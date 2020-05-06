@@ -176,3 +176,5 @@ following are currently used:
 - `//e` is an unclassified enhancement
 - `//p` is a POTS enhancement
 - `//s` is a socket enhancement
+- `//x` is something to be removed
+- `//*` is something to be fixed or implemented as soon as possible

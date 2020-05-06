@@ -1,116 +1,117 @@
 
 MODULE INITIALIZATION          msecs      invoked at
-pre-Module.Startup               161    11:29:26.379
-NodeBase.NbModule...                    11:29:26.540
-...initialized                   405
-NodeTools.NtModule...                   11:29:26.957
-...initialized                    79
-CodeTools.CtModule...                   11:29:27.047
-...initialized                    33
-NetworkBase.NwModule...                 11:29:27.090
+pre-Module.Startup               149    09:29:46.095
+NodeBase.NbModule...                    09:29:46.244
+...initialized                   113
+NodeTools.NtModule...                   09:29:46.365
+...initialized                    55
+CodeTools.CtModule...                   09:29:46.429
+...initialized                    28
+NetworkBase.NwModule...                 09:29:46.466
 
-    NET500 3-May-2020 11:29:27.111 on Reigi {1}
-...initialized                   142
-SessionBase.SbModule...                 11:29:27.244
-...initialized                   145
-ControlNode.CnModule...                 11:29:27.401
-...initialized                    10
-SessionTools.StModule...                11:29:27.425
+    NET500 6-May-2020 09:29:46.483 on Reigi {1}
+...initialized                    88
+SessionBase.SbModule...                 09:29:46.563
+...initialized                   116
+ControlNode.CnModule...                 09:29:46.689
+...initialized                     9
+SessionTools.StModule...                09:29:46.714
 ...initialized                    27
-MediaBase.MbModule...                   11:29:27.465
+MediaBase.MbModule...                   09:29:46.754
+...initialized                    18
+CallBase.CbModule...                    09:29:46.787
+...initialized                    27
+PotsBase.PbModule...                    09:29:46.827
+...initialized                    28
+OperationsNode.OnModule...              09:29:46.871
+...initialized                    12
+RoutingNode.RnModule...                 09:29:46.897
+...initialized                    16
+ServiceNode.SnModule...                 09:29:46.926
+...initialized                    47
+AccessNode.AnModule...                  09:29:46.984
 ...initialized                    25
-CallBase.CbModule...                    11:29:27.505
-...initialized                    30
-PotsBase.PbModule...                    11:29:27.546
-...initialized                    38
-OperationsNode.OnModule...              11:29:27.600
-...initialized                    11
-RoutingNode.RnModule...                 11:29:27.624
-...initialized                    11
-ServiceNode.SnModule...                 11:29:27.647
-...initialized                    70
-AccessNode.AnModule...                  11:29:27.735
-...initialized                    23
                                -----
-total initialization time       1397
+total initialization time        930
 
-    NODE500 3-May-2020 11:29:27.788 on Reigi {2}
+    NODE500 6-May-2020 09:29:47.039 on Reigi {2}
 
-    NODE103 3-May-2020 11:29:33.686 on Reigi {3}
-    in NodeBase.CliThread (tid=9, nid=0x00008c98)
-      reason : 0x1
+    NODE103 6-May-2020 09:29:53.713 on Reigi {3}
+    in NodeBase.CliThread (tid=9, nid=0x0000be7c)
+      level  : reload
+      reason : manual restart
       errval : 0x3
     Function Traceback:
-      NodeBase.Thread.FunctionInvoked @ thread.cpp + 2012[9]
-      NodeBase.Debug.ft @ debug.cpp + 71[9]
-      NodeBase.SysThread.Suspend @ systhread.win.cpp + 340[11]
-      NodeBase.SysThread.Delay @ systhread.cpp + 107[0]
-      NodeBase.Thread.Pause @ thread.cpp + 2579[28]
-      NodeBase.RootThread.Enter @ rootthread.cpp + 202[9]
-      NodeBase.Thread.Start @ thread.cpp + 3366[15]
-      NodeBase.Thread.EnterThread @ thread.cpp + 1812[0]
-      NodeBase.RootThread.Main @ rootthread.cpp + 297[9]
-      main @ main.cpp + 141[0]
-      invoke_main @ exe_common.inl + 78[27]
-      __scrt_common_main_seh @ exe_common.inl + 288[5]
-      __scrt_common_main @ exe_common.inl + 331[0]
-      mainCRTStartup @ exe_main.cpp + 17[0]
+      NodeBase.ElementException.ElementException @ elementexception.cpp + 39[12]
+      NodeBase.Restart.Initiate @ restart.cpp + 63[24]
+      NodeBase.RestartCommand.ProcessCommand @ nbincrement.cpp + 2445[17]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 505[19]
+      NodeBase.CliThread.ReadCommands @ clithread.cpp + 693[0]
+      NodeBase.ReadCommand.ProcessCommand @ nbincrement.cpp + 2309[0]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 505[19]
+      NodeBase.CliThread.ReadCommands @ clithread.cpp + 693[0]
+      NodeBase.CliThread.Enter @ clithread.cpp + 339[17]
+      NodeBase.Thread.Start @ thread.cpp + 3365[15]
+      NodeBase.Thread.EnterThread @ thread.cpp + 1811[0]
+      register_onexit_function @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
 RESTART TYPE: reload
 
 MODULE SHUTDOWN                msecs      invoked at
-Notifying threads...                    11:29:33.919
+Notifying threads...                    09:29:53.997
 
-    STATS400 3-May-2020 11:29:33.966 on Reigi {4}
-    For reporting period beginning at 11:29:26.554
+    STATS400 6-May-2020 09:29:54.024 on Reigi {4}
+    For reporting period beginning at 09:29:46.254
 ----------------------------------------------------------------------------
 Threads [ThreadId]                               Curr      Prev         All
   root [1]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
-                                      yields       746         0         746
-                                  interrupts       744         0         744
+                                      yields       804         0         804
+                                  interrupts       802         0         802
              longest length of message queue         *         *           *
-                 highest stack usage (words)       274         *         274
-           longest time scheduled in (usecs)      2086         *        2086
-                total execution time (msecs)        68         0          68
+                 highest stack usage (words)       268         *         268
+           longest time scheduled in (usecs)      2085         *        2085
+                total execution time (msecs)        72         0          72
   init [2]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
-                                      yields       788         0         788
-                                  interrupts       700         0         700
+                                      yields       852         0         852
+                                  interrupts       705         0         705
              longest length of message queue         *         *           *
                  highest stack usage (words)      2746         *        2746
-           longest time scheduled in (usecs)   1264213         *     1264213
-                total execution time (msecs)      1397         0        1397
+           longest time scheduled in (usecs)    809263         *      809263
+                total execution time (msecs)       951         0         951
   file [3]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
-                                      yields       136         0         136
-                                  interrupts        65         0          65
+                                      yields       138         0         138
+                                  interrupts        66         0          66
              longest length of message queue        38         *          38
-                 highest stack usage (words)       325         *         325
-           longest time scheduled in (usecs)    249196         *      249196
-                total execution time (msecs)       924         0         924
+                 highest stack usage (words)       319         *         319
+           longest time scheduled in (usecs)    257641         *      257641
+                total execution time (msecs)       939         0         939
   cout [4]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
                                       yields       116         0         116
                                   interrupts        55         0          55
              longest length of message queue        29         *          29
-                 highest stack usage (words)       293         *         293
-           longest time scheduled in (usecs)      2045         *        2045
-                total execution time (msecs)        18         0          18
+                 highest stack usage (words)       287         *         287
+           longest time scheduled in (usecs)       477         *         477
+                total execution time (msecs)        17         0          17
   cin [5]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
                                       yields         3         0           3
                                   interrupts         1         0           1
              longest length of message queue         *         *           *
-                 highest stack usage (words)       240         *         240
-           longest time scheduled in (usecs)       108         *         108
+                 highest stack usage (words)       234         *         234
+           longest time scheduled in (usecs)        76         *          76
                 total execution time (msecs)         0         0           0
   objaud [6]
                                        traps         0         0           0
@@ -119,16 +120,16 @@ Threads [ThreadId]                               Curr      Prev         All
                                   interrupts         0         0           0
              longest length of message queue         *         *           *
                  highest stack usage (words)       424         *         424
-           longest time scheduled in (usecs)      2959         *        2959
-                total execution time (msecs)        16         0          16
+           longest time scheduled in (usecs)      3716         *        3716
+                total execution time (msecs)        18         0          18
   stats [7]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
-                                      yields         1         0           1
+                                      yields         2         0           2
                                   interrupts         0         0           0
              longest length of message queue         *         *           *
-                 highest stack usage (words)       248         *         248
-           longest time scheduled in (usecs)       224         *         224
+                 highest stack usage (words)       242         *         242
+           longest time scheduled in (usecs)       138         *         138
                 total execution time (msecs)         0         0           0
   log [8]
                                        traps         0         0           0
@@ -137,25 +138,25 @@ Threads [ThreadId]                               Curr      Prev         All
                                   interrupts         2         0           2
              longest length of message queue         *         *           *
                  highest stack usage (words)       341         *         341
-           longest time scheduled in (usecs)     22958         *       22958
-                total execution time (msecs)        23         0          23
+           longest time scheduled in (usecs)     24365         *       24365
+                total execution time (msecs)        25         0          25
   cli [9]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
                                       yields        49         0          49
                                   interrupts         2         0           2
              longest length of message queue         *         *           *
-                 highest stack usage (words)      1046         *        1046
-           longest time scheduled in (usecs)    255805         *      255805
-                total execution time (msecs)       346         0         346
+                 highest stack usage (words)      1051         *        1051
+           longest time scheduled in (usecs)    248716         *      248716
+                total execution time (msecs)       329         0         329
   timer [10]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
-                                      yields         6         0           6
+                                      yields         7         0           7
                                   interrupts         1         0           1
              longest length of message queue         *         *           *
-                 highest stack usage (words)       241         *         241
-           longest time scheduled in (usecs)       334         *         334
+                 highest stack usage (words)       235         *         235
+           longest time scheduled in (usecs)       261         *         261
                 total execution time (msecs)         1         0           1
   invoker [11]
                                        traps         0         0           0
@@ -163,35 +164,35 @@ Threads [ThreadId]                               Curr      Prev         All
                                       yields         1         0           1
                                   interrupts         1         0           1
              longest length of message queue         *         *           *
-                 highest stack usage (words)       259         *         259
-           longest time scheduled in (usecs)       168         *         168
+                 highest stack usage (words)       253         *         253
+           longest time scheduled in (usecs)       159         *         159
                 total execution time (msecs)         0         0           0
   tcpio [12]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
-                                      yields         3         0           3
+                                      yields         4         0           4
                                   interrupts         1         0           1
              longest length of message queue         *         *           *
                  highest stack usage (words)       285         *         285
-           longest time scheduled in (usecs)      1623         *        1623
-                total execution time (msecs)         2         0           2
+           longest time scheduled in (usecs)      1724         *        1724
+                total execution time (msecs)         3         0           3
   udpio [13]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
                                       yields         1         0           1
                                   interrupts         1         0           1
              longest length of message queue         *         *           *
-                 highest stack usage (words)       319         *         319
-           longest time scheduled in (usecs)       586         *         586
-                total execution time (msecs)         1         0           1
+                 highest stack usage (words)       282         *         282
+           longest time scheduled in (usecs)       477         *         477
+                total execution time (msecs)         0         0           0
   udpio [14]
                                        traps         0         0           0
               running unpreemptable too long         0         0           0
                                       yields         1         0           1
                                   interrupts         1         0           1
              longest length of message queue         *         *           *
-                 highest stack usage (words)       317         *         317
-           longest time scheduled in (usecs)       653         *         653
+                 highest stack usage (words)       302         *         302
+           longest time scheduled in (usecs)       875         *         875
                 total execution time (msecs)         1         0           1
 ----------------------------------------------------------------------------
 Logs [group id_t]                                Curr      Prev         All
@@ -440,8 +441,8 @@ Logs [group id_t]                                Curr      Prev         All
 Object Pools [ObjectPoolId]                      Curr      Prev         All
   MsgBuffers [1]
                      fewest remaining blocks      1981         *        1981
-                      successful allocations       120         0         120
-                               deallocations       120         0         120
+                      successful allocations       121         0         121
+                               deallocations       121         0         121
                     unsuccessful allocations         0         0           0
                    blocks recovered by audit         0         0           0
           size of block minus largest object        48         *          48
@@ -527,11 +528,11 @@ Object Pools [ObjectPoolId]                      Curr      Prev         All
 Threads (all)                                    Curr      Prev         All
                                    creations         0         0           0
                                    deletions         0         0           0
-                                  interrupts      1514         0        1514
-                            context switches      1822         0        1822
-                     scheduled to run locked       221         0         221
-                                 preemptions        22         0          22
-                     scheduled after timeout        22         0          22
+                                  interrupts      1574         0        1574
+                            context switches      1940         0        1940
+                     scheduled to run locked       224         0         224
+                                 preemptions        24         0          24
+                     scheduled after timeout        25         0          25
                        resignaled to proceed         0         0           0
      scheduling interrupt when thread locked         0         0           0
                        selected to run again         0         0           0
@@ -719,87 +720,83 @@ POTS Calls                                       Curr      Prev         All
                       Protocol Timer Expired         0         0           0
                                Reset Circuit         0         0           0
 ----------------------------------------------------------------------------
-...threads to exit: 11            77
+...threads to exit: 11            47
 
-    THR907 3-May-2020 11:29:34.066 on Reigi {5}
-    thread=NetworkBase.UdpIoThread (tid=13, nid=0x000065c8)
-    mutexes=1
-
-    THR901 3-May-2020 11:29:34.067 on Reigi {7}
-    thread=SessionBase.TimerThread (tid=10, nid=0x00005618)
+    THR901 6-May-2020 09:29:54.114 on Reigi {5}
+    thread=SessionBase.TimerThread (tid=10, nid=0x0000a1d8)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.067 on Reigi {10}
-    thread=NodeBase.CliThread (tid=9, nid=0x00008c98)
+    THR901 6-May-2020 09:29:54.115 on Reigi {12}
+    thread=NodeBase.LogThread (tid=8, nid=0x00008960)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.090 on Reigi {15}
-    thread=NetworkBase.UdpIoThread (tid=13, nid=0x000065c8)
+    THR901 6-May-2020 09:29:54.114 on Reigi {6}
+    thread=NodeBase.CoutThread (tid=4, nid=0x0000a664)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.072 on Reigi {13}
-    thread=SessionBase.InvokerThread (tid=11, nid=0x00009300)
+    THR901 6-May-2020 09:29:54.116 on Reigi {13}
+    thread=NetworkBase.UdpIoThread (tid=14, nid=0x00008d2c)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.067 on Reigi {6}
-    thread=NetworkBase.UdpIoThread (tid=14, nid=0x000088f4)
+    THR901 6-May-2020 09:29:54.122 on Reigi {14}
+    thread=NetworkBase.UdpIoThread (tid=13, nid=0x0000b5f8)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.073 on Reigi {14}
-    thread=NodeBase.ObjectPoolAudit (tid=6, nid=0x00007838)
+    THR901 6-May-2020 09:29:54.125 on Reigi {15}
+    thread=NetworkBase.TcpIoThread (tid=12, nid=0x00005de0)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.067 on Reigi {8}
-    thread=NodeBase.StatisticsThread (tid=7, nid=0x00006c0c)
+    THR901 6-May-2020 09:29:54.114 on Reigi {9}
+    thread=NodeBase.StatisticsThread (tid=7, nid=0x0000617c)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.117 on Reigi {16}
-    thread=NetworkBase.TcpIoThread (tid=12, nid=0x00009f50)
+    THR901 6-May-2020 09:29:54.114 on Reigi {8}
+    thread=NodeBase.CliThread (tid=9, nid=0x0000be7c)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.071 on Reigi {11}
-    thread=NodeBase.CoutThread (tid=4, nid=0x000061f4)
+    THR901 6-May-2020 09:29:54.114 on Reigi {7}
+    thread=NodeBase.FileThread (tid=3, nid=0x00009b78)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.067 on Reigi {9}
-    thread=NodeBase.FileThread (tid=3, nid=0x00006d80)
+    THR901 6-May-2020 09:29:54.115 on Reigi {10}
+    thread=SessionBase.InvokerThread (tid=11, nid=0x00009744)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 11:29:34.071 on Reigi {12}
-    thread=NodeBase.LogThread (tid=8, nid=0x000071f8)
+    THR901 6-May-2020 09:29:54.115 on Reigi {11}
+    thread=NodeBase.ObjectPoolAudit (tid=6, nid=0x0000b59c)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-...threads exited: 11            322
-AccessNode.AnModule...                  11:29:34.258
+...threads exited: 11            276
+AccessNode.AnModule...                  09:29:54.294
+...shut down                      18
+ServiceNode.SnModule...                 09:29:54.330
 ...shut down                      17
-ServiceNode.SnModule...                 11:29:34.294
+RoutingNode.RnModule...                 09:29:54.605
+...shut down                      71
+OperationsNode.OnModule...              09:29:54.697
 ...shut down                      21
-RoutingNode.RnModule...                 11:29:34.334
-...shut down                      18
-OperationsNode.OnModule...              11:29:34.370
-...shut down                      18
-PotsBase.PbModule...                    11:29:34.408
-...shut down                      18
-CallBase.CbModule...                    11:29:34.444
+PotsBase.PbModule...                    09:29:54.738
+...shut down                      22
+CallBase.CbModule...                    09:29:54.782
+...shut down                      23
+MediaBase.MbModule...                   09:29:54.824
 ...shut down                      20
-MediaBase.MbModule...                   11:29:34.483
-...shut down                      17
-SessionTools.StModule...                11:29:34.519
-...shut down                     269
-ControlNode.CnModule...                 11:29:34.875
-...shut down                      26
-SessionBase.SbModule...                 11:29:34.927
-...shut down                      26
-NetworkBase.NwModule...                 11:29:34.979
-...shut down                      41
-CodeTools.CtModule...                   11:29:35.044
+SessionTools.StModule...                09:29:54.869
 ...shut down                      21
-NodeTools.NtModule...                   11:29:35.084
-...shut down                      26
-NodeBase.NbModule...                    11:29:35.134
-...shut down                      29
+ControlNode.CnModule...                 09:29:54.913
+...shut down                      18
+SessionBase.SbModule...                 09:29:54.954
+...shut down                      15
+NetworkBase.NwModule...                 09:29:54.989
+...shut down                      22
+CodeTools.CtModule...                   09:29:55.029
+...shut down                      15
+NodeTools.NtModule...                   09:29:55.063
+...shut down                      17
+NodeBase.NbModule...                    09:29:55.100
+...shut down                      28
                                -----
-total shutdown time             1260
+total shutdown time             1148
 
 MODULE INITIALIZATION          msecs      invoked at
-NodeBase.NbModule...                    11:29:35.197
+NodeBase.NbModule...                    09:29:55.165

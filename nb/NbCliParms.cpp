@@ -50,7 +50,6 @@ fixed_string CreateStreamFailure  = "Could not create output stream.";
 fixed_string DelayFailure         = "Delay failed: rc=";
 fixed_string EmptySet             = "No elements in set.";
 fixed_string EndOfFreeQueue       = "Failed: reached end of pool's free queue.";
-fixed_string NextRestartExpl      = "This change will take effect after the next restart.";
 fixed_string NoAlarmExpl          = "There is no alarm with that identifier.";
 fixed_string NoBuffersExpl        = "There were no buffers to display.";
 fixed_string NoCfgParmExpl        = "No such configuration parameter.";

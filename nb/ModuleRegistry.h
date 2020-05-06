@@ -77,9 +77,9 @@ private:
    //
    void Restart();
 
-   //  Sets the attributes for an upcoming restart.
+   //  Sets the level for an upcoming restart.
    //
-   void SetReason(RestartLevel level, reinit_t reason, debug64_t errval);
+   void SetLevel(RestartLevel level);
 
    //  Returns the next restart level when a restart fails.
    //

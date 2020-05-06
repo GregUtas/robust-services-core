@@ -23,6 +23,7 @@
 #define ELEMENTEXCEPTION_H_INCLUDED
 
 #include "Exception.h"
+#include "Restart.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -37,7 +38,7 @@ public:
    //  LEVEL is the restart severity.  REASON is one of the values defined
    //  in Restart.h. ERRVAL is for debugging.
    //
-   ElementException(RestartLevel leve, reinit_t reason, debug64_t errval);
+   ElementException(RestartLevel level, RestartReason reason, debug64_t errval);
 
    //  Not subclassed.
    //
@@ -53,7 +54,7 @@ public:
 
    //  Returns the reason for the restart.
    //
-   reinit_t Reason() const { return reason_; }
+   RestartReason Reason() const { return reason_; }
 
    //  Returns the error value.
    //
@@ -65,11 +66,11 @@ private:
 
    //  The severity of the restart.
    //
-   RestartLevel level_;
+   const RestartLevel level_;
 
    //  The reason for the restart.
    //
-   const reinit_t reason_;
+   const RestartReason reason_;
 
    //  An error value for debugging.
    //

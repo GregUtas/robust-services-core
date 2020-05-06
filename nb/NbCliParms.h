@@ -52,7 +52,6 @@ extern fixed_string CreateStreamFailure;
 extern fixed_string DelayFailure;
 extern fixed_string EmptySet;
 extern fixed_string EndOfFreeQueue;
-extern fixed_string NextRestartExpl;
 extern fixed_string NoAlarmExpl;
 extern fixed_string NoBuffersExpl;
 extern fixed_string NoCfgParmExpl;

@@ -209,14 +209,9 @@ enum RestartLevel
    RestartLevel_N  // number of restart levels
 };
 
-//  Returns a string that identifies LEVEL.  Returns ERROR_STR if
-//  LEVEL is RestartNone or RestartExit.
+//  Inserts a string for LEVEL into STREAM.
 //
-c_string strRestartLevel(RestartLevel level);
-
-//  The reason for a shutdown or restart.  See Restart.h for values.
-//
-typedef uint32_t reinit_t;
+std::ostream& operator<<(std::ostream& stream, RestartLevel level);
 
 //  Outcomes for a thread delay (timed sleep) function.
 //

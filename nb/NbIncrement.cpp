@@ -560,12 +560,10 @@ word CfgParmsCommand::ProcessCommand(CliThread& cli) const
 
       if(level != RestartNone)
       {
-         expl = NextRestartExpl;
-         auto pos = expl.rfind("restart");
-         value = strRestartLevel(level);
-         value.push_back(SPACE);
-         expl.insert(pos, value);
-         return cli.Report(-4, expl);
+         std::ostringstream stream;
+         stream << "This change will take effect after the next ";
+         stream << level << " restart.";
+         return cli.Report(-4, stream.str());
       }
 
       return cli.Report(0, SuccessExpl);

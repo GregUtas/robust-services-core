@@ -58,9 +58,9 @@ private:
    //
    enum State
    {
-      Initializing,  // system being initialized
+      Initializing,  // system is being initialized or restarted
       Running,       // system is in service
-      Restarting     // initiating a restart
+      Restarting     // internal error: initiating a restart
    };
 
    //  Flags used when interrupting InitThread.
@@ -83,9 +83,9 @@ private:
    //
    ~InitThread();
 
-   //  Initiates a restart of the type specified by LEVEL, REASON, and ERRVAL.
+   //  Initiates a restart at LEVEL.
    //
-   void InitiateRestart(RestartLevel level, reinit_t reason, debug64_t errval);
+   void InitiateRestart(RestartLevel level);
 
    //  Initializes or restarts the system.
    //

@@ -20,16 +20,20 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "InitThread.h"
-#include <ostream>
 #include <set>
+#include <sstream>
 #include <string>
 #include "Algorithms.h"
 #include "Daemon.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
+#include "Formatters.h"
+#include "Log.h"
 #include "ModuleRegistry.h"
+#include "NbLogs.h"
 #include "NbTracer.h"
 #include "Registry.h"
+#include "Restart.h"
 #include "RootThread.h"
 #include "Singleton.h"
 #include "ThreadAdmin.h"
@@ -51,9 +55,9 @@ const Flags InitThread::ScheduleMask = Flags(1 << Schedule);
 fn_name InitThread_ctor = "InitThread.ctor";
 
 InitThread::InitThread() : Thread(SystemFaction),
+   errval_(0),
    state_(Initializing),
-   timeout_(false),
-   errval_(0)
+   timeout_(false)
 {
    Debug::ft(InitThread_ctor);
 
@@ -121,13 +125,25 @@ void InitThread::CauseRestart()
    Debug::ft(InitThread_CauseRestart);
 
    //  We get here if
-   //  o we trapped during a restart
    //  o our state gets corrupted (unlikely)
    //  o Delay fails (unlikely)
    //
+   auto log = Log::Create(NodeLogGroup, NodeRestart);
+
+   if(log != nullptr)
+   {
+      auto prefix = Log::Tab + spaces(2);
+      *log << Log::Tab << "in " << to_str() << CRLF;
+      *log << prefix << "level  : " << RestartWarm << CRLF;
+      *log << prefix << "reason : " << ThreadPauseFailed << CRLF;
+      *log << prefix << "errval : " << strHex(debug64_t(0)) << CRLF;
+      Log::Submit(log);
+   }
+
+   auto reg = Singleton< ModuleRegistry >::Instance();
+   reg->SetLevel(RestartWarm);
    Singleton< RootThread >::Instance()->Interrupt(RestartMask);
    state_ = Initializing;
-   errval_ = 0;
    Pause(100);
 }
 
@@ -369,16 +385,15 @@ void InitThread::InitializeSystem()
 
 fn_name InitThread_InitiateRestart = "InitThread.InitiateRestart";
 
-void InitThread::InitiateRestart
-   (RestartLevel level, reinit_t reason, debug64_t errval)
+void InitThread::InitiateRestart(RestartLevel level)
 {
    Debug::ft(InitThread_InitiateRestart);
 
-   //  Save the restart reason and error value.  Tell RootThread that
-   //  a restart is occurring so that it can act as a watchdog on its
-   //  completion, and then inform our thread.
+   //  Set the restart's level.  Tell RootThread that a restart is
+   //  occurring so that it can act as a watchdog on its completion and
+   //  then wake up our thread.
    //
-   Singleton< ModuleRegistry >::Instance()->SetReason(level, reason, errval);
+   Singleton< ModuleRegistry >::Instance()->SetLevel(level);
    Singleton< RootThread >::Instance()->Interrupt(RestartMask);
    Interrupt(RestartMask);
 }

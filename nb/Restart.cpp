@@ -20,8 +20,11 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Restart.h"
+#include <ostream>
 #include "Debug.h"
 #include "ElementException.h"
+
+using std::ostream;
 
 //------------------------------------------------------------------------------
 
@@ -52,7 +55,8 @@ bool Restart::ClearsMemory(MemoryType type)
 
 fn_name Restart_Initiate = "Restart.Initiate";
 
-void Restart::Initiate(RestartLevel level, reinit_t reason, debug64_t errval)
+void Restart::Initiate
+   (RestartLevel level, RestartReason reason, debug64_t errval)
 {
    Debug::ft(Restart_Initiate);
 
@@ -78,5 +82,35 @@ RestartLevel Restart::LevelToClear(MemoryType type)
    }
 
    return RestartNone;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string RestartReasonStrings[RestartReason_N + 1] =
+{
+   "nil restart",
+   "manual restart",
+   "mutex creation failed",
+   "heap creation failed",
+   "object pool creation failed",
+   "network layer unavailable",
+   "restart timeout",
+   "scheduling timeout",
+   "thread pause failed",
+   "death of eritical thread",
+   "heap protection failed",
+   "heap corruption",
+   "work queue corruption",
+   "timer queue corruption",
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, RestartReason reason)
+{
+   if((reason >= 0) && (reason < RestartReason_N))
+      stream << RestartReasonStrings[reason];
+   else
+      stream << RestartReasonStrings[RestartReason_N];
+   return stream;
 }
 }

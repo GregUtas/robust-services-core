@@ -3398,8 +3398,7 @@ main_t Thread::Start()
          //
          if(faction_ < SystemFaction)
          {
-            auto system = Singleton< InitThread >::Instance();
-            system->InitiateRestart(nex.Level(), reason, code);
+            Singleton< InitThread >::Instance()->InitiateRestart(nex.Level());
          }
 
          continue;

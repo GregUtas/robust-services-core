@@ -97,18 +97,21 @@ ostream& operator<<(ostream& stream, MemoryType type)
 
 fixed_string RestartStrings[RestartLevel_N + 1] =
 {
-   ERROR_STR,
+   "none",
    "warm",
    "cold",
    "reload",
    "reboot",
-   ERROR_STR,
+   "exit",
    ERROR_STR
 };
 
-c_string strRestartLevel(RestartLevel level)
+ostream& operator<<(ostream& stream, RestartLevel level)
 {
-   if((level >= 0) && (level < RestartLevel_N)) return RestartStrings[level];
-   return RestartStrings[RestartLevel_N];
+   if((level >= 0) && (level < RestartLevel_N))
+      stream << RestartStrings[level];
+   else
+      stream << RestartStrings[RestartLevel_N];
+   return stream;
 }
 }

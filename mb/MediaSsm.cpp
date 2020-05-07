@@ -66,13 +66,13 @@ void MediaSsm::Display(ostream& stream,
 
 fn_name MediaSsm_GetSubtended = "MediaSsm.GetSubtended";
 
-void MediaSsm::GetSubtended(Base* objects[], size_t& count) const
+void MediaSsm::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(MediaSsm_GetSubtended);
 
-   RootServiceSM::GetSubtended(objects, count);
+   RootServiceSM::GetSubtended(objects);
 
-   if(mgwPsm_ != nullptr) mgwPsm_->GetSubtended(objects, count);
+   if(mgwPsm_ != nullptr) mgwPsm_->GetSubtended(objects);
 }
 
 //------------------------------------------------------------------------------

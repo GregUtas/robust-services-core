@@ -557,20 +557,20 @@ void Context::Exqueue()
 
 fn_name Context_GetSubtended = "Context.GetSubtended";
 
-void Context::GetSubtended(Base* objects[], size_t& count) const
+void Context::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(Context_GetSubtended);
 
-   Pooled::GetSubtended(objects, count);
+   Pooled::GetSubtended(objects);
 
    for(auto m = priMsgq_.First(); m != nullptr; priMsgq_.Next(m))
    {
-      m->GetSubtended(objects, count);
+      m->GetSubtended(objects);
    }
 
    for(auto m = stdMsgq_.First(); m != nullptr; stdMsgq_.Next(m))
    {
-      m->GetSubtended(objects, count);
+      m->GetSubtended(objects);
    }
 }
 

@@ -280,7 +280,7 @@ void BuffTrace::ClaimBlocks()
 
    if((buff_ != nullptr) && !corrupt_ && !buff_->IsInvalid())
    {
-      buff_->Claim();
+      buff_->ClaimBlocks();
    }
 }
 

@@ -41,6 +41,10 @@ public:
    //
    Class* Lookup(ClassId cid) const;
 
+   //  Overridden to be forwarded to all classes in the registry.
+   //
+   void ClaimBlocks() override;
+
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;

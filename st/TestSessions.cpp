@@ -460,13 +460,13 @@ Message* TestMessage::GetAppMsg()
 
 fn_name TestMessage_GetSubtended = "TestMessage.GetSubtended";
 
-void TestMessage::GetSubtended(Base* objects[], size_t& count) const
+void TestMessage::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(TestMessage_GetSubtended);
 
-   Message::GetSubtended(objects, count);
+   Message::GetSubtended(objects);
 
-   if(appMsg_ != nullptr) appMsg_->GetSubtended(objects, count);
+   if(appMsg_ != nullptr) appMsg_->GetSubtended(objects);
 }
 
 //------------------------------------------------------------------------------

@@ -381,13 +381,13 @@ SignalId Message::GetSignal() const
 
 fn_name Message_GetSubtended = "Message.GetSubtended";
 
-void Message::GetSubtended(Base* objects[], size_t& count) const
+void Message::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(Message_GetSubtended);
 
-   Pooled::GetSubtended(objects, count);
+   Pooled::GetSubtended(objects);
 
-   buff_->GetSubtended(objects, count);
+   buff_->GetSubtended(objects);
 }
 
 //------------------------------------------------------------------------------

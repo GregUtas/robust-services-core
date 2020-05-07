@@ -66,7 +66,7 @@ public:
 
    //  Overridden to claim blocks that this object owns.  If the object is
    //  marked corrupt, it simply returns; otherwise, it surrounds a call
-   //  to Base::ClaimBlocks by setting and clearing the corrupt_ flag.
+   //  to Object::ClaimBlocks by setting and clearing the corrupt_ flag.
    //
    void ClaimBlocks() override;
 

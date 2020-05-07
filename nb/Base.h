@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <string>
+#include <vector>
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -55,10 +56,6 @@ class Base
    friend class Class;
    friend class ObjectPool;
 public:
-   //> The maximum number of objects in the Base::GetSubtended array.
-   //
-   static const size_t MaxSubtendedCount;
-
    //  Virtual to allow subclassing.
    //
    virtual ~Base() = default;
@@ -83,18 +80,17 @@ public:
    //
    void Output(std::ostream& stream, col_t indent, bool verbose) const;
 
-   //  Adds the object to OBJECTS.  COUNT identifies the next available
-   //  slot in the OBJECTS array.  Used by ClaimBlocks and LogSubtended,
+   //  Adds the object to OBJECTS.  Used by ClaimBlocks and LogSubtended,
    //  and must therefore be overridden by subclasses of Pooled so that
    //  transitively owned pooled objects are also added to OBJECTS:
    //
-   //  void MyObject::GetSubtended(Base* objects[], size_t& count)
+   //  void MyObject::GetSubtended(std::vector< Base* >& objects)
    //  {
-   //     MyBaseClass::GetSubtended(objects, count);
-   //     for(each object X that I own) X.GetSubtended(objects, count);
+   //     MyBaseClass::GetSubtended(objects);
+   //     for(each object X that I own) X.GetSubtended(objects);
    //  }
    //
-   virtual void GetSubtended(Base* objects[], size_t& count) const;
+   virtual void GetSubtended(std::vector< Base* >& objects) const;
 
    //  Logs this object and all subtended objects by invoking each of their
    //  Display functions with STREAM, PREFIX, and OPTIONS.

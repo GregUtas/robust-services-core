@@ -150,10 +150,10 @@ void SysTcpSocket::ClaimBlocks()
 
    for(auto buff = ogMsgq_.First(); buff != nullptr; ogMsgq_.Next(buff))
    {
-      buff->Claim();
+      buff->ClaimBlocks();
    }
 
-   if(icMsg_ != nullptr) icMsg_->Claim();
+   if(icMsg_ != nullptr) icMsg_->ClaimBlocks();
 }
 
 //------------------------------------------------------------------------------

@@ -50,7 +50,7 @@ public:
 
    //  Overridden to enumerate all objects that the context owns.
    //
-   void GetSubtended(Base* objects[], size_t& count) const override;
+   void GetSubtended(std::vector< Base* >& objects) const override;
 
    //  Overridden to display member variables.
    //

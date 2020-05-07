@@ -67,6 +67,20 @@ bool ClassRegistry::BindClass(Class& cls)
 
 //------------------------------------------------------------------------------
 
+fn_name ClassRegistry_ClaimBlocks = "ClassRegistry.ClaimBlocks";
+
+void ClassRegistry::ClaimBlocks()
+{
+   Debug::ft(ClassRegistry_ClaimBlocks);
+
+   for(auto c = classes_.First(); c != nullptr; classes_.Next(c))
+   {
+      c->ClaimBlocks();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void ClassRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {

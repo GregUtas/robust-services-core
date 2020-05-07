@@ -1439,20 +1439,18 @@ bool Thread::ChangeFaction(Faction faction)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Claim = "Thread.Claim";
+fn_name Thread_ClaimBlocks = "Thread.ClaimBlocks";
 
-void Thread::Claim()
+void Thread::ClaimBlocks()
 {
-   Debug::ft(Thread_Claim);
-
-   Permanent::Claim();
+   Debug::ft(Thread_ClaimBlocks);
 
    //  Claim messages on the queue.  Sometimes there are hundreds of these,
    //  so trying to add them all to GetSubtended's array isn't possible.
    //
    for(auto m = msgq_.First(); m != nullptr; msgq_.Next(m))
    {
-      m->Claim();
+      m->ClaimBlocks();
    }
 }
 

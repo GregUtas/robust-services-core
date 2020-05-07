@@ -69,7 +69,7 @@ public:
    //
    size_t Restarting(RestartLevel level) const;
 
-   //  Overridden to claim all threads in the registry.
+   //  Overridden to be forwarded to all threads in the registry.
    //
    void ClaimBlocks() override;
 

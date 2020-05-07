@@ -91,10 +91,11 @@ public:
    //
    static ptrdiff_t CellDiff();
 
-   //  Overridden to enumerate all objects that the Class owns (not
-   //  objects of, or created by, this Class, but its actual members).
+   //  Overridden to claim objects that the class owns (not objects of, or
+   //  created by, this Class, but its actual members).  May be overridden,
+   //  but this version must be invoked.
    //
-   void GetSubtended(Base* objects[], size_t& count) const override;
+   void ClaimBlocks() override;
 
    //  Overridden for restarts.
    //

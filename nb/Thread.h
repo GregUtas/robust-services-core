@@ -286,7 +286,7 @@ protected:
    //  Overridden to claim queued messages.  May be overridden, but this
    //  version must be invoked.
    //
-   void Claim() override;
+   void ClaimBlocks() override;
 
    //  Overridden to release resources during error recovery.  May be
    //  overridden, but this version must be invoked.

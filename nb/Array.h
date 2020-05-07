@@ -235,7 +235,7 @@ private:
       else if(size > max_)
          size = max_;
       auto bytes = sizeof(T) * size;
-      auto table = (T*) Memory::Alloc(bytes, mem_, false);
+      auto table = (T*) Memory::Alloc(bytes, mem_);
       if(table == nullptr) return false;
       for(size_t i = 0; i < size_; ++i) table[i] = std::move(array_[i]);
       cap_ = size;

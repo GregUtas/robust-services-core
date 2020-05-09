@@ -24,8 +24,9 @@
 
 #include "Thread.h"
 #include <cstddef>
-#include "Clock.h"
+#include "Duration.h"
 #include "NbTypes.h"
+#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 
@@ -53,7 +54,7 @@ private:
    static secs_t LongIntervalSecs;
 
    //> The number of seconds between the rollover of the short interval
-   //  for thread statistics (default = 10 seconds).
+   //  for thread statistics (default = 5 seconds).
    //
    static secs_t ShortIntervalSecs;
 
@@ -64,10 +65,9 @@ private:
    //
    static size_t WakeupsBetweenReports;
 
-   //> The number of ticks that should occur between the times at which
-   //  the thread starts to run.
+   //> The interval between the times when the thread starts to run.
    //
-   static ticks_t PrevToCurrTicks;
+   static Duration SleepInterval;
 
    //  Private because this singleton is not subclassed.
    //
@@ -80,7 +80,7 @@ private:
    //  Calculates how long the thread will sleep when it is initially
    //  entered, and also initializes countdown_;
    //
-   msecs_t CalcFirstDelay();
+   Duration CalcFirstDelay();
 
    //  Overridden to return a name for the thread.
    //
@@ -101,7 +101,7 @@ private:
 
    //  The next time at which the thread wants to run.
    //
-   ticks_t wakeupTicks_;
+   TimePoint wakeupTime_;
 
    //  A counter that causes a report to be generated when it reaches zero.
    //

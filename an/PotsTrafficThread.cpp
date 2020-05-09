@@ -40,6 +40,7 @@
 #include "Restart.h"
 #include "SbPools.h"
 #include "Singleton.h"
+#include "TimePoint.h"
 #include "Tones.h"
 
 using namespace MediaBase;
@@ -180,8 +181,8 @@ private:
 
    //  The times at which the originator entered and left the call.
    //
-   const ticks_t origStart_;
-   ticks_t origEnd_;
+   const TimePoint origStart_;
+   TimePoint origEnd_;
 
    //  The amount of time to wait before sending another offhook.
    //
@@ -197,8 +198,8 @@ private:
 
    //  The times at which the terminator entered and left the call.
    //
-   ticks_t termStart_;
-   ticks_t termEnd_;
+   TimePoint termStart_;
+   TimePoint termEnd_;
 
    //  The call's state.
    //
@@ -291,7 +292,7 @@ fn_name TrafficCall_ctor = "TrafficCall.ctor";
 TrafficCall::TrafficCall(PotsCircuit& orig) :
    callid_(CallId_),
    orig_(&orig),
-   origStart_(Clock::TicksNow()),
+   origStart_(TimePoint::Now()),
    origEnd_(0),
    delay_(0),
    dest_(Address::NilDN),
@@ -327,16 +328,16 @@ TrafficCall::~TrafficCall()
    //
    auto thread = Singleton< PotsTrafficThread >::Instance();
 
-   if(origEnd_ != 0)
+   if(origEnd_.IsValid())
    {
-      auto ticks = origEnd_ - origStart_;
-      thread->RecordHoldingTime(Clock::TicksToSecs(ticks));
+      auto duration = origEnd_ - origStart_;
+      thread->RecordHoldingTime(duration);
    }
 
-   if(termEnd_ != 0)
+   if(termEnd_.IsValid())
    {
-      auto ticks = termEnd_ - termStart_;
-      thread->RecordHoldingTime(Clock::TicksToSecs(ticks) + 2);
+      auto duration = termEnd_ - termStart_ + (ONE_SEC << 1);
+      thread->RecordHoldingTime(duration);
    }
 }
 
@@ -462,7 +463,7 @@ void TrafficCall::EraseOrig()
    {
       orig_->ClearTrafficId(callid_);
       orig_ = nullptr;
-      origEnd_ = Clock::TicksNow();
+      origEnd_ = TimePoint::Now();
    }
 }
 
@@ -478,7 +479,7 @@ void TrafficCall::EraseTerm()
    {
       term_->ClearTrafficId(callid_);
       term_ = nullptr;
-      termEnd_ = Clock::TicksNow();
+      termEnd_ = TimePoint::Now();
    }
 }
 
@@ -898,7 +899,7 @@ msecs_t TrafficCall::ProcessTerminating()
       {
          term_ = term;
          term_->SetTrafficId(callid_);
-         termStart_ = Clock::TicksNow();
+         termStart_ = TimePoint::Now();
       }
       else
       {
@@ -1031,10 +1032,10 @@ c_string TrafficCall::strState(State state)
 
 //==============================================================================
 
-const msecs_t PotsTrafficThread::MsecsPerTick = 100;
+const msecs_t PotsTrafficThread::MsecsToSleep = 100;
 const secs_t PotsTrafficThread::MaxDelaySecs = 120;
 const size_t PotsTrafficThread::NumOfSlots =
-   1000 * PotsTrafficThread::MaxDelaySecs / PotsTrafficThread::MsecsPerTick + 1;
+   1000 * PotsTrafficThread::MaxDelaySecs / PotsTrafficThread::MsecsToSleep + 1;
 const Address::DN PotsTrafficThread::StartDN = 30001;
 const secs_t PotsTrafficThread::HoldingTimeSecs = 35;
 const size_t PotsTrafficThread::DNsPer100Calls = 165;
@@ -1133,7 +1134,7 @@ void PotsTrafficThread::Display(ostream& stream,
 
    stream << prefix << "NumOfSlots      : " << NumOfSlots << CRLF;
    stream << prefix << "MaxCallsPerMin  : " << MaxCallsPerMin << CRLF;
-   stream << prefix << "timeout         : " << timeout_ << CRLF;
+   stream << prefix << "timeout         : " << timeout_.To(mSECS) << CRLF;
    stream << prefix << "callsPerMin     : " << callsPerMin_ << CRLF;
    stream << prefix << "maxCallsPerTick : " << maxCallsPerTick_ << CRLF;
    stream << prefix << "milCallsPerTick : " << milCallsPerTick_ << CRLF;
@@ -1171,7 +1172,7 @@ void PotsTrafficThread::Enqueue(TrafficCall& call, msecs_t delay)
       return;
    }
 
-   size_t incr = delay / MsecsPerTick;
+   size_t incr = delay / MsecsToSleep;
    if(incr == 0) incr = 1;
    if(incr >= NumOfSlots) incr = NumOfSlots - 1;
    auto nextSlot = currSlot_ + incr;
@@ -1199,7 +1200,7 @@ void PotsTrafficThread::Enter()
          //
          //  Our call rate has been modified and we have work to do.
          //
-         timeout_ = MsecsPerTick;
+         timeout_ = Duration(MsecsToSleep, mSECS);
          break;
 
       case DelayCompleted:
@@ -1225,8 +1226,8 @@ void PotsTrafficThread::Enter()
       //
       if(timeout_ != TIMEOUT_NEVER)
       {
-         auto runTime = MsecsSinceStart();
-         sleep = (runTime > timeout_ ? 0 : timeout_ - runTime);
+         auto runTime = CurrTimeRunning();
+         sleep = (runTime > timeout_ ? TIMEOUT_IMMED : timeout_ - runTime);
       }
    }
 }
@@ -1297,13 +1298,13 @@ Address::DN PotsTrafficThread::FindDn(DnStatus status) const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_InitialMsecs = "PotsTrafficThread.InitialMsecs";
+fn_name PotsTrafficThread_InitialTime = "PotsTrafficThread.InitialTime";
 
-msecs_t PotsTrafficThread::InitialMsecs() const
+Duration PotsTrafficThread::InitialTime() const
 {
-   Debug::ft(PotsTrafficThread_InitialMsecs);
+   Debug::ft(PotsTrafficThread_InitialTime);
 
-   return Thread::InitialMsecs() << 4;
+   return Thread::InitialTime() << 4;
 }
 
 //------------------------------------------------------------------------------
@@ -1320,7 +1321,7 @@ void PotsTrafficThread::Query(ostream& stream) const
    if(timeout_ == TIMEOUT_NEVER)
       stream << "infinite";
    else
-      stream << timeout_;
+      stream << timeout_.to_str(mSECS);
    stream << CRLF;
 
    stream << "Maximum calls per minute     " << MaxCallsPerMin << CRLF;
@@ -1374,9 +1375,9 @@ void PotsTrafficThread::Query(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-void PotsTrafficThread::RecordHoldingTime(secs_t secs)
+void PotsTrafficThread::RecordHoldingTime(const Duration& time)
 {
-   totalTimes_ += secs;
+   totalTimes_ += time.To(SECS);
    ++totalReports_;
 }
 
@@ -1464,7 +1465,7 @@ void PotsTrafficThread::SetRate(word rate)
       FunctionGuard guard(Guard_MemUnprotect);
       auto reg = Singleton< PotsProfileRegistry >::Instance();
 
-      for(auto i = 0; i < n; ++i)
+      for(size_t i = 0; i < n; ++i)
       {
          if(reg->Profile(dn) == nullptr)
          {
@@ -1486,7 +1487,7 @@ void PotsTrafficThread::SetRate(word rate)
 
    if(callsPerMin_ > 0)
    {
-      size_t ticksPerMin = 60000 / MsecsPerTick;
+      size_t ticksPerMin = 60000 / MsecsToSleep;
       size_t CallsPerTick1000 = (1000 * rate) / ticksPerMin;
 
       milCallsPerTick_ = CallsPerTick1000 % 1000;
@@ -1520,7 +1521,7 @@ void PotsTrafficThread::Takedown()
    while(count > 0)
    {
       auto prev = curr;
-      Pause(1000);
+      Pause(ONE_SEC);
       curr = contexts->InUseCount();
       if(curr == 0) break;
       if(curr == prev) --count;

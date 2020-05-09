@@ -26,13 +26,13 @@
 #include <cstddef>
 #include <memory>
 #include <string>
-#include "Clock.h"
 #include "Factory.h"
 #include "NbTypes.h"
 #include "Q1Way.h"
 #include "Q2Link.h"
 #include "SbTypes.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 
 namespace SessionBase
 {
@@ -322,7 +322,7 @@ private:
 
    //  The time when the context was enqueued.
    //
-   NodeBase::ticks_t enqTime_;
+   NodeBase::TimePoint enqTime_;
 
    //  The invoker pool that is managing this context.
    //

@@ -57,10 +57,6 @@ public:
    //
    bool InsertSocket(SysSocket* socket);
 
-   //  Overridden to claim IpBuffers queued for output.
-   //
-   void ClaimBlocks() override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -89,6 +85,10 @@ private:
    //  Overridden to receive TCP messages on PORT.
    //
    void Enter() override;
+
+   //  Overridden to claim IpBuffers queued for output.
+   //
+   void ClaimBlocks() override;
 
    //  Returns the listener socket.
    //

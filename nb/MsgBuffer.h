@@ -24,7 +24,7 @@
 
 #include "Pooled.h"
 #include <cstddef>
-#include "Clock.h"
+#include "TimePoint.h"
 #include "ToolTypes.h"
 
 //------------------------------------------------------------------------------
@@ -50,11 +50,11 @@ public:
 
    //  Returns the time when the message was created.
    //
-   ticks_t RxTicks() const { return rxTicks_; }
+   TimePoint RxTime() const { return rxTime_; }
 
    //  Modifies the time when the message was created.
    //
-   void SetRxTicks(const ticks_t& ticks) { rxTicks_ = ticks; }
+   void SetRxTime(const TimePoint& time) { rxTime_ = time; }
 
    //  Determines whether the buffer should be traced.  The default version
    //  returns TraceDefault and may be overridden as requred.
@@ -76,7 +76,7 @@ public:
 private:
    //  The time when the message arrived at I/O level.
    //
-   ticks_t rxTicks_;
+   TimePoint rxTime_;
 };
 }
 #endif

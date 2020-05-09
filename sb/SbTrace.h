@@ -25,13 +25,14 @@
 #include "TimedRecord.h"
 #include <iosfwd>
 #include <string>
-#include "Clock.h"
+#include "Duration.h"
 #include "EventHandler.h"
 #include "LocalAddress.h"
 #include "Message.h"
 #include "NbTypes.h"
 #include "SbTypes.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 //
@@ -57,13 +58,13 @@ public:
    //
    TransTrace(const Context& ctx, const Message& msg, const InvokerThread* inv);
 
-   //  When a trace tool starts its work, it calls Clock::TicksNow()
+   //  When a trace tool starts its work, it calls TimePoint::Now()
    //  to obtain the current clock time in ticks.  When it finishes its
    //  work, it calls this function so that the time used by the tool
    //  can be excluded from the cost of the current transaction.  THEN
-   //  was the value obtained from TicksNow.
+   //  was the value obtained from TimePoint::Now().
    //
-   void ResumeTime(const NodeBase::ticks_t& then);
+   void ResumeTime(const NodeBase::TimePoint& then);
 
    //  Called to set the context once it is known.
    //
@@ -107,11 +108,11 @@ private:
 
    //  The time when the transaction began.
    //
-   NodeBase::ticks_t ticks0_;
+   NodeBase::TimePoint time0_;
 
    //  The time when the transaction ended.
    //
-   NodeBase::ticks_t ticks1_;
+   NodeBase::TimePoint time1_;
 
    //  The FactoryId (or ServiceId, if known) involved in the transaction.
    //

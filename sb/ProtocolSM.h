@@ -25,7 +25,7 @@
 #include "ProtocolLayer.h"
 #include <cstddef>
 #include <cstdint>
-#include "Clock.h"
+#include "Duration.h"
 #include "Message.h"
 #include "Q1Way.h"
 #include "SbTypes.h"
@@ -101,12 +101,12 @@ public:
       Timeout            // expected message not received
    };
 
-   //  Starts a timer that will expire in DURATION seconds.  If the timer
+   //  Starts a timer that expires after DURATION +/- 0.5 secs.  If the timer
    //  expires, the PSM receives a message with a signal of Signal::Timeout,
    //  followed by a parameter that contains OWNER and TID, which are echoed
    //  so that the application that started the timer can identify it (using
    //  OWNER, which might be a pointer to an SSM or PSM) and also determine
-   //  its purpose (using TID).  If REPEAT us set, the timer restarts when
+   //  its purpose (using TID).  If REPEAT is set, the timer restarts when
    //  it expires and must be explicitly stopped.  Returns true if the timer
    //  was successfully started.
    //

@@ -27,6 +27,7 @@
 #include <utility>
 #include "Algorithms.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "FunctionStats.h"
 #include "FunctionTrace.h"
 #include "Memory.h"

@@ -38,8 +38,7 @@ namespace NodeTools
 {
 FunctionStats::FunctionStats(fn_name_arg func, size_t calls) :
    func_(func),
-   calls_(calls),
-   time_(0)
+   calls_(calls)
 {
 }
 
@@ -56,14 +55,14 @@ void FunctionStats::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    stream << setw(9) << calls_ << spaces(2);
-   stream << setw(10) << time_ << spaces(3);
+   stream << setw(10) << time_.To(uSECS) << spaces(3);
    stream << func_;
    stream << CRLF;
 }
 
 //------------------------------------------------------------------------------
 
-void FunctionStats::IncrCalls(usecs_t net)
+void FunctionStats::IncrCalls(const Duration& net)
 {
    ++calls_;
    time_ += net;

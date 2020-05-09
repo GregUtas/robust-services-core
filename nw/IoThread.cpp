@@ -54,7 +54,6 @@ IoThread::IoThread(Daemon* daemon, const IpService* service, ipport_t port) :
    port_(port),
    ipPort_(nullptr),
    recvs_(0),
-   ticks0_(0),
    buffer_(nullptr),
    rxSize_(service->RxSize()),
    txSize_(service->TxSize())
@@ -123,7 +122,7 @@ void IoThread::Display(ostream& stream,
    stream << prefix << "recvs  : " << recvs_ << CRLF;
    stream << prefix << "txAddr : " << txAddr_.to_string() << CRLF;
    stream << prefix << "rxAddr : " << rxAddr_.to_string() << CRLF;
-   stream << prefix << "ticks0 : " << ticks0_ << CRLF;
+   stream << prefix << "time   : " << time_.Ticks() << CRLF;
    stream << prefix << "buffer : " << strPtr(buffer_) << CRLF;
    stream << prefix << "rxSize : " << rxSize_ << CRLF;
    stream << prefix << "txSize : " << txSize_ << CRLF;
@@ -191,7 +190,7 @@ void IoThread::InvokeHandler
       handler->NetworkToHost(*buff, dest, source, rcvd);
       buff->SetRxAddr(rxAddr_);
       buff->SetTxAddr(txAddr_);
-      buff->SetRxTicks(ticks0_);
+      buff->SetRxTime(time_);
       handler->ReceiveBuff(buff, rcvd, port.GetService()->GetFaction());
 
       if(rcvd >= size) return;

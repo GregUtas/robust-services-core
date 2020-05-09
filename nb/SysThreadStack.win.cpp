@@ -46,7 +46,7 @@ namespace NodeBase
 //
 constexpr size_t MaxFrames = 2048;
 
-//* Workaround for RSC not finding unique_ptr< void*[] >::reset.
+//c Workaround for static analysis tool not finding unique_ptr<void*[]>::reset.
 //
 typedef void* voidstar;
 

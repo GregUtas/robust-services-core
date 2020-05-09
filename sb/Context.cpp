@@ -26,6 +26,7 @@
 #include <sstream>
 #include "Algorithms.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "GlobalAddress.h"
@@ -232,7 +233,7 @@ void Context::CaptureTask(const Message& msg, const InvokerThread* inv)
    if(TraceOn())
    {
       auto buff = Singleton< TraceBuffer >::Instance();
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
 
       if(buff->ToolIsOn(TransTracer))
       {
@@ -321,7 +322,7 @@ void Context::Display(ostream& stream,
    priMsgq_.Display(stream, prefix + spaces(2), options);
    stream << prefix << "stdMsgq : " << CRLF;
    stdMsgq_.Display(stream, prefix + spaces(2), options);
-   stream << prefix << "enqTime : " << enqTime_ << CRLF;
+   stream << prefix << "enqTime : " << enqTime_.Ticks() << CRLF;
    stream << prefix << "pool    : " << pool_ << CRLF;
    stream << prefix << "thread  : " << thread_ << CRLF;
    stream << prefix << "faction : " << int(faction_) << CRLF;
@@ -447,7 +448,7 @@ void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
       whichq_ = &whichq;
       state_ = Ready;
       prio_ = prio;
-      enqTime_ = Clock::TicksNow();
+      enqTime_ = TimePoint::Now();
       pool_->Enqueued(prio_);
       return;
 
@@ -739,7 +740,7 @@ void Context::ProcessWork(InvokerThread* inv)
    thread_ = inv;
    if(thread_ == nullptr) return;
 
-   auto delay = Clock::TicksToMsecs(Clock::TicksSince(enqTime_));
+   auto delay = TimePoint::Now() - enqTime_;
 
    pool_->RecordDelay(prio_, delay);
 

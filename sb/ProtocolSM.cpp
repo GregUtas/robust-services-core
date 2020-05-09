@@ -40,6 +40,7 @@
 #include "Signal.h"
 #include "Singleton.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 #include "Timer.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
@@ -96,7 +97,7 @@ ProtocolSM::~ProtocolSM()
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -392,7 +393,7 @@ void ProtocolSM::Initialize(bool henq)
 
    if(ctx->TraceOn(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))

@@ -23,8 +23,8 @@
 #include <sstream>
 #include <string>
 #include "Alarm.h"
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Log.h"
@@ -34,6 +34,7 @@
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
 #include "SysUdpSocket.h"
+#include "TimePoint.h"
 #include "UdpIpService.h"
 
 using namespace NodeBase;
@@ -199,7 +200,7 @@ void UdpIoThread::Enter()
       }
 
       ++recvs_;
-      ticks0_ = Clock::TicksNow();
+      time_ = TimePoint::Now();
 
       if(rcvd < 0)
       {
@@ -220,7 +221,7 @@ void UdpIoThread::Enter()
             }
          }
 
-         Pause(20);
+         Pause(Duration(20, mSECS));
          recvs_ = 0;
          continue;
       }

@@ -26,8 +26,8 @@
 #include <memory>
 #include <sstream>
 #include "Algorithms.h"
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "MutexGuard.h"

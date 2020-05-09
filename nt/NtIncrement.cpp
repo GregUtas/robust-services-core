@@ -46,8 +46,8 @@
 #include "Algorithms.h"
 #include "Class.h"
 #include "CliThread.h"
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
@@ -4159,7 +4159,7 @@ void RecoveryThread::Enter()
          break;
       case MutexBlock:
          AcquireMutex();
-         Pause(100);
+         Pause(Duration(100, mSECS));
          RecoveryMutex_.Release();
          break;
       case MutexExit:
@@ -4196,7 +4196,7 @@ void RecoveryThread::Enter()
       //  so that the thread will resume execution after it is deleted remotely
       //  (>recover delete f), after which it should exit.
       //
-      Pause(5 * TIMEOUT_1_SEC);
+      Pause(Duration(5, SECS));
    }
 }
 

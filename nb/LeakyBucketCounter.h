@@ -24,7 +24,8 @@
 
 #include "Object.h"
 #include <cstddef>
-#include "Clock.h"
+#include "Duration.h"
+#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 
@@ -65,14 +66,15 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  The length of the interval (SECONDS, converted to ticks).
+   //  The length of the interval during which a threshold number
+   //  of events have to occur to drain the bucket.
    //
-   ticks_t interval_;
+   Duration interval_;
 
    //  The last time that HasReachedLimit was invoked (i.e. the
    //  last time than an event occurred).
    //
-   ticks_t lastTime_;
+   TimePoint lastTime_;
 
    //  The maximum number of events allowed during an interval.
    //

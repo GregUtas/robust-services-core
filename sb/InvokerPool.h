@@ -26,7 +26,6 @@
 #include <cstddef>
 #include <iosfwd>
 #include <string>
-#include "Clock.h"
 #include "Factory.h"
 #include "NbTypes.h"
 #include "RegCell.h"
@@ -84,7 +83,7 @@ public:
    //  Returns a work queue's maximum delay during the current
    //  statistics interval.
    //
-   NodeBase::msecs_t WorkQMaxDelay(MsgPriority prio) const;
+   NodeBase::Duration WorkQMaxDelay(MsgPriority prio) const;
 
    //  Displays statistics.
    //
@@ -124,7 +123,8 @@ protected:
    //  processed.  A pool can override this to raise an alarm when DELAY is
    //  excessive, but the base class version must be invoked.
    //
-   virtual void RecordDelay(MsgPriority prio, NodeBase::msecs_t delay) const;
+   virtual void RecordDelay
+      (MsgPriority prio, const NodeBase::Duration& delay) const;
 private:
    //  Returns true if ingress work should be rejected.  Each pool
    //  should override this to protect against overload.

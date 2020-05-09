@@ -29,9 +29,9 @@
 #include <string>
 #include "Algorithms.h"
 #include "BcCause.h"
-#include "Clock.h"
 #include "Context.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "GlobalAddress.h"
 #include "IpPortRegistry.h"
 #include "LocalAddress.h"

@@ -63,8 +63,6 @@ TransTrace::TransTrace(const Message& msg, const Factory& fac) :
    TimedRecord(TransTracer),
    rcvr_(&fac),
    buff_(msg.Buffer()),
-   ticks0_(0),
-   ticks1_(0),
    cid_(fac.Fid()),
    service_(false),
    type_(fac.GetType()),
@@ -73,8 +71,8 @@ TransTrace::TransTrace(const Message& msg, const Factory& fac) :
    sid_(msg.GetSignal())
 {
    rid_ = RxNet;
-   ticks0_ = msg.Buffer()->RxTicks();
-   ticks1_ = ticks0_;
+   time0_ = msg.Buffer()->RxTime();
+   time1_ = time0_;
 }
 
 //------------------------------------------------------------------------------
@@ -84,8 +82,6 @@ TransTrace::TransTrace
    TimedRecord(TransTracer),
    rcvr_(&ctx),
    buff_(msg.Buffer()),
-   ticks0_(0),
-   ticks1_(0),
    cid_(NIL_ID),
    service_(false),
    type_(ctx.Type()),
@@ -113,8 +109,8 @@ TransTrace::TransTrace
       }
    }
 
-   ticks0_ = inv->Ticks0();
-   ticks1_ = ticks0_;
+   time0_ = inv->Time0();
+   time1_ = time0_;
 }
 
 //------------------------------------------------------------------------------
@@ -123,9 +119,8 @@ bool TransTrace::Display(ostream& stream, const string& opts)
 {
    if(!TimedRecord::Display(stream, opts)) return false;
 
-   auto delta = ticks1_ - ticks0_;
-   auto usecs = Clock::TicksToUsecs(delta);
-   stream << setw(TraceDump::TotWidth) << usecs << TraceDump::Tab();
+   auto delta = time1_ - time0_;
+   stream << setw(TraceDump::TotWidth) << delta.To(uSECS) << TraceDump::Tab();
 
    stream << rcvr_ << TraceDump::Tab();
 
@@ -168,7 +163,7 @@ void TransTrace::EndOfTransaction()
 {
    //  Set the time at which this transaction ended.
    //
-   ticks1_ = Clock::TicksNow();
+   time1_ = TimePoint::Now();
 }
 
 //------------------------------------------------------------------------------
@@ -189,14 +184,14 @@ c_string TransTrace::EventString() const
 
 //------------------------------------------------------------------------------
 
-void TransTrace::ResumeTime(const ticks_t& then)
+void TransTrace::ResumeTime(const TimePoint& then)
 {
    //  Adjust this transaction's elapsed time so that the time spent since
    //  THEN is excluded.
    //
-   auto warp = Clock::TicksSince(then);
-   ticks0_ += warp;
-   ticks1_ = ticks0_;
+   auto warp = TimePoint::Now() - then;
+   time0_ += warp;
+   time1_ = time0_;
 }
 
 //------------------------------------------------------------------------------

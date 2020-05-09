@@ -23,7 +23,6 @@
 #define INITTHREAD_H_INCLUDED
 
 #include "Thread.h"
-#include "Clock.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -93,7 +92,7 @@ private:
 
    //  Calculates the run-to-completion timeout (our sleep interval).
    //
-   msecs_t CalculateDelay() const;
+   Duration CalculateDelay() const;
 
    //  Invoked after sleeping for the expected duration.
    //

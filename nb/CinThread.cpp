@@ -24,8 +24,8 @@
 #include <istream>
 #include <ostream>
 #include <string>
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "FunctionGuard.h"
 #include "Memory.h"
 #include "Restart.h"

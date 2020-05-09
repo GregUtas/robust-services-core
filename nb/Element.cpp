@@ -24,7 +24,6 @@
 #include "CfgBoolParm.h"
 #include "CfgParmRegistry.h"
 #include "CfgStrParm.h"
-#include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "MainArgs.h"
@@ -32,6 +31,7 @@
 #include "SysFile.h"
 #include "SysTime.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 
 using std::ostream;
 using std::string;
@@ -80,7 +80,7 @@ Element::~Element()
 
 const string Element::ConsoleFileName()
 {
-   return "console" + Clock::TimeZeroStr();
+   return "console" + TimePoint::TimeZeroStr();
 }
 
 //------------------------------------------------------------------------------

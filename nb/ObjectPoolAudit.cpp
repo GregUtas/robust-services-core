@@ -39,7 +39,7 @@ fn_name ObjectPoolAudit_ctor = "ObjectPoolAudit.ctor";
 
 ObjectPoolAudit::ObjectPoolAudit() :
    Thread(AuditFaction, Singleton< ObjectDaemon >::Instance()),
-   interval_(5000),
+   interval_(Duration(5, SECS)),
    phase_(CheckingFreeq),
    pid_(NIL_ID)
 {
@@ -82,7 +82,7 @@ void ObjectPoolAudit::Display(ostream& stream,
 {
    Thread::Display(stream, prefix, options);
 
-   stream << prefix << "interval : " << interval_ << CRLF;
+   stream << prefix << "interval : " << interval_.to_str(SECS) << CRLF;
    stream << prefix << "phase    : " << phase_ << CRLF;
    stream << prefix << "pid      : " << int(pid_) << CRLF;
 }
@@ -115,7 +115,7 @@ void ObjectPoolAudit::Patch(sel_t selector, void* arguments)
 
 fn_name ObjectPoolAudit_SetInterval = "ObjectPoolAudit.SetInterval";
 
-void ObjectPoolAudit::SetInterval(msecs_t interval)
+void ObjectPoolAudit::SetInterval(const Duration& interval)
 {
    Debug::ft(ObjectPoolAudit_SetInterval);
 

@@ -23,8 +23,8 @@
 #include <sstream>
 #include <string>
 #include "Alarm.h"
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "InputHandler.h"
 #include "IpPort.h"
@@ -36,6 +36,7 @@
 #include "SysIpL3Addr.h"
 #include "SysTcpSocket.h"
 #include "TcpIpService.h"
+#include "TimePoint.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -372,7 +373,7 @@ void TcpIoThread::Enter()
          //s Handle Poll() error.
          //
          OutputLog(NetworkSocketError, "Poll", SocketError, sockets_.Front());
-         Pause(20);
+         Pause(Duration(20, mSECS));
          continue;
       }
 
@@ -588,7 +589,7 @@ word TcpIoThread::PollSockets()
    //
    EnterBlockingOperation(BlockedOnNetwork, TcpIoThread_Enter);
    {
-      ready = SysTcpSocket::Poll(sockets, size, 2 * TIMEOUT_1_SEC);
+      ready = SysTcpSocket::Poll(sockets, size, Duration(ONE_SEC << 1));
    }
    ExitBlockingOperation(TcpIoThread_Enter);
 
@@ -683,7 +684,7 @@ void TcpIoThread::ServiceSocket()
    //
    if(!flags->test(PollRead)) return;
 
-   ticks0_ = Clock::TicksNow();
+   time_ = TimePoint::Now();
 
    auto rcvd = socket->Recv(buffer_, SysSocket::MaxMsgSize);
 

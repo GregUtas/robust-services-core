@@ -37,6 +37,7 @@
 #include "Signal.h"
 #include "Singleton.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 #include "TimerProtocol.h"
 #include "TimerRegistry.h"
 #include "TlvMessage.h"
@@ -77,7 +78,7 @@ Timer::Timer
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -107,7 +108,7 @@ Timer::~Timer()
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))

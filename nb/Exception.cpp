@@ -23,6 +23,7 @@
 #include <ios>
 #include <utility>
 #include "Debug.h"
+#include "Duration.h"
 #include "SysThreadStack.h"
 #include "Thread.h"
 
@@ -45,7 +46,7 @@ Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
    //  Exception handling and stack walking are slow, so give the thread
    //  another 200 msecs.
    //
-   Thread::ExtendTime(200);
+   Thread::ExtendTime(Duration(200, mSECS));
 
    //  When capturing the stack, exclude this constructor and those of
    //  our subclasses.

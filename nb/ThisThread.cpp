@@ -50,9 +50,9 @@ void ThisThread::IncludeInTrace()
 
 //------------------------------------------------------------------------------
 
-DelayRc ThisThread::Pause(msecs_t msecs)
+DelayRc ThisThread::Pause(const Duration& timeout)
 {
-   return Thread::Pause(msecs);
+   return Thread::Pause(timeout);
 }
 
 //------------------------------------------------------------------------------

@@ -24,8 +24,8 @@
 #include <ios>
 #include <iosfwd>
 #include <sstream>
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Element.h"
 #include "FunctionGuard.h"
 #include "MutexGuard.h"

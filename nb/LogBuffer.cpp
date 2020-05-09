@@ -23,7 +23,6 @@
 #include <bitset>
 #include <iosfwd>
 #include <sstream>
-#include "Clock.h"
 #include "Debug.h"
 #include "Log.h"
 #include "LogThread.h"
@@ -34,6 +33,7 @@
 #include "Singleton.h"
 #include "SysMutex.h"
 #include "SysTime.h"
+#include "TimePoint.h"
 
 using std::ostream;
 using std::string;
@@ -113,7 +113,7 @@ LogBuffer::LogBuffer(size_t size) :
    //  replaced within a '-'.
    //
    if(Restart::GetLevel() == RestartReboot)
-      fileName_ = "logs" + Clock::TimeZeroStr();
+      fileName_ = "logs" + TimePoint::TimeZeroStr();
    else
       fileName_ = "logs" + SysTime().to_str(SysTime::Numeric);
    auto pos = fileName_.find('.');

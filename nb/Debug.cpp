@@ -23,6 +23,7 @@
 #include <sstream>
 #include "AssertionException.h"
 #include "CoutThread.h"
+#include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "InitFlags.h"
@@ -140,7 +141,7 @@ void Debug::Progress(const string& s, bool force)
    if(force || SwFlagOn(ShowToolProgress))
    {
       CoutThread::Spool(s.c_str());
-      ThisThread::Pause(10);
+      ThisThread::Pause(Duration(10, mSECS));
    }
 }
 

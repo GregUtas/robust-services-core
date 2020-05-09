@@ -24,6 +24,7 @@
 #include <memory>
 #include <winsock2.h>
 #include "Debug.h"
+#include "Duration.h"
 #include "NwTrace.h"
 #include "SysIpL3Addr.h"
 #include "TcpIpService.h"
@@ -154,12 +155,13 @@ void SysTcpSocket::Patch(sel_t selector, void* arguments)
 
 fn_name SysTcpSocket_Poll = "SysTcpSocket.Poll";
 
-word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs)
+word SysTcpSocket::Poll
+   (SysTcpSocket* sockets[], size_t size, const Duration& timeout)
 {
    Debug::ft(SysTcpSocket_Poll);
 
    if(size == 0) return 0;
-   int timeout = (msecs != TIMEOUT_NEVER ? msecs : -1);
+   int delay = (timeout != TIMEOUT_NEVER ? timeout.ToMsecs() : -1);
 
    //  Create an array for the sockets and their flags.
    //
@@ -178,7 +180,7 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs)
       if(inFlags.test(PollReadOob)) requests |= POLLRDBAND;
    }
 
-   auto ready = WSAPoll(list.get(), size, timeout);
+   auto ready = WSAPoll(list.get(), size, delay);
 
    if(ready == SOCKET_ERROR)
    {

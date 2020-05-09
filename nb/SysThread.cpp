@@ -23,6 +23,7 @@
 #include <ostream>
 #include <string>
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "NbSignals.h"
 
@@ -99,11 +100,11 @@ SysThread::~SysThread()
 
 fn_name SysThread_Delay = "SysThread.Delay";
 
-DelayRc SysThread::Delay(msecs_t msecs)
+DelayRc SysThread::Delay(const Duration& timeout)
 {
    Debug::ft(SysThread_Delay);
 
-   return Suspend(event_, msecs);
+   return Suspend(event_, timeout);
 }
 
 //------------------------------------------------------------------------------

@@ -24,10 +24,10 @@
 
 #include "Thread.h"
 #include <cstddef>
-#include "Clock.h"
 #include "NwTypes.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 
@@ -114,7 +114,7 @@ protected:
 
    //  The time when the current message arrived.
    //
-   NodeBase::ticks_t ticks0_;
+   NodeBase::TimePoint time_;
 
    //  The buffer for receiving messages.
    //

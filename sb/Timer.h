@@ -24,7 +24,7 @@
 
 #include "Pooled.h"
 #include <cstddef>
-#include "Clock.h"
+#include "Duration.h"
 #include "Q1Link.h"
 #include "Q2Link.h"
 #include "SbTypes.h"

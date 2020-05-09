@@ -24,10 +24,10 @@
 
 #include "TraceRecord.h"
 #include <string>
-#include "Clock.h"
 #include "NbTypes.h"
 #include "SysDecls.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 
@@ -44,11 +44,11 @@ public:
 
    //  Returns the tick time at which the event occurred.
    //
-   ticks_t GetTicks() const { return ticks_; }
+   TimePoint GetTime() const { return time_; }
 
-   //  Sets the tick time at which the event occurred.
+   //  Sets the time at which the event occurred.
    //
-   void SetTicks(const ticks_t& ticks) { ticks_ = ticks; }
+   void SetTime(const TimePoint& time) { time_ = time; }
 
    //  Returns the native thread identifier associated with the event.
    //
@@ -80,7 +80,7 @@ private:
 
    //  The time when the record was created.
    //
-   ticks_t ticks_;
+   TimePoint time_;
 
    //  The previous thread for which a record was displayed.
    //

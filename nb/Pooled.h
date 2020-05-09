@@ -70,12 +70,6 @@ public:
    //
    void ClaimBlocks() override;
 
-   //  Clears the object's orphaned_ field so that the object pool audit
-   //  will not reclaim it.  May be overridden, but the base class version
-   //  must be invoked.
-   //
-   void Claim() override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -97,6 +91,12 @@ protected:
    //
    Pooled();
 private:
+   //  Clears the object's orphaned_ field so that the object pool audit
+   //  will not reclaim it.  May be overridden, but the base class version
+   //  must be invoked.
+   //
+   void Claim() override;
+
    //  Link for queueing the object.
    //
    Q1Link link_;

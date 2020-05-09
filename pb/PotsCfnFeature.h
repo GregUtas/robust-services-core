@@ -25,7 +25,7 @@
 #include "PotsFeature.h"
 #include "PotsFeatures.h"
 #include "BcAddress.h"
-#include "Clock.h"
+#include "Duration.h"
 #include "NbTypes.h"
 
 using namespace NodeBase;

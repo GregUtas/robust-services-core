@@ -35,6 +35,7 @@
 #include "SysDecls.h"
 #include "SysThread.h"
 #include "SysThreadStack.h"
+#include "TimePoint.h"
 #include "TraceBuffer.h"
 #include "TraceDump.h"
 #include "TraceRecord.h"
@@ -489,7 +490,7 @@ void CtorChain::MoveOuterAboveInit()
    {
       auto outer = ctors_.back();
       Singleton< TraceBuffer >::Instance()->MoveAbove(outer, init_);
-      outer->SetTicks(init_->GetTicks());
+      outer->SetTime(init_->GetTime());
    }
 
    init_ = nullptr;
@@ -504,7 +505,7 @@ void CtorChain::MoveOuterAboveInner() const
       auto inner = ctors_.front();
       auto outer = ctors_.back();
       Singleton< TraceBuffer >::Instance()->MoveAbove(outer, inner);
-      outer->SetTicks(inner->GetTicks());
+      outer->SetTime(inner->GetTime());
    }
 }
 
@@ -535,9 +536,7 @@ FunctionTrace::FunctionTrace(fn_name_arg func, fn_depth depth) :
    TimedRecord(FunctionTracer),
    func_(func),
    depth_(depth),
-   invokerDepth_(0),
-   gross_(0),
-   net_(0)
+   invokerDepth_(0)
 {
    if(depth_ < 0) depth_ = 0;
    rid_ = NIL_ID;
@@ -549,9 +548,7 @@ FunctionTrace::FunctionTrace() :
    TimedRecord(FunctionTracer),
    func_(nullptr),
    depth_(0),
-   invokerDepth_(0),
-   gross_(0),
-   net_(0)
+   invokerDepth_(0)
 {
    rid_ = NIL_ID;
 }
@@ -608,14 +605,14 @@ void FunctionTrace::CalcFuncTimes()
 
 //------------------------------------------------------------------------------
 
-usecs_t FunctionTrace::CalcGrossTime()
+Duration FunctionTrace::CalcGrossTime()
 {
    auto buff = Singleton< TraceBuffer >::Instance();
    auto mask = FTmask;
    TraceRecord* rec = this;
    FunctionTrace* prev = this;
    auto nid = Nid();
-   ticks_t others = 0;
+   Duration others(ZERO_SECS);
 
    //  A function's gross time is the time between when it was invoked and
    //  when the next function at the same (or lower) depth was invoked--in
@@ -629,25 +626,25 @@ usecs_t FunctionTrace::CalcGrossTime()
 
       if(prev->Nid() != nid)
       {
-         others += (curr->GetTicks() - prev->GetTicks());
+         others += (curr->GetTime() - prev->GetTime());
       }
 
       if(curr->Nid() == nid)
       {
          if(curr->depth_ <= depth_)
          {
-            int64_t gross = curr->GetTicks() - GetTicks() - others;
-            if(gross < 0) gross = 0;
-            return Clock::TicksToUsecs(gross);
+            auto gross = curr->GetTime() - GetTime() - others;
+            if(gross < ZERO_SECS) gross = ZERO_SECS;
+            return gross;
          }
       }
 
       prev = curr;
    }
 
-   int64_t gross = prev->GetTicks() - GetTicks() - others;
-   if(gross < 0) gross = 0;
-   return Clock::TicksToUsecs(gross);
+   auto gross = prev->GetTime() - GetTime() - others;
+   if(gross < ZERO_SECS) gross = ZERO_SECS;
+   return gross;
 }
 
 //------------------------------------------------------------------------------
@@ -668,7 +665,7 @@ void FunctionTrace::CalcTimes()
    //  on the same thread.
    //
    net_ = gross_;
-   if(net_ == 0) return;
+   if(net_ == ZERO_SECS) return;
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
@@ -748,8 +745,8 @@ bool FunctionTrace::Display(ostream& stream, const string& opts)
    //  depth and its invoker's apparent depth instead.
    //
    auto notimes = (opts.find(NoTimeData) != string::npos);
-   usecs_t gross = (notimes ? depth_ : gross_);
-   usecs_t net = (notimes ? invokerDepth_ : net_);
+   usecs_t gross = (notimes ? depth_ : gross_.To(uSECS));
+   usecs_t net = (notimes ? invokerDepth_ : net_.To(uSECS));
 
    stream << setw(TraceDump::TotWidth) << gross << TraceDump::Tab();
    stream << setw(TraceDump::NetWidth) << net << TraceDump::Tab();

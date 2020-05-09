@@ -193,6 +193,6 @@ void PotsWmlFeatureProfile::Display(ostream& stream,
 {
    DnRouteFeatureProfile::Display(stream, prefix, options);
 
-   stream << prefix << "timeout : " << int(timeout_) << CRLF;
+   stream << prefix << "timeout : " << timeout_ << CRLF;
 }
 }

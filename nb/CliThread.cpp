@@ -30,9 +30,9 @@
 #include "CliCommand.h"
 #include "CliRegistry.h"
 #include "CliStack.h"
-#include "Clock.h"
 #include "CoutThread.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Element.h"
 #include "FileThread.h"
 #include "Formatters.h"
@@ -736,7 +736,7 @@ void CliThread::ReadCommands()
             //    after we have been created.  Pausing is also appropriate in
             //    this case, as another restart should occur momentarily.
             //
-            Pause(TIMEOUT_1_SEC);
+            Pause(ONE_SEC);
             break;
 
          case StreamInUse:

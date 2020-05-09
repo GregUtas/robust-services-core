@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MutexGuard.h"
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "SysMutex.h"
 #include "SysTypes.h"
 

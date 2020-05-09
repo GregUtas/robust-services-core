@@ -25,12 +25,12 @@
 #include "Permanent.h"
 #include <atomic>
 #include <cstddef>
-#include "Clock.h"
 #include "RegCell.h"
 #include "SysDecls.h"
 
 namespace NodeBase
 {
+   class Duration;
    class Thread;
 }
 
@@ -96,7 +96,7 @@ public:
 
    //  Acquires the mutex.  TIMEOUT specifies how long to wait.
    //
-   Rc Acquire(msecs_t timeout);
+   Rc Acquire(const Duration& timeout);
 
    //  Releases the mutex.  If ABANDON is set, the mutex is released
    //  (if owned by this thread) no matter how many times it had been

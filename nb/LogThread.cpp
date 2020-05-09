@@ -27,9 +27,9 @@
 #include "CallbackRequest.h"
 #include "CfgIntParm.h"
 #include "CfgParmRegistry.h"
-#include "Clock.h"
 #include "CoutThread.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Element.h"
 #include "FileThread.h"
 #include "Formatters.h"
@@ -170,7 +170,7 @@ void LogThread::Enter()
 
       if(msgs->AvailCount() <= size_t(NoSpoolingMessageCount_))
       {
-         delay = TIMEOUT_1_SEC;  // wait for more MsgBuffers
+         delay = ONE_SEC;  // wait for more MsgBuffers
          continue;
       }
 

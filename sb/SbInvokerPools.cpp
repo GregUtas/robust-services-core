@@ -28,6 +28,7 @@
 #include "CfgIntParm.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "Log.h"
 #include "SbLogs.h"
@@ -134,7 +135,8 @@ void PayloadInvokerPool::Patch(sel_t selector, void* arguments)
 
 fn_name PayloadInvokerPool_RecordDelay = "PayloadInvokerPool.RecordDelay";
 
-void PayloadInvokerPool::RecordDelay(MsgPriority prio, msecs_t delay) const
+void PayloadInvokerPool::RecordDelay
+   (MsgPriority prio, const Duration& delay) const
 {
    Debug::ft(PayloadInvokerPool_RecordDelay);
 
@@ -142,11 +144,11 @@ void PayloadInvokerPool::RecordDelay(MsgPriority prio, msecs_t delay) const
 
    AlarmStatus status = CriticalAlarm;
 
-   if(delay < 2000)
+   if(delay < (ONE_SEC << 1))
       status = NoAlarm;
-   else if(delay < 4000)
+   else if(delay < (ONE_SEC << 2))
       status = MinorAlarm;
-   else if(delay < 8000)
+   else if(delay < (ONE_SEC << 3))
       status = MajorAlarm;
 
    if(overloadAlarm_ != nullptr)

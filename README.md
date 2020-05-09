@@ -150,14 +150,14 @@ provides sets of commands for testing functions in the [`NbHeap`](/nb/NbHeap.h),
 [`Q2Way`](/nb/Q2Way.h), [`Registry`](/nb/Registry.h), and [`SysTime`](/nb/SysTime.h)
 interfaces.
 
-## License
+## Licensing
 
-The software in this repository is freely available under the terms of the [GNU General Public
-License, version 3](/LICENSE.txt), which basically says that you must also publish changes to
-this code, as well as your own. If you are developing software that you want to be proprietary,
-the GPLv3 license allows RSC to be licensed under the terms of another license approved by the
-[Free Software Foundation](https://www.gnu.org/licenses/license-list.html). Some of these
-licenses allow your software to remain proprietary. However, there would be a relicensing fee,
+RSC is freely available under the terms of the [GNU General Public License,
+version 3](/LICENSE.txt), which basically says that you must also publish your own software, as
+well as your changes to RSC. If you are developing software that you want to keep proprietary,
+the GPLv3 license also allows RSC to be licensed under the terms of another license approved by
+the [Free Software Foundation](https://www.gnu.org/licenses/license-list.html). Some of those
+licenses allow your software to remain proprietary. However, compensation would be required,
 and any changes that you make to RSC itself (bug fixes and enhancements) would still have to
 be published.
 

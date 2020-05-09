@@ -85,7 +85,7 @@ Timer::QId TimerRegistry::CalcQId(secs_t secs) const
    //  will be served in less than half a second, so increment SECS.
    //
    auto thr = Singleton< TimerThread >::Instance();
-   auto incr = (thr->MsecsSinceStart() >= 500 ? 1 : 0);
+   auto incr = (thr->CurrTimeRunning().To(mSECS) >= 500 ? 1 : 0);
 
    secs += incr;
    if(secs >= Timer::MaxQId) return Timer::MaxQId;

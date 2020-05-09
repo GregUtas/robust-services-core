@@ -41,11 +41,11 @@
 #include "CliRegistry.h"
 #include "CliStack.h"
 #include "CliThread.h"
-#include "Clock.h"
 #include "CoutThread.h"
 #include "Daemon.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Element.h"
 #include "FileThread.h"
 #include "Formatters.h"
@@ -324,6 +324,7 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
 
    id_t index;
    word secs;
+   Duration timeout;
 
    if(!GetTextIndex(index, cli)) return -1;
 
@@ -338,8 +339,8 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
       //
       if(!GetIntParm(secs, cli)) return -1;
       cli.EndOfInput(false);
-      secs = (secs == 0 ? TIMEOUT_NEVER : secs * TIMEOUT_1_SEC);
-      thr->SetInterval(secs);
+      timeout = (secs == 0 ? TIMEOUT_NEVER : Duration(secs, SECS));
+      thr->SetInterval(timeout);
       break;
    case AuditForceIndex:
       //
@@ -834,7 +835,7 @@ word DelayCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(secs, cli)) return -1;
    cli.EndOfInput(false);
 
-   auto rc = ThisThread::Pause(secs * TIMEOUT_1_SEC);
+   auto rc = ThisThread::Pause(Duration(secs, SECS));
    if(rc != DelayCompleted) return cli.Report(-6, DelayFailure);
    return cli.Report(0, SuccessExpl);
 }

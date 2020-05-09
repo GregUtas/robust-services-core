@@ -23,8 +23,8 @@
 #include <cstdint>
 #include <sstream>
 #include <string>
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "InitFlags.h"
 #include "InitThread.h"
@@ -101,7 +101,7 @@ void RootThread::Enter()
    Debug::ft(RootThread_Enter);
 
    Thread* initThr;
-   msecs_t timeout = 0;
+   auto timeout = TIMEOUT_IMMED;
    auto reason = NilRestart;
 
    //  When a thread is entered, it is unpreemptable.  However, we must run
@@ -130,7 +130,7 @@ void RootThread::Enter()
             systhrd_->Wait();
          }
 
-         timeout = ThreadAdmin::InitTimeoutMsecs();
+         timeout = ThreadAdmin::InitTimeout();
 
          switch(Pause(timeout))
          {
@@ -162,7 +162,7 @@ void RootThread::Enter()
             if(log != nullptr)
             {
                *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
-               *log << " timeout=" << timeout;
+               *log << " timeout=" << timeout.to_str(mSECS);
                Log::Submit(log);
             }
 
@@ -175,7 +175,7 @@ void RootThread::Enter()
                if(initThr != nullptr)
                {
                   initThr->Raise(SIGCLOSE);
-                  Pause(100);
+                  Pause(Duration(100, mSECS));
                }
             }
             else
@@ -197,7 +197,7 @@ void RootThread::Enter()
 
          //  The system initialized.  Sleep for the scheduling timeout.
          //
-         timeout = ThreadAdmin::SchedTimeoutMsecs();
+         timeout = ThreadAdmin::SchedTimeout();
 
          switch(Pause(timeout))
          {
@@ -248,7 +248,7 @@ void RootThread::Enter()
          if(log != nullptr)
          {
             *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
-            *log << " timeout=" << timeout;
+            *log << " timeout=" << timeout.to_str(mSECS);
             Log::Submit(log);
          }
 

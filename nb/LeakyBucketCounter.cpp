@@ -35,8 +35,6 @@ namespace NodeBase
 fn_name LeakyBucketCounter_ctor = "LeakyBucketCounter.ctor";
 
 LeakyBucketCounter::LeakyBucketCounter() :
-   interval_(0),
-   lastTime_(0),
    limit_(0),
    count_(0)
 {
@@ -59,8 +57,8 @@ void LeakyBucketCounter::Display(ostream& stream,
 {
    Object::Display(stream, prefix, options);
 
-   stream << prefix << "interval : " << interval_ << CRLF;
-   stream << prefix << "lastTime : " << lastTime_ << CRLF;
+   stream << prefix << "interval : " << interval_.to_str(mSECS) << CRLF;
+   stream << prefix << "lastTime : " << lastTime_.Ticks() << CRLF;
    stream << prefix << "limit    : " << limit_ << CRLF;
    stream << prefix << "count    : " << count_ << CRLF;
 }
@@ -81,9 +79,9 @@ bool LeakyBucketCounter::HasReachedLimit()
    //  Calculate the number of events that have drained
    //  from the bucket since the last event occurred.
    //
-   ticks_t now;
-   auto elapsed = Clock::TicksSince(lastTime_, now);
-   auto debits = elapsed / (interval_ / limit_);
+   auto now = TimePoint::Now();
+   auto elapsed = now - lastTime_;
+   auto debits = elapsed.Ticks() / (interval_.Ticks() / limit_);
 
    //  If the bucket isn't empty, drain events.
    //
@@ -125,8 +123,8 @@ void LeakyBucketCounter::Initialize(size_t limit, secs_t seconds)
 {
    Debug::ft(LeakyBucketCounter_Initialize);
 
-   interval_ = Clock::SecsToTicks(seconds);
-   lastTime_ = Clock::TicksNow();
+   interval_ = Duration(seconds, SECS);
+   lastTime_ = TimePoint::Now();
    limit_ = limit;
    count_ = 0;
 }

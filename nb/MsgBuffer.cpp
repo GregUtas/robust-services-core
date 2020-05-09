@@ -36,7 +36,7 @@ namespace NodeBase
 {
 fn_name MsgBuffer_ctor1 = "MsgBuffer.ctor";
 
-MsgBuffer::MsgBuffer() : rxTicks_(Clock::TicksNow())
+MsgBuffer::MsgBuffer() : rxTime_(TimePoint::Now())
 {
    Debug::ft(MsgBuffer_ctor1);
 }
@@ -45,7 +45,7 @@ MsgBuffer::MsgBuffer() : rxTicks_(Clock::TicksNow())
 
 fn_name MsgBuffer_ctor2 = "MsgBuffer.ctor(copy)";
 
-MsgBuffer::MsgBuffer(const MsgBuffer& that) : rxTicks_(that.rxTicks_)
+MsgBuffer::MsgBuffer(const MsgBuffer& that) : rxTime_(that.rxTime_)
 {
    Debug::ft(MsgBuffer_ctor2);
 }
@@ -66,7 +66,7 @@ void MsgBuffer::Display(ostream& stream,
 {
    Pooled::Display(stream, prefix, options);
 
-   stream << prefix << "rxTicks : " << rxTicks_ << CRLF;
+   stream << prefix << "rxTime : " << rxTime_.Ticks() << CRLF;
 }
 
 //------------------------------------------------------------------------------

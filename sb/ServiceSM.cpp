@@ -23,7 +23,6 @@
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
-#include "Clock.h"
 #include "Context.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -37,6 +36,7 @@
 #include "Singleton.h"
 #include "State.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -86,7 +86,7 @@ ServiceSM::ServiceSM(ServiceId sid) :
 
    if(ctx->TraceOn(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -113,7 +113,7 @@ ServiceSM::~ServiceSM()
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
@@ -567,7 +567,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
 
             if(Context::RunningContextTraced(trans))
             {
-               auto warp = Clock::TicksNow();
+               auto warp = TimePoint::Now();
                auto buff = Singleton< TraceBuffer >::Instance();
 
                if(buff->ToolIsOn(ContextTracer))

@@ -98,12 +98,6 @@ public:
    void LogSubtended(std::ostream& stream,
       const std::string& prefix, const Flags& options) const;
 
-   //  Marks an object as in-use so that an audit will not reclaim it.  The
-   //  version here does nothing; the function is defined at this level so
-   //  that GetSubtended can be used to create a list of blocks to claim.
-   //
-   virtual void Claim() { }
-
    //  Invokes Claim on the object and all of the blocks that it owns.
    //  The default version claims all objects returned by GetSubtended.
    //
@@ -155,6 +149,12 @@ protected:
    //
    Base() = default;
 private:
+   //  Marks an object as in-use so that an audit will not reclaim it.  The
+   //  version here does nothing; the function is defined at this level so
+   //  that GetSubtended can be used to create a list of blocks to claim.
+   //
+   virtual void Claim() { }
+
    //  Type for an object's pointer to its virtual function table.
    //
    typedef uintptr_t vptr_t;

@@ -24,7 +24,7 @@
 
 #include "Immutable.h"
 #include <cstddef>
-#include "Clock.h"
+#include "Duration.h"
 #include "NbTypes.h"
 #include "RegCell.h"
 #include "SysTypes.h"
@@ -56,7 +56,7 @@ public:
 
    //  Creates an alarm identified by NAME and explained by EXPL.  DELAY is
    //  for hysteresis control: the alarm's level cannot be decreased until
-   //  DELAY seconds have passed.  A value of 0 avoids hysteresis control.
+   //  DELAY has passed.  A value of TIMEOUT_IMMED avoids hysteresis control.
    //  Instead of Log::Create, the application must invoke Alarm::Create,
    //  which returns nullptr unless a log should be generated.
    //
@@ -122,7 +122,7 @@ private:
 
    //  The delay when downgrading the alarm.
    //
-   const ticks_t delay_;
+   const Duration delay_;
 
    //  The alarm's index in AlarmRegistry.
    //

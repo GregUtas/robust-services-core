@@ -23,9 +23,10 @@
 #define ARRAY_H_INCLUDED
 
 #include <cstddef>
+#include <memory>
 #include <utility>
+#include <vector>
 #include "Debug.h"
-#include "Memory.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -35,17 +36,12 @@
 //
 namespace NodeBase
 {
-template< typename T > class Array
+template< typename T, class A = std::allocator<T>> class Array
 {
 public:
    //  Creates an empty array.
    //
-   Array()
-      : size_(0),
-      cap_(0),
-      max_(0),
-      mem_(MemNull),
-      array_(nullptr)
+   Array() : max_(0)
    {
       Debug::ft(Array_ctor());
    }
@@ -55,8 +51,6 @@ public:
    ~Array()
    {
       Debug::ft(Array_dtor());
-      Memory::Free(array_, mem_);
-      array_ = nullptr;
    }
 
    //  Deleted to prohibit copying.
@@ -67,17 +61,10 @@ public:
    //  Specifies that the array uses memory of type MEM and that it
    //  is limited to MAX elements.
    //
-   bool Init(size_t max, MemoryType mem)
+   void Init(size_t max)
    {
       Debug::ft(Array_Init());
-      if(array_ != nullptr)
-      {
-         Debug::SwLog(Array_Init(), cap_, max_);
-         return false;
-      }
-      mem_ = mem;
       max_ = (max < 2 ? 2 : max);
-      return true;
    }
 
    //  Increases the size of the array to support CAPACITY elements.
@@ -86,194 +73,147 @@ public:
    {
       Debug::ft(Array_Reserve());
       if(capacity > max_) return false;
-      if(capacity <= cap_) return true;
-      return Extend(capacity);
+      vector_.reserve(capacity);
+      return true;
    }
 
    //  Inserts ITEM at the end of the array.
    //
    bool PushBack(T& item)
    {
-      if(&item == nullptr)
-      {
-         Debug::SwLog(Array_PushBack(), 0, 0);
-         return false;
-      }
-      if(size_ >= cap_)
-      {
-         if(!Extend(size_ + 1)) return false;
-      }
-      array_[size_] = item;
-      ++size_;
+      Debug::Assert(&item != nullptr);
+      if(vector_.size() >= max_) return false;
+      vector_.push_back(item);
       return true;
    }
 
-   //  Erases the item in the cell specified by INDEX, and
+   //  Erases the item in the cell specified by INDEX and
    //  moves the last item into its cell.
    //
    void Erase(size_t index)
    {
-      if(index >= size_)
+      auto size = vector_.size();
+      Debug::Assert(index < size);
+      if((size > 1) && (index < (size - 1)))
       {
-         Debug::SwLog(Array_Erase(), index, size_);
-         return;
+         std::swap(vector_[index], vector_.back());
       }
-      if(--size_ == 0) return;
-      if(index == size_) return;
-      array_[index] = std::move(array_[size_]);
+      vector_.pop_back();
    }
 
    //  Replaces the item in the cell specified by INDEX with ITEM.
    //
-   bool Replace(size_t index, T& item) const
+   void Replace(size_t index, T& item)
    {
-      if(&item == nullptr)
-      {
-         Debug::SwLog(Array_Replace(), 0, 0);
-         return false;
-      }
-      if(index >= size_)
-      {
-         Debug::SwLog(Array_Replace(), index, size_);
-         return false;
-      }
-      array_[index] = item;
-      return true;
+      Debug::Assert(&item != nullptr);
+      auto size = vector_.size();
+      Debug::Assert(index < size);
+      vector_[index].~T();
+      vector_[index] = std::move(item);
    }
 
    //  Returns the number of items in the array.
    //
-   size_t Size() const { return size_; }
+   size_t Size() const { return vector_.size(); }
 
    //  Returns true if the array is empty.
    //
-   bool Empty() const { return (size_ == 0); }
+   bool Empty() const { return vector_.empty(); }
 
    //  Returns the first item.
    //
    const T& Front() const
    {
-      Debug::Assert(size_ > 0);
-      return array_[0];
+      Debug::Assert(vector_.size() > 0);
+      return vector_.front();
    }
 
    //  Returns the first item.
    //
    T& Front()
    {
-      Debug::Assert(size_ > 0);
-      return array_[0];
+      Debug::Assert(vector_.size() > 0);
+      return vector_.front();
    }
 
    //  Returns the last item.
    //
    const T& Back() const
    {
-      Debug::Assert(size_ > 0);
-      return array_[size_ - 1];
+      Debug::Assert(vector_.size() > 0);
+      return vector_.back();
    }
 
    //  Returns the last item.
    //
    T& Back()
    {
-      Debug::Assert(size_ > 0);
-      return array_[size_ - 1];
+      Debug::Assert(vector_.size() > 0);
+      return vector_.back();
    }
 
    //  Returns the item at [index].
    //
    const T& At(size_t index) const
    {
-      Debug::Assert(index < size_);
-      return array_[index];
+      Debug::Assert(index < vector_.size());
+      return vector_[index];
    }
 
    //  Returns the item at [index].
    //
    T& At(size_t index)
    {
-      Debug::Assert(index < size_);
-      return array_[index];
+      Debug::Assert(index < vector_.size());
+      return vector_[index];
    }
 
    //  Returns the item at [index].
    //
    const T& operator[](size_t index) const
    {
-      Debug::Assert(index < size_);
-      return array_[index];
+      Debug::Assert(index < vector_.size());
+      return vector_[index];
    }
 
    //  Returns the item at [index].
    //
    T& operator[](size_t index)
    {
-      Debug::Assert(index < size_);
-      return array_[index];
+      Debug::Assert(index < vector_.size());
+      return vector_[index];
    }
 
    //  Returns a pointer to the entire array of items.
    //
-   const T* Items() const { return array_; }
-
-   //  Returns a pointer to the entire array of items.
-   //
-   T* Items() { return array_; }
-private:
-   //  Increases the size of the array, up to its maximum, when more space
-   //  is needed.  MIN is the minimum number of elements to be supported.
-   //
-   bool Extend(size_t min)
+   const T* Data() const
    {
-      Debug::ft(Array_Extend());
-      if(cap_ >= max_) return false;
-      if(min > max_) return false;
-      auto size = cap_ << 1;
-      if(size < min)
-         size = min;
-      else if(size > max_)
-         size = max_;
-      auto bytes = sizeof(T) * size;
-      auto table = (T*) Memory::Alloc(bytes, mem_);
-      if(table == nullptr) return false;
-      for(size_t i = 0; i < size_; ++i) table[i] = std::move(array_[i]);
-      cap_ = size;
-      Memory::Free(array_, mem_);
-      array_ = table;
-      return true;
+      if(vector_.empty()) return nullptr;
+      return vector_.data();
    }
 
+   //  Returns a pointer to the entire array of items.
+   //
+   T* Data()
+   {
+      if(vector_.empty()) return nullptr;
+      return vector_.data();
+   }
+private:
    //  See the comment in Singleton.h about fn_name's in a template header.
    //
    inline static fn_name Array_ctor()     { return "Array.ctor"; }
    inline static fn_name Array_dtor()     { return "Array.dtor"; }
    inline static fn_name Array_Init()     { return "Array.Init"; }
    inline static fn_name Array_Reserve()  { return "Array.Reserve"; }
-   inline static fn_name Array_PushBack() { return "Array.PushBack"; }
-   inline static fn_name Array_Erase()    { return "Array.Erase"; }
-   inline static fn_name Array_Replace()  { return "Array.Replace"; }
-   inline static fn_name Array_Extend()   { return "Array.Extend"; }
-
-   //  The number of items currently in the array.
-   //
-   size_t size_;
-
-   //  The current size of the array.
-   //
-   size_t cap_;
 
    //  The maximum size allowed for the array.
    //
    size_t max_;
 
-   //  The type of memory used by the array.
-   //
-   MemoryType mem_;
-
    //  The array of items.
    //
-   T* array_;
+   std::vector< T, A > vector_;
 };
 }
 #endif

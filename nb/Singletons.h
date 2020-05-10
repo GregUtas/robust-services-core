@@ -24,6 +24,7 @@
 
 #include "Permanent.h"
 #include <cstddef>
+#include "Allocators.h"
 #include "Array.h"
 #include "SysTypes.h"
 
@@ -91,7 +92,7 @@ private:
 
    //  Information about each singleton.
    //
-   Array< SingletonTuple > registry_;
+   Array< SingletonTuple, PermanentAllocator< SingletonTuple >> registry_;
 
    //  The registry of singletons.
    //

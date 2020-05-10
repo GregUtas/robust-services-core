@@ -55,7 +55,7 @@ Singletons::Singletons()
 {
    Debug::ft(Singletons_ctor);
 
-   registry_.Init(MaxSingletons, MemPermanent);
+   registry_.Init(MaxSingletons);
    registry_.Reserve(MaxSingletons >> 4);
 }
 
@@ -110,7 +110,7 @@ void Singletons::Display(ostream& stream,
 
    for(size_t i = 0; i < registry_.Size(); ++i)
    {
-      auto entry = registry_[i];
+      auto& entry = registry_[i];
 
       stream << lead << strIndex(i);
       stream << entry.addr;

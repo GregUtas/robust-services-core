@@ -8,8 +8,9 @@ configuration parameter InitTimeoutMsecs occurred. If FIELD_LOAD is
 ? NODE101
 InitThread, which ensures that cooperative multitasking is occurring,
 failed to send a heartbeat to RootThread. The need for this heartbeat
-can be suppressed by setting the configuration parameter BreakEnabled,
-which is typically done to use breakpoint debugging. A restart follows
+can be suppressed by setting the configuration parameter BreakEnabled:
+  >cfgparms set breakenabled t
+This is typically done to use breakpoint debugging. A restart follows
 this log if the configuration parameter ReinitOnSchedTimeout is set.
 ? NODE102
 Symbol information for the executable was not found. This means that

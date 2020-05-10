@@ -85,7 +85,7 @@ namespace NodeBase
 //  to prevent a stack overflow.
 //
 //  NOTE ON INITIALIZATION ORDER:
-//  ===================-========
+//  ============================
 //  Debug::ft is invoked fairly early during initialzation, well before entry
 //  to main().  The SysMutex and Duration items defined at file scope in this
 //  file end up invoking Debug::ft during their initialization.  If FtLocks_

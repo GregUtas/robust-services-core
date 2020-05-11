@@ -52,8 +52,7 @@ InvokerThread::InvokerThread(Faction faction, Daemon* daemon) :
    pool_(nullptr),
    ctx_(nullptr),
    msg_(nullptr),
-   trans_(0),
-   ticks0_(0)
+   trans_(0)
 {
    Debug::ft(InvokerThread_ctor);
 
@@ -156,7 +155,7 @@ void InvokerThread::Display(ostream& stream,
    stream << prefix << "ctx    : " << ctx_.get() << CRLF;
    stream << prefix << "msg    : " << msg_ << CRLF;
    stream << prefix << "trans  : " << trans_ << CRLF;
-   stream << prefix << "ticks0 : " << ticks0_ << CRLF;
+   stream << prefix << "ticks0 : " << time0_.Ticks() << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -252,7 +251,7 @@ void InvokerThread::SetContext(Context* ctx)
    ctx_.release();
    ctx_.reset(ctx);
    ++trans_;
-   ticks0_ = Clock::TicksNow();
+   time0_ = TimePoint::Now();
 }
 
 //------------------------------------------------------------------------------

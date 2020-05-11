@@ -142,7 +142,7 @@ bool Argument::EnterScope()
 
 fn_name Argument_ExitBlock = "Argument.ExitBlock";
 
-void Argument::ExitBlock()
+void Argument::ExitBlock() const
 {
    Debug::ft(Argument_ExitBlock);
 
@@ -1142,7 +1142,7 @@ bool Enum::EnterScope()
 
 fn_name Enum_ExitBlock = "Enum.ExitBlock";
 
-void Enum::ExitBlock()
+void Enum::ExitBlock() const
 {
    Debug::ft(Enum_ExitBlock);
 
@@ -1374,7 +1374,7 @@ bool Enumerator::EnterScope()
 
 fn_name Enumerator_ExitBlock = "Enumerator.ExitBlock";
 
-void Enumerator::ExitBlock()
+void Enumerator::ExitBlock() const
 {
    Debug::ft(Enumerator_ExitBlock);
 
@@ -2474,6 +2474,7 @@ bool TemplateParm::EnterScope()
    Debug::ft(TemplateParm_EnterScope);
 
    Context::SetPos(GetLoc());
+   Context::InsertLocal(this);
    if(default_ != nullptr) default_->EnteringScope(Context::Scope());
    return true;
 }
@@ -2482,7 +2483,7 @@ bool TemplateParm::EnterScope()
 
 fn_name TemplateParm_ExitBlock = "TemplateParm.ExitBlock";
 
-void TemplateParm::ExitBlock()
+void TemplateParm::ExitBlock() const
 {
    Debug::ft(TemplateParm_ExitBlock);
 
@@ -2813,7 +2814,7 @@ bool Typedef::EnterScope()
 
 fn_name Typedef_ExitBlock = "Typedef.ExitBlock";
 
-void Typedef::ExitBlock()
+void Typedef::ExitBlock() const
 {
    Debug::ft(Typedef_ExitBlock);
 
@@ -3003,7 +3004,7 @@ bool Using::EnterScope()
 
 fn_name Using_ExitBlock = "Using.ExitBlock";
 
-void Using::ExitBlock()
+void Using::ExitBlock() const
 {
    Debug::ft(Using_ExitBlock);
 

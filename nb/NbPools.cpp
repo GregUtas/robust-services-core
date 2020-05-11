@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbPools.h"
+#include "ClassRegistry.h"
 #include "Debug.h"
 #include "MsgBuffer.h"
 #include "NbAppIds.h"
@@ -64,6 +65,14 @@ void MsgBufferPool::ClaimBlocks()
 
    Singleton< ThreadRegistry >::Instance()->ClaimBlocks();
    Singleton< TraceBuffer >::Instance()->ClaimBlocks();
+
+   //  Although subclasses of Class don't necessarily own MsgBuffers, they
+   //  can own pooled objects for the purpose of supporting object templates
+   //  and quasi-singletons.  One pool must therefore invoke ClaimBlocks on
+   //  classes to have those blocks marked in use, so it might as well be
+   //  this pool.
+   //
+   Singleton< ClassRegistry >::Instance()->ClaimBlocks();
 }
 
 //------------------------------------------------------------------------------

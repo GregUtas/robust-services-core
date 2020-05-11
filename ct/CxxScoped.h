@@ -290,7 +290,7 @@ public:
 
    //  Overridden to remove the argument as a local.
    //
-   void ExitBlock() override;
+   void ExitBlock() const override;
 
    //  Overridden to invoke EnterBlock on the argument's type (spec_) and
    //  any default value (default_).
@@ -551,7 +551,7 @@ public:
    //  constructor puts it there, and this removes it as soon as it goes out
    //  of scope).
    //
-   void ExitBlock() override;
+   void ExitBlock() const override;
 
    //  Overridden to indicate that an enum can be converted to an integer.
    //
@@ -670,7 +670,7 @@ public:
    //  constructor puts it there, and this removes it as soon as it goes out
    //  of scope).
    //
-   void ExitBlock() override;
+   void ExitBlock() const override;
 
    //  Overridden to indicate that an enum can be converted to an integer.
    //
@@ -1194,7 +1194,7 @@ public:
 
    //  Overridden to remove the parameter as a local.
    //
-   void ExitBlock() override;
+   void ExitBlock() const override;
 
    //  Overridden to update SYMBOLS with the parameter's type usage.
    //
@@ -1397,7 +1397,7 @@ public:
 
    //  Overridden to remove the typedef as a local.
    //
-   void ExitBlock() override;
+   void ExitBlock() const override;
 
    //  Overridden to return the definition's underlying numeric type.
    //
@@ -1545,7 +1545,7 @@ public:
 
    //  Overridden to make the declaration unavailable.
    //
-   void ExitBlock() override;
+   void ExitBlock() const override;
 
    //  Overridden to return the declaration's qualified name.
    //

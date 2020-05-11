@@ -25,10 +25,10 @@
 #include "Dynamic.h"
 #include <cstddef>
 #include <iosfwd>
-#include "Clock.h"
 #include "NbTypes.h"
 #include "Registry.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 
 namespace NodeBase
 {
@@ -65,7 +65,7 @@ public:
 
    //  Returns the tick time when the current interval started.
    //
-   static const ticks_t& StartTicks() { return StartTicks_; }
+   static const TimePoint& StartTime() { return StartTime_; }
 
    //  Invoked at regular intervals to start a new measurement period.  If
    //  FIRST is true, previous values in Statistics::total_ are discarded.
@@ -119,7 +119,7 @@ private:
 
    //  The time when the most recent statistics interval began.
    //
-   static ticks_t StartTicks_;
+   static TimePoint StartTime_;
 };
 }
 #endif

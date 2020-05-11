@@ -35,7 +35,6 @@ fn_name SysTickTimer_ctor = "SysTickTimer.ctor";
 
 SysTickTimer::SysTickTimer() :
    ticks_per_sec_(1000),
-   startTick_(0),
    available_(false)
 {
    Debug::ft(SysTickTimer_ctor);
@@ -48,7 +47,7 @@ SysTickTimer::SysTickTimer() :
       ticks_per_sec_ = frequency.QuadPart;
    }
 
-   startTick_ = TicksNow();
+   startPoint_ = Now();
    startTime_ = SysTime();
 
    startTimeStr_ = startTime_.to_str(SysTime::Numeric).c_str();
@@ -69,28 +68,28 @@ SysTickTimer::~SysTickTimer()
 
 //------------------------------------------------------------------------------
 
-void SysTickTimer::Patch(sel_t selector, void* arguments)
-{
-   Immutable::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-ticks_t SysTickTimer::TicksNow() const
+TimePoint SysTickTimer::Now() const
 {
    if(available_)
    {
       LARGE_INTEGER now;
       QueryPerformanceCounter(&now);
-      return now.QuadPart;
+      return TimePoint(now.QuadPart);
    }
    else
    {
       _timeb now;
       _ftime_s(&now);
-      ticks_t msecs = 1000 * now.time;
-      return msecs + now.millitm;
+      auto msecs = 1000LL * now.time;
+      return TimePoint(msecs + now.millitm);
    }
+}
+
+//------------------------------------------------------------------------------
+
+void SysTickTimer::Patch(sel_t selector, void* arguments)
+{
+   Immutable::Patch(selector, arguments);
 }
 }
 #endif

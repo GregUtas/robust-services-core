@@ -207,7 +207,7 @@ public:
    //  If the item is located in a code block, this is invoked when analysis
    //  of the block ends, which corresponds the block going out of scope.
    //
-   virtual void ExitBlock() { }
+   virtual void ExitBlock() const { }
 
    //  Returns true if a unary operator can be appended after this item.
    //  Returning false converts an (ambiguous) unary operator to a binary

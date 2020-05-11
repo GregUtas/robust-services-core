@@ -21,7 +21,6 @@
 //
 #include "MsgFactory.h"
 #include "Algorithms.h"
-#include "Clock.h"
 #include "Debug.h"
 #include "Message.h"
 #include "MsgContext.h"
@@ -29,6 +28,7 @@
 #include "SbTrace.h"
 #include "SbTracer.h"
 #include "Singleton.h"
+#include "TimePoint.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -74,7 +74,7 @@ void MsgFactory::CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt)
 {
    Debug::ft(MsgFactory_CaptureMsg);
 
-   auto warp = Clock::TicksNow();
+   auto warp = TimePoint::Now();
    auto sbt = Singleton< SbTracer >::Instance();
 
    if(!ctx.TraceOn())

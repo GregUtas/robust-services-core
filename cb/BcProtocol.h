@@ -32,7 +32,7 @@
 #include "TlvProtocol.h"
 #include "UdpIpService.h"
 #include <cstddef>
-#include "Clock.h"
+#include "Duration.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SbTypes.h"

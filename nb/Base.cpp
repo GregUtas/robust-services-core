@@ -33,24 +33,19 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t Base::MaxSubtendedCount = 256;
-
-//------------------------------------------------------------------------------
-
 fn_name Base_ClaimBlocks = "Base.ClaimBlocks";
 
 void Base::ClaimBlocks()
 {
    Debug::ft(Base_ClaimBlocks);
 
-   Base* objects[MaxSubtendedCount];
-   size_t count = 0;
+   std::vector< Base* > objects;
 
    //  Claim this object and all of the objects that it owns.
    //
-   GetSubtended(objects, count);
+   GetSubtended(objects);
 
-   for(size_t i = 0; i < count; ++i)
+   for(size_t i = 0; i < objects.size(); ++i)
    {
       objects[i]->Claim();
    }
@@ -69,27 +64,11 @@ void Base::Display(ostream& stream,
 
 fn_name Base_GetSubtended = "Base.GetSubtended";
 
-void Base::GetSubtended(Base* objects[], size_t& count) const
+void Base::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(Base_GetSubtended);
 
-   static Base* lastLoggedObject0 = nullptr;
-
-   if(count < MaxSubtendedCount)
-   {
-      objects[count++] = const_cast< Base* >(this);
-      return;
-   }
-
-   //  To prevent a log flood, limit the frequency of logs.  This is invoked
-   //  during the object pool audit, so throwing an exception is out because
-   //  it could lead to the audit trapping repeatedly.
-   //
-   if(objects[0] != lastLoggedObject0)
-   {
-      lastLoggedObject0 = objects[0];
-      Debug::SwLog(Base_GetSubtended, "objects array full", count);
-   }
+   objects.push_back(const_cast< Base* >(this));
 }
 
 //------------------------------------------------------------------------------
@@ -101,12 +80,11 @@ void Base::LogSubtended(ostream& stream,
 {
    Debug::ft(Base_LogSubtended);
 
-   Base* objects[MaxSubtendedCount];
-   size_t count = 0;
+   std::vector< Base* > objects;
 
-   GetSubtended(objects, count);
+   GetSubtended(objects);
 
-   for(size_t i = 0; i < count; ++i)
+   for(size_t i = 0; i < objects.size(); ++i)
    {
       if(i > 0) stream << prefix << string(60 - prefix.size(), '-') << CRLF;
       objects[i]->Display(stream, prefix, options);

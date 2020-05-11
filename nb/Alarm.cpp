@@ -28,6 +28,7 @@
 #include "Debug.h"
 #include "Log.h"
 #include "Singleton.h"
+#include "TimePoint.h"
 
 using std::ostream;
 using std::string;
@@ -58,7 +59,7 @@ struct AlarmDynamic : public Permanent
 
    //  The most recent time at which the alarm was at its current level.
    //
-   ticks_t currStatusTime_;
+   TimePoint currStatusTime_;
 };
 
 //==============================================================================
@@ -73,7 +74,7 @@ fn_name Alarm_ctor = "Alarm.ctor";
 Alarm::Alarm(c_string name, c_string expl, secs_t delay) :
    name_(name),
    expl_(expl),
-   delay_(delay * Clock::TicksPerSec())
+   delay_(Duration(delay, SECS))
 {
    Debug::ft(Alarm_ctor);
 
@@ -121,7 +122,7 @@ ostringstreamPtr Alarm::Create
 {
    Debug::ft(Alarm_Create);
 
-   auto now = Clock::TicksNow();
+   auto now = TimePoint::Now();
    ostringstreamPtr log(nullptr);
 
    if(status > dyn_->status_)
@@ -181,7 +182,7 @@ void Alarm::SetStatus(AlarmStatus status)
 
    dyn_->status_ = status;
    dyn_->nextStatus_ = NoAlarm;
-   dyn_->currStatusTime_ = Clock::TicksNow();
+   dyn_->currStatusTime_ = TimePoint::Now();
 }
 
 //------------------------------------------------------------------------------

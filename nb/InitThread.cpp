@@ -27,6 +27,7 @@
 #include "Daemon.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "Log.h"
 #include "ModuleRegistry.h"
@@ -84,7 +85,7 @@ c_string InitThread::AbbrName() const
 
 fn_name InitThread_CalculateDelay = "InitThread.CalculateDelay";
 
-msecs_t InitThread::CalculateDelay() const
+Duration InitThread::CalculateDelay() const
 {
    Debug::ft(InitThread_CalculateDelay);
 
@@ -95,24 +96,24 @@ msecs_t InitThread::CalculateDelay() const
    //  o the RTC timeout, if no unpreemptable thread is running (or
    //    if it has already been signalled for running too long).
    //
-   ticks_t ticks = 0;
+   Duration timeout;
    auto thr = LockedThread();
 
    if((thr != nullptr) && !timeout_)
-      ticks = thr->TicksLeft();
+      timeout = thr->TimeLeft();
    else
-      ticks = Clock::MsecsToTicks(ThreadAdmin::RtcTimeoutMsecs());
+      timeout = ThreadAdmin::RtcTimeout();
 
-   auto delay = ThreadAdmin::SchedTimeoutMsecs() >> 1;
+   auto delay = ThreadAdmin::SchedTimeout() >> 1;
 
-   if(ticks < Clock::MsecsToTicks(delay))
+   if(timeout < delay)
    {
-      delay = Clock::TicksToMsecs(ticks);
+      delay = timeout;
    }
 
    //  If our timeout interval was rounded off to zero, sleep briefly.
    //
-   if(delay <= 0) delay = 1;
+   if(delay <= TIMEOUT_IMMED) delay = ONE_mSEC;
    return delay;
 }
 
@@ -144,7 +145,7 @@ void InitThread::CauseRestart()
    reg->SetLevel(RestartWarm);
    Singleton< RootThread >::Instance()->Interrupt(RestartMask);
    state_ = Initializing;
-   Pause(100);
+   Pause(Duration(100, mSECS));
 }
 
 //------------------------------------------------------------------------------
@@ -216,7 +217,7 @@ void InitThread::Enter()
 {
    Debug::ft(InitThread_Enter);
 
-   msecs_t delay;
+   Duration delay;
    DelayRc drc;
 
    //  When a thread is entered, it is unpreemptable.  However, we must run
@@ -348,7 +349,7 @@ void InitThread::HandleTimeout()
    //  If the locked thread has run too long, signal it unless breakpoint
    //  debugging is enabled.
    //
-   if((thr->TicksLeft() == 0) && !ThreadAdmin::BreakEnabled())
+   if((thr->TimeLeft() == ZERO_SECS) && !ThreadAdmin::BreakEnabled())
    {
       thr->RtcTimeout();
       timeout_ = true;

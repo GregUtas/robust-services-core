@@ -46,17 +46,13 @@ namespace NodeBase
 //
 constexpr size_t MaxFrames = 2048;
 
-//* Workaround for RSC not finding unique_ptr< void*[] >::reset.
-//
-typedef void* voidstar;
-
 //  For holding stack frames.
 //
 typedef void* StackFrames[MaxFrames];
 
 //  For holding stack frames.
 //
-typedef std::unique_ptr< voidstar[] > StackFramesPtr;
+typedef std::unique_ptr< void*[] > StackFramesPtr;
 
 //------------------------------------------------------------------------------
 //

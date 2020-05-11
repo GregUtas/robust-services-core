@@ -32,7 +32,7 @@
 #include <iosfwd>
 #include <string>
 #include "BcCause.h"
-#include "Clock.h"
+#include "Duration.h"
 #include "NbTypes.h"
 #include "SbTypes.h"
 #include "Switch.h"

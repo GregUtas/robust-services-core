@@ -120,7 +120,7 @@ void BotThread::Enter()
 {
    Debug::ft(BotThread_Enter);
 
-   Pause(4 * TIMEOUT_1_SEC);
+   Pause(Duration(4, SECS));
 
    bot_ = BaseBot::instance();
    auto rc = bot_->initialise();
@@ -131,7 +131,7 @@ void BotThread::Enter()
       return;
    }
 
-   msecs_t delay;
+   Duration delay;
 
    while(true)
    {
@@ -142,7 +142,7 @@ void BotThread::Enter()
       if(wakeups_.empty())
          delay = TIMEOUT_NEVER;
       else
-         delay = 1000 * wakeups_.cbegin()->secs;
+         delay = Duration(wakeups_.cbegin()->secs, SECS);
 
       auto msg = DeqMsg(delay);
 

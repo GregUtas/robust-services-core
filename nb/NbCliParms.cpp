@@ -24,8 +24,8 @@
 #include <cstdint>
 #include "CliCommand.h"
 #include "CliThread.h"
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Log.h"
 #include "LogBufferRegistry.h"
 #include "Module.h"

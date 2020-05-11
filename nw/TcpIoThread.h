@@ -24,6 +24,7 @@
 
 #include "IoThread.h"
 #include <cstddef>
+#include "Allocators.h"
 #include "Array.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
@@ -57,10 +58,6 @@ public:
    //
    bool InsertSocket(SysSocket* socket);
 
-   //  Overridden to claim IpBuffers queued for output.
-   //
-   void ClaimBlocks() override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -89,6 +86,10 @@ private:
    //  Overridden to receive TCP messages on PORT.
    //
    void Enter() override;
+
+   //  Overridden to claim IpBuffers queued for output.
+   //
+   void ClaimBlocks() override;
 
    //  Returns the listener socket.
    //
@@ -164,7 +165,8 @@ private:
    //  first socket listens for new connections, and each of the others
    //  handles an individual connection.
    //
-   NodeBase::Array< SysTcpSocket* > sockets_;
+   NodeBase::Array< SysTcpSocket*,
+      NodeBase::DynamicAllocator< SysTcpSocket* >> sockets_;
 
    //  Set if the underlying service accepts connections.  If not set,
    //  a listener socket is not allocated, and sockets_[0] is not used.

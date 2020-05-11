@@ -36,7 +36,7 @@ namespace NodeBase
 {
 const size_t StatisticsRegistry::MaxStats = 1000;
 const size_t StatisticsRegistry::MaxGroups = 100;
-ticks_t StatisticsRegistry::StartTicks_ = 0;
+TimePoint StatisticsRegistry::StartTime_ = TimePoint();
 
 //------------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ StatisticsRegistry::StatisticsRegistry()
    stats_.Init(MaxStats, Statistic::CellDiff(), MemDynamic);
    groups_.Init(MaxGroups, StatisticsGroup::CellDiff(), MemDynamic);
 
-   StartTicks_ = 0;
+   StartTime_ = TimePoint();
 }
 
 //------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ void StatisticsRegistry::DisplayStats
    Debug::ft(StatisticsRegistry_DisplayStats);
 
    stream << "For reporting period beginning at ";
-   stream << Clock::TicksToTime(StartTicks_) << CRLF;
+   stream << StartTime_.to_str() << CRLF;
 
    for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
    {
@@ -149,7 +149,7 @@ void StatisticsRegistry::StartInterval(bool first)
       s->StartInterval(first);
    }
 
-   StartTicks_ = Clock::TicksNow();
+   StartTime_ = TimePoint::Now();
 }
 
 //------------------------------------------------------------------------------
@@ -160,13 +160,13 @@ void StatisticsRegistry::Startup(RestartLevel level)
 {
    Debug::ft(StatisticsRegistry_Startup);
 
-   //  If StartTicks_ is zero, the registry has just been constructed or
-   //  reconstructed.  Statistics can only start to be accumulated now,
-   //  so set StartTicks_ to the current time.
+   //  If StartTime_ is invalid, the registry has just been constructed or
+   //  reconstructed.  Statistics can only start to be accumulated now, so
+   //  set StartTicks_ to the current time.
    //
-   if(StartTicks_ == 0)
+   if(!StartTime_.IsValid())
    {
-      StartTicks_ = Clock::TicksNow();
+      StartTime_ = TimePoint::Now();
    }
 }
 

@@ -867,7 +867,7 @@ public:
 
    //  Overridden to remove the item as a local.
    //
-   void ExitBlock() override;
+   void ExitBlock() const override;
 
    //  Overridden to update SYMBOLS with the data's type usage.
    //

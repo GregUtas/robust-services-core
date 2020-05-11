@@ -45,8 +45,8 @@ secs_t StatisticsThread::ShortIntervalSecs = 5;   // must be a divisor of 60
 size_t StatisticsThread::WakeupsBetweenReports =
    StatisticsThread::LongIntervalSecs / StatisticsThread::ShortIntervalSecs;
 
-ticks_t StatisticsThread::PrevToCurrTicks =
-   Clock::SecsToTicks(StatisticsThread::ShortIntervalSecs);
+Duration StatisticsThread::SleepInterval =
+   Duration(StatisticsThread::ShortIntervalSecs, SECS);
 
 //------------------------------------------------------------------------------
 
@@ -54,7 +54,6 @@ fn_name StatisticsThread_ctor = "StatisticsThread.ctor";
 
 StatisticsThread::StatisticsThread() :
    Thread(BackgroundFaction, Singleton< StatisticsDaemon >::Instance()),
-   wakeupTicks_(0),
    countdown_(WakeupsBetweenReports),
    delayed_(false)
 {
@@ -83,12 +82,11 @@ c_string StatisticsThread::AbbrName() const
 
 fn_name StatisticsThread_CalcFirstDelay = "StatisticsThread.CalcFirstDelay";
 
-msecs_t StatisticsThread::CalcFirstDelay()
+Duration StatisticsThread::CalcFirstDelay()
 {
    Debug::ft(StatisticsThread_CalcFirstDelay);
 
    SysTime timeNow;
-   auto ticksNow = Clock::TicksNow();
 
    //  Start the first short interval for thread statistics at the next
    //  time that is at least half the distance between short intervals.
@@ -122,8 +120,9 @@ msecs_t StatisticsThread::CalcFirstDelay()
       countdown_ = (delta / (1000 * ShortIntervalSecs)) + 1;
    }
 
-   wakeupTicks_ = ticksNow + Clock::MsecsToTicks(delay);
-   return delay;
+   Duration sleepTime(delay, mSECS);
+   wakeupTime_ = TimePoint::Now() + sleepTime;
+   return sleepTime;
 }
 
 //------------------------------------------------------------------------------
@@ -144,9 +143,9 @@ void StatisticsThread::Display(ostream& stream,
 {
    Thread::Display(stream, prefix, options);
 
-   stream << prefix << "wakeupTicks : " << wakeupTicks_ << CRLF;
-   stream << prefix << "countdown   : " << countdown_ << CRLF;
-   stream << prefix << "delayed     : " << delayed_ << CRLF;
+   stream << prefix << "wakeupTime : " << wakeupTime_.Ticks() << CRLF;
+   stream << prefix << "countdown  : " << countdown_ << CRLF;
+   stream << prefix << "delayed    : " << delayed_ << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -205,8 +204,8 @@ void StatisticsThread::Enter()
 
       //  Calculate the time when we want to wake up and sleep until then.
       //
-      wakeupTicks_ += PrevToCurrTicks;
-      sleep = Clock::TicksToMsecs(Clock::TicksUntil(wakeupTicks_));
+      wakeupTime_ += SleepInterval;
+      sleep = wakeupTime_ - TimePoint::Now();
    }
 }
 

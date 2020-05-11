@@ -126,13 +126,13 @@ void SsmContext::EndOfTransaction()
 
 fn_name SsmContext_GetSubtended = "SsmContext.GetSubtended";
 
-void SsmContext::GetSubtended(Base* objects[], size_t& count) const
+void SsmContext::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(SsmContext_GetSubtended);
 
-   PsmContext::GetSubtended(objects, count);
+   PsmContext::GetSubtended(objects);
 
-   if(root_ != nullptr) root_->GetSubtended(objects, count);
+   if(root_ != nullptr) root_->GetSubtended(objects);
 }
 
 //------------------------------------------------------------------------------

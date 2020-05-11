@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TimerThread.h"
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "SbDaemons.h"
 #include "SbTracer.h"
 #include "Singleton.h"
@@ -103,7 +103,7 @@ void TimerThread::Enter()
    //  Every second, tell our registry to process the next timer queue.
    //
    auto reg = Singleton< TimerRegistry >::Instance();
-   auto sleep = TIMEOUT_1_SEC;
+   Duration sleep(ONE_SEC);
 
    while(true)
    {
@@ -112,8 +112,8 @@ void TimerThread::Enter()
 
       //  Sleep for one second, minus the amount of time that we just ran.
       //
-      auto runTime = MsecsSinceStart();
-      sleep = (runTime > 1000 ? 0 : 1000 - runTime);
+      auto runTime = CurrTimeRunning();
+      sleep = (runTime > ONE_SEC ? TIMEOUT_IMMED : ONE_SEC - runTime);
    }
 }
 

@@ -137,7 +137,7 @@ public:
 
    //  Overridden to enumerate all objects that the PSM owns.
    //
-   void GetSubtended(Base* objects[], size_t& count) const override;
+   void GetSubtended(std::vector< Base* >& objects) const override;
 
    //  Overridden to display member variables.
    //

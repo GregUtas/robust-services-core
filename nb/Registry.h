@@ -573,7 +573,7 @@ private:
       auto count = std::min(2 * capacity_, max_);
       if(count <= min) count = min + 1;
       auto size = sizeof(T*) * count;
-      auto table = (T**) Memory::Alloc(size, mem_, false);
+      auto table = (T**) Memory::Alloc(size, mem_);
       if(table == nullptr) return false;
       for(id_t i = 0; i < capacity_; ++i) table[i] = registry_[i];
       for(id_t i = capacity_; i < count; ++i) table[i] = nullptr;

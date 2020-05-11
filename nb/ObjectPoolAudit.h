@@ -23,7 +23,7 @@
 #define OBJECTPOOLAUDIT_H_INCLUDED
 
 #include "Thread.h"
-#include "Clock.h"
+#include "Duration.h"
 #include "NbTypes.h"
 
 //------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ class ObjectPoolAudit : public Thread
 public:
    //  Sets the audit interval.
    //
-   void SetInterval(msecs_t interval);
+   void SetInterval(const Duration& interval);
 
    //  Overridden to display member variables.
    //
@@ -82,7 +82,7 @@ private:
 
    //  The time between audits.
    //
-   msecs_t interval_;
+   Duration interval_;
 
    //  The work currently being performed by the audit.
    //

@@ -271,7 +271,7 @@ void PotsToneTreatment::Display(ostream& stream,
 
    stream << prefix << "tone     : " << int(tone_) ;
    stream << " [" << strClass(reg->GetTone(tone_), false) << ']' << CRLF;
-   stream << prefix << "duration : " << int(duration_) << CRLF;
+   stream << prefix << "duration : " << duration_ << CRLF;
 }
 
 //==============================================================================

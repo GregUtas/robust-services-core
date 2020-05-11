@@ -22,9 +22,9 @@
 #include <set>
 #include <string>
 #include <vector>
-#include "Clock.h"
 #include "DipProtocol.h"
 #include "DipTypes.h"
+#include "Duration.h"
 #include "StartupParameters.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"

@@ -40,6 +40,7 @@
 #include "Signal.h"
 #include "Singleton.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 #include "Timer.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
@@ -96,7 +97,7 @@ ProtocolSM::~ProtocolSM()
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -303,30 +304,30 @@ ProtocolId ProtocolSM::GetProtocol() const
 
 fn_name ProtocolSM_GetSubtended = "ProtocolSM.GetSubtended";
 
-void ProtocolSM::GetSubtended(Base* objects[], size_t& count) const
+void ProtocolSM::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(ProtocolSM_GetSubtended);
 
-   ProtocolLayer::GetSubtended(objects, count);
+   ProtocolLayer::GetSubtended(objects);
 
    for(auto m = rcvdMsgq_.First(); m != nullptr; rcvdMsgq_.Next(m))
    {
-      m->GetSubtended(objects, count);
+      m->GetSubtended(objects);
    }
 
    for(auto m = ogMsgq_.First(); m != nullptr; ogMsgq_.Next(m))
    {
-      m->GetSubtended(objects, count);
+      m->GetSubtended(objects);
    }
 
    for(auto m = sentMsgq_.First(); m != nullptr; sentMsgq_.Next(m))
    {
-      m->GetSubtended(objects, count);
+      m->GetSubtended(objects);
    }
 
    for(auto t = timerq_.First(); t != nullptr; timerq_.Next(t))
    {
-      t->GetSubtended(objects, count);
+      t->GetSubtended(objects);
    }
 }
 
@@ -392,7 +393,7 @@ void ProtocolSM::Initialize(bool henq)
 
    if(ctx->TraceOn(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))

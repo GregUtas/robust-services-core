@@ -29,6 +29,7 @@
 #include <string>
 #include "CliThread.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Event.h"
 #include "Factory.h"
 #include "FactoryRegistry.h"
@@ -1472,7 +1473,7 @@ word SbStatusCommand::ProcessCommand(CliThread& cli) const
    {
       *cli.obuf << setw(8) << p->WorkQCurrLength(INGRESS);
       *cli.obuf << setw(8) << p->WorkQMaxLength(INGRESS);
-      *cli.obuf << setw(8) << p->WorkQMaxDelay(INGRESS);
+      *cli.obuf << setw(8) << p->WorkQMaxDelay(INGRESS).To(mSECS);
       *cli.obuf << spaces(3) << p->GetFaction() << CRLF;
    }
 

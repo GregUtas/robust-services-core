@@ -25,7 +25,7 @@
 #include "TimedRecord.h"
 #include <cstddef>
 #include <string>
-#include "Clock.h"
+#include "Duration.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
 
@@ -86,7 +86,7 @@ public:
 
    //  Returns the net time spent in the function that this record captured.
    //
-   usecs_t Net() const { return net_; }
+   Duration Net() const { return net_; }
 
    //  Overridden to display the trace record.
    //
@@ -150,7 +150,7 @@ private:
 
    //  Calculates the gross time spent in a function call.
    //
-   usecs_t CalcGrossTime();
+   Duration CalcGrossTime();
 
    //  The name of function that was invoked.
    //
@@ -170,12 +170,12 @@ private:
    //  The total time spent in the function call.  Calculated after
    //  tracing stops.
    //
-   usecs_t gross_;
+   Duration gross_;
 
    //  The net time spent in the function call.  Calculated after
    //  tracing stops.
    //
-   usecs_t net_;
+   Duration net_;
 
    //  The scope of function tracing.
    //

@@ -30,7 +30,7 @@
 #include <iosfwd>
 #include <memory>
 #include <string>
-#include "Clock.h"
+#include "Duration.h"
 #include "NbTypes.h"
 #include "Q1Way.h"
 #include "RegCell.h"
@@ -82,21 +82,21 @@ public:
    //
    static word RtcPercentUsed();
 
-   //  Schedules the current thread out for MSECS.  If MSECS is TIMEOUT_IMMED,
-   //  the thread is scheduled out but can run again immediately, although other
-   //  threads may get to run first.  If MSECS is TIMEOUT_NEVER, the thread
+   //  Schedules the current thread out for TIME.  If TIME is TIMEOUT_IMMED,
+   //  the thread is scheduled out but can run again immediately, though other
+   //  threads may get to run first.  If TIME is TIMEOUT_NEVER, the thread
    //  sleeps forever, although it can be interrupted.  Returns the reason why
    //  the pause ended.
    //
-   static DelayRc Pause(msecs_t msecs = TIMEOUT_IMMED);
+   static DelayRc Pause(Duration time = TIMEOUT_IMMED);
 
    //  Invokes Pause(TIMEOUT_IMMED) if RtcPercentUsed() returns LIMIT or more.
    //
    static void PauseOver(word limit);
 
-   //  The number of msecs that the thread has run since it was scheduled in.
+   //  How long the thread has run since it was scheduled in.
    //
-   msecs_t MsecsSinceStart() const;
+   Duration CurrTimeRunning() const;
 
    //  Returns true if the thread has been scheduled to run.
    //
@@ -261,11 +261,11 @@ protected:
    //
    void SetInitialized();
 
-   //  Returns the number of milliseconds that the thread receives when it
-   //  begins to run unpreemptably.  The default should only be overridden
-   //  for compelling reasons.
+   //  Returns the amount of time that the thread receives when it begins
+   //  to run unpreemptably.  The default should only be overridden for
+   //  compelling reasons.
    //
-   virtual msecs_t InitialMsecs() const;
+   virtual Duration InitialTime() const;
 
    //  Queues MSG for processing by the thread.  May be overridden, but the
    //  base class version must be invoked.  Protected so that a subclass can
@@ -277,7 +277,7 @@ protected:
    //  TIMEOUT to wait for a message.  May be overridden, but the base class
    //  version must be invoked.  Protected to restrict usage to subclasses.
    //
-   virtual MsgBuffer* DeqMsg(msecs_t timeout);
+   virtual MsgBuffer* DeqMsg(const Duration& timeout);
 
    //  Dereferences a bad pointer during testing.
    //
@@ -286,7 +286,7 @@ protected:
    //  Overridden to claim queued messages.  May be overridden, but this
    //  version must be invoked.
    //
-   void Claim() override;
+   void ClaimBlocks() override;
 
    //  Overridden to release resources during error recovery.  May be
    //  overridden, but this version must be invoked.
@@ -565,13 +565,13 @@ private:
    //
    static bool TraceRunningThread(Thread*& thr);
 
-   //  Returns the number of ticks still available to the locked thread.
+   //  Returns the amount of time still available to the locked thread.
    //
-   ticks_t TicksLeft() const;
+   Duration TimeLeft() const;
 
-   //  Gives the running thread MSECS more time to run unpreemptably.
+   //  Gives the running thread more TIME to run unpreemptably.
    //
-   static void ExtendTime(msecs_t msecs);
+   static void ExtendTime(const Duration& time);
 
    //  Invoked when a thread did not yield before the run-to-completion
    //  timer expired.
@@ -627,8 +627,8 @@ private:
    //  period.  TIME1 was the duration of the most recent short interval
    //  for thread statistics.
    //
-   void DisplaySummary
-      (std::ostream& stream, usecs_t time0, usecs_t time1) const;
+   void DisplaySummary(std::ostream& stream,
+      const Duration& time0, const Duration& time1) const;
 
    //  Displays a summary of all threads' statistics in STREAM.
    //

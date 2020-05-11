@@ -26,7 +26,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
-#include "Clock.h"
+#include "Duration.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -127,6 +127,10 @@ public:
    //
    void SubDays(size_t days);
 
+   //  Returns the number of msecs since T0 (Jan 1, 1900).
+   //
+   int64_t MsecsSinceT0() const;
+
    //  Returns a three-character string for the Month.
    //
    c_string strMonth() const;
@@ -172,10 +176,6 @@ private:
    //  Returns the number of days since T0 (Jan 1, 1900).
    //
    size_t DaysSinceT0() const;
-
-   //  Returns the number of msecs since T0 (Jan 1, 1900).
-   //
-   int64_t MsecsSinceT0() const;
 
    //  Verifies that the time is valid.
    //

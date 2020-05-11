@@ -24,8 +24,8 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "FileThread.h"
 #include "FunctionGuard.h"
 #include "MutexGuard.h"

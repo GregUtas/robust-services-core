@@ -26,7 +26,7 @@
 #include "ProxyBcSessions.h"
 #include "SbExtInputHandler.h"
 #include "UdpIpService.h"
-#include "Clock.h"
+#include "Duration.h"
 #include "EventHandler.h"
 #include "Initiator.h"
 #include "NbTypes.h"

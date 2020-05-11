@@ -66,7 +66,8 @@ private:
 
    //  Overridden to raise an alarm when DELAY is excessive.
    //
-   void RecordDelay(MsgPriority prio, NodeBase::msecs_t delay) const override;
+   void RecordDelay
+      (MsgPriority prio, const NodeBase::Duration& delay) const override;
 
    //  The configuration parameter for the maximum length of
    //  this pool's ingress work queue.

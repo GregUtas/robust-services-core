@@ -262,13 +262,13 @@ MediaPsm* MediaPsm::GetOgPsm() const
 
 fn_name MediaPsm_GetSubtended = "MediaPsm.GetSubtended";
 
-void MediaPsm::GetSubtended(Base* objects[], size_t& count) const
+void MediaPsm::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(MediaPsm_GetSubtended);
 
-   ProtocolSM::GetSubtended(objects, count);
+   ProtocolSM::GetSubtended(objects);
 
-   if(mep_ != nullptr) mep_->GetSubtended(objects, count);
+   if(mep_ != nullptr) mep_->GetSubtended(objects);
 }
 
 //------------------------------------------------------------------------------

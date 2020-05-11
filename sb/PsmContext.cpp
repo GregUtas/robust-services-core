@@ -209,20 +209,20 @@ MsgPort* PsmContext::FindPort(const Message& msg) const
 
 fn_name PsmContext_GetSubtended = "PsmContext.GetSubtended";
 
-void PsmContext::GetSubtended(Base* objects[], size_t& count) const
+void PsmContext::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(PsmContext_GetSubtended);
 
-   MsgContext::GetSubtended(objects, count);
+   MsgContext::GetSubtended(objects);
 
    for(auto p = psmq_.First(); p != nullptr; psmq_.Next(p))
    {
-      p->GetSubtended(objects, count);
+      p->GetSubtended(objects);
    }
 
    for(auto p = portq_.First(); p != nullptr; portq_.Next(p))
    {
-      p->GetSubtended(objects, count);
+      p->GetSubtended(objects);
    }
 }
 

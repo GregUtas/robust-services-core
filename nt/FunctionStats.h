@@ -24,8 +24,7 @@
 
 #include "Temporary.h"
 #include <cstddef>
-
-#include "Clock.h"
+#include "Duration.h"
 #include "Q2Link.h"
 #include "SysTypes.h"
 
@@ -58,12 +57,12 @@ public:
 
    //  Returns the total net time spent in the function.
    //
-   msecs_t Time() const { return time_; }
+   Duration Time() const { return time_; }
 
    //  Increments the number of times the function was invoked and
    //  adds NET to the total net time spent in it.
    //
-   void IncrCalls(usecs_t net);
+   void IncrCalls(const Duration& net);
 
    //  Returns -1, 0, or 1 if THAT is less than, equal to, or greater
    //  than "this" when sorted by namespace and function name.
@@ -93,7 +92,7 @@ private:
 
    //  The total net time spent in the function.
    //
-   usecs_t time_;
+   Duration time_;
 };
 }
 #endif

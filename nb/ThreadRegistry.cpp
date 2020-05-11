@@ -169,8 +169,6 @@ void ThreadRegistry::ClaimBlocks()
 {
    Debug::ft(ThreadRegistry_ClaimBlocks);
 
-   //  Have all threads mark themselves and their objects as being in use.
-   //
    for(auto t = threads_.First(); t != nullptr; threads_.Next(t))
    {
       t->ClaimBlocks();

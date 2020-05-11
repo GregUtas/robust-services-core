@@ -1667,7 +1667,7 @@ public:
    void AddToXref() const override;
    void Check() const override;
    void EnterBlock() override;
-   void ExitBlock() override;
+   void ExitBlock() const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to display the template's full specification.

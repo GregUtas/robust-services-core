@@ -121,7 +121,7 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
-   void ExitBlock() override;
+   void ExitBlock() const override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override { return false; }
@@ -208,7 +208,7 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
-   void ExitBlock() override;
+   void ExitBlock() const override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override;
@@ -282,7 +282,7 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
-   void ExitBlock() override;
+   void ExitBlock() const override;
    bool InLine() const override { return false; }
    void Shrink() override { name_.shrink_to_fit(); }
 private:
@@ -369,7 +369,7 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
-   void ExitBlock() override;
+   void ExitBlock() const override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override { return false; }

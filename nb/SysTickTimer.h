@@ -23,10 +23,11 @@
 #define SYSTICKTIMER_H_INCLUDED
 
 #include "Immutable.h"
-#include "Clock.h"
+#include <cstdint>
 #include "NbTypes.h"
 #include "SysTime.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 
@@ -40,17 +41,17 @@ class SysTickTimer : public Immutable
 public:
    //  Returns the number of ticks in one second.
    //
-   ticks_t TicksPerSec() const { return ticks_per_sec_; }
+   int64_t TicksPerSec() const { return ticks_per_sec_; }
 
    //  Returns the current time as a raw tick count.  It is assumed
    //  that the value returned by this function increases over time
    //  and is only reset if the system is rebooted.
    //
-   ticks_t TicksNow() const;
+   TimePoint Now() const;
 
    //  Returns the time (in ticks) when the system was booted.
    //
-   ticks_t StartTick() const { return startTick_; }
+   TimePoint StartPoint() const { return startPoint_; }
 
    //  Returns the time (in full) when the system was booted.
    //
@@ -80,11 +81,11 @@ private:
 
    //  The number of ticks in one second.
    //
-   ticks_t ticks_per_sec_;
+   int64_t ticks_per_sec_;
 
-   //  The tick count when the system was initialized.
+   //  The time when the system was initialized.
    //
-   ticks_t startTick_;
+   TimePoint startPoint_;
 
    //  The full clock time when the system was initialized.
    //

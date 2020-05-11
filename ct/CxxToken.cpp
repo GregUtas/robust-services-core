@@ -1959,7 +1959,7 @@ void Operation::ExecuteNew() const
       //
       ExecuteCall();
       Context::PopArg(false);
-      spec.IncrPtrs();
+      spec.SetNewPtrs();
       Context::PushArg(spec);
       overload_ = opNew;
    }

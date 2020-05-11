@@ -23,7 +23,7 @@
 #define TIMERREGISTRY_H_INCLUDED
 
 #include "Dynamic.h"
-#include "Clock.h"
+#include "Duration.h"
 #include "NbTypes.h"
 #include "Q2Way.h"
 #include "Timer.h"

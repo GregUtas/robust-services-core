@@ -24,7 +24,7 @@
 
 #include "Protected.h"
 #include <cstddef>
-#include "Clock.h"
+#include "Duration.h"
 #include "EventHandler.h"
 #include "Q1Link.h"
 #include "Q1Way.h"

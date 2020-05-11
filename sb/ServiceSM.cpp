@@ -23,7 +23,6 @@
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
-#include "Clock.h"
 #include "Context.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -37,6 +36,7 @@
 #include "Singleton.h"
 #include "State.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -86,7 +86,7 @@ ServiceSM::ServiceSM(ServiceId sid) :
 
    if(ctx->TraceOn(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -113,7 +113,7 @@ ServiceSM::~ServiceSM()
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = Clock::TicksNow();
+      auto warp = TimePoint::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
@@ -327,23 +327,23 @@ Service* ServiceSM::GetService() const
 
 fn_name ServiceSM_GetSubtended = "ServiceSM.GetSubtended";
 
-void ServiceSM::GetSubtended(Base* objects[], size_t& count) const
+void ServiceSM::GetSubtended(std::vector< Base* >& objects) const
 {
    Debug::ft(ServiceSM_GetSubtended);
 
-   Pooled::GetSubtended(objects, count);
+   Pooled::GetSubtended(objects);
 
    for(auto i = 0; i < Event::Location_N; ++i)
    {
       for(auto evt = eventq_[i].First(); evt != nullptr; eventq_[i].Next(evt))
       {
-         evt->GetSubtended(objects, count);
+         evt->GetSubtended(objects);
       }
    }
 
    for(auto mod = ssmq_.First(); mod != nullptr; ssmq_.Next(mod))
    {
-      mod->GetSubtended(objects, count);
+      mod->GetSubtended(objects);
    }
 }
 
@@ -567,7 +567,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
 
             if(Context::RunningContextTraced(trans))
             {
-               auto warp = Clock::TicksNow();
+               auto warp = TimePoint::Now();
                auto buff = Singleton< TraceBuffer >::Instance();
 
                if(buff->ToolIsOn(ContextTracer))

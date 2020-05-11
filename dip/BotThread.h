@@ -26,8 +26,8 @@
 
 #include "Thread.h"
 #include <set>
-#include "Clock.h"
 #include "DipTypes.h"
+#include "Duration.h"
 #include "NbTypes.h"
 
 namespace Diplomacy

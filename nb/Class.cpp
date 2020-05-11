@@ -98,6 +98,18 @@ ptrdiff_t Class::CellDiff()
 
 //------------------------------------------------------------------------------
 
+fn_name Class_ClaimBlocks = "Class.ClaimBlocks";
+
+void Class::ClaimBlocks()
+{
+   Debug::ft(Class_ClaimBlocks);
+
+   if(dyn_->template_ != nullptr) dyn_->template_->ClaimBlocks();
+   if(dyn_->singleton_ != nullptr) dyn_->singleton_->ClaimBlocks();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_Create = "Class.Create";
 
 Object* Class::Create()
@@ -199,22 +211,6 @@ Object* Class::GetQuasiSingleton()
    }
 
    return New(size_);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Class_GetSubtended = "Class.GetSubtended";
-
-void Class::GetSubtended(Base* objects[], size_t& count) const
-{
-   Debug::ft(Class_GetSubtended);
-
-   Immutable::GetSubtended(objects, count);
-
-   if(dyn_->template_ != nullptr)
-      dyn_->template_->GetSubtended(objects, count);
-   if(dyn_->singleton_ != nullptr)
-      dyn_->singleton_->GetSubtended(objects, count);
 }
 
 //------------------------------------------------------------------------------

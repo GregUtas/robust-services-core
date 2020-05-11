@@ -25,7 +25,6 @@
 #include "SysSocket.h"
 #include <bitset>
 #include <cstddef>
-#include "Clock.h"
 #include "NwTypes.h"
 #include "Q1Way.h"
 #include "SysDecls.h"
@@ -99,12 +98,12 @@ public:
    //
    PollFlags* InFlags() { return &inFlags_; }
 
-   //  Waits for events on SOCKETS, which is SIZE in length.  MSECS
+   //  Waits for events on SOCKETS, which is SIZE in length.  TIMEOUT
    //  specifies how long to wait.  Returns the number of sockets on
    //  which events have occurred, and -1 on failure.
    //
-   static NodeBase::word Poll
-      (SysTcpSocket* sockets[], size_t size, NodeBase::msecs_t msecs);
+   static NodeBase::word Poll(SysTcpSocket* sockets[],
+      size_t size, const NodeBase::Duration& timeout);
 
    //  Returns the flags that reported the socket's status after invoking
    //  Poll.  Any of the flags could have been set.

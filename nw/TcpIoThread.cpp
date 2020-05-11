@@ -23,8 +23,8 @@
 #include <sstream>
 #include <string>
 #include "Alarm.h"
-#include "Clock.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "InputHandler.h"
 #include "IpPort.h"
@@ -36,6 +36,7 @@
 #include "SysIpL3Addr.h"
 #include "SysTcpSocket.h"
 #include "TcpIpService.h"
+#include "TimePoint.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -96,7 +97,7 @@ TcpIoThread::TcpIoThread(Daemon* daemon,
    //  run-time, SysTcpSocket::Poll will fail spectacularly if it was blocked
    //  on its polling operation when the resizing occurred.
    //
-   sockets_.Init(fdSize, MemDynamic);
+   sockets_.Init(fdSize);
    sockets_.Reserve(fdSize);
    SetInitialized();
 }
@@ -372,7 +373,7 @@ void TcpIoThread::Enter()
          //s Handle Poll() error.
          //
          OutputLog(NetworkSocketError, "Poll", SocketError, sockets_.Front());
-         Pause(20);
+         Pause(Duration(20, mSECS));
          continue;
       }
 
@@ -579,7 +580,7 @@ word TcpIoThread::PollSockets()
    //  the last polling operation.
    //
    ipPort_->RecvsInSequence(recvs_);
-   auto sockets = sockets_.Items();
+   auto sockets = sockets_.Data();
    word ready = 0;
 
    //  Poll the sockets for new events.  The timeout of 2 seconds is
@@ -588,7 +589,7 @@ word TcpIoThread::PollSockets()
    //
    EnterBlockingOperation(BlockedOnNetwork, TcpIoThread_Enter);
    {
-      ready = SysTcpSocket::Poll(sockets, size, 2 * TIMEOUT_1_SEC);
+      ready = SysTcpSocket::Poll(sockets, size, ONE_SEC << 1);
    }
    ExitBlockingOperation(TcpIoThread_Enter);
 
@@ -683,7 +684,7 @@ void TcpIoThread::ServiceSocket()
    //
    if(!flags->test(PollRead)) return;
 
-   ticks0_ = Clock::TicksNow();
+   time_ = TimePoint::Now();
 
    auto rcvd = socket->Recv(buffer_, SysSocket::MaxMsgSize);
 

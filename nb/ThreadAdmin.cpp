@@ -31,6 +31,7 @@
 #include "CfgIntParm.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
@@ -537,16 +538,16 @@ void ThreadAdmin::Incr(Register r)
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadAdmin_InitTimeoutMsecs = "ThreadAdmin.InitTimeoutMsecs";
+fn_name ThreadAdmin_InitTimeout = "ThreadAdmin.InitTimeout";
 
-msecs_t ThreadAdmin::InitTimeoutMsecs()
+Duration ThreadAdmin::InitTimeout()
 {
-   Debug::ft(ThreadAdmin_InitTimeoutMsecs);
+   Debug::ft(ThreadAdmin_InitTimeout);
 
    auto config = AccessConfig();
    auto msecs = (config != nullptr ?
       config->initTimeoutMsecs_ : DefaultAdminValues.initTimeoutMsecs_);
-   return msecs << WarpFactor();
+   return Duration(msecs, mSECS) << WarpFactor();
 }
 
 //------------------------------------------------------------------------------
@@ -585,20 +586,22 @@ word ThreadAdmin::RtcLimit()
 
 //------------------------------------------------------------------------------
 
-msecs_t ThreadAdmin::RtcTimeoutMsecs()
+Duration ThreadAdmin::RtcTimeout()
 {
    auto config = AccessConfig();
-   if(config != nullptr) return config->rtcTimeoutMsecs_;
-   return DefaultAdminValues.rtcTimeoutMsecs_;
+   auto msecs = (config != nullptr ?
+      config->rtcTimeoutMsecs_ : DefaultAdminValues.rtcTimeoutMsecs_);
+   return Duration(msecs, mSECS);
 }
 
 //------------------------------------------------------------------------------
 
-msecs_t ThreadAdmin::SchedTimeoutMsecs()
+Duration ThreadAdmin::SchedTimeout()
 {
    auto config = AccessConfig();
-   if(config != nullptr) return config->schedTimeoutMsecs_;
-   return DefaultAdminValues.schedTimeoutMsecs_;
+   auto msecs = (config != nullptr ?
+      config->schedTimeoutMsecs_ : DefaultAdminValues.schedTimeoutMsecs_);
+   return Duration(msecs, mSECS);
 }
 
 //------------------------------------------------------------------------------

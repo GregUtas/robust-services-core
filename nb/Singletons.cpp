@@ -36,8 +36,8 @@ namespace NodeBase
 {
 struct SingletonTuple
 {
-   const Base** addr;    // pointer to a singleton's Instance_ pointer
-   MemoryType type;      // the type of memory that the singleton uses
+   const Base** addr;  // pointer to a singleton's Instance_ pointer
+   MemoryType type;    // the type of memory that the singleton uses
 
    SingletonTuple(const Base** a, MemoryType t) : addr(a), type(t) { }
 };
@@ -55,7 +55,7 @@ Singletons::Singletons()
 {
    Debug::ft(Singletons_ctor);
 
-   registry_.Init(MaxSingletons, MemPermanent);
+   registry_.Init(MaxSingletons);
    registry_.Reserve(MaxSingletons >> 4);
 }
 
@@ -110,7 +110,7 @@ void Singletons::Display(ostream& stream,
 
    for(size_t i = 0; i < registry_.Size(); ++i)
    {
-      auto entry = registry_[i];
+      auto& entry = registry_[i];
 
       stream << lead << strIndex(i);
       stream << entry.addr;

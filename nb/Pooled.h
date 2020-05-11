@@ -66,15 +66,9 @@ public:
 
    //  Overridden to claim blocks that this object owns.  If the object is
    //  marked corrupt, it simply returns; otherwise, it surrounds a call
-   //  to Base::ClaimBlocks by setting and clearing the corrupt_ flag.
+   //  to Object::ClaimBlocks by setting and clearing the corrupt_ flag.
    //
    void ClaimBlocks() override;
-
-   //  Clears the object's orphaned_ field so that the object pool audit
-   //  will not reclaim it.  May be overridden, but the base class version
-   //  must be invoked.
-   //
-   void Claim() override;
 
    //  Overridden to display member variables.
    //
@@ -97,6 +91,12 @@ protected:
    //
    Pooled();
 private:
+   //  Clears the object's orphaned_ field so that the object pool audit
+   //  will not reclaim it.  May be overridden, but the base class version
+   //  must be invoked.
+   //
+   void Claim() override;
+
    //  Link for queueing the object.
    //
    Q1Link link_;

@@ -23,7 +23,7 @@
 #define THISTHREAD_H_INCLUDED
 
 #include <string>
-#include "Clock.h"
+#include "Duration.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
@@ -43,7 +43,7 @@ namespace NodeBase
    {
       ThreadId RunningThreadId();
       word RtcPercentUsed();
-      DelayRc Pause(msecs_t msecs = TIMEOUT_IMMED);
+      DelayRc Pause(const Duration& timeout = TIMEOUT_IMMED);
       void PauseOver(word limit);
       bool EnterBlockingOperation(BlockingReason why, fn_name_arg func);
       void ExitBlockingOperation(fn_name_arg func);

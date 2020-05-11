@@ -53,7 +53,10 @@ namespace std
       T& at(size_t pos);
       void pop_back();
       void push_back(const T& value);
+      const T* data() const;
+      T* data();
       size_t capacity() const;
+      void reserve(size_t capacity);
       void shrink_to_fit();
    };
 }

@@ -130,6 +130,7 @@ public:
    //
    void DecrPtrs() { --ptrs_; }
    void IncrPtrs() { ++ptrs_; }
+   void SetNewPtrs();
 
    //  Returns true if the indirection, address of, or array subscript
    //  operator was applied to the argument.

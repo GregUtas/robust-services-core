@@ -25,12 +25,12 @@
 #include "Thread.h"
 #include <cstddef>
 #include <memory>
-#include "Clock.h"
 #include "Context.h"
 #include "NbTypes.h"
 #include "RegCell.h"
 #include "SbTypes.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 
@@ -56,9 +56,9 @@ public:
    //
    static NodeBase::word RtcYieldPercent() { return RtcYieldPercent_; }
 
-   //  Returns the tick time when the current transaction started.
+   //  Returns the time when the current transaction started.
    //
-   NodeBase::ticks_t Ticks0() const { return ticks0_; }
+   NodeBase::TimePoint Time0() const { return time0_; }
 
    //  Returns the offset to iid_.
    //
@@ -150,7 +150,7 @@ private:
 
    //  The time when the current transaction began.
    //
-   NodeBase::ticks_t ticks0_;
+   NodeBase::TimePoint time0_;
 
    //  Percentage of run-to-completion timeout that must remain for invoker
    //  to begin another transaction instead of yielding.

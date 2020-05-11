@@ -22,6 +22,7 @@
 #include "TimedRecord.h"
 #include <iomanip>
 #include <ostream>
+#include "Duration.h"
 #include "Singleton.h"
 #include "SysThread.h"
 #include "Thread.h"
@@ -61,7 +62,7 @@ ThreadId TimedRecord::PrevTid_ = NIL_ID;
 TimedRecord::TimedRecord(FlagId owner) :
    TraceRecord(owner),
    nid_(SysThread::RunningThreadId()),
-   ticks_(Clock::TicksNow())
+   time_(TimePoint::Now())
 {
 }
 
@@ -97,10 +98,10 @@ bool TimedRecord::Display(ostream& stream, const string& opts)
 
 string TimedRecord::GetTime(const string& opts) const
 {
-   //  Convert our tick timestamp to hh:mm:ss.mmm and remove the hours.
+   //  Convert our timestamp to hh:mm:ss.mmm and remove the hours.
    //
    if(opts.find(NoTimeData) != string::npos) return "00:00.000";
-   return Clock::TicksToTime(ticks_, MinsField);
+   return time_.to_str(MinsField);
 }
 
 //------------------------------------------------------------------------------

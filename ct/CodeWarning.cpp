@@ -995,6 +995,12 @@ bool CodeWarning::Suppress() const
       if(fn == "ProxyBcSessions.h") return true;
       break;
 
+   case AnonymousArgument:
+   {
+      if(*item_->Name() == "operator++") return true;
+      if(*item_->Name() == "operator--") return true;
+   }
+
    case FunctionCouldBeStatic:
    case FunctionCouldBeFree:
    case CouldBeNoexcept:
@@ -1023,8 +1029,9 @@ bool CodeWarning::Suppress() const
       if(file != nullptr)
       {
          if(fn == "Algorithms.cpp") return true;
+         if(fn == "Duration.cpp") return true;
          if(fn == "Formatters.cpp") return true;
-         if(fn == "Clock.cpp") return true;
+         if(fn == "TimePoint.cpp") return true;
          if(fn == "TraceRecord.cpp") return true;
          if(fn == "CxxString.cpp") return true;
       }

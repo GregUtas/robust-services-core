@@ -2790,13 +2790,19 @@ void TemplateParms::EnterScope() const
    {
       (*p)->EnterScope();
    }
+
+   //  Each template parameter added itself as a local so that it could
+   //  be resolved if used to specify a default value for a subsequent
+   //  template parameter.  Thus this hack to erase those locals...
+   //
+   ExitBlock();
 }
 
 //------------------------------------------------------------------------------
 
 fn_name TemplateParms_ExitBlock = "TemplateParms.ExitBlock";
 
-void TemplateParms::ExitBlock()
+void TemplateParms::ExitBlock() const
 {
    Debug::ft(TemplateParms_ExitBlock);
 

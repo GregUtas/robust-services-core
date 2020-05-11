@@ -29,15 +29,8 @@
 
 namespace NodeBase
 {
-//  Time intervals.
-//
-typedef uint32_t secs_t;   // seconds
-typedef uint32_t msecs_t;  // milliseconds
-typedef uint32_t usecs_t;  // microseconds
-
-//------------------------------------------------------------------------------
-//
-//  A field in a full time representation.
+//  A field in a full time representation.  This is used mostly in SysTime
+//  but is also required here.
 //
 enum TimeField
 {
@@ -50,6 +43,15 @@ enum TimeField
    MsecsField,
    TimeField_N
 };
+
+//------------------------------------------------------------------------------
+//
+//  Time intervals.  These are used for values that will be converted to, or
+//  have been converted from, a Duration (below).
+//
+typedef uint32_t secs_t;   // seconds
+typedef uint32_t msecs_t;  // milliseconds
+typedef uint32_t usecs_t;  // microseconds
 
 //------------------------------------------------------------------------------
 //
@@ -150,8 +152,8 @@ public:
 
    //  Changes the interval by a power of 2.
    //
-   Duration& operator<<=(const int8_t shift);
-   Duration& operator>>=(const int8_t shift);
+   Duration& operator<<=(int8_t shift);
+   Duration& operator>>=(int8_t shift);
 
    //  The value that represents infinity.
    //

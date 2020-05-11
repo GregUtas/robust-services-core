@@ -672,13 +672,15 @@ void FunctionTrace::CalcTimes()
       auto curr = static_cast< FunctionTrace* >(rec);
 
       if(curr->Nid() != nid) continue;
-      if(curr->depth_ <= depth_) return;
+      if(curr->depth_ <= depth_) break;
 
       if(curr->depth_ == (depth_ + 1))
       {
          net_ -= curr->CalcGrossTime();
       }
    }
+
+   if(net_.Ticks() < 0) net_ = ZERO_SECS;
 }
 
 //------------------------------------------------------------------------------

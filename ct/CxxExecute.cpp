@@ -1919,6 +1919,25 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
 
 //------------------------------------------------------------------------------
 
+fn_name StackArg_SetNewPtrs = "StackArg.SetNewPtrs";
+
+void StackArg::SetNewPtrs()
+{
+   Debug::ft(StackArg_SetNewPtrs);
+
+   //  When operator new is invoked, it returns a pointer to memory allocated
+   //  for the *top level* type.  If that type has any pointer or array tags,
+   //  only the first one matters; any deeper pointers or arrays will require
+   //  separate allocations.  We therefore adjust ptrs_ so that the underlying
+   //  type can contribute at most *one* pointer (or array).
+   //
+   auto ptrs = Ptrs(true);
+   auto adjust = (ptrs <= 1 ? 1 : 2 - ptrs);
+   ptrs_ += adjust;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name StackArg_SetNonConst = "StackArg.SetNonConst";
 
 void StackArg::SetNonConst(size_t index) const

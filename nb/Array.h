@@ -26,6 +26,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include "Allocators.h"
 #include "Debug.h"
 #include "SysTypes.h"
 
@@ -36,7 +37,7 @@
 //
 namespace NodeBase
 {
-template< typename T, class A = std::allocator<T>> class Array
+template< typename T, class A = std::allocator< T >> class Array
 {
 public:
    //  Creates an empty array.
@@ -87,8 +88,8 @@ public:
       return true;
    }
 
-   //  Erases the item in the cell specified by INDEX and
-   //  moves the last item into its cell.
+   //  Erases the item in the cell specified by INDEX and moves
+   //  the last item into its cell.
    //
    void Erase(size_t index)
    {
@@ -108,8 +109,9 @@ public:
       Debug::Assert(&item != nullptr);
       auto size = vector_.size();
       Debug::Assert(index < size);
-      vector_[index].~T();
-      vector_[index] = std::move(item);
+      vector_.push_back(item);
+      std::swap(vector_[index], vector_.back());
+      vector_.pop_back();
    }
 
    //  Returns the number of items in the array.
@@ -202,10 +204,10 @@ public:
 private:
    //  See the comment in Singleton.h about fn_name's in a template header.
    //
-   inline static fn_name Array_ctor()     { return "Array.ctor"; }
-   inline static fn_name Array_dtor()     { return "Array.dtor"; }
-   inline static fn_name Array_Init()     { return "Array.Init"; }
-   inline static fn_name Array_Reserve()  { return "Array.Reserve"; }
+   inline static fn_name Array_ctor()    { return "Array.ctor"; }
+   inline static fn_name Array_dtor()    { return "Array.dtor"; }
+   inline static fn_name Array_Init()    { return "Array.Init"; }
+   inline static fn_name Array_Reserve() { return "Array.Reserve"; }
 
    //  The maximum size allowed for the array.
    //

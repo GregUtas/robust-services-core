@@ -1804,7 +1804,7 @@ void FuncData::EnterBlock()
 
 fn_name FuncData_ExitBlock = "FuncData.ExitBlock";
 
-void FuncData::ExitBlock()
+void FuncData::ExitBlock() const
 {
    Debug::ft(FuncData_ExitBlock);
 

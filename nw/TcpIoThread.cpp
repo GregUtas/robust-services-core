@@ -589,7 +589,7 @@ word TcpIoThread::PollSockets()
    //
    EnterBlockingOperation(BlockedOnNetwork, TcpIoThread_Enter);
    {
-      ready = SysTcpSocket::Poll(sockets, size, Duration(ONE_SEC << 1));
+      ready = SysTcpSocket::Poll(sockets, size, ONE_SEC << 1);
    }
    ExitBlockingOperation(TcpIoThread_Enter);
 

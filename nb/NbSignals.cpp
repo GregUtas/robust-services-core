@@ -86,7 +86,7 @@ private:
 //------------------------------------------------------------------------------
 
 SigWrite::SigWrite() : PosixSignal(SIGWRITE, "SIGWRITE",
-   "Write to Protected Memory", 12, PS_Native()) { }
+   "Write to Protected Memory", 0, NoFlags) { }
 
 SigClose::SigClose() : PosixSignal(SIGCLOSE, "SIGCLOSE",
    "Non-Error Shutdown", 12,

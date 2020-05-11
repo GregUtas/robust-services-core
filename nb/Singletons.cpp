@@ -36,8 +36,8 @@ namespace NodeBase
 {
 struct SingletonTuple
 {
-   const Base** addr;    // pointer to a singleton's Instance_ pointer
-   MemoryType type;      // the type of memory that the singleton uses
+   const Base** addr;  // pointer to a singleton's Instance_ pointer
+   MemoryType type;    // the type of memory that the singleton uses
 
    SingletonTuple(const Base** a, MemoryType t) : addr(a), type(t) { }
 };

@@ -172,7 +172,7 @@ void Catch::EnterBlock()
 
 fn_name Catch_ExitBlock = "Catch.ExitBlock";
 
-void Catch::ExitBlock()
+void Catch::ExitBlock() const
 {
    Debug::ft(Catch_ExitBlock);
 
@@ -603,7 +603,7 @@ void For::EnterBlock()
 
 fn_name For_ExitBlock = "For.ExitBlock";
 
-void For::ExitBlock()
+void For::ExitBlock() const
 {
    Debug::ft(For_ExitBlock);
 
@@ -890,7 +890,7 @@ void Label::EnterBlock()
 
 fn_name Label_ExitBlock = "Label.ExitBlock";
 
-void Label::ExitBlock()
+void Label::ExitBlock() const
 {
    Debug::ft(Label_ExitBlock);
 
@@ -1154,7 +1154,7 @@ void Try::EnterBlock()
 
 fn_name Try_ExitBlock = "Try.ExitBlock";
 
-void Try::ExitBlock()
+void Try::ExitBlock() const
 {
    Debug::ft(Try_ExitBlock);
 

@@ -213,7 +213,10 @@ bool ThreadTrace::Display(ostream& stream, const string& opts)
    switch(rid_)
    {
    case PauseEnter:
-      stream << " (msecs=" << info_ << ')';
+      if(info_ == -1)
+         stream << " (forever)";
+      else
+         stream << " (msecs=" << Duration(info_, TICKS).To(mSECS) << ')';
       break;
    case PauseExit:
       stream << " (";
@@ -863,6 +866,8 @@ ThreadState Threads::GetState()
 
 bool Threads::IsDeleted() const
 {
+   if(threads_.empty()) return false;
+
    auto pid = SysThread::RunningThreadId();
 
    MutexGuard guard(&ThreadsLock_);

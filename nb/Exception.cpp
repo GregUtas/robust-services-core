@@ -43,10 +43,10 @@ Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
    Thread::ResetDebugFlags();
    Debug::ft(Exception_ctor1);  //@
 
-   //  Exception handling and stack walking are slow, so give the thread
-   //  another 200 msecs.
+   //  Capturing a stack trace takes time, so give the thread an extra
+   //  20 msecs.
    //
-   Thread::ExtendTime(Duration(200, mSECS));
+   Thread::ExtendTime(Duration(20, mSECS));
 
    //  When capturing the stack, exclude this constructor and those of
    //  our subclasses.

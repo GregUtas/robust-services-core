@@ -52,7 +52,7 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  Base class for threads.  All threads should subclass from this, as it
+//  Base class for threads.  All threads should derive from this, as it
 //  provides functions that support RSC's programming model.
 //
 class Thread : public Permanent
@@ -72,16 +72,6 @@ public:
    //
    static const ThreadId MaxId;
 
-   //  Returns the thread that is currently running.  Throws an exception
-   //  if ASSERT is set and the running thread cannot be found.
-   //
-   static Thread* RunningThread(bool assert = true);
-
-   //  Returns how long the running thread has run as a percentage (0 to 100)
-   //  of the run-to-completion timeout.  Returns 0 for a preemptable thread.
-   //
-   static word RtcPercentUsed();
-
    //  Schedules the current thread out for TIME.  If TIME is TIMEOUT_IMMED,
    //  the thread is scheduled out but can run again immediately, though other
    //  threads may get to run first.  If TIME is TIMEOUT_NEVER, the thread
@@ -90,23 +80,36 @@ public:
    //
    static DelayRc Pause(Duration time = TIMEOUT_IMMED);
 
+   //  Returns how long the running thread has run as a percentage (0 to 100)
+   //  of the run-to-completion timeout.  Returns 0 for a preemptable thread.
+   //
+   static word RtcPercentUsed();
+
    //  Invokes Pause(TIMEOUT_IMMED) if RtcPercentUsed() returns LIMIT or more.
    //
    static void PauseOver(word limit);
 
-   //  How long the thread has run since it was scheduled in.
+   //  Must be called immediately before using a blocking operation.  WHY is
+   //  the reason for blocking.  FUNC identifies the function that wants to
+   //  call the blocking operation.  Returns false if the operation must not
+   //  be performed.
    //
-   Duration CurrTimeRunning() const;
+   static bool EnterBlockingOperation(BlockingReason why, fn_name_arg func);
 
-   //  Returns true if the thread has been scheduled to run.
+   //  Must be called immediately after a blocking operation completes.
+   //  FUNC identifies the function that has resumed execution.
    //
-   bool IsScheduled() const;
+   static void ExitBlockingOperation(fn_name_arg func);
+
+   //  Returns the reason, if any, that the thread is blocked.
+   //
+   BlockingReason GetBlockingReason() const;
 
    //  Awakens a thread if it has paused.  If it has not paused, it will be
    //  immediately reawakened if it pauses.  If it is blocked for some other
    //  reason, it remains blocked.  MASK can be used to set flags that the
    //  thread can access with Vector() when it resumes execution.  How these
-   //  flags are interpreted is thread specific.
+   //  flags are interpreted is thread-specific.
    //
    bool Interrupt(const Flags& mask = NoFlags);
 
@@ -126,21 +129,10 @@ public:
    //
    static void ResetFlags();
 
-   //  Must be called immediately before using a blocking operation.  WHY is
-   //  the reason for blocking.  FUNC identifies the function that wants to
-   //  call the blocking operation.  Returns false if the operation must not
-   //  be performed.
+   //  Returns the thread that is currently running.  Throws an exception
+   //  if ASSERT is set and the running thread cannot be found.
    //
-   static bool EnterBlockingOperation(BlockingReason why, fn_name_arg func);
-
-   //  Must be called immediately after a blocking operation completes.
-   //  FUNC identifies the function that has resumed execution.
-   //
-   static void ExitBlockingOperation(fn_name_arg func);
-
-   //  Returns the reason, if any, that the thread is blocked.
-   //
-   BlockingReason GetBlockingReason() const;
+   static Thread* RunningThread(bool assert = true);
 
    //  Returns the thread's identifier within ThreadRegistry.
    //
@@ -194,16 +186,6 @@ public:
    //
    void Raise(signal_t sig);
 
-   //  Displays statistics.  May be overridden to include thread-specific
-   //  statistics, but the base class version must be invoked.
-   //
-   virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
-
-   //  Returns the percentage of idle time during the most recent
-   //  short interval.
-   //
-   static double PercentIdle();
-
    //  Invoked by SignalHandler (and, on Windows, SE_Handler) to handle SIG.
    //  CODE is for debugging.  Returns false if the running thread is unknown
    //  and SIG is not a break signal (that is, does not have PosixSignal::Break
@@ -217,9 +199,27 @@ public:
    //
    static void ResetDebugFlags();
 
+   //  Returns true if the thread has been scheduled to run.
+   //
+   bool IsScheduled() const;
+
+   //  How long the thread has run since it was scheduled in.
+   //
+   Duration CurrTimeRunning() const;
+
+   //  Returns the percentage of idle time during the most recent statistics
+   //  short interval.
+   //
+   static double PercentIdle();
+
    //  Returns a string containing the thread's class name and identifiers.
    //
    std::string to_str() const;
+
+   //  Displays statistics.  May be overridden to include thread-specific
+   //  statistics, but the base class version must be invoked.
+   //
+   virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 
    //  Returns the offset to tid_.
    //
@@ -256,16 +256,10 @@ protected:
 
    //  Invoked as the last thing done in a leaf class constructor.  When
    //  a Thread is created, its native thread may actually start to run
-   //  before the Thread has been fully constructed, so the thread will
-   //  is held up until it has invoked this function.
+   //  before the Thread has been fully constructed, so the thread is held
+   //  up until it has invoked this function.
    //
    void SetInitialized();
-
-   //  Returns the amount of time that the thread receives when it begins
-   //  to run unpreemptably.  The default should only be overridden for
-   //  compelling reasons.
-   //
-   virtual Duration InitialTime() const;
 
    //  Queues MSG for processing by the thread.  May be overridden, but the
    //  base class version must be invoked.  Protected so that a subclass can
@@ -278,6 +272,16 @@ protected:
    //  version must be invoked.  Protected to restrict usage to subclasses.
    //
    virtual MsgBuffer* DeqMsg(const Duration& timeout);
+
+   //  Returns the amount of time that the thread receives when it begins
+   //  to run unpreemptably.  The default should only be overridden for
+   //  compelling reasons.
+   //
+   virtual Duration InitialTime() const;
+
+   //  Starts the next short interval for thread statistics.
+   //
+   static void StartShortInterval();
 
    //  Dereferences a bad pointer during testing.
    //
@@ -292,67 +296,18 @@ protected:
    //  overridden, but this version must be invoked.
    //
    void Cleanup() override;
-
-   //  Starts the next short interval for thread statistics.
-   //
-   static void StartShortInterval();
 private:
-   //  Causes the current thread to run unpreemptably (run to completion).
-   //  When a thread is entered, it is made unpreemptable before its Enter
-   //  function is invoked.  Must be invoked via FunctionGuard.
-   //
-   static void MakeUnpreemptable();
-
-   //  Causes the current thread to run preemptably.  Must be invoked
-   //  via FunctionGuard.
-   //
-   static void MakePreemptable();
-
-   //  Write-enables MemProtected.  Must be invoked via FunctionGuard.
-   //
-   static void MemUnprotect();
-
-   //  Write-disables MemProtected.  Must be invoked via FunctionGuard.
-   //
-   static void MemProtect();
-
-   //  Write-enables MemImmutable.  Must be invoked via FunctionGuard.
-   //
-   static void ImmUnprotect();
-
-   //  Write-disables MemImmutable.  Must be invoked via FunctionGuard.
-   //
-   static void ImmProtect();
-
-   //  What to do after handling a signal or exception.
-   //
-   enum TrapAction
-   {
-      Continue,  // check if the thread should be recovered
-      Release,   // return by invoking Exit
-      Return     // return immediately
-   };
-
    //  Returns an abbreviated version of the thread's name, which must be
    //  at most 7 characters long.
    //
    virtual c_string AbbrName() const = 0;
 
-   //  The common entry function for all threads.  ARG is a pointer to
-   //  the Thread object.
-   //
-   static main_t EnterThread(void* arg);
-
-   //  Contains most of the entry code that is common to all threads.
-   //  Implements the safety net that can recover from all exceptions.
-   //
-   main_t Start();
-
    //  The entry point to the thread.  If the thread needs an argument,
    //  it must be provided using a data member defined by the thread's
-   //  subclass.  Before this function is invoked, every thread is made
-   //  unpreemptable (see MakeUnpreemptable).  If this function returns,
-   //  the thread is deleted and exits with a code of 0.
+   //  subclass and set by its constructor.  Before this function is
+   //  invoked, every thread is made unpreemptable (see MakeUnpreemptable).
+   //  If this function returns, the thread is deleted and exits with a
+   //  code of 0.
    //
    virtual void Enter() = 0;
 
@@ -381,6 +336,13 @@ private:
    //
    virtual void Unblock();
 
+   //  Invoked at the outset of a restart so that the thread can decide whether
+   //  to exit or sleep until the restart is over.  The default version returns
+   //  true.  Because it is desirable to delete and recreate all threads during
+   //  a restart, this should only be overridden for compelling reasons.
+   //
+   virtual bool ExitOnRestart(RestartLevel level) const;
+
    //  Invoked when a thread is reentered after a signal or exception.
    //  This allows the thread to clean up work in progress and
    //  o return false to simply exit the thread and delete it, after
@@ -394,17 +356,47 @@ private:
    //
    virtual bool Recover();
 
-   //  Invoked at the outset of a restart so that the thread can decide whether
-   //  to exit or sleep until the restart is over.  The default version returns
-   //  true.  Because it is desirable to delete and recreate all threads during
-   //  a restart, this should only be overridden for compelling reasons.
-   //
-   virtual bool ExitOnRestart(RestartLevel level) const;
-
    //  Invoked to destroy a thread.  The default version simply invokes
    //  delete but may be overridden to properly delete a Singleton.
    //
    virtual void Destroy();
+
+   //  Causes the current thread to run unpreemptably (run to completion).
+   //  When a thread is entered, it is made unpreemptable before its Enter
+   //  function is invoked.  Must be invoked via FunctionGuard.
+   //
+   static void MakeUnpreemptable();
+
+   //  Causes the current thread to run preemptably.  Must be invoked
+   //  via FunctionGuard.
+   //
+   static void MakePreemptable();
+
+   //  Write-enables MemProtected.  Must be invoked via FunctionGuard.
+   //
+   static void MemUnprotect();
+
+   //  Write-disables MemProtected.  Must be invoked via FunctionGuard.
+   //
+   static void MemProtect();
+
+   //  Write-enables MemImmutable.  Must be invoked via FunctionGuard.
+   //
+   static void ImmUnprotect();
+
+   //  Write-disables MemImmutable.  Must be invoked via FunctionGuard.
+   //
+   static void ImmProtect();
+
+   //  The common entry function for all threads.  ARG is a pointer to
+   //  the Thread object.
+   //
+   static main_t EnterThread(void* arg);
+
+   //  Contains most of the entry code that is common to all threads.
+   //  Implements the safety net that can recover from all exceptions.
+   //
+   main_t Start();
 
    //  Returns a flag in the thread's interrupt vector.  See also TestFlag.
    //
@@ -532,6 +524,15 @@ private:
    //
    static void RegisterForSignals();
 
+   //  What to do after handling a signal or exception.
+   //
+   enum TrapAction
+   {
+      Continue,  // check if the thread should be recovered
+      Release,   // return by invoking Exit
+      Return     // return immediately
+   };
+
    //  Handles a trap (signal or exception).  EX is nullptr if the exception
    //  is not a subclass of Exception.  E is nullptr if the exception is not
    //  derived from exception.  SIG is SIGNIL unless EX is a SignalException.
@@ -552,6 +553,20 @@ private:
    //
    bool Restarting(RestartLevel level);
 
+   //  Returns the amount of time still available to the locked thread.
+   //  Returns ZERO_SECS if the thread has used up all of its time.
+   //
+   Duration TimeLeft() const;
+
+   //  Gives the running thread more TIME to run unpreemptably.
+   //
+   static void ExtendTime(const Duration& time);
+
+   //  Invoked when a thread did not yield before the run-to-completion
+   //  timer expired.
+   //
+   void RtcTimeout();
+
    //  Coordinates activities associated with invoking FUNC, namely
    //  o capturing FUNC in a trace tool
    //  o throwing an exception when the running thread is to be trapped
@@ -565,18 +580,13 @@ private:
    //
    static bool TraceRunningThread(Thread*& thr);
 
-   //  Returns the amount of time still available to the locked thread.
+   //  Records the thread event associated with RID if the running thread (THR)
+   //  is being traced.  If THR is nullptr, the running thread will be found.
+   //  FUNC is the function in which the event occurred, and INFO (optional)
+   //  provides debugging information.
    //
-   Duration TimeLeft() const;
-
-   //  Gives the running thread more TIME to run unpreemptably.
-   //
-   static void ExtendTime(const Duration& time);
-
-   //  Invoked when a thread did not yield before the run-to-completion
-   //  timer expired.
-   //
-   void RtcTimeout();
+   static void Trace(Thread* thr, fn_name_arg func,
+      TraceRecordId rid, int32_t info = 0);
 
    //  Invoked to set or clear trap_.
    //
@@ -589,14 +599,6 @@ private:
    //  Invoked to check stack usage.
    //
    void StackCheck();
-
-   //  Records the thread event associated with RID if the running thread (THR)
-   //  is being traced.  If THR is nullptr, the running thread will be found.
-   //  FUNC is the function in which the event occurred, and INFO (optional)
-   //  provides debugging information.
-   //
-   static void Trace(Thread* thr, fn_name_arg func,
-      TraceRecordId rid, int32_t info = 0);
 
    //  Sets the signal to be raised or that is being handled.
    //
@@ -666,12 +668,9 @@ private:
    //
    bool initialized_;
 
-   //  Set if the thread has been deleted.  This must be defined in
-   //  the main Thread object, which resides in an ObjectPool block
-   //  and can therefore be referenced for a while after the thread
-   //  has been deleted.
+   //  Set if the thread is in the process of being deleted.
    //
-   bool deleted_;
+   bool deleting_;
 
    //  The thread's message queue.
    //

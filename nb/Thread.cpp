@@ -927,7 +927,7 @@ enum SchedulingAction
 //  data here reduces the number of #includes in the header and sometimes allows
 //  new capabilities to be added without significant recompilation.  Member data
 //  is declared in the header
-//  o to survive deletion of this object (see comment about deleted_)
+//  o to survive deletion of this object
 //  o for performance (to allow inlining or avoid an extra dereference)
 //
 class ThreadPriv : public Permanent
@@ -1257,7 +1257,7 @@ Thread::Thread(Faction faction, Daemon* daemon) :
    daemon_(daemon),
    faction_(faction),
    initialized_(false),
-   deleted_(false)
+   deleting_(false)
 {
    Debug::ft(Thread_ctor);
 
@@ -1369,7 +1369,7 @@ Thread* Thread::ActiveThread()
 
    auto thr = ActiveThread_.load();
    if(thr == nullptr) return nullptr;
-   if(thr->deleted_) return nullptr;
+   if(thr->deleting_) return nullptr;
    return thr;
 }
 
@@ -1400,7 +1400,7 @@ TraceStatus Thread::CalcStatus(bool dynamic) const
 
 bool Thread::CanBeScheduled() const
 {
-   return (!deleted_ && (priv_->blocked_ == NotBlocked) &&
+   return (!deleting_ && (priv_->blocked_ == NotBlocked) &&
       FactionsEnabled_.test(faction_));
 }
 
@@ -1558,15 +1558,15 @@ void Thread::Display(ostream& stream,
    Permanent::Display(stream, prefix, options);
 
    auto lead = prefix + spaces(2);
-   stream << prefix << "systhrd : " << systhrd_.get() << CRLF;
+   stream << prefix << "systhrd  : " << systhrd_.get() << CRLF;
    if(systhrd_ != nullptr) systhrd_->Display(stream, lead, options);
-   stream << prefix << "daemon  : " << strObj(daemon_) << CRLF;
-   stream << prefix << "tid     : " << tid_.to_str() << CRLF;
-   stream << prefix << "faction : " << int(faction_) << CRLF;
-   stream << prefix << "deleted : " << deleted_ << CRLF;
-   stream << prefix << "msgq    : " << CRLF;
+   stream << prefix << "daemon   : " << strObj(daemon_) << CRLF;
+   stream << prefix << "tid      : " << tid_.to_str() << CRLF;
+   stream << prefix << "faction  : " << int(faction_) << CRLF;
+   stream << prefix << "deleting : " << deleting_ << CRLF;
+   stream << prefix << "msgq     : " << CRLF;
    msgq_.Display(stream, lead, options);
-   stream << prefix << "priv    : " << CRLF;
+   stream << prefix << "priv     : " << CRLF;
    priv_->Display(stream, lead, options);
 }
 
@@ -2203,7 +2203,7 @@ bool Thread::Interrupt(const Flags& mask)
 {
    Debug::ft(Thread_Interrupt);
 
-   if(deleted_) return false;
+   if(deleting_) return false;
 
    //  Update the thread's vector.  This always occurs because
    //  o A thread is only interrupted if it is sleeping (or running), not
@@ -2269,7 +2269,7 @@ bool Thread::IsTraceable() const
 //------------------------------------------------------------------------------
 
 fixed_string KillRootThread = "The root thread cannot be killed.";
-fixed_string KillDeletedThread = "A deleted thread cannot be killed.";
+fixed_string KillDeletingThread = "The thread is already being deleted.";
 
 fn_name Thread_Kill = "Thread.Kill";
 
@@ -2278,7 +2278,7 @@ fixed_string Thread::Kill()
    Debug::ft(Thread_Kill);
 
    if(Singleton< RootThread >::Instance() == this) return KillRootThread;
-   if(deleted_) return KillDeletedThread;
+   if(deleting_) return KillDeletingThread;
 
    //  If the thread is holding or blocked on a mutex, delete it outright.
    //  Otherwise, sending it the signal SIGPURGE will cause it to exit as
@@ -2550,7 +2550,6 @@ SysThreadId Thread::NativeThreadId() const
 {
    Debug::noft();
 
-   if(deleted_) return NIL_ID;
    if(systhrd_ != nullptr) return systhrd_->Nid();
    return NIL_ID;
 }
@@ -2847,11 +2846,11 @@ void Thread::ReleaseResources(bool orphaned)
 {
    Debug::ft(Thread_ReleaseResources);
 
-   //  Setting deleted_ prevents most functions from accessing the thread
-   //  while it is being deleted.
+   //  Setting deleting_ prevents any attempt to come through here twice and
+   //  prevents the thread from being accessed remotely while being deleted.
    //
-   if(deleted_) return;
-   deleted_ = true;
+   if(deleting_) return;
+   deleting_ = true;
 
    //  This can no longer be the active thread.
    //
@@ -3025,7 +3024,7 @@ Thread* Thread::RunningThread(bool assert)
       if(reg != nullptr) thr = reg->FindThread(nid);
    }
 
-   if((thr != nullptr) && !thr->deleted_) return thr;
+   if(thr != nullptr) return thr;
 
    //  The thread could not be found.  This can occur for various reasons:
    //  o The system has just started to run, and not even RootThread has
@@ -3684,7 +3683,9 @@ Duration Thread::TimeLeft() const
    //  been recalculated.
    //
    if(!priv_->currEnd_.IsValid()) return InitialTime();
-   return priv_->currEnd_ - TimePoint::Now();
+   auto time = priv_->currEnd_ - TimePoint::Now();
+   if(time.Ticks() <= 0) return ZERO_SECS;
+   return time;
 }
 
 //------------------------------------------------------------------------------

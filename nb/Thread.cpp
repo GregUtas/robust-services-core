@@ -3809,8 +3809,9 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       //  with a trap during trap recovery:
       //  o On the second trap, log it and force the thread to exit.
       //  o On the third trap, force the thread to exit.
-      //  o On the fourth trap, exit without even deleting the thread
-      //    and let the object pool audit recover the Thread object.
+      //  o On the fourth trap, exit without even deleting the thread.
+      //    This will leak its memory, which is better than what seems
+      //    to be an infinite loop.
       //
       auto retrapped = false;
       if(Restart::GetStage() == Running) stats_->traps_->Incr();

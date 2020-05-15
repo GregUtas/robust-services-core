@@ -22,83 +22,19 @@
 #ifndef SYSSIGNALS_H_INCLUDED
 #define SYSSIGNALS_H_INCLUDED
 
-#include "PosixSignal.h"
-#include "NbTypes.h"
-
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-class SysSignals
+namespace SysSignals
 {
-public:
-   //  Deleted because this class only has static members.
+   //  Creates standard signals (in <cstdint>) during system initialization.
    //
-   SysSignals() = delete;
+   void CreateStandardSignals();
 
    //  Creates native signals during system initialization.
    //
-   static void CreateNativeSignals();
-private:
-   //  Standard signals.  CreateNativeSignals instantiates a singleton for each
-   //  one that this platform supports.  Other signals also exist, but their use
-   //  in a server is either dubious or unlikely to be required.
-   //
-   class SigAbort : public PosixSignal
-   {
-      friend class Singleton< SigAbort >;
-   private:
-      SigAbort();
-   };
-
-   class SigBreak : public PosixSignal
-   {
-      friend class Singleton< SigBreak >;
-   private:
-      SigBreak();
-   };
-
-   class SigBus : public PosixSignal
-   {
-      friend class Singleton< SigBus >;
-   private:
-      SigBus();
-   };
-
-   class SigFpe : public PosixSignal
-   {
-      friend class Singleton< SigFpe >;
-   private:
-      SigFpe();
-   };
-
-   class SigIll : public PosixSignal
-   {
-      friend class Singleton< SigIll >;
-   private:
-      SigIll();
-   };
-
-   class SigInt : public PosixSignal
-   {
-      friend class Singleton< SigInt >;
-   private:
-      SigInt();
-   };
-
-   class SigSegv : public PosixSignal
-   {
-      friend class Singleton< SigSegv >;
-   private:
-      SigSegv();
-   };
-
-   class SigTerm : public PosixSignal
-   {
-      friend class Singleton< SigTerm >;
-   private:
-      SigTerm();
-   };
-};
+   void CreateNativeSignals();
+}
 }
 #endif

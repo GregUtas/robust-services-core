@@ -238,7 +238,7 @@ void Context::CaptureTask(const Message& msg, const InvokerThread* inv)
       if(buff->ToolIsOn(TransTracer))
       {
          auto rec = trans_ = new TransTrace(*this, msg, inv);
-         buff->Insert(rec);
+         if(!buff->Insert(rec)) trans_ = nullptr;
       }
 
       if(buff->ToolIsOn(ContextTracer))

@@ -48,13 +48,15 @@ public:
    //
    explicit SysIpL2Addr(const std::string& text);
 
-   //  Copy constructor.
+   //  Copy/move constructors.
    //
-   SysIpL2Addr(const SysIpL2Addr& that);
+   SysIpL2Addr(const SysIpL2Addr& that) = default;
+   SysIpL2Addr(SysIpL2Addr&& that) = default;
 
-   //  Copy operator.
+   //  Copy/move operators.
    //
-   SysIpL2Addr& operator=(const SysIpL2Addr& that);
+   SysIpL2Addr& operator=(const SysIpL2Addr& that) = default;
+   SysIpL2Addr& operator=(SysIpL2Addr&& that) = default;
 
    //  Virtual to allow subclassing.
    //

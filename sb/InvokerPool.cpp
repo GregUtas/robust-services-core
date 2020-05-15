@@ -796,7 +796,7 @@ TransTrace* InvokerPool::TraceRxNet(Message& msg, const Factory& fac)
       if(buff->ToolIsOn(TransTracer))
       {
          auto rec = trans = new TransTrace(msg, fac);
-         buff->Insert(rec);
+         if(!buff->Insert(rec)) trans = nullptr;
       }
 
       if(buff->ToolIsOn(BufferTracer))

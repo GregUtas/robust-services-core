@@ -45,13 +45,15 @@ struct LocalAddress
    //
    LocalAddress();
 
-   //  Copy constructor.
+   //  Copy/move constructors.
    //
    LocalAddress(const LocalAddress& that) = default;
+   LocalAddress(LocalAddress&& that) = default;
 
-   //  Copy operator.
+   //  Copy/move operators.
    //
    LocalAddress& operator=(const LocalAddress& that) = default;
+   LocalAddress& operator=(LocalAddress&& that) = default;
 
    //  Returns true if both addresses match.  FIDs only have to match if BID
    //  is NIL_ID.

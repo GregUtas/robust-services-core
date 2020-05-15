@@ -52,12 +52,6 @@ Daemon::Daemon(fixed_string name, size_t size) :
 {
    Debug::ft(Daemon_ctor);
 
-   if(name == nullptr)
-   {
-      Debug::SwLog(Daemon_ctor, "null name", 0);
-      return;
-   }
-
    Singleton< DaemonRegistry >::Instance()->BindDaemon(*this);
    EnsureAlarm();
 }

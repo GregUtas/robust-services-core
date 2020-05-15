@@ -285,7 +285,8 @@ bool Argument::WasWritten(const StackArg* arg, bool passed)
       if(item != nullptr) item->nonconst_ = true;
    }
 
-   if(!passed && (name_ != THIS_STR) && !arg->UsedIndirectly())
+   if(!passed && (name_ != THIS_STR) &&
+      (arg != nullptr) && !arg->UsedIndirectly())
    {
       modified_ = true;
       if(item != nullptr) item->modified_ = true;

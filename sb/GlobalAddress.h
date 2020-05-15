@@ -60,13 +60,15 @@ public:
    //
    ~GlobalAddress();
 
-   //  Copy constructor.
+   //  Copy/move constructors.
    //
-   GlobalAddress(const GlobalAddress& that);
+   GlobalAddress(const GlobalAddress& that) = default;
+   GlobalAddress(GlobalAddress&& that) = default;
 
-   //  Copy operator.
+   //  Copy/move operators.
    //
    GlobalAddress& operator=(const GlobalAddress& that) = default;
+   GlobalAddress& operator=(GlobalAddress&& that) = default;
 
    //  Returns the local address.
    //

@@ -120,11 +120,7 @@ void UdpIoThread::Enter()
 
    //  Exit if an IP port is not assigned to this thread.
    //
-   if(ipPort_ == nullptr)
-   {
-      RaiseAlarm(0);
-      return;
-   }
+   if(ipPort_ == nullptr) return;
 
    //  If a UDP socket is already assigned to our port, reuse it: this
    //  occurs when being reentered after a trap.  If no socket exists,

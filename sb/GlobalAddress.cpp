@@ -80,16 +80,6 @@ GlobalAddress::GlobalAddress
 
 //------------------------------------------------------------------------------
 
-fn_name GlobalAddress_ctor5 = "GlobalAddress.ctor(copy)";
-
-GlobalAddress::GlobalAddress(const GlobalAddress& that) : SysIpL3Addr(that),
-   sbAddr_(that.sbAddr_)
-{
-   Debug::ft(GlobalAddress_ctor5);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name GlobalAddress_dtor = "GlobalAddress.dtor";
 
 GlobalAddress::~GlobalAddress()

@@ -349,6 +349,8 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
       }
       while((item != last) && (item->file_ == f));
    }
+
+   checkFiles->Release();
 }
 
 //------------------------------------------------------------------------------
@@ -999,6 +1001,7 @@ bool CodeWarning::Suppress() const
    {
       if(*item_->Name() == "operator++") return true;
       if(*item_->Name() == "operator--") return true;
+      break;
    }
 
    case FunctionCouldBeStatic:

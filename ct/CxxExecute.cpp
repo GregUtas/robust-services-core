@@ -1740,7 +1740,7 @@ void StackArg::SetAsAutoType() const
       if(AutoType_.item != nullptr) return;
    }
 
-   auto expl = "Auto type not set for " + Trace();
+   auto expl = "Auto type not set: item is null";
    Context::SwLog(StackArg_SetAsAutoType, expl, 0);
 }
 

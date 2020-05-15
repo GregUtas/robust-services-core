@@ -128,6 +128,15 @@ bool IncludesAreSorted(const string& line1, const string& line2)
 
 //------------------------------------------------------------------------------
 //
+//  Return true if INDEX can index an array of SIZE.  Note that INDEX is signed.
+//
+bool IsValidIndex(word index, size_t size)
+{
+   return (index >= 0 ? index < size : false);
+}
+
+//------------------------------------------------------------------------------
+//
 //  Sets EXPL to "TEXT not found."  If QUOTES is set, TEXT is enclosed in
 //  quotes.  Returns 0.
 //
@@ -337,11 +346,12 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    //  Find the argument names used in the definition and the declaration.
    //
    auto& defnArgs = defn->GetArgs();
-   if(log.offset_ >= defnArgs.size()) return NotFound(expl, "Argument");
+   if(!IsValidIndex(log.offset_, defnArgs.size()))
+      return NotFound(expl, "Argument");
    auto defnName = defnArgs.at(log.offset_)->Name();
 
    auto& declArgs = decl->GetArgs();
-   if(log.offset_ >= declArgs.size())
+   if(!IsValidIndex(log.offset_, declArgs.size()))
       return NotFound(expl, "Argument declaration");
    auto declName = declArgs.at(log.offset_)->Name();
 
@@ -4030,7 +4040,7 @@ word Editor::TagAsConstArgument(const CodeWarning& log, string& expl)
    auto& args = func->GetArgs();
    auto index = log.offset_;
    if(func->IsStatic() || (func->GetClass() == nullptr)) --index;
-   if(index >= args.size()) return NotFound(expl, "Argument");
+   if(!IsValidIndex(index, args.size())) return NotFound(expl, "Argument");
    auto arg = args.at(index).get();
    if(arg == nullptr) return NotFound(expl, "Argument");
    auto type = FindPos(arg->GetTypeSpec()->GetPos());

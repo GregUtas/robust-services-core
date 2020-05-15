@@ -871,8 +871,9 @@ void ProxyBcSsm::Relay(BcPsm& target) const
    }
 
    if(&target == NPsm()) msg->SetPriority(PROGRESS);
+   if(msg->Relay(target)) return;
 
-   msg->Relay(target);
+   Context::Kill("failed to relay message", 0);
 }
 
 //------------------------------------------------------------------------------

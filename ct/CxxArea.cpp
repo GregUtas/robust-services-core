@@ -1226,8 +1226,6 @@ Function* Class::FindFuncByRole(FunctionRole role, bool base) const
 
    switch(role)
    {
-   case FuncOther:
-      return nullptr;
    case CopyOper:
    case MoveOper:
       funcs = Opers();

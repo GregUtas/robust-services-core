@@ -291,11 +291,6 @@ protected:
    //  version must be invoked.
    //
    void ClaimBlocks() override;
-
-   //  Overridden to release resources during error recovery.  May be
-   //  overridden, but this version must be invoked.
-   //
-   void Cleanup() override;
 private:
    //  Returns an abbreviated version of the thread's name, which must be
    //  at most 7 characters long.
@@ -663,10 +658,6 @@ private:
    //  The thread's scheduler faction.
    //
    Faction faction_;
-
-   //  Set when the thread has initialized.
-   //
-   bool initialized_;
 
    //  Set if the thread is in the process of being deleted.
    //

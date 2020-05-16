@@ -94,7 +94,7 @@ typedef std::pair< string, Typedef* > TypePair;
 //
 //  Displays REFS (references to a single item) in STREAM.
 //
-const int LAST_XREF_START_COLUMN = 122;
+const word LAST_XREF_START_COLUMN = 122;
 
 void DisplayReferences(ostream& stream, const CxxNamedVector& refs)
 {
@@ -102,7 +102,7 @@ void DisplayReferences(ostream& stream, const CxxNamedVector& refs)
 
    CodeFile* refFile = nullptr;
    auto endline = false;
-   auto room = LAST_XREF_START_COLUMN;
+   word room = LAST_XREF_START_COLUMN;
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {

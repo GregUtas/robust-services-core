@@ -2763,14 +2763,15 @@ void Function::CheckCtor() const
    }
 
    //  The compiler default is for a copy or move constructor to invoke the
-   //  base class *constructor*, not its copy or move constructor.  This may
-   //  not be the desired behavior unless the base copy or move constructor
-   //  is deleted.
+   //  base class *constructor*, not its copy or move constructor.  This is
+   //  alright if this class has a default copy or move constructor that can
+   //  simply make a bitwise copy.  Otherwise, it may not be the desired
+   //  behavior unless the base copy or move constructor is deleted.
    //
    auto role = FuncRole();
    if((role == CopyCtor) || (role == MoveCtor))
    {
-      if(defn->call_ == nullptr)
+      if((defn->call_ == nullptr) && !IsDefaulted())
       {
          auto base = GetClass()->BaseClass();
          if(base != nullptr)
@@ -2820,7 +2821,7 @@ void Function::CheckCtor() const
    {
       if(item->initOrder == 0)
       {
-         if((item->initNeeded) && (!IsDefaulted() || FuncRole() != CopyCtor))
+         if((item->initNeeded) && (!IsDefaulted() || FuncRole() == PureCtor))
          {
             //  Log both the missing member and the suspicious constructor.
             //  This helps to pinpoint where the concern lies.

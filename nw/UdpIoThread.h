@@ -57,10 +57,6 @@ protected:
    //  Overridden to release resources in order to unblock.
    //
    void Unblock() override;
-
-   //  Overridden to release resources during error recovery.
-   //
-   void Cleanup() override;
 private:
    //  Overridden to return a name for the thread.
    //

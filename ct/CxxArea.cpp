@@ -1226,8 +1226,6 @@ Function* Class::FindFuncByRole(FunctionRole role, bool base) const
 
    switch(role)
    {
-   case FuncOther:
-      return nullptr;
    case CopyOper:
    case MoveOper:
       funcs = Opers();
@@ -2948,7 +2946,7 @@ void Namespace::Check() const
    if(name.empty()) name = SCOPE_STR;
    name.insert(0, "namespace ");
    name.push_back(CRLF);
-   Debug::Progress(name, true);
+   Debug::Progress(name);
 
    CxxArea::Check();
 

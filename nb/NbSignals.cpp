@@ -116,8 +116,10 @@ void CreatePosixSignals()
 {
    Debug::ft(NodeBase_CreatePosixSignals);
 
-   //  Create this platform's native signals and then our proprietary signals.
+   //  Create <cstdint> signals, this platform's native signals, and then
+   //  our proprietary signals.
    //
+   SysSignals::CreateStandardSignals();
    SysSignals::CreateNativeSignals();
 
    Singleton< SigWrite >::Instance();

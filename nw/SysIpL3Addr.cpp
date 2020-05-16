@@ -76,18 +76,6 @@ SysIpL3Addr::SysIpL3Addr(const SysIpL2Addr& l2Addr, ipport_t port,
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL3Addr_ctor4 = "SysIpL3Addr.ctor(copy)";
-
-SysIpL3Addr::SysIpL3Addr(const SysIpL3Addr& that) : SysIpL2Addr(that),
-   port_(that.port_),
-   proto_(that.proto_),
-   socket_(that.socket_)
-{
-   Debug::ft(SysIpL3Addr_ctor4);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name SysIpL3Addr_dtor = "SysIpL3Addr.dtor";
 
 SysIpL3Addr::~SysIpL3Addr()
@@ -105,21 +93,6 @@ void SysIpL3Addr::Display(ostream& stream,
    stream << prefix << "port   : " << port_ << CRLF;
    stream << prefix << "proto  : " << proto_ << CRLF;
    stream << prefix << "socket : " << socket_ << CRLF;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysIpL3Addr_opAssign = "SysIpL3Addr.operator=(copy)";
-
-SysIpL3Addr& SysIpL3Addr::operator=(const SysIpL3Addr& that)
-{
-   Debug::ft(SysIpL3Addr_opAssign);
-
-   if(&that == this) return *this;
-   SysIpL2Addr::operator=(that);
-   this->port_ = that.port_;
-   this->socket_ = that.socket_;
-   return *this;
 }
 
 //------------------------------------------------------------------------------

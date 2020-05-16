@@ -221,6 +221,7 @@ void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
    if(NumberOfHeaps == 0)
    {
       expl << "Failed to get list of heaps: err=" << GetLastError() << CRLF;
+      HeapFree(DefaultProcessHeap, 0, aHeaps);
       return;
    }
 
@@ -231,6 +232,7 @@ void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
       //  has created a new heap and the buffer is now too small.
       //
       expl << "The number of heaps changed: try again." << CRLF;
+      HeapFree(DefaultProcessHeap, 0, aHeaps);
       return;
    }
    else
@@ -243,10 +245,7 @@ void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
 
    //  Release the memory allocated from the default process heap.
    //
-   if(!HeapFree(DefaultProcessHeap, 0, aHeaps))
-   {
-      expl << "Failed to free memory allocated from default heap." << CRLF;
-   }
+   HeapFree(DefaultProcessHeap, 0, aHeaps);
 }
 
 //------------------------------------------------------------------------------

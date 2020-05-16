@@ -21,6 +21,9 @@
 //
 #ifdef OS_WIN
 #include "SysSignals.h"
+#include "PosixSignal.h"
+#include <bitset>
+#include <csignal>
 #include "Debug.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -29,19 +32,25 @@
 
 namespace NodeBase
 {
+class SigBreak : public PosixSignal
+{
+   friend class Singleton< SigBreak >;
+private:
+   SigBreak();
+};
+
+SigBreak::SigBreak() : PosixSignal(SIGBREAK, "SIGBREAK",
+   "Ctrl-Break", 8, PS_Native() | PS_Break()) { }
+
+//------------------------------------------------------------------------------
+
 fn_name SysSignals_CreateNativeSignals = "SysSignals.CreateNativeSignals";
 
 void SysSignals::CreateNativeSignals()
 {
    Debug::ft(SysSignals_CreateNativeSignals);
 
-   Singleton< SigAbort >::Instance();
    Singleton< SigBreak >::Instance();
-   Singleton< SigFpe >::Instance();
-   Singleton< SigIll >::Instance();
-   Singleton< SigInt >::Instance();
-   Singleton< SigSegv >::Instance();
-   Singleton< SigTerm >::Instance();
 }
 }
 #endif

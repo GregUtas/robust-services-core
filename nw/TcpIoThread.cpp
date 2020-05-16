@@ -238,18 +238,6 @@ void TcpIoThread::ClaimBlocks()
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_Cleanup = "TcpIoThread.Cleanup";
-
-void TcpIoThread::Cleanup()
-{
-   Debug::ft(TcpIoThread_Cleanup);
-
-   ReleaseResources();
-   Thread::Cleanup();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name TcpIoThread_ClearAlarm = "TcpIoThread.ClearAlarm";
 
 void TcpIoThread::ClearAlarm() const

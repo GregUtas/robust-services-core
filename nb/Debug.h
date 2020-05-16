@@ -101,10 +101,9 @@ public:
    //
    static void Assert(bool condition, debug64_t errval = 0);
 
-   //  If FORCE or the ShowToolProgress is set, invokes CoutThread::Spool(s)
-   //  followed by Thread::Pause(10).
+   //  Writes S to the console and pauses for 10 milliseconds.
    //
-   static void Progress(const std::string& s, bool force = false);
+   static void Progress(const std::string& s);
 
    //  Does nothing.  Useful for defining a breakpoint or tracepoint.
    //

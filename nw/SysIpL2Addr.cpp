@@ -33,20 +33,11 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name SysIpL2Addr_ctor1 = "SysIpL2Addr.ctor(IPv4addr)";
+fn_name SysIpL2Addr_ctor = "SysIpL2Addr.ctor(IPv4addr)";
 
 SysIpL2Addr::SysIpL2Addr(ipv4addr_t v4Addr) : v4Addr_(v4Addr)
 {
-   Debug::ft(SysIpL2Addr_ctor1);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysIpL2Addr_ctor2 = "SysIpL2Addr.ctor(copy)";
-
-SysIpL2Addr::SysIpL2Addr(const SysIpL2Addr& that) : v4Addr_(that.v4Addr_)
-{
-   Debug::ft(SysIpL2Addr_ctor2);
+   Debug::ft(SysIpL2Addr_ctor);
 }
 
 //------------------------------------------------------------------------------
@@ -66,18 +57,6 @@ void SysIpL2Addr::Display(ostream& stream,
    Object::Display(stream, prefix, options);
 
    stream << prefix << "v4Addr : " << to_str() << CRLF;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysIpL2Addr_opAssign = "SysIpL2Addr.operator=(copy)";
-
-SysIpL2Addr& SysIpL2Addr::operator=(const SysIpL2Addr& that)
-{
-   Debug::ft(SysIpL2Addr_opAssign);
-
-   if(&that != this) this->v4Addr_ = that.v4Addr_;
-   return *this;
 }
 
 //------------------------------------------------------------------------------

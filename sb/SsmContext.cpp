@@ -199,22 +199,19 @@ void SsmContext::ProcessIcMsg(Message& msg)
          currEvent->SetOwner(*root_);
       }
 
-      if(root_ != nullptr)
+      //  Keep processing events while the root SSM wishes to continue.
+      //
+      Event* nextEvent = nullptr;
+      auto rc = EventHandler::Continue;
+
+      while(rc == EventHandler::Continue)
       {
-         //  Keep processing events while the root SSM wishes to continue.
-         //
-         Event* nextEvent = nullptr;
-         auto rc = EventHandler::Continue;
+         rc = root_->ProcessEvent(currEvent, nextEvent);
 
-         while(rc == EventHandler::Continue)
+         if(rc == EventHandler::Continue)
          {
-            rc = root_->ProcessEvent(currEvent, nextEvent);
-
-            if(rc == EventHandler::Continue)
-            {
-               currEvent = nextEvent;
-               nextEvent = nullptr;
-            }
+            currEvent = nextEvent;
+            nextEvent = nullptr;
          }
       }
    }

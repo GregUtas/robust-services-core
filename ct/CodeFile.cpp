@@ -639,7 +639,7 @@ void CodeFile::Check()
       return;
    }
 
-   Debug::Progress(Name() + CRLF, true);
+   Debug::Progress(Name() + CRLF);
    Trim(nullptr);
    CheckProlog();
    CheckIncludeGuard();
@@ -788,6 +788,7 @@ void CodeFile::CheckFunctionOrder() const
          case FuncOperator:
          case FuncStandard:
             prev = (*f)->Name();
+            //  [[fallthrough]]
          case FuncDtor:
             state = FuncStandard;
          }
@@ -1293,7 +1294,7 @@ LineType CodeFile::ClassifyLine
       auto begin1 = s.find_first_not_of(SPACE, type.size());
       if(begin1 == string::npos) break;
       auto under = s.find('_', begin1);
-      if(begin1 == string::npos) break;
+      if(under == string::npos) break;
       auto equals = s.find('=', under);
       if(equals == string::npos) break;
 
@@ -1752,7 +1753,7 @@ word CodeFile::Format(string& expl) const
 {
    Debug::ft(CodeFile_Format);
 
-   Debug::Progress(Name() + CRLF, true);
+   Debug::Progress(Name() + CRLF);
 
    auto rc = CreateEditor(expl);
    if(rc != 0) return rc;
@@ -2334,7 +2335,7 @@ void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
 fn_name CodeFile_LogLine = "CodeFile.LogLine";
 
 void CodeFile::LogLine(size_t line, Warning warning,
-   size_t offset, const string& info, bool hide) const
+   word offset, const string& info, bool hide) const
 {
    Debug::ft(CodeFile_LogLine);
 
@@ -2347,7 +2348,7 @@ void CodeFile::LogLine(size_t line, Warning warning,
 fn_name CodeFile_LogPos = "CodeFile.LogPos";
 
 void CodeFile::LogPos(size_t pos, Warning warning,
-   const CxxNamed* item, size_t offset, const string& info, bool hide) const
+   const CxxNamed* item, word offset, const string& info, bool hide) const
 {
    Debug::ft(CodeFile_LogPos);
 

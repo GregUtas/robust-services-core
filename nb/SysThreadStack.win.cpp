@@ -234,7 +234,7 @@ void SysThreadStack::Display(ostream& stream, fn_depth omit)
             {
                name = file;
                auto pos = name.rfind(BACKSLASH);
-               if(pos >= 0) name = name.erase(0, pos + 1);
+               if(pos != string::npos) name = name.erase(0, pos + 1);
                stream << name << " + " << line << '[' << disp << ']';
             }
             else

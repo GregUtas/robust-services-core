@@ -20,57 +20,102 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysSignals.h"
+#include "PosixSignal.h"
 #include <bitset>
 #include <csignal>
+#include "Debug.h"
+#include "Singleton.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-SysSignals::SigAbort::SigAbort() : PosixSignal(SIGABRT, "SIGABRT",
-   "Abort Request", 0, PS_Native()) { }
+class SigAbort : public PosixSignal
+{
+   friend class Singleton< SigAbort >;
+private:
+   SigAbort();
+};
+
+class SigFpe : public PosixSignal
+{
+   friend class Singleton< SigFpe >;
+private:
+   SigFpe();
+};
+
+class SigIll : public PosixSignal
+{
+   friend class Singleton< SigIll >;
+private:
+   SigIll();
+};
+
+class SigInt : public PosixSignal
+{
+   friend class Singleton< SigInt >;
+private:
+   SigInt();
+};
+
+class SigSegv : public PosixSignal
+{
+   friend class Singleton< SigSegv >;
+private:
+   SigSegv();
+};
+
+class SigTerm : public PosixSignal
+{
+   friend class Singleton< SigTerm >;
+private:
+   SigTerm();
+};
 
 //------------------------------------------------------------------------------
 
-#ifndef SIGBREAK
-const signal_t SIGBREAK = 21;
-#endif
-
-SysSignals::SigBreak::SigBreak() : PosixSignal(SIGBREAK, "SIGBREAK",
-   "Ctrl-Break", 8, PS_Native() | PS_Break()) { }
+SigAbort::SigAbort() : PosixSignal(SIGABRT, "SIGABRT",
+"Abort Request", 0, PS_Native()) { }
 
 //------------------------------------------------------------------------------
 
-#ifndef SIGBUS
-const signal_t SIGBUS = 10;
-#endif
-
-SysSignals::SigBus::SigBus() : PosixSignal(SIGBUS, "SIGBUS",
-   "Invalid Memory Reference", 0, PS_Native()) { }
-
-//------------------------------------------------------------------------------
-
-SysSignals::SigFpe::SigFpe() : PosixSignal(SIGFPE, "SIGFPE",
+SigFpe::SigFpe() : PosixSignal(SIGFPE, "SIGFPE",
    "Erroneous Arithmetic Operation", 0, PS_Native()) { }
 
 //------------------------------------------------------------------------------
 
-SysSignals::SigIll::SigIll() : PosixSignal(SIGILL, "SIGILL",
+SigIll::SigIll() : PosixSignal(SIGILL, "SIGILL",
    "Illegal Instruction", 0, PS_Native()) { }
 
 //------------------------------------------------------------------------------
 
-SysSignals::SigInt::SigInt() : PosixSignal(SIGINT, "SIGINT",
+SigInt::SigInt() : PosixSignal(SIGINT, "SIGINT",
    "Terminal Interrupt", 8, PS_Native() | PS_Break()) { }
 
 //------------------------------------------------------------------------------
 
-SysSignals::SigSegv::SigSegv() : PosixSignal(SIGSEGV, "SIGSEGV",
+SigSegv::SigSegv() : PosixSignal(SIGSEGV, "SIGSEGV",
    "Invalid Memory Reference", 0, PS_Native()) { }
 
 //------------------------------------------------------------------------------
 
-SysSignals::SigTerm::SigTerm() : PosixSignal(SIGTERM, "SIGTERM",
+SigTerm::SigTerm() : PosixSignal(SIGTERM, "SIGTERM",
    "Termination Request", 0, PS_Native()) { }
+
+//------------------------------------------------------------------------------
+
+fn_name SysSignals_CreateStandardSignals = "SysSignals.CreateStandardSignals";
+
+void SysSignals::CreateStandardSignals()
+{
+   Debug::ft(SysSignals_CreateStandardSignals);
+
+   Singleton< SigAbort >::Instance();
+   Singleton< SigFpe >::Instance();
+   Singleton< SigIll >::Instance();
+   Singleton< SigInt >::Instance();
+   Singleton< SigSegv >::Instance();
+   Singleton< SigTerm >::Instance();
+}
 }

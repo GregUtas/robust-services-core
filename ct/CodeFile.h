@@ -265,7 +265,7 @@ public:
    //  WARNING.
    //
    void LogPos(size_t pos, Warning warning,
-      const CxxNamed* item = nullptr, size_t offset = 0,
+      const CxxNamed* item = nullptr, NodeBase::word offset = 0,
       const std::string& info = std::string(NodeBase::EMPTY_STR),
       bool hide = false) const;
 
@@ -372,7 +372,7 @@ private:
    //  Logs WARNING, which occurred on LINE.  OFFSET and INFO are specific
    //  to WARNING.
    //
-   void LogLine(size_t line, Warning warning, size_t offset = 0,
+   void LogLine(size_t line, Warning warning, NodeBase::word offset = 0,
       const std::string& info = std::string(NodeBase::EMPTY_STR),
       bool hide = false) const;
 

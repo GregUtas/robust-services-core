@@ -631,7 +631,7 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
       (opts.find(OriginalFileView) != string::npos) ||
       (opts.find(ClassHierarchyView) != string::npos))
    {
-      Debug::Progress(string("Exporting parsed code...") + CRLF, true);
+      Debug::Progress(string("Exporting parsed code...") + CRLF);
       auto stream = cli.FileStream();
       if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
       Singleton< Library >::Instance()->Export(*stream, opts);
@@ -641,7 +641,7 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
 
    if(opts.find(FileSymbolUsage) != string::npos)
    {
-      Debug::Progress(string("Exporting file symbol usage...") + CRLF, true);
+      Debug::Progress(string("Exporting file symbol usage...") + CRLF);
       auto stream = cli.FileStream();
       if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
       auto filename = title + ".trim.txt";
@@ -651,7 +651,7 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
 
    if(opts.find(GlobalCrossReference) != string::npos)
    {
-      Debug::Progress(string("Exporting cross-reference...") + CRLF, true);
+      Debug::Progress(string("Exporting cross-reference...") + CRLF);
       auto stream = cli.FileStream();
       if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
       auto filename = title + ".xref.txt";

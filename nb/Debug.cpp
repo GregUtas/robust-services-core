@@ -134,15 +134,12 @@ void Debug::noop()
 
 fn_name Debug_Progress = "Debug.Progress";
 
-void Debug::Progress(const string& s, bool force)
+void Debug::Progress(const string& s)
 {
    Debug::ft(Debug_Progress);
 
-   if(force || SwFlagOn(ShowToolProgress))
-   {
-      CoutThread::Spool(s.c_str());
-      ThisThread::Pause(Duration(10, mSECS));
-   }
+   CoutThread::Spool(s.c_str());
+   ThisThread::Pause(Duration(10, mSECS));
 }
 
 //------------------------------------------------------------------------------
@@ -170,7 +167,7 @@ void Debug::SetSwFlag(FlagId fid, bool value)
 
       //  To be reenabled, RootThread has to be signalled.
       //
-      if((fid == DisableRootThreadFlag) && !value)
+      if((fid == DisableRootThread) && !value)
       {
          Singleton< RootThread >::Instance()->systhrd_->Proceed();
       }

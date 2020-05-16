@@ -33,7 +33,7 @@ namespace NodeBase
 {
 //  How an item is currently selected by a trace tool.
 //
-enum TraceStatus
+enum TraceStatus : uint8_t
 {
    TraceDefault,   // item has neither been included nor excluded
    TraceExcluded,  // item has been excluded

@@ -235,10 +235,6 @@ private:
    //
    void AllocResources();
 
-   //  Releases resources when deleting or recreating the thread.
-   //
-   void ReleaseResources();
-
    //  Overridden to return a name for the thread.
    //
    c_string AbbrName() const override;
@@ -251,10 +247,6 @@ private:
    //  Overridden to delete the singleton.
    //
    void Destroy() override;
-
-   //  Overridden to release resources during error recovery.
-   //
-   void Cleanup() override;
 
    //  The default prompt for user input.
    //

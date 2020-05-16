@@ -177,18 +177,6 @@ char CliThread::CharPrompt
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Cleanup = "CliThread.Cleanup";
-
-void CliThread::Cleanup()
-{
-   Debug::ft(CliThread_Cleanup);
-
-   ReleaseResources();
-   Thread::Cleanup();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CliThread_Destroy = "CliThread.Destroy";
 
 void CliThread::Destroy()
@@ -745,36 +733,6 @@ void CliThread::ReadCommands()
          }
       }
    }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CliThread_ReleaseResources = "CliThread.ReleaseResources";
-
-void CliThread::ReleaseResources()
-{
-   Debug::ft(CliThread_ReleaseResources);
-
-   for(auto i = 0; i <= CliAppData::MaxId; ++i)
-   {
-      appData_[i].reset();
-   }
-
-   for(auto i = inIndex_; i > 0; --i)
-   {
-      in_[i].reset();
-   }
-
-   for(auto i = outIndex_; i > 0; --i)
-   {
-      outName_[i].reset();
-   }
-
-   stream_.reset();
-   prompt_.reset();
-   stack_.reset();
-   obuf.reset();
-   ibuf.reset();
 }
 
 //------------------------------------------------------------------------------

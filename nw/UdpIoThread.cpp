@@ -80,18 +80,6 @@ c_string UdpIoThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoThread_Cleanup = "UdpIoThread.Cleanup";
-
-void UdpIoThread::Cleanup()
-{
-   Debug::ft(UdpIoThread_Cleanup);
-
-   ReleaseResources();
-   Thread::Cleanup();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name UdpIoThread_ClearAlarm = "UdpIoThread.ClearAlarm";
 
 void UdpIoThread::ClearAlarm() const

@@ -2946,7 +2946,7 @@ void Namespace::Check() const
    if(name.empty()) name = SCOPE_STR;
    name.insert(0, "namespace ");
    name.push_back(CRLF);
-   Debug::Progress(name, true);
+   Debug::Progress(name);
 
    CxxArea::Check();
 

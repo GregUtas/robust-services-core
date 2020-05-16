@@ -639,7 +639,7 @@ void CodeFile::Check()
       return;
    }
 
-   Debug::Progress(Name() + CRLF, true);
+   Debug::Progress(Name() + CRLF);
    Trim(nullptr);
    CheckProlog();
    CheckIncludeGuard();
@@ -1753,7 +1753,7 @@ word CodeFile::Format(string& expl) const
 {
    Debug::ft(CodeFile_Format);
 
-   Debug::Progress(Name() + CRLF, true);
+   Debug::Progress(Name() + CRLF);
 
    auto rc = CreateEditor(expl);
    if(rc != 0) return rc;

@@ -125,7 +125,7 @@ void RootThread::Enter()
          //  The following suspends RootThread during breakpoint debugging,
          //  where it would otherwise appear with annoying regularity.
          //
-         if(InitFlags::SuspendRoot() || Debug::SwFlagOn(DisableRootThreadFlag))
+         if(InitFlags::SuspendRoot() || Debug::SwFlagOn(DisableRootThread))
          {
             systhrd_->Wait();
          }
@@ -190,7 +190,7 @@ void RootThread::Enter()
          //  The following suspends RootThread during breakpoint debugging,
          //  where it would otherwise apper with annoying regularity.
          //
-         if(Debug::SwFlagOn(DisableRootThreadFlag))
+         if(Debug::SwFlagOn(DisableRootThread))
          {
             systhrd_->Wait();
          }

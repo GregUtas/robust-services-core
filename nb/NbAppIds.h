@@ -54,8 +54,7 @@ enum ObjectPoolIds
 //  Reserved software debugging flags.  Ad hoc usage should begin with the
 //  last FlagId defined here.
 //
-constexpr FlagId ShowToolProgress = 0;
-constexpr FlagId DisableRootThreadFlag = 1;
+constexpr FlagId DisableRootThread = 1;
 constexpr FlagId ThreadReenterFlag = 2;
 constexpr FlagId ThreadRecoverTrapFlag = 3;
 constexpr FlagId ThreadCtorTrapFlag = 4;

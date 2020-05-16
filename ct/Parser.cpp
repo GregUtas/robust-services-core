@@ -4317,7 +4317,7 @@ bool Parser::Parse(CodeFile& file)
    //  the console.
    //
    if(file.ParseStatus() != CodeFile::Unparsed) return true;
-   Debug::Progress(file.Name(), true);
+   Debug::Progress(file.Name());
 
    //  Create a parse trace file if requested.
    //
@@ -4353,7 +4353,7 @@ bool Parser::Parse(CodeFile& file)
    auto parsed = lexer_.Eof();
    Context::SetFile(nullptr);
    file.SetParsed(parsed);
-   Debug::Progress((parsed ? CRLF_STR : string(" **FAILED** ") + CRLF), true);
+   Debug::Progress((parsed ? CRLF_STR : string(" **FAILED** ") + CRLF));
    if(!parsed) Failure(venue_);
 
    //  On success, delete the parse file if it is not supposed to be retained.
@@ -4372,7 +4372,7 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
    Debug::ft(Parser_ParseClassInst);
 
    auto name = inst->ScopedName(true);
-   Debug::Progress(CRLF + Indent() + name, true);
+   Debug::Progress(CRLF + Indent() + name);
 
    //  Initialize the parser.  If an "object code" file is being produced,
    //  insert the instance name.
@@ -4403,7 +4403,7 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
    //  is being produced, indicate that parsing of the template is complete.
    //
    auto parsed = lexer_.Eof();
-   Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "), true);
+   Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "));
    if(!parsed) Failure(venue_);
    Context::Trace(CxxTrace::END_TEMPLATE);
    return parsed;
@@ -4418,7 +4418,7 @@ bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
 {
    Debug::ft(Parser_ParseFuncInst);
 
-   Debug::Progress(CRLF + Indent() + name, true);
+   Debug::Progress(CRLF + Indent() + name);
 
    //  Initialize the parser.  If an "object code" file is being produced,
    //  insert the instance name.
@@ -4451,7 +4451,7 @@ bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
    //  is being produced, indicate that parsing of the template is complete.
    //
    parsed = lexer_.Eof();
-   Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "), true);
+   Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "));
    if(!parsed) Failure(venue_);
    Context::Trace(CxxTrace::END_TEMPLATE);
    return parsed;

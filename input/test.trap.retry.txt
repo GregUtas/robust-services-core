@@ -1,10 +1,7 @@
 / Make the recovery test thread critical.
 read test.trap.setup
-swflags set &flag.disablerootthread on
 read debug
 
 / Edit the following to rerun trap testcases that failed.
-testcase begin recover.Return
-read trap.01
-testcase begin recover.DaemonRetrap
-read trap.26
+testcase begin recover.ThreadDtorTrap
+read trap.27

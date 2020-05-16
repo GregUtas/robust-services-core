@@ -64,6 +64,7 @@ constexpr FlagId CipAlwaysOverIpFlag = 7;
 constexpr FlagId CallTrapFlag = 8;
 constexpr FlagId CipIamTimeoutFlag = 9;
 constexpr FlagId CipAlertingTimeoutFlag = 10;
-constexpr FlagId FirstAppDebugFlag = 11;
+constexpr FlagId ThreadDtorTrapFlag = 11;
+constexpr FlagId FirstAppDebugFlag = 12;
 }
 #endif

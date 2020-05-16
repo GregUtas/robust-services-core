@@ -3881,25 +3881,27 @@ class RecoveryThread : public Thread
 {
    friend class Singleton< RecoveryThread >;
 public:
-   typedef id_t Test;
-
-   static const Test Sleep = 0;
-   static const Test Abort = 1;
-   static const Test Create = 2;
-   static const Test CtorTrap = 3;
-   static const Test Delete = 4;
-   static const Test DerefenceBadPtr = 5;
-   static const Test DivideByZero = 6;
-   static const Test InfiniteLoop = 7;
-   static const Test MutexBlock = 8;
-   static const Test MutexExit = 9;
-   static const Test MutexTrap = 10;
-   static const Test OverflowStack = 11;
-   static const Test RaiseSignal = 12;
-   static const Test Return = 13;
-   static const Test Swerr = 14;
-   static const Test Terminate = 15;
-   static const Test Trap = 16;
+   enum Test
+   {
+      Sleep,
+      Abort,
+      Create,
+      CtorTrap,
+      DtorTrap,
+      Delete,
+      DerefenceBadPtr,
+      DivideByZero,
+      InfiniteLoop,
+      MutexBlock,
+      MutexExit,
+      MutexTrap,
+      OverflowStack,
+      RaiseSignal,
+      Return,
+      Swerr,
+      Terminate,
+      Trap
+   };
 
    void SetTest(Test test) { test_ = test; }
    void SetTestSignal(signal_t signal) {signal_ = signal; }
@@ -3998,6 +4000,12 @@ fn_name RecoveryThread_dtor = "RecoveryThread.dtor";
 RecoveryThread::~RecoveryThread()
 {
    Debug::ft(RecoveryThread_dtor);
+
+   if(Debug::SwFlagOn(ThreadDtorTrapFlag))
+   {
+      Debug::SetSwFlag(ThreadDtorTrapFlag, false);
+      UseBadPointer();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -4154,6 +4162,9 @@ void RecoveryThread::Enter()
       case DivideByZero:
          DoDivide();
          break;
+      case DtorTrap:
+         Debug::SetSwFlag(ThreadDtorTrapFlag, true);
+         return;
       case InfiniteLoop:
          LoopForever();
          break;
@@ -4287,6 +4298,11 @@ class DivideText : public CliText
 public: DivideText();
 };
 
+class DtorTrapText : public CliText
+{
+public: DtorTrapText();
+};
+
 class LoopText : public CliText
 {
 public: LoopText();
@@ -4408,6 +4424,13 @@ DivideText::DivideText() : CliText(DivideTextExpl, DivideTextStr) { }
 
 //------------------------------------------------------------------------------
 
+fixed_string DtorTrapTextStr = "dtortrap";
+fixed_string DtorTrapTextExpl = "trap in recovery thread destructor";
+
+DtorTrapText::DtorTrapText() : CliText(DtorTrapTextExpl, DtorTrapTextStr) { }
+
+//------------------------------------------------------------------------------
+
 fixed_string LoopTextStr = "loop";
 fixed_string LoopTextExpl = "enter an infinite loop";
 
@@ -4518,6 +4541,7 @@ RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
    BindText(*new TrapText, RecoveryThread::Trap);
    BindText(*new StackText, RecoveryThread::OverflowStack);
    BindText(*new DeleteText, RecoveryThread::Delete);
+   BindText(*new DtorTrapText, RecoveryThread::DtorTrap);
 }
 
 //------------------------------------------------------------------------------
@@ -4562,6 +4586,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
    if(!GetTextIndex(index, cli)) return -1;
 
    auto thr = EnsureThread(index);
+   auto test = RecoveryThread::Test(index);
    auto reg = Singleton< PosixSignalRegistry >::Instance();
 
    switch(index)
@@ -4571,6 +4596,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
 
    case RecoveryThread::Abort:
    case RecoveryThread::CtorTrap:
+   case RecoveryThread::DtorTrap:
    case RecoveryThread::DerefenceBadPtr:
    case RecoveryThread::DivideByZero:
    case RecoveryThread::InfiniteLoop:
@@ -4582,7 +4608,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
    case RecoveryThread::Swerr:
    case RecoveryThread::Terminate:
       cli.EndOfInput(false);
-      thr->SetTest(index);
+      thr->SetTest(test);
       thr->Interrupt();
       break;
 
@@ -4591,7 +4617,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       cli.EndOfInput(false);
       if(flag)
       {
-         thr->SetTest(index);
+         thr->SetTest(test);
          thr->Interrupt();
       }
       else
@@ -4605,7 +4631,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       cli.EndOfInput(false);
       signal = reg->Value(signame);
       if(signal == SIGNIL) return cli.Report(-3, UnknownSignalExpl);
-      thr->SetTest(index);
+      thr->SetTest(test);
       thr->SetTestSignal(signal);
       thr->Interrupt();
       break;
@@ -4618,7 +4644,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       if(ps == nullptr) return cli.Report(-3, UnknownSignalExpl);
       if(flag)
       {
-         thr->SetTest(index);
+         thr->SetTest(test);
          thr->SetTestSignal(ps->Value());
          thr->Interrupt();
       }

@@ -1,8 +1,10 @@
-/ Suppress scheduling timeout.  Exclude audit and
-/ background threads, as well as the timer thread,
+/ Suppress scheduling timeout.  Disable the root thread,
+/ which constantly shows up at breakpoints.  Exclude audit
+/ and background threads, as well as the timer thread,
 / from traces.
 /
 cfgparms set breakenabled t
+swflags set &flag.disablerootthread on
 exclude faction &faction.audit
 exclude faction &faction.bkgd
 sb exclude timers

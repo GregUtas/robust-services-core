@@ -83,12 +83,12 @@ void NtModule::Startup(RestartLevel level)
    auto reg = Singleton< SymbolRegistry >::Instance();
    if(!Restart::ClearsMemory(reg->MemType())) return;
 
-   reg->BindSymbol("flag.showtoolprogress", ShowToolProgress);
-   reg->BindSymbol("flag.disablerootthread", DisableRootThreadFlag);
+   reg->BindSymbol("flag.disablerootthread", DisableRootThread);
    reg->BindSymbol("flag.reenterthread", ThreadReenterFlag);
    reg->BindSymbol("flag.recovertrap", ThreadRecoverTrapFlag);
    reg->BindSymbol("flag.threadctortrap", ThreadCtorTrapFlag);
    reg->BindSymbol("flag.threadctorretrap", ThreadCtorRetrapFlag);
    reg->BindSymbol("flag.threadretrap", ThreadRetrapFlag);
+   reg->BindSymbol("flag.threaddtortrap", ThreadDtorTrapFlag);
 }
 }

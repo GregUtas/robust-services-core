@@ -1,6 +1,12 @@
+/ This only leaves LoadTestFaction, to which RecoveryThread belongs,
+/ traced. Including SystemFaction (InitThread) would show Daemon work
+/ but would also make the traces much longer, because InitThread runs
+/ well before, and after, RecoveryThread.
+/
 exclude faction &faction.audit
 exclude faction &faction.bkgd
 exclude faction &faction.oper
 exclude faction &faction.mtce
 exclude faction &faction.payload
-include faction &faction.system
+exclude faction &faction.system
+exclude faction &faction.watchdog

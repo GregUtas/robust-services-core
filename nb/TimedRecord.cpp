@@ -70,6 +70,8 @@ TimedRecord::TimedRecord(FlagId owner) :
 
 bool TimedRecord::Display(ostream& stream, const string& opts)
 {
+   if(!time_.IsValid()) return false;
+
    auto reg = Singleton< ThreadRegistry >::Instance();
    auto tid = reg->FindThreadId(nid_);
    auto thr = reg->FindThread(nid_);

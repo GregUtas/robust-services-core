@@ -25,60 +25,30 @@
 #include <windows.h>
 #include "Debug.h"
 
-using std::string;
-
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-fn_name SysTickTimer_ctor = "SysTickTimer.ctor";
+SysTickTimer* SysTickTimer::Instance_ = nullptr;
 
-SysTickTimer::SysTickTimer() :
-   ticks_per_sec_(1000),
-   available_(false)
+//------------------------------------------------------------------------------
+
+fn_name SysTickTimer_dtor = "SysTickTimer.dtor";
+
+SysTickTimer::~SysTickTimer()
 {
-   Debug::ft(SysTickTimer_ctor);
+   Debug::ftnt(SysTickTimer_dtor);
 
-   LARGE_INTEGER frequency;
-
-   if(QueryPerformanceFrequency(&frequency))
-   {
-      available_ = true;
-      ticks_per_sec_ = frequency.QuadPart;
-   }
-
-   startPoint_ = Now();
-   startTime_ = SysTime();
-
-   startTimeStr_ = startTime_.to_str(SysTime::Numeric).c_str();
-   auto pos = startTimeStr_.find('.');
-   if(pos != string::npos) startTimeStr_[pos] = '-';
+   Debug::SwLog(SysTickTimer_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
 
-TimePoint SysTickTimer::Now() const
+SysTickTimer* SysTickTimer::Instance()
 {
-   if(available_)
-   {
-      LARGE_INTEGER now;
-      QueryPerformanceCounter(&now);
-      return TimePoint(now.QuadPart);
-   }
-   else
-   {
-      _timeb now;
-      _ftime_s(&now);
-      auto msecs = 1000LL * now.time;
-      return TimePoint(msecs + now.millitm);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void SysTickTimer::Patch(sel_t selector, void* arguments)
-{
-   Immutable::Patch(selector, arguments);
+   if(Instance_ != nullptr) return Instance_;
+   Instance_ = new SysTickTimer;
+   return Instance_;
 }
 }
 #endif

@@ -39,6 +39,14 @@ class SysTickTimer : public Immutable
 {
    friend class Singleton< SysTickTimer >;
 public:
+   //  Returns the timer after creating it if it doesn't yet exist.
+   //
+   static SysTickTimer* Instance();
+
+   //  Returns the timer.
+   //
+   static SysTickTimer* Extant() { return Instance_; }
+
    //  Returns the number of ticks in one second.
    //
    int64_t TicksPerSec() const { return ticks_per_sec_; }
@@ -94,6 +102,10 @@ private:
    //  startTime_ as a string (yymmdd-hhmmss).
    //
    ImmutableStr startTimeStr_;
+
+   //  The timer instance.
+   //
+   static SysTickTimer* Instance_;
 
    //  Set if this platform supports fine-grained tick timing.
    //

@@ -37,7 +37,8 @@ TimePoint::TimePoint() : ts_(0) { }
 
 TimePoint::TimePoint(const SysTime& time) : ts_(0)
 {
-   auto timer = Singleton< SysTickTimer >::Instance();
+   auto timer = SysTickTimer::Extant();
+   if(timer == nullptr) return;
    auto msecs1 = timer->StartTime().MsecsSinceT0();
    auto msecs2 = time.MsecsSinceT0();
    Duration diff(msecs2 - msecs1, mSECS);
@@ -60,7 +61,8 @@ TimePoint TimePoint::Never()
 
 TimePoint TimePoint::Now()
 {
-   auto timer = Singleton< SysTickTimer >::Instance();
+   auto timer = SysTickTimer::Extant();
+   if(timer == nullptr) return TimePoint(0);
    return TimePoint(timer->Now());
 }
 
@@ -136,7 +138,8 @@ TimePoint& TimePoint::operator-=(const Duration& rhs)
 
 TimePoint TimePoint::TimeZero()
 {
-   auto timer = Singleton< SysTickTimer >::Instance();
+   auto timer = SysTickTimer::Extant();
+   if(timer == nullptr) return TimePoint(0);
    return TimePoint(timer->StartPoint());
 }
 
@@ -144,16 +147,19 @@ TimePoint TimePoint::TimeZero()
 
 string TimePoint::TimeZeroStr()
 {
-   return Singleton< SysTickTimer >::Instance()->StartTimeStr();
+   auto timer = SysTickTimer::Extant();
+   if(timer == nullptr) return ERROR_STR;
+   return timer->StartTimeStr();
 }
 
 //------------------------------------------------------------------------------
 
 string TimePoint::to_str(TimeField field) const
 {
-   if(ts_ == 0) return ERROR_STR;
+   if(ts_ == 0) return "--:--.---";
 
-   auto timer = Singleton< SysTickTimer >::Instance();
+   auto timer = SysTickTimer::Extant();
+   if(timer == nullptr) return ERROR_STR;
    auto startTime = timer->StartTime();
    auto diff = (*this - timer->StartPoint());
 

@@ -64,6 +64,7 @@
 #include "StatisticsRegistry.h"
 #include "SysMutex.h"
 #include "SysThreadStack.h"
+#include "SysTickTimer.h"
 #include "ThreadAdmin.h"
 #include "ThreadRegistry.h"
 #include "TimePoint.h"
@@ -92,6 +93,11 @@ namespace NodeBase
 //  could occur if an item initialized in another file also causes Debug::ft
 //  to be invoked.
 //
+//  SysTickTimer provides the time at which a function was invoked, so it is
+//  created after FtLocks_.  FtLocks_ must be created first because functions
+//  invoked to create SysTickTimer invoke Debug::ft, which requires FtLocks_
+//  to have been constructed.
+//
 std::map< SysThreadId, std::atomic_flag > FtLocks_;
 
 //  Returns the Debug::ft lock for the running thread.
@@ -115,8 +121,10 @@ std::atomic_flag& AccessFtLock()
    return lock;
 }
 
-//------------------------------------------------------------------------------
+const SysTickTimer* TickTimer = SysTickTimer::Instance();
 
+//------------------------------------------------------------------------------
+//
 //  Records invocations of Pause.
 //
 class ThreadTrace : public FunctionTrace

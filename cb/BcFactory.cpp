@@ -40,7 +40,7 @@ fn_name BcFactory_dtor = "BcFactory.dtor";
 
 BcFactory::~BcFactory()
 {
-   Debug::ft(BcFactory_dtor);
+   Debug::ftnt(BcFactory_dtor);
 }
 
 //------------------------------------------------------------------------------

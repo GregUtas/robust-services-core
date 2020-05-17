@@ -113,7 +113,7 @@ fn_name CfgParmRegistry_dtor = "CfgParmRegistry.dtor";
 
 CfgParmRegistry::~CfgParmRegistry()
 {
-   Debug::ft(CfgParmRegistry_dtor);
+   Debug::ftnt(CfgParmRegistry_dtor);
 
    Debug::SwLog(CfgParmRegistry_dtor, UnexpectedInvocation, 0);
 }

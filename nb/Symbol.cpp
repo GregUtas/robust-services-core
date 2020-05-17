@@ -64,7 +64,7 @@ fn_name Symbol_dtor = "Symbol.dtor";
 
 Symbol::~Symbol()
 {
-   Debug::ft(Symbol_dtor);
+   Debug::ftnt(Symbol_dtor);
 
    Singleton< SymbolRegistry >::Instance()->RemoveSymbol(*this);
 }

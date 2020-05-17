@@ -47,7 +47,7 @@ fn_name AllocationException_dtor = "AllocationException.dtor";
 
 AllocationException::~AllocationException()
 {
-   Debug::ft(AllocationException_dtor);
+   Debug::ftnt(AllocationException_dtor);
 }
 
 //------------------------------------------------------------------------------

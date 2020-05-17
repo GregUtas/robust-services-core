@@ -53,7 +53,7 @@ fn_name StTestData_dtor = "StTestData.dtor";
 
 StTestData::~StTestData()
 {
-   Debug::ft(StTestData_dtor);
+   Debug::ftnt(StTestData_dtor);
 }
 
 //------------------------------------------------------------------------------

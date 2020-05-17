@@ -261,10 +261,10 @@ private:
    //
    typedef std::pair< fn_name_arg, size_t > FunctionCount;
 
-   //  Allocates space for recording 2^N trace records.  Throws an exception
-   //  if EX is set and allocation fails, else returns false.
+   //  Allocates space for recording 2^N trace records.  Returns false if
+   //  allocation fails.
    //
-   bool AllocBuffers(size_t n, bool ex);
+   bool AllocBuffers(size_t n);
 
    //  Allocates the next available slot for a TraceRecord subclass.  Returns
    //  SIZE_MAX if no more slots are available or the buffer is locked.

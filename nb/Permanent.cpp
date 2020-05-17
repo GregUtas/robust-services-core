@@ -40,7 +40,7 @@ fn_name Permanent_delete1 = "Permanent.operator delete";
 
 void Permanent::operator delete(void* addr)
 {
-   Debug::ft(Permanent_delete1);
+   Debug::ftnt(Permanent_delete1);
 
    Memory::Free(addr, MemPermanent);
 }
@@ -51,7 +51,7 @@ fn_name Permanent_delete2 = "Permanent.operator delete[]";
 
 void Permanent::operator delete[](void* addr)
 {
-   Debug::ft(Permanent_delete2);
+   Debug::ftnt(Permanent_delete2);
 
    Memory::Free(addr, MemPermanent);
 }
@@ -62,7 +62,7 @@ fn_name Permanent_delete3 = "Permanent.operator delete(place)";
 
 void Permanent::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ft(Permanent_delete3);
+   Debug::ftnt(Permanent_delete3);
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ fn_name Permanent_delete4 = "Permanent.operator delete[](place)";
 
 void Permanent::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ft(Permanent_delete4);
+   Debug::ftnt(Permanent_delete4);
 }
 
 //------------------------------------------------------------------------------

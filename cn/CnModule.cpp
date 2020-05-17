@@ -50,7 +50,7 @@ fn_name CnModule_dtor = "CnModule.dtor";
 
 CnModule::~CnModule()
 {
-   Debug::ft(CnModule_dtor);
+   Debug::ftnt(CnModule_dtor);
 }
 
 //------------------------------------------------------------------------------

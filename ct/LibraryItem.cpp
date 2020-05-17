@@ -45,7 +45,7 @@ fn_name LibraryItem_dtor = "LibraryItem.dtor";
 
 LibraryItem::~LibraryItem()
 {
-   Debug::ft(LibraryItem_dtor);
+   Debug::ftnt(LibraryItem_dtor);
 }
 
 //------------------------------------------------------------------------------

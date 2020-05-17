@@ -73,11 +73,11 @@ fn_name PotsProfile_dtor = "PotsProfile.dtor";
 
 PotsProfile::~PotsProfile()
 {
-   Debug::ft(PotsProfile_dtor);
+   Debug::ftnt(PotsProfile_dtor);
 
    //  Remove the profile from the registry.
    //
-   Singleton< PotsProfileRegistry >::Instance()->UnbindProfile(*this);
+   Singleton< PotsProfileRegistry >::Extant()->UnbindProfile(*this);
 }
 
 //------------------------------------------------------------------------------

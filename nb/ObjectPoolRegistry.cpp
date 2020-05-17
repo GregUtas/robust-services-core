@@ -85,7 +85,7 @@ fn_name ObjectPoolStatsGroup_dtor = "ObjectPoolStatsGroup.dtor";
 
 ObjectPoolStatsGroup::~ObjectPoolStatsGroup()
 {
-   Debug::ft(ObjectPoolStatsGroup_dtor);
+   Debug::ftnt(ObjectPoolStatsGroup_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ fn_name ObjectPoolRegistry_dtor = "ObjectPoolRegistry.dtor";
 
 ObjectPoolRegistry::~ObjectPoolRegistry()
 {
-   Debug::ft(ObjectPoolRegistry_dtor);
+   Debug::ftnt(ObjectPoolRegistry_dtor);
 
    Debug::SwLog(ObjectPoolRegistry_dtor, UnexpectedInvocation, 0);
 }

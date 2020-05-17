@@ -46,7 +46,7 @@ fn_name SsmFactory_dtor = "SsmFactory.dtor";
 
 SsmFactory::~SsmFactory()
 {
-   Debug::ft(SsmFactory_dtor);
+   Debug::ftnt(SsmFactory_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -72,7 +72,7 @@ fn_name PotsCfuFeature_dtor = "PotsCfuFeature.dtor";
 
 PotsCfuFeature::~PotsCfuFeature()
 {
-   Debug::ft(PotsCfuFeature_dtor);
+   Debug::ftnt(PotsCfuFeature_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ fn_name PotsCfuFeatureProfile_dtor = "PotsCfuFeatureProfile.dtor";
 
 PotsCfuFeatureProfile::~PotsCfuFeatureProfile()
 {
-   Debug::ft(PotsCfuFeatureProfile_dtor);
+   Debug::ftnt(PotsCfuFeatureProfile_dtor);
 }
 
 //------------------------------------------------------------------------------

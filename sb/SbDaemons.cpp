@@ -55,7 +55,7 @@ fn_name InvokerDaemon_dtor = "InvokerDaemon.dtor";
 
 InvokerDaemon::~InvokerDaemon()
 {
-   Debug::ft(InvokerDaemon_dtor);
+   Debug::ftnt(InvokerDaemon_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ fn_name TimerDaemon_dtor = "TimerDaemon.dtor";
 
 TimerDaemon::~TimerDaemon()
 {
-   Debug::ft(TimerDaemon_dtor);
+   Debug::ftnt(TimerDaemon_dtor);
 }
 
 //------------------------------------------------------------------------------

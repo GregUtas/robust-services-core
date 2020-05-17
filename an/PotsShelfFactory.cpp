@@ -77,7 +77,7 @@ fn_name PotsShelfFactory_dtor = "PotsShelfFactory.dtor";
 
 PotsShelfFactory::~PotsShelfFactory()
 {
-   Debug::ft(PotsShelfFactory_dtor);
+   Debug::ftnt(PotsShelfFactory_dtor);
 }
 
 //------------------------------------------------------------------------------

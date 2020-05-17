@@ -1170,7 +1170,7 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
    if(name == OPERATOR_STR)
    {
       if(GetOpOverride(oper)) return true;
-      Debug::SwLog(Lexer_GetName2, name, oper, SwInfo);
+      Debug::SwLog(Lexer_GetName2, name, oper, false);
    }
    else
    {

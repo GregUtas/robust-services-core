@@ -58,10 +58,10 @@ fn_name Protocol_dtor = "Protocol.dtor";
 
 Protocol::~Protocol()
 {
-   Debug::ft(Protocol_dtor);
+   Debug::ftnt(Protocol_dtor);
 
    Debug::SwLog(Protocol_dtor, UnexpectedInvocation, 0);
-   Singleton< ProtocolRegistry >::Instance()->UnbindProtocol(*this);
+   Singleton< ProtocolRegistry >::Extant()->UnbindProtocol(*this);
 }
 
 //------------------------------------------------------------------------------

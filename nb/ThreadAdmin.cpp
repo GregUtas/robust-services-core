@@ -134,7 +134,7 @@ fn_name ThreadsStats_dtor = "ThreadsStats.dtor";
 
 ThreadsStats::~ThreadsStats()
 {
-   Debug::ft(ThreadsStats_dtor);
+   Debug::ftnt(ThreadsStats_dtor);
 
    Debug::SwLog(ThreadsStats_dtor, UnexpectedInvocation, 0);
 }
@@ -154,7 +154,7 @@ fn_name ThreadsStatsGroup_dtor = "ThreadsStatsGroup.dtor";
 
 ThreadsStatsGroup::~ThreadsStatsGroup()
 {
-   Debug::ft(ThreadsStatsGroup_dtor);
+   Debug::ftnt(ThreadsStatsGroup_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ fn_name BreakEnabledCfg_dtor = "BreakEnabledCfg.dtor";
 
 BreakEnabledCfg::~BreakEnabledCfg()
 {
-   Debug::ft(BreakEnabledCfg_dtor);
+   Debug::ftnt(BreakEnabledCfg_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -340,7 +340,7 @@ fn_name ThreadAdmin_dtor = "ThreadAdmin.dtor";
 
 ThreadAdmin::~ThreadAdmin()
 {
-   Debug::ft(ThreadAdmin_dtor);
+   Debug::ftnt(ThreadAdmin_dtor);
 
    Debug::SwLog(ThreadAdmin_dtor, UnexpectedInvocation, 0);
 }

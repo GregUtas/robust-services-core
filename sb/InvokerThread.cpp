@@ -67,7 +67,7 @@ fn_name InvokerThread_dtor = "InvokerThread.dtor";
 
 InvokerThread::~InvokerThread()
 {
-   Debug::ft(InvokerThread_dtor);
+   Debug::ftnt(InvokerThread_dtor);
 
    if(RunningInvoker_ == this) RunningInvoker_ = nullptr;
    pool_->UnbindThread(*this);

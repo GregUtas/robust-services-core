@@ -71,7 +71,7 @@ fn_name Element_dtor = "Element.dtor";
 
 Element::~Element()
 {
-   Debug::ft(Element_dtor);
+   Debug::ftnt(Element_dtor);
 
    Debug::SwLog(Element_dtor, UnexpectedInvocation, 0);
 }

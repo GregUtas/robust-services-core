@@ -68,7 +68,7 @@ fn_name StatisticsThread_dtor = "StatisticsThread.dtor";
 
 StatisticsThread::~StatisticsThread()
 {
-   Debug::ft(StatisticsThread_dtor);
+   Debug::ftnt(StatisticsThread_dtor);
 }
 
 //------------------------------------------------------------------------------

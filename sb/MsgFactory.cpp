@@ -52,7 +52,7 @@ fn_name MsgFactory_dtor = "MsgFactory.dtor";
 
 MsgFactory::~MsgFactory()
 {
-   Debug::ft(MsgFactory_dtor);
+   Debug::ftnt(MsgFactory_dtor);
 }
 
 //------------------------------------------------------------------------------

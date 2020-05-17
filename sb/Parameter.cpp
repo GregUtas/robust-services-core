@@ -73,7 +73,7 @@ fn_name Parameter_dtor = "Parameter.dtor";
 
 Parameter::~Parameter()
 {
-   Debug::ft(Parameter_dtor);
+   Debug::ftnt(Parameter_dtor);
 
    Debug::SwLog(Parameter_dtor, UnexpectedInvocation, 0);
 

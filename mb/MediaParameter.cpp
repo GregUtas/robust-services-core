@@ -80,7 +80,7 @@ fn_name MediaParameter_dtor = "MediaParameter.dtor";
 
 MediaParameter::~MediaParameter()
 {
-   Debug::ft(MediaParameter_dtor);
+   Debug::ftnt(MediaParameter_dtor);
 }
 
 //------------------------------------------------------------------------------

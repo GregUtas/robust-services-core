@@ -50,7 +50,7 @@ fn_name CliAppData_dtor = "CliAppData.dtor";
 
 CliAppData::~CliAppData()
 {
-   Debug::ft(CliAppData_dtor);
+   Debug::ftnt(CliAppData_dtor);
 }
 
 //------------------------------------------------------------------------------

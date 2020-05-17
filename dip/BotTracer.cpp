@@ -63,7 +63,7 @@ fn_name BotTracer_dtor = "BotTracer.dtor";
 
 BotTracer::~BotTracer()
 {
-   Debug::ft(BotTracer_dtor);
+   Debug::ftnt(BotTracer_dtor);
 
    Debug::SwLog(BotTracer_dtor, UnexpectedInvocation, 0);
 }

@@ -57,7 +57,7 @@ fn_name CinThread_dtor = "CinThread.dtor";
 
 CinThread::~CinThread()
 {
-   Debug::ft(CinThread_dtor);
+   Debug::ftnt(CinThread_dtor);
 }
 
 //------------------------------------------------------------------------------

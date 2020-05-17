@@ -32,7 +32,6 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
-#include "Debug.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -831,8 +830,8 @@ public:
    //  the log in the compilation trace to make it easier to see where
    //  the error occurred.
    //
-   static void SwLog(NodeBase::fn_name_arg func, const std::string& expl,
-      NodeBase::word errval, NodeBase::SwLogLevel level = NodeBase::SwInfo);
+   static void SwLog(NodeBase::fn_name_arg func,
+      const std::string& expl, NodeBase::word errval, bool stack = false);
 
    //  Resets static data members when entering a restart at LEVEL.
    //

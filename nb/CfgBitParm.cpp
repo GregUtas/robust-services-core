@@ -44,7 +44,7 @@ fn_name CfgBitParm_dtor = "CfgBitParm.dtor";
 
 CfgBitParm::~CfgBitParm()
 {
-   Debug::ft(CfgBitParm_dtor);
+   Debug::ftnt(CfgBitParm_dtor);
 }
 
 //------------------------------------------------------------------------------

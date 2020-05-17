@@ -58,7 +58,7 @@ fn_name PotsBicFeatureProfile_dtor = "PotsBicFeatureProfile.dtor";
 
 PotsBicFeatureProfile::~PotsBicFeatureProfile()
 {
-   Debug::ft(PotsBicFeatureProfile_dtor);
+   Debug::ftnt(PotsBicFeatureProfile_dtor);
 }
 
 //==============================================================================
@@ -89,7 +89,7 @@ fn_name PotsBicFeature_dtor = "PotsBicFeature.dtor";
 
 PotsBicFeature::~PotsBicFeature()
 {
-   Debug::ft(PotsBicFeature_dtor);
+   Debug::ftnt(PotsBicFeature_dtor);
 }
 
 //------------------------------------------------------------------------------

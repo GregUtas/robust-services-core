@@ -74,7 +74,7 @@ fn_name FunctionProfiler_dtor = "FunctionProfiler.dtor";
 
 FunctionProfiler::~FunctionProfiler()
 {
-   Debug::ft(FunctionProfiler_dtor);
+   Debug::ftnt(FunctionProfiler_dtor);
 
    //  Delete all of the data that was allocated to generate the statistics.
    //

@@ -115,7 +115,7 @@ fn_name PotsCcwService_dtor = "PotsCcwService.dtor";
 
 PotsCcwService::~PotsCcwService()
 {
-   Debug::ft(PotsCcwService_dtor);
+   Debug::ftnt(PotsCcwService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ fn_name PotsCcwState_dtor = "PotsCcwState.dtor";
 
 PotsCcwState::~PotsCcwState()
 {
-   Debug::ft(PotsCcwState_dtor);
+   Debug::ftnt(PotsCcwState_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ fn_name PotsCcwSsm_dtor = "PotsCcwSsm.dtor";
 
 PotsCcwSsm::~PotsCcwSsm()
 {
-   Debug::ft(PotsCcwSsm_dtor);
+   Debug::ftnt(PotsCcwSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

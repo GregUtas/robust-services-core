@@ -226,7 +226,7 @@ fn_name PotsProxyService_dtor = "PotsProxyService.dtor";
 
 PotsProxyService::~PotsProxyService()
 {
-   Debug::ft(PotsProxyService_dtor);
+   Debug::ftnt(PotsProxyService_dtor);
 }
 
 //==============================================================================

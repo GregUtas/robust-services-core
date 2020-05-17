@@ -75,7 +75,7 @@ fn_name MediaPsm_dtor = "MediaPsm.dtor";
 
 MediaPsm::~MediaPsm()
 {
-   Debug::ft(MediaPsm_dtor);
+   Debug::ftnt(MediaPsm_dtor);
 
    //  Delete the media endpoint, if any.
    //

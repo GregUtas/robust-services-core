@@ -29,6 +29,7 @@
 #include <exception>
 #include <iosfwd>
 #include <memory>
+#include <new>
 #include <string>
 #include "Duration.h"
 #include "NbTypes.h"
@@ -129,10 +130,12 @@ public:
    //
    static void ResetFlags();
 
-   //  Returns the thread that is currently running.  Throws an exception
-   //  if ASSERT is set and the running thread cannot be found.
+   //  Returns the thread that is currently running.  Throws an
+   //  exception if the thread is not found unless the nothrow
+   //  version is used.
    //
-   static Thread* RunningThread(bool assert = true);
+   static Thread* RunningThread();
+   static Thread* RunningThread(const std::nothrow_t&);
 
    //  Returns the thread's identifier within ThreadRegistry.
    //
@@ -356,6 +359,10 @@ private:
    //
    virtual void Destroy();
 
+   //  Used by both versions of RunningThread.
+   //
+   static Thread* FindRunningThread();
+
    //  Causes the current thread to run unpreemptably (run to completion).
    //  When a thread is entered, it is made unpreemptable before its Enter
    //  function is invoked.  Must be invoked via FunctionGuard.
@@ -568,12 +575,14 @@ private:
    //  o checking stack usage by the running thread
    //
    static void FunctionInvoked(fn_name_arg func);
+   static void FunctionInvoked(fn_name_arg func, const std::nothrow_t&);
 
    //  Determines whether the running thread (THR) should be traced.  If THR
    //  is nullptr, it is updated to the running thread if this function must
    //  actually find the running thread to make its determination.
    //
    static bool TraceRunningThread(Thread*& thr);
+   static bool TraceRunningThread(Thread*& thr, const std::nothrow_t&);
 
    //  Records the thread event associated with RID if the running thread (THR)
    //  is being traced.  If THR is nullptr, the running thread will be found.

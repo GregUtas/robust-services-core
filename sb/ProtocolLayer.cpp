@@ -75,7 +75,7 @@ fn_name ProtocolLayer_dtor = "ProtocolLayer.dtor";
 
 ProtocolLayer::~ProtocolLayer()
 {
-   Debug::ft(ProtocolLayer_dtor);
+   Debug::ftnt(ProtocolLayer_dtor);
 
    //  There should be no upper layer.  Regardless, notify any adjacent
    //  layer that still exists and clear our reference to it.

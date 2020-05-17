@@ -71,7 +71,7 @@ fn_name InitThread_dtor = "InitThread.dtor";
 
 InitThread::~InitThread()
 {
-   Debug::ft(InitThread_dtor);
+   Debug::ftnt(InitThread_dtor);
 }
 
 //------------------------------------------------------------------------------

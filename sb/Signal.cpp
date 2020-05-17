@@ -65,7 +65,7 @@ fn_name Signal_dtor = "Signal.dtor";
 
 Signal::~Signal()
 {
-   Debug::ft(Signal_dtor);
+   Debug::ftnt(Signal_dtor);
 
    Debug::SwLog(Signal_dtor, UnexpectedInvocation, 0);
 

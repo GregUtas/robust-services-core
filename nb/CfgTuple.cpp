@@ -66,10 +66,10 @@ fn_name CfgTuple_dtor = "CfgTuple.dtor";
 
 CfgTuple::~CfgTuple()
 {
-   Debug::ft(CfgTuple_dtor);
+   Debug::ftnt(CfgTuple_dtor);
 
    Debug::SwLog(CfgTuple_dtor, UnexpectedInvocation, 0);
-   Singleton< CfgParmRegistry >::Instance()->UnbindTuple(*this);
+   Singleton< CfgParmRegistry >::Extant()->UnbindTuple(*this);
 }
 
 //------------------------------------------------------------------------------

@@ -71,7 +71,7 @@ fn_name PotsCircuit_dtor = "PotsCircuit.dtor";
 
 PotsCircuit::~PotsCircuit()
 {
-   Debug::ft(PotsCircuit_dtor);
+   Debug::ftnt(PotsCircuit_dtor);
 
    StateCount_[state_]--;
 }

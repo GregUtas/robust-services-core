@@ -39,7 +39,7 @@ fn_name BcState_dtor = "BcState.dtor";
 
 BcState::~BcState()
 {
-   Debug::ft(BcState_dtor);
+   Debug::ftnt(BcState_dtor);
 }
 
 //------------------------------------------------------------------------------

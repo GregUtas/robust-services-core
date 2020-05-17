@@ -58,7 +58,7 @@ fn_name PotsCallHandler_dtor = "PotsCallHandler.dtor";
 
 PotsCallHandler::~PotsCallHandler()
 {
-   Debug::ft(PotsCallHandler_dtor);
+   Debug::ftnt(PotsCallHandler_dtor);
 }
 
 //------------------------------------------------------------------------------

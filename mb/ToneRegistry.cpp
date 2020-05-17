@@ -49,7 +49,7 @@ fn_name ToneRegistry_dtor = "ToneRegistry.dtor";
 
 ToneRegistry::~ToneRegistry()
 {
-   Debug::ft(ToneRegistry_dtor);
+   Debug::ftnt(ToneRegistry_dtor);
 
    Debug::SwLog(ToneRegistry_dtor, UnexpectedInvocation, 0);
 }

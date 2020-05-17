@@ -134,7 +134,7 @@ fn_name ModuleRegistry_dtor = "ModuleRegistry.dtor";
 
 ModuleRegistry::~ModuleRegistry()
 {
-   Debug::ft(ModuleRegistry_dtor);
+   Debug::ftnt(ModuleRegistry_dtor);
 
    Debug::SwLog(ModuleRegistry_dtor, UnexpectedInvocation, 0);
 }

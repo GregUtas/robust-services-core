@@ -49,9 +49,9 @@ fn_name Circuit_dtor = "Circuit.dtor";
 
 Circuit::~Circuit()
 {
-   Debug::ft(Circuit_dtor);
+   Debug::ftnt(Circuit_dtor);
 
-   Singleton< Switch >::Instance()->UnbindCircuit(*this);
+   Singleton< Switch >::Extant()->UnbindCircuit(*this);
 }
 
 //------------------------------------------------------------------------------

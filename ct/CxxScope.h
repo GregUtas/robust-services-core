@@ -1059,6 +1059,11 @@ public:
    //
    size_t FindArg(const Argument* arg, bool disp) const;
 
+   //  OFFSET is an argument index in a CodeWarning log, which was obtained
+   //  with FindArg(arg, true).  This returns its actual index in GetArgs().
+   //
+   size_t LogOffsetToArgIndex(NodeBase::word offset) const;
+
    //  Returns the function's declaration.
    //
    const Function* GetDecl() const { return (defn_ ? mate_ : this); }

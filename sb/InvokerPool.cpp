@@ -93,7 +93,7 @@ fn_name InvokerPoolStats_dtor = "InvokerPoolStats.dtor";
 
 InvokerPoolStats::~InvokerPoolStats()
 {
-   Debug::ft(InvokerPoolStats_dtor);
+   Debug::ftnt(InvokerPoolStats_dtor);
 
    Debug::SwLog(InvokerPoolStats_dtor, UnexpectedInvocation, 0);
 }
@@ -161,7 +161,7 @@ fn_name InvokerWork_dtor = "InvokerWork.dtor";
 
 InvokerWork::~InvokerWork()
 {
-   Debug::ft(InvokerWork_dtor);
+   Debug::ftnt(InvokerWork_dtor);
 
    Debug::SwLog(InvokerWork_dtor, UnexpectedInvocation, 0);
    contextq_.Purge();
@@ -215,10 +215,10 @@ fn_name InvokerPool_dtor = "InvokerPool.dtor";
 
 InvokerPool::~InvokerPool()
 {
-   Debug::ft(InvokerPool_dtor);
+   Debug::ftnt(InvokerPool_dtor);
 
    Debug::SwLog(InvokerPool_dtor, UnexpectedInvocation, 0);
-   Singleton< InvokerPoolRegistry >::Instance()->UnbindPool(*this);
+   Singleton< InvokerPoolRegistry >::Extant()->UnbindPool(*this);
 }
 
 //------------------------------------------------------------------------------

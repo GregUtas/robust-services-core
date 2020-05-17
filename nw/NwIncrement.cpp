@@ -481,6 +481,6 @@ fn_name NwIncrement_dtor = "NwIncrement.dtor";
 
 NwIncrement::~NwIncrement()
 {
-   Debug::ft(NwIncrement_dtor);
+   Debug::ftnt(NwIncrement_dtor);
 }
 }

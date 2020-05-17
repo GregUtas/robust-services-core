@@ -86,7 +86,7 @@ fn_name PotsCallFactory_dtor = "PotsCallFactory.dtor";
 
 PotsCallFactory::~PotsCallFactory()
 {
-   Debug::ft(PotsCallFactory_dtor);
+   Debug::ftnt(PotsCallFactory_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -118,10 +118,10 @@ fn_name Service_dtor = "Service.dtor";
 
 Service::~Service()
 {
-   Debug::ft(Service_dtor);
+   Debug::ftnt(Service_dtor);
 
    Debug::SwLog(Service_dtor, UnexpectedInvocation, 0);
-   Singleton< ServiceRegistry >::Instance()->UnbindService(*this);
+   Singleton< ServiceRegistry >::Extant()->UnbindService(*this);
 }
 
 //------------------------------------------------------------------------------

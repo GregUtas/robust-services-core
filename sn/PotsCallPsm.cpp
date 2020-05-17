@@ -76,7 +76,7 @@ fn_name PotsCallPsm_dtor = "PotsCallPsm.dtor";
 
 PotsCallPsm::~PotsCallPsm()
 {
-   Debug::ft(PotsCallPsm_dtor);
+   Debug::ftnt(PotsCallPsm_dtor);
 }
 
 //------------------------------------------------------------------------------

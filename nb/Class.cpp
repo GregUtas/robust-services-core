@@ -81,10 +81,10 @@ fn_name Class_dtor = "Class.dtor";
 
 Class::~Class()
 {
-   Debug::ft(Class_dtor);
+   Debug::ftnt(Class_dtor);
 
    Debug::SwLog(Class_dtor, UnexpectedInvocation, 0);
-   Singleton< ClassRegistry >::Instance()->UnbindClass(*this);
+   Singleton< ClassRegistry >::Extant()->UnbindClass(*this);
 }
 
 //------------------------------------------------------------------------------

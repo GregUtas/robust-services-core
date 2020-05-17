@@ -86,7 +86,7 @@ fn_name MsgPort_dtor = "MsgPort.dtor";
 
 MsgPort::~MsgPort()
 {
-   Debug::ft(MsgPort_dtor);
+   Debug::ftnt(MsgPort_dtor);
 
    //  Record the port's deletion if this context is traced.
    //

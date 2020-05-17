@@ -49,7 +49,7 @@ fn_name MediaSsm_dtor = "MediaSsm.dtor";
 
 MediaSsm::~MediaSsm()
 {
-   Debug::ft(MediaSsm_dtor);
+   Debug::ftnt(MediaSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -89,7 +89,7 @@ fn_name LogThread_dtor = "LogThread.dtor";
 
 LogThread::~LogThread()
 {
-   Debug::ft(LogThread_dtor);
+   Debug::ftnt(LogThread_dtor);
 
    //  Clear our configuration parameter so that it won't be deleted.
    //  (it resides in protected memory.)  When we are recreated, our

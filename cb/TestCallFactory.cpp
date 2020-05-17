@@ -45,7 +45,7 @@ fn_name TestCallFactory_dtor = "TestCallFactory.dtor";
 
 TestCallFactory::~TestCallFactory()
 {
-   Debug::ft(TestCallFactory_dtor);
+   Debug::ftnt(TestCallFactory_dtor);
 }
 
 //------------------------------------------------------------------------------

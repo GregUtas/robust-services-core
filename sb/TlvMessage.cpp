@@ -107,7 +107,7 @@ fn_name TlvMessage_dtor = "TlvMessage.dtor";
 
 TlvMessage::~TlvMessage()
 {
-   Debug::ft(TlvMessage_dtor);
+   Debug::ftnt(TlvMessage_dtor);
 }
 
 //------------------------------------------------------------------------------

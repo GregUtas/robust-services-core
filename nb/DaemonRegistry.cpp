@@ -49,7 +49,7 @@ fn_name DaemonRegistry_dtor = "DaemonRegistry.dtor";
 
 DaemonRegistry::~DaemonRegistry()
 {
-   Debug::ft(DaemonRegistry_dtor);
+   Debug::ftnt(DaemonRegistry_dtor);
 
    Debug::SwLog(DaemonRegistry_dtor, UnexpectedInvocation, 0);
 }

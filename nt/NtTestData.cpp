@@ -52,7 +52,7 @@ fn_name NtTestData_dtor = "NtTestData.dtor";
 
 NtTestData::~NtTestData()
 {
-   Debug::ft(NtTestData_dtor);
+   Debug::ftnt(NtTestData_dtor);
 }
 
 //------------------------------------------------------------------------------

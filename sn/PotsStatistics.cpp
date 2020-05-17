@@ -73,7 +73,7 @@ fn_name PotsStatistics_dtor = "PotsStatistics.dtor";
 
 PotsStatistics::~PotsStatistics()
 {
-   Debug::ft(PotsStatistics_dtor);
+   Debug::ftnt(PotsStatistics_dtor);
 }
 
 //------------------------------------------------------------------------------

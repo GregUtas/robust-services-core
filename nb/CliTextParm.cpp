@@ -58,7 +58,7 @@ fn_name CliTextParm_dtor = "CliTextParm.dtor";
 
 CliTextParm::~CliTextParm()
 {
-   Debug::ft(CliTextParm_dtor);
+   Debug::ftnt(CliTextParm_dtor);
 }
 
 //------------------------------------------------------------------------------

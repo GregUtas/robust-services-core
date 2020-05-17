@@ -24,6 +24,7 @@
 
 #include <cstddef>
 #include <iosfwd>
+#include <new>
 #include <string>
 #include "SysTypes.h"
 
@@ -56,10 +57,12 @@ namespace Memory
    //
    void Set(void* dest, byte_t value, size_t size);
 
-   //  Allocates a memory segment of SIZE of the specified TYPE.
-   //  If EX is true, an AllocationException is thrown on failure.
+   //  Allocates a memory segment of SIZE of the specified TYPE.  The
+   //  first version throws an AllocationException on failure, whereas
+   //  the second version returns nullptr.
    //
-   void* Alloc(size_t size, MemoryType type, bool ex = true);
+   void* Alloc(size_t size, MemoryType type);
+   void* Alloc(size_t size, MemoryType type, const std::nothrow_t&);
 
    //  Deallocates the memory segment returned by Alloc.
    //

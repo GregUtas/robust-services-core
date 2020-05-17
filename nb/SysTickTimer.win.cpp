@@ -61,7 +61,7 @@ fn_name SysTickTimer_dtor = "SysTickTimer.dtor";
 
 SysTickTimer::~SysTickTimer()
 {
-   Debug::ft(SysTickTimer_dtor);
+   Debug::ftnt(SysTickTimer_dtor);
 
    Debug::SwLog(SysTickTimer_dtor, UnexpectedInvocation, 0);
 }

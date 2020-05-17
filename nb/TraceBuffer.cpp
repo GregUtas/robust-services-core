@@ -24,6 +24,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <new>
 #include <sstream>
 #include "Debug.h"
 #include "Element.h"
@@ -32,6 +33,7 @@
 #include "FunctionTrace.h"
 #include "InitFlags.h"
 #include "Memory.h"
+#include "NbTracer.h"
 #include "Registry.h"
 #include "Singleton.h"
 #include "SysFile.h"
@@ -121,8 +123,16 @@ TraceBuffer::TraceBuffer() :
    blocks_(0),
    processed_(false)
 {
-   AllocBuffers(MinSize, true);
+   AllocBuffers(MinSize);
    invocations_.reset(new InvocationsTable);
+
+   //  Create NbTracer here.  It used to be done in Thread.CalcStatus, but it
+   //  now uses Singleton.Extant, instead of Singleton.Instance, to avoid the
+   //  potentially throwing new operator in the latter.  This caused NbTracer
+   //  to not be created until after the system had initialized, in which case
+   //  initialization could not be traced at all.
+   //
+   Singleton< NbTracer >::Instance();
 
    if(InitFlags::TraceInit())
    {
@@ -178,7 +188,7 @@ void* TraceBuffer::AddFunction()
 
 fn_name TraceBuffer_AllocBuffers = "TraceBuffer.AllocBuffers";
 
-bool TraceBuffer::AllocBuffers(size_t n, bool ex)
+bool TraceBuffer::AllocBuffers(size_t n)
 {
    Debug::ft(TraceBuffer_AllocBuffers);
 
@@ -207,11 +217,11 @@ bool TraceBuffer::AllocBuffers(size_t n, bool ex)
    size_ = 0;
 
    buff_ = (TraceRecord**)
-      Memory::Alloc(size * sizeof(TraceRecord*), MemPermanent, ex);
+      Memory::Alloc(size * sizeof(TraceRecord*), MemPermanent, std::nothrow);
    if(buff_ == nullptr) return false;
 
    funcs_ = (FunctionTrace*)
-      Memory::Alloc(size * sizeof(FunctionTrace), MemPermanent, ex);
+      Memory::Alloc(size * sizeof(FunctionTrace), MemPermanent, std::nothrow);
    if(funcs_ == nullptr)
    {
       Memory::Free(buff_, MemPermanent);
@@ -684,7 +694,7 @@ TraceRc TraceBuffer::SetSize(size_t n)
    //
    if(Debug::TraceOn()) return NotWhileTracing;
    if(!Empty()) return BufferNotEmpty;
-   if(!AllocBuffers(n, false)) return BufferAllocFailed;
+   if(!AllocBuffers(n)) return BufferAllocFailed;
    return TraceOk;
 }
 

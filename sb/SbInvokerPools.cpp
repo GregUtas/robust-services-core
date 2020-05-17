@@ -102,7 +102,7 @@ fn_name PayloadInvokerPool_dtor = "PayloadInvokerPool.dtor";
 
 PayloadInvokerPool::~PayloadInvokerPool()
 {
-   Debug::ft(PayloadInvokerPool_dtor);
+   Debug::ftnt(PayloadInvokerPool_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -103,7 +103,7 @@ fn_name PotsBcSsm_dtor = "PotsBcSsm.dtor";
 
 PotsBcSsm::~PotsBcSsm()
 {
-   Debug::ft(PotsBcSsm_dtor);
+   Debug::ftnt(PotsBcSsm_dtor);
 
    auto upsm = PotsCallPsm::Cast(UPsm());
 

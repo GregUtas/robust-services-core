@@ -58,7 +58,7 @@ fn_name PotsMessage_dtor = "PotsMessage.dtor";
 
 PotsMessage::~PotsMessage()
 {
-   Debug::ft(PotsMessage_dtor);
+   Debug::ftnt(PotsMessage_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ fn_name Pots_UN_Message_dtor = "Pots_UN_Message.dtor";
 
 Pots_UN_Message::~Pots_UN_Message()
 {
-   Debug::ft(Pots_UN_Message_dtor);
+   Debug::ftnt(Pots_UN_Message_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -221,7 +221,7 @@ fn_name Pots_NU_Message_dtor = "Pots_NU_Message.dtor";
 
 Pots_NU_Message::~Pots_NU_Message()
 {
-   Debug::ft(Pots_NU_Message_dtor);
+   Debug::ftnt(Pots_NU_Message_dtor);
 }
 
 //------------------------------------------------------------------------------

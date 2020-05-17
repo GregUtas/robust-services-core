@@ -52,7 +52,7 @@ fn_name MsgBufferPool_dtor = "MsgBufferPool.dtor";
 
 MsgBufferPool::~MsgBufferPool()
 {
-   Debug::ft(MsgBufferPool_dtor);
+   Debug::ftnt(MsgBufferPool_dtor);
 }
 
 //------------------------------------------------------------------------------

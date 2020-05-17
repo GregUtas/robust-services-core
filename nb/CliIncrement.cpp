@@ -57,10 +57,10 @@ fn_name CliIncrement_dtor = "CliIncrement.dtor";
 
 CliIncrement::~CliIncrement()
 {
-   Debug::ft(CliIncrement_dtor);
+   Debug::ftnt(CliIncrement_dtor);
 
    Debug::SwLog(CliIncrement_dtor, UnexpectedInvocation, 0);
-   Singleton< CliRegistry >::Instance()->UnbindIncrement(*this);
+   Singleton< CliRegistry >::Extant()->UnbindIncrement(*this);
 }
 
 //------------------------------------------------------------------------------

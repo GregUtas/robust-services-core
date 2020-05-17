@@ -113,7 +113,7 @@ fn_name ImmutableHeap_dtor = "ImmutableHeap.dtor";
 
 ImmutableHeap::~ImmutableHeap()
 {
-   Debug::ft(ImmutableHeap_dtor);
+   Debug::ftnt(ImmutableHeap_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ fn_name ProtectedHeap_dtor = "ProtectedHeap.dtor";
 
 ProtectedHeap::~ProtectedHeap()
 {
-   Debug::ft(ProtectedHeap_dtor);
+   Debug::ftnt(ProtectedHeap_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ fn_name PersistentHeap_dtor = "PersistentHeap.dtor";
 
 PersistentHeap::~PersistentHeap()
 {
-   Debug::ft(PersistentHeap_dtor);
+   Debug::ftnt(PersistentHeap_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ fn_name DynamicHeap_dtor = "DynamicHeap.dtor";
 
 DynamicHeap::~DynamicHeap()
 {
-   Debug::ft(DynamicHeap_dtor);
+   Debug::ftnt(DynamicHeap_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ fn_name TemporaryHeap_dtor = "TemporaryHeap.dtor";
 
 TemporaryHeap::~TemporaryHeap()
 {
-   Debug::ft(TemporaryHeap_dtor);
+   Debug::ftnt(TemporaryHeap_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -275,11 +275,11 @@ size_t Memory::Align(size_t size, size_t log2align)
 
 //------------------------------------------------------------------------------
 
-fn_name Memory_Alloc = "Memory.Alloc";
+fn_name Memory_Alloc1 = "Memory.Alloc";
 
-void* Memory::Alloc(size_t size, MemoryType type, bool ex)
+void* Memory::Alloc(size_t size, MemoryType type)
 {
-   Debug::ft(Memory_Alloc);
+   Debug::ft(Memory_Alloc1);
 
    if(size == 0) return nullptr;
 
@@ -288,7 +288,6 @@ void* Memory::Alloc(size_t size, MemoryType type, bool ex)
    auto heap = EnsureHeap(type);
    if(heap == nullptr)
    {
-      if(!ex) return nullptr;
       throw AllocationException(type, size);
    }
 
@@ -299,9 +298,47 @@ void* Memory::Alloc(size_t size, MemoryType type, bool ex)
    auto addr = heap->Alloc(gross);
    if(addr == nullptr)
    {
-      if(!ex) return nullptr;
       throw AllocationException(type, gross);
    }
+
+   //  Success.  Record the size of the segment (excluding its header)
+   //  and its memory type.
+   //
+   if(Debug::TraceOn())
+   {
+      auto buff = Singleton< TraceBuffer >::Extant();
+
+      if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
+      {
+         auto rec = new MemoryTrace(MemoryTrace::Alloc, addr, type, gross);
+         buff->Insert(rec);
+      }
+   }
+
+   return addr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Memory_Alloc2 = "Memory.Alloc(nothrow)";
+
+void* Memory::Alloc(size_t size, MemoryType type, const std::nothrow_t&)
+{
+   Debug::ft(Memory_Alloc2);
+
+   if(size == 0) return nullptr;
+
+   //  Access the heap that manages the type of memory being requested.
+   //
+   auto heap = AccessHeap(type);
+   if(heap == nullptr) return nullptr;
+
+   //  Align the size of the segment to the system's word size and ask
+   //  the heap to allocate it.
+   //
+   auto gross = Align(size);
+   auto addr = heap->Alloc(gross);
+   if(addr == nullptr) return nullptr;
 
    //  Success.  Record the size of the segment (excluding its header)
    //  and its memory type.
@@ -383,7 +420,7 @@ fn_name Memory_Free = "Memory.Free";
 
 void Memory::Free(void* addr, MemoryType type)
 {
-   Debug::ft(Memory_Free);
+   Debug::ftnt(Memory_Free);
 
    //  ADDR is where the application's data begins.  Access the header that
    //  precedes it in order to find the heap that owns the memory segment.

@@ -93,7 +93,7 @@ fn_name IpPortStats_dtor = "IpPortStats.dtor";
 
 IpPortStats::~IpPortStats()
 {
-   Debug::ft(IpPortStats_dtor);
+   Debug::ftnt(IpPortStats_dtor);
 }
 
 //==============================================================================
@@ -121,7 +121,7 @@ fn_name IpPort_dtor = "IpPort.dtor";
 
 IpPort::~IpPort()
 {
-   Debug::ft(IpPort_dtor);
+   Debug::ftnt(IpPort_dtor);
 
    //  Shut down any I/O thread.  It must delete its socket(s).
    //  Deregister the port.
@@ -132,7 +132,7 @@ IpPort::~IpPort()
       SetThread(nullptr);
    }
 
-   Singleton< IpPortRegistry >::Instance()->UnbindPort(*this);
+   Singleton< IpPortRegistry >::Extant()->UnbindPort(*this);
 }
 
 //------------------------------------------------------------------------------

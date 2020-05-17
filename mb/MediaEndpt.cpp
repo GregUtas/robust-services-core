@@ -55,7 +55,7 @@ fn_name MediaEndpt_dtor = "MediaEndpt.dtor";
 
 MediaEndpt::~MediaEndpt()
 {
-   Debug::ft(MediaEndpt_dtor);
+   Debug::ftnt(MediaEndpt_dtor);
 
    if(state_ != Idle)
    {

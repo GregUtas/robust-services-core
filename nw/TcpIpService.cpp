@@ -47,7 +47,7 @@ fn_name TcpIpService_dtor = "TcpIpService.dtor";
 
 TcpIpService::~TcpIpService()
 {
-   Debug::ft(TcpIpService_dtor);
+   Debug::ftnt(TcpIpService_dtor);
 }
 
 //------------------------------------------------------------------------------

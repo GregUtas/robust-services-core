@@ -89,7 +89,7 @@ fn_name MscBuilder_dtor = "MscBuilder.dtor";
 
 MscBuilder::~MscBuilder()
 {
-   Debug::ft(MscBuilder_dtor);
+   Debug::ftnt(MscBuilder_dtor);
 
    //  Delete all of the data that was allocated to build the MSC.
    //

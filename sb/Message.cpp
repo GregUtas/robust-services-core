@@ -118,7 +118,7 @@ fn_name Message_dtor = "Message.dtor";
 
 Message::~Message()
 {
-   Debug::ft(Message_dtor);
+   Debug::ftnt(Message_dtor);
 
    //  Record the message's deletion if this context is traced.
    //

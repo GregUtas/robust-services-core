@@ -52,7 +52,7 @@ fn_name StreamRequest_dtor = "StreamRequest.dtor";
 
 StreamRequest::~StreamRequest()
 {
-   Debug::ft(StreamRequest_dtor);
+   Debug::ftnt(StreamRequest_dtor);
 }
 
 //------------------------------------------------------------------------------

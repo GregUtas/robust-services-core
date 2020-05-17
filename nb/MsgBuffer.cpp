@@ -56,7 +56,7 @@ fn_name MsgBuffer_dtor = "MsgBuffer.dtor";
 
 MsgBuffer::~MsgBuffer()
 {
-   Debug::ft(MsgBuffer_dtor);
+   Debug::ftnt(MsgBuffer_dtor);
 }
 
 //------------------------------------------------------------------------------

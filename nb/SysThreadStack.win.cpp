@@ -24,6 +24,7 @@
 #include <cstddef>
 #include <cstring>
 #include <memory>
+#include <new>
 #include <sstream>
 #include <string>
 #include <windows.h>  // must precede dbghelp.h
@@ -150,7 +151,7 @@ DWORD StackInfo::Startup()
    if(Symbols != nullptr) return 0;
 
    auto size = sizeof(SYMBOL_INFO) + MAX_SYM_NAME;
-   Symbols = (SYMBOL_INFO*) Memory::Alloc(size, MemPermanent, false);
+   Symbols = (SYMBOL_INFO*) Memory::Alloc(size, MemPermanent, std::nothrow);
    if(Symbols == nullptr) return ERROR_NOT_ENOUGH_MEMORY;
 
    Process = GetCurrentProcess();

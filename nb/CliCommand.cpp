@@ -59,7 +59,7 @@ fn_name CliCommand_dtor = "CliCommand.dtor";
 
 CliCommand::~CliCommand()
 {
-   Debug::ft(CliCommand_dtor);
+   Debug::ftnt(CliCommand_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -44,7 +44,7 @@ fn_name MsgContext_dtor = "MsgContext.dtor";
 
 MsgContext::~MsgContext()
 {
-   Debug::ft(MsgContext_dtor);
+   Debug::ftnt(MsgContext_dtor);
 }
 
 //------------------------------------------------------------------------------

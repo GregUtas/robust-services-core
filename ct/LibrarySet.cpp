@@ -66,7 +66,7 @@ fn_name LibrarySet_dtor = "LibrarySet.dtor";
 
 LibrarySet::~LibrarySet()
 {
-   Debug::ft(LibrarySet_dtor);
+   Debug::ftnt(LibrarySet_dtor);
 
    Singleton< Library >::Instance()->EraseVar(*this);
 }

@@ -51,7 +51,7 @@ fn_name CliBoolParm_dtor = "CliBoolParm.dtor";
 
 CliBoolParm::~CliBoolParm()
 {
-   Debug::ft(CliBoolParm_dtor);
+   Debug::ftnt(CliBoolParm_dtor);
 }
 
 //------------------------------------------------------------------------------

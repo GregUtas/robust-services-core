@@ -73,10 +73,10 @@ fn_name LogGroup_dtor = "LogGroup.dtor";
 
 LogGroup::~LogGroup()
 {
-   Debug::ft(LogGroup_dtor);
+   Debug::ftnt(LogGroup_dtor);
 
    Debug::SwLog(LogGroup_dtor, UnexpectedInvocation, 0);
-   Singleton< LogGroupRegistry >::Instance()->UnbindGroup(*this);
+   Singleton< LogGroupRegistry >::Extant()->UnbindGroup(*this);
 }
 
 //------------------------------------------------------------------------------

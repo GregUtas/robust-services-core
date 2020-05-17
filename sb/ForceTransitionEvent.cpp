@@ -49,7 +49,7 @@ fn_name ForceTransitionEvent_dtor = "ForceTransitionEvent.dtor";
 
 ForceTransitionEvent::~ForceTransitionEvent()
 {
-   Debug::ft(ForceTransitionEvent_dtor);
+   Debug::ftnt(ForceTransitionEvent_dtor);
 }
 
 //------------------------------------------------------------------------------

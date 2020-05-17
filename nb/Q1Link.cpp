@@ -46,7 +46,7 @@ Q1Link::~Q1Link()
    //
    if(next == nullptr) return;
 
-   Debug::ft(Q1Link_dtor);
+   Debug::ftnt(Q1Link_dtor);
 
    auto prev = this;
    auto curr = next;

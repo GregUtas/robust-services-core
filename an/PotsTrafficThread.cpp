@@ -268,7 +268,7 @@ fn_name TrafficCallPool_dtor = "TrafficCallPool.dtor";
 
 TrafficCallPool::~TrafficCallPool()
 {
-   Debug::ft(TrafficCallPool_dtor);
+   Debug::ftnt(TrafficCallPool_dtor);
 
    //  The TrafficCalls on freeq_ have already been destructed, so now they
    //  only need to return to their heap.
@@ -314,7 +314,7 @@ fn_name TrafficCall_dtor = "TrafficCall.dtor";
 
 TrafficCall::~TrafficCall()
 {
-   Debug::ft(TrafficCall_dtor);
+   Debug::ftnt(TrafficCall_dtor);
 
    --StateCount_[state_];
 
@@ -498,9 +498,9 @@ fn_name TrafficCall_delete = "TrafficCall.operator delete";
 
 void TrafficCall::operator delete(void* addr)
 {
-   Debug::ft(TrafficCall_delete);
+   Debug::ftnt(TrafficCall_delete);
 
-   Singleton< TrafficCallPool >::Instance()->Enq((TrafficCall*) addr);
+   Singleton< TrafficCallPool >::Extant()->Enq((TrafficCall*) addr);
 }
 
 //------------------------------------------------------------------------------
@@ -1084,7 +1084,7 @@ fn_name PotsTrafficThread_dtor = "PotsTrafficThread.dtor";
 
 PotsTrafficThread::~PotsTrafficThread()
 {
-   Debug::ft(PotsTrafficThread_dtor);
+   Debug::ftnt(PotsTrafficThread_dtor);
 
    //  Don't clean up during a cold restart.  Every circuit will try to
    //  send a final message, which causes a flood of logs because the

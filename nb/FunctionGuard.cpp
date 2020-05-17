@@ -66,7 +66,7 @@ fn_name FunctionGuard_dtor = "FunctionGuard.dtor";
 
 FunctionGuard::~FunctionGuard()
 {
-   Debug::ft(FunctionGuard_dtor);
+   Debug::ftnt(FunctionGuard_dtor);
 
    if(first_ != Guard_Nil) Release();
 }

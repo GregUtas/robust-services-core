@@ -37,6 +37,6 @@ fn_name BcTrigger_dtor = "BcTrigger.dtor";
 
 BcTrigger::~BcTrigger()
 {
-   Debug::ft(BcTrigger_dtor);
+   Debug::ftnt(BcTrigger_dtor);
 }
 }

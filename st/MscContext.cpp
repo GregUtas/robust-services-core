@@ -53,7 +53,7 @@ fn_name MscContext_dtor = "MscContext.dtor";
 
 MscContext::~MscContext()
 {
-   Debug::ft(MscContext_dtor);
+   Debug::ftnt(MscContext_dtor);
 }
 
 //------------------------------------------------------------------------------

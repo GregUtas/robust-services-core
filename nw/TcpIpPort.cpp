@@ -52,7 +52,7 @@ fn_name TcpIpPort_dtor = "TcpIpPort.dtor";
 
 TcpIpPort::~TcpIpPort()
 {
-   Debug::ft(TcpIpPort_dtor);
+   Debug::ftnt(TcpIpPort_dtor);
 }
 
 //------------------------------------------------------------------------------

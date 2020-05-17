@@ -47,7 +47,7 @@ fn_name CliCookie_dtor = "CliCookie.dtor";
 
 CliCookie::~CliCookie()
 {
-   Debug::ft(CliCookie_dtor);
+   Debug::ftnt(CliCookie_dtor);
 }
 
 //------------------------------------------------------------------------------

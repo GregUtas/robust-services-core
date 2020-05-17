@@ -66,7 +66,7 @@ fn_name Class_dtor = "Class.dtor[>ct]";
 
 Class::~Class()
 {
-   Debug::ft(Class_dtor);
+   Debug::ftnt(Class_dtor);
 
    Singleton< CxxSymbols >::Instance()->EraseClass(this);
    CxxStats::Decr(CxxStats::CLASS_DECL);
@@ -1976,7 +1976,7 @@ fn_name ClassInst_dtor = "ClassInst.dtor";
 
 ClassInst::~ClassInst()
 {
-   Debug::ft(ClassInst_dtor);
+   Debug::ftnt(ClassInst_dtor);
 
    //  The following is the kind of thing that can happen when a base class
    //  is not always virtual.
@@ -2300,7 +2300,7 @@ fn_name CxxArea_dtor = "CxxArea.dtor";
 
 CxxArea::~CxxArea()
 {
-   Debug::ft(CxxArea_dtor);
+   Debug::ftnt(CxxArea_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -2912,7 +2912,7 @@ fn_name Namespace_dtor = "Namespace.dtor";
 
 Namespace::~Namespace()
 {
-   Debug::ft(Namespace_dtor);
+   Debug::ftnt(Namespace_dtor);
 
    Singleton< CxxSymbols >::Instance()->EraseSpace(this);
    CxxStats::Decr(CxxStats::SPACE_DECL);

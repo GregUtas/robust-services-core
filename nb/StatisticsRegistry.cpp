@@ -58,7 +58,7 @@ fn_name StatisticsRegistry_dtor = "StatisticsRegistry.dtor";
 
 StatisticsRegistry::~StatisticsRegistry()
 {
-   Debug::ft(StatisticsRegistry_dtor);
+   Debug::ftnt(StatisticsRegistry_dtor);
 
    Debug::SwLog(StatisticsRegistry_dtor, UnexpectedInvocation, 0);
 }

@@ -40,7 +40,7 @@ fn_name Temporary_delete1 = "Temporary.operator delete";
 
 void Temporary::operator delete(void* addr)
 {
-   Debug::ft(Temporary_delete1);
+   Debug::ftnt(Temporary_delete1);
 
    Memory::Free(addr, MemTemporary);
 }
@@ -51,7 +51,7 @@ fn_name Temporary_delete2 = "Temporary.operator delete[]";
 
 void Temporary::operator delete[](void* addr)
 {
-   Debug::ft(Temporary_delete2);
+   Debug::ftnt(Temporary_delete2);
 
    Memory::Free(addr, MemTemporary);
 }
@@ -62,7 +62,7 @@ fn_name Temporary_delete3 = "Temporary.operator delete(place)";
 
 void Temporary::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ft(Temporary_delete3);
+   Debug::ftnt(Temporary_delete3);
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ fn_name Temporary_delete4 = "Temporary.operator delete[](place)";
 
 void Temporary::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ft(Temporary_delete4);
+   Debug::ftnt(Temporary_delete4);
 }
 
 //------------------------------------------------------------------------------

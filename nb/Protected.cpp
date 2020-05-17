@@ -40,7 +40,7 @@ fn_name Protected_delete1 = "Protected.operator delete";
 
 void Protected::operator delete(void* addr)
 {
-   Debug::ft(Protected_delete1);
+   Debug::ftnt(Protected_delete1);
 
    Memory::Free(addr, MemProtected);
 }
@@ -51,7 +51,7 @@ fn_name Protected_delete2 = "Protected.operator delete[]";
 
 void Protected::operator delete[](void* addr)
 {
-   Debug::ft(Protected_delete2);
+   Debug::ftnt(Protected_delete2);
 
    Memory::Free(addr, MemProtected);
 }
@@ -62,7 +62,7 @@ fn_name Protected_delete3 = "Protected.operator delete(place)";
 
 void Protected::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ft(Protected_delete3);
+   Debug::ftnt(Protected_delete3);
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ fn_name Protected_delete4 = "Protected.operator delete[](place)";
 
 void Protected::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ft(Protected_delete4);
+   Debug::ftnt(Protected_delete4);
 }
 
 //------------------------------------------------------------------------------

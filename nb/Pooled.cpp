@@ -141,11 +141,11 @@ fn_name Pooled_delete = "Pooled.operator delete";
 
 void Pooled::operator delete(void* addr)
 {
-   Debug::ft(Pooled_delete);
+   Debug::ftnt(Pooled_delete);
 
    auto obj = (Pooled*) addr;
    auto pid = ObjectPool::ObjPid(obj);
-   auto pool = Singleton< ObjectPoolRegistry >::Instance()->Pool(pid);
+   auto pool = Singleton< ObjectPoolRegistry >::Extant()->Pool(pid);
    if(pool != nullptr) pool->EnqBlock(obj, true);
 }
 

@@ -51,7 +51,7 @@ fn_name CfgFlagParm_dtor = "CfgFlagParm.dtor";
 
 CfgFlagParm::~CfgFlagParm()
 {
-   Debug::ft(CfgFlagParm_dtor);
+   Debug::ftnt(CfgFlagParm_dtor);
 }
 
 //------------------------------------------------------------------------------

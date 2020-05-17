@@ -698,12 +698,14 @@ void FunctionTrace::Capture(fn_name_arg func)
    //
    if(Scope_ == CountsOnly)
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton< TraceBuffer >::Extant();
+      if(buff == nullptr) return;
       buff->RecordInvocation(func);
       return;
    }
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton< TraceBuffer >::Extant();
+   if(buff == nullptr) return;
    auto depth = SysThreadStack::FuncDepth() - 3;
 
    //  If this is a destructor call that is not one level deeper than the last

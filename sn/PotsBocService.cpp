@@ -110,7 +110,7 @@ fn_name PotsBocService_dtor = "PotsBocService.dtor";
 
 PotsBocService::~PotsBocService()
 {
-   Debug::ft(PotsBocService_dtor);
+   Debug::ftnt(PotsBocService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ fn_name PotsBocSsm_dtor = "PotsBocSsm.dtor";
 
 PotsBocSsm::~PotsBocSsm()
 {
-   Debug::ft(PotsBocSsm_dtor);
+   Debug::ftnt(PotsBocSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

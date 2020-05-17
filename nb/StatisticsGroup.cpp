@@ -66,10 +66,10 @@ fn_name StatisticsGroup_dtor = "StatisticsGroup.dtor";
 
 StatisticsGroup::~StatisticsGroup()
 {
-   Debug::ft(StatisticsGroup_dtor);
+   Debug::ftnt(StatisticsGroup_dtor);
 
    Debug::SwLog(StatisticsGroup_dtor, UnexpectedInvocation, 0);
-   Singleton< StatisticsRegistry >::Instance()->UnbindGroup(*this);
+   Singleton< StatisticsRegistry >::Extant()->UnbindGroup(*this);
 }
 
 //------------------------------------------------------------------------------

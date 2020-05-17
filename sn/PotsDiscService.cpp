@@ -67,7 +67,7 @@ fn_name PotsDiscService_dtor = "PotsDiscService.dtor";
 
 PotsDiscService::~PotsDiscService()
 {
-   Debug::ft(PotsDiscService_dtor);
+   Debug::ftnt(PotsDiscService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ fn_name PotsDiscSsm_dtor = "PotsDiscSsm.dtor";
 
 PotsDiscSsm::~PotsDiscSsm()
 {
-   Debug::ft(PotsDiscSsm_dtor);
+   Debug::ftnt(PotsDiscSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

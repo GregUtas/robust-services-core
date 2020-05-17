@@ -56,7 +56,7 @@ fn_name MbModule_dtor = "MbModule.dtor";
 
 MbModule::~MbModule()
 {
-   Debug::ft(MbModule_dtor);
+   Debug::ftnt(MbModule_dtor);
 }
 
 //------------------------------------------------------------------------------

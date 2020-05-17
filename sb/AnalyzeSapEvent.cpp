@@ -59,7 +59,7 @@ fn_name AnalyzeSapEvent_dtor = "AnalyzeSapEvent.dtor";
 
 AnalyzeSapEvent::~AnalyzeSapEvent()
 {
-   Debug::ft(AnalyzeSapEvent_dtor);
+   Debug::ftnt(AnalyzeSapEvent_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -76,7 +76,7 @@ fn_name FileWalker_dtor = "FileWalker.dtor";
 
 FileWalker::~FileWalker()
 {
-   Debug::ft(FileWalker_dtor);
+   Debug::ftnt(FileWalker_dtor);
 
    Reset();
 }

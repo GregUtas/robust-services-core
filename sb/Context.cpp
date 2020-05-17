@@ -127,7 +127,7 @@ fn_name SbException_dtor = "SbException.dtor";
 
 SbException::~SbException()
 {
-   Debug::ft(SbException_dtor);
+   Debug::ftnt(SbException_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ fn_name Context_dtor = "Context.dtor";
 
 Context::~Context()
 {
-   Debug::ft(Context_dtor);
+   Debug::ftnt(Context_dtor);
 
    //  Purge queued objects, remove ourselves from any queue, and make sure
    //  that no one thinks we're currently running.

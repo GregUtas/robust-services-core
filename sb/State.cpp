@@ -118,7 +118,7 @@ fn_name State_dtor = "State.dtor";
 
 State::~State()
 {
-   Debug::ft(State_dtor);
+   Debug::ftnt(State_dtor);
 
    Debug::SwLog(State_dtor, UnexpectedInvocation, 0);
 

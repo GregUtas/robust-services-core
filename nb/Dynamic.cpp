@@ -40,7 +40,7 @@ fn_name Dynamic_delete1 = "Dynamic.operator delete";
 
 void Dynamic::operator delete(void* addr)
 {
-   Debug::ft(Dynamic_delete1);
+   Debug::ftnt(Dynamic_delete1);
 
    Memory::Free(addr, MemDynamic);
 }
@@ -51,7 +51,7 @@ fn_name Dynamic_delete2 = "Dynamic.operator delete[]";
 
 void Dynamic::operator delete[](void* addr)
 {
-   Debug::ft(Dynamic_delete2);
+   Debug::ftnt(Dynamic_delete2);
 
    Memory::Free(addr, MemDynamic);
 }
@@ -62,7 +62,7 @@ fn_name Dynamic_delete3 = "Dynamic.operator delete(place)";
 
 void Dynamic::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ft(Dynamic_delete3);
+   Debug::ftnt(Dynamic_delete3);
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ fn_name Dynamic_delete4 = "Dynamic.operator delete[](place)";
 
 void Dynamic::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ft(Dynamic_delete4);
+   Debug::ftnt(Dynamic_delete4);
 }
 
 //------------------------------------------------------------------------------

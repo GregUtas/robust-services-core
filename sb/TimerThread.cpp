@@ -51,7 +51,7 @@ fn_name TimerThread_dtor = "TimerThread.dtor";
 
 TimerThread::~TimerThread()
 {
-   Debug::ft(TimerThread_dtor);
+   Debug::ftnt(TimerThread_dtor);
 }
 
 //------------------------------------------------------------------------------

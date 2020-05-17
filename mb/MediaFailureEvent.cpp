@@ -47,7 +47,7 @@ fn_name MediaFailureEvent_dtor = "MediaFailureEvent.dtor";
 
 MediaFailureEvent::~MediaFailureEvent()
 {
-   Debug::ft(MediaFailureEvent_dtor);
+   Debug::ftnt(MediaFailureEvent_dtor);
 }
 
 //------------------------------------------------------------------------------

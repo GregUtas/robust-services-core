@@ -55,7 +55,7 @@ fn_name PsmContext_dtor = "PsmContext.dtor";
 
 PsmContext::~PsmContext()
 {
-   Debug::ft(PsmContext_dtor);
+   Debug::ftnt(PsmContext_dtor);
 
    //  Delete all PSMs and ports.  PSMs are deleted ahead of ports so that
    //  SendFinalMsg can send a message down the stack.

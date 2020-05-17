@@ -45,7 +45,7 @@ fn_name SbExtInputHandler_dtor = "SbExtInputHandler.dtor";
 
 SbExtInputHandler::~SbExtInputHandler()
 {
-   Debug::ft(SbExtInputHandler_dtor);
+   Debug::ftnt(SbExtInputHandler_dtor);
 }
 
 //------------------------------------------------------------------------------

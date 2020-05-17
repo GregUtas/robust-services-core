@@ -1701,6 +1701,6 @@ fn_name CtIncrement_dtor = "CtIncrement.dtor";
 
 CtIncrement::~CtIncrement()
 {
-   Debug::ft(CtIncrement_dtor);
+   Debug::ftnt(CtIncrement_dtor);
 }
 }

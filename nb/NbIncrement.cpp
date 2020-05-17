@@ -3836,6 +3836,6 @@ fn_name NbIncrement_dtor = "NbIncrement.dtor";
 
 NbIncrement::~NbIncrement()
 {
-   Debug::ft(NbIncrement_dtor);
+   Debug::ftnt(NbIncrement_dtor);
 }
 }

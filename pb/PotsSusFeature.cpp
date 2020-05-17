@@ -67,7 +67,7 @@ fn_name PotsSusFeature_dtor = "PotsSusFeature.dtor";
 
 PotsSusFeature::~PotsSusFeature()
 {
-   Debug::ft(PotsSusFeature_dtor);
+   Debug::ftnt(PotsSusFeature_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -104,6 +104,6 @@ fn_name PotsSusFeatureProfile_dtor = "PotsSusFeatureProfile.dtor";
 
 PotsSusFeatureProfile::~PotsSusFeatureProfile()
 {
-   Debug::ft(PotsSusFeatureProfile_dtor);
+   Debug::ftnt(PotsSusFeatureProfile_dtor);
 }
 }

@@ -46,7 +46,7 @@ fn_name LibraryVarSet_dtor = "LibraryVarSet.dtor";
 
 LibraryVarSet::~LibraryVarSet()
 {
-   Debug::ft(LibraryVarSet_dtor);
+   Debug::ftnt(LibraryVarSet_dtor);
 }
 
 //------------------------------------------------------------------------------

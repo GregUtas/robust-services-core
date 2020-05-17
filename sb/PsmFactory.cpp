@@ -48,7 +48,7 @@ fn_name PsmFactory_dtor = "PsmFactory.dtor";
 
 PsmFactory::~PsmFactory()
 {
-   Debug::ft(PsmFactory_dtor);
+   Debug::ftnt(PsmFactory_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -46,7 +46,7 @@ fn_name MutexGuard_dtor = "MutexGuard.dtor";
 
 MutexGuard::~MutexGuard()
 {
-   Debug::ft(MutexGuard_dtor);
+   Debug::ftnt(MutexGuard_dtor);
 
    if(mutex_ != nullptr) Release();
 }

@@ -61,7 +61,7 @@ fn_name SoftwareException_dtor = "SoftwareException.dtor";
 
 SoftwareException::~SoftwareException()
 {
-   Debug::ft(SoftwareException_dtor);
+   Debug::ftnt(SoftwareException_dtor);
 }
 
 //------------------------------------------------------------------------------

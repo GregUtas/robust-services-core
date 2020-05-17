@@ -323,7 +323,7 @@ fn_name PotsCwtService_dtor = "PotsCwtService.dtor";
 
 PotsCwtService::~PotsCwtService()
 {
-   Debug::ft(PotsCwtService_dtor);
+   Debug::ftnt(PotsCwtService_dtor);
 }
 
 //==============================================================================
@@ -344,7 +344,7 @@ fn_name PotsCwaService_dtor = "PotsCwaService.dtor";
 
 PotsCwaService::~PotsCwaService()
 {
-   Debug::ft(PotsCwaService_dtor);
+   Debug::ftnt(PotsCwaService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -389,7 +389,7 @@ fn_name PotsCwbService_dtor = "PotsCwbService.dtor";
 
 PotsCwbService::~PotsCwbService()
 {
-   Debug::ft(PotsCwbService_dtor);
+   Debug::ftnt(PotsCwbService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -418,7 +418,7 @@ fn_name PotsCwaState_dtor = "PotsCwaState.dtor";
 
 PotsCwaState::~PotsCwaState()
 {
-   Debug::ft(PotsCwaState_dtor);
+   Debug::ftnt(PotsCwaState_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -459,7 +459,7 @@ fn_name PotsCwbState_dtor = "PotsCwbState.dtor";
 
 PotsCwbState::~PotsCwbState()
 {
-   Debug::ft(PotsCwbState_dtor);
+   Debug::ftnt(PotsCwbState_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -516,7 +516,7 @@ fn_name PotsCwtEvent_dtor = "PotsCwtEvent.dtor";
 
 PotsCwtEvent::~PotsCwtEvent()
 {
-   Debug::ft(PotsCwtEvent_dtor);
+   Debug::ftnt(PotsCwtEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -534,7 +534,7 @@ fn_name PotsCwtAckEvent_dtor = "PotsCwtAckEvent.dtor";
 
 PotsCwtAckEvent::~PotsCwtAckEvent()
 {
-   Debug::ft(PotsCwtAckEvent_dtor);
+   Debug::ftnt(PotsCwtAckEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -554,7 +554,7 @@ fn_name PotsCwtReleaseEvent_dtor = "PotsCwtReleaseEvent.dtor";
 
 PotsCwtReleaseEvent::~PotsCwtReleaseEvent()
 {
-   Debug::ft(PotsCwtReleaseEvent_dtor);
+   Debug::ftnt(PotsCwtReleaseEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -582,7 +582,7 @@ fn_name PotsCwtSsm_dtor = "PotsCwtSsm.dtor";
 
 PotsCwtSsm::~PotsCwtSsm()
 {
-   Debug::ft(PotsCwtSsm_dtor);
+   Debug::ftnt(PotsCwtSsm_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -672,7 +672,7 @@ fn_name PotsCwaSsm_dtor = "PotsCwaSsm.dtor";
 
 PotsCwaSsm::~PotsCwaSsm()
 {
-   Debug::ft(PotsCwaSsm_dtor);
+   Debug::ftnt(PotsCwaSsm_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -738,7 +738,7 @@ fn_name PotsCwbSsm_dtor = "PotsCwbSsm.dtor";
 
 PotsCwbSsm::~PotsCwbSsm()
 {
-   Debug::ft(PotsCwbSsm_dtor);
+   Debug::ftnt(PotsCwbSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

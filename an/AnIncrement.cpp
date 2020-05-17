@@ -187,6 +187,6 @@ fn_name AnIncrement_dtor = "AnIncrement.dtor";
 
 AnIncrement::~AnIncrement()
 {
-   Debug::ft(AnIncrement_dtor);
+   Debug::ftnt(AnIncrement_dtor);
 }
 }

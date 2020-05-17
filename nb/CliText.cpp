@@ -54,7 +54,7 @@ fn_name CliText_dtor = "CliText.dtor";
 
 CliText::~CliText()
 {
-   Debug::ft(CliText_dtor);
+   Debug::ftnt(CliText_dtor);
 }
 
 //------------------------------------------------------------------------------

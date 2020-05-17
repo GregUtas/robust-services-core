@@ -865,6 +865,6 @@ fn_name PotsIncrement_dtor = "PotsIncrement.dtor";
 
 PotsIncrement::~PotsIncrement()
 {
-   Debug::ft(PotsIncrement_dtor);
+   Debug::ftnt(PotsIncrement_dtor);
 }
 }

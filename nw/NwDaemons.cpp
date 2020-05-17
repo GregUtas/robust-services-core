@@ -56,7 +56,7 @@ fn_name TcpIoDaemon_dtor = "TcpIoDaemon.dtor";
 
 TcpIoDaemon::~TcpIoDaemon()
 {
-   Debug::ft(TcpIoDaemon_dtor);
+   Debug::ftnt(TcpIoDaemon_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ fn_name UdpIoDaemon_dtor = "UdpIoDaemon.dtor";
 
 UdpIoDaemon::~UdpIoDaemon()
 {
-   Debug::ft(UdpIoDaemon_dtor);
+   Debug::ftnt(UdpIoDaemon_dtor);
 }
 
 //------------------------------------------------------------------------------

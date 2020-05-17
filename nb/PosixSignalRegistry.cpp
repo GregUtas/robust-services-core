@@ -50,7 +50,7 @@ fn_name PosixSignalRegistry_dtor = "PosixSignalRegistry.dtor";
 
 PosixSignalRegistry::~PosixSignalRegistry()
 {
-   Debug::ft(PosixSignalRegistry_dtor);
+   Debug::ftnt(PosixSignalRegistry_dtor);
 
    Debug::SwLog(PosixSignalRegistry_dtor, UnexpectedInvocation, 0);
 }

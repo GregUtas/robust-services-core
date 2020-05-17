@@ -45,7 +45,7 @@ fn_name AssertionException_dtor = "AssertionException.dtor";
 
 AssertionException::~AssertionException()
 {
-   Debug::ft(AssertionException_dtor);
+   Debug::ftnt(AssertionException_dtor);
 }
 
 //------------------------------------------------------------------------------

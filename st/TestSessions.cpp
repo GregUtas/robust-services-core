@@ -209,7 +209,7 @@ fn_name TestSession_dtor = "TestSession.dtor";
 
 TestSession::~TestSession()
 {
-   Debug::ft(TestSession_dtor);
+   Debug::ftnt(TestSession_dtor);
 
    if(testPsm_ != nullptr) testPsm_->Kill();
 }
@@ -337,7 +337,7 @@ fn_name TestFactory_dtor = "TestFactory.dtor";
 
 TestFactory::~TestFactory()
 {
-   Debug::ft(TestFactory_dtor);
+   Debug::ftnt(TestFactory_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -383,7 +383,7 @@ fn_name TestProtocol_dtor = "TestProtocol.dtor";
 
 TestProtocol::~TestProtocol()
 {
-   Debug::ft(TestProtocol_dtor);
+   Debug::ftnt(TestProtocol_dtor);
 }
 
 //==============================================================================
@@ -425,7 +425,7 @@ fn_name TestMessage_dtor = "TestMessage.dtor";
 
 TestMessage::~TestMessage()
 {
-   Debug::ft(TestMessage_dtor);
+   Debug::ftnt(TestMessage_dtor);
 
    delete appMsg_;
    appMsg_ = nullptr;
@@ -544,7 +544,7 @@ fn_name TestPsm_dtor = "TestPsm.dtor";
 
 TestPsm::~TestPsm()
 {
-   Debug::ft(TestPsm_dtor);
+   Debug::ftnt(TestPsm_dtor);
 
    SendFinalMsg();
 }
@@ -728,7 +728,7 @@ fn_name TestService_dtor = "TestService.dtor";
 
 TestService::~TestService()
 {
-   Debug::ft(TestService_dtor);
+   Debug::ftnt(TestService_dtor);
 }
 
 //==============================================================================
@@ -746,7 +746,7 @@ fn_name TestState_dtor = "TestState.dtor";
 
 TestState::~TestState()
 {
-   Debug::ft(TestState_dtor);
+   Debug::ftnt(TestState_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -800,7 +800,7 @@ fn_name TestEvent_dtor = "TestEvent.dtor";
 
 TestEvent::~TestEvent()
 {
-   Debug::ft(TestEvent_dtor);
+   Debug::ftnt(TestEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -819,7 +819,7 @@ fn_name TestInjectEvent_dtor = "TestInjectEvent.dtor";
 
 TestInjectEvent::~TestInjectEvent()
 {
-   Debug::ft(TestInjectEvent_dtor);
+   Debug::ftnt(TestInjectEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -838,7 +838,7 @@ fn_name TestVerifyEvent_dtor = "TestVerifyEvent.dtor";
 
 TestVerifyEvent::~TestVerifyEvent()
 {
-   Debug::ft(TestVerifyEvent_dtor);
+   Debug::ftnt(TestVerifyEvent_dtor);
 }
 
 //==============================================================================
@@ -863,7 +863,7 @@ fn_name TestSsm_dtor = "TestSsm.dtor";
 
 TestSsm::~TestSsm()
 {
-   Debug::ft(TestSsm_dtor);
+   Debug::ftnt(TestSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

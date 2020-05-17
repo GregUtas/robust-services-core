@@ -52,9 +52,9 @@ fn_name Tone_dtor = "Tone.dtor";
 
 Tone::~Tone()
 {
-   Debug::ft(Tone_dtor);
+   Debug::ftnt(Tone_dtor);
 
-   Singleton< ToneRegistry >::Instance()->UnbindTone(*this);
+   Singleton< ToneRegistry >::Extant()->UnbindTone(*this);
 }
 
 //------------------------------------------------------------------------------

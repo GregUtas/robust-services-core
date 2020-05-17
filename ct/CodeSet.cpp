@@ -50,7 +50,7 @@ fn_name CodeSet_dtor = "CodeSet.dtor";
 
 CodeSet::~CodeSet()
 {
-   Debug::ft(CodeSet_dtor);
+   Debug::ftnt(CodeSet_dtor);
 }
 
 //------------------------------------------------------------------------------

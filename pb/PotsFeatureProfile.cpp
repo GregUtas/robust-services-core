@@ -49,7 +49,7 @@ fn_name PotsFeatureProfile_dtor = "PotsFeatureProfile.dtor";
 
 PotsFeatureProfile::~PotsFeatureProfile()
 {
-   Debug::ft(PotsFeatureProfile_dtor);
+   Debug::ftnt(PotsFeatureProfile_dtor);
 }
 
 //------------------------------------------------------------------------------

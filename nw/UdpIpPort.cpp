@@ -46,7 +46,7 @@ fn_name UdpIpPort_dtor = "UdpIpPort.dtor";
 
 UdpIpPort::~UdpIpPort()
 {
-   Debug::ft(UdpIpPort_dtor);
+   Debug::ftnt(UdpIpPort_dtor);
 }
 
 //------------------------------------------------------------------------------

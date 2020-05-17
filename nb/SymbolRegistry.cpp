@@ -52,7 +52,7 @@ fn_name SymbolRegistry_dtor = "SymbolRegistry.dtor";
 
 SymbolRegistry::~SymbolRegistry()
 {
-   Debug::ft(SymbolRegistry_dtor);
+   Debug::ftnt(SymbolRegistry_dtor);
 
    Debug::SwLog(SymbolRegistry_dtor, UnexpectedInvocation, 0);
    symbolq_.Purge();

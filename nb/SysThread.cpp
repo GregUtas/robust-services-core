@@ -89,7 +89,7 @@ fn_name SysThread_dtor = "SysThread.dtor";
 
 SysThread::~SysThread()
 {
-   Debug::ft(SysThread_dtor);
+   Debug::ftnt(SysThread_dtor);
 
    DeleteSentry(event_);
    DeleteSentry(guard_);

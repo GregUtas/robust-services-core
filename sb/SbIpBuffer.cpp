@@ -66,7 +66,7 @@ fn_name SbIpBuffer_dtor = "SbIpBuffer.dtor";
 
 SbIpBuffer::~SbIpBuffer()
 {
-   Debug::ft(SbIpBuffer_dtor);
+   Debug::ftnt(SbIpBuffer_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ fn_name SbIpBuffer_delete1 = "SbIpBuffer.operator delete";
 
 void SbIpBuffer::operator delete(void* addr)
 {
-   Debug::ft(SbIpBuffer_delete1);
+   Debug::ftnt(SbIpBuffer_delete1);
 
    Pooled::operator delete(addr);
 }
@@ -108,7 +108,7 @@ fn_name SbIpBuffer_delete2 = "SbIpBuffer.operator delete(user)";
 
 void SbIpBuffer::operator delete(void* addr, SbPoolUser user)
 {
-   Debug::ft(SbIpBuffer_delete2);
+   Debug::ftnt(SbIpBuffer_delete2);
 
    Pooled::operator delete(addr);
 }

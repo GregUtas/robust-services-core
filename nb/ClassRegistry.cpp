@@ -138,7 +138,7 @@ fn_name ClassRegistry_UnbindClass = "ClassRegistry.UnbindClass";
 
 void ClassRegistry::UnbindClass(Class& cls)
 {
-   Debug::ft(ClassRegistry_UnbindClass);
+   Debug::ftnt(ClassRegistry_UnbindClass);
 
    classes_.Erase(cls);
 }

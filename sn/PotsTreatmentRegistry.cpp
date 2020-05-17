@@ -216,7 +216,7 @@ fn_name PotsTreatmentRegistry_UnbindTreatmentQ =
 
 void PotsTreatmentRegistry::UnbindTreatmentQ(PotsTreatmentQueue& treatmentq)
 {
-   Debug::ft(PotsTreatmentRegistry_UnbindTreatmentQ);
+   Debug::ftnt(PotsTreatmentRegistry_UnbindTreatmentQ);
 
    treatmentqs_.Erase(treatmentq);
 }

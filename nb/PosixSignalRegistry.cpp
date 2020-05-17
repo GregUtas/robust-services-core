@@ -149,7 +149,7 @@ fn_name PosixSignalRegistry_UnbindSignal = "PosixSignalRegistry.UnbindSignal";
 
 void PosixSignalRegistry::UnbindSignal(PosixSignal& signal)
 {
-   Debug::ft(PosixSignalRegistry_UnbindSignal);
+   Debug::ftnt(PosixSignalRegistry_UnbindSignal);
 
    signals_.Erase(signal);
 }

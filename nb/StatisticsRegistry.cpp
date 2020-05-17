@@ -176,7 +176,7 @@ fn_name StatisticsRegistry_UnbindGroup = "StatisticsRegistry.UnbindGroup";
 
 void StatisticsRegistry::UnbindGroup(StatisticsGroup& group)
 {
-   Debug::ft(StatisticsRegistry_UnbindGroup);
+   Debug::ftnt(StatisticsRegistry_UnbindGroup);
 
    groups_.Erase(group);
 }
@@ -187,7 +187,7 @@ fn_name StatisticsRegistry_UnbindStat = "StatisticsRegistry.UnbindStat";
 
 void StatisticsRegistry::UnbindStat(Statistic& stat)
 {
-   Debug::ft(StatisticsRegistry_UnbindStat);
+   Debug::ftnt(StatisticsRegistry_UnbindStat);
 
    stats_.Erase(stat);
 }

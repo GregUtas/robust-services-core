@@ -160,7 +160,7 @@ fn_name MutexRegistry_UnbindMutex = "MutexRegistry.UnbindMutex";
 
 void MutexRegistry::UnbindMutex(SysMutex& mutex)
 {
-   Debug::ft(MutexRegistry_UnbindMutex);
+   Debug::ftnt(MutexRegistry_UnbindMutex);
 
    mutexes_.Erase(mutex);
 }

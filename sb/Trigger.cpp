@@ -105,7 +105,7 @@ fn_name Trigger_UnbindInitiator = "Trigger.UnbindInitiator";
 
 void Trigger::UnbindInitiator(Initiator& init)
 {
-   Debug::ft(Trigger_UnbindInitiator);
+   Debug::ftnt(Trigger_UnbindInitiator);
 
    if(!initq_.Exq(init))
    {

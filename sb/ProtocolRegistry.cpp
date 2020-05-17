@@ -97,7 +97,7 @@ fn_name ProtocolRegistry_UnbindProtocol = "ProtocolRegistry.UnbindProtocol";
 
 void ProtocolRegistry::UnbindProtocol(Protocol& protocol)
 {
-   Debug::ft(ProtocolRegistry_UnbindProtocol);
+   Debug::ftnt(ProtocolRegistry_UnbindProtocol);
 
    protocols_.Erase(protocol);
 }

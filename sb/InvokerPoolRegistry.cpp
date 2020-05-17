@@ -218,7 +218,7 @@ fn_name InvokerPoolRegistry_UnbindPool = "InvokerPoolRegistry.UnbindPool";
 
 void InvokerPoolRegistry::UnbindPool(InvokerPool& pool)
 {
-   Debug::ft(InvokerPoolRegistry_UnbindPool);
+   Debug::ftnt(InvokerPoolRegistry_UnbindPool);
 
    pools_.Erase(pool);
 }

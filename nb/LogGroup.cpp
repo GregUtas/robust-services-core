@@ -217,7 +217,7 @@ fn_name LogGroup_UnbindLog = "LogGroup.UnbindLog";
 
 void LogGroup::UnbindLog(Log& log)
 {
-   Debug::ft(LogGroup_UnbindLog);
+   Debug::ftnt(LogGroup_UnbindLog);
 
    logs_.Erase(log);
 }

@@ -455,7 +455,7 @@ fn_name IpPort_UnbindHandler = "IpPort.UnbindHandler";
 
 void IpPort::UnbindHandler(const InputHandler& handler)
 {
-   Debug::ft(IpPort_UnbindHandler);
+   Debug::ftnt(IpPort_UnbindHandler);
 
    //  Do nothing if a different handler is registered.
    //

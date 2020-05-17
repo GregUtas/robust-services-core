@@ -340,7 +340,7 @@ fn_name ObjectPoolRegistry_UnbindPool = "ObjectPoolRegistry.UnbindPool";
 
 void ObjectPoolRegistry::UnbindPool(ObjectPool& pool)
 {
-   Debug::ft(ObjectPoolRegistry_UnbindPool);
+   Debug::ftnt(ObjectPoolRegistry_UnbindPool);
 
    FunctionGuard guard(Guard_MemUnprotect);
    pools_.Erase(pool);

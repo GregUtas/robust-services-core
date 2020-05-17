@@ -188,7 +188,7 @@ fn_name Singletons_UnbindInstance = "Singletons.UnbindInstance";
 
 void Singletons::UnbindInstance(const Base** addr)
 {
-   Debug::ft(Singletons_UnbindInstance);
+   Debug::ftnt(Singletons_UnbindInstance);
 
    //  Search for a singleton whose Instance_ pointer matches ADDR and remove
    //  it from the registry.  Move the last entry into its slot to keep the

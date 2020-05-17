@@ -151,7 +151,7 @@ fn_name ToolRegistry_UnbindTool = "ToolRegistry.UnbindTool";
 
 void ToolRegistry::UnbindTool(Tool& tool)
 {
-   Debug::ft(ToolRegistry_UnbindTool);
+   Debug::ftnt(ToolRegistry_UnbindTool);
 
    tools_.Erase(tool);
 }

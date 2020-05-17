@@ -219,7 +219,7 @@ fn_name Protocol_UnbindParameter = "Protocol.UnbindParameter";
 
 void Protocol::UnbindParameter(Parameter& parameter)
 {
-   Debug::ft(Protocol_UnbindParameter);
+   Debug::ftnt(Protocol_UnbindParameter);
 
    parameters_.Erase(parameter);
 }
@@ -230,7 +230,7 @@ fn_name Protocol_UnbindSignal = "Protocol.UnbindSignal";
 
 void Protocol::UnbindSignal(Signal& signal)
 {
-   Debug::ft(Protocol_UnbindSignal);
+   Debug::ftnt(Protocol_UnbindSignal);
 
    signals_.Erase(signal);
 }

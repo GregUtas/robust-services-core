@@ -154,7 +154,7 @@ fn_name PotsProfileRegistry_UnbindProfile = "PotsProfileRegistry.UnbindProfile";
 
 void PotsProfileRegistry::UnbindProfile(PotsProfile& profile)
 {
-   Debug::ft(PotsProfileRegistry_UnbindProfile);
+   Debug::ftnt(PotsProfileRegistry_UnbindProfile);
 
    profiles_.Erase(profile);
 }

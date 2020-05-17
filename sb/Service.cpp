@@ -411,7 +411,7 @@ fn_name Service_UnbindState = "Service.UnbindState";
 
 void Service::UnbindState (State& state)
 {
-   Debug::ft(Service_UnbindState);
+   Debug::ftnt(Service_UnbindState);
 
    states_.Erase(state);
 }

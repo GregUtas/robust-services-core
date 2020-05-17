@@ -444,7 +444,7 @@ fn_name ModuleRegistry_UnbindModule = "ModuleRegistry.UnbindModule";
 
 void ModuleRegistry::UnbindModule(Module& module)
 {
-   Debug::ft(ModuleRegistry_UnbindModule);
+   Debug::ftnt(ModuleRegistry_UnbindModule);
 
    modules_.Erase(module);
 }

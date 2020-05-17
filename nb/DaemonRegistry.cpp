@@ -145,7 +145,7 @@ fn_name DaemonRegistry_UnbindDaemon = "DaemonRegistry.UnbindDaemon";
 
 void DaemonRegistry::UnbindDaemon(Daemon& daemon)
 {
-   Debug::ft(DaemonRegistry_UnbindDaemon);
+   Debug::ftnt(DaemonRegistry_UnbindDaemon);
 
    daemons_.Erase(daemon);
 }

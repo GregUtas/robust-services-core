@@ -97,7 +97,7 @@ fn_name ServiceRegistry_UnbindService = "ServiceRegistry.UnbindService";
 
 void ServiceRegistry::UnbindService(Service& service)
 {
-   Debug::ft(ServiceRegistry_UnbindService);
+   Debug::ftnt(ServiceRegistry_UnbindService);
 
    services_.Erase(service);
 }

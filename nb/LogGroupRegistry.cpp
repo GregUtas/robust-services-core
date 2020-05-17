@@ -249,7 +249,7 @@ fn_name LogGroupRegistry_UnbindGroup = "LogGroupRegistry.UnbindGroup";
 
 void LogGroupRegistry::UnbindGroup(LogGroup& group)
 {
-   Debug::ft(LogGroupRegistry_UnbindGroup);
+   Debug::ftnt(LogGroupRegistry_UnbindGroup);
 
    groups_.Erase(group);
 }

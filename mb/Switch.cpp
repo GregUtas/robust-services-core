@@ -99,7 +99,7 @@ fn_name Switch_UnbindCircuit = "Switch.UnbindCircuit";
 
 void Switch::UnbindCircuit(Circuit& circuit)
 {
-   Debug::ft(Switch_UnbindCircuit);
+   Debug::ftnt(Switch_UnbindCircuit);
 
    circuits_.Erase(circuit);
 }

@@ -274,6 +274,6 @@ void InvokerThread::Shutdown(RestartLevel level)
    Restart::Release(ctx_);
    if(ctx_ == nullptr) return;
 
-   Singleton< PayloadInvokerPool >::Instance()->Requeue(*ctx_.release());
+   Singleton< PayloadInvokerPool >::Extant()->Requeue(*ctx_.release());
 }
 }

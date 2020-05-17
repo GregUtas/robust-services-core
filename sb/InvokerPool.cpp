@@ -822,7 +822,7 @@ fn_name InvokerPool_UnbindThread = "InvokerPool.UnbindThread";
 
 void InvokerPool::UnbindThread(InvokerThread& thread)
 {
-   Debug::ft(InvokerPool_UnbindThread);
+   Debug::ftnt(InvokerPool_UnbindThread);
 
    invokers_.Erase(thread);
 }

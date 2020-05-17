@@ -129,7 +129,7 @@ fn_name IpServiceRegistry_UnbindService = "IpServiceRegistry.UnbindService";
 
 void IpServiceRegistry::UnbindService(IpService& service)
 {
-   Debug::ft(IpServiceRegistry_UnbindService);
+   Debug::ftnt(IpServiceRegistry_UnbindService);
 
    services_.Erase(service);
 }

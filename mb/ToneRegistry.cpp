@@ -102,7 +102,7 @@ fn_name ToneRegistry_UnbindTone = "ToneRegistry.UnbindTone";
 
 void ToneRegistry::UnbindTone(Tone& tone)
 {
-   Debug::ft(ToneRegistry_UnbindTone);
+   Debug::ftnt(ToneRegistry_UnbindTone);
 
    tones_.Erase(tone);
 }

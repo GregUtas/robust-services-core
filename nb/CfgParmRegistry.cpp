@@ -463,7 +463,7 @@ fn_name CfgParmRegistry_UnbindParm = "CfgParmRegistry.UnbindParm";
 
 void CfgParmRegistry::UnbindParm(CfgParm& parm)
 {
-   Debug::ft(CfgParmRegistry_UnbindParm);
+   Debug::ftnt(CfgParmRegistry_UnbindParm);
 
    parmq_.Exq(parm);
 }
@@ -474,7 +474,7 @@ fn_name CfgParmRegistry_UnbindTuple = "CfgParmRegistry.UnbindTuple";
 
 void CfgParmRegistry::UnbindTuple(CfgTuple& tuple)
 {
-   Debug::ft(CfgParmRegistry_UnbindTuple);
+   Debug::ftnt(CfgParmRegistry_UnbindTuple);
 
    tupleq_.Exq(tuple);
 }

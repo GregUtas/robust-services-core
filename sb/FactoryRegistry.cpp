@@ -209,7 +209,7 @@ fn_name FactoryRegistry_UnbindFactory = "FactoryRegistry.UnbindFactory";
 
 void FactoryRegistry::UnbindFactory(Factory& factory)
 {
-   Debug::ft(FactoryRegistry_UnbindFactory);
+   Debug::ftnt(FactoryRegistry_UnbindFactory);
 
    factories_.Erase(factory);
 }

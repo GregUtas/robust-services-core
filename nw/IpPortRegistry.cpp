@@ -382,7 +382,7 @@ fn_name IpPortRegistry_UnbindPort = "IpPortRegistry.UnbindPort";
 
 void IpPortRegistry::UnbindPort(IpPort& port)
 {
-   Debug::ft(IpPortRegistry_UnbindPort);
+   Debug::ftnt(IpPortRegistry_UnbindPort);
 
    portq_.Exq(port);
 }

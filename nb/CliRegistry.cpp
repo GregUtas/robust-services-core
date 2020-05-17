@@ -128,7 +128,7 @@ fn_name CliRegistry_UnbindIncrement = "CliRegistry.UnbindIncrement";
 
 void CliRegistry::UnbindIncrement(CliIncrement& incr)
 {
-   Debug::ft(CliRegistry_UnbindIncrement);
+   Debug::ftnt(CliRegistry_UnbindIncrement);
 
    increments_.Erase(incr);
 }

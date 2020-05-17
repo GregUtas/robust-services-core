@@ -287,7 +287,7 @@ fn_name ThreadRegistry_UnbindThread = "ThreadRegistry.UnbindThread";
 
 void ThreadRegistry::UnbindThread(Thread& thread)
 {
-   Debug::ft(ThreadRegistry_UnbindThread);
+   Debug::ftnt(ThreadRegistry_UnbindThread);
 
    threads_.Erase(thread);
 }

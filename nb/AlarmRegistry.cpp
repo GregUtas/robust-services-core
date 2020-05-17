@@ -157,7 +157,7 @@ fn_name AlarmRegistry_UnbindAlarm = "AlarmRegistry.UnbindAlarm";
 
 void AlarmRegistry::UnbindAlarm(Alarm& alarm)
 {
-   Debug::ft(AlarmRegistry_UnbindAlarm);
+   Debug::ftnt(AlarmRegistry_UnbindAlarm);
 
    alarms_.Erase(alarm);
 }

@@ -158,7 +158,7 @@ fn_name PotsFeatureRegistry_UnbindFeature = "PotsFeatureRegistry.UnbindFeature";
 
 void PotsFeatureRegistry::UnbindFeature(PotsFeature& feature)
 {
-   Debug::ft(PotsFeatureRegistry_UnbindFeature);
+   Debug::ftnt(PotsFeatureRegistry_UnbindFeature);
 
    features_.Erase(feature);
 }

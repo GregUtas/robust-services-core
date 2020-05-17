@@ -131,7 +131,7 @@ fn_name PotsTreatmentQueue_UnbindTreatment =
 
 void PotsTreatmentQueue::UnbindTreatment(PotsTreatment& treatment)
 {
-   Debug::ft(PotsTreatmentQueue_UnbindTreatment);
+   Debug::ftnt(PotsTreatmentQueue_UnbindTreatment);
 
    treatmentq_.Exq(treatment);
 }

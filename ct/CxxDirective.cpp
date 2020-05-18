@@ -678,7 +678,7 @@ Macro::~Macro()
 {
    Debug::ftnt(Macro_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseMacro(this);
+   Singleton< CxxSymbols >::Extant()->EraseMacro(this);
    CxxStats::Decr(CxxStats::DEFINE_DIRECTIVE);
 }
 

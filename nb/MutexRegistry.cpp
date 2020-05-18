@@ -69,7 +69,7 @@ fn_name MutexRegistry_Abandon = "MutexRegistry.Abandon";
 
 void MutexRegistry::Abandon() const
 {
-   Debug::ft(MutexRegistry_Abandon);
+   Debug::ftnt(MutexRegistry_Abandon);
 
    size_t count = 0;
    auto nid = SysThread::RunningThreadId();

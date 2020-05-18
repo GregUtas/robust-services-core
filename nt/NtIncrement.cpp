@@ -1751,7 +1751,7 @@ Q1WayItem::Q1WayItem(word index) : index_(index) { }
 
 Q1WayItem::~Q1WayItem()
 {
-   Singleton< Q1WayPool >::Instance()->items_[index_].release();
+   Singleton< Q1WayPool >::Extant()->items_[index_].release();
 }
 
 //------------------------------------------------------------------------------
@@ -2271,7 +2271,7 @@ Q2WayItem::Q2WayItem(word index) : index_(index) { }
 
 Q2WayItem::~Q2WayItem()
 {
-   Singleton< Q2WayPool >::Instance()->items_[index_].release();
+   Singleton< Q2WayPool >::Extant()->items_[index_].release();
 }
 
 //------------------------------------------------------------------------------
@@ -2835,7 +2835,7 @@ RegistryItem::RegistryItem(word index) : index_(index) { }
 
 RegistryItem::~RegistryItem()
 {
-   Singleton< RegistryPool >::Instance()->items_[index_].release();
+   Singleton< RegistryPool >::Extant()->items_[index_].release();
 }
 
 //------------------------------------------------------------------------------

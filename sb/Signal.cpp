@@ -69,7 +69,7 @@ Signal::~Signal()
 
    Debug::SwLog(Signal_dtor, UnexpectedInvocation, 0);
 
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid_);
+   auto pro = Singleton< ProtocolRegistry >::Extant()->GetProtocol(prid_);
    if(pro != nullptr) pro->UnbindSignal(*this);
 }
 

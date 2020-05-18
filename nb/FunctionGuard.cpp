@@ -77,7 +77,7 @@ fn_name FunctionGuard_Release = "FunctionGuard.Release";
 
 void FunctionGuard::Release()
 {
-   Debug::ft(FunctionGuard_Release);
+   Debug::ftnt(FunctionGuard_Release);
 
    auto first = first_;
    first_ = Guard_Nil;

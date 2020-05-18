@@ -1373,7 +1373,7 @@ Thread::~Thread()
 {
    Debug::ftnt(Thread_dtor);
 
-   auto threads = Singleton< Threads >::Instance();
+   auto threads = Singleton< Threads >::Extant();
    threads->Destroying(Deleting, systhrd_.get());
 
    ThreadAdmin::Incr(ThreadAdmin::Deletions);
@@ -2242,7 +2242,7 @@ void Thread::ImmProtect()
    //
    if(thr->priv_->immUnprots_ == 0)
    {
-      Debug::SwErr("underflow", thr->Tid());
+      Debug::SwLog(Thread_ImmProtect, "underflow", thr->Tid());
       return;
    }
 
@@ -2270,7 +2270,7 @@ void Thread::ImmUnprotect()
    //
    if(thr->priv_->immUnprots_ >= MaxUnprotectCount)
    {
-      Debug::SwErr("overflow", thr->Tid());
+      Debug::SwLog(Thread_ImmUnprotect, "overflow", thr->Tid());
       return;
    }
 
@@ -2573,7 +2573,7 @@ void Thread::MakeUnpreemptable()
    //
    if(thr->priv_->unpreempts_ >= MaxUnpreemptCount)
    {
-      Debug::SwErr("overflow", thr->Tid());
+      Debug::SwLog(Thread_MakeUnpreemptable, "overflow", thr->Tid());
       return;
    }
 
@@ -2597,7 +2597,7 @@ void Thread::MemProtect()
    //
    if(thr->priv_->memUnprots_ == 0)
    {
-      Debug::SwErr("underflow", thr->Tid());
+      Debug::SwLog(Thread_MemProtect, "underflow", thr->Tid());
       return;
    }
 
@@ -2623,7 +2623,7 @@ void Thread::MemUnprotect()
    //
    if(thr->priv_->memUnprots_ >= MaxUnprotectCount)
    {
-      Debug::SwErr("overflow", thr->Tid());
+      Debug::SwLog(Thread_MemUnprotect, "overflow", thr->Tid());
       return;
    }
 
@@ -2772,7 +2772,7 @@ void Thread::Raise(signal_t sig)
 
    //  Ensure that SIG is valid.
    //
-   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto reg = Singleton< PosixSignalRegistry >::Extant();
    auto ps1 = reg->Find(sig);
 
    if(ps1 == nullptr)

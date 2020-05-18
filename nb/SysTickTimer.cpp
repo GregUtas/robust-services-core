@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysTickTimer.win.cpp
+//  SysTickTimer.cpp
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -22,7 +22,6 @@
 #ifdef OS_WIN
 #include "SysTickTimer.h"
 #include <sys/timeb.h>
-#include <windows.h>
 #include "Debug.h"
 
 //------------------------------------------------------------------------------

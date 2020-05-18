@@ -137,7 +137,7 @@ fn_name SysMutex_Release = "SysMutex.Release";
 
 void SysMutex::Release(bool abandon)
 {
-   Debug::ft(SysMutex_Release);
+   Debug::ftnt(SysMutex_Release);
 
    auto curr = SysThread::RunningThreadId();
 

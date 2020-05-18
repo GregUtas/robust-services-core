@@ -431,7 +431,7 @@ ClassData::~ClassData()
    Debug::ftnt(ClassData_dtor);
 
    CloseScope();
-   Singleton< CxxSymbols >::Instance()->EraseData(this);
+   Singleton< CxxSymbols >::Extant()->EraseData(this);
    CxxStats::Decr(CxxStats::CLASS_DATA);
 }
 
@@ -1956,7 +1956,7 @@ Function::~Function()
    if(type_) return;
 
    CloseScope();
-   Singleton< CxxSymbols >::Instance()->EraseFunc(this);
+   Singleton< CxxSymbols >::Extant()->EraseFunc(this);
    CxxStats::Decr(CxxStats::FUNC_DECL);
 }
 
@@ -5673,7 +5673,7 @@ SpaceData::~SpaceData()
    Debug::ftnt(SpaceData_dtor);
 
    CloseScope();
-   Singleton< CxxSymbols >::Instance()->EraseData(this);
+   Singleton< CxxSymbols >::Extant()->EraseData(this);
    CxxStats::Decr(CxxStats::FILE_DATA);
 }
 

@@ -68,7 +68,7 @@ Class::~Class()
 {
    Debug::ftnt(Class_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseClass(this);
+   Singleton< CxxSymbols >::Extant()->EraseClass(this);
    CxxStats::Decr(CxxStats::CLASS_DECL);
 }
 
@@ -2914,7 +2914,7 @@ Namespace::~Namespace()
 {
    Debug::ftnt(Namespace_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseSpace(this);
+   Singleton< CxxSymbols >::Extant()->EraseSpace(this);
    CxxStats::Decr(CxxStats::SPACE_DECL);
 }
 

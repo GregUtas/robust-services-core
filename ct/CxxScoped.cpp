@@ -961,7 +961,7 @@ Enum::~Enum()
 {
    Debug::ftnt(Enum_dtor);
 
-   if(!name_.empty()) Singleton< CxxSymbols >::Instance()->EraseEnum(this);
+   if(!name_.empty()) Singleton< CxxSymbols >::Extant()->EraseEnum(this);
    CxxStats::Decr(CxxStats::ENUM_DECL);
 }
 
@@ -1281,7 +1281,7 @@ Enumerator::~Enumerator()
 {
    Debug::ftnt(Enumerator_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseEtor(this);
+   Singleton< CxxSymbols >::Extant()->EraseEtor(this);
    CxxStats::Decr(CxxStats::ENUM_MEM);
 }
 
@@ -1507,7 +1507,7 @@ Forward::~Forward()
 {
    Debug::ftnt(Forward_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseForw(this);
+   Singleton< CxxSymbols >::Extant()->EraseForw(this);
    CxxStats::Decr(CxxStats::FORWARD_DECL);
 }
 
@@ -1719,7 +1719,7 @@ Friend::~Friend()
 
    if(GetFunction() == nullptr)
    {
-      Singleton< CxxSymbols >::Instance()->EraseFriend(this);
+      Singleton< CxxSymbols >::Extant()->EraseFriend(this);
    }
 
    CxxStats::Decr(CxxStats::FRIEND_DECL);
@@ -2585,7 +2585,7 @@ Terminal::~Terminal()
 {
    Debug::ftnt(Terminal_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseTerm(this);
+   Singleton< CxxSymbols >::Extant()->EraseTerm(this);
    CxxStats::Decr(CxxStats::TERMINAL_DECL);
 }
 
@@ -2677,7 +2677,7 @@ Typedef::~Typedef()
 {
    Debug::ftnt(Typedef_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseType(this);
+   Singleton< CxxSymbols >::Extant()->EraseType(this);
    CxxStats::Decr(CxxStats::TYPE_DECL);
 }
 

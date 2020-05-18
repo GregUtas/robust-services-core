@@ -136,7 +136,9 @@ const string Element::InputPath()
 
 string Element::Name()
 {
-   return Singleton< Element >::Instance()->name_.c_str();
+   auto element = Singleton< Element >::Extant();
+   if(element == nullptr) return "Unnamed Element";
+   return element->name_.c_str();
 }
 
 //------------------------------------------------------------------------------

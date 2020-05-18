@@ -21,7 +21,6 @@
 //
 #include "Duration.h"
 #include "Debug.h"
-#include "Singleton.h"
 #include "SysTickTimer.h"
 #include "SysTypes.h"
 

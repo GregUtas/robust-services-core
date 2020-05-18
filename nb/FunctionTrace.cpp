@@ -856,7 +856,7 @@ void FunctionTrace::FixCtorChains()
 
 void* FunctionTrace::operator new(size_t size)
 {
-   return Singleton< TraceBuffer >::Instance()->AddFunction();
+   return Singleton< TraceBuffer >::Extant()->AddFunction();
 }
 
 //------------------------------------------------------------------------------

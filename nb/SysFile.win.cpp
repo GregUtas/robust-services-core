@@ -124,7 +124,7 @@ fn_name FileWalker_Reset = "FileWalker.Reset";
 
 bool FileWalker::Reset()
 {
-   Debug::ft(FileWalker_Reset);
+   Debug::ftnt(FileWalker_Reset);
 
    if(iterator_ == -1) return false;
    _findclose(iterator_);

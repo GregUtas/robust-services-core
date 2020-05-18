@@ -380,7 +380,7 @@ private:
    //  nullptr).  OFFSET and INFO arespecific to WARNING.
    //
    void LogCode(Warning warning, size_t line, size_t pos,
-      const CxxNamed* item, size_t offset = 0,
+      const CxxNamed* item, NodeBase::word offset = 0,
       const std::string& info = std::string(NodeBase::EMPTY_STR),
       bool hide = false) const;
 

@@ -59,7 +59,7 @@ void MutexGuard::Release()
 {
    if(mutex_ != nullptr)
    {
-      Debug::ft(MutexGuard_Release);
+      Debug::ftnt(MutexGuard_Release);
       mutex_->Release();
       mutex_ = nullptr;
    }

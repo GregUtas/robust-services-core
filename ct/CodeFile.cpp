@@ -2312,7 +2312,7 @@ void CodeFile::LogAddUsings(ostream* stream) const
 fn_name CodeFile_LogCode = "CodeFile.LogCode";
 
 void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
-   const CxxNamed* item, size_t offset, const string& info, bool hide) const
+   const CxxNamed* item, word offset, const string& info, bool hide) const
 {
    Debug::ft(CodeFile_LogCode);
 

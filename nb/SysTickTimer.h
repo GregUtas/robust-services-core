@@ -37,7 +37,6 @@ namespace NodeBase
 //
 class SysTickTimer : public Immutable
 {
-   friend class Singleton< SysTickTimer >;
 public:
    //  Returns the timer after creating it if it doesn't yet exist.
    //

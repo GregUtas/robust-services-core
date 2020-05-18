@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TimePoint.h"
-#include "Singleton.h"
 #include "SysTickTimer.h"
 #include "SysTime.h"
 #include "SysTypes.h"

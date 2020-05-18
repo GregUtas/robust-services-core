@@ -66,7 +66,7 @@ Symbol::~Symbol()
 {
    Debug::ftnt(Symbol_dtor);
 
-   Singleton< SymbolRegistry >::Instance()->RemoveSymbol(*this);
+   Singleton< SymbolRegistry >::Extant()->RemoveSymbol(*this);
 }
 
 //------------------------------------------------------------------------------

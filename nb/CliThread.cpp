@@ -84,7 +84,8 @@ CliThread::~CliThread()
 {
    Debug::ftnt(CliThread_dtor);
 
-   Singleton< CinThread >::Instance()->ClearClient(this);
+   auto thread = Singleton< CinThread >::Extant();
+   if(thread != nullptr) thread->ClearClient(this);
 }
 
 //------------------------------------------------------------------------------

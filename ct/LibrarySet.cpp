@@ -66,9 +66,9 @@ fn_name LibrarySet_dtor = "LibrarySet.dtor";
 
 LibrarySet::~LibrarySet()
 {
-   Debug::ft(LibrarySet_dtor);
+   Debug::ftnt(LibrarySet_dtor);
 
-   Singleton< Library >::Instance()->EraseVar(*this);
+   Singleton< Library >::Extant()->EraseVar(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -378,7 +378,7 @@ fn_name LibrarySet_Release = "LibrarySet.Release";
 
 void LibrarySet::Release()
 {
-   Debug::ft(LibrarySet_Release);
+   Debug::ftnt(LibrarySet_Release);
 
    if(!IsTemporary()) return;
    delete this;

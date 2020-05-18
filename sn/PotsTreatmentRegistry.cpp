@@ -53,7 +53,7 @@ fn_name PotsTreatmentRegistry_dtor = "PotsTreatmentRegistry.dtor";
 
 PotsTreatmentRegistry::~PotsTreatmentRegistry()
 {
-   Debug::ft(PotsTreatmentRegistry_dtor);
+   Debug::ftnt(PotsTreatmentRegistry_dtor);
 
    Debug::SwLog(PotsTreatmentRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -216,7 +216,7 @@ fn_name PotsTreatmentRegistry_UnbindTreatmentQ =
 
 void PotsTreatmentRegistry::UnbindTreatmentQ(PotsTreatmentQueue& treatmentq)
 {
-   Debug::ft(PotsTreatmentRegistry_UnbindTreatmentQ);
+   Debug::ftnt(PotsTreatmentRegistry_UnbindTreatmentQ);
 
    treatmentqs_.Erase(treatmentq);
 }

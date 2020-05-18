@@ -75,7 +75,7 @@ fn_name NbModule_dtor = "NbModule.dtor";
 
 NbModule::~NbModule()
 {
-   Debug::ft(NbModule_dtor);
+   Debug::ftnt(NbModule_dtor);
 }
 
 //------------------------------------------------------------------------------

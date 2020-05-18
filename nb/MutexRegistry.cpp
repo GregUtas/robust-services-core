@@ -22,6 +22,7 @@
 #include "MutexRegistry.h"
 #include <cstddef>
 #include <ios>
+#include <new>
 #include <sstream>
 #include "Debug.h"
 #include "Formatters.h"
@@ -57,7 +58,7 @@ fn_name MutexRegistry_dtor = "MutexRegistry.dtor";
 
 MutexRegistry::~MutexRegistry()
 {
-   Debug::ft(MutexRegistry_dtor);
+   Debug::ftnt(MutexRegistry_dtor);
 
    Debug::SwLog(MutexRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -68,7 +69,7 @@ fn_name MutexRegistry_Abandon = "MutexRegistry.Abandon";
 
 void MutexRegistry::Abandon() const
 {
-   Debug::ft(MutexRegistry_Abandon);
+   Debug::ftnt(MutexRegistry_Abandon);
 
    size_t count = 0;
    auto nid = SysThread::RunningThreadId();
@@ -88,7 +89,7 @@ void MutexRegistry::Abandon() const
 
       if(log != nullptr)
       {
-         auto thr = Thread::RunningThread(false);
+         auto thr = Thread::RunningThread(std::nothrow);
 
          if(thr != nullptr)
             *log << Log::Tab << "thread=" << thr->to_str() << CRLF;
@@ -159,7 +160,7 @@ fn_name MutexRegistry_UnbindMutex = "MutexRegistry.UnbindMutex";
 
 void MutexRegistry::UnbindMutex(SysMutex& mutex)
 {
-   Debug::ft(MutexRegistry_UnbindMutex);
+   Debug::ftnt(MutexRegistry_UnbindMutex);
 
    mutexes_.Erase(mutex);
 }

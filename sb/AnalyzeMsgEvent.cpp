@@ -51,7 +51,7 @@ fn_name AnalyzeMsgEvent_dtor = "AnalyzeMsgEvent.dtor";
 
 AnalyzeMsgEvent::~AnalyzeMsgEvent()
 {
-   Debug::ft(AnalyzeMsgEvent_dtor);
+   Debug::ftnt(AnalyzeMsgEvent_dtor);
 }
 
 //------------------------------------------------------------------------------

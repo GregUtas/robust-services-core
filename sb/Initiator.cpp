@@ -69,7 +69,7 @@ fn_name Initiator_dtor = "Initiator.dtor";
 
 Initiator::~Initiator()
 {
-   Debug::ft(Initiator_dtor);
+   Debug::ftnt(Initiator_dtor);
 
    Debug::SwLog(Initiator_dtor, UnexpectedInvocation, 0);
 

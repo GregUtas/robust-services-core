@@ -66,7 +66,7 @@ fn_name FunctionGuard_dtor = "FunctionGuard.dtor";
 
 FunctionGuard::~FunctionGuard()
 {
-   Debug::ft(FunctionGuard_dtor);
+   Debug::ftnt(FunctionGuard_dtor);
 
    if(first_ != Guard_Nil) Release();
 }
@@ -77,7 +77,7 @@ fn_name FunctionGuard_Release = "FunctionGuard.Release";
 
 void FunctionGuard::Release()
 {
-   Debug::ft(FunctionGuard_Release);
+   Debug::ftnt(FunctionGuard_Release);
 
    auto first = first_;
    first_ = Guard_Nil;

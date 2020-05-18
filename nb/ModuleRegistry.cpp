@@ -134,7 +134,7 @@ fn_name ModuleRegistry_dtor = "ModuleRegistry.dtor";
 
 ModuleRegistry::~ModuleRegistry()
 {
-   Debug::ft(ModuleRegistry_dtor);
+   Debug::ftnt(ModuleRegistry_dtor);
 
    Debug::SwLog(ModuleRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -444,7 +444,7 @@ fn_name ModuleRegistry_UnbindModule = "ModuleRegistry.UnbindModule";
 
 void ModuleRegistry::UnbindModule(Module& module)
 {
-   Debug::ft(ModuleRegistry_UnbindModule);
+   Debug::ftnt(ModuleRegistry_UnbindModule);
 
    modules_.Erase(module);
 }

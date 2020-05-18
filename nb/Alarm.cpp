@@ -98,10 +98,10 @@ fn_name Alarm_dtor = "Alarm.dtor";
 
 Alarm::~Alarm()
 {
-   Debug::ft(Alarm_dtor);
+   Debug::ftnt(Alarm_dtor);
 
    Debug::SwLog(Alarm_dtor, UnexpectedInvocation, 0);
-   Singleton< AlarmRegistry >::Instance()->UnbindAlarm(*this);
+   Singleton< AlarmRegistry >::Extant()->UnbindAlarm(*this);
 }
 
 //------------------------------------------------------------------------------

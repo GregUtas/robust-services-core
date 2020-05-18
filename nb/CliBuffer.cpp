@@ -66,7 +66,7 @@ fn_name CliBuffer_dtor = "CliBuffer.dtor";
 
 CliBuffer::~CliBuffer()
 {
-   Debug::ft(CliBuffer_dtor);
+   Debug::ftnt(CliBuffer_dtor);
 }
 
 //------------------------------------------------------------------------------

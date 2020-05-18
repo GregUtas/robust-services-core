@@ -50,7 +50,7 @@ fn_name SignalException_dtor = "SignalException.dtor";
 
 SignalException::~SignalException()
 {
-   Debug::ft(SignalException_dtor);
+   Debug::ftnt(SignalException_dtor);
 }
 
 //------------------------------------------------------------------------------

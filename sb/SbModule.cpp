@@ -63,7 +63,7 @@ fn_name SbModule_dtor = "SbModule.dtor";
 
 SbModule::~SbModule()
 {
-   Debug::ft(SbModule_dtor);
+   Debug::ftnt(SbModule_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -92,7 +92,7 @@ fn_name Event_dtor = "Event.dtor";
 
 Event::~Event()
 {
-   Debug::ft(Event_dtor);
+   Debug::ftnt(Event_dtor);
 
    //  Record the event's deletion if this context is traced.
    //

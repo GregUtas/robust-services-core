@@ -66,7 +66,7 @@ fn_name UdpIoThread_dtor = "UdpIoThread.dtor";
 
 UdpIoThread::~UdpIoThread()
 {
-   Debug::ft(UdpIoThread_dtor);
+   Debug::ftnt(UdpIoThread_dtor);
 
    ReleaseResources();
 }

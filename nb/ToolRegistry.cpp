@@ -52,7 +52,7 @@ fn_name ToolRegistry_dtor = "ToolRegistry.dtor";
 
 ToolRegistry::~ToolRegistry()
 {
-   Debug::ft(ToolRegistry_dtor);
+   Debug::ftnt(ToolRegistry_dtor);
 
    Debug::SwLog(ToolRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -151,7 +151,7 @@ fn_name ToolRegistry_UnbindTool = "ToolRegistry.UnbindTool";
 
 void ToolRegistry::UnbindTool(Tool& tool)
 {
-   Debug::ft(ToolRegistry_UnbindTool);
+   Debug::ftnt(ToolRegistry_UnbindTool);
 
    tools_.Erase(tool);
 }

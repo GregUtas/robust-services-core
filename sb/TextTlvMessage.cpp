@@ -60,7 +60,7 @@ fn_name TextTlvMessage_dtor = "TextTlvMessage.dtor";
 
 TextTlvMessage::~TextTlvMessage()
 {
-   Debug::ft(TextTlvMessage_dtor);
+   Debug::ftnt(TextTlvMessage_dtor);
 }
 
 //------------------------------------------------------------------------------

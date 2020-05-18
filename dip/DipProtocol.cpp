@@ -472,7 +472,7 @@ fn_name DipIpBuffer_dtor = "DipIpBuffer.dtor";
 
 DipIpBuffer::~DipIpBuffer()
 {
-   Debug::ft(DipIpBuffer_dtor);
+   Debug::ftnt(DipIpBuffer_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -540,6 +540,6 @@ fn_name DipIpBufferPool_dtor = "DipIpBufferPool.dtor";
 
 DipIpBufferPool::~DipIpBufferPool()
 {
-   Debug::ft(DipIpBufferPool_dtor);
+   Debug::ftnt(DipIpBufferPool_dtor);
 }
 }

@@ -49,7 +49,7 @@ fn_name DaemonRegistry_dtor = "DaemonRegistry.dtor";
 
 DaemonRegistry::~DaemonRegistry()
 {
-   Debug::ft(DaemonRegistry_dtor);
+   Debug::ftnt(DaemonRegistry_dtor);
 
    Debug::SwLog(DaemonRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -145,7 +145,7 @@ fn_name DaemonRegistry_UnbindDaemon = "DaemonRegistry.UnbindDaemon";
 
 void DaemonRegistry::UnbindDaemon(Daemon& daemon)
 {
-   Debug::ft(DaemonRegistry_UnbindDaemon);
+   Debug::ftnt(DaemonRegistry_UnbindDaemon);
 
    daemons_.Erase(daemon);
 }

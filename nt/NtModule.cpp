@@ -53,7 +53,7 @@ fn_name NtModule_dtor = "NtModule.dtor";
 
 NtModule::~NtModule()
 {
-   Debug::ft(NtModule_dtor);
+   Debug::ftnt(NtModule_dtor);
 }
 
 //------------------------------------------------------------------------------

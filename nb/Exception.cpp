@@ -87,7 +87,7 @@ fn_name Exception_dtor = "Exception.dtor";
 
 Exception::~Exception()
 {
-   Debug::ft(Exception_dtor);
+   Debug::ftnt(Exception_dtor);
 }
 
 //------------------------------------------------------------------------------

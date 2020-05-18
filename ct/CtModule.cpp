@@ -61,7 +61,7 @@ fn_name CtModule_dtor = "CtModule.dtor";
 
 CtModule::~CtModule()
 {
-   Debug::ft(CtModule_dtor);
+   Debug::ftnt(CtModule_dtor);
 }
 
 //------------------------------------------------------------------------------

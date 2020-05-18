@@ -376,7 +376,7 @@ fn_name NbHeap_dtor = "NbHeap.dtor";
 
 NbHeap::~NbHeap()
 {
-   Debug::ft(NbHeap_dtor);
+   Debug::ftnt(NbHeap_dtor);
 
    if(heap_ == nullptr) return;
    heap_->lock->Acquire(TIMEOUT_NEVER);

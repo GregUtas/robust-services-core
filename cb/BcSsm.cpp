@@ -62,7 +62,7 @@ fn_name BcSsm_dtor = "BcSsm.dtor";
 
 BcSsm::~BcSsm()
 {
-   Debug::ft(BcSsm_dtor);
+   Debug::ftnt(BcSsm_dtor);
 
    StateCount_[CurrState()]--;
 }

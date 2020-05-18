@@ -61,7 +61,7 @@ fn_name LogStatsGroup_dtor = "LogStatsGroup.dtor";
 
 LogStatsGroup::~LogStatsGroup()
 {
-   Debug::ft(LogStatsGroup_dtor);
+   Debug::ftnt(LogStatsGroup_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ fn_name LogGroupRegistry_dtor = "LogGroupRegistry.dtor";
 
 LogGroupRegistry::~LogGroupRegistry()
 {
-   Debug::ft(LogGroupRegistry_dtor);
+   Debug::ftnt(LogGroupRegistry_dtor);
 
    Debug::SwLog(LogGroupRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -249,7 +249,7 @@ fn_name LogGroupRegistry_UnbindGroup = "LogGroupRegistry.UnbindGroup";
 
 void LogGroupRegistry::UnbindGroup(LogGroup& group)
 {
-   Debug::ft(LogGroupRegistry_UnbindGroup);
+   Debug::ftnt(LogGroupRegistry_UnbindGroup);
 
    groups_.Erase(group);
 }

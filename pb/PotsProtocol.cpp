@@ -337,7 +337,7 @@ fn_name PotsProtocol_dtor = "PotsProtocol.dtor";
 
 PotsProtocol::~PotsProtocol()
 {
-   Debug::ft(PotsProtocol_dtor);
+   Debug::ftnt(PotsProtocol_dtor);
 }
 
 //==============================================================================

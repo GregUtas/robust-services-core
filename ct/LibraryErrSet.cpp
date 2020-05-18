@@ -51,7 +51,7 @@ fn_name LibraryErrSet_dtor = "LibraryErrSet.dtor";
 
 LibraryErrSet::~LibraryErrSet()
 {
-   Debug::ft(LibraryErrSet_dtor);
+   Debug::ftnt(LibraryErrSet_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  UdpIpPort.cpp
+//  SysTickTimer.cpp
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -19,53 +19,35 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "UdpIpPort.h"
+#ifdef OS_WIN
+#include "SysTickTimer.h"
+#include <sys/timeb.h>
 #include "Debug.h"
-#include "NwDaemons.h"
-#include "SysTypes.h"
-#include "UdpIoThread.h"
-#include "UdpIpService.h"
-
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
-namespace NetworkBase
+namespace NodeBase
 {
-fn_name UdpIpPort_ctor = "UdpIpPort.ctor";
-
-UdpIpPort::UdpIpPort(ipport_t port, const IpService* service) :
-   IpPort(port, service)
-{
-   Debug::ft(UdpIpPort_ctor);
-}
+SysTickTimer* SysTickTimer::Instance_ = nullptr;
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIpPort_dtor = "UdpIpPort.dtor";
+fn_name SysTickTimer_dtor = "SysTickTimer.dtor";
 
-UdpIpPort::~UdpIpPort()
+SysTickTimer::~SysTickTimer()
 {
-   Debug::ftnt(UdpIpPort_dtor);
+   Debug::ftnt(SysTickTimer_dtor);
+
+   Debug::SwLog(SysTickTimer_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIpPort_CreateIoThread = "UdpIpPort.CreateIoThread";
-
-IoThread* UdpIpPort::CreateIoThread()
+SysTickTimer* SysTickTimer::Instance()
 {
-   Debug::ft(UdpIpPort_CreateIoThread);
-
-   auto svc = static_cast< const UdpIpService* >(GetService());
-   auto daemon = UdpIoDaemon::GetDaemon(svc, GetPort());
-   return new UdpIoThread(daemon, svc, GetPort());
-}
-
-//------------------------------------------------------------------------------
-
-void UdpIpPort::Patch(sel_t selector, void* arguments)
-{
-   IpPort::Patch(selector, arguments);
+   if(Instance_ != nullptr) return Instance_;
+   Instance_ = new SysTickTimer;
+   return Instance_;
 }
 }
+#endif

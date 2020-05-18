@@ -83,7 +83,7 @@ fn_name TestDatabase_dtor = "TestDatabase.dtor";
 
 TestDatabase::~TestDatabase()
 {
-   Debug::ft(TestDatabase_dtor);
+   Debug::ftnt(TestDatabase_dtor);
 }
 
 //------------------------------------------------------------------------------

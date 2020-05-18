@@ -121,7 +121,7 @@ fn_name Parser_dtor = "Parser.dtor";
 
 Parser::~Parser()
 {
-   Debug::ft(Parser_dtor);
+   Debug::ftnt(Parser_dtor);
 
    //  Remove the parser and close the parse trace file, if any.
    //
@@ -246,7 +246,7 @@ bool Parser::CheckType(QualNamePtr& name)
       return false;
 
    default:
-      Debug::SwLog(Parser_CheckType, *name->Name(), type, SwInfo);
+      Debug::SwLog(Parser_CheckType, *name->Name(), type, false);
    }
 
    return false;
@@ -317,7 +317,7 @@ void Parser::Failure(const string& venue) const
    auto line = lexer_.GetLineNum(farthest_);
    std::ostringstream text;
    text << venue << ", line " << line + 1 << ": " << code;
-   Debug::SwLog(Parser_Failure, text.str(), cause_, SwInfo);
+   Debug::SwLog(Parser_Failure, text.str(), cause_, false);
 }
 
 //------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ bool Parser::Fault(DirectiveError err) const
    auto line = lexer_.GetLineNum(curr);
    std::ostringstream text;
    text << venue_ << ", line " << line + 1 << ':' << CRLF << Log::Tab << code;
-   Debug::SwLog(Parser_Fault, text.str(), err, SwInfo);
+   Debug::SwLog(Parser_Fault, text.str(), err, false);
    return false;
 }
 
@@ -1411,7 +1411,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
          return Backup(start, 228);
 
       default:
-         Debug::SwLog(Parser_GetCxxAlpha, "unexpected operator", op, SwInfo);
+         Debug::SwLog(Parser_GetCxxAlpha, "unexpected operator", op, false);
          return Backup(start, 79);
       }
    }
@@ -2997,7 +2997,7 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
 
       if(!lexer_.GetOpOverride(oper))
       {
-         Debug::SwLog(Parser_GetQualName, "operator override?", 0, SwInfo);
+         Debug::SwLog(Parser_GetQualName, "operator override?", 0, false);
          return Backup(start, 169);
       }
 
@@ -4576,7 +4576,7 @@ bool Parser::ParseInBlock(Cxx::Keyword kwd, Block* block)
             return block->AddStatement(assembler.release());
          break;
       case '-':
-         Debug::SwLog(Parser_ParseInBlock, "unexpected keyword", kwd, SwInfo);
+         Debug::SwLog(Parser_ParseInBlock, "unexpected keyword", kwd, false);
          return false;
       }
 
@@ -4666,7 +4666,7 @@ bool Parser::ParseInClass(Cxx::Keyword kwd, Class* cls)
             return cls->AddAsm(assembler);
          break;
       case '-':
-         Debug::SwLog(Parser_ParseInClass, "unexpected keyword", kwd, SwInfo);
+         Debug::SwLog(Parser_ParseInClass, "unexpected keyword", kwd, false);
          return false;
       }
 
@@ -4758,7 +4758,7 @@ bool Parser::ParseInFile(Cxx::Keyword kwd, Namespace* space)
             return space->AddAsm(assembler);
          break;
       case '-':
-         Debug::SwLog(Parser_ParseInFile, "unexpected keyword", kwd, SwInfo);
+         Debug::SwLog(Parser_ParseInFile, "unexpected keyword", kwd, false);
          return false;
       }
 
@@ -4892,7 +4892,7 @@ bool Parser::SetCompoundType
       return true;
 
    default:
-      Debug::SwLog(Parser_SetCompoundType, *name->Name(), type, SwInfo);
+      Debug::SwLog(Parser_SetCompoundType, *name->Name(), type, false);
    }
 
    return false;
@@ -4914,7 +4914,7 @@ bool Parser::Skip(size_t end, const ExprPtr& expr, size_t cause)
    auto line = lexer_.GetLineNum(start);
    std::ostringstream text;
    text << venue_ << ", line " << line + 1 << ": " << code;
-   Debug::SwLog(Parser_Skip, text.str(), cause, SwInfo);
+   Debug::SwLog(Parser_Skip, text.str(), cause, false);
 
    TokenPtr item(new StrLiteral(code));
    expr->AddItem(item);

@@ -50,7 +50,7 @@ fn_name ServiceRegistry_dtor = "ServiceRegistry.dtor";
 
 ServiceRegistry::~ServiceRegistry()
 {
-   Debug::ft(ServiceRegistry_dtor);
+   Debug::ftnt(ServiceRegistry_dtor);
 
    Debug::SwLog(ServiceRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -97,7 +97,7 @@ fn_name ServiceRegistry_UnbindService = "ServiceRegistry.UnbindService";
 
 void ServiceRegistry::UnbindService(Service& service)
 {
-   Debug::ft(ServiceRegistry_UnbindService);
+   Debug::ftnt(ServiceRegistry_UnbindService);
 
    services_.Erase(service);
 }

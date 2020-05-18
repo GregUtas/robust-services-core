@@ -170,7 +170,7 @@ fn_name PotsCfxService_dtor = "PotsCfxService.dtor";
 
 PotsCfxService::~PotsCfxService()
 {
-   Debug::ft(PotsCfxService_dtor);
+   Debug::ftnt(PotsCfxService_dtor);
 }
 
 //==============================================================================
@@ -188,7 +188,7 @@ fn_name PotsCfxState_dtor = "PotsCfxState.dtor";
 
 PotsCfxState::~PotsCfxState()
 {
-   Debug::ft(PotsCfxState_dtor);
+   Debug::ftnt(PotsCfxState_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ fn_name PotsCfxEvent_dtor = "PotsCfxEvent.dtor";
 
 PotsCfxEvent::~PotsCfxEvent()
 {
-   Debug::ft(PotsCfxEvent_dtor);
+   Debug::ftnt(PotsCfxEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -257,7 +257,7 @@ fn_name PotsCfbTimeoutEvent_dtor = "PotsCfbTimeoutEvent.dtor";
 
 PotsCfbTimeoutEvent::~PotsCfbTimeoutEvent()
 {
-   Debug::ft(PotsCfbTimeoutEvent_dtor);
+   Debug::ftnt(PotsCfbTimeoutEvent_dtor);
 }
 
 //==============================================================================
@@ -340,7 +340,7 @@ fn_name PotsCfxSsm_dtor = "PotsCfxSsm.dtor";
 
 PotsCfxSsm::~PotsCfxSsm()
 {
-   Debug::ft(PotsCfxSsm_dtor);
+   Debug::ftnt(PotsCfxSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

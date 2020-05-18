@@ -43,7 +43,7 @@ fn_name UdpIpService_dtor = "UdpIpService.dtor";
 
 UdpIpService::~UdpIpService()
 {
-   Debug::ft(UdpIpService_dtor);
+   Debug::ftnt(UdpIpService_dtor);
 }
 
 //------------------------------------------------------------------------------

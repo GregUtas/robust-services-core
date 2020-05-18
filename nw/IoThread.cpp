@@ -85,7 +85,7 @@ fn_name IoThread_dtor = "IoThread.dtor";
 
 IoThread::~IoThread()
 {
-   Debug::ft(IoThread_dtor);
+   Debug::ftnt(IoThread_dtor);
 
    if(ipPort_ != nullptr) ipPort_->SetThread(nullptr);
 }

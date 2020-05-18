@@ -102,7 +102,7 @@ fn_name IpBuffer_dtor = "IpBuffer.dtor";
 
 IpBuffer::~IpBuffer()
 {
-   Debug::ft(IpBuffer_dtor);
+   Debug::ftnt(IpBuffer_dtor);
 
    if(buff_ != nullptr)
    {
@@ -161,7 +161,7 @@ size_t IpBuffer::BuffSize(size_t size)
       if(BuffSizes[i] >= size) return BuffSizes[i];
    }
 
-   Debug::SwLog(IpBuffer_BuffSize, "size out of range", size, SwError);
+   Debug::SwErr("size out of range", size);
    return 0;
 }
 
@@ -376,6 +376,6 @@ fn_name IpBufferPool_dtor = "IpBufferPool.dtor";
 
 IpBufferPool::~IpBufferPool()
 {
-   Debug::ft(IpBufferPool_dtor);
+   Debug::ftnt(IpBufferPool_dtor);
 }
 }

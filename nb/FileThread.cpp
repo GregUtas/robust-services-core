@@ -131,7 +131,7 @@ fn_name FileRequest_dtor = "FileRequest.dtor";
 
 FileRequest::~FileRequest()
 {
-   Debug::ft(FileRequest_dtor);
+   Debug::ftnt(FileRequest_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ fn_name FileThread_dtor = "FileThread.dtor";
 
 FileThread::~FileThread()
 {
-   Debug::ft(FileThread_dtor);
+   Debug::ftnt(FileThread_dtor);
 }
 
 //------------------------------------------------------------------------------

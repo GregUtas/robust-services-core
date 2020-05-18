@@ -52,7 +52,7 @@ fn_name AlarmRegistry_dtor = "AlarmRegistry.dtor";
 
 AlarmRegistry::~AlarmRegistry()
 {
-   Debug::ft(AlarmRegistry_dtor);
+   Debug::ftnt(AlarmRegistry_dtor);
 
    Debug::SwLog(AlarmRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -157,7 +157,7 @@ fn_name AlarmRegistry_UnbindAlarm = "AlarmRegistry.UnbindAlarm";
 
 void AlarmRegistry::UnbindAlarm(Alarm& alarm)
 {
-   Debug::ft(AlarmRegistry_UnbindAlarm);
+   Debug::ftnt(AlarmRegistry_UnbindAlarm);
 
    alarms_.Erase(alarm);
 }

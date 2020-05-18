@@ -61,7 +61,7 @@ fn_name RootThread_dtor = "RootThread.dtor";
 
 RootThread::~RootThread()
 {
-   Debug::ft(RootThread_dtor);
+   Debug::ftnt(RootThread_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -86,7 +86,7 @@ fn_name PotsTwcFeature_dtor = "PotsTwcFeature.dtor";
 
 PotsTwcFeature::~PotsTwcFeature()
 {
-   Debug::ft(PotsTwcFeature_dtor);
+   Debug::ftnt(PotsTwcFeature_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -123,6 +123,6 @@ fn_name PotsTwcFeatureProfile_dtor = "PotsTwcFeatureProfile.dtor";
 
 PotsTwcFeatureProfile::~PotsTwcFeatureProfile()
 {
-   Debug::ft(PotsTwcFeatureProfile_dtor);
+   Debug::ftnt(PotsTwcFeatureProfile_dtor);
 }
 }

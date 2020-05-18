@@ -47,7 +47,7 @@ fn_name Switch_dtor = "Switch.dtor";
 
 Switch::~Switch()
 {
-   Debug::ft(Switch_dtor);
+   Debug::ftnt(Switch_dtor);
 
    Debug::SwLog(Switch_dtor, UnexpectedInvocation, 0);
 }
@@ -99,7 +99,7 @@ fn_name Switch_UnbindCircuit = "Switch.UnbindCircuit";
 
 void Switch::UnbindCircuit(Circuit& circuit)
 {
-   Debug::ft(Switch_UnbindCircuit);
+   Debug::ftnt(Switch_UnbindCircuit);
 
    circuits_.Erase(circuit);
 }

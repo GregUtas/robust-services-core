@@ -58,7 +58,7 @@ fn_name NwModule_dtor = "NwModule.dtor";
 
 NwModule::~NwModule()
 {
-   Debug::ft(NwModule_dtor);
+   Debug::ftnt(NwModule_dtor);
 }
 
 //------------------------------------------------------------------------------

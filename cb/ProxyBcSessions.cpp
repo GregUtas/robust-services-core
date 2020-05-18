@@ -127,7 +127,7 @@ fn_name ProxyBcService_dtor = "ProxyBcService.dtor";
 
 ProxyBcService::~ProxyBcService()
 {
-   Debug::ft(ProxyBcService_dtor);
+   Debug::ftnt(ProxyBcService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -311,7 +311,7 @@ fn_name ProxyBcReleaseUserEvent_dtor = "ProxyBcReleaseUserEvent.dtor";
 
 ProxyBcReleaseUserEvent::~ProxyBcReleaseUserEvent()
 {
-   Debug::ft(ProxyBcReleaseUserEvent_dtor);
+   Debug::ftnt(ProxyBcReleaseUserEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -329,7 +329,7 @@ fn_name ProxyBcProgressEvent_dtor = "ProxyBcProgressEvent.dtor";
 
 ProxyBcProgressEvent::~ProxyBcProgressEvent()
 {
-   Debug::ft(ProxyBcProgressEvent_dtor);
+   Debug::ftnt(ProxyBcProgressEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -346,7 +346,7 @@ fn_name ProxyBcAnswerEvent_dtor = "ProxyBcAnswerEvent.dtor";
 
 ProxyBcAnswerEvent::~ProxyBcAnswerEvent()
 {
-   Debug::ft(ProxyBcAnswerEvent_dtor);
+   Debug::ftnt(ProxyBcAnswerEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -363,7 +363,7 @@ fn_name ProxyBcReleaseEvent_dtor = "ProxyBcReleaseEvent.dtor";
 
 ProxyBcReleaseEvent::~ProxyBcReleaseEvent()
 {
-   Debug::ft(ProxyBcReleaseEvent_dtor);
+   Debug::ftnt(ProxyBcReleaseEvent_dtor);
 }
 
 //==============================================================================
@@ -508,7 +508,7 @@ fn_name ProxyBcPsm_dtor = "ProxyBcPsm.dtor";
 
 ProxyBcPsm::~ProxyBcPsm()
 {
-   Debug::ft(ProxyBcPsm_dtor);
+   Debug::ftnt(ProxyBcPsm_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -599,7 +599,7 @@ fn_name ProxyBcSsm_dtor = "ProxyBcSsm.dtor";
 
 ProxyBcSsm::~ProxyBcSsm()
 {
-   Debug::ft(ProxyBcSsm_dtor);
+   Debug::ftnt(ProxyBcSsm_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -960,7 +960,7 @@ fn_name ProxyBcFactory_dtor = "ProxyBcFactory.dtor";
 
 ProxyBcFactory::~ProxyBcFactory()
 {
-   Debug::ft(ProxyBcFactory_dtor);
+   Debug::ftnt(ProxyBcFactory_dtor);
 }
 
 //------------------------------------------------------------------------------

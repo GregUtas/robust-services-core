@@ -115,7 +115,7 @@ fn_name TokenMessage_dtor = "TokenMessage.dtor";
 
 TokenMessage::~TokenMessage()
 {
-   Debug::ft(TokenMessage_dtor);
+   Debug::ftnt(TokenMessage_dtor);
 
    clear();
 }

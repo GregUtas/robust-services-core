@@ -58,7 +58,7 @@ fn_name CliCharParm_dtor = "CliCharParm.dtor";
 
 CliCharParm::~CliCharParm()
 {
-   Debug::ft(CliCharParm_dtor);
+   Debug::ftnt(CliCharParm_dtor);
 }
 
 //------------------------------------------------------------------------------

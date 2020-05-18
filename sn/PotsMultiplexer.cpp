@@ -172,7 +172,7 @@ fn_name PotsMuxFactory_dtor = "PotsMuxFactory.dtor";
 
 PotsMuxFactory::~PotsMuxFactory()
 {
-   Debug::ft(PotsMuxFactory_dtor);
+   Debug::ftnt(PotsMuxFactory_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -312,7 +312,7 @@ fn_name PotsMuxPsm_dtor = "PotsMuxPsm.dtor";
 
 PotsMuxPsm::~PotsMuxPsm()
 {
-   Debug::ft(PotsMuxPsm_dtor);
+   Debug::ftnt(PotsMuxPsm_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -628,7 +628,7 @@ fn_name PotsMuxService_dtor = "PotsMuxService.dtor";
 
 PotsMuxService::~PotsMuxService()
 {
-   Debug::ft(PotsMuxService_dtor);
+   Debug::ftnt(PotsMuxService_dtor);
 }
 
 //==============================================================================
@@ -646,7 +646,7 @@ fn_name PotsMuxState_dtor = "PotsMuxState.dtor";
 
 PotsMuxState::~PotsMuxState()
 {
-   Debug::ft(PotsMuxState_dtor);
+   Debug::ftnt(PotsMuxState_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -694,7 +694,7 @@ fn_name PotsMuxEvent_dtor = "PotsMuxEvent.dtor";
 
 PotsMuxEvent::~PotsMuxEvent()
 {
-   Debug::ft(PotsMuxEvent_dtor);
+   Debug::ftnt(PotsMuxEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -713,7 +713,7 @@ fn_name PotsMuxInitiateEvent_dtor = "PotsMuxInitiateEvent.dtor";
 
 PotsMuxInitiateEvent::~PotsMuxInitiateEvent()
 {
-   Debug::ft(PotsMuxInitiateEvent_dtor);
+   Debug::ftnt(PotsMuxInitiateEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -732,7 +732,7 @@ fn_name PotsMuxRelayEvent_dtor = "PotsMuxRelayEvent.dtor";
 
 PotsMuxRelayEvent::~PotsMuxRelayEvent()
 {
-   Debug::ft(PotsMuxRelayEvent_dtor);
+   Debug::ftnt(PotsMuxRelayEvent_dtor);
 }
 
 //==============================================================================
@@ -763,7 +763,7 @@ fn_name PotsMuxSsm_dtor = "PotsMuxSsm.dtor";
 
 PotsMuxSsm::~PotsMuxSsm()
 {
-   Debug::ft(PotsMuxSsm_dtor);
+   Debug::ftnt(PotsMuxSsm_dtor);
 
    if((uPsm_ != nullptr) && (prof_ != nullptr))
    {

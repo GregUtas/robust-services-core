@@ -332,7 +332,7 @@ fn_name CxxSymbols_dtor = "CxxSymbols.dtor";
 
 CxxSymbols::~CxxSymbols()
 {
-   Debug::ft(CxxSymbols_dtor);
+   Debug::ftnt(CxxSymbols_dtor);
 
    CxxStats::Decr(CxxStats::CXX_SYMBOLS);
 }

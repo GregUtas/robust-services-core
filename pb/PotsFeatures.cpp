@@ -55,7 +55,7 @@ fn_name DnRouteFeatureProfile_dtor = "DnRouteFeatureProfile.dtor";
 
 DnRouteFeatureProfile::~DnRouteFeatureProfile()
 {
-   Debug::ft(DnRouteFeatureProfile_dtor);
+   Debug::ftnt(DnRouteFeatureProfile_dtor);
 }
 
 //------------------------------------------------------------------------------

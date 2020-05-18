@@ -60,10 +60,10 @@ fn_name IpService_dtor = "IpService.dtor";
 
 IpService::~IpService()
 {
-   Debug::ft(IpService_dtor);
+   Debug::ftnt(IpService_dtor);
 
    Debug::SwLog(IpService_dtor, UnexpectedInvocation, 0);
-   Singleton< IpServiceRegistry >::Instance()->UnbindService(*this);
+   Singleton< IpServiceRegistry >::Extant()->UnbindService(*this);
 }
 
 //------------------------------------------------------------------------------

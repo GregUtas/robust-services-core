@@ -62,9 +62,9 @@ fn_name PotsTreatmentQueue_dtor = "PotsTreatmentQueue.dtor";
 
 PotsTreatmentQueue::~PotsTreatmentQueue()
 {
-   Debug::ft(PotsTreatmentQueue_dtor);
+   Debug::ftnt(PotsTreatmentQueue_dtor);
 
-   Singleton< PotsTreatmentRegistry >::Instance()->UnbindTreatmentQ(*this);
+   Singleton< PotsTreatmentRegistry >::Extant()->UnbindTreatmentQ(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ fn_name PotsTreatmentQueue_UnbindTreatment =
 
 void PotsTreatmentQueue::UnbindTreatment(PotsTreatment& treatment)
 {
-   Debug::ft(PotsTreatmentQueue_UnbindTreatment);
+   Debug::ftnt(PotsTreatmentQueue_UnbindTreatment);
 
    treatmentq_.Exq(treatment);
 }
@@ -159,9 +159,9 @@ fn_name PotsTreatment_dtor = "PotsTreatment.dtor";
 
 PotsTreatment::~PotsTreatment()
 {
-   Debug::ft(PotsTreatment_dtor);
+   Debug::ftnt(PotsTreatment_dtor);
 
-   auto reg = Singleton< PotsTreatmentRegistry >::Instance();
+   auto reg = Singleton< PotsTreatmentRegistry >::Extant();
    auto tq = reg->TreatmentQ(qid_);
 
    if(tq != nullptr)

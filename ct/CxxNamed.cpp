@@ -140,7 +140,7 @@ fn_name CxxNamed_dtor = "CxxNamed.dtor";
 
 CxxNamed::~CxxNamed()
 {
-   Debug::ft(CxxNamed_dtor);
+   Debug::ftnt(CxxNamed_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -765,7 +765,7 @@ fn_name DataSpec_dtor = "DataSpec.dtor";
 
 DataSpec::~DataSpec()
 {
-   Debug::ft(DataSpec_dtor);
+   Debug::ftnt(DataSpec_dtor);
 
    CxxStats::Decr(CxxStats::DATA_SPEC);
 }
@@ -2083,7 +2083,7 @@ fn_name QualName_dtor = "QualName.dtor";
 
 QualName::~QualName()
 {
-   Debug::ft(QualName_dtor);
+   Debug::ftnt(QualName_dtor);
 
    CxxStats::Decr(CxxStats::QUAL_NAME);
 }
@@ -2924,7 +2924,7 @@ fn_name TypeName_dtor = "TypeName.dtor";
 
 TypeName::~TypeName()
 {
-   Debug::ft(TypeName_dtor);
+   Debug::ftnt(TypeName_dtor);
 
    CxxStats::Decr(CxxStats::TYPE_NAME);
 }

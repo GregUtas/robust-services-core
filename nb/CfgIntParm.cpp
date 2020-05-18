@@ -52,7 +52,7 @@ fn_name CfgIntParm_dtor = "CfgIntParm.dtor";
 
 CfgIntParm::~CfgIntParm()
 {
-   Debug::ft(CfgIntParm_dtor);
+   Debug::ftnt(CfgIntParm_dtor);
 }
 
 //------------------------------------------------------------------------------

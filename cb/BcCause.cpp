@@ -95,7 +95,7 @@ fn_name CauseParameter_dtor = "CauseParameter.dtor";
 
 CauseParameter::~CauseParameter()
 {
-   Debug::ft(CauseParameter_dtor);
+   Debug::ftnt(CauseParameter_dtor);
 }
 
 //------------------------------------------------------------------------------

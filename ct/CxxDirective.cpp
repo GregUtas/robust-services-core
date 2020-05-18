@@ -144,7 +144,7 @@ fn_name Define_dtor = "Define.dtor";
 
 Define::~Define()
 {
-   Debug::ft(Define_dtor);
+   Debug::ftnt(Define_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -676,9 +676,9 @@ fn_name Macro_dtor = "Macro.dtor";
 
 Macro::~Macro()
 {
-   Debug::ft(Macro_dtor);
+   Debug::ftnt(Macro_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseMacro(this);
+   Singleton< CxxSymbols >::Extant()->EraseMacro(this);
    CxxStats::Decr(CxxStats::DEFINE_DIRECTIVE);
 }
 
@@ -821,7 +821,7 @@ fn_name MacroName_dtor = "MacroName.dtor";
 
 MacroName::~MacroName()
 {
-   Debug::ft(MacroName_dtor);
+   Debug::ftnt(MacroName_dtor);
 
    CxxStats::Decr(CxxStats::QUAL_NAME);
 }

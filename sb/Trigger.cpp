@@ -52,7 +52,7 @@ fn_name Trigger_dtor = "Trigger.dtor";
 
 Trigger::~Trigger()
 {
-   Debug::ft(Trigger_dtor);
+   Debug::ftnt(Trigger_dtor);
 
    Debug::SwLog(Trigger_dtor, UnexpectedInvocation, 0);
    initq_.Purge();
@@ -105,7 +105,7 @@ fn_name Trigger_UnbindInitiator = "Trigger.UnbindInitiator";
 
 void Trigger::UnbindInitiator(Initiator& init)
 {
-   Debug::ft(Trigger_UnbindInitiator);
+   Debug::ftnt(Trigger_UnbindInitiator);
 
    if(!initq_.Exq(init))
    {

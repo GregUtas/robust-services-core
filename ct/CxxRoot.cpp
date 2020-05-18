@@ -326,7 +326,7 @@ fn_name CxxRoot_dtor = "CxxRoot.dtor";
 
 CxxRoot::~CxxRoot()
 {
-   Debug::ft(CxxRoot_dtor);
+   Debug::ftnt(CxxRoot_dtor);
 }
 
 //------------------------------------------------------------------------------

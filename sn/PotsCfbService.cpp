@@ -83,7 +83,7 @@ fn_name PotsCfbService_dtor = "PotsCfbService.dtor";
 
 PotsCfbService::~PotsCfbService()
 {
-   Debug::ft(PotsCfbService_dtor);
+   Debug::ftnt(PotsCfbService_dtor);
 }
 
 //------------------------------------------------------------------------------

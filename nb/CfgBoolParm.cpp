@@ -49,7 +49,7 @@ fn_name CfgBoolParm_dtor = "CfgBoolParm.dtor";
 
 CfgBoolParm::~CfgBoolParm()
 {
-   Debug::ft(CfgBoolParm_dtor);
+   Debug::ftnt(CfgBoolParm_dtor);
 }
 
 //------------------------------------------------------------------------------

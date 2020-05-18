@@ -52,7 +52,7 @@ fn_name AnModule_dtor = "AnModule.dtor";
 
 AnModule::~AnModule()
 {
-   Debug::ft(AnModule_dtor);
+   Debug::ftnt(AnModule_dtor);
 }
 
 //------------------------------------------------------------------------------

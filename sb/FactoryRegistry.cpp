@@ -65,7 +65,7 @@ fn_name FactoryStatsGroup_dtor = "FactoryStatsGroup.dtor";
 
 FactoryStatsGroup::~FactoryStatsGroup()
 {
-   Debug::ft(FactoryStatsGroup_dtor);
+   Debug::ftnt(FactoryStatsGroup_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ fn_name FactoryRegistry_dtor = "FactoryRegistry.dtor";
 
 FactoryRegistry::~FactoryRegistry()
 {
-   Debug::ft(FactoryRegistry_dtor);
+   Debug::ftnt(FactoryRegistry_dtor);
 
    Debug::SwLog(FactoryRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -209,7 +209,7 @@ fn_name FactoryRegistry_UnbindFactory = "FactoryRegistry.UnbindFactory";
 
 void FactoryRegistry::UnbindFactory(Factory& factory)
 {
-   Debug::ft(FactoryRegistry_UnbindFactory);
+   Debug::ftnt(FactoryRegistry_UnbindFactory);
 
    factories_.Erase(factory);
 }

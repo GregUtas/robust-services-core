@@ -51,7 +51,7 @@ fn_name PotsProfileRegistry_dtor = "PotsProfileRegistry.dtor";
 
 PotsProfileRegistry::~PotsProfileRegistry()
 {
-   Debug::ft(PotsProfileRegistry_dtor);
+   Debug::ftnt(PotsProfileRegistry_dtor);
 
    Debug::SwLog(PotsProfileRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -154,7 +154,7 @@ fn_name PotsProfileRegistry_UnbindProfile = "PotsProfileRegistry.UnbindProfile";
 
 void PotsProfileRegistry::UnbindProfile(PotsProfile& profile)
 {
-   Debug::ft(PotsProfileRegistry_UnbindProfile);
+   Debug::ftnt(PotsProfileRegistry_UnbindProfile);
 
    profiles_.Erase(profile);
 }

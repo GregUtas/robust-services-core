@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Debug.h"
+#include <new>
 #include <sstream>
 #include "AssertionException.h"
 #include "CoutThread.h"
@@ -74,19 +75,22 @@ void Debug::ft(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
+void Debug::ftnt(fn_name_arg func)
+{
+   if(FcFlags_.none()) return;
+   Thread::FunctionInvoked(func, std::nothrow);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Debug_GenerateSwLog = "Debug.GenerateSwLog";
 
 void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
-      debug64_t offset, SwLogLevel level)
+      debug64_t offset, bool stack)
 {
    if(!Thread::EnterSwLog()) return;
 
    Debug::ft(Debug_GenerateSwLog);
-
-   if(level == SwError)
-   {
-      throw SoftwareException(errstr, offset, 3);
-   }
 
    auto log = Log::Create(SoftwareLogGroup, SoftwareError);
 
@@ -102,7 +106,7 @@ void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
       *log << Log::Tab << "errval=" << errstr;
       *log << "  offset=" << strHex(offset) << CRLF;
 
-      if(level != SwInfo) SysThreadStack::Display(*log, 1);
+      if(stack) SysThreadStack::Display(*log, 1);
       Log::Submit(log);
    }
 
@@ -176,6 +180,28 @@ void Debug::SetSwFlag(FlagId fid, bool value)
 
 //------------------------------------------------------------------------------
 
+fn_name Debug_SwErr1 = "Debug.SwErr";
+
+void Debug::SwErr(debug64_t errval, debug64_t offset)
+{
+   Debug::ft(Debug_SwErr1);
+
+   throw SoftwareException(strHex(errval), offset, 1);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Debug_SwErr2 = "Debug.SwErr(string)";
+
+void Debug::SwErr(const string& errstr, debug64_t offset)
+{
+   Debug::ft(Debug_SwErr2);
+
+   throw SoftwareException(errstr, offset, 1);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Debug_SwFlagOn = "Debug.SwFlagOn";
 
 bool Debug::SwFlagOn(FlagId fid)
@@ -192,26 +218,26 @@ bool Debug::SwFlagOn(FlagId fid)
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_SwLog1 = "Debug.SwLog(int)";
+fn_name Debug_SwLog1 = "Debug.SwLog";
 
-void Debug::SwLog(fn_name_arg func, debug64_t errval,
-   debug64_t offset, SwLogLevel level)
+void Debug::SwLog(fn_name_arg func,
+   debug64_t errval, debug64_t offset, bool stack)
 {
    Debug::ft(Debug_SwLog1);
 
-   GenerateSwLog(func, strHex(errval), offset, level);
+   GenerateSwLog(func, strHex(errval), offset, stack);
 }
 
 //------------------------------------------------------------------------------
 
 fn_name Debug_SwLog2 = "Debug.SwLog(string)";
 
-void Debug::SwLog(fn_name_arg func, const string& errstr,
-   debug64_t offset, SwLogLevel level)
+void Debug::SwLog(fn_name_arg func,
+   const string& errstr, debug64_t offset, bool stack)
 {
    Debug::ft(Debug_SwLog2);
 
-   GenerateSwLog(func, errstr, offset, level);
+   GenerateSwLog(func, errstr, offset, stack);
 }
 
 //------------------------------------------------------------------------------

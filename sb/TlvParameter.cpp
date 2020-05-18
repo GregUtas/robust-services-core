@@ -42,7 +42,7 @@ fn_name TlvParameter_dtor = "TlvParameter.dtor";
 
 TlvParameter::~TlvParameter()
 {
-   Debug::ft(TlvParameter_dtor);
+   Debug::ftnt(TlvParameter_dtor);
 }
 
 //------------------------------------------------------------------------------

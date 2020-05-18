@@ -64,7 +64,7 @@ fn_name SysHeap_dtor = "SysHeap.dtor";
 
 SysHeap::~SysHeap()
 {
-   Debug::ft(SysHeap_dtor);
+   Debug::ftnt(SysHeap_dtor);
 
    //  If there's no actual heap, we're done.
    //

@@ -48,6 +48,6 @@ fn_name MediaEndptPool_dtor = "MediaEndptPool.dtor";
 
 MediaEndptPool::~MediaEndptPool()
 {
-   Debug::ft(MediaEndptPool_dtor);
+   Debug::ftnt(MediaEndptPool_dtor);
 }
 }

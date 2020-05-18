@@ -71,7 +71,7 @@ fn_name SnModule_dtor = "SnModule.dtor";
 
 SnModule::~SnModule()
 {
-   Debug::ft(SnModule_dtor);
+   Debug::ftnt(SnModule_dtor);
 }
 
 //------------------------------------------------------------------------------

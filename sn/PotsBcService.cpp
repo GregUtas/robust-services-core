@@ -254,6 +254,6 @@ fn_name PotsBcService_dtor = "PotsBcService.dtor";
 
 PotsBcService::~PotsBcService()
 {
-   Debug::ft(PotsBcService_dtor);
+   Debug::ftnt(PotsBcService_dtor);
 }
 }

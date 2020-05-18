@@ -57,7 +57,7 @@ fn_name RootServiceSM_dtor = "RootServiceSM.dtor";
 
 RootServiceSM::~RootServiceSM()
 {
-   Debug::ft(RootServiceSM_dtor);
+   Debug::ftnt(RootServiceSM_dtor);
 
    //  Deregister the SSM from its context.
    //

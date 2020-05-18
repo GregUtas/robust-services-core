@@ -53,7 +53,7 @@ fn_name TlvProtocol_dtor = "TlvProtocol.dtor";
 
 TlvProtocol::~TlvProtocol()
 {
-   Debug::ft(TlvProtocol_dtor);
+   Debug::ftnt(TlvProtocol_dtor);
 }
 
 //------------------------------------------------------------------------------

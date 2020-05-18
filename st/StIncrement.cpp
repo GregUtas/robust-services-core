@@ -861,7 +861,7 @@ fn_name StIncrement_dtor = "StIncrement.dtor";
 
 StIncrement::~StIncrement()
 {
-   Debug::ft(StIncrement_dtor);
+   Debug::ftnt(StIncrement_dtor);
 }
 
 //------------------------------------------------------------------------------

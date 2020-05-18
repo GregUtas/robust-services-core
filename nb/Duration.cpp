@@ -21,7 +21,6 @@
 //
 #include "Duration.h"
 #include "Debug.h"
-#include "Singleton.h"
 #include "SysTickTimer.h"
 #include "SysTypes.h"
 
@@ -41,7 +40,10 @@ Duration::Duration(int64_t value, TimeUnits units) : ticks_(value)
 {
    if((value == 0) || (value == Infinity) || (units == TICKS)) return;
 
-   int64_t tps = Singleton< SysTickTimer >::Instance()->TicksPerSec();
+   auto timer = SysTickTimer::Extant();
+   if(timer == nullptr) return;
+
+   int64_t tps = timer->TicksPerSec();
 
    switch(units)
    {
@@ -209,7 +211,10 @@ int64_t Duration::To(TimeUnits units) const
 {
    if((ticks_ == 0) || (ticks_ == Infinity) || (units == TICKS)) return ticks_;
 
-   int64_t tps = Singleton< SysTickTimer >::Instance()->TicksPerSec();
+   auto timer = SysTickTimer::Extant();
+   if(timer == nullptr) return ticks_;
+
+   int64_t tps = timer->TicksPerSec();
 
    switch(units)
    {

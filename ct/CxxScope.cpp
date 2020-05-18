@@ -65,7 +65,7 @@ fn_name Block_dtor = "Block.dtor";
 
 Block::~Block()
 {
-   Debug::ft(Block_dtor);
+   Debug::ftnt(Block_dtor);
 
    CxxStats::Decr(CxxStats::BLOCK_DECL);
 }
@@ -428,10 +428,10 @@ fn_name ClassData_dtor = "ClassData.dtor";
 
 ClassData::~ClassData()
 {
-   Debug::ft(ClassData_dtor);
+   Debug::ftnt(ClassData_dtor);
 
    CloseScope();
-   Singleton< CxxSymbols >::Instance()->EraseData(this);
+   Singleton< CxxSymbols >::Extant()->EraseData(this);
    CxxStats::Decr(CxxStats::CLASS_DATA);
 }
 
@@ -852,7 +852,7 @@ fn_name CxxScope_dtor = "CxxScope.dtor";
 
 CxxScope::~CxxScope()
 {
-   Debug::ft(CxxScope_dtor);
+   Debug::ftnt(CxxScope_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -1089,7 +1089,7 @@ fn_name Data_dtor = "Data.dtor";
 
 Data::~Data()
 {
-   Debug::ft(Data_dtor);
+   Debug::ftnt(Data_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -1689,7 +1689,7 @@ fn_name FuncData_dtor = "FuncData.dtor";
 
 FuncData::~FuncData()
 {
-   Debug::ft(FuncData_dtor);
+   Debug::ftnt(FuncData_dtor);
 
    CxxStats::Decr(CxxStats::FUNC_DATA);
 }
@@ -1951,12 +1951,12 @@ fn_name Function_dtor = "Function.dtor";
 
 Function::~Function()
 {
-   Debug::ft(Function_dtor);
+   Debug::ftnt(Function_dtor);
 
    if(type_) return;
 
    CloseScope();
-   Singleton< CxxSymbols >::Instance()->EraseFunc(this);
+   Singleton< CxxSymbols >::Extant()->EraseFunc(this);
    CxxStats::Decr(CxxStats::FUNC_DECL);
 }
 
@@ -4735,6 +4735,13 @@ bool Function::LocateItem(const CxxNamed* item, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+size_t Function::LogOffsetToArgIndex(word offset) const
+{
+   return (this_ ? offset : offset - 1);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_LogToBoth = "Function.LogToBoth";
 
 void Function::LogToBoth(Warning warning, size_t index) const
@@ -5663,10 +5670,10 @@ fn_name SpaceData_dtor = "SpaceData.dtor";
 
 SpaceData::~SpaceData()
 {
-   Debug::ft(SpaceData_dtor);
+   Debug::ftnt(SpaceData_dtor);
 
    CloseScope();
-   Singleton< CxxSymbols >::Instance()->EraseData(this);
+   Singleton< CxxSymbols >::Extant()->EraseData(this);
    CxxStats::Decr(CxxStats::FILE_DATA);
 }
 

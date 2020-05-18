@@ -52,7 +52,7 @@ fn_name CliRegistry_dtor = "CliRegistry.dtor";
 
 CliRegistry::~CliRegistry()
 {
-   Debug::ft(CliRegistry_dtor);
+   Debug::ftnt(CliRegistry_dtor);
 
    Debug::SwLog(CliRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -128,7 +128,7 @@ fn_name CliRegistry_UnbindIncrement = "CliRegistry.UnbindIncrement";
 
 void CliRegistry::UnbindIncrement(CliIncrement& incr)
 {
-   Debug::ft(CliRegistry_UnbindIncrement);
+   Debug::ftnt(CliRegistry_UnbindIncrement);
 
    increments_.Erase(incr);
 }

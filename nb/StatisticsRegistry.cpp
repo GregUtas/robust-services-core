@@ -58,7 +58,7 @@ fn_name StatisticsRegistry_dtor = "StatisticsRegistry.dtor";
 
 StatisticsRegistry::~StatisticsRegistry()
 {
-   Debug::ft(StatisticsRegistry_dtor);
+   Debug::ftnt(StatisticsRegistry_dtor);
 
    Debug::SwLog(StatisticsRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -176,7 +176,7 @@ fn_name StatisticsRegistry_UnbindGroup = "StatisticsRegistry.UnbindGroup";
 
 void StatisticsRegistry::UnbindGroup(StatisticsGroup& group)
 {
-   Debug::ft(StatisticsRegistry_UnbindGroup);
+   Debug::ftnt(StatisticsRegistry_UnbindGroup);
 
    groups_.Erase(group);
 }
@@ -187,7 +187,7 @@ fn_name StatisticsRegistry_UnbindStat = "StatisticsRegistry.UnbindStat";
 
 void StatisticsRegistry::UnbindStat(Statistic& stat)
 {
-   Debug::ft(StatisticsRegistry_UnbindStat);
+   Debug::ftnt(StatisticsRegistry_UnbindStat);
 
    stats_.Erase(stat);
 }

@@ -48,7 +48,7 @@ fn_name Address_dtor = "Address.dtor";
 
 Address::~Address()
 {
-   Debug::ft(Address_dtor);
+   Debug::ftnt(Address_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ fn_name AddressParameter_dtor = "AddressParameter.dtor";
 
 AddressParameter::~AddressParameter()
 {
-   Debug::ft(AddressParameter_dtor);
+   Debug::ftnt(AddressParameter_dtor);
 }
 
 //------------------------------------------------------------------------------

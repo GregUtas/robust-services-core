@@ -79,7 +79,7 @@ fn_name HostAddrCfg_dtor = "HostAddrCfg.dtor";
 
 HostAddrCfg::~HostAddrCfg()
 {
-   Debug::ft(HostAddrCfg_dtor);
+   Debug::ftnt(HostAddrCfg_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ fn_name IpPortStatsGroup_dtor = "IpPortStatsGroup.dtor";
 
 IpPortStatsGroup::~IpPortStatsGroup()
 {
-   Debug::ft(IpPortStatsGroup_dtor);
+   Debug::ftnt(IpPortStatsGroup_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ fn_name IpPortRegistry_dtor = "IpPortRegistry.dtor";
 
 IpPortRegistry::~IpPortRegistry()
 {
-   Debug::ft(IpPortRegistry_dtor);
+   Debug::ftnt(IpPortRegistry_dtor);
 
    Debug::SwLog(IpPortRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -382,7 +382,7 @@ fn_name IpPortRegistry_UnbindPort = "IpPortRegistry.UnbindPort";
 
 void IpPortRegistry::UnbindPort(IpPort& port)
 {
-   Debug::ft(IpPortRegistry_UnbindPort);
+   Debug::ftnt(IpPortRegistry_UnbindPort);
 
    portq_.Exq(port);
 }

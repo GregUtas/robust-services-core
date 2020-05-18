@@ -122,7 +122,7 @@ fn_name NbTracer_dtor = "NbTracer.dtor";
 
 NbTracer::~NbTracer()
 {
-   Debug::ft(NbTracer_dtor);
+   Debug::ftnt(NbTracer_dtor);
 
    Debug::SwLog(NbTracer_dtor, UnexpectedInvocation, 0);
 }

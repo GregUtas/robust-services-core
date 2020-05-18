@@ -118,10 +118,10 @@ fn_name Service_dtor = "Service.dtor";
 
 Service::~Service()
 {
-   Debug::ft(Service_dtor);
+   Debug::ftnt(Service_dtor);
 
    Debug::SwLog(Service_dtor, UnexpectedInvocation, 0);
-   Singleton< ServiceRegistry >::Instance()->UnbindService(*this);
+   Singleton< ServiceRegistry >::Extant()->UnbindService(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -411,7 +411,7 @@ fn_name Service_UnbindState = "Service.UnbindState";
 
 void Service::UnbindState (State& state)
 {
-   Debug::ft(Service_UnbindState);
+   Debug::ftnt(Service_UnbindState);
 
    states_.Erase(state);
 }

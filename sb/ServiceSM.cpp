@@ -105,7 +105,7 @@ fn_name ServiceSM_dtor = "ServiceSM.dtor";
 
 ServiceSM::~ServiceSM()
 {
-   Debug::ft(ServiceSM_dtor);
+   Debug::ftnt(ServiceSM_dtor);
 
    //  Record the SSM's deletion if this context is traced.
    //

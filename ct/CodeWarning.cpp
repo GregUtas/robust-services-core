@@ -30,6 +30,7 @@
 #include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
+#include "CxxScoped.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -953,8 +954,14 @@ bool CodeWarning::Suppress() const
    switch(warning_)
    {
    case ArgumentUnused:
+   {
       if(fn == "BaseBot.h") return true;
+      auto func = static_cast< const Function* >(item_);
+      auto index = func->LogOffsetToArgIndex(offset_);
+      auto& arg = func->GetArgs().at(index);
+      if(*arg->GetTypeSpec()->Name() == "nothrow_t") return true;
       break;
+   }
 
    case DataUnused:
       if(fn == "Allocators.h") return true;
@@ -1001,6 +1008,10 @@ bool CodeWarning::Suppress() const
    {
       if(*item_->Name() == "operator++") return true;
       if(*item_->Name() == "operator--") return true;
+      auto func = static_cast< const Function* >(item_);
+      auto index = func->LogOffsetToArgIndex(offset_);
+      auto& arg = func->GetArgs().at(index);
+      if(*arg->GetTypeSpec()->Name() == "nothrow_t") return true;
       break;
    }
 

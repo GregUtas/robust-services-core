@@ -50,7 +50,7 @@ fn_name CliStack_dtor = "CliStack.dtor";
 
 CliStack::~CliStack()
 {
-   Debug::ft(CliStack_dtor);
+   Debug::ftnt(CliStack_dtor);
 
    //  Exit all active increments.
    //

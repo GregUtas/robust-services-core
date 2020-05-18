@@ -69,7 +69,7 @@ fn_name SbIpBufferPool_dtor = "SbIpBufferPool.dtor";
 
 SbIpBufferPool::~SbIpBufferPool()
 {
-   Debug::ft(SbIpBufferPool_dtor);
+   Debug::ftnt(SbIpBufferPool_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ fn_name ContextPool_dtor = "ContextPool.dtor";
 
 ContextPool::~ContextPool()
 {
-   Debug::ft(ContextPool_dtor);
+   Debug::ftnt(ContextPool_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ fn_name EventPool_dtor = "EventPool.dtor";
 
 EventPool::~EventPool()
 {
-   Debug::ft(EventPool_dtor);
+   Debug::ftnt(EventPool_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ fn_name MessagePool_dtor = "MessagePool.dtor";
 
 MessagePool::~MessagePool()
 {
-   Debug::ft(MessagePool_dtor);
+   Debug::ftnt(MessagePool_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ fn_name MsgPortPool_dtor = "MsgPortPool.dtor";
 
 MsgPortPool::~MsgPortPool()
 {
-   Debug::ft(MsgPortPool_dtor);
+   Debug::ftnt(MsgPortPool_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -263,7 +263,7 @@ fn_name ProtocolSMPool_dtor = "ProtocolSMPool.dtor";
 
 ProtocolSMPool::~ProtocolSMPool()
 {
-   Debug::ft(ProtocolSMPool_dtor);
+   Debug::ftnt(ProtocolSMPool_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -345,7 +345,7 @@ fn_name ServiceSMPool_dtor = "ServiceSMPool.dtor";
 
 ServiceSMPool::~ServiceSMPool()
 {
-   Debug::ft(ServiceSMPool_dtor);
+   Debug::ftnt(ServiceSMPool_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -377,7 +377,7 @@ fn_name TimerPool_dtor = "TimerPool.dtor";
 
 TimerPool::~TimerPool()
 {
-   Debug::ft(TimerPool_dtor);
+   Debug::ftnt(TimerPool_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -469,7 +469,7 @@ fn_name BtIpBufferPool_dtor = "BtIpBufferPool.dtor";
 
 BtIpBufferPool::~BtIpBufferPool()
 {
-   Debug::ft(BtIpBufferPool_dtor);
+   Debug::ftnt(BtIpBufferPool_dtor);
 }
 
 //------------------------------------------------------------------------------

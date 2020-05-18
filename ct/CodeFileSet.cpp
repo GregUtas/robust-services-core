@@ -63,7 +63,7 @@ fn_name CodeFileSet_dtor = "CodeFileSet.dtor";
 
 CodeFileSet::~CodeFileSet()
 {
-   Debug::ft(CodeFileSet_dtor);
+   Debug::ftnt(CodeFileSet_dtor);
 }
 
 //------------------------------------------------------------------------------

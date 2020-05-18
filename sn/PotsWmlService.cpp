@@ -231,7 +231,7 @@ fn_name PotsWmlService_dtor = "PotsWmlService.dtor";
 
 PotsWmlService::~PotsWmlService()
 {
-   Debug::ft(PotsWmlService_dtor);
+   Debug::ftnt(PotsWmlService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -260,7 +260,7 @@ fn_name PotsWmlActivate_dtor = "PotsWmlActivate.dtor";
 
 PotsWmlActivate::~PotsWmlActivate()
 {
-   Debug::ft(PotsWmlActivate_dtor);
+   Debug::ftnt(PotsWmlActivate_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -290,7 +290,7 @@ fn_name PotsWmlDeactivate_dtor = "PotsWmlDeactivate.dtor";
 
 PotsWmlDeactivate::~PotsWmlDeactivate()
 {
-   Debug::ft(PotsWmlDeactivate_dtor);
+   Debug::ftnt(PotsWmlDeactivate_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -319,7 +319,7 @@ fn_name PotsWmlEvent_dtor = "PotsWmlEvent.dtor";
 
 PotsWmlEvent::~PotsWmlEvent()
 {
-   Debug::ft(PotsWmlEvent_dtor);
+   Debug::ftnt(PotsWmlEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -338,7 +338,7 @@ fn_name PotsWmlTimeoutEvent_dtor = "PotsWmlTimeoutEvent.dtor";
 
 PotsWmlTimeoutEvent::~PotsWmlTimeoutEvent()
 {
-   Debug::ft(PotsWmlTimeoutEvent_dtor);
+   Debug::ftnt(PotsWmlTimeoutEvent_dtor);
 }
 
 //==============================================================================
@@ -356,7 +356,7 @@ fn_name PotsWmlState_dtor = "PotsWmlState.dtor";
 
 PotsWmlState::~PotsWmlState()
 {
-   Debug::ft(PotsWmlState_dtor);
+   Debug::ftnt(PotsWmlState_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -411,7 +411,7 @@ fn_name PotsWmlSsm_dtor = "PotsWmlSsm.dtor";
 
 PotsWmlSsm::~PotsWmlSsm()
 {
-   Debug::ft(PotsWmlSsm_dtor);
+   Debug::ftnt(PotsWmlSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

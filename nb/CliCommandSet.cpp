@@ -49,7 +49,7 @@ fn_name CliCommandSet_dtor = "CliCommandSet.dtor";
 
 CliCommandSet::~CliCommandSet()
 {
-   Debug::ft(CliCommandSet_dtor);
+   Debug::ftnt(CliCommandSet_dtor);
 }
 
 //------------------------------------------------------------------------------

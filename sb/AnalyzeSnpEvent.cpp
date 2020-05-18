@@ -55,7 +55,7 @@ fn_name AnalyzeSnpEvent_dtor = "AnalyzeSnpEvent.dtor";
 
 AnalyzeSnpEvent::~AnalyzeSnpEvent()
 {
-   Debug::ft(AnalyzeSnpEvent_dtor);
+   Debug::ftnt(AnalyzeSnpEvent_dtor);
 }
 
 //------------------------------------------------------------------------------

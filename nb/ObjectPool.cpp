@@ -24,6 +24,7 @@
 #include "Dynamic.h"
 #include "Persistent.h"
 #include <bitset>
+#include <new>
 #include <sstream>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
@@ -127,7 +128,7 @@ fn_name ObjectPoolSizeCfg_dtor = "ObjectPoolSizeCfg.dtor";
 
 ObjectPoolSizeCfg::~ObjectPoolSizeCfg()
 {
-   Debug::ft(ObjectPoolSizeCfg_dtor);
+   Debug::ftnt(ObjectPoolSizeCfg_dtor);
 
    Debug::SwLog(ObjectPoolSizeCfg_dtor, UnexpectedInvocation, 0);
 }
@@ -176,7 +177,7 @@ fn_name ObjectPoolStats_dtor = "ObjectPoolStats.dtor";
 
 ObjectPoolStats::~ObjectPoolStats()
 {
-   Debug::ft(ObjectPoolStats_dtor);
+   Debug::ftnt(ObjectPoolStats_dtor);
 }
 
 //==============================================================================
@@ -264,7 +265,7 @@ fn_name ObjectPool_dtor = "ObjectPool.dtor";
 
 ObjectPool::~ObjectPool()
 {
-   Debug::ft(ObjectPool_dtor);
+   Debug::ftnt(ObjectPool_dtor);
 
    Debug::SwLog(ObjectPool_dtor, UnexpectedInvocation, 0);
 
@@ -274,7 +275,7 @@ ObjectPool::~ObjectPool()
       blocks_[i] = nullptr;
    }
 
-   Singleton< ObjectPoolRegistry >::Instance()->UnbindPool(*this);
+   Singleton< ObjectPoolRegistry >::Extant()->UnbindPool(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -289,7 +290,7 @@ bool ObjectPool::AllocBlocks()
    {
       auto pid = Pid();
       auto size = sizeof(uword) * segSize_;
-      blocks_[currSegments_] = (uword*) Memory::Alloc(size, mem_, false);
+      blocks_[currSegments_] = (uword*) Memory::Alloc(size, mem_, std::nothrow);
 
       if(blocks_[currSegments_] == nullptr)
       {
@@ -714,13 +715,13 @@ fn_name ObjectPool_EnqBlock = "ObjectPool.EnqBlock";
 
 void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 {
-   if(deleted) Debug::ft(ObjectPool_EnqBlock);
+   if(deleted) Debug::ftnt(ObjectPool_EnqBlock);
 
    if(obj == nullptr) return;
 
    if(Debug::TraceOn() && deleted)
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton< TraceBuffer >::Extant();
 
       if(buff->ToolIsOn(ObjPoolTracer))
       {
@@ -746,7 +747,7 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
       return;
    }
 
-   auto reg = Singleton< ObjectPoolRegistry >::Instance();
+   auto reg = Singleton< ObjectPoolRegistry >::Extant();
    auto nullify = reg->NullifyObjectData();
    obj->Nullify(nullify ? blockSize_ - BlockHeaderSize : 0);
 

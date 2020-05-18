@@ -49,7 +49,7 @@ fn_name ClassRegistry_dtor = "ClassRegistry.dtor";
 
 ClassRegistry::~ClassRegistry()
 {
-   Debug::ft(ClassRegistry_dtor);
+   Debug::ftnt(ClassRegistry_dtor);
 
    Debug::SwLog(ClassRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -138,7 +138,7 @@ fn_name ClassRegistry_UnbindClass = "ClassRegistry.UnbindClass";
 
 void ClassRegistry::UnbindClass(Class& cls)
 {
-   Debug::ft(ClassRegistry_UnbindClass);
+   Debug::ftnt(ClassRegistry_UnbindClass);
 
    classes_.Erase(cls);
 }

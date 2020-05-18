@@ -30,7 +30,6 @@
 #include <iomanip>
 #include <ios>
 #include <map>
-#include <new>
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
@@ -65,6 +64,7 @@
 #include "StatisticsRegistry.h"
 #include "SysMutex.h"
 #include "SysThreadStack.h"
+#include "SysTickTimer.h"
 #include "ThreadAdmin.h"
 #include "ThreadRegistry.h"
 #include "TimePoint.h"
@@ -93,6 +93,11 @@ namespace NodeBase
 //  could occur if an item initialized in another file also causes Debug::ft
 //  to be invoked.
 //
+//  SysTickTimer provides the time at which a function was invoked, so it is
+//  created after FtLocks_.  FtLocks_ must be created first because functions
+//  invoked to create SysTickTimer invoke Debug::ft, which requires FtLocks_
+//  to have been constructed.
+//
 std::map< SysThreadId, std::atomic_flag > FtLocks_;
 
 //  Returns the Debug::ft lock for the running thread.
@@ -116,8 +121,10 @@ std::atomic_flag& AccessFtLock()
    return lock;
 }
 
-//------------------------------------------------------------------------------
+const SysTickTimer* TickTimer = SysTickTimer::Instance();
 
+//------------------------------------------------------------------------------
+//
 //  Records invocations of Pause.
 //
 class ThreadTrace : public FunctionTrace
@@ -305,7 +312,7 @@ fn_name ThreadStats_dtor = "ThreadStats.dtor";
 
 ThreadStats::~ThreadStats()
 {
-   Debug::ft(ThreadStats_dtor);
+   Debug::ftnt(ThreadStats_dtor);
 }
 
 //==============================================================================
@@ -446,7 +453,7 @@ fn_name ContextSwitches_dtor = "ContextSwitches.dtor";
 
 ContextSwitches::~ContextSwitches()
 {
-   Debug::ft(ContextSwitches_dtor);
+   Debug::ftnt(ContextSwitches_dtor);
 
    Debug::SwLog(ContextSwitches_dtor, UnexpectedInvocation, 0);
 }
@@ -840,7 +847,7 @@ fn_name Threads_dtor = "Threads.dtor";
 
 Threads::~Threads()
 {
-   Debug::ft(Threads_dtor);
+   Debug::ftnt(Threads_dtor);
 
    Debug::SwLog(Threads_dtor, UnexpectedInvocation, 0);
 }
@@ -1186,7 +1193,7 @@ fn_name ThreadPriv_dtor = "ThreadPriv.dtor";
 
 ThreadPriv::~ThreadPriv()
 {
-   Debug::ft(ThreadPriv_dtor);
+   Debug::ftnt(ThreadPriv_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -1364,9 +1371,9 @@ fn_name Thread_dtor = "Thread.dtor";
 
 Thread::~Thread()
 {
-   Debug::ft(Thread_dtor);
+   Debug::ftnt(Thread_dtor);
 
-   auto threads = Singleton< Threads >::Instance();
+   auto threads = Singleton< Threads >::Extant();
    threads->Destroying(Deleting, systhrd_.get());
 
    ThreadAdmin::Incr(ThreadAdmin::Deletions);
@@ -1446,11 +1453,13 @@ TraceStatus Thread::CalcStatus(bool dynamic) const
    if(dynamic && priv_->traceMsg_) return TraceIncluded;
    if(priv_->status_ != TraceDefault) return priv_->status_;
 
-   auto nbt = Singleton< NbTracer >::Instance();
+   auto nbt = Singleton< NbTracer >::Extant();
+   if(nbt == nullptr) return TraceExcluded;
    auto status = nbt->FactionStatus(faction_);
    if(status != TraceDefault) return status;
 
-   auto buff = Singleton< TraceBuffer >::Instance();
+   auto buff = Singleton< TraceBuffer >::Extant();
+   if(buff == nullptr) return TraceExcluded;
    if(buff->FilterIsOn(TraceAll)) return TraceIncluded;
    return TraceExcluded;
 }
@@ -1835,7 +1844,7 @@ bool Thread::EnterSwLog()
    //  If the thread is already generating nested software logs, prevent
    //  further nesting.
    //
-   auto thr = RunningThread(false);
+   auto thr = RunningThread(std::nothrow);
    if(thr == nullptr) return true;
    if(thr->priv_ == nullptr) return true;
    if(++thr->priv_->swlogs_ <= 2) return true;
@@ -2012,7 +2021,7 @@ void Thread::ExitSwLog(bool all)
 {
    Debug::ft(Thread_ExitSwLog);
 
-   auto thr = RunningThread(false);
+   auto thr = RunningThread(std::nothrow);
    if(thr == nullptr) return;
    if(thr->priv_ == nullptr) return;
    if(thr->priv_->swlogs_ == 0) return;
@@ -2034,7 +2043,7 @@ void Thread::ExtendTime(const Duration& time)
    //  been deleted.  This is invoked during exception handling, so don't get
    //  upset if the thread can't be found.
    //
-   auto thr = RunningThread(false);
+   auto thr = RunningThread(std::nothrow);
    if(thr == nullptr) return;
    thr->priv_->currEnd_ += time;
 }
@@ -2052,6 +2061,32 @@ SysThread::Priority Thread::FactionToPriority(Faction& faction)
    Debug::SwLog(Thread_FactionToPriority, "invalid faction", faction);
    faction = BackgroundFaction;
    return SysThread::DefaultPriority;
+}
+
+//------------------------------------------------------------------------------
+
+Thread* Thread::FindRunningThread()
+{
+   Debug::noft();
+
+   //  The running thread is usually the active thread.  If it isn't,
+   //  search the thread registry.
+   //
+   auto nid = SysThread::RunningThreadId();
+   Thread* thr = nullptr;
+   auto active = ActiveThread();
+
+   if((active != nullptr) && (active->NativeThreadId() == nid))
+   {
+      thr = active;
+   }
+   else
+   {
+      auto reg = Singleton< ThreadRegistry >::Extant();
+      if(reg != nullptr) thr = reg->FindThread(nid);
+   }
+
+   return thr;
 }
 
 //------------------------------------------------------------------------------
@@ -2080,7 +2115,7 @@ void Thread::FunctionInvoked(fn_name_arg func)
 
    if(Debug::FcFlags_.test(Debug::TrapPending))
    {
-      if(thr == nullptr) thr = RunningThread(false);
+      if(thr == nullptr) thr = RunningThread(std::nothrow);
       if(thr == nullptr) return;
       thr->TrapCheck();
    }
@@ -2089,13 +2124,33 @@ void Thread::FunctionInvoked(fn_name_arg func)
    {
       if(StackCheckCounter_ <= 1)
       {
-         if(thr == nullptr) thr = RunningThread(false);
+         if(thr == nullptr) thr = RunningThread(std::nothrow);
          if(thr == nullptr) return;
          thr->StackCheck();
       }
       else
       {
          --StackCheckCounter_;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void Thread::FunctionInvoked(fn_name_arg func, const std::nothrow_t&)
+{
+   Debug::noft();
+
+   Thread* thr = nullptr;
+
+   if(Debug::FcFlags_.test(Debug::TracingActive))
+   {
+      auto& lock = AccessFtLock();
+      if(!lock.test_and_set())
+      {
+         if(TraceRunningThread(thr, std::nothrow))
+            FunctionTrace::Capture(func);
+         lock.clear();
       }
    }
 }
@@ -2122,7 +2177,7 @@ bool Thread::HandleSignal(signal_t sig, uint32_t code)
 {
    Debug::ft(Thread_HandleSignal);  //@
 
-   auto thr = RunningThread(false);
+   auto thr = RunningThread(std::nothrow);
 
    if(thr != nullptr)
    {
@@ -2187,7 +2242,7 @@ void Thread::ImmProtect()
    //
    if(thr->priv_->immUnprots_ == 0)
    {
-      Debug::SwLog(Thread_ImmProtect, "underflow", thr->Tid(), SwError);
+      Debug::SwLog(Thread_ImmProtect, "underflow", thr->Tid());
       return;
    }
 
@@ -2215,7 +2270,7 @@ void Thread::ImmUnprotect()
    //
    if(thr->priv_->immUnprots_ >= MaxUnprotectCount)
    {
-      Debug::SwLog(Thread_ImmUnprotect, "overflow", thr->Tid(), SwError);
+      Debug::SwLog(Thread_ImmUnprotect, "overflow", thr->Tid());
       return;
    }
 
@@ -2518,7 +2573,7 @@ void Thread::MakeUnpreemptable()
    //
    if(thr->priv_->unpreempts_ >= MaxUnpreemptCount)
    {
-      Debug::SwLog(Thread_MakeUnpreemptable, "overflow", thr->Tid(), SwError);
+      Debug::SwLog(Thread_MakeUnpreemptable, "overflow", thr->Tid());
       return;
    }
 
@@ -2542,7 +2597,7 @@ void Thread::MemProtect()
    //
    if(thr->priv_->memUnprots_ == 0)
    {
-      Debug::SwLog(Thread_MemProtect, "underflow", thr->Tid(), SwError);
+      Debug::SwLog(Thread_MemProtect, "underflow", thr->Tid());
       return;
    }
 
@@ -2568,7 +2623,7 @@ void Thread::MemUnprotect()
    //
    if(thr->priv_->memUnprots_ >= MaxUnprotectCount)
    {
-      Debug::SwLog(Thread_MemUnprotect, "overflow", thr->Tid(), SwError);
+      Debug::SwLog(Thread_MemUnprotect, "overflow", thr->Tid());
       return;
    }
 
@@ -2717,7 +2772,7 @@ void Thread::Raise(signal_t sig)
 
    //  Ensure that SIG is valid.
    //
-   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto reg = Singleton< PosixSignalRegistry >::Extant();
    auto ps1 = reg->Find(sig);
 
    if(ps1 == nullptr)
@@ -2738,7 +2793,7 @@ void Thread::Raise(signal_t sig)
    //  running thread can't be found, don't assert: the signal handler can
    //  invoke this when a signal occurs on an unknown thread.
    //
-   auto thr = RunningThread(false);
+   auto thr = RunningThread(std::nothrow);
 
    if(thr == this)
    {
@@ -2907,14 +2962,14 @@ void Thread::ReleaseResources(bool orphaned)
 
    //  Remove the thread from the global registry.
    //
-   Singleton< ThreadRegistry >::Instance()->UnbindThread(*this);
+   Singleton< ThreadRegistry >::Extant()->UnbindThread(*this);
 
    //  If the thread is about to exit, delete its native thread; otherwise
    //  register its native thread as an orphan.  Various functions invoke
    //  GetState to check for the existence of an orphaned native thread,
    //  which is immediately exited when found.
    //
-   auto threads = Singleton< Threads >::Instance();
+   auto threads = Singleton< Threads >::Extant();
 
    if(orphaned)
    {
@@ -3060,27 +3115,11 @@ void Thread::RtcTimeout()
 
 //------------------------------------------------------------------------------
 
-Thread* Thread::RunningThread(bool assert)
+Thread* Thread::RunningThread()
 {
    Debug::noft();
 
-   //  The running thread is usually the active thread.  If it isn't,
-   //  search the thread registry.
-   //
-   auto nid = SysThread::RunningThreadId();
-   Thread* thr = nullptr;
-   auto active = ActiveThread();
-
-   if((active != nullptr) && (active->NativeThreadId() == nid))
-   {
-      thr = active;
-   }
-   else
-   {
-      auto reg = Singleton< ThreadRegistry >::Extant();
-      if(reg != nullptr) thr = reg->FindThread(nid);
-   }
-
+   auto thr = FindRunningThread();
    if(thr != nullptr) return thr;
 
    //  The thread could not be found.  This can occur for various reasons:
@@ -3094,15 +3133,23 @@ Thread* Thread::RunningThread(bool assert)
    //
    ThreadAdmin::Incr(ThreadAdmin::Unknowns);
 
-   if(assert)
-   {
-      if(Singleton< Threads >::Instance()->GetState() == Deleted)
-         throw SignalException(SIGDELETED, 0);
-      else
-         Debug::Assert(false);
-   }
+   if(Singleton< Threads >::Instance()->GetState() == Deleted)
+      throw SignalException(SIGDELETED, 0);
+   else
+      Debug::Assert(false);
 
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+Thread* Thread::RunningThread(const std::nothrow_t&)
+{
+   Debug::noft();
+
+   auto thr = FindRunningThread();
+   if(thr == nullptr) ThreadAdmin::Incr(ThreadAdmin::Unknowns);
+   return thr;
 }
 
 //------------------------------------------------------------------------------
@@ -3767,7 +3814,7 @@ string Thread::to_str() const
 void Thread::Trace(Thread* thr,
    fn_name_arg func, TraceRecordId rid, int32_t info)
 {
-   if(thr == nullptr) thr = RunningThread(false);
+   if(thr == nullptr) thr = RunningThread(std::nothrow);
    if(thr == nullptr) return;
 
    if(Debug::FcFlags_.test(Debug::TracingActive))
@@ -3800,7 +3847,36 @@ bool Thread::TraceRunningThread(Thread*& thr)
    {
       auto reg = Singleton< ThreadRegistry >::Extant();
       if(reg == nullptr) return true;
-      thr = RunningThread(false);
+      thr = RunningThread(std::nothrow);
+      if(thr == nullptr) return true;
+   }
+
+   return thr->IsTraceable();
+}
+
+//------------------------------------------------------------------------------
+
+bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
+{
+   //  Do not trace this thread if the trace buffer is locked or
+   //  function tracing is not on.
+   //
+   auto buff = Singleton< TraceBuffer >::Extant();
+   if(buff == nullptr) return false;
+   if(!buff->ToolIsOn(FunctionTracer)) return false;
+
+   //  If the running thread is unknown, find it while taking care not
+   //  to create the thread registry prematurely during initialization.
+   //  If the registry does not yet exist, we must be tracing the root
+   //  thread during initialization.  Other cases in which the running
+   //  thread cannot be found often involve error scenarios, so include
+   //  them.
+   //
+   if(thr == nullptr)
+   {
+      auto reg = Singleton< ThreadRegistry >::Extant();
+      if(reg == nullptr) return true;
+      thr = RunningThread(std::nothrow);
       if(thr == nullptr) return true;
    }
 

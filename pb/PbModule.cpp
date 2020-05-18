@@ -66,7 +66,7 @@ fn_name PbModule_dtor = "PbModule.dtor";
 
 PbModule::~PbModule()
 {
-   Debug::ft(PbModule_dtor);
+   Debug::ftnt(PbModule_dtor);
 }
 
 //------------------------------------------------------------------------------

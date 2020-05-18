@@ -67,7 +67,7 @@ fn_name InvokerThread_dtor = "InvokerThread.dtor";
 
 InvokerThread::~InvokerThread()
 {
-   Debug::ft(InvokerThread_dtor);
+   Debug::ftnt(InvokerThread_dtor);
 
    if(RunningInvoker_ == this) RunningInvoker_ = nullptr;
    pool_->UnbindThread(*this);
@@ -274,6 +274,6 @@ void InvokerThread::Shutdown(RestartLevel level)
    Restart::Release(ctx_);
    if(ctx_ == nullptr) return;
 
-   Singleton< PayloadInvokerPool >::Instance()->Requeue(*ctx_.release());
+   Singleton< PayloadInvokerPool >::Extant()->Requeue(*ctx_.release());
 }
 }

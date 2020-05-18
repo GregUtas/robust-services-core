@@ -55,7 +55,7 @@ fn_name CodeDir_dtor = "CodeDir.dtor";
 
 CodeDir::~CodeDir()
 {
-   Debug::ft(CodeDir_dtor);
+   Debug::ftnt(CodeDir_dtor);
 }
 
 //------------------------------------------------------------------------------

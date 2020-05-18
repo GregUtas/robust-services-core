@@ -64,7 +64,7 @@ fn_name CbModule_dtor = "CbModule.dtor";
 
 CbModule::~CbModule()
 {
-   Debug::ft(CbModule_dtor);
+   Debug::ftnt(CbModule_dtor);
 }
 
 //------------------------------------------------------------------------------

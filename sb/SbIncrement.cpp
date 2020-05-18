@@ -1707,6 +1707,6 @@ fn_name SbIncrement_dtor = "SbIncrement.dtor";
 
 SbIncrement::~SbIncrement()
 {
-   Debug::ft(SbIncrement_dtor);
+   Debug::ftnt(SbIncrement_dtor);
 }
 }

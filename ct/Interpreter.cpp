@@ -301,7 +301,7 @@ fn_name LibraryOpcode_dtor = "LibraryOpcode.dtor";
 
 LibraryOpcode::~LibraryOpcode()
 {
-   Debug::ft(LibraryOpcode_dtor);
+   Debug::ftnt(LibraryOpcode_dtor);
 
    //  lhs_ will become someone else's rhs_, so don't delete it.
    //  And until it does, the operand stack owns it.
@@ -445,7 +445,7 @@ fn_name Interpreter_dtor = "Interpreter.dtor";
 
 Interpreter::~Interpreter()
 {
-   Debug::ft(Interpreter_dtor);
+   Debug::ftnt(Interpreter_dtor);
 
    //  Invoke Release on operands (LibrarySets).  This will cause
    //  a temporary to delete itself.

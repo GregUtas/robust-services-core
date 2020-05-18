@@ -552,7 +552,7 @@ fn_name PotsCwmService_dtor = "PotsCwmService.dtor";
 
 PotsCwmService::~PotsCwmService()
 {
-   Debug::ft(PotsCwmService_dtor);
+   Debug::ftnt(PotsCwmService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -581,7 +581,7 @@ fn_name PotsCwmState_dtor = "PotsCwmState.dtor";
 
 PotsCwmState::~PotsCwmState()
 {
-   Debug::ft(PotsCwmState_dtor);
+   Debug::ftnt(PotsCwmState_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -660,7 +660,7 @@ fn_name PotsCwmEvent_dtor = "PotsCwmEvent.dtor";
 
 PotsCwmEvent::~PotsCwmEvent()
 {
-   Debug::ft(PotsCwmEvent_dtor);
+   Debug::ftnt(PotsCwmEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -679,7 +679,7 @@ fn_name PotsCwmFacilityEvent_dtor = "PotsCwmFacilityEvent.dtor";
 
 PotsCwmFacilityEvent::~PotsCwmFacilityEvent()
 {
-   Debug::ft(PotsCwmFacilityEvent_dtor);
+   Debug::ftnt(PotsCwmFacilityEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -698,7 +698,7 @@ fn_name PotsCwmNotifyEvent_dtor = "PotsCwmNotifyEvent.dtor";
 
 PotsCwmNotifyEvent::~PotsCwmNotifyEvent()
 {
-   Debug::ft(PotsCwmNotifyEvent_dtor);
+   Debug::ftnt(PotsCwmNotifyEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -717,7 +717,7 @@ fn_name PotsCwmToneTimeoutEvent_dtor = "PotsCwmToneTimeoutEvent.dtor";
 
 PotsCwmToneTimeoutEvent::~PotsCwmToneTimeoutEvent()
 {
-   Debug::ft(PotsCwmToneTimeoutEvent_dtor);
+   Debug::ftnt(PotsCwmToneTimeoutEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -736,7 +736,7 @@ fn_name PotsCwmRenotifyEvent_dtor = "PotsCwmRenotifyEvent.dtor";
 
 PotsCwmRenotifyEvent::~PotsCwmRenotifyEvent()
 {
-   Debug::ft(PotsCwmRenotifyEvent_dtor);
+   Debug::ftnt(PotsCwmRenotifyEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -755,7 +755,7 @@ fn_name PotsCwmFlipflopEvent_dtor = "PotsCwmFlipflopEvent.dtor";
 
 PotsCwmFlipflopEvent::~PotsCwmFlipflopEvent()
 {
-   Debug::ft(PotsCwmFlipflopEvent_dtor);
+   Debug::ftnt(PotsCwmFlipflopEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -774,7 +774,7 @@ fn_name PotsCwmReanswerEvent_dtor = "PotsCwmReanswerEvent.dtor";
 
 PotsCwmReanswerEvent::~PotsCwmReanswerEvent()
 {
-   Debug::ft(PotsCwmReanswerEvent_dtor);
+   Debug::ftnt(PotsCwmReanswerEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -793,7 +793,7 @@ fn_name PotsCwmReanswerTimeoutEvent_dtor = "PotsCwmReanswerTimeoutEvent.dtor";
 
 PotsCwmReanswerTimeoutEvent::~PotsCwmReanswerTimeoutEvent()
 {
-   Debug::ft(PotsCwmReanswerTimeoutEvent_dtor);
+   Debug::ftnt(PotsCwmReanswerTimeoutEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -812,7 +812,7 @@ fn_name PotsCwmReconnectEvent_dtor = "PotsCwmReconnectEvent.dtor";
 
 PotsCwmReconnectEvent::~PotsCwmReconnectEvent()
 {
-   Debug::ft(PotsCwmReconnectEvent_dtor);
+   Debug::ftnt(PotsCwmReconnectEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -831,7 +831,7 @@ fn_name PotsCwmLocalReleaseEvent_dtor = "PotsCwmLocalReleaseEvent.dtor";
 
 PotsCwmLocalReleaseEvent::~PotsCwmLocalReleaseEvent()
 {
-   Debug::ft(PotsCwmLocalReleaseEvent_dtor);
+   Debug::ftnt(PotsCwmLocalReleaseEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -852,7 +852,7 @@ fn_name PotsCwmRemoteReleaseEvent_dtor = "PotsCwmRemoteReleaseEvent.dtor";
 
 PotsCwmRemoteReleaseEvent::~PotsCwmRemoteReleaseEvent()
 {
-   Debug::ft(PotsCwmRemoteReleaseEvent_dtor);
+   Debug::ftnt(PotsCwmRemoteReleaseEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -882,7 +882,7 @@ fn_name PotsCwmActiveReleaseEvent_dtor = "PotsCwmActiveReleaseEvent.dtor";
 
 PotsCwmActiveReleaseEvent::~PotsCwmActiveReleaseEvent()
 {
-   Debug::ft(PotsCwmActiveReleaseEvent_dtor);
+   Debug::ftnt(PotsCwmActiveReleaseEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -902,7 +902,7 @@ fn_name PotsCwmInactiveReleaseEvent_dtor = "PotsCwmInactiveReleaseEvent.dtor";
 
 PotsCwmInactiveReleaseEvent::~PotsCwmInactiveReleaseEvent()
 {
-   Debug::ft(PotsCwmInactiveReleaseEvent_dtor);
+   Debug::ftnt(PotsCwmInactiveReleaseEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -921,7 +921,7 @@ fn_name PotsCwmQuiesceEvent_dtor = "PotsCwmQuiesceEvent.dtor";
 
 PotsCwmQuiesceEvent::~PotsCwmQuiesceEvent()
 {
-   Debug::ft(PotsCwmQuiesceEvent_dtor);
+   Debug::ftnt(PotsCwmQuiesceEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -940,7 +940,7 @@ fn_name PotsCwmRelayEvent_dtor = "PotsCwmRelayEvent.dtor";
 
 PotsCwmRelayEvent::~PotsCwmRelayEvent()
 {
-   Debug::ft(PotsCwmRelayEvent_dtor);
+   Debug::ftnt(PotsCwmRelayEvent_dtor);
 }
 
 //==============================================================================
@@ -962,7 +962,7 @@ fn_name PotsCwmSsm_dtor = "PotsCwmSsm.dtor";
 
 PotsCwmSsm::~PotsCwmSsm()
 {
-   Debug::ft(PotsCwmSsm_dtor);
+   Debug::ftnt(PotsCwmSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

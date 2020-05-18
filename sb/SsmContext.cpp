@@ -60,7 +60,7 @@ fn_name SsmContext_dtor = "SsmContext.dtor";
 
 SsmContext::~SsmContext()
 {
-   Debug::ft(SsmContext_dtor);
+   Debug::ftnt(SsmContext_dtor);
 
    delete root_;
    root_ = nullptr;

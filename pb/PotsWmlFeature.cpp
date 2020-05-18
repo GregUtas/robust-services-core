@@ -89,7 +89,7 @@ fn_name PotsWmlFeature_dtor = "PotsWmlFeature.dtor";
 
 PotsWmlFeature::~PotsWmlFeature()
 {
-   Debug::ft(PotsWmlFeature_dtor);
+   Debug::ftnt(PotsWmlFeature_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ fn_name PotsWmlFeatureProfile_dtor = "PotsWmlFeatureProfile.dtor";
 
 PotsWmlFeatureProfile::~PotsWmlFeatureProfile()
 {
-   Debug::ft(PotsWmlFeatureProfile_dtor);
+   Debug::ftnt(PotsWmlFeatureProfile_dtor);
 }
 
 //------------------------------------------------------------------------------

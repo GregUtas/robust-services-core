@@ -1751,7 +1751,7 @@ Q1WayItem::Q1WayItem(word index) : index_(index) { }
 
 Q1WayItem::~Q1WayItem()
 {
-   Singleton< Q1WayPool >::Instance()->items_[index_].release();
+   Singleton< Q1WayPool >::Extant()->items_[index_].release();
 }
 
 //------------------------------------------------------------------------------
@@ -2271,7 +2271,7 @@ Q2WayItem::Q2WayItem(word index) : index_(index) { }
 
 Q2WayItem::~Q2WayItem()
 {
-   Singleton< Q2WayPool >::Instance()->items_[index_].release();
+   Singleton< Q2WayPool >::Extant()->items_[index_].release();
 }
 
 //------------------------------------------------------------------------------
@@ -2835,7 +2835,7 @@ RegistryItem::RegistryItem(word index) : index_(index) { }
 
 RegistryItem::~RegistryItem()
 {
-   Singleton< RegistryPool >::Instance()->items_[index_].release();
+   Singleton< RegistryPool >::Extant()->items_[index_].release();
 }
 
 //------------------------------------------------------------------------------
@@ -3898,7 +3898,7 @@ public:
       OverflowStack,
       RaiseSignal,
       Return,
-      Swerr,
+      SwErr,
       Terminate,
       Trap
    };
@@ -3914,7 +3914,7 @@ private:
    static void DoAbort();
    static void DoDelete();
    static int DoDivide();
-   static void DoSwerr();
+   static void DoSwErr();
    static void DoTerminate();
    static void LoopForever();
    static void RecurseForever(size_t depth);
@@ -3947,7 +3947,7 @@ RecoveryDaemon::RecoveryDaemon() : Daemon(RecoveryDaemonName, 1)
 
 RecoveryDaemon::~RecoveryDaemon()
 {
-   Debug::ft(RecoveryDaemon_dtor);
+   Debug::ftnt(RecoveryDaemon_dtor);
 }
 
 Thread* RecoveryDaemon::CreateThread()
@@ -3999,7 +3999,7 @@ fn_name RecoveryThread_dtor = "RecoveryThread.dtor";
 
 RecoveryThread::~RecoveryThread()
 {
-   Debug::ft(RecoveryThread_dtor);
+   Debug::ftnt(RecoveryThread_dtor);
 
    if(Debug::SwFlagOn(ThreadDtorTrapFlag))
    {
@@ -4097,13 +4097,13 @@ void RecoveryThread::DoRaise() const
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_DoSwerr = "RecoveryThread.DoSwerr";
+fn_name RecoveryThread_DoSwErr = "RecoveryThread.DoSwErr";
 
-void RecoveryThread::DoSwerr()
+void RecoveryThread::DoSwErr()
 {
-   Debug::ft(RecoveryThread_DoSwerr);
+   Debug::ft(RecoveryThread_DoSwErr);
 
-   Debug::SwLog(RecoveryThread_DoSwerr, Swerr, 1, SwError);
+   Debug::SwErr(SwErr, 1);
 }
 
 //------------------------------------------------------------------------------
@@ -4190,8 +4190,8 @@ void RecoveryThread::Enter()
          return;
       case Sleep:
          break;
-      case Swerr:
-         DoSwerr();
+      case SwErr:
+         DoSwErr();
          break;
       case Terminate:
          DoTerminate();
@@ -4343,9 +4343,9 @@ class StackText : public CliText
 public: StackText();
 };
 
-class SwerrText : public CliText
+class SwErrText : public CliText
 {
-public: SwerrText();
+public: SwErrText();
 };
 
 class TerminateText : public CliText
@@ -4489,10 +4489,10 @@ StackText::StackText() : CliText(StackTextExpl, StackTextStr) { }
 
 //------------------------------------------------------------------------------
 
-fixed_string SwerrTextStr = "swerr";
-fixed_string SwerrTextExpl = "cause a software exception";
+fixed_string SwErrTextStr = "swerr";
+fixed_string SwErrTextExpl = "cause a software exception";
 
-SwerrText::SwerrText() : CliText(SwerrTextExpl, SwerrTextStr) { }
+SwErrText::SwErrText() : CliText(SwErrTextExpl, SwErrTextStr) { }
 
 //------------------------------------------------------------------------------
 
@@ -4536,7 +4536,7 @@ RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
    BindText(*new MutexExitText, RecoveryThread::MutexExit);
    BindText(*new MutexTrapText, RecoveryThread::MutexTrap);
    BindText(*new RaiseText, RecoveryThread::RaiseSignal);
-   BindText(*new SwerrText, RecoveryThread::Swerr);
+   BindText(*new SwErrText, RecoveryThread::SwErr);
    BindText(*new TerminateText, RecoveryThread::Terminate);
    BindText(*new TrapText, RecoveryThread::Trap);
    BindText(*new StackText, RecoveryThread::OverflowStack);
@@ -4605,7 +4605,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
    case RecoveryThread::MutexTrap:
    case RecoveryThread::OverflowStack:
    case RecoveryThread::Return:
-   case RecoveryThread::Swerr:
+   case RecoveryThread::SwErr:
    case RecoveryThread::Terminate:
       cli.EndOfInput(false);
       thr->SetTest(test);
@@ -4697,6 +4697,6 @@ fn_name NtIncrement_dtor = "NtIncrement.dtor";
 
 NtIncrement::~NtIncrement()
 {
-   Debug::ft(NtIncrement_dtor);
+   Debug::ftnt(NtIncrement_dtor);
 }
 }

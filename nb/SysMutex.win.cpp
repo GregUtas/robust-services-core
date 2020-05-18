@@ -21,6 +21,7 @@
 //
 #ifdef OS_WIN
 #include "SysMutex.h"
+#include <new>
 #include <windows.h>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -59,14 +60,14 @@ fn_name SysMutex_dtor = "SysMutex.dtor";
 
 SysMutex::~SysMutex()
 {
-   Debug::ft(SysMutex_dtor);
+   Debug::ftnt(SysMutex_dtor);
 
    if(nid_ != NIL_ID)
    {
       Debug::SwLog(SysMutex_dtor, name_, nid_);
    }
 
-   Singleton< MutexRegistry >::Instance()->UnbindMutex(*this);
+   Singleton< MutexRegistry >::Extant()->UnbindMutex(*this);
 
    if(mutex_ != nullptr)
    {
@@ -93,7 +94,7 @@ SysMutex::Rc SysMutex::Acquire(const Duration& timeout)
       return Acquired;
    }
 
-   auto thr = Thread::RunningThread(false);
+   auto thr = Thread::RunningThread(std::nothrow);
    auto result = Error;
    if(thr != nullptr) thr->UpdateMutex(this);
    auto rc = WaitForSingleObject(mutex_, timeout.ToMsecs());
@@ -136,7 +137,7 @@ fn_name SysMutex_Release = "SysMutex.Release";
 
 void SysMutex::Release(bool abandon)
 {
-   Debug::ft(SysMutex_Release);
+   Debug::ftnt(SysMutex_Release);
 
    auto curr = SysThread::RunningThreadId();
 

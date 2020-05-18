@@ -55,7 +55,7 @@ fn_name Heap_dtor = "Heap.dtor";
 
 Heap::~Heap()
 {
-   Debug::ft(Heap_dtor);
+   Debug::ftnt(Heap_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ fn_name Heap_delete = "Heap.operator delete";
 
 void Heap::operator delete(void* addr)
 {
-   Debug::ft(Heap_delete);
+   Debug::ftnt(Heap_delete);
 
    ::operator delete(addr);
 }

@@ -58,7 +58,7 @@ fn_name CodeCoverage_dtor = "CodeCoverage.dtor";
 
 CodeCoverage::~CodeCoverage()
 {
-   Debug::ft(CodeCoverage_dtor);
+   Debug::ftnt(CodeCoverage_dtor);
 }
 
 //------------------------------------------------------------------------------

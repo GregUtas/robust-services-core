@@ -54,7 +54,7 @@ fn_name ObjectPoolAudit_dtor = "ObjectPoolAudit.dtor";
 
 ObjectPoolAudit::~ObjectPoolAudit()
 {
-   Debug::ft(ObjectPoolAudit_dtor);
+   Debug::ftnt(ObjectPoolAudit_dtor);
 }
 
 //------------------------------------------------------------------------------

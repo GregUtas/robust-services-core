@@ -47,7 +47,7 @@ fn_name CliPtrParm_dtor = "CliPtrParm.dtor";
 
 CliPtrParm::~CliPtrParm()
 {
-   Debug::ft(CliPtrParm_dtor);
+   Debug::ftnt(CliPtrParm_dtor);
 }
 
 //------------------------------------------------------------------------------

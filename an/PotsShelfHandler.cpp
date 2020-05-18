@@ -55,7 +55,7 @@ fn_name PotsShelfHandler_dtor = "PotsShelfHandler.dtor";
 
 PotsShelfHandler::~PotsShelfHandler()
 {
-   Debug::ft(PotsShelfHandler_dtor);
+   Debug::ftnt(PotsShelfHandler_dtor);
 }
 
 //------------------------------------------------------------------------------

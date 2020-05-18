@@ -49,7 +49,7 @@ fn_name IpServiceRegistry_dtor = "IpServiceRegistry.dtor";
 
 IpServiceRegistry::~IpServiceRegistry()
 {
-   Debug::ft(IpServiceRegistry_dtor);
+   Debug::ftnt(IpServiceRegistry_dtor);
 
    Debug::SwLog(IpServiceRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -129,7 +129,7 @@ fn_name IpServiceRegistry_UnbindService = "IpServiceRegistry.UnbindService";
 
 void IpServiceRegistry::UnbindService(IpService& service)
 {
-   Debug::ft(IpServiceRegistry_UnbindService);
+   Debug::ftnt(IpServiceRegistry_UnbindService);
 
    services_.Erase(service);
 }

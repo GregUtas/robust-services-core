@@ -58,7 +58,7 @@ fn_name MainArgs_dtor = "MainArgs.dtor";
 
 MainArgs::~MainArgs()
 {
-   Debug::ft(MainArgs_dtor);
+   Debug::ftnt(MainArgs_dtor);
 
    Debug::SwLog(MainArgs_dtor, UnexpectedInvocation, 0);
 }

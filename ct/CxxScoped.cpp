@@ -365,7 +365,7 @@ void BaseDecl::FindReferent()
    //  The base class wasn't found.
    //
    auto log = "Unknown base class: " + *Name() + " [" + strLocation() + ']';
-   Debug::SwLog(BaseDecl_FindReferent, log, 0, SwInfo);
+   Debug::SwLog(BaseDecl_FindReferent, log, 0, false);
 }
 
 //------------------------------------------------------------------------------
@@ -447,7 +447,7 @@ fn_name CxxScoped_dtor = "CxxScoped.dtor";
 
 CxxScoped::~CxxScoped()
 {
-   Debug::ft(CxxScoped_dtor);
+   Debug::ftnt(CxxScoped_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -959,9 +959,9 @@ fn_name Enum_dtor = "Enum.dtor";
 
 Enum::~Enum()
 {
-   Debug::ft(Enum_dtor);
+   Debug::ftnt(Enum_dtor);
 
-   if(!name_.empty()) Singleton< CxxSymbols >::Instance()->EraseEnum(this);
+   if(!name_.empty()) Singleton< CxxSymbols >::Extant()->EraseEnum(this);
    CxxStats::Decr(CxxStats::ENUM_DECL);
 }
 
@@ -1279,9 +1279,9 @@ fn_name Enumerator_dtor = "Enumerator.dtor";
 
 Enumerator::~Enumerator()
 {
-   Debug::ft(Enumerator_dtor);
+   Debug::ftnt(Enumerator_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseEtor(this);
+   Singleton< CxxSymbols >::Extant()->EraseEtor(this);
    CxxStats::Decr(CxxStats::ENUM_MEM);
 }
 
@@ -1505,9 +1505,9 @@ fn_name Forward_dtor = "Forward.dtor";
 
 Forward::~Forward()
 {
-   Debug::ft(Forward_dtor);
+   Debug::ftnt(Forward_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseForw(this);
+   Singleton< CxxSymbols >::Extant()->EraseForw(this);
    CxxStats::Decr(CxxStats::FORWARD_DECL);
 }
 
@@ -1715,11 +1715,11 @@ fn_name Friend_dtor = "Friend.dtor";
 
 Friend::~Friend()
 {
-   Debug::ft(Friend_dtor);
+   Debug::ftnt(Friend_dtor);
 
    if(GetFunction() == nullptr)
    {
-      Singleton< CxxSymbols >::Instance()->EraseFriend(this);
+      Singleton< CxxSymbols >::Extant()->EraseFriend(this);
    }
 
    CxxStats::Decr(CxxStats::FRIEND_DECL);
@@ -2583,9 +2583,9 @@ fn_name Terminal_dtor = "Terminal.dtor";
 
 Terminal::~Terminal()
 {
-   Debug::ft(Terminal_dtor);
+   Debug::ftnt(Terminal_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseTerm(this);
+   Singleton< CxxSymbols >::Extant()->EraseTerm(this);
    CxxStats::Decr(CxxStats::TERMINAL_DECL);
 }
 
@@ -2675,9 +2675,9 @@ fn_name Typedef_dtor = "Typedef.dtor";
 
 Typedef::~Typedef()
 {
-   Debug::ft(Typedef_dtor);
+   Debug::ftnt(Typedef_dtor);
 
-   Singleton< CxxSymbols >::Instance()->EraseType(this);
+   Singleton< CxxSymbols >::Extant()->EraseType(this);
    CxxStats::Decr(CxxStats::TYPE_DECL);
 }
 
@@ -3027,7 +3027,7 @@ void Using::FindReferent()
 
    auto qname = QualifiedName(true, false);
    auto log = "Unknown using: " + qname + " [" + strLocation() + ']';
-   Debug::SwLog(Using_FindReferent, log, 0, SwInfo);
+   Debug::SwLog(Using_FindReferent, log, 0, false);
 }
 
 //------------------------------------------------------------------------------

@@ -97,7 +97,7 @@ fn_name Timer_dtor = "Timer.dtor";
 
 Timer::~Timer()
 {
-   Debug::ft(Timer_dtor);
+   Debug::ftnt(Timer_dtor);
 
    //  Record the timer's deletion if this context is traced.  If the timer
    //  is being deleted because it expired and the TimerRegistry is sending

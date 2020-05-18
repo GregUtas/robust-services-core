@@ -65,7 +65,7 @@ fn_name PotsCallIpService_dtor = "PotsCallIpService.dtor";
 
 PotsCallIpService::~PotsCallIpService()
 {
-   Debug::ft(PotsCallIpService_dtor);
+   Debug::ftnt(PotsCallIpService_dtor);
 }
 
 //------------------------------------------------------------------------------

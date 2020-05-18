@@ -47,7 +47,7 @@ fn_name LeakyBucketCounter_dtor = "LeakyBucketCounter.dtor";
 
 LeakyBucketCounter::~LeakyBucketCounter()
 {
-   Debug::ft(LeakyBucketCounter_dtor);
+   Debug::ftnt(LeakyBucketCounter_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -81,7 +81,7 @@ fn_name ProgressParameter_dtor = "ProgressParameter.dtor";
 
 ProgressParameter::~ProgressParameter()
 {
-   Debug::ft(ProgressParameter_dtor);
+   Debug::ftnt(ProgressParameter_dtor);
 }
 
 //------------------------------------------------------------------------------

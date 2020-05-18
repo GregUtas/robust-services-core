@@ -47,7 +47,7 @@ fn_name CliDaemon_dtor = "CliDaemon.dtor";
 
 CliDaemon::~CliDaemon()
 {
-   Debug::ft(CliDaemon_dtor);
+   Debug::ftnt(CliDaemon_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ fn_name ObjectDaemon_dtor = "ObjectDaemon.dtor";
 
 ObjectDaemon::~ObjectDaemon()
 {
-   Debug::ft(ObjectDaemon_dtor);
+   Debug::ftnt(ObjectDaemon_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ fn_name StatisticsDaemon_dtor = "StatisticsDaemon.dtor";
 
 StatisticsDaemon::~StatisticsDaemon()
 {
-   Debug::ft(StatisticsDaemon_dtor);
+   Debug::ftnt(StatisticsDaemon_dtor);
 }
 
 //------------------------------------------------------------------------------

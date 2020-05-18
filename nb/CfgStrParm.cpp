@@ -47,7 +47,7 @@ fn_name CfgStrParm_dtor = "CfgStrParm.dtor";
 
 CfgStrParm::~CfgStrParm()
 {
-   Debug::ft(CfgStrParm_dtor);
+   Debug::ftnt(CfgStrParm_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -49,7 +49,7 @@ fn_name MscContextPair_dtor = "MscContextPair.dtor";
 
 MscContextPair::~MscContextPair()
 {
-   Debug::ft(MscContextPair_dtor);
+   Debug::ftnt(MscContextPair_dtor);
 }
 
 //------------------------------------------------------------------------------

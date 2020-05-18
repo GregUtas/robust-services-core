@@ -108,7 +108,7 @@ fn_name TcpIoThread_dtor = "TcpIoThread.dtor";
 
 TcpIoThread::~TcpIoThread()
 {
-   Debug::ft(TcpIoThread_dtor);
+   Debug::ftnt(TcpIoThread_dtor);
 
    ReleaseResources();
 }

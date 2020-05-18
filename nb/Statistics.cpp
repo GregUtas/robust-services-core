@@ -73,9 +73,9 @@ fn_name Statistic_dtor = "Statistic.dtor";
 
 Statistic::~Statistic()
 {
-   Debug::ft(Statistic_dtor);
+   Debug::ftnt(Statistic_dtor);
 
-   Singleton< StatisticsRegistry >::Instance()->UnbindStat(*this);
+   Singleton< StatisticsRegistry >::Extant()->UnbindStat(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ fn_name Counter_dtor = "Counter.dtor";
 
 Counter::~Counter()
 {
-   Debug::ft(Counter_dtor);
+   Debug::ftnt(Counter_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ fn_name Accumulator_dtor = "Accumulator.dtor";
 
 Accumulator::~Accumulator()
 {
-   Debug::ft(Accumulator_dtor);
+   Debug::ftnt(Accumulator_dtor);
 }
 
 //==============================================================================
@@ -221,7 +221,7 @@ fn_name HighWatermark_dtor = "HighWatermark.dtor";
 
 HighWatermark::~HighWatermark()
 {
-   Debug::ft(HighWatermark_dtor);
+   Debug::ftnt(HighWatermark_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -299,7 +299,7 @@ fn_name LowWatermark_dtor = "LowWatermark.dtor";
 
 LowWatermark::~LowWatermark()
 {
-   Debug::ft(LowWatermark_dtor);
+   Debug::ftnt(LowWatermark_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -61,7 +61,7 @@ fn_name ThreadStatsGroup_dtor = "ThreadStatsGroup.dtor";
 
 ThreadStatsGroup::~ThreadStatsGroup()
 {
-   Debug::ft(ThreadStatsGroup_dtor);
+   Debug::ftnt(ThreadStatsGroup_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ fn_name ThreadRegistry_dtor = "ThreadRegistry.dtor";
 
 ThreadRegistry::~ThreadRegistry()
 {
-   Debug::ft(ThreadRegistry_dtor);
+   Debug::ftnt(ThreadRegistry_dtor);
 
    Debug::SwLog(ThreadRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -287,7 +287,7 @@ fn_name ThreadRegistry_UnbindThread = "ThreadRegistry.UnbindThread";
 
 void ThreadRegistry::UnbindThread(Thread& thread)
 {
-   Debug::ft(ThreadRegistry_UnbindThread);
+   Debug::ftnt(ThreadRegistry_UnbindThread);
 
    threads_.Erase(thread);
 }

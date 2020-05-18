@@ -41,7 +41,7 @@ fn_name BcEvent_dtor = "BcEvent.dtor";
 
 BcEvent::~BcEvent()
 {
-   Debug::ft(BcEvent_dtor);
+   Debug::ftnt(BcEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ fn_name BcProgressEvent_dtor = "BcProgressEvent.dtor";
 
 BcProgressEvent::~BcProgressEvent()
 {
-   Debug::ft(BcProgressEvent_dtor);
+   Debug::ftnt(BcProgressEvent_dtor);
 }
 
 void BcProgressEvent::Display(ostream& stream,
@@ -85,7 +85,7 @@ fn_name BcReleaseEvent_dtor = "BcReleaseEvent.dtor";
 
 BcReleaseEvent::~BcReleaseEvent()
 {
-   Debug::ft(BcReleaseEvent_dtor);
+   Debug::ftnt(BcReleaseEvent_dtor);
 }
 
 void BcReleaseEvent::Display(ostream& stream,
@@ -110,7 +110,7 @@ fn_name BcOriginateEvent_dtor = "BcOriginateEvent.dtor";
 
 BcOriginateEvent::~BcOriginateEvent()
 {
-   Debug::ft(BcOriginateEvent_dtor);
+   Debug::ftnt(BcOriginateEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ fn_name BcAuthorizeOriginationEvent_dtor = "BcAuthorizeOriginationEvent.dtor";
 
 BcAuthorizeOriginationEvent::~BcAuthorizeOriginationEvent()
 {
-   Debug::ft(BcAuthorizeOriginationEvent_dtor);
+   Debug::ftnt(BcAuthorizeOriginationEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ fn_name BcOriginationDeniedEvent_dtor = "BcOriginationDeniedEvent.dtor";
 
 BcOriginationDeniedEvent::~BcOriginationDeniedEvent()
 {
-   Debug::ft(BcOriginationDeniedEvent_dtor);
+   Debug::ftnt(BcOriginationDeniedEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ fn_name BcCollectInformationEvent_dtor = "BcCollectInformationEvent.dtor";
 
 BcCollectInformationEvent::~BcCollectInformationEvent()
 {
-   Debug::ft(BcCollectInformationEvent_dtor);
+   Debug::ftnt(BcCollectInformationEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ fn_name BcCollectionTimeoutEvent_dtor = "BcCollectionTimeoutEvent.dtor";
 
 BcCollectionTimeoutEvent::~BcCollectionTimeoutEvent()
 {
-   Debug::ft(BcCollectionTimeoutEvent_dtor);
+   Debug::ftnt(BcCollectionTimeoutEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ fn_name BcLocalInformationEvent_dtor = "BcLocalInformationEvent.dtor";
 
 BcLocalInformationEvent::~BcLocalInformationEvent()
 {
-   Debug::ft(BcLocalInformationEvent_dtor);
+   Debug::ftnt(BcLocalInformationEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -214,7 +214,7 @@ fn_name BcAnalyzeInformationEvent_dtor = "BcAnalyzeInformationEvent.dtor";
 
 BcAnalyzeInformationEvent::~BcAnalyzeInformationEvent()
 {
-   Debug::ft(BcAnalyzeInformationEvent_dtor);
+   Debug::ftnt(BcAnalyzeInformationEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -232,7 +232,7 @@ fn_name BcInvalidInformationEvent_dtor = "BcInvalidInformationEvent.dtor";
 
 BcInvalidInformationEvent::~BcInvalidInformationEvent()
 {
-   Debug::ft(BcInvalidInformationEvent_dtor);
+   Debug::ftnt(BcInvalidInformationEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ fn_name BcSelectRouteEvent_dtor = "BcSelectRouteEvent.dtor";
 
 BcSelectRouteEvent::~BcSelectRouteEvent()
 {
-   Debug::ft(BcSelectRouteEvent_dtor);
+   Debug::ftnt(BcSelectRouteEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -266,7 +266,7 @@ fn_name BcAuthorizeCallSetupEvent_dtor = "BcAuthorizeCallSetupEvent.dtor";
 
 BcAuthorizeCallSetupEvent::~BcAuthorizeCallSetupEvent()
 {
-   Debug::ft(BcAuthorizeCallSetupEvent_dtor);
+   Debug::ftnt(BcAuthorizeCallSetupEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -282,7 +282,7 @@ fn_name BcSendCallEvent_dtor = "BcSendCallEvent.dtor";
 
 BcSendCallEvent::~BcSendCallEvent()
 {
-   Debug::ft(BcSendCallEvent_dtor);
+   Debug::ftnt(BcSendCallEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -300,7 +300,7 @@ fn_name BcRemoteProgressEvent_dtor = "BcRemoteProgressEvent.dtor";
 
 BcRemoteProgressEvent::~BcRemoteProgressEvent()
 {
-   Debug::ft(BcRemoteProgressEvent_dtor);
+   Debug::ftnt(BcRemoteProgressEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -317,7 +317,7 @@ fn_name BcRemoteBusyEvent_dtor = "BcRemoteBusyEvent.dtor";
 
 BcRemoteBusyEvent::~BcRemoteBusyEvent()
 {
-   Debug::ft(BcRemoteBusyEvent_dtor);
+   Debug::ftnt(BcRemoteBusyEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -334,7 +334,7 @@ fn_name BcRemoteAlertingEvent_dtor = "BcRemoteAlertingEvent.dtor";
 
 BcRemoteAlertingEvent::~BcRemoteAlertingEvent()
 {
-   Debug::ft(BcRemoteAlertingEvent_dtor);
+   Debug::ftnt(BcRemoteAlertingEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -352,7 +352,7 @@ fn_name BcRemoteNoAnswerEvent_dtor = "BcRemoteNoAnswerEvent.dtor";
 
 BcRemoteNoAnswerEvent::~BcRemoteNoAnswerEvent()
 {
-   Debug::ft(BcRemoteNoAnswerEvent_dtor);
+   Debug::ftnt(BcRemoteNoAnswerEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -369,7 +369,7 @@ fn_name BcRemoteAnswerEvent_dtor = "BcRemoteAnswerEvent.dtor";
 
 BcRemoteAnswerEvent::~BcRemoteAnswerEvent()
 {
-   Debug::ft(BcRemoteAnswerEvent_dtor);
+   Debug::ftnt(BcRemoteAnswerEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -386,7 +386,7 @@ fn_name BcTerminateEvent_dtor = "BcTerminateEvent.dtor";
 
 BcTerminateEvent::~BcTerminateEvent()
 {
-   Debug::ft(BcTerminateEvent_dtor);
+   Debug::ftnt(BcTerminateEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -403,7 +403,7 @@ fn_name BcAuthorizeTerminationEvent_dtor = "BcAuthorizeTerminationEvent.dtor";
 
 BcAuthorizeTerminationEvent::~BcAuthorizeTerminationEvent()
 {
-   Debug::ft(BcAuthorizeTerminationEvent_dtor);
+   Debug::ftnt(BcAuthorizeTerminationEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -421,7 +421,7 @@ fn_name BcTerminationDeniedEvent_dtor = "BcTerminationDeniedEvent.dtor";
 
 BcTerminationDeniedEvent::~BcTerminationDeniedEvent()
 {
-   Debug::ft(BcTerminationDeniedEvent_dtor);
+   Debug::ftnt(BcTerminationDeniedEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -438,7 +438,7 @@ fn_name BcSelectFacilityEvent_dtor = "BcSelectFacilityEvent.dtor";
 
 BcSelectFacilityEvent::~BcSelectFacilityEvent()
 {
-   Debug::ft(BcSelectFacilityEvent_dtor);
+   Debug::ftnt(BcSelectFacilityEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -455,7 +455,7 @@ fn_name BcLocalBusyEvent_dtor = "BcLocalBusyEvent.dtor";
 
 BcLocalBusyEvent::~BcLocalBusyEvent()
 {
-   Debug::ft(BcLocalBusyEvent_dtor);
+   Debug::ftnt(BcLocalBusyEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -472,7 +472,7 @@ fn_name BcPresentCallEvent_dtor = "BcPresentCallEvent.dtor";
 
 BcPresentCallEvent::~BcPresentCallEvent()
 {
-   Debug::ft(BcPresentCallEvent_dtor);
+   Debug::ftnt(BcPresentCallEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -490,7 +490,7 @@ fn_name BcFacilityFailureEvent_dtor = "BcFacilityFailureEvent.dtor";
 
 BcFacilityFailureEvent::~BcFacilityFailureEvent()
 {
-   Debug::ft(BcFacilityFailureEvent_dtor);
+   Debug::ftnt(BcFacilityFailureEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -508,7 +508,7 @@ fn_name BcLocalProgressEvent_dtor = "BcLocalProgressEvent.dtor";
 
 BcLocalProgressEvent::~BcLocalProgressEvent()
 {
-   Debug::ft(BcLocalProgressEvent_dtor);
+   Debug::ftnt(BcLocalProgressEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -525,7 +525,7 @@ fn_name BcLocalAlertingEvent_dtor = "BcLocalAlertingEvent.dtor";
 
 BcLocalAlertingEvent::~BcLocalAlertingEvent()
 {
-   Debug::ft(BcLocalAlertingEvent_dtor);
+   Debug::ftnt(BcLocalAlertingEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -542,7 +542,7 @@ fn_name BcLocalNoAnswerEvent_dtor = "BcLocalNoAnswerEvent.dtor";
 
 BcLocalNoAnswerEvent::~BcLocalNoAnswerEvent()
 {
-   Debug::ft(BcLocalNoAnswerEvent_dtor);
+   Debug::ftnt(BcLocalNoAnswerEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -559,7 +559,7 @@ fn_name BcLocalAnswerEvent_dtor = "BcLocalAnswerEvent.dtor";
 
 BcLocalAnswerEvent::~BcLocalAnswerEvent()
 {
-   Debug::ft(BcLocalAnswerEvent_dtor);
+   Debug::ftnt(BcLocalAnswerEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -576,7 +576,7 @@ fn_name BcLocalSuspendEvent_dtor = "BcLocalSuspendEvent.dtor";
 
 BcLocalSuspendEvent::~BcLocalSuspendEvent()
 {
-   Debug::ft(BcLocalSuspendEvent_dtor);
+   Debug::ftnt(BcLocalSuspendEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -593,7 +593,7 @@ fn_name BcLocalResumeEvent_dtor = "BcLocalResumeEvent.dtor";
 
 BcLocalResumeEvent::~BcLocalResumeEvent()
 {
-   Debug::ft(BcLocalResumeEvent_dtor);
+   Debug::ftnt(BcLocalResumeEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -610,7 +610,7 @@ fn_name BcRemoteSuspendEvent_dtor = "BcRemoteSuspendEvent.dtor";
 
 BcRemoteSuspendEvent::~BcRemoteSuspendEvent()
 {
-   Debug::ft(BcRemoteSuspendEvent_dtor);
+   Debug::ftnt(BcRemoteSuspendEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -627,7 +627,7 @@ fn_name BcRemoteResumeEvent_dtor = "BcRemoteResumeEvent.dtor";
 
 BcRemoteResumeEvent::~BcRemoteResumeEvent()
 {
-   Debug::ft(BcRemoteResumeEvent_dtor);
+   Debug::ftnt(BcRemoteResumeEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -644,7 +644,7 @@ fn_name BcLocalReleaseEvent_dtor = "BcLocalReleaseEvent.dtor";
 
 BcLocalReleaseEvent::~BcLocalReleaseEvent()
 {
-   Debug::ft(BcLocalReleaseEvent_dtor);
+   Debug::ftnt(BcLocalReleaseEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -661,7 +661,7 @@ fn_name BcRemoteReleaseEvent_dtor = "BcRemoteReleaseEvent.dtor";
 
 BcRemoteReleaseEvent::~BcRemoteReleaseEvent()
 {
-   Debug::ft(BcRemoteReleaseEvent_dtor);
+   Debug::ftnt(BcRemoteReleaseEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -678,7 +678,7 @@ fn_name BcReleaseCallEvent_dtor = "BcReleaseCallEvent.dtor";
 
 BcReleaseCallEvent::~BcReleaseCallEvent()
 {
-   Debug::ft(BcReleaseCallEvent_dtor);
+   Debug::ftnt(BcReleaseCallEvent_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -696,7 +696,7 @@ fn_name BcApplyTreatmentEvent_dtor = "BcApplyTreatmentEvent.dtor";
 
 BcApplyTreatmentEvent::~BcApplyTreatmentEvent()
 {
-   Debug::ft(BcApplyTreatmentEvent_dtor);
+   Debug::ftnt(BcApplyTreatmentEvent_dtor);
 }
 
 //------------------------------------------------------------------------------

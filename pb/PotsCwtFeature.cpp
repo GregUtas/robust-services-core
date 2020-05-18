@@ -69,7 +69,7 @@ fn_name PotsCwtFeature_dtor = "PotsCwtFeature.dtor";
 
 PotsCwtFeature::~PotsCwtFeature()
 {
-   Debug::ft(PotsCwtFeature_dtor);
+   Debug::ftnt(PotsCwtFeature_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -106,6 +106,6 @@ fn_name PotsCwtFeatureProfile_dtor = "PotsCwtFeatureProfile.dtor";
 
 PotsCwtFeatureProfile::~PotsCwtFeatureProfile()
 {
-   Debug::ft(PotsCwtFeatureProfile_dtor);
+   Debug::ftnt(PotsCwtFeatureProfile_dtor);
 }
 }

@@ -50,7 +50,7 @@ fn_name ProtocolRegistry_dtor = "ProtocolRegistry.dtor";
 
 ProtocolRegistry::~ProtocolRegistry()
 {
-   Debug::ft(ProtocolRegistry_dtor);
+   Debug::ftnt(ProtocolRegistry_dtor);
 
    Debug::SwLog(ProtocolRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -97,7 +97,7 @@ fn_name ProtocolRegistry_UnbindProtocol = "ProtocolRegistry.UnbindProtocol";
 
 void ProtocolRegistry::UnbindProtocol(Protocol& protocol)
 {
-   Debug::ft(ProtocolRegistry_UnbindProtocol);
+   Debug::ftnt(ProtocolRegistry_UnbindProtocol);
 
    protocols_.Erase(protocol);
 }

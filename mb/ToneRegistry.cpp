@@ -49,7 +49,7 @@ fn_name ToneRegistry_dtor = "ToneRegistry.dtor";
 
 ToneRegistry::~ToneRegistry()
 {
-   Debug::ft(ToneRegistry_dtor);
+   Debug::ftnt(ToneRegistry_dtor);
 
    Debug::SwLog(ToneRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -102,7 +102,7 @@ fn_name ToneRegistry_UnbindTone = "ToneRegistry.UnbindTone";
 
 void ToneRegistry::UnbindTone(Tone& tone)
 {
-   Debug::ft(ToneRegistry_UnbindTone);
+   Debug::ftnt(ToneRegistry_UnbindTone);
 
    tones_.Erase(tone);
 }

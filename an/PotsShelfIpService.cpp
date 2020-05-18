@@ -65,7 +65,7 @@ fn_name PotsShelfIpService_dtor = "PotsShelfIpService.dtor";
 
 PotsShelfIpService::~PotsShelfIpService()
 {
-   Debug::ft(PotsShelfIpService_dtor);
+   Debug::ftnt(PotsShelfIpService_dtor);
 }
 
 //------------------------------------------------------------------------------

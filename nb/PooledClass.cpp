@@ -53,7 +53,7 @@ fn_name PooledClass_dtor = "PooledClass.dtor";
 
 PooledClass::~PooledClass()
 {
-   Debug::ft(PooledClass_dtor);
+   Debug::ftnt(PooledClass_dtor);
 }
 
 //------------------------------------------------------------------------------

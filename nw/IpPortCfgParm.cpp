@@ -53,7 +53,7 @@ fn_name IpPortCfgParm_dtor = "IpPortCfgParm.dtor";
 
 IpPortCfgParm::~IpPortCfgParm()
 {
-   Debug::ft(IpPortCfgParm_dtor);
+   Debug::ftnt(IpPortCfgParm_dtor);
 }
 
 //------------------------------------------------------------------------------

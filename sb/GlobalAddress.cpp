@@ -84,7 +84,7 @@ fn_name GlobalAddress_dtor = "GlobalAddress.dtor";
 
 GlobalAddress::~GlobalAddress()
 {
-   Debug::ft(GlobalAddress_dtor);
+   Debug::ftnt(GlobalAddress_dtor);
 }
 
 //------------------------------------------------------------------------------

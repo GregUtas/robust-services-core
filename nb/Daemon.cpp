@@ -62,10 +62,10 @@ fn_name Daemon_dtor = "Daemon.dtor";
 
 Daemon::~Daemon()
 {
-   Debug::ft(Daemon_dtor);
+   Debug::ftnt(Daemon_dtor);
 
    Debug::SwLog(Daemon_dtor, UnexpectedInvocation, 0);
-   Singleton< DaemonRegistry >::Instance()->UnbindDaemon(*this);
+   Singleton< DaemonRegistry >::Extant()->UnbindDaemon(*this);
 }
 
 //------------------------------------------------------------------------------

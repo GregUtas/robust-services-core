@@ -83,7 +83,7 @@ fn_name PotsCfuActivate_dtor = "PotsCfuActivate.dtor";
 
 PotsCfuActivate::~PotsCfuActivate()
 {
-   Debug::ft(PotsCfuActivate_dtor);
+   Debug::ftnt(PotsCfuActivate_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ fn_name PotsCfuDeactivate_dtor = "PotsCfuDeactivate.dtor";
 
 PotsCfuDeactivate::~PotsCfuDeactivate()
 {
-   Debug::ft(PotsCfuDeactivate_dtor);
+   Debug::ftnt(PotsCfuDeactivate_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ fn_name PotsCfuService_dtor = "PotsCfuService.dtor";
 
 PotsCfuService::~PotsCfuService()
 {
-   Debug::ft(PotsCfuService_dtor);
+   Debug::ftnt(PotsCfuService_dtor);
 }
 
 //------------------------------------------------------------------------------

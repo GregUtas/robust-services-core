@@ -61,7 +61,7 @@ fn_name TimerRegistry_dtor = "TimerRegistry.dtor";
 
 TimerRegistry::~TimerRegistry()
 {
-   Debug::ft(TimerRegistry_dtor);
+   Debug::ftnt(TimerRegistry_dtor);
 
    Debug::SwLog(TimerRegistry_dtor, UnexpectedInvocation, 0);
 

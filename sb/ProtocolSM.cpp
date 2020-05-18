@@ -89,7 +89,7 @@ fn_name ProtocolSM_dtor = "ProtocolSM.dtor";
 
 ProtocolSM::~ProtocolSM()
 {
-   Debug::ft(ProtocolSM_dtor);
+   Debug::ftnt(ProtocolSM_dtor);
 
    //  Record the PSM's deletion if this context is traced.
    //

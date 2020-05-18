@@ -50,7 +50,7 @@ fn_name ElementException_dtor = "ElementException.dtor";
 
 ElementException::~ElementException()
 {
-   Debug::ft(ElementException_dtor);
+   Debug::ftnt(ElementException_dtor);
 }
 
 //------------------------------------------------------------------------------

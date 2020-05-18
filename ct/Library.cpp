@@ -99,7 +99,7 @@ fn_name Library_dtor = "Library.dtor";
 
 Library::~Library()
 {
-   Debug::ft(Library_dtor);
+   Debug::ftnt(Library_dtor);
 
    //  When dirs_, files_, and vars_ are deleted, so are their elements.
 }

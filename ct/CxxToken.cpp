@@ -241,7 +241,7 @@ fn_name CxxToken_dtor = "CxxToken.dtor";
 
 CxxToken::~CxxToken()
 {
-   Debug::ft(CxxToken_dtor);
+   Debug::ftnt(CxxToken_dtor);
 }
 
 //------------------------------------------------------------------------------

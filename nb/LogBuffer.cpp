@@ -132,7 +132,7 @@ fn_name LogBuffer_dtor = "LogBuffer.dtor";
 
 LogBuffer::~LogBuffer()
 {
-   Debug::ft(LogBuffer_dtor);
+   Debug::ftnt(LogBuffer_dtor);
 
    MutexGuard guard(&LogBufferLock_);
 

@@ -53,10 +53,10 @@ fn_name Module_dtor = "Module.dtor";
 
 Module::~Module()
 {
-   Debug::ft(Module_dtor);
+   Debug::ftnt(Module_dtor);
 
    Debug::SwLog(Module_dtor, UnexpectedInvocation, 0);
-   Singleton< ModuleRegistry >::Instance()->UnbindModule(*this);
+   Singleton< ModuleRegistry >::Extant()->UnbindModule(*this);
 }
 
 //------------------------------------------------------------------------------

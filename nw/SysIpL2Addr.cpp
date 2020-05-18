@@ -46,7 +46,7 @@ fn_name SysIpL2Addr_dtor = "SysIpL2Addr.dtor";
 
 SysIpL2Addr::~SysIpL2Addr()
 {
-   Debug::ft(SysIpL2Addr_dtor);
+   Debug::ftnt(SysIpL2Addr_dtor);
 }
 
 //------------------------------------------------------------------------------

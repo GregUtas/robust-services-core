@@ -58,7 +58,7 @@ fn_name StModule_dtor = "StModule.dtor";
 
 StModule::~StModule()
 {
-   Debug::ft(StModule_dtor);
+   Debug::ftnt(StModule_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -57,7 +57,7 @@ fn_name CodeDirSet_dtor = "CodeDirSet.dtor";
 
 CodeDirSet::~CodeDirSet()
 {
-   Debug::ft(CodeDirSet_dtor);
+   Debug::ftnt(CodeDirSet_dtor);
 }
 
 //------------------------------------------------------------------------------

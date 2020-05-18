@@ -56,7 +56,7 @@ fn_name ServiceCodeRegistry_dtor = "ServiceCodeRegistry.dtor";
 
 ServiceCodeRegistry::~ServiceCodeRegistry()
 {
-   Debug::ft(ServiceCodeRegistry_dtor);
+   Debug::ftnt(ServiceCodeRegistry_dtor);
 
    Debug::SwLog(ServiceCodeRegistry_dtor, UnexpectedInvocation, 0);
 }

@@ -80,7 +80,7 @@ fn_name SysIpL3Addr_dtor = "SysIpL3Addr.dtor";
 
 SysIpL3Addr::~SysIpL3Addr()
 {
-   Debug::ft(SysIpL3Addr_dtor);
+   Debug::ftnt(SysIpL3Addr_dtor);
 }
 
 //------------------------------------------------------------------------------

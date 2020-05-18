@@ -65,11 +65,11 @@ fn_name Signal_dtor = "Signal.dtor";
 
 Signal::~Signal()
 {
-   Debug::ft(Signal_dtor);
+   Debug::ftnt(Signal_dtor);
 
    Debug::SwLog(Signal_dtor, UnexpectedInvocation, 0);
 
-   auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid_);
+   auto pro = Singleton< ProtocolRegistry >::Extant()->GetProtocol(prid_);
    if(pro != nullptr) pro->UnbindSignal(*this);
 }
 

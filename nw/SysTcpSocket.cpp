@@ -87,7 +87,7 @@ fn_name SysTcpSocket_dtor = "SysTcpSocket.dtor";
 
 SysTcpSocket::~SysTcpSocket()
 {
-   Debug::ft(SysTcpSocket_dtor);
+   Debug::ftnt(SysTcpSocket_dtor);
 
    //  Neither the application nor the I/O thread should be using the socket.
    //  If the socket has just received a message, the socket should not be

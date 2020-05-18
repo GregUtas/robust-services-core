@@ -59,7 +59,7 @@ fn_name CliIntParm_dtor = "CliIntParm.dtor";
 
 CliIntParm::~CliIntParm()
 {
-   Debug::ft(CliIntParm_dtor);
+   Debug::ftnt(CliIntParm_dtor);
 }
 
 //------------------------------------------------------------------------------

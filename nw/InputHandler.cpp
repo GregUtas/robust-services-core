@@ -50,7 +50,7 @@ fn_name InputHandler_dtor = "InputHandler.dtor";
 
 InputHandler::~InputHandler()
 {
-   Debug::ft(InputHandler_dtor);
+   Debug::ftnt(InputHandler_dtor);
 
    port_->UnbindHandler(*this);
 }

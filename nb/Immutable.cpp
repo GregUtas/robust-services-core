@@ -40,7 +40,7 @@ fn_name Immutable_delete1 = "Immutable.operator delete";
 
 void Immutable::operator delete(void* addr)
 {
-   Debug::ft(Immutable_delete1);
+   Debug::ftnt(Immutable_delete1);
 
    Memory::Free(addr, MemImmutable);
 }
@@ -51,7 +51,7 @@ fn_name Immutable_delete2 = "Immutable.operator delete[]";
 
 void Immutable::operator delete[](void* addr)
 {
-   Debug::ft(Immutable_delete2);
+   Debug::ftnt(Immutable_delete2);
 
    Memory::Free(addr, MemImmutable);
 }
@@ -62,7 +62,7 @@ fn_name Immutable_delete3 = "Immutable.operator delete(place)";
 
 void Immutable::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ft(Immutable_delete3);
+   Debug::ftnt(Immutable_delete3);
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ fn_name Immutable_delete4 = "Immutable.operator delete[](place)";
 
 void Immutable::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ft(Immutable_delete4);
+   Debug::ftnt(Immutable_delete4);
 }
 
 //------------------------------------------------------------------------------

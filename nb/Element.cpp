@@ -71,7 +71,7 @@ fn_name Element_dtor = "Element.dtor";
 
 Element::~Element()
 {
-   Debug::ft(Element_dtor);
+   Debug::ftnt(Element_dtor);
 
    Debug::SwLog(Element_dtor, UnexpectedInvocation, 0);
 }
@@ -136,7 +136,9 @@ const string Element::InputPath()
 
 string Element::Name()
 {
-   return Singleton< Element >::Instance()->name_.c_str();
+   auto element = Singleton< Element >::Extant();
+   if(element == nullptr) return "Unnamed Element";
+   return element->name_.c_str();
 }
 
 //------------------------------------------------------------------------------

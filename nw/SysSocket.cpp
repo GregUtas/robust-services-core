@@ -59,7 +59,7 @@ fn_name SysSocket_dtor = "SysSocket.dtor";
 
 SysSocket::~SysSocket()
 {
-   Debug::ft(SysSocket_dtor);
+   Debug::ftnt(SysSocket_dtor);
 
    TraceEvent(NwTrace::Delete, 0);
 }

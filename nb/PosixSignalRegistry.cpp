@@ -50,7 +50,7 @@ fn_name PosixSignalRegistry_dtor = "PosixSignalRegistry.dtor";
 
 PosixSignalRegistry::~PosixSignalRegistry()
 {
-   Debug::ft(PosixSignalRegistry_dtor);
+   Debug::ftnt(PosixSignalRegistry_dtor);
 
    Debug::SwLog(PosixSignalRegistry_dtor, UnexpectedInvocation, 0);
 }
@@ -149,7 +149,7 @@ fn_name PosixSignalRegistry_UnbindSignal = "PosixSignalRegistry.UnbindSignal";
 
 void PosixSignalRegistry::UnbindSignal(PosixSignal& signal)
 {
-   Debug::ft(PosixSignalRegistry_UnbindSignal);
+   Debug::ftnt(PosixSignalRegistry_UnbindSignal);
 
    signals_.Erase(signal);
 }

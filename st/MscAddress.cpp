@@ -55,7 +55,7 @@ fn_name MscAddress_dtor = "MscAddress.dtor";
 
 MscAddress::~MscAddress()
 {
-   Debug::ft(MscAddress_dtor);
+   Debug::ftnt(MscAddress_dtor);
 }
 
 //------------------------------------------------------------------------------

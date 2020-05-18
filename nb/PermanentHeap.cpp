@@ -40,7 +40,7 @@ fn_name PermanentHeap_dtor = "PermanentHeap.dtor";
 
 PermanentHeap::~PermanentHeap()
 {
-   Debug::ft(PermanentHeap_dtor);
+   Debug::ftnt(PermanentHeap_dtor);
 }
 
 //------------------------------------------------------------------------------

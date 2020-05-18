@@ -110,7 +110,7 @@ fn_name PotsBicService_dtor = "PotsBicService.dtor";
 
 PotsBicService::~PotsBicService()
 {
-   Debug::ft(PotsBicService_dtor);
+   Debug::ftnt(PotsBicService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ fn_name PotsBicSsm_dtor = "PotsBicSsm.dtor";
 
 PotsBicSsm::~PotsBicSsm()
 {
-   Debug::ft(PotsBicSsm_dtor);
+   Debug::ftnt(PotsBicSsm_dtor);
 }
 
 //------------------------------------------------------------------------------

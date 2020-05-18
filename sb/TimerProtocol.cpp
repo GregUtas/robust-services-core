@@ -71,7 +71,7 @@ fn_name TimerProtocol_dtor = "TimerProtocol.dtor";
 
 TimerProtocol::~TimerProtocol()
 {
-   Debug::ft(TimerProtocol_dtor);
+   Debug::ftnt(TimerProtocol_dtor);
 }
 
 //==============================================================================
@@ -89,7 +89,7 @@ fn_name TimeoutSignal_dtor = "TimeoutSignal.dtor";
 
 TimeoutSignal::~TimeoutSignal()
 {
-   Debug::ft(TimeoutSignal_dtor);
+   Debug::ftnt(TimeoutSignal_dtor);
 }
 
 //==============================================================================
@@ -109,7 +109,7 @@ fn_name TimeoutParameter_dtor = "TimeoutParameter.dtor";
 
 TimeoutParameter::~TimeoutParameter()
 {
-   Debug::ft(TimeoutParameter_dtor);
+   Debug::ftnt(TimeoutParameter_dtor);
 }
 
 //------------------------------------------------------------------------------

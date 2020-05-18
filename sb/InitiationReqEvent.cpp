@@ -58,7 +58,7 @@ fn_name InitiationReqEvent_dtor = "InitiationReqEvent.dtor";
 
 InitiationReqEvent::~InitiationReqEvent()
 {
-   Debug::ft(InitiationReqEvent_dtor);
+   Debug::ftnt(InitiationReqEvent_dtor);
 }
 
 //------------------------------------------------------------------------------

@@ -136,6 +136,6 @@ fn_name BcService_dtor = "BcService.dtor";
 
 BcService::~BcService()
 {
-   Debug::ft(BcService_dtor);
+   Debug::ftnt(BcService_dtor);
 }
 }

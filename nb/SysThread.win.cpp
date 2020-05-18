@@ -201,7 +201,7 @@ fn_name SysThread_Delete = "SysThread.Delete";
 
 void SysThread::Delete(SysThread_t& thread)
 {
-   Debug::ft(SysThread_Delete);
+   Debug::ftnt(SysThread_Delete);
 
    if(thread != nullptr)
    {
@@ -216,7 +216,7 @@ fn_name SysThread_DeleteSentry = "SysThread.DeleteSentry";
 
 void SysThread::DeleteSentry(SysSentry_t& sentry)
 {
-   Debug::ft(SysThread_DeleteSentry);
+   Debug::ftnt(SysThread_DeleteSentry);
 
    if(sentry != nullptr)
    {

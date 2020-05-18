@@ -60,7 +60,7 @@ fn_name CoutThread_dtor = "CoutThread.dtor";
 
 CoutThread::~CoutThread()
 {
-   Debug::ft(CoutThread_dtor);
+   Debug::ftnt(CoutThread_dtor);
 }
 
 //------------------------------------------------------------------------------

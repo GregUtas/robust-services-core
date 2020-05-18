@@ -430,7 +430,7 @@ fn_name CodeFile_dtor = "CodeFile.dtor";
 
 CodeFile::~CodeFile()
 {
-   Debug::ft(CodeFile_dtor);
+   Debug::ftnt(CodeFile_dtor);
 
    CxxStats::Decr(CxxStats::CODE_FILE);
 }
@@ -1275,9 +1275,11 @@ LineType CodeFile::ClassifyLine
       if(s.find(PRIVATE_STR) == pos) return AccessControl;
    }
 
-   //  Look for invocations of Debug::ft.
+   //  Look for invocations of Debug::ft and its variants.
    //
    if(FindSubstr(s, "Debug::ft(") != string::npos) return DebugFt;
+   if(FindSubstr(s, "Debug::ftnt(") != string::npos) return DebugFt;
+   if(FindSubstr(s, "Debug::noft(") != string::npos) return DebugFt;
 
    //  Look for strings that provide function names for Debug::ft.  These
    //  have the format
@@ -2189,7 +2191,7 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
       else
       {
          string expl = "Non-class forward: " + (*i)->ScopedName(true);
-         Debug::SwLog(CodeFile_LogAddForwards, expl, 0, SwInfo);
+         Debug::SwLog(CodeFile_LogAddForwards, expl, 0, false);
       }
 
       name << (*i)->ScopedName(true);
@@ -2310,7 +2312,7 @@ void CodeFile::LogAddUsings(ostream* stream) const
 fn_name CodeFile_LogCode = "CodeFile.LogCode";
 
 void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
-   const CxxNamed* item, size_t offset, const string& info, bool hide) const
+   const CxxNamed* item, word offset, const string& info, bool hide) const
 {
    Debug::ft(CodeFile_LogCode);
 

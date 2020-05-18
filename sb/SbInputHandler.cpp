@@ -55,7 +55,7 @@ fn_name SbInputHandler_dtor = "SbInputHandler.dtor";
 
 SbInputHandler::~SbInputHandler()
 {
-   Debug::ft(SbInputHandler_dtor);
+   Debug::ftnt(SbInputHandler_dtor);
 }
 
 //------------------------------------------------------------------------------

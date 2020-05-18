@@ -283,7 +283,7 @@ public:
    //
    void Purge()
    {
-      Debug::ft(Q1Way_Purge());
+      Debug::ftnt(Q1Way_Purge());
       while(tail_.next != nullptr)
       {
          auto item = Deq();

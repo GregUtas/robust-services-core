@@ -74,7 +74,7 @@ fn_name PotsBocFeature_dtor = "PotsBocFeature.dtor";
 
 PotsBocFeature::~PotsBocFeature()
 {
-   Debug::ft(PotsBocFeature_dtor);
+   Debug::ftnt(PotsBocFeature_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -109,6 +109,6 @@ fn_name PotsBocFeatureProfile_dtor = "PotsBocFeatureProfile.dtor";
 
 PotsBocFeatureProfile::~PotsBocFeatureProfile()
 {
-   Debug::ft(PotsBocFeatureProfile_dtor);
+   Debug::ftnt(PotsBocFeatureProfile_dtor);
 }
 }

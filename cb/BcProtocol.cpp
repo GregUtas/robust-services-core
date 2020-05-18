@@ -231,7 +231,7 @@ fn_name CipUdpService_dtor = "CipUdpService.dtor";
 
 CipUdpService::~CipUdpService()
 {
-   Debug::ft(CipUdpService_dtor);
+   Debug::ftnt(CipUdpService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ fn_name CipTcpService_dtor = "CipTcpService.dtor";
 
 CipTcpService::~CipTcpService()
 {
-   Debug::ft(CipTcpService_dtor);
+   Debug::ftnt(CipTcpService_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -362,7 +362,7 @@ fn_name CipProtocol_dtor = "CipProtocol.dtor";
 
 CipProtocol::~CipProtocol()
 {
-   Debug::ft(CipProtocol_dtor);
+   Debug::ftnt(CipProtocol_dtor);
 }
 
 //==============================================================================
@@ -691,7 +691,7 @@ fn_name CipMessage_dtor = "CipMessage.dtor";
 
 CipMessage::~CipMessage()
 {
-   Debug::ft(CipMessage_dtor);
+   Debug::ftnt(CipMessage_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -776,7 +776,7 @@ fn_name BcPsm_dtor = "BcPsm.dtor";
 
 BcPsm::~BcPsm()
 {
-   Debug::ft(BcPsm_dtor);
+   Debug::ftnt(BcPsm_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -1153,7 +1153,7 @@ fn_name CipPsm_dtor = "CipPsm.dtor";
 
 CipPsm::~CipPsm()
 {
-   Debug::ft(CipPsm_dtor);
+   Debug::ftnt(CipPsm_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -1199,7 +1199,7 @@ fn_name CipHandler_dtor = "CipHandler.dtor";
 
 CipHandler::~CipHandler()
 {
-   Debug::ft(CipHandler_dtor);
+   Debug::ftnt(CipHandler_dtor);
 }
 
 //==============================================================================
@@ -1218,7 +1218,7 @@ fn_name CipFactory_dtor = "CipFactory.dtor";
 
 CipFactory::~CipFactory()
 {
-   Debug::ft(CipFactory_dtor);
+   Debug::ftnt(CipFactory_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -1293,7 +1293,7 @@ fn_name CipObcFactory_dtor = "CipObcFactory.dtor";
 
 CipObcFactory::~CipObcFactory()
 {
-   Debug::ft(CipObcFactory_dtor);
+   Debug::ftnt(CipObcFactory_dtor);
 }
 
 //------------------------------------------------------------------------------
@@ -1357,7 +1357,7 @@ fn_name CipTbcFactory_dtor = "CipTbcFactory.dtor";
 
 CipTbcFactory::~CipTbcFactory()
 {
-   Debug::ft(CipTbcFactory_dtor);
+   Debug::ftnt(CipTbcFactory_dtor);
 }
 
 //------------------------------------------------------------------------------

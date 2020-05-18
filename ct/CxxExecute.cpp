@@ -32,6 +32,7 @@
 #include "CxxString.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
+#include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
 #include "Parser.h"
@@ -551,7 +552,7 @@ bool Context::StartTracing()
 fn_name Context_SwLog = "Context.SwLog";
 
 void Context::SwLog
-   (fn_name_arg func, const string& expl, word errval, SwLogLevel level)
+   (fn_name_arg func, const string& expl, word errval, bool stack)
 {
    Debug::ft(Context_SwLog);
 
@@ -572,8 +573,8 @@ void Context::SwLog
    LastLogLoc_ = loc;
    auto info = loc + ": " + expl;
    Trace(CxxTrace::ERROR, errval, info);
-   if(Tracing && (level == SwInfo)) return;  //@
-   Debug::SwLog(func, info, errval, level);
+   if(Tracing && !stack) return;  //@
+   Debug::SwLog(func, info, errval, stack);
 }
 
 //------------------------------------------------------------------------------
@@ -783,7 +784,7 @@ void ParseFrame::Clear(word from)
    }
    if(ops_.empty()) return;
    Debug::SwLog(ParseFrame_Clear,
-      "operator stack not empty", ops_.size(), SwInfo);
+      "operator stack not empty", ops_.size(), false);
    ops_.clear();
 }
 

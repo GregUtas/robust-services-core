@@ -1,22 +1,22 @@
 LINE COUNTS
-   75848   source code not in one of the categories below
-   43174   blank line
-   17668   blank comment
-   10365   comment at the top of a file (e.g. for the file's name or license info)
-    7517   comment followed by repeated characters to draw a rule (e.g. //---- ...)
+   75871   source code not in one of the categories below
+   43184   blank line
+   17680   blank comment
+   10379   comment at the top of a file (e.g. for the file's name or license info)
+    7519   comment followed by repeated characters to draw a rule (e.g. //---- ...)
      167   comment followed by a character that classifies it (e.g. //c <text>)
-   19925   comment not in one of the categories above (e.g. //  <text>)
+   19932   comment not in one of the categories above (e.g. //  <text>)
        0   C-style comment
-   15319   bare left brace
-   13532   bare right brace
+   15321   bare left brace
+   13534   bare right brace
     1788   bare right brace with semicolon
     2399   access control
     4654   invocation of Debug::ft
     4756   definition of an fn_name
-    6168   #include directive
-    1125   preprocessor directive other than #include
+    6170   #include directive
+    1127   preprocessor directive other than #include
      902   using statement
-  225307   TOTAL
+  225383   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   125  C-style cast
@@ -32,7 +32,7 @@ WARNING COUNTS (* if supported by >fix)
 * W024     1  Add forward declaration
   W026    30  Unused argument
   W027     7  Unused class
-* W028    44  Unused data
+* W028    45  Unused data
 * W029     1  Unused enum
 * W030    20  Unused enumerator
 * W032   185  Unused function
@@ -63,7 +63,7 @@ WARNING COUNTS (* if supported by >fix)
   W102     4  Line length exceeds the standard maximum
   W103     1  Function not sorted in standard order
   W104    35  File heading is not standard
-* W106   572  Function does not invoke Debug::ft
+* W106   573  Function does not invoke Debug::ft
   W107    14  Function does not invoke Debug::ft as first statement
   W110    37  Override of Base.Display not found
 * W111    11  Override of Object.Patch not found
@@ -325,8 +325,8 @@ W006 reinterpret_cast
   C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.cpp(100):    auto fake = reinterpret_cast< const Symbol* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysMutex.cpp(41):    auto fake = reinterpret_cast< const SysMutex* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTypes.cpp(34):    auto bytes = reinterpret_cast< uint8_t* >(&value);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1475):    auto p = reinterpret_cast< char* >(BAD_POINTER);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1484):    auto fake = reinterpret_cast< const Thread* >(&local);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1483):    auto p = reinterpret_cast< char* >(BAD_POINTER);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1492):    auto fake = reinterpret_cast< const Thread* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/Tool.cpp(69):    auto fake = reinterpret_cast< const Tool* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionStats.cpp(76):    auto fake = reinterpret_cast< const FunctionStats* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1773):    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
@@ -1012,7 +1012,7 @@ W009 Pointer arithmetic
   C:/Users/gregu/Documents/rsc/rsc/nb/LogBuffer.cpp(328):    auto after = (ptr_t) next_ + size;
   C:/Users/gregu/Documents/rsc/rsc/nb/LogBuffer.cpp(329):    auto wrap = after >= (buff_ + size_);
   C:/Users/gregu/Documents/rsc/rsc/nb/LogBuffer.cpp(356):       after = buff_ + size;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3362):    ptrdiff_t stacksize = &local - priv_->stackBase_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3370):    ptrdiff_t stacksize = &local - priv_->stackBase_;
   C:/Users/gregu/Documents/rsc/rsc/nw/IoThread.cpp(197):       source += rcvd;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.cpp(145):       Memory::Copy((buff_ + hdrSize_ + paySize), source, size);
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.cpp(145):       Memory::Copy((buff_ + hdrSize_ + paySize), source, size);
@@ -1483,6 +1483,7 @@ W028 Unused data
   C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(194):    static const id_t LastNbIndex = 3;
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTypes.h(50): constexpr uword UWORD_MAX = (sizeof(word) == 8 ? UINT64_MAX : UINT32_MAX);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTypes.h(63): constexpr size_t GBs = 1024 * 1024 * 1024;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(124): const SysTickTimer* TickTimer = SysTickTimer::Instance();
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.h(80):    static const id_t LastNtIndex = FuncTraceScope;
   C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.h(106):    static const Id LastId    = NextId + 9;  // range constant
   C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.h(134):    static const Id LastId   = NextId + 7;  // range constant
@@ -1608,11 +1609,11 @@ W032 Unused function
   C:/Users/gregu/Documents/rsc/rsc/nb/SysMemory.h(50):    bool Lock(void* addr, size_t size);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysMemory.h(55):    bool Unlock(void* addr, size_t size);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysMutex.h(113):    Thread* Owner() const;
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.h(68):    bool TickTimingAvailable() const { return available_; }
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.h(75):    bool TickTimingAvailable() const { return available_; }
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.h(77):    int16_t Get(TimeField field) const { return time_[field]; }
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(750):    ThreadInfo(const ThreadInfo& info) = default;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(751):    ThreadInfo(ThreadInfo&& info) = default;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(753):    ThreadInfo& operator=(ThreadInfo&& info) = default;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(758):    ThreadInfo(const ThreadInfo& info) = default;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(759):    ThreadInfo(ThreadInfo&& info) = default;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(761):    ThreadInfo& operator=(ThreadInfo&& info) = default;
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(119):    static std::atomic_uint32_t* Vector();
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(123):    static bool TestFlag(FlagId fid);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(127):    static void ResetFlag(FlagId fid);
@@ -1792,7 +1793,7 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/nb/StatisticsGroup.h(67):    static ptrdiff_t CellDiff();
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.h(81):    int16_t DayOfWeek() const;
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.h(136):    c_string strMonth() const;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(141):    static void* operator new(size_t size);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(149):    static void* operator new(size_t size);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(131):    static void ResetFlags();
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(146):    SysThreadId NativeThreadId() const;
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(229):    static ptrdiff_t CellDiff();
@@ -2033,8 +2034,8 @@ W055 Data need not be mutable
 W056 Default constructor invoked: POD members not initialized
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(57):    _finddata_t attributes_;
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.win.cpp(42):    LARGE_INTEGER frequency;
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.win.cpp(75):       LARGE_INTEGER now;
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.win.cpp(81):       _timeb now;
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.win.cpp(64):       LARGE_INTEGER now;
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.win.cpp(70):       _timeb now;
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.win.cpp(41):    _timeb timebuff;
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.win.cpp(42):    tm timeofday;
   C:/Users/gregu/Documents/rsc/rsc/nw/SysIpL2Addr.win.cpp(54):    in_addr result;
@@ -2950,7 +2951,7 @@ W092 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThreadStack.win.cpp(80):    static fn_depth GetFrames(StackFramesPtr& frames);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.h(89):    static bool IsLeapYear(int16_t year);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.h(158):    static const int16_t* DaysPerMonth(int16_t year);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(131):    static void CaptureEvent(fn_name_arg func, Id rid, int32_t info = 0);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(139):    static void CaptureEvent(fn_name_arg func, Id rid, int32_t info = 0);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(91):    static void PauseOver(word limit);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(216):    static double PercentIdle();
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(291):    static void CauseTrap();
@@ -3245,11 +3246,11 @@ W099 Line contains adjacent spaces
   C:/Users/gregu/Documents/rsc/rsc/nb/Registry.h(633):    inline static fn_name Registry_Cell()   { return "Registry.Cell"; }
   C:/Users/gregu/Documents/rsc/rsc/nb/Singleton.h(125):       Singleton_Destroy()  { return "Singleton.Destroy"; }
   C:/Users/gregu/Documents/rsc/rsc/nb/StatisticsGroup.cpp(40): fixed_string StatisticsGroup::ReportHeader =  "     Curr      Prev         All";
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(271):    CounterPtr       traps_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(272):    CounterPtr       exceeds_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(273):    CounterPtr       yields_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(274):    CounterPtr       interrupts_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(278):    AccumulatorPtr   totTime_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(279):    CounterPtr       traps_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(280):    CounterPtr       exceeds_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(281):    CounterPtr       yields_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(282):    CounterPtr       interrupts_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(286):    AccumulatorPtr   totTime_;
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(183):    CfgIntParmPtr  initTimeoutMsecs_;
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(184):    CfgIntParmPtr  schedTimeoutMsecs_;
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(186):    CfgIntParmPtr  rtcTimeoutMsecs_;
@@ -3668,7 +3669,7 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/ClassRegistry.cpp(95): Class* ClassRegistry::Lookup(ClassId cid) const
   C:/Users/gregu/Documents/rsc/rsc/nb/CliCookie.cpp(136): uint32_t CliCookie::Index(uint32_t depth) const
   C:/Users/gregu/Documents/rsc/rsc/nb/Debug.cpp(54): void Debug::Assert(bool condition, debug64_t errval)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Element.cpp(195): bool Element::RunningInLab()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Element.cpp(197): bool Element::RunningInLab()
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(193): CtorChain::CtorChain(FunctionTrace* inner) :
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(210): bool CtorChain::AddToPreviousChain(FunctionTrace* ctor)
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(263): CtorChain::Action CtorChain::CalcAction
@@ -3790,7 +3791,8 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThreadStack.win.cpp(136): void StackInfo::Shutdown()
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThreadStack.win.cpp(145): DWORD StackInfo::Startup()
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThreadStack.win.cpp(258): fn_depth SysThreadStack::FuncDepth()
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.win.cpp(71): TimePoint SysTickTimer::Now() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.cpp(46): SysTickTimer* SysTickTimer::Instance()
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.win.cpp(60): TimePoint SysTickTimer::Now() const
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(180): int16_t SysTime::DayOfWeek() const
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(190): int16_t SysTime::DayOfYear() const
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(206): const int16_t* SysTime::DaysPerMonth(int16_t year)
@@ -3807,31 +3809,31 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/ThisThread.cpp(74): ThreadId ThisThread::RunningThreadId()
   C:/Users/gregu/Documents/rsc/rsc/nb/ThisThread.cpp(81): TraceRc ThisThread::StartTracing(const string& opts)
   C:/Users/gregu/Documents/rsc/rsc/nb/ThisThread.cpp(88): void ThisThread::StopTracing()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(455): ContextSwitch* ContextSwitches::AddSwitch()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(958): bool Threads::IsDeleted() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1436): SysMutex* Thread::BlockingMutex() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1443): TraceStatus Thread::CalcStatus(bool dynamic) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1461): bool Thread::CanBeScheduled() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1533): bool Thread::ClearActiveThread(Thread* active)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2152): BlockingReason Thread::GetBlockingReason() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2159): TraceStatus Thread::GetStatus() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2324): bool Thread::IsLocked() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2331): bool Thread::IsScheduled() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2338): bool Thread::IsTraceable() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2385): Thread* Thread::LockedThread()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2447): TraceRc Thread::LogContextSwitches(bool on)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2630): uint8_t Thread::MutexCount() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2656): DelayRc Thread::Pause(Duration time)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2700): double Thread::PercentIdle()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3001): void Thread::ResetDebugFlags()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3248): void Thread::SetStatus(TraceStatus status)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3610): TraceRc Thread::StartTracing(const string& opts)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3644): void Thread::StopTracing()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3806): void Thread::Trace(Thread* thr,
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3823): bool Thread::TraceRunningThread(Thread*& thr)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3851): bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(4073): void Thread::UpdateMutex(SysMutex* mutex)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(4080): void Thread::UpdateMutexCount(bool acquired)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(463): ContextSwitch* ContextSwitches::AddSwitch()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(966): bool Threads::IsDeleted() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1444): SysMutex* Thread::BlockingMutex() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1451): TraceStatus Thread::CalcStatus(bool dynamic) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1469): bool Thread::CanBeScheduled() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1541): bool Thread::ClearActiveThread(Thread* active)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2160): BlockingReason Thread::GetBlockingReason() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2167): TraceStatus Thread::GetStatus() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2332): bool Thread::IsLocked() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2339): bool Thread::IsScheduled() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2346): bool Thread::IsTraceable() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2393): Thread* Thread::LockedThread()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2455): TraceRc Thread::LogContextSwitches(bool on)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2638): uint8_t Thread::MutexCount() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2664): DelayRc Thread::Pause(Duration time)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2708): double Thread::PercentIdle()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3009): void Thread::ResetDebugFlags()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3256): void Thread::SetStatus(TraceStatus status)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3618): TraceRc Thread::StartTracing(const string& opts)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3652): void Thread::StopTracing()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3814): void Thread::Trace(Thread* thr,
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3831): bool Thread::TraceRunningThread(Thread*& thr)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3859): bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(4081): void Thread::UpdateMutex(SysMutex* mutex)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(4088): void Thread::UpdateMutexCount(bool acquired)
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(350): const ThreadAdminValues* ThreadAdmin::AccessConfig()
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(365): bool ThreadAdmin::BreakEnabled()
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(472): void ThreadAdmin::Incr(Register r)
@@ -3954,13 +3956,13 @@ W107 Function does not invoke Debug::ft as first statement
   C:/Users/gregu/Documents/rsc/rsc/nb/Debug.cpp(93):    Debug::ft(Debug_GenerateSwLog);
   C:/Users/gregu/Documents/rsc/rsc/nb/Exception.cpp(44):    Debug::ft(Exception_ctor1);  //@
   C:/Users/gregu/Documents/rsc/rsc/nb/MutexGuard.cpp(38):    Debug::ft(MutexGuard_ctor);
-  C:/Users/gregu/Documents/rsc/rsc/nb/MutexGuard.cpp(62):       Debug::ft(MutexGuard_Release);
+  C:/Users/gregu/Documents/rsc/rsc/nb/MutexGuard.cpp(62):       Debug::ftnt(MutexGuard_Release);
   C:/Users/gregu/Documents/rsc/rsc/nb/Q1Link.cpp(49):    Debug::ftnt(Q1Link_dtor);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThread.win.cpp(75):    Debug::ft(NodeBase_SE_Handler);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2877):    Debug::ft(Thread_Ready);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3323):    Debug::ft(Thread_SignalHandler);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3391):          Debug::ft(Thread_Start);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3899):       Debug::ft(Thread_TrapHandler);  //@
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2885):    Debug::ft(Thread_Ready);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3331):    Debug::ft(Thread_SignalHandler);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3399):          Debug::ft(Thread_Start);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3907):       Debug::ft(Thread_TrapHandler);  //@
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(4138):       Debug::ft(RecoveryThread_Enter);
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.cpp(738):    Debug::ft(Context_ProcessWork);
 W110 Override of Base.Display not found
@@ -3980,9 +3982,9 @@ W110 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(188): struct ObjectPoolDynamic : public Persistent
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(37): class FileWalker : public FileList
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.h(38): class SysTickTimer : public Immutable
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(265): class ThreadStats : public Dynamic
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(357): class ContextSwitches : public Permanent
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(769): class Threads : public Permanent
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(273): class ThreadStats : public Dynamic
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(365): class ContextSwitches : public Permanent
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(777): class Threads : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(55): class ThreadsStats : public Dynamic
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(218): struct ThreadAdminValues : public Persistent
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.h(63): class TraceBuffer : public Permanent
@@ -4003,9 +4005,9 @@ W110 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(55): class PotsCallIpService : public UdpIpService
 W111 Override of Object.Patch not found
   C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(61): class ProtectedHeap : public NbHeap
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(357): class ContextSwitches : public Permanent
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(769): class Threads : public Permanent
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(993): class ThreadPriv : public Permanent
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(365): class ContextSwitches : public Permanent
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(777): class Threads : public Permanent
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1001): class ThreadPriv : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/sb/EventHandler.h(48): class EventHandler : public NodeBase::Immutable
   C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(40): class SbAnalyzeMessage : public EventHandler
   C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(54): class SbAnalyzeSap : public EventHandler
@@ -4081,7 +4083,7 @@ W119 Argument passed by value is modified
   C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(151/3):    const string& expl, std::streamsize p) const
   C:/Users/gregu/Documents/rsc/rsc/nb/CliText.cpp(41/2): CliText::CliText(c_string help, c_string text, bool opt, uint32_t size) :
   C:/Users/gregu/Documents/rsc/rsc/nb/CliTextParm.cpp(144/2): void CliTextParm::Explain(ostream& stream, col_t indent) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/CliThread.cpp(778/2):    (const string& expl, size_t begin, size_t end, col_t indent) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/CliThread.cpp(779/2):    (const string& expl, size_t begin, size_t end, col_t indent) const
   C:/Users/gregu/Documents/rsc/rsc/nb/LogBuffer.cpp(99/1): LogBuffer::LogBuffer(size_t size) :
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(243/2): NbHeap::NbHeap(MemoryType type, size_t size) : Heap(),
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(418/1): void* NbHeap::Alloc(size_t size)
@@ -4095,8 +4097,8 @@ W119 Argument passed by value is modified
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(140/1): void SysTime::AddMsecs(msecs_t msecs)
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(402/1): void SysTime::SubDays(size_t days)
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(437/1): void SysTime::SubMsecs(msecs_t msecs)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2168/1): bool Thread::HandleSignal(signal_t sig, uint32_t code)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3806/1): void Thread::Trace(Thread* thr,
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2176/1): bool Thread::HandleSignal(signal_t sig, uint32_t code)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3814/1): void Thread::Trace(Thread* thr,
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.cpp(191/1): bool TraceBuffer::AllocBuffers(size_t n)
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.cpp(376/1): TraceRc TraceBuffer::DisplayTrace(ostream* stream, const string& opts)
   C:/Users/gregu/Documents/rsc/rsc/nw/IoThread.cpp(151/2):    (const IpPort& port, const byte_t* source, size_t size) const
@@ -6636,7 +6638,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/CliTextParm.h
     49:    explicit CliTextParm(c_string help, bool opt = false,
 C:/Users/gregu/Documents/rsc/rsc/nb/CliThread.cpp
   W119 Argument passed by value is modified
-    778/2:    (const string& expl, size_t begin, size_t end, col_t indent) const
+    779/2:    (const string& expl, size_t begin, size_t end, col_t indent) const
 C:/Users/gregu/Documents/rsc/rsc/nb/CliThread.h
   W032 Unused function
     97:    word IntPrompt(const std::string& prompt, word min, word max);
@@ -6706,7 +6708,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/Duration.h
     183: int64_t  operator/(const Duration& lhs, const Duration& rhs);
 C:/Users/gregu/Documents/rsc/rsc/nb/Element.cpp
   W106 Function does not invoke Debug::ft
-    195: bool Element::RunningInLab()
+    197: bool Element::RunningInLab()
 C:/Users/gregu/Documents/rsc/rsc/nb/Element.h
   W042 Member could be private
     52:    static const std::string RscPath();
@@ -6929,7 +6931,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/MsgBuffer.h
 C:/Users/gregu/Documents/rsc/rsc/nb/MutexGuard.cpp
   W107 Function does not invoke Debug::ft as first statement
     38:    Debug::ft(MutexGuard_ctor);
-    62:       Debug::ft(MutexGuard_Release);
+    62:       Debug::ftnt(MutexGuard_Release);
 C:/Users/gregu/Documents/rsc/rsc/nb/MutexRegistry.h
   W042 Member could be private
     53:    SysMutex* Find(const std::string& name) const;
@@ -7520,18 +7522,21 @@ C:/Users/gregu/Documents/rsc/rsc/nb/SysThreadStack.win.cpp
     136: void StackInfo::Shutdown()
     145: DWORD StackInfo::Startup()
     258: fn_depth SysThreadStack::FuncDepth()
+C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.cpp
+  W106 Function does not invoke Debug::ft
+    46: SysTickTimer* SysTickTimer::Instance()
 C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.h
   W032 Unused function
-    68:    bool TickTimingAvailable() const { return available_; }
+    75:    bool TickTimingAvailable() const { return available_; }
   W110 Override of Base.Display not found
     38: class SysTickTimer : public Immutable
 C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.win.cpp
   W056 Default constructor invoked: POD members not initialized
     42:    LARGE_INTEGER frequency;
-    75:       LARGE_INTEGER now;
-    81:       _timeb now;
+    64:       LARGE_INTEGER now;
+    70:       _timeb now;
   W106 Function does not invoke Debug::ft
-    71: TimePoint SysTickTimer::Now() const
+    60: TimePoint SysTickTimer::Now() const
 C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp
   W005 Functional cast
     361:          Truncate(TimeField(int(field) + 1));
@@ -7597,66 +7602,68 @@ C:/Users/gregu/Documents/rsc/rsc/nb/ThisThread.cpp
     88: void ThisThread::StopTracing()
 C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp
   W006 reinterpret_cast
-    1475:    auto p = reinterpret_cast< char* >(BAD_POINTER);
-    1484:    auto fake = reinterpret_cast< const Thread* >(&local);
+    1483:    auto p = reinterpret_cast< char* >(BAD_POINTER);
+    1492:    auto fake = reinterpret_cast< const Thread* >(&local);
   W009 Pointer arithmetic
-    3362:    ptrdiff_t stacksize = &local - priv_->stackBase_;
+    3370:    ptrdiff_t stacksize = &local - priv_->stackBase_;
+  W028 Unused data
+    124: const SysTickTimer* TickTimer = SysTickTimer::Instance();
   W032 Unused function
-    750:    ThreadInfo(const ThreadInfo& info) = default;
-    751:    ThreadInfo(ThreadInfo&& info) = default;
-    753:    ThreadInfo& operator=(ThreadInfo&& info) = default;
+    758:    ThreadInfo(const ThreadInfo& info) = default;
+    759:    ThreadInfo(ThreadInfo&& info) = default;
+    761:    ThreadInfo& operator=(ThreadInfo&& info) = default;
   W042 Member could be private
-    141:    static void* operator new(size_t size);
+    149:    static void* operator new(size_t size);
   W092 Function could be free
-    131:    static void CaptureEvent(fn_name_arg func, Id rid, int32_t info = 0);
+    139:    static void CaptureEvent(fn_name_arg func, Id rid, int32_t info = 0);
   W099 Line contains adjacent spaces
-    271:    CounterPtr       traps_;
-    272:    CounterPtr       exceeds_;
-    273:    CounterPtr       yields_;
-    274:    CounterPtr       interrupts_;
-    278:    AccumulatorPtr   totTime_;
+    279:    CounterPtr       traps_;
+    280:    CounterPtr       exceeds_;
+    281:    CounterPtr       yields_;
+    282:    CounterPtr       interrupts_;
+    286:    AccumulatorPtr   totTime_;
   W106 Function does not invoke Debug::ft
-    455: ContextSwitch* ContextSwitches::AddSwitch()
-    958: bool Threads::IsDeleted() const
-    1436: SysMutex* Thread::BlockingMutex() const
-    1443: TraceStatus Thread::CalcStatus(bool dynamic) const
-    1461: bool Thread::CanBeScheduled() const
-    1533: bool Thread::ClearActiveThread(Thread* active)
-    2152: BlockingReason Thread::GetBlockingReason() const
-    2159: TraceStatus Thread::GetStatus() const
-    2324: bool Thread::IsLocked() const
-    2331: bool Thread::IsScheduled() const
-    2338: bool Thread::IsTraceable() const
-    2385: Thread* Thread::LockedThread()
-    2447: TraceRc Thread::LogContextSwitches(bool on)
-    2630: uint8_t Thread::MutexCount() const
-    2656: DelayRc Thread::Pause(Duration time)
-    2700: double Thread::PercentIdle()
-    3001: void Thread::ResetDebugFlags()
-    3248: void Thread::SetStatus(TraceStatus status)
-    3610: TraceRc Thread::StartTracing(const string& opts)
-    3644: void Thread::StopTracing()
-    3806: void Thread::Trace(Thread* thr,
-    3823: bool Thread::TraceRunningThread(Thread*& thr)
-    3851: bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
-    4073: void Thread::UpdateMutex(SysMutex* mutex)
-    4080: void Thread::UpdateMutexCount(bool acquired)
+    463: ContextSwitch* ContextSwitches::AddSwitch()
+    966: bool Threads::IsDeleted() const
+    1444: SysMutex* Thread::BlockingMutex() const
+    1451: TraceStatus Thread::CalcStatus(bool dynamic) const
+    1469: bool Thread::CanBeScheduled() const
+    1541: bool Thread::ClearActiveThread(Thread* active)
+    2160: BlockingReason Thread::GetBlockingReason() const
+    2167: TraceStatus Thread::GetStatus() const
+    2332: bool Thread::IsLocked() const
+    2339: bool Thread::IsScheduled() const
+    2346: bool Thread::IsTraceable() const
+    2393: Thread* Thread::LockedThread()
+    2455: TraceRc Thread::LogContextSwitches(bool on)
+    2638: uint8_t Thread::MutexCount() const
+    2664: DelayRc Thread::Pause(Duration time)
+    2708: double Thread::PercentIdle()
+    3009: void Thread::ResetDebugFlags()
+    3256: void Thread::SetStatus(TraceStatus status)
+    3618: TraceRc Thread::StartTracing(const string& opts)
+    3652: void Thread::StopTracing()
+    3814: void Thread::Trace(Thread* thr,
+    3831: bool Thread::TraceRunningThread(Thread*& thr)
+    3859: bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
+    4081: void Thread::UpdateMutex(SysMutex* mutex)
+    4088: void Thread::UpdateMutexCount(bool acquired)
   W107 Function does not invoke Debug::ft as first statement
-    2877:    Debug::ft(Thread_Ready);
-    3323:    Debug::ft(Thread_SignalHandler);
-    3391:          Debug::ft(Thread_Start);
-    3899:       Debug::ft(Thread_TrapHandler);  //@
+    2885:    Debug::ft(Thread_Ready);
+    3331:    Debug::ft(Thread_SignalHandler);
+    3399:          Debug::ft(Thread_Start);
+    3907:       Debug::ft(Thread_TrapHandler);  //@
   W110 Override of Base.Display not found
-    265: class ThreadStats : public Dynamic
-    357: class ContextSwitches : public Permanent
-    769: class Threads : public Permanent
+    273: class ThreadStats : public Dynamic
+    365: class ContextSwitches : public Permanent
+    777: class Threads : public Permanent
   W111 Override of Object.Patch not found
-    357: class ContextSwitches : public Permanent
-    769: class Threads : public Permanent
-    993: class ThreadPriv : public Permanent
+    365: class ContextSwitches : public Permanent
+    777: class Threads : public Permanent
+    1001: class ThreadPriv : public Permanent
   W119 Argument passed by value is modified
-    2168/1: bool Thread::HandleSignal(signal_t sig, uint32_t code)
-    3806/1: void Thread::Trace(Thread* thr,
+    2176/1: bool Thread::HandleSignal(signal_t sig, uint32_t code)
+    3814/1: void Thread::Trace(Thread* thr,
 C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h
   W005 Functional cast
     142:    ThreadId Tid() const { return ThreadId(tid_.GetId()); }

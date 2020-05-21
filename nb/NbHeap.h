@@ -91,7 +91,7 @@ public:
    //  the same size.  Blocks at level N-1 are twice the size of blocks at
    //  level N.
    //
-   typedef int level_t;
+   typedef word level_t;
 
    //  The type for a block's index.  The state of each block is maintained
    //  in separate heap management data.  If the heap spans N blocks of its

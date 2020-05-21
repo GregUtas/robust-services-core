@@ -36,7 +36,7 @@ namespace NetworkBase
 
 namespace NetworkBase
 {
-//  Global registry for protocols supported over IP.
+//  Global registry for services that use IP protocols.
 //
 class IpServiceRegistry : public NodeBase::Immutable
 {
@@ -72,13 +72,11 @@ private:
    //
    ~IpServiceRegistry();
 
-   //  Adds SERVICE to the registry.  Invoked by IpService's base class
-   //  constructor.
+   //  Adds SERVICE to the registry.
    //
    bool BindService(IpService& service);
 
-   //  Removes SERVICE from the registry.  Invoked by IpService's base
-   //  class destructor.
+   //  Removes SERVICE from the registry.
    //
    void UnbindService(IpService& service);
 

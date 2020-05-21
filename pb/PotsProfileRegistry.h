@@ -39,7 +39,7 @@ using namespace CallBase;
 
 namespace PotsBase
 {
-//  Registry for PotsProfile instances.
+//  Registry for POTS profiles.
 //
 class PotsProfileRegistry : public Protected
 {

@@ -37,18 +37,18 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  Global registry for alarms.
+//  Global registry for mutexes.
 //
 class MutexRegistry : public Permanent
 {
    friend class Singleton< MutexRegistry >;
    friend class SysMutex;
 public:
-   //> The maximum number of alarms.
+   //> The maximum number of mutexes.
    //
    static const id_t MaxMutexes;
 
-   //  Returns the alarm associated with NAME.
+   //  Returns the mutex associated with NAME.
    //
    SysMutex* Find(const std::string& name) const;
 
@@ -77,15 +77,15 @@ private:
    //
    ~MutexRegistry();
 
-   //  Registers GROUP.
+   //  Adds MUTEX to the registry.
    //
    bool BindMutex(SysMutex& mutex);
 
-   //  Removes ALARM from the registry.
+   //  Removes MUTEX from the registry.
    //
    void UnbindMutex(SysMutex& mutex);
 
-   //  The registry of alarms.
+   //  The registry of mutexes.
    //
    Registry< SysMutex > mutexes_;
 };

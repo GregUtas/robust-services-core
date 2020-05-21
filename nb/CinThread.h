@@ -24,6 +24,7 @@
 
 #include "Thread.h"
 #include <ios>
+#include <string>
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -38,14 +39,12 @@ class CinThread : public Thread
 {
    friend class Singleton< CinThread >;
 public:
-   //  Reads input from the console and places it in BUFF, which can hold up
-   //  to CAPACITY characters.  Returns the number of characters read (N >= 1),
-   //  excluding the trailing NUL that is also placed in BUFF.  If N <= 0, see
-   //  StreamRc.  The client thread is only scheduled out if input is not yet
-   //  available, so it must not call EnterBlockingOperation before it invokes
-   //  this function.
+   //  Reads input from the console and places it in BUFF.  Returns the number
+   //  of characters read (N >= 1).  If N <= 0, see StreamRc.  The client is
+   //  only scheduled out if input is not yet available, so it must not call
+   //  EnterBlockingOperation before it invokes this function.
    //
-   static std::streamsize GetLine(char* buff, std::streamsize capacity);
+   static std::streamsize GetLine(std::string& buff);
 
    //  If THR is the current client, clears it.  A thread's destructor should
    //  invoke this if it uses CinThread::GetLine.
@@ -61,10 +60,6 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //> The size of the console input buffer.
-   //
-   static const std::streamsize BuffSize = 2 * COUT_LENGTH_MAX;
-
    //  Private because this singleton is not subclassed.
    //
    CinThread();
@@ -93,11 +88,7 @@ private:
 
    //  Buffer for input.
    //
-   char buff_[BuffSize];
-
-   //  The number of characters in buff_.
-   //
-   std::streamsize size_;
+   std::string buff_;
 
    //  The thread that is waiting for input.
    //

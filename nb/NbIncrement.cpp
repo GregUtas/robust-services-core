@@ -41,7 +41,6 @@
 #include "CliRegistry.h"
 #include "CliStack.h"
 #include "CliThread.h"
-#include "CoutThread.h"
 #include "Daemon.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
@@ -2749,7 +2748,6 @@ class SendCommand : public CliCommand
 public:
    SendCommand();
 private:
-   static void SendAckToOutputFile(const CliThread& cli);
    word ProcessCommand(CliThread& cli) const override;
 };
 
@@ -2804,6 +2802,7 @@ word SendCommand::ProcessCommand(CliThread& cli) const
 
    id_t index;
    string title;
+   bool all = false;
    bool append = false;
 
    if(!GetTextParm(index, title, cli)) return -1;
@@ -2818,29 +2817,18 @@ word SendCommand::ProcessCommand(CliThread& cli) const
       //
       cli.EndOfInput(false);
 
-      if(cli.outIndex_ > 0)
-      {
-         SendAckToOutputFile(cli);
-
-         for(auto i = (index == SendPrevIndex ? 1 : cli.outIndex_); i > 0; --i)
-         {
-            cli.outName_[cli.outIndex_--].reset();
-         }
-
-         return 0;
-      }
-
+      if(index == SendCoutIndex) all = true;
+      if(cli.PopOutputFile(all)) return 0;
       return cli.Report(0, SendingToConsoleExpl);
 
    case SendFileIndex:
       if(GetBoolParmRc(append, cli) == Error) return -1;
       cli.EndOfInput(false);
 
-      if(cli.outIndex_ < CliThread::OutSize - 1)
+      title += ".cli.txt";
+
+      if(cli.PushOutputFile(title))
       {
-         SendAckToOutputFile(cli);
-         title += ".cli.txt";
-         cli.outName_[++cli.outIndex_].reset(new string(title));
          if(!append) FileThread::Truncate(title);
          return 0;
       }
@@ -2851,22 +2839,6 @@ word SendCommand::ProcessCommand(CliThread& cli) const
       Debug::SwLog(SendCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
-}
-
-fn_name SendCommand_SendAckToOutputFile = "SendCommand.SendAckToOutputFile";
-
-void SendCommand::SendAckToOutputFile(const CliThread& cli)
-{
-   Debug::ft(SendCommand_SendAckToOutputFile);
-
-   std::ostringstream ack;
-
-   ack << spaces(2) << SuccessExpl << CRLF;
-
-   if(cli.outIndex_ == 0)
-      CoutThread::Spool(ack.str().c_str());
-   else
-      FileThread::Spool(*cli.outName_[cli.outIndex_], ack.str());
 }
 
 //------------------------------------------------------------------------------

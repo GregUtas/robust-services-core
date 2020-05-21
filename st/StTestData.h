@@ -76,7 +76,7 @@ public:
 
    //  Overridden to clean up at the end of a test.
    //
-   void EventOccurred(Event evt) override;
+   void EventOccurred(Event event) override;
 
    //  Overridden to display member variables.
    //

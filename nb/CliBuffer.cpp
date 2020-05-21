@@ -22,7 +22,6 @@
 #include "CliBuffer.h"
 #include <cctype>
 #include <iosfwd>
-#include <istream>
 #include <sstream>
 #include "CinThread.h"
 #include "CliThread.h"
@@ -55,7 +54,7 @@ fixed_string CliBuffer::ErrorPointer = "_|";
 
 fn_name CliBuffer_ctor = "CliBuffer.ctor";
 
-CliBuffer::CliBuffer() : size_(0), pos_(0)
+CliBuffer::CliBuffer() : pos_(0)
 {
    Debug::ft(CliBuffer_ctor);
 }
@@ -77,22 +76,20 @@ CliBuffer::CharType CliBuffer::CalcType(bool quoted)
 {
    Debug::ft(CliBuffer_CalcType);
 
-   if(pos_ < size_)
+   if(pos_ < buff_.size())
    {
       switch(buff_[pos_])
       {
       case EscapeChar:
          //
-         //  Move the remaining characters up and continue to the next
-         //  characters.
+         //  Erase this character and treat the next one literally.
          //
-         --size_;
-         for(auto i = pos_; i < size_; ++i) buff_[i] = buff_[i + 1];
+         buff_.erase(pos_, 1);
          break;
 
       case CommentChar:
          if(quoted) return Regular;
-         pos_ = size_;
+         pos_ = buff_.size();
          return EndOfLine;
 
       case StringChar:
@@ -127,7 +124,6 @@ void CliBuffer::Display(ostream& stream,
 
    stream << prefix << "buff : " << CRLF;
    stream << prefix << spaces(2) << buff_ << CRLF;
-   stream << prefix << "size : " << size_ << CRLF;
    stream << prefix << "pos  : " << pos_ << CRLF;
 }
 
@@ -171,16 +167,16 @@ void CliBuffer::ErrorAtPos(const CliThread& cli,
          *cli.obuf << SPACE;
    }
 
-   //  POS_ was at the *end* of the previous blank-terminated string,
+   //  pos_ was at the *end* of the previous blank-terminated string,
    //  so the faulty input occurred at the end of any blank space that
-   //  followed POS_.  Tabs are not accepted in the input stream and
-   //  shouldn't be echoed at POS_ because this will put the error
+   //  followed pos_.  Tabs are not accepted in the input stream and
+   //  shouldn't be echoed at pos_ because this will put the error
    //  pointer at the end of the tab (the next character) rather than
    //  at the beginning.
    //
    if(buff_[p] != TAB)
    {
-      for(auto i = p; (i < size_) && isspace(buff_[i]); ++i)
+      for(auto i = p; (i < buff_.size()) && isspace(buff_[i]); ++i)
       {
          *cli.obuf << buff_[i];
       }
@@ -198,9 +194,8 @@ bool CliBuffer::FindNextNonBlank()
 {
    Debug::ft(CliBuffer_FindNextNonBlank);
 
-   //  Skip blanks.  If this takes us to the end of the buffer, return false.
-   //  If we find the comment character, advance to the end of the buffer.
-   //  If we find the escape character, continue to the next character.
+   //  Return true if there is a non-blank character before the end
+   //  of the line.
    //
    while(true)
    {
@@ -223,92 +218,20 @@ bool CliBuffer::FindNextNonBlank()
 
 fn_name CliBuffer_GetInt = "CliBuffer.GetInt";
 
-CliParm::Rc CliBuffer::GetInt(string& s, word& n, bool hex)
+CliParm::Rc CliBuffer::GetInt(const string& s, word& n, bool hex)
 {
    Debug::ft(CliBuffer_GetInt);
 
-   auto count = s.size();
-   size_t start = 0;
-   bool minus = false;
-   int base;
-   int digit;
+   if(s.empty()) return CliParm::None;
 
-   if(count == 0) return CliParm::None;
+   std::istringstream input(s);
 
-   //  Set BASE (decimal or hex).  Decimal values may be negative.
-   //
    if(hex)
-   {
-      base = 16;
-   }
+      input >> std::hex >> n;
    else
-   {
-      base = 10;
+      input >> std::dec >> n;
 
-      if(s.front() == '-')
-      {
-         minus = true;
-         start = 1;
-         if(count == 1) return CliParm::Error;
-      }
-   }
-
-   n = 0;
-
-   for(auto i = start; i < count; ++i)
-   {
-      //  An integer or hex string is terminated by spaces and punctuation.
-      //  Other intervening characters are errors.
-      //
-      char c = tolower(s[i]);
-
-      if(hex)
-      {
-         if(!isxdigit(c)) return CliParm::Error;
-      }
-      else
-      {
-         if(!isdigit(c)) return CliParm::Error;
-      }
-   }
-
-   //  We have a legal integer string.  Convert it to a true integer,
-   //  checking for overflow.
-   //
-   for(auto i = start; i < count; ++i)
-   {
-      switch(s[i])
-      {
-      case '0': digit = 0; break;
-      case '1': digit = 1; break;
-      case '2': digit = 2; break;
-      case '3': digit = 3; break;
-      case '4': digit = 4; break;
-      case '5': digit = 5; break;
-      case '6': digit = 6; break;
-      case '7': digit = 7; break;
-      case '8': digit = 8; break;
-      case '9': digit = 9; break;
-      case 'a': digit = 10; break;
-      case 'b': digit = 11; break;
-      case 'c': digit = 12; break;
-      case 'd': digit = 13; break;
-      case 'e': digit = 14; break;
-      case 'f': digit = 15; break;
-      default: return CliParm::Error;
-      }
-
-      if(n > (WORD_MAX / 16))
-      {
-         if((WORD_MAX / n) < digit) return CliParm::Error;
-      }
-
-      n = (n * base) + digit;
-   }
-
-   if(minus) n = -n;
-
-   return CliParm::Ok;
+   return (input.fail() ? CliParm::Error : CliParm::Ok);
 }
 
 //------------------------------------------------------------------------------
@@ -329,8 +252,8 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
 
    if(source == nullptr)
    {
-      size_ = CinThread::GetLine(buff_, BuffSize);
-      if(size_ <= 0) return size_;
+      auto count = CinThread::GetLine(buff_);
+      if(count <= 0) return count;
       FileThread::Record(buff_, true);
       return ScanLine(cli);
    }
@@ -339,16 +262,14 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
    //
    if(source->eof()) return StreamEof;
 
-   ThisThread::EnterBlockingOperation(BlockedOnConsole, CliBuffer_GetLine);
+   ThisThread::EnterBlockingOperation(BlockedOnStream, CliBuffer_GetLine);
    {
-      source->getline(buff_, BuffSize);
+      std::getline(*source, buff_);
    }
    ThisThread::ExitBlockingOperation(CliBuffer_GetLine);
 
    if(source->fail()) return StreamFailure;
-   size_ = source->gcount();
-   if(!source->eof()) --size_;
-   if(size_ <= 0) return StreamEmpty;
+   if(buff_.empty()) return StreamEmpty;
 
    //  Echo the input to the console.
    //
@@ -563,10 +484,8 @@ std::streamsize CliBuffer::PutLine(const CliThread& cli, const string& input)
 
    //  Put INPUT in the buffer, echo it to the console, and scan it.
    //
-   size_ = input.size();
-   if(size_ <= 0) return StreamEmpty;
-   for(std::streamsize i = 0; i < size_; ++i) buff_[i] = input[i];
-   buff_[size_] = NUL;
+   if(input.empty()) return StreamEmpty;
+   buff_ = input;
    CoutThread::Spool(input.c_str(), true);
    return ScanLine(cli);
 }
@@ -585,7 +504,7 @@ void CliBuffer::Read(string& s)
    //
    if(!FindNextNonBlank()) return;
 
-   while(pos_ < size_)
+   while(pos_ < buff_.size())
    {
       s += buff_[pos_++];
    }
@@ -601,7 +520,7 @@ std::streamsize CliBuffer::ScanLine(const CliThread& cli)
 
    //  Report failure if any input characters are non-printable.
    //
-   for(pos_ = 0; pos_ < size_; ++pos_)
+   for(pos_ = 0; pos_ < buff_.size(); ++pos_)
    {
       if(!isprint(buff_[pos_]))
       {

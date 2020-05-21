@@ -80,7 +80,7 @@ public:
    //  Converts S to an integer, supplying it in N and returning Ok
    //  on success.  HEX is true if the integer is in hex.
    //
-   static CliParm::Rc GetInt(std::string& s, word& n, bool hex);
+   static CliParm::Rc GetInt(const std::string& s, word& n, bool hex);
 
    //  Returns the current parse location in the input stream.
    //
@@ -173,21 +173,13 @@ private:
    //
    std::streamsize PutLine(const CliThread& cli, const std::string& input);
 
-   //> The maximum number of characters in a line of user input.
-   //
-   static const size_t BuffSize = 2 * COUT_LENGTH_MAX;
-
    //  Buffer for user input.
    //
-   char buff_[BuffSize];
-
-   //  The number of characters in buff_.
-   //
-   std::streamsize size_;
+   std::string buff_;
 
    //  Index of the next character to be read from buff_.
    //
-   std::streamsize pos_;
+   size_t pos_;
 };
 }
 #endif

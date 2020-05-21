@@ -156,12 +156,12 @@ bool CliCharParm::ShowValues(string& values) const
 {
    Debug::ft(CliCharParm_ShowValues);
 
-   auto max = strlen(chars_) - 1;
+   auto last = strlen(chars_) - 1;
 
-   for(col_t i = 0; i <= max; ++i)
+   for(col_t i = 0; i <= last; ++i)
    {
       values += chars_[i];
-      if(i < max) values += CharSeparator;
+      if(i < last) values += CharSeparator;
    }
 
    return true;

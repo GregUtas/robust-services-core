@@ -65,9 +65,9 @@ fixed_string AlarmStatusStrings[AlarmStatus_N + 1] =
 fixed_string BlockingReasonStrings[BlockingReason_N + 1] =
 {
    "ready",     // NotBlocked
-   "sleeping",  // BlockedOnClock
+   "clock",     // BlockedOnClock
    "network",   // BlockedOnNetwork
-   "console",   // BlockedOnConsole
+   "stream",    // BlockedOnStream
    "database",  // BlockedOnDatabase
    "???"        // BlockingReason_N
 };

@@ -23,9 +23,9 @@
 #define CLISTACK_H_INCLUDED
 
 #include "Temporary.h"
-#include <cstddef>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace NodeBase
 {
@@ -80,10 +80,6 @@ private:
    //
    CliIncrement* FindIncrement(const std::string& name) const;
 
-   //> The maximum number of increments that can be active simultaneously.
-   //
-   static const size_t MaxIncrDepth = 16;
-
    //  Not subclassed.  Only created by CliThread.
    //
    CliStack();
@@ -98,15 +94,11 @@ private:
 
    //  Adds INCR to the set of active increments.
    //
-   bool Push(CliIncrement& incr);
+   void Push(CliIncrement& incr);
 
    //  The stack of active increments.
    //
-   CliIncrement* increments_[MaxIncrDepth + 1];
-
-   //  The index to the top of the stack.
-   //
-   int top_;
+   std::vector< CliIncrement* > increments_;
 };
 }
 #endif

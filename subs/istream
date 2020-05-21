@@ -16,7 +16,22 @@ namespace std
    public:
       basic_istream();
       virtual ~basic_istream();
-      basic_istream& operator>>(int& i) const;
+      basic_ostream& operator>>(bool& b);
+      basic_ostream& operator>>(char& c);
+      basic_ostream& operator>>(unsigned char& uc);
+      basic_ostream& operator>>(short& s);
+      basic_ostream& operator>>(unsigned short& us);
+      basic_ostream& operator>>(int& i);
+      basic_ostream& operator>>(unsigned int& ui);
+      basic_ostream& operator>>(long& l);
+      basic_ostream& operator>>(unsigned long& ul);
+      basic_ostream& operator>>(long long& ll);
+      basic_ostream& operator>>(unsigned long long& ull);
+      basic_ostream& operator>>(float& f);
+      basic_ostream& operator>>(double& d);
+      basic_ostream& operator>>(long double& ld);
+      basic_ostream& operator>>(void*& p);
+      basic_istream& operator>>(const stream_manipulator& m);
       basic_istream& getline(char* buff, size_t len);
       basic_istream& read(void* stuff, streamsize count);
       streamsize gcount() const;

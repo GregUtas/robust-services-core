@@ -29,7 +29,7 @@
 
 namespace NodeBase
 {
-//  CLI bool parameter.
+//  CLI boolean parameter.
 //
 class CliBoolParm : public CliParm
 {

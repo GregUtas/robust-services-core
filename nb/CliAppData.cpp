@@ -68,7 +68,7 @@ void CliAppData::Display(ostream& stream,
 
 fn_name CliAppData_EventOccurred = "CliAppData.EventOccurred";
 
-void CliAppData::EventOccurred(Event evt)
+void CliAppData::EventOccurred(Event event)
 {
    Debug::ft(CliAppData_EventOccurred);
 }

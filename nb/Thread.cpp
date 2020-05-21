@@ -2009,7 +2009,7 @@ bool Thread::ExitOnRestart(RestartLevel level) const
    //  has no mechanism for interrupting it.
    //
    if(faction_ >= SystemFaction) return false;
-   if(priv_->blocked_ == BlockedOnConsole) return false;
+   if(priv_->blocked_ == BlockedOnStream) return false;
    return true;
 }
 

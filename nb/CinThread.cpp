@@ -20,14 +20,11 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CinThread.h"
-#include <algorithm>
 #include <istream>
 #include <ostream>
-#include <string>
 #include "Debug.h"
 #include "Duration.h"
 #include "FunctionGuard.h"
-#include "Memory.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysConsole.h"
@@ -42,7 +39,6 @@ namespace NodeBase
 fn_name CinThread_ctor = "CinThread.ctor";
 
 CinThread::CinThread() : Thread(OperationsFaction),
-   size_(0),
    client_(nullptr)
 {
    Debug::ft(CinThread_ctor);
@@ -93,7 +89,6 @@ void CinThread::Display(ostream& stream,
    Thread::Display(stream, prefix, options);
 
    stream << prefix << "buff   : " << buff_ << CRLF;
-   stream << prefix << "size   : " << size_ << CRLF;
    stream << prefix << "client : " << client_ << CRLF;
 }
 
@@ -114,11 +109,9 @@ void CinThread::Enter()
 
       auto& source = SysConsole::In();
 
-      EnterBlockingOperation(BlockedOnConsole, CinThread_Enter);
-         source.getline(buff_, BuffSize);
+      EnterBlockingOperation(BlockedOnStream, CinThread_Enter);
+         std::getline(source, buff_);
       ExitBlockingOperation(CinThread_Enter);
-
-      size_ = source.gcount();
 
       //  If there was an error, clear it.
       //
@@ -128,7 +121,7 @@ void CinThread::Enter()
       //  time to wake up and process the input.  If there is no client,
       //  sleeping buffers the input until a client requests it.
       //
-      if(size_ > 0)
+      if(!buff_.empty())
       {
          if(client_ != nullptr) client_->Interrupt();
          Pause(TIMEOUT_NEVER);
@@ -140,14 +133,13 @@ void CinThread::Enter()
 
 fn_name CinThread_GetLine = "CinThread.GetLine";
 
-std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
+std::streamsize CinThread::GetLine(string& buff)
 {
    Debug::ft(CinThread_GetLine);
 
    //  Do not read from the console during a restart.  It blocks a thread,
    //  which prevents it from exiting.
    //
-   if(capacity <= 0) return StreamInterrupt;
    if(Restart::GetStage() != Running) return StreamRestart;
 
    auto client = RunningThread();
@@ -159,7 +151,7 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
 
    auto server = Singleton< CinThread >::Instance();
 
-   if(server->size_ == 0)
+   if(server->buff_.empty())
    {
       //  Nothing is buffered.  Register the client and put it to sleep;
       //  the server thread will interrupt it when input is available.
@@ -171,7 +163,7 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
       //  it before console input arrives.  To receive input, the client
       //  must call this function again.
       //
-      if(server->size_ == 0)
+      if(server->buff_.empty())
       {
          server->client_ = nullptr;
          return StreamInterrupt;
@@ -182,17 +174,13 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
    //  server's data, and awaken the server thread so that it can read
    //  the next input.
    //
-   auto n = std::min(server->size_, capacity - 1);
-   Memory::Copy(buff, server->buff_, n);
-   buff[n] = NUL;
-
-   server->buff_[0] = NUL;
-   server->size_ = 0;
+   buff = server->buff_;
+   server->buff_.clear();
    server->client_ = nullptr;
    guard.Release();
 
    server->Interrupt();
-   return n - 1;
+   return buff.size();
 }
 
 //------------------------------------------------------------------------------

@@ -92,8 +92,8 @@ word CliCommand::ExplainCommand(ostream& stream, bool verbose) const
    }
    else
    {
-      //  We are listing all of the commands in the increment.  Display only
-      //  each command's name and its purpose.
+      //  We are listing all of the commands in the increment.  Display
+      //  only each command's name and its purpose.
       //
       stream << spaces(CommandWidth - strlen(Text()));
       stream << Text() << ParmExplPrefix << Help() << CRLF;

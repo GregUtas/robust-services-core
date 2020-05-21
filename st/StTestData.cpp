@@ -128,11 +128,11 @@ void StTestData::Display(ostream& stream,
 
 fn_name StTestData_EventOccurred = "StTestData.EventOccurred";
 
-void StTestData::EventOccurred(Event evt)
+void StTestData::EventOccurred(Event event)
 {
    Debug::ft(StTestData_EventOccurred);
 
-   if(evt == EndOfTest)
+   if(event == EndOfTest)
    {
       for(auto i = 0; i <= Factory::MaxId; ++i) lastMsg_[i] = nullptr;
 

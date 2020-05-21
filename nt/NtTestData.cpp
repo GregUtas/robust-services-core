@@ -114,7 +114,7 @@ void NtTestData::Conclude()
       tdb->SetState(name_.c_str(), TestDatabase::Passed);
    }
 
-   cli->Notify(CliAppData::EndOfTest);
+   cli->Notify(EndOfTest);
    name_.clear();
 }
 

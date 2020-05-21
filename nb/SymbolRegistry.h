@@ -38,7 +38,7 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  Global registry for symbols.
+//  Global registry for CLI symbols.
 //
 class SymbolRegistry : public Dynamic
 {
@@ -65,7 +65,7 @@ public:
    //
    Symbol* FindSymbol(const std::string& name) const;
 
-   //  Removes SYM from the registry.  It must be explicitly deleted.
+   //  Removes SYM from the registry.  It must still be deleted.
    //
    void RemoveSymbol(Symbol& sym);
 

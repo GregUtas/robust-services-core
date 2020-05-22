@@ -176,7 +176,7 @@ void CliBuffer::ErrorAtPos(const CliThread& cli,
    //
    if(buff_[p] != TAB)
    {
-      for(auto i = p; (i < buff_.size()) && isspace(buff_[i]); ++i)
+      for(size_t i = p; (i < buff_.size()) && isspace(buff_[i]); ++i)
       {
          *cli.obuf << buff_[i];
       }

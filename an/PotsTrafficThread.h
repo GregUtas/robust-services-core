@@ -54,7 +54,7 @@ public:
    //  HoldingTimeSecs, as well as wanting about 33% of DNs to be idle
    //  at any given time.
    //
-   static const size_t MaxCallsPerMin;
+   static const uint32_t MaxCallsPerMin;
 
    //  Criteria used when searching for a DN.
    //
@@ -68,11 +68,11 @@ public:
 
    //  Sets the number of calls to be generated per minute.
    //
-   void SetRate(word rate);
+   void SetRate(uint32_t rate);
 
    //  Returns the number of calls to be generated per minute.
    //
-   word GetRate() const { return callsPerMin_; }
+   uint32_t GetRate() const { return callsPerMin_; }
 
    //  Displays status information.
    //
@@ -128,7 +128,7 @@ private:
    //  The average number of POTS lines involved in 100 calls, which
    //  can be found using the >traffic query command.
    //
-   static const size_t DNsPer100Calls;
+   static const uint32_t DNsPer100Calls;
 
    //  Private because this singleton is not subclassed.
    //
@@ -180,17 +180,17 @@ private:
 
    //  The number of calls to generate per minute.
    //
-   word callsPerMin_;
+   uint32_t callsPerMin_;
 
    //  The maximum number of calls to generate during each tick.  It
    //  is set to twice the target rate.
    //
-   size_t maxCallsPerTick_;
+   uint32_t maxCallsPerTick_;
 
    //  The fractional number of calls (in thousandths) to generate
    //  during each tick.
    //
-   size_t milCallsPerTick_;
+   uint32_t milCallsPerTick_;
 
    //  The first DN created for running traffic.
    //

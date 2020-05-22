@@ -52,7 +52,7 @@ CliStack::~CliStack()
 
    //  Exit all active increments.
    //
-   for(int i = increments_.size() - 1; i >= 0; --i)
+   for(size_t i = increments_.size() - 1; i != SIZE_MAX; --i)
    {
       increments_.at(i)->Exit();
    }
@@ -70,7 +70,7 @@ void CliStack::Display(ostream& stream,
 
    stream << prefix << "increments : " << CRLF;
 
-   for(int i = increments_.size() - 1; i >= 0; --i)
+   for(size_t i = increments_.size() - 1; i != SIZE_MAX; --i)
    {
       stream << lead1 << strIndex(i);
 
@@ -109,7 +109,7 @@ const CliCommand* CliStack::FindCommand
    //  a command.  If more than one increment has TEXT as a command,
    //  the most recently entered increment gets to handle it.
    //
-   for(int i = increments_.size() - 1; i >= 0; --i)
+   for(size_t i = increments_.size() - 1; i != SIZE_MAX; --i)
    {
       auto c = increments_.at(i)->FindCommand(comm);
 
@@ -133,7 +133,7 @@ CliIncrement* CliStack::FindIncrement(const string& name) const
 
    //  Search the active increments for the one that is known by NAME.
    //
-   for(int i = increments_.size() - 1; i >= 0; --i)
+   for(size_t i = increments_.size() - 1; i != SIZE_MAX; --i)
    {
       if(increments_.at(i)->Name() == name) return increments_.at(i);
    }

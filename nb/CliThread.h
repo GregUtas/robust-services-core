@@ -265,6 +265,10 @@ private:
    //
    void Enter() override;
 
+   //  Overridden to abort work on a break signal.
+   //
+   bool Recover() override;
+
    //  Overridden to delete the singleton.
    //
    void Destroy() override;

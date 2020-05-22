@@ -41,6 +41,8 @@
 #include "NbCliParms.h"
 #include "NbDaemons.h"
 #include "NbIncrement.h"
+#include "PosixSignal.h"
+#include "PosixSignalRegistry.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "Symbol.h"
@@ -218,7 +220,7 @@ void CliThread::Display(ostream& stream,
    stream << prefix << "inFiles : " << CRLF;
    for(size_t i = 0; i < inFiles_.size(); ++i)
    {
-      stream << lead1 << strIndex(i) << inFiles_[i].get() << CRLF;
+      stream << lead1 << strIndex(i) << inFiles_.at(i).get() << CRLF;
    }
 
    stream << prefix << "appsData : " << CRLF;
@@ -771,6 +773,31 @@ void CliThread::ReadCommands()
          }
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CliThread_Recover = "CliThread.Recover";
+
+bool CliThread::Recover()
+{
+   Debug::ft(CliThread_Recover);
+
+   auto sig = GetSignal();
+   auto reg = Singleton< PosixSignalRegistry >::Instance();
+
+   if(reg->Attrs(sig).test(PosixSignal::Break))
+   {
+      //  On a break signal, remain in the current increment(s) but
+      //  abort whatever work was in progress.
+      //
+      appsData_.clear();
+      inFiles_.clear();
+      outFiles_.clear();
+      stream_.reset();
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------

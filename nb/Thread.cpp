@@ -2164,6 +2164,13 @@ BlockingReason Thread::GetBlockingReason() const
 
 //------------------------------------------------------------------------------
 
+signal_t Thread::GetSignal() const
+{
+   return priv_->signal_;
+}
+
+//------------------------------------------------------------------------------
+
 TraceStatus Thread::GetStatus() const
 {
    return priv_->status_;

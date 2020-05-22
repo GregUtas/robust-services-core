@@ -196,6 +196,10 @@ public:
    //
    static bool HandleSignal(signal_t sig, uint32_t code);
 
+   //  Returns the signal, if any, that is currently being handled.
+   //
+   signal_t GetSignal() const;
+
    //  Clears status flags that prevent stack overflows.  This function is
    //  invoked during exception and signal handling so that logging and
    //  function tracing do not remain permanently disabled.

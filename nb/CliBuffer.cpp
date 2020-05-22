@@ -518,6 +518,10 @@ std::streamsize CliBuffer::ScanLine(const CliThread& cli)
 {
    Debug::ft(CliBuffer_ScanLine);
 
+   //  If the input ends with a CRLF, remove it.
+   //
+   if(!buff_.empty() && (buff_.back() == CRLF)) buff_.pop_back();
+
    //  Report failure if any input characters are non-printable.
    //
    for(pos_ = 0; pos_ < buff_.size(); ++pos_)

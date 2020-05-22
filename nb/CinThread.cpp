@@ -113,18 +113,22 @@ void CinThread::Enter()
          std::getline(source, buff_);
       ExitBlockingOperation(CinThread_Enter);
 
-      //  If there was an error, clear it.
+      //  Unless there was an error, sleep after notifying the client that
+      //  input is available.  This gives the client time to wake up and
+      //  process the input.  If there is no client, sleeping buffers the
+      //  input until a client requests it.  Append an endline to the input
+      //  so that we don't see buff_.empty() and immediately put the client
+      //  back to sleep when it requests the input.
       //
-      if(!source) source.clear();
-
-      //  If characters were entered, sleep.  Sleeping gives the client
-      //  time to wake up and process the input.  If there is no client,
-      //  sleeping buffers the input until a client requests it.
-      //
-      if(!buff_.empty())
+      if(source)
       {
+         buff_.push_back(CRLF);
          if(client_ != nullptr) client_->Interrupt();
          Pause(TIMEOUT_NEVER);
+      }
+      else
+      {
+         source.clear();
       }
    }
 }

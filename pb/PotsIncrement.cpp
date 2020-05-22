@@ -167,7 +167,7 @@ word CodesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(CodesCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    Singleton< ServiceCodeRegistry >::Instance()->Output(*cli.obuf, 2, true);
    return 0;
@@ -211,7 +211,7 @@ word DeactivateCommand::ProcessCommand(CliThread& cli) const
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
 
    if(!GetTextIndex(id2, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto ftr = pro->FindFeature(id2);
    if(ftr == nullptr) return cli.Report(-3, NotSubscribedExpl);
@@ -249,7 +249,7 @@ word DeregisterCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
@@ -300,7 +300,7 @@ word DnsCommand::ProcessCommand(CliThread& cli) const
       return -1;
    }
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< PotsProfileRegistry >::Instance();
 
@@ -370,7 +370,7 @@ word FeaturesCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< PotsFeatureRegistry >::Instance();
 
@@ -426,7 +426,7 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetCBV(*this, cli, c, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< MediaEndptPool >::Instance();
 
@@ -501,7 +501,7 @@ word RegisterCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
    if(pro != nullptr) return cli.Report(-3, AlreadyRegistered);
@@ -541,7 +541,7 @@ word ResetCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
@@ -607,7 +607,7 @@ word PbSizesCommand::ProcessCommand(CliThread& cli) const
    bool all = false;
 
    if(GetBoolParmRc(all, cli) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    *cli.obuf << spaces(2) << SizesHeader << CRLF;
    DisplaySizes(cli, all);
    return 0;
@@ -695,7 +695,7 @@ word TonesCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< ToneRegistry >::Instance();
 
@@ -757,7 +757,7 @@ word TsPortsCommand::ProcessCommand(CliThread& cli) const
       return -1;
    }
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto tsw = Singleton< Switch >::Instance();
 
@@ -824,7 +824,7 @@ word UnsubscribeCommand::ProcessCommand(CliThread& cli) const
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
 
    if(!GetTextIndex(id2, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    if(!pro->Unsubscribe(id2)) return -4;
    return cli.Report(0, SuccessExpl);

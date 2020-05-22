@@ -136,7 +136,7 @@ LibrarySet* LibraryCommand::Evaluate(const CliThread& cli)
 
    auto pos = cli.Prompt().size() + cli.ibuf->Pos();
    cli.ibuf->Read(expr);
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return nullptr;
 
    auto result = Singleton< Library >::Instance()->Evaluate(expr, pos);
    return result;
@@ -176,7 +176,7 @@ word AssignCommand::ProcessCommand(CliThread& cli) const
       Symbol::InvalidInitialChars())) return -1;
    auto pos = cli.Prompt().size() + cli.ibuf->Pos();
    cli.ibuf->Read(expr);
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto rc = Singleton< Library >::Instance()->Assign(name, expr, pos, expl);
    return cli.Report(rc, expl);
@@ -214,7 +214,7 @@ word CheckCommand::ProcessCommand(CliThread& cli) const
    if(!GetFileName(title, cli)) return -1;
 
    auto set = LibraryCommand::Evaluate(cli);
-   if(set == nullptr) return cli.Report(-7, AllocationError);
+   if(set == nullptr) return -1;
 
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
@@ -375,7 +375,7 @@ word CoverageCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case CoverageLoadIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = database->Load(expl);
       break;
 
@@ -385,18 +385,18 @@ word CoverageCommand::ProcessCommand(CliThread& cli) const
 
    case CoverageUnderIndex:
       if(!GetIntParm(min, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = database->Under(min, expl);
       break;
 
    case CoverageEraseIndex:
       if(!GetString(name, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = database->Erase(name, expl);
       break;
 
    case CoverageUpdateIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = database->Update(expl);
       break;
 
@@ -518,7 +518,7 @@ word ExplainCommand::ProcessCommand(CliThread& cli) const
    word id;
 
    if(!GetIntParm(id, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    string key = 'W' + std::to_string(id);
    auto path = Element::HelpPath() + PATH_SEPARATOR + "cppcheck.txt";
@@ -612,7 +612,7 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetFileName(title, cli)) return -1;
    GetString(opts, cli);
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    if(opts.empty())
    {
@@ -701,7 +701,7 @@ word FileIdCommand::ProcessCommand(CliThread& cli) const
    word fid;
 
    if(!GetIntParm(fid, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto file = Singleton< Library >::Instance()->Files().At(fid);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
@@ -747,7 +747,7 @@ word FileInfoCommand::ProcessCommand(CliThread& cli) const
    string name;
 
    if(!GetString(name, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto file = Singleton< Library >::Instance()->FindFile(name);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
@@ -904,7 +904,7 @@ word ImportCommand::ProcessCommand(CliThread& cli) const
    if(!GetIdentifier(name, cli, Symbol::ValidNameChars(),
       Symbol::InvalidInitialChars())) return -1;
    if(!GetString(subdir, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto lib = Singleton< Library >::Instance();
    string path(lib->SourcePath());
@@ -1073,7 +1073,7 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIdentifier(name, cli, Symbol::ValidNameChars(),
       Symbol::InvalidInitialChars())) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto rc = Singleton< Library >::Instance()->Purge(name, expl);
    return cli.Report(rc, expl);
@@ -1121,7 +1121,7 @@ word ScanCommand::ProcessCommand(CliThread& cli) const
    //
    auto pos = cli.Prompt().size() + cli.ibuf->Pos();
    cli.ibuf->Read(line);
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto quote1 = line.find(QUOTE);
    auto quote2 = line.rfind(QUOTE);
@@ -1229,7 +1229,7 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
    id_t index;
 
    if(!GetTextIndex(index, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    switch(index)
    {
@@ -1319,7 +1319,7 @@ word ShrinkCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(ShrinkCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    CxxStats::Shrink();
    return 0;
@@ -1544,12 +1544,12 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
       break;
 
    case ActionParm::Clear:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       Context::ClearTracepoints();
       return cli.Report(0, SuccessExpl);
 
    case ActionParm::List:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       Context::DisplayTracepoints(*cli.obuf, spaces(2));
       return 0;
 
@@ -1560,7 +1560,7 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
    if(!GetTextIndex(mode, cli)) return -1;
    if(!GetString(filename, cli)) return -1;
    if(!GetIntParm(line, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto lib = Singleton< Library >::Instance();
    auto file = lib->FindFile(filename);
@@ -1651,7 +1651,7 @@ word ExpCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(ExpCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    *cli.obuf << "This command currently does nothing." << CRLF;
    return 0;
 }

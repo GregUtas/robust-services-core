@@ -120,7 +120,7 @@ PotsFeatureProfile* PotsWmlFeature::Subscribe
          towarn = true;
       }
 
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return nullptr;
       if(dnwarn) *cli.obuf << spaces(2) << UnregisteredDnWarning << CRLF;
       if(towarn) *cli.obuf << spaces(2) << DefaultTimeoutWarning << CRLF;
    }
@@ -178,7 +178,7 @@ bool PotsWmlFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
       {
          timeout_ = timeout;
       }
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return nullptr;
       if(dnwarn) *cli.obuf << spaces(2) << UnregisteredDnWarning << CRLF;
       return true;
    }

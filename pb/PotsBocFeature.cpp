@@ -90,7 +90,7 @@ PotsFeatureProfile* PotsBocFeature::Subscribe
 {
    Debug::ft(PotsBocFeature_Subscribe);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return nullptr;
    return new PotsBocFeatureProfile;
 }
 

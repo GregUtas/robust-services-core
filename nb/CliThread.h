@@ -58,12 +58,12 @@ class CliThread : public Thread
    friend class HelpCommand;
    friend class QuitCommand;
 public:
-   //  Called once a command has been parsed.  Returns true if the input
-   //  stream contains no more non-blank characters.  Otherwise, an error
-   //  or warning message (as determined by ERROR) is output, indicating
-   //  where the superfluous input starts.
+   //  Called after a command has been parsed.  Returns true if the input
+   //  stream contains no more non-blank characters, else returns false
+   //  after clearing the input buffer and displaying an error message
+   //  that indicates where the superfluous input started.
    //
-   bool EndOfInput(bool error) const;
+   bool EndOfInput() const;
 
    //  Used to report the result of a command that returned RC.  EXPL is
    //  displayed as a success or failure explanation with INDENT leading

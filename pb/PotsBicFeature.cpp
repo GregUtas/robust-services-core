@@ -105,7 +105,7 @@ PotsFeatureProfile* PotsBicFeature::Subscribe
 {
    Debug::ft(PotsBicFeature_Subscribe);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return nullptr;
    return new PotsBicFeatureProfile;
 }
 }

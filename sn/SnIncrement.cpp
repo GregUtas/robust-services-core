@@ -84,7 +84,7 @@ word SnSizesCommand::ProcessCommand(CliThread& cli) const
    bool all = false;
 
    if(GetBoolParmRc(all, cli) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    *cli.obuf << spaces(2) << SizesHeader << CRLF;
    DisplaySizes(cli, all);
    return 0;
@@ -129,7 +129,7 @@ word TreatmentsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< PotsTreatmentRegistry >::Instance();
 

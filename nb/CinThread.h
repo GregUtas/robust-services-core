@@ -40,9 +40,10 @@ class CinThread : public Thread
    friend class Singleton< CinThread >;
 public:
    //  Reads input from the console and places it in BUFF.  Returns the number
-   //  of characters read (N >= 1).  If N <= 0, see StreamRc.  The client is
-   //  only scheduled out if input is not yet available, so it must not call
-   //  EnterBlockingOperation before it invokes this function.
+   //  of characters read (N >= 1); note that an endline is appended to BUFF.
+   //  If N <= 0, see StreamRc.  The client is only scheduled out if input is
+   //  not yet available, so it must not call EnterBlockingOperation before it
+   //  invokes this function.
    //
    static std::streamsize GetLine(std::string& buff);
 

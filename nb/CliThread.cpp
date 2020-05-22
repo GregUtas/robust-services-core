@@ -296,17 +296,13 @@ word CliThread::DisplayHelp(const string& path, const string& key) const
 
 fn_name CliThread_EndOfInput = "CliThread.EndOfInput";
 
-bool CliThread::EndOfInput(bool error) const
+bool CliThread::EndOfInput() const
 {
    Debug::ft(CliThread_EndOfInput);
 
    if(!ibuf->FindNextNonBlank()) return true;
 
-   if(error)
-      ibuf->ErrorAtPos(*this, "Error: extra input");
-   else
-      ibuf->ErrorAtPos(*this, "Extra input ignored");
-
+   ibuf->ErrorAtPos(*this, "Error: extra input");
    return false;
 }
 
@@ -744,7 +740,6 @@ void CliThread::ReadCommands()
                //  End of input stream.  Delete the stream and resume input
                //  from the previous stream.
                //
-               inFiles_.back().reset();
                inFiles_.pop_back();
                skip_ = true;
                return;

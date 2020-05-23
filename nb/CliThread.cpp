@@ -21,6 +21,7 @@
 //
 #include "CliThread.h"
 #include <algorithm>
+#include <bitset>
 #include <cctype>
 #include <cstdio>
 #include <ios>
@@ -57,7 +58,6 @@ using std::string;
 
 namespace NodeBase
 {
-constexpr size_t MaxInputDepth = 8;
 constexpr size_t MaxOutputDepth = 8;
 
 const char CliThread::CliPrompt = '>';
@@ -68,7 +68,6 @@ fn_name CliThread_ctor = "CliThread.ctor";
 
 CliThread::CliThread() :
    Thread(OperationsFaction, Singleton< CliDaemon >::Instance()),
-   skip_(false),
    command_(nullptr),
    result_(0)
 {
@@ -110,9 +109,7 @@ void CliThread::AllocResources()
    *obuf << std::boolalpha << std::nouppercase;
    stack_.reset(new CliStack);
    prompt_.clear();
-   skip_ = false;
    outFiles_.clear();
-   inFiles_.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -142,7 +139,7 @@ char CliThread::CharPrompt
    //  return the first character.
    //
    if(chars.empty()) return NUL;
-   if(!inFiles_.empty()) return chars.front();
+   if(ibuf->ReadingFromFile()) return chars.front();
 
    auto first = true;
    string text;
@@ -163,13 +160,12 @@ char CliThread::CharPrompt
       CoutThread::Spool(stream);
       first = false;
 
-      auto count = CinThread::GetLine(text);
+      if(CinThread::GetLine(text) < 0) return NUL;
 
-      if(count < 0) return NUL;
-
+      text.pop_back();
       FileThread::Record(text, true);
 
-      if(count == 1)
+      if(text.size() == 1)
       {
          auto c = (upper ? text[0] : tolower(text[0]));
          if(chars.find(c) != string::npos) return c;
@@ -204,7 +200,6 @@ void CliThread::Display(ostream& stream,
    stream << prefix << "stack : " << CRLF;
    stack_->Display(stream, lead1, options);
    stream << prefix << "prompt   : " << prompt_ << CRLF;
-   stream << prefix << "skip     : " << skip_ << CRLF;
    stream << prefix << "command  : " << strObj(command_) << CRLF;
    stream << prefix << "cookie   : " << CRLF;
    cookie_.Display(stream, lead1, options);
@@ -215,12 +210,6 @@ void CliThread::Display(ostream& stream,
    for(size_t i = 0; i < outFiles_.size(); ++i)
    {
       stream << lead1 << strIndex(i) << outFiles_.at(i) << CRLF;
-   }
-
-   stream << prefix << "inFiles : " << CRLF;
-   for(size_t i = 0; i < inFiles_.size(); ++i)
-   {
-      stream << lead1 << strIndex(i) << inFiles_.at(i).get() << CRLF;
    }
 
    stream << prefix << "appsData : " << CRLF;
@@ -422,13 +411,6 @@ CliAppData* CliThread::GetAppData(CliAppData::Id aid) const
 
 //------------------------------------------------------------------------------
 
-std::istream* CliThread::InputFile() const
-{
-   return (inFiles_.empty() ? nullptr : inFiles_.back().get());
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CliThread_IntPrompt = "CliThread.IntPrompt";
 
 word CliThread::IntPrompt(const string& prompt, word min, word max)
@@ -440,7 +422,7 @@ word CliThread::IntPrompt(const string& prompt, word min, word max)
    //  If input is being taken from a file rather than the console,
    //  return 0.
    //
-   if(!inFiles_.empty()) return 0;
+   if(ibuf->ReadingFromFile()) return 0;
 
    auto first = true;
    string text;
@@ -461,8 +443,8 @@ word CliThread::IntPrompt(const string& prompt, word min, word max)
       CoutThread::Spool(stream);
       first = false;
 
-      auto count = CinThread::GetLine(text);
-      if(count < 0) return result;
+      if(CinThread::GetLine(text) < 0) return -1;
+      text.pop_back();
 
       string input(text);
       FileThread::Record(input, true);
@@ -522,33 +504,6 @@ void CliThread::Notify(CliAppData::Event event) const
    {
       a->second->EventOccurred(event);
    }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CliThread_OpenInputFile = "CliThread.OpenInputFile";
-
-word CliThread::OpenInputFile(const string& name, string& expl)
-{
-   Debug::ft(CliThread_OpenInputFile);
-
-   if(inFiles_.size() >= MaxInputDepth)
-   {
-      expl = TooManyInputStreams;
-      return -7;
-   }
-
-   auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
-   auto file = SysFile::CreateIstream(path.c_str());
-
-   if(file != nullptr)
-   {
-      inFiles_.push_back(std::move(file));
-      return 0;
-   }
-
-   expl = NoFileExpl;
-   return -2;
 }
 
 //------------------------------------------------------------------------------
@@ -684,6 +639,8 @@ void CliThread::ReadCommands()
 {
    Debug::ft(CliThread_ReadCommands);
 
+   auto skip = false;  // suppresses the CLI prompt if set
+
    while(true)
    {
       //  Print the CLI prompt, which contains the name of the
@@ -693,7 +650,7 @@ void CliThread::ReadCommands()
       prompt.push_back(CliPrompt);
       prompt_ = prompt;
 
-      if(!skip_)
+      if(!skip)
       {
          CoutThread::Spool(prompt_.c_str());
 
@@ -703,7 +660,7 @@ void CliThread::ReadCommands()
          }
       }
 
-      skip_ = false;
+      skip = false;
 
       //  Read the user's input and parse it.
       //
@@ -721,10 +678,9 @@ void CliThread::ReadCommands()
          {
          case StreamEmpty:
             //
-            //  Display the prompt again only if reading from the console.
+            //  Redisplay the prompt again only if reading from the console.
             //
-            skip_ = !inFiles_.empty();
-            break;
+            skip = ibuf->ReadingFromFile();
 
          case StreamBadChar:
             //
@@ -735,21 +691,12 @@ void CliThread::ReadCommands()
 
          case StreamEof:
          case StreamFailure:
-            if(!inFiles_.empty())
-            {
-               //  End of input stream.  Delete the stream and resume input
-               //  from the previous stream.
-               //
-               inFiles_.pop_back();
-               skip_ = true;
-               return;
-            }
-
-            //  StreamEof and StreamFailure are not reported when reading from
-            //  the console.  Pause before continuing.
             //
-            Debug::SwLog(CliThread_ReadCommands, "invalid StreamRc", rc);
-            //  [fallthrough]
+            //  CliBuffer has handled the error.  Continue with the next input.
+            //
+            skip = true;
+            break;
+
          case StreamInterrupt:
          case StreamRestart:
             //
@@ -787,9 +734,9 @@ bool CliThread::Recover()
       //  abort whatever work was in progress.
       //
       appsData_.clear();
-      inFiles_.clear();
       outFiles_.clear();
       stream_.reset();
+      ibuf->Reset();
    }
 
    return true;
@@ -981,7 +928,7 @@ string CliThread::StrPrompt(const string& prompt)
    //  If input is being taken from a file rather than the console,
    //  return an empty string.
    //
-   if(!inFiles_.empty()) return EMPTY_STR;
+   if(ibuf->ReadingFromFile()) return EMPTY_STR;
 
    auto first = true;
    string text;
@@ -1002,10 +949,10 @@ string CliThread::StrPrompt(const string& prompt)
       CoutThread::Spool(stream);
       first = false;
 
-      auto count = CinThread::GetLine(text);
-      if(count < 0) return EMPTY_STR;
+      if(CinThread::GetLine(text) < 0) return EMPTY_STR;
+      text.pop_back();
 
-      if(count > 0)
+      if(!text.empty())
       {
          string input(text);
          FileThread::Record(input, true);

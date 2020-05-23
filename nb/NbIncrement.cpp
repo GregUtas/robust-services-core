@@ -2302,10 +2302,8 @@ word ReadCommand::ProcessCommand(CliThread& cli) const
    //
    if(name == "cin") return cli.Report(0, ConsoleAutomaticExpl);
 
-   auto rc = cli.OpenInputFile(name, expl);
+   auto rc = cli.ibuf->OpenInputFile(name, expl);
    if(rc != 0) return cli.Report(rc, expl);
-
-   cli.ReadCommands();
    return 0;
 }
 

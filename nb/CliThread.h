@@ -177,23 +177,9 @@ public:
    //
    const std::string& Prompt() const { return prompt_; }
 
-   //  Returns the file (if any) from which input is being read.
-   //
-   std::istream* InputFile() const;
-
    //  Returns the parse cookie.
    //
    CliCookie& Cookie() { return cookie_; }
-
-   //  Opens NAME.txt for reading input.  Returns 0 on success.  Returns
-   //  another value on failure after updating EXPL with an explanation.
-   //
-   word OpenInputFile(const std::string& name, std::string& expl);
-
-   //  Reads commands from the current input file (inFile_) or, if it is
-   //  empty, from the console via CinThread.
-   //
-   void ReadCommands();
 
    //  Overridden for restarts.
    //
@@ -227,6 +213,11 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~CliThread();
+
+   //  Reads commands from the current input file (inFile_) or, if it is
+   //  empty, from the console via CinThread.
+   //
+   void ReadCommands();
 
    //  Parses user input and returns the command to be executed.
    //  Returns nullptr if no command is to be invoked.
@@ -285,10 +276,6 @@ private:
    //
    std::string prompt_;
 
-   //  Set to suppress the prompt on a one-time basis.
-   //
-   bool skip_;
-
    //  The command currently being executed.
    //
    const CliCommand* command_;
@@ -310,12 +297,6 @@ private:
    //  via CoutThread, which copies it to the console transcript file.
    //
    std::vector< std::string > outFiles_;
-
-   //  The files from which input is being read; input is currently read
-   //  from inFile_.back().  If empty, input is read from the console via
-   //  CinThread.
-   //
-   std::vector< istreamPtr > inFiles_;
 
    //  Application-specific data.
    //

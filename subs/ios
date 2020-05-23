@@ -25,6 +25,7 @@ namespace std
       static const int binary = 32;
       enum seekdir {beg, cur, end};
       bool operator!() const;
+      explicit operator bool() const;
       void clear();
       bool eof() const;
       bool fail() const;

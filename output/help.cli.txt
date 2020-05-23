@@ -265,7 +265,7 @@ save              : Saves what was captured by trace tools.
     [<str>]       : options: t=suppress times; c=don't move ctors
 )
 
-if                : Executes rest of input line if condition is true.
+if                : Conditionally executes a CLI command.
   <int>           : symbol for an integer (e.g. &cli.result)
 (                 : relational operator...
   <               : less than
@@ -276,9 +276,9 @@ if                : Executes rest of input line if condition is true.
   >=              : greater than or equal to
 )
   <int>           : value for comparison
-  <str>           : CLI command to be executed if true
-  [else]          : precedes commands to be executed if false
-  [<str>]         : CLI command to be executed if false
+  <str>           : command to execute if condition is true
+  [else]          : precedes command to execute if condition is false
+  [<str>]         : command to execute if condition is false
 
 delay             : Pauses before executing the next command.
   (0:180)         : time (secs)

@@ -1359,16 +1359,16 @@ fixed_string IfValueExpl = "value for comparison";
 
 IfValue::IfValue() : CliIntParm(IfValueExpl, WORD_MIN, WORD_MAX) { }
 
-fixed_string CommandMandExpl = "CLI command to be executed if true";
+fixed_string CommandMandExpl = "command to execute if condition is true";
 
 CommandMandParm::CommandMandParm() : CliTextParm(CommandMandExpl, false, 0) { }
 
-fixed_string CommandOptExpl = "CLI command to be executed if false";
+fixed_string CommandOptExpl = "command to execute if condition is false";
 
 CommandOptParm::CommandOptParm() : CliTextParm(CommandOptExpl, true, 0) { }
 
 fixed_string ElseStr = "else";
-fixed_string ElseExpl = "precedes commands to be executed if false";
+fixed_string ElseExpl = "precedes command to execute if condition is false";
 
 ElseText::ElseText() : CliText(ElseExpl, ElseStr) { }
 
@@ -1378,7 +1378,7 @@ ElseParm::ElseParm() : CliTextParm(ElseExpl, true)
 }
 
 fixed_string IfStr = "if";
-fixed_string IfExpl = "Executes rest of input line if condition is true.";
+fixed_string IfExpl = "Conditionally executes a CLI command.";
 
 IfCommand::IfCommand() : CliCommand(IfStr, IfExpl)
 {
@@ -1444,7 +1444,7 @@ word IfCommand::ProcessCommand(CliThread& cli) const
    if(split != string::npos)
    {
       tcomm = comm.substr(0, split);
-      fcomm = comm.substr(split + 5);
+      fcomm = comm.substr(split + 6);
    }
 
    if(result)

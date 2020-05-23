@@ -276,6 +276,9 @@ if                : Executes rest of input line if condition is true.
   >=              : greater than or equal to
 )
   <int>           : value for comparison
+  <str>           : CLI command to be executed if true
+  [else]          : precedes commands to be executed if false
+  [<str>]         : CLI command to be executed if false
 
 delay             : Pauses before executing the next command.
   (0:180)         : time (secs)
@@ -552,6 +555,7 @@ recover           : Tests thread recovery.
   abort           : call abort()
   create          : create the recovery thread
   ctortrap        : trap in recovery thread constructor
+  dtortrap        : trap in recovery thread destructor
   delete          : delete the recovery thread
     (t|f)         : perform by 'this' (t) or by another thread (f)
   badptr          : dereference an invalid pointer

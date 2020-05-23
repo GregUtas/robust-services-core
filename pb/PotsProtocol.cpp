@@ -511,7 +511,7 @@ PotsDigitsParameter::PotsDigitsParameter() :
 
 fixed_string DigitsExpl = "digit string: (0..9|*|#)*";
 
-DigitsParm::DigitsParm() : CliTextParm(DigitsExpl) { }
+DigitsParm::DigitsParm() : CliTextParm(DigitsExpl, false, 0) { }
 
 CliParm* PotsDigitsParameter::CreateCliParm(Usage use) const
 {

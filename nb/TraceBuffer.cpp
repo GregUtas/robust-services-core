@@ -22,7 +22,6 @@
 #include "TraceBuffer.h"
 #include "TraceRecord.h"
 #include <cmath>
-#include <cstdint>
 #include <cstring>
 #include <new>
 #include <sstream>

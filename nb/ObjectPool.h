@@ -181,10 +181,6 @@ public:
    //
    bool Corrupt(size_t n);
 
-   //  Returns the offset to pid_.
-   //
-   static ptrdiff_t CellDiff();
-
    //  Overridden for restarts.
    //
    void Startup(RestartLevel level) override;
@@ -264,6 +260,10 @@ private:
    //  Accesses the header that resides above OBJ.
    //
    static ObjectBlock* ObjToBlock(const Pooled* obj);
+
+   //  Returns the offset to pid_.
+   //
+   static ptrdiff_t CellDiff();
 
    //  The pool's identifier.
    //

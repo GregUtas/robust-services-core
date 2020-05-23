@@ -178,7 +178,7 @@ bool PotsWmlFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
       {
          timeout_ = timeout;
       }
-      if(!cli.EndOfInput()) return nullptr;
+      if(!cli.EndOfInput()) return false;
       if(dnwarn) *cli.obuf << spaces(2) << UnregisteredDnWarning << CRLF;
       return true;
    }

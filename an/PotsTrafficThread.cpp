@@ -21,7 +21,6 @@
 //
 #include "PotsTrafficThread.h"
 #include "Dynamic.h"
-#include <cstdint>
 #include <iomanip>
 #include <sstream>
 #include "Algorithms.h"

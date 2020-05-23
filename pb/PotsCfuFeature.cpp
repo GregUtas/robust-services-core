@@ -141,7 +141,7 @@ bool PotsCfuFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 
    if(DnRouteFeatureProfile::Activate(profile, cli))
    {
-      if(!cli.EndOfInput()) return nullptr;
+      if(!cli.EndOfInput()) return false;
       auto reg = Singleton< PotsProfileRegistry >::Instance();
 
       if(reg->Profile(GetDN()) == nullptr)

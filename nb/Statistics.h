@@ -68,10 +68,6 @@ public:
    //
    virtual void DisplayStat(std::ostream& stream, const Flags& options) const;
 
-   //  Returns the offset to mid_.
-   //
-   static ptrdiff_t CellDiff();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -114,6 +110,10 @@ private:
    //  different behavior.
    //
    virtual void StartInterval(bool first);
+
+   //  Returns the offset to mid_.
+   //
+   static ptrdiff_t CellDiff();
 
    //  The statistic's index in StatisticsRegistry.
    //

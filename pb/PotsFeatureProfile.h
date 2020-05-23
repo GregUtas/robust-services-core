@@ -63,10 +63,6 @@ public:
    //
    PotsFeature::Id Fid() const { return fid_; }
 
-   //  Returns the offset to link_.
-   //
-   static ptrdiff_t LinkDiff();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -86,6 +82,10 @@ private:
    //  to perform feature-specific work when a feature is unsubscribed.
    //
    virtual bool Unsubscribe(PotsProfile& profile);
+
+   //  Returns the offset to link_.
+   //
+   static ptrdiff_t LinkDiff();
 
    //  The feature's identifier.
    //

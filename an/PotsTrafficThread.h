@@ -24,6 +24,7 @@
 
 #include "Thread.h"
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "BcAddress.h"

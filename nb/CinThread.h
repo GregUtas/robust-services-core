@@ -26,7 +26,6 @@
 #include <ios>
 #include <string>
 #include "NbTypes.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 

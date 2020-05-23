@@ -25,6 +25,7 @@
 #include "Permanent.h"
 #include <atomic>
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <map>
 #include <string>

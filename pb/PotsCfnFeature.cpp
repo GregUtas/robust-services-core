@@ -174,7 +174,7 @@ bool PotsCfnFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
          FunctionGuard guard(Guard_MemUnprotect);
          timeout_ = timeout;
       }
-      if(!cli.EndOfInput()) return nullptr;
+      if(!cli.EndOfInput()) return false;
 
       auto reg = Singleton< PotsProfileRegistry >::Instance();
 

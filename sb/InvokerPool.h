@@ -90,10 +90,6 @@ public:
    virtual void DisplayStats
       (std::ostream& stream, const NodeBase::Flags& options) const;
 
-   //  Returns the offset to faction_.
-   //
-   static ptrdiff_t CellDiff();
-
    //  Overridden for restarts.
    //
    void Startup(NodeBase::RestartLevel level) override;
@@ -207,6 +203,10 @@ private:
    //  Overridden to mark objects in the work queues as being in use.
    //
    void ClaimBlocks() override;
+
+   //  Returns the offset to faction_.
+   //
+   static ptrdiff_t CellDiff();
 
    //  The scheduler faction in which the pool's invokers run.
    //

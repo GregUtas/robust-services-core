@@ -92,10 +92,6 @@ public:
    virtual PotsFeatureProfile* Subscribe
       (PotsProfile& profile, CliThread& cli) const = 0;  //d
 
-   //  Returns the offset to fid_.
-   //
-   static ptrdiff_t CellDiff();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -120,6 +116,10 @@ private:
    //  Returns the parameters used to provision the feature.
    //
    virtual CliText* Attrs() const = 0;
+
+   //  Returns the offset to fid_.
+   //
+   static ptrdiff_t CellDiff();
 
    //  The feature's identifier in PotsFeatureRegistry.
    //

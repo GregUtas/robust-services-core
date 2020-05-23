@@ -112,7 +112,7 @@ bool GetIpL3Addr(SysIpL3Addr& input, const CliCommand& comm, CliThread& cli)
    //  Get the IP address string (n.n.n.n[:p]) and put it into a stream.
    //
    if(!comm.GetString(s, cli)) return false;
-   if(!cli.EndOfInput()) return -1;
+   if(!cli.EndOfInput()) return false;
 
    std::istringstream stream(s);
 

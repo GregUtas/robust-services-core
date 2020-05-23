@@ -21,6 +21,8 @@
 //
 #include "CliStack.h"
 #include <bitset>
+#include <cstddef>
+#include <cstdint>
 #include <ostream>
 #include "CliIncrement.h"
 #include "Debug.h"

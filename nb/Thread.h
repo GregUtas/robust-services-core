@@ -196,10 +196,6 @@ public:
    //
    static bool HandleSignal(signal_t sig, uint32_t code);
 
-   //  Returns the signal, if any, that is currently being handled.
-   //
-   signal_t GetSignal() const;
-
    //  Clears status flags that prevent stack overflows.  This function is
    //  invoked during exception and signal handling so that logging and
    //  function tracing do not remain permanently disabled.
@@ -227,10 +223,6 @@ public:
    //  statistics, but the base class version must be invoked.
    //
    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
-
-   //  Returns the offset to tid_.
-   //
-   static ptrdiff_t CellDiff();
 
    //  Overridden for restarts.  This is only invoked on threads that did
    //  not exit and survived the restart.
@@ -285,6 +277,10 @@ protected:
    //  compelling reasons.
    //
    virtual Duration InitialTime() const;
+
+   //  Returns the signal, if any, that is currently being handled.
+   //
+   signal_t GetSignal() const;
 
    //  Starts the next short interval for thread statistics.
    //
@@ -655,6 +651,10 @@ private:
    //  Displays context switches in STREAM.
    //
    static void DisplayContextSwitches(std::ostream& stream);
+
+   //  Returns the offset to tid_.
+   //
+   static ptrdiff_t CellDiff();
 
    //  The wrapper for the native thread.
    //

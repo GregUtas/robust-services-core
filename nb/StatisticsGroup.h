@@ -62,10 +62,6 @@ public:
    //
    id_t Gid() const { return gid_.GetId(); }
 
-   //  Returns the offset to gid_.
-   //
-   static ptrdiff_t CellDiff();
-
    //  Displays statistics in STREAM.  If ID is 0, all of the group's statistics
    //  are to be displayed, else only statistics associated with the identifier
    //  (e.g. an ObjectPool identifier) are to be displayed.  The default version
@@ -96,6 +92,10 @@ private:
    //  Returns the string that explains the group.
    //
    c_string Expl() const { return expl_.c_str(); }
+
+   //  Returns the offset to gid_.
+   //
+   static ptrdiff_t CellDiff();
 
    //  The group's index in StatisticsRegistry.
    //

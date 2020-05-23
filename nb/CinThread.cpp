@@ -121,7 +121,7 @@ void CinThread::Enter()
       //  so that we don't see buff_.empty() and immediately put the client
       //  back to sleep when it requests the input.
       //
-      if(source)
+      if(!source.fail())
       {
          buff_.push_back(CRLF);
          if(client_ != nullptr) client_->Interrupt();

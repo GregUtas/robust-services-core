@@ -866,7 +866,7 @@ public: TestResetText();
 
 fixed_string TestPrologExpl = "filename (none if omitted)";
 
-TestPrologParm::TestPrologParm() : CliTextParm(TestPrologExpl, true) { }
+TestPrologParm::TestPrologParm() : CliTextParm(TestPrologExpl, true, 0) { }
 
 fixed_string TestPrologTextStr = "prolog";
 fixed_string TestPrologTextExpl = "file to read before executing a testcase";
@@ -879,7 +879,7 @@ TestPrologText::TestPrologText() :
 
 fixed_string TestEpilogExpl = "filename (none if omitted)";
 
-TestEpilogParm::TestEpilogParm() : CliTextParm(TestEpilogExpl, true) { }
+TestEpilogParm::TestEpilogParm() : CliTextParm(TestEpilogExpl, true, 0) { }
 
 fixed_string TestEpilogTextStr = "epilog";
 fixed_string TestEpilogTextExpl = "file to read after a testcase passes";
@@ -892,7 +892,7 @@ TestEpilogText::TestEpilogText() :
 
 fixed_string TestRecoverExpl = "filename (epilog if omitted)";
 
-TestRecoverParm::TestRecoverParm() : CliTextParm(TestRecoverExpl, true) { }
+TestRecoverParm::TestRecoverParm() : CliTextParm(TestRecoverExpl, true, 0) { }
 
 fixed_string TestRecoverTextStr = "recover";
 fixed_string TestRecoverTextExpl = "file to read after a testcase fails";
@@ -905,7 +905,7 @@ TestRecoverText::TestRecoverText() :
 
 fixed_string TestBeginExpl = "testcase filename";
 
-TestBeginParm::TestBeginParm() : CliTextParm(TestBeginExpl) { }
+TestBeginParm::TestBeginParm() : CliTextParm(TestBeginExpl, false, 0) { }
 
 fixed_string TestBeginTextStr = "begin";
 fixed_string TestBeginTextExpl =
@@ -928,7 +928,7 @@ TestFailCodeParm::TestFailCodeParm() :
 
 fixed_string TestFailExpl = "explanation for failure";
 
-TestFailExplParm::TestFailExplParm() : CliTextParm(TestFailExpl, true) { }
+TestFailExplParm::TestFailExplParm() : CliTextParm(TestFailExpl, true, 0) { }
 
 fixed_string TestFailedTextStr = "failed";
 fixed_string TestFailedTextExpl = "records that the current testcase failed";
@@ -958,7 +958,7 @@ TestQueryText::TestQueryText() :
 
 fixed_string TestEraseExpl = "testcase name";
 
-TestEraseParm::TestEraseParm() : CliTextParm(TestEraseExpl) { }
+TestEraseParm::TestEraseParm() : CliTextParm(TestEraseExpl, false, 0) { }
 
 fixed_string TestEraseTextStr = "erase";
 fixed_string TestEraseTextExpl = "removes a testcase from the database";
@@ -4478,7 +4478,7 @@ ReturnText::ReturnText() : CliText(ReturnTextExpl, ReturnTextStr) { }
 
 fixed_string SignalParmExpl = "signal's name ('SIG...')";
 
-SignalParm::SignalParm() : CliTextParm(SignalParmExpl) { }
+SignalParm::SignalParm() : CliTextParm(SignalParmExpl, false, 0) { }
 
 //------------------------------------------------------------------------------
 

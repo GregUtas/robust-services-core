@@ -111,11 +111,6 @@ CliBuffer::CharType CliBuffer::CalcType(bool quoted)
    {
       switch(buff_[pos_])
       {
-      case CommentChar:
-         if(quoted) return Regular;
-         pos_ = buff_.size();
-         return EndOfLine;
-
       case StringChar:
          return String;
 
@@ -649,21 +644,39 @@ std::streamsize CliBuffer::ScanLine(const CliThread& cli)
    if(!buff_.empty() && (buff_.back() == CRLF)) buff_.pop_back();
 
    auto& source = sources_.front();
+   auto quoted = false;
    string s;
 
-   //  Handle any escape and break characters in the input stream.
-   //  Report failure if any input character is non-printable.
-   //
    for(size_t i = 0; i < buff_.size(); ++i)
    {
       switch(buff_[i])
       {
+      case String:
+         quoted = !quoted;
+         break;
+
+      case CommentChar:
+         //
+         //  Ignore the rest of the input unless this appears in a string.
+         //
+         if(quoted)
+            s.push_back(buff_[i]);
+         else
+            i = buff_.size();
+         break;
+
       case EscapeChar:
+         //
+         //  Add the next character to the string without interpreting it.
+         //
          ++i;
          if(i < buff_.size()) s.push_back(buff_[i]);
          break;
 
       case BreakChar:
+         //
+         //  Save the string before the break character and start a new one.
+         //
          source.inputs_.push_back(s);
          s.clear();
          break;

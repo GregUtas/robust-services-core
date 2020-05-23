@@ -557,7 +557,7 @@ public: CallingParm();
 
 fixed_string CallingExpl = "calling DN (digit string)";
 
-CallingParm::CallingParm() : CliTextParm(CallingExpl) { }
+CallingParm::CallingParm() : CliTextParm(CallingExpl, false, 0) { }
 
 CliParm* CipCallingParameter::CreateCliParm(Usage use) const
 {
@@ -581,7 +581,7 @@ public: CalledParm();
 
 fixed_string CalledExpl = "called DN (digit string)";
 
-CalledParm::CalledParm() : CliTextParm(CalledExpl) { }
+CalledParm::CalledParm() : CliTextParm(CalledExpl, false, 0) { }
 
 CliParm* CipCalledParameter::CreateCliParm(Usage use) const
 {
@@ -607,7 +607,7 @@ fixed_string OriginalCallingExpl = "original calling DN (digit string)";
 fixed_string OriginalCallingTag = "oclg";
 
 OriginalCallingParm::OriginalCallingParm() :
-   CliTextParm(OriginalCallingExpl, true, 32, OriginalCallingTag) { }
+   CliTextParm(OriginalCallingExpl, true, 0, OriginalCallingTag) { }
 
 CliParm* CipOriginalCallingParameter::CreateCliParm(Usage use) const
 {
@@ -633,7 +633,7 @@ fixed_string OriginalCalledExpl = "original called DN (digit string)";
 fixed_string OriginalCalledTag = "ocld";
 
 OriginalCalledParm::OriginalCalledParm() :
-   CliTextParm(OriginalCalledExpl, true, 32, OriginalCalledTag) { }
+   CliTextParm(OriginalCalledExpl, true, 0, OriginalCalledTag) { }
 
 CliParm* CipOriginalCalledParameter::CreateCliParm(Usage use) const
 {

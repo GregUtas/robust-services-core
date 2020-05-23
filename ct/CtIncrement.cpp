@@ -87,19 +87,19 @@ public: VarMandName();
 
 fixed_string CodeSetExprExpl = "a set of code files or directories";
 
-CodeSetExprParm::CodeSetExprParm() : CliTextParm(CodeSetExprExpl) { }
+CodeSetExprParm::CodeSetExprParm() : CliTextParm(CodeSetExprExpl, false, 0) { }
 
 fixed_string FileSetExprExpl = "a set of code files";
 
-FileSetExprParm::FileSetExprParm() : CliTextParm(FileSetExprExpl) { }
+FileSetExprParm::FileSetExprParm() : CliTextParm(FileSetExprExpl, false, 0) { }
 
 fixed_string SetExprExpl = "a set of code files or directories";
 
-SetExprParm::SetExprParm() : CliTextParm(SetExprExpl) { }
+SetExprParm::SetExprParm() : CliTextParm(SetExprExpl, false, 0) { }
 
 fixed_string VarMandNameExpl = "variable name";
 
-VarMandName::VarMandName() : CliTextParm(VarMandNameExpl) { }
+VarMandName::VarMandName() : CliTextParm(VarMandNameExpl, false, 0) { }
 
 //------------------------------------------------------------------------------
 //
@@ -297,7 +297,7 @@ public: FuncNameParm();
 
 fixed_string FuncNameParmExpl = "name of function to remove";
 
-FuncNameParm::FuncNameParm() : CliTextParm(FuncNameParmExpl) { }
+FuncNameParm::FuncNameParm() : CliTextParm(FuncNameParmExpl, false, 0) { }
 
 fixed_string CoverageEraseTextStr = "erase";
 fixed_string CoverageEraseTextExpl = "removes a function from the database";
@@ -546,7 +546,7 @@ public: ViewsParm();
 
 fixed_string ViewsExpl = "options (enter \">help export full\" for details)";
 
-ViewsParm::ViewsParm() : CliTextParm(ViewsExpl, true) { }
+ViewsParm::ViewsParm() : CliTextParm(ViewsExpl, true, 0) { }
 
 class ExportCommand : public CliCommand
 {
@@ -728,7 +728,7 @@ private:
 
 fixed_string CodeFileExpl = "filename (including extension)";
 
-CodeFileParm::CodeFileParm() : CliTextParm(CodeFileExpl) { }
+CodeFileParm::CodeFileParm() : CliTextParm(CodeFileExpl, false, 0) { }
 
 fixed_string FileInfoStr = "fileinfo";
 fixed_string FileInfoExpl = "Displays information about a code file.";
@@ -878,11 +878,11 @@ private:
 
 fixed_string DirMandNameExpl = "directory name";
 
-DirMandName::DirMandName() : CliTextParm(DirMandNameExpl) { }
+DirMandName::DirMandName() : CliTextParm(DirMandNameExpl, false, 0) { }
 
 fixed_string PathMandExpl = "path within SourcePath configuration parameter";
 
-PathMandParm::PathMandParm() : CliTextParm(PathMandExpl) { }
+PathMandParm::PathMandParm() : CliTextParm(PathMandExpl, false, 0) { }
 
 fixed_string ImportStr = "import";
 fixed_string ImportExpl = "Adds a directory to the code base.";
@@ -962,7 +962,8 @@ public: ParseOptionsParm();
 fixed_string ParseOptionsExpl =
    "options (enter \">help parse full\" for details)";
 
-ParseOptionsParm::ParseOptionsParm() : CliTextParm(ParseOptionsExpl) { }
+ParseOptionsParm::ParseOptionsParm() :
+   CliTextParm(ParseOptionsExpl, false, 0) { }
 
 class DefineFileParm : public CliTextParm
 {
@@ -972,7 +973,7 @@ public: DefineFileParm();
 fixed_string DefineFileExpl =
    "file for #define symbols (.txt in input directory)";
 
-DefineFileParm::DefineFileParm() : CliTextParm(DefineFileExpl) { }
+DefineFileParm::DefineFileParm() : CliTextParm(DefineFileExpl, false, 0) { }
 
 class ParseCommand : public LibraryCommand
 {
@@ -1098,7 +1099,8 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
 
 fixed_string StringPatternExpl = "string to look for (quoted; '$' = wildcard)";
 
-StringPatternParm::StringPatternParm() : CliTextParm(StringPatternExpl) { }
+StringPatternParm::StringPatternParm() :
+   CliTextParm(StringPatternExpl, false, 0) { }
 
 fixed_string ScanStr = "scan";
 fixed_string ScanExpl = "Scans files for lines that contain a string.";
@@ -1384,7 +1386,7 @@ public: FileNameParm();
 
 fixed_string FileNameExpl = "name of source code file";
 
-FileNameParm::FileNameParm() : CliTextParm(FileNameExpl) { }
+FileNameParm::FileNameParm() : CliTextParm(FileNameExpl, false, 0) { }
 
 class LineNumberParm : public CliIntParm
 {

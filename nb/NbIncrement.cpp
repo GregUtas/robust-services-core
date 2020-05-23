@@ -101,7 +101,7 @@ public: AlarmParm();
 
 fixed_string AlarmExpl = "alarm name";
 
-AlarmParm::AlarmParm() : CliTextParm(AlarmExpl) { }
+AlarmParm::AlarmParm() : CliTextParm(AlarmExpl, false, 0) { }
 
 class AlarmsListText : public CliText
 {
@@ -448,11 +448,11 @@ private:
 
 fixed_string CfgParmNameExpl = "name of configuration parameter";
 
-CfgParmName::CfgParmName() : CliTextParm(CfgParmNameExpl) { }
+CfgParmName::CfgParmName() : CliTextParm(CfgParmNameExpl, false, 0) { }
 
 fixed_string CfgParmValueExpl = "value of configuration parameter";
 
-CfgParmValue::CfgParmValue() : CliTextParm(CfgParmValueExpl) { }
+CfgParmValue::CfgParmValue() : CliTextParm(CfgParmValueExpl, false, 0) { }
 
 fixed_string CfgParmsListStr = "list";
 fixed_string CfgParmsListExpl = "lists all configuration parameters";
@@ -1143,11 +1143,11 @@ private:
 
 fixed_string HelpIncrExpl = "name of increment";
 
-HelpIncrParm::HelpIncrParm() : CliTextParm(HelpIncrExpl, true) { }
+HelpIncrParm::HelpIncrParm() : CliTextParm(HelpIncrExpl, true, 0) { }
 
 fixed_string HelpCommExpl = "name of command ('full' = all commands)";
 
-HelpCommParm::HelpCommParm() : CliTextParm(HelpCommExpl, true) { }
+HelpCommParm::HelpCommParm() : CliTextParm(HelpCommExpl, true, 0) { }
 
 class HelpFullText : public CliText
 {
@@ -1323,6 +1323,26 @@ public:
    IfValue();
 };
 
+class CommandMandParm : public CliTextParm
+{
+public: CommandMandParm();
+};
+
+class ElseText : public CliText
+{
+public: ElseText();
+};
+
+class ElseParm : public CliTextParm
+{
+public: ElseParm();
+};
+
+class CommandOptParm : public CliTextParm
+{
+public: CommandOptParm();
+};
+
 class IfCommand : public CliCommand
 {
 public:
@@ -1339,6 +1359,24 @@ fixed_string IfValueExpl = "value for comparison";
 
 IfValue::IfValue() : CliIntParm(IfValueExpl, WORD_MIN, WORD_MAX) { }
 
+fixed_string CommandMandExpl = "CLI command to be executed if true";
+
+CommandMandParm::CommandMandParm() : CliTextParm(CommandMandExpl, false, 0) { }
+
+fixed_string CommandOptExpl = "CLI command to be executed if false";
+
+CommandOptParm::CommandOptParm() : CliTextParm(CommandOptExpl, true, 0) { }
+
+fixed_string ElseStr = "else";
+fixed_string ElseExpl = "precedes commands to be executed if false";
+
+ElseText::ElseText() : CliText(ElseExpl, ElseStr) { }
+
+ElseParm::ElseParm() : CliTextParm(ElseExpl, true)
+{
+   BindText(*new ElseText, 1);
+}
+
 fixed_string IfStr = "if";
 fixed_string IfExpl = "Executes rest of input line if condition is true.";
 
@@ -1347,6 +1385,9 @@ IfCommand::IfCommand() : CliCommand(IfStr, IfExpl)
    BindParm(*new IfSymbol);
    BindParm(*new RelationParm);
    BindParm(*new IfValue);
+   BindParm(*new CommandMandParm);
+   BindParm(*new ElseParm);
+   BindParm(*new CommandOptParm);
 }
 
 fn_name IfCommand_ProcessCommand = "IfCommand.ProcessCommand";
@@ -1396,9 +1437,24 @@ word IfCommand::ProcessCommand(CliThread& cli) const
    //  the rest of the input line.  If it contains anything, execute it
    //  as a command; otherwise, report that the outcome was true.
    //
-   if(!result) return cli.Report(0, ReturnFalse);
-   if(!comm.empty()) return cli.Execute(comm);
-   return cli.Report(1, ReturnTrue);
+   string tcomm(comm);
+   string fcomm(EMPTY_STR);
+   auto split = comm.find(" else ");
+
+   if(split != string::npos)
+   {
+      tcomm = comm.substr(0, split);
+      fcomm = comm.substr(split + 5);
+   }
+
+   if(result)
+   {
+      if(!tcomm.empty()) return cli.Execute(tcomm);
+      return cli.Report(1, ReturnTrue);
+   }
+
+   if(!fcomm.empty()) return cli.Execute(fcomm);
+   return cli.Report(1, ReturnFalse);
 }
 
 //------------------------------------------------------------------------------
@@ -2048,7 +2104,7 @@ private:
 
 fixed_string PrintParmExpl = "the string to be written to the console";
 
-PrintParm::PrintParm() : CliTextParm(PrintParmExpl) { }
+PrintParm::PrintParm() : CliTextParm(PrintParmExpl, false, 0) { }
 
 fixed_string PrintStr = "print";
 fixed_string PrintExpl = "Writes a string to the console.";
@@ -2272,7 +2328,7 @@ private:
 
 fixed_string ReadWhereExpl = "read input from <str>.txt";
 
-ReadWhereParm::ReadWhereParm() : CliTextParm(ReadWhereExpl) { }
+ReadWhereParm::ReadWhereParm() : CliTextParm(ReadWhereExpl, false, 0) { }
 
 fixed_string ReadStr = "read";
 fixed_string ReadExpl = "Reads commands from a file.";
@@ -2455,7 +2511,7 @@ public: SetOptionsParm();
 
 fixed_string SetOptionsExpl = "options: t=suppress times; c=don't move ctors";
 
-SetOptionsParm::SetOptionsParm() : CliTextParm(SetOptionsExpl, true) { }
+SetOptionsParm::SetOptionsParm() : CliTextParm(SetOptionsExpl, true, 0) { }
 
 const string& ValidSetOptions = "tc";
 
@@ -2900,7 +2956,7 @@ BuffWrapText::BuffWrapText() : CliText(BuffWrapTextExpl, BuffWrapTextStr)
 
 fixed_string ToolListExpl = "tools to set: string of tool abbreviations";
 
-ToolListParm::ToolListParm() : CliTextParm(ToolListExpl) { }
+ToolListParm::ToolListParm() : CliTextParm(ToolListExpl, false, 0) { }
 
 fixed_string ToolListTextStr = "tools";
 fixed_string ToolListTextExpl =
@@ -3049,7 +3105,8 @@ public: StartOptionsParm();
 
 fixed_string StartOptionsExpl = "options: i=immediate";
 
-StartOptionsParm::StartOptionsParm() : CliTextParm(StartOptionsExpl, true) { }
+StartOptionsParm::StartOptionsParm() :
+   CliTextParm(StartOptionsExpl, true, 0) { }
 
 const string& ValidStartOptions = "i";
 
@@ -3474,16 +3531,15 @@ private:
 
 fixed_string SymbolOptNameExpl = "symbol's name (lists all if omitted)";
 
-SymbolOptName::SymbolOptName() :
-   CliTextParm(SymbolOptNameExpl, true) { }
+SymbolOptName::SymbolOptName() : CliTextParm(SymbolOptNameExpl, true, 0) { }
 
 fixed_string SymbolMandNameExpl = "symbol's name";
 
-SymbolMandName::SymbolMandName() : CliTextParm(SymbolMandNameExpl) { }
+SymbolMandName::SymbolMandName() : CliTextParm(SymbolMandNameExpl, false, 0) { }
 
 fixed_string SymbolValueExpl = "symbol's value (symbol deleted if omitted)";
 
-SymbolValue::SymbolValue() : CliTextParm(SymbolValueExpl, true) { }
+SymbolValue::SymbolValue() : CliTextParm(SymbolValueExpl, true, 0) { }
 
 fixed_string SymbolsListStr = "list";
 fixed_string SymbolsListExpl = "lists symbols";

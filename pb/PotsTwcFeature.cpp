@@ -102,7 +102,7 @@ PotsFeatureProfile* PotsTwcFeature::Subscribe
 {
    Debug::ft(PotsTwcFeature_Subscribe);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return nullptr;
 
    FunctionGuard guard(Guard_MemUnprotect);
    return new PotsTwcFeatureProfile;

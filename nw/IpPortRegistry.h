@@ -37,7 +37,7 @@ namespace NetworkBase
 
 namespace NetworkBase
 {
-//  Global registry for IP ports that receive messages for applications.
+//  Global registry for IP ports that receive messages for services.
 //
 class IpPortRegistry : public NodeBase::Protected
 {
@@ -100,7 +100,7 @@ private:
    //
    SysIpL2Addr hostAddr_;
 
-   //  The element's IP address.
+   //  The string associated with element's IP address.
    //
    NodeBase::ProtectedStr hostAddrStr_;
 

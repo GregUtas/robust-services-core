@@ -38,7 +38,7 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  Global registry for Tool subclasses.
+//  Global registry for debug tools.
 //
 class ToolRegistry : public Immutable
 {
@@ -90,7 +90,7 @@ private:
    //
    static const size_t MaxTools;
 
-   //  The global registry of CLI increments.
+   //  The global registry of debug tools.
    //
    Registry< Tool > tools_;
 };

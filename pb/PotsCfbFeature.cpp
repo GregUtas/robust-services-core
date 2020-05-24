@@ -92,7 +92,7 @@ PotsFeatureProfile* PotsCfbFeature::Subscribe
 
    if(cli.Command()->GetIntParmRc(dn, cli) == CliParm::Ok)
    {
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return nullptr;
       auto reg = Singleton< PotsProfileRegistry >::Instance();
 
       if(reg->Profile(dn) == nullptr)
@@ -139,7 +139,7 @@ bool PotsCfbFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 
    if(DnRouteFeatureProfile::Activate(profile, cli))
    {
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return false;
       auto reg = Singleton< PotsProfileRegistry >::Instance();
 
       if(reg->Profile(GetDN()) == nullptr)

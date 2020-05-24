@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CliCookie.h"
+#include <cstddef>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -34,11 +35,9 @@ namespace NodeBase
 {
 fn_name CliCookie_ctor = "CliCookie.ctor";
 
-CliCookie::CliCookie() : depth_(0)
+CliCookie::CliCookie()
 {
    Debug::ft(CliCookie_ctor);
-
-   for(size_t i = 0; i < MaxParmDepth; ++i) index_[i] = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -60,7 +59,7 @@ void CliCookie::Advance()
 
    //  Advance to the next parameter at the current level in the tree.
    //
-   index_[depth_]++;
+   ++index_.back();
 }
 
 //------------------------------------------------------------------------------
@@ -74,7 +73,8 @@ void CliCookie::Ascend()
    //  There are no more parameters at the current level, so back up
    //  and look for the next parameter at the previous level.
    //
-   index_[--depth_]++;
+   index_.pop_back();
+   ++index_.back();
 }
 
 //------------------------------------------------------------------------------
@@ -87,10 +87,7 @@ void CliCookie::Descend()
 
    //  Look for the first parameter at the next level.
    //
-   if(depth_ < MaxParmDepth - 1)
-   {
-      index_[++depth_] = 1;
-   }
+   index_.push_back(1);
 }
 
 //------------------------------------------------------------------------------
@@ -104,11 +101,8 @@ void CliCookie::Descend(uint32_t index)
    //  Record INDEX as the offset where a parameter was found at the next
    //  level, and then look for the first parameter at the subsequent level.
    //
-   if(depth_ < MaxParmDepth - 2)
-   {
-      index_[++depth_] = index;
-      index_[++depth_] = 1;
-   }
+   index_.push_back(index);
+   index_.push_back(1);
 }
 
 //------------------------------------------------------------------------------
@@ -120,22 +114,22 @@ void CliCookie::Display(ostream& stream,
 
    stream << prefix << "index : { ";
 
-   for(size_t i = 0; i < MaxParmDepth; ++i)
+   auto last = index_.size() - 1;
+
+   for(size_t i = 0; i <= last; ++i)
    {
-      stream << index_[i] << SPACE;
-      if(depth_ == i) stream << "/ ";
+      stream << index_.at(i);
+      if(i != last) stream << ", ";
    }
 
-   stream << '}' << CRLF;
-
-   stream << prefix << "depth : " << depth_ << CRLF;
+   stream << " }" << CRLF;
 }
 
 //------------------------------------------------------------------------------
 
 uint32_t CliCookie::Index(uint32_t depth) const
 {
-   if(depth <= depth_) return index_[depth];
+   if(depth < index_.size()) return index_.at(depth);
    return 0;
 }
 
@@ -149,8 +143,8 @@ void CliCookie::Initialize()
 
    //  Look for the first parameter at level 0.
    //
-   depth_ = 0;
-   index_[0] = 1;
+   index_.clear();
+   index_.push_back(1);
 }
 
 //------------------------------------------------------------------------------

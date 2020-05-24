@@ -40,7 +40,8 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  A set of related CLI commands.
+//  A set of related CLI commands.  Currently, each corresponds one-to-one
+//  with a static library.
 //
 class CliIncrement : public Immutable
 {

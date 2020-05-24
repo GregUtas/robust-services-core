@@ -29,6 +29,7 @@
 #include "NbCliParms.h"
 #include "Registry.h"
 
+using std::ostream;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -61,7 +62,7 @@ bool CliCommandSet::BindCommand(CliCommand& comm)
    Debug::ft(CliCommandSet_BindCommand);
 
    //  Generate a log and fail if
-   //  o COMM has no name (a wildcard match), or
+   //  o COMM has no name
    //  o another entry has the same name as COMM, which would make
    //    COMM inaccessible.
    //
@@ -99,6 +100,41 @@ bool CliCommandSet::BindParm(CliParm& parm)
    //
    Debug::SwLog(CliCommandSet_BindParm, strClass(&parm), Parms().Size());
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CliCommandSet_ExplainCommand = "CliCommandSet.ExplainCommand";
+
+word CliCommandSet::ExplainCommand(ostream& stream, bool verbose) const
+{
+   Debug::ft(CliCommandSet_ExplainCommand);
+
+   if(verbose)
+   {
+      //  This class optimizes out the CliTextParm that would otherwise hold
+      //  the commands in the set, so include the symbols which indicate that
+      //  one of our subcommands must follow our command name.
+      //
+      CliParm::Explain(stream, 0);
+
+      stream << MandParmBegin << CRLF;
+
+      auto& parms = Parms();
+
+      for(auto p = parms.First(); p != nullptr; parms.Next(p))
+      {
+         p->Explain(stream, 2);
+      }
+
+      stream << MandParmEnd << CRLF;
+   }
+   else
+   {
+      CliCommand::ExplainCommand(stream, verbose);
+   }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------

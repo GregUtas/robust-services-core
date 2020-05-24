@@ -25,10 +25,16 @@
 #include "Temporary.h"
 #include <cstddef>
 #include <ios>
+#include <list>
 #include <memory>
 #include <string>
 #include "CliParm.h"
 #include "SysTypes.h"
+
+namespace NodeBase
+{
+   struct CliSource;
+}
 
 //------------------------------------------------------------------------------
 
@@ -67,6 +73,10 @@ public:
    //
    static const char SymbolChar;
 
+   //  The character that separates multiple commands entered on one line.
+   //
+   static const char BreakChar;
+
    //  Highlights faulty user input during command parsing.
    //
    static fixed_string ErrorPointer;
@@ -80,7 +90,7 @@ public:
    //  Converts S to an integer, supplying it in N and returning Ok
    //  on success.  HEX is true if the integer is in hex.
    //
-   static CliParm::Rc GetInt(std::string& s, word& n, bool hex);
+   static CliParm::Rc GetInt(const std::string& s, word& n, bool hex);
 
    //  Returns the current parse location in the input stream.
    //
@@ -96,10 +106,11 @@ public:
    //  blanks as the length of the current CLI prompt, plus the user's
    //  input, up to P.  Append an error pointer to this string and output
    //  it.  Then output EXPL and, if input is being read from a file, add
-   //  the line and column where the error occurred.
+   //  the line and column where the error occurred.  Clears buff_ before
+   //  returning so that the rest of the input line will be ignored.
    //
    void ErrorAtPos(const CliThread& cli,
-      const std::string& expl, std::streamsize p = -1) const;
+      const std::string& expl, std::streamsize p = -1);
 
    //  Returns the rest (unread portion) of the input line in S.
    //
@@ -108,6 +119,15 @@ public:
    //  Outputs the rest (unread portion) of the input line to the console.
    //
    void Print();
+
+   //  Opens NAME.txt for reading input.  Returns 0 on success.  Returns
+   //  another value on failure after updating EXPL with an explanation.
+   //
+   word OpenInputFile(const std::string& name, std::string& expl);
+
+   //  Returns true if input is being taken from a file.
+   //
+   bool ReadingFromFile() const;
 
    //  Overridden to display member variables.
    //
@@ -149,6 +169,11 @@ private:
    //
    std::streamsize ScanLine(const CliThread& cli);
 
+   //  Fetches the next command from the current input line.  Returns false
+   //  if there are no more commands.
+   //
+   bool GetNextInput();
+
    //  Returns a string that echoes the user's input.
    //
    std::string Echo() const;
@@ -173,21 +198,24 @@ private:
    //
    std::streamsize PutLine(const CliThread& cli, const std::string& input);
 
-   //> The maximum number of characters in a line of user input.
+   //  Releases all input files so that input will again be taken from the
+   //  console.
    //
-   static const size_t BuffSize = 2 * COUT_LENGTH_MAX;
+   void Reset();
 
-   //  Buffer for user input.
+   //  Contains the input currently being processed.
    //
-   char buff_[BuffSize];
-
-   //  The number of characters in buff_.
-   //
-   std::streamsize size_;
+   std::string buff_;
 
    //  Index of the next character to be read from buff_.
    //
-   std::streamsize pos_;
+   size_t pos_;
+
+   //  The source(s) for CLI input.  This acts as a stack, with the console
+   //  at the bottom, and files from which input is being read being pushed
+   //  onto the stack.
+   //
+   std::list< CliSource > sources_;
 };
 }
 #endif

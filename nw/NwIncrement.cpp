@@ -85,20 +85,20 @@ word NwClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    {
    case PeerIndex:
       if(!GetIpL3Addr(targ, *this, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nwt->SelectPeer(targ, TraceDefault);
       break;
    case PeersIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nwt->ClearSelections(TracePeer);
       break;
    case PortIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nwt->SelectPort(id, TraceDefault);
       break;
    case PortsIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nwt->ClearSelections(TracePort);
       break;
    default:
@@ -144,12 +144,12 @@ word NwExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    {
    case ExcludePeerIndex:
       if(!GetIpL3Addr(targ, *this, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nwt->SelectPeer(targ, TraceExcluded);
       break;
    case ExcludePortIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nwt->SelectPort(id, TraceExcluded);
       break;
    default:
@@ -195,12 +195,12 @@ word NwIncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    {
    case IncludePeerIndex:
       if(!GetIpL3Addr(targ, *this, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nwt->SelectPeer(targ, TraceIncluded);
       break;
    case IncludePortIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nwt->SelectPort(id, TraceIncluded);
       break;
    default:
@@ -302,20 +302,20 @@ word IpCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case HostNameIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       if(!SysIpL2Addr::HostName(name)) return cli.Report(-2, NoHostNameExpl);
       return cli.Report(0, name);
    case NameToAddrIndex:
       if(!GetString(name, cli)) return -1;
       if(!GetString(service, cli)) service.clear();
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       host = SysIpL3Addr(name, service, proto);
       if(!host.IsValid()) return cli.Report(-2, NoHostAddrExpl);
       *cli.obuf << spaces(2) << host.to_str() << CRLF;
       break;
    case AddrToNameIndex:
       if(!GetIpL3Addr(host, *this, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       if(!host.AddrToName(name, service)) return cli.Report(-2, NoHostInfoExpl);
       *cli.obuf << spaces(2) << name;
       if(!service.empty()) *cli.obuf << " : " << service;
@@ -367,7 +367,7 @@ word IpPortsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< IpPortRegistry >::Instance();
 

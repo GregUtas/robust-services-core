@@ -149,12 +149,22 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
       return rc;
    }
 
+   auto& files = Singleton< Library >::Instance()->Files();
+
+   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   {
+      if(files.At(*f)->ParseStatus() != CodeFile::Passed)
+      {
+         expl = "Files to be checked must first be successfully parsed.";
+         return rc;
+      }
+   }
+
    //  To avoid generating spurious warnings, all files affected by those to be
    //  checked, as well as all files that affect them, must have been parsed.
    //  As long as one of them has been parsed, we can parse the others because
    //  the target (operating system and word size) is already known.
    //
-   auto& files = Singleton< Library >::Instance()->Files();
    auto abSet = static_cast< CodeFileSet* >(this->AffectedBy());
    auto asSet = static_cast< CodeFileSet* >(this->Affecters());
    auto parseSet = new SetOfIds;

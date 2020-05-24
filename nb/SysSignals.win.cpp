@@ -40,7 +40,7 @@ private:
 };
 
 SigBreak::SigBreak() : PosixSignal(SIGBREAK, "SIGBREAK",
-   "Ctrl-Break", 8, PS_Native() | PS_Break()) { }
+   "Ctrl-Break", 8, PS_Native() | PS_Break() | PS_Interrupt()) { }
 
 //------------------------------------------------------------------------------
 

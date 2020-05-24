@@ -39,7 +39,7 @@ using namespace NodeBase;
 
 namespace PotsBase
 {
-//  Registry for the singleton instances of PotsFeature subclasses.
+//  Registry for POTS features.
 //
 class PotsFeatureRegistry : public Immutable
 {
@@ -82,7 +82,7 @@ private:
    //
    void UnbindFeature(PotsFeature& feature);
 
-   //  The registry of PotsFeature subclasses.
+   //  The registry of POTS features.
    //
    Registry< PotsFeature > features_;
 

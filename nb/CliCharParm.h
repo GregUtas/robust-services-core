@@ -34,8 +34,8 @@ namespace NodeBase
 class CliCharParm : public CliParm
 {
 public:
-   //  HELP, OPT, and TAG are passed to CliParm.  CHARS lists the characters
-   //  that are valid for this parameter.
+   //  HELP, OPT, and TAG are passed to CliParm.  CHARS lists the
+   //  characters that are valid for this parameter.
    //
    CliCharParm(c_string help, c_string chars,
       bool opt = false, c_string tag = nullptr);

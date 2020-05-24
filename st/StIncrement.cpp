@@ -131,7 +131,7 @@ word StCorruptCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    PooledObjectId bid;
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< ContextPool >::Instance();
    auto ctx = static_cast< Context* >(pool->FirstUsed(bid));
@@ -337,7 +337,7 @@ word InjectCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    //  Inject the message.  If there is no session, have the factory send
    //  the message directly.  If there is a session, queue the message and
@@ -438,18 +438,18 @@ word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    string title;
    auto debug = false;
 
+   auto yield = cli.GenerateReportPreemptably();
+   FunctionGuard guard(Guard_MakePreemptable, yield);
+
    if(!GetFileName(title, cli)) return -1;
    if(GetBoolParmRc(debug, cli) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
    auto buff = Singleton< TraceBuffer >::Instance();
    if(buff->Empty()) return ExplainTraceRc(cli, BufferEmpty);
-
-   auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    std::unique_ptr< MscBuilder > msc(new MscBuilder(debug));
    rc = msc->Generate(*stream);
@@ -528,7 +528,7 @@ word StSizesCommand::ProcessCommand(CliThread& cli) const
    auto all = false;
 
    if(GetBoolParmRc(all, cli) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    *cli.obuf << spaces(2) << SizesHeader << CRLF;
    DisplaySizes(cli, all);
    return 0;
@@ -608,7 +608,7 @@ word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       auto flag = false;
 
       if(!GetTextIndex(setHowIndex, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       flag = (setHowIndex == SetHowParm::On);
       test->SetVerify(flag);
       return cli.Report(0, SuccessExpl);
@@ -830,7 +830,7 @@ word VerifyCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    delete msg;
    if(failed) return -3;
    return cli.Report(0, SuccessExpl);

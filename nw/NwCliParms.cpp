@@ -45,7 +45,8 @@ fixed_string NoIpPortExpl   = "Nothing is registered against that IP port.";
 
 fixed_string HostNameMandExpl = "name of host";
 
-HostNameMandParm::HostNameMandParm() : CliTextParm(HostNameMandExpl) { }
+HostNameMandParm::HostNameMandParm() :
+   CliTextParm(HostNameMandExpl, false, 0) { }
 
 //------------------------------------------------------------------------------
 
@@ -56,7 +57,7 @@ public: IpAddrTextParm();
 
 fixed_string IpAddrTextParmExpl = "IP address and optional port: n.n.n.n[:p]";
 
-IpAddrTextParm::IpAddrTextParm() : CliTextParm(IpAddrTextParmExpl) { }
+IpAddrTextParm::IpAddrTextParm() : CliTextParm(IpAddrTextParmExpl, false, 0) { }
 
 IpAddrParm::IpAddrParm(c_string help, c_string text) :
    CliText(help, text)
@@ -112,7 +113,7 @@ bool GetIpL3Addr(SysIpL3Addr& input, const CliCommand& comm, CliThread& cli)
    //  Get the IP address string (n.n.n.n[:p]) and put it into a stream.
    //
    if(!comm.GetString(s, cli)) return false;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return false;
 
    std::istringstream stream(s);
 
@@ -168,5 +169,5 @@ IpPortOptParm::IpPortOptParm() :
 fixed_string ServiceNameOptExpl = "name of IP service (or port number)";
 
 ServiceNameOptParm::ServiceNameOptParm() :
-   CliTextParm(ServiceNameOptExpl, true) { }
+   CliTextParm(ServiceNameOptExpl, true, 0) { }
 }

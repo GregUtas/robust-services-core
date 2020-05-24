@@ -19,65 +19,6 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-//  The Command Line Interpreter (CLI) allows applications (grouped into
-//  "increments") to register themselves so that they can be invoked from an
-//  input stream.  The CLI reads input from the stream and passes it to the
-//  appropriate increment.  An increment defines commands that may also take
-//  parameters.  Because each increment, command, and parameter is a subclass
-//  of a common set of CLI base classes, all CLI applications have a common
-//  look and feel.
-//
-//  When a user inputs an increment's name, the CLI enters that increment.  The
-//  increment's commands then become available in the foreground.  For example:
-//
-//    >sb         // enters the SessionBase increment
-//    >protocols  // lists all protocols supported by SessionBase applications
-//
-//  If an increment has not been entered, its commands can nevertheless be
-//  accessed by prefixing them with the increment's name.  For example:
-//
-//    >sb protocols  // does not remain in the SessionBase increment
-//
-//  The CLI itself provides some basic commands in the NodeBase increment:
-//
-//    >help                // lists commands supported by the CLI
-//    >help <incr>         // lists commands supported by an increment
-//    >help <incr> <comm>  // provides help on an increment's command
-//    >help <comm>         // same as help <incr> <comm> if already in <incr>
-//    >incrs               // lists all registered increments
-//    >send <file>         // sends output to file.txt ("cout" = to console)
-//    >quit                // exits the most recently entered increment
-//    >quit all            // exits all increments
-//
-//  Most CLI input is converted to lower case.  A string defined for a command
-//  or parameter must be in lower case, or the CLI will not recognize it.  One
-//  exception is that values for configuration parameters (input through the
-//  "setparm" command) are not converted to lower case.
-//
-//  In the following list, classes marked with a '*' are subclassed (or used
-//  directly) to create application-specific CLI objects.
-//
-// *CliIncrement:    Subclassed to define an increment.
-// *CliCommand:      Subclassed by each of an increment's commands.
-//  CliParm:         A command takes zero or more parameters.  Subclasses
-//                   define actual parameter types:
-//    *CliText:      A string that is followed by zero or more parameters.
-//                   It is subclassed to define CliCommand and to define
-//                   the individual strings that a CliTextParm accepts.
-//    *CliIntParm:   An integer parameter
-//    *CliBoolParm:  A boolean parameter
-//    *CliCharParm:  A character parameter
-//    *CliPtrParm:   A pointer parameter
-//    *CliTextParm:  A text parameter (any string or *one* from a list).
-//  CliRegistry:     Registry for increments.
-//  CliStack:        Tracks active increments.
-//  CliBuffer:       Reads and parses user input.
-//  CliThread:       Reads user input and invokes the appropriate increment.
-//  CliAppData:      Provides application-specific storage for CliThread.
-//  Symbol:          A string that may be used instead of a CLI parameter's
-//                   value; often a mnemonic for an integer constant.
-//  SymbolRegistry:  Registry for symbols.
-//
 #ifndef CLIPARM_H_INCLUDED
 #define CLIPARM_H_INCLUDED
 
@@ -96,10 +37,69 @@ namespace NodeBase
 }
 
 //------------------------------------------------------------------------------
-
+//
+//  The Command Line Interpreter (CLI) allows "increments" (applications) to
+//  register so that they can be invoked from an input stream.  The CLI reads
+//  input from the stream and passes it to the appropriate increment.  Each
+//  increment defines commands that may also take parameters.  Because each
+//  increment, command, and parameter derives from a common set of CLI base
+//  classes, all CLI applications behave in a similar way.
+//
+//  When a user inputs an increment's name, the CLI enters that increment.  The
+//  increment's commands then become available in the foreground.  For example:
+//
+//    >sb         // enters the SessionBase increment
+//    >protocols  // lists all protocols supported by SessionBase applications
+//
+//  If an increment has not been entered, its commands can nevertheless be
+//  accessed by prefixing them with the increment's name.  For example:
+//
+//    >sb protocols  // does not remain in the SessionBase increment
+//
+//  The CLI itself provides some basic commands in the NodeBase increment,
+//  whose commands always remain available:
+//
+//    >help                // lists commands supported by the CLI
+//    >help <incr>         // lists commands supported by an increment
+//    >help <incr> <comm>  // provides help on an increment's command
+//    >help <comm>         // same as help <incr> <comm> if already in <incr>
+//    >incrs               // lists all registered increments
+//    >send <file>         // sends output to file.txt ("cout" = to console)
+//    >quit                // exits the most recently entered increment
+//    >quit all            // exits all increments
+//
+//  To match a command name or parameter value, CLI input must generally use
+//  the same case (upper or lower).
+//
+//  In the following list, classes marked with a '*' are subclassed (or used
+//  directly) to create application-specific CLI objects.
+//
+// *CliIncrement:    Subclassed to define an increment
+// *CliCommand:      Subclassed by each of an increment's commands
+// *CliCommandSet:   Subclassed to group commands under an "umbrella" command
+//  CliParm:         A command takes zero or more parameters.  Subclasses of
+//                   CliParm define actual parameter types:
+//    *CliText:      A string that is followed by zero or more parameters.
+//                   Subclassed to define CliCommand and the specific strings
+//                   that a CliTextParm accepts.
+//    *CliIntParm:   An integer parameter
+//    *CliBoolParm:  A boolean parameter
+//    *CliCharParm:  A character parameter
+//    *CliPtrParm:   A pointer parameter
+//    *CliTextParm:  A text parameter (any string, or one specified in a list)
+//  CliRegistry:     Registry for increments
+//  CliStack:        Tracks active increments
+//  CliBuffer:       Reads and parses user input
+//  CliCookie:       Tracks the current location in the "tree" of parameters
+//  CliThread:       Reads user input and invokes the appropriate increment
+// *CliAppData:      Provides application-specific storage on CliThread
+//  Symbol:          A string that may be used instead of a CLI parameter's
+//                   value; often a mnemonic for an integer constant
+//  SymbolRegistry:  Registry for symbols
+//
 namespace NodeBase
 {
-//  A virtual class that defines functions common to CLI parameters.
+//  Virtual base class for CLI parameters.
 //
 class CliParm : public Immutable
 {
@@ -220,13 +220,13 @@ public:
    //
    virtual Rc GetStringRc(std::string& s, CliThread& cli) const;
 
-   //  Returns the next parameter in S if it is a valid filename.  Used
-   //  when a filename is mandatory.
+   //  Returns the next parameter in S if it is a valid filename.
+   //  Used when a filename is mandatory.
    //
    bool GetFileName(std::string& s, CliThread& cli) const;
 
-   //  Returns the next parameter in S if it is a valid filename.  Used
-   //  when a filename is optional.
+   //  Returns the next parameter in S if it is a valid filename.
+   //  Used when a filename is optional.
    //
    virtual Rc GetFileNameRc(std::string& s, CliThread& cli) const;
 
@@ -256,7 +256,8 @@ public:
    //
    c_string Tag() const { return tag_; }
 
-   //  Sets the registry index required by the parameter.
+   //  Sets the registry index where the parameter was placed (or where
+   //  it *must* be placed, if specified before it is registered).
    //
    void SetId(id_t id) { pid_.SetId(id); }
 
@@ -305,8 +306,8 @@ protected:
 
    //  HELP explains the parameter's purpose.  OPT indicates whether it is
    //  mandatory or optional.  TAG may be used for an optional parameter:
-   //  it allows the parameter to appear in any order, tagged with "<tag>=".
-   //  Protected because this class is virtual.
+   //  it allows the parameter to appear in any order, tagged with "<tag>="
+   //  (unquoted).  Protected because this class is virtual.
    //
    CliParm(c_string help, bool opt, c_string tag);
 private:

@@ -213,48 +213,48 @@ word SbClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    switch(index)
    {
    case SelectionsIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->ClearSelections(TraceAll);
       break;
    case FactoryIndex:
       if(!GetIntParm(id1, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectFactory(id1, TraceDefault);
       break;
    case FactoriesIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->ClearSelections(TraceFactory);
       break;
    case ProtocolIndex:
       if(!GetIntParm(id1, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectProtocol(id1, TraceDefault);
       break;
    case ProtocolsIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->ClearSelections(TraceProtocol);
       break;
    case SignalIndex:
       if(!GetIntParm(id1, cli)) return -1;
       if(!GetIntParm(id2, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectSignal(id1, id2, TraceDefault);
       break;
    case SignalsIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->ClearSelections(TraceSignal);
       break;
    case ServiceIndex:
       if(!GetIntParm(id1, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectService(id1, TraceDefault);
       break;
    case ServicesIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->ClearSelections(TraceService);
       break;
    case TimersIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectTimers(TraceDefault);
       break;
    default:
@@ -293,7 +293,7 @@ word ContextsCommand::ProcessCommand(CliThread& cli) const
    bool c, v;
 
    if(GetCBV(*this, cli, c, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< ContextPool >::Instance();
    auto num = pool->InUseCount();
@@ -348,7 +348,7 @@ word EventsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
 
@@ -419,31 +419,31 @@ word SbExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    {
    case FactoryIndex:
       if(!GetIntParm(id1, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectFactory(id1, TraceExcluded);
       break;
 
    case ProtocolIndex:
       if(!GetIntParm(id1, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectProtocol(id1, TraceExcluded);
       break;
 
    case ServiceIndex:
       if(!GetIntParm(id1, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectService(id1, TraceExcluded);
       break;
 
    case SignalIndex:
       if(!GetIntParm(id1, cli)) return -1;
       if(!GetIntParm(id2, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectSignal(id1, id2, TraceExcluded);
       break;
 
    case TimersIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectTimers(TraceExcluded);
       break;
 
@@ -492,7 +492,7 @@ word FactoriesCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< FactoryRegistry >::Instance();
 
@@ -551,7 +551,7 @@ word HandlersCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
@@ -616,31 +616,31 @@ word SbIncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    {
    case FactoryIndex:
       if(!GetIntParm(id1, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectFactory(id1, TraceIncluded);
       break;
 
    case ProtocolIndex:
       if(!GetIntParm(id1, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectProtocol(id1, TraceIncluded);
       break;
 
    case SignalIndex:
       if(!GetIntParm(id1, cli)) return -1;
       if(!GetIntParm(id2, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectSignal(id1, id2, TraceIncluded);
       break;
 
    case ServiceIndex:
       if(!GetIntParm(id1, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectService(id1, TraceIncluded);
       break;
 
    case TimersIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = sbt->SelectTimers(TraceIncluded);
       break;
 
@@ -689,7 +689,7 @@ word InvPoolsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< InvokerPoolRegistry >::Instance();
 
@@ -746,7 +746,7 @@ word KillCommand::ProcessCommand(CliThread& cli) const
    std::ostringstream prompt;
 
    if(!GetPtrParm(p, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    prompt << BadObjectPtrWarning << CRLF << ContinuePrompt;
    if(!cli.BoolPrompt(prompt.str())) return cli.Report(0, CommandAbortedExpl);
@@ -800,7 +800,7 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetCBV(*this, cli, c, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< MessagePool >::Instance();
 
@@ -887,7 +887,7 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetCBV(*this, cli, c, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< MsgPortPool >::Instance();
 
@@ -975,7 +975,7 @@ word ParametersCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid);
    if(pro == nullptr) return cli.Report(-2, NoProtocolExpl);
@@ -1043,7 +1043,7 @@ word ProtocolsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< ProtocolRegistry >::Instance();
 
@@ -1099,7 +1099,7 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetCBV(*this, cli, c, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< ProtocolSMPool >::Instance();
 
@@ -1204,7 +1204,7 @@ word ServicesCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< ServiceRegistry >::Instance();
 
@@ -1263,7 +1263,7 @@ word SignalsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid);
    if(pro == nullptr) return cli.Report(-2, NoProtocolExpl);
@@ -1331,7 +1331,7 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetCBV(*this, cli, c, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< ServiceSMPool >::Instance();
 
@@ -1418,7 +1418,7 @@ word StatesCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);
@@ -1542,7 +1542,7 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetCBV(*this, cli, c, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< TimerPool >::Instance();
 
@@ -1631,7 +1631,7 @@ word TriggersCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
    if(svc == nullptr) return cli.Report(-2, NoServiceExpl);

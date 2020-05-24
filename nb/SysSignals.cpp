@@ -91,7 +91,7 @@ SigIll::SigIll() : PosixSignal(SIGILL, "SIGILL",
 //------------------------------------------------------------------------------
 
 SigInt::SigInt() : PosixSignal(SIGINT, "SIGINT",
-   "Terminal Interrupt", 8, PS_Native() | PS_Break()) { }
+   "Terminal Interrupt", 8, PS_Native() | PS_Break() | PS_Interrupt()) { }
 
 //------------------------------------------------------------------------------
 

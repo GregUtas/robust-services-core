@@ -21,7 +21,6 @@
 //
 #include "PotsTrafficThread.h"
 #include "Dynamic.h"
-#include <cstdint>
 #include <iomanip>
 #include <sstream>
 #include "Algorithms.h"
@@ -1038,8 +1037,8 @@ const size_t PotsTrafficThread::NumOfSlots =
    1000 * PotsTrafficThread::MaxDelaySecs / PotsTrafficThread::MsecsToSleep + 1;
 const Address::DN PotsTrafficThread::StartDN = 30001;
 const secs_t PotsTrafficThread::HoldingTimeSecs = 35;
-const size_t PotsTrafficThread::DNsPer100Calls = 165;
-const size_t PotsTrafficThread::MaxCallsPerMin =
+const uint32_t PotsTrafficThread::DNsPer100Calls = 165;
+const uint32_t PotsTrafficThread::MaxCallsPerMin =
    (Address::LastDN - PotsTrafficThread::StartDN + 1) *  // number of DNs
    (6000 / PotsTrafficThread::HoldingTimeSecs) /         // 100 * calls/DN/min
    (3 * PotsTrafficThread::DNsPer100Calls / 2);          // 100 * DNs/call + 50%
@@ -1435,7 +1434,7 @@ void PotsTrafficThread::SendMessages()
 
 fn_name PotsTrafficThread_SetRate = "PotsTrafficThread.SetRate";
 
-void PotsTrafficThread::SetRate(word rate)
+void PotsTrafficThread::SetRate(uint32_t rate)
 {
    Debug::ft(PotsTrafficThread_SetRate);
 
@@ -1487,8 +1486,8 @@ void PotsTrafficThread::SetRate(word rate)
 
    if(callsPerMin_ > 0)
    {
-      size_t ticksPerMin = 60000 / MsecsToSleep;
-      size_t CallsPerTick1000 = (1000 * rate) / ticksPerMin;
+      uint32_t ticksPerMin = 60000 / MsecsToSleep;
+      uint32_t CallsPerTick1000 = (1000 * rate) / ticksPerMin;
 
       milCallsPerTick_ = CallsPerTick1000 % 1000;
       maxCallsPerTick_ = (CallsPerTick1000 / 1000) << 1;

@@ -96,7 +96,7 @@ PotsFeatureProfile* PotsHtlFeature::Subscribe
    word dn;
 
    if(!cli.Command()->GetIntParm(dn, cli)) return nullptr;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return nullptr;
 
    if(Singleton< PotsProfileRegistry >::Instance()->Profile(dn) == nullptr)
       *cli.obuf << spaces(2) << UnregisteredDnWarning << CRLF;

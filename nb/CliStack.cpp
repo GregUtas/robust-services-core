@@ -21,6 +21,8 @@
 //
 #include "CliStack.h"
 #include <bitset>
+#include <cstddef>
+#include <cstdint>
 #include <ostream>
 #include "CliIncrement.h"
 #include "Debug.h"
@@ -37,11 +39,9 @@ namespace NodeBase
 {
 fn_name CliStack_ctor = "CliStack.ctor";
 
-CliStack::CliStack() : top_(0)
+CliStack::CliStack()
 {
    Debug::ft(CliStack_ctor);
-
-   increments_[0] = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -54,9 +54,9 @@ CliStack::~CliStack()
 
    //  Exit all active increments.
    //
-   for(auto i = top_; i >= 0; --i)
+   for(size_t i = increments_.size() - 1; i != SIZE_MAX; --i)
    {
-      if(increments_[i] != nullptr) increments_[i]->Exit();
+      increments_.at(i)->Exit();
    }
 }
 
@@ -67,25 +67,23 @@ void CliStack::Display(ostream& stream,
 {
    Temporary::Display(stream, prefix, options);
 
-   stream << prefix << "top : " << top_ << CRLF;
-
    auto lead1 = prefix + spaces(2);
    auto lead2 = prefix + spaces(4);
 
    stream << prefix << "increments : " << CRLF;
 
-   for(auto i = top_; i >= 0; --i)
+   for(size_t i = increments_.size() - 1; i != SIZE_MAX; --i)
    {
       stream << lead1 << strIndex(i);
 
-      if((increments_[i] != nullptr) && options.test(DispVerbose))
+      if(options.test(DispVerbose))
       {
          stream << CRLF;
-         increments_[i]->Display(stream, lead2, options);
+         increments_.at(i)->Display(stream, lead2, options);
       }
       else
       {
-         stream << strObj(increments_[i]) << CRLF;
+         stream << strObj(increments_.at(i)) << CRLF;
       }
    }
 }
@@ -113,13 +111,13 @@ const CliCommand* CliStack::FindCommand
    //  a command.  If more than one increment has TEXT as a command,
    //  the most recently entered increment gets to handle it.
    //
-   for(auto i = top_; i >= 0; --i)
+   for(size_t i = increments_.size() - 1; i != SIZE_MAX; --i)
    {
-      auto c = increments_[i]->FindCommand(comm);
+      auto c = increments_.at(i)->FindCommand(comm);
 
       if(c != nullptr)
       {
-         incr = increments_[i];
+         incr = increments_.at(i);
          return c;
       }
    }
@@ -137,9 +135,9 @@ CliIncrement* CliStack::FindIncrement(const string& name) const
 
    //  Search the active increments for the one that is known by NAME.
    //
-   for(auto i = top_; i >= 0; --i)
+   for(size_t i = increments_.size() - 1; i != SIZE_MAX; --i)
    {
-      if(increments_[i]->Name() == name) return increments_[i];
+      if(increments_.at(i)->Name() == name) return increments_.at(i);
    }
 
    return nullptr;
@@ -163,9 +161,10 @@ bool CliStack::Pop()
    //  Exit the increment on top of the stack, but always keep the NodeBase
    //  increment.
    //
-   if(top_ > 0)
+   if(increments_.size() > 1)
    {
-      increments_[top_--]->Exit();
+      increments_.back()->Exit();
+      increments_.pop_back();
       return true;
    }
 
@@ -176,20 +175,12 @@ bool CliStack::Pop()
 
 fn_name CliStack_Push = "CliStack.Push";
 
-bool CliStack::Push(CliIncrement& incr)
+void CliStack::Push(CliIncrement& incr)
 {
    Debug::ft(CliStack_Push);
 
-   //  If there is space on the stack, add INCR.
-   //
-   if(top_ < MaxIncrDepth)
-   {
-      increments_[++top_] = &incr;
-      incr.Enter();
-      return true;
-   }
-
-   return false;
+   increments_.push_back(&incr);
+   incr.Enter();
 }
 
 //------------------------------------------------------------------------------
@@ -203,9 +194,9 @@ void CliStack::SetRoot(CliIncrement& root)
    //  If the stack is empty, add ROOT (the NodeBase increment) as the
    //  first increment.
    //
-   if(increments_[0] == nullptr)
+   if(increments_.empty())
    {
-      increments_[0] = &root;
+      increments_.push_back(&root);
       root.Enter();
    }
 }
@@ -218,6 +209,6 @@ CliIncrement* CliStack::Top() const
 {
    Debug::ft(CliStack_Top);
 
-   return increments_[top_];
+   return (increments_.empty() ? nullptr : increments_.back());
 }
 }

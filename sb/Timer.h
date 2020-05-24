@@ -47,10 +47,6 @@ public:
    //
    ProtocolSM* Psm() const { return psm_; }
 
-   //  Returns the offset to link_.
-   //
-   static ptrdiff_t LinkDiff();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -109,6 +105,10 @@ private:
    //  Timer queue identifier.
    //
    typedef int QId;
+
+   //  Returns the offset to link_.
+   //
+   static ptrdiff_t LinkDiff();
 
    //  Nil timer queue identifier, which allows array index 0 to be used.
    //

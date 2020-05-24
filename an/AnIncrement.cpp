@@ -137,7 +137,7 @@ word TrafficCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case TrafficStatesIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       *cli.obuf << "Basic call states:" << CRLF;
       BcSsm::DisplayStateCounts(*cli.obuf, spaces(2));
       *cli.obuf << "POTS circuit states:" << CRLF;
@@ -148,12 +148,12 @@ word TrafficCommand::ProcessCommand(CliThread& cli) const
 
    case TrafficRateIndex:
       if(!GetIntParm(rate, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       Singleton< PotsTrafficThread >::Instance()->SetRate(rate);
       break;
 
    case TrafficQueryIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       Singleton< PotsTrafficThread >::Instance()->Query(*cli.obuf);
       break;
 

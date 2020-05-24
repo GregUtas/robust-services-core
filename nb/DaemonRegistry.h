@@ -36,8 +36,7 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  Database for code coverage, which maps functions to the testcases that
-//  execute them.
+//  Global registry for daemons.
 //
 class DaemonRegistry : public Permanent
 {

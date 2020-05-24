@@ -2009,7 +2009,7 @@ bool Thread::ExitOnRestart(RestartLevel level) const
    //  has no mechanism for interrupting it.
    //
    if(faction_ >= SystemFaction) return false;
-   if(priv_->blocked_ == BlockedOnConsole) return false;
+   if(priv_->blocked_ == BlockedOnStream) return false;
    return true;
 }
 
@@ -2160,6 +2160,13 @@ void Thread::FunctionInvoked(fn_name_arg func, const std::nothrow_t&)
 BlockingReason Thread::GetBlockingReason() const
 {
    return priv_->blocked_;
+}
+
+//------------------------------------------------------------------------------
+
+signal_t Thread::GetSignal() const
+{
+   return priv_->signal_;
 }
 
 //------------------------------------------------------------------------------

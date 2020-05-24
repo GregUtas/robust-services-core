@@ -45,25 +45,22 @@ public:
    //
    typedef int Id;
 
-   //> Highest valid CLI application identifier.
-   //
-   static const Id MaxId = 7;
-
-   //  Events of interest to applications.
+   //  Events of interest to applications.  They are defined here because
+   //  they are broadcast to all applications running on the CLI thread.
    //
    enum Event
    {
-      EndOfTest
+      EndOfTest  // current testcase completed
    };
 
    //  Returns the CLI thread associated with the data.
    //
    CliThread* Cli() const { return cli_; }
 
-   //  Notifies the application that an event has occurred.  The default
+   //  Notifies the application that EVENT has occurred.  The default
    //  version does nothing.
    //
-   virtual void EventOccurred(Event evt);
+   virtual void EventOccurred(Event event);
 
    //  Overridden to display member variables.
    //
@@ -95,8 +92,7 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  Identifiers for applications that register data with a CliThread.  Each is
-//  treated as a CliAppData::Id (an int) above.
+//  Identifiers for applications that register data with a CliThread.
 //
 constexpr CliAppData::Id TestcaseAppId = 0;
 constexpr CliAppData::Id TestSessionAppId = 1;

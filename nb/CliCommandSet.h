@@ -58,6 +58,11 @@ protected:
    //
    CliCommandSet(c_string comm, c_string help, uint32_t size = 32);
 private:
+   //  Overridden to display the subcommands as if they were grouped
+   //  within a CliTextParm.
+   //
+   word ExplainCommand(std::ostream& stream, bool verbose) const override;
+
    //  Overridden to find and invoke a subcommand.
    //
    word ProcessCommand(CliThread& cli) const override;

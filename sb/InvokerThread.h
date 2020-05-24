@@ -60,10 +60,6 @@ public:
    //
    NodeBase::TimePoint Time0() const { return time0_; }
 
-   //  Returns the offset to iid_.
-   //
-   static ptrdiff_t CellDiff2();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -126,6 +122,10 @@ private:
    //  Overridden to handle any context assigned to the context.
    //
    void Shutdown(NodeBase::RestartLevel level) override;
+
+   //  Returns the offset to iid_.
+   //
+   static ptrdiff_t CellDiff2();
 
    //  The thread's identifier in its InvokerPool.
    //

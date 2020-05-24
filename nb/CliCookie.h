@@ -23,23 +23,19 @@
 #define CLICOOKIE_H_INCLUDED
 
 #include "Object.h"
-#include <cstddef>
 #include <cstdint>
+#include <vector>
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-//  Accesses the current location in a command's parameter tree when parsing
-//  the input stream.
+//  Accesses the current location in a CLI command's parameter tree when
+//  parsing the input stream.
 //
 class CliCookie : public Object
 {
 public:
-   //> The maximum depth of CLI parameter nesting.
-   //
-   static const size_t MaxParmDepth = 9;
-
    //  Public so that an instance can be declared as a member.
    //
    CliCookie();
@@ -87,11 +83,7 @@ public:
 private:
    //  The current location at each level in the parameter tree.
    //
-   uint32_t index_[MaxParmDepth];
-
-   //  The current depth in the parameter tree.
-   //
-   uint32_t depth_;
+   std::vector< uint32_t > index_;
 };
 }
 #endif

@@ -20,17 +20,15 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CinThread.h"
-#include <algorithm>
 #include <istream>
 #include <ostream>
-#include <string>
 #include "Debug.h"
 #include "Duration.h"
 #include "FunctionGuard.h"
-#include "Memory.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysConsole.h"
+#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -42,7 +40,6 @@ namespace NodeBase
 fn_name CinThread_ctor = "CinThread.ctor";
 
 CinThread::CinThread() : Thread(OperationsFaction),
-   size_(0),
    client_(nullptr)
 {
    Debug::ft(CinThread_ctor);
@@ -93,7 +90,6 @@ void CinThread::Display(ostream& stream,
    Thread::Display(stream, prefix, options);
 
    stream << prefix << "buff   : " << buff_ << CRLF;
-   stream << prefix << "size   : " << size_ << CRLF;
    stream << prefix << "client : " << client_ << CRLF;
 }
 
@@ -114,24 +110,26 @@ void CinThread::Enter()
 
       auto& source = SysConsole::In();
 
-      EnterBlockingOperation(BlockedOnConsole, CinThread_Enter);
-         source.getline(buff_, BuffSize);
+      EnterBlockingOperation(BlockedOnStream, CinThread_Enter);
+         std::getline(source, buff_);
       ExitBlockingOperation(CinThread_Enter);
 
-      size_ = source.gcount();
-
-      //  If there was an error, clear it.
+      //  Unless there was an error, sleep after notifying the client that
+      //  input is available.  This gives the client time to wake up and
+      //  process the input.  If there is no client, sleeping buffers the
+      //  input until a client requests it.  Append an endline to the input
+      //  so that we don't see buff_.empty() and immediately put the client
+      //  back to sleep when it requests the input.
       //
-      if(!source) source.clear();
-
-      //  If characters were entered, sleep.  Sleeping gives the client
-      //  time to wake up and process the input.  If there is no client,
-      //  sleeping buffers the input until a client requests it.
-      //
-      if(size_ > 0)
+      if(!source.fail())
       {
+         buff_.push_back(CRLF);
          if(client_ != nullptr) client_->Interrupt();
          Pause(TIMEOUT_NEVER);
+      }
+      else
+      {
+         source.clear();
       }
    }
 }
@@ -140,14 +138,13 @@ void CinThread::Enter()
 
 fn_name CinThread_GetLine = "CinThread.GetLine";
 
-std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
+std::streamsize CinThread::GetLine(string& buff)
 {
    Debug::ft(CinThread_GetLine);
 
    //  Do not read from the console during a restart.  It blocks a thread,
    //  which prevents it from exiting.
    //
-   if(capacity <= 0) return StreamInterrupt;
    if(Restart::GetStage() != Running) return StreamRestart;
 
    auto client = RunningThread();
@@ -159,7 +156,7 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
 
    auto server = Singleton< CinThread >::Instance();
 
-   if(server->size_ == 0)
+   if(server->buff_.empty())
    {
       //  Nothing is buffered.  Register the client and put it to sleep;
       //  the server thread will interrupt it when input is available.
@@ -171,7 +168,7 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
       //  it before console input arrives.  To receive input, the client
       //  must call this function again.
       //
-      if(server->size_ == 0)
+      if(server->buff_.empty())
       {
          server->client_ = nullptr;
          return StreamInterrupt;
@@ -182,17 +179,13 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
    //  server's data, and awaken the server thread so that it can read
    //  the next input.
    //
-   auto n = std::min(server->size_, capacity - 1);
-   Memory::Copy(buff, server->buff_, n);
-   buff[n] = NUL;
-
-   server->buff_[0] = NUL;
-   server->size_ = 0;
+   buff = server->buff_;
+   server->buff_.clear();
    server->client_ = nullptr;
    guard.Release();
 
    server->Interrupt();
-   return n - 1;
+   return buff.size();
 }
 
 //------------------------------------------------------------------------------

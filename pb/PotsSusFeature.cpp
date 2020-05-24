@@ -83,7 +83,7 @@ PotsFeatureProfile* PotsSusFeature::Subscribe
 {
    Debug::ft(PotsSusFeature_Subscribe);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return nullptr;
 
    FunctionGuard guard(Guard_MemUnprotect);
    return new PotsSusFeatureProfile;

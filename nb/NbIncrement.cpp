@@ -41,7 +41,6 @@
 #include "CliRegistry.h"
 #include "CliStack.h"
 #include "CliThread.h"
-#include "CoutThread.h"
 #include "Daemon.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
@@ -102,7 +101,7 @@ public: AlarmParm();
 
 fixed_string AlarmExpl = "alarm name";
 
-AlarmParm::AlarmParm() : CliTextParm(AlarmExpl) { }
+AlarmParm::AlarmParm() : CliTextParm(AlarmExpl, false, 0) { }
 
 class AlarmsListText : public CliText
 {
@@ -194,13 +193,13 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case AlarmsListIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       Singleton< AlarmRegistry >::Instance()->Output(*cli.obuf, 2, false);
       break;
 
    case AlarmsExplainIndex:
       if(!GetString(name, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       alarm = Singleton< AlarmRegistry >::Instance()->Find(name);
 
@@ -225,7 +224,7 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
 
    case AlarmsClearIndex:
       if(!GetString(name, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       alarm = Singleton< AlarmRegistry >::Instance()->Find(name);
 
@@ -338,7 +337,7 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
       //  converted to milliseconds.
       //
       if(!GetIntParm(secs, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       timeout = (secs == 0 ? TIMEOUT_NEVER : Duration(secs, SECS));
       thr->SetInterval(timeout);
       break;
@@ -346,7 +345,7 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
       //
       //  Wake the audit without otherwise changing its interval.
       //
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       thr->Interrupt();
       break;
    default:
@@ -386,7 +385,7 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
    bool c, v;
 
    if(GetCBV(*this, cli, c, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< MsgBufferPool >::Instance();
    auto num = pool->InUseCount();
@@ -449,11 +448,11 @@ private:
 
 fixed_string CfgParmNameExpl = "name of configuration parameter";
 
-CfgParmName::CfgParmName() : CliTextParm(CfgParmNameExpl) { }
+CfgParmName::CfgParmName() : CliTextParm(CfgParmNameExpl, false, 0) { }
 
 fixed_string CfgParmValueExpl = "value of configuration parameter";
 
-CfgParmValue::CfgParmValue() : CliTextParm(CfgParmValueExpl) { }
+CfgParmValue::CfgParmValue() : CliTextParm(CfgParmValueExpl, false, 0) { }
 
 fixed_string CfgParmsListStr = "list";
 fixed_string CfgParmsListExpl = "lists all configuration parameters";
@@ -527,13 +526,13 @@ word CfgParmsCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case CfgParmsListIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       reg->ListParms(*cli.obuf, spaces(2));
       break;
 
    case CfgParmsExplIndex:
       if(!GetString(key, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       parm = reg->FindParm(key);
       if(parm == nullptr) return cli.Report(-2, NoCfgParmExpl);
       parm->Explain(expl);
@@ -541,7 +540,7 @@ word CfgParmsCommand::ProcessCommand(CliThread& cli) const
 
    case CfgParmsGetIndex:
       if(!GetString(key, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       if(!reg->GetValue(key, value)) return cli.Report(-2, NoCfgParmExpl);
       *cli.obuf << spaces(2) << "Value: " << value << CRLF;
       break;
@@ -549,7 +548,7 @@ word CfgParmsCommand::ProcessCommand(CliThread& cli) const
    case CfgParmsSetIndex:
       if(!GetString(key, cli)) return -1;
       if(!GetString(value, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       parm = reg->FindParm(key);
       if(parm == nullptr) return cli.Report(-2, NoCfgParmExpl);
 
@@ -633,33 +632,33 @@ word ClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    switch(index)
    {
    case BufferIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = Singleton< TraceBuffer >::Instance()->Clear();
       break;
    case ToolsIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = Singleton< TraceBuffer >::Instance()->ClearTools();
       break;
    case SelectionsIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nbt->ClearSelections(TraceAll);
       break;
    case FactionIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nbt->SelectFaction(Faction(id), TraceDefault);
       break;
    case FactionsIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nbt->ClearSelections(TraceFaction);
       break;
    case ThreadIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = NbTracer::SelectThread(id, TraceDefault);
       break;
    case ThreadsIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nbt->ClearSelections(TraceThread);
       break;
    default:
@@ -761,7 +760,7 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
       }
 
       if(GetBV(*this, cli, v) == Error) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(all)
       {
@@ -779,7 +778,7 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
    case DaemonsSetIndex:
       if(!GetIntParm(id, cli)) return -1;
       if(!GetTextIndex(setHowIndex, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       daemon = reg->Daemons().At(id);
       if(daemon == nullptr) return cli.Report(-2, NoDaemonExpl);
@@ -833,7 +832,7 @@ word DelayCommand::ProcessCommand(CliThread& cli) const
    word secs;
 
    if(!GetIntParm(secs, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto rc = ThisThread::Pause(Duration(secs, SECS));
    if(rc != DelayCompleted) return cli.Report(-6, DelayFailure);
@@ -882,7 +881,7 @@ word DisplayCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetPtrParm(p, cli)) return -1;
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    prompt << BadObjectPtrWarning << CRLF << ContinuePrompt;
    if(!cli.BoolPrompt(prompt.str())) return cli.Report(0, CommandAbortedExpl);
@@ -942,7 +941,7 @@ word DumpCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetPtrParm(p, cli)) return -1;
    if(GetIntParmRc(n, cli) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    prompt << BadObjectPtrWarning << CRLF << ContinuePrompt;
    if(!cli.BoolPrompt(prompt.str())) return cli.Report(0, CommandAbortedExpl);
@@ -1003,12 +1002,12 @@ word ExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    {
    case ExcludeFactionIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
       break;
    case ExcludeThreadIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = NbTracer::SelectThread(id, TraceExcluded);
       break;
    default:
@@ -1085,7 +1084,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
    id_t index;
 
    if(!GetTextIndex(index, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    switch(index)
    {
@@ -1144,11 +1143,11 @@ private:
 
 fixed_string HelpIncrExpl = "name of increment";
 
-HelpIncrParm::HelpIncrParm() : CliTextParm(HelpIncrExpl, true) { }
+HelpIncrParm::HelpIncrParm() : CliTextParm(HelpIncrExpl, true, 0) { }
 
 fixed_string HelpCommExpl = "name of command ('full' = all commands)";
 
-HelpCommParm::HelpCommParm() : CliTextParm(HelpCommExpl, true) { }
+HelpCommParm::HelpCommParm() : CliTextParm(HelpCommExpl, true, 0) { }
 
 class HelpFullText : public CliText
 {
@@ -1221,13 +1220,13 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetString(s1, cli))
    {
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       return DisplayHelp(cli, EMPTY_STR);  // [1]
    }
 
    if(s1 == "full")
    {
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       incr = cli.stack_->Top();
       incr->Explain(*cli.obuf, 2);
       return DisplayHelp(cli, incr->Name());  // [2]
@@ -1239,7 +1238,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
    {
       if(GetString(s2, cli) && (s2 == "full"))
       {
-         cli.EndOfInput(false);
+         if(!cli.EndOfInput()) return -1;
          comm->ExplainCommand(*cli.obuf, true);
          *cli.obuf << CRLF;
          string key(incr->Name());
@@ -1248,7 +1247,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
          return DisplayHelp(cli, key);  // [3]
       }
 
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(!s2.empty())
       {
@@ -1268,13 +1267,13 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetString(s2, cli))
    {
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       return incr->Explain(*cli.obuf, 1);  // [7]
    }
 
    if(s2 == "full")
    {
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       incr->Explain(*cli.obuf, 2);
       return DisplayHelp(cli, incr->Name());  // [8]
    }
@@ -1283,14 +1282,14 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
 
    if(comm == nullptr)
    {
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       *cli.obuf << spaces(2) << ParameterIgnored << s2 << CRLF;
       return incr->Explain(*cli.obuf, 1);  // [9]
    }
 
    if(GetString(s3, cli) && (s3 == "full"))
    {
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       comm->ExplainCommand(*cli.obuf, true);
       *cli.obuf << CRLF;
       string key(incr->Name());
@@ -1299,7 +1298,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
       return DisplayHelp(cli, key);  // [10]
    }
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    if(!s3.empty())
    {
       *cli.obuf << spaces(2) << ParameterIgnored << s3 << CRLF;  // [11]
@@ -1324,6 +1323,26 @@ public:
    IfValue();
 };
 
+class CommandMandParm : public CliTextParm
+{
+public: CommandMandParm();
+};
+
+class ElseText : public CliText
+{
+public: ElseText();
+};
+
+class ElseParm : public CliTextParm
+{
+public: ElseParm();
+};
+
+class CommandOptParm : public CliTextParm
+{
+public: CommandOptParm();
+};
+
 class IfCommand : public CliCommand
 {
 public:
@@ -1340,14 +1359,35 @@ fixed_string IfValueExpl = "value for comparison";
 
 IfValue::IfValue() : CliIntParm(IfValueExpl, WORD_MIN, WORD_MAX) { }
 
+fixed_string CommandMandExpl = "command to execute if condition is true";
+
+CommandMandParm::CommandMandParm() : CliTextParm(CommandMandExpl, false, 0) { }
+
+fixed_string CommandOptExpl = "command to execute if condition is false";
+
+CommandOptParm::CommandOptParm() : CliTextParm(CommandOptExpl, true, 0) { }
+
+fixed_string ElseStr = "else";
+fixed_string ElseExpl = "precedes command to execute if condition is false";
+
+ElseText::ElseText() : CliText(ElseExpl, ElseStr) { }
+
+ElseParm::ElseParm() : CliTextParm(ElseExpl, true)
+{
+   BindText(*new ElseText, 1);
+}
+
 fixed_string IfStr = "if";
-fixed_string IfExpl = "Executes rest of input line if condition is true.";
+fixed_string IfExpl = "Conditionally executes a CLI command.";
 
 IfCommand::IfCommand() : CliCommand(IfStr, IfExpl)
 {
    BindParm(*new IfSymbol);
    BindParm(*new RelationParm);
    BindParm(*new IfValue);
+   BindParm(*new CommandMandParm);
+   BindParm(*new ElseParm);
+   BindParm(*new CommandOptParm);
 }
 
 fn_name IfCommand_ProcessCommand = "IfCommand.ProcessCommand";
@@ -1391,15 +1431,30 @@ word IfCommand::ProcessCommand(CliThread& cli) const
    }
 
    cli.ibuf->Read(comm);
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    //  If the result was false, report it.  If the result was true, read
    //  the rest of the input line.  If it contains anything, execute it
    //  as a command; otherwise, report that the outcome was true.
    //
-   if(!result) return cli.Report(0, ReturnFalse);
-   if(!comm.empty()) return cli.Execute(comm);
-   return cli.Report(1, ReturnTrue);
+   string tcomm(comm);
+   string fcomm(EMPTY_STR);
+   auto split = comm.find(" else ");
+
+   if(split != string::npos)
+   {
+      tcomm = comm.substr(0, split);
+      fcomm = comm.substr(split + 6);
+   }
+
+   if(result)
+   {
+      if(!tcomm.empty()) return cli.Execute(tcomm);
+      return cli.Report(1, ReturnTrue);
+   }
+
+   if(!fcomm.empty()) return cli.Execute(fcomm);
+   return cli.Report(1, ReturnFalse);
 }
 
 //------------------------------------------------------------------------------
@@ -1457,18 +1512,18 @@ word IncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    {
    case IncludeAllIndex:
       if(!GetTextIndex(setHowIndex, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       flag = (setHowIndex == SetHowParm::On);
       rc = Singleton< TraceBuffer >::Instance()->SelectAll(flag);
       break;
    case IncludeFactionIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
       break;
    case IncludeThreadIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = NbTracer::SelectThread(id, TraceIncluded);
       break;
    default:
@@ -1501,7 +1556,7 @@ word IncrsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(IncrsCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    Singleton< CliRegistry >::Instance()->ListIncrements(*cli.obuf);
    return 0;
 }
@@ -1736,7 +1791,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    {
    case ListIndex:
       GetStringRc(name, cli);
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(name.empty())
       {
@@ -1754,7 +1809,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    case ExplainIndex:
       if(!GetString(name, cli)) return -1;
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(!FindGroupAndLog(name, id, group, log, expl))
       {
@@ -1778,7 +1833,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    case SuppressIndex:
       if(!GetString(name, cli)) return -1;
       if(!GetTextIndex(setHowIndex, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(!FindGroupAndLog(name, 0, group, log, expl))
       {
@@ -1792,7 +1847,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       if(!GetString(name, cli)) return -1;
       if(!GetIntParm(id, cli)) return -1;
       if(!GetIntParm(interval, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(!FindGroupAndLog(name, id, group, log, expl))
       {
@@ -1804,14 +1859,14 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    case BuffersIndex:
       if(GetBV(*this, cli, v) == Error) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       reg->Output(*cli.obuf, 2, v);
       break;
 
    case WriteIndex:
       if(!GetIntParm(id, cli)) return -1;
       if(!GetIntParm(count, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       buff = reg->Access(id);
 
@@ -1839,7 +1894,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    case FreeIndex:
       if(!GetIntParm(id, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       {
          FunctionGuard guard(Guard_ImmUnprotect);
 
@@ -1851,7 +1906,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       break;
 
    case CountIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       *cli.obuf << Log::Count() << CRLF;
       return Log::Count();
 
@@ -1900,7 +1955,7 @@ word ModulesCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< ModuleRegistry >::Instance();
 
@@ -1956,7 +2011,7 @@ word MutexesCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< MutexRegistry >::Instance();
 
@@ -2012,7 +2067,7 @@ word PoolsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< ObjectPoolRegistry >::Instance();
 
@@ -2049,7 +2104,7 @@ private:
 
 fixed_string PrintParmExpl = "the string to be written to the console";
 
-PrintParm::PrintParm() : CliTextParm(PrintParmExpl) { }
+PrintParm::PrintParm() : CliTextParm(PrintParmExpl, false, 0) { }
 
 fixed_string PrintStr = "print";
 fixed_string PrintExpl = "Writes a string to the console.";
@@ -2107,7 +2162,7 @@ word PsignalsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< PosixSignalRegistry >::Instance();
 
@@ -2170,7 +2225,7 @@ word QueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
    Debug::ft(QueryCommand_ProcessSubcommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    switch(index)
    {
@@ -2240,7 +2295,7 @@ word QuitCommand::ProcessCommand(CliThread& cli) const
 
    auto rc = GetTextIndexRc(index, cli);
    if(rc == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    if(!cli.stack_->Pop()) return cli.Report(0, NoIncrExpl);
 
@@ -2273,7 +2328,7 @@ private:
 
 fixed_string ReadWhereExpl = "read input from <str>.txt";
 
-ReadWhereParm::ReadWhereParm() : CliTextParm(ReadWhereExpl) { }
+ReadWhereParm::ReadWhereParm() : CliTextParm(ReadWhereExpl, false, 0) { }
 
 fixed_string ReadStr = "read";
 fixed_string ReadExpl = "Reads commands from a file.";
@@ -2295,7 +2350,7 @@ word ReadCommand::ProcessCommand(CliThread& cli) const
    //  Get the file's name.  If it isn't CIN, set its extension to ".txt".
    //
    if(!GetString(name, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    //  If input is to be taken from the console, there is nothing to do.
    //  Commands are read from an input file until exhausted, after which
@@ -2303,10 +2358,8 @@ word ReadCommand::ProcessCommand(CliThread& cli) const
    //
    if(name == "cin") return cli.Report(0, ConsoleAutomaticExpl);
 
-   auto rc = cli.OpenInputFile(name, expl);
+   auto rc = cli.ibuf->OpenInputFile(name, expl);
    if(rc != 0) return cli.Report(rc, expl);
-
-   cli.ReadCommands();
    return 0;
 }
 
@@ -2413,7 +2466,7 @@ word RestartCommand::ProcessCommand(CliThread& cli) const
    std::ostringstream prompt;
 
    if(!GetTextIndex(index, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    if(index == ExitIndex)
    {
@@ -2458,7 +2511,7 @@ public: SetOptionsParm();
 
 fixed_string SetOptionsExpl = "options: t=suppress times; c=don't move ctors";
 
-SetOptionsParm::SetOptionsParm() : CliTextParm(SetOptionsExpl, true) { }
+SetOptionsParm::SetOptionsParm() : CliTextParm(SetOptionsExpl, true, 0) { }
 
 const string& ValidSetOptions = "tc";
 
@@ -2522,9 +2575,12 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    string opts;
    string expl;
 
+   auto yield = cli.GenerateReportPreemptably();
+   FunctionGuard guard(Guard_MakePreemptable, yield);
+
    if(!GetFileName(title, cli)) return -1;
    if(GetStringRc(opts, cli) == CliParm::Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    if(!opts.empty() && (opts != "-"))
    {
@@ -2536,9 +2592,6 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
-
-   auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    rc = Singleton< TraceBuffer >::Instance()->DisplayTrace(stream, opts);
 
@@ -2656,8 +2709,12 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case SchedShowIndex:
+   {
+      auto yield = cli.GenerateReportPreemptably();
+      FunctionGuard guard(Guard_MakePreemptable, yield);
+
       if(!GetFileName(title, cli)) title.clear();
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(!title.empty())
       {
@@ -2671,20 +2728,21 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
       title += ".sched.txt";
       cli.SendToFile(title, true);
       break;
+   }
 
    case SchedStartIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = Thread::LogContextSwitches(true);
       break;
 
    case SchedStopIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = Thread::LogContextSwitches(false);
       break;
 
    case SchedKillIndex:
       if(!GetIntParm(tid, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       {
          auto thr = Singleton< ThreadRegistry >::Instance()->GetThread(tid);
          if(thr == nullptr) return cli.Report(-2, NoThreadExpl);
@@ -2749,7 +2807,6 @@ class SendCommand : public CliCommand
 public:
    SendCommand();
 private:
-   static void SendAckToOutputFile(const CliThread& cli);
    word ProcessCommand(CliThread& cli) const override;
 };
 
@@ -2804,6 +2861,7 @@ word SendCommand::ProcessCommand(CliThread& cli) const
 
    id_t index;
    string title;
+   bool all = false;
    bool append = false;
 
    if(!GetTextParm(index, title, cli)) return -1;
@@ -2816,31 +2874,20 @@ word SendCommand::ProcessCommand(CliThread& cli) const
       //  >send cout clears the entire output stack, whereas >send prev
       //  only clears the top.
       //
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
-      if(cli.outIndex_ > 0)
-      {
-         SendAckToOutputFile(cli);
-
-         for(auto i = (index == SendPrevIndex ? 1 : cli.outIndex_); i > 0; --i)
-         {
-            cli.outName_[cli.outIndex_--].reset();
-         }
-
-         return 0;
-      }
-
+      if(index == SendCoutIndex) all = true;
+      if(cli.PopOutputFile(all)) return 0;
       return cli.Report(0, SendingToConsoleExpl);
 
    case SendFileIndex:
       if(GetBoolParmRc(append, cli) == Error) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
-      if(cli.outIndex_ < CliThread::OutSize - 1)
+      title += ".cli.txt";
+
+      if(cli.PushOutputFile(title))
       {
-         SendAckToOutputFile(cli);
-         title += ".cli.txt";
-         cli.outName_[++cli.outIndex_].reset(new string(title));
          if(!append) FileThread::Truncate(title);
          return 0;
       }
@@ -2851,22 +2898,6 @@ word SendCommand::ProcessCommand(CliThread& cli) const
       Debug::SwLog(SendCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
-}
-
-fn_name SendCommand_SendAckToOutputFile = "SendCommand.SendAckToOutputFile";
-
-void SendCommand::SendAckToOutputFile(const CliThread& cli)
-{
-   Debug::ft(SendCommand_SendAckToOutputFile);
-
-   std::ostringstream ack;
-
-   ack << spaces(2) << SuccessExpl << CRLF;
-
-   if(cli.outIndex_ == 0)
-      CoutThread::Spool(ack.str().c_str());
-   else
-      FileThread::Spool(*cli.outName_[cli.outIndex_], ack.str());
 }
 
 //------------------------------------------------------------------------------
@@ -2930,7 +2961,7 @@ BuffWrapText::BuffWrapText() : CliText(BuffWrapTextExpl, BuffWrapTextStr)
 
 fixed_string ToolListExpl = "tools to set: string of tool abbreviations";
 
-ToolListParm::ToolListParm() : CliTextParm(ToolListExpl) { }
+ToolListParm::ToolListParm() : CliTextParm(ToolListExpl, false, 0) { }
 
 fixed_string ToolListTextStr = "tools";
 fixed_string ToolListTextExpl =
@@ -2997,7 +3028,7 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    case SetToolListIndex:
       if(!GetString(toolList, cli)) return -1;
       if(!GetTextIndex(setHowIndex, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       flag = (setHowIndex == SetHowParm::On);
 
       if(!ValidateOptions(toolList, reg->ListToolChars(), expl))
@@ -3016,13 +3047,13 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    case SetBuffSizeIndex:
       if(!GetIntParm(buffSize, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = buff->SetSize(buffSize);
       break;
 
    case SetBuffWrapIndex:
       if(!GetBoolParm(flag, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = buff->SetWrap(flag);
       break;
 
@@ -3063,7 +3094,7 @@ word SingletonsCommand::ProcessCommand(CliThread& cli) const
    bool v = false;
 
    if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    Singletons::Instance()->Output(*cli.obuf, 2, v);
    return 0;
 }
@@ -3079,7 +3110,8 @@ public: StartOptionsParm();
 
 fixed_string StartOptionsExpl = "options: i=immediate";
 
-StartOptionsParm::StartOptionsParm() : CliTextParm(StartOptionsExpl, true) { }
+StartOptionsParm::StartOptionsParm() :
+   CliTextParm(StartOptionsExpl, true, 0) { }
 
 const string& ValidStartOptions = "i";
 
@@ -3109,7 +3141,7 @@ word StartCommand::ProcessCommand(CliThread& cli) const
    string expl;
 
    if(GetStringRc(opts, cli) == CliParm::Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    if(!opts.empty() && (opts != "-"))
    {
@@ -3255,11 +3287,12 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case StatsGroupsIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       reg->Output(*cli.obuf, 2, false);
       break;
 
    case StatsShowIndex:
+   {
       switch(GetIntParmRc(gid, cli))
       {
       case None: all = true; break;
@@ -3267,10 +3300,13 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
       default: return -1;
       }
 
+      auto yield = cli.GenerateReportPreemptably();
+      FunctionGuard guard(Guard_MakePreemptable, yield);
+
       if(GetIntParmRc(mid, cli) == Error) return -1;
       if(GetBV(*this, cli, v) == Error) return -1;
       if(!GetFileName(title, cli)) title.clear();
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(!title.empty())
       {
@@ -3298,10 +3334,11 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
       title += ".stats.txt";
       cli.SendToFile(title, true);
       break;
+   }
 
    case StatsRolloverIndex:
       if(GetBoolParmRc(first, cli) == Error) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       reg->StartInterval(first);
       break;
 
@@ -3345,7 +3382,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(StatusCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    *cli.obuf << "STATUS REPORT: " << Element::strTimePlace() << CRLF;
    *cli.obuf << "MEMORY USAGE" << CRLF;
@@ -3450,7 +3487,7 @@ word StopCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(StopCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    Singleton< TraceBuffer >::Instance()->StopTracing();
    return ExplainTraceRc(cli, TraceOk);
 }
@@ -3504,16 +3541,15 @@ private:
 
 fixed_string SymbolOptNameExpl = "symbol's name (lists all if omitted)";
 
-SymbolOptName::SymbolOptName() :
-   CliTextParm(SymbolOptNameExpl, true) { }
+SymbolOptName::SymbolOptName() : CliTextParm(SymbolOptNameExpl, true, 0) { }
 
 fixed_string SymbolMandNameExpl = "symbol's name";
 
-SymbolMandName::SymbolMandName() : CliTextParm(SymbolMandNameExpl) { }
+SymbolMandName::SymbolMandName() : CliTextParm(SymbolMandNameExpl, false, 0) { }
 
 fixed_string SymbolValueExpl = "symbol's value (symbol deleted if omitted)";
 
-SymbolValue::SymbolValue() : CliTextParm(SymbolValueExpl, true) { }
+SymbolValue::SymbolValue() : CliTextParm(SymbolValueExpl, true, 0) { }
 
 fixed_string SymbolsListStr = "list";
 fixed_string SymbolsListExpl = "lists symbols";
@@ -3585,7 +3621,7 @@ word SymbolsCommand::ProcessCommand(CliThread& cli) const
    {
    case SymbolsListIndex:
       all = (GetStringRc(name, cli) == None);
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(!all)
       {
@@ -3619,7 +3655,7 @@ word SymbolsCommand::ProcessCommand(CliThread& cli) const
       if(!GetIdentifier(name, cli, Symbol::ValidNameChars(),
          Symbol::InvalidInitialChars())) return -1;
       del = (GetStringRc(value, cli) == None);
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       if(del)
       {
@@ -3643,7 +3679,7 @@ word SymbolsCommand::ProcessCommand(CliThread& cli) const
       if(!GetIdentifier(name, cli, Symbol::ValidNameChars(),
          Symbol::InvalidInitialChars())) return -1;
       if(!GetString(key, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       sym = sreg->EnsureSymbol(name);
       if(sym == nullptr) return cli.Report(-7, SymbolOverflowExpl);
@@ -3697,7 +3733,7 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
    }
 
    if(GetCBV(*this, cli, c, v) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto reg = Singleton< ThreadRegistry >::Instance();
    auto size = reg->Threads().Size();

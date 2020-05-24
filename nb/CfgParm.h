@@ -75,10 +75,6 @@ public:
    //
    bool SetValue(c_string input, RestartLevel& level);
 
-   //  Returns the offset to link_.
-   //
-   static ptrdiff_t LinkDiff();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -133,6 +129,10 @@ private:
    //  the tuple is changed to the default.
    //
    bool SetFromTuple();
+
+   //  Returns the offset to link_.
+   //
+   static ptrdiff_t LinkDiff();
 
    //  The parameter's tuple (its key and the string used to set its value).
    //

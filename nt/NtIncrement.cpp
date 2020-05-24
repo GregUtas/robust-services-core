@@ -152,7 +152,7 @@ word CorruptCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    if(!GetIntParm(pid, cli)) return -1;
    if(!GetIntParm(n, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< ObjectPoolRegistry >::Instance()->Pool(pid);
    if(pool == nullptr) return cli.Report(-2, NoPoolExpl);
@@ -253,15 +253,20 @@ word NtLogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    switch(index)
    {
    case SortIndex:
+   {
+      auto yield = cli.GenerateReportPreemptably();
+      FunctionGuard guard(Guard_MakePreemptable, yield);
+
       if(!GetFileName(input, cli)) return -1;
       if(!GetFileName(output, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = Sort(input, output, expl);
       return cli.Report(rc, expl);
+   }
 
    case FloodIndex:
       if(!GetIntParm(count, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
 
       while(count-- > 0)
       {
@@ -456,6 +461,9 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    id_t sortHowIndex;
    auto sort = FunctionProfiler::ByCalls;
 
+   auto yield = cli.GenerateReportPreemptably();
+   FunctionGuard guard(Guard_MakePreemptable, yield);
+
    if(!GetFileName(title, cli)) return -1;
    if(GetTextIndexRc(sortHowIndex, cli) == Ok)
    {
@@ -466,13 +474,10 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       case SortByNamesIndex: sort = FunctionProfiler::ByNames; break;
       }
    }
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
-
-   auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    FunctionTrace::Process(EMPTY_STR);
    std::unique_ptr< FunctionProfiler > fp(new FunctionProfiler);
@@ -565,7 +570,7 @@ word NtSetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    id_t scope;
 
    if(!GetTextIndex(scope, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    switch(scope)
    {
@@ -633,7 +638,7 @@ word SizesCommand::ProcessCommand(CliThread& cli) const
    auto all = false;
 
    if(GetBoolParmRc(all, cli) == Error) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    *cli.obuf << spaces(2) << SizesHeader << CRLF;
    DisplaySizes(cli, all);
    return 0;
@@ -739,17 +744,17 @@ word SwFlagsCommand::ProcessCommand(CliThread& cli) const
    case FlagsSetIndex:
       if(!GetIntParm(flag, cli)) return -1;
       if(!GetTextIndex(setHowIndex, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       Debug::SetSwFlag(flag, (setHowIndex == SetHowParm::On));
       break;
 
    case FlagsClearIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       Debug::ResetSwFlags();
       break;
 
    case FlagsQueryIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       flags = Debug::GetSwFlags();
       *cli.obuf << spaces(2) << "Flags on (bit offsets):";
 
@@ -866,7 +871,7 @@ public: TestResetText();
 
 fixed_string TestPrologExpl = "filename (none if omitted)";
 
-TestPrologParm::TestPrologParm() : CliTextParm(TestPrologExpl, true) { }
+TestPrologParm::TestPrologParm() : CliTextParm(TestPrologExpl, true, 0) { }
 
 fixed_string TestPrologTextStr = "prolog";
 fixed_string TestPrologTextExpl = "file to read before executing a testcase";
@@ -879,7 +884,7 @@ TestPrologText::TestPrologText() :
 
 fixed_string TestEpilogExpl = "filename (none if omitted)";
 
-TestEpilogParm::TestEpilogParm() : CliTextParm(TestEpilogExpl, true) { }
+TestEpilogParm::TestEpilogParm() : CliTextParm(TestEpilogExpl, true, 0) { }
 
 fixed_string TestEpilogTextStr = "epilog";
 fixed_string TestEpilogTextExpl = "file to read after a testcase passes";
@@ -892,7 +897,7 @@ TestEpilogText::TestEpilogText() :
 
 fixed_string TestRecoverExpl = "filename (epilog if omitted)";
 
-TestRecoverParm::TestRecoverParm() : CliTextParm(TestRecoverExpl, true) { }
+TestRecoverParm::TestRecoverParm() : CliTextParm(TestRecoverExpl, true, 0) { }
 
 fixed_string TestRecoverTextStr = "recover";
 fixed_string TestRecoverTextExpl = "file to read after a testcase fails";
@@ -905,7 +910,7 @@ TestRecoverText::TestRecoverText() :
 
 fixed_string TestBeginExpl = "testcase filename";
 
-TestBeginParm::TestBeginParm() : CliTextParm(TestBeginExpl) { }
+TestBeginParm::TestBeginParm() : CliTextParm(TestBeginExpl, false, 0) { }
 
 fixed_string TestBeginTextStr = "begin";
 fixed_string TestBeginTextExpl =
@@ -928,7 +933,7 @@ TestFailCodeParm::TestFailCodeParm() :
 
 fixed_string TestFailExpl = "explanation for failure";
 
-TestFailExplParm::TestFailExplParm() : CliTextParm(TestFailExpl, true) { }
+TestFailExplParm::TestFailExplParm() : CliTextParm(TestFailExpl, true, 0) { }
 
 fixed_string TestFailedTextStr = "failed";
 fixed_string TestFailedTextExpl = "records that the current testcase failed";
@@ -958,7 +963,7 @@ TestQueryText::TestQueryText() :
 
 fixed_string TestEraseExpl = "testcase name";
 
-TestEraseParm::TestEraseParm() : CliTextParm(TestEraseExpl) { }
+TestEraseParm::TestEraseParm() : CliTextParm(TestEraseExpl, false, 0) { }
 
 fixed_string TestEraseTextStr = "erase";
 fixed_string TestEraseTextExpl = "removes a testcase from the database";
@@ -1029,57 +1034,57 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    {
    case TestPrologIndex:
       if(!GetString(text, cli)) text.clear();
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       test->SetProlog(text);
       break;
 
    case TestEpilogIndex:
       if(!GetString(text, cli)) text.clear();
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       test->SetEpilog(text);
       break;
 
    case TestRecoverIndex:
       if(!GetString(text, cli)) text.clear();
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       test->SetRecover(text);
       break;
 
    case TestBeginIndex:
       if(!GetString(text, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       return test->Initiate(text);
 
    case TestEndIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       test->Conclude();
       return 0;
 
    case TestFailedIndex:
       if(!GetIntParm(rc, cli)) return -1;
       if(!GetString(text, cli)) text.clear();
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       return test->SetFailed(rc, text);
 
    case TestQueryIndex:
       if(GetBV(*this, cli, v) == Error) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       test->Query(v, expl);
       return cli.Report(0, expl);
 
    case TestRetestIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = Singleton< TestDatabase >::Instance()->Retest(expl);
       return cli.Report(rc, expl);
 
    case TestEraseIndex:
       if(!GetString(text, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = Singleton< TestDatabase >::Instance()->Erase(text, expl);
       return cli.Report(rc, expl);
 
    case TestResetIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       test->Reset();
       break;
 
@@ -1291,7 +1296,7 @@ word HeapCreateCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetCharParm(c, cli)) return -1;
    if(!GetIntParm(size, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    switch(c)
    {
@@ -1333,7 +1338,7 @@ word HeapDestroyCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(HeapDestroyCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    Heap* heap = nullptr;
    auto rc = CheckHeap(true, cli, heap);
@@ -1365,7 +1370,7 @@ word HeapAllocCommand::ProcessCommand(CliThread& cli) const
    word size;
 
    if(!GetIntParm(size, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    Heap* heap = nullptr;
    auto rc = CheckHeap(true, cli, heap);
@@ -1397,7 +1402,7 @@ word HeapBlockToSizeCommand::ProcessCommand(CliThread& cli) const
    void* addr;
 
    if(!GetPtrParm(addr, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    Heap* heap = nullptr;
    auto rc = CheckHeap(true, cli, heap);
@@ -1450,7 +1455,7 @@ word HeapFreeCommand::ProcessCommand(CliThread& cli) const
    void* addr;
 
    if(!GetPtrParm(addr, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    Heap* heap = nullptr;
    auto rc = CheckHeap(true, cli, heap);
@@ -1481,7 +1486,7 @@ word HeapValidateCommand::ProcessCommand(CliThread& cli) const
    void* addr;
 
    if(!GetPtrParm(addr, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    Heap* heap = nullptr;
    auto rc = CheckHeap(true, cli, heap);
@@ -1583,7 +1588,7 @@ word LbcInitCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(limit, cli)) return -1;
    if(!GetIntParm(secs, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< LbcPool >::Instance();
    pool->lbc_.Initialize(limit, secs);
    pool->lbc_.Output(*cli.obuf, 2, true);
@@ -1603,7 +1608,7 @@ word LbcEventCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(LbcEventCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    *cli.obuf << spaces(2);
    auto pool = Singleton< LbcPool >::Instance();
    if(pool->lbc_.HasReachedLimit())
@@ -1855,7 +1860,7 @@ word Countq1Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Countq1Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
    *cli.obuf << "  size=" << pool->itemq_.Size() << CRLF;
    pool->Output(*cli.obuf, 2, false);
@@ -1875,7 +1880,7 @@ word Deq1Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Deq1Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
    auto item = pool->itemq_.Deq();
    if(item != nullptr)
@@ -1899,7 +1904,7 @@ word Emptyq1Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Emptyq1Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
    auto empty = pool->itemq_.Empty();
    *cli.obuf << "  empty=" << empty << CRLF;
@@ -1926,7 +1931,7 @@ word Enq1Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    if(id1 == 0)
    {
       *cli.obuf << NullPtrInvalid << CRLF;
@@ -1957,7 +1962,7 @@ word Exq1Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    if(id1 == 0)
    {
       *cli.obuf << NullPtrInvalid << CRLF;
@@ -1983,7 +1988,7 @@ word Firstq1Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Firstq1Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
 
    auto item = pool->itemq_.First();
@@ -2014,7 +2019,7 @@ word Henq1Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    if(id1 == 0)
    {
       *cli.obuf << NullPtrInvalid << CRLF;
@@ -2047,7 +2052,7 @@ word Insertq1Command::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
    if(!GetIntParm(id2, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    if(id2 == 0)
    {
       *cli.obuf << NullPtrInvalid << CRLF;
@@ -2078,7 +2083,7 @@ word Nextq1Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< Q1WayPool >::Instance();
    auto item = pool->items_[id1].get();
@@ -2121,7 +2126,7 @@ word Purgeq1Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Purgeq1Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
    pool->itemq_.Purge();
    pool->Output(*cli.obuf, 2, false);
@@ -2376,7 +2381,7 @@ word Countq2Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Countq2Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
    *cli.obuf << "  size=" << pool->itemq_.Size() << CRLF;
    pool->Output(*cli.obuf, 2, false);
@@ -2396,7 +2401,7 @@ word Deq2Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Deq2Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
    auto item = pool->itemq_.Deq();
    if(item != nullptr)
@@ -2420,7 +2425,7 @@ word Emptyq2Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Emptyq2Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
    auto empty = pool->itemq_.Empty();
    *cli.obuf << "  empty=" << empty << CRLF;
@@ -2447,7 +2452,7 @@ word Enq2Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    if(id1 == 0)
    {
       *cli.obuf << NullPtrInvalid << CRLF;
@@ -2478,7 +2483,7 @@ word Exq2Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    if(id1 == 0)
    {
       *cli.obuf << NullPtrInvalid << CRLF;
@@ -2504,7 +2509,7 @@ word Firstq2Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Firstq2Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
 
    *cli.obuf << "T*=First(): " << CRLF;
@@ -2537,7 +2542,7 @@ word Henq2Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    if(id1 == 0)
    {
       *cli.obuf << NullPtrInvalid << CRLF;
@@ -2562,7 +2567,7 @@ word Lastq2Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Lastq2Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
 
    *cli.obuf << "T*=Last(): " << CRLF;
@@ -2595,7 +2600,7 @@ word Nextq2Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< Q2WayPool >::Instance();
    auto item = pool->items_[id1].get();
@@ -2644,7 +2649,7 @@ word Prevq2Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< Q2WayPool >::Instance();
    auto item = pool->items_[id1].get();
@@ -2687,7 +2692,7 @@ word Purgeq2Command::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(Purgeq2Command_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
    pool->itemq_.Purge();
    pool->Output(*cli.obuf, 2, false);
@@ -2939,7 +2944,7 @@ word InitCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< RegistryPool >::Instance();
    auto result = pool->registry_.Init
       (id1, RegistryItem::CellDiff(), MemTemporary, false);
@@ -2977,7 +2982,7 @@ word InsertCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< RegistryPool >::Instance();
    if(id1 > 0)
    {
@@ -3021,7 +3026,7 @@ word RemoveCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< RegistryPool >::Instance();
    if(fixed)
       result = pool->registry_.Erase(*pool->items_[id1], id2);
@@ -3051,7 +3056,7 @@ word AtCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< RegistryPool >::Instance();
    auto item = pool->registry_.At(id1);
    if(item != nullptr)
@@ -3090,7 +3095,7 @@ word FirstCommand::ProcessCommand(CliThread& cli) const
    default: return -1;
    }
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< RegistryPool >::Instance();
    if(start)
    {
@@ -3128,7 +3133,7 @@ word NextCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< RegistryPool >::Instance();
    auto item = pool->items_[id1].get();
@@ -3171,7 +3176,7 @@ word LastCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(LastCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< RegistryPool >::Instance();
    auto item = pool->registry_.Last();
    if(item != nullptr)
@@ -3201,7 +3206,7 @@ word PrevCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto pool = Singleton< RegistryPool >::Instance();
    auto item = pool->items_[id1].get();
@@ -3244,7 +3249,7 @@ word CountCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(CountCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< RegistryPool >::Instance();
    *cli.obuf << "  size=" << pool->registry_.Size() << CRLF;
    pool->Output(*cli.obuf, 2, true);
@@ -3476,7 +3481,7 @@ word TimeCtor1Command::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    pool->time_[id1] = SysTime();
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3516,7 +3521,7 @@ word TimeCtor2Command::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(min, cli)) return -1;
    if(!GetIntParm(sec, cli)) return -1;
    if(!GetIntParm(msec, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    pool->time_[id1] = SysTime(year, month - 1, day, hour, min, sec, msec);
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3542,7 +3547,7 @@ word DayOfWeekCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    *cli.obuf << "  day=" << pool->time_[id1].strWeekDay() << CRLF;
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3568,7 +3573,7 @@ word DayOfYearCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    *cli.obuf << "  day=" << pool->time_[id1].DayOfYear() + 1 << CRLF;
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3595,7 +3600,7 @@ word IsLeapYearCommand::ProcessCommand(CliThread& cli) const
    word year;
 
    if(!GetIntParm(year, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    *cli.obuf << "  leap year=" << SysTime::IsLeapYear(year) << CRLF;
    return 0;
 }
@@ -3622,7 +3627,7 @@ word TruncateCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
    if(!GetTextIndex(field, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    pool->time_[id1].Truncate(TimeField(field - 1));
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3653,7 +3658,7 @@ word RoundCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(id1, cli)) return -1;
    if(!GetTextIndex(field, cli)) return -1;
    if(!GetIntParm(interval, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    pool->time_[id1].Round(TimeField(field - 1), interval);
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3681,7 +3686,7 @@ word AddMsecsCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
    if(!GetIntParm(msecs, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    pool->time_[id1].AddMsecs(msecs);
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3709,7 +3714,7 @@ word SubMsecsCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
    if(!GetIntParm(msecs, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    pool->time_[id1].SubMsecs(msecs);
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3737,7 +3742,7 @@ word MsecsFromNowCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    *cli.obuf << "  msecs=" << pool->time_[id1].MsecsFromNow() << CRLF;
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3767,7 +3772,7 @@ word MsecsUntilCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
    if(!GetIntParm(id2, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    *cli.obuf << "  msecs=" << pool->time_[id1].MsecsUntil(pool->time_[id2])
       << CRLF;
@@ -3797,7 +3802,7 @@ word AddDaysCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
    if(!GetIntParm(days, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    pool->time_[id1].AddDays(days);
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3825,7 +3830,7 @@ word SubDaysCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIntParm(id1, cli)) return -1;
    if(!GetIntParm(days, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    pool->time_[id1].SubDays(days);
    *cli.obuf << "  time=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
@@ -3851,7 +3856,7 @@ word StrTimeCommand::ProcessCommand(CliThread& cli) const
    word id1;
 
    if(!GetIntParm(id1, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< SysTimePool >::Instance();
    *cli.obuf << "   a=" << pool->time_[id1].to_str(SysTime::Alpha) << CRLF;
    *cli.obuf << "  la=" << pool->time_[id1].to_str(SysTime::LowAlpha) << CRLF;
@@ -4478,7 +4483,7 @@ ReturnText::ReturnText() : CliText(ReturnTextExpl, ReturnTextStr) { }
 
 fixed_string SignalParmExpl = "signal's name ('SIG...')";
 
-SignalParm::SignalParm() : CliTextParm(SignalParmExpl) { }
+SignalParm::SignalParm() : CliTextParm(SignalParmExpl, false, 0) { }
 
 //------------------------------------------------------------------------------
 
@@ -4607,14 +4612,14 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
    case RecoveryThread::Return:
    case RecoveryThread::SwErr:
    case RecoveryThread::Terminate:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       thr->SetTest(test);
       thr->Interrupt();
       break;
 
    case RecoveryThread::Delete:
       if(!GetBoolParm(flag, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       if(flag)
       {
          thr->SetTest(test);
@@ -4628,7 +4633,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
 
    case RecoveryThread::RaiseSignal:
       if(!GetString(signame, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       signal = reg->Value(signame);
       if(signal == SIGNIL) return cli.Report(-3, UnknownSignalExpl);
       thr->SetTest(test);
@@ -4639,7 +4644,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
    case RecoveryThread::Trap:
       if(!GetBoolParm(flag, cli)) return -1;
       if(!GetString(signame, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       ps = reg->Find(signame);
       if(ps == nullptr) return cli.Report(-3, UnknownSignalExpl);
       if(flag)

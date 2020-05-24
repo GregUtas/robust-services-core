@@ -22,7 +22,6 @@
 #include "TraceBuffer.h"
 #include "TraceRecord.h"
 #include <cmath>
-#include <cstdint>
 #include <cstring>
 #include <new>
 #include <sstream>
@@ -207,7 +206,7 @@ bool TraceBuffer::AllocBuffers(size_t n)
    //
    if(n < MinSize) n = MinSize;
    if(n > MaxSize) n = MaxSize;
-   size_t size = 1;
+   uint32_t size = 1;
    size <<= n;
 
    Memory::Free(buff_, MemPermanent);
@@ -236,19 +235,19 @@ bool TraceBuffer::AllocBuffers(size_t n)
 
 //------------------------------------------------------------------------------
 
-size_t TraceBuffer::AllocSlot()
+uint32_t TraceBuffer::AllocSlot()
 {
    //  This fails if
    //  o the buffer is not allocated
    //  o the buffer is locked
    //  o the buffer is full and wraparound is not enabled
    //
-   if(buff_ == nullptr) return SIZE_MAX;
+   if(buff_ == nullptr) return UINT32_MAX;
 
    if(softLocks_ > 0)
    {
       ++blocks_;
-      return SIZE_MAX;
+      return UINT32_MAX;
    }
 
    auto slot = bnext_.fetch_add(1);
@@ -258,7 +257,7 @@ size_t TraceBuffer::AllocSlot()
       ovfl_ = true;
       if(wrap_) return (slot & (size_ - 1));
       bnext_ = size_;
-      return SIZE_MAX;
+      return UINT32_MAX;
    }
 
    return slot;

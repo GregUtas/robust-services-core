@@ -25,6 +25,7 @@
 #include "Permanent.h"
 #include <atomic>
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <map>
 #include <string>
@@ -267,9 +268,9 @@ private:
    bool AllocBuffers(size_t n);
 
    //  Allocates the next available slot for a TraceRecord subclass.  Returns
-   //  SIZE_MAX if no more slots are available or the buffer is locked.
+   //  UINT32_MAX if no more slots are available or the buffer is locked.
    //
-   size_t AllocSlot();
+   uint32_t AllocSlot();
 
    //  Flags that indicate which trace tools are enabled.
    //
@@ -290,15 +291,15 @@ private:
 
    //  The current size of buff_ and funcs_.
    //
-   size_t size_;
+   uint32_t size_;
 
    //  The next available slot in buff_.
    //
-   std::atomic_size_t bnext_;
+   std::atomic_uint32_t bnext_;
 
    //  The next available slot in funcs_.
    //
-   std::atomic_size_t fnext_;
+   std::atomic_uint32_t fnext_;
 
    //  Set if the buffer should wrap around when full.
    //

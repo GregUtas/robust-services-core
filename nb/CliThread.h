@@ -25,8 +25,9 @@
 #include "Thread.h"
 #include <cstddef>
 #include <iosfwd>
-#include <istream>
+#include <map>
 #include <string>
+#include <vector>
 #include "CliAppData.h"
 #include "CliCookie.h"
 #include "NbTypes.h"
@@ -56,14 +57,13 @@ class CliThread : public Thread
    friend class Singleton< CliThread >;
    friend class HelpCommand;
    friend class QuitCommand;
-   friend class SendCommand;
 public:
-   //  Called once a command has been parsed.  Returns true if the input
-   //  stream contains no more non-blank characters.  Otherwise, an error
-   //  or warning message (as determined by ERROR) is output, indicating
-   //  where the superfluous input starts.
+   //  Called after a command has been parsed.  Returns true if the input
+   //  stream contains no more non-blank characters, else returns false
+   //  after clearing the input buffer and displaying an error message
+   //  that indicates where the superfluous input started.
    //
-   bool EndOfInput(bool error) const;
+   bool EndOfInput() const;
 
    //  Used to report the result of a command that returned RC.  EXPL is
    //  displayed as a success or failure explanation with INDENT leading
@@ -92,12 +92,14 @@ public:
       const std::string& chars, const std::string& help, bool upper = false);
 
    //  Displays PROMPT and loops until the user enters an integer between MIN
-   //  and MAX, which is returned.
+   //  and MAX, which is returned.  Returns 0 if commands are being read from
+   //  a file rather than the console.
    //
    word IntPrompt(const std::string& prompt, word min, word max);
 
    //  Displays PROMPT until the user enters valid input, which is returned.
-   //  Returns an empty string if an error occurs.
+   //  Returns an empty string if an error occurs or if commands are being
+   //  read from a file rather than the console.
    //
    std::string StrPrompt(const std::string& prompt);
 
@@ -110,18 +112,19 @@ public:
    word DisplayHelp(const std::string& path, const std::string& key) const;
 
    //  Returns the buffer where output to be passed to FileThread is placed.
+   //  Used by a command that wants to write to a file.
    //
    std::ostream* FileStream();
 
    //  After output has been placed in the buffer returned by FileStream
    //  (above), invoke this to send the buffer to FileThread, which will
-   //  write the output to a file identified by NAME.  If PURGE is set,
+   //  write the output to the file identified by NAME.  If PURGE is set,
    //  an existing file with NAME is overwritten; otherwise, the output
    //  is appended to it.
    //
    void SendToFile(const std::string& name, bool purge = false);
 
-   //  Returns the current command.
+   //  Returns the command currently being executed.
    //
    const CliCommand* Command() const { return command_; }
 
@@ -134,7 +137,20 @@ public:
    //
    word Execute(const std::string& input);
 
-   //  Accesses application-specific data.
+   //  Pushes FILE as the location to which output should be sent.  Returns
+   //  true on success.  Returns false if the maximum depth of output files
+   //  has been reached.
+   //
+   bool PushOutputFile(const std::string& file);
+
+   //  Pops the current output file so that subsequent output is sent to the
+   //  previous file or, if ALL is set, to the console.  Returns false if no
+   //  output files were present and output was already going to the console.
+   //
+   bool PopOutputFile(bool all);
+
+   //  Accesses data associated with the application identified by AID.
+   //  Returns nullptr if that application does not have any data.
    //
    CliAppData* GetAppData(CliAppData::Id aid) const;
 
@@ -142,11 +158,11 @@ public:
    //
    void SetAppData(CliAppData* data, CliAppData::Id aid);
 
-   //  Notifies applications that EVT has occurred.
+   //  Notifies all active applications that EVENT has occurred.
    //
-   void Notify(CliAppData::Event evt) const;
+   void Notify(CliAppData::Event event) const;
 
-   //  Invoked when tracing is still on and trace tool is about to generate
+   //  Invoked when tracing is still on and a trace tool is about to generate
    //  a report.  Reports are normally generated preemptably, but in the lab
    //  the user is given the option to trace generation of the report itself.
    //
@@ -156,28 +172,14 @@ public:
    //
    word InvokeSubcommand(const CliCommand& comm);
 
-   //  Returns the current prompt.
+   //  Returns the prompt that is currently displayed when this thread is
+   //  ready to accept the next command.
    //
-   const std::string& Prompt() const { return *prompt_; }
-
-   //  Returns the file from which input is being read.
-   //
-   std::istream* InputFile() const { return in_[inIndex_].get(); }
+   const std::string& Prompt() const { return prompt_; }
 
    //  Returns the parse cookie.
    //
    CliCookie& Cookie() { return cookie_; }
-
-   //  Opens NAME.txt for reading input.  Returns 0 on success.  On failure,
-   //  returns another value and updates EXPL with an explanation.
-   //
-   word OpenInputFile(const std::string& name, std::string& expl);
-
-   //  Reads commands from the current input stream (in_[inIndex_).
-   //  This is initially the console, but the >read command calls
-   //  this to read commands from a file.
-   //
-   void ReadCommands();
 
    //  Overridden for restarts.
    //
@@ -212,7 +214,12 @@ private:
    //
    ~CliThread();
 
-   //  Parses user input and returns the command to be processed.
+   //  Reads commands from the current input file (inFile_) or, if it is
+   //  empty, from the console via CinThread.
+   //
+   void ReadCommands();
+
+   //  Parses user input and returns the command to be executed.
    //  Returns nullptr if no command is to be invoked.
    //
    const CliCommand* ParseCommand() const;
@@ -221,6 +228,11 @@ private:
    //  and returns its result.
    //
    word InvokeCommand(const CliCommand& comm);
+
+   //  Sends SuccessExpl to the current output file just before closing it
+   //  or opening a new output file.
+   //
+   void SendAckToOutputFile();
 
    //  Sets the result of executing a command.
    //
@@ -244,6 +256,10 @@ private:
    //
    void Enter() override;
 
+   //  Overridden to abort work on a break signal.
+   //
+   bool Recover() override;
+
    //  Overridden to delete the singleton.
    //
    void Destroy() override;
@@ -258,11 +274,7 @@ private:
 
    //  The current prompt for user input.
    //
-   stringPtr prompt_;
-
-   //  Set to suppress the prompt on a one-time basis.
-   //
-   bool skip_;
+   std::string prompt_;
 
    //  The command currently being executed.
    //
@@ -280,36 +292,15 @@ private:
    //
    ostringstreamPtr stream_;
 
-   //> The number of input streams that can be nested by the >send command.
+   //  The file names to which output is being sent; output is currently
+   //  sent to outFile_.back().  If empty, output is sent to the console
+   //  via CoutThread, which copies it to the console transcript file.
    //
-   static const size_t OutSize = 8;
-
-   //  Where to send output (the default is to CoutThread, which copies it
-   //  to the console transcript file).
-   //
-   stringPtr outName_[OutSize];
-
-   //  The index into out_ that references the name of the output stream
-   //  (if zero, output is sent to CoutThread).
-   //
-   size_t outIndex_;
-
-   //> The number of input streams that can be nested by the >read command.
-   //
-   static const size_t InSize = 8;
-
-   //  The stream from which input is being read (in_[0] is nullptr).
-   //
-   istreamPtr in_[InSize];
-
-   //  The index into in_ that references the input stream (if zero,
-   //  input is taken from CinThread).
-   //
-   size_t inIndex_;
+   std::vector< std::string > outFiles_;
 
    //  Application-specific data.
    //
-   std::unique_ptr< CliAppData > appData_[CliAppData::MaxId + 1];
+   std::map< CliAppData::Id, std::unique_ptr< CliAppData >> appsData_;
 };
 }
 #endif

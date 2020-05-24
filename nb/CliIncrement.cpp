@@ -72,7 +72,7 @@ bool CliIncrement::BindCommand(CliCommand& comm)
    Debug::ft(CliIncrement_BindCommand);
 
    //  Generate a log and fail if
-   //  o COMM has no name (a wildcard match), or
+   //  o COMM has no name
    //  o another entry has the same name as COMM, which would make
    //    COMM inaccessible.
    //

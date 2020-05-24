@@ -168,10 +168,6 @@ public:
    virtual LibrarySet* NeededBy() const;
    virtual LibrarySet* Needers() const;
 
-   //  Returns the offset to link_.
-   //
-   static ptrdiff_t LinkDiff();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -215,6 +211,10 @@ private:
    //  Generates a log and returns nullptr.
    //
    LibrarySet* OpError() const;
+
+   //  Returns the offset to link_.
+   //
+   static ptrdiff_t LinkDiff();
 
    //  Link for the queue of sets.
    //

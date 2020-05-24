@@ -171,7 +171,7 @@ IdOptParm::IdOptParm() : CliIntParm(IdExpl, 0, UINT16_MAX, true) { }
 
 fixed_string IstreamMandExpl = "filename for input (in OutputPath directory)";
 
-IstreamMandParm::IstreamMandParm() : CliTextParm(IstreamMandExpl) { }
+IstreamMandParm::IstreamMandParm() : CliTextParm(IstreamMandExpl, false, 0) { }
 
 //------------------------------------------------------------------------------
 
@@ -222,11 +222,12 @@ LogBufferIdParm::LogBufferIdParm() :
 
 fixed_string LogGroupMandExpl = "log group name";
 
-LogGroupMandParm::LogGroupMandParm() : CliTextParm(LogGroupMandExpl) { }
+LogGroupMandParm::LogGroupMandParm() :
+   CliTextParm(LogGroupMandExpl, false, 0) { }
 
 fixed_string LogGroupOptExpl = "log group name (default=all)";
 
-LogGroupOptParm::LogGroupOptParm() : CliTextParm(LogGroupOptExpl, true) { }
+LogGroupOptParm::LogGroupOptParm() : CliTextParm(LogGroupOptExpl, true, 0) { }
 
 //------------------------------------------------------------------------------
 
@@ -258,11 +259,11 @@ ObjPoolIdOptParm::ObjPoolIdOptParm() :
 
 fixed_string OstreamMandExpl = "filename for output";
 
-OstreamMandParm::OstreamMandParm() : CliTextParm(OstreamMandExpl) { }
+OstreamMandParm::OstreamMandParm() : CliTextParm(OstreamMandExpl, false, 0) { }
 
 fixed_string OstreamOptExpl = "filename for output (default=console)";
 
-OstreamOptParm::OstreamOptParm() : CliTextParm(OstreamOptExpl, true) { }
+OstreamOptParm::OstreamOptParm() : CliTextParm(OstreamOptExpl, true, 0) { }
 
 //------------------------------------------------------------------------------
 

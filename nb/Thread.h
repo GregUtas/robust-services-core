@@ -224,10 +224,6 @@ public:
    //
    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 
-   //  Returns the offset to tid_.
-   //
-   static ptrdiff_t CellDiff();
-
    //  Overridden for restarts.  This is only invoked on threads that did
    //  not exit and survived the restart.
    //
@@ -281,6 +277,10 @@ protected:
    //  compelling reasons.
    //
    virtual Duration InitialTime() const;
+
+   //  Returns the signal, if any, that is currently being handled.
+   //
+   signal_t GetSignal() const;
 
    //  Starts the next short interval for thread statistics.
    //
@@ -651,6 +651,10 @@ private:
    //  Displays context switches in STREAM.
    //
    static void DisplayContextSwitches(std::ostream& stream);
+
+   //  Returns the offset to tid_.
+   //
+   static ptrdiff_t CellDiff();
 
    //  The wrapper for the native thread.
    //

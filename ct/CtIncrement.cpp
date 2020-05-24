@@ -87,19 +87,19 @@ public: VarMandName();
 
 fixed_string CodeSetExprExpl = "a set of code files or directories";
 
-CodeSetExprParm::CodeSetExprParm() : CliTextParm(CodeSetExprExpl) { }
+CodeSetExprParm::CodeSetExprParm() : CliTextParm(CodeSetExprExpl, false, 0) { }
 
 fixed_string FileSetExprExpl = "a set of code files";
 
-FileSetExprParm::FileSetExprParm() : CliTextParm(FileSetExprExpl) { }
+FileSetExprParm::FileSetExprParm() : CliTextParm(FileSetExprExpl, false, 0) { }
 
 fixed_string SetExprExpl = "a set of code files or directories";
 
-SetExprParm::SetExprParm() : CliTextParm(SetExprExpl) { }
+SetExprParm::SetExprParm() : CliTextParm(SetExprExpl, false, 0) { }
 
 fixed_string VarMandNameExpl = "variable name";
 
-VarMandName::VarMandName() : CliTextParm(VarMandNameExpl) { }
+VarMandName::VarMandName() : CliTextParm(VarMandNameExpl, false, 0) { }
 
 //------------------------------------------------------------------------------
 //
@@ -136,7 +136,7 @@ LibrarySet* LibraryCommand::Evaluate(const CliThread& cli)
 
    auto pos = cli.Prompt().size() + cli.ibuf->Pos();
    cli.ibuf->Read(expr);
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return nullptr;
 
    auto result = Singleton< Library >::Instance()->Evaluate(expr, pos);
    return result;
@@ -176,7 +176,7 @@ word AssignCommand::ProcessCommand(CliThread& cli) const
       Symbol::InvalidInitialChars())) return -1;
    auto pos = cli.Prompt().size() + cli.ibuf->Pos();
    cli.ibuf->Read(expr);
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto rc = Singleton< Library >::Instance()->Assign(name, expr, pos, expl);
    return cli.Report(rc, expl);
@@ -214,7 +214,7 @@ word CheckCommand::ProcessCommand(CliThread& cli) const
    if(!GetFileName(title, cli)) return -1;
 
    auto set = LibraryCommand::Evaluate(cli);
-   if(set == nullptr) return cli.Report(-7, AllocationError);
+   if(set == nullptr) return -1;
 
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
@@ -297,7 +297,7 @@ public: FuncNameParm();
 
 fixed_string FuncNameParmExpl = "name of function to remove";
 
-FuncNameParm::FuncNameParm() : CliTextParm(FuncNameParmExpl) { }
+FuncNameParm::FuncNameParm() : CliTextParm(FuncNameParmExpl, false, 0) { }
 
 fixed_string CoverageEraseTextStr = "erase";
 fixed_string CoverageEraseTextExpl = "removes a function from the database";
@@ -375,7 +375,7 @@ word CoverageCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case CoverageLoadIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = database->Load(expl);
       break;
 
@@ -385,18 +385,18 @@ word CoverageCommand::ProcessCommand(CliThread& cli) const
 
    case CoverageUnderIndex:
       if(!GetIntParm(min, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = database->Under(min, expl);
       break;
 
    case CoverageEraseIndex:
       if(!GetString(name, cli)) return -1;
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = database->Erase(name, expl);
       break;
 
    case CoverageUpdateIndex:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       rc = database->Update(expl);
       break;
 
@@ -518,7 +518,7 @@ word ExplainCommand::ProcessCommand(CliThread& cli) const
    word id;
 
    if(!GetIntParm(id, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    string key = 'W' + std::to_string(id);
    auto path = Element::HelpPath() + PATH_SEPARATOR + "cppcheck.txt";
@@ -546,7 +546,7 @@ public: ViewsParm();
 
 fixed_string ViewsExpl = "options (enter \">help export full\" for details)";
 
-ViewsParm::ViewsParm() : CliTextParm(ViewsExpl, true) { }
+ViewsParm::ViewsParm() : CliTextParm(ViewsExpl, true, 0) { }
 
 class ExportCommand : public CliCommand
 {
@@ -612,7 +612,7 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetFileName(title, cli)) return -1;
    GetString(opts, cli);
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    if(opts.empty())
    {
@@ -701,7 +701,7 @@ word FileIdCommand::ProcessCommand(CliThread& cli) const
    word fid;
 
    if(!GetIntParm(fid, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto file = Singleton< Library >::Instance()->Files().At(fid);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
@@ -728,7 +728,7 @@ private:
 
 fixed_string CodeFileExpl = "filename (including extension)";
 
-CodeFileParm::CodeFileParm() : CliTextParm(CodeFileExpl) { }
+CodeFileParm::CodeFileParm() : CliTextParm(CodeFileExpl, false, 0) { }
 
 fixed_string FileInfoStr = "fileinfo";
 fixed_string FileInfoExpl = "Displays information about a code file.";
@@ -747,7 +747,7 @@ word FileInfoCommand::ProcessCommand(CliThread& cli) const
    string name;
 
    if(!GetString(name, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto file = Singleton< Library >::Instance()->FindFile(name);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
@@ -878,11 +878,11 @@ private:
 
 fixed_string DirMandNameExpl = "directory name";
 
-DirMandName::DirMandName() : CliTextParm(DirMandNameExpl) { }
+DirMandName::DirMandName() : CliTextParm(DirMandNameExpl, false, 0) { }
 
 fixed_string PathMandExpl = "path within SourcePath configuration parameter";
 
-PathMandParm::PathMandParm() : CliTextParm(PathMandExpl) { }
+PathMandParm::PathMandParm() : CliTextParm(PathMandExpl, false, 0) { }
 
 fixed_string ImportStr = "import";
 fixed_string ImportExpl = "Adds a directory to the code base.";
@@ -904,7 +904,7 @@ word ImportCommand::ProcessCommand(CliThread& cli) const
    if(!GetIdentifier(name, cli, Symbol::ValidNameChars(),
       Symbol::InvalidInitialChars())) return -1;
    if(!GetString(subdir, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto lib = Singleton< Library >::Instance();
    string path(lib->SourcePath());
@@ -962,7 +962,8 @@ public: ParseOptionsParm();
 fixed_string ParseOptionsExpl =
    "options (enter \">help parse full\" for details)";
 
-ParseOptionsParm::ParseOptionsParm() : CliTextParm(ParseOptionsExpl) { }
+ParseOptionsParm::ParseOptionsParm() :
+   CliTextParm(ParseOptionsExpl, false, 0) { }
 
 class DefineFileParm : public CliTextParm
 {
@@ -972,7 +973,7 @@ public: DefineFileParm();
 fixed_string DefineFileExpl =
    "file for #define symbols (.txt in input directory)";
 
-DefineFileParm::DefineFileParm() : CliTextParm(DefineFileExpl) { }
+DefineFileParm::DefineFileParm() : CliTextParm(DefineFileExpl, false, 0) { }
 
 class ParseCommand : public LibraryCommand
 {
@@ -1073,7 +1074,7 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIdentifier(name, cli, Symbol::ValidNameChars(),
       Symbol::InvalidInitialChars())) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto rc = Singleton< Library >::Instance()->Purge(name, expl);
    return cli.Report(rc, expl);
@@ -1098,7 +1099,8 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
 
 fixed_string StringPatternExpl = "string to look for (quoted; '$' = wildcard)";
 
-StringPatternParm::StringPatternParm() : CliTextParm(StringPatternExpl) { }
+StringPatternParm::StringPatternParm() :
+   CliTextParm(StringPatternExpl, false, 0) { }
 
 fixed_string ScanStr = "scan";
 fixed_string ScanExpl = "Scans files for lines that contain a string.";
@@ -1121,7 +1123,7 @@ word ScanCommand::ProcessCommand(CliThread& cli) const
    //
    auto pos = cli.Prompt().size() + cli.ibuf->Pos();
    cli.ibuf->Read(line);
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto quote1 = line.find(QUOTE);
    auto quote2 = line.rfind(QUOTE);
@@ -1229,7 +1231,7 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
    id_t index;
 
    if(!GetTextIndex(index, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    switch(index)
    {
@@ -1319,7 +1321,7 @@ word ShrinkCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(ShrinkCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    CxxStats::Shrink();
    return 0;
@@ -1384,7 +1386,7 @@ public: FileNameParm();
 
 fixed_string FileNameExpl = "name of source code file";
 
-FileNameParm::FileNameParm() : CliTextParm(FileNameExpl) { }
+FileNameParm::FileNameParm() : CliTextParm(FileNameExpl, false, 0) { }
 
 class LineNumberParm : public CliIntParm
 {
@@ -1544,12 +1546,12 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
       break;
 
    case ActionParm::Clear:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       Context::ClearTracepoints();
       return cli.Report(0, SuccessExpl);
 
    case ActionParm::List:
-      cli.EndOfInput(false);
+      if(!cli.EndOfInput()) return -1;
       Context::DisplayTracepoints(*cli.obuf, spaces(2));
       return 0;
 
@@ -1560,7 +1562,7 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
    if(!GetTextIndex(mode, cli)) return -1;
    if(!GetString(filename, cli)) return -1;
    if(!GetIntParm(line, cli)) return -1;
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
 
    auto lib = Singleton< Library >::Instance();
    auto file = lib->FindFile(filename);
@@ -1651,7 +1653,7 @@ word ExpCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(ExpCommand_ProcessCommand);
 
-   cli.EndOfInput(false);
+   if(!cli.EndOfInput()) return -1;
    *cli.obuf << "This command currently does nothing." << CRLF;
    return 0;
 }

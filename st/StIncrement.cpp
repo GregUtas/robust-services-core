@@ -438,6 +438,9 @@ word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    string title;
    auto debug = false;
 
+   auto yield = cli.GenerateReportPreemptably();
+   FunctionGuard guard(Guard_MakePreemptable, yield);
+
    if(!GetFileName(title, cli)) return -1;
    if(GetBoolParmRc(debug, cli) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
@@ -447,9 +450,6 @@ word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    auto buff = Singleton< TraceBuffer >::Instance();
    if(buff->Empty()) return ExplainTraceRc(cli, BufferEmpty);
-
-   auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    std::unique_ptr< MscBuilder > msc(new MscBuilder(debug));
    rc = msc->Generate(*stream);

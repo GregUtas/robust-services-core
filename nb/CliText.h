@@ -38,7 +38,7 @@ class CliText : public CliParm
 {
    friend class CliTextParm;
 public:
-   //  HELP and OPTIONAL are passed to CliParm.  TEXT is the string that can
+   //  HELP and OPT are passed to CliParm.  TEXT is the string that can
    //  be followed by parameters.  SIZE specifies the number of parameters
    //  that can follow the string.  If TEXT is EMPTY_STR, then any string
    //  acts as a match (which means that any subsequent instance of CliText

@@ -31,6 +31,7 @@
 #include "Element.h"
 #include "FileThread.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "NbCliParms.h"
 #include "NbTypes.h"
 #include "Singleton.h"
@@ -310,6 +311,7 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
    //
    if(source.file_->eof())
    {
+      FunctionGuard guard(Guard_MakePreemptable);
       sources_.pop_front();
       return StreamEof;
    }
@@ -322,6 +324,7 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
 
    if(source.file_->fail())
    {
+      FunctionGuard guard(Guard_MakePreemptable);
       sources_.pop_front();
       return StreamFailure;
    }
@@ -517,6 +520,8 @@ word CliBuffer::OpenInputFile(const string& name, string& expl)
       expl = TooManyInputStreams;
       return -7;
    }
+
+   FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
    auto file = SysFile::CreateIstream(path.c_str());

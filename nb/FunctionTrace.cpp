@@ -607,6 +607,10 @@ void FunctionTrace::CalcFuncTimes()
 
 Duration FunctionTrace::CalcGrossTime()
 {
+   //  Some records are captured before SysTickTimer is even initialized.
+   //
+   if(!GetTime().IsValid()) return ZERO_SECS;
+
    auto buff = Singleton< TraceBuffer >::Instance();
    auto mask = FTmask;
    TraceRecord* rec = this;

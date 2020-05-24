@@ -2575,6 +2575,9 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    string opts;
    string expl;
 
+   auto yield = cli.GenerateReportPreemptably();
+   FunctionGuard guard(Guard_MakePreemptable, yield);
+
    if(!GetFileName(title, cli)) return -1;
    if(GetStringRc(opts, cli) == CliParm::Error) return -1;
    if(!cli.EndOfInput()) return -1;
@@ -2589,9 +2592,6 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
-
-   auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    rc = Singleton< TraceBuffer >::Instance()->DisplayTrace(stream, opts);
 
@@ -2709,6 +2709,10 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case SchedShowIndex:
+   {
+      auto yield = cli.GenerateReportPreemptably();
+      FunctionGuard guard(Guard_MakePreemptable, yield);
+
       if(!GetFileName(title, cli)) title.clear();
       if(!cli.EndOfInput()) return -1;
 
@@ -2724,6 +2728,7 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
       title += ".sched.txt";
       cli.SendToFile(title, true);
       break;
+   }
 
    case SchedStartIndex:
       if(!cli.EndOfInput()) return -1;
@@ -3287,12 +3292,16 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
       break;
 
    case StatsShowIndex:
+   {
       switch(GetIntParmRc(gid, cli))
       {
       case None: all = true; break;
       case Ok: all = false; break;
       default: return -1;
       }
+
+      auto yield = cli.GenerateReportPreemptably();
+      FunctionGuard guard(Guard_MakePreemptable, yield);
 
       if(GetIntParmRc(mid, cli) == Error) return -1;
       if(GetBV(*this, cli, v) == Error) return -1;
@@ -3325,6 +3334,7 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
       title += ".stats.txt";
       cli.SendToFile(title, true);
       break;
+   }
 
    case StatsRolloverIndex:
       if(GetBoolParmRc(first, cli) == Error) return -1;

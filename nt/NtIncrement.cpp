@@ -253,11 +253,16 @@ word NtLogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    switch(index)
    {
    case SortIndex:
+   {
+      auto yield = cli.GenerateReportPreemptably();
+      FunctionGuard guard(Guard_MakePreemptable, yield);
+
       if(!GetFileName(input, cli)) return -1;
       if(!GetFileName(output, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
       rc = Sort(input, output, expl);
       return cli.Report(rc, expl);
+   }
 
    case FloodIndex:
       if(!GetIntParm(count, cli)) return -1;
@@ -456,6 +461,9 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    id_t sortHowIndex;
    auto sort = FunctionProfiler::ByCalls;
 
+   auto yield = cli.GenerateReportPreemptably();
+   FunctionGuard guard(Guard_MakePreemptable, yield);
+
    if(!GetFileName(title, cli)) return -1;
    if(GetTextIndexRc(sortHowIndex, cli) == Ok)
    {
@@ -470,9 +478,6 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
-
-   auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    FunctionTrace::Process(EMPTY_STR);
    std::unique_ptr< FunctionProfiler > fp(new FunctionProfiler);

@@ -34,7 +34,7 @@ namespace NodeBase
 class CliBoolParm : public CliParm
 {
 public:
-   //  HELP and OPTIONAL are passed to CliParm.
+   //  HELP and OPT are passed to CliParm.
    //
    explicit CliBoolParm(c_string help,
       bool opt = false, c_string tag = nullptr);

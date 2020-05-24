@@ -91,7 +91,7 @@ public:
    //  Explains the command.  If VERBOSE is true, all of the command's
    //  parameters are also explained.  Returns 0.
    //
-   word ExplainCommand(std::ostream& stream, bool verbose) const;
+   virtual word ExplainCommand(std::ostream& stream, bool verbose) const;
 
    //  Overridden for patching.
    //

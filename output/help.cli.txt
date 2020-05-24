@@ -413,12 +413,15 @@ corrupt           : Corrupts a data structure for testing purposes.
 )
 
 lbc               : Tests a LeakyBucketCounter function.
+(
   init            : Initializes the counter.
     (1:3600)      : capacity of bucket (limit)
     (1:3600)      : time to empty bucket (seconds)
   event           : Updates the counter when an event occurs.
+)
 
 q1                : Tests a Q1Way function.
+(
   enq             : Adds an item to the end of the queue.
     (0:8)         : item number (0 = nullptr)
   henq            : Adds an item to the front of the queue.
@@ -435,8 +438,10 @@ q1                : Tests a Q1Way function.
   count           : Returns the number of items in the queue.
   empty           : Returns true if the queue is empty.
   purge           : Deletes all the items in the queue.
+)
 
 q2                : Tests a Q2Way function.
+(
   enq             : Adds an item to the end of the queue.
     (0:8)         : item number (0 = nullptr)
   henq            : Adds an item to the front of the queue.
@@ -453,8 +458,10 @@ q2                : Tests a Q2Way function.
   count           : Returns the number of items in the queue.
   empty           : Returns true if the queue is empty.
   purge           : Deletes all the items in the queue.
+)
 
 reg               : Tests a Registry function.
+(
   init            : Initializes the registry.
     (0:8)         : maximum number of items in registry
   insert          : Adds an item to the registry.
@@ -473,8 +480,10 @@ reg               : Tests a Registry function.
   prev            : Returns the previous item in the registry.
     (0:8)         : item number (0 = nullptr)
   count           : Returns the number of items in the registry.
+)
 
 time              : Tests a SysTime function.
+(
   ctor1           : Constructs the current time.
     (1:3)         : item number
   ctor2           : Constructs a specified time.
@@ -534,8 +543,10 @@ time              : Tests a SysTime function.
     <int>         : number of days
   strtime         : Displays the time in various formats.
     (1:3)         : item number
+)
 
 heap              : Tests an NbHeap function.
+(
   create          : Creates the heap.
     (t|d|p)       : heap's memory type (temporary|dynamic|protected)
     (0:2048)      : heap's size
@@ -549,6 +560,7 @@ heap              : Tests an NbHeap function.
     <hex>         : block's address
   validate        : Validates the heap (if 0) or a block.
     <hex>         : block's address
+)
 
 recover           : Tests thread recovery.
 (                 : what to recover from...

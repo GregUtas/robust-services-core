@@ -99,7 +99,7 @@ fn_name PotsCallPsm_Cast = "PotsCallPsm.Cast";
 
 PotsCallPsm* PotsCallPsm::Cast(ProtocolSM* psm)
 {
-   Debug::ft(PotsCallPsm_Cast);
+   Debug::ftnt(PotsCallPsm_Cast);
 
    if((psm != nullptr) && (psm->GetFactory() == PotsCallFactoryId))
    {

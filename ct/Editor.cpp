@@ -4369,6 +4369,12 @@ Editor::Iter Editor::UpdateFuncDeclLoc
       return LineAfterFunc(prev);
    }
 
+   if(next == nullptr)
+   {
+      Debug::SwLog(Editor_UpdateFuncDeclLoc, "prev and next are nullptr", 0);
+      return source_.end();
+   }
+
    //  Insert the function before NEXT.  If the new function is to be offset
    //  with a blank, it will follow the new function.
    //
@@ -4584,9 +4590,17 @@ word Editor::Write(string& expl)
    //  Delete the original file and replace it with the new one.
    //
    output.reset();
-   remove(path.c_str());
+   auto err = remove(path.c_str());
 
-   auto err = rename(temp.c_str(), path.c_str());
+   if(err != 0)
+   {
+      stream << "Failed to remove " << file_->Name() << ": error=" << err;
+      expl = stream.str();
+      return err;
+   }
+
+   err = rename(temp.c_str(), path.c_str());
+
    if(err != 0)
    {
       stream << "Failed to rename " << file_->Name() << ": error=" << err;

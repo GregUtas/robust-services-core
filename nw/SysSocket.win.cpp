@@ -153,19 +153,15 @@ fn_name SysSocket_Invalidate = "SysSocket.Invalidate";
 
 void SysSocket::Invalidate()
 {
-   Debug::ft(SysSocket_Invalidate);
+   Debug::ftnt(SysSocket_Invalidate);
 
    socket_= INVALID_SOCKET;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_IsValid = "SysSocket.IsValid";
-
 bool SysSocket::IsValid() const
 {
-   Debug::ft(SysSocket_IsValid);
-
    return (socket_ != INVALID_SOCKET);
 }
 
@@ -252,7 +248,7 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
    }
 
    if(max < rxSize)
-      Debug::SwLog(SysSocket_SetService, max, rxSize);
+      Debug::SwLog(SysSocket_SetService, "rx size too large", rxSize);
 
    if(setsockopt(socket_, SOL_SOCKET, SO_SNDBUF,
       (const char*) &txSize, sizeof(txSize)) == SOCKET_ERROR)
@@ -269,7 +265,7 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
    }
 
    if(max < txSize)
-      Debug::SwLog(SysSocket_SetService, max, txSize);
+      Debug::SwLog(SysSocket_SetService, "tx size too large", txSize);
    return rc;
 }
 

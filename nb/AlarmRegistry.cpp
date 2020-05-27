@@ -104,7 +104,7 @@ fn_name AlarmRegistry_Find = "AlarmRegistry.Find";
 
 Alarm* AlarmRegistry::Find(const std::string& name) const
 {
-   Debug::ft(AlarmRegistry_Find);
+   Debug::ftnt(AlarmRegistry_Find);
 
    auto key = strUpper(name);
 

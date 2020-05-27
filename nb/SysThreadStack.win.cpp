@@ -181,7 +181,7 @@ fn_name SysThreadStack_Display = "SysThreadStack.Display";
 
 void SysThreadStack::Display(ostream& stream, fn_depth omit)
 {
-   Debug::ft(SysThreadStack_Display);
+   Debug::ftnt(SysThreadStack_Display);
 
    StackFramesPtr frames = nullptr;
    auto depth = StackInfo::GetFrames(frames);

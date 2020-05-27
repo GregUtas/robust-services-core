@@ -587,7 +587,7 @@ Pooled* ObjectPool::DeqBlock(size_t size)
 
    if(size > maxsize)
    {
-      Debug::SwLog(ObjectPool_DeqBlock, size, Pid());
+      Debug::SwLog(ObjectPool_DeqBlock, "size too large", size);
       throw AllocationException(mem_, size);
    }
 
@@ -737,13 +737,13 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
    {
       if(obj->orphaned_ == 0)
       {
-         Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(0, Pid()));
+         Debug::SwLog(ObjectPool_EnqBlock, "block not in use", debug64_t(obj));
          return;
       }
    }
    else if(obj->link_.next != nullptr)
    {
-      Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(1, Pid()));
+      Debug::SwLog(ObjectPool_EnqBlock, "block still queued", debug64_t(obj));
       return;
    }
 
@@ -766,7 +766,7 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
    if(!dyn_->freeq_.Enq(*obj))
    {
-      Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(2, Pid()));
+      Debug::SwLog(ObjectPool_EnqBlock, "block not queued", debug64_t(obj));
       return;
    }
 
@@ -930,7 +930,7 @@ Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
             if(b->obj.assigned_)
             {
                if(IndicesToBid(i, j, bid)) return &b->obj;
-               Debug::SwLog(ObjectPool_NextUsed, i, j);
+               Debug::SwLog(ObjectPool_NextUsed, "index error", debug64_t(b));
                return nullptr;
             }
          }

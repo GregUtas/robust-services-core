@@ -218,7 +218,7 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
       //  Other results are unlikely.  We are here because an SSM raised
       //  an initiation event after handling some other event.
       //
-      Debug::SwLog(SbInitiationReq_ProcessEvent, ire.GetModifier(), rc);
+      Debug::SwLog(SbInitiationReq_ProcessEvent, "unexpected result", rc);
       delete nextEvent;
       nextEvent = nullptr;
       rc = Suspend;

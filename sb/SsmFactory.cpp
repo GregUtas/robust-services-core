@@ -70,7 +70,7 @@ ProtocolSM* SsmFactory::AllocOgPsm(const Message& msg) const
 
    //  This must be implemented by a subclass if required.
    //
-   Debug::SwLog(SsmFactory_AllocOgPsm, Fid(), 0);
+   Debug::SwLog(SsmFactory_AllocOgPsm, UnexpectedInvocation, Fid());
    return nullptr;
 }
 
@@ -84,7 +84,7 @@ RootServiceSM* SsmFactory::AllocRoot(const Message& msg, ProtocolSM& psm) const
 
    //  This must be implemented by a subclass if required.
    //
-   Debug::SwLog(SsmFactory_AllocRoot, Fid(), 0);
+   Debug::SwLog(SsmFactory_AllocRoot, UnexpectedInvocation, Fid());
    return nullptr;
 }
 
@@ -98,7 +98,7 @@ SsmContext* SsmFactory::FindContext(const Message& msg) const
 
    //  This must be implemented by a subclass if required.
    //
-   Debug::SwLog(SsmFactory_FindContext, Fid(), 0);
+   Debug::SwLog(SsmFactory_FindContext, UnexpectedInvocation, Fid());
    return nullptr;
 }
 

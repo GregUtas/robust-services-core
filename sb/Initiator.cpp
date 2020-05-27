@@ -106,7 +106,7 @@ EventHandler::Rc Initiator::EventError(Event*& evt, EventHandler::Rc rc) const
 {
    Debug::ft(Initiator_EventError);
 
-   Debug::SwLog(Initiator_EventError, evt->Eid(), sid_);
+   Debug::SwLog(Initiator_EventError, "event error", pack2(sid_, evt->Eid()));
    delete evt;
    evt = nullptr;
    return rc;
@@ -118,9 +118,9 @@ fn_name Initiator_GetTrigger = "Initiator.GetTrigger";
 
 Trigger* Initiator::GetTrigger() const
 {
-   Debug::ft(Initiator_GetTrigger);
+   Debug::ftnt(Initiator_GetTrigger);
 
-   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid_);
+   auto svc = Singleton< ServiceRegistry >::Extant()->GetService(sid_);
 
    if(svc == nullptr)
    {
@@ -129,7 +129,7 @@ Trigger* Initiator::GetTrigger() const
       return nullptr;
    }
 
-   auto anc = Singleton< ServiceRegistry >::Instance()->GetService(aid_);
+   auto anc = Singleton< ServiceRegistry >::Extant()->GetService(aid_);
 
    if(anc == nullptr)
    {

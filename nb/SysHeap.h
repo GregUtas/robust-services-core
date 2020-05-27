@@ -100,6 +100,10 @@ protected:
    //  Protected because this class is virtual.
    //
    SysHeap(MemoryType type, size_t size);
+
+   //  Wrapper for the default heap.  TYPE must be MemPermanent.
+   //
+   explicit SysHeap(MemoryType type);
 private:
    //  The native handle to the underlying heap.
    //

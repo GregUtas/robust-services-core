@@ -25,6 +25,7 @@
 #include <fstream>
 #include <ios>
 #include <iosfwd>
+#include <new>
 #include "Debug.h"
 
 using std::string;
@@ -96,10 +97,11 @@ fn_name SysFile_CreateOstream = "SysFile.CreateOstream";
 
 ostreamPtr SysFile::CreateOstream(const char* fileName, bool trunc)
 {
-   Debug::ft(SysFile_CreateOstream);
+   Debug::ftnt(SysFile_CreateOstream);
 
    auto mode = (trunc ? std::ios::trunc : std::ios::app);
-   ostreamPtr stream(new std::ofstream(fileName, mode));
+   ostreamPtr stream(new (std::nothrow) std::ofstream(fileName, mode));
+   if(stream == nullptr) return nullptr;
    *stream << std::boolalpha << std::nouppercase;
    return stream;
 }
@@ -117,7 +119,7 @@ bool SysFile::FindFiles
 
    if(fileExt[0] != '.')
    {
-      Debug::SwLog(SysFile_FindFiles, fileExt[0], 0);
+      Debug::SwLog(SysFile_FindFiles, "unexpected character", fileExt[0]);
       return false;
    }
 
@@ -150,7 +152,7 @@ fn_name SysFile_Normalize1 = "SysFile.Normalize";
 
 void SysFile::Normalize(string& path)
 {
-   Debug::ft(SysFile_Normalize1);
+   Debug::ftnt(SysFile_Normalize1);
 
    for(size_t pos = 0; pos < path.size(); ++pos)
    {
@@ -164,7 +166,7 @@ fn_name SysFile_Normalize2 = "SysFile.Normalize(const)";
 
 string SysFile::Normalize(const string& path)
 {
-   Debug::ft(SysFile_Normalize2);
+   Debug::ftnt(SysFile_Normalize2);
 
    auto copy = path;
    Normalize(copy);

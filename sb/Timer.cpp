@@ -109,7 +109,7 @@ Timer::~Timer()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = TimePoint::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton< TraceBuffer >::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -142,15 +142,14 @@ fn_name Timer_Deregister = "Timer.Deregister";
 
 void Timer::Deregister()
 {
-   Debug::ft(Timer_Deregister);
+   Debug::ftnt(Timer_Deregister);
 
    if(qid_ == NilQId) return;
 
    //  Remove the timer from the timer registry and clear our queue
    //  identifier so that we no longer think we're on a queue.
    //
-   auto reg = Singleton< TimerRegistry >::Instance();
-   reg->timerq_[qid_].Exq(*this);
+   Singleton< TimerRegistry >::Extant()->timerq_[qid_].Exq(*this);
    qid_ = NilQId;
 }
 
@@ -284,7 +283,7 @@ void Timer::SendTimeout()
 
    if(!msg->SendToSelf())
    {
-      Debug::SwLog(Timer_SendTimeout, debug64_t(psm), psm->GetFactory());
+      Debug::SwLog(Timer_SendTimeout, "send failed", psm->GetFactory());
    }
 
    //  If the timer isn't repetitive, delete it.

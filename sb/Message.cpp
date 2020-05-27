@@ -127,7 +127,7 @@ Message::~Message()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = TimePoint::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton< TraceBuffer >::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -566,7 +566,7 @@ bool Message::Relay(ProtocolSM& ogPsm)
       return true;
    }
 
-   Debug::SwLog(Message_Relay, error, pack2(GetProtocol(), GetSignal()));
+   Debug::SwLog(Message_Relay, "invalid operation", error);
    return false;
 }
 
@@ -617,7 +617,7 @@ bool Message::Restore()
       return true;
    }
 
-   Debug::SwLog(Message_Restore, error, pack2(GetProtocol(), GetSignal()));
+   Debug::SwLog(Message_Restore, "invalid operation", error);
    return false;
 }
 
@@ -646,7 +646,7 @@ bool Message::Retrieve(ProtocolSM* psm)
       return true;
    }
 
-   Debug::SwLog(Message_Retrieve, error, pack2(GetProtocol(), GetSignal()));
+   Debug::SwLog(Message_Retrieve, "invalid operation", error);
    return false;
 }
 
@@ -706,7 +706,7 @@ bool Message::Send(Route route)
 
    if(buff_->Dir() != MsgOutgoing)
    {
-      return SendFailure(pack2(GetProtocol(), GetSignal()), 0);
+      return SendFailure(pack2(GetProtocol(), GetSignal()));
    }
 
    auto header = buff_->Header();
@@ -805,8 +805,7 @@ bool Message::Send(Route route)
 
       if(fac == nullptr)
       {
-         return SendFailure
-            (pack2(GetProtocol(), GetSignal()), pack2(header->rxAddr.fid, 2));
+         return SendFailure(pack2(GetProtocol(), GetSignal()));
       }
 
       auto faction = fac->GetFaction();
@@ -815,8 +814,7 @@ bool Message::Send(Route route)
 
       if(pool == nullptr)
       {
-         return SendFailure
-            (pack2(GetProtocol(), GetSignal()), pack2(faction, 3));
+         return SendFailure(pack2(GetProtocol(), GetSignal()));
       }
 
       header->route = route;
@@ -882,11 +880,11 @@ bool Message::Send(Route route)
 
 fn_name Message_SendFailure = "Message.SendFailure";
 
-bool Message::SendFailure(debug64_t errval, debug64_t offset)
+bool Message::SendFailure(debug64_t errval)
 {
    Debug::ft(Message_SendFailure);
 
-   Debug::SwLog(Message_SendFailure, errval, offset);
+   Debug::SwLog(Message_SendFailure, "send failed", errval);
    Handled(false);
    return false;
 }
@@ -929,7 +927,8 @@ bool Message::SendToSelf()
       return Send(Internal);
    }
 
-   Debug::SwLog(Message_SendToSelf, error, pack2(GetProtocol(), GetSignal()));
+   Debug::SwLog(Message_SendToSelf,
+      "failed to send message", pack2(GetProtocol(), GetSignal()));
    return false;
 }
 

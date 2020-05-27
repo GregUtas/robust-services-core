@@ -61,7 +61,7 @@ public:
       if(head_.next == nullptr) return;  // Init never invoked
       if(head_.next != &head_)
       {
-         Debug::ft(Q2Way_dtor());        // queue isn't empty
+         Debug::ftnt(Q2Way_dtor());        // queue isn't empty
          Purge();
       }
       head_.prev = nullptr;              // expected by Q2Link destructor
@@ -129,7 +129,7 @@ public:
       }
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Deq(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Deq(), "queue not intitialized", 0);
          return nullptr;
       }
       if(head_.next == &head_)             // if head points to itself
@@ -178,7 +178,7 @@ public:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Next(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Next(), "queue not initialized", 0);
          return false;
       }
       const Q2Link* item;                   // item will hold result
@@ -222,7 +222,7 @@ public:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Prev(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Prev(), "queue not initialized", 0);
          return false;
       }
       const Q2Link* item;                   // item will hold result
@@ -277,10 +277,10 @@ public:
    //
    void Purge()
    {
-      Debug::ft(Q2Way_Purge());
+      Debug::ftnt(Q2Way_Purge());
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Purge(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Purge(), "queue not initialized", 0);
          return;
       }
       while(head_.next != &head_)
@@ -321,12 +321,12 @@ private:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q2Way_Item(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Item(), "queue not initialized", 0);
          return nullptr;
       }
       if(&elem == nullptr)
       {
-         Debug::SwLog(Q2Way_Item(), 0, 1);  // ELEM is invalid
+         Debug::SwLog(Q2Way_Item(), "invalid element", 0);
          return nullptr;
       }
 

@@ -167,7 +167,7 @@ fn_name LogGroupRegistry_FindGroup = "LogGroupRegistry.FindGroup";
 
 LogGroup* LogGroupRegistry::FindGroup(const std::string& name) const
 {
-   Debug::ft(LogGroupRegistry_FindGroup);
+   Debug::ftnt(LogGroupRegistry_FindGroup);
 
    auto key = strUpper(name);
 
@@ -185,7 +185,7 @@ fn_name LogGroupRegistry_FindLog = "LogGroupRegistry.FindLog";
 
 Log* LogGroupRegistry::FindLog(const std::string& name, LogId id) const
 {
-   Debug::ft(LogGroupRegistry_FindLog);
+   Debug::ftnt(LogGroupRegistry_FindLog);
 
    auto group = FindGroup(name);
    if(group != nullptr) return group->FindLog(id);

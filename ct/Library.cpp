@@ -354,7 +354,7 @@ fn_name Library_EraseVar = "Library.EraseVar";
 
 void Library::EraseVar(LibrarySet& var)
 {
-   Debug::ft(Library_EraseVar);
+   Debug::ftnt(Library_EraseVar);
 
    vars_.Exq(var);
 }

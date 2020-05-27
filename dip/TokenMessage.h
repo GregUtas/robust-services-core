@@ -59,9 +59,10 @@ public:
    //
    ~TokenMessage();
 
-   //  Copy assignment operator.
+   //  Copy/move operators.
    //
    TokenMessage& operator=(const TokenMessage& that);
+   TokenMessage& operator=(TokenMessage&& that);
 
    //  Copies the message's tokens into TOKENS, which can hold up to MAX
    //  tokens.  Returns FALSE if the message is empty or contains more

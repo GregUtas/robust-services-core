@@ -69,7 +69,7 @@ fn_name MainArgs_At = "MainArgs.At";
 
 c_string MainArgs::At(size_t n)
 {
-   Debug::ft(MainArgs_At);
+   Debug::ftnt(MainArgs_At);
 
    auto reg = Singleton< MainArgs >::Extant();
    if(reg == nullptr) return MainParms.at(n).c_str();

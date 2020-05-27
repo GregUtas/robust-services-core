@@ -449,7 +449,7 @@ CliParm::Rc CliBuffer::GetStr(string& t, string& s)
          return CliParm::Error;
 
       default:
-         Debug::SwLog(CliBuffer_GetStr, pos_, type);
+         Debug::SwLog(CliBuffer_GetStr, "unknown type", type);
          return CliParm::Error;
       }
 

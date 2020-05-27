@@ -966,7 +966,7 @@ ProtocolSM::IncomingRc BcPsm::ProcessIcMsg(Message& msg, Event*& event)
       else
          error = pack2(cpi->progress, sig);
 
-      Debug::SwLog(BcPsm_ProcessIcMsg, error, state);
+      Debug::SwLog(BcPsm_ProcessIcMsg, "unexpected signal", error);
       event = RootSsm()->RaiseProtocolError(*this, SignalInvalid);
       return EventRaised;
    }
@@ -1084,7 +1084,7 @@ ProtocolSM::OutgoingRc BcPsm::ProcessOgMsg(Message& msg)
       else
          error = pack2(cpi->progress, sig);
 
-      Debug::SwLog(BcPsm_ProcessOgMsg, error, state);
+      Debug::SwLog(BcPsm_ProcessOgMsg, "unexpected signal", error);
       return PurgeMessage;
    }
 

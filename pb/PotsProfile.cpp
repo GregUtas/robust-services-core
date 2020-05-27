@@ -95,7 +95,7 @@ fn_name PotsProfile_ClearObjAddr1 = "PotsProfile.ClearObjAddr(addr)";
 
 bool PotsProfile::ClearObjAddr(const LocalAddress& addr)
 {
-   Debug::ft(PotsProfile_ClearObjAddr1);
+   Debug::ftnt(PotsProfile_ClearObjAddr1);
 
    //  For purposes of error recovery, transition to the idle state
    //  if the address is unknown.
@@ -116,7 +116,7 @@ fn_name PotsProfile_ClearObjAddr2 = "PotsProfile.ClearObjAddr(psm)";
 
 bool PotsProfile::ClearObjAddr(const ProtocolSM* psm)
 {
-   Debug::ft(PotsProfile_ClearObjAddr2);
+   Debug::ftnt(PotsProfile_ClearObjAddr2);
 
    if(psm == nullptr) return false;
    auto port = psm->Port();

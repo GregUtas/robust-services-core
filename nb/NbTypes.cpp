@@ -108,7 +108,7 @@ fn_name NodeBase_GetType = "NodeBase.GetLogType";
 
 LogType GetLogType(LogId id)
 {
-   Debug::ft(NodeBase_GetType);
+   Debug::ftnt(NodeBase_GetType);
 
    if((id >= TroubleLog) && (id <= TroubleLog + 99)) return TroubleLog;
    if((id >= ThresholdLog) && (id <= ThresholdLog + 99)) return ThresholdLog;

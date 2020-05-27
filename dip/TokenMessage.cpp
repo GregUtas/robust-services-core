@@ -251,7 +251,8 @@ void TokenMessage::find_parms() const
 
    if(parm_index != parm_count_)
    {
-      Debug::SwLog(TokenMessage_find_parms, parm_count_, parm_index);
+      Debug::SwLog
+         (TokenMessage_find_parms, "invalid count", parm_index - parm_count_);
    }
 
    parm_begins_[parm_count_] = length_;
@@ -324,11 +325,11 @@ void TokenMessage::log(const string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_opAssign = "TokenMessage.operator=";
+fn_name TokenMessage_opAssign1 = "TokenMessage.operator=(copy)";
 
 TokenMessage& TokenMessage::operator=(const TokenMessage& that)
 {
-   Debug::ft(TokenMessage_opAssign);
+   Debug::ft(TokenMessage_opAssign1);
 
    if(&that == this) return *this;
 
@@ -338,6 +339,24 @@ TokenMessage& TokenMessage::operator=(const TokenMessage& that)
    {
       set_from(that.message_.get(), that.length_);
    }
+
+   return *this;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TokenMessage_opAssign2 = "TokenMessage.operator=(move)";
+
+TokenMessage& TokenMessage::operator=(TokenMessage&& that)
+{
+   Debug::ft(TokenMessage_opAssign2);
+
+   if(&that == this) return *this;
+
+   this->length_ = that.length_;
+   this->message_ = std::move(that.message_);
+   this->parm_count_ = that.parm_count_;
+   this->parm_begins_ = std::move(that.parm_begins_);
 
    return *this;
 }

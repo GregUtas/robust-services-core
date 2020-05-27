@@ -875,7 +875,7 @@ fn_name CxxScope_CloseScope = "CxxScope.CloseScope";
 
 void CxxScope::CloseScope()
 {
-   Debug::ft(CxxScope_CloseScope);
+   Debug::ftnt(CxxScope_CloseScope);
 
    for(NO_OP; pushes_ > 0; --pushes_) Context::PopScope();
 }

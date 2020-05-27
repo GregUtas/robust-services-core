@@ -74,7 +74,7 @@ TcpIoThread::TcpIoThread(Daemon* daemon,
 
    if(fdSize > MaxConns)
    {
-      Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
+      Debug::SwLog(TcpIoThread_ctor, "descriptor too large", fdSize);
       fdSize = MaxConns;
    }
    else if(listen_)

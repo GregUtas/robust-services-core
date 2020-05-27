@@ -1839,7 +1839,7 @@ fn_name Thread_EnterSwLog = "Thread.EnterSwLog";
 
 bool Thread::EnterSwLog()
 {
-   Debug::ft(Thread_EnterSwLog);
+   Debug::ftnt(Thread_EnterSwLog);
 
    //  If the thread is already generating nested software logs, prevent
    //  further nesting.
@@ -2019,7 +2019,7 @@ fn_name Thread_ExitSwLog = "Thread.ExitSwLog";
 
 void Thread::ExitSwLog(bool all)
 {
-   Debug::ft(Thread_ExitSwLog);
+   Debug::ftnt(Thread_ExitSwLog);
 
    auto thr = RunningThread(std::nothrow);
    if(thr == nullptr) return;
@@ -2242,7 +2242,8 @@ void Thread::ImmProtect()
 
    if(Restart::GetLevel() >= RestartReboot) return;
 
-   auto thr = RunningThread();
+   auto thr = RunningThread(std::nothrow);
+   if(thr == nullptr) return;
 
    //  Write-protect the immutable memory segment.  This is used after
    //  ImmUnprotect, so it is an error if underflow would occur.
@@ -2271,7 +2272,8 @@ void Thread::ImmUnprotect()
 
    if(Restart::GetLevel() >= RestartReboot) return;
 
-   auto thr = RunningThread();
+   auto thr = RunningThread(std::nothrow);
+   if(thr == nullptr) return;
 
    //  Write-enable the immutable memory segment.
    //
@@ -2380,7 +2382,7 @@ fixed_string Thread::Kill()
 {
    Debug::ft(Thread_Kill);
 
-   if(Singleton< RootThread >::Instance() == this) return KillRootThread;
+   if(Singleton< RootThread >::Extant() == this) return KillRootThread;
    if(deleting_) return KillDeletingThread;
 
    //  If the thread is holding or blocked on a mutex, delete it outright.
@@ -2416,7 +2418,7 @@ void Thread::LogContextSwitch() const
 
    auto now = TimePoint::Now();
 
-   if(Singleton< Threads >::Instance()->IsDeleted())
+   if(Singleton< Threads >::Extant()->IsDeleted())
    {
       //  This thread has been deleted.  Create a partial entry for it.
       //
@@ -2552,9 +2554,10 @@ fn_name Thread_MakePreemptable = "Thread.MakePreemptable";
 
 void Thread::MakePreemptable()
 {
-   Debug::ft(Thread_MakePreemptable);
+   Debug::ftnt(Thread_MakePreemptable);
 
-   auto thr = RunningThread();
+   auto thr = RunningThread(std::nothrow);
+   if(thr == nullptr) return;
 
    //  If the thread is already preemptable, nothing needs to be done.
    //  If it just become preemptable, schedule it out.
@@ -2571,9 +2574,10 @@ fn_name Thread_MakeUnpreemptable = "Thread.MakeUnpreemptable";
 
 void Thread::MakeUnpreemptable()
 {
-   Debug::ft(Thread_MakeUnpreemptable);
+   Debug::ftnt(Thread_MakeUnpreemptable);
 
-   auto thr = RunningThread();
+   auto thr = RunningThread(std::nothrow);
+   if(thr == nullptr) return;
 
    //  Increment the unpreemptable count.  If the thread has just become
    //  unpreemptable, schedule it out before starting to run it locked.
@@ -2593,11 +2597,12 @@ fn_name Thread_MemProtect = "Thread.MemProtect";
 
 void Thread::MemProtect()
 {
-   Debug::ft(Thread_MemProtect);
+   Debug::ftnt(Thread_MemProtect);
 
    if(Restart::GetLevel() >= RestartReload) return;
 
-   auto thr = RunningThread();
+   auto thr = RunningThread(std::nothrow);
+   if(thr == nullptr) return;
 
    //  Write-protect the protected memory segment.  This is used after
    //  MemUnprotect, so it is an error if underflow would occur.
@@ -2620,11 +2625,12 @@ fn_name Thread_MemUnprotect = "Thread.MemUnprotect";
 
 void Thread::MemUnprotect()
 {
-   Debug::ft(Thread_MemUnprotect);
+   Debug::ftnt(Thread_MemUnprotect);
 
    if(Restart::GetLevel() >= RestartReload) return;
 
-   auto thr = RunningThread();
+   auto thr = RunningThread(std::nothrow);
+   if(thr == nullptr) return;
 
    //  Write-enable the protected memory segment.
    //

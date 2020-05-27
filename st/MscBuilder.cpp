@@ -526,14 +526,14 @@ void MscBuilder::EnsureFactories()
 
 fn_name MscBuilder_Error = "MscBuilder.Error";
 
-bool MscBuilder::Error(debug64_t errval, debug64_t offset)
+bool MscBuilder::Error(const string& errstr, debug64_t errval)
 {
    Debug::ft(MscBuilder_Error);
 
-   Debug::SwLog(MscBuilder_Error, errval, offset);
+   Debug::SwLog(MscBuilder_Error, errstr, errval);
    *stream_ << ErrorFlag;
-   *stream_ << " errval=" << strHex(errval);
-   *stream_ << " offset=" << strHex(offset);
+   *stream_ << SPACE << errstr;
+   *stream_ << "; errval=" << strHex(errval);
    debug_ = true;
    return false;
 }
@@ -910,7 +910,7 @@ void MscBuilder::OutputChart()
    //
    if((lines_ <= 1) || (lines_ > MaxCols))
    {
-      Error(lines_, group_);
+      Error("invalid context count", lines_);
       AddRow(OutputFiller(nullptr));
       return;
    }
@@ -1090,7 +1090,7 @@ bool MscBuilder::OutputMessage
       auto txaddr = FindAddr(mt.LocAddr());
       if(txaddr == nullptr)
       {
-         return Error(pack3(mt.Prid(), mt.Sid(), 1), mt.LocAddr().fid);
+         return Error("txaddr not found", pack2(mt.Prid(), mt.Sid()));
       }
 
       auto sender = txaddr->Context();
@@ -1135,7 +1135,7 @@ bool MscBuilder::OutputMessage
                rxaddr = FindAddr(mt.RemAddr());
                if(rxaddr == nullptr)
                {
-                  return Error(pack3(mt.Prid(), mt.Sid(), 2), mt.RemAddr().fid);
+                  return Error("rxaddr not found", pack2(mt.Prid(), mt.Sid()));
                }
             }
             else
@@ -1143,7 +1143,7 @@ bool MscBuilder::OutputMessage
                rxaddr = FindPeer(mt.LocAddr());
                if(rxaddr == nullptr)
                {
-                  return Error(pack3(mt.Prid(), mt.Sid(), 3), mt.LocAddr().fid);
+                  return Error("peer not found", pack2(mt.Prid(), mt.Sid()));
                }
             }
 
@@ -1158,12 +1158,12 @@ bool MscBuilder::OutputMessage
 
          if(receiver == nullptr)
          {
-            return Error(pack3(mt.Prid(), mt.Sid(), 4), mt.RemAddr().fid);
+            return Error("receiver not found", pack2(mt.Prid(), mt.Sid()));
          }
 
          if(receiver->Group() != group_)
          {
-            return Error(pack3(mt.Prid(), mt.Sid(), 5), mt.RemAddr().fid);
+            return Error("receiver group invalid", pack2(mt.Prid(), mt.Sid()));
          }
 
          end = receiver->Column();
@@ -1177,13 +1177,13 @@ bool MscBuilder::OutputMessage
       auto rxaddr = FindAddr(mt.LocAddr());
       if(rxaddr == nullptr)
       {
-         return Error(pack3(mt.Prid(), mt.Sid(), 6), mt.LocAddr().fid);
+         return Error("rxaddr not found", pack2(mt.Prid(), mt.Sid()));
       }
 
       auto receiver = rxaddr->Context();
       if(receiver == nullptr)
       {
-         return Error(pack3(mt.Prid(), mt.Sid(), 7), mt.LocAddr().fid);
+         return Error("receiver not found", pack2(mt.Prid(), mt.Sid()));
       }
 
       if(receiver->Group() != group_) return true;
@@ -1192,12 +1192,12 @@ bool MscBuilder::OutputMessage
 
       if(sender == nullptr)
       {
-         return Error(pack3(mt.Prid(), mt.Sid(), 8), mt.RemAddr().fid);
+         return Error("sender not found", pack2(mt.Prid(), mt.Sid()));
       }
 
       if(sender->Group() != group_)
       {
-         return Error(pack3(mt.Prid(), mt.Sid(), 9), mt.RemAddr().fid);
+         return Error("invalid sender group", pack2(mt.Prid(), mt.Sid()));
       }
 
       start = sender->Column();
@@ -1210,7 +1210,8 @@ bool MscBuilder::OutputMessage
    //  the word "Signal".
    //
    auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(mt.Prid());
-   if(pro == nullptr) return Error(pack3(mt.Prid(), mt.Sid(), 8), 0);
+   if(pro == nullptr)
+      return Error("protocol not found", pack2(mt.Prid(), mt.Sid()));
 
    auto label = strClass(pro->GetSignal(mt.Sid()), false);
    auto index = label.find("Signal");
@@ -1288,7 +1289,7 @@ bool MscBuilder::OutputMessage
    {
       //  A message from a context to itself (start == end) causes problems.
       //
-      return Error(pack2(mt.Prid(), mt.Sid()), start);
+      return Error("message to self", pack2(mt.Prid(), mt.Sid()));
    }
 
    auto gap = spaces(TimeGap);
@@ -1427,7 +1428,7 @@ void MscBuilder::SetContextColumns()
    //
    if(nextCol_ != (FirstCol + (lines_ * ColWidth)))
    {
-      Debug::SwLog(MscBuilder_SetContextColumns, nextCol_, lines_);
+      Debug::SwLog(MscBuilder_SetContextColumns, "column invalid", nextCol_);
    }
 }
 

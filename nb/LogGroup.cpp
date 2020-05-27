@@ -156,7 +156,7 @@ fn_name LogGroup_FindLog = "LogGroup.FindLog";
 
 Log* LogGroup::FindLog(LogId id) const
 {
-   Debug::ft(LogGroup_FindLog);
+   Debug::ftnt(LogGroup_FindLog);
 
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
    {

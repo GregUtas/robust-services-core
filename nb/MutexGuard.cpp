@@ -36,8 +36,8 @@ MutexGuard::MutexGuard(SysMutex* mutex) : mutex_(mutex)
    if(mutex_ == nullptr) return;
 
    Debug::ft(MutexGuard_ctor);
-   auto rc = mutex_->Acquire(TIMEOUT_NEVER);
-   Debug::Assert(rc == SysMutex::Acquired);
+
+   mutex_->Acquire(TIMEOUT_NEVER);
 }
 
 //------------------------------------------------------------------------------

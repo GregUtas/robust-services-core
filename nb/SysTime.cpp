@@ -313,7 +313,7 @@ bool SysTime::OutOfRange(TimeField field)
 {
    Debug::ft(SysTime_OutOfRange);
 
-   Debug::SwLog(SysTime_OutOfRange, time_[field], field);
+   Debug::SwLog(SysTime_OutOfRange, "value out range", time_[field]);
    for(auto f = 0; f < TimeField_N; ++f) time_[f] = 0;
    return false;
 }
@@ -369,7 +369,7 @@ void SysTime::Round(TimeField field, int16_t interval)
       }
       else
       {
-         Debug::SwLog(SysTime_Round, field, interval);
+         Debug::SwLog(SysTime_Round, "invalid field", field);
       }
       return;
 

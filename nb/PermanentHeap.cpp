@@ -29,9 +29,9 @@ namespace NodeBase
 {
 fn_name PermanentHeap_ctor = "PermanentHeap.ctor";
 
-PermanentHeap::PermanentHeap() : SysHeap(MemPermanent, 0)
+PermanentHeap::PermanentHeap() : SysHeap(MemPermanent)
 {
-   Debug::ft(PermanentHeap_ctor);
+   Debug::ftnt(PermanentHeap_ctor);
 }
 
 //------------------------------------------------------------------------------

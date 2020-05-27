@@ -252,7 +252,7 @@ fn_name SsmContext_SetRoot = "SsmContext.SetRoot";
 
 void SsmContext::SetRoot(RootServiceSM* root)
 {
-   Debug::ft(SsmContext_SetRoot);
+   Debug::ftnt(SsmContext_SetRoot);
 
    root_ = root;
 

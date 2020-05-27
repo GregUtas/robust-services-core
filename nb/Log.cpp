@@ -25,6 +25,7 @@
 #include <bitset>
 #include <cctype>
 #include <ios>
+#include <new>
 #include <sstream>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
@@ -146,7 +147,7 @@ fn_name Log_Create1 = "Log.Create";
 
 ostringstreamPtr Log::Create(fixed_string groupName, LogId id)
 {
-   Debug::ft(Log_Create1);
+   Debug::ftnt(Log_Create1);
 
    //  Find the log's definition.
    //
@@ -175,7 +176,7 @@ fn_name Log_Create2 = "Log.Create(alarm)";
 ostringstreamPtr Log::Create(fixed_string groupName,
    LogId id, fixed_string alarmName, AlarmStatus status)
 {
-   Debug::ft(Log_Create2);
+   Debug::ftnt(Log_Create2);
 
    //  Use the non-alarm version if no alarm is being set or cleared.
    //
@@ -187,7 +188,10 @@ ostringstreamPtr Log::Create(fixed_string groupName,
    auto log = Find(groupName, id, group);
    if(log == nullptr) return nullptr;
 
-   auto alarm = Singleton< AlarmRegistry >::Instance()->Find(alarmName);
+   auto reg = Singleton< AlarmRegistry >::Extant();
+   if(reg == nullptr) return nullptr;
+
+   auto alarm = reg->Find(alarmName);
    if(alarm == nullptr) return nullptr;
 
    //  Create the log's header and add the alarm name on the second line.
@@ -240,9 +244,10 @@ fn_name Log_Find = "Log.Find";
 
 Log* Log::Find(fixed_string groupName, LogId id, LogGroup*& group)
 {
-   Debug::ft(Log_Find);
+   Debug::ftnt(Log_Find);
 
-   auto reg = Singleton< LogGroupRegistry >::Instance();
+   auto reg = Singleton< LogGroupRegistry >::Extant();
+   if(reg == nullptr) return nullptr;
    group = reg->FindGroup(groupName);
    if(group == nullptr) return nullptr;
    return group->FindLog(id);
@@ -257,7 +262,7 @@ const size_t MinNameSize = 1 + LogIdSize;
 
 Log* Log::Find(fixed_string log)
 {
-   Debug::ft(Log_Find);
+   Debug::ftnt(Log_Find);
 
    //  The log's name starts at LOG[Indent + 1], after the <CRLF> at the
    //  start of the log and the field for an alarm status.  Find END, the
@@ -290,9 +295,10 @@ fn_name Log_Format = "Log.Format";
 
 ostringstreamPtr Log::Format(AlarmStatus status) const
 {
-   Debug::ft(Log_Format);
+   Debug::ftnt(Log_Format);
 
-   ostringstreamPtr stream(new std::ostringstream);
+   ostringstreamPtr stream(new (std::nothrow) std::ostringstream);
+   if(stream == nullptr) return nullptr;
 
    //  The first line of each log, after any alarm indicator, contains the
    //  log's group name and identifier, followed by the time and node on
@@ -374,7 +380,7 @@ fn_name Log_Submit = "Log.Submit";
 
 void Log::Submit(ostringstreamPtr& stream)
 {
-   Debug::ft(Log_Submit);
+   Debug::ftnt(Log_Submit);
 
    if(stream == nullptr) return;
    if(stream->str().back() != CRLF) *stream << CRLF;
@@ -406,7 +412,11 @@ void Log::Submit(ostringstreamPtr& stream)
 
    //  Add the log to the active log buffer.
    //
-   auto buffer = Singleton< LogBufferRegistry >::Instance()->Active();
+   auto reg = Singleton< LogBufferRegistry >::Extant();
+   if(reg == nullptr) return;
+
+   auto buffer = reg->Active();
+   if(buffer == nullptr) return;
 
    if(buffer->Push(stream))
       log->bufferCount_->Incr();
@@ -420,7 +430,7 @@ fn_name Log_Suppressed = "Log.Suppressed";
 
 ostringstreamPtr Log::Suppressed() const
 {
-   Debug::ft(Log_Suppressed);
+   Debug::ftnt(Log_Suppressed);
 
    suppressCount_->Incr();
    return nullptr;

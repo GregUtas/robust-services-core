@@ -22,6 +22,8 @@
 #include "LogThread.h"
 #include <cstddef>
 #include <iosfwd>
+#include <new>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include "CallbackRequest.h"
@@ -37,9 +39,11 @@
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
 #include "MutexGuard.h"
+#include "NbDaemons.h"
 #include "NbPools.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "SysConsole.h"
 #include "SysFile.h"
 #include "SysMutex.h"
 
@@ -62,7 +66,8 @@ word LogThread::NoSpoolingMessageCount_ = 400;
 
 fn_name LogThread_ctor = "LogThread.ctor";
 
-LogThread::LogThread() : Thread(BackgroundFaction)
+LogThread::LogThread() :
+   Thread(BackgroundFaction, Singleton< LogDaemon >::Instance())
 {
    Debug::ft(LogThread_ctor);
 
@@ -102,7 +107,7 @@ LogThread::~LogThread()
 
 c_string LogThread::AbbrName() const
 {
-   return "log";
+   return LogDaemonName;
 }
 
 //------------------------------------------------------------------------------
@@ -117,8 +122,9 @@ void LogThread::CopyToConsole(const ostringstreamPtr& stream)
    //
    if(Element::RunningInLab())
    {
-      ostringstreamPtr clone(new std::ostringstream(stream->str()));
-      CoutThread::Spool(clone);
+      ostringstreamPtr clone
+         (new (std::nothrow) std::ostringstream(stream->str()));
+      if(clone != nullptr) CoutThread::Spool(clone);
    }
 }
 
@@ -207,7 +213,7 @@ fn_name LogThread_Spool = "LogThread.Spool";
 
 void LogThread::Spool(ostringstreamPtr& stream, const Log* log)
 {
-   Debug::ft(LogThread_Spool);
+   Debug::ftnt(LogThread_Spool);
 
    //  This is only intended to be invoked during a restart.  Our thread won't
    //  get to run, so output the log directly.  This is done locked to avoid
@@ -215,14 +221,34 @@ void LogThread::Spool(ostringstreamPtr& stream, const Log* log)
    //  generate an exit log during the shutdown phase.
    //
    auto level = Restart::GetStage();
-   Debug::Assert(level != Running, level);
+
+   if(level == Running)
+   {
+      Debug::SwLog(LogThread_Spool, "invoked while in service", 0);
+      return;
+   }
 
    if((log == nullptr) || (GetLogType(log->Id()) != PeriodicLog))
    {
-      CopyToConsole(stream);
+      //  Write the log to the console and the console transcript file.
+      //
+      SysConsole::Out() << stream->str() << std::flush;
+
+      auto path = Element::OutputPath() +
+         PATH_SEPARATOR + Element::ConsoleFileName() + ".txt";
+      auto file = SysFile::CreateOstream(path.c_str());
+
+      if(file != nullptr)
+      {
+         *file << stream->str();
+         file.reset();
+      }
    }
 
-   auto name = Singleton< LogBufferRegistry >::Instance()->FileName();
+   auto reg = Singleton< LogBufferRegistry >::Extant();
+   if(reg == nullptr) return;
+
+   auto name = reg->FileName();
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;
 
    MutexGuard guard(&LogFileLock_);

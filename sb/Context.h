@@ -120,10 +120,10 @@ public:
    static void Kill(NodeBase::debug64_t errval, NodeBase::debug64_t offset);
 
    //  Logs the objects in the context for debugging purposes.  FUNC,
-   //  ERRVAL, and OFFSET are passed to Debug::SwLog.
+   //  ERRSTR, and OFFSET are passed to Debug::SwLog.
    //
    static void Dump(NodeBase::fn_name_arg func,
-      NodeBase::debug64_t errval, NodeBase::debug64_t offset);
+      const std::string& errstr, NodeBase::debug64_t offset);
 
    //  Records a message with signal SID, in protocol PRID, travelling in
    //  direction DIR.  This allows the message history to be included in

@@ -725,7 +725,6 @@ int ThreadAdmin::WarpFactor()
       auto buff = Singleton< TraceBuffer >::Instance();
       if(buff->ToolIsOn(FunctionTracer)) warp += 2;
       if(buff->GetTools().count() > 1) warp += 1;
-      if(buff->ImmediateTraceOn()) warp += 1;
    }
 
    return warp;

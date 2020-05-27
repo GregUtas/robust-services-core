@@ -153,7 +153,7 @@ bool MediaSsm::SetMgwPsm(ProtocolSM* psm)
 
       //  A media gateway PSM already exists.
       //
-      Debug::SwLog(MediaSsm_SetMgwPsm, 0, 1);
+      Debug::SwLog(MediaSsm_SetMgwPsm, "PSM already exists", 1);
    }
    else
    {
@@ -165,7 +165,7 @@ bool MediaSsm::SetMgwPsm(ProtocolSM* psm)
 
       //  There wasn't a media gateway PSM to free.
       //
-      Debug::SwLog(MediaSsm_SetMgwPsm, 0, 0);
+      Debug::SwLog(MediaSsm_SetMgwPsm, "no PSM exists", 0);
    }
 
    return false;

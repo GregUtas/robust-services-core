@@ -96,9 +96,15 @@ bool CliTextParm::BindText(CliText& text, id_t index)
    {
       auto prev = t->Text();
 
-      if((prev[0] == NUL) || (strcmp(prev, s) == 0))
+      if(prev[0] == NUL)
       {
-         Debug::SwLog(CliTextParm_BindText, t->GetId(), index);
+         Debug::SwLog(CliTextParm_BindText, "hidden by previous", t->GetId());
+         return false;
+      }
+
+      if(strcmp(prev, s) == 0)
+      {
+         Debug::SwLog(CliTextParm_BindText, "same as previous", index);
          return false;
       }
    }
@@ -219,7 +225,18 @@ CliTextParm::Rc CliTextParm::GetFileNameRc(string& s, CliThread& cli) const
 
       bool empty = (stream->tellp() == std::streampos(0));
       stream.reset();
-      if(empty) remove(s.c_str());
+
+      if(empty)
+      {
+         auto err = remove(s.c_str());
+
+         if(err != 0)
+         {
+            string expl("failed to remove ");
+            expl.append(s);
+            Debug::SwLog(CliTextParm_GetFileNameRc, expl, err);
+         }
+      }
    }
 
    return rc;

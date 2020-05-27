@@ -431,7 +431,7 @@ void Memory::Free(void* addr, MemoryType type)
 
    if(heap == nullptr)
    {
-      Debug::SwLog(Memory_Free, 0, type);
+      Debug::SwLog(Memory_Free, "heap not found", type);
       return;
    }
 

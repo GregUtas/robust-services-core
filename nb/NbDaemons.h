@@ -36,7 +36,6 @@ namespace NodeBase
 //  o CoutThread (by CoutThread.Spool)
 //  o FileThread (by FileThread.Spool)
 //  o InitThread (by Thread.Ready, Thread.Schedule, and others)
-//  o LogThread (by LogBuffer.Push)
 //
 extern fixed_string CliDaemonName;
 
@@ -48,6 +47,22 @@ public:
 private:
    CliDaemon();
    ~CliDaemon();
+   Thread* CreateThread() override;
+   AlarmStatus GetAlarmLevel() const override;
+};
+
+//------------------------------------------------------------------------------
+
+extern fixed_string LogDaemonName;
+
+class LogDaemon : public Daemon
+{
+   friend class Singleton< LogDaemon >;
+public:
+   void Patch(sel_t selector, void* arguments) override;
+private:
+   LogDaemon();
+   ~LogDaemon();
    Thread* CreateThread() override;
    AlarmStatus GetAlarmLevel() const override;
 };

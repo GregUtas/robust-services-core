@@ -34,7 +34,7 @@ fn_name SysTime_ctor2 = "SysTime.ctor(now)";
 
 SysTime::SysTime()
 {
-   Debug::ft(SysTime_ctor2);
+   Debug::ftnt(SysTime_ctor2);
 
    errno_t err;
    time_t longtime;

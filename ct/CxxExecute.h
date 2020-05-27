@@ -410,7 +410,6 @@ constexpr char TraceParse = 'p';
 constexpr char SaveParseTrace = 's';
 constexpr char TraceCompilation = 'c';
 constexpr char TraceFunctions = 'f';
-constexpr char TraceImmediate = 'i';
 
 //------------------------------------------------------------------------------
 //

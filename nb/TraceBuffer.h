@@ -143,9 +143,8 @@ public:
    //
    TraceRc Clear();
 
-   //  Initiates tracing by all enabled tools using OPTS, which can include
-   //  o ImmediateTrace ('i'): each trace record is immediately written to
-   //    the file "immed.trace.txt" when it is created
+   //  Initiates tracing by all enabled tools using OPTS, which is
+   //  currently unused.
    //
    TraceRc StartTracing(const std::string& opts);
 
@@ -174,10 +173,6 @@ public:
    //  Displays status information before trace records are displayed.
    //
    void DisplayStart(std::ostream& stream) const;
-
-   //  Returns true if trace records are being output immediately.
-   //
-   bool ImmediateTraceOn() const { return immediate_; }
 
    //  Returns the time (full) when tracing started.
    //
@@ -313,10 +308,6 @@ private:
    //
    std::atomic_uint8_t softLocks_;
 
-   //  Set if each trace record should be output immediately.
-   //
-   bool immediate_;
-
    //  The output stream if immediate tracing is being performed.
    //
    ostreamPtr stream_;
@@ -337,11 +328,5 @@ private:
    //
    bool processed_;
 };
-
-//------------------------------------------------------------------------------
-//
-//  Options for the CLI >start command.
-//
-constexpr char ImmediateTrace = 'i';
 }
 #endif

@@ -213,7 +213,7 @@ fn_name ProtocolLayer_GetFactory = "ProtocolLayer.GetFactory";
 
 FactoryId ProtocolLayer::GetFactory() const
 {
-   Debug::ft(ProtocolLayer_GetFactory);
+   Debug::ftnt(ProtocolLayer_GetFactory);
 
    Debug::SwLog(ProtocolLayer_GetFactory, strOver(this), 0);
    return NIL_ID;

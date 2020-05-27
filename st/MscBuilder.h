@@ -230,10 +230,10 @@ private:
    void ReduceColumns(MscColumn start, MscColumn count);
 
    //  Invoked when an unexpected condition occurs.  Generates a log that
-   //  contains ERRVAL and OFFSET, and adds a '?' debug line to the MSC to
+   //  contains ERRSTR and ERRVAL, and adds a '?' debug line to the MSC to
    //  indicate where the error occurred.  Returns false.
    //
-   bool Error(debug64_t errval, debug64_t offset);
+   bool Error(const std::string& errstr, debug64_t errval);
 
    //  Set if internal data structures are to be displayed.
    //

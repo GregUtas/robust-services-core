@@ -79,6 +79,55 @@ void CliDaemon::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
+fixed_string LogDaemonName = "log";
+
+//------------------------------------------------------------------------------
+
+fn_name LogDaemon_ctor = "LogDaemon.ctor";
+
+LogDaemon::LogDaemon() : Daemon(LogDaemonName, 1)
+{
+   Debug::ft(LogDaemon_ctor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogDaemon_dtor = "LogDaemon.dtor";
+
+LogDaemon::~LogDaemon()
+{
+   Debug::ftnt(LogDaemon_dtor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogDaemon_CreateThread = "LogDaemon.CreateThread";
+
+Thread* LogDaemon::CreateThread()
+{
+   Debug::ft(LogDaemon_CreateThread);
+   return Singleton< CliThread >::Instance();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogDaemon_GetAlarmLevel = "LogDaemon.GetAlarmLevel";
+
+AlarmStatus LogDaemon::GetAlarmLevel() const
+{
+   Debug::ft(LogDaemon_GetAlarmLevel);
+   return CriticalAlarm;
+}
+
+//------------------------------------------------------------------------------
+
+void LogDaemon::Patch(sel_t selector, void* arguments)
+{
+   Daemon::Patch(selector, arguments);
+}
+
+//==============================================================================
+
 fixed_string ObjectDaemonName = "objaud";
 
 //------------------------------------------------------------------------------

@@ -108,7 +108,7 @@ bool SysTcpSocket::Listen(size_t backlog)
 
    if(backlog > SOMAXCONN)
    {
-      Debug::SwLog(SysTcpSocket_Listen, SOMAXCONN, backlog);
+      Debug::SwLog(SysTcpSocket_Listen, "backlog too large", backlog);
       backlog = SOMAXCONN;
    }
 
@@ -216,9 +216,15 @@ word SysTcpSocket::Recv(byte_t* buff, size_t size)
 {
    Debug::ft(SysTcpSocket_Recv);
 
-   if((buff == nullptr) || (size == 0))
+   if(buff == nullptr)
    {
-      Debug::SwLog(SysTcpSocket_Recv, size, (buff == nullptr));
+      Debug::SwLog(SysTcpSocket_Recv, "invalid buffer", 0);
+      return -1;
+   }
+
+   if(size == 0)
+   {
+      Debug::SwLog(SysTcpSocket_Recv, "invalid size", size);
       return -1;
    }
 
@@ -261,9 +267,15 @@ word SysTcpSocket::Send(const byte_t* data, size_t size)
 {
    Debug::ft(SysTcpSocket_Send);
 
-   if((data == nullptr) || (size == 0))
+   if(data == nullptr)
    {
-      Debug::SwLog(SysTcpSocket_Send, size, (data == nullptr));
+      Debug::SwLog(SysTcpSocket_Send, "invalid data", 0);
+      return -1;
+   }
+
+   if(size == 0)
+   {
+      Debug::SwLog(SysTcpSocket_Send, "invalid size", size);
       return -1;
    }
 
@@ -313,7 +325,7 @@ SysSocket::AllocRc SysTcpSocket::SetService
    }
 
    if(val != alive)
-      Debug::SwLog(SysTcpSocket_SetService, val, alive);
+      Debug::SwLog(SysTcpSocket_SetService, "keepalive not set", val);
 
    return AllocOk;
 }

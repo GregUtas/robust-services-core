@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Debug.h"
+#include <ios>
 #include <new>
 #include <sstream>
 #include "AssertionException.h"
@@ -83,38 +84,6 @@ void Debug::ftnt(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_GenerateSwLog = "Debug.GenerateSwLog";
-
-void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
-      debug64_t offset, bool stack)
-{
-   if(!Thread::EnterSwLog()) return;
-
-   Debug::ft(Debug_GenerateSwLog);
-
-   auto log = Log::Create(SoftwareLogGroup, SoftwareError);
-
-   if(log != nullptr)
-   {
-      *log << Log::Tab << "in ";
-      if(func != nullptr)
-         *log << func;
-      else
-         *log << "Unknown Function";
-      *log << CRLF;
-
-      *log << Log::Tab << "errval=" << errstr;
-      *log << "  offset=" << strHex(offset) << CRLF;
-
-      if(stack) SysThreadStack::Display(*log, 1);
-      Log::Submit(log);
-   }
-
-   Thread::ExitSwLog(false);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Debug_GetSwFlags = "Debug.GetSwFlags";
 
 Flags Debug::GetSwFlags()
@@ -163,7 +132,7 @@ fn_name Debug_SetSwFlag = "Debug.SetSwFlag";
 
 void Debug::SetSwFlag(FlagId fid, bool value)
 {
-   Debug::ft(Debug_SetSwFlag);
+   Debug::ftnt(Debug_SetSwFlag);
 
    if(Element::RunningInLab() && (fid <= MaxFlagId))
    {
@@ -173,29 +142,18 @@ void Debug::SetSwFlag(FlagId fid, bool value)
       //
       if((fid == DisableRootThread) && !value)
       {
-         Singleton< RootThread >::Instance()->systhrd_->Proceed();
+         Singleton< RootThread >::Extant()->systhrd_->Proceed();
       }
    }
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_SwErr1 = "Debug.SwErr";
-
-void Debug::SwErr(debug64_t errval, debug64_t offset)
-{
-   Debug::ft(Debug_SwErr1);
-
-   throw SoftwareException(strHex(errval), offset, 1);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Debug_SwErr2 = "Debug.SwErr(string)";
+fn_name Debug_SwErr = "Debug.SwErr";
 
 void Debug::SwErr(const string& errstr, debug64_t offset)
 {
-   Debug::ft(Debug_SwErr2);
+   Debug::ft(Debug_SwErr);
 
    throw SoftwareException(errstr, offset, 1);
 }
@@ -206,7 +164,7 @@ fn_name Debug_SwFlagOn = "Debug.SwFlagOn";
 
 bool Debug::SwFlagOn(FlagId fid)
 {
-   Debug::ft(Debug_SwFlagOn);
+   Debug::ftnt(Debug_SwFlagOn);
 
    if(Element::RunningInLab() && (fid <= MaxFlagId))
    {
@@ -218,26 +176,37 @@ bool Debug::SwFlagOn(FlagId fid)
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_SwLog1 = "Debug.SwLog";
+fn_name Debug_SwLog = "Debug.SwLog";
 
 void Debug::SwLog(fn_name_arg func,
-   debug64_t errval, debug64_t offset, bool stack)
+   const string& errstr, debug64_t errval, bool stack)
 {
-   Debug::ft(Debug_SwLog1);
+   Debug::ftnt(Debug_SwLog);
 
-   GenerateSwLog(func, strHex(errval), offset, stack);
-}
+   if(!Thread::EnterSwLog()) return;
 
-//------------------------------------------------------------------------------
+   Debug::ftnt(Debug_SwLog);
 
-fn_name Debug_SwLog2 = "Debug.SwLog(string)";
+   auto log = Log::Create(SoftwareLogGroup, SoftwareError);
 
-void Debug::SwLog(fn_name_arg func,
-   const string& errstr, debug64_t offset, bool stack)
-{
-   Debug::ft(Debug_SwLog2);
+   if(log != nullptr)
+   {
+      *log << Log::Tab << "in ";
+      if(func != nullptr)
+         *log << func;
+      else
+         *log << "Unknown Function";
+      *log << CRLF;
 
-   GenerateSwLog(func, errstr, offset, stack);
+      *log << Log::Tab << "expl=" << errstr;
+      *log << "  errval=" << HexPrefixStr;
+      *log << std::hex << errval << std::dec << CRLF;
+
+      if(stack) SysThreadStack::Display(*log, 1);
+      Log::Submit(log);
+   }
+
+   Thread::ExitSwLog(false);
 }
 
 //------------------------------------------------------------------------------

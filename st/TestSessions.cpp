@@ -616,7 +616,7 @@ Message::Route TestPsm::Route() const
 
    //  A test PSM does not send messages.
    //
-   Debug::SwLog(TestPsm_Route, 0, 0);
+   Debug::SwLog(TestPsm_Route, UnexpectedInvocation, 0);
    return Message::Internal;
 }
 

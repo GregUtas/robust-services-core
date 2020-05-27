@@ -49,12 +49,6 @@ namespace InitFlags
    //
    bool CauseTimeout();  // default=false
 
-   //  Return true to immediately write trace records to a file, as they
-   //  are created, if TraceInit is also set.  The file is created in the
-   //  directory that contains the executable.
-   //
-   bool ImmediateTrace();  // default=false
-
    //  Return true to trace initialization.
    //
    bool TraceInit();  // default=true (false if FIELD_LOAD #defined)

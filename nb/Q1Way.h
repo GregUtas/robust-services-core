@@ -61,7 +61,7 @@ public:
    ~Q1Way()
    {
       if(tail_.next == nullptr) return;
-      Debug::ft(Q1Way_dtor());
+      Debug::ftnt(Q1Way_dtor());
       Purge();
    }
 
@@ -213,7 +213,7 @@ public:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q1Way_Next(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q1Way_Next(), "queue not initialized", 0);
          return false;
       }
       Q1Link* item;                         // item will hold result
@@ -328,7 +328,7 @@ public:
       }
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q1Way_Next(), 0, 0);    // queue is not initialized
+         Debug::SwLog(Q1Way_Corrupt(), "queue not initialized", 0);
          return;
       }
       auto item = (Q1Link*)                   // start at the current item
@@ -342,12 +342,12 @@ private:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwLog(Q1Way_Item(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q1Way_Item(), "queue not initialized", 0);
          return nullptr;
       }
       if(&elem == nullptr)
       {
-         Debug::SwLog(Q1Way_Item(), 0, 1);  // ELEM is invalid
+         Debug::SwLog(Q1Way_Item(), "invalid element", 0);
          return nullptr;
       }
 
@@ -380,17 +380,18 @@ private:
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //
-   inline static fn_name Q1Way_dtor()   { return "Q1Way.dtor"; }
-   inline static fn_name Q1Way_Init()   { return "Q1Way.Init"; }
-   inline static fn_name Q1Way_Enq()    { return "Q1Way.Enq"; }
-   inline static fn_name Q1Way_Henq()   { return "Q1Way.Henq"; }
-   inline static fn_name Q1Way_Insert() { return "Q1Way.Insert"; }
-   inline static fn_name Q1Way_Deq()    { return "Q1Way.Deq"; }
-   inline static fn_name Q1Way_Exq()    { return "Q1Way.Exq"; }
-   inline static fn_name Q1Way_Next()   { return "Q1Way.Next"; }
-   inline static fn_name Q1Way_Size()   { return "Q1Way.Size"; }
-   inline static fn_name Q1Way_Purge()  { return "Q1Way.Purge"; }
-   inline static fn_name Q1Way_Item()   { return "Q1Way.Item"; }
+   inline static fn_name Q1Way_dtor()    { return "Q1Way.dtor"; }
+   inline static fn_name Q1Way_Init()    { return "Q1Way.Init"; }
+   inline static fn_name Q1Way_Enq()     { return "Q1Way.Enq"; }
+   inline static fn_name Q1Way_Henq()    { return "Q1Way.Henq"; }
+   inline static fn_name Q1Way_Insert()  { return "Q1Way.Insert"; }
+   inline static fn_name Q1Way_Deq()     { return "Q1Way.Deq"; }
+   inline static fn_name Q1Way_Exq()     { return "Q1Way.Exq"; }
+   inline static fn_name Q1Way_Next()    { return "Q1Way.Next"; }
+   inline static fn_name Q1Way_Size()    { return "Q1Way.Size"; }
+   inline static fn_name Q1Way_Purge()   { return "Q1Way.Purge"; }
+   inline static fn_name Q1Way_Corrupt() { return "Q1Way.Corrupt"; }
+   inline static fn_name Q1Way_Item()    { return "Q1Way.Item"; }
 
    //  For initializing diff_.
    //

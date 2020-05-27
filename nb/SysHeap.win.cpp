@@ -36,26 +36,48 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name SysHeap_ctor = "SysHeap.ctor";
+fn_name SysHeap_ctor1 = "SysHeap.ctor";
 
 SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
    heap_(nullptr),
    size_(size),
    type_(type)
 {
-   Debug::ft(SysHeap_ctor);
+   Debug::ft(SysHeap_ctor1);
 
    //  If this is the default heap, wrap it, else create it.
    //
    if(type == MemPermanent)
-      heap_ = GetProcessHeap();
-   else
-      heap_ = HeapCreate(0, size, size);
+   {
+      Debug::SwLog(SysHeap_ctor1, "wrong memory type", type);
+      return;
+   }
+
+   heap_ = HeapCreate(0, size, size);
 
    if(heap_ == nullptr)
    {
       Restart::Initiate(RestartWarm, HeapCreationFailed, type);
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysHeap_ctor2 = "SysHeap.ctor(wrap)";
+
+SysHeap::SysHeap(MemoryType type) : Heap(),
+   heap_(nullptr),
+   size_(0),
+   type_(type)
+{
+   Debug::ftnt(SysHeap_ctor2);
+
+   //  If this is the default heap, wrap it.
+   //
+   if(type == MemPermanent)
+      heap_ = GetProcessHeap();
+   else
+      Debug::SwLog(SysHeap_ctor2, "wrong memory type", type);
 }
 
 //------------------------------------------------------------------------------
@@ -74,13 +96,13 @@ SysHeap::~SysHeap()
    //
    if(heap_ == GetProcessHeap())
    {
-      Debug::SwLog(SysHeap_dtor, debug64_t(heap_), 0);
+      Debug::SwLog(SysHeap_dtor, "tried to free default heap", 0);
       return;
    }
 
    if(!HeapDestroy(heap_))
    {
-      Debug::SwLog(SysHeap_dtor, debug64_t(heap_), GetLastError());
+      Debug::SwLog(SysHeap_dtor, "heap not freed", GetLastError());
    }
 
    heap_ = nullptr;
@@ -153,7 +175,7 @@ void SysHeap::Free(void* addr)
    if(HeapFree(heap_, 0, addr))
       Freed(size);
    else
-      Debug::SwLog(SysHeap_Free, debug64_t(addr), GetLastError());
+      Debug::SwLog(SysHeap_Free, "failed to free heap", GetLastError());
 }
 
 //------------------------------------------------------------------------------

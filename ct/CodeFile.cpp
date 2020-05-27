@@ -2410,7 +2410,7 @@ void CodeFile::LogRemoveIncludes
       fn += f->Name();
       fn.push_back(x ? '>' : QUOTE);
       auto pos = code_.find(fn);
-      LogPos(pos, IncludeRemove);
+      if(pos != string::npos) LogPos(pos, IncludeRemove);
    }
 
    DisplayFileNames(stream, fids, "Remove the #include for");

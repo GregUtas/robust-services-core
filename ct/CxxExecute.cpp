@@ -541,9 +541,7 @@ bool Context::StartTracing()
       ThisThread::IncludeInTrace();
    }
 
-   string opts;
-   if(Context::OptionIsOn(TraceImmediate)) opts.push_back(ImmediateTrace);
-   ThisThread::StartTracing(opts);
+   ThisThread::StartTracing(EMPTY_STR);
    return true;
 }
 
@@ -992,7 +990,7 @@ fn_name ParseFrame_PopScope = "ParseFrame.PopScope";
 
 void ParseFrame::PopScope()
 {
-   Debug::ft(ParseFrame_PopScope);
+   Debug::ftnt(ParseFrame_PopScope);
 
    if(!scopes_.empty())
       scopes_.pop_back();
@@ -2151,10 +2149,8 @@ void Tracepoint::OnLine(const CodeFile* file, size_t line, bool compiling) const
    case Start:
    {
       auto buff = Singleton< TraceBuffer >::Instance();
-      string opts;
-      if(Context::OptionIsOn(TraceImmediate)) opts.push_back(ImmediateTrace);
       ThisThread::IncludeInTrace();
-      ThisThread::StartTracing(opts);
+      ThisThread::StartTracing(EMPTY_STR);
       Context::Tracing = buff->ToolIsOn(ParserTracer);
       break;
    }

@@ -270,7 +270,8 @@ word NtLogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
       while(count-- > 0)
       {
-         Debug::SwLog(NtLogsCommand_ProcessSubcommand, count + 1, 0);
+         Debug::SwLog
+            (NtLogsCommand_ProcessSubcommand, "log flood test", count + 1);
       }
       break;
    }
@@ -4108,7 +4109,7 @@ void RecoveryThread::DoSwErr()
 {
    Debug::ft(RecoveryThread_DoSwErr);
 
-   Debug::SwErr(SwErr, 1);
+   Debug::SwErr("software error test", 1);
 }
 
 //------------------------------------------------------------------------------

@@ -337,7 +337,7 @@ void Context::Display(ostream& stream,
 
 fn_name Context_Dump = "Context.Dump";
 
-void Context::Dump(fn_name_arg func, debug64_t errval, debug64_t offset)
+void Context::Dump(fn_name_arg func, const string& errstr, debug64_t offset)
 {
    Debug::ft(Context_Dump);
 
@@ -345,7 +345,7 @@ void Context::Dump(fn_name_arg func, debug64_t errval, debug64_t offset)
 
    if(ctx != nullptr)
    {
-      Debug::SwLog(func, errval, offset);
+      Debug::SwLog(func, errstr, offset);
       ctx->Dump();
    }
 }
@@ -496,10 +496,7 @@ void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
       return;
 
    default:
-      //
-      //  An unknown state.
-      //
-      Debug::SwLog(Context_Enqueue, debug64_t(this), state_);
+      Debug::SwLog(Context_Enqueue, "unknown state", state_);
       delete this;
    }
 }
@@ -541,12 +538,12 @@ void Context::Exqueue()
    if(whichq_ == nullptr)
    {
       if(state_ == Ready)
-         Debug::SwLog(Context_Exqueue, debug64_t(this), state_);
+         Debug::SwLog(Context_Exqueue, "not queued", state_);
       return;
    }
 
    if(state_ != Ready)
-      Debug::SwLog(Context_Exqueue, debug64_t(this), state_);
+      Debug::SwLog(Context_Exqueue, "unexpected state", state_);
 
    whichq_->Exq(*this);
    whichq_ = nullptr;
@@ -893,10 +890,7 @@ void Context::SetState(State state)
       return;
 
    default:
-      //
-      //  An unknown state.
-      //
-      Debug::SwLog(Context_SetState, debug64_t(this), state_);
+      Debug::SwLog(Context_SetState, "unknown state", state_);
       delete this;
       return;
    }
@@ -932,7 +926,7 @@ bool Context::StopTimer(const Base& owner, TimerId tid)
          }
          else
          {
-            Debug::SwLog(Context_StopTimer, debug64_t(m), tid);
+            Debug::SwLog(Context_StopTimer, "timeout parm not found", tid);
          }
       }
    }

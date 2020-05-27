@@ -330,8 +330,7 @@ protected:
 
    //  Invoked when Send wants to log an error.  Also invokes Handled.
    //
-   virtual bool SendFailure
-      (NodeBase::debug64_t errval, NodeBase::debug64_t offset);
+   virtual bool SendFailure(NodeBase::debug64_t errval);
 
    //  Returns a non-const pointer to the message's buffer.
    //

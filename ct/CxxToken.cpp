@@ -693,7 +693,7 @@ bool Expression::AddItem(TokenPtr& item)
    //  operators of this type (function calls, new, and new[]) by assembling
    //  all of the arguments itself, in GetArgList and GetNew.
    //
-   Debug::SwLog(Expression_AddItem, oper->Op(), type);
+   Debug::SwLog(Expression_AddItem, "unexpected operator", oper->Op());
    return false;
 }
 
@@ -740,7 +740,7 @@ bool Expression::AddUnaryOp(TokenPtr& item)
       {
       case Cxx::OBJECT_DELETE:
       case Cxx::OBJECT_DELETE_ARRAY:
-         Debug::SwLog(Expression_AddUnaryOp, oper->Op(), items_.size());
+         Debug::SwLog(Expression_AddUnaryOp, "unexpected args", oper->Op());
          return false;
       }
 
@@ -808,7 +808,7 @@ bool Expression::AddVariableOp(TokenPtr& item)
       return false;
    }
 
-   Debug::SwLog(Expression_AddVariableOp, prev->Type(), op);
+   Debug::SwLog(Expression_AddVariableOp, "unexpected item", prev->Type());
    return false;
 }
 
@@ -1194,7 +1194,7 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 
    if((attrs.arguments != 0) && (args_.size() >= attrs.arguments))
    {
-      Debug::SwLog(Operation_AddArg, op_, arg->Type());
+      Debug::SwLog(Operation_AddArg, "too many arguments", op_);
    }
 
    args_.push_back(std::move(arg));
@@ -1246,7 +1246,7 @@ bool Operation::AppendUnary()
    //
    if(ElideForward()) return true;
 
-   Debug::SwLog(Operation_AppendUnary, op_, args_.size());
+   Debug::SwLog(Operation_AppendUnary, "failed to elide", op_);
    return false;
 }
 

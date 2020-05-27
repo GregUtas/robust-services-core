@@ -84,7 +84,7 @@ fn_name SysMutex_Acquire = "SysMutex.Acquire";
 
 SysMutex::Rc SysMutex::Acquire(const Duration& timeout)
 {
-   Debug::ft(SysMutex_Acquire);
+   Debug::ftnt(SysMutex_Acquire);
 
    auto curr = SysThread::RunningThreadId();
 

@@ -23,6 +23,7 @@
 #include "CliTextParm.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "CliText.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -106,7 +107,8 @@ void PotsFeatureRegistry::Audit()
 
          if(f1->IsIncompatible(fid2) != f2->IsIncompatible(fid1))
          {
-            Debug::SwLog(PotsFeatureRegistry_Audit, fid1, fid2);
+            Debug::SwLog
+               (PotsFeatureRegistry_Audit, "mismatch", pack2(fid1, fid2));
             f1->SetIncompatible(fid2);
             f2->SetIncompatible(fid1);
          }

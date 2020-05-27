@@ -1404,7 +1404,7 @@ EventHandler::Rc PotsCwmSsm::RelayFacilityMsg()
 
    if(!pmsg->Relay(*ogPsm))
    {
-      Context::Kill("Failed to relay message", pfi->sid);
+      Context::Kill("failed to relay message", pfi->sid);
       return EventHandler::Suspend;
    }
 

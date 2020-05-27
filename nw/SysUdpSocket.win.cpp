@@ -69,9 +69,15 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
    sockaddr_in peer;
    int peersize = sizeof(peer);
 
+   if(buff == nullptr)
+   {
+      Debug::SwLog(SysUdpSocket_RecvFrom, "invalid buffer", 0);
+      return 0;
+   }
+
    if((buff == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysUdpSocket_RecvFrom, size, (buff == nullptr));
+      Debug::SwLog(SysUdpSocket_RecvFrom, "invalid size", size);
       return 0;
    }
 
@@ -101,9 +107,15 @@ word SysUdpSocket::SendTo
    sockaddr_in peer;
    int peersize = sizeof(peer);
 
+   if(data == nullptr)
+   {
+      Debug::SwLog(SysUdpSocket_SendTo, "invalid data", 0);
+      return 0;
+   }
+
    if((data == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysUdpSocket_SendTo, size, (data == nullptr));
+      Debug::SwLog(SysUdpSocket_SendTo, "invalid size", size);
       return 0;
    }
 

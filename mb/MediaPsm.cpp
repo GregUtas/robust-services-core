@@ -409,7 +409,7 @@ fn_name MediaPsm_SetMep = "MediaPsm.SetMep";
 
 void MediaPsm::SetMep(MediaEndpt* mep)
 {
-   Debug::ft(MediaPsm_SetMep);
+   Debug::ftnt(MediaPsm_SetMep);
 
    mep_ = mep;
 }

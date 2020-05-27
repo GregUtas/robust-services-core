@@ -51,7 +51,7 @@ public:
    //
    ~Array()
    {
-      Debug::ft(Array_dtor());
+      Debug::ftnt(Array_dtor());
    }
 
    //  Deleted to prohibit copying.
@@ -94,7 +94,8 @@ public:
    void Erase(size_t index)
    {
       auto size = vector_.size();
-      Debug::Assert(index < size);
+      if(index >= size) return;
+
       if((size > 1) && (index < (size - 1)))
       {
          std::swap(vector_[index], vector_.back());

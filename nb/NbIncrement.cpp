@@ -1957,7 +1957,7 @@ word ModulesCommand::ProcessCommand(CliThread& cli) const
    if(GetBV(*this, cli, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto reg = Singleton< ModuleRegistry >::Instance();
+   auto reg = Singleton< ModuleRegistry >::Extant();
 
    if(all)
    {
@@ -2710,11 +2710,11 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
    {
    case SchedShowIndex:
    {
-      auto yield = cli.GenerateReportPreemptably();
-      FunctionGuard guard(Guard_MakePreemptable, yield);
-
       if(!GetFileName(title, cli)) title.clear();
       if(!cli.EndOfInput()) return -1;
+
+      auto yield = (title.empty() ? false : cli.GenerateReportPreemptably());
+      FunctionGuard guard(Guard_MakePreemptable, yield);
 
       if(!title.empty())
       {
@@ -3103,18 +3103,6 @@ word SingletonsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The START command.
 //
-class StartOptionsParm : public CliTextParm
-{
-public: StartOptionsParm();
-};
-
-fixed_string StartOptionsExpl = "options: i=immediate";
-
-StartOptionsParm::StartOptionsParm() :
-   CliTextParm(StartOptionsExpl, true, 0) { }
-
-const string& ValidStartOptions = "i";
-
 class StartCommand : public CliCommand
 {
 public:
@@ -3126,10 +3114,7 @@ private:
 fixed_string StartStr = "start";
 fixed_string StartExpl = "Starts tracing.";
 
-StartCommand::StartCommand() : CliCommand(StartStr, StartExpl)
-{
-   BindParm(*new StartOptionsParm);
-}
+StartCommand::StartCommand() : CliCommand(StartStr, StartExpl) { }
 
 fn_name StartCommand_ProcessCommand = "StartCommand.ProcessCommand";
 
@@ -3137,26 +3122,9 @@ word StartCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(StartCommand_ProcessCommand);
 
-   string opts;
-   string expl;
-
-   if(GetStringRc(opts, cli) == CliParm::Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   if(!opts.empty() && (opts != "-"))
-   {
-      if(!ValidateOptions(opts, ValidStartOptions, expl))
-      {
-         return cli.Report(-1, expl);
-      }
-   }
-
-   if((opts.find(ImmediateTrace) != string::npos) && !Element::RunningInLab())
-   {
-      return cli.Report(-5, NotInFieldExpl);
-   }
-
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(opts);
+   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(EMPTY_STR);
    return ExplainTraceRc(cli, rc);
 }
 
@@ -3300,13 +3268,13 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
       default: return -1;
       }
 
-      auto yield = cli.GenerateReportPreemptably();
-      FunctionGuard guard(Guard_MakePreemptable, yield);
-
       if(GetIntParmRc(mid, cli) == Error) return -1;
       if(GetBV(*this, cli, v) == Error) return -1;
       if(!GetFileName(title, cli)) title.clear();
       if(!cli.EndOfInput()) return -1;
+
+      auto yield = (title.empty() ? false : cli.GenerateReportPreemptably());
+      FunctionGuard guard(Guard_MakePreemptable, yield);
 
       if(!title.empty())
       {

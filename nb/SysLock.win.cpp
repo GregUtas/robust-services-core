@@ -46,7 +46,7 @@ SysLock::~SysLock()
 {
    if(owner_ != NIL_ID)
    {
-      Debug::SwLog(SysLock_dtor, owner_, 0);
+      Debug::SwLog(SysLock_dtor, "lock has owner", owner_);
    }
 
    if(mutex_ != nullptr)
@@ -54,7 +54,7 @@ SysLock::~SysLock()
       if(CloseHandle(mutex_))
          mutex_ = nullptr;
       else
-         Debug::SwLog(SysLock_dtor, 0, GetLastError());
+         Debug::SwLog(SysLock_dtor, "lock not freed", GetLastError());
    }
 }
 
@@ -105,7 +105,7 @@ void SysLock::Release()
 
    if(!ReleaseMutex(mutex_))
    {
-      Debug::SwLog(SysLock_Release, 0, GetLastError());
+      Debug::SwLog(SysLock_Release, "failed to release mutex", GetLastError());
    }
 }
 }

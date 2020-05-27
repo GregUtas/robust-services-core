@@ -35,7 +35,6 @@
 #include "NbTracer.h"
 #include "Registry.h"
 #include "Singleton.h"
-#include "SysFile.h"
 #include "SysThread.h"
 #include "ThisThread.h"
 #include "Tool.h"
@@ -117,7 +116,6 @@ TraceBuffer::TraceBuffer() :
    wrap_(false),
    ovfl_(false),
    softLocks_(0),
-   immediate_(false),
    stream_(nullptr),
    blocks_(0),
    processed_(false)
@@ -135,11 +133,9 @@ TraceBuffer::TraceBuffer() :
 
    if(InitFlags::TraceInit())
    {
-      string opts;
       SetTool(FunctionTracer, true);
       SetFilter(TraceAll);
-      if(InitFlags::ImmediateTrace()) opts.push_back(ImmediateTrace);
-      StartTracing(opts);
+      StartTracing(EMPTY_STR);
    }
 }
 
@@ -293,7 +289,7 @@ fn_name TraceBuffer_Clear = "TraceBuffer.Clear";
 
 TraceRc TraceBuffer::Clear()
 {
-   Debug::ft(TraceBuffer_Clear);
+   Debug::ftnt(TraceBuffer_Clear);
 
    //  If tracing has been stopped, delete all records in the buffer
    //  and reset member variables.
@@ -413,18 +409,13 @@ bool TraceBuffer::HasBeenProcessed()
 
 bool TraceBuffer::Insert(TraceRecord* record)
 {
-   //  If immediate tracing is active, display the record now.
-   //
-   if(immediate_)
-   {
-      if(record->Display(*stream_, EMPTY_STR)) *stream_ << CRLF;
-   }
+   if(record == nullptr) return false;
 
    //  Delete the record if no slot is available.
    //
    auto slot = AllocSlot();
 
-   if(slot == SIZE_MAX)
+   if(slot == UINT32_MAX)
    {
       delete record;
       return false;
@@ -620,7 +611,6 @@ void TraceBuffer::Query(ostream& stream) const
 
 fixed_string TracingOn = "Tracing is ON.";
 fixed_string TracingOff = "Tracing is OFF.";
-fixed_string ImmediateOn = "IMMEDIATE tracing is enabled.";
 
 fn_name TraceBuffer_QueryTools = "TraceBuffer.QueryTools";
 
@@ -629,14 +619,9 @@ void TraceBuffer::QueryTools(ostream& stream) const
    Debug::ft(TraceBuffer_QueryTools);
 
    if(Debug::TraceOn())
-   {
       stream << TracingOn << CRLF;
-      if(immediate_) stream << ImmediateOn << CRLF;
-   }
    else
-   {
       stream << TracingOff << CRLF;
-   }
 
    auto& tools = Singleton< ToolRegistry >::Instance()->Tools();
 
@@ -790,16 +775,6 @@ TraceRc TraceBuffer::StartTracing(const string& opts)
       Insert(new BufferTrace);
    }
 
-   if(opts.find(ImmediateTrace) != string::npos)
-   {
-      auto path = Element::OutputPath();
-      if(!path.empty()) path.push_back(PATH_SEPARATOR);
-      path += "immed.trace.txt";
-      stream_ = SysFile::CreateOstream(path.c_str());
-      if(stream_ == nullptr) return CouldNotOpenFile;
-      immediate_ = true;
-   }
-
    if(Empty()) startTime_ = SysTime();
    Debug::FcFlags_.set(Debug::TracingActive);
    return TraceOk;
@@ -817,16 +792,6 @@ void TraceBuffer::StopTracing()
 
    SetTool(ToolBuffer, false);
    Debug::FcFlags_.reset(Debug::TracingActive);
-
-   //  If trace records are being output immediately, return after
-   //  closing the trace output file.
-   //
-   if(immediate_)
-   {
-      stream_.reset();
-      immediate_ = false;
-      return;
-   }
 }
 
 //------------------------------------------------------------------------------

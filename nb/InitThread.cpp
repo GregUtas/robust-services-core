@@ -141,9 +141,9 @@ void InitThread::CauseRestart()
       Log::Submit(log);
    }
 
-   auto reg = Singleton< ModuleRegistry >::Instance();
+   auto reg = Singleton< ModuleRegistry >::Extant();
    reg->SetLevel(RestartWarm);
-   Singleton< RootThread >::Instance()->Interrupt(RestartMask);
+   Singleton< RootThread >::Extant()->Interrupt(RestartMask);
    state_ = Initializing;
    Pause(Duration(100, mSECS));
 }
@@ -298,7 +298,7 @@ void InitThread::HandleInterrupt()
    //  In each of these cases, interrupt RootThread so that its watchdog
    //  timer won't expire.
    //
-   Singleton< RootThread >::Instance()->Interrupt();
+   Singleton< RootThread >::Extant()->Interrupt();
 
    if(Test(Recreate))
    {
@@ -321,7 +321,7 @@ void InitThread::HandleTimeout()
 
    //  Interrupt RootThread so that its watchdog timer won't expire.
    //
-   Singleton< RootThread >::Instance()->Interrupt();
+   Singleton< RootThread >::Extant()->Interrupt();
    timeout_ = false;
 
    //  If there is no locked thread, schedule one.  If the locked thread
@@ -367,9 +367,9 @@ void InitThread::InitializeSystem()
    //  Once the system is initialized, notify RootThread so that it
    //  will stop the watchdog timer that runs during initialization.
    //
-   Singleton< ModuleRegistry >::Instance()->Restart();
+   Singleton< ModuleRegistry >::Extant()->Restart();
    state_ = Running;
-   Singleton< RootThread >::Instance()->Interrupt();
+   Singleton< RootThread >::Extant()->Interrupt();
 
    //  Now that the restart is over, disable  tracing of RootThread
    //  and this thread, which usually cause unwanted noise in traces.
@@ -394,8 +394,8 @@ void InitThread::InitiateRestart(RestartLevel level)
    //  occurring so that it can act as a watchdog on its completion and
    //  then wake up our thread.
    //
-   Singleton< ModuleRegistry >::Instance()->SetLevel(level);
-   Singleton< RootThread >::Instance()->Interrupt(RestartMask);
+   Singleton< ModuleRegistry >::Extant()->SetLevel(level);
+   Singleton< RootThread >::Extant()->Interrupt(RestartMask);
    Interrupt(RestartMask);
 }
 

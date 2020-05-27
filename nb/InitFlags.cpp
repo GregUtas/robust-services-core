@@ -45,15 +45,6 @@ bool InitFlags::CauseTimeout()
 
 //------------------------------------------------------------------------------
 
-bool InitFlags::ImmediateTrace()
-{
-   //  This has no effect unless TraceInit returns true.
-   //
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 bool InitFlags::SuspendRoot()
 {
    return false;

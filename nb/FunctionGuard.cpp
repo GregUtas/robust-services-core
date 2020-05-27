@@ -33,7 +33,7 @@ fn_name FunctionGuard_ctor = "FunctionGuard.ctor";
 FunctionGuard::FunctionGuard(GuardedFunction first, bool invoke) :
    first_(Guard_Nil)
 {
-   Debug::ft(FunctionGuard_ctor);
+   Debug::ftnt(FunctionGuard_ctor);
 
    if(!invoke) return;
 

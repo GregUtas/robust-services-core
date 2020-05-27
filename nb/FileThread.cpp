@@ -23,6 +23,7 @@
 #include "StreamRequest.h"
 #include <ios>
 #include <iosfwd>
+#include <new>
 #include <sstream>
 #include "Debug.h"
 #include "Duration.h"
@@ -272,7 +273,7 @@ fn_name FileThread_Record = "FileThread.Record";
 
 void FileThread::Record(const std::string& s, bool eol)
 {
-   Debug::ft(FileThread_Record);
+   Debug::ftnt(FileThread_Record);
 
    MutexGuard guard(&ConsoleFileLock_);
 
@@ -287,7 +288,7 @@ fn_name FileThread_Spool1 = "FileThread.Spool(written)";
 void FileThread::Spool(const string& name,
    ostringstreamPtr& stream, CallbackRequestPtr& written, bool trunc)
 {
-   Debug::ft(FileThread_Spool1);
+   Debug::ftnt(FileThread_Spool1);
 
    if(stream == nullptr) return;
 
@@ -330,7 +331,7 @@ fn_name FileThread_Spool2 = "FileThread.Spool(stream)";
 
 void FileThread::Spool(const string& name, ostringstreamPtr& stream, bool trunc)
 {
-   Debug::ft(FileThread_Spool2);
+   Debug::ftnt(FileThread_Spool2);
 
    CallbackRequestPtr callback;
    Spool(name, stream, callback, trunc);
@@ -342,9 +343,11 @@ fn_name FileThread_Spool3 = "FileThread.Spool(string)";
 
 void FileThread::Spool(const string& name, const string& s, bool eol)
 {
-   Debug::ft(FileThread_Spool3);
+   Debug::ftnt(FileThread_Spool3);
 
-   ostringstreamPtr stream(new std::ostringstream);
+   ostringstreamPtr stream(new (std::nothrow) std::ostringstream);
+   if(stream == nullptr) return;
+
    *stream << s;
    if(eol) *stream << CRLF;
 

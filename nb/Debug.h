@@ -77,21 +77,15 @@ public:
    static void ftnt(fn_name_arg func);
 
    //  Generates a software log.  FUNC is the function's exact name, in the
-   //  same form as that used for Debug::ft above.  ERRVAL/ERRSTR provides
-   //  debug information.  OFFSET is often a sequence number within a function,
-   //  which makes it easy to see which occurrence of SwLog was invoked, but in
-   //  some cases it provides debug information instead.  If STACK is set, the
-   //  log includes a stack trace.
+   //  same form as that used for Debug::ft above.  ERRSTR and ERRVAL provide
+   //  debug information.  If STACK is set, the log includes a stack trace.
    //
    static void SwLog(fn_name_arg func,
-      debug64_t errval, debug64_t offset, bool stack = true);
-   static void SwLog(fn_name_arg func,
-      const std::string& errstr, debug64_t offset, bool stack = true);
+      const std::string& errstr, debug64_t errval, bool stack = true);
 
    //  Throws an exception.  The arguments are the same as for SwLog, above.
    //  A stack trace is always included.
    //
-   static void SwErr(debug64_t errval, debug64_t offset);
    static void SwErr(const std::string& errstr, debug64_t offset);
 
    //  Throws an exception if CONDITION is false.  ERRVAL is for debugging.
@@ -141,11 +135,6 @@ private:
       TrapPending,    // set when a Raise() is pending on any thread
       StackChecking   // set when stack overflow prevention is active
    };
-
-   //  Used by the various versions of SwLog.
-   //
-   static void GenerateSwLog(fn_name_arg func, const std::string& errstr,
-      debug64_t offset, bool stack);
 
    //  Flags for controlling the behavior of software during testing.
    //

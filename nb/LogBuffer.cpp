@@ -220,7 +220,7 @@ fn_name LogBuffer_First = "LogBuffer.First";
 
 const LogBuffer::Entry* LogBuffer::First() const
 {
-   Debug::ft(LogBuffer_First);
+   Debug::ftnt(LogBuffer_First);
 
    return (spooled_ != nullptr ? spooled_ : unspooled_);
 }
@@ -318,7 +318,7 @@ fn_name LogBuffer_InsertionPoint = "LogBuffer.InsertionPoint";
 
 LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
 {
-   Debug::ft(LogBuffer_InsertionPoint);
+   Debug::ftnt(LogBuffer_InsertionPoint);
 
    //  The log is normally inserted at next_, which will advance to AFTER.
    //  However, the log needs to go at the top of the buffer if it would
@@ -436,7 +436,7 @@ void LogBuffer::Purge(const Entry* last)
       {
          //  LAST no longer exists: requests must have been reordered!?
          //
-         Debug::SwLog(LogsWritten_Callback, debug64_t(last), debug64_t(Last()));
+         Debug::SwLog(LogsWritten_Callback, "last not found", debug64_t(last));
          return;
       }
    }
@@ -457,13 +457,18 @@ fn_name LogBuffer_Push = "LogBuffer.Push";
 
 bool LogBuffer::Push(const ostringstreamPtr& log)
 {
-   Debug::ft(LogBuffer_Push);
+   Debug::ftnt(LogBuffer_Push);
 
    //  This must not be invoked during a restart.
    //  LogThread::Spool should be invoked instead.
    //
    auto level = Restart::GetStage();
-   Debug::Assert(level == Running, level);
+
+   if(level != Running)
+   {
+      Debug::SwLog(LogBuffer_Push, "invoked during restart", level);
+      return false;
+   }
 
    auto count = log->str().size();
    size_t size = sizeof(Header) + count + 1;
@@ -484,7 +489,8 @@ bool LogBuffer::Push(const ostringstreamPtr& log)
    UpdateMax();
    guard.Release();
 
-   Singleton< LogThread >::Instance()->Interrupt();
+   auto thread = Singleton< LogThread >::Extant();
+   if(thread != nullptr) thread->Interrupt();
    return true;
 }
 
@@ -506,7 +512,7 @@ fn_name LogBuffer_SetNext = "LogBuffer.SetNext";
 
 void LogBuffer::SetNext(Entry* next)
 {
-   Debug::ft(LogBuffer_SetNext);
+   Debug::ftnt(LogBuffer_SetNext);
 
    next_ = next;
    next_->header.prev = nullptr;

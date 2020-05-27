@@ -3674,8 +3674,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec, string& name)
 {
    Debug::ft(Parser_GetTypeSpec2);
 
-   GetTypeSpec(spec);
-   if(spec == nullptr) return false;
+   if(!GetTypeSpec(spec)) return false;
 
    auto func = spec->GetFuncSpec();
 
@@ -4358,8 +4357,23 @@ bool Parser::Parse(CodeFile& file)
 
    //  On success, delete the parse file if it is not supposed to be retained.
    //
-   pTrace_.reset();
-   if(parsed && !Context::OptionIsOn(SaveParseTrace)) remove(path.c_str());
+   if(pTrace_ != nullptr)
+   {
+      pTrace_.reset();
+
+      if(parsed && !Context::OptionIsOn(SaveParseTrace))
+      {
+         auto err = remove(path.c_str());
+
+         if(err != 0)
+         {
+            std::ostringstream stream;
+            stream << "failed to remove " << path.c_str();
+            Debug::SwLog(Parser_Parse, stream.str(), err, false);
+         }
+      }
+   }
+
    return parsed;
 }
 

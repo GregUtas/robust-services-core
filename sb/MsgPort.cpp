@@ -95,7 +95,7 @@ MsgPort::~MsgPort()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = TimePoint::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton< TraceBuffer >::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {

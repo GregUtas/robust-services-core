@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsProxyHandlers.h"
+#include "Algorithms.h"
 #include "BcAddress.h"
 #include "BcCause.h"
 #include "BcProgress.h"
@@ -75,7 +76,8 @@ EventHandler::Rc PotsProxyNuAnalyzeLocalMessage::ProcessEvent
       cause = Cause::UnallocatedNumber;
    }
 
-   Debug::SwLog(PotsProxyNuAnalyzeLocalMessage_ProcessEvent, sid, cause);
+   Debug::SwLog(PotsProxyNuAnalyzeLocalMessage_ProcessEvent,
+      "unexpected signal", pack2(sid, cause));
    return pssm.RaiseReleaseCall(nextEvent, cause);
 }
 

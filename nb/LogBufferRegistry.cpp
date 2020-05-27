@@ -76,7 +76,7 @@ fn_name LogBufferRegistry_Active = "LogBufferRegistry.Active";
 
 LogBuffer* LogBufferRegistry::Active() const
 {
-   Debug::ft(LogBufferRegistry_Active);
+   Debug::ftnt(LogBufferRegistry_Active);
 
    if(size_ == 0) return nullptr;
    return buffer_[size_ - 1].get();

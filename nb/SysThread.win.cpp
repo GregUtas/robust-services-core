@@ -268,7 +268,7 @@ bool SysThread::Resume(SysSentry_t& sentry)
    //  Signal SENTRY in case the thread is blocked on it.
    //
    if(SetEvent(sentry)) return true;
-   Debug::SwLog(SysThread_Resume, GetLastError(), nid_);
+   Debug::SwLog(SysThread_Resume, "failed to set event", GetLastError());
    return false;
 }
 
@@ -344,7 +344,7 @@ DelayRc SysThread::Suspend(SysSentry_t& sentry, const Duration& timeout)
    //
    if(RunningThreadId() != nid_)
    {
-      Debug::SwLog(SysThread_Suspend, RunningThreadId(), nid_);
+      Debug::SwLog(SysThread_Suspend, "thread not running", nid_);
       return DelayError;
    }
 
@@ -369,7 +369,7 @@ DelayRc SysThread::Suspend(SysSentry_t& sentry, const Duration& timeout)
       Debug::SwLog(SysThread_Suspend, "unexpected result", rc);
       return DelayInterrupted;
    default:
-      Debug::SwLog(SysThread_Suspend, GetLastError(), rc);
+      Debug::SwLog(SysThread_Suspend, "unknown result", GetLastError());
    }
 
    return DelayError;

@@ -98,7 +98,7 @@ ProtocolSM::~ProtocolSM()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = TimePoint::Now();
-      auto buff = Singleton< TraceBuffer >::Instance();
+      auto buff = Singleton< TraceBuffer >::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
       {
@@ -460,7 +460,7 @@ void ProtocolSM::Kill()
 
    if(!msg->SendToSelf())
    {
-      Debug::SwLog(ProtocolSM_Kill, "failed to send message", fid_);
+      Debug::SwLog(ProtocolSM_Kill, "send failed", fid_);
    }
 }
 

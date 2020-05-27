@@ -134,14 +134,13 @@ If no options are entered, they default to "nchsux".  At least one option of
 /
 ? ct.parse
 The options are specified in a string that contains any of the following:
-  t: display logs while compiling templates (otherwise suppressed because
+  t: display logs while compiling templates (normally suppressed because
      an item accessed through a template parameter cannot be resolved)
   p: save parse tree on failure
   s: always save parse tree
   c: generate "object code" when compiling (use >save trace <fn> afterwards)
-  i: immediate tracing: needed if 'x' causes trace buffer to overflow
   f: enable FunctionTracer
-For no options, use the skip character ('~').
+For no options, use a hyphen ('-').
 /
 ? nb.sched
 The following columns appear in >sched show output:

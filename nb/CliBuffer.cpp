@@ -112,6 +112,10 @@ CliBuffer::CharType CliBuffer::CalcType(bool quoted)
    {
       switch(buff_[pos_])
       {
+      case EscapeChar:
+         if(++pos_ >= buff_.size()) return EndOfLine;
+         break;
+
       case StringChar:
          return String;
 
@@ -672,9 +676,9 @@ std::streamsize CliBuffer::ScanLine(const CliThread& cli)
 
       case EscapeChar:
          //
-         //  Add the next character to the string without interpreting it.
+         //  Add the escape character and the next one to the string.
          //
-         ++i;
+         s.push_back(buff_[i++]);
          if(i < buff_.size()) s.push_back(buff_[i]);
          break;
 

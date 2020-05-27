@@ -1004,7 +1004,6 @@ const string& ValidParseOptions()
       ValidOpts.push_back(SaveParseTrace);
       ValidOpts.push_back(TraceCompilation);
       ValidOpts.push_back(TraceFunctions);
-      ValidOpts.push_back(TraceImmediate);
    }
 
    return ValidOpts;

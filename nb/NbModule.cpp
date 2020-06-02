@@ -105,8 +105,8 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton< CfgParmRegistry >::Instance()->Shutdown(level);
    Singleton< LogGroupRegistry >::Instance()->Shutdown(level);
    Singleton< AlarmRegistry >::Instance()->Shutdown(level);
-   Singleton< LogBufferRegistry >::Instance()->Shutdown(level);
    Singleton< StatisticsRegistry >::Instance()->Shutdown(level);
+   Singleton< LogBufferRegistry >::Instance()->Shutdown(level);
    Singleton< PosixSignalRegistry >::Instance()->Shutdown(level);
 
    Singleton< TraceBuffer >::Instance()->Shutdown(level);
@@ -128,8 +128,8 @@ void NbModule::Startup(RestartLevel level)
    //  must be invoked.
    //
    Singleton< PosixSignalRegistry >::Instance()->Startup(level);
-   Singleton< StatisticsRegistry >::Instance()->Startup(level);
    Singleton< LogBufferRegistry >::Instance()->Startup(level);
+   Singleton< StatisticsRegistry >::Instance()->Startup(level);
    Singleton< AlarmRegistry >::Instance()->Startup(level);
    Singleton< LogGroupRegistry >::Instance()->Startup(level);
    CreateNbLogs(level);

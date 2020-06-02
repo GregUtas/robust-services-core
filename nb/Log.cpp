@@ -412,10 +412,7 @@ void Log::Submit(ostringstreamPtr& stream)
 
    //  Add the log to the active log buffer.
    //
-   auto reg = Singleton< LogBufferRegistry >::Extant();
-   if(reg == nullptr) return;
-
-   auto buffer = reg->Active();
+   auto buffer = Singleton< LogBufferRegistry >::Extant()->Active();
    if(buffer == nullptr) return;
 
    if(buffer->Push(stream))

@@ -38,7 +38,7 @@ namespace NodeBase
 
 //------------------------------------------------------------------------------
 //
-//  The Command Line Interpreter (CLI) allows "increments" (applications) to
+//  The Command Line Interface (CLI) allows "increments" (applications) to
 //  register so that they can be invoked from an input stream.  The CLI reads
 //  input from the stream and passes it to the appropriate increment.  Each
 //  increment defines commands that may also take parameters.  Because each
@@ -142,12 +142,12 @@ public:
    //
    virtual void Explain(std::ostream& stream, col_t indent) const;
 
-   //  Returns the next parameter in I if it is an integer.  Used when
+   //  Returns the next parameter in N if it is an integer.  Used when
    //  an integer parameter is mandatory.
    //
    bool GetIntParm(word& n, CliThread& cli) const;
 
-   //  Returns the next parameter in I if it is an integer.  Used when
+   //  Returns the next parameter in N if it is an integer.  Used when
    //  an integer parameter is optional.
    //
    virtual Rc GetIntParmRc(word& n, CliThread& cli) const;

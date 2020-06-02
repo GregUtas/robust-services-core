@@ -29,6 +29,7 @@
 #include "InitFlags.h"
 #include "InitThread.h"
 #include "Log.h"
+#include "LogBufferRegistry.h"
 #include "NbAppIds.h"
 #include "NbLogs.h"
 #include "NbSignals.h"
@@ -290,6 +291,11 @@ main_t RootThread::Main()
       //  RootThread can register for signals when it is wrapped.
       //
       CreatePosixSignals();
+
+      //  Create the log buffer, which is used to log the progress
+      //  of initialization.
+      //
+      Singleton< LogBufferRegistry >::Instance();
 
       //  Wrap the root thread and enter it.
       //

@@ -230,25 +230,26 @@ void LogThread::Spool(ostringstreamPtr& stream, const Log* log)
 
    if((log == nullptr) || (GetLogType(log->Id()) != PeriodicLog))
    {
-      //  Write the log to the console and the console transcript file.
+      //  In a lab load, write the log to the console and the console
+      //  transcript file.
       //
-      SysConsole::Out() << stream->str() << std::flush;
-
-      auto path = Element::OutputPath() +
-         PATH_SEPARATOR + Element::ConsoleFileName() + ".txt";
-      auto file = SysFile::CreateOstream(path.c_str());
-
-      if(file != nullptr)
+      if(Element::RunningInLab())
       {
-         *file << stream->str();
-         file.reset();
+         SysConsole::Out() << stream->str() << std::flush;
+
+         auto path = Element::OutputPath() +
+            PATH_SEPARATOR + Element::ConsoleFileName() + ".txt";
+         auto file = SysFile::CreateOstream(path.c_str());
+
+         if(file != nullptr)
+         {
+            *file << stream->str();
+            file.reset();
+         }
       }
    }
 
-   auto reg = Singleton< LogBufferRegistry >::Extant();
-   if(reg == nullptr) return;
-
-   auto name = reg->FileName();
+   auto name = Singleton< LogBufferRegistry >::Extant()->FileName();
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;
 
    MutexGuard guard(&LogFileLock_);

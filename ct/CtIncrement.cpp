@@ -1467,10 +1467,10 @@ class ListText : public CliText
 public: ListText();
 };
 
-class ActionParm : public CliTextParm
+class TraceAction : public CliTextParm
 {
 public:
-   ActionParm();
+   TraceAction();
 
    //  Values for the parameter.
    //
@@ -1512,17 +1512,17 @@ ListText::ListText() : CliText(ListTextExpl, ListTextStr) { }
 
 fixed_string ActionExpl = "subcommand...";
 
-ActionParm::ActionParm() : CliTextParm(ActionExpl)
+TraceAction::TraceAction() : CliTextParm(ActionExpl)
 {
-   BindText(*new InsertText, ActionParm::Insert);
-   BindText(*new RemoveText, ActionParm::Remove);
-   BindText(*new ClearText, ActionParm::Clear);
-   BindText(*new ListText, ActionParm::List);
+   BindText(*new InsertText, TraceAction::Insert);
+   BindText(*new RemoveText, TraceAction::Remove);
+   BindText(*new ClearText, TraceAction::Clear);
+   BindText(*new ListText, TraceAction::List);
 }
 
 TraceCommand::TraceCommand() : CliCommand(TraceStr, TraceExpl)
 {
-   BindParm(*new ActionParm);
+   BindParm(*new TraceAction);
 }
 
 fn_name TraceCommand_ProcessCommand = "TraceCommand.ProcessCommand";
@@ -1540,16 +1540,16 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
 
    switch(action)
    {
-   case ActionParm::Insert:
-   case ActionParm::Remove:
+   case TraceAction::Insert:
+   case TraceAction::Remove:
       break;
 
-   case ActionParm::Clear:
+   case TraceAction::Clear:
       if(!cli.EndOfInput()) return -1;
       Context::ClearTracepoints();
       return cli.Report(0, SuccessExpl);
 
-   case ActionParm::List:
+   case TraceAction::List:
       if(!cli.EndOfInput()) return -1;
       Context::DisplayTracepoints(*cli.obuf, spaces(2));
       return 0;
@@ -1571,7 +1571,7 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
       return cli.Report(-2, "Source code file not found.");
    }
 
-   if(action == ActionParm::Remove)
+   if(action == TraceAction::Remove)
    {
       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
       return cli.Report(0, SuccessExpl);

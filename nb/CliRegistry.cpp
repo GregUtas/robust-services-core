@@ -111,8 +111,6 @@ void CliRegistry::ListIncrements(ostream& stream) const
    {
       i->Explain(stream, 0);
    }
-
-   stream << CRLF;
 }
 
 //------------------------------------------------------------------------------

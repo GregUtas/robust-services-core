@@ -67,6 +67,11 @@ to better support standalone clients that use IP (TCP, in this case). The
 resulting software is available in the [_dip_](/dip) directory and is
 described in some further detail [here](/docs/RSC-Diplomacy.md).
 
+## Documentation
+
+This page provides an overview of RSC. There is also a page which lists
+[documents](/docs/README.md) that go into far more depth on many topics.
+
 ## Installing the repository
 
 Download the repository to a directory named _rsc_. This is because, when
@@ -81,8 +86,8 @@ RSC requires C++11.
 RSC is currently implemented on Windows, where it runs as a console application.
 However, it defines an abstraction layer, in the form of generic C++ _.h_'s and
 platform-specific _.cpp_'s, that should allow it to be ported to other systems
-fairly easily. Two executables, for 32-bit and 64-bit Windows, are provided
-[here](/exe).
+fairly easily. Two debug executables, for 32-bit and 64-bit Windows, are
+provided [here](/exe).
 
 The directories that contain RSC's source code, and the dependencies between
 them, are listed in the comments that precede the implementation of

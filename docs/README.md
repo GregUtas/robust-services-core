@@ -2,7 +2,7 @@
 
 ## RSC Foundation
 
-These documents describe general RSC capabilities:
+These documents describe RSC's primary capabilities:
 
 Document | Description
 -------- | -----------
@@ -23,18 +23,18 @@ Document | Description
 
 ## C++ Static Analysis
 
-These documents describe the C++ static analysis tool found in the _ct_ directory:
+These documents describe the C++ static analysis tools found in the _ct_ directory:
 
 Document | Description
 -------- | -----------
 [RSC C++ Static Analysis Tools](/docs/RSC-Cpp-Static-Analysis-Tools.md) | overview of the C++ static analysis tools
 [RSC C++11 Exclusions](/docs/RSC-Cpp11-Exclusions.md) | C++11 language features not supported by the static analysis tools
-[A Static Analysis Tool for C++](https://www.codeproject.com/Articles/5246833/A-Static-Analysis-Tool-for-Cplusplus) | article on static analysis tools
+[A Static Analysis Tool for C++](https://www.codeproject.com/Articles/5246833/A-Static-Analysis-Tool-for-Cplusplus) | article on the static analysis tools
 
 ## RSC Session Processing and Applications
 
 These documents describe the session processing framework provided with RSC and the POTS and
-Diplomacy bot applications that uses it:
+Diplomacy bot applications that use it:
 
 Document | Description
 -------- | -----------

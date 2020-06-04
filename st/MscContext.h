@@ -126,7 +126,7 @@ private:
    //
    const ContextType type_;
 
-   //  The context's identifer (a ServiceId or FactoryId).
+   //  The context's identifier (a ServiceId or FactoryId).
    //  An unknown external context is encoded as a factory
    //  with NIL_ID.
    //

@@ -32,7 +32,7 @@
 
 namespace NodeBase
 {
-//  Base class for debugging tools.  See TraceRecord, TraceBufer, and NbTracer.
+//  Base class for debugging tools.  See TraceRecord, TraceBuffer, and NbTracer.
 //
 class Tool : public Immutable
 {

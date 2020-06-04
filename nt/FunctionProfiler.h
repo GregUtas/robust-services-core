@@ -104,7 +104,7 @@ private:
    //
    const size_t size_;
 
-   //  The hash table for FunctionStat records.  Function names with the
+   //  The hash table for FunctionStats records.  Function names with the
    //  same hash value appear in the same queue.
    //
    Q2Way< FunctionStats >* functionq_;

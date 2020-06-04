@@ -210,12 +210,12 @@ public:
    //
    virtual Rc GetTextParmRc(id_t& i, std::string& s, CliThread& cli) const;
 
-   //  Returns the next parameter in S if it is an arbitary string.
+   //  Returns the next parameter in S if it is an arbitrary string.
    //  Used when a string parameter is mandatory.
    //
    bool GetString(std::string& s, CliThread& cli) const;
 
-   //  Returns the next parameter in S if it is an arbitary string.
+   //  Returns the next parameter in S if it is an arbitrary string.
    //  Used when a string parameter is optional.
    //
    virtual Rc GetStringRc(std::string& s, CliThread& cli) const;

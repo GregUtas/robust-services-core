@@ -544,7 +544,7 @@ CxxScope* CxxSymbols::FindScope(const CxxScope* scope, string& name) const
    Debug::ft(CxxSymbols_FindScope);
 
    //  Erase any leading scope qualifier, as we plan to use full names that
-   //  do not have a leading scope qualifier.  If a leading scope qualifer
+   //  do not have a leading scope qualifier.  If a leading scope qualifier
    //  is not present, prefix the name of any supplied scope to NAME unless
    //  NAME (redundantly) includes that scope.  Template arguments are left
    //  out because a template instance is in the scope of the class template.

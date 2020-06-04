@@ -42,7 +42,7 @@ namespace NodeBase
 //
 //  DESIGN GUIDELINES
 //
-//  Threads that run unpreeemptably are mutually excluded, so mutexes are only
+//  Threads that run unpreemptably are mutually excluded, so mutexes are only
 //  needed to interact with preemptable or high priority threads.  This is the
 //  rationale for running threads unpreemptably ("locked") and only pausing
 //  between logical units of work.  If the locked thread blocks on a mutex, no
@@ -66,7 +66,7 @@ namespace NodeBase
 //
 //  3. Do not perform a blocking operation while holding a mutex.
 //     EnterBlockingOperation generates a log if this occurs.  A mutex should
-//     be held for a short time, to perform an indivisble operation, so it is
+//     be held for a short time, to perform an indivisible operation, so it is
 //     hard to see how this could legitimately involve a blocking operation.
 //
 class SysMutex : public Permanent

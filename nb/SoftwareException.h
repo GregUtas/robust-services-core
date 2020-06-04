@@ -55,7 +55,7 @@ private:
    //
    const char* what() const noexcept override;
 
-   //  An error valuefor debugging.
+   //  An error value for debugging.
    //
    const debug64_t errval_;
 

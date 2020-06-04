@@ -233,7 +233,7 @@ private:
    word aborts_;
 
    //  Each active call is queued against the timeslot in which it will
-   //  decide what to do next (typically, to send a messsage).
+   //  decide what to do next (typically, to send a message).
    //
    Q1Way< TrafficCall >* timewheel_;
 };

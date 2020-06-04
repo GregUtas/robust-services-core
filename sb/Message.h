@@ -158,7 +158,7 @@ public:
 
    //  Moves a sent (and saved) outgoing message to PSM's outgoing message
    //  queue so that it can be retransmitted.  If PSM is nullptr, it stays
-   //  on the same PSM.  By specifiying a PSM other than the one where the
+   //  on the same PSM.  By specifying a PSM other than the one where the
    //  message is queued, the message can effectively be broadcast (saved
    //  by one PSM, then retrieved by the next).
    //

@@ -464,7 +464,7 @@ private:
    bool GetOp(ExprPtr& expr, bool cxx);
 
    //  Updates EXPR with the results of parsing a literal.  CODE specifies
-   //  the encoding tag, if any, that preceded a character os string literal.
+   //  the encoding tag, if any, that preceded a character or string literal.
    //
    bool GetNum(ExprPtr& expr);
    bool GetChar(ExprPtr& expr, Cxx::Encoding code);

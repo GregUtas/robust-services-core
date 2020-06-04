@@ -36,7 +36,7 @@ namespace SessionBase
 //  PSMs (ProtocolSMs) above it.  It manages the local (host) and remote (peer)
 //  addresses that are exchanging messages.  When the stack receives an initial
 //  message, the port saves the host and peer addresses and adds them to each
-//  outgoing message.  But when the the stack sends the initial message, that
+//  outgoing message.  But when the stack sends the initial message, that
 //  message must specify the peer's address and the host's IP address, IP port,
 //  and factory.
 //
@@ -96,7 +96,7 @@ public:
    //
    ProtocolSM* UppermostPsm() const override;
 
-   //  Returns the ports's factory.
+   //  Returns the port's factory.
    //
    FactoryId GetFactory()
       const override { return locAddr_.sbAddr_.fid; }

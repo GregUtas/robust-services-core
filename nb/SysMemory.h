@@ -40,8 +40,8 @@ namespace SysMemory
    void* Alloc(void* addr, size_t size, MemoryProtection attrs = MemReadWrite);
 
    //  Frees the memory ADDR[0 to SIZE-1].  To free an entire segment that
-   //  was previously returned by Alloc, ADDR must be the the address that
-   //  was returned by ALLOC and SIZE must be 0.
+   //  was previously returned by Alloc, ADDR must be the address that was
+   //  returned by ALLOC and SIZE must be 0.
    //
    bool Free(void* addr, size_t size);
 

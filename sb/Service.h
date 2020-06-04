@@ -236,7 +236,7 @@ private:
    //
    NodeBase::Registry< Trigger > triggers_;
 
-   //  Set if the service suppports modifiers.
+   //  Set if the service supports modifiers.
    //
    const bool modifiable_;
 

@@ -648,7 +648,7 @@ public:
    //
    void Check() const override;
 
-   //  Overridden to generae a log if the enumerator is unused but its enum
+   //  Overridden to generate a log if the enumerator is unused but its enum
    //  *is* used.
    //
    bool CheckIfUnused(Warning warning) const override;
@@ -786,7 +786,7 @@ public:
    //
    bool EnterScope() override;
 
-   //  Overriden to add the forward's referent to SYMBOLS.
+   //  Overridden to add the forward's referent to SYMBOLS.
    //
    void GetDirectClasses(CxxUsageSets& symbols) const override;
 
@@ -794,7 +794,7 @@ public:
    //
    QualName* GetQualName() const override { return name_.get(); }
 
-   //  Overriden to support the forward declaration of templates.
+   //  Overridden to support the forward declaration of templates.
    //
    const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
@@ -827,7 +827,7 @@ public:
    //
    void SetAsReferent(const CxxNamed* user) override;
 
-   //  Overriden to support the forward declaration of templates.
+   //  Overridden to support the forward declaration of templates.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
 
@@ -922,7 +922,7 @@ public:
    //
    bool EnterScope() override;
 
-   //  Overriden to add the friend's referent to SYMBOLS.
+   //  Overridden to add the friend's referent to SYMBOLS.
    //
    void GetDirectClasses(CxxUsageSets& symbols) const override;
 
@@ -934,7 +934,7 @@ public:
    //
    QualName* GetQualName() const override;
 
-   //  Overriden to support templates as friends.
+   //  Overridden to support templates as friends.
    //
    const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
@@ -986,7 +986,7 @@ public:
    //
    void SetAsReferent(const CxxNamed* user) override;
 
-   //  Overriden to support templates as friends.
+   //  Overridden to support templates as friends.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
 
@@ -1366,7 +1366,7 @@ public:
    //
    void SetUsing() { using_ = true; }
 
-   //  Sets the typdef's alignment.
+   //  Sets the typedef's alignment.
    //
    void SetAlignment(AlignAsPtr& align);
 

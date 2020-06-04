@@ -53,7 +53,7 @@ public:
    //
    ~Interpreter();
 
-   //  Evalutes the expression.
+   //  Evaluates the expression.
    //
    LibrarySet* Evaluate();
 

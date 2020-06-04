@@ -1157,7 +1157,7 @@ public:
    //
    virtual TypeSpec* Clone() const = 0;
 
-   //  Provides acccess to the type's tags.
+   //  Provides access to the type's tags.
    //
    virtual TypeTags* Tags() = 0;
    virtual const TypeTags* Tags() const = 0;
@@ -1238,7 +1238,7 @@ public:
    //    and THAT is added to tmpltArgs as the corresponding template argument
    //    unless a different argument was found previously.
    //  o If this is not a template parameter, THAT must have the same type.
-   //  Returns Incompatible if the above conditions are not satisifed.  Returns
+   //  Returns Incompatible if the above conditions are not satisfied.  Returns
    //  Compatible on an exact match, or something else on a partial match (if,
    //  for example, THAT is a pointer type and the template parameter is not).
    //
@@ -1298,7 +1298,7 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  A name, possibily qualified, that is being used as a type.
+//  A name, possibly qualified, that is being used as a type.
 //
 class DataSpec : public TypeSpec
 {

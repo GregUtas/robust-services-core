@@ -1737,7 +1737,7 @@ TagCount DataSpec::Refs() const
 
    //  An auto type can have a negative reference count that is eliminated
    //  once its type is determined.  Stop as soon as the count is positive;
-   //  else an l-value reference (&) could become an r-value reference (&&).
+   //  else an l-value reference (&) could become an rvalue reference (&&).
    //
    TagCount count = 0;
    auto spec = static_cast< const TypeSpec* >(this);
@@ -1789,7 +1789,7 @@ bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
    Debug::ft(DataSpec_ResolveTemplate);
 
    //  Don't create a template instance if this item was only created
-   //  interally, during template matching.
+   //  internally, during template matching.
    //
    return (GetTemplateRole() != TemplateClass);
 }

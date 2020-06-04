@@ -364,7 +364,7 @@ public:
    //
    explicit PotsCallPsm(Switch::PortId port);
 
-   //  Creates a PSM from an adjancent layer.  PORT is the same as above.
+   //  Creates a PSM from an adjacent layer.  PORT is the same as above.
    //  The other arguments are the same as those for the base class.
    //
    PotsCallPsm(ProtocolLayer& adj, bool upper, Switch::PortId port);

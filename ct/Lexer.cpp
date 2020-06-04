@@ -261,7 +261,7 @@ void Lexer::CalcDepths()
             case IndentControl:
             {
                //  If this keyword is not followed by a colon, it controls the
-               //  visiblity of a base class and can be handled like a normal
+               //  visibility of a base class and can be handled like a normal
                //  identifier.  If it *is* followed by a colon, it controls the
                //  visibility of the members that follow.  Put it at DEPTH - 1
                //  and treat it as if it ends with a semicolon so that the code

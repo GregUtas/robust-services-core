@@ -350,7 +350,7 @@ class PotsCollectInformationSap : public BcTrigger
 {
    friend class Singleton< PotsCollectInformationSap >;
 public:
-   //  HTL and WML are incompatiable, so they can have the same priority.
+   //  HTL and WML are incompatible, so they can have the same priority.
    //
    static const Initiator::Priority PotsHtlPriority = 50;
    static const Initiator::Priority PotsWmlPriority = 50;

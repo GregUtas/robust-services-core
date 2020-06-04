@@ -150,7 +150,7 @@ void Daemon::Disable()
 {
    Debug::ft(Daemon_Disable);
 
-   //  This is a bit of a kludge but fits in will with the overall logic.
+   //  This is a bit of a kludge but fits in well with the overall logic.
    //
    traps_ = 2;
 }

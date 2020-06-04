@@ -86,7 +86,7 @@ namespace NodeBase
 //
 //  NOTE ON INITIALIZATION ORDER:
 //  ============================
-//  Debug::ft is invoked fairly early during initialzation, well before entry
+//  Debug::ft is invoked fairly early during initialization, well before entry
 //  to main().  The SysMutex and Duration items defined at file scope in this
 //  file end up invoking Debug::ft during their initialization.  If FtLocks_
 //  has not been initialized at that point, FtLocks_.find() will trap.  This
@@ -2197,7 +2197,7 @@ bool Thread::HandleSignal(signal_t sig, uint32_t code)
          sig = thr->priv_->signal_;
       }
 
-      //  Turn the signal into a standard C++ exception so that ic can
+      //  Turn the signal into a standard C++ exception so that it can
       //  be caught and recovery action initiated.
       //
       throw SignalException(sig, code);

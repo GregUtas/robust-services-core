@@ -74,7 +74,7 @@ public:
    //
    NodeBase::TraceRc ClearSelections(NodeBase::FlagId filter);
 
-   //  Determines wheter IPB, travelling in DIR, should be traced.
+   //  Determines whether IPB, travelling in DIR, should be traced.
    //
    NodeBase::TraceStatus BuffStatus
       (const IpBuffer& ipb, NodeBase::MsgDirection dir) const;

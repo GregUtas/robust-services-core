@@ -1,9 +1,9 @@
 //==============================================================================
 //
-//  intsafe
+//  intsafe.h
 //
-#ifndef INTSAFE_INCLUDED
-#define INTSAFE_INCLUDED
+#ifndef INTSAFE_H_INCLUDED
+#define INTSAFE_H_INCLUDED
 
 #include "windows.h"
 

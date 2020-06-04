@@ -861,7 +861,7 @@ EventHandler::Rc BcSsm::RequestService(Event*& nextEvent)
 {
    Debug::ft(BcSsm_RequestService);
 
-   //  A service code should should have been dialed.
+   //  A service code should have been dialed.
    //
    if(analysis_.selector == Address::ScType)
    {

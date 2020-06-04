@@ -865,7 +865,7 @@ bool Message::Send(Route route)
    }
 
    //  If the message was moved to its destination, ChangeDir already invoked
-   //  Handled.  However, the messsage needs to clear its PSM now that it is
+   //  Handled.  However, the message needs to clear its PSM now that it is
    //  queued on the destination context.  This was deferred until now so that
    //  trace tools could record the message's PSM.
    //

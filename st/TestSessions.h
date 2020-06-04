@@ -143,7 +143,7 @@ private:
    //
    IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
 
-   //  Overridden to handle an outoing message.
+   //  Overridden to handle an outgoing message.
    //
    OutgoingRc ProcessOgMsg(Message& msg) override;
 
@@ -256,7 +256,7 @@ public:
    //
    void SetTestPsm(TestPsm* psm);
 
-   //  Sets the appplication PSM.
+   //  Sets the application PSM.
    //
    void SetAppPsm(ProtocolSM* psm);
 

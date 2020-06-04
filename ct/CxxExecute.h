@@ -674,7 +674,7 @@ public:
    static CxxScope* Scope() { return Frame_->Scope(); }
 
    //  If parsing a template instance, returns the scope in which its
-   //  instantiation occured, else returns the current scope.
+   //  instantiation occurred, else returns the current scope.
    //
    static CxxScope* PrevScope();
 

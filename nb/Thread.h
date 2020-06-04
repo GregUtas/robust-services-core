@@ -243,7 +243,7 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Creates a thread that runs in the scheduler faction FACTION and
+   //  Creates a thread that runs in the specified scheduler FACTION and
    //  is managed by DAEMON.  Protected because this class is virtual.
    //
    Thread(Faction faction, Daemon* daemon = nullptr);

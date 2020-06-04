@@ -122,7 +122,7 @@ public:
    //
    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
 private:
-   //  Comparision operators.
+   //  Comparison operators.
    //
    bool operator==(const CodeWarning& that) const;
    bool operator!=(const CodeWarning& that) const;
@@ -147,7 +147,7 @@ private:
    //
    std::vector< CodeWarning* > LogsToFix(std::string& expl);
 
-   //  Returns the other log associated with a warning that invovles
+   //  Returns the other log associated with a warning that involves
    //  fixing both a declaration and a definition.
    //
    CodeWarning* FindMateLog(std::string& expl) const;

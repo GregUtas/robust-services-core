@@ -488,7 +488,7 @@ LibrarySet* Library::FindVar(const string& name) const
 {
    Debug::ft(Library_FindVar);
 
-   //  Exclude temporary variables from the search.  The are currently no
+   //  Exclude temporary variables from the search.  There are currently no
    //  situations where including them is useful, and excluding them avoids
    //  the case where an expression tries to create two temporary variables
    //  with the same name.  If the second attempt simply returns the first

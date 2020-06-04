@@ -513,7 +513,7 @@ bool Iff::EnterScope()
    Debug::ft(Iff_EnterScope);
 
    //  Compile the code that follows the #if if the condition that follows
-   //  evalutes to true.
+   //  evaluates to true.
    //
    Context::SetPos(GetLoc());
    Context::PushOptional(this);

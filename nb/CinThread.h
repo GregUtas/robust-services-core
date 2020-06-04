@@ -69,7 +69,7 @@ private:
    ~CinThread();
 
    //  Registers CLIENT as waiting for input.  Returns false if another
-   //  client is currenty registered.
+   //  client is currently registered.
    //
    bool SetClient(Thread* client);
 

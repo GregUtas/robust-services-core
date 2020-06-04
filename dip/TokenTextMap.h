@@ -27,7 +27,7 @@ namespace Diplomacy
 
 namespace Diplomacy
 {
-//  Provides mappings between raw token values and their text represenations.
+//  Provides mappings between raw token values and their text representations.
 //
 class TokenTextMap
 {

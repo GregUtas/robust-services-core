@@ -72,7 +72,7 @@ Object::ClassId Object::GetClassId() const
 bool Object::GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid)
 {
    //  OID contains an object's class and instance identifiers.
-   //  Update C to its class and IID to its instance identifer.
+   //  Update C to its class and IID to its instance identifier.
    //
    ClassId cid = oid >> MaxInstanceIdLog2;
    cls = Singleton< ClassRegistry >::Instance()->Lookup(cid);

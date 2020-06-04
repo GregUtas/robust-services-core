@@ -184,7 +184,7 @@ extern const std::string DoubleRule;
 enum Constraint
 {
    NonKeyword,   // must not be a keyword
-   TypeKeyword,  // may only be a type keyword (e.g int)
+   TypeKeyword,  // may only be a type keyword (e.g. int)
    AnyKeyword    // may be a keyword
 };
 
@@ -566,7 +566,7 @@ struct LineTypeAttr
    //
    const bool isMergeable;
 
-   //  The lne is considered to be blank.
+   //  The line is considered to be blank.
    //
    const bool isBlank;
 

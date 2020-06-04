@@ -43,7 +43,7 @@ public:
    //
    explicit SysIpL2Addr(ipv4addr_t v4Addr);
 
-   //  Constructs an IPv4 address from the string "nnn.nnn.nnn.nnn".
+   //  Constructs an IPv4 address from the string "n.n.n.n".
    //  Failure can be checked using IsValid.
    //
    explicit SysIpL2Addr(const std::string& text);
@@ -74,7 +74,7 @@ public:
    //
    ipv4addr_t GetIpV4Addr() const { return v4Addr_; }
 
-   //  Returns the address as a string ("a.b.c.d").
+   //  Returns the address as a string ("n.n.n.n").
    //
    virtual std::string to_str() const;
 

@@ -99,7 +99,7 @@ public:
    //
    bool AddrToName(std::string& name, std::string& service) const;
 
-   //  Returns the address as a string ("a.b.c.d:port").
+   //  Returns the address as a string ("n.n.n.n:p").
    //
    std::string to_str() const override;
 

@@ -2065,7 +2065,7 @@ EventHandler::Rc PotsCwmAcAnalyzeUserMessage::ProcessEvent
 
    case PotsSignal::Alerting:
       //
-      //  This susbsequent alerting occurs after we apply ringing.  Don't
+      //  This subsequent alerting occurs after we apply ringing.  Don't
       //  relay it, because it will confuse whichever call is ringing us.
       //
       switch(cwts)

@@ -51,7 +51,7 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Returns the the parameter's next value.
+   //  Returns the parameter's next value.
    //
    bool GetNextValue() const { return next_; }
 

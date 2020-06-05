@@ -148,7 +148,7 @@ public:
    }
 
    //  The + operators perform straight concatenation (i.e. append).
-   //  THe & operators enclose THAT in parentheses before appending.
+   //  The & operators enclose THAT in parentheses before appending.
    //
    TokenMessage operator+(const Token& that) const;
    TokenMessage operator&(const Token& that) const;

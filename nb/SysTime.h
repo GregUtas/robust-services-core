@@ -169,7 +169,7 @@ private:
    //
    static const int64_t SecsInLeapYear;
 
-   //  The number of seconds in a non leap year.
+   //  The number of seconds in a non-leap year.
    //
    static const int64_t SecsInNonLeapYear;
 

@@ -125,7 +125,7 @@ private:
    virtual word ProcessCommand(CliThread& cli) const = 0;
 
    //  Overridden to stop looking for parameters if those below this
-   //  command have been exhasted.
+   //  command have been exhausted.
    //
    bool Ascend() const override { return false; }
 

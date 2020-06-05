@@ -64,7 +64,7 @@ public:
    //
    c_string Key() const;
 
-   //  Updates EXPL to explain the parmeter's purpose.
+   //  Updates EXPL to explain the parameter's purpose.
    //
    virtual void Explain(std::string& expl) const { expl = expl_; }
 

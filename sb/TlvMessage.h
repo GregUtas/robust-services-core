@@ -38,7 +38,7 @@
 
 namespace SessionBase
 {
-//  Supports messages whose parameters are encodeded in TLV format.  Although
+//  Supports messages whose parameters are encoded in TLV format.  Although
 //  this class can be used directly, any non-trivial protocol should usually
 //  define its own subclass or per-signal subclasses.
 //

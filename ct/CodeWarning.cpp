@@ -241,7 +241,7 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
    std::vector< CodeWarning > warnings;
 
    //  Count the total number of warnings of each type that appear in files
-   //  belonging to the original SET, extracing them into the local set of
+   //  belonging to the original SET, extracting them into the local set of
    //  warnings.  Exclude warnings that are to be hidden.
    //
    for(auto item = Warnings_.cbegin(); item != Warnings_.cend(); ++item)
@@ -1157,7 +1157,7 @@ bool CodeWarning::Suppress() const
    case ShouldNotBeNoexcept:
       if(fn == "Allocators.h") return true;
 
-      //  Placeement delete must be noexcept.
+      //  Placement delete must be noexcept.
       //
       if(item_->Name()->find("operator delete") == 0)
       {

@@ -104,7 +104,7 @@ public:
       return true;
    }
 
-   //  Returns the minmum level required to destroy memory of TYPE.
+   //  Returns the minimum level required to destroy memory of TYPE.
    //
    static RestartLevel LevelToClear(MemoryType type);
 

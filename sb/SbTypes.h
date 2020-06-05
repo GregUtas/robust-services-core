@@ -127,7 +127,7 @@ NodeBase::c_string strMsgPriority(MsgPriority prio);
 enum SbPoolUser
 {
    PayloadUser,  // payload applications
-   ToolUser      // trace tool appliations
+   ToolUser      // trace tool applications
 };
 
 //  Forward declarations.

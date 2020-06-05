@@ -66,7 +66,7 @@ const string BackChars = "$%@!>\"";
 
 //------------------------------------------------------------------------------
 //
-//  If CODE is an #include directive, unmanagles and returns it, else
+//  If CODE is an #include directive, unmangles and returns it, else
 //  simply returns it without any changes.
 //
 string DemangleInclude(string code)
@@ -559,7 +559,7 @@ Editor::Iter Editor::CodeBegin()
       {
       case OpenBrace:
          //
-         //  This should be the the brace for a namespace enclosure.
+         //  This should be the brace for a namespace enclosure.
          //
          ns = true;
          break;
@@ -1681,7 +1681,7 @@ Editor::Iter Editor::FindFuncDeclLoc
 {
    Debug::ft(Editor_FindFuncDeclLoc);
 
-   //  This currrently assumes that the function to be added is an override.
+   //  This currently assumes that the function to be added is an override.
    //  If there is no function with the same access control, add the access
    //  control and function in the usual order (public, protected, private).
    //  Otherwise, add the function after the first occurrence of its access
@@ -1798,7 +1798,7 @@ Editor::Iter Editor::FindFuncDefnLoc(const CodeFile* file,
    //  Look at all the functions that are defined in this file and that belong
    //  to CLS.  Add the new function after the constructor, destructor, and any
    //  function whose name precedes the new function alphabetically, and add the
-   //  new function befoe any function whose name follows the new function.
+   //  new function before any function whose name follows the new function.
    //
    auto funcs = file->Funcs();
    const Function* prev = nullptr;
@@ -3471,7 +3471,7 @@ Editor::Iter Editor::LineAfterFunc(const Function* func)
    if(open != string::npos)
    {
       //  This is a function definition, and CLOSE is the position
-      //   ofits final right brace.
+      //  of its final right brace.
       //
       end = FindPos(close);
    }

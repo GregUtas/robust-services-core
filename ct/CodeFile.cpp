@@ -1697,7 +1697,7 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
    //  Something that this file #includes (transitively) must make ITEM visible.
    //  Search the files that affect this one.  A file in the resulting set must
-   //  have a visible using statment for NAME, at least up to PREFIX.
+   //  have a visible using statement for NAME, at least up to PREFIX.
    //
    auto search = this->Affecters();
 
@@ -2243,7 +2243,7 @@ void CodeFile::LogAddUsings(ostream* stream) const
    Debug::ft(CodeFile_LogAddUsings);
 
    //  Remove any redundant using statements.  These arise if, for example,
-   //  a using statment to resolve A::B::C is added before one for A::B.
+   //  a using statement to resolve A::B::C is added before one for A::B.
    //
    for(auto u1 = usings_.cbegin(); u1 != usings_.cend(); ++u1)
    {

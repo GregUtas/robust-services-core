@@ -642,7 +642,7 @@ bool ClassData::EnterScope()
    Debug::ft(ClassData_EnterScope);
 
    //  When class data is declared, its type and field with are known.
-   //  A static const POD member (unless its a pointer) could also be
+   //  A static const POD member (unless it's a pointer) could also be
    //  initialized at this point.
    //
    Context::SetPos(GetLoc());
@@ -2360,7 +2360,7 @@ bool Function::CanBeNoexcept() const
    //  o The compiler may treat constructors, destructors, and operators as
    //    noexcept if they rely on nothing that is potentially throwing, so
    //    there is little advantage to marking them noexcept.  Even a simple
-   //    constructor or destructor shoudln't be noexcept if a constructor or
+   //    constructor or destructor shouldn't be noexcept if a constructor or
    //    destructor in a constructed base class is potentially throwing.
    //
    return false;
@@ -2412,7 +2412,7 @@ Function* Function::CanInvokeWith
    }
 
    //  Each argument in ARGS must match, or be transformable to, the type that
-   //  this function expects.  Assume compatability and downgrade from there.
+   //  this function expects.  Assume compatibility and downgrade from there.
    //  Note that a "this" argument is skipped if thisIncr is 1 instead of 0.
    //
    match = Compatible;

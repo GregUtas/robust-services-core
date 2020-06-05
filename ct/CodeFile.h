@@ -204,9 +204,9 @@ public:
    //  Returns the group to which the file specified by FILE, FN, or
    //  INCL belongs:
    //    group 1: an external file in declIds_
-   //    group 2: an interal file in declIds_
+   //    group 2: an internal file in declIds_
    //    group 3: an external file in baseIds_
-   //    group 4: an interal file in baseIds_
+   //    group 4: an internal file in baseIds_
    //    group 5: an external file (one in angle brackets)
    //    group 6: an internal file (one in quotes)
    //  Returns 0 if an error occurred.
@@ -377,7 +377,7 @@ private:
       bool hide = false) const;
 
    //  Logs WARNING, which occurred on LINE and POS within ITEM (which may be
-   //  nullptr).  OFFSET and INFO arespecific to WARNING.
+   //  nullptr).  OFFSET and INFO are specific to WARNING.
    //
    void LogCode(Warning warning, size_t line, size_t pos,
       const CxxNamed* item, NodeBase::word offset = 0,

@@ -638,7 +638,7 @@ bool Parser::GetBasic(TokenPtr& statement)
 
    //  If the next sequence is a name followed by a ':', this is a label.
    //  It's treated as a statement, like "default" in a switch statement.
-   //  But watch out for a scope resoution operator!
+   //  But watch out for a scope resolution operator!
    //
    string name;
    if(lexer_.GetName(name))
@@ -1141,7 +1141,7 @@ bool Parser::GetConditional(ExprPtr& expr)
 
    auto start = CurrPos();
 
-   //  The "?" has already been parsed and should have beeen preceded by
+   //  The "?" has already been parsed and should have been preceded by
    //  a valid expression.
    //
    ExprPtr exp1;

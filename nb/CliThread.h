@@ -48,8 +48,8 @@ namespace NodeBase
 //  increment.
 //
 //  NOTE: The CLI thread runs unpreemptably.  CLI applications must invoke
-//  ====  SetPreemptable before performing time-consuming operations and
-//        invoke SetUnpreemptable once finished.  All CLI output is first
+//  ====  MakePreemptable before performing time-consuming operations and
+//        invoke MakeUnpreemptable once finished.  All CLI output is first
 //        written to OBUF before being forwarded to the console.
 //
 class CliThread : public Thread
@@ -214,8 +214,8 @@ private:
    //
    ~CliThread();
 
-   //  Reads commands from the current input file (inFile_) or, if it is
-   //  empty, from the console via CinThread.
+   //  Reads commands from the current input file (if any) or from the
+   //  console via CinThread.
    //
    void ReadCommands();
 
@@ -293,7 +293,7 @@ private:
    ostringstreamPtr stream_;
 
    //  The file names to which output is being sent; output is currently
-   //  sent to outFile_.back().  If empty, output is sent to the console
+   //  sent to outFiles_.back().  If empty, output is sent to the console
    //  via CoutThread, which copies it to the console transcript file.
    //
    std::vector< std::string > outFiles_;

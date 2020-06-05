@@ -36,7 +36,7 @@
 
 namespace SessionBase
 {
-//  An InvokerThread calss InvokerPool::ProcessWork to dequeue and execute
+//  An InvokerThread calls InvokerPool::ProcessWork to dequeue and execute
 //  SessionBase application work.
 //
 class InvokerThread : public NodeBase::Thread

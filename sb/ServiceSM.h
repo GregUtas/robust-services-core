@@ -155,7 +155,7 @@ public:
    //
    static void* operator new(size_t size);
 protected:
-   //  Modifer SSMs are created by Service::AllocModifier.  Non-modifier SSMs
+   //  Modifier SSMs are created by Service::AllocModifier.  Non-modifier SSMs
    //  subclass from RootServiceSM.  Protected because this class is virtual.
    //
    explicit ServiceSM(ServiceId sid);

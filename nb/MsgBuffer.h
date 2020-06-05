@@ -57,7 +57,7 @@ public:
    void SetRxTime(const TimePoint& time) { rxTime_ = time; }
 
    //  Determines whether the buffer should be traced.  The default version
-   //  returns TraceDefault and may be overridden as requred.
+   //  returns TraceDefault and may be overridden as required.
    //
    virtual TraceStatus GetStatus() const;
 

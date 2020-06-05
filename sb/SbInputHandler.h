@@ -79,7 +79,7 @@ protected:
    //
    //    //  Invoke the base class to queue the message.  The base
    //    //  class assumes that the message has a valid MsgHeader.
-   //    //  The origina message didn't, but now it does.
+   //    //  The original message didn't, but now it does.
    //    //
    //    SbInputHandler::ReceiveBuff(buffer, size, faction);
    //

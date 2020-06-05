@@ -186,7 +186,7 @@ public:
       {
          curr = curr->next;                // the next element--but
          if(curr == tail_.next)            // stop after searching the
-            return false;                  // entire entire queue
+            return false;                  // entire queue
       }
       curr->next = item->next;             // curr's next becomes item's next
       if(tail_.next == item)               // if the item was the tail

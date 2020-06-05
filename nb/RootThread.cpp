@@ -189,7 +189,7 @@ void RootThread::Enter()
       case Running:
          //
          //  The following suspends RootThread during breakpoint debugging,
-         //  where it would otherwise apper with annoying regularity.
+         //  where it would otherwise appear with annoying regularity.
          //
          if(Debug::SwFlagOn(DisableRootThread))
          {

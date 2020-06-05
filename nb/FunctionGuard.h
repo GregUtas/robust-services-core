@@ -34,7 +34,7 @@ enum GuardedFunction
    Guard_MakeUnpreemptable,  // ...Thread::MakePreemptable
    Guard_MakePreemptable,    // ...Thread::MakeUnpreemptable
    Guard_MemUnprotect,       // ...Thread::MemProtect
-   Guard_ImmUnprotect        // ...Memory::Protect(MemImmutable)
+   Guard_ImmUnprotect        // ...Thread::ImmProtect
 };
 
 //------------------------------------------------------------------------------

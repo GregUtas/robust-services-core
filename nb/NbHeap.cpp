@@ -419,7 +419,7 @@ void* NbHeap::Alloc(size_t size)
 {
    Debug::ft(NbHeap_Alloc);
 
-   //  Allocate a block at the level that can accomodate SIZE.
+   //  Allocate a block at the level that can accommodate SIZE.
    //
    MutexGuard guard(heap_->lock.get());
 
@@ -438,7 +438,7 @@ HeapBlock* NbHeap::AllocBlock(level_t level, size_t size)
 {
    //  Allocate a block at LEVEL.  If no block is available, try the next
    //  level with larger blocks.  If a block is obtained that could be split
-   //  and still accomodate SIZE, split it and requeue its right child before
+   //  and still accommodate SIZE, split it and requeue its right child before
    //  before returning it.
    //
    if(level < heap_->minLevel) return nullptr;
@@ -759,7 +759,7 @@ void NbHeap::Patch(sel_t selector, void* arguments)
 
 void NbHeap::ReleaseBlock(HeapBlock* block, level_t level)
 {
-   //  When the heap is initalized, queueing a block means that it is split
+   //  When the heap is initialized, queueing a block means that it is split
    //  from its sibling, which also means their ancestors are split.  It is
    //  safe to stop if we reach an ancestor that is already split.
    //

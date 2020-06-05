@@ -30,7 +30,7 @@
 
 namespace NetworkBase
 {
-//  An IP port number.  Interally, an IP port should be stored in host order.
+//  An IP port number.  Internally, an IP port should be stored in host order.
 //
 typedef uint16_t ipport_t;
 
@@ -44,7 +44,7 @@ constexpr ipport_t PotsCallIpPort = 40002;
 constexpr ipport_t MaxIpPort = UINT16_MAX;
 constexpr ipport_t LastAppIpPort = MaxIpPort;
 
-//  An IPv4 address.  Interally, an IP address should be stored in host order.
+//  An IPv4 address.  Internally, an IP address should be stored in host order.
 //
 typedef uint32_t ipv4addr_t;
 

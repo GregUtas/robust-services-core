@@ -55,7 +55,7 @@ namespace NodeBase
 //    existing one fails send a heartbeat.  But given that a thread cannot exit
 //    without its daemon being notified, the primary risk is a thread that gets
 //    into an infinite loop.  However, threads usually run locked, and a locked
-//    thread is signalled if it runs too long, so agaain hearbeating has little
+//    thread is signalled if it runs too long, so again heartbeating has little
 //    additional value.
 //
 class Daemon : public Permanent
@@ -140,7 +140,7 @@ private:
    virtual void Recover() { }
 
    //  Returns the severity of alarm to raise when a thread exits and
-   //  CreateThead fails to create a replacement.  The default version
+   //  CreateThread fails to create a replacement.  The default version
    //  returns MajorAlarm if no threads remain and MinorAlarm otherwise.
    //
    virtual AlarmStatus GetAlarmLevel() const;

@@ -532,7 +532,7 @@ public:
    //
    void GetConvertibleTypes(StackArgVector& types) override;
 
-   //  Overriden to add the class to SYMBOLS.  The purpose of this function is
+   //  Overridden to add the class to SYMBOLS.  The purpose of this function is
    //  to find a class that was resolved by a forward or friend declaration but
    //  whose definition should be #included.  If the class is already #included,
    //  it must add itself as a direct usage to ensure that >trim won't suggest
@@ -557,7 +557,7 @@ public:
    //
    CxxScope* GetTemplate() const override;
 
-   //  Overriden to support class templates.
+   //  Overridden to support class templates.
    //
    const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
@@ -593,7 +593,7 @@ public:
    //
    void RecordUsage() const override { AddUsage(); }
 
-   //  Overriden to support class templates.
+   //  Overridden to support class templates.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
 
@@ -817,7 +817,7 @@ public:
    //
    Class* GetClassTemplate() const override { return tmplt_; }
 
-   //  Overriden to not add the class template instance to SYMBOLS, given
+   //  Overridden to not add the class template instance to SYMBOLS, given
    //  that each of its components (class template and template arguments)
    //  is added individually.
    //

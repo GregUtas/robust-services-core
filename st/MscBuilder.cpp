@@ -50,8 +50,8 @@ fixed_string MscTrailer = "END OF MSC";
 
 const MscColumn FirstCol = (ColWidth / 2);  // column for first vertical line
 const size_t MinMsgLine = 5;                // minimum length of horizontal line
-const size_t TimeGap = 3;                   // spacing between event times
-const size_t TimeLen = 9;                   // length of an event time (m:s.ms)
+const size_t TimeGap = 3;               // spacing between event times
+const size_t TimeLen = 9;               // length of an event time (mm:ss.msecs)
 
 const char IdleCtx   = ':';
 const char ActiveCtx = '|';

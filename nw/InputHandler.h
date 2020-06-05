@@ -129,7 +129,7 @@ public:
    //  (InputHandler has also become an output handler.)  The message begins
    //  at SRC, is SIZE bytes long, and is located in the BUFF being sent.
    //  Returns the location of the converted message, which could be SRC if
-   //  no conversion occurred.  The default verison simply returns SRC.
+   //  no conversion occurred.  The default version simply returns SRC.
    //
    virtual NodeBase::byte_t* HostToNetwork
       (IpBuffer& buff, NodeBase::byte_t* src, size_t size) const;

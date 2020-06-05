@@ -205,7 +205,7 @@ private:
    State state_;
 
    //  The number of milliseconds to wait before looking for dial tone
-   //  and retransmiting an offhook if dial tone is not yet connected.
+   //  and retransmitting an offhook if dial tone is not yet connected.
    //
    static const msecs_t DelayMsecs_[DelaySize];
 

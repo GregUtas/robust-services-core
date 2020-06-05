@@ -86,7 +86,7 @@ void MapAndUnits::adjudicate_builds()
          if(orders.adjustments.size() +
             orders.number_of_waives < orders.number_of_orders_required)
          {
-            //  Too few builds ordered.  Waive the reminaing builds.
+            //  Too few builds ordered.  Waive the remaining builds.
             //
             orders.number_of_waives =
                orders.number_of_orders_required - orders.adjustments.size();
@@ -667,7 +667,7 @@ void MapAndUnits::build_convoy_subversion_list()
 
    //  We're now finished with the convoyed_units set.  All further work on
    //  convoyed units is done through the subversion map.  There is no need
-   //  to udpate convoyed_units for the rest of the adjudicator.
+   //  to update convoyed_units for the rest of the adjudicator.
 }
 
 //------------------------------------------------------------------------------
@@ -1887,7 +1887,7 @@ bool MapAndUnits::resolve_attacks_on_occupied_province(ProvinceId province)
 {
    Debug::ft(MapAndUnits_resolve_attacks_on_occupied_province);
 
-   //  If no unit can dislodge the occupant, bounce all attemps to enter
+   //  If no unit can dislodge the occupant, bounce all attempts to enter
    //  the province and report that its occupant was not dislodged.
    //
    auto dislodger = find_dislodger(province);

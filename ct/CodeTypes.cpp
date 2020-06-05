@@ -226,7 +226,7 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
    LineTypeAttr(T, T, F, F),  // IncludeDirective
    LineTypeAttr(T, T, F, F),  // HashDirective
    LineTypeAttr(T, T, F, F),  // UsingStatement
-   LineTypeAttr(F, F, F, F),  // AnyLne
+   LineTypeAttr(F, F, F, F),  // AnyLine
    LineTypeAttr(F, F, F, F)   // LineType_N
 };
 

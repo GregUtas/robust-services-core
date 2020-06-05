@@ -148,7 +148,7 @@ void UdpIoThread::Enter()
    ClearAlarm();
 
    //  Enter a loop that keeps waiting forever to receive the next message.
-   //  Pause after receiving a threshhold number of messages in a row.
+   //  Pause after receiving a threshold number of messages in a row.
    //
    while(true)
    {

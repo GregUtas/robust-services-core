@@ -56,11 +56,11 @@ public:
 
    //  Returns the distance to the superscope SCOPE.  Returns 0 if SCOPE is
    //  the same as this scope.  Returns NOT_A_SUBSCOPE if this scope is not
-   //  a subcope of SCOPE.
+   //  a subscope of SCOPE.
    //
    Distance ScopeDistance(const CxxScope* scope) const;
 
-   //  Returns the template paraemter that corresponds to NAME.  For example,
+   //  Returns the template parameter that corresponds to NAME.  For example,
    //  returns the template parameter for "T" when "T" appears somewhere in
    //    template< typename T > class <name> { ... };
    //
@@ -634,7 +634,7 @@ public:
    //
    QualName* GetQualName() const override { return name_.get(); }
 
-   //  Overriden to support static member data in a template.
+   //  Overridden to support static member data in a template.
    //
    const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
@@ -652,7 +652,7 @@ public:
    //
    void RecordUsage() const override { AddUsage(); }
 
-   //  Overriden to support static member data in a template.
+   //  Overridden to support static member data in a template.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
 
@@ -935,7 +935,7 @@ public:
    //
    void AddArg(ArgumentPtr& arg);
 
-   //  Specifies whether the function is tagged as exter.
+   //  Specifies whether the function is tagged as extern.
    //
    void SetExtern(bool extn) { extern_ = extn; }
 
@@ -1171,8 +1171,8 @@ public:
       (StackArgVector& args, stringVector& argTypes, TypeMatch& match) const;
 
    //  THAT is an argument whose type is thatType.  If this is a constructor
-   //  that can be invoked implicitly with THAT, deterimes how compatible THAT
-   //  is with the constructor's argument.
+   //  that can be invoked implicitly with THAT, determines how compatible
+   //  THAT is with the constructor's argument.
    //
    TypeMatch CalcConstructibilty
       (const StackArg& that, const std::string& thatType) const;
@@ -1324,7 +1324,7 @@ public:
    //
    CxxScope* GetTemplateInstance() const override;
 
-   //  Overriden to support function templates.
+   //  Overridden to support function templates.
    //
    const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
@@ -1358,7 +1358,7 @@ public:
    //
    bool LocateItem(const CxxNamed* item, size_t& n) const override;
 
-   //  Overriden to include VIA as a "this" argument.
+   //  Overridden to include VIA as a "this" argument.
    //
    StackArg MemberToArg
       (StackArg& via, TypeName* name, Cxx::Operator op) override;
@@ -1381,7 +1381,7 @@ public:
    //
    void RecordUsage() const override;
 
-   //  Overriden to support function templates.
+   //  Overridden to support function templates.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
 
@@ -1500,11 +1500,11 @@ private:
    //
    void AdjustRecvConstness(const Function* invoker, StackArg& recvArg) const;
 
-   //  Invoked when the function accesed a non-public member in its class.
+   //  Invoked when the function accessed a non-public member in its class.
    //
    void SetNonPublic();
 
-   //  Invoked when the function accesed a non-static member in its class.
+   //  Invoked when the function accessed a non-static member in its class.
    //
    void SetNonStatic();
 

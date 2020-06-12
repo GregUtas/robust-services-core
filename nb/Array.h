@@ -59,8 +59,7 @@ public:
    Array(const Array& that) = delete;
    Array& operator=(const Array& that) = delete;
 
-   //  Specifies that the array uses memory of type MEM and that it
-   //  is limited to MAX elements.
+   //  Specifies that the array is limited to MAX elements.
    //
    void Init(size_t max)
    {
@@ -94,9 +93,9 @@ public:
    void Erase(size_t index)
    {
       auto size = vector_.size();
-      if(index >= size) return;
+      Debug::Assert(index < size);
 
-      if((size > 1) && (index < (size - 1)))
+      if(index < (size - 1))
       {
          std::swap(vector_[index], vector_.back());
       }
@@ -127,7 +126,7 @@ public:
    //
    const T& Front() const
    {
-      Debug::Assert(vector_.size() > 0);
+      Debug::Assert(!vector_.empty());
       return vector_.front();
    }
 
@@ -135,7 +134,7 @@ public:
    //
    T& Front()
    {
-      Debug::Assert(vector_.size() > 0);
+      Debug::Assert(!vector_.empty());
       return vector_.front();
    }
 
@@ -143,7 +142,7 @@ public:
    //
    const T& Back() const
    {
-      Debug::Assert(vector_.size() > 0);
+      Debug::Assert(!vector_.empty());
       return vector_.back();
    }
 
@@ -151,7 +150,7 @@ public:
    //
    T& Back()
    {
-      Debug::Assert(vector_.size() > 0);
+      Debug::Assert(!vector_.empty());
       return vector_.back();
    }
 
@@ -160,7 +159,7 @@ public:
    const T& At(size_t index) const
    {
       Debug::Assert(index < vector_.size());
-      return vector_[index];
+      return vector_.at(index);
    }
 
    //  Returns the item at [index].
@@ -168,7 +167,7 @@ public:
    T& At(size_t index)
    {
       Debug::Assert(index < vector_.size());
-      return vector_[index];
+      return vector_.at(index);
    }
 
    //  Returns the item at [index].

@@ -109,9 +109,7 @@ public:
       Debug::Assert(&item != nullptr);
       auto size = vector_.size();
       Debug::Assert(index < size);
-      vector_.push_back(item);
-      std::swap(vector_[index], vector_.back());
-      vector_.pop_back();
+      vector_[index] = item;
    }
 
    //  Returns the number of items in the array.

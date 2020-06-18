@@ -100,9 +100,9 @@ public:
          Debug::SwLog(Registry_Init(), "already initialized", max_);
          return false;
       }
-      if(diff == NilDiff)
+      if(diff < 0)
       {
-         Debug::SwLog(Registry_Init(), "no cell offset", 0);
+         Debug::SwLog(Registry_Init(), "no cell offset", diff);
          return false;
       }
       max_ = (max == 0 ? 0 : max + 1);
@@ -499,7 +499,7 @@ public:
          auto& item = registry_[i];
          if(item != nullptr)
          {
-            if(diff_ != NilDiff)
+            if(diff_ > 0)
             {
                auto cell = (RegCell*) getptr2(item, diff_);
                cell->bound = false;
@@ -547,7 +547,7 @@ private:
    {
       //  Ensure that the registry has been initialized with a RegCell offset.
       //
-      if(diff_ == NilDiff)
+      if(diff_ <= 0)
       {
          Debug::SwLog(Registry_Cell(), "no cell offset", 0);
          return nullptr;
@@ -658,7 +658,7 @@ private:
    //
    ptrdiff_t diff_;
 
-   //  Set if items in the registry should be deleted during an overwrite or
+   //  Set if items in the registry should be deleted when overwritten or
    //  when the registry itself is deleted.
    //
    bool delete_;

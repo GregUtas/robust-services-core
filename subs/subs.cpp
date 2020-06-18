@@ -50,5 +50,3 @@
 #include "winerror.h"
 #include "winsock2.h"
 #include "ws2tcpip.h"
-
-const std::nothrow_t std::nothrow;

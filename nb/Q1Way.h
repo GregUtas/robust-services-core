@@ -98,7 +98,10 @@ public:
          item->next = tail_.next->next;        // item points to first element
          tail_.next->next = item;              // last element points to item
       }
-      else item->next = item;                  // else item points to itself
+      else                                     // else
+      {
+         item->next = item;                    // item points to itself
+      }
       tail_.next = item;                       // tail points to item
       return true;
    }

@@ -16,6 +16,9 @@ Document | Description
 [Robust C++ : Initialization and Restarts](https://www.codeproject.com/Articles/5254138/Robust-Cplusplus-Initialization-and-Restarts) | article on structuring `main` and recovering from memory corruption
 [Debugging Live Systems](https://www.codeproject.com/Articles/5255828/Debugging-Live-Systems) | article on debugging capabilities
 [A Command Line Interface (CLI) Framework](https://www.codeproject.com/Articles/5269493/A-Command-Line-Interface-CLI-Framework) | article on the command line interface
+[Robust C++: Queue Templates](https://www.codeproject.com/Articles/5271081/Robust-Cplusplus-Queue-Templates) | article on the `Q1Way` and `Q2Way` templates
+[A Template for Polymorphs](https://www.codeproject.com/Articles/5271143/A-Template-for-Polymorphs) | article on the `Registry` template
+[A Wrapper for `std::vector`](https://www.codeproject.com/Tips/5271013/A-Wrapper-for-std-vector) | article on the `Array` template
 [RSC Software Design](/docs/RSC-Software-Design.pdf) | high-level design notes for various enhancements
 [_output_](/output) directory | mostly output from tests, but also a summary of all [CLI commands](/output/help.cli.txt)
 [RSC Windows Build Options](/docs/RSC-Windows-Build-Options.md) | build options used in VS2017

@@ -2,7 +2,7 @@
 
 ## RSC Foundation
 
-These documents describe RSC's primary capabilities:
+These documents describe RSC's primary capabilities.
 
 Document | Description
 -------- | -----------
@@ -26,7 +26,7 @@ Document | Description
 
 ## C++ Static Analysis
 
-These documents describe the C++ static analysis tools found in the _ct_ directory:
+These documents describe the C++ static analysis tools found in the _ct_ directory.
 
 Document | Description
 -------- | -----------
@@ -37,7 +37,7 @@ Document | Description
 ## RSC Session Processing and Applications
 
 These documents describe the session processing framework provided with RSC and the POTS and
-Diplomacy bot applications that use it:
+Diplomacy bot applications that use it.
 
 Document | Description
 -------- | -----------

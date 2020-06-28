@@ -21,14 +21,22 @@
 //
 #include "ThreadRegistry.h"
 #include "StatisticsGroup.h"
+#include <algorithm>
+#include <bitset>
+#include <iterator>
 #include <ostream>
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "MutexGuard.h"
 #include "NbCliParms.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "SysMutex.h"
+#include "SysThread.h"
+#include "ThisThread.h"
 #include "Thread.h"
+#include "ThreadAdmin.h"
 
 using std::ostream;
 using std::string;
@@ -37,6 +45,22 @@ using std::string;
 
 namespace NodeBase
 {
+bool IsSortedByThreadId(const Thread* thr1, const Thread* thr2)
+{
+   return (thr1->Tid() < thr2->Tid());
+}
+
+//==============================================================================
+
+ThreadInfo::ThreadInfo(ThreadState state, SysThread* systhrd, Thread* thread) :
+   state_(state),
+   systhrd_(systhrd),
+   thread_(thread)
+{
+}
+
+//==============================================================================
+
 class ThreadStatsGroup : public StatisticsGroup
 {
 public:
@@ -79,11 +103,11 @@ void ThreadStatsGroup::DisplayStats
 
    if(id == 0)
    {
-      auto& threads = reg->Threads();
+      auto threads = reg->GetThreads();
 
-      for(auto t = threads.First(); t != nullptr; threads.Next(t))
+      for(auto t = threads.cbegin(); t != threads.cend(); ++t)
       {
-         t->DisplayStats(stream, options);
+         (*t)->DisplayStats(stream, options);
       }
    }
    else
@@ -101,6 +125,18 @@ void ThreadStatsGroup::DisplayStats
 }
 
 //==============================================================================
+//
+//  Critical section lock for the thread registry.
+//
+SysMutex ThreadsLock_("ThreadsLock");
+
+//  The thread at which to start searching for the thread to be
+//  scheduled in.  Scheduling is currently round-robin but will
+//  eventually be changed to support proportional scheduling.
+//
+SysThreadId NextSysThreadId_ = 0;
+
+//------------------------------------------------------------------------------
 
 fn_name ThreadRegistry_ctor = "ThreadRegistry.ctor";
 
@@ -108,9 +144,7 @@ ThreadRegistry::ThreadRegistry()
 {
    Debug::ft(ThreadRegistry_ctor);
 
-   threads_.Init(Thread::MaxId, Thread::CellDiff(), MemPermanent);
    statsGroup_.reset(new ThreadStatsGroup);
-   ids_.reset(new IdMap);
 }
 
 //------------------------------------------------------------------------------
@@ -126,53 +160,67 @@ ThreadRegistry::~ThreadRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_AssociateIds = "ThreadRegistry.AssociateIds";
-
-void ThreadRegistry::AssociateIds(const Thread& thread)
-{
-   Debug::ft(ThreadRegistry_AssociateIds);
-
-   //  Add an entry that maps the thread's SysThreadId to its ThreadId.
-   //
-   auto tid = thread.Tid();
-   auto nid = thread.NativeThreadId();
-   auto result = ids_->insert(IdPair(nid, tid));
-
-   //  If the entry couldn't be added, NID was already in the table.
-   //  It has been recycled, so update it with its new ThreadId.
-   //
-   if(!result.second)
-   {
-      auto& entry = *result.first;
-      entry.second = tid;
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name ThreadRegistry_BindThread = "ThreadRegistry.BindThread";
-
-bool ThreadRegistry::BindThread(Thread& thread)
-{
-   Debug::ft(ThreadRegistry_BindThread);
-
-   if(!threads_.Insert(thread)) return false;
-   AssociateIds(thread);
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name ThreadRegistry_ClaimBlocks = "ThreadRegistry.ClaimBlocks";
 
 void ThreadRegistry::ClaimBlocks()
 {
    Debug::ft(ThreadRegistry_ClaimBlocks);
 
-   for(auto t = threads_.First(); t != nullptr; threads_.Next(t))
+   for(auto t = threads_.cbegin(); t != threads_.cend(); ++t)
    {
-      t->ClaimBlocks();
+      auto thr = t->second.thread_;
+      if(thr != nullptr) thr->ClaimBlocks();
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ThreadRegistry_Created = "ThreadRegistry.Created";
+
+void ThreadRegistry::Created(SysThread* systhrd, Thread* thread)
+{
+   Debug::ft(ThreadRegistry_Created);
+
+   MutexGuard guard(&ThreadsLock_);
+
+   auto nid = systhrd->Nid();
+   auto entry = threads_.find(nid);
+
+   if(entry == threads_.cend())
+   {
+      SetThreadId(thread);
+      threads_.insert(Entry(nid, ThreadInfo(Constructing, systhrd, thread)));
+      return;
+   }
+
+   Debug::SwLog(ThreadRegistry_Created, "thread already exists", nid);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ThreadRegistry_Destroying = "ThreadRegistry.Destroying";
+
+void ThreadRegistry::Destroying(ThreadState state, const SysThread* systhrd)
+{
+   Debug::ft(ThreadRegistry_Destroying);
+
+   MutexGuard guard(&ThreadsLock_);
+
+   //  If a thread is deleted by code running on another thread, its
+   //  own native thread identifier must be used to find it.
+   //
+   auto nid = (systhrd != nullptr ?
+      systhrd->Nid() : SysThread::RunningThreadId());
+   auto entry = threads_.find(nid);
+
+   if(entry != threads_.cend())
+   {
+      entry->second.state_ = state;
+      if(state == Deleted) entry->second.thread_ = nullptr;
+      return;
+   }
+
+   Debug::SwLog(ThreadRegistry_Destroying, "thread not found", nid);
 }
 
 //------------------------------------------------------------------------------
@@ -182,11 +230,48 @@ void ThreadRegistry::Display(ostream& stream,
 {
    Permanent::Display(stream, prefix, options);
 
-   stream << prefix << "statsGroup        : ";
+   stream << prefix << "statsGroup : ";
    stream << strObj(statsGroup_.get()) << CRLF;
 
    stream << prefix << "threads [ThreadId]" << CRLF;
-   threads_.Display(stream, prefix + spaces(2), options);
+   auto threads = GetThreads();
+
+   auto lead1 = prefix + spaces(2);
+   auto lead2 = prefix + spaces(4);
+
+   for(auto t = threads.cbegin(); t != threads.cend(); ++t)
+   {
+      stream << lead1 << strIndex((*t)->Tid());
+
+      if(options.test(DispVerbose))
+      {
+         stream << CRLF;
+         (*t)->Display(stream, lead2, NoFlags);
+         ThisThread::PauseOver(90);
+      }
+      else
+      {
+         stream << strObj(*t) << CRLF;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ThreadRegistry_Erase = "ThreadRegistry.Erase";
+
+void ThreadRegistry::Erase(SysThreadId nid)
+{
+   Debug::ft(ThreadRegistry_Erase);
+
+   MutexGuard guard(&ThreadsLock_);
+
+   auto entry = threads_.find(nid);
+
+   if(entry != threads_.cend())
+   {
+      threads_.erase(entry);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -195,31 +280,109 @@ Thread* ThreadRegistry::FindThread(SysThreadId nid) const
 {
    Debug::noft();
 
-   auto tid = FindThreadId(nid);
-   if(tid == NIL_ID) return nullptr;
-
-   auto thr = threads_.At(tid);
-   if(thr == nullptr) return nullptr;
-   if(thr->NativeThreadId() != nid) return nullptr;
-   return thr;
+   auto entry = threads_.find(nid);
+   if(entry == threads_.end()) return nullptr;
+   return entry->second.thread_;
 }
 
 //------------------------------------------------------------------------------
 
-ThreadId ThreadRegistry::FindThreadId(SysThreadId nid) const
-{
-   Debug::noft();
+fn_name ThreadRegistry_GetState = "ThreadRegistry.GetState";
 
-   auto entry = ids_->find(nid);
-   if(entry == ids_->cend()) return NIL_ID;
-   return entry->second;
+ThreadState ThreadRegistry::GetState()
+{
+   Debug::ft(ThreadRegistry_GetState);
+
+   MutexGuard guard(&ThreadsLock_);
+
+   auto nid = SysThread::RunningThreadId();
+   auto entry = threads_.find(nid);
+
+   if(entry != threads_.cend())
+   {
+      auto state = entry->second.state_;
+      auto systhrd = entry->second.systhrd_;
+
+      if(state == Deleted)
+      {
+         threads_.erase(entry);
+         ThreadAdmin::Incr(ThreadAdmin::Orphans);
+         delete systhrd;
+         Debug::SwLog(ThreadRegistry_GetState, "orphan exited", nid);
+      }
+
+      return state;
+   }
+
+   return NotRegistered;
 }
 
 //------------------------------------------------------------------------------
 
 Thread* ThreadRegistry::GetThread(ThreadId tid) const
 {
-   return threads_.At(tid);
+   for(auto t = threads_.cbegin(); t != threads_.cend(); ++t)
+   {
+      auto thread = t->second.thread_;
+      if((thread != nullptr) && (thread->Tid() == tid)) return thread;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+std::vector< Thread* > ThreadRegistry::GetThreads() const
+{
+   std::vector< Thread* > threads;
+
+   MutexGuard guard(&ThreadsLock_);
+
+   for(auto t = threads_.cbegin(); t != threads_.cend(); ++t)
+   {
+      auto thread = t->second.thread_;
+      if(thread != nullptr) threads.push_back(thread);
+   }
+
+   guard.Release();
+
+   std::sort(threads.begin(), threads.end(), IsSortedByThreadId);
+   return threads;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ThreadRegistry_Initialized = "ThreadRegistry.Initialized";
+
+void ThreadRegistry::Initialized(SysThreadId nid)
+{
+   Debug::ft(ThreadRegistry_Initialized);
+
+   MutexGuard guard(&ThreadsLock_);
+
+   auto entry = threads_.find(nid);
+
+   if(entry != threads_.cend())
+      entry->second.state_ = Constructed;
+   else
+      Debug::SwLog(ThreadRegistry_Initialized, "thread not found", nid);
+}
+
+//------------------------------------------------------------------------------
+
+bool ThreadRegistry::IsDeleted() const
+{
+   MutexGuard guard(&ThreadsLock_);
+
+   auto nid = SysThread::RunningThreadId();
+   auto entry = threads_.find(nid);
+
+   if(entry != threads_.cend())
+   {
+      return (entry->second.state_ == Deleted);
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -239,12 +402,107 @@ size_t ThreadRegistry::Restarting(RestartLevel level) const
 
    size_t count = 0;
 
-   for(auto t = threads_.Last(); t != nullptr; threads_.Prev(t))
+   auto threads = GetThreads();
+
+   for(auto t = threads.rbegin(); t != threads.rend(); ++t)
    {
-      if(t->Restarting(level)) ++count;
+      if((*t)->Restarting(level)) ++count;
    }
 
    return count;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ThreadRegistry_Select = "ThreadRegistry.Select";
+
+Thread* ThreadRegistry::Select() const
+{
+   Debug::ft(ThreadRegistry_Select);
+
+   //  Cycle through all threads, beginning with the one identified by
+   //  NextSysThreadId_, to find the next one that can be scheduled.
+   //
+   auto t = threads_.find(NextSysThreadId_);
+   if(t == threads_.end()) t = threads_.begin();
+   Thread* next = nullptr;
+
+   for(NO_OP; t != threads_.end(); ++t)
+   {
+      auto thread = t->second.thread_;
+      if(thread == nullptr) continue;
+
+      if(thread->CanBeScheduled())
+      {
+         next = thread;
+         break;
+      }
+   }
+
+   if(next == nullptr)
+   {
+      for(t = threads_.begin(); t != threads_.end(); ++t)
+      {
+         auto thread = t->second.thread_;
+         if(thread == nullptr) continue;
+
+         if(thread->CanBeScheduled())
+         {
+            next = thread;
+            break;
+         }
+      }
+   }
+
+   //  If a thread was found, start the next search with the thread
+   //  that follows it.
+   //
+   if(next != nullptr)
+   {
+      auto entry = threads_.find(next->NativeThreadId());
+
+      while(true)
+      {
+         ++entry;
+
+         if(entry == threads_.end())
+         {
+            NextSysThreadId_ = 0;
+            break;
+         }
+
+         auto thread = entry->second.thread_;
+         if(thread == nullptr) continue;
+
+         NextSysThreadId_ = thread->NativeThreadId();
+         break;
+      }
+   }
+
+   return next;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ThreadRegistry_SetThreadId = "ThreadRegistry.SetThreadId";
+
+void ThreadRegistry::SetThreadId(Thread* thread) const
+{
+   Debug::ft(ThreadRegistry_SetThreadId);
+
+   //  Get a list of all threads, sorted by ThreadId, and assign the
+   //  first available identifier to THREAD.
+   //
+   ThreadId tid = 1;
+   auto threads = GetThreads();
+
+   for(auto t = threads.cbegin(); t != threads.cend(); ++t)
+   {
+      if((*t)->Tid() != tid) break;
+      ++tid;
+   }
+
+   thread->SetTid(tid);
 }
 
 //------------------------------------------------------------------------------
@@ -255,12 +513,23 @@ void ThreadRegistry::Shutdown(RestartLevel level)
 {
    Debug::ft(ThreadRegistry_Shutdown);
 
-   for(auto t = threads_.Last(); t != nullptr; threads_.Prev(t))
+   auto threads = GetThreads();
+
+   for(auto t = threads.rbegin(); t != threads.rend(); ++t)
    {
-      t->Shutdown(level);
+      (*t)->Shutdown(level);
    }
 
    Restart::Release(statsGroup_);
+}
+
+//------------------------------------------------------------------------------
+
+size_t ThreadRegistry::Size()
+{
+   auto reg = Singleton< ThreadRegistry >::Extant();
+   if(reg == nullptr) return 0;
+   return reg->Threads().size();
 }
 
 //------------------------------------------------------------------------------
@@ -275,20 +544,11 @@ void ThreadRegistry::Startup(RestartLevel level)
    //
    if(statsGroup_ == nullptr) statsGroup_.reset(new ThreadStatsGroup);
 
-   for(auto t = threads_.First(); t != nullptr; threads_.Next(t))
+   auto threads = GetThreads();
+
+   for(auto t = threads.begin(); t != threads.end(); ++t)
    {
-      t->Startup(level);
+      (*t)->Startup(level);
    }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name ThreadRegistry_UnbindThread = "ThreadRegistry.UnbindThread";
-
-void ThreadRegistry::UnbindThread(Thread& thread)
-{
-   Debug::ftnt(ThreadRegistry_UnbindThread);
-
-   threads_.Erase(thread);
 }
 }

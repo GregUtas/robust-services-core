@@ -26,13 +26,14 @@
 #include <cstddef>
 #include <map>
 #include <utility>
+#include <vector>
 #include "NbTypes.h"
-#include "Registry.h"
 #include "SysDecls.h"
 #include "SysTypes.h"
 
 namespace NodeBase
 {
+   class SysThread;
    class Thread;
 }
 
@@ -40,34 +41,75 @@ namespace NodeBase
 
 namespace NodeBase
 {
+//  The state of a thread.  This handles the following scenarios:
+//  1. A thread runs before its Thread object is fully constructed.
+//  2. A thread runs without a Thread object because
+//     a) its constructor trapped after its native thread was created
+//     b) its destructor trapped
+//     c) it was deleted by another thread
+//     d) it deleted itself
+//  In case #1, the thread must wait to run.  In the other cases, it
+//  must exit as soon as possible.
+//
+enum ThreadState
+{
+   NotRegistered,  // no entry for SysThreadId in ThreadRegistry
+   Constructing,   // Thread under construction
+   Constructed,    // waiting to enter Thread.Start or running
+   Deleting,       // Thread destructor entered
+   Deleted         // Thread unexpectedly deleted but still running
+};
+
+//------------------------------------------------------------------------------
+//
+//  Information about a thread.
+//
+struct ThreadInfo
+{
+   ThreadInfo(ThreadState state, SysThread* systhrd, Thread* thread);
+   ThreadInfo(const ThreadInfo& info) = default;
+   ThreadInfo(ThreadInfo&& info) = default;
+   ThreadInfo& operator=(const ThreadInfo& info) = default;
+   ThreadInfo& operator=(ThreadInfo&& info) = default;
+
+   //  The thread's state;
+   //
+   ThreadState state_;
+
+   //  The wrapper for the native thread.
+   //
+   SysThread* systhrd_;
+
+   //  The full RSC thread object.
+   //
+   Thread* thread_;
+};
+
+//------------------------------------------------------------------------------
+//
 //  Global registry for threads.
 //
 class ThreadRegistry : public Permanent
 {
    friend class Singleton< ThreadRegistry >;
    friend class Thread;
+   friend class ModuleRegistry;
 public:
-   //  Returns the thread registered against TID.
-   //
-   Thread* GetThread(ThreadId tid) const;
-
    //  Returns the thread whose native identifier is NID.
    //
    Thread* FindThread(SysThreadId nid) const;
 
-   //  Returns the registry of threads.  Used for iteration.
+   //  Returns the number of threads in the registry.
    //
-   const Registry< Thread >& Threads() const { return threads_; }
+   static size_t Size();
 
-   //  Returns the ThreadId associated with a native thread identifier.
-   //  Returns NIL_ID if the native thread is unknown.
+   //  Returns all Threads sorted by ThreadId.
    //
-   ThreadId FindThreadId(SysThreadId nid) const;
+   std::vector< Thread* > GetThreads() const;
 
-   //  Informs all threads that a restart is occurring.  Returns the
-   //  number of threads that will exit instead of sleeping.
+   //  Returns the thread registered against TID.
    //
-   size_t Restarting(RestartLevel level) const;
+   Thread* GetThread(ThreadId tid) const;
 
    //  Overridden to be forwarded to all threads in the registry.
    //
@@ -98,38 +140,64 @@ private:
    //
    ~ThreadRegistry();
 
-   //  Adds THREAD to the registry and returns the identifier assigned to
-   //  it.  Returns NIL_ID if the registry is full.
+   //  The type for the thread registry.
    //
-   bool BindThread(Thread& thread);
+   typedef std::map< SysThreadId, ThreadInfo > ThreadMap;
 
-   //  Removes THREAD from the registry.
+   //  Returns the registry of threads.  Used for iteration.
    //
-   void UnbindThread(Thread& thread);
+   const ThreadMap& Threads() const { return threads_; }
 
-   //  Associates THREAD's identifier with its native thread identifier.
+   //  Puts SYSTHRD and THREAD in the Constructing state.
    //
-   void AssociateIds(const Thread& thread);
+   void Created(SysThread* systhrd, Thread* thread);
 
-   //  A table for mapping SysThreadIds to ThreadIds.
+   //  Puts NID the Constructed state.
    //
-   typedef std::map< SysThreadId, ThreadId > IdMap;
+   void Initialized(SysThreadId nid);
 
-   //  A tuple that maps a SysThreadId to a ThreadId.
+   //  Puts the running thread in STATE, with its wrapper being SYSTHRD.
    //
-   typedef std::pair< SysThreadId, ThreadId > IdPair;
+   void Destroying(ThreadState state, const SysThread* systhrd);
 
-   //  The global registry of threads.
+   //  Returns the running thread's state.  If it is Deleted, the thread
+   //  is removed from the registry and must exit.  Returns Constructing
+   //  if the thread is not found.
    //
-   Registry< Thread > threads_;
+   ThreadState GetState();
+
+   //  Returns true if the running thread has been deleted.
+   //
+   bool IsDeleted() const;
+
+   //  Removes NID from the registry.
+   //
+   void Erase(SysThreadId nid);
+
+   //  Selects the next thread to run.
+   //
+   Thread* Select() const;
+
+   //  Informs all threads that a restart is occurring.  Returns the
+   //  number of threads that will exit instead of sleeping.
+   //
+   size_t Restarting(RestartLevel level) const;
+
+   //  Sets THREAD's ThreadId when adding it to the registry.
+   //
+   void SetThreadId(Thread* thread) const;
+
+   //  An entry for a thread.
+   //
+   typedef std::pair< SysThreadId, ThreadInfo > Entry;
+
+   //  The threads.
+   //
+   ThreadMap threads_;
 
    //  The statistics group for per-thread statistics.
    //
    StatisticsGroupPtr statsGroup_;
-
-   //  The table that maps a SysThreadId to a ThreadId.
-   //
-   std::unique_ptr< IdMap > ids_;
 };
 }
 #endif

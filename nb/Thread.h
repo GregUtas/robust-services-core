@@ -24,7 +24,6 @@
 
 #include "Permanent.h"
 #include <atomic>
-#include <cstddef>
 #include <cstdint>
 #include <exception>
 #include <iosfwd>
@@ -34,7 +33,6 @@
 #include "Duration.h"
 #include "NbTypes.h"
 #include "Q1Way.h"
-#include "RegCell.h"
 #include "SysDecls.h"
 #include "SysThread.h"
 #include "SysTypes.h"
@@ -63,7 +61,6 @@ class Thread : public Permanent
    friend class FunctionGuard;
    friend class InitThread;
    friend class ModuleRegistry;
-   friend class Registry< Thread >;
    friend class RootThread;
    friend class SchedCommand;
    friend class SysMutex;
@@ -139,7 +136,7 @@ public:
 
    //  Returns the thread's identifier within ThreadRegistry.
    //
-   ThreadId Tid() const { return ThreadId(tid_.GetId()); }
+   ThreadId Tid() const { return tid_; }
 
    //  Returns the native thread's identifier.
    //
@@ -359,6 +356,10 @@ private:
    //
    virtual void Destroy();
 
+   //  Sets the thread's internal identifier when it is added to ThreadRegistry.
+   //
+   void SetTid(ThreadId tid) { tid_ = tid; }
+
    //  Used by both versions of RunningThread.
    //
    static Thread* FindRunningThread();
@@ -430,10 +431,6 @@ private:
    //  is running or ready.
    //
    static Thread* SwitchContext();
-
-   //  Selects the next thread to run.
-   //
-   static Thread* Select();
 
    //  Invoked to signal the thread to run.
    //
@@ -652,10 +649,6 @@ private:
    //
    static void DisplayContextSwitches(std::ostream& stream);
 
-   //  Returns the offset to tid_.
-   //
-   static ptrdiff_t CellDiff();
-
    //  The wrapper for the native thread.
    //
    std::unique_ptr< SysThread > systhrd_;
@@ -666,7 +659,7 @@ private:
 
    //  The thread's identifier in ThreadRegistry.
    //
-   RegCell tid_;
+   ThreadId tid_;
 
    //  The thread's scheduler faction.
    //

@@ -59,10 +59,6 @@ public:
    //
    std::string GetTime(const std::string& opts) const;
 
-   //  Returns the thread identifier associated with the event.
-   //
-   ThreadId Tid() const;
-
    //  Overridden to display the timestamp and executing thread.  Displays
    //  nothing and returns false if the thread is to be excluded from this
    //  trace.  May be overridden, but this version should be invoked first.

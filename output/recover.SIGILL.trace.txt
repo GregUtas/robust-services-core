@@ -1,116 +1,116 @@
-START OF TRACE: 24-May-2020 10:10:05.602 on Reigi
+START OF TRACE: 28-Jun-2020 11:19:30.409 on Reigi
 
 mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function
 ---------  ---  -----  ---------   -------  --------
-10:05.679   15               928        14    :   : Thread.ExitBlockingOperation
-10:05.679   15               891         8    :   :   Thread.Ready
-10:05.679   15               883        16    :   :   : SysThread.Wait
-10:05.679   15               866       866    :   :   :   SysThread.Suspend
-10:05.680   15                21         8    :   :   Thread.Resume
-10:05.680   15                 6         6    :   :   : ThreadAdmin.WarpFactor
-10:05.680   15                 6         6    :   :   : Thread.InitialTime
-10:05.680   15                 6         6    :   Thread.Pause (interrupted)
-10:05.680   15              2806         7    : RecoveryThread.Enter
-10:05.680   15              2798      2798    :   RecoveryThread.DoRaise
-10:05.680   15                26        26    :   :   :   Thread.ExitSwLog
-10:05.680   15              2757         4    :   :   Thread.SignalHandler
-10:05.680   15                 7         7    :   :   : Thread.RegisterForSignals
-10:05.680   15              2745        11    :   :   : Thread.HandleSignal
-10:05.680   15                 4         4    :   :   :   :   : Thread.ExitSwLog
-10:05.680   15              2733         0    :   :   :   SignalException.ctor
-10:05.680   15              2733         5    :   :   :   : Exception.ctor
-10:05.680   15                 7         7    :   :   :   :   Thread.ExtendTime
-10:05.680   15              2720      2720    :   :   :   :   SysThreadStack.Display
-10:05.682   15               515        25    : Thread.TrapHandler
-10:05.682   15                 6         6    :   : Heap.SetPermissions
-10:05.682   15                 6         6    :   : Heap.SetPermissions
-10:05.682   15                 6         6    :   MutexRegistry.Abandon
-10:05.682   15                82         5    :   Threads.GetState
-10:05.682   15                42         5    :   : MutexGuard.ctor
-10:05.682   15                36        36    :   :   SysMutex.Acquire
-10:05.683   15                34         3    :   : MutexGuard.dtor
-10:05.683   15                30         4    :   :   MutexGuard.Release
-10:05.683   15                26        26    :   :   : SysMutex.Release
-10:05.683   15                 7         7    :   Thread.SetSignal
-10:05.683   15               377         6    :   Thread.LogTrap
-10:05.683   15               207         5    :   : Log.Create
-10:05.683   15                36        12    :   :   Log.Find
-10:05.683   15                18        18    :   :   : LogGroupRegistry.FindGroup
-10:05.683   15                 5         5    :   :   : LogGroup.FindLog
-10:05.683   15               166       166    :   :   Log.Format
-10:05.683   15               139       139    :   :   :   SysTime.ctor(now)
-10:05.683   15                27        27    :   : LeakyBucketCounter.HasReachedLimit
-10:05.683   15               135        23    :   : Log.Submit
-10:05.683   15                36        12    :   :   Log.Find
-10:05.683   15                23         6    :   :   : Log.Find
-10:05.683   15                 9         9    :   :   :   LogGroupRegistry.FindGroup
-10:05.683   15                 6         6    :   :   :   LogGroup.FindLog
-10:05.683   15                 3         3    :   :   LogBufferRegistry.Active
-10:05.683   15                72         8    :   :   LogBuffer.Push
-10:05.683   15                10         3    :   :   : MutexGuard.ctor
-10:05.683   15                 6         6    :   :   :   SysMutex.Acquire
-10:05.683   15                13         3    :   :   : LogBuffer.InsertionPoint
-10:05.683   15                 3         3    :   :   :   LogBuffer.First
-10:05.683   15                 7         7    :   :   :   LogBuffer.SetNext
-10:05.683   15                 7         4    :   :   : Memory.Copy
-10:05.683   15                 3         3    :   :   :   LogBuffer.First
-10:05.683   15                 7         2    :   :   : MutexGuard.Release
-10:05.683   15                 4         4    :   :   :   SysMutex.Release
-10:05.683   15                18         4    :   :   : Thread.Interrupt
-10:05.683   15                13         3    :   :   :   SysThread.Interrupt
-10:05.683   15                10        10    :   :   :   : SysThread.Resume
-10:05.683   15                 6         6    :   :   : MutexGuard.dtor
-10:05.683   15                16        16    :   Debug.SwFlagOn
-10:05.683   15                10         3    :   :   :   :   :   :   :   :   : SignalException.dtor
-10:05.683   15                 7         7    :   :   :   :   :   :   :   :   :   Exception.dtor
-10:05.683   15              4061         4    Thread.Start
-10:05.683   15                 4         4    : SysThread.Start
-10:05.683   15                27        21    : RecoveryThread.Recover
-10:05.683   15                 3         3    :   Debug.SwFlagOn
-10:05.683   15                 3         3    :   Debug.SwFlagOn
-10:05.683   15                 2         2    : Thread.SetSignal
-10:05.683   15              3823         3    : Thread.Pause (msecs=0)
-10:05.683   15                72         3    :   Thread.EnterBlockingOperation
-10:05.683   15                69         3    :   : Thread.Suspend
-10:05.683   15                38        38    :   :   Thread.LogContextSwitch
-10:05.683   15                12         3    :   :   :   MutexGuard.ctor
-10:05.683   15                 9         9    :   :   :   : SysMutex.Acquire
-10:05.683   15                11         2    :   :   :   MutexGuard.dtor
-10:05.683   15                 9         2    :   :   :   : MutexGuard.Release
-10:05.683   15                 6         6    :   :   :   :   SysMutex.Release
-10:05.683   15                 6         6    :   :   :   SysMutex.Acquire
-10:05.683   15                 4         4    :   :   :   SysMutex.Release
-10:05.683   15                27         7    :   :   Thread.Schedule
-10:05.683   15                20         5    :   :   : Thread.Interrupt
-10:05.683   15                14         4    :   :   :   SysThread.Interrupt
-10:05.683   15                 9         9    :   :   :   : SysThread.Resume
-10:05.683   15              3747         7    :   Thread.ExitBlockingOperation
-10:05.683   15              3704         6    :   : Thread.Ready
-10:05.683   15                39        23    :   :   Thread.Interrupt
-10:05.683   15                16         7    :   :   : SysThread.Interrupt
-10:05.683   15                 9         9    :   :   :   SysThread.Resume
-10:05.683   15              3658         6    :   :   SysThread.Wait
-10:05.683   15              3652      3652    :   :   : SysThread.Suspend
-10:05.687   15                35        13    :   : Thread.Resume
-10:05.687   15                 7         7    :   :   ThreadAdmin.WarpFactor
-10:05.687   15                14        14    :   :   Thread.InitialTime
-10:05.687   15                 6         6    : Thread.Pause (completed)
-10:05.687   15               192         4    : RecoveryThread.Enter
-10:05.687   15               188        10    :   Thread.Pause (msecs=5000)
-10:05.687   15               172         9    :   : Thread.EnterBlockingOperation
-10:05.687   15               162         7    :   :   Thread.Suspend
-10:05.687   15               125       125    :   :   : Thread.LogContextSwitch
-10:05.687   15                65         7    :   :   :   : MutexGuard.ctor
-10:05.687   15                57        57    :   :   :   :   SysMutex.Acquire
-10:05.687   15                24         6    :   :   :   : MutexGuard.dtor
-10:05.687   15                18         5    :   :   :   :   MutexGuard.Release
-10:05.687   15                12        12    :   :   :   :   : SysMutex.Release
-10:05.687   15                15        15    :   :   :   : SysMutex.Acquire
-10:05.687   15                 9         9    :   :   :   : SysMutex.Release
-10:05.687   15                29         9    :   :   : Thread.Schedule
-10:05.687   15                20         5    :   :   :   Thread.Interrupt
-10:05.687   15                14         5    :   :   :   : SysThread.Interrupt
-10:05.687   15                 9         9    :   :   :   :   SysThread.Resume
-10:05.687   15                 5         5    :   : SysThread.Delay
-10:05.687   15                 0         0    :   :   SysThread.Suspend
+19:30.463   15              1312        34    :   : Thread.ExitBlockingOperation
+19:30.463   15              1260         9    :   :   Thread.Ready
+19:30.463   15              1251        13    :   :   : SysThread.Wait
+19:30.463   15              1237      1237    :   :   :   SysThread.Suspend
+19:30.464   15                17         7    :   :   Thread.Resume
+19:30.464   15                 6         6    :   :   : ThreadAdmin.WarpFactor
+19:30.464   15                 4         4    :   :   : Thread.InitialTime
+19:30.464   15                 6         6    :   Thread.Pause (interrupted)
+19:30.464   15              2415         5    : RecoveryThread.Enter
+19:30.464   15              2410      2410    :   RecoveryThread.DoRaise
+19:30.464   15                 2         2    :   :   :   Thread.ExitSwLog
+19:30.464   15              2400         3    :   :   Thread.SignalHandler
+19:30.464   15                 6         6    :   :   : Thread.RegisterForSignals
+19:30.464   15              2390        13    :   :   : Thread.HandleSignal
+19:30.464   15                 5         5    :   :   :   :   : Thread.ExitSwLog
+19:30.464   15              2377         0    :   :   :   SignalException.ctor
+19:30.464   15              2377         5    :   :   :   : Exception.ctor
+19:30.464   15                 8         8    :   :   :   :   Thread.ExtendTime
+19:30.464   15              2363      2363    :   :   :   :   SysThreadStack.Display
+19:30.466   15               413        13    : Thread.TrapHandler
+19:30.467   15                 3         3    :   : Heap.SetPermissions
+19:30.467   15                 3         3    :   : Heap.SetPermissions
+19:30.467   15                20        20    :   MutexRegistry.Abandon
+19:30.467   15                28         3    :   ThreadRegistry.GetState
+19:30.467   15                15         3    :   : MutexGuard.ctor
+19:30.467   15                12        12    :   :   SysMutex.Acquire
+19:30.467   15                10         2    :   : MutexGuard.dtor
+19:30.467   15                 7         2    :   :   MutexGuard.Release
+19:30.467   15                 5         5    :   :   : SysMutex.Release
+19:30.467   15                 3         3    :   Thread.SetSignal
+19:30.467   15               330         3    :   Thread.LogTrap
+19:30.467   15               208         2    :   : Log.Create
+19:30.467   15                23         7    :   :   Log.Find
+19:30.467   15                11        11    :   :   : LogGroupRegistry.FindGroup
+19:30.467   15                 3         3    :   :   : LogGroup.FindLog
+19:30.467   15               182       182    :   :   Log.Format
+19:30.467   15               155       155    :   :   :   SysTime.ctor(now)
+19:30.467   15                15        15    :   : LeakyBucketCounter.HasReachedLimit
+19:30.467   15               103        12    :   : Log.Submit
+19:30.467   15                24         6    :   :   Log.Find
+19:30.467   15                17         3    :   :   : Log.Find
+19:30.467   15                 7         7    :   :   :   LogGroupRegistry.FindGroup
+19:30.467   15                 6         6    :   :   :   LogGroup.FindLog
+19:30.467   15                 3         3    :   :   LogBufferRegistry.Active
+19:30.467   15                63         7    :   :   LogBuffer.Push
+19:30.467   15                 8         3    :   :   : MutexGuard.ctor
+19:30.467   15                 5         5    :   :   :   SysMutex.Acquire
+19:30.467   15                11         2    :   :   : LogBuffer.InsertionPoint
+19:30.467   15                 2         2    :   :   :   LogBuffer.First
+19:30.467   15                 6         6    :   :   :   LogBuffer.SetNext
+19:30.467   15                 6         4    :   :   : Memory.Copy
+19:30.467   15                 2         2    :   :   :   LogBuffer.First
+19:30.467   15                 6         2    :   :   : MutexGuard.Release
+19:30.467   15                 4         4    :   :   :   SysMutex.Release
+19:30.467   15                16         3    :   :   : Thread.Interrupt
+19:30.467   15                12         3    :   :   :   SysThread.Interrupt
+19:30.467   15                 9         9    :   :   :   : SysThread.Resume
+19:30.467   15                 6         6    :   :   : MutexGuard.dtor
+19:30.467   15                15        15    :   Debug.SwFlagOn
+19:30.467   15                 9         3    :   :   :   :   :   :   :   :   : SignalException.dtor
+19:30.467   15                 6         6    :   :   :   :   :   :   :   :   :   Exception.dtor
+19:30.467   15              2582         3    Thread.Start
+19:30.467   15                 3         3    : SysThread.Start
+19:30.467   15                 7         2    : RecoveryThread.Recover
+19:30.467   15                 2         2    :   Debug.SwFlagOn
+19:30.467   15                 2         2    :   Debug.SwFlagOn
+19:30.467   15                 2         2    : Thread.SetSignal
+19:30.467   15              2312         3    : Thread.Pause (msecs=0)
+19:30.467   15                65         4    :   Thread.EnterBlockingOperation
+19:30.467   15                61         3    :   : Thread.Suspend
+19:30.467   15                36        36    :   :   Thread.LogContextSwitch
+19:30.467   15                11         3    :   :   :   MutexGuard.ctor
+19:30.467   15                 8         8    :   :   :   : SysMutex.Acquire
+19:30.467   15                10         2    :   :   :   MutexGuard.dtor
+19:30.467   15                 8         2    :   :   :   : MutexGuard.Release
+19:30.467   15                 5         5    :   :   :   :   SysMutex.Release
+19:30.467   15                 4         4    :   :   :   SysMutex.Acquire
+19:30.467   15                 4         4    :   :   :   SysMutex.Release
+19:30.467   15                22         5    :   :   Thread.Schedule
+19:30.467   15                17         4    :   :   : Thread.Interrupt
+19:30.467   15                12         4    :   :   :   SysThread.Interrupt
+19:30.467   15                 8         8    :   :   :   : SysThread.Resume
+19:30.467   15              2243         5    :   Thread.ExitBlockingOperation
+19:30.467   15              2217         4    :   : Thread.Ready
+19:30.467   15                14         4    :   :   Thread.Interrupt
+19:30.467   15                10         4    :   :   : SysThread.Interrupt
+19:30.467   15                 5         5    :   :   :   SysThread.Resume
+19:30.467   15              2198         4    :   :   SysThread.Wait
+19:30.467   15              2194      2194    :   :   : SysThread.Suspend
+19:30.469   15                20         8    :   : Thread.Resume
+19:30.469   15                 6         6    :   :   ThreadAdmin.WarpFactor
+19:30.469   15                 4         4    :   :   Thread.InitialTime
+19:30.469   15                 3         3    : Thread.Pause (completed)
+19:30.469   15               249         2    : RecoveryThread.Enter
+19:30.469   15               247         4    :   Thread.Pause (msecs=5000)
+19:30.469   15               231         3    :   : Thread.EnterBlockingOperation
+19:30.469   15               228         4    :   :   Thread.Suspend
+19:30.469   15               165       165    :   :   : Thread.LogContextSwitch
+19:30.469   15               129         4    :   :   :   : MutexGuard.ctor
+19:30.469   15               125       125    :   :   :   :   SysMutex.Acquire
+19:30.469   15                18         4    :   :   :   : MutexGuard.dtor
+19:30.469   15                14         4    :   :   :   :   MutexGuard.Release
+19:30.469   15                 9         9    :   :   :   :   : SysMutex.Release
+19:30.469   15                 5         5    :   :   :   : SysMutex.Acquire
+19:30.469   15                 7         7    :   :   :   : SysMutex.Release
+19:30.469   15                57        10    :   :   : Thread.Schedule
+19:30.469   15                47        15    :   :   :   Thread.Interrupt
+19:30.469   15                32        13    :   :   :   : SysThread.Interrupt
+19:30.469   15                19        19    :   :   :   :   SysThread.Resume
+19:30.469   15                10        10    :   : SysThread.Delay
+19:30.469   15                 0         0    :   :   SysThread.Suspend
 END OF TRACE

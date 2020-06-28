@@ -3703,8 +3703,8 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
    if(GetCBV(*this, cli, c, v) == Error) return -1;
    if(!cli.EndOfInput()) return -1;
 
+   auto size = ThreadRegistry::Size();
    auto reg = Singleton< ThreadRegistry >::Instance();
-   auto size = reg->Threads().Size();
 
    if(c)
    {

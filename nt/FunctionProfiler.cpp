@@ -197,16 +197,9 @@ TraceRc FunctionProfiler::Generate(ostream& stream, Sort sort)
          for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
          {
             auto ft = static_cast<FunctionTrace*>(rec);
-            auto in = (ft->Tid() == NIL_ID);
-
-            if(!in)
-            {
-               auto thr = reg->GetThread(ft->Tid());
-               if(thr == nullptr)
-                  in = true;
-               else
-                  in = (thr->CalcStatus(false) == TraceIncluded);
-            }
+            auto thr = reg->FindThread(ft->Nid());
+            auto in = true;
+            if(thr != nullptr) in = (thr->CalcStatus(false) == TraceIncluded);
 
             if(in)
             {

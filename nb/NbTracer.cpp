@@ -23,10 +23,10 @@
 #include "Tool.h"
 #include <ostream>
 #include <string>
+#include <vector>
 #include "Debug.h"
 #include "Formatters.h"
 #include "FunctionTrace.h"
-#include "Registry.h"
 #include "Singleton.h"
 #include "Thread.h"
 #include "ThreadRegistry.h"
@@ -136,7 +136,7 @@ TraceRc NbTracer::ClearSelections(FlagId filter)
    Debug::ft(NbTracer_ClearSelections);
 
    auto buff = Singleton< TraceBuffer >::Instance();
-   auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
+   auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
 
    switch(filter)
    {
@@ -149,9 +149,9 @@ TraceRc NbTracer::ClearSelections(FlagId filter)
       break;
 
    case TraceThread:
-      for(auto t = threads.First(); t != nullptr; threads.Next(t))
+      for(auto t = threads.begin(); t != threads.end(); ++t)
       {
-         t->SetStatus(TraceDefault);
+         (*t)->SetStatus(TraceDefault);
       }
       buff->ClearFilter(TraceThread);
       break;
@@ -226,14 +226,14 @@ void NbTracer::QuerySelections(ostream& stream) const
    }
    else
    {
-      auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
+      auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
 
-      for(auto t = threads.First(); t != nullptr; threads.Next(t))
+      for(auto t = threads.cbegin(); t != threads.cend(); ++t)
       {
-         if(t->GetStatus() != TraceDefault)
+         if((*t)->GetStatus() != TraceDefault)
          {
-            stream << spaces(2) << t->GetStatus() << ": ";
-            stream << strObj(t) << CRLF;
+            stream << spaces(2) << (*t)->GetStatus() << ": ";
+            stream << strObj(*t) << CRLF;
          }
       }
    }
@@ -305,11 +305,11 @@ bool NbTracer::ThreadsEmpty()
 {
    Debug::ft(NbTracer_ThreadsEmpty);
 
-   auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
+   auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
 
-   for(auto t = threads.First(); t != nullptr; threads.Next(t))
+   for(auto t = threads.cbegin(); t != threads.cend(); ++t)
    {
-      if(t->GetStatus() != TraceDefault) return false;
+      if((*t)->GetStatus() != TraceDefault) return false;
    }
 
    return true;

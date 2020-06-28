@@ -75,12 +75,11 @@ bool TimedRecord::Display(ostream& stream, const string& opts)
    if(!time_.IsValid()) return false;
 
    auto reg = Singleton< ThreadRegistry >::Instance();
-   auto tid = reg->FindThreadId(nid_);
    auto thr = reg->FindThread(nid_);
-
    if((thr != nullptr) && (thr->CalcStatus(false) != TraceIncluded))
       return false;
 
+   auto tid = (thr != nullptr ? thr->Tid() : NIL_ID);
    stream << GetTime(opts) << TraceDump::Tab();
    stream << setw(TraceDump::TidWidth) << tid;
 
@@ -106,12 +105,5 @@ string TimedRecord::GetTime(const string& opts) const
    //
    if(opts.find(NoTimeData) != string::npos) return "00:00.000";
    return time_.to_str(MinsField);
-}
-
-//------------------------------------------------------------------------------
-
-ThreadId TimedRecord::Tid() const
-{
-   return Singleton< ThreadRegistry >::Instance()->FindThreadId(nid_);
 }
 }

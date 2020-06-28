@@ -25,6 +25,7 @@
 #include <iomanip>
 #include <ios>
 #include <iosfwd>
+#include <map>
 #include <sstream>
 #include <string>
 #include "Debug.h"
@@ -323,7 +324,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    Log::Submit(stream_);
 
    auto reg = Singleton< ThreadRegistry >::Instance();
-   auto before = reg->Threads().Size();
+   auto before = reg->Threads().size();
    auto planned = reg->Restarting(level);
    size_t actual = 0;
 
@@ -342,11 +343,11 @@ void ModuleRegistry::Shutdown(RestartLevel level)
       {
          Thread::SwitchContext();
          ThisThread::Pause(delay);
-         actual = before - reg->Threads().Size();
+         actual = before - reg->Threads().size();
       }
    Thread::EnableFactions(NoFactions);
 
-   actual = before - reg->Threads().Size();
+   actual = before - reg->Threads().size();
    *Stream() << CRLF << ExitedThreadsStr << setw(2) << actual;
    *Stream() << setw(36 - (strlen(ExitedThreadsStr) + 2));
    elapsed = TimePoint::Now() - zeroTime;

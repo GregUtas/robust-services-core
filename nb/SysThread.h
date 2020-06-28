@@ -46,9 +46,9 @@ class SysThread : public Permanent
    friend std::unique_ptr< SysThread >::deleter_type;
    friend class Debug;
    friend class Thread;
+   friend class ThreadRegistry;
    friend class RootThread;
    friend class InitThread;
-   friend class Threads;
 public:
    //  Returns the native identifier of the running thread.
    //

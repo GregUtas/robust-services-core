@@ -1392,8 +1392,8 @@ TypeMatch StackArg::CalcMatchWith(const StackArg& that,
    StackArgVector these, those;
    these.push_back(*this);
    those.push_back(that);
-   this->item->Root()->GetConvertibleTypes(these);
-   that.item->Root()->GetConvertibleTypes(those);
+   this->item->Root()->GetConvertibleTypes(these, true);
+   that.item->Root()->GetConvertibleTypes(those, false);
    if((these.size() == 1) && (those.size() == 1)) return best;
 
    auto first = true;

@@ -190,8 +190,9 @@ public:
    virtual Numeric GetNumeric() const { return Numeric::Nil; }
 
    //  Updates TYPES with the types to which the item can be converted.
+   //  EXPL is set if explicit conversion is required.
    //
-   virtual void GetConvertibleTypes(StackArgVector& types) { }
+   virtual void GetConvertibleTypes(StackArgVector& types, bool expl) { }
 
    //  Returns what the item refers to.  The default version generates a
    //  log and returns nullptr.

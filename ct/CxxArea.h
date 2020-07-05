@@ -530,7 +530,7 @@ public:
    //  Overridden to return the types for which the class has conversion
    //  operators.
    //
-   void GetConvertibleTypes(StackArgVector& types) override;
+   void GetConvertibleTypes(StackArgVector& types, bool expl) override;
 
    //  Overridden to add the class to SYMBOLS.  The purpose of this function is
    //  to find a class that was resolved by a forward or friend declaration but

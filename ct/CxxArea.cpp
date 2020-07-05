@@ -1321,7 +1321,7 @@ void Class::GetConvertibleTypes(StackArgVector& types, bool expl)
          {
             if(!expl || !oper->IsExplicit())
             {
-               auto spec = (*o)->GetTypeSpec();
+               auto spec = oper->GetTypeSpec();
                types.push_back(spec->ResultType());
             }
          }

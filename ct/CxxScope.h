@@ -445,7 +445,7 @@ public:
 
    //  Overridden to increment the number of times the data was written.
    //
-   bool WasWritten(const StackArg* arg, bool passed) override;
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect) override;
 protected:
    //  Creates a data item with SPEC.  Protected because this class is virtual.
    //
@@ -777,7 +777,7 @@ public:
 
    //  Overridden to track usage of the "mutable" attribute.
    //
-   bool WasWritten(const StackArg* arg, bool passed) override;
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect) override;
 private:
    //  Overridden to check that data members are private.
    //

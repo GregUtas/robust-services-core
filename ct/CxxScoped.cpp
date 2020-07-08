@@ -271,7 +271,7 @@ bool Argument::WasRead()
 
 fn_name Argument_WasWritten = "Argument.WasWritten";
 
-bool Argument::WasWritten(const StackArg* arg, bool passed)
+bool Argument::WasWritten(const StackArg* arg, bool direct, bool indirect)
 {
    Debug::ft(Argument_WasWritten);
 
@@ -285,8 +285,8 @@ bool Argument::WasWritten(const StackArg* arg, bool passed)
       if(item != nullptr) item->nonconst_ = true;
    }
 
-   if(!passed && (name_ != THIS_STR) &&
-      (arg != nullptr) && !arg->UsedIndirectly())
+   if(direct && (name_ != THIS_STR) && (arg != nullptr) &&
+      !arg->UsedIndirectly())
    {
       modified_ = true;
       if(item != nullptr) item->modified_ = true;

@@ -383,7 +383,7 @@ void CxxToken::ShrinkTokens(const TokenPtrVector& tokens)
 
 fn_name CxxToken_WasWritten = "CxxToken.WasWritten";
 
-bool CxxToken::WasWritten(const StackArg* arg, bool passed)
+bool CxxToken::WasWritten(const StackArg* arg, bool direct, bool indirect)
 {
    Debug::ft(CxxToken_WasWritten);
 

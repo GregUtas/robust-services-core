@@ -447,7 +447,7 @@ void Class::BlockCopied(const StackArg* arg)
    for(auto d = data->cbegin(); d != data->cend(); ++d)
    {
       auto mem = d->get();
-      if(!mem->IsStatic()) mem->WasWritten(arg, false);
+      if(!mem->IsStatic()) mem->WasWritten(arg, true, false);
    }
 }
 

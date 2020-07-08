@@ -1616,7 +1616,7 @@ private:
 
    //  Overridden to support a temporary variable represented by a DataSpec.
    //
-   bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
       override { return false; }
 
    //  The qualified name for the type as it appeared in the source code.

@@ -40,11 +40,11 @@ namespace std
       T& back();
       const T& front() const;
       T& front();
-      iterator erase(const_iterator& where);
-      iterator erase(const_iterator& first, const_iterator& last);
-      iterator insert(iterator& where, const T& value);
-      iterator insert(const_iterator& where, const T& value);
-      iterator insert(const_iterator& where, size_t count, const T& value);
+      iterator erase(const_iterator where);
+      iterator erase(const_iterator first, const_iterator last);
+      iterator insert(iterator where, const T& value);
+      iterator insert(const_iterator where, const T& value);
+      iterator insert(const_iterator where, size_t count, const T& value);
       void push_back(const T& value);
       void push_front(const T& value);
       void pop_back();

@@ -201,12 +201,10 @@ public:
    //
    void SetAsTemporary();
 
-   //  Returns true if the argument is read-only.  PASSED is set if the
-   //  argument is being passed to a non-const reference or pointer.
-   //  Returns const_ if PASSED is set or the argument is not a pointer,
-   //  else returns constptr_.
+   //  Returns true if the argument, which was just modified,
+   //  is read-only.
    //
-   bool IsReadOnly(bool passed) const;
+   bool IsReadOnly() const;
 
    //  Tags the argument as a function to be invoked unless it
    //  was previously tagged as a "this" argument.

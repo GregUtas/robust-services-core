@@ -613,7 +613,7 @@ public:
    //  Overridden to support, for example, passing a "this" argument or writing
    //  to a class object in an array.
    //
-   bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
       override { return false; }
 
    //  Overridden to append template arguments to a template specialization.

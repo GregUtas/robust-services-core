@@ -2777,7 +2777,7 @@ word Editor::InitByConstructor(const CodeWarning& log, string& expl)
 
 fn_name Editor_Insert = "Editor.Insert";
 
-Editor::Iter Editor::Insert(Iter iter, const string& code)
+Editor::Iter Editor::Insert(const Iter& iter, const string& code)
 {
    Debug::ft(Editor_Insert);
 

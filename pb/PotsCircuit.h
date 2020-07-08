@@ -217,7 +217,7 @@ private:
 
    //  The profile associated with the circuit.
    //
-   PotsProfile* profile_;
+   PotsProfile* const profile_;
 
    //  Identifies (if non-zero) the traffic call that is using the circuit.
    //

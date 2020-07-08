@@ -110,7 +110,7 @@ private:
 
    //  The PSM that owns this MEP.
    //
-   MediaPsm* psm_;
+   MediaPsm* const psm_;
 
    //  The MEP's state.
    //

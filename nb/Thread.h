@@ -655,7 +655,7 @@ private:
 
    //  The thread's manager, if any.
    //
-   Daemon* daemon_;
+   Daemon* const daemon_;
 
    //  The thread's identifier in ThreadRegistry.
    //

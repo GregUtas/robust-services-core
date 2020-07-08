@@ -66,7 +66,7 @@ protected:
 private:
    //  A pointer to the object that contains the flag's value.
    //
-   Flags* curr_;
+   Flags* const curr_;
 
    //  The value to be set during an appropriate restart.
    //

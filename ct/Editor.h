@@ -354,7 +354,7 @@ private:
 
    //  Inserts CODE at ITER and returns its location.
    //
-   Iter Insert(Iter iter, const string& code);
+   Iter Insert(const Iter& iter, const string& code);
 
    //  Inserts PREFIX on the line identified by ITER, starting at POS.  The
    //  prefix replaces blanks but leaves at least one space between it and

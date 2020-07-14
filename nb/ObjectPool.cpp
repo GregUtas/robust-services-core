@@ -89,7 +89,7 @@ public:
 protected:
    void SetCurr() override;
 private:
-   ObjectPool* pool_;
+   ObjectPool* const pool_;
 };
 
 //  Statistics for each object pool.

@@ -2839,7 +2839,7 @@ word Thread::RtcPercentUsed()
    //  This returns 0 unless the thread is running unpreemptably.
    //
    auto thr = RunningThread();
-   if((thr == nullptr) || !thr->IsLocked()) return 0;
+   if(!thr->IsLocked()) return 0;
 
    auto used = TimePoint::Now() - thr->priv_->currStart_;
    auto full = thr->priv_->currEnd_ - thr->priv_->currStart_;
@@ -3323,11 +3323,11 @@ void Thread::StartShortInterval()
 
 TraceRc Thread::StartTracing(const string& opts)
 {
-   auto thr = RunningThread();
    auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(opts);
 
    if(rc == TraceOk)
    {
+      auto thr = RunningThread();
       thr->priv_->autostop_ = (opts.find(TraceAutostop) != string::npos);
       thr->priv_->tracing_ = true;
    }

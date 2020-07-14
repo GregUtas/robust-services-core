@@ -190,8 +190,9 @@ public:
    virtual Numeric GetNumeric() const { return Numeric::Nil; }
 
    //  Updates TYPES with the types to which the item can be converted.
+   //  EXPL is set if explicit conversion is required.
    //
-   virtual void GetConvertibleTypes(StackArgVector& types) { }
+   virtual void GetConvertibleTypes(StackArgVector& types, bool expl) { }
 
    //  Returns what the item refers to.  The default version generates a
    //  log and returns nullptr.
@@ -230,11 +231,11 @@ public:
    //  ARG is the stack variable through which the item was modified.  The item
    //  itself is usually arg.item, but ARG is nullptr for a function's "this"
    //  Argument, and arg.item is a data member's outer class when that entire
-   //  class was the target of a block copy.  PASSED is set when the item was
-   //  passed to a non-const reference or pointer instead of definitely being
-   //  modified.
+   //  class was the target of a block copy.  DIRECT is set when the item was
+   //  (or could be) modified, and INDIRECT is set when the item is a pointer
+   //  and what it refers to was (or could have been) modified.
    //
-   virtual bool WasWritten(const StackArg* arg, bool passed);
+   virtual bool WasWritten(const StackArg* arg, bool direct, bool indirect);
 
    //  Invoked when it is determined that an item cannot be const.  Returning
    //  false indicates that the item is actually const, which generates a log.

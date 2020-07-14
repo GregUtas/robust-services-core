@@ -360,6 +360,8 @@ void CliThread::Flush()
          CoutThread::Spool(obuf);
       else
          FileThread::Spool(outFiles_.back(), obuf);
+
+      Pause();
    }
 
    //  Create a new output buffer for the next command's results.
@@ -472,7 +474,6 @@ word CliThread::InvokeCommand(const CliCommand& comm)
    Pause();
    command_ = &comm;
    SetResult(comm.ProcessCommand(*this));
-   Flush();
    command_ = nullptr;
    return result_;
 }

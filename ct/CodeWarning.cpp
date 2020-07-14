@@ -650,7 +650,7 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X,
       "Expression mixes bool with numeric")));
    Attrs_.insert(WarningPair(FunctionNotOverridden,
-      WarningAttrs(F, X,
+      WarningAttrs(T, X,
       "Virtual function has no overrides")));
    Attrs_.insert(WarningPair(RemoveVirtualTag,
       WarningAttrs(T, E,
@@ -907,12 +907,6 @@ std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
    case FunctionCouldBeStatic:
    case CouldBeNoexcept:
    case ShouldNotBeNoexcept:
-      if(static_cast< const Function* >(item_)->IsVirtual())
-      {
-         expl = "Modifying a virtual function is not yet supported.";
-         return logs;
-      }
-      //  [[fallthrough]]
    case FunctionCouldBeDefaulted:
       logs.push_back(this);
       log = FindMateLog(expl);

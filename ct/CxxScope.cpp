@@ -821,15 +821,15 @@ void ClassData::WasMutated(const StackArg* arg)
 
 fn_name ClassData_WasWritten = "ClassData.WasWritten";
 
-bool ClassData::WasWritten(const StackArg* arg, bool passed)
+bool ClassData::WasWritten(const StackArg* arg, bool direct, bool indirect)
 {
    Debug::ft(ClassData_WasWritten);
 
-   auto result = Data::WasWritten(arg, passed);
+   auto result = Data::WasWritten(arg, direct, indirect);
 
    //  Check if mutable data just made use of its mutability.
    //
-   if(mutable_ && arg->IsReadOnly(passed))
+   if(mutable_ && direct && arg->IsReadOnly())
    {
       mutated_ = true;
    }
@@ -1645,7 +1645,7 @@ bool Data::WasRead()
 
 fn_name Data_WasWritten = "Data.WasWritten";
 
-bool Data::WasWritten(const StackArg* arg, bool passed)
+bool Data::WasWritten(const StackArg* arg, bool direct, bool indirect)
 {
    Debug::ft(Data_WasWritten);
 
@@ -1658,13 +1658,33 @@ bool Data::WasWritten(const StackArg* arg, bool passed)
 
    if(ptrs == 0)
    {
-      nonconst_ = true;
-      if(item != nullptr) item->nonconst_ = true;
+      if(direct)
+      {
+         nonconst_ = true;
+         if(item != nullptr) item->nonconst_ = true;
+      }
+
+      if(indirect)
+      {
+         string expl("Indirection through ");
+         expl += *arg->item->Name();
+
+         Context::SwLog(Data_WasWritten, expl, 0);
+      }
    }
    else
    {
-      nonconstptr_ = true;
-      if(item != nullptr) item->nonconstptr_ = true;
+      if(direct)
+      {
+         nonconstptr_ = true;
+         if(item != nullptr) item->nonconstptr_ = true;
+      }
+
+      if(indirect)
+      {
+         nonconst_ = true;
+         if(item != nullptr) item->nonconst_ = true;
+      }
    }
 
    return true;
@@ -3596,12 +3616,14 @@ bool Function::EnterScope()
       }
    }
 
-   //  Add the function to this file's list of functions.  If it's
-   //  a declaration, check if it's an override.  Then compile it.
+   //  Add the function to its file's functions.  If it's a declaration,
+   //  check if it's an override.  Add it to the area where it was found
+   //  and compile it.
    //
    found_ = true;
    if(defn || AtFileScope()) GetFile()->InsertFunc(this);
    if(!defn) CheckOverride();
+   GetArea()->InsertFunc(this, defn);
    EnterBlock();
    return !defn;
 }
@@ -4237,7 +4259,7 @@ void Function::IncrThisWrites() const
    if(!this_) return;
 
    auto arg = args_[0].get();
-   arg->WasWritten(nullptr, false);
+   arg->WasWritten(nullptr, false, true);
    arg->SetNonConst();
 
    if(arg->IsConst())

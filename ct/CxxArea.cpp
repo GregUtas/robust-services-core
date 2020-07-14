@@ -447,7 +447,7 @@ void Class::BlockCopied(const StackArg* arg)
    for(auto d = data->cbegin(); d != data->cend(); ++d)
    {
       auto mem = d->get();
-      if(!mem->IsStatic()) mem->WasWritten(arg, false);
+      if(!mem->IsStatic()) mem->WasWritten(arg, true, false);
    }
 }
 
@@ -1303,22 +1303,28 @@ Class* Class::GetClassTemplate() const
 
 fn_name Class_GetConvertibleTypes = "Class.GetConvertibleTypes";
 
-void Class::GetConvertibleTypes(StackArgVector& types)
+void Class::GetConvertibleTypes(StackArgVector& types, bool expl)
 {
    Debug::ft(Class_GetConvertibleTypes);
 
    Instantiate();
 
-   auto opers = Opers();
-
-   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
+   for(auto cls = this; cls != nullptr; cls = cls->BaseClass())
    {
-      auto oper = o->get();
+      auto opers = cls->Opers();
 
-      if((oper->Operator() == Cxx::CAST) && !oper->IsExplicit())
+      for(auto o = opers->cbegin(); o != opers->cend(); ++o)
       {
-         auto spec = (*o)->GetTypeSpec();
-         types.push_back(spec->ResultType());
+         auto oper = o->get();
+
+         if(oper->Operator() == Cxx::CAST)
+         {
+            if(!expl || !oper->IsExplicit())
+            {
+               auto spec = oper->GetTypeSpec();
+               types.push_back(spec->ResultType());
+            }
+         }
       }
    }
 }
@@ -2398,7 +2404,7 @@ bool CxxArea::AddForw(ForwardPtr& forw)
 
 fn_name CxxArea_AddFunc = "CxxArea.AddFunc";
 
-bool CxxArea::AddFunc(FunctionPtr& func)
+bool CxxArea::AddFunc(FunctionPtr& func) const
 {
    Debug::ft(CxxArea_AddFunc);
 
@@ -2411,20 +2417,12 @@ bool CxxArea::AddFunc(FunctionPtr& func)
       if((cls != nullptr) && cls->IsInTemplateInstance()) return true;
    }
 
-   if(func->EnterScope())
-   {
-      AddItem(func.get());
-
-      if(func->FuncType() == FuncOperator)
-         opers_.push_back(std::move(func));
-      else
-         funcs_.push_back(std::move(func));
-   }
-   else
-   {
-      defns_.push_back(std::move(func));
-   }
-
+   //  Release the function after adding it to this scope and executing its
+   //  code (if supplied).  EnterScope invokes InsertFunc, which assigns us
+   //  ownership of the function, so just release our FUNC argument.
+   //
+   func->EnterScope();
+   func.release();
    return true;
 }
 
@@ -2783,6 +2781,25 @@ const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
    }
 
    return &funcs_;
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::InsertFunc(Function* func, bool defn)
+{
+   if(!defn)
+   {
+      AddItem(func);
+
+      if(func->FuncType() == FuncOperator)
+         opers_.push_back(FunctionPtr(func));
+      else
+         funcs_.push_back(FunctionPtr(func));
+   }
+   else
+   {
+      defns_.push_back(FunctionPtr(func));
+   }
 }
 
 //------------------------------------------------------------------------------

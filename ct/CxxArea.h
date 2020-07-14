@@ -68,7 +68,7 @@ public:
 
    //  Adds a function or operator to the area.
    //
-   bool AddFunc(FunctionPtr& func);
+   bool AddFunc(FunctionPtr& func) const;
 
    //  Adds a typedef to the area.
    //
@@ -81,6 +81,11 @@ public:
    //  Adds a static_assert to the area.
    //
    bool AddStaticAssert(StaticAssertPtr& assert);
+
+   //  Adds FUNC to the area, taking ownership of it.  DEFN is set if
+   //  the function is a definition rather than a declaration.
+   //
+   void InsertFunc(Function* func, bool defn);
 
    //  Returns the area's classes.
    //
@@ -530,7 +535,7 @@ public:
    //  Overridden to return the types for which the class has conversion
    //  operators.
    //
-   void GetConvertibleTypes(StackArgVector& types) override;
+   void GetConvertibleTypes(StackArgVector& types, bool expl) override;
 
    //  Overridden to add the class to SYMBOLS.  The purpose of this function is
    //  to find a class that was resolved by a forward or friend declaration but
@@ -613,7 +618,7 @@ public:
    //  Overridden to support, for example, passing a "this" argument or writing
    //  to a class object in an array.
    //
-   bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
       override { return false; }
 
    //  Overridden to append template arguments to a template specialization.

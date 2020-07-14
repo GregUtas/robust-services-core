@@ -563,7 +563,7 @@ protected:
 
    //  A pointer to the game map and position.
    //
-   MapAndUnits* map_and_units;
+   MapAndUnits* const map_and_units;
 
    //  The powers that are currently in civil disorder.  Updated when
    //  a CCD or NOT(CCD) arrives.

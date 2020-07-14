@@ -2336,6 +2336,24 @@ bool Parser::GetIf(TokenPtr& statement)
 
 //------------------------------------------------------------------------------
 
+fn_name Parser_GetInline = "Parser.GetInline";
+
+void Parser::GetInline(Function* func)
+{
+   Debug::ft(Parser_GetInline);
+
+   auto pos = func->GetBracePos();
+
+   if(pos != string::npos)
+   {
+      farthest_ = pos;
+      lexer_.Reposition(pos);
+      GetFuncImpl(func);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Parser_GetInlines = "Parser.GetInlines";
 
 bool Parser::GetInlines(Class* cls)
@@ -2351,28 +2369,14 @@ bool Parser::GetInlines(Class* cls)
 
    for(size_t i = 0; i < funcs->size(); ++i)
    {
-      auto pos = funcs->at(i)->GetBracePos();
-
-      if(pos != string::npos)
-      {
-         farthest_ = pos;
-         lexer_.Reposition(pos);
-         GetFuncImpl(funcs->at(i).get());
-      }
+      GetInline(funcs->at(i).get());
    }
 
    auto opers = cls->Opers();
 
    for(size_t i = 0; i < opers->size(); ++i)
    {
-      auto pos = opers->at(i)->GetBracePos();
-
-      if(pos != string::npos)
-      {
-         farthest_ = pos;
-         lexer_.Reposition(pos);
-         GetFuncImpl(opers->at(i).get());
-      }
+      GetInline(opers->at(i).get());
    }
 
    auto friends = cls->Friends();
@@ -2380,18 +2384,7 @@ bool Parser::GetInlines(Class* cls)
    for(size_t i = 0; i < friends->size(); ++i)
    {
       auto func = friends->at(i)->Inline();
-
-      if(func != nullptr)
-      {
-         auto pos = func->GetBracePos();
-
-         if(pos != string::npos)
-         {
-            farthest_ = pos;
-            lexer_.Reposition(pos);
-            GetFuncImpl(func);
-         }
-      }
+      if(func != nullptr) GetInline(func);
    }
 
    farthest_ = end;

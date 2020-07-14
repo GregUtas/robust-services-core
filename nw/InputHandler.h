@@ -155,7 +155,7 @@ protected:
 private:
    //  The port where the input handler is registered.
    //
-   IpPort* port_;
+   IpPort* const port_;
 };
 }
 #endif

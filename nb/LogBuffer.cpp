@@ -59,7 +59,7 @@ public:
 private:
    //  The buffer from which the logs were spooled.
    //
-   LogBuffer* buff_;
+   LogBuffer* const buff_;
 
    //  The last log that was spooled from the buffer.
    //

@@ -72,7 +72,7 @@ protected:
 private:
    //  A pointer to the string that contains the parameter's value.
    //
-   ProtectedStr* curr_;
+   ProtectedStr* const curr_;
 
    //  The value to be set during an appropriate restart.
    //

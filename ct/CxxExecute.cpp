@@ -1345,7 +1345,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
       //
       if((thatRefs > 0) || (thatPtrs > 0))
       {
-         if(this->item->WasWritten(this, true))
+         if(this->item->WasWritten(this, thatRefs > 0, thatPtrs > 0))
          {
             Context::Trace(CxxTrace::INCR_WRITES, *this);
          }
@@ -1392,8 +1392,8 @@ TypeMatch StackArg::CalcMatchWith(const StackArg& that,
    StackArgVector these, those;
    these.push_back(*this);
    those.push_back(that);
-   this->item->Root()->GetConvertibleTypes(these);
-   that.item->Root()->GetConvertibleTypes(those);
+   this->item->Root()->GetConvertibleTypes(these, true);
+   that.item->Root()->GetConvertibleTypes(those, false);
    if((these.size() == 1) && (those.size() == 1)) return best;
 
    auto first = true;
@@ -1539,11 +1539,10 @@ bool StackArg::IsDefaultCtor(const StackArgVector& args) const
 
 fn_name StackArg_IsReadOnly = "StackArg.IsReadOnly";
 
-bool StackArg::IsReadOnly(bool passed) const
+bool StackArg::IsReadOnly() const
 {
    Debug::ft(StackArg_IsReadOnly);
 
-   if(passed) return const_;
    return (Ptrs(true) == 0 ? const_ : constptr_);
 }
 
@@ -2053,7 +2052,7 @@ void StackArg::WasWritten() const
 
    if(item == nullptr) return;
    if(ptrs == 0) SetAsDirect();
-   if(!item->WasWritten(this, false)) return;
+   if(!item->WasWritten(this, true, false)) return;
    Context::Trace(CxxTrace::INCR_WRITES, *this);
 
    //  See if a class was just block-copied.

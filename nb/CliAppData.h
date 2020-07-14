@@ -83,7 +83,7 @@ protected:
 private:
    //  The CLI thread associated with the data.
    //
-   CliThread* cli_;
+   CliThread* const cli_;
 
    //  The application associated with the data.
    //

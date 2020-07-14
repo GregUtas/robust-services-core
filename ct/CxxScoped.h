@@ -352,7 +352,7 @@ public:
 
    //  Overridden to increment the number of writes.
    //
-   bool WasWritten(const StackArg* arg, bool passed) override;
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect) override;
 private:
    //  Overridden to return the argument's type.
    //
@@ -597,7 +597,7 @@ public:
    //  Overridden to support, for example, writing to an enum in a std::vector
    //  or passing an enum as an argument.
    //
-   bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
       override { return false; }
 private:
    //  The enumeration's name.
@@ -1330,7 +1330,7 @@ public:
    //  Overridden to support, for example, writing to a char in a std::string
    //  or passing an int as an argument.
    //
-   bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
       override { return false; }
 private:
    //  The terminal's name.
@@ -1451,7 +1451,7 @@ public:
    //  Overridden to support a temporary variable represented by a typedef
    //  that was, for example, returned by one function and passed to another.
    //
-   bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
       override { return false; }
 private:
    //  Overridden to return the underlying type.

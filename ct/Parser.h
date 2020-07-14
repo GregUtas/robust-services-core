@@ -268,6 +268,10 @@ private:
    //
    bool GetBaseDecl(BaseDeclPtr& base);
 
+   //  Looks for a function definition after FUNC's signature has been parsed.
+   //
+   void GetInline(Function* func);
+
    //  Returns true after successfully parsing CLS's inlines.
    //
    bool GetInlines(Class* cls);

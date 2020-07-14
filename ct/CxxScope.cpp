@@ -3616,12 +3616,14 @@ bool Function::EnterScope()
       }
    }
 
-   //  Add the function to this file's list of functions.  If it's
-   //  a declaration, check if it's an override.  Then compile it.
+   //  Add the function to its file's functions.  If it's a declaration,
+   //  check if it's an override.  Add it to the area where it was found
+   //  and compile it.
    //
    found_ = true;
    if(defn || AtFileScope()) GetFile()->InsertFunc(this);
    if(!defn) CheckOverride();
+   GetArea()->InsertFunc(this, defn);
    EnterBlock();
    return !defn;
 }

@@ -96,6 +96,25 @@ string DemangleInclude(string code)
 
 //------------------------------------------------------------------------------
 //
+//  Adds FUNC and its overrides to FUNCS.
+//
+void GetOverrides(const Function* func, std::vector< const Function* >& funcs)
+{
+   funcs.push_back(func);
+
+   auto defn = static_cast< const Function* >(func->GetMate());
+   if((defn != nullptr) && (defn != func)) funcs.push_back(defn);
+
+   auto& overs = func->GetOverrides();
+
+   for(auto f = overs.cbegin(); f != overs.cend(); ++f)
+   {
+      GetOverrides(*f, funcs);
+   }
+}
+
+//------------------------------------------------------------------------------
+//
 //  Returns true if the #include in LINE1 should precede that in LINE2.
 //
 bool IncludesAreSorted(const string& line1, const string& line2)
@@ -148,6 +167,22 @@ word Report(string& expl, fixed_string text, word rc = 0)
 {
    expl = text;
    return rc;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Displays EXPL when RC was returned after fixing a single item.
+//
+void ReportFix(CliThread& cli, word rc, string& expl)
+{
+   if(rc <= 0)
+   {
+      *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
+      *cli.obuf << CRLF;
+      cli.Flush();
+   }
+
+   expl.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -1325,17 +1360,15 @@ word Editor::EraseForward(const CodeWarning& log, string& expl)
 
 fn_name Editor_EraseFunction = "Editor.EraseFunction";
 
-word Editor::EraseFunction(const CodeWarning& log, string& expl)
+word Editor::EraseFunction(const Function* func, string& expl)
 {
    Debug::ft(Editor_EraseFunction);
-
-   auto func = static_cast< const Function* >(log.item_);
 
    //  It's easy if we're erasing a declaration that has a separate definition.
    //
    if(func->GetDefn() != func)
    {
-      return EraseCode(log.pos_, ";", expl);
+      return EraseCode(func->GetPos(), ";", expl);
    }
 
    //  The function contains code, so find its first and last lines.
@@ -1429,13 +1462,13 @@ word Editor::EraseMutableTag(const CodeWarning& log, string& expl)
 
 fn_name Editor_EraseNoexceptTag = "Editor.EraseNoexceptTag";
 
-word Editor::EraseNoexceptTag(const CodeWarning& log, string& expl)
+word Editor::EraseNoexceptTag(const Function* func, string& expl)
 {
    Debug::ft(Editor_EraseNoexceptTag);
 
    //  Look for "noexcept" just before the end of the function's signature.
    //
-   auto endsig = FindSigEnd(log);
+   auto endsig = FindSigEnd(func);
    if(endsig.pos == string::npos) return NotFound(expl, "Signature end");
    endsig = Rfind(endsig.iter, NOEXCEPT_STR, endsig.pos - 1);
    if(endsig.pos == string::npos) return NotFound(expl, NOEXCEPT_STR, true);
@@ -1625,15 +1658,9 @@ Editor::CodeLocation Editor::Find(Iter iter, const string& str, size_t off)
 
 fn_name Editor_FindArgsEnd = "Editor.FindArgsEnd";
 
-Editor::CodeLocation Editor::FindArgsEnd(const CodeWarning& log)
+Editor::CodeLocation Editor::FindArgsEnd(const Function* func)
 {
    Debug::ft(Editor_FindArgsEnd);
-
-   //  Verify that LOG.ITEM is a function in our file.
-   //
-   if(log.item_->Type() != Cxx::Function) return CodeLocation(source_.end());
-   auto func = static_cast< const Function* >(log.item_);
-   if(func->GetFile() != file_) return CodeLocation(source_.end());
 
    auto& args = func->GetArgs();
    if(args.empty())
@@ -1965,19 +1992,30 @@ Editor::CodeLocation Editor::FindPos(size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindSigEnd = "Editor.FindSigEnd";
+fn_name Editor_FindSigEnd1 = "Editor.FindSigEnd(log)";
 
 Editor::CodeLocation Editor::FindSigEnd(const CodeWarning& log)
 {
-   Debug::ft(Editor_FindSigEnd);
+   Debug::ft(Editor_FindSigEnd1);
+
+   if(log.item_ == nullptr) return CodeLocation(source_.end());
+   if(log.item_->Type() != Cxx::Function) return CodeLocation(source_.end());
+   return FindSigEnd(static_cast< const Function* >(log.item_));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_FindSigEnd2 = "Editor.FindSigEnd(func)";
+
+Editor::CodeLocation Editor::FindSigEnd(const Function* func)
+{
+   Debug::ft(Editor_FindSigEnd2);
 
    //  Look for the first semicolon or left brace after the function's name.
    //
-   if(log.item_ == nullptr) return CodeLocation(source_.end());
-   if(log.item_->Type() != Cxx::Function) return CodeLocation(source_.end());
-   auto func = FindPos(log.item_->GetPos());
-   if(func.pos == string::npos) return CodeLocation(source_.end());
-   return FindFirstOf(func.iter, func.pos, ";{");
+   auto loc = FindPos(func->GetPos());
+   if(loc.pos == string::npos) return CodeLocation(source_.end());
+   return FindFirstOf(loc.iter, loc.pos, ";{");
 }
 
 //------------------------------------------------------------------------------
@@ -2263,9 +2301,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
          {
             auto editor = (*log)->file_->GetEditor(expl);
             if(editor != nullptr) rc = editor->FixLog(cli, **log, expl);
-            *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
-            *cli.obuf << CRLF;
-            expl.clear();
+            ReportFix(cli, rc, expl);
          }
 
          break;
@@ -2285,12 +2321,12 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
       }
 
       cli.Flush();
-      if(exit || (rc != 0)) break;
+      if(exit || (rc < 0)) break;
    }
 
    if(found)
    {
-      if(exit || (rc != 0))
+      if(exit || (rc < 0))
          *cli.obuf << spaces(2) << "Remaining warnings skipped." << CRLF;
       else
          *cli.obuf << spaces(2) << "End of warnings." << CRLF;
@@ -2334,6 +2370,93 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_FixFunction = "Editor.FixFunction";
+
+word Editor::FixFunction
+   (const Function* func, const CodeWarning& log, string& expl)
+{
+   Debug::ft(Editor_FixFunction);
+
+   switch(log.warning_)
+   {
+   case FunctionUnused:
+      return EraseFunction(func, expl);
+   case ArgumentCouldBeConstRef:
+      return TagAsConstReference(func, log.offset_, expl);
+   case ArgumentCouldBeConst:
+      return TagAsConstArgument(func, log.offset_, expl);
+   case FunctionCouldBeConst:
+      return TagAsConstFunction(func, expl);;
+   case FunctionCouldBeStatic:
+      return TagAsStaticFunction(func, expl);
+   case CouldBeNoexcept:
+      return TagAsNoexcept(func, expl);
+   case ShouldNotBeNoexcept:
+      return EraseNoexceptTag(func, expl);
+   }
+
+   expl = "Internal error: warning not supported.";
+   return -1;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_FixFunctions = "Editor.FixFunctions";
+
+word Editor::FixFunctions(CliThread& cli, const CodeWarning& log, string& expl)
+{
+   Debug::ft(Editor_FixFunctions);
+
+   if(log.item_->Type() != Cxx::Function)
+   {
+      expl = "Internal error: warning not associated with a function.";
+      return -1;
+   }
+
+   //  Ignore LOG when it is associated with a distinct function definition.
+   //  The log associated with the function's declaration is fixed instead.
+   //
+   auto func = static_cast< const Function* >(log.item_);
+
+   if((func->GetDefn() == func) && (func->GetMate() != nullptr))
+   {
+      return 1;
+   }
+
+   //  Create a list of all the function declarations and definitions that
+   //  are associated with the log.
+   //
+   std::vector< const Function* > funcs;
+   GetOverrides(func, funcs);
+
+   for(auto f = funcs.cbegin(); f != funcs.cend(); ++f)
+   {
+      auto rc = -1;
+      auto file = (*f)->GetFile();
+      auto editor = file->GetEditor(expl);
+      if(editor != nullptr) rc = editor->FixFunction(*f, log, expl);
+
+      auto fn = file->Name();
+
+      if(expl.empty())
+      {
+         fn += ": ";
+         expl = fn + SuccessExpl;
+      }
+      else
+      {
+         fn += ":\n" + spaces(4);
+         expl = fn + expl;
+      }
+
+      ReportFix(cli, rc, expl);
+   }
+
+   return 1;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_FixLog = "Editor.FixLog";
 
 word Editor::FixLog(CliThread& cli, CodeWarning& log, string& expl)
@@ -2353,7 +2476,7 @@ word Editor::FixLog(CliThread& cli, CodeWarning& log, string& expl)
 
    auto rc = FixWarning(cli, log, expl);
    if(rc == 0) log.status = Pending;
-   return (rc >= -1 ? 0 : rc);
+   return (rc == -1 ? 0 : rc);
 }
 
 //------------------------------------------------------------------------------
@@ -2431,7 +2554,7 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
    case FriendUnused:
       return EraseCode(log.pos_, ";", expl);
    case FunctionUnused:
-      return EraseFunction(log, expl);
+      return FixFunctions(cli, log, expl);
    case TypedefUnused:
       return EraseCode(log.pos_, ";", expl);
    case ForwardUnresolved:
@@ -2472,6 +2595,8 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
       return InsertDefaultFunction(log, expl);
    case FunctionNotDefined:
       return EraseCode(log.pos_, ";", expl);
+   case FunctionNotOverridden:
+      return EraseVirtualTag(log, expl);
    case RemoveVirtualTag:
       return EraseVirtualTag(log, expl);
    case OverrideTagMissing:
@@ -2483,13 +2608,13 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
    case OverrideRenamesArgument:
       return AlignArgumentNames(log, expl);
    case ArgumentCouldBeConstRef:
-      return TagAsConstReference(log, expl);
+      return FixFunctions(cli, log, expl);
    case ArgumentCouldBeConst:
-      return TagAsConstArgument(log, expl);
+      return FixFunctions(cli, log, expl);
    case FunctionCouldBeConst:
-      return TagAsConstFunction(log, expl);
+      return FixFunctions(cli, log, expl);
    case FunctionCouldBeStatic:
-      return TagAsStaticFunction(log, expl);
+      return FixFunctions(cli, log, expl);
    case UseOfTab:
       return ConvertTabsToBlanks();
    case Indentation:
@@ -2517,9 +2642,9 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
    case InitCouldUseConstructor:
       return InitByConstructor(log, expl);
    case CouldBeNoexcept:
-      return TagAsNoexcept(log, expl);
+      return FixFunctions(cli, log, expl);
    case ShouldNotBeNoexcept:
-      return EraseNoexceptTag(log, expl);
+      return FixFunctions(cli, log, expl);
    case UseOfSlashAsterisk:
       return ReplaceSlashAsterisk(log, expl);
    case RemoveLineBreak:
@@ -4016,16 +4141,15 @@ word Editor::SortIncludes(string& expl)
 
 fn_name Editor_TagAsConstArgument = "Editor.TagAsConstArgument";
 
-word Editor::TagAsConstArgument(const CodeWarning& log, string& expl)
+word Editor::TagAsConstArgument(const Function* func, word offset, string& expl)
 {
    Debug::ft(Editor_TagAsConstArgument);
 
    //  Find the line on which the argument's type appears, and insert
    //  "const" before that type.
    //
-   auto func = static_cast< const Function* >(log.item_);
    auto& args = func->GetArgs();
-   auto index = func->LogOffsetToArgIndex(log.offset_);
+   auto index = func->LogOffsetToArgIndex(offset);
    auto arg = args.at(index).get();
    if(arg == nullptr) return NotFound(expl, "Argument");
    auto type = FindPos(arg->GetTypeSpec()->GetPos());
@@ -4055,42 +4179,16 @@ word Editor::TagAsConstData(const CodeWarning& log, string& expl)
 
 fn_name Editor_TagAsConstFunction = "Editor.TagAsConstFunction";
 
-word Editor::TagAsConstFunction(const CodeWarning& log, string& expl)
+word Editor::TagAsConstFunction(const Function* func, string& expl)
 {
    Debug::ft(Editor_TagAsConstFunction);
 
-   //  Find the semicolon or left brace after the function's signature.
+   //  Insert " const" after the right parenthesis at the end of the function's
+   //  argument list.
    //
-   auto endsig = FindSigEnd(log);
-   if(endsig.pos == string::npos) return NotFound(expl, "Signature end");
-
-   if(endsig.iter->code[endsig.pos] == '{')
-   {
-      if(endsig.iter->code.find_first_not_of(WhitespaceChars) == endsig.pos)
-      {
-         //  The brace is on a new line.  Append " const" to the previous line.
-         //
-         --endsig.iter;
-         endsig.iter->code.append(" const");
-      }
-      else
-      {
-         //  The brace is not on a new line, so insert "const " before it.
-         //
-         endsig.iter->code.insert(endsig.pos, "const ");
-      }
-   }
-   else
-   {
-      //  If there isn't a space before the insertion point, insert
-      //  " const" instead of "const".
-      //
-      if((endsig.pos > 0) && !IsBlank(endsig.iter->code[endsig.pos - 1]))
-         endsig.iter->code.insert(endsig.pos, " const");
-      else
-         endsig.iter->code.insert(endsig.pos, "const");
-   }
-
+   auto endsig = FindArgsEnd(func);
+   if(endsig.pos == string::npos) return NotFound(expl, "End of argument list");
+   endsig.iter->code.insert(endsig.pos + 1, " const");
    return Changed(endsig.iter, expl);
 }
 
@@ -4120,7 +4218,8 @@ word Editor::TagAsConstPointer(const CodeWarning& log, string& expl)
 
 fn_name Editor_TagAsConstReference = "Editor.TagAsConstReference";
 
-word Editor::TagAsConstReference(const CodeWarning& log, string& expl)
+word Editor::TagAsConstReference
+   (const Function* func, word offset, string& expl)
 {
    Debug::ft(Editor_TagAsConstReference);
 
@@ -4129,11 +4228,15 @@ word Editor::TagAsConstReference(const CodeWarning& log, string& expl)
    //  added first so that its position won't change as a result of adding the
    //  "const" earlier in the line.
    //
-   auto arg = FindPos(log.pos_);
-   if(arg.pos == string::npos) return NotFound(expl, "Argument name");
-   auto prev = RfindNonBlank(arg.iter, arg.pos - 1);
+   auto& args = func->GetArgs();
+   auto index = func->LogOffsetToArgIndex(offset);
+   auto arg = args.at(index).get();
+   if(arg == nullptr) return NotFound(expl, "Argument");
+   auto loc = FindPos(arg->GetPos());
+   if(loc.pos == string::npos) return NotFound(expl, "Argument name");
+   auto prev = RfindNonBlank(loc.iter, loc.pos - 1);
    prev.iter->code.insert(prev.pos + 1, 1, '&');
-   auto rc = TagAsConstArgument(log, expl);
+   auto rc = TagAsConstArgument(func, offset, expl);
    if(rc != 0) return rc;
    expl.clear();
    return Changed(prev.iter, expl);
@@ -4198,16 +4301,16 @@ word Editor::TagAsExplicit(const CodeWarning& log, string& expl)
 
 fn_name Editor_TagAsNoexcept = "Editor.TagAsNoexcept";
 
-word Editor::TagAsNoexcept(const CodeWarning& log, string& expl)
+word Editor::TagAsNoexcept(const Function* func, string& expl)
 {
    Debug::ft(Editor_TagAsNoexcept);
 
    //  Insert "noexcept" after "const" but before "override" or "final".
    //  Start by finding the end of the function's argument list.
    //
-   auto func = FindPos(log.item_->GetPos());
-   if(func.pos == string::npos) return NotFound(expl, "Function name");
-   auto rpar = FindArgsEnd(log);
+   auto loc = FindPos(func->GetPos());
+   if(loc.pos == string::npos) return NotFound(expl, "Function name");
+   auto rpar = FindArgsEnd(func);
    if(rpar.pos == string::npos) return NotFound(expl, "End of argument list");
 
    //  If there is a "const" after the right parenthesis, insert "noexcept"
@@ -4247,23 +4350,21 @@ word Editor::TagAsOverride(const CodeWarning& log, string& expl)
 
 fn_name Editor_TagAsStaticFunction = "Editor.TagAsStaticFunction";
 
-word Editor::TagAsStaticFunction(const CodeWarning& log, string& expl)
+word Editor::TagAsStaticFunction(const Function* func, string& expl)
 {
    Debug::ft(Editor_TagAsStaticFunction);
 
    //  Start with the function's return type in case it's on the line above
    //  the function's name.  Then find the end of the argument list.
    //
-   auto type = FindPos(log.item_->GetTypeSpec()->GetPos());
+   auto type = FindPos(func->GetTypeSpec()->GetPos());
    if(type.pos == string::npos) return NotFound(expl, "Function type");
-   auto rpar = FindArgsEnd(log);
+   auto rpar = FindArgsEnd(func);
    if(rpar.pos == string::npos) return NotFound(expl, "End of argument list");
 
    //  Only a function's declaration, not its definition, is tagged "static".
    //  The parser also wants "static" to follow "extern" and "inline".
    //
-   auto func = static_cast< const Function* >(log.item_);
-
    if(func->GetDecl() == func)
    {
       auto front = type.iter->code.rfind(INLINE_STR, type.pos);

@@ -2404,7 +2404,7 @@ bool CxxArea::AddForw(ForwardPtr& forw)
 
 fn_name CxxArea_AddFunc = "CxxArea.AddFunc";
 
-bool CxxArea::AddFunc(FunctionPtr& func)
+bool CxxArea::AddFunc(FunctionPtr& func) const
 {
    Debug::ft(CxxArea_AddFunc);
 
@@ -2417,20 +2417,12 @@ bool CxxArea::AddFunc(FunctionPtr& func)
       if((cls != nullptr) && cls->IsInTemplateInstance()) return true;
    }
 
-   if(func->EnterScope())
-   {
-      AddItem(func.get());
-
-      if(func->FuncType() == FuncOperator)
-         opers_.push_back(std::move(func));
-      else
-         funcs_.push_back(std::move(func));
-   }
-   else
-   {
-      defns_.push_back(std::move(func));
-   }
-
+   //  Release the function after adding it to this scope and executing its
+   //  code (if supplied).  EnterScope invokes InsertFunc, which assigns us
+   //  ownership of the function, so just release our FUNC argument.
+   //
+   func->EnterScope();
+   func.release();
    return true;
 }
 
@@ -2789,6 +2781,25 @@ const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
    }
 
    return &funcs_;
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::InsertFunc(Function* func, bool defn)
+{
+   if(!defn)
+   {
+      AddItem(func);
+
+      if(func->FuncType() == FuncOperator)
+         opers_.push_back(FunctionPtr(func));
+      else
+         funcs_.push_back(FunctionPtr(func));
+   }
+   else
+   {
+      defns_.push_back(FunctionPtr(func));
+   }
 }
 
 //------------------------------------------------------------------------------

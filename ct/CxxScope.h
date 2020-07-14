@@ -1229,6 +1229,10 @@ public:
    //
    bool CheckDebugName(const std::string& str) const;
 
+   //  Returns the function's overrides.
+   //
+   const FunctionVector& GetOverrides() const { return overs_; }
+
    //  Displays the function's declaration.
    //
    void DisplayDecl(std::ostream& stream, const NodeBase::Flags& options) const;

@@ -68,7 +68,7 @@ public:
 
    //  Adds a function or operator to the area.
    //
-   bool AddFunc(FunctionPtr& func);
+   bool AddFunc(FunctionPtr& func) const;
 
    //  Adds a typedef to the area.
    //
@@ -81,6 +81,11 @@ public:
    //  Adds a static_assert to the area.
    //
    bool AddStaticAssert(StaticAssertPtr& assert);
+
+   //  Adds FUNC to the area, taking ownership of it.  DEFN is set if
+   //  the function is a definition rather than a declaration.
+   //
+   void InsertFunc(Function* func, bool defn);
 
    //  Returns the area's classes.
    //

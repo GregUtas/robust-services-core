@@ -127,6 +127,11 @@ private:
    //
    word FixLog(CliThread& cli, CodeWarning& log, string& expl);
 
+   //  Fixes LOG, which is associated with a function that could be virtual.
+   //  Updates EXPL with any explanation.
+   //
+   word FixFunctions(CliThread& cli, const CodeWarning& log, string& expl);
+
    //  Most of the editing functions attempt to fix the warning reported in LOG,
    //  returning 0 on success.  Any other result indicates an error, in which
    //  case EXPL provides an explanation.  A return value of -1 means that the
@@ -146,10 +151,8 @@ private:
    word EraseEnumerator(const CodeWarning& log, string& expl);
    word EraseExplicitTag(const CodeWarning& log, string& expl);
    word EraseForward(const CodeWarning& log, string& expl);
-   word EraseFunction(const CodeWarning& log, string& expl);
    word EraseLineBreak(const CodeWarning& log, string& expl);
    word EraseMutableTag(const CodeWarning& log, string& expl);
-   word EraseNoexceptTag(const CodeWarning& log, string& expl);
    word EraseOverrideTag(const CodeWarning& log, string& expl);
    word EraseSemicolon(const CodeWarning& log, string& expl);
    word EraseVirtualTag(const CodeWarning& log, string& expl);
@@ -168,16 +171,27 @@ private:
    word ReplaceNull(const CodeWarning& log, string& expl);
    word ReplaceSlashAsterisk(const CodeWarning& log, string& expl);
    word ReplaceUsing(const CodeWarning& log, string& expl);
-   word TagAsConstArgument(const CodeWarning& log, string& expl);
    word TagAsConstData(const CodeWarning& log, string& expl);
-   word TagAsConstFunction(const CodeWarning& log, string& expl);
    word TagAsConstPointer(const CodeWarning& log, string& expl);
-   word TagAsConstReference(const CodeWarning& log, string& expl);
    word TagAsDefaulted(const CodeWarning& log, string& expl);
    word TagAsExplicit(const CodeWarning& log, string& expl);
-   word TagAsNoexcept(const CodeWarning& log, string& expl);
    word TagAsOverride(const CodeWarning& log, string& expl);
-   word TagAsStaticFunction(const CodeWarning& log, string& expl);
+
+   //  Fixes LOG, which is associated with FUNC, and updates EXPL with any
+   //  explanation.
+   //
+   word FixFunction(const Function* func, const CodeWarning& log, string& expl);
+
+   //  Fixes FUNC and updates EXPL with any explanation.  OFFSET is log.offset_
+   //  when the original log is associated with one of FUNC's arguments.
+   //
+   word EraseFunction(const Function* func, string& expl);
+   word EraseNoexceptTag(const Function* func, string& expl);
+   word TagAsConstArgument(const Function* func, word offset, string& expl);
+   word TagAsConstFunction(const Function* func, string& expl);
+   word TagAsConstReference(const Function* func, word offset, string& expl);
+   word TagAsNoexcept(const Function* func, string& expl);
+   word TagAsStaticFunction(const Function* func, string& expl);
 
    //  Erases the line of code addressed by POS.
    //
@@ -336,17 +350,17 @@ private:
    //
    CodeLocation FindFirstOf(Iter iter, size_t off, const string& chars);
 
-   //  If LOG.ITEM is a function, returns the location of the right
-   //  parenthesis at the end of the function's argument list.  Returns
-   //  {source_.end(), string::npos} on failure.
+   //  Returns the location of the right parenthesis after a function's
+   //  argument list.  Returns {source_.end(), string::npos} on failure.
    //
-   CodeLocation FindArgsEnd(const CodeWarning& log);
+   CodeLocation FindArgsEnd(const Function* func);
 
-   //  If LOG.ITEM is a function, returns the location of the semicolon
-   //  at the end of its declaration or the left brace at the end of its
-   //  signature.  Returns {source_.end(), string::npos} on failure.
+   //  Returns the location of the semicolon after a function's declaration
+   //  or the left brace that begins its definition.  Returns {source_.end(),
+   //  string::npos} on failure.
    //
    CodeLocation FindSigEnd(const CodeWarning& log);
+   CodeLocation FindSigEnd(const Function* func);
 
    //  Returns the line that follows FUNC.
    //

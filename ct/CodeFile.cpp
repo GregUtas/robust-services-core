@@ -676,15 +676,15 @@ void CodeFile::CheckDebugFt() const
    //
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
-      //  A function in a header is only expected to invoke Debug::ft if
-      //  part of a template; checking functions in a template instance
-      //  would therefore be redundant.
+      //  The function must have an implementation to be checked.  A function
+      //  in a header is only expected to invoke Debug::ft if it's part of a
+      //  template; checking functions in a template instance would therefore
+      //  be redundant.
       //
+      if((*f)->GetRange(begin, end) == string::npos) continue;
       if(IsHeader() && ((*f)->GetTemplateType() == NonTemplate)) return;
       if((*f)->IsInTemplateInstance()) continue;
 
-      (*f)->GetRange(begin, end);
-      if(begin >= end) continue;
       auto last = lexer_.GetLineNum(end);
       auto open = false, debug = false, code = false;
       std::ostringstream source;

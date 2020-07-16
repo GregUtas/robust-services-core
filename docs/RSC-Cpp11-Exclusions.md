@@ -46,11 +46,7 @@ the parser and other `CodeTools` classes.
 - [ ] `decltype`
 - [ ] `export` (removed in C\++11; reintroduced in C\++20)
 - [ ] `register` (removed in C\++17)
-- [ ] `volatile` (parsed but not used during type or function matching)
 - [ ] `and`, `and_eq`, `bitand`, `bitor`, `compl`, `not`, `not_eq`, `or`, `or_eq`, `xor`, `xor_eq`
-
-  There are proposals to remove `volatile` in C++20. Good riddance, for the same
-  reasons as `register` and the original semantics of `inline`.
 
 ### Preprocessor
 - [ ] `#define` for any value other than an empty string or an integer literal

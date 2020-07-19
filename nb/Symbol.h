@@ -22,7 +22,7 @@
 #ifndef SYMBOL_H_INCLUDED
 #define SYMBOL_H_INCLUDED
 
-#include "Dynamic.h"
+#include "Permanent.h"
 #include <cstddef>
 #include <string>
 #include "NbTypes.h"
@@ -37,7 +37,7 @@ namespace NodeBase
 //  a numeric value or string in CLI commands.  Symbols are defined through
 //  SymbolRegistry.BindSymbol rather than by using this class directly.
 //
-class Symbol : public Dynamic
+class Symbol : public Permanent
 {
 public:
    //  Creates a symbol with NAME.
@@ -95,11 +95,11 @@ public:
 private:
    //  The symbol's name.
    //
-   const DynamicStr name_;
+   const std::string name_;
 
    //  The symbol's value.
    //
-   DynamicStr value_;
+   std::string value_;
 
    //  Set if the value is locked.
    //

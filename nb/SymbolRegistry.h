@@ -22,7 +22,7 @@
 #ifndef SYMBOLREGISTRY_H_INCLUDED
 #define SYMBOLREGISTRY_H_INCLUDED
 
-#include "Dynamic.h"
+#include "Permanent.h"
 #include <cstddef>
 #include <string>
 #include "NbTypes.h"
@@ -40,7 +40,7 @@ namespace NodeBase
 {
 //  Global registry for CLI symbols.
 //
-class SymbolRegistry : public Dynamic
+class SymbolRegistry : public Permanent
 {
    friend class Singleton< SymbolRegistry >;
 public:

@@ -140,18 +140,13 @@ void ServiceCodeRegistry::Startup(RestartLevel level)
       SetService(73, PotsCfuDeactivation);
    }
 
-   //  Define service code symbols if the symbol registry was just
-   //  created.
+   //  Define service code symbols.
    //
    auto reg = Singleton< SymbolRegistry >::Instance();
-
-   if(Restart::ClearsMemory(reg->MemType()))
-   {
-      reg->BindSymbol("sc.wml.activation", "*33");
-      reg->BindSymbol("sc.wml.deactivation", "*34");
-      reg->BindSymbol("sc.ccw", "*70");
-      reg->BindSymbol("sc.cfu.activation", "*72");
-      reg->BindSymbol("sc.cfu.deactivation", "*73");
-   }
+   reg->BindSymbol("sc.wml.activation", "*33");
+   reg->BindSymbol("sc.wml.deactivation", "*34");
+   reg->BindSymbol("sc.ccw", "*70");
+   reg->BindSymbol("sc.cfu.activation", "*72");
+   reg->BindSymbol("sc.cfu.deactivation", "*73");
 }
 }

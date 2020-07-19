@@ -1026,6 +1026,11 @@ class HeapsListText : public CliText
 public: HeapsListText();
 };
 
+class HeapsInUseText : public CliText
+{
+public: HeapsInUseText();
+};
+
 class HeapsValidateText : public CliText
 {
 public: HeapsValidateText();
@@ -1050,6 +1055,15 @@ fixed_string HeapsListTextExpl = "lists all heaps";
 HeapsListText::HeapsListText() :
    CliText(HeapsListTextExpl, HeapsListTextStr) { }
 
+fixed_string HeapsInUseTextStr = "inuse";
+fixed_string HeapsInUseTextExpl = "returns the number of bytes allocated";
+
+HeapsInUseText::HeapsInUseText() :
+   CliText(HeapsInUseTextExpl, HeapsInUseTextStr)
+{
+   BindParm(*new MemoryTypeParm);
+}
+
 fixed_string HeapsValidateTextStr = "validate";
 fixed_string HeapsValidateTextExpl = "validates all heaps";
 
@@ -1057,13 +1071,15 @@ HeapsValidateText::HeapsValidateText() :
    CliText(HeapsValidateTextExpl, HeapsValidateTextStr) { }
 
 const id_t HeapsListIndex = 1;
-const id_t HeapsValidateIndex = 2;
+const id_t HeapsInUseIndex = 2;
+const id_t HeapsValidateIndex = 3;
 
 fixed_string HeapsActionExpl = "subcommand...";
 
 HeapsAction::HeapsAction() : CliTextParm(HeapsActionExpl)
 {
    BindText(*new HeapsListText, HeapsListIndex);
+   BindText(*new HeapsInUseText, HeapsInUseIndex);
    BindText(*new HeapsValidateText, HeapsValidateIndex);
 }
 
@@ -1082,17 +1098,32 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(HeapsCommand_ProcessCommand);
 
    id_t index;
+   word memtype;
 
    if(!GetTextIndex(index, cli)) return -1;
-   if(!cli.EndOfInput()) return -1;
 
    switch(index)
    {
    case HeapsListIndex:
+      if(!cli.EndOfInput()) return -1;
       Memory::DisplayHeaps(*cli.obuf, spaces(2));
       return 0;
 
+   case HeapsInUseIndex:
+      if(!GetIntParm(memtype, cli)) return -1;
+      if(cli.EndOfInput())
+      {
+         auto type = MemoryType(memtype);
+         auto heap = Memory::GetHeap(type);
+         if(heap == nullptr) return cli.Report(-2, "Heap not found.");
+         auto size = heap->BytesInUse();
+         *cli.obuf << spaces(2) << "Bytes in use: " << size << CRLF;
+         return size;
+      }
+      return -1;
+
    case HeapsValidateIndex:
+      if(!cli.EndOfInput()) return -1;
       *cli.obuf << spaces(2) << "Validating heaps..." << CRLF;
 
       for(auto m = 1; m < MemoryType_N; ++m)
@@ -3841,5 +3872,26 @@ fn_name NbIncrement_dtor = "NbIncrement.dtor";
 NbIncrement::~NbIncrement()
 {
    Debug::ftnt(NbIncrement_dtor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name NbIncrement_Startup = "NbIncrement.Startup";
+
+void NbIncrement::Startup(RestartLevel level)
+{
+   Debug::ftnt(NbIncrement_Startup);
+
+   CliIncrement::Startup(level);
+
+   //  Define symbols related to memory types.
+   //
+   auto reg = Singleton< SymbolRegistry >::Instance();
+   reg->BindSymbol("mem.temp", MemTemporary);
+   reg->BindSymbol("mem.dyn", MemDynamic);
+   reg->BindSymbol("mem.pers", MemPersistent);
+   reg->BindSymbol("mem.prot", MemProtected);
+   reg->BindSymbol("mem.perm", MemPermanent);
+   reg->BindSymbol("mem.imm", MemImmutable);
 }
 }

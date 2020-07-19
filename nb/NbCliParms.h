@@ -137,7 +137,7 @@ word ExplainTraceRc(const CliThread& cli, TraceRc rc);
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for a Faction.
+//  Parameters for a Faction.
 //
 class FactionMandParm : public CliIntParm
 {
@@ -151,7 +151,7 @@ public: FactionOptParm();
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for an id_t.
+//  Parameters for an id_t.
 //
 class IdMandParm : public CliIntParm
 {
@@ -197,11 +197,20 @@ public: LogGroupOptParm();
 
 //------------------------------------------------------------------------------
 //
-//  Parameters for a mandatory LogId.
+//  Parameter for a mandatory LogId.
 //
 class LogIdMandParm : public CliIntParm
 {
 public: LogIdMandParm();
+};
+
+//------------------------------------------------------------------------------
+//
+//  Parameter for a mandatory MemoryType.
+//
+class MemoryTypeParm : public CliIntParm
+{
+public: MemoryTypeParm();
 };
 
 //------------------------------------------------------------------------------

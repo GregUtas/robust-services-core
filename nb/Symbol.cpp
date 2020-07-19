@@ -74,7 +74,7 @@ Symbol::~Symbol()
 void Symbol::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Dynamic::Display(stream, prefix, options);
+   Permanent::Display(stream, prefix, options);
 
    stream << prefix << "name   : " << name_ << CRLF;
    stream << prefix << "value  : " << value_ << CRLF;
@@ -105,7 +105,7 @@ ptrdiff_t Symbol::LinkDiff()
 
 void Symbol::Patch(sel_t selector, void* arguments)
 {
-   Dynamic::Patch(selector, arguments);
+   Permanent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

@@ -275,6 +275,10 @@ private:
 class NbIncrement : public CliIncrement
 {
    friend class Singleton< NbIncrement >;
+public:
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 private:
    //  Private because this singleton is not subclassed.
    //

@@ -94,16 +94,15 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
+   //  Wrapper for the default C++ heap.
+   //
+   SysHeap();
+
    //  Creates a heap for memory of TYPE.  If SIZE is 0, the heap's
-   //  size can expand, else it is limited to SIZE bytes.  If TYPE
-   //  is MemPermanent, this creates a wrapper for the default heap.
-   //  Protected because this class is virtual.
+   //  size can expand, else it is limited to SIZE bytes.  TYPE must
+   //  not be MemPermanent.  Protected because this class is virtual.
    //
    SysHeap(MemoryType type, size_t size);
-
-   //  Wrapper for the default heap.  TYPE must be MemPermanent.
-   //
-   explicit SysHeap(MemoryType type);
 private:
    //  The native handle to the underlying heap.
    //

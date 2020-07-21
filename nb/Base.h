@@ -140,10 +140,15 @@ public:
    //
    virtual MemoryType MemType() const { return MemPermanent; }
 
-   //  Overridden to invoke Debug::ft before the default ::operator new.
+   //  Overridden to invoke Debug::ft before the global ::operator new.
    //
    static void* operator new(size_t size);
    static void* operator new[](size_t size);
+
+   //  Placement new (the above versions hide the global placement new).
+   //
+   static void* operator new(size_t size, void* place);
+   static void* operator new[](size_t size, void* place);
 protected:
    //  Protected because this class is virtual.
    //

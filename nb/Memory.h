@@ -79,7 +79,7 @@ namespace Memory
 
    //  Returns the heap (if any) associated with TYPE.
    //
-   const Heap* GetHeap(MemoryType type);
+   Heap* AccessHeap(MemoryType type);
 
    //  Protects the heap for TYPE.
    //

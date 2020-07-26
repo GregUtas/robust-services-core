@@ -25,6 +25,7 @@
 #include <string>
 #include "AllocationException.h"
 #include "Debug.h"
+#include "Formatters.h"
 #include "Restart.h"
 #include "SysMemory.h"
 
@@ -44,7 +45,8 @@ Heap::Heap() :
    fails_(0),
    frees_(0),
    maxInUse_(0),
-   changes_(0)
+   changes_(0),
+   trace_(false)
 {
    Debug::ft(Heap_ctor);
 }
@@ -108,6 +110,27 @@ void Heap::Display(ostream& stream,
    stream << prefix << "frees    : " << frees_ << CRLF;
    stream << prefix << "maxInUse : " << maxInUse_ << CRLF;
    stream << prefix << "changes  : " << changes_ << CRLF;
+   stream << prefix << "trace    : " << trace_ << CRLF;
+   stream << prefix << "blocks   : " << blocks_.size() << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+void Heap::DisplayBlocks(ostream& stream) const
+{
+   if(blocks_.empty())
+   {
+      stream << "No blocks to display." << CRLF;
+      return;
+   }
+
+   for(auto b = blocks_.cbegin(); b != blocks_.cend(); ++b)
+   {
+      auto cls = strClass(b->first, true);
+      if(cls == ERROR_STR) cls = "not an object";
+      stream << "size=" << b->second << spaces(2);
+      stream << b->first << " (" << cls << ')' << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -123,10 +146,18 @@ void Heap::Free(void* addr)
 
 //------------------------------------------------------------------------------
 
-void Heap::Freed(size_t size)
+void Heap::Freeing(void* addr, size_t size)
 {
    inUse_ -= size;
    ++frees_;
+   if(!trace_) return;
+
+   word freed = size;
+   auto entry = blocks_.find(addr);
+   if(entry != blocks_.cend())
+      blocks_.erase(entry);
+   else
+      blocks_.insert(TraceEntry(addr, -freed));
 }
 
 //------------------------------------------------------------------------------
@@ -169,18 +200,30 @@ void Heap::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-void Heap::Requested(size_t size, bool ok)
+void Heap::Requested(size_t size, void* addr)
 {
-   if(ok)
+   if(addr != nullptr)
    {
       inUse_ += size;
       if(inUse_ > maxInUse_) maxInUse_ = inUse_;
       ++allocs_;
+      if(trace_) blocks_.insert(TraceEntry(addr, size));
    }
    else
    {
       ++fails_;
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Heap_ResetTrace = "Heap.ResetTrace";
+
+void Heap::ResetTrace()
+{
+   Debug::ft(Heap_ResetTrace);
+
+   blocks_.clear();
 }
 
 //------------------------------------------------------------------------------
@@ -218,6 +261,17 @@ int Heap::SetPermissions(MemoryProtection attrs)
 
    Restart::Initiate(Restart::LevelToClear(Type()), HeapProtectionFailed, err);
    return err;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Heap_SetTrace = "Heap.SetTrace";
+
+void Heap::SetTrace(bool enabled)
+{
+   Debug::ft(Heap_SetTrace);
+
+   trace_ = enabled;
 }
 
 //------------------------------------------------------------------------------

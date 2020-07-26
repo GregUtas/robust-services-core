@@ -1031,6 +1031,36 @@ class HeapsInUseText : public CliText
 public: HeapsInUseText();
 };
 
+class HeapsResetText : public CliText
+{
+public: HeapsResetText();
+};
+
+class HeapsStartText : public CliText
+{
+public: HeapsStartText();
+};
+
+class HeapsStopText : public CliText
+{
+public: HeapsStopText();
+};
+
+class HeapsDisplayText : public CliText
+{
+public: HeapsDisplayText();
+};
+
+class HeapsTraceAction : public CliTextParm
+{
+public: HeapsTraceAction();
+};
+
+class HeapsTraceText : public CliText
+{
+public: HeapsTraceText();
+};
+
 class HeapsValidateText : public CliText
 {
 public: HeapsValidateText();
@@ -1064,6 +1094,55 @@ HeapsInUseText::HeapsInUseText() :
    BindParm(*new MemoryTypeParm);
 }
 
+const id_t HeapsResetIndex = 1;
+const id_t HeapsStartIndex = 2;
+const id_t HeapsStopIndex = 3;
+const id_t HeapsDisplayIndex = 4;
+
+fixed_string HeapsResetTextStr = "reset";
+fixed_string HeapsResetTextExpl = "clears allocated blocks";
+
+HeapsResetText::HeapsResetText() :
+   CliText(HeapsResetTextExpl, HeapsResetTextStr) { }
+
+fixed_string HeapsStartTextStr = "start";
+fixed_string HeapsStartTextExpl = "starts tracing of allocated blocks";
+
+HeapsStartText::HeapsStartText() :
+   CliText(HeapsStartTextExpl, HeapsStartTextStr) { }
+
+fixed_string HeapsStopTextStr = "stop";
+fixed_string HeapsStopTextExpl = "stops tracing of allocated blocks";
+
+HeapsStopText::HeapsStopText() :
+   CliText(HeapsStopTextExpl, HeapsStopTextStr) { }
+
+fixed_string HeapsDisplayTextStr = "display";
+fixed_string HeapsDisplayTextExpl = "displays allocated blocks";
+
+HeapsDisplayText::HeapsDisplayText() :
+   CliText(HeapsDisplayTextExpl, HeapsDisplayTextStr) { }
+
+fixed_string HeapsTraceActionExpl = "tracing subcommand...";
+
+HeapsTraceAction::HeapsTraceAction() : CliTextParm(HeapsTraceActionExpl)
+{
+   BindText(*new HeapsResetText, HeapsResetIndex);
+   BindText(*new HeapsStartText, HeapsStartIndex);
+   BindText(*new HeapsStopText, HeapsStopIndex);
+   BindText(*new HeapsDisplayText, HeapsDisplayIndex);
+}
+
+fixed_string HeapsTraceTextStr = "trace";
+fixed_string HeapsTraceTextExpl = "controls heap trace tool";
+
+HeapsTraceText::HeapsTraceText() :
+   CliText(HeapsTraceTextExpl, HeapsTraceTextStr)
+{
+   BindParm(*new MemoryTypeParm);
+   BindParm(*new HeapsTraceAction);
+}
+
 fixed_string HeapsValidateTextStr = "validate";
 fixed_string HeapsValidateTextExpl = "validates all heaps";
 
@@ -1072,7 +1151,8 @@ HeapsValidateText::HeapsValidateText() :
 
 const id_t HeapsListIndex = 1;
 const id_t HeapsInUseIndex = 2;
-const id_t HeapsValidateIndex = 3;
+const id_t HeapsTraceIndex = 3;
+const id_t HeapsValidateIndex = 4;
 
 fixed_string HeapsActionExpl = "subcommand...";
 
@@ -1080,6 +1160,7 @@ HeapsAction::HeapsAction() : CliTextParm(HeapsActionExpl)
 {
    BindText(*new HeapsListText, HeapsListIndex);
    BindText(*new HeapsInUseText, HeapsInUseIndex);
+   BindText(*new HeapsTraceText, HeapsTraceIndex);
    BindText(*new HeapsValidateText, HeapsValidateIndex);
 }
 
@@ -1098,6 +1179,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(HeapsCommand_ProcessCommand);
 
    id_t index;
+   id_t trace;
    word memtype;
 
    if(!GetTextIndex(index, cli)) return -1;
@@ -1114,11 +1196,40 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
       if(cli.EndOfInput())
       {
          auto type = MemoryType(memtype);
-         auto heap = Memory::GetHeap(type);
+         auto heap = Memory::AccessHeap(type);
          if(heap == nullptr) return cli.Report(-2, "Heap not found.");
          auto size = heap->BytesInUse();
          *cli.obuf << spaces(2) << "Bytes in use: " << size << CRLF;
          return size;
+      }
+      return -1;
+
+   case HeapsTraceIndex:
+      if(!GetIntParm(memtype, cli)) return -1;
+      if(!GetTextIndex(trace, cli)) return -1;
+      if(cli.EndOfInput())
+      {
+         auto type = MemoryType(memtype);
+         auto heap = Memory::AccessHeap(type);
+         if(heap == nullptr) return cli.Report(-2, "Heap not found.");
+
+         switch(trace)
+         {
+         case HeapsResetIndex:
+            heap->ResetTrace();
+            return cli.Report(0, SuccessExpl);
+         case HeapsStartIndex:
+            heap->SetTrace(true);
+            return cli.Report(0, SuccessExpl);
+         case HeapsStopIndex:
+            heap->SetTrace(false);
+            return cli.Report(0, SuccessExpl);
+         case HeapsDisplayIndex:
+            heap->DisplayBlocks(*cli.obuf);
+            return 0;
+         default:
+            return cli.Report(trace, SystemErrorExpl);
+         }
       }
       return -1;
 
@@ -3389,7 +3500,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
 
    for(auto m = 0; m < MemoryType_N; ++m)
    {
-      auto heap = Memory::GetHeap(MemoryType(m));
+      auto heap = Memory::AccessHeap(MemoryType(m));
 
       if(heap != nullptr)
       {

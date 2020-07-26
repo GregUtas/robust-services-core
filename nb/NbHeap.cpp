@@ -428,7 +428,7 @@ void* NbHeap::Alloc(size_t size)
    if(level > LastLevel) return nullptr;
 
    auto block = AllocBlock(level, size);
-   Requested(size, block != nullptr);
+   Requested(size, block);
    return block;
 }
 
@@ -693,11 +693,11 @@ void NbHeap::Free(void* addr)
 
    MutexGuard guard(heap_->lock.get());
 
+   Freeing(addr, size);
    auto level = SizeToLevel(size);
    if(level > LastLevel) return;
 
    FreeBlock((HeapBlock*) addr, level);
-   Freed(size);
 }
 
 //------------------------------------------------------------------------------

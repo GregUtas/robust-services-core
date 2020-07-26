@@ -119,7 +119,7 @@ void* SysHeap::Alloc(size_t size)
    if(heap_ == nullptr) return nullptr;
 
    auto addr = HeapAlloc(heap_, 0, size);
-   Requested(size, addr != nullptr);
+   Requested(size, addr);
    return addr;
 }
 
@@ -164,11 +164,12 @@ void SysHeap::Free(void* addr)
    if(heap_ == nullptr) return;
 
    auto size = BlockToSize(addr);
+   Freeing(addr, size);
 
-   if(HeapFree(heap_, 0, addr))
-      Freed(size);
-   else
+   if(!HeapFree(heap_, 0, addr))
+   {
       Debug::SwLog(SysHeap_Free, "HeapFree failed", GetLastError());
+   }
 }
 
 //------------------------------------------------------------------------------

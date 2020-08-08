@@ -190,6 +190,16 @@ singletons        : Displays the singletons registry.
 heaps             : Lists all heaps.
 (                 : subcommand...
   list            : lists all heaps
+  inuse           : returns the number of bytes allocated
+    (1:6)         : memory type (see mem.* symbols)
+  trace           : controls heap trace tool
+    (1:6)         : memory type (see mem.* symbols)
+  (               : tracing subcommand...
+    reset         : clears allocated blocks
+    start         : starts tracing of allocated blocks
+    stop          : stops tracing of allocated blocks
+    display       : displays allocated blocks
+  )
   validate        : validates all heaps
 )
 

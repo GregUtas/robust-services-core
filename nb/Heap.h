@@ -24,6 +24,7 @@
 
 #include "Permanent.h"
 #include <cstddef>
+#include <map>
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -122,6 +123,18 @@ public:
    //
    bool IsFixedSize() const;
 
+   //  Enables or disables tracing of allocated blocks.
+   //
+   void SetTrace(bool enabled);
+
+   //  Clears the set of allocated blocks.
+   //
+   void ResetTrace();
+
+   //  Displays the addresses of allocated blocks.
+   //
+   void DisplayBlocks(std::ostream& stream) const;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -147,14 +160,13 @@ protected:
    //
    Heap();
 
-   //  Invoked when SIZE bytes of memory were requested.  OK is
-   //  set if allocation succeeded.
+   //  Invoked before returning ADDR for a request of SIZE bytes.
    //
-   void Requested(size_t size, bool ok = true);
+   void Requested(size_t size, void* addr);
 
-   //  Invoked when a SIZE bytes of memory have been freed.
+   //  Invoked before freeing ADDR, a block that is SIZE bytes long.
    //
-   void Freed(size_t size);
+   void Freeing(void* addr, size_t size);
 private:
    //  The heap's current memory protection attributes.
    //
@@ -183,6 +195,20 @@ private:
    //  The number of times the heap's memory protection was changed.
    //
    size_t changes_;
+
+   //  Set if in-use blocks are being traced.
+   //
+   bool trace_;
+
+   //  A trace entry, which contains a block's address and its size.  The
+   //  size is negative when a block whose allocation was not recorded is
+   //  freed.
+   //
+   typedef std::pair< void*, word > TraceEntry;
+
+   //  Tracks allocated blocksto assist with detecting memory leaks.
+   //
+   std::map< void*, word > blocks_;
 };
 }
 #endif

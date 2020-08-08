@@ -109,7 +109,7 @@ private:
 
    //  Overridden to support placement new.
    //
-   static void* operator new(size_t size, void* where);
+   static void* operator new(size_t size, void* place);
 
    //  Captures a call to FUNC when tracing is enabled.  Applications use
    //  Debug::ft instead of invoking this directly.

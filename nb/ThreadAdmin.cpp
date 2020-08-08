@@ -651,8 +651,6 @@ void ThreadAdmin::Startup(RestartLevel level)
    //  Define symbols related to threads.
    //
    auto reg = Singleton< SymbolRegistry >::Instance();
-   if(!Restart::ClearsMemory(reg->MemType())) return;
-
    reg->BindSymbol("faction.audit", AuditFaction);
    reg->BindSymbol("faction.bkgd", BackgroundFaction);
    reg->BindSymbol("faction.oper", OperationsFaction);

@@ -22,6 +22,7 @@
 #include "StreamRequest.h"
 #include <string>
 #include "Debug.h"
+#include "Formatters.h"
 
 using std::ostream;
 using std::string;
@@ -75,7 +76,31 @@ void StreamRequest::Display(ostream& stream,
 {
    MsgBuffer::Display(stream, prefix, options);
 
-   stream << prefix << "stream  : " << stream_.get() << CRLF;
+   stream << prefix << "stream : " << stream_.get() << CRLF;
+
+   //  Display the first four lines of stream_.
+   //
+   if(stream_ != nullptr)
+   {
+      const auto& str = stream_->str();
+      auto indent = prefix + spaces(2);
+
+      for(size_t i = 0, begin = 0; i < 4; ++i)
+      {
+         auto end = str.find(CRLF, begin);
+
+         if(end == string::npos)
+         {
+            stream << indent << str.substr(begin) << CRLF;
+            break;
+         }
+
+         stream << indent << str.substr(begin, end - begin + 1);
+         begin = end + 1;
+         if(begin >= str.size()) break;
+      }
+   }
+
    stream << prefix << "written : " << written_.get() << CRLF;
 }
 

@@ -865,9 +865,9 @@ void* FunctionTrace::operator new(size_t size)
 
 //------------------------------------------------------------------------------
 
-void* FunctionTrace::operator new(size_t size, void* where)
+void* FunctionTrace::operator new(size_t size, void* place)
 {
-   return where;
+   return place;
 }
 
 //------------------------------------------------------------------------------

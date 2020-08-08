@@ -100,8 +100,6 @@ void CbModule::Startup(RestartLevel level)
    //  Define symbols.
    //
    auto reg = Singleton< SymbolRegistry >::Instance();
-   if(!Restart::ClearsMemory(reg->MemType())) return;
-
    reg->BindSymbol("factory.cip.obc", CipObcFactoryId);
    reg->BindSymbol("factory.cip.tbc", CipTbcFactoryId);
    reg->BindSymbol("factory.call.proxy", ProxyCallFactoryId);

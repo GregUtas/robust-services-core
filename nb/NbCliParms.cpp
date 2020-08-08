@@ -238,6 +238,13 @@ LogIdMandParm::LogIdMandParm() :
 
 //------------------------------------------------------------------------------
 
+fixed_string MemoryTypeExpl = "memory type (see mem.* symbols)";
+
+MemoryTypeParm::MemoryTypeParm() :
+   CliIntParm(MemoryTypeExpl, MemTemporary, MemImmutable) { }
+
+//------------------------------------------------------------------------------
+
 fixed_string ModuleIdOptExpl = "ModuleId (default=all)";
 
 ModuleIdOptParm::ModuleIdOptParm() :

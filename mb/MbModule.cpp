@@ -96,8 +96,6 @@ void MbModule::Startup(RestartLevel level)
    //  Define symbols.
    //
    auto reg = Singleton< SymbolRegistry >::Instance();
-   if(!Restart::ClearsMemory(reg->MemType())) return;
-
    reg->BindSymbol("port.silence", Tone::Silence);
    reg->BindSymbol("port.dial", Tone::Dial);
    reg->BindSymbol("port.stutter", Tone::StutteredDial);

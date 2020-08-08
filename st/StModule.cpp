@@ -86,8 +86,6 @@ void StModule::Startup(RestartLevel level)
    //  Define symbols.
    //
    auto reg = Singleton< SymbolRegistry >::Instance();
-   if(!Restart::ClearsMemory(reg->MemType())) return;
-
    reg->BindSymbol("factory.test", TestFactoryId);
 }
 }

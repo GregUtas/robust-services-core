@@ -143,7 +143,6 @@ void SnModule::Startup(RestartLevel level)
    //  Define symbols.
    //
    auto reg = Singleton< SymbolRegistry >::Instance();
-   if(!Restart::ClearsMemory(reg->MemType())) return;
 
    reg->BindSymbol("factory.pots.shelf", PotsShelfFactoryId);
    reg->BindSymbol("factory.pots.call", PotsCallFactoryId);

@@ -1,0 +1,12 @@
+heaps inuse &mem.temp
+if &cli.result > &mem.temp.inuse testcase failed &cli.result "Leak in temporary memory"
+heaps inuse &mem.dyn
+if &cli.result > &mem.dyn.inuse testcase failed &cli.result "Leak in dynamic memory"
+heaps inuse &mem.pers
+if &cli.result > &mem.pers.inuse testcase failed &cli.result "Leak in persistent memory"
+heaps inuse &mem.prot
+if &cli.result > &mem.prot.inuse testcase failed &cli.result "Leak in protected memory"
+heaps inuse &mem.perm
+if &cli.result > &mem.perm.inuse testcase failed &cli.result "Leak in permanent memory"
+heaps inuse &mem.imm
+if &cli.result > &mem.imm.inuse testcase failed &cli.result "Leak in immutable memory"

@@ -90,7 +90,7 @@ bool SymbolRegistry::BindSymbol
 void SymbolRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Dynamic::Display(stream, prefix, options);
+   Permanent::Display(stream, prefix, options);
 
    stream << prefix << "symbolq : " << CRLF;
    symbolq_.Display(stream, prefix + spaces(2), options);
@@ -152,7 +152,7 @@ Symbol* SymbolRegistry::FindSymbol(const string& name) const
 
 void SymbolRegistry::Patch(sel_t selector, void* arguments)
 {
-   Dynamic::Patch(selector, arguments);
+   Permanent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

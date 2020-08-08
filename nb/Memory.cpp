@@ -213,25 +213,6 @@ TemporaryHeap::~TemporaryHeap()
 
 //------------------------------------------------------------------------------
 //
-//  Returns the heap (if any) associated with TYPE.
-//
-Heap* AccessHeap(MemoryType type)
-{
-   switch(type)
-   {
-   case MemTemporary: return Singleton< TemporaryHeap >::Extant();
-   case MemDynamic: return Singleton< DynamicHeap >::Extant();
-   case MemPersistent: return Singleton< PersistentHeap >::Extant();
-   case MemProtected: return Singleton< ProtectedHeap >::Extant();
-   case MemPermanent: return PermanentHeap::Instance();
-   case MemImmutable: return Singleton< ImmutableHeap >::Extant();
-   }
-
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-//
 //  Returns the heap for TYPE.  If it doesn't exist, it is created.
 //
 Heap* EnsureHeap(MemoryType type)
@@ -275,6 +256,23 @@ size_t Memory::Align(size_t size, size_t log2align)
 
 //------------------------------------------------------------------------------
 
+Heap* Memory::AccessHeap(MemoryType type)
+{
+   switch(type)
+   {
+   case MemTemporary: return Singleton< TemporaryHeap >::Extant();
+   case MemDynamic: return Singleton< DynamicHeap >::Extant();
+   case MemPersistent: return Singleton< PersistentHeap >::Extant();
+   case MemProtected: return Singleton< ProtectedHeap >::Extant();
+   case MemPermanent: return PermanentHeap::Instance();
+   case MemImmutable: return Singleton< ImmutableHeap >::Extant();
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Memory_Alloc1 = "Memory.Alloc";
 
 void* Memory::Alloc(size_t size, MemoryType type)
@@ -301,8 +299,7 @@ void* Memory::Alloc(size_t size, MemoryType type)
       throw AllocationException(type, gross);
    }
 
-   //  Success.  Record the size of the segment (excluding its header)
-   //  and its memory type.
+   //  Record the size of the segment and its memory type.
    //
    if(Debug::TraceOn())
    {
@@ -340,8 +337,7 @@ void* Memory::Alloc(size_t size, MemoryType type, const std::nothrow_t&)
    auto addr = heap->Alloc(gross);
    if(addr == nullptr) return nullptr;
 
-   //  Success.  Record the size of the segment (excluding its header)
-   //  and its memory type.
+   //  Record the size of the segment and its memory type.
    //
    if(Debug::TraceOn())
    {
@@ -435,7 +431,7 @@ void Memory::Free(void* addr, MemoryType type)
       return;
    }
 
-   //  Free the memory segment.  Its actual size includes the header.
+   //  Free the memory segment.
    //
    if(Debug::TraceOn())
    {
@@ -450,13 +446,6 @@ void Memory::Free(void* addr, MemoryType type)
    }
 
    heap->Free(addr);
-}
-
-//------------------------------------------------------------------------------
-
-const Heap* Memory::GetHeap(MemoryType type)
-{
-   return AccessHeap(type);
 }
 
 //------------------------------------------------------------------------------

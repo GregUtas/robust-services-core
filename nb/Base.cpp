@@ -135,6 +135,28 @@ void* Base::operator new[](size_t size)
 
 //------------------------------------------------------------------------------
 
+fn_name Base_new3 = "Base.operator new(place)";
+
+void* Base::operator new(size_t size, void* place)
+{
+   Debug::ft(Base_new3);
+
+   return place;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Base_new4 = "Base.operator new[](place)";
+
+void* Base::operator new[](size_t size, void* place)
+{
+   Debug::ft(Base_new4);
+
+   return place;
+}
+
+//------------------------------------------------------------------------------
+
 void Base::Output(ostream& stream, col_t indent, bool verbose) const
 {
    auto opts = (verbose ? VerboseOpt : NoFlags);

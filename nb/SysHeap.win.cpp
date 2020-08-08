@@ -65,19 +65,12 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
 
 fn_name SysHeap_ctor2 = "SysHeap.ctor(wrap)";
 
-SysHeap::SysHeap(MemoryType type) : Heap(),
-   heap_(nullptr),
+SysHeap::SysHeap() : Heap(),
+   heap_(GetProcessHeap()),
    size_(0),
-   type_(type)
+   type_(MemPermanent)
 {
    Debug::ftnt(SysHeap_ctor2);
-
-   //  If this is the default heap, wrap it.
-   //
-   if(type == MemPermanent)
-      heap_ = GetProcessHeap();
-   else
-      Debug::SwLog(SysHeap_ctor2, "wrong memory type", type);
 }
 
 //------------------------------------------------------------------------------
@@ -126,7 +119,7 @@ void* SysHeap::Alloc(size_t size)
    if(heap_ == nullptr) return nullptr;
 
    auto addr = HeapAlloc(heap_, 0, size);
-   Requested(size, addr != nullptr);
+   Requested(size, addr);
    return addr;
 }
 
@@ -171,11 +164,12 @@ void SysHeap::Free(void* addr)
    if(heap_ == nullptr) return;
 
    auto size = BlockToSize(addr);
+   Freeing(addr, size);
 
-   if(HeapFree(heap_, 0, addr))
-      Freed(size);
-   else
-      Debug::SwLog(SysHeap_Free, "failed to free heap", GetLastError());
+   if(!HeapFree(heap_, 0, addr))
+   {
+      Debug::SwLog(SysHeap_Free, "HeapFree failed", GetLastError());
+   }
 }
 
 //------------------------------------------------------------------------------

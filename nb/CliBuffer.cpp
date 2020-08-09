@@ -161,17 +161,43 @@ void CliBuffer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+
 fn_name CliBuffer_Echo = "CliBuffer.Echo";
 
-string CliBuffer::Echo() const
+void CliBuffer::Echo()
 {
    Debug::ft(CliBuffer_Echo);
 
-   string s = buff_;
-   return s;
-}
+   //  Skip white space.
+   //
+   if(!FindNextNonBlank()) return;
 
-//------------------------------------------------------------------------------
+   string s;
+   string t;
+
+   //  Create a string that contains the rest of the input stream, but
+   //  handle '&' as a special character for referencing a symbol.  If
+   //  a symbol doesn't follow the '&', include it.
+   //
+   while(true)
+   {
+      switch(CalcType(false))
+      {
+      case EndOfLine:
+         CoutThread::Spool(s.c_str(), true);
+         return;
+
+      case Symbol:
+         if(GetSymbol(t) != CliParm::Ok) s += SymbolChar;
+         s += t;
+         break;
+
+      default:
+         s += buff_[pos_++];
+      }
+   }
+}
 
 fn_name CliBuffer_ErrorAtPos = "CliBuffer.ErrorAtPos";
 
@@ -249,6 +275,17 @@ bool CliBuffer::FindNextNonBlank()
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CliBuffer_GetInput = "CliBuffer.GetInput";
+
+string CliBuffer::GetInput() const
+{
+   Debug::ft(CliBuffer_GetInput);
+
+   return buff_;
 }
 
 //------------------------------------------------------------------------------
@@ -545,44 +582,6 @@ word CliBuffer::OpenInputFile(const string& name, string& expl)
 void CliBuffer::Patch(sel_t selector, void* arguments)
 {
    Temporary::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CliBuffer_Print = "CliBuffer.Print";
-
-void CliBuffer::Print()
-{
-   Debug::ft(CliBuffer_Print);
-
-   //  Skip white space.
-   //
-   if(!FindNextNonBlank()) return;
-
-   string s;
-   string t;
-
-   //  Create a string that contains the rest of the input stream, but
-   //  handle '&' as a special character for referencing a symbol.  If
-   //  a symbol doesn't follow the '&', include it.
-   //
-   while(true)
-   {
-      switch(CalcType(false))
-      {
-      case EndOfLine:
-         CoutThread::Spool(s.c_str(), true);
-         return;
-
-      case Symbol:
-         if(GetSymbol(t) != CliParm::Ok) s += SymbolChar;
-         s += t;
-         break;
-
-      default:
-         s += buff_[pos_++];
-      }
-   }
 }
 
 //------------------------------------------------------------------------------

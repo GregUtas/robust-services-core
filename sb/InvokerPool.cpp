@@ -176,7 +176,6 @@ const size_t InvokerPool::MaxInvokers = 10;
 fn_name InvokerPool_ctor = "InvokerPool.ctor";
 
 InvokerPool::InvokerPool(Faction faction, const string& parmKey) :
-   poolSize_(1),
    invokersCfg_(nullptr),
    corrupt_(false)
 {
@@ -195,9 +194,8 @@ InvokerPool::InvokerPool(Faction faction, const string& parmKey) :
 
    if(invokersCfg_ == nullptr)
    {
-      invokersCfg_.reset(new CfgIntParm(parmKey.c_str(), "1",
-         reinterpret_cast< word* >(&poolSize_), 1,
-         10, "number of invokers in pool"));
+      invokersCfg_.reset(new CfgIntParm(parmKey.c_str(),
+         "1", 1, 10, "number of invokers in pool"));
       reg->BindParm(*invokersCfg_);
    }
 
@@ -329,7 +327,6 @@ void InvokerPool::Display(ostream& stream,
    Dynamic::Display(stream, prefix, options);
 
    stream << prefix << "faction     : " << faction_.to_str() << CRLF;
-   stream << prefix << "poolSize    : " << poolSize_ << CRLF;
    stream << prefix << "corrupt     : " << corrupt_ << CRLF;
    stream << prefix << "invokersCfg : " << CRLF;
    stream << strObj(invokersCfg_.get()) << CRLF;
@@ -772,7 +769,8 @@ void InvokerPool::Startup(RestartLevel level)
 {
    Debug::ft(InvokerPool_Startup);
 
-   auto daemon = InvokerDaemon::GetDaemon(GetFaction(), poolSize_);
+   auto daemon =
+      InvokerDaemon::GetDaemon(GetFaction(), invokersCfg_->GetValue());
    daemon->CreateThreads();
 }
 

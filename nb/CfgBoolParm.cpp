@@ -34,10 +34,9 @@ namespace NodeBase
 {
 fn_name CfgBoolParm_ctor = "CfgBoolParm.ctor";
 
-CfgBoolParm::CfgBoolParm
-(c_string key, c_string def, bool* field, c_string expl) :
+CfgBoolParm::CfgBoolParm(c_string key, c_string def, c_string expl) :
    CfgBitParm(key, def, expl),
-   curr_(field),
+   curr_(false),
    next_(false)
 {
    Debug::ft(CfgBoolParm_ctor);
@@ -59,7 +58,7 @@ void CfgBoolParm::Display(ostream& stream,
 {
    CfgBitParm::Display(stream, prefix, options);
 
-   stream << prefix << "curr : " << *curr_ << CRLF;
+   stream << prefix << "curr : " << curr_ << CRLF;
    stream << prefix << "next : " << next_ << CRLF;
 }
 
@@ -79,7 +78,7 @@ void CfgBoolParm::SetCurr()
    Debug::ft(CfgBoolParm_SetCurr);
 
    FunctionGuard guard(Guard_MemUnprotect);
-   *curr_ = next_;
+   curr_ = next_;
    CfgBitParm::SetCurr();
 }
 

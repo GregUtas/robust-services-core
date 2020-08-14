@@ -20,14 +20,12 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LogThread.h"
-#include <cstddef>
 #include <iosfwd>
 #include <new>
 #include <ostream>
 #include <sstream>
 #include <string>
 #include "CallbackRequest.h"
-#include "CfgIntParm.h"
 #include "CfgParmRegistry.h"
 #include "CoutThread.h"
 #include "Debug.h"
@@ -60,10 +58,6 @@ SysMutex LogFileLock_("LogFileLock");
 
 //------------------------------------------------------------------------------
 
-word LogThread::NoSpoolingMessageCount_ = 400;
-
-//------------------------------------------------------------------------------
-
 fn_name LogThread_ctor = "LogThread.ctor";
 
 LogThread::LogThread() :
@@ -79,8 +73,7 @@ LogThread::LogThread() :
    if(noSpoolingMessageCount_ == nullptr)
    {
       noSpoolingMessageCount_.reset
-         (new CfgIntParm("NoSpoolingMessageCount", "400",
-         &NoSpoolingMessageCount_, 200, 600,
+         (new CfgIntParm("NoSpoolingMessageCount", "400", 200, 600,
          "messages reserved for work other than spooling logs"));
       reg->BindParm(*noSpoolingMessageCount_);
    }
@@ -146,8 +139,6 @@ void LogThread::Display(ostream& stream,
 {
    Thread::Display(stream, prefix, options);
 
-   stream << prefix << "NoSpoolingMessageCount : ";
-   stream << NoSpoolingMessageCount_ << CRLF;
    stream << prefix << "noSpoolingMessageCount : ";
    stream << strObj(noSpoolingMessageCount_.get()) << CRLF;
 }
@@ -174,7 +165,7 @@ void LogThread::Enter()
    {
       Pause(delay);
 
-      if(msgs->AvailCount() <= size_t(NoSpoolingMessageCount_))
+      if(msgs->AvailCount() <= NoSpoolingMessageCount())
       {
          delay = ONE_SEC;  // wait for more MsgBuffers
          continue;

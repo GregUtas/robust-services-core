@@ -35,6 +35,7 @@
 #include "SbPools.h"
 #include "SbTypes.h"
 #include "Singleton.h"
+#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -44,11 +45,6 @@ using std::string;
 
 namespace SessionBase
 {
-word PayloadInvokerPool::NoIngressQueueLength_ = 1200;
-word PayloadInvokerPool::NoIngressMessageCount_ = 800;
-
-//------------------------------------------------------------------------------
-
 fn_name PayloadInvokerPool_ctor = "PayloadInvokerPool.ctor";
 
 PayloadInvokerPool::PayloadInvokerPool() :
@@ -67,8 +63,7 @@ PayloadInvokerPool::PayloadInvokerPool() :
    if(noIngressQueueLength_ == nullptr)
    {
       noIngressQueueLength_.reset
-         (new CfgIntParm("NoIngressQueueLength", "1200",
-         &NoIngressQueueLength_, 600, 1800,
+         (new CfgIntParm("NoIngressQueueLength", "1200", 600, 1800,
          "maximum length of ingress work queue"));
       reg->BindParm(*noIngressQueueLength_);
    }
@@ -79,8 +74,7 @@ PayloadInvokerPool::PayloadInvokerPool() :
    if(noIngressMessageCount_ == nullptr)
    {
       noIngressMessageCount_.reset
-         (new CfgIntParm("NoIngressMessageCount", "800",
-         &NoIngressMessageCount_, 400, 1200,
+         (new CfgIntParm("NoIngressMessageCount", "800", 400, 1200,
          "messages reserved for non-ingress work"));
       reg->BindParm(*noIngressMessageCount_);
    }
@@ -112,10 +106,6 @@ void PayloadInvokerPool::Display(ostream& stream,
 {
    InvokerPool::Display(stream, prefix, options);
 
-   stream << prefix << "NoIngressQueueLength  : ";
-   stream << NoIngressQueueLength_ << CRLF;
-   stream << prefix << "NoIngressMessageCount : ";
-   stream << NoIngressMessageCount_ << CRLF;
    stream << prefix << "noIngressQueueLength  : ";
    stream << strObj(noIngressQueueLength_.get()) << CRLF;
    stream << prefix << "noIngressMessageCount : ";
@@ -169,9 +159,9 @@ bool PayloadInvokerPool::RejectIngressWork() const
    Debug::ft(PayloadInvokerPool_RejectIngressWork);
 
    auto msgCount = Singleton< MessagePool >::Instance()->AvailCount();
-   auto msgOvld = (msgCount <= size_t(NoIngressMessageCount_));
+   auto msgOvld = (msgCount <= size_t(noIngressMessageCount_->GetValue()));
    auto workLength = WorkQCurrLength(INGRESS);
-   auto workOvld = (workLength >= size_t(NoIngressQueueLength_));
+   auto workOvld = (workLength >= size_t(noIngressQueueLength_->GetValue()));
 
    if(msgOvld || workOvld)
    {

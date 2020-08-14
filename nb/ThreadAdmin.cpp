@@ -22,7 +22,6 @@
 #include "ThreadAdmin.h"
 #include "CfgBoolParm.h"
 #include "Dynamic.h"
-#include "Persistent.h"
 #include "StatisticsGroup.h"
 #include <bitset>
 #include <ostream>
@@ -94,7 +93,7 @@ public:
 class BreakEnabledCfg : public CfgBoolParm
 {
 public:
-   explicit BreakEnabledCfg(bool* field);
+   BreakEnabledCfg();
    ~BreakEnabledCfg();
 protected:
    void SetCurr() override;
@@ -175,8 +174,8 @@ void ThreadsStatsGroup::DisplayStats
 
 fn_name BreakEnabledCfg_ctor = "BreakEnabledCfg.ctor";
 
-BreakEnabledCfg::BreakEnabledCfg(bool* field) :
-   CfgBoolParm("BreakEnabled", "F", field, "set to use breakpoint debugging")
+BreakEnabledCfg::BreakEnabledCfg() :
+   CfgBoolParm("BreakEnabled", "F", "set to use breakpoint debugging")
 {
    Debug::ft(BreakEnabledCfg_ctor);
 }
@@ -198,7 +197,7 @@ void BreakEnabledCfg::SetCurr()
 {
    Debug::ft(BreakEnabledCfg_SetCurr);
 
-   auto curr = GetCurrValue();
+   auto curr = GetValue();
    auto next = GetNextValue();
 
    CfgBoolParm::SetCurr();
@@ -215,122 +214,66 @@ void BreakEnabledCfg::SetCurr()
 
 //==============================================================================
 
-struct ThreadAdminValues : public Persistent
-{
-   //  Initializes configuration parameters to default values.
-   //
-   ThreadAdminValues() :
-      initTimeoutMsecs_(2000),
-      schedTimeoutMsecs_(100),
-      reinitOnSchedTimeout_(true),
-      rtcTimeoutMsecs_(20),
-      trapOnRtcTimeout_(true),
-      rtcLimit_(6),
-      rtcInterval_(60),
-      breakEnabled_(false),
-      trapLimit_(4),
-      trapInterval_(60),
-      stackUsageLimit_(8000),
-      stackCheckInterval_(1)
-   {
-   }
-
-   //  See the eponymous public functions for a description of each value.
-   //
-   word initTimeoutMsecs_;
-   word schedTimeoutMsecs_;
-   bool reinitOnSchedTimeout_;
-   word rtcTimeoutMsecs_;
-   bool trapOnRtcTimeout_;
-   word rtcLimit_;
-   word rtcInterval_;
-   bool breakEnabled_;
-   word trapLimit_;
-   word trapInterval_;
-   word stackUsageLimit_;
-   word stackCheckInterval_;
-};
-
-//  Created before entering main() to provide default values for configuration
-//  parameters until they are set from the configuration file.
-//
-const ThreadAdminValues DefaultAdminValues;
-
-//==============================================================================
-
 fn_name ThreadAdmin_ctor = "ThreadAdmin.ctor";
 
 ThreadAdmin::ThreadAdmin()
 {
    Debug::ft(ThreadAdmin_ctor);
 
-   config_.reset(new ThreadAdminValues);
    stats_.reset(new ThreadsStats);
    statsGroup_.reset(new ThreadsStatsGroup);
 
    auto creg = Singleton< CfgParmRegistry >::Instance();
 
    initTimeoutMsecs_.reset(new CfgIntParm("InitTimeoutMsecs",
-      "10000", &config_->initTimeoutMsecs_, 5000, 180000,
-      "restart timeout (msecs)"));
+      "10000", 5000, 180000, "restart timeout (msecs)"));
    creg->BindParm(*initTimeoutMsecs_);
 
    schedTimeoutMsecs_.reset(new CfgIntParm("SchedTimeoutMsecs",
-      "50", &config_->schedTimeoutMsecs_, 5, 200,
-      "scheduling timeout (msecs)"));
+      "50", 5, 200, "scheduling timeout (msecs)"));
    creg->BindParm(*schedTimeoutMsecs_);
 
    reinitOnSchedTimeout_.reset(new CfgBoolParm("ReinitOnSchedTimeout",
-      "T", &config_->reinitOnSchedTimeout_,
-      "set to cause a restart on scheduling timeout"));
+      "T", "set to cause a restart on scheduling timeout"));
    creg->BindParm(*reinitOnSchedTimeout_);
 
    rtcTimeoutMsecs_.reset(new CfgIntParm("RtcTimeoutMsecs",
-      "20", &config_->rtcTimeoutMsecs_, 5, 100,
-      "run-to-completion timeout (msecs)"));
+      "20", 5, 100, "run-to-completion timeout (msecs)"));
    creg->BindParm(*rtcTimeoutMsecs_);
 
    trapOnRtcTimeout_.reset(new CfgBoolParm("TrapOnRtcTimeout",
-      "T", &config_->trapOnRtcTimeout_,
-      "set to trap when a thread exceeds the RTC timeout"));
+      "T", "set to trap when a thread exceeds the RTC timeout"));
    creg->BindParm(*trapOnRtcTimeout_);
 
    rtcLimit_.reset(new CfgIntParm("RtcLimit",
-      "6", &config_->rtcLimit_, 1, 10,
-      "RTC timeouts that cause thread to be trapped"));
+      "6", 1, 10, "RTC timeouts that cause thread to be trapped"));
    creg->BindParm(*rtcLimit_);
 
    rtcInterval_.reset(new CfgIntParm("RtcInterval",
-      "60", &config_->rtcInterval_, 5, 60,
-      "interval (secs) in which to reach RtcLimit"));
+      "60", 5, 60, "interval (secs) in which to reach RtcLimit"));
    creg->BindParm(*rtcInterval_);
 
-   breakEnabled_.reset(new BreakEnabledCfg(&config_->breakEnabled_));
+   breakEnabled_.reset(new BreakEnabledCfg);
    creg->BindParm(*breakEnabled_);
 
    trapLimit_.reset(new CfgIntParm("TrapLimit",
-      "4", &config_->trapLimit_, 2, 10,
-      "trap count that kills/recreates thread"));
+      "4", 2, 10, "trap count that kills/recreates thread"));
    creg->BindParm(*trapLimit_);
 
    trapInterval_.reset(new CfgIntParm("TrapInterval",
-      "60", &config_->trapInterval_, 5, 300,
-      "interval (secs) in which to reach TrapLimit"));
+      "60", 5, 300, "interval (secs) in which to reach TrapLimit"));
    creg->BindParm(*trapInterval_);
 
    checkStack_.reset(new CfgFlagParm("CheckStack",
-      "F", &Debug::FcFlags_, Debug::StackChecking,
-      "set to check stack sizes"));
+      "F", &Debug::FcFlags_, Debug::StackChecking, "set to check stack sizes"));
    creg->BindParm(*checkStack_);
 
    stackUsageLimit_.reset(new CfgIntParm("StackUsageLimit",
-      "8000", &config_->stackUsageLimit_, 4000, 20000,
-      "stack usage that traps thread (words)"));
+      "8000", 4000, 20000, "stack usage that traps thread (words)"));
    creg->BindParm(*stackUsageLimit_);
 
    stackCheckInterval_.reset(new CfgIntParm("StackCheckInterval",
-      "10", &config_->stackCheckInterval_, 1, 20,
-      "check stack size every nth function call"));
+      "10", 1, 20, "check stack size every nth function call"));
    creg->BindParm(*stackCheckInterval_);
 }
 
@@ -347,28 +290,12 @@ ThreadAdmin::~ThreadAdmin()
 
 //------------------------------------------------------------------------------
 
-const ThreadAdminValues* ThreadAdmin::AccessConfig()
-{
-   if((Restart::GetStage() == ShuttingDown) &&
-      (Restart::GetLevel() == RestartReload))
-   {
-      return nullptr;
-   }
-
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin == nullptr) return nullptr;
-   return admin->config_.get();
-}
-
-//------------------------------------------------------------------------------
-
 bool ThreadAdmin::BreakEnabled()
 {
    if(!Element::RunningInLab()) return false;
 
-   auto config = AccessConfig();
-   if(config != nullptr) return config->breakEnabled_;
-   return DefaultAdminValues.breakEnabled_;
+   auto self = Singleton< ThreadAdmin >::Extant();
+   return (self != nullptr ? self->breakEnabled_->GetValue() : false);
 }
 
 //------------------------------------------------------------------------------
@@ -377,33 +304,6 @@ void ThreadAdmin::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    Protected::Display(stream, prefix, options);
-
-   if(!options.test(DispVerbose)) return;
-
-   stream << prefix << "InitTimeoutMsecs     : ";
-   stream << config_->initTimeoutMsecs_ << CRLF;
-   stream << prefix << "SchedTimeoutMsecs    : ";
-   stream << config_->schedTimeoutMsecs_ << CRLF;
-   stream << prefix << "ReinitOnSchedTimeout : ";
-   stream << config_->reinitOnSchedTimeout_ << CRLF;
-   stream << prefix << "RtcTimeoutMsecs      : ";
-   stream << config_->rtcTimeoutMsecs_ << CRLF;
-   stream << prefix << "TrapOnRtcTimeout     : ";
-   stream << config_->trapOnRtcTimeout_ << CRLF;
-   stream << prefix << "RtcLimit             : ";
-   stream << config_->rtcLimit_ << CRLF;
-   stream << prefix << "RtcInterval          : ";
-   stream << config_->rtcInterval_ << CRLF;
-   stream << prefix << "BreakEnabled         : ";
-   stream << config_->breakEnabled_ << CRLF;
-   stream << prefix << "TrapLimit            : ";
-   stream << config_->trapLimit_ << CRLF;
-   stream << prefix << "TrapInterval         : ";
-   stream << config_->trapInterval_ << CRLF;
-   stream << prefix << "StackUsageLimit      : ";
-   stream << config_->stackUsageLimit_ << CRLF;
-   stream << prefix << "StackCheckInterval   : ";
-   stream << config_->stackCheckInterval_ << CRLF;
 
    stream << prefix << "initTimeoutMsecs     : ";
    stream << strObj(initTimeoutMsecs_.get()) << CRLF;
@@ -431,7 +331,6 @@ void ThreadAdmin::Display(ostream& stream,
    stream << strObj(stackUsageLimit_.get()) << CRLF;
    stream << prefix << "stackCheckInterval   : ";
    stream << strObj(stackCheckInterval_.get()) << CRLF;
-
    stream << prefix << "statsGroup           : ";
    stream << strObj(statsGroup_.get()) << CRLF;
 }
@@ -544,9 +443,8 @@ Duration ThreadAdmin::InitTimeout()
 {
    Debug::ft(ThreadAdmin_InitTimeout);
 
-   auto config = AccessConfig();
-   auto msecs = (config != nullptr ?
-      config->initTimeoutMsecs_ : DefaultAdminValues.initTimeoutMsecs_);
+   auto self = Singleton< ThreadAdmin >::Extant();
+   auto msecs = (self != nullptr ? self->initTimeoutMsecs_->GetValue() : 2000);
    return Duration(msecs, mSECS) << WarpFactor();
 }
 
@@ -561,36 +459,32 @@ void ThreadAdmin::Patch(sel_t selector, void* arguments)
 
 bool ThreadAdmin::ReinitOnSchedTimeout()
 {
-   auto config = AccessConfig();
-   if(config != nullptr) return config->reinitOnSchedTimeout_;
-   return DefaultAdminValues.reinitOnSchedTimeout_;
+   auto self = Singleton< ThreadAdmin >::Extant();
+   return (self != nullptr ? self->reinitOnSchedTimeout_->GetValue() : true);
 }
 
 //------------------------------------------------------------------------------
 
 word ThreadAdmin::RtcInterval()
 {
-   auto config = AccessConfig();
-   if(config != nullptr) return config->rtcInterval_;
-   return DefaultAdminValues.rtcInterval_;
+   auto self = Singleton< ThreadAdmin >::Extant();
+   return (self != nullptr ? self->rtcInterval_->GetValue() : 60);
 }
 
 //------------------------------------------------------------------------------
 
 word ThreadAdmin::RtcLimit()
 {
-   auto config = AccessConfig();
-   if(config != nullptr) return config->rtcLimit_;
-   return DefaultAdminValues.rtcLimit_;
+   auto self = Singleton< ThreadAdmin >::Extant();
+   return (self != nullptr ? self->rtcLimit_->GetValue() : 6);
 }
 
 //------------------------------------------------------------------------------
 
 Duration ThreadAdmin::RtcTimeout()
 {
-   auto config = AccessConfig();
-   auto msecs = (config != nullptr ?
-      config->rtcTimeoutMsecs_ : DefaultAdminValues.rtcTimeoutMsecs_);
+   auto self = Singleton< ThreadAdmin >::Extant();
+   auto msecs = (self != nullptr ? self->rtcTimeoutMsecs_->GetValue() : 20);
    return Duration(msecs, mSECS);
 }
 
@@ -598,9 +492,8 @@ Duration ThreadAdmin::RtcTimeout()
 
 Duration ThreadAdmin::SchedTimeout()
 {
-   auto config = AccessConfig();
-   auto msecs = (config != nullptr ?
-      config->schedTimeoutMsecs_ : DefaultAdminValues.schedTimeoutMsecs_);
+   auto self = Singleton< ThreadAdmin >::Extant();
+   auto msecs = (self != nullptr ? self->schedTimeoutMsecs_->GetValue() : 100);
    return Duration(msecs, mSECS);
 }
 
@@ -621,18 +514,16 @@ void ThreadAdmin::Shutdown(RestartLevel level)
 
 word ThreadAdmin::StackCheckInterval()
 {
-   auto config = AccessConfig();
-   if(config != nullptr) return config->stackCheckInterval_;
-   return DefaultAdminValues.stackCheckInterval_;
+   auto self = Singleton< ThreadAdmin >::Extant();
+   return (self != nullptr ? self->stackCheckInterval_->GetValue() : 1);
 }
 
 //------------------------------------------------------------------------------
 
 word ThreadAdmin::StackUsageLimit()
 {
-   auto config = AccessConfig();
-   if(config != nullptr) return config->stackUsageLimit_;
-   return DefaultAdminValues.stackUsageLimit_;
+   auto self = Singleton< ThreadAdmin >::Extant();
+   return (self != nullptr ? self->stackUsageLimit_->GetValue() : 8000);
 }
 
 //------------------------------------------------------------------------------
@@ -677,27 +568,24 @@ word ThreadAdmin::TrapCount()
 
 word ThreadAdmin::TrapInterval()
 {
-   auto config = AccessConfig();
-   if(config != nullptr) return config->trapInterval_;
-   return DefaultAdminValues.trapInterval_;
+   auto self = Singleton< ThreadAdmin >::Extant();
+   return (self != nullptr ? self->trapInterval_->GetValue() : 60);
 }
 
 //------------------------------------------------------------------------------
 
 word ThreadAdmin::TrapLimit()
 {
-   auto config = AccessConfig();
-   if(config != nullptr) return config->trapLimit_;
-   return DefaultAdminValues.trapLimit_;
+   auto self = Singleton< ThreadAdmin >::Extant();
+   return (self != nullptr ? self->trapLimit_->GetValue() : 4);
 }
 
 //------------------------------------------------------------------------------
 
 bool ThreadAdmin::TrapOnRtcTimeout()
 {
-   auto config = AccessConfig();
-   if(config != nullptr) return config->trapOnRtcTimeout_;
-   return DefaultAdminValues.trapOnRtcTimeout_;
+   auto self = Singleton< ThreadAdmin >::Extant();
+   return (self != nullptr ? self->trapOnRtcTimeout_->GetValue() : true);
 }
 
 //------------------------------------------------------------------------------

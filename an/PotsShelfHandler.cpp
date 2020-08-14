@@ -35,6 +35,7 @@
 #include "SbAppIds.h"
 #include "SbIpBuffer.h"
 #include "Singleton.h"
+#include "SysTypes.h"
 #include "TlvParameter.h"
 
 //------------------------------------------------------------------------------

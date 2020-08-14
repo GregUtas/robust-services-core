@@ -36,12 +36,15 @@ class CfgIntParm : public CfgParm
 public:
    //  Creates a parameter with the specified attributes.
    //
-   CfgIntParm(c_string key, c_string def, word* field,
-      word min, word max, c_string expl);
+   CfgIntParm(c_string key, c_string def, word min, word max, c_string expl);
 
    //  Virtual to allow subclassing.
    //
    virtual ~CfgIntParm();
+
+   //  Returns the parameter's current value.
+   //
+   word GetValue() const { return curr_; }
 
    //  Overridden to display member variables.
    //
@@ -52,10 +55,6 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Returns the parameter's current value.
-   //
-   word GetCurrValue() const { return *curr_; }
-
    //  Sets the parameter's next value.  May be overridden to prevent
    //  invalid settings.  If so, invoke this version before returning
    //  true.
@@ -66,7 +65,7 @@ protected:
    //
    void Explain(std::string& expl) const override;
 
-   //  Calls GetCurrValue and maps the result to a string that corresponds
+   //  Calls GetValue and maps the result to a string that corresponds
    //  to the parameter's current value.
    //
    std::string GetCurr() const override;
@@ -80,9 +79,9 @@ protected:
    //
    bool SetNext(c_string input) override;
 private:
-   //  A pointer to the field that contains the parameter's value.
+   //  The parameter's current value.
    //
-   word* const curr_;
+   word curr_;
 
    //  The value to be set during an appropriate restart.
    //

@@ -54,7 +54,7 @@ public:
 protected:
    //  Overridden to return the parameter's current value.
    //
-   bool GetCurrValue() const override;
+   bool GetValue() const override;
 
    //  Overridden to transfer next_ to curr_.
    //
@@ -64,7 +64,9 @@ protected:
    //
    bool SetNextValue(bool value) override;
 private:
-   //  A pointer to the object that contains the flag's value.
+   //  A pointer to the object that contains the flag's value.  Its
+   //  MemoryType must have at least the same level of persistence
+   //  as this configuration parameter
    //
    Flags* const curr_;
 

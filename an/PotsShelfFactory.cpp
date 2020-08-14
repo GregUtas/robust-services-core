@@ -31,6 +31,7 @@
 #include "PotsProtocol.h"
 #include "SbAppIds.h"
 #include "Singleton.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 

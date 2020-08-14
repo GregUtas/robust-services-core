@@ -33,6 +33,7 @@
 #include "UdpIpService.h"
 #include <cstddef>
 #include "Duration.h"
+#include "IpPortCfgParm.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SbTypes.h"
@@ -302,7 +303,7 @@ public:
    //  Overridden to return the service's attributes.
    //
    c_string Name() const override { return "Call Interworking"; }
-   ipport_t Port() const override { return ipport_t(port_); }
+   ipport_t Port() const override { return portCfg_->GetPort(); }
    Faction GetFaction() const override { return PayloadFaction; }
 private:
    //  Private because this singleton is not subclassed.
@@ -321,11 +322,7 @@ private:
    //
    InputHandler* CreateHandler(IpPort* port) const override;
 
-   //  The port on which the protocol is running.
-   //
-   word port_;
-
-   //  The configuration parameter for port_.
+   //  The configuration parameter for setting the service's port.
    //
    IpPortCfgParmPtr portCfg_;
 };
@@ -341,7 +338,7 @@ public:
    //  Overridden to return the service's attributes.
    //
    c_string Name() const override { return "Call Interworking"; }
-   ipport_t Port() const override { return ipport_t(port_); }
+   ipport_t Port() const override { return portCfg_->GetPort(); }
    Faction GetFaction() const override { return PayloadFaction; }
    size_t MaxConns() const override { return TcpIoThread::MaxConns; }
    size_t MaxBacklog() const override { return 200; }
@@ -366,11 +363,7 @@ private:
    //
    InputHandler* CreateHandler(IpPort* port) const override;
 
-   //  The port on which the protocol is running.
-   //
-   word port_;
-
-   //  The configuration parameter for port_.
+   //  The configuration parameter for setting the service's port.
    //
    IpPortCfgParmPtr portCfg_;
 };

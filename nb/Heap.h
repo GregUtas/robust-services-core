@@ -24,7 +24,9 @@
 
 #include "Permanent.h"
 #include <cstddef>
+#include <iosfwd>
 #include <map>
+#include <utility>
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------

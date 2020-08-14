@@ -25,7 +25,6 @@
 #include "NbAppIds.h"
 #include "NbModule.h"
 #include "NtIncrement.h"
-#include "Restart.h"
 #include "Singleton.h"
 #include "SymbolRegistry.h"
 #include "SysTypes.h"

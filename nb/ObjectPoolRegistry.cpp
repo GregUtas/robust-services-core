@@ -25,7 +25,6 @@
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
-#include "CfgBoolParm.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -128,8 +127,7 @@ void ObjectPoolStatsGroup::DisplayStats
 
 fn_name ObjectPoolRegistry_ctor = "ObjectPoolRegistry.ctor";
 
-ObjectPoolRegistry::ObjectPoolRegistry() :
-   nullifyObjectData_(false)
+ObjectPoolRegistry::ObjectPoolRegistry()
 {
    Debug::ft(ObjectPoolRegistry_ctor);
 
@@ -137,7 +135,7 @@ ObjectPoolRegistry::ObjectPoolRegistry() :
    pools_.Init(ObjectPool::MaxId, ObjectPool::CellDiff(), MemProtected);
    statsGroup_.reset(new ObjectPoolStatsGroup);
    nullifyObjectDataCfg_.reset(new CfgBoolParm("NullifyObjectData", "F",
-      &nullifyObjectData_, "set to nullify the data after an object's vptr"));
+      "set to nullify the data after an object's vptr"));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*nullifyObjectDataCfg_);
 }
 
@@ -272,8 +270,6 @@ void ObjectPoolRegistry::Display(ostream& stream,
 
    stream << prefix << "statsGroup        : ";
    stream << strObj(statsGroup_.get()) << CRLF;
-   stream << prefix << "nullifyObjectData : ";
-   stream << nullifyObjectData_ << CRLF;
    stream << prefix << "nullifyObjectDataCfg : ";
    stream << strObj(nullifyObjectDataCfg_.get()) << CRLF;
 

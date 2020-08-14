@@ -212,10 +212,6 @@ private:
    //
    NodeBase::RegCell faction_;
 
-   //  The desired number of invokers in the pool.
-   //
-   size_t poolSize_;
-
    //  The configuration parameter for the number of invokers in the pool.
    //
    NodeBase::CfgIntParmPtr invokersCfg_;

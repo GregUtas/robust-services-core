@@ -50,7 +50,7 @@ namespace NetworkBase
 class HostAddrCfg : public CfgStrParm
 {
 public:
-   explicit HostAddrCfg(ProtectedStr* field);
+   HostAddrCfg();
    ~HostAddrCfg();
    SysIpL2Addr Address() const { return addr_; }
 protected:
@@ -67,8 +67,8 @@ private:
 
 fn_name HostAddrCfg_ctor = "HostAddrCfg.ctor";
 
-HostAddrCfg::HostAddrCfg(ProtectedStr* field) : CfgStrParm("ElementDefaultAddr",
-   "127.0.0.1", field, "element's default IP address (n.n.n.n)")
+HostAddrCfg::HostAddrCfg() : CfgStrParm("ElementDefaultAddr",
+   "127.0.0.1", "element's default IP address (n.n.n.n)")
 {
    Debug::ft(HostAddrCfg_ctor);
 }
@@ -177,12 +177,12 @@ void IpPortStatsGroup::DisplayStats
 
 fn_name IpPortRegistry_ctor = "IpPortRegistry.ctor";
 
-IpPortRegistry::IpPortRegistry() : hostAddrStr_("127.0.0.1")
+IpPortRegistry::IpPortRegistry()
 {
    Debug::ft(IpPortRegistry_ctor);
 
    portq_.Init(IpPort::LinkDiff());
-   hostAddrCfg_.reset(new HostAddrCfg(&hostAddrStr_));
+   hostAddrCfg_.reset(new HostAddrCfg);
    Singleton< CfgParmRegistry >::Instance()->BindParm(*hostAddrCfg_);
    statsGroup_.reset(new IpPortStatsGroup);
 }
@@ -277,7 +277,6 @@ void IpPortRegistry::Display(ostream& stream,
    Protected::Display(stream, prefix, options);
 
    stream << prefix << "HostAddr    : " << hostAddr_.to_str() << CRLF;
-   stream << prefix << "HostAddrStr : " << hostAddrStr_ << CRLF;
    stream << prefix << "hostAddrCfg : " << strObj(hostAddrCfg_.get()) << CRLF;
    stream << prefix << "statsGroup  : " << strObj(statsGroup_.get()) << CRLF;
    stream << prefix << "portq : " << CRLF;

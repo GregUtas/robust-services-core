@@ -26,7 +26,6 @@
 #include "Formatters.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
-#include "NwTypes.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -40,8 +39,8 @@ namespace NetworkBase
 fn_name IpPortCfgParm_ctor = "IpPortCfgParm.ctor";
 
 IpPortCfgParm::IpPortCfgParm(c_string key, c_string def,
-   word* field, c_string expl, const IpService* service) :
-   CfgIntParm(key, def, field, FirstAppIpPort, LastAppIpPort, expl),
+   c_string expl, const IpService* service) :
+   CfgIntParm(key, def, FirstAppIpPort, LastAppIpPort, expl),
    service_(service)
 {
    Debug::ft(IpPortCfgParm_ctor);

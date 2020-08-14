@@ -23,7 +23,6 @@
 #include "Debug.h"
 #include "MbPools.h"
 #include "ModuleRegistry.h"
-#include "Restart.h"
 #include "SbModule.h"
 #include "Singleton.h"
 #include "Switch.h"

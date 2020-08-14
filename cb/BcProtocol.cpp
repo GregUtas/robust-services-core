@@ -38,7 +38,6 @@
 #include "FactoryRegistry.h"
 #include "GlobalAddress.h"
 #include "IpPort.h"
-#include "IpPortCfgParm.h"
 #include "IpPortRegistry.h"
 #include "NbAppIds.h"
 #include "RootServiceSM.h"
@@ -215,13 +214,13 @@ fixed_string CipUdpPortExpl = "Call Interworking Protocol: UDP port";
 
 fn_name CipUdpService_ctor = "CipUdpService.ctor";
 
-CipUdpService::CipUdpService() : port_(NilIpPort)
+CipUdpService::CipUdpService()
 {
    Debug::ft(CipUdpService_ctor);
 
    auto port = std::to_string(CipIpPort);
    portCfg_.reset(new IpPortCfgParm
-      (CipUdpPortKey, port.c_str(), &port_, CipUdpPortExpl, this));
+      (CipUdpPortKey, port.c_str(), CipUdpPortExpl, this));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
 }
 
@@ -276,13 +275,13 @@ fixed_string CipTcpPortExpl = "Call Interworking Protocol: TCP port";
 
 fn_name CipTcpService_ctor = "CipTcpService.ctor";
 
-CipTcpService::CipTcpService() : port_(NilIpPort)
+CipTcpService::CipTcpService()
 {
    Debug::ft(CipTcpService_ctor);
 
    auto port = std::to_string(CipIpPort);
    portCfg_.reset(new IpPortCfgParm
-      (CipTcpPortKey, port.c_str(), &port_, CipTcpPortExpl, this));
+      (CipTcpPortKey, port.c_str(), CipTcpPortExpl, this));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
 }
 

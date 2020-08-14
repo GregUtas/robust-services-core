@@ -22,7 +22,6 @@
 #include "Library.h"
 #include <sstream>
 #include "CfgParmRegistry.h"
-#include "CfgStrParm.h"
 #include "CodeDir.h"
 #include "CodeDirSet.h"
 #include "CodeFile.h"
@@ -87,9 +86,8 @@ Library::Library() :
    files_.Init(MaxFiles, CodeFile::CellDiff(), MemPermanent);
    vars_.Init(LibrarySet::LinkDiff());
 
-   sourcePath_.reset(new ProtectedStr);
    sourcePathCfg_.reset(new CfgStrParm
-      ("SourcePath", EMPTY_STR, sourcePath_.get(), "source code directory"));
+      ("SourcePath", EMPTY_STR, "source code directory"));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*sourcePathCfg_);
 }
 
@@ -256,7 +254,6 @@ void Library::Display(ostream& stream,
 {
    Base::Display(stream, prefix, options);
 
-   stream << prefix << "sourcePath    : " << sourcePath_.get() << CRLF;
    stream << prefix << "sourcePathCfg : " << sourcePathCfg_.get() << CRLF;
    stream << prefix << "dirs : " << CRLF;
    dirs_.Display(stream, prefix + spaces(2), options);
@@ -602,7 +599,6 @@ void Library::Shutdown(RestartLevel level)
    Debug::ft(Library_Shutdown);
 
    Restart::Release(sourcePathCfg_);
-   if(Restart::ClearsMemory(MemProtected)) sourcePath_.release();
 
    //  The library is preserved during restarts.
    //
@@ -622,19 +618,13 @@ void Library::Startup(RestartLevel level)
 {
    Debug::ft(Library_Startup);
 
-   //  Recreate our configuration parameter and its string if either no longer
-   //  exists.
+   //  Recreate our configuration parameter if it no longer exists.
    //
-   if(sourcePath_ == nullptr)
-   {
-      sourcePath_.reset(new ProtectedStr);
-   }
-
    if(sourcePathCfg_ == nullptr)
    {
       FunctionGuard guard(Guard_MemUnprotect);
       sourcePathCfg_.reset(new CfgStrParm
-         ("SourcePath", EMPTY_STR, sourcePath_.get(), "source code directory"));
+         ("SourcePath", EMPTY_STR, "source code directory"));
       Singleton< CfgParmRegistry >::Instance()->BindParm(*sourcePathCfg_);
    }
 

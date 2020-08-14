@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <iosfwd>
 #include <string>
+#include "CfgStrParm.h"
 #include "NbTypes.h"
 #include "Q2Way.h"
 #include "Registry.h"
@@ -54,7 +55,7 @@ public:
    //  Returns the path to the source directory, the root for all .h and
    //  .cpp files.  Does not include a trailing PATH_SEPARATOR character.
    //
-   NodeBase::c_string SourcePath() const { return sourcePath_->c_str(); }
+   NodeBase::c_string SourcePath() const {return sourcePathCfg_->GetValue(); }
 
    //  Adds PATH, which will be known by NAME, to the code base.  Updates
    //  EXPL to indicate success or failure.  Returns 0 on success.
@@ -175,10 +176,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~Library();
-
-   //  The path to the root directory for source code files.
-   //
-   NodeBase::ProtectedStrPtr sourcePath_;
 
    //  Configuration parameter for the source code directory.
    //

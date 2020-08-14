@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StreamRequest.h"
+#include <cstddef>
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"

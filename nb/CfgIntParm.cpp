@@ -35,10 +35,9 @@ namespace NodeBase
 {
 fn_name CfgIntParm_ctor = "CfgIntParm.ctor";
 
-CfgIntParm::CfgIntParm(c_string key, c_string def, word* field,
-   word min, word max, c_string expl) :
-   CfgParm(key, def, expl),
-   curr_(field),
+CfgIntParm::CfgIntParm(c_string key, c_string def, word min, word max,
+   c_string expl) : CfgParm(key, def, expl),
+   curr_(0),
    next_(0),
    min_(min),
    max_(max)
@@ -62,7 +61,7 @@ void CfgIntParm::Display(ostream& stream,
 {
    CfgParm::Display(stream, prefix, options);
 
-   stream << prefix << "curr : " << *curr_ << CRLF;
+   stream << prefix << "curr : " << curr_ << CRLF;
    stream << prefix << "next : " << next_ << CRLF;
    stream << prefix << "min  : " << min_ << CRLF;
    stream << prefix << "max  : " << max_ << CRLF;
@@ -88,7 +87,7 @@ string CfgIntParm::GetCurr() const
 {
    Debug::ft(CfgIntParm_GetCurr);
 
-   return std::to_string(*curr_);
+   return std::to_string(curr_);
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +106,7 @@ void CfgIntParm::SetCurr()
    Debug::ft(CfgIntParm_SetCurr);
 
    FunctionGuard guard(Guard_MemUnprotect);
-   *curr_ = next_;
+   curr_ = next_;
    CfgParm::SetCurr();
 }
 

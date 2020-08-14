@@ -25,11 +25,11 @@
 #include "MsgFactory.h"
 #include "SbExtInputHandler.h"
 #include "UdpIpService.h"
+#include "IpPortCfgParm.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SbTypes.h"
 #include "Switch.h"
-#include "SysTypes.h"
 
 using namespace SessionBase;
 using namespace MediaBase;
@@ -48,7 +48,7 @@ public:
    //  Overridden to return the service's attributes.
    //
    c_string Name() const override { return "POTS Shelf"; }
-   ipport_t Port() const override { return ipport_t(port_); }
+   ipport_t Port() const override { return portCfg_->GetPort(); }
    Faction GetFaction() const override { return PayloadFaction; }
 private:
    //  Private because this singleton is not subclassed.
@@ -67,11 +67,7 @@ private:
    //
    InputHandler* CreateHandler(IpPort* port) const override;
 
-   //  The port on which the protocol is running.
-   //
-   word port_;
-
-   //  The configuration parameter for port_.
+   //  The configuration parameter for setting the service's port.
    //
    IpPortCfgParmPtr portCfg_;
 };

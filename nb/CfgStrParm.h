@@ -37,11 +37,15 @@ class CfgStrParm : public CfgParm
 public:
    //  Creates a parameter with the specified attributes.
    //
-   CfgStrParm(c_string key, c_string def, ProtectedStr* field, c_string expl);
+   CfgStrParm(c_string key, c_string def, c_string expl);
 
    //  Virtual to allow subclassing.
    //
    virtual ~CfgStrParm();
+
+   //  Returns the parameter's current value.
+   //
+   c_string GetValue() const { return curr_.c_str(); }
 
    //  Overridden to display member variables.
    //
@@ -58,7 +62,7 @@ protected:
 
    //  Overridden to return the parameter's current value.
    //
-   std::string GetCurr() const override { return curr_->c_str(); }
+   std::string GetCurr() const override { return curr_.c_str(); }
 
    //  Overridden to transfer next_ to curr_.
    //
@@ -70,9 +74,9 @@ protected:
    //
    bool SetNext(c_string input) override;
 private:
-   //  A pointer to the string that contains the parameter's value.
+   //  The parameter's current value.
    //
-   ProtectedStr* const curr_;
+   ProtectedStr curr_;
 
    //  The value to be set during an appropriate restart.
    //

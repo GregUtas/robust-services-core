@@ -23,6 +23,8 @@
 #define LOGTHREAD_H_INCLUDED
 
 #include "Thread.h"
+#include <cstddef>
+#include "CfgIntParm.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -81,14 +83,16 @@ private:
    //
    void Destroy() override;
 
+   //  Returns the number of message buffers reserved for work other than
+   //  spooling logs.
+   //
+   size_t NoSpoolingMessageCount() const
+      { return noSpoolingMessageCount_->GetValue(); }
+
    //  The configuration parameter for the number of MsgBuffers reserved
    //  for work other than spooling logs.
    //
    CfgIntParmPtr noSpoolingMessageCount_;
-
-   //  The number of MsgBuffers reserved for work other than spooling logs.
-   //
-   static word NoSpoolingMessageCount_;
 };
 }
 #endif

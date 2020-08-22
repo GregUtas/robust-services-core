@@ -2,7 +2,7 @@
 //
 //  CodeFile.cpp
 //
-//  Copyright (C) 2017  Greg Utas
+//  Copyright (C) 2013-2020  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //
@@ -2491,7 +2491,7 @@ string CodeFile::Path(bool full) const
 const stringVector DEFAULT_PROLOG =
 {
    EMPTY_STR,
-   "Copyright (C) 2017  Greg Utas",
+   "Copyright (C) 2013-2020  Greg Utas",
    EMPTY_STR,
    "This file is part of the Robust Services Core (RSC).",
    EMPTY_STR,

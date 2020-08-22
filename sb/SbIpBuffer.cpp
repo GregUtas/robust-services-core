@@ -2,7 +2,7 @@
 //
 //  SbIpBuffer.cpp
 //
-//  Copyright (C) 2017  Greg Utas
+//  Copyright (C) 2013-2020  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //

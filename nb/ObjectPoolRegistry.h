@@ -23,6 +23,7 @@
 #define OBJECTPOOLREGISTRY_H_INCLUDED
 
 #include "Protected.h"
+#include "CfgBoolParm.h"
 #include "NbTypes.h"
 #include "Registry.h"
 
@@ -53,7 +54,7 @@ public:
 
    //  Returns true if full object nullification is enabled.
    //
-   bool NullifyObjectData() const { return nullifyObjectData_; }
+   bool NullifyObjectData() const { return nullifyObjectDataCfg_->GetValue(); }
 
    //  Overridden for restarts.
    //
@@ -95,10 +96,6 @@ private:
    //  The global registry of object pools.
    //
    Registry< ObjectPool > pools_;
-
-   //  If set, causes an object's data to be nullified after its vptr.
-   //
-   bool nullifyObjectData_;
 
    //  Configuration parameter for object nullification.
    //

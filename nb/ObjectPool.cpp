@@ -114,8 +114,7 @@ public:
 fn_name ObjectPoolSizeCfg_ctor = "ObjectPoolSizeCfg.ctor";
 
 ObjectPoolSizeCfg::ObjectPoolSizeCfg(ObjectPool* pool) :
-   CfgIntParm(pool->key_.c_str(), "1",
-      reinterpret_cast< word* >(&pool->targSegments_), 0,
+   CfgIntParm(pool->key_.c_str(), "1", 0,
       ObjectPool::MaxSegments, "number of segments of 1K objects"),
    pool_(pool)
 {
@@ -236,7 +235,6 @@ ObjectPool::ObjectPool
    segIncr_(0),
    segSize_(0),
    currSegments_(0),
-   targSegments_(1),
    targSegmentsCfg_(nullptr),
    alarm_(nullptr)
 {
@@ -286,7 +284,7 @@ bool ObjectPool::AllocBlocks()
 {
    Debug::ft(ObjectPool_AllocBlocks);
 
-   while(currSegments_ < targSegments_)
+   while(currSegments_ < targSegmentsCfg_->GetValue())
    {
       auto pid = Pid();
       auto size = sizeof(uword) * segSize_;
@@ -299,7 +297,7 @@ bool ObjectPool::AllocBlocks()
          if(log != nullptr)
          {
             *log << Log::Tab << "pool=" << int(pid);
-            *log << " target=" << targSegments_;
+            *log << " target=" << targSegmentsCfg_->GetValue();
             *log << " actual=" << currSegments_;
             Log::Submit(log);
          }
@@ -639,7 +637,6 @@ void ObjectPool::Display(ostream& stream,
    stream << prefix << "segIncr         : " << segIncr_ << CRLF;
    stream << prefix << "segSize         : " << segSize_ << CRLF;
    stream << prefix << "currSegments    : " << currSegments_ << CRLF;
-   stream << prefix << "targSegments    : " << targSegments_ << CRLF;
    stream << prefix << "targSegmentsCfg : ";
    stream << strObj(targSegmentsCfg_.get()) << CRLF;
    stream << prefix << "availCount      : " << dyn_->availCount_ << CRLF;

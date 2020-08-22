@@ -36,11 +36,15 @@ class CfgBoolParm : public CfgBitParm
 public:
    //  Creates a parameter with the specified attributes.
    //
-   CfgBoolParm(c_string key, c_string def, bool* field, c_string expl);
+   CfgBoolParm(c_string key, c_string def, c_string expl);
 
    //  Virtual to allow subclassing.
    //
    virtual ~CfgBoolParm();
+
+   //  Overridden to return the parameter's current value.
+   //
+   bool GetValue() const override { return curr_; }
 
    //  Overridden to display member variables.
    //
@@ -55,10 +59,6 @@ protected:
    //
    bool GetNextValue() const { return next_; }
 
-   //  Overridden to return the parameter's current value.
-   //
-   bool GetCurrValue() const override { return *curr_; }
-
    //  Overridden to transfer next_ to curr_.
    //
    void SetCurr() override;
@@ -67,9 +67,9 @@ protected:
    //
    bool SetNextValue(bool value) override;
 private:
-   //  A pointer to the field that contains the parameter's value.
+   //  The parameter's current value.
    //
-   bool* const curr_;
+   bool curr_;
 
    //  The value to be set during an appropriate restart.
    //

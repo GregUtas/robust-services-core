@@ -39,7 +39,6 @@
 #include "PotsSusService.h"
 #include "PotsTreatmentRegistry.h"
 #include "PotsWmlService.h"
-#include "Restart.h"
 #include "SbAppIds.h"
 #include "Singleton.h"
 #include "SnIncrement.h"

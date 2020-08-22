@@ -951,6 +951,45 @@ word DumpCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
+//  The ECHO command.
+//
+class EchoParm : public CliTextParm
+{
+public: EchoParm();
+};
+
+class EchoCommand : public CliCommand
+{
+public:
+   EchoCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string EchoParmExpl = "the string to be written to the console";
+
+EchoParm::EchoParm() : CliTextParm(EchoParmExpl, false, 0) { }
+
+fixed_string EchoStr = "echo";
+fixed_string EchoExpl = "Writes the rest of the input line to the console.";
+
+EchoCommand::EchoCommand() : CliCommand(EchoStr, EchoExpl)
+{
+   BindParm(*new EchoParm);
+}
+
+fn_name EchoCommand_ProcessCommand = "EchoCommand.ProcessCommand";
+
+word EchoCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(EchoCommand_ProcessCommand);
+
+   cli.ibuf->Echo();
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+//
 //  The EXCLUDE command.
 //
 fixed_string ExcludeWhatExpl = "what to exclude...";
@@ -2224,45 +2263,6 @@ word PoolsCommand::ProcessCommand(CliThread& cli) const
       pool->Output(*cli.obuf, 2, v);
    }
 
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-//
-//  The PRINT command.
-//
-class PrintParm : public CliTextParm
-{
-public: PrintParm();
-};
-
-class PrintCommand : public CliCommand
-{
-public:
-   PrintCommand();
-private:
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-fixed_string PrintParmExpl = "the string to be written to the console";
-
-PrintParm::PrintParm() : CliTextParm(PrintParmExpl, false, 0) { }
-
-fixed_string PrintStr = "print";
-fixed_string PrintExpl = "Writes a string to the console.";
-
-PrintCommand::PrintCommand() : CliCommand(PrintStr, PrintExpl)
-{
-   BindParm(*new PrintParm);
-}
-
-fn_name PrintCommand_ProcessCommand = "PrintCommand.ProcessCommand";
-
-word PrintCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft(PrintCommand_ProcessCommand);
-
-   cli.ibuf->Print();
    return 0;
 }
 
@@ -3942,7 +3942,7 @@ NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
    BindCommand(*new IncrsCommand);
    BindCommand(*new SendCommand);
    BindCommand(*new ReadCommand);
-   BindCommand(*new PrintCommand);
+   BindCommand(*new EchoCommand);
    BindCommand(*new CfgParmsCommand);
    BindCommand(*new LogsCommand);
    BindCommand(*new AlarmsCommand);

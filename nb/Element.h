@@ -92,17 +92,9 @@ private:
    //
    ~Element();
 
-   //  The element's name.
-   //
-   ProtectedStr name_;
-
    //  Configuration parameter for the element's name.
    //
    CfgStrParmPtr nameCfg_;
-
-   //  Set if this is a lab load.
-   //
-   bool runningInLab_;
 
    //  Configuration parameter that defines if this is a lab load.
    //

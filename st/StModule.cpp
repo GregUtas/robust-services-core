@@ -23,7 +23,6 @@
 #include "Debug.h"
 #include "ModuleRegistry.h"
 #include "NtModule.h"
-#include "Restart.h"
 #include "SbAppIds.h"
 #include "SbModule.h"
 #include "Singleton.h"

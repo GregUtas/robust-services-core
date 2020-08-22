@@ -24,7 +24,6 @@
 #include <string>
 #include "CfgParmRegistry.h"
 #include "Debug.h"
-#include "IpPortCfgParm.h"
 #include "Singleton.h"
 
 //------------------------------------------------------------------------------
@@ -49,13 +48,13 @@ fixed_string PotsCallIpPortExpl = "POTS Call Protocol: UDP port";
 
 fn_name PotsCallIpService_ctor = "PotsCallIpService.ctor";
 
-PotsCallIpService::PotsCallIpService() : port_(NilIpPort)
+PotsCallIpService::PotsCallIpService()
 {
    Debug::ft(PotsCallIpService_ctor);
 
    auto port = std::to_string(PotsCallIpPort);
    portCfg_.reset(new IpPortCfgParm
-      (PotsCallIpPortKey, port.c_str(), &port_, PotsCallIpPortExpl, this));
+      (PotsCallIpPortKey, port.c_str(), PotsCallIpPortExpl, this));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
 }
 

@@ -68,7 +68,7 @@ void CfgFlagParm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-bool CfgFlagParm::GetCurrValue() const
+bool CfgFlagParm::GetValue() const
 {
    return curr_->test(fid_);
 }

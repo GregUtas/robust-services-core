@@ -24,7 +24,9 @@
 
 #include "Permanent.h"
 #include <cstddef>
+#include <iosfwd>
 #include <map>
+#include <utility>
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -206,7 +208,7 @@ private:
    //
    typedef std::pair< void*, word > TraceEntry;
 
-   //  Tracks allocated blocksto assist with detecting memory leaks.
+   //  Tracks allocated blocks to assist with detecting memory leaks.
    //
    std::map< void*, word > blocks_;
 };

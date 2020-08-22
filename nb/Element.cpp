@@ -42,26 +42,20 @@ namespace NodeBase
 {
 fn_name Element_ctor = "Element.ctor";
 
-Element::Element() :
-   name_("Unnamed Element"),
-   runningInLab_(false)
+Element::Element()
 {
    Debug::ft(Element_ctor);
-
-#ifndef FIELD_LOAD
-   runningInLab_ = true;
-#endif
 
    //  Create our configuration parameters.
    //
    auto reg = Singleton< CfgParmRegistry >::Instance();
 
    nameCfg_.reset(new CfgStrParm
-      ("ElementName", "Unnamed Element", &name_, "element's name"));
+      ("ElementName", "Unnamed Element", "element's name"));
    reg->BindParm(*nameCfg_);
 
    runningInLabCfg_.reset(new CfgBoolParm
-      ("RunningInLab", "T", &runningInLab_, "set if running in lab"));
+      ("RunningInLab", "T", "set if running in lab"));
    reg->BindParm(*runningInLabCfg_);
 }
 
@@ -90,8 +84,8 @@ void Element::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   stream << prefix << "name            : " << name_ << CRLF;
-   stream << prefix << "RunningInLab    : " << runningInLab_ << CRLF;
+   stream << prefix << "name            : " << Name() << CRLF;
+   stream << prefix << "RunningInLab    : " << RunningInLab() << CRLF;
    stream << prefix << "RscPath         : " << RscPath() << CRLF;
    stream << prefix << "HelpPath        : " << HelpPath() << CRLF;
    stream << prefix << "InputPath       : " << InputPath() << CRLF;
@@ -138,7 +132,7 @@ string Element::Name()
 {
    auto element = Singleton< Element >::Extant();
    if(element == nullptr) return "Unnamed Element";
-   return element->name_.c_str();
+   return element->nameCfg_->GetValue();
 }
 
 //------------------------------------------------------------------------------
@@ -200,7 +194,7 @@ bool Element::RunningInLab()
    //  create this class until it is required for another purpose.
    //
    auto element = Singleton< Element >::Extant();
-   if(element != nullptr) return element->runningInLab_;
+   if(element != nullptr) return element->runningInLabCfg_->GetValue();
 
 #ifndef FIELD_LOAD
    return true;

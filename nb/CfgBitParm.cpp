@@ -64,20 +64,20 @@ string CfgBitParm::GetCurr() const
 {
    Debug::ft(CfgBitParm_GetCurr);
 
-   string s = (GetCurrValue() ? ValidTrueChars() : ValidFalseChars());
+   string s = (GetValue() ? ValidTrueChars() : ValidFalseChars());
    s.erase(1);
    return s;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CfgBitParm_GetCurrValue = "CfgBitParm.GetCurrValue";
+fn_name CfgBitParm_GetValue = "CfgBitParm.GetValue";
 
-bool CfgBitParm::GetCurrValue() const
+bool CfgBitParm::GetValue() const
 {
-   Debug::ft(CfgBitParm_GetCurrValue);
+   Debug::ft(CfgBitParm_GetValue);
 
-   Debug::SwLog(CfgBitParm_GetCurrValue, strOver(this), 0);
+   Debug::SwLog(CfgBitParm_GetValue, strOver(this), 0);
    return false;
 }
 

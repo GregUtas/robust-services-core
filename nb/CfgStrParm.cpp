@@ -33,10 +33,8 @@ namespace NodeBase
 {
 fn_name CfgStrParm_ctor = "CfgStrParm.ctor";
 
-CfgStrParm::CfgStrParm
-   (c_string key, c_string def, ProtectedStr* field, c_string expl) :
-   CfgParm(key, def, expl),
-   curr_(field)
+CfgStrParm::CfgStrParm(c_string key, c_string def, c_string expl) :
+   CfgParm(key, def, expl)
 {
    Debug::ft(CfgStrParm_ctor);
 }
@@ -57,7 +55,7 @@ void CfgStrParm::Display(ostream& stream,
 {
    CfgParm::Display(stream, prefix, options);
 
-   stream << prefix << "curr : " << *curr_ << CRLF;
+   stream << prefix << "curr : " << curr_ << CRLF;
    stream << prefix << "next : " << next_ << CRLF;
 }
 
@@ -86,7 +84,7 @@ void CfgStrParm::SetCurr()
    Debug::ft(CfgStrParm_SetCurr);
 
    FunctionGuard guard(Guard_MemUnprotect);
-   *curr_ = next_;
+   curr_ = next_;
    CfgParm::SetCurr();
 }
 

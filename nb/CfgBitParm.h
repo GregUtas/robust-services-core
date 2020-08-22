@@ -49,13 +49,13 @@ protected:
 
    //  Returns the parameter's current value.
    //
-   virtual bool GetCurrValue() const = 0;
+   virtual bool GetValue() const = 0;
 
    //  Overridden to prefix the parameter's type and allowed values.
    //
    void Explain(std::string& expl) const override;
 
-   //  Calls GetCurrValue and maps the result to ValidTrueChars[0]
+   //  Calls GetValue and maps the result to ValidTrueChars[0]
    //  or ValidFalseChars[0].
    //
    std::string GetCurr() const override;

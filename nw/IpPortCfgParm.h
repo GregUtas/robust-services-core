@@ -23,12 +23,8 @@
 #define IPPORTCFGPARM_H_INCLUDED
 
 #include "CfgIntParm.h"
+#include "NwTypes.h"
 #include "SysTypes.h"
-
-namespace NetworkBase
-{
-   class IpService;
-}
 
 //------------------------------------------------------------------------------
 
@@ -44,11 +40,15 @@ public:
    //  the port.
    //
    IpPortCfgParm(NodeBase::c_string key, NodeBase::c_string def,
-      NodeBase::word* field, NodeBase::c_string expl, const IpService* service);
+      NodeBase::c_string expl, const IpService* service);
 
    //  Virtual to allow subclassing.
    //
    virtual ~IpPortCfgParm();
+
+   //  Returns the port on which the service is configured.
+   //
+   ipport_t GetPort() const { return ipport_t(GetValue()); }
 
    //  Overridden to display member variables.
    //

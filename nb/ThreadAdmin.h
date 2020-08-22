@@ -30,7 +30,6 @@
 namespace NodeBase
 {
    class Duration;
-   struct ThreadAdminValues;
    class ThreadsStats;
 }
 
@@ -169,14 +168,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~ThreadAdmin();
-
-   //  Safely accesses configuration values.
-   //
-   static const ThreadAdminValues* AccessConfig();
-
-   //  Thread configuration values;
-   //
-   std::unique_ptr< ThreadAdminValues > config_;
 
    //  Thread configuration parameters.
    //

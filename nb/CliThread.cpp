@@ -525,7 +525,7 @@ const CliCommand* CliThread::ParseCommand() const
    //
    if(!outFiles_.empty())
    {
-      auto input = ibuf->Echo();
+      auto input = ibuf->GetInput();
       FileThread::Spool(outFiles_.back(), input, true);
    }
 

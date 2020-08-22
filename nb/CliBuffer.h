@@ -118,7 +118,7 @@ public:
 
    //  Outputs the rest (unread portion) of the input line to the console.
    //
-   void Print();
+   void Echo();
 
    //  Opens NAME.txt for reading input.  Returns 0 on success.  Returns
    //  another value on failure after updating EXPL with an explanation.
@@ -174,9 +174,9 @@ private:
    //
    bool GetNextInput();
 
-   //  Returns a string that echoes the user's input.
+   //  Returns all of the current input line.
    //
-   std::string Echo() const;
+   std::string GetInput() const;
 
    //  Returns the type of character at pos_, handling the escape and comment
    //  characters.  QUOTED is set if a string literal is being constructed.

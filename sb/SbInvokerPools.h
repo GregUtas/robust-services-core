@@ -25,7 +25,6 @@
 #include "InvokerPool.h"
 #include "NbTypes.h"
 #include "ObjectPool.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -78,14 +77,6 @@ private:
    //  reserved for non-ingress work.
    //
    NodeBase::CfgIntParmPtr noIngressMessageCount_;
-
-   //  The maximum length allowed for the ingress work queue.
-   //
-   static NodeBase::word NoIngressQueueLength_;
-
-   //  The number of SbIpBuffers reserved for non-ingress work.
-   //
-   static NodeBase::word NoIngressMessageCount_;
 };
 }
 #endif

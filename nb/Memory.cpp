@@ -232,6 +232,23 @@ Heap* EnsureHeap(MemoryType type)
 
 //==============================================================================
 
+Heap* Memory::AccessHeap(MemoryType type)
+{
+   switch(type)
+   {
+   case MemTemporary: return Singleton< TemporaryHeap >::Extant();
+   case MemDynamic: return Singleton< DynamicHeap >::Extant();
+   case MemPersistent: return Singleton< PersistentHeap >::Extant();
+   case MemProtected: return Singleton< ProtectedHeap >::Extant();
+   case MemPermanent: return PermanentHeap::Instance();
+   case MemImmutable: return Singleton< ImmutableHeap >::Extant();
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 MemoryType Memory::AddrToType(const void* addr)
 {
    for(auto m = 1; m < MemoryType_N; ++m)
@@ -252,23 +269,6 @@ const size_t PowerOf2[] = {1, 2, 4, 8, 16, 32, 64, 128};
 size_t Memory::Align(size_t size, size_t log2align)
 {
    return (((size + PowerOf2[log2align] - 1) >> log2align) << log2align);
-}
-
-//------------------------------------------------------------------------------
-
-Heap* Memory::AccessHeap(MemoryType type)
-{
-   switch(type)
-   {
-   case MemTemporary: return Singleton< TemporaryHeap >::Extant();
-   case MemDynamic: return Singleton< DynamicHeap >::Extant();
-   case MemPersistent: return Singleton< PersistentHeap >::Extant();
-   case MemProtected: return Singleton< ProtectedHeap >::Extant();
-   case MemPermanent: return PermanentHeap::Instance();
-   case MemImmutable: return Singleton< ImmutableHeap >::Extant();
-   }
-
-   return nullptr;
 }
 
 //------------------------------------------------------------------------------

@@ -25,7 +25,6 @@
 #include "Permanent.h"
 #include <cstddef>
 #include <string>
-#include "NbTypes.h"
 #include "Q1Link.h"
 #include "SysTypes.h"
 

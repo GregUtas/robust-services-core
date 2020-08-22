@@ -100,10 +100,6 @@ private:
    //
    SysIpL2Addr hostAddr_;
 
-   //  The string associated with element's IP address.
-   //
-   NodeBase::ProtectedStr hostAddrStr_;
-
    //  Configuration parameter for the element's IP address.
    //
    std::unique_ptr< HostAddrCfg > hostAddrCfg_;

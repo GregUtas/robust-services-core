@@ -300,10 +300,6 @@ private:
    //
    size_t currSegments_;
 
-   //  The desired number of segments in the pool.
-   //
-   size_t targSegments_;
-
    //  The configuration parameter for the number of segments in the pool.
    //
    CfgIntParmPtr targSegmentsCfg_;

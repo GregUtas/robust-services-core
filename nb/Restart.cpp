@@ -39,6 +39,9 @@ bool Restart::ClearsMemory(MemoryType type)
 {
    switch(type)
    {
+   case MemImmutable:
+   case MemPermanent:
+      return (Level_ >= RestartReboot);
    case MemProtected:
    case MemPersistent:
       return (Level_ >= RestartReload);

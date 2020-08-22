@@ -29,7 +29,6 @@
 #include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "ProxyBcSessions.h"
-#include "Restart.h"
 #include "SbAppIds.h"
 #include "ServiceCodeRegistry.h"
 #include "Singleton.h"

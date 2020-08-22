@@ -24,8 +24,8 @@
 #include <string>
 #include "CfgParmRegistry.h"
 #include "Debug.h"
-#include "IpPortCfgParm.h"
 #include "Singleton.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -49,13 +49,13 @@ fixed_string PotsShelfIpPortExpl = "POTS Shelf Protocol: UDP port";
 
 fn_name PotsShelfIpService_ctor = "PotsShelfIpService.ctor";
 
-PotsShelfIpService::PotsShelfIpService() : port_(NilIpPort)
+PotsShelfIpService::PotsShelfIpService()
 {
    Debug::ft(PotsShelfIpService_ctor);
 
    auto port = std::to_string(PotsShelfIpPort);
    portCfg_.reset(new IpPortCfgParm
-      (PotsShelfIpPortKey, port.c_str(), &port_, PotsShelfIpPortExpl, this));
+      (PotsShelfIpPortKey, port.c_str(), PotsShelfIpPortExpl, this));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
 }
 

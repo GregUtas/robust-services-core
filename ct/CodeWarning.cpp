@@ -24,6 +24,7 @@
 #include <iomanip>
 #include <iterator>
 #include <sstream>
+#include "CodeDir.h"
 #include "CodeFile.h"
 #include "CodeFileSet.h"
 #include "CxxArea.h"
@@ -1019,10 +1020,11 @@ bool CodeWarning::Suppress() const
       if(fn.find("CliParms.cpp") != string::npos) return true;
       break;
 
-   case RemoveLineBreak:
-      if(fn == "BcStates.cpp") return true;
-      if(fn == "CodeWarning.cpp") return true;
-      break;
+   case HeadingNotStandard:
+   {
+      auto dir = file_->Dir();
+      return ((dir != nullptr) && (dir->Path().find("/dip") != string::npos));
+   }
 
    case DebugFtNotInvoked:
    {
@@ -1134,8 +1136,7 @@ bool CodeWarning::Suppress() const
          return true;
       }
 
-      //  Leaf classes for the CLI and configuration parameters, as well
-      //  as statistics and tools, do not need to override Patch.
+      //  Simple leaf classes do not need to override Patch.
       //
       if(cls->Subclasses()->empty())
       {
@@ -1144,6 +1145,7 @@ bool CodeWarning::Suppress() const
          if(cls->DerivesFrom("Statistic")) return true;
          if(cls->DerivesFrom("StatisticsGroup")) return true;
          if(cls->DerivesFrom("Tool")) return true;
+         if(cls->DerivesFrom("EventHandler")) return true;
       }
       break;
    }
@@ -1158,6 +1160,11 @@ bool CodeWarning::Suppress() const
          auto func = static_cast< const Function* >(item_);
          return (func->MinArgs() > 1);
       }
+      break;
+
+   case RemoveLineBreak:
+      if(fn == "BcStates.cpp") return true;
+      if(fn == "CodeWarning.cpp") return true;
       break;
    }
 

@@ -1,27 +1,27 @@
 LINE COUNTS
-   76028   source code not in one of the categories below
-   43294   blank line
-   17678   blank comment
+   76032   source code not in one of the categories below
+   43323   blank line
+   17671   blank comment
    10330   comment at the top of a file (e.g. for the file's name or license info)
-    7538   comment followed by repeated characters to draw a rule (e.g. //---- ...)
+    7541   comment followed by repeated characters to draw a rule (e.g. //---- ...)
      160   comment followed by a character that classifies it (e.g. //c <text>)
-   19998   comment not in one of the categories above (e.g. //  <text>)
+   19988   comment not in one of the categories above (e.g. //  <text>)
        0   C-style comment
-   15367   bare left brace
-   13576   bare right brace
-    1792   bare right brace with semicolon
-    2403   access control
-    4662   invocation of Debug::ft
-    4764   definition of an fn_name
-    6199   #include directive
-    1127   preprocessor directive other than #include
+   15386   bare left brace
+   13588   bare right brace
+    1799   bare right brace with semicolon
+    2412   access control
+    4667   invocation of Debug::ft
+    4769   definition of an fn_name
+    6201   #include directive
+    1125   preprocessor directive other than #include
      903   using statement
-  225819   TOTAL
+  225895   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   125  C-style cast
-  W005    51  Functional cast
-  W006   125  reinterpret_cast
+  W005    50  Functional cast
+  W006   123  reinterpret_cast
   W007   578  Cast down the inheritance hierarchy
   W008    45  Cast removes const qualification
   W009    15  Pointer arithmetic
@@ -35,8 +35,8 @@ WARNING COUNTS (* if supported by >fix)
 * W028    45  Unused data
 * W029     1  Unused enum
 * W030    20  Unused enumerator
-* W032   187  Unused function
-* W033     1  Unused typedef
+* W032   186  Unused function
+* W033     2  Unused typedef
   W037     9  Member hides inherited name
   W042   137  Member could be private
   W043    55  Member could be protected
@@ -51,7 +51,7 @@ WARNING COUNTS (* if supported by >fix)
   W060    71  Base class constructor is public
   W062     2  Member not included in member initialization list
   W065    27  Base class virtual destructor is not public
-  W075   389  Virtual function is public
+  W075   390  Virtual function is public
 * W077    57  Virtual function has no overrides
   W082    90  Adjacent arguments have the same type
 * W088    41  Argument could be const
@@ -61,12 +61,11 @@ WARNING COUNTS (* if supported by >fix)
 * W099   292  Line contains adjacent spaces
   W102     4  Line length exceeds the standard maximum
   W103     1  Function not sorted in standard order
-  W104    35  File heading is not standard
-* W106   584  Function does not invoke Debug::ft
+* W106   582  Function does not invoke Debug::ft
   W107    13  Function does not invoke Debug::ft as first statement
-  W110    36  Override of Base.Display not found
-* W111    10  Override of Object.Patch not found
-* W117    30  Line can merge with the next line and be under the length limit
+  W110    35  Override of Base.Display not found
+* W111     6  Override of Object.Patch not found
+* W117    29  Line can merge with the next line and be under the length limit
   W119    72  Argument passed by value is modified
   W120     4  Function returns non-const reference or pointer to member data
 ========================================================================================================================
@@ -117,24 +116,24 @@ W004 C-style cast
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(502):    auto block = (const HeapBlock*) addr;
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(627):                   if(block < (HeapBlock*) heap_)
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(629):                   else if(block < (HeapBlock*) heap_->minAddr)
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(699):    FreeBlock((HeapBlock*) addr, level);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(700):    FreeBlock((HeapBlock*) addr, level);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(748):    return (HeapBlock*) (heap_->leftAddr + (offset << Log2Size(level)));
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(830):       auto size = BlockToSize((const HeapBlock*) addr);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(833):       auto index = BlockToIndex((const HeapBlock*) addr, level);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(885):          if((HeapBlock*) block->link.prev->next != block)
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(887):          if((HeapBlock*) block->link.next->prev != block)
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(293):       blocks_[currSegments_] = (uword*) Memory::Alloc(size, mem_, std::nothrow);
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(317):          auto b = (ObjectBlock*) &seg[j];
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(369):             auto b = (ObjectBlock*) &seg[j];
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(405):             auto curr = (Pooled*) getptr1(item, diff);
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(833):       return (ObjectBlock*) &blocks_[0][0];
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(903):       return (ObjectBlock*) &blocks_[i][j];
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(928):             auto b = (ObjectBlock*) &seg[j];
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(960):    auto block = (const_ptr_t) ObjToBlock(obj);
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(961):    auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(965):       auto b0 = (const_ptr_t) &blocks_[i][0];
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(1008):    return (ObjectBlock*) getptr1(obj, BlockHeaderSize);
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(1038):          auto b = (ObjectBlock*) &seg[j];
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(291):       blocks_[currSegments_] = (uword*) Memory::Alloc(size, mem_, std::nothrow);
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(315):          auto b = (ObjectBlock*) &seg[j];
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(367):             auto b = (ObjectBlock*) &seg[j];
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(403):             auto curr = (Pooled*) getptr1(item, diff);
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(830):       return (ObjectBlock*) &blocks_[0][0];
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(900):       return (ObjectBlock*) &blocks_[i][j];
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(925):             auto b = (ObjectBlock*) &seg[j];
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(957):    auto block = (const_ptr_t) ObjToBlock(obj);
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(958):    auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(962):       auto b0 = (const_ptr_t) &blocks_[i][0];
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(1005):    return (ObjectBlock*) getptr1(obj, BlockHeaderSize);
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(1035):          auto b = (ObjectBlock*) &seg[j];
   C:/Users/gregu/Documents/rsc/rsc/nb/Pooled.cpp(146):    auto obj = (Pooled*) addr;
   C:/Users/gregu/Documents/rsc/rsc/nb/Q1Way.h(141):          getptr2(prev, diff_);                   // put item after previous
   C:/Users/gregu/Documents/rsc/rsc/nb/Q1Way.h(163):       return (T*) getptr1(item, diff_);  // location of item's vptr
@@ -162,7 +161,7 @@ W004 C-style cast
   C:/Users/gregu/Documents/rsc/rsc/nb/Registry.h(576):       auto table = (T**) Memory::Alloc(size, mem_);
   C:/Users/gregu/Documents/rsc/rsc/nb/Singleton.h(80):       reg->BindInstance((const Base**) &Instance_, type);
   C:/Users/gregu/Documents/rsc/rsc/nb/Singleton.h(99):       reg->UnbindInstance((const Base**) &Instance_);
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.win.cpp(226):    aHeaps = (HANDLE*) HeapAlloc(DefaultProcessHeap, 0, BytesToAllocate);
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.win.cpp(220):    aHeaps = (HANDLE*) HeapAlloc(DefaultProcessHeap, 0, BytesToAllocate);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThread.win.cpp(162):       (_beginthreadex_proc_type) entry,  // thread entry function
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThread.win.cpp(163):       (void*) client,                    // argument to entry function
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThread.win.cpp(167):    auto handle = (HANDLE) result;
@@ -198,15 +197,12 @@ W004 C-style cast
   C:/Users/gregu/Documents/rsc/rsc/sb/TlvMessage.cpp(277):    return (Fence*) fence;
   C:/Users/gregu/Documents/rsc/rsc/sb/TlvMessage.cpp(435):    pit.pptr = (TlvParmPtr) &pit.mptr->bytes[nextIndex];
 W005 Functional cast
-  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelf.h(51):    ipport_t Port() const override { return ipport_t(port_); }
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(305):    ipport_t Port() const override { return ipport_t(port_); }
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(344):    ipport_t Port() const override { return ipport_t(port_); }
   C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp(139):       auto rc = AddDigit(Digit(ds.digits_[i]));
   C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp(150):    if(i < Size()) return Digit(digits_[i]);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(263):          << spaces(3) << LineType(t) << CRLF;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(274):          *stream << (Attrs_.at(Warning(w)).fixable ? '*' : SPACE);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(275):          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(276):             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(264):          << spaces(3) << LineType(t) << CRLF;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(275):          *stream << (Attrs_.at(Warning(w)).fixable ? '*' : SPACE);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(276):          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(277):             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
   C:/Users/gregu/Documents/rsc/rsc/ct/CtIncrement.cpp(1576):       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
   C:/Users/gregu/Documents/rsc/rsc/ct/CtIncrement.cpp(1590):    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.cpp(335):       if(Attrs[i].symbol.compare(sym) == 0) return Cxx::Operator(i);
@@ -220,14 +216,16 @@ W005 Functional cast
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1396):          oper = Cxx::Operator(match->second);
   C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.cpp(446): ipport_t BotTcpService::Port() const { return ipport_t(port_); }
   C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(70):    Id Tid() const { return Id(tid_.GetId()); }
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(258):       auto type = MemoryType(m);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(256):       auto type = MemoryType(m);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(735):    return BlockState(state);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(649):       rc = nbt->SelectFaction(Faction(id), TraceDefault);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1006):       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1100):          auto type = MemoryType(m);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1111):          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1522):       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(3361):       auto heap = Memory::GetHeap(MemoryType(m));
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1045):       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1237):          auto type = MemoryType(memtype);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1251):          auto type = MemoryType(memtype);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1281):          auto type = MemoryType(m);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1292):          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1703):       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(3503):       auto heap = Memory::AccessHeap(MemoryType(m));
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.cpp(216):             stream << Faction(f) << CRLF;
   C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.h(94):    ObjectPoolId Pid() const { return ObjectPoolId(pid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(361):          Truncate(TimeField(int(field) + 1));
@@ -236,6 +234,7 @@ W005 Functional cast
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3633):    pool->time_[id1].Truncate(TimeField(field - 1));
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3664):    pool->time_[id1].Round(TimeField(field - 1), interval);
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(4595):    auto test = RecoveryThread::Test(index);
+  C:/Users/gregu/Documents/rsc/rsc/nw/IpPortCfgParm.h(51):    ipport_t GetPort() const { return ipport_t(GetValue()); }
   C:/Users/gregu/Documents/rsc/rsc/pb/PotsFeature.h(69):    Id Fid() const { return Id(fid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/sb/Factory.h(91):    Id Fid() const { return Id(fid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.h(72):       { return NodeBase::Faction(faction_.GetId()); }
@@ -248,15 +247,14 @@ W005 Functional cast
   C:/Users/gregu/Documents/rsc/rsc/sb/Service.h(62):    Id Sid() const { return Id(sid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/sb/Signal.h(78):    Id Sid() const { return Id(sid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/sb/State.h(57):    Id Stid() const { return Id(stid_.GetId()); }
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(62):    ipport_t Port() const override { return ipport_t(port_); }
 W006 reinterpret_cast
-  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfHandler.cpp(72):    auto pptr = reinterpret_cast< TlvParmPtr >(sbuff->PayloadPtr());
-  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfHandler.cpp(73):    auto phi = reinterpret_cast< PotsHeaderInfo* >(pptr->bytes);
+  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfHandler.cpp(73):    auto pptr = reinterpret_cast< TlvParmPtr >(sbuff->PayloadPtr());
+  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfHandler.cpp(74):    auto phi = reinterpret_cast< PotsHeaderInfo* >(pptr->bytes);
   C:/Users/gregu/Documents/rsc/rsc/an/PotsTrafficThread.cpp(490):    auto fake = reinterpret_cast< const TrafficCall* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.cpp(97):    reinterpret_cast< const DigitString* >(bytes)->Display(stream, prefix);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcCause.cpp(132):    reinterpret_cast< const CauseInfo* >(bytes)->Display(stream, prefix);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProgress.cpp(119):    reinterpret_cast< const ProgressInfo* >(bytes)->Display(stream, prefix);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(468):    reinterpret_cast< const RouteResult* >(bytes)->Display(stream, prefix);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(467):    reinterpret_cast< const RouteResult* >(bytes)->Display(stream, prefix);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeDir.cpp(66):    auto fake = reinterpret_cast< const CodeDir* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(617):    auto fake = reinterpret_cast< const CodeFile* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(281):    auto fake = reinterpret_cast< const LibrarySet* >(&local);
@@ -297,7 +295,7 @@ W006 reinterpret_cast
   C:/Users/gregu/Documents/rsc/rsc/mb/Tones.cpp(65):    auto fake = reinterpret_cast< const Tone* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/Alarm.cpp(112):    auto fake = reinterpret_cast< const Alarm* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp(101):    auto obj = reinterpret_cast< ObjectStruct* >(this);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp(150):    auto obj = reinterpret_cast< const ObjectStruct* >(this);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp(172):    auto obj = reinterpret_cast< const ObjectStruct* >(this);
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParm.cpp(139):    auto fake = reinterpret_cast< const CfgParm* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgTuple.cpp(92):    auto fake = reinterpret_cast< const CfgTuple* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.cpp(95):    auto fake = reinterpret_cast< const Class* >(&local);
@@ -314,8 +312,7 @@ W006 reinterpret_cast
   C:/Users/gregu/Documents/rsc/rsc/nb/LogGroup.cpp(116):    auto fake = reinterpret_cast< const LogGroup* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/Module.cpp(67):    auto fake = reinterpret_cast< const Module* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.cpp(120):    auto obj = reinterpret_cast< ObjectStruct* >(this);
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(118):       reinterpret_cast< word* >(&pool->targSegments_), 0,
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(543):    auto fake = reinterpret_cast< const ObjectPool* >(&local);
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(541):    auto fake = reinterpret_cast< const ObjectPool* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/Pooled.cpp(120):    auto fake = reinterpret_cast< const Pooled* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/PosixSignal.cpp(73):    auto fake = reinterpret_cast< const PosixSignal* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/Statistics.cpp(86):    auto fake = reinterpret_cast< const Statistic* >(&local);
@@ -346,8 +343,7 @@ W006 reinterpret_cast
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.cpp(919):             auto toi = reinterpret_cast< TimeoutInfo* >(pptr->bytes);
   C:/Users/gregu/Documents/rsc/rsc/sb/Factory.cpp(203):    auto fake = reinterpret_cast< const Factory* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/sb/Initiator.cpp(217):    auto fake = reinterpret_cast< const Initiator* >(&local);
-  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(199):          reinterpret_cast< word* >(&poolSize_), 1,
-  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(240):    auto fake = reinterpret_cast< const InvokerPool* >(&local);
+  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(238):    auto fake = reinterpret_cast< const InvokerPool* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/sb/InvokerThread.cpp(132):    auto fake = reinterpret_cast< const InvokerThread* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/sb/Parameter.cpp(108):    auto fake = reinterpret_cast< const Parameter* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/sb/Protocol.cpp(94):    auto fake = reinterpret_cast< const Protocol* >(&local);
@@ -376,11 +372,11 @@ W006 reinterpret_cast
   C:/Users/gregu/Documents/rsc/rsc/st/MscContext.cpp(97):    auto fake = reinterpret_cast< const MscContext* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/st/MscContextPair.cpp(93):    auto fake = reinterpret_cast< const MscContextPair* >(&local);
 W007 Cast down the inheritance hierarchy
-  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfFactory.cpp(142):    auto& pmsg = static_cast< Pots_UN_Message& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfFactory.cpp(155):    auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
-  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfFactory.cpp(177):    auto& pmsg = static_cast< Pots_NU_Message& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfFactory.cpp(187):    auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
-  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfHandler.cpp(70):    auto sbuff = static_cast< SbIpBuffer* >(buff.get());
+  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfFactory.cpp(143):    auto& pmsg = static_cast< Pots_UN_Message& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfFactory.cpp(156):    auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
+  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfFactory.cpp(178):    auto& pmsg = static_cast< Pots_NU_Message& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfFactory.cpp(188):    auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
+  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfHandler.cpp(71):    auto sbuff = static_cast< SbIpBuffer* >(buff.get());
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.cpp(114):    auto& tlvmsg = static_cast< TlvMessage& >(msg);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.cpp(164):    auto& tlvmsg = static_cast< const TlvMessage& >(msg);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcHandlers.cpp(41):    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
@@ -397,13 +393,13 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/cb/BcHandlers.cpp(191):    auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcHandlers.cpp(192):    auto          msg = static_cast< CipMessage* >(ame.Msg());
   C:/Users/gregu/Documents/rsc/rsc/cb/BcHandlers.cpp(194):    auto&         bcssm = static_cast< BcSsm& >(ssm);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(483):    auto&       tlvmsg = static_cast< TlvMessage& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(513):    auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(825):       if(m->GetSignal() == sid) return static_cast< CipMessage* >(m);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(857):    auto&         tmsg = static_cast< TlvMessage& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(987):    auto&         tmsg = static_cast< TlvMessage& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(1384):    auto& tmsg = static_cast< const CipMessage& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(1389):    auto fac = static_cast< SsmFactory* >(reg->GetFactory(rte->selector));
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(482):    auto&       tlvmsg = static_cast< TlvMessage& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(512):    auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(824):       if(m->GetSignal() == sid) return static_cast< CipMessage* >(m);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(856):    auto&         tmsg = static_cast< TlvMessage& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(986):    auto&         tmsg = static_cast< TlvMessage& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(1383):    auto& tmsg = static_cast< const CipMessage& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(1388):    auto fac = static_cast< SsmFactory* >(reg->GetFactory(rte->selector));
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSsm.cpp(394):    auto& rre = static_cast< BcRemoteReleaseEvent& >(currEvent);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSsm.cpp(909):       auto fac = static_cast< BcFactory* >(reg->GetFactory(route_.selector));
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.cpp(379):    auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
@@ -441,13 +437,13 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeSet.cpp(100):    auto that = static_cast< const CodeSet* >(rhs);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeSet.cpp(137):    auto that = static_cast< const CodeSet* >(rhs);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeSet.cpp(151):    auto that = static_cast< const CodeSet* >(rhs);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(953):       auto func = static_cast< const Function* >(item_);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(983):       auto data = static_cast< const Data* >(item_);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1005):       auto func = static_cast< const Function* >(item_);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1029):       auto func = static_cast< const Function* >(item_);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1103):       auto cls = static_cast< const Class* >(item_);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1127):       auto cls = static_cast< const Class* >(item_);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1158):          auto func = static_cast< const Function* >(item_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(954):       auto func = static_cast< const Function* >(item_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(984):       auto data = static_cast< const Data* >(item_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1006):       auto func = static_cast< const Function* >(item_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1031):       auto func = static_cast< const Function* >(item_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1105):       auto cls = static_cast< const Class* >(item_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1129):       auto cls = static_cast< const Class* >(item_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(1160):          auto func = static_cast< const Function* >(item_);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(211):          static_cast< const Function* >(item)->IsInline())
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(1025):    auto area = static_cast< CxxArea* >(GetScope());
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(1028):    if(inst != nullptr) return static_cast< ClassInst* >(inst);
@@ -604,7 +600,7 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(818):       auto curr = static_cast< FunctionTrace* >(rec);
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(836):       auto curr = static_cast< FunctionTrace* >(rec);
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(911):       auto curr = static_cast< FunctionTrace* >(rec);
-  C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.cpp(77):       (static_cast< CfgIntParm* >(reg->FindParm("NoSpoolingMessageCount")));
+  C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.cpp(71):       (static_cast< CfgIntParm* >(reg->FindParm("NoSpoolingMessageCount")));
   C:/Users/gregu/Documents/rsc/rsc/nb/MemoryTrace.cpp(67):       auto curr = static_cast< MemoryTrace* >(rec);
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.cpp(453):          auto ft = static_cast< FunctionTrace* >(rec);
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.cpp(484):          auto ft = static_cast< FunctionTrace* >(rec);
@@ -634,8 +630,8 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(958):    auto&         pmsg = static_cast< const PotsMessage& >(msg);
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.cpp(803):                inv = static_cast< InvokerThread* >(Thread::RunningThread());
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.cpp(915):             (m)->FindParm(Parameter::Timeout);
-  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(194):    invokersCfg_.reset(static_cast< CfgIntParm* >(reg->FindParm(parmKey)));
-  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(556):       auto inv = static_cast< InvokerThread* >(Thread::RunningThread());
+  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(193):    invokersCfg_.reset(static_cast< CfgIntParm* >(reg->FindParm(parmKey)));
+  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(553):       auto inv = static_cast< InvokerThread* >(Thread::RunningThread());
   C:/Users/gregu/Documents/rsc/rsc/sb/MsgContext.cpp(84):    static_cast< MsgFactory* >(fac)->ProcessIcMsg(msg);
   C:/Users/gregu/Documents/rsc/rsc/sb/MsgPort.cpp(79):    locAddr_.sbAddr_.fid = static_cast< ProtocolSM& >(upper).GetFactory();
   C:/Users/gregu/Documents/rsc/rsc/sb/MsgPort.cpp(155):    return static_cast< PsmFactory* >(fac)->AllocIcPsm(msg, *this);
@@ -653,8 +649,8 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/sb/SbIncrement.cpp(1351):       auto ssm = static_cast< ServiceSM* >(obj);
   C:/Users/gregu/Documents/rsc/rsc/sb/SbIncrement.cpp(1564):       auto tmr = static_cast< Timer* >(obj);
   C:/Users/gregu/Documents/rsc/rsc/sb/SbInputHandler.cpp(112):    SbIpBufferPtr sbbuff(static_cast< SbIpBuffer* >(buff.release()));
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbInvokerPools.cpp(65):       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressQueueLength")));
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbInvokerPools.cpp(77):       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressMessageCount")));
+  C:/Users/gregu/Documents/rsc/rsc/sb/SbInvokerPools.cpp(61):       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressQueueLength")));
+  C:/Users/gregu/Documents/rsc/rsc/sb/SbInvokerPools.cpp(72):       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressMessageCount")));
   C:/Users/gregu/Documents/rsc/rsc/sb/SbPools.cpp(226):       auto port = static_cast< MsgPort* >(obj);
   C:/Users/gregu/Documents/rsc/rsc/sb/SbPools.cpp(287):    auto psm = static_cast< ProtocolSM* >(NextUsed(PsmToAudit_));
   C:/Users/gregu/Documents/rsc/rsc/sb/SbPools.cpp(304):       psm = static_cast< ProtocolSM* >(NextUsed(PsmToAudit_));
@@ -1036,10 +1032,10 @@ W020 Using statement in header
   C:/Users/gregu/Documents/rsc/rsc/cb/BcCause.h(33): using namespace SessionBase;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProgress.h(32): using namespace NodeBase;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProgress.h(33): using namespace SessionBase;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(50): using namespace NodeBase;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(51): using namespace NetworkBase;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(52): using namespace SessionBase;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(53): using namespace MediaBase;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(51): using namespace NodeBase;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(52): using namespace NetworkBase;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(53): using namespace SessionBase;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(54): using namespace MediaBase;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcRouting.h(31): using namespace SessionBase;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(53): using namespace MediaBase;
   C:/Users/gregu/Documents/rsc/rsc/cb/CbModule.h(28): using namespace NodeBase;
@@ -1137,10 +1133,10 @@ W020 Using statement in header
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxyHandlers.h(28): using namespace NodeBase;
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxyHandlers.h(29): using namespace SessionBase;
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(28): using namespace CallBase;
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(44): using namespace CallBase;
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(45): using namespace NetworkBase;
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(46): using namespace NodeBase;
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(47): using namespace SessionBase;
+  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(45): using namespace CallBase;
+  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(46): using namespace NetworkBase;
+  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(47): using namespace NodeBase;
+  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(48): using namespace SessionBase;
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsStatistics.h(30): using namespace NodeBase;
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsStatistics.h(31): using namespace CallBase;
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsSusService.h(30): using namespace NodeBase;
@@ -1433,7 +1429,7 @@ W026 Unused argument
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(436/2):    EventHandler::Rc ReleaseInactive(Cause::Ind cause, Event*& nextEvent);
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.h(156/1):    PotsMuxSsm(const Message& msg, ProtocolSM& psm);
 W027 Unused class
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(298): class CipUdpService : public UdpIpService
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(299): class CipUdpService : public UdpIpService
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(191): class ProxyBcDisconnecting : public BcDisconnecting
   C:/Users/gregu/Documents/rsc/rsc/dip/DipModule.h(38): class DipModule : public Module
   C:/Users/gregu/Documents/rsc/rsc/mb/MediaFailureEvent.h(42): class MediaFailureEvent : public Event
@@ -1512,10 +1508,10 @@ W030 Unused enumerator
 W032 Unused function
   C:/Users/gregu/Documents/rsc/rsc/an/PotsShelf.h(64):    CliText* CreateText() const override;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(214):    Digit At(DigitCount i) const;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(182):    MediaInfo* AddMedia(const MediaInfo& media);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(249):    void InjectFinalMsg() override;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(318):    CliText* CreateText() const override;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(363):    CliText* CreateText() const override;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(183):    MediaInfo* AddMedia(const MediaInfo& media);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(250):    void InjectFinalMsg() override;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(319):    CliText* CreateText() const override;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(360):    CliText* CreateText() const override;
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(194):    explicit ProxyBcDisconnecting(ServiceId sid);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.h(163):    static std::string Demangle(const std::string& s);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(128):    bool operator!=(const CodeWarning& that) const;
@@ -1555,7 +1551,6 @@ W032 Unused function
   C:/Users/gregu/Documents/rsc/rsc/nb/Array.h(157):    const T& At(size_t index) const
   C:/Users/gregu/Documents/rsc/rsc/nb/Array.h(165):    T& At(size_t index)
   C:/Users/gregu/Documents/rsc/rsc/nb/Array.h(189):    const T* Data() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(57):    word GetCurrValue() const { return *curr_; }
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.h(63):    virtual void Initialize();
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.h(72):    virtual Object* Create();
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.h(76):    virtual Object* GetQuasiSingleton();
@@ -1696,9 +1691,10 @@ W032 Unused function
   C:/Users/gregu/Documents/rsc/rsc/sb/TlvParameter.h(71):    static Id ExtractPid(const TlvParmLayout& parm);
   C:/Users/gregu/Documents/rsc/rsc/sb/TlvProtocol.h(39):    SignalId ExtractSignal(const SbIpBuffer& buff) const override;
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.h(75):    PotsMuxPsm(ProtocolLayer& adj, bool upper, Switch::PortId port);
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(75):    CliText* CreateText() const override;
+  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(76):    CliText* CreateText() const override;
 W033 Unused typedef
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTypes.h(226): using PersistentStr =
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbTypes.h(233): using ProtectedStrPtr = std::unique_ptr< ProtectedStr >;
 W037 Member hides inherited name
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(314):    static const Id NextId = FirstId + 50;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(881):    static const Id NextId                 = FirstUn + 7;
@@ -1715,9 +1711,9 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(183):    Rc AddDigit(Digit d);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(202):    DigitCount Size() const;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(226):    bool operator==(const DigitString& that) const;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(236):    void EnsureMediaMsg() override;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(240):    IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(411):    Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(237):    void EnsureMediaMsg() override;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(241):    IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(404):    Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1013):    virtual EventHandler::Rc RaiseInvalidInformation(Event*& nextEvent);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1014):    virtual EventHandler::Rc RaiseSelectRoute(Event*& nextEvent);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1015):    virtual EventHandler::Rc RaiseAuthorizeCallSetup(Event*& nextEvent);
@@ -1749,8 +1745,8 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxStrLiteral.h(88):    static DataPtr CreateRef()
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(52):    CxxNamedSet inherits;   // types not needed to calculate #include or using
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(214):    std::string NextOperator() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(67):    CodeDir* FindDir(const std::string& name) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(88):    LibrarySet* FindVar(const std::string& name) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(68):    CodeDir* FindDir(const std::string& name) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(89):    LibrarySet* FindVar(const std::string& name) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(69):    bool IsReadOnly() const;
   C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.h(202):    byte_t first_payload_byte;  // for creating a pointer to the first byte
   C:/Users/gregu/Documents/rsc/rsc/dip/Token.h(99):    bool is_number() const;
@@ -1767,7 +1763,7 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgBitParm.h(66):    bool SetNext(c_string input) override;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgBoolParm.h(68):    bool SetNextValue(bool value) override;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgFlagParm.h(65):    bool SetNextValue(bool value) override;
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(81):    bool SetNext(c_string input) override;
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(80):    bool SetNext(c_string input) override;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParm.h(65):    c_string Key() const;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParmRegistry.h(57):    CfgTuple* FindTuple(const std::string& key) const;
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.h(67):    virtual MemoryType ObjType() const = 0;
@@ -1776,8 +1772,8 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/nb/CliText.h(61):    c_string HelpText() const;
   C:/Users/gregu/Documents/rsc/rsc/nb/Daemon.h(89):    id_t Did() const { return did_.GetId(); }
   C:/Users/gregu/Documents/rsc/rsc/nb/Element.h(52):    static const std::string RscPath();
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(95):    int SetAttrs(MemoryProtection attrs);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(123):    bool IsFixedSize() const;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(98):    int SetAttrs(MemoryProtection attrs);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(126):    bool IsFixedSize() const;
   C:/Users/gregu/Documents/rsc/rsc/nb/LogGroup.h(81):    id_t Gid() const { return gid_.GetId(); }
   C:/Users/gregu/Documents/rsc/rsc/nb/LogGroup.h(85):    bool Suppressed() const { return suppressed_; }
   C:/Users/gregu/Documents/rsc/rsc/nb/MutexRegistry.h(53):    SysMutex* Find(const std::string& name) const;
@@ -1785,7 +1781,7 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.h(72):    typedef uint32_t InstanceId;  // identifies an object within a Class
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.h(73):    typedef uint32_t ObjectId;    // ClassId (12 bits) + InstanceId (20 bits)
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.h(103):    virtual InstanceId GetInstanceId() const;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPoolRegistry.h(56):    bool NullifyObjectData() const { return nullifyObjectData_; }
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPoolRegistry.h(57):    bool NullifyObjectData() const { return nullifyObjectDataCfg_->GetValue(); }
   C:/Users/gregu/Documents/rsc/rsc/nb/StatisticsGroup.h(63):    id_t Gid() const { return gid_.GetId(); }
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.h(81):    int16_t DayOfWeek() const;
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.h(136):    c_string strMonth() const;
@@ -1841,7 +1837,7 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/sb/Trigger.h(77):    static bool IsValidId(Id tid)
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(252):    void StartTimer(TimerId tid, secs_t duration);
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.h(158):    void SetProfile(PotsProfile* prof) { prof_ = prof; }
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(422):    ProtocolSM* TimerPsm(TimerId tid) const;
+  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(419):    ProtocolSM* TimerPsm(TimerId tid) const;
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsStatistics.h(45):    typedef uint8_t Id;
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsTreatmentRegistry.h(50):    void SetCauseToTreatmentQ(Cause::Ind cause, PotsTreatmentQueue::QId qid);
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsTreatments.h(93):    PotsTreatment* NextTreatment(const PotsTreatment& treatment) const;
@@ -1957,15 +1953,15 @@ W053 Data could be const
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(212):    word offset_;
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(216):    std::string info_;
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(220):    bool hide_;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(230):    LibraryVarSet* varSet_;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(227):    LibraryVarSet* varSet_;
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(221):    NodeBase::Q2Link link_;
   C:/Users/gregu/Documents/rsc/rsc/dip/BotThread.h(112):       BotEvent event;       // event
   C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.h(144):    DipHeader header;  // no parameters (length = 0)
   C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.h(202):    byte_t first_payload_byte;  // for creating a pointer to the first byte
   C:/Users/gregu/Documents/rsc/rsc/mb/Circuit.h(90):    RegCell port_;
   C:/Users/gregu/Documents/rsc/rsc/nb/Alarm.h(129):    RegCell aid_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(93):    word min_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(97):    word max_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(92):    word min_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(96):    word max_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParm.h(155):    Q1Link link_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgTuple.h(119):    Q1Link link_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(62):    istreamPtr file_;
@@ -1988,7 +1984,7 @@ W053 Data could be const
   C:/Users/gregu/Documents/rsc/rsc/nb/StatisticsThread.h(59):    static secs_t ShortIntervalSecs;
   C:/Users/gregu/Documents/rsc/rsc/nb/StatisticsThread.h(66):    static size_t WakeupsBetweenReports;
   C:/Users/gregu/Documents/rsc/rsc/nb/StatisticsThread.h(70):    static Duration SleepInterval;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.h(110):    Q1Link link_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.h(109):    Q1Link link_;
   C:/Users/gregu/Documents/rsc/rsc/nb/SysMutex.h(138):    RegCell mid_;
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionStats.h(83):    Q2Link link_;
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1643):    Q1Link link_;
@@ -2050,9 +2046,9 @@ W057 Default constructor invoked
   C:/Users/gregu/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(168):    std::unique_ptr< pollfd[] > list(new pollfd[size]);
 W060 Base class constructor is public
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(284):    Class(QualNamePtr& name, Cxx::ClassTag tag);
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgBoolParm.h(39):    CfgBoolParm(c_string key, c_string def, bool* field, c_string expl);
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(39):    CfgIntParm(c_string key, c_string def, word* field,
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.h(40):    CfgStrParm(c_string key, c_string def, ProtectedStr* field, c_string expl);
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgBoolParm.h(39):    CfgBoolParm(c_string key, c_string def, c_string expl);
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(39):    CfgIntParm(c_string key, c_string def, word min, word max, c_string expl);
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.h(40):    CfgStrParm(c_string key, c_string def, c_string expl);
   C:/Users/gregu/Documents/rsc/rsc/nb/CliBoolParm.h(39):    explicit CliBoolParm(c_string help,
   C:/Users/gregu/Documents/rsc/rsc/nb/CliCharParm.h(40):    CliCharParm(c_string help, c_string chars,
   C:/Users/gregu/Documents/rsc/rsc/nb/CliIntParm.h(49):    CliIntParm(c_string help, word min, word max,
@@ -2397,6 +2393,7 @@ W075 Virtual function is public
   C:/Users/gregu/Documents/rsc/rsc/nb/Base.h(137):    virtual void Shutdown(RestartLevel level) { }
   C:/Users/gregu/Documents/rsc/rsc/nb/Base.h(141):    virtual MemoryType MemType() const { return MemPermanent; }
   C:/Users/gregu/Documents/rsc/rsc/nb/CallbackRequest.h(44):    virtual void Callback() { }
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgBoolParm.h(47):    bool GetValue() const override { return curr_; }
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParm.h(69):    virtual void Explain(std::string& expl) const { expl = expl_; }
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.h(63):    virtual void Initialize();
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.h(67):    virtual MemoryType ObjType() const = 0;
@@ -2420,15 +2417,15 @@ W075 Virtual function is public
   C:/Users/gregu/Documents/rsc/rsc/nb/CliParm.h(244):    virtual Rc GetIdentifierRc(std::string& s, CliThread& cli,
   C:/Users/gregu/Documents/rsc/rsc/nb/CliText.h(69):    virtual bool BindParm(CliParm& parm);
   C:/Users/gregu/Documents/rsc/rsc/nb/Exception.h(51):    virtual void Display(std::ostream& stream, const std::string& prefix) const;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(49):    virtual void* Addr() const = 0;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(53):    virtual size_t Size() const = 0;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(57):    virtual MemoryType Type() const = 0;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(61):    virtual void* Alloc(size_t size) = 0;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(65):    virtual void Free(void* addr) = 0;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(70):    virtual size_t BlockToSize(const void* addr) const = 0;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(75):    virtual bool Validate(const void* addr) const = 0;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(79):    virtual bool CanBeProtected() const { return true; }
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(86):    virtual int SetPermissions(MemoryProtection attrs);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(52):    virtual void* Addr() const = 0;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(56):    virtual size_t Size() const = 0;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(60):    virtual MemoryType Type() const = 0;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(64):    virtual void* Alloc(size_t size) = 0;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(68):    virtual void Free(void* addr) = 0;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(73):    virtual size_t BlockToSize(const void* addr) const = 0;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(78):    virtual bool Validate(const void* addr) const = 0;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(82):    virtual bool CanBeProtected() const { return true; }
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h(89):    virtual int SetPermissions(MemoryProtection attrs);
   C:/Users/gregu/Documents/rsc/rsc/nb/MsgBuffer.h(62):    virtual TraceStatus GetStatus() const;
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.h(59):    virtual void Patch(sel_t selector, void* arguments) { }
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.h(84):    virtual Class* GetClass() const;
@@ -2522,7 +2519,7 @@ W075 Virtual function is public
   C:/Users/gregu/Documents/rsc/rsc/sb/ProtocolLayer.h(112):    virtual ProtocolLayer* JoinPeer
   C:/Users/gregu/Documents/rsc/rsc/sb/ProtocolLayer.h(119):    virtual bool DropPeer(const GlobalAddress& peerPrevRemAddr) = 0;
   C:/Users/gregu/Documents/rsc/rsc/sb/RootServiceSM.h(50):    virtual Event* RaiseProtocolError(ProtocolSM& psm, ProtocolSM::Error err);
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbInvokerPools.h(44):    bool RejectIngressWork() const override;
+  C:/Users/gregu/Documents/rsc/rsc/sb/SbInvokerPools.h(43):    bool RejectIngressWork() const override;
   C:/Users/gregu/Documents/rsc/rsc/sb/Service.h(84):    virtual NodeBase::c_string PortName(PortId pid) const;
   C:/Users/gregu/Documents/rsc/rsc/sb/Service.h(114):    virtual ServiceSM* AllocModifier() const;
   C:/Users/gregu/Documents/rsc/rsc/sb/ServiceSM.h(67):    virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) = 0;
@@ -2626,8 +2623,8 @@ W082 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(526):    void DebugFtCode
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(222):    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(408):    void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(62):    NodeBase::word Import
-  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(104):    NodeBase::word Assign(const std::string& name,
+  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(63):    NodeBase::word Import
+  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(105):    NodeBase::word Assign(const std::string& name,
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(405):    static bool SetCompoundType
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(451):    bool GetParExpr(ExprPtr& expr, bool omit, bool opt = false);
   C:/Users/gregu/Documents/rsc/rsc/ct/SetOperations.h(33):    void SetDifference
@@ -2642,11 +2639,11 @@ W082 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.h(55):    uint64_t pack4(uint16_t a, uint16_t b, uint16_t c, uint16_t d);
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.h(63):    size_t round_to_2_exp_n(size_t n, size_t e, bool up);
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgBitParm.h(48):    CfgBitParm(c_string key, c_string def, c_string expl);
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgBoolParm.h(39):    CfgBoolParm(c_string key, c_string def, bool* field, c_string expl);
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgBoolParm.h(39):    CfgBoolParm(c_string key, c_string def, c_string expl);
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgFlagParm.h(39):    CfgFlagParm(c_string key, c_string def,
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(39):    CfgIntParm(c_string key, c_string def, word* field,
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(39):    CfgIntParm(c_string key, c_string def, word min, word max, c_string expl);
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParm.h(91):    CfgParm(c_string key, c_string def, c_string expl);
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.h(40):    CfgStrParm(c_string key, c_string def, ProtectedStr* field, c_string expl);
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.h(40):    CfgStrParm(c_string key, c_string def, c_string expl);
   C:/Users/gregu/Documents/rsc/rsc/nb/CliCharParm.h(40):    CliCharParm(c_string help, c_string chars,
   C:/Users/gregu/Documents/rsc/rsc/nb/CliCommand.h(104):    CliCommand(c_string comm, c_string help, uint32_t size = 32);
   C:/Users/gregu/Documents/rsc/rsc/nb/CliCommandSet.h(59):    CliCommandSet(c_string comm, c_string help, uint32_t size = 32);
@@ -2674,7 +2671,7 @@ W082 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionProfiler.h(88):    static void CheckHigh(FunctionStats*& high, FunctionStats* curr,
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(224):    word Sort(const string& input, const string& output, string& expl) const;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.h(50):    IpBuffer(NodeBase::MsgDirection dir, size_t header, size_t payload);
-  C:/Users/gregu/Documents/rsc/rsc/nw/IpPortCfgParm.h(46):    IpPortCfgParm(NodeBase::c_string key, NodeBase::c_string def,
+  C:/Users/gregu/Documents/rsc/rsc/nw/IpPortCfgParm.h(42):    IpPortCfgParm(NodeBase::c_string key, NodeBase::c_string def,
   C:/Users/gregu/Documents/rsc/rsc/nw/SysIpL3Addr.h(59):    SysIpL3Addr
   C:/Users/gregu/Documents/rsc/rsc/pb/PotsFeature.h(105):    PotsFeature(PotsFeature::Id fid, bool deactivation,
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.h(132):    void TraceMsg(ProtocolId prid, SignalId sid, NodeBase::MsgDirection dir);
@@ -2758,8 +2755,8 @@ W090 Function could be const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(150):    void EraseSpace(const Namespace* space);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(151):    void EraseTerm(const Terminal* term);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(152):    void EraseType(const Typedef* type);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(72):    CodeFile* EnsureFile(const std::string& file, CodeDir* dir = nullptr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(104):    NodeBase::word Assign(const std::string& name,
+  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(73):    CodeFile* EnsureFile(const std::string& file, CodeDir* dir = nullptr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(105):    NodeBase::word Assign(const std::string& name,
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(206):    virtual void process_ccd_message
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(212):    virtual void process_drw_message(const TokenMessage& message);
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(243):    virtual void process_out_message(const TokenMessage& message);
@@ -2913,8 +2910,8 @@ W092 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/nb/Log.h(115):    static Log* Find(fixed_string groupName, LogId id, LogGroup*& group);
   C:/Users/gregu/Documents/rsc/rsc/nb/Log.h(120):    static Log* Find(fixed_string log);
   C:/Users/gregu/Documents/rsc/rsc/nb/Log.h(128):    static size_t Count();
-  C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.h(66):    static void Spool(ostringstreamPtr& stream, const Log* log);
-  C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.h(70):    static void CopyToConsole(const ostringstreamPtr& stream);
+  C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.h(68):    static void Spool(ostringstreamPtr& stream, const Log* log);
+  C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.h(72):    static void CopyToConsole(const ostringstreamPtr& stream);
   C:/Users/gregu/Documents/rsc/rsc/nb/MainArgs.h(53):    static void PushBack(const std::string& arg);
   C:/Users/gregu/Documents/rsc/rsc/nb/MemoryTrace.h(57):    static c_string TypeString(MemoryType type);
   C:/Users/gregu/Documents/rsc/rsc/nb/ModuleRegistry.h(82):    void SetLevel(RestartLevel level);
@@ -2927,8 +2924,8 @@ W092 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/nb/Restart.h(99):    template< class T > static bool Release(std::unique_ptr< T >& obj)
   C:/Users/gregu/Documents/rsc/rsc/nb/Restart.h(109):    static RestartLevel LevelToClear(MemoryType type);
   C:/Users/gregu/Documents/rsc/rsc/nb/Restart.h(115):    static void Initiate
-  C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.h(59):    static const std::string& ValidNameChars();
-  C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.h(64):    static const std::string& InvalidInitialChars();
+  C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.h(58):    static const std::string& ValidNameChars();
+  C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.h(63):    static const std::string& InvalidInitialChars();
   C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.h(86):    static void ListHeaps(std::set< void* >& heaps, std::ostringstream& expl);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThread.h(55):    static SysThreadId RunningThreadId();
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThread.h(120):    static SysThread_t Wrap();
@@ -2948,7 +2945,7 @@ W092 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(626):    static void EnableFactions(const FactionFlags& enabled);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(642):    static TraceRc LogContextSwitches(bool on);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(650):    static void DisplayContextSwitches(std::ostream& stream);
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(91):    static int WarpFactor();
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(90):    static int WarpFactor();
   C:/Users/gregu/Documents/rsc/rsc/nb/TimePoint.h(62):    static TimePoint TimeZero();
   C:/Users/gregu/Documents/rsc/rsc/nb/TimePoint.h(66):    static std::string TimeZeroStr();
   C:/Users/gregu/Documents/rsc/rsc/nb/TimePoint.h(70):    static TimePoint Now();
@@ -2994,7 +2991,7 @@ W092 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/sb/TlvParameter.h(71):    static Id ExtractPid(const TlvParmLayout& parm);
   C:/Users/gregu/Documents/rsc/rsc/sb/Trigger.h(77):    static bool IsValidId(Id tid)
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(456):    static EventHandler::Rc SendFacilityNack(PotsMuxPsm* npsm, ServiceId sid);
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(136):    static void SendRelease(const Message& msg1);
+  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(133):    static void SendRelease(const Message& msg1);
   C:/Users/gregu/Documents/rsc/rsc/st/StTestData.h(52):    static StTestData* Access(CliThread& cli);
 W097 Line indentation is not a multiple of the standard value
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.cpp(248):     const string& line2, size_t begin2, size_t end2)
@@ -3049,24 +3046,24 @@ W099 Line contains adjacent spaces
   C:/Users/gregu/Documents/rsc/rsc/cb/BcHandlers.cpp(193):    auto          sid = msg->GetSignal();
   C:/Users/gregu/Documents/rsc/rsc/cb/BcHandlers.cpp(194):    auto&         bcssm = static_cast< BcSsm& >(ssm);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcHandlers.cpp(196):    CauseInfo*    cci;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(480):    id_t        idx;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(481):    word        fid, rid;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(483):    auto&       tlvmsg = static_cast< TlvMessage& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(512):    TestRc       rc;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(513):    auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(515):    id_t         idx;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(516):    word         fid, rid;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(856):    auto          state = GetState();
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(857):    auto&         tmsg = static_cast< TlvMessage& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(858):    auto          sig = tmsg.GetSignal();
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(859):    TimeoutInfo*  toi = nullptr;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(861):    auto          err = true;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(862):    debug64_t     error;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(986):    auto          state = GetState();
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(987):    auto&         tmsg = static_cast< TlvMessage& >(msg);
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(988):    auto          sig = msg.GetSignal();
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(990):    auto          err = true;
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(991):    debug64_t     error;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(479):    id_t        idx;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(480):    word        fid, rid;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(482):    auto&       tlvmsg = static_cast< TlvMessage& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(511):    TestRc       rc;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(512):    auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(514):    id_t         idx;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(515):    word         fid, rid;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(855):    auto          state = GetState();
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(856):    auto&         tmsg = static_cast< TlvMessage& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(857):    auto          sig = tmsg.GetSignal();
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(858):    TimeoutInfo*  toi = nullptr;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(860):    auto          err = true;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(861):    debug64_t     error;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(985):    auto          state = GetState();
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(986):    auto&         tmsg = static_cast< TlvMessage& >(msg);
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(987):    auto          sig = msg.GetSignal();
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(989):    auto          err = true;
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(990):    debug64_t     error;
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.cpp(379):    auto&         ame = static_cast< AnalyzeMsgEvent& >(currEvent);
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.cpp(380):    auto          msg = static_cast< CipMessage* >(ame.Msg());
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.cpp(381):    auto          sid = msg->GetSignal();
@@ -3241,15 +3238,15 @@ W099 Line contains adjacent spaces
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(282):    CounterPtr       yields_;
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(283):    CounterPtr       interrupts_;
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(287):    AccumulatorPtr   totTime_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(183):    CfgIntParmPtr  initTimeoutMsecs_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(184):    CfgIntParmPtr  schedTimeoutMsecs_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(186):    CfgIntParmPtr  rtcTimeoutMsecs_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(188):    CfgIntParmPtr  rtcLimit_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(189):    CfgIntParmPtr  rtcInterval_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(191):    CfgIntParmPtr  trapLimit_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(192):    CfgIntParmPtr  trapInterval_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(194):    CfgIntParmPtr  stackUsageLimit_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(195):    CfgIntParmPtr  stackCheckInterval_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(174):    CfgIntParmPtr  initTimeoutMsecs_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(175):    CfgIntParmPtr  schedTimeoutMsecs_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(177):    CfgIntParmPtr  rtcTimeoutMsecs_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(179):    CfgIntParmPtr  rtcLimit_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(180):    CfgIntParmPtr  rtcInterval_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(182):    CfgIntParmPtr  trapLimit_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(183):    CfgIntParmPtr  trapInterval_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(185):    CfgIntParmPtr  stackUsageLimit_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(186):    CfgIntParmPtr  stackCheckInterval_;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.cpp(58):    CounterPtr       recvs_;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.cpp(59):    AccumulatorPtr   bytesRcvd_;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.cpp(62):    CounterPtr       discards_;
@@ -3326,46 +3323,10 @@ W099 Line contains adjacent spaces
 W102 Line length exceeds the standard maximum
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSsm.cpp(293):    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2873):       (lpar.iter->code.find_first_not_of(WhitespaceChars, lpar.pos + 1) == rpar))
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(3336): "Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(3337): "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(3478): "Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(3479): "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 W103 Function not sorted in standard order
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(164): size_t LevelToSize(NbHeap::level_t level)
-W104 File heading is not standard
-  C:/Users/gregu/Documents/rsc/rsc/dip/Adjudicator.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/BotThread.cpp(5): //  Copyright (C) 2019  Greg Utas
-  C:/Users/gregu/Documents/rsc/rsc/dip/BotThread.h(5): //  Copyright (C) 2019  Greg Utas
-  C:/Users/gregu/Documents/rsc/rsc/dip/BotTrace.cpp(7): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/BotTrace.h(7): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/BotTracer.cpp(7): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/BotTracer.h(7): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/BotType.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/ConvoySubversion.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/ConvoySubversion.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/DipModule.cpp(5): //  Copyright (C) 2019  Greg Utas
-  C:/Users/gregu/Documents/rsc/rsc/dip/DipModule.h(5): //  Copyright (C) 2019  Greg Utas
-  C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.cpp(5): //  Copyright (C) 2019  Greg Utas
-  C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.h(5): //  Copyright (C) 2019  Greg Utas
-  C:/Users/gregu/Documents/rsc/rsc/dip/DipTypes.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/Location.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/Location.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/MapAndUnits.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/MapAndUnits.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/Province.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/Province.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/StartupParameters.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/StartupParameters.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/Token.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/Token.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/TokenMessage.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/TokenMessage.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/TokenTextMap.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/TokenTextMap.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/UnitOrder.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/UnitOrder.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/WinterOrders.cpp(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-  C:/Users/gregu/Documents/rsc/rsc/dip/WinterOrders.h(5): //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/an/PotsTrafficThread.cpp(1377): void PotsTrafficThread::RecordHoldingTime(const Duration& time)
   C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp(148): Digit DigitString::At(DigitCount i) const
@@ -3392,11 +3353,11 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.cpp(235): bool InsertSpaceOnMerge(const string& line1, const string& line2, size_t begin2)
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.cpp(246): size_t LineMergeLength
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(631): template< typename T > size_t IndexOf(const std::vector< T >& v, const T& item)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(178): word CodeWarning::FindWarning(const CodeWarning& log)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(814): bool CodeWarning::IsSortedByFile
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(833): bool CodeWarning::IsSortedByType
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(852): bool CodeWarning::IsSortedToFix
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(944): bool CodeWarning::Suppress() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(179): word CodeWarning::FindWarning(const CodeWarning& log)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(815): bool CodeWarning::IsSortedByFile
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(834): bool CodeWarning::IsSortedByType
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(853): bool CodeWarning::IsSortedToFix
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(945): bool CodeWarning::Suppress() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(396): void Class::AddItem(const CxxNamed* item)
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(1296): Class* Class::GetClassTemplate() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(1334): Cxx::Access Class::GetCurrAccess() const
@@ -3655,18 +3616,18 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/mb/ToneRegistry.cpp(81): Tone* ToneRegistry::GetTone(Tone::Id tid) const
   C:/Users/gregu/Documents/rsc/rsc/nb/Alarm.cpp(204): AlarmStatus Alarm::Status() const
   C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp(96): void Base::Nullify(size_t n)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp(146): Base::vptr_t Base::Vptr() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp(168): Base::vptr_t Base::Vptr() const
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgBitParm.cpp(52): void CfgBitParm::Explain(string& expl) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgFlagParm.cpp(71): bool CfgFlagParm::GetCurrValue() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.cpp(73): void CfgIntParm::Explain(string& expl) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgFlagParm.cpp(71): bool CfgFlagParm::GetValue() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.cpp(72): void CfgIntParm::Explain(string& expl) const
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParmRegistry.cpp(272): void CfgParmRegistry::ListParms(ostream& stream, const string& prefix) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.cpp(66): void CfgStrParm::Explain(string& expl) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.cpp(64): void CfgStrParm::Explain(string& expl) const
   C:/Users/gregu/Documents/rsc/rsc/nb/CinThread.cpp(69): void CinThread::ClearClient(const Thread* client)
   C:/Users/gregu/Documents/rsc/rsc/nb/ClassRegistry.cpp(95): Class* ClassRegistry::Lookup(ClassId cid) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(626): bool CliBuffer::ReadingFromFile() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(625): bool CliBuffer::ReadingFromFile() const
   C:/Users/gregu/Documents/rsc/rsc/nb/CliCookie.cpp(130): uint32_t CliCookie::Index(uint32_t depth) const
   C:/Users/gregu/Documents/rsc/rsc/nb/Debug.cpp(55): void Debug::Assert(bool condition, debug64_t errval)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Element.cpp(197): bool Element::RunningInLab()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Element.cpp(191): bool Element::RunningInLab()
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(193): CtorChain::CtorChain(FunctionTrace* inner) :
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(210): bool CtorChain::AddToPreviousChain(FunctionTrace* ctor)
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(263): CtorChain::Action CtorChain::CalcAction
@@ -3678,9 +3639,9 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(487): void CtorChain::MoveOuterAboveInit()
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(501): void CtorChain::MoveOuterAboveInner() const
   C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.cpp(514): void CtorChain::SetOuter(FunctionTrace* outer)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.cpp(126): void Heap::Freed(size_t size)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.cpp(134): bool Heap::IsFixedSize() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.cpp(172): void Heap::Requested(size_t size, bool ok)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.cpp(149): void Heap::Freeing(void* addr, size_t size)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.cpp(165): bool Heap::IsFixedSize() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Heap.cpp(203): void Heap::Requested(size_t size, void* addr)
   C:/Users/gregu/Documents/rsc/rsc/nb/InitFlags.cpp(28): bool InitFlags::AllowBreak()
   C:/Users/gregu/Documents/rsc/rsc/nb/InitFlags.cpp(39): bool InitFlags::CauseTimeout()
   C:/Users/gregu/Documents/rsc/rsc/nb/InitFlags.cpp(48): bool InitFlags::SuspendRoot()
@@ -3690,14 +3651,13 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/LogGroup.cpp(178): void LogGroup::SetSuppressed(bool suppressed)
   C:/Users/gregu/Documents/rsc/rsc/nb/LogGroupRegistry.cpp(197): LogGroup* LogGroupRegistry::Group(id_t gid) const
   C:/Users/gregu/Documents/rsc/rsc/nb/MainArgs.cpp(150): size_t MainArgs::Size()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(218): Heap* AccessHeap(MemoryType type)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(237): Heap* EnsureHeap(MemoryType type)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(254): MemoryType Memory::AddrToType(const void* addr)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(271): size_t Memory::Align(size_t size, size_t log2align)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(457): const Heap* Memory::GetHeap(MemoryType type)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(466): bool Memory::Protect(MemoryType type)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(551): bool Memory::Unprotect(MemoryType type)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(584): size_t Memory::Words(size_t size)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(218): Heap* EnsureHeap(MemoryType type)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(235): Heap* Memory::AccessHeap(MemoryType type)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(252): MemoryType Memory::AddrToType(const void* addr)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(269): size_t Memory::Align(size_t size, size_t log2align)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(455): bool Memory::Protect(MemoryType type)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(540): bool Memory::Unprotect(MemoryType type)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(573): size_t Memory::Words(size_t size)
   C:/Users/gregu/Documents/rsc/rsc/nb/ModuleRegistry.cpp(59): const FactionFlags& AllFactions()
   C:/Users/gregu/Documents/rsc/rsc/nb/ModuleRegistry.cpp(76): const FactionFlags& ShutdownFactions()
   C:/Users/gregu/Documents/rsc/rsc/nb/ModuleRegistry.cpp(172): Module* ModuleRegistry::GetModule(ModuleId mid) const
@@ -3730,21 +3690,21 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.cpp(61): Object::ClassId Object::GetClassId() const
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.cpp(72): bool Object::GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid)
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.cpp(99): Object::ObjectId Object::GetObjectId() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(333): size_t ObjectPool::AllocCount() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(502): size_t ObjectPool::AvailCount() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(509): bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(810): size_t ObjectPool::Expansions() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(817): size_t ObjectPool::FailCount() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(862): size_t ObjectPool::FreeCount() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(869): bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(881): size_t ObjectPool::InUseCount() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(888): size_t ObjectPool::LowAvailCount() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(895): ObjectBlock* ObjectPool::Next(PooledObjectId& bid) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(914): Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(987): ObjectPoolId ObjectPool::ObjPid(const Pooled* obj)
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(996): PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(1005): ObjectBlock* ObjectPool::ObjToBlock(const Pooled* obj)
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPoolRegistry.cpp(293): ObjectPool* ObjectPoolRegistry::Pool(ObjectPoolId pid) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(331): size_t ObjectPool::AllocCount() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(500): size_t ObjectPool::AvailCount() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(507): bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(807): size_t ObjectPool::Expansions() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(814): size_t ObjectPool::FailCount() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(859): size_t ObjectPool::FreeCount() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(866): bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(878): size_t ObjectPool::InUseCount() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(885): size_t ObjectPool::LowAvailCount() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(892): ObjectBlock* ObjectPool::Next(PooledObjectId& bid) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(911): Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(984): ObjectPoolId ObjectPool::ObjPid(const Pooled* obj)
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(993): PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(1002): ObjectBlock* ObjectPool::ObjToBlock(const Pooled* obj)
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPoolRegistry.cpp(289): ObjectPool* ObjectPoolRegistry::Pool(ObjectPoolId pid) const
   C:/Users/gregu/Documents/rsc/rsc/nb/PermanentHeap.cpp(48): PermanentHeap* PermanentHeap::Instance()
   C:/Users/gregu/Documents/rsc/rsc/nb/PosixSignal.cpp(126): Flags PS_Break()
   C:/Users/gregu/Documents/rsc/rsc/nb/PosixSignal.cpp(131): Flags PS_Delayed()
@@ -3761,7 +3721,7 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/RegCell.cpp(38): RegCell::~RegCell()
   C:/Users/gregu/Documents/rsc/rsc/nb/RegCell.cpp(50): void RegCell::SetId(id_t cid)
   C:/Users/gregu/Documents/rsc/rsc/nb/Restart.cpp(38): bool Restart::ClearsMemory(MemoryType type)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Restart.cpp(68): RestartLevel Restart::LevelToClear(MemoryType type)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Restart.cpp(71): RestartLevel Restart::LevelToClear(MemoryType type)
   C:/Users/gregu/Documents/rsc/rsc/nb/Singletons.cpp(124): Singletons* Singletons::Instance()
   C:/Users/gregu/Documents/rsc/rsc/nb/Statistics.cpp(114): uint64_t Statistic::Overall() const
   C:/Users/gregu/Documents/rsc/rsc/nb/Statistics.cpp(259): uint64_t HighWatermark::Overall() const
@@ -3772,9 +3732,9 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(99): bool FileWalker::AtEnd() const
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(106): void FileWalker::GetName(string& fileName) const
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(115): bool FileWalker::IsSubdir() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.win.cpp(113): void* SysHeap::Addr() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.win.cpp(149): bool SysHeap::CanBeProtected() const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.win.cpp(183): void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.win.cpp(106): void* SysHeap::Addr() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.win.cpp(142): bool SysHeap::CanBeProtected() const { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.win.cpp(177): void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
   C:/Users/gregu/Documents/rsc/rsc/nb/SysLock.win.cpp(33): SysLock::SysLock() :
   C:/Users/gregu/Documents/rsc/rsc/nb/SysLock.win.cpp(45): SysLock::~SysLock()
   C:/Users/gregu/Documents/rsc/rsc/nb/SysLock.win.cpp(63): void SysLock::Acquire()
@@ -3830,20 +3790,19 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3565): bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3785): void Thread::UpdateMutex(SysMutex* mutex)
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3792): void Thread::UpdateMutexCount(bool acquired)
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(350): const ThreadAdminValues* ThreadAdmin::AccessConfig()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(365): bool ThreadAdmin::BreakEnabled()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(472): void ThreadAdmin::Incr(Register r)
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(562): bool ThreadAdmin::ReinitOnSchedTimeout()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(571): word ThreadAdmin::RtcInterval()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(580): word ThreadAdmin::RtcLimit()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(589): Duration ThreadAdmin::RtcTimeout()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(599): Duration ThreadAdmin::SchedTimeout()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(622): word ThreadAdmin::StackCheckInterval()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(631): word ThreadAdmin::StackUsageLimit()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(668): word ThreadAdmin::TrapCount()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(680): word ThreadAdmin::TrapInterval()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(689): word ThreadAdmin::TrapLimit()
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(698): bool ThreadAdmin::TrapOnRtcTimeout()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(293): bool ThreadAdmin::BreakEnabled()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(371): void ThreadAdmin::Incr(Register r)
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(460): bool ThreadAdmin::ReinitOnSchedTimeout()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(468): word ThreadAdmin::RtcInterval()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(476): word ThreadAdmin::RtcLimit()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(484): Duration ThreadAdmin::RtcTimeout()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(493): Duration ThreadAdmin::SchedTimeout()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(515): word ThreadAdmin::StackCheckInterval()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(523): word ThreadAdmin::StackUsageLimit()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(557): word ThreadAdmin::TrapCount()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(569): word ThreadAdmin::TrapInterval()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(577): word ThreadAdmin::TrapLimit()
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(585): bool ThreadAdmin::TrapOnRtcTimeout()
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadRegistry.cpp(48): bool IsSortedByThreadId(const Thread* thr1, const Thread* thr2)
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadRegistry.cpp(322): Thread* ThreadRegistry::GetThread(ThreadId tid) const
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadRegistry.cpp(335): std::vector< Thread* > ThreadRegistry::GetThreads() const
@@ -3878,7 +3837,7 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nt/TestDatabase.cpp(154): TestDatabase::State TestDatabase::GetState(const string& testcase)
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.cpp(207): TraceStatus IpBuffer::GetStatus() const
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.cpp(210): size_t IpPort::Discards() const
-  C:/Users/gregu/Documents/rsc/rsc/nw/IpPortRegistry.cpp(289): IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
+  C:/Users/gregu/Documents/rsc/rsc/nw/IpPortRegistry.cpp(288): IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
   C:/Users/gregu/Documents/rsc/rsc/nw/IpServiceRegistry.cpp(81): IpService* IpServiceRegistry::GetService(const string& name) const
   C:/Users/gregu/Documents/rsc/rsc/nw/SysSocket.cpp(138): void SysSocket::SetStatus(bool ok, const string& err)
   C:/Users/gregu/Documents/rsc/rsc/nw/SysSocket.cpp(162): bool SysSocket::SetTracing(bool tracing)
@@ -3918,10 +3877,10 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/sb/Factory.cpp(227): size_t Factory::DiscardedMessageCount() const
   C:/Users/gregu/Documents/rsc/rsc/sb/FactoryRegistry.cpp(157): Factory* FactoryRegistry::GetFactory(FactoryId fid) const
   C:/Users/gregu/Documents/rsc/rsc/sb/InitiationReqEvent.cpp(92): void InitiationReqEvent::Capture
-  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(733): void InvokerPool::RecordDelay(MsgPriority prio, const Duration& delay) const
-  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(832): size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
-  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(840): Duration InvokerPool::WorkQMaxDelay(MsgPriority prio) const
-  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(848): size_t InvokerPool::WorkQMaxLength(MsgPriority prio) const
+  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(730): void InvokerPool::RecordDelay(MsgPriority prio, const Duration& delay) const
+  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(830): size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
+  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(838): Duration InvokerPool::WorkQMaxDelay(MsgPriority prio) const
+  C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(846): size_t InvokerPool::WorkQMaxLength(MsgPriority prio) const
   C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPoolRegistry.cpp(182): InvokerPool* InvokerPoolRegistry::Pool(Faction faction) const
   C:/Users/gregu/Documents/rsc/rsc/sb/InvokerThread.cpp(121): TraceStatus InvokerThread::CalcStatus(bool dynamic) const
   C:/Users/gregu/Documents/rsc/rsc/sb/Message.cpp(251): MsgDirection Message::Dir() const
@@ -3968,8 +3927,8 @@ W107 Function does not invoke Debug::ft as first statement
 W110 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/an/PotsShelf.h(44): class PotsShelfIpService : public UdpIpService
   C:/Users/gregu/Documents/rsc/rsc/an/PotsTrafficThread.cpp(223): class TrafficCallPool : public Dynamic
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(298): class CipUdpService : public UdpIpService
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(337): class CipTcpService : public TcpIpService
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(299): class CipUdpService : public UdpIpService
+  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(334): class CipTcpService : public TcpIpService
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.h(43): class CodeCoverage : public NodeBase::Temporary
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(87): class CxxSymbols: public NodeBase::Base
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.h(44): class Interpreter : public NodeBase::Temporary
@@ -3979,13 +3938,12 @@ W110 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.h(63): class NbTracer : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(84): class ObjectPoolSizeCfg : public CfgIntParm
   C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(97): class ObjectPoolStats : public Dynamic
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(188): struct ObjectPoolDynamic : public Persistent
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(187): struct ObjectPoolDynamic : public Persistent
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(37): class FileWalker : public FileList
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.h(38): class SysTickTimer : public Immutable
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(274): class ThreadStats : public Dynamic
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(366): class ContextSwitches : public Permanent
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(55): class ThreadsStats : public Dynamic
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(218): struct ThreadAdminValues : public Persistent
+  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(54): class ThreadsStats : public Dynamic
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.h(64): class TraceBuffer : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionProfiler.h(49): class FunctionProfiler : public Temporary
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1103): class TestHeap : public NbHeap
@@ -4001,17 +3959,13 @@ W110 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp(105): class InvokerWork : public Dynamic
   C:/Users/gregu/Documents/rsc/rsc/sb/SbPools.h(192): class TimerPool : public NodeBase::ObjectPool
   C:/Users/gregu/Documents/rsc/rsc/sb/SbTracer.h(113): class SbTracer : public NodeBase::Permanent
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(55): class PotsCallIpService : public UdpIpService
+  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(56): class PotsCallIpService : public UdpIpService
 W111 Override of Object.Patch not found
   C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(61): class ProtectedHeap : public NbHeap
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(275): class NbIncrement : public CliIncrement
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(366): class ContextSwitches : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(762): class ThreadPriv : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/sb/EventHandler.h(48): class EventHandler : public NodeBase::Immutable
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(40): class SbAnalyzeMessage : public EventHandler
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(54): class SbAnalyzeSap : public EventHandler
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(68): class SbAnalyzeSnp : public EventHandler
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(82): class SbForceTransition : public EventHandler
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(96): class SbInitiationReq : public EventHandler
   C:/Users/gregu/Documents/rsc/rsc/sb/TimerProtocol.h(88): class TimeoutParameter : public TlvParameter
 W117 Line can merge with the next line and be under the length limit
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.cpp(242):    BindEventHandler
@@ -4020,7 +3974,6 @@ W117 Line can merge with the next line and be under the length limit
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.cpp(1859):          (press->message == contents))
   C:/Users/gregu/Documents/rsc/rsc/nb/CliStack.h(65):    const CliCommand* FindCommand
   C:/Users/gregu/Documents/rsc/rsc/nb/SoftwareException.h(41):    SoftwareException
-  C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(322):       "F", &Debug::FcFlags_, Debug::StackChecking,
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(606):    BindEventHandler
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(622):    BindEventHandler
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(626):    BindEventHandler
@@ -4079,7 +4032,7 @@ W119 Argument passed by value is modified
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(55/1): size_t log2(size_t n, bool up)
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(118/1): size_t round_to_2_exp_n(size_t n, size_t e, bool up)
   C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp(96/1): void Base::Nullify(size_t n)
-  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(179/3):    (const CliThread& cli, const string& expl, std::streamsize p)
+  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(205/3):    (const CliThread& cli, const string& expl, std::streamsize p)
   C:/Users/gregu/Documents/rsc/rsc/nb/CliText.cpp(41/2): CliText::CliText(c_string help, c_string text, bool opt, uint32_t size) :
   C:/Users/gregu/Documents/rsc/rsc/nb/CliTextParm.cpp(150/2): void CliTextParm::Explain(ostream& stream, col_t indent) const
   C:/Users/gregu/Documents/rsc/rsc/nb/CliThread.cpp(786/2):    (const string& expl, size_t begin, size_t end, col_t indent) const
@@ -4088,9 +4041,9 @@ W119 Argument passed by value is modified
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(418/1): void* NbHeap::Alloc(size_t size)
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(705/1): void NbHeap::FreeBlock(HeapBlock* block, level_t level)
   C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp(805/1): void NbHeap::SplitAncestors(index_t block)
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(509/1): bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(525/1): Pooled* ObjectPool::BidToObj(PooledObjectId bid) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(551/1): bool ObjectPool::Corrupt(size_t n)
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(507/1): bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(523/1): Pooled* ObjectPool::BidToObj(PooledObjectId bid) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(549/1): bool ObjectPool::Corrupt(size_t n)
   C:/Users/gregu/Documents/rsc/rsc/nb/SysMemory.win.cpp(71/1): void* SysMemory::Alloc(void* addr, size_t size, MemoryProtection attrs)
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(105/1): void SysTime::AddDays(size_t days)
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(140/1): void SysTime::AddMsecs(msecs_t msecs)
@@ -4137,8 +4090,6 @@ C:/Users/gregu/Documents/rsc/rsc/an/AnModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
 C:/Users/gregu/Documents/rsc/rsc/an/PotsShelf.h
-  W005 Functional cast
-    51:    ipport_t Port() const override { return ipport_t(port_); }
   W020 Using statement in header
     34: using namespace SessionBase;
     35: using namespace MediaBase;
@@ -4151,20 +4102,20 @@ C:/Users/gregu/Documents/rsc/rsc/an/PotsShelf.h
     44: class PotsShelfIpService : public UdpIpService
 C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfFactory.cpp
   W007 Cast down the inheritance hierarchy
-    142:    auto& pmsg = static_cast< Pots_UN_Message& >(msg);
-    155:    auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
-    177:    auto& pmsg = static_cast< Pots_NU_Message& >(msg);
-    187:    auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
+    143:    auto& pmsg = static_cast< Pots_UN_Message& >(msg);
+    156:    auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
+    178:    auto& pmsg = static_cast< Pots_NU_Message& >(msg);
+    188:    auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(phi->port));
   W022 Add using statement
     1: namespace MediaBase
     1: namespace NodeBase
     1: namespace SessionBase
 C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfHandler.cpp
   W006 reinterpret_cast
-    72:    auto pptr = reinterpret_cast< TlvParmPtr >(sbuff->PayloadPtr());
-    73:    auto phi = reinterpret_cast< PotsHeaderInfo* >(pptr->bytes);
+    73:    auto pptr = reinterpret_cast< TlvParmPtr >(sbuff->PayloadPtr());
+    74:    auto phi = reinterpret_cast< PotsHeaderInfo* >(pptr->bytes);
   W007 Cast down the inheritance hierarchy
-    70:    auto sbuff = static_cast< SbIpBuffer* >(buff.get());
+    71:    auto sbuff = static_cast< SbIpBuffer* >(buff.get());
   W022 Add using statement
     1: namespace MediaBase
     1: namespace NetworkBase
@@ -4294,62 +4245,59 @@ C:/Users/gregu/Documents/rsc/rsc/cb/BcProgress.h
     33: using namespace SessionBase;
 C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp
   W006 reinterpret_cast
-    468:    reinterpret_cast< const RouteResult* >(bytes)->Display(stream, prefix);
+    467:    reinterpret_cast< const RouteResult* >(bytes)->Display(stream, prefix);
   W007 Cast down the inheritance hierarchy
-    483:    auto&       tlvmsg = static_cast< TlvMessage& >(msg);
-    513:    auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
-    825:       if(m->GetSignal() == sid) return static_cast< CipMessage* >(m);
-    857:    auto&         tmsg = static_cast< TlvMessage& >(msg);
-    987:    auto&         tmsg = static_cast< TlvMessage& >(msg);
-    1384:    auto& tmsg = static_cast< const CipMessage& >(msg);
-    1389:    auto fac = static_cast< SsmFactory* >(reg->GetFactory(rte->selector));
+    482:    auto&       tlvmsg = static_cast< TlvMessage& >(msg);
+    512:    auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
+    824:       if(m->GetSignal() == sid) return static_cast< CipMessage* >(m);
+    856:    auto&         tmsg = static_cast< TlvMessage& >(msg);
+    986:    auto&         tmsg = static_cast< TlvMessage& >(msg);
+    1383:    auto& tmsg = static_cast< const CipMessage& >(msg);
+    1388:    auto fac = static_cast< SsmFactory* >(reg->GetFactory(rte->selector));
   W022 Add using statement
     1: namespace MediaBase
     1: namespace NetworkBase
     1: namespace NodeBase
     1: namespace SessionBase
   W099 Line contains adjacent spaces
-    480:    id_t        idx;
-    481:    word        fid, rid;
-    483:    auto&       tlvmsg = static_cast< TlvMessage& >(msg);
-    512:    TestRc       rc;
-    513:    auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
-    515:    id_t         idx;
-    516:    word         fid, rid;
-    856:    auto          state = GetState();
-    857:    auto&         tmsg = static_cast< TlvMessage& >(msg);
-    858:    auto          sig = tmsg.GetSignal();
-    859:    TimeoutInfo*  toi = nullptr;
-    861:    auto          err = true;
-    862:    debug64_t     error;
-    986:    auto          state = GetState();
-    987:    auto&         tmsg = static_cast< TlvMessage& >(msg);
-    988:    auto          sig = msg.GetSignal();
-    990:    auto          err = true;
-    991:    debug64_t     error;
+    479:    id_t        idx;
+    480:    word        fid, rid;
+    482:    auto&       tlvmsg = static_cast< TlvMessage& >(msg);
+    511:    TestRc       rc;
+    512:    auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
+    514:    id_t         idx;
+    515:    word         fid, rid;
+    855:    auto          state = GetState();
+    856:    auto&         tmsg = static_cast< TlvMessage& >(msg);
+    857:    auto          sig = tmsg.GetSignal();
+    858:    TimeoutInfo*  toi = nullptr;
+    860:    auto          err = true;
+    861:    debug64_t     error;
+    985:    auto          state = GetState();
+    986:    auto&         tmsg = static_cast< TlvMessage& >(msg);
+    987:    auto          sig = msg.GetSignal();
+    989:    auto          err = true;
+    990:    debug64_t     error;
 C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h
-  W005 Functional cast
-    305:    ipport_t Port() const override { return ipport_t(port_); }
-    344:    ipport_t Port() const override { return ipport_t(port_); }
   W020 Using statement in header
-    50: using namespace NodeBase;
-    51: using namespace NetworkBase;
-    52: using namespace SessionBase;
-    53: using namespace MediaBase;
+    51: using namespace NodeBase;
+    52: using namespace NetworkBase;
+    53: using namespace SessionBase;
+    54: using namespace MediaBase;
   W027 Unused class
-    298: class CipUdpService : public UdpIpService
+    299: class CipUdpService : public UdpIpService
   W032 Unused function
-    182:    MediaInfo* AddMedia(const MediaInfo& media);
-    249:    void InjectFinalMsg() override;
-    318:    CliText* CreateText() const override;
-    363:    CliText* CreateText() const override;
+    183:    MediaInfo* AddMedia(const MediaInfo& media);
+    250:    void InjectFinalMsg() override;
+    319:    CliText* CreateText() const override;
+    360:    CliText* CreateText() const override;
   W042 Member could be private
-    236:    void EnsureMediaMsg() override;
-    240:    IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
-    411:    Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
+    237:    void EnsureMediaMsg() override;
+    241:    IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
+    404:    Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
   W110 Override of Base.Display not found
-    298: class CipUdpService : public UdpIpService
-    337: class CipTcpService : public TcpIpService
+    299: class CipUdpService : public UdpIpService
+    334: class CipTcpService : public TcpIpService
 C:/Users/gregu/Documents/rsc/rsc/cb/BcRouting.cpp
   W022 Add using statement
     1: namespace SessionBase
@@ -4645,24 +4593,24 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h
     631: template< typename T > size_t IndexOf(const std::vector< T >& v, const T& item)
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp
   W005 Functional cast
-    263:          << spaces(3) << LineType(t) << CRLF;
-    274:          *stream << (Attrs_.at(Warning(w)).fixable ? '*' : SPACE);
-    275:          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
-    276:             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
+    264:          << spaces(3) << LineType(t) << CRLF;
+    275:          *stream << (Attrs_.at(Warning(w)).fixable ? '*' : SPACE);
+    276:          *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
+    277:             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
   W007 Cast down the inheritance hierarchy
-    953:       auto func = static_cast< const Function* >(item_);
-    983:       auto data = static_cast< const Data* >(item_);
-    1005:       auto func = static_cast< const Function* >(item_);
-    1029:       auto func = static_cast< const Function* >(item_);
-    1103:       auto cls = static_cast< const Class* >(item_);
-    1127:       auto cls = static_cast< const Class* >(item_);
-    1158:          auto func = static_cast< const Function* >(item_);
+    954:       auto func = static_cast< const Function* >(item_);
+    984:       auto data = static_cast< const Data* >(item_);
+    1006:       auto func = static_cast< const Function* >(item_);
+    1031:       auto func = static_cast< const Function* >(item_);
+    1105:       auto cls = static_cast< const Class* >(item_);
+    1129:       auto cls = static_cast< const Class* >(item_);
+    1160:          auto func = static_cast< const Function* >(item_);
   W106 Function does not invoke Debug::ft
-    178: word CodeWarning::FindWarning(const CodeWarning& log)
-    814: bool CodeWarning::IsSortedByFile
-    833: bool CodeWarning::IsSortedByType
-    852: bool CodeWarning::IsSortedToFix
-    944: bool CodeWarning::Suppress() const
+    179: word CodeWarning::FindWarning(const CodeWarning& log)
+    815: bool CodeWarning::IsSortedByFile
+    834: bool CodeWarning::IsSortedByType
+    853: bool CodeWarning::IsSortedToFix
+    945: bool CodeWarning::Suppress() const
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h
   W020 Using statement in header
     37: using NodeBase::fixed_string;
@@ -5655,16 +5603,16 @@ C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h
     408:    void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
 C:/Users/gregu/Documents/rsc/rsc/ct/Library.h
   W042 Member could be private
-    67:    CodeDir* FindDir(const std::string& name) const;
-    88:    LibrarySet* FindVar(const std::string& name) const;
+    68:    CodeDir* FindDir(const std::string& name) const;
+    89:    LibrarySet* FindVar(const std::string& name) const;
   W053 Data could be const
-    230:    LibraryVarSet* varSet_;
+    227:    LibraryVarSet* varSet_;
   W082 Adjacent arguments have the same type
-    62:    NodeBase::word Import
-    104:    NodeBase::word Assign(const std::string& name,
+    63:    NodeBase::word Import
+    105:    NodeBase::word Assign(const std::string& name,
   W090 Function could be const
-    72:    CodeFile* EnsureFile(const std::string& file, CodeDir* dir = nullptr);
-    104:    NodeBase::word Assign(const std::string& name,
+    73:    CodeFile* EnsureFile(const std::string& file, CodeDir* dir = nullptr);
+    105:    NodeBase::word Assign(const std::string& name,
 C:/Users/gregu/Documents/rsc/rsc/ct/LibraryErrSet.cpp
   W106 Function does not invoke Debug::ft
     103: word LibraryErrSet::Error(string& expl) const
@@ -5829,8 +5777,6 @@ C:/Users/gregu/Documents/rsc/rsc/dip/Adjudicator.cpp
     2144:                 f != subverting_army.convoyers.end(); ++f)
     2147:                    a != attacks.upper_bound(*f); ++a)
     2201:        u != unbalanced_head_to_heads.end(); ++u)
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.cpp
   W006 reinterpret_cast
     227:    auto em = reinterpret_cast< EM_Message* >(buff->PayloadPtr());
@@ -5842,8 +5788,6 @@ C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.cpp
     2333:    auto im = reinterpret_cast< IM_Message* >(buff->PayloadPtr());
     2490:    auto dm = reinterpret_cast< DM_Message* >(buff->PayloadPtr());
     2494:    message.get_tokens(reinterpret_cast< Token* >(&dm->tokens), count);
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
   W106 Function does not invoke Debug::ft
     455: BaseBot::StartupResult BaseBot::initialise(const StartupParameters& parameters)
     462: BaseBot* BaseBot::instance()
@@ -5881,16 +5825,12 @@ C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h
     544:    static void report_out(const Token& power);
     556:    void report_exit(fixed_string reason);
     716:    static bool send_buff(DipIpBuffer& buff);
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/BotThread.cpp
   W006 reinterpret_cast
     193:    auto msg = reinterpret_cast< BM_Message* >(buff->PayloadPtr());
     224:    auto message = reinterpret_cast< const DipMessage* >(ipb->HeaderPtr());
   W007 Cast down the inheritance hierarchy
     211:    DipIpBufferPtr ipb(static_cast< DipIpBuffer* >(msg));
-  W104 File heading is not standard
-    5: //  Copyright (C) 2019  Greg Utas
 C:/Users/gregu/Documents/rsc/rsc/dip/BotThread.h
   W020 Using statement in header
     38: using namespace NodeBase;
@@ -5900,57 +5840,34 @@ C:/Users/gregu/Documents/rsc/rsc/dip/BotThread.h
     112:       BotEvent event;       // event
   W055 Data need not be mutable
     113:       mutable secs_t secs;  // delay
-  W104 File heading is not standard
-    5: //  Copyright (C) 2019  Greg Utas
 C:/Users/gregu/Documents/rsc/rsc/dip/BotTrace.cpp
   W006 reinterpret_cast
     102:       auto message = reinterpret_cast< const DipMessage* >(buff_->HeaderPtr());
     131:    return reinterpret_cast< DipHeader* >(buff_->HeaderPtr());
   W022 Add using statement
     1: namespace NodeBase
-  W104 File heading is not standard
-    7: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/BotTrace.h
   W020 Using statement in header
     35: using namespace NodeBase;
   W032 Unused function
     69:    DipHeader* Header() const;
-  W104 File heading is not standard
-    7: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-C:/Users/gregu/Documents/rsc/rsc/dip/BotTracer.cpp
-  W104 File heading is not standard
-    7: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/BotTracer.h
   W020 Using statement in header
     30: using namespace NodeBase;
-  W104 File heading is not standard
-    7: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/BotType.h
   W018 Remove #include directive
     21: #include "BaseBot.h"
   W024 Add forward declaration
     1: class Diplomacy::BaseBot
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/ConvoySubversion.cpp
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
   W106 Function does not invoke Debug::ft
     29: void ConvoySubversion::clear()  // <b>
     37: void ConvoySubversion::decrement()
-C:/Users/gregu/Documents/rsc/rsc/dip/ConvoySubversion.h
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-C:/Users/gregu/Documents/rsc/rsc/dip/DipModule.cpp
-  W104 File heading is not standard
-    5: //  Copyright (C) 2019  Greg Utas
 C:/Users/gregu/Documents/rsc/rsc/dip/DipModule.h
   W020 Using statement in header
     30: using namespace NodeBase;
   W027 Unused class
     38: class DipModule : public Module
-  W104 File heading is not standard
-    5: //  Copyright (C) 2019  Greg Utas
 C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.cpp
   W005 Functional cast
     446: ipport_t BotTcpService::Port() const { return ipport_t(port_); }
@@ -5978,8 +5895,6 @@ C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.cpp
     338:    DipIpBufferPtr dipbuff(static_cast< DipIpBuffer* >(buff.release()));
   W009 Pointer arithmetic
     216:       dest = payload + received;
-  W104 File heading is not standard
-    5: //  Copyright (C) 2019  Greg Utas
   W106 Function does not invoke Debug::ft
     446: ipport_t BotTcpService::Port() const { return ipport_t(port_); }
 C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.h
@@ -6009,22 +5924,13 @@ C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.h
   W053 Data could be const
     144:    DipHeader header;  // no parameters (length = 0)
     202:    byte_t first_payload_byte;  // for creating a pointer to the first byte
-  W104 File heading is not standard
-    5: //  Copyright (C) 2019  Greg Utas
 C:/Users/gregu/Documents/rsc/rsc/dip/DipTypes.h
   W020 Using statement in header
     26: using namespace NetworkBase;
     27: using namespace NodeBase;
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-C:/Users/gregu/Documents/rsc/rsc/dip/Location.cpp
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/Location.h
   W032 Unused function
     75:    bool operator<(const Location& that) const;
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/MapAndUnits.cpp
   W097 Line indentation is not a multiple of the standard value
     127:              (our_winter_orders.number_of_waives != 0));
@@ -6036,8 +5942,6 @@ C:/Users/gregu/Documents/rsc/rsc/dip/MapAndUnits.cpp
     2151:               game_map[build_loc.province].home_powers.end())
     2158:               game_map[build_loc.province].neighbours.end())
     2197:               winter->number_of_waives >= winter->number_of_orders_required)
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
   W106 Function does not invoke Debug::ft
     272: bool MapAndUnits::can_move_to(const UnitOrder& unit, const Location& dest) const
     290: bool MapAndUnits::can_move_to_province
@@ -6061,25 +5965,10 @@ C:/Users/gregu/Documents/rsc/rsc/dip/MapAndUnits.h
     162:    static MapAndUnits* create_clone();
     166:    static void delete_clone(MapAndUnits*& clone);
     260:    std::string display_retreat_order(const UnitOrder& unit) const;
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-C:/Users/gregu/Documents/rsc/rsc/dip/Province.cpp
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-C:/Users/gregu/Documents/rsc/rsc/dip/Province.h
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-C:/Users/gregu/Documents/rsc/rsc/dip/StartupParameters.cpp
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/StartupParameters.h
   W020 Using statement in header
     21: using namespace NetworkBase;
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/Token.cpp
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
   W106 Function does not invoke Debug::ft
     32: Token::Token(const category_t cat, const subtoken_t sub)
     40: int Token::get_number() const
@@ -6108,14 +5997,10 @@ C:/Users/gregu/Documents/rsc/rsc/dip/Token.h
     224: constexpr category_t CATEGORY_PRESS = 0x4A;
   W042 Member could be private
     99:    bool is_number() const;
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/TokenMessage.cpp
   W097 Line indentation is not a multiple of the standard value
     406:              that.length_ * sizeof(Token));
     450:              that.length_ * sizeof(Token));
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
   W106 Function does not invoke Debug::ft
     125: Token TokenMessage::at(size_t index) const
     132: void TokenMessage::clear()
@@ -6131,11 +6016,7 @@ C:/Users/gregu/Documents/rsc/rsc/dip/TokenMessage.h
     171:    bool operator<(const TokenMessage& that) const;
   W042 Member could be private
     128:    size_t set_from(const Token* stream, size_t length);
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/TokenTextMap.cpp
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
   W106 Function does not invoke Debug::ft
     333: TokenTextMap* TokenTextMap::instance()
 C:/Users/gregu/Documents/rsc/rsc/dip/TokenTextMap.h
@@ -6144,26 +6025,14 @@ C:/Users/gregu/Documents/rsc/rsc/dip/TokenTextMap.h
     38:    typedef std::map< std::string, Token > TextToTokenMap;
   W092 Function could be free
     42:    static TokenTextMap* instance();
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-C:/Users/gregu/Documents/rsc/rsc/dip/UnitOrder.cpp
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
-C:/Users/gregu/Documents/rsc/rsc/dip/UnitOrder.h
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/dip/WinterOrders.cpp
   W022 Add using statement
     1: namespace NodeBase
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
   W106 Function does not invoke Debug::ft
     37: size_t WinterOrders::get_number_of_results() const
 C:/Users/gregu/Documents/rsc/rsc/dip/WinterOrders.h
   W032 Unused function
     52:    size_t get_number_of_results() const;
-  W104 File heading is not standard
-    5: //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 C:/Users/gregu/Documents/rsc/rsc/mb/Circuit.cpp
   W006 reinterpret_cast
     62:    auto fake = reinterpret_cast< const Circuit* >(&local);
@@ -6377,12 +6246,12 @@ C:/Users/gregu/Documents/rsc/rsc/nb/Array.h
 C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp
   W006 reinterpret_cast
     101:    auto obj = reinterpret_cast< ObjectStruct* >(this);
-    150:    auto obj = reinterpret_cast< const ObjectStruct* >(this);
+    172:    auto obj = reinterpret_cast< const ObjectStruct* >(this);
   W008 Cast removes const qualification
     71:    objects.push_back(const_cast< Base* >(this));
   W106 Function does not invoke Debug::ft
     96: void Base::Nullify(size_t n)
-    146: Base::vptr_t Base::Vptr() const
+    168: Base::vptr_t Base::Vptr() const
   W119 Argument passed by value is modified
     96/1: void Base::Nullify(size_t n)
 C:/Users/gregu/Documents/rsc/rsc/nb/Base.h
@@ -6417,12 +6286,14 @@ C:/Users/gregu/Documents/rsc/rsc/nb/CfgBoolParm.h
   W042 Member could be private
     68:    bool SetNextValue(bool value) override;
   W060 Base class constructor is public
-    39:    CfgBoolParm(c_string key, c_string def, bool* field, c_string expl);
+    39:    CfgBoolParm(c_string key, c_string def, c_string expl);
+  W075 Virtual function is public
+    47:    bool GetValue() const override { return curr_; }
   W082 Adjacent arguments have the same type
-    39:    CfgBoolParm(c_string key, c_string def, bool* field, c_string expl);
+    39:    CfgBoolParm(c_string key, c_string def, c_string expl);
 C:/Users/gregu/Documents/rsc/rsc/nb/CfgFlagParm.cpp
   W106 Function does not invoke Debug::ft
-    71: bool CfgFlagParm::GetCurrValue() const
+    71: bool CfgFlagParm::GetValue() const
 C:/Users/gregu/Documents/rsc/rsc/nb/CfgFlagParm.h
   W042 Member could be private
     65:    bool SetNextValue(bool value) override;
@@ -6430,19 +6301,17 @@ C:/Users/gregu/Documents/rsc/rsc/nb/CfgFlagParm.h
     39:    CfgFlagParm(c_string key, c_string def,
 C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.cpp
   W106 Function does not invoke Debug::ft
-    73: void CfgIntParm::Explain(string& expl) const
+    72: void CfgIntParm::Explain(string& expl) const
 C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h
-  W032 Unused function
-    57:    word GetCurrValue() const { return *curr_; }
   W042 Member could be private
-    81:    bool SetNext(c_string input) override;
+    80:    bool SetNext(c_string input) override;
   W053 Data could be const
-    93:    word min_;
-    97:    word max_;
+    92:    word min_;
+    96:    word max_;
   W060 Base class constructor is public
-    39:    CfgIntParm(c_string key, c_string def, word* field,
+    39:    CfgIntParm(c_string key, c_string def, word min, word max, c_string expl);
   W082 Adjacent arguments have the same type
-    39:    CfgIntParm(c_string key, c_string def, word* field,
+    39:    CfgIntParm(c_string key, c_string def, word min, word max, c_string expl);
 C:/Users/gregu/Documents/rsc/rsc/nb/CfgParm.cpp
   W006 reinterpret_cast
     139:    auto fake = reinterpret_cast< const CfgParm* >(&local);
@@ -6467,12 +6336,12 @@ C:/Users/gregu/Documents/rsc/rsc/nb/CfgParmRegistry.h
     123:    bool LoadNextTuple(std::string& key, std::string& value);
 C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.cpp
   W106 Function does not invoke Debug::ft
-    66: void CfgStrParm::Explain(string& expl) const
+    64: void CfgStrParm::Explain(string& expl) const
 C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.h
   W060 Base class constructor is public
-    40:    CfgStrParm(c_string key, c_string def, ProtectedStr* field, c_string expl);
+    40:    CfgStrParm(c_string key, c_string def, c_string expl);
   W082 Adjacent arguments have the same type
-    40:    CfgStrParm(c_string key, c_string def, ProtectedStr* field, c_string expl);
+    40:    CfgStrParm(c_string key, c_string def, c_string expl);
 C:/Users/gregu/Documents/rsc/rsc/nb/CfgTuple.cpp
   W006 reinterpret_cast
     92:    auto fake = reinterpret_cast< const CfgTuple* >(&local);
@@ -6538,9 +6407,9 @@ C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp
   W053 Data could be const
     62:    istreamPtr file_;
   W106 Function does not invoke Debug::ft
-    626: bool CliBuffer::ReadingFromFile() const
+    625: bool CliBuffer::ReadingFromFile() const
   W119 Argument passed by value is modified
-    179/3:    (const CliThread& cli, const string& expl, std::streamsize p)
+    205/3:    (const CliThread& cli, const string& expl, std::streamsize p)
 C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.h
   W042 Member could be private
     130:    bool ReadingFromFile() const;
@@ -6723,7 +6592,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/Duration.h
     183: int64_t  operator/(const Duration& lhs, const Duration& rhs);
 C:/Users/gregu/Documents/rsc/rsc/nb/Element.cpp
   W106 Function does not invoke Debug::ft
-    197: bool Element::RunningInLab()
+    191: bool Element::RunningInLab()
 C:/Users/gregu/Documents/rsc/rsc/nb/Element.h
   W042 Member could be private
     52:    static const std::string RscPath();
@@ -6798,23 +6667,23 @@ C:/Users/gregu/Documents/rsc/rsc/nb/FunctionTrace.h
     48:    FunctionTrace();
 C:/Users/gregu/Documents/rsc/rsc/nb/Heap.cpp
   W106 Function does not invoke Debug::ft
-    126: void Heap::Freed(size_t size)
-    134: bool Heap::IsFixedSize() const
-    172: void Heap::Requested(size_t size, bool ok)
+    149: void Heap::Freeing(void* addr, size_t size)
+    165: bool Heap::IsFixedSize() const
+    203: void Heap::Requested(size_t size, void* addr)
 C:/Users/gregu/Documents/rsc/rsc/nb/Heap.h
   W042 Member could be private
-    95:    int SetAttrs(MemoryProtection attrs);
-    123:    bool IsFixedSize() const;
+    98:    int SetAttrs(MemoryProtection attrs);
+    126:    bool IsFixedSize() const;
   W075 Virtual function is public
-    49:    virtual void* Addr() const = 0;
-    53:    virtual size_t Size() const = 0;
-    57:    virtual MemoryType Type() const = 0;
-    61:    virtual void* Alloc(size_t size) = 0;
-    65:    virtual void Free(void* addr) = 0;
-    70:    virtual size_t BlockToSize(const void* addr) const = 0;
-    75:    virtual bool Validate(const void* addr) const = 0;
-    79:    virtual bool CanBeProtected() const { return true; }
-    86:    virtual int SetPermissions(MemoryProtection attrs);
+    52:    virtual void* Addr() const = 0;
+    56:    virtual size_t Size() const = 0;
+    60:    virtual MemoryType Type() const = 0;
+    64:    virtual void* Alloc(size_t size) = 0;
+    68:    virtual void Free(void* addr) = 0;
+    73:    virtual size_t BlockToSize(const void* addr) const = 0;
+    78:    virtual bool Validate(const void* addr) const = 0;
+    82:    virtual bool CanBeProtected() const { return true; }
+    89:    virtual int SetPermissions(MemoryProtection attrs);
 C:/Users/gregu/Documents/rsc/rsc/nb/InitFlags.cpp
   W106 Function does not invoke Debug::ft
     28: bool InitFlags::AllowBreak()
@@ -6878,11 +6747,11 @@ C:/Users/gregu/Documents/rsc/rsc/nb/LogGroupRegistry.h
     58:    Log* FindLog(const std::string& name, LogId id) const;
 C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.cpp
   W007 Cast down the inheritance hierarchy
-    77:       (static_cast< CfgIntParm* >(reg->FindParm("NoSpoolingMessageCount")));
+    71:       (static_cast< CfgIntParm* >(reg->FindParm("NoSpoolingMessageCount")));
 C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.h
   W092 Function could be free
-    66:    static void Spool(ostringstreamPtr& stream, const Log* log);
-    70:    static void CopyToConsole(const ostringstreamPtr& stream);
+    68:    static void Spool(ostringstreamPtr& stream, const Log* log);
+    72:    static void CopyToConsole(const ostringstreamPtr& stream);
 C:/Users/gregu/Documents/rsc/rsc/nb/MainArgs.cpp
   W106 Function does not invoke Debug::ft
     150: size_t MainArgs::Size()
@@ -6891,16 +6760,15 @@ C:/Users/gregu/Documents/rsc/rsc/nb/MainArgs.h
     53:    static void PushBack(const std::string& arg);
 C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp
   W005 Functional cast
-    258:       auto type = MemoryType(m);
+    256:       auto type = MemoryType(m);
   W106 Function does not invoke Debug::ft
-    218: Heap* AccessHeap(MemoryType type)
-    237: Heap* EnsureHeap(MemoryType type)
-    254: MemoryType Memory::AddrToType(const void* addr)
-    271: size_t Memory::Align(size_t size, size_t log2align)
-    457: const Heap* Memory::GetHeap(MemoryType type)
-    466: bool Memory::Protect(MemoryType type)
-    551: bool Memory::Unprotect(MemoryType type)
-    584: size_t Memory::Words(size_t size)
+    218: Heap* EnsureHeap(MemoryType type)
+    235: Heap* Memory::AccessHeap(MemoryType type)
+    252: MemoryType Memory::AddrToType(const void* addr)
+    269: size_t Memory::Align(size_t size, size_t log2align)
+    455: bool Memory::Protect(MemoryType type)
+    540: bool Memory::Unprotect(MemoryType type)
+    573: size_t Memory::Words(size_t size)
   W111 Override of Object.Patch not found
     61: class ProtectedHeap : public NbHeap
 C:/Users/gregu/Documents/rsc/rsc/nb/Memory.h
@@ -6970,7 +6838,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.cpp
     502:    auto block = (const HeapBlock*) addr;
     627:                   if(block < (HeapBlock*) heap_)
     629:                   else if(block < (HeapBlock*) heap_->minAddr)
-    699:    FreeBlock((HeapBlock*) addr, level);
+    700:    FreeBlock((HeapBlock*) addr, level);
     748:    return (HeapBlock*) (heap_->leftAddr + (offset << Log2Size(level)));
     830:       auto size = BlockToSize((const HeapBlock*) addr);
     833:       auto index = BlockToIndex((const HeapBlock*) addr, level);
@@ -7020,14 +6888,16 @@ C:/Users/gregu/Documents/rsc/rsc/nb/NbHeap.h
 C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp
   W005 Functional cast
     649:       rc = nbt->SelectFaction(Faction(id), TraceDefault);
-    1006:       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
-    1100:          auto type = MemoryType(m);
-    1111:          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
-    1522:       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
-    3361:       auto heap = Memory::GetHeap(MemoryType(m));
+    1045:       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
+    1237:          auto type = MemoryType(memtype);
+    1251:          auto type = MemoryType(memtype);
+    1281:          auto type = MemoryType(m);
+    1292:          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
+    1703:       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
+    3503:       auto heap = Memory::AccessHeap(MemoryType(m));
   W102 Line length exceeds the standard maximum
-    3336: "Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
-    3337: "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
+    3478: "Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
+    3479: "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h
   W028 Unused data
     194:    static const id_t LastNbIndex = 3;
@@ -7046,6 +6916,8 @@ C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h
     227:    explicit SaveCommand(bool bind = true);
     244:    ClearWhatParm();
     262:    explicit ClearCommand(bool bind = true);
+  W111 Override of Object.Patch not found
+    275: class NbIncrement : public CliIncrement
 C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.cpp
   W005 Functional cast
     216:             stream << Faction(f) << CRLF;
@@ -7071,6 +6943,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/NbTypes.h
     127: std::ostream& operator<<(std::ostream& stream, AlarmStatus status);
   W033 Unused typedef
     226: using PersistentStr =
+    233: using ProtectedStrPtr = std::unique_ptr< ProtectedStr >;
 C:/Users/gregu/Documents/rsc/rsc/nb/Object.cpp
   W006 reinterpret_cast
     120:    auto obj = reinterpret_cast< ObjectStruct* >(this);
@@ -7111,21 +6984,20 @@ C:/Users/gregu/Documents/rsc/rsc/nb/Object.h
     115:    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid);
 C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp
   W004 C-style cast
-    293:       blocks_[currSegments_] = (uword*) Memory::Alloc(size, mem_, std::nothrow);
-    317:          auto b = (ObjectBlock*) &seg[j];
-    369:             auto b = (ObjectBlock*) &seg[j];
-    405:             auto curr = (Pooled*) getptr1(item, diff);
-    833:       return (ObjectBlock*) &blocks_[0][0];
-    903:       return (ObjectBlock*) &blocks_[i][j];
-    928:             auto b = (ObjectBlock*) &seg[j];
-    960:    auto block = (const_ptr_t) ObjToBlock(obj);
-    961:    auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
-    965:       auto b0 = (const_ptr_t) &blocks_[i][0];
-    1008:    return (ObjectBlock*) getptr1(obj, BlockHeaderSize);
-    1038:          auto b = (ObjectBlock*) &seg[j];
+    291:       blocks_[currSegments_] = (uword*) Memory::Alloc(size, mem_, std::nothrow);
+    315:          auto b = (ObjectBlock*) &seg[j];
+    367:             auto b = (ObjectBlock*) &seg[j];
+    403:             auto curr = (Pooled*) getptr1(item, diff);
+    830:       return (ObjectBlock*) &blocks_[0][0];
+    900:       return (ObjectBlock*) &blocks_[i][j];
+    925:             auto b = (ObjectBlock*) &seg[j];
+    957:    auto block = (const_ptr_t) ObjToBlock(obj);
+    958:    auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
+    962:       auto b0 = (const_ptr_t) &blocks_[i][0];
+    1005:    return (ObjectBlock*) getptr1(obj, BlockHeaderSize);
+    1035:          auto b = (ObjectBlock*) &seg[j];
   W006 reinterpret_cast
-    118:       reinterpret_cast< word* >(&pool->targSegments_), 0,
-    543:    auto fake = reinterpret_cast< const ObjectPool* >(&local);
+    541:    auto fake = reinterpret_cast< const ObjectPool* >(&local);
   W099 Line contains adjacent spaces
     104:    CounterPtr      allocCount_;
     105:    CounterPtr      freeCount_;
@@ -7133,28 +7005,28 @@ C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp
     107:    CounterPtr      auditCount_;
     108:    CounterPtr      expansions_;
   W106 Function does not invoke Debug::ft
-    333: size_t ObjectPool::AllocCount() const
-    502: size_t ObjectPool::AvailCount() const
-    509: bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
-    810: size_t ObjectPool::Expansions() const
-    817: size_t ObjectPool::FailCount() const
-    862: size_t ObjectPool::FreeCount() const
-    869: bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
-    881: size_t ObjectPool::InUseCount() const
-    888: size_t ObjectPool::LowAvailCount() const
-    895: ObjectBlock* ObjectPool::Next(PooledObjectId& bid) const
-    914: Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
-    987: ObjectPoolId ObjectPool::ObjPid(const Pooled* obj)
-    996: PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
-    1005: ObjectBlock* ObjectPool::ObjToBlock(const Pooled* obj)
+    331: size_t ObjectPool::AllocCount() const
+    500: size_t ObjectPool::AvailCount() const
+    507: bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
+    807: size_t ObjectPool::Expansions() const
+    814: size_t ObjectPool::FailCount() const
+    859: size_t ObjectPool::FreeCount() const
+    866: bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
+    878: size_t ObjectPool::InUseCount() const
+    885: size_t ObjectPool::LowAvailCount() const
+    892: ObjectBlock* ObjectPool::Next(PooledObjectId& bid) const
+    911: Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
+    984: ObjectPoolId ObjectPool::ObjPid(const Pooled* obj)
+    993: PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
+    1002: ObjectBlock* ObjectPool::ObjToBlock(const Pooled* obj)
   W110 Override of Base.Display not found
     84: class ObjectPoolSizeCfg : public CfgIntParm
     97: class ObjectPoolStats : public Dynamic
-    188: struct ObjectPoolDynamic : public Persistent
+    187: struct ObjectPoolDynamic : public Persistent
   W119 Argument passed by value is modified
-    509/1: bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
-    525/1: Pooled* ObjectPool::BidToObj(PooledObjectId bid) const
-    551/1: bool ObjectPool::Corrupt(size_t n)
+    507/1: bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
+    523/1: Pooled* ObjectPool::BidToObj(PooledObjectId bid) const
+    549/1: bool ObjectPool::Corrupt(size_t n)
 C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.h
   W005 Functional cast
     94:    ObjectPoolId Pid() const { return ObjectPoolId(pid_.GetId()); }
@@ -7177,10 +7049,10 @@ C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.h
     262:    static ObjectBlock* ObjToBlock(const Pooled* obj);
 C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPoolRegistry.cpp
   W106 Function does not invoke Debug::ft
-    293: ObjectPool* ObjectPoolRegistry::Pool(ObjectPoolId pid) const
+    289: ObjectPool* ObjectPoolRegistry::Pool(ObjectPoolId pid) const
 C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPoolRegistry.h
   W042 Member could be private
-    56:    bool NullifyObjectData() const { return nullifyObjectData_; }
+    57:    bool NullifyObjectData() const { return nullifyObjectDataCfg_->GetValue(); }
 C:/Users/gregu/Documents/rsc/rsc/nb/PermanentHeap.cpp
   W106 Function does not invoke Debug::ft
     48: PermanentHeap* PermanentHeap::Instance()
@@ -7319,7 +7191,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/Registry.h
 C:/Users/gregu/Documents/rsc/rsc/nb/Restart.cpp
   W106 Function does not invoke Debug::ft
     38: bool Restart::ClearsMemory(MemoryType type)
-    68: RestartLevel Restart::LevelToClear(MemoryType type)
+    71: RestartLevel Restart::LevelToClear(MemoryType type)
 C:/Users/gregu/Documents/rsc/rsc/nb/Restart.h
   W092 Function could be free
     99:    template< class T > static bool Release(std::unique_ptr< T >& obj)
@@ -7401,10 +7273,10 @@ C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.cpp
     100:    auto fake = reinterpret_cast< const Symbol* >(&local);
 C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.h
   W053 Data could be const
-    110:    Q1Link link_;
+    109:    Q1Link link_;
   W092 Function could be free
-    59:    static const std::string& ValidNameChars();
-    64:    static const std::string& InvalidInitialChars();
+    58:    static const std::string& ValidNameChars();
+    63:    static const std::string& InvalidInitialChars();
 C:/Users/gregu/Documents/rsc/rsc/nb/SymbolRegistry.h
   W082 Adjacent arguments have the same type
     57:    bool BindSymbol
@@ -7446,11 +7318,11 @@ C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.h
     86:    static void ListHeaps(std::set< void* >& heaps, std::ostringstream& expl);
 C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.win.cpp
   W004 C-style cast
-    226:    aHeaps = (HANDLE*) HeapAlloc(DefaultProcessHeap, 0, BytesToAllocate);
+    220:    aHeaps = (HANDLE*) HeapAlloc(DefaultProcessHeap, 0, BytesToAllocate);
   W106 Function does not invoke Debug::ft
-    113: void* SysHeap::Addr() const
-    149: bool SysHeap::CanBeProtected() const { return false; }
-    183: void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
+    106: void* SysHeap::Addr() const
+    142: bool SysHeap::CanBeProtected() const { return false; }
+    177: void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
 C:/Users/gregu/Documents/rsc/rsc/nb/SysLock.h
   W027 Unused class
     43: class SysLock
@@ -7716,38 +7588,34 @@ C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h
     650:    static void DisplayContextSwitches(std::ostream& stream);
 C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp
   W106 Function does not invoke Debug::ft
-    350: const ThreadAdminValues* ThreadAdmin::AccessConfig()
-    365: bool ThreadAdmin::BreakEnabled()
-    472: void ThreadAdmin::Incr(Register r)
-    562: bool ThreadAdmin::ReinitOnSchedTimeout()
-    571: word ThreadAdmin::RtcInterval()
-    580: word ThreadAdmin::RtcLimit()
-    589: Duration ThreadAdmin::RtcTimeout()
-    599: Duration ThreadAdmin::SchedTimeout()
-    622: word ThreadAdmin::StackCheckInterval()
-    631: word ThreadAdmin::StackUsageLimit()
-    668: word ThreadAdmin::TrapCount()
-    680: word ThreadAdmin::TrapInterval()
-    689: word ThreadAdmin::TrapLimit()
-    698: bool ThreadAdmin::TrapOnRtcTimeout()
+    293: bool ThreadAdmin::BreakEnabled()
+    371: void ThreadAdmin::Incr(Register r)
+    460: bool ThreadAdmin::ReinitOnSchedTimeout()
+    468: word ThreadAdmin::RtcInterval()
+    476: word ThreadAdmin::RtcLimit()
+    484: Duration ThreadAdmin::RtcTimeout()
+    493: Duration ThreadAdmin::SchedTimeout()
+    515: word ThreadAdmin::StackCheckInterval()
+    523: word ThreadAdmin::StackUsageLimit()
+    557: word ThreadAdmin::TrapCount()
+    569: word ThreadAdmin::TrapInterval()
+    577: word ThreadAdmin::TrapLimit()
+    585: bool ThreadAdmin::TrapOnRtcTimeout()
   W110 Override of Base.Display not found
-    55: class ThreadsStats : public Dynamic
-    218: struct ThreadAdminValues : public Persistent
-  W117 Line can merge with the next line and be under the length limit
-    322:       "F", &Debug::FcFlags_, Debug::StackChecking,
+    54: class ThreadsStats : public Dynamic
 C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h
   W092 Function could be free
-    91:    static int WarpFactor();
+    90:    static int WarpFactor();
   W099 Line contains adjacent spaces
-    183:    CfgIntParmPtr  initTimeoutMsecs_;
-    184:    CfgIntParmPtr  schedTimeoutMsecs_;
-    186:    CfgIntParmPtr  rtcTimeoutMsecs_;
-    188:    CfgIntParmPtr  rtcLimit_;
-    189:    CfgIntParmPtr  rtcInterval_;
-    191:    CfgIntParmPtr  trapLimit_;
-    192:    CfgIntParmPtr  trapInterval_;
-    194:    CfgIntParmPtr  stackUsageLimit_;
-    195:    CfgIntParmPtr  stackCheckInterval_;
+    174:    CfgIntParmPtr  initTimeoutMsecs_;
+    175:    CfgIntParmPtr  schedTimeoutMsecs_;
+    177:    CfgIntParmPtr  rtcTimeoutMsecs_;
+    179:    CfgIntParmPtr  rtcLimit_;
+    180:    CfgIntParmPtr  rtcInterval_;
+    182:    CfgIntParmPtr  trapLimit_;
+    183:    CfgIntParmPtr  trapInterval_;
+    185:    CfgIntParmPtr  stackUsageLimit_;
+    186:    CfgIntParmPtr  stackCheckInterval_;
 C:/Users/gregu/Documents/rsc/rsc/nb/ThreadRegistry.cpp
   W106 Function does not invoke Debug::ft
     48: bool IsSortedByThreadId(const Thread* thr1, const Thread* thr2)
@@ -8042,11 +7910,13 @@ C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.h
   W090 Function could be const
     176:    virtual IoThread* CreateIoThread();
 C:/Users/gregu/Documents/rsc/rsc/nw/IpPortCfgParm.h
+  W005 Functional cast
+    51:    ipport_t GetPort() const { return ipport_t(GetValue()); }
   W082 Adjacent arguments have the same type
-    46:    IpPortCfgParm(NodeBase::c_string key, NodeBase::c_string def,
+    42:    IpPortCfgParm(NodeBase::c_string key, NodeBase::c_string def,
 C:/Users/gregu/Documents/rsc/rsc/nw/IpPortRegistry.cpp
   W106 Function does not invoke Debug::ft
-    289: IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
+    288: IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
   W110 Override of Base.Display not found
     50: class HostAddrCfg : public CfgStrParm
 C:/Users/gregu/Documents/rsc/rsc/nw/IpService.cpp
@@ -8764,20 +8634,19 @@ C:/Users/gregu/Documents/rsc/rsc/sb/Initiator.h
     105/2:       (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const;
 C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.cpp
   W006 reinterpret_cast
-    199:          reinterpret_cast< word* >(&poolSize_), 1,
-    240:    auto fake = reinterpret_cast< const InvokerPool* >(&local);
+    238:    auto fake = reinterpret_cast< const InvokerPool* >(&local);
   W007 Cast down the inheritance hierarchy
-    194:    invokersCfg_.reset(static_cast< CfgIntParm* >(reg->FindParm(parmKey)));
-    556:       auto inv = static_cast< InvokerThread* >(Thread::RunningThread());
+    193:    invokersCfg_.reset(static_cast< CfgIntParm* >(reg->FindParm(parmKey)));
+    553:       auto inv = static_cast< InvokerThread* >(Thread::RunningThread());
   W099 Line contains adjacent spaces
     71:    CounterPtr       requeues_;
     72:    CounterPtr       trojans_;
     73:    CounterPtr       lockouts_;
   W106 Function does not invoke Debug::ft
-    733: void InvokerPool::RecordDelay(MsgPriority prio, const Duration& delay) const
-    832: size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
-    840: Duration InvokerPool::WorkQMaxDelay(MsgPriority prio) const
-    848: size_t InvokerPool::WorkQMaxLength(MsgPriority prio) const
+    730: void InvokerPool::RecordDelay(MsgPriority prio, const Duration& delay) const
+    830: size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
+    838: Duration InvokerPool::WorkQMaxDelay(MsgPriority prio) const
+    846: size_t InvokerPool::WorkQMaxLength(MsgPriority prio) const
   W110 Override of Base.Display not found
     64: class InvokerPoolStats : public Dynamic
     105: class InvokerWork : public Dynamic
@@ -9048,13 +8917,6 @@ C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.cpp
     50:    auto pid = ssm.CalcPort(static_cast< const AnalyzeMsgEvent& >(currEvent));
     126:    auto& fte = static_cast< ForceTransitionEvent& >(currEvent);
     140:    auto& ire = static_cast< InitiationReqEvent& >(currEvent);
-C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h
-  W111 Override of Object.Patch not found
-    40: class SbAnalyzeMessage : public EventHandler
-    54: class SbAnalyzeSap : public EventHandler
-    68: class SbAnalyzeSnp : public EventHandler
-    82: class SbForceTransition : public EventHandler
-    96: class SbInitiationReq : public EventHandler
 C:/Users/gregu/Documents/rsc/rsc/sb/SbIncrement.cpp
   W004 C-style cast
     753:    ((ProtocolSM*) p)->Kill();
@@ -9078,11 +8940,11 @@ C:/Users/gregu/Documents/rsc/rsc/sb/SbInputHandler.cpp
     112:    SbIpBufferPtr sbbuff(static_cast< SbIpBuffer* >(buff.release()));
 C:/Users/gregu/Documents/rsc/rsc/sb/SbInvokerPools.cpp
   W007 Cast down the inheritance hierarchy
-    65:       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressQueueLength")));
-    77:       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressMessageCount")));
+    61:       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressQueueLength")));
+    72:       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressMessageCount")));
 C:/Users/gregu/Documents/rsc/rsc/sb/SbInvokerPools.h
   W075 Virtual function is public
-    44:    bool RejectIngressWork() const override;
+    43:    bool RejectIngressWork() const override;
 C:/Users/gregu/Documents/rsc/rsc/sb/SbIpBuffer.h
   W006 reinterpret_cast
     62:       { return reinterpret_cast< MsgHeader* >(HeaderPtr()); }
@@ -9869,21 +9731,19 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h
   W022 Add using statement
     1: namespace NodeBase
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h
-  W005 Functional cast
-    62:    ipport_t Port() const override { return ipport_t(port_); }
   W020 Using statement in header
-    44: using namespace CallBase;
-    45: using namespace NetworkBase;
-    46: using namespace NodeBase;
-    47: using namespace SessionBase;
+    45: using namespace CallBase;
+    46: using namespace NetworkBase;
+    47: using namespace NodeBase;
+    48: using namespace SessionBase;
   W032 Unused function
-    75:    CliText* CreateText() const override;
+    76:    CliText* CreateText() const override;
   W042 Member could be private
-    422:    ProtocolSM* TimerPsm(TimerId tid) const;
+    419:    ProtocolSM* TimerPsm(TimerId tid) const;
   W092 Function could be free
-    136:    static void SendRelease(const Message& msg1);
+    133:    static void SendRelease(const Message& msg1);
   W110 Override of Base.Display not found
-    55: class PotsCallIpService : public UdpIpService
+    56: class PotsCallIpService : public UdpIpService
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsStatistics.cpp
   W022 Add using statement
     1: namespace CallBase::Cause

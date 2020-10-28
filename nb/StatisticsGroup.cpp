@@ -37,7 +37,7 @@ namespace NodeBase
 {
 const size_t StatisticsGroup::MaxExplSize = 44;
 const size_t StatisticsGroup::ReportWidth = 76;
-fixed_string StatisticsGroup::ReportHeader =  "     Curr      Prev         All";
+fixed_string StatisticsGroup::ReportHeader = "      Curr      Prev         All";
 //<----------------group name---------------->      Curr      Prev         All
 //  <-------------member name---------------->
 //    <---individual statistic explanation---> nnnnnnnnn nnnnnnnnn nnnnnnnnnnn

@@ -153,11 +153,13 @@ void LogGroupRegistry::Display(ostream& stream,
 {
    auto lead = prefix + spaces(2);
 
-   stream << prefix << "Groups [id_t] with logs:" << CRLF;
+   stream << prefix << "Groups [id_t]";
+   if(options.test(DispVerbose)) stream << " with logs";
+   stream << ":" << CRLF;
 
    for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
    {
-      g->Display(stream, lead, NoFlags);
+      g->Display(stream, lead, options);
    }
 }
 

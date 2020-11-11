@@ -169,7 +169,7 @@ public:
 
    //  Updates the total and returns it.
    //
-   size_t Add(size_t amount) { return (curr_ += amount); }
+   size_t Add(size_t count) { return (curr_ += count); }
 };
 
 //------------------------------------------------------------------------------

@@ -210,7 +210,7 @@ void Daemon::EnsureAlarm()
 
    if(alarm_ == nullptr)
    {
-      auto alarmExpl = "Thread(s) unavailable: " + alarmName;
+      auto alarmExpl = "Thread(s) unavailable: " + name_;
       FunctionGuard guard(Guard_ImmUnprotect);
       alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 0);
    }

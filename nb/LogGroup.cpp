@@ -126,6 +126,7 @@ void LogGroup::Display(ostream& stream,
    stream << name_ << " group (" << expl_ << ')';
    if(suppressed_) stream << " [SUPPRESSED]";
    stream << CRLF;
+   if(!options.test(DispVerbose)) return;
 
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
    {

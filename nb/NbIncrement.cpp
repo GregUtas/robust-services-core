@@ -1761,6 +1761,17 @@ LogsListText::LogsListText() :
    BindParm(*new LogGroupOptParm);
 }
 
+class LogsGroupsText : public CliText
+{
+public: LogsGroupsText();
+};
+
+fixed_string LogsGroupsTextStr = "groups";
+fixed_string LogsGroupsTextExpl = "lists all log groups";
+
+LogsGroupsText::LogsGroupsText() :
+   CliText(LogsGroupsTextExpl, LogsGroupsTextStr) { }
+
 class LogsExplainText : public CliText
 {
 public: LogsExplainText();
@@ -1882,6 +1893,7 @@ fixed_string LogsActionExpl = "subcommand...";
 LogsAction::LogsAction() : CliTextParm(LogsActionExpl)
 {
    BindText(*new LogsListText, LogsCommand::ListIndex);
+   BindText(*new LogsGroupsText, LogsCommand::GroupsIndex);
    BindText(*new LogsExplainText, LogsCommand::ExplainIndex);
    BindText(*new LogsThrottleText, LogsCommand::ThrottleIndex);
    BindText(*new LogsSuppressText, LogsCommand::SuppressIndex);
@@ -1976,15 +1988,20 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
       if(name.empty())
       {
-         Singleton< LogGroupRegistry >::Instance()->Output(*cli.obuf, 2, false);
+         Singleton< LogGroupRegistry >::Instance()->Output(*cli.obuf, 2, true);
       }
       else
       {
          group = Singleton< LogGroupRegistry >::Instance()->FindGroup(name);
          if(group == nullptr) return cli.Report(-1, NoLogGroupExpl);
-         group->Output(*cli.obuf, 2, false);
+         group->Output(*cli.obuf, 2, true);
       }
 
+      break;
+
+   case GroupsIndex:
+      if(!cli.EndOfInput()) return -1;
+      Singleton< LogGroupRegistry >::Instance()->Output(*cli.obuf, 2, false);
       break;
 
    case ExplainIndex:

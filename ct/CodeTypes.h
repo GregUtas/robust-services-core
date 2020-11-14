@@ -505,6 +505,7 @@ enum Warning
    FunctionCouldBeMember,    // static|free but has an indirect class argument
    ExplicitConstructor,      // constructor need not be tagged explicit
    BitwiseOperatorOnBoolean, // operator | or & used on boolean
+   DebugFtCanBeLiteral,      // could pass an inline string literal to Debug::ft
    Warning_N                 // number of warnings
 };
 

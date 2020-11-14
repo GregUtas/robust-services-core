@@ -2651,6 +2651,8 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
       return EraseLineBreak(log, expl);
    case ExplicitConstructor:
       return EraseExplicitTag(log, expl);
+   case DebugFtCanBeLiteral:
+      return ReplaceDebugFtName(log, expl);
    default:
       expl = "Fixing this type of warning is not supported.";
    }
@@ -3832,6 +3834,39 @@ word Editor::RenameIncludeGuard(const CodeWarning& log, string& expl)
    def->code.erase(strlen(HASH_DEFINE_STR) + 1);
    def->code.append(guard);
    return Changed(def, expl);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_ReplaceDebugFtName = "Editor.ReplaceDebugFtName";
+
+word Editor::ReplaceDebugFtName(const CodeWarning& log, string& expl)
+{
+   Debug::ft(Editor_ReplaceDebugFtName);
+
+   //  Find the fn_name data, in-line its string literal in the Debug::ft
+   //  call, and then erase it.
+   //
+   auto s = FindLine(log.line_, expl);
+   if(s == source_.end()) return 0;
+
+   auto lpar = s->code.find('(');
+   if(lpar == string::npos) return NotFound(expl, "Left parenthesis");
+   auto rpar = s->code.find(')', lpar);
+   if(rpar == string::npos) return NotFound(expl, "Right parenthesis");
+   auto data = static_cast< const Data* >(log.item_);
+   if(data == nullptr) return NotFound(expl, "fn_name declaration");
+
+   string fname;
+   if(!data->GetStrValue(fname)) return NotFound(expl, "fn_name definition");
+   auto dloc = FindPos(data->GetPos());
+   if(dloc.iter == source_.end()) return NotFound(expl, "fn_name in source");
+   auto split = (dloc.iter->code.back() != ';');
+   auto next = source_.erase(dloc.iter);
+   if(split) source_.erase(next);
+   auto literal = QUOTE + fname + QUOTE;
+   s->code.replace(lpar + 1, rpar - lpar - 1, literal);
+   return Changed(s, expl);
 }
 
 //------------------------------------------------------------------------------

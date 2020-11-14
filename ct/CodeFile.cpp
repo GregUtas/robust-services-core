@@ -705,19 +705,40 @@ void CodeFile::CheckDebugFt() const
 
             if(lexer_.GetNthLine(n, statement))
             {
-               auto prev = statement.find('(');
-               if(prev == string::npos) break;
-               auto next = statement.find(')', prev);
-               if(next == string::npos) break;
-               dname = statement.substr(prev + 1, next - prev - 1);
-               auto data = FindData(dname);
-               if(data == nullptr) break;
-               auto ok = data->GetStrValue(fname);
+               auto lpar = statement.find('(');
+               if(lpar == string::npos) break;
+               auto rpar = statement.find(')', lpar);
+               if(rpar == string::npos) break;
+
+               Data* data = nullptr;
+               auto ok = false;
+
+               if((statement[lpar + 1] == QUOTE) && 
+                  (statement[rpar - lpar + 1] == QUOTE))
+               {
+                  fname = statement.substr(lpar + 1, rpar - lpar - 1);
+                  ok = true;
+               }
+               else
+               {
+                  dname = statement.substr(lpar + 1, rpar - lpar - 1);
+                  data = FindData(dname);
+                  if(data == nullptr) break;
+                  ok = data->GetStrValue(fname);
+               }
+
                if(ok)
                {
                   ok = (*f)->CheckDebugName(fname);
+
                   if(!cover->Insert(fname, hash, Name()))
+                  {
                      LogLine(n, DebugFtNameDuplicated);
+                  }
+                  else if(ok && (data != nullptr) && (data->Readers() <= 1))
+                  {
+                     LogPos(lexer_.GetLineStart(n), DebugFtCanBeLiteral, data);
+                  }
                }
 
                if(!ok) LogPos(begin, DebugFtNameMismatch, *f);

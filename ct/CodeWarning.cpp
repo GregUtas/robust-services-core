@@ -791,6 +791,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(BitwiseOperatorOnBoolean,
       WarningAttrs(F, X,
       "Operator | or & used on boolean")));
+   Attrs_.insert(WarningPair(DebugFtCanBeLiteral,
+      WarningAttrs(T, R,
+      "Function name passed to Debug::ft could be inlined string literal")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X,
       ERROR_STR)));

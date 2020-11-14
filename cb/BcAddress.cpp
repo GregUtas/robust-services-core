@@ -35,20 +35,16 @@ using std::string;
 
 namespace CallBase
 {
-fn_name Address_ctor = "Address.ctor";
-
 Address::Address()
 {
-   Debug::ft(Address_ctor);
+   Debug::ft("Address.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Address_dtor = "Address.dtor";
-
 Address::~Address()
 {
-   Debug::ftnt(Address_dtor);
+   Debug::ftnt("Address.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -72,21 +68,17 @@ ostream& operator<<(ostream& stream, Address::Type type)
 
 //==============================================================================
 
-fn_name AddressParameter_ctor = "AddressParameter.ctor";
-
 AddressParameter::AddressParameter(ProtocolId prid, Id pid) :
    TlvParameter(prid, pid)
 {
-   Debug::ft(AddressParameter_ctor);
+   Debug::ft("AddressParameter.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name AddressParameter_dtor = "AddressParameter.dtor";
-
 AddressParameter::~AddressParameter()
 {
-   Debug::ftnt(AddressParameter_dtor);
+   Debug::ftnt("AddressParameter.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -153,12 +145,10 @@ Parameter::TestRc AddressParameter::InjectMsg
 
 //------------------------------------------------------------------------------
 
-fn_name AddressParameter_VerifyMsg = "AddressParameter.VerifyMsg";
-
 Parameter::TestRc AddressParameter::VerifyMsg
    (CliThread& cli, const Message& msg, Usage use) const
 {
-   Debug::ft(AddressParameter_VerifyMsg);
+   Debug::ft("AddressParameter.VerifyMsg");
 
    TestRc rc;
    auto& tlvmsg = static_cast< const TlvMessage& >(msg);

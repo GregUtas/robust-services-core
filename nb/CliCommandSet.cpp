@@ -36,21 +36,17 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CliCommandSet_ctor = "CliCommandSet.ctor";
-
 CliCommandSet::CliCommandSet(c_string comm,
    c_string help, uint32_t size) : CliCommand(comm, help, size)
 {
-   Debug::ft(CliCommandSet_ctor);
+   Debug::ft("CliCommandSet.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommandSet_dtor = "CliCommandSet.dtor";
-
 CliCommandSet::~CliCommandSet()
 {
-   Debug::ftnt(CliCommandSet_dtor);
+   Debug::ftnt("CliCommandSet.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -104,11 +100,9 @@ bool CliCommandSet::BindParm(CliParm& parm)
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommandSet_ExplainCommand = "CliCommandSet.ExplainCommand";
-
 word CliCommandSet::ExplainCommand(ostream& stream, bool verbose) const
 {
-   Debug::ft(CliCommandSet_ExplainCommand);
+   Debug::ft("CliCommandSet.ExplainCommand");
 
    if(verbose)
    {
@@ -146,11 +140,9 @@ void CliCommandSet::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommandSet_ProcessCommand = "CliCommandSet.ProcessCommand";
-
 word CliCommandSet::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(CliCommandSet_ProcessCommand);
+   Debug::ft("CliCommandSet.ProcessCommand");
 
    string s;
    string tag;

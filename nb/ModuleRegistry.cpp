@@ -114,11 +114,9 @@ std::ostringstream* Stream()
 
 //==============================================================================
 
-fn_name ModuleRegistry_ctor = "ModuleRegistry.ctor";
-
 ModuleRegistry::ModuleRegistry()
 {
-   Debug::ft(ModuleRegistry_ctor);
+   Debug::ft("ModuleRegistry.ctor");
 
    modules_.Init(Module::MaxId, Module::CellDiff(), MemImmutable);
 
@@ -142,11 +140,9 @@ ModuleRegistry::~ModuleRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name ModuleRegistry_BindModule = "ModuleRegistry.BindModule";
-
 void ModuleRegistry::BindModule(Module& module)
 {
-   Debug::ft(ModuleRegistry_BindModule);
+   Debug::ft("ModuleRegistry.BindModule");
 
    modules_.Insert(module);
 }
@@ -176,11 +172,9 @@ Module* ModuleRegistry::GetModule(ModuleId mid) const
 
 //------------------------------------------------------------------------------
 
-fn_name ModuleRegistry_NextLevel = "ModuleRegistry.NextLevel";
-
 RestartLevel ModuleRegistry::NextLevel()
 {
-   Debug::ft(ModuleRegistry_NextLevel);
+   Debug::ft("ModuleRegistry.NextLevel");
 
    switch(Restart::Level_)
    {
@@ -207,11 +201,9 @@ void ModuleRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name ModuleRegistry_Restart = "ModuleRegistry.Restart";
-
 void ModuleRegistry::Restart()
 {
-   Debug::ft(ModuleRegistry_Restart);
+   Debug::ft("ModuleRegistry.Restart");
 
    auto reentered = true;
 
@@ -264,11 +256,9 @@ void ModuleRegistry::Restart()
 
 //------------------------------------------------------------------------------
 
-fn_name ModuleRegistry_SetLevel = "ModuleRegistry.SetLevel";
-
 void ModuleRegistry::SetLevel(RestartLevel level)
 {
-   Debug::ft(ModuleRegistry_SetLevel);
+   Debug::ft("ModuleRegistry.SetLevel");
 
    level_ = level;
 }
@@ -287,11 +277,9 @@ fixed_string ExitedThreadsStr = "...threads exited: ";
 fixed_string ShutdownStr = "...shut down";
 const size_t ShutdownStrSize = strlen(ShutdownStr);
 
-fn_name ModuleRegistry_Shutdown = "ModuleRegistry.Shutdown";
-
 void ModuleRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(ModuleRegistry_Shutdown);
+   Debug::ft("ModuleRegistry.Shutdown");
 
    if(level >= RestartReload)
    {
@@ -392,11 +380,9 @@ fixed_string PreModuleStr = "pre-Module.Startup";
 fixed_string InitializedStr = "...initialized";
 const size_t InitializedStrSize = strlen(InitializedStr);
 
-fn_name ModuleRegistry_Startup = "ModuleRegistry.Startup";
-
 void ModuleRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(ModuleRegistry_Startup);
+   Debug::ft("ModuleRegistry.Startup");
 
    auto zeroTime =
       (level >= RestartReboot ? TimePoint::TimeZero() : TimePoint::Now());
@@ -441,11 +427,9 @@ void ModuleRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name ModuleRegistry_UnbindModule = "ModuleRegistry.UnbindModule";
-
 void ModuleRegistry::UnbindModule(Module& module)
 {
-   Debug::ftnt(ModuleRegistry_UnbindModule);
+   Debug::ftnt("ModuleRegistry.UnbindModule");
 
    modules_.Erase(module);
 }

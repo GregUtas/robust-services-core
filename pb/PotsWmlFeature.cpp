@@ -72,12 +72,10 @@ PotsWmlAttrs::PotsWmlAttrs() : CliText(PotsWmlFullName, PotsWmlAbbrName)
 
 //==============================================================================
 
-fn_name PotsWmlFeature_ctor = "PotsWmlFeature.ctor";
-
 PotsWmlFeature::PotsWmlFeature() :
    PotsFeature(WML, true, PotsWmlAbbrName, PotsWmlFullName)
 {
-   Debug::ft(PotsWmlFeature_ctor);
+   Debug::ft("PotsWmlFeature.ctor");
 
    SetIncompatible(BOC);
    SetIncompatible(HTL);
@@ -85,11 +83,9 @@ PotsWmlFeature::PotsWmlFeature() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlFeature_dtor = "PotsWmlFeature.dtor";
-
 PotsWmlFeature::~PotsWmlFeature()
 {
-   Debug::ftnt(PotsWmlFeature_dtor);
+   Debug::ftnt("PotsWmlFeature.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -98,12 +94,10 @@ CliText* PotsWmlFeature::Attrs() const { return new PotsWmlAttrs; }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlFeature_Subscribe = "PotsWmlFeature.Subscribe";
-
 PotsFeatureProfile* PotsWmlFeature::Subscribe
    (PotsProfile& profile, CliThread& cli) const
 {
-   Debug::ft(PotsWmlFeature_Subscribe);
+   Debug::ft("PotsWmlFeature.Subscribe");
 
    word dn, timeout = 0;
    bool dnwarn = false, towarn = false;
@@ -136,33 +130,27 @@ PotsFeatureProfile* PotsWmlFeature::Subscribe
 
 //==============================================================================
 
-fn_name PotsWmlFeatureProfile_ctor = "PotsWmlFeatureProfile.ctor";
-
 PotsWmlFeatureProfile::PotsWmlFeatureProfile(Address::DN dn, secs_t timeout) :
    DnRouteFeatureProfile(WML, dn),
    timeout_(timeout)
 {
-   Debug::ft(PotsWmlFeatureProfile_ctor);
+   Debug::ft("PotsWmlFeatureProfile.ctor");
 
    if(timeout_ == 0) timeout_ = PotsProtocol::FirstDigitTimeout - 5;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlFeatureProfile_dtor = "PotsWmlFeatureProfile.dtor";
-
 PotsWmlFeatureProfile::~PotsWmlFeatureProfile()
 {
-   Debug::ftnt(PotsWmlFeatureProfile_dtor);
+   Debug::ftnt("PotsWmlFeatureProfile.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlFeatureProfile_Activate = "PotsWmlFeatureProfile.Activate";
-
 bool PotsWmlFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 {
-   Debug::ft(PotsWmlFeatureProfile_Activate);
+   Debug::ft("PotsWmlFeatureProfile.Activate");
 
    FunctionGuard guard(Guard_MemUnprotect);
 

@@ -136,11 +136,9 @@ void LogGroup::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroup_DisplayStats = "LogGroup.DisplayStats";
-
 void LogGroup::DisplayStats(ostream& stream, const Flags& options) const
 {
-   Debug::ft(LogGroup_DisplayStats);
+   Debug::ft("LogGroup.DisplayStats");
 
    stream << spaces(2) << name_.c_str() << " group ";
    stream << strIndex(Gid(), 0, false) << CRLF;
@@ -153,11 +151,9 @@ void LogGroup::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroup_FindLog = "LogGroup.FindLog";
-
 Log* LogGroup::FindLog(LogId id) const
 {
-   Debug::ftnt(LogGroup_FindLog);
+   Debug::ftnt("LogGroup.FindLog");
 
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
    {
@@ -184,11 +180,9 @@ void LogGroup::SetSuppressed(bool suppressed)
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroup_Shutdown = "LogGroup.Shutdown";
-
 void LogGroup::Shutdown(RestartLevel level)
 {
-   Debug::ft(LogGroup_Shutdown);
+   Debug::ft("LogGroup.Shutdown");
 
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
    {
@@ -200,11 +194,9 @@ void LogGroup::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroup_Startup = "LogGroup.Startup";
-
 void LogGroup::Startup(RestartLevel level)
 {
-   Debug::ft(LogGroup_Startup);
+   Debug::ft("LogGroup.Startup");
 
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
    {
@@ -214,11 +206,9 @@ void LogGroup::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroup_UnbindLog = "LogGroup.UnbindLog";
-
 void LogGroup::UnbindLog(Log& log)
 {
-   Debug::ftnt(LogGroup_UnbindLog);
+   Debug::ftnt("LogGroup.UnbindLog");
 
    logs_.Erase(log);
 }

@@ -34,29 +34,23 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name TcpIpService_ctor = "TcpIpService.ctor";
-
 TcpIpService::TcpIpService()
 {
-   Debug::ft(TcpIpService_ctor);
+   Debug::ft("TcpIpService.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TcpIpService_dtor = "TcpIpService.dtor";
 
 TcpIpService::~TcpIpService()
 {
-   Debug::ftnt(TcpIpService_dtor);
+   Debug::ftnt("TcpIpService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIpService_CreatePort = "TcpIpService.CreatePort";
-
 IpPort* TcpIpService::CreatePort(ipport_t pid)
 {
-   Debug::ft(TcpIpService_CreatePort);
+   Debug::ft("TcpIpService.CreatePort");
 
    return new TcpIpPort(pid, this);
 }

@@ -26,8 +26,6 @@ using namespace NodeBase;
 
 namespace Diplomacy
 {
-fn_name MapAndUnits_ctor = "MapAndUnits.ctor";
-
 MapAndUnits::MapAndUnits() :
    number_of_provinces(0),
    number_of_powers(0),
@@ -39,16 +37,14 @@ MapAndUnits::MapAndUnits() :
    check_on_adjudication(false),
    our_number_of_disbands(0)
 {
-   Debug::ft(MapAndUnits_ctor);
+   Debug::ft("MapAndUnits.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_all_orders_received = "MapAndUnits.all_orders_received";
-
 bool MapAndUnits::all_orders_received(PowerId power) const
 {
-   Debug::ft(MapAndUnits_all_orders_received);
+   Debug::ft("MapAndUnits.all_orders_received");
 
    switch(curr_season.all())
    {
@@ -134,11 +130,9 @@ bool MapAndUnits::any_orders_entered() const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_build_now = "MapAndUnits.build_now";
-
 void MapAndUnits::build_now(TokenMessage& now) const
 {
-   Debug::ft(MapAndUnits_build_now);
+   Debug::ft("MapAndUnits.build_now");
 
    now = Token(TOKEN_COMMAND_NOW) + encode_turn();
 
@@ -155,11 +149,9 @@ void MapAndUnits::build_now(TokenMessage& now) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_build_sco = "MapAndUnits.build_sco";
-
 void MapAndUnits::build_sco(TokenMessage& sco) const
 {
-   Debug::ft(MapAndUnits_build_sco);
+   Debug::ft("MapAndUnits.build_sco");
 
    TokenMessage power_owned_scs[POWER_MAX];
    TokenMessage unowned_scs;
@@ -198,11 +190,9 @@ void MapAndUnits::build_sco(TokenMessage& sco) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_build_sub = "MapAndUnits.build_sub";
-
 TokenMessage MapAndUnits::build_sub() const
 {
-   Debug::ft(MapAndUnits_build_sub);
+   Debug::ft("MapAndUnits.build_sub");
 
    TokenMessage sub(TOKEN_COMMAND_SUB);
    TokenMessage unit_order;
@@ -310,11 +300,9 @@ bool MapAndUnits::can_move_to_province
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_cancel_build_order = "MapAndUnits.cancel_build_order";
-
 bool MapAndUnits::cancel_build_order(ProvinceId province)
 {
-   Debug::ft(MapAndUnits_cancel_build_order);
+   Debug::ft("MapAndUnits.cancel_build_order");
 
    Location first_coast(province, 0);
    auto match = our_winter_orders.adjustments.lower_bound(first_coast);
@@ -331,11 +319,9 @@ bool MapAndUnits::cancel_build_order(ProvinceId province)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_cancel_remove_order = "MapAndUnits.cancel_remove_order";
-
 bool MapAndUnits::cancel_remove_order(ProvinceId location)
 {
-   Debug::ft(MapAndUnits_cancel_remove_order);
+   Debug::ft("MapAndUnits.cancel_remove_order");
 
    //  This is exactly the same as removing a build order.
    //
@@ -344,11 +330,9 @@ bool MapAndUnits::cancel_remove_order(ProvinceId location)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_clear_all_orders = "MapAndUnits.clear_all_orders";
-
 void MapAndUnits::clear_all_orders()
 {
-   Debug::ft(MapAndUnits_clear_all_orders);
+   Debug::ft("MapAndUnits.clear_all_orders");
 
    for(auto u = units.begin(); u != units.end(); ++u)
    {
@@ -366,11 +350,9 @@ void MapAndUnits::clear_all_orders()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_create_clone = "MapAndUnits.create_clone";
-
 MapAndUnits* MapAndUnits::create_clone()
 {
-   Debug::ft(MapAndUnits_create_clone);
+   Debug::ft("MapAndUnits.create_clone");
 
    auto original = instance();
    auto duplicate = new MapAndUnits;
@@ -381,11 +363,9 @@ MapAndUnits* MapAndUnits::create_clone()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_delete_clone = "MapAndUnits.delete_clone";
-
 void MapAndUnits::delete_clone(MapAndUnits*& clone)
 {
-   Debug::ft(MapAndUnits_delete_clone);
+   Debug::ft("MapAndUnits.delete_clone");
 
    if(clone == instance()) return;  // wanker!
    delete clone;
@@ -531,12 +511,10 @@ string MapAndUnits::display_retreat_result(const UnitOrder& unit) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_encode_build_result = "MapAndUnits.encode_build_result";
-
 TokenMessage MapAndUnits::encode_build_result
    (PowerId power, const WinterOrders& orders, const Location& location) const
 {
-   Debug::ft(MapAndUnits_encode_build_result);
+   Debug::ft("MapAndUnits.encode_build_result");
 
    TokenMessage order = power_token(power);
 
@@ -560,11 +538,9 @@ TokenMessage MapAndUnits::encode_build_result
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_encode_dislodged_unit = "MapAndUnits.encode_dislodged_unit";
-
 TokenMessage MapAndUnits::encode_dislodged_unit(const UnitOrder& unit) const
 {
-   Debug::ft(MapAndUnits_encode_dislodged_unit);
+   Debug::ft("MapAndUnits.encode_dislodged_unit");
 
    TokenMessage retreat_locations;
 
@@ -844,11 +820,9 @@ TokenMessage MapAndUnits::encode_retreat_result(const UnitOrder& unit) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_encode_turn = "MapAndUnits.encode_turn";
-
 TokenMessage MapAndUnits::encode_turn() const
 {
-   Debug::ft(MapAndUnits_encode_turn);
+   Debug::ft("MapAndUnits.encode_turn");
 
    Token year;
 
@@ -872,11 +846,9 @@ TokenMessage MapAndUnits::encode_unit(const UnitOrder& unit) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_encode_waive = "MapAndUnits.encode_waive";
-
 TokenMessage MapAndUnits::encode_waive(PowerId power) const
 {
-   Debug::ft(MapAndUnits_encode_waive);
+   Debug::ft("MapAndUnits.encode_waive");
 
    auto order = power_token(power) + Token(TOKEN_ORDER_WVE);
    auto msg = Token(TOKEN_COMMAND_ORD) +
@@ -886,11 +858,9 @@ TokenMessage MapAndUnits::encode_waive(PowerId power) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_find_adjustment = "MapAndUnits.find_adjustment";
-
 Location MapAndUnits::find_adjustment(ProvinceId province) const
 {
-   Debug::ft(MapAndUnits_find_adjustment);
+   Debug::ft("MapAndUnits.find_adjustment");
 
    Location first_coast(province, 0);
    auto match = our_winter_orders.adjustments.lower_bound(first_coast);
@@ -906,14 +876,11 @@ Location MapAndUnits::find_adjustment(ProvinceId province) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_find_result_unit_initial_location =
-   "MapAndUnits.find_result_unit_initial_location";
-
 Location MapAndUnits::find_result_unit_initial_location
    (ProvinceId province, bool& is_new_build, bool& retreated_to_province,
    bool& moved_to_province, bool& unit_found) const
 {
-   Debug::ft(MapAndUnits_find_result_unit_initial_location);
+   Debug::ft("MapAndUnits.find_result_unit_initial_location");
 
    is_new_build = false;
    retreated_to_province = false;
@@ -968,12 +935,10 @@ Location MapAndUnits::find_result_unit_initial_location
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_find_unit = "MapAndUnits.find_unit";
-
 UnitOrder* MapAndUnits::find_unit
    (const TokenMessage& unit_to_find, UnitOrderMap& units_map) const
 {
-   Debug::ft(MapAndUnits_find_unit);
+   Debug::ft("MapAndUnits.find_unit");
 
    if(unit_to_find.parm_count() != 3)
    {
@@ -1017,12 +982,9 @@ UnitOrder* MapAndUnits::find_unit
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_adjudication_results =
-   "MapAndUnits.get_adjudication_results";
-
 size_t MapAndUnits::get_adjudication_results(TokenMessage ord_messages[]) const
 {
-   Debug::ft(MapAndUnits_get_adjudication_results);
+   Debug::ft("MapAndUnits.get_adjudication_results");
 
    switch(curr_season.all())
    {
@@ -1043,12 +1005,9 @@ size_t MapAndUnits::get_adjudication_results(TokenMessage ord_messages[]) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_adjustment_results =
-   "MapAndUnits.get_adjustment_results";
-
 size_t MapAndUnits::get_adjustment_results(TokenMessage ord_messages[]) const
 {
-   Debug::ft(MapAndUnits_get_adjustment_results);
+   Debug::ft("MapAndUnits.get_adjustment_results");
 
    size_t count = 0;
 
@@ -1076,11 +1035,9 @@ size_t MapAndUnits::get_adjustment_results(TokenMessage ord_messages[]) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_centre_count = "MapAndUnits.get_centre_count";
-
 size_t MapAndUnits::get_centre_count(Token power) const
 {
-   Debug::ft(MapAndUnits_get_centre_count);
+   Debug::ft("MapAndUnits.get_centre_count");
 
    size_t count = 0;
 
@@ -1097,11 +1054,9 @@ size_t MapAndUnits::get_centre_count(Token power) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_centres = "MapAndUnits.get_centres";
-
 std::vector< PowerCentres > MapAndUnits::get_centres() const
 {
-   Debug::ft(MapAndUnits_get_centres);
+   Debug::ft("MapAndUnits.get_centres");
 
    std::vector< PowerCentres > owners;
 
@@ -1136,11 +1091,9 @@ std::vector< PowerCentres > MapAndUnits::get_centres() const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_destinations = "MapAndUnits.get_destinations";
-
 const LocationSet* MapAndUnits::get_destinations(ProvinceId province) const
 {
-   Debug::ft(MapAndUnits_get_destinations);
+   Debug::ft("MapAndUnits.get_destinations");
 
    //  If PROVINCE contains a unit, return its possible destinations.
    //
@@ -1156,13 +1109,10 @@ const LocationSet* MapAndUnits::get_destinations(ProvinceId province) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_dislodged_unit_destinations =
-   "MapAndUnits.get_dislodged_unit_destinations";
-
 const LocationSet* MapAndUnits::get_dislodged_unit_destinations
    (ProvinceId province) const
 {
-   Debug::ft(MapAndUnits_get_dislodged_unit_destinations);
+   Debug::ft("MapAndUnits.get_dislodged_unit_destinations");
 
    auto unit = dislodged_units.find(province);
 
@@ -1176,11 +1126,9 @@ const LocationSet* MapAndUnits::get_dislodged_unit_destinations
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_movement_results = "MapAndUnits.get_movement_results";
-
 size_t MapAndUnits::get_movement_results(TokenMessage ord_messages[]) const
 {
-   Debug::ft(MapAndUnits_get_movement_results);
+   Debug::ft("MapAndUnits.get_movement_results");
 
    size_t count = 0;
 
@@ -1249,11 +1197,9 @@ std::vector< PowerOrders > MapAndUnits::get_orders(const Token& season) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_retreat_results = "MapAndUnits.get_retreat_results";
-
 size_t MapAndUnits::get_retreat_results(TokenMessage ord_messages[]) const
 {
-   Debug::ft(MapAndUnits_get_retreat_results);
+   Debug::ft("MapAndUnits.get_retreat_results");
 
    size_t n = 0;
 
@@ -1267,11 +1213,9 @@ size_t MapAndUnits::get_retreat_results(TokenMessage ord_messages[]) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_unit_count = "MapAndUnits.get_unit_count";
-
 size_t MapAndUnits::get_unit_count(Token power) const
 {
-   Debug::ft(MapAndUnits_get_unit_count);
+   Debug::ft("MapAndUnits.get_unit_count");
 
    size_t count = 0;
 
@@ -1288,11 +1232,9 @@ size_t MapAndUnits::get_unit_count(Token power) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_units = "MapAndUnits.get_units";
-
 std::vector< PowerUnits > MapAndUnits::get_units() const
 {
-   Debug::ft(MapAndUnits_get_units);
+   Debug::ft("MapAndUnits.get_units");
 
    std::vector< PowerUnits > owners;
 
@@ -1322,11 +1264,9 @@ std::vector< PowerUnits > MapAndUnits::get_units() const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_get_variant_setting = "MapAndUnits.get_variant_setting";
-
 bool MapAndUnits::get_variant_setting(const Token& option, Token* setting) const
 {
-   Debug::ft(MapAndUnits_get_variant_setting);
+   Debug::ft("MapAndUnits.get_variant_setting");
 
    for(size_t count = 0; count < variant.parm_count(); ++count)
    {
@@ -1348,12 +1288,10 @@ bool MapAndUnits::get_variant_setting(const Token& option, Token* setting) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_has_route_to_province = "MapAndUnits.has_route_to_province";
-
 bool MapAndUnits::has_route_to_province
    (const UnitOrder& unit, ProvinceId province, ProvinceId exclude) const
 {
-   Debug::ft(MapAndUnits_has_route_to_province);
+   Debug::ft("MapAndUnits.has_route_to_province");
 
    //  Check for a direct move.
    //
@@ -1452,11 +1390,9 @@ MapAndUnits* MapAndUnits::instance()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_adjacencies = "MapAndUnits.process_adjacencies";
-
 size_t MapAndUnits::process_adjacencies(const TokenMessage& adjacencies)
 {
-   Debug::ft(MapAndUnits_process_adjacencies);
+   Debug::ft("MapAndUnits.process_adjacencies");
 
    for(size_t count = 0; count < adjacencies.parm_count(); ++count)
    {
@@ -1474,11 +1410,9 @@ size_t MapAndUnits::process_adjacencies(const TokenMessage& adjacencies)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_hlo = "MapAndUnits.process_hlo";
-
 size_t MapAndUnits::process_hlo(const TokenMessage& hlo)
 {
-   Debug::ft(MapAndUnits_process_hlo);
+   Debug::ft("MapAndUnits.process_hlo");
 
    set_our_power(hlo.get_parm(1).front());
    passcode = hlo.get_parm(2).front().get_number();
@@ -1490,11 +1424,9 @@ size_t MapAndUnits::process_hlo(const TokenMessage& hlo)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_map = "MapAndUnits.process_map";
-
 size_t MapAndUnits::process_map(const TokenMessage& map)
 {
-   Debug::ft(MapAndUnits_process_map);
+   Debug::ft("MapAndUnits.process_map");
 
    auto name = map.get_parm(1);
    map_name = name.to_str().c_str();
@@ -1516,11 +1448,9 @@ size_t MapAndUnits::process_map(const TokenMessage& map)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_mdf = "MapAndUnits.process_mdf";
-
 size_t MapAndUnits::process_mdf(const TokenMessage& mdf)
 {
-   Debug::ft(MapAndUnits_process_mdf);
+   Debug::ft("MapAndUnits.process_mdf");
 
    if(mdf.parm_count() != 4)
    {
@@ -1563,12 +1493,9 @@ size_t MapAndUnits::process_mdf(const TokenMessage& mdf)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_non_supply_centres =
-   "MapAndUnits.process_non_supply_centres";
-
 size_t MapAndUnits::process_non_supply_centres(const TokenMessage& centres)
 {
-   Debug::ft(MapAndUnits_process_non_supply_centres);
+   Debug::ft("MapAndUnits.process_non_supply_centres");
 
    for(size_t count = 0; count < centres.size(); ++count)
    {
@@ -1676,11 +1603,9 @@ size_t MapAndUnits::process_now(const TokenMessage& now)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_now_unit = "MapAndUnits.process_now_unit";
-
 size_t MapAndUnits::process_now_unit(const TokenMessage& unit_parm)
 {
-   Debug::ft(MapAndUnits_process_now_unit);
+   Debug::ft("MapAndUnits.process_now_unit");
 
    ProvinceId pid = NIL_PROVINCE;
    Token coast;
@@ -2213,11 +2138,9 @@ Token MapAndUnits::process_order(const TokenMessage& order, PowerId power)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_powers = "MapAndUnits.process_powers";
-
 size_t MapAndUnits::process_powers(const TokenMessage& powers)
 {
-   Debug::ft(MapAndUnits_process_powers);
+   Debug::ft("MapAndUnits.process_powers");
 
    bool power_used[POWER_MAX];
    auto error = NO_ERROR;
@@ -2248,12 +2171,9 @@ size_t MapAndUnits::process_powers(const TokenMessage& powers)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_province_adjacency =
-   "MapAndUnits.process_province_adjacency";
-
 size_t MapAndUnits::process_province_adjacency(const TokenMessage& adjacency)
 {
-   Debug::ft(MapAndUnits_process_province_adjacency);
+   Debug::ft("MapAndUnits.process_province_adjacency");
 
    auto p = adjacency.at(0).province_id();
 
@@ -2285,11 +2205,9 @@ size_t MapAndUnits::process_province_adjacency(const TokenMessage& adjacency)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_provinces = "MapAndUnits.process_provinces";
-
 size_t MapAndUnits::process_provinces(const TokenMessage& provinces)
 {
-   Debug::ft(MapAndUnits_process_provinces);
+   Debug::ft("MapAndUnits.process_provinces");
 
    for(size_t p = 0; p < PROVINCE_MAX; ++p)
    {
@@ -2377,11 +2295,9 @@ size_t MapAndUnits::process_sco(const TokenMessage& sco)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_sco_for_power = "MapAndUnits.process_sco_for_power";
-
 size_t MapAndUnits::process_sco_for_power(const TokenMessage& sco_parm)
 {
-   Debug::ft(MapAndUnits_process_sco_for_power);
+   Debug::ft("MapAndUnits.process_sco_for_power");
 
    auto power = sco_parm.front();
 
@@ -2407,12 +2323,10 @@ size_t MapAndUnits::process_sco_for_power(const TokenMessage& sco_parm)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_sub = "MapAndUnits.process_sub";
-
 size_t MapAndUnits::process_sub
    (const TokenMessage& sub, PowerId power, Token results[])
 {
-   Debug::ft(MapAndUnits_process_sub);
+   Debug::ft("MapAndUnits.process_sub");
 
    auto signal = sub.get_parm(0);
 
@@ -2432,12 +2346,9 @@ size_t MapAndUnits::process_sub
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_supply_centres =
-   "MapAndUnits.process_supply_centres";
-
 size_t MapAndUnits::process_supply_centres(const TokenMessage& centres)
 {
-   Debug::ft(MapAndUnits_process_supply_centres);
+   Debug::ft("MapAndUnits.process_supply_centres");
 
    for(size_t count = 0; count < centres.parm_count(); ++count)
    {
@@ -2454,13 +2365,10 @@ size_t MapAndUnits::process_supply_centres(const TokenMessage& centres)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_supply_centres_for_power =
-   "MapAndUnits.process_supply_centres_for_power";
-
 size_t MapAndUnits::process_supply_centres_for_power
    (const TokenMessage& centres)
 {
-   Debug::ft(MapAndUnits_process_supply_centres_for_power);
+   Debug::ft("MapAndUnits.process_supply_centres_for_power");
 
    PowerSet home_powers;
    Token power = TOKEN_PARAMETER_UNO;  // default = unowned (neutral)
@@ -2557,11 +2465,9 @@ Token MapAndUnits::province_token(ProvinceId province) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_build_order = "MapAndUnits.set_build_order";
-
 void MapAndUnits::set_build_order(Location location)
 {
-   Debug::ft(MapAndUnits_set_build_order);
+   Debug::ft("MapAndUnits.set_build_order");
 
    //  If a build order for this province has already been submitted, erase
    //  it.  Note that the build might have been on a different coast.
@@ -2582,12 +2488,10 @@ void MapAndUnits::set_build_order(Location location)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_convoy_order = "MapAndUnits.set_convoy_order";
-
 bool MapAndUnits::set_convoy_order
    (ProvinceId unit, ProvinceId client, ProvinceId dest)
 {
-   Debug::ft(MapAndUnits_set_convoy_order);
+   Debug::ft("MapAndUnits.set_convoy_order");
 
    auto unit_to_order = units.find(unit);
 
@@ -2604,11 +2508,9 @@ bool MapAndUnits::set_convoy_order
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_disband_order = "MapAndUnits.set_disband_order";
-
 bool MapAndUnits::set_disband_order(ProvinceId unit)
 {
-   Debug::ft(MapAndUnits_set_disband_order);
+   Debug::ft("MapAndUnits.set_disband_order");
 
    auto unit_to_order = dislodged_units.find(unit);
 
@@ -2623,11 +2525,9 @@ bool MapAndUnits::set_disband_order(ProvinceId unit)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_hold_order = "MapAndUnits.set_hold_order";
-
 bool MapAndUnits::set_hold_order(ProvinceId unit)
 {
-   Debug::ft(MapAndUnits_set_hold_order);
+   Debug::ft("MapAndUnits.set_hold_order");
 
    auto unit_to_order = units.find(unit);
 
@@ -2642,13 +2542,10 @@ bool MapAndUnits::set_hold_order(ProvinceId unit)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_move_by_convoy_order =
-   "MapAndUnits.set_move_by_convoy_order";
-
 bool MapAndUnits::set_move_by_convoy_order
    (ProvinceId unit, ProvinceId dest, size_t length, const ProvinceId fleets[])
 {
-   Debug::ft(MapAndUnits_set_move_by_convoy_order);
+   Debug::ft("MapAndUnits.set_move_by_convoy_order");
 
    auto unit_to_order = units.find(unit);
 
@@ -2682,11 +2579,9 @@ bool MapAndUnits::set_move_by_single_step_convoy_order
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_move_order = "MapAndUnits.set_move_order";
-
 bool MapAndUnits::set_move_order(ProvinceId unit, Location dest)
 {
-   Debug::ft(MapAndUnits_set_move_order);
+   Debug::ft("MapAndUnits.set_move_order");
 
    auto unit_to_order = units.find(unit);
 
@@ -2702,23 +2597,18 @@ bool MapAndUnits::set_move_order(ProvinceId unit, Location dest)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_multiple_waive_orders =
-   "MapAndUnits.set_multiple_waive_orders";
-
 void MapAndUnits::set_multiple_waive_orders(size_t waives)
 {
-   Debug::ft(MapAndUnits_set_multiple_waive_orders);
+   Debug::ft("MapAndUnits.set_multiple_waive_orders");
 
    our_winter_orders.number_of_waives += waives;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_order_checking = "MapAndUnits.set_order_checking";
-
 void MapAndUnits::set_order_checking(bool on_submission, bool on_adjudication)
 {
-   Debug::ft(MapAndUnits_set_order_checking);
+   Debug::ft("MapAndUnits.set_order_checking");
 
    check_on_submission = on_submission;
    check_on_adjudication = on_adjudication;
@@ -2726,11 +2616,9 @@ void MapAndUnits::set_order_checking(bool on_submission, bool on_adjudication)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_our_power = "MapAndUnits.set_our_power";
-
 void MapAndUnits::set_our_power(const Token& token)
 {
-   Debug::ft(MapAndUnits_set_our_power);
+   Debug::ft("MapAndUnits.set_our_power");
 
    our_power = token;
 
@@ -2756,11 +2644,9 @@ void MapAndUnits::set_our_power(const Token& token)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_remove_order = "MapAndUnits.set_remove_order";
-
 bool MapAndUnits::set_remove_order(ProvinceId unit)
 {
-   Debug::ft(MapAndUnits_set_remove_order);
+   Debug::ft("MapAndUnits.set_remove_order");
 
    auto unit_to_order = units.find(unit);
 
@@ -2777,11 +2663,9 @@ bool MapAndUnits::set_remove_order(ProvinceId unit)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_retreat_order = "MapAndUnits.set_retreat_order";
-
 bool MapAndUnits::set_retreat_order(ProvinceId unit, Location dest)
 {
-   Debug::ft(MapAndUnits_set_retreat_order);
+   Debug::ft("MapAndUnits.set_retreat_order");
 
    auto unit_to_order = dislodged_units.find(unit);
 
@@ -2797,12 +2681,9 @@ bool MapAndUnits::set_retreat_order(ProvinceId unit, Location dest)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_support_to_hold_order =
-   "MapAndUnits.set_support_to_hold_order";
-
 bool MapAndUnits::set_support_to_hold_order(ProvinceId unit, ProvinceId client)
 {
-   Debug::ft(MapAndUnits_set_support_to_hold_order);
+   Debug::ft("MapAndUnits.set_support_to_hold_order");
 
    auto unit_to_order = units.find(unit);
 
@@ -2818,13 +2699,10 @@ bool MapAndUnits::set_support_to_hold_order(ProvinceId unit, ProvinceId client)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_support_to_move_order =
-   "MapAndUnits.set_support_to_move_order";
-
 bool MapAndUnits::set_support_to_move_order
    (ProvinceId unit, ProvinceId client, ProvinceId dest)
 {
-   Debug::ft(MapAndUnits_set_support_to_move_order);
+   Debug::ft("MapAndUnits.set_support_to_move_order");
 
    auto unit_to_order = units.find(unit);
 
@@ -2841,34 +2719,27 @@ bool MapAndUnits::set_support_to_move_order
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_total_number_of_waive_orders =
-   "MapAndUnits.set_total_number_of_waive_orders";
-
 void MapAndUnits::set_total_number_of_waive_orders(size_t waives)
 {
-   Debug::ft(MapAndUnits_set_total_number_of_waive_orders);
+   Debug::ft("MapAndUnits.set_total_number_of_waive_orders");
 
    our_winter_orders.number_of_waives = waives;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_set_waive_order = "MapAndUnits.set_waive_order";
-
 void MapAndUnits::set_waive_order()
 {
-   Debug::ft(MapAndUnits_set_waive_order);
+   Debug::ft("MapAndUnits.set_waive_order");
 
    our_winter_orders.number_of_waives++;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_unorder_adjustment = "MapAndUnits.unorder_adjustment";
-
 bool MapAndUnits::unorder_adjustment(const TokenMessage& not_sub, PowerId power)
 {
-   Debug::ft(MapAndUnits_unorder_adjustment);
+   Debug::ft("MapAndUnits.unorder_adjustment");
 
    if(curr_season != TOKEN_SEASON_WIN)
    {

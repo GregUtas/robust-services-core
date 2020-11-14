@@ -64,11 +64,9 @@ c_string Cause::strInd(Ind ind)
 
 //==============================================================================
 
-fn_name CauseInfo_ctor = "CauseInfo.ctor";
-
 CauseInfo::CauseInfo() : cause(Cause::NilInd)
 {
-   Debug::ft(CauseInfo_ctor);
+   Debug::ft("CauseInfo.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -81,21 +79,17 @@ void CauseInfo::Display(ostream& stream, const string& prefix) const
 
 //==============================================================================
 
-fn_name CauseParameter_ctor = "CauseParameter.ctor";
-
 CauseParameter::CauseParameter(ProtocolId prid, Id pid) :
    TlvIntParameter< Cause::Ind >(prid, pid)
 {
-   Debug::ft(CauseParameter_ctor);
+   Debug::ft("CauseParameter.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CauseParameter_dtor = "CauseParameter.dtor";
-
 CauseParameter::~CauseParameter()
 {
-   Debug::ftnt(CauseParameter_dtor);
+   Debug::ftnt("CauseParameter.dtor");
 }
 
 //------------------------------------------------------------------------------

@@ -69,11 +69,9 @@ BotTrace::~BotTrace()
 
 //------------------------------------------------------------------------------
 
-fn_name BotTrace_ClaimBlocks = "BotTrace.ClaimBlocks";
-
 void BotTrace::ClaimBlocks()
 {
-   Debug::ft(BotTrace_ClaimBlocks);
+   Debug::ft("BotTrace.ClaimBlocks");
 
    if((buff_ != nullptr) && !corrupt_ && !buff_->IsInvalid())
    {
@@ -133,11 +131,9 @@ DipHeader* BotTrace::Header() const
 
 //------------------------------------------------------------------------------
 
-fn_name BotTrace_Shutdown = "BotTrace.Shutdown";
-
 void BotTrace::Shutdown(RestartLevel level)
 {
-   Debug::ft(BotTrace_Shutdown);
+   Debug::ft("BotTrace.Shutdown");
 
    if(level >= RestartCold) Nullify();
 }

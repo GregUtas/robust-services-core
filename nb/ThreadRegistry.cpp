@@ -72,30 +72,24 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadStatsGroup_ctor = "ThreadStatsGroup.ctor";
-
 ThreadStatsGroup::ThreadStatsGroup() : StatisticsGroup("Threads [ThreadId]")
 {
-   Debug::ft(ThreadStatsGroup_ctor);
+   Debug::ft("ThreadStatsGroup.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ThreadStatsGroup_dtor = "ThreadStatsGroup.dtor";
 
 ThreadStatsGroup::~ThreadStatsGroup()
 {
-   Debug::ftnt(ThreadStatsGroup_dtor);
+   Debug::ftnt("ThreadStatsGroup.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ThreadStatsGroup_DisplayStats = "ThreadStatsGroup.DisplayStats";
 
 void ThreadStatsGroup::DisplayStats
    (ostream& stream, id_t id, const Flags& options) const
 {
-   Debug::ft(ThreadStatsGroup_DisplayStats);
+   Debug::ft("ThreadStatsGroup.DisplayStats");
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
@@ -138,11 +132,9 @@ SysThreadId NextSysThreadId_ = 0;
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_ctor = "ThreadRegistry.ctor";
-
 ThreadRegistry::ThreadRegistry()
 {
-   Debug::ft(ThreadRegistry_ctor);
+   Debug::ft("ThreadRegistry.ctor");
 
    statsGroup_.reset(new ThreadStatsGroup);
 }
@@ -160,11 +152,9 @@ ThreadRegistry::~ThreadRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_ClaimBlocks = "ThreadRegistry.ClaimBlocks";
-
 void ThreadRegistry::ClaimBlocks()
 {
-   Debug::ft(ThreadRegistry_ClaimBlocks);
+   Debug::ft("ThreadRegistry.ClaimBlocks");
 
    for(auto t = threads_.cbegin(); t != threads_.cend(); ++t)
    {
@@ -258,11 +248,9 @@ void ThreadRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_Erase = "ThreadRegistry.Erase";
-
 void ThreadRegistry::Erase(SysThreadId nid)
 {
-   Debug::ft(ThreadRegistry_Erase);
+   Debug::ft("ThreadRegistry.Erase");
 
    MutexGuard guard(&ThreadsLock_);
 
@@ -394,11 +382,9 @@ void ThreadRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_Restarting = "ThreadRegistry.Restarting";
-
 size_t ThreadRegistry::Restarting(RestartLevel level) const
 {
-   Debug::ft(ThreadRegistry_Restarting);
+   Debug::ft("ThreadRegistry.Restarting");
 
    size_t count = 0;
 
@@ -414,11 +400,9 @@ size_t ThreadRegistry::Restarting(RestartLevel level) const
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_Select = "ThreadRegistry.Select";
-
 Thread* ThreadRegistry::Select() const
 {
-   Debug::ft(ThreadRegistry_Select);
+   Debug::ft("ThreadRegistry.Select");
 
    //  Cycle through all threads, beginning with the one identified by
    //  NextSysThreadId_, to find the next one that can be scheduled.
@@ -484,11 +468,9 @@ Thread* ThreadRegistry::Select() const
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_SetThreadId = "ThreadRegistry.SetThreadId";
-
 void ThreadRegistry::SetThreadId(Thread* thread) const
 {
-   Debug::ft(ThreadRegistry_SetThreadId);
+   Debug::ft("ThreadRegistry.SetThreadId");
 
    //  Get a list of all threads, sorted by ThreadId, and assign the
    //  first available identifier to THREAD.
@@ -507,11 +489,9 @@ void ThreadRegistry::SetThreadId(Thread* thread) const
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_Shutdown = "ThreadRegistry.Shutdown";
-
 void ThreadRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(ThreadRegistry_Shutdown);
+   Debug::ft("ThreadRegistry.Shutdown");
 
    auto threads = GetThreads();
 
@@ -534,11 +514,9 @@ size_t ThreadRegistry::Size()
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_Startup = "ThreadRegistry.Startup";
-
 void ThreadRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(ThreadRegistry_Startup);
+   Debug::ft("ThreadRegistry.Startup");
 
    //  This starts up all threads that survived the restart.
    //

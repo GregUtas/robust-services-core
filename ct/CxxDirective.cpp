@@ -55,11 +55,9 @@ void AlignLeft(ostream& stream, const string& prefix)
 
 //------------------------------------------------------------------------------
 
-fn_name Conditional_ctor = "Conditional.ctor";
-
 Conditional::Conditional()
 {
-   Debug::ft(Conditional_ctor);
+   Debug::ft("Conditional.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -81,11 +79,9 @@ void Conditional::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Conditional_EnterScope = "Conditional.EnterScope";
-
 bool Conditional::EnterScope()
 {
-   Debug::ft(Conditional_EnterScope);
+   Debug::ft("Conditional.EnterScope");
 
    //c The expression that follows an #if or #elif is not currently evaluated.
    //  This function returns false, so the code that follows the directive will
@@ -107,44 +103,36 @@ void Conditional::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //==============================================================================
 
-fn_name CxxDirective_ctor = "CxxDirective.ctor";
-
 CxxDirective::CxxDirective()
 {
-   Debug::ft(CxxDirective_ctor);
+   Debug::ft("CxxDirective.ctor");
 }
 
 //==============================================================================
-
-fn_name Define_ctor1 = "Define.ctor";
 
 Define::Define(const string& name) : Macro(name),
    rhs_(nullptr),
    value_(nullptr),
    defined_(false)
 {
-   Debug::ft(Define_ctor1);
+   Debug::ft("Define.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Define_ctor2 = "Define.ctor(rhs)";
 
 Define::Define(const string& name, ExprPtr& rhs) : Macro(name),
    rhs_(std::move(rhs)),
    value_(nullptr),
    defined_(true)
 {
-   Debug::ft(Define_ctor2);
+   Debug::ft("Define.ctor(rhs)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Define_dtor = "Define.dtor";
-
 Define::~Define()
 {
-   Debug::ftnt(Define_dtor);
+   Debug::ftnt("Define.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -184,11 +172,9 @@ void Define::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Define_EnterScope = "Define.EnterScope";
-
 bool Define::EnterScope()
 {
-   Debug::ft(Define_EnterScope);
+   Debug::ft("Define.EnterScope");
 
    //  If the macro is not yet defined, wait for its definition.
    //
@@ -210,11 +196,9 @@ bool Define::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Define_SetExpr = "Define.SetExpr";
-
 void Define::SetExpr(ExprPtr& rhs)
 {
-   Debug::ft(Define_SetExpr);
+   Debug::ft("Define.SetExpr");
 
    //  Now that the macro has been defined, EnterScope can be invoked.
    //
@@ -233,11 +217,9 @@ void Define::Shrink()
 
 //==============================================================================
 
-fn_name Elif_ctor = "Elif.ctor";
-
 Elif::Elif()
 {
-   Debug::ft(Elif_ctor);
+   Debug::ft("Elif.ctor");
 
    CxxStats::Incr(CxxStats::ELIF_DIRECTIVE);
 }
@@ -254,11 +236,9 @@ void Elif::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Elif_EnterScope = "Elif.EnterScope";
-
 bool Elif::EnterScope()
 {
-   Debug::ft(Elif_EnterScope);
+   Debug::ft("Elif.EnterScope");
 
    //  Compile the code that follows the #elif if its #if has not yet compiled
    //  any code and the condition following the #elif evaluates to true.
@@ -273,11 +253,9 @@ bool Elif::EnterScope()
 
 //==============================================================================
 
-fn_name Else_ctor = "Else.ctor";
-
 Else::Else()
 {
-   Debug::ft(Else_ctor);
+   Debug::ft("Else.ctor");
 
    CxxStats::Incr(CxxStats::ELSE_DIRECTIVE);
 }
@@ -294,11 +272,9 @@ void Else::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Else_EnterScope = "Else.EnterScope";
-
 bool Else::EnterScope()
 {
-   Debug::ft(Else_EnterScope);
+   Debug::ft("Else.EnterScope");
 
    //  Compile the code that follows the #else if its #if/#ifdef/#ifndef has
    //  not yet compiled any code.
@@ -310,11 +286,9 @@ bool Else::EnterScope()
 
 //==============================================================================
 
-fn_name Endif_ctor = "Endif.ctor";
-
 Endif::Endif()
 {
-   Debug::ft(Endif_ctor);
+   Debug::ft("Endif.ctor");
 
    CxxStats::Incr(CxxStats::ENDIF_DIRECTIVE);
 }
@@ -330,11 +304,9 @@ void Endif::Display(ostream& stream,
 
 //==============================================================================
 
-fn_name Error_ctor = "Error.ctor";
-
 Error::Error(string& text) : StringDirective(text)
 {
-   Debug::ft(Error_ctor);
+   Debug::ft("Error.ctor");
 
    CxxStats::Incr(CxxStats::ERROR_DIRECTIVE);
 }
@@ -363,23 +335,19 @@ bool Error::EnterScope()
 
 //==============================================================================
 
-fn_name Existential_ctor = "Existential.ctor";
-
 Existential::Existential(MacroNamePtr& macro) :
    else_(nullptr)
 {
-   Debug::ft(Existential_ctor);
+   Debug::ft("Existential.ctor");
 
    name_ = std::move(macro);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Existential_AddElse = "Existential.AddElse";
-
 bool Existential::AddElse(const Else* e)
 {
-   Debug::ft(Existential_AddElse);
+   Debug::ft("Existential.AddElse");
 
    if(else_ != nullptr) return false;
    else_ = e;
@@ -419,11 +387,9 @@ void Existential::Shrink()
 
 //==============================================================================
 
-fn_name Ifdef_ctor = "Ifdef.ctor";
-
 Ifdef::Ifdef(MacroNamePtr& macro) : Existential(macro)
 {
-   Debug::ft(Ifdef_ctor);
+   Debug::ft("Ifdef.ctor");
 
    CxxStats::Incr(CxxStats::IFDEF_DIRECTIVE);
 }
@@ -440,11 +406,9 @@ void Ifdef::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Ifdef_EnterScope = "Ifdef.EnterScope";
-
 bool Ifdef::EnterScope()
 {
-   Debug::ft(Ifdef_EnterScope);
+   Debug::ft("Ifdef.EnterScope");
 
    //  Compile the code that follows the #ifdef if the symbol that follows
    //  it has been defined.
@@ -458,23 +422,19 @@ bool Ifdef::EnterScope()
 
 //==============================================================================
 
-fn_name Iff_ctor = "Iff.ctor";
-
 Iff::Iff() :
    else_(nullptr)
 {
-   Debug::ft(Iff_ctor);
+   Debug::ft("Iff.ctor");
 
    CxxStats::Incr(CxxStats::IF_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Iff_AddElif = "Iff.AddElif";
-
 bool Iff::AddElif(Elif* e)
 {
-   Debug::ft(Iff_AddElif);
+   Debug::ft("Iff.AddElif");
 
    if(else_ != nullptr) return false;
    elifs_.push_back(e);
@@ -483,11 +443,9 @@ bool Iff::AddElif(Elif* e)
 
 //------------------------------------------------------------------------------
 
-fn_name Iff_AddElse = "Iff.AddElse";
-
 bool Iff::AddElse(const Else* e)
 {
-   Debug::ft(Iff_AddElse);
+   Debug::ft("Iff.AddElse");
 
    if(else_ != nullptr) return false;
    else_ = e;
@@ -506,11 +464,9 @@ void Iff::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Iff_EnterScope = "Iff.EnterScope";
-
 bool Iff::EnterScope()
 {
-   Debug::ft(Iff_EnterScope);
+   Debug::ft("Iff.EnterScope");
 
    //  Compile the code that follows the #if if the condition that follows
    //  evaluates to true.
@@ -524,11 +480,9 @@ bool Iff::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Iff_HasCompiledCode = "Iff.HasCompiledCode";
-
 bool Iff::HasCompiledCode() const
 {
-   Debug::ft(Iff_HasCompiledCode);
+   Debug::ft("Iff.HasCompiledCode");
 
    if(HasCompiledCode()) return true;
 
@@ -551,11 +505,9 @@ void Iff::Shrink()
 
 //==============================================================================
 
-fn_name Ifndef_ctor = "Ifndef.ctor";
-
 Ifndef::Ifndef(MacroNamePtr& macro) : Existential(macro)
 {
-   Debug::ft(Ifndef_ctor);
+   Debug::ft("Ifndef.ctor");
 
    CxxStats::Incr(CxxStats::IFNDEF_DIRECTIVE);
 }
@@ -572,11 +524,9 @@ void Ifndef::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Ifndef_EnterScope = "Ifndef.EnterScope";
-
 bool Ifndef::EnterScope()
 {
-   Debug::ft(Ifndef_EnterScope);
+   Debug::ft("Ifndef.EnterScope");
 
    //  Compile the code that follows the #ifndef if the symbol that follows
    //  it has not been defined.
@@ -590,12 +540,10 @@ bool Ifndef::EnterScope()
 
 //==============================================================================
 
-fn_name Include_ctor = "Include.ctor";
-
 Include::Include(string& name, bool angle) : SymbolDirective(name),
    angle_(angle)
 {
-   Debug::ft(Include_ctor);
+   Debug::ft("Include.ctor");
 
    CxxStats::Incr(CxxStats::INCLUDE_DIRECTIVE);
 }
@@ -615,11 +563,9 @@ void Include::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Include_FindFile = "Include.FindFile";
-
 CodeFile* Include::FindFile() const
 {
-   Debug::ft(Include_FindFile);
+   Debug::ft("Include.FindFile");
 
    auto lib = Singleton< Library >::Instance();
    auto name = Name();
@@ -637,11 +583,9 @@ void Include::Shrink()
 
 //==============================================================================
 
-fn_name Line_ctor = "Line.ctor";
-
 Line::Line(string& text) : StringDirective(text)
 {
-   Debug::ft(Line_ctor);
+   Debug::ft("Line.ctor");
 
    CxxStats::Incr(CxxStats::LINE_DIRECTIVE);
 }
@@ -657,13 +601,11 @@ void Line::Display(ostream& stream,
 
 //==============================================================================
 
-fn_name Macro_ctor = "Macro.ctor";
-
 Macro::Macro(const string& name) :
    refs_(0),
    name_(name)
 {
-   Debug::ft(Macro_ctor);
+   Debug::ft("Macro.ctor");
 
    SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
    Singleton< CxxSymbols >::Instance()->InsertMacro(this);
@@ -672,11 +614,9 @@ Macro::Macro(const string& name) :
 
 //------------------------------------------------------------------------------
 
-fn_name Macro_dtor = "Macro.dtor";
-
 Macro::~Macro()
 {
-   Debug::ftnt(Macro_dtor);
+   Debug::ftnt("Macro.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseMacro(this);
    CxxStats::Decr(CxxStats::DEFINE_DIRECTIVE);
@@ -703,22 +643,18 @@ void Macro::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Macro_Empty = "Macro.Empty";
-
 bool Macro::Empty() const
 {
-   Debug::ft(Macro_Empty);
+   Debug::ft("Macro.Empty");
 
    return (GetValue() == nullptr);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Macro_GetNumeric = "Macro.GetNumeric";
-
 Numeric Macro::GetNumeric() const
 {
-   Debug::ft(Macro_GetNumeric);
+   Debug::ft("Macro.GetNumeric");
 
    auto ref = Referent();
    if(ref != nullptr) return ref->GetNumeric();
@@ -739,12 +675,10 @@ CxxToken* Macro::GetValue() const
 
 //------------------------------------------------------------------------------
 
-fn_name Macro_NameRefersToItem = "Macro.NameRefersToItem";
-
 bool Macro::NameRefersToItem(const string& name,
    const CxxScope* scope, const CodeFile* file, SymbolView* view) const
 {
-   Debug::ft(Macro_NameRefersToItem);
+   Debug::ft("Macro.NameRefersToItem");
 
    //  If this item was not declared in a file, it must be a macro name
    //  that was defined for the compile (e.g. OS_WIN).
@@ -782,11 +716,9 @@ void Macro::Shrink()
 
 //------------------------------------------------------------------------------
 
-fn_name Macro_TypeString = "Macro.TypeString";
-
 string Macro::TypeString(bool arg) const
 {
-   Debug::ft(Macro_TypeString);
+   Debug::ft("Macro.TypeString");
 
    auto value = GetValue();
    if(value != nullptr) return value->TypeString(arg);
@@ -803,13 +735,11 @@ bool Macro::WasRead()
 
 //==============================================================================
 
-fn_name MacroName_ctor = "MacroName.ctor";
-
 MacroName::MacroName(string& name) :
    ref_(nullptr),
    defined_(false)
 {
-   Debug::ft(MacroName_ctor);
+   Debug::ft("MacroName.ctor");
 
    std::swap(name_, name);
    CxxStats::Incr(CxxStats::MACRO_NAME);
@@ -817,11 +747,9 @@ MacroName::MacroName(string& name) :
 
 //------------------------------------------------------------------------------
 
-fn_name MacroName_dtor = "MacroName.dtor";
-
 MacroName::~MacroName()
 {
-   Debug::ftnt(MacroName_dtor);
+   Debug::ftnt("MacroName.dtor");
 
    CxxStats::Decr(CxxStats::QUAL_NAME);
 }
@@ -835,11 +763,9 @@ void MacroName::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name MacroName_EnterBlock = "MacroName.EnterBlock";
-
 void MacroName::EnterBlock()
 {
-   Debug::ft(MacroName_EnterBlock);
+   Debug::ft("MacroName.EnterBlock");
 
    Context::SetPos(GetLoc());
    Context::PushArg(StackArg(Referent(), 0, false));
@@ -870,11 +796,9 @@ void MacroName::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name MacroName_Referent = "MacroName.Referent";
-
 CxxScoped* MacroName::Referent() const
 {
-   Debug::ft(MacroName_Referent);
+   Debug::ft("MacroName.Referent");
 
    //  This is invoked to find a referent in a preprocessor directive.
    //
@@ -946,11 +870,9 @@ string MacroName::TypeString(bool arg) const
 
 //------------------------------------------------------------------------------
 
-fn_name MacroName_WasDefined = "MacroName.WasDefined";
-
 bool MacroName::WasDefined() const
 {
-   Debug::ft(MacroName_WasDefined);
+   Debug::ft("MacroName.WasDefined");
 
    //  Make sure that the referent has been searched for.
    //
@@ -960,23 +882,19 @@ bool MacroName::WasDefined() const
 
 //==============================================================================
 
-fn_name Optional_ctor = "Optional.ctor";
-
 Optional::Optional()
 {
-   Debug::ft(Optional_ctor);
+   Debug::ft("Optional.ctor");
 }
 
 //==============================================================================
-
-fn_name OptionalCode_ctor = "OptionalCode.ctor";
 
 OptionalCode::OptionalCode() :
    begin_(string::npos),
    end_(0),
    compile_(false)
 {
-   Debug::ft(OptionalCode_ctor);
+   Debug::ft("OptionalCode.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -1017,11 +935,9 @@ void OptionalCode::Display(ostream& stream,
 
 //==============================================================================
 
-fn_name Pragma_ctor = "Pragma.ctor";
-
 Pragma::Pragma(string& text) : StringDirective(text)
 {
-   Debug::ft(Pragma_ctor);
+   Debug::ft("Pragma.ctor");
 
    CxxStats::Incr(CxxStats::PRAGMA_DIRECTIVE);
 }
@@ -1037,11 +953,9 @@ void Pragma::Display(ostream& stream,
 
 //==============================================================================
 
-fn_name StringDirective_ctor = "StringDirective.ctor";
-
 StringDirective::StringDirective(string& text)
 {
-   Debug::ft(StringDirective_ctor);
+   Debug::ft("StringDirective.ctor");
 
    std::swap(text_, text);
 }
@@ -1055,11 +969,9 @@ void StringDirective::Shrink()
 
 //==============================================================================
 
-fn_name SymbolDirective_ctor = "SymbolDirective.ctor";
-
 SymbolDirective::SymbolDirective(string& name)
 {
-   Debug::ft(SymbolDirective_ctor);
+   Debug::ft("SymbolDirective.ctor");
 
    std::swap(name_, name);
 }
@@ -1073,11 +985,9 @@ void SymbolDirective::Shrink()
 
 //==============================================================================
 
-fn_name Undef_ctor = "Undef.ctor";
-
 Undef::Undef(string& name) : SymbolDirective(name)
 {
-   Debug::ft(Undef_ctor);
+   Debug::ft("Undef.ctor");
 
    CxxStats::Incr(CxxStats::UNDEF_DIRECTIVE);
 }

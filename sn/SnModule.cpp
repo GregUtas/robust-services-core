@@ -52,11 +52,9 @@ using namespace SessionBase;
 
 namespace ServiceNode
 {
-fn_name SnModule_ctor = "SnModule.ctor";
-
 SnModule::SnModule() : Module()
 {
-   Debug::ft(SnModule_ctor);
+   Debug::ft("SnModule.ctor");
 
    //  Create the modules required by ServiceNode.
    //
@@ -66,31 +64,25 @@ SnModule::SnModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name SnModule_dtor = "SnModule.dtor";
-
 SnModule::~SnModule()
 {
-   Debug::ftnt(SnModule_dtor);
+   Debug::ftnt("SnModule.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SnModule_Shutdown = "SnModule.Shutdown";
-
 void SnModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(SnModule_Shutdown);
+   Debug::ft("SnModule.Shutdown");
 
    Singleton< PotsTreatmentRegistry >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SnModule_Startup = "SnModule.Startup";
-
 void SnModule::Startup(RestartLevel level)
 {
-   Debug::ft(SnModule_Startup);
+   Debug::ft("SnModule.Startup");
 
    Singleton< SnIncrement >::Instance()->Startup(level);
 

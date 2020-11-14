@@ -173,21 +173,17 @@ void BM_Message::Display(ostream& stream) const
 
 //==============================================================================
 
-fn_name DipInputHandler_ctor = "DipInputHandler.ctor";
-
 DipInputHandler::DipInputHandler(IpPort* port) : InputHandler(port)
 {
-   Debug::ft(DipInputHandler_ctor);
+   Debug::ft("DipInputHandler.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DipInputHandler_AllocBuff = "DipInputHandler.AllocBuff";
-
 IpBuffer* DipInputHandler::AllocBuff(const byte_t* source,
    size_t size, byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const
 {
-   Debug::ft(DipInputHandler_AllocBuff);
+   Debug::ft("DipInputHandler.AllocBuff");
 
    auto tcpSocket = static_cast< SysTcpSocket* >(socket);
    IpBufferPtr buff(tcpSocket->AcquireIcMsg());
@@ -221,12 +217,10 @@ IpBuffer* DipInputHandler::AllocBuff(const byte_t* source,
 
 //------------------------------------------------------------------------------
 
-fn_name DipInputHandler_HostToNetwork = "DipInputHandler.HostToNetwork";
-
 byte_t* DipInputHandler::HostToNetwork
    (IpBuffer& buff, byte_t* src, size_t size) const
 {
-   Debug::ft(DipInputHandler_HostToNetwork);
+   Debug::ft("DipInputHandler.HostToNetwork");
 
    //  Some fields are byte-oriented, but most are 16 bits long and
    //  therefore need to be converted.  Conversion is done in place.
@@ -268,12 +262,10 @@ byte_t* DipInputHandler::HostToNetwork
 
 //------------------------------------------------------------------------------
 
-fn_name DipInputHandler_NetworkToHost = "DipInputHandler.NetworkToHost";
-
 void DipInputHandler::NetworkToHost
    (IpBuffer& buff, byte_t* dest, const byte_t* src, size_t size) const
 {
-   Debug::ft(DipInputHandler_NetworkToHost);
+   Debug::ft("DipInputHandler.NetworkToHost");
 
    //  Copy the entire message and then modify it in place, similar to
    //  HostToNetwork.  If this is the FIRST message, convert msg->length
@@ -325,12 +317,10 @@ void DipInputHandler::NetworkToHost
 
 //------------------------------------------------------------------------------
 
-fn_name DipInputHandler_ReceiveBuff = "DipInputHandler.ReceiveBuff";
-
 void DipInputHandler::ReceiveBuff
    (IpBufferPtr& buff, size_t size, Faction faction) const
 {
-   Debug::ft(DipInputHandler_ReceiveBuff);
+   Debug::ft("DipInputHandler.ReceiveBuff");
 
    //  If the message is not complete, return it to the socket to await
    //  more bytes instead of passing it to BotThread for processing.
@@ -357,11 +347,9 @@ void DipInputHandler::ReceiveBuff
 
 //------------------------------------------------------------------------------
 
-fn_name DipInputHandler_SocketFailed = "DipInputHandler.SocketFailed";
-
 void DipInputHandler::SocketFailed(SysSocket* socket) const
 {
-   Debug::ft(DipInputHandler_SocketFailed);
+   Debug::ft("DipInputHandler.SocketFailed");
 
    //  Send a message to BotThread, informing it of the failure.
    //
@@ -388,31 +376,25 @@ BotTcpServiceText::BotTcpServiceText() :
 
 //------------------------------------------------------------------------------
 
-fn_name BotTcpService_ctor = "BotTcpService.ctor";
-
 BotTcpService::BotTcpService() : port_(NilIpPort)
 {
-   Debug::ft(BotTcpService_ctor);
+   Debug::ft("BotTcpService.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BotTcpService_CreateHandler = "BotTcpService.CreateHandler";
-
 InputHandler* BotTcpService::CreateHandler(IpPort* port) const
 {
-   Debug::ft(BotTcpService_CreateHandler);
+   Debug::ft("BotTcpService.CreateHandler");
 
    return new DipInputHandler(port);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BotTcpService_CreateText = "BotTcpService.CreateText";
-
 CliText* BotTcpService::CreateText() const
 {
-   Debug::ft(BotTcpService_CreateText);
+   Debug::ft("BotTcpService.CreateText");
 
    return new BotTcpServiceText;
 }
@@ -429,11 +411,9 @@ void BotTcpService::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name BotTcpService_GetAppSocketSizes = "BotTcpService.GetAppSocketSizes";
-
 void BotTcpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
 {
-   Debug::ft(BotTcpService_GetAppSocketSizes);
+   Debug::ft("BotTcpService.GetAppSocketSizes");
 
    //  Setting txSize to 0 prevents buffering of outgoing messages.
    //
@@ -447,41 +427,33 @@ ipport_t BotTcpService::Port() const { return ipport_t(port_); }
 
 //==============================================================================
 
-fn_name DipIpBuffer_ctor1 = "DipIpBuffer.ctor";
-
 DipIpBuffer::DipIpBuffer(MsgDirection dir, size_t size) :
    IpBuffer(dir, 0, size),
    currSize_(dir == MsgOutgoing ? size : 0)
 {
-   Debug::ft(DipIpBuffer_ctor1);
+   Debug::ft("DipIpBuffer.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name DipIpBuffer_ctor2 = "DipIpBuffer.ctor(copy)";
 
 DipIpBuffer::DipIpBuffer(const DipIpBuffer& that) : IpBuffer(that),
    currSize_(that.currSize_)
 {
-   Debug::ft(DipIpBuffer_ctor2);
+   Debug::ft("DipIpBuffer.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name DipIpBuffer_dtor = "DipIpBuffer.dtor";
 
 DipIpBuffer::~DipIpBuffer()
 {
-   Debug::ftnt(DipIpBuffer_dtor);
+   Debug::ftnt("DipIpBuffer.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DipIpBuffer_AddBytes = "DipIpBuffer.AddBytes";
-
 bool DipIpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 {
-   Debug::ft(DipIpBuffer_AddBytes);
+   Debug::ft("DipIpBuffer.AddBytes");
 
    if(!IpBuffer::AddBytes(source, size, moved)) return false;
    if(source != nullptr) currSize_ += size;
@@ -490,11 +462,9 @@ bool DipIpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 
 //------------------------------------------------------------------------------
 
-fn_name DipIpBuffer_BytesAdded = "DipIpBuffer.BytesAdded";
-
 void DipIpBuffer::BytesAdded(size_t size)
 {
-   Debug::ft(DipIpBuffer_BytesAdded);
+   Debug::ft("DipIpBuffer.BytesAdded");
 
    currSize_ += size;
 }
@@ -511,11 +481,9 @@ void DipIpBuffer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name DipIpBuffer_new = "DipIpBuffer.operator new";
-
 void* DipIpBuffer::operator new(size_t size)
 {
-   Debug::ft(DipIpBuffer_new);
+   Debug::ft("DipIpBuffer.operator new");
 
    return Singleton< DipIpBufferPool >::Instance()->DeqBlock(size);
 }
@@ -526,20 +494,16 @@ const size_t DipIpBufferPool::BlockSize = sizeof(DipIpBuffer);
 
 //------------------------------------------------------------------------------
 
-fn_name DipIpBufferPool_ctor = "DipIpBufferPool.ctor";
-
 DipIpBufferPool::DipIpBufferPool() :
    ObjectPool(DipIpBufferObjPoolId, MemDynamic, BlockSize, "DipIpBuffers")
 {
-   Debug::ft(DipIpBufferPool_ctor);
+   Debug::ft("DipIpBufferPool.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DipIpBufferPool_dtor = "DipIpBufferPool.dtor";
-
 DipIpBufferPool::~DipIpBufferPool()
 {
-   Debug::ftnt(DipIpBufferPool_dtor);
+   Debug::ftnt("DipIpBufferPool.dtor");
 }
 }

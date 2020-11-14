@@ -36,13 +36,11 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CliIncrement_ctor = "CliIncrement.ctor";
-
 CliIncrement::CliIncrement(c_string name, c_string help, uint32_t size) :
    name_(name),
    help_(help)
 {
-   Debug::ft(CliIncrement_ctor);
+   Debug::ft("CliIncrement.ctor");
 
    Debug::Assert(name_ != nullptr);
    Debug::Assert(help_ != nullptr);
@@ -121,33 +119,27 @@ void CliIncrement::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CliIncrement_Enter = "CliIncrement.Enter";
-
 void CliIncrement::Enter()
 {
-   Debug::ft(CliIncrement_Enter);
+   Debug::ft("CliIncrement.Enter");
 
    //  This function is overridden by subclasses that require it.
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CliIncrement_Exit = "CliIncrement.Exit";
 
 void CliIncrement::Exit()
 {
-   Debug::ft(CliIncrement_Exit);
+   Debug::ft("CliIncrement.Exit");
 
    //  This function is overridden by subclasses that require it.
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliIncrement_Explain = "CliIncrement.Explain";
-
 word CliIncrement::Explain(ostream& stream, int level) const
 {
-   Debug::ft(CliIncrement_Explain);
+   Debug::ft("CliIncrement.Explain");
 
    switch(level)
    {
@@ -176,11 +168,9 @@ word CliIncrement::Explain(ostream& stream, int level) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliIncrement_FindCommand = "CliIncrement.FindCommand";
-
 CliCommand* CliIncrement::FindCommand(const string& comm) const
 {
-   Debug::ft(CliIncrement_FindCommand);
+   Debug::ft("CliIncrement.FindCommand");
 
    //  Search the increment's commands for one whose name is COMM.
    //

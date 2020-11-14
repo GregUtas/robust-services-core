@@ -102,11 +102,9 @@ SbTracer::SignalFilter::SignalFilter(ProtocolId p, SignalId s, TraceStatus ts) :
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_ctor = "SbTracer.ctor";
-
 SbTracer::SbTracer() : timers_(TraceDefault)
 {
-   Debug::ft(SbTracer_ctor);
+   Debug::ft("SbTracer.ctor");
 
    for(auto i = 0; i <= Factory::MaxId; ++i) factories_[i] = TraceDefault;
    for(auto i = 0; i <= Protocol::MaxId; ++i) protocols_[i] = TraceDefault;
@@ -184,11 +182,9 @@ TraceRc SbTracer::ClearSelections(FlagId filter)
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_FactoriesEmpty = "SbTracer.FactoriesEmpty";
-
 bool SbTracer::FactoriesEmpty() const
 {
-   Debug::ft(SbTracer_FactoriesEmpty);
+   Debug::ft("SbTracer.FactoriesEmpty");
 
    for(auto i = 0; i <= Factory::MaxId; ++i)
    {
@@ -200,11 +196,9 @@ bool SbTracer::FactoriesEmpty() const
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_FindSignal = "SbTracer.FindSignal";
-
 int SbTracer::FindSignal(ProtocolId prid, SignalId sid) const
 {
-   Debug::ft(SbTracer_FindSignal);
+   Debug::ft("SbTracer.FindSignal");
 
    for(auto i = 0; i < MaxSignalEntries; ++i)
    {
@@ -216,11 +210,9 @@ int SbTracer::FindSignal(ProtocolId prid, SignalId sid) const
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_MsgStatus = "SbTracer.MsgStatus";
-
 TraceStatus SbTracer::MsgStatus(const Message& msg, MsgDirection dir) const
 {
-   Debug::ft(SbTracer_MsgStatus);
+   Debug::ft("SbTracer.MsgStatus");
 
    if(!Debug::TraceOn()) return TraceExcluded;
 
@@ -253,11 +245,9 @@ void SbTracer::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_ProtocolsEmpty = "SbTracer.ProtocolsEmpty";
-
 bool SbTracer::ProtocolsEmpty() const
 {
-   Debug::ft(SbTracer_ProtocolsEmpty);
+   Debug::ft("SbTracer.ProtocolsEmpty");
 
    for(auto i = 0; i <= Protocol::MaxId; ++i)
    {
@@ -269,11 +259,9 @@ bool SbTracer::ProtocolsEmpty() const
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_QuerySelections = "SbTracer.QuerySelections";
-
 void SbTracer::QuerySelections(ostream& stream) const
 {
-   Debug::ft(SbTracer_QuerySelections);
+   Debug::ft("SbTracer.QuerySelections");
 
    auto nwt = Singleton< NwTracer >::Instance();
 
@@ -371,11 +359,9 @@ void SbTracer::QuerySelections(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_SelectFactory = "SbTracer.SelectFactory";
-
 TraceRc SbTracer::SelectFactory(FactoryId fid, TraceStatus status)
 {
-   Debug::ft(SbTracer_SelectFactory);
+   Debug::ft("SbTracer.SelectFactory");
 
    if(Singleton< FactoryRegistry >::Instance()->GetFactory(fid) == nullptr)
    {
@@ -398,11 +384,9 @@ TraceRc SbTracer::SelectFactory(FactoryId fid, TraceStatus status)
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_SelectProtocol = "SbTracer.SelectProtocol";
-
 TraceRc SbTracer::SelectProtocol(ProtocolId prid, TraceStatus status)
 {
-   Debug::ft(SbTracer_SelectProtocol);
+   Debug::ft("SbTracer.SelectProtocol");
 
    if(Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid) == nullptr)
    {
@@ -425,11 +409,9 @@ TraceRc SbTracer::SelectProtocol(ProtocolId prid, TraceStatus status)
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_SelectService = "SbTracer.SelectService";
-
 TraceRc SbTracer::SelectService(ServiceId sid, TraceStatus status)
 {
-   Debug::ft(SbTracer_SelectService);
+   Debug::ft("SbTracer.SelectService");
 
    if(Singleton< ServiceRegistry >::Instance()->GetService(sid) == nullptr)
    {
@@ -452,12 +434,10 @@ TraceRc SbTracer::SelectService(ServiceId sid, TraceStatus status)
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_SelectSignal = "SbTracer.SelectSignal";
-
 TraceRc SbTracer::SelectSignal
    (ProtocolId prid, SignalId sid, TraceStatus status)
 {
-   Debug::ft(SbTracer_SelectSignal);
+   Debug::ft("SbTracer.SelectSignal");
 
    auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid);
 
@@ -495,11 +475,9 @@ TraceRc SbTracer::SelectSignal
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_SelectTimers = "SbTracer.SelectTimers";
-
 TraceRc SbTracer::SelectTimers(TraceStatus status)
 {
-   Debug::ft(SbTracer_SelectTimers);
+   Debug::ft("SbTracer.SelectTimers");
 
    auto buff = Singleton< TraceBuffer >::Instance();
 
@@ -515,11 +493,9 @@ TraceRc SbTracer::SelectTimers(TraceStatus status)
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_ServiceIsTraced = "SbTracer.ServiceIsTraced";
-
 bool SbTracer::ServiceIsTraced(ServiceId sid) const
 {
-   Debug::ft(SbTracer_ServiceIsTraced);
+   Debug::ft("SbTracer.ServiceIsTraced");
 
    if(!Debug::TraceOn()) return false;
 
@@ -531,11 +507,9 @@ bool SbTracer::ServiceIsTraced(ServiceId sid) const
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_ServicesEmpty = "SbTracer.ServicesEmpty";
-
 bool SbTracer::ServicesEmpty() const
 {
-   Debug::ft(SbTracer_ServicesEmpty);
+   Debug::ft("SbTracer.ServicesEmpty");
 
    for(auto i = 0; i <= Service::MaxId; ++i)
    {
@@ -547,11 +521,9 @@ bool SbTracer::ServicesEmpty() const
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_SignalsEmpty = "SbTracer.SignalsEmpty";
-
 bool SbTracer::SignalsEmpty() const
 {
-   Debug::ft(SbTracer_SignalsEmpty);
+   Debug::ft("SbTracer.SignalsEmpty");
 
    for(auto i = 0; i < MaxSignalEntries; ++i)
    {
@@ -563,11 +535,9 @@ bool SbTracer::SignalsEmpty() const
 
 //------------------------------------------------------------------------------
 
-fn_name SbTracer_SignalStatus = "SbTracer.SignalStatus";
-
 TraceStatus SbTracer::SignalStatus(ProtocolId prid, SignalId sid) const
 {
-   Debug::ft(SbTracer_SignalStatus);
+   Debug::ft("SbTracer.SignalStatus");
 
    auto i = FindSignal(prid, sid);
    if(i < 0) return TraceDefault;

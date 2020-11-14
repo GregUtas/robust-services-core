@@ -38,11 +38,9 @@ using std::string;
 
 namespace CallBase
 {
-fn_name ServiceCodeRegistry_ctor = "ServiceCodeRegistry.ctor";
-
 ServiceCodeRegistry::ServiceCodeRegistry()
 {
-   Debug::ft(ServiceCodeRegistry_ctor);
+   Debug::ft("ServiceCodeRegistry.ctor");
 
    for(auto i = 0; i <= Address::LastSC; ++i)
    {
@@ -122,11 +120,9 @@ void ServiceCodeRegistry::SetService(Address::SC sc, ServiceId sid)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceCodeRegistry_Startup = "ServiceCodeRegistry.Startup";
-
 void ServiceCodeRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(ServiceCodeRegistry_Startup);
+   Debug::ft("ServiceCodeRegistry.Startup");
 
    //  Define service codes if our registry was just created.  These
    //  are fixed but would be configurable in a production system.

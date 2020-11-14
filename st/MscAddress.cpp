@@ -36,26 +36,22 @@ using std::string;
 
 namespace SessionTools
 {
-fn_name MscAddress_ctor = "MscAddress.ctor";
-
 MscAddress::MscAddress(const MsgTrace& mt, MscContext* context) :
    locAddr_(mt.LocAddr()),
    context_(context),
    external_(false),
    extFid_(NIL_ID)
 {
-   Debug::ft(MscAddress_ctor);
+   Debug::ft("MscAddress.ctor");
 
    SetPeer(mt, context);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MscAddress_dtor = "MscAddress.dtor";
-
 MscAddress::~MscAddress()
 {
-   Debug::ftnt(MscAddress_dtor);
+   Debug::ftnt("MscAddress.dtor");
 }
 
 //------------------------------------------------------------------------------

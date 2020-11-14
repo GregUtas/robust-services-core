@@ -37,11 +37,9 @@ fixed_string ObjPoolLogGroup = "OBJ";
 
 //------------------------------------------------------------------------------
 
-fn_name NodeBase_CreateNbLogs = "NodeBase.CreateNbLogs";
-
 void CreateNbLogs(RestartLevel level)
 {
-   Debug::ft(NodeBase_CreateNbLogs);
+   Debug::ft("NodeBase.CreateNbLogs");
 
    if(level < RestartReboot) return;
 

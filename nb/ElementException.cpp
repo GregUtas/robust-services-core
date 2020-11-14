@@ -32,8 +32,6 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name ElementException_ctor = "ElementException.ctor";
-
 ElementException::ElementException
    (RestartLevel level, RestartReason reason, debug64_t errval) :
    Exception(true, 1),
@@ -41,16 +39,14 @@ ElementException::ElementException
    reason_(reason),
    errval_(errval)
 {
-   Debug::ft(ElementException_ctor);
+   Debug::ft("ElementException.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ElementException_dtor = "ElementException.dtor";
-
 ElementException::~ElementException()
 {
-   Debug::ftnt(ElementException_dtor);
+   Debug::ftnt("ElementException.dtor");
 }
 
 //------------------------------------------------------------------------------

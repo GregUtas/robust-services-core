@@ -40,12 +40,10 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name SbIpBuffer_ctor1 = "SbIpBuffer.ctor";
-
 SbIpBuffer::SbIpBuffer(MsgDirection dir, size_t payload) :
    IpBuffer(dir, sizeof(MsgHeader), payload)
 {
-   Debug::ft(SbIpBuffer_ctor1);
+   Debug::ft("SbIpBuffer.ctor");
 
    auto header = Header();
    if(header != nullptr) *header = MsgHeader();
@@ -53,20 +51,16 @@ SbIpBuffer::SbIpBuffer(MsgDirection dir, size_t payload) :
 
 //------------------------------------------------------------------------------
 
-fn_name SbIpBuffer_ctor2 = "SbIpBuffer.ctor(copy)";
-
 SbIpBuffer::SbIpBuffer(const SbIpBuffer& that) : IpBuffer(that)
 {
-   Debug::ft(SbIpBuffer_ctor2);
+   Debug::ft("SbIpBuffer.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SbIpBuffer_dtor = "SbIpBuffer.dtor";
-
 SbIpBuffer::~SbIpBuffer()
 {
-   Debug::ftnt(SbIpBuffer_dtor);
+   Debug::ftnt("SbIpBuffer.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -93,33 +87,27 @@ void SbIpBuffer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name SbIpBuffer_delete1 = "SbIpBuffer.operator delete";
-
 void SbIpBuffer::operator delete(void* addr)
 {
-   Debug::ftnt(SbIpBuffer_delete1);
+   Debug::ftnt("SbIpBuffer.operator delete");
 
    Pooled::operator delete(addr);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SbIpBuffer_delete2 = "SbIpBuffer.operator delete(user)";
 
 void SbIpBuffer::operator delete(void* addr, SbPoolUser user)
 {
-   Debug::ftnt(SbIpBuffer_delete2);
+   Debug::ftnt("SbIpBuffer.operator delete(user)");
 
    Pooled::operator delete(addr);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SbIpBuffer_new = "SbIpBuffer.operator new";
-
 void* SbIpBuffer::operator new(size_t size, SbPoolUser user)
 {
-   Debug::ft(SbIpBuffer_new);
+   Debug::ft("SbIpBuffer.operator new");
 
    switch(user)
    {
@@ -141,11 +129,9 @@ void SbIpBuffer::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name SbIpBuffer_PayloadSize = "SbIpBuffer.PayloadSize";
-
 size_t SbIpBuffer::PayloadSize() const
 {
-   Debug::ft(SbIpBuffer_PayloadSize);
+   Debug::ft("SbIpBuffer.PayloadSize");
 
    return Header()->length;
 }

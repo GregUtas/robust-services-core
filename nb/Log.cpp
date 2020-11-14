@@ -143,11 +143,9 @@ size_t Log::Count()
 
 //------------------------------------------------------------------------------
 
-fn_name Log_Create1 = "Log.Create";
-
 ostringstreamPtr Log::Create(fixed_string groupName, LogId id)
 {
-   Debug::ftnt(Log_Create1);
+   Debug::ftnt("Log.Create");
 
    //  Find the log's definition.
    //
@@ -171,12 +169,10 @@ ostringstreamPtr Log::Create(fixed_string groupName, LogId id)
 
 //------------------------------------------------------------------------------
 
-fn_name Log_Create2 = "Log.Create(alarm)";
-
 ostringstreamPtr Log::Create(fixed_string groupName,
    LogId id, fixed_string alarmName, AlarmStatus status)
 {
-   Debug::ftnt(Log_Create2);
+   Debug::ftnt("Log.Create(alarm)");
 
    //  Use the non-alarm version if no alarm is being set or cleared.
    //
@@ -220,11 +216,9 @@ void Log::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Log_DisplayStats = "Log.DisplayStats";
-
 void Log::DisplayStats(ostream& stream, const Flags& options) const
 {
-   Debug::ft(Log_DisplayStats);
+   Debug::ft("Log.DisplayStats");
 
    if(!options.test(DispVerbose))
    {
@@ -291,11 +285,9 @@ Log* Log::Find(fixed_string log)
 
 //------------------------------------------------------------------------------
 
-fn_name Log_Format = "Log.Format";
-
 ostringstreamPtr Log::Format(AlarmStatus status) const
 {
-   Debug::ftnt(Log_Format);
+   Debug::ftnt("Log.Format");
 
    ostringstreamPtr stream(new (std::nothrow) std::ostringstream);
    if(stream == nullptr) return nullptr;
@@ -322,11 +314,9 @@ void Log::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Log_SetInterval = "Log.SetInterval";
-
 void Log::SetInterval(uint8_t interval)
 {
-   Debug::ft(Log_SetInterval);
+   Debug::ft("Log.SetInterval");
 
    dyn_->interval_ = interval;
    dyn_->sequence_ = interval;
@@ -334,11 +324,9 @@ void Log::SetInterval(uint8_t interval)
 
 //------------------------------------------------------------------------------
 
-fn_name Log_Shutdown = "Log.Shutdown";
-
 void Log::Shutdown(RestartLevel level)
 {
-   Debug::ft(Log_Shutdown);
+   Debug::ft("Log.Shutdown");
 
    //  Stop throttling or suppressing a log after a restart by
    //  using placement new to reset dyn_.
@@ -356,11 +344,9 @@ void Log::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Log_Startup = "Log.Startup";
-
 void Log::Startup(RestartLevel level)
 {
-   Debug::ft(Log_Startup);
+   Debug::ft("Log.Startup");
 
    //  Create items that may have disappeared during the restart.
    //
@@ -423,11 +409,9 @@ void Log::Submit(ostringstreamPtr& stream)
 
 //------------------------------------------------------------------------------
 
-fn_name Log_Suppressed = "Log.Suppressed";
-
 ostringstreamPtr Log::Suppressed() const
 {
-   Debug::ftnt(Log_Suppressed);
+   Debug::ftnt("Log.Suppressed");
 
    suppressCount_->Incr();
    return nullptr;

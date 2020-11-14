@@ -24,7 +24,6 @@
 #include "ModuleRegistry.h"
 #include "SbModule.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace SessionBase;
 
@@ -32,11 +31,9 @@ using namespace SessionBase;
 
 namespace ControlNode
 {
-fn_name CnModule_ctor = "CnModule.ctor";
-
 CnModule::CnModule() : Module()
 {
-   Debug::ft(CnModule_ctor);
+   Debug::ft("CnModule.ctor");
 
    //  Create the modules required by ControlNode.
    //
@@ -46,28 +43,22 @@ CnModule::CnModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name CnModule_dtor = "CnModule.dtor";
-
 CnModule::~CnModule()
 {
-   Debug::ftnt(CnModule_dtor);
+   Debug::ftnt("CnModule.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CnModule_Shutdown = "CnModule.Shutdown";
 
 void CnModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(CnModule_Shutdown);
+   Debug::ft("CnModule.Shutdown");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CnModule_Startup = "CnModule.Startup";
-
 void CnModule::Startup(RestartLevel level)
 {
-   Debug::ft(CnModule_Startup);
+   Debug::ft("CnModule.Startup");
 }
 }

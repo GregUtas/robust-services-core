@@ -45,29 +45,23 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name CodeCoverage_ctor = "CodeCoverage.ctor";
-
 CodeCoverage::CodeCoverage()
 {
-   Debug::ft(CodeCoverage_ctor);
+   Debug::ft("CodeCoverage.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CodeCoverage_dtor = "CodeCoverage.dtor";
 
 CodeCoverage::~CodeCoverage()
 {
-   Debug::ftnt(CodeCoverage_dtor);
+   Debug::ftnt("CodeCoverage.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Build = "CodeCoverage.Build";
-
 word CodeCoverage::Build(std::ostringstream& expl)
 {
-   Debug::ft(CodeCoverage_Build);
+   Debug::ft("CodeCoverage.Build");
 
    if(currFuncs_.empty())
    {
@@ -160,11 +154,9 @@ word CodeCoverage::Build(std::ostringstream& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Commit = "CodeCoverage.Commit";
-
 bool CodeCoverage::Commit(const Functions& funcs)
 {
-   Debug::ft(CodeCoverage_Commit);
+   Debug::ft("CodeCoverage.Commit");
 
    FunctionGuard guard(Guard_MakePreemptable);
 
@@ -209,11 +201,9 @@ string CodeCoverage::Demangle(const string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Diff = "CodeCoverage.Diff";
-
 word CodeCoverage::Diff(std::ostringstream& expl) const
 {
-   Debug::ft(CodeCoverage_Diff);
+   Debug::ft("CodeCoverage.Diff");
 
    expl << "Added functions: ";
    auto found = false;
@@ -262,11 +252,9 @@ word CodeCoverage::Diff(std::ostringstream& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Erase = "CodeCoverage.Erase";
-
 word CodeCoverage::Erase(string& func, string& expl)
 {
-   Debug::ft(CodeCoverage_Erase);
+   Debug::ft("CodeCoverage.Erase");
 
    if(prevFuncs_.empty())
    {
@@ -295,12 +283,10 @@ word CodeCoverage::Erase(string& func, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_GetError = "CodeCoverage.GetError";
-
 CodeCoverage::LoadState CodeCoverage::GetError
    (const string& reason, word& rc, string& expl)
 {
-   Debug::ft(CodeCoverage_GetError);
+   Debug::ft("CodeCoverage.GetError");
 
    expl = reason;
    rc = -1;
@@ -309,12 +295,10 @@ CodeCoverage::LoadState CodeCoverage::GetError
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_GetFunc = "CodeCoverage.GetFunc";
-
 CodeCoverage::LoadState CodeCoverage::GetFunc
    (string& input, word& rc, string& expl)
 {
-   Debug::ft(CodeCoverage_GetFunc);
+   Debug::ft("CodeCoverage.GetFunc");
 
    auto func = strGet(input);
    if(func.empty()) return GetFunction;
@@ -333,11 +317,9 @@ CodeCoverage::LoadState CodeCoverage::GetFunc
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_GetTests = "CodeCoverage.GetTests";
-
 CodeCoverage::LoadState CodeCoverage::GetTests(string& input)
 {
-   Debug::ft(CodeCoverage_GetTests);
+   Debug::ft("CodeCoverage.GetTests");
 
    auto test = strGet(input);
    if(test.empty()) return GetTestcases;
@@ -349,11 +331,9 @@ CodeCoverage::LoadState CodeCoverage::GetTests(string& input)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Insert = "CodeCoverage.Insert";
-
 bool CodeCoverage::Insert(const string& func, uint32_t hash, const string& file)
 {
-   Debug::ft(CodeCoverage_Insert);
+   Debug::ft("CodeCoverage.Insert");
 
    auto name = Mangle(func);
    auto iter = currFuncs_.find(name);
@@ -370,11 +350,9 @@ bool CodeCoverage::Insert(const string& func, uint32_t hash, const string& file)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Load = "CodeCoverage.Load";
-
 word CodeCoverage::Load(string& expl)
 {
-   Debug::ft(CodeCoverage_Load);
+   Debug::ft("CodeCoverage.Load");
 
    FunctionGuard guard(Guard_MakePreemptable);
 
@@ -443,11 +421,9 @@ string CodeCoverage::Mangle(const string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Merge = "CodeCoverage.Merge";
-
 word CodeCoverage::Merge(std::ostringstream& expl)
 {
-   Debug::ft(CodeCoverage_Merge);
+   Debug::ft("CodeCoverage.Merge");
 
    auto testdb = Singleton< TestDatabase >::Instance();
    std::set< string > inclTests;
@@ -518,11 +494,9 @@ word CodeCoverage::Merge(std::ostringstream& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Query = "CodeCoverage.Query";
-
 word CodeCoverage::Query(string& expl)
 {
-   Debug::ft(CodeCoverage_Query);
+   Debug::ft("CodeCoverage.Query");
 
    if(prevFuncs_.empty())
    {
@@ -564,12 +538,10 @@ word CodeCoverage::Query(string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Report = "CodeCoverage.Report";
-
 word CodeCoverage::Report
    (word rc, const std::ostringstream& stream, string& expl)
 {
-   Debug::ft(CodeCoverage_Report);
+   Debug::ft("CodeCoverage.Report");
 
    expl = stream.str();
    return rc;
@@ -577,11 +549,9 @@ word CodeCoverage::Report
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Retest = "CodeCoverage.Retest";
-
 word CodeCoverage::Retest(std::ostringstream& expl) const
 {
-   Debug::ft(CodeCoverage_Retest);
+   Debug::ft("CodeCoverage.Retest");
 
    std::vector< Functions::const_iterator > modified;
 
@@ -662,11 +632,9 @@ word CodeCoverage::Retest(std::ostringstream& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Shutdown = "CodeCoverage.Shutdown";
-
 void CodeCoverage::Shutdown(RestartLevel level)
 {
-   Debug::ft(CodeCoverage_Shutdown);
+   Debug::ft("CodeCoverage.Shutdown");
 
    prevFuncs_.clear();
    currFuncs_.clear();
@@ -676,11 +644,9 @@ void CodeCoverage::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Under = "CodeCoverage.Under";
-
 word CodeCoverage::Under(size_t min, string& expl)
 {
-   Debug::ft(CodeCoverage_Under);
+   Debug::ft("CodeCoverage.Under");
 
    expl.clear();
 
@@ -708,11 +674,9 @@ word CodeCoverage::Under(size_t min, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Update = "CodeCoverage.Update";
-
 word CodeCoverage::Update(string& expl)
 {
-   Debug::ft(CodeCoverage_Update);
+   Debug::ft("CodeCoverage.Update");
 
    std::ostringstream stream;
 

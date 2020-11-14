@@ -44,8 +44,6 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name SysTcpSocket_ctor1 = "SysTcpSocket.ctor";
-
 SysTcpSocket::SysTcpSocket(ipport_t port,
    const TcpIpService* service, AllocRc& rc) : SysSocket(port, service, rc),
    state_(Idle),
@@ -54,7 +52,7 @@ SysTcpSocket::SysTcpSocket(ipport_t port,
    appState_(Initial),
    icMsg_(nullptr)
 {
-   Debug::ft(SysTcpSocket_ctor1);
+   Debug::ft("SysTcpSocket.ctor");
 
    ogMsgq_.Init(Pooled::LinkDiff());
    if(rc != AllocOk) return;
@@ -65,8 +63,6 @@ SysTcpSocket::SysTcpSocket(ipport_t port,
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_ctor2 = "SysTcpSocket.ctor(wrap)";
-
 SysTcpSocket::SysTcpSocket(SysSocket_t socket) : SysSocket(socket),
    state_(Connected),
    disconnecting_(false),
@@ -74,7 +70,7 @@ SysTcpSocket::SysTcpSocket(SysSocket_t socket) : SysSocket(socket),
    appState_(Initial),
    icMsg_(nullptr)
 {
-   Debug::ft(SysTcpSocket_ctor2);
+   Debug::ft("SysTcpSocket.ctor(wrap)");
 
    ogMsgq_.Init(Pooled::LinkDiff());
    if(SetBlocking(false)) return;
@@ -117,11 +113,9 @@ SysTcpSocket::~SysTcpSocket()
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Acquire = "SysTcpSocket.Acquire";
-
 void SysTcpSocket::Acquire()
 {
-   Debug::ft(SysTcpSocket_Acquire);
+   Debug::ft("SysTcpSocket.Acquire");
 
    TraceEvent(NwTrace::Acquire, state_);
    appState_ = Acquired;
@@ -129,11 +123,9 @@ void SysTcpSocket::Acquire()
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_AcquireIcMsg = "SysTcpSocket.AcquireIcMsg";
-
 IpBuffer* SysTcpSocket::AcquireIcMsg()
 {
-   Debug::ft(SysTcpSocket_AcquireIcMsg);
+   Debug::ft("SysTcpSocket.AcquireIcMsg");
 
    auto buff = icMsg_;
    icMsg_ = nullptr;
@@ -142,11 +134,9 @@ IpBuffer* SysTcpSocket::AcquireIcMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_ClaimBlocks = "SysTcpSocket.ClaimBlocks";
-
 void SysTcpSocket::ClaimBlocks()
 {
-   Debug::ft(SysTcpSocket_ClaimBlocks);
+   Debug::ft("SysTcpSocket.ClaimBlocks");
 
    for(auto buff = ogMsgq_.First(); buff != nullptr; ogMsgq_.Next(buff))
    {
@@ -158,11 +148,9 @@ void SysTcpSocket::ClaimBlocks()
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Deregister = "SysTcpSocket.Deregister";
-
 bool SysTcpSocket::Deregister()
 {
-   Debug::ft(SysTcpSocket_Deregister);
+   Debug::ft("SysTcpSocket.Deregister");
 
    //  If the application has not released the socket, close it without
    //  deleting its wrapper object.  It will be deleted when the
@@ -183,11 +171,9 @@ bool SysTcpSocket::Deregister()
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Dispatch = "SysTcpSocket.Dispatch";
-
 void SysTcpSocket::Dispatch()
 {
-   Debug::ft(SysTcpSocket_Dispatch);
+   Debug::ft("SysTcpSocket.Dispatch");
 
    //  The socket is writeable, so it must be connected.  Stop checking
    //  if it is writeable until it queues another message.
@@ -235,22 +221,18 @@ void SysTcpSocket::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_IsOpen = "SysTcpSocket.IsOpen";
-
 bool SysTcpSocket::IsOpen() const
 {
-   Debug::ft(SysTcpSocket_IsOpen);
+   Debug::ft("SysTcpSocket.IsOpen");
 
    return (!disconnecting_ && IsValid());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Purge = "SysTcpSocket.Purge";
-
 void SysTcpSocket::Purge()
 {
-   Debug::ft(SysTcpSocket_Purge);
+   Debug::ft("SysTcpSocket.Purge");
 
    TraceEvent(NwTrace::Purge, state_);
    iotActive_ = false;
@@ -260,11 +242,9 @@ void SysTcpSocket::Purge()
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_QueueBuff = "SysTcpSocket.QueueBuff";
-
 SysSocket::SendRc SysTcpSocket::QueueBuff(IpBuffer* buff, bool henq)
 {
-   Debug::ft(SysTcpSocket_QueueBuff);
+   Debug::ft("SysTcpSocket.QueueBuff");
 
    TraceEvent(NwTrace::Queue, state_);
    if(!IsOpen()) return SendFailed;
@@ -292,11 +272,9 @@ SysSocket::SendRc SysTcpSocket::QueueBuff(IpBuffer* buff, bool henq)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Register = "SysTcpSocket.Register";
-
 void SysTcpSocket::Register()
 {
-   Debug::ft(SysTcpSocket_Register);
+   Debug::ft("SysTcpSocket.Register");
 
    TraceEvent(NwTrace::Register, state_);
    iotActive_ = true;
@@ -304,11 +282,9 @@ void SysTcpSocket::Register()
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Release = "SysTcpSocket.Release";
-
 void SysTcpSocket::Release()
 {
-   Debug::ft(SysTcpSocket_Release);
+   Debug::ft("SysTcpSocket.Release");
 
    //  If the socket is still in the I/O thread's socket array, close it
    //  without deleting its wrapper object.  When the PollInvalid event
@@ -408,11 +384,9 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_SetIcMsg = "SysTcpSocket.SetIcMsg";
-
 void SysTcpSocket::SetIcMsg(IpBuffer* buff)
 {
-   Debug::ft(SysTcpSocket_SetIcMsg);
+   Debug::ft("SysTcpSocket.SetIcMsg");
 
    if((icMsg_ != nullptr) && (icMsg_ != buff))
    {

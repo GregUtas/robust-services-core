@@ -63,8 +63,6 @@ signal_t AccessViolationType(const _EXCEPTION_POINTERS* ex)
 
 //------------------------------------------------------------------------------
 
-fn_name NodeBase_SE_Handler = "NodeBase.SE_Handler";
-
 //  Converts a Windows structured exception to a C++ exception.
 //
 void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
@@ -72,7 +70,7 @@ void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
    //  Reenable Debug functions before tracing this function.
    //
    Thread::ResetDebugFlags();
-   Debug::ft(NodeBase_SE_Handler);
+   Debug::ft("NodeBase.SE_Handler");
 
    signal_t sig = 0;
 
@@ -149,12 +147,10 @@ void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Create = "SysThread.Create";
-
 SysThread_t SysThread::Create(const ThreadEntry entry,
    const Thread* client, size_t stackSize, SysThreadId& nid)
 {
-   Debug::ft(SysThread_Create);
+   Debug::ft("SysThread.Create");
 
    auto result = _beginthreadex(
       nullptr,                           // default security attributes
@@ -178,11 +174,9 @@ SysThread_t SysThread::Create(const ThreadEntry entry,
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_CreateSentry = "SysThread.CreateSentry";
-
 SysSentry_t SysThread::CreateSentry()
 {
-   Debug::ft(SysThread_CreateSentry);
+   Debug::ft("SysThread.CreateSentry");
 
    //  On another platform, this is likely to be a combination of a
    //  condition variable and mutex, wrapped within an object that is
@@ -197,11 +191,9 @@ SysSentry_t SysThread::CreateSentry()
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Delete = "SysThread.Delete";
-
 void SysThread::Delete(SysThread_t& thread)
 {
-   Debug::ftnt(SysThread_Delete);
+   Debug::ftnt("SysThread.Delete");
 
    if(thread != nullptr)
    {
@@ -212,11 +204,9 @@ void SysThread::Delete(SysThread_t& thread)
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_DeleteSentry = "SysThread.DeleteSentry";
-
 void SysThread::DeleteSentry(SysSentry_t& sentry)
 {
-   Debug::ftnt(SysThread_DeleteSentry);
+   Debug::ftnt("SysThread.DeleteSentry");
 
    if(sentry != nullptr)
    {
@@ -283,11 +273,9 @@ SysThreadId SysThread::RunningThreadId()
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_SetPriority = "SysThread.SetPriority";
-
 bool SysThread::SetPriority(Priority prio)
 {
-   Debug::ft(SysThread_SetPriority);
+   Debug::ft("SysThread.SetPriority");
 
    if(priority_ == prio) return true;
 
@@ -377,11 +365,9 @@ DelayRc SysThread::Suspend(SysSentry_t& sentry, const Duration& timeout)
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Wrap = "SysThread.Wrap";
-
 SysThread_t SysThread::Wrap()
 {
-   Debug::ft(SysThread_Wrap);
+   Debug::ft("SysThread.Wrap");
 
    //  Set our overall process priority and return a handle to our thread.
    //

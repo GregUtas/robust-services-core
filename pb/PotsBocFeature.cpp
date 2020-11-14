@@ -52,12 +52,10 @@ PotsBocAttrs::PotsBocAttrs() : CliText(PotsBocFullName, PotsBocAbbrName) { }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBocFeature_ctor = "PotsBocFeature.ctor";
-
 PotsBocFeature::PotsBocFeature() :
    PotsFeature(BOC, false, PotsBocAbbrName, PotsBocFullName)
 {
-   Debug::ft(PotsBocFeature_ctor);
+   Debug::ft("PotsBocFeature.ctor");
 
    SetIncompatible(HTL);
    SetIncompatible(WML);
@@ -70,11 +68,9 @@ PotsBocFeature::PotsBocFeature() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBocFeature_dtor = "PotsBocFeature.dtor";
-
 PotsBocFeature::~PotsBocFeature()
 {
-   Debug::ftnt(PotsBocFeature_dtor);
+   Debug::ftnt("PotsBocFeature.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -83,12 +79,10 @@ CliText* PotsBocFeature::Attrs() const { return new PotsBocAttrs; }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBocFeature_Subscribe = "PotsBocFeature.Subscribe";
-
 PotsFeatureProfile* PotsBocFeature::Subscribe
    (PotsProfile& profile, CliThread& cli) const
 {
-   Debug::ft(PotsBocFeature_Subscribe);
+   Debug::ft("PotsBocFeature.Subscribe");
 
    if(!cli.EndOfInput()) return nullptr;
    return new PotsBocFeatureProfile;
@@ -96,19 +90,15 @@ PotsFeatureProfile* PotsBocFeature::Subscribe
 
 //==============================================================================
 
-fn_name PotsBocFeatureProfile_ctor = "PotsBocFeatureProfile.ctor";
-
 PotsBocFeatureProfile::PotsBocFeatureProfile() : PotsFeatureProfile(BOC)
 {
-   Debug::ft(PotsBocFeatureProfile_ctor);
+   Debug::ft("PotsBocFeatureProfile.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBocFeatureProfile_dtor = "PotsBocFeatureProfile.dtor";
-
 PotsBocFeatureProfile::~PotsBocFeatureProfile()
 {
-   Debug::ftnt(PotsBocFeatureProfile_dtor);
+   Debug::ftnt("PotsBocFeatureProfile.dtor");
 }
 }

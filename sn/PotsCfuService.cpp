@@ -29,7 +29,6 @@
 #include "PotsSessions.h"
 #include "SbAppIds.h"
 #include "SbEvents.h"
-#include "SysTypes.h"
 
 using namespace CallBase;
 
@@ -37,23 +36,19 @@ using namespace CallBase;
 
 namespace PotsBase
 {
-fn_name PotsCfuInitiator_ctor = "PotsCfuInitiator.ctor";
-
 PotsCfuInitiator::PotsCfuInitiator() : Initiator(PotsCfuServiceId,
    PotsCallServiceId, BcTrigger::AuthorizeTerminationSap,
    PotsAuthorizeTerminationSap::PotsCfuPriority)
 {
-   Debug::ft(PotsCfuInitiator_ctor);
+   Debug::ft("PotsCfuInitiator.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfuInitiator_ProcessEvent = "PotsCfuInitiator.ProcessEvent";
-
 EventHandler::Rc PotsCfuInitiator::ProcessEvent
    (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCfuInitiator_ProcessEvent);
+   Debug::ft("PotsCfuInitiator.ProcessEvent");
 
    auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
    auto prof = pssm.Profile();
@@ -70,88 +65,70 @@ EventHandler::Rc PotsCfuInitiator::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsCfuActivate_ctor = "PotsCfuActivate.ctor";
-
 PotsCfuActivate::PotsCfuActivate() : Service(PotsCfuActivation, false, true)
 {
-   Debug::ft(PotsCfuActivate_ctor);
+   Debug::ft("PotsCfuActivate.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfuActivate_dtor = "PotsCfuActivate.dtor";
 
 PotsCfuActivate::~PotsCfuActivate()
 {
-   Debug::ftnt(PotsCfuActivate_dtor);
+   Debug::ftnt("PotsCfuActivate.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfuActivate_AllocModifier = "PotsCfuActivate.AllocModifier";
-
 ServiceSM* PotsCfuActivate::AllocModifier() const
 {
-   Debug::ft(PotsCfuActivate_AllocModifier);
+   Debug::ft("PotsCfuActivate.AllocModifier");
 
    return new PotsCfxSsm(PotsCfuActivation);
 }
 
 //==============================================================================
 
-fn_name PotsCfuDeactivate_ctor = "PotsCfuDeactivate.ctor";
-
 PotsCfuDeactivate::PotsCfuDeactivate() :
    Service(PotsCfuDeactivation, false, true)
 {
-   Debug::ft(PotsCfuDeactivate_ctor);
+   Debug::ft("PotsCfuDeactivate.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfuDeactivate_dtor = "PotsCfuDeactivate.dtor";
 
 PotsCfuDeactivate::~PotsCfuDeactivate()
 {
-   Debug::ftnt(PotsCfuDeactivate_dtor);
+   Debug::ftnt("PotsCfuDeactivate.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfuDeactivate_AllocModifier = "PotsCfuDeactivate.AllocModifier";
-
 ServiceSM* PotsCfuDeactivate::AllocModifier() const
 {
-   Debug::ft(PotsCfuDeactivate_AllocModifier);
+   Debug::ft("PotsCfuDeactivate.AllocModifier");
 
    return new PotsCfxSsm(PotsCfuDeactivation);
 }
 
 //==============================================================================
 
-fn_name PotsCfuService_ctor = "PotsCfuService.ctor";
-
 PotsCfuService::PotsCfuService() : Service(PotsCfuServiceId, false, true)
 {
-   Debug::ft(PotsCfuService_ctor);
+   Debug::ft("PotsCfuService.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfuService_dtor = "PotsCfuService.dtor";
 
 PotsCfuService::~PotsCfuService()
 {
-   Debug::ftnt(PotsCfuService_dtor);
+   Debug::ftnt("PotsCfuService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfuService_AllocModifier = "PotsCfuService.AllocModifier";
-
 ServiceSM* PotsCfuService::AllocModifier() const
 {
-   Debug::ft(PotsCfuService_AllocModifier);
+   Debug::ft("PotsCfuService.AllocModifier");
 
    return new PotsCfxSsm(PotsCfuServiceId);
 }

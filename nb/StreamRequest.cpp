@@ -32,38 +32,30 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name StreamRequest_ctor1 = "StreamRequest.ctor";
-
 StreamRequest::StreamRequest() : stream_(nullptr)
 {
-   Debug::ft(StreamRequest_ctor1);
+   Debug::ft("StreamRequest.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name StreamRequest_ctor2 = "StreamRequest.ctor(copy)";
 
 StreamRequest::StreamRequest(const StreamRequest& that) : MsgBuffer(that)
 {
-   Debug::ft(StreamRequest_ctor2);
+   Debug::ft("StreamRequest.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name StreamRequest_dtor = "StreamRequest.dtor";
 
 StreamRequest::~StreamRequest()
 {
-   Debug::ftnt(StreamRequest_dtor);
+   Debug::ftnt("StreamRequest.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StreamRequest_Cleanup = "StreamRequest.Cleanup";
-
 void StreamRequest::Cleanup()
 {
-   Debug::ft(StreamRequest_Cleanup);
+   Debug::ft("StreamRequest.Cleanup");
 
    stream_.reset();
    written_.reset();

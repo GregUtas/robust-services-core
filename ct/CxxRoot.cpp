@@ -68,18 +68,14 @@ private:
    mutable StrLiteralPtr date_;
 };
 
-fn_name MacroDATE_ctor = "MacroDATE.ctor";
-
 MacroDATE::MacroDATE() : Macro(string("__DATE__"))
 {
-   Debug::ft(MacroDATE_ctor);
+   Debug::ft("MacroDATE.ctor");
 }
-
-fn_name MacroDATE_GetValue = "MacroDATE.GetValue";
 
 CxxToken* MacroDATE::GetValue() const
 {
-   Debug::ft(MacroDATE_GetValue);
+   Debug::ft("MacroDATE.GetValue");
 
    if(date_ != nullptr) return date_.get();
 
@@ -111,18 +107,14 @@ private:
    mutable StrLiteralPtrVector files_;
 };
 
-fn_name MacroFILE_ctor = "MacroFILE.ctor";
-
 MacroFILE::MacroFILE() : Macro(string("__FILE__"))
 {
-   Debug::ft(MacroFILE_ctor);
+   Debug::ft("MacroFILE.ctor");
 }
-
-fn_name MacroFILE_GetValue = "MacroFILE.GetValue";
 
 CxxToken* MacroFILE::GetValue() const
 {
-   Debug::ft(MacroFILE_GetValue);
+   Debug::ft("MacroFILE.GetValue");
 
    auto file = Context::File();
 
@@ -160,18 +152,14 @@ private:
    mutable StrLiteralPtrVector funcs_;
 };
 
-fn_name MacroFunc_ctor = "MacroFunc.ctor";
-
 MacroFunc::MacroFunc() : Macro(string("__func__"))
 {
-   Debug::ft(MacroFunc_ctor);
+   Debug::ft("MacroFunc.ctor");
 }
-
-fn_name MacroFunc_GetValue = "MacroFunc.GetValue";
 
 CxxToken* MacroFunc::GetValue() const
 {
-   Debug::ft(MacroFunc_GetValue);
+   Debug::ft("MacroFunc.GetValue");
 
    auto scope = Context::Scope();
 
@@ -209,18 +197,14 @@ private:
    mutable StrLiteralPtrVector lines_;
 };
 
-fn_name MacroLINE_ctor = "MacroLINE.ctor";
-
 MacroLINE::MacroLINE() : Macro(string("__LINE__"))
 {
-   Debug::ft(MacroLINE_ctor);
+   Debug::ft("MacroLINE.ctor");
 }
-
-fn_name MacroLINE_GetValue = "MacroLINE.GetValue";
 
 CxxToken* MacroLINE::GetValue() const
 {
-   Debug::ft(MacroLINE_GetValue);
+   Debug::ft("MacroLINE.GetValue");
 
    auto parser = Context::GetParser();
 
@@ -251,18 +235,14 @@ private:
    mutable StrLiteralPtr time_;
 };
 
-fn_name MacroTIME_ctor = "MacroTIME.ctor";
-
 MacroTIME::MacroTIME() : Macro(string("__TIME__"))
 {
-   Debug::ft(MacroTIME_ctor);
+   Debug::ft("MacroTIME.ctor");
 }
-
-fn_name MacroTIME_GetValue = "MacroTIME.GetValue";
 
 CxxToken* MacroTIME::GetValue() const
 {
-   Debug::ft(MacroTIME_GetValue);
+   Debug::ft("MacroTIME.GetValue");
 
    if(time_ != nullptr) return time_.get();
 
@@ -295,8 +275,6 @@ private:
 
 //==============================================================================
 
-fn_name CxxRoot_ctor = "CxxRoot.ctor";
-
 CxxRoot::CxxRoot() :
    auto_(nullptr),
    bool_(nullptr),
@@ -317,25 +295,21 @@ CxxRoot::CxxRoot() :
    ushort_(nullptr),
    void_(nullptr)
 {
-   Debug::ft(CxxRoot_ctor);
+   Debug::ft("CxxRoot.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CxxRoot_dtor = "CxxRoot.dtor";
 
 CxxRoot::~CxxRoot()
 {
-   Debug::ftnt(CxxRoot_dtor);
+   Debug::ftnt("CxxRoot.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxRoot_AddMacro = "CxxRoot.AddMacro";
-
 bool CxxRoot::AddMacro(MacroPtr& macro)
 {
-   Debug::ft(CxxRoot_AddMacro);
+   Debug::ft("CxxRoot.AddMacro");
 
    macro->EnterScope();
    macros_.push_back(std::move(macro));
@@ -344,11 +318,9 @@ bool CxxRoot::AddMacro(MacroPtr& macro)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxRoot_DefineSymbols = "CxxRoot.DefineSymbols";
-
 void CxxRoot::DefineSymbols(std::istream& stream)
 {
-   Debug::ft(CxxRoot_DefineSymbols);
+   Debug::ft("CxxRoot.DefineSymbols");
 
    //  Read the symbols from STREAM that are to be #defined for the compile.
    //
@@ -390,22 +362,18 @@ void CxxRoot::Shrink() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxRoot_Shutdown = "CxxRoot.Shutdown";
-
 void CxxRoot::Shutdown(RestartLevel level)
 {
-   Debug::ft(CxxRoot_Shutdown);
+   Debug::ft("CxxRoot.Shutdown");
 
    Restart::Release(gns_);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxRoot_Startup = "CxxRoot.Startup";
-
 void CxxRoot::Startup(RestartLevel level)
 {
-   Debug::ft(CxxRoot_Startup);
+   Debug::ft("CxxRoot.Startup");
 
    //  Parser output is now preserved during restarts.
    //

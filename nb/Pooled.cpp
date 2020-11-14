@@ -39,24 +39,20 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name Pooled_ctor = "Pooled.ctor";
-
 Pooled::Pooled() :
    assigned_(true),
    orphaned_(0),
    corrupt_(false),
    logged_(false)
 {
-   Debug::ft(Pooled_ctor);
+   Debug::ft("Pooled.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Pooled_Claim = "Pooled.Claim";
-
 void Pooled::Claim()
 {
-   Debug::ft(Pooled_Claim);
+   Debug::ft("Pooled.Claim");
 
    orphaned_ = 0;
 
@@ -74,11 +70,9 @@ void Pooled::Claim()
 
 //------------------------------------------------------------------------------
 
-fn_name Pooled_ClaimBlocks = "Pooled.ClaimBlocks";
-
 void Pooled::ClaimBlocks()
 {
-   Debug::ft(Pooled_ClaimBlocks);
+   Debug::ft("Pooled.ClaimBlocks");
 
    //  If this block is corrupt, let the audit recover it.
    //
@@ -123,11 +117,9 @@ ptrdiff_t Pooled::LinkDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name Pooled_MemType = "Pooled.MemType";
-
 MemoryType Pooled::MemType() const
 {
-   Debug::ft(Pooled_MemType);
+   Debug::ft("Pooled.MemType");
 
    auto pid = ObjectPool::ObjPid(this);
    auto pool = Singleton< ObjectPoolRegistry >::Instance()->Pool(pid);
@@ -137,11 +129,9 @@ MemoryType Pooled::MemType() const
 
 //------------------------------------------------------------------------------
 
-fn_name Pooled_delete = "Pooled.operator delete";
-
 void Pooled::operator delete(void* addr)
 {
-   Debug::ftnt(Pooled_delete);
+   Debug::ftnt("Pooled.operator delete");
 
    auto obj = (Pooled*) addr;
    auto pid = ObjectPool::ObjPid(obj);

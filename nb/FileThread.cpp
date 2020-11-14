@@ -102,46 +102,38 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name FileRequest_ctor1 = "FileRequest.ctor";
-
 FileRequest::FileRequest(const string& name, bool trunc) :
    name_(nullptr),
    trunc_(trunc)
 {
-   Debug::ft(FileRequest_ctor1);
+   Debug::ft("FileRequest.ctor");
 
    name_ = stringPtr(new string(name));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name FileRequest_ctor2 = "FileRequest.ctor(copy)";
-
 FileRequest::FileRequest(const FileRequest& that) : StreamRequest(that),
    name_(nullptr),
    trunc_(that.trunc_)
 {
-   Debug::ft(FileRequest_ctor2);
+   Debug::ft("FileRequest.ctor(copy)");
 
    name_ = stringPtr(new string(*that.name_));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name FileRequest_dtor = "FileRequest.dtor";
-
 FileRequest::~FileRequest()
 {
-   Debug::ftnt(FileRequest_dtor);
+   Debug::ftnt("FileRequest.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name FileRequest_Cleanup = "FileRequest.Cleanup";
-
 void FileRequest::Cleanup()
 {
-   Debug::ft(FileRequest_Cleanup);
+   Debug::ft("FileRequest.Cleanup");
 
    name_.reset();
    StreamRequest::Cleanup();
@@ -167,22 +159,18 @@ void FileRequest::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-fn_name FileThread_ctor = "FileThread.ctor";
-
 FileThread::FileThread() : Thread(BackgroundFaction)
 {
-   Debug::ft(FileThread_ctor);
+   Debug::ft("FileThread.ctor");
 
    SetInitialized();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_dtor = "FileThread.dtor";
-
 FileThread::~FileThread()
 {
-   Debug::ftnt(FileThread_dtor);
+   Debug::ftnt("FileThread.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -194,11 +182,9 @@ c_string FileThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_CreateStream = "FileThread.CreateStream";
-
 ostringstreamPtr FileThread::CreateStream()
 {
-   Debug::ft(FileThread_CreateStream);
+   Debug::ft("FileThread.CreateStream");
 
    ostringstreamPtr stream(new std::ostringstream);
    *stream << std::boolalpha << std::nouppercase;
@@ -207,22 +193,18 @@ ostringstreamPtr FileThread::CreateStream()
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_Destroy = "FileThread.Destroy";
-
 void FileThread::Destroy()
 {
-   Debug::ft(FileThread_Destroy);
+   Debug::ft("FileThread.Destroy");
 
    Singleton< FileThread >::Destroy();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_Enter = "FileThread.Enter";
-
 void FileThread::Enter()
 {
-   Debug::ft(FileThread_Enter);
+   Debug::ft("FileThread.Enter");
 
    while(true)
    {
@@ -269,11 +251,9 @@ void FileThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_Record = "FileThread.Record";
-
 void FileThread::Record(const std::string& s, bool eol)
 {
-   Debug::ftnt(FileThread_Record);
+   Debug::ftnt("FileThread.Record");
 
    MutexGuard guard(&ConsoleFileLock_);
 
@@ -283,12 +263,10 @@ void FileThread::Record(const std::string& s, bool eol)
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_Spool1 = "FileThread.Spool(written)";
-
 void FileThread::Spool(const string& name,
    ostringstreamPtr& stream, CallbackRequestPtr& written, bool trunc)
 {
-   Debug::ftnt(FileThread_Spool1);
+   Debug::ftnt("FileThread.Spool(written)");
 
    if(stream == nullptr) return;
 
@@ -327,11 +305,9 @@ void FileThread::Spool(const string& name,
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_Spool2 = "FileThread.Spool(stream)";
-
 void FileThread::Spool(const string& name, ostringstreamPtr& stream, bool trunc)
 {
-   Debug::ftnt(FileThread_Spool2);
+   Debug::ftnt("FileThread.Spool(stream)");
 
    CallbackRequestPtr callback;
    Spool(name, stream, callback, trunc);
@@ -339,11 +315,9 @@ void FileThread::Spool(const string& name, ostringstreamPtr& stream, bool trunc)
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_Spool3 = "FileThread.Spool(string)";
-
 void FileThread::Spool(const string& name, const string& s, bool eol)
 {
-   Debug::ftnt(FileThread_Spool3);
+   Debug::ftnt("FileThread.Spool(string)");
 
    ostringstreamPtr stream(new (std::nothrow) std::ostringstream);
    if(stream == nullptr) return;
@@ -357,11 +331,9 @@ void FileThread::Spool(const string& name, const string& s, bool eol)
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_Truncate = "FileThread.Truncate";
-
 void FileThread::Truncate(const string& name)
 {
-   Debug::ft(FileThread_Truncate);
+   Debug::ft("FileThread.Truncate");
 
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;
    auto file = SysFile::CreateOstream(path.c_str(), true);

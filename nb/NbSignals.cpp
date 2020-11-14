@@ -110,11 +110,9 @@ SigDeleted::SigDeleted() : PosixSignal(SIGDELETED, "SIGDELETED",
 
 //------------------------------------------------------------------------------
 
-fn_name NodeBase_CreatePosixSignals = "NodeBase.CreatePosixSignals";
-
 void CreatePosixSignals()
 {
-   Debug::ft(NodeBase_CreatePosixSignals);
+   Debug::ft("NodeBase.CreatePosixSignals");
 
    //  Create <cstdint> signals, this platform's native signals, and then
    //  our proprietary signals.

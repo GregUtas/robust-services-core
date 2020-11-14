@@ -39,15 +39,13 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CfgParm_ctor = "CfgParm.ctor";
-
 CfgParm::CfgParm(c_string key, c_string def, c_string expl) :
    tuple_(nullptr),
    default_(def),
    expl_(expl),
    level_(RestartNone)
 {
-   Debug::ft(CfgParm_ctor);
+   Debug::ft("CfgParm.ctor");
 
    Debug::Assert(key != nullptr);
    Debug::Assert(default_ != nullptr);
@@ -115,11 +113,9 @@ string CfgParm::GetCurr() const
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParm_GetInput = "CfgParm.GetInput";
-
 string CfgParm::GetInput() const
 {
-   Debug::ft(CfgParm_GetInput);
+   Debug::ft("CfgParm.GetInput");
 
    return GetCurr();
 }
@@ -149,11 +145,9 @@ void CfgParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParm_SetCurr = "CfgParm.SetCurr";
-
 void CfgParm::SetCurr()
 {
-   Debug::ft(CfgParm_SetCurr);
+   Debug::ft("CfgParm.SetCurr");
 
    FunctionGuard guard(Guard_MemUnprotect);
    auto input = GetInput();
@@ -163,11 +157,9 @@ void CfgParm::SetCurr()
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParm_SetFromTuple = "CfgParm.SetFromTuple";
-
 bool CfgParm::SetFromTuple()
 {
-   Debug::ft(CfgParm_SetFromTuple);
+   Debug::ft("CfgParm.SetFromTuple");
 
    auto input = tuple_->Input();
 
@@ -204,11 +196,9 @@ bool CfgParm::SetNext(c_string input)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParm_SetValue = "CfgParm.SetValue";
-
 bool CfgParm::SetValue(c_string input, RestartLevel& level)
 {
-   Debug::ft(CfgParm_SetValue);
+   Debug::ft("CfgParm.SetValue");
 
    FunctionGuard guard(Guard_MemUnprotect);
    if(!SetNext(input)) return false;

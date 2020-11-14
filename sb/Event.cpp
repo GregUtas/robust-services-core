@@ -88,11 +88,9 @@ Event::Event(Id eid, ServiceSM* owner, Location loc) :
 
 //------------------------------------------------------------------------------
 
-fn_name Event_dtor = "Event.dtor";
-
 Event::~Event()
 {
-   Debug::ftnt(Event_dtor);
+   Debug::ftnt("Event.dtor");
 
    //  Record the event's deletion if this context is traced.
    //
@@ -117,22 +115,18 @@ Event::~Event()
 
 //------------------------------------------------------------------------------
 
-fn_name Event_BuildSap = "Event.BuildSap";
-
 Event* Event::BuildSap(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(Event_BuildSap);
+   Debug::ft("Event.BuildSap");
 
    return new AnalyzeSapEvent(owner, owner.CurrState(), *this, tid);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Event_BuildSnp = "Event.BuildSnp";
-
 Event* Event::BuildSnp(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(Event_BuildSnp);
+   Debug::ft("Event.BuildSnp");
 
    return new AnalyzeSnpEvent
       (owner, owner.CurrState(), owner.NextState(), *this, tid);
@@ -193,11 +187,9 @@ void Event::FreeContext(bool freeMsg)
 
 //------------------------------------------------------------------------------
 
-fn_name Event_new = "Event.operator new";
-
 void* Event::operator new(size_t size)
 {
-   Debug::ft(Event_new);
+   Debug::ft("Event.operator new");
 
    return Singleton< EventPool >::Instance()->DeqBlock(size);
 }
@@ -281,29 +273,23 @@ bool Event::SaveContext()
 
 //------------------------------------------------------------------------------
 
-fn_name Event_SetCurrInitiator = "Event.SetCurrInitiator";
-
 void Event::SetCurrInitiator(const Initiator* init)
 {
-   Debug::ft(Event_SetCurrInitiator);
+   Debug::ft("Event.SetCurrInitiator");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Event_SetCurrSsm = "Event.SetCurrSsm";
 
 void Event::SetCurrSsm(ServiceSM* ssm)
 {
-   Debug::ft(Event_SetCurrSsm);
+   Debug::ft("Event.SetCurrSsm");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Event_SetLocation = "Event.SetLocation";
-
 void Event::SetLocation(Location loc)
 {
-   Debug::ft(Event_SetLocation);
+   Debug::ft("Event.SetLocation");
 
    if(location_ != loc)
    {

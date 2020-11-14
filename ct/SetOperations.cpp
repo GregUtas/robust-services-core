@@ -25,7 +25,6 @@
 #include <memory>
 #include <set>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 
@@ -33,11 +32,9 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
-fn_name CodeTools_SetDifference1 = "CodeTools.SetDifference(-)";
-
 void SetDifference(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 {
-   Debug::ft(CodeTools_SetDifference1);
+   Debug::ft("CodeTools.SetDifference(-)");
 
    lhs.clear();
    std::set_difference(rhs1.cbegin(), rhs1.cend(),
@@ -46,11 +43,9 @@ void SetDifference(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_SetDifference2 = "CodeTools.SetDifference(-=)";
-
 void SetDifference(SetOfIds& lhs, const SetOfIds& rhs)
 {
-   Debug::ft(CodeTools_SetDifference2);
+   Debug::ft("CodeTools.SetDifference(-=)");
 
    std::unique_ptr< SetOfIds > temp(new SetOfIds);
    std::set_difference(lhs.cbegin(), lhs.cend(),
@@ -60,11 +55,9 @@ void SetDifference(SetOfIds& lhs, const SetOfIds& rhs)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_SetIntersection1 = "CodeTools.SetIntersection(&)";
-
 void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 {
-   Debug::ft(CodeTools_SetIntersection1);
+   Debug::ft("CodeTools.SetIntersection(&)");
 
    lhs.clear();
    std::set_intersection(rhs1.cbegin(), rhs1.cend(),
@@ -73,11 +66,9 @@ void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_SetIntersection2 = "CodeTools.SetIntersection(&=)";
-
 void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs)
 {
-   Debug::ft(CodeTools_SetIntersection2);
+   Debug::ft("CodeTools.SetIntersection(&=)");
 
    std::unique_ptr< SetOfIds > temp(new SetOfIds);
    std::set_intersection(lhs.cbegin(), lhs.cend(),
@@ -87,11 +78,9 @@ void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_SetUnion1 = "CodeTools.SetUnion(|)";
-
 void SetUnion(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 {
-   Debug::ft(CodeTools_SetUnion1);
+   Debug::ft("CodeTools.SetUnion(|)");
 
    lhs.clear();
    std::set_union(rhs1.cbegin(), rhs1.cend(),
@@ -100,11 +89,9 @@ void SetUnion(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_SetUnion2 = "CodeTools.SetUnion(|=)";
-
 void SetUnion(SetOfIds& lhs, const SetOfIds& rhs)
 {
-   Debug::ft(CodeTools_SetUnion2);
+   Debug::ft("CodeTools.SetUnion(|=)");
 
    std::unique_ptr< SetOfIds > temp(new SetOfIds);
    std::set_union(lhs.cbegin(), lhs.cend(),

@@ -33,24 +33,20 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CliAppData_ctor = "CliAppData.ctor";
-
 CliAppData::CliAppData(CliThread& cli, Id id) :
    cli_(&cli),
    id_(id)
 {
-   Debug::ft(CliAppData_ctor);
+   Debug::ft("CliAppData.ctor");
 
    cli_->SetAppData(this, id_);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliAppData_dtor = "CliAppData.dtor";
-
 CliAppData::~CliAppData()
 {
-   Debug::ftnt(CliAppData_dtor);
+   Debug::ftnt("CliAppData.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -66,11 +62,9 @@ void CliAppData::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CliAppData_EventOccurred = "CliAppData.EventOccurred";
-
 void CliAppData::EventOccurred(Event event)
 {
-   Debug::ft(CliAppData_EventOccurred);
+   Debug::ft("CliAppData.EventOccurred");
 }
 
 //------------------------------------------------------------------------------

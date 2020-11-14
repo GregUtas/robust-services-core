@@ -74,11 +74,9 @@ bool FileList::IsSubdir() const
 
 //==============================================================================
 
-fn_name SysFile_CreateIstream = "SysFile.CreateIstream";
-
 istreamPtr SysFile::CreateIstream(const char* fileName)
 {
-   Debug::ft(SysFile_CreateIstream);
+   Debug::ft("SysFile.CreateIstream");
 
    istreamPtr stream(new std::ifstream(fileName));
 
@@ -93,11 +91,9 @@ istreamPtr SysFile::CreateIstream(const char* fileName)
 
 //------------------------------------------------------------------------------
 
-fn_name SysFile_CreateOstream = "SysFile.CreateOstream";
-
 ostreamPtr SysFile::CreateOstream(const char* fileName, bool trunc)
 {
-   Debug::ftnt(SysFile_CreateOstream);
+   Debug::ftnt("SysFile.CreateOstream");
 
    auto mode = (trunc ? std::ios::trunc : std::ios::app);
    ostreamPtr stream(new (std::nothrow) std::ofstream(fileName, mode));
@@ -148,11 +144,9 @@ bool SysFile::FindFiles
 
 //------------------------------------------------------------------------------
 
-fn_name SysFile_Normalize1 = "SysFile.Normalize";
-
 void SysFile::Normalize(string& path)
 {
-   Debug::ftnt(SysFile_Normalize1);
+   Debug::ftnt("SysFile.Normalize");
 
    for(size_t pos = 0; pos < path.size(); ++pos)
    {
@@ -162,11 +156,9 @@ void SysFile::Normalize(string& path)
 
 //------------------------------------------------------------------------------
 
-fn_name SysFile_Normalize2 = "SysFile.Normalize(const)";
-
 string SysFile::Normalize(const string& path)
 {
-   Debug::ftnt(SysFile_Normalize2);
+   Debug::ftnt("SysFile.Normalize(const)");
 
    auto copy = path;
    Normalize(copy);

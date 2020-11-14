@@ -70,31 +70,25 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolStatsGroup_ctor = "ObjectPoolStatsGroup.ctor";
-
 ObjectPoolStatsGroup::ObjectPoolStatsGroup() :
    StatisticsGroup("Object Pools [ObjectPoolId]")
 {
-   Debug::ft(ObjectPoolStatsGroup_ctor);
+   Debug::ft("ObjectPoolStatsGroup.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ObjectPoolStatsGroup_dtor = "ObjectPoolStatsGroup.dtor";
 
 ObjectPoolStatsGroup::~ObjectPoolStatsGroup()
 {
-   Debug::ftnt(ObjectPoolStatsGroup_dtor);
+   Debug::ftnt("ObjectPoolStatsGroup.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ObjectPoolStatsGroup_DisplayStats = "ObjectPoolStatsGroup.DisplayStats";
 
 void ObjectPoolStatsGroup::DisplayStats
    (ostream& stream, id_t id, const Flags& options) const
 {
-   Debug::ft(ObjectPoolStatsGroup_DisplayStats);
+   Debug::ft("ObjectPoolStatsGroup.DisplayStats");
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
@@ -125,11 +119,9 @@ void ObjectPoolStatsGroup::DisplayStats
 
 //==============================================================================
 
-fn_name ObjectPoolRegistry_ctor = "ObjectPoolRegistry.ctor";
-
 ObjectPoolRegistry::ObjectPoolRegistry()
 {
-   Debug::ft(ObjectPoolRegistry_ctor);
+   Debug::ft("ObjectPoolRegistry.ctor");
 
    Singleton< ObjPoolTraceTool >::Instance();
    pools_.Init(ObjectPool::MaxId, ObjectPool::CellDiff(), MemProtected);
@@ -251,11 +243,9 @@ void ObjectPoolRegistry::AuditPools() const
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolRegistry_BindPool = "ObjectPoolRegistry.BindPool";
-
 bool ObjectPoolRegistry::BindPool(ObjectPool& pool)
 {
-   Debug::ft(ObjectPoolRegistry_BindPool);
+   Debug::ft("ObjectPoolRegistry.BindPool");
 
    FunctionGuard guard(Guard_MemUnprotect);
    return pools_.Insert(pool);
@@ -293,11 +283,9 @@ ObjectPool* ObjectPoolRegistry::Pool(ObjectPoolId pid) const
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolRegistry_Shutdown = "ObjectPoolRegistry.Shutdown";
-
 void ObjectPoolRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(ObjectPoolRegistry_Shutdown);
+   Debug::ft("ObjectPoolRegistry.Shutdown");
 
    for(auto p = pools_.Last(); p != nullptr; pools_.Prev(p))
    {
@@ -312,11 +300,9 @@ void ObjectPoolRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolRegistry_Startup = "ObjectPoolRegistry.Startup";
-
 void ObjectPoolRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(ObjectPoolRegistry_Startup);
+   Debug::ft("ObjectPoolRegistry.Startup");
 
    if(statsGroup_ == nullptr)
    {
@@ -332,11 +318,9 @@ void ObjectPoolRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolRegistry_UnbindPool = "ObjectPoolRegistry.UnbindPool";
-
 void ObjectPoolRegistry::UnbindPool(ObjectPool& pool)
 {
-   Debug::ftnt(ObjectPoolRegistry_UnbindPool);
+   Debug::ftnt("ObjectPoolRegistry.UnbindPool");
 
    FunctionGuard guard(Guard_MemUnprotect);
    pools_.Erase(pool);

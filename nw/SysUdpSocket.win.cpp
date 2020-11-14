@@ -32,12 +32,10 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-fn_name SysUdpSocket_ctor = "SysUdpSocket.ctor";
-
 SysUdpSocket::SysUdpSocket(ipport_t port,
    const UdpIpService* service, AllocRc& rc) : SysSocket(port, service, rc)
 {
-   Debug::ft(SysUdpSocket_ctor);
+   Debug::ft("SysUdpSocket.ctor");
 
    //  If the maximum UDP message size has not been set, set it now.
    //

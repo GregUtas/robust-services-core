@@ -34,20 +34,16 @@ fixed_string DigitString::DigitToChar = "?1234567890*#???";
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_ctor1 = "DigitString.ctor";
-
 DigitString::DigitString() : size_(0)
 {
-   Debug::ft(DigitString_ctor1);
+   Debug::ft("DigitString.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_ctor2 = "DigitString.ctor(dn)";
-
 DigitString::DigitString(Address::DN dn) : size_(0)
 {
-   Debug::ft(DigitString_ctor2);
+   Debug::ft("DigitString.ctor(dn)");
 
    if(Address::IsValidDN(dn))
    {
@@ -65,22 +61,18 @@ DigitString::DigitString(Address::DN dn) : size_(0)
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_ctor3 = "DigitString.ctor(string)";
-
 DigitString::DigitString(const string& s) : size_(0)
 {
-   Debug::ft(DigitString_ctor3);
+   Debug::ft("DigitString.ctor(string)");
 
    AddDigits(s);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_AddDigit = "DigitString.AddDigit";
-
 DigitString::Rc DigitString::AddDigit(Digit d)
 {
-   Debug::ft(DigitString_AddDigit);
+   Debug::ft("DigitString.AddDigit");
 
    if((size_ > 0) && (digits_[size_ - 1] == Digit_Hash)) return Complete;
    if(!IsValidDigit(d)) return IllegalDigit;
@@ -92,11 +84,9 @@ DigitString::Rc DigitString::AddDigit(Digit d)
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_AddDigits1 = "DigitString.AddDigits(string)";
-
 DigitString::Rc DigitString::AddDigits(const string& s)
 {
-   Debug::ft(DigitString_AddDigits1);
+   Debug::ft("DigitString.AddDigits(string)");
 
    DigitString::Rc rc;
    auto len = s.size();
@@ -128,11 +118,9 @@ DigitString::Rc DigitString::AddDigits(const string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_AddDigits2 = "DigitString.AddDigits(digits)";
-
 DigitString::Rc DigitString::AddDigits(const DigitString& ds)
 {
-   Debug::ft(DigitString_AddDigits2);
+   Debug::ft("DigitString.AddDigits(digits)");
 
    for(auto i = 0; i < ds.size_; ++i)
    {
@@ -153,11 +141,9 @@ Digit DigitString::At(DigitCount i) const
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_Clear = "DigitString.Clear";
-
 void DigitString::Clear()
 {
-   Debug::ft(DigitString_Clear);
+   Debug::ft("DigitString.Clear");
 
    size_ = 0;
 }
@@ -224,11 +210,9 @@ bool DigitString::operator!=(const DigitString& that) const
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_Size = "DigitString.Size";
-
 DigitString::DigitCount DigitString::Size() const
 {
-   Debug::ft(DigitString_Size);
+   Debug::ft("DigitString.Size");
 
    if(size_ == 0) return 0;
    if(digits_[size_ - 1] == Digit_Hash) return size_ - 1;
@@ -237,11 +221,9 @@ DigitString::DigitCount DigitString::Size() const
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_ToDN = "DigitString.ToDN";
-
 Address::DN DigitString::ToDN() const
 {
-   Debug::ft(DigitString_ToDN);
+   Debug::ft("DigitString.ToDN");
 
    if(Size() == Address::DN_Length)
    {
@@ -264,11 +246,9 @@ Address::DN DigitString::ToDN() const
 
 //------------------------------------------------------------------------------
 
-fn_name DigitString_ToSC = "DigitString.ToSC";
-
 Address::SC DigitString::ToSC() const
 {
-   Debug::ft(DigitString_ToSC);
+   Debug::ft("DigitString.ToSC");
 
    if(Size() == Address::SC_Length)
    {

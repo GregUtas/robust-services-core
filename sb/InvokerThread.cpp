@@ -45,8 +45,6 @@ const InvokerThread* InvokerThread::RunningInvoker_ = nullptr;
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerThread_ctor = "InvokerThread.ctor";
-
 InvokerThread::InvokerThread(Faction faction, Daemon* daemon) :
    Thread(faction, daemon),
    pool_(nullptr),
@@ -54,7 +52,7 @@ InvokerThread::InvokerThread(Faction faction, Daemon* daemon) :
    msg_(nullptr),
    trans_(0)
 {
-   Debug::ft(InvokerThread_ctor);
+   Debug::ft("InvokerThread.ctor");
 
    pool_ = Singleton< InvokerPoolRegistry >::Instance()->Pool(faction);
    Debug::Assert(pool_->BindThread(*this));
@@ -63,11 +61,9 @@ InvokerThread::InvokerThread(Faction faction, Daemon* daemon) :
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerThread_dtor = "InvokerThread.dtor";
-
 InvokerThread::~InvokerThread()
 {
-   Debug::ftnt(InvokerThread_dtor);
+   Debug::ftnt("InvokerThread.dtor");
 
    if(RunningInvoker_ == this) RunningInvoker_ = nullptr;
    pool_->UnbindThread(*this);
@@ -135,11 +131,9 @@ ptrdiff_t InvokerThread::CellDiff2()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerThread_ClearContext = "InvokerThread.ClearContext";
-
 void InvokerThread::ClearContext()
 {
-   Debug::ft(InvokerThread_ClearContext);
+   Debug::ft("InvokerThread.ClearContext");
 
    ctx_.release();
 }
@@ -186,11 +180,9 @@ void InvokerThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerThread_Recover = "InvokerThread.Recover";
-
 bool InvokerThread::Recover()
 {
-   Debug::ft(InvokerThread_Recover);
+   Debug::ft("InvokerThread.Recover");
 
    //  If a restart is underway, just exit, which is what we wanted to do
    //  anyway.
@@ -224,11 +216,9 @@ bool InvokerThread::Recover()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerThread_ScheduledIn = "InvokerThread.ScheduledIn";
-
 void InvokerThread::ScheduledIn(fn_name_arg func)
 {
-   Debug::ft(InvokerThread_ScheduledIn);
+   Debug::ft("InvokerThread.ScheduledIn");
 
    RunningInvoker_ = this;
    trans_ = 0;
@@ -238,11 +228,9 @@ void InvokerThread::ScheduledIn(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerThread_SetContext = "InvokerThread.SetContext";
-
 void InvokerThread::SetContext(Context* ctx)
 {
-   Debug::ft(InvokerThread_SetContext);
+   Debug::ft("InvokerThread.SetContext");
 
    //  Stupid unique_ptr tricks #2.  This can be invoked when ctx_.get() == ctx,
    //  in which case ctx_ must first be cleared to avoid a tragic deletion.  The
@@ -256,11 +244,9 @@ void InvokerThread::SetContext(Context* ctx)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerThread_Shutdown = "InvokerThread.Shutdown";
-
 void InvokerThread::Shutdown(RestartLevel level)
 {
-   Debug::ft(InvokerThread_Shutdown);
+   Debug::ft("InvokerThread.Shutdown");
 
    //  Our destructor always invokes this, and it is also invoked if we
    //  failed to exit during a restart.

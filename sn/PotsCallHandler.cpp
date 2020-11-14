@@ -45,30 +45,24 @@
 
 namespace PotsBase
 {
-fn_name PotsCallHandler_ctor = "PotsCallHandler.ctor";
-
 PotsCallHandler::PotsCallHandler(IpPort* port) : SbExtInputHandler(port)
 {
-   Debug::ft(PotsCallHandler_ctor);
+   Debug::ft("PotsCallHandler.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCallHandler_dtor = "PotsCallHandler.dtor";
 
 PotsCallHandler::~PotsCallHandler()
 {
-   Debug::ftnt(PotsCallHandler_dtor);
+   Debug::ftnt("PotsCallHandler.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCallHandler_DiscardBuff = "PotsCallHandler.DiscardBuff";
 
 void PotsCallHandler::DiscardBuff
    (const IpBufferPtr& buff, const PotsHeaderInfo* phi, word errval) const
 {
-   Debug::ft(PotsCallHandler_DiscardBuff);
+   Debug::ft("PotsCallHandler.DiscardBuff");
 
    Port()->InvalidDiscarded();
 
@@ -85,12 +79,10 @@ void PotsCallHandler::DiscardBuff
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallHandler_ReceiveBuff = "PotsCallHandler.ReceiveBuff";
-
 void PotsCallHandler::ReceiveBuff
    (IpBufferPtr& buff, size_t size, Faction faction) const
 {
-   Debug::ft(PotsCallHandler_ReceiveBuff);
+   Debug::ft("PotsCallHandler.ReceiveBuff");
 
    auto sbuff = static_cast< SbIpBuffer* >(buff.get());
    auto header = sbuff->Header();

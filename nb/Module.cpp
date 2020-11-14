@@ -40,11 +40,9 @@ const ModuleId Module::MaxId = 4000;
 
 //------------------------------------------------------------------------------
 
-fn_name Module_ctor = "Module.ctor";
-
 Module::Module()
 {
-   Debug::ft(Module_ctor);
+   Debug::ft("Module.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -87,19 +85,15 @@ void Module::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Module_Shutdown = "Module.Shutdown";
-
 void Module::Shutdown(RestartLevel level)
 {
-   Debug::ft(Module_Shutdown);
+   Debug::ft("Module.Shutdown");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Module_Startup = "Module.Startup";
-
 void Module::Startup(RestartLevel level)
 {
-   Debug::ft(Module_Startup);
+   Debug::ft("Module.Startup");
 }
 }

@@ -39,8 +39,6 @@ using std::string;
 
 namespace PotsBase
 {
-fn_name PotsCallPsm_ctor1 = "PotsCallPsm.ctor(first)";
-
 PotsCallPsm::PotsCallPsm(Switch::PortId port) : MediaPsm(PotsCallFactoryId),
    ogMsg_(nullptr),
    sendRing_(false),
@@ -48,14 +46,12 @@ PotsCallPsm::PotsCallPsm(Switch::PortId port) : MediaPsm(PotsCallFactoryId),
    sendCause_(false),
    sendFacility_(false)
 {
-   Debug::ft(PotsCallPsm_ctor1);
+   Debug::ft("PotsCallPsm.ctor(first)");
 
    header_.port = port;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCallPsm_ctor2 = "PotsCallPsm.ctor(subseq)";
 
 PotsCallPsm::PotsCallPsm(ProtocolLayer& adj, bool upper, Switch::PortId port) :
    MediaPsm(PotsCallFactoryId, adj, upper),
@@ -65,27 +61,23 @@ PotsCallPsm::PotsCallPsm(ProtocolLayer& adj, bool upper, Switch::PortId port) :
    sendCause_(false),
    sendFacility_(false)
 {
-   Debug::ft(PotsCallPsm_ctor2);
+   Debug::ft("PotsCallPsm.ctor(subseq)");
 
    header_.port = port;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_dtor = "PotsCallPsm.dtor";
-
 PotsCallPsm::~PotsCallPsm()
 {
-   Debug::ftnt(PotsCallPsm_dtor);
+   Debug::ftnt("PotsCallPsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_ApplyRinging = "PotsCallPsm.ApplyRinging";
-
 void PotsCallPsm::ApplyRinging(bool on)
 {
-   Debug::ft(PotsCallPsm_ApplyRinging);
+   Debug::ft("PotsCallPsm.ApplyRinging");
 
    if(ring_.on == on) return;
    ring_.on = on;
@@ -95,11 +87,9 @@ void PotsCallPsm::ApplyRinging(bool on)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_Cast = "PotsCallPsm.Cast";
-
 PotsCallPsm* PotsCallPsm::Cast(ProtocolSM* psm)
 {
-   Debug::ftnt(PotsCallPsm_Cast);
+   Debug::ftnt("PotsCallPsm.Cast");
 
    if((psm != nullptr) && (psm->GetFactory() == PotsCallFactoryId))
    {
@@ -135,11 +125,9 @@ void PotsCallPsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_EnsureMediaMsg = "PotsCallPsm.EnsureMediaMsg";
-
 void PotsCallPsm::EnsureMediaMsg()
 {
-   Debug::ft(PotsCallPsm_EnsureMediaMsg);
+   Debug::ft("PotsCallPsm.EnsureMediaMsg");
 
    //  A media update can be included in any message, so an outgoing
    //  message only needs to be created if one doesn't already exist.
@@ -152,11 +140,9 @@ void PotsCallPsm::EnsureMediaMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_InjectFinalMsg = "PotsCallPsm.InjectFinalMsg";
-
 void PotsCallPsm::InjectFinalMsg()
 {
-   Debug::ft(PotsCallPsm_InjectFinalMsg);
+   Debug::ft("PotsCallPsm.InjectFinalMsg");
 
    auto msg = new PotsMessage(this, 20);
 
@@ -169,11 +155,9 @@ void PotsCallPsm::InjectFinalMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_ProcessIcMsg = "PotsCallPsm.ProcessIcMsg";
-
 ProtocolSM::IncomingRc PotsCallPsm::ProcessIcMsg(Message& msg, Event*& event)
 {
-   Debug::ft(PotsCallPsm_ProcessIcMsg);
+   Debug::ft("PotsCallPsm.ProcessIcMsg");
 
    auto& pmsg = static_cast< Pots_UN_Message& >(msg);
    auto sid = pmsg.GetSignal();
@@ -340,11 +324,9 @@ ProtocolSM::OutgoingRc PotsCallPsm::ProcessOgMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_ReportDigits = "PotsCallPsm.ReportDigits";
-
 void PotsCallPsm::ReportDigits(bool report)
 {
-   Debug::ft(PotsCallPsm_ReportDigits);
+   Debug::ft("PotsCallPsm.ReportDigits");
 
    if(scan_.digits == report) return;
    scan_.digits = report;
@@ -354,11 +336,9 @@ void PotsCallPsm::ReportDigits(bool report)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_ReportFlash = "PotsCallPsm.ReportFlash";
-
 void PotsCallPsm::ReportFlash(bool report)
 {
-   Debug::ft(PotsCallPsm_ReportFlash);
+   Debug::ft("PotsCallPsm.ReportFlash");
 
    if(scan_.flash == report) return;
    scan_.flash = report;
@@ -368,11 +348,9 @@ void PotsCallPsm::ReportFlash(bool report)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_Route = "PotsCallPsm.Route";
-
 Message::Route PotsCallPsm::Route() const
 {
-   Debug::ft(PotsCallPsm_Route);
+   Debug::ft("PotsCallPsm.Route");
 
    //  Messages to the POTS shelf are sent over the IP stack.  Messages to
    //  another POTS UPSM or a POTS multiplexer are sent internally.
@@ -387,11 +365,9 @@ Message::Route PotsCallPsm::Route() const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_SendCause = "PotsCallPsm.SendCause";
-
 void PotsCallPsm::SendCause(Cause::Ind cause)
 {
-   Debug::ft(PotsCallPsm_SendCause);
+   Debug::ft("PotsCallPsm.SendCause");
 
    cause_.cause = cause;
    sendCause_ = true;
@@ -400,11 +376,9 @@ void PotsCallPsm::SendCause(Cause::Ind cause)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_SendFacility = "PotsCallPsm.SendFacility";
-
 void PotsCallPsm::SendFacility(ServiceId sid, Facility::Ind ind)
 {
-   Debug::ft(PotsCallPsm_SendFacility);
+   Debug::ft("PotsCallPsm.SendFacility");
 
    facility_.sid = sid;
    facility_.ind = ind;
@@ -414,11 +388,9 @@ void PotsCallPsm::SendFacility(ServiceId sid, Facility::Ind ind)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_SendFinalMsg = "PotsCallPsm.SendFinalMsg";
-
 void PotsCallPsm::SendFinalMsg()
 {
-   Debug::ft(PotsCallPsm_SendFinalMsg);
+   Debug::ft("PotsCallPsm.SendFinalMsg");
 
    if(GetState() == Idle) return;
 
@@ -481,11 +453,9 @@ void PotsCallPsm::SendSignal(SignalId signal)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallPsm_Synch = "PotsCallPsm.Synch";
-
 void PotsCallPsm::Synch(PotsCallPsm& upsm) const
 {
-   Debug::ft(PotsCallPsm_Synch);
+   Debug::ft("PotsCallPsm.Synch");
 
    upsm.SetState(GetState());
    SynchEdge(upsm);

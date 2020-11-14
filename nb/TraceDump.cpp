@@ -42,11 +42,9 @@ fixed_string Header = "mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function\n"
 
 //------------------------------------------------------------------------------
 
-fn_name TraceDump_Generate = "TraceDump.Generate";
-
 TraceRc TraceDump::Generate(ostream& stream, const string& opts)
 {
-   Debug::ft(TraceDump_Generate);
+   Debug::ft("TraceDump.Generate");
 
    FunctionTrace::Process(opts);
 

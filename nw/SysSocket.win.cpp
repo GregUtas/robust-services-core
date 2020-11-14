@@ -112,11 +112,9 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_Close = "SysSocket.Close";
-
 void SysSocket::Close(bool disconnecting)
 {
-   Debug::ft(SysSocket_Close);
+   Debug::ft("SysSocket.Close");
 
    if(IsValid())
    {
@@ -128,11 +126,9 @@ void SysSocket::Close(bool disconnecting)
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_Empty = "SysSocket.Empty";
-
 bool SysSocket::Empty()
 {
-   Debug::ft(SysSocket_Empty);
+   Debug::ft("SysSocket.Empty");
 
    u_long bytecount = 0;
 
@@ -149,11 +145,9 @@ bool SysSocket::Empty()
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_Invalidate = "SysSocket.Invalidate";
-
 void SysSocket::Invalidate()
 {
-   Debug::ftnt(SysSocket_Invalidate);
+   Debug::ftnt("SysSocket.Invalidate");
 
    socket_= INVALID_SOCKET;
 }
@@ -167,11 +161,9 @@ bool SysSocket::IsValid() const
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_SetBlocking = "SysSocket.SetBlocking";
-
 bool SysSocket::SetBlocking(bool blocking)
 {
-   Debug::ft(SysSocket_SetBlocking);
+   Debug::ft("SysSocket.SetBlocking");
 
    if(blocking_ == blocking) return true;
 
@@ -191,11 +183,9 @@ bool SysSocket::SetBlocking(bool blocking)
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_SetError = "SysSocket.SetError";
-
 word SysSocket::SetError()
 {
-   Debug::ft(SysSocket_SetError);
+   Debug::ft("SysSocket.SetError");
 
    error_ = WSAGetLastError();
 
@@ -271,11 +261,9 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_StartLayer = "SysSocket.StartLayer";
-
 bool SysSocket::StartLayer()
 {
-   Debug::ft(SysSocket_StartLayer);
+   Debug::ft("SysSocket.StartLayer");
 
    WSAData wsaData;
 
@@ -311,11 +299,9 @@ bool SysSocket::StartLayer()
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_StopLayer = "SysSocket.StopLayer";
-
 void SysSocket::StopLayer()
 {
-   Debug::ft(SysSocket_StopLayer);
+   Debug::ft("SysSocket.StopLayer");
 
    if(WSACleanup() != 0)
    {

@@ -33,32 +33,26 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name ForceTransitionEvent_ctor = "ForceTransitionEvent.ctor";
-
 ForceTransitionEvent::ForceTransitionEvent
    (ServiceSM& owner, const EventHandler& handler) :
    Event(ForceTransition, &owner),
    handler_(&handler)
 {
-   Debug::ft(ForceTransitionEvent_ctor);
+   Debug::ft("ForceTransitionEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ForceTransitionEvent_dtor = "ForceTransitionEvent.dtor";
 
 ForceTransitionEvent::~ForceTransitionEvent()
 {
-   Debug::ftnt(ForceTransitionEvent_dtor);
+   Debug::ftnt("ForceTransitionEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ForceTransitionEvent_BuildSap = "ForceTransitionEvent.BuildSap";
-
 Event* ForceTransitionEvent::BuildSap(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(ForceTransitionEvent_BuildSap);
+   Debug::ft("ForceTransitionEvent.BuildSap");
 
    //  Modifiers cannot analyze or intercept the Force Transition event.
    //

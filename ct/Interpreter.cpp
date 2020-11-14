@@ -116,8 +116,6 @@ const OperatorInfo OperatorInfo::Attrs[Operator_N] =
 
 //------------------------------------------------------------------------------
 
-fn_name OperatorInfo_ctor = "OperatorInfo.ctor";
-
 OperatorInfo::OperatorInfo(const string& sym, int args, LibSetType lhs,
    LibSetType rhs1, LibSetType rhs2) :
    sym(sym),
@@ -126,7 +124,7 @@ OperatorInfo::OperatorInfo(const string& sym, int args, LibSetType lhs,
    rhs1(rhs1),
    rhs2(rhs2)
 {
-   Debug::ft(OperatorInfo_ctor);
+   Debug::ft("OperatorInfo.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -205,8 +203,6 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryOpcode_ctor = "LibraryOpcode.ctor";
-
 LibraryOpcode::LibraryOpcode(LibTokenType op, std::stack< LibrarySet* >& args) :
    lhs_(nullptr),
    rhs1_(nullptr),
@@ -214,7 +210,7 @@ LibraryOpcode::LibraryOpcode(LibTokenType op, std::stack< LibrarySet* >& args) :
    op_(op),
    err_(ExpressionOk)
 {
-   Debug::ft(LibraryOpcode_ctor);
+   Debug::ft("LibraryOpcode.ctor");
 
    //  Access the operator's attributes.
    //
@@ -297,11 +293,9 @@ LibraryOpcode::LibraryOpcode(LibTokenType op, std::stack< LibrarySet* >& args) :
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryOpcode_dtor = "LibraryOpcode.dtor";
-
 LibraryOpcode::~LibraryOpcode()
 {
-   Debug::ftnt(LibraryOpcode_dtor);
+   Debug::ftnt("LibraryOpcode.dtor");
 
    //  lhs_ will become someone else's rhs_, so don't delete it.
    //  And until it does, the operand stack owns it.
@@ -315,11 +309,9 @@ LibraryOpcode::~LibraryOpcode()
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryOpcode_CheckArgType = "LibraryOpcode.CheckArgType";
-
 bool LibraryOpcode::CheckArgType(LibSetType accepted, LibSetType entered)
 {
-   Debug::ft(LibraryOpcode_CheckArgType);
+   Debug::ft("LibraryOpcode.CheckArgType");
 
    switch(accepted)
    {
@@ -427,8 +419,6 @@ const string LegalChars(BlankChars + PathChars + LibOpChars + LibIdChars);
 
 //------------------------------------------------------------------------------
 
-fn_name Interpreter_ctor = "Interpreter.ctor";
-
 Interpreter::Interpreter(const string& expr, size_t offset) :
    expr_(expr),
    offset_(offset),
@@ -436,16 +426,14 @@ Interpreter::Interpreter(const string& expr, size_t offset) :
    curr_(0),
    type_(OpNil)
 {
-   Debug::ft(Interpreter_ctor);
+   Debug::ft("Interpreter.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Interpreter_dtor = "Interpreter.dtor";
-
 Interpreter::~Interpreter()
 {
-   Debug::ftnt(Interpreter_dtor);
+   Debug::ftnt("Interpreter.dtor");
 
    //  Invoke Release on operands (LibrarySets).  This will cause
    //  a temporary to delete itself.
@@ -532,11 +520,9 @@ LibExprErr Interpreter::ApplyOperator(bool operand)
 
 //------------------------------------------------------------------------------
 
-fn_name Interpreter_CheckExpr = "Interpreter.CheckExpr";
-
 LibExprErr Interpreter::CheckExpr()
 {
-   Debug::ft(Interpreter_CheckExpr);
+   Debug::ft("Interpreter.CheckExpr");
 
    //  Check for an empty expression.
    //
@@ -585,11 +571,9 @@ LibExprErr Interpreter::CheckExpr()
 
 //------------------------------------------------------------------------------
 
-fn_name Interpreter_Error = "Interpreter.Error";
-
 LibrarySet* Interpreter::Error(LibExprErr err) const
 {
-   Debug::ft(Interpreter_Error);
+   Debug::ft("Interpreter.Error");
 
    size_t loc = 0;
 
@@ -886,11 +870,9 @@ LibExprErr Interpreter::HandleToken()
 
 //------------------------------------------------------------------------------
 
-fn_name Interpreter_IsOperator = "Interpreter.IsOperator";
-
 bool Interpreter::IsOperator(const string& s)
 {
-   Debug::ft(Interpreter_IsOperator);
+   Debug::ft("Interpreter.IsOperator");
 
    for(auto i = 0; i < Operator_N; ++i)
    {
@@ -902,11 +884,9 @@ bool Interpreter::IsOperator(const string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name Interpreter_SkipBlanks = "Interpreter.SkipBlanks";
-
 LibExprErr Interpreter::SkipBlanks()
 {
-   Debug::ft(Interpreter_SkipBlanks);
+   Debug::ft("Interpreter.SkipBlanks");
 
    //  Skip over blanks and see if this gets us to the end of EXPR.
    //

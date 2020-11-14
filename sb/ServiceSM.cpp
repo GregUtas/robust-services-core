@@ -48,8 +48,6 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name ServiceSM_ctor = "ServiceSM.ctor";
-
 ServiceSM::ServiceSM(ServiceId sid) :
    sid_(sid),
    currState_(Null),
@@ -59,7 +57,7 @@ ServiceSM::ServiceSM(ServiceId sid) :
    nextSnp_(NIL_ID),
    parentSsm_(nullptr)
 {
-   Debug::ft(ServiceSM_ctor);
+   Debug::ft("ServiceSM.ctor");
 
    for(auto i = 0; i <= Trigger::MaxId; ++i) triggered_[i] = false;
 
@@ -147,11 +145,9 @@ ServiceSM::~ServiceSM()
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_CalcPort = "ServiceSM.CalcPort";
-
 ServicePortId ServiceSM::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(ServiceSM_CalcPort);
+   Debug::ft("ServiceSM.CalcPort");
 
    Context::Kill(strOver(this), sid_);
    return NIL_ID;
@@ -159,11 +155,9 @@ ServicePortId ServiceSM::CalcPort(const AnalyzeMsgEvent& ame)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_DeleteIdleModifier = "ServiceSM.DeleteIdleModifier";
-
 void ServiceSM::DeleteIdleModifier()
 {
-   Debug::ft(ServiceSM_DeleteIdleModifier);
+   Debug::ft("ServiceSM.DeleteIdleModifier");
 
    //  If this is a modifier in the Null state, delete it.
    //
@@ -219,11 +213,9 @@ void ServiceSM::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_EndOfTransaction = "ServiceSM.EndOfTransaction";
-
 void ServiceSM::EndOfTransaction()
 {
-   Debug::ft(ServiceSM_EndOfTransaction);
+   Debug::ft("ServiceSM.EndOfTransaction");
 
    //  The following allows SetNextState to be used after ProcessEvent,
    //  usually to enter the Null state after all PSMs have been deleted.
@@ -325,11 +317,9 @@ Service* ServiceSM::GetService() const
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_GetSubtended = "ServiceSM.GetSubtended";
-
 void ServiceSM::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(ServiceSM_GetSubtended);
+   Debug::ft("ServiceSM.GetSubtended");
 
    Pooled::GetSubtended(objects);
 
@@ -349,11 +339,9 @@ void ServiceSM::GetSubtended(std::vector< Base* >& objects) const
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_HasTriggered = "ServiceSM.HasTriggered";
-
 bool ServiceSM::HasTriggered(TriggerId tid) const
 {
-   Debug::ft(ServiceSM_HasTriggered);
+   Debug::ft("ServiceSM.HasTriggered");
 
    if(!Trigger::IsValidId(tid)) return false;
 
@@ -362,11 +350,9 @@ bool ServiceSM::HasTriggered(TriggerId tid) const
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_HenqModifier = "ServiceSM.HenqModifier";
-
 void ServiceSM::HenqModifier(ServiceSM& modifier)
 {
-   Debug::ft(ServiceSM_HenqModifier);
+   Debug::ft("ServiceSM.HenqModifier");
 
    ssmq_.Henq(modifier);
    modifier.SetParent(*this);
@@ -374,11 +360,9 @@ void ServiceSM::HenqModifier(ServiceSM& modifier)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_MorphToService = "ServiceSM.MorphToService";
-
 void ServiceSM::MorphToService(ServiceId sid)
 {
-   Debug::ft(ServiceSM_MorphToService);
+   Debug::ft("ServiceSM.MorphToService");
 
    //e Support true morphing (Object::MorphTo).
 
@@ -387,11 +371,9 @@ void ServiceSM::MorphToService(ServiceId sid)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_new = "ServiceSM.operator new";
-
 void* ServiceSM::operator new(size_t size)
 {
-   Debug::ft(ServiceSM_new);
+   Debug::ft("ServiceSM.operator new");
 
    return Singleton< ServiceSMPool >::Instance()->DeqBlock(size);
 }
@@ -822,11 +804,9 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_ProcessInitAck = "ServiceSM.ProcessInitAck";
-
 EventHandler::Rc ServiceSM::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(ServiceSM_ProcessInitAck);
+   Debug::ft("ServiceSM.ProcessInitAck");
 
    Context::Kill(strOver(this), sid_);
    return EventHandler::Pass;
@@ -834,11 +814,9 @@ EventHandler::Rc ServiceSM::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_ProcessInitNack = "ServiceSM.ProcessInitNack";
-
 EventHandler::Rc ServiceSM::ProcessInitNack(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(ServiceSM_ProcessInitNack);
+   Debug::ft("ServiceSM.ProcessInitNack");
 
    //  This function must be overridden if it can be invoked.
    //
@@ -848,13 +826,11 @@ EventHandler::Rc ServiceSM::ProcessInitNack(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_ProcessInitqSap = "ServiceSM.ProcessInitqSap";
-
 EventHandler::Rc ServiceSM::ProcessInitqSap
    (const Trigger* trigger, const Initiator* modifier, Event& sapEvent,
    Event*& nextEvent, Phase& phase)
 {
-   Debug::ft(ServiceSM_ProcessInitqSap);
+   Debug::ft("ServiceSM.ProcessInitqSap");
 
    InitiationReqEvent* initEvent;
 
@@ -1076,33 +1052,27 @@ EventHandler::Rc ServiceSM::ProcessInitReq
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_ProcessSap = "ServiceSM.ProcessSap";
-
 EventHandler::Rc ServiceSM::ProcessSap(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(ServiceSM_ProcessSap);
+   Debug::ft("ServiceSM.ProcessSap");
 
    return EventHandler::Pass;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ServiceSM_ProcessSip = "ServiceSM.ProcessSip";
 
 EventHandler::Rc ServiceSM::ProcessSip(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(ServiceSM_ProcessSip);
+   Debug::ft("ServiceSM.ProcessSip");
 
    return EventHandler::Pass;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_ProcessSnp = "ServiceSM.ProcessSnp";
-
 EventHandler::Rc ServiceSM::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(ServiceSM_ProcessSnp);
+   Debug::ft("ServiceSM.ProcessSnp");
 
    return EventHandler::Pass;
 }
@@ -1194,11 +1164,9 @@ void ServiceSM::ProcessSsmqSnp(ServiceSM* modifier, Event& snpEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_PsmDeleted = "ServiceSM.PsmDeleted";
-
 void ServiceSM::PsmDeleted(ProtocolSM& exPsm)
 {
-   Debug::ft(ServiceSM_PsmDeleted);
+   Debug::ft("ServiceSM.PsmDeleted");
 
    for(auto mod = ssmq_.First(); mod != nullptr; ssmq_.Next(mod))
    {
@@ -1208,11 +1176,9 @@ void ServiceSM::PsmDeleted(ProtocolSM& exPsm)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_SetNextSap = "ServiceSM.SetNextSap";
-
 void ServiceSM::SetNextSap(TriggerId sap)
 {
-   Debug::ft(ServiceSM_SetNextSap);
+   Debug::ft("ServiceSM.SetNextSap");
 
    if(!Trigger::IsValidId(sap)) return;
 
@@ -1221,11 +1187,9 @@ void ServiceSM::SetNextSap(TriggerId sap)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_SetNextSnp = "ServiceSM.SetNextSnp";
-
 void ServiceSM::SetNextSnp(TriggerId snp)
 {
-   Debug::ft(ServiceSM_SetNextSnp);
+   Debug::ft("ServiceSM.SetNextSnp");
 
    if(!Trigger::IsValidId(snp)) return;
 
@@ -1234,11 +1198,9 @@ void ServiceSM::SetNextSnp(TriggerId snp)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_SetNextState = "ServiceSM.SetNextState";
-
 void ServiceSM::SetNextState(StateId stid)
 {
-   Debug::ft(ServiceSM_SetNextState);
+   Debug::ft("ServiceSM.SetNextState");
 
    nextState_ = stid;
    idled_ = (stid == Null);
@@ -1246,11 +1208,9 @@ void ServiceSM::SetNextState(StateId stid)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSM_SetParent = "ServiceSM.SetParent";
-
 void ServiceSM::SetParent(ServiceSM& parent)
 {
-   Debug::ft(ServiceSM_SetParent);
+   Debug::ft("ServiceSM.SetParent");
 
    parentSsm_ = &parent;
 }

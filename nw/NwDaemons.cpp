@@ -40,32 +40,26 @@ fixed_string TcpIoDaemonName = "tcp";
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoDaemon_ctor = "TcpIoDaemon.ctor";
-
 TcpIoDaemon::TcpIoDaemon(const TcpIpService* service, ipport_t port) :
    Daemon(MakeName(port).c_str(), 1),
    service_(service),
    port_(port)
 {
-   Debug::ft(TcpIoDaemon_ctor);
+   Debug::ft("TcpIoDaemon.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TcpIoDaemon_dtor = "TcpIoDaemon.dtor";
 
 TcpIoDaemon::~TcpIoDaemon()
 {
-   Debug::ftnt(TcpIoDaemon_dtor);
+   Debug::ftnt("TcpIoDaemon.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoDaemon_CreateThread = "TcpIoDaemon.CreateThread";
-
 Thread* TcpIoDaemon::CreateThread()
 {
-   Debug::ft(TcpIoDaemon_CreateThread);
+   Debug::ft("TcpIoDaemon.CreateThread");
 
    return new TcpIoThread(this, service_, port_);
 }
@@ -83,11 +77,9 @@ void TcpIoDaemon::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoDaemon_GetDaemon = "TcpIoDaemon.GetDaemon";
-
 TcpIoDaemon* TcpIoDaemon::GetDaemon(const TcpIpService* service, ipport_t port)
 {
-   Debug::ft(TcpIoDaemon_GetDaemon);
+   Debug::ft("TcpIoDaemon.GetDaemon");
 
    auto reg = Singleton< DaemonRegistry >::Instance();
    auto name = MakeName(port);
@@ -103,11 +95,9 @@ TcpIoDaemon* TcpIoDaemon::GetDaemon(const TcpIpService* service, ipport_t port)
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoDaemon_MakeName = "TcpIoDaemon.MakeName";
-
 string TcpIoDaemon::MakeName(ipport_t port)
 {
-   Debug::ft(TcpIoDaemon_MakeName);
+   Debug::ft("TcpIoDaemon.MakeName");
 
    //  A Daemon requires a unique name, so append the port number
    //  to the basic name.
@@ -131,32 +121,26 @@ fixed_string UdpIoDaemonName = "udp";
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoDaemon_ctor = "UdpIoDaemon.ctor";
-
 UdpIoDaemon::UdpIoDaemon(const UdpIpService* service, ipport_t port) :
    Daemon(MakeName(port).c_str(), 1),
    service_(service),
    port_(port)
 {
-   Debug::ft(UdpIoDaemon_ctor);
+   Debug::ft("UdpIoDaemon.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name UdpIoDaemon_dtor = "UdpIoDaemon.dtor";
 
 UdpIoDaemon::~UdpIoDaemon()
 {
-   Debug::ftnt(UdpIoDaemon_dtor);
+   Debug::ftnt("UdpIoDaemon.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoDaemon_CreateThread = "UdpIoDaemon.CreateThread";
-
 Thread* UdpIoDaemon::CreateThread()
 {
-   Debug::ft(UdpIoDaemon_CreateThread);
+   Debug::ft("UdpIoDaemon.CreateThread");
 
    return new UdpIoThread(this, service_, port_);
 }
@@ -174,11 +158,9 @@ void UdpIoDaemon::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoDaemon_GetDaemon = "UdpIoDaemon.GetDaemon";
-
 UdpIoDaemon* UdpIoDaemon::GetDaemon(const UdpIpService* service, ipport_t port)
 {
-   Debug::ft(UdpIoDaemon_GetDaemon);
+   Debug::ft("UdpIoDaemon.GetDaemon");
 
    auto reg = Singleton< DaemonRegistry >::Instance();
    auto name = MakeName(port);
@@ -194,11 +176,9 @@ UdpIoDaemon* UdpIoDaemon::GetDaemon(const UdpIpService* service, ipport_t port)
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoDaemon_MakeName = "UdpIoDaemon.MakeName";
-
 string UdpIoDaemon::MakeName(ipport_t port)
 {
-   Debug::ft(UdpIoDaemon_MakeName);
+   Debug::ft("UdpIoDaemon.MakeName");
 
    //  A Daemon requires a unique name, so append the port number
    //  to the basic name.

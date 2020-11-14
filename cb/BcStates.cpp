@@ -28,18 +28,14 @@ namespace CallBase
 {
 //b Event handlers not used in the POTS implementation are commented out.
 //
-fn_name BcState_ctor = "BcState.ctor";
-
 BcState::BcState(ServiceId sid, Id stid) : State(sid, stid)
 {
-   Debug::ft(BcState_ctor);
+   Debug::ft("BcState.ctor");
 }
-
-fn_name BcState_dtor = "BcState.dtor";
 
 BcState::~BcState()
 {
-   Debug::ftnt(BcState_dtor);
+   Debug::ftnt("BcState.dtor");
 }
 
 //------------------------------------------------------------------------------

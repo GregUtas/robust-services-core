@@ -25,7 +25,6 @@
 #include <csignal>
 #include "Debug.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -105,11 +104,9 @@ SigTerm::SigTerm() : PosixSignal(SIGTERM, "SIGTERM",
 
 //------------------------------------------------------------------------------
 
-fn_name SysSignals_CreateStandardSignals = "SysSignals.CreateStandardSignals";
-
 void SysSignals::CreateStandardSignals()
 {
-   Debug::ft(SysSignals_CreateStandardSignals);
+   Debug::ft("SysSignals.CreateStandardSignals");
 
    Singleton< SigAbort >::Instance();
    Singleton< SigFpe >::Instance();

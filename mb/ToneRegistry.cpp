@@ -34,11 +34,9 @@ using std::string;
 
 namespace MediaBase
 {
-fn_name ToneRegistry_ctor = "ToneRegistry.ctor";
-
 ToneRegistry::ToneRegistry()
 {
-   Debug::ft(ToneRegistry_ctor);
+   Debug::ft("ToneRegistry.ctor");
 
    tones_.Init(Tone::MaxId, Tone::CellDiff(), MemDynamic);
 }
@@ -56,11 +54,9 @@ ToneRegistry::~ToneRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name ToneRegistry_BindTone = "ToneRegistry.BindTone";
-
 bool ToneRegistry::BindTone(Tone& tone)
 {
-   Debug::ft(ToneRegistry_BindTone);
+   Debug::ft("ToneRegistry.BindTone");
 
    return tones_.Insert(tone);
 }
@@ -85,11 +81,9 @@ Tone* ToneRegistry::GetTone(Tone::Id tid) const
 
 //------------------------------------------------------------------------------
 
-fn_name ToneRegistry_ToneToPort = "ToneRegistry.ToneToPort";
-
 Switch::PortId ToneRegistry::ToneToPort(Tone::Id tid)
 {
-   Debug::ft(ToneRegistry_ToneToPort);
+   Debug::ft("ToneRegistry.ToneToPort");
 
    auto tone = Singleton< ToneRegistry >::Instance()->GetTone(tid);
    if(tone != nullptr) return tone->TsPort();
@@ -98,11 +92,9 @@ Switch::PortId ToneRegistry::ToneToPort(Tone::Id tid)
 
 //------------------------------------------------------------------------------
 
-fn_name ToneRegistry_UnbindTone = "ToneRegistry.UnbindTone";
-
 void ToneRegistry::UnbindTone(Tone& tone)
 {
-   Debug::ftnt(ToneRegistry_UnbindTone);
+   Debug::ftnt("ToneRegistry.UnbindTone");
 
    tones_.Erase(tone);
 }

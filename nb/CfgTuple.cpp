@@ -40,13 +40,11 @@ const char CfgTuple::CommentChar = '/';
 
 //------------------------------------------------------------------------------
 
-fn_name CfgTuple_ctor = "CfgTuple.ctor";
-
 CfgTuple::CfgTuple(fixed_string key, fixed_string input) :
    key_(key),
    input_(input)
 {
-   Debug::ft(CfgTuple_ctor);
+   Debug::ft("CfgTuple.ctor");
 
    if(key_.find_first_not_of(ValidKeyChars().c_str()) != string::npos)
    {

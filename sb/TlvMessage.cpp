@@ -32,21 +32,17 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-fn_name TlvMessage_ctor1 = "TlvMessage.ctor(i/c)";
-
 TlvMessage::TlvMessage(SbIpBufferPtr& buff) : Message(buff)
 {
-   Debug::ft(TlvMessage_ctor1);
+   Debug::ft("TlvMessage.ctor(i/c)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_ctor2 = "TlvMessage.ctor(o/g)";
-
 TlvMessage::TlvMessage(ProtocolSM* psm, size_t size) :
    Message(psm, Pad(size) + FenceSize)
 {
-   Debug::ft(TlvMessage_ctor2);
+   Debug::ft("TlvMessage.ctor(o/g)");
 
    //  An outgoing TLV message must always end with the parameter fence.
    //
@@ -55,12 +51,10 @@ TlvMessage::TlvMessage(ProtocolSM* psm, size_t size) :
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_ctor3 = "TlvMessage.ctor(unwrap)";
-
 TlvMessage::TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm) :
    Message(psm, parm.header.plen)
 {
-   Debug::ft(TlvMessage_ctor3);
+   Debug::ft("TlvMessage.ctor(unwrap)");
 
    //  We just constructed an empty outgoing message.  Fill it with the
    //  message encapsulated in PARM and make it an incoming message.
@@ -80,12 +74,10 @@ TlvMessage::TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm) :
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_ctor4 = "TlvMessage.ctor(copy)";
-
 TlvMessage::TlvMessage(const Message& msg, ProtocolSM* psm) :
    Message(psm, msg.Header()->length + FenceSize)
 {
-   Debug::ft(TlvMessage_ctor4);
+   Debug::ft("TlvMessage.ctor(copy)");
 
    byte_t* from;
    byte_t* to;
@@ -103,21 +95,17 @@ TlvMessage::TlvMessage(const Message& msg, ProtocolSM* psm) :
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_dtor = "TlvMessage.dtor";
-
 TlvMessage::~TlvMessage()
 {
-   Debug::ftnt(TlvMessage_dtor);
+   Debug::ftnt("TlvMessage.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_AddBytes = "TlvMessage.AddBytes";
-
 TlvParmPtr TlvMessage::AddBytes
    (const byte_t* src, size_t size, ParameterId pid)
 {
-   Debug::ft(TlvMessage_AddBytes);
+   Debug::ft("TlvMessage.AddBytes");
 
    auto pptr = AddParm(pid, size);
    if(pptr != nullptr) Memory::Copy(pptr->bytes, src, size);
@@ -126,11 +114,9 @@ TlvParmPtr TlvMessage::AddBytes
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_AddFence = "TlvMessage.AddFence";
-
 void TlvMessage::AddFence()
 {
-   Debug::ft(TlvMessage_AddFence);
+   Debug::ft("TlvMessage.AddFence");
 
    bool moved = false;
    if(!WriteBuffer()->AddBytes(nullptr, FenceSize, moved)) return;
@@ -188,11 +174,9 @@ TlvParmPtr TlvMessage::AddParm(ParameterId pid, size_t plen)
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_AllParms = "TlvMessage.AllParms";
-
 size_t TlvMessage::AllParms(TlvParmArray ptab, size_t size) const
 {
-   Debug::ft(TlvMessage_AllParms);
+   Debug::ft("TlvMessage.AllParms");
 
    size_t count = 0;
    ParmIterator pit;
@@ -208,11 +192,9 @@ size_t TlvMessage::AllParms(TlvParmArray ptab, size_t size) const
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_ChangeDir = "TlvMessage.ChangeDir";
-
 void TlvMessage::ChangeDir(MsgDirection nextDir)
 {
-   Debug::ft(TlvMessage_ChangeDir);
+   Debug::ft("TlvMessage.ChangeDir");
 
    //  An outgoing message must have a valid parameter fence.
    //
@@ -222,11 +204,9 @@ void TlvMessage::ChangeDir(MsgDirection nextDir)
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_CheckFence = "TlvMessage.CheckFence";
-
 void TlvMessage::CheckFence() const
 {
-   Debug::ft(TlvMessage_CheckFence);
+   Debug::ft("TlvMessage.CheckFence");
 
    //  If the fence has been trampled, kill the context after putting the
    //  death pattern into the buffer to mark the location where trampling
@@ -241,11 +221,9 @@ void TlvMessage::CheckFence() const
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_CopyParm = "TlvMessage.CopyParm";
-
 TlvParmPtr TlvMessage::CopyParm(const TlvParmLayout& src, ParameterId pid)
 {
-   Debug::ft(TlvMessage_CopyParm);
+   Debug::ft("TlvMessage.CopyParm");
 
    if(pid == NIL_ID) pid = src.header.pid;
    auto pptr = AddParm(pid, src.header.plen);
@@ -255,22 +233,18 @@ TlvParmPtr TlvMessage::CopyParm(const TlvParmLayout& src, ParameterId pid)
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_DeleteParm = "TlvMessage.DeleteParm";
-
 void TlvMessage::DeleteParm(TlvParmLayout& parm)
 {
-   Debug::ft(TlvMessage_DeleteParm);
+   Debug::ft("TlvMessage.DeleteParm");
 
    parm.header.pid = NIL_ID;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_FencePtr = "TlvMessage.FencePtr";
-
 TlvMessage::Fence* TlvMessage::FencePtr() const
 {
-   Debug::ft(TlvMessage_FencePtr);
+   Debug::ft("TlvMessage.FencePtr");
 
    auto layout = TlvLayout();
    auto fence = layout->bytes + layout->header.length;
@@ -279,11 +253,9 @@ TlvMessage::Fence* TlvMessage::FencePtr() const
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_FindBytes = "TlvMessage.FindBytes";
-
 byte_t* TlvMessage::FindBytes(size_t& size, ParameterId pid) const
 {
-   Debug::ft(TlvMessage_FindBytes);
+   Debug::ft("TlvMessage.FindBytes");
 
    auto pptr = FindParm(pid);
 
@@ -299,11 +271,9 @@ byte_t* TlvMessage::FindBytes(size_t& size, ParameterId pid) const
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_FindParm = "TlvMessage.FindParm";
-
 TlvParmPtr TlvMessage::FindParm(ParameterId pid) const
 {
-   Debug::ft(TlvMessage_FindParm);
+   Debug::ft("TlvMessage.FindParm");
 
    ParmIterator pit;
 
@@ -317,12 +287,10 @@ TlvParmPtr TlvMessage::FindParm(ParameterId pid) const
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_FindParms = "TlvMessage.FindParms";
-
 size_t TlvMessage::FindParms
    (ParameterId pid, TlvParmArray ptab, size_t size) const
 {
-   Debug::ft(TlvMessage_FindParms);
+   Debug::ft("TlvMessage.FindParms");
 
    size_t count = 0;
    ParmIterator pit;
@@ -340,11 +308,9 @@ size_t TlvMessage::FindParms
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_FirstParm = "TlvMessage.FirstParm";
-
 TlvParmPtr TlvMessage::FirstParm(ParmIterator& pit) const
 {
-   Debug::ft(TlvMessage_FirstParm);
+   Debug::ft("TlvMessage.FirstParm");
 
    auto layout = TlvLayout();
 
@@ -364,11 +330,9 @@ TlvParmPtr TlvMessage::FirstParm(ParmIterator& pit) const
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_InspectMsg = "TlvMessage.InspectMsg";
-
 Message::InspectRc TlvMessage::InspectMsg(debug64_t& errval) const
 {
-   Debug::ft(TlvMessage_InspectMsg);
+   Debug::ft("TlvMessage.InspectMsg");
 
    auto rc = Message::InspectMsg(errval);
    if(rc != Ok) return rc;
@@ -380,11 +344,9 @@ Message::InspectRc TlvMessage::InspectMsg(debug64_t& errval) const
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_MatchParm = "TlvMessage.MatchParm";
-
 bool TlvMessage::MatchParm(TlvParmPtr pptr, ParmIterator& pit, bool& last) const
 {
-   Debug::ft(TlvMessage_MatchParm);
+   Debug::ft("TlvMessage.MatchParm");
 
    ParmIterator locpit;
    TlvParmPtr locpptr;
@@ -413,11 +375,9 @@ bool TlvMessage::MatchParm(TlvParmPtr pptr, ParmIterator& pit, bool& last) const
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_NextParm = "TlvMessage.NextParm";
-
 TlvParmPtr TlvMessage::NextParm(ParmIterator& pit) const
 {
-   Debug::ft(TlvMessage_NextParm);
+   Debug::ft("TlvMessage.NextParm");
 
    size_t nextIndex;
 
@@ -439,11 +399,9 @@ TlvParmPtr TlvMessage::NextParm(ParmIterator& pit) const
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_ParmOffset = "TlvMessage.ParmOffset";
-
 size_t TlvMessage::ParmOffset(ParmIterator& pit) const
 {
-   Debug::ft(TlvMessage_ParmOffset);
+   Debug::ft("TlvMessage.ParmOffset");
 
    if(pit.mptr == TlvLayout())
    {
@@ -462,11 +420,9 @@ void TlvMessage::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_Send = "TlvMessage.Send";
-
 bool TlvMessage::Send(Message::Route route)
 {
-   Debug::ft(TlvMessage_Send);
+   Debug::ft("TlvMessage.Send");
 
    //  Check the fence in case trampling occurred after the last AddParm.
    //

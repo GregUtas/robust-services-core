@@ -37,11 +37,9 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name Trigger_ctor = "Trigger.ctor";
-
 Trigger::Trigger(Id tid) : tid_(tid)
 {
-   Debug::ft(Trigger_ctor);
+   Debug::ft("Trigger.ctor");
 
    initq_.Init(Initiator::LinkDiff());
 }
@@ -60,11 +58,9 @@ Trigger::~Trigger()
 
 //------------------------------------------------------------------------------
 
-fn_name Trigger_BindInitiator = "Trigger.BindInitiator";
-
 bool Trigger::BindInitiator(Initiator& init)
 {
-   Debug::ft(Trigger_BindInitiator);
+   Debug::ft("Trigger.BindInitiator");
 
    auto prio = init.GetPriority();
    Initiator* prev = nullptr;

@@ -36,32 +36,26 @@ using std::string;
 
 namespace NodeTools
 {
-fn_name NtTestData_ctor = "NtTestData.ctor";
-
 NtTestData::NtTestData(CliThread& cli) : CliAppData(cli, TestcaseAppId),
    failed_(false),
    passCount_(0),
    failCount_(0)
 {
-   Debug::ft(NtTestData_ctor);
+   Debug::ft("NtTestData.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name NtTestData_dtor = "NtTestData.dtor";
 
 NtTestData::~NtTestData()
 {
-   Debug::ftnt(NtTestData_dtor);
+   Debug::ftnt("NtTestData.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name NtTestData_Access = "NtTestData.Access";
-
 NtTestData* NtTestData::Access(CliThread& cli)
 {
-   Debug::ft(NtTestData_Access);
+   Debug::ft("NtTestData.Access");
 
    auto data = cli.GetAppData(TestcaseAppId);
    if(data == nullptr) data = new NtTestData(cli);
@@ -70,11 +64,9 @@ NtTestData* NtTestData::Access(CliThread& cli)
 
 //------------------------------------------------------------------------------
 
-fn_name NtTestData_Conclude = "NtTestData.Conclude";
-
 void NtTestData::Conclude()
 {
-   Debug::ft(NtTestData_Conclude);
+   Debug::ft("NtTestData.Conclude");
 
    if(name_.empty()) return;
 
@@ -136,11 +128,9 @@ void NtTestData::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name NtTestData_Initiate = "NtTestData.Initiate";
-
 word NtTestData::Initiate(const string& test)
 {
-   Debug::ft(NtTestData_Initiate);
+   Debug::ft("NtTestData.Initiate");
 
    //  If a testcase is currently running, wrap it up before starting
    //  the new one.
@@ -165,11 +155,9 @@ word NtTestData::Initiate(const string& test)
 
 //------------------------------------------------------------------------------
 
-fn_name NtTestData_Query = "NtTestData.Query";
-
 void NtTestData::Query(bool verbose, string& expl) const
 {
-   Debug::ft(NtTestData_Query);
+   Debug::ft("NtTestData.Query");
 
    std::ostringstream stream;
    stream << "Current test session:" << CRLF;
@@ -185,22 +173,18 @@ void NtTestData::Query(bool verbose, string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name NtTestData_Reset = "NtTestData.Reset";
-
 void NtTestData::Reset()
 {
-   Debug::ft(NtTestData_Reset);
+   Debug::ft("NtTestData.Reset");
 
    Cli()->SetAppData(nullptr, TestcaseAppId);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name NtTestData_SetFailed = "NtTestData.SetFailed";
-
 word NtTestData::SetFailed(word rc, const string& expl)
 {
-   Debug::ft(NtTestData_SetFailed);
+   Debug::ft("NtTestData.SetFailed");
 
    failed_ = true;
 

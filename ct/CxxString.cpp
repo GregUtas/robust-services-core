@@ -47,11 +47,9 @@ size_t FindTemplateEnd(const string& name, size_t pos);
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_AdjustPtrs = "CodeTools.AdjustPtrs";
-
 void AdjustPtrs(string& type, TagCount ptrs) //c reassess for >1 const pointer
 {
-   Debug::ft(CodeTools_AdjustPtrs);
+   Debug::ft("CodeTools.AdjustPtrs");
 
    if(ptrs == 0) return;
    if(type.empty()) return;
@@ -143,11 +141,9 @@ void AdjustPtrs(string& type, TagCount ptrs) //c reassess for >1 const pointer
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_CompareScopes = "CodeTools.CompareScopes";
-
 size_t CompareScopes(const string& fqSub, const string& fqSuper, bool tmplt)
 {
-   Debug::ft(CodeTools_CompareScopes);
+   Debug::ft("CodeTools.CompareScopes");
 
    //  fqSuper is a superscope of fqSub if it matches all, or a front portion,
    //  of fqSub.  On a partial match, check that the match actually reached a
@@ -200,11 +196,9 @@ size_t FindIndex(const stringVector& sv, const string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_FindSubstr = "CodeTools.FindSubstr";
-
 size_t FindSubstr(const string& s, const string& targ)
 {
-   Debug::ft(CodeTools_FindSubstr);
+   Debug::ft("CodeTools.FindSubstr");
 
    //  Look for TARG.  If it's found, check that it does not appear after
    //  a // comment or within a string literal.
@@ -284,11 +278,9 @@ string GetFileExtension(const string& file)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_GetFileName = "CodeTools.GetFileName";
-
 string GetFileName(const string& path)
 {
-   Debug::ft(CodeTools_GetFileName);
+   Debug::ft("CodeTools.GetFileName");
 
    auto file = path;
    auto pos = file.rfind('/');
@@ -467,11 +459,9 @@ bool IsBlank(char c)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_IsCodeFile = "CodeTools.IsCodeFile";
-
 bool IsCodeFile(const string& file)
 {
-   Debug::ft(CodeTools_IsCodeFile);
+   Debug::ft("CodeTools.IsCodeFile");
 
    //  Besides the usual .h* and .c* extensions, treat a file with
    //  no extension (e.g. <iosfwd>) as a code file.
@@ -493,11 +483,9 @@ bool IsCodeFile(const string& file)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_IsValidIdentifier = "CodeTools.IsValidIdentifier";
-
 bool IsValidIdentifier(const string& id)
 {
-   Debug::ft(CodeTools_IsValidIdentifier);
+   Debug::ft("CodeTools.IsValidIdentifier");
 
    if(!CxxChar::Attrs[id.front()].validFirst) return false;
 
@@ -518,11 +506,9 @@ bool IsWordChar(char c)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_NameCouldReferTo = "CodeTools.NameCouldReferTo";
-
 size_t NameCouldReferTo(const string& fqName, const string& name)
 {
-   Debug::ft(CodeTools_NameCouldReferTo);
+   Debug::ft("CodeTools.NameCouldReferTo");
 
    //  NAME must match a tail portion (or all of) fqName.  On a partial
    //  match, check that the match actually reached a scope operator.
@@ -602,11 +588,9 @@ string& Prefix(string&& scope, fixed_string separator)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_RemoveConsts = "CodeTools.RemoveConsts";
-
 string RemoveConsts(const string& type)
 {
-   Debug::ft(CodeTools_RemoveConsts);
+   Debug::ft("CodeTools.RemoveConsts");
 
    //  Remove occurrences of "const " (a type or argument
    //  that is const) or " const" (a const pointer).
@@ -635,11 +619,9 @@ string RemoveConsts(const string& type)
 
 fixed_string OperatorAmpersand = "operator&";
 
-fn_name CodeTools_RemoveRefs = "CodeTools.RemoveRefs";
-
 string& RemoveRefs(string& type)
 {
-   Debug::ft(CodeTools_RemoveRefs);
+   Debug::ft("CodeTools.RemoveRefs");
 
    auto pos = type.find('&');
    if(pos == string::npos) return type;
@@ -666,11 +648,9 @@ string& RemoveRefs(string& type)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_RemoveTags = "CodeTools.RemoveTags";
-
 string& RemoveTags(string& type)
 {
-   Debug::ft(CodeTools_RemoveTags);
+   Debug::ft("CodeTools.RemoveTags");
 
    //  Erase any leading "const" and then any trailing ones.  When searching
    //  backwards for trailing ones, make sure that we don't erase a "const"
@@ -711,11 +691,9 @@ string& RemoveTags(string& type)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_RemoveTemplates = "CodeTools.RemoveTemplates";
-
 string& RemoveTemplates(string&& type)
 {
-   Debug::ft(CodeTools_RemoveTemplates);
+   Debug::ft("CodeTools.RemoveTemplates");
 
    while(true)
    {
@@ -731,12 +709,10 @@ string& RemoveTemplates(string&& type)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_Replace = "CodeTools.Replace";
-
 size_t Replace
    (string& code, const string& s1, const string& s2, size_t begin, size_t end)
 {
-   Debug::ft(CodeTools_Replace);
+   Debug::ft("CodeTools.Replace");
 
    auto size1 = s1.size();
    auto size2 = s2.size();

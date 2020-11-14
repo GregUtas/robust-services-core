@@ -36,12 +36,10 @@ using std::string;
 
 namespace SessionTools
 {
-fn_name StTestData_ctor = "StTestData.ctor";
-
 StTestData::StTestData(CliThread& cli) : CliAppData(cli, TestSessionAppId),
    verify_(true)
 {
-   Debug::ft(StTestData_ctor);
+   Debug::ft("StTestData.ctor");
 
    for(auto i = 0; i <= Factory::MaxId; ++i) lastMsg_[i] = nullptr;
    for(auto i = 0; i <= TestSession::MaxId; ++i) session_[i] = nullptr;
@@ -49,20 +47,16 @@ StTestData::StTestData(CliThread& cli) : CliAppData(cli, TestSessionAppId),
 
 //------------------------------------------------------------------------------
 
-fn_name StTestData_dtor = "StTestData.dtor";
-
 StTestData::~StTestData()
 {
-   Debug::ftnt(StTestData_dtor);
+   Debug::ftnt("StTestData.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StTestData_Access = "StTestData.Access";
-
 StTestData* StTestData::Access(CliThread& cli)
 {
-   Debug::ft(StTestData_Access);
+   Debug::ft("StTestData.Access");
 
    auto data = cli.GetAppData(TestSessionAppId);
    if(data == nullptr) data = new StTestData(cli);
@@ -126,11 +120,9 @@ void StTestData::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name StTestData_EventOccurred = "StTestData.EventOccurred";
-
 void StTestData::EventOccurred(Event event)
 {
-   Debug::ft(StTestData_EventOccurred);
+   Debug::ft("StTestData.EventOccurred");
 
    if(event == EndOfTest)
    {
@@ -145,11 +137,9 @@ void StTestData::EventOccurred(Event event)
 
 //------------------------------------------------------------------------------
 
-fn_name StTestData_InjectMsg = "StTestData.InjectMsg";
-
 bool StTestData::InjectMsg(Message& appMsg, TestSessionId tid)
 {
-   Debug::ft(StTestData_InjectMsg);
+   Debug::ft("StTestData.InjectMsg");
 
    auto sdata = AccessSession(tid);
 
@@ -180,11 +170,9 @@ bool StTestData::InjectMsg(Message& appMsg, TestSessionId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name StTestData_NextIcMsg = "StTestData.NextIcMsg";
-
 Message* StTestData::NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip)
 {
-   Debug::ft(StTestData_NextIcMsg);
+   Debug::ft("StTestData.NextIcMsg");
 
    lastMsg_[fid] = BuffTrace::NextIcMsg(lastMsg_[fid], fid, sid, skip);
 

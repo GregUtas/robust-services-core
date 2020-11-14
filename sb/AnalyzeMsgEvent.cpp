@@ -36,31 +36,25 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name AnalyzeMsgEvent_ctor = "AnalyzeMsgEvent.ctor";
-
 AnalyzeMsgEvent::AnalyzeMsgEvent(Message& msg) :
    Event(AnalyzeMsg, msg.Psm()->RootSsm()),
    msg_(&msg)
 {
-   Debug::ft(AnalyzeMsgEvent_ctor);
+   Debug::ft("AnalyzeMsgEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name AnalyzeMsgEvent_dtor = "AnalyzeMsgEvent.dtor";
 
 AnalyzeMsgEvent::~AnalyzeMsgEvent()
 {
-   Debug::ftnt(AnalyzeMsgEvent_dtor);
+   Debug::ftnt("AnalyzeMsgEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeMsgEvent_BuildSap = "AnalyzeMsgEvent.BuildSap";
-
 Event* AnalyzeMsgEvent::BuildSap(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(AnalyzeMsgEvent_BuildSap);
+   Debug::ft("AnalyzeMsgEvent.BuildSap");
 
    //  Modifiers receive the Analyze Message event in its original form.
    //
@@ -69,11 +63,9 @@ Event* AnalyzeMsgEvent::BuildSap(ServiceSM& owner, TriggerId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeMsgEvent_BuildSnp = "AnalyzeMsgEvent.BuildSnp";
-
 Event* AnalyzeMsgEvent::BuildSnp(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(AnalyzeMsgEvent_BuildSnp);
+   Debug::ft("AnalyzeMsgEvent.BuildSnp");
 
    //  Notification is not provided after message analysis.
    //

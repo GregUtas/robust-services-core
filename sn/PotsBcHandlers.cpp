@@ -50,13 +50,10 @@ using namespace MediaBase;
 
 namespace PotsBase
 {
-fn_name PotsBcNuAnalyzeLocalMessage_ProcessEvent =
-   "PotsBcNuAnalyzeLocalMessage.ProcessEvent";
-
 EventHandler::Rc PotsBcNuAnalyzeLocalMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcNuAnalyzeLocalMessage_ProcessEvent);
+   Debug::ft("PotsBcNuAnalyzeLocalMessage.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto prof = pssm.Profile();
@@ -91,12 +88,10 @@ EventHandler::Rc PotsBcNuAnalyzeLocalMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcNuOriginate_ProcessEvent = "PotsBcNuOriginate.ProcessEvent";
-
 EventHandler::Rc PotsBcNuOriginate::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcNuOriginate_ProcessEvent);
+   Debug::ft("PotsBcNuOriginate.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -106,13 +101,10 @@ EventHandler::Rc PotsBcNuOriginate::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcAoAnalyzeLocalMessage_ProcessEvent =
-   "PotsBcAoAnalyzeLocalMessage.ProcessEvent";
-
 EventHandler::Rc PotsBcAoAnalyzeLocalMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAoAnalyzeLocalMessage_ProcessEvent);
+   Debug::ft("PotsBcAoAnalyzeLocalMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto sid = ame.Msg()->GetSignal();
@@ -128,13 +120,10 @@ EventHandler::Rc PotsBcAoAnalyzeLocalMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcAoAuthorizeOrigination_ProcessEvent =
-   "PotsBcAoAuthorizeOrigination.ProcessEvent";
-
 EventHandler::Rc PotsBcAoAuthorizeOrigination::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAoAuthorizeOrigination_ProcessEvent);
+   Debug::ft("PotsBcAoAuthorizeOrigination.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -143,13 +132,10 @@ EventHandler::Rc PotsBcAoAuthorizeOrigination::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcAoOriginationDenied_ProcessEvent =
-   "PotsBcAoOriginationDenied.ProcessEvent";
-
 EventHandler::Rc PotsBcAoOriginationDenied::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAoOriginationDenied_ProcessEvent);
+   Debug::ft("PotsBcAoOriginationDenied.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto& ode = static_cast< BcOriginationDeniedEvent& >(currEvent);
@@ -216,13 +202,10 @@ EventHandler::Rc PotsBcCiAnalyzeLocalMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcCiCollectInformation_ProcessEvent =
-   "PotsBcCiCollectInformation.ProcessEvent";
-
 EventHandler::Rc PotsBcCiCollectInformation::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcCiCollectInformation_ProcessEvent);
+   Debug::ft("PotsBcCiCollectInformation.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
@@ -246,13 +229,10 @@ EventHandler::Rc PotsBcCiCollectInformation::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcCiCollectionTimeout_ProcessEvent =
-   "PotsBcCiCollectionTimeout.ProcessEvent";
-
 EventHandler::Rc PotsBcCiCollectionTimeout::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcCiCollectionTimeout_ProcessEvent);
+   Debug::ft("PotsBcCiCollectionTimeout.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
@@ -263,13 +243,10 @@ EventHandler::Rc PotsBcCiCollectionTimeout::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcCiLocalInformation_ProcessEvent =
-   "PotsBcCiLocalInformation.ProcessEvent";
-
 EventHandler::Rc PotsBcCiLocalInformation::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcCiLocalInformation_ProcessEvent);
+   Debug::ft("PotsBcCiLocalInformation.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -287,13 +264,10 @@ EventHandler::Rc PotsBcCiLocalInformation::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcAiAnalyzeInformation_ProcessEvent =
-   "PotsBcAiAnalyzeInformation.ProcessEvent";
-
 EventHandler::Rc PotsBcAiAnalyzeInformation::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAiAnalyzeInformation_ProcessEvent);
+   Debug::ft("PotsBcAiAnalyzeInformation.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -302,13 +276,10 @@ EventHandler::Rc PotsBcAiAnalyzeInformation::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcAiInvalidInformation_ProcessEvent =
-   "PotsBcAiInvalidInformation.ProcessEvent";
-
 EventHandler::Rc PotsBcAiInvalidInformation::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAiInvalidInformation_ProcessEvent);
+   Debug::ft("PotsBcAiInvalidInformation.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -317,12 +288,10 @@ EventHandler::Rc PotsBcAiInvalidInformation::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcSrSelectRoute_ProcessEvent = "PotsBcSrSelectRoute.ProcessEvent";
-
 EventHandler::Rc PotsBcSrSelectRoute::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcSrSelectRoute_ProcessEvent);
+   Debug::ft("PotsBcSrSelectRoute.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -331,13 +300,10 @@ EventHandler::Rc PotsBcSrSelectRoute::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcAsAuthorizeCallSetup_ProcessEvent =
-   "PotsBcAsAuthorizeCallSetup.ProcessEvent";
-
 EventHandler::Rc PotsBcAsAuthorizeCallSetup::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAsAuthorizeCallSetup_ProcessEvent);
+   Debug::ft("PotsBcAsAuthorizeCallSetup.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -346,13 +312,10 @@ EventHandler::Rc PotsBcAsAuthorizeCallSetup::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcScAnalyzeLocalMessage_ProcessEvent =
-   "PotsBcScAnalyzeLocalMessage.ProcessEvent";
-
 EventHandler::Rc PotsBcScAnalyzeLocalMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcScAnalyzeLocalMessage_ProcessEvent);
+   Debug::ft("PotsBcScAnalyzeLocalMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto sid = ame.Msg()->GetSignal();
@@ -368,12 +331,10 @@ EventHandler::Rc PotsBcScAnalyzeLocalMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcScSendCall_ProcessEvent = "PotsBcScSendCall.ProcessEvent";
-
 EventHandler::Rc PotsBcScSendCall::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcScSendCall_ProcessEvent);
+   Debug::ft("PotsBcScSendCall.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto iam = pssm.BuildCipIam();
@@ -389,12 +350,10 @@ EventHandler::Rc PotsBcScSendCall::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcScRemoteBusy_ProcessEvent = "PotsBcScRemoteBusy.ProcessEvent";
-
 EventHandler::Rc PotsBcScRemoteBusy::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcScRemoteBusy_ProcessEvent);
+   Debug::ft("PotsBcScRemoteBusy.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -403,13 +362,10 @@ EventHandler::Rc PotsBcScRemoteBusy::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcScRemoteProgress_ProcessEvent =
-   "PotsBcScRemoteProgress.ProcessEvent";
-
 EventHandler::Rc PotsBcScRemoteProgress::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcScRemoteProgress_ProcessEvent);
+   Debug::ft("PotsBcScRemoteProgress.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -419,13 +375,10 @@ EventHandler::Rc PotsBcScRemoteProgress::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcScRemoteAlerting_ProcessEvent =
-   "PotsBcScRemoteAlerting.ProcessEvent";
-
 EventHandler::Rc PotsBcScRemoteAlerting::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcScRemoteAlerting_ProcessEvent);
+   Debug::ft("PotsBcScRemoteAlerting.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -436,13 +389,10 @@ EventHandler::Rc PotsBcScRemoteAlerting::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcScRemoteRelease_ProcessEvent =
-   "PotsBcScRemoteRelease.ProcessEvent";
-
 EventHandler::Rc PotsBcScRemoteRelease::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcScRemoteRelease_ProcessEvent);
+   Debug::ft("PotsBcScRemoteRelease.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto& rre = static_cast< BcRemoteReleaseEvent& >(currEvent);
@@ -454,13 +404,10 @@ EventHandler::Rc PotsBcScRemoteRelease::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcOaRemoteNoAnswer_ProcessEvent =
-   "PotsBcOaRemoteNoAnswer.ProcessEvent";
-
 EventHandler::Rc PotsBcOaRemoteNoAnswer::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcOaRemoteNoAnswer_ProcessEvent);
+   Debug::ft("PotsBcOaRemoteNoAnswer.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -469,12 +416,10 @@ EventHandler::Rc PotsBcOaRemoteNoAnswer::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcNuTerminate_ProcessEvent = "PotsBcNuTerminate.ProcessEvent";
-
 EventHandler::Rc PotsBcNuTerminate::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcNuTerminate_ProcessEvent);
+   Debug::ft("PotsBcNuTerminate.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto npsm = pssm.NPsm();
@@ -500,13 +445,10 @@ EventHandler::Rc PotsBcNuTerminate::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcAtAuthorizeTermination_ProcessEvent =
-   "PotsBcAtAuthorizeTermination.ProcessEvent";
-
 EventHandler::Rc PotsBcAtAuthorizeTermination::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAtAuthorizeTermination_ProcessEvent);
+   Debug::ft("PotsBcAtAuthorizeTermination.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -515,13 +457,10 @@ EventHandler::Rc PotsBcAtAuthorizeTermination::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcAtTerminationDenied_ProcessEvent =
-   "PotsBcAtTerminationDenied.ProcessEvent";
-
 EventHandler::Rc PotsBcAtTerminationDenied::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAtTerminationDenied_ProcessEvent);
+   Debug::ft("PotsBcAtTerminationDenied.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto& tde = static_cast< BcTerminationDeniedEvent& >(currEvent);
@@ -531,13 +470,10 @@ EventHandler::Rc PotsBcAtTerminationDenied::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcSfAnalyzeLocalMessage_ProcessEvent =
-   "PotsBcSfAnalyzeLocalMessage.ProcessEvent";
-
 EventHandler::Rc PotsBcSfAnalyzeLocalMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcSfAnalyzeLocalMessage_ProcessEvent);
+   Debug::ft("PotsBcSfAnalyzeLocalMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
@@ -553,13 +489,10 @@ EventHandler::Rc PotsBcSfAnalyzeLocalMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcSfSelectFacility_ProcessEvent =
-   "PotsBcSfSelectFacility.ProcessEvent";
-
 EventHandler::Rc PotsBcSfSelectFacility::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcSfSelectFacility_ProcessEvent);
+   Debug::ft("PotsBcSfSelectFacility.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -573,12 +506,10 @@ EventHandler::Rc PotsBcSfSelectFacility::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcSfLocalBusy_ProcessEvent = "PotsBcSfLocalBusy.ProcessEvent";
-
 EventHandler::Rc PotsBcSfLocalBusy::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcSfLocalBusy_ProcessEvent);
+   Debug::ft("PotsBcSfLocalBusy.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -587,13 +518,10 @@ EventHandler::Rc PotsBcSfLocalBusy::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcPcAnalyzeLocalMessage_ProcessEvent =
-   "PotsBcPcAnalyzeLocalMessage.ProcessEvent";
-
 EventHandler::Rc PotsBcPcAnalyzeLocalMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcPcAnalyzeLocalMessage_ProcessEvent);
+   Debug::ft("PotsBcPcAnalyzeLocalMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto sid = ame.Msg()->GetSignal();
@@ -615,12 +543,10 @@ EventHandler::Rc PotsBcPcAnalyzeLocalMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcPcPresentCall_ProcessEvent = "PotsBcPcPresentCall.ProcessEvent";
-
 EventHandler::Rc PotsBcPcPresentCall::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcPcPresentCall_ProcessEvent);
+   Debug::ft("PotsBcPcPresentCall.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto prof = pssm.Profile();
@@ -643,13 +569,10 @@ EventHandler::Rc PotsBcPcPresentCall::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcPcFacilityFailure_ProcessEvent =
-   "PotsBcPcFacilityFailure.ProcessEvent";
-
 EventHandler::Rc PotsBcPcFacilityFailure::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcPcFacilityFailure_ProcessEvent);
+   Debug::ft("PotsBcPcFacilityFailure.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -658,13 +581,10 @@ EventHandler::Rc PotsBcPcFacilityFailure::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcPcLocalAlerting_ProcessEvent =
-   "PotsBcPcLocalAlerting.ProcessEvent";
-
 EventHandler::Rc PotsBcPcLocalAlerting::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcPcLocalAlerting_ProcessEvent);
+   Debug::ft("PotsBcPcLocalAlerting.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -674,13 +594,10 @@ EventHandler::Rc PotsBcPcLocalAlerting::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcPcRemoteRelease_ProcessEvent =
-   "PotsBcPcRemoteRelease.ProcessEvent";
-
 EventHandler::Rc PotsBcPcRemoteRelease::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcPcRemoteRelease_ProcessEvent);
+   Debug::ft("PotsBcPcRemoteRelease.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -690,13 +607,10 @@ EventHandler::Rc PotsBcPcRemoteRelease::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcTaAnalyzeLocalMessage_ProcessEvent =
-   "PotsBcTaAnalyzeLocalMessage.ProcessEvent";
-
 EventHandler::Rc PotsBcTaAnalyzeLocalMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcTaAnalyzeLocalMessage_ProcessEvent);
+   Debug::ft("PotsBcTaAnalyzeLocalMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto sid = ame.Msg()->GetSignal();
@@ -713,13 +627,10 @@ EventHandler::Rc PotsBcTaAnalyzeLocalMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcTaLocalNoAnswer_ProcessEvent =
-   "PotsBcTaLocalNoAnswer.ProcessEvent";
-
 EventHandler::Rc PotsBcTaLocalNoAnswer::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcTaLocalNoAnswer_ProcessEvent);
+   Debug::ft("PotsBcTaLocalNoAnswer.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -728,13 +639,10 @@ EventHandler::Rc PotsBcTaLocalNoAnswer::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcTaRemoteRelease_ProcessEvent =
-   "PotsBcTaRemoteRelease.ProcessEvent";
-
 EventHandler::Rc PotsBcTaRemoteRelease::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcTaRemoteRelease_ProcessEvent);
+   Debug::ft("PotsBcTaRemoteRelease.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -791,12 +699,10 @@ EventHandler::Rc PotsBcAcAnalyzeLocalMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcAcLocalSuspend_ProcessEvent = "PotsBcAcLocalSuspend.ProcessEvent";
-
 EventHandler::Rc PotsBcAcLocalSuspend::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAcLocalSuspend_ProcessEvent);
+   Debug::ft("PotsBcAcLocalSuspend.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -809,13 +715,10 @@ EventHandler::Rc PotsBcAcLocalSuspend::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcAcRemoteSuspend_ProcessEvent =
-   "PotsBcAcRemoteSuspend.ProcessEvent";
-
 EventHandler::Rc PotsBcAcRemoteSuspend::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcAcRemoteSuspend_ProcessEvent);
+   Debug::ft("PotsBcAcRemoteSuspend.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -825,12 +728,10 @@ EventHandler::Rc PotsBcAcRemoteSuspend::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcLsLocalResume_ProcessEvent = "PotsBcLsLocalResume.ProcessEvent";
-
 EventHandler::Rc PotsBcLsLocalResume::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcLsLocalResume_ProcessEvent);
+   Debug::ft("PotsBcLsLocalResume.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -843,13 +744,10 @@ EventHandler::Rc PotsBcLsLocalResume::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcLsRemoteRelease_ProcessEvent =
-   "PotsBcLsRemoteRelease.ProcessEvent";
-
 EventHandler::Rc PotsBcLsRemoteRelease::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcLsRemoteRelease_ProcessEvent);
+   Debug::ft("PotsBcLsRemoteRelease.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -859,12 +757,10 @@ EventHandler::Rc PotsBcLsRemoteRelease::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcRsRemoteResume_ProcessEvent = "PotsBcRsRemoteResume.ProcessEvent";
-
 EventHandler::Rc PotsBcRsRemoteResume::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcRsRemoteResume_ProcessEvent);
+   Debug::ft("PotsBcRsRemoteResume.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -913,13 +809,10 @@ EventHandler::Rc PotsBcExAnalyzeLocalMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcExApplyTreatment_ProcessEvent =
-   "PotsBcExApplyTreatment.ProcessEvent";
-
 EventHandler::Rc PotsBcExApplyTreatment::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcExApplyTreatment_ProcessEvent);
+   Debug::ft("PotsBcExApplyTreatment.ProcessEvent");
 
    auto& ate = static_cast< BcApplyTreatmentEvent& >(currEvent);
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
@@ -953,12 +846,10 @@ EventHandler::Rc PotsBcExApplyTreatment::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsBcLocalAnswer_ProcessEvent = "PotsBcLocalAnswer.ProcessEvent";
-
 EventHandler::Rc PotsBcLocalAnswer::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcLocalAnswer_ProcessEvent);
+   Debug::ft("PotsBcLocalAnswer.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());
@@ -969,12 +860,10 @@ EventHandler::Rc PotsBcLocalAnswer::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcRemoteAnswer_ProcessEvent = "PotsBcRemoteAnswer.ProcessEvent";
-
 EventHandler::Rc PotsBcRemoteAnswer::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcRemoteAnswer_ProcessEvent);
+   Debug::ft("PotsBcRemoteAnswer.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
 
@@ -985,12 +874,10 @@ EventHandler::Rc PotsBcRemoteAnswer::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcLocalRelease_ProcessEvent = "PotsBcLocalRelease.ProcessEvent";
-
 EventHandler::Rc PotsBcLocalRelease::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcLocalRelease_ProcessEvent);
+   Debug::ft("PotsBcLocalRelease.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto& lre = static_cast< BcLocalReleaseEvent& >(currEvent);
@@ -1001,12 +888,10 @@ EventHandler::Rc PotsBcLocalRelease::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcReleaseCall_ProcessEvent = "PotsBcReleaseCall.ProcessEvent";
-
 EventHandler::Rc PotsBcReleaseCall::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcReleaseCall_ProcessEvent);
+   Debug::ft("PotsBcReleaseCall.ProcessEvent");
 
    auto& cte = static_cast< BcReleaseCallEvent& >(currEvent);
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
@@ -1036,12 +921,10 @@ EventHandler::Rc PotsBcReleaseCall::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcReleaseUser_ProcessEvent = "PotsBcReleaseUser.ProcessEvent";
-
 EventHandler::Rc PotsBcReleaseUser::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsBcReleaseUser_ProcessEvent);
+   Debug::ft("PotsBcReleaseUser.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto upsm = PotsCallPsm::Cast(pssm.UPsm());

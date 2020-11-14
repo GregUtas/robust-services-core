@@ -37,8 +37,6 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name MsgHeader_ctor = "MsgHeader.ctor";
-
 MsgHeader::MsgHeader() :
    priority(INGRESS),
    initial(false),
@@ -53,7 +51,7 @@ MsgHeader::MsgHeader() :
    signal(NIL_ID),
    length(0)
 {
-   Debug::ft(MsgHeader_ctor);
+   Debug::ft("MsgHeader.ctor");
 }
 
 //------------------------------------------------------------------------------

@@ -50,11 +50,9 @@ fixed_string StatExplStrings[PotsStatistics::MaxId + 1] =
 
 //------------------------------------------------------------------------------
 
-fn_name PotsStatistics_ctor = "PotsStatistics.ctor";
-
 PotsStatistics::PotsStatistics() : StatisticsGroup("POTS Calls")
 {
-   Debug::ft(PotsStatistics_ctor);
+   Debug::ft("PotsStatistics.ctor");
 
    for(auto i = 0; i <= MaxId; ++i)
    {
@@ -69,21 +67,17 @@ PotsStatistics::PotsStatistics() : StatisticsGroup("POTS Calls")
 
 //------------------------------------------------------------------------------
 
-fn_name PotsStatistics_dtor = "PotsStatistics.dtor";
-
 PotsStatistics::~PotsStatistics()
 {
-   Debug::ftnt(PotsStatistics_dtor);
+   Debug::ftnt("PotsStatistics.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsStatistics_DisplayStats = "PotsStatistics.DisplayStats";
-
 void PotsStatistics::DisplayStats
    (ostream& stream, id_t id, const Flags& options) const
 {
-   Debug::ft(PotsStatistics_DisplayStats);
+   Debug::ft("PotsStatistics.DisplayStats");
 
    StatisticsGroup::DisplayStats(stream, id, options);
 

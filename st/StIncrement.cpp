@@ -119,12 +119,9 @@ StCorruptCommand::StCorruptCommand() : CorruptCommand(false)
    BindParm(*new StCorruptWhatParm);
 }
 
-fn_name StCorruptCommand_ProcessSubcommand =
-   "StCorruptCommand.ProcessSubcommand";
-
 word StCorruptCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(StCorruptCommand_ProcessSubcommand);
+   Debug::ft("StCorruptCommand.ProcessSubcommand");
 
    if(index != ContextIndex)
       return CorruptCommand::ProcessSubcommand(cli, index);
@@ -199,11 +196,9 @@ private:
 fixed_string InjectStr = "inject";
 fixed_string InjectExpl = "Sends a message FROM a factory or one of its PSMs.";
 
-fn_name InjectCommand_ctor = "InjectCommand.ctor";
-
 InjectCommand::InjectCommand() : CliCommand(InjectStr, InjectExpl)
 {
-   Debug::ft(InjectCommand_ctor);
+   Debug::ft("InjectCommand.ctor");
 
    auto& facs = Singleton< FactoryRegistry >::Instance()->Factories();
    auto preg = Singleton< ProtocolRegistry >::Instance();
@@ -273,11 +268,9 @@ InjectCommand::InjectCommand() : CliCommand(InjectStr, InjectExpl)
    }
 }
 
-fn_name InjectCommand_ProcessCommand = "InjectCommand.ProcessCommand";
-
 word InjectCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(InjectCommand_ProcessCommand);
+   Debug::ft("InjectCommand.ProcessCommand");
 
    id_t fid, sid;
    word tid = 0;
@@ -426,11 +419,9 @@ StSaveCommand::StSaveCommand() : NtSaveCommand(false)
    BindParm(*new StSaveWhatParm);
 }
 
-fn_name StSaveCommand_ProcessSubcommand = "StSaveCommand.ProcessSubcommand";
-
 word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(StSaveCommand_ProcessSubcommand);
+   Debug::ft("StSaveCommand.ProcessSubcommand");
 
    if(index != MscIndex) return NtSaveCommand::ProcessSubcommand(cli, index);
 
@@ -519,11 +510,9 @@ void StSizesCommand::DisplaySizes(CliThread& cli, bool all) const
    *cli.obuf << "  Trigger = " << sizeof(Trigger) << CRLF;
 }
 
-fn_name StSizesCommand_ProcessCommand = "StSizesCommand.ProcessCommand";
-
 word StSizesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(StSizesCommand_ProcessCommand);
+   Debug::ft("StSizesCommand.ProcessCommand");
 
    auto all = false;
 
@@ -577,12 +566,9 @@ StTestcaseCommand::StTestcaseCommand() : TestcaseCommand(false)
    BindParm(*new StTestcaseAction);
 }
 
-fn_name StTestcaseCommand_ProcessSubcommand =
-   "StTestcaseCommand.ProcessSubcommand";
-
 word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(StTestcaseCommand_ProcessSubcommand);
+   Debug::ft("StTestcaseCommand.ProcessSubcommand");
 
    switch(index)
    {
@@ -635,11 +621,9 @@ fixed_string VerifyStr = "verify";
 fixed_string VerifyExpl =
    "Checks a message RECEIVED by a factory or one of its PSMs.";
 
-fn_name VerifyCommand_ctor = "VerifyCommand.ctor";
-
 VerifyCommand::VerifyCommand() : CliCommand(VerifyStr, VerifyExpl)
 {
-   Debug::ft(VerifyCommand_ctor);
+   Debug::ft("VerifyCommand.ctor");
 
    auto& facs = Singleton< FactoryRegistry >::Instance()->Factories();
    auto preg = Singleton< ProtocolRegistry >::Instance();
@@ -712,11 +696,9 @@ VerifyCommand::VerifyCommand() : CliCommand(VerifyStr, VerifyExpl)
    }
 }
 
-fn_name VerifyCommand_ProcessCommand = "VerifyCommand.ProcessCommand";
-
 word VerifyCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(VerifyCommand_ProcessCommand);
+   Debug::ft("VerifyCommand.ProcessCommand");
 
    auto ntest = NtTestData::Access(cli);
    if(ntest == nullptr) return cli.Report(-7, AllocationError);
@@ -843,11 +825,9 @@ word VerifyCommand::ProcessCommand(CliThread& cli) const
 fixed_string StIncrText = "st";
 fixed_string StIncrExpl = "SessionBase Tools and Tests";
 
-fn_name StIncrement_ctor = "StIncrement.ctor";
-
 StIncrement::StIncrement() : CliIncrement(StIncrText, StIncrExpl)
 {
-   Debug::ft(StIncrement_ctor);
+   Debug::ft("StIncrement.ctor");
 
    BindCommand(*new StSaveCommand);
    BindCommand(*new StTestcaseCommand);
@@ -857,20 +837,16 @@ StIncrement::StIncrement() : CliIncrement(StIncrText, StIncrExpl)
 
 //------------------------------------------------------------------------------
 
-fn_name StIncrement_dtor = "StIncrement.dtor";
-
 StIncrement::~StIncrement()
 {
-   Debug::ftnt(StIncrement_dtor);
+   Debug::ftnt("StIncrement.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StIncrement_Enter = "StIncrement.Enter";
-
 void StIncrement::Enter()
 {
-   Debug::ft(StIncrement_Enter);
+   Debug::ft("StIncrement.Enter");
 
    //  The binding of these commands is deferred until the increment
    //  is first entered because their parameters can only be created

@@ -27,93 +27,75 @@
 
 namespace NodeBase
 {
-fn_name Immutable_ctor = "Immutable.ctor";
-
 Immutable::Immutable()
 {
-   Debug::ft(Immutable_ctor);
+   Debug::ft("Immutable.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Immutable_delete1 = "Immutable.operator delete";
 
 void Immutable::operator delete(void* addr)
 {
-   Debug::ftnt(Immutable_delete1);
+   Debug::ftnt("Immutable.operator delete");
 
    Memory::Free(addr, MemImmutable);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Immutable_delete2 = "Immutable.operator delete[]";
 
 void Immutable::operator delete[](void* addr)
 {
-   Debug::ftnt(Immutable_delete2);
+   Debug::ftnt("Immutable.operator delete[]");
 
    Memory::Free(addr, MemImmutable);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Immutable_delete3 = "Immutable.operator delete(place)";
-
 void Immutable::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ftnt(Immutable_delete3);
+   Debug::ftnt("Immutable.operator delete(place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Immutable_delete4 = "Immutable.operator delete[](place)";
 
 void Immutable::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ftnt(Immutable_delete4);
+   Debug::ftnt("Immutable.operator delete[](place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Immutable_new1 = "Immutable.operator new";
 
 void* Immutable::operator new(size_t size)
 {
-   Debug::ft(Immutable_new1);
+   Debug::ft("Immutable.operator new");
 
    return Memory::Alloc(size, MemImmutable);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Immutable_new2 = "Immutable.operator new[]";
 
 void* Immutable::operator new[](size_t size)
 {
-   Debug::ft(Immutable_new2);
+   Debug::ft("Immutable.operator new[]");
 
    return Memory::Alloc(size, MemImmutable);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Immutable_new3 = "Immutable.operator new(place)";
-
 void* Immutable::operator new(size_t size, void* place)
 {
-   Debug::ft(Immutable_new3);
+   Debug::ft("Immutable.operator new(place)");
 
    return place;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Immutable_new4 = "Immutable.operator new[](place)";
-
 void* Immutable::operator new[](size_t size, void* place)
 {
-   Debug::ft(Immutable_new4);
+   Debug::ft("Immutable.operator new[](place)");
 
    return place;
 }

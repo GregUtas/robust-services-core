@@ -84,22 +84,18 @@ void CxxLocation::SetLoc(CodeFile* file, size_t pos)
 
 //==============================================================================
 
-fn_name Asm_ctor = "Asm.ctor";
-
 Asm::Asm(ExprPtr& code) : code_(std::move(code))
 {
-   Debug::ft(Asm_ctor);
+   Debug::ft("Asm.ctor");
 
    CxxStats::Incr(CxxStats::ASM);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Asm_EnterScope = "Asm.EnterScope";
-
 bool Asm::EnterScope()
 {
-   Debug::ft(Asm_EnterScope);
+   Debug::ft("Asm.EnterScope");
 
    Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertAsm(this);
@@ -117,39 +113,31 @@ void Asm::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-fn_name CxxNamed_ctor1 = "CxxNamed.ctor";
-
 CxxNamed::CxxNamed()
 {
-   Debug::ft(CxxNamed_ctor1);
+   Debug::ft("CxxNamed.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CxxNamed_ctor2 = "CxxNamed.ctor(copy)";
 
 CxxNamed::CxxNamed(const CxxNamed& that) : CxxToken(that),
    loc_(that.loc_)
 {
-   Debug::ft(CxxNamed_ctor2);
+   Debug::ft("CxxNamed.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CxxNamed_dtor = "CxxNamed.dtor";
 
 CxxNamed::~CxxNamed()
 {
-   Debug::ftnt(CxxNamed_dtor);
+   Debug::ftnt("CxxNamed.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_Accessed = "CxxNamed.Accessed";
-
 void CxxNamed::Accessed() const
 {
-   Debug::ft(CxxNamed_Accessed);
+   Debug::ft("CxxNamed.Accessed");
 
    auto func = Context::Scope()->GetFunction();
    if(func == nullptr) return;
@@ -158,11 +146,9 @@ void CxxNamed::Accessed() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_AddUsage = "CxxNamed.AddUsage";
-
 void CxxNamed::AddUsage() const
 {
-   Debug::ft(CxxNamed_AddUsage);
+   Debug::ft("CxxNamed.AddUsage");
 
    if(Context::ParsingTemplateInstance()) return;
    if(IsInTemplateInstance()) return;
@@ -173,11 +159,9 @@ void CxxNamed::AddUsage() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_AtFileScope = "CxxNamed.AtFileScope";
-
 bool CxxNamed::AtFileScope() const
 {
-   Debug::ft(CxxNamed_AtFileScope);
+   Debug::ft("CxxNamed.AtFileScope");
 
    auto scope = GetScope();
    if(scope == nullptr) return false;
@@ -186,11 +170,9 @@ bool CxxNamed::AtFileScope() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_CopyContext = "CxxNamed.CopyContext";
-
 void CxxNamed::CopyContext(const CxxNamed* that)
 {
-   Debug::ft(CxxNamed_CopyContext);
+   Debug::ft("CxxNamed.CopyContext");
 
    auto scope = that->GetScope();
    SetScope(scope);
@@ -229,11 +211,9 @@ void CxxNamed::FindReferent()
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_FindTemplateAnalog = "CxxNamed.FindTemplateAnalog";
-
 CxxScoped* CxxNamed::FindTemplateAnalog(const CxxNamed* item) const
 {
-   Debug::ft(CxxNamed_FindTemplateAnalog);
+   Debug::ft("CxxNamed.FindTemplateAnalog");
 
    auto inst = GetTemplateInstance();
    if(inst == nullptr) return nullptr;
@@ -269,11 +249,9 @@ id_t CxxNamed::GetDeclFid() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_GetDirectClasses = "CxxNamed.GetDirectClasses";
-
 void CxxNamed::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(CxxNamed_GetDirectClasses);
+   Debug::ft("CxxNamed.GetDirectClasses");
 
    auto spec = GetTypeSpec();
    if(spec == nullptr) return;
@@ -282,11 +260,9 @@ void CxxNamed::GetDirectClasses(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_GetDirectTemplateArgs = "CxxNamed.GetDirectTemplateArgs";
-
 void CxxNamed::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 {
-   Debug::ft(CxxNamed_GetDirectTemplateArgs);
+   Debug::ft("CxxNamed.GetDirectTemplateArgs");
 
    auto spec = GetTypeSpec();
    if(spec == nullptr) return;
@@ -336,11 +312,9 @@ bool CxxNamed::IsInTemplateInstance() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_IsPreviousDeclOf = "CxxNamed.IsPreviousDeclOf";
-
 bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 {
-   Debug::ft(CxxNamed_IsPreviousDeclOf);
+   Debug::ft("CxxNamed.IsPreviousDeclOf");
 
    //  ITEM and "this" are already known to have the same name.  If "this"
    //  existed before ITEM, ITEM must be another object.  And for them to
@@ -359,12 +333,10 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_Log = "CxxNamed.Log";
-
 void CxxNamed::Log(Warning warning, const CxxNamed* item,
    word offset, bool hide, const string& info) const
 {
-   Debug::ft(CxxNamed_Log);
+   Debug::ft("CxxNamed.Log");
 
    //  If this warning is associated with a template instance, log it
    //  against the template.
@@ -402,11 +374,9 @@ StackArg CxxNamed::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_NameToArg = "CxxNamed.NameToArg";
-
 StackArg CxxNamed::NameToArg(Cxx::Operator op, TypeName* name)
 {
-   Debug::ft(CxxNamed_NameToArg);
+   Debug::ft("CxxNamed.NameToArg");
 
    Accessed();
    return StackArg(this, name);
@@ -623,11 +593,9 @@ string CxxNamed::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_SetContext = "CxxNamed.SetContext";
-
 void CxxNamed::SetContext(size_t pos)
 {
-   Debug::ft(CxxNamed_SetContext);
+   Debug::ft("CxxNamed.SetContext");
 
    //  If the item has already set its scope, don't overwrite it.
    //
@@ -646,22 +614,18 @@ void CxxNamed::SetContext(size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_SetLoc = "CxxNamed.SetLoc";
-
 void CxxNamed::SetLoc(CodeFile* file, size_t pos)
 {
-   Debug::ft(CxxNamed_SetLoc);
+   Debug::ft("CxxNamed.SetLoc");
 
    loc_.SetLoc(file, pos);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_SetReferent = "CxxNamed.SetReferent";
-
 void CxxNamed::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
-   Debug::ft(CxxNamed_SetReferent);
+   Debug::ft("CxxNamed.SetReferent");
 
    Context::SwLog(CxxNamed_FindReferent, strOver(this), 0);
 }
@@ -722,24 +686,20 @@ const TypeSpecPtr DataSpec::Int = TypeSpecPtr(new DataSpec(INT_STR));
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ctor1 = "DataSpec.ctor";
-
 DataSpec::DataSpec(QualNamePtr& name) :
    name_(name.release()),
    arrays_(nullptr)
 {
-   Debug::ft(DataSpec_ctor1);
+   Debug::ft("DataSpec.ctor");
 
    CxxStats::Incr(CxxStats::DATA_SPEC);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ctor2 = "DataSpec.ctor(string)";
-
 DataSpec::DataSpec(const char* name) : arrays_(nullptr)
 {
-   Debug::ft(DataSpec_ctor2);
+   Debug::ft("DataSpec.ctor(string)");
 
    name_ = QualNamePtr(new QualName(name));
    CxxStats::Incr(CxxStats::DATA_SPEC);
@@ -747,13 +707,11 @@ DataSpec::DataSpec(const char* name) : arrays_(nullptr)
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ctor3 = "DataSpec.ctor(copy)";
-
 DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
    arrays_(nullptr),
    tags_(that.tags_)
 {
-   Debug::ft(DataSpec_ctor3);
+   Debug::ft("DataSpec.ctor(copy)");
 
    name_.reset(new QualName(*that.name_.get()));
    CxxStats::Incr(CxxStats::DATA_SPEC);
@@ -761,22 +719,18 @@ DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_dtor = "DataSpec.dtor";
-
 DataSpec::~DataSpec()
 {
-   Debug::ftnt(DataSpec_dtor);
+   Debug::ftnt("DataSpec.dtor");
 
    CxxStats::Decr(CxxStats::DATA_SPEC);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_AddArray = "DataSpec.AddArray";
-
 void DataSpec::AddArray(ArraySpecPtr& array)
 {
-   Debug::ft(DataSpec_AddArray);
+   Debug::ft("DataSpec.AddArray");
 
    if(arrays_ == nullptr) arrays_.reset(new ArraySpecPtrVector);
    arrays_->push_back(std::move(array));
@@ -802,11 +756,9 @@ void DataSpec::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_AlignTemplateArg = "DataSpec.AlignTemplateArg";
-
 string DataSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 {
-   Debug::ft(DataSpec_AlignTemplateArg);
+   Debug::ft("DataSpec.AlignTemplateArg");
 
    //  If this is a template argument, remove any tags specified
    //  by this type from thatArg's type.
@@ -827,11 +779,9 @@ string DataSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_Arrays = "DataSpec.Arrays";
-
 TagCount DataSpec::Arrays() const
 {
-   Debug::ft(DataSpec_Arrays);
+   Debug::ft("DataSpec.Arrays");
 
    TagCount count = 0;
    auto spec = static_cast< const TypeSpec* >(this);
@@ -857,22 +807,18 @@ void DataSpec::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_Clone = "DataSpec.Clone";
-
 TypeSpec* DataSpec::Clone() const
 {
-   Debug::ft(DataSpec_Clone);
+   Debug::ft("DataSpec.Clone");
 
    return new DataSpec(*this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_CopyContext = "DataSpec.CopyContext";
-
 void DataSpec::CopyContext(const CxxNamed* that)
 {
-   Debug::ft(DataSpec_CopyContext);
+   Debug::ft("DataSpec.CopyContext");
 
    CxxNamed::CopyContext(that);
 
@@ -881,11 +827,9 @@ void DataSpec::CopyContext(const CxxNamed* that)
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_DirectClass = "DataSpec.DirectClass";
-
 Class* DataSpec::DirectClass() const
 {
-   Debug::ft(DataSpec_DirectClass);
+   Debug::ft("DataSpec.DirectClass");
 
    auto root = Root();
    if(root->Type() != Cxx::Class) return nullptr;
@@ -895,11 +839,9 @@ Class* DataSpec::DirectClass() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_DirectType = "DataSpec.DirectType";
-
 CxxScoped* DataSpec::DirectType() const
 {
-   Debug::ft(DataSpec_DirectType);
+   Debug::ft("DataSpec.DirectType");
 
    return name_->DirectType();
 }
@@ -926,11 +868,9 @@ void DataSpec::DisplayTags(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_EnterArrays = "DataSpec.EnterArrays";
-
 void DataSpec::EnterArrays() const
 {
-   Debug::ft(DataSpec_EnterArrays);
+   Debug::ft("DataSpec.EnterArrays");
 
    if(arrays_ != nullptr)
    {
@@ -943,11 +883,9 @@ void DataSpec::EnterArrays() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_EnterBlock = "DataSpec.EnterBlock";
-
 void DataSpec::EnterBlock()
 {
-   Debug::ft(DataSpec_EnterBlock);
+   Debug::ft("DataSpec.EnterBlock");
 
    Context::SetPos(GetLoc());
    Context::PushArg(ResultType());
@@ -955,11 +893,9 @@ void DataSpec::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_EnteringScope = "DataSpec.EnteringScope";
-
 void DataSpec::EnteringScope(const CxxScope* scope)
 {
-   Debug::ft(DataSpec_EnteringScope);
+   Debug::ft("DataSpec.EnteringScope");
 
    Context::SetPos(GetLoc());
 
@@ -1069,22 +1005,18 @@ TypeTags DataSpec::GetAllTags() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_GetDirectClasses = "DataSpec.GetDirectClasses";
-
 void DataSpec::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(DataSpec_GetDirectClasses);
+   Debug::ft("DataSpec.GetDirectClasses");
 
    name_->GetDirectClasses(symbols);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_GetDirectTemplateArgs = "DataSpec.GetDirectTemplateArgs";
-
 void DataSpec::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 {
-   Debug::ft(DataSpec_GetDirectTemplateArgs);
+   Debug::ft("DataSpec.GetDirectTemplateArgs");
 
    auto ref = Referent();
 
@@ -1111,22 +1043,18 @@ void DataSpec::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_GetNames = "DataSpec.GetNames";
-
 void DataSpec::GetNames(stringVector& names) const
 {
-   Debug::ft(DataSpec_GetNames);
+   Debug::ft("DataSpec.GetNames");
 
    name_->GetNames(names);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_GetNumeric = "DataSpec.GetNumeric";
-
 Numeric DataSpec::GetNumeric() const
 {
-   Debug::ft(DataSpec_GetNumeric);
+   Debug::ft("DataSpec.GetNumeric");
 
    auto ptrs = Ptrs(true);
    if(ptrs > 0) return Numeric::Pointer;
@@ -1261,11 +1189,9 @@ void DataSpec::Instantiating(CxxScopedVector& locals) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_IsAuto = "DataSpec.IsAuto";
-
 bool DataSpec::IsAuto() const
 {
-   Debug::ft(DataSpec_IsAuto);
+   Debug::ft("DataSpec.IsAuto");
 
    //  A data item (FuncData) of type auto initially has the keyword "auto"
    //  as its referent.  This referent is overwritten when the data's actual
@@ -1283,11 +1209,9 @@ bool DataSpec::IsAutoDecl() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_IsConst = "DataSpec.IsConst";
-
 bool DataSpec::IsConst() const
 {
-   Debug::ft(DataSpec_IsConst);
+   Debug::ft("DataSpec.IsConst");
 
    if(IsAutoDecl()) return tags_.IsConst();
    if(tags_.IsConst()) return true;
@@ -1338,22 +1262,18 @@ bool DataSpec::IsConstPtr(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_IsIndirect = "DataSpec.IsIndirect";
-
 bool DataSpec::IsIndirect() const
 {
-   Debug::ft(DataSpec_IsIndirect);
+   Debug::ft("DataSpec.IsIndirect");
 
    return ((Refs() > 0) || (Ptrs(true) > 0));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_IsUsedInNameOnly = "DataSpec.IsUsedInNameOnly";
-
 bool DataSpec::IsUsedInNameOnly() const
 {
-   Debug::ft(DataSpec_IsUsedInNameOnly);
+   Debug::ft("DataSpec.IsUsedInNameOnly");
 
    //  The type did not have to be defined before it appeared in this
    //  specification if one of the following is true:
@@ -1393,11 +1313,9 @@ bool DataSpec::IsUsedInNameOnly() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_IsVolatile = "DataSpec.IsVolatile";
-
 bool DataSpec::IsVolatile() const
 {
-   Debug::ft(DataSpec_IsVolatile);
+   Debug::ft("DataSpec.IsVolatile");
 
    if(IsAutoDecl()) return tags_.IsVolatile();
    if(tags_.IsVolatile()) return true;
@@ -1475,11 +1393,9 @@ bool DataSpec::ItemIsTemplateArg(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_MatchesExactly = "DataSpec.MatchesExactly";
-
 bool DataSpec::MatchesExactly(const TypeSpec* that) const
 {
-   Debug::ft(DataSpec_MatchesExactly);
+   Debug::ft("DataSpec.MatchesExactly");
 
    auto type1 = this->TypeString(false);
    auto type2 = that->TypeString(false);
@@ -1488,12 +1404,10 @@ bool DataSpec::MatchesExactly(const TypeSpec* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_MatchTemplate = "DataSpec.MatchTemplate";
-
 TypeMatch DataSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
    stringVector& tmpltArgs, bool& argFound) const
 {
-   Debug::ft(DataSpec_MatchTemplate);
+   Debug::ft("DataSpec.MatchTemplate");
 
    //  Do a depth-first traversal of this type and THAT.  For each node
    //  in this type, THAT must have a corresponding node.
@@ -1549,11 +1463,9 @@ TypeMatch DataSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_MatchTemplateArg = "DataSpec.MatchTemplateArg";
-
 TypeMatch DataSpec::MatchTemplateArg(const TypeSpec* that) const
 {
-   Debug::ft(DataSpec_MatchTemplateArg);
+   Debug::ft("DataSpec.MatchTemplateArg");
 
    //  If this is a template argument, match on the basis of tags,
    //  leaving room to prefer an exact match.
@@ -1573,12 +1485,10 @@ TypeMatch DataSpec::MatchTemplateArg(const TypeSpec* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_NamesReferToArgs = "DataSpec.NamesReferToArgs";
-
 bool DataSpec::NamesReferToArgs(const NameVector& names,
    const CxxScope* scope, const CodeFile* file, size_t& index) const
 {
-   Debug::ft(DataSpec_NamesReferToArgs);
+   Debug::ft("DataSpec.NamesReferToArgs");
 
    //  See if NAME matches this type in constness and level of
    //  indirection while removing any "const" tags from NAME.
@@ -1714,11 +1624,9 @@ TagCount DataSpec::Ptrs(bool arrays) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_Referent = "DataSpec.Referent";
-
 CxxScoped* DataSpec::Referent() const
 {
-   Debug::ft(DataSpec_Referent);
+   Debug::ft("DataSpec.Referent");
 
    auto ref = name_->GetReferent();
    if(ref != nullptr) return ref;
@@ -1760,11 +1668,9 @@ TagCount DataSpec::Refs() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ResolveForward = "DataSpec.ResolveForward";
-
 bool DataSpec::ResolveForward(CxxScoped* decl, size_t n) const
 {
-   Debug::ft(DataSpec_ResolveForward);
+   Debug::ft("DataSpec.ResolveForward");
 
    //  Stop at the forward declaration unless it's a template.  If it is,
    //  continue so that template arguments can be applied to its referent,
@@ -1782,11 +1688,9 @@ bool DataSpec::ResolveForward(CxxScoped* decl, size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ResolveTemplate = "DataSpec.ResolveTemplate";
-
 bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 {
-   Debug::ft(DataSpec_ResolveTemplate);
+   Debug::ft("DataSpec.ResolveTemplate");
 
    //  Don't create a template instance if this item was only created
    //  internally, during template matching.
@@ -1796,11 +1700,9 @@ bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ResolveTemplateArg = "DataSpec.ResolveTemplateArg";
-
 bool DataSpec::ResolveTemplateArg() const
 {
-   Debug::ft(DataSpec_ResolveTemplateArg);
+   Debug::ft("DataSpec.ResolveTemplateArg");
 
    if(GetTemplateRole() != TemplateArgument) return false;
 
@@ -1814,11 +1716,9 @@ bool DataSpec::ResolveTemplateArg() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ResolveTypedef = "DataSpec.ResolveTypedef";
-
 bool DataSpec::ResolveTypedef(Typedef* type, size_t n) const
 {
-   Debug::ft(DataSpec_ResolveTypedef);
+   Debug::ft("DataSpec.ResolveTypedef");
 
    //  Stop at the typedef unless it has template arguments.  If it does,
    //  delegate to name_, which will record it as a referent and resolve
@@ -1939,11 +1839,9 @@ void DataSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_SetTemplateRole = "DataSpec.SetTemplateRole";
-
 void DataSpec::SetTemplateRole(TemplateRole role) const
 {
-   Debug::ft(DataSpec_SetTemplateRole);
+   Debug::ft("DataSpec.SetTemplateRole");
 
    TypeSpec::SetTemplateRole(role);
 
@@ -1958,11 +1856,9 @@ void DataSpec::SetTemplateRole(TemplateRole role) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_SetUserType = "DataSpec.SetUserType";
-
 void DataSpec::SetUserType(Cxx::ItemType user)
 {
-   Debug::ft(DataSpec_SetUserType);
+   Debug::ft("DataSpec.SetUserType");
 
    TypeSpec::SetUserType(user);
    name_->SetUserType(user);
@@ -2037,11 +1933,9 @@ string DataSpec::TypeTagsString(const TypeTags& tags) const
 
 //==============================================================================
 
-fn_name QualName_ctor1 = "QualName.ctor(type)";
-
 QualName::QualName(TypeNamePtr& type)
 {
-   Debug::ft(QualName_ctor1);
+   Debug::ft("QualName.ctor(type)");
 
    first_ = std::move(type);
    CxxStats::Incr(CxxStats::QUAL_NAME);
@@ -2049,11 +1943,9 @@ QualName::QualName(TypeNamePtr& type)
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_ctor2 = "QualName.ctor(string)";
-
 QualName::QualName(const string& name)
 {
-   Debug::ft(QualName_ctor2);
+   Debug::ft("QualName.ctor(string)");
 
    auto copy = name;
    first_ = (TypeNamePtr(new TypeName(copy)));
@@ -2062,11 +1954,9 @@ QualName::QualName(const string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_ctor3 = "QualName.ctor(copy)";
-
 QualName::QualName(const QualName& that) : CxxNamed(that)
 {
-   Debug::ft(QualName_ctor3);
+   Debug::ft("QualName.ctor(copy)");
 
    for(auto n = that.First(); n != nullptr; n = n->Next())
    {
@@ -2079,11 +1969,9 @@ QualName::QualName(const QualName& that) : CxxNamed(that)
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_dtor = "QualName.dtor";
-
 QualName::~QualName()
 {
-   Debug::ftnt(QualName_dtor);
+   Debug::ftnt("QualName.dtor");
 
    CxxStats::Decr(CxxStats::QUAL_NAME);
 }
@@ -2100,11 +1988,9 @@ void QualName::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_Append = "QualName.Append";
-
 void QualName::Append(const string& name, bool space) const
 {
-   Debug::ft(QualName_Append);
+   Debug::ft("QualName.Append");
 
    Last()->Append(name, space);
 }
@@ -2136,11 +2022,9 @@ void QualName::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_CheckCtorDefn = "QualName.CheckCtorDefn";
-
 bool QualName::CheckCtorDefn() const
 {
-   Debug::ft(QualName_CheckCtorDefn);
+   Debug::ft("QualName.CheckCtorDefn");
 
    auto size = Size();
    if(size <= 1) return false;
@@ -2149,11 +2033,9 @@ bool QualName::CheckCtorDefn() const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_CheckIfTemplateArgument = "QualName.CheckIfTemplateArgument";
-
 void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
 {
-   Debug::ft(QualName_CheckIfTemplateArgument);
+   Debug::ft("QualName.CheckIfTemplateArgument");
 
    //  If we are parsing a function in a template instance and this name's
    //  referent (REF) is a template argument, find the template's version
@@ -2182,11 +2064,9 @@ void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_CopyContext = "QualName.CopyContext";
-
 void QualName::CopyContext(const CxxNamed* that)
 {
-   Debug::ft(QualName_CopyContext);
+   Debug::ft("QualName.CopyContext");
 
    CxxNamed::CopyContext(that);
 
@@ -2198,11 +2078,9 @@ void QualName::CopyContext(const CxxNamed* that)
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_EnterBlock = "QualName.EnterBlock";
-
 void QualName::EnterBlock()
 {
-   Debug::ft(QualName_EnterBlock);
+   Debug::ft("QualName.EnterBlock");
 
    Context::SetPos(GetLoc());
    auto name = *Name();
@@ -2231,22 +2109,18 @@ void QualName::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_GetDirectClasses = "QualName.GetDirectClasses";
-
 void QualName::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(QualName_GetDirectClasses);
+   Debug::ft("QualName.GetDirectClasses");
 
    Last()->GetDirectClasses(symbols);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_GetDirectTemplateArgs = "QualName.GetDirectTemplateArgs";
-
 void QualName::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 {
-   Debug::ft(QualName_GetDirectTemplateArgs);
+   Debug::ft("QualName.GetDirectTemplateArgs");
 
    for(auto n = First(); n != nullptr; n = n->Next())
    {
@@ -2256,11 +2130,9 @@ void QualName::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_GetForward = "QualName.GetForward";
-
 CxxScoped* QualName::GetForward() const
 {
-   Debug::ft(QualName_GetForward);
+   Debug::ft("QualName.GetForward");
 
    CxxScoped* forw = nullptr;
 
@@ -2275,11 +2147,9 @@ CxxScoped* QualName::GetForward() const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_GetNames = "QualName.GetNames";
-
 void QualName::GetNames(stringVector& names) const
 {
-   Debug::ft(QualName_GetNames);
+   Debug::ft("QualName.GetNames");
 
    //  Add this name, without template arguments, to the list.
    //
@@ -2353,11 +2223,9 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_ItemIsTemplateArg = "QualName.ItemIsTemplateArg";
-
 bool QualName::ItemIsTemplateArg(const CxxNamed* item) const
 {
-   Debug::ft(QualName_ItemIsTemplateArg);
+   Debug::ft("QualName.ItemIsTemplateArg");
 
    //  Look for template arguments attached to each name.
    //
@@ -2385,12 +2253,10 @@ TypeName* QualName::Last() const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_MatchTemplate = "QualName.MatchTemplate";
-
 TypeMatch QualName::MatchTemplate(const QualName* that,
    stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const
 {
-   Debug::ft(QualName_MatchTemplate);
+   Debug::ft("QualName.MatchTemplate");
 
    auto match = Compatible;
    auto size = Size();
@@ -2421,11 +2287,9 @@ void QualName::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_PushBack = "QualName.PushBack";
-
 void QualName::PushBack(TypeNamePtr& type)
 {
-   Debug::ft(QualName_PushBack);
+   Debug::ft("QualName.PushBack");
 
    if(first_ == nullptr)
       first_ = std::move(type);
@@ -2458,11 +2322,9 @@ string QualName::QualifiedName(bool scopes, bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_Referent = "QualName.Referent";
-
 CxxScoped* QualName::Referent() const
 {
-   Debug::ft(QualName_Referent);
+   Debug::ft("QualName.Referent");
 
    //  This is invoked to find a referent in executable code.
    //
@@ -2484,11 +2346,9 @@ CxxScoped* QualName::Referent() const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_ResolveTemplate = "QualName.ResolveTemplate";
-
 bool QualName::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 {
-   Debug::ft(QualName_ResolveTemplate);
+   Debug::ft("QualName.ResolveTemplate");
 
    //  If something within the template instance is being named,
    //  force its instantiation.
@@ -2502,67 +2362,55 @@ bool QualName::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_ResolveTypedef = "QualName.ResolveTypedef";
-
 bool QualName::ResolveTypedef(Typedef* type, size_t n) const
 {
-   Debug::ft(QualName_ResolveTypedef);
+   Debug::ft("QualName.ResolveTypedef");
 
    return At(n)->ResolveTypedef(type, n);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_SetOperator = "QualName.SetOperator";
-
 void QualName::SetOperator(Cxx::Operator oper) const
 {
-   Debug::ft(QualName_SetOperator);
+   Debug::ft("QualName.SetOperator");
 
    Last()->SetOperator(oper);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_SetReferent = "QualName.SetReferent";
-
 void QualName::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
-   Debug::ft(QualName_SetReferent);
+   Debug::ft("QualName.SetReferent");
 
    Last()->SetReferent(item, view);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_SetReferentN = "QualName.SetReferentN";
-
 void QualName::SetReferentN
    (size_t n, CxxScoped* item, const SymbolView* view) const
 {
-   Debug::ft(QualName_SetReferentN);
+   Debug::ft("QualName.SetReferentN");
 
    At(n)->SetReferent(item, view);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_SetTemplateArgs = "QualName.SetTemplateArgs";
-
 void QualName::SetTemplateArgs(const TemplateParms* tparms)
 {
-   Debug::ft(QualName_SetTemplateArgs);
+   Debug::ft("QualName.SetTemplateArgs");
 
    Last()->SetTemplateArgs(tparms);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_SetUserType = "QualName.SetUserType";
-
 void QualName::SetUserType(Cxx::ItemType user) const
 {
-   Debug::ft(QualName_SetUserType);
+   Debug::ft("QualName.SetUserType");
 
    for(auto n = First(); n != nullptr; n = n->Next())
    {
@@ -2616,12 +2464,10 @@ string QualName::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name SpaceDefn_ctor = "SpaceDefn.ctor";
-
 SpaceDefn::SpaceDefn(const Namespace* ns) :
    space_(ns)
 {
-   Debug::ft(SpaceDefn_ctor);
+   Debug::ft("SpaceDefn.ctor");
 
    CxxStats::Incr(CxxStats::SPACE_DEFN);
 }
@@ -2649,13 +2495,11 @@ string SpaceDefn::ScopedName(bool templates) const
 
 //==============================================================================
 
-fn_name StaticAssert_ctor = "StaticAssert.ctor";
-
 StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
    expr_(std::move(expr)),
    message_(std::move(message))
 {
-   Debug::ft(StaticAssert_ctor);
+   Debug::ft("StaticAssert.ctor");
 
    CxxStats::Incr(CxxStats::STATIC_ASSERT);
 }
@@ -2669,11 +2513,9 @@ void StaticAssert::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name StaticAssert_EnterBlock = "StaticAssert.EnterBlock";
-
 void StaticAssert::EnterBlock()
 {
-   Debug::ft(StaticAssert_EnterBlock);
+   Debug::ft("StaticAssert.EnterBlock");
 
    Context::SetPos(GetLoc());
    expr_->EnterBlock();
@@ -2683,11 +2525,9 @@ void StaticAssert::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name StaticAssert_EnterScope = "StaticAssert.EnterScope";
-
 bool StaticAssert::EnterScope()
 {
-   Debug::ft(StaticAssert_EnterScope);
+   Debug::ft("StaticAssert.EnterScope");
 
    Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertStaticAssert(this);
@@ -2723,11 +2563,9 @@ void StaticAssert::Shrink()
 
 //==============================================================================
 
-fn_name TemplateParms_ctor1 = "TemplateParms.ctor";
-
 TemplateParms::TemplateParms(TemplateParmPtr& parm)
 {
-   Debug::ft(TemplateParms_ctor1);
+   Debug::ft("TemplateParms.ctor");
 
    parms_.push_back(std::move(parm));
    CxxStats::Incr(CxxStats::TEMPLATE_PARMS);
@@ -2735,11 +2573,9 @@ TemplateParms::TemplateParms(TemplateParmPtr& parm)
 
 //------------------------------------------------------------------------------
 
-fn_name TemplateParms_AddParm = "TemplateParms.AddParm";
-
 void TemplateParms::AddParm(TemplateParmPtr& parm)
 {
-   Debug::ft(TemplateParms_AddParm);
+   Debug::ft("TemplateParms.AddParm");
 
    parms_.push_back(std::move(parm));
 }
@@ -2766,11 +2602,9 @@ void TemplateParms::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name TemplateParms_EnterBlock = "TemplateParms.EnterBlock";
-
 void TemplateParms::EnterBlock()
 {
-   Debug::ft(TemplateParms_EnterBlock);
+   Debug::ft("TemplateParms.EnterBlock");
 
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
@@ -2780,11 +2614,9 @@ void TemplateParms::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name TemplateParms_EnterScope = "TemplateParms.EnterScope";
-
 void TemplateParms::EnterScope() const
 {
-   Debug::ft(TemplateParms_EnterScope);
+   Debug::ft("TemplateParms.EnterScope");
 
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
@@ -2800,11 +2632,9 @@ void TemplateParms::EnterScope() const
 
 //------------------------------------------------------------------------------
 
-fn_name TemplateParms_ExitBlock = "TemplateParms.ExitBlock";
-
 void TemplateParms::ExitBlock() const
 {
-   Debug::ft(TemplateParms_ExitBlock);
+   Debug::ft("TemplateParms.ExitBlock");
 
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
@@ -2867,8 +2697,6 @@ string TemplateParms::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name TypeName_ctor1 = "TypeName.ctor";
-
 TypeName::TypeName(string& name) :
    args_(nullptr),
    ref_(nullptr),
@@ -2880,15 +2708,13 @@ TypeName::TypeName(string& name) :
    using_(false),
    direct_(false)
 {
-   Debug::ft(TypeName_ctor1);
+   Debug::ft("TypeName.ctor");
 
    std::swap(name_, name);
    CxxStats::Incr(CxxStats::TYPE_NAME);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TypeName_ctor2 = "TypeName.ctor(copy)";
 
 TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    name_(that.name_),
@@ -2901,7 +2727,7 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    using_(that.using_),
    direct_(that.direct_)
 {
-   Debug::ft(TypeName_ctor2);
+   Debug::ft("TypeName.ctor(copy)");
 
    if(that.args_ != nullptr)
    {
@@ -2920,22 +2746,18 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_dtor = "TypeName.dtor";
-
 TypeName::~TypeName()
 {
-   Debug::ftnt(TypeName_dtor);
+   Debug::ftnt("TypeName.dtor");
 
    CxxStats::Decr(CxxStats::TYPE_NAME);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_AddTemplateArg = "TypeName.AddTemplateArg";
-
 void TypeName::AddTemplateArg(TypeSpecPtr& arg)
 {
-   Debug::ft(TypeName_AddTemplateArg);
+   Debug::ft("TypeName.AddTemplateArg");
 
    if(args_ == nullptr) args_.reset(new TypeSpecPtrVector);
    arg->SetTemplateRole(TemplateArgument);
@@ -2989,11 +2811,9 @@ void TypeName::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_Append = "TypeName.Append";
-
 void TypeName::Append(const string& name, bool space)
 {
-   Debug::ft(TypeName_Append);
+   Debug::ft("TypeName.Append");
 
    if(space) name_ += SPACE;
    name_ += name;
@@ -3021,11 +2841,9 @@ CxxScoped* TypeName::DirectType() const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_FindReferent = "TypeName.FindReferent";
-
 void TypeName::FindReferent()
 {
-   Debug::ft(TypeName_FindReferent);
+   Debug::ft("TypeName.FindReferent");
 
    if(args_ != nullptr)
    {
@@ -3038,11 +2856,9 @@ void TypeName::FindReferent()
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_GetDirectClasses = "TypeName.GetDirectClasses";
-
 void TypeName::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(TypeName_GetDirectClasses);
+   Debug::ft("TypeName.GetDirectClasses");
 
    auto ref = DirectType();
 
@@ -3059,11 +2875,9 @@ void TypeName::GetDirectClasses(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_GetDirectTemplateArgs = "TypeName.GetDirectTemplateArgs";
-
 void TypeName::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 {
-   Debug::ft(TypeName_GetDirectTemplateArgs);
+   Debug::ft("TypeName.GetDirectTemplateArgs");
 
    if(args_ != nullptr)
    {
@@ -3076,11 +2890,9 @@ void TypeName::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_GetNames = "TypeName.GetNames";
-
 void TypeName::GetNames(stringVector& names) const
 {
-   Debug::ft(TypeName_GetNames);
+   Debug::ft("TypeName.GetNames");
 
    if(args_ != nullptr)
    {
@@ -3132,11 +2944,9 @@ void TypeName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_HasTemplateParmFor = "TypeName.HasTemplateParmFor";
-
 bool TypeName::HasTemplateParmFor(const CxxScope* scope) const
 {
-   Debug::ft(TypeName_HasTemplateParmFor);
+   Debug::ft("TypeName.HasTemplateParmFor");
 
    if(args_ != nullptr)
    {
@@ -3151,11 +2961,9 @@ bool TypeName::HasTemplateParmFor(const CxxScope* scope) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_Instantiating = "TypeName.Instantiating";
-
 void TypeName::Instantiating(CxxScopedVector& locals) const
 {
-   Debug::ft(TypeName_Instantiating);
+   Debug::ft("TypeName.Instantiating");
 
    if(args_ != nullptr)
    {
@@ -3168,11 +2976,9 @@ void TypeName::Instantiating(CxxScopedVector& locals) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_ItemIsTemplateArg = "TypeName.ItemIsTemplateArg";
-
 bool TypeName::ItemIsTemplateArg(const CxxNamed* item) const
 {
-   Debug::ft(TypeName_ItemIsTemplateArg);
+   Debug::ft("TypeName.ItemIsTemplateArg");
 
    if(args_ != nullptr)
    {
@@ -3199,12 +3005,10 @@ bool TypeName::ItemIsTemplateArg(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_MatchTemplate = "TypeName.MatchTemplate";
-
 TypeMatch TypeName::MatchTemplate(const TypeName* that,
    stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const
 {
-   Debug::ft(TypeName_MatchTemplate);
+   Debug::ft("TypeName.MatchTemplate");
 
    if(this->args_ == nullptr) return Compatible;
    auto thisSize = this->args_->size();
@@ -3226,11 +3030,9 @@ TypeMatch TypeName::MatchTemplate(const TypeName* that,
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_MemberAccessed = "TypeName.MemberAccessed";
-
 void TypeName::MemberAccessed(Class* cls, CxxScoped* mem) const
 {
-   Debug::ft(TypeName_MemberAccessed);
+   Debug::ft("TypeName.MemberAccessed");
 
    ref_ = mem;
    class_ = cls;
@@ -3238,12 +3040,10 @@ void TypeName::MemberAccessed(Class* cls, CxxScoped* mem) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_NamesReferToArgs = "TypeName.NamesReferToArgs";
-
 bool TypeName::NamesReferToArgs(const NameVector& names,
    const CxxScope* scope, const CodeFile* file, size_t& index) const
 {
-   Debug::ft(TypeName_NamesReferToArgs);
+   Debug::ft("TypeName.NamesReferToArgs");
 
    if(args_ != nullptr)
    {
@@ -3306,11 +3106,9 @@ string TypeName::QualifiedName(bool scopes, bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_ResolveTypedef = "TypeName.ResolveTypedef";
-
 bool TypeName::ResolveTypedef(Typedef* type, size_t n) const
 {
-   Debug::ft(TypeName_ResolveTypedef);
+   Debug::ft("TypeName.ResolveTypedef");
 
    type_ = type;
    return true;
@@ -3318,22 +3116,18 @@ bool TypeName::ResolveTypedef(Typedef* type, size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_SetForward = "TypeName.SetForward";
-
 void TypeName::SetForward(CxxScoped* decl) const
 {
-   Debug::ft(TypeName_SetForward);
+   Debug::ft("TypeName.SetForward");
 
    forw_ = decl;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_SetOperator = "TypeName.SetOperator";
-
 void TypeName::SetOperator(Cxx::Operator oper)
 {
-   Debug::ft(TypeName_SetOperator);
+   Debug::ft("TypeName.SetOperator");
 
    oper_ = oper;
 
@@ -3368,11 +3162,9 @@ void TypeName::SetOperator(Cxx::Operator oper)
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_SetReferent = "TypeName.SetReferent";
-
 void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
-   Debug::ft(TypeName_SetReferent);
+   Debug::ft("TypeName.SetReferent");
 
    //  This can be invoked more than once when a class template name clears
    //  its referent, instead of leaving it as a forward declaration, so that
@@ -3387,11 +3179,9 @@ void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_SetTemplateArgs = "TypeName.SetTemplateArgs";
-
 void TypeName::SetTemplateArgs(const TemplateParms* tparms)
 {
-   Debug::ft(TypeName_SetTemplateArgs);
+   Debug::ft("TypeName.SetTemplateArgs");
 
    auto parms = tparms->Parms();
 
@@ -3405,11 +3195,9 @@ void TypeName::SetTemplateArgs(const TemplateParms* tparms)
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_SetTemplateRole = "TypeName.SetTemplateRole";
-
 void TypeName::SetTemplateRole(TemplateRole role) const
 {
-   Debug::ft(TypeName_SetTemplateRole);
+   Debug::ft("TypeName.SetTemplateRole");
 
    if(args_ != nullptr)
    {
@@ -3422,11 +3210,9 @@ void TypeName::SetTemplateRole(TemplateRole role) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_SetUserType = "TypeName.SetUserType";
-
 void TypeName::SetUserType(Cxx::ItemType user) const
 {
-   Debug::ft(TypeName_SetUserType);
+   Debug::ft("TypeName.SetUserType");
 
    if(args_ != nullptr)
    {
@@ -3459,11 +3245,9 @@ void TypeName::Shrink()
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_SubclassAccess = "TypeName.SubclassAccess";
-
 void TypeName::SubclassAccess(Class* cls) const
 {
-   Debug::ft(TypeName_SubclassAccess);
+   Debug::ft("TypeName.SubclassAccess");
 
    class_ = cls;
 }
@@ -3487,24 +3271,20 @@ string TypeName::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name TypeSpec_ctor1 = "TypeSpec.ctor";
-
 TypeSpec::TypeSpec() :
    user_(Cxx::Operation),
    role_(TemplateNone)
 {
-   Debug::ft(TypeSpec_ctor1);
+   Debug::ft("TypeSpec.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TypeSpec_ctor2 = "TypeSpec.ctor(copy)";
 
 TypeSpec::TypeSpec(const TypeSpec& that) : CxxNamed(that),
    user_(that.user_),
    role_(that.role_)
 {
-   Debug::ft(TypeSpec_ctor2);
+   Debug::ft("TypeSpec.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------
@@ -3705,11 +3485,9 @@ void TypeSpec::SetPtrs(TagCount count)
 
 //------------------------------------------------------------------------------
 
-fn_name TypeSpec_SetUserType = "TypeSpec.SetUserType";
-
 void TypeSpec::SetUserType(Cxx::ItemType user)
 {
-   Debug::ft(TypeSpec_SetUserType);
+   Debug::ft("TypeSpec.SetUserType");
 
    user_ = user;
 }
@@ -3740,8 +3518,6 @@ string TypeSpec::TypeTagsString(const TypeTags& tags) const
 
 //==============================================================================
 
-fn_name TypeTags_ctor1 = "TypeTags.ctor";
-
 TypeTags::TypeTags() :
    ptrDet_(false),
    refDet_(false),
@@ -3754,12 +3530,10 @@ TypeTags::TypeTags() :
    constPtr_(0),
    volatilePtr_(0)
 {
-   Debug::ft(TypeTags_ctor1);
+   Debug::ft("TypeTags.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TypeTags_ctor2 = "TypeTags.ctor(TypeSpec)";
 
 TypeTags::TypeTags(const TypeSpec& spec) :
    ptrDet_(false),
@@ -3773,7 +3547,7 @@ TypeTags::TypeTags(const TypeSpec& spec) :
    constPtr_(0),
    volatilePtr_(0)
 {
-   Debug::ft(TypeTags_ctor2);
+   Debug::ft("TypeTags.ctor(TypeSpec)");
 
    for(auto i = 0; i < ptrs_; ++i)
    {
@@ -3783,11 +3557,9 @@ TypeTags::TypeTags(const TypeSpec& spec) :
 
 //------------------------------------------------------------------------------
 
-fn_name TypeTags_AlignTemplateTag = "TypeTags.AlignTemplateTag";
-
 bool TypeTags::AlignTemplateTag(TypeTags& that) const
 {
-   Debug::ft(TypeTags_AlignTemplateTag);
+   Debug::ft("TypeTags.AlignTemplateTag");
 
    if(that.ptrs_ < this->ptrs_) return false;
    if(that.arrays_ < this->arrays_) return false;
@@ -3798,11 +3570,9 @@ bool TypeTags::AlignTemplateTag(TypeTags& that) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeTags_ArrayCount = "TypeTags.ArrayCount";
-
 TagCount TypeTags::ArrayCount() const
 {
-   Debug::ft(TypeTags_ArrayCount);
+   Debug::ft("TypeTags.ArrayCount");
 
    auto count = arrays_;
    if(array_) ++count;
@@ -3847,11 +3617,9 @@ bool TypeTags::IsVolatilePtr(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeTags_MatchTemplateTags = "TypeTags.MatchTemplateTags";
-
 TypeMatch TypeTags::MatchTemplateTags(const TypeTags& that) const
 {
-   Debug::ft(TypeTags_MatchTemplateTags);
+   Debug::ft("TypeTags.MatchTemplateTags");
 
    if(this->ptrs_ > that.ptrs_) return Incompatible;
    if(this->arrays_ > that.arrays_) return Incompatible;
@@ -3880,11 +3648,9 @@ void TypeTags::Print(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeTags_PtrCount = "TypeTags.PtrCount";
-
 TagCount TypeTags::PtrCount(bool arrays) const
 {
-   Debug::ft(TypeTags_PtrCount);
+   Debug::ft("TypeTags.PtrCount");
 
    if(!arrays) return ptrs_;
    auto count = ptrs_ + arrays_;
@@ -3908,11 +3674,9 @@ void TypeTags::SetConstPtr() const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeTags_SetPointer = "TypeTags.SetPointer";
-
 bool TypeTags::SetPointer(size_t n, bool readonly, bool unstable)
 {
-   Debug::ft(TypeTags_SetPointer);
+   Debug::ft("TypeTags.SetPointer");
 
    //  Note that a "const" or "volatile" attributed cannot be cleared once set.
    //
@@ -3930,11 +3694,9 @@ bool TypeTags::SetPointer(size_t n, bool readonly, bool unstable)
 
 //------------------------------------------------------------------------------
 
-fn_name TypeTags_SetPtrs = "TypeTags.SetPtrs";
-
 void TypeTags::SetPtrs(TagCount count)
 {
-   Debug::ft(TypeTags_SetPtrs);
+   Debug::ft("TypeTags.SetPtrs");
 
    ptrs_ = count;
 }

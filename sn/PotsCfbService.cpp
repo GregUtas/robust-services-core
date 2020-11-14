@@ -29,7 +29,6 @@
 #include "PotsSessions.h"
 #include "SbAppIds.h"
 #include "SbEvents.h"
-#include "SysTypes.h"
 
 using namespace CallBase;
 
@@ -37,23 +36,19 @@ using namespace CallBase;
 
 namespace PotsBase
 {
-fn_name PotsCfbInitiator_ctor = "PotsCfbInitiator.ctor";
-
 PotsCfbInitiator::PotsCfbInitiator() :
    Initiator(PotsCfbServiceId, PotsCallServiceId,
    BcTrigger::LocalBusySap, PotsLocalBusySap::PotsCfbPriority)
 {
-   Debug::ft(PotsCfbInitiator_ctor);
+   Debug::ft("PotsCfbInitiator.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfbInitiator_ProcessEvent = "PotsCfbInitiator.ProcessEvent";
-
 EventHandler::Rc PotsCfbInitiator::ProcessEvent
    (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCfbInitiator_ProcessEvent);
+   Debug::ft("PotsCfbInitiator.ProcessEvent");
 
    auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
    auto prof = pssm.Profile();
@@ -70,29 +65,23 @@ EventHandler::Rc PotsCfbInitiator::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsCfbService_ctor = "PotsCfbService.ctor";
-
 PotsCfbService::PotsCfbService() : Service(PotsCfbServiceId, false, true)
 {
-   Debug::ft(PotsCfbService_ctor);
+   Debug::ft("PotsCfbService.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfbService_dtor = "PotsCfbService.dtor";
 
 PotsCfbService::~PotsCfbService()
 {
-   Debug::ftnt(PotsCfbService_dtor);
+   Debug::ftnt("PotsCfbService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfbService_AllocModifier = "PotsCfbService.AllocModifier";
-
 ServiceSM* PotsCfbService::AllocModifier() const
 {
-   Debug::ft(PotsCfbService_AllocModifier);
+   Debug::ft("PotsCfbService.AllocModifier");
 
    return new PotsCfxSsm(PotsCfbServiceId);
 }

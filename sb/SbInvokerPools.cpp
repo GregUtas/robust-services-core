@@ -92,11 +92,9 @@ PayloadInvokerPool::PayloadInvokerPool() :
 
 //------------------------------------------------------------------------------
 
-fn_name PayloadInvokerPool_dtor = "PayloadInvokerPool.dtor";
-
 PayloadInvokerPool::~PayloadInvokerPool()
 {
-   Debug::ftnt(PayloadInvokerPool_dtor);
+   Debug::ftnt("PayloadInvokerPool.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -123,12 +121,10 @@ void PayloadInvokerPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name PayloadInvokerPool_RecordDelay = "PayloadInvokerPool.RecordDelay";
-
 void PayloadInvokerPool::RecordDelay
    (MsgPriority prio, const Duration& delay) const
 {
-   Debug::ft(PayloadInvokerPool_RecordDelay);
+   Debug::ft("PayloadInvokerPool.RecordDelay");
 
    InvokerPool::RecordDelay(prio, delay);
 
@@ -151,12 +147,9 @@ void PayloadInvokerPool::RecordDelay
 
 //------------------------------------------------------------------------------
 
-fn_name PayloadInvokerPool_RejectIngressWork =
-   "PayloadInvokerPool.RejectIngressWork";
-
 bool PayloadInvokerPool::RejectIngressWork() const
 {
-   Debug::ft(PayloadInvokerPool_RejectIngressWork);
+   Debug::ft("PayloadInvokerPool.RejectIngressWork");
 
    auto msgCount = Singleton< MessagePool >::Instance()->AvailCount();
    auto msgOvld = (msgCount <= size_t(noIngressMessageCount_->GetValue()));

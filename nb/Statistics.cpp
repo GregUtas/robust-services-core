@@ -69,11 +69,9 @@ Statistic::Statistic(const string& expl, size_t divisor) :
 
 //------------------------------------------------------------------------------
 
-fn_name Statistic_dtor = "Statistic.dtor";
-
 Statistic::~Statistic()
 {
-   Debug::ftnt(Statistic_dtor);
+   Debug::ftnt("Statistic.dtor");
 
    Singleton< StatisticsRegistry >::Extant()->UnbindStat(*this);
 }
@@ -125,11 +123,9 @@ void Statistic::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Statistic_StartInterval = "Statistic.StartInterval";
-
 void Statistic::StartInterval(bool first)
 {
-   Debug::ft(Statistic_StartInterval);
+   Debug::ft("Statistic.StartInterval");
 
    if(first)
       total_ = curr_.load();
@@ -142,21 +138,17 @@ void Statistic::StartInterval(bool first)
 
 //==============================================================================
 
-fn_name Counter_ctor = "Counter.ctor";
-
 Counter::Counter(const string& expl, size_t divisor) :
    Statistic(expl, divisor)
 {
-   Debug::ft(Counter_ctor);
+   Debug::ft("Counter.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Counter_dtor = "Counter.dtor";
-
 Counter::~Counter()
 {
-   Debug::ftnt(Counter_dtor);
+   Debug::ftnt("Counter.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -184,31 +176,25 @@ void Counter::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-fn_name Accumulator_ctor = "Accumulator.ctor";
-
 Accumulator::Accumulator(const string& expl, size_t divisor) :
    Counter(expl, divisor)
 {
-   Debug::ft(Accumulator_ctor);
+   Debug::ft("Accumulator.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Accumulator_dtor = "Accumulator.dtor";
-
 Accumulator::~Accumulator()
 {
-   Debug::ftnt(Accumulator_dtor);
+   Debug::ftnt("Accumulator.dtor");
 }
 
 //==============================================================================
 
-fn_name HighWatermark_ctor = "HighWatermark.ctor";
-
 HighWatermark::HighWatermark(const string& expl, size_t divisor) :
    Statistic(expl, divisor)
 {
-   Debug::ft(HighWatermark_ctor);
+   Debug::ft("HighWatermark.ctor");
 
    curr_ = Initial;
    prev_ = Initial;
@@ -217,11 +203,9 @@ HighWatermark::HighWatermark(const string& expl, size_t divisor) :
 
 //------------------------------------------------------------------------------
 
-fn_name HighWatermark_dtor = "HighWatermark.dtor";
-
 HighWatermark::~HighWatermark()
 {
-   Debug::ftnt(HighWatermark_dtor);
+   Debug::ftnt("HighWatermark.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -264,11 +248,9 @@ uint64_t HighWatermark::Overall() const
 
 //------------------------------------------------------------------------------
 
-fn_name HighWatermark_StartInterval = "HighWatermark.StartInterval";
-
 void HighWatermark::StartInterval(bool first)
 {
-   Debug::ft(HighWatermark_StartInterval);
+   Debug::ft("HighWatermark.StartInterval");
 
    if(first || (curr_ > total_))
    {
@@ -281,12 +263,10 @@ void HighWatermark::StartInterval(bool first)
 
 //==============================================================================
 
-fn_name LowWatermark_ctor = "LowWatermark.ctor";
-
 LowWatermark::LowWatermark(const string& expl, size_t divisor) :
    Statistic(expl, divisor)
 {
-   Debug::ft(LowWatermark_ctor);
+   Debug::ft("LowWatermark.ctor");
 
    curr_ = Initial;
    prev_ = Initial;
@@ -295,11 +275,9 @@ LowWatermark::LowWatermark(const string& expl, size_t divisor) :
 
 //------------------------------------------------------------------------------
 
-fn_name LowWatermark_dtor = "LowWatermark.dtor";
-
 LowWatermark::~LowWatermark()
 {
-   Debug::ftnt(LowWatermark_dtor);
+   Debug::ftnt("LowWatermark.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -342,11 +320,9 @@ uint64_t LowWatermark::Overall() const
 
 //------------------------------------------------------------------------------
 
-fn_name LowWatermark_StartInterval = "LowWatermark.StartInterval";
-
 void LowWatermark::StartInterval(bool first)
 {
-   Debug::ft(LowWatermark_StartInterval);
+   Debug::ft("LowWatermark.StartInterval");
 
    if(first || (curr_ < total_))
    {

@@ -177,11 +177,9 @@ DWORD StackInfo::Startup()
 
 //==============================================================================
 
-fn_name SysThreadStack_Display = "SysThreadStack.Display";
-
 void SysThreadStack::Display(ostream& stream, fn_depth omit)
 {
-   Debug::ftnt(SysThreadStack_Display);
+   Debug::ftnt("SysThreadStack.Display");
 
    StackFramesPtr frames = nullptr;
    auto depth = StackInfo::GetFrames(frames);
@@ -268,11 +266,9 @@ fn_depth SysThreadStack::FuncDepth()
 
 //------------------------------------------------------------------------------
 
-fn_name SysThreadStack_Shutdown = "SysThreadStack.Shutdown";
-
 void SysThreadStack::Shutdown(RestartLevel level)
 {
-   Debug::ft(SysThreadStack_Shutdown);
+   Debug::ft("SysThreadStack.Shutdown");
 
    //  When actually exiting the process, unload symbol information.
    //
@@ -284,11 +280,9 @@ void SysThreadStack::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name SysThreadStack_Startup = "SysThreadStack.Startup";
-
 void SysThreadStack::Startup(RestartLevel level)
 {
-   Debug::ft(SysThreadStack_Startup);
+   Debug::ft("SysThreadStack.Startup");
 
    auto errval = StackInfo::Startup();
    if(errval == 0) return;
@@ -304,11 +298,9 @@ void SysThreadStack::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name SysThreadStack_TrapIsOk = "SysThreadStack.TrapIsOk";
-
 bool SysThreadStack::TrapIsOk()
 {
-   Debug::ft(SysThreadStack_TrapIsOk);
+   Debug::ft("SysThreadStack.TrapIsOk");
 
    //  Do not trap a thread that is currently executing a destructor.
    //

@@ -49,11 +49,9 @@ Singletons* Singletons::Instance_ = nullptr;
 
 //------------------------------------------------------------------------------
 
-fn_name Singletons_ctor = "Singletons.ctor";
-
 Singletons::Singletons()
 {
-   Debug::ft(Singletons_ctor);
+   Debug::ft("Singletons.ctor");
 
    registry_.Init(MaxSingletons);
    registry_.Reserve(MaxSingletons >> 4);
@@ -72,11 +70,9 @@ Singletons::~Singletons()
 
 //------------------------------------------------------------------------------
 
-fn_name Singletons_BindInstance = "Singletons.BindInstance";
-
 void Singletons::BindInstance(const Base** addr, MemoryType type)
 {
-   Debug::ft(Singletons_BindInstance);
+   Debug::ft("Singletons.BindInstance");
 
    //  Singletons on the permanent or immutable heap do not have to
    //  be recorded, because those heaps always survive restarts.
@@ -137,11 +133,9 @@ void Singletons::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Singletons_Shutdown = "Singletons.Shutdown";
-
 void Singletons::Shutdown(RestartLevel level)
 {
-   Debug::ft(Singletons_Shutdown);
+   Debug::ft("Singletons.Shutdown");
 
    MemoryType type;
 
@@ -184,11 +178,9 @@ void Singletons::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Singletons_UnbindInstance = "Singletons.UnbindInstance";
-
 void Singletons::UnbindInstance(const Base** addr)
 {
-   Debug::ftnt(Singletons_UnbindInstance);
+   Debug::ftnt("Singletons.UnbindInstance");
 
    //  Search for a singleton whose Instance_ pointer matches ADDR and remove
    //  it from the registry.  Move the last entry into its slot to keep the

@@ -34,39 +34,31 @@ fixed_string CliDaemonName = "cli";
 
 //------------------------------------------------------------------------------
 
-fn_name CliDaemon_ctor = "CliDaemon.ctor";
-
 CliDaemon::CliDaemon() : Daemon(CliDaemonName, 1)
 {
-   Debug::ft(CliDaemon_ctor);
+   Debug::ft("CliDaemon.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CliDaemon_dtor = "CliDaemon.dtor";
 
 CliDaemon::~CliDaemon()
 {
-   Debug::ftnt(CliDaemon_dtor);
+   Debug::ftnt("CliDaemon.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliDaemon_CreateThread = "CliDaemon.CreateThread";
-
 Thread* CliDaemon::CreateThread()
 {
-   Debug::ft(CliDaemon_CreateThread);
+   Debug::ft("CliDaemon.CreateThread");
    return Singleton< CliThread >::Instance();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliDaemon_GetAlarmLevel = "CliDaemon.GetAlarmLevel";
-
 AlarmStatus CliDaemon::GetAlarmLevel() const
 {
-   Debug::ft(CliDaemon_GetAlarmLevel);
+   Debug::ft("CliDaemon.GetAlarmLevel");
    return CriticalAlarm;
 }
 
@@ -83,39 +75,31 @@ fixed_string LogDaemonName = "log";
 
 //------------------------------------------------------------------------------
 
-fn_name LogDaemon_ctor = "LogDaemon.ctor";
-
 LogDaemon::LogDaemon() : Daemon(LogDaemonName, 1)
 {
-   Debug::ft(LogDaemon_ctor);
+   Debug::ft("LogDaemon.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LogDaemon_dtor = "LogDaemon.dtor";
 
 LogDaemon::~LogDaemon()
 {
-   Debug::ftnt(LogDaemon_dtor);
+   Debug::ftnt("LogDaemon.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LogDaemon_CreateThread = "LogDaemon.CreateThread";
-
 Thread* LogDaemon::CreateThread()
 {
-   Debug::ft(LogDaemon_CreateThread);
+   Debug::ft("LogDaemon.CreateThread");
    return Singleton< CliThread >::Instance();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LogDaemon_GetAlarmLevel = "LogDaemon.GetAlarmLevel";
-
 AlarmStatus LogDaemon::GetAlarmLevel() const
 {
-   Debug::ft(LogDaemon_GetAlarmLevel);
+   Debug::ft("LogDaemon.GetAlarmLevel");
    return CriticalAlarm;
 }
 
@@ -132,29 +116,23 @@ fixed_string ObjectDaemonName = "objaud";
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectDaemon_ctor = "ObjectDaemon.ctor";
-
 ObjectDaemon::ObjectDaemon() : Daemon(ObjectDaemonName, 1)
 {
-   Debug::ft(ObjectDaemon_ctor);
+   Debug::ft("ObjectDaemon.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ObjectDaemon_dtor = "ObjectDaemon.dtor";
 
 ObjectDaemon::~ObjectDaemon()
 {
-   Debug::ftnt(ObjectDaemon_dtor);
+   Debug::ftnt("ObjectDaemon.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectDaemon_CreateThread = "ObjectDaemon.CreateThread";
-
 Thread* ObjectDaemon::CreateThread()
 {
-   Debug::ft(ObjectDaemon_CreateThread);
+   Debug::ft("ObjectDaemon.CreateThread");
    return Singleton< ObjectPoolAudit >::Instance();
 }
 
@@ -171,29 +149,23 @@ fixed_string StatisticsDaemonName = "stats";
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsDaemon_ctor = "StatisticsDaemon.ctor";
-
 StatisticsDaemon::StatisticsDaemon() : Daemon(StatisticsDaemonName, 1)
 {
-   Debug::ft(StatisticsDaemon_ctor);
+   Debug::ft("StatisticsDaemon.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name StatisticsDaemon_dtor = "StatisticsDaemon.dtor";
 
 StatisticsDaemon::~StatisticsDaemon()
 {
-   Debug::ftnt(StatisticsDaemon_dtor);
+   Debug::ftnt("StatisticsDaemon.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsDaemon_CreateThread = "StatisticsDaemon.CreateThread";
-
 Thread* StatisticsDaemon::CreateThread()
 {
-   Debug::ft(StatisticsDaemon_CreateThread);
+   Debug::ft("StatisticsDaemon.CreateThread");
    return Singleton< StatisticsThread >::Instance();
 }
 

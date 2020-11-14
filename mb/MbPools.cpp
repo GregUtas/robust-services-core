@@ -34,20 +34,16 @@ const size_t MediaEndptPool::BlockSize =
 
 //------------------------------------------------------------------------------
 
-fn_name MediaEndptPool_ctor = "MediaEndptPool.ctor";
-
 MediaEndptPool::MediaEndptPool() :
    ObjectPool(MediaEndptObjPoolId, MemDynamic, BlockSize, "MediaEndpts")
 {
-   Debug::ft(MediaEndptPool_ctor);
+   Debug::ft("MediaEndptPool.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MediaEndptPool_dtor = "MediaEndptPool.dtor";
-
 MediaEndptPool::~MediaEndptPool()
 {
-   Debug::ftnt(MediaEndptPool_dtor);
+   Debug::ftnt("MediaEndptPool.dtor");
 }
 }

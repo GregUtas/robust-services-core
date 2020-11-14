@@ -40,11 +40,9 @@ const size_t LogBufferRegistry::LogBufferSize = 1 * MBs;
 
 //------------------------------------------------------------------------------
 
-fn_name LogBufferRegistry_ctor = "LogBufferRegistry.ctor";
-
 LogBufferRegistry::LogBufferRegistry() : size_(0)
 {
-   Debug::ft(LogBufferRegistry_ctor);
+   Debug::ft("LogBufferRegistry.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -60,11 +58,9 @@ LogBufferRegistry::~LogBufferRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name LogBufferRegistry_Access = "LogBufferRegistry.Access";
-
 LogBuffer* LogBufferRegistry::Access(size_t index) const
 {
-   Debug::ft(LogBufferRegistry_Access);
+   Debug::ft("LogBufferRegistry.Access");
 
    if(index >= size_ - 1) return nullptr;
    return buffer_[index].get();
@@ -72,11 +68,9 @@ LogBuffer* LogBufferRegistry::Access(size_t index) const
 
 //------------------------------------------------------------------------------
 
-fn_name LogBufferRegistry_Active = "LogBufferRegistry.Active";
-
 LogBuffer* LogBufferRegistry::Active() const
 {
-   Debug::ftnt(LogBufferRegistry_Active);
+   Debug::ftnt("LogBufferRegistry.Active");
 
    if(size_ == 0) return nullptr;
    return buffer_[size_ - 1].get();
@@ -84,11 +78,9 @@ LogBuffer* LogBufferRegistry::Active() const
 
 //------------------------------------------------------------------------------
 
-fn_name LogBufferRegistry_Compress = "LogBufferRegistry.Compress";
-
 void LogBufferRegistry::Compress()
 {
-   Debug::ft(LogBufferRegistry_Compress);
+   Debug::ft("LogBufferRegistry.Compress");
 
    for(size_t i = 0; i < size_ - 1; ++i)
    {
@@ -172,11 +164,9 @@ void LogBufferRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name LogBufferRegistry_Startup = "LogBufferRegistry.Startup";
-
 void LogBufferRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(LogBufferRegistry_Startup);
+   Debug::ft("LogBufferRegistry.Startup");
 
    //  Allocate a log buffer during each restart.  When the system is booting,
    //  don't unprotect immutable memory, because it needs to stay unprotected

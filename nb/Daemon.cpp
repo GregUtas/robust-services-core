@@ -42,15 +42,13 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name Daemon_ctor = "Daemon.ctor";
-
 Daemon::Daemon(fixed_string name, size_t size) :
    name_(name),
    size_(size),
    traps_(0),
    alarm_(nullptr)
 {
-   Debug::ft(Daemon_ctor);
+   Debug::ft("Daemon.ctor");
 
    Singleton< DaemonRegistry >::Instance()->BindDaemon(*this);
    EnsureAlarm();
@@ -91,11 +89,9 @@ Thread* Daemon::CreateThread()
 
 //------------------------------------------------------------------------------
 
-fn_name Daemon_CreateThreads = "Daemon.CreateThreads";
-
 void Daemon::CreateThreads()
 {
-   Debug::ft(Daemon_CreateThreads);
+   Debug::ft("Daemon.CreateThreads");
 
    switch(traps_)
    {
@@ -144,11 +140,9 @@ void Daemon::CreateThreads()
 
 //------------------------------------------------------------------------------
 
-fn_name Daemon_Disable = "Daemon.Disable";
-
 void Daemon::Disable()
 {
-   Debug::ft(Daemon_Disable);
+   Debug::ft("Daemon.Disable");
 
    //  This is a bit of a kludge but fits in well with the overall logic.
    //
@@ -179,11 +173,9 @@ void Daemon::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Daemon_Enable = "Daemon.Enable";
-
 void Daemon::Enable()
 {
-   Debug::ft(Daemon_Enable);
+   Debug::ft("Daemon.Enable");
 
    auto enabling = (traps_ >= 2);
    traps_ = 0;
@@ -196,11 +188,9 @@ void Daemon::Enable()
 
 //------------------------------------------------------------------------------
 
-fn_name Daemon_EnsureAlarm = "Daemon.EnsureAlarm";
-
 void Daemon::EnsureAlarm()
 {
-   Debug::ft(Daemon_EnsureAlarm);
+   Debug::ft("Daemon.EnsureAlarm");
 
    //  If the thread unavailable alarm is not registered, create it.
    //
@@ -235,11 +225,9 @@ Daemon::Iterator Daemon::Find(Thread* thread)
 
 //------------------------------------------------------------------------------
 
-fn_name Daemon_GetAlarmLevel = "Daemon.GetAlarmLevel";
-
 AlarmStatus Daemon::GetAlarmLevel() const
 {
-   Debug::ft(Daemon_GetAlarmLevel);
+   Debug::ft("Daemon.GetAlarmLevel");
 
    return (threads_.empty() ? MajorAlarm : MinorAlarm);
 }
@@ -253,11 +241,9 @@ void Daemon::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Daemon_RaiseAlarm = "Daemon.RaiseAlarm";
-
 void Daemon::RaiseAlarm(AlarmStatus level) const
 {
-   Debug::ft(Daemon_RaiseAlarm);
+   Debug::ft("Daemon.RaiseAlarm");
 
    auto id = (level == CriticalAlarm ? ThreadCriticalDeath : ThreadUnavailable);
 
@@ -279,11 +265,9 @@ void Daemon::RaiseAlarm(AlarmStatus level) const
 
 //------------------------------------------------------------------------------
 
-fn_name Daemon_Startup = "Daemon.Startup";
-
 void Daemon::Startup(RestartLevel level)
 {
-   Debug::ft(Daemon_Startup);
+   Debug::ft("Daemon.Startup");
 
    traps_ = 0;
    EnsureAlarm();
@@ -291,22 +275,18 @@ void Daemon::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Daemon_ThreadCreated = "Daemon.ThreadCreated";
-
 void Daemon::ThreadCreated(Thread* thread)
 {
-   Debug::ft(Daemon_ThreadCreated);
+   Debug::ft("Daemon.ThreadCreated");
 
    threads_.insert(thread);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Daemon_ThreadDeleted = "Daemon.ThreadDeleted";
-
 void Daemon::ThreadDeleted(Thread* thread)
 {
-   Debug::ft(Daemon_ThreadDeleted);
+   Debug::ft("Daemon.ThreadDeleted");
 
    //  This does not immediately recreate the deleted thread.  We only create
    //  threads when invoked by InitThread, which is not the case here.  So we

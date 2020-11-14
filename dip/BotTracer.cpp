@@ -48,11 +48,9 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name BotTracer_ctor = "BotTracer.ctor";
-
 BotTracer::BotTracer()
 {
-   Debug::ft(BotTracer_ctor);
+   Debug::ft("BotTracer.ctor");
 
    Singleton< BotTraceTool >::Instance();
 }

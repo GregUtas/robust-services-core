@@ -38,8 +38,6 @@ const signal_t PosixSignal::MaxId = UINT8_MAX;
 
 //------------------------------------------------------------------------------
 
-fn_name PosixSignal_ctor = "PosixSignal.ctor";
-
 PosixSignal::PosixSignal(signal_t value, c_string name,
    c_string expl, uint8_t severity, const Flags& attrs) :
    value_(value),
@@ -48,7 +46,7 @@ PosixSignal::PosixSignal(signal_t value, c_string name,
    severity_(severity),
    attrs_(attrs)
 {
-   Debug::ft(PosixSignal_ctor);
+   Debug::ft("PosixSignal.ctor");
 
    Singleton< PosixSignalRegistry >::Instance()->BindSignal(*this);
 }

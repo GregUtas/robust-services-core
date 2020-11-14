@@ -39,11 +39,9 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name Protocol_ctor = "Protocol.ctor";
-
 Protocol::Protocol(Id prid, Id base) : base_(base)
 {
-   Debug::ft(Protocol_ctor);
+   Debug::ft("Protocol.ctor");
 
    signals_.Init(Signal::MaxId, Signal::CellDiff(), MemImmutable);
    parameters_.Init(Parameter::MaxId, Parameter::CellDiff(), MemImmutable);
@@ -66,22 +64,18 @@ Protocol::~Protocol()
 
 //------------------------------------------------------------------------------
 
-fn_name Protocol_BindParameter = "Protocol.BindParameter";
-
 bool Protocol::BindParameter(Parameter& parameter)
 {
-   Debug::ft(Protocol_BindParameter);
+   Debug::ft("Protocol.BindParameter");
 
    return parameters_.Insert(parameter);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Protocol_BindSignal = "Protocol.BindSignal";
-
 bool Protocol::BindSignal(Signal& signal)
 {
-   Debug::ft(Protocol_BindSignal);
+   Debug::ft("Protocol.BindSignal");
 
    return signals_.Insert(signal);
 }
@@ -215,33 +209,27 @@ void Protocol::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Protocol_UnbindParameter = "Protocol.UnbindParameter";
-
 void Protocol::UnbindParameter(Parameter& parameter)
 {
-   Debug::ftnt(Protocol_UnbindParameter);
+   Debug::ftnt("Protocol.UnbindParameter");
 
    parameters_.Erase(parameter);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Protocol_UnbindSignal = "Protocol.UnbindSignal";
-
 void Protocol::UnbindSignal(Signal& signal)
 {
-   Debug::ftnt(Protocol_UnbindSignal);
+   Debug::ftnt("Protocol.UnbindSignal");
 
    signals_.Erase(signal);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Protocol_Understands = "Protocol.Understands";
-
 bool Protocol::Understands(Id prid1, Id prid2)
 {
-   Debug::ft(Protocol_Understands);
+   Debug::ft("Protocol.Understands");
 
    if(prid1 == prid2) return true;
 

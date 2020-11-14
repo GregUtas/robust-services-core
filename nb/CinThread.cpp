@@ -37,12 +37,10 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CinThread_ctor = "CinThread.ctor";
-
 CinThread::CinThread() : Thread(OperationsFaction),
    client_(nullptr)
 {
-   Debug::ft(CinThread_ctor);
+   Debug::ft("CinThread.ctor");
 
    buff_[0] = NUL;
    SetInitialized();
@@ -50,11 +48,9 @@ CinThread::CinThread() : Thread(OperationsFaction),
 
 //------------------------------------------------------------------------------
 
-fn_name CinThread_dtor = "CinThread.dtor";
-
 CinThread::~CinThread()
 {
-   Debug::ftnt(CinThread_dtor);
+   Debug::ftnt("CinThread.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -73,11 +69,9 @@ void CinThread::ClearClient(const Thread* client)
 
 //------------------------------------------------------------------------------
 
-fn_name CinThread_Destroy = "CinThread.Destroy";
-
 void CinThread::Destroy()
 {
-   Debug::ft(CinThread_Destroy);
+   Debug::ft("CinThread.Destroy");
 
    Singleton< CinThread >::Destroy();
 }
@@ -136,11 +130,9 @@ void CinThread::Enter()
 
 //------------------------------------------------------------------------------
 
-fn_name CinThread_GetLine = "CinThread.GetLine";
-
 std::streamsize CinThread::GetLine(string& buff)
 {
-   Debug::ft(CinThread_GetLine);
+   Debug::ft("CinThread.GetLine");
 
    //  Do not read from the console during a restart.  It blocks a thread,
    //  which prevents it from exiting.
@@ -197,11 +189,9 @@ void CinThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CinThread_SetClient = "CinThread.SetClient";
-
 bool CinThread::SetClient(Thread* client)
 {
-   Debug::ft(CinThread_SetClient);
+   Debug::ft("CinThread.SetClient");
 
    //  This succeeds if
    //  o no client is currently registered

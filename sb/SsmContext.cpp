@@ -46,21 +46,17 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name SsmContext_ctor = "SsmContext.ctor";
-
 SsmContext::SsmContext(Faction faction) : PsmContext(faction),
    root_(nullptr)
 {
-   Debug::ft(SsmContext_ctor);
+   Debug::ft("SsmContext.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SsmContext_dtor = "SsmContext.dtor";
-
 SsmContext::~SsmContext()
 {
-   Debug::ftnt(SsmContext_dtor);
+   Debug::ftnt("SsmContext.dtor");
 
    delete root_;
    root_ = nullptr;
@@ -111,11 +107,9 @@ void SsmContext::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name SsmContext_EndOfTransaction = "SsmContext.EndOfTransaction";
-
 void SsmContext::EndOfTransaction()
 {
-   Debug::ft(SsmContext_EndOfTransaction);
+   Debug::ft("SsmContext.EndOfTransaction");
 
    PsmContext::EndOfTransaction();
 
@@ -124,11 +118,9 @@ void SsmContext::EndOfTransaction()
 
 //------------------------------------------------------------------------------
 
-fn_name SsmContext_GetSubtended = "SsmContext.GetSubtended";
-
 void SsmContext::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(SsmContext_GetSubtended);
+   Debug::ft("SsmContext.GetSubtended");
 
    PsmContext::GetSubtended(objects);
 
@@ -137,11 +129,9 @@ void SsmContext::GetSubtended(std::vector< Base* >& objects) const
 
 //------------------------------------------------------------------------------
 
-fn_name SsmContext_IsIdle = "SsmContext.IsIdle";
-
 bool SsmContext::IsIdle() const
 {
-   Debug::ft(SsmContext_IsIdle);
+   Debug::ft("SsmContext.IsIdle");
 
    if(root_ == nullptr) return true;
 
@@ -150,11 +140,9 @@ bool SsmContext::IsIdle() const
 
 //------------------------------------------------------------------------------
 
-fn_name SsmContext_OutputLog = "SsmContext.OutputLog";
-
 void SsmContext::OutputLog(ServiceId sid, word errval) const
 {
-   Debug::ft(SsmContext_OutputLog);
+   Debug::ft("SsmContext.OutputLog");
 
    auto log = Log::Create(SessionLogGroup, ServiceError);
    if(log == nullptr) return;
@@ -173,11 +161,9 @@ void SsmContext::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name SsmContext_ProcessIcMsg = "SsmContext.ProcessIcMsg";
-
 void SsmContext::ProcessIcMsg(Message& msg)
 {
-   Debug::ft(SsmContext_ProcessIcMsg);
+   Debug::ft("SsmContext.ProcessIcMsg");
 
    //  Find or create the port that will receive MSG.
    //
@@ -248,11 +234,9 @@ void SsmContext::ProcessIcMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name SsmContext_SetRoot = "SsmContext.SetRoot";
-
 void SsmContext::SetRoot(RootServiceSM* root)
 {
-   Debug::ftnt(SsmContext_SetRoot);
+   Debug::ftnt("SsmContext.SetRoot");
 
    root_ = root;
 

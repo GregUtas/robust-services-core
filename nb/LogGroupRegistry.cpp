@@ -48,30 +48,24 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name LogStatsGroup_ctor = "LogStatsGroup.ctor";
-
 LogStatsGroup::LogStatsGroup() : StatisticsGroup("Logs [group id_t]")
 {
-   Debug::ft(LogStatsGroup_ctor);
+   Debug::ft("LogStatsGroup.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LogStatsGroup_dtor = "LogStatsGroup.dtor";
 
 LogStatsGroup::~LogStatsGroup()
 {
-   Debug::ftnt(LogStatsGroup_dtor);
+   Debug::ftnt("LogStatsGroup.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LogStatsGroup_DisplayStats = "LogStatsGroup.DisplayStats";
 
 void LogStatsGroup::DisplayStats
    (ostream& stream, id_t id, const Flags& options) const
 {
-   Debug::ft(LogStatsGroup_DisplayStats);
+   Debug::ft("LogStatsGroup.DisplayStats");
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
@@ -106,11 +100,9 @@ const id_t LogGroupRegistry::MaxGroups = 250;
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroupRegistry_ctor = "LogGroupRegistry.ctor";
-
 LogGroupRegistry::LogGroupRegistry()
 {
-   Debug::ft(LogGroupRegistry_ctor);
+   Debug::ft("LogGroupRegistry.ctor");
 
    groups_.Init(MaxGroups, LogGroup::CellDiff(), MemImmutable);
    statsGroup_.reset(new LogStatsGroup);
@@ -165,11 +157,9 @@ void LogGroupRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroupRegistry_FindGroup = "LogGroupRegistry.FindGroup";
-
 LogGroup* LogGroupRegistry::FindGroup(const std::string& name) const
 {
-   Debug::ftnt(LogGroupRegistry_FindGroup);
+   Debug::ftnt("LogGroupRegistry.FindGroup");
 
    auto key = strUpper(name);
 
@@ -183,11 +173,9 @@ LogGroup* LogGroupRegistry::FindGroup(const std::string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroupRegistry_FindLog = "LogGroupRegistry.FindLog";
-
 Log* LogGroupRegistry::FindLog(const std::string& name, LogId id) const
 {
-   Debug::ftnt(LogGroupRegistry_FindLog);
+   Debug::ftnt("LogGroupRegistry.FindLog");
 
    auto group = FindGroup(name);
    if(group != nullptr) return group->FindLog(id);
@@ -210,11 +198,9 @@ void LogGroupRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroupRegistry_Shutdown = "LogGroupRegistry.Shutdown";
-
 void LogGroupRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(LogGroupRegistry_Shutdown);
+   Debug::ft("LogGroupRegistry.Shutdown");
 
    for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
    {
@@ -227,11 +213,9 @@ void LogGroupRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroupRegistry_Startup = "LogGroupRegistry.Startup";
-
 void LogGroupRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(LogGroupRegistry_Startup);
+   Debug::ft("LogGroupRegistry.Startup");
 
    if(statsGroup_ == nullptr)
    {
@@ -247,11 +231,9 @@ void LogGroupRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroupRegistry_UnbindGroup = "LogGroupRegistry.UnbindGroup";
-
 void LogGroupRegistry::UnbindGroup(LogGroup& group)
 {
-   Debug::ftnt(LogGroupRegistry_UnbindGroup);
+   Debug::ftnt("LogGroupRegistry.UnbindGroup");
 
    groups_.Erase(group);
 }

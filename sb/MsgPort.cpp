@@ -51,28 +51,24 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name MsgPort_ctor1 = "MsgPort.ctor(i/c)";
-
 MsgPort::MsgPort(const Message& msg, Context& ctx) : ProtocolLayer(&ctx),
    locAddr_(msg.GetReceiver()),
    remAddr_(msg.GetSender()),
    msgRcvd_(true),
    msgSent_(false)
 {
-   Debug::ft(MsgPort_ctor1);
+   Debug::ft("MsgPort.ctor(i/c)");
 
    Initialize(&msg);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_ctor2 = "MsgPort.ctor(o/g)";
-
 MsgPort::MsgPort(ProtocolLayer& upper) : ProtocolLayer(upper, true),
    msgRcvd_(false),
    msgSent_(false)
 {
-   Debug::ft(MsgPort_ctor2);
+   Debug::ft("MsgPort.ctor(o/g)");
 
    //  We were created on behalf of UPPER's factory.
    //
@@ -82,11 +78,9 @@ MsgPort::MsgPort(ProtocolLayer& upper) : ProtocolLayer(upper, true),
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_dtor = "MsgPort.dtor";
-
 MsgPort::~MsgPort()
 {
-   Debug::ftnt(MsgPort_dtor);
+   Debug::ftnt("MsgPort.dtor");
 
    //  Record the port's deletion if this context is traced.
    //
@@ -114,11 +108,9 @@ MsgPort::~MsgPort()
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_AdjacentDeleted = "MsgPort.AdjacentDeleted";
-
 void MsgPort::AdjacentDeleted(bool upper)
 {
-   Debug::ft(MsgPort_AdjacentDeleted);
+   Debug::ft("MsgPort.AdjacentDeleted");
 
    ProtocolLayer::AdjacentDeleted(upper);
    delete this;
@@ -157,11 +149,9 @@ ProtocolLayer* MsgPort::AllocUpper(const Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_Cleanup = "MsgPort.Cleanup";
-
 void MsgPort::Cleanup()
 {
-   Debug::ft(MsgPort_Cleanup);
+   Debug::ft("MsgPort.Cleanup");
 
    remAddr_.ReleaseSocket();
    ProtocolLayer::Cleanup();
@@ -186,11 +176,9 @@ void MsgPort::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_DropPeer = "MsgPort.DropPeer";
-
 bool MsgPort::DropPeer(const GlobalAddress& peerPrevRemAddr)
 {
-   Debug::ft(MsgPort_DropPeer);
+   Debug::ft("MsgPort.DropPeer");
 
    //  Report failure if this PSM's peer cannot be found.
    //
@@ -207,11 +195,9 @@ bool MsgPort::DropPeer(const GlobalAddress& peerPrevRemAddr)
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_Find = "MsgPort.Find";
-
 MsgPort* MsgPort::Find(const LocalAddress& locAddr)
 {
-   Debug::ft(MsgPort_Find);
+   Debug::ft("MsgPort.Find");
 
    auto pool = Singleton< MsgPortPool >::Instance();
    if(locAddr.pid != pool->Pid()) return nullptr;
@@ -228,11 +214,9 @@ MsgPort* MsgPort::Find(const LocalAddress& locAddr)
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_FindPeer = "MsgPort.FindPeer";
-
 MsgPort* MsgPort::FindPeer(const GlobalAddress& remAddr)
 {
-   Debug::ft(MsgPort_FindPeer);
+   Debug::ft("MsgPort.FindPeer");
 
    return Singleton< MsgPortPool >::Instance()->FindPeerPort(remAddr);
 }
@@ -298,12 +282,10 @@ void MsgPort::Initialize(const Message* msg)
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_JoinPeer = "MsgPort.JoinPeer";
-
 ProtocolLayer* MsgPort::JoinPeer
    (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr)
 {
-   Debug::ft(MsgPort_JoinPeer);
+   Debug::ft("MsgPort.JoinPeer");
 
    //  Find the peer port.
    //
@@ -330,11 +312,9 @@ ProtocolLayer* MsgPort::JoinPeer
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_new = "MsgPort.operator new";
-
 void* MsgPort::operator new(size_t size)
 {
-   Debug::ft(MsgPort_new);
+   Debug::ft("MsgPort.operator new");
 
    return Singleton< MsgPortPool >::Instance()->DeqBlock(size);
 }
@@ -348,22 +328,18 @@ void MsgPort::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_Port = "MsgPort.Port";
-
 MsgPort* MsgPort::Port() const
 {
-   Debug::ft(MsgPort_Port);
+   Debug::ft("MsgPort.Port");
 
    return const_cast< MsgPort* >(this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_ReceiveMsg = "MsgPort.ReceiveMsg";
-
 Event* MsgPort::ReceiveMsg(Message& msg)
 {
-   Debug::ft(MsgPort_ReceiveMsg);
+   Debug::ft("MsgPort.ReceiveMsg");
 
    //  If this port was created to receive a message, msgRcvd_ was set by the
    //  constructor.  If this port was created to send a message, then msgRcvd_
@@ -391,11 +367,9 @@ Event* MsgPort::ReceiveMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_Route = "MsgPort.Route";
-
 Message::Route MsgPort::Route() const
 {
-   Debug::ft(MsgPort_Route);
+   Debug::ft("MsgPort.Route");
 
    auto upper = Upper();
    if(upper != nullptr) return upper->Route();
@@ -406,11 +380,9 @@ Message::Route MsgPort::Route() const
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_SendMsg = "MsgPort.SendMsg";
-
 bool MsgPort::SendMsg(Message& msg)
 {
-   Debug::ft(MsgPort_SendMsg);
+   Debug::ft("MsgPort.SendMsg");
 
    if(!msgRcvd_ && !msgSent_)
    {
@@ -458,11 +430,9 @@ bool MsgPort::SendMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_UpdatePeer = "MsgPort.UpdatePeer";
-
 void MsgPort::UpdatePeer() const
 {
-   Debug::ft(MsgPort_UpdatePeer);
+   Debug::ft("MsgPort.UpdatePeer");
 
    //  When a message arrives and creates a port, immediately update the peer
    //  (the port that sent the message) so that it knows the address of this
@@ -486,11 +456,9 @@ void MsgPort::UpdatePeer() const
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_UppermostPsm = "MsgPort.UppermostPsm";
-
 ProtocolSM* MsgPort::UppermostPsm() const
 {
-   Debug::ft(MsgPort_UppermostPsm);
+   Debug::ft("MsgPort.UppermostPsm");
 
    auto upper = Upper();
    if(upper == nullptr) return nullptr;
@@ -499,11 +467,9 @@ ProtocolSM* MsgPort::UppermostPsm() const
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPort_WrapMsg = "MsgPort.WrapMsg";
-
 Message* MsgPort::WrapMsg(Message& msg)
 {
-   Debug::ft(MsgPort_WrapMsg);
+   Debug::ft("MsgPort.WrapMsg");
 
    return &msg;
 }

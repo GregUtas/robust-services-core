@@ -42,13 +42,11 @@ using namespace NodeBase;
 
 namespace Diplomacy
 {
-fn_name BotThread_ctor = "BotThread.ctor";
-
 BotThread::BotThread() : Thread(PayloadFaction),
    bot_(nullptr),
    exit_(false)
 {
-   Debug::ft(BotThread_ctor);
+   Debug::ft("BotThread.ctor");
 
    SetInitialized();
 }
@@ -62,11 +60,9 @@ c_string BotThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name BotThread_CancelEvent = "BotThread.CancelEvent";
-
 void BotThread::CancelEvent(BotEvent event)
 {
-   Debug::ft(BotThread_CancelEvent);
+   Debug::ft("BotThread.CancelEvent");
 
    for(auto w = wakeups_.begin(); w != wakeups_.end(); ++w)
    {
@@ -80,11 +76,9 @@ void BotThread::CancelEvent(BotEvent event)
 
 //------------------------------------------------------------------------------
 
-fn_name BotThread_Destroy = "BotThread.Destroy";
-
 void BotThread::Destroy()
 {
-   Debug::ft(BotThread_Destroy);
+   Debug::ft("BotThread.Destroy");
 
    Singleton< BotThread >::Destroy();
 }
@@ -164,11 +158,9 @@ void BotThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name BotThread_ProcessEvent = "BotThread.ProcessEvent";
-
 void BotThread::ProcessEvent()
 {
-   Debug::ft(BotThread_ProcessEvent);
+   Debug::ft("BotThread.ProcessEvent");
 
    //  The event to be processed is at the front of wakeups_.  Before
    //  injecting a BM_Message containing the event, adjust the timeouts
@@ -199,11 +191,9 @@ void BotThread::ProcessEvent()
 
 //------------------------------------------------------------------------------
 
-fn_name BotThread_ProcessMsg = "BotThread.ProcessMsg";
-
 void BotThread::ProcessMsg(MsgBuffer* msg) const
 {
-   Debug::ft(BotThread_ProcessMsg);
+   Debug::ft("BotThread.ProcessMsg");
 
    //  A message has arrived.  Have the bot process it and then delete it
    //  (which occurs automatically, because we assign it to a unique_ptr).
@@ -227,11 +217,9 @@ void BotThread::ProcessMsg(MsgBuffer* msg) const
 
 //------------------------------------------------------------------------------
 
-fn_name BotThread_QueueEvent = "BotThread.QueueEvent";
-
 bool BotThread::QueueEvent(BotEvent event, secs_t secs)
 {
-   Debug::ft(BotThread_QueueEvent);
+   Debug::ft("BotThread.QueueEvent");
 
    auto item = wakeups_.insert(Wakeup(event, secs));
    return item.second;
@@ -239,11 +227,9 @@ bool BotThread::QueueEvent(BotEvent event, secs_t secs)
 
 //------------------------------------------------------------------------------
 
-fn_name BotThread_QueueMsg = "BotThread.QueueMsg";
-
 void BotThread::QueueMsg(DipIpBufferPtr& buff)
 {
-   Debug::ft(BotThread_QueueMsg);
+   Debug::ft("BotThread.QueueMsg");
 
    EnqMsg(*buff.release());
 }

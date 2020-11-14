@@ -47,36 +47,30 @@ UsingVector Block::Usings_ = UsingVector();
 
 //------------------------------------------------------------------------------
 
-fn_name Block_ctor = "Block.ctor";
-
 Block::Block(bool braced) :
    name_(LOCALS_STR),
    braced_(braced),
    nested_(false)
 {
-   Debug::ft(Block_ctor);
+   Debug::ft("Block.ctor");
 
    CxxStats::Incr(CxxStats::BLOCK_DECL);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Block_dtor = "Block.dtor";
-
 Block::~Block()
 {
-   Debug::ftnt(Block_dtor);
+   Debug::ftnt("Block.dtor");
 
    CxxStats::Decr(CxxStats::BLOCK_DECL);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Block_AddStatement = "Block.AddStatement";
-
 bool Block::AddStatement(CxxToken* s)
 {
-   Debug::ft(Block_AddStatement);
+   Debug::ft("Block.AddStatement");
 
    statements_.push_back(TokenPtr(s));
    return true;
@@ -94,11 +88,9 @@ void Block::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Block_AddUsing = "Block.AddUsing";
-
 void Block::AddUsing(Using* use)
 {
-   Debug::ft(Block_AddUsing);
+   Debug::ft("Block.AddUsing");
 
    Usings_.push_back(use);
 }
@@ -208,11 +200,9 @@ void Block::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Block_EnterBlock = "Block.EnterBlock";
-
 void Block::EnterBlock()
 {
-   Debug::ft(Block_EnterBlock);
+   Debug::ft("Block.EnterBlock");
 
    Context::SetPos(GetLoc());
    Context::PushScope(this);
@@ -234,11 +224,9 @@ void Block::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Block_FindNthItem = "Block.FindNthItem";
-
 CxxScoped* Block::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(Block_FindNthItem);
+   Debug::ft("Block.FindNthItem");
 
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
@@ -278,12 +266,10 @@ void Block::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Block_GetUsingFor = "Block.GetUsingFor";
-
 Using* Block::GetUsingFor(const string& fqName,
    size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
-   Debug::ft(Block_GetUsingFor);
+   Debug::ft("Block.GetUsingFor");
 
    for(auto u = Usings_.cbegin(); u != Usings_.cend(); ++u)
    {
@@ -306,11 +292,9 @@ bool Block::InLine() const
 
 //------------------------------------------------------------------------------
 
-fn_name Block_LocateItem = "Block.LocateItem";
-
 bool Block::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(Block_LocateItem);
+   Debug::ft("Block.LocateItem");
 
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
@@ -344,11 +328,9 @@ void Block::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name Block_RemoveUsing = "Block.RemoveUsing";
-
 void Block::RemoveUsing(const Using* use)
 {
-   Debug::ft(Block_RemoveUsing);
+   Debug::ft("Block.RemoveUsing");
 
    for(auto u = Usings_.cbegin(); u != Usings_.cend(); ++u)
    {
@@ -362,11 +344,9 @@ void Block::RemoveUsing(const Using* use)
 
 //------------------------------------------------------------------------------
 
-fn_name Block_ResetUsings = "Block.ResetUsings";
-
 void Block::ResetUsings()
 {
-   Debug::ft(Block_ResetUsings);
+   Debug::ft("Block.ResetUsings");
 
    Usings_.clear();
 }
@@ -404,8 +384,6 @@ void Block::Shrink()
 
 //==============================================================================
 
-fn_name ClassData_ctor = "ClassData.ctor";
-
 ClassData::ClassData(string& name, TypeSpecPtr& type) : Data(type),
    memInit_(nullptr),
    mutable_(false),
@@ -414,7 +392,7 @@ ClassData::ClassData(string& name, TypeSpecPtr& type) : Data(type),
    last_(false),
    depth_(0)
 {
-   Debug::ft(ClassData_ctor);
+   Debug::ft("ClassData.ctor");
 
    std::swap(name_, name);
    Singleton< CxxSymbols >::Instance()->InsertData(this);
@@ -424,11 +402,9 @@ ClassData::ClassData(string& name, TypeSpecPtr& type) : Data(type),
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_dtor = "ClassData.dtor";
-
 ClassData::~ClassData()
 {
-   Debug::ftnt(ClassData_dtor);
+   Debug::ftnt("ClassData.dtor");
 
    CloseScope();
    Singleton< CxxSymbols >::Extant()->EraseData(this);
@@ -446,11 +422,9 @@ void ClassData::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_Check = "ClassData.Check";
-
 void ClassData::Check() const
 {
-   Debug::ft(ClassData_Check);
+   Debug::ft("ClassData.Check");
 
    Data::Check();
 
@@ -477,11 +451,9 @@ void ClassData::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_CheckAccessControl = "ClassData.CheckAccessControl";
-
 void ClassData::CheckAccessControl() const
 {
-   Debug::ft(ClassData_CheckAccessControl);
+   Debug::ft("ClassData.CheckAccessControl");
 
    //  This checks for data that
    //  o could have a more restricted access control, or
@@ -505,11 +477,9 @@ void ClassData::CheckAccessControl() const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_CheckIfInitialized = "ClassData.CheckIfInitialized";
-
 void ClassData::CheckIfInitialized() const
 {
-   Debug::ft(ClassData_CheckIfInitialized);
+   Debug::ft("ClassData.CheckIfInitialized");
 
    //  Static data should be initialized.
    //
@@ -518,11 +488,9 @@ void ClassData::CheckIfInitialized() const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_CheckIfMutated = "ClassData.CheckIfMutated";
-
 void ClassData::CheckIfMutated() const
 {
-   Debug::ft(ClassData_CheckIfMutated);
+   Debug::ft("ClassData.CheckIfMutated");
 
    if(mutable_ && !mutated_) Log(DataNeedNotBeMutable);
 }
@@ -635,11 +603,9 @@ void ClassData::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_EnterScope = "ClassData.EnterScope";
-
 bool ClassData::EnterScope()
 {
-   Debug::ft(ClassData_EnterScope);
+   Debug::ft("ClassData.EnterScope");
 
    //  When class data is declared, its type and field with are known.
    //  A static const POD member (unless it's a pointer) could also be
@@ -689,11 +655,9 @@ void ClassData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_IsUnionMember = "ClassData.IsUnionMember";
-
 bool ClassData::IsUnionMember() const
 {
-   Debug::ft(ClassData_IsUnionMember);
+   Debug::ft("ClassData.IsUnionMember");
 
    //  Look for an anonymous union as well as a named union.
    //
@@ -712,11 +676,9 @@ bool ClassData::IsUnionMember() const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_MemberToArg = "ClassData.MemberToArg";
-
 StackArg ClassData::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 {
-   Debug::ft(ClassData_MemberToArg);
+   Debug::ft("ClassData.MemberToArg");
 
    //  Create an argument for this member, which was accessed through VIA.
    //
@@ -728,11 +690,9 @@ StackArg ClassData::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_NameToArg = "ClassData.NameToArg";
-
 StackArg ClassData::NameToArg(Cxx::Operator op, TypeName* name)
 {
-   Debug::ft(ClassData_NameToArg);
+   Debug::ft("ClassData.NameToArg");
 
    //  Create an argument, marking it as a member of the context class and
    //  noting if it is mutable.  Log a read on the implicit "this", and if
@@ -751,11 +711,9 @@ StackArg ClassData::NameToArg(Cxx::Operator op, TypeName* name)
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_Promote = "ClassData.Promote";
-
 void ClassData::Promote(Class* cls, Cxx::Access access, bool first, bool last)
 {
-   Debug::ft(ClassData_Promote);
+   Debug::ft("ClassData.Promote");
 
    //  Update our scope and access control.  To support nested anonymous unions,
    //  don't overwrite first_ and last_.  Members of a nested anonymous union
@@ -790,11 +748,9 @@ void ClassData::Shrink()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_WasMutated = "ClassData.WasMutated";
-
 void ClassData::WasMutated(const StackArg* arg)
 {
-   Debug::ft(ClassData_WasMutated);
+   Debug::ft("ClassData.WasMutated");
 
    Data::SetNonConst();
 
@@ -819,11 +775,9 @@ void ClassData::WasMutated(const StackArg* arg)
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_WasWritten = "ClassData.WasWritten";
-
 bool ClassData::WasWritten(const StackArg* arg, bool direct, bool indirect)
 {
-   Debug::ft(ClassData_WasWritten);
+   Debug::ft("ClassData.WasWritten");
 
    auto result = Data::WasWritten(arg, direct, indirect);
 
@@ -839,30 +793,24 @@ bool ClassData::WasWritten(const StackArg* arg, bool direct, bool indirect)
 
 //==============================================================================
 
-fn_name CxxScope_ctor = "CxxScope.ctor";
-
 CxxScope::CxxScope() : pushes_(0)
 {
-   Debug::ft(CxxScope_ctor);
+   Debug::ft("CxxScope.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CxxScope_dtor = "CxxScope.dtor";
 
 CxxScope::~CxxScope()
 {
-   Debug::ftnt(CxxScope_dtor);
+   Debug::ftnt("CxxScope.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CxxScope_AccessibilityOf = "CxxScope.AccessibilityOf";
 
 void CxxScope::AccessibilityOf
    (const CxxScope* scope, const CxxScoped* item, SymbolView* view) const
 {
-   Debug::ft(CxxScope_AccessibilityOf);
+   Debug::ft("CxxScope.AccessibilityOf");
 
    view->distance = scope->ScopeDistance(this);
    view->accessibility =
@@ -871,11 +819,9 @@ void CxxScope::AccessibilityOf
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScope_CloseScope = "CxxScope.CloseScope";
-
 void CxxScope::CloseScope()
 {
-   Debug::ftnt(CxxScope_CloseScope);
+   Debug::ftnt("CxxScope.CloseScope");
 
    for(NO_OP; pushes_ > 0; --pushes_) Context::PopScope();
 }
@@ -897,11 +843,9 @@ id_t CxxScope::GetDistinctDeclFid() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScope_NameToTemplateParm = "CxxScope.NameToTemplateParm";
-
 TemplateParm* CxxScope::NameToTemplateParm(const string& name) const
 {
-   Debug::ft(CxxScope_NameToTemplateParm);
+   Debug::ft("CxxScope.NameToTemplateParm");
 
    auto scope = this;
 
@@ -976,12 +920,10 @@ void CxxScope::OpenScope(string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScope_ReplaceTemplateParms = "CxxScope.ReplaceTemplateParms";
-
 void CxxScope::ReplaceTemplateParms
    (string& code, const TypeSpecPtrVector* args, size_t begin) const
 {
-   Debug::ft(CxxScope_ReplaceTemplateParms);
+   Debug::ft("CxxScope.ReplaceTemplateParms");
 
    //  Replace the template parameters with the instance arguments.
    //
@@ -1042,11 +984,9 @@ void CxxScope::ReplaceTemplateParms
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScope_ScopeDistance = "CxxScope.ScopeDistance";
-
 Distance CxxScope::ScopeDistance(const CxxScope* scope) const
 {
-   Debug::ft(CxxScope_ScopeDistance);
+   Debug::ft("CxxScope.ScopeDistance");
 
    Distance dist = 0;
 
@@ -1060,8 +1000,6 @@ Distance CxxScope::ScopeDistance(const CxxScope* scope) const
 }
 
 //==============================================================================
-
-fn_name Data_ctor = "Data.ctor";
 
 Data::Data(TypeSpecPtr& spec) :
    extern_(false),
@@ -1078,18 +1016,16 @@ Data::Data(TypeSpecPtr& spec) :
    reads_(0),
    writes_(0)
 {
-   Debug::ft(Data_ctor);
+   Debug::ft("Data.ctor");
 
    spec_->SetUserType(Cxx::Data);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Data_dtor = "Data.dtor";
-
 Data::~Data()
 {
-   Debug::ftnt(Data_dtor);
+   Debug::ftnt("Data.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -1104,11 +1040,9 @@ void Data::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_Check = "Data.Check";
-
 void Data::Check() const
 {
-   Debug::ft(Data_Check);
+   Debug::ft("Data.Check");
 
    spec_->Check();
    if(!defn_ && (mate_ != nullptr)) mate_->Check();
@@ -1116,11 +1050,9 @@ void Data::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_CheckConstness = "Data.CheckConstness";
-
 void Data::CheckConstness(bool could) const
 {
-   Debug::ft(Data_CheckConstness);
+   Debug::ft("Data.CheckConstness");
 
    if(reads_ > 0)
    {
@@ -1151,11 +1083,9 @@ void Data::CheckConstness(bool could) const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_CheckUsage = "Data.CheckUsage";
-
 void Data::CheckUsage() const
 {
-   Debug::ft(Data_CheckUsage);
+   Debug::ft("Data.CheckUsage");
 
    if(reads_ == 0)
    {
@@ -1237,22 +1167,18 @@ void Data::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_ExecuteAlignment = "Data.ExecuteAlignment";
-
 void Data::ExecuteAlignment() const
 {
-   Debug::ft(Data_ExecuteAlignment);
+   Debug::ft("Data.ExecuteAlignment");
 
    if(alignas_ != nullptr) alignas_->EnterBlock();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Data_ExecuteInit = "Data.ExecuteInit";
-
 bool Data::ExecuteInit(bool push)
 {
-   Debug::ft(Data_ExecuteInit);
+   Debug::ft("Data.ExecuteInit");
 
    if(push)
    {
@@ -1298,22 +1224,18 @@ CodeFile* Data::GetDefnFile() const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_GetInitName = "Data.GetInitName";
-
 void Data::GetInitName(QualNamePtr& qualName) const
 {
-   Debug::ft(Data_GetInitName);
+   Debug::ft("Data.GetInitName");
 
    qualName.reset(new QualName(*Name()));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Data_GetStrValue = "Data.GetStrValue";
-
 bool Data::GetStrValue(string& str) const
 {
-   Debug::ft(Data_GetStrValue);
+   Debug::ft("Data.GetStrValue");
 
    //  In order to return a string, the data must have an initialization
    //  statement.  Display the statement and look for the quotation marks
@@ -1353,11 +1275,9 @@ void Data::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_InitByAssign = "Data.InitByAssign";
-
 bool Data::InitByAssign()
 {
-   Debug::ft(Data_InitByAssign);
+   Debug::ft("Data.InitByAssign");
 
    if(init_ == nullptr) return false;
 
@@ -1377,11 +1297,9 @@ bool Data::InitByAssign()
 
 //------------------------------------------------------------------------------
 
-fn_name Data_InitByDefault = "Data.InitByDefault";
-
 bool Data::InitByDefault()
 {
-   Debug::ft(Data_InitByDefault);
+   Debug::ft("Data.InitByDefault");
 
    if(extern_) return false;
 
@@ -1497,11 +1415,9 @@ bool Data::IsConst() const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_IsDefaultConstructible = "Data.IsDefaultConstructible";
-
 bool Data::IsDefaultConstructible() const
 {
-   Debug::ft(Data_IsDefaultConstructible);
+   Debug::ft("Data.IsDefaultConstructible");
 
    if(static_) return true;
 
@@ -1520,11 +1436,9 @@ bool Data::IsDefaultConstructible() const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_NameToArg = "Data.NameToArg";
-
 StackArg Data::NameToArg(Cxx::Operator op, TypeName* name)
 {
-   Debug::ft(Data_NameToArg);
+   Debug::ft("Data.NameToArg");
 
    //  Make data writeable during its initialization.
    //
@@ -1535,22 +1449,18 @@ StackArg Data::NameToArg(Cxx::Operator op, TypeName* name)
 
 //------------------------------------------------------------------------------
 
-fn_name Data_SetAlignment = "Data.SetAlignment";
-
 void Data::SetAlignment(AlignAsPtr& align)
 {
-   Debug::ft(Data_SetAlignment);
+   Debug::ft("Data.SetAlignment");
 
    alignas_ = std::move(align);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Data_SetAssignment = "Data.SetAssignment";
-
 void Data::SetAssignment(ExprPtr& expr)
 {
-   Debug::ft(Data_SetAssignment);
+   Debug::ft("Data.SetAssignment");
 
    //  Create an assignment expression in which the name of this data item
    //  is the first argument and EXPR is the second argument.
@@ -1571,11 +1481,9 @@ void Data::SetAssignment(ExprPtr& expr)
 
 //------------------------------------------------------------------------------
 
-fn_name Data_SetDefn = "Data.SetDefn";
-
 void Data::SetDefn(Data* data)
 {
-   Debug::ft(Data_SetDefn);
+   Debug::ft("Data.SetDefn");
 
    data->mate_ = this;
    data->defn_ = true;
@@ -1584,11 +1492,9 @@ void Data::SetDefn(Data* data)
 
 //------------------------------------------------------------------------------
 
-fn_name Data_SetInited = "Data.SetInited";
-
 void Data::SetInited()
 {
-   Debug::ft(Data_SetInited);
+   Debug::ft("Data.SetInited");
 
    GetDecl()->inited_ = true;
 
@@ -1598,11 +1504,9 @@ void Data::SetInited()
 
 //------------------------------------------------------------------------------
 
-fn_name Data_SetNonConst = "Data.SetNonConst";
-
 bool Data::SetNonConst()
 {
-   Debug::ft(Data_SetNonConst);
+   Debug::ft("Data.SetNonConst");
 
    if(initing_) return true;
    if(nonconst_) return true;
@@ -1692,12 +1596,10 @@ bool Data::WasWritten(const StackArg* arg, bool direct, bool indirect)
 
 //==============================================================================
 
-fn_name FuncData_ctor = "FuncData.ctor";
-
 FuncData::FuncData(string& name, TypeSpecPtr& type) : Data(type),
    first_(this)
 {
-   Debug::ft(FuncData_ctor);
+   Debug::ft("FuncData.ctor");
 
    std::swap(name_, name);
    CxxStats::Incr(CxxStats::FUNC_DATA);
@@ -1705,11 +1607,9 @@ FuncData::FuncData(string& name, TypeSpecPtr& type) : Data(type),
 
 //------------------------------------------------------------------------------
 
-fn_name FuncData_dtor = "FuncData.dtor";
-
 FuncData::~FuncData()
 {
-   Debug::ftnt(FuncData_dtor);
+   Debug::ftnt("FuncData.dtor");
 
    CxxStats::Decr(CxxStats::FUNC_DATA);
 }
@@ -1725,11 +1625,9 @@ void FuncData::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name FuncData_Check = "FuncData.Check";
-
 void FuncData::Check() const
 {
-   Debug::ft(FuncData_Check);
+   Debug::ft("FuncData.Check");
 
    //  Don't check a function's internal variables for potential constness.
    //
@@ -1791,11 +1689,9 @@ void FuncData::DisplayItem(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name FuncData_EnterBlock = "FuncData.EnterBlock";
-
 void FuncData::EnterBlock()
 {
-   Debug::ft(FuncData_EnterBlock);
+   Debug::ft("FuncData.EnterBlock");
 
    //  This also doubles as the equivalent of EnterScope for function data.
    //  Set the data's scope, add it to the local symbol table, and compile
@@ -1822,11 +1718,9 @@ void FuncData::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name FuncData_ExitBlock = "FuncData.ExitBlock";
-
 void FuncData::ExitBlock() const
 {
-   Debug::ft(FuncData_ExitBlock);
+   Debug::ft("FuncData.ExitBlock");
 
    Context::EraseLocal(this);
    if(next_ != nullptr) next_->ExitBlock();
@@ -1850,11 +1744,9 @@ void FuncData::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name FuncData_SetNext = "FuncData.SetNext";
-
 void FuncData::SetNext(DataPtr& next)
 {
-   Debug::ft(FuncData_SetNext);
+   Debug::ft("FuncData.SetNext");
 
    next_.reset(next.release());
    auto data = static_cast< FuncData* >(next_.get());
@@ -1874,8 +1766,6 @@ void FuncData::Shrink()
 }
 
 //==============================================================================
-
-fn_name Function_ctor1 = "Function.ctor";
 
 Function::Function(QualNamePtr& name) :
    name_(name.release()),
@@ -1909,7 +1799,7 @@ Function::Function(QualNamePtr& name) :
    base_(nullptr),
    tmplt_(nullptr)
 {
-   Debug::ft(Function_ctor1);
+   Debug::ft("Function.ctor");
 
    Singleton< CxxSymbols >::Instance()->InsertFunc(this);
 
@@ -1919,8 +1809,6 @@ Function::Function(QualNamePtr& name) :
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Function_ctor2 = "Function.ctor(spec)";
 
 Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    name_(name.release()),
@@ -1955,7 +1843,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    base_(nullptr),
    tmplt_(nullptr)
 {
-   Debug::ft(Function_ctor2);
+   Debug::ft("Function.ctor(spec)");
 
    spec_->SetUserType(Cxx::Function);
    if(type_) return;
@@ -1967,11 +1855,9 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
 
 //------------------------------------------------------------------------------
 
-fn_name Function_dtor = "Function.dtor";
-
 Function::~Function()
 {
-   Debug::ftnt(Function_dtor);
+   Debug::ftnt("Function.dtor");
 
    if(type_) return;
 
@@ -1982,11 +1868,9 @@ Function::~Function()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_AddArg = "Function.AddArg";
-
 void Function::AddArg(ArgumentPtr& arg)
 {
-   Debug::ft(Function_AddArg);
+   Debug::ft("Function.AddArg");
 
    arg->SetScope(this);
    args_.push_back(std::move(arg));
@@ -1994,33 +1878,27 @@ void Function::AddArg(ArgumentPtr& arg)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_AddMemberInit = "Function.AddMemberInit";
-
 void Function::AddMemberInit(MemberInitPtr& init)
 {
-   Debug::ft(Function_AddMemberInit);
+   Debug::ft("Function.AddMemberInit");
 
    mems_.push_back(std::move(init));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Function_AddOverride = "Function.AddOverride";
-
 void Function::AddOverride(Function* over) const
 {
-   Debug::ft(Function_AddOverride);
+   Debug::ft("Function.AddOverride");
 
    overs_.push_back(over);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Function_AddThisArg = "Function.AddThisArg";
-
 void Function::AddThisArg()
 {
-   Debug::ft(Function_AddThisArg);
+   Debug::ft("Function.AddThisArg");
 
    //  Don't add a "this" argument if the function
    //  o is static
@@ -2166,12 +2044,10 @@ void Function::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_AdjustRecvConstness = "Function.AdjustRecvConstness";
-
 void Function::AdjustRecvConstness
    (const Function* invoker, StackArg& recvArg) const
 {
-   Debug::ft(Function_AdjustRecvConstness);
+   Debug::ft("Function.AdjustRecvConstness");
 
    //  Make ARG const if it's another instance of the same virtual function or
    //  it's a "this" argument and this function also has a const version.  This
@@ -2232,11 +2108,9 @@ void Function::AdjustRecvConstness
 
 //------------------------------------------------------------------------------
 
-fn_name Function_ArgCouldBeConst = "Function.ArgCouldBeConst";
-
 bool Function::ArgCouldBeConst(size_t n) const
 {
-   Debug::ft(Function_ArgCouldBeConst);
+   Debug::ft("Function.ArgCouldBeConst");
 
    //  If the function has overrides, check the argument in each.  If the
    //  function is a template or a member of a class template, check the
@@ -2262,11 +2136,9 @@ bool Function::ArgCouldBeConst(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_ArgIsUnused = "Function.ArgIsUnused";
-
 bool Function::ArgIsUnused(size_t n) const
 {
-   Debug::ft(Function_ArgIsUnused);
+   Debug::ft("Function.ArgIsUnused");
 
    //  If the function has overrides, check the argument in each.  If the
    //  function is a template or a member of a class template, check the
@@ -2292,11 +2164,9 @@ bool Function::ArgIsUnused(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_ArgumentsMatch = "Function.ArgumentsMatch";
-
 bool Function::ArgumentsMatch(const Function* that) const
 {
-   Debug::ft(Function_ArgumentsMatch);
+   Debug::ft("Function.ArgumentsMatch");
 
    //  Check each argument for an exact match.
    //
@@ -2320,12 +2190,10 @@ bool Function::ArgumentsMatch(const Function* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_CalcConstructibilty = "Function.CalcConstructibilty";
-
 TypeMatch Function::CalcConstructibilty
    (const StackArg& that, const string& thatType) const
 {
-   Debug::ft(Function_CalcConstructibilty);
+   Debug::ft("Function.CalcConstructibilty");
 
    //  If this function must be invoked explicitly or is not even a
    //  constructor, there is no compatibility.
@@ -2348,11 +2216,9 @@ TypeMatch Function::CalcConstructibilty
 
 //------------------------------------------------------------------------------
 
-fn_name Function_CanBeNoexcept = "Function.CanBeNoexcept";
-
 bool Function::CanBeNoexcept() const
 {
-   Debug::ft(Function_CanBeNoexcept);
+   Debug::ft("Function.CanBeNoexcept");
 
    //  A deleted function need not be noexcept.
    //
@@ -2388,12 +2254,10 @@ bool Function::CanBeNoexcept() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_CanInvokeWith = "Function.CanInvokeWith";
-
 Function* Function::CanInvokeWith
    (StackArgVector& args, stringVector& argTypes, TypeMatch& match) const
 {
-   Debug::ft(Function_CanInvokeWith);
+   Debug::ft("Function.CanInvokeWith");
 
    //  ARGS must not contain more arguments than this function accepts.  If
    //  the function has a "this" argument, ignore it if this function takes
@@ -2501,11 +2365,9 @@ Function* Function::CanInvokeWith
 
 //------------------------------------------------------------------------------
 
-fn_name Function_Check = "Function.Check";
-
 void Function::Check() const
 {
-   Debug::ft(Function_Check);
+   Debug::ft("Function.Check");
 
    //  Only check the first instance of a function template.  Any warnings
    //  logged against it will be moved to the function template itself.
@@ -2868,11 +2730,9 @@ void Function::CheckCtor() const
 
 const string LeftPunctuation("([<{");
 
-fn_name Function_CheckDebugName = "Function.CheckDebugName";
-
 bool Function::CheckDebugName(const string& str) const
 {
-   Debug::ft(Function_CheckDebugName);
+   Debug::ft("Function.CheckDebugName");
 
    //  Check that STR is of the form
    //     "<scope>.<name>"
@@ -2962,11 +2822,9 @@ void Function::CheckForVirtualDefault() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_CheckFree = "Function.CheckFree";
-
 void Function::CheckFree() const
 {
-   Debug::ft(Function_CheckFree);
+   Debug::ft("Function.CheckFree");
 
    //  This function can be free.  But if it has a possible "this" argument
    //  for another class, it should probably be a member of that class.
@@ -3226,11 +3084,9 @@ void Function::CheckOverride()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_CheckStatic = "Function.CheckStatic";
-
 void Function::CheckStatic() const
 {
-   Debug::ft(Function_CheckStatic);
+   Debug::ft("Function.CheckStatic");
 
    //  If this function isn't static, it could be.
    //
@@ -3257,11 +3113,9 @@ void Function::CheckStatic() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_DebugName = "Function.DebugName";
-
 string Function::DebugName() const
 {
-   Debug::ft(Function_DebugName);
+   Debug::ft("Function.DebugName");
 
    switch(FuncType())
    {
@@ -3276,11 +3130,9 @@ string Function::DebugName() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_DeleteVoidArg = "Function.DeleteVoidArg";
-
 void Function::DeleteVoidArg()
 {
-   Debug::ft(Function_DeleteVoidArg);
+   Debug::ft("Function.DeleteVoidArg");
 
    if(this_)
       args_[1].reset();
@@ -3498,11 +3350,9 @@ void Function::DisplayInfo(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_EnterBlock = "Function.EnterBlock";
-
 void Function::EnterBlock()
 {
-   Debug::ft(Function_EnterBlock);
+   Debug::ft("Function.EnterBlock");
 
    //  If the function has no implementation, do nothing.  An empty function
    //  (just the braces) has an empty code block, so it will get past this.
@@ -3582,11 +3432,9 @@ void Function::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_EnterScope = "Function.EnterScope";
-
 bool Function::EnterScope()
 {
-   Debug::ft(Function_EnterScope);
+   Debug::ft("Function.EnterScope");
 
    //  If this function requires a "this" argument, add it now.
    //
@@ -3630,11 +3478,9 @@ bool Function::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_EnterSignature = "Function.EnterSignature";
-
 void Function::EnterSignature()
 {
-   Debug::ft(Function_EnterSignature);
+   Debug::ft("Function.EnterSignature");
 
    if(spec_ != nullptr) spec_->EnteringScope(this);
 
@@ -3653,11 +3499,9 @@ void Function::EnterSignature()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_FindArg = "Function.FindArg";
-
 size_t Function::FindArg(const Argument* arg, bool disp) const
 {
-   Debug::ft(Function_FindArg);
+   Debug::ft("Function.FindArg");
 
    for(size_t i = 0; i < args_.size(); ++i)
    {
@@ -3672,11 +3516,9 @@ size_t Function::FindArg(const Argument* arg, bool disp) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_FindBaseFunc = "Function.FindBaseFunc";
-
 Function* Function::FindBaseFunc() const
 {
-   Debug::ft(Function_FindBaseFunc);
+   Debug::ft("Function.FindBaseFunc");
 
    if(defn_) return GetDecl()->FindBaseFunc();
 
@@ -3745,11 +3587,9 @@ Function* Function::FindBaseFunc() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_FindNthItem = "Function.FindNthItem";
-
 CxxScoped* Function::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(Function_FindNthItem);
+   Debug::ft("Function.FindNthItem");
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -3763,11 +3603,9 @@ CxxScoped* Function::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_FindRootFunc = "Function.FindRootFunc";
-
 Function* Function::FindRootFunc() const
 {
-   Debug::ft(Function_FindRootFunc);
+   Debug::ft("Function.FindRootFunc");
 
    if(defn_) return GetDecl()->FindRootFunc();
 
@@ -3844,11 +3682,9 @@ CxxScoped* Function::FindTemplateAnalog(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_FirstInstance = "Function.FirstInstance";
-
 Function* Function::FirstInstance() const
 {
-   Debug::ft(Function_FirstInstance);
+   Debug::ft("Function.FirstInstance");
 
    auto fti = tmplts_.cbegin();
    if(fti == tmplts_.cend()) return nullptr;
@@ -3857,11 +3693,9 @@ Function* Function::FirstInstance() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_FirstInstanceInClass = "Function.FirstInstanceInClass";
-
 Function* Function::FirstInstanceInClass() const
 {
-   Debug::ft(Function_FirstInstanceInClass);
+   Debug::ft("Function.FirstInstanceInClass");
 
    auto cls = GetClass();
    if(cls == nullptr) return nullptr;
@@ -3873,12 +3707,10 @@ Function* Function::FirstInstanceInClass() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_FoundFunc = "Function.FoundFunc";
-
 Function* Function::FoundFunc
    (Function* func, const StackArgVector& args, TypeMatch& match)
 {
-   Debug::ft(Function_FoundFunc);
+   Debug::ft("Function.FoundFunc");
 
    //  If a function template has been instantiated, record that each of its
    //  arguments was used.  This ensures that >trim will ask for each type to
@@ -4210,11 +4042,9 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_HasInvokers = "Function.HasInvokers";
-
 bool Function::HasInvokers() const
 {
-   Debug::ft(Function_HasInvokers);
+   Debug::ft("Function.HasInvokers");
 
    if(defn_) return GetDecl()->HasInvokers();
 
@@ -4239,11 +4069,9 @@ bool Function::HasInvokers() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_IncrThisReads = "Function.IncrThisReads";
-
 void Function::IncrThisReads() const
 {
-   Debug::ft(Function_IncrThisReads);
+   Debug::ft("Function.IncrThisReads");
 
    if(this_) args_[0]->WasRead();
 }
@@ -4283,11 +4111,9 @@ Function* Function::InstantiateError(const string& instName, debug64_t offset)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_InstantiateFunction1 = "Function.InstantiateFunction(type)";
-
 Function* Function::InstantiateFunction(const TypeName* type) const
 {
-   Debug::ft(Function_InstantiateFunction1);
+   Debug::ft("Function.InstantiateFunction(type)");
 
    //  Create the name for the function template instance and look for it.
    //  If it has already been instantiated, return it.
@@ -4486,11 +4312,9 @@ void Function::Invoke(StackArgVector* args)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_InvokeDefaultBaseCtor = "Function.InvokeDefaultBaseCtor";
-
 void Function::InvokeDefaultBaseCtor() const
 {
-   Debug::ft(Function_InvokeDefaultBaseCtor);
+   Debug::ft("Function.InvokeDefaultBaseCtor");
 
    auto cls = GetClass();
    if(cls == nullptr) return;
@@ -4504,11 +4328,9 @@ void Function::InvokeDefaultBaseCtor() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_IsDeleted = "Function.IsDeleted";
-
 bool Function::IsDeleted() const
 {
-   Debug::ft(Function_IsDeleted);
+   Debug::ft("Function.IsDeleted");
 
    if(deleted_) return true;
 
@@ -4545,11 +4367,9 @@ bool Function::IsImplemented() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_IsInvokedInBase = "Function.IsInvokedInBase";
-
 bool Function::IsInvokedInBase() const
 {
-   Debug::ft(Function_IsInvokedInBase);
+   Debug::ft("Function.IsInvokedInBase");
 
    if(defn_) return GetDecl()->IsInvokedInBase();
 
@@ -4563,11 +4383,9 @@ bool Function::IsInvokedInBase() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_IsOverriddenAtOrBelow = "Function.IsOverriddenAtOrBelow";
-
 bool Function::IsOverriddenAtOrBelow(const Class* cls) const
 {
-   Debug::ft(Function_IsOverriddenAtOrBelow);
+   Debug::ft("Function.IsOverriddenAtOrBelow");
 
    for(auto f = overs_.cbegin(); f != overs_.cend(); ++f)
    {
@@ -4581,11 +4399,9 @@ bool Function::IsOverriddenAtOrBelow(const Class* cls) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_IsTemplateArg = "Function.IsTemplateArg";
-
 bool Function::IsTemplateArg(const Argument* arg) const
 {
-   Debug::ft(Function_IsTemplateArg);
+   Debug::ft("Function.IsTemplateArg");
 
    //  For ARG to be a template argument, it must be a template parameter
    //  in its template.
@@ -4599,11 +4415,9 @@ bool Function::IsTemplateArg(const Argument* arg) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_IsTrivial = "Function.IsTrivial";
-
 bool Function::IsTrivial() const
 {
-   Debug::ft(Function_IsTrivial);
+   Debug::ft("Function.IsTrivial");
 
    if(IsDefaulted()) return true;
    if(tmplt_ != nullptr) return false;
@@ -4644,11 +4458,9 @@ bool Function::IsTrivial() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_IsUndefined = "Function.IsUndefined";
-
 bool Function::IsUndefined() const
 {
-   Debug::ft(Function_IsUndefined);
+   Debug::ft("Function.IsUndefined");
 
    if(GetDefn()->impl_ == nullptr) return true;
    if(IsDeleted()) return true;
@@ -4657,11 +4469,9 @@ bool Function::IsUndefined() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_IsUnused = "Function.IsUnused";
-
 bool Function::IsUnused() const
 {
-   Debug::ft(Function_IsUnused);
+   Debug::ft("Function.IsUnused");
 
    //  If a function template has no specializations, it is unused.
    //
@@ -4685,11 +4495,9 @@ bool Function::IsUnused() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_ItemAccessed = "Function.ItemAccessed";
-
 void Function::ItemAccessed(const CxxNamed* item)
 {
-   Debug::ft(Function_ItemAccessed);
+   Debug::ft("Function.ItemAccessed");
 
    //  This currently determines if this function
    //  o accessed a non-public member in its own class or a base class;
@@ -4740,11 +4548,9 @@ void Function::ItemAccessed(const CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_LocateItem = "Function.LocateItem";
-
 bool Function::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(Function_LocateItem);
+   Debug::ft("Function.LocateItem");
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -4764,11 +4570,9 @@ size_t Function::LogOffsetToArgIndex(word offset) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_LogToBoth = "Function.LogToBoth";
-
 void Function::LogToBoth(Warning warning, size_t index) const
 {
-   Debug::ft(Function_LogToBoth);
+   Debug::ft("Function.LogToBoth");
 
    if(index == SIZE_MAX)
    {
@@ -4790,13 +4594,11 @@ void Function::LogToBoth(Warning warning, size_t index) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_MatchTemplate = "Function.MatchTemplate";
-
 TypeMatch Function::MatchTemplate
    (const string& thisType, const string& thatType,
       stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound)
 {
-   Debug::ft(Function_MatchTemplate);
+   Debug::ft("Function.MatchTemplate");
 
    //  Create TypeSpecs for thisType and thatType by invoking a new parser.
    //  Parsing requires a scope, so use the current one.  Note that const
@@ -4821,11 +4623,9 @@ TypeMatch Function::MatchTemplate
 
 //------------------------------------------------------------------------------
 
-fn_name Function_MemberToArg = "Function.MemberToArg";
-
 StackArg Function::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 {
-   Debug::ft(Function_MemberToArg);
+   Debug::ft("Function.MemberToArg");
 
    //  Push this function and return VIA as its "this" argument.  When a class
    //  has both a static and a member function with the same name, name lookup
@@ -4846,11 +4646,9 @@ StackArg Function::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_MinArgs = "Function.MinArgs";
-
 size_t Function::MinArgs() const
 {
-   Debug::ft(Function_MinArgs);
+   Debug::ft("Function.MinArgs");
 
    size_t min = 0;
 
@@ -4865,12 +4663,10 @@ size_t Function::MinArgs() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_NameRefersToItem = "Function.NameRefersToItem";
-
 bool Function::NameRefersToItem(const string& name,
    const CxxScope* scope, const CodeFile* file, SymbolView* view) const
 {
-   Debug::ft(Function_NameRefersToItem);
+   Debug::ft("Function.NameRefersToItem");
 
    //  If this isn't a function template instance, invoke the base class
    //  version.
@@ -4909,11 +4705,9 @@ bool Function::NameRefersToItem(const string& name,
 
 //------------------------------------------------------------------------------
 
-fn_name Function_PushThisArg = "Function.PushThisArg";
-
 void Function::PushThisArg(StackArgVector& args) const
 {
-   Debug::ft(Function_PushThisArg);
+   Debug::ft("Function.PushThisArg");
 
    //  Return if this function doesn't take a "this" argument.
    //
@@ -4945,11 +4739,9 @@ void Function::PushThisArg(StackArgVector& args) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_RecordUsage = "Function.RecordUsage";
-
 void Function::RecordUsage() const
 {
-   Debug::ft(Function_RecordUsage);
+   Debug::ft("Function.RecordUsage");
 
    if(tmplt_ == nullptr)
       AddUsage();
@@ -4959,11 +4751,9 @@ void Function::RecordUsage() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_ResultType = "Function.ResultType";
-
 StackArg Function::ResultType() const
 {
-   Debug::ft(Function_ResultType);
+   Debug::ft("Function.ResultType");
 
    //  Constructors and destructors have no return type.
    //
@@ -4974,22 +4764,18 @@ StackArg Function::ResultType() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SetBaseInit = "Function.SetBaseInit";
-
 void Function::SetBaseInit(ExprPtr& init)
 {
-   Debug::ft(Function_SetBaseInit);
+   Debug::ft("Function.SetBaseInit");
 
    call_.reset(init.release());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SetDefn = "Function.SetDefn";
-
 void Function::SetDefn(Function* func)
 {
-   Debug::ft(Function_SetDefn);
+   Debug::ft("Function.SetDefn");
 
    func->mate_ = this;
    func->defn_ = true;
@@ -5010,11 +4796,9 @@ void Function::SetDefn(Function* func)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SetImpl = "Function.SetImpl";
-
 void Function::SetImpl(BlockPtr& block)
 {
-   Debug::ft(Function_SetImpl);
+   Debug::ft("Function.SetImpl");
 
    impl_.reset(block.release());
 
@@ -5035,11 +4819,9 @@ void Function::SetImpl(BlockPtr& block)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SetNonPublic = "Function.SetNonPublic";
-
 void Function::SetNonPublic()
 {
-   Debug::ft(Function_SetNonPublic);
+   Debug::ft("Function.SetNonPublic");
 
    if(nonpublic_) return;
    nonpublic_ = true;
@@ -5049,11 +4831,9 @@ void Function::SetNonPublic()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SetNonStatic = "Function.SetNonStatic";
-
 void Function::SetNonStatic()
 {
-   Debug::ft(Function_SetNonStatic);
+   Debug::ft("Function.SetNonStatic");
 
    if(nonstatic_) return;
    nonstatic_ = true;
@@ -5063,11 +4843,9 @@ void Function::SetNonStatic()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SetOperator = "Function.SetOperator";
-
 void Function::SetOperator(Cxx::Operator oper)
 {
-   Debug::ft(Function_SetOperator);
+   Debug::ft("Function.SetOperator");
 
    //  Verify that the number of arguments is correct for OPER.  Since we
    //  assume that the code is well-formed, this doesn't check correctness.
@@ -5091,11 +4869,9 @@ void Function::SetOperator(Cxx::Operator oper)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SetStatic = "Function.SetStatic";
-
 void Function::SetStatic(bool stat, Cxx::Operator oper)
 {
-   Debug::ft(Function_SetStatic);
+   Debug::ft("Function.SetStatic");
 
    static_ = stat;
    if(static_) return;
@@ -5112,11 +4888,9 @@ void Function::SetStatic(bool stat, Cxx::Operator oper)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SetTemplateArgs = "Function.SetTemplateArgs";
-
 void Function::SetTemplateArgs(const TypeName* spec)
 {
-   Debug::ft(Function_SetTemplateArgs);
+   Debug::ft("Function.SetTemplateArgs");
 
    tspec_.reset(new TypeName(*spec));
    tspec_->CopyContext(spec);
@@ -5124,11 +4898,9 @@ void Function::SetTemplateArgs(const TypeName* spec)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SetTemplateParms = "Function.SetTemplateParms";
-
 void Function::SetTemplateParms(TemplateParmsPtr& parms)
 {
-   Debug::ft(Function_SetTemplateParms);
+   Debug::ft("Function.SetTemplateParms");
 
    parms_ = std::move(parms);
 }
@@ -5167,11 +4939,9 @@ void Function::Shrink()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_SignatureMatches = "Function.SignatureMatches";
-
 bool Function::SignatureMatches(const Function* that, bool base) const
 {
-   Debug::ft(Function_SignatureMatches);
+   Debug::ft("Function.SignatureMatches");
 
    //  The functions match if they have the same number of arguments and
    //  their return types and arguments also match.
@@ -5265,11 +5035,9 @@ string Function::TypeString(bool arg) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_UpdateThisArg = "Function.UpdateThisArg";
-
 void Function::UpdateThisArg(StackArgVector& args) const
 {
-   Debug::ft(Function_UpdateThisArg);
+   Debug::ft("Function.UpdateThisArg");
 
    if(!this_)
    {
@@ -5312,11 +5080,9 @@ void Function::UpdateThisArg(StackArgVector& args) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_WasCalled = "Function.WasCalled";
-
 void Function::WasCalled()
 {
-   Debug::ft(Function_WasCalled);
+   Debug::ft("Function.WasCalled");
 
    //  Don't record a recursive invocation.  It's a minor thing, but a
    //  function should be logged as unused if its only invoker is itself.
@@ -5417,11 +5183,9 @@ string Function::XrefName(bool templates) const
 
 //==============================================================================
 
-fn_name FuncSpec_ctor = "FuncSpec.ctor";
-
 FuncSpec::FuncSpec(FunctionPtr& func) : func_(func.release())
 {
-   Debug::ft(FuncSpec_ctor);
+   Debug::ft("FuncSpec.ctor");
 
    CxxStats::Incr(CxxStats::FUNC_SPEC);
 }
@@ -5490,11 +5254,9 @@ void FuncSpec::EnterArrays() const
 
 //------------------------------------------------------------------------------
 
-fn_name FuncSpec_EnteringScope = "FuncSpec.EnteringScope";
-
 void FuncSpec::EnteringScope(const CxxScope* scope)
 {
-   Debug::ft(FuncSpec_EnteringScope);
+   Debug::ft("FuncSpec.EnteringScope");
 
    func_->EnterSignature();
 }
@@ -5674,12 +5436,10 @@ string FuncSpec::TypeTagsString(const TypeTags& tags) const
 
 //==============================================================================
 
-fn_name SpaceData_ctor = "SpaceData.ctor";
-
 SpaceData::SpaceData(QualNamePtr& name, TypeSpecPtr& type) : Data(type),
    name_(name.release())
 {
-   Debug::ft(SpaceData_ctor);
+   Debug::ft("SpaceData.ctor");
 
    auto qname = name_->QualifiedName(true, false);
    OpenScope(qname);
@@ -5688,11 +5448,9 @@ SpaceData::SpaceData(QualNamePtr& name, TypeSpecPtr& type) : Data(type),
 
 //------------------------------------------------------------------------------
 
-fn_name SpaceData_dtor = "SpaceData.dtor";
-
 SpaceData::~SpaceData()
 {
-   Debug::ftnt(SpaceData_dtor);
+   Debug::ftnt("SpaceData.dtor");
 
    CloseScope();
    Singleton< CxxSymbols >::Extant()->EraseData(this);
@@ -5701,11 +5459,9 @@ SpaceData::~SpaceData()
 
 //------------------------------------------------------------------------------
 
-fn_name SpaceData_Check = "SpaceData.Check";
-
 void SpaceData::Check() const
 {
-   Debug::ft(SpaceData_Check);
+   Debug::ft("SpaceData.Check");
 
    Data::Check();
 
@@ -5722,11 +5478,9 @@ void SpaceData::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name SpaceData_CheckIfInitialized = "SpaceData.CheckIfInitialized";
-
 void SpaceData::CheckIfInitialized() const
 {
-   Debug::ft(SpaceData_CheckIfInitialized);
+   Debug::ft("SpaceData.CheckIfInitialized");
 
    //  Data declared at file scope should be initialized.
    //
@@ -5735,11 +5489,9 @@ void SpaceData::CheckIfInitialized() const
 
 //------------------------------------------------------------------------------
 
-fn_name SpaceData_CheckIfStatic = "SpaceData.CheckIfStatic";
-
 void SpaceData::CheckIfStatic() const
 {
-   Debug::ft(SpaceData_CheckIfStatic);
+   Debug::ft("SpaceData.CheckIfStatic");
 
    //  Static data in a header is dubious.  Unless it is tagged extern, it
    //  defaults to static.  However, constexpr (even though theoretically
@@ -5792,11 +5544,9 @@ void SpaceData::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name SpaceData_EnterScope = "SpaceData.EnterScope";
-
 bool SpaceData::EnterScope()
 {
-   Debug::ft(SpaceData_EnterScope);
+   Debug::ft("SpaceData.EnterScope");
 
    Context::SetPos(GetLoc());
    if(parms_ != nullptr) parms_->EnterScope();
@@ -5823,22 +5573,18 @@ bool SpaceData::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name SpaceData_GetInitName = "SpaceData.GetInitName";
-
 void SpaceData::GetInitName(QualNamePtr& qualName) const
 {
-   Debug::ft(SpaceData_GetInitName);
+   Debug::ft("SpaceData.GetInitName");
 
    qualName.reset(new QualName(*name_));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SpaceData_SetTemplateParms = "SpaceData.SetTemplateParms";
-
 void SpaceData::SetTemplateParms(TemplateParmsPtr& parms)
 {
-   Debug::ft(SpaceData_SetTemplateParms);
+   Debug::ft("SpaceData.SetTemplateParms");
 
    parms_ = std::move(parms);
 }

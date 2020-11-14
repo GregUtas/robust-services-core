@@ -208,8 +208,6 @@ const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
 
 //------------------------------------------------------------------------------
 
-fn_name CxxWord_ctor = "CxxWord.ctor";
-
 CxxWord::CxxWord
    (const string& file, const string& cls, const string& func, bool adv) :
    fileTarget(file),
@@ -217,7 +215,7 @@ CxxWord::CxxWord
    funcTarget(func),
    advance(adv)
 {
-   Debug::ft(CxxWord_ctor);
+   Debug::ft("CxxWord.ctor");
 }
 
 //==============================================================================
@@ -297,8 +295,6 @@ const CxxOp CxxOp::Attrs[Cxx::NIL_OPERATOR + 1] =
 
 //------------------------------------------------------------------------------
 
-fn_name CxxOp_ctor = "CxxOp.ctor";
-
 CxxOp::CxxOp(const string& sym, size_t args,
    size_t prio, bool over, bool push, bool symm) :
    symbol(sym),
@@ -308,16 +304,14 @@ CxxOp::CxxOp(const string& sym, size_t args,
    rightToLeft(push),
    symmetric(symm)
 {
-   Debug::ft(CxxOp_ctor);
+   Debug::ft("CxxOp.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxOp_NameToOperator = "CxxOp.NameToOperator";
-
 Cxx::Operator CxxOp::NameToOperator(const string& name)
 {
-   Debug::ft(CxxOp_NameToOperator);
+   Debug::ft("CxxOp.NameToOperator");
 
    auto pos = name.rfind(OPERATOR_STR);
    if(pos == string::npos) return Cxx::NIL_OPERATOR;
@@ -340,11 +334,9 @@ Cxx::Operator CxxOp::NameToOperator(const string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxOp_OperatorToName = "CxxOp.OperatorToName";
-
 string CxxOp::OperatorToName(Cxx::Operator oper)
 {
-   Debug::ft(CxxOp_OperatorToName);
+   Debug::ft("CxxOp.OperatorToName");
 
    auto& attrs = Attrs[oper];
    string name(OPERATOR_STR);
@@ -366,11 +358,9 @@ string CxxOp::OperatorToName(Cxx::Operator oper)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxOp_UpdateOperator = "CxxOp.UpdateOperator";
-
 void CxxOp::UpdateOperator(Cxx::Operator& oper, size_t args)
 {
-   Debug::ft(CxxOp_UpdateOperator);
+   Debug::ft("CxxOp.UpdateOperator");
 
    auto& attrs = Attrs[oper];
 
@@ -396,11 +386,9 @@ CxxChar CxxChar::Attrs[UINT8_MAX + 1] = { };
 
 //------------------------------------------------------------------------------
 
-fn_name CxxChar_Initialize = "CxxChar.Initialize";
-
 void CxxChar::Initialize()
 {
-   Debug::ft(CxxChar_Initialize);
+   Debug::ft("CxxChar.Initialize");
 
    for(auto c = 0; c <= UINT8_MAX; ++c)
    {
@@ -475,11 +463,9 @@ const Numeric Numeric::wChar(INT, sizeof(wchar_t) << 3, F);
 
 //------------------------------------------------------------------------------
 
-fn_name Numeric_CalcMatchWith = "Numeric.CalcMatchWith";
-
 TypeMatch Numeric::CalcMatchWith(const Numeric* that) const
 {
-   Debug::ft(Numeric_CalcMatchWith);
+   Debug::ft("Numeric.CalcMatchWith");
 
    //  Determine whether THAT can be implicitly converted to THIS.
    //
@@ -604,8 +590,6 @@ CxxStats CxxStats::Info[CxxStats::Item_N] =
 
 //------------------------------------------------------------------------------
 
-fn_name CxxStats_ctor = "CxxStats.ctor";
-
 CxxStats::CxxStats(const string& item, size_t bytes) :
    name(item),
    size(bytes),
@@ -613,7 +597,7 @@ CxxStats::CxxStats(const string& item, size_t bytes) :
    strings(0),
    vectors(0)
 {
-   Debug::ft(CxxStats_ctor);
+   Debug::ft("CxxStats.ctor");
 }
 
 //------------------------------------------------------------------------------

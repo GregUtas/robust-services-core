@@ -34,22 +34,18 @@ using std::string;
 
 namespace MediaBase
 {
-fn_name Circuit_ctor = "Circuit.ctor";
-
 Circuit::Circuit() : rxFrom_(Switch::SilentPort)
 {
-   Debug::ft(Circuit_ctor);
+   Debug::ft("Circuit.ctor");
 
    Singleton< Switch >::Instance()->BindCircuit(*this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Circuit_dtor = "Circuit.dtor";
-
 Circuit::~Circuit()
 {
-   Debug::ftnt(Circuit_dtor);
+   Debug::ftnt("Circuit.dtor");
 
    Singleton< Switch >::Extant()->UnbindCircuit(*this);
 }
@@ -76,11 +72,9 @@ void Circuit::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Circuit_MakeConn = "Circuit.MakeConn";
-
 void Circuit::MakeConn(Switch::PortId rxFrom)
 {
-   Debug::ft(Circuit_MakeConn);
+   Debug::ft("Circuit.MakeConn");
 
    if(Switch::IsValidPort(rxFrom)) rxFrom_ = rxFrom;
 }

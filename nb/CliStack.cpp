@@ -37,20 +37,16 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CliStack_ctor = "CliStack.ctor";
-
 CliStack::CliStack()
 {
-   Debug::ft(CliStack_ctor);
+   Debug::ft("CliStack.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliStack_dtor = "CliStack.dtor";
-
 CliStack::~CliStack()
 {
-   Debug::ftnt(CliStack_dtor);
+   Debug::ftnt("CliStack.dtor");
 
    //  Exit all active increments.
    //
@@ -127,11 +123,9 @@ const CliCommand* CliStack::FindCommand
 
 //------------------------------------------------------------------------------
 
-fn_name CliStack_FindIncrement = "CliStack.FindIncrement";
-
 CliIncrement* CliStack::FindIncrement(const string& name) const
 {
-   Debug::ft(CliStack_FindIncrement);
+   Debug::ft("CliStack.FindIncrement");
 
    //  Search the active increments for the one that is known by NAME.
    //
@@ -152,11 +146,9 @@ void CliStack::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliStack_Pop = "CliStack.Pop";
-
 bool CliStack::Pop()
 {
-   Debug::ft(CliStack_Pop);
+   Debug::ft("CliStack.Pop");
 
    //  Exit the increment on top of the stack, but always keep the NodeBase
    //  increment.
@@ -173,11 +165,9 @@ bool CliStack::Pop()
 
 //------------------------------------------------------------------------------
 
-fn_name CliStack_Push = "CliStack.Push";
-
 void CliStack::Push(CliIncrement& incr)
 {
-   Debug::ft(CliStack_Push);
+   Debug::ft("CliStack.Push");
 
    increments_.push_back(&incr);
    incr.Enter();
@@ -185,11 +175,9 @@ void CliStack::Push(CliIncrement& incr)
 
 //------------------------------------------------------------------------------
 
-fn_name CliStack_SetRoot = "CliStack.SetRoot";
-
 void CliStack::SetRoot(CliIncrement& root)
 {
-   Debug::ft(CliStack_SetRoot);
+   Debug::ft("CliStack.SetRoot");
 
    //  If the stack is empty, add ROOT (the NodeBase increment) as the
    //  first increment.
@@ -203,11 +191,9 @@ void CliStack::SetRoot(CliIncrement& root)
 
 //------------------------------------------------------------------------------
 
-fn_name CliStack_Top = "CliStack.Top";
-
 CliIncrement* CliStack::Top() const
 {
-   Debug::ft(CliStack_Top);
+   Debug::ft("CliStack.Top");
 
    return (increments_.empty() ? nullptr : increments_.back());
 }

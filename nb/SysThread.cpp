@@ -34,8 +34,6 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name SysThread_ctor1 = "SysThread.ctor";
-
 SysThread::SysThread(const Thread* client,
    const ThreadEntry entry, Priority prio, size_t size) :
    nthread_(nullptr),
@@ -45,7 +43,7 @@ SysThread::SysThread(const Thread* client,
    priority_(Priority_N),
    signal_(SIGNIL)
 {
-   Debug::ft(SysThread_ctor1);
+   Debug::ft("SysThread.ctor");
 
    Debug::Assert(event_ != nullptr);
    Debug::Assert(guard_ != nullptr);
@@ -60,8 +58,6 @@ SysThread::SysThread(const Thread* client,
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_ctor2 = "SysThread.ctor(wrap)";
-
 SysThread::SysThread() :
    nthread_(nullptr),
    nid_(RunningThreadId()),
@@ -70,7 +66,7 @@ SysThread::SysThread() :
    priority_(Priority_N),
    signal_(SIGNIL)
 {
-   Debug::ft(SysThread_ctor2);
+   Debug::ft("SysThread.ctor(wrap)");
 
    Debug::Assert(event_ != nullptr);
    Debug::Assert(guard_ != nullptr);
@@ -85,11 +81,9 @@ SysThread::SysThread() :
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_dtor = "SysThread.dtor";
-
 SysThread::~SysThread()
 {
-   Debug::ftnt(SysThread_dtor);
+   Debug::ftnt("SysThread.dtor");
 
    DeleteSentry(event_);
    DeleteSentry(guard_);
@@ -98,11 +92,9 @@ SysThread::~SysThread()
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Delay = "SysThread.Delay";
-
 DelayRc SysThread::Delay(const Duration& timeout)
 {
-   Debug::ft(SysThread_Delay);
+   Debug::ft("SysThread.Delay");
 
    return Suspend(event_, timeout);
 }
@@ -125,33 +117,27 @@ void SysThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Interrupt = "SysThread.Interrupt";
-
 bool SysThread::Interrupt()
 {
-   Debug::ft(SysThread_Interrupt);
+   Debug::ft("SysThread.Interrupt");
 
    return Resume(event_);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Proceed = "SysThread.Proceed";
-
 bool SysThread::Proceed()
 {
-   Debug::ft(SysThread_Proceed);
+   Debug::ft("SysThread.Proceed");
 
    return Resume(guard_);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Wait = "SysThread.Wait";
-
 DelayRc SysThread::Wait()
 {
-   Debug::ft(SysThread_Wait);
+   Debug::ft("SysThread.Wait");
 
    return Suspend(guard_, TIMEOUT_NEVER);
 }

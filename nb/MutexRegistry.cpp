@@ -43,11 +43,9 @@ const id_t MutexRegistry::MaxMutexes = 250;
 
 //------------------------------------------------------------------------------
 
-fn_name MutexRegistry_ctor = "MutexRegistry.ctor";
-
 MutexRegistry::MutexRegistry()
 {
-   Debug::ft(MutexRegistry_ctor);
+   Debug::ft("MutexRegistry.ctor");
 
    mutexes_.Init(MaxMutexes, SysMutex::CellDiff(), MemPermanent);
 }
@@ -65,11 +63,9 @@ MutexRegistry::~MutexRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name MutexRegistry_Abandon = "MutexRegistry.Abandon";
-
 void MutexRegistry::Abandon() const
 {
-   Debug::ftnt(MutexRegistry_Abandon);
+   Debug::ftnt("MutexRegistry.Abandon");
 
    size_t count = 0;
    auto nid = SysThread::RunningThreadId();
@@ -131,11 +127,9 @@ void MutexRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name MutexRegistry_Find = "MutexRegistry.Find";
-
 SysMutex* MutexRegistry::Find(const std::string& name) const
 {
-   Debug::ft(MutexRegistry_Find);
+   Debug::ft("MutexRegistry.Find");
 
    auto key = strUpper(name);
 
@@ -156,11 +150,9 @@ void MutexRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name MutexRegistry_UnbindMutex = "MutexRegistry.UnbindMutex";
-
 void MutexRegistry::UnbindMutex(SysMutex& mutex)
 {
-   Debug::ftnt(MutexRegistry_UnbindMutex);
+   Debug::ftnt("MutexRegistry.UnbindMutex");
 
    mutexes_.Erase(mutex);
 }

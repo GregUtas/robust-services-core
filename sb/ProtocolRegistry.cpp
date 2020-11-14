@@ -35,11 +35,9 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name ProtocolRegistry_ctor = "ProtocolRegistry.ctor";
-
 ProtocolRegistry::ProtocolRegistry()
 {
-   Debug::ft(ProtocolRegistry_ctor);
+   Debug::ft("ProtocolRegistry.ctor");
 
    protocols_.Init(Protocol::MaxId, Protocol::CellDiff(), MemImmutable);
 }
@@ -57,11 +55,9 @@ ProtocolRegistry::~ProtocolRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolRegistry_BindProtocol = "ProtocolRegistry.BindProtocol";
-
 bool ProtocolRegistry::BindProtocol(Protocol& protocol)
 {
-   Debug::ft(ProtocolRegistry_BindProtocol);
+   Debug::ft("ProtocolRegistry.BindProtocol");
 
    return protocols_.Insert(protocol);
 }
@@ -93,11 +89,9 @@ void ProtocolRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolRegistry_UnbindProtocol = "ProtocolRegistry.UnbindProtocol";
-
 void ProtocolRegistry::UnbindProtocol(Protocol& protocol)
 {
-   Debug::ftnt(ProtocolRegistry_UnbindProtocol);
+   Debug::ftnt("ProtocolRegistry.UnbindProtocol");
 
    protocols_.Erase(protocol);
 }

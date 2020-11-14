@@ -27,93 +27,75 @@
 
 namespace NodeBase
 {
-fn_name Protected_ctor = "Protected.ctor";
-
 Protected::Protected()
 {
-   Debug::ft(Protected_ctor);
+   Debug::ft("Protected.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Protected_delete1 = "Protected.operator delete";
 
 void Protected::operator delete(void* addr)
 {
-   Debug::ftnt(Protected_delete1);
+   Debug::ftnt("Protected.operator delete");
 
    Memory::Free(addr, MemProtected);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Protected_delete2 = "Protected.operator delete[]";
 
 void Protected::operator delete[](void* addr)
 {
-   Debug::ftnt(Protected_delete2);
+   Debug::ftnt("Protected.operator delete[]");
 
    Memory::Free(addr, MemProtected);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Protected_delete3 = "Protected.operator delete(place)";
-
 void Protected::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ftnt(Protected_delete3);
+   Debug::ftnt("Protected.operator delete(place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Protected_delete4 = "Protected.operator delete[](place)";
 
 void Protected::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ftnt(Protected_delete4);
+   Debug::ftnt("Protected.operator delete[](place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Protected_new1 = "Protected.operator new";
 
 void* Protected::operator new(size_t size)
 {
-   Debug::ft(Protected_new1);
+   Debug::ft("Protected.operator new");
 
    return Memory::Alloc(size, MemProtected);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Protected_new2 = "Protected.operator new[]";
 
 void* Protected::operator new[](size_t size)
 {
-   Debug::ft(Protected_new2);
+   Debug::ft("Protected.operator new[]");
 
    return Memory::Alloc(size, MemProtected);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Protected_new3 = "Protected.operator new(place)";
-
 void* Protected::operator new(size_t size, void* place)
 {
-   Debug::ft(Protected_new3);
+   Debug::ft("Protected.operator new(place)");
 
    return place;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Protected_new4 = "Protected.operator new[](place)";
-
 void* Protected::operator new[](size_t size, void* place)
 {
-   Debug::ft(Protected_new4);
+   Debug::ft("Protected.operator new[](place)");
 
    return place;
 }

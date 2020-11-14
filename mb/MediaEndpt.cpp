@@ -36,13 +36,11 @@ using std::string;
 
 namespace MediaBase
 {
-fn_name MediaEndpt_ctor = "MediaEndpt.ctor";
-
 MediaEndpt::MediaEndpt(MediaPsm& psm) :
    psm_(&psm),
    state_(Idle)
 {
-   Debug::ft(MediaEndpt_ctor);
+   Debug::ft("MediaEndpt.ctor");
 
    //  Register with the PSM.
    //
@@ -69,11 +67,9 @@ MediaEndpt::~MediaEndpt()
 
 //------------------------------------------------------------------------------
 
-fn_name MediaEndpt_Deallocate = "MediaEndpt.Deallocate";
-
 void MediaEndpt::Deallocate()
 {
-   Debug::ft(MediaEndpt_Deallocate);
+   Debug::ft("MediaEndpt.Deallocate");
 
    state_ = Idle;
 }
@@ -90,11 +86,9 @@ void MediaEndpt::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name MediaEndpt_EndOfTransaction = "MediaEndpt.EndOfTransaction";
-
 void MediaEndpt::EndOfTransaction()
 {
-   Debug::ft(MediaEndpt_EndOfTransaction);
+   Debug::ft("MediaEndpt.EndOfTransaction");
 
    if(state_ == Idle) delete this;
 }
@@ -125,22 +119,18 @@ ProtocolSM* MediaEndpt::MgwPsm() const
 
 //------------------------------------------------------------------------------
 
-fn_name MediaEndpt_new = "MediaEndpt.operator new";
-
 void* MediaEndpt::operator new(size_t size)
 {
-   Debug::ft(MediaEndpt_new);
+   Debug::ft("MediaEndpt.operator new");
 
    return Singleton< MediaEndptPool >::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MediaEndpt_ProcessIcMsg = "MediaEndpt.ProcessIcMsg";
-
 void MediaEndpt::ProcessIcMsg(Message& msg)
 {
-   Debug::ft(MediaEndpt_ProcessIcMsg);
+   Debug::ft("MediaEndpt.ProcessIcMsg");
 
    //  This function must be overridden by subclasses that require it.
    //
@@ -149,11 +139,9 @@ void MediaEndpt::ProcessIcMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name MediaEndpt_SetState = "MediaEndpt.SetState";
-
 void MediaEndpt::SetState(StateId stid)
 {
-   Debug::ft(MediaEndpt_SetState);
+   Debug::ft("MediaEndpt.SetState");
 
    state_ = stid;
 }

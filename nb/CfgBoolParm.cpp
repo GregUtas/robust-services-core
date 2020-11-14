@@ -32,23 +32,19 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CfgBoolParm_ctor = "CfgBoolParm.ctor";
-
 CfgBoolParm::CfgBoolParm(c_string key, c_string def, c_string expl) :
    CfgBitParm(key, def, expl),
    curr_(false),
    next_(false)
 {
-   Debug::ft(CfgBoolParm_ctor);
+   Debug::ft("CfgBoolParm.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CfgBoolParm_dtor = "CfgBoolParm.dtor";
-
 CfgBoolParm::~CfgBoolParm()
 {
-   Debug::ftnt(CfgBoolParm_dtor);
+   Debug::ftnt("CfgBoolParm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -71,11 +67,9 @@ void CfgBoolParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgBoolParm_SetCurr = "CfgBoolParm.SetCurr";
-
 void CfgBoolParm::SetCurr()
 {
-   Debug::ft(CfgBoolParm_SetCurr);
+   Debug::ft("CfgBoolParm.SetCurr");
 
    FunctionGuard guard(Guard_MemUnprotect);
    curr_ = next_;
@@ -84,11 +78,9 @@ void CfgBoolParm::SetCurr()
 
 //------------------------------------------------------------------------------
 
-fn_name CfgBoolParm_SetNextValue = "CfgBoolParm.SetNextValue";
-
 bool CfgBoolParm::SetNextValue(bool value)
 {
-   Debug::ft(CfgBoolParm_SetNextValue);
+   Debug::ft("CfgBoolParm.SetNextValue");
 
    FunctionGuard guard(Guard_MemUnprotect);
    next_ = value;

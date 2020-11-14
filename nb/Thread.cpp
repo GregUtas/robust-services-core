@@ -179,7 +179,6 @@ ThreadTrace::ThreadTrace(fn_name_arg func,
 //------------------------------------------------------------------------------
 
 fn_name Thread_EnterThread = "Thread.EnterThread";
-fn_name Thread_ExitBlockingOperation = "Thread.ExitBlockingOperation";
 fn_name ThreadTrace_CaptureEvent = "ThreadTrace.CaptureEvent";
 
 void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, int32_t info)
@@ -289,11 +288,9 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadStats_ctor = "ThreadStats.ctor";
-
 ThreadStats::ThreadStats()
 {
-   Debug::ft(ThreadStats_ctor);
+   Debug::ft("ThreadStats.ctor");
 
    traps_.reset(new Counter("traps"));
    exceeds_.reset(new Counter("running unpreemptable too long"));
@@ -309,11 +306,9 @@ ThreadStats::ThreadStats()
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadStats_dtor = "ThreadStats.dtor";
-
 ThreadStats::~ThreadStats()
 {
-   Debug::ftnt(ThreadStats_dtor);
+   Debug::ftnt("ThreadStats.dtor");
 }
 
 //==============================================================================
@@ -433,8 +428,6 @@ SysMutex ContextSwitchesLock_("ContextSwitchesLock");
 
 //------------------------------------------------------------------------------
 
-fn_name ContextSwitches_ctor = "ContextSwitches.ctor";
-
 ContextSwitches::ContextSwitches() :
    capacity_(0),
    next_(0),
@@ -442,7 +435,7 @@ ContextSwitches::ContextSwitches() :
    full_(false),
    log_(false)
 {
-   Debug::ft(ContextSwitches_ctor);
+   Debug::ft("ContextSwitches.ctor");
 
    switches_.reset(new ContextSwitch[4096]);
    capacity_ = 4096;
@@ -720,11 +713,9 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name ContextSwitches_LogSwitches = "ContextSwitches.LogSwitches";
-
 TraceRc ContextSwitches::LogSwitches(bool on)
 {
-   Debug::ft(ContextSwitches_LogSwitches);
+   Debug::ft("ContextSwitches.LogSwitches");
 
    if(on)
    {
@@ -914,8 +905,6 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadPriv_ctor = "ThreadPriv.ctor";
-
 ThreadPriv::ThreadPriv() :
    unpreempts_(1),
    immUnprots_(0),
@@ -942,7 +931,7 @@ ThreadPriv::ThreadPriv() :
    acquiring_(nullptr),
    vector_(0)
 {
-   Debug::ft(ThreadPriv_ctor);
+   Debug::ft("ThreadPriv.ctor");
 
    rtcLbc_.Initialize(ThreadAdmin::RtcLimit(), ThreadAdmin::RtcInterval());
    trapLbc_.Initialize(ThreadAdmin::TrapLimit(), ThreadAdmin::TrapInterval());
@@ -950,11 +939,9 @@ ThreadPriv::ThreadPriv() :
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadPriv_dtor = "ThreadPriv.dtor";
-
 ThreadPriv::~ThreadPriv()
 {
-   Debug::ftnt(ThreadPriv_dtor);
+   Debug::ftnt("ThreadPriv.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -1074,15 +1061,13 @@ const ThreadId Thread::MaxId = 99;
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ctor = "Thread.ctor";
-
 Thread::Thread(Faction faction, Daemon* daemon) :
    daemon_(daemon),
    tid_(NIL_ID),
    faction_(faction),
    deleting_(false)
 {
-   Debug::ft(Thread_ctor);
+   Debug::ft("Thread.ctor");
 
    priv_.reset(new ThreadPriv);
    stats_.reset(new ThreadStats);
@@ -1118,11 +1103,9 @@ Thread::Thread(Faction faction, Daemon* daemon) :
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_dtor = "Thread.dtor";
-
 Thread::~Thread()
 {
-   Debug::ftnt(Thread_dtor);
+   Debug::ftnt("Thread.dtor");
 
    auto threads = Singleton< ThreadRegistry >::Extant();
    threads->Destroying(Deleting, systhrd_.get());
@@ -1225,11 +1208,9 @@ bool Thread::CanBeScheduled() const
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_CauseTrap = "Thread.CauseTrap";
-
 void Thread::CauseTrap()
 {
-   Debug::ft(Thread_CauseTrap);
+   Debug::ft("Thread.CauseTrap");
 
    auto p = reinterpret_cast< char* >(BAD_POINTER);
    if(*p == 0) ++p;
@@ -1263,11 +1244,9 @@ bool Thread::ChangeFaction(Faction faction)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ClaimBlocks = "Thread.ClaimBlocks";
-
 void Thread::ClaimBlocks()
 {
-   Debug::ft(Thread_ClaimBlocks);
+   Debug::ft("Thread.ClaimBlocks");
 
    //  Claim messages on the queue.  Sometimes there are hundreds of these,
    //  so trying to add them all to GetSubtended's array isn't possible.
@@ -1287,11 +1266,9 @@ bool Thread::ClearActiveThread(Thread* active)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_CurrTimeRunning = "Thread.CurrTimeRunning";
-
 Duration Thread::CurrTimeRunning() const
 {
-   Debug::ft(Thread_CurrTimeRunning);
+   Debug::ft("Thread.CurrTimeRunning");
 
    if(!priv_->currStart_.IsValid()) return ZERO_SECS;
    return (TimePoint::Now() - priv_->currStart_);
@@ -1299,11 +1276,9 @@ Duration Thread::CurrTimeRunning() const
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_DeqMsg = "Thread.DeqMsg";
-
 MsgBuffer* Thread::DeqMsg(const Duration& timeout)
 {
-   Debug::ft(Thread_DeqMsg);
+   Debug::ft("Thread.DeqMsg");
 
    auto buff = msgq_.Deq();
 
@@ -1333,11 +1308,9 @@ MsgBuffer* Thread::DeqMsg(const Duration& timeout)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Destroy = "Thread.Destroy";
-
 void Thread::Destroy()
 {
-   Debug::ft(Thread_Destroy);
+   Debug::ft("Thread.Destroy");
 
    delete this;
 }
@@ -1371,11 +1344,9 @@ void Thread::DisplayContextSwitches(ostream& stream)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_DisplayStats = "Thread.DisplayStats";
-
 void Thread::DisplayStats(ostream& stream, const Flags& options) const
 {
-   Debug::ft(Thread_DisplayStats);
+   Debug::ft("Thread.DisplayStats");
 
    stream << spaces(2) << AbbrName()
       << SPACE << strIndex(Tid(), 0, false) << CRLF;
@@ -1502,22 +1473,18 @@ void Thread::DisplaySummary
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_EnableFactions = "Thread.EnableFactions";
-
 void Thread::EnableFactions(const FactionFlags& enabled)
 {
-   Debug::ft(Thread_EnableFactions);
+   Debug::ft("Thread.EnableFactions");
 
    FactionsEnabled_ = enabled;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_EnqMsg = "Thread.EnqMsg";
-
 bool Thread::EnqMsg(MsgBuffer& msg)
 {
-   Debug::ft(Thread_EnqMsg);
+   Debug::ft("Thread.EnqMsg");
 
    if(msgq_.Enq(msg))
    {
@@ -1577,11 +1544,9 @@ bool Thread::EnterBlockingOperation(BlockingReason why, fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_EnterSwLog = "Thread.EnterSwLog";
-
 bool Thread::EnterSwLog()
 {
-   Debug::ftnt(Thread_EnterSwLog);
+   Debug::ftnt("Thread.EnterSwLog");
 
    //  If the thread is already generating nested software logs, prevent
    //  further nesting.
@@ -1628,11 +1593,9 @@ main_t Thread::EnterThread(void* arg)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Exit = "Thread.Exit";
-
 main_t Thread::Exit(signal_t sig)
 {
-   Debug::ft(Thread_Exit);
+   Debug::ft("Thread.Exit");
 
    //  If the thread is holding any mutexes, release them.
    //  Then log the exit.
@@ -1670,7 +1633,7 @@ main_t Thread::Exit(signal_t sig)
 
 void Thread::ExitBlockingOperation(fn_name_arg func)
 {
-   Debug::ft(Thread_ExitBlockingOperation);
+   Debug::ft("Thread.ExitBlockingOperation");
 
    auto thr = RunningThread();
    thr->priv_->currStart_ = TimePoint::Now();
@@ -1696,8 +1659,6 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Thread_ExitIfSafe = "Thread.ExitIfSafe";
 
 void Thread::ExitIfSafe(debug64_t offset)
 {
@@ -1725,7 +1686,7 @@ void Thread::ExitIfSafe(debug64_t offset)
    auto& lock = AccessFtLock();
    if(lock.test_and_set()) return;
 
-   Debug::ft(Thread_ExitIfSafe);
+   Debug::ft("Thread.ExitIfSafe");
 
    if((priv_->traps_ == 0) && SysThreadStack::TrapIsOk())
    {
@@ -1740,11 +1701,9 @@ void Thread::ExitIfSafe(debug64_t offset)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ExitOnRestart = "Thread.ExitOnRestart";
-
 bool Thread::ExitOnRestart(RestartLevel level) const
 {
-   Debug::ft(Thread_ExitOnRestart);
+   Debug::ft("Thread.ExitOnRestart");
 
    //  RootThread and InitThread run during a restart.  A thread blocked on
    //  stream input, such as CinThread, cannot be forced to exit because C++
@@ -1757,11 +1716,9 @@ bool Thread::ExitOnRestart(RestartLevel level) const
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ExitSwLog = "Thread.ExitSwLog";
-
 void Thread::ExitSwLog(bool all)
 {
-   Debug::ftnt(Thread_ExitSwLog);
+   Debug::ftnt("Thread.ExitSwLog");
 
    auto thr = RunningThread(std::nothrow);
    if(thr == nullptr) return;
@@ -1775,11 +1732,9 @@ void Thread::ExitSwLog(bool all)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ExtendTime = "Thread.ExtendTime";
-
 void Thread::ExtendTime(const Duration& time)
 {
-   Debug::ft(Thread_ExtendTime);
+   Debug::ft("Thread.ExtendTime");
 
    //  Time cannot be extended for an orphaned thread: its Thread object has
    //  been deleted.  This is invoked during exception handling, so don't get
@@ -1920,11 +1875,9 @@ TraceStatus Thread::GetStatus() const
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_HandleSignal = "Thread.HandleSignal";
-
 bool Thread::HandleSignal(signal_t sig, uint32_t code)
 {
-   Debug::ft(Thread_HandleSignal);  //@
+   Debug::ft("Thread.HandleSignal");  //@
 
    auto thr = RunningThread(std::nothrow);
 
@@ -2033,22 +1986,18 @@ void Thread::ImmUnprotect()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_InitialTime = "Thread.InitialTime";
-
 Duration Thread::InitialTime() const
 {
-   Debug::ft(Thread_InitialTime);
+   Debug::ft("Thread.InitialTime");
 
    return ThreadAdmin::RtcTimeout();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Interrupt = "Thread.Interrupt";
-
 bool Thread::Interrupt(const Flags& mask)
 {
-   Debug::ft(Thread_Interrupt);
+   Debug::ft("Thread.Interrupt");
 
    if(deleting_) return false;
 
@@ -2118,11 +2067,9 @@ bool Thread::IsTraceable() const
 fixed_string KillRootThread = "The root thread cannot be killed.";
 fixed_string KillDeletingThread = "The thread is already being deleted.";
 
-fn_name Thread_Kill = "Thread.Kill";
-
 fixed_string Thread::Kill()
 {
-   Debug::ft(Thread_Kill);
+   Debug::ft("Thread.Kill");
 
    if(Singleton< RootThread >::Extant() == this) return KillRootThread;
    if(deleting_) return KillDeletingThread;
@@ -2150,11 +2097,9 @@ Thread* Thread::LockedThread()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_LogContextSwitch = "Thread.LogContextSwitch";
-
 void Thread::LogContextSwitch() const
 {
-   Debug::ft(Thread_LogContextSwitch);
+   Debug::ft("Thread.LogContextSwitch");
 
    ThreadAdmin::Incr(ThreadAdmin::Switches);
 
@@ -2210,11 +2155,9 @@ TraceRc Thread::LogContextSwitches(bool on)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_LogSignal = "Thread.LogSignal";
-
 bool Thread::LogSignal(signal_t sig) const
 {
-   Debug::ft(Thread_LogSignal);
+   Debug::ft("Thread.LogSignal");
 
    //  Don't log
    //  o a subsequent SIGYIELD if traps on SIGYIELD are disabled;
@@ -2229,12 +2172,10 @@ bool Thread::LogSignal(signal_t sig) const
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_LogTrap = "Thread.LogTrap";
-
 bool Thread::LogTrap(const Exception* ex,
    const std::exception* e, signal_t sig, const std::ostringstream* stack)
 {
-   Debug::ft(Thread_LogTrap);
+   Debug::ft("Thread.LogTrap");
 
    auto reg = Singleton< PosixSignalRegistry >::Instance();
    if(reg->Attrs(sig).test(PosixSignal::NoError)) return false;
@@ -2292,11 +2233,9 @@ bool Thread::LogTrap(const Exception* ex,
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_MakePreemptable = "Thread.MakePreemptable";
-
 void Thread::MakePreemptable()
 {
-   Debug::ftnt(Thread_MakePreemptable);
+   Debug::ftnt("Thread.MakePreemptable");
 
    auto thr = RunningThread(std::nothrow);
    if(thr == nullptr) return;
@@ -2449,11 +2388,9 @@ DelayRc Thread::Pause(Duration time)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_PauseOver = "Thread.PauseOver";
-
 void Thread::PauseOver(word limit)
 {
-   Debug::ft(Thread_PauseOver);
+   Debug::ft("Thread.PauseOver");
 
    if(RtcPercentUsed() >= limit) Pause();
 }
@@ -2469,11 +2406,9 @@ double Thread::PercentIdle()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Preempt = "Thread.Preempt";
-
 void Thread::Preempt()
 {
-   Debug::ft(Thread_Preempt);
+   Debug::ft("Thread.Preempt");
 
    //  Set the thread's ready time so that it will later be reselected,
    //  and lower its priority so that the platform won't schedule it in.
@@ -2485,11 +2420,9 @@ void Thread::Preempt()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Proceed = "Thread.Proceed";
-
 void Thread::Proceed()
 {
-   Debug::ft(Thread_Proceed);
+   Debug::ft("Thread.Proceed");
 
    //  Unless a restart runs with unprotected memory, update memory protection
    //  to what the thread expects.  Ensure that its priority is such that the
@@ -2631,13 +2564,11 @@ void Thread::Raise(signal_t sig)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Ready = "Thread.Ready";
-
 void Thread::Ready()
 {
    priv_->currStart_ = TimePoint::Now();
 
-   Debug::ft(Thread_Ready);
+   Debug::ft("Thread.Ready");
 
    if(faction_ >= SystemFaction) return;
 
@@ -2661,22 +2592,18 @@ void Thread::Ready()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Recover = "Thread.Recover";
-
 bool Thread::Recover()
 {
-   Debug::ft(Thread_Recover);
+   Debug::ft("Thread.Recover");
 
    return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_RegisterForSignals = "Thread.RegisterForSignals";
-
 void Thread::RegisterForSignals()
 {
-   Debug::ft(Thread_RegisterForSignals);
+   Debug::ft("Thread.RegisterForSignals");
 
    auto& signals = Singleton< PosixSignalRegistry >::Instance()->Signals();
 
@@ -2691,11 +2618,9 @@ void Thread::RegisterForSignals()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ReleaseResources = "Thread.ReleaseResources";
-
 void Thread::ReleaseResources(bool orphaned)
 {
-   Debug::ft(Thread_ReleaseResources);
+   Debug::ft("Thread.ReleaseResources");
 
    //  Setting deleting_ prevents any attempt to come through here twice and
    //  prevents the thread from being accessed remotely while being deleted.
@@ -2745,11 +2670,9 @@ void Thread::ReleaseResources(bool orphaned)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Reset = "Thread.Reset";
-
 void Thread::Reset(FlagId fid)
 {
-   Debug::ft(Thread_Reset);
+   Debug::ft("Thread.Reset");
 
    uint32_t mask = (1 << fid);
    priv_->vector_.fetch_and(~mask);
@@ -2765,33 +2688,27 @@ void Thread::ResetDebugFlags()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ResetFlag = "Thread.ResetFlag";
-
 void Thread::ResetFlag(FlagId fid)
 {
-   Debug::ft(Thread_ResetFlag);
+   Debug::ft("Thread.ResetFlag");
 
    RunningThread()->Reset(fid);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ResetFlags = "Thread.ResetFlags";
-
 void Thread::ResetFlags()
 {
-   Debug::ft(Thread_ResetFlags);
+   Debug::ft("Thread.ResetFlags");
 
    RunningThread()->priv_->vector_.store(0);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Restarting = "Thread.Restarting";
-
 bool Thread::Restarting(RestartLevel level)
 {
-   Debug::ft(Thread_Restarting);
+   Debug::ft("Thread.Restarting");
 
    //  If the thread is willing to exit, signal it.  ModuleRegistry.Shutdown
    //  will momentarily schedule it so that it can exit.
@@ -2811,11 +2728,9 @@ bool Thread::Restarting(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Resume = "Thread.Resume";
-
 void Thread::Resume(fn_name_arg func)
 {
-   Debug::ft(Thread_Resume);
+   Debug::ft("Thread.Resume");
 
    //  Set the time before which a locked thread should schedule itself out.
    //
@@ -2830,11 +2745,9 @@ void Thread::Resume(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_RtcPercentUsed = "Thread.RtcPercentUsed";
-
 word Thread::RtcPercentUsed()
 {
-   Debug::ft(Thread_RtcPercentUsed);
+   Debug::ft("Thread.RtcPercentUsed");
 
    //  This returns 0 unless the thread is running unpreemptably.
    //
@@ -2850,11 +2763,9 @@ word Thread::RtcPercentUsed()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_RtcTimeout = "Thread.RtcTimeout";
-
 void Thread::RtcTimeout()
 {
-   Debug::ft(Thread_RtcTimeout);
+   Debug::ft("Thread.RtcTimeout");
 
    if(stats_ != nullptr) stats_->exceeds_->Incr();
 
@@ -2905,11 +2816,9 @@ Thread* Thread::RunningThread(const std::nothrow_t&)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Schedule = "Thread.Schedule";
-
 void Thread::Schedule()
 {
-   Debug::ft(Thread_Schedule);
+   Debug::ft("Thread.Schedule");
 
    //  Scheduling only occurs among application threads.
    //
@@ -2934,22 +2843,18 @@ void Thread::Schedule()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_SetInitialized = "Thread.SetInitialized";
-
 void Thread::SetInitialized()
 {
-   Debug::ft(Thread_SetInitialized);
+   Debug::ft("Thread.SetInitialized");
 
    Singleton< ThreadRegistry >::Instance()->Initialized(systhrd_->Nid());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_SetSignal = "Thread.SetSignal";
-
 void Thread::SetSignal(signal_t sig)
 {
-   Debug::ft(Thread_SetSignal);
+   Debug::ft("Thread.SetSignal");
 
    priv_->signal_ = sig;
 }
@@ -2963,11 +2868,9 @@ void Thread::SetStatus(TraceStatus status)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_SetTrap = "Thread.SetTrap";
-
 void Thread::SetTrap(bool on)
 {
-   Debug::ft(Thread_SetTrap);
+   Debug::ft("Thread.SetTrap");
 
    if(on)
    {
@@ -2999,11 +2902,9 @@ void Thread::SetTrap(bool on)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Shutdown = "Thread.Shutdown";
-
 void Thread::Shutdown(RestartLevel level)
 {
-   Debug::ft(Thread_Shutdown);
+   Debug::ft("Thread.Shutdown");
 
    Restart::Release(stats_);
 
@@ -3025,14 +2926,12 @@ void Thread::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_SignalHandler = "Thread.SignalHandler";
-
 void Thread::SignalHandler(signal_t sig)
 {
    //  Reenable Debug functions before tracing this function.
    //
    ResetDebugFlags();
-   Debug::ft(Thread_SignalHandler);
+   Debug::ft("Thread.SignalHandler");
 
    //  Re-register for signals before handling the signal.
    //
@@ -3283,11 +3182,9 @@ main_t Thread::Start()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_StartShortInterval = "Thread.StartShortInterval";
-
 void Thread::StartShortInterval()
 {
-   Debug::ft(Thread_StartShortInterval);
+   Debug::ft("Thread.StartShortInterval");
 
    auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
 
@@ -3337,11 +3234,9 @@ TraceRc Thread::StartTracing(const string& opts)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Startup = "Thread.Startup";
-
 void Thread::Startup(RestartLevel level)
 {
-   Debug::ft(Thread_Startup);
+   Debug::ft("Thread.Startup");
 
    //  Recreate the thread's statistics if they were deleted.  If the
    //  thread slept during the restart, wake it up.
@@ -3369,11 +3264,9 @@ void Thread::StopTracing()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Suspend = "Thread.Suspend";
-
 void Thread::Suspend()
 {
-   Debug::ft(Thread_Suspend);
+   Debug::ft("Thread.Suspend");
 
    if(priv_->autostop_) StopTracing();
 
@@ -3399,11 +3292,9 @@ void Thread::Suspend()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_SwitchContext = "Thread.SwitchContext";
-
 Thread* Thread::SwitchContext()
 {
-   Debug::ft(Thread_SwitchContext);
+   Debug::ft("Thread.SwitchContext");
 
    auto curr = ActiveThread();
 
@@ -3457,11 +3348,9 @@ Thread* Thread::SwitchContext()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Test = "Thread.Test";
-
 bool Thread::Test(FlagId fid) const
 {
-   Debug::ft(Thread_Test);
+   Debug::ft("Thread.Test");
 
    auto flags = priv_->vector_.load();
    return ((flags & (1 << fid)) != 0);
@@ -3469,22 +3358,18 @@ bool Thread::Test(FlagId fid) const
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_TestFlag = "Thread.TestFlag";
-
 bool Thread::TestFlag(FlagId fid)
 {
-   Debug::ft(Thread_TestFlag);
+   Debug::ft("Thread.TestFlag");
 
    return RunningThread()->Test(fid);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_TimeLeft = "Thread.TimeLeft";
-
 Duration Thread::TimeLeft() const
 {
-   Debug::ft(Thread_TimeLeft);
+   Debug::ft("Thread.TimeLeft");
 
    //  currEnd_ is zeroed just before yielding.  This prevents its previous
    //  value from being used during the brief interval in which the thread
@@ -3773,11 +3658,9 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Unblock = "Thread.Unblock";
-
 void Thread::Unblock()
 {
-   Debug::ft(Thread_Unblock);
+   Debug::ft("Thread.Unblock");
 }
 
 //------------------------------------------------------------------------------
@@ -3799,11 +3682,9 @@ void Thread::UpdateMutexCount(bool acquired)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Vector = "Thread.Vector";
-
 std::atomic_uint32_t* Thread::Vector()
 {
-   Debug::ft(Thread_Vector);
+   Debug::ft("Thread.Vector");
 
    return &RunningThread()->priv_->vector_;
 }

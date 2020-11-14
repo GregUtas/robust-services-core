@@ -26,7 +26,6 @@
 #include "PotsSessions.h"
 #include "SbAppIds.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace SessionBase;
 
@@ -34,12 +33,10 @@ using namespace SessionBase;
 
 namespace PotsBase
 {
-fn_name PotsProxyService_ctor = "PotsProxyService.ctor";
-
 PotsProxyService::PotsProxyService() :
    ProxyBcService(PotsProxyServiceId, true)
 {
-   Debug::ft(PotsProxyService_ctor);
+   Debug::ft("PotsProxyService.ctor");
 
    //  Create and register all of our states, event handlers, and triggers.
    //
@@ -222,11 +219,9 @@ PotsProxyService::PotsProxyService() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProxyService_dtor = "PotsProxyService.dtor";
-
 PotsProxyService::~PotsProxyService()
 {
-   Debug::ftnt(PotsProxyService_dtor);
+   Debug::ftnt("PotsProxyService.dtor");
 }
 
 //==============================================================================

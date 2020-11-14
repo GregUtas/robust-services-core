@@ -30,21 +30,17 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CfgBitParm_ctor = "CfgBitParm.ctor";
-
 CfgBitParm::CfgBitParm(c_string key, c_string def, c_string expl) :
    CfgParm(key, def, expl)
 {
-   Debug::ft(CfgBitParm_ctor);
+   Debug::ft("CfgBitParm.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CfgBitParm_dtor = "CfgBitParm.dtor";
-
 CfgBitParm::~CfgBitParm()
 {
-   Debug::ftnt(CfgBitParm_dtor);
+   Debug::ftnt("CfgBitParm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -58,11 +54,9 @@ void CfgBitParm::Explain(string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CfgBitParm_GetCurr = "CfgBitParm.GetCurr";
-
 string CfgBitParm::GetCurr() const
 {
-   Debug::ft(CfgBitParm_GetCurr);
+   Debug::ft("CfgBitParm.GetCurr");
 
    string s = (GetValue() ? ValidTrueChars() : ValidFalseChars());
    s.erase(1);
@@ -90,11 +84,9 @@ void CfgBitParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgBitParm_SetNext = "CfgBitParm.SetNext";
-
 bool CfgBitParm::SetNext(c_string input)
 {
-   Debug::ft(CfgBitParm_SetNext);
+   Debug::ft("CfgBitParm.SetNext");
 
    string next(input);
 

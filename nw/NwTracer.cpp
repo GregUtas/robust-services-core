@@ -67,11 +67,9 @@ NwTracer::PortFilter::PortFilter(ipport_t p, TraceStatus s) :
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_ctor = "NwTracer.ctor";
-
 NwTracer::NwTracer()
 {
-   Debug::ft(NwTracer_ctor);
+   Debug::ft("NwTracer.ctor");
 
    for(auto i = 0; i < MaxPeerEntries; ++i) peers_[i] = PeerFilter();
    for(auto i = 0; i < MaxPortEntries; ++i) ports_[i] = PortFilter();
@@ -92,11 +90,9 @@ NwTracer::~NwTracer()
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_BuffStatus = "NwTracer.BuffStatus";
-
 TraceStatus NwTracer::BuffStatus(const IpBuffer& ipb, MsgDirection dir) const
 {
-   Debug::ft(NwTracer_BuffStatus);
+   Debug::ft("NwTracer.BuffStatus");
 
    if(!Debug::TraceOn()) return TraceExcluded;
 
@@ -164,11 +160,9 @@ TraceRc NwTracer::ClearSelections(FlagId filter)
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_FindPeer = "NwTracer.FindPeer";
-
 int NwTracer::FindPeer(const SysIpL3Addr& peer) const
 {
-   Debug::ft(NwTracer_FindPeer);
+   Debug::ft("NwTracer.FindPeer");
 
    for(auto i = 0; i < MaxPeerEntries; ++i)
    {
@@ -184,11 +178,9 @@ int NwTracer::FindPeer(const SysIpL3Addr& peer) const
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_FindPort = "NwTracer.FindPort";
-
 int NwTracer::FindPort(ipport_t port) const
 {
-   Debug::ft(NwTracer_FindPort);
+   Debug::ft("NwTracer.FindPort");
 
    for(auto i = 0; i < MaxPortEntries; ++i)
    {
@@ -207,11 +199,9 @@ void NwTracer::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_PeersEmpty = "NwTracer.PeersEmpty";
-
 bool NwTracer::PeersEmpty() const
 {
-   Debug::ft(NwTracer_PeersEmpty);
+   Debug::ft("NwTracer.PeersEmpty");
 
    for(auto i = 0; i < MaxPeerEntries; ++i)
    {
@@ -223,11 +213,9 @@ bool NwTracer::PeersEmpty() const
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_PeerStatus = "NwTracer.PeerStatus";
-
 TraceStatus NwTracer::PeerStatus(const SysIpL3Addr& peer) const
 {
-   Debug::ft(NwTracer_PeerStatus);
+   Debug::ft("NwTracer.PeerStatus");
 
    auto i = FindPeer(peer);
    if(i < 0) return TraceDefault;
@@ -236,11 +224,9 @@ TraceStatus NwTracer::PeerStatus(const SysIpL3Addr& peer) const
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_PortsEmpty = "NwTracer.PortsEmpty";
-
 bool NwTracer::PortsEmpty() const
 {
-   Debug::ft(NwTracer_PortsEmpty);
+   Debug::ft("NwTracer.PortsEmpty");
 
    for(auto i = 0; i < MaxPortEntries; ++i)
    {
@@ -252,11 +238,9 @@ bool NwTracer::PortsEmpty() const
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_PortStatus = "NwTracer.PortStatus";
-
 TraceStatus NwTracer::PortStatus(ipport_t port) const
 {
-   Debug::ft(NwTracer_PortStatus);
+   Debug::ft("NwTracer.PortStatus");
 
    auto i = FindPort(port);
    if(i < 0) return TraceDefault;
@@ -268,11 +252,9 @@ TraceStatus NwTracer::PortStatus(ipport_t port) const
 fixed_string PeersSelected = "Peers: ";
 fixed_string PortsSelected = "Ports: ";
 
-fn_name NwTracer_QuerySelections = "NwTracer.QuerySelections";
-
 void NwTracer::QuerySelections(ostream& stream) const
 {
-   Debug::ft(NwTracer_QuerySelections);
+   Debug::ft("NwTracer.QuerySelections");
 
    auto nbt = Singleton< NbTracer >::Instance();
 
@@ -319,12 +301,10 @@ void NwTracer::QuerySelections(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_SelectPeer = "NwTracer.SelectPeer";
-
 TraceRc NwTracer::SelectPeer
    (const SysIpL3Addr& peer, TraceStatus status)
 {
-   Debug::ft(NwTracer_SelectPeer);
+   Debug::ft("NwTracer.SelectPeer");
 
    auto buff = Singleton< TraceBuffer >::Instance();
 
@@ -356,11 +336,9 @@ TraceRc NwTracer::SelectPeer
 
 //------------------------------------------------------------------------------
 
-fn_name NwTracer_SelectPort = "NwTracer.SelectPort";
-
 TraceRc NwTracer::SelectPort(ipport_t port, TraceStatus status)
 {
-   Debug::ft(NwTracer_SelectPort);
+   Debug::ft("NwTracer.SelectPort");
 
    auto buff = Singleton< TraceBuffer >::Instance();
 

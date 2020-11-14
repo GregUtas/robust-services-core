@@ -37,11 +37,9 @@ const size_t SymbolRegistry::MaxSymbols = 4000;
 
 //------------------------------------------------------------------------------
 
-fn_name SymbolRegistry_ctor = "SymbolRegistry.ctor";
-
 SymbolRegistry::SymbolRegistry()
 {
-   Debug::ft(SymbolRegistry_ctor);
+   Debug::ft("SymbolRegistry.ctor");
 
    symbolq_.Init(Symbol::LinkDiff());
 }
@@ -60,11 +58,9 @@ SymbolRegistry::~SymbolRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name SymbolRegistry_BindSymbol1 = "SymbolRegistry.BindSymbol(int)";
-
 bool SymbolRegistry::BindSymbol(const string& name, word value, bool lock)
 {
-   Debug::ft(SymbolRegistry_BindSymbol1);
+   Debug::ft("SymbolRegistry.BindSymbol(int)");
 
    auto sym = EnsureSymbol(name);
    if(sym == nullptr) return false;
@@ -73,12 +69,10 @@ bool SymbolRegistry::BindSymbol(const string& name, word value, bool lock)
 
 //------------------------------------------------------------------------------
 
-fn_name SymbolRegistry_BindSymbol2 = "SymbolRegistry.BindSymbol(string)";
-
 bool SymbolRegistry::BindSymbol
    (const string& name, const string& value, bool lock)
 {
-   Debug::ft(SymbolRegistry_BindSymbol2);
+   Debug::ft("SymbolRegistry.BindSymbol(string)");
 
    auto sym = EnsureSymbol(name);
    if(sym == nullptr) return false;
@@ -134,11 +128,9 @@ Symbol* SymbolRegistry::EnsureSymbol(const string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name SymbolRegistry_FindSymbol = "SymbolRegistry.FindSymbol";
-
 Symbol* SymbolRegistry::FindSymbol(const string& name) const
 {
-   Debug::ft(SymbolRegistry_FindSymbol);
+   Debug::ft("SymbolRegistry.FindSymbol");
 
    for(auto s = symbolq_.First(); s != nullptr; symbolq_.Next(s))
    {
@@ -157,11 +149,9 @@ void SymbolRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name SymbolRegistry_RemoveSymbol = "SymbolRegistry.RemoveSymbol";
-
 void SymbolRegistry::RemoveSymbol(Symbol& sym)
 {
-   Debug::ft(SymbolRegistry_RemoveSymbol);
+   Debug::ft("SymbolRegistry.RemoveSymbol");
 
    symbolq_.Exq(sym);
 }

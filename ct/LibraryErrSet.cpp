@@ -35,54 +35,44 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name LibraryErrSet_ctor = "LibraryErrSet.ctor";
-
 LibraryErrSet::LibraryErrSet(const string& name, LibExprErr err, size_t pos) :
    LibrarySet(name),
    err_(err),
    pos_(pos)
 {
-   Debug::ft(LibraryErrSet_ctor);
+   Debug::ft("LibraryErrSet.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LibraryErrSet_dtor = "LibraryErrSet.dtor";
 
 LibraryErrSet::~LibraryErrSet()
 {
-   Debug::ftnt(LibraryErrSet_dtor);
+   Debug::ftnt("LibraryErrSet.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryErrSet_Check = "LibraryErrSet.Check";
-
 word LibraryErrSet::Check(CliThread& cli, ostream* stream, string& expl) const
 {
-   Debug::ft(LibraryErrSet_Check);
+   Debug::ft("LibraryErrSet.Check");
 
    return Error(expl);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryErrSet_Count = "LibraryErrSet.Count";
-
 word LibraryErrSet::Count(string& result) const
 {
-   Debug::ft(LibraryErrSet_Count);
+   Debug::ft("LibraryErrSet.Count");
 
    return Error(result);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryErrSet_Countlines = "LibraryErrSet.Countlines";
-
 word LibraryErrSet::Countlines(string& result) const
 {
-   Debug::ft(LibraryErrSet_Countlines);
+   Debug::ft("LibraryErrSet.Countlines");
 
    return Error(result);
 }
@@ -120,89 +110,73 @@ word LibraryErrSet::Error(string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryErrSet_Fix = "LibraryErrSet.Fix";
-
 word LibraryErrSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 {
-   Debug::ft(LibraryErrSet_Fix);
+   Debug::ft("LibraryErrSet.Fix");
 
    return Error(expl);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LibraryErrSet_Format = "LibraryErrSet.Format";
 
 word LibraryErrSet::Format(string& expl) const
 {
-   Debug::ft(LibraryErrSet_Format);
+   Debug::ft("LibraryErrSet.Format");
 
    return Error(expl);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LibraryErrSet_List = "LibraryErrSet.List";
 
 word LibraryErrSet::List(ostream& stream, string& expl) const
 {
-   Debug::ft(LibraryErrSet_List);
+   Debug::ft("LibraryErrSet.List");
 
    return Error(expl);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LibraryErrSet_Parse = "LibraryErrSet.Parse";
 
 word LibraryErrSet::Parse(string& expl, const string& opts) const
 {
-   Debug::ft(LibraryErrSet_Parse);
+   Debug::ft("LibraryErrSet.Parse");
 
    return Error(expl);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LibraryErrSet_PreAssign = "LibraryErrSet.PreAssign";
 
 word LibraryErrSet::PreAssign(string& expl) const
 {
-   Debug::ft(LibraryErrSet_PreAssign);
+   Debug::ft("LibraryErrSet.PreAssign");
 
    return Error(expl);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LibraryErrSet_Scan = "LibraryErrSet.Scan";
 
 word LibraryErrSet::Scan
    (ostream& stream, const string& pattern, string& expl) const
 {
-   Debug::ft(LibraryErrSet_Scan);
+   Debug::ft("LibraryErrSet.Scan");
 
    return Error(expl);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryErrSet_Show = "LibraryErrSet.Show";
-
 word LibraryErrSet::Show(string& result) const
 {
-   Debug::ft(LibraryErrSet_Show);
+   Debug::ft("LibraryErrSet.Show");
 
    return Error(result);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryErrSet_Sort = "LibraryErrSet.Sort";
-
 word LibraryErrSet::Sort(ostream& stream, string& expl) const
 {
-   Debug::ft(LibraryErrSet_Sort);
+   Debug::ft("LibraryErrSet.Sort");
 
    return Error(expl);
 }

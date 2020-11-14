@@ -175,11 +175,9 @@ IstreamMandParm::IstreamMandParm() : CliTextParm(IstreamMandExpl, false, 0) { }
 
 //------------------------------------------------------------------------------
 
-fn_name NodeBase_GetBV = "NodeBase.GetBV";
-
 CliParm::Rc GetBV(const CliCommand& comm, CliThread& cli, bool& v)
 {
-   Debug::ft(NodeBase_GetBV);
+   Debug::ft("NodeBase.GetBV");
 
    char c;
    auto rc = comm.GetCharParmRc(c, cli);
@@ -189,11 +187,9 @@ CliParm::Rc GetBV(const CliCommand& comm, CliThread& cli, bool& v)
 
 //------------------------------------------------------------------------------
 
-fn_name NodeBase_GetCBV = "NodeBase.GetCBV";
-
 CliParm::Rc GetCBV(const CliCommand& comm, CliThread& cli, bool& c, bool& v)
 {
-   Debug::ft(NodeBase_GetCBV);
+   Debug::ft("NodeBase.GetCBV");
 
    char k;
 
@@ -563,11 +559,9 @@ ToolsText::ToolsText() : CliText(ToolsTextExpl, ToolsTextStr) { }
 
 //------------------------------------------------------------------------------
 
-fn_name NodeBase_ValidateOptions = "NodeBase.ValidateOptions";
-
 bool ValidateOptions(const string& opts, const string& valid, string& expl)
 {
-   Debug::ft(NodeBase_ValidateOptions);
+   Debug::ft("NodeBase.ValidateOptions");
 
    string invalid;
 

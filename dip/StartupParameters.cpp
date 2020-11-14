@@ -30,8 +30,6 @@ using namespace NodeBase;
 
 namespace Diplomacy
 {
-fn_name StartupParameters_ctor = "StartupParameters.ctor";
-
 StartupParameters::StartupParameters() :
    ip_specified(false),
    name_specified(false),
@@ -42,7 +40,7 @@ StartupParameters::StartupParameters() :
    power(EMPTY_STR),
    passcode(0)
 {
-   Debug::ft(StartupParameters_ctor);
+   Debug::ft("StartupParameters.ctor");
 }
 
 //------------------------------------------------------------------------------

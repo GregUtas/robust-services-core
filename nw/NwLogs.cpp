@@ -36,11 +36,9 @@ fixed_string NetworkAlarmName = "NETWORK";
 
 //------------------------------------------------------------------------------
 
-fn_name NetworkBase_CreateNwLogs = "NetworkBase.CreateNwLogs";
-
 void CreateNwLogs(RestartLevel level)
 {
-   Debug::ft(NetworkBase_CreateNwLogs);
+   Debug::ft("NetworkBase.CreateNwLogs");
 
    if(level < RestartReboot) return;
 

@@ -487,11 +487,9 @@ fixed_string PotsCwmRelayEventStr           = "PotsCwmRelayEvent";
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmService_ctor = "PotsCwmService.ctor";
-
 PotsCwmService::PotsCwmService() : Service(PotsCwmServiceId, true)
 {
-   Debug::ft(PotsCwmService_ctor);
+   Debug::ft("PotsCwmService.ctor");
 
    Singleton< PotsCwmNull >::Instance();
    Singleton< PotsCwmInitiating >::Instance();
@@ -548,58 +546,46 @@ PotsCwmService::PotsCwmService() : Service(PotsCwmServiceId, true)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmService_dtor = "PotsCwmService.dtor";
-
 PotsCwmService::~PotsCwmService()
 {
-   Debug::ftnt(PotsCwmService_dtor);
+   Debug::ftnt("PotsCwmService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmService_AllocModifier = "PotsCwmService.AllocModifier";
-
 ServiceSM* PotsCwmService::AllocModifier() const
 {
-   Debug::ft(PotsCwmService_AllocModifier);
+   Debug::ft("PotsCwmService.AllocModifier");
 
    return new PotsCwmSsm;
 }
 
 //==============================================================================
 
-fn_name PotsCwmState_ctor = "PotsCwmState.ctor";
-
 PotsCwmState::PotsCwmState(Id stid) : State(PotsCwmServiceId, stid)
 {
-   Debug::ft(PotsCwmState_ctor);
+   Debug::ft("PotsCwmState.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmState_dtor = "PotsCwmState.dtor";
 
 PotsCwmState::~PotsCwmState()
 {
-   Debug::ftnt(PotsCwmState_dtor);
+   Debug::ftnt("PotsCwmState.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmNull_ctor = "PotsCwmNull.ctor";
 
 PotsCwmNull::PotsCwmNull() : PotsCwmState(PotsCwmState::Null)
 {
-   Debug::ft(PotsCwmNull_ctor);
+   Debug::ft("PotsCwmNull.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmInitiating_ctor = "PotsCwmInitiating.ctor";
-
 PotsCwmInitiating::PotsCwmInitiating() : PotsCwmState(PotsCwmState::Initiating)
 {
-   Debug::ft(PotsCwmInitiating_ctor);
+   Debug::ft("PotsCwmInitiating.ctor");
 
    BindMsgAnalyzer
       (PotsCwmEventHandler::InAnalyzeNetworkMessage, Service::NetworkPort);
@@ -609,11 +595,9 @@ PotsCwmInitiating::PotsCwmInitiating() : PotsCwmState(PotsCwmState::Initiating)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmActive_ctor = "PotsCwmActive.ctor";
-
 PotsCwmActive::PotsCwmActive() : PotsCwmState(PotsCwmState::Active)
 {
-   Debug::ft(PotsCwmActive_ctor);
+   Debug::ft("PotsCwmActive.ctor");
 
    BindMsgAnalyzer
       (PotsCwmEventHandler::AcAnalyzeUserMessage, Service::UserPort);
@@ -647,212 +631,168 @@ PotsCwmActive::PotsCwmActive() : PotsCwmState(PotsCwmState::Active)
 
 //==============================================================================
 
-fn_name PotsCwmEvent_ctor = "PotsCwmEvent.ctor";
-
 PotsCwmEvent::PotsCwmEvent(Id eid, ServiceSM& owner) : Event(eid, &owner)
 {
-   Debug::ft(PotsCwmEvent_ctor);
+   Debug::ft("PotsCwmEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmEvent_dtor = "PotsCwmEvent.dtor";
 
 PotsCwmEvent::~PotsCwmEvent()
 {
-   Debug::ftnt(PotsCwmEvent_dtor);
+   Debug::ftnt("PotsCwmEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmFacilityEvent_ctor = "PotsCwmFacilityEvent.ctor";
 
 PotsCwmFacilityEvent::PotsCwmFacilityEvent(ServiceSM& owner) :
    PotsCwmEvent(Facility, owner)
 {
-   Debug::ft(PotsCwmFacilityEvent_ctor);
+   Debug::ft("PotsCwmFacilityEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmFacilityEvent_dtor = "PotsCwmFacilityEvent.dtor";
 
 PotsCwmFacilityEvent::~PotsCwmFacilityEvent()
 {
-   Debug::ftnt(PotsCwmFacilityEvent_dtor);
+   Debug::ftnt("PotsCwmFacilityEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmNotifyEvent_ctor = "PotsCwmNotifyEvent.ctor";
 
 PotsCwmNotifyEvent::PotsCwmNotifyEvent(ServiceSM& owner) :
    PotsCwmEvent(Notify, owner)
 {
-   Debug::ft(PotsCwmNotifyEvent_ctor);
+   Debug::ft("PotsCwmNotifyEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmNotifyEvent_dtor = "PotsCwmNotifyEvent.dtor";
 
 PotsCwmNotifyEvent::~PotsCwmNotifyEvent()
 {
-   Debug::ftnt(PotsCwmNotifyEvent_dtor);
+   Debug::ftnt("PotsCwmNotifyEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmToneTimeoutEvent_ctor = "PotsCwmToneTimeoutEvent.ctor";
 
 PotsCwmToneTimeoutEvent::PotsCwmToneTimeoutEvent(ServiceSM& owner) :
    PotsCwmEvent(ToneTimeout, owner)
 {
-   Debug::ft(PotsCwmToneTimeoutEvent_ctor);
+   Debug::ft("PotsCwmToneTimeoutEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmToneTimeoutEvent_dtor = "PotsCwmToneTimeoutEvent.dtor";
 
 PotsCwmToneTimeoutEvent::~PotsCwmToneTimeoutEvent()
 {
-   Debug::ftnt(PotsCwmToneTimeoutEvent_dtor);
+   Debug::ftnt("PotsCwmToneTimeoutEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmRenotifyEvent_ctor = "PotsCwmRenotifyEvent.ctor";
 
 PotsCwmRenotifyEvent::PotsCwmRenotifyEvent(ServiceSM& owner) :
    PotsCwmEvent(Renotify, owner)
 {
-   Debug::ft(PotsCwmRenotifyEvent_ctor);
+   Debug::ft("PotsCwmRenotifyEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmRenotifyEvent_dtor = "PotsCwmRenotifyEvent.dtor";
 
 PotsCwmRenotifyEvent::~PotsCwmRenotifyEvent()
 {
-   Debug::ftnt(PotsCwmRenotifyEvent_dtor);
+   Debug::ftnt("PotsCwmRenotifyEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmFlipflopEvent_ctor = "PotsCwmFlipflopEvent.ctor";
 
 PotsCwmFlipflopEvent::PotsCwmFlipflopEvent(ServiceSM& owner) :
    PotsCwmEvent(Flipflop, owner)
 {
-   Debug::ft(PotsCwmFlipflopEvent_ctor);
+   Debug::ft("PotsCwmFlipflopEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmFlipflopEvent_dtor = "PotsCwmFlipflopEvent.dtor";
 
 PotsCwmFlipflopEvent::~PotsCwmFlipflopEvent()
 {
-   Debug::ftnt(PotsCwmFlipflopEvent_dtor);
+   Debug::ftnt("PotsCwmFlipflopEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmReanswerEvent_ctor = "PotsCwmReanswerEvent.ctor";
 
 PotsCwmReanswerEvent::PotsCwmReanswerEvent(ServiceSM& owner) :
    PotsCwmEvent(Reanswer, owner)
 {
-   Debug::ft(PotsCwmReanswerEvent_ctor);
+   Debug::ft("PotsCwmReanswerEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmReanswerEvent_dtor = "PotsCwmReanswerEvent.dtor";
 
 PotsCwmReanswerEvent::~PotsCwmReanswerEvent()
 {
-   Debug::ftnt(PotsCwmReanswerEvent_dtor);
+   Debug::ftnt("PotsCwmReanswerEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmReanswerTimeoutEvent_ctor = "PotsCwmReanswerTimeoutEvent.ctor";
 
 PotsCwmReanswerTimeoutEvent::PotsCwmReanswerTimeoutEvent(ServiceSM& owner) :
    PotsCwmEvent(ReanswerTimeout, owner)
 {
-   Debug::ft(PotsCwmReanswerTimeoutEvent_ctor);
+   Debug::ft("PotsCwmReanswerTimeoutEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmReanswerTimeoutEvent_dtor = "PotsCwmReanswerTimeoutEvent.dtor";
 
 PotsCwmReanswerTimeoutEvent::~PotsCwmReanswerTimeoutEvent()
 {
-   Debug::ftnt(PotsCwmReanswerTimeoutEvent_dtor);
+   Debug::ftnt("PotsCwmReanswerTimeoutEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmReconnectEvent_ctor = "PotsCwmReconnectEvent.ctor";
 
 PotsCwmReconnectEvent::PotsCwmReconnectEvent(ServiceSM& owner) :
    PotsCwmEvent(Reconnect, owner)
 {
-   Debug::ft(PotsCwmReconnectEvent_ctor);
+   Debug::ft("PotsCwmReconnectEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmReconnectEvent_dtor = "PotsCwmReconnectEvent.dtor";
 
 PotsCwmReconnectEvent::~PotsCwmReconnectEvent()
 {
-   Debug::ftnt(PotsCwmReconnectEvent_dtor);
+   Debug::ftnt("PotsCwmReconnectEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmLocalReleaseEvent_ctor = "PotsCwmLocalReleaseEvent.ctor";
 
 PotsCwmLocalReleaseEvent::PotsCwmLocalReleaseEvent(ServiceSM& owner) :
    PotsCwmEvent(LocalRelease, owner)
 {
-   Debug::ft(PotsCwmLocalReleaseEvent_ctor);
+   Debug::ft("PotsCwmLocalReleaseEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmLocalReleaseEvent_dtor = "PotsCwmLocalReleaseEvent.dtor";
 
 PotsCwmLocalReleaseEvent::~PotsCwmLocalReleaseEvent()
 {
-   Debug::ftnt(PotsCwmLocalReleaseEvent_dtor);
+   Debug::ftnt("PotsCwmLocalReleaseEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmRemoteReleaseEvent_ctor = "PotsCwmRemoteReleaseEvent.ctor";
 
 PotsCwmRemoteReleaseEvent::PotsCwmRemoteReleaseEvent
    (Id eid, ServiceSM& owner, Cause::Ind cause) :
    PotsCwmEvent(eid, owner),
    cause_(cause)
 {
-   Debug::ft(PotsCwmRemoteReleaseEvent_ctor);
+   Debug::ft("PotsCwmRemoteReleaseEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmRemoteReleaseEvent_dtor = "PotsCwmRemoteReleaseEvent.dtor";
-
 PotsCwmRemoteReleaseEvent::~PotsCwmRemoteReleaseEvent()
 {
-   Debug::ftnt(PotsCwmRemoteReleaseEvent_dtor);
+   Debug::ftnt("PotsCwmRemoteReleaseEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -867,85 +807,67 @@ void PotsCwmRemoteReleaseEvent::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmActiveReleaseEvent_ctor = "PotsCwmActiveReleaseEvent.ctor";
-
 PotsCwmActiveReleaseEvent::PotsCwmActiveReleaseEvent
    (ServiceSM& owner, Cause::Ind cause) :
    PotsCwmRemoteReleaseEvent(ActiveRelease, owner, cause)
 {
-   Debug::ft(PotsCwmActiveReleaseEvent_ctor);
+   Debug::ft("PotsCwmActiveReleaseEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmActiveReleaseEvent_dtor = "PotsCwmActiveReleaseEvent.dtor";
 
 PotsCwmActiveReleaseEvent::~PotsCwmActiveReleaseEvent()
 {
-   Debug::ftnt(PotsCwmActiveReleaseEvent_dtor);
+   Debug::ftnt("PotsCwmActiveReleaseEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmInactiveReleaseEvent_ctor = "PotsCwmInactiveReleaseEvent.ctor";
 
 PotsCwmInactiveReleaseEvent::PotsCwmInactiveReleaseEvent
    (ServiceSM& owner, Cause::Ind cause) :
    PotsCwmRemoteReleaseEvent(InactiveRelease, owner, cause)
 {
-   Debug::ft(PotsCwmInactiveReleaseEvent_ctor);
+   Debug::ft("PotsCwmInactiveReleaseEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmInactiveReleaseEvent_dtor = "PotsCwmInactiveReleaseEvent.dtor";
 
 PotsCwmInactiveReleaseEvent::~PotsCwmInactiveReleaseEvent()
 {
-   Debug::ftnt(PotsCwmInactiveReleaseEvent_dtor);
+   Debug::ftnt("PotsCwmInactiveReleaseEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmQuiesceEvent_ctor = "PotsCwmQuiesceEvent.ctor";
 
 PotsCwmQuiesceEvent::PotsCwmQuiesceEvent(ServiceSM& owner) :
    PotsCwmEvent(Quiesce, owner)
 {
-   Debug::ft(PotsCwmQuiesceEvent_ctor);
+   Debug::ft("PotsCwmQuiesceEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmQuiesceEvent_dtor = "PotsCwmQuiesceEvent.dtor";
 
 PotsCwmQuiesceEvent::~PotsCwmQuiesceEvent()
 {
-   Debug::ftnt(PotsCwmQuiesceEvent_dtor);
+   Debug::ftnt("PotsCwmQuiesceEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmRelayEvent_ctor = "PotsCwmRelayEvent.ctor";
 
 PotsCwmRelayEvent::PotsCwmRelayEvent(ServiceSM& owner) :
    PotsCwmEvent(Relay, owner)
 {
-   Debug::ft(PotsCwmRelayEvent_ctor);
+   Debug::ft("PotsCwmRelayEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmRelayEvent_dtor = "PotsCwmRelayEvent.dtor";
-
 PotsCwmRelayEvent::~PotsCwmRelayEvent()
 {
-   Debug::ftnt(PotsCwmRelayEvent_dtor);
+   Debug::ftnt("PotsCwmRelayEvent.dtor");
 }
 
 //==============================================================================
-
-fn_name PotsCwmSsm_ctor = "PotsCwmSsm.ctor";
 
 PotsCwmSsm::PotsCwmSsm() : ServiceSM(PotsCwmServiceId),
    substate_(Initiating),
@@ -953,36 +875,30 @@ PotsCwmSsm::PotsCwmSsm() : ServiceSM(PotsCwmServiceId),
    tid_(NIL_ID),
    onhook_(false)
 {
-   Debug::ft(PotsCwmSsm_ctor);
+   Debug::ft("PotsCwmSsm.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCwmSsm_dtor = "PotsCwmSsm.dtor";
 
 PotsCwmSsm::~PotsCwmSsm()
 {
-   Debug::ftnt(PotsCwmSsm_dtor);
+   Debug::ftnt("PotsCwmSsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_CalcPort = "PotsCwmSsm.CalcPort";
-
 ServicePortId PotsCwmSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(PotsCwmSsm_CalcPort);
+   Debug::ft("PotsCwmSsm.CalcPort");
 
    return Parent()->CalcPort(ame);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_CalcRole = "PotsCwmSsm.CalcRole";
-
 PotsCwmSsm::PsmRole PotsCwmSsm::CalcRole(const ProtocolSM* psm) const
 {
-   Debug::ft(PotsCwmSsm_CalcRole);
+   Debug::ft("PotsCwmSsm.CalcRole");
 
    if(UPsm() == psm) return User;
    if(NPsm(activeCall_) == psm) return Active;
@@ -1009,11 +925,9 @@ void PotsCwmSsm::ClearTimer(TimerId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_ConnectInactiveCall = "PotsCwmSsm.ConnectInactiveCall";
-
 void PotsCwmSsm::ConnectInactiveCall(Tone::Id tone)
 {
-   Debug::ft(PotsCwmSsm_ConnectInactiveCall);
+   Debug::ft("PotsCwmSsm.ConnectInactiveCall");
 
    //  Make the inactive call the active one.
    //
@@ -1048,11 +962,9 @@ void PotsCwmSsm::ConnectInactiveCall(Tone::Id tone)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_CreateNPsm = "PotsCwmSsm.CreateNPsm";
-
 PotsMuxPsm* PotsCwmSsm::CreateNPsm() const
 {
-   Debug::ft(PotsCwmSsm_CreateNPsm);
+   Debug::ft("PotsCwmSsm.CreateNPsm");
 
    auto port = Mux()->Profile()->GetCircuit()->TsPort();
    return new PotsMuxPsm(port);
@@ -1073,11 +985,9 @@ void PotsCwmSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_Flipflop = "PotsCwmSsm.Flipflop";
-
 EventHandler::Rc PotsCwmSsm::Flipflop()
 {
-   Debug::ft(PotsCwmSsm_Flipflop);
+   Debug::ft("PotsCwmSsm.Flipflop");
 
    auto actNPsm = NPsm(activeCall_);
    auto hldNPsm = NPsm(1 - activeCall_);
@@ -1286,12 +1196,10 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_ProcessInitNack = "PotsCwmSsm.ProcessInitNack";
-
 EventHandler::Rc PotsCwmSsm::ProcessInitNack
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsCwmSsm_ProcessInitNack);
+   Debug::ft("PotsCwmSsm.ProcessInitNack");
 
    //  This has to handle the case where CWT occurs during CWT, when the
    //  nack is sent to the third NPsm.  This PSM is not registered with
@@ -1305,11 +1213,9 @@ EventHandler::Rc PotsCwmSsm::ProcessInitNack
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_ProcessSip = "PotsCwmSsm.ProcessSip";
-
 EventHandler::Rc PotsCwmSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsCwmSsm_ProcessSip);
+   Debug::ft("PotsCwmSsm.ProcessSip");
 
    auto& ire = static_cast< InitiationReqEvent& >(currEvent);
 
@@ -1319,11 +1225,9 @@ EventHandler::Rc PotsCwmSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_Reanswer = "PotsCwmSsm.Reanswer";
-
 EventHandler::Rc PotsCwmSsm::Reanswer()
 {
-   Debug::ft(PotsCwmSsm_Reanswer);
+   Debug::ft("PotsCwmSsm.Reanswer");
 
    if(substate_ != Reringing)
    {
@@ -1346,11 +1250,9 @@ EventHandler::Rc PotsCwmSsm::Reanswer()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_Reconnect = "PotsCwmSsm.Reconnect";
-
 EventHandler::Rc PotsCwmSsm::Reconnect()
 {
-   Debug::ft(PotsCwmSsm_Reconnect);
+   Debug::ft("PotsCwmSsm.Reconnect");
 
    if(substate_ != Holding)
    {
@@ -1366,11 +1268,9 @@ EventHandler::Rc PotsCwmSsm::Reconnect()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_RelayFacilityMsg = "PotsCwmSsm.RelayFacilityMsg";
-
 EventHandler::Rc PotsCwmSsm::RelayFacilityMsg()
 {
-   Debug::ft(PotsCwmSsm_RelayFacilityMsg);
+   Debug::ft("PotsCwmSsm.RelayFacilityMsg");
 
    if(CurrState() != PotsCwmState::Initiating)
    {
@@ -1415,11 +1315,9 @@ EventHandler::Rc PotsCwmSsm::RelayFacilityMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_RelayMsg = "PotsCwmSsm.RelayMsg";
-
 EventHandler::Rc PotsCwmSsm::RelayMsg()
 {
-   Debug::ft(PotsCwmSsm_RelayMsg);
+   Debug::ft("PotsCwmSsm.RelayMsg");
 
    auto pmsg = static_cast< PotsMessage* >(Context::ContextMsg());
    auto sid = pmsg->GetSignal();
@@ -1525,11 +1423,9 @@ EventHandler::Rc PotsCwmSsm::RelayMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_ReleaseActive = "PotsCwmSsm.ReleaseActive";
-
 EventHandler::Rc PotsCwmSsm::ReleaseActive(Cause::Ind cause, Event*& nextEvent)
 {
-   Debug::ft(PotsCwmSsm_ReleaseActive);
+   Debug::ft("PotsCwmSsm.ReleaseActive");
 
    auto upsm = UPsm();
 
@@ -1579,11 +1475,9 @@ EventHandler::Rc PotsCwmSsm::ReleaseActive(Cause::Ind cause, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_ReleaseCwt = "PotsCwmSsm.ReleaseCwt";
-
 void PotsCwmSsm::ReleaseCwt(Facility::Ind ind)
 {
-   Debug::ft(PotsCwmSsm_ReleaseCwt);
+   Debug::ft("PotsCwmSsm.ReleaseCwt");
 
    auto actNPsm = NPsm(activeCall_);
    auto hldNPsm = NPsm(1 - activeCall_);
@@ -1628,12 +1522,10 @@ void PotsCwmSsm::ReleaseCwt(Facility::Ind ind)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_ReleaseInactive = "PotsCwmSsm.ReleaseInactive";
-
 EventHandler::Rc PotsCwmSsm::ReleaseInactive
    (Cause::Ind cause, Event*& nextEvent)
 {
-   Debug::ft(PotsCwmSsm_ReleaseInactive);
+   Debug::ft("PotsCwmSsm.ReleaseInactive");
 
    auto upsm = UPsm();
 
@@ -1727,11 +1619,9 @@ EventHandler::Rc PotsCwmSsm::ReleaseInactive
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_Rering = "PotsCwmSsm.Rering";
-
 EventHandler::Rc PotsCwmSsm::Rering()
 {
-   Debug::ft(PotsCwmSsm_Rering);
+   Debug::ft("PotsCwmSsm.Rering");
 
    switch(substate_)
    {
@@ -1783,11 +1673,9 @@ EventHandler::Rc PotsCwmSsm::Rering()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_SendFacilityNack = "PotsCwmSsm.SendFacilityNack";
-
 EventHandler::Rc PotsCwmSsm::SendFacilityNack(PotsMuxPsm* npsm, ServiceId sid)
 {
-   Debug::ft(PotsCwmSsm_SendFacilityNack);
+   Debug::ft("PotsCwmSsm.SendFacilityNack");
 
    npsm->SendSignal(PotsSignal::Facility);
    npsm->SendFacility(sid, Facility::InitiationNack);
@@ -1796,11 +1684,9 @@ EventHandler::Rc PotsCwmSsm::SendFacilityNack(PotsMuxPsm* npsm, ServiceId sid)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_SetNextState = "PotsCwmSsm.SetNextState";
-
 void PotsCwmSsm::SetNextState(StateId stid)
 {
-   Debug::ft(PotsCwmSsm_SetNextState);
+   Debug::ft("PotsCwmSsm.SetNextState");
 
    if(stid == Null)
    {
@@ -1812,22 +1698,18 @@ void PotsCwmSsm::SetNextState(StateId stid)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_SetSubstate = "PotsCwmSsm.SetSubstate";
-
 void PotsCwmSsm::SetSubstate(Substate state)
 {
-   Debug::ft(PotsCwmSsm_SetSubstate);
+   Debug::ft("PotsCwmSsm.SetSubstate");
 
    substate_ = state;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_StartCwtTone = "PotsCwmSsm.StartCwtTone";
-
 EventHandler::Rc PotsCwmSsm::StartCwtTone()
 {
-   Debug::ft(PotsCwmSsm_StartCwtTone);
+   Debug::ft("PotsCwmSsm.StartCwtTone");
 
    auto upsm = UPsm();
 
@@ -1882,11 +1764,9 @@ void PotsCwmSsm::StartTimer(TimerId tid, secs_t duration)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_StopCwtTone = "PotsCwmSsm.StopCwtTone";
-
 EventHandler::Rc PotsCwmSsm::StopCwtTone()
 {
-   Debug::ft(PotsCwmSsm_StopCwtTone);
+   Debug::ft("PotsCwmSsm.StopCwtTone");
 
    switch(substate_)
    {
@@ -1910,11 +1790,9 @@ EventHandler::Rc PotsCwmSsm::StopCwtTone()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmSsm_StopReringing = "PotsCwmSsm.StopReringing";
-
 EventHandler::Rc PotsCwmSsm::StopReringing()
 {
-   Debug::ft(PotsCwmSsm_StopReringing);
+   Debug::ft("PotsCwmSsm.StopReringing");
 
    //  Release the remaining call and the subscriber.
    //
@@ -1956,13 +1834,10 @@ void PotsCwmSsm::StopTimer(TimerId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmInAnalyzeNetworkMessage_ProcessEvent =
-   "PotsCwmInAnalyzeNetworkMessage.ProcessEvent";
-
 EventHandler::Rc PotsCwmInAnalyzeNetworkMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmInAnalyzeNetworkMessage_ProcessEvent);
+   Debug::ft("PotsCwmInAnalyzeNetworkMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto pmsg = static_cast< Pots_NU_Message* >(ame.Msg());
@@ -1987,12 +1862,10 @@ EventHandler::Rc PotsCwmInAnalyzeNetworkMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmInFacility_ProcessEvent = "PotsCwmInFacility.ProcessEvent";
-
 EventHandler::Rc PotsCwmInFacility::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmInFacility_ProcessEvent);
+   Debug::ft("PotsCwmInFacility.ProcessEvent");
 
    auto& mux = static_cast< PotsCwmSsm& >(ssm);
 
@@ -2001,13 +1874,10 @@ EventHandler::Rc PotsCwmInFacility::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcAnalyzeUserMessage_ProcessEvent =
-   "PotsCwmAcAnalyzeUserMessage.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcAnalyzeUserMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcAnalyzeUserMessage_ProcessEvent);
+   Debug::ft("PotsCwmAcAnalyzeUserMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto sid = ame.Msg()->GetSignal();
@@ -2105,13 +1975,10 @@ EventHandler::Rc PotsCwmAcAnalyzeUserMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcAnalyzeNetworkMessage_ProcessEvent =
-   "PotsCwmAcAnalyzeNetworkMessage.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcAnalyzeNetworkMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcAnalyzeNetworkMessage_ProcessEvent);
+   Debug::ft("PotsCwmAcAnalyzeNetworkMessage.ProcessEvent");
 
    //  Message received from NPSM while in Active state.
    //
@@ -2207,12 +2074,10 @@ EventHandler::Rc PotsCwmAcAnalyzeNetworkMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcNotify_ProcessEvent = "PotsCwmAcNotify.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcNotify::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcNotify_ProcessEvent);
+   Debug::ft("PotsCwmAcNotify.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
 
@@ -2221,12 +2086,10 @@ EventHandler::Rc PotsCwmAcNotify::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcToneTimeout_ProcessEvent = "PotsCwmAcToneTimeout.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcToneTimeout::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcToneTimeout_ProcessEvent);
+   Debug::ft("PotsCwmAcToneTimeout.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
 
@@ -2235,12 +2098,10 @@ EventHandler::Rc PotsCwmAcToneTimeout::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcRenotify_ProcessEvent = "PotsCwmAcRenotify.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcRenotify::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcRenotify_ProcessEvent);
+   Debug::ft("PotsCwmAcRenotify.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
 
@@ -2249,12 +2110,10 @@ EventHandler::Rc PotsCwmAcRenotify::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcFlipflop_ProcessEvent = "PotsCwmAcFlipflop.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcFlipflop::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcFlipflop_ProcessEvent);
+   Debug::ft("PotsCwmAcFlipflop.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
 
@@ -2263,12 +2122,10 @@ EventHandler::Rc PotsCwmAcFlipflop::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcReanswer_ProcessEvent = "PotsCwmAcReanswer.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcReanswer::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcReanswer_ProcessEvent);
+   Debug::ft("PotsCwmAcReanswer.ProcessEvent");
 
    //  This occurs when being rerung by the remaining call.
    //
@@ -2279,13 +2136,10 @@ EventHandler::Rc PotsCwmAcReanswer::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcReanswerTimeout_ProcessEvent =
-   "PotsCwmAcReanswerTimeout.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcReanswerTimeout::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcReanswerTimeout_ProcessEvent);
+   Debug::ft("PotsCwmAcReanswerTimeout.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
 
@@ -2294,12 +2148,10 @@ EventHandler::Rc PotsCwmAcReanswerTimeout::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcReconnect_ProcessEvent = "PotsCwmAcReconnect.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcReconnect::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcReconnect_ProcessEvent);
+   Debug::ft("PotsCwmAcReconnect.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
 
@@ -2308,13 +2160,10 @@ EventHandler::Rc PotsCwmAcReconnect::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcLocalRelease_ProcessEvent =
-   "PotsCwmAcLocalRelease.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcLocalRelease::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcLocalRelease_ProcessEvent);
+   Debug::ft("PotsCwmAcLocalRelease.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
 
@@ -2323,13 +2172,10 @@ EventHandler::Rc PotsCwmAcLocalRelease::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcActiveRelease_ProcessEvent =
-   "PotsCwmAcActiveRelease.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcActiveRelease::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcActiveRelease_ProcessEvent);
+   Debug::ft("PotsCwmAcActiveRelease.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
    auto& are = static_cast< PotsCwmActiveReleaseEvent& >(currEvent);
@@ -2339,13 +2185,10 @@ EventHandler::Rc PotsCwmAcActiveRelease::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcInactiveRelease_ProcessEvent =
-   "PotsCwmAcInactiveRelease.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcInactiveRelease::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcInactiveRelease_ProcessEvent);
+   Debug::ft("PotsCwmAcInactiveRelease.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
    auto& ire = static_cast< PotsCwmInactiveReleaseEvent& >(currEvent);
@@ -2355,12 +2198,10 @@ EventHandler::Rc PotsCwmAcInactiveRelease::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcQuiesce_ProcessEvent = "PotsCwmAcQuiesce.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcQuiesce::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcQuiesce_ProcessEvent);
+   Debug::ft("PotsCwmAcQuiesce.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
    auto cwts = cwt.GetSubstate();
@@ -2377,12 +2218,10 @@ EventHandler::Rc PotsCwmAcQuiesce::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCwmAcRelay_ProcessEvent = "PotsCwmAcRelay.ProcessEvent";
-
 EventHandler::Rc PotsCwmAcRelay::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCwmAcRelay_ProcessEvent);
+   Debug::ft("PotsCwmAcRelay.ProcessEvent");
 
    auto& cwt = static_cast< PotsCwmSsm& >(ssm);
 

@@ -32,22 +32,18 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name LeakyBucketCounter_ctor = "LeakyBucketCounter.ctor";
-
 LeakyBucketCounter::LeakyBucketCounter() :
    limit_(0),
    count_(0)
 {
-   Debug::ft(LeakyBucketCounter_ctor);
+   Debug::ft("LeakyBucketCounter.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LeakyBucketCounter_dtor = "LeakyBucketCounter.dtor";
-
 LeakyBucketCounter::~LeakyBucketCounter()
 {
-   Debug::ftnt(LeakyBucketCounter_dtor);
+   Debug::ftnt("LeakyBucketCounter.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -65,12 +61,9 @@ void LeakyBucketCounter::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name LeakyBucketCounter_HasReachedLimit =
-   "LeakyBucketCounter.HasReachedLimit";
-
 bool LeakyBucketCounter::HasReachedLimit()
 {
-   Debug::ft(LeakyBucketCounter_HasReachedLimit);
+   Debug::ft("LeakyBucketCounter.HasReachedLimit");
 
    //  Return false if the bucket has not been initialized.
    //
@@ -117,11 +110,9 @@ bool LeakyBucketCounter::HasReachedLimit()
 
 //------------------------------------------------------------------------------
 
-fn_name LeakyBucketCounter_Initialize = "LeakyBucketCounter.Initialize";
-
 void LeakyBucketCounter::Initialize(size_t limit, secs_t seconds)
 {
-   Debug::ft(LeakyBucketCounter_Initialize);
+   Debug::ft("LeakyBucketCounter.Initialize");
 
    interval_ = Duration(seconds, SECS);
    lastTime_ = TimePoint::Now();

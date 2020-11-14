@@ -23,7 +23,6 @@
 #include "Debug.h"
 #include "NbTypes.h"
 #include "SbIpBuffer.h"
-#include "SysTypes.h"
 
 using namespace NetworkBase;
 using namespace NodeBase;
@@ -32,30 +31,24 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-fn_name SbExtInputHandler_ctor = "SbExtInputHandler.ctor";
-
 SbExtInputHandler::SbExtInputHandler(IpPort* port) : SbInputHandler(port)
 {
-   Debug::ft(SbExtInputHandler_ctor);
+   Debug::ft("SbExtInputHandler.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SbExtInputHandler_dtor = "SbExtInputHandler.dtor";
 
 SbExtInputHandler::~SbExtInputHandler()
 {
-   Debug::ftnt(SbExtInputHandler_dtor);
+   Debug::ftnt("SbExtInputHandler.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SbExtInputHandler_AllocBuff = "SbExtInputHandler.AllocBuff";
 
 IpBuffer* SbExtInputHandler::AllocBuff(const byte_t* source,
    size_t size, byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const
 {
-   Debug::ft(SbExtInputHandler_AllocBuff);
+   Debug::ft("SbExtInputHandler.AllocBuff");
 
    auto buff = new SbIpBuffer(MsgIncoming, size);
    dest = buff->PayloadPtr();

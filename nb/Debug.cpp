@@ -84,11 +84,9 @@ void Debug::ftnt(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_GetSwFlags = "Debug.GetSwFlags";
-
 Flags Debug::GetSwFlags()
 {
-   Debug::ft(Debug_GetSwFlags);
+   Debug::ft("Debug.GetSwFlags");
 
    if(Element::RunningInLab()) return SwFlags_;
    return NoFlags;
@@ -96,20 +94,16 @@ Flags Debug::GetSwFlags()
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_noop = "Debug.noop";
-
 void Debug::noop()
 {
-   Debug::ft(Debug_noop);
+   Debug::ft("Debug.noop");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_Progress = "Debug.Progress";
-
 void Debug::Progress(const string& s)
 {
-   Debug::ft(Debug_Progress);
+   Debug::ft("Debug.Progress");
 
    CoutThread::Spool(s.c_str());
    ThisThread::Pause(Duration(10, mSECS));
@@ -117,22 +111,18 @@ void Debug::Progress(const string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_ResetSwFlags = "Debug.ResetSwFlags";
-
 void Debug::ResetSwFlags()
 {
-   Debug::ft(Debug_ResetSwFlags);
+   Debug::ft("Debug.ResetSwFlags");
 
    SwFlags_.reset();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_SetSwFlag = "Debug.SetSwFlag";
-
 void Debug::SetSwFlag(FlagId fid, bool value)
 {
-   Debug::ftnt(Debug_SetSwFlag);
+   Debug::ftnt("Debug.SetSwFlag");
 
    if(Element::RunningInLab() && (fid <= MaxFlagId))
    {
@@ -149,22 +139,18 @@ void Debug::SetSwFlag(FlagId fid, bool value)
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_SwErr = "Debug.SwErr";
-
 void Debug::SwErr(const string& errstr, debug64_t offset)
 {
-   Debug::ft(Debug_SwErr);
+   Debug::ft("Debug.SwErr");
 
    throw SoftwareException(errstr, offset, 1);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_SwFlagOn = "Debug.SwFlagOn";
-
 bool Debug::SwFlagOn(FlagId fid)
 {
-   Debug::ftnt(Debug_SwFlagOn);
+   Debug::ftnt("Debug.SwFlagOn");
 
    if(Element::RunningInLab() && (fid <= MaxFlagId))
    {

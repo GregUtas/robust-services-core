@@ -58,12 +58,10 @@ PotsHtlAttrs::PotsHtlAttrs() : CliText(PotsHtlFullName, PotsHtlAbbrName)
 
 //==============================================================================
 
-fn_name PotsHtlFeature_ctor = "PotsHtlFeature.ctor";
-
 PotsHtlFeature::PotsHtlFeature() :
    PotsFeature(HTL, false, PotsHtlAbbrName, PotsHtlFullName)
 {
-   Debug::ft(PotsHtlFeature_ctor);
+   Debug::ft("PotsHtlFeature.ctor");
 
    SetIncompatible(BOC);
    SetIncompatible(WML);
@@ -73,11 +71,9 @@ PotsHtlFeature::PotsHtlFeature() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsHtlFeature_dtor = "PotsHtlFeature.dtor";
-
 PotsHtlFeature::~PotsHtlFeature()
 {
-   Debug::ftnt(PotsHtlFeature_dtor);
+   Debug::ftnt("PotsHtlFeature.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -86,12 +82,10 @@ CliText* PotsHtlFeature::Attrs() const { return new PotsHtlAttrs; }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsHtlFeature_Subscribe = "PotsHtlFeature.Subscribe";
-
 PotsFeatureProfile* PotsHtlFeature::Subscribe
    (PotsProfile& profile, CliThread& cli) const
 {
-   Debug::ft(PotsHtlFeature_Subscribe);
+   Debug::ft("PotsHtlFeature.Subscribe");
 
    word dn;
 
@@ -107,22 +101,18 @@ PotsFeatureProfile* PotsHtlFeature::Subscribe
 
 //==============================================================================
 
-fn_name PotsHtlFeatureProfile_ctor = "PotsHtlFeatureProfile.ctor";
-
 PotsHtlFeatureProfile::PotsHtlFeatureProfile(Address::DN dn) :
    PotsFeatureProfile(HTL),
    dn_(dn)
 {
-   Debug::ft(PotsHtlFeatureProfile_ctor);
+   Debug::ft("PotsHtlFeatureProfile.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsHtlFeatureProfile_dtor = "PotsHtlFeatureProfile.dtor";
-
 PotsHtlFeatureProfile::~PotsHtlFeatureProfile()
 {
-   Debug::ftnt(PotsHtlFeatureProfile_dtor);
+   Debug::ftnt("PotsHtlFeatureProfile.dtor");
 }
 
 //------------------------------------------------------------------------------

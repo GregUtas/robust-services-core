@@ -65,30 +65,24 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name HostAddrCfg_ctor = "HostAddrCfg.ctor";
-
 HostAddrCfg::HostAddrCfg() : CfgStrParm("ElementDefaultAddr",
    "127.0.0.1", "element's default IP address (n.n.n.n)")
 {
-   Debug::ft(HostAddrCfg_ctor);
+   Debug::ft("HostAddrCfg.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name HostAddrCfg_dtor = "HostAddrCfg.dtor";
 
 HostAddrCfg::~HostAddrCfg()
 {
-   Debug::ftnt(HostAddrCfg_dtor);
+   Debug::ftnt("HostAddrCfg.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name HostAddrCfg_SetCurr = "HostAddrCfg.SetCurr";
-
 void HostAddrCfg::SetCurr()
 {
-   Debug::ft(HostAddrCfg_SetCurr);
+   Debug::ft("HostAddrCfg.SetCurr");
 
    FunctionGuard guard(Guard_MemUnprotect);
    CfgStrParm::SetCurr();
@@ -97,11 +91,9 @@ void HostAddrCfg::SetCurr()
 
 //------------------------------------------------------------------------------
 
-fn_name HostAddrCfg_SetNext = "HostAddrCfg.SetNext";
-
 bool HostAddrCfg::SetNext(c_string input)
 {
-   Debug::ft(HostAddrCfg_SetNext);
+   Debug::ft("HostAddrCfg.SetNext");
 
    SysIpL2Addr addr(input);
    if(!addr.IsValid()) return false;
@@ -121,30 +113,24 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortStatsGroup_ctor = "IpPortStatsGroup.ctor";
-
 IpPortStatsGroup::IpPortStatsGroup() : StatisticsGroup("IpPorts [ipport_t]")
 {
-   Debug::ft(IpPortStatsGroup_ctor);
+   Debug::ft("IpPortStatsGroup.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name IpPortStatsGroup_dtor = "IpPortStatsGroup.dtor";
 
 IpPortStatsGroup::~IpPortStatsGroup()
 {
-   Debug::ftnt(IpPortStatsGroup_dtor);
+   Debug::ftnt("IpPortStatsGroup.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name IpPortStatsGroup_DisplayStats = "IpPortStatsGroup.DisplayStats";
 
 void IpPortStatsGroup::DisplayStats
    (ostream& stream, id_t id, const Flags& options) const
 {
-   Debug::ft(IpPortStatsGroup_DisplayStats);
+   Debug::ft("IpPortStatsGroup.DisplayStats");
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
@@ -175,11 +161,9 @@ void IpPortStatsGroup::DisplayStats
 
 //==============================================================================
 
-fn_name IpPortRegistry_ctor = "IpPortRegistry.ctor";
-
 IpPortRegistry::IpPortRegistry()
 {
-   Debug::ft(IpPortRegistry_ctor);
+   Debug::ft("IpPortRegistry.ctor");
 
    portq_.Init(IpPort::LinkDiff());
    hostAddrCfg_.reset(new HostAddrCfg);
@@ -250,12 +234,10 @@ bool IpPortRegistry::BindPort(IpPort& port)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortRegistry_CanBypassStack = "IpPortRegistry.CanBypassStack";
-
 bool IpPortRegistry::CanBypassStack
    (const SysIpL3Addr& srce, const SysIpL3Addr& dest) const
 {
-   Debug::ft(IpPortRegistry_CanBypassStack);
+   Debug::ft("IpPortRegistry.CanBypassStack");
 
    if((dest.GetIpV4Addr() != srce.GetIpV4Addr()) &&
       (dest.GetIpV4Addr() != SysIpL2Addr::LoopbackAddr().GetIpV4Addr()))
@@ -301,11 +283,9 @@ IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortRegistry_HostAddress = "IpPortRegistry.HostAddress";
-
 SysIpL2Addr IpPortRegistry::HostAddress()
 {
-   Debug::ft(IpPortRegistry_HostAddress);
+   Debug::ft("IpPortRegistry.HostAddress");
 
    auto reg = Singleton< IpPortRegistry >::Extant();
    if(reg == nullptr) return SysIpL2Addr::LoopbackAddr();
@@ -337,11 +317,9 @@ void IpPortRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortRegistry_Shutdown = "IpPortRegistry.Shutdown";
-
 void IpPortRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(IpPortRegistry_Shutdown);
+   Debug::ft("IpPortRegistry.Shutdown");
 
    for(auto p = portq_.First(); p != nullptr; portq_.Next(p))
    {
@@ -354,11 +332,9 @@ void IpPortRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortRegistry_Startup = "IpPortRegistry.Startup";
-
 void IpPortRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(IpPortRegistry_Startup);
+   Debug::ft("IpPortRegistry.Startup");
 
    //  The host address is frequently required and may be expensive to
    //  look up.  It is therefore cached during initialization, after
@@ -377,11 +353,9 @@ void IpPortRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortRegistry_UnbindPort = "IpPortRegistry.UnbindPort";
-
 void IpPortRegistry::UnbindPort(IpPort& port)
 {
-   Debug::ftnt(IpPortRegistry_UnbindPort);
+   Debug::ftnt("IpPortRegistry.UnbindPort");
 
    portq_.Exq(port);
 }

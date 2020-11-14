@@ -33,7 +33,6 @@
 #include "SbLogs.h"
 #include "SbTypes.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace NetworkBase;
 using namespace NodeBase;
@@ -42,30 +41,24 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-fn_name SbInputHandler_ctor = "SbInputHandler.ctor";
-
 SbInputHandler::SbInputHandler(IpPort* port) : InputHandler(port)
 {
-   Debug::ft(SbInputHandler_ctor);
+   Debug::ft("SbInputHandler.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SbInputHandler_dtor = "SbInputHandler.dtor";
 
 SbInputHandler::~SbInputHandler()
 {
-   Debug::ftnt(SbInputHandler_dtor);
+   Debug::ftnt("SbInputHandler.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SbInputHandler_AllocBuff = "SbInputHandler.AllocBuff";
 
 IpBuffer* SbInputHandler::AllocBuff(const byte_t* source,
    size_t size, byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const
 {
-   Debug::ft(SbInputHandler_AllocBuff);
+   Debug::ft("SbInputHandler.AllocBuff");
 
    if(size < sizeof(MsgHeader))
    {
@@ -96,12 +89,10 @@ void SbInputHandler::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name SbInputHandler_ReceiveBuff = "SbInputHandler.ReceiveBuff";
-
 void SbInputHandler::ReceiveBuff
    (IpBufferPtr& buff, size_t size, Faction faction) const
 {
-   Debug::ft(SbInputHandler_ReceiveBuff);
+   Debug::ft("SbInputHandler.ReceiveBuff");
 
    //  Find the invoker pool associated with FACTION and pass it the buffer
    //  to have it added to that pool's work queue.

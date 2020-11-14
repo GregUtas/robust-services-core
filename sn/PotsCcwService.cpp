@@ -97,11 +97,9 @@ private:
 
 //==============================================================================
 
-fn_name PotsCcwService_ctor = "PotsCcwService.ctor";
-
 PotsCcwService::PotsCcwService() : Service(PotsCcwServiceId, false, true)
 {
-   Debug::ft(PotsCcwService_ctor);
+   Debug::ft("PotsCcwService.ctor");
 
    Singleton< PotsCcwNull >::Instance();
    Singleton< PotsCcwActive >::Instance();
@@ -111,97 +109,77 @@ PotsCcwService::PotsCcwService() : Service(PotsCcwServiceId, false, true)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCcwService_dtor = "PotsCcwService.dtor";
-
 PotsCcwService::~PotsCcwService()
 {
-   Debug::ftnt(PotsCcwService_dtor);
+   Debug::ftnt("PotsCcwService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCcwService_AllocModifier = "PotsCcwService.AllocModifier";
-
 ServiceSM* PotsCcwService::AllocModifier() const
 {
-   Debug::ft(PotsCcwService_AllocModifier);
+   Debug::ft("PotsCcwService.AllocModifier");
 
    return new PotsCcwSsm;
 }
 
 //==============================================================================
 
-fn_name PotsCcwState_ctor = "PotsCcwState.ctor";
-
 PotsCcwState::PotsCcwState(Id stid) : State(PotsCcwServiceId, stid)
 {
-   Debug::ft(PotsCcwState_ctor);
+   Debug::ft("PotsCcwState.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCcwState_dtor = "PotsCcwState.dtor";
 
 PotsCcwState::~PotsCcwState()
 {
-   Debug::ftnt(PotsCcwState_dtor);
+   Debug::ftnt("PotsCcwState.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCcwNull_ctor = "PotsCcwNull.ctor";
 
 PotsCcwNull::PotsCcwNull() : PotsCcwState(PotsCcwNull::Null)
 {
-   Debug::ft(PotsCcwNull_ctor);
+   Debug::ft("PotsCcwNull.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCcwActive_ctor = "PotsCcwActive.ctor";
-
 PotsCcwActive::PotsCcwActive() : PotsCcwState(PotsCcwState::Active)
 {
-   Debug::ft(PotsCcwActive_ctor);
+   Debug::ft("PotsCcwActive.ctor");
 }
 
 //==============================================================================
 
-fn_name PotsCcwSsm_ctor = "PotsCcwSsm.ctor";
-
 PotsCcwSsm::PotsCcwSsm() : ServiceSM(PotsCcwServiceId)
 {
-   Debug::ft(PotsCcwSsm_ctor);
+   Debug::ft("PotsCcwSsm.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCcwSsm_dtor = "PotsCcwSsm.dtor";
 
 PotsCcwSsm::~PotsCcwSsm()
 {
-   Debug::ftnt(PotsCcwSsm_dtor);
+   Debug::ftnt("PotsCcwSsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCcwSsm_CalcPort = "PotsCcwSsm.CalcPort";
-
 ServicePortId PotsCcwSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(PotsCcwSsm_CalcPort);
+   Debug::ft("PotsCcwSsm.CalcPort");
 
    return Parent()->CalcPort(ame);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCcwSsm_ProcessInitAck = "PotsCcwSsm.ProcessInitAck";
-
 EventHandler::Rc PotsCcwSsm::ProcessInitAck
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsCcwSsm_ProcessInitAck);
+   Debug::ft("PotsCcwSsm.ProcessInitAck");
 
    auto& pssm = static_cast< PotsBcSsm& >(*Parent());
    auto stid = pssm.CurrState();
@@ -241,12 +219,10 @@ EventHandler::Rc PotsCcwSsm::ProcessInitAck
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCcwSsm_ProcessInitNack = "PotsCcwSsm.ProcessInitNack";
-
 EventHandler::Rc PotsCcwSsm::ProcessInitNack
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsCcwSsm_ProcessInitNack);
+   Debug::ft("PotsCcwSsm.ProcessInitNack");
 
    return EventHandler::Resume;
 }
@@ -280,11 +256,9 @@ EventHandler::Rc PotsCcwSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCcwSsm_ProcessSnp = "PotsCcwSsm.ProcessSnp";
-
 EventHandler::Rc PotsCcwSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsCcwSsm_ProcessSnp);
+   Debug::ft("PotsCcwSsm.ProcessSnp");
 
    auto pssm = static_cast< PotsBcSsm* >(Parent());
 
@@ -294,13 +268,10 @@ EventHandler::Rc PotsCcwSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCcwAcCollectInformation_ProcessEvent =
-   "PotsCcwAcCollectInformation.ProcessEvent";
-
 EventHandler::Rc PotsCcwAcCollectInformation::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCcwAcCollectInformation_ProcessEvent);
+   Debug::ft("PotsCcwAcCollectInformation.ProcessEvent");
 
    auto& pssm = static_cast< PotsBcSsm& >(ssm);
    auto ppsm = PotsCallPsm::Cast(pssm.UPsm());

@@ -46,15 +46,13 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name Class_ctor = "Class.ctor[>ct]";
-
 Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    name_(name.release()),
    tag_(tag),
    currAccess_(Cxx::Access_N),
    copied_(false)
 {
-   Debug::ft(Class_ctor);
+   Debug::ft("Class.ctor[>ct]");
 
    Singleton< CxxSymbols >::Instance()->InsertClass(this);
    CxxStats::Incr(CxxStats::CLASS_DECL);
@@ -62,11 +60,9 @@ Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
 
 //------------------------------------------------------------------------------
 
-fn_name Class_dtor = "Class.dtor[>ct]";
-
 Class::~Class()
 {
-   Debug::ftnt(Class_dtor);
+   Debug::ftnt("Class.dtor[>ct]");
 
    Singleton< CxxSymbols >::Extant()->EraseClass(this);
    CxxStats::Decr(CxxStats::CLASS_DECL);
@@ -280,22 +276,18 @@ void Class::AccessibilityOf
 
 //------------------------------------------------------------------------------
 
-fn_name Class_AccessibilityTo = "Class.AccessibilityTo";
-
 void Class::AccessibilityTo(const CxxScope* scope, SymbolView* view) const
 {
-   Debug::ft(Class_AccessibilityTo);
+   Debug::ft("Class.AccessibilityTo");
 
    AccessibilityOf(scope, this, view);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Class_AddAnonymousUnion = "Class.AddAnonymousUnion";
-
 bool Class::AddAnonymousUnion(const ClassPtr& cls)
 {
-   Debug::ft(Class_AddAnonymousUnion);
+   Debug::ft("Class.AddAnonymousUnion");
 
    //  There is nothing to do unless CLS is an anonymous union.
    //
@@ -322,11 +314,9 @@ bool Class::AddAnonymousUnion(const ClassPtr& cls)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_AddBase = "Class.AddBase";
-
 void Class::AddBase(BaseDeclPtr& base)
 {
-   Debug::ft(Class_AddBase);
+   Debug::ft("Class.AddBase");
 
    //  This is always invoked, so verify that a base class actually exists.
    //  If it is found from this scope, make it our base class.
@@ -338,11 +328,9 @@ void Class::AddBase(BaseDeclPtr& base)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_AddDirective = "Class.AddDirective";
-
 bool Class::AddDirective(DirectivePtr& dir)
 {
-   Debug::ft(Class_AddDirective);
+   Debug::ft("Class.AddDirective");
 
    AddItem(dir.get());
    dirs_.push_back(std::move(dir));
@@ -351,11 +339,9 @@ bool Class::AddDirective(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_AddFiles = "Class.AddFiles";
-
 void Class::AddFiles(SetOfIds& imSet) const
 {
-   Debug::ft(Class_AddFiles);
+   Debug::ft("Class.AddFiles");
 
    auto classes = Classes();
 
@@ -381,11 +367,9 @@ void Class::AddFiles(SetOfIds& imSet) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_AddFriend = "Class.AddFriend";
-
 bool Class::AddFriend(FriendPtr& decl)
 {
-   Debug::ft(Class_AddFriend);
+   Debug::ft("Class.AddFriend");
 
    if(decl->EnterScope()) friends_.push_back(std::move(decl));
    return true;
@@ -400,11 +384,9 @@ void Class::AddItem(const CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_AddSubclass = "Class.AddSubclass";
-
 bool Class::AddSubclass(Class* cls)
 {
-   Debug::ft(Class_AddSubclass);
+   Debug::ft("Class.AddSubclass");
 
    subs_.push_back(cls);
    return true;
@@ -431,11 +413,9 @@ void Class::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_BlockCopied = "Class.BlockCopied";
-
 void Class::BlockCopied(const StackArg* arg)
 {
-   Debug::ft(Class_BlockCopied);
+   Debug::ft("Class.BlockCopied");
 
    if(copied_) return;
    copied_ = true;
@@ -453,11 +433,9 @@ void Class::BlockCopied(const StackArg* arg)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_CanConstructFrom = "Class.CanConstructFrom";
-
 bool Class::CanConstructFrom(const StackArg& that, const string& thatType) const
 {
-   Debug::ft(Class_CanConstructFrom);
+   Debug::ft("Class.CanConstructFrom");
 
    //  Visit our functions to see if one of them is a suitable constructor.
    //
@@ -490,11 +468,9 @@ bool Class::CanConstructFrom(const StackArg& that, const string& thatType) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_Check = "Class.Check";
-
 void Class::Check() const
 {
-   Debug::ft(Class_Check);
+   Debug::ft("Class.Check");
 
    CxxArea::Check();
 
@@ -517,11 +493,9 @@ void Class::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_CheckIfUnused = "Class.CheckIfUnused";
-
 bool Class::CheckIfUnused(Warning warning) const
 {
-   Debug::ft(Class_CheckIfUnused);
+   Debug::ft("Class.CheckIfUnused");
 
    auto attrs = GetUsageAttrs();
 
@@ -614,11 +588,9 @@ bool Class::CheckIfUnused(Warning warning) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_CheckOverrides = "Class.CheckOverrides";
-
 void Class::CheckOverrides() const
 {
-   Debug::ft(Class_CheckOverrides);
+   Debug::ft("Class.CheckOverrides");
 
    //  Check for overrides of Patch and Display.  The following are exempt:
    //  o Template instances (any warnings apply to the template).
@@ -667,11 +639,9 @@ void Class::CheckOverrides() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_CheckRuleOfThree = "Class.CheckRuleOfThree";
-
 void Class::CheckRuleOfThree() const
 {
-   Debug::ft(Class_CheckRuleOfThree);
+   Debug::ft("Class.CheckRuleOfThree");
 
    if(GetFile()->IsSubsFile()) return;
 
@@ -746,11 +716,9 @@ void Class::CheckRuleOfThree() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_ClassDistance = "Class.ClassDistance";
-
 Distance Class::ClassDistance(const Class* cls) const
 {
-   Debug::ft(Class_ClassDistance);
+   Debug::ft("Class.ClassDistance");
 
    Distance dist = 0;
 
@@ -765,11 +733,9 @@ Distance Class::ClassDistance(const Class* cls) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_CreateCode = "Class.CreateCode";
-
 size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
 {
-   Debug::ft(Class_CreateCode);
+   Debug::ft("Class.CreateCode");
 
    //  If this is a class template, get its source code.
    //
@@ -846,11 +812,9 @@ size_t Class::CreateCodeError(const string& name, debug64_t offset)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_CreateInstance = "Class.CreateInstance";
-
 ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
 {
-   Debug::ft(Class_CreateInstance);
+   Debug::ft("Class.CreateInstance");
 
    QualNamePtr newName(new QualName(name));
    newName->CopyContext(this);
@@ -863,11 +827,9 @@ ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_DerivesFrom1 = "Class.DerivesFrom(class)";
-
 bool Class::DerivesFrom(const Class* cls) const
 {
-   Debug::ft(Class_DerivesFrom1);
+   Debug::ft("Class.DerivesFrom(class)");
 
    auto dist = ClassDistance(cls);
    return ((dist > 0) && (dist != NOT_A_SUBCLASS));
@@ -875,11 +837,9 @@ bool Class::DerivesFrom(const Class* cls) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_DerivesFrom2 = "Class.DerivesFrom(name)";
-
 bool Class::DerivesFrom(const string& name) const
 {
-   Debug::ft(Class_DerivesFrom2);
+   Debug::ft("Class.DerivesFrom(name)");
 
    for(auto s = BaseClass(); s != nullptr; s = s->BaseClass())
    {
@@ -1058,22 +1018,18 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_EnterParms = "Class.EnterParms";
-
 void Class::EnterParms() const
 {
-   Debug::ft(Class_EnterParms);
+   Debug::ft("Class.EnterParms");
 
    if(parms_ != nullptr) parms_->EnterBlock();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Class_EnterScope = "Class.EnterScope";
-
 bool Class::EnterScope()
 {
-   Debug::ft(Class_EnterScope);
+   Debug::ft("Class.EnterScope");
 
    if(AtFileScope()) GetFile()->InsertClass(this);
    if(parms_ != nullptr) parms_->EnterScope();
@@ -1083,23 +1039,19 @@ bool Class::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Class_ExitParms = "Class.ExitParms";
-
 void Class::ExitParms() const
 {
-   Debug::ft(Class_ExitParms);
+   Debug::ft("Class.ExitParms");
 
    if(parms_ != nullptr) parms_->ExitBlock();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Class_FindCtor = "Class.FindCtor";
-
 Function* Class::FindCtor
    (StackArgVector* args, const CxxScope* scope, SymbolView* view)
 {
-   Debug::ft(Class_FindCtor);
+   Debug::ft("Class.FindCtor");
 
    //  If no arguments were provided, look for the default constructor.
    //  If there isn't one, return the first constructor found (if any).
@@ -1133,11 +1085,9 @@ Function* Class::FindCtor
 
 //------------------------------------------------------------------------------
 
-fn_name Class_FindCtors = "Class.FindCtors";
-
 std::vector< Function* > Class::FindCtors() const
 {
-   Debug::ft(Class_FindCtors);
+   Debug::ft("Class.FindCtors");
 
    std::vector< Function* > ctors;
    const FunctionPtrVector* funcs = Funcs();
@@ -1153,11 +1103,9 @@ std::vector< Function* > Class::FindCtors() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_FindDtor = "Class.FindDtor";
-
 Function* Class::FindDtor(const CxxScope* scope, SymbolView* view) const
 {
-   Debug::ft(Class_FindDtor);
+   Debug::ft("Class.FindDtor");
 
    auto name = *Name();
    name.insert(0, 1, '~');
@@ -1166,11 +1114,9 @@ Function* Class::FindDtor(const CxxScope* scope, SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_FindFriend = "Class.FindFriend";
-
 Friend* Class::FindFriend(const CxxScope* scope) const
 {
-   Debug::ft(Class_FindFriend);
+   Debug::ft("Class.FindFriend");
 
    if(friends_.empty()) return nullptr;
 
@@ -1186,12 +1132,10 @@ Friend* Class::FindFriend(const CxxScope* scope) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_FindFunc = "Class.FindFunc(scope)";
-
 Function* Class::FindFunc(const string& name, StackArgVector* args,
    bool base, const CxxScope* scope, SymbolView* view) const
 {
-   Debug::ft(Class_FindFunc);
+   Debug::ft("Class.FindFunc(scope)");
 
    auto f = CxxArea::FindFunc(name, args, false, scope, view);
    if(MemberIsAccessibleTo(f, scope, view)) return f;
@@ -1247,12 +1191,10 @@ Function* Class::FindFuncByRole(FunctionRole role, bool base) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_FindMember = "Class.FindMember";
-
 CxxScoped* Class::FindMember(const string& name,
    bool base, const CxxScope* scope, SymbolView* view) const
 {
-   Debug::ft(Class_FindMember);
+   Debug::ft("Class.FindMember");
 
    auto item = CxxArea::FindItem(name);
 
@@ -1277,11 +1219,9 @@ CxxScoped* Class::FindMember(const string& name,
 
 //------------------------------------------------------------------------------
 
-fn_name Class_FindName = "Class.FindName";
-
 CxxScoped* Class::FindName(const string& name, const Class* base) const
 {
-   Debug::ft(Class_FindName);
+   Debug::ft("Class.FindName");
 
    auto item = FindMember(name, false);
    if(item != nullptr) return item;
@@ -1301,11 +1241,9 @@ Class* Class::GetClassTemplate() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetConvertibleTypes = "Class.GetConvertibleTypes";
-
 void Class::GetConvertibleTypes(StackArgVector& types, bool expl)
 {
-   Debug::ft(Class_GetConvertibleTypes);
+   Debug::ft("Class.GetConvertibleTypes");
 
    Instantiate();
 
@@ -1348,22 +1286,18 @@ Cxx::Access Class::GetCurrAccess() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetDirectClasses = "Class.GetDirectClasses";
-
 void Class::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(Class_GetDirectClasses);
+   Debug::ft("Class.GetDirectClasses");
 
    symbols.AddDirect(this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetFuncDefinition = "Class.GetFuncDefinition";
-
 FunctionDefinition Class::GetFuncDefinition(const Function* func) const
 {
-   Debug::ft(Class_GetFuncDefinition);
+   Debug::ft("Class.GetFuncDefinition");
 
    if(func == nullptr) return NotDeclared;
    if(func->GetScope() == this) return LocalDeclared;
@@ -1378,11 +1312,9 @@ FunctionDefinition Class::GetFuncDefinition(const Function* func) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetFuncIndex = "Class.GetFuncIndex";
-
 bool Class::GetFuncIndex(const Function* func, size_t& idx) const
 {
-   Debug::ft(Class_GetFuncIndex);
+   Debug::ft("Class.GetFuncIndex");
 
    auto list = FuncVector(*func->Name());
 
@@ -1396,11 +1328,9 @@ bool Class::GetFuncIndex(const Function* func, size_t& idx) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetMemberInitAttrs = "Class.GetMemberInitAttrs";
-
 void Class::GetMemberInitAttrs(DataInitVector& members) const
 {
-   Debug::ft(Class_GetMemberInitAttrs);
+   Debug::ft("Class.GetMemberInitAttrs");
 
    auto data = Datas();
 
@@ -1454,11 +1384,9 @@ CxxScope* Class::GetTemplate() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetUsageAttrs = "Class.GetUsageAttrs";
-
 Class::UsageAttributes Class::GetUsageAttrs() const
 {
-   Debug::ft(Class_GetUsageAttrs);
+   Debug::ft("Class.GetUsageAttrs");
 
    UsageAttributes attrs;
 
@@ -1642,12 +1570,10 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetUsingFor = "Class.GetUsingFor";
-
 Using* Class::GetUsingFor(const string& fqName,
    size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
-   Debug::ft(Class_GetUsingFor);
+   Debug::ft("Class.GetUsingFor");
 
    auto usings = Usings();
 
@@ -1661,11 +1587,9 @@ Using* Class::GetUsingFor(const string& fqName,
 
 //------------------------------------------------------------------------------
 
-fn_name Class_HasPODMember = "Class.HasPODMember";
-
 bool Class::HasPODMember() const
 {
-   Debug::ft(Class_HasPODMember);
+   Debug::ft("Class.HasPODMember");
 
    auto data = Datas();
 
@@ -1679,11 +1603,9 @@ bool Class::HasPODMember() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_IsDefaultConstructible = "Class.IsDefaultConstructible";
-
 bool Class::IsDefaultConstructible()
 {
-   Debug::ft(Class_IsDefaultConstructible);
+   Debug::ft("Class.IsDefaultConstructible");
 
    //  A class is default constructible if it
    //  o is not a union;
@@ -1710,11 +1632,9 @@ bool Class::IsDefaultConstructible()
 
 //------------------------------------------------------------------------------
 
-fn_name Class_IsImplemented = "Class.IsImplemented";
-
 bool Class::IsImplemented() const
 {
-   Debug::ft(Class_IsImplemented);
+   Debug::ft("Class.IsImplemented");
 
    auto funcs = Funcs();
 
@@ -1735,11 +1655,9 @@ bool Class::IsImplemented() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_MatchFunc = "Class.MatchFunc";
-
 Function* Class::MatchFunc(const Function* curr, bool base) const
 {
-   Debug::ft(Class_MatchFunc);
+   Debug::ft("Class.MatchFunc");
 
    auto func = CxxArea::MatchFunc(curr, base);
    if(func != nullptr) return func;
@@ -1822,11 +1740,9 @@ bool Class::MemberIsAccessibleTo
 
 //------------------------------------------------------------------------------
 
-fn_name Class_NameToArg = "Class.NameToArg";
-
 StackArg Class::NameToArg(Cxx::Operator op, TypeName* name)
 {
-   Debug::ft(Class_NameToArg);
+   Debug::ft("Class.NameToArg");
 
    //  This will be a constructor call unless this class's size is being
    //  looked up.  Set the "invoke" flag on the argument, which will be
@@ -1846,22 +1762,18 @@ Class* Class::OuterClass() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_SetAlignment = "Class.SetAlignment";
-
 void Class::SetAlignment(AlignAsPtr& align)
 {
-   Debug::ft(Class_SetAlignment);
+   Debug::ft("Class.SetAlignment");
 
    alignas_ = std::move(align);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Class_SetCurrAccess = "Class.SetCurrAccess";
-
 bool Class::SetCurrAccess(Cxx::Access access)
 {
-   Debug::ft(Class_SetCurrAccess);
+   Debug::ft("Class.SetCurrAccess");
 
    if(currAccess_ == access)
    {
@@ -1880,11 +1792,9 @@ bool Class::SetCurrAccess(Cxx::Access access)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_SetTemplateParms = "Class.SetTemplateParms";
-
 void Class::SetTemplateParms(TemplateParmsPtr& parms)
 {
-   Debug::ft(Class_SetTemplateParms);
+   Debug::ft("Class.SetTemplateParms");
 
    parms_ = std::move(parms);
 }
@@ -1958,8 +1868,6 @@ string Class::XrefName(bool templates) const
 
 //==============================================================================
 
-fn_name ClassInst_ctor = "ClassInst.ctor";
-
 ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
    Class(name, tmplt->GetClassTag()),
    tmplt_(tmplt),
@@ -1968,7 +1876,7 @@ ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
    created_(false),
    compiled_(false)
 {
-   Debug::ft(ClassInst_ctor);
+   Debug::ft("ClassInst.ctor");
 
    tspec_.reset(new TypeName(*spec));
    tspec_->CopyContext(spec);
@@ -1978,11 +1886,9 @@ ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
 
 //------------------------------------------------------------------------------
 
-fn_name ClassInst_dtor = "ClassInst.dtor";
-
 ClassInst::~ClassInst()
 {
-   Debug::ftnt(ClassInst_dtor);
+   Debug::ftnt("ClassInst.dtor");
 
    //  The following is the kind of thing that can happen when a base class
    //  is not always virtual.
@@ -1993,11 +1899,9 @@ ClassInst::~ClassInst()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassInst_Check = "ClassInst.Check";
-
 void ClassInst::Check() const
 {
-   Debug::ft(ClassInst_Check);
+   Debug::ft("ClassInst.Check");
 
    //  Only check the first instance of a class template.  Any warnings
    //  logged against it will be moved to the class template itself.
@@ -2008,11 +1912,9 @@ void ClassInst::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassInst_DerivesFrom = "ClassInst.DerivesFrom";
-
 bool ClassInst::DerivesFrom(const Class* cls) const
 {
-   Debug::ft(ClassInst_DerivesFrom);
+   Debug::ft("ClassInst.DerivesFrom");
 
    //  This is a class template instance, T<args1>.  If CLS is not a class
    //  template instance or is not an instance of the same class template,
@@ -2111,11 +2013,9 @@ void ClassInst::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ClassInst_FindInstanceAnalog = "ClassInst.FindInstanceAnalog";
-
 CxxScoped* ClassInst::FindInstanceAnalog(const CxxNamed* item) const
 {
-   Debug::ft(ClassInst_FindInstanceAnalog);
+   Debug::ft("ClassInst.FindInstanceAnalog");
 
    if(!created_) return nullptr;
 
@@ -2139,11 +2039,9 @@ CxxScoped* ClassInst::FindInstanceAnalog(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassInst_FindTemplateAnalog = "ClassInst.FindTemplateAnalog";
-
 CxxScoped* ClassInst::FindTemplateAnalog(const CxxNamed* item) const
 {
-   Debug::ft(ClassInst_FindTemplateAnalog);
+   Debug::ft("ClassInst.FindTemplateAnalog");
 
    //  If ITEM is in a function, have that function find its analog.
    //  A friend can be in a function and its scope is not the class
@@ -2204,11 +2102,9 @@ void ClassInst::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassInst_Instantiate = "ClassInst.Instantiate";
-
 void ClassInst::Instantiate()
 {
-   Debug::ft(ClassInst_Instantiate);
+   Debug::ft("ClassInst.Instantiate");
 
    //  Return if the template has already been instantiated.  Otherwise,
    //  notify tspec_, which contains the template name and arguments, that
@@ -2242,12 +2138,10 @@ void ClassInst::Instantiate()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassInst_NameRefersToItem = "ClassInst.NameRefersToItem";
-
 bool ClassInst::NameRefersToItem(const string& name,
    const CxxScope* scope, const CodeFile* file, SymbolView* view) const
 {
-   Debug::ft(ClassInst_NameRefersToItem);
+   Debug::ft("ClassInst.NameRefersToItem");
 
    //  Split NAME into its component (template name and arguments).  If it
    //  refers to this class instance's template, see if also refers to its
@@ -2293,29 +2187,23 @@ string ClassInst::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name CxxArea_ctor = "CxxArea.ctor";
-
 CxxArea::CxxArea()
 {
-   Debug::ft(CxxArea_ctor);
+   Debug::ft("CxxArea.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CxxArea_dtor = "CxxArea.dtor";
 
 CxxArea::~CxxArea()
 {
-   Debug::ftnt(CxxArea_dtor);
+   Debug::ftnt("CxxArea.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddAsm = "CxxArea.AddAsm";
-
 bool CxxArea::AddAsm(AsmPtr& code)
 {
-   Debug::ft(CxxArea_AddAsm);
+   Debug::ft("CxxArea.AddAsm");
 
    if(code->EnterScope())
    {
@@ -2328,11 +2216,9 @@ bool CxxArea::AddAsm(AsmPtr& code)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddClass = "CxxArea.AddClass";
-
 bool CxxArea::AddClass(ClassPtr& cls)
 {
-   Debug::ft(CxxArea_AddClass);
+   Debug::ft("CxxArea.AddClass");
 
    if(AddAnonymousUnion(cls)) return true;
 
@@ -2347,11 +2233,9 @@ bool CxxArea::AddClass(ClassPtr& cls)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddData = "CxxArea.AddData";
-
 bool CxxArea::AddData(DataPtr& data)
 {
-   Debug::ft(CxxArea_AddData);
+   Debug::ft("CxxArea.AddData");
 
    if(data->EnterScope())
    {
@@ -2368,11 +2252,9 @@ bool CxxArea::AddData(DataPtr& data)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddEnum = "CxxArea.AddEnum";
-
 bool CxxArea::AddEnum(EnumPtr& decl)
 {
-   Debug::ft(CxxArea_AddEnum);
+   Debug::ft("CxxArea.AddEnum");
 
    if(decl->EnterScope())
    {
@@ -2385,11 +2267,9 @@ bool CxxArea::AddEnum(EnumPtr& decl)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddForw = "CxxArea.AddForw";
-
 bool CxxArea::AddForw(ForwardPtr& forw)
 {
-   Debug::ft(CxxArea_AddForw);
+   Debug::ft("CxxArea.AddForw");
 
    if(forw->EnterScope())
    {
@@ -2402,11 +2282,9 @@ bool CxxArea::AddForw(ForwardPtr& forw)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddFunc = "CxxArea.AddFunc";
-
 bool CxxArea::AddFunc(FunctionPtr& func) const
 {
-   Debug::ft(CxxArea_AddFunc);
+   Debug::ft("CxxArea.AddFunc");
 
    //  If this is an inline function, do not add it to a template instance.
    //  Simply returning results in FUNC being deleted.
@@ -2428,11 +2306,9 @@ bool CxxArea::AddFunc(FunctionPtr& func) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddStaticAssert = "CxxArea.AddStaticAssert";
-
 bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
 {
-   Debug::ft(CxxArea_AddStaticAssert);
+   Debug::ft("CxxArea.AddStaticAssert");
 
    if(assert->EnterScope())
    {
@@ -2488,11 +2364,9 @@ void CxxArea::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddType = "CxxArea.AddType";
-
 bool CxxArea::AddType(TypedefPtr& type)
 {
-   Debug::ft(CxxArea_AddType);
+   Debug::ft("CxxArea.AddType");
 
    if(type->EnterScope())
    {
@@ -2505,11 +2379,9 @@ bool CxxArea::AddType(TypedefPtr& type)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddUsing = "CxxArea.AddUsing";
-
 bool CxxArea::AddUsing(UsingPtr& use)
 {
-   Debug::ft(CxxArea_AddUsing);
+   Debug::ft("CxxArea.AddUsing");
 
    if(use->EnterScope()) usings_.push_back(std::move(use));
    return true;
@@ -2517,11 +2389,9 @@ bool CxxArea::AddUsing(UsingPtr& use)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_Check = "CxxArea.Check";
-
 void CxxArea::Check() const
 {
-   Debug::ft(CxxArea_Check);
+   Debug::ft("CxxArea.Check");
 
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
@@ -2566,11 +2436,9 @@ void CxxArea::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_FindClass = "CxxArea.FindClass";
-
 Class* CxxArea::FindClass(const string& name) const
 {
-   Debug::ft(CxxArea_FindClass);
+   Debug::ft("CxxArea.FindClass");
 
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
@@ -2582,11 +2450,9 @@ Class* CxxArea::FindClass(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_FindData = "CxxArea.FindData";
-
 Data* CxxArea::FindData(const string& name) const
 {
-   Debug::ft(CxxArea_FindData);
+   Debug::ft("CxxArea.FindData");
 
    for(auto d = data_.cbegin(); d != data_.cend(); ++d)
    {
@@ -2598,11 +2464,9 @@ Data* CxxArea::FindData(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_FindEnum = "CxxArea.FindEnum";
-
 Enum* CxxArea::FindEnum(const string& name) const
 {
-   Debug::ft(CxxArea_FindEnum);
+   Debug::ft("CxxArea.FindEnum");
 
    for(auto e = enums_.cbegin(); e != enums_.cend(); ++e)
    {
@@ -2614,11 +2478,9 @@ Enum* CxxArea::FindEnum(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_FindEnumerator = "CxxArea.FindEnumerator";
-
 Enumerator* CxxArea::FindEnumerator(const string& name) const
 {
-   Debug::ft(CxxArea_FindEnumerator);
+   Debug::ft("CxxArea.FindEnumerator");
 
    for(auto e = enums_.cbegin(); e != enums_.cend(); ++e)
    {
@@ -2631,12 +2493,10 @@ Enumerator* CxxArea::FindEnumerator(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_FindFunc = "CxxArea.FindFunc";
-
 Function* CxxArea::FindFunc(const string& name, StackArgVector* args,
    bool base, const CxxScope* scope, SymbolView* view) const
 {
-   Debug::ft(CxxArea_FindFunc);
+   Debug::ft("CxxArea.FindFunc");
 
    //  Get the type string for each argument in ARGS.
    //
@@ -2706,11 +2566,9 @@ Function* CxxArea::FindFunc(const string& name, StackArgVector* args,
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_FindItem = "CxxArea.FindItem";
-
 CxxScoped* CxxArea::FindItem(const string& name) const
 {
-   Debug::ft(CxxArea_FindItem);
+   Debug::ft("CxxArea.FindItem");
 
    auto op = CxxOp::NameToOperator(name);
 
@@ -2739,11 +2597,9 @@ CxxScoped* CxxArea::FindItem(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_FindType = "CxxArea.FindType";
-
 Typedef* CxxArea::FindType(const string& name) const
 {
-   Debug::ft(CxxArea_FindType);
+   Debug::ft("CxxArea.FindType");
 
    for(auto t = types_.cbegin(); t != types_.cend(); ++t)
    {
@@ -2755,11 +2611,9 @@ Typedef* CxxArea::FindType(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_FoundFunc = "CxxArea.FoundFunc";
-
 Function* CxxArea::FoundFunc(Function* func, SymbolView* view, TypeMatch match)
 {
-   Debug::ft(CxxArea_FoundFunc);
+   Debug::ft("CxxArea.FoundFunc");
 
    if(view != nullptr) view->match = match;
    return func;
@@ -2804,11 +2658,9 @@ void CxxArea::InsertFunc(Function* func, bool defn)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_MatchFunc = "CxxArea.MatchFunc";
-
 Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 {
-   Debug::ft(CxxArea_MatchFunc);
+   Debug::ft("CxxArea.MatchFunc");
 
    auto list = FuncVector(*curr->Name());
 
@@ -2910,13 +2762,11 @@ void CxxArea::Shrink()
 
 //==============================================================================
 
-fn_name Namespace_ctor = "Namespace.ctor";
-
 Namespace::Namespace(const string& name, Namespace* space) :
    name_(name),
    checked_(false)
 {
-   Debug::ft(Namespace_ctor);
+   Debug::ft("Namespace.ctor");
 
    CxxArea::SetScope(space);
    Singleton< CxxSymbols >::Instance()->InsertSpace(this);
@@ -2925,11 +2775,9 @@ Namespace::Namespace(const string& name, Namespace* space) :
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_dtor = "Namespace.dtor";
-
 Namespace::~Namespace()
 {
-   Debug::ftnt(Namespace_dtor);
+   Debug::ftnt("Namespace.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseSpace(this);
    CxxStats::Decr(CxxStats::SPACE_DECL);
@@ -2937,12 +2785,10 @@ Namespace::~Namespace()
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_AccessibilityOf = "Namespace.AccessibilityOf";
-
 void Namespace::AccessibilityOf
    (const CxxScope* scope, const CxxScoped* item, SymbolView* view) const
 {
-   Debug::ft(Namespace_AccessibilityOf);
+   Debug::ft("Namespace.AccessibilityOf");
 
    view->accessibility = (item->GetFile()->IsCpp() ? Restricted : Unrestricted);
    view->distance = scope->ScopeDistance(this);
@@ -2950,11 +2796,9 @@ void Namespace::AccessibilityOf
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_Check = "Namespace.Check";
-
 void Namespace::Check() const
 {
-   Debug::ft(Namespace_Check);
+   Debug::ft("Namespace.Check");
 
    if(checked_) return;
    checked_ = true;
@@ -3008,11 +2852,9 @@ void Namespace::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_EnsureNamespace = "Namespace.EnsureNamespace";
-
 Namespace* Namespace::EnsureNamespace(const string& name)
 {
-   Debug::ft(Namespace_EnsureNamespace);
+   Debug::ft("Namespace.EnsureNamespace");
 
    //  If a namespace defined by NAME is not found, create it.
    //
@@ -3026,12 +2868,10 @@ Namespace* Namespace::EnsureNamespace(const string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_FindFunc = "Namespace.FindFunc";
-
 Function* Namespace::FindFunc(const string& name, StackArgVector* args,
    bool base, const CxxScope* scope, SymbolView* view) const
 {
-   Debug::ft(Namespace_FindFunc);
+   Debug::ft("Namespace.FindFunc");
 
    auto f = CxxArea::FindFunc(name, args, false, scope, view);
    if(f != nullptr) return f;
@@ -3048,11 +2888,9 @@ Function* Namespace::FindFunc(const string& name, StackArgVector* args,
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_FindItem = "Namespace.FindItem";
-
 CxxScoped* Namespace::FindItem(const string& name) const
 {
-   Debug::ft(Namespace_FindItem);
+   Debug::ft("Namespace.FindItem");
 
    CxxScoped* item = FindNamespace(name);
    if(item != nullptr) return item;
@@ -3062,11 +2900,9 @@ CxxScoped* Namespace::FindItem(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_FindNamespace = "Namespace.FindNamespace";
-
 Namespace* Namespace::FindNamespace(const string& name) const
 {
-   Debug::ft(Namespace_FindNamespace);
+   Debug::ft("Namespace.FindNamespace");
 
    //  Return the namespace, if any, defined by NAME.
    //
@@ -3103,11 +2939,9 @@ string Namespace::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_SetLoc = "Namespace.SetLoc";
-
 void Namespace::SetLoc(CodeFile* file, size_t pos)
 {
-   Debug::ft(Namespace_SetLoc);
+   Debug::ft("Namespace.SetLoc");
 
    //  If this is the first appearance of the namespace, set its location.
    //  Create a namespace definition for the current file.

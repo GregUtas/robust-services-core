@@ -267,11 +267,9 @@ FactoryId BuffTrace::ActiveFid() const
 
 //------------------------------------------------------------------------------
 
-fn_name BuffTrace_ClaimBlocks = "BuffTrace.ClaimBlocks";
-
 void BuffTrace::ClaimBlocks()
 {
-   Debug::ft(BuffTrace_ClaimBlocks);
+   Debug::ft("BuffTrace.ClaimBlocks");
 
    if((buff_ != nullptr) && !corrupt_ && !buff_->IsInvalid())
    {
@@ -406,11 +404,9 @@ BuffTrace* BuffTrace::NextIcMsg
 
 //------------------------------------------------------------------------------
 
-fn_name BuffTrace_Rewrap = "BuffTrace.Rewrap";
-
 Message* BuffTrace::Rewrap()
 {
-   Debug::ft(BuffTrace_Rewrap);
+   Debug::ft("BuffTrace.Rewrap");
 
    if(buff_ == nullptr) return nullptr;
 
@@ -425,11 +421,9 @@ Message* BuffTrace::Rewrap()
 
 //------------------------------------------------------------------------------
 
-fn_name BuffTrace_Shutdown = "BuffTrace.Shutdown";
-
 void BuffTrace::Shutdown(RestartLevel level)
 {
-   Debug::ft(BuffTrace_Shutdown);
+   Debug::ft("BuffTrace.Shutdown");
 
    if(buff_ != nullptr)
    {

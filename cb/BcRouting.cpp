@@ -36,24 +36,20 @@ using std::string;
 
 namespace CallBase
 {
-fn_name AnalysisResult_ctor1 = "AnalysisResult.ctor";
-
 AnalysisResult::AnalysisResult() :
    selector(Address::Invalid),
    identifier(0)
 {
-   Debug::ft(AnalysisResult_ctor1);
+   Debug::ft("AnalysisResult.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name AnalysisResult_ctor2 = "AnalysisResult.ctor(digits)";
 
 AnalysisResult::AnalysisResult(const DigitString& ds) :
    selector(Address::Invalid),
    identifier(0)
 {
-   Debug::ft(AnalysisResult_ctor2);
+   Debug::ft("AnalysisResult.ctor(digits)");
 
    auto dn = ds.ToDN();
 
@@ -85,24 +81,20 @@ void AnalysisResult::Display(ostream& stream, const string& prefix) const
 
 //==============================================================================
 
-fn_name RouteResult_ctor1 = "RouteResult.ctor";
-
 RouteResult::RouteResult() :
    selector(NIL_ID),
    identifier(0)
 {
-   Debug::ft(RouteResult_ctor1);
+   Debug::ft("RouteResult.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name RouteResult_ctor2 = "RouteResult.ctor(analysis)";
 
 RouteResult::RouteResult(const AnalysisResult& ar) :
    selector(NIL_ID),
    identifier(0)
 {
-   Debug::ft(RouteResult_ctor2);
+   Debug::ft("RouteResult.ctor(analysis)");
 
    switch(ar.selector)
    {

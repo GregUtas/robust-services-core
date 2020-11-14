@@ -55,21 +55,17 @@ const size_t SbIpBufferPool::BlockSize = sizeof(SbIpBuffer);
 
 //------------------------------------------------------------------------------
 
-fn_name SbIpBufferPool_ctor = "SbIpBufferPool.ctor";
-
 SbIpBufferPool::SbIpBufferPool() :
    ObjectPool(SbIpBufferObjPoolId, MemDynamic, BlockSize, "SbIpBuffers")
 {
-   Debug::ft(SbIpBufferPool_ctor);
+   Debug::ft("SbIpBufferPool.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SbIpBufferPool_dtor = "SbIpBufferPool.dtor";
-
 SbIpBufferPool::~SbIpBufferPool()
 {
-   Debug::ftnt(SbIpBufferPool_dtor);
+   Debug::ftnt("SbIpBufferPool.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -85,30 +81,24 @@ const size_t ContextPool::BlockSize = sizeof(SsmContext);
 
 //------------------------------------------------------------------------------
 
-fn_name ContextPool_ctor = "ContextPool.ctor";
-
 ContextPool::ContextPool() :
    ObjectPool(ContextObjPoolId, MemDynamic, BlockSize, "Contexts")
 {
-   Debug::ft(ContextPool_ctor);
+   Debug::ft("ContextPool.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ContextPool_dtor = "ContextPool.dtor";
 
 ContextPool::~ContextPool()
 {
-   Debug::ftnt(ContextPool_dtor);
+   Debug::ftnt("ContextPool.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ContextPool_ClaimBlocks = "ContextPool.ClaimBlocks";
-
 void ContextPool::ClaimBlocks()
 {
-   Debug::ft(ContextPool_ClaimBlocks);
+   Debug::ft("ContextPool.ClaimBlocks");
 
    Singleton< InvokerPoolRegistry >::Instance()->ClaimBlocks();
 }
@@ -126,21 +116,17 @@ const size_t EventPool::BlockSize = sizeof(Event) + (20 * BYTES_PER_WORD);
 
 //------------------------------------------------------------------------------
 
-fn_name EventPool_ctor = "EventPool.ctor";
-
 EventPool::EventPool() :
    ObjectPool(EventObjPoolId, MemDynamic, BlockSize, "Events")
 {
-   Debug::ft(EventPool_ctor);
+   Debug::ft("EventPool.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name EventPool_dtor = "EventPool.dtor";
-
 EventPool::~EventPool()
 {
-   Debug::ftnt(EventPool_dtor);
+   Debug::ftnt("EventPool.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -156,21 +142,17 @@ const size_t MessagePool::BlockSize = sizeof(Message) + (40 * BYTES_PER_WORD);
 
 //------------------------------------------------------------------------------
 
-fn_name MessagePool_ctor = "MessagePool.ctor";
-
 MessagePool::MessagePool() :
    ObjectPool(MessageObjPoolId, MemDynamic, BlockSize, "Messages")
 {
-   Debug::ft(MessagePool_ctor);
+   Debug::ft("MessagePool.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MessagePool_dtor = "MessagePool.dtor";
-
 MessagePool::~MessagePool()
 {
-   Debug::ftnt(MessagePool_dtor);
+   Debug::ftnt("MessagePool.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -186,30 +168,24 @@ const size_t MsgPortPool::BlockSize = sizeof(MsgPort);
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPortPool_ctor = "MsgPortPool.ctor";
-
 MsgPortPool::MsgPortPool() :
    ObjectPool(MsgPortObjPoolId, MemDynamic, BlockSize, "MsgPorts")
 {
-   Debug::ft(MsgPortPool_ctor);
+   Debug::ft("MsgPortPool.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name MsgPortPool_dtor = "MsgPortPool.dtor";
 
 MsgPortPool::~MsgPortPool()
 {
-   Debug::ftnt(MsgPortPool_dtor);
+   Debug::ftnt("MsgPortPool.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MsgPortPool_FindPeerPort = "MsgPortPool.FindPeerPort";
-
 MsgPort* MsgPortPool::FindPeerPort(const GlobalAddress& remAddr) const
 {
-   Debug::ft(MsgPortPool_FindPeerPort);
+   Debug::ft("MsgPortPool.FindPeerPort");
 
    PooledObjectId bid;
 
@@ -249,30 +225,24 @@ PooledObjectId ProtocolSMPool::PsmToAudit_ = NIL_ID;
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSMPool_ctor = "ProtocolSMPool.ctor";
-
 ProtocolSMPool::ProtocolSMPool() :
    ObjectPool(ProtocolSMObjPoolId, MemDynamic, BlockSize, "ProtocolSMs")
 {
-   Debug::ft(ProtocolSMPool_ctor);
+   Debug::ft("ProtocolSMPool.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ProtocolSMPool_dtor = "ProtocolSMPool.dtor";
 
 ProtocolSMPool::~ProtocolSMPool()
 {
-   Debug::ftnt(ProtocolSMPool_dtor);
+   Debug::ftnt("ProtocolSMPool.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSMPool_ClaimBlocks = "ProtocolSMPool.ClaimBlocks";
-
 void ProtocolSMPool::ClaimBlocks()
 {
-   Debug::ft(ProtocolSMPool_ClaimBlocks);
+   Debug::ft("ProtocolSMPool.ClaimBlocks");
 
    //  Find the context for each in-use PSM and mark all the objects in its
    //  context as being in use.  A context that is not on a work queue MUST
@@ -331,21 +301,17 @@ const size_t ServiceSMPool::BlockSize =
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSMPool_ctor = "ServiceSMPool.ctor";
-
 ServiceSMPool::ServiceSMPool() :
    ObjectPool(ServiceSMObjPoolId, MemDynamic, BlockSize, "ServiceSMs")
 {
-   Debug::ft(ServiceSMPool_ctor);
+   Debug::ft("ServiceSMPool.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceSMPool_dtor = "ServiceSMPool.dtor";
-
 ServiceSMPool::~ServiceSMPool()
 {
-   Debug::ftnt(ServiceSMPool_dtor);
+   Debug::ftnt("ServiceSMPool.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -361,43 +327,35 @@ const size_t TimerPool::BlockSize = sizeof(Timer);
 
 //------------------------------------------------------------------------------
 
-fn_name TimerPool_ctor = "TimerPool.ctor";
-
 TimerPool::TimerPool() :
    ObjectPool(TimerObjPoolId, MemDynamic, BlockSize, "Timers")
 {
-   Debug::ft(TimerPool_ctor);
+   Debug::ft("TimerPool.ctor");
 
    timeouts_.reset(new Counter("timeout messages sent"));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TimerPool_dtor = "TimerPool.dtor";
-
 TimerPool::~TimerPool()
 {
-   Debug::ftnt(TimerPool_dtor);
+   Debug::ftnt("TimerPool.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TimerPool_ClaimBlocks = "TimerPool.ClaimBlocks";
-
 void TimerPool::ClaimBlocks()
 {
-   Debug::ft(TimerPool_ClaimBlocks);
+   Debug::ft("TimerPool.ClaimBlocks");
 
    Singleton< TimerRegistry >::Instance()->ClaimBlocks();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TimerPool_DisplayStats = "TimerPool.DisplayStats";
-
 void TimerPool::DisplayStats(ostream& stream, const Flags& options) const
 {
-   Debug::ft(TimerPool_DisplayStats);
+   Debug::ft("TimerPool.DisplayStats");
 
    ObjectPool::DisplayStats(stream, options);
 
@@ -420,11 +378,9 @@ void TimerPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name TimerPool_Shutdown = "TimerPool.Shutdown";
-
 void TimerPool::Shutdown(RestartLevel level)
 {
-   Debug::ft(TimerPool_Shutdown);
+   Debug::ft("TimerPool.Shutdown");
 
    FunctionGuard guard(Guard_MemUnprotect);
    Restart::Release(timeouts_);
@@ -434,11 +390,9 @@ void TimerPool::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name TimerPool_Startup = "TimerPool.Startup";
-
 void TimerPool::Startup(RestartLevel level)
 {
-   Debug::ft(TimerPool_Startup);
+   Debug::ft("TimerPool.Startup");
 
    ObjectPool::Startup(level);
 
@@ -455,30 +409,24 @@ const size_t BtIpBufferPool::BlockSize = sizeof(SbIpBuffer);
 
 //------------------------------------------------------------------------------
 
-fn_name BtIpBufferPool_ctor = "BtIpBufferPool.ctor";
-
 BtIpBufferPool::BtIpBufferPool() :
    ObjectPool(BtIpBufferObjPoolId, MemDynamic, BlockSize, "BtIpBuffers")
 {
-   Debug::ft(BtIpBufferPool_ctor);
+   Debug::ft("BtIpBufferPool.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BtIpBufferPool_dtor = "BtIpBufferPool.dtor";
 
 BtIpBufferPool::~BtIpBufferPool()
 {
-   Debug::ftnt(BtIpBufferPool_dtor);
+   Debug::ftnt("BtIpBufferPool.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BtIpBufferPool_ClaimBlocks = "BtIpBufferPool.ClaimBlocks";
-
 void BtIpBufferPool::ClaimBlocks()
 {
-   Debug::ft(BtIpBufferPool_ClaimBlocks);
+   Debug::ft("BtIpBufferPool.ClaimBlocks");
 
    Singleton< TraceBuffer >::Instance()->ClaimBlocks();
 }

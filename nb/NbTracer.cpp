@@ -103,11 +103,9 @@ private:
 
 //------------------------------------------------------------------------------
 //
-fn_name NbTracer_ctor = "NbTracer.ctor";
-
 NbTracer::NbTracer()
 {
-   Debug::ft(NbTracer_ctor);
+   Debug::ft("NbTracer.ctor");
 
    for(auto f = 0; f < Faction_N; ++f) factions_[f] = TraceDefault;
 
@@ -190,11 +188,9 @@ fixed_string AllSelected      = "ALL ACTIVITY selected.";
 fixed_string FactionsSelected = "Factions: ";
 fixed_string ThreadsSelected  = "Threads: ";
 
-fn_name NbTracer_QuerySelections = "NbTracer.QuerySelections";
-
 void NbTracer::QuerySelections(ostream& stream) const
 {
-   Debug::ft(NbTracer_QuerySelections);
+   Debug::ft("NbTracer.QuerySelections");
 
    auto buff = Singleton< TraceBuffer >::Instance();
 
@@ -241,11 +237,9 @@ void NbTracer::QuerySelections(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name NbTracer_SelectFaction = "NbTracer.SelectFaction";
-
 TraceRc NbTracer::SelectFaction(Faction faction, TraceStatus status)
 {
-   Debug::ft(NbTracer_SelectFaction);
+   Debug::ft("NbTracer.SelectFaction");
 
    auto buff = Singleton< TraceBuffer >::Instance();
 
@@ -273,11 +267,9 @@ TraceRc NbTracer::SelectFaction(Faction faction, TraceStatus status)
 
 //------------------------------------------------------------------------------
 
-fn_name NbTracer_SelectThread = "NbTracer.SelectThread";
-
 TraceRc NbTracer::SelectThread(ThreadId tid, TraceStatus status)
 {
-   Debug::ft(NbTracer_SelectThread);
+   Debug::ft("NbTracer.SelectThread");
 
    auto thr = Singleton< ThreadRegistry >::Instance()->GetThread(tid);
 
@@ -299,11 +291,9 @@ TraceRc NbTracer::SelectThread(ThreadId tid, TraceStatus status)
 
 //------------------------------------------------------------------------------
 
-fn_name NbTracer_ThreadsEmpty = "NbTracer.ThreadsEmpty";
-
 bool NbTracer::ThreadsEmpty()
 {
-   Debug::ft(NbTracer_ThreadsEmpty);
+   Debug::ft("NbTracer.ThreadsEmpty");
 
    auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
 

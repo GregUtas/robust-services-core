@@ -13,7 +13,6 @@
 //
 #include "Province.h"
 #include "Debug.h"
-#include "SysTypes.h"
 #include "TokenMessage.h"
 
 using namespace NodeBase;
@@ -31,11 +30,9 @@ Province::Province() :
 
 //------------------------------------------------------------------------------
 
-fn_name Province_process_adjacency_list = "Province.process_adjacency_list";
-
 size_t Province::process_adjacency_list(const TokenMessage& adjacency_list)
 {
-   Debug::ft(Province_process_adjacency_list);
+   Debug::ft("Province.process_adjacency_list");
 
    Token coast;
    Token adjacent_coast_token;

@@ -86,12 +86,10 @@ EventHandler::Rc SbAnalyzeMessage::ProcessEvent
 
 //==============================================================================
 
-fn_name SbAnalyzeSap_ProcessEvent = "SbAnalyzeSap.ProcessEvent";
-
 EventHandler::Rc SbAnalyzeSap::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(SbAnalyzeSap_ProcessEvent);
+   Debug::ft("SbAnalyzeSap.ProcessEvent");
 
    //  Invoke the modifier's SAP handler.
    //
@@ -100,12 +98,10 @@ EventHandler::Rc SbAnalyzeSap::ProcessEvent
 
 //==============================================================================
 
-fn_name SbAnalyzeSnp_ProcessEvent = "SbAnalyzeSnp.ProcessEvent";
-
 EventHandler::Rc SbAnalyzeSnp::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(SbAnalyzeSnp_ProcessEvent);
+   Debug::ft("SbAnalyzeSnp.ProcessEvent");
 
    //  Invoke the modifier's SNP handler.
    //
@@ -114,12 +110,10 @@ EventHandler::Rc SbAnalyzeSnp::ProcessEvent
 
 //==============================================================================
 
-fn_name SbForceTransition_ProcessEvent = "SbForceTransition.ProcessEvent";
-
 EventHandler::Rc SbForceTransition::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(SbForceTransition_ProcessEvent);
+   Debug::ft("SbForceTransition.ProcessEvent");
 
    //  Invoke the event handler specified by the event.
    //

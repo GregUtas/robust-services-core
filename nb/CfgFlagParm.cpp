@@ -33,8 +33,6 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CfgFlagParm_ctor = "CfgFlagParm.ctor";
-
 CfgFlagParm::CfgFlagParm(c_string key, c_string def,
    Flags* field, FlagId fid, c_string expl) :
    CfgBitParm(key, def, expl),
@@ -42,16 +40,14 @@ CfgFlagParm::CfgFlagParm(c_string key, c_string def,
    next_(false),
    fid_(fid)
 {
-   Debug::ft(CfgFlagParm_ctor);
+   Debug::ft("CfgFlagParm.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CfgFlagParm_dtor = "CfgFlagParm.dtor";
-
 CfgFlagParm::~CfgFlagParm()
 {
-   Debug::ftnt(CfgFlagParm_dtor);
+   Debug::ftnt("CfgFlagParm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -82,11 +78,9 @@ void CfgFlagParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgFlagParm_SetCurr = "CfgFlagParm.SetCurr";
-
 void CfgFlagParm::SetCurr()
 {
-   Debug::ft(CfgFlagParm_SetCurr);
+   Debug::ft("CfgFlagParm.SetCurr");
 
    FunctionGuard guard(Guard_MemUnprotect);
    curr_->set(fid_, next_);
@@ -95,11 +89,9 @@ void CfgFlagParm::SetCurr()
 
 //------------------------------------------------------------------------------
 
-fn_name CfgFlagParm_SetNextValue = "CfgFlagParm.SetNextValue";
-
 bool CfgFlagParm::SetNextValue(bool value)
 {
-   Debug::ft(CfgFlagParm_SetNextValue);
+   Debug::ft("CfgFlagParm.SetNextValue");
 
    FunctionGuard guard(Guard_MemUnprotect);
    next_ = value;

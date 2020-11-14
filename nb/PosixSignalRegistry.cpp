@@ -35,11 +35,9 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name PosixSignalRegistry_ctor = "PosixSignalRegistry.ctor";
-
 PosixSignalRegistry::PosixSignalRegistry()
 {
-   Debug::ft(PosixSignalRegistry_ctor);
+   Debug::ft("PosixSignalRegistry.ctor");
 
    signals_.Init(PosixSignal::MaxId, PosixSignal::CellDiff(), MemImmutable);
 }
@@ -68,11 +66,9 @@ Flags PosixSignalRegistry::Attrs(signal_t value) const
 
 //------------------------------------------------------------------------------
 
-fn_name PosixSignalRegistry_BindSignal = "PosixSignalRegistry.BindSignal";
-
 bool PosixSignalRegistry::BindSignal(PosixSignal& signal)
 {
-   Debug::ft(PosixSignalRegistry_BindSignal);
+   Debug::ft("PosixSignalRegistry.BindSignal");
 
    return signals_.Insert(signal);
 }
@@ -145,11 +141,9 @@ string PosixSignalRegistry::strSignal(signal_t value) const
 
 //------------------------------------------------------------------------------
 
-fn_name PosixSignalRegistry_UnbindSignal = "PosixSignalRegistry.UnbindSignal";
-
 void PosixSignalRegistry::UnbindSignal(PosixSignal& signal)
 {
-   Debug::ftnt(PosixSignalRegistry_UnbindSignal);
+   Debug::ftnt("PosixSignalRegistry.UnbindSignal");
 
    signals_.Erase(signal);
 }

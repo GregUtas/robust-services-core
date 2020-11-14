@@ -81,22 +81,18 @@ IoThread::IoThread(Daemon* daemon, const IpService* service, ipport_t port) :
 
 //------------------------------------------------------------------------------
 
-fn_name IoThread_dtor = "IoThread.dtor";
-
 IoThread::~IoThread()
 {
-   Debug::ftnt(IoThread_dtor);
+   Debug::ftnt("IoThread.dtor");
 
    if(ipPort_ != nullptr) ipPort_->SetThread(nullptr);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name IoThread_ConditionalPause = "IoThread.ConditionalPause";
-
 bool IoThread::ConditionalPause(word percent)
 {
-   Debug::ft(IoThread_ConditionalPause);
+   Debug::ft("IoThread.ConditionalPause");
 
    if(RtcPercentUsed() > percent)
    {
@@ -130,11 +126,9 @@ void IoThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name IoThread_ExitOnRestart = "IoThread.ExitOnRestart";
-
 bool IoThread::ExitOnRestart(RestartLevel level) const
 {
-   Debug::ft(IoThread_ExitOnRestart);
+   Debug::ft("IoThread.ExitOnRestart");
 
    //  Don't exit the thread during a warm restart.  Sessions survive, so
    //  we should continue to service our socket(s) as soon as the restart
@@ -145,12 +139,10 @@ bool IoThread::ExitOnRestart(RestartLevel level) const
 
 //------------------------------------------------------------------------------
 
-fn_name IoThread_InvokeHandler = "IoThread.InvokeHandler";
-
 void IoThread::InvokeHandler
    (const IpPort& port, const byte_t* source, size_t size) const
 {
-   Debug::ft(IoThread_InvokeHandler);
+   Debug::ft("IoThread.InvokeHandler");
 
    auto handler = port.GetHandler();
 

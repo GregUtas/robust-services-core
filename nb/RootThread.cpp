@@ -46,23 +46,19 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name RootThread_ctor = "RootThread.ctor";
-
 RootThread::RootThread() : Thread(WatchdogFaction),
    state_(Initializing)
 {
-   Debug::ft(RootThread_ctor);
+   Debug::ft("RootThread.ctor");
 
    SetInitialized();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name RootThread_dtor = "RootThread.dtor";
-
 RootThread::~RootThread()
 {
-   Debug::ftnt(RootThread_dtor);
+   Debug::ftnt("RootThread.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -74,11 +70,9 @@ c_string RootThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name RootThread_Destroy = "RootThread.Destroy";
-
 void RootThread::Destroy()
 {
-   Debug::ft(RootThread_Destroy);
+   Debug::ft("RootThread.Destroy");
 
    Singleton< RootThread >::Destroy();
 }
@@ -95,11 +89,9 @@ void RootThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name RootThread_Enter = "RootThread.Enter";
-
 void RootThread::Enter()
 {
-   Debug::ft(RootThread_Enter);
+   Debug::ft("RootThread.Enter");
 
    Thread* initThr;
    auto timeout = TIMEOUT_IMMED;
@@ -272,11 +264,9 @@ void RootThread::Enter()
 
 //------------------------------------------------------------------------------
 
-fn_name RootThread_Main = "RootThread.Main";
-
 main_t RootThread::Main()
 {
-   Debug::ft(RootThread_Main);
+   Debug::ft("RootThread.Main");
 
    //  This loop is hypothetical because Start() does not return.
    //  If Enter() above returned, the loop would come into play.

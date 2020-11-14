@@ -80,12 +80,10 @@ const int64_t SysTime::SecsInNonLeapYear = 365 * 24 * 60 * 60;
 
 //------------------------------------------------------------------------------
 
-fn_name SysTime_ctor1 = "SysTime.ctor(explicit)";
-
 SysTime::SysTime(int16_t year, int16_t month, int16_t day,
    int16_t hour, int16_t min, int16_t sec, int16_t msec)
 {
-   Debug::ft(SysTime_ctor1);
+   Debug::ft("SysTime.ctor(explicit)");
 
    time_[YearsField] = year;
    time_[MonthsField] = month;
@@ -100,11 +98,9 @@ SysTime::SysTime(int16_t year, int16_t month, int16_t day,
 
 //------------------------------------------------------------------------------
 
-fn_name SysTime_AddDays = "SysTime.AddDays";
-
 void SysTime::AddDays(size_t days)
 {
-   Debug::ft(SysTime_AddDays);
+   Debug::ft("SysTime.AddDays");
 
    for(auto dpm = DaysPerMonth(time_[YearsField]); days > 0; --days)
    {
@@ -135,11 +131,9 @@ void SysTime::AddDays(size_t days)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTime_AddMsecs = "SysTime.AddMsecs";
-
 void SysTime::AddMsecs(msecs_t msecs)
 {
-   Debug::ft(SysTime_AddMsecs);
+   Debug::ft("SysTime.AddMsecs");
 
    int carry;
 
@@ -250,11 +244,9 @@ bool SysTime::IsLeapYear(int16_t year)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTime_MsecsFromNow = "SysTime.MsecsFromNow";
-
 int32_t SysTime::MsecsFromNow() const
 {
-   Debug::ft(SysTime_MsecsFromNow);
+   Debug::ft("SysTime.MsecsFromNow");
 
    return SysTime().MsecsUntil(*this);
 }
@@ -397,11 +389,9 @@ c_string SysTime::strWeekDay() const
 
 //------------------------------------------------------------------------------
 
-fn_name SysTime_SubDays = "SysTime.SubDays";
-
 void SysTime::SubDays(size_t days)
 {
-   Debug::ft(SysTime_SubDays);
+   Debug::ft("SysTime.SubDays");
 
    for(auto dpm = DaysPerMonth(time_[YearsField]); days > 0; --days)
    {
@@ -432,11 +422,9 @@ void SysTime::SubDays(size_t days)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTime_SubMsecs = "SysTime.SubMsecs";
-
 void SysTime::SubMsecs(msecs_t msecs)
 {
-   Debug::ft(SysTime_SubMsecs);
+   Debug::ft("SysTime.SubMsecs");
 
    int borrow;
 
@@ -518,22 +506,18 @@ string SysTime::to_str(Format format) const
 
 //------------------------------------------------------------------------------
 
-fn_name SysTime_Truncate = "SysTime.Truncate";
-
 void SysTime::Truncate(TimeField field)
 {
-   Debug::ft(SysTime_Truncate);
+   Debug::ft("SysTime.Truncate");
 
    for(auto f = int(field); f < TimeField_N; ++f) time_[f] = MinValues[f];
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysTime_Verify = "SysTime.Verify";
-
 bool SysTime::Verify()
 {
-   Debug::ft(SysTime_Verify);
+   Debug::ft("SysTime.Verify");
 
    for(auto f = 0; f < TimeField_N; ++f)
    {

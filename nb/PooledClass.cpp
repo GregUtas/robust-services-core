@@ -38,22 +38,18 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name PooledClass_ctor = "PooledClass.ctor";
-
 PooledClass::PooledClass(ClassId cid, size_t size) :
    Class(cid, size),
    pool_(nullptr)
 {
-   Debug::ft(PooledClass_ctor);
+   Debug::ft("PooledClass.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PooledClass_dtor = "PooledClass.dtor";
-
 PooledClass::~PooledClass()
 {
-   Debug::ftnt(PooledClass_dtor);
+   Debug::ftnt("PooledClass.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -78,11 +74,9 @@ void PooledClass::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PooledClass_New = "PooledClass.New";
-
 Object* PooledClass::New(size_t size)
 {
-   Debug::ft(PooledClass_New);
+   Debug::ft("PooledClass.New");
 
    return pool_->DeqBlock(size);
 }

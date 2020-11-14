@@ -35,11 +35,9 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name ServiceRegistry_ctor = "ServiceRegistry.ctor";
-
 ServiceRegistry::ServiceRegistry()
 {
-   Debug::ft(ServiceRegistry_ctor);
+   Debug::ft("ServiceRegistry.ctor");
 
    services_.Init(Service::MaxId, Service::CellDiff(), MemImmutable);
 }
@@ -57,11 +55,9 @@ ServiceRegistry::~ServiceRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceRegistry_BindService = "ServiceRegistry.BindService";
-
 bool ServiceRegistry::BindService(Service& service)
 {
-   Debug::ft(ServiceRegistry_BindService);
+   Debug::ft("ServiceRegistry.BindService");
 
    return services_.Insert(service);
 }
@@ -93,11 +89,9 @@ void ServiceRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name ServiceRegistry_UnbindService = "ServiceRegistry.UnbindService";
-
 void ServiceRegistry::UnbindService(Service& service)
 {
-   Debug::ftnt(ServiceRegistry_UnbindService);
+   Debug::ftnt("ServiceRegistry.UnbindService");
 
    services_.Erase(service);
 }

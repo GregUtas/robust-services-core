@@ -62,13 +62,11 @@ struct ClassDynamic : public Permanent
 
 //==============================================================================
 
-fn_name Class_ctor = "Class.ctor";
-
 Class::Class(ClassId cid, size_t size) :
    size_(size),
    vptr_(BAD_POINTER)
 {
-   Debug::ft(Class_ctor);
+   Debug::ft("Class.ctor");
 
    dyn_.reset(new ClassDynamic);
    cid_.SetId(cid);
@@ -98,11 +96,9 @@ ptrdiff_t Class::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name Class_ClaimBlocks = "Class.ClaimBlocks";
-
 void Class::ClaimBlocks()
 {
-   Debug::ft(Class_ClaimBlocks);
+   Debug::ft("Class.ClaimBlocks");
 
    if(dyn_->template_ != nullptr) dyn_->template_->ClaimBlocks();
    if(dyn_->singleton_ != nullptr) dyn_->singleton_->ClaimBlocks();
@@ -179,11 +175,9 @@ void Class::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Class_FreeQuasiSingleton = "Class.FreeQuasiSingleton";
-
 void Class::FreeQuasiSingleton(Object* obj)
 {
-   Debug::ft(Class_FreeQuasiSingleton);
+   Debug::ft("Class.FreeQuasiSingleton");
 
    //  If a quasi-singleton is already available, return OBJ to its pool,
    //  else make it the quasi-singleton.
@@ -196,11 +190,9 @@ void Class::FreeQuasiSingleton(Object* obj)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetQuasiSingleton = "Class.GetQuasiSingleton";
-
 Object* Class::GetQuasiSingleton()
 {
-   Debug::ft(Class_GetQuasiSingleton);
+   Debug::ft("Class.GetQuasiSingleton");
 
    //  If the quasi-singleton is available, return it, else allocate a block
    //  from the pool associated with this class.
@@ -226,11 +218,9 @@ void Class::Initialize()
 
 //------------------------------------------------------------------------------
 
-fn_name Class_New = "Class.New";
-
 Object* Class::New(size_t size)
 {
-   Debug::ft(Class_New);
+   Debug::ft("Class.New");
 
    auto type = MemType();
    auto addr = Memory::Alloc(size, type);
@@ -306,11 +296,9 @@ bool Class::SetTemplate(Object& obj)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_SetVptr = "Class.SetVptr";
-
 bool Class::SetVptr(const Object& obj)
 {
-   Debug::ft(Class_SetVptr);
+   Debug::ft("Class.SetVptr");
 
    //  Verify OBJ and save its vptr.
    //
@@ -323,11 +311,9 @@ bool Class::SetVptr(const Object& obj)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_Shutdown = "Class.Shutdown";
-
 void Class::Shutdown(RestartLevel level)
 {
-   Debug::ft(Class_Shutdown);
+   Debug::ft("Class.Shutdown");
 
    Restart::Release(dyn_->template_);
    Restart::Release(dyn_->singleton_);

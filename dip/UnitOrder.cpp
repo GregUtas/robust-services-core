@@ -53,11 +53,9 @@ UnitOrder::UnitOrder() :
 
 //------------------------------------------------------------------------------
 
-fn_name UnitOrder_decode_order = "UnitOrder.decode_order";
-
 void UnitOrder::decode_order(const TokenMessage& ord)
 {
-   Debug::ft(UnitOrder_decode_order);
+   Debug::ft("UnitOrder.decode_order");
 
    TokenMessage fleets;
 
@@ -118,11 +116,9 @@ void UnitOrder::decode_order(const TokenMessage& ord)
 
 //------------------------------------------------------------------------------
 
-fn_name UnitOrder_decode_result = "UnitOrder.decode_result";
-
 void UnitOrder::decode_result(const TokenMessage& result)
 {
-   Debug::ft(UnitOrder_decode_result);
+   Debug::ft("UnitOrder.decode_result");
 
    no_convoy = false;
    no_army_to_convoy = false;
@@ -194,11 +190,9 @@ void UnitOrder::decode_result(const TokenMessage& result)
 
 //------------------------------------------------------------------------------
 
-fn_name UnitOrder_mark_convoy_disrupted = "UnitOrder.mark_convoy_disrupted";
-
 void UnitOrder::mark_convoy_disrupted()
 {
-   Debug::ft(UnitOrder_mark_convoy_disrupted);
+   Debug::ft("UnitOrder.mark_convoy_disrupted");
 
    auto& units = MapAndUnits::instance()->units;
 
@@ -215,11 +209,9 @@ void UnitOrder::mark_convoy_disrupted()
 
 //------------------------------------------------------------------------------
 
-fn_name UnitOrder_mark_move_bounced = "UnitOrder.mark_move_bounced";
-
 void UnitOrder::mark_move_bounced()
 {
-   Debug::ft(UnitOrder_mark_move_bounced);
+   Debug::ft("UnitOrder.mark_move_bounced");
 
    bounce = true;
    order_type_copy = HOLD_NO_SUPPORT_ORDER;
@@ -229,11 +221,9 @@ void UnitOrder::mark_move_bounced()
 
 //------------------------------------------------------------------------------
 
-fn_name UnitOrder_mark_move_illegal = "UnitOrder.mark_move_illegal";
-
 void UnitOrder::mark_move_illegal(const Token& reason)
 {
-   Debug::ft(UnitOrder_mark_move_illegal);
+   Debug::ft("UnitOrder.mark_move_illegal");
 
    illegal_order = true;
    illegal_reason = reason;

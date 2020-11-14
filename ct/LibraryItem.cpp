@@ -32,20 +32,16 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name LibraryItem_ctor = "LibraryItem.ctor";
-
 LibraryItem::LibraryItem(const string& name) : name_(name)
 {
-   Debug::ft(LibraryItem_ctor);
+   Debug::ft("LibraryItem.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryItem_dtor = "LibraryItem.dtor";
-
 LibraryItem::~LibraryItem()
 {
-   Debug::ftnt(LibraryItem_dtor);
+   Debug::ftnt("LibraryItem.dtor");
 }
 
 //------------------------------------------------------------------------------

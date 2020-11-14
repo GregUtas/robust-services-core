@@ -68,13 +68,11 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name LogsWritten_ctor = "LogsWritten.ctor";
-
 LogsWritten::LogsWritten(LogBuffer* buff, const LogBuffer::Entry* last) :
    buff_(buff),
    last_(last)
 {
-   Debug::ft(LogsWritten_ctor);
+   Debug::ft("LogsWritten.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -94,8 +92,6 @@ const size_t LogBuffer::BundledLogSizeThreshold = 2048;
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_ctor = "LogBuffer.ctor";
-
 LogBuffer::LogBuffer(size_t size) :
    discards_(0),
    spooled_(nullptr),
@@ -105,7 +101,7 @@ LogBuffer::LogBuffer(size_t size) :
    size_(0),
    buff_(nullptr)
 {
-   Debug::ft(LogBuffer_ctor);
+   Debug::ft("LogBuffer.ctor");
 
    //  During a boot/reboot, the name of the log file includes the system's
    //  startup time.  During a restart, its name contains the time at which
@@ -128,11 +124,9 @@ LogBuffer::LogBuffer(size_t size) :
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_dtor = "LogBuffer.dtor";
-
 LogBuffer::~LogBuffer()
 {
-   Debug::ftnt(LogBuffer_dtor);
+   Debug::ftnt("LogBuffer.dtor");
 
    MutexGuard guard(&LogBufferLock_);
 
@@ -142,11 +136,9 @@ LogBuffer::~LogBuffer()
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_Advance = "LogBuffer.Advance";
-
 const LogBuffer::Entry* LogBuffer::Advance()
 {
-   Debug::ft(LogBuffer_Advance);
+   Debug::ft("LogBuffer.Advance");
 
    if(unspooled_ == nullptr) return nullptr;
 
@@ -161,11 +153,9 @@ const LogBuffer::Entry* LogBuffer::Advance()
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_Count = "LogBuffer.Count";
-
 size_t LogBuffer::Count(bool spooled, bool unspooled) const
 {
-   Debug::ft(LogBuffer_Count);
+   Debug::ft("LogBuffer.Count");
 
    if(!spooled && !unspooled) return 0;
 
@@ -216,33 +206,27 @@ void LogBuffer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_First = "LogBuffer.First";
-
 const LogBuffer::Entry* LogBuffer::First() const
 {
-   Debug::ftnt(LogBuffer_First);
+   Debug::ftnt("LogBuffer.First");
 
    return (spooled_ != nullptr ? spooled_ : unspooled_);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_FirstSpooled = "LogBuffer.FirstSpooled";
-
 const LogBuffer::Entry* LogBuffer::FirstSpooled() const
 {
-   Debug::ft(LogBuffer_FirstSpooled);
+   Debug::ft("LogBuffer.FirstSpooled");
 
    return spooled_;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_FirstUnspooled = "LogBuffer.FirstUnspooled";
-
 const LogBuffer::Entry* LogBuffer::FirstUnspooled() const
 {
-   Debug::ft(LogBuffer_FirstUnspooled);
+   Debug::ft("LogBuffer.FirstUnspooled");
 
    return unspooled_;
 }
@@ -314,11 +298,9 @@ ostringstreamPtr LogBuffer::GetLogs
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_InsertionPoint = "LogBuffer.InsertionPoint";
-
 LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
 {
-   Debug::ftnt(LogBuffer_InsertionPoint);
+   Debug::ftnt("LogBuffer.InsertionPoint");
 
    //  The log is normally inserted at next_, which will advance to AFTER.
    //  However, the log needs to go at the top of the buffer if it would
@@ -367,11 +349,9 @@ LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_Last = "LogBuffer.Last";
-
 const LogBuffer::Entry* LogBuffer::Last() const
 {
-   Debug::ft(LogBuffer_Last);
+   Debug::ft("LogBuffer.Last");
 
    return next_->header.prev;
 }
@@ -385,11 +365,9 @@ void LogBuffer::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_Pop = "LogBuffer.Pop";
-
 const LogBuffer::Entry* LogBuffer::Pop()
 {
-   Debug::ft(LogBuffer_Pop);
+   Debug::ft("LogBuffer.Pop");
 
    if(spooled_ == nullptr) return nullptr;
 
@@ -421,11 +399,9 @@ const LogBuffer::Entry* LogBuffer::Pop()
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_Purge = "LogBuffer.Purge";
-
 void LogBuffer::Purge(const Entry* last)
 {
-   Debug::ft(LogBuffer_Purge);
+   Debug::ft("LogBuffer.Purge");
 
    //  If the LAST log that was written to the log file still exists, free the
    //  logs before it, and then free it as well.
@@ -496,11 +472,9 @@ bool LogBuffer::Push(const ostringstreamPtr& log)
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_ResetAllToUnspooled = "LogBuffer.ResetAllToUnspooled";
-
 void LogBuffer::ResetAllToUnspooled()
 {
-   Debug::ft(LogBuffer_ResetAllToUnspooled);
+   Debug::ft("LogBuffer.ResetAllToUnspooled");
 
    if(spooled_ != nullptr) unspooled_ = spooled_;
    spooled_ = nullptr;
@@ -508,11 +482,9 @@ void LogBuffer::ResetAllToUnspooled()
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_SetNext = "LogBuffer.SetNext";
-
 void LogBuffer::SetNext(Entry* next)
 {
-   Debug::ftnt(LogBuffer_SetNext);
+   Debug::ftnt("LogBuffer.SetNext");
 
    next_ = next;
    next_->header.prev = nullptr;

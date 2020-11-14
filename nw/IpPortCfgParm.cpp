@@ -36,23 +36,19 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name IpPortCfgParm_ctor = "IpPortCfgParm.ctor";
-
 IpPortCfgParm::IpPortCfgParm(c_string key, c_string def,
    c_string expl, const IpService* service) :
    CfgIntParm(key, def, FirstAppIpPort, LastAppIpPort, expl),
    service_(service)
 {
-   Debug::ft(IpPortCfgParm_ctor);
+   Debug::ft("IpPortCfgParm.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortCfgParm_dtor = "IpPortCfgParm.dtor";
-
 IpPortCfgParm::~IpPortCfgParm()
 {
-   Debug::ftnt(IpPortCfgParm_dtor);
+   Debug::ftnt("IpPortCfgParm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -74,11 +70,9 @@ void IpPortCfgParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortCfgParm_SetNextValue = "IpPortCfgParm.SetNextValue";
-
 bool IpPortCfgParm::SetNextValue(word value)
 {
-   Debug::ft(IpPortCfgParm_SetNextValue);
+   Debug::ft("IpPortCfgParm.SetNextValue");
 
    //  Check that the port is valid and available for the intended protocol.
    //

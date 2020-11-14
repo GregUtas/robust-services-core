@@ -24,11 +24,9 @@ using namespace NodeBase;
 
 namespace Diplomacy
 {
-fn_name TokenTextMap_ctor = "TokenTextMap.ctor";
-
 TokenTextMap::TokenTextMap()
 {
-   Debug::ft(TokenTextMap_ctor);
+   Debug::ft("TokenTextMap.ctor");
 
    //  Create mappings between each token and its text representation.
    //
@@ -261,11 +259,9 @@ TokenTextMap::TokenTextMap()
 
 //-----------------------------------------------------------------------------
 
-fn_name TokenTextMap_erase = "TokenTextMap.erase";
-
 void TokenTextMap::erase(category_t cat)
 {
-   Debug::ft(TokenTextMap_erase);
+   Debug::ft("TokenTextMap.erase");
 
    token_t curr_category = cat << 8;
    token_t next_category = (cat + 1) << 8;
@@ -284,12 +280,9 @@ void TokenTextMap::erase(category_t cat)
 
 //-----------------------------------------------------------------------------
 
-fn_name TokenTextMap_erase_powers_and_provinces =
-   "TokenTextMap.erase_powers_and_provinces";
-
 void TokenTextMap::erase_powers_and_provinces()
 {
-   Debug::ft(TokenTextMap_erase_powers_and_provinces);
+   Debug::ft("TokenTextMap.erase_powers_and_provinces");
 
    erase(CATEGORY_POWER);
 

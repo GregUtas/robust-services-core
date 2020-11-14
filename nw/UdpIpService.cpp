@@ -21,7 +21,6 @@
 //
 #include "UdpIpService.h"
 #include "Debug.h"
-#include "SysTypes.h"
 #include "UdpIpPort.h"
 
 using namespace NodeBase;
@@ -30,29 +29,23 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-fn_name UdpIpService_ctor = "UdpIpService.ctor";
-
 UdpIpService::UdpIpService()
 {
-   Debug::ft(UdpIpService_ctor);
+   Debug::ft("UdpIpService.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name UdpIpService_dtor = "UdpIpService.dtor";
 
 UdpIpService::~UdpIpService()
 {
-   Debug::ftnt(UdpIpService_dtor);
+   Debug::ftnt("UdpIpService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIpService_CreatePort = "UdpIpService.CreatePort";
-
 IpPort* UdpIpService::CreatePort(ipport_t pid)
 {
-   Debug::ft(UdpIpService_CreatePort);
+   Debug::ft("UdpIpService.CreatePort");
 
    return new UdpIpPort(pid, this);
 }

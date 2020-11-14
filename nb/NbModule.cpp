@@ -50,7 +50,6 @@
 #include "StatisticsThread.h"
 #include "SymbolRegistry.h"
 #include "SysThreadStack.h"
-#include "SysTypes.h"
 #include "ThisThread.h"
 #include "ThreadAdmin.h"
 #include "ThreadRegistry.h"
@@ -60,22 +59,18 @@
 
 namespace NodeBase
 {
-fn_name NbModule_ctor = "NbModule.ctor";
-
 NbModule::NbModule() : Module()
 {
-   Debug::ft(NbModule_ctor);
+   Debug::ft("NbModule.ctor");
 
    Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name NbModule_dtor = "NbModule.dtor";
-
 NbModule::~NbModule()
 {
-   Debug::ftnt(NbModule_dtor);
+   Debug::ftnt("NbModule.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -87,11 +82,9 @@ void NbModule::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name NbModule_Shutdown = "NbModule.Shutdown";
-
 void NbModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(NbModule_Shutdown);
+   Debug::ft("NbModule.Shutdown");
 
    Singleton< NbIncrement >::Instance()->Shutdown(level);
    Singleton< SymbolRegistry >::Instance()->Shutdown(level);
@@ -117,11 +110,9 @@ void NbModule::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name NbModule_Startup = "NbModule.Startup";
-
 void NbModule::Startup(RestartLevel level)
 {
-   Debug::ft(NbModule_Startup);
+   Debug::ft("NbModule.Startup");
 
    //  Create/start singletons.  Some of these already exist as a
    //  result of creating RootThread, but their Startup functions

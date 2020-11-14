@@ -42,24 +42,20 @@ const char CliIntParm::RangeSeparator = ':';
 
 //------------------------------------------------------------------------------
 
-fn_name CliIntParm_ctor = "CliIntParm.ctor";
-
 CliIntParm::CliIntParm(c_string help, word min, word max,
    bool opt, c_string tag, bool hex) : CliParm(help, opt, tag),
    min_(min),
    max_(max),
    hex_(hex)
 {
-   Debug::ft(CliIntParm_ctor);
+   Debug::ft("CliIntParm.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliIntParm_dtor = "CliIntParm.dtor";
-
 CliIntParm::~CliIntParm()
 {
-   Debug::ftnt(CliIntParm_dtor);
+   Debug::ftnt("CliIntParm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -76,11 +72,9 @@ void CliIntParm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CliIntParm_GetIntParmRc = "CliIntParm.GetIntParmRc";
-
 CliParm::Rc CliIntParm::GetIntParmRc(word& n, CliThread& cli) const
 {
-   Debug::ft(CliIntParm_GetIntParmRc);
+   Debug::ft("CliIntParm.GetIntParmRc");
 
    n = 0;
 
@@ -153,11 +147,9 @@ void CliIntParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliIntParm_ShowValues = "CliIntParm.ShowValues";
-
 bool CliIntParm::ShowValues(string& values) const
 {
-   Debug::ft(CliIntParm_ShowValues);
+   Debug::ft("CliIntParm.ShowValues");
 
    if((min_ == WORD_MIN) && (max_ == WORD_MAX))
    {

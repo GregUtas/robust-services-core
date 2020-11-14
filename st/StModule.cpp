@@ -28,7 +28,6 @@
 #include "Singleton.h"
 #include "StIncrement.h"
 #include "SymbolRegistry.h"
-#include "SysTypes.h"
 #include "TestSessions.h"
 
 using namespace NodeTools;
@@ -38,11 +37,9 @@ using namespace SessionBase;
 
 namespace SessionTools
 {
-fn_name StModule_ctor = "StModule.ctor";
-
 StModule::StModule() : Module()
 {
-   Debug::ft(StModule_ctor);
+   Debug::ft("StModule.ctor");
 
    //  Create the modules required by SessionTools.
    //
@@ -53,29 +50,23 @@ StModule::StModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name StModule_dtor = "StModule.dtor";
-
 StModule::~StModule()
 {
-   Debug::ftnt(StModule_dtor);
+   Debug::ftnt("StModule.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name StModule_Shutdown = "StModule.Shutdown";
 
 void StModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(StModule_Shutdown);
+   Debug::ft("StModule.Shutdown");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StModule_Startup = "StModule.Startup";
-
 void StModule::Startup(RestartLevel level)
 {
-   Debug::ft(StModule_Startup);
+   Debug::ft("StModule.Startup");
 
    Singleton< TestProtocol >::Instance()->Startup(level);
    Singleton< TestService >::Instance()->Startup(level);

@@ -104,11 +104,9 @@ TcpIoThread::TcpIoThread(Daemon* daemon,
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_dtor = "TcpIoThread.dtor";
-
 TcpIoThread::~TcpIoThread()
 {
-   Debug::ftnt(TcpIoThread_dtor);
+   Debug::ftnt("TcpIoThread.dtor");
 
    ReleaseResources();
 }
@@ -122,11 +120,9 @@ c_string TcpIoThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_AcceptConn = "TcpIoThread.AcceptConn";
-
 bool TcpIoThread::AcceptConn()
 {
-   Debug::ft(TcpIoThread_AcceptConn);
+   Debug::ft("TcpIoThread.AcceptConn");
 
    if(!listen_) return false;
    auto listener = Listener();
@@ -168,11 +164,9 @@ bool TcpIoThread::AcceptConn()
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_AllocateListener = "TcpIoThread.AllocateListener";
-
 bool TcpIoThread::AllocateListener()
 {
-   Debug::ft(TcpIoThread_AllocateListener);
+   Debug::ft("TcpIoThread.AllocateListener");
 
    //  Release any listener registered with our port.
    //
@@ -222,11 +216,9 @@ bool TcpIoThread::AllocateListener()
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_ClaimBlocks = "TcpIoThread.ClaimBlocks";
-
 void TcpIoThread::ClaimBlocks()
 {
-   Debug::ft(TcpIoThread_ClaimBlocks);
+   Debug::ft("TcpIoThread.ClaimBlocks");
 
    IoThread::ClaimBlocks();
 
@@ -238,11 +230,9 @@ void TcpIoThread::ClaimBlocks()
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_ClearAlarm = "TcpIoThread.ClearAlarm";
-
 void TcpIoThread::ClearAlarm() const
 {
-   Debug::ft(TcpIoThread_ClearAlarm);
+   Debug::ft("TcpIoThread.ClearAlarm");
 
    auto alarm = ipPort_->GetAlarm();
    if(alarm == nullptr) return;
@@ -447,11 +437,9 @@ void TcpIoThread::EraseSocket(size_t& index)
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_InsertSocket = "TcpIoThread.InsertSocket";
-
 bool TcpIoThread::InsertSocket(SysSocket* socket)
 {
-   Debug::ft(TcpIoThread_InsertSocket);
+   Debug::ft("TcpIoThread.InsertSocket");
 
    if(socket->Protocol() != IpTcp) return false;
 
@@ -484,11 +472,9 @@ SysTcpSocket* TcpIoThread::Listener() const
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_ListenerHasFailed = "TcpIoThread.ListenerHasFailed";
-
 bool TcpIoThread::ListenerHasFailed(SysTcpSocket* listener) const
 {
-   Debug::ft(TcpIoThread_ListenerHasFailed);
+   Debug::ft("TcpIoThread.ListenerHasFailed");
 
    auto flags = listener->OutFlags();
 
@@ -504,12 +490,10 @@ bool TcpIoThread::ListenerHasFailed(SysTcpSocket* listener) const
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_OutputLog = "TcpIoThread.OutputLog";
-
 void TcpIoThread::OutputLog(LogId id, fixed_string expl,
    Error error, SysTcpSocket* socket, debug64_t errval) const
 {
-   Debug::ft(TcpIoThread_OutputLog);
+   Debug::ft("TcpIoThread.OutputLog");
 
    if((error == SocketError) && (socket->GetError() == 0)) return;
 
@@ -543,11 +527,9 @@ void TcpIoThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_PollSockets = "TcpIoThread.PollSockets";
-
 word TcpIoThread::PollSockets()
 {
-   Debug::ft(TcpIoThread_PollSockets);
+   Debug::ft("TcpIoThread.PollSockets");
 
    //  If we have no sockets, sleep until InsertSocket wakes us.
    //
@@ -593,11 +575,9 @@ word TcpIoThread::PollSockets()
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_RaiseAlarm = "TcpIoThread.RaiseAlarm";
-
 bool TcpIoThread::RaiseAlarm(word errval) const
 {
-   Debug::ft(TcpIoThread_RaiseAlarm);
+   Debug::ft("TcpIoThread.RaiseAlarm");
 
    auto alarm = ipPort_->GetAlarm();
    if(alarm == nullptr) return false;
@@ -612,11 +592,9 @@ bool TcpIoThread::RaiseAlarm(word errval) const
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_ReleaseResources = "TcpIoThread.ReleaseResources";
-
 void TcpIoThread::ReleaseResources()
 {
-   Debug::ft(TcpIoThread_ReleaseResources);
+   Debug::ft("TcpIoThread.ReleaseResources");
 
    for(auto size = sockets_.Size(); size > 0; size = sockets_.Size())
    {
@@ -631,11 +609,9 @@ void TcpIoThread::ReleaseResources()
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_ServiceSocket = "TcpIoThread.ServiceSocket";
-
 void TcpIoThread::ServiceSocket()
 {
-   Debug::ft(TcpIoThread_ServiceSocket);
+   Debug::ft("TcpIoThread.ServiceSocket");
 
    auto socket = sockets_[curr_];
    if(socket == nullptr) return;
@@ -709,11 +685,9 @@ void TcpIoThread::ServiceSocket()
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_Unblock = "TcpIoThread.Unblock";
-
 void TcpIoThread::Unblock()
 {
-   Debug::ft(TcpIoThread_Unblock);
+   Debug::ft("TcpIoThread.Unblock");
 
    //  Delete the thread's sockets.  If it is blocked on Recv, this should
    //  unblock it.

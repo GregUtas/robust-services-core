@@ -53,25 +53,21 @@ const Flags InitThread::ScheduleMask = Flags(1 << Schedule);
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_ctor = "InitThread.ctor";
-
 InitThread::InitThread() : Thread(SystemFaction),
    errval_(0),
    state_(Initializing),
    timeout_(false)
 {
-   Debug::ft(InitThread_ctor);
+   Debug::ft("InitThread.ctor");
 
    SetInitialized();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_dtor = "InitThread.dtor";
-
 InitThread::~InitThread()
 {
-   Debug::ftnt(InitThread_dtor);
+   Debug::ftnt("InitThread.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -83,11 +79,9 @@ c_string InitThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_CalculateDelay = "InitThread.CalculateDelay";
-
 Duration InitThread::CalculateDelay() const
 {
-   Debug::ft(InitThread_CalculateDelay);
+   Debug::ft("InitThread.CalculateDelay");
 
    //  Wake up at the earliest of the following:
    //  o the time before which RootThread must be interrupted to
@@ -119,11 +113,9 @@ Duration InitThread::CalculateDelay() const
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_CauseRestart = "InitThread.CauseRestart";
-
 void InitThread::CauseRestart()
 {
-   Debug::ft(InitThread_CauseRestart);
+   Debug::ft("InitThread.CauseRestart");
 
    //  We get here if
    //  o our state gets corrupted (unlikely)
@@ -150,11 +142,9 @@ void InitThread::CauseRestart()
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_ContextSwitch = "InitThread.ContextSwitch";
-
 void InitThread::ContextSwitch()
 {
-   Debug::ft(InitThread_ContextSwitch);
+   Debug::ft("InitThread.ContextSwitch");
 
    //  The current execution flow for context switching is
    //    Thread.Suspend
@@ -188,11 +178,9 @@ void InitThread::ContextSwitch()
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_Destroy = "InitThread.Destroy";
-
 void InitThread::Destroy()
 {
-   Debug::ft(InitThread_Destroy);
+   Debug::ft("InitThread.Destroy");
 
    Singleton< InitThread >::Destroy();
 }
@@ -271,11 +259,9 @@ void InitThread::Enter()
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_HandleInterrupt = "InitThread.HandleInterrupt";
-
 void InitThread::HandleInterrupt()
 {
-   Debug::ft(InitThread_HandleInterrupt);
+   Debug::ft("InitThread.HandleInterrupt");
 
    //  See if we were interrupted to initiate a restart.  In this case, our
    //  InitiateRestart function has already interrupted RootThread to inform
@@ -313,11 +299,9 @@ void InitThread::HandleInterrupt()
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_HandleTimeout = "InitThread.HandleTimeout";
-
 void InitThread::HandleTimeout()
 {
-   Debug::ft(InitThread_HandleTimeout);
+   Debug::ft("InitThread.HandleTimeout");
 
    //  Interrupt RootThread so that its watchdog timer won't expire.
    //
@@ -358,11 +342,9 @@ void InitThread::HandleTimeout()
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_InitializeSystem = "InitThread.InitializeSystem";
-
 void InitThread::InitializeSystem()
 {
-   Debug::ft(InitThread_InitializeSystem);
+   Debug::ft("InitThread.InitializeSystem");
 
    //  Once the system is initialized, notify RootThread so that it
    //  will stop the watchdog timer that runs during initialization.
@@ -384,11 +366,9 @@ void InitThread::InitializeSystem()
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_InitiateRestart = "InitThread.InitiateRestart";
-
 void InitThread::InitiateRestart(RestartLevel level)
 {
-   Debug::ft(InitThread_InitiateRestart);
+   Debug::ft("InitThread.InitiateRestart");
 
    //  Set the restart's level.  Tell RootThread that a restart is
    //  occurring so that it can act as a watchdog on its completion and
@@ -408,11 +388,9 @@ void InitThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_RecreateThreads = "InitThread.RecreateThreads";
-
 void InitThread::RecreateThreads()
 {
-   Debug::ft(InitThread_RecreateThreads);
+   Debug::ft("InitThread.RecreateThreads");
 
    //  Invoke daemons with missing threads.
    //

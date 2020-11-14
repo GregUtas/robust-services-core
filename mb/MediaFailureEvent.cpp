@@ -32,31 +32,25 @@ using std::string;
 
 namespace MediaBase
 {
-fn_name MediaFailureEvent_ctor = "MediaFailureEvent.ctor";
-
 MediaFailureEvent::MediaFailureEvent(ServiceSM& owner, MediaEndpt& mep) :
    Event(MediaFailure, &owner),
    mep_(&mep)
 {
-   Debug::ft(MediaFailureEvent_ctor);
+   Debug::ft("MediaFailureEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name MediaFailureEvent_dtor = "MediaFailureEvent.dtor";
 
 MediaFailureEvent::~MediaFailureEvent()
 {
-   Debug::ftnt(MediaFailureEvent_dtor);
+   Debug::ftnt("MediaFailureEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MediaFailureEvent_BuildSap = "MediaFailureEvent.BuildSap";
-
 Event* MediaFailureEvent::BuildSap(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(MediaFailureEvent_BuildSap);
+   Debug::ft("MediaFailureEvent.BuildSap");
 
    //  Modifiers receive the Media Failure event in its original form.
    //
@@ -65,11 +59,9 @@ Event* MediaFailureEvent::BuildSap(ServiceSM& owner, TriggerId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name MediaFailureEvent_BuildSnp = "MediaFailureEvent.BuildSnp";
-
 Event* MediaFailureEvent::BuildSnp(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(MediaFailureEvent_BuildSnp);
+   Debug::ft("MediaFailureEvent.BuildSnp");
 
    //  Notification is not provided after a Media Failure event.
    //

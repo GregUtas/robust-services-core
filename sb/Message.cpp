@@ -55,8 +55,6 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name Message_ctor1 = "Message.ctor(i/c)";
-
 Message::Message(SbIpBufferPtr& buff) :
    buff_(buff.release()),
    bt_(nullptr),
@@ -65,12 +63,10 @@ Message::Message(SbIpBufferPtr& buff) :
    psm_(nullptr),
    whichq_(nullptr)
 {
-   Debug::ft(Message_ctor1);
+   Debug::ft("Message.ctor(i/c)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Message_ctor2 = "Message.ctor(o/g)";
 
 Message::Message(ProtocolSM* psm, size_t size) :
    buff_(nullptr),
@@ -80,7 +76,7 @@ Message::Message(ProtocolSM* psm, size_t size) :
    psm_(psm),
    whichq_(nullptr)
 {
-   Debug::ft(Message_ctor2);
+   Debug::ft("Message.ctor(o/g)");
 
    buff_.reset(new SbIpBuffer(MsgOutgoing, size));
 
@@ -114,11 +110,9 @@ Message::Message(ProtocolSM* psm, size_t size) :
 
 //------------------------------------------------------------------------------
 
-fn_name Message_dtor = "Message.dtor";
-
 Message::~Message()
 {
-   Debug::ftnt(Message_dtor);
+   Debug::ftnt("Message.dtor");
 
    //  Record the message's deletion if this context is traced.
    //
@@ -147,11 +141,9 @@ Message::~Message()
 
 //------------------------------------------------------------------------------
 
-fn_name Message_Capture = "Message.Capture";
-
 void Message::Capture(Route route) const
 {
-   Debug::ft(Message_Capture);
+   Debug::ft("Message.Capture");
 
    auto warp = TimePoint::Now();
    auto sbt = Singleton< SbTracer >::Instance();
@@ -232,11 +224,9 @@ void Message::ChangeDir(MsgDirection nextDir)
 
 //------------------------------------------------------------------------------
 
-fn_name Message_ClearContext = "Message.ClearContext";
-
 void Message::ClearContext() const
 {
-   Debug::ft(Message_ClearContext);
+   Debug::ft("Message.ClearContext");
 
    //  If this is the context (incoming) message, remove it from context.
    //
@@ -316,11 +306,9 @@ void Message::Exqueue()
 
 //------------------------------------------------------------------------------
 
-fn_name Message_FindSignal = "Message.FindSignal";
-
 Message* Message::FindSignal(SignalId sid) const
 {
-   Debug::ft(Message_FindSignal);
+   Debug::ft("Message.FindSignal");
 
    //  This is only supported for messages queued against PSMs.
    //
@@ -344,11 +332,9 @@ ProtocolId Message::GetProtocol() const
 
 //------------------------------------------------------------------------------
 
-fn_name Message_GetReceiver = "Message.GetReceiver";
-
 GlobalAddress Message::GetReceiver() const
 {
-   Debug::ft(Message_GetReceiver);
+   Debug::ft("Message.GetReceiver");
 
    auto ipaddr = buff_->RxAddr();
    auto sbaddr = buff_->Header()->rxAddr;
@@ -358,11 +344,9 @@ GlobalAddress Message::GetReceiver() const
 
 //------------------------------------------------------------------------------
 
-fn_name Message_GetSender = "Message.GetSender";
-
 GlobalAddress Message::GetSender() const
 {
-   Debug::ft(Message_GetSender);
+   Debug::ft("Message.GetSender");
 
    auto ipaddr = buff_->TxAddr();
    auto sbaddr = buff_->Header()->txAddr;
@@ -379,11 +363,9 @@ SignalId Message::GetSignal() const
 
 //------------------------------------------------------------------------------
 
-fn_name Message_GetSubtended = "Message.GetSubtended";
-
 void Message::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(Message_GetSubtended);
+   Debug::ft("Message.GetSubtended");
 
    Pooled::GetSubtended(objects);
 
@@ -436,11 +418,9 @@ MsgHeader* Message::Header() const
 
 //------------------------------------------------------------------------------
 
-fn_name Message_Henqueue = "Message.Henqueue";
-
 void Message::Henqueue(Q1Way< Message >& whichq)
 {
-   Debug::ft(Message_Henqueue);
+   Debug::ft("Message.Henqueue");
 
    //  If the message is currently queued, dequeue it.  If enqueueing it
    //  fails, generate a log and delete it, else save its new location.
@@ -460,11 +440,9 @@ void Message::Henqueue(Q1Way< Message >& whichq)
 
 //------------------------------------------------------------------------------
 
-fn_name Message_InspectMsg = "Message.InspectMsg";
-
 Message::InspectRc Message::InspectMsg(debug64_t& errval) const
 {
-   Debug::ft(Message_InspectMsg);
+   Debug::ft("Message.InspectMsg");
 
    //e Support message inspection.
 
@@ -473,22 +451,18 @@ Message::InspectRc Message::InspectMsg(debug64_t& errval) const
 
 //------------------------------------------------------------------------------
 
-fn_name Message_InvalidDiscarded = "Message.InvalidDiscarded";
-
 void Message::InvalidDiscarded() const
 {
-   Debug::ft(Message_InvalidDiscarded);
+   Debug::ft("Message.InvalidDiscarded");
 
    buff_->InvalidDiscarded();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_NextMsg = "Message.NextMsg";
-
 Message* Message::NextMsg() const
 {
-   Debug::ft(Message_NextMsg);
+   Debug::ft("Message.NextMsg");
 
    if(whichq_ == nullptr) return nullptr;
 
@@ -497,11 +471,9 @@ Message* Message::NextMsg() const
 
 //------------------------------------------------------------------------------
 
-fn_name Message_new = "Message.operator new";
-
 void* Message::operator new(size_t size)
 {
-   Debug::ft(Message_new);
+   Debug::ft("Message.operator new");
 
    return Singleton< MessagePool >::Instance()->DeqBlock(size);
 }
@@ -515,22 +487,18 @@ void Message::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Message_Payload = "Message.Payload";
-
 size_t Message::Payload(byte_t*& bytes) const
 {
-   Debug::ft(Message_Payload);
+   Debug::ft("Message.Payload");
 
    return buff_->Payload(bytes);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_Refresh = "Message.Refresh";
-
 void Message::Refresh()
 {
-   Debug::ft(Message_Refresh);
+   Debug::ft("Message.Refresh");
 
    if(psm_ != nullptr) psm_->RefreshMsg(*this);
 }
@@ -572,11 +540,9 @@ bool Message::Relay(ProtocolSM& ogPsm)
 
 //------------------------------------------------------------------------------
 
-fn_name Message_Replace = "Message.Replace";
-
 void Message::Replace(SbIpBufferPtr& buff)
 {
-   Debug::ft(Message_Replace);
+   Debug::ft("Message.Replace");
 
    if(buff_ == buff) return;
    buff_.reset(buff.release());
@@ -652,11 +618,9 @@ bool Message::Retrieve(ProtocolSM* psm)
 
 //------------------------------------------------------------------------------
 
-fn_name Message_RxFactory = "Message.RxFactory";
-
 Factory* Message::RxFactory() const
 {
-   Debug::ft(Message_RxFactory);
+   Debug::ft("Message.RxFactory");
 
    auto fid = buff_->Header()->rxAddr.fid;
 
@@ -665,33 +629,27 @@ Factory* Message::RxFactory() const
 
 //------------------------------------------------------------------------------
 
-fn_name Message_RxIpAddr = "Message.RxIpAddr";
-
 const SysIpL3Addr& Message::RxIpAddr() const
 {
-   Debug::ft(Message_RxIpAddr);
+   Debug::ft("Message.RxIpAddr");
 
    return buff_->RxAddr();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_RxSbAddr = "Message.RxSbAddr";
-
 const LocalAddress& Message::RxSbAddr() const
 {
-   Debug::ft(Message_RxSbAddr);
+   Debug::ft("Message.RxSbAddr");
 
    return buff_->Header()->rxAddr;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_Save = "Message.Save";
-
 void Message::Save()
 {
-   Debug::ft(Message_Save);
+   Debug::ft("Message.Save");
 
    ++saves_;
 }
@@ -934,55 +892,45 @@ bool Message::SendToSelf()
 
 //------------------------------------------------------------------------------
 
-fn_name Message_SetJoin = "Message.SetJoin";
-
 void Message::SetJoin(bool join)
 {
-   Debug::ft(Message_SetJoin);
+   Debug::ft("Message.SetJoin");
 
    buff_->Header()->join = join;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_SetPriority = "Message.SetPriority";
-
 void Message::SetPriority(MsgPriority prio)
 {
-   Debug::ft(Message_SetPriority);
+   Debug::ft("Message.SetPriority");
 
    buff_->Header()->priority = prio;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_SetProtocol = "Message.SetProtocol";
-
 void Message::SetProtocol(ProtocolId prid)
 {
-   Debug::ft(Message_SetProtocol);
+   Debug::ft("Message.SetProtocol");
 
    buff_->Header()->protocol = prid;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_SetPsm = "Message.SetPsm";
-
 void Message::SetPsm(ProtocolSM* psm)
 {
-   Debug::ft(Message_SetPsm);
+   Debug::ft("Message.SetPsm");
 
    psm_ = psm;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_SetReceiver = "Message.SetReceiver";
-
 void Message::SetReceiver(const GlobalAddress& receiver)
 {
-   Debug::ft(Message_SetReceiver);
+   Debug::ft("Message.SetReceiver");
 
    if(buff_->Dir() == MsgOutgoing)
    {
@@ -993,11 +941,9 @@ void Message::SetReceiver(const GlobalAddress& receiver)
 
 //------------------------------------------------------------------------------
 
-fn_name Message_SetRxAddr = "Message.SetRxAddr";
-
 void Message::SetRxAddr(const LocalAddress& rxaddr)
 {
-   Debug::ft(Message_SetRxAddr);
+   Debug::ft("Message.SetRxAddr");
 
    if(buff_->Dir() == MsgIncoming)
    {
@@ -1018,11 +964,9 @@ void Message::SetRxAddr(const LocalAddress& rxaddr)
 
 //------------------------------------------------------------------------------
 
-fn_name Message_SetSender = "Message.SetSender";
-
 void Message::SetSender(const GlobalAddress& sender)
 {
-   Debug::ft(Message_SetSender);
+   Debug::ft("Message.SetSender");
 
    if(buff_->Dir() == MsgOutgoing)
    {
@@ -1033,33 +977,27 @@ void Message::SetSender(const GlobalAddress& sender)
 
 //------------------------------------------------------------------------------
 
-fn_name Message_SetSignal = "Message.SetSignal";
-
 void Message::SetSignal(SignalId sid)
 {
-   Debug::ft(Message_SetSignal);
+   Debug::ft("Message.SetSignal");
 
    buff_->Header()->signal = sid;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_TxIpAddr = "Message.TxIpAddr";
-
 const SysIpL3Addr& Message::TxIpAddr() const
 {
-   Debug::ft(Message_TxIpAddr);
+   Debug::ft("Message.TxIpAddr");
 
    return buff_->TxAddr();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Message_TxSbAddr = "Message.TxSbAddr";
-
 const LocalAddress& Message::TxSbAddr() const
 {
-   Debug::ft(Message_TxSbAddr);
+   Debug::ft("Message.TxSbAddr");
 
    return buff_->Header()->txAddr;
 }

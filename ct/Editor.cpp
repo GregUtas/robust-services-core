@@ -39,12 +39,14 @@
 #include "CxxString.h"
 #include "CxxToken.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
 #include "SysFile.h"
+#include "ThisThread.h"
 
 using std::string;
 using namespace NodeBase;
@@ -258,8 +260,6 @@ size_t Editor::Commits_ = 0;
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ctor = "Editor.ctor";
-
 Editor::Editor(const CodeFile* file, string& expl) :
    file_(file),
    line_(0),
@@ -267,7 +267,7 @@ Editor::Editor(const CodeFile* file, string& expl) :
    sorted_(false),
    aliased_(false)
 {
-   Debug::ft(Editor_ctor);
+   Debug::ft("Editor.ctor");
 
    //  Get the file's source code.  If this fails, there is no point in
    //  continuing.
@@ -284,11 +284,9 @@ Editor::Editor(const CodeFile* file, string& expl) :
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_AdjustLineIndentation = "Editor.AdjustLineIndentation";
-
 word Editor::AdjustLineIndentation(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_AdjustLineIndentation);
+   Debug::ft("Editor.AdjustLineIndentation");
 
    auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
@@ -298,11 +296,9 @@ word Editor::AdjustLineIndentation(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_AdjustTags = "Editor.AdjustTags";
-
 word Editor::AdjustTags(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_AdjustTags);
+   Debug::ft("Editor.AdjustTags");
 
    auto tag = (log.warning_ == PtrTagDetached ? '*' : '&');
    string target = "Detached ";
@@ -350,11 +346,9 @@ word Editor::AdjustTags(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_AlignArgumentNames = "Editor.AlignArgumentNames";
-
 word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_AlignArgumentNames);
+   Debug::ft("Editor.AlignArgumentNames");
 
    //  This is logged on a definition when it uses a different argument name
    //  than the declaration, and on both when they use a different name than
@@ -405,11 +399,9 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ChangeClassToStruct = "Editor.ChangeClassToStruct";
-
 word Editor::ChangeClassToStruct(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_ChangeClassToStruct);
+   Debug::ft("Editor.ChangeClassToStruct");
 
    //  Look for the class's name and then back up to "class".
    //
@@ -438,11 +430,9 @@ word Editor::ChangeClassToStruct(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_Changed1 = "Editor.Changed";
-
 word Editor::Changed()
 {
-   Debug::ft(Editor_Changed1);
+   Debug::ft("Editor.Changed");
 
    Editors_.insert(this);
    return 0;
@@ -450,11 +440,9 @@ word Editor::Changed()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_Changed2 = "Editor.Changed(iter)";
-
 word Editor::Changed(const Iter& iter, string& expl)
 {
-   Debug::ft(Editor_Changed2);
+   Debug::ft("Editor.Changed(iter)");
 
    expl = (iter->code.empty() ? EMPTY_STR : iter->code);
    Editors_.insert(this);
@@ -463,11 +451,9 @@ word Editor::Changed(const Iter& iter, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ChangeDebugFtName = "Editor.ChangeDebugFtName";
-
 word Editor::ChangeDebugFtName(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_ChangeDebugFtName);
+   Debug::ft("Editor.ChangeDebugFtName");
 
    //  Find the locations of the existing fn_name definition and
    //  Debug::ft invocation.  The definition could span two lines.
@@ -506,11 +492,9 @@ word Editor::ChangeDebugFtName(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ChangeStructToClass = "Editor.ChangeStructToClass";
-
 word Editor::ChangeStructToClass(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_ChangeStructToClass);
+   Debug::ft("Editor.ChangeStructToClass");
 
    //  Look for the struct's name and then back up to "struct".
    //
@@ -641,11 +625,9 @@ Editor::Iter Editor::CodeBegin()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_CodeFollowsImmediately = "Editor.CodeFollowsImmediately";
-
 const bool Editor::CodeFollowsImmediately(const Iter& iter) const
 {
-   Debug::ft(Editor_CodeFollowsImmediately);
+   Debug::ft("Editor.CodeFollowsImmediately");
 
    //  Proceed from ITER, skipping blank lines and access controls.  Return
    //  false if the next thing is executable code (this excludes braces and
@@ -666,11 +648,9 @@ const bool Editor::CodeFollowsImmediately(const Iter& iter) const
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ConvertTabsToBlanks = "Editor.ConvertTabsToBlanks";
-
 word Editor::ConvertTabsToBlanks()
 {
-   Debug::ft(Editor_ConvertTabsToBlanks);
+   Debug::ft("Editor.ConvertTabsToBlanks");
 
    auto indent = file_->IndentSize();
 
@@ -725,12 +705,10 @@ word Editor::ConvertTabsToBlanks()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_DebugFtCode = "Editor.DebugFtCode";
-
 void Editor::DebugFtCode
    (const Function* func, std::string& defn, std::string& call) const
 {
-   Debug::ft(Editor_DebugFtCode);
+   Debug::ft("Editor.DebugFtCode");
 
    //  Assemble the following:
    //  o fname: the function's name
@@ -771,11 +749,9 @@ void Editor::DebugFtCode
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_DisplayLog = "Editor.DisplayLog";
-
 void Editor::DisplayLog(const CliThread& cli, const CodeWarning& log, bool file)
 {
-   Debug::ft(Editor_DisplayLog);
+   Debug::ft("Editor.DisplayLog");
 
    if(file)
    {
@@ -809,11 +785,9 @@ void Editor::DisplayLog(const CliThread& cli, const CodeWarning& log, bool file)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseAccessControl = "Editor.EraseAccessControl";
-
 word Editor::EraseAccessControl(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseAccessControl);
+   Debug::ft("Editor.EraseAccessControl");
 
    //  The parser logs RedundantAccessControl at the position
    //  where it occurred; log.item_ is nullptr in this warning.
@@ -868,11 +842,9 @@ word Editor::EraseAccessControl(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseAdjacentSpaces = "Editor.EraseAdjacentSpaces";
-
 word Editor::EraseAdjacentSpaces(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseAdjacentSpaces);
+   Debug::ft("Editor.EraseAdjacentSpaces");
 
    auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
@@ -936,11 +908,9 @@ word Editor::EraseAdjacentSpaces(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseBlankLine = "Editor.EraseBlankLine";
-
 word Editor::EraseBlankLine(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseBlankLine);
+   Debug::ft("Editor.EraseBlankLine");
 
    //  Remove the specified line of code.
    //
@@ -952,11 +922,9 @@ word Editor::EraseBlankLine(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseBlankLinePairs = "Editor.EraseBlankLinePairs";
-
 word Editor::EraseBlankLinePairs()
 {
-   Debug::ft(Editor_EraseBlankLinePairs);
+   Debug::ft("Editor.EraseBlankLinePairs");
 
    auto i1 = source_.begin();
    if(i1 == source_.end()) return 0;
@@ -979,11 +947,9 @@ word Editor::EraseBlankLinePairs()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseCode1 = "Editor.EraseCode";
-
 word Editor::EraseCode(size_t pos, string& expl)
 {
-   Debug::ft(Editor_EraseCode1);
+   Debug::ft("Editor.EraseCode");
 
    //  Erase the line that contains POS.
    //
@@ -995,11 +961,9 @@ word Editor::EraseCode(size_t pos, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseCode2 = "Editor.EraseCode(delimiters)";
-
 word Editor::EraseCode(size_t pos, const string& delimiters, string& expl)
 {
-   Debug::ft(Editor_EraseCode2);
+   Debug::ft("Editor.EraseCode(delimiters)");
 
    //  Find the where the code to be deleted begins and ends.
    //
@@ -1044,11 +1008,9 @@ word Editor::EraseCode(size_t pos, const string& delimiters, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseConst = "Editor.EraseConst";
-
 word Editor::EraseConst(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseConst);
+   Debug::ft("Editor.EraseConst");
 
    //  There are two places for a redundant "const" after the typename:
    //    "const" <typename> "const" [<typetags>] "const"
@@ -1099,12 +1061,10 @@ word Editor::EraseConst(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseData = "Editor.EraseData";
-
 word Editor::EraseData
    (const CliThread& cli, const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseData);
+   Debug::ft("Editor.EraseData");
 
    auto decl = static_cast< const Data* >(log.item_);
    auto defn = decl->GetMate();
@@ -1172,11 +1132,9 @@ word Editor::EraseData
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseEmptyNamespace = "Editor.EraseEmptyNamespace";
-
 word Editor::EraseEmptyNamespace(const Iter& iter)
 {
-   Debug::ft(Editor_EraseEmptyNamespace);
+   Debug::ft("Editor.EraseEmptyNamespace");
 
    //  ITER references the line that follows a forward declaration which was
    //  just deleted.  If this left an empty "namespace <ns> { }", remove it.
@@ -1199,11 +1157,9 @@ word Editor::EraseEmptyNamespace(const Iter& iter)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseEmptySeparators = "Editor.EraseEmptySeparators";
-
 word Editor::EraseEmptySeparators()
 {
-   Debug::ft(Editor_EraseEmptySeparators);
+   Debug::ft("Editor.EraseEmptySeparators");
 
    auto i1 = source_.begin();
    if(i1 == source_.end()) return 0;
@@ -1251,11 +1207,9 @@ word Editor::EraseEmptySeparators()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseEnumerator = "Editor.EraseEnumerator";
-
 word Editor::EraseEnumerator(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseEnumerator);
+   Debug::ft("Editor.EraseEnumerator");
 
    auto etor = static_cast< const Enumerator* >(log.item_);
    auto curr = FindPos(log.pos_);
@@ -1323,11 +1277,9 @@ word Editor::EraseEnumerator(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseExplicitTag = "Editor.EraseExplicitTag";
-
 word Editor::EraseExplicitTag(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseExplicitTag);
+   Debug::ft("Editor.EraseExplicitTag");
 
    auto ctor = FindPos(log.item_->GetPos());
    if(ctor.pos == string::npos) return NotFound(expl, "Constructor");
@@ -1339,11 +1291,9 @@ word Editor::EraseExplicitTag(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseForward = "Editor.EraseForward";
-
 word Editor::EraseForward(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseForward);
+   Debug::ft("Editor.EraseForward");
 
    //  Erase the line where the forward declaration appears.  This
    //  may leave an empty enclosing namespace that should be deleted.
@@ -1358,11 +1308,9 @@ word Editor::EraseForward(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseFunction = "Editor.EraseFunction";
-
 word Editor::EraseFunction(const Function* func, string& expl)
 {
-   Debug::ft(Editor_EraseFunction);
+   Debug::ft("Editor.EraseFunction");
 
    //  It's easy if we're erasing a declaration that has a separate definition.
    //
@@ -1390,11 +1338,9 @@ word Editor::EraseFunction(const Function* func, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseLineBreak1 = "Editor.EraseLineBreak(iter)";
-
 bool Editor::EraseLineBreak(const Iter& curr)
 {
-   Debug::ft(Editor_EraseLineBreak1);
+   Debug::ft("Editor.EraseLineBreak(iter)");
 
    auto next = std::next(curr);
    if(next == source_.end()) return false;
@@ -1426,11 +1372,9 @@ bool Editor::EraseLineBreak(const Iter& curr)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseLineBreak2 = "Editor.EraseLineBreak(log)";
-
 word Editor::EraseLineBreak(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseLineBreak2);
+   Debug::ft("Editor.EraseLineBreak(log)");
 
    auto iter = FindLine(log.line_, expl);
    if(iter == source_.end()) return 0;
@@ -1441,11 +1385,9 @@ word Editor::EraseLineBreak(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseMutableTag = "Editor.EraseMutableTag";
-
 word Editor::EraseMutableTag(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseMutableTag);
+   Debug::ft("Editor.EraseMutableTag");
 
    //  Find the line on which the data's type appears, and erase the
    //  "mutable" before that type.
@@ -1460,11 +1402,9 @@ word Editor::EraseMutableTag(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseNoexceptTag = "Editor.EraseNoexceptTag";
-
 word Editor::EraseNoexceptTag(const Function* func, string& expl)
 {
-   Debug::ft(Editor_EraseNoexceptTag);
+   Debug::ft("Editor.EraseNoexceptTag");
 
    //  Look for "noexcept" just before the end of the function's signature.
    //
@@ -1479,11 +1419,9 @@ word Editor::EraseNoexceptTag(const Function* func, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseOffsets = "Editor.EraseOffsets";
-
 word Editor::EraseOffsets()
 {
-   Debug::ft(Editor_EraseOffsets);
+   Debug::ft("Editor.EraseOffsets");
 
    for(auto i2 = source_.begin(); i2 != source_.end(); ++i2)
    {
@@ -1520,11 +1458,9 @@ word Editor::EraseOffsets()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseOverrideTag = "Editor.EraseOverrideTag";
-
 word Editor::EraseOverrideTag(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseOverrideTag);
+   Debug::ft("Editor.EraseOverrideTag");
 
    //  Look for "override" just before the end of the function's signature.
    //
@@ -1539,11 +1475,9 @@ word Editor::EraseOverrideTag(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseSemicolon = "Editor.EraseSemicolon";
-
 word Editor::EraseSemicolon(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseSemicolon);
+   Debug::ft("Editor.EraseSemicolon");
 
    //  The parser logs a redundant semicolon that follows the closing '}'
    //  of a function definition or namespace enclosure.
@@ -1564,11 +1498,9 @@ word Editor::EraseSemicolon(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseTrailingBlanks = "Editor.EraseTrailingBlanks";
-
 word Editor::EraseTrailingBlanks()
 {
-   Debug::ft(Editor_EraseTrailingBlanks);
+   Debug::ft("Editor.EraseTrailingBlanks");
 
    for(auto s = source_.begin(); s != source_.end(); ++s)
    {
@@ -1584,11 +1516,9 @@ word Editor::EraseTrailingBlanks()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseVirtualTag = "Editor.EraseVirtualTag";
-
 word Editor::EraseVirtualTag(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseVirtualTag);
+   Debug::ft("Editor.EraseVirtualTag");
 
    //  Look for "virtual" just before the function's return type.
    //
@@ -1602,11 +1532,9 @@ word Editor::EraseVirtualTag(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_EraseVoidArgument = "Editor.EraseVoidArgument";
-
 word Editor::EraseVoidArgument(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_EraseVoidArgument);
+   Debug::ft("Editor.EraseVoidArgument");
 
    //  The function might return "void", so the second occurrence of "void"
    //  could be the argument.  Erase it, leaving only the parentheses.
@@ -1637,11 +1565,9 @@ word Editor::EraseVoidArgument(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_Find = "Editor.Find";
-
 Editor::CodeLocation Editor::Find(Iter iter, const string& str, size_t off)
 {
-   Debug::ft(Editor_Find);
+   Debug::ft("Editor.Find");
 
    while(iter != source_.end())
    {
@@ -1656,11 +1582,9 @@ Editor::CodeLocation Editor::Find(Iter iter, const string& str, size_t off)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindArgsEnd = "Editor.FindArgsEnd";
-
 Editor::CodeLocation Editor::FindArgsEnd(const Function* func)
 {
-   Debug::ft(Editor_FindArgsEnd);
+   Debug::ft("Editor.FindArgsEnd");
 
    auto& args = func->GetArgs();
    if(args.empty())
@@ -1681,12 +1605,10 @@ Editor::CodeLocation Editor::FindArgsEnd(const Function* func)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindFirstOf = "Editor.FindFirstOf";
-
 Editor::CodeLocation Editor::FindFirstOf
    (Iter iter, size_t off, const string& chars)
 {
-   Debug::ft(Editor_FindFirstOf);
+   Debug::ft("Editor.FindFirstOf");
 
    while(iter != source_.end())
    {
@@ -1701,12 +1623,10 @@ Editor::CodeLocation Editor::FindFirstOf
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindFuncDeclLoc = "Editor.FindFuncDeclLoc";
-
 Editor::Iter Editor::FindFuncDeclLoc
    (const Class* cls, const string& name, FuncDeclAttrs& attrs)
 {
-   Debug::ft(Editor_FindFuncDeclLoc);
+   Debug::ft("Editor.FindFuncDeclLoc");
 
    //  This currently assumes that the function to be added is an override.
    //  If there is no function with the same access control, add the access
@@ -1770,12 +1690,10 @@ Editor::Iter Editor::FindFuncDeclLoc
 
 fixed_string FilePrompt = "Enter the filename in which to define";
 
-fn_name Editor_FindFuncDefnFile = "Editor.FindFuncDefnFile";
-
 const CodeFile* Editor::FindFuncDefnFile
    (CliThread& cli, const Class* cls, const string& name)
 {
-   Debug::ft(Editor_FindFuncDefnFile);
+   Debug::ft("Editor.FindFuncDefnFile");
 
    //  Look at all the functions in the class to which the new function
    //  will be added.  If all of them are implemented in the same file,
@@ -1815,12 +1733,10 @@ const CodeFile* Editor::FindFuncDefnFile
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindFuncDefnLoc = "Editor.FindFuncDefnLoc";
-
 Editor::Iter Editor::FindFuncDefnLoc(const CodeFile* file,
    const Class* cls, const string& name, string& expl, FuncDefnAttrs& attrs)
 {
-   Debug::ft(Editor_FindFuncDefnLoc);
+   Debug::ft("Editor.FindFuncDefnLoc");
 
    //  Look at all the functions that are defined in this file and that belong
    //  to CLS.  Add the new function after the constructor, destructor, and any
@@ -1898,11 +1814,9 @@ Editor::Iter Editor::FindFuncDefnLoc(const CodeFile* file,
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindLine1 = "Editor.FindLine";
-
 Editor::Iter Editor::FindLine(size_t line)
 {
-   Debug::ft(Editor_FindLine1);
+   Debug::ft("Editor.FindLine");
 
    for(auto s = source_.begin(); s != source_.end(); ++s)
    {
@@ -1914,11 +1828,9 @@ Editor::Iter Editor::FindLine(size_t line)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindLine2 = "Editor.FindLine(expl)";
-
 Editor::Iter Editor::FindLine(size_t line, string& expl)
 {
-   Debug::ft(Editor_FindLine2);
+   Debug::ft("Editor.FindLine(expl)");
 
    auto s = FindLine(line);
 
@@ -1932,12 +1844,10 @@ Editor::Iter Editor::FindLine(size_t line, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindLog = "Editor.FindLog";
-
 CodeWarning* Editor::FindLog
    (const CodeWarning& log, const CxxNamed* item, word offset)
 {
-   Debug::ft(Editor_FindLog);
+   Debug::ft("Editor.FindLog");
 
    for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
    {
@@ -1953,11 +1863,9 @@ CodeWarning* Editor::FindLog
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindNonBlank = "Editor.FindNonBlank";
-
 Editor::CodeLocation Editor::FindNonBlank(Iter iter, size_t pos)
 {
-   Debug::ft(Editor_FindNonBlank);
+   Debug::ft("Editor.FindNonBlank");
 
    while(iter != source_.end())
    {
@@ -1972,11 +1880,9 @@ Editor::CodeLocation Editor::FindNonBlank(Iter iter, size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindPos = "Editor.FindPos";
-
 Editor::CodeLocation Editor::FindPos(size_t pos)
 {
-   Debug::ft(Editor_FindPos);
+   Debug::ft("Editor.FindPos");
 
    //  Find ITEM's location within its file, and convert this to a line
    //  number and offset on that line.
@@ -1992,11 +1898,9 @@ Editor::CodeLocation Editor::FindPos(size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindSigEnd1 = "Editor.FindSigEnd(log)";
-
 Editor::CodeLocation Editor::FindSigEnd(const CodeWarning& log)
 {
-   Debug::ft(Editor_FindSigEnd1);
+   Debug::ft("Editor.FindSigEnd(log)");
 
    if(log.item_ == nullptr) return CodeLocation(source_.end());
    if(log.item_->Type() != Cxx::Function) return CodeLocation(source_.end());
@@ -2005,11 +1909,9 @@ Editor::CodeLocation Editor::FindSigEnd(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindSigEnd2 = "Editor.FindSigEnd(func)";
-
 Editor::CodeLocation Editor::FindSigEnd(const Function* func)
 {
-   Debug::ft(Editor_FindSigEnd2);
+   Debug::ft("Editor.FindSigEnd(func)");
 
    //  Look for the first semicolon or left brace after the function's name.
    //
@@ -2020,12 +1922,10 @@ Editor::CodeLocation Editor::FindSigEnd(const Function* func)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindSpecialFuncLoc = "Editor.FindSpecialFuncLoc";
-
 Editor::Iter Editor::FindSpecialFuncLoc
    (const CodeWarning& log, FuncDeclAttrs& attrs)
 {
-   Debug::ft(Editor_FindSpecialFuncLoc);
+   Debug::ft("Editor.FindSpecialFuncLoc");
 
    //  Find special member functions defined in the class that needs
    //  to have another one added.  The insertion point will be either
@@ -2142,11 +2042,9 @@ Editor::Iter Editor::FindSpecialFuncLoc
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindUsingReferents = "Editor.FindUsingReferents";
-
 CxxNamedSet Editor::FindUsingReferents(const CxxNamed* item) const
 {
-   Debug::ft(Editor_FindUsingReferents);
+   Debug::ft("Editor.FindUsingReferents");
 
    CxxUsageSets symbols;
    CxxNamedSet refs;
@@ -2163,12 +2061,10 @@ CxxNamedSet Editor::FindUsingReferents(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindWord = "Editor.FindWord";
-
 Editor::CodeLocation Editor::FindWord
    (Iter iter, size_t pos, const string& id, size_t* range)
 {
-   Debug::ft(Editor_FindWord);
+   Debug::ft("Editor.FindWord");
 
    //  Look for ID, which must be preceded and followed by characters
    //  that are not allowed in an identifier.
@@ -2205,11 +2101,9 @@ Editor::CodeLocation Editor::FindWord
 
 fixed_string FixPrompt = "  Fix?";
 
-fn_name Editor_Fix = "Editor.Fix";
-
 word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 {
-   Debug::ft(Editor_Fix);
+   Debug::ft("Editor.Fix");
 
    //  Get the file's warnings and source code.
    //
@@ -2321,6 +2215,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
       }
 
       cli.Flush();
+      if(!opts.prompt) ThisThread::Pause(Duration(20, mSECS));
       if(exit || (rc < 0)) break;
    }
 
@@ -2370,12 +2265,10 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FixFunction = "Editor.FixFunction";
-
 word Editor::FixFunction
    (const Function* func, const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_FixFunction);
+   Debug::ft("Editor.FixFunction");
 
    switch(log.warning_)
    {
@@ -2401,11 +2294,9 @@ word Editor::FixFunction
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FixFunctions = "Editor.FixFunctions";
-
 word Editor::FixFunctions(CliThread& cli, const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_FixFunctions);
+   Debug::ft("Editor.FixFunctions");
 
    if(log.item_->Type() != Cxx::Function)
    {
@@ -2457,11 +2348,9 @@ word Editor::FixFunctions(CliThread& cli, const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FixLog = "Editor.FixLog";
-
 word Editor::FixLog(CliThread& cli, CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_FixLog);
+   Debug::ft("Editor.FixLog");
 
    switch(log.status)
    {
@@ -2481,11 +2370,9 @@ word Editor::FixLog(CliThread& cli, CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FixStatus = "Editor.FixStatus";
-
 WarningStatus Editor::FixStatus(const CodeWarning& log) const
 {
-   Debug::ft(Editor_FixStatus);
+   Debug::ft("Editor.FixStatus");
 
    if((log.warning_ == IncludeNotSorted) ||
       (log.warning_ == IncludeFollowsCode))
@@ -2501,11 +2388,9 @@ WarningStatus Editor::FixStatus(const CodeWarning& log) const
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FixWarning = "Editor.FixWarning";
-
 word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_FixWarning);
+   Debug::ft("Editor.FixWarning");
 
    switch(log.warning_)
    {
@@ -2662,11 +2547,9 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_Format = "Editor.Format";
-
 word Editor::Format(string& expl)
 {
-   Debug::ft(Editor_Format);
+   Debug::ft("Editor.Format");
 
    if(read_ != 0)
    {
@@ -2682,11 +2565,9 @@ word Editor::Format(string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_GetCode = "Editor.GetCode";
-
 word Editor::GetCode(std::string& expl)
 {
-   Debug::ft(Editor_GetCode);
+   Debug::ft("Editor.GetCode");
 
    auto input = file_->InputStream();
 
@@ -2734,11 +2615,9 @@ LineType Editor::GetLineType(const Iter& iter) const
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_IncludesBegin = "Editor.IncludesBegin";
-
 Editor::Iter Editor::IncludesBegin()
 {
-   Debug::ft(Editor_IncludesBegin);
+   Debug::ft("Editor.IncludesBegin");
 
    for(auto s = source_.begin(); s != source_.end(); ++s)
    {
@@ -2750,11 +2629,9 @@ Editor::Iter Editor::IncludesBegin()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_IncludesEnd = "Editor.IncludesEnd";
-
 Editor::Iter Editor::IncludesEnd()
 {
-   Debug::ft(Editor_IncludesEnd);
+   Debug::ft("Editor.IncludesEnd");
 
    for(auto s = IncludesBegin(); s != source_.end(); ++s)
    {
@@ -2781,11 +2658,9 @@ bool Editor::IncludesSorted(const SourceLine& line1, const SourceLine& line2)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_Indent = "Editor.Indent";
-
 size_t Editor::Indent(const Iter& iter, bool split)
 {
-   Debug::ft(Editor_Indent);
+   Debug::ft("Editor.Indent");
 
    //  Start by erasing all blanks at the beginning of this line.
    //
@@ -2830,11 +2705,9 @@ size_t Editor::Indent(const Iter& iter, bool split)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InitByConstructor = "Editor.InitByConstructor";
-
 word Editor::InitByConstructor(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InitByConstructor);
+   Debug::ft("Editor.InitByConstructor");
 
    //  Change ["const"] <type> <name> = <class> "(" [<args>] ");"
    //      to ["const"] <class> <name> "(" <args> ");"
@@ -2902,11 +2775,9 @@ word Editor::InitByConstructor(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_Insert = "Editor.Insert";
-
 Editor::Iter Editor::Insert(const Iter& iter, const string& code)
 {
-   Debug::ft(Editor_Insert);
+   Debug::ft("Editor.Insert");
 
    Changed();
    return source_.insert(iter, SourceLine(code, SIZE_MAX));
@@ -2914,11 +2785,9 @@ Editor::Iter Editor::Insert(const Iter& iter, const string& code)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertBlankLine = "Editor.InsertBlankLine";
-
 word Editor::InsertBlankLine(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InsertBlankLine);
+   Debug::ft("Editor.InsertBlankLine");
 
    auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
@@ -2928,11 +2797,9 @@ word Editor::InsertBlankLine(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertDebugFtCall = "Editor.InsertDebugFtCall";
-
 word Editor::InsertDebugFtCall(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InsertDebugFtCall);
+   Debug::ft("Editor.InsertDebugFtCall");
 
    auto name = FindPos(log.item_->GetPos());
    if(name.pos == string::npos) return NotFound(expl, "Function name");
@@ -2985,11 +2852,9 @@ word Editor::InsertDebugFtCall(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertDefaultFunction = "Editor.InsertDefaultFunction";
-
 word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InsertDefaultFunction);
+   Debug::ft("Editor.InsertDefaultFunction");
 
    //  If this log is not one associated with the class itself, nothing
    //  needs to be done.
@@ -3113,11 +2978,9 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertForward1 = "Editor.InsertForward(log)";
-
 word Editor::InsertForward(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InsertForward1);
+   Debug::ft("Editor.InsertForward(log)");
 
    //  LOGS provides the forward's namespace and any template parameters.
    //
@@ -3169,12 +3032,10 @@ word Editor::InsertForward(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertForward2 = "Editor.InsertForward(iter)";
-
 word Editor::InsertForward
    (const Iter& iter, const string& forward, string& expl)
 {
-   Debug::ft(Editor_InsertForward2);
+   Debug::ft("Editor.InsertForward(iter)");
 
    //  ITER references a namespace that matches the one for a new forward
    //  declaration.  Insert the new declaration alphabetically within the
@@ -3198,11 +3059,9 @@ word Editor::InsertForward
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertInclude1 = "Editor.InsertInclude(log)";
-
 word Editor::InsertInclude(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InsertInclude1);
+   Debug::ft("Editor.InsertInclude(log)");
 
    //  Create the new #include directive and add it to the list.
    //  Its file name appears in log.info_.
@@ -3215,11 +3074,9 @@ word Editor::InsertInclude(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertInclude2 = "Editor.InsertInclude(string)";
-
 word Editor::InsertInclude(string& include, string& expl)
 {
-   Debug::ft(Editor_InsertInclude2);
+   Debug::ft("Editor.InsertInclude(string)");
 
    //  Modify the characters that surround the #include's file name
    //  based on the group to which it belongs.
@@ -3260,11 +3117,9 @@ word Editor::InsertInclude(string& include, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertIncludeGuard = "Editor.InsertIncludeGuard";
-
 word Editor::InsertIncludeGuard(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InsertIncludeGuard);
+   Debug::ft("Editor.InsertIncludeGuard");
 
    //  Insert the guard before the first #include.  If there isn't one,
    //  insert it before the first line of code.  If there isn't any code,
@@ -3284,11 +3139,9 @@ word Editor::InsertIncludeGuard(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertLineBreak1 = "Editor.InsertLineBreak(pos)";
-
 Editor::CodeLocation Editor::InsertLineBreak(const Iter& iter, size_t pos)
 {
-   Debug::ft(Editor_InsertLineBreak1);
+   Debug::ft("Editor.InsertLineBreak(pos)");
 
    if(iter->code.size() <= pos) return CodeLocation(source_.end());
    if(iter->code.find_first_not_of(WhitespaceChars, pos) == string::npos)
@@ -3302,11 +3155,9 @@ Editor::CodeLocation Editor::InsertLineBreak(const Iter& iter, size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertLineBreak2 = "Editor.InsertLineBreak(log)";
-
 word Editor::InsertLineBreak(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InsertLineBreak2);
+   Debug::ft("Editor.InsertLineBreak(log)");
 
    auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
@@ -3316,12 +3167,10 @@ word Editor::InsertLineBreak(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertNamespaceForward = "Editor.InsertNamespaceForward";
-
 word Editor::InsertNamespaceForward
    (const Iter& iter, const string& nspace, const string& forward, string& expl)
 {
-   Debug::ft(Editor_InsertNamespaceForward);
+   Debug::ft("Editor.InsertNamespaceForward");
 
    //  Insert a new forward declaration, along with an enclosing namespace,
    //  at ITER.  Offset it with blank lines.
@@ -3337,11 +3186,9 @@ word Editor::InsertNamespaceForward
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertPatch = "Editor.InsertPatch";
-
 word Editor::InsertPatch(CliThread& cli, const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InsertPatch);
+   Debug::ft("Editor.InsertPatch");
 
    //  Extract the name of the function to insert.  (It will be "Patch",
    //  but this code might eventually be generalized for other functions.)
@@ -3383,11 +3230,9 @@ fixed_string PatchReturn = "void";
 fixed_string PatchSignature = "Patch(sel_t selector, void* arguments)";
 fixed_string PatchInvocation = "Patch(selector, arguments)";
 
-fn_name Editor_InsertPatchDecl = "Editor.InsertPatchDecl";
-
 void Editor::InsertPatchDecl(Iter& iter, const FuncDeclAttrs& attrs)
 {
-   Debug::ft(Editor_InsertPatchDecl);
+   Debug::ft("Editor.InsertPatchDecl");
 
    //  See if a blank line should be inserted below the function.  Then
    //  insert its definition and comment, and see if a blank line and/or
@@ -3423,12 +3268,10 @@ void Editor::InsertPatchDecl(Iter& iter, const FuncDeclAttrs& attrs)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertPatchDefn = "Editor.InsertPatchDefn";
-
 void Editor::InsertPatchDefn
    (Iter& iter, const Class* cls, const FuncDefnAttrs& attrs)
 {
-   Debug::ft(Editor_InsertPatchDefn);
+   Debug::ft("Editor.InsertPatchDefn");
 
    //  See whether to insert a blank and rule below the function.
    //
@@ -3477,11 +3320,9 @@ void Editor::InsertPatchDefn
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertPrefix = "Editor.InsertPrefix";
-
 void Editor::InsertPrefix(const Iter& iter, size_t pos, const string& prefix)
 {
-   Debug::ft(Editor_InsertPrefix);
+   Debug::ft("Editor.InsertPrefix");
 
    auto first = iter->code.find_first_not_of(WhitespaceChars);
 
@@ -3500,11 +3341,9 @@ void Editor::InsertPrefix(const Iter& iter, size_t pos, const string& prefix)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertUsing = "Editor.InsertUsing";
-
 word Editor::InsertUsing(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_InsertUsing);
+   Debug::ft("Editor.InsertUsing");
 
    //  Create the new using statement and decide where to insert it.
    //
@@ -3549,11 +3388,9 @@ word Editor::InsertUsing(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_IntroStart = "Editor.IntroStart";
-
 Editor::Iter Editor::IntroStart(const Iter& iter, bool funcName)
 {
-   Debug::ft(Editor_IntroStart);
+   Debug::ft("Editor.IntroStart");
 
    Iter curr = iter;
 
@@ -3584,11 +3421,9 @@ Editor::Iter Editor::IntroStart(const Iter& iter, bool funcName)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_LineAfterFunc = "Editor.LineAfterFunc";
-
 Editor::Iter Editor::LineAfterFunc(const Function* func)
 {
-   Debug::ft(Editor_LineAfterFunc);
+   Debug::ft("Editor.LineAfterFunc");
 
    CodeLocation end(source_.end());
    size_t begin, close;
@@ -3618,11 +3453,9 @@ Editor::Iter Editor::LineAfterFunc(const Function* func)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_MangleInclude = "Editor.MangleInclude";
-
 word Editor::MangleInclude(string& include, string& expl) const
 {
-   Debug::ft(Editor_MangleInclude);
+   Debug::ft("Editor.MangleInclude");
 
    //  INCLUDE is enclosed in angle brackets or quotes.  To simplify
    //  sorting, the following substitutions are made:
@@ -3650,11 +3483,9 @@ word Editor::MangleInclude(string& include, string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_NextPos = "Editor.NextPos";
-
 Editor::CodeLocation Editor::NextPos(const CodeLocation& curr)
 {
-   Debug::ft(Editor_NextPos);
+   Debug::ft("Editor.NextPos");
 
    auto next = curr;
 
@@ -3674,11 +3505,9 @@ Editor::CodeLocation Editor::NextPos(const CodeLocation& curr)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_PrevPos = "Editor.PrevPos";
-
 Editor::CodeLocation Editor::PrevPos(const CodeLocation& curr)
 {
-   Debug::ft(Editor_PrevPos);
+   Debug::ft("Editor.PrevPos");
 
    auto prev = curr;
 
@@ -3703,11 +3532,9 @@ Editor::CodeLocation Editor::PrevPos(const CodeLocation& curr)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_PrologEnd = "Editor.PrologEnd";
-
 Editor::Iter Editor::PrologEnd()
 {
-   Debug::ft(Editor_PrologEnd);
+   Debug::ft("Editor.PrologEnd");
 
    for(auto s = source_.begin(); s != source_.end(); ++s)
    {
@@ -3727,11 +3554,9 @@ void Editor::PushBack(const string& code)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_QualifyReferent = "Editor.QualifyReferent";
-
 void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
 {
-   Debug::ft(Editor_QualifyReferent);
+   Debug::ft("Editor.QualifyReferent");
 
    //  Within ITEM, prefix NS wherever SYMBOL appears as an identifier.
    //
@@ -3798,11 +3623,9 @@ void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_QualifyUsings = "Editor.QualifyUsings";
-
 void Editor::QualifyUsings(const CxxNamed* item)
 {
-   Debug::ft(Editor_QualifyUsings);
+   Debug::ft("Editor.QualifyUsings");
 
    auto refs = FindUsingReferents(item);
 
@@ -3814,11 +3637,9 @@ void Editor::QualifyUsings(const CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_RenameIncludeGuard = "Editor.RenameIncludeGuard";
-
 word Editor::RenameIncludeGuard(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_RenameIncludeGuard);
+   Debug::ft("Editor.RenameIncludeGuard");
 
    //  This warning is logged against the #define.
    //
@@ -3838,11 +3659,9 @@ word Editor::RenameIncludeGuard(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ReplaceDebugFtName = "Editor.ReplaceDebugFtName";
-
 word Editor::ReplaceDebugFtName(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_ReplaceDebugFtName);
+   Debug::ft("Editor.ReplaceDebugFtName");
 
    //  Find the fn_name data, in-line its string literal in the Debug::ft
    //  call, and then erase it.
@@ -3871,11 +3690,9 @@ word Editor::ReplaceDebugFtName(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ReplaceNull = "Editor.ReplaceNull";
-
 word Editor::ReplaceNull(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_ReplaceNull);
+   Debug::ft("Editor.ReplaceNull");
 
    //  If there are multiple occurrences on the same line, each one will
    //  cause a log, so just fix the first one.
@@ -3891,11 +3708,9 @@ word Editor::ReplaceNull(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ReplaceSlashAsterisk = "Editor.ReplaceSlashAsterisk";
-
 word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_ReplaceSlashAsterisk);
+   Debug::ft("Editor.ReplaceSlashAsterisk");
 
    auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
@@ -4005,11 +3820,9 @@ word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ReplaceUsing = "Editor.ReplaceUsing";
-
 word Editor::ReplaceUsing(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_ReplaceUsing);
+   Debug::ft("Editor.ReplaceUsing");
 
    //  Before removing the using statement, add type aliases to each class
    //  for symbols that appear in its definition and that were resolved by
@@ -4021,11 +3834,9 @@ word Editor::ReplaceUsing(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_ResolveUsings = "Editor.ResolveUsings";
-
 word Editor::ResolveUsings()
 {
-   Debug::ft(Editor_ResolveUsings);
+   Debug::ft("Editor.ResolveUsings");
 
    //  This function only needs to be run once per file.
    //
@@ -4073,11 +3884,9 @@ word Editor::ResolveUsings()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_Rfind = "Editor.Rfind";
-
 Editor::CodeLocation Editor::Rfind(Iter iter, const string& str, size_t off)
 {
-   Debug::ft(Editor_Rfind);
+   Debug::ft("Editor.Rfind");
 
    if(iter == source_.end()) return CodeLocation(iter);
 
@@ -4095,11 +3904,9 @@ Editor::CodeLocation Editor::Rfind(Iter iter, const string& str, size_t off)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_RfindNonBlank = "Editor.RfindNonBlank";
-
 Editor::CodeLocation Editor::RfindNonBlank(Iter iter, size_t pos)
 {
-   Debug::ft(Editor_RfindNonBlank);
+   Debug::ft("Editor.RfindNonBlank");
 
    if(iter == source_.end()) return CodeLocation(iter);
    if(pos == string::npos) pos = iter->code.size();
@@ -4118,11 +3925,9 @@ Editor::CodeLocation Editor::RfindNonBlank(Iter iter, size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_SortIncludes = "Editor.SortIncludes";
-
 word Editor::SortIncludes(string& expl)
 {
-   Debug::ft(Editor_SortIncludes);
+   Debug::ft("Editor.SortIncludes");
 
    //  std::list does not support a sort bounded by iterators, so move all of
    //  the #include statements into a new list, sort them, and reinsert them.
@@ -4174,11 +3979,9 @@ word Editor::SortIncludes(string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsConstArgument = "Editor.TagAsConstArgument";
-
 word Editor::TagAsConstArgument(const Function* func, word offset, string& expl)
 {
-   Debug::ft(Editor_TagAsConstArgument);
+   Debug::ft("Editor.TagAsConstArgument");
 
    //  Find the line on which the argument's type appears, and insert
    //  "const" before that type.
@@ -4195,11 +3998,9 @@ word Editor::TagAsConstArgument(const Function* func, word offset, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsConstData = "Editor.TagAsConstData";
-
 word Editor::TagAsConstData(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_TagAsConstData);
+   Debug::ft("Editor.TagAsConstData");
 
    //  Find the line on which the data's type appears, and insert
    //  "const" before that type.
@@ -4212,11 +4013,9 @@ word Editor::TagAsConstData(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsConstFunction = "Editor.TagAsConstFunction";
-
 word Editor::TagAsConstFunction(const Function* func, string& expl)
 {
-   Debug::ft(Editor_TagAsConstFunction);
+   Debug::ft("Editor.TagAsConstFunction");
 
    //  Insert " const" after the right parenthesis at the end of the function's
    //  argument list.
@@ -4229,11 +4028,9 @@ word Editor::TagAsConstFunction(const Function* func, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsConstPointer = "Editor.TagAsConstPointer";
-
 word Editor::TagAsConstPointer(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_TagAsConstPointer);
+   Debug::ft("Editor.TagAsConstPointer");
 
    //  If there is more than one pointer, this applies to the last one, so
    //  back up from the data item's name.  Search for the name on this line
@@ -4251,12 +4048,10 @@ word Editor::TagAsConstPointer(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsConstReference = "Editor.TagAsConstReference";
-
 word Editor::TagAsConstReference
    (const Function* func, word offset, string& expl)
 {
-   Debug::ft(Editor_TagAsConstReference);
+   Debug::ft("Editor.TagAsConstReference");
 
    //  Find the line on which the argument's name appears.  Insert a reference
    //  tag before the argument's name and "const" before its type.  The tag is
@@ -4279,11 +4074,9 @@ word Editor::TagAsConstReference
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsDefaulted = "Editor.TagAsDefaulted";
-
 word Editor::TagAsDefaulted(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_TagAsDefaulted);
+   Debug::ft("Editor.TagAsDefaulted");
 
    //  If this is a separate definition, delete it and tag the definition
    //  as defaulted.
@@ -4315,11 +4108,9 @@ word Editor::TagAsDefaulted(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsExplicit = "Editor.TagAsExplicit";
-
 word Editor::TagAsExplicit(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_TagAsExplicit);
+   Debug::ft("Editor.TagAsExplicit");
 
    //  A constructor can be tagged "constexpr", which the parser looks for
    //  only *after* "explicit".
@@ -4334,11 +4125,9 @@ word Editor::TagAsExplicit(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsNoexcept = "Editor.TagAsNoexcept";
-
 word Editor::TagAsNoexcept(const Function* func, string& expl)
 {
-   Debug::ft(Editor_TagAsNoexcept);
+   Debug::ft("Editor.TagAsNoexcept");
 
    //  Insert "noexcept" after "const" but before "override" or "final".
    //  Start by finding the end of the function's argument list.
@@ -4363,11 +4152,9 @@ word Editor::TagAsNoexcept(const Function* func, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsOverride = "Editor.TagAsOverride";
-
 word Editor::TagAsOverride(const CodeWarning& log, string& expl)
 {
-   Debug::ft(Editor_TagAsOverride);
+   Debug::ft("Editor.TagAsOverride");
 
    //  Insert "override" just before the end of the function's signature.
    //
@@ -4383,11 +4170,9 @@ word Editor::TagAsOverride(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_TagAsStaticFunction = "Editor.TagAsStaticFunction";
-
 word Editor::TagAsStaticFunction(const Function* func, string& expl)
 {
-   Debug::ft(Editor_TagAsStaticFunction);
+   Debug::ft("Editor.TagAsStaticFunction");
 
    //  Start with the function's return type in case it's on the line above
    //  the function's name.  Then find the end of the argument list.
@@ -4443,11 +4228,9 @@ word Editor::TagAsStaticFunction(const Function* func, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_UpdateFuncDeclAttrs = "Editor.UpdateFuncDeclAttrs";
-
 void Editor::UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs)
 {
-   Debug::ft(Editor_UpdateFuncDeclAttrs);
+   Debug::ft("Editor.UpdateFuncDeclAttrs");
 
    if(func == nullptr) return;
 
@@ -4552,11 +4335,9 @@ Editor::Iter Editor::UpdateFuncDeclLoc
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_UpdateFuncDefnAttrs = "Editor.UpdateFuncDefnAttrs";
-
 void Editor::UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs)
 {
-   Debug::ft(Editor_UpdateFuncDefnAttrs);
+   Debug::ft("Editor.UpdateFuncDefnAttrs");
 
    if(func == nullptr) return;
 
@@ -4608,12 +4389,10 @@ void Editor::UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_UpdateFuncDefnLoc = "Editor.UpdateFuncDefnLoc";
-
 Editor::Iter Editor::UpdateFuncDefnLoc
    (const Function* prev, const Function* next, FuncDefnAttrs& attrs)
 {
-   Debug::ft(Editor_UpdateFuncDefnLoc);
+   Debug::ft("Editor.UpdateFuncDefnLoc");
 
    //  PREV and NEXT are the functions that precede and follow the function
    //  whose definition is to be inserted.
@@ -4677,11 +4456,9 @@ Editor::Iter Editor::UpdateFuncDefnLoc
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_Write = "Editor.Write";
-
 word Editor::Write(string& expl)
 {
-   Debug::ft(Editor_Write);
+   Debug::ft("Editor.Write");
 
    std::ostringstream stream;
 

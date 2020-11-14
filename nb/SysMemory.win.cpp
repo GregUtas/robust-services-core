@@ -115,11 +115,9 @@ bool SysMemory::Lock(void* addr, size_t size)
 
 //------------------------------------------------------------------------------
 
-fn_name SysMemory_Protect = "SysMemory.Protect";
-
 int SysMemory::Protect(void* addr, size_t size, MemoryProtection attrs)
 {
-   Debug::ft(SysMemory_Protect);
+   Debug::ft("SysMemory.Protect");
 
    auto newMode = GetMemoryProtection(attrs);
    if(newMode == PAGE_INVALID) return ERROR_INVALID_PARAMETER;

@@ -31,54 +31,44 @@ using namespace SessionTools;
 
 namespace CallBase
 {
-fn_name TestCallFactory_ctor = "TestCallFactory.ctor";
-
 TestCallFactory::TestCallFactory() :
    BcFactory(TestCallFactoryId, CipProtocolId, "CIP Test Calls")
 {
-   Debug::ft(TestCallFactory_ctor);
+   Debug::ft("TestCallFactory.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TestCallFactory_dtor = "TestCallFactory.dtor";
 
 TestCallFactory::~TestCallFactory()
 {
-   Debug::ftnt(TestCallFactory_dtor);
+   Debug::ftnt("TestCallFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TestCallFactory_AllocIcPsm = "TestCallFactory.AllocIcPsm";
 
 ProtocolSM* TestCallFactory::AllocIcPsm
    (const Message& msg, ProtocolLayer& lower) const
 {
-   Debug::ft(TestCallFactory_AllocIcPsm);
+   Debug::ft("TestCallFactory.AllocIcPsm");
 
    return new CipPsm(CipTbcFactoryId, lower, false);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestCallFactory_AllocRoot = "TestCallFactory.AllocRoot";
-
 RootServiceSM* TestCallFactory::AllocRoot
    (const Message& msg, ProtocolSM& psm) const
 {
-   Debug::ft(TestCallFactory_AllocRoot);
+   Debug::ft("TestCallFactory.AllocRoot");
 
    return new TestSsm(psm);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestCallFactory_VerifyRoute = "TestCallFactory.VerifyRoute";
-
 Cause::Ind TestCallFactory::VerifyRoute(RouteResult::Id rid) const
 {
-   Debug::ft(TestCallFactory_VerifyRoute);
+   Debug::ft("TestCallFactory.VerifyRoute");
 
    //b Change this to access the DN registry once DnProfile is refactored
    //  as a base class for PotsProfile.

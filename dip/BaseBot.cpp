@@ -56,8 +56,6 @@ using namespace NetworkBase;
 
 namespace Diplomacy
 {
-fn_name BaseBot_ctor = "BaseBot.ctor";
-
 BaseBot::BaseBot() :
    map_and_units(MapAndUnits::instance()),
    initialised_(false),
@@ -71,18 +69,16 @@ BaseBot::BaseBot() :
    ord_received_(false),
    map_requested_(false)
 {
-   Debug::ft(BaseBot_ctor);
+   Debug::ft("BaseBot.ctor");
 
    title_ = MainArgs::At(0);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_active_powers = "BaseBot.active_powers";
-
 TokenMessage BaseBot::active_powers(bool self) const
 {
-   Debug::ft(BaseBot_active_powers);
+   Debug::ft("BaseBot.active_powers");
 
    TokenMessage result;
 
@@ -103,23 +99,18 @@ TokenMessage BaseBot::active_powers(bool self) const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_cancel_event = "BaseBot.cancel_event";
-
 void BaseBot::cancel_event(BotEvent event)
 {
-   Debug::ft(BaseBot_cancel_event);
+   Debug::ft("BaseBot.cancel_event");
 
    Singleton< BotThread >::Instance()->CancelEvent(event);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_check_sent_press_for_inactive_power =
-   "BaseBot.check_sent_press_for_inactive_power";
-
 void BaseBot::check_sent_press_for_inactive_power(const Token& inactive_power)
 {
-   Debug::ft(BaseBot_check_sent_press_for_inactive_power);
+   Debug::ft("BaseBot.check_sent_press_for_inactive_power");
 
    for(auto press = sent_press_.begin(); press != sent_press_.end(); ++press)
    {
@@ -147,11 +138,9 @@ void BaseBot::check_sent_press_for_inactive_power(const Token& inactive_power)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_create_socket = "BaseBot.create_socket";
-
 BaseBot::StartupResult BaseBot::create_socket()
 {
-   Debug::ft(BaseBot_create_socket);
+   Debug::ft("BaseBot.create_socket");
 
    //  Release any existing socket, allocate a new one, register our use
    //  of it, and save it against the server's IP address.
@@ -169,11 +158,9 @@ BaseBot::StartupResult BaseBot::create_socket()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_delete_socket = "BaseBot.delete_socket";
-
 void BaseBot::delete_socket(ProtocolError error)
 {
-   Debug::ft(BaseBot_delete_socket);
+   Debug::ft("BaseBot.delete_socket");
 
    set_state(DISCONNECTED);
    server_addr_.ReleaseSocket();
@@ -291,11 +278,9 @@ void BaseBot::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_get_ipaddrs = "BaseBot.get_ipaddrs";
-
 BaseBot::StartupResult BaseBot::get_ipaddrs()
 {
-   Debug::ft(BaseBot_get_ipaddrs);
+   Debug::ft("BaseBot.get_ipaddrs");
 
    std::ostringstream stream;
 
@@ -372,11 +357,9 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_get_reconnect_details = "BaseBot.get_reconnect_details";
-
 bool BaseBot::get_reconnect_details(Token& power, int& passcode) const
 {
-   Debug::ft(BaseBot_get_reconnect_details);
+   Debug::ft("BaseBot.get_reconnect_details");
 
    //  If reconnection information was provided during startup,
    //  supply it and request that reconnection be attempted.
@@ -393,11 +376,9 @@ bool BaseBot::get_reconnect_details(Token& power, int& passcode) const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_get_try_tokens = "BaseBot.get_try_tokens";
-
 const std::vector< Token >& BaseBot::get_try_tokens() const
 {
-   Debug::ft(BaseBot_get_try_tokens);
+   Debug::ft("BaseBot.get_try_tokens");
 
    static std::vector< Token > no_tokens;
 
@@ -406,11 +387,9 @@ const std::vector< Token >& BaseBot::get_try_tokens() const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_initialise = "BaseBot.initialise";
-
 BaseBot::StartupResult BaseBot::initialise()
 {
-   Debug::ft(BaseBot_initialise);
+   Debug::ft("BaseBot.initialise");
 
    if(initialised_) return STARTUP_OK;
 
@@ -468,22 +447,18 @@ BaseBot* BaseBot::instance()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_adm_message = "BaseBot.process_adm_message";
-
 void BaseBot::process_adm_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_adm_message);
+   Debug::ft("BaseBot.process_adm_message");
 
    if(report_) message.log("ADM received");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_bm_message = "BaseBot.process_bm_message";
-
 void BaseBot::process_bm_message(const DipMessage& message)
 {
-   Debug::ft(BaseBot_process_bm_message);
+   Debug::ft("BaseBot.process_bm_message");
 
    std::ostringstream stream;
    stream << "Unprocessed BM: event=" << int(message.header.spare) << CRLF;
@@ -492,11 +467,9 @@ void BaseBot::process_bm_message(const DipMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_ccd = "BaseBot.process_ccd";
-
 void BaseBot::process_ccd(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_ccd);
+   Debug::ft("BaseBot.process_ccd");
 
    auto cd_power = message.get_parm(1).front();
    auto is_new_disconnection = false;
@@ -514,12 +487,10 @@ void BaseBot::process_ccd(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_ccd_message = "BaseBot.process_ccd_message";
-
 void BaseBot::process_ccd_message
    (const TokenMessage& message, bool is_new_disconnection)
 {
-   Debug::ft(BaseBot_process_ccd_message);
+   Debug::ft("BaseBot.process_ccd_message");
 
    if(report_ && is_new_disconnection)
    {
@@ -529,23 +500,18 @@ void BaseBot::process_ccd_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_command_line_parameter =
-   "BaseBot.process_command_line_parameter";
-
 bool BaseBot::process_command_line_parameter(char token, string& value)
 {
-   Debug::ft(BaseBot_process_command_line_parameter);
+   Debug::ft("BaseBot.process_command_line_parameter");
 
    return false;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_dm_message = "BaseBot.process_dm_message";
-
 void BaseBot::process_dm_message(const DipMessage& message)
 {
-   Debug::ft(BaseBot_process_dm_message);
+   Debug::ft("BaseBot.process_dm_message");
 
    auto& dm = reinterpret_cast< const DM_Message& >(message);
    auto tokens = reinterpret_cast< const Token* >(&dm.tokens);
@@ -659,22 +625,18 @@ void BaseBot::process_dm_message(const DipMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_drw_message = "BaseBot.process_drw_message";
-
 void BaseBot::process_drw_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_drw_message);
+   Debug::ft("BaseBot.process_drw_message");
 
    if(report_) report_end(message);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_em_message = "BaseBot.process_em_message";
-
 void BaseBot::process_em_message(const DipMessage& message)
 {
-   Debug::ft(BaseBot_process_em_message);
+   Debug::ft("BaseBot.process_em_message");
 
    //  The server has closed the connection because of an error.
    //
@@ -684,11 +646,9 @@ void BaseBot::process_em_message(const DipMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_fm_message = "BaseBot.process_fm_message";
-
 void BaseBot::process_fm_message(const DipMessage& message)
 {
-   Debug::ft(BaseBot_process_fm_message);
+   Debug::ft("BaseBot.process_fm_message");
 
    //  The server has closed the connection gracefully.
    //
@@ -697,11 +657,9 @@ void BaseBot::process_fm_message(const DipMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_frm_message = "BaseBot.process_frm_message";
-
 void BaseBot::process_frm_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_frm_message);
+   Debug::ft("BaseBot.process_frm_message");
 
    auto message_id = message.get_parm(1);
    auto from_power = message_id.front();
@@ -739,11 +697,9 @@ void BaseBot::process_frm_message(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_hlo_message = "BaseBot.process_hlo_message";
-
 void BaseBot::process_hlo_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_hlo_message);
+   Debug::ft("BaseBot.process_hlo_message");
 
    if(report_)
    {
@@ -757,44 +713,36 @@ void BaseBot::process_hlo_message(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_huh_message = "BaseBot.process_huh_message";
-
 void BaseBot::process_huh_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_huh_message);
+   Debug::ft("BaseBot.process_huh_message");
 
    message.log("HUH received");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_lod_message = "BaseBot.process_lod_message";
-
 void BaseBot::process_lod_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_lod_message);
+   Debug::ft("BaseBot.process_lod_message");
 
    send_to_server(Token(TOKEN_COMMAND_REJ) & message);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_map_message = "BaseBot.process_map_message";
-
 void BaseBot::process_map_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_map_message);
+   Debug::ft("BaseBot.process_map_message");
 
    if(report_) message.log("MAP received");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_mdf = "BaseBot.process_mdf";
-
 void BaseBot::process_mdf(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_mdf);
+   Debug::ft("BaseBot.process_mdf");
 
    auto rc = map_and_units->process_mdf(message);
 
@@ -827,22 +775,18 @@ void BaseBot::process_mdf(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_mdf_message = "BaseBot.process_mdf_message";
-
 void BaseBot::process_mdf_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_mdf_message);
+   Debug::ft("BaseBot.process_mdf_message");
 
    if(report_) report_mdf();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_message = "BaseBot.process_message";
-
 void BaseBot::process_message(const DipMessage& message)
 {
-   Debug::ft(BaseBot_process_message);
+   Debug::ft("BaseBot.process_message");
 
    switch(message.header.signal)
    {
@@ -893,11 +837,9 @@ void BaseBot::process_mis_message(const TokenMessage& message) { }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_not = "BaseBot.process_not";
-
 void BaseBot::process_not(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_not);
+   Debug::ft("BaseBot.process_not");
 
    auto inner = message.get_parm(1);
    auto signal = inner.front().all();
@@ -919,12 +861,10 @@ void BaseBot::process_not(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_not_ccd = "BaseBot.process_not_ccd";
-
 void BaseBot::process_not_ccd
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_not_ccd);
+   Debug::ft("BaseBot.process_not_ccd");
 
    auto cd_power = parameters.front();
    auto is_new_reconnection = false;
@@ -940,12 +880,10 @@ void BaseBot::process_not_ccd
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_not_ccd_message = "BaseBot.process_not_ccd_message";
-
 void BaseBot::process_not_ccd_message(const TokenMessage& message,
    const TokenMessage& parameters, bool is_new_reconnection)
 {
-   Debug::ft(BaseBot_process_not_ccd_message);
+   Debug::ft("BaseBot.process_not_ccd_message");
 
    if(report_ && is_new_reconnection)
    {
@@ -960,11 +898,9 @@ void BaseBot::process_not_tme_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_now = "BaseBot.process_now";
-
 void BaseBot::process_now(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_now);
+   Debug::ft("BaseBot.process_now");
 
    if(report_) report_ords();
    map_and_units->process_now(message);
@@ -974,22 +910,18 @@ void BaseBot::process_now(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_now_message = "BaseBot.process_now_message";
-
 void BaseBot::process_now_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_now_message);
+   Debug::ft("BaseBot.process_now_message");
 
    if(report_) report_now();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_off_message = "BaseBot.process_off_message";
-
 void BaseBot::process_off_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_off_message);
+   Debug::ft("BaseBot.process_off_message");
 
    if(report_) report_end(message);
    delete_socket(SERVER_OFF);
@@ -997,11 +929,9 @@ void BaseBot::process_off_message(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_ord = "BaseBot.process_ord";
-
 void BaseBot::process_ord(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_ord);
+   Debug::ft("BaseBot.process_ord");
 
    map_and_units->process_ord(message);
    ord_received_ = true;
@@ -1014,11 +944,9 @@ void BaseBot::process_ord_message(const TokenMessage& message) { }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_out = "BaseBot.process_out";
-
 void BaseBot::process_out(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_out);
+   Debug::ft("BaseBot.process_out");
 
    //  Update the set of eliminated powers.  If any unacknowledged press
    //  included the eliminated power as a recipient, the server is about
@@ -1032,22 +960,18 @@ void BaseBot::process_out(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_out_message = "BaseBot.process_out_message";
-
 void BaseBot::process_out_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_out_message);
+   Debug::ft("BaseBot.process_out_message");
 
    if(report_) report_out(message.get_parm(1).front());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_prn_message = "BaseBot.process_prn_message";
-
 void BaseBot::process_prn_message(const Token* message, size_t size)
 {
-   Debug::ft(BaseBot_process_prn_message);
+   Debug::ft("BaseBot.process_prn_message");
 
    std::ostringstream stream;
    stream << "PRN received" << CRLF;
@@ -1069,11 +993,9 @@ void BaseBot::process_prn_message(const Token* message, size_t size)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_rej = "BaseBot.process_rej";
-
 void BaseBot::process_rej(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_rej);
+   Debug::ft("BaseBot.process_rej");
 
    auto inner = message.get_parm(1);
    auto signal = inner.front().all();
@@ -1152,60 +1074,50 @@ void BaseBot::process_rej_adm_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_rej_drw_message = "BaseBot.process_rej_drw_message";
-
 void BaseBot::process_rej_drw_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_drw_message);
+   Debug::ft("BaseBot.process_rej_drw_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BaseBot_process_rej_gof_message = "BaseBot.process_rej_gof_message";
 
 void BaseBot::process_rej_gof_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_gof_message);
+   Debug::ft("BaseBot.process_rej_gof_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BaseBot_process_rej_hlo_message = "BaseBot.process_rej_hlo_message";
 
 void BaseBot::process_rej_hlo_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_hlo_message);
+   Debug::ft("BaseBot.process_rej_hlo_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BaseBot_process_rej_hst_message = "BaseBot.process_rej_hst_message";
 
 void BaseBot::process_rej_hst_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_hst_message);
+   Debug::ft("BaseBot.process_rej_hst_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_rej_iam_message = "BaseBot.process_rej_iam_message";
-
 void BaseBot::process_rej_iam_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_iam_message);
+   Debug::ft("BaseBot.process_rej_iam_message");
 
    message.log("Unprocessed message");
 }
@@ -1217,12 +1129,10 @@ void BaseBot::process_rej_mis_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_rej_nme_message = "BaseBot.process_rej_nme_message";
-
 void BaseBot::process_rej_nme_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_nme_message);
+   Debug::ft("BaseBot.process_rej_nme_message");
 
    Token power;
    Token passcode;
@@ -1245,12 +1155,10 @@ void BaseBot::process_rej_nme_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_rej_not = "BaseBot.process_rej_not";
-
 void BaseBot::process_rej_not
    (const TokenMessage& message, const TokenMessage& rej_not_parameters)
 {
-   Debug::ft(BaseBot_process_rej_not);
+   Debug::ft("BaseBot.process_rej_not");
 
    switch(rej_not_parameters.front().all())
    {
@@ -1269,74 +1177,60 @@ void BaseBot::process_rej_not
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_rej_not_drw_message =
-   "BaseBot.process_rej_not_drw_message";
-
 void BaseBot::process_rej_not_drw_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_not_drw_message);
+   Debug::ft("BaseBot.process_rej_not_drw_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BaseBot_process_rej_not_gof_message =
-   "BaseBot.process_rej_not_gof_message";
 
 void BaseBot::process_rej_not_gof_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_not_gof_message);
+   Debug::ft("BaseBot.process_rej_not_gof_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BaseBot_process_rej_now_message = "BaseBot.process_rej_now_message";
 
 void BaseBot::process_rej_now_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_now_message);
+   Debug::ft("BaseBot.process_rej_now_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BaseBot_process_rej_ord_message = "BaseBot.process_rej_ord_message";
 
 void BaseBot::process_rej_ord_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_ord_message);
+   Debug::ft("BaseBot.process_rej_ord_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BaseBot_process_rej_sco_message = "BaseBot.process_rej_sco_message";
 
 void BaseBot::process_rej_sco_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_sco_message);
+   Debug::ft("BaseBot.process_rej_sco_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_rej_snd = "BaseBot.process_rej_snd";
-
 void BaseBot::process_rej_snd
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_snd);
+   Debug::ft("BaseBot.process_rej_snd");
 
    auto press = message.get_parm(1);
    remove_sent_press(press);
@@ -1345,47 +1239,39 @@ void BaseBot::process_rej_snd
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_rej_snd_message = "BaseBot.process_rej_snd_message";
-
 void BaseBot::process_rej_snd_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_snd_message);
+   Debug::ft("BaseBot.process_rej_snd_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BaseBot_process_rej_sub_message = "BaseBot.process_rej_sub_message";
 
 void BaseBot::process_rej_sub_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_sub_message);
+   Debug::ft("BaseBot.process_rej_sub_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BaseBot_process_rej_tme_message = "BaseBot.process_rej_tme_message";
 
 void BaseBot::process_rej_tme_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_rej_tme_message);
+   Debug::ft("BaseBot.process_rej_tme_message");
 
    message.log("Unprocessed message");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_rm_message = "BaseBot.process_rm_message";
-
 void BaseBot::process_rm_message(const DipMessage& message)
 {
-   Debug::ft(BaseBot_process_rm_message);
+   Debug::ft("BaseBot.process_rm_message");
 
    //  We've just connected to the server, so cancel the reconnection
    //  event and reset the initial timeout for reconnection attempts.
@@ -1431,11 +1317,9 @@ void BaseBot::process_rm_message(const DipMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_sco = "BaseBot.process_sco";
-
 void BaseBot::process_sco(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_sco);
+   Debug::ft("BaseBot.process_sco");
 
    if(report_) report_ords();
    map_and_units->process_sco(message);
@@ -1446,55 +1330,45 @@ void BaseBot::process_sco(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_sco_message = "BaseBot.process_sco_message";
-
 void BaseBot::process_sco_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_sco_message);
+   Debug::ft("BaseBot.process_sco_message");
 
    if(report_) report_sco();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_slo_message = "BaseBot.process_slo_message";
-
 void BaseBot::process_slo_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_slo_message);
+   Debug::ft("BaseBot.process_slo_message");
 
    if(report_) report_end(message);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_smr_message = "BaseBot.process_smr_message";
-
 void BaseBot::process_smr_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_smr_message);
+   Debug::ft("BaseBot.process_smr_message");
 
    if(report_) report_smr(message);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_sve_message = "BaseBot.process_sve_message";
-
 void BaseBot::process_sve_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_sve_message);
+   Debug::ft("BaseBot.process_sve_message");
 
    send_to_server(Token(TOKEN_COMMAND_YES) & message);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_thx_message = "BaseBot.process_thx_message";
-
 void BaseBot::process_thx_message(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_thx_message);
+   Debug::ft("BaseBot.process_thx_message");
 
    TokenMessage new_order;
    auto send_new_order = false;
@@ -1608,11 +1482,9 @@ void BaseBot::process_unexpected_yes_not_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_yes = "BaseBot.process_yes";
-
 void BaseBot::process_yes(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_process_yes);
+   Debug::ft("BaseBot.process_yes");
 
    auto inner = message.get_parm(1);
 
@@ -1681,12 +1553,10 @@ void BaseBot::process_yes_nme_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_yes_not = "BaseBot.process_yes_not";
-
 void BaseBot::process_yes_not
    (const TokenMessage& message, const TokenMessage& yes_not_parameters)
 {
-   Debug::ft(BaseBot_process_yes_not);
+   Debug::ft("BaseBot.process_yes_not");
 
    switch(yes_not_parameters.front().all())
    {
@@ -1724,12 +1594,10 @@ void BaseBot::process_yes_not_sub_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_yes_obs_message = "BaseBot.process_yes_obs_message";
-
 void BaseBot::process_yes_obs_message
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_yes_obs_message);
+   Debug::ft("BaseBot.process_yes_obs_message");
 
    observer_ = true;
    report_ = true;
@@ -1737,12 +1605,10 @@ void BaseBot::process_yes_obs_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_process_yes_snd = "BaseBot.process_yes_snd";
-
 void BaseBot::process_yes_snd
    (const TokenMessage& message, const TokenMessage& parameters)
 {
-   Debug::ft(BaseBot_process_yes_snd);
+   Debug::ft("BaseBot.process_yes_snd");
 
    auto press = message.get_parm(1);
    remove_sent_press(press);
@@ -1761,11 +1627,9 @@ void BaseBot::process_yes_tme_message
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_queue_event = "BaseBot.queue_event";
-
 bool BaseBot::queue_event(BotEvent event, secs_t secs)
 {
-   Debug::ft(BaseBot_queue_event);
+   Debug::ft("BaseBot.queue_event");
 
    auto thread = Singleton< BotThread >::Instance();
 
@@ -1794,11 +1658,9 @@ bool BaseBot::queue_event(BotEvent event, secs_t secs)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_reconnect = "BaseBot.reconnect";
-
 void BaseBot::reconnect()
 {
-   Debug::ft(BaseBot_reconnect);
+   Debug::ft("BaseBot.reconnect");
 
    set_state(DISCONNECTED);
    auto rc = create_socket();
@@ -1825,11 +1687,9 @@ void BaseBot::reconnect()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_reconnection_delay = "BaseBot.reconnection_delay";
-
 uint8_t BaseBot::reconnection_delay()
 {
-   Debug::ft(BaseBot_reconnection_delay);
+   Debug::ft("BaseBot.reconnection_delay");
 
    //  The initial delay is 1 second.  Each time we try to reconnect, double
    //  it (which means that we wait 2 seconds the first time).  After we wait
@@ -1843,11 +1703,9 @@ uint8_t BaseBot::reconnection_delay()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_remove_sent_press = "BaseBot.remove_sent_press";
-
 void BaseBot::remove_sent_press(const TokenMessage& send_message)
 {
-   Debug::ft(BaseBot_remove_sent_press);
+   Debug::ft("BaseBot.remove_sent_press");
 
    auto recipients = send_message.get_parm(1);
    auto contents = send_message.get_parm(2);
@@ -1865,11 +1723,9 @@ void BaseBot::remove_sent_press(const TokenMessage& send_message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_report_ccd = "BaseBot.report_ccd";
-
 void BaseBot::report_ccd(const Token& power, bool disorder)
 {
-   Debug::ft(BaseBot_report_ccd);
+   Debug::ft("BaseBot.report_ccd");
 
    std::ostringstream stream;
    stream << power << " is ";
@@ -1884,12 +1740,9 @@ void BaseBot::report_close(ProtocolError error) { }
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_report_command_line_parameters =
-   "BaseBot.report_command_line_parameters";
-
 string BaseBot::report_command_line_parameters()
 {
-   Debug::ft(BaseBot_report_command_line_parameters);
+   Debug::ft("BaseBot.report_command_line_parameters");
 
    return string(EMPTY_STR);
 }
@@ -1956,11 +1809,9 @@ void BaseBot::report_end(const TokenMessage& message) const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_report_exit = "BaseBot.report_exit";
-
 void BaseBot::report_exit(fixed_string reason)
 {
-   Debug::ft(BaseBot_report_exit);
+   Debug::ft("BaseBot.report_exit");
 
    std::ostringstream stream;
    stream << "EXITING: " << reason << CRLF;
@@ -1979,11 +1830,9 @@ void BaseBot::report_failed_press
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_report_mdf = "BaseBot.report_mdf";
-
 void BaseBot::report_mdf() const
 {
-   Debug::ft(BaseBot_report_mdf);
+   Debug::ft("BaseBot.report_mdf");
 
    std::ostringstream stream;
    stream << "The provinces (";
@@ -2016,11 +1865,9 @@ void BaseBot::report_mdf() const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_report_now = "BaseBot.report_now";
-
 void BaseBot::report_now() const
 {
-   Debug::ft(BaseBot_report_now);
+   Debug::ft("BaseBot.report_now");
 
    std::ostringstream stream;
    stream << "The current location of units is" << CRLF;
@@ -2056,11 +1903,9 @@ void BaseBot::report_now() const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_report_ords = "BaseBot.report_ords";
-
 void BaseBot::report_ords()
 {
-   Debug::ft(BaseBot_report_ords);
+   Debug::ft("BaseBot.report_ords");
 
    //  This is invoked when an SCO or NOW is received.  However, we don't
    //  want to report order results before the first move or twice during
@@ -2149,11 +1994,9 @@ void BaseBot::report_ords()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_report_out = "BaseBot.report_out";
-
 void BaseBot::report_out(const Token& power)
 {
-   Debug::ft(BaseBot_report_out);
+   Debug::ft("BaseBot.report_out");
 
    if(!power.is_power()) return;  // for UNO
 
@@ -2164,11 +2007,9 @@ void BaseBot::report_out(const Token& power)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_report_sco = "BaseBot.report_sco";
-
 void BaseBot::report_sco() const
 {
-   Debug::ft(BaseBot_report_sco);
+   Debug::ft("BaseBot.report_sco");
 
    std::ostringstream stream;
    stream << "The current ownership of supply centres is" << CRLF;
@@ -2200,11 +2041,9 @@ void BaseBot::report_sco() const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_report_smr = "BaseBot.report_smr";
-
 void BaseBot::report_smr(const TokenMessage& message) const
 {
-   Debug::ft(BaseBot_report_smr);
+   Debug::ft("BaseBot.report_smr");
 
    std::ostringstream stream;
    stream << "Game summary:" << CRLF;
@@ -2232,11 +2071,9 @@ void BaseBot::report_smr(const TokenMessage& message) const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_request_map = "BaseBot.request_map";
-
 void BaseBot::request_map()
 {
-   Debug::ft(BaseBot_request_map);
+   Debug::ft("BaseBot.request_map");
 
    map_requested_ = true;
    send_to_server(TokenMessage(TOKEN_COMMAND_MAP));
@@ -2244,11 +2081,9 @@ void BaseBot::request_map()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_bm_message = "BaseBot.send_bm_message";
-
 void BaseBot::send_bm_message(const byte_t* payload, uint16_t length) const
 {
-   Debug::ft(BaseBot_send_bm_message);
+   Debug::ft("BaseBot.send_bm_message");
 
    DipIpBufferPtr buff(new DipIpBuffer(MsgOutgoing, DipHeaderSize + length));
    buff->SetTxAddr(client_addr_);
@@ -2266,11 +2101,9 @@ void BaseBot::send_bm_message(const byte_t* payload, uint16_t length) const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_broadcast_to_server = "BaseBot.send_broadcast_to_server";
-
 void BaseBot::send_broadcast_to_server(const TokenMessage& broadcast_message)
 {
-   Debug::ft(BaseBot_send_broadcast_to_server);
+   Debug::ft("BaseBot.send_broadcast_to_server");
 
    TokenMessage receiving_powers;
    SentPressInfo press_record;
@@ -2291,11 +2124,9 @@ void BaseBot::send_broadcast_to_server(const TokenMessage& broadcast_message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_buff = "BaseBot.send_buff";
-
 bool BaseBot::send_buff(DipIpBuffer& buff)
 {
-   Debug::ft(BaseBot_send_buff);
+   Debug::ft("BaseBot.send_buff");
 
    if(Debug::TraceOn())
    {
@@ -2354,11 +2185,9 @@ void BaseBot::send_im_message()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_nme = "BaseBot.send_nme";
-
 void BaseBot::send_nme(fixed_string name, fixed_string version)
 {
-   Debug::ft(BaseBot_send_nme);
+   Debug::ft("BaseBot.send_nme");
 
    TokenMessage name_tokens;
    TokenMessage version_tokens;
@@ -2379,11 +2208,9 @@ void BaseBot::send_nme(fixed_string name, fixed_string version)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_nme_or_obs = "BaseBot.send_nme_or_obs";
-
 void BaseBot::send_nme_or_obs()
 {
-   Debug::ft(BaseBot_send_nme_or_obs);
+   Debug::ft("BaseBot.send_nme_or_obs");
 
    send_to_server(TOKEN_COMMAND_OBS);
    set_title(TOKEN_COMMAND_OBS, false);
@@ -2391,11 +2218,9 @@ void BaseBot::send_nme_or_obs()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_orders_to_server = "BaseBot.send_orders_to_server";
-
 void BaseBot::send_orders_to_server()
 {
-   Debug::ft(BaseBot_send_orders_to_server);
+   Debug::ft("BaseBot.send_orders_to_server");
 
    auto sub = map_and_units->build_sub();
 
@@ -2407,12 +2232,10 @@ void BaseBot::send_orders_to_server()
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_press_to_server = "BaseBot.send_press_to_server";
-
 void BaseBot::send_press_to_server(const TokenMessage& press_to,
    const TokenMessage& press, bool resend_partial)
 {
-   Debug::ft(BaseBot_send_press_to_server);
+   Debug::ft("BaseBot.send_press_to_server");
 
    SentPressInfo press_record;
 
@@ -2430,11 +2253,9 @@ void BaseBot::send_press_to_server(const TokenMessage& press_to,
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_to_console= "BaseBot.send_to_console";
-
 void BaseBot::send_to_console(std::ostringstream& report)
 {
-   Debug::ft(BaseBot_send_to_console);
+   Debug::ft("BaseBot.send_to_console");
 
    auto cli = Singleton< CliThread >::Instance();
    report << CRLF;
@@ -2444,12 +2265,10 @@ void BaseBot::send_to_console(std::ostringstream& report)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_to_reduced_powers = "BaseBot.send_to_reduced_powers";
-
 void BaseBot::send_to_reduced_powers
    (const SentPress::iterator& press_iter, const Token& inactive_power)
 {
-   Debug::ft(BaseBot_send_to_reduced_powers);
+   Debug::ft("BaseBot.send_to_reduced_powers");
 
    TokenMessage reduced_powers;
    auto receiving_powers = press_iter->receiving_powers;
@@ -2469,11 +2288,9 @@ void BaseBot::send_to_reduced_powers
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_send_to_server = "BaseBot.send_to_server";
-
 bool BaseBot::send_to_server(const TokenMessage& message)
 {
-   Debug::ft(BaseBot_send_to_server);
+   Debug::ft("BaseBot.send_to_server");
 
    if(state_ != CONNECTED)
    {
@@ -2507,11 +2324,9 @@ bool BaseBot::send_to_server(const TokenMessage& message)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_set_state = "BaseBot.set_state";
-
 void BaseBot::set_state(ProtocolState state)
 {
-   Debug::ft(BaseBot_set_state);
+   Debug::ft("BaseBot.set_state");
 
    state_ = state;
 
@@ -2536,11 +2351,9 @@ void BaseBot::set_state(ProtocolState state)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_set_title = "BaseBot.set_title";
-
 void BaseBot::set_title(token_t msg, bool rcvd)
 {
-   Debug::ft(BaseBot_set_title);
+   Debug::ft("BaseBot.set_title");
 
    //  Update the console's title to provide status information.
    //
@@ -2590,11 +2403,9 @@ void BaseBot::set_title(token_t msg, bool rcvd)
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_surviving_powers = "BaseBot.surviving_powers";
-
 TokenMessage BaseBot::surviving_powers(bool self) const
 {
-   Debug::ft(BaseBot_surviving_powers);
+   Debug::ft("BaseBot.surviving_powers");
 
    TokenMessage result;
 
@@ -2614,11 +2425,9 @@ TokenMessage BaseBot::surviving_powers(bool self) const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseBot_update_out_powers = "BaseBot.update_out_powers";
-
 void BaseBot::update_out_powers()
 {
-   Debug::ft(BaseBot_update_out_powers);
+   Debug::ft("BaseBot.update_out_powers");
 
    //  If a power owns no centres, add it to out_powers.  If it
    //  wasn't already in the set, report its elimination.

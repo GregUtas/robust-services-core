@@ -62,11 +62,9 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name CodeTools_AddForwardDependencies = "CodeTools.AddForwardDependencies";
-
 void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 {
-   Debug::ft(CodeTools_AddForwardDependencies);
+   Debug::ft("CodeTools.AddForwardDependencies");
 
    //  SYMBOLS is the usage information for the symbols that appeared in
    //  this file.  An #include should appear for a forward declaration that
@@ -180,11 +178,9 @@ void DisplaySymbolsAndFiles
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_FindForwardCandidates = "CodeTools.FindForwardCandidates";
-
 void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
 {
-   Debug::ft(CodeTools_FindForwardCandidates);
+   Debug::ft("CodeTools.FindForwardCandidates");
 
    //  A forward declaration may be required for a type that was referenced
    //  indirectly.
@@ -206,11 +202,9 @@ void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_GetTransitiveBases = "CodeTools.GetTransitiveBases";
-
 void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& tBaseIds)
 {
-   Debug::ft(CodeTools_GetTransitiveBases);
+   Debug::ft("CodeTools.GetTransitiveBases");
 
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
@@ -249,11 +243,9 @@ char LastCodeChar(const string& s, size_t slashSlashPos)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_RemoveAliasedClasses = "CodeTools.RemoveAliasedClasses";
-
 void RemoveAliasedClasses(CxxNamedSet& inclSet)
 {
-   Debug::ft(CodeTools_RemoveAliasedClasses);
+   Debug::ft("CodeTools.RemoveAliasedClasses");
 
    //  Look at all pairs of items in inclSet, whose files will be #included
    //  by this file.  If one item in the pair is a class and the other item
@@ -321,11 +313,9 @@ void RemoveAliasedClasses(CxxNamedSet& inclSet)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_RemoveIncludedBaseItems = "CodeTools.RemoveIncludedBaseItems";
-
 void RemoveIncludedBaseItems(CxxNamedSet& inclSet)
 {
-   Debug::ft(CodeTools_RemoveIncludedBaseItems);
+   Debug::ft("CodeTools.RemoveIncludedBaseItems");
 
    //  Update inclSet by removing types defined in a base class of another
    //  item in inclSet.  An #include is not needed for such a type.
@@ -369,11 +359,9 @@ void RemoveIncludedBaseItems(CxxNamedSet& inclSet)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_RemoveIndirectBaseItems = "CodeTools.RemoveIndirectBaseItems";
-
 void RemoveIndirectBaseItems(const CxxNamedSet& bases, CxxNamedSet& inclSet)
 {
-   Debug::ft(CodeTools_RemoveIndirectBaseItems);
+   Debug::ft("CodeTools.RemoveIndirectBaseItems");
 
    //  Update inclSet by removing types defined in indirect base classes
    //  of BASES, which are the base classes implemented in this file.
@@ -406,8 +394,6 @@ void RemoveIndirectBaseItems(const CxxNamedSet& bases, CxxNamedSet& inclSet)
 
 //==============================================================================
 
-fn_name CodeFile_ctor = "CodeFile.ctor";
-
 CodeFile::CodeFile(const string& name, CodeDir* dir) : LibraryItem(name),
    dir_(dir),
    isHeader_(false),
@@ -416,7 +402,7 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) : LibraryItem(name),
    parsed_(Unparsed),
    checked_(false)
 {
-   Debug::ft(CodeFile_ctor);
+   Debug::ft("CodeFile.ctor");
 
    isHeader_ = (name.find(".c") == string::npos);
    isSubsFile_ = (dir != nullptr) && dir->IsSubsDir();
@@ -426,23 +412,19 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) : LibraryItem(name),
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_dtor = "CodeFile.dtor";
-
 CodeFile::~CodeFile()
 {
-   Debug::ftnt(CodeFile_dtor);
+   Debug::ftnt("CodeFile.dtor");
 
    CxxStats::Decr(CxxStats::CODE_FILE);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_AddDirectTypes = "CodeFile.AddDirectTypes";
-
 void CodeFile::AddDirectTypes
    (const CxxNamedSet& directs, CxxNamedSet& inclSet) const
 {
-   Debug::ft(CodeFile_AddDirectTypes);
+   Debug::ft("CodeFile.AddDirectTypes");
 
    //  DIRECTS contains types that were used directly.  Types in executable
    //  code are also considered to be used directly, except for terminals
@@ -463,12 +445,10 @@ void CodeFile::AddDirectTypes
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_AddIncludeIds = "CodeFile.AddIncludeIds";
-
 void CodeFile::AddIncludeIds
    (const CxxNamedSet& inclSet, SetOfIds& inclIds) const
 {
-   Debug::ft(CodeFile_AddIncludeIds);
+   Debug::ft("CodeFile.AddIncludeIds");
 
    auto thisFid = Fid();
 
@@ -481,12 +461,10 @@ void CodeFile::AddIncludeIds
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_AddIndirectExternalTypes = "CodeFile.AddIndirectExternalTypes";
-
 void CodeFile::AddIndirectExternalTypes
    (const CxxNamedSet& indirects, CxxNamedSet& inclSet) const
 {
-   Debug::ft(CodeFile_AddIndirectExternalTypes);
+   Debug::ft("CodeFile.AddIndirectExternalTypes");
 
    //  INDIRECTS contains types that were used indirectly.  Filter out those
    //  which are terminals (for which an #include is not required) or that
@@ -514,33 +492,27 @@ void CodeFile::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_AddUsage = "CodeFile.AddUsage";
-
 void CodeFile::AddUsage(const CxxNamed* item)
 {
-   Debug::ft(CodeFile_AddUsage);
+   Debug::ft("CodeFile.AddUsage");
 
    usages_.insert(item);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_AddUser = "CodeFile.AddUser";
-
 void CodeFile::AddUser(const CodeFile* file)
 {
-   Debug::ft(CodeFile_AddUser);
+   Debug::ft("CodeFile.AddUser");
 
    userIds_.insert(file->Fid());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_Affecters = "CodeFile.Affecters";
-
 const SetOfIds& CodeFile::Affecters() const
 {
-   Debug::ft(CodeFile_Affecters);
+   Debug::ft("CodeFile.Affecters");
 
    //  If affecterIds_ is empty, build it.
    //
@@ -557,11 +529,9 @@ const SetOfIds& CodeFile::Affecters() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CalcGroup1 = "CodeFile.CalcGroup(file)";
-
 size_t CodeFile::CalcGroup(const CodeFile* file) const
 {
-   Debug::ft(CodeFile_CalcGroup1);
+   Debug::ft("CodeFile.CalcGroup(file)");
 
    if(file == nullptr) return 0;
    auto ext = file->IsSubsFile();
@@ -573,33 +543,27 @@ size_t CodeFile::CalcGroup(const CodeFile* file) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CalcGroup2 = "CodeFile.CalcGroup(fn)";
-
 size_t CodeFile::CalcGroup(const string& fn) const
 {
-   Debug::ft(CodeFile_CalcGroup2);
+   Debug::ft("CodeFile.CalcGroup(fn)");
 
    return CalcGroup(Singleton< Library >::Instance()->FindFile(fn));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CalcGroup3 = "CodeFile.CalcGroup(incl)";
-
 size_t CodeFile::CalcGroup(const Include& incl) const
 {
-   Debug::ft(CodeFile_CalcGroup3);
+   Debug::ft("CodeFile.CalcGroup(incl)");
 
    return CalcGroup(incl.FindFile());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CanBeTrimmed = "CodeFile.CanBeTrimmed";
-
 bool CodeFile::CanBeTrimmed() const
 {
-   Debug::ft(CodeFile_CanBeTrimmed);
+   Debug::ft("CodeFile.CanBeTrimmed");
 
    //  Don't trim unparsed files, empty files; or substitute files.
    //
@@ -620,11 +584,9 @@ ptrdiff_t CodeFile::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_Check = "CodeFile.Check";
-
 void CodeFile::Check()
 {
-   Debug::ft(CodeFile_Check);
+   Debug::ft("CodeFile.Check");
 
    //  We don't do a Debug::Progress on our file name, because Trim
    //  (invoked below) already does it.
@@ -655,11 +617,9 @@ void CodeFile::Check()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckDebugFt = "CodeFile.CheckDebugFt";
-
 void CodeFile::CheckDebugFt() const
 {
-   Debug::ft(CodeFile_CheckDebugFt);
+   Debug::ft("CodeFile.CheckDebugFt");
 
    auto cover = Singleton< CodeCoverage >::Instance();
    size_t begin, end;
@@ -713,7 +673,7 @@ void CodeFile::CheckDebugFt() const
                Data* data = nullptr;
                auto ok = false;
 
-               if((statement[lpar + 1] == QUOTE) && 
+               if((statement[lpar + 1] == QUOTE) &&
                   (statement[rpar - lpar + 1] == QUOTE))
                {
                   fname = statement.substr(lpar + 1, rpar - lpar - 1);
@@ -741,7 +701,8 @@ void CodeFile::CheckDebugFt() const
                   }
                }
 
-               if(!ok) LogPos(begin, DebugFtNameMismatch, *f);
+               if(!ok)
+                  LogPos(begin, DebugFtNameMismatch, *f);
             }
             break;
 
@@ -760,11 +721,9 @@ void CodeFile::CheckDebugFt() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckFunctionOrder = "CodeFile.CheckFunctionOrder";
-
 void CodeFile::CheckFunctionOrder() const
 {
-   Debug::ft(CodeFile_CheckFunctionOrder);
+   Debug::ft("CodeFile.CheckFunctionOrder");
 
    if(IsHeader() || funcs_.empty()) return;
 
@@ -849,11 +808,9 @@ void CodeFile::CheckFunctionOrder() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckIncludeGuard = "CodeFile.CheckIncludeGuard";
-
 void CodeFile::CheckIncludeGuard()
 {
-   Debug::ft(CodeFile_CheckIncludeGuard);
+   Debug::ft("CodeFile.CheckIncludeGuard");
 
    if(IsCpp()) return;
 
@@ -900,11 +857,9 @@ void CodeFile::CheckIncludeGuard()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckIncludeOrder = "CodeFile.CheckIncludeOrder";
-
 void CodeFile::CheckIncludeOrder() const
 {
-   Debug::ft(CodeFile_CheckIncludeOrder);
+   Debug::ft("CodeFile.CheckIncludeOrder");
 
    //  The desired order for #include directives is
    //    1. files in declIds_ or baseIds_
@@ -956,11 +911,9 @@ void CodeFile::CheckIncludeOrder() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckIncludes = "CodeFile.CheckIncludes";
-
 void CodeFile::CheckIncludes()
 {
-   Debug::ft(CodeFile_CheckIncludes);
+   Debug::ft("CodeFile.CheckIncludes");
 
    //  Log any #include directive that follows code.
    //
@@ -983,11 +936,9 @@ void CodeFile::CheckIncludes()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckLineBreaks = "CodeFile.CheckLineBreaks";
-
 void CodeFile::CheckLineBreaks()
 {
-   Debug::ft(CodeFile_CheckLineBreaks);
+   Debug::ft("CodeFile.CheckLineBreaks");
 
    //  Look for lines that could be combined and stay within the maximum
    //  line length.
@@ -1010,11 +961,9 @@ void CodeFile::CheckLineBreaks()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckProlog = "CodeFile.CheckProlog";
-
 void CodeFile::CheckProlog()
 {
-   Debug::ft(CodeFile_CheckProlog);
+   Debug::ft("CodeFile.CheckProlog");
 
    //  Each file should begin with
    //
@@ -1057,11 +1006,9 @@ void CodeFile::CheckProlog()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckSeparation = "CodeFile.CheckSeparation";
-
 void CodeFile::CheckSeparation()
 {
-   Debug::ft(CodeFile_CheckSeparation);
+   Debug::ft("CodeFile.CheckSeparation");
 
    //  Look for warnings that involve looking at adjacent lines or the
    //  file's contents as a whole.
@@ -1153,11 +1100,9 @@ void CodeFile::CheckSeparation()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckUsings = "CodeFile.CheckUsings";
-
 void CodeFile::CheckUsings() const
 {
-   Debug::ft(CodeFile_CheckUsings);
+   Debug::ft("CodeFile.CheckUsings");
 
    //  Check each using statement and then look for duplicates.
    //
@@ -1180,12 +1125,10 @@ void CodeFile::CheckUsings() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_ClassifyLine1 = "CodeFile.ClassifyLine(string)";
-
 LineType CodeFile::ClassifyLine
    (string s, bool& cont, std::set< Warning >& warnings) const
 {
-   Debug::ft(CodeFile_ClassifyLine1);
+   Debug::ft("CodeFile.ClassifyLine(string)");
 
    cont = false;
 
@@ -1362,11 +1305,9 @@ LineType CodeFile::ClassifyLine
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_ClassifyLine2 = "CodeFile.ClassifyLine(size_t)";
-
 LineType CodeFile::ClassifyLine(size_t n, bool& cont)
 {
-   Debug::ft(CodeFile_ClassifyLine2);
+   Debug::ft("CodeFile.ClassifyLine(size_t)");
 
    //  Get the code for line N and classify it.
    //
@@ -1417,11 +1358,9 @@ LineType CodeFile::ClassifyLine(size_t n, bool& cont)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CreateEditor = "CodeFile.CreateEditor";
-
 word CodeFile::CreateEditor(string& expl) const
 {
-   Debug::ft(CodeFile_CreateEditor);
+   Debug::ft("CodeFile.CreateEditor");
 
    expl.clear();
    if(editor_ != nullptr) return 0;
@@ -1537,11 +1476,9 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_EraseInternals = "CodeFile.EraseInternals";
-
 void CodeFile::EraseInternals(CxxNamedSet& set) const
 {
-   Debug::ft(CodeFile_EraseInternals);
+   Debug::ft("CodeFile.EraseInternals");
 
    for(auto i = set.cbegin(); i != set.cend(); NO_OP)
    {
@@ -1554,11 +1491,9 @@ void CodeFile::EraseInternals(CxxNamedSet& set) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_FindData = "CodeFile.FindData";
-
 Data* CodeFile::FindData(const string& name) const
 {
-   Debug::ft(CodeFile_FindData);
+   Debug::ft("CodeFile.FindData");
 
    for(auto d = data_.cbegin(); d != data_.cend(); ++d)
    {
@@ -1570,11 +1505,9 @@ Data* CodeFile::FindData(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_FindDeclIds = "CodeFile.FindDeclIds";
-
 void CodeFile::FindDeclIds()
 {
-   Debug::ft(CodeFile_FindDeclIds);
+   Debug::ft("CodeFile.FindDeclIds");
 
    //  If this is a .cpp, find declIds_, the headers that declare items that
    //  the .cpp defines.  Also find classIds_, the transitive base classes of
@@ -1615,12 +1548,10 @@ void CodeFile::FindDeclIds()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_FindLog = "CodeFile.FindLog";
-
 CodeWarning* CodeFile::FindLog(const CodeWarning& log,
    const CxxNamed* item, word offset, std::string& expl) const
 {
-   Debug::ft(CodeFile_FindLog);
+   Debug::ft("CodeFile.FindLog");
 
    if(CreateEditor(expl) != 0) return nullptr;
    return editor_->FindLog(log, item, offset);
@@ -1628,11 +1559,9 @@ CodeWarning* CodeFile::FindLog(const CodeWarning& log,
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_FindOrAddUsing = "CodeFile.FindOrAddUsing";
-
 void CodeFile::FindOrAddUsing(const CxxNamed* user)
 {
-   Debug::ft(CodeFile_FindOrAddUsing);
+   Debug::ft("CodeFile.FindOrAddUsing");
 
    string name;
    CxxScoped* ref;
@@ -1702,12 +1631,10 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_FindUsingFor = "CodeFile.FindUsingFor";
-
 Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
    const CxxScoped* item, const CxxScope* scope) const
 {
-   Debug::ft(CodeFile_FindUsingFor);
+   Debug::ft("CodeFile.FindUsingFor");
 
    //  It's easy if this file or SCOPE has a sufficient using statement.
    //
@@ -1746,11 +1673,9 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_Fix = "CodeFile.Fix";
-
 word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 {
-   Debug::ft(CodeFile_Fix);
+   Debug::ft("CodeFile.Fix");
 
    auto rc = CreateEditor(expl);
 
@@ -1770,11 +1695,9 @@ word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_Format = "CodeFile.Format";
-
 word CodeFile::Format(string& expl) const
 {
-   Debug::ft(CodeFile_Format);
+   Debug::ft("CodeFile.Format");
 
    Debug::Progress(Name() + CRLF);
 
@@ -1786,22 +1709,18 @@ word CodeFile::Format(string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_GenerateReport = "CodeFile.GenerateReport";
-
 void CodeFile::GenerateReport(ostream* stream, const SetOfIds& set)
 {
-   Debug::ft(CodeFile_GenerateReport);
+   Debug::ft("CodeFile.GenerateReport");
 
    CodeWarning::GenerateReport(stream, set);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_GetDeclaredBaseClasses = "CodeFile.GetDeclaredBaseClasses";
-
 void CodeFile::GetDeclaredBaseClasses(CxxNamedSet& bases) const
 {
-   Debug::ft(CodeFile_GetDeclaredBaseClasses);
+   Debug::ft("CodeFile.GetDeclaredBaseClasses");
 
    //  Reset BASES to the base classes of those declared in this file.
    //
@@ -1845,11 +1764,9 @@ int8_t CodeFile::GetDepth(size_t line) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_GetEditor = "CodeFile.GetEditor";
-
 Editor* CodeFile::GetEditor(string& expl) const
 {
-   Debug::ft(CodeFile_GetEditor);
+   Debug::ft("CodeFile.GetEditor");
 
    if(editor_ == nullptr)
    {
@@ -1885,11 +1802,9 @@ LineType CodeFile::GetLineType(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_GetUsageInfo = "CodeFile.GetUsageInfo";
-
 void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
 {
-   Debug::ft(CodeFile_GetUsageInfo);
+   Debug::ft("CodeFile.GetUsageInfo");
 
    //  Ask each of the code items in this file to provide information
    //  about the symbols that it uses.
@@ -1953,12 +1868,10 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_GetUsingFor = "CodeFile.GetUsingFor";
-
 Using* CodeFile::GetUsingFor(const string& fqName,
    size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
-   Debug::ft(CodeFile_GetUsingFor);
+   Debug::ft("CodeFile.GetUsingFor");
 
    //c Verify that the using statement is visible to SCOPE.  Files don't have
    //  using statements: namespaces, classes, and function blocks do, although
@@ -1974,11 +1887,9 @@ Using* CodeFile::GetUsingFor(const string& fqName,
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_HasForwardFor = "CodeFile.HasForwardFor";
-
 bool CodeFile::HasForwardFor(const CxxNamed* item) const
 {
-   Debug::ft(CodeFile_HasForwardFor);
+   Debug::ft("CodeFile.HasForwardFor");
 
    for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
    {
@@ -1990,11 +1901,9 @@ bool CodeFile::HasForwardFor(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_Implementers = "CodeFile.Implementers";
-
 const SetOfIds& CodeFile::Implementers()
 {
-   Debug::ft(CodeFile_Implementers);
+   Debug::ft("CodeFile.Implementers");
 
    //  If implIds_ is empty, build it.
    //
@@ -2036,11 +1945,9 @@ size_t CodeFile::IndentSize() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_InputStream = "CodeFile.InputStream";
-
 istreamPtr CodeFile::InputStream() const
 {
-   Debug::ft(CodeFile_InputStream);
+   Debug::ft("CodeFile.InputStream");
 
    //  If the file's directory is unknown (e.g. in the standard library), it
    //  can't be opened.  The file could nonetheless be known, however, as the
@@ -2229,11 +2136,9 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_LogAddIncludes = "CodeFile.LogAddIncludes";
-
 void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids) const
 {
-   Debug::ft(CodeFile_LogAddIncludes);
+   Debug::ft("CodeFile.LogAddIncludes");
 
    //  For each file in FIDS, generate a log saying that an #include for
    //  it should be added.  Put the filename in angle brackets or quotes,
@@ -2257,11 +2162,9 @@ void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_LogAddUsings = "CodeFile.LogAddUsings";
-
 void CodeFile::LogAddUsings(ostream* stream) const
 {
-   Debug::ft(CodeFile_LogAddUsings);
+   Debug::ft("CodeFile.LogAddUsings");
 
    //  Remove any redundant using statements.  These arise if, for example,
    //  a using statement to resolve A::B::C is added before one for A::B.
@@ -2330,12 +2233,10 @@ void CodeFile::LogAddUsings(ostream* stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_LogCode = "CodeFile.LogCode";
-
 void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
    const CxxNamed* item, word offset, const string& info, bool hide) const
 {
-   Debug::ft(CodeFile_LogCode);
+   Debug::ft("CodeFile.LogCode");
 
    //  Don't log warnings in a substitute file or a template instance.
    //
@@ -2355,12 +2256,10 @@ void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_LogLine = "CodeFile.LogLine";
-
 void CodeFile::LogLine(size_t line, Warning warning,
    word offset, const string& info, bool hide) const
 {
-   Debug::ft(CodeFile_LogLine);
+   Debug::ft("CodeFile.LogLine");
 
    auto pos = lexer_.GetLineStart(line);
    LogCode(warning, line, pos, nullptr, offset, info, hide);
@@ -2368,12 +2267,10 @@ void CodeFile::LogLine(size_t line, Warning warning,
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_LogPos = "CodeFile.LogPos";
-
 void CodeFile::LogPos(size_t pos, Warning warning,
    const CxxNamed* item, word offset, const string& info, bool hide) const
 {
-   Debug::ft(CodeFile_LogPos);
+   Debug::ft("CodeFile.LogPos");
 
    auto line = lexer_.GetLineNum(pos);
    LogCode(warning, line, pos, item, offset, info, hide);
@@ -2381,12 +2278,10 @@ void CodeFile::LogPos(size_t pos, Warning warning,
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_LogRemoveForwards = "CodeFile.LogRemoveForwards";
-
 void CodeFile::LogRemoveForwards
    (ostream* stream, const CxxNamedSet& items) const
 {
-   Debug::ft(CodeFile_LogRemoveForwards);
+   Debug::ft("CodeFile.LogRemoveForwards");
 
    //  Log each forward declaration that should be removed.  If the
    //  declaration cannot be found (something that shouldn't occur),
@@ -2410,12 +2305,10 @@ void CodeFile::LogRemoveForwards
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_LogRemoveIncludes = "CodeFile.LogRemoveIncludes";
-
 void CodeFile::LogRemoveIncludes
    (ostream* stream, const SetOfIds& fids) const
 {
-   Debug::ft(CodeFile_LogRemoveIncludes);
+   Debug::ft("CodeFile.LogRemoveIncludes");
 
    //  For each file in FIDS, generate a log saying that the #include for
    //  it should be removed.
@@ -2439,11 +2332,9 @@ void CodeFile::LogRemoveIncludes
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_LogRemoveUsings = "CodeFile.LogRemoveUsings";
-
 void CodeFile::LogRemoveUsings(ostream* stream) const
 {
-   Debug::ft(CodeFile_LogRemoveUsings);
+   Debug::ft("CodeFile.LogRemoveUsings");
 
    //  Using statements still marked for removal should be deleted.
    //  Don't report any that were added by >trim.
@@ -2464,11 +2355,9 @@ void CodeFile::LogRemoveUsings(ostream* stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_MakeGuardName = "CodeFile.MakeGuardName";
-
 string CodeFile::MakeGuardName() const
 {
-   Debug::ft(CodeFile_MakeGuardName);
+   Debug::ft("CodeFile.MakeGuardName");
 
    if(IsCpp()) return EMPTY_STR;
 
@@ -2538,12 +2427,10 @@ const stringVector& CodeFile::Prolog() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_PruneForwardCandidates = "CodeFile.PruneForwardCandidates";
-
 void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
    const SetOfIds& inclIds, CxxNamedSet& addForws) const
 {
-   Debug::ft(CodeFile_PruneForwardCandidates);
+   Debug::ft("CodeFile.PruneForwardCandidates");
 
    //  Go through the possible forward declarations and remove those that
    //  are not needed.
@@ -2616,12 +2503,10 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_PruneLocalForwards = "CodeFile.PruneLocalForwards";
-
 void CodeFile::PruneLocalForwards
    (CxxNamedSet& addForws, CxxNamedSet& delForws) const
 {
-   Debug::ft(CodeFile_PruneLocalForwards);
+   Debug::ft("CodeFile.PruneLocalForwards");
 
    //  Keep a forward declaration that resolved a symbol (possibly on behalf
    //  of a different file) or that *will* resolve a symbol that now needs a
@@ -2659,11 +2544,9 @@ void CodeFile::PruneLocalForwards
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_RemoveHeaderIds = "CodeFile.RemoveHeaderIds";
-
 void CodeFile::RemoveHeaderIds(SetOfIds& inclIds) const
 {
-   Debug::ft(CodeFile_RemoveHeaderIds);
+   Debug::ft("CodeFile.RemoveHeaderIds");
 
    //  If this is a .cpp, it implements items declared one or more headers
    //  (declIds_).  The .cpp need not #include anything that one of those
@@ -2688,11 +2571,9 @@ void CodeFile::RemoveHeaderIds(SetOfIds& inclIds) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_SaveBaseIds = "CodeFile.SaveBaseIds";
-
 void CodeFile::SaveBaseIds(const CxxNamedSet& bases)
 {
-   Debug::ft(CodeFile_SaveBaseIds);
+   Debug::ft("CodeFile.SaveBaseIds");
 
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
@@ -2703,11 +2584,9 @@ void CodeFile::SaveBaseIds(const CxxNamedSet& bases)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_Scan = "CodeFile.Scan";
-
 void CodeFile::Scan()
 {
-   Debug::ft(CodeFile_Scan);
+   Debug::ft("CodeFile.Scan");
 
    if(!code_.empty()) return;
 
@@ -2804,11 +2683,9 @@ void CodeFile::Scan()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_SetDir = "CodeFile.SetDir";
-
 void CodeFile::SetDir(CodeDir* dir)
 {
-   Debug::ft(CodeFile_SetDir);
+   Debug::ft("CodeFile.SetDir");
 
    dir_ = dir;
    isSubsFile_ = dir_->IsSubsDir();
@@ -2816,11 +2693,9 @@ void CodeFile::SetDir(CodeDir* dir)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_SetParsed = "CodeFile.SetParsed";
-
 void CodeFile::SetParsed(bool passed)
 {
-   Debug::ft(CodeFile_SetParsed);
+   Debug::ft("CodeFile.SetParsed");
 
    parsed_ = (passed ? Passed : Failed);
 }
@@ -2879,11 +2754,9 @@ void CodeFile::Shrink()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_Trim = "CodeFile.Trim";
-
 void CodeFile::Trim(ostream* stream)
 {
-   Debug::ft(CodeFile_Trim);
+   Debug::ft("CodeFile.Trim");
 
    //  If this file should be trimmed, find the headers that declare items
    //  that this file defines, and assemble information about the symbols

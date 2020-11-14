@@ -61,11 +61,9 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name FactoryStats_ctor = "FactoryStats.ctor";
-
 FactoryStats::FactoryStats()
 {
-   Debug::ft(FactoryStats_ctor);
+   Debug::ft("FactoryStats.ctor");
 
    icMsgsIntra_.reset(new Counter("incoming intraprocessor messages"));
    icMsgsInter_.reset(new Counter("incoming interprocessor messages"));
@@ -91,15 +89,13 @@ FactoryStats::~FactoryStats()
 
 //==============================================================================
 
-fn_name Factory_ctor = "Factory.ctor";
-
 Factory::Factory(Id fid, ContextType type, ProtocolId prid, c_string name) :
    type_(type),
    faction_(PayloadFaction),
    prid_(prid),
    name_(name)
 {
-   Debug::ft(Factory_ctor);
+   Debug::ft("Factory.ctor");
 
    Debug::Assert(name_ != nullptr);
 
@@ -206,11 +202,9 @@ ptrdiff_t Factory::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_CreateText = "Factory.CreateText";
-
 CliText* Factory::CreateText() const
 {
-   Debug::ft(Factory_CreateText);
+   Debug::ft("Factory.CreateText");
 
    return nullptr;
 }
@@ -261,11 +255,9 @@ void Factory::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_DisplayStats = "Factory.DisplayStats";
-
 void Factory::DisplayStats(ostream& stream, const Flags& options) const
 {
-   Debug::ft(Factory_DisplayStats);
+   Debug::ft("Factory.DisplayStats");
 
    stream << spaces(2) << name_ << SPACE << strIndex(Fid(), 0, false) << CRLF;
 
@@ -282,11 +274,9 @@ void Factory::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_IncrContexts = "Factory.IncrContexts";
-
 void Factory::IncrContexts() const
 {
-   Debug::ft(Factory_IncrContexts);
+   Debug::ft("Factory.IncrContexts");
 
    stats_->contexts_->Incr();
 }
@@ -305,11 +295,9 @@ bool Factory::InjectMsg(Message& msg) const
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_IsLegalIcSignal = "Factory.IsLegalIcSignal";
-
 bool Factory::IsLegalIcSignal(SignalId sid) const
 {
-   Debug::ft(Factory_IsLegalIcSignal);
+   Debug::ft("Factory.IsLegalIcSignal");
 
    if(!Signal::IsValidId(sid)) return false;
    return icSignals_[sid];
@@ -317,11 +305,9 @@ bool Factory::IsLegalIcSignal(SignalId sid) const
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_IsLegalOgSignal = "Factory.IsLegalOgSignal";
-
 bool Factory::IsLegalOgSignal(SignalId sid) const
 {
-   Debug::ft(Factory_IsLegalOgSignal);
+   Debug::ft("Factory.IsLegalOgSignal");
 
    if(!Signal::IsValidId(sid)) return false;
    return ogSignals_[sid];
@@ -361,11 +347,9 @@ Factory::Rc Factory::ReceiveMsg
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_RecordDeletion = "Factory.RecordDeletion";
-
 void Factory::RecordDeletion(bool context) const
 {
-   Debug::ft(Factory_RecordDeletion);
+   Debug::ft("Factory.RecordDeletion");
 
    if(context)
       stats_->ctxsDeleted_->Incr();
@@ -375,11 +359,9 @@ void Factory::RecordDeletion(bool context) const
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_RecordMsg = "Factory.RecordMsg";
-
 void Factory::RecordMsg(bool incoming, bool inter, size_t size) const
 {
-   Debug::ft(Factory_RecordMsg);
+   Debug::ft("Factory.RecordMsg");
 
    if(incoming)
    {
@@ -403,33 +385,27 @@ void Factory::RecordMsg(bool incoming, bool inter, size_t size) const
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_ScreenFirstMsg = "Factory.ScreenFirstMsg";
-
 bool Factory::ScreenFirstMsg(const Message& msg, MsgPriority& prio) const
 {
-   Debug::ft(Factory_ScreenFirstMsg);
+   Debug::ft("Factory.ScreenFirstMsg");
 
    return false;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_ScreenIcMsgs = "Factory.ScreenIcMsgs";
-
 bool Factory::ScreenIcMsgs(Q1Way< Message >& msgq)
 {
-   Debug::ft(Factory_ScreenIcMsgs);
+   Debug::ft("Factory.ScreenIcMsgs");
 
    return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_Shutdown = "Factory.Shutdown";
-
 void Factory::Shutdown(RestartLevel level)
 {
-   Debug::ft(Factory_Shutdown);
+   Debug::ft("Factory.Shutdown");
 
    FunctionGuard guard(Guard_ImmUnprotect);
    Restart::Release(stats_);
@@ -437,11 +413,9 @@ void Factory::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Factory_Startup = "Factory.Startup";
-
 void Factory::Startup(RestartLevel level)
 {
-   Debug::ft(Factory_Startup);
+   Debug::ft("Factory.Startup");
 
    if(stats_ == nullptr)
    {

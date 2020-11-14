@@ -42,32 +42,26 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CliTextParm_ctor = "CliTextParm.ctor";
-
 CliTextParm::CliTextParm(c_string help, bool opt, uint32_t size,
    c_string tag) : CliParm(help, opt, tag)
 {
-   Debug::ft(CliTextParm_ctor);
+   Debug::ft("CliTextParm.ctor");
 
    strings_.Init(size, CliParm::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliTextParm_dtor = "CliTextParm.dtor";
-
 CliTextParm::~CliTextParm()
 {
-   Debug::ftnt(CliTextParm_dtor);
+   Debug::ftnt("CliTextParm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliTextParm_AccessParm = "CliTextParm.AccessParm";
-
 CliParm* CliTextParm::AccessParm(CliCookie& cookie, uint32_t depth) const
 {
-   Debug::ft(CliTextParm_AccessParm);
+   Debug::ft("CliTextParm.AccessParm");
 
    //  If we are reading parameters that are associated with one of our
    //  strings, continue to search for more parameters.
@@ -116,11 +110,9 @@ bool CliTextParm::BindText(CliText& text, id_t index)
 
 //------------------------------------------------------------------------------
 
-fn_name CliTextParm_Descend = "CliTextParm.Descend";
-
 void CliTextParm::Descend(CliCookie& cookie, uint32_t index) const
 {
-   Debug::ft(CliTextParm_Descend);
+   Debug::ft("CliTextParm.Descend");
 
    //  If the string that was just read takes no parameters, advance
    //  to the next parameter at this level, else descend two levels
@@ -244,12 +236,10 @@ CliTextParm::Rc CliTextParm::GetFileNameRc(string& s, CliThread& cli) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliTextParm_GetIdentifierRc = "CliTextParm.GetIdentifierRc";
-
 CliParm::Rc CliTextParm::GetIdentifierRc(string& s, CliThread& cli,
    const string& valid, const string& exclude) const
 {
-   Debug::ft(CliTextParm_GetIdentifierRc);
+   Debug::ft("CliTextParm.GetIdentifierRc");
 
    auto rc = GetStringRc(s, cli);
 
@@ -279,11 +269,9 @@ CliParm::Rc CliTextParm::GetIdentifierRc(string& s, CliThread& cli,
 
 //------------------------------------------------------------------------------
 
-fn_name CliTextParm_GetStringRc = "CliTextParm.GetStringRc";
-
 CliParm::Rc CliTextParm::GetStringRc(string& s, CliThread& cli) const
 {
-   Debug::ft(CliTextParm_GetStringRc);
+   Debug::ft("CliTextParm.GetStringRc");
 
    string t;
 
@@ -338,11 +326,9 @@ CliParm::Rc CliTextParm::GetStringRc(string& s, CliThread& cli) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliTextParm_GetTextParmRc = "CliTextParm.GetTextParmRc";
-
 CliParm::Rc CliTextParm::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
 {
-   Debug::ft(CliTextParm_GetTextParmRc);
+   Debug::ft("CliTextParm.GetTextParmRc");
 
    i = 0;
 

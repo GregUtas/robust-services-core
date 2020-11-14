@@ -45,8 +45,6 @@ int PotsCircuit::StateCount_[] = { 0 };
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCircuit_ctor = "PotsCircuit.ctor";
-
 PotsCircuit::PotsCircuit(PotsProfile& profile) :
    state_(Idle),
    offhook_(false),
@@ -58,7 +56,7 @@ PotsCircuit::PotsCircuit(PotsProfile& profile) :
    trafficId_(0),
    buffIndex_(0)
 {
-   Debug::ft(PotsCircuit_ctor);
+   Debug::ft("PotsCircuit.ctor");
 
    for(auto i = 0; i < TraceSize; ++i) trace_[i] = NilSignalEntry;
 
@@ -67,33 +65,27 @@ PotsCircuit::PotsCircuit(PotsProfile& profile) :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCircuit_dtor = "PotsCircuit.dtor";
-
 PotsCircuit::~PotsCircuit()
 {
-   Debug::ftnt(PotsCircuit_dtor);
+   Debug::ftnt("PotsCircuit.dtor");
 
    StateCount_[state_]--;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCircuit_ClearTrafficId = "PotsCircuit.ClearTrafficId";
-
 void PotsCircuit::ClearTrafficId(size_t tid)
 {
-   Debug::ft(PotsCircuit_ClearTrafficId);
+   Debug::ft("PotsCircuit.ClearTrafficId");
 
    if(trafficId_ == tid) trafficId_ = 0;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCircuit_CreateMsg = "PotsCircuit.CreateMsg";
-
 Pots_UN_Message* PotsCircuit::CreateMsg(PotsSignal::Id sid) const
 {
-   Debug::ft(PotsCircuit_CreateMsg);
+   Debug::ft("PotsCircuit.CreateMsg");
 
    auto msg = new Pots_UN_Message(nullptr, 12);
    msg->Header()->injected = true;
@@ -163,11 +155,9 @@ string PotsCircuit::Name() const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCircuit_ReceiveMsg = "PotsCircuit.ReceiveMsg";
-
 void PotsCircuit::ReceiveMsg(const Pots_NU_Message& msg)
 {
-   Debug::ft(PotsCircuit_ReceiveMsg);
+   Debug::ft("PotsCircuit.ReceiveMsg");
 
    PotsRingInfo* pri;
    PotsScanInfo* psi;
@@ -287,11 +277,9 @@ void PotsCircuit::ReceiveMsg(const Pots_NU_Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCircuit_ResetCircuit = "PotsCircuit.ResetCircuit";
-
 void PotsCircuit::ResetCircuit()
 {
-   Debug::ft(PotsCircuit_ResetCircuit);
+   Debug::ft("PotsCircuit.ResetCircuit");
 
    //  If the circuit is not in its initial state, reset it and
    //  generate a log.
@@ -323,11 +311,9 @@ void PotsCircuit::ResetCircuit()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCircuit_ResetStateCounts = "PotsCircuit.ResetStateCounts";
-
 void PotsCircuit::ResetStateCounts(RestartLevel level)
 {
-   Debug::ft(PotsCircuit_ResetStateCounts);
+   Debug::ft("PotsCircuit.ResetStateCounts");
 
    if(level < RestartCold) return;
 
@@ -336,11 +322,9 @@ void PotsCircuit::ResetStateCounts(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCircuit_SendMsg1 = "PotsCircuit.SendMsg";
-
 bool PotsCircuit::SendMsg(Pots_UN_Message& msg)
 {
-   Debug::ft(PotsCircuit_SendMsg1);
+   Debug::ft("PotsCircuit.SendMsg");
 
    bool ok = false;
    auto sid = msg.GetSignal();
@@ -441,11 +425,9 @@ bool PotsCircuit::SendMsg(PotsSignal::Id sid)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCircuit_SetState = "PotsCircuit.SetState";
-
 void PotsCircuit::SetState(State state)
 {
-   Debug::ft(PotsCircuit_SetState);
+   Debug::ft("PotsCircuit.SetState");
 
    StateCount_[state_]--;
    state_ = state;

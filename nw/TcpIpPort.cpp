@@ -38,21 +38,17 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-fn_name TcpIpPort_ctor = "TcpIpPort.ctor";
-
 TcpIpPort::TcpIpPort(ipport_t port, const IpService* service) :
    IpPort(port, service)
 {
-   Debug::ft(TcpIpPort_ctor);
+   Debug::ft("TcpIpPort.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIpPort_dtor = "TcpIpPort.dtor";
-
 TcpIpPort::~TcpIpPort()
 {
-   Debug::ftnt(TcpIpPort_dtor);
+   Debug::ftnt("TcpIpPort.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -103,11 +99,9 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIpPort_CreateIoThread = "TcpIpPort.CreateIoThread";
-
 IoThread* TcpIpPort::CreateIoThread()
 {
-   Debug::ft(TcpIpPort_CreateIoThread);
+   Debug::ft("TcpIpPort.CreateIoThread");
 
    auto svc = static_cast< const TcpIpService* >(GetService());
    auto daemon = TcpIoDaemon::GetDaemon(svc, GetPort());

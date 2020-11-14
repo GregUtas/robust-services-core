@@ -34,11 +34,9 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name IpServiceRegistry_ctor = "IpServiceRegistry.ctor";
-
 IpServiceRegistry::IpServiceRegistry()
 {
-   Debug::ft(IpServiceRegistry_ctor);
+   Debug::ft("IpServiceRegistry.ctor");
 
    services_.Init(IpService::MaxId, IpService::CellDiff(), MemImmutable);
 }
@@ -56,11 +54,9 @@ IpServiceRegistry::~IpServiceRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name IpServiceRegistry_BindService = "IpServiceRegistry.BindService";
-
 bool IpServiceRegistry::BindService(IpService& service)
 {
-   Debug::ft(IpServiceRegistry_BindService);
+   Debug::ft("IpServiceRegistry.BindService");
 
    return services_.Insert(service);
 }
@@ -97,11 +93,9 @@ void IpServiceRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name IpServiceRegistry_Shutdown = "IpServiceRegistry.Shutdown";
-
 void IpServiceRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(IpServiceRegistry_Shutdown);
+   Debug::ft("IpServiceRegistry.Shutdown");
 
    for(auto s = services_.First(); s != nullptr; services_.Next(s))
    {
@@ -111,11 +105,9 @@ void IpServiceRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name IpServiceRegistry_Startup = "IpServiceRegistry.Startup";
-
 void IpServiceRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(IpServiceRegistry_Startup);
+   Debug::ft("IpServiceRegistry.Startup");
 
    for(auto s = services_.First(); s != nullptr; services_.Next(s))
    {
@@ -125,11 +117,9 @@ void IpServiceRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name IpServiceRegistry_UnbindService = "IpServiceRegistry.UnbindService";
-
 void IpServiceRegistry::UnbindService(IpService& service)
 {
-   Debug::ftnt(IpServiceRegistry_UnbindService);
+   Debug::ftnt("IpServiceRegistry.UnbindService");
 
    services_.Erase(service);
 }

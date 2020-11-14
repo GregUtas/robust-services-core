@@ -69,11 +69,9 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortStats_ctor = "IpPortStats.ctor";
-
 IpPortStats::IpPortStats()
 {
-   Debug::ft(IpPortStats_ctor);
+   Debug::ft("IpPortStats.ctor");
 
    recvs_.reset(new Counter("receive operations"));
    bytesRcvd_.reset(new Accumulator("bytes received"));
@@ -89,16 +87,12 @@ IpPortStats::IpPortStats()
 
 //------------------------------------------------------------------------------
 
-fn_name IpPortStats_dtor = "IpPortStats.dtor";
-
 IpPortStats::~IpPortStats()
 {
-   Debug::ftnt(IpPortStats_dtor);
+   Debug::ftnt("IpPortStats.dtor");
 }
 
 //==============================================================================
-
-fn_name IpPort_ctor = "IpPort.ctor";
 
 IpPort::IpPort(ipport_t port, const IpService* service) :
    port_(port),
@@ -108,7 +102,7 @@ IpPort::IpPort(ipport_t port, const IpService* service) :
    socket_(nullptr),
    alarm_(nullptr)
 {
-   Debug::ft(IpPort_ctor);
+   Debug::ft("IpPort.ctor");
 
    EnsureAlarm();
    stats_.reset(new IpPortStats);
@@ -117,11 +111,9 @@ IpPort::IpPort(ipport_t port, const IpService* service) :
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_dtor = "IpPort.dtor";
-
 IpPort::~IpPort()
 {
-   Debug::ftnt(IpPort_dtor);
+   Debug::ftnt("IpPort.dtor");
 
    //  Shut down any I/O thread.  It must delete its socket(s).
    //  Deregister the port.
@@ -137,11 +129,9 @@ IpPort::~IpPort()
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_BindHandler = "IpPort.BindHandler";
-
 bool IpPort::BindHandler(InputHandler& handler)
 {
-   Debug::ft(IpPort_BindHandler);
+   Debug::ft("IpPort.BindHandler");
 
    handler_.reset(&handler);
 
@@ -154,11 +144,9 @@ bool IpPort::BindHandler(InputHandler& handler)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_BytesRcvd = "IpPort.BytesRcvd";
-
 void IpPort::BytesRcvd(size_t count) const
 {
-   Debug::ft(IpPort_BytesRcvd);
+   Debug::ft("IpPort.BytesRcvd");
 
    stats_->recvs_->Incr();
    stats_->bytesRcvd_->Add(count);
@@ -167,11 +155,9 @@ void IpPort::BytesRcvd(size_t count) const
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_BytesSent = "IpPort.BytesSent";
-
 void IpPort::BytesSent(size_t count) const
 {
-   Debug::ft(IpPort_BytesSent);
+   Debug::ft("IpPort.BytesSent");
 
    stats_->sends_->Incr();
    stats_->bytesSent_->Add(count);
@@ -180,11 +166,9 @@ void IpPort::BytesSent(size_t count) const
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_CreateAppSocket = "IpPort.CreateAppSocket";
-
 SysTcpSocket* IpPort::CreateAppSocket()
 {
-   Debug::ft(IpPort_CreateAppSocket);
+   Debug::ft("IpPort.CreateAppSocket");
 
    //  This function must be overridden by ports that require it.
    //
@@ -230,11 +214,9 @@ void IpPort::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_DisplayStats = "IpPort.DisplayStats";
-
 void IpPort::DisplayStats(ostream& stream, const Flags& options) const
 {
-   Debug::ft(IpPort_DisplayStats);
+   Debug::ft("IpPort.DisplayStats");
 
    auto name = service_->Name();
 
@@ -254,11 +236,9 @@ void IpPort::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_EnsureAlarm = "IpPort.EnsureAlarm";
-
 void IpPort::EnsureAlarm()
 {
-   Debug::ft(IpPort_EnsureAlarm);
+   Debug::ft("IpPort.EnsureAlarm");
 
    //  If the port's alarm is not registered, create it.
    //
@@ -276,22 +256,18 @@ void IpPort::EnsureAlarm()
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_IngressDiscarded = "IpPort.IngressDiscarded";
-
 void IpPort::IngressDiscarded() const
 {
-   Debug::ft(IpPort_IngressDiscarded);
+   Debug::ft("IpPort.IngressDiscarded");
 
    stats_->rejects_->Incr();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_InvalidDiscarded = "IpPort.InvalidDiscarded";
-
 void IpPort::InvalidDiscarded() const
 {
-   Debug::ft(IpPort_InvalidDiscarded);
+   Debug::ft("IpPort.InvalidDiscarded");
 
    stats_->discards_->Incr();
 }
@@ -314,22 +290,18 @@ void IpPort::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_PollArrayOverflow = "IpPort.PollArrayOverflow";
-
 void IpPort::PollArrayOverflow() const
 {
-   Debug::ft(IpPort_PollArrayOverflow);
+   Debug::ft("IpPort.PollArrayOverflow");
 
    stats_->overflows_->Incr();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_RecvsInSequence = "IpPort.RecvsInSequence";
-
 void IpPort::RecvsInSequence(size_t count) const
 {
-   Debug::ft(IpPort_RecvsInSequence);
+   Debug::ft("IpPort.RecvsInSequence");
 
    stats_->maxRecvs_->Update(count);
 }
@@ -407,11 +379,9 @@ void IpPort::SetThread(IoThread* thread)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_Shutdown = "IpPort.Shutdown";
-
 void IpPort::Shutdown(RestartLevel level)
 {
-   Debug::ft(IpPort_Shutdown);
+   Debug::ft("IpPort.Shutdown");
 
    if(Restart::ClearsMemory(MemType())) return;
 
@@ -426,11 +396,9 @@ void IpPort::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_Startup = "IpPort.Startup";
-
 void IpPort::Startup(RestartLevel level)
 {
-   Debug::ft(IpPort_Startup);
+   Debug::ft("IpPort.Startup");
 
    FunctionGuard guard(Guard_MemUnprotect);
 
@@ -451,11 +419,9 @@ void IpPort::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name IpPort_UnbindHandler = "IpPort.UnbindHandler";
-
 void IpPort::UnbindHandler(const InputHandler& handler)
 {
-   Debug::ftnt(IpPort_UnbindHandler);
+   Debug::ftnt("IpPort.UnbindHandler");
 
    //  Do nothing if a different handler is registered.
    //

@@ -48,11 +48,9 @@ WhichFeatureParm::WhichFeatureParm() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsFeatureRegistry_ctor = "PotsFeatureRegistry.ctor";
-
 PotsFeatureRegistry::PotsFeatureRegistry()
 {
-   Debug::ft(PotsFeatureRegistry_ctor);
+   Debug::ft("PotsFeatureRegistry.ctor");
 
    features_.Init(PotsFeature::MaxId, PotsFeature::CellDiff(), MemImmutable);
    featuresSubscribe_.reset(new WhichFeatureParm);
@@ -118,11 +116,9 @@ void PotsFeatureRegistry::Audit()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsFeatureRegistry_BindFeature = "PotsFeatureRegistry.BindFeature";
-
 bool PotsFeatureRegistry::BindFeature(PotsFeature& feature)
 {
-   Debug::ft(PotsFeatureRegistry_BindFeature);
+   Debug::ft("PotsFeatureRegistry.BindFeature");
 
    return features_.Insert(feature);
 }
@@ -156,11 +152,9 @@ PotsFeature* PotsFeatureRegistry::Feature(PotsFeature::Id fid) const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsFeatureRegistry_UnbindFeature = "PotsFeatureRegistry.UnbindFeature";
-
 void PotsFeatureRegistry::UnbindFeature(PotsFeature& feature)
 {
-   Debug::ftnt(PotsFeatureRegistry_UnbindFeature);
+   Debug::ftnt("PotsFeatureRegistry.UnbindFeature");
 
    features_.Erase(feature);
 }

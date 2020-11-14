@@ -49,14 +49,12 @@ fixed_string MediaFailureEventStr    = "MediaFailureEvent";
 
 //------------------------------------------------------------------------------
 
-fn_name Service_ctor = "Service.ctor";
-
 Service::Service(Id sid, bool modifiable, bool modifier) :
    status_(NotRegistered),
    modifiable_(modifiable),
    modifier_(modifier)
 {
-   Debug::ft(Service_ctor);
+   Debug::ft("Service.ctor");
 
    sid_.SetId(sid);
 
@@ -407,11 +405,9 @@ c_string Service::PortName(PortId pid) const
 
 //------------------------------------------------------------------------------
 
-fn_name Service_UnbindState = "Service.UnbindState";
-
 void Service::UnbindState (State& state)
 {
-   Debug::ftnt(Service_UnbindState);
+   Debug::ftnt("Service.UnbindState");
 
    states_.Erase(state);
 }

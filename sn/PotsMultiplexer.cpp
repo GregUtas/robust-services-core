@@ -142,12 +142,10 @@ PotsMuxFactoryText::PotsMuxFactoryText() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxFactory_ctor = "PotsMuxFactory.ctor";
-
 PotsMuxFactory::PotsMuxFactory() :
    SsmFactory(PotsMuxFactoryId, PotsProtocolId, "POTS Multiplexer")
 {
-   Debug::ft(PotsMuxFactory_ctor);
+   Debug::ft("PotsMuxFactory.ctor");
 
    AddIncomingSignal(Signal::Timeout);
    AddIncomingSignal(PotsSignal::Supervise);
@@ -168,32 +166,26 @@ PotsMuxFactory::PotsMuxFactory() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxFactory_dtor = "PotsMuxFactory.dtor";
-
 PotsMuxFactory::~PotsMuxFactory()
 {
-   Debug::ftnt(PotsMuxFactory_dtor);
+   Debug::ftnt("PotsMuxFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxFactory_AllocIcMsg = "PotsMuxFactory.AllocIcMsg";
-
 Message* PotsMuxFactory::AllocIcMsg(SbIpBufferPtr& buff) const
 {
-   Debug::ft(PotsMuxFactory_AllocIcMsg);
+   Debug::ft("PotsMuxFactory.AllocIcMsg");
 
    return new Pots_NU_Message(buff);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxFactory_AllocIcPsm = "PotsMuxFactory.AllocIcPsm";
-
 ProtocolSM* PotsMuxFactory::AllocIcPsm
    (const Message& msg, ProtocolLayer& lower) const
 {
-   Debug::ft(PotsMuxFactory_AllocIcPsm);
+   Debug::ft("PotsMuxFactory.AllocIcPsm");
 
    auto& pmsg = static_cast< const PotsMessage& >(msg);
    auto phi = pmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
@@ -203,45 +195,37 @@ ProtocolSM* PotsMuxFactory::AllocIcPsm
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxFactory_AllocOgMsg = "PotsMuxFactory.AllocOgMsg";
-
 Message* PotsMuxFactory::AllocOgMsg(SignalId sid) const
 {
-   Debug::ft(PotsMuxFactory_AllocOgMsg);
+   Debug::ft("PotsMuxFactory.AllocOgMsg");
 
    return new Pots_UN_Message(nullptr, 12);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxFactory_AllocRoot = "PotsMuxFactory.AllocRoot";
-
 RootServiceSM* PotsMuxFactory::AllocRoot
    (const Message& msg, ProtocolSM& psm) const
 {
-   Debug::ft(PotsMuxFactory_AllocRoot);
+   Debug::ft("PotsMuxFactory.AllocRoot");
 
    return new PotsMuxSsm(msg, psm);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxFactory_CreateText = "PotsMuxFactory.CreateText";
-
 CliText* PotsMuxFactory::CreateText() const
 {
-   Debug::ft(PotsMuxFactory_CreateText);
+   Debug::ft("PotsMuxFactory.CreateText");
 
    return new PotsMuxFactoryText;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxFactory_FindContext = "PotsMuxFactory.FindContext";
-
 SsmContext* PotsMuxFactory::FindContext(const Message& msg) const
 {
-   Debug::ft(PotsMuxFactory_FindContext);
+   Debug::ft("PotsMuxFactory.FindContext");
 
    //  Find the root SSM for this POTS subscriber.  If it's the POTS
    //  multiplexer, then join its context.
@@ -268,32 +252,26 @@ SsmContext* PotsMuxFactory::FindContext(const Message& msg) const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxFactory_ReallocOgMsg = "PotsMuxFactory.ReallocOgMsg";
-
 Message* PotsMuxFactory::ReallocOgMsg(SbIpBufferPtr& buff) const
 {
-   Debug::ft(PotsMuxFactory_ReallocOgMsg);
+   Debug::ft("PotsMuxFactory.ReallocOgMsg");
 
    return new Pots_UN_Message(buff);
 }
 
 //==============================================================================
 
-fn_name PotsMuxPsm_ctor1 = "PotsMuxPsm.ctor(first)";
-
 PotsMuxPsm::PotsMuxPsm(Switch::PortId port) : MediaPsm(PotsMuxFactoryId),
    remSid_(NIL_ID),
    ogMsg_(nullptr),
    sendCause_(false)
 {
-   Debug::ft(PotsMuxPsm_ctor1);
+   Debug::ft("PotsMuxPsm.ctor(first)");
 
    header_.port = port;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsMuxPsm_ctor2 = "PotsMuxPsm.ctor(subseq)";
 
 PotsMuxPsm::PotsMuxPsm(ProtocolLayer& adj, bool upper, Switch::PortId port) :
    MediaPsm(PotsMuxFactoryId, adj, upper),
@@ -301,18 +279,16 @@ PotsMuxPsm::PotsMuxPsm(ProtocolLayer& adj, bool upper, Switch::PortId port) :
    ogMsg_(nullptr),
    sendCause_(false)
 {
-   Debug::ft(PotsMuxPsm_ctor2);
+   Debug::ft("PotsMuxPsm.ctor(subseq)");
 
    header_.port = port;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPsm_dtor = "PotsMuxPsm.dtor";
-
 PotsMuxPsm::~PotsMuxPsm()
 {
-   Debug::ftnt(PotsMuxPsm_dtor);
+   Debug::ftnt("PotsMuxPsm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -337,11 +313,9 @@ void PotsMuxPsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPsm_EnsureMediaMsg = "PotsMuxPsm.EnsureMediaMsg";
-
 void PotsMuxPsm::EnsureMediaMsg()
 {
-   Debug::ft(PotsMuxPsm_EnsureMediaMsg);
+   Debug::ft("PotsMuxPsm.EnsureMediaMsg");
 
    //  A media update can be included in any message, so an outgoing
    //  message only needs to be created if one doesn't already exist.
@@ -355,11 +329,9 @@ void PotsMuxPsm::EnsureMediaMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPsm_ProcessIcMsg = "PotsMuxPsm.ProcessIcMsg";
-
 ProtocolSM::IncomingRc PotsMuxPsm::ProcessIcMsg(Message& msg, Event*& event)
 {
-   Debug::ft(PotsMuxPsm_ProcessIcMsg);
+   Debug::ft("PotsMuxPsm.ProcessIcMsg");
 
    auto& pmsg = static_cast< Pots_UN_Message& >(msg);
    auto sid = pmsg.GetSignal();
@@ -495,22 +467,18 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPsm_Route = "PotsMuxPsm.Route";
-
 Message::Route PotsMuxPsm::Route() const
 {
-   Debug::ft(PotsMuxPsm_Route);
+   Debug::ft("PotsMuxPsm.Route");
 
    return Message::Internal;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPsm_SendCause = "PotsMuxPsm.SendCause";
-
 void PotsMuxPsm::SendCause(Cause::Ind cause)
 {
-   Debug::ft(PotsMuxPsm_SendCause);
+   Debug::ft("PotsMuxPsm.SendCause");
 
    cause_.cause = cause;
    sendCause_ = true;
@@ -537,11 +505,9 @@ void PotsMuxPsm::SendFacility(Facility::Ind ind)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPsm_SendFinalMsg = "PotsMuxPsm.SendFinalMsg";
-
 void PotsMuxPsm::SendFinalMsg()
 {
-   Debug::ft(PotsMuxPsm_SendFinalMsg);
+   Debug::ft("PotsMuxPsm.SendFinalMsg");
 
    if(GetState() == Idle) return;
    auto msg = new Pots_UN_Message(this, 20);
@@ -597,11 +563,9 @@ fixed_string PotsMuxRelayEventStr    = "PotsMuxRelayEvent";
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxService_ctor = "PotsMuxService.ctor";
-
 PotsMuxService::PotsMuxService() : Service(PotsMuxServiceId, true)
 {
-   Debug::ft(PotsMuxService_ctor);
+   Debug::ft("PotsMuxService.ctor");
 
    Singleton< PotsMuxNull >::Instance();
    Singleton< PotsMuxPassive >::Instance();
@@ -624,38 +588,30 @@ PotsMuxService::PotsMuxService() : Service(PotsMuxServiceId, true)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxService_dtor = "PotsMuxService.dtor";
-
 PotsMuxService::~PotsMuxService()
 {
-   Debug::ftnt(PotsMuxService_dtor);
+   Debug::ftnt("PotsMuxService.dtor");
 }
 
 //==============================================================================
 
-fn_name PotsMuxState_ctor = "PotsMuxState.ctor";
-
 PotsMuxState::PotsMuxState(Id stid) : State(PotsMuxServiceId, stid)
 {
-   Debug::ft(PotsMuxState_ctor);
+   Debug::ft("PotsMuxState.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsMuxState_dtor = "PotsMuxState.dtor";
 
 PotsMuxState::~PotsMuxState()
 {
-   Debug::ftnt(PotsMuxState_dtor);
+   Debug::ftnt("PotsMuxState.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxNull_ctor = "PotsMuxNull.ctor";
-
 PotsMuxNull::PotsMuxNull() : PotsMuxState(PotsMuxState::Null)
 {
-   Debug::ft(PotsMuxNull_ctor);
+   Debug::ft("PotsMuxNull.ctor");
 
    BindMsgAnalyzer
       (PotsMuxEventHandler::NuAnalyzeNetworkMessage, Service::NetworkPort);
@@ -665,11 +621,9 @@ PotsMuxNull::PotsMuxNull() : PotsMuxState(PotsMuxState::Null)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPassive_ctor = "PotsMuxPassive.ctor";
-
 PotsMuxPassive::PotsMuxPassive() : PotsMuxState(PotsMuxState::Passive)
 {
-   Debug::ft(PotsMuxPassive_ctor);
+   Debug::ft("PotsMuxPassive.ctor");
 
    BindMsgAnalyzer
       (PotsMuxEventHandler::PaAnalyzeUserMessage, Service::UserPort);
@@ -681,70 +635,56 @@ PotsMuxPassive::PotsMuxPassive() : PotsMuxState(PotsMuxState::Passive)
 
 //==============================================================================
 
-fn_name PotsMuxEvent_ctor = "PotsMuxEvent.ctor";
-
 PotsMuxEvent::PotsMuxEvent(Id eid, ServiceSM& owner) : Event(eid, &owner)
 {
-   Debug::ft(PotsMuxEvent_ctor);
+   Debug::ft("PotsMuxEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsMuxEvent_dtor = "PotsMuxEvent.dtor";
 
 PotsMuxEvent::~PotsMuxEvent()
 {
-   Debug::ftnt(PotsMuxEvent_dtor);
+   Debug::ftnt("PotsMuxEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsMuxInitiateEvent_ctor = "PotsMuxInitiateEvent.ctor";
 
 PotsMuxInitiateEvent::PotsMuxInitiateEvent(ServiceSM& owner) :
    PotsMuxEvent(Initiate, owner)
 {
-   Debug::ft(PotsMuxInitiateEvent_ctor);
+   Debug::ft("PotsMuxInitiateEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsMuxInitiateEvent_dtor = "PotsMuxInitiateEvent.dtor";
 
 PotsMuxInitiateEvent::~PotsMuxInitiateEvent()
 {
-   Debug::ftnt(PotsMuxInitiateEvent_dtor);
+   Debug::ftnt("PotsMuxInitiateEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsMuxRelayEvent_ctor = "PotsMuxRelayEvent.ctor";
 
 PotsMuxRelayEvent::PotsMuxRelayEvent(ServiceSM& owner) :
    PotsMuxEvent(Relay, owner)
 {
-   Debug::ft(PotsMuxRelayEvent_ctor);
+   Debug::ft("PotsMuxRelayEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxRelayEvent_dtor = "PotsMuxRelayEvent.dtor";
-
 PotsMuxRelayEvent::~PotsMuxRelayEvent()
 {
-   Debug::ftnt(PotsMuxRelayEvent_dtor);
+   Debug::ftnt("PotsMuxRelayEvent.dtor");
 }
 
 //==============================================================================
-
-fn_name PotsMuxSsm_ctor = "PotsMuxSsm.ctor";
 
 PotsMuxSsm::PotsMuxSsm(const Message& msg, ProtocolSM& psm) :
    MediaSsm(PotsMuxServiceId),
    prof_(nullptr),
    uPsm_(nullptr)
 {
-   Debug::ft(PotsMuxSsm_ctor);
+   Debug::ft("PotsMuxSsm.ctor");
 
    for(auto i = 0; i <= MaxCallId; ++i) nPsm_[i] = nullptr;
 
@@ -759,11 +699,9 @@ PotsMuxSsm::PotsMuxSsm(const Message& msg, ProtocolSM& psm) :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxSsm_dtor = "PotsMuxSsm.dtor";
-
 PotsMuxSsm::~PotsMuxSsm()
 {
-   Debug::ftnt(PotsMuxSsm_dtor);
+   Debug::ftnt("PotsMuxSsm.dtor");
 
    if((uPsm_ != nullptr) && (prof_ != nullptr))
    {
@@ -776,11 +714,9 @@ PotsMuxSsm::~PotsMuxSsm()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxSsm_CalcPort = "PotsMuxSsm.CalcPort";
-
 ServicePortId PotsMuxSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(PotsMuxSsm_CalcPort);
+   Debug::ft("PotsMuxSsm.CalcPort");
 
    auto psm = ame.Msg()->Psm();
 
@@ -790,11 +726,9 @@ ServicePortId PotsMuxSsm::CalcPort(const AnalyzeMsgEvent& ame)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxSsm_CountCalls = "PotsMuxSsm.CountCalls";
-
 size_t PotsMuxSsm::CountCalls() const
 {
-   Debug::ft(PotsMuxSsm_CountCalls);
+   Debug::ft("PotsMuxSsm.CountCalls");
 
    size_t n = 0;
 
@@ -818,11 +752,9 @@ void PotsMuxSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxSsm_Initiate = "PotsMuxSsm.Initiate";
-
 EventHandler::Rc PotsMuxSsm::Initiate(Event*& nextEvent)
 {
-   Debug::ft(PotsMuxSsm_Initiate);
+   Debug::ft("PotsMuxSsm.Initiate");
 
    auto pmsg = static_cast< PotsMessage* >(Context::ContextMsg());
    auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
@@ -846,11 +778,9 @@ EventHandler::Rc PotsMuxSsm::Initiate(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxSsm_NPsm = "PotsMuxSsm.NPsm";
-
 PotsMuxPsm* PotsMuxSsm::NPsm() const
 {
-   Debug::ft(PotsMuxSsm_NPsm);
+   Debug::ft("PotsMuxSsm.NPsm");
 
    if(nPsm_[0] == nullptr) return nPsm_[1];
    return nPsm_[0];
@@ -858,11 +788,9 @@ PotsMuxPsm* PotsMuxSsm::NPsm() const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxSsm_PsmDeleted = "PotsMuxSsm.PsmDeleted";
-
 void PotsMuxSsm::PsmDeleted(ProtocolSM& exPsm)
 {
-   Debug::ft(PotsMuxSsm_PsmDeleted);
+   Debug::ft("PotsMuxSsm.PsmDeleted");
 
    if(uPsm_ == &exPsm)
    {
@@ -886,11 +814,9 @@ void PotsMuxSsm::PsmDeleted(ProtocolSM& exPsm)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxSsm_RelayMsg = "PotsMuxSsm.RelayMsg";
-
 EventHandler::Rc PotsMuxSsm::RelayMsg()
 {
-   Debug::ft(PotsMuxSsm_RelayMsg);
+   Debug::ft("PotsMuxSsm.RelayMsg");
 
    auto pmsg = static_cast< PotsMessage* >(Context::ContextMsg());
    auto sid = pmsg->GetSignal();
@@ -974,24 +900,19 @@ void PotsMuxSsm::SetNPsm(CallId cid, PotsMuxPsm& psm)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxSsm_SetUPsm = "PotsMuxSsm.SetUPsm";
-
 void PotsMuxSsm::SetUPsm(PotsCallPsm& psm)
 {
-   Debug::ft(PotsMuxSsm_SetUPsm);
+   Debug::ft("PotsMuxSsm.SetUPsm");
 
    uPsm_ = &psm;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxNuAnalyzeNetworkMessage_ProcessEvent =
-   "PotsMuxNuAnalyzeNetworkMessage.ProcessEvent";
-
 EventHandler::Rc PotsMuxNuAnalyzeNetworkMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsMuxNuAnalyzeNetworkMessage_ProcessEvent);
+   Debug::ft("PotsMuxNuAnalyzeNetworkMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto pmsg = static_cast< Pots_NU_Message* >(ame.Msg());
@@ -1009,12 +930,10 @@ EventHandler::Rc PotsMuxNuAnalyzeNetworkMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxNuInitiate_ProcessEvent = "PotsMuxNuInitiate.ProcessEvent";
-
 EventHandler::Rc PotsMuxNuInitiate::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsMuxNuInitiate_ProcessEvent);
+   Debug::ft("PotsMuxNuInitiate.ProcessEvent");
 
    auto& mux = static_cast< PotsMuxSsm& >(ssm);
 
@@ -1023,13 +942,10 @@ EventHandler::Rc PotsMuxNuInitiate::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPaAnalyzeUserMessage_ProcessEvent =
-   "PotsMuxPaAnalyzeUserMessage.ProcessEvent";
-
 EventHandler::Rc PotsMuxPaAnalyzeUserMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsMuxPaAnalyzeUserMessage_ProcessEvent);
+   Debug::ft("PotsMuxPaAnalyzeUserMessage.ProcessEvent");
 
    nextEvent = new PotsMuxRelayEvent(ssm);
    return Continue;
@@ -1037,13 +953,10 @@ EventHandler::Rc PotsMuxPaAnalyzeUserMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPaAnalyzeNetworkMessage_ProcessEvent =
-   "PotsMuxPaAnalyzeNetworkMessage.ProcessEvent";
-
 EventHandler::Rc PotsMuxPaAnalyzeNetworkMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsMuxPaAnalyzeNetworkMessage_ProcessEvent);
+   Debug::ft("PotsMuxPaAnalyzeNetworkMessage.ProcessEvent");
 
    //  Message received from NPSM while in Passive state.
    //
@@ -1064,12 +977,10 @@ EventHandler::Rc PotsMuxPaAnalyzeNetworkMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPaRelay_ProcessEvent = "PotsMuxPaRelay.ProcessEvent";
-
 EventHandler::Rc PotsMuxPaRelay::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsMuxPaRelay_ProcessEvent);
+   Debug::ft("PotsMuxPaRelay.ProcessEvent");
 
    auto& mux = static_cast< PotsMuxSsm& >(ssm);
 

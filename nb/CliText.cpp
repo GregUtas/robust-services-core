@@ -36,13 +36,11 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CliText_ctor = "CliText.ctor";
-
 CliText::CliText(c_string help, c_string text, bool opt, uint32_t size) :
    CliParm(help, opt, nullptr),
    text_(text)
 {
-   Debug::ft(CliText_ctor);
+   Debug::ft("CliText.ctor");
 
    if(text_ == nullptr) text = EMPTY_STR;
    parms_.Init(size, CliParm::CellDiff(), MemImmutable);
@@ -50,20 +48,16 @@ CliText::CliText(c_string help, c_string text, bool opt, uint32_t size) :
 
 //------------------------------------------------------------------------------
 
-fn_name CliText_dtor = "CliText.dtor";
-
 CliText::~CliText()
 {
-   Debug::ftnt(CliText_dtor);
+   Debug::ftnt("CliText.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliText_AccessParm = "CliText.AccessParm";
-
 CliParm* CliText::AccessParm(CliCookie& cookie, uint32_t depth) const
 {
-   Debug::ft(CliText_AccessParm);
+   Debug::ft("CliText.AccessParm");
 
    //  We are currently at DEPTH in the parameter tree.  If we are looking
    //  for parameters at DEPTH + 1, go deeper into the tree to access the
@@ -117,11 +111,9 @@ bool CliText::BindParm(CliParm& parm)
 
 //------------------------------------------------------------------------------
 
-fn_name CliText_Descend = "CliText.Descend";
-
 void CliText::Descend(CliCookie& cookie) const
 {
-   Debug::ft(CliText_Descend);
+   Debug::ft("CliText.Descend");
 
    //  If the string that was just read takes no parameters, advance to
    //  the next parameter at this level, else descend one level to look
@@ -147,11 +139,9 @@ void CliText::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CliText_Explain = "CliText.Explain";
-
 void CliText::Explain(ostream& stream, col_t indent) const
 {
-   Debug::ft(CliText_Explain);
+   Debug::ft("CliText.Explain");
 
    //  Use our base class to display our string, and follow it with our
    //  parameters.
@@ -166,11 +156,9 @@ void CliText::Explain(ostream& stream, col_t indent) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliText_GetTextParmRc = "CliText.GetTextParmRc";
-
 CliParm::Rc CliText::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
 {
-   Debug::ft(CliText_GetTextParmRc);
+   Debug::ft("CliText.GetTextParmRc");
 
    i = 0;
 
@@ -247,11 +235,9 @@ void CliText::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliText_ShowValues = "CliText.ShowValues";
-
 bool CliText::ShowValues(string& values) const
 {
-   Debug::ft(CliText_ShowValues);
+   Debug::ft("CliText.ShowValues");
 
    values = HelpText();
    return false;

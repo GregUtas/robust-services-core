@@ -49,11 +49,9 @@ using std::string;
 
 namespace PotsBase
 {
-fn_name PotsProfile_ctor = "PotsProfile.ctor";
-
 PotsProfile::PotsProfile(DN dn)
 {
-   Debug::ft(PotsProfile_ctor);
+   Debug::ft("PotsProfile.ctor");
 
    //  Set the profile's identifier to its DN, create a circuit for it,
    //  initialize its queue of subscribed features, and add it to the
@@ -69,11 +67,9 @@ PotsProfile::PotsProfile(DN dn)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_dtor = "PotsProfile.dtor";
-
 PotsProfile::~PotsProfile()
 {
-   Debug::ftnt(PotsProfile_dtor);
+   Debug::ftnt("PotsProfile.dtor");
 
    //  Remove the profile from the registry.
    //
@@ -91,11 +87,9 @@ ptrdiff_t PotsProfile::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_ClearObjAddr1 = "PotsProfile.ClearObjAddr(addr)";
-
 bool PotsProfile::ClearObjAddr(const LocalAddress& addr)
 {
-   Debug::ftnt(PotsProfile_ClearObjAddr1);
+   Debug::ftnt("PotsProfile.ClearObjAddr(addr)");
 
    //  For purposes of error recovery, transition to the idle state
    //  if the address is unknown.
@@ -112,11 +106,9 @@ bool PotsProfile::ClearObjAddr(const LocalAddress& addr)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_ClearObjAddr2 = "PotsProfile.ClearObjAddr(psm)";
-
 bool PotsProfile::ClearObjAddr(const ProtocolSM* psm)
 {
-   Debug::ftnt(PotsProfile_ClearObjAddr2);
+   Debug::ftnt("PotsProfile.ClearObjAddr(psm)");
 
    if(psm == nullptr) return false;
    auto port = psm->Port();
@@ -126,11 +118,9 @@ bool PotsProfile::ClearObjAddr(const ProtocolSM* psm)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_Deregister = "PotsProfile.Deregister";
-
 bool PotsProfile::Deregister()
 {
-   Debug::ft(PotsProfile_Deregister);
+   Debug::ft("PotsProfile.Deregister");
 
    FunctionGuard guard(Guard_MemUnprotect);
 
@@ -179,11 +169,9 @@ void PotsProfile::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_FindFeature = "PotsProfile.FindFeature";
-
 PotsFeatureProfile* PotsProfile::FindFeature(PotsFeature::Id fid) const
 {
-   Debug::ft(PotsProfile_FindFeature);
+   Debug::ft("PotsProfile.FindFeature");
 
    for(auto f = featureq_.First(); f != nullptr; featureq_.Next(f))
    {
@@ -195,22 +183,18 @@ PotsFeatureProfile* PotsProfile::FindFeature(PotsFeature::Id fid) const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_HasFeature = "PotsProfile.HasFeature";
-
 bool PotsProfile::HasFeature(PotsFeature::Id fid) const
 {
-   Debug::ft(PotsProfile_HasFeature);
+   Debug::ft("PotsProfile.HasFeature");
 
    return (FindFeature(fid) != nullptr);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_SetObjAddr = "PotsProfile.SetObjAddr";
-
 bool PotsProfile::SetObjAddr(const MsgPort& port)
 {
-   Debug::ft(PotsProfile_SetObjAddr);
+   Debug::ft("PotsProfile.SetObjAddr");
 
    //  Fail if PORT is invalid.
    //
@@ -241,11 +225,9 @@ bool PotsProfile::SetObjAddr(const MsgPort& port)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_SetState = "PotsProfile.SetState";
-
 void PotsProfile::SetState(const ProtocolSM* psm, State state)
 {
-   Debug::ft(PotsProfile_SetState);
+   Debug::ft("PotsProfile.SetState");
 
    if(psm == nullptr) return;
    auto port = psm->Port();
@@ -259,11 +241,9 @@ void PotsProfile::SetState(const ProtocolSM* psm, State state)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_Shutdown = "PotsProfile.Shutdown";
-
 void PotsProfile::Shutdown(RestartLevel level)
 {
-   Debug::ft(PotsProfile_Shutdown);
+   Debug::ft("PotsProfile.Shutdown");
 
    if(Restart::ClearsMemory(MemType())) return;
 
@@ -276,11 +256,9 @@ void PotsProfile::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_Startup = "PotsProfile.Startup";
-
 void PotsProfile::Startup(RestartLevel level)
 {
-   Debug::ft(PotsProfile_Startup);
+   Debug::ft("PotsProfile.Startup");
 
    if(circuit_ == nullptr)
    {
@@ -291,11 +269,9 @@ void PotsProfile::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_Subscribe = "PotsProfile.Subscribe";
-
 bool PotsProfile::Subscribe(PotsFeature::Id fid, CliThread& cli)
 {
-   Debug::ft(PotsProfile_Subscribe);
+   Debug::ft("PotsProfile.Subscribe");
 
    auto reg = Singleton< PotsFeatureRegistry >::Instance();
 
@@ -335,11 +311,9 @@ bool PotsProfile::Subscribe(PotsFeature::Id fid, CliThread& cli)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfile_Unsubscribe = "PotsProfile.Unsubscribe";
-
 bool PotsProfile::Unsubscribe(PotsFeature::Id fid)
 {
-   Debug::ft(PotsProfile_Unsubscribe);
+   Debug::ft("PotsProfile.Unsubscribe");
    for(auto fp = featureq_.First(); fp != nullptr; featureq_.Next(fp))
    {
       if(fp->Fid() == fid)

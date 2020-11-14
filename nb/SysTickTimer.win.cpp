@@ -31,13 +31,11 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name SysTickTimer_ctor = "SysTickTimer.ctor";
-
 SysTickTimer::SysTickTimer() :
    ticks_per_sec_(1000),
    available_(false)
 {
-   Debug::ft(SysTickTimer_ctor);
+   Debug::ft("SysTickTimer.ctor");
 
    LARGE_INTEGER frequency;
 

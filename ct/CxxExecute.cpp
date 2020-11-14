@@ -180,11 +180,9 @@ std::vector< XrefFrame > Context::XrefFrames_ = std::vector< XrefFrame >();
 
 //------------------------------------------------------------------------------
 
-fn_name Context_ClearTracepoints = "Context.ClearTracepoints";
-
 void Context::ClearTracepoints()
 {
-   Debug::ft(Context_ClearTracepoints);
+   Debug::ft("Context.ClearTracepoints");
 
    Tracepoints_.clear();
 }
@@ -220,11 +218,9 @@ void Context::DisplayTracepoints(ostream& stream, const string& prefix)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Enter = "Context.Enter";
-
 void Context::Enter(const CxxScoped* owner)
 {
-   Debug::ft(Context_Enter);
+   Debug::ft("Context.Enter");
 
    Trace(CxxTrace::START_SCOPE, 0, owner->ScopedName(true));
    SetPos(owner);
@@ -232,12 +228,10 @@ void Context::Enter(const CxxScoped* owner)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_EraseTracepoint = "Context.EraseTracepoint";
-
 void Context::EraseTracepoint
    (const CodeFile* file, size_t line, Tracepoint::Action action)
 {
-   Debug::ft(Context_EraseTracepoint);
+   Debug::ft("Context.EraseTracepoint");
 
    Tracepoint loc(file, line, action);
    Tracepoints_.erase(loc);
@@ -273,12 +267,10 @@ XrefUpdater Context::GetXrefUpdater()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_InsertTracepoint = "Context.InsertTracepoint";
-
 void Context::InsertTracepoint
    (const CodeFile* file, size_t line, Tracepoint::Action action)
 {
-   Debug::ft(Context_InsertTracepoint);
+   Debug::ft("Context.InsertTracepoint");
 
    Tracepoint loc(file, line, action);
    Tracepoints_.insert(loc);
@@ -315,11 +307,9 @@ string Context::Location()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Log = "Context.Log";
-
 void Context::Log(Warning warning, const CxxNamed* item, word offset)
 {
-   Debug::ft(Context_Log);
+   Debug::ft("Context.Log");
 
    if(File_ == nullptr) return;
    File_->LogPos(GetPos(), warning, item, offset);
@@ -356,11 +346,9 @@ bool Context::ParsingTemplateInstance()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_PopParser= "Context.PopParser";
-
 void Context::PopParser(const Parser* parser)
 {
-   Debug::ft(Context_PopParser);
+   Debug::ft("Context.PopParser");
 
    //  If PARSER is on top of the stack, remove it.
    //
@@ -382,11 +370,9 @@ void Context::PopXrefFrame()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_PrevScope = "Context.PrevScope";
-
 CxxScope* Context::PrevScope()
 {
-   Debug::ft(Context_PrevScope);
+   Debug::ft("Context.PrevScope");
 
    if(!ParsingTemplateInstance()) return Scope();
 
@@ -397,11 +383,9 @@ CxxScope* Context::PrevScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_PushParser= "Context.PushParser";
-
 void Context::PushParser(const Parser* parser)
 {
-   Debug::ft(Context_PushParser);
+   Debug::ft("Context.PushParser");
 
    ParseFramePtr frame(new ParseFrame(parser));
    Frame_ = frame.get();
@@ -427,11 +411,9 @@ void Context::PushXrefItem(const TypeName* item)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Reset = "Context.Reset";
-
 void Context::Reset()
 {
-   Debug::ft(Context_Reset);
+   Debug::ft("Context.Reset");
 
    Frame_->Reset();
    File_ = nullptr;
@@ -441,11 +423,9 @@ void Context::Reset()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_SetFile = "Context.SetFile";
-
 void Context::SetFile(CodeFile* file)
 {
-   Debug::ft(Context_SetFile);
+   Debug::ft("Context.SetFile");
 
    //  This is the start of a new parse, so reinitialize the context.
    //
@@ -500,11 +480,9 @@ void Context::SetPos(const CxxScoped* scope)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Shutdown = "Context.Shutdown";
-
 void Context::Shutdown(RestartLevel level)
 {
-   Debug::ft(Context_Shutdown);
+   Debug::ft("Context.Shutdown");
 
    Tracing = false;
    Options_ = EMPTY_STR;
@@ -517,11 +495,9 @@ void Context::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_StartTracing = "Context.StartTracing";
-
 bool Context::StartTracing()
 {
-   Debug::ft(Context_StartTracing);
+   Debug::ft("Context.StartTracing");
 
    auto x = OptionIsOn(TraceCompilation);
    auto f = OptionIsOn(TraceFunctions);
@@ -547,12 +523,10 @@ bool Context::StartTracing()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_SwLog = "Context.SwLog";
-
 void Context::SwLog
    (fn_name_arg func, const string& expl, word errval, bool stack)
 {
-   Debug::ft(Context_SwLog);
+   Debug::ft("Context.SwLog");
 
    //  Logs are usually suppressed when compiling a function in a template.
    //
@@ -622,11 +596,9 @@ void Context::Trace(CxxTrace::Action act, const CxxToken* token)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_WasCalled = "Context.WasCalled";
-
 void Context::WasCalled(Function* func)
 {
-   Debug::ft(Context_WasCalled);
+   Debug::ft("Context.WasCalled");
 
    if(func == nullptr) return;
    func->WasCalled();
@@ -756,13 +728,11 @@ bool FileTrace::Display(ostream& stream, const string& opts)
 
 //==============================================================================
 
-fn_name ParseFrame_ctor = "ParseFrame.ctor";
-
 ParseFrame::ParseFrame(const Parser* parser) :
    parser_(parser),
    pos_(string::npos)
 {
-   Debug::ft(ParseFrame_ctor);
+   Debug::ft("ParseFrame.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -788,22 +758,18 @@ void ParseFrame::Clear(word from)
 
 //------------------------------------------------------------------------------
 
-fn_name ParseFrame_EraseLocal = "ParseFrame.EraseLocal";
-
 void ParseFrame::EraseLocal(const CxxScoped* local)
 {
-   Debug::ft(ParseFrame_EraseLocal);
+   Debug::ft("ParseFrame.EraseLocal");
 
    EraseSymbol(local, locals_);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ParseFrame_Execute = "ParseFrame.Execute";
-
 void ParseFrame::Execute()
 {
-   Debug::ft(ParseFrame_Execute);
+   Debug::ft("ParseFrame.Execute");
 
    //  There is nothing to do if the stacks are empty.
    //
@@ -866,11 +832,9 @@ CxxScoped* ParseFrame::FindLocal(const string& name, SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
-fn_name ParseFrame_InsertLocal = "ParseFrame.InsertLocal";
-
 void ParseFrame::InsertLocal(CxxScoped* local)
 {
-   Debug::ft(ParseFrame_InsertLocal);
+   Debug::ft("ParseFrame.InsertLocal");
 
    typedef std::pair< string, CxxScoped* > LocalPair;
 
@@ -973,11 +937,9 @@ const Operation* ParseFrame::PopOp()
 
 //------------------------------------------------------------------------------
 
-fn_name ParseFrame_PopOptional = "ParseFrame.PopOptional";
-
 bool ParseFrame::PopOptional()
 {
-   Debug::ft(ParseFrame_PopOptional);
+   Debug::ft("ParseFrame.PopOptional");
 
    if(opts_.empty()) return false;
    opts_.pop_back();
@@ -1045,33 +1007,27 @@ void ParseFrame::PushOp(const Operation* op)
 
 //------------------------------------------------------------------------------
 
-fn_name ParseFrame_PushOptional = "ParseFrame.PushOptional";
-
 void ParseFrame::PushOptional(OptionalCode* code)
 {
-   Debug::ft(ParseFrame_PushOptional);
+   Debug::ft("ParseFrame.PushOptional");
 
    opts_.push_back(code);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ParseFrame_PushScope = "ParseFrame.PushScope";
-
 void ParseFrame::PushScope(CxxScope* scope)
 {
-   Debug::ft(ParseFrame_PushScope);
+   Debug::ft("ParseFrame.PushScope");
 
    scopes_.push_back(scope);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ParseFrame_Reset = "ParseFrame.Reset";
-
 void ParseFrame::Reset()
 {
-   Debug::ft(ParseFrame_Reset);
+   Debug::ft("ParseFrame.Reset");
 
    opts_.clear();
    locals_.clear();
@@ -1090,11 +1046,9 @@ CxxScope* ParseFrame::Scope() const
 
 //------------------------------------------------------------------------------
 
-fn_name ParseFrame_TopArg = "ParseFrame.TopArg";
-
 StackArg* ParseFrame::TopArg()
 {
-   Debug::ft(ParseFrame_TopArg);
+   Debug::ft("ParseFrame.TopArg");
 
    if(args_.empty()) return nullptr;
    return &args_.back();
@@ -1102,11 +1056,9 @@ StackArg* ParseFrame::TopArg()
 
 //------------------------------------------------------------------------------
 
-fn_name ParseFrame_TopOp = "ParseFrame.TopOp";
-
 const Operation* ParseFrame::TopOp() const
 {
-   Debug::ft(ParseFrame_TopOp);
+   Debug::ft("ParseFrame.TopOp");
 
    if(ops_.empty()) return nullptr;
    return ops_.back();
@@ -1119,8 +1071,6 @@ const StackArg NilStackArg = StackArg(nullptr, 0, false);
 StackArg StackArg::AutoType_ = NilStackArg;
 
 //------------------------------------------------------------------------------
-
-fn_name StackArg_ctor1 = "StackArg.ctor(ptrs)";
 
 StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
    item(t),
@@ -1138,12 +1088,10 @@ StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
    ctor_(ctor),
    read_(false)
 {
-   Debug::ft(StackArg_ctor1);
+   Debug::ft("StackArg.ctor(ptrs)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name StackArg_ctor2 = "StackArg.ctor(func)";
 
 StackArg::StackArg(Function* f, TypeName* name) :
    item(f),
@@ -1161,12 +1109,10 @@ StackArg::StackArg(Function* f, TypeName* name) :
    ctor_(false),
    read_(false)
 {
-   Debug::ft(StackArg_ctor2);
+   Debug::ft("StackArg.ctor(func)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name StackArg_ctor3 = "StackArg.ctor(via)";
 
 StackArg::StackArg(CxxToken* t, TypeName* name,
    const StackArg& via, Cxx::Operator op) :
@@ -1185,7 +1131,7 @@ StackArg::StackArg(CxxToken* t, TypeName* name,
    ctor_(false),
    read_(false)
 {
-   Debug::ft(StackArg_ctor3);
+   Debug::ft("StackArg.ctor(via)");
 
    //c Support a via_ chain (that is, also record via_.via_).  This
    //  would fix the bug where b is flagged as "could be const" despite
@@ -1215,8 +1161,6 @@ StackArg::StackArg(CxxToken* t, TypeName* name,
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_ctor4 = "StackArg.ctor(name)";
-
 StackArg::StackArg(CxxToken* t, TypeName* name) :
    item(t),
    name(name),
@@ -1233,16 +1177,14 @@ StackArg::StackArg(CxxToken* t, TypeName* name) :
    ctor_(false),
    read_(false)
 {
-   Debug::ft(StackArg_ctor4);
+   Debug::ft("StackArg.ctor(name)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_Arrays = "StackArg.Arrays";
-
 size_t StackArg::Arrays() const
 {
-   Debug::ft(StackArg_Arrays);
+   Debug::ft("StackArg.Arrays");
 
    if(item == nullptr) return 0;
    auto spec = item->GetTypeSpec();
@@ -1374,12 +1316,10 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_CalcMatchWith = "StackArg.CalcMatchWith";
-
 TypeMatch StackArg::CalcMatchWith(const StackArg& that,
    const string& thisType, const string& thatType) const
 {
-   Debug::ft(StackArg_CalcMatchWith);
+   Debug::ft("StackArg.CalcMatchWith");
 
    auto best = MatchWith(that, thisType, thatType);
    if(best >= Derivable) return best;
@@ -1444,11 +1384,9 @@ TypeMatch StackArg::CalcMatchWith(const StackArg& that,
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_CanBeOverloaded = "StackArg.CanBeOverloaded";
-
 bool StackArg::CanBeOverloaded() const
 {
-   Debug::ft(StackArg_CanBeOverloaded);
+   Debug::ft("StackArg.CanBeOverloaded");
 
    if(item == nullptr) return false;
    if(Ptrs(true) != 0) return false;
@@ -1458,11 +1396,9 @@ bool StackArg::CanBeOverloaded() const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_CheckIfBool = "StackArg.CheckIfBool";
-
 void StackArg::CheckIfBool() const
 {
-   Debug::ft(StackArg_CheckIfBool);
+   Debug::ft("StackArg.CheckIfBool");
 
    switch(DataSpec::Bool->MustMatchWith(*this))
    {
@@ -1476,12 +1412,9 @@ void StackArg::CheckIfBool() const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_ContextFunctionIsNonConst =
-   "StackArg.ContextFunctionIsNonConst";
-
 void StackArg::ContextFunctionIsNonConst()
 {
-   Debug::ft(StackArg_ContextFunctionIsNonConst);
+   Debug::ft("StackArg.ContextFunctionIsNonConst");
 
    auto func = Context::Scope()->GetFunction();
    if(func != nullptr) func->IncrThisWrites();
@@ -1496,11 +1429,9 @@ bool StackArg::IsBool() const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_IsDefaultCtor = "StackArg.IsDefaultCtor";
-
 bool StackArg::IsDefaultCtor(const StackArgVector& args) const
 {
-   Debug::ft(StackArg_IsDefaultCtor);
+   Debug::ft("StackArg.IsDefaultCtor");
 
    //  For this item to be a constructor, it must either *be* a class or its
    //  name must be that *of* its class.  The first can occur because, when
@@ -1537,22 +1468,18 @@ bool StackArg::IsDefaultCtor(const StackArgVector& args) const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_IsReadOnly = "StackArg.IsReadOnly";
-
 bool StackArg::IsReadOnly() const
 {
-   Debug::ft(StackArg_IsReadOnly);
+   Debug::ft("StackArg.IsReadOnly");
 
    return (Ptrs(true) == 0 ? const_ : constptr_);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_MatchConst = "StackArg.MatchConst";
-
 TypeMatch StackArg::MatchConst(const StackArg& that, TypeMatch match) const
 {
-   Debug::ft(StackArg_MatchConst);
+   Debug::ft("StackArg.MatchConst");
 
    //  o A const argument can be passed to a non-const parameter by value.
    //  o A non-const object can be passed to a const function, but only if
@@ -1581,12 +1508,10 @@ TypeMatch StackArg::MatchConst(const StackArg& that, TypeMatch match) const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_MatchWith = "StackArg.MatchWith";
-
 TypeMatch StackArg::MatchWith(const StackArg& that,
    const string& thisType, const string& thatType) const
 {
-   Debug::ft(StackArg_MatchWith);
+   Debug::ft("StackArg.MatchWith");
 
    if(this->item == nullptr) return Incompatible;
    if(that.item == nullptr) return Incompatible;
@@ -1655,11 +1580,9 @@ TypeMatch StackArg::MatchWith(const StackArg& that,
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_NumericType = "StackArg.NumericType";
-
 Numeric StackArg::NumericType() const
 {
-   Debug::ft(StackArg_NumericType);
+   Debug::ft("StackArg.NumericType");
 
    if(item == nullptr) return Numeric::Nil;
    if(Ptrs(true) > 0) return Numeric::Pointer;
@@ -1710,11 +1633,9 @@ size_t StackArg::Ptrs(bool arrays) const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_Refs = "StackArg.Refs";
-
 size_t StackArg::Refs() const
 {
-   Debug::ft(StackArg_Refs);
+   Debug::ft("StackArg.Refs");
 
    if(item == nullptr) return 0;
    auto spec = item->GetTypeSpec();
@@ -1744,22 +1665,18 @@ void StackArg::SetAsAutoType() const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_SetAsDirect = "StackArg.SetAsDirect";
-
 void StackArg::SetAsDirect() const
 {
-   Debug::ft(StackArg_SetAsDirect);
+   Debug::ft("StackArg.SetAsDirect");
 
    if(name != nullptr) name->SetAsDirect();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_SetAsReadOnly = "StackArg.SetAsReadOnly";
-
 void StackArg::SetAsReadOnly()
 {
-   Debug::ft(StackArg_SetAsReadOnly);
+   Debug::ft("StackArg.SetAsReadOnly");
 
    if(!item->IsPointer(false))
       const_ = true;
@@ -1769,11 +1686,9 @@ void StackArg::SetAsReadOnly()
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_SetAsTemporary = "StackArg.SetAsTemporary";
-
 void StackArg::SetAsTemporary()
 {
-   Debug::ft(StackArg_SetAsTemporary);
+   Debug::ft("StackArg.SetAsTemporary");
 
    SetAsWriteable();
    member_ = false;
@@ -1781,11 +1696,9 @@ void StackArg::SetAsTemporary()
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_SetAsWriteable = "StackArg.SetAsWriteable";
-
 void StackArg::SetAsWriteable()
 {
-   Debug::ft(StackArg_SetAsWriteable);
+   Debug::ft("StackArg.SetAsWriteable");
 
    if(!item->IsPointer(false))
       const_ = false;
@@ -1818,22 +1731,18 @@ void StackArg::SetAutoType()
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_SetAutoTypeFor = "StackArg.SetAutoTypeFor";
-
 bool StackArg::SetAutoTypeFor(const FuncData& data)
 {
-   Debug::ft(StackArg_SetAutoTypeFor);
+   Debug::ft("StackArg.SetAutoTypeFor");
 
    return AutoType_.SetAutoTypeOn(data);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_SetAutoTypeOn = "StackArg.SetAutoTypeOn";
-
 bool StackArg::SetAutoTypeOn(const FuncData& data) const
 {
-   Debug::ft(StackArg_SetAutoTypeOn);
+   Debug::ft("StackArg.SetAutoTypeOn");
 
    //  An auto type acquires the type that resulted from the right-hand side
    //  of the expression that was just compiled.  However, it is adjusted to
@@ -1917,11 +1826,9 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_SetNewPtrs = "StackArg.SetNewPtrs";
-
 void StackArg::SetNewPtrs()
 {
-   Debug::ft(StackArg_SetNewPtrs);
+   Debug::ft("StackArg.SetNewPtrs");
 
    //  When operator new is invoked, it returns a pointer to memory allocated
    //  for the *top level* type.  If that type has any pointer or array tags,
@@ -1997,11 +1904,9 @@ string StackArg::TypeString(bool arg) const
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_WasIndexed = "StackArg.WasIndexed";
-
 void StackArg::WasIndexed()
 {
-   Debug::ft(StackArg_WasIndexed);
+   Debug::ft("StackArg.WasIndexed");
 
    //  If the number of pointers (excluding arrays) attached to this type
    //  accounts for all the pointers that remain (which includes arrays),
@@ -2027,11 +1932,9 @@ void StackArg::WasIndexed()
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_WasRead = "StackArg.WasRead";
-
 void StackArg::WasRead() const
 {
-   Debug::ft(StackArg_WasRead);
+   Debug::ft("StackArg.WasRead");
 
    if(read_) return;
    if(item == nullptr) return;
@@ -2124,8 +2027,6 @@ void Tracepoint::Display(ostream& stream, const string& prefix) const
 
 //------------------------------------------------------------------------------
 
-fn_name Tracepoint_OnLine = "Tracepoint.OnLine";
-
 void Tracepoint::OnLine(const CodeFile* file, size_t line, bool compiling) const
 {
    if(file_ != file) return;
@@ -2133,7 +2034,7 @@ void Tracepoint::OnLine(const CodeFile* file, size_t line, bool compiling) const
    if(parsed_ && !compiling) return;
    if(compiled_ && compiling) return;
 
-   Debug::ft(Tracepoint_OnLine);
+   Debug::ft("Tracepoint.OnLine");
 
    switch(action_)
    {

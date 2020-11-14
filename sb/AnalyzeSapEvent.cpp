@@ -38,8 +38,6 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name AnalyzeSapEvent_ctor = "AnalyzeSapEvent.ctor";
-
 AnalyzeSapEvent::AnalyzeSapEvent(ServiceSM& owner, StateId currState,
    Event& currEvent, TriggerId tid) :
    Event(AnalyzeSap, &owner),
@@ -50,25 +48,21 @@ AnalyzeSapEvent::AnalyzeSapEvent(ServiceSM& owner, StateId currState,
    currInit_(nullptr),
    savedMsg_(nullptr)
 {
-   Debug::ft(AnalyzeSapEvent_ctor);
+   Debug::ft("AnalyzeSapEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name AnalyzeSapEvent_dtor = "AnalyzeSapEvent.dtor";
 
 AnalyzeSapEvent::~AnalyzeSapEvent()
 {
-   Debug::ftnt(AnalyzeSapEvent_dtor);
+   Debug::ftnt("AnalyzeSapEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeSapEvent_BuildSap = "AnalyzeSapEvent.BuildSap";
-
 Event* AnalyzeSapEvent::BuildSap(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(AnalyzeSapEvent_BuildSap);
+   Debug::ft("AnalyzeSapEvent.BuildSap");
 
    //  Second-order modifiers receive the Analyze SAP event in its
    //  original form.
@@ -78,11 +72,9 @@ Event* AnalyzeSapEvent::BuildSap(ServiceSM& owner, TriggerId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeSapEvent_BuildSnp = "AnalyzeSapEvent.BuildSnp";
-
 Event* AnalyzeSapEvent::BuildSnp(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(AnalyzeSapEvent_BuildSnp);
+   Debug::ft("AnalyzeSapEvent.BuildSnp");
 
    //  Notification is not provided after handling the Analyze SAP event.
    //
@@ -115,11 +107,9 @@ void AnalyzeSapEvent::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeSapEvent_Free = "AnalyzeSapEvent.Free";
-
 void AnalyzeSapEvent::Free()
 {
-   Debug::ft(AnalyzeSapEvent_Free);
+   Debug::ft("AnalyzeSapEvent.Free");
 
    //  Free the underlying event and the SAP.
    //
@@ -158,11 +148,9 @@ void AnalyzeSapEvent::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeSapEvent_Restore = "AnalyzeSapEvent.Restore";
-
 Event* AnalyzeSapEvent::Restore(EventHandler::Rc& rc)
 {
-   Debug::ft(AnalyzeSapEvent_Restore);
+   Debug::ft("AnalyzeSapEvent.Restore");
 
    //  Restore the SAP, its underlying event, and the saved context message.
    //
@@ -186,11 +174,9 @@ Event* AnalyzeSapEvent::Restore(EventHandler::Rc& rc)
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeSapEvent_RestoreContext = "AnalyzeSapEvent.RestoreContext";
-
 Event* AnalyzeSapEvent::RestoreContext(EventHandler::Rc& rc)
 {
-   Debug::ft(AnalyzeSapEvent_RestoreContext);
+   Debug::ft("AnalyzeSapEvent.RestoreContext");
 
    //  The Restore function handles everything.
    //
@@ -199,11 +185,9 @@ Event* AnalyzeSapEvent::RestoreContext(EventHandler::Rc& rc)
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeSapEvent_Save = "AnalyzeSapEvent.Save";
-
 bool AnalyzeSapEvent::Save()
 {
-   Debug::ft(AnalyzeSapEvent_Save);
+   Debug::ft("AnalyzeSapEvent.Save");
 
    //  Save the SAP and its underlying event.
    //
@@ -220,11 +204,9 @@ bool AnalyzeSapEvent::Save()
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeSapEvent_SaveContext = "AnalyzeSapEvent.SaveContext";
-
 bool AnalyzeSapEvent::SaveContext()
 {
-   Debug::ft(AnalyzeSapEvent_SaveContext);
+   Debug::ft("AnalyzeSapEvent.SaveContext");
 
    //  Save the context message if successful in saving the SAP event.
    //

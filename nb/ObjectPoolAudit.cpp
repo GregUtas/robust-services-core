@@ -35,26 +35,22 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name ObjectPoolAudit_ctor = "ObjectPoolAudit.ctor";
-
 ObjectPoolAudit::ObjectPoolAudit() :
    Thread(AuditFaction, Singleton< ObjectDaemon >::Instance()),
    interval_(Duration(5, SECS)),
    phase_(CheckingFreeq),
    pid_(NIL_ID)
 {
-   Debug::ft(ObjectPoolAudit_ctor);
+   Debug::ft("ObjectPoolAudit.ctor");
 
    SetInitialized();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolAudit_dtor = "ObjectPoolAudit.dtor";
-
 ObjectPoolAudit::~ObjectPoolAudit()
 {
-   Debug::ftnt(ObjectPoolAudit_dtor);
+   Debug::ftnt("ObjectPoolAudit.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -66,11 +62,9 @@ c_string ObjectPoolAudit::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolAudit_Destroy = "ObjectPoolAudit.Destroy";
-
 void ObjectPoolAudit::Destroy()
 {
-   Debug::ft(ObjectPoolAudit_Destroy);
+   Debug::ft("ObjectPoolAudit.Destroy");
 
    Singleton< ObjectPoolAudit >::Destroy();
 }
@@ -89,11 +83,9 @@ void ObjectPoolAudit::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolAudit_Enter = "ObjectPoolAudit.Enter";
-
 void ObjectPoolAudit::Enter()
 {
-   Debug::ft(ObjectPoolAudit_Enter);
+   Debug::ft("ObjectPoolAudit.Enter");
 
    //  Audit blocks forever.
    //
@@ -113,11 +105,9 @@ void ObjectPoolAudit::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolAudit_SetInterval = "ObjectPoolAudit.SetInterval";
-
 void ObjectPoolAudit::SetInterval(const Duration& interval)
 {
-   Debug::ft(ObjectPoolAudit_SetInterval);
+   Debug::ft("ObjectPoolAudit.SetInterval");
 
    auto prev = interval_;
    interval_ = interval;

@@ -24,7 +24,6 @@
 #include "Library.h"
 #include "Q2Way.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::string;
@@ -33,29 +32,23 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name LibraryVarSet_ctor = "LibraryVarSet.ctor";
-
 LibraryVarSet::LibraryVarSet(const string& name) : LibrarySet(name)
 {
-   Debug::ft(LibraryVarSet_ctor);
+   Debug::ft("LibraryVarSet.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LibraryVarSet_dtor = "LibraryVarSet.dtor";
 
 LibraryVarSet::~LibraryVarSet()
 {
-   Debug::ftnt(LibraryVarSet_dtor);
+   Debug::ftnt("LibraryVarSet.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryVarSet_Count = "LibraryVarSet.Count";
-
 word LibraryVarSet::Count(string& result) const
 {
-   Debug::ft(LibraryVarSet_Count);
+   Debug::ft("LibraryVarSet.Count");
 
    auto size = Singleton< Library >::Instance()->Variables().Size();
    return Counted(result, &size);
@@ -63,11 +56,9 @@ word LibraryVarSet::Count(string& result) const
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryVarSet_Show = "LibraryVarSet.Show";
-
 word LibraryVarSet::Show(string& result) const
 {
-   Debug::ft(LibraryVarSet_Show);
+   Debug::ft("LibraryVarSet.Show");
 
    auto& vars = Singleton< Library >::Instance()->Variables();
 

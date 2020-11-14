@@ -95,27 +95,23 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name SbException_ctor1 = "SbException.ctor";
-
 SbException::SbException(debug64_t errval, debug64_t offset) :
    SoftwareException(errval, offset, 2),
    ctx_(nullptr)
 {
-   Debug::ft(SbException_ctor1);
+   Debug::ft("SbException.ctor");
 
    auto inv = InvokerThread::RunningInvoker_;
    if(inv != nullptr) ctx_ = inv->GetContext();
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SbException_ctor2 = "SbException.ctor(string)";
 
 SbException::SbException(const string& errstr, debug64_t offset) :
    SoftwareException(errstr, offset, 2),
    ctx_(nullptr)
 {
-   Debug::ft(SbException_ctor2);
+   Debug::ft("SbException.ctor(string)");
 
    auto inv = InvokerThread::RunningInvoker_;
    if(inv != nullptr) ctx_ = inv->GetContext();
@@ -123,11 +119,9 @@ SbException::SbException(const string& errstr, debug64_t offset) :
 
 //------------------------------------------------------------------------------
 
-fn_name SbException_dtor = "SbException.dtor";
-
 SbException::~SbException()
 {
-   Debug::ftnt(SbException_dtor);
+   Debug::ftnt("SbException.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -193,11 +187,9 @@ Context::Context(Faction faction) :
 
 //------------------------------------------------------------------------------
 
-fn_name Context_dtor = "Context.dtor";
-
 Context::~Context()
 {
-   Debug::ftnt(Context_dtor);
+   Debug::ftnt("Context.dtor");
 
    //  Purge queued objects, remove ourselves from any queue, and make sure
    //  that no one thinks we're currently running.
@@ -220,11 +212,9 @@ Context::~Context()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_CaptureTask = "Context.CaptureTask";
-
 void Context::CaptureTask(const Message& msg, const InvokerThread* inv)
 {
-   Debug::ft(Context_CaptureTask);
+   Debug::ft("Context.CaptureTask");
 
    auto sbt = Singleton< SbTracer >::Instance();
 
@@ -253,11 +243,9 @@ void Context::CaptureTask(const Message& msg, const InvokerThread* inv)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Cleanup = "Context.Cleanup";
-
 void Context::Cleanup()
 {
-   Debug::ft(Context_Cleanup);
+   Debug::ft("Context.Cleanup");
 
    //  If the context is on a work queue, it had better be exqueued, because
    //  a work queue corruption causes a restart.
@@ -274,11 +262,9 @@ void Context::Cleanup()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_ContextPsm = "Context.ContextPsm";
-
 ProtocolSM* Context::ContextPsm()
 {
-   Debug::ft(Context_ContextPsm);
+   Debug::ft("Context.ContextPsm");
 
    if(ContextMsg_ == nullptr) return nullptr;
    return ContextMsg_->Psm();
@@ -286,11 +272,9 @@ ProtocolSM* Context::ContextPsm()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_ContextRoot = "Context.ContextRoot";
-
 RootServiceSM* Context::ContextRoot()
 {
-   Debug::ft(Context_ContextRoot);
+   Debug::ft("Context.ContextRoot");
 
    auto ctx = RunningContext();
    if(ctx == nullptr) return nullptr;
@@ -299,11 +283,9 @@ RootServiceSM* Context::ContextRoot()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Corrupt = "Context.Corrupt";
-
 void Context::Corrupt()
 {
-   Debug::ft(Context_Corrupt);
+   Debug::ft("Context.Corrupt");
 
    if(Element::RunningInLab()) stdMsgq_.Corrupt(nullptr);
 }
@@ -335,11 +317,9 @@ void Context::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Dump = "Context.Dump";
-
 void Context::Dump(fn_name_arg func, const string& errstr, debug64_t offset)
 {
-   Debug::ft(Context_Dump);
+   Debug::ft("Context.Dump");
 
    auto ctx = RunningContext();
 
@@ -362,11 +342,9 @@ void Context::Dump() const
 
 //------------------------------------------------------------------------------
 
-fn_name Context_EnqMsg = "Context.EnqMsg";
-
 bool Context::EnqMsg(Message& msg)
 {
-   Debug::ft(Context_EnqMsg);
+   Debug::ft("Context.EnqMsg");
 
    if(IsCorrupt()) return false;
 
@@ -380,11 +358,9 @@ bool Context::EnqMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_EnqPort = "Context.EnqPort";
-
 void Context::EnqPort(MsgPort& port)
 {
-   Debug::ft(Context_EnqPort);
+   Debug::ft("Context.EnqPort");
 
    //  This is overridden by contexts that support ports.
    //
@@ -393,11 +369,9 @@ void Context::EnqPort(MsgPort& port)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_EnqPsm = "Context.EnqPsm";
-
 void Context::EnqPsm(ProtocolSM& psm)
 {
-   Debug::ft(Context_EnqPsm);
+   Debug::ft("Context.EnqPsm");
 
    //  This is overridden by contexts that support PSMs.
    //
@@ -503,11 +477,9 @@ void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_ExqPort = "Context.ExqPort";
-
 void Context::ExqPort(MsgPort& port)
 {
-   Debug::ft(Context_ExqPort);
+   Debug::ft("Context.ExqPort");
 
    //  This is overridden by contexts that support ports.
    //
@@ -516,11 +488,9 @@ void Context::ExqPort(MsgPort& port)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_ExqPsm = "Context.ExqPsm";
-
 void Context::ExqPsm(ProtocolSM& psm)
 {
-   Debug::ft(Context_ExqPsm);
+   Debug::ft("Context.ExqPsm");
 
    //  This is overridden by contexts that support PSMs.
    //
@@ -553,11 +523,9 @@ void Context::Exqueue()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_GetSubtended = "Context.GetSubtended";
-
 void Context::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(Context_GetSubtended);
+   Debug::ft("Context.GetSubtended");
 
    Pooled::GetSubtended(objects);
 
@@ -574,11 +542,9 @@ void Context::GetSubtended(std::vector< Base* >& objects) const
 
 //------------------------------------------------------------------------------
 
-fn_name Context_HenqPsm = "Context.HenqPsm";
-
 void Context::HenqPsm(ProtocolSM& psm)
 {
-   Debug::ft(Context_HenqPsm);
+   Debug::ft("Context.HenqPsm");
 
    //  This is overridden by contexts that support PSMs.
    //
@@ -587,22 +553,18 @@ void Context::HenqPsm(ProtocolSM& psm)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Kill1 = "Context.Kill";
-
 void Context::Kill(debug64_t errval, debug64_t offset)
 {
-   Debug::ft(Context_Kill1);
+   Debug::ft("Context.Kill");
 
    throw SbException(errval, offset);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Kill2 = "Context.Kill(string)";
-
 void Context::Kill(const string& errstr, debug64_t offset)
 {
-   Debug::ft(Context_Kill2);
+   Debug::ft("Context.Kill(string)");
 
    throw SbException(errstr, offset);
 }
@@ -618,11 +580,9 @@ ptrdiff_t Context::LinkDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_MsgCount = "Context.MsgCount";
-
 size_t Context::MsgCount(bool priority, bool standard) const
 {
-   Debug::ft(Context_MsgCount);
+   Debug::ft("Context.MsgCount");
 
    size_t size = 0;
 
@@ -633,11 +593,9 @@ size_t Context::MsgCount(bool priority, bool standard) const
 
 //------------------------------------------------------------------------------
 
-fn_name Context_new = "Context.operator new";
-
 void* Context::operator new(size_t size)
 {
-   Debug::ft(Context_new);
+   Debug::ft("Context.operator new");
 
    return Singleton< ContextPool >::Instance()->DeqBlock(size);
 }
@@ -651,22 +609,18 @@ void Context::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_ProcessIcMsg = "Context.ProcessIcMsg";
-
 void Context::ProcessIcMsg(Message& msg)
 {
-   Debug::ft(Context_ProcessIcMsg);
+   Debug::ft("Context.ProcessIcMsg");
 
    Kill(strOver(this), msg.Header()->rxAddr.fid);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Context_ProcessMsg = "Context.ProcessMsg";
-
 bool Context::ProcessMsg(Q1Way< Message >& msgq, const InvokerThread* inv)
 {
-   Debug::ft(Context_ProcessMsg);
+   Debug::ft("Context.ProcessMsg");
 
    bool deleted = false;
 
@@ -827,11 +781,9 @@ void Context::ProcessWork(InvokerThread* inv)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_RunningContext = "Context.RunningContext";
-
 Context* Context::RunningContext()
 {
-   Debug::ft(Context_RunningContext);
+   Debug::ft("Context.RunningContext");
 
    auto inv = InvokerThread::RunningInvoker_;
    if(inv != nullptr) return inv->GetContext();
@@ -840,11 +792,9 @@ Context* Context::RunningContext()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_RunningContextTraced = "Context.RunningContextTraced";
-
 bool Context::RunningContextTraced(TransTrace*& trans)
 {
-   Debug::ft(Context_RunningContextTraced);
+   Debug::ft("Context.RunningContextTraced");
 
    auto inv = InvokerThread::RunningInvoker_;
 
@@ -859,11 +809,9 @@ bool Context::RunningContextTraced(TransTrace*& trans)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_SetContextMsg = "Context.SetContextMsg";
-
 void Context::SetContextMsg(Message* msg)
 {
-   Debug::ft(Context_SetContextMsg);
+   Debug::ft("Context.SetContextMsg");
 
    ContextMsg_ = msg;
 }
@@ -969,11 +917,9 @@ string Context::strTrace() const
 
 //------------------------------------------------------------------------------
 
-fn_name Context_TraceMsg = "Context.TraceMsg";
-
 void Context::TraceMsg(ProtocolId prid, SignalId sid, MsgDirection dir)
 {
-   Debug::ft(Context_TraceMsg);
+   Debug::ft("Context.TraceMsg");
 
    trace_[buffIndex_].prid = prid;
    trace_[buffIndex_].sid = sid;

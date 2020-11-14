@@ -36,8 +36,6 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name AnalyzeSnpEvent_ctor = "AnalyzeSnpEvent.ctor";
-
 AnalyzeSnpEvent::AnalyzeSnpEvent(ServiceSM& owner, StateId currState,
    StateId nextState, Event& currEvent, TriggerId tid) :
    Event(AnalyzeSnp, &owner),
@@ -46,25 +44,21 @@ AnalyzeSnpEvent::AnalyzeSnpEvent(ServiceSM& owner, StateId currState,
    currEvent_(&currEvent),
    trigger_(tid)
 {
-   Debug::ft(AnalyzeSnpEvent_ctor);
+   Debug::ft("AnalyzeSnpEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name AnalyzeSnpEvent_dtor = "AnalyzeSnpEvent.dtor";
 
 AnalyzeSnpEvent::~AnalyzeSnpEvent()
 {
-   Debug::ftnt(AnalyzeSnpEvent_dtor);
+   Debug::ftnt("AnalyzeSnpEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeSnpEvent_BuildSap = "AnalyzeSnpEvent.BuildSap";
-
 Event* AnalyzeSnpEvent::BuildSap(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(AnalyzeSnpEvent_BuildSap);
+   Debug::ft("AnalyzeSnpEvent.BuildSap");
 
    //  Analysis is not provided before notification.
    //
@@ -73,11 +67,9 @@ Event* AnalyzeSnpEvent::BuildSap(ServiceSM& owner, TriggerId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name AnalyzeSnpEvent_BuildSnp = "AnalyzeSnpEvent.BuildSnp";
-
 Event* AnalyzeSnpEvent::BuildSnp(ServiceSM& owner, TriggerId tid)
 {
-   Debug::ft(AnalyzeSnpEvent_BuildSnp);
+   Debug::ft("AnalyzeSnpEvent.BuildSnp");
 
    //  Second-order modifiers receive the Analyze SNP event in its
    //  original form.

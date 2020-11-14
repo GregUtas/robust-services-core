@@ -29,29 +29,23 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-fn_name TlvParameter_ctor = "TlvParameter.ctor";
-
 TlvParameter::TlvParameter(ProtocolId prid, Id pid) : Parameter(prid, pid)
 {
-   Debug::ft(TlvParameter_ctor);
+   Debug::ft("TlvParameter.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TlvParameter_dtor = "TlvParameter.dtor";
 
 TlvParameter::~TlvParameter()
 {
-   Debug::ftnt(TlvParameter_dtor);
+   Debug::ftnt("TlvParameter.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TlvParameter_ExtractPid = "TlvParameter.ExtractPid";
-
 Parameter::Id TlvParameter::ExtractPid(const TlvParmLayout& parm)
 {
-   Debug::ft(TlvParameter_ExtractPid);
+   Debug::ft("TlvParameter.ExtractPid");
 
    return parm.header.pid;
 }
@@ -65,12 +59,10 @@ void TlvParameter::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name TlvParameter_VerifyMsg = "TlvParameter.VerifyMsg";
-
 Parameter::TestRc TlvParameter::VerifyMsg
    (CliThread& cli, const Message& msg, Usage use) const
 {
-   Debug::ft(TlvParameter_VerifyMsg);
+   Debug::ft("TlvParameter.VerifyMsg");
 
    auto& tmsg = static_cast< const TlvMessage& >(msg);
    auto pid = Pid();

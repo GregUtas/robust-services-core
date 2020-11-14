@@ -29,26 +29,22 @@ using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_ctor1 = "TokenMessage.ctor";
-
 namespace Diplomacy
 {
 TokenMessage::TokenMessage() :
    length_(0),
    parm_count_(0)
 {
-   Debug::ft(TokenMessage_ctor1);
+   Debug::ft("TokenMessage.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TokenMessage_ctor2 = "TokenMessage.ctor(token_t)";
 
 TokenMessage::TokenMessage(token_t raw) :
    length_(0),
    parm_count_(0)
 {
-   Debug::ft(TokenMessage_ctor2);
+   Debug::ft("TokenMessage.ctor(token_t)");
 
    const Token token = Token(raw);
    set_from(&token, 1);
@@ -56,52 +52,44 @@ TokenMessage::TokenMessage(token_t raw) :
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_ctor3 = "TokenMessage.ctor(token)";
-
 TokenMessage::TokenMessage(const Token& token) :
    length_(0),
    parm_count_(0)
 {
-   Debug::ft(TokenMessage_ctor3);
+   Debug::ft("TokenMessage.ctor(token)");
 
    set_from(&token, 1);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_ctor4 = "TokenMessage.ctor(message)";
-
 TokenMessage::TokenMessage(const Token* message) :
    length_(0),
    parm_count_(0)
 {
-   Debug::ft(TokenMessage_ctor4);
+   Debug::ft("TokenMessage.ctor(message)");
 
    set_from(message);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_ctor5 = "TokenMessage.ctor(stream)";
-
 TokenMessage::TokenMessage(const Token* stream, size_t length) :
    length_(0),
    parm_count_(0)
 {
-   Debug::ft(TokenMessage_ctor5);
+   Debug::ft("TokenMessage.ctor(stream)");
 
    set_from(stream, length);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_ctor6 = "TokenMessage.ctor(copy)";
-
 TokenMessage::TokenMessage(const TokenMessage& that) :
    length_(0),
    parm_count_(0)
 {
-   Debug::ft(TokenMessage_ctor6);
+   Debug::ft("TokenMessage.ctor(copy)");
 
    if(that.message_ != nullptr)
    {
@@ -111,11 +99,9 @@ TokenMessage::TokenMessage(const TokenMessage& that) :
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_dtor = "TokenMessage.dtor";
-
 TokenMessage::~TokenMessage()
 {
-   Debug::ftnt(TokenMessage_dtor);
+   Debug::ftnt("TokenMessage.dtor");
 
    clear();
 }
@@ -139,11 +125,9 @@ void TokenMessage::clear()
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_enclose = "TokenMessage.enclose";
-
 TokenMessage TokenMessage::enclose() const
 {
-   Debug::ft(TokenMessage_enclose);
+   Debug::ft("TokenMessage.enclose");
 
    TokenMessage combined;
 
@@ -176,11 +160,9 @@ TokenMessage TokenMessage::enclose() const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_enclose_this = "TokenMessage.enclose_this";
-
 void TokenMessage::enclose_this()
 {
-   Debug::ft(TokenMessage_enclose_this);
+   Debug::ft("TokenMessage.enclose_this");
 
    if(message_ == nullptr)
    {
@@ -267,11 +249,9 @@ Token TokenMessage::front() const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_get_parm = "TokenMessage.get_parm";
-
 TokenMessage TokenMessage::get_parm(size_t n) const
 {
-   Debug::ft(TokenMessage_get_parm);
+   Debug::ft("TokenMessage.get_parm");
 
    TokenMessage parm;
 
@@ -297,11 +277,9 @@ TokenMessage TokenMessage::get_parm(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_get_tokens = "TokenMessage.get_tokens";
-
 bool TokenMessage::get_tokens(Token tokens[], size_t max) const
 {
-   Debug::ft(TokenMessage_get_tokens);
+   Debug::ft("TokenMessage.get_tokens");
 
    if(message_ == nullptr) return false;
    if(max < length_) return false;
@@ -311,11 +289,9 @@ bool TokenMessage::get_tokens(Token tokens[], size_t max) const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_log = "TokenMessage.log";
-
 void TokenMessage::log(const string& expl) const
 {
-   Debug::ft(TokenMessage_log);
+   Debug::ft("TokenMessage.log");
 
    std::ostringstream stream;
    stream << expl << CRLF;
@@ -325,11 +301,9 @@ void TokenMessage::log(const string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_opAssign1 = "TokenMessage.operator=(copy)";
-
 TokenMessage& TokenMessage::operator=(const TokenMessage& that)
 {
-   Debug::ft(TokenMessage_opAssign1);
+   Debug::ft("TokenMessage.operator=(copy)");
 
    if(&that == this) return *this;
 
@@ -345,11 +319,9 @@ TokenMessage& TokenMessage::operator=(const TokenMessage& that)
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_opAssign2 = "TokenMessage.operator=(move)";
-
 TokenMessage& TokenMessage::operator=(TokenMessage&& that)
 {
-   Debug::ft(TokenMessage_opAssign2);
+   Debug::ft("TokenMessage.operator=(move)");
 
    if(&that == this) return *this;
 
@@ -370,11 +342,9 @@ Token TokenMessage::operator[](size_t index) const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_opAdd1 = "TokenMessage.operator+(token)";
-
 TokenMessage TokenMessage::operator+(const Token& token)
 {
-   Debug::ft(TokenMessage_opAdd1);
+   Debug::ft("TokenMessage.operator+(token)");
 
    TokenMessage message(token);
    return operator+(message);
@@ -382,11 +352,9 @@ TokenMessage TokenMessage::operator+(const Token& token)
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_opAdd2 = "TokenMessage.operator+(message)";
-
 TokenMessage TokenMessage::operator+(const TokenMessage& that)
 {
-   Debug::ft(TokenMessage_opAdd2);
+   Debug::ft("TokenMessage.operator+(message)");
 
    TokenMessage combined;
 
@@ -414,11 +382,9 @@ TokenMessage TokenMessage::operator+(const TokenMessage& that)
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_opAnd1 = "TokenMessage.operator&(token)";
-
 TokenMessage TokenMessage::operator&(const Token& token)
 {
-   Debug::ft(TokenMessage_opAnd1);
+   Debug::ft("TokenMessage.operator&(token)");
 
    TokenMessage message(token);
    return operator&(message);
@@ -426,11 +392,9 @@ TokenMessage TokenMessage::operator&(const Token& token)
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_opAnd2 = "TokenMessage.operator&(message)";
-
 TokenMessage TokenMessage::operator&(const TokenMessage& that)
 {
-   Debug::ft(TokenMessage_opAnd2);
+   Debug::ft("TokenMessage.operator&(message)");
 
    TokenMessage combined;
 
@@ -515,11 +479,9 @@ bool TokenMessage::operator<(const TokenMessage& that) const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_parm_is_single_token = "TokenMessage.parm_is_single_token";
-
 bool TokenMessage::parm_is_single_token(size_t n) const
 {
-   Debug::ft(TokenMessage_parm_is_single_token);
+   Debug::ft("TokenMessage.parm_is_single_token");
 
    if(n >= parm_count_) return false;
    find_parms();
@@ -528,11 +490,9 @@ bool TokenMessage::parm_is_single_token(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_parm_start = "TokenMessage.parm_start";
-
 size_t TokenMessage::parm_start(size_t n) const
 {
-   Debug::ft(TokenMessage_parm_start);
+   Debug::ft("TokenMessage.parm_start");
 
    if(n >= parm_count_) return 0;
    find_parms();
@@ -547,11 +507,9 @@ size_t TokenMessage::parm_start(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_set_as_ascii = "TokenMessage.set_as_ascii";
-
 void TokenMessage::set_as_ascii(const string& text)
 {
-   Debug::ft(TokenMessage_set_as_ascii);
+   Debug::ft("TokenMessage.set_as_ascii");
 
    auto tokens = new Token[text.size()];
 
@@ -566,11 +524,9 @@ void TokenMessage::set_as_ascii(const string& text)
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_set_from1 = "TokenMessage.set_from(stream)";
-
 size_t TokenMessage::set_from(const Token* stream)
 {
-   Debug::ft(TokenMessage_set_from1);
+   Debug::ft("TokenMessage.set_from(stream)");
 
    clear();
 
@@ -621,11 +577,9 @@ size_t TokenMessage::set_from(const Token* stream)
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_set_from2 = "TokenMessage.set_from(stream, length)";
-
 size_t TokenMessage::set_from(const Token* stream, size_t length)
 {
-   Debug::ft(TokenMessage_set_from2);
+   Debug::ft("TokenMessage.set_from(stream, length)");
 
    word location = NO_ERROR;
    int nesting = 0;
@@ -673,11 +627,9 @@ size_t TokenMessage::set_from(const Token* stream, size_t length)
 
 //------------------------------------------------------------------------------
 
-fn_name TokenMessage_set_from3 = "TokenMessage.set_from(text)";
-
 size_t TokenMessage::set_from(const string& text)
 {
-   Debug::ft(TokenMessage_set_from3);
+   Debug::ft("TokenMessage.set_from(text)");
 
    auto location = NO_ERROR;
    size_t text_index = 0;

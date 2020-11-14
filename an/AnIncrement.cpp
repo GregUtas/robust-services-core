@@ -172,21 +172,17 @@ word TrafficCommand::ProcessCommand(CliThread& cli) const
 fixed_string AnText = "an";
 fixed_string AnExpl = "Access Node Increment";
 
-fn_name AnIncrement_ctor = "AnIncrement.ctor";
-
 AnIncrement::AnIncrement() : CliIncrement(AnText, AnExpl)
 {
-   Debug::ft(AnIncrement_ctor);
+   Debug::ft("AnIncrement.ctor");
 
    BindCommand(*new TrafficCommand);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name AnIncrement_dtor = "AnIncrement.dtor";
-
 AnIncrement::~AnIncrement()
 {
-   Debug::ftnt(AnIncrement_dtor);
+   Debug::ftnt("AnIncrement.dtor");
 }
 }

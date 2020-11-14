@@ -34,32 +34,26 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name CodeSet_ctor = "CodeSet.ctor";
-
 CodeSet::CodeSet(const string& name, SetOfIds* set) : LibrarySet(name),
    set_(set)
 {
-   Debug::ft(CodeSet_ctor);
+   Debug::ft("CodeSet.ctor");
 
    if(set_ == nullptr) set_.reset(new SetOfIds);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeSet_dtor = "CodeSet.dtor";
-
 CodeSet::~CodeSet()
 {
-   Debug::ftnt(CodeSet_dtor);
+   Debug::ftnt("CodeSet.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeSet_Assign = "CodeSet.Assign";
-
 LibrarySet* CodeSet::Assign(LibrarySet* rhs)
 {
-   Debug::ft(CodeSet_Assign);
+   Debug::ft("CodeSet.Assign");
 
    auto that = static_cast< CodeSet* >(rhs);
 
@@ -78,11 +72,9 @@ LibrarySet* CodeSet::Assign(LibrarySet* rhs)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeSet_Count = "CodeSet.Count";
-
 word CodeSet::Count(string& result) const
 {
-   Debug::ft(CodeSet_Count);
+   Debug::ft("CodeSet.Count");
 
    auto count = set_->size();
    return Counted(result, &count);
@@ -90,11 +82,9 @@ word CodeSet::Count(string& result) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeSet_Difference = "CodeSet.Difference";
-
 LibrarySet* CodeSet::Difference(const LibrarySet* rhs) const
 {
-   Debug::ft(CodeSet_Difference);
+   Debug::ft("CodeSet.Difference");
 
    auto result = new SetOfIds;
    auto that = static_cast< const CodeSet* >(rhs);
@@ -127,11 +117,9 @@ void CodeSet::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CodeSet_Intersection = "CodeSet.Intersection";
-
 LibrarySet* CodeSet::Intersection(const LibrarySet* rhs) const
 {
-   Debug::ft(CodeSet_Intersection);
+   Debug::ft("CodeSet.Intersection");
 
    auto result = new SetOfIds;
    auto that = static_cast< const CodeSet* >(rhs);
@@ -141,11 +129,9 @@ LibrarySet* CodeSet::Intersection(const LibrarySet* rhs) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeSet_Union = "CodeSet.Union";
-
 LibrarySet* CodeSet::Union(const LibrarySet* rhs) const
 {
-   Debug::ft(CodeSet_Union);
+   Debug::ft("CodeSet.Union");
 
    auto result = new SetOfIds;
    auto that = static_cast< const CodeSet* >(rhs);

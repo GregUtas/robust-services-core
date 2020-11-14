@@ -34,14 +34,12 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name Exception_ctor1 = "Exception.ctor";
-
 Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
 {
    //  Reenable Debug functions before tracing this function.
    //
    Thread::ResetDebugFlags();
-   Debug::ft(Exception_ctor1);  //@
+   Debug::ft("Exception.ctor");  //@
 
    //  Capturing a stack trace takes time, so give the thread an extra
    //  20 msecs.
@@ -61,33 +59,27 @@ Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
 
 //------------------------------------------------------------------------------
 
-fn_name Exception_ctor2 = "Exception.ctor(copy)";
-
 Exception::Exception(const Exception& that) :
    exception(that),
    stack_(std::move(that.stack_))
 {
-   Debug::ft(Exception_ctor2);
+   Debug::ft("Exception.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Exception_ctor3 = "Exception.ctor(move)";
 
 Exception::Exception(Exception&& that) :
    exception(that),
    stack_(std::move(that.stack_))
 {
-   Debug::ft(Exception_ctor3);
+   Debug::ft("Exception.ctor(move)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Exception_dtor = "Exception.dtor";
-
 Exception::~Exception()
 {
-   Debug::ftnt(Exception_dtor);
+   Debug::ftnt("Exception.dtor");
 }
 
 //------------------------------------------------------------------------------

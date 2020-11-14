@@ -27,93 +27,75 @@
 
 namespace NodeBase
 {
-fn_name Permanent_ctor = "Permanent.ctor";
-
 Permanent::Permanent()
 {
-   Debug::ft(Permanent_ctor);
+   Debug::ft("Permanent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Permanent_delete1 = "Permanent.operator delete";
 
 void Permanent::operator delete(void* addr)
 {
-   Debug::ftnt(Permanent_delete1);
+   Debug::ftnt("Permanent.operator delete");
 
    Memory::Free(addr, MemPermanent);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Permanent_delete2 = "Permanent.operator delete[]";
 
 void Permanent::operator delete[](void* addr)
 {
-   Debug::ftnt(Permanent_delete2);
+   Debug::ftnt("Permanent.operator delete[]");
 
    Memory::Free(addr, MemPermanent);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Permanent_delete3 = "Permanent.operator delete(place)";
-
 void Permanent::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ftnt(Permanent_delete3);
+   Debug::ftnt("Permanent.operator delete(place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Permanent_delete4 = "Permanent.operator delete[](place)";
 
 void Permanent::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ftnt(Permanent_delete4);
+   Debug::ftnt("Permanent.operator delete[](place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Permanent_new1 = "Permanent.operator new";
 
 void* Permanent::operator new(size_t size)
 {
-   Debug::ft(Permanent_new1);
+   Debug::ft("Permanent.operator new");
 
    return Memory::Alloc(size, MemPermanent);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Permanent_new2 = "Permanent.operator new[]";
 
 void* Permanent::operator new[](size_t size)
 {
-   Debug::ft(Permanent_new2);
+   Debug::ft("Permanent.operator new[]");
 
    return Memory::Alloc(size, MemPermanent);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Permanent_new3 = "Permanent.operator new(place)";
-
 void* Permanent::operator new(size_t size, void* place)
 {
-   Debug::ft(Permanent_new3);
+   Debug::ft("Permanent.operator new(place)");
 
    return place;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Permanent_new4 = "Permanent.operator new[](place)";
-
 void* Permanent::operator new[](size_t size, void* place)
 {
-   Debug::ft(Permanent_new4);
+   Debug::ft("Permanent.operator new[](place)");
 
    return place;
 }

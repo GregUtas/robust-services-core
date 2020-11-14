@@ -44,11 +44,9 @@ size_t SysUdpSocket::MaxUdpSize_ = 0;
 
 //------------------------------------------------------------------------------
 
-fn_name SysUdpSocket_dtor = "SysUdpSocket.dtor";
-
 SysUdpSocket::~SysUdpSocket()
 {
-   Debug::ftnt(SysUdpSocket_dtor);
+   Debug::ftnt("SysUdpSocket.dtor");
 
    Close(false);
 }

@@ -26,7 +26,6 @@
 #include "Debug.h"
 #include "SbAppIds.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -52,81 +51,65 @@ private:
 
 //==============================================================================
 
-fn_name PotsDiscService_ctor = "PotsDiscService.ctor";
-
 PotsDiscService::PotsDiscService() : Service(PotsDiscServiceId, false, true)
 {
-   Debug::ft(PotsDiscService_ctor);
+   Debug::ft("PotsDiscService.ctor");
 
    Singleton< PotsDiscNull >::Instance();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsDiscService_dtor = "PotsDiscService.dtor";
-
 PotsDiscService::~PotsDiscService()
 {
-   Debug::ftnt(PotsDiscService_dtor);
+   Debug::ftnt("PotsDiscService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsDiscService_AllocModifier = "PotsDiscService.AllocModifier";
-
 ServiceSM* PotsDiscService::AllocModifier() const
 {
-   Debug::ft(PotsDiscService_AllocModifier);
+   Debug::ft("PotsDiscService.AllocModifier");
 
    return new PotsDiscSsm;
 }
 
 //==============================================================================
 
-fn_name PotsDiscNull_ctor = "PotsDiscNull.ctor";
-
 PotsDiscNull::PotsDiscNull() : State(PotsDiscServiceId, ServiceSM::Null)
 {
-   Debug::ft(PotsDiscNull_ctor);
+   Debug::ft("PotsDiscNull.ctor");
 }
 
 //==============================================================================
 
-fn_name PotsDiscSsm_ctor = "PotsDiscSsm.ctor";
-
 PotsDiscSsm::PotsDiscSsm() : ServiceSM(PotsDiscServiceId)
 {
-   Debug::ft(PotsDiscSsm_ctor);
+   Debug::ft("PotsDiscSsm.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsDiscSsm_dtor = "PotsDiscSsm.dtor";
 
 PotsDiscSsm::~PotsDiscSsm()
 {
-   Debug::ftnt(PotsDiscSsm_dtor);
+   Debug::ftnt("PotsDiscSsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsDiscSsm_CalcPort = "PotsDiscSsm.CalcPort";
-
 ServicePortId PotsDiscSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(PotsDiscSsm_CalcPort);
+   Debug::ft("PotsDiscSsm.CalcPort");
 
    return Parent()->CalcPort(ame);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsDiscSsm_ProcessInitAck = "PotsDiscSsm.ProcessInitAck";
-
 EventHandler::Rc PotsDiscSsm::ProcessInitAck
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsDiscSsm_ProcessInitAck);
+   Debug::ft("PotsDiscSsm.ProcessInitAck");
 
    auto& pssm = static_cast< BcSsm& >(*Parent());
    auto stid = pssm.CurrState();

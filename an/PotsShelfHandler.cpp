@@ -35,38 +35,31 @@
 #include "SbAppIds.h"
 #include "SbIpBuffer.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 #include "TlvParameter.h"
 
 //------------------------------------------------------------------------------
 
 namespace PotsBase
 {
-fn_name PotsShelfHandler_ctor = "PotsShelfHandler.ctor";
-
 PotsShelfHandler::PotsShelfHandler(IpPort* port) :
    SbExtInputHandler(port)
 {
-   Debug::ft(PotsShelfHandler_ctor);
+   Debug::ft("PotsShelfHandler.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsShelfHandler_dtor = "PotsShelfHandler.dtor";
 
 PotsShelfHandler::~PotsShelfHandler()
 {
-   Debug::ftnt(PotsShelfHandler_dtor);
+   Debug::ftnt("PotsShelfHandler.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsShelfHandler_ReceiveBuff = "PotsShelfHandler.ReceiveBuff";
 
 void PotsShelfHandler::ReceiveBuff
    (IpBufferPtr& buff, size_t size, Faction faction) const
 {
-   Debug::ft(PotsShelfHandler_ReceiveBuff);
+   Debug::ft("PotsShelfHandler.ReceiveBuff");
 
    auto sbuff = static_cast< SbIpBuffer* >(buff.get());
    auto header = sbuff->Header();

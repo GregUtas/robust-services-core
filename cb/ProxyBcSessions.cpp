@@ -99,12 +99,10 @@ fixed_string ProxyBcReleaseEventStr     = "ProxyBcReleaseEvent";
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcService_ctor = "ProxyBcService.ctor";
-
 ProxyBcService::ProxyBcService(Id sid, bool modifiable) :
    BcService(sid, modifiable)
 {
-   Debug::ft(ProxyBcService_ctor);
+   Debug::ft("ProxyBcService.ctor");
 
    BindHandler(*Singleton< ProxyBcAnalyzeProxyMessage >::Instance(),
       ProxyBcEventHandler::AnalyzeProxyMessage);
@@ -123,11 +121,9 @@ ProxyBcService::ProxyBcService(Id sid, bool modifiable) :
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcService_dtor = "ProxyBcService.dtor";
-
 ProxyBcService::~ProxyBcService()
 {
-   Debug::ftnt(ProxyBcService_dtor);
+   Debug::ftnt("ProxyBcService.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -298,72 +294,56 @@ ProxyBcException::ProxyBcException(ServiceId sid) : BcException(sid)
 
 //==============================================================================
 
-fn_name ProxyBcReleaseUserEvent_ctor = "ProxyBcReleaseUserEvent.ctor";
-
 ProxyBcReleaseUserEvent::ProxyBcReleaseUserEvent
    (ServiceSM& owner, Cause::Ind cause) :
    BcReleaseEvent(ProxyBcEvent::ReleaseUser, owner, cause)
 {
-   Debug::ft(ProxyBcReleaseUserEvent_ctor);
+   Debug::ft("ProxyBcReleaseUserEvent.ctor");
 }
-
-fn_name ProxyBcReleaseUserEvent_dtor = "ProxyBcReleaseUserEvent.dtor";
 
 ProxyBcReleaseUserEvent::~ProxyBcReleaseUserEvent()
 {
-   Debug::ftnt(ProxyBcReleaseUserEvent_dtor);
+   Debug::ftnt("ProxyBcReleaseUserEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ProxyBcProgressEvent_ctor = "ProxyBcProgressEvent.ctor";
 
 ProxyBcProgressEvent::ProxyBcProgressEvent
    (ServiceSM& owner, Progress::Ind progress) :
    BcProgressEvent(ProxyBcEvent::ProxyProgress, owner, progress)
 {
-   Debug::ft(ProxyBcProgressEvent_ctor);
+   Debug::ft("ProxyBcProgressEvent.ctor");
 }
-
-fn_name ProxyBcProgressEvent_dtor = "ProxyBcProgressEvent.dtor";
 
 ProxyBcProgressEvent::~ProxyBcProgressEvent()
 {
-   Debug::ftnt(ProxyBcProgressEvent_dtor);
+   Debug::ftnt("ProxyBcProgressEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ProxyBcAnswerEvent_ctor = "ProxyBcAnswerEvent.ctor";
 
 ProxyBcAnswerEvent::ProxyBcAnswerEvent(ServiceSM& owner) :
    BcEvent(ProxyBcEvent::ProxyAnswer, owner)
 {
-   Debug::ft(ProxyBcAnswerEvent_ctor);
+   Debug::ft("ProxyBcAnswerEvent.ctor");
 }
-
-fn_name ProxyBcAnswerEvent_dtor = "ProxyBcAnswerEvent.dtor";
 
 ProxyBcAnswerEvent::~ProxyBcAnswerEvent()
 {
-   Debug::ftnt(ProxyBcAnswerEvent_dtor);
+   Debug::ftnt("ProxyBcAnswerEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcReleaseEvent_ctor = "ProxyBcReleaseEvent.ctor";
-
 ProxyBcReleaseEvent::ProxyBcReleaseEvent(ServiceSM& owner, Cause::Ind cause) :
    BcReleaseEvent(ProxyBcEvent::ProxyRelease, owner, cause)
 {
-   Debug::ft(ProxyBcReleaseEvent_ctor);
+   Debug::ft("ProxyBcReleaseEvent.ctor");
 }
-
-fn_name ProxyBcReleaseEvent_dtor = "ProxyBcReleaseEvent.dtor";
 
 ProxyBcReleaseEvent::~ProxyBcReleaseEvent()
 {
-   Debug::ftnt(ProxyBcReleaseEvent_dtor);
+   Debug::ftnt("ProxyBcReleaseEvent.dtor");
 }
 
 //==============================================================================
@@ -403,13 +383,10 @@ EventHandler::Rc ProxyBcAnalyzeProxyMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcProgressHandler_ProcessEvent =
-   "ProxyBcProgressHandler.ProcessEvent";
-
 EventHandler::Rc ProxyBcProgressHandler::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(ProxyBcProgressHandler_ProcessEvent);
+   Debug::ft("ProxyBcProgressHandler.ProcessEvent");
 
    auto& ppe = static_cast< ProxyBcProgressEvent& >(currEvent);
 
@@ -438,12 +415,10 @@ EventHandler::Rc ProxyBcProgressHandler::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcAnswerHandler_ProcessEvent = "ProxyBcAnswerHandler.ProcessEvent";
-
 EventHandler::Rc ProxyBcAnswerHandler::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(ProxyBcAnswerHandler_ProcessEvent);
+   Debug::ft("ProxyBcAnswerHandler.ProcessEvent");
 
    //  When a proxy UPSM reports answer, award it the call and release all
    //  other UPSMs.
@@ -466,13 +441,10 @@ EventHandler::Rc ProxyBcAnswerHandler::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcReleaseHandler_ProcessEvent =
-   "ProxyBcReleaseHandler.ProcessEvent";
-
 EventHandler::Rc ProxyBcReleaseHandler::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(ProxyBcReleaseHandler_ProcessEvent);
+   Debug::ft("ProxyBcReleaseHandler.ProcessEvent");
 
    //  There is nothing to do.  The proxy UPSM will idle itself.  If it is
    //  the last proxy UPSM, the call will become a non-proxy call with the
@@ -483,32 +455,26 @@ EventHandler::Rc ProxyBcReleaseHandler::ProcessEvent
 
 //==============================================================================
 
-fn_name ProxyBcPsm_ctor1 = "ProxyBcPsm.ctor(first)";
-
 ProxyBcPsm::ProxyBcPsm() : BcPsm(ProxyCallFactoryId),
    exclude_(false)
 {
-   Debug::ft(ProxyBcPsm_ctor1);
+   Debug::ft("ProxyBcPsm.ctor(first)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ProxyBcPsm_ctor2 = "ProxyBcPsm.ctor(subseq)";
 
 ProxyBcPsm::ProxyBcPsm(ProtocolLayer& adj, bool upper) :
    BcPsm(ProxyCallFactoryId, adj, upper),
    exclude_(false)
 {
-   Debug::ft(ProxyBcPsm_ctor2);
+   Debug::ft("ProxyBcPsm.ctor(subseq)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcPsm_dtor = "ProxyBcPsm.dtor";
-
 ProxyBcPsm::~ProxyBcPsm()
 {
-   Debug::ftnt(ProxyBcPsm_dtor);
+   Debug::ftnt("ProxyBcPsm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -523,11 +489,9 @@ void ProxyBcPsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcPsm_ProcessOgMsg = "ProxyBcPsm.ProcessOgMsg";
-
 ProtocolSM::OutgoingRc ProxyBcPsm::ProcessOgMsg(Message& msg)
 {
-   Debug::ft(ProxyBcPsm_ProcessOgMsg);
+   Debug::ft("ProxyBcPsm.ProcessOgMsg");
 
    //  Send all proxy messages with immediate priority.
    //
@@ -574,41 +538,33 @@ ProtocolSM::OutgoingRc ProxyBcPsm::ProcessOgMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcPsm_Route = "ProxyBcPsm.Route";
-
 Message::Route ProxyBcPsm::Route() const
 {
-   Debug::ft(ProxyBcPsm_Route);
+   Debug::ft("ProxyBcPsm.Route");
 
    return Message::Internal;
 }
 
 //==============================================================================
 
-fn_name ProxyBcSsm_ctor = "ProxyBcSsm.ctor";
-
 ProxyBcSsm::ProxyBcSsm(ServiceId sid) : BcSsm(sid),
    proxyCount_(0)
 {
-   Debug::ft(ProxyBcSsm_ctor);
+   Debug::ft("ProxyBcSsm.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ProxyBcSsm_dtor = "ProxyBcSsm.dtor";
 
 ProxyBcSsm::~ProxyBcSsm()
 {
-   Debug::ftnt(ProxyBcSsm_dtor);
+   Debug::ftnt("ProxyBcSsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_AllocOgProxy = "ProxyBcSsm.AllocOgProxy";
-
 ProxyBcPsm* ProxyBcSsm::AllocOgProxy()
 {
-   Debug::ft(ProxyBcSsm_AllocOgProxy);
+   Debug::ft("ProxyBcSsm.AllocOgProxy");
 
    auto ppsm = new ProxyBcPsm;
 
@@ -631,11 +587,9 @@ ProxyBcPsm* ProxyBcSsm::AllocOgProxy()
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_CalcPort = "ProxyBcSsm.CalcPort";
-
 ServicePortId ProxyBcSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(ProxyBcSsm_CalcPort);
+   Debug::ft("ProxyBcSsm.CalcPort");
 
    auto psm = ame.Msg()->Psm();
 
@@ -668,11 +622,9 @@ void ProxyBcSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_EndOfTransaction = "ProxyBcSsm.EndOfTransaction";
-
 void ProxyBcSsm::EndOfTransaction()
 {
-   Debug::ft(ProxyBcSsm_EndOfTransaction);
+   Debug::ft("ProxyBcSsm.EndOfTransaction");
 
    //  Before invoking the base class, look for proxy PSMs that are excluded
    //  from the broadcast group and reinclude them.
@@ -690,11 +642,9 @@ void ProxyBcSsm::EndOfTransaction()
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_FirstBroadcast = "ProxyBcSsm.FirstBroadcast";
-
 ProxyBcPsm* ProxyBcSsm::FirstBroadcast() const
 {
-   Debug::ft(ProxyBcSsm_FirstBroadcast);
+   Debug::ft("ProxyBcSsm.FirstBroadcast");
 
    for(auto p = FirstProxy(); p != nullptr; NextProxy(p))
    {
@@ -709,11 +659,9 @@ ProxyBcPsm* ProxyBcSsm::FirstBroadcast() const
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_FirstProxy = "ProxyBcSsm.FirstProxy";
-
 ProxyBcPsm* ProxyBcSsm::FirstProxy() const
 {
-   Debug::ft(ProxyBcSsm_FirstProxy);
+   Debug::ft("ProxyBcSsm.FirstProxy");
 
    auto ctx = GetContext();
 
@@ -730,11 +678,9 @@ ProxyBcPsm* ProxyBcSsm::FirstProxy() const
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_NextBroadcast = "ProxyBcSsm.NextBroadcast";
-
 void ProxyBcSsm::NextBroadcast(ProxyBcPsm*& ppsm) const
 {
-   Debug::ft(ProxyBcSsm_NextBroadcast);
+   Debug::ft("ProxyBcSsm.NextBroadcast");
 
    for(NextProxy(ppsm); ppsm != nullptr; NextProxy(ppsm))
    {
@@ -744,11 +690,9 @@ void ProxyBcSsm::NextBroadcast(ProxyBcPsm*& ppsm) const
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_NextProxy = "ProxyBcSsm.NextProxy";
-
 void ProxyBcSsm::NextProxy(ProxyBcPsm*& ppsm) const
 {
-   Debug::ft(ProxyBcSsm_NextProxy);
+   Debug::ft("ProxyBcSsm.NextProxy");
 
    auto ctx = GetContext();
    ProtocolSM* psm = ppsm;
@@ -767,11 +711,9 @@ void ProxyBcSsm::NextProxy(ProxyBcPsm*& ppsm) const
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_PsmDeleted = "ProxyBcSsm.PsmDeleted";
-
 void ProxyBcSsm::PsmDeleted(ProtocolSM& exPsm)
 {
-   Debug::ft(ProxyBcSsm_PsmDeleted);
+   Debug::ft("ProxyBcSsm.PsmDeleted");
 
    //  Track the number of proxy UPSMs.
    //
@@ -790,11 +732,9 @@ void ProxyBcSsm::PsmDeleted(ProtocolSM& exPsm)
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_RaiseProxyAnswer = "ProxyBcSsm.RaiseProxyAnswer";
-
 EventHandler::Rc ProxyBcSsm::RaiseProxyAnswer(Event*& nextEvent)
 {
-   Debug::ft(ProxyBcSsm_RaiseProxyAnswer);
+   Debug::ft("ProxyBcSsm.RaiseProxyAnswer");
 
    SetNextSap(ProxyBcTrigger::ProxyAnswerSap);
    nextEvent = new ProxyBcAnswerEvent(*this);
@@ -803,12 +743,10 @@ EventHandler::Rc ProxyBcSsm::RaiseProxyAnswer(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_RaiseProxyProgress = "ProxyBcSsm.RaiseProxyProgress";
-
 EventHandler::Rc ProxyBcSsm::RaiseProxyProgress
    (Event*& nextEvent, Progress::Ind progress)
 {
-   Debug::ft(ProxyBcSsm_RaiseProxyProgress);
+   Debug::ft("ProxyBcSsm.RaiseProxyProgress");
 
    nextEvent = new ProxyBcProgressEvent(*this, progress);
    return EventHandler::Continue;
@@ -816,12 +754,10 @@ EventHandler::Rc ProxyBcSsm::RaiseProxyProgress
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_RaiseProxyRelease = "ProxyBcSsm.RaiseProxyRelease";
-
 EventHandler::Rc ProxyBcSsm::RaiseProxyRelease
    (Event*& nextEvent, Cause::Ind cause)
 {
-   Debug::ft(ProxyBcSsm_RaiseProxyRelease);
+   Debug::ft("ProxyBcSsm.RaiseProxyRelease");
 
    nextEvent = new ProxyBcReleaseEvent(*this, cause);
    return EventHandler::Continue;
@@ -829,12 +765,10 @@ EventHandler::Rc ProxyBcSsm::RaiseProxyRelease
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_RaiseReleaseUser = "ProxyBcSsm.RaiseReleaseUser";
-
 EventHandler::Rc ProxyBcSsm::RaiseReleaseUser
    (Event*& nextEvent, Cause::Ind cause)
 {
-   Debug::ft(ProxyBcSsm_RaiseReleaseUser);
+   Debug::ft("ProxyBcSsm.RaiseReleaseUser");
 
    nextEvent = new ProxyBcReleaseUserEvent(*this, cause);
    return EventHandler::Continue;
@@ -878,11 +812,9 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_ReleaseProxies = "ProxyBcSsm.ReleaseProxies";
-
 void ProxyBcSsm::ReleaseProxies(ProxyBcPsm* skip, Cause::Ind cause) const
 {
-   Debug::ft(ProxyBcSsm_ReleaseProxies);
+   Debug::ft("ProxyBcSsm.ReleaseProxies");
 
    //  If one of the proxy PSMs is to be skipped, excluded it when
    //  the REL is broadcast.
@@ -906,11 +838,9 @@ void ProxyBcSsm::ReleaseProxies(ProxyBcPsm* skip, Cause::Ind cause) const
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcSsm_SetUPsm = "ProxyBcSsm.SetUPsm";
-
 void ProxyBcSsm::SetUPsm(MediaPsm& psm)
 {
-   Debug::ft(ProxyBcSsm_SetUPsm);
+   Debug::ft("ProxyBcSsm.SetUPsm");
 
    if((proxyCount_ == 0) && (psm.GetFactory() == ProxyCallFactoryId))
    {
@@ -935,12 +865,10 @@ ProxyBcFactoryText::ProxyBcFactoryText() :
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcFactory_ctor = "ProxyBcFactory.ctor";
-
 ProxyBcFactory::ProxyBcFactory() :
    CipFactory(ProxyCallFactoryId, "Proxy Calls")
 {
-   Debug::ft(ProxyBcFactory_ctor);
+   Debug::ft("ProxyBcFactory.ctor");
 
    AddIncomingSignal(Signal::Timeout);
    AddIncomingSignal(CipSignal::IAM);
@@ -956,33 +884,27 @@ ProxyBcFactory::ProxyBcFactory() :
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcFactory_dtor = "ProxyBcFactory.dtor";
-
 ProxyBcFactory::~ProxyBcFactory()
 {
-   Debug::ftnt(ProxyBcFactory_dtor);
+   Debug::ftnt("ProxyBcFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcFactory_AllocIcPsm = "ProxyBcFactory.AllocIcPsm";
-
 ProtocolSM* ProxyBcFactory::AllocIcPsm
    (const Message& msg, ProtocolLayer& lower) const
 {
-   Debug::ft(ProxyBcFactory_AllocIcPsm);
+   Debug::ft("ProxyBcFactory.AllocIcPsm");
 
    return new ProxyBcPsm(lower, false);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcFactory_AllocRoot = "ProxyBcFactory.AllocRoot";
-
 RootServiceSM* ProxyBcFactory::AllocRoot
    (const Message& msg, ProtocolSM& psm) const
 {
-   Debug::ft(ProxyBcFactory_AllocRoot);
+   Debug::ft("ProxyBcFactory.AllocRoot");
 
    auto& tmsg = static_cast< const CipMessage& >(msg);
    auto rte = tmsg.FindType< RouteResult >(CipParameter::Route);
@@ -995,11 +917,9 @@ RootServiceSM* ProxyBcFactory::AllocRoot
 
 //------------------------------------------------------------------------------
 
-fn_name ProxyBcFactory_CreateText = "ProxyBcFactory.CreateText";
-
 CliText* ProxyBcFactory::CreateText() const
 {
-   Debug::ft(ProxyBcFactory_CreateText);
+   Debug::ft("ProxyBcFactory.CreateText");
 
    return new ProxyBcFactoryText;
 }

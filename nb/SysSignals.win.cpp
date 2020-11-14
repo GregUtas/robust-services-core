@@ -26,7 +26,6 @@
 #include <csignal>
 #include "Debug.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -44,11 +43,9 @@ SigBreak::SigBreak() : PosixSignal(SIGBREAK, "SIGBREAK",
 
 //------------------------------------------------------------------------------
 
-fn_name SysSignals_CreateNativeSignals = "SysSignals.CreateNativeSignals";
-
 void SysSignals::CreateNativeSignals()
 {
-   Debug::ft(SysSignals_CreateNativeSignals);
+   Debug::ft("SysSignals.CreateNativeSignals");
 
    Singleton< SigBreak >::Instance();
 }

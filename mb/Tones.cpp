@@ -36,11 +36,9 @@ using std::string;
 
 namespace MediaBase
 {
-fn_name Tone_ctor = "Tone.ctor";
-
 Tone::Tone(Id tid)
 {
-   Debug::ft(Tone_ctor);
+   Debug::ft("Tone.ctor");
 
    tid_.SetId(tid);
    Singleton< ToneRegistry >::Instance()->BindTone(*this);
@@ -48,11 +46,9 @@ Tone::Tone(Id tid)
 
 //------------------------------------------------------------------------------
 
-fn_name Tone_dtor = "Tone.dtor";
-
 Tone::~Tone()
 {
-   Debug::ftnt(Tone_dtor);
+   Debug::ftnt("Tone.dtor");
 
    Singleton< ToneRegistry >::Extant()->UnbindTone(*this);
 }

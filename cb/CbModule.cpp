@@ -34,7 +34,6 @@
 #include "Singleton.h"
 #include "StModule.h"
 #include "SymbolRegistry.h"
-#include "SysTypes.h"
 
 using namespace SessionBase;
 using namespace SessionTools;
@@ -44,11 +43,9 @@ using namespace MediaBase;
 
 namespace CallBase
 {
-fn_name CbModule_ctor = "CbModule.ctor";
-
 CbModule::CbModule() : Module()
 {
-   Debug::ft(CbModule_ctor);
+   Debug::ft("CbModule.ctor");
 
    //  Create the modules required by CallBase.
    //
@@ -59,20 +56,16 @@ CbModule::CbModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name CbModule_dtor = "CbModule.dtor";
-
 CbModule::~CbModule()
 {
-   Debug::ftnt(CbModule_dtor);
+   Debug::ftnt("CbModule.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CbModule_Shutdown = "CbModule.Shutdown";
-
 void CbModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(CbModule_Shutdown);
+   Debug::ft("CbModule.Shutdown");
 
    Singleton< ServiceCodeRegistry >::Instance()->Shutdown(level);
 
@@ -81,11 +74,9 @@ void CbModule::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name CbModule_Startup = "CbModule.Startup";
-
 void CbModule::Startup(RestartLevel level)
 {
-   Debug::ft(CbModule_Startup);
+   Debug::ft("CbModule.Startup");
 
    Singleton< CipProtocol >::Instance()->Startup(level);
    Singleton< CipObcFactory >::Instance()->Startup(level);

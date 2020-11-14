@@ -53,12 +53,10 @@ PotsCallFactoryText::PotsCallFactoryText() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_ctor = "PotsCallFactory.ctor";
-
 PotsCallFactory::PotsCallFactory() :
    BcFactory(PotsCallFactoryId, PotsProtocolId, "POTS Basic Call")
 {
-   Debug::ft(PotsCallFactory_ctor);
+   Debug::ft("PotsCallFactory.ctor");
 
    AddOutgoingSignal(PotsSignal::Supervise);
    AddOutgoingSignal(PotsSignal::Lockout);
@@ -82,32 +80,26 @@ PotsCallFactory::PotsCallFactory() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_dtor = "PotsCallFactory.dtor";
-
 PotsCallFactory::~PotsCallFactory()
 {
-   Debug::ftnt(PotsCallFactory_dtor);
+   Debug::ftnt("PotsCallFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_AllocIcMsg = "PotsCallFactory.AllocIcMsg";
-
 Message* PotsCallFactory::AllocIcMsg(SbIpBufferPtr& buff) const
 {
-   Debug::ft(PotsCallFactory_AllocIcMsg);
+   Debug::ft("PotsCallFactory.AllocIcMsg");
 
    return new Pots_UN_Message(buff);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_AllocIcPsm = "PotsCallFactory.AllocIcPsm";
-
 ProtocolSM* PotsCallFactory::AllocIcPsm
    (const Message& msg, ProtocolLayer& lower) const
 {
-   Debug::ft(PotsCallFactory_AllocIcPsm);
+   Debug::ft("PotsCallFactory.AllocIcPsm");
 
    auto& pmsg = static_cast< const Pots_UN_Message& >(msg);
    auto phi = pmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
@@ -117,11 +109,9 @@ ProtocolSM* PotsCallFactory::AllocIcPsm
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_AllocOgMsg = "PotsCallFactory.AllocOgMsg";
-
 Message* PotsCallFactory::AllocOgMsg(SignalId sid) const
 {
-   Debug::ft(PotsCallFactory_AllocOgMsg);
+   Debug::ft("PotsCallFactory.AllocOgMsg");
 
    return new Pots_NU_Message(nullptr, 32);
 }
@@ -163,23 +153,19 @@ RootServiceSM* PotsCallFactory::AllocRoot
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_CreateText = "PotsCallFactory.CreateText";
-
 CliText* PotsCallFactory::CreateText() const
 {
-   Debug::ft(PotsCallFactory_CreateText);
+   Debug::ft("PotsCallFactory.CreateText");
 
    return new PotsCallFactoryText;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_PortAllocated = "PotsCallFactory.PortAllocated";
-
 void PotsCallFactory::PortAllocated
    (const MsgPort& port, const Message* msg) const
 {
-   Debug::ft(PotsCallFactory_PortAllocated);
+   Debug::ft("PotsCallFactory.PortAllocated");
 
    //  Record this port's address in the user's profile.  This will allow
    //  subsequent messages to be routed to the same context, even if it is
@@ -206,34 +192,28 @@ void PotsCallFactory::PortAllocated
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_ReallocOgMsg = "PotsCallFactory.ReallocOgMsg";
-
 Message* PotsCallFactory::ReallocOgMsg(SbIpBufferPtr& buff) const
 {
-   Debug::ft(PotsCallFactory_ReallocOgMsg);
+   Debug::ft("PotsCallFactory.ReallocOgMsg");
 
    return new Pots_NU_Message(buff);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_ScreenFirstMsg = "PotsCallFactory.ScreenFirstMsg";
-
 bool PotsCallFactory::ScreenFirstMsg
    (const Message& msg, MsgPriority& prio) const
 {
-   Debug::ft(PotsCallFactory_ScreenFirstMsg);
+   Debug::ft("PotsCallFactory.ScreenFirstMsg");
 
    return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_ScreenIcMsgs = "PotsCallFactory.ScreenIcMsgs";
-
 bool PotsCallFactory::ScreenIcMsgs(Q1Way< Message >& msgq)
 {
-   Debug::ft(PotsCallFactory_ScreenIcMsgs);
+   Debug::ft("PotsCallFactory.ScreenIcMsgs");
 
    auto msg1 = msgq.First();
 
@@ -266,11 +246,9 @@ bool PotsCallFactory::ScreenIcMsgs(Q1Way< Message >& msgq)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_SendRelease = "PotsCallFactory.SendRelease";
-
 void PotsCallFactory::SendRelease(const Message& msg1)
 {
-   Debug::ft(PotsCallFactory_SendRelease);
+   Debug::ft("PotsCallFactory.SendRelease");
 
    auto& icmsg = static_cast< const PotsMessage& >(msg1);
    auto icphi = icmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
@@ -291,11 +269,9 @@ void PotsCallFactory::SendRelease(const Message& msg1)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallFactory_VerifyRoute = "PotsCallFactory.VerifyRoute";
-
 Cause::Ind PotsCallFactory::VerifyRoute(RouteResult::Id rid) const
 {
-   Debug::ft(PotsCallFactory_VerifyRoute);
+   Debug::ft("PotsCallFactory.VerifyRoute");
 
    //  There is no point in sending a CIP IAM if the destination DN is not
    //  registered.

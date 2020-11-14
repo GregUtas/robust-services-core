@@ -34,57 +34,47 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name GlobalAddress_ctor1 = "GlobalAddress.ctor";
-
 GlobalAddress::GlobalAddress()
 {
-   Debug::ft(GlobalAddress_ctor1);
+   Debug::ft("GlobalAddress.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name GlobalAddress_ctor2 = "GlobalAddress.ctor(L3addr, factory)";
-
 GlobalAddress::GlobalAddress(const SysIpL3Addr& l3Addr, FactoryId fid) :
    SysIpL3Addr(l3Addr)
 {
-   Debug::ft(GlobalAddress_ctor2);
+   Debug::ft("GlobalAddress.ctor(L3addr, factory)");
 
    sbAddr_.fid = fid;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name GlobalAddress_ctor3 = "GlobalAddress.ctor(L2addr, port, factory)";
 
 GlobalAddress::GlobalAddress
    (const SysIpL2Addr& l2Addr, ipport_t port, FactoryId fid) :
    SysIpL3Addr(l2Addr, port)
 {
-   Debug::ft(GlobalAddress_ctor3);
+   Debug::ft("GlobalAddress.ctor(L2addr, port, factory)");
 
    sbAddr_.fid = fid;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name GlobalAddress_ctor4 = "GlobalAddress.ctor(L3addr, locaddr)";
 
 GlobalAddress::GlobalAddress
    (const SysIpL3Addr& l3Addr, const LocalAddress& sbAddr) :
    SysIpL3Addr(l3Addr),
    sbAddr_(sbAddr)
 {
-   Debug::ft(GlobalAddress_ctor4);
+   Debug::ft("GlobalAddress.ctor(L3addr, locaddr)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name GlobalAddress_dtor = "GlobalAddress.dtor";
-
 GlobalAddress::~GlobalAddress()
 {
-   Debug::ftnt(GlobalAddress_dtor);
+   Debug::ftnt("GlobalAddress.dtor");
 }
 
 //------------------------------------------------------------------------------

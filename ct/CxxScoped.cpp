@@ -465,7 +465,6 @@ void CxxScoped::AddReference(const CxxNamed* item) const
          ref = static_cast< const Function* >(ref)->FindRootFunc();
       }
 
-      prev->SetReferent(ref, nullptr);
       ref->Xref().insert(prev);
       return;
    }

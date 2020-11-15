@@ -674,9 +674,9 @@ void CodeFile::CheckDebugFt() const
                auto ok = false;
 
                if((statement[lpar + 1] == QUOTE) &&
-                  (statement[rpar - lpar + 1] == QUOTE))
+                  (statement[rpar - 1] == QUOTE))
                {
-                  fname = statement.substr(lpar + 1, rpar - lpar - 1);
+                  fname = statement.substr(lpar + 2, rpar - lpar - 3);
                   ok = true;
                }
                else
@@ -701,8 +701,7 @@ void CodeFile::CheckDebugFt() const
                   }
                }
 
-               if(!ok)
-                  LogPos(begin, DebugFtNameMismatch, *f);
+               if(!ok) LogPos(begin, DebugFtNameMismatch, *f);
             }
             break;
 
@@ -2571,6 +2570,40 @@ void CodeFile::RemoveHeaderIds(SetOfIds& inclIds) const
 
 //------------------------------------------------------------------------------
 
+void CodeFile::RemoveInvalidIncludes(SetOfIds& addIds) const
+{
+   Debug::ft("CodeFile.RemoveInvalidIncludes");
+
+   //  A file should not #include
+   //  (a) itself
+   //  (b) a file that it affects (a file that transitively #includes it)
+   //  (c) a .cpp
+   //  The latter two can occur when a template uses one of its instances
+   //  to resolve symbols accessed through a template parameter.
+   //
+   auto lib = Singleton< Library >::Instance();
+   auto fid = Fid();
+
+   addIds.erase(fid);
+
+   for(auto f = addIds.cbegin(); f != addIds.cend(); NO_OP)
+   {
+      auto file = lib->Files().At(*f);
+
+      if(file != nullptr)
+      {
+         auto& affecters = file->Affecters();
+
+         if(file->IsCpp() || (affecters.find(fid) != affecters.cend()))
+            f = addIds.erase(f);
+         else
+            ++f;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::SaveBaseIds(const CxxNamedSet& bases)
 {
    Debug::ft("CodeFile.SaveBaseIds");
@@ -2842,11 +2875,11 @@ void CodeFile::Trim(ostream* stream)
    RemoveHeaderIds(inclIds);
 
    //  Output addIds, the #includes that should be added.  It contains
-   //  inclIds, minus the file itself and what is already #included.
+   //  inclIds, minus any spurious files and what is already #included.
    //
    SetOfIds addIds;
    SetDifference(addIds, inclIds, inclIds_);
-   addIds.erase(Fid());
+   RemoveInvalidIncludes(addIds);
    LogAddIncludes(stream, addIds);
 
    //  Output delIds, which are the #includes that should be removed.  It

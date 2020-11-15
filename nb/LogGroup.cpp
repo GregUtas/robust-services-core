@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LogGroup.h"
+#include <bitset>
 #include <cstdint>
 #include <ostream>
 #include "Algorithms.h"

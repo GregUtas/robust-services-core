@@ -21,6 +21,7 @@
 //
 #include "LogGroupRegistry.h"
 #include "StatisticsGroup.h"
+#include <bitset>
 #include <ostream>
 #include "Debug.h"
 #include "Formatters.h"

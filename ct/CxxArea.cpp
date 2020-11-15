@@ -1497,7 +1497,7 @@ Class::UsageAttributes Class::GetUsageAttrs() const
 
 void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   //  IF this is a class template, obtain usage information from its first
+   //  If this is a class template, obtain usage information from its first
    //  instance in case some symbols in the template could not be resolved.
    //
    if(!tmplts_.empty())

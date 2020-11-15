@@ -257,7 +257,7 @@ public:
    //
    virtual void AddToXref() const { }
 
-   //  Updates SYMBOLS with how this item used other types within FILE.  See
+   //  Updates SYMBOLS with how this item (in FILE) used other types.  See
    //  UsageType for a list of how various uses of a type are distinguished.
    //
    virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const { }

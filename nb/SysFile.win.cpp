@@ -59,12 +59,10 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name FileWalker_ctor = "FileWalker.ctor";
-
 FileWalker::FileWalker(const char* dirName, const char* fileSpec) :
    iterator_(-1)
 {
-   Debug::ft(FileWalker_ctor);
+   Debug::ft("FileWalker.ctor");
 
    auto err = (dirName != nullptr ? SysFile::SetDir(dirName) : false);
    if(!err) iterator_ = _findfirst(fileSpec, &attributes_);
@@ -72,22 +70,18 @@ FileWalker::FileWalker(const char* dirName, const char* fileSpec) :
 
 //------------------------------------------------------------------------------
 
-fn_name FileWalker_dtor = "FileWalker.dtor";
-
 FileWalker::~FileWalker()
 {
-   Debug::ftnt(FileWalker_dtor);
+   Debug::ftnt("FileWalker.dtor");
 
    Reset();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name FileWalker_Advance = "FileWalker.Advance";
-
 bool FileWalker::Advance()
 {
-   Debug::ft(FileWalker_Advance);
+   Debug::ft("FileWalker.Advance");
 
    if(iterator_ == -1) return false;
    if(_findnext(iterator_, &attributes_) == 0) return true;
@@ -120,11 +114,9 @@ bool FileWalker::IsSubdir() const
 
 //------------------------------------------------------------------------------
 
-fn_name FileWalker_Reset = "FileWalker.Reset";
-
 bool FileWalker::Reset()
 {
-   Debug::ftnt(FileWalker_Reset);
+   Debug::ftnt("FileWalker.Reset");
 
    if(iterator_ == -1) return false;
    _findclose(iterator_);
@@ -134,11 +126,9 @@ bool FileWalker::Reset()
 
 //==============================================================================
 
-fn_name SysFile_GetCurrDir = "SysFile.GetCurrDir";
-
 void SysFile::GetCurrDir(string& dirName)
 {
-   Debug::ft(SysFile_GetCurrDir);
+   Debug::ft("SysFile.GetCurrDir");
 
    char buff[256];
 
@@ -150,11 +140,9 @@ void SysFile::GetCurrDir(string& dirName)
 
 //------------------------------------------------------------------------------
 
-fn_name SysFile_GetFileList = "SysFile.GetFileList";
-
 FileListPtr SysFile::GetFileList(const char* dirName, const char* fileSpec)
 {
-   Debug::ft(SysFile_GetFileList);
+   Debug::ft("SysFile.GetFileList");
 
    if(dirName != nullptr)
    {
@@ -174,11 +162,9 @@ FileListPtr SysFile::GetFileList(const char* dirName, const char* fileSpec)
 
 //------------------------------------------------------------------------------
 
-fn_name SysFile_SetDir = "SysFile.SetDir";
-
 bool SysFile::SetDir(const char* dirName)
 {
-   Debug::ft(SysFile_SetDir);
+   Debug::ft("SysFile.SetDir");
 
    return (_chdir(dirName) == 0);
 }

@@ -45,20 +45,16 @@ public: PotsBicAttrs();
 
 //==============================================================================
 
-fn_name PotsBicFeatureProfile_ctor = "PotsBicFeatureProfile.ctor";
-
 PotsBicFeatureProfile::PotsBicFeatureProfile() : PotsFeatureProfile(BIC)
 {
-   Debug::ft(PotsBicFeatureProfile_ctor);
+   Debug::ft("PotsBicFeatureProfile.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBicFeatureProfile_dtor = "PotsBicFeatureProfile.dtor";
-
 PotsBicFeatureProfile::~PotsBicFeatureProfile()
 {
-   Debug::ftnt(PotsBicFeatureProfile_dtor);
+   Debug::ftnt("PotsBicFeatureProfile.dtor");
 }
 
 //==============================================================================
@@ -70,12 +66,10 @@ PotsBicAttrs::PotsBicAttrs() : CliText(PotsBicFullName, PotsBicAbbrName) { }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBicFeature_ctor = "PotsBicFeature.ctor";
-
 PotsBicFeature::PotsBicFeature() :
    PotsFeature(BIC, false, PotsBicAbbrName, PotsBicFullName)
 {
-   Debug::ft(PotsBicFeature_ctor);
+   Debug::ft("PotsBicFeature.ctor");
 
    SetIncompatible(CFU);
    SetIncompatible(CFB);
@@ -85,11 +79,9 @@ PotsBicFeature::PotsBicFeature() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBicFeature_dtor = "PotsBicFeature.dtor";
-
 PotsBicFeature::~PotsBicFeature()
 {
-   Debug::ftnt(PotsBicFeature_dtor);
+   Debug::ftnt("PotsBicFeature.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -98,12 +90,10 @@ CliText* PotsBicFeature::Attrs() const { return new PotsBicAttrs; }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBicFeature_Subscribe = "PotsBicFeature.Subscribe";
-
 PotsFeatureProfile* PotsBicFeature::Subscribe
    (PotsProfile& profile, CliThread& cli) const
 {
-   Debug::ft(PotsBicFeature_Subscribe);
+   Debug::ft("PotsBicFeature.Subscribe");
 
    if(!cli.EndOfInput()) return nullptr;
    return new PotsBicFeatureProfile;

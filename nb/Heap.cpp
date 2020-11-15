@@ -36,8 +36,6 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name Heap_ctor = "Heap.ctor";
-
 Heap::Heap() :
    attrs_(MemReadWrite),
    inUse_(0),
@@ -48,16 +46,14 @@ Heap::Heap() :
    changes_(0),
    trace_(false)
 {
-   Debug::ft(Heap_ctor);
+   Debug::ft("Heap.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_dtor = "Heap.dtor";
-
 Heap::~Heap()
 {
-   Debug::ftnt(Heap_dtor);
+   Debug::ftnt("Heap.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -169,22 +165,18 @@ bool Heap::IsFixedSize() const
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_delete = "Heap.operator delete";
-
 void Heap::operator delete(void* addr)
 {
-   Debug::ftnt(Heap_delete);
+   Debug::ftnt("Heap.operator delete");
 
    ::operator delete(addr);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_new = "Heap.operator new";
-
 void* Heap::operator new(size_t size)
 {
-   Debug::ft(Heap_new);
+   Debug::ft("Heap.operator new");
 
    auto addr = ::operator new(size, std::nothrow);
    if(addr != nullptr) return addr;
@@ -217,22 +209,18 @@ void Heap::Requested(size_t size, void* addr)
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_ResetTrace = "Heap.ResetTrace";
-
 void Heap::ResetTrace()
 {
-   Debug::ft(Heap_ResetTrace);
+   Debug::ft("Heap.ResetTrace");
 
    blocks_.clear();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_SetAttrs = "Heap.SetAttrs";
-
 int Heap::SetAttrs(MemoryProtection attrs)
 {
-   Debug::ft(Heap_SetAttrs);
+   Debug::ft("Heap.SetAttrs");
 
    if(attrs_ == attrs) return 0;
    attrs_ = attrs;
@@ -265,11 +253,9 @@ int Heap::SetPermissions(MemoryProtection attrs)
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_SetTrace = "Heap.SetTrace";
-
 void Heap::SetTrace(bool enabled)
 {
-   Debug::ft(Heap_SetTrace);
+   Debug::ft("Heap.SetTrace");
 
    trace_ = enabled;
 }

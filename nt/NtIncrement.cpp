@@ -127,11 +127,9 @@ CorruptCommand::CorruptCommand(bool bind) :
    if(bind) BindParm(*new CorruptWhatParm);
 }
 
-fn_name CorruptCommand_ProcessCommand = "CorruptCommand.ProcessCommand";
-
 word CorruptCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(CorruptCommand_ProcessCommand);
+   Debug::ft("CorruptCommand.ProcessCommand");
 
    id_t corruptWhatIndex;
 
@@ -140,11 +138,9 @@ word CorruptCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, corruptWhatIndex);
 }
 
-fn_name CorruptCommand_ProcessSubcommand = "CorruptCommand.ProcessSubcommand";
-
 word CorruptCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(CorruptCommand_ProcessSubcommand);
+   Debug::ft("CorruptCommand.ProcessSubcommand");
 
    if(index != PoolIndex) return CliCommand::ProcessSubcommand(cli, index);
 
@@ -279,12 +275,10 @@ word NtLogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    return rc;
 }
 
-fn_name NtLogsCommand_Sort = "NtLogsCommand.Sort";
-
 word NtLogsCommand::Sort
    (const string& input, const string& output, string& expl) const
 {
-   Debug::ft(NtLogsCommand_Sort);
+   Debug::ft("NtLogsCommand.Sort");
 
    FunctionGuard guard(Guard_MakePreemptable);
 
@@ -449,11 +443,9 @@ NtSaveCommand::NtSaveCommand(bool bind) : SaveCommand(false)
    if(bind) BindParm(*new NtSaveWhatParm);
 }
 
-fn_name NtSaveCommand_ProcessSubcommand = "NtSaveCommand.ProcessSubcommand";
-
 word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(NtSaveCommand_ProcessSubcommand);
+   Debug::ft("NtSaveCommand.ProcessSubcommand");
 
    if(index != FuncsIndex) return SaveCommand::ProcessSubcommand(cli, index);
 
@@ -559,11 +551,9 @@ NtSetCommand::NtSetCommand(bool bind) : SetCommand(false)
    if(bind) BindParm(*new NtSetWhatParm);
 }
 
-fn_name NtSetCommand_ProcessSubcommand = "NtSetCommand.ProcessSubcommand";
-
 word NtSetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(NtSetCommand_ProcessSubcommand);
+   Debug::ft("NtSetCommand.ProcessSubcommand");
 
    if(index != FuncTraceScope) return SetCommand::ProcessSubcommand(cli, index);
 
@@ -630,11 +620,9 @@ void SizesCommand::DisplaySizes(CliThread& cli, bool all) const
    *cli.obuf << "  TraceRecord = " << sizeof(TraceRecord) << CRLF;
 }
 
-fn_name SizesCommand_ProcessCommand = "SizesCommand.ProcessCommand";
-
 word SizesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SizesCommand_ProcessCommand);
+   Debug::ft("SizesCommand.ProcessCommand");
 
    auto all = false;
 
@@ -728,11 +716,9 @@ SwFlagsCommand::SwFlagsCommand() : CliCommand(SwFlagsStr, SwFlagsExpl)
    BindParm(*new FlagsAction);
 }
 
-fn_name SwFlagsCommand_ProcessCommand = "SwFlagsCommand.ProcessCommand";
-
 word SwFlagsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SwFlagsCommand_ProcessCommand);
+   Debug::ft("SwFlagsCommand.ProcessCommand");
 
    id_t index, setHowIndex;
    word flag;
@@ -1005,11 +991,9 @@ TestcaseCommand::TestcaseCommand(bool bind) :
    if(bind) BindParm(*new TestcaseAction);
 }
 
-fn_name TestcaseCommand_ProcessCommand = "TestcaseCommand.ProcessCommand";
-
 word TestcaseCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TestcaseCommand_ProcessCommand);
+   Debug::ft("TestcaseCommand.ProcessCommand");
 
    id_t index;
 
@@ -1018,11 +1002,9 @@ word TestcaseCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, index);
 }
 
-fn_name TestcaseCommand_ProcessSubcommand = "TestcaseCommand.ProcessSubcommand";
-
 word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(TestcaseCommand_ProcessSubcommand);
+   Debug::ft("TestcaseCommand.ProcessSubcommand");
 
    auto test = NtTestData::Access(cli);
    if(test == nullptr) return cli.Report(-7, AllocationError);
@@ -1285,11 +1267,9 @@ HeapCreateCommand::HeapCreateCommand() :
    BindParm(*new HeapSizeParm);
 }
 
-fn_name HeapCreateCommand_ProcessCommand = "HeapCreateCommand.ProcessCommand";
-
 word HeapCreateCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(HeapCreateCommand_ProcessCommand);
+   Debug::ft("HeapCreateCommand.ProcessCommand");
 
    char c;
    word size;
@@ -1333,11 +1313,9 @@ fixed_string HeapDestroyExpl = "Destroys the heap.";
 HeapDestroyCommand::HeapDestroyCommand() :
    CliCommand(HeapDestroyStr, HeapDestroyExpl) { }
 
-fn_name HeapDestroyCommand_ProcessCommand = "HeapDestroyCommand.ProcessCommand";
-
 word HeapDestroyCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(HeapDestroyCommand_ProcessCommand);
+   Debug::ft("HeapDestroyCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
 
@@ -1362,11 +1340,9 @@ HeapAllocCommand::HeapAllocCommand() :
    BindParm(*new HeapBlockSizeParm);
 }
 
-fn_name HeapAllocCommand_ProcessCommand = "HeapAllocCommand.ProcessCommand";
-
 word HeapAllocCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(HeapAllocCommand_ProcessCommand);
+   Debug::ft("HeapAllocCommand.ProcessCommand");
 
    word size;
 
@@ -1393,12 +1369,9 @@ HeapBlockToSizeCommand::HeapBlockToSizeCommand() :
    BindParm(*new HeapBlockAddrParm);
 }
 
-fn_name HeapBlockToSizeCommand_ProcessCommand =
-   "HeapBlockToSizeCommand.ProcessCommand";
-
 word HeapBlockToSizeCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(HeapBlockToSizeCommand_ProcessCommand);
+   Debug::ft("HeapBlockToSizeCommand.ProcessCommand");
 
    void* addr;
 
@@ -1422,11 +1395,9 @@ fixed_string HeapDisplayExpl = "Displays the heap.";
 HeapDisplayCommand::HeapDisplayCommand() :
    CliCommand(HeapDisplayStr, HeapDisplayExpl) { }
 
-fn_name HeapDisplayCommand_ProcessCommand = "HeapDisplayCommand.ProcessCommand";
-
 word HeapDisplayCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(HeapDisplayCommand_ProcessCommand);
+   Debug::ft("HeapDisplayCommand.ProcessCommand");
 
    Heap* heap = nullptr;
    auto rc = CheckHeap(true, cli, heap);
@@ -1447,11 +1418,9 @@ HeapFreeCommand::HeapFreeCommand() :
    BindParm(*new HeapBlockAddrParm);
 }
 
-fn_name HeapFreeCommand_ProcessCommand = "HeapFreeCommand.ProcessCommand";
-
 word HeapFreeCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(HeapFreeCommand_ProcessCommand);
+   Debug::ft("HeapFreeCommand.ProcessCommand");
 
    void* addr;
 
@@ -1477,12 +1446,9 @@ HeapValidateCommand::HeapValidateCommand() :
    BindParm(*new HeapBlockAddrParm);
 }
 
-fn_name HeapValidateCommand_ProcessCommand =
-   "HeapValidateCommand.ProcessCommand";
-
 word HeapValidateCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(HeapValidateCommand_ProcessCommand);
+   Debug::ft("HeapValidateCommand.ProcessCommand");
 
    void* addr;
 
@@ -1579,11 +1545,9 @@ LbcInitCommand::LbcInitCommand() : CliCommand(LbcInitStr, LbcInitExpl)
    BindParm(*new LbcTimeParm);
 }
 
-fn_name LbcInitCommand_ProcessCommand = "LbcInitCommand.ProcessCommand";
-
 word LbcInitCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(LbcInitCommand_ProcessCommand);
+   Debug::ft("LbcInitCommand.ProcessCommand");
 
    word limit, secs;
 
@@ -1603,11 +1567,9 @@ fixed_string LbcEventExpl = "Updates the counter when an event occurs.";
 
 LbcEventCommand::LbcEventCommand() : CliCommand(LbcEventStr, LbcEventExpl) { }
 
-fn_name LbcEventCommand_ProcessCommand = "LbcEventCommand.ProcessCommand";
-
 word LbcEventCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(LbcEventCommand_ProcessCommand);
+   Debug::ft("LbcEventCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    *cli.obuf << spaces(2);
@@ -1855,11 +1817,9 @@ fixed_string Countq1Expl = "Returns the number of items in the queue.";
 
 Countq1Command::Countq1Command() : CliCommand(Countq1Str, Countq1Expl) { }
 
-fn_name Countq1Command_ProcessCommand = "Countq1Command.ProcessCommand";
-
 word Countq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Countq1Command_ProcessCommand);
+   Debug::ft("Countq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
@@ -1875,11 +1835,9 @@ fixed_string Deq1Expl = "Removes the item at the front of the queue.";
 
 Deq1Command::Deq1Command() : CliCommand(Deq1Str, Deq1Expl) { }
 
-fn_name Deq1Command_ProcessCommand = "Deq1Command.ProcessCommand";
-
 word Deq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Deq1Command_ProcessCommand);
+   Debug::ft("Deq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
@@ -1899,11 +1857,9 @@ fixed_string Emptyq1Expl = "Returns true if the queue is empty.";
 
 Emptyq1Command::Emptyq1Command() : CliCommand(Emptyq1Str, Emptyq1Expl) { }
 
-fn_name Emptyq1Command_ProcessCommand = "Emptyq1Command.ProcessCommand";
-
 word Emptyq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Emptyq1Command_ProcessCommand);
+   Debug::ft("Emptyq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
@@ -1923,11 +1879,9 @@ Enq1Command::Enq1Command() : CliCommand(Enq1Str, Enq1Expl)
    BindParm(*new Q1WayItemIndexParm);
 }
 
-fn_name Enq1Command_ProcessCommand = "Enq1Command.ProcessCommand";
-
 word Enq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Enq1Command_ProcessCommand);
+   Debug::ft("Enq1Command.ProcessCommand");
 
    word id1;
 
@@ -1954,11 +1908,9 @@ Exq1Command::Exq1Command() : CliCommand(Exq1Str, Exq1Expl)
    BindParm(*new Q1WayItemIndexParm);
 }
 
-fn_name Exq1Command_ProcessCommand = "Exq1Command.ProcessCommand";
-
 word Exq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Exq1Command_ProcessCommand);
+   Debug::ft("Exq1Command.ProcessCommand");
 
    word id1;
 
@@ -1983,11 +1935,9 @@ fixed_string Firstq1Expl = "Returns the first item in the queue.";
 
 Firstq1Command::Firstq1Command() : CliCommand(Firstq1Str, Firstq1Expl) { }
 
-fn_name Firstq1Command_ProcessCommand = "Firstq1Command.ProcessCommand";
-
 word Firstq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Firstq1Command_ProcessCommand);
+   Debug::ft("Firstq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
@@ -2011,11 +1961,9 @@ Henq1Command::Henq1Command() : CliCommand(Henq1Str, Henq1Expl)
    BindParm(*new Q1WayItemIndexParm);
 }
 
-fn_name Henq1Command_ProcessCommand = "Henq1Command.ProcessCommand";
-
 word Henq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Henq1Command_ProcessCommand);
+   Debug::ft("Henq1Command.ProcessCommand");
 
    word id1;
 
@@ -2043,11 +1991,9 @@ Insertq1Command::Insertq1Command() : CliCommand(Insertq1Str, Insertq1Expl)
    BindParm(*new Q1WayItemIndexParm);
 }
 
-fn_name Insertq1Command_ProcessCommand = "Insertq1Command.ProcessCommand";
-
 word Insertq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Insertq1Command_ProcessCommand);
+   Debug::ft("Insertq1Command.ProcessCommand");
 
    word id1, id2;
 
@@ -2075,11 +2021,9 @@ Nextq1Command::Nextq1Command() : CliCommand(Nextq1Str, Nextq1Expl)
    BindParm(*new Q1WayItemIndexParm);
 }
 
-fn_name Nextq1Command_ProcessCommand = "Nextq1Command.ProcessCommand";
-
 word Nextq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Nextq1Command_ProcessCommand);
+   Debug::ft("Nextq1Command.ProcessCommand");
 
    word id1;
 
@@ -2121,11 +2065,9 @@ fixed_string Purgeq1Expl = "Deletes all the items in the queue.";
 
 Purgeq1Command::Purgeq1Command() : CliCommand(Purgeq1Str, Purgeq1Expl) { }
 
-fn_name Purgeq1Command_ProcessCommand = "Purgeq1Command.ProcessCommand";
-
 word Purgeq1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Purgeq1Command_ProcessCommand);
+   Debug::ft("Purgeq1Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q1WayPool >::Instance();
@@ -2376,11 +2318,9 @@ fixed_string Countq2Expl = "Returns the number of items in the queue.";
 
 Countq2Command::Countq2Command() : CliCommand(Countq2Str, Countq2Expl) { }
 
-fn_name Countq2Command_ProcessCommand = "Countq2Command.ProcessCommand";
-
 word Countq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Countq2Command_ProcessCommand);
+   Debug::ft("Countq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
@@ -2396,11 +2336,9 @@ fixed_string Deq2Expl = "Removes the item at the front of the queue.";
 
 Deq2Command::Deq2Command() : CliCommand(Deq2Str, Deq2Expl) { }
 
-fn_name Deq2Command_ProcessCommand = "Deq2Command.ProcessCommand";
-
 word Deq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Deq2Command_ProcessCommand);
+   Debug::ft("Deq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
@@ -2420,11 +2358,9 @@ fixed_string Emptyq2Expl = "Returns true if the queue is empty.";
 
 Emptyq2Command::Emptyq2Command() : CliCommand(Emptyq2Str, Emptyq2Expl) { }
 
-fn_name Emptyq2Command_ProcessCommand = "Emptyq2Command.ProcessCommand";
-
 word Emptyq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Emptyq2Command_ProcessCommand);
+   Debug::ft("Emptyq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
@@ -2444,11 +2380,9 @@ Enq2Command::Enq2Command() : CliCommand(Enq2Str, Enq2Expl)
    BindParm(*new Q2WayItemIndexParm);
 }
 
-fn_name Enq2Command_ProcessCommand = "Enq2Command.ProcessCommand";
-
 word Enq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Enq2Command_ProcessCommand);
+   Debug::ft("Enq2Command.ProcessCommand");
 
    word id1;
 
@@ -2475,11 +2409,9 @@ Exq2Command::Exq2Command() : CliCommand(Exq2Str, Exq2Expl)
    BindParm(*new Q2WayItemIndexParm);
 }
 
-fn_name Exq2Command_ProcessCommand = "Exq2Command.ProcessCommand";
-
 word Exq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Exq2Command_ProcessCommand);
+   Debug::ft("Exq2Command.ProcessCommand");
 
    word id1;
 
@@ -2504,11 +2436,9 @@ fixed_string Firstq2Expl = "Returns the first item in the queue.";
 
 Firstq2Command::Firstq2Command() : CliCommand(Firstq2Str, Firstq2Expl) { }
 
-fn_name Firstq2Command_ProcessCommand = "Firstq2Command.ProcessCommand";
-
 word Firstq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Firstq2Command_ProcessCommand);
+   Debug::ft("Firstq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
@@ -2534,11 +2464,9 @@ Henq2Command::Henq2Command() : CliCommand(Henq2Str, Henq2Expl)
    BindParm(*new Q2WayItemIndexParm);
 }
 
-fn_name Henq2Command_ProcessCommand = "Henq2Command.ProcessCommand";
-
 word Henq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Henq2Command_ProcessCommand);
+   Debug::ft("Henq2Command.ProcessCommand");
 
    word id1;
 
@@ -2562,11 +2490,9 @@ fixed_string Lastq2Expl = "Returns the last item in the queue.";
 
 Lastq2Command::Lastq2Command() : CliCommand(Lastq2Str, Lastq2Expl) { }
 
-fn_name Lastq2Command_ProcessCommand = "Lastq2Command.ProcessCommand";
-
 word Lastq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Lastq2Command_ProcessCommand);
+   Debug::ft("Lastq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
@@ -2592,11 +2518,9 @@ Nextq2Command::Nextq2Command() : CliCommand(Nextq2Str, Nextq2Expl)
    BindParm(*new Q2WayItemIndexParm);
 }
 
-fn_name Nextq2Command_ProcessCommand = "Nextq2Command.ProcessCommand";
-
 word Nextq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Nextq2Command_ProcessCommand);
+   Debug::ft("Nextq2Command.ProcessCommand");
 
    word id1;
 
@@ -2641,11 +2565,9 @@ Prevq2Command::Prevq2Command() : CliCommand(Prevq2Str, Prevq2Expl)
    BindParm(*new Q2WayItemIndexParm);
 }
 
-fn_name Prevq2Command_ProcessCommand = "Prevq2Command.ProcessCommand";
-
 word Prevq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Prevq2Command_ProcessCommand);
+   Debug::ft("Prevq2Command.ProcessCommand");
 
    word id1;
 
@@ -2687,11 +2609,9 @@ fixed_string Purgeq2Expl = "Deletes all the items in the queue.";
 
 Purgeq2Command::Purgeq2Command() : CliCommand(Purgeq2Str, Purgeq2Expl) { }
 
-fn_name Purgeq2Command_ProcessCommand = "Purgeq2Command.ProcessCommand";
-
 word Purgeq2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(Purgeq2Command_ProcessCommand);
+   Debug::ft("Purgeq2Command.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< Q2WayPool >::Instance();
@@ -2936,11 +2856,9 @@ InitCommand::InitCommand() : CliCommand(InitStr, InitExpl)
    BindParm(*new RegistrySizeParm);
 }
 
-fn_name InitCommand_ProcessCommand = "InitCommand.ProcessCommand";
-
 word InitCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(InitCommand_ProcessCommand);
+   Debug::ft("InitCommand.ProcessCommand");
 
    word id1;
 
@@ -2965,11 +2883,9 @@ InsertCommand::InsertCommand() : CliCommand(InsertStr, InsertExpl)
    BindParm(*new RegistryIdOptParm);
 }
 
-fn_name InsertCommand_ProcessCommand = "InsertCommand.ProcessCommand";
-
 word InsertCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(InsertCommand_ProcessCommand);
+   Debug::ft("InsertCommand.ProcessCommand");
 
    word id1, id2;
    bool fixed;
@@ -3009,11 +2925,9 @@ RemoveCommand::RemoveCommand() : CliCommand(RemoveStr, RemoveExpl)
    BindParm(*new RegistryIdOptParm);
 }
 
-fn_name RemoveCommand_ProcessCommand = "RemoveCommand.ProcessCommand";
-
 word RemoveCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(RemoveCommand_ProcessCommand);
+   Debug::ft("RemoveCommand.ProcessCommand");
 
    word id1, id2;
    bool fixed, result;
@@ -3048,11 +2962,9 @@ AtCommand::AtCommand() : CliCommand(AtStr, AtExpl)
    BindParm(*new RegistryIdMandParm);
 }
 
-fn_name AtCommand_ProcessCommand = "AtCommand.ProcessCommand";
-
 word AtCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(AtCommand_ProcessCommand);
+   Debug::ft("AtCommand.ProcessCommand");
 
    word id1;
 
@@ -3078,11 +2990,9 @@ FirstCommand::FirstCommand() : CliCommand(FirstStr, FirstExpl)
    BindParm(*new RegistryIdOptParm);
 }
 
-fn_name FirstCommand_ProcessCommand = "FirstCommand.ProcessCommand";
-
 word FirstCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(FirstCommand_ProcessCommand);
+   Debug::ft("FirstCommand.ProcessCommand");
 
    word id1;
    bool start;
@@ -3125,11 +3035,9 @@ NextCommand::NextCommand() : CliCommand(NextStr, NextExpl)
    BindParm(*new RegistryItemIndexParm);
 }
 
-fn_name NextCommand_ProcessCommand = "NextCommand.ProcessCommand";
-
 word NextCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(NextCommand_ProcessCommand);
+   Debug::ft("NextCommand.ProcessCommand");
 
    word id1;
 
@@ -3171,11 +3079,9 @@ fixed_string LastExpl = "Returns the last item in the registry.";
 
 LastCommand::LastCommand() : CliCommand(LastStr, LastExpl) { }
 
-fn_name LastCommand_ProcessCommand = "LastCommand.ProcessCommand";
-
 word LastCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(LastCommand_ProcessCommand);
+   Debug::ft("LastCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< RegistryPool >::Instance();
@@ -3198,11 +3104,9 @@ PrevCommand::PrevCommand() : CliCommand(PrevStr, PrevExpl)
    BindParm(*new RegistryItemIndexParm);
 }
 
-fn_name PrevCommand_ProcessCommand = "PrevCommand.ProcessCommand";
-
 word PrevCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(PrevCommand_ProcessCommand);
+   Debug::ft("PrevCommand.ProcessCommand");
 
    word id1;
 
@@ -3244,11 +3148,9 @@ fixed_string CountExpl = "Returns the number of items in the registry.";
 
 CountCommand::CountCommand() : CliCommand(CountStr, CountExpl) { }
 
-fn_name CountCommand_ProcessCommand = "CountCommand.ProcessCommand[>nt]";
-
 word CountCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(CountCommand_ProcessCommand);
+   Debug::ft("CountCommand.ProcessCommand[>nt]");
 
    if(!cli.EndOfInput()) return -1;
    auto pool = Singleton< RegistryPool >::Instance();
@@ -3473,11 +3375,9 @@ TimeCtor1Command::TimeCtor1Command() : CliCommand(TimeCtor1Str, TimeCtor1Expl)
    BindParm(*new SysTimeIndexParm);
 }
 
-fn_name TimeCtor1Command_ProcessCommand = "TimeCtor1Command.ProcessCommand";
-
 word TimeCtor1Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TimeCtor1Command_ProcessCommand);
+   Debug::ft("TimeCtor1Command.ProcessCommand");
 
    word id1;
 
@@ -3506,11 +3406,9 @@ TimeCtor2Command::TimeCtor2Command() : CliCommand(TimeCtor2Str, TimeCtor2Expl)
    BindParm(*new SysTimeMsecondParm);
 }
 
-fn_name TimeCtor2Command_ProcessCommand = "TimeCtor2Command.ProcessCommand";
-
 word TimeCtor2Command::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TimeCtor2Command_ProcessCommand);
+   Debug::ft("TimeCtor2Command.ProcessCommand");
 
    word id1, year, month, day, hour, min, sec, msec;
 
@@ -3539,11 +3437,9 @@ DayOfWeekCommand::DayOfWeekCommand() : CliCommand(DayOfWeekStr, DayOfWeekExpl)
    BindParm(*new SysTimeIndexParm);
 }
 
-fn_name DayOfWeekCommand_ProcessCommand = "DayOfWeekCommand.ProcessCommand";
-
 word DayOfWeekCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(DayOfWeekCommand_ProcessCommand);
+   Debug::ft("DayOfWeekCommand.ProcessCommand");
 
    word id1;
 
@@ -3565,11 +3461,9 @@ DayOfYearCommand::DayOfYearCommand() : CliCommand(DayOfYearStr, DayOfYearExpl)
    BindParm(*new SysTimeIndexParm);
 }
 
-fn_name DayOfYearCommand_ProcessCommand = "DayOfYearCommand.ProcessCommand";
-
 word DayOfYearCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(DayOfYearCommand_ProcessCommand);
+   Debug::ft("DayOfYearCommand.ProcessCommand");
 
    word id1;
 
@@ -3592,11 +3486,9 @@ IsLeapYearCommand::IsLeapYearCommand() :
    BindParm(*new SysTimeYearParm);
 }
 
-fn_name IsLeapYearCommand_ProcessCommand = "IsLeapYearCommand.ProcessCommand";
-
 word IsLeapYearCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(IsLeapYearCommand_ProcessCommand);
+   Debug::ft("IsLeapYearCommand.ProcessCommand");
 
    word year;
 
@@ -3617,11 +3509,9 @@ TruncateCommand::TruncateCommand() : CliCommand(TruncateStr, TruncateExpl)
    BindParm(*new SysTimeFieldParm);
 }
 
-fn_name TruncateCommand_ProcessCommand = "TruncateCommand.ProcessCommand";
-
 word TruncateCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TruncateCommand_ProcessCommand);
+   Debug::ft("TruncateCommand.ProcessCommand");
 
    id_t field;
    word id1;
@@ -3647,11 +3537,9 @@ RoundCommand::RoundCommand() : CliCommand(RoundStr, RoundExpl)
    BindParm(*new SysTimeIntervalParm);
 }
 
-fn_name RoundCommand_ProcessCommand = "RoundCommand.ProcessCommand";
-
 word RoundCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(RoundCommand_ProcessCommand);
+   Debug::ft("RoundCommand.ProcessCommand");
 
    word id1, interval;
    id_t field;
@@ -3677,11 +3565,9 @@ AddMsecsCommand::AddMsecsCommand() : CliCommand(AddMsecsStr, AddMsecsExpl)
    BindParm(*new SysTimeMsecsParm);
 }
 
-fn_name AddMsecsCommand_ProcessCommand = "AddMsecsCommand.ProcessCommand";
-
 word AddMsecsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(AddMsecsCommand_ProcessCommand);
+   Debug::ft("AddMsecsCommand.ProcessCommand");
 
    word id1, msecs;
 
@@ -3705,11 +3591,9 @@ SubMsecsCommand::SubMsecsCommand() : CliCommand(SubMsecsStr, SubMsecsExpl)
    BindParm(*new SysTimeMsecsParm);
 }
 
-fn_name SubMsecsCommand_ProcessCommand = "SubMsecsCommand.ProcessCommand";
-
 word SubMsecsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SubMsecsCommand_ProcessCommand);
+   Debug::ft("SubMsecsCommand.ProcessCommand");
 
    word id1, msecs;
 
@@ -3733,12 +3617,9 @@ MsecsFromNowCommand::MsecsFromNowCommand() :
    BindParm(*new SysTimeIndexParm);
 }
 
-fn_name MsecsFromNowCommand_ProcessCommand =
-   "MsecsFromNowCommand.ProcessCommand";
-
 word MsecsFromNowCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(MsecsFromNowCommand_ProcessCommand);
+   Debug::ft("MsecsFromNowCommand.ProcessCommand");
 
    word id1;
 
@@ -3763,11 +3644,9 @@ MsecsUntilCommand::MsecsUntilCommand() :
    BindParm(*new SysTimeIndexParm);
 }
 
-fn_name MsecsUntilCommand_ProcessCommand = "MsecsUntilCommand.ProcessCommand";
-
 word MsecsUntilCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(MsecsUntilCommand_ProcessCommand);
+   Debug::ft("MsecsUntilCommand.ProcessCommand");
 
    word id1, id2;
 
@@ -3793,11 +3672,9 @@ AddDaysCommand::AddDaysCommand() : CliCommand(AddDaysStr, AddDaysExpl)
    BindParm(*new SysTimeDaysParm);
 }
 
-fn_name AddDaysCommand_ProcessCommand = "AddDaysCommand.ProcessCommand";
-
 word AddDaysCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(AddDaysCommand_ProcessCommand);
+   Debug::ft("AddDaysCommand.ProcessCommand");
 
    word id1, days;
 
@@ -3821,11 +3698,9 @@ SubDaysCommand::SubDaysCommand() : CliCommand(SubDaysStr, SubDaysExpl)
    BindParm(*new SysTimeDaysParm);
 }
 
-fn_name SubDaysCommand_ProcessCommand = "SubDaysCommand.ProcessCommand";
-
 word SubDaysCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SubDaysCommand_ProcessCommand);
+   Debug::ft("SubDaysCommand.ProcessCommand");
 
    word id1, days;
 
@@ -3848,11 +3723,9 @@ StrTimeCommand::StrTimeCommand() : CliCommand(StrTimeStr, StrTimeExpl)
    BindParm(*new SysTimeIndexParm);
 }
 
-fn_name StrTimeCommand_ProcessCommand = "StrTimeCommand.ProcessCommand";
-
 word StrTimeCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(StrTimeCommand_ProcessCommand);
+   Debug::ft("StrTimeCommand.ProcessCommand");
 
    word id1;
 
@@ -3941,43 +3814,37 @@ SysMutex RecoveryMutex_("RecoveryMutex");
 //------------------------------------------------------------------------------
 
 fixed_string RecoveryDaemonName = "recover";
-fixed_string RecoveryDaemon_ctor = "RecoveryDaemon.ctor";
-fixed_string RecoveryDaemon_dtor = "RecoveryDaemon.dtor";
-fixed_string RecoveryDaemon_CreateThread = "RecoveryDaemon.CreateThread";
-fixed_string RecoveryDaemon_GetAlarmLevel = "RecoveryDaemon.GetAlarmLevel";
 
 RecoveryDaemon::RecoveryDaemon() : Daemon(RecoveryDaemonName, 1)
 {
-   Debug::ft(RecoveryDaemon_ctor);
+   Debug::ft("RecoveryDaemon.ctor");
 }
 
 RecoveryDaemon::~RecoveryDaemon()
 {
-   Debug::ftnt(RecoveryDaemon_dtor);
+   Debug::ftnt("RecoveryDaemon.dtor");
 }
 
 Thread* RecoveryDaemon::CreateThread()
 {
-   Debug::ft(RecoveryDaemon_CreateThread);
+   Debug::ft("RecoveryDaemon.CreateThread");
    return Singleton< RecoveryThread >::Instance();
 }
 
 AlarmStatus RecoveryDaemon::GetAlarmLevel() const
 {
-   Debug::ft(RecoveryDaemon_GetAlarmLevel);
+   Debug::ft("RecoveryDaemon.GetAlarmLevel");
    return MinorAlarm;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name RecoveryThread_ctor = "RecoveryThread.ctor";
 
 RecoveryThread::RecoveryThread() :
    Thread(LoadTestFaction, Singleton< RecoveryDaemon >::Instance()),
    test_(Sleep),
    signal_(0)
 {
-   Debug::ft(RecoveryThread_ctor);
+   Debug::ft("RecoveryThread.ctor");
 
    //  Set ThreadCtorTrapFlag to cause a trap during thread creation.  This
    //  tests orphan recovery and a single daemon trap.  If ThreadCtorRetrapFlag
@@ -4001,11 +3868,9 @@ RecoveryThread::RecoveryThread() :
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_dtor = "RecoveryThread.dtor";
-
 RecoveryThread::~RecoveryThread()
 {
-   Debug::ftnt(RecoveryThread_dtor);
+   Debug::ftnt("RecoveryThread.dtor");
 
    if(Debug::SwFlagOn(ThreadDtorTrapFlag))
    {
@@ -4036,11 +3901,9 @@ void RecoveryThread::AcquireMutex()
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_Destroy = "RecoveryThread.Destroy";
-
 void RecoveryThread::Destroy()
 {
-   Debug::ft(RecoveryThread_Destroy);
+   Debug::ft("RecoveryThread.Destroy");
 
    Singleton< RecoveryThread >::Destroy();
 }
@@ -4058,33 +3921,27 @@ void RecoveryThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_DoAbort = "RecoveryThread.DoAbort";
-
 void RecoveryThread::DoAbort()
 {
-   Debug::ft(RecoveryThread_DoAbort);
+   Debug::ft("RecoveryThread.DoAbort");
 
    std::abort();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_DoDelete = "RecoveryThread.DoDelete";
-
 void RecoveryThread::DoDelete()
 {
-   Debug::ft(RecoveryThread_DoDelete);
+   Debug::ft("RecoveryThread.DoDelete");
 
    Singleton< RecoveryThread >::Destroy();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_DoDivide = "RecoveryThread.DoDivide";
-
 int RecoveryThread::DoDivide()
 {
-   Debug::ft(RecoveryThread_DoDivide);
+   Debug::ft("RecoveryThread.DoDivide");
 
    int one = 1, zero = 0;
    return (one / zero);
@@ -4092,44 +3949,36 @@ int RecoveryThread::DoDivide()
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_DoRaise = "RecoveryThread.DoRaise";
-
 void RecoveryThread::DoRaise() const
 {
-   Debug::ft(RecoveryThread_DoRaise);
+   Debug::ft("RecoveryThread.DoRaise");
 
    raise(signal_);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_DoSwErr = "RecoveryThread.DoSwErr";
-
 void RecoveryThread::DoSwErr()
 {
-   Debug::ft(RecoveryThread_DoSwErr);
+   Debug::ft("RecoveryThread.DoSwErr");
 
    Debug::SwErr("software error test", 1);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_DoTerminate = "RecoveryThread.DoTerminate";
-
 void RecoveryThread::DoTerminate()
 {
-   Debug::ft(RecoveryThread_DoTerminate);
+   Debug::ft("RecoveryThread.DoTerminate");
 
    std::terminate();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_DoTrap = "RecoveryThread.DoTrap";
-
 void RecoveryThread::DoTrap()
 {
-   Debug::ft(RecoveryThread_DoTrap);
+   Debug::ft("RecoveryThread.DoTrap");
    Raise(signal_);
 }
 
@@ -4238,11 +4087,9 @@ void RecoveryThread::LoopForever()
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_Recover = "RecoveryThread.Recover";
-
 bool RecoveryThread::Recover()
 {
-   Debug::ft(RecoveryThread_Recover);
+   Debug::ft("RecoveryThread.Recover");
 
    if(Debug::SwFlagOn(ThreadRecoverTrapFlag)) UseBadPointer();
    return Debug::SwFlagOn(ThreadReenterFlag);
@@ -4250,22 +4097,18 @@ bool RecoveryThread::Recover()
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_RecurseForever = "RecoveryThread.RecurseForever";
-
 void RecoveryThread::RecurseForever(size_t depth)
 {
-   Debug::ft(RecoveryThread_RecurseForever);
+   Debug::ft("RecoveryThread.RecurseForever");
 
    RecurseForever(depth + 1);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name RecoveryThread_UseBadPointer = "RecoveryThread.UseBadPointer";
-
 void RecoveryThread::UseBadPointer()
 {
-   Debug::ft(RecoveryThread_UseBadPointer);
+   Debug::ft("RecoveryThread.UseBadPointer");
 
    CauseTrap();
 }
@@ -4675,11 +4518,9 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
 fixed_string NtStr = "nt";
 fixed_string NtExpl = "NodeBase Tools and Tests";
 
-fn_name NtIncrement_ctor = "NtIncrement.ctor";
-
 NtIncrement::NtIncrement() : CliIncrement(NtStr, NtExpl)
 {
-   Debug::ft(NtIncrement_ctor);
+   Debug::ft("NtIncrement.ctor");
 
    BindCommand(*new NtLogsCommand);
    BindCommand(*new NtSetCommand);
@@ -4699,10 +4540,8 @@ NtIncrement::NtIncrement() : CliIncrement(NtStr, NtExpl)
 
 //------------------------------------------------------------------------------
 
-fn_name NtIncrement_dtor = "NtIncrement.dtor";
-
 NtIncrement::~NtIncrement()
 {
-   Debug::ftnt(NtIncrement_dtor);
+   Debug::ftnt("NtIncrement.dtor");
 }
 }

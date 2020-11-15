@@ -27,7 +27,6 @@
 #include "Singleton.h"
 #include "Switch.h"
 #include "SymbolRegistry.h"
-#include "SysTypes.h"
 #include "ToneRegistry.h"
 #include "Tones.h"
 
@@ -37,11 +36,9 @@ using namespace SessionBase;
 
 namespace MediaBase
 {
-fn_name MbModule_ctor = "MbModule.ctor";
-
 MbModule::MbModule() : Module()
 {
-   Debug::ft(MbModule_ctor);
+   Debug::ft("MbModule.ctor");
 
    //  Create the modules required by MediaBase.
    //
@@ -51,20 +48,16 @@ MbModule::MbModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name MbModule_dtor = "MbModule.dtor";
-
 MbModule::~MbModule()
 {
-   Debug::ftnt(MbModule_dtor);
+   Debug::ftnt("MbModule.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MbModule_Shutdown = "MbModule.Shutdown";
-
 void MbModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(MbModule_Shutdown);
+   Debug::ft("MbModule.Shutdown");
 
    Singleton< ToneRegistry >::Instance()->Shutdown(level);
    Singleton< Switch >::Instance()->Shutdown(level);
@@ -72,11 +65,9 @@ void MbModule::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name MbModule_Startup = "MbModule.Startup";
-
 void MbModule::Startup(RestartLevel level)
 {
-   Debug::ft(MbModule_Startup);
+   Debug::ft("MbModule.Startup");
 
    Singleton< Switch >::Instance()->Startup(level);
    Singleton< ToneRegistry >::Instance()->Startup(level);

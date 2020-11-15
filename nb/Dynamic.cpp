@@ -27,93 +27,75 @@
 
 namespace NodeBase
 {
-fn_name Dynamic_ctor = "Dynamic.ctor";
-
 Dynamic::Dynamic()
 {
-   Debug::ft(Dynamic_ctor);
+   Debug::ft("Dynamic.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Dynamic_delete1 = "Dynamic.operator delete";
 
 void Dynamic::operator delete(void* addr)
 {
-   Debug::ftnt(Dynamic_delete1);
+   Debug::ftnt("Dynamic.operator delete");
 
    Memory::Free(addr, MemDynamic);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Dynamic_delete2 = "Dynamic.operator delete[]";
 
 void Dynamic::operator delete[](void* addr)
 {
-   Debug::ftnt(Dynamic_delete2);
+   Debug::ftnt("Dynamic.operator delete[]");
 
    Memory::Free(addr, MemDynamic);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Dynamic_delete3 = "Dynamic.operator delete(place)";
-
 void Dynamic::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ftnt(Dynamic_delete3);
+   Debug::ftnt("Dynamic.operator delete(place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Dynamic_delete4 = "Dynamic.operator delete[](place)";
 
 void Dynamic::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ftnt(Dynamic_delete4);
+   Debug::ftnt("Dynamic.operator delete[](place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Dynamic_new1 = "Dynamic.operator new";
 
 void* Dynamic::operator new(size_t size)
 {
-   Debug::ft(Dynamic_new1);
+   Debug::ft("Dynamic.operator new");
 
    return Memory::Alloc(size, MemDynamic);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Dynamic_new2 = "Dynamic.operator new[]";
 
 void* Dynamic::operator new[](size_t size)
 {
-   Debug::ft(Dynamic_new2);
+   Debug::ft("Dynamic.operator new[]");
 
    return Memory::Alloc(size, MemDynamic);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Dynamic_new3 = "Dynamic.operator new(place)";
-
 void* Dynamic::operator new(size_t size, void* place)
 {
-   Debug::ft(Dynamic_new3);
+   Debug::ft("Dynamic.operator new(place)");
 
    return place;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Dynamic_new4 = "Dynamic.operator new[](place)";
-
 void* Dynamic::operator new[](size_t size, void* place)
 {
-   Debug::ft(Dynamic_new4);
+   Debug::ft("Dynamic.operator new[](place)");
 
    return place;
 }

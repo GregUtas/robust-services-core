@@ -62,8 +62,6 @@ const char ErrorFlag = '?';
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_ctor = "MscBuilder.ctor";
-
 MscBuilder::MscBuilder(bool debug) :
    debug_(debug),
    nextEvent_(0),
@@ -74,7 +72,7 @@ MscBuilder::MscBuilder(bool debug) :
    nextRow_(0),
    stream_(nullptr)
 {
-   Debug::ft(MscBuilder_ctor);
+   Debug::ft("MscBuilder.ctor");
 
    contextq_.Init(MscContext::LinkDiff());
    addressq_.Init(MscAddress::LinkDiff());
@@ -85,11 +83,9 @@ MscBuilder::MscBuilder(bool debug) :
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_dtor = "MscBuilder.dtor";
-
 MscBuilder::~MscBuilder()
 {
-   Debug::ftnt(MscBuilder_dtor);
+   Debug::ftnt("MscBuilder.dtor");
 
    //  Delete all of the data that was allocated to build the MSC.
    //
@@ -100,11 +96,9 @@ MscBuilder::~MscBuilder()
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_AddEvent = "MscBuilder.AddEvent";
-
 void MscBuilder::AddEvent(const TraceRecord* rec)
 {
-   Debug::ft(MscBuilder_AddEvent);
+   Debug::ft("MscBuilder.AddEvent");
 
    if(nextEvent_ < MaxEvents)
    {
@@ -114,11 +108,9 @@ void MscBuilder::AddEvent(const TraceRecord* rec)
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_AddRow = "MscBuilder.AddRow";
-
 void MscBuilder::AddRow(const string& s)
 {
-   Debug::ft(MscBuilder_AddRow);
+   Debug::ft("MscBuilder.AddRow");
 
    if(nextRow_ < MaxRows)
    {
@@ -128,11 +120,9 @@ void MscBuilder::AddRow(const string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_AnalyzeEvents = "MscBuilder.AnalyzeEvents";
-
 TraceRc MscBuilder::AnalyzeEvents()
 {
-   Debug::ft(MscBuilder_AnalyzeEvents);
+   Debug::ft("MscBuilder.AnalyzeEvents");
 
    MscContext* ctx = nullptr;
    const TransTrace* tt;
@@ -202,11 +192,9 @@ TraceRc MscBuilder::AnalyzeEvents()
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_ColumnToContext = "MscBuilder.ColumnToContext";
-
 MscContext* MscBuilder::ColumnToContext(MscColumn column) const
 {
-   Debug::ft(MscBuilder_ColumnToContext);
+   Debug::ft("MscBuilder.ColumnToContext");
 
    for(auto c = contextq_.First(); c != nullptr; contextq_.Next(c))
    {
@@ -219,11 +207,9 @@ MscContext* MscBuilder::ColumnToContext(MscColumn column) const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_Compress = "MscBuilder.Compress";
-
 void MscBuilder::Compress()
 {
-   Debug::ft(MscBuilder_Compress);
+   Debug::ft("MscBuilder.Compress");
 
    MscColumn leftGap;   // columns to delete at left of message rows
    MscColumn midGap;    // columns to delete in middle of header rows
@@ -347,11 +333,9 @@ void MscBuilder::Compress()
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_CountContexts = "MscBuilder.CountContexts";
-
 size_t MscBuilder::CountContexts() const
 {
-   Debug::ft(MscBuilder_CountContexts);
+   Debug::ft("MscBuilder.CountContexts");
 
    size_t count = 0;
 
@@ -411,11 +395,9 @@ void MscBuilder::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_EnsureAddr = "MscBuilder.EnsureAddr";
-
 void MscBuilder::EnsureAddr(const MsgTrace& mt, MscContext* context)
 {
-   Debug::ft(MscBuilder_EnsureAddr);
+   Debug::ft("MscBuilder.EnsureAddr");
 
    if(mt.LocAddr().fid == NIL_ID) return;
 
@@ -429,11 +411,9 @@ void MscBuilder::EnsureAddr(const MsgTrace& mt, MscContext* context)
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_EnsureContext1 = "MscBuilder.EnsureContext(fac)";
-
 MscContext* MscBuilder::EnsureContext(const Factory* fac, FactoryId fid)
 {
-   Debug::ft(MscBuilder_EnsureContext1);
+   Debug::ft("MscBuilder.EnsureContext(fac)");
 
    auto ctx = FindContext(fac, fid);
    if(ctx != nullptr) return ctx;
@@ -445,11 +425,9 @@ MscContext* MscBuilder::EnsureContext(const Factory* fac, FactoryId fid)
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_EnsureContext2 = "MscBuilder.EnsureContext(trans)";
-
 MscContext* MscBuilder::EnsureContext(const TransTrace& trans)
 {
-   Debug::ft(MscBuilder_EnsureContext2);
+   Debug::ft("MscBuilder.EnsureContext(trans)");
 
    //  When an SSM context is created, its root SSM is not created until the
    //  first transaction.  The root SSM's identifier must therefore be set
@@ -477,11 +455,9 @@ MscContext* MscBuilder::EnsureContext(const TransTrace& trans)
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_EnsureFactories = "MscBuilder.EnsureFactories";
-
 void MscBuilder::EnsureFactories()
 {
-   Debug::ft(MscBuilder_EnsureFactories);
+   Debug::ft("MscBuilder.EnsureFactories");
 
    //  There are three situations in which an address (PSM or factory) will
    //  not have a peer:
@@ -543,11 +519,9 @@ bool MscBuilder::Error(const string& errstr, debug64_t errval)
 const Flags TTmask = Flags(1 << TransTracer);
 const Flags CTmask = Flags(1 << ContextTracer);
 
-fn_name MscBuilder_ExtractEvents = "MscBuilder.ExtractEvents";
-
 TraceRc MscBuilder::ExtractEvents()
 {
-   Debug::ft(MscBuilder_ExtractEvents);
+   Debug::ft("MscBuilder.ExtractEvents");
 
    auto buff = Singleton< TraceBuffer >::Instance();
    auto mask = (TTmask | CTmask);
@@ -583,11 +557,9 @@ TraceRc MscBuilder::ExtractEvents()
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_ExtractGroup = "MscBuilder.ExtractGroup";
-
 bool MscBuilder::ExtractGroup() const
 {
-   Debug::ft(MscBuilder_ExtractGroup);
+   Debug::ft("MscBuilder.ExtractGroup");
 
    bool found = false;
 
@@ -657,11 +629,9 @@ bool MscBuilder::ExtractGroup() const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_FindAddr = "MscBuilder.FindAddr";
-
 MscAddress* MscBuilder::FindAddr(const LocalAddress& locAddr) const
 {
-   Debug::ft(MscBuilder_FindAddr);
+   Debug::ft("MscBuilder.FindAddr");
 
    for(auto a = addressq_.First(); a != nullptr; addressq_.Next(a))
    {
@@ -673,11 +643,9 @@ MscAddress* MscBuilder::FindAddr(const LocalAddress& locAddr) const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_FindContext = "MscBuilder.FindContext";
-
 MscContext* MscBuilder::FindContext(const void* rcvr, id_t cid) const
 {
-   Debug::ft(MscBuilder_FindContext);
+   Debug::ft("MscBuilder.FindContext");
 
    for(auto c = contextq_.First(); c != nullptr; contextq_.Next(c))
    {
@@ -689,11 +657,9 @@ MscContext* MscBuilder::FindContext(const void* rcvr, id_t cid) const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_FindPeer = "MscBuilder.FindPeer";
-
 MscAddress* MscBuilder::FindPeer(const LocalAddress& locAddr) const
 {
-   Debug::ft(MscBuilder_FindPeer);
+   Debug::ft("MscBuilder.FindPeer");
 
    auto addr = FindAddr(locAddr);
    if(addr == nullptr) return nullptr;
@@ -702,11 +668,9 @@ MscAddress* MscBuilder::FindPeer(const LocalAddress& locAddr) const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_FindRxMsg = "MscBuilder.FindRxMsg";
-
 const MsgTrace* MscBuilder::FindRxMsg(size_t index) const
 {
-   Debug::ft(MscBuilder_FindRxMsg);
+   Debug::ft("MscBuilder.FindRxMsg");
 
    auto rxnet = static_cast< const TransTrace* >(events_[index]);
    auto trans = static_cast< const TransTrace* >(nullptr);
@@ -748,11 +712,9 @@ const MsgTrace* MscBuilder::FindRxMsg(size_t index) const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_FindTrans = "MscBuilder.FindTrans";
-
 const TransTrace* MscBuilder::FindTrans(size_t index) const
 {
-   Debug::ft(MscBuilder_FindTrans);
+   Debug::ft("MscBuilder.FindTrans");
 
    auto txmsg = static_cast< const MsgTrace* >(events_[index]);
 
@@ -795,11 +757,9 @@ const TransTrace* MscBuilder::FindTrans(size_t index) const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_Generate = "MscBuilder.Generate";
-
 TraceRc MscBuilder::Generate(ostream& stream)
 {
-   Debug::ft(MscBuilder_Generate);
+   Debug::ft("MscBuilder.Generate");
 
    //  Find the trace records needed to build an MSC.  These records
    //  are used until the MSC is completed, so make sure they don't
@@ -857,11 +817,9 @@ TraceRc MscBuilder::Generate(ostream& stream)
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_JoinAddrs = "MscBuilder.JoinAddrs";
-
 void MscBuilder::JoinAddrs(const MsgTrace& mt)
 {
-   Debug::ft(MscBuilder_JoinAddrs);
+   Debug::ft("MscBuilder.JoinAddrs");
 
    if(mt.Route() != Message::Internal) return;
 
@@ -874,11 +832,9 @@ void MscBuilder::JoinAddrs(const MsgTrace& mt)
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_JoinContexts = "MscBuilder.JoinContexts";
-
 void MscBuilder::JoinContexts(MscContext& context1, MscContext& context2)
 {
-   Debug::ft(MscBuilder_JoinContexts);
+   Debug::ft("MscBuilder.JoinContexts");
 
    for(auto p = pairq_.First(); p != nullptr; pairq_.Next(p))
    {
@@ -890,11 +846,9 @@ void MscBuilder::JoinContexts(MscContext& context1, MscContext& context2)
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_OutputChart = "MscBuilder.OutputChart";
-
 void MscBuilder::OutputChart()
 {
-   Debug::ft(MscBuilder_OutputChart);
+   Debug::ft("MscBuilder.OutputChart");
 
    nextRow_ = 0;
 
@@ -999,11 +953,9 @@ void MscBuilder::OutputChart()
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_OutputFiller = "MscBuilder.OutputFiller";
-
 string MscBuilder::OutputFiller(const MscContext* active) const
 {
-   Debug::ft(MscBuilder_OutputFiller);
+   Debug::ft("MscBuilder.OutputFiller");
 
    //  Generate a "blank" line in the MSC.  It contains a vertical line for
    //  each context, with a different type of line for the ACTIVE context.
@@ -1023,11 +975,9 @@ string MscBuilder::OutputFiller(const MscContext* active) const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_OutputGroup = "MscBuilder.OutputGroup";
-
 void MscBuilder::OutputGroup()
 {
-   Debug::ft(MscBuilder_OutputGroup);
+   Debug::ft("MscBuilder.OutputGroup");
 
    MscColumn col = FirstCol;
    string text1, text2;
@@ -1061,11 +1011,9 @@ void MscBuilder::OutputGroup()
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_OutputHeader = "MscBuilder.OutputHeader";
-
 void MscBuilder::OutputHeader() const
 {
-   Debug::ft(MscBuilder_OutputHeader);
+   Debug::ft("MscBuilder.OutputHeader");
 
    auto buff = Singleton< TraceBuffer >::Instance();
    *stream_ << MscHeader << buff->strTimePlace() << CRLF;
@@ -1073,12 +1021,10 @@ void MscBuilder::OutputHeader() const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_OutputMessage = "MscBuilder.OutputMessage";
-
 bool MscBuilder::OutputMessage
    (const MscContext* active, const MsgTrace& mt, const TransTrace* tt)
 {
-   Debug::ft(MscBuilder_OutputMessage);
+   Debug::ft("MscBuilder.OutputMessage");
 
    string txmsgTime, rxnetTime, transTime;
    MscColumn start, end;
@@ -1321,11 +1267,9 @@ bool MscBuilder::OutputMessage
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_OutputTrailer = "MscBuilder.OutputTrailer";
-
 void MscBuilder::OutputTrailer() const
 {
-   Debug::ft(MscBuilder_OutputTrailer);
+   Debug::ft("MscBuilder.OutputTrailer");
 
    //  Append TransTracer and ContextTracer events to the MSC.
    //  To filter out other trace records, disable other tools
@@ -1344,11 +1288,9 @@ void MscBuilder::OutputTrailer() const
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_ReduceColumns = "MscBuilder.ReduceColumns";
-
 void MscBuilder::ReduceColumns(MscColumn start, MscColumn count)
 {
-   Debug::ft(MscBuilder_ReduceColumns);
+   Debug::ft("MscBuilder.ReduceColumns");
 
    //  All columns beyond START have moved COUNT columns to the left.
    //
@@ -1434,11 +1376,9 @@ void MscBuilder::SetContextColumns()
 
 //------------------------------------------------------------------------------
 
-fn_name MscBuilder_SetNeighbourColumns = "MscBuilder.SetNeighbourColumns";
-
 void MscBuilder::SetNeighbourColumns(const MscContext& context)
 {
-   Debug::ft(MscBuilder_SetNeighbourColumns);
+   Debug::ft("MscBuilder.SetNeighbourColumns");
 
    //  Find all pairs of communicating contexts that contain RCVR.  If the
    //  other context in the pair is not assigned a column, assign one to it.

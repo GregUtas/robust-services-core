@@ -45,11 +45,9 @@ void Object::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Object_GetClass = "Object.GetClass";
-
 Class* Object::GetClass() const
 {
-   Debug::ft(Object_GetClass);
+   Debug::ft("Object.GetClass");
 
    //  This is overridden by objects that belong to a Class.
    //
@@ -83,11 +81,9 @@ bool Object::GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid)
 
 //------------------------------------------------------------------------------
 
-fn_name Object_GetInstanceId = "Object.GetInstanceId";
-
 Object::InstanceId Object::GetInstanceId() const
 {
-   Debug::ft(Object_GetInstanceId);
+   Debug::ft("Object.GetInstanceId");
 
    //  This is overridden by objects that have identifiers.
    //
@@ -109,11 +105,9 @@ Object::ObjectId Object::GetObjectId() const
 
 //------------------------------------------------------------------------------
 
-fn_name Object_MorphTo = "Object.MorphTo";
-
 void Object::MorphTo(const Class& target)
 {
-   Debug::ft(Object_MorphTo);
+   Debug::ft("Object.MorphTo");
 
    //  Change this object's vptr to that of the target class.
    //

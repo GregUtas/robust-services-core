@@ -34,13 +34,11 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name TimeoutInfo_ctor= "TimeoutInfo.ctor";
-
 TimeoutInfo::TimeoutInfo() :
    owner(nullptr),
    tid(0)
 {
-   Debug::ft(TimeoutInfo_ctor);
+   Debug::ft("TimeoutInfo.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -53,11 +51,9 @@ void TimeoutInfo::Display(ostream& stream, const string& prefix) const
 
 //==============================================================================
 
-fn_name TimerProtocol_ctor = "TimerProtocol.ctor";
-
 TimerProtocol::TimerProtocol() : TlvProtocol(TimerProtocolId, NIL_ID)
 {
-   Debug::ft(TimerProtocol_ctor);
+   Debug::ft("TimerProtocol.ctor");
 
    //  Create the timeout signal and parameter.
    //
@@ -67,49 +63,39 @@ TimerProtocol::TimerProtocol() : TlvProtocol(TimerProtocolId, NIL_ID)
 
 //------------------------------------------------------------------------------
 
-fn_name TimerProtocol_dtor = "TimerProtocol.dtor";
-
 TimerProtocol::~TimerProtocol()
 {
-   Debug::ftnt(TimerProtocol_dtor);
+   Debug::ftnt("TimerProtocol.dtor");
 }
 
 //==============================================================================
 
-fn_name TimeoutSignal_ctor = "TimeoutSignal.ctor";
-
 TimeoutSignal::TimeoutSignal() : Signal(TimerProtocolId, Timeout)
 {
-   Debug::ft(TimeoutSignal_ctor);
+   Debug::ft("TimeoutSignal.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TimeoutSignal_dtor = "TimeoutSignal.dtor";
-
 TimeoutSignal::~TimeoutSignal()
 {
-   Debug::ftnt(TimeoutSignal_dtor);
+   Debug::ftnt("TimeoutSignal.dtor");
 }
 
 //==============================================================================
 
-fn_name TimeoutParameter_ctor = "TimeoutParameter.ctor";
-
 TimeoutParameter::TimeoutParameter() : TlvParameter(TimerProtocolId, Timeout)
 {
-   Debug::ft(TimeoutParameter_ctor);
+   Debug::ft("TimeoutParameter.ctor");
 
    BindUsage(Signal::Timeout, Mandatory);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TimeoutParameter_dtor = "TimeoutParameter.dtor";
-
 TimeoutParameter::~TimeoutParameter()
 {
-   Debug::ftnt(TimeoutParameter_dtor);
+   Debug::ftnt("TimeoutParameter.dtor");
 }
 
 //------------------------------------------------------------------------------

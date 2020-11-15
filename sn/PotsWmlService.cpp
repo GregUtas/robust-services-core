@@ -170,23 +170,19 @@ private:
 
 //==============================================================================
 
-fn_name PotsWmlInitiator_ctor = "PotsWmlInitiator.ctor";
-
 PotsWmlInitiator::PotsWmlInitiator() : Initiator(PotsWmlServiceId,
    PotsCallServiceId, BcTrigger::CollectInformationSap,
    PotsCollectInformationSap::PotsWmlPriority)
 {
-   Debug::ft(PotsWmlInitiator_ctor);
+   Debug::ft("PotsWmlInitiator.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlInitiator_ProcessEvent = "PotsWmlInitiator.ProcessEvent";
-
 EventHandler::Rc PotsWmlInitiator::ProcessEvent
    (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsWmlInitiator_ProcessEvent);
+   Debug::ft("PotsWmlInitiator.ProcessEvent");
 
    auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
    auto prof = pssm.Profile();
@@ -205,11 +201,9 @@ EventHandler::Rc PotsWmlInitiator::ProcessEvent
 
 fixed_string PotsWmlTimeoutEventStr = "PotsWmlTimeoutEvent";
 
-fn_name PotsWmlService_ctor = "PotsWmlService.ctor";
-
 PotsWmlService::PotsWmlService() : Service(PotsWmlServiceId, false, true)
 {
-   Debug::ft(PotsWmlService_ctor);
+   Debug::ft("PotsWmlService.ctor");
 
    Singleton< PotsWmlNull >::Instance();
    Singleton< PotsWmlActivating >::Instance();
@@ -227,154 +221,122 @@ PotsWmlService::PotsWmlService() : Service(PotsWmlServiceId, false, true)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlService_dtor = "PotsWmlService.dtor";
-
 PotsWmlService::~PotsWmlService()
 {
-   Debug::ftnt(PotsWmlService_dtor);
+   Debug::ftnt("PotsWmlService.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsWmlService_AllocModifier = "PotsWmlService.AllocModifier";
 
 ServiceSM* PotsWmlService::AllocModifier() const
 {
-   Debug::ft(PotsWmlService_AllocModifier);
+   Debug::ft("PotsWmlService.AllocModifier");
 
    return new PotsWmlSsm;
 }
 
 //==============================================================================
-
-fn_name PotsWmlActivate_ctor = "PotsWmlActivate.ctor";
 
 PotsWmlActivate::PotsWmlActivate() : Service(PotsWmlActivation, false, true)
 {
-   Debug::ft(PotsWmlActivate_ctor);
+   Debug::ft("PotsWmlActivate.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsWmlActivate_dtor = "PotsWmlActivate.dtor";
 
 PotsWmlActivate::~PotsWmlActivate()
 {
-   Debug::ftnt(PotsWmlActivate_dtor);
+   Debug::ftnt("PotsWmlActivate.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlActivate_AllocModifier = "PotsWmlActivate.AllocModifier";
-
 ServiceSM* PotsWmlActivate::AllocModifier() const
 {
-   Debug::ft(PotsWmlActivate_AllocModifier);
+   Debug::ft("PotsWmlActivate.AllocModifier");
 
    return new PotsWmlSsm;
 }
 
 //==============================================================================
-
-fn_name PotsWmlDeactivate_ctor = "PotsWmlDeactivate.ctor";
 
 PotsWmlDeactivate::PotsWmlDeactivate() :
    Service(PotsWmlDeactivation, false, true)
 {
-   Debug::ft(PotsWmlDeactivate_ctor);
+   Debug::ft("PotsWmlDeactivate.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsWmlDeactivate_dtor = "PotsWmlDeactivate.dtor";
 
 PotsWmlDeactivate::~PotsWmlDeactivate()
 {
-   Debug::ftnt(PotsWmlDeactivate_dtor);
+   Debug::ftnt("PotsWmlDeactivate.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlDeactivate_AllocModifier = "PotsWmlDeactivate.AllocModifier";
-
 ServiceSM* PotsWmlDeactivate::AllocModifier() const
 {
-   Debug::ft(PotsWmlDeactivate_AllocModifier);
+   Debug::ft("PotsWmlDeactivate.AllocModifier");
 
    return new PotsWmlSsm;
 }
 
 //==============================================================================
 
-fn_name PotsWmlEvent_ctor = "PotsWmlEvent.ctor";
-
 PotsWmlEvent::PotsWmlEvent(Id eid, ServiceSM& owner) : Event(eid, &owner)
 {
-   Debug::ft(PotsWmlEvent_ctor);
+   Debug::ft("PotsWmlEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsWmlEvent_dtor = "PotsWmlEvent.dtor";
 
 PotsWmlEvent::~PotsWmlEvent()
 {
-   Debug::ftnt(PotsWmlEvent_dtor);
+   Debug::ftnt("PotsWmlEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsWmlTimeoutEvent_ctor = "PotsWmlTimeoutEvent.ctor";
 
 PotsWmlTimeoutEvent::PotsWmlTimeoutEvent(ServiceSM& owner) :
    PotsWmlEvent(Timeout, owner)
 {
-   Debug::ft(PotsWmlTimeoutEvent_ctor);
+   Debug::ft("PotsWmlTimeoutEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlTimeoutEvent_dtor = "PotsWmlTimeoutEvent.dtor";
-
 PotsWmlTimeoutEvent::~PotsWmlTimeoutEvent()
 {
-   Debug::ftnt(PotsWmlTimeoutEvent_dtor);
+   Debug::ftnt("PotsWmlTimeoutEvent.dtor");
 }
 
 //==============================================================================
 
-fn_name PotsWmlState_ctor = "PotsWmlState.ctor";
-
 PotsWmlState::PotsWmlState(Id stid) : State(PotsWmlServiceId, stid)
 {
-   Debug::ft(PotsWmlState_ctor);
+   Debug::ft("PotsWmlState.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsWmlState_dtor = "PotsWmlState.dtor";
 
 PotsWmlState::~PotsWmlState()
 {
-   Debug::ftnt(PotsWmlState_dtor);
+   Debug::ftnt("PotsWmlState.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsWmlNull_ctor = "PotsWmlNull.ctor";
 
 PotsWmlNull::PotsWmlNull() : PotsWmlState(PotsWmlState::Null)
 {
-   Debug::ft(PotsWmlNull_ctor);
+   Debug::ft("PotsWmlNull.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlActivating_ctor = "PotsWmlActivating.ctor";
-
 PotsWmlActivating::PotsWmlActivating() : PotsWmlState(PotsWmlState::Activating)
 {
-   Debug::ft(PotsWmlActivating_ctor);
+   Debug::ft("PotsWmlActivating.ctor");
 
    BindMsgAnalyzer
       (PotsWmlEventHandler::AcAnalyzeMessage, Service::UserPort);
@@ -382,11 +344,9 @@ PotsWmlActivating::PotsWmlActivating() : PotsWmlState(PotsWmlState::Activating)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlTiming_ctor = "PotsWmlTiming.ctor";
-
 PotsWmlTiming::PotsWmlTiming() : PotsWmlState(PotsWmlState::Timing)
 {
-   Debug::ft(PotsWmlTiming_ctor);
+   Debug::ft("PotsWmlTiming.ctor");
 
    BindMsgAnalyzer
       (PotsWmlEventHandler::TiAnalyzeMessage, Service::UserPort);
@@ -396,42 +356,34 @@ PotsWmlTiming::PotsWmlTiming() : PotsWmlState(PotsWmlState::Timing)
 
 //==============================================================================
 
-fn_name PotsWmlSsm_ctor = "PotsWmlSsm.ctor";
-
 PotsWmlSsm::PotsWmlSsm() : ServiceSM(PotsWmlServiceId),
    wmlp_(nullptr),
    timer_(false)
 {
-   Debug::ft(PotsWmlSsm_ctor);
+   Debug::ft("PotsWmlSsm.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsWmlSsm_dtor = "PotsWmlSsm.dtor";
 
 PotsWmlSsm::~PotsWmlSsm()
 {
-   Debug::ftnt(PotsWmlSsm_dtor);
+   Debug::ftnt("PotsWmlSsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlSsm_CalcPort = "PotsWmlSsm.CalcPort";
-
 ServicePortId PotsWmlSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(PotsWmlSsm_CalcPort);
+   Debug::ft("PotsWmlSsm.CalcPort");
 
    return Parent()->CalcPort(ame);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlSsm_Cancel = "PotsWmlSsm.Cancel";
-
 void PotsWmlSsm::Cancel()
 {
-   Debug::ft(PotsWmlSsm_Cancel);
+   Debug::ft("PotsWmlSsm.Cancel");
 
    auto pssm = static_cast< PotsBcSsm* >(Parent());
    auto upsm = pssm->UPsm();
@@ -453,12 +405,10 @@ void PotsWmlSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlSsm_ProcessInitAck = "PotsWmlSsm.ProcessInitAck";
-
 EventHandler::Rc PotsWmlSsm::ProcessInitAck
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsWmlSsm_ProcessInitAck);
+   Debug::ft("PotsWmlSsm.ProcessInitAck");
 
    auto& ire = static_cast< InitiationReqEvent& >(currEvent);
    auto sid = ire.GetModifier();
@@ -520,24 +470,20 @@ EventHandler::Rc PotsWmlSsm::ProcessInitAck
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlSsm_ProcessInitNack = "PotsWmlSsm.ProcessInitNack";
-
 EventHandler::Rc PotsWmlSsm::ProcessInitNack
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsWmlSsm_ProcessInitNack);
+   Debug::ft("PotsWmlSsm.ProcessInitNack");
 
    return EventHandler::Resume;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlSsm_ProcessSap = "PotsWmlSsm.ProcessSap";
-
 EventHandler::Rc PotsWmlSsm::ProcessSap
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsWmlSsm_ProcessSap);
+   Debug::ft("PotsWmlSsm.ProcessSap");
 
    auto& sap = static_cast< AnalyzeSapEvent& >(currEvent);
    auto tid = sap.GetTrigger();
@@ -616,11 +562,9 @@ EventHandler::Rc PotsWmlSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlSsm_ProcessSnp = "PotsWmlSsm.ProcessSnp";
-
 EventHandler::Rc PotsWmlSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsWmlSsm_ProcessSnp);
+   Debug::ft("PotsWmlSsm.ProcessSnp");
 
    auto pssm = static_cast< PotsBcSsm* >(Parent());
 
@@ -630,26 +574,20 @@ EventHandler::Rc PotsWmlSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlAcAnalyzeMessage_ProcessEvent =
-   "PotsWmlAcAnalyzeMessage.ProcessEvent";
-
 EventHandler::Rc PotsWmlAcAnalyzeMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsWmlAcAnalyzeMessage_ProcessEvent);
+   Debug::ft("PotsWmlAcAnalyzeMessage.ProcessEvent");
 
    return Pass;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlTiAnalyzeMessage_ProcessEvent =
-   "PotsWmlTiAnalyzeMessage.ProcessEvent";
-
 EventHandler::Rc PotsWmlTiAnalyzeMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsWmlTiAnalyzeMessage_ProcessEvent);
+   Debug::ft("PotsWmlTiAnalyzeMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto sid = ame.Msg()->GetSignal();
@@ -672,12 +610,10 @@ EventHandler::Rc PotsWmlTiAnalyzeMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsWmlTiTimeout_ProcessEvent = "PotsWmlTiTimeout.ProcessEvent";
-
 EventHandler::Rc PotsWmlTiTimeout::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsWmlTiTimeout_ProcessEvent);
+   Debug::ft("PotsWmlTiTimeout.ProcessEvent");
 
    auto& wssm = static_cast< PotsWmlSsm& >(ssm);
    auto& pssm = static_cast< PotsBcSsm& >(*wssm.Parent());

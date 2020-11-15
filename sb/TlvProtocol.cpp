@@ -40,20 +40,16 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name TlvProtocol_ctor = "TlvProtocol.ctor";
-
 TlvProtocol::TlvProtocol(Id prid, Id base) : Protocol(prid, base)
 {
-   Debug::ft(TlvProtocol_ctor);
+   Debug::ft("TlvProtocol.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TlvProtocol_dtor = "TlvProtocol.dtor";
-
 TlvProtocol::~TlvProtocol()
 {
-   Debug::ftnt(TlvProtocol_dtor);
+   Debug::ftnt("TlvProtocol.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -93,11 +89,9 @@ void TlvProtocol::DisplayMsg(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name TlvProtocol_ExtractSignal = "TlvProtocol.ExtractSignal";
-
 SignalId TlvProtocol::ExtractSignal(const SbIpBuffer& buff) const
 {
-   Debug::ft(TlvProtocol_ExtractSignal);
+   Debug::ft("TlvProtocol.ExtractSignal");
 
    return buff.Header()->signal;
 }

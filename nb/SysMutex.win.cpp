@@ -37,8 +37,6 @@
 
 namespace NodeBase
 {
-fn_name SysMutex_ctor = "SysMutex.ctor";
-
 SysMutex::SysMutex(const char* name) :
    name_(name),
    mutex_(nullptr),
@@ -46,7 +44,7 @@ SysMutex::SysMutex(const char* name) :
    owner_(nullptr),
    locks_(0)
 {
-   Debug::ft(SysMutex_ctor);
+   Debug::ft("SysMutex.ctor");
 
    mutex_ = CreateMutex(nullptr, false, nullptr);
    Debug::Assert(mutex_ != nullptr);

@@ -64,11 +64,9 @@ fixed_string BcApplyTreatmentEventStr       = "BcApplyTreatmentEvent";
 
 //------------------------------------------------------------------------------
 
-fn_name BcService_ctor = "BcService.ctor";
-
 BcService::BcService(Id sid, bool modifiable) : Service(sid, modifiable, false)
 {
-   Debug::ft(BcService_ctor);
+   Debug::ft("BcService.ctor");
 
    BindHandler(*Singleton< BcNuAnalyzeRemoteMessage >::Instance(),
       BcEventHandler::NuAnalyzeRemoteMessage);
@@ -132,10 +130,8 @@ BcService::BcService(Id sid, bool modifiable) : Service(sid, modifiable, false)
 
 //------------------------------------------------------------------------------
 
-fn_name BcService_dtor = "BcService.dtor";
-
 BcService::~BcService()
 {
-   Debug::ftnt(BcService_dtor);
+   Debug::ftnt("BcService.dtor");
 }
 }

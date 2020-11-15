@@ -51,31 +51,25 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name FactoryStatsGroup_ctor = "FactoryStatsGroup.ctor";
-
 FactoryStatsGroup::FactoryStatsGroup() :
    StatisticsGroup("Factories [Factory::Id]")
 {
-   Debug::ft(FactoryStatsGroup_ctor);
+   Debug::ft("FactoryStatsGroup.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name FactoryStatsGroup_dtor = "FactoryStatsGroup.dtor";
 
 FactoryStatsGroup::~FactoryStatsGroup()
 {
-   Debug::ftnt(FactoryStatsGroup_dtor);
+   Debug::ftnt("FactoryStatsGroup.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name FactoryStatsGroup_DisplayStats = "FactoryStatsGroup.DisplayStats";
 
 void FactoryStatsGroup::DisplayStats
    (ostream& stream, id_t id, const Flags& options) const
 {
-   Debug::ft(FactoryStatsGroup_DisplayStats);
+   Debug::ft("FactoryStatsGroup.DisplayStats");
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
@@ -106,11 +100,9 @@ void FactoryStatsGroup::DisplayStats
 
 //==============================================================================
 
-fn_name FactoryRegistry_ctor = "FactoryRegistry.ctor";
-
 FactoryRegistry::FactoryRegistry()
 {
-   Debug::ft(FactoryRegistry_ctor);
+   Debug::ft("FactoryRegistry.ctor");
 
    factories_.Init(Factory::MaxId, Factory::CellDiff(), MemImmutable);
    statsGroup_.reset(new FactoryStatsGroup);
@@ -129,11 +121,9 @@ FactoryRegistry::~FactoryRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name FactoryRegistry_BindFactory = "FactoryRegistry.BindFactory";
-
 bool FactoryRegistry::BindFactory(Factory& factory)
 {
-   Debug::ft(FactoryRegistry_BindFactory);
+   Debug::ft("FactoryRegistry.BindFactory");
 
    return factories_.Insert(factory);
 }
@@ -168,11 +158,9 @@ void FactoryRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name FactoryRegistry_Shutdown = "FactoryRegistry.Shutdown";
-
 void FactoryRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(FactoryRegistry_Shutdown);
+   Debug::ft("FactoryRegistry.Shutdown");
 
    for(auto f = factories_.Last(); f != nullptr; factories_.Prev(f))
    {
@@ -185,11 +173,9 @@ void FactoryRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name FactoryRegistry_Startup = "FactoryRegistry.Startup";
-
 void FactoryRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(FactoryRegistry_Startup);
+   Debug::ft("FactoryRegistry.Startup");
 
    if(statsGroup_ == nullptr)
    {
@@ -205,11 +191,9 @@ void FactoryRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name FactoryRegistry_UnbindFactory = "FactoryRegistry.UnbindFactory";
-
 void FactoryRegistry::UnbindFactory(Factory& factory)
 {
-   Debug::ftnt(FactoryRegistry_UnbindFactory);
+   Debug::ftnt("FactoryRegistry.UnbindFactory");
 
    factories_.Erase(factory);
 }

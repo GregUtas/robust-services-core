@@ -101,11 +101,9 @@ protected:
 
 //==============================================================================
 
-fn_name ThreadsStats_ctor = "ThreadsStats.ctor";
-
 ThreadsStats::ThreadsStats()
 {
-   Debug::ft(ThreadsStats_ctor);
+   Debug::ft("ThreadsStats.ctor");
 
    creations_.reset(new Counter("creations"));
    deletions_.reset(new Counter("deletions"));
@@ -140,30 +138,24 @@ ThreadsStats::~ThreadsStats()
 
 //==============================================================================
 
-fn_name ThreadsStatsGroup_ctor = "ThreadsStatsGroup.ctor";
-
 ThreadsStatsGroup::ThreadsStatsGroup() : StatisticsGroup("Threads (all)")
 {
-   Debug::ft(ThreadsStatsGroup_ctor);
+   Debug::ft("ThreadsStatsGroup.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ThreadsStatsGroup_dtor = "ThreadsStatsGroup.dtor";
 
 ThreadsStatsGroup::~ThreadsStatsGroup()
 {
-   Debug::ftnt(ThreadsStatsGroup_dtor);
+   Debug::ftnt("ThreadsStatsGroup.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ThreadsStatsGroup_DisplayStats = "ThreadsStatsGroup.DisplayStats";
 
 void ThreadsStatsGroup::DisplayStats
    (ostream& stream, id_t id, const Flags& options) const
 {
-   Debug::ft(ThreadsStatsGroup_DisplayStats);
+   Debug::ft("ThreadsStatsGroup.DisplayStats");
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
@@ -172,30 +164,24 @@ void ThreadsStatsGroup::DisplayStats
 
 //==============================================================================
 
-fn_name BreakEnabledCfg_ctor = "BreakEnabledCfg.ctor";
-
 BreakEnabledCfg::BreakEnabledCfg() :
    CfgBoolParm("BreakEnabled", "F", "set to use breakpoint debugging")
 {
-   Debug::ft(BreakEnabledCfg_ctor);
+   Debug::ft("BreakEnabledCfg.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BreakEnabledCfg_dtor = "BreakEnabledCfg.dtor";
 
 BreakEnabledCfg::~BreakEnabledCfg()
 {
-   Debug::ftnt(BreakEnabledCfg_dtor);
+   Debug::ftnt("BreakEnabledCfg.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BreakEnabledCfg_SetCurr = "BreakEnabledCfg.SetCurr";
-
 void BreakEnabledCfg::SetCurr()
 {
-   Debug::ft(BreakEnabledCfg_SetCurr);
+   Debug::ft("BreakEnabledCfg.SetCurr");
 
    auto curr = GetValue();
    auto next = GetNextValue();
@@ -214,11 +200,9 @@ void BreakEnabledCfg::SetCurr()
 
 //==============================================================================
 
-fn_name ThreadAdmin_ctor = "ThreadAdmin.ctor";
-
 ThreadAdmin::ThreadAdmin()
 {
-   Debug::ft(ThreadAdmin_ctor);
+   Debug::ft("ThreadAdmin.ctor");
 
    stats_.reset(new ThreadsStats);
    statsGroup_.reset(new ThreadsStatsGroup);
@@ -337,11 +321,9 @@ void ThreadAdmin::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadAdmin_DisplayStats = "ThreadAdmin.DisplayStats";
-
 void ThreadAdmin::DisplayStats(ostream& stream, const Flags& options) const
 {
-   Debug::ft(ThreadAdmin_DisplayStats);
+   Debug::ft("ThreadAdmin.DisplayStats");
 
    if(stats_ != nullptr)
    {
@@ -437,11 +419,9 @@ void ThreadAdmin::Incr(Register r)
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadAdmin_InitTimeout = "ThreadAdmin.InitTimeout";
-
 Duration ThreadAdmin::InitTimeout()
 {
-   Debug::ft(ThreadAdmin_InitTimeout);
+   Debug::ft("ThreadAdmin.InitTimeout");
 
    auto self = Singleton< ThreadAdmin >::Extant();
    auto msecs = (self != nullptr ? self->initTimeoutMsecs_->GetValue() : 2000);
@@ -499,11 +479,9 @@ Duration ThreadAdmin::SchedTimeout()
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadAdmin_Shutdown = "ThreadAdmin.Shutdown";
-
 void ThreadAdmin::Shutdown(RestartLevel level)
 {
-   Debug::ft(ThreadAdmin_Shutdown);
+   Debug::ft("ThreadAdmin.Shutdown");
 
    FunctionGuard guard(Guard_MemUnprotect);
    Restart::Release(stats_);
@@ -528,11 +506,9 @@ word ThreadAdmin::StackUsageLimit()
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadAdmin_Startup = "ThreadAdmin.Startup";
-
 void ThreadAdmin::Startup(RestartLevel level)
 {
-   Debug::ft(ThreadAdmin_Startup);
+   Debug::ft("ThreadAdmin.Startup");
 
    FunctionGuard guard(Guard_MemUnprotect);
    if(stats_ == nullptr) stats_.reset(new ThreadsStats);
@@ -590,11 +566,9 @@ bool ThreadAdmin::TrapOnRtcTimeout()
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadAdmin_WarpFactor = "ThreadAdmin.WarpFactor";
-
 int ThreadAdmin::WarpFactor()
 {
-   Debug::ft(ThreadAdmin_WarpFactor);
+   Debug::ft("ThreadAdmin.WarpFactor");
 
    auto warp = 0;
 

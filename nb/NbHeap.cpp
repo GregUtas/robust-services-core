@@ -372,11 +372,9 @@ NbHeap::NbHeap(MemoryType type, size_t size) : Heap(),
 
 //------------------------------------------------------------------------------
 
-fn_name NbHeap_dtor = "NbHeap.dtor";
-
 NbHeap::~NbHeap()
 {
-   Debug::ftnt(NbHeap_dtor);
+   Debug::ftnt("NbHeap.dtor");
 
    if(heap_ == nullptr) return;
    heap_->lock->Acquire(TIMEOUT_NEVER);
@@ -413,11 +411,9 @@ bool NbHeap::AddrIsValid(const void* addr, bool header) const
 
 //------------------------------------------------------------------------------
 
-fn_name NbHeap_Alloc = "NbHeap.Alloc";
-
 void* NbHeap::Alloc(size_t size)
 {
-   Debug::ft(NbHeap_Alloc);
+   Debug::ft("NbHeap.Alloc");
 
    //  Allocate a block at the level that can accommodate SIZE.
    //
@@ -479,11 +475,9 @@ NbHeap::index_t NbHeap::BlockToIndex
 
 //------------------------------------------------------------------------------
 
-fn_name NbHeap_BlockToSize = "NbHeap.BlockToSize";
-
 size_t NbHeap::BlockToSize(const void* addr) const
 {
-   Debug::ft(NbHeap_BlockToSize);
+   Debug::ft("NbHeap.BlockToSize");
 
    //  ADDR can be used at any level where it falls on a block boundary.
    //  Find the number of "0" bits after its last "1" bit.  It must have
@@ -682,11 +676,9 @@ HeapBlock* NbHeap::Enqueue(HeapBlock* block, level_t level)
 
 //------------------------------------------------------------------------------
 
-fn_name NbHeap_Free = "NbHeap.Free";
-
 void NbHeap::Free(void* addr)
 {
-   Debug::ft(NbHeap_Free);
+   Debug::ft("NbHeap.Free");
 
    auto size = BlockToSize(addr);
    if(size == 0) return;
@@ -817,11 +809,9 @@ void NbHeap::SplitAncestors(index_t block)
 
 //------------------------------------------------------------------------------
 
-fn_name NbHeap_Validate = "NbHeap.Validate";
-
 bool NbHeap::Validate(const void* addr) const
 {
-   Debug::ft(NbHeap_Validate);
+   Debug::ft("NbHeap.Validate");
 
    MutexGuard guard(heap_->lock.get());
 

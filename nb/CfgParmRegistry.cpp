@@ -66,11 +66,9 @@ fixed_string AppendToExePath_ = "input/element.config.txt";
 //  Called by LoadNextTuple to flag invalid entries in ConfigFileName.
 //  ID identifies the problem, and INPUT is the invalid entry.
 //
-fn_name NodeBase_BadLine = "NodeBase.BadLine";
-
 void BadLine(LogId id, const string& input)
 {
-   Debug::ft(NodeBase_BadLine);
+   Debug::ft("NodeBase.BadLine");
 
    auto log = Log::Create(ConfigLogGroup, id);
 
@@ -83,11 +81,9 @@ void BadLine(LogId id, const string& input)
 
 //==============================================================================
 
-fn_name CfgParmRegistry_ctor = "CfgParmRegistry.ctor";
-
 CfgParmRegistry::CfgParmRegistry()
 {
-   Debug::ft(CfgParmRegistry_ctor);
+   Debug::ft("CfgParmRegistry.ctor");
 
    tupleq_.Init(CfgTuple::LinkDiff());
    parmq_.Init(CfgParm::LinkDiff());
@@ -154,11 +150,9 @@ bool CfgParmRegistry::BindParm(CfgParm& parm)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParmRegistry_BindTuple = "CfgParmRegistry.BindTuple";
-
 bool CfgParmRegistry::BindTuple(CfgTuple& tuple)
 {
-   Debug::ft(CfgParmRegistry_BindTuple);
+   Debug::ft("CfgParmRegistry.BindTuple");
 
    CfgTuple* prev = nullptr;
    auto key0 = strLower(tuple.Key());
@@ -207,11 +201,9 @@ void CfgParmRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParmRegistry_FindParm = "CfgParmRegistry.FindParm";
-
 CfgParm* CfgParmRegistry::FindParm(const string& key) const
 {
-   Debug::ft(CfgParmRegistry_FindParm);
+   Debug::ft("CfgParmRegistry.FindParm");
 
    auto k = strLower(key);
 
@@ -227,11 +219,9 @@ CfgParm* CfgParmRegistry::FindParm(const string& key) const
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParmRegistry_FindTuple = "CfgParmRegistry.FindTuple";
-
 CfgTuple* CfgParmRegistry::FindTuple(const string& key) const
 {
-   Debug::ft(CfgParmRegistry_FindTuple);
+   Debug::ft("CfgParmRegistry.FindTuple");
 
    auto k = strLower(key);
 
@@ -247,11 +237,9 @@ CfgTuple* CfgParmRegistry::FindTuple(const string& key) const
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParmRegistry_GetValue = "CfgParmRegistry.GetValue";
-
 bool CfgParmRegistry::GetValue(const string& key, string& value) const
 {
-   Debug::ft(CfgParmRegistry_GetValue);
+   Debug::ft("CfgParmRegistry.GetValue");
 
    //  Find the parameter that matches KEY and return its value.
    //
@@ -280,11 +268,9 @@ void CfgParmRegistry::ListParms(ostream& stream, const string& prefix) const
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParmRegistry_LoadNextTuple = "CfgParmRegistry.LoadNextTuple";
-
 bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
 {
-   Debug::ft(CfgParmRegistry_LoadNextTuple);
+   Debug::ft("CfgParmRegistry.LoadNextTuple");
 
    string input;
    size_t keyBeg, keyEnd, valBeg, valEnd, extra;
@@ -364,11 +350,9 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParmRegistry_LoadTuples = "CfgParmRegistry.LoadTuples";
-
 void CfgParmRegistry::LoadTuples()
 {
-   Debug::ft(CfgParmRegistry_LoadTuples);
+   Debug::ft("CfgParmRegistry.LoadTuples");
 
    string key;
    string value;
@@ -431,11 +415,9 @@ void CfgParmRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParmRegistry_Startup = "CfgParmRegistry.Startup";
-
 void CfgParmRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(CfgParmRegistry_Startup);
+   Debug::ft("CfgParmRegistry.Startup");
 
    //  Load configuration parameters if the registry was created.  If the
    //  registry survived a restart, update any configuration parameters whose
@@ -459,22 +441,18 @@ void CfgParmRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParmRegistry_UnbindParm = "CfgParmRegistry.UnbindParm";
-
 void CfgParmRegistry::UnbindParm(CfgParm& parm)
 {
-   Debug::ftnt(CfgParmRegistry_UnbindParm);
+   Debug::ftnt("CfgParmRegistry.UnbindParm");
 
    parmq_.Exq(parm);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CfgParmRegistry_UnbindTuple = "CfgParmRegistry.UnbindTuple";
-
 void CfgParmRegistry::UnbindTuple(CfgTuple& tuple)
 {
-   Debug::ftnt(CfgParmRegistry_UnbindTuple);
+   Debug::ftnt("CfgParmRegistry.UnbindTuple");
 
    tupleq_.Exq(tuple);
 }

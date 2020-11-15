@@ -35,34 +35,28 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name InputHandler_ctor = "InputHandler.ctor";
-
 InputHandler::InputHandler(IpPort* port) : port_(port)
 {
-   Debug::ft(InputHandler_ctor);
+   Debug::ft("InputHandler.ctor");
 
    Debug::Assert(port_->BindHandler(*this));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name InputHandler_dtor = "InputHandler.dtor";
-
 InputHandler::~InputHandler()
 {
-   Debug::ftnt(InputHandler_dtor);
+   Debug::ftnt("InputHandler.dtor");
 
    port_->UnbindHandler(*this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name InputHandler_AllocBuff = "InputHandler.AllocBuff";
-
 IpBuffer* InputHandler::AllocBuff(const byte_t* source,
    size_t size, byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const
 {
-   Debug::ft(InputHandler_AllocBuff);
+   Debug::ft("InputHandler.AllocBuff");
 
    auto buffer = new IpBuffer(MsgIncoming, 0, size);
    dest = buffer->HeaderPtr();
@@ -81,24 +75,20 @@ void InputHandler::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name InputHandler_HostToNetwork = "InputHandler.HostToNetwork";
-
 byte_t* InputHandler::HostToNetwork
    (IpBuffer& buff, byte_t* src, size_t size) const
 {
-   Debug::ft(InputHandler_HostToNetwork);
+   Debug::ft("InputHandler.HostToNetwork");
 
    return src;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name InputHandler_NetworkToHost = "InputHandler.NetworkToHost";
-
 void InputHandler::NetworkToHost
    (IpBuffer& buff, byte_t* dest, const byte_t* src, size_t size) const
 {
-   Debug::ft(InputHandler_NetworkToHost);
+   Debug::ft("InputHandler.NetworkToHost");
 
    Memory::Copy(dest, src, size);
 }

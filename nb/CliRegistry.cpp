@@ -37,11 +37,9 @@ const size_t CliRegistry::MaxIncrements = 30;
 
 //------------------------------------------------------------------------------
 
-fn_name CliRegistry_ctor = "CliRegistry.ctor";
-
 CliRegistry::CliRegistry()
 {
-   Debug::ft(CliRegistry_ctor);
+   Debug::ft("CliRegistry.ctor");
 
    increments_.Init(MaxIncrements, CliIncrement::CellDiff(), MemImmutable);
 }
@@ -59,11 +57,9 @@ CliRegistry::~CliRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name CliRegistry_BindIncrement = "CliRegistry.BindIncrement";
-
 bool CliRegistry::BindIncrement(CliIncrement& incr)
 {
-   Debug::ft(CliRegistry_BindIncrement);
+   Debug::ft("CliRegistry.BindIncrement");
 
    return increments_.Insert(incr);
 }
@@ -81,11 +77,9 @@ void CliRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CliRegistry_FindIncrement = "CliRegistry.FindIncrement";
-
 CliIncrement* CliRegistry::FindIncrement(const string& name) const
 {
-   Debug::ft(CliRegistry_FindIncrement);
+   Debug::ft("CliRegistry.FindIncrement");
 
    //  Look for the increment that is known by NAME.
    //
@@ -99,11 +93,9 @@ CliIncrement* CliRegistry::FindIncrement(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliRegistry_ListIncrements = "CliRegistry.ListIncrements";
-
 void CliRegistry::ListIncrements(ostream& stream) const
 {
-   Debug::ft(CliRegistry_ListIncrements);
+   Debug::ft("CliRegistry.ListIncrements");
 
    //  Output a brief description of each increment.
    //
@@ -122,11 +114,9 @@ void CliRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliRegistry_UnbindIncrement = "CliRegistry.UnbindIncrement";
-
 void CliRegistry::UnbindIncrement(CliIncrement& incr)
 {
-   Debug::ftnt(CliRegistry_UnbindIncrement);
+   Debug::ftnt("CliRegistry.UnbindIncrement");
 
    increments_.Erase(incr);
 }

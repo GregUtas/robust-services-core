@@ -23,7 +23,6 @@
 #include "Debug.h"
 #include "Message.h"
 #include "MsgFactory.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 
@@ -31,29 +30,23 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-fn_name MsgContext_ctor = "MsgContext.ctor";
-
 MsgContext::MsgContext(Faction faction) : Context(faction)
 {
-   Debug::ft(MsgContext_ctor);
+   Debug::ft("MsgContext.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name MsgContext_dtor = "MsgContext.dtor";
 
 MsgContext::~MsgContext()
 {
-   Debug::ftnt(MsgContext_dtor);
+   Debug::ftnt("MsgContext.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MsgContext_EndOfTransaction = "MsgContext.EndOfTransaction";
-
 void MsgContext::EndOfTransaction()
 {
-   Debug::ft(MsgContext_EndOfTransaction);
+   Debug::ft("MsgContext.EndOfTransaction");
 
    //  The context message has been handled.
    //
@@ -70,11 +63,9 @@ void MsgContext::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name MsgContext_ProcessIcMsg = "MsgContext.ProcessIcMsg";
-
 void MsgContext::ProcessIcMsg(Message& msg)
 {
-   Debug::ft(MsgContext_ProcessIcMsg);
+   Debug::ft("MsgContext.ProcessIcMsg");
 
    //  Tell the factory associated with this context to process MSG.
    //

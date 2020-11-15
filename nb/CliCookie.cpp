@@ -33,29 +33,23 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CliCookie_ctor = "CliCookie.ctor";
-
 CliCookie::CliCookie()
 {
-   Debug::ft(CliCookie_ctor);
+   Debug::ft("CliCookie.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CliCookie_dtor = "CliCookie.dtor";
 
 CliCookie::~CliCookie()
 {
-   Debug::ftnt(CliCookie_dtor);
+   Debug::ftnt("CliCookie.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliCookie_Advance = "CliCookie.Advance";
-
 void CliCookie::Advance()
 {
-   Debug::ft(CliCookie_Advance);
+   Debug::ft("CliCookie.Advance");
 
    //  Advance to the next parameter at the current level in the tree.
    //
@@ -64,11 +58,9 @@ void CliCookie::Advance()
 
 //------------------------------------------------------------------------------
 
-fn_name CliCookie_Ascend = "CliCookie.Ascend";
-
 void CliCookie::Ascend()
 {
-   Debug::ft(CliCookie_Ascend);
+   Debug::ft("CliCookie.Ascend");
 
    //  There are no more parameters at the current level, so back up
    //  and look for the next parameter at the previous level.
@@ -79,11 +71,9 @@ void CliCookie::Ascend()
 
 //------------------------------------------------------------------------------
 
-fn_name CliCookie_Descend1 = "CliCookie.Descend";
-
 void CliCookie::Descend()
 {
-   Debug::ft(CliCookie_Descend1);
+   Debug::ft("CliCookie.Descend");
 
    //  Look for the first parameter at the next level.
    //
@@ -92,11 +82,9 @@ void CliCookie::Descend()
 
 //------------------------------------------------------------------------------
 
-fn_name CliCookie_Descend2 = "CliCookie.Descend(index)";
-
 void CliCookie::Descend(uint32_t index)
 {
-   Debug::ft(CliCookie_Descend2);
+   Debug::ft("CliCookie.Descend(index)");
 
    //  Record INDEX as the offset where a parameter was found at the next
    //  level, and then look for the first parameter at the subsequent level.
@@ -135,11 +123,9 @@ uint32_t CliCookie::Index(uint32_t depth) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliCookie_Initialize = "CliCookie.Initialize";
-
 void CliCookie::Initialize()
 {
-   Debug::ft(CliCookie_Initialize);
+   Debug::ft("CliCookie.Initialize");
 
    //  Look for the first parameter at level 0.
    //

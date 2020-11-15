@@ -32,11 +32,9 @@ using std::string;
 
 namespace MediaBase
 {
-fn_name Switch_ctor = "Switch.ctor";
-
 Switch::Switch()
 {
-   Debug::ft(Switch_ctor);
+   Debug::ft("Switch.ctor");
 
    circuits_.Init(MaxPortId, Circuit::CellDiff(), MemDynamic);
 }
@@ -54,22 +52,18 @@ Switch::~Switch()
 
 //------------------------------------------------------------------------------
 
-fn_name Switch_BindCircuit = "Switch.BindCircuit";
-
 bool Switch::BindCircuit(Circuit& circuit)
 {
-   Debug::ft(Switch_BindCircuit);
+   Debug::ft("Switch.BindCircuit");
 
    return circuits_.Insert(circuit);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Switch_CircuitName = "Switch.CircuitName";
-
 string Switch::CircuitName(PortId pid) const
 {
-   Debug::ft(Switch_CircuitName);
+   Debug::ft("Switch.CircuitName");
 
    auto cct = GetCircuit(pid);
    return (cct != nullptr ? cct->Name() : "Unequipped");
@@ -95,11 +89,9 @@ Circuit* Switch::GetCircuit(PortId pid) const
 
 //------------------------------------------------------------------------------
 
-fn_name Switch_UnbindCircuit = "Switch.UnbindCircuit";
-
 void Switch::UnbindCircuit(Circuit& circuit)
 {
-   Debug::ftnt(Switch_UnbindCircuit);
+   Debug::ftnt("Switch.UnbindCircuit");
 
    circuits_.Erase(circuit);
 }

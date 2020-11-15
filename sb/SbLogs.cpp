@@ -36,11 +36,9 @@ fixed_string OverloadAlarmName = "OVERLOAD";
 
 //------------------------------------------------------------------------------
 
-fn_name SessionBase_CreateSbLogs = "SessionBase.CreateSbLogs";
-
 void CreateSbLogs(RestartLevel level)
 {
-   Debug::ft(SessionBase_CreateSbLogs);
+   Debug::ft("SessionBase.CreateSbLogs");
 
    if(level < RestartReboot) return;
 

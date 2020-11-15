@@ -62,11 +62,9 @@ UdpIoThread::UdpIoThread(Daemon* daemon,
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoThread_dtor = "UdpIoThread.dtor";
-
 UdpIoThread::~UdpIoThread()
 {
-   Debug::ftnt(UdpIoThread_dtor);
+   Debug::ftnt("UdpIoThread.dtor");
 
    ReleaseResources();
 }
@@ -80,11 +78,9 @@ c_string UdpIoThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoThread_ClearAlarm = "UdpIoThread.ClearAlarm";
-
 void UdpIoThread::ClearAlarm() const
 {
-   Debug::ft(UdpIoThread_ClearAlarm);
+   Debug::ft("UdpIoThread.ClearAlarm");
 
    auto alarm = ipPort_->GetAlarm();
    if(alarm == nullptr) return;
@@ -226,11 +222,9 @@ void UdpIoThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoThread_RaiseAlarm = "UdpIoThread.RaiseAlarm";
-
 void UdpIoThread::RaiseAlarm(debug64_t errval) const
 {
-   Debug::ft(UdpIoThread_RaiseAlarm);
+   Debug::ft("UdpIoThread.RaiseAlarm");
 
    auto alarm = ipPort_->GetAlarm();
    if(alarm == nullptr) return;
@@ -244,11 +238,9 @@ void UdpIoThread::RaiseAlarm(debug64_t errval) const
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoThread_ReleaseResources = "UdpIoThread.ReleaseResources";
-
 void UdpIoThread::ReleaseResources()
 {
-   Debug::ft(UdpIoThread_ReleaseResources);
+   Debug::ft("UdpIoThread.ReleaseResources");
 
    if(ipPort_ != nullptr)
    {
@@ -260,11 +252,9 @@ void UdpIoThread::ReleaseResources()
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoThread_Unblock = "UdpIoThread.Unblock";
-
 void UdpIoThread::Unblock()
 {
-   Debug::ft(UdpIoThread_Unblock);
+   Debug::ft("UdpIoThread.Unblock");
 
    //  Delete the thread's socket.  If it is blocked on Recvfrom, this should
    //  unblock it.

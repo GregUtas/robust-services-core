@@ -44,11 +44,9 @@ using std::string;
 
 namespace PotsBase
 {
-fn_name PotsTreatmentQueue_ctor = "PotsTreatmentQueue.ctor";
-
 PotsTreatmentQueue::PotsTreatmentQueue(QId qid)
 {
-   Debug::ft(PotsTreatmentQueue_ctor);
+   Debug::ft("PotsTreatmentQueue.ctor");
 
    qid_.SetId(qid);
    treatmentq_.Init(PotsTreatment::LinkDiff());
@@ -58,22 +56,18 @@ PotsTreatmentQueue::PotsTreatmentQueue(QId qid)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTreatmentQueue_dtor = "PotsTreatmentQueue.dtor";
-
 PotsTreatmentQueue::~PotsTreatmentQueue()
 {
-   Debug::ftnt(PotsTreatmentQueue_dtor);
+   Debug::ftnt("PotsTreatmentQueue.dtor");
 
    Singleton< PotsTreatmentRegistry >::Extant()->UnbindTreatmentQ(*this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTreatmentQueue_BindTreatment = "PotsTreatmentQueue.BindTreatment";
-
 void PotsTreatmentQueue::BindTreatment(PotsTreatment& treatment)
 {
-   Debug::ft(PotsTreatmentQueue_BindTreatment);
+   Debug::ft("PotsTreatmentQueue.BindTreatment");
 
    treatmentq_.Enq(treatment);
 }
@@ -103,35 +97,28 @@ void PotsTreatmentQueue::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTreatmentQueue_FirstTreatment = "PotsTreatmentQueue.FirstTreatment";
-
 PotsTreatment* PotsTreatmentQueue::FirstTreatment() const
 {
-   Debug::ft(PotsTreatmentQueue_FirstTreatment);
+   Debug::ft("PotsTreatmentQueue.FirstTreatment");
 
    return treatmentq_.First();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTreatmentQueue_NextTreatment = "PotsTreatmentQueue.NextTreatment";
-
 PotsTreatment* PotsTreatmentQueue::NextTreatment
    (const PotsTreatment& treatment) const
 {
-   Debug::ft(PotsTreatmentQueue_NextTreatment);
+   Debug::ft("PotsTreatmentQueue.NextTreatment");
 
    return treatmentq_.Next(treatment);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTreatmentQueue_UnbindTreatment =
-   "PotsTreatmentQueue.UnbindTreatment";
-
 void PotsTreatmentQueue::UnbindTreatment(PotsTreatment& treatment)
 {
-   Debug::ftnt(PotsTreatmentQueue_UnbindTreatment);
+   Debug::ftnt("PotsTreatmentQueue.UnbindTreatment");
 
    treatmentq_.Exq(treatment);
 }
@@ -172,12 +159,10 @@ PotsTreatment::~PotsTreatment()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTreatment_ApplyTreatment = "PotsTreatment.ApplyTreatment";
-
 EventHandler::Rc PotsTreatment::ApplyTreatment
    (const BcApplyTreatmentEvent& ate) const
 {
-   Debug::ft(PotsTreatment_ApplyTreatment);
+   Debug::ft("PotsTreatment.ApplyTreatment");
 
    Context::Kill(strOver(this), pack2(ate.Owner()->Sid(), ate.GetCause()));
    return EventHandler::Suspend;
@@ -243,12 +228,10 @@ PotsToneTreatment::PotsToneTreatment
 
 //------------------------------------------------------------------------------
 
-fn_name PotsToneTreatment_ApplyTreatment = "PotsToneTreatment.ApplyTreatment";
-
 EventHandler::Rc PotsToneTreatment::ApplyTreatment
    (const BcApplyTreatmentEvent& ate) const
 {
-   Debug::ft(PotsToneTreatment_ApplyTreatment);
+   Debug::ft("PotsToneTreatment.ApplyTreatment");
 
    auto pssm = static_cast< PotsBcSsm* >(ate.Owner());
    auto upsm = PotsCallPsm::Cast(pssm->UPsm());
@@ -276,23 +259,18 @@ void PotsToneTreatment::Display(ostream& stream,
 
 //==============================================================================
 
-fn_name PotsLockoutTreatment_ctor = "PotsLockoutTreatment.ctor";
-
 PotsLockoutTreatment::PotsLockoutTreatment(PotsTreatmentQueue::QId qid) :
    PotsTreatment(qid)
 {
-   Debug::ft(PotsLockoutTreatment_ctor);
+   Debug::ft("PotsLockoutTreatment.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsLockoutTreatment_ApplyTreatment =
-   "PotsLockoutTreatment.ApplyTreatment";
-
 EventHandler::Rc PotsLockoutTreatment::ApplyTreatment
    (const BcApplyTreatmentEvent& ate) const
 {
-   Debug::ft(PotsLockoutTreatment_ApplyTreatment);
+   Debug::ft("PotsLockoutTreatment.ApplyTreatment");
 
    auto pssm = static_cast< PotsBcSsm* >(ate.Owner());
    auto upsm = PotsCallPsm::Cast(pssm->UPsm());
@@ -307,22 +285,18 @@ EventHandler::Rc PotsLockoutTreatment::ApplyTreatment
 
 //==============================================================================
 
-fn_name PotsIdleTreatment_ctor = "PotsIdleTreatment.ctor";
-
 PotsIdleTreatment::PotsIdleTreatment(PotsTreatmentQueue::QId qid) :
    PotsTreatment(qid)
 {
-   Debug::ft(PotsIdleTreatment_ctor);
+   Debug::ft("PotsIdleTreatment.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsIdleTreatment_ApplyTreatment = "PotsIdleTreatment.ApplyTreatment";
-
 EventHandler::Rc PotsIdleTreatment::ApplyTreatment
    (const BcApplyTreatmentEvent& ate) const
 {
-   Debug::ft(PotsIdleTreatment_ApplyTreatment);
+   Debug::ft("PotsIdleTreatment.ApplyTreatment");
 
    auto pssm = static_cast< PotsBcSsm* >(ate.Owner());
 

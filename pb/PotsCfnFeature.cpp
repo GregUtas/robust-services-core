@@ -73,12 +73,10 @@ PotsCfnAttrs::PotsCfnAttrs() : CliText(PotsCfnFullName, PotsCfnAbbrName)
 
 //==============================================================================
 
-fn_name PotsCfnFeature_ctor = "PotsCfnFeature.ctor";
-
 PotsCfnFeature::PotsCfnFeature() :
    PotsFeature(CFN, true, PotsCfnAbbrName, PotsCfnFullName)
 {
-   Debug::ft(PotsCfnFeature_ctor);
+   Debug::ft("PotsCfnFeature.ctor");
 
    SetIncompatible(BOC);
    SetIncompatible(BIC);
@@ -86,11 +84,9 @@ PotsCfnFeature::PotsCfnFeature() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfnFeature_dtor = "PotsCfnFeature.dtor";
-
 PotsCfnFeature::~PotsCfnFeature()
 {
-   Debug::ftnt(PotsCfnFeature_dtor);
+   Debug::ftnt("PotsCfnFeature.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -99,12 +95,10 @@ CliText* PotsCfnFeature::Attrs() const { return new PotsCfnAttrs; }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfnFeature_Subscribe = "PotsCfnFeature.Subscribe";
-
 PotsFeatureProfile* PotsCfnFeature::Subscribe
    (PotsProfile& profile, CliThread& cli) const
 {
-   Debug::ft(PotsCfnFeature_Subscribe);
+   Debug::ft("PotsCfnFeature.Subscribe");
 
    word dn, timeout = 0;
    bool dnwarn = false, towarn = false;
@@ -137,33 +131,27 @@ PotsFeatureProfile* PotsCfnFeature::Subscribe
 
 //==============================================================================
 
-fn_name PotsCfnFeatureProfile_ctor = "PotsCfnFeatureProfile.ctor";
-
 PotsCfnFeatureProfile::PotsCfnFeatureProfile(Address::DN dn, secs_t timeout) :
    DnRouteFeatureProfile(CFN, dn),
    timeout_(timeout)
 {
-   Debug::ft(PotsCfnFeatureProfile_ctor);
+   Debug::ft("PotsCfnFeatureProfile.ctor");
 
    if(timeout_ == 0) timeout_ = 5 * PotsProtocol::RingingCycleTime;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfnFeatureProfile_dtor = "PotsCfnFeatureProfile.dtor";
-
 PotsCfnFeatureProfile::~PotsCfnFeatureProfile()
 {
-   Debug::ftnt(PotsCfnFeatureProfile_dtor);
+   Debug::ftnt("PotsCfnFeatureProfile.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfnFeatureProfile_Activate = "PotsCfnFeatureProfile.Activate";
-
 bool PotsCfnFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 {
-   Debug::ft(PotsCfnFeatureProfile_Activate);
+   Debug::ft("PotsCfnFeatureProfile.Activate");
 
    word timeout;
 

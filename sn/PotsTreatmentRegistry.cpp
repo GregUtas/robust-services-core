@@ -36,11 +36,9 @@ using std::string;
 
 namespace PotsBase
 {
-fn_name PotsTreatmentRegistry_ctor = "PotsTreatmentRegistry.ctor";
-
 PotsTreatmentRegistry::PotsTreatmentRegistry()
 {
-   Debug::ft(PotsTreatmentRegistry_ctor);
+   Debug::ft("PotsTreatmentRegistry.ctor");
 
    for(auto c = 0; c <= Cause::MaxInd; ++c) causeToQId_[c] = NIL_ID;
    treatmentqs_.Init(PotsTreatmentQueue::MaxQId,
@@ -60,12 +58,9 @@ PotsTreatmentRegistry::~PotsTreatmentRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTreatmentRegistry_BindTreatmentQ =
-   "PotsTreatmentRegistry.BindTreatmentQ";
-
 bool PotsTreatmentRegistry::BindTreatmentQ(PotsTreatmentQueue& treatmentq)
 {
-   Debug::ft(PotsTreatmentRegistry_BindTreatmentQ);
+   Debug::ft("PotsTreatmentRegistry.BindTreatmentQ");
 
    return treatmentqs_.Insert(treatmentq);
 }
@@ -135,11 +130,9 @@ void PotsTreatmentRegistry::SetCauseToTreatmentQ
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTreatmentRegistry_Startup = "PotsTreatmentRegistry.Startup";
-
 void PotsTreatmentRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(PotsTreatmentRegistry_Startup);
+   Debug::ft("PotsTreatmentRegistry.Startup");
 
    //  Here queues are defined statically, but a production system would
    //  allow them to be provisioned dynamically, along with the cause to
@@ -211,12 +204,9 @@ PotsTreatmentQueue* PotsTreatmentRegistry::TreatmentQ
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTreatmentRegistry_UnbindTreatmentQ =
-   "PotsTreatmentRegistry.UnbindTreatmentQ";
-
 void PotsTreatmentRegistry::UnbindTreatmentQ(PotsTreatmentQueue& treatmentq)
 {
-   Debug::ftnt(PotsTreatmentRegistry_UnbindTreatmentQ);
+   Debug::ftnt("PotsTreatmentRegistry.UnbindTreatmentQ");
 
    treatmentqs_.Erase(treatmentq);
 }

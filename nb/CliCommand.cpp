@@ -55,20 +55,16 @@ CliCommand::CliCommand(c_string comm, c_string help, uint32_t size) :
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_dtor = "CliCommand.dtor";
-
 CliCommand::~CliCommand()
 {
-   Debug::ftnt(CliCommand_dtor);
+   Debug::ftnt("CliCommand.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_Exhausted = "CliCommand.Exhausted";
-
 CliParm::Rc CliCommand::Exhausted(const CliThread& cli, const string& type)
 {
-   Debug::ft(CliCommand_Exhausted);
+   Debug::ft("CliCommand.Exhausted");
 
    auto s = "Internal error: parameters exhausted before looking for " + type;
    cli.ibuf->ErrorAtPos(cli, s);
@@ -77,11 +73,9 @@ CliParm::Rc CliCommand::Exhausted(const CliThread& cli, const string& type)
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_ExplainCommand = "CliCommand.ExplainCommand";
-
 word CliCommand::ExplainCommand(ostream& stream, bool verbose) const
 {
-   Debug::ft(CliCommand_ExplainCommand);
+   Debug::ft("CliCommand.ExplainCommand");
 
    if(verbose)
    {
@@ -104,11 +98,9 @@ word CliCommand::ExplainCommand(ostream& stream, bool verbose) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_GetBoolParmRc = "CliCommand.GetBoolParmRc";
-
 CliParm::Rc CliCommand::GetBoolParmRc(bool& b, CliThread& cli) const
 {
-   Debug::ft(CliCommand_GetBoolParmRc);
+   Debug::ft("CliCommand.GetBoolParmRc");
 
    //  Return the next parameter, which should be a boolean.
    //
@@ -119,11 +111,9 @@ CliParm::Rc CliCommand::GetBoolParmRc(bool& b, CliThread& cli) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_GetCharParmRc = "CliCommand.GetCharParmRc";
-
 CliParm::Rc CliCommand::GetCharParmRc(char& c, CliThread& cli) const
 {
-   Debug::ft(CliCommand_GetCharParmRc);
+   Debug::ft("CliCommand.GetCharParmRc");
 
    //  Return the next parameter, which should be a character.
    //
@@ -134,11 +124,9 @@ CliParm::Rc CliCommand::GetCharParmRc(char& c, CliThread& cli) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_GetFileNameRc = "CliCommand.GetFileNameRc";
-
 CliCommand::Rc CliCommand::GetFileNameRc(string& s, CliThread& cli) const
 {
-   Debug::ft(CliCommand_GetFileNameRc);
+   Debug::ft("CliCommand.GetFileNameRc");
 
    //  Return the next parameter, which should be a filename.
    //
@@ -149,12 +137,10 @@ CliCommand::Rc CliCommand::GetFileNameRc(string& s, CliThread& cli) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_GetIdentifierRc = "CliCommand.GetIdentifierRc";
-
 CliParm::Rc CliCommand::GetIdentifierRc(string& s, CliThread& cli,
    const string& valid, const string& exclude) const
 {
-   Debug::ft(CliCommand_GetIdentifierRc);
+   Debug::ft("CliCommand.GetIdentifierRc");
 
    //  Return the next parameter, which should be an identifier.
    //
@@ -165,11 +151,9 @@ CliParm::Rc CliCommand::GetIdentifierRc(string& s, CliThread& cli,
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_GetIntParmRc = "CliCommand.GetIntParmRc";
-
 CliParm::Rc CliCommand::GetIntParmRc(word& n, CliThread& cli) const
 {
-   Debug::ft(CliCommand_GetIntParmRc);
+   Debug::ft("CliCommand.GetIntParmRc");
 
    //  Return the next parameter, which should be an integer.
    //
@@ -180,11 +164,9 @@ CliParm::Rc CliCommand::GetIntParmRc(word& n, CliThread& cli) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_GetPtrParmRc = "CliCommand.GetPtrParmRc";
-
 CliParm::Rc CliCommand::GetPtrParmRc(void*& p, CliThread& cli) const
 {
-   Debug::ft(CliCommand_GetPtrParmRc);
+   Debug::ft("CliCommand.GetPtrParmRc");
 
    //  Return the next parameter, which should be a pointer.
    //
@@ -195,11 +177,9 @@ CliParm::Rc CliCommand::GetPtrParmRc(void*& p, CliThread& cli) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_GetStringRc = "CliCommand.GetStringRc";
-
 CliParm::Rc CliCommand::GetStringRc(string& s, CliThread& cli) const
 {
-   Debug::ft(CliCommand_GetStringRc);
+   Debug::ft("CliCommand.GetStringRc");
 
    //  Return the next parameter, which can be any string.
    //
@@ -210,11 +190,9 @@ CliParm::Rc CliCommand::GetStringRc(string& s, CliThread& cli) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommand_GetTextParmRc = "CliCommand.GetTextParmRc";
-
 CliParm::Rc CliCommand::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
 {
-   Debug::ft(CliCommand_GetTextParmRc);
+   Debug::ft("CliCommand.GetTextParmRc");
 
    //  Return the next parameter, which should be a string in a specified list.
    //

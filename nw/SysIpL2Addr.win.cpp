@@ -36,11 +36,9 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name SysIpL2Addr_ctor3 = "SysIpL2Addr.ctor";
-
 SysIpL2Addr::SysIpL2Addr() : v4Addr_(INADDR_NONE)
 {
-   Debug::ft(SysIpL2Addr_ctor3);
+   Debug::ft("SysIpL2Addr.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -70,11 +68,9 @@ SysIpL2Addr::SysIpL2Addr(const string& text) : v4Addr_(INADDR_NONE)
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL2Addr_HostName = "SysIpL2Addr.HostName";
-
 bool SysIpL2Addr::HostName(string& name)
 {
-   Debug::ft(SysIpL2Addr_HostName);
+   Debug::ft("SysIpL2Addr.HostName");
 
    char buff[256];
 
@@ -98,22 +94,18 @@ bool SysIpL2Addr::HostName(string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL2Addr_IsValid = "SysIpL2Addr.IsValid";
-
 bool SysIpL2Addr::IsValid() const
 {
-   Debug::ft(SysIpL2Addr_IsValid);
+   Debug::ft("SysIpL2Addr.IsValid");
 
    return (v4Addr_ != INADDR_NONE);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL2Addr_LoopbackAddr = "SysIpL2Addr.LoopbackAddr";
-
 SysIpL2Addr SysIpL2Addr::LoopbackAddr()
 {
-   Debug::ft(SysIpL2Addr_LoopbackAddr);
+   Debug::ft("SysIpL2Addr.LoopbackAddr");
 
    return SysIpL2Addr(INADDR_LOOPBACK);
 }

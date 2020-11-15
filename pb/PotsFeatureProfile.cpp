@@ -36,20 +36,16 @@ using std::string;
 
 namespace PotsBase
 {
-fn_name PotsFeatureProfile_ctor = "PotsFeatureProfile.ctor";
-
 PotsFeatureProfile::PotsFeatureProfile(PotsFeature::Id fid) : fid_(fid)
 {
-   Debug::ft(PotsFeatureProfile_ctor);
+   Debug::ft("PotsFeatureProfile.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsFeatureProfile_dtor = "PotsFeatureProfile.dtor";
-
 PotsFeatureProfile::~PotsFeatureProfile()
 {
-   Debug::ftnt(PotsFeatureProfile_dtor);
+   Debug::ftnt("PotsFeatureProfile.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -101,11 +97,9 @@ ptrdiff_t PotsFeatureProfile::LinkDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsFeatureProfile_Unsubscribe = "PotsFeatureProfile.Unsubscribe";
-
 bool PotsFeatureProfile::Unsubscribe(PotsProfile& profile)
 {
-   Debug::ft(PotsFeatureProfile_Unsubscribe);
+   Debug::ft("PotsFeatureProfile.Unsubscribe");
 
    return true;
 }

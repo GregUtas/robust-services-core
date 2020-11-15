@@ -872,11 +872,9 @@ void* FunctionTrace::operator new(size_t size, void* place)
 
 //------------------------------------------------------------------------------
 
-fn_name FunctionTrace_Process = "FunctionTrace.Process";
-
 void FunctionTrace::Process(const string& opts)
 {
-   Debug::ft(FunctionTrace_Process);
+   Debug::ft("FunctionTrace.Process");
 
    //  If the trace records have already been processed, don't process
    //  them again.
@@ -896,11 +894,9 @@ void FunctionTrace::Process(const string& opts)
 
 //------------------------------------------------------------------------------
 
-fn_name FunctionTrace_RemoveCxxDeletes = "FunctionTrace.RemoveCxxDeletes";
-
 void FunctionTrace::RemoveCxxDeletes()
 {
-   Debug::ft(FunctionTrace_RemoveCxxDeletes);
+   Debug::ft("FunctionTrace.RemoveCxxDeletes");
 
    auto buff = Singleton< TraceBuffer >::Instance();
    TraceRecord* rec = nullptr;
@@ -930,11 +926,9 @@ void FunctionTrace::RemoveCxxDeletes()
 
 //------------------------------------------------------------------------------
 
-fn_name FunctionTrace_SetScope = "FunctionTrace.SetScope";
-
 TraceRc FunctionTrace::SetScope(Scope scope)
 {
-   Debug::ft(FunctionTrace_SetScope);
+   Debug::ft("FunctionTrace.SetScope");
 
    if(Debug::TraceOn()) return NotWhileTracing;
 

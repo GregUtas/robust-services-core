@@ -35,11 +35,9 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name Break_ctor = "Break.ctor";
-
 Break::Break(size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(Break_ctor);
+   Debug::ft("Break.ctor");
 
    CxxStats::Incr(CxxStats::BREAK);
 }
@@ -53,12 +51,10 @@ void Break::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-fn_name Case_ctor = "Case.ctor";
-
 Case::Case(ExprPtr& expression, size_t pos) : CxxStatement(pos),
    expr_(expression.release())
 {
-   Debug::ft(Case_ctor);
+   Debug::ft("Case.ctor");
 
    CxxStats::Incr(CxxStats::CASE);
 }
@@ -83,11 +79,9 @@ void Case::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Case_EnterBlock = "Case.EnterBlock";
-
 void Case::EnterBlock()
 {
-   Debug::ft(Case_EnterBlock);
+   Debug::ft("Case.EnterBlock");
 
    CxxStatement::EnterBlock();
 
@@ -105,11 +99,9 @@ void Case::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //==============================================================================
 
-fn_name Catch_ctor = "Catch.ctor";
-
 Catch::Catch(size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(Catch_ctor);
+   Debug::ft("Catch.ctor");
 
    CxxStats::Incr(CxxStats::CATCH);
 }
@@ -151,11 +143,9 @@ void Catch::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Catch_EnterBlock = "Catch.EnterBlock";
-
 void Catch::EnterBlock()
 {
-   Debug::ft(Catch_EnterBlock);
+   Debug::ft("Catch.EnterBlock");
 
    CxxStatement::EnterBlock();
 
@@ -170,22 +160,18 @@ void Catch::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Catch_ExitBlock = "Catch.ExitBlock";
-
 void Catch::ExitBlock() const
 {
-   Debug::ft(Catch_ExitBlock);
+   Debug::ft("Catch.ExitBlock");
 
    if(arg_ != nullptr) arg_->ExitBlock();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Catch_FindNthItem = "Catch.FindNthItem";
-
 CxxScoped* Catch::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(Catch_FindNthItem);
+   Debug::ft("Catch.FindNthItem");
 
    return handler_->FindNthItem(name, n);
 }
@@ -200,11 +186,9 @@ void Catch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Catch_LocateItem = "Catch.LocateItem";
-
 bool Catch::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(Catch_LocateItem);
+   Debug::ft("Catch.LocateItem");
 
    return handler_->LocateItem(item, n);
 }
@@ -219,11 +203,9 @@ void Catch::Shrink()
 
 //==============================================================================
 
-fn_name Condition_ctor = "Condition.ctor";
-
 Condition::Condition(size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(Condition_ctor);
+   Debug::ft("Condition.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -235,11 +217,9 @@ void Condition::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Condition_EnterBlock = "Condition.EnterBlock";
-
 void Condition::EnterBlock()
 {
-   Debug::ft(Condition_EnterBlock);
+   Debug::ft("Condition.EnterBlock");
 
    CxxStatement::EnterBlock();
 
@@ -278,11 +258,9 @@ bool Condition::Show(ostream& stream) const
 
 //==============================================================================
 
-fn_name Continue_ctor = "Continue.ctor";
-
 Continue::Continue(size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(Continue_ctor);
+   Debug::ft("Continue.ctor");
 
    CxxStats::Incr(CxxStats::CONTINUE);
 }
@@ -296,11 +274,9 @@ void Continue::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-fn_name CxxStatement_ctor = "CxxStatement.ctor";
-
 CxxStatement::CxxStatement(size_t pos) : pos_(pos)
 {
-   Debug::ft(CxxStatement_ctor);
+   Debug::ft("CxxStatement.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -312,11 +288,9 @@ void CxxStatement::EnterBlock()
 
 //==============================================================================
 
-fn_name Do_ctor = "Do.ctor";
-
 Do::Do(size_t pos) : Condition(pos)
 {
-   Debug::ft(Do_ctor);
+   Debug::ft("Do.ctor");
 
    CxxStats::Incr(CxxStats::DO);
 }
@@ -365,11 +339,9 @@ void Do::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Do_EnterBlock = "Do.EnterBlock";
-
 void Do::EnterBlock()
 {
-   Debug::ft(Do_EnterBlock);
+   Debug::ft("Do.EnterBlock");
 
    loop_->EnterBlock();
    Condition::EnterBlock();
@@ -377,11 +349,9 @@ void Do::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Do_FindNthItem = "Do.FindNthItem";
-
 CxxScoped* Do::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(Do_FindNthItem);
+   Debug::ft("Do.FindNthItem");
 
    return loop_->FindNthItem(name, n);
 }
@@ -403,11 +373,9 @@ bool Do::InLine() const
 
 //------------------------------------------------------------------------------
 
-fn_name Do_LocateItem = "Do.LocateItem";
-
 bool Do::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(Do_LocateItem);
+   Debug::ft("Do.LocateItem");
 
    return loop_->LocateItem(item, n);
 }
@@ -433,12 +401,10 @@ void Do::Shrink()
 
 //==============================================================================
 
-fn_name Expr_ctor = "Expr.ctor";
-
 Expr::Expr(ExprPtr& expression, size_t pos) : CxxStatement(pos),
    expr_(expression.release())
 {
-   Debug::ft(Expr_ctor);
+   Debug::ft("Expr.ctor");
 
    CxxStats::Incr(CxxStats::EXPR);
 }
@@ -452,11 +418,9 @@ void Expr::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Expr_EnterBlock = "Expr.EnterBlock";
-
 void Expr::EnterBlock()
 {
-   Debug::ft(Expr_EnterBlock);
+   Debug::ft("Expr.EnterBlock");
 
    CxxStatement::EnterBlock();
 
@@ -480,11 +444,9 @@ void Expr::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-fn_name For_ctor = "For.ctor";
-
 For::For(size_t pos) : Condition(pos)
 {
-   Debug::ft(For_ctor);
+   Debug::ft("For.ctor");
 
    CxxStats::Incr(CxxStats::FOR);
 }
@@ -576,11 +538,9 @@ void For::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name For_EnterBlock = "For.EnterBlock";
-
 void For::EnterBlock()
 {
-   Debug::ft(For_EnterBlock);
+   Debug::ft("For.EnterBlock");
 
    if(initial_ != nullptr)
    {
@@ -601,22 +561,18 @@ void For::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name For_ExitBlock = "For.ExitBlock";
-
 void For::ExitBlock() const
 {
-   Debug::ft(For_ExitBlock);
+   Debug::ft("For.ExitBlock");
 
    if(initial_ != nullptr) initial_->ExitBlock();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name For_FindNthItem = "For.FindNthItem";
-
 CxxScoped* For::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(For_FindNthItem);
+   Debug::ft("For.FindNthItem");
 
    auto item = initial_->FindNthItem(name, n);
    if(item != nullptr) return item;
@@ -644,11 +600,9 @@ bool For::InLine() const
 
 //------------------------------------------------------------------------------
 
-fn_name For_LocateItem = "For.LocateItem";
-
 bool For::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(For_LocateItem);
+   Debug::ft("For.LocateItem");
 
    if(initial_->LocateItem(item, n)) return true;
    if(subsequent_->LocateItem(item, n)) return true;
@@ -674,11 +628,9 @@ void For::Shrink()
 
 //==============================================================================
 
-fn_name Goto_ctor = "Goto.ctor";
-
 Goto::Goto(string& label, size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(Goto_ctor);
+   Debug::ft("Goto.ctor");
 
    std::swap(label_, label);
    CxxStats::Incr(CxxStats::GOTO);
@@ -686,11 +638,9 @@ Goto::Goto(string& label, size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Goto_EnterBlock = "Goto.EnterBlock";
-
 void Goto::EnterBlock()
 {
-   Debug::ft(Goto_EnterBlock);
+   Debug::ft("Goto.EnterBlock");
 
    CxxStatement::EnterBlock();
 
@@ -707,12 +657,10 @@ void Goto::Print(std::ostream& stream, const NodeBase::Flags& options) const
 
 //==============================================================================
 
-fn_name If_ctor = "If.ctor";
-
 If::If(size_t pos) : Condition(pos),
    elseif_(false)
 {
-   Debug::ft(If_ctor);
+   Debug::ft("If.ctor");
 
    CxxStats::Incr(CxxStats::IF);
 }
@@ -768,11 +716,9 @@ void If::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name If_EnterBlock = "If.EnterBlock";
-
 void If::EnterBlock()
 {
-   Debug::ft(If_EnterBlock);
+   Debug::ft("If.EnterBlock");
 
    Condition::EnterBlock();
    then_->EnterBlock();
@@ -781,11 +727,9 @@ void If::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name If_FindNthItem = "If.FindNthItem";
-
 CxxScoped* If::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(If_FindNthItem);
+   Debug::ft("If.FindNthItem");
 
    auto item = then_->FindNthItem(name, n);
    if(item != nullptr) return item;
@@ -814,11 +758,9 @@ bool If::InLine() const
 
 //------------------------------------------------------------------------------
 
-fn_name If_LocateItem = "If.LocateItem";
-
 bool If::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(If_LocateItem);
+   Debug::ft("If.LocateItem");
 
    if(then_->LocateItem(item, n)) return true;
    if(else_ == nullptr) return false;
@@ -853,11 +795,9 @@ void If::Shrink()
 
 //==============================================================================
 
-fn_name Label_ctor = "Label.ctor";
-
 Label::Label(string& name, size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(Label_ctor);
+   Debug::ft("Label.ctor");
 
    std::swap(name_, name);
    CxxStats::Incr(CxxStats::LABEL);
@@ -874,11 +814,9 @@ void Label::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Label_EnterBlock = "Label.EnterBlock";
-
 void Label::EnterBlock()
 {
-   Debug::ft(Label_EnterBlock);
+   Debug::ft("Label.EnterBlock");
 
    CxxStatement::EnterBlock();
 
@@ -888,11 +826,9 @@ void Label::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Label_ExitBlock = "Label.ExitBlock";
-
 void Label::ExitBlock() const
 {
-   Debug::ft(Label_ExitBlock);
+   Debug::ft("Label.ExitBlock");
 
    //  A full compiler would remove the label from a symbol table
    //  here, but we don't bother to do anything with labels.
@@ -900,11 +836,9 @@ void Label::ExitBlock() const
 
 //==============================================================================
 
-fn_name NoOp_ctor = "NoOp.ctor";
-
 NoOp::NoOp(size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(NoOp_ctor);
+   Debug::ft("NoOp.ctor");
 
    CxxStats::Incr(CxxStats::NOOP);
 }
@@ -926,11 +860,9 @@ void NoOp::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-fn_name Return_ctor = "Return.ctor";
-
 Return::Return(size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(Return_ctor);
+   Debug::ft("Return.ctor");
 
    CxxStats::Incr(CxxStats::RETURN);
 }
@@ -944,11 +876,9 @@ void Return::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Return_EnterBlock = "Return.EnterBlock";
-
 void Return::EnterBlock()
 {
-   Debug::ft(Return_EnterBlock);
+   Debug::ft("Return.EnterBlock");
 
    CxxStatement::EnterBlock();
 
@@ -989,11 +919,9 @@ void Return::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-fn_name Switch_ctor = "Switch.ctor[>ct]";
-
 Switch::Switch(size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(Switch_ctor);
+   Debug::ft("Switch.ctor[>ct]");
 
    CxxStats::Incr(CxxStats::SWITCH);
 }
@@ -1029,11 +957,9 @@ void Switch::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Switch_EnterBlock = "Switch.EnterBlock";
-
 void Switch::EnterBlock()
 {
-   Debug::ft(Switch_EnterBlock);
+   Debug::ft("Switch.EnterBlock");
 
    CxxStatement::EnterBlock();
 
@@ -1045,11 +971,9 @@ void Switch::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Switch_FindNthItem = "Switch.FindNthItem";
-
 CxxScoped* Switch::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(Switch_FindNthItem);
+   Debug::ft("Switch.FindNthItem");
 
    return cases_->FindNthItem(name, n);
 }
@@ -1064,11 +988,9 @@ void Switch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Switch_LocateItem = "Switch.LocateItem";
-
 bool Switch::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(Switch_LocateItem);
+   Debug::ft("Switch.LocateItem");
 
    return cases_->LocateItem(item, n);
 }
@@ -1083,11 +1005,9 @@ void Switch::Shrink()
 
 //==============================================================================
 
-fn_name Try_ctor = "Try.ctor";
-
 Try::Try(size_t pos) : CxxStatement(pos)
 {
-   Debug::ft(Try_ctor);
+   Debug::ft("Try.ctor");
 
    CxxStats::Incr(CxxStats::TRY);
 }
@@ -1134,11 +1054,9 @@ void Try::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Try_EnterBlock = "Try.EnterBlock";
-
 void Try::EnterBlock()
 {
-   Debug::ft(Try_EnterBlock);
+   Debug::ft("Try.EnterBlock");
 
    CxxStatement::EnterBlock();
 
@@ -1152,11 +1070,9 @@ void Try::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Try_ExitBlock = "Try.ExitBlock";
-
 void Try::ExitBlock() const
 {
-   Debug::ft(Try_ExitBlock);
+   Debug::ft("Try.ExitBlock");
 
    for(auto c = catches_.crbegin(); c != catches_.crend(); ++c)
    {
@@ -1166,11 +1082,9 @@ void Try::ExitBlock() const
 
 //------------------------------------------------------------------------------
 
-fn_name Try_FindNthItem = "Try.FindNthItem";
-
 CxxScoped* Try::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(Try_FindNthItem);
+   Debug::ft("Try.FindNthItem");
 
    auto item = try_->FindNthItem(name, n);
    if(item != nullptr) return item;
@@ -1198,11 +1112,9 @@ void Try::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Try_LocateItem = "Try.LocateItem";
-
 bool Try::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(Try_LocateItem);
+   Debug::ft("Try.LocateItem");
 
    if(try_->LocateItem(item, n)) return true;
 
@@ -1228,11 +1140,9 @@ void Try::Shrink()
 
 //==============================================================================
 
-fn_name While_ctor = "While.ctor";
-
 While::While(size_t pos) : Condition(pos)
 {
-   Debug::ft(While_ctor);
+   Debug::ft("While.ctor");
 
    CxxStats::Incr(CxxStats::WHILE);
 }
@@ -1268,11 +1178,9 @@ void While::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name While_EnterBlock = "While.EnterBlock";
-
 void While::EnterBlock()
 {
-   Debug::ft(While_EnterBlock);
+   Debug::ft("While.EnterBlock");
 
    Condition::EnterBlock();
    loop_->EnterBlock();
@@ -1280,11 +1188,9 @@ void While::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name While_FindNthItem = "While.FindNthItem";
-
 CxxScoped* While::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(While_FindNthItem);
+   Debug::ft("While.FindNthItem");
 
    return loop_->FindNthItem(name, n);
 }
@@ -1306,11 +1212,9 @@ bool While::InLine() const
 
 //------------------------------------------------------------------------------
 
-fn_name While_LocateItem = "While.LocateItem";
-
 bool While::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(While_LocateItem);
+   Debug::ft("While.LocateItem");
 
    return loop_->LocateItem(item, n);
 }

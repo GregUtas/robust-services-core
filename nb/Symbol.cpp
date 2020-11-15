@@ -49,22 +49,18 @@ namespace NodeBase
 //  o Support >symbols set <name> <expr>.  If the result of expr can change,
 //    save it as a string and use Execute to evaluate it each time.
 //
-fn_name Symbol_ctor = "Symbol.ctor";
-
 Symbol::Symbol(const string& name) :
    name_(name.c_str()),
    locked_(false)
 {
-   Debug::ft(Symbol_ctor);
+   Debug::ft("Symbol.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Symbol_dtor = "Symbol.dtor";
-
 Symbol::~Symbol()
 {
-   Debug::ftnt(Symbol_dtor);
+   Debug::ftnt("Symbol.dtor");
 
    Singleton< SymbolRegistry >::Extant()->RemoveSymbol(*this);
 }
@@ -110,11 +106,9 @@ void Symbol::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Symbol_SetValue= "Symbol.SetValue";
-
 bool Symbol::SetValue(const string& value, bool lock)
 {
-   Debug::ft(Symbol_SetValue);
+   Debug::ft("Symbol.SetValue");
 
    if(locked_) return false;
 

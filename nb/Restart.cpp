@@ -56,12 +56,10 @@ bool Restart::ClearsMemory(MemoryType type)
 
 //------------------------------------------------------------------------------
 
-fn_name Restart_Initiate = "Restart.Initiate";
-
 void Restart::Initiate
    (RestartLevel level, RestartReason reason, debug64_t errval)
 {
-   Debug::ft(Restart_Initiate);
+   Debug::ft("Restart.Initiate");
 
    throw ElementException(level, reason, errval);
 }

@@ -46,11 +46,9 @@ PotsCallServiceText::PotsCallServiceText() :
 fixed_string PotsCallIpPortKey = "PotsCallIpPort";
 fixed_string PotsCallIpPortExpl = "POTS Call Protocol: UDP port";
 
-fn_name PotsCallIpService_ctor = "PotsCallIpService.ctor";
-
 PotsCallIpService::PotsCallIpService()
 {
-   Debug::ft(PotsCallIpService_ctor);
+   Debug::ft("PotsCallIpService.ctor");
 
    auto port = std::to_string(PotsCallIpPort);
    portCfg_.reset(new IpPortCfgParm
@@ -60,31 +58,25 @@ PotsCallIpService::PotsCallIpService()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallIpService_dtor = "PotsCallIpService.dtor";
-
 PotsCallIpService::~PotsCallIpService()
 {
-   Debug::ftnt(PotsCallIpService_dtor);
+   Debug::ftnt("PotsCallIpService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallIpService_CreateHandler = "PotsCallIpService.CreateHandler";
-
 InputHandler* PotsCallIpService::CreateHandler(IpPort* port) const
 {
-   Debug::ft(PotsCallIpService_CreateHandler);
+   Debug::ft("PotsCallIpService.CreateHandler");
 
    return new PotsCallHandler(port);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCallIpService_CreateText = "PotsCallIpService.CreateText";
-
 CliText* PotsCallIpService::CreateText() const
 {
-   Debug::ft(PotsCallIpService_CreateText);
+   Debug::ft("PotsCallIpService.CreateText");
 
    return new PotsCallServiceText;
 }

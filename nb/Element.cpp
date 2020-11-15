@@ -40,11 +40,9 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name Element_ctor = "Element.ctor";
-
 Element::Element()
 {
-   Debug::ft(Element_ctor);
+   Debug::ft("Element.ctor");
 
    //  Create our configuration parameters.
    //

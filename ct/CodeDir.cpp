@@ -41,21 +41,17 @@ using std::string;
 //
 namespace CodeTools
 {
-fn_name CodeDir_ctor = "CodeDir.ctor";
-
 CodeDir::CodeDir(const string& name, const string& path) : LibraryItem(name),
    path_(path)
 {
-   Debug::ft(CodeDir_ctor);
+   Debug::ft("CodeDir.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeDir_dtor = "CodeDir.dtor";
-
 CodeDir::~CodeDir()
 {
-   Debug::ftnt(CodeDir_dtor);
+   Debug::ftnt("CodeDir.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -69,11 +65,9 @@ ptrdiff_t CodeDir::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeDir_CppCount = "CodeDir.CppCount";
-
 size_t CodeDir::CppCount() const
 {
-   Debug::ft(CodeDir_CppCount);
+   Debug::ft("CodeDir.CppCount");
 
    size_t count = 0;
 
@@ -100,11 +94,9 @@ void CodeDir::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CodeDir_Extract = "CodeDir.Extract";
-
 word CodeDir::Extract(string& expl)
 {
-   Debug::ft(CodeDir_Extract);
+   Debug::ft("CodeDir.Extract");
 
    //  Set this as the current directory.
    //
@@ -144,11 +136,9 @@ word CodeDir::Extract(string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeDir_HeaderCount = "CodeDir.HeaderCount";
-
 size_t CodeDir::HeaderCount() const
 {
-   Debug::ft(CodeDir_HeaderCount);
+   Debug::ft("CodeDir.HeaderCount");
 
    size_t count = 0;
 
@@ -164,11 +154,9 @@ size_t CodeDir::HeaderCount() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeDir_IsSubsDir = "CodeDir.IsSubsDir";
-
 bool CodeDir::IsSubsDir() const
 {
-   Debug::ft(CodeDir_IsSubsDir);
+   Debug::ft("CodeDir.IsSubsDir");
 
    return PathIncludes(path_, Library::SubsDir);
 }

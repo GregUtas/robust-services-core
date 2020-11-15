@@ -25,7 +25,6 @@
 #include "ModuleRegistry.h"
 #include "PbModule.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace ControlNode;
 using namespace PotsBase;
@@ -34,11 +33,9 @@ using namespace PotsBase;
 
 namespace OperationsNode
 {
-fn_name OnModule_ctor = "OnModule.ctor";
-
 OnModule::OnModule() : Module()
 {
-   Debug::ft(OnModule_ctor);
+   Debug::ft("OnModule.ctor");
 
    //  Create the modules required by OperationsNode.
    //
@@ -49,28 +46,22 @@ OnModule::OnModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name OnModule_dtor = "OnModule.dtor";
-
 OnModule::~OnModule()
 {
-   Debug::ftnt(OnModule_dtor);
+   Debug::ftnt("OnModule.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name OnModule_Shutdown = "OnModule.Shutdown";
 
 void OnModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(OnModule_Shutdown);
+   Debug::ft("OnModule.Shutdown");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name OnModule_Startup = "OnModule.Startup";
-
 void OnModule::Startup(RestartLevel level)
 {
-   Debug::ft(OnModule_Startup);
+   Debug::ft("OnModule.Startup");
 }
 }

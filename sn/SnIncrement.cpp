@@ -75,11 +75,9 @@ void SnSizesCommand::DisplaySizes(CliThread& cli, bool all) const
    *cli.obuf << "  PotsTreatment = " << sizeof(PotsTreatment) << CRLF;
 }
 
-fn_name SnSizesCommand_ProcessCommand = "SnSizesCommand.ProcessCommand";
-
 word SnSizesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SnSizesCommand_ProcessCommand);
+   Debug::ft("SnSizesCommand.ProcessCommand");
 
    bool all = false;
 
@@ -112,11 +110,9 @@ TreatmentsCommand::TreatmentsCommand() :
    BindParm(*new DispBVParm);
 }
 
-fn_name TreatmentsCommand_ProcessCommand = "TreatmentsCommand.ProcessCommand";
-
 word TreatmentsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TreatmentsCommand_ProcessCommand);
+   Debug::ft("TreatmentsCommand.ProcessCommand");
 
    word qid;
    bool all, v = false;
@@ -154,11 +150,9 @@ word TreatmentsCommand::ProcessCommand(CliThread& cli) const
 fixed_string SnText = "sn";
 fixed_string SnExpl = "Service Node Increment";
 
-fn_name SnIncrement_ctor = "SnIncrement.ctor";
-
 SnIncrement::SnIncrement() : CliIncrement(SnText, SnExpl)
 {
-   Debug::ft(SnIncrement_ctor);
+   Debug::ft("SnIncrement.ctor");
 
    BindCommand(*new TreatmentsCommand);
    BindCommand(*new SnSizesCommand);
@@ -166,10 +160,8 @@ SnIncrement::SnIncrement() : CliIncrement(SnText, SnExpl)
 
 //------------------------------------------------------------------------------
 
-fn_name SnIncrement_dtor = "SnIncrement.dtor";
-
 SnIncrement::~SnIncrement()
 {
-   Debug::ftnt(SnIncrement_dtor);
+   Debug::ftnt("SnIncrement.dtor");
 }
 }

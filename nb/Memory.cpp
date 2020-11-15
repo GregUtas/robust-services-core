@@ -100,47 +100,37 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name ImmutableHeap_ctor = "ImmutableHeap.ctor";
-
 ImmutableHeap::ImmutableHeap() : NbHeap(MemImmutable, Size_)
 {
-   Debug::ft(ImmutableHeap_ctor);
+   Debug::ft("ImmutableHeap.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ImmutableHeap_dtor = "ImmutableHeap.dtor";
 
 ImmutableHeap::~ImmutableHeap()
 {
-   Debug::ftnt(ImmutableHeap_dtor);
+   Debug::ftnt("ImmutableHeap.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ProtectedHeap_ctor = "ProtectedHeap.ctor";
 
 ProtectedHeap::ProtectedHeap() : NbHeap(MemProtected, GetSize())
 {
-   Debug::ft(ProtectedHeap_ctor);
+   Debug::ft("ProtectedHeap.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ProtectedHeap_dtor = "ProtectedHeap.dtor";
 
 ProtectedHeap::~ProtectedHeap()
 {
-   Debug::ftnt(ProtectedHeap_dtor);
+   Debug::ftnt("ProtectedHeap.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProtectedHeap_GetSize = "ProtectedHeap.GetSize";
-
 size_t ProtectedHeap::GetSize()
 {
-   Debug::ft(ProtectedHeap_GetSize);
+   Debug::ft("ProtectedHeap.GetSize");
 
    size_t size;
 
@@ -159,56 +149,44 @@ size_t ProtectedHeap::GetSize()
 
 //------------------------------------------------------------------------------
 
-fn_name PersistentHeap_ctor = "PersistentHeap.ctor";
-
 PersistentHeap::PersistentHeap() : SysHeap(MemPersistent, 0)
 {
-   Debug::ft(PersistentHeap_ctor);
+   Debug::ft("PersistentHeap.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PersistentHeap_dtor = "PersistentHeap.dtor";
 
 PersistentHeap::~PersistentHeap()
 {
-   Debug::ftnt(PersistentHeap_dtor);
+   Debug::ftnt("PersistentHeap.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name DynamicHeap_ctor = "DynamicHeap.ctor";
 
 DynamicHeap::DynamicHeap() : SysHeap(MemDynamic, 0)
 {
-   Debug::ft(DynamicHeap_ctor);
+   Debug::ft("DynamicHeap.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name DynamicHeap_dtor = "DynamicHeap.dtor";
 
 DynamicHeap::~DynamicHeap()
 {
-   Debug::ftnt(DynamicHeap_dtor);
+   Debug::ftnt("DynamicHeap.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TemporaryHeap_ctor = "TemporaryHeap.ctor";
 
 TemporaryHeap::TemporaryHeap() : SysHeap(MemTemporary, 0)
 {
-   Debug::ft(TemporaryHeap_ctor);
+   Debug::ft("TemporaryHeap.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TemporaryHeap_dtor = "TemporaryHeap.dtor";
-
 TemporaryHeap::~TemporaryHeap()
 {
-   Debug::ftnt(TemporaryHeap_dtor);
+   Debug::ftnt("TemporaryHeap.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -273,11 +251,9 @@ size_t Memory::Align(size_t size, size_t log2align)
 
 //------------------------------------------------------------------------------
 
-fn_name Memory_Alloc1 = "Memory.Alloc";
-
 void* Memory::Alloc(size_t size, MemoryType type)
 {
-   Debug::ft(Memory_Alloc1);
+   Debug::ft("Memory.Alloc");
 
    if(size == 0) return nullptr;
 
@@ -317,11 +293,9 @@ void* Memory::Alloc(size_t size, MemoryType type)
 
 //------------------------------------------------------------------------------
 
-fn_name Memory_Alloc2 = "Memory.Alloc(nothrow)";
-
 void* Memory::Alloc(size_t size, MemoryType type, const std::nothrow_t&)
 {
-   Debug::ft(Memory_Alloc2);
+   Debug::ft("Memory.Alloc(nothrow)");
 
    if(size == 0) return nullptr;
 
@@ -355,11 +329,9 @@ void* Memory::Alloc(size_t size, MemoryType type, const std::nothrow_t&)
 
 //------------------------------------------------------------------------------
 
-fn_name Memory_Copy = "Memory.Copy";
-
 void Memory::Copy(void* dest, const void* source, size_t size)
 {
-   Debug::ft(Memory_Copy);
+   Debug::ft("Memory.Copy");
 
    memcpy(dest, source, size);
 }
@@ -496,22 +468,18 @@ void* Memory::Realloc(void* addr, size_t size, MemoryType type)
 
 //------------------------------------------------------------------------------
 
-fn_name Memory_Set = "Memory.Set";
-
 void Memory::Set(void* dest, byte_t value, size_t size)
 {
-   Debug::ft(Memory_Set);
+   Debug::ft("Memory.Set");
 
    memset(dest, value, size);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Memory_Shutdown = "Memory.Shutdown";
-
 void Memory::Shutdown()
 {
-   Debug::ft(Memory_Shutdown);
+   Debug::ft("Memory.Shutdown");
 
    if(Restart::ClearsMemory(MemTemporary))
    {
@@ -557,11 +525,9 @@ bool Memory::Unprotect(MemoryType type)
 
 //------------------------------------------------------------------------------
 
-fn_name Memory_Validate = "Memory.Validate";
-
 int Memory::Validate(MemoryType type, const void* addr)
 {
-   Debug::ft(Memory_Validate);
+   Debug::ft("Memory.Validate");
 
    auto heap = AccessHeap(type);
    if(heap == nullptr) return -1;

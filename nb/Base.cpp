@@ -33,11 +33,9 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name Base_ClaimBlocks = "Base.ClaimBlocks";
-
 void Base::ClaimBlocks()
 {
-   Debug::ft(Base_ClaimBlocks);
+   Debug::ft("Base.ClaimBlocks");
 
    std::vector< Base* > objects;
 
@@ -62,23 +60,19 @@ void Base::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Base_GetSubtended = "Base.GetSubtended";
-
 void Base::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(Base_GetSubtended);
+   Debug::ft("Base.GetSubtended");
 
    objects.push_back(const_cast< Base* >(this));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Base_LogSubtended = "Base.LogSubtended";
-
 void Base::LogSubtended(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Debug::ft(Base_LogSubtended);
+   Debug::ft("Base.LogSubtended");
 
    std::vector< Base* > objects;
 
@@ -113,44 +107,36 @@ void Base::Nullify(size_t n)
 
 //------------------------------------------------------------------------------
 
-fn_name Base_new1 = "Base.operator new";
-
 void* Base::operator new(size_t size)
 {
-   Debug::ft(Base_new1);
+   Debug::ft("Base.operator new");
 
    return ::operator new(size);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Base_new2 = "Base.operator new[]";
-
 void* Base::operator new[](size_t size)
 {
-   Debug::ft(Base_new2);
+   Debug::ft("Base.operator new[]");
 
    return ::operator new[](size);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Base_new3 = "Base.operator new(place)";
-
 void* Base::operator new(size_t size, void* place)
 {
-   Debug::ft(Base_new3);
+   Debug::ft("Base.operator new(place)");
 
    return place;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Base_new4 = "Base.operator new[](place)";
-
 void* Base::operator new[](size_t size, void* place)
 {
-   Debug::ft(Base_new4);
+   Debug::ft("Base.operator new[](place)");
 
    return place;
 }

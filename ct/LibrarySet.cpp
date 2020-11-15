@@ -42,12 +42,10 @@ uint8_t LibrarySet::SeqNo_ = 0;
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_ctor = "LibrarySet.ctor";
-
 LibrarySet::LibrarySet(const string& name) : LibraryItem(name),
    temp_(false)
 {
-   Debug::ft(LibrarySet_ctor);
+   Debug::ft("LibrarySet.ctor");
 
    auto s = AccessName();
 
@@ -62,11 +60,9 @@ LibrarySet::LibrarySet(const string& name) : LibraryItem(name),
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_dtor = "LibrarySet.dtor";
-
 LibrarySet::~LibrarySet()
 {
-   Debug::ftnt(LibrarySet_dtor);
+   Debug::ftnt("LibrarySet.dtor");
 
    Singleton< Library >::Extant()->EraseVar(*this);
 }
@@ -94,11 +90,9 @@ LibrarySet* LibrarySet::Assign(LibrarySet* rhs)
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Check = "LibrarySet.Check";
-
 word LibrarySet::Check(CliThread& cli, ostream* stream, string& expl) const
 {
-   Debug::ft(LibrarySet_Check);
+   Debug::ft("LibrarySet.Check");
 
    return NotImplemented(expl);
 }
@@ -112,22 +106,18 @@ LibrarySet* LibrarySet::CommonAffecters() const
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Count = "LibrarySet.Count";
-
 word LibrarySet::Count(string& result) const
 {
-   Debug::ft(LibrarySet_Count);
+   Debug::ft("LibrarySet.Count");
 
    return NotImplemented(result);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Counted = "LibrarySet.Counted";
-
 word LibrarySet::Counted(string& result, const size_t* count)
 {
-   Debug::ft(LibrarySet_Counted);
+   Debug::ft("LibrarySet.Counted");
 
    result = "Count: ";
 
@@ -141,11 +131,9 @@ word LibrarySet::Counted(string& result, const size_t* count)
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Countlines = "LibrarySet.Countlines";
-
 word LibrarySet::Countlines(string& result) const
 {
-   Debug::ft(LibrarySet_Countlines);
+   Debug::ft("LibrarySet.Countlines");
 
    return NotImplemented(result);
 }
@@ -206,22 +194,18 @@ LibrarySet* LibrarySet::FileType(const LibrarySet* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Fix = "LibrarySet.Fix";
-
 word LibrarySet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 {
-   Debug::ft(LibrarySet_Fix);
+   Debug::ft("LibrarySet.Fix");
 
    return NotImplemented(expl);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Format = "LibrarySet.Format";
-
 word LibrarySet::Format(string& expl) const
 {
-   Debug::ft(LibrarySet_Format);
+   Debug::ft("LibrarySet.Format");
 
    return NotImplemented(expl);
 }
@@ -284,11 +268,9 @@ ptrdiff_t LibrarySet::LinkDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_List = "LibrarySet.List";
-
 word LibrarySet::List(ostream& stream, string& expl) const
 {
-   Debug::ft(LibrarySet_List);
+   Debug::ft("LibrarySet.List");
 
    return NotImplemented(expl);
 }
@@ -352,33 +334,27 @@ LibrarySet* LibrarySet::OpError() const
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Parse = "LibrarySet.Parse";
-
 word LibrarySet::Parse(string& expl, const string& opts) const
 {
-   Debug::ft(LibrarySet_Parse);
+   Debug::ft("LibrarySet.Parse");
 
    return NotImplemented(expl);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name LibrarySet_PreAssign = "LibrarySet.PreAssign";
 
 word LibrarySet::PreAssign(string& expl) const
 {
-   Debug::ft(LibrarySet_PreAssign);
+   Debug::ft("LibrarySet.PreAssign");
 
    return NotImplemented(expl);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Release = "LibrarySet.Release";
-
 void LibrarySet::Release()
 {
-   Debug::ftnt(LibrarySet_Release);
+   Debug::ftnt("LibrarySet.Release");
 
    if(!IsTemporary()) return;
    delete this;
@@ -386,34 +362,28 @@ void LibrarySet::Release()
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Scan = "LibrarySet.Scan";
-
 word LibrarySet::Scan
    (ostream& stream, const string& pattern, string& expl) const
 {
-   Debug::ft(LibrarySet_Scan);
+   Debug::ft("LibrarySet.Scan");
 
    return NotImplemented(expl);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Show = "LibrarySet.Show";
-
 word LibrarySet::Show(string& result) const
 {
-   Debug::ft(LibrarySet_Show);
+   Debug::ft("LibrarySet.Show");
 
    return NotImplemented(result);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Shown = "LibrarySet.Shown";
-
 word LibrarySet::Shown(string& result)
 {
-   Debug::ft(LibrarySet_Shown);
+   Debug::ft("LibrarySet.Shown");
 
    if(result.rfind(", ") != string::npos)
       result.erase(result.size() - 2, 2);
@@ -424,22 +394,18 @@ word LibrarySet::Shown(string& result)
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Sort = "LibrarySet.Sort";
-
 word LibrarySet::Sort(ostream& stream, string& expl) const
 {
-   Debug::ft(LibrarySet_Sort);
+   Debug::ft("LibrarySet.Sort");
 
    return NotImplemented(expl);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_TemporaryName = "LibrarySet.TemporaryName";
-
 string LibrarySet::TemporaryName()
 {
-   Debug::ft(LibrarySet_TemporaryName);
+   Debug::ft("LibrarySet.TemporaryName");
 
    string name = "%temp";
    name += std::to_string(int(SeqNo_));

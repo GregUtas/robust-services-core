@@ -53,21 +53,17 @@ PotsSusAttrs::PotsSusAttrs() : CliText(PotsSusFullName, PotsSusAbbrName) { }
 
 //==============================================================================
 
-fn_name PotsSusFeature_ctor = "PotsSusFeature.ctor";
-
 PotsSusFeature::PotsSusFeature() :
    PotsFeature(SUS, false, PotsSusAbbrName, PotsSusFullName)
 {
-   Debug::ft(PotsSusFeature_ctor);
+   Debug::ft("PotsSusFeature.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsSusFeature_dtor = "PotsSusFeature.dtor";
-
 PotsSusFeature::~PotsSusFeature()
 {
-   Debug::ftnt(PotsSusFeature_dtor);
+   Debug::ftnt("PotsSusFeature.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -76,12 +72,10 @@ CliText* PotsSusFeature::Attrs() const { return new PotsSusAttrs; }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsSusFeature_Subscribe = "PotsSusFeature.Subscribe";
-
 PotsFeatureProfile* PotsSusFeature::Subscribe
    (PotsProfile& profile, CliThread& cli) const
 {
-   Debug::ft(PotsSusFeature_Subscribe);
+   Debug::ft("PotsSusFeature.Subscribe");
 
    if(!cli.EndOfInput()) return nullptr;
 
@@ -91,19 +85,15 @@ PotsFeatureProfile* PotsSusFeature::Subscribe
 
 //==============================================================================
 
-fn_name PotsSusFeatureProfile_ctor = "PotsSusFeatureProfile.ctor";
-
 PotsSusFeatureProfile::PotsSusFeatureProfile() : PotsFeatureProfile(SUS)
 {
-   Debug::ft(PotsSusFeatureProfile_ctor);
+   Debug::ft("PotsSusFeatureProfile.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsSusFeatureProfile_dtor = "PotsSusFeatureProfile.dtor";
-
 PotsSusFeatureProfile::~PotsSusFeatureProfile()
 {
-   Debug::ftnt(PotsSusFeatureProfile_dtor);
+   Debug::ftnt("PotsSusFeatureProfile.dtor");
 }
 }

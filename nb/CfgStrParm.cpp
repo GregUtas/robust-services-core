@@ -31,21 +31,17 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CfgStrParm_ctor = "CfgStrParm.ctor";
-
 CfgStrParm::CfgStrParm(c_string key, c_string def, c_string expl) :
    CfgParm(key, def, expl)
 {
-   Debug::ft(CfgStrParm_ctor);
+   Debug::ft("CfgStrParm.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CfgStrParm_dtor = "CfgStrParm.dtor";
-
 CfgStrParm::~CfgStrParm()
 {
-   Debug::ftnt(CfgStrParm_dtor);
+   Debug::ftnt("CfgStrParm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -77,11 +73,9 @@ void CfgStrParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgStrParm_SetCurr = "CfgStrParm.SetCurr";
-
 void CfgStrParm::SetCurr()
 {
-   Debug::ft(CfgStrParm_SetCurr);
+   Debug::ft("CfgStrParm.SetCurr");
 
    FunctionGuard guard(Guard_MemUnprotect);
    curr_ = next_;
@@ -90,11 +84,9 @@ void CfgStrParm::SetCurr()
 
 //------------------------------------------------------------------------------
 
-fn_name CfgStrParm_SetNext = "CfgStrParm.SetNext";
-
 bool CfgStrParm::SetNext(c_string input)
 {
-   Debug::ft(CfgStrParm_SetNext);
+   Debug::ft("CfgStrParm.SetNext");
 
    FunctionGuard guard(Guard_MemUnprotect);
    next_ = input;

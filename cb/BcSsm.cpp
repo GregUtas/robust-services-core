@@ -44,25 +44,21 @@ int BcSsm::StateCount_[] = { 0 };
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_ctor = "BcSsm.ctor";
-
 BcSsm::BcSsm(ServiceId sid) : MediaSsm(sid),
    model_(XbcModel),
    uPsm_(nullptr),
    nPsm_(nullptr)
 {
-   Debug::ft(BcSsm_ctor);
+   Debug::ft("BcSsm.ctor");
 
    StateCount_[BcState::Null]++;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_dtor = "BcSsm.dtor";
-
 BcSsm::~BcSsm()
 {
-   Debug::ftnt(BcSsm_dtor);
+   Debug::ftnt("BcSsm.dtor");
 
    StateCount_[CurrState()]--;
 }
@@ -87,11 +83,9 @@ CipPsm* BcSsm::AllocNPsm()
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_AnalyzeInformation = "BcSsm.AnalyzeInformation";
-
 EventHandler::Rc BcSsm::AnalyzeInformation(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_AnalyzeInformation);
+   Debug::ft("BcSsm.AnalyzeInformation");
 
    //  The next event depends on what digits have been dialed.
    //
@@ -219,11 +213,9 @@ CipMessage* BcSsm::BuildCipRel(Cause::Ind cause)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_CalcPort = "BcSsm.CalcPort";
-
 ServicePortId BcSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(BcSsm_CalcPort);
+   Debug::ft("BcSsm.CalcPort");
 
    auto psm = ame.Msg()->Psm();
 
@@ -234,11 +226,9 @@ ServicePortId BcSsm::CalcPort(const AnalyzeMsgEvent& ame)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_ClearCall = "BcSsm.ClearCall";
-
 EventHandler::Rc BcSsm::ClearCall(Cause::Ind cause)
 {
-   Debug::ft(BcSsm_ClearCall);
+   Debug::ft("BcSsm.ClearCall");
 
    if((nPsm_ != nullptr) && (nPsm_->GetState() != ProtocolSM::Idle))
    {
@@ -385,11 +375,9 @@ EventHandler::Rc BcSsm::HandleLocalAnswer()
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_HandleRemoteRelease = "BcSsm.HandleRemoteRelease";
-
 EventHandler::Rc BcSsm::HandleRemoteRelease(Event& currEvent)
 {
-   Debug::ft(BcSsm_HandleRemoteRelease);
+   Debug::ft("BcSsm.HandleRemoteRelease");
 
    auto& rre = static_cast< BcRemoteReleaseEvent& >(currEvent);
    Cause::Ind cause = rre.GetCause();
@@ -399,11 +387,9 @@ EventHandler::Rc BcSsm::HandleRemoteRelease(Event& currEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_PsmDeleted = "BcSsm.PsmDeleted";
-
 void BcSsm::PsmDeleted(ProtocolSM& exPsm)
 {
-   Debug::ft(BcSsm_PsmDeleted);
+   Debug::ft("BcSsm.PsmDeleted");
 
    if(uPsm_ == &exPsm)
       uPsm_ = nullptr;
@@ -415,11 +401,9 @@ void BcSsm::PsmDeleted(ProtocolSM& exPsm)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseAnalyzeInformation = "BcSsm.RaiseAnalyzeInformation";
-
 EventHandler::Rc BcSsm::RaiseAnalyzeInformation(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseAnalyzeInformation);
+   Debug::ft("BcSsm.RaiseAnalyzeInformation");
 
    SetNextSnp(BcTrigger::InformationCollectedSnp);
    SetNextState(BcState::AnalyzingInformation);
@@ -430,12 +414,10 @@ EventHandler::Rc BcSsm::RaiseAnalyzeInformation(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseApplyTreatment = "BcSsm.RaiseApplyTreatment";
-
 EventHandler::Rc BcSsm::RaiseApplyTreatment
    (Event*& nextEvent, Cause::Ind cause)
 {
-   Debug::ft(BcSsm_RaiseApplyTreatment);
+   Debug::ft("BcSsm.RaiseApplyTreatment");
 
    SetNextState(BcState::Exception);
    SetNextSap(BcTrigger::ApplyTreatmentSap);
@@ -445,11 +427,9 @@ EventHandler::Rc BcSsm::RaiseApplyTreatment
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseAuthorizeCallSetup = "BcSsm.RaiseAuthorizeCallSetup";
-
 EventHandler::Rc BcSsm::RaiseAuthorizeCallSetup(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseAuthorizeCallSetup);
+   Debug::ft("BcSsm.RaiseAuthorizeCallSetup");
 
    SetNextSnp(BcTrigger::RouteSelectedSnp);
    SetNextState(BcState::AuthorizingCallSetup);
@@ -460,11 +440,9 @@ EventHandler::Rc BcSsm::RaiseAuthorizeCallSetup(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseAuthorizeOrigination = "BcSsm.RaiseAuthorizeOrigination";
-
 EventHandler::Rc BcSsm::RaiseAuthorizeOrigination(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseAuthorizeOrigination);
+   Debug::ft("BcSsm.RaiseAuthorizeOrigination");
 
    SetNextSnp(BcTrigger::OriginateSnp);
    SetNextState(BcState::AuthorizingOrigination);
@@ -475,11 +453,9 @@ EventHandler::Rc BcSsm::RaiseAuthorizeOrigination(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseAuthorizeTermination = "BcSsm.RaiseAuthorizeTermination";
-
 EventHandler::Rc BcSsm::RaiseAuthorizeTermination(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseAuthorizeTermination);
+   Debug::ft("BcSsm.RaiseAuthorizeTermination");
 
    SetNextSnp(BcTrigger::TerminateSnp);
    SetNextState(BcState::AuthorizingTermination);
@@ -490,11 +466,9 @@ EventHandler::Rc BcSsm::RaiseAuthorizeTermination(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseCollectInformation = "BcSsm.RaiseCollectInformation";
-
 EventHandler::Rc BcSsm::RaiseCollectInformation(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseCollectInformation);
+   Debug::ft("BcSsm.RaiseCollectInformation");
 
    SetNextSnp(BcTrigger::OriginatedSnp);
    SetNextState(BcState::CollectingInformation);
@@ -505,11 +479,9 @@ EventHandler::Rc BcSsm::RaiseCollectInformation(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseCollectionTimeout = "BcSsm.RaiseCollectionTimeout";
-
 EventHandler::Rc BcSsm::RaiseCollectionTimeout(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseCollectionTimeout);
+   Debug::ft("BcSsm.RaiseCollectionTimeout");
 
    SetNextSap(BcTrigger::CollectionTimeoutSap);
    nextEvent = new BcCollectionTimeoutEvent(*this, Cause::AddressTimeout);
@@ -518,11 +490,9 @@ EventHandler::Rc BcSsm::RaiseCollectionTimeout(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseFacilityFailure = "BcSsm.RaiseFacilityFailure";
-
 EventHandler::Rc BcSsm::RaiseFacilityFailure(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseFacilityFailure);
+   Debug::ft("BcSsm.RaiseFacilityFailure");
 
    SetNextSap(BcTrigger::FacilityFailureSap);
    nextEvent = new BcFacilityFailureEvent(*this, Cause::AlertingTimeout);
@@ -531,11 +501,9 @@ EventHandler::Rc BcSsm::RaiseFacilityFailure(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseInvalidInformation = "BcSsm.RaiseInvalidInformation";
-
 EventHandler::Rc BcSsm::RaiseInvalidInformation(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseInvalidInformation);
+   Debug::ft("BcSsm.RaiseInvalidInformation");
 
    SetNextSap(BcTrigger::InvalidInformationSap);
    nextEvent = new BcInvalidInformationEvent(*this, Cause::InvalidAddress);
@@ -544,11 +512,9 @@ EventHandler::Rc BcSsm::RaiseInvalidInformation(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseLocalAlerting = "BcSsm.RaiseLocalAlerting";
-
 EventHandler::Rc BcSsm::RaiseLocalAlerting(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseLocalAlerting);
+   Debug::ft("BcSsm.RaiseLocalAlerting");
 
    nextEvent = new BcLocalAlertingEvent(*this);
    return EventHandler::Continue;
@@ -556,11 +522,9 @@ EventHandler::Rc BcSsm::RaiseLocalAlerting(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseLocalAnswer = "BcSsm.RaiseLocalAnswer";
-
 EventHandler::Rc BcSsm::RaiseLocalAnswer(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseLocalAnswer);
+   Debug::ft("BcSsm.RaiseLocalAnswer");
 
    SetNextSap(BcTrigger::LocalAnswerSap);
    nextEvent = new BcLocalAnswerEvent(*this);
@@ -569,11 +533,9 @@ EventHandler::Rc BcSsm::RaiseLocalAnswer(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseLocalBusy = "BcSsm.RaiseLocalBusy";
-
 EventHandler::Rc BcSsm::RaiseLocalBusy(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseLocalBusy);
+   Debug::ft("BcSsm.RaiseLocalBusy");
 
    SetNextSap(BcTrigger::LocalBusySap);
    nextEvent = new BcLocalBusyEvent(*this, Cause::UserBusy);
@@ -582,11 +544,9 @@ EventHandler::Rc BcSsm::RaiseLocalBusy(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseLocalInformation = "BcSsm.RaiseLocalInformation";
-
 EventHandler::Rc BcSsm::RaiseLocalInformation(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseLocalInformation);
+   Debug::ft("BcSsm.RaiseLocalInformation");
 
    SetNextSap(BcTrigger::LocalInformationSap);
    nextEvent = new BcLocalInformationEvent(*this);
@@ -595,11 +555,9 @@ EventHandler::Rc BcSsm::RaiseLocalInformation(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseLocalNoAnswer = "BcSsm.RaiseLocalNoAnswer";
-
 EventHandler::Rc BcSsm::RaiseLocalNoAnswer(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseLocalNoAnswer);
+   Debug::ft("BcSsm.RaiseLocalNoAnswer");
 
    SetNextSap(BcTrigger::LocalNoAnswerSap);
    nextEvent = new BcLocalNoAnswerEvent(*this, Cause::AnswerTimeout);
@@ -608,12 +566,10 @@ EventHandler::Rc BcSsm::RaiseLocalNoAnswer(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseLocalProgress = "BcSsm.RaiseLocalProgress";
-
 EventHandler::Rc BcSsm::RaiseLocalProgress
    (Event*& nextEvent, Progress::Ind progress)
 {
-   Debug::ft(BcSsm_RaiseLocalProgress);
+   Debug::ft("BcSsm.RaiseLocalProgress");
 
    nextEvent = new BcLocalProgressEvent(*this, progress);
    return EventHandler::Continue;
@@ -621,12 +577,10 @@ EventHandler::Rc BcSsm::RaiseLocalProgress
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseLocalRelease = "BcSsm.RaiseLocalRelease";
-
 EventHandler::Rc BcSsm::RaiseLocalRelease
    (Event*& nextEvent, Cause::Ind cause)
 {
-   Debug::ft(BcSsm_RaiseLocalRelease);
+   Debug::ft("BcSsm.RaiseLocalRelease");
 
    SetNextSap(BcTrigger::LocalReleaseSap);
    nextEvent = new BcLocalReleaseEvent(*this, cause);
@@ -635,11 +589,9 @@ EventHandler::Rc BcSsm::RaiseLocalRelease
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseLocalResume = "BcSsm.RaiseLocalResume";
-
 EventHandler::Rc BcSsm::RaiseLocalResume(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseLocalResume);
+   Debug::ft("BcSsm.RaiseLocalResume");
 
    nextEvent = new BcLocalResumeEvent(*this);
    return EventHandler::Continue;
@@ -647,11 +599,9 @@ EventHandler::Rc BcSsm::RaiseLocalResume(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseLocalSuspend = "BcSsm.RaiseLocalSuspend";
-
 EventHandler::Rc BcSsm::RaiseLocalSuspend(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseLocalSuspend);
+   Debug::ft("BcSsm.RaiseLocalSuspend");
 
    nextEvent = new BcLocalSuspendEvent(*this);
    return EventHandler::Continue;
@@ -659,11 +609,9 @@ EventHandler::Rc BcSsm::RaiseLocalSuspend(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaisePresentCall = "BcSsm.RaisePresentCall";
-
 EventHandler::Rc BcSsm::RaisePresentCall(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaisePresentCall);
+   Debug::ft("BcSsm.RaisePresentCall");
 
    SetNextSnp(BcTrigger::FacilitySelectedSnp);
    SetNextState(BcState::PresentingCall);
@@ -674,11 +622,9 @@ EventHandler::Rc BcSsm::RaisePresentCall(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseProtocolError = "BcSsm.RaiseProtocolError";
-
 Event* BcSsm::RaiseProtocolError(ProtocolSM& psm, ProtocolSM::Error err)
 {
-   Debug::ft(BcSsm_RaiseProtocolError);
+   Debug::ft("BcSsm.RaiseProtocolError");
 
    switch(err)
    {
@@ -695,12 +641,10 @@ Event* BcSsm::RaiseProtocolError(ProtocolSM& psm, ProtocolSM::Error err)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseReleaseCall = "BcSsm.RaiseReleaseCall";
-
 EventHandler::Rc BcSsm::RaiseReleaseCall
    (Event*& nextEvent, Cause::Ind cause)
 {
-   Debug::ft(BcSsm_RaiseReleaseCall);
+   Debug::ft("BcSsm.RaiseReleaseCall");
 
    SetNextSap(BcTrigger::ReleaseCallSap);
    nextEvent = new BcReleaseCallEvent(*this, cause);
@@ -709,11 +653,9 @@ EventHandler::Rc BcSsm::RaiseReleaseCall
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseRemoteAlerting = "BcSsm.RaiseRemoteAlerting";
-
 EventHandler::Rc BcSsm::RaiseRemoteAlerting(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseRemoteAlerting);
+   Debug::ft("BcSsm.RaiseRemoteAlerting");
 
    nextEvent = new BcRemoteAlertingEvent(*this);
    return EventHandler::Continue;
@@ -721,11 +663,9 @@ EventHandler::Rc BcSsm::RaiseRemoteAlerting(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseRemoteAnswer = "BcSsm.RaiseRemoteAnswer";
-
 EventHandler::Rc BcSsm::RaiseRemoteAnswer(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseRemoteAnswer);
+   Debug::ft("BcSsm.RaiseRemoteAnswer");
 
    nextEvent = new BcRemoteAnswerEvent(*this);
    return EventHandler::Continue;
@@ -733,11 +673,9 @@ EventHandler::Rc BcSsm::RaiseRemoteAnswer(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseRemoteBusy = "BcSsm.RaiseRemoteBusy";
-
 EventHandler::Rc BcSsm::RaiseRemoteBusy(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseRemoteBusy);
+   Debug::ft("BcSsm.RaiseRemoteBusy");
 
    SetNextSap(BcTrigger::RemoteBusySap);
    nextEvent = new BcRemoteBusyEvent(*this, Cause::UserBusy);
@@ -746,11 +684,9 @@ EventHandler::Rc BcSsm::RaiseRemoteBusy(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseRemoteNoAnswer = "BcSsm.RaiseRemoteNoAnswer";
-
 EventHandler::Rc BcSsm::RaiseRemoteNoAnswer(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseRemoteNoAnswer);
+   Debug::ft("BcSsm.RaiseRemoteNoAnswer");
 
    SetNextSap(BcTrigger::RemoteNoAnswerSap);
    nextEvent = new BcRemoteNoAnswerEvent(*this, Cause::AnswerTimeout);
@@ -759,12 +695,10 @@ EventHandler::Rc BcSsm::RaiseRemoteNoAnswer(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseRemoteProgress = "BcSsm.RaiseRemoteProgress";
-
 EventHandler::Rc BcSsm::RaiseRemoteProgress
    (Event*& nextEvent, Progress::Ind progress)
 {
-   Debug::ft(BcSsm_RaiseRemoteProgress);
+   Debug::ft("BcSsm.RaiseRemoteProgress");
 
    nextEvent = new BcRemoteProgressEvent(*this, progress);
    return EventHandler::Continue;
@@ -772,12 +706,10 @@ EventHandler::Rc BcSsm::RaiseRemoteProgress
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseRemoteRelease = "BcSsm.RaiseRemoteRelease";
-
 EventHandler::Rc BcSsm::RaiseRemoteRelease
    (Event*& nextEvent, Cause::Ind cause)
 {
-   Debug::ft(BcSsm_RaiseRemoteRelease);
+   Debug::ft("BcSsm.RaiseRemoteRelease");
 
    SetNextSap(BcTrigger::RemoteReleaseSap);
    nextEvent = new BcRemoteReleaseEvent(*this, cause);
@@ -786,11 +718,9 @@ EventHandler::Rc BcSsm::RaiseRemoteRelease
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseRemoteResume = "BcSsm.RaiseRemoteResume";
-
 EventHandler::Rc BcSsm::RaiseRemoteResume(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseRemoteResume);
+   Debug::ft("BcSsm.RaiseRemoteResume");
 
    nextEvent = new BcRemoteResumeEvent(*this);
    return EventHandler::Continue;
@@ -798,11 +728,9 @@ EventHandler::Rc BcSsm::RaiseRemoteResume(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseRemoteSuspend = "BcSsm.RaiseRemoteSuspend";
-
 EventHandler::Rc BcSsm::RaiseRemoteSuspend(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseRemoteSuspend);
+   Debug::ft("BcSsm.RaiseRemoteSuspend");
 
    nextEvent = new BcRemoteSuspendEvent(*this);
    return EventHandler::Continue;
@@ -810,11 +738,9 @@ EventHandler::Rc BcSsm::RaiseRemoteSuspend(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseSelectFacility = "BcSsm.RaiseSelectFacility";
-
 EventHandler::Rc BcSsm::RaiseSelectFacility(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseSelectFacility);
+   Debug::ft("BcSsm.RaiseSelectFacility");
 
    SetNextSnp(BcTrigger::TerminatedSnp);
    SetNextState(BcState::SelectingFacility);
@@ -825,11 +751,9 @@ EventHandler::Rc BcSsm::RaiseSelectFacility(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseSelectRoute = "BcSsm.RaiseSelectRoute";
-
 EventHandler::Rc BcSsm::RaiseSelectRoute(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseSelectRoute);
+   Debug::ft("BcSsm.RaiseSelectRoute");
 
    SetNextSnp(BcTrigger::InformationAnalyzedSnp);
    SetNextState(BcState::SelectingRoute);
@@ -840,11 +764,9 @@ EventHandler::Rc BcSsm::RaiseSelectRoute(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RaiseSendCall = "BcSsm.RaiseSendCall";
-
 EventHandler::Rc BcSsm::RaiseSendCall(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RaiseSendCall);
+   Debug::ft("BcSsm.RaiseSendCall");
 
    SetNextSnp(BcTrigger::CallSetupAuthorizedSnp);
    SetNextState(BcState::SendingCall);
@@ -855,11 +777,9 @@ EventHandler::Rc BcSsm::RaiseSendCall(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_RequestService = "BcSsm.RequestService";
-
 EventHandler::Rc BcSsm::RequestService(Event*& nextEvent)
 {
-   Debug::ft(BcSsm_RequestService);
+   Debug::ft("BcSsm.RequestService");
 
    //  A service code should have been dialed.
    //
@@ -880,11 +800,9 @@ EventHandler::Rc BcSsm::RequestService(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_ResetStateCounts = "BcSsm.ResetStateCounts";
-
 void BcSsm::ResetStateCounts(RestartLevel level)
 {
-   Debug::ft(BcSsm_ResetStateCounts);
+   Debug::ft("BcSsm.ResetStateCounts");
 
    if(level < RestartCold) return;
 
@@ -927,22 +845,18 @@ EventHandler::Rc BcSsm::SelectRoute(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_SetModel = "BcSsm.SetModel";
-
 void BcSsm::SetModel(Model model)
 {
-   Debug::ft(BcSsm_SetModel);
+   Debug::ft("BcSsm.SetModel");
 
    model_ = model;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BcSsm_SetNextState = "BcSsm.SetNextState";
-
 void BcSsm::SetNextState(StateId stid)
 {
-   Debug::ft(BcSsm_SetNextState);
+   Debug::ft("BcSsm.SetNextState");
 
    StateCount_[CurrState()]--;
    StateCount_[stid]++;

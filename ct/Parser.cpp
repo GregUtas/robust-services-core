@@ -61,8 +61,6 @@ uint32_t Parser::Backups[] = { 0 };
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_ctor1 = "Parser.ctor(opts)";
-
 Parser::Parser(const string& opts) :
    source_(IsUnknown),
    inst_(nullptr),
@@ -73,7 +71,7 @@ Parser::Parser(const string& opts) :
    cause_(0),
    pTrace_(nullptr)
 {
-   Debug::ft(Parser_ctor1);
+   Debug::ft("Parser.ctor(opts)");
 
    //  Save the options that control generation of a parse trace file (on
    //  a per-file basis) and object code file (a single file).  Make this
@@ -95,8 +93,6 @@ Parser::Parser(const string& opts) :
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_ctor2 = "Parser.ctor(scope)";
-
 Parser::Parser(CxxScope* scope) :
    source_(IsUnknown),
    inst_(nullptr),
@@ -107,7 +103,7 @@ Parser::Parser(CxxScope* scope) :
    cause_(0),
    pTrace_(nullptr)
 {
-   Debug::ft(Parser_ctor2);
+   Debug::ft("Parser.ctor(scope)");
 
    //  Make this the active parser and set the scope for parsing.
    //
@@ -117,11 +113,9 @@ Parser::Parser(CxxScope* scope) :
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_dtor = "Parser.dtor";
-
 Parser::~Parser()
 {
-   Debug::ftnt(Parser_dtor);
+   Debug::ftnt("Parser.dtor");
 
    //  Remove the parser and close the parse trace file, if any.
    //
@@ -134,11 +128,9 @@ Parser::~Parser()
 //
 //  Current causes are 1 to 259.
 //
-fn_name Parser_Backup1 = "Parser.Backup(cause)";
-
 bool Parser::Backup(size_t cause)
 {
-   Debug::ft(Parser_Backup1);
+   Debug::ft("Parser.Backup(cause)");
 
    ++Backups[cause];
    return false;
@@ -146,11 +138,9 @@ bool Parser::Backup(size_t cause)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Backup2 = "Parser.Backup(pos, cause)";
-
 bool Parser::Backup(size_t pos, size_t cause)
 {
-   Debug::ft(Parser_Backup2);
+   Debug::ft("Parser.Backup(pos, cause)");
 
    auto curr = CurrPos();
 
@@ -166,11 +156,9 @@ bool Parser::Backup(size_t pos, size_t cause)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Backup3 = "Parser.Backup(pos, cause, func)";
-
 bool Parser::Backup(size_t pos, FunctionPtr& func, size_t cause)
 {
-   Debug::ft(Parser_Backup3);
+   Debug::ft("Parser.Backup(pos, cause, func)");
 
    func.reset();
    return Backup(pos, cause);
@@ -270,11 +258,9 @@ size_t Parser::CurrPos() const
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_DisplayStats = "Parser.DisplayStats";
-
 void Parser::DisplayStats(ostream& stream)
 {
-   Debug::ft(Parser_DisplayStats);
+   Debug::ft("Parser.DisplayStats");
 
    stream << "Cause       Count" << CRLF;
 
@@ -289,12 +275,10 @@ void Parser::DisplayStats(ostream& stream)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Enter = "Parser.Enter";
-
 void Parser::Enter(SourceType source, const string& venue,
       const TypeName* inst, const string& code, bool preprocess)
 {
-   Debug::ft(Parser_Enter);
+   Debug::ft("Parser.Enter");
 
    source_ = source;
    venue_ = venue;
@@ -339,11 +323,9 @@ bool Parser::Fault(DirectiveError err) const
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetAccess = "Parser.GetAccess";
-
 bool Parser::GetAccess(Cxx::Keyword kwd, Cxx::Access& access)
 {
-   Debug::ft(Parser_GetAccess);
+   Debug::ft("Parser.GetAccess");
 
    //  <Access> = ("public" | "protected" | "private") ":"
    //  The keyword has already been parsed.
@@ -366,11 +348,9 @@ bool Parser::GetAccess(Cxx::Keyword kwd, Cxx::Access& access)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetAlignAs = "Parser.GetAlignAs";
-
 bool Parser::GetAlignAs(AlignAsPtr& align)
 {
-   Debug::ft(Parser_GetAlignAs);
+   Debug::ft("Parser.GetAlignAs");
 
    if(!NextKeywordIs(ALIGNAS_STR)) return true;
    if(!lexer_.NextCharIs('(')) return false;
@@ -865,11 +845,9 @@ bool Parser::GetCatch(TokenPtr& statement)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetChar = "Parser.GetChar";
-
 bool Parser::GetChar(ExprPtr& expr, Cxx::Encoding code)
 {
-   Debug::ft(Parser_GetChar);
+   Debug::ft("Parser.GetChar");
 
    //  Extract the character that appears between two single quotation
    //  marks and wrap it in the appropriate type of character literal.
@@ -906,11 +884,9 @@ bool Parser::GetChar(ExprPtr& expr, Cxx::Encoding code)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetClass = "Parser.GetClass";
-
 bool Parser::GetClass(Cxx::Keyword kwd, CxxArea* area)
 {
-   Debug::ft(Parser_GetClass);
+   Debug::ft("Parser.GetClass");
 
    ClassPtr cls;
    ForwardPtr forw;
@@ -1065,11 +1041,9 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCompoundType = "Parser.GetCompoundType";
-
 bool Parser::GetCompoundType(QualNamePtr& name, Cxx::Type type)
 {
-   Debug::ft(Parser_GetCompoundType);
+   Debug::ft("Parser.GetCompoundType");
 
    int sign = 0;  // -1 = signed, 0 = unspecified, 1 = unsigned
    int size = 0;  // -1 = short, 0 = unspecified, 1 = long, 2 = long long
@@ -1516,11 +1490,9 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCxxLiteralOrAlpha = "Parser.GetCxxLiteralOrAlpha";
-
 bool Parser::GetCxxLiteralOrAlpha(ExprPtr& expr)
 {
-   Debug::ft(Parser_GetCxxLiteralOrAlpha);
+   Debug::ft("Parser.GetCxxLiteralOrAlpha");
 
    Cxx::Encoding code = Cxx::Encoding_N;
    char c;
@@ -1810,11 +1782,9 @@ bool Parser::GetEnumerator(string& name, ExprPtr& init)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetFileDecls = "Parser.GetFileDecls";
-
 void Parser::GetFileDecls(Namespace* space)
 {
-   Debug::ft(Parser_GetFileDecls);
+   Debug::ft("Parser.GetFileDecls");
 
    string str;
 
@@ -2253,11 +2223,9 @@ bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetFuncSpecial = "Parser.GetFuncSpecial";
-
 bool Parser::GetFuncSpecial(FunctionPtr& func)
 {
-   Debug::ft(Parser_GetFuncSpecial);
+   Debug::ft("Parser.GetFuncSpecial");
 
    //  Look for "= delete;" or "= default; ".
    //
@@ -2336,11 +2304,9 @@ bool Parser::GetIf(TokenPtr& statement)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetInline = "Parser.GetInline";
-
 void Parser::GetInline(Function* func)
 {
-   Debug::ft(Parser_GetInline);
+   Debug::ft("Parser.GetInline");
 
    auto pos = func->GetBracePos();
 
@@ -2354,11 +2320,9 @@ void Parser::GetInline(Function* func)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetInlines = "Parser.GetInlines";
-
 bool Parser::GetInlines(Class* cls)
 {
-   Debug::ft(Parser_GetInlines);
+   Debug::ft("Parser.GetInlines");
 
    //  This jumps around to parse functions, so adjust farthest_ accordingly.
    //
@@ -2395,11 +2359,9 @@ bool Parser::GetInlines(Class* cls)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetLINE = "Parser.GetLINE";
-
 string Parser::GetLINE() const
 {
-   Debug::ft(Parser_GetLINE);
+   Debug::ft("Parser.GetLINE");
 
    std::ostringstream stream;
 
@@ -2410,11 +2372,9 @@ string Parser::GetLINE() const
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetLineNum = "Parser.GetLineNum";
-
 size_t Parser::GetLineNum(size_t pos) const
 {
-   Debug::ft(Parser_GetLineNum);
+   Debug::ft("Parser.GetLineNum");
 
    if(pos == string::npos) pos = CurrPos();
    return lexer_.GetLineNum(pos);
@@ -2422,11 +2382,9 @@ size_t Parser::GetLineNum(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetMemberDecls = "Parser.GetMemberDecls";
-
 void Parser::GetMemberDecls(Class* cls)
 {
-   Debug::ft(Parser_GetMemberDecls);
+   Debug::ft("Parser.GetMemberDecls");
 
    string str;
 
@@ -2446,11 +2404,9 @@ void Parser::GetMemberDecls(Class* cls)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetName = "Parser.GetName";
-
 bool Parser::GetName(string& name)
 {
-   Debug::ft(Parser_GetName);
+   Debug::ft("Parser.GetName");
 
    if(!lexer_.GetName(name)) return false;
 
@@ -2608,11 +2564,9 @@ bool Parser::GetNoExcept(ExprPtr& expr)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetNum = "Parser.GetNum";
-
 bool Parser::GetNum(ExprPtr& expr)
 {
-   Debug::ft(Parser_GetNum);
+   Debug::ft("Parser.GetNum");
 
    TokenPtr item;
    if(!lexer_.GetNum(item)) return false;
@@ -2622,11 +2576,9 @@ bool Parser::GetNum(ExprPtr& expr)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetOp = "Parser.GetOp";
-
 bool Parser::GetOp(ExprPtr& expr, bool cxx)
 {
-   Debug::ft(Parser_GetOp);
+   Debug::ft("Parser.GetOp");
 
    auto start = CurrPos();
 
@@ -2669,11 +2621,9 @@ bool Parser::GetOp(ExprPtr& expr, bool cxx)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetParExpr = "Parser.GetParExpr";
-
 bool Parser::GetParExpr(ExprPtr& expr, bool omit, bool opt)
 {
-   Debug::ft(Parser_GetParExpr);
+   Debug::ft("Parser.GetParExpr");
 
    auto start = CurrPos();
 
@@ -2689,11 +2639,9 @@ bool Parser::GetParExpr(ExprPtr& expr, bool omit, bool opt)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetPointers = "Parser.GetPointers";
-
 size_t Parser::GetPointers()
 {
-   Debug::ft(Parser_GetPointers);
+   Debug::ft("Parser.GetPointers");
 
    bool space;
    return lexer_.GetIndirectionLevel('*', space);
@@ -2701,11 +2649,9 @@ size_t Parser::GetPointers()
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetPreAlpha = "Parser.GetPreAlpha";
-
 bool Parser::GetPreAlpha(ExprPtr& expr)
 {
-   Debug::ft(Parser_GetPreAlpha);
+   Debug::ft("Parser.GetPreAlpha");
 
    auto start = CurrPos();
 
@@ -3156,11 +3102,9 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetStatements = "Parser.GetStatements";
-
 bool Parser::GetStatements(BlockPtr& block, bool braced)
 {
-   Debug::ft(Parser_GetStatements);
+   Debug::ft("Parser.GetStatements");
 
    string str;
 
@@ -3213,11 +3157,9 @@ bool Parser::GetStaticAssert(StaticAssertPtr& statement)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetStr = "Parser.GetStr";
-
 bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code)
 {
-   Debug::ft(Parser_GetStr);
+   Debug::ft("Parser.GetStr");
 
    //  Extract the string that appears between two quotation marks
    //  and wrap it in the appropriate type of string literal.
@@ -3436,11 +3378,9 @@ bool Parser::GetThrow(ExprPtr& expr)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTime = "Parser.GetTime";
-
 const SysTime* Parser::GetTime()
 {
-   Debug::ft(Parser_GetTime);
+   Debug::ft("Parser.GetTime");
 
    return &Context::RootParser()->time_;
 }
@@ -3534,11 +3474,9 @@ bool Parser::GetTypeId(ExprPtr& expr)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTypeName = "Parser.GetTypeName";
-
 bool Parser::GetTypeName(TypeNamePtr& type, Constraint constraint)
 {
-   Debug::ft(Parser_GetTypeName);
+   Debug::ft("Parser.GetTypeName");
 
    //  <TypeName> = <Name> ["<" <TypeSpec> ["," <TypeSpec>]* ">"]
    //
@@ -3661,11 +3599,9 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec, KeywordSet* attrs)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTypeSpec2 = "Parser.GetTypeSpec(name)";
-
 bool Parser::GetTypeSpec(TypeSpecPtr& spec, string& name)
 {
-   Debug::ft(Parser_GetTypeSpec2);
+   Debug::ft("Parser.GetTypeSpec(name)");
 
    if(!GetTypeSpec(spec)) return false;
 
@@ -3688,11 +3624,9 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec, string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTypeTags = "Parser.GetTypeTags";
-
 bool Parser::GetTypeTags(TypeSpec* spec)
 {
-   Debug::ft(Parser_GetTypeTags);
+   Debug::ft("Parser.GetTypeTags");
 
    //  <TypeTags> = [["*"] ["const"] ["volatile"]]* ["[]"]
    //               ["&" | "&&"] ["const"] ["volatile"]
@@ -3835,11 +3769,9 @@ bool Parser::GetWhile(TokenPtr& statement)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleDefine = "Parser.HandleDefine";
-
 bool Parser::HandleDefine()
 {
-   Debug::ft(Parser_HandleDefine);
+   Debug::ft("Parser.HandleDefine");
 
    //  <Define> = "#define" <Name> [<Expr>]
    //
@@ -3874,11 +3806,9 @@ bool Parser::HandleDefine()
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleDirective = "Parser.HandleDirective";
-
 bool Parser::HandleDirective(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleDirective);
+   Debug::ft("Parser.HandleDirective");
 
    string str;
    auto kwd = lexer_.NextDirective(str);
@@ -3917,11 +3847,9 @@ bool Parser::HandleDirective(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleElif = "Parser.HandleElif";
-
 bool Parser::HandleElif(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleElif);
+   Debug::ft("Parser.HandleElif");
 
    //  <Elif> = "#elif" <Expr>
    //
@@ -3945,11 +3873,9 @@ bool Parser::HandleElif(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleElse = "Parser.HandleElse";
-
 bool Parser::HandleElse(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleElse);
+   Debug::ft("Parser.HandleElse");
 
    //  <Else> = "#else"
    //
@@ -3969,11 +3895,9 @@ bool Parser::HandleElse(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleEndif = "Parser.HandleEndif";
-
 bool Parser::HandleEndif(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleEndif);
+   Debug::ft("Parser.HandleEndif");
 
    //  <Endif> = "#endif"
    //
@@ -3990,11 +3914,9 @@ bool Parser::HandleEndif(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleError = "Parser.HandleError";
-
 bool Parser::HandleError(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleError);
+   Debug::ft("Parser.HandleError");
 
    //  <Error> = "#error" <Text>
    //
@@ -4013,11 +3935,9 @@ bool Parser::HandleError(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleIf = "Parser.HandleIf";
-
 bool Parser::HandleIf(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleIf);
+   Debug::ft("Parser.HandleIf");
 
    //  <If> = "#if" <Expr>
    //
@@ -4038,11 +3958,9 @@ bool Parser::HandleIf(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleIfdef = "Parser.HandleIfdef";
-
 bool Parser::HandleIfdef(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleIfdef);
+   Debug::ft("Parser.HandleIfdef");
 
    //  <Ifdef> = "#ifdef" <Name>
    //
@@ -4064,11 +3982,9 @@ bool Parser::HandleIfdef(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleIfndef = "Parser.HandleIfndef";
-
 bool Parser::HandleIfndef(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleIfndef);
+   Debug::ft("Parser.HandleIfndef");
 
    //  <Ifndef> = "#ifndef" <Name>
    //
@@ -4090,11 +4006,9 @@ bool Parser::HandleIfndef(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleInclude = "Parser.HandleInclude";
-
 bool Parser::HandleInclude()
 {
-   Debug::ft(Parser_HandleInclude);
+   Debug::ft("Parser.HandleInclude");
 
    //  <Include> = "#include" <FileName>
    //
@@ -4116,11 +4030,9 @@ bool Parser::HandleInclude()
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleLine = "Parser.HandleLine";
-
 bool Parser::HandleLine(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleLine);
+   Debug::ft("Parser.HandleLine");
 
    //  <Line> = "#line" <Text>
    //
@@ -4138,11 +4050,9 @@ bool Parser::HandleLine(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleParentheses = "Parser.HandleParentheses";
-
 bool Parser::HandleParentheses(ExprPtr& expr)
 {
-   Debug::ft(Parser_HandleParentheses);
+   Debug::ft("Parser.HandleParentheses");
 
    //  The left parenthesis has already been parsed.  It could introduce a
    //  function call, a C-style cast, or simply parentheses for precedence
@@ -4171,11 +4081,9 @@ bool Parser::HandleParentheses(ExprPtr& expr)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandlePragma = "Parser.HandlePragma";
-
 bool Parser::HandlePragma(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandlePragma);
+   Debug::ft("Parser.HandlePragma");
 
    //  <Pragma> = "#pragma" <Text>
    //
@@ -4193,11 +4101,9 @@ bool Parser::HandlePragma(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleTilde = "Parser.HandleTilde";
-
 bool Parser::HandleTilde(ExprPtr& expr, size_t start)
 {
-   Debug::ft(Parser_HandleTilde);
+   Debug::ft("Parser.HandleTilde");
 
    TokenPtr item;
 
@@ -4232,11 +4138,9 @@ bool Parser::HandleTilde(ExprPtr& expr, size_t start)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_HandleUndef = "Parser.HandleUndef";
-
 bool Parser::HandleUndef(DirectivePtr& dir)
 {
-   Debug::ft(Parser_HandleUndef);
+   Debug::ft("Parser.HandleUndef");
 
    //  <Undef> = "#undef" <Name>
    //
@@ -4261,11 +4165,9 @@ string Parser::Indent()
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Log = "Parser.Log";
-
 void Parser::Log(Warning warning, size_t pos) const
 {
-   Debug::ft(Parser_Log);
+   Debug::ft("Parser.Log");
 
    if(pos == string::npos) pos = lexer_.Prev();
    Context::File()->LogPos(pos, warning);
@@ -4273,11 +4175,9 @@ void Parser::Log(Warning warning, size_t pos) const
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_NextKeyword = "Parser.NextKeyword";
-
 Cxx::Keyword Parser::NextKeyword(string& str)
 {
-   Debug::ft(Parser_NextKeyword);
+   Debug::ft("Parser.NextKeyword");
 
    auto kwd = lexer_.NextKeyword(str);
    if(kwd != Cxx::NIL_KEYWORD) kwdBegin_ = CurrPos();
@@ -4286,11 +4186,9 @@ Cxx::Keyword Parser::NextKeyword(string& str)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_NextKeywordIs = "Parser.NextKeywordIs";
-
 bool Parser::NextKeywordIs(fixed_string str)
 {
-   Debug::ft(Parser_NextKeywordIs);
+   Debug::ft("Parser.NextKeywordIs");
 
    if(!lexer_.NextStringIs(str)) return false;
    kwdBegin_ = lexer_.Prev();
@@ -4372,11 +4270,9 @@ bool Parser::Parse(CodeFile& file)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_ParseClassInst = "Parser.ParseClassInst";
-
 bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
 {
-   Debug::ft(Parser_ParseClassInst);
+   Debug::ft("Parser.ParseClassInst");
 
    auto name = inst->ScopedName(true);
    Debug::Progress(CRLF + Indent() + name);
@@ -4418,12 +4314,10 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_ParseFuncInst = "Parser.ParseFuncInst";
-
 bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
    CxxArea* area, const TypeName* type, const NodeBase::stringPtr& code)
 {
-   Debug::ft(Parser_ParseFuncInst);
+   Debug::ft("Parser.ParseFuncInst");
 
    Debug::Progress(CRLF + Indent() + name);
 
@@ -4777,11 +4671,9 @@ bool Parser::ParseInFile(Cxx::Keyword kwd, Namespace* space)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_ParseQualName = "Parser.ParseQualName";
-
 bool Parser::ParseQualName(const string& code, QualNamePtr& name)
 {
-   Debug::ft(Parser_ParseQualName);
+   Debug::ft("Parser.ParseQualName");
 
    Enter(IsQualName, "internal QualName", nullptr, code, false);
    return GetQualName(name);
@@ -4789,11 +4681,9 @@ bool Parser::ParseQualName(const string& code, QualNamePtr& name)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_ParseTypeSpec = "Parser.ParseTypeSpec";
-
 bool Parser::ParseTypeSpec(const string& code, TypeSpecPtr& spec)
 {
-   Debug::ft(Parser_ParseTypeSpec);
+   Debug::ft("Parser.ParseTypeSpec");
 
    Enter(IsTypeSpec, "internal TypeSpec", nullptr, code, false);
    auto parsed = GetTypeSpec(spec);
@@ -4803,22 +4693,18 @@ bool Parser::ParseTypeSpec(const string& code, TypeSpecPtr& spec)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_ResetStats = "Parser.ResetStats";
-
 void Parser::ResetStats()
 {
-   Debug::ft(Parser_ResetStats);
+   Debug::ft("Parser.ResetStats");
 
    for(size_t i = 0; i <= MaxCause; ++i) Backups[i] = 0;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_ResolveInstanceArgument = "Parser.ResolveInstanceArgument";
-
 CxxScoped* Parser::ResolveInstanceArgument(const QualName* name) const
 {
-   Debug::ft(Parser_ResolveInstanceArgument);
+   Debug::ft("Parser.ResolveInstanceArgument");
 
    if(!ParsingTemplateInstance()) return nullptr;
 
@@ -4931,11 +4817,9 @@ bool Parser::Skip(size_t end, const ExprPtr& expr, size_t cause)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Success = "Parser.Success";
-
 bool Parser::Success(fn_name_arg func, size_t start) const
 {
-   Debug::ft(Parser_Success);
+   Debug::ft("Parser.Success");
 
    if(!Context::OptionIsOn(TraceParse)) return true;
    if(ParsingTemplateInstance()) return true;

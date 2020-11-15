@@ -25,7 +25,6 @@
 #include "SbDaemons.h"
 #include "SbTracer.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 #include "TimerRegistry.h"
 #include "ToolTypes.h"
 
@@ -35,23 +34,19 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-fn_name TimerThread_ctor = "TimerThread.ctor";
-
 TimerThread::TimerThread() :
    Thread(PayloadFaction, Singleton< TimerDaemon >::Instance())
 {
-   Debug::ft(TimerThread_ctor);
+   Debug::ft("TimerThread.ctor");
 
    SetInitialized();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TimerThread_dtor = "TimerThread.dtor";
-
 TimerThread::~TimerThread()
 {
-   Debug::ftnt(TimerThread_dtor);
+   Debug::ftnt("TimerThread.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -83,22 +78,18 @@ TraceStatus TimerThread::CalcStatus(bool dynamic) const
 
 //------------------------------------------------------------------------------
 
-fn_name TimerThread_Destroy = "TimerThread.Destroy";
-
 void TimerThread::Destroy()
 {
-   Debug::ft(TimerThread_Destroy);
+   Debug::ft("TimerThread.Destroy");
 
    Singleton< TimerThread >::Destroy();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TimerThread_Enter = "TimerThread.Enter";
-
 void TimerThread::Enter()
 {
-   Debug::ft(TimerThread_Enter);
+   Debug::ft("TimerThread.Enter");
 
    //  Every second, tell our registry to process the next timer queue.
    //

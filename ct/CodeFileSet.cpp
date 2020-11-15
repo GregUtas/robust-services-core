@@ -50,29 +50,23 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name CodeFileSet_ctor = "CodeFileSet.ctor";
-
 CodeFileSet::CodeFileSet(const string& name, SetOfIds* set) : CodeSet(name, set)
 {
-   Debug::ft(CodeFileSet_ctor);
+   Debug::ft("CodeFileSet.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CodeFileSet_dtor = "CodeFileSet.dtor";
 
 CodeFileSet::~CodeFileSet()
 {
-   Debug::ftnt(CodeFileSet_dtor);
+   Debug::ftnt("CodeFileSet.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_AffectedBy = "CodeFileSet.AffectedBy";
-
 LibrarySet* CodeFileSet::AffectedBy() const
 {
-   Debug::ft(CodeFileSet_AffectedBy);
+   Debug::ft("CodeFileSet.AffectedBy");
 
    //  What is affected by this set are those that include it, transitively.
    //  Start with the initial set and add files that directly include any
@@ -101,11 +95,9 @@ LibrarySet* CodeFileSet::AffectedBy() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Affecters = "CodeFileSet.Affecters";
-
 LibrarySet* CodeFileSet::Affecters() const
 {
-   Debug::ft(CodeFileSet_Affecters);
+   Debug::ft("CodeFileSet.Affecters");
 
    //  What affects this set are what it includes, transitively.  Start with
    //  the initial set and add files that any member directly includes.
@@ -133,11 +125,9 @@ LibrarySet* CodeFileSet::Affecters() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Check = "CodeFileSet.Check";
-
 word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
 {
-   Debug::ft(CodeFileSet_Check);
+   Debug::ft("CodeFileSet.Check");
 
    word rc = 0;
 
@@ -214,11 +204,9 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_CommonAffecters = "CodeFileSet.CommonAffecters";
-
 LibrarySet* CodeFileSet::CommonAffecters() const
 {
-   Debug::ft(CodeFileSet_CommonAffecters);
+   Debug::ft("CodeFileSet.CommonAffecters");
 
    //  The common affecters of this set is the intersection of
    //  each file's affecters.
@@ -243,11 +231,9 @@ LibrarySet* CodeFileSet::CommonAffecters() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Countlines = "CodeFileSet.Countlines";
-
 word CodeFileSet::Countlines(string& result) const
 {
-   Debug::ft(CodeFileSet_Countlines);
+   Debug::ft("CodeFileSet.Countlines");
 
    result = "linecount: ";
 
@@ -266,22 +252,18 @@ word CodeFileSet::Countlines(string& result) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Create = "CodeFileSet.Create";
-
 LibrarySet* CodeFileSet::Create(const string& name, SetOfIds* set) const
 {
-   Debug::ft(CodeFileSet_Create);
+   Debug::ft("CodeFileSet.Create");
 
    return new CodeFileSet(name, set);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Directories = "CodeFileSet.Directories";
-
 LibrarySet* CodeFileSet::Directories() const
 {
-   Debug::ft(CodeFileSet_Directories);
+   Debug::ft("CodeFileSet.Directories");
 
    //  Iterate over the set of code files to find their directories.
    //
@@ -301,11 +283,9 @@ LibrarySet* CodeFileSet::Directories() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_FileName = "CodeFileSet.FileName";
-
 LibrarySet* CodeFileSet::FileName(const LibrarySet* that) const
 {
-   Debug::ft(CodeFileSet_FileName);
+   Debug::ft("CodeFileSet.FileName");
 
    auto& fileSet = Set();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
@@ -333,11 +313,9 @@ LibrarySet* CodeFileSet::FileName(const LibrarySet* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_FileType = "CodeFileSet.FileType";
-
 LibrarySet* CodeFileSet::FileType(const LibrarySet* that) const
 {
-   Debug::ft(CodeFileSet_FileType);
+   Debug::ft("CodeFileSet.FileType");
 
    auto& fileSet = Set();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
@@ -370,11 +348,9 @@ LibrarySet* CodeFileSet::FileType(const LibrarySet* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Fix = "CodeFileSet.Fix";
-
 word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 {
-   Debug::ft(CodeFileSet_Fix);
+   Debug::ft("CodeFileSet.Fix");
 
    auto& fileSet = Set();
 
@@ -416,11 +392,9 @@ word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Format = "CodeFileSet.Format";
-
 word CodeFileSet::Format(string& expl) const
 {
-   Debug::ft(CodeFileSet_Format);
+   Debug::ft("CodeFileSet.Format");
 
    auto& fileSet = Set();
    auto& files = Singleton< Library >::Instance()->Files();
@@ -462,11 +436,9 @@ word CodeFileSet::Format(string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_FoundIn = "CodeFileSet.FoundIn";
-
 LibrarySet* CodeFileSet::FoundIn(const LibrarySet* that) const
 {
-   Debug::ft(CodeFileSet_FoundIn);
+   Debug::ft("CodeFileSet.FoundIn");
 
    //  Iterate over the set of code files to find those which appear
    //  in one of THAT's directories.
@@ -493,11 +465,9 @@ LibrarySet* CodeFileSet::FoundIn(const LibrarySet* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Implements = "CodeFileSet.Implements";
-
 LibrarySet* CodeFileSet::Implements() const
 {
-   Debug::ft(CodeFileSet_Implements);
+   Debug::ft("CodeFileSet.Implements");
 
    //  In order to find where something declared in a file is defined, and
    //  vice versa, everything that affects the file, and that is affected
@@ -534,11 +504,9 @@ LibrarySet* CodeFileSet::Implements() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_List = "CodeFileSet.List";
-
 word CodeFileSet::List(ostream& stream, string& expl) const
 {
-   Debug::ft(CodeFileSet_List);
+   Debug::ft("CodeFileSet.List");
 
    auto& fileSet = Set();
 
@@ -560,11 +528,9 @@ word CodeFileSet::List(ostream& stream, string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_MatchString = "CodeFileSet.MatchString";
-
 LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
 {
-   Debug::ft(CodeFileSet_MatchString);
+   Debug::ft("CodeFileSet.MatchString");
 
    auto& fileSet = Set();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
@@ -591,11 +557,9 @@ LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_NeededBy = "CodeFileSet.NeededBy";
-
 LibrarySet* CodeFileSet::NeededBy() const
 {
-   Debug::ft(CodeFileSet_NeededBy);
+   Debug::ft("CodeFileSet.NeededBy");
 
    //  The code files needed by the set fs1 are those that must also appear
    //  in a build which contains fs1 in order to resolve all symbols during
@@ -623,11 +587,9 @@ LibrarySet* CodeFileSet::NeededBy() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Needers = "CodeFileSet.Needers";
-
 LibrarySet* CodeFileSet::Needers() const
 {
-   Debug::ft(CodeFileSet_Needers);
+   Debug::ft("CodeFileSet.Needers");
 
    //  The code files that need any in set fs1 are those that could not appear
    //  in a build without including fs1 to resolve all symbols during linking.
@@ -655,11 +617,9 @@ LibrarySet* CodeFileSet::Needers() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Parse = "CodeFileSet.Parse";
-
 word CodeFileSet::Parse(string& expl, const string& opts) const
 {
-   Debug::ft(CodeFileSet_Parse);
+   Debug::ft("CodeFileSet.Parse");
 
    auto& fileSet = Set();
 
@@ -751,12 +711,10 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Scan = "CodeFileSet.Scan";
-
 word CodeFileSet::Scan
    (ostream& stream, const string& pattern, string& expl) const
 {
-   Debug::ft(CodeFileSet_Scan);
+   Debug::ft("CodeFileSet.Scan");
 
    auto& fileSet = Set();
 
@@ -799,11 +757,9 @@ word CodeFileSet::Scan
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Show = "CodeFileSet.Show";
-
 word CodeFileSet::Show(string& result) const
 {
-   Debug::ft(CodeFileSet_Show);
+   Debug::ft("CodeFileSet.Show");
 
    auto& fileSet = Set();
    auto& files = Singleton< Library >::Instance()->Files();
@@ -818,11 +774,9 @@ word CodeFileSet::Show(string& result) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Sort = "CodeFileSet.Sort";
-
 word CodeFileSet::Sort(ostream& stream, string& expl) const
 {
-   Debug::ft(CodeFileSet_Sort);
+   Debug::ft("CodeFileSet.Sort");
 
    //  Get the build order.
    //
@@ -983,11 +937,9 @@ BuildOrderPtr CodeFileSet::SortInBuildOrder() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_UsedBy = "CodeFileSet.UsedBy";
-
 LibrarySet* CodeFileSet::UsedBy(bool self) const
 {
-   Debug::ft(CodeFileSet_UsedBy);
+   Debug::ft("CodeFileSet.UsedBy");
 
    //  Iterate over this set of code files to find what they include.
    //
@@ -1015,11 +967,9 @@ LibrarySet* CodeFileSet::UsedBy(bool self) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFileSet_Users = "CodeFileSet.Users";
-
 LibrarySet* CodeFileSet::Users(bool self) const
 {
-   Debug::ft(CodeFileSet_Users);
+   Debug::ft("CodeFileSet.Users");
 
    //  Iterate over this set of code files to find those that include them.
    //

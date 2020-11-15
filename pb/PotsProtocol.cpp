@@ -302,11 +302,9 @@ public: ScanParm();
 
 //==============================================================================
 
-fn_name PotsProtocol_ctor = "PotsProtocol.ctor";
-
 PotsProtocol::PotsProtocol() : TlvProtocol(PotsProtocolId, TimerProtocolId)
 {
-   Debug::ft(PotsProtocol_ctor);
+   Debug::ft("PotsProtocol.ctor");
 
    //  Create POTS signals and parameters.
    //
@@ -333,11 +331,9 @@ PotsProtocol::PotsProtocol() : TlvProtocol(PotsProtocolId, TimerProtocolId)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProtocol_dtor = "PotsProtocol.dtor";
-
 PotsProtocol::~PotsProtocol()
 {
-   Debug::ftnt(PotsProtocol_dtor);
+   Debug::ftnt("PotsProtocol.dtor");
 }
 
 //==============================================================================
@@ -571,12 +567,10 @@ void PotsFacilityParameter::DisplayMsg(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsFacilityParameter_InjectMsg = "PotsFacilityParameter.InjectMsg";
-
 Parameter::TestRc PotsFacilityParameter::InjectMsg
    (CliThread& cli, Message& msg, Usage use) const
 {
-   Debug::ft(PotsFacilityParameter_InjectMsg);
+   Debug::ft("PotsFacilityParameter.InjectMsg");
 
    id_t             index;
    word             sid, ind;
@@ -632,12 +626,10 @@ Parameter::TestRc PotsFacilityParameter::InjectMsg
 
 //------------------------------------------------------------------------------
 
-fn_name PotsFacilityParameter_VerifyMsg = "PotsFacilityParameter.VerifyMsg";
-
 Parameter::TestRc PotsFacilityParameter::VerifyMsg
    (CliThread& cli, const Message& msg, Usage use) const
 {
-   Debug::ft(PotsFacilityParameter_VerifyMsg);
+   Debug::ft("PotsFacilityParameter.VerifyMsg");
 
    TestRc            rc;
    auto&             pmsg = static_cast< const PotsMessage& >(msg);
@@ -681,13 +673,11 @@ Parameter::TestRc PotsFacilityParameter::VerifyMsg
 
 //------------------------------------------------------------------------------
 
-fn_name PotsFacilityInfo_ctor = "PotsFacilityInfo.ctor";
-
 PotsFacilityInfo::PotsFacilityInfo() :
    sid(NIL_ID),
    ind(Facility::NilInd)
 {
-   Debug::ft(PotsFacilityInfo_ctor);
+   Debug::ft("PotsFacilityInfo.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -738,12 +728,10 @@ void PotsHeaderParameter::DisplayMsg(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsHeaderParameter_InjectMsg = "PotsHeaderParameter.InjectMsg";
-
 Parameter::TestRc PotsHeaderParameter::InjectMsg
    (CliThread& cli, Message& msg, Usage use) const
 {
-   Debug::ft(PotsHeaderParameter_InjectMsg);
+   Debug::ft("PotsHeaderParameter.InjectMsg");
 
    word           port;
    PotsHeaderInfo info;
@@ -765,12 +753,10 @@ Parameter::TestRc PotsHeaderParameter::InjectMsg
 
 //------------------------------------------------------------------------------
 
-fn_name PotsHeaderParameter_VerifyMsg = "PotsHeaderParameter.VerifyMsg";
-
 Parameter::TestRc PotsHeaderParameter::VerifyMsg
    (CliThread& cli, const Message& msg, Usage use) const
 {
-   Debug::ft(PotsHeaderParameter_VerifyMsg);
+   Debug::ft("PotsHeaderParameter.VerifyMsg");
 
    TestRc          rc;
    auto&           pmsg = static_cast< const PotsMessage& >(msg);
@@ -788,13 +774,11 @@ Parameter::TestRc PotsHeaderParameter::VerifyMsg
 
 //------------------------------------------------------------------------------
 
-fn_name PotsHeaderInfo_ctor = "PotsHeaderInfo.ctor";
-
 PotsHeaderInfo::PotsHeaderInfo() :
    signal(NIL_ID),
    port(NIL_ID)
 {
-   Debug::ft(PotsHeaderInfo_ctor);
+   Debug::ft("PotsHeaderInfo.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -859,12 +843,10 @@ void PotsRingParameter::DisplayMsg(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsRingParameter_VerifyMsg = "PotsRingParameter.VerifyMsg";
-
 Parameter::TestRc PotsRingParameter::VerifyMsg
    (CliThread& cli, const Message& msg, Usage use) const
 {
-   Debug::ft(PotsRingParameter_VerifyMsg);
+   Debug::ft("PotsRingParameter.VerifyMsg");
 
    TestRc        rc;
    auto&         pmsg = static_cast< const PotsMessage& >(msg);
@@ -904,11 +886,9 @@ Parameter::TestRc PotsRingParameter::VerifyMsg
 
 //------------------------------------------------------------------------------
 
-fn_name PotsRingInfo_ctor = "PotsRingInfo.ctor";
-
 PotsRingInfo::PotsRingInfo() : on(false)
 {
-   Debug::ft(PotsRingInfo_ctor);
+   Debug::ft("PotsRingInfo.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -947,12 +927,10 @@ void PotsScanParameter::DisplayMsg(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsScanParameter_VerifyMsg = "PotsScanParameter.VerifyMsg";
-
 Parameter::TestRc PotsScanParameter::VerifyMsg
    (CliThread& cli, const Message& msg, Usage use) const
 {
-   Debug::ft(PotsScanParameter_VerifyMsg);
+   Debug::ft("PotsScanParameter.VerifyMsg");
 
    TestRc        rc;
    auto&         pmsg = static_cast< const PotsMessage& >(msg);
@@ -1015,13 +993,11 @@ Parameter::TestRc PotsScanParameter::VerifyMsg
 
 //------------------------------------------------------------------------------
 
-fn_name PotsScanInfo_ctor = "PotsScanInfo.ctor";
-
 PotsScanInfo::PotsScanInfo() :
    digits(false),
    flash(false)
 {
-   Debug::ft(PotsScanInfo_ctor);
+   Debug::ft("PotsScanInfo.ctor");
 }
 
 //------------------------------------------------------------------------------

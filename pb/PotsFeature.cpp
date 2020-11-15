@@ -34,15 +34,13 @@ using std::string;
 
 namespace PotsBase
 {
-fn_name PotsFeature_ctor = "PotsFeature.ctor";
-
 PotsFeature::PotsFeature(PotsFeature::Id fid, bool deactivation,
    c_string abbr, c_string name) :
    deactivation_(deactivation),
    abbr_(abbr),
    name_(name)
 {
-   Debug::ft(PotsFeature_ctor);
+   Debug::ft("PotsFeature.ctor");
 
    Debug::Assert(abbr_ != nullptr);
    Debug::Assert(name_ != nullptr);
@@ -114,11 +112,9 @@ void PotsFeature::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsFeature_SetIncompatible = "PotsFeature.SetIncompatible";
-
 void PotsFeature::SetIncompatible(PotsFeature::Id fid)
 {
-   Debug::ft(PotsFeature_SetIncompatible);
+   Debug::ft("PotsFeature.SetIncompatible");
 
    if(fid <= MaxId) incompatible_[fid] = true;
 }

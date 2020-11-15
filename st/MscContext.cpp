@@ -35,8 +35,6 @@ using std::string;
 
 namespace SessionTools
 {
-fn_name MscContext_ctor = "MscContext.ctor";
-
 MscContext::MscContext(const void* rcvr, ContextType type, uint16_t cid) :
    rcvr_(rcvr),
    type_(type),
@@ -44,25 +42,21 @@ MscContext::MscContext(const void* rcvr, ContextType type, uint16_t cid) :
    col_(NilMscColumn),
    group_(0)
 {
-   Debug::ft(MscContext_ctor);
+   Debug::ft("MscContext.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name MscContext_dtor = "MscContext.dtor";
 
 MscContext::~MscContext()
 {
-   Debug::ftnt(MscContext_dtor);
+   Debug::ftnt("MscContext.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MscContext_ClearGroup = "MscContext.ClearGroup";
-
 void MscContext::ClearGroup()
 {
-   Debug::ft(MscContext_ClearGroup);
+   Debug::ft("MscContext.ClearGroup");
 
    if(rcvr_ == nullptr) group_ = 0;
 }
@@ -100,11 +94,9 @@ ptrdiff_t MscContext::LinkDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name MscContext_Names = "MscContext.Names";
-
 void MscContext::Names(string& text1, string& text2) const
 {
-   Debug::ft(MscContext_Names);
+   Debug::ft("MscContext.Names");
 
    if((rcvr_ == nullptr) && (cid_ == NIL_ID))
    {
@@ -135,11 +127,9 @@ void MscContext::Names(string& text1, string& text2) const
 
 //------------------------------------------------------------------------------
 
-fn_name MscContext_SetColumn = "MscContext.SetColumn";
-
 MscColumn MscContext::SetColumn(MscColumn col)
 {
-   Debug::ft(MscContext_SetColumn);
+   Debug::ft("MscContext.SetColumn");
 
    col_ = col;
    return col + ColWidth;
@@ -147,11 +137,9 @@ MscColumn MscContext::SetColumn(MscColumn col)
 
 //------------------------------------------------------------------------------
 
-fn_name MscContext_SetGroup = "MscContext.SetGroup";
-
 bool MscContext::SetGroup(int group)
 {
-   Debug::ft(MscContext_SetGroup);
+   Debug::ft("MscContext.SetGroup");
 
    if(rcvr_ == nullptr)
    {

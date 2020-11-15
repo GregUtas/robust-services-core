@@ -34,29 +34,23 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name MsgBuffer_ctor1 = "MsgBuffer.ctor";
-
 MsgBuffer::MsgBuffer() : rxTime_(TimePoint::Now())
 {
-   Debug::ft(MsgBuffer_ctor1);
+   Debug::ft("MsgBuffer.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name MsgBuffer_ctor2 = "MsgBuffer.ctor(copy)";
 
 MsgBuffer::MsgBuffer(const MsgBuffer& that) : rxTime_(that.rxTime_)
 {
-   Debug::ft(MsgBuffer_ctor2);
+   Debug::ft("MsgBuffer.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MsgBuffer_dtor = "MsgBuffer.dtor";
-
 MsgBuffer::~MsgBuffer()
 {
-   Debug::ftnt(MsgBuffer_dtor);
+   Debug::ftnt("MsgBuffer.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -78,11 +72,9 @@ TraceStatus MsgBuffer::GetStatus() const
 
 //------------------------------------------------------------------------------
 
-fn_name MsgBuffer_new = "MsgBuffer.operator new";
-
 void* MsgBuffer::operator new(size_t size)
 {
-   Debug::ft(MsgBuffer_new);
+   Debug::ft("MsgBuffer.operator new");
 
    return Singleton< MsgBufferPool >::Instance()->DeqBlock(size);
 }

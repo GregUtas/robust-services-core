@@ -111,11 +111,9 @@ ptrdiff_t Parameter::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name Parameter_CreateCliParm = "Parameter.CreateCliParm";
-
 CliParm* Parameter::CreateCliParm(Usage use) const
 {
-   Debug::ft(Parameter_CreateCliParm);
+   Debug::ft("Parameter.CreateCliParm");
 
    return nullptr;
 }

@@ -40,11 +40,9 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-fn_name NwModule_ctor = "NwModule.ctor";
-
 NwModule::NwModule() : Module()
 {
-   Debug::ft(NwModule_ctor);
+   Debug::ft("NwModule.ctor");
 
    //  Create the modules required by NetworkBase.
    //
@@ -54,11 +52,9 @@ NwModule::NwModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name NwModule_dtor = "NwModule.dtor";
-
 NwModule::~NwModule()
 {
-   Debug::ftnt(NwModule_dtor);
+   Debug::ftnt("NwModule.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -70,11 +66,9 @@ void NwModule::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name NwModule_Shutdown = "NwModule.Shutdown";
-
 void NwModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(NwModule_Shutdown);
+   Debug::ft("NwModule.Shutdown");
 
    Singleton< IpPortRegistry >::Instance()->Shutdown(level);
    Singleton< IpServiceRegistry >::Instance()->Shutdown(level);
@@ -84,11 +78,9 @@ void NwModule::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name NwModule_Startup = "NwModule.Startup";
-
 void NwModule::Startup(RestartLevel level)
 {
-   Debug::ft(NwModule_Startup);
+   Debug::ft("NwModule.Startup");
 
    CreateNwLogs(level);
 

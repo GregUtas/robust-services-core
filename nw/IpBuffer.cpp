@@ -57,8 +57,6 @@ const size_t BuffSizes[nSizes + 1] =
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_ctor1 = "IpBuffer.ctor";
-
 IpBuffer::IpBuffer(MsgDirection dir, size_t header, size_t payload) :
    MsgBuffer(),
    buff_(nullptr),
@@ -68,14 +66,12 @@ IpBuffer::IpBuffer(MsgDirection dir, size_t header, size_t payload) :
    external_(false),
    queued_(false)
 {
-   Debug::ft(IpBuffer_ctor1);
+   Debug::ft("IpBuffer.ctor");
 
    buff_ = (byte_t*) Memory::Alloc(BuffSize(buffSize_), MemDynamic);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name IpBuffer_ctor2 = "IpBuffer.ctor(copy)";
 
 IpBuffer::IpBuffer(const IpBuffer& that) : MsgBuffer(that),
    buff_(nullptr),
@@ -87,7 +83,7 @@ IpBuffer::IpBuffer(const IpBuffer& that) : MsgBuffer(that),
    external_(that.external_),
    queued_(false)
 {
-   Debug::ft(IpBuffer_ctor2);
+   Debug::ft("IpBuffer.ctor(copy)");
 
    buff_ = (byte_t*) Memory::Alloc(BuffSize(buffSize_), MemDynamic);
 
@@ -98,11 +94,9 @@ IpBuffer::IpBuffer(const IpBuffer& that) : MsgBuffer(that),
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_dtor = "IpBuffer.dtor";
-
 IpBuffer::~IpBuffer()
 {
-   Debug::ftnt(IpBuffer_dtor);
+   Debug::ftnt("IpBuffer.dtor");
 
    if(buff_ != nullptr)
    {
@@ -113,11 +107,9 @@ IpBuffer::~IpBuffer()
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_AddBytes = "IpBuffer.AddBytes";
-
 bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 {
-   Debug::ft(IpBuffer_AddBytes);
+   Debug::ft("IpBuffer.AddBytes");
 
    //  If the buffer can't hold SIZE more bytes, extend its size.
    //
@@ -150,11 +142,9 @@ bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_BuffSize = "IpBuffer.BuffSize";
-
 size_t IpBuffer::BuffSize(size_t size)
 {
-   Debug::ft(IpBuffer_BuffSize);
+   Debug::ft("IpBuffer.BuffSize");
 
    for(auto i = 0; i <= nSizes; ++i)
    {
@@ -167,11 +157,9 @@ size_t IpBuffer::BuffSize(size_t size)
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_Cleanup = "IpBuffer.Cleanup";
-
 void IpBuffer::Cleanup()
 {
-   Debug::ft(IpBuffer_Cleanup);
+   Debug::ft("IpBuffer.Cleanup");
 
    if(buff_ != nullptr)
    {
@@ -211,11 +199,9 @@ TraceStatus IpBuffer::GetStatus() const
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_InvalidDiscarded = "IpBuffer.InvalidDiscarded";
-
 void IpBuffer::InvalidDiscarded() const
 {
-   Debug::ft(IpBuffer_InvalidDiscarded);
+   Debug::ft("IpBuffer.InvalidDiscarded");
 
    auto reg = Singleton< IpPortRegistry >::Instance();
    auto port = reg->GetPort(rxAddr_.GetPort());
@@ -224,22 +210,18 @@ void IpBuffer::InvalidDiscarded() const
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_new = "IpBuffer.operator new";
-
 void* IpBuffer::operator new(size_t size)
 {
-   Debug::ft(IpBuffer_new);
+   Debug::ft("IpBuffer.operator new");
 
    return Singleton< IpBufferPool >::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_OutgoingBytes = "IpBuffer.OutgoingBytes";
-
 size_t IpBuffer::OutgoingBytes(byte_t*& bytes) const
 {
-   Debug::ft(IpBuffer_OutgoingBytes);
+   Debug::ft("IpBuffer.OutgoingBytes");
 
    if(external_)
    {
@@ -260,11 +242,9 @@ void IpBuffer::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_Payload = "IpBuffer.Payload";
-
 size_t IpBuffer::Payload(byte_t*& bytes) const
 {
-   Debug::ft(IpBuffer_Payload);
+   Debug::ft("IpBuffer.Payload");
 
    bytes = buff_;
    if(bytes == nullptr) return 0;
@@ -275,11 +255,9 @@ size_t IpBuffer::Payload(byte_t*& bytes) const
 
 //------------------------------------------------------------------------------
 
-fn_name IpBuffer_PayloadSize = "IpBuffer.PayloadSize";
-
 size_t IpBuffer::PayloadSize() const
 {
-   Debug::ft(IpBuffer_PayloadSize);
+   Debug::ft("IpBuffer.PayloadSize");
 
    return buffSize_ - hdrSize_;
 }
@@ -362,20 +340,16 @@ const size_t IpBufferPool::BlockSize = sizeof(IpBuffer);
 
 //------------------------------------------------------------------------------
 
-fn_name IpBufferPool_ctor = "IpBufferPool.ctor";
-
 IpBufferPool::IpBufferPool() :
    ObjectPool(IpBufferObjPoolId, MemDynamic, BlockSize, "IpBuffers")
 {
-   Debug::ft(IpBufferPool_ctor);
+   Debug::ft("IpBufferPool.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name IpBufferPool_dtor = "IpBufferPool.dtor";
-
 IpBufferPool::~IpBufferPool()
 {
-   Debug::ftnt(IpBufferPool_dtor);
+   Debug::ftnt("IpBufferPool.dtor");
 }
 }

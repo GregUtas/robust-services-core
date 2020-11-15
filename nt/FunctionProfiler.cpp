@@ -47,13 +47,11 @@ const uint32_t FunctionProfiler::HashMask = ((1 << HashTableSizeLog2) - 1);
 
 //------------------------------------------------------------------------------
 
-fn_name FunctionProfiler_ctor = "FunctionProfiler.ctor";
-
 FunctionProfiler::FunctionProfiler() :
    size_(1 << HashTableSizeLog2),
    functionq_(nullptr)
 {
-   Debug::ft(FunctionProfiler_ctor);
+   Debug::ft("FunctionProfiler.ctor");
 
    auto size = sizeof(Q2Way< FunctionStats >) * size_;
    functionq_ = (Q2Way< FunctionStats >*) Memory::Alloc(size, MemTemporary);
@@ -70,11 +68,9 @@ FunctionProfiler::FunctionProfiler() :
 
 //------------------------------------------------------------------------------
 
-fn_name FunctionProfiler_dtor = "FunctionProfiler.dtor";
-
 FunctionProfiler::~FunctionProfiler()
 {
-   Debug::ftnt(FunctionProfiler_dtor);
+   Debug::ftnt("FunctionProfiler.dtor");
 
    //  Delete all of the data that was allocated to generate the statistics.
    //
@@ -121,11 +117,9 @@ void FunctionProfiler::CheckHigh(FunctionStats*& high,
 
 //------------------------------------------------------------------------------
 
-fn_name FunctionProfiler_EnsureRecord = "FunctionProfiler.EnsureRecord";
-
 FunctionStats* FunctionProfiler::EnsureRecord(fn_name_arg func, size_t count)
 {
-   Debug::ft(FunctionProfiler_EnsureRecord);
+   Debug::ft("FunctionProfiler.EnsureRecord");
 
    size_t index = (string_hash(func) & HashMask);
    auto fsq = &functionq_[index];
@@ -228,11 +222,9 @@ fixed_string FpHeader    = "FUNCTION PROFILE";
 fixed_string FpColumns   = "    Calls       uSecs   Function";
 fixed_string FpSeparator = "    -----       -----   --------";
 
-fn_name FunctionProfiler_Show = "FunctionProfiler.Show";
-
 TraceRc FunctionProfiler::Show(ostream& stream, Sort sort)
 {
-   Debug::ft(FunctionProfiler_Show);
+   Debug::ft("FunctionProfiler.Show");
 
    auto buff = Singleton< TraceBuffer >::Instance();
    stream << FpHeader << buff->strTimePlace() << CRLF << CRLF;

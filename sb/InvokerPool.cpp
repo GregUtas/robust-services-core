@@ -75,11 +75,9 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPoolStats_ctor = "InvokerPoolStats.ctor";
-
 InvokerPoolStats::InvokerPoolStats()
 {
-   Debug::ft(InvokerPoolStats_ctor);
+   Debug::ft("InvokerPoolStats.ctor");
 
    maxTrans_.reset(new HighWatermark("most transactions before yielding"));
    requeues_.reset(new Counter("contexts requeued after priority work"));
@@ -141,11 +139,9 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerWork_ctor = "InvokerWork.ctor";
-
 InvokerWork::InvokerWork() : length_(0)
 {
-   Debug::ft(InvokerWork_ctor);
+   Debug::ft("InvokerWork.ctor");
 
    contextq_.Init(Context::LinkDiff());
 
@@ -173,13 +169,11 @@ const size_t InvokerPool::MaxInvokers = 10;
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_ctor = "InvokerPool.ctor";
-
 InvokerPool::InvokerPool(Faction faction, const string& parmKey) :
    invokersCfg_(nullptr),
    corrupt_(false)
 {
-   Debug::ft(InvokerPool_ctor);
+   Debug::ft("InvokerPool.ctor");
 
    faction_.SetId(faction);
    invokers_.Init(MaxInvokers, InvokerThread::CellDiff2(), MemDynamic);
@@ -221,11 +215,9 @@ InvokerPool::~InvokerPool()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_BindThread = "InvokerPool.BindThread";
-
 bool InvokerPool::BindThread(InvokerThread& thread)
 {
-   Debug::ft(InvokerPool_BindThread);
+   Debug::ft("InvokerPool.BindThread");
 
    return invokers_.Insert(thread);
 }
@@ -241,11 +233,9 @@ ptrdiff_t InvokerPool::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_ClaimBlocks = "InvokerPool.ClaimBlocks";
-
 void InvokerPool::ClaimBlocks()
 {
-   Debug::ft(InvokerPool_ClaimBlocks);
+   Debug::ft("InvokerPool.ClaimBlocks");
 
    //  Mark all objects accessible through the work queues as being in use.
    //  If we trap because a work queue was corrupt, cause a restart.
@@ -293,11 +283,9 @@ void InvokerPool::ClaimBlocks()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_Dequeued = "InvokerPool.Dequeued";
-
 void InvokerPool::Dequeued(MsgPriority prio) const
 {
-   Debug::ft(InvokerPool_Dequeued);
+   Debug::ft("InvokerPool.Dequeued");
 
    auto work = work_[prio].get();
 
@@ -346,11 +334,9 @@ void InvokerPool::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_DisplayStats = "InvokerPool.DisplayStats";
-
 void InvokerPool::DisplayStats(ostream& stream, const Flags& options) const
 {
-   Debug::ft(InvokerPool_DisplayStats);
+   Debug::ft("InvokerPool.DisplayStats");
 
    stream << spaces(2) << GetFaction();
    stream << SPACE << strIndex(GetFaction(), 0, false) << CRLF;
@@ -374,11 +360,9 @@ void InvokerPool::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_Enqueued = "InvokerPool.Enqueued";
-
 void InvokerPool::Enqueued(MsgPriority prio) const
 {
-   Debug::ft(InvokerPool_Enqueued);
+   Debug::ft("InvokerPool.Enqueued");
 
    auto work = work_[prio].get();
    ++work->length_;
@@ -387,11 +371,9 @@ void InvokerPool::Enqueued(MsgPriority prio) const
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_FindWork = "InvokerPool.FindWork";
-
 Context* InvokerPool::FindWork()
 {
-   Debug::ft(InvokerPool_FindWork);
+   Debug::ft("InvokerPool.FindWork");
 
    //  MsgPriority is unsigned, so PRIO must be signed to end this loop.
    //
@@ -426,11 +408,9 @@ Context* InvokerPool::FindWork()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_GenerateLog = "InvokerPool.GenerateLog";
-
 bool InvokerPool::GenerateLog(Factory::Rc rc)
 {
-   Debug::ft(InvokerPool_GenerateLog);
+   Debug::ft("InvokerPool.GenerateLog");
 
    //  Suppress PortNotFound logs, which arise from legitimate race conditions.
    //
@@ -439,11 +419,9 @@ bool InvokerPool::GenerateLog(Factory::Rc rc)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_KickThread = "InvokerPool.KickThread";
-
 void InvokerPool::KickThread()
 {
-   Debug::ft(InvokerPool_KickThread);
+   Debug::ft("InvokerPool.KickThread");
 
    //  Ensure that one of our invokers is ready to handle newly queued work.
    //
@@ -473,12 +451,10 @@ void InvokerPool::KickThread()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_LogLostBuff = "InvokerPool.LogLostBuff";
-
 bool InvokerPool::LogLostBuff
    (SbIpBuffer& buff, FactoryId fid, Factory::Rc rc) const
 {
-   Debug::ft(InvokerPool_LogLostBuff);
+   Debug::ft("InvokerPool.LogLostBuff");
 
    buff.InvalidDiscarded();
 
@@ -502,11 +478,9 @@ bool InvokerPool::LogLostBuff
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_LogLostMsg = "InvokerPool.LogLostMsg";
-
 bool InvokerPool::LogLostMsg(Message& msg, Factory::Rc rc, TransTrace* tt) const
 {
-   Debug::ft(InvokerPool_LogLostMsg);
+   Debug::ft("InvokerPool.LogLostMsg");
 
    msg.InvalidDiscarded();
 
@@ -539,11 +513,9 @@ void InvokerPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_ProcessWork = "InvokerPool.ProcessWork";
-
 void InvokerPool::ProcessWork()
 {
-   Debug::ft(InvokerPool_ProcessWork);
+   Debug::ft("InvokerPool.ProcessWork");
 
    //  Dequeue a context from the work queue and invoke its ProcessWork
    //  function.
@@ -585,11 +557,9 @@ void InvokerPool::ProcessWork()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_ReadyCount = "InvokerPool.ReadyCount";
-
 size_t InvokerPool::ReadyCount() const
 {
-   Debug::ft(InvokerPool_ReadyCount);
+   Debug::ft("InvokerPool.ReadyCount");
 
    size_t ready = 0;
 
@@ -611,11 +581,9 @@ size_t InvokerPool::ReadyCount() const
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_ReceiveBuff = "InvokerPool.ReceiveBuff";
-
 bool InvokerPool::ReceiveBuff(SbIpBufferPtr& buff, bool atIoLevel)
 {
-   Debug::ft(InvokerPool_ReceiveBuff);
+   Debug::ft("InvokerPool.ReceiveBuff");
 
    auto header = buff->Header();
 
@@ -648,11 +616,9 @@ bool InvokerPool::ReceiveBuff(SbIpBufferPtr& buff, bool atIoLevel)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_ReceiveMsg = "InvokerPool.ReceiveMsg";
-
 bool InvokerPool::ReceiveMsg(Message& msg, bool atIoLevel)
 {
-   Debug::ft(InvokerPool_ReceiveMsg);
+   Debug::ft("InvokerPool.ReceiveMsg");
 
    auto header = msg.Header();
    Context* ctx = nullptr;
@@ -734,11 +700,9 @@ void InvokerPool::RecordDelay(MsgPriority prio, const Duration& delay) const
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_Requeue = "InvokerPool.Requeue";
-
 void InvokerPool::Requeue(Context& ctx)
 {
-   Debug::ft(InvokerPool_Requeue);
+   Debug::ft("InvokerPool.Requeue");
 
    //  A context has processed its priority messages.  It still has standard
    //  messages queued against it, so it has invoked this function in order
@@ -750,11 +714,9 @@ void InvokerPool::Requeue(Context& ctx)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_ScheduledOut = "InvokerPool.ScheduledOut";
-
 void InvokerPool::ScheduledOut()
 {
-   Debug::ft(InvokerPool_ScheduledOut);
+   Debug::ft("InvokerPool.ScheduledOut");
 
    if(InvokerThread::RunningInvoker_ == nullptr) return;
    if(Restart::GetStage() != Running) return;
@@ -763,11 +725,9 @@ void InvokerPool::ScheduledOut()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_Startup = "InvokerPool.Startup";
-
 void InvokerPool::Startup(RestartLevel level)
 {
-   Debug::ft(InvokerPool_Startup);
+   Debug::ft("InvokerPool.Startup");
 
    auto daemon =
       InvokerDaemon::GetDaemon(GetFaction(), invokersCfg_->GetValue());
@@ -776,11 +736,9 @@ void InvokerPool::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_TraceRxNet = "InvokerPool.TraceRxNet";
-
 TransTrace* InvokerPool::TraceRxNet(Message& msg, const Factory& fac)
 {
-   Debug::ft(InvokerPool_TraceRxNet);
+   Debug::ft("InvokerPool.TraceRxNet");
 
    auto sbt = Singleton< SbTracer >::Instance();
 
@@ -816,11 +774,9 @@ TransTrace* InvokerPool::TraceRxNet(Message& msg, const Factory& fac)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPool_UnbindThread = "InvokerPool.UnbindThread";
-
 void InvokerPool::UnbindThread(InvokerThread& thread)
 {
-   Debug::ftnt(InvokerPool_UnbindThread);
+   Debug::ftnt("InvokerPool.UnbindThread");
 
    invokers_.Erase(thread);
 }

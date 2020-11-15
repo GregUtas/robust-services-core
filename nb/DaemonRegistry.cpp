@@ -34,11 +34,9 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name DaemonRegistry_ctor = "DaemonRegistry.ctor";
-
 DaemonRegistry::DaemonRegistry()
 {
-   Debug::ft(DaemonRegistry_ctor);
+   Debug::ft("DaemonRegistry.ctor");
 
    daemons_.Init(Thread::MaxId, Daemon::CellDiff(), MemPermanent);
 }
@@ -113,11 +111,9 @@ void DaemonRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name DaemonRegistry_Shutdown = "DaemonRegistry.Shutdown";
-
 void DaemonRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(DaemonRegistry_Shutdown);
+   Debug::ft("DaemonRegistry.Shutdown");
 
    for(auto d = daemons_.First(); d != nullptr; daemons_.Next(d))
    {
@@ -127,11 +123,9 @@ void DaemonRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name DaemonRegistry_Startup = "DaemonRegistry.Startup";
-
 void DaemonRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(DaemonRegistry_Startup);
+   Debug::ft("DaemonRegistry.Startup");
 
    for(auto d = daemons_.First(); d != nullptr; daemons_.Next(d))
    {
@@ -141,11 +135,9 @@ void DaemonRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name DaemonRegistry_UnbindDaemon = "DaemonRegistry.UnbindDaemon";
-
 void DaemonRegistry::UnbindDaemon(Daemon& daemon)
 {
-   Debug::ftnt(DaemonRegistry_UnbindDaemon);
+   Debug::ftnt("DaemonRegistry.UnbindDaemon");
 
    daemons_.Erase(daemon);
 }

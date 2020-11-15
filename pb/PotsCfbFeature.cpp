@@ -55,12 +55,10 @@ PotsCfbAttrs::PotsCfbAttrs() : CliText(PotsCfbFullName, PotsCfbAbbrName)
 
 //==============================================================================
 
-fn_name PotsCfbFeature_ctor = "PotsCfbFeature.ctor";
-
 PotsCfbFeature::PotsCfbFeature() :
    PotsFeature(CFB, true, PotsCfbAbbrName, PotsCfbFullName)
 {
-   Debug::ft(PotsCfbFeature_ctor);
+   Debug::ft("PotsCfbFeature.ctor");
 
    SetIncompatible(BOC);
    SetIncompatible(BIC);
@@ -68,11 +66,9 @@ PotsCfbFeature::PotsCfbFeature() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfbFeature_dtor = "PotsCfbFeature.dtor";
-
 PotsCfbFeature::~PotsCfbFeature()
 {
-   Debug::ftnt(PotsCfbFeature_dtor);
+   Debug::ftnt("PotsCfbFeature.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -81,12 +77,10 @@ CliText* PotsCfbFeature::Attrs() const { return new PotsCfbAttrs; }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfbFeature_Subscribe = "PotsCfbFeature.Subscribe";
-
 PotsFeatureProfile* PotsCfbFeature::Subscribe
    (PotsProfile& profile, CliThread& cli) const
 {
-   Debug::ft(PotsCfbFeature_Subscribe);
+   Debug::ft("PotsCfbFeature.Subscribe");
 
    word dn;
 
@@ -112,30 +106,24 @@ PotsFeatureProfile* PotsCfbFeature::Subscribe
 
 //==============================================================================
 
-fn_name PotsCfbFeatureProfile_ctor = "PotsCfbFeatureProfile.ctor";
-
 PotsCfbFeatureProfile::PotsCfbFeatureProfile(Address::DN dn) :
    DnRouteFeatureProfile(CFB, dn)
 {
-   Debug::ft(PotsCfbFeatureProfile_ctor);
+   Debug::ft("PotsCfbFeatureProfile.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfbFeatureProfile_dtor = "PotsCfbFeatureProfile.dtor";
 
 PotsCfbFeatureProfile::~PotsCfbFeatureProfile()
 {
-   Debug::ftnt(PotsCfbFeatureProfile_dtor);
+   Debug::ftnt("PotsCfbFeatureProfile.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfbFeatureProfile_Activate = "PotsCfbFeatureProfile.Activate";
-
 bool PotsCfbFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 {
-   Debug::ft(PotsCfbFeatureProfile_Activate);
+   Debug::ft("PotsCfbFeatureProfile.Activate");
 
    if(DnRouteFeatureProfile::Activate(profile, cli))
    {

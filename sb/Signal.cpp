@@ -84,11 +84,9 @@ ptrdiff_t Signal::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name Signal_CreateText = "Signal.CreateText";
-
 CliText* Signal::CreateText() const
 {
-   Debug::ft(Signal_CreateText);
+   Debug::ft("Signal.CreateText");
 
    return nullptr;
 }

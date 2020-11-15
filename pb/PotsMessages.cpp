@@ -28,7 +28,6 @@
 #include "MediaParameter.h"
 #include "NwTypes.h"
 #include "SbAppIds.h"
-#include "SysTypes.h"
 
 using namespace NetworkBase;
 
@@ -36,60 +35,48 @@ using namespace NetworkBase;
 
 namespace PotsBase
 {
-fn_name PotsMessage_ctor1 = "PotsMessage.ctor(i/c)";
-
 PotsMessage::PotsMessage(SbIpBufferPtr& buff) : TlvMessage(buff)
 {
-   Debug::ft(PotsMessage_ctor1);
+   Debug::ft("PotsMessage.ctor(i/c)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsMessage_ctor2 = "PotsMessage.ctor(o/g)";
 
 PotsMessage::PotsMessage(ProtocolSM* psm, size_t size) : TlvMessage(psm, size)
 {
-   Debug::ft(PotsMessage_ctor2);
+   Debug::ft("PotsMessage.ctor(o/g)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsMessage_dtor = "PotsMessage.dtor";
 
 PotsMessage::~PotsMessage()
 {
-   Debug::ftnt(PotsMessage_dtor);
+   Debug::ftnt("PotsMessage.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMessage_AddCause = "PotsMessage.AddCause";
-
 CauseInfo* PotsMessage::AddCause(const CauseInfo& cause)
 {
-   Debug::ft(PotsMessage_AddCause);
+   Debug::ft("PotsMessage.AddCause");
 
    return AddType(cause, PotsParameter::Cause);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMessage_AddFacility = "PotsMessage.AddFacility";
-
 PotsFacilityInfo* PotsMessage::AddFacility(const PotsFacilityInfo& facility)
 {
-   Debug::ft(PotsMessage_AddFacility);
+   Debug::ft("PotsMessage.AddFacility");
 
    return AddType(facility, PotsParameter::Facility);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMessage_AddHeader = "PotsMessage.AddHeader";
-
 PotsHeaderInfo* PotsMessage::AddHeader(const PotsHeaderInfo& header)
 {
-   Debug::ft(PotsMessage_AddHeader);
+   Debug::ft("PotsMessage.AddHeader");
 
    SetSignal(header.signal);
    return AddType(header, PotsParameter::Header);
@@ -97,43 +84,35 @@ PotsHeaderInfo* PotsMessage::AddHeader(const PotsHeaderInfo& header)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMessage_AddMedia = "PotsMessage.AddMedia";
-
 MediaInfo* PotsMessage::AddMedia(const MediaInfo& media)
 {
-   Debug::ft(PotsMessage_AddMedia);
+   Debug::ft("PotsMessage.AddMedia");
 
    return AddType(media, PotsParameter::Media);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMessage_AddProgress = "PotsMessage.AddProgress";
-
 ProgressInfo* PotsMessage::AddProgress(const ProgressInfo& progress)
 {
-   Debug::ft(PotsMessage_AddProgress);
+   Debug::ft("PotsMessage.AddProgress");
 
    return AddType(progress, PotsParameter::Progress);
 }
 
 //==============================================================================
 
-fn_name Pots_UN_Message_ctor1 = "Pots_UN_Message.ctor(i/c)";
-
 Pots_UN_Message::Pots_UN_Message(SbIpBufferPtr& buff) : PotsMessage(buff)
 {
-   Debug::ft(Pots_UN_Message_ctor1);
+   Debug::ft("Pots_UN_Message.ctor(i/c)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Pots_UN_Message_ctor2 = "Pots_UN_Message.ctor(o/g)";
-
 Pots_UN_Message::Pots_UN_Message(ProtocolSM* psm, size_t size) :
    PotsMessage(psm, size)
 {
-   Debug::ft(Pots_UN_Message_ctor2);
+   Debug::ft("Pots_UN_Message.ctor(o/g)");
 
    //  If there is no PSM, the message's header must be supplied here.
    //d Node-specific software needs to supply the IP layer 3 addresses.
@@ -154,41 +133,33 @@ Pots_UN_Message::Pots_UN_Message(ProtocolSM* psm, size_t size) :
 
 //------------------------------------------------------------------------------
 
-fn_name Pots_UN_Message_dtor = "Pots_UN_Message.dtor";
-
 Pots_UN_Message::~Pots_UN_Message()
 {
-   Debug::ftnt(Pots_UN_Message_dtor);
+   Debug::ftnt("Pots_UN_Message.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Pots_UN_Message_AddDigits = "Pots_UN_Message.AddDigits";
-
 DigitString* Pots_UN_Message::AddDigits(const DigitString& digits)
 {
-   Debug::ft(Pots_UN_Message_AddDigits);
+   Debug::ft("Pots_UN_Message.AddDigits");
 
    return AddType(digits, PotsParameter::Digits);
 }
 
 //==============================================================================
 
-fn_name Pots_NU_Message_ctor1 = "Pots_NU_Message.ctor(i/c)";
-
 Pots_NU_Message::Pots_NU_Message(SbIpBufferPtr& buff) : PotsMessage(buff)
 {
-   Debug::ft(Pots_NU_Message_ctor1);
+   Debug::ft("Pots_NU_Message.ctor(i/c)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Pots_NU_Message_ctor2 = "Pots_NU_Message.ctor(o/g)";
-
 Pots_NU_Message::Pots_NU_Message(ProtocolSM* psm, size_t size) :
    PotsMessage(psm, size)
 {
-   Debug::ft(Pots_NU_Message_ctor2);
+   Debug::ft("Pots_NU_Message.ctor(o/g)");
 
    //  If there is no PSM, the message's header must be supplied here.
    //d Node-specific software needs to supply the IP layer 3 addresses.
@@ -217,31 +188,25 @@ Pots_NU_Message::Pots_NU_Message(ProtocolSM* psm, size_t size) :
 
 //------------------------------------------------------------------------------
 
-fn_name Pots_NU_Message_dtor = "Pots_NU_Message.dtor";
-
 Pots_NU_Message::~Pots_NU_Message()
 {
-   Debug::ftnt(Pots_NU_Message_dtor);
+   Debug::ftnt("Pots_NU_Message.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Pots_NU_Message_AddRing = "Pots_NU_Message.AddRing";
-
 PotsRingInfo* Pots_NU_Message::AddRing(const PotsRingInfo& ring)
 {
-   Debug::ft(Pots_NU_Message_AddRing);
+   Debug::ft("Pots_NU_Message.AddRing");
 
    return AddType(ring, PotsParameter::Ring);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Pots_NU_Message_AddScan = "Pots_NU_Message.AddScan";
-
 PotsScanInfo* Pots_NU_Message::AddScan(const PotsScanInfo& scan)
 {
-   Debug::ft(Pots_NU_Message_AddScan);
+   Debug::ft("Pots_NU_Message.AddScan");
 
    return AddType(scan, PotsParameter::Scan);
 }

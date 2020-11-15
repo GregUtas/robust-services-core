@@ -26,7 +26,6 @@
 #include "PbModule.h"
 #include "PotsShelf.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace PotsBase;
 
@@ -34,11 +33,9 @@ using namespace PotsBase;
 
 namespace AccessNode
 {
-fn_name AnModule_ctor = "AnModule.ctor";
-
 AnModule::AnModule() : Module()
 {
-   Debug::ft(AnModule_ctor);
+   Debug::ft("AnModule.ctor");
 
    //  Create the modules required by AccessNode.
    //
@@ -48,29 +45,23 @@ AnModule::AnModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name AnModule_dtor = "AnModule.dtor";
-
 AnModule::~AnModule()
 {
-   Debug::ftnt(AnModule_dtor);
+   Debug::ftnt("AnModule.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name AnModule_Shutdown = "AnModule.Shutdown";
 
 void AnModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(AnModule_Shutdown);
+   Debug::ft("AnModule.Shutdown");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name AnModule_Startup = "AnModule.Startup";
-
 void AnModule::Startup(RestartLevel level)
 {
-   Debug::ft(AnModule_Startup);
+   Debug::ft("AnModule.Startup");
 
    Singleton< PotsShelfFactory >::Instance()->Startup(level);
    Singleton< PotsShelfIpService >::Instance()->Startup(level);

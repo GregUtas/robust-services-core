@@ -41,11 +41,9 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name AlignAs_ctor = "AlignAs.ctor";
-
 AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 {
-   Debug::ft(AlignAs_ctor);
+   Debug::ft("AlignAs.ctor");
 
    CxxStats::Incr(CxxStats::ALIGNAS);
 }
@@ -59,11 +57,9 @@ void AlignAs::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name AlignAs_EnterBlock = "AlignAs.EnterBlock";
-
 void AlignAs::EnterBlock()
 {
-   Debug::ft(AlignAs_EnterBlock);
+   Debug::ft("AlignAs.EnterBlock");
 
    token_->EnterBlock();
 }
@@ -86,11 +82,9 @@ void AlignAs::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-fn_name ArraySpec_ctor = "ArraySpec.ctor";
-
 ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
 {
-   Debug::ft(ArraySpec_ctor);
+   Debug::ft("ArraySpec.ctor");
 
    CxxStats::Incr(CxxStats::ARRAY_SPEC);
 }
@@ -104,11 +98,9 @@ void ArraySpec::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name ArraySpec_EnterBlock = "ArraySpec.EnterBlock";
-
 void ArraySpec::EnterBlock()
 {
-   Debug::ft(ArraySpec_EnterBlock);
+   Debug::ft("ArraySpec.EnterBlock");
 
    if(expr_ != nullptr) expr_->EnterBlock();
 }
@@ -138,22 +130,18 @@ string ArraySpec::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name BoolLiteral_Referent = "BoolLiteral.Referent";
-
 CxxScoped* BoolLiteral::Referent() const
 {
-   Debug::ft(BoolLiteral_Referent);
+   Debug::ft("BoolLiteral.Referent");
 
    return Singleton< CxxRoot >::Instance()->BoolTerm();
 }
 
 //==============================================================================
 
-fn_name BraceInit_ctor = "BraceInit.ctor";
-
 BraceInit::BraceInit()
 {
-   Debug::ft(BraceInit_ctor);
+   Debug::ft("BraceInit.ctor");
 
    CxxStats::Incr(CxxStats::BRACE_INIT);
 }
@@ -170,11 +158,9 @@ void BraceInit::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name BraceInit_EnterBlock = "BraceInit.EnterBlock";
-
 void BraceInit::EnterBlock()
 {
-   Debug::ft(BraceInit_EnterBlock);
+   Debug::ft("BraceInit.EnterBlock");
 
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
@@ -228,29 +214,23 @@ void BraceInit::Shrink()
 
 //==============================================================================
 
-fn_name CxxToken_ctor = "CxxToken.ctor";
-
 CxxToken::CxxToken()
 {
-   Debug::ft(CxxToken_ctor);
+   Debug::ft("CxxToken.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CxxToken_dtor = "CxxToken.dtor";
 
 CxxToken::~CxxToken()
 {
-   Debug::ftnt(CxxToken_dtor);
+   Debug::ftnt("CxxToken.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxToken_DirectClass = "CxxToken.DirectClass";
-
 Class* CxxToken::DirectClass() const
 {
-   Debug::ft(CxxToken_DirectClass);
+   Debug::ft("CxxToken.DirectClass");
 
    auto spec = GetTypeSpec();
    if(spec == nullptr) return nullptr;
@@ -280,11 +260,9 @@ void CxxToken::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name CxxToken_GetTemplateArgs = "CxxToken.GetTemplateArgs";
-
 TypeName* CxxToken::GetTemplateArgs() const
 {
-   Debug::ft(CxxToken_GetTemplateArgs);
+   Debug::ft("CxxToken.GetTemplateArgs");
 
    auto name = GetQualName();
    return (name != nullptr ? name->GetTemplateArgs() : nullptr);
@@ -331,11 +309,9 @@ CxxScoped* CxxToken::Referent() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxToken_ReferentDefn = "CxxToken.ReferentDefn";
-
 CxxScoped* CxxToken::ReferentDefn() const
 {
-   Debug::ft(CxxToken_ReferentDefn);
+   Debug::ft("CxxToken.ReferentDefn");
 
    auto ref1 = Referent();
 
@@ -350,11 +326,9 @@ CxxScoped* CxxToken::ReferentDefn() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxToken_Root = "CxxToken.Root";
-
 CxxToken* CxxToken::Root() const
 {
-   Debug::ft(CxxToken_Root);
+   Debug::ft("CxxToken.Root");
 
    CxxToken* prev = const_cast< CxxToken* >(this);
    CxxToken* curr = prev->RootType();
@@ -495,11 +469,9 @@ void CxxUsageSets::AddUser(const CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxUsageSets_EraseLocals = "CxxUsageSets.EraseLocals";
-
 void CxxUsageSets::EraseLocals()
 {
-   Debug::ft(CxxUsageSets_EraseLocals);
+   Debug::ft("CxxUsageSets.EraseLocals");
 
    for(auto d = directs.cbegin(); d != directs.cend(); NO_OP)
    {
@@ -512,11 +484,9 @@ void CxxUsageSets::EraseLocals()
 
 //------------------------------------------------------------------------------
 
-fn_name CxxUsageSets_EraseTemplateArgs = "CxxUsageSets.EraseTemplateArgs";
-
 void CxxUsageSets::EraseTemplateArgs(const TypeName* type)
 {
-   Debug::ft(CxxUsageSets_EraseTemplateArgs);
+   Debug::ft("CxxUsageSets.EraseTemplateArgs");
 
    stringVector names;
    type->GetNames(names);
@@ -527,11 +497,9 @@ void CxxUsageSets::EraseTemplateArgs(const TypeName* type)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxUsageSets_Union = "CxxUsageSets.Union";
-
 void CxxUsageSets::Union(const CxxUsageSets& set)
 {
-   Debug::ft(CxxUsageSets_Union);
+   Debug::ft("CxxUsageSets.Union");
 
    CodeTools::Union(bases, set.bases);
    CodeTools::Union(directs, set.directs);
@@ -548,24 +516,20 @@ const TokenPtr Expression::StartOfExpr =
 
 //------------------------------------------------------------------------------
 
-fn_name Expression_ctor = "Expression.ctor";
-
 Expression::Expression(size_t end, bool force) :
    end_(end),
    force_(force)
 {
-   Debug::ft(Expression_ctor);
+   Debug::ft("Expression.ctor");
 
    CxxStats::Incr(CxxStats::EXPRESSION);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Expression_AddBinaryOp = "Expression.AddBinaryOp";
-
 bool Expression::AddBinaryOp(TokenPtr& item)
 {
-   Debug::ft(Expression_AddBinaryOp);
+   Debug::ft("Expression.AddBinaryOp");
 
    auto oper = static_cast< Operation* >(item.get());
 
@@ -814,11 +778,9 @@ bool Expression::AddVariableOp(TokenPtr& item)
 
 //------------------------------------------------------------------------------
 
-fn_name Expression_Back = "Expression.Back";
-
 CxxToken* Expression::Back()
 {
-   Debug::ft(Expression_Back);
+   Debug::ft("Expression.Back");
 
    if(items_.empty()) return nullptr;
    return items_.back()->Back();
@@ -826,11 +788,9 @@ CxxToken* Expression::Back()
 
 //------------------------------------------------------------------------------
 
-fn_name Expression_EnterBlock = "Expression.EnterBlock";
-
 void Expression::EnterBlock()
 {
-   Debug::ft(Expression_EnterBlock);
+   Debug::ft("Expression.EnterBlock");
 
    //  If evaluation of this expression is to be forced at its end_, mark
    //  the beginning of the expression by pushing a token onto the operator
@@ -878,11 +838,9 @@ void Expression::Shrink()
 
 //------------------------------------------------------------------------------
 
-fn_name Expression_Start = "Expression.Start";
-
 void Expression::Start()
 {
-   Debug::ft(Expression_Start);
+   Debug::ft("Expression.Start");
 
    //  Push StartOfExpr onto the stack.  Its priority is lower than all other
    //  operators.  This allows an expression to push its operators onto the
@@ -936,11 +894,9 @@ void FloatLiteral::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name FloatLiteral_Referent = "FloatLiteral.Referent";
-
 CxxScoped* FloatLiteral::Referent() const
 {
-   Debug::ft(FloatLiteral_Referent);
+   Debug::ft("FloatLiteral.Referent");
 
    auto base = Singleton< CxxRoot >::Instance();
 
@@ -989,11 +945,9 @@ Numeric IntLiteral::BaseNumeric() const
 
 //------------------------------------------------------------------------------
 
-fn_name IntLiteral_GetNumeric = "IntLiteral.GetNumeric";
-
 Numeric IntLiteral::GetNumeric() const
 {
-   Debug::ft(IntLiteral_GetNumeric);
+   Debug::ft("IntLiteral.GetNumeric");
 
    //  Get the default numeric type for this constant and adjust its width
    //  to what is actually needed to represent the constant.  In this way,
@@ -1058,11 +1012,9 @@ void IntLiteral::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name IntLiteral_Referent = "IntLiteral.Referent";
-
 CxxScoped* IntLiteral::Referent() const
 {
-   Debug::ft(IntLiteral_Referent);
+   Debug::ft("IntLiteral.Referent");
 
    auto base = Singleton< CxxRoot >::Instance();
 
@@ -1097,11 +1049,9 @@ string IntLiteral::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name Literal_ctor = "Literal.ctor";
-
 Literal::Literal()
 {
-   Debug::ft(Literal_ctor);
+   Debug::ft("Literal.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -1113,11 +1063,9 @@ CxxToken* Literal::AutoType() const
 
 //------------------------------------------------------------------------------
 
-fn_name Literal_EnterBlock = "Literal.EnterBlock";
-
 void Literal::EnterBlock()
 {
-   Debug::ft(Literal_EnterBlock);
+   Debug::ft("Literal.EnterBlock");
 
    Context::PushArg(StackArg(this, 0, false));
 }
@@ -1154,24 +1102,20 @@ Cxx::ItemType Literal::Type() const
 
 //==============================================================================
 
-fn_name NullPtr_Referent = "NullPtr.Referent";
-
 CxxScoped* NullPtr::Referent() const
 {
-   Debug::ft(NullPtr_Referent);
+   Debug::ft("NullPtr.Referent");
 
    return Singleton< CxxRoot >::Instance()->NullptrTerm();
 }
 
 //==============================================================================
 
-fn_name Operation_ctor = "Operation.ctor";
-
 Operation::Operation(Cxx::Operator op) :
    op_(op),
    overload_(nullptr)
 {
-   Debug::ft(Operation_ctor);
+   Debug::ft("Operation.ctor");
 
    CxxStats::Incr(CxxStats::OPERATION);
 }
@@ -1252,11 +1196,9 @@ bool Operation::AppendUnary()
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_ArgCapacity = "Operation.ArgCapacity";
-
 size_t Operation::ArgCapacity() const
 {
-   Debug::ft(Operation_ArgCapacity);
+   Debug::ft("Operation.ArgCapacity");
 
    auto& attrs = CxxOp::Attrs[op_];
    if(attrs.arguments == 0) return SIZE_MAX;
@@ -1267,11 +1209,9 @@ size_t Operation::ArgCapacity() const
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_Back = "Operation.Back";
-
 CxxToken* Operation::Back()
 {
-   Debug::ft(Operation_Back);
+   Debug::ft("Operation.Back");
 
    auto size = args_.size();
    if(size == 0) return this;
@@ -1284,11 +1224,9 @@ CxxToken* Operation::Back()
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_CheckBitwiseOp = "Operation.CheckBitwiseOp";
-
 void Operation::CheckBitwiseOp(const StackArg& arg1, const StackArg& arg2) const
 {
-   Debug::ft(Operation_CheckBitwiseOp);
+   Debug::ft("Operation.CheckBitwiseOp");
 
    switch(op_)
    {
@@ -1305,11 +1243,9 @@ void Operation::CheckBitwiseOp(const StackArg& arg1, const StackArg& arg2) const
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_CheckCast = "Operation.CheckCast";
-
 void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
 {
-   Debug::ft(Operation_CheckCast);
+   Debug::ft("Operation.CheckCast");
 
    //  Some casts are always logged.
    //
@@ -1399,11 +1335,9 @@ void Operation::DisplayNew(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_ElideForward = "Operation.ElideForward";
-
 bool Operation::ElideForward()
 {
-   Debug::ft(Operation_ElideForward);
+   Debug::ft("Operation.ElideForward");
 
    //  An operator can elide forward if it needs one more argument.
    //
@@ -1416,11 +1350,9 @@ bool Operation::ElideForward()
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_EnterBlock = "Operation.EnterBlock";
-
 void Operation::EnterBlock()
 {
-   Debug::ft(Operation_EnterBlock);
+   Debug::ft("Operation.EnterBlock");
 
    auto& attrs = CxxOp::Attrs[op_];
 
@@ -1871,11 +1803,9 @@ void Operation::ExecuteCall()
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_ExecuteDelete = "Operation.ExecuteDelete";
-
 void Operation::ExecuteDelete(const StackArg& arg) const
 {
-   Debug::ft(Operation_ExecuteDelete);
+   Debug::ft("Operation.ExecuteDelete");
 
    //  Look for operator delete for ARG.  Register a call to it if it is
    //  found.  If ARG was a pointer to a class, also register a call to
@@ -1914,11 +1844,9 @@ void Operation::ExecuteDelete(const StackArg& arg) const
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_ExecuteNew = "Operation.ExecuteNew";
-
 void Operation::ExecuteNew() const
 {
-   Debug::ft(Operation_ExecuteNew);
+   Debug::ft("Operation.ExecuteNew");
 
    //  If this is operator new[], compile its array argument(s), which
    //  start at the third argument.  Pop each result.
@@ -2299,11 +2227,9 @@ void Operation::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_IsOverloaded1 = "Operation.IsOverloaded(unary)";
-
 bool Operation::IsOverloaded(StackArg& arg) const
 {
-   Debug::ft(Operation_IsOverloaded1);
+   Debug::ft("Operation.IsOverloaded(unary)");
 
    if(!CxxOp::Attrs[op_].overloadable) return false;
    if(!arg.CanBeOverloaded()) return false;
@@ -2314,11 +2240,9 @@ bool Operation::IsOverloaded(StackArg& arg) const
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_IsOverloaded2 = "Operation.IsOverloaded(binary)";
-
 bool Operation::IsOverloaded(StackArg& arg1, StackArg& arg2) const
 {
-   Debug::ft(Operation_IsOverloaded2);
+   Debug::ft("Operation.IsOverloaded(binary)");
 
    //  If this operator can be overloaded, see if an overload exists.
    //  If its arguments can be flipped, also look for that overload.
@@ -2531,11 +2455,9 @@ void Operation::Push() const
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_PushArgs = "Operation.PushArgs";
-
 void Operation::PushArgs() const
 {
-   Debug::ft(Operation_PushArgs);
+   Debug::ft("Operation.PushArgs");
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -2906,11 +2828,9 @@ void Precedence::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Precedence_EnterBlock = "Precedence.EnterBlock";
-
 void Precedence::EnterBlock()
 {
-   Debug::ft(Precedence_EnterBlock);
+   Debug::ft("Precedence.EnterBlock");
 
    if(expr_ != nullptr) expr_->EnterBlock();
 }

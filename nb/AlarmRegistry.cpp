@@ -37,11 +37,9 @@ const id_t AlarmRegistry::MaxAlarms = 250;
 
 //------------------------------------------------------------------------------
 
-fn_name AlarmRegistry_ctor = "AlarmRegistry.ctor";
-
 AlarmRegistry::AlarmRegistry()
 {
-   Debug::ft(AlarmRegistry_ctor);
+   Debug::ft("AlarmRegistry.ctor");
 
    alarms_.Init(MaxAlarms, Alarm::CellDiff(), MemImmutable);
 }
@@ -100,11 +98,9 @@ void AlarmRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name AlarmRegistry_Find = "AlarmRegistry.Find";
-
 Alarm* AlarmRegistry::Find(const std::string& name) const
 {
-   Debug::ftnt(AlarmRegistry_Find);
+   Debug::ftnt("AlarmRegistry.Find");
 
    auto key = strUpper(name);
 
@@ -125,11 +121,9 @@ void AlarmRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name AlarmRegistry_Shutdown = "AlarmRegistry.Shutdown";
-
 void AlarmRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(AlarmRegistry_Shutdown);
+   Debug::ft("AlarmRegistry.Shutdown");
 
    for(auto a = alarms_.First(); a != nullptr; alarms_.Next(a))
    {
@@ -139,11 +133,9 @@ void AlarmRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name AlarmRegistry_Startup = "AlarmRegistry.Startup";
-
 void AlarmRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(AlarmRegistry_Startup);
+   Debug::ft("AlarmRegistry.Startup");
 
    for(auto a = alarms_.First(); a != nullptr; alarms_.Next(a))
    {
@@ -153,11 +145,9 @@ void AlarmRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name AlarmRegistry_UnbindAlarm = "AlarmRegistry.UnbindAlarm";
-
 void AlarmRegistry::UnbindAlarm(Alarm& alarm)
 {
-   Debug::ftnt(AlarmRegistry_UnbindAlarm);
+   Debug::ftnt("AlarmRegistry.UnbindAlarm");
 
    alarms_.Erase(alarm);
 }

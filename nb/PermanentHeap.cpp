@@ -21,26 +21,21 @@
 //
 #include "PermanentHeap.h"
 #include "Debug.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-fn_name PermanentHeap_ctor = "PermanentHeap.ctor";
-
 PermanentHeap::PermanentHeap() : SysHeap()
 {
-   Debug::ftnt(PermanentHeap_ctor);
+   Debug::ftnt("PermanentHeap.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PermanentHeap_dtor = "PermanentHeap.dtor";
-
 PermanentHeap::~PermanentHeap()
 {
-   Debug::ftnt(PermanentHeap_dtor);
+   Debug::ftnt("PermanentHeap.dtor");
 }
 
 //------------------------------------------------------------------------------

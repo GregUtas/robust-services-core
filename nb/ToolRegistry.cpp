@@ -37,11 +37,9 @@ const size_t ToolRegistry::MaxTools = 20;
 
 //------------------------------------------------------------------------------
 
-fn_name ToolRegistry_ctor = "ToolRegistry.ctor";
-
 ToolRegistry::ToolRegistry()
 {
-   Debug::ft(ToolRegistry_ctor);
+   Debug::ft("ToolRegistry.ctor");
 
    tools_.Init(MaxTools, Tool::CellDiff(), MemImmutable);
 }
@@ -97,11 +95,9 @@ void ToolRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ToolRegistry_FindTool = "ToolRegistry.FindTool";
-
 Tool* ToolRegistry::FindTool(char abbr) const
 {
-   Debug::ft(ToolRegistry_FindTool);
+   Debug::ft("ToolRegistry.FindTool");
 
    if(!isprint(abbr)) return nullptr;
 
@@ -122,11 +118,9 @@ Tool* ToolRegistry::GetTool(FlagId id) const
 
 //------------------------------------------------------------------------------
 
-fn_name ToolRegistry_ListToolChars = "ToolRegistry.ListToolChars";
-
 string ToolRegistry::ListToolChars() const
 {
-   Debug::ft(ToolRegistry_ListToolChars);
+   Debug::ft("ToolRegistry.ListToolChars");
 
    string tools;
 
@@ -147,11 +141,9 @@ void ToolRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name ToolRegistry_UnbindTool = "ToolRegistry.UnbindTool";
-
 void ToolRegistry::UnbindTool(Tool& tool)
 {
-   Debug::ftnt(ToolRegistry_UnbindTool);
+   Debug::ftnt("ToolRegistry.UnbindTool");
 
    tools_.Erase(tool);
 }

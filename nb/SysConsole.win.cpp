@@ -22,7 +22,6 @@
 #include "SysConsole.h"
 #include <windows.h>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::string;
 using std::wstring;
@@ -31,11 +30,9 @@ using std::wstring;
 
 namespace NodeBase
 {
-fn_name SysConsole_Minimize = "SysConsole.Minimize";
-
 bool SysConsole::Minimize(bool minimize)
 {
-   Debug::ft(SysConsole_Minimize);
+   Debug::ft("SysConsole.Minimize");
 
    auto window = GetConsoleWindow();
    auto mode = (minimize ? SW_MINIMIZE : SW_RESTORE);
@@ -44,11 +41,9 @@ bool SysConsole::Minimize(bool minimize)
 
 //------------------------------------------------------------------------------
 
-fn_name SysConsole_SetTitle = "SysConsole.SetTitle";
-
 bool SysConsole::SetTitle(const string& title)
 {
-   Debug::ft(SysConsole_SetTitle);
+   Debug::ft("SysConsole.SetTitle");
 
    wstring wtitle(title.begin(), title.end());
    return SetConsoleTitle(wtitle.c_str());

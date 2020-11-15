@@ -31,23 +31,19 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name AllocationException_ctor = "AllocationException.ctor";
-
 AllocationException::AllocationException(MemoryType type, size_t size) :
    Exception(true, 1),
    type_(type),
    size_(size)
 {
-   Debug::ft(AllocationException_ctor);
+   Debug::ft("AllocationException.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name AllocationException_dtor = "AllocationException.dtor";
-
 AllocationException::~AllocationException()
 {
-   Debug::ftnt(AllocationException_dtor);
+   Debug::ftnt("AllocationException.dtor");
 }
 
 //------------------------------------------------------------------------------

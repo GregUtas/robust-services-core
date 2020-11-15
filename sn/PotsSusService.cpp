@@ -33,7 +33,6 @@
 #include "SbAppIds.h"
 #include "SbEvents.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace CallBase;
 
@@ -63,22 +62,18 @@ private:
 
 //==============================================================================
 
-fn_name PotsSusInitiator_ctor = "PotsSusInitiator.ctor";
-
 PotsSusInitiator::PotsSusInitiator(TriggerId tid, Initiator::Priority prio) :
    Initiator(PotsSusServiceId, PotsCallServiceId, tid, prio)
 {
-   Debug::ft(PotsSusInitiator_ctor);
+   Debug::ft("PotsSusInitiator.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsSusInitiator_ProcessEvent = "PotsSusInitiator.ProcessEvent";
-
 EventHandler::Rc PotsSusInitiator::ProcessEvent
    (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsSusInitiator_ProcessEvent);
+   Debug::ft("PotsSusInitiator.ProcessEvent");
 
    auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
    auto prof = pssm.Profile();
@@ -94,103 +89,83 @@ EventHandler::Rc PotsSusInitiator::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsOSusInitiator_ctor = "PotsOSusInitiator.ctor";
-
 PotsOSusInitiator::PotsOSusInitiator() :
    PotsSusInitiator(BcTrigger::AuthorizeOriginationSap,
    PotsAuthorizeOriginationSap::PotsSusPriority)
 {
-   Debug::ft(PotsOSusInitiator_ctor);
+   Debug::ft("PotsOSusInitiator.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsTSusInitiator_ctor = "PotsTSusInitiator.ctor";
 
 PotsTSusInitiator::PotsTSusInitiator() :
    PotsSusInitiator(BcTrigger::AuthorizeTerminationSap,
    PotsAuthorizeTerminationSap::PotsSusPriority)
 {
-   Debug::ft(PotsTSusInitiator_ctor);
+   Debug::ft("PotsTSusInitiator.ctor");
 }
 
 //==============================================================================
 
-fn_name PotsSusService_ctor = "PotsSusService.ctor";
-
 PotsSusService::PotsSusService() : Service(PotsSusServiceId, false, true)
 {
-   Debug::ft(PotsSusService_ctor);
+   Debug::ft("PotsSusService.ctor");
 
    Singleton< PotsSusNull >::Instance();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsSusService_dtor = "PotsSusService.dtor";
-
 PotsSusService::~PotsSusService()
 {
-   Debug::ftnt(PotsSusService_dtor);
+   Debug::ftnt("PotsSusService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsSusService_AllocModifier = "PotsSusService.AllocModifier";
-
 ServiceSM* PotsSusService::AllocModifier() const
 {
-   Debug::ft(PotsSusService_AllocModifier);
+   Debug::ft("PotsSusService.AllocModifier");
 
    return new PotsSusSsm;
 }
 
 //==============================================================================
 
-fn_name PotsSusNull_ctor = "PotsSusNull.ctor";
-
 PotsSusNull::PotsSusNull() : State(PotsSusServiceId, ServiceSM::Null)
 {
-   Debug::ft(PotsSusNull_ctor);
+   Debug::ft("PotsSusNull.ctor");
 }
 
 //==============================================================================
 
-fn_name PotsSusSsm_ctor = "PotsSusSsm.ctor";
-
 PotsSusSsm::PotsSusSsm() : ServiceSM(PotsSusServiceId)
 {
-   Debug::ft(PotsSusSsm_ctor);
+   Debug::ft("PotsSusSsm.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsSusSsm_dtor = "PotsSusSsm.dtor";
 
 PotsSusSsm::~PotsSusSsm()
 {
-   Debug::ftnt(PotsSusSsm_dtor);
+   Debug::ftnt("PotsSusSsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsSusSsm_CalcPort = "PotsSusSsm.CalcPort";
-
 ServicePortId PotsSusSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(PotsSusSsm_CalcPort);
+   Debug::ft("PotsSusSsm.CalcPort");
 
    return Parent()->CalcPort(ame);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsSusSsm_ProcessInitAck = "PotsSusSsm.ProcessInitAck";
-
 EventHandler::Rc PotsSusSsm::ProcessInitAck
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsSusSsm_ProcessInitAck);
+   Debug::ft("PotsSusSsm.ProcessInitAck");
 
    auto& pssm = *Parent();
    auto stid = pssm.CurrState();
@@ -217,12 +192,10 @@ EventHandler::Rc PotsSusSsm::ProcessInitAck
 
 //------------------------------------------------------------------------------
 
-fn_name PotsSusSsm_ProcessInitNack = "PotsSusSsm.ProcessInitNack";
-
 EventHandler::Rc PotsSusSsm::ProcessInitNack
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsSusSsm_ProcessInitNack);
+   Debug::ft("PotsSusSsm.ProcessInitNack");
 
    return EventHandler::Resume;
 }

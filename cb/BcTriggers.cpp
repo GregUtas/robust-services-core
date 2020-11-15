@@ -26,17 +26,13 @@
 
 namespace CallBase
 {
-fn_name BcTrigger_ctor = "BcTrigger.ctor";
-
 BcTrigger::BcTrigger(Id tid) : Trigger(tid)
 {
-   Debug::ft(BcTrigger_ctor);
+   Debug::ft("BcTrigger.ctor");
 }
-
-fn_name BcTrigger_dtor = "BcTrigger.dtor";
 
 BcTrigger::~BcTrigger()
 {
-   Debug::ftnt(BcTrigger_dtor);
+   Debug::ftnt("BcTrigger.dtor");
 }
 }

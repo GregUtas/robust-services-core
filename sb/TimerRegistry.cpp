@@ -40,14 +40,12 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name TimerRegistry_ctor = "TimerRegistry.ctor";
-
 TimerRegistry::TimerRegistry() :
    nextQid_(0),
    currTimer_(nullptr),
    corrupt_(false)
 {
-   Debug::ft(TimerRegistry_ctor);
+   Debug::ft("TimerRegistry.ctor");
 
    for(auto i = 0; i <= Timer::MaxQId; ++i)
    {
@@ -74,11 +72,9 @@ TimerRegistry::~TimerRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name TimerRegistry_CalcQId = "TimerRegistry.CalcQId";
-
 Timer::QId TimerRegistry::CalcQId(secs_t secs) const
 {
-   Debug::ft(TimerRegistry_CalcQId);
+   Debug::ft("TimerRegistry.CalcQId");
 
    //  The timer thread wakes up 1000 msecs after it last began to run.
    //  If it last began to run over 500 msecs ago, the next timer queue
@@ -99,11 +95,9 @@ Timer::QId TimerRegistry::CalcQId(secs_t secs) const
 
 //------------------------------------------------------------------------------
 
-fn_name TimerRegistry_ClaimBlocks = "TimerRegistry.ClaimBlocks";
-
 void TimerRegistry::ClaimBlocks()
 {
-   Debug::ft(TimerRegistry_ClaimBlocks);
+   Debug::ft("TimerRegistry.ClaimBlocks");
 
    //  This doesn't actually claim timers in the timer registry.  Each timer is
    //  owned by a PSM, so timers are claimed via ProtocolSMPool::ClaimBlocks.
@@ -175,11 +169,9 @@ void TimerRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name TimerRegistry_ProcessWork = "TimerRegistry.ProcessWork";
-
 void TimerRegistry::ProcessWork()
 {
-   Debug::ft(TimerRegistry_ProcessWork);
+   Debug::ft("TimerRegistry.ProcessWork");
 
    //  Service the next timer queue.
    //
@@ -207,11 +199,9 @@ void TimerRegistry::ProcessWork()
 
 //------------------------------------------------------------------------------
 
-fn_name TimerRegistry_SendTimeout = "TimerRegistry.SendTimeout";
-
 void TimerRegistry::SendTimeout(Timer* tmr)
 {
-   Debug::ft(TimerRegistry_SendTimeout);
+   Debug::ft("TimerRegistry.SendTimeout");
 
    //  If this timer was the last one encountered, it must have trapped
    //  when sending its timeout, so just delete it.

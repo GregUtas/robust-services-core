@@ -40,31 +40,25 @@ fixed_string InvokerDaemonName = "invoker";
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerDaemon_ctor = "InvokerDaemon.ctor";
-
 InvokerDaemon::InvokerDaemon(Faction faction, size_t size) :
    Daemon(MakeName(faction).c_str(), 1),
    faction_(faction)
 {
-   Debug::ft(InvokerDaemon_ctor);
+   Debug::ft("InvokerDaemon.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name InvokerDaemon_dtor = "InvokerDaemon.dtor";
 
 InvokerDaemon::~InvokerDaemon()
 {
-   Debug::ftnt(InvokerDaemon_dtor);
+   Debug::ftnt("InvokerDaemon.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerDaemon_CreateThread = "InvokerDaemon.CreateThread";
-
 Thread* InvokerDaemon::CreateThread()
 {
-   Debug::ft(InvokerDaemon_CreateThread);
+   Debug::ft("InvokerDaemon.CreateThread");
 
    return new InvokerThread(faction_, this);
 }
@@ -81,11 +75,9 @@ void InvokerDaemon::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerDaemon_GetAlarmLevel = "InvokerDaemon.GetAlarmLevel";
-
 AlarmStatus InvokerDaemon::GetAlarmLevel() const
 {
-   Debug::ft(InvokerDaemon_GetAlarmLevel);
+   Debug::ft("InvokerDaemon.GetAlarmLevel");
 
    //  Anything other than a critical alarm is rather hypothetical because
    //  there should have been enough traps to cause a restart if multiple
@@ -99,11 +91,9 @@ AlarmStatus InvokerDaemon::GetAlarmLevel() const
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerDaemon_GetDaemon = "InvokerDaemon.GetDaemon";
-
 InvokerDaemon* InvokerDaemon::GetDaemon(Faction faction, size_t size)
 {
-   Debug::ft(InvokerDaemon_GetDaemon);
+   Debug::ft("InvokerDaemon.GetDaemon");
 
    auto reg = Singleton< DaemonRegistry >::Instance();
    auto name = MakeName(faction);
@@ -119,11 +109,9 @@ InvokerDaemon* InvokerDaemon::GetDaemon(Faction faction, size_t size)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerDaemon_MakeName = "InvokerDaemon.MakeName";
-
 string InvokerDaemon::MakeName(Faction faction)
 {
-   Debug::ft(InvokerDaemon_MakeName);
+   Debug::ft("InvokerDaemon.MakeName");
 
    //  A Daemon requires a unique name, so append the faction's character
    //  to the basic name.
@@ -147,40 +135,32 @@ fixed_string TimerDaemonName = "timer";
 
 //------------------------------------------------------------------------------
 
-fn_name TimerDaemon_ctor = "TimerDaemon.ctor";
-
 TimerDaemon::TimerDaemon() : Daemon(TimerDaemonName, 1)
 {
-   Debug::ft(TimerDaemon_ctor);
+   Debug::ft("TimerDaemon.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TimerDaemon_dtor = "TimerDaemon.dtor";
 
 TimerDaemon::~TimerDaemon()
 {
-   Debug::ftnt(TimerDaemon_dtor);
+   Debug::ftnt("TimerDaemon.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fixed_string TimerDaemon_CreateThread = "TimerDaemon.CreateThread";
-
 Thread* TimerDaemon::CreateThread()
 {
-   Debug::ft(TimerDaemon_CreateThread);
+   Debug::ft("TimerDaemon.CreateThread");
 
    return Singleton< TimerThread >::Instance();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TimerDaemon_GetAlarmLevel = "TimerDaemon.GetAlarmLevel";
-
 AlarmStatus TimerDaemon::GetAlarmLevel() const
 {
-   Debug::ft(TimerDaemon_GetAlarmLevel);
+   Debug::ft("TimerDaemon.GetAlarmLevel");
 
    return CriticalAlarm;
 }

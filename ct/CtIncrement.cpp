@@ -126,11 +126,9 @@ protected:
 LibraryCommand::LibraryCommand(c_string comm, c_string help) :
    CliCommand(comm, help) { }
 
-fn_name LibraryCommand_Evaluate = "LibraryCommand.Evaluate";
-
 LibrarySet* LibraryCommand::Evaluate(const CliThread& cli)
 {
-   Debug::ft(LibraryCommand_Evaluate);
+   Debug::ft("LibraryCommand.Evaluate");
 
    string expr;
 
@@ -164,11 +162,9 @@ AssignCommand::AssignCommand() : CliCommand(AssignStr, AssignExpl)
    BindParm(*new CodeSetExprParm);
 }
 
-fn_name AssignCommand_ProcessCommand = "AssignCommand.ProcessCommand";
-
 word AssignCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(AssignCommand_ProcessCommand);
+   Debug::ft("AssignCommand.ProcessCommand");
 
    string name, expr, expl;
 
@@ -203,11 +199,9 @@ CheckCommand::CheckCommand() : LibraryCommand(CheckStr, CheckExpl)
    BindParm(*new FileSetExprParm);
 }
 
-fn_name CheckCommand_ProcessCommand = "CheckCommand.ProcessCommand";
-
 word CheckCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(CheckCommand_ProcessCommand);
+   Debug::ft("CheckCommand.ProcessCommand");
 
    string title;
 
@@ -358,11 +352,9 @@ CoverageCommand::CoverageCommand() : LibraryCommand(CoverageStr, CoverageExpl)
    BindParm(*new CoverageAction);
 }
 
-fn_name CoverageCommand_ProcessCommand = "CoverageCommand.ProcessCommand";
-
 word CoverageCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(CoverageCommand_ProcessCommand);
+   Debug::ft("CoverageCommand.ProcessCommand");
 
    auto database = Singleton< CodeCoverage >::Instance();
    id_t index;
@@ -427,11 +419,9 @@ CountCommand::CountCommand() : LibraryCommand(CountStr, CountExpl)
    BindParm(*new SetExprParm);
 }
 
-fn_name CountCommand_ProcessCommand = "CountCommand.ProcessCommand[>ct]";
-
 word CountCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(CountCommand_ProcessCommand);
+   Debug::ft("CountCommand.ProcessCommand[>ct]");
 
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
@@ -464,11 +454,9 @@ CountlinesCommand::CountlinesCommand() :
    BindParm(*new FileSetExprParm);
 }
 
-fn_name CountlinesCommand_ProcessCommand = "CountlinesCommand.ProcessCommand";
-
 word CountlinesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(CountlinesCommand_ProcessCommand);
+   Debug::ft("CountlinesCommand.ProcessCommand");
 
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
@@ -509,11 +497,9 @@ ExplainCommand::ExplainCommand() : CliCommand(ExplainStr, ExplainExpl)
    BindParm(*new WarningIdParm);
 }
 
-fn_name ExplainCommand_ProcessCommand = "ExplainCommand.ProcessCommand";
-
 word ExplainCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ExplainCommand_ProcessCommand);
+   Debug::ft("ExplainCommand.ProcessCommand");
 
    word id;
 
@@ -600,11 +586,9 @@ const string& ValidExportOptions()
    return ValidOpts;
 }
 
-fn_name ExportCommand_ProcessCommand = "ExportCommand.ProcessCommand";
-
 word ExportCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ExportCommand_ProcessCommand);
+   Debug::ft("ExportCommand.ProcessCommand");
 
    string title;
    string opts;
@@ -692,11 +676,9 @@ FileIdCommand::FileIdCommand() : CliCommand(FileIdStr, FileIdExpl)
    BindParm(*new FileIdMandParm);
 }
 
-fn_name FileIdCommand_ProcessCommand = "FileIdCommand.ProcessCommand";
-
 word FileIdCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(FileIdCommand_ProcessCommand);
+   Debug::ft("FileIdCommand.ProcessCommand");
 
    word fid;
 
@@ -738,11 +720,9 @@ FileInfoCommand::FileInfoCommand() : CliCommand(FileInfoStr, FileInfoExpl)
    BindParm(*new CodeFileParm);
 }
 
-fn_name FileInfoCommand_ProcessCommand = "FileInfoCommand.ProcessCommand";
-
 word FileInfoCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(FileInfoCommand_ProcessCommand);
+   Debug::ft("FileInfoCommand.ProcessCommand");
 
    string name;
 
@@ -795,11 +775,9 @@ FixCommand::FixCommand() : LibraryCommand(FixStr, FixExpl)
    BindParm(*new FileSetExprParm);
 }
 
-fn_name FixCommand_ProcessCommand = "FixCommand.ProcessCommand";
-
 word FixCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(FixCommand_ProcessCommand);
+   Debug::ft("FixCommand.ProcessCommand");
 
    word warning;
    FixOptions options;
@@ -838,11 +816,9 @@ FormatCommand::FormatCommand() : LibraryCommand(FormatStr, FormatExpl)
    BindParm(*new CodeSetExprParm);
 }
 
-fn_name FormatCommand_ProcessCommand = "FormatCommand.ProcessCommand";
-
 word FormatCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(FormatCommand_ProcessCommand);
+   Debug::ft("FormatCommand.ProcessCommand");
 
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
@@ -893,11 +869,9 @@ ImportCommand::ImportCommand() : CliCommand(ImportStr, ImportExpl)
    BindParm(*new PathMandParm);
 }
 
-fn_name ImportCommand_ProcessCommand = "ImportCommand.ProcessCommand";
-
 word ImportCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ImportCommand_ProcessCommand);
+   Debug::ft("ImportCommand.ProcessCommand");
 
    string name, subdir, expl;
 
@@ -933,11 +907,9 @@ ListCommand::ListCommand() : LibraryCommand(ListStr, ListExpl)
    BindParm(*new CodeSetExprParm);
 }
 
-fn_name ListCommand_ProcessCommand = "ListCommand.ProcessCommand";
-
 word ListCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ListCommand_ProcessCommand);
+   Debug::ft("ListCommand.ProcessCommand");
 
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
@@ -1009,11 +981,9 @@ const string& ValidParseOptions()
    return ValidOpts;
 }
 
-fn_name ParseCommand_ProcessCommand = "ParseCommand.ProcessCommand";
-
 word ParseCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ParseCommand_ProcessCommand);
+   Debug::ft("ParseCommand.ProcessCommand");
 
    string opts;
    string name;
@@ -1063,11 +1033,9 @@ PurgeCommand::PurgeCommand() : CliCommand(PurgeStr, PurgeExpl)
    BindParm(*new VarMandName);
 }
 
-fn_name PurgeCommand_ProcessCommand = "PurgeCommand.ProcessCommand";
-
 word PurgeCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(PurgeCommand_ProcessCommand);
+   Debug::ft("PurgeCommand.ProcessCommand");
 
    string name, expr, expl;
 
@@ -1110,11 +1078,9 @@ ScanCommand::ScanCommand() : CliCommand(ScanStr, ScanExpl)
    BindParm(*new StringPatternParm);
 }
 
-fn_name ScanCommand_ProcessCommand = "ScanCommand.ProcessCommand";
-
 word ScanCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ScanCommand_ProcessCommand);
+   Debug::ft("ScanCommand.ProcessCommand");
 
    string line, expr, pattern, expl;
 
@@ -1314,11 +1280,9 @@ fixed_string ShrinkExpl = "Shrinks the library's element containers.";
 
 ShrinkCommand::ShrinkCommand() : CliCommand(ShrinkStr, ShrinkExpl) { }
 
-fn_name ShrinkCommand_ProcessCommand = "ShrinkCommand.ProcessCommand";
-
 word ShrinkCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ShrinkCommand_ProcessCommand);
+   Debug::ft("ShrinkCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
 
@@ -1346,11 +1310,9 @@ SortCommand::SortCommand() : LibraryCommand(SortStr, SortExpl)
    BindParm(*new FileSetExprParm);
 }
 
-fn_name SortCommand_ProcessCommand = "SortCommand.ProcessCommand";
-
 word SortCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SortCommand_ProcessCommand);
+   Debug::ft("SortCommand.ProcessCommand");
 
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
@@ -1525,11 +1487,9 @@ TraceCommand::TraceCommand() : CliCommand(TraceStr, TraceExpl)
    BindParm(*new TraceAction);
 }
 
-fn_name TraceCommand_ProcessCommand = "TraceCommand.ProcessCommand";
-
 word TraceCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TraceCommand_ProcessCommand);
+   Debug::ft("TraceCommand.ProcessCommand");
 
    id_t action;
    id_t mode;
@@ -1611,11 +1571,9 @@ TypeCommand::TypeCommand() : LibraryCommand(TypeStr, TypeExpl)
    BindParm(*new SetExprParm);
 }
 
-fn_name TypeCommand_ProcessCommand = "TypeCommand.ProcessCommand";
-
 word TypeCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TypeCommand_ProcessCommand);
+   Debug::ft("TypeCommand.ProcessCommand");
 
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
@@ -1646,11 +1604,9 @@ fixed_string ExpExpl = "Performs an experimental test.";
 
 ExpCommand::ExpCommand() : CliCommand(ExpStr, ExpExpl) { }
 
-fn_name ExpCommand_ProcessCommand = "ExpCommand.ProcessCommand";
-
 word ExpCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ExpCommand_ProcessCommand);
+   Debug::ft("ExpCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    *cli.obuf << "This command currently does nothing." << CRLF;
@@ -1664,11 +1620,9 @@ word ExpCommand::ProcessCommand(CliThread& cli) const
 fixed_string CtStr = "ct";
 fixed_string CtExpl = "CodeTools Increment";
 
-fn_name CtIncrement_ctor = "CtIncrement.ctor";
-
 CtIncrement::CtIncrement() : CliIncrement(CtStr, CtExpl)
 {
-   Debug::ft(CtIncrement_ctor);
+   Debug::ft("CtIncrement.ctor");
 
    BindCommand(*new ImportCommand);
    BindCommand(*new ShowCommand);
@@ -1698,10 +1652,8 @@ CtIncrement::CtIncrement() : CliIncrement(CtStr, CtExpl)
 
 //------------------------------------------------------------------------------
 
-fn_name CtIncrement_dtor = "CtIncrement.dtor";
-
 CtIncrement::~CtIncrement()
 {
-   Debug::ftnt(CtIncrement_dtor);
+   Debug::ftnt("CtIncrement.dtor");
 }
 }

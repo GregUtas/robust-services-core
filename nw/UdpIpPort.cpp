@@ -22,7 +22,6 @@
 #include "UdpIpPort.h"
 #include "Debug.h"
 #include "NwDaemons.h"
-#include "SysTypes.h"
 #include "UdpIoThread.h"
 #include "UdpIpService.h"
 
@@ -32,30 +31,24 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-fn_name UdpIpPort_ctor = "UdpIpPort.ctor";
-
 UdpIpPort::UdpIpPort(ipport_t port, const IpService* service) :
    IpPort(port, service)
 {
-   Debug::ft(UdpIpPort_ctor);
+   Debug::ft("UdpIpPort.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name UdpIpPort_dtor = "UdpIpPort.dtor";
 
 UdpIpPort::~UdpIpPort()
 {
-   Debug::ftnt(UdpIpPort_dtor);
+   Debug::ftnt("UdpIpPort.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIpPort_CreateIoThread = "UdpIpPort.CreateIoThread";
-
 IoThread* UdpIpPort::CreateIoThread()
 {
-   Debug::ft(UdpIpPort_CreateIoThread);
+   Debug::ft("UdpIpPort.CreateIoThread");
 
    auto svc = static_cast< const UdpIpService* >(GetService());
    auto daemon = UdpIoDaemon::GetDaemon(svc, GetPort());

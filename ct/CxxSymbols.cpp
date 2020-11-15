@@ -145,11 +145,9 @@ void DisplayReferences(ostream& stream, const CxxNamedVector& refs)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_FindNearestItem1 = "CodeTools.FindNearestItem(list)";
-
 size_t FindNearestItem(const SymbolVector& list)
 {
-   Debug::ft(CodeTools_FindNearestItem1);
+   Debug::ft("CodeTools.FindNearestItem(list)");
 
    //  Return the match in the nearest scope.
    //
@@ -179,11 +177,9 @@ size_t FindNearestItem(const SymbolVector& list)
 //  been resolved.  Returns SIZE_MAX if none of the items in LIST is in a
 //  related scope.
 //
-fn_name CodeTools_FindNearestItem2 = "CodeTools.FindNearestItem(views)";
-
 size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
 {
-   Debug::ft(CodeTools_FindNearestItem2);
+   Debug::ft("CodeTools.FindNearestItem(views)");
 
    //  Return the match in the nearest scope, but preferring a resolved
    //  forward or friend declaration to one that is still unresolved.
@@ -317,33 +313,27 @@ bool IsSortedByScope(const CxxScoped* item1, const CxxScoped* item2)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxSymbols_ctor = "CxxSymbols.ctor";
-
 CxxSymbols::CxxSymbols()
 {
-   Debug::ft(CxxSymbols_ctor);
+   Debug::ft("CxxSymbols.ctor");
 
    CxxStats::Incr(CxxStats::CXX_SYMBOLS);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxSymbols_dtor = "CxxSymbols.dtor";
-
 CxxSymbols::~CxxSymbols()
 {
-   Debug::ftnt(CxxSymbols_dtor);
+   Debug::ftnt("CxxSymbols.dtor");
 
    CxxStats::Decr(CxxStats::CXX_SYMBOLS);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxSymbols_DisplayXref = "CxxSymbols.DisplayXref";
-
 void CxxSymbols::DisplayXref(ostream& stream) const
 {
-   Debug::ft(CxxSymbols_DisplayXref);
+   Debug::ft("CxxSymbols.DisplayXref");
 
    //  Start by displaying references to namespaces.
    //
@@ -537,11 +527,9 @@ Macro* CxxSymbols::FindMacro(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxSymbols_FindScope = "CxxSymbols.FindScope";
-
 CxxScope* CxxSymbols::FindScope(const CxxScope* scope, string& name) const
 {
-   Debug::ft(CxxSymbols_FindScope);
+   Debug::ft("CxxSymbols.FindScope");
 
    //  Erase any leading scope qualifier, as we plan to use full names that
    //  do not have a leading scope qualifier.  If a leading scope qualifier
@@ -739,13 +727,11 @@ CxxScoped* CxxSymbols::FindSymbol(const CodeFile* file,
 
 //------------------------------------------------------------------------------
 
-fn_name CxxSymbols_FindSymbols = "CxxSymbols.FindSymbols";
-
 void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
    const string& name, const Flags& mask, SymbolVector& list,
    ViewVector& views, const CxxArea* area) const
 {
-   Debug::ft(CxxSymbols_FindSymbols);
+   Debug::ft("CxxSymbols.FindSymbols");
 
    auto key = Normalize(name);
 
@@ -899,12 +885,10 @@ void CxxSymbols::InsertType(Typedef* type)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxSymbols_IsUniqueName = "CxxSymbols.IsUniqueName";
-
 bool CxxSymbols::IsUniqueName
    (const CxxScope* scope, const std::string& name) const
 {
-   Debug::ft(CxxSymbols_IsUniqueName);
+   Debug::ft("CxxSymbols.IsUniqueName");
 
    //  This only needs to look for functions.
    //
@@ -925,11 +909,9 @@ bool CxxSymbols::IsUniqueName
 
 //------------------------------------------------------------------------------
 
-fn_name CxxSymbols_ListMacros = "CxxSymbols.ListMacros";
-
 void CxxSymbols::ListMacros(const string& name, SymbolVector& list) const
 {
-   Debug::ft(CxxSymbols_ListMacros);
+   Debug::ft("CxxSymbols.ListMacros");
 
    auto last = macros_->upper_bound(name);
 
@@ -1043,11 +1025,9 @@ void CxxSymbols::Shrink() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxSymbols_Shutdown = "CxxSymbols.Shutdown";
-
 void CxxSymbols::Shutdown(RestartLevel level)
 {
-   Debug::ft(CxxSymbols_Shutdown);
+   Debug::ft("CxxSymbols.Shutdown");
 
    //  Symbol tables are preserved during restarts.
    //
@@ -1068,11 +1048,9 @@ void CxxSymbols::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxSymbols_Startup = "CxxSymbols.Startup";
-
 void CxxSymbols::Startup(RestartLevel level)
 {
-   Debug::ft(CxxSymbols_Startup);
+   Debug::ft("CxxSymbols.Startup");
 
    //  Create the symbol tables if they don't exist.
    //

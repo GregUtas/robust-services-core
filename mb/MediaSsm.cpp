@@ -35,21 +35,17 @@ using std::string;
 
 namespace MediaBase
 {
-fn_name MediaSsm_ctor = "MediaSsm.ctor";
-
 MediaSsm::MediaSsm(ServiceId sid) : RootServiceSM(sid),
    mgwPsm_(nullptr)
 {
-   Debug::ft(MediaSsm_ctor);
+   Debug::ft("MediaSsm.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MediaSsm_dtor = "MediaSsm.dtor";
-
 MediaSsm::~MediaSsm()
 {
-   Debug::ftnt(MediaSsm_dtor);
+   Debug::ftnt("MediaSsm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -64,11 +60,9 @@ void MediaSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name MediaSsm_GetSubtended = "MediaSsm.GetSubtended";
-
 void MediaSsm::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(MediaSsm_GetSubtended);
+   Debug::ft("MediaSsm.GetSubtended");
 
    RootServiceSM::GetSubtended(objects);
 
@@ -77,12 +71,10 @@ void MediaSsm::GetSubtended(std::vector< Base* >& objects) const
 
 //------------------------------------------------------------------------------
 
-fn_name MediaSsm_NotifyListeners = "MediaSsm.NotifyListeners";
-
 void MediaSsm::NotifyListeners
    (const ProtocolSM& txPsm, Switch::PortId txPort) const
 {
-   Debug::ft(MediaSsm_NotifyListeners);
+   Debug::ft("MediaSsm.NotifyListeners");
 
    //  Notify all of the PSMs that are listening to txPsm that they should
    //  now listen to txPort.
@@ -102,11 +94,9 @@ void MediaSsm::NotifyListeners
 
 //------------------------------------------------------------------------------
 
-fn_name MediaSsm_PsmDeleted = "MediaSsm.PsmDeleted";
-
 void MediaSsm::PsmDeleted(ProtocolSM& exPsm)
 {
-   Debug::ft(MediaSsm_PsmDeleted);
+   Debug::ft("MediaSsm.PsmDeleted");
 
    //  Notify all of the PSMs that are listening to exPsm that exPsm has
    //  been deleted.

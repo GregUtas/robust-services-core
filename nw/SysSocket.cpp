@@ -42,24 +42,20 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name SysSocket_ctor1 = "SysSocket.ctor(wrap)";
-
 SysSocket::SysSocket(SysSocket_t socket) :
    socket_(socket),
    blocking_(true),
    tracing_(false),
    error_(0)
 {
-   Debug::ft(SysSocket_ctor1);
+   Debug::ft("SysSocket.ctor(wrap)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_dtor = "SysSocket.dtor";
-
 SysSocket::~SysSocket()
 {
-   Debug::ftnt(SysSocket_dtor);
+   Debug::ftnt("SysSocket.dtor");
 
    TraceEvent(NwTrace::Delete, 0);
 }
@@ -79,12 +75,10 @@ void SysSocket::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_OutputLog = "SysSocket.OutputLog";
-
 void SysSocket::OutputLog
    (LogId id, fixed_string expl, const IpBuffer* buff) const
 {
-   Debug::ft(SysSocket_OutputLog);
+   Debug::ft("SysSocket.OutputLog");
 
    auto log = Log::Create(NetworkLogGroup, id);
    if(log == nullptr) return;
@@ -121,11 +115,9 @@ SysSocket::SendRc SysSocket::SendBuff(IpBuffer& buff)
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_SetError1 = "SysSocket.SetError(errval)";
-
 word SysSocket::SetError(word errval)
 {
-   Debug::ft(SysSocket_SetError1);
+   Debug::ft("SysSocket.SetError(errval)");
 
    error_ = errval;
    return -1;
@@ -185,11 +177,9 @@ bool SysSocket::TraceEnabled()
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_TraceEvent = "SysSocket.TraceEvent";
-
 NwTrace* SysSocket::TraceEvent(TraceRecordId rid, word data)
 {
-   Debug::ft(SysSocket_TraceEvent);
+   Debug::ft("SysSocket.TraceEvent");
 
    if(!TraceEnabled()) return nullptr;
 
@@ -205,12 +195,10 @@ NwTrace* SysSocket::TraceEvent(TraceRecordId rid, word data)
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_TracePeer = "SysSocket.TracePeer";
-
 NwTrace* SysSocket::TracePeer
    (TraceRecordId rid, ipport_t port, const SysIpL3Addr& peer, word data)
 {
-   Debug::ft(SysSocket_TracePeer);
+   Debug::ft("SysSocket.TracePeer");
 
    if(!TraceEnabled()) return nullptr;
 
@@ -228,11 +216,9 @@ NwTrace* SysSocket::TracePeer
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_TracePort = "SysSocket.TracePort";
-
 NwTrace* SysSocket::TracePort(TraceRecordId rid, ipport_t port, word data)
 {
-   Debug::ft(SysSocket_TracePort);
+   Debug::ft("SysSocket.TracePort");
 
    if(!TraceEnabled()) return nullptr;
 

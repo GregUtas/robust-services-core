@@ -45,11 +45,9 @@ const id_t IpService::MaxId = 1000;
 
 //------------------------------------------------------------------------------
 
-fn_name IpService_ctor = "IpService.ctor";
-
 IpService::IpService()
 {
-   Debug::ft(IpService_ctor);
+   Debug::ft("IpService.ctor");
 
    Singleton< IpServiceRegistry >::Instance()->BindService(*this);
 }
@@ -259,11 +257,9 @@ IpPort* IpService::Provision(ipport_t pid)
 
 //------------------------------------------------------------------------------
 
-fn_name IpService_Startup = "IpService.Startup";
-
 void IpService::Startup(RestartLevel level)
 {
-   Debug::ft(IpService_Startup);
+   Debug::ft("IpService.Startup");
 
    auto pid = Port();
    if(pid != NilIpPort) Provision(pid);

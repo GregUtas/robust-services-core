@@ -69,11 +69,9 @@ void MapAndUnits::adjudicate()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_adjudicate_builds = "MapAndUnits.adjudicate_builds";
-
 void MapAndUnits::adjudicate_builds()
 {
-   Debug::ft(MapAndUnits_adjudicate_builds);
+   Debug::ft("MapAndUnits.adjudicate_builds");
 
    //  Check that each power has ordered enough builds or disbands.
    //
@@ -119,11 +117,9 @@ void MapAndUnits::adjudicate_builds()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_adjudicate_moves = "MapAndUnits.adjudicate_moves";
-
 void MapAndUnits::adjudicate_moves()
 {
-   Debug::ft(MapAndUnits_adjudicate_moves);
+   Debug::ft("MapAndUnits.adjudicate_moves");
 
    auto changes_made = true;
    auto futile_convoys_checked = false;
@@ -169,11 +165,9 @@ void MapAndUnits::adjudicate_moves()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_adjudicate_retreats = "MapAndUnits.adjudicate_retreats";
-
 void MapAndUnits::adjudicate_retreats()
 {
-   Debug::ft(MapAndUnits_adjudicate_retreats);
+   Debug::ft("MapAndUnits.adjudicate_retreats");
 
    AttackMap retreat_map;
 
@@ -232,11 +226,9 @@ void MapAndUnits::adjudicate_retreats()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_advance_attack_rings = "MapAndUnits.advance_attack_rings";
-
 void MapAndUnits::advance_attack_rings()
 {
-   Debug::ft(MapAndUnits_advance_attack_rings);
+   Debug::ft("MapAndUnits.advance_attack_rings");
 
    UnitList::iterator ring_member_iterator;
 
@@ -347,11 +339,9 @@ void MapAndUnits::advance_attack_rings()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_advance_unit = "MapAndUnits.advance_unit";
-
 void MapAndUnits::advance_unit(ProvinceId from_province)
 {
-   Debug::ft(MapAndUnits_advance_unit);
+   Debug::ft("MapAndUnits.advance_unit");
 
    //  The unit in FROM_PROVINCE will move to its DEST, and all
    //  other units trying to move to DEST will be bounced.
@@ -410,11 +400,9 @@ bool MapAndUnits::apply_adjudication()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_apply_builds = "MapAndUnits.apply_builds";
-
 void MapAndUnits::apply_builds()
 {
-   Debug::ft(MapAndUnits_apply_builds);
+   Debug::ft("MapAndUnits.apply_builds");
 
    for(PowerId p = 0; p < number_of_powers; ++p)
    {
@@ -451,11 +439,9 @@ void MapAndUnits::apply_builds()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_apply_moves = "MapAndUnits.apply_moves";
-
 void MapAndUnits::apply_moves()
 {
-   Debug::ft(MapAndUnits_apply_moves);
+   Debug::ft("MapAndUnits.apply_moves");
 
    UnitOrderMap moved_units;
 
@@ -522,11 +508,9 @@ void MapAndUnits::apply_moves()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_apply_retreats = "MapAndUnits.apply_retreats";
-
 void MapAndUnits::apply_retreats()
 {
-   Debug::ft(MapAndUnits_apply_retreats);
+   Debug::ft("MapAndUnits.apply_retreats");
 
    //  Clear the order for all dislodged units.  Put each one that moved in
    //  its new location and clear the set of dislodged units when done.
@@ -549,12 +533,9 @@ void MapAndUnits::apply_retreats()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_bounce_all_attacks_on_province =
-   "MapAndUnits.bounce_all_attacks_on_province";
-
 void MapAndUnits::bounce_all_attacks_on_province(ProvinceId dest)
 {
-   Debug::ft(MapAndUnits_bounce_all_attacks_on_province);
+   Debug::ft("MapAndUnits.bounce_all_attacks_on_province");
 
    //  Bounce all moves to DEST.
    //
@@ -573,11 +554,9 @@ void MapAndUnits::bounce_all_attacks_on_province(ProvinceId dest)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_bounce_attack = "MapAndUnits.bounce_attack";
-
 void MapAndUnits::bounce_attack(UnitOrder& unit)
 {
-   Debug::ft(MapAndUnits_bounce_attack);
+   Debug::ft("MapAndUnits.bounce_attack");
 
    //  Mark UNIT's move as bouncing and remove it from the list of
    //  attacks on its destination now that it has been resolved.
@@ -597,12 +576,9 @@ void MapAndUnits::bounce_attack(UnitOrder& unit)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_build_convoy_subversion_list =
-   "MapAndUnits.build_convoy_subversion_list";
-
 void MapAndUnits::build_convoy_subversion_list()
 {
-   Debug::ft(MapAndUnits_build_convoy_subversion_list);
+   Debug::ft("MapAndUnits.build_convoy_subversion_list");
 
    //  Check each convoying army to see if it subverts another convoy.
    //  If it does, record the army whose convoy is being subverted.
@@ -672,11 +648,9 @@ void MapAndUnits::build_convoy_subversion_list()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_build_support_lists = "MapAndUnits.build_support_lists";
-
 void MapAndUnits::build_support_lists()
 {
-   Debug::ft(MapAndUnits_build_support_lists);
+   Debug::ft("MapAndUnits.build_support_lists");
 
    //  Add each supporting unit to the set of supports for its client.
    //
@@ -722,12 +696,10 @@ void MapAndUnits::build_support_lists()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_calc_ring_status = "MapAndUnits.calc_ring_status";
-
 RingUnitStatus MapAndUnits::calc_ring_status
    (ProvinceId to_prov, ProvinceId from_prov)
 {
-   Debug::ft(MapAndUnits_calc_ring_status);
+   Debug::ft("MapAndUnits.calc_ring_status");
 
    size_t most_supports = 0;
    size_t most_supports_to_dislodge = 0;
@@ -789,12 +761,9 @@ RingUnitStatus MapAndUnits::calc_ring_status
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_cancel_inconsistent_convoys =
-   "MapAndUnits.cancel_inconsistent_convoys";
-
 void MapAndUnits::cancel_inconsistent_convoys()
 {
-   Debug::ft(MapAndUnits_cancel_inconsistent_convoys);
+   Debug::ft("MapAndUnits.cancel_inconsistent_convoys");
 
    //  For all armies moving by convoy, check that all required fleets
    //  were ordered to convoy it.
@@ -892,12 +861,9 @@ void MapAndUnits::cancel_inconsistent_convoys()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_cancel_inconsistent_supports =
-   "MapAndUnits.cancel_inconsistent_supports";
-
 void MapAndUnits::cancel_inconsistent_supports()
 {
-   Debug::ft(MapAndUnits_cancel_inconsistent_supports);
+   Debug::ft("MapAndUnits.cancel_inconsistent_supports");
 
    //  For all supports to hold, check that the client isn't moving.  For
    //  all supports to move, check that the client is moving as expected.
@@ -976,12 +942,9 @@ void MapAndUnits::cancel_inconsistent_supports()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_check_for_futile_convoys =
-   "MapAndUnits.check_for_futile_convoys";
-
 bool MapAndUnits::check_for_futile_convoys()
 {
-   Debug::ft(MapAndUnits_check_for_futile_convoys);
+   Debug::ft("MapAndUnits.check_for_futile_convoys");
 
    //  Find each subverted convoy and try to resolve it by checking its
    //  fleets for dislodgement.
@@ -1048,12 +1011,9 @@ bool MapAndUnits::check_for_futile_convoys()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_check_for_illegal_move_orders =
-   "MapAndUnits.check_for_illegal_move_orders";
-
 void MapAndUnits::check_for_illegal_move_orders()
 {
-   Debug::ft(MapAndUnits_check_for_illegal_move_orders);
+   Debug::ft("MapAndUnits.check_for_illegal_move_orders");
 
    for(auto u = units.begin(); u != units.end(); ++u)
    {
@@ -1164,12 +1124,9 @@ void MapAndUnits::check_for_illegal_move_orders()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_check_for_illegal_retreat_orders =
-   "MapAndUnits.check_for_illegal_retreat_orders";
-
 void MapAndUnits::check_for_illegal_retreat_orders()
 {
-   Debug::ft(MapAndUnits_check_for_illegal_retreat_orders);
+   Debug::ft("MapAndUnits.check_for_illegal_retreat_orders");
 
    for(auto u = dislodged_units.begin(); u != dislodged_units.end(); ++u)
    {
@@ -1197,12 +1154,9 @@ void MapAndUnits::check_for_illegal_retreat_orders()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_check_for_indomitable_and_futile_convoys =
-   "MapAndUnits.check_for_indomitable_and_futile_convoys";
-
 bool MapAndUnits::check_for_indomitable_and_futile_convoys()
 {
-   Debug::ft(MapAndUnits_check_for_indomitable_and_futile_convoys);
+   Debug::ft("MapAndUnits.check_for_indomitable_and_futile_convoys");
 
    bool changes_made = false;
 
@@ -1342,11 +1296,9 @@ bool MapAndUnits::check_for_indomitable_and_futile_convoys()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_cut_support = "MapAndUnits.cut_support";
-
 void MapAndUnits::cut_support(ProvinceId province)
 {
-   Debug::ft(MapAndUnits_cut_support);
+   Debug::ft("MapAndUnits.cut_support");
 
    auto u = units.find(province);
 
@@ -1376,12 +1328,9 @@ void MapAndUnits::cut_support(ProvinceId province)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_direct_attacks_cut_support =
-   "MapAndUnits.direct_attacks_cut_support";
-
 void MapAndUnits::direct_attacks_cut_support()
 {
-   Debug::ft(MapAndUnits_direct_attacks_cut_support);
+   Debug::ft("MapAndUnits.direct_attacks_cut_support");
 
    //  For each moving unit, see if its destination province is occupied.
    //
@@ -1488,12 +1437,9 @@ size_t MapAndUnits::distance_from_home(const UnitOrder& unit) const
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_fight_ordinary_battles =
-   "MapAndUnits.fight_ordinary_battles";
-
 void MapAndUnits::fight_ordinary_battles()
 {
-   Debug::ft(MapAndUnits_fight_ordinary_battles);
+   Debug::ft("MapAndUnits.fight_ordinary_battles");
 
    //  AttackMap contains all units that are trying to move.  When a unit's
    //  move is resolved, it is removed from the map, so keep resolving moves
@@ -1508,12 +1454,10 @@ void MapAndUnits::fight_ordinary_battles()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_find_dislodger = "MapAndUnits.find_dislodger";
-
 ProvinceId MapAndUnits::find_dislodger
    (ProvinceId province, bool ignore_occupant)
 {
-   Debug::ft(MapAndUnits_find_dislodger);
+   Debug::ft("MapAndUnits.find_dislodger");
 
    size_t most_supports = 0;
    size_t most_supports_to_dislodge = 0;
@@ -1568,12 +1512,9 @@ ProvinceId MapAndUnits::find_dislodger
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_find_empty_province_invader =
-   "MapAndUnits.find_empty_province_invader";
-
 ProvinceId MapAndUnits::find_empty_province_invader(ProvinceId dest)
 {
-   Debug::ft(MapAndUnits_find_empty_province_invader);
+   Debug::ft("MapAndUnits.find_empty_province_invader");
 
    size_t most_supports = 0;
    size_t second_most_supports = 0;
@@ -1612,11 +1553,9 @@ ProvinceId MapAndUnits::find_empty_province_invader(ProvinceId dest)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_generate_cd_disbands = "MapAndUnits.generate_cd_disbands";
-
 void MapAndUnits::generate_cd_disbands(PowerId power, WinterOrders& orders)
 {
-   Debug::ft(MapAndUnits_generate_cd_disbands);
+   Debug::ft("MapAndUnits.generate_cd_disbands");
 
    typedef std::multimap< size_t, ProvinceId > DistanceFromHomeMap;
 
@@ -1650,12 +1589,9 @@ void MapAndUnits::generate_cd_disbands(PowerId power, WinterOrders& orders)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_identify_attack_rings_and_head_to_head_battles =
-   "MapAndUnits.identify_attack_rings_and_head_to_head_battles";
-
 void MapAndUnits::identify_attack_rings_and_head_to_head_battles()
 {
-   Debug::ft(MapAndUnits_identify_attack_rings_and_head_to_head_battles);
+   Debug::ft("MapAndUnits.identify_attack_rings_and_head_to_head_battles");
 
    int move_counter = 0;
 
@@ -1750,12 +1686,9 @@ void MapAndUnits::identify_attack_rings_and_head_to_head_battles()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_initialise_move_adjudication =
-   "MapAndUnits.initialise_move_adjudication";
-
 void MapAndUnits::initialise_move_adjudication()
 {
-   Debug::ft(MapAndUnits_initialise_move_adjudication);
+   Debug::ft("MapAndUnits.initialise_move_adjudication");
 
    //  Clear all lists of units.
    //
@@ -1880,12 +1813,9 @@ bool MapAndUnits::move_to_next_turn()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_resolve_attacks_on_occupied_province =
-   "MapAndUnits.resolve_attacks_on_occupied_province";
-
 bool MapAndUnits::resolve_attacks_on_occupied_province(ProvinceId province)
 {
-   Debug::ft(MapAndUnits_resolve_attacks_on_occupied_province);
+   Debug::ft("MapAndUnits.resolve_attacks_on_occupied_province");
 
    //  If no unit can dislodge the occupant, bounce all attempts to enter
    //  the province and report that its occupant was not dislodged.
@@ -1912,12 +1842,9 @@ bool MapAndUnits::resolve_attacks_on_occupied_province(ProvinceId province)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_resolve_attacks_on_province =
-   "MapAndUnits.resolve_attacks_on_province";
-
 void MapAndUnits::resolve_attacks_on_province(ProvinceId province)
 {
-   Debug::ft(MapAndUnits_resolve_attacks_on_province);
+   Debug::ft("MapAndUnits.resolve_attacks_on_province");
 
    auto occupant = units.find(province);
 
@@ -1965,12 +1892,9 @@ void MapAndUnits::resolve_attacks_on_province(ProvinceId province)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_resolve_attacks_on_unsubverted_convoys =
-   "MapAndUnits.resolve_attacks_on_unsubverted_convoys";
-
 bool MapAndUnits::resolve_attacks_on_unsubverted_convoys()
 {
-   Debug::ft(MapAndUnits_resolve_attacks_on_unsubverted_convoys);
+   Debug::ft("MapAndUnits.resolve_attacks_on_unsubverted_convoys");
 
    //  Resolve attacks on each unsubverted convoy's fleets.
    //
@@ -2033,12 +1957,9 @@ bool MapAndUnits::resolve_attacks_on_unsubverted_convoys()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_resolve_balanced_head_to_head_battles =
-   "MapAndUnits.resolve_balanced_head_to_head_battles";
-
 void MapAndUnits::resolve_balanced_head_to_head_battles()
 {
-   Debug::ft(MapAndUnits_resolve_balanced_head_to_head_battles);
+   Debug::ft("MapAndUnits.resolve_balanced_head_to_head_battles");
 
    //  Consider each pair of units that are clashing head on (i.e. A-B
    //  and B-A).  The clash is balanced, so neither one will advance.
@@ -2092,12 +2013,9 @@ void MapAndUnits::resolve_balanced_head_to_head_battles()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_resolve_circles_of_subversion =
-   "MapAndUnits.resolve_circles_of_subversion";
-
 void MapAndUnits::resolve_circles_of_subversion()
 {
-   Debug::ft(MapAndUnits_resolve_circles_of_subversion);
+   Debug::ft("MapAndUnits.resolve_circles_of_subversion");
 
    auto s = subversions.begin();
 
@@ -2186,12 +2104,9 @@ void MapAndUnits::resolve_circles_of_subversion()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_resolve_unbalanced_head_to_head_battles =
-   "MapAndUnits.resolve_unbalanced_head_to_head_battles";
-
 void MapAndUnits::resolve_unbalanced_head_to_head_battles()
 {
-   Debug::ft(MapAndUnits_resolve_unbalanced_head_to_head_battles);
+   Debug::ft("MapAndUnits.resolve_unbalanced_head_to_head_battles");
 
    //  Consider each pair of units that are clashing head on (i.e. A-B and B-A).
    //  The clash is unbalanced, so the stronger will dislodge the weaker unless
@@ -2259,11 +2174,9 @@ void MapAndUnits::resolve_unbalanced_head_to_head_battles()
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_update_sc_ownership = "MapAndUnits.update_sc_ownership";
-
 bool MapAndUnits::update_sc_ownership()
 {
-   Debug::ft(MapAndUnits_update_sc_ownership);
+   Debug::ft("MapAndUnits.update_sc_ownership");
 
    size_t unit_count[POWER_MAX];
    size_t sc_count[POWER_MAX];

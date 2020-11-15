@@ -111,14 +111,12 @@ public:
 
 //==============================================================================
 
-fn_name ObjectPoolSizeCfg_ctor = "ObjectPoolSizeCfg.ctor";
-
 ObjectPoolSizeCfg::ObjectPoolSizeCfg(ObjectPool* pool) :
    CfgIntParm(pool->key_.c_str(), "1", 0,
       ObjectPool::MaxSegments, "number of segments of 1K objects"),
    pool_(pool)
 {
-   Debug::ft(ObjectPoolSizeCfg_ctor);
+   Debug::ft("ObjectPoolSizeCfg.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -134,11 +132,9 @@ ObjectPoolSizeCfg::~ObjectPoolSizeCfg()
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolSizeCfg_SetCurr = "ObjectPoolSizeCfg.SetCurr";
-
 void ObjectPoolSizeCfg::SetCurr()
 {
-   Debug::ft(ObjectPoolSizeCfg_SetCurr);
+   Debug::ft("ObjectPoolSizeCfg.SetCurr");
 
    FunctionGuard guard(Guard_MemUnprotect);
    CfgIntParm::SetCurr();
@@ -155,11 +151,9 @@ void ObjectPoolSizeCfg::SetCurr()
 
 //==============================================================================
 
-fn_name ObjectPoolStats_ctor = "ObjectPoolStats.ctor";
-
 ObjectPoolStats::ObjectPoolStats()
 {
-   Debug::ft(ObjectPoolStats_ctor);
+   Debug::ft("ObjectPoolStats.ctor");
 
    lowCount_.reset(new LowWatermark("fewest remaining blocks"));
    allocCount_.reset(new Counter("successful allocations"));
@@ -172,11 +166,9 @@ ObjectPoolStats::ObjectPoolStats()
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPoolStats_dtor = "ObjectPoolStats.dtor";
-
 ObjectPoolStats::~ObjectPoolStats()
 {
-   Debug::ftnt(ObjectPoolStats_dtor);
+   Debug::ftnt("ObjectPoolStats.dtor");
 }
 
 //==============================================================================
@@ -224,8 +216,6 @@ const ObjectPoolId ObjectPool::MaxId = 250;
 const uint8_t ObjectPool::OrphanThreshold = 2;
 const size_t ObjectPool::OrphanMaxLogs = 8;
 
-fn_name ObjectPool_ctor = "ObjectPool.ctor";
-
 ObjectPool::ObjectPool
    (ObjectPoolId pid, MemoryType mem, size_t size, const string& name) :
    name_(name.c_str()),
@@ -238,7 +228,7 @@ ObjectPool::ObjectPool
    targSegmentsCfg_(nullptr),
    alarm_(nullptr)
 {
-   Debug::ft(ObjectPool_ctor);
+   Debug::ft("ObjectPool.ctor");
 
    //  The block size must account for the header above each Pooled object.
    //
@@ -278,11 +268,9 @@ ObjectPool::~ObjectPool()
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_AllocBlocks = "ObjectPool.AllocBlocks";
-
 bool ObjectPool::AllocBlocks()
 {
-   Debug::ft(ObjectPool_AllocBlocks);
+   Debug::ft("ObjectPool.AllocBlocks");
 
    while(currSegments_ < targSegmentsCfg_->GetValue())
    {
@@ -335,11 +323,9 @@ size_t ObjectPool::AllocCount() const
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_AuditFreeq = "ObjectPool.AuditFreeq";
-
 void ObjectPool::AuditFreeq()
 {
-   Debug::ft(ObjectPool_AuditFreeq);
+   Debug::ft("ObjectPool.AuditFreeq");
 
    size_t count = 0;
 
@@ -518,11 +504,9 @@ bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_BidToObj = "ObjectPool.BidToObj";
-
 Pooled* ObjectPool::BidToObj(PooledObjectId bid) const
 {
-   Debug::ft(ObjectPool_BidToObj);
+   Debug::ft("ObjectPool.BidToObj");
 
    if(bid == NIL_ID) return nullptr;
 
@@ -544,11 +528,9 @@ ptrdiff_t ObjectPool::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_Corrupt = "ObjectPool.Corrupt";
-
 bool ObjectPool::Corrupt(size_t n)
 {
-   Debug::ft(ObjectPool_Corrupt);
+   Debug::ft("ObjectPool.Corrupt");
 
    if(!Element::RunningInLab()) return false;
 
@@ -656,11 +638,9 @@ void ObjectPool::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_DisplayStats = "ObjectPool.DisplayStats";
-
 void ObjectPool::DisplayStats(ostream& stream, const Flags& options) const
 {
-   Debug::ft(ObjectPool_DisplayStats);
+   Debug::ft("ObjectPool.DisplayStats");
 
    stream << spaces(2) << name_ << SPACE << strIndex(Pid(), 0, false) << CRLF;
 
@@ -782,11 +762,9 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_EnsureAlarm = "ObjectPool.EnsureAlarm";
-
 void ObjectPool::EnsureAlarm()
 {
-   Debug::ft(ObjectPool_EnsureAlarm);
+   Debug::ft("ObjectPool.EnsureAlarm");
 
    //  If the high usage alarm is not registered, create it.
    //
@@ -818,11 +796,9 @@ size_t ObjectPool::FailCount() const
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_First = "ObjectPool.First";
-
 ObjectBlock* ObjectPool::First(PooledObjectId& bid) const
 {
-   Debug::ft(ObjectPool_First);
+   Debug::ft("ObjectPool.First");
 
    if(currSegments_ > 0)
    {
@@ -836,11 +812,9 @@ ObjectBlock* ObjectPool::First(PooledObjectId& bid) const
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_FirstUsed = "ObjectPool.FirstUsed";
-
 Pooled* ObjectPool::FirstUsed(PooledObjectId& bid) const
 {
-   Debug::ft(ObjectPool_FirstUsed);
+   Debug::ft("ObjectPool.FirstUsed");
 
    auto b = First(bid);
 
@@ -940,11 +914,9 @@ Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_ObjBid = "ObjectPool.ObjBid";
-
 PooledObjectId ObjectPool::ObjBid(const Pooled* obj, bool inUseOnly) const
 {
-   Debug::ft(ObjectPool_ObjBid);
+   Debug::ft("ObjectPool.ObjBid");
 
    if(obj == nullptr) return NIL_ID;
    if(inUseOnly && !obj->assigned_) return NIL_ID;
@@ -1014,11 +986,9 @@ void ObjectPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_RecoverBlocks = "ObjectPool.RecoverBlocks";
-
 void ObjectPool::RecoverBlocks()
 {
-   Debug::ft(ObjectPool_RecoverBlocks);
+   Debug::ft("ObjectPool.RecoverBlocks");
 
    auto pid = Pid();
    auto buff = Singleton< TraceBuffer >::Instance();
@@ -1101,11 +1071,9 @@ void ObjectPool::RecoverBlocks()
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_Shutdown = "ObjectPool.Shutdown";
-
 void ObjectPool::Shutdown(RestartLevel level)
 {
-   Debug::ft(ObjectPool_Shutdown);
+   Debug::ft("ObjectPool.Shutdown");
 
    if(Restart::ClearsMemory(MemType())) return;
 
@@ -1126,11 +1094,9 @@ void ObjectPool::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_Startup = "ObjectPool.Startup";
-
 void ObjectPool::Startup(RestartLevel level)
 {
-   Debug::ft(ObjectPool_Startup);
+   Debug::ft("ObjectPool.Startup");
 
    FunctionGuard guard(Guard_MemUnprotect);
 
@@ -1144,11 +1110,9 @@ void ObjectPool::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name ObjectPool_UpdateAlarm = "ObjectPool.UpdateAlarm";
-
 void ObjectPool::UpdateAlarm()
 {
-   Debug::ft(ObjectPool_UpdateAlarm);
+   Debug::ft("ObjectPool.UpdateAlarm");
 
    if(alarm_ == nullptr) return;
    dyn_->delta_ = 0;

@@ -82,31 +82,25 @@ fixed_string CliBuffer::ErrorPointer = "_|";
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_ctor = "CliBuffer.ctor";
-
 CliBuffer::CliBuffer() : pos_(0)
 {
-   Debug::ft(CliBuffer_ctor);
+   Debug::ft("CliBuffer.ctor");
 
    sources_.push_front(CliSource());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_dtor = "CliBuffer.dtor";
-
 CliBuffer::~CliBuffer()
 {
-   Debug::ftnt(CliBuffer_dtor);
+   Debug::ftnt("CliBuffer.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_CalcType = "CliBuffer.CalcType";
-
 CliBuffer::CharType CliBuffer::CalcType(bool quoted)
 {
-   Debug::ft(CliBuffer_CalcType);
+   Debug::ft("CliBuffer.CalcType");
 
    if(pos_ < buff_.size())
    {
@@ -161,13 +155,9 @@ void CliBuffer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-
-fn_name CliBuffer_Echo = "CliBuffer.Echo";
-
 void CliBuffer::Echo()
 {
-   Debug::ft(CliBuffer_Echo);
+   Debug::ft("CliBuffer.Echo");
 
    //  Skip white space.
    //
@@ -199,12 +189,10 @@ void CliBuffer::Echo()
    }
 }
 
-fn_name CliBuffer_ErrorAtPos = "CliBuffer.ErrorAtPos";
-
 void CliBuffer::ErrorAtPos
    (const CliThread& cli, const string& expl, std::streamsize p)
 {
-   Debug::ft(CliBuffer_ErrorAtPos);
+   Debug::ft("CliBuffer.ErrorAtPos");
 
    //  Generate spaces to bypass the prompt.  ErrorPointer points one
    //  column to the right of where it starts, so subtract a space.
@@ -251,11 +239,9 @@ void CliBuffer::ErrorAtPos
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_FindNextNonBlank = "CliBuffer.FindNextNonBlank";
-
 bool CliBuffer::FindNextNonBlank()
 {
-   Debug::ft(CliBuffer_FindNextNonBlank);
+   Debug::ft("CliBuffer.FindNextNonBlank");
 
    //  Return true if there is a non-blank character before the end
    //  of the line.
@@ -279,22 +265,18 @@ bool CliBuffer::FindNextNonBlank()
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_GetInput = "CliBuffer.GetInput";
-
 string CliBuffer::GetInput() const
 {
-   Debug::ft(CliBuffer_GetInput);
+   Debug::ft("CliBuffer.GetInput");
 
    return buff_;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_GetInt = "CliBuffer.GetInt";
-
 CliParm::Rc CliBuffer::GetInt(const string& s, word& n, bool hex)
 {
-   Debug::ft(CliBuffer_GetInt);
+   Debug::ft("CliBuffer.GetInt");
 
    if(s.empty()) return CliParm::None;
 
@@ -382,11 +364,9 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_GetNextInput = "CliBuffer.GetNextInput";
-
 bool CliBuffer::GetNextInput()
 {
-   Debug::ft(CliBuffer_GetNextInput);
+   Debug::ft("CliBuffer.GetNextInput");
 
    auto& source = sources_.front();
 
@@ -520,11 +500,9 @@ CliParm::Rc CliBuffer::GetStr(string& t, string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_GetSymbol = "CliBuffer.GetSymbol";
-
 CliParm::Rc CliBuffer::GetSymbol(string& s)
 {
-   Debug::ft(CliBuffer_GetSymbol);
+   Debug::ft("CliBuffer.GetSymbol");
 
    s.clear();
 
@@ -550,11 +528,9 @@ CliParm::Rc CliBuffer::GetSymbol(string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_OpenInputFile = "CliBuffer.OpenInputFile";
-
 word CliBuffer::OpenInputFile(const string& name, string& expl)
 {
-   Debug::ft(CliBuffer_OpenInputFile);
+   Debug::ft("CliBuffer.OpenInputFile");
 
    if(sources_.size() >= MaxInputDepth)
    {
@@ -586,11 +562,9 @@ void CliBuffer::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_PutLine = "CliBuffer.PutLine";
-
 std::streamsize CliBuffer::PutLine(const CliThread& cli, const string& input)
 {
-   Debug::ft(CliBuffer_PutLine);
+   Debug::ft("CliBuffer.PutLine");
 
    //  Put INPUT in the buffer, echo it to the console, and scan it.
    //
@@ -602,11 +576,9 @@ std::streamsize CliBuffer::PutLine(const CliThread& cli, const string& input)
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_Read = "CliBuffer.Read";
-
 void CliBuffer::Read(string& s)
 {
-   Debug::ft(CliBuffer_Read);
+   Debug::ft("CliBuffer.Read");
 
    s.clear();
 
@@ -629,11 +601,9 @@ bool CliBuffer::ReadingFromFile() const
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_Reset = "CliBuffer.Reset";
-
 void CliBuffer::Reset()
 {
-   Debug::ft(CliBuffer_Reset);
+   Debug::ft("CliBuffer.Reset");
 
    sources_.clear();
    sources_.push_front(CliSource());
@@ -641,11 +611,9 @@ void CliBuffer::Reset()
 
 //------------------------------------------------------------------------------
 
-fn_name CliBuffer_ScanLine = "CliBuffer.ScanLine";
-
 std::streamsize CliBuffer::ScanLine(const CliThread& cli)
 {
-   Debug::ft(CliBuffer_ScanLine);
+   Debug::ft("CliBuffer.ScanLine");
 
    //  If the input ends with a CRLF, remove it.
    //

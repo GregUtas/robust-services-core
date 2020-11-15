@@ -168,6 +168,7 @@ private:
    word InsertPatch(CliThread& cli, const CodeWarning& log, string& expl);
    word InsertUsing(const CodeWarning& log, string& expl);
    word RenameIncludeGuard(const CodeWarning& log, string& expl);
+   word ReplaceDebugFtName(const CodeWarning& log, string& expl);
    word ReplaceNull(const CodeWarning& log, string& expl);
    word ReplaceSlashAsterisk(const CodeWarning& log, string& expl);
    word ReplaceUsing(const CodeWarning& log, string& expl);

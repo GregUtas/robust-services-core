@@ -63,14 +63,12 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
 
 //------------------------------------------------------------------------------
 
-fn_name SysHeap_ctor2 = "SysHeap.ctor(wrap)";
-
 SysHeap::SysHeap() : Heap(),
    heap_(GetProcessHeap()),
    size_(0),
    type_(MemPermanent)
 {
-   Debug::ftnt(SysHeap_ctor2);
+   Debug::ftnt("SysHeap.ctor(wrap)");
 }
 
 //------------------------------------------------------------------------------
@@ -110,11 +108,9 @@ void* SysHeap::Addr() const
 
 //------------------------------------------------------------------------------
 
-fn_name SysHeap_Alloc= "SysHeap.Alloc";
-
 void* SysHeap::Alloc(size_t size)
 {
-   Debug::ft(SysHeap_Alloc);
+   Debug::ft("SysHeap.Alloc");
 
    if(heap_ == nullptr) return nullptr;
 
@@ -125,11 +121,9 @@ void* SysHeap::Alloc(size_t size)
 
 //------------------------------------------------------------------------------
 
-fn_name SysHeap_BlockToSize = "SysHeap.BlockToSize";
-
 size_t SysHeap::BlockToSize(const void* addr) const
 {
-   Debug::ft(SysHeap_BlockToSize);
+   Debug::ft("SysHeap.BlockToSize");
 
    if(heap_ == nullptr) return 0;
    auto size = HeapSize(heap_, 0, addr);
@@ -285,11 +279,9 @@ int SysHeap::SetPermissions(MemoryProtection attrs)
 
 //------------------------------------------------------------------------------
 
-fn_name SysHeap_Validate = "SysHeap.Validate";
-
 bool SysHeap::Validate(const void* addr) const
 {
-   Debug::ft(SysHeap_Validate);
+   Debug::ft("SysHeap.Validate");
 
    if(heap_ == nullptr) return true;
    return HeapValidate(heap_, 0, addr);

@@ -115,12 +115,10 @@ ptrdiff_t Alarm::CellDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name Alarm_Create = "Alarm.Create";
-
 ostringstreamPtr Alarm::Create
    (fixed_string groupName, LogId id, AlarmStatus status)
 {
-   Debug::ft(Alarm_Create);
+   Debug::ft("Alarm.Create");
 
    auto now = TimePoint::Now();
    ostringstreamPtr log(nullptr);
@@ -174,11 +172,9 @@ void Alarm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Alarm_SetStatus = "Alarm.SetStatus";
-
 void Alarm::SetStatus(AlarmStatus status)
 {
-   Debug::ft(Alarm_SetStatus);
+   Debug::ft("Alarm.SetStatus");
 
    dyn_->status_ = status;
    dyn_->nextStatus_ = NoAlarm;
@@ -187,11 +183,9 @@ void Alarm::SetStatus(AlarmStatus status)
 
 //------------------------------------------------------------------------------
 
-fn_name Alarm_Shutdown = "Alarm.Shutdown";
-
 void Alarm::Shutdown(RestartLevel level)
 {
-   Debug::ft(Alarm_Shutdown);
+   Debug::ft("Alarm.Shutdown");
 
    //  Clear an alarm during all restarts by using placement new to
    //  reset dyn_.

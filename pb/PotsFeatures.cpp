@@ -38,33 +38,27 @@ using std::string;
 
 namespace PotsBase
 {
-fn_name DnRouteFeatureProfile_ctor = "DnRouteFeatureProfile.ctor";
-
 DnRouteFeatureProfile::DnRouteFeatureProfile
    (PotsFeature::Id fid, Address::DN dn) :
    PotsFeatureProfile(fid),
    dn_(dn),
    on_(PotsProfile::IsValidDN(dn))
 {
-   Debug::ft(DnRouteFeatureProfile_ctor);
+   Debug::ft("DnRouteFeatureProfile.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name DnRouteFeatureProfile_dtor = "DnRouteFeatureProfile.dtor";
 
 DnRouteFeatureProfile::~DnRouteFeatureProfile()
 {
-   Debug::ftnt(DnRouteFeatureProfile_dtor);
+   Debug::ftnt("DnRouteFeatureProfile.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DnRouteFeatureProfile_Activate = "DnRouteFeatureProfile.Activate";
-
 bool DnRouteFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 {
-   Debug::ft(DnRouteFeatureProfile_Activate);
+   Debug::ft("DnRouteFeatureProfile.Activate");
 
    FunctionGuard guard(Guard_MemUnprotect);
 
@@ -86,11 +80,9 @@ bool DnRouteFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 
 //------------------------------------------------------------------------------
 
-fn_name DnRouteFeatureProfile_Deactivate = "DnRouteFeatureProfile.Deactivate";
-
 bool DnRouteFeatureProfile::Deactivate(PotsProfile& profile)
 {
-   Debug::ft(DnRouteFeatureProfile_Deactivate);
+   Debug::ft("DnRouteFeatureProfile.Deactivate");
 
    FunctionGuard guard(Guard_MemUnprotect);
    on_ = false;

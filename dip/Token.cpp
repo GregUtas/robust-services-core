@@ -75,23 +75,19 @@ Token& Token::operator=(const Token& that)
 
 //------------------------------------------------------------------------------
 
-fn_name Token_opAdd1 = "Token.operator+(token)";
-
 TokenMessage Token::operator+(const Token& that) const
 {
-   Debug::ft(Token_opAdd1);
+   Debug::ft("Token.operator+(token)");
 
    TokenMessage message(*this);
    return message + that;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Token_opAdd2 = "Token.operator+(message)";
 
 TokenMessage Token::operator+(const TokenMessage& that) const
 {
-   Debug::ft(Token_opAdd2);
+   Debug::ft("Token.operator+(message)");
 
    TokenMessage message(*this);
    return message + that;
@@ -99,11 +95,9 @@ TokenMessage Token::operator+(const TokenMessage& that) const
 
 //------------------------------------------------------------------------------
 
-fn_name Token_opAnd1 = "Token.operator&(token)";
-
 TokenMessage Token::operator&(const Token& that) const
 {
-   Debug::ft(Token_opAnd1);
+   Debug::ft("Token.operator&(token)");
 
    TokenMessage message(*this);
    return message & that;
@@ -111,11 +105,9 @@ TokenMessage Token::operator&(const Token& that) const
 
 //------------------------------------------------------------------------------
 
-fn_name Token_opAnd2 = "Token.operator&(message)";
-
 TokenMessage Token::operator&(const TokenMessage& that) const
 {
-   Debug::ft(Token_opAnd2);
+   Debug::ft("Token.operator&(message)");
 
    TokenMessage message(*this);
    return message & that;

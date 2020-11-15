@@ -415,6 +415,8 @@ public:
    bool IsUnused() const
       override { return ((reads_ == 0) && (writes_ == 0)); }
 
+   size_t Readers() const { return reads_; }
+
    //  Overridden to indicate whether the data is volatile.
    //
    bool IsVolatile() const override { return spec_->IsVolatile(); }

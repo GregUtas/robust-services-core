@@ -64,14 +64,12 @@ const char CliThread::CliPrompt = '>';
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_ctor = "CliThread.ctor";
-
 CliThread::CliThread() :
    Thread(OperationsFaction, Singleton< CliDaemon >::Instance()),
    command_(nullptr),
    result_(0)
 {
-   Debug::ft(CliThread_ctor);
+   Debug::ft("CliThread.ctor");
 
    AllocResources();
    SetInitialized();
@@ -79,11 +77,9 @@ CliThread::CliThread() :
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_dtor = "CliThread.dtor";
-
 CliThread::~CliThread()
 {
-   Debug::ftnt(CliThread_dtor);
+   Debug::ftnt("CliThread.dtor");
 
    auto thread = Singleton< CinThread >::Extant();
    if(thread != nullptr) thread->ClearClient(this);
@@ -98,11 +94,9 @@ c_string CliThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_AllocResources = "CliThread.AllocResources";
-
 void CliThread::AllocResources()
 {
-   Debug::ft(CliThread_AllocResources);
+   Debug::ft("CliThread.AllocResources");
 
    ibuf.reset(new CliBuffer);
    obuf.reset(new std::ostringstream);
@@ -117,23 +111,19 @@ void CliThread::AllocResources()
 fixed_string YesNoChars = "yn";
 fixed_string YesNoHelp = "Enter y(yes) or n(no): ";
 
-fn_name CliThread_BoolPrompt = "CliThread.BoolPrompt";
-
 bool CliThread::BoolPrompt(const string& prompt)
 {
-   Debug::ft(CliThread_BoolPrompt);
+   Debug::ft("CliThread.BoolPrompt");
 
    return (CharPrompt(prompt, YesNoChars, YesNoHelp) == 'y');
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_CharPrompt = "CliThread.CharPrompt";
-
 char CliThread::CharPrompt
    (const string& prompt, const string& chars, const string& help, bool upper)
 {
-   Debug::ft(CliThread_CharPrompt);
+   Debug::ft("CliThread.CharPrompt");
 
    //  If input is being taken from a file rather than the console,
    //  return the first character.
@@ -175,11 +165,9 @@ char CliThread::CharPrompt
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Destroy = "CliThread.Destroy";
-
 void CliThread::Destroy()
 {
-   Debug::ft(CliThread_Destroy);
+   Debug::ft("CliThread.Destroy");
 
    Singleton< CliThread >::Destroy();
 }
@@ -222,11 +210,9 @@ void CliThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_DisplayHelp = "CliThread.DisplayHelp";
-
 word CliThread::DisplayHelp(const string& path, const string& key) const
 {
-   Debug::ft(CliThread_DisplayHelp);
+   Debug::ft("CliThread.DisplayHelp");
 
    //  Open the help file addressed by PATH.
    //
@@ -283,11 +269,9 @@ word CliThread::DisplayHelp(const string& path, const string& key) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_EndOfInput = "CliThread.EndOfInput";
-
 bool CliThread::EndOfInput() const
 {
-   Debug::ft(CliThread_EndOfInput);
+   Debug::ft("CliThread.EndOfInput");
 
    if(!ibuf->FindNextNonBlank()) return true;
 
@@ -297,11 +281,9 @@ bool CliThread::EndOfInput() const
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Enter = "CliThread.Enter";
-
 void CliThread::Enter()
 {
-   Debug::ft(CliThread_Enter);
+   Debug::ft("CliThread.Enter");
 
    //  Put the root increment on the stack and start reading commands.
    //
@@ -311,11 +293,9 @@ void CliThread::Enter()
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Execute = "CliThread.Execute";
-
 word CliThread::Execute(const string& input)
 {
-   Debug::ft(CliThread_Execute);
+   Debug::ft("CliThread.Execute");
 
    word result = -1;
 
@@ -334,11 +314,9 @@ word CliThread::Execute(const string& input)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_FileStream = "CliThread.FileStream";
-
 ostream* CliThread::FileStream()
 {
-   Debug::ft(CliThread_FileStream);
+   Debug::ft("CliThread.FileStream");
 
    stream_ = FileThread::CreateStream();
    return stream_.get();
@@ -346,11 +324,9 @@ ostream* CliThread::FileStream()
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Flush = "CliThread.Flush";
-
 void CliThread::Flush()
 {
-   Debug::ft(CliThread_Flush);
+   Debug::ft("CliThread.Flush");
 
    //  Send output to either the console or a separate file.
    //
@@ -372,12 +348,9 @@ void CliThread::Flush()
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_GenerateReportPreemptably =
-   "CliThread.GenerateReportPreemptably";
-
 bool CliThread::GenerateReportPreemptably()
 {
-   Debug::ft(CliThread_GenerateReportPreemptably);
+   Debug::ft("CliThread.GenerateReportPreemptably");
 
    //  Generate the report preemptably unless tracing is on in the lab
    //  and the user specifically wants to trace report generation.
@@ -400,11 +373,9 @@ bool CliThread::GenerateReportPreemptably()
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_GetAppData = "CliThread.GetAppData";
-
 CliAppData* CliThread::GetAppData(CliAppData::Id aid) const
 {
-   Debug::ft(CliThread_GetAppData);
+   Debug::ft("CliThread.GetAppData");
 
    auto a = appsData_.find(aid);
    if(a != appsData_.cend()) return a->second.get();
@@ -413,11 +384,9 @@ CliAppData* CliThread::GetAppData(CliAppData::Id aid) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_IntPrompt = "CliThread.IntPrompt";
-
 word CliThread::IntPrompt(const string& prompt, word min, word max)
 {
-   Debug::ft(CliThread_IntPrompt);
+   Debug::ft("CliThread.IntPrompt");
 
    word result = -1;
 
@@ -458,11 +427,9 @@ word CliThread::IntPrompt(const string& prompt, word min, word max)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_InvokeCommand = "CliThread.InvokeCommand";
-
 word CliThread::InvokeCommand(const CliCommand& comm)
 {
-   Debug::ft(CliThread_InvokeCommand);
+   Debug::ft("CliThread.InvokeCommand");
 
    //  Initialize the cookie so that it will look for the command's
    //  first parameter.
@@ -480,11 +447,9 @@ word CliThread::InvokeCommand(const CliCommand& comm)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_InvokeSubcommand = "CliThread.InvokeSubcommand";
-
 word CliThread::InvokeSubcommand(const CliCommand& comm)
 {
-   Debug::ft(CliThread_InvokeSubcommand);
+   Debug::ft("CliThread.InvokeSubcommand");
 
    auto prev = command_;
    command_ = &comm;
@@ -495,11 +460,9 @@ word CliThread::InvokeSubcommand(const CliCommand& comm)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Notify = "CliThread.Notify";
-
 void CliThread::Notify(CliAppData::Event event) const
 {
-   Debug::ft(CliThread_Notify);
+   Debug::ft("CliThread.Notify");
 
    for(auto a = appsData_.cbegin(); a != appsData_.cend(); ++a)
    {
@@ -509,11 +472,9 @@ void CliThread::Notify(CliAppData::Event event) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_ParseCommand = "CliThread.ParseCommand";
-
 const CliCommand* CliThread::ParseCommand() const
 {
-   Debug::ft(CliThread_ParseCommand);
+   Debug::ft("CliThread.ParseCommand");
 
    string token1;
    string token2;
@@ -598,11 +559,9 @@ void CliThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_PopOutputFile = "CliThread.PopOutputFile";
-
 bool CliThread::PopOutputFile(bool all)
 {
-   Debug::ft(CliThread_PopOutputFile);
+   Debug::ft("CliThread.PopOutputFile");
 
    if(outFiles_.empty()) return false;
 
@@ -619,11 +578,9 @@ bool CliThread::PopOutputFile(bool all)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_PushOutputFile = "CliThread.PushOutputFile";
-
 bool CliThread::PushOutputFile(const string& file)
 {
-   Debug::ft(CliThread_PushOutputFile);
+   Debug::ft("CliThread.PushOutputFile");
 
    if(outFiles_.size() >= MaxOutputDepth) return false;
 
@@ -720,11 +677,9 @@ void CliThread::ReadCommands()
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Recover = "CliThread.Recover";
-
 bool CliThread::Recover()
 {
-   Debug::ft(CliThread_Recover);
+   Debug::ft("CliThread.Recover");
 
    auto sig = GetSignal();
    auto reg = Singleton< PosixSignalRegistry >::Instance();
@@ -745,11 +700,9 @@ bool CliThread::Recover()
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Report = "CliThread.Report";
-
 word CliThread::Report(word rc, const string& expl, col_t indent) const
 {
-   Debug::ft(CliThread_Report);
+   Debug::ft("CliThread.Report");
 
    //  If EXPL contains explicit endlines, output each substring
    //  that ends with an endline individually.
@@ -780,12 +733,10 @@ word CliThread::Report(word rc, const string& expl, col_t indent) const
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Report1 = "CliThread.Report1";
-
 void CliThread::Report1
    (const string& expl, size_t begin, size_t end, col_t indent) const
 {
-   Debug::ft(CliThread_Report1);
+   Debug::ft("CliThread.Report1");
 
    size_t maxlen = 79 - indent;  // maximum line length
 
@@ -827,11 +778,9 @@ void CliThread::Report1
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_SendAckToOutputFile = "CliThread.SendAckToOutputFile";
-
 void CliThread::SendAckToOutputFile()
 {
-   Debug::ft(CliThread_SendAckToOutputFile);
+   Debug::ft("CliThread.SendAckToOutputFile");
 
    std::ostringstream ack;
 
@@ -845,11 +794,9 @@ void CliThread::SendAckToOutputFile()
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_SendToFile = "CliThread.SendToFile";
-
 void CliThread::SendToFile(const string& name, bool purge)
 {
-   Debug::ft(CliThread_SendToFile);
+   Debug::ft("CliThread.SendToFile");
 
    if(stream_->tellp() > 0)
    {
@@ -859,11 +806,9 @@ void CliThread::SendToFile(const string& name, bool purge)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_SetAppData = "CliThread.SetAppData";
-
 void CliThread::SetAppData(CliAppData* data, CliAppData::Id aid)
 {
-   Debug::ft(CliThread_SetAppData);
+   Debug::ft("CliThread.SetAppData");
 
    if(data == nullptr)
       appsData_.erase(aid);
@@ -873,11 +818,9 @@ void CliThread::SetAppData(CliAppData* data, CliAppData::Id aid)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_SetResult = "CliThread.SetResult";
-
 void CliThread::SetResult(word result)
 {
-   Debug::ft(CliThread_SetResult);
+   Debug::ft("CliThread.SetResult");
 
    result_ = result;
    auto reg = Singleton< SymbolRegistry >::Instance();
@@ -887,11 +830,9 @@ void CliThread::SetResult(word result)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Shutdown = "CliThread.Shutdown";
-
 void CliThread::Shutdown(RestartLevel level)
 {
-   Debug::ft(CliThread_Shutdown);
+   Debug::ft("CliThread.Shutdown");
 
    //  Nullify the resources whose heap will be deleted during a restart.
    //
@@ -908,11 +849,9 @@ void CliThread::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_Startup = "CliThread.Startup";
-
 void CliThread::Startup(RestartLevel level)
 {
-   Debug::ft(CliThread_Startup);
+   Debug::ft("CliThread.Startup");
 
    Thread::Startup(level);
    AllocResources();
@@ -920,11 +859,9 @@ void CliThread::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name CliThread_StrPrompt = "CliThread.StrPrompt";
-
 string CliThread::StrPrompt(const string& prompt)
 {
-   Debug::ft(CliThread_StrPrompt);
+   Debug::ft("CliThread.StrPrompt");
 
    //  If input is being taken from a file rather than the console,
    //  return an empty string.

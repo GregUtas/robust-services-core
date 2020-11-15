@@ -100,11 +100,9 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL3Addr_AddrToName = "SysIpL3Addr.AddrToName";
-
 bool SysIpL3Addr::AddrToName(string& name, string& service) const
 {
-   Debug::ft(SysIpL3Addr_AddrToName);
+   Debug::ft("SysIpL3Addr.AddrToName");
 
    sockaddr_in addr;
    char buff1[64];

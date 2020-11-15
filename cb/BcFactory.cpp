@@ -26,21 +26,17 @@
 
 namespace CallBase
 {
-fn_name BcFactory_ctor = "BcFactory.ctor";
-
 BcFactory::BcFactory(Id fid, ProtocolId prid, c_string name) :
    SsmFactory(fid, prid, name)
 {
-   Debug::ft(BcFactory_ctor);
+   Debug::ft("BcFactory.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BcFactory_dtor = "BcFactory.dtor";
-
 BcFactory::~BcFactory()
 {
-   Debug::ftnt(BcFactory_dtor);
+   Debug::ftnt("BcFactory.dtor");
 }
 
 //------------------------------------------------------------------------------

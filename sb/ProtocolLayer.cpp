@@ -36,14 +36,12 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name ProtocolLayer_ctor1 = "ProtocolLayer.ctor(first)";
-
 ProtocolLayer::ProtocolLayer(Context* ctx) :
    ctx_(ctx),
    upper_(nullptr),
    lower_(nullptr)
 {
-   Debug::ft(ProtocolLayer_ctor1);
+   Debug::ft("ProtocolLayer.ctor(first)");
 
    if(ctx_ == nullptr) ctx_ = Context::RunningContext();
    Debug::Assert(ctx_ != nullptr);
@@ -51,14 +49,12 @@ ProtocolLayer::ProtocolLayer(Context* ctx) :
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_ctor2 = "ProtocolLayer.ctor(subseq)";
-
 ProtocolLayer::ProtocolLayer(ProtocolLayer& adj, bool upper) :
    ctx_(nullptr),
    upper_(nullptr),
    lower_(nullptr)
 {
-   Debug::ft(ProtocolLayer_ctor2);
+   Debug::ft("ProtocolLayer.ctor(subseq)");
    Debug::Assert(&adj != nullptr);
 
    ctx_ = adj.GetContext();
@@ -96,11 +92,9 @@ ProtocolLayer::~ProtocolLayer()
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_AdjacentDeleted = "ProtocolLayer.AdjacentDeleted";
-
 void ProtocolLayer::AdjacentDeleted(bool upper)
 {
-   Debug::ft(ProtocolLayer_AdjacentDeleted);
+   Debug::ft("ProtocolLayer.AdjacentDeleted");
 
    if(upper)
       upper_ = nullptr;
@@ -110,33 +104,27 @@ void ProtocolLayer::AdjacentDeleted(bool upper)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_AllocLower = "ProtocolLayer.AllocLower";
-
 ProtocolLayer* ProtocolLayer::AllocLower(const Message* msg)
 {
-   Debug::ft(ProtocolLayer_AllocLower);
+   Debug::ft("ProtocolLayer.AllocLower");
 
    return nullptr;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name ProtocolLayer_AllocUpper = "ProtocolLayer.AllocUpper";
 
 ProtocolLayer* ProtocolLayer::AllocUpper(const Message& msg)
 {
-   Debug::ft(ProtocolLayer_AllocUpper);
+   Debug::ft("ProtocolLayer.AllocUpper");
 
    return nullptr;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_CreateAppSocket = "ProtocolLayer.CreateAppSocket";
-
 SysTcpSocket* ProtocolLayer::CreateAppSocket()
 {
-   Debug::ft(ProtocolLayer_CreateAppSocket);
+   Debug::ft("ProtocolLayer.CreateAppSocket");
 
    return nullptr;
 }
@@ -155,11 +143,9 @@ void ProtocolLayer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_DropPeer = "ProtocolLayer.DropPeer";
-
 bool ProtocolLayer::DropPeer(const GlobalAddress& peerPrevRemAddr)
 {
-   Debug::ft(ProtocolLayer_DropPeer);
+   Debug::ft("ProtocolLayer.DropPeer");
 
    Context::Kill(strOver(this), GetFactory());
    return false;
@@ -167,11 +153,9 @@ bool ProtocolLayer::DropPeer(const GlobalAddress& peerPrevRemAddr)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_EnsureLower = "ProtocolLayer.EnsureLower";
-
 void ProtocolLayer::EnsureLower(const Message* msg)
 {
-   Debug::ft(ProtocolLayer_EnsureLower);
+   Debug::ft("ProtocolLayer.EnsureLower");
 
    //  If the layer below doesn't exist, try to create it.
    //
@@ -191,11 +175,9 @@ void ProtocolLayer::EnsureLower(const Message* msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_EnsurePort = "ProtocolLayer.EnsurePort";
-
 MsgPort* ProtocolLayer::EnsurePort()
 {
-   Debug::ft(ProtocolLayer_EnsurePort);
+   Debug::ft("ProtocolLayer.EnsurePort");
 
    //  Create the stack down to the port.
    //
@@ -221,12 +203,10 @@ FactoryId ProtocolLayer::GetFactory() const
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_JoinPeer = "ProtocolLayer.JoinPeer";
-
 ProtocolLayer* ProtocolLayer::JoinPeer
    (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr)
 {
-   Debug::ft(ProtocolLayer_JoinPeer);
+   Debug::ft("ProtocolLayer.JoinPeer");
 
    Context::Kill(strOver(this), GetFactory());
    return nullptr;
@@ -253,11 +233,9 @@ MsgPort* ProtocolLayer::Port() const
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_ReceiveMsg = "ProtocolLayer.ReceiveMsg";
-
 Event* ProtocolLayer::ReceiveMsg(Message& msg)
 {
-   Debug::ft(ProtocolLayer_ReceiveMsg);
+   Debug::ft("ProtocolLayer.ReceiveMsg");
 
    Context::Kill(strOver(this), GetFactory());
    return nullptr;
@@ -265,11 +243,9 @@ Event* ProtocolLayer::ReceiveMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_RootSsm = "ProtocolLayer.RootSsm";
-
 RootServiceSM* ProtocolLayer::RootSsm() const
 {
-   Debug::ft(ProtocolLayer_RootSsm);
+   Debug::ft("ProtocolLayer.RootSsm");
 
    if(ctx_ != nullptr) return ctx_->RootSsm();
    return nullptr;
@@ -289,11 +265,9 @@ Message::Route ProtocolLayer::Route() const
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_SendMsg = "ProtocolLayer.SendMsg";
-
 bool ProtocolLayer::SendMsg(Message& msg)
 {
-   Debug::ft(ProtocolLayer_SendMsg);
+   Debug::ft("ProtocolLayer.SendMsg");
 
    Context::Kill(strOver(this), GetFactory());
    return false;
@@ -301,11 +275,9 @@ bool ProtocolLayer::SendMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_SendToLower = "ProtocolLayer.SendToLower";
-
 bool ProtocolLayer::SendToLower(Message& msg)
 {
-   Debug::ft(ProtocolLayer_SendToLower);
+   Debug::ft("ProtocolLayer.SendToLower");
 
    //  Wrap the current message, pass it to the layer below, and flag it
    //  as handled unless it will be passed transparently.
@@ -318,11 +290,9 @@ bool ProtocolLayer::SendToLower(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_SendToUpper = "ProtocolLayer.SendToUpper";
-
 Event* ProtocolLayer::SendToUpper(Message& msg)
 {
-   Debug::ft(ProtocolLayer_SendToUpper);
+   Debug::ft("ProtocolLayer.SendToUpper");
 
    //  If the layer above doesn't exist, try to create it.
    //
@@ -352,11 +322,9 @@ Event* ProtocolLayer::SendToUpper(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_UnwrapMsg = "ProtocolLayer.UnwrapMsg";
-
 Message* ProtocolLayer::UnwrapMsg(Message& msg)
 {
-   Debug::ft(ProtocolLayer_UnwrapMsg);
+   Debug::ft("ProtocolLayer.UnwrapMsg");
 
    //  A layer that is not at the bottom of a stack must implement
    //  this function.
@@ -379,11 +347,9 @@ ProtocolSM* ProtocolLayer::UppermostPsm() const
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolLayer_WrapMsg = "ProtocolLayer.WrapMsg";
-
 Message* ProtocolLayer::WrapMsg(Message& msg)
 {
-   Debug::ft(ProtocolLayer_WrapMsg);
+   Debug::ft("ProtocolLayer.WrapMsg");
 
    //  A layer that is not at the bottom of a stack must implement
    //  this function.

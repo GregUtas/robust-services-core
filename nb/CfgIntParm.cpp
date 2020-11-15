@@ -33,8 +33,6 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CfgIntParm_ctor = "CfgIntParm.ctor";
-
 CfgIntParm::CfgIntParm(c_string key, c_string def, word min, word max,
    c_string expl) : CfgParm(key, def, expl),
    curr_(0),
@@ -42,16 +40,14 @@ CfgIntParm::CfgIntParm(c_string key, c_string def, word min, word max,
    min_(min),
    max_(max)
 {
-   Debug::ft(CfgIntParm_ctor);
+   Debug::ft("CfgIntParm.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CfgIntParm_dtor = "CfgIntParm.dtor";
-
 CfgIntParm::~CfgIntParm()
 {
-   Debug::ftnt(CfgIntParm_dtor);
+   Debug::ftnt("CfgIntParm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -81,11 +77,9 @@ void CfgIntParm::Explain(string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CfgIntParm_GetCurr = "CfgIntParm.GetCurr";
-
 string CfgIntParm::GetCurr() const
 {
-   Debug::ft(CfgIntParm_GetCurr);
+   Debug::ft("CfgIntParm.GetCurr");
 
    return std::to_string(curr_);
 }
@@ -99,11 +93,9 @@ void CfgIntParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgIntParm_SetCurr = "CfgIntParm.SetCurr";
-
 void CfgIntParm::SetCurr()
 {
-   Debug::ft(CfgIntParm_SetCurr);
+   Debug::ft("CfgIntParm.SetCurr");
 
    FunctionGuard guard(Guard_MemUnprotect);
    curr_ = next_;
@@ -112,11 +104,9 @@ void CfgIntParm::SetCurr()
 
 //------------------------------------------------------------------------------
 
-fn_name CfgIntParm_SetNext = "CfgIntParm.SetNext";
-
 bool CfgIntParm::SetNext(c_string input)
 {
-   Debug::ft(CfgIntParm_SetNext);
+   Debug::ft("CfgIntParm.SetNext");
 
    word n = 0;
    std::istringstream stream(input);
@@ -128,11 +118,9 @@ bool CfgIntParm::SetNext(c_string input)
 
 //------------------------------------------------------------------------------
 
-fn_name CfgIntParm_SetNextValue = "CfgIntParm.SetNextValue";
-
 bool CfgIntParm::SetNextValue(word value)
 {
-   Debug::ft(CfgIntParm_SetNextValue);
+   Debug::ft("CfgIntParm.SetNextValue");
 
    if((value >= min_) && (value <= max_))
    {

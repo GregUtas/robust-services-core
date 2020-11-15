@@ -35,11 +35,9 @@ using std::string;
 
 namespace PotsBase
 {
-fn_name PotsProfileRegistry_ctor = "PotsProfileRegistry.ctor";
-
 PotsProfileRegistry::PotsProfileRegistry()
 {
-   Debug::ft(PotsProfileRegistry_ctor);
+   Debug::ft("PotsProfileRegistry.ctor");
 
    auto max = Address::LastDN - Address::FirstDN + 1;
    profiles_.Init(max, PotsProfile::CellDiff(), MemProtected);
@@ -58,11 +56,9 @@ PotsProfileRegistry::~PotsProfileRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfileRegistry_BindProfile = "PotsProfileRegistry.BindProfile";
-
 bool PotsProfileRegistry::BindProfile(PotsProfile& profile)
 {
-   Debug::ft(PotsProfileRegistry_BindProfile);
+   Debug::ft("PotsProfileRegistry.BindProfile");
 
    return profiles_.Insert(profile);
 }
@@ -80,11 +76,9 @@ void PotsProfileRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfileRegistry_FirstProfile = "PotsProfileRegistry.FirstProfile";
-
 PotsProfile* PotsProfileRegistry::FirstProfile(Address::DN dn) const
 {
-   Debug::ft(PotsProfileRegistry_FirstProfile);
+   Debug::ft("PotsProfileRegistry.FirstProfile");
 
    if(!PotsProfile::IsValidDN(dn)) return nullptr;
 
@@ -95,11 +89,9 @@ PotsProfile* PotsProfileRegistry::FirstProfile(Address::DN dn) const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfileRegistry_NextProfile = "PotsProfileRegistry.NextProfile";
-
 PotsProfile* PotsProfileRegistry::NextProfile(const PotsProfile& profile) const
 {
-   Debug::ft(PotsProfileRegistry_NextProfile);
+   Debug::ft("PotsProfileRegistry.NextProfile");
 
    auto dn = profile.GetDN();
 
@@ -120,11 +112,9 @@ PotsProfile* PotsProfileRegistry::Profile(Address::DN dn) const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfileRegistry_Shutdown = "PotsProfileRegistry.Shutdown";
-
 void PotsProfileRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(PotsProfileRegistry_Shutdown);
+   Debug::ft("PotsProfileRegistry.Shutdown");
 
    PotsCircuit::ResetStateCounts(level);
 
@@ -136,11 +126,9 @@ void PotsProfileRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfileRegistry_Startup = "PotsProfileRegistry.Startup";
-
 void PotsProfileRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(PotsProfileRegistry_Startup);
+   Debug::ft("PotsProfileRegistry.Startup");
 
    for(auto p = profiles_.First(); p != nullptr; profiles_.Next(p))
    {
@@ -150,11 +138,9 @@ void PotsProfileRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsProfileRegistry_UnbindProfile = "PotsProfileRegistry.UnbindProfile";
-
 void PotsProfileRegistry::UnbindProfile(PotsProfile& profile)
 {
-   Debug::ftnt(PotsProfileRegistry_UnbindProfile);
+   Debug::ftnt("PotsProfileRegistry.UnbindProfile");
 
    profiles_.Erase(profile);
 }

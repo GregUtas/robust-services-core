@@ -49,32 +49,25 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPoolStatsGroup_ctor = "InvokerPoolStatsGroup.ctor";
-
 InvokerPoolStatsGroup::InvokerPoolStatsGroup() :
    StatisticsGroup("Invoker Pools [Faction]")
 {
-   Debug::ft(InvokerPoolStatsGroup_ctor);
+   Debug::ft("InvokerPoolStatsGroup.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name InvokerPoolStatsGroup_dtor = "InvokerPoolStatsGroup.dtor";
 
 InvokerPoolStatsGroup::~InvokerPoolStatsGroup()
 {
-   Debug::ftnt(InvokerPoolStatsGroup_dtor);
+   Debug::ftnt("InvokerPoolStatsGroup.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name InvokerPoolStatsGroup_DisplayStats =
-   "InvokerPoolStatsGroup.DisplayStats";
 
 void InvokerPoolStatsGroup::DisplayStats
    (ostream& stream, id_t id, const Flags& options) const
 {
-   Debug::ft(InvokerPoolStatsGroup_DisplayStats);
+   Debug::ft("InvokerPoolStatsGroup.DisplayStats");
 
    StatisticsGroup::DisplayStats(stream, id, options);
 
@@ -105,11 +98,9 @@ void InvokerPoolStatsGroup::DisplayStats
 
 //==============================================================================
 
-fn_name InvokerPoolRegistry_ctor = "InvokerPoolRegistry.ctor";
-
 InvokerPoolRegistry::InvokerPoolRegistry() : poolToAudit_(0)
 {
-   Debug::ft(InvokerPoolRegistry_ctor);
+   Debug::ft("InvokerPoolRegistry.ctor");
 
    pools_.Init(Faction_N, InvokerPool::CellDiff(), MemDynamic);
    statsGroup_.reset(new InvokerPoolStatsGroup);
@@ -128,22 +119,18 @@ InvokerPoolRegistry::~InvokerPoolRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPoolRegistry_BindPool = "InvokerPoolRegistry.BindPool";
-
 bool InvokerPoolRegistry::BindPool(InvokerPool& pool)
 {
-   Debug::ft(InvokerPoolRegistry_BindPool);
+   Debug::ft("InvokerPoolRegistry.BindPool");
 
    return pools_.Insert(pool);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPoolRegistry_ClaimBlocks = "InvokerPoolRegistry.ClaimBlocks";
-
 void InvokerPoolRegistry::ClaimBlocks()
 {
-   Debug::ft(InvokerPoolRegistry_ClaimBlocks);
+   Debug::ft("InvokerPoolRegistry.ClaimBlocks");
 
    while(poolToAudit_ < Faction_N)
    {
@@ -186,11 +173,9 @@ InvokerPool* InvokerPoolRegistry::Pool(Faction faction) const
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPoolRegistry_Shutdown = "InvokerPoolRegistry.Shutdown";
-
 void InvokerPoolRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(InvokerPoolRegistry_Shutdown);
+   Debug::ft("InvokerPoolRegistry.Shutdown");
 
    for(auto p = pools_.First(); p != nullptr; pools_.Next(p))
    {
@@ -200,11 +185,9 @@ void InvokerPoolRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPoolRegistry_Startup = "InvokerPoolRegistry.Startup";
-
 void InvokerPoolRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(InvokerPoolRegistry_Startup);
+   Debug::ft("InvokerPoolRegistry.Startup");
 
    for(auto p = pools_.First(); p != nullptr; pools_.Next(p))
    {
@@ -214,11 +197,9 @@ void InvokerPoolRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPoolRegistry_UnbindPool = "InvokerPoolRegistry.UnbindPool";
-
 void InvokerPoolRegistry::UnbindPool(InvokerPool& pool)
 {
-   Debug::ftnt(InvokerPoolRegistry_UnbindPool);
+   Debug::ftnt("InvokerPoolRegistry.UnbindPool");
 
    pools_.Erase(pool);
 }

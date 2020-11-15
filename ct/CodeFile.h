@@ -454,6 +454,11 @@ private:
    //
    void FindOrAddUsing(const CxxNamed* user);
 
+   //  Removes, from addIds, files that should not be added to this file's
+   //  #include directives.
+   //
+   void RemoveInvalidIncludes(SetOfIds& addIds) const;
+
    //  Logs an IncludeAdd for each file in FIDS.
    //
    void LogAddIncludes(std::ostream* stream, const SetOfIds& fids) const;

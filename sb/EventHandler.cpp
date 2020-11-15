@@ -35,11 +35,9 @@ using std::ostream;
 
 namespace SessionBase
 {
-fn_name EventHandler_ctor = "EventHandler.ctor";
-
 EventHandler::EventHandler()
 {
-   Debug::ft(EventHandler_ctor);
+   Debug::ft("EventHandler.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -55,12 +53,10 @@ EventHandler::~EventHandler()
 
 //------------------------------------------------------------------------------
 
-fn_name EventHandler_ProcessEvent = "EventHandler.ProcessEvent";
-
 EventHandler::Rc EventHandler::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(EventHandler_ProcessEvent);
+   Debug::ft("EventHandler.ProcessEvent");
 
    //  An event handler must override this function if it can be invoked.
    //

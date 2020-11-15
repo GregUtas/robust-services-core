@@ -29,11 +29,9 @@
 
 namespace PotsBase
 {
-fn_name PotsBcService_ctor = "PotsBcService.ctor";
-
 PotsBcService::PotsBcService() : ProxyBcService(PotsCallServiceId, true)
 {
-   Debug::ft(PotsBcService_ctor);
+   Debug::ft("PotsBcService.ctor");
 
    //  Create and register all of our states, event handlers, and triggers.
    //
@@ -250,10 +248,8 @@ PotsBcService::PotsBcService() : ProxyBcService(PotsCallServiceId, true)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcService_dtor = "PotsBcService.dtor";
-
 PotsBcService::~PotsBcService()
 {
-   Debug::ftnt(PotsBcService_dtor);
+   Debug::ftnt("PotsBcService.dtor");
 }
 }

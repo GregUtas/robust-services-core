@@ -58,12 +58,10 @@ SysMutex LogFileLock_("LogFileLock");
 
 //------------------------------------------------------------------------------
 
-fn_name LogThread_ctor = "LogThread.ctor";
-
 LogThread::LogThread() :
    Thread(BackgroundFaction, Singleton< LogDaemon >::Instance())
 {
-   Debug::ft(LogThread_ctor);
+   Debug::ft("LogThread.ctor");
 
    auto reg = Singleton< CfgParmRegistry >::Instance();
 
@@ -83,11 +81,9 @@ LogThread::LogThread() :
 
 //------------------------------------------------------------------------------
 
-fn_name LogThread_dtor = "LogThread.dtor";
-
 LogThread::~LogThread()
 {
-   Debug::ftnt(LogThread_dtor);
+   Debug::ftnt("LogThread.dtor");
 
    //  Clear our configuration parameter so that it won't be deleted.
    //  (it resides in protected memory.)  When we are recreated, our
@@ -105,11 +101,9 @@ c_string LogThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name LogThread_CopyToConsole = "LogThread.CopyToConsole";
-
 void LogThread::CopyToConsole(const ostringstreamPtr& stream)
 {
-   Debug::ft(LogThread_CopyToConsole);
+   Debug::ft("LogThread.CopyToConsole");
 
    //  In a lab load, display the logs on the console.
    //
@@ -123,11 +117,9 @@ void LogThread::CopyToConsole(const ostringstreamPtr& stream)
 
 //------------------------------------------------------------------------------
 
-fn_name LogThread_Destroy = "LogThread.Destroy";
-
 void LogThread::Destroy()
 {
-   Debug::ft(LogThread_Destroy);
+   Debug::ft("LogThread.Destroy");
 
    Singleton< LogThread >::Destroy();
 }
@@ -145,11 +137,9 @@ void LogThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name LogThread_Enter = "LogThread.Enter";
-
 void LogThread::Enter()
 {
-   Debug::ft(LogThread_Enter);
+   Debug::ft("LogThread.Enter");
 
    auto reg = Singleton< LogBufferRegistry >::Instance();
    auto msgs = Singleton< MsgBufferPool >::Instance();

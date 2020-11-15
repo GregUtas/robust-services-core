@@ -34,11 +34,9 @@ fixed_string PotsLogGroup = "POTS";
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBase_CreatePotsLogs = "PotsBase.CreatePotsLogs";
-
 void CreatePotsLogs(RestartLevel level)
 {
-   Debug::ft(PotsBase_CreatePotsLogs);
+   Debug::ft("PotsBase.CreatePotsLogs");
 
    if(level < RestartReboot) return;
 

@@ -45,22 +45,18 @@ SysMutex CoutThreadMsgQLock_("CoutThreadMsgQLock");
 
 //------------------------------------------------------------------------------
 
-fn_name CoutThread_ctor = "CoutThread.ctor";
-
 CoutThread::CoutThread() : Thread(BackgroundFaction)
 {
-   Debug::ft(CoutThread_ctor);
+   Debug::ft("CoutThread.ctor");
 
    SetInitialized();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CoutThread_dtor = "CoutThread.dtor";
-
 CoutThread::~CoutThread()
 {
-   Debug::ftnt(CoutThread_dtor);
+   Debug::ftnt("CoutThread.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -72,22 +68,18 @@ c_string CoutThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name CoutThread_Destroy = "CoutThread.Destroy";
-
 void CoutThread::Destroy()
 {
-   Debug::ft(CoutThread_Destroy);
+   Debug::ft("CoutThread.Destroy");
 
    Singleton< CoutThread >::Destroy();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CoutThread_Enter = "CoutThread.Enter";
-
 void CoutThread::Enter()
 {
-   Debug::ft(CoutThread_Enter);
+   Debug::ft("CoutThread.Enter");
 
    while(true)
    {
@@ -115,11 +107,9 @@ void CoutThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CoutThread_Spool1 = "CoutThread.Spool(stream)";
-
 void CoutThread::Spool(ostringstreamPtr& stream)
 {
-   Debug::ft(CoutThread_Spool1);
+   Debug::ft("CoutThread.Spool(stream)");
 
    if(stream == nullptr) return;
 
@@ -151,11 +141,9 @@ void CoutThread::Spool(ostringstreamPtr& stream)
 
 //------------------------------------------------------------------------------
 
-fn_name CoutThread_Spool2 = "CoutThread.Spool(string)";
-
 void CoutThread::Spool(c_string s, bool eol)
 {
-   Debug::ft(CoutThread_Spool2);
+   Debug::ft("CoutThread.Spool(string)");
 
    ostringstreamPtr stream(new std::ostringstream);
    *stream << s;

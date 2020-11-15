@@ -261,11 +261,9 @@ uint32_t TraceBuffer::AllocSlot()
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_ClaimBlocks = "TraceBuffer.ClaimBlocks";
-
 void TraceBuffer::ClaimBlocks()
 {
-   Debug::ft(TraceBuffer_ClaimBlocks);
+   Debug::ft("TraceBuffer.ClaimBlocks");
 
    //  Function trace records don't need to claim anything, so skip
    //  them for efficiency.
@@ -285,11 +283,9 @@ void TraceBuffer::ClaimBlocks()
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_Clear = "TraceBuffer.Clear";
-
 TraceRc TraceBuffer::Clear()
 {
-   Debug::ftnt(TraceBuffer_Clear);
+   Debug::ftnt("TraceBuffer.Clear");
 
    //  If tracing has been stopped, delete all records in the buffer
    //  and reset member variables.
@@ -332,11 +328,9 @@ TraceRc TraceBuffer::Clear()
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_ClearTools = "TraceBuffer.ClearTools";
-
 TraceRc TraceBuffer::ClearTools()
 {
-   Debug::ft(TraceBuffer_ClearTools);
+   Debug::ft("TraceBuffer.ClearTools");
 
    tools_.reset();
    return TraceOk;
@@ -344,11 +338,9 @@ TraceRc TraceBuffer::ClearTools()
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_DisplayStart = "TraceBuffer.DisplayStart";
-
 void TraceBuffer::DisplayStart(ostream& stream) const
 {
-   Debug::ft(TraceBuffer_DisplayStart);
+   Debug::ft("TraceBuffer.DisplayStart");
 
    stream << StartOfTrace << strTimePlace() << CRLF << CRLF;
    if(blocks_ > 0) stream << BlockedStr << blocks_ << CRLF;
@@ -366,11 +358,9 @@ void TraceBuffer::DisplayStart(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_DisplayTrace = "TraceBuffer.DisplayTrace";
-
 TraceRc TraceBuffer::DisplayTrace(ostream* stream, const string& opts)
 {
-   Debug::ft(TraceBuffer_DisplayTrace);
+   Debug::ft("TraceBuffer.DisplayTrace");
 
    if(Empty()) return BufferEmpty;
 
@@ -394,11 +384,9 @@ bool TraceBuffer::Empty() const
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_HasBeenProcessed = "TraceBuffer.HasBeenProcessed";
-
 bool TraceBuffer::HasBeenProcessed()
 {
-   Debug::ft(TraceBuffer_HasBeenProcessed);
+   Debug::ft("TraceBuffer.HasBeenProcessed");
 
    if(processed_) return true;
    processed_ = true;
@@ -588,11 +576,9 @@ void TraceBuffer::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_Query = "TraceBuffer.Query";
-
 void TraceBuffer::Query(ostream& stream) const
 {
-   Debug::ft(TraceBuffer_Query);
+   Debug::ft("TraceBuffer.Query");
 
    auto indent = spaces(2);
    auto entries = (ovfl_ ? size_ : bnext_);
@@ -612,11 +598,9 @@ void TraceBuffer::Query(ostream& stream) const
 fixed_string TracingOn = "Tracing is ON.";
 fixed_string TracingOff = "Tracing is OFF.";
 
-fn_name TraceBuffer_QueryTools = "TraceBuffer.QueryTools";
-
 void TraceBuffer::QueryTools(ostream& stream) const
 {
-   Debug::ft(TraceBuffer_QueryTools);
+   Debug::ft("TraceBuffer.QueryTools");
 
    if(Debug::TraceOn())
       stream << TracingOn << CRLF;
@@ -651,11 +635,9 @@ void TraceBuffer::RecordInvocation(fn_name_arg func) const
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_SelectAll = "TraceBuffer.SelectAll";
-
 TraceRc TraceBuffer::SelectAll(bool on)
 {
-   Debug::ft(TraceBuffer_SelectAll);
+   Debug::ft("TraceBuffer.SelectAll");
 
    if(on)
       SetFilter(TraceAll);
@@ -667,11 +649,9 @@ TraceRc TraceBuffer::SelectAll(bool on)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_SetSize = "TraceBuffer.SetSize";
-
 TraceRc TraceBuffer::SetSize(size_t n)
 {
-   Debug::ft(TraceBuffer_SetSize);
+   Debug::ft("TraceBuffer.SetSize");
 
    //  Buffer resizing is only allowed when tracing has been stopped
    //  and all trace records have been cleared.
@@ -684,11 +664,9 @@ TraceRc TraceBuffer::SetSize(size_t n)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_SetTool = "TraceBuffer.SetTool";
-
 TraceRc TraceBuffer::SetTool(FlagId tid, bool value)
 {
-   Debug::ft(TraceBuffer_SetTool);
+   Debug::ft("TraceBuffer.SetTool");
 
    //  This is invoked well before main(), so avoid creating ToolRegistry that
    //  early.  Doing so causes heap corruption in Windows debug mode, but the
@@ -709,11 +687,9 @@ TraceRc TraceBuffer::SetTool(FlagId tid, bool value)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_SetTools = "TraceBuffer.SetTools";
-
 TraceRc TraceBuffer::SetTools(const Flags& tools)
 {
-   Debug::ft(TraceBuffer_SetTools);
+   Debug::ft("TraceBuffer.SetTools");
 
    tools_ = tools;
    return TraceOk;
@@ -721,11 +697,9 @@ TraceRc TraceBuffer::SetTools(const Flags& tools)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_SetWrap = "TraceBuffer.SetWrap";
-
 TraceRc TraceBuffer::SetWrap(bool wrap)
 {
-   Debug::ft(TraceBuffer_SetWrap);
+   Debug::ft("TraceBuffer.SetWrap");
 
    //  Although wraparound could be enabled/disabled while the buffer contains
    //  entries, it appears to be of little value and would result in confusing
@@ -739,11 +713,9 @@ TraceRc TraceBuffer::SetWrap(bool wrap)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_Shutdown = "TraceBuffer.Shutdown";
-
 void TraceBuffer::Shutdown(RestartLevel level)
 {
-   Debug::ft(TraceBuffer_Shutdown);
+   Debug::ft("TraceBuffer.Shutdown");
 
    TraceRecord* rec = nullptr;
    auto mask = Flags().set();
@@ -758,11 +730,9 @@ void TraceBuffer::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_StartTracing = "TraceBuffer.StartTracing";
-
 TraceRc TraceBuffer::StartTracing(const string& opts)
 {
-   Debug::ft(TraceBuffer_StartTracing);
+   Debug::ft("TraceBuffer.StartTracing");
 
    if(Debug::TraceOn() && !Empty()) return AlreadyStarted;
    if(tools_.none()) return NoToolSelected;
@@ -782,11 +752,9 @@ TraceRc TraceBuffer::StartTracing(const string& opts)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_StopTracing = "TraceBuffer.StopTracing";
-
 void TraceBuffer::StopTracing()
 {
-   Debug::ft(TraceBuffer_StopTracing);
+   Debug::ft("TraceBuffer.StopTracing");
 
    if(!Debug::FcFlags_.test(Debug::TracingActive)) return;
 

@@ -33,7 +33,6 @@
 #include "SbTracer.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 #include "TimerProtocol.h"
 #include "TimerRegistry.h"
 #include "TimerThread.h"
@@ -45,11 +44,9 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-fn_name SbModule_ctor = "SbModule.ctor";
-
 SbModule::SbModule() : Module()
 {
-   Debug::ft(SbModule_ctor);
+   Debug::ft("SbModule.ctor");
 
    //  Create the modules required by SessionBase.
    //
@@ -59,11 +56,9 @@ SbModule::SbModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name SbModule_dtor = "SbModule.dtor";
-
 SbModule::~SbModule()
 {
-   Debug::ftnt(SbModule_dtor);
+   Debug::ftnt("SbModule.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -75,11 +70,9 @@ void SbModule::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name SbModule_Shutdown = "SbModule.Shutdown";
-
 void SbModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(SbModule_Shutdown);
+   Debug::ft("SbModule.Shutdown");
 
    Singleton< TimerRegistry >::Instance()->Shutdown(level);
    Singleton< FactoryRegistry >::Instance()->Shutdown(level);
@@ -89,11 +82,9 @@ void SbModule::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name SbModule_Startup = "SbModule.Startup";
-
 void SbModule::Startup(RestartLevel level)
 {
-   Debug::ft(SbModule_Startup);
+   Debug::ft("SbModule.Startup");
 
    CreateSbLogs(level);
 

@@ -45,8 +45,6 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name Argument_ctor = "Argument.ctor";
-
 Argument::Argument(string& name, TypeSpecPtr& spec) :
    spec_(spec.release()),
    reads_(0),
@@ -54,7 +52,7 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
    nonconst_(false),
    modified_(false)
 {
-   Debug::ft(Argument_ctor);
+   Debug::ft("Argument.ctor");
 
    std::swap(name_, name);
    spec_->SetUserType(Cxx::Function);
@@ -71,11 +69,9 @@ void Argument::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_Check = "Argument.Check";
-
 void Argument::Check() const
 {
-   Debug::ft(Argument_Check);
+   Debug::ft("Argument.Check");
 
    spec_->Check();
    if(name_.empty()) LogToFunc(AnonymousArgument);
@@ -84,11 +80,9 @@ void Argument::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_CheckVoid = "Argument.CheckVoid";
-
 void Argument::CheckVoid() const
 {
-   Debug::ft(Argument_CheckVoid);
+   Debug::ft("Argument.CheckVoid");
 
    if(name_.empty())
    {
@@ -106,11 +100,9 @@ void Argument::CheckVoid() const
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_EnterBlock = "Argument.EnterBlock";
-
 void Argument::EnterBlock()
 {
-   Debug::ft(Argument_EnterBlock);
+   Debug::ft("Argument.EnterBlock");
 
    Context::SetPos(GetLoc());
    if(!name_.empty()) Context::InsertLocal(this);
@@ -118,11 +110,9 @@ void Argument::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_EnterScope = "Argument.EnterScope";
-
 bool Argument::EnterScope()
 {
-   Debug::ft(Argument_EnterScope);
+   Debug::ft("Argument.EnterScope");
 
    Context::SetPos(GetLoc());
    spec_->EnteringScope(GetScope());
@@ -140,11 +130,9 @@ bool Argument::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_ExitBlock = "Argument.ExitBlock";
-
 void Argument::ExitBlock() const
 {
-   Debug::ft(Argument_ExitBlock);
+   Debug::ft("Argument.ExitBlock");
 
    if(name_.empty()) return;
    Context::EraseLocal(this);
@@ -160,11 +148,9 @@ void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_IsThisCandidate = "Argument.IsThisCandidate";
-
 Class* Argument::IsThisCandidate() const
 {
-   Debug::ft(Argument_IsThisCandidate);
+   Debug::ft("Argument.IsThisCandidate");
 
    auto ref = Referent();
    if(ref == nullptr) return nullptr;
@@ -178,11 +164,9 @@ Class* Argument::IsThisCandidate() const
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_LogToFunc = "Argument.LogToFunc";
-
 void Argument::LogToFunc(Warning warning) const
 {
-   Debug::ft(Argument_LogToFunc);
+   Debug::ft("Argument.LogToFunc");
 
    auto func = static_cast< Function* >(GetScope());
    auto offset = func->FindArg(this, true);
@@ -219,11 +203,9 @@ void Argument::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_SetNonConst = "Argument.SetNonConst";
-
 bool Argument::SetNonConst()
 {
-   Debug::ft(Argument_SetNonConst);
+   Debug::ft("Argument.SetNonConst");
 
    if(!nonconst_)
    {
@@ -255,11 +237,9 @@ string Argument::TypeString(bool arg) const
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_WasRead = "Argument.WasRead";
-
 bool Argument::WasRead()
 {
-   Debug::ft(Argument_WasRead);
+   Debug::ft("Argument.WasRead");
 
    ++reads_;
    auto item = static_cast< Argument* >(FindTemplateAnalog(this));
@@ -269,11 +249,9 @@ bool Argument::WasRead()
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_WasWritten = "Argument.WasWritten";
-
 bool Argument::WasWritten(const StackArg* arg, bool direct, bool indirect)
 {
-   Debug::ft(Argument_WasWritten);
+   Debug::ft("Argument.WasWritten");
 
    ++writes_;
    auto item = static_cast< Argument* >(FindTemplateAnalog(this));
@@ -297,13 +275,11 @@ bool Argument::WasWritten(const StackArg* arg, bool direct, bool indirect)
 
 //==============================================================================
 
-fn_name BaseDecl_ctor = "BaseDecl.ctor";
-
 BaseDecl::BaseDecl(QualNamePtr& name, Cxx::Access access) :
    name_(name.release()),
    using_(false)
 {
-   Debug::ft(BaseDecl_ctor);
+   Debug::ft("BaseDecl.ctor");
 
    SetAccess(access);
    CxxStats::Incr(CxxStats::BASE_DECL);
@@ -326,11 +302,9 @@ void BaseDecl::DisplayDecl(ostream& stream, bool fq) const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseDecl_EnterScope = "BaseDecl.EnterScope";
-
 bool BaseDecl::EnterScope()
 {
-   Debug::ft(BaseDecl_EnterScope);
+   Debug::ft("BaseDecl.EnterScope");
 
    //  If the base class cannot be found, return false so that this
    //  object will be deleted.  Otherwise, record our new subclass.
@@ -388,11 +362,9 @@ void BaseDecl::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseDecl_Referent = "BaseDecl.Referent";
-
 CxxScoped* BaseDecl::Referent() const
 {
-   Debug::ft(BaseDecl_Referent);
+   Debug::ft("BaseDecl.Referent");
 
    return name_->GetReferent();
 }
@@ -406,11 +378,9 @@ string BaseDecl::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseDecl_SetAccess = "BaseDecl.SetAccess";
-
 void BaseDecl::SetAccess(Cxx::Access access)
 {
-   Debug::ft(BaseDecl_SetAccess);
+   Debug::ft("BaseDecl.SetAccess");
 
    //  This is invoked twice: first by our constructor, and then by
    //  Parser.SetContext.  We want to preserve the value set by our
@@ -430,33 +400,27 @@ string BaseDecl::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name CxxScoped_ctor = "CxxScoped.ctor";
-
 CxxScoped::CxxScoped() :
    scope_(nullptr),
    access_(Cxx::Public),
    public_(false),
    protected_(false)
 {
-   Debug::ft(CxxScoped_ctor);
+   Debug::ft("CxxScoped.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CxxScoped_dtor = "CxxScoped.dtor";
 
 CxxScoped::~CxxScoped()
 {
-   Debug::ftnt(CxxScoped_dtor);
+   Debug::ftnt("CxxScoped.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_AccessibilityTo = "CxxScoped.AccessibilityTo";
-
 void CxxScoped::AccessibilityTo(const CxxScope* scope, SymbolView* view) const
 {
-   Debug::ft(CxxScoped_AccessibilityTo);
+   Debug::ft("CxxScoped.AccessibilityTo");
 
    return GetScope()->AccessibilityOf(scope, this, view);
 }
@@ -501,7 +465,6 @@ void CxxScoped::AddReference(const CxxNamed* item) const
          ref = static_cast< const Function* >(ref)->FindRootFunc();
       }
 
-      prev->SetReferent(ref, nullptr);
       ref->Xref().insert(prev);
       return;
    }
@@ -511,11 +474,9 @@ void CxxScoped::AddReference(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_BroadestAccessUsed = "CxxScoped.BroadestAccessUsed";
-
 Cxx::Access CxxScoped::BroadestAccessUsed() const
 {
-   Debug::ft(CxxScoped_BroadestAccessUsed);
+   Debug::ft("CxxScoped.BroadestAccessUsed");
 
    if(GetClass() == nullptr) return Cxx::Public;
    if(public_) return Cxx::Public;
@@ -525,11 +486,9 @@ Cxx::Access CxxScoped::BroadestAccessUsed() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_CheckAccessControl = "CxxScoped.CheckAccessControl";
-
 void CxxScoped::CheckAccessControl() const
 {
-   Debug::ft(CxxScoped_CheckAccessControl);
+   Debug::ft("CxxScoped.CheckAccessControl");
 
    //  If an item is used, log it if its access control could be
    //  more restrictive.
@@ -553,11 +512,9 @@ void CxxScoped::CheckAccessControl() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_CheckIfHiding = "CxxScoped.CheckIfHiding";
-
 void CxxScoped::CheckIfHiding() const
 {
-   Debug::ft(CxxScoped_CheckIfHiding);
+   Debug::ft("CxxScoped.CheckIfHiding");
 
    auto item = FindInheritedName();
    if((item == nullptr) || (item->GetAccess() == Cxx::Private)) return;
@@ -566,11 +523,9 @@ void CxxScoped::CheckIfHiding() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_CheckIfUnused = "CxxScoped.CheckIfUnused";
-
 bool CxxScoped::CheckIfUnused(Warning warning) const
 {
-   Debug::ft(CxxScoped_CheckIfUnused);
+   Debug::ft("CxxScoped.CheckIfUnused");
 
    if(!IsUnused()) return false;
    Log(warning);
@@ -607,11 +562,9 @@ void CxxScoped::DisplayFiles(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_FileScopeAccessiblity = "CxxScoped.FileScopeAccessiblity";
-
 Accessibility CxxScoped::FileScopeAccessiblity() const
 {
-   Debug::ft(CxxScoped_FileScopeAccessiblity);
+   Debug::ft("CxxScoped.FileScopeAccessiblity");
 
    if(IsInTemplateInstance()) return Unrestricted;
    if(GetFile()->IsCpp()) return Restricted;
@@ -620,11 +573,9 @@ Accessibility CxxScoped::FileScopeAccessiblity() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_FindInheritedName = "CxxScoped.FindInheritedName";
-
 CxxScoped* CxxScoped::FindInheritedName() const
 {
-   Debug::ft(CxxScoped_FindInheritedName);
+   Debug::ft("CxxScoped.FindInheritedName");
 
    auto cls = GetClass();
    if(cls == nullptr) return nullptr;
@@ -635,11 +586,9 @@ CxxScoped* CxxScoped::FindInheritedName() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_FindNthItem = "CxxScoped.FindNthItem";
-
 CxxScoped* CxxScoped::FindNthItem(const std::string& name, size_t& n) const
 {
-   Debug::ft(CxxScoped_FindNthItem);
+   Debug::ft("CxxScoped.FindNthItem");
 
    if(n == 0) return nullptr;
    if(name == *Name()) --n;
@@ -746,11 +695,9 @@ bool CxxScoped::IsIndirect() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_IsSubscopeOf = "CxxScoped.IsSubscopeOf";
-
 bool CxxScoped::IsSubscopeOf(const string& fqSuper) const
 {
-   Debug::ft(CxxScoped_IsSubscopeOf);
+   Debug::ft("CxxScoped.IsSubscopeOf");
 
    auto fqSub = ScopedName(false);
    return (CompareScopes(fqSub, fqSuper, false) != string::npos);
@@ -758,11 +705,9 @@ bool CxxScoped::IsSubscopeOf(const string& fqSuper) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_IsSuperscopeOf = "CxxScoped.IsSuperscopeOf";
-
 bool CxxScoped::IsSuperscopeOf(const string& fqSub, bool tmplt) const
 {
-   Debug::ft(CxxScoped_IsSuperscopeOf);
+   Debug::ft("CxxScoped.IsSuperscopeOf");
 
    auto fqSuper = ScopedName(tmplt);
    return (CompareScopes(fqSub, fqSuper, tmplt) != string::npos);
@@ -770,11 +715,9 @@ bool CxxScoped::IsSuperscopeOf(const string& fqSub, bool tmplt) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_LocateItem = "CxxScoped.LocateItem";
-
 bool CxxScoped::LocateItem(const CxxNamed* item, size_t& n) const
 {
-   Debug::ft(CxxScoped_LocateItem);
+   Debug::ft("CxxScoped.LocateItem");
 
    if(item == this)
    {
@@ -930,11 +873,9 @@ void CxxScoped::RecordAccess(Cxx::Access access) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_RecordTemplateAccess = "CxxScoped.RecordTemplateAccess";
-
 void CxxScoped::RecordTemplateAccess(Cxx::Access access) const
 {
-   Debug::ft(CxxScoped_RecordTemplateAccess);
+   Debug::ft("CxxScoped.RecordTemplateAccess");
 
    auto item = FindTemplateAnalog(this);
    if(item != nullptr) item->RecordAccess(access);
@@ -942,11 +883,9 @@ void CxxScoped::RecordTemplateAccess(Cxx::Access access) const
 
 //==============================================================================
 
-fn_name Enum_ctor = "Enum.ctor";
-
 Enum::Enum(string& name) : refs_(0)
 {
-   Debug::ft(Enum_ctor);
+   Debug::ft("Enum.ctor");
 
    std::swap(name_, name);
    if(!name_.empty()) Singleton< CxxSymbols >::Instance()->InsertEnum(this);
@@ -955,11 +894,9 @@ Enum::Enum(string& name) : refs_(0)
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_dtor = "Enum.dtor";
-
 Enum::~Enum()
 {
-   Debug::ftnt(Enum_dtor);
+   Debug::ftnt("Enum.dtor");
 
    if(!name_.empty()) Singleton< CxxSymbols >::Extant()->EraseEnum(this);
    CxxStats::Decr(CxxStats::ENUM_DECL);
@@ -967,11 +904,9 @@ Enum::~Enum()
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_AddEnumerator = "Enum.AddEnumerator";
-
 void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
 {
-   Debug::ft(Enum_AddEnumerator);
+   Debug::ft("Enum.AddEnumerator");
 
    EnumeratorPtr etor(new Enumerator(name, init, this));
    etor->SetScope(GetScope());
@@ -995,22 +930,18 @@ void Enum::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_AddType = "Enum.AddType";
-
 void Enum::AddType(TypeSpecPtr& type)
 {
-   Debug::ft(Enum_AddType);
+   Debug::ft("Enum.AddType");
 
    spec_ = std::move(type);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_Check = "Enum.Check";
-
 void Enum::Check() const
 {
-   Debug::ft(Enum_Check);
+   Debug::ft("Enum.Check");
 
    if(name_.empty()) Log(AnonymousEnum);
    CheckIfUnused(EnumUnused);
@@ -1025,11 +956,9 @@ void Enum::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_CheckAccessControl = "Enum.CheckAccessControl";
-
 void Enum::CheckAccessControl() const
 {
-   Debug::ft(Enum_CheckAccessControl);
+   Debug::ft("Enum.CheckAccessControl");
 
    //  Whether the access control can be further restricted depends on
    //  each of the enumerators as well as the enumeration type itself.
@@ -1108,11 +1037,9 @@ void Enum::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_EnterBlock = "Enum.EnterBlock";
-
 void Enum::EnterBlock()
 {
-   Debug::ft(Enum_EnterBlock);
+   Debug::ft("Enum.EnterBlock");
 
    Context::SetPos(GetLoc());
 
@@ -1127,11 +1054,9 @@ void Enum::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_EnterScope = "Enum.EnterScope";
-
 bool Enum::EnterScope()
 {
-   Debug::ft(Enum_EnterScope);
+   Debug::ft("Enum.EnterScope");
 
    Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertEnum(this);
@@ -1141,11 +1066,9 @@ bool Enum::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_ExitBlock = "Enum.ExitBlock";
-
 void Enum::ExitBlock() const
 {
-   Debug::ft(Enum_ExitBlock);
+   Debug::ft("Enum.ExitBlock");
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {
@@ -1157,11 +1080,9 @@ void Enum::ExitBlock() const
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_FindEnumerator = "Enum.FindEnumerator";
-
 Enumerator* Enum::FindEnumerator(const string& name) const
 {
-   Debug::ft(Enum_FindEnumerator);
+   Debug::ft("Enum.FindEnumerator");
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {
@@ -1193,11 +1114,9 @@ void Enum::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_IsUnused = "Enum.IsUnused";
-
 bool Enum::IsUnused() const
 {
-   Debug::ft(Enum_IsUnused);
+   Debug::ft("Enum.IsUnused");
 
    if(refs_ > 0) return false;
 
@@ -1211,22 +1130,18 @@ bool Enum::IsUnused() const
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_SetAlignment = "Enum.SetAlignment";
-
 void Enum::SetAlignment(AlignAsPtr& align)
 {
-   Debug::ft(Enum_SetAlignment);
+   Debug::ft("Enum.SetAlignment");
 
    alignas_ = std::move(align);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_SetAsReferent = "Enum.SetAsReferent";
-
 void Enum::SetAsReferent(const CxxNamed* user)
 {
-   Debug::ft(Enum_SetAsReferent);
+   Debug::ft("Enum.SetAsReferent");
 
    ++refs_;
    auto item = static_cast< Enum* >(FindTemplateAnalog(this));
@@ -1259,14 +1174,12 @@ string Enum::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name Enumerator_ctor = "Enumerator.ctor";
-
 Enumerator::Enumerator(string& name, ExprPtr& init, const Enum* decl) :
    init_(init.release()),
    enum_(decl),
    refs_(0)
 {
-   Debug::ft(Enumerator_ctor);
+   Debug::ft("Enumerator.ctor");
 
    std::swap(name_, name);
    Singleton< CxxSymbols >::Instance()->InsertEtor(this);
@@ -1275,11 +1188,9 @@ Enumerator::Enumerator(string& name, ExprPtr& init, const Enum* decl) :
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_dtor = "Enumerator.dtor";
-
 Enumerator::~Enumerator()
 {
-   Debug::ftnt(Enumerator_dtor);
+   Debug::ftnt("Enumerator.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseEtor(this);
    CxxStats::Decr(CxxStats::ENUM_MEM);
@@ -1294,11 +1205,9 @@ void Enumerator::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_Check = "Enumerator.Check";
-
 void Enumerator::Check() const
 {
-   Debug::ft(Enumerator_Check);
+   Debug::ft("Enumerator.Check");
 
    CheckIfUnused(EnumeratorUnused);
    CheckIfHiding();
@@ -1306,11 +1215,9 @@ void Enumerator::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_CheckIfUnused = "Enumerator.CheckIfUnused";
-
 bool Enumerator::CheckIfUnused(Warning warning) const
 {
-   Debug::ft(Enumerator_CheckIfUnused);
+   Debug::ft("Enumerator.CheckIfUnused");
 
    if(!IsUnused()) return false;
    if(enum_->IsUnused()) return false;
@@ -1361,11 +1268,9 @@ void Enumerator::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_EnterScope = "Enumerator.EnterScope";
-
 bool Enumerator::EnterScope()
 {
-   Debug::ft(Enumerator_EnterScope);
+   Debug::ft("Enumerator.EnterScope");
 
    EnterBlock();
    return true;
@@ -1373,22 +1278,18 @@ bool Enumerator::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_ExitBlock = "Enumerator.ExitBlock";
-
 void Enumerator::ExitBlock() const
 {
-   Debug::ft(Enumerator_ExitBlock);
+   Debug::ft("Enumerator.ExitBlock");
 
    Singleton< CxxSymbols >::Instance()->EraseEtor(this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_GetScopedNames = "Enumerator.GetScopedNames";
-
 void Enumerator::GetScopedNames(stringVector& names, bool templates) const
 {
-   Debug::ft(Enumerator_GetScopedNames);
+   Debug::ft("Enumerator.GetScopedNames");
 
    //  The superclass version provides the enumerator's fully qualified name,
    //  which includes that of its enum.  Then, unless the enum is anonymous,
@@ -1414,11 +1315,9 @@ void Enumerator::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_RecordAccess = "Enumerator.RecordAccess";
-
 void Enumerator::RecordAccess(Cxx::Access access) const
 {
-   Debug::ft(Enumerator_RecordAccess);
+   Debug::ft("Enumerator.RecordAccess");
 
    CxxScoped::RecordAccess(access);
    enum_->RecordAccess(access);
@@ -1433,11 +1332,9 @@ string Enumerator::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_SetAsReferent = "Enumerator.SetAsReferent";
-
 void Enumerator::SetAsReferent(const CxxNamed* user)
 {
-   Debug::ft(Enumerator_SetAsReferent);
+   Debug::ft("Enumerator.SetAsReferent");
 
    ++refs_;
    auto item = static_cast< Enumerator* >(FindTemplateAnalog(this));
@@ -1465,11 +1362,9 @@ string Enumerator::TypeString(bool arg) const
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_WasRead = "Enumerator.WasRead";
-
 bool Enumerator::WasRead()
 {
-   Debug::ft(Enumerator_WasRead);
+   Debug::ft("Enumerator.WasRead");
 
    ++refs_;
    auto item = static_cast< Enumerator* >(FindTemplateAnalog(this));
@@ -1486,14 +1381,12 @@ string Enumerator::XrefName(bool templates) const
 
 //==============================================================================
 
-fn_name Forward_ctor = "Forward.ctor";
-
 Forward::Forward(QualNamePtr& name, Cxx::ClassTag tag) :
    tag_(tag),
    name_(name.release()),
    users_(0)
 {
-   Debug::ft(Forward_ctor);
+   Debug::ft("Forward.ctor");
 
    Singleton< CxxSymbols >::Instance()->InsertForw(this);
    CxxStats::Incr(CxxStats::FORWARD_DECL);
@@ -1501,11 +1394,9 @@ Forward::Forward(QualNamePtr& name, Cxx::ClassTag tag) :
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_dtor = "Forward.dtor";
-
 Forward::~Forward()
 {
-   Debug::ftnt(Forward_dtor);
+   Debug::ftnt("Forward.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseForw(this);
    CxxStats::Decr(CxxStats::FORWARD_DECL);
@@ -1530,11 +1421,9 @@ CxxToken* Forward::AutoType() const
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_Check = "Forward.Check";
-
 void Forward::Check() const
 {
-   Debug::ft(Forward_Check);
+   Debug::ft("Forward.Check");
 
    if(parms_ != nullptr) parms_->Check();
 
@@ -1573,22 +1462,18 @@ void Forward::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_EnterBlock = "Forward.EnterBlock";
-
 void Forward::EnterBlock()
 {
-   Debug::ft(Forward_EnterBlock);
+   Debug::ft("Forward.EnterBlock");
 
    Context::PushArg(StackArg(Referent(), 0, false));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_EnterScope = "Forward.EnterScope";
-
 bool Forward::EnterScope()
 {
-   Debug::ft(Forward_EnterScope);
+   Debug::ft("Forward.EnterScope");
 
    Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertForw(this);
@@ -1598,11 +1483,9 @@ bool Forward::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_GetDirectClasses = "Forward.GetDirectClasses";
-
 void Forward::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(Forward_GetDirectClasses);
+   Debug::ft("Forward.GetDirectClasses");
 
    auto ref = Referent();
    if(ref != nullptr) symbols.AddDirect(ref);
@@ -1621,11 +1504,9 @@ bool Forward::IncludeInXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_Referent = "Forward.Referent";
-
 CxxScoped* Forward::Referent() const
 {
-   Debug::ft(Forward_Referent);
+   Debug::ft("Forward.Referent");
 
    auto ref = name_->GetReferent();
    if(ref != nullptr) return ref;
@@ -1647,11 +1528,9 @@ string Forward::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_SetAsReferent = "Forward.SetAsReferent";
-
 void Forward::SetAsReferent(const CxxNamed* user)
 {
-   Debug::ft(Forward_SetAsReferent);
+   Debug::ft("Forward.SetAsReferent");
 
    ++users_;
    auto item = static_cast< Forward* >(FindTemplateAnalog(this));
@@ -1660,11 +1539,9 @@ void Forward::SetAsReferent(const CxxNamed* user)
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_SetTemplateParms = "Forward.SetTemplateParms";
-
 void Forward::SetTemplateParms(TemplateParmsPtr& parms)
 {
-   Debug::ft(Forward_SetTemplateParms);
+   Debug::ft("Forward.SetTemplateParms");
 
    parms_ = std::move(parms);
 }
@@ -1693,8 +1570,6 @@ size_t Friend::Depth_ = 0;
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_ctor = "Friend.ctor";
-
 Friend::Friend() :
    inline_(nullptr),
    grantor_(nullptr),
@@ -1704,18 +1579,16 @@ Friend::Friend() :
    searched_(false),
    users_(0)
 {
-   Debug::ft(Friend_ctor);
+   Debug::ft("Friend.ctor");
 
    CxxStats::Incr(CxxStats::FRIEND_DECL);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_dtor = "Friend.dtor";
-
 Friend::~Friend()
 {
-   Debug::ftnt(Friend_dtor);
+   Debug::ftnt("Friend.dtor");
 
    if(GetFunction() == nullptr)
    {
@@ -1744,11 +1617,9 @@ CxxToken* Friend::AutoType() const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_Check = "Friend.Check";
-
 void Friend::Check() const
 {
-   Debug::ft(Friend_Check);
+   Debug::ft("Friend.Check");
 
    if(parms_ != nullptr) parms_->Check();
 
@@ -1825,11 +1696,9 @@ void Friend::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_EnterScope = "Friend.EnterScope";
-
 bool Friend::EnterScope()
 {
-   Debug::ft(Friend_EnterScope);
+   Debug::ft("Friend.EnterScope");
 
    //  A friend declaration can also act as a forward declaration, so add it
    //  to the symbol table.  This was not done in the constructor because the
@@ -1952,11 +1821,9 @@ CxxScoped* Friend::FindForward() const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_FindReferent = "Friend.FindReferent";
-
 void Friend::FindReferent()
 {
-   Debug::ft(Friend_FindReferent);
+   Debug::ft("Friend.FindReferent");
 
    //  The following prevents a stack overflow.  The declaration itself can be
    //  found as a candidate when ResolveName is invoked.  To find what it refers
@@ -2002,11 +1869,9 @@ void Friend::FindReferent()
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_GetDirectClasses = "Friend.GetDirectClasses";
-
 void Friend::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(Friend_GetDirectClasses);
+   Debug::ft("Friend.GetDirectClasses");
 
    auto ref = Referent();
    if(ref != nullptr) symbols.AddDirect(ref);
@@ -2113,11 +1978,9 @@ bool Friend::IncludeInXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_IncrUsers = "Friend.IncrUsers";
-
 void Friend::IncrUsers()
 {
-   Debug::ft(Friend_IncrUsers);
+   Debug::ft("Friend.IncrUsers");
 
    ++users_;
    auto item = static_cast< Friend* >(grantor_->FindTemplateAnalog(this));
@@ -2144,11 +2007,9 @@ string Friend::QualifiedName(bool scopes, bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_Referent = "Friend.Referent";
-
 CxxScoped* Friend::Referent() const
 {
-   Debug::ft(Friend_Referent);
+   Debug::ft("Friend.Referent");
 
    auto ref = GetReferent();
    if(ref != nullptr) return ref;
@@ -2158,11 +2019,9 @@ CxxScoped* Friend::Referent() const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_ResolveForward = "Friend.ResolveForward";
-
 bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
 {
-   Debug::ft(Friend_ResolveForward);
+   Debug::ft("Friend.ResolveForward");
 
    //  A forward declaration for the friend was found.  Unless it is
    //  the friend declaration itself, save it, along with its scope,
@@ -2177,11 +2036,9 @@ bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_ResolveTemplate = "Friend.ResolveTemplate";
-
 bool Friend::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 {
-   Debug::ft(Friend_ResolveTemplate);
+   Debug::ft("Friend.ResolveTemplate");
 
    const_cast< Friend* >(this)->SetScope(cls->GetScope());
    return true;
@@ -2198,11 +2055,9 @@ string Friend::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_SetAsReferent = "Friend.SetAsReferent";
-
 void Friend::SetAsReferent(const CxxNamed* user)
 {
-   Debug::ft(Friend_SetAsReferent);
+   Debug::ft("Friend.SetAsReferent");
 
    //  Don't log this for another friend or forward declaration.
    //
@@ -2220,11 +2075,9 @@ void Friend::SetAsReferent(const CxxNamed* user)
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_SetFunc = "Friend.SetFunc";
-
 void Friend::SetFunc(FunctionPtr& func)
 {
-   Debug::ft(Friend_SetFunc);
+   Debug::ft("Friend.SetFunc");
 
    func->CloseScope();
 
@@ -2252,11 +2105,9 @@ void Friend::SetFunc(FunctionPtr& func)
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_SetName = "Friend.SetName";
-
 void Friend::SetName(QualNamePtr& name)
 {
-   Debug::ft(Friend_SetName);
+   Debug::ft("Friend.SetName");
 
    name_ = std::move(name);
 }
@@ -2293,11 +2144,9 @@ void Friend::SetReferent(CxxScoped* item, const SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_SetTemplateParms = "Friend.SetTemplateParms";
-
 void Friend::SetTemplateParms(TemplateParmsPtr& parms)
 {
-   Debug::ft(Friend_SetTemplateParms);
+   Debug::ft("Friend.SetTemplateParms");
 
    parms_ = std::move(parms);
 }
@@ -2326,14 +2175,12 @@ string Friend::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name MemberInit_ctor = "MemberInit.ctor";
-
 MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
    ctor_(ctor),
    ref_(nullptr),
    init_(init.release())
 {
-   Debug::ft(MemberInit_ctor);
+   Debug::ft("MemberInit.ctor");
 
    std::swap(name_, name);
    CxxStats::Incr(CxxStats::MEMBER_INIT);
@@ -2406,8 +2253,6 @@ void MemberInit::Shrink()
 
 //==============================================================================
 
-fn_name TemplateParm_ctor1 = "TemplateParm.ctor";
-
 TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
    QualNamePtr& type, size_t ptrs, TypeSpecPtr& preset) :
    tag_(tag),
@@ -2415,7 +2260,7 @@ TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
    ptrs_(ptrs),
    default_(std::move(preset))
 {
-   Debug::ft(TemplateParm_ctor1);
+   Debug::ft("TemplateParm.ctor");
 
    std::swap(name_, name);
    CxxStats::Incr(CxxStats::TEMPLATE_PARM);
@@ -2444,11 +2289,9 @@ CxxToken* TemplateParm::AutoType() const
 
 //------------------------------------------------------------------------------
 
-fn_name TemplateParm_Check = "TemplateParm.Check";
-
 void TemplateParm::Check() const
 {
-   Debug::ft(TemplateParm_Check);
+   Debug::ft("TemplateParm.Check");
 
    if(type_ != nullptr) type_->Check();
    if(default_ != nullptr) default_->Check();
@@ -2456,11 +2299,9 @@ void TemplateParm::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name TemplateParm_EnterBlock = "TemplateParm.EnterBlock";
-
 void TemplateParm::EnterBlock()
 {
-   Debug::ft(TemplateParm_EnterBlock);
+   Debug::ft("TemplateParm.EnterBlock");
 
    Context::SetPos(GetLoc());
    Context::InsertLocal(this);
@@ -2468,11 +2309,9 @@ void TemplateParm::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name TemplateParm_EnterScope = "TemplateParm.EnterScope";
-
 bool TemplateParm::EnterScope()
 {
-   Debug::ft(TemplateParm_EnterScope);
+   Debug::ft("TemplateParm.EnterScope");
 
    Context::SetPos(GetLoc());
    Context::InsertLocal(this);
@@ -2482,11 +2321,9 @@ bool TemplateParm::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name TemplateParm_ExitBlock = "TemplateParm.ExitBlock";
-
 void TemplateParm::ExitBlock() const
 {
-   Debug::ft(TemplateParm_ExitBlock);
+   Debug::ft("TemplateParm.ExitBlock");
 
    Context::EraseLocal(this);
 }
@@ -2563,14 +2400,12 @@ string TemplateParm::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name Terminal_ctor = "Terminal.ctor";
-
 Terminal::Terminal(const string& name, const string& type) :
    name_(name),
    type_(type.empty() ? name : type),
    attrs_(Numeric::Nil)
 {
-   Debug::ft(Terminal_ctor);
+   Debug::ft("Terminal.ctor");
 
    SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
    Singleton< CxxSymbols >::Instance()->InsertTerm(this);
@@ -2579,11 +2414,9 @@ Terminal::Terminal(const string& name, const string& type) :
 
 //------------------------------------------------------------------------------
 
-fn_name Terminal_dtor = "Terminal.dtor";
-
 Terminal::~Terminal()
 {
-   Debug::ftnt(Terminal_dtor);
+   Debug::ftnt("Terminal.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseTerm(this);
    CxxStats::Decr(CxxStats::TERMINAL_DECL);
@@ -2608,34 +2441,28 @@ void Terminal::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Terminal_EnterBlock = "Terminal.EnterBlock";
-
 void Terminal::EnterBlock()
 {
-   Debug::ft(Terminal_EnterBlock);
+   Debug::ft("Terminal.EnterBlock");
 
    Context::PushArg(StackArg(this, 0, false));
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Terminal_IsAuto = "Terminal.IsAuto";
-
 bool Terminal::IsAuto() const
 {
-   Debug::ft(Terminal_IsAuto);
+   Debug::ft("Terminal.IsAuto");
 
    return (*Name() == AUTO_STR);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Terminal_NameRefersToItem = "Terminal.NameRefersToItem";
-
 bool Terminal::NameRefersToItem(const string& name,
    const CxxScope* scope, const CodeFile* file, SymbolView* view) const
 {
-   Debug::ft(Terminal_NameRefersToItem);
+   Debug::ft("Terminal.NameRefersToItem");
 
    *view = DeclaredGlobally;
    return true;
@@ -2654,14 +2481,12 @@ void Terminal::Shrink()
 
 //==============================================================================
 
-fn_name Typedef_ctor = "Typedef.ctor";
-
 Typedef::Typedef(string& name, TypeSpecPtr& spec) :
    spec_(spec.release()),
    using_(false),
    refs_(0)
 {
-   Debug::ft(Typedef_ctor);
+   Debug::ft("Typedef.ctor");
 
    std::swap(name_, name);
    spec_->SetUserType(Cxx::Typedef);
@@ -2671,11 +2496,9 @@ Typedef::Typedef(string& name, TypeSpecPtr& spec) :
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_dtor = "Typedef.dtor";
-
 Typedef::~Typedef()
 {
-   Debug::ftnt(Typedef_dtor);
+   Debug::ftnt("Typedef.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseType(this);
    CxxStats::Decr(CxxStats::TYPE_DECL);
@@ -2691,11 +2514,9 @@ void Typedef::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_Check = "Typedef.Check";
-
 void Typedef::Check() const
 {
-   Debug::ft(Typedef_Check);
+   Debug::ft("Typedef.Check");
 
    spec_->Check();
    CheckIfUnused(TypedefUnused);
@@ -2706,11 +2527,9 @@ void Typedef::Check() const
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_CheckPointerType = "Typedef.CheckPointerType";
-
 void Typedef::CheckPointerType() const
 {
-   Debug::ft(Typedef_CheckPointerType);
+   Debug::ft("Typedef.CheckPointerType");
 
    if(spec_->Ptrs(false) > 0) Log(PointerTypedef);
 }
@@ -2783,11 +2602,9 @@ void Typedef::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_EnterBlock = "Typedef.EnterBlock";
-
 void Typedef::EnterBlock()
 {
-   Debug::ft(Typedef_EnterBlock);
+   Debug::ft("Typedef.EnterBlock");
 
    Context::SetPos(GetLoc());
    spec_->EnteringScope(GetScope());
@@ -2797,11 +2614,9 @@ void Typedef::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_EnterScope = "Typedef.EnterScope";
-
 bool Typedef::EnterScope()
 {
-   Debug::ft(Typedef_EnterScope);
+   Debug::ft("Typedef.EnterScope");
 
    Context::SetPos(GetLoc());
    Context::Enter(this);
@@ -2813,11 +2628,9 @@ bool Typedef::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_ExitBlock = "Typedef.ExitBlock";
-
 void Typedef::ExitBlock() const
 {
-   Debug::ft(Typedef_ExitBlock);
+   Debug::ft("Typedef.ExitBlock");
 
    Singleton< CxxSymbols >::Instance()->EraseType(this);
 }
@@ -2859,33 +2672,27 @@ void Typedef::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_Referent = "Typedef.Referent";
-
 CxxScoped* Typedef::Referent() const
 {
-   Debug::ft(Typedef_Referent);
+   Debug::ft("Typedef.Referent");
 
    return spec_->Referent();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_SetAlignment = "Typedef.SetAlignment";
-
 void Typedef::SetAlignment(AlignAsPtr& align)
 {
-   Debug::ft(Typedef_SetAlignment);
+   Debug::ft("Typedef.SetAlignment");
 
    alignas_ = std::move(align);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_SetAsReferent = "Typedef.SetAsReferent";
-
 void Typedef::SetAsReferent(const CxxNamed* user)
 {
-   Debug::ft(Typedef_SetAsReferent);
+   Debug::ft("Typedef.SetAsReferent");
 
    ++refs_;
    auto item = static_cast< Typedef* >(FindTemplateAnalog(this));
@@ -2911,8 +2718,6 @@ string Typedef::TypeString(bool arg) const
 
 //==============================================================================
 
-fn_name Using_ctor = "Using.ctor";
-
 Using::Using(QualNamePtr& name, bool space, bool added) :
    name_(name.release()),
    users_(0),
@@ -2920,7 +2725,7 @@ Using::Using(QualNamePtr& name, bool space, bool added) :
    remove_(false),
    space_(space)
 {
-   Debug::ft(Using_ctor);
+   Debug::ft("Using.ctor");
 
    CxxStats::Incr(CxxStats::USING_DECL);
 }
@@ -2934,11 +2739,9 @@ void Using::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Using_Check = "Using.Check";
-
 void Using::Check() const
 {
-   Debug::ft(Using_Check);
+   Debug::ft("Using.Check");
 
    if(added_) return;
 
@@ -2976,11 +2779,9 @@ void Using::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Using_EnterBlock = "Using.EnterBlock";
-
 void Using::EnterBlock()
 {
-   Debug::ft(Using_EnterBlock);
+   Debug::ft("Using.EnterBlock");
 
    Context::SetPos(GetLoc());
    Block::AddUsing(this);
@@ -2989,11 +2790,9 @@ void Using::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Using_EnterScope = "Using.EnterScope";
-
 bool Using::EnterScope()
 {
-   Debug::ft(Using_EnterScope);
+   Debug::ft("Using.EnterScope");
 
    Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertUsing(this);
@@ -3003,11 +2802,9 @@ bool Using::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Using_ExitBlock = "Using.ExitBlock";
-
 void Using::ExitBlock() const
 {
-   Debug::ft(Using_ExitBlock);
+   Debug::ft("Using.ExitBlock");
 
    Block::RemoveUsing(this);
 }
@@ -3032,12 +2829,10 @@ void Using::FindReferent()
 
 //------------------------------------------------------------------------------
 
-fn_name Using_IsUsingFor = "Using.IsUsingFor";
-
 bool Using::IsUsingFor
    (const string& fqName, size_t prefix, const CxxScope* scope) const
 {
-   Debug::ft(Using_IsUsingFor);
+   Debug::ft("Using.IsUsingFor");
 
    auto ref = Referent();
    if(ref == nullptr) return false;
@@ -3067,11 +2862,9 @@ bool Using::IsUsingFor
 
 //------------------------------------------------------------------------------
 
-fn_name Using_Referent = "Using.Referent";
-
 CxxScoped* Using::Referent() const
 {
-   Debug::ft(Using_Referent);
+   Debug::ft("Using.Referent");
 
    auto ref = name_->GetReferent();
    if(ref != nullptr) return ref;
@@ -3096,11 +2889,9 @@ string Using::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Using_SetScope = "Using.SetScope";
-
 void Using::SetScope(CxxScope* scope)
 {
-   Debug::ft(Using_SetScope);
+   Debug::ft("Using.SetScope");
 
    //  If a using statement appears in a class, the class is not part
    //  of what it refers to, so step out to the class's namespace.

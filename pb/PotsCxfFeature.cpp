@@ -53,12 +53,10 @@ PotsCxfAttrs::PotsCxfAttrs() : CliText(PotsCxfFullName, PotsCxfAbbrName) { }
 
 //==============================================================================
 
-fn_name PotsCxfFeature_ctor = "PotsCxfFeature.ctor";
-
 PotsCxfFeature::PotsCxfFeature() :
    PotsFeature(CXF, false, PotsCxfAbbrName, PotsCxfFullName)
 {
-   Debug::ft(PotsCxfFeature_ctor);
+   Debug::ft("PotsCxfFeature.ctor");
 
    SetIncompatible(BOC);
    SetIncompatible(HTL);
@@ -66,11 +64,9 @@ PotsCxfFeature::PotsCxfFeature() :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCxfFeature_dtor = "PotsCxfFeature.dtor";
-
 PotsCxfFeature::~PotsCxfFeature()
 {
-   Debug::ftnt(PotsCxfFeature_dtor);
+   Debug::ftnt("PotsCxfFeature.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -79,12 +75,10 @@ CliText* PotsCxfFeature::Attrs() const { return new PotsCxfAttrs; }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCxfFeature_Subscribe = "PotsCxfFeature.Subscribe";
-
 PotsFeatureProfile* PotsCxfFeature::Subscribe
    (PotsProfile& profile, CliThread& cli) const
 {
-   Debug::ft(PotsCxfFeature_Subscribe);
+   Debug::ft("PotsCxfFeature.Subscribe");
 
    if(!cli.EndOfInput()) return nullptr;
 
@@ -94,19 +88,15 @@ PotsFeatureProfile* PotsCxfFeature::Subscribe
 
 //==============================================================================
 
-fn_name PotsCxfFeatureProfile_ctor = "PotsCxfFeatureProfile.ctor";
-
 PotsCxfFeatureProfile::PotsCxfFeatureProfile() : PotsFeatureProfile(CXF)
 {
-   Debug::ft(PotsCxfFeatureProfile_ctor);
+   Debug::ft("PotsCxfFeatureProfile.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCxfFeatureProfile_dtor = "PotsCxfFeatureProfile.dtor";
-
 PotsCxfFeatureProfile::~PotsCxfFeatureProfile()
 {
-   Debug::ftnt(PotsCxfFeatureProfile_dtor);
+   Debug::ftnt("PotsCxfFeatureProfile.dtor");
 }
 }

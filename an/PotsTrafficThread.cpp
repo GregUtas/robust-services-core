@@ -252,22 +252,18 @@ private:
 
 //==============================================================================
 
-fn_name TrafficCallPool_ctor = "TrafficCallPool.ctor";
-
 TrafficCallPool::TrafficCallPool()
 {
-   Debug::ft(TrafficCallPool_ctor);
+   Debug::ft("TrafficCallPool.ctor");
 
    freeq_.Init(TrafficCall::LinkDiff());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCallPool_dtor = "TrafficCallPool.dtor";
-
 TrafficCallPool::~TrafficCallPool()
 {
-   Debug::ftnt(TrafficCallPool_dtor);
+   Debug::ftnt("TrafficCallPool.dtor");
 
    //  The TrafficCalls on freeq_ have already been destructed, so now they
    //  only need to return to their heap.
@@ -286,8 +282,6 @@ size_t TrafficCall::CallId_ = 1;
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ctor = "TrafficCall.ctor";
-
 TrafficCall::TrafficCall(PotsCircuit& orig) :
    callid_(CallId_),
    orig_(&orig),
@@ -300,7 +294,7 @@ TrafficCall::TrafficCall(PotsCircuit& orig) :
    termEnd_(0),
    state_(Originating)
 {
-   Debug::ft(TrafficCall_ctor);
+   Debug::ft("TrafficCall.ctor");
 
    ++CallId_;
    orig.SetTrafficId(callid_);
@@ -309,11 +303,9 @@ TrafficCall::TrafficCall(PotsCircuit& orig) :
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_dtor = "TrafficCall.dtor";
-
 TrafficCall::~TrafficCall()
 {
-   Debug::ftnt(TrafficCall_dtor);
+   Debug::ftnt("TrafficCall.dtor");
 
    --StateCount_[state_];
 
@@ -375,11 +367,9 @@ msecs_t TrafficCall::Advance()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_CheckTerm = "TrafficCall.CheckTerm";
-
 bool TrafficCall::CheckTerm()
 {
-   Debug::ft(TrafficCall_CheckTerm);
+   Debug::ft("TrafficCall.CheckTerm");
 
    if(term_ == nullptr) return false;
 
@@ -452,11 +442,9 @@ void TrafficCall::DisplayStateCounts(ostream& stream, const string& prefix)
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_EraseOrig = "TrafficCall.EraseOrig";
-
 void TrafficCall::EraseOrig()
 {
-   Debug::ft(TrafficCall_EraseOrig);
+   Debug::ft("TrafficCall.EraseOrig");
 
    if(orig_ != nullptr)
    {
@@ -468,11 +456,9 @@ void TrafficCall::EraseOrig()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_EraseTerm = "TrafficCall.EraseTerm";
-
 void TrafficCall::EraseTerm()
 {
-   Debug::ft(TrafficCall_EraseTerm);
+   Debug::ft("TrafficCall.EraseTerm");
 
    if(term_ != nullptr)
    {
@@ -493,22 +479,18 @@ ptrdiff_t TrafficCall::LinkDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_delete = "TrafficCall.operator delete";
-
 void TrafficCall::operator delete(void* addr)
 {
-   Debug::ftnt(TrafficCall_delete);
+   Debug::ftnt("TrafficCall.operator delete");
 
    Singleton< TrafficCallPool >::Extant()->Enq((TrafficCall*) addr);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_new = "TrafficCall.operator new";
-
 void* TrafficCall::operator new(size_t size)
 {
-   Debug::ft(TrafficCall_new);
+   Debug::ft("TrafficCall.operator new");
 
    auto data = Singleton< TrafficCallPool >::Instance()->Deq();
    if(data != nullptr) return data;
@@ -517,11 +499,9 @@ void* TrafficCall::operator new(size_t size)
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_Originate = "TrafficCall.Originate";
-
 msecs_t TrafficCall::Originate() const
 {
-   Debug::ft(TrafficCall_Originate);
+   Debug::ft("TrafficCall.Originate");
 
    //  Send an offhook and look for dial tone after a brief delay.
    //
@@ -531,11 +511,9 @@ msecs_t TrafficCall::Originate() const
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ProcessConnected = "TrafficCall.ProcessConnected";
-
 msecs_t TrafficCall::ProcessConnected()
 {
-   Debug::ft(TrafficCall_ProcessConnected);
+   Debug::ft("TrafficCall.ProcessConnected");
 
    if(!CheckTerm()) return 0;
 
@@ -566,11 +544,9 @@ msecs_t TrafficCall::ProcessConnected()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ProcessDialing = "TrafficCall.ProcessDialing";
-
 msecs_t TrafficCall::ProcessDialing()
 {
-   Debug::ft(TrafficCall_ProcessDialing);
+   Debug::ft("TrafficCall.ProcessDialing");
 
    //  We check orig_->CanDial() here because the traffic thread falls
    //  behind when trace tools are imposing significant overhead.  Digit
@@ -615,11 +591,9 @@ msecs_t TrafficCall::ProcessDialing()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ProcessOriginating = "TrafficCall.ProcessOriginating";
-
 msecs_t TrafficCall::ProcessOriginating()
 {
-   Debug::ft(TrafficCall_ProcessOriginating);
+   Debug::ft("TrafficCall.ProcessOriginating");
 
    auto state = orig_->GetState();
 
@@ -763,11 +737,9 @@ msecs_t TrafficCall::ProcessOriginating()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ProcessReleasing = "TrafficCall.ProcessReleasing";
-
 msecs_t TrafficCall::ProcessReleasing()
 {
-   Debug::ft(TrafficCall_ProcessReleasing);
+   Debug::ft("TrafficCall.ProcessReleasing");
 
    //  Release whoever is still in the call.
    //
@@ -778,11 +750,9 @@ msecs_t TrafficCall::ProcessReleasing()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ProcessRinging = "TrafficCall.ProcessRinging";
-
 msecs_t TrafficCall::ProcessRinging()
 {
-   Debug::ft(TrafficCall_ProcessRinging);
+   Debug::ft("TrafficCall.ProcessRinging");
 
    if(!CheckTerm()) return 0;
 
@@ -813,11 +783,9 @@ msecs_t TrafficCall::ProcessRinging()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ProcessSingleEnded = "TrafficCall.ProcessSingleEnded";
-
 msecs_t TrafficCall::ProcessSingleEnded()
 {
-   Debug::ft(TrafficCall_ProcessSingleEnded);
+   Debug::ft("TrafficCall.ProcessSingleEnded");
 
    // o Release after 2 to 6 seconds (90%).
    // o Release after 15 to 75 seconds (10%).
@@ -829,11 +797,9 @@ msecs_t TrafficCall::ProcessSingleEnded()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ProcessSuspended = "TrafficCall.ProcessSuspended";
-
 msecs_t TrafficCall::ProcessSuspended()
 {
-   Debug::ft(TrafficCall_ProcessSuspended);
+   Debug::ft("TrafficCall.ProcessSuspended");
 
    if(!CheckTerm()) return 0;
 
@@ -876,11 +842,9 @@ msecs_t TrafficCall::ProcessSuspended()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ProcessTerminating = "TrafficCall.ProcessTerminating";
-
 msecs_t TrafficCall::ProcessTerminating()
 {
-   Debug::ft(TrafficCall_ProcessTerminating);
+   Debug::ft("TrafficCall.ProcessTerminating");
 
    auto port = orig_->RxFrom();
 
@@ -953,11 +917,9 @@ msecs_t TrafficCall::ProcessTerminating()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ReleaseOrig = "TrafficCall.ReleaseOrig";
-
 void TrafficCall::ReleaseOrig()
 {
-   Debug::ft(TrafficCall_ReleaseOrig);
+   Debug::ft("TrafficCall.ReleaseOrig");
 
    //  If the originator is in the call, have it send an onhook.
    //  If the terminator is onhook, remove it from the call.
@@ -976,11 +938,9 @@ void TrafficCall::ReleaseOrig()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ReleaseTerm = "TrafficCall.ReleaseTerm";
-
 void TrafficCall::ReleaseTerm()
 {
-   Debug::ft(TrafficCall_ReleaseTerm);
+   Debug::ft("TrafficCall.ReleaseTerm");
 
    //  If the terminator is offhook, have it send an onhook.  If the
    //  originator has released, remove the terminator from the call.
@@ -998,11 +958,9 @@ void TrafficCall::ReleaseTerm()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_ResetStateCounts = "TrafficCall.ResetStateCounts";
-
 void TrafficCall::ResetStateCounts()
 {
-   Debug::ft(TrafficCall_ResetStateCounts);
+   Debug::ft("TrafficCall.ResetStateCounts");
 
    for(auto i = 0; i < State_N; ++i) StateCount_[i] = 0;
    CallId_ = 1;
@@ -1010,11 +968,9 @@ void TrafficCall::ResetStateCounts()
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_SetState = "TrafficCall.SetState";
-
 void TrafficCall::SetState(State state)
 {
-   Debug::ft(TrafficCall_SetState);
+   Debug::ft("TrafficCall.SetState");
 
    --StateCount_[state_];
    state_ = state;
@@ -1045,8 +1001,6 @@ const uint32_t PotsTrafficThread::MaxCallsPerMin =
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_ctor = "PotsTrafficThread.ctor";
-
 PotsTrafficThread::PotsTrafficThread() : Thread(LoadTestFaction),
    timeout_(TIMEOUT_NEVER),
    callsPerMin_(0),
@@ -1063,7 +1017,7 @@ PotsTrafficThread::PotsTrafficThread() : Thread(LoadTestFaction),
    aborts_(0),
    timewheel_(nullptr)
 {
-   Debug::ft(PotsTrafficThread_ctor);
+   Debug::ft("PotsTrafficThread.ctor");
 
    auto size = sizeof(Q1Way< TrafficCall >) * NumOfSlots;
    timewheel_ = (Q1Way< TrafficCall >*) Memory::Alloc(size, MemDynamic);
@@ -1079,11 +1033,9 @@ PotsTrafficThread::PotsTrafficThread() : Thread(LoadTestFaction),
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_dtor = "PotsTrafficThread.dtor";
-
 PotsTrafficThread::~PotsTrafficThread()
 {
-   Debug::ftnt(PotsTrafficThread_dtor);
+   Debug::ftnt("PotsTrafficThread.dtor");
 
    //  Don't clean up during a cold restart.  Every circuit will try to
    //  send a final message, which causes a flood of logs because the
@@ -1115,11 +1067,9 @@ c_string PotsTrafficThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_Destroy = "PotsTrafficThread.Destroy";
-
 void PotsTrafficThread::Destroy()
 {
-   Debug::ft(PotsTrafficThread_Destroy);
+   Debug::ft("PotsTrafficThread.Destroy");
 
    Singleton< PotsTrafficThread >::Destroy();
 }
@@ -1158,11 +1108,9 @@ void PotsTrafficThread::DisplayStateCounts(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_Enqueue = "PotsTrafficThread.Enqueue";
-
 void PotsTrafficThread::Enqueue(TrafficCall& call, msecs_t delay)
 {
-   Debug::ft(PotsTrafficThread_Enqueue);
+   Debug::ft("PotsTrafficThread.Enqueue");
 
    if((delay == 0) || call.Empty())
    {
@@ -1233,11 +1181,9 @@ void PotsTrafficThread::Enter()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_ExitOnRestart = "PotsTrafficThread.ExitOnRestart";
-
 bool PotsTrafficThread::ExitOnRestart(RestartLevel level) const
 {
-   Debug::ft(PotsTrafficThread_ExitOnRestart);
+   Debug::ft("PotsTrafficThread.ExitOnRestart");
 
    //  Calls survive warm restarts, so continue to generate traffic when
    //  the restart ends.  Exit during other restarts.
@@ -1297,22 +1243,18 @@ Address::DN PotsTrafficThread::FindDn(DnStatus status) const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_InitialTime = "PotsTrafficThread.InitialTime";
-
 Duration PotsTrafficThread::InitialTime() const
 {
-   Debug::ft(PotsTrafficThread_InitialTime);
+   Debug::ft("PotsTrafficThread.InitialTime");
 
    return Thread::InitialTime() << 4;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_Query = "PotsTrafficThread.Query";
-
 void PotsTrafficThread::Query(ostream& stream) const
 {
-   Debug::ft(PotsTrafficThread_Query);
+   Debug::ft("PotsTrafficThread.Query");
 
    stream << "Number of timewheel slots    " << NumOfSlots << CRLF;
 
@@ -1382,11 +1324,9 @@ void PotsTrafficThread::RecordHoldingTime(const Duration& time)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_SendMessages = "PotsTrafficThread.SendMessages";
-
 void PotsTrafficThread::SendMessages()
 {
-   Debug::ft(PotsTrafficThread_SendMessages);
+   Debug::ft("PotsTrafficThread.SendMessages");
 
    auto& slot = timewheel_[currSlot_];
 
@@ -1432,11 +1372,9 @@ void PotsTrafficThread::SendMessages()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_SetRate = "PotsTrafficThread.SetRate";
-
 void PotsTrafficThread::SetRate(uint32_t rate)
 {
-   Debug::ft(PotsTrafficThread_SetRate);
+   Debug::ft("PotsTrafficThread.SetRate");
 
    if(rate > callsPerMin_)
    {
@@ -1503,11 +1441,9 @@ void PotsTrafficThread::SetRate(uint32_t rate)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsTrafficThread_Takedown = "PotsTrafficThread.Takedown";
-
 void PotsTrafficThread::Takedown()
 {
-   Debug::ft(PotsTrafficThread_Takedown);
+   Debug::ft("PotsTrafficThread.Takedown");
 
    //  Deregister the DNs that we created, pausing after each group of 100.
    //  Although we're finished, calls are still in the process of clearing,

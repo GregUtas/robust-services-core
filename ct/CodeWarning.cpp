@@ -90,8 +90,6 @@ std::vector< CodeWarning > CodeWarning::Warnings_ =
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_ctor = "CodeWarning.ctor";
-
 CodeWarning::CodeWarning(Warning warning, const CodeFile* file,
    size_t line, size_t pos, const CxxNamed* item, word offset,
    const string& info, bool hide) :
@@ -105,18 +103,16 @@ CodeWarning::CodeWarning(Warning warning, const CodeFile* file,
    hide_(hide),
    status(NotSupported)
 {
-   Debug::ft(CodeWarning_ctor);
+   Debug::ft("CodeWarning.ctor");
 
    if(Attrs_.at(warning).fixable) status = NotFixed;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_FindMateLog = "CodeWarning.FindMateLog";
-
 CodeWarning* CodeWarning::FindMateLog(std::string& expl) const
 {
-   Debug::ft(CodeWarning_FindMateLog);
+   Debug::ft("CodeWarning.FindMateLog");
 
    //  Look for the mate item associated with this log.  Find its file and
    //  editor, and ask its editor find the log that corresponds to this one.
@@ -134,11 +130,9 @@ CodeWarning* CodeWarning::FindMateLog(std::string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_FindRootLog = "CodeWarning.FindRootLog";
-
 CodeWarning* CodeWarning::FindRootLog(std::string& expl)
 {
-   Debug::ft(CodeWarning_FindRootLog);
+   Debug::ft("CodeWarning.FindRootLog");
 
    //  This warning is logged against the location that invokes a special
    //  member function and that class that did not declare that function.
@@ -188,11 +182,9 @@ word CodeWarning::FindWarning(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_GenerateReport = "CodeWarning.GenerateReport";
-
 void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 {
-   Debug::ft(CodeWarning_GenerateReport);
+   Debug::ft("CodeWarning.GenerateReport");
 
    //  Clear any previous report's global counts.
    //
@@ -357,11 +349,9 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_GetNewFuncName = "CodeWarning.GetNewFuncName";
-
 string CodeWarning::GetNewFuncName(string& expl) const
 {
-   Debug::ft(CodeWarning_GetNewFuncName);
+   Debug::ft("CodeWarning.GetNewFuncName");
 
    switch(warning_)
    {
@@ -377,12 +367,10 @@ string CodeWarning::GetNewFuncName(string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_GetWarnings = "CodeWarning.GetWarnings";
-
 void CodeWarning::GetWarnings
    (const CodeFile* file, std::vector< CodeWarning >& warnings)
 {
-   Debug::ft(CodeWarning_GetWarnings);
+   Debug::ft("CodeWarning.GetWarnings");
 
    for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
    {
@@ -395,11 +383,9 @@ void CodeWarning::GetWarnings
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_Initialize = "CodeWarning.Initialize";
-
 void CodeWarning::Initialize()
 {
-   Debug::ft(CodeWarning_Initialize);
+   Debug::ft("CodeWarning.Initialize");
 
    //  The following constants define how warnings will be sorted before the
    //  editor fixes them.  Fixes that require more significant editing are
@@ -791,6 +777,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(BitwiseOperatorOnBoolean,
       WarningAttrs(F, X,
       "Operator | or & used on boolean")));
+   Attrs_.insert(WarningPair(DebugFtCanBeLiteral,
+      WarningAttrs(T, R,
+      "Function name passed to Debug::ft could be inlined string literal")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X,
       ERROR_STR)));
@@ -798,11 +787,9 @@ void CodeWarning::Initialize()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_Insert = "CodeWarning.Insert";
-
 void CodeWarning::Insert() const
 {
-   Debug::ft(CodeWarning_Insert);
+   Debug::ft("CodeWarning.Insert");
 
    if((FindWarning(*this) < 0) && !Suppress())
    {
@@ -875,11 +862,9 @@ bool CodeWarning::IsSortedToFix
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_LogsToFix = "CodeWarning.LogsToFix";
-
 std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
 {
-   Debug::ft(CodeWarning_LogsToFix);
+   Debug::ft("CodeWarning.LogsToFix");
 
    std::vector< CodeWarning* > logs;
    CodeWarning* log = nullptr;

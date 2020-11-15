@@ -37,30 +37,24 @@ fixed_string CliBoolParm::AnyBoolParm = "t|f";
 
 //------------------------------------------------------------------------------
 
-fn_name CliBoolParm_ctor = "CliBoolParm.ctor";
-
 CliBoolParm::CliBoolParm(c_string help, bool opt, c_string tag) :
    CliParm(help, opt, tag)
 {
-   Debug::ft(CliBoolParm_ctor);
+   Debug::ft("CliBoolParm.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CliBoolParm_dtor = "CliBoolParm.dtor";
 
 CliBoolParm::~CliBoolParm()
 {
-   Debug::ftnt(CliBoolParm_dtor);
+   Debug::ftnt("CliBoolParm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliBoolParm_GetBoolParmRc = "CliBoolParm.GetBoolParmRc";
-
 CliParm::Rc CliBoolParm::GetBoolParmRc(bool& b, CliThread& cli) const
 {
-   Debug::ft(CliBoolParm_GetBoolParmRc);
+   Debug::ft("CliBoolParm.GetBoolParmRc");
 
    string s;
    string t;
@@ -137,11 +131,9 @@ void CliBoolParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliBoolParm_ShowValues = "CliBoolParm.ShowValues";
-
 bool CliBoolParm::ShowValues(string& values) const
 {
-   Debug::ft(CliBoolParm_ShowValues);
+   Debug::ft("CliBoolParm.ShowValues");
 
    values = AnyBoolParm;
    return true;

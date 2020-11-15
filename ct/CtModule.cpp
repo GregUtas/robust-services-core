@@ -33,7 +33,6 @@
 #include "NbModule.h"
 #include "NtModule.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using namespace NodeTools;
@@ -42,11 +41,9 @@ using namespace NodeTools;
 
 namespace CodeTools
 {
-fn_name CtModule_ctor = "CtModule.ctor";
-
 CtModule::CtModule() : Module()
 {
-   Debug::ft(CtModule_ctor);
+   Debug::ft("CtModule.ctor");
 
    //  Create the modules required by CodeTools.
    //
@@ -57,20 +54,16 @@ CtModule::CtModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name CtModule_dtor = "CtModule.dtor";
-
 CtModule::~CtModule()
 {
-   Debug::ftnt(CtModule_dtor);
+   Debug::ftnt("CtModule.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CtModule_Shutdown = "CtModule.Shutdown";
-
 void CtModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(CtModule_Shutdown);
+   Debug::ft("CtModule.Shutdown");
 
    auto coverdb = Singleton< CodeCoverage >::Extant();
    if(coverdb != nullptr) coverdb->Shutdown(level);
@@ -83,11 +76,9 @@ void CtModule::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name CtModule_Startup = "CtModule.Startup";
-
 void CtModule::Startup(RestartLevel level)
 {
-   Debug::ft(CtModule_Startup);
+   Debug::ft("CtModule.Startup");
 
    CodeWarning::Initialize();
    Lexer::Initialize();

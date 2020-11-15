@@ -50,11 +50,9 @@ c_string Progress::strInd(Ind ind)
 
 //==============================================================================
 
-fn_name ProgressInfo_ctor = "ProgressInfo.ctor";
-
 ProgressInfo::ProgressInfo() : progress(Progress::NilInd)
 {
-   Debug::ft(ProgressInfo_ctor);
+   Debug::ft("ProgressInfo.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -67,21 +65,17 @@ void ProgressInfo::Display(ostream& stream, const string& prefix) const
 
 //==============================================================================
 
-fn_name ProgressParameter_ctor = "ProgressParameter.ctor";
-
 ProgressParameter::ProgressParameter(ProtocolId prid, Id pid) :
    TlvIntParameter< Progress::Ind >(prid, pid)
 {
-   Debug::ft(ProgressParameter_ctor);
+   Debug::ft("ProgressParameter.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProgressParameter_dtor = "ProgressParameter.dtor";
-
 ProgressParameter::~ProgressParameter()
 {
-   Debug::ftnt(ProgressParameter_dtor);
+   Debug::ftnt("ProgressParameter.dtor");
 }
 
 //------------------------------------------------------------------------------

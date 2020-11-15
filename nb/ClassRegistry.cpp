@@ -34,11 +34,9 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name ClassRegistry_ctor = "ClassRegistry.ctor";
-
 ClassRegistry::ClassRegistry()
 {
-   Debug::ft(ClassRegistry_ctor);
+   Debug::ft("ClassRegistry.ctor");
 
    classes_.Init(MaxClassId, Class::CellDiff(), MemImmutable);
 }
@@ -56,22 +54,18 @@ ClassRegistry::~ClassRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassRegistry_BindClass = "ClassRegistry.BindClass";
-
 bool ClassRegistry::BindClass(Class& cls)
 {
-   Debug::ft(ClassRegistry_BindClass);
+   Debug::ft("ClassRegistry.BindClass");
 
    return classes_.Insert(cls);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ClassRegistry_ClaimBlocks = "ClassRegistry.ClaimBlocks";
-
 void ClassRegistry::ClaimBlocks()
 {
-   Debug::ft(ClassRegistry_ClaimBlocks);
+   Debug::ft("ClassRegistry.ClaimBlocks");
 
    for(auto c = classes_.First(); c != nullptr; classes_.Next(c))
    {
@@ -106,11 +100,9 @@ void ClassRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name ClassRegistry_Shutdown = "ClassRegistry.Shutdown";
-
 void ClassRegistry::Shutdown(RestartLevel level)
 {
-   Debug::ft(ClassRegistry_Shutdown);
+   Debug::ft("ClassRegistry.Shutdown");
 
    for(auto c = classes_.First(); c != nullptr; classes_.Next(c))
    {
@@ -120,11 +112,9 @@ void ClassRegistry::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name ClassRegistry_Startup = "ClassRegistry.Startup";
-
 void ClassRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(ClassRegistry_Startup);
+   Debug::ft("ClassRegistry.Startup");
 
    for(auto c = classes_.First(); c != nullptr; classes_.Next(c))
    {
@@ -134,11 +124,9 @@ void ClassRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name ClassRegistry_UnbindClass = "ClassRegistry.UnbindClass";
-
 void ClassRegistry::UnbindClass(Class& cls)
 {
-   Debug::ftnt(ClassRegistry_UnbindClass);
+   Debug::ftnt("ClassRegistry.UnbindClass");
 
    classes_.Erase(cls);
 }

@@ -212,11 +212,9 @@ CipUdpServiceText::CipUdpServiceText() :
 fixed_string CipUdpPortKey = "CipUdpPort";
 fixed_string CipUdpPortExpl = "Call Interworking Protocol: UDP port";
 
-fn_name CipUdpService_ctor = "CipUdpService.ctor";
-
 CipUdpService::CipUdpService()
 {
-   Debug::ft(CipUdpService_ctor);
+   Debug::ft("CipUdpService.ctor");
 
    auto port = std::to_string(CipIpPort);
    portCfg_.reset(new IpPortCfgParm
@@ -226,31 +224,25 @@ CipUdpService::CipUdpService()
 
 //------------------------------------------------------------------------------
 
-fn_name CipUdpService_dtor = "CipUdpService.dtor";
-
 CipUdpService::~CipUdpService()
 {
-   Debug::ftnt(CipUdpService_dtor);
+   Debug::ftnt("CipUdpService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipUdpService_CreateHandler = "CipUdpService.CreateHandler";
-
 InputHandler* CipUdpService::CreateHandler(IpPort* port) const
 {
-   Debug::ft(CipUdpService_CreateHandler);
+   Debug::ft("CipUdpService.CreateHandler");
 
    return new CipHandler(port);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipUdpService_CreateText = "CipUdpService.CreateText";
-
 CliText* CipUdpService::CreateText() const
 {
-   Debug::ft(CipUdpService_CreateText);
+   Debug::ft("CipUdpService.CreateText");
 
    return new CipUdpServiceText;
 }
@@ -273,11 +265,9 @@ CipTcpServiceText::CipTcpServiceText() :
 fixed_string CipTcpPortKey = "CipTcpPort";
 fixed_string CipTcpPortExpl = "Call Interworking Protocol: TCP port";
 
-fn_name CipTcpService_ctor = "CipTcpService.ctor";
-
 CipTcpService::CipTcpService()
 {
-   Debug::ft(CipTcpService_ctor);
+   Debug::ft("CipTcpService.ctor");
 
    auto port = std::to_string(CipIpPort);
    portCfg_.reset(new IpPortCfgParm
@@ -287,42 +277,34 @@ CipTcpService::CipTcpService()
 
 //------------------------------------------------------------------------------
 
-fn_name CipTcpService_dtor = "CipTcpService.dtor";
-
 CipTcpService::~CipTcpService()
 {
-   Debug::ftnt(CipTcpService_dtor);
+   Debug::ftnt("CipTcpService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipTcpService_CreateHandler = "CipTcpService.CreateHandler";
-
 InputHandler* CipTcpService::CreateHandler(IpPort* port) const
 {
-   Debug::ft(CipTcpService_CreateHandler);
+   Debug::ft("CipTcpService.CreateHandler");
 
    return new CipHandler(port);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipTcpService_CreateText = "CipTcpService.CreateText";
-
 CliText* CipTcpService::CreateText() const
 {
-   Debug::ft(CipTcpService_CreateText);
+   Debug::ft("CipTcpService.CreateText");
 
    return new CipTcpServiceText;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipTcpService_GetAppSocketSizes = "CipTcpService.GetAppSocketSizes";
-
 void CipTcpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
 {
-   Debug::ft(CipTcpService_GetAppSocketSizes);
+   Debug::ft("CipTcpService.GetAppSocketSizes");
 
    //  Setting txSize to 0 prevents buffering of outgoing messages.
    //
@@ -332,11 +314,9 @@ void CipTcpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
 
 //==============================================================================
 
-fn_name CipProtocol_ctor = "CipProtocol.ctor";
-
 CipProtocol::CipProtocol() : TlvProtocol(CipProtocolId, TimerProtocolId)
 {
-   Debug::ft(CipProtocol_ctor);
+   Debug::ft("CipProtocol.ctor");
 
    //  Create the CIP signals and parameters.
    //
@@ -357,11 +337,9 @@ CipProtocol::CipProtocol() : TlvProtocol(CipProtocolId, TimerProtocolId)
 
 //------------------------------------------------------------------------------
 
-fn_name CipProtocol_dtor = "CipProtocol.dtor";
-
 CipProtocol::~CipProtocol()
 {
-   Debug::ftnt(CipProtocol_dtor);
+   Debug::ftnt("CipProtocol.dtor");
 }
 
 //==============================================================================
@@ -469,12 +447,10 @@ void CipRouteParameter::DisplayMsg(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CipRouteParameter_InjectMsg = "CipRouteParameter.InjectMsg";
-
 Parameter::TestRc CipRouteParameter::InjectMsg
    (CliThread& cli, Message& msg, Usage use) const
 {
-   Debug::ft(CipRouteParameter_InjectMsg);
+   Debug::ft("CipRouteParameter.InjectMsg");
 
    id_t        idx;
    word        fid, rid;
@@ -501,12 +477,10 @@ Parameter::TestRc CipRouteParameter::InjectMsg
 
 //------------------------------------------------------------------------------
 
-fn_name CipRouteParameter_VerifyMsg = "CipRouteParameter.VerifyMsg";
-
 Parameter::TestRc CipRouteParameter::VerifyMsg
    (CliThread& cli, const Message& msg, Usage use) const
 {
-   Debug::ft(CipRouteParameter_VerifyMsg);
+   Debug::ft("CipRouteParameter.VerifyMsg");
 
    TestRc       rc;
    auto&        tlvmsg = static_cast< const TlvMessage& >(msg);
@@ -668,114 +642,92 @@ CipMediaParameter::CipMediaParameter() :
 
 //==============================================================================
 
-fn_name CipMessage_ctor1 = "CipMessage.ctor(i/c)";
-
 CipMessage::CipMessage(SbIpBufferPtr& buff) : TlvMessage(buff)
 {
-   Debug::ft(CipMessage_ctor1);
+   Debug::ft("CipMessage.ctor(i/c)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CipMessage_ctor2 = "CipMessage.ctor(o/g)";
 
 CipMessage::CipMessage(ProtocolSM* psm, size_t size) : TlvMessage(psm, size)
 {
-   Debug::ft(CipMessage_ctor2);
+   Debug::ft("CipMessage.ctor(o/g)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CipMessage_dtor = "CipMessage.dtor";
 
 CipMessage::~CipMessage()
 {
-   Debug::ftnt(CipMessage_dtor);
+   Debug::ftnt("CipMessage.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipMessage_AddAddress = "CipMessage.AddAddress";
-
 DigitString* CipMessage::AddAddress(const DigitString& ds, CipParameter::Id pid)
 {
-   Debug::ft(CipMessage_AddAddress);
+   Debug::ft("CipMessage.AddAddress");
 
    return AddType(ds, pid);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipMessage_AddCause = "CipMessage.AddCause";
-
 CauseInfo* CipMessage::AddCause(const CauseInfo& cause)
 {
-   Debug::ft(CipMessage_AddCause);
+   Debug::ft("CipMessage.AddCause");
 
    return AddType(cause, CipParameter::Cause);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipMessage_AddMedia = "CipMessage.AddMedia";
-
 MediaInfo* CipMessage::AddMedia(const MediaInfo& media)
 {
-   Debug::ft(CipMessage_AddMedia);
+   Debug::ft("CipMessage.AddMedia");
 
    return AddType(media, CipParameter::Media);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipMessage_AddProgress = "CipMessage.AddProgress";
-
 ProgressInfo* CipMessage::AddProgress(const ProgressInfo& progress)
 {
-   Debug::ft(CipMessage_AddProgress);
+   Debug::ft("CipMessage.AddProgress");
 
    return AddType(progress, CipParameter::Progress);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipMessage_AddRoute = "CipMessage.AddRoute";
-
 RouteResult* CipMessage::AddRoute(const RouteResult& route)
 {
-   Debug::ft(CipMessage_AddRoute);
+   Debug::ft("CipMessage.AddRoute");
 
    return AddType(route, CipParameter::Route);
 }
 
 //==============================================================================
 
-fn_name BcPsm_ctor1 = "BcPsm.ctor(o/g)";
-
 BcPsm::BcPsm(FactoryId fid) : MediaPsm(fid),
    iamTimer_(false)
 {
-   Debug::ft(BcPsm_ctor1);
+   Debug::ft("BcPsm.ctor(o/g)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name BcPsm_ctor2 = "BcPsm.ctor(subseq)";
 
 BcPsm::BcPsm(FactoryId fid, ProtocolLayer& adj, bool upper) :
    MediaPsm(fid, adj, upper),
    iamTimer_(false)
 {
-   Debug::ft(BcPsm_ctor2);
+   Debug::ft("BcPsm.ctor(subseq)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name BcPsm_dtor = "BcPsm.dtor";
-
 BcPsm::~BcPsm()
 {
-   Debug::ftnt(BcPsm_dtor);
+   Debug::ftnt("BcPsm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -790,11 +742,9 @@ void BcPsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name BcPsm_EnsureMediaMsg = "BcPsm.EnsureMediaMsg";
-
 void BcPsm::EnsureMediaMsg()
 {
-   Debug::ft(BcPsm_EnsureMediaMsg);
+   Debug::ft("BcPsm.EnsureMediaMsg");
 
    //  A media update can be included in any message, so an outgoing
    //  message only needs to be created if one doesn't already exist.
@@ -813,11 +763,9 @@ void BcPsm::EnsureMediaMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name BcPsm_FindRcvdMsg = "BcPsm.FindRcvdMsg";
-
 CipMessage* BcPsm::FindRcvdMsg(CipSignal::Id sid) const
 {
-   Debug::ft(BcPsm_FindRcvdMsg);
+   Debug::ft("BcPsm.FindRcvdMsg");
 
    for(auto m = FirstRcvdMsg(); m != nullptr; m = m->NextMsg())
    {
@@ -829,11 +777,9 @@ CipMessage* BcPsm::FindRcvdMsg(CipSignal::Id sid) const
 
 //------------------------------------------------------------------------------
 
-fn_name BcPsm_InjectFinalMsg = "BcPsm.InjectFinalMsg";
-
 void BcPsm::InjectFinalMsg()
 {
-   Debug::ft(BcPsm_InjectFinalMsg);
+   Debug::ft("BcPsm.InjectFinalMsg");
 
    auto msg = new CipMessage(this, 16);
    CauseInfo cci;
@@ -1110,11 +1056,9 @@ ProtocolSM::OutgoingRc BcPsm::ProcessOgMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name BcPsm_SendFinalMsg = "BcPsm.SendFinalMsg";
-
 void BcPsm::SendFinalMsg()
 {
-   Debug::ft(BcPsm_SendFinalMsg);
+   Debug::ft("BcPsm.SendFinalMsg");
 
    if(GetState() == Idle) return;
 
@@ -1129,39 +1073,31 @@ void BcPsm::SendFinalMsg()
 
 //==============================================================================
 
-fn_name CipPsm_ctor1 = "CipPsm.ctor(IAM)";
-
 CipPsm::CipPsm() : BcPsm(CipObcFactoryId)
 {
-   Debug::ft(CipPsm_ctor1);
+   Debug::ft("CipPsm.ctor(IAM)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CipPsm_ctor2 = "CipPsm.ctor(layer)";
 
 CipPsm::CipPsm(FactoryId fid, ProtocolLayer& adj, bool upper) :
    BcPsm(fid, adj, upper)
 {
-   Debug::ft(CipPsm_ctor2);
+   Debug::ft("CipPsm.ctor(layer)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CipPsm_dtor = "CipPsm.dtor";
 
 CipPsm::~CipPsm()
 {
-   Debug::ftnt(CipPsm_dtor);
+   Debug::ftnt("CipPsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipPsm_CreateAppSocket = "CipPsm.CreateAppSocket";
-
 SysTcpSocket* CipPsm::CreateAppSocket()
 {
-   Debug::ft(CipPsm_CreateAppSocket);
+   Debug::ft("CipPsm.CreateAppSocket");
 
    if(!Debug::SwFlagOn(CipAlwaysOverIpFlag)) return nullptr;
 
@@ -1173,11 +1109,9 @@ SysTcpSocket* CipPsm::CreateAppSocket()
 
 //------------------------------------------------------------------------------
 
-fn_name CipPsm_Route = "CipPsm.Route";
-
 Message::Route CipPsm::Route() const
 {
-   Debug::ft(CipPsm_Route);
+   Debug::ft("CipPsm.Route");
 
    if(Debug::SwFlagOn(CipAlwaysOverIpFlag)) return Message::IpStack;
    return Message::Internal;
@@ -1185,70 +1119,56 @@ Message::Route CipPsm::Route() const
 
 //==============================================================================
 
-fn_name CipHandler_ctor = "CipHandler.ctor";
-
 CipHandler::CipHandler(IpPort* port) : SbInputHandler(port)
 {
-   Debug::ft(CipHandler_ctor);
+   Debug::ft("CipHandler.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipHandler_dtor = "CipHandler.dtor";
-
 CipHandler::~CipHandler()
 {
-   Debug::ftnt(CipHandler_dtor);
+   Debug::ftnt("CipHandler.dtor");
 }
 
 //==============================================================================
 
-fn_name CipFactory_ctor = "CipFactory.ctor";
-
 CipFactory::CipFactory(Id fid, c_string name) :
    SsmFactory(fid, CipProtocolId, name)
 {
-   Debug::ft(CipFactory_ctor);
+   Debug::ft("CipFactory.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CipFactory_dtor = "CipFactory.dtor";
 
 CipFactory::~CipFactory()
 {
-   Debug::ftnt(CipFactory_dtor);
+   Debug::ftnt("CipFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipFactory_AllocIcMsg = "CipFactory.AllocIcMsg";
-
 Message* CipFactory::AllocIcMsg(SbIpBufferPtr& buff) const
 {
-   Debug::ft(CipFactory_AllocIcMsg);
+   Debug::ft("CipFactory.AllocIcMsg");
 
    return new CipMessage(buff);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipFactory_AllocOgMsg = "CipFactory.AllocOgMsg";
-
 Message* CipFactory::AllocOgMsg(SignalId sid) const
 {
-   Debug::ft(CipFactory_AllocOgMsg);
+   Debug::ft("CipFactory.AllocOgMsg");
 
    return new CipMessage(nullptr, 16);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipFactory_ReallocOgMsg = "CipFactory.ReallocOgMsg";
-
 Message* CipFactory::ReallocOgMsg(SbIpBufferPtr& buff) const
 {
-   Debug::ft(CipFactory_ReallocOgMsg);
+   Debug::ft("CipFactory.ReallocOgMsg");
 
    return new CipMessage(buff);
 }
@@ -1269,12 +1189,10 @@ CipObcFactoryText::CipObcFactoryText() :
 
 //------------------------------------------------------------------------------
 
-fn_name CipObcFactory_ctor = "CipObcFactory.ctor";
-
 CipObcFactory::CipObcFactory() :
    CipFactory(CipObcFactoryId, "Outgoing CIP Calls")
 {
-   Debug::ft(CipObcFactory_ctor);
+   Debug::ft("CipObcFactory.ctor");
 
    AddOutgoingSignal(CipSignal::IAM);
    AddOutgoingSignal(CipSignal::CPG);
@@ -1288,31 +1206,25 @@ CipObcFactory::CipObcFactory() :
 
 //------------------------------------------------------------------------------
 
-fn_name CipObcFactory_dtor = "CipObcFactory.dtor";
-
 CipObcFactory::~CipObcFactory()
 {
-   Debug::ftnt(CipObcFactory_dtor);
+   Debug::ftnt("CipObcFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipObcFactory_AllocOgPsm = "CipObcFactory.AllocOgPsm";
-
 ProtocolSM* CipObcFactory::AllocOgPsm(const Message& msg) const
 {
-   Debug::ft(CipObcFactory_AllocOgPsm);
+   Debug::ft("CipObcFactory.AllocOgPsm");
 
    return new CipPsm;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipObcFactory_CreateText = "CipObcFactory.CreateText";
-
 CliText* CipObcFactory::CreateText() const
 {
-   Debug::ft(CipObcFactory_CreateText);
+   Debug::ft("CipObcFactory.CreateText");
 
    return new CipObcFactoryText;
 }
@@ -1333,12 +1245,10 @@ CipTbcFactoryText::CipTbcFactoryText() :
 
 //------------------------------------------------------------------------------
 
-fn_name CipTbcFactory_ctor = "CipTbcFactory.ctor";
-
 CipTbcFactory::CipTbcFactory() :
    CipFactory(CipTbcFactoryId, "Incoming CIP Calls")
 {
-   Debug::ft(CipTbcFactory_ctor);
+   Debug::ft("CipTbcFactory.ctor");
 
    AddOutgoingSignal(CipSignal::CPG);
    AddOutgoingSignal(CipSignal::ANM);
@@ -1352,33 +1262,27 @@ CipTbcFactory::CipTbcFactory() :
 
 //------------------------------------------------------------------------------
 
-fn_name CipTbcFactory_dtor = "CipTbcFactory.dtor";
-
 CipTbcFactory::~CipTbcFactory()
 {
-   Debug::ftnt(CipTbcFactory_dtor);
+   Debug::ftnt("CipTbcFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipTbcFactory_AllocIcPsm = "CipTbcFactory.AllocIcPsm";
-
 ProtocolSM* CipTbcFactory::AllocIcPsm
    (const Message& msg, ProtocolLayer& lower) const
 {
-   Debug::ft(CipTbcFactory_AllocIcPsm);
+   Debug::ft("CipTbcFactory.AllocIcPsm");
 
    return new CipPsm(CipTbcFactoryId, lower, false);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CipTbcFactory_AllocRoot = "CipTbcFactory.AllocRoot";
-
 RootServiceSM* CipTbcFactory::AllocRoot
    (const Message& msg, ProtocolSM& psm) const
 {
-   Debug::ft(CipTbcFactory_AllocRoot);
+   Debug::ft("CipTbcFactory.AllocRoot");
 
    auto& tmsg = static_cast< const CipMessage& >(msg);
    auto rte = tmsg.FindType< RouteResult >(CipParameter::Route);
@@ -1391,11 +1295,9 @@ RootServiceSM* CipTbcFactory::AllocRoot
 
 //------------------------------------------------------------------------------
 
-fn_name CipTbcFactory_CreateText = "CipTbcFactory.CreateText";
-
 CliText* CipTbcFactory::CreateText() const
 {
-   Debug::ft(CipTbcFactory_CreateText);
+   Debug::ft("CipTbcFactory.CreateText");
 
    return new CipTbcFactoryText;
 }

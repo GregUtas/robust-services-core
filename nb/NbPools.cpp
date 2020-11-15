@@ -38,30 +38,24 @@ const size_t MsgBufferPool::BlockSize =
 
 //------------------------------------------------------------------------------
 
-fn_name MsgBufferPool_ctor = "MsgBufferPool.ctor";
-
 MsgBufferPool::MsgBufferPool() :
    ObjectPool(MsgBufferObjPoolId, MemDynamic, BlockSize, "MsgBuffers")
 {
-   Debug::ft(MsgBufferPool_ctor);
+   Debug::ft("MsgBufferPool.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name MsgBufferPool_dtor = "MsgBufferPool.dtor";
 
 MsgBufferPool::~MsgBufferPool()
 {
-   Debug::ftnt(MsgBufferPool_dtor);
+   Debug::ftnt("MsgBufferPool.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MsgBufferPool_ClaimBlocks = "MsgBufferPool.ClaimBlocks";
-
 void MsgBufferPool::ClaimBlocks()
 {
-   Debug::ft(MsgBufferPool_ClaimBlocks);
+   Debug::ft("MsgBufferPool.ClaimBlocks");
 
    Singleton< ThreadRegistry >::Instance()->ClaimBlocks();
    Singleton< TraceBuffer >::Instance()->ClaimBlocks();

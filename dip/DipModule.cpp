@@ -29,7 +29,6 @@
 #include "ModuleRegistry.h"
 #include "NwModule.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using namespace NetworkBase;
@@ -38,11 +37,9 @@ using namespace NetworkBase;
 
 namespace Diplomacy
 {
-fn_name DipModule_ctor = "DipModule.ctor";
-
 DipModule::DipModule() : Module()
 {
-   Debug::ft(DipModule_ctor);
+   Debug::ft("DipModule.ctor");
 
    //  Create the modules required by Diplomacy.
    //
@@ -52,20 +49,16 @@ DipModule::DipModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name DipModule_Shutdown = "DipModule.Shutdown";
-
 void DipModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(DipModule_Shutdown);
+   Debug::ft("DipModule.Shutdown");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name DipModule_Startup = "DipModule.Startup";
-
 void DipModule::Startup(RestartLevel level)
 {
-   Debug::ft(DipModule_Startup);
+   Debug::ft("DipModule.Startup");
 
    Singleton< DipIpBufferPool >::Instance()->Startup(level);
    Singleton< BotTcpService >::Instance()->Startup(level);

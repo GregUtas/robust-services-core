@@ -34,42 +34,34 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name TextTlvMessage_ctor1 = "TextTlvMessage.ctor(i/c)";
-
 TextTlvMessage::TextTlvMessage(SbIpBufferPtr& buff) :
    TlvMessage(buff),
    text_(true)
 {
-   Debug::ft(TextTlvMessage_ctor1);
+   Debug::ft("TextTlvMessage.ctor(i/c)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TextTlvMessage_ctor2 = "TextTlvMessage.ctor(o/g)";
 
 TextTlvMessage::TextTlvMessage(ProtocolSM* psm, size_t size) :
    TlvMessage(psm, size),
    text_(false)
 {
-   Debug::ft(TextTlvMessage_ctor2);
+   Debug::ft("TextTlvMessage.ctor(o/g)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TextTlvMessage_dtor = "TextTlvMessage.dtor";
 
 TextTlvMessage::~TextTlvMessage()
 {
-   Debug::ftnt(TextTlvMessage_dtor);
+   Debug::ftnt("TextTlvMessage.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TextTlvMessage_Build = "TextTlvMessage.Build";
-
 SbIpBufferPtr TextTlvMessage::Build()
 {
-   Debug::ft(TextTlvMessage_Build);
+   Debug::ft("TextTlvMessage.Build");
 
    Context::Kill(strOver(this), GetProtocol());
    return nullptr;
@@ -87,11 +79,9 @@ void TextTlvMessage::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name TextTlvMessage_Parse = "TextTlvMessage.Parse";
-
 SbIpBufferPtr TextTlvMessage::Parse()
 {
-   Debug::ft(TextTlvMessage_Parse);
+   Debug::ft("TextTlvMessage.Parse");
 
    Context::Kill(strOver(this), GetProtocol());
    return nullptr;
@@ -106,11 +96,9 @@ void TextTlvMessage::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name TextTlvMessage_Receive = "TextTlvMessage.Receive";
-
 bool TextTlvMessage::Receive()
 {
-   Debug::ft(TextTlvMessage_Receive);
+   Debug::ft("TextTlvMessage.Receive");
 
    if(!text_) return true;
    auto buff = Parse();
@@ -122,11 +110,9 @@ bool TextTlvMessage::Receive()
 
 //------------------------------------------------------------------------------
 
-fn_name TextTlvMessage_Send = "TextTlvMessage.Send";
-
 bool TextTlvMessage::Send(Route route)
 {
-   Debug::ft(TextTlvMessage_Send);
+   Debug::ft("TextTlvMessage.Send");
 
    if(!text_)
    {

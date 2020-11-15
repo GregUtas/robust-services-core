@@ -44,40 +44,32 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name CodeDirSet_ctor = "CodeDirSet.ctor";
-
 CodeDirSet::CodeDirSet(const string& name, SetOfIds* set) : CodeSet(name, set)
 {
-   Debug::ft(CodeDirSet_ctor);
+   Debug::ft("CodeDirSet.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CodeDirSet_dtor = "CodeDirSet.dtor";
 
 CodeDirSet::~CodeDirSet()
 {
-   Debug::ftnt(CodeDirSet_dtor);
+   Debug::ftnt("CodeDirSet.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeDirSet_Create = "CodeDirSet.Create";
-
 LibrarySet* CodeDirSet::Create(const string& name, SetOfIds* set) const
 {
-   Debug::ft(CodeDirSet_Create);
+   Debug::ft("CodeDirSet.Create");
 
    return new CodeDirSet(name, set);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeDirSet_Files = "CodeDirSet.Files";
-
 LibrarySet* CodeDirSet::Files() const
 {
-   Debug::ft(CodeDirSet_Files);
+   Debug::ft("CodeDirSet.Files");
 
    //  Iterate over all code files to find those whose directory is in DIRSET.
    //
@@ -106,11 +98,9 @@ LibrarySet* CodeDirSet::Files() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeDirSet_List = "CodeDirSet.List";
-
 word CodeDirSet::List(ostream& stream, string& expl) const
 {
-   Debug::ft(CodeDirSet_List);
+   Debug::ft("CodeDirSet.List");
 
    auto& dirSet = Set();
 
@@ -133,11 +123,9 @@ word CodeDirSet::List(ostream& stream, string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeDirSet_Show = "CodeDirSet.Show";
-
 word CodeDirSet::Show(string& result) const
 {
-   Debug::ft(CodeDirSet_Show);
+   Debug::ft("CodeDirSet.Show");
 
    auto& dirSet = Set();
    auto& dirs = Singleton< Library >::Instance()->Directories();

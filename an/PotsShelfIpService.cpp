@@ -47,11 +47,9 @@ PotsShelfServiceText::PotsShelfServiceText() :
 fixed_string PotsShelfIpPortKey = "PotsShelfIpPort";
 fixed_string PotsShelfIpPortExpl = "POTS Shelf Protocol: UDP port";
 
-fn_name PotsShelfIpService_ctor = "PotsShelfIpService.ctor";
-
 PotsShelfIpService::PotsShelfIpService()
 {
-   Debug::ft(PotsShelfIpService_ctor);
+   Debug::ft("PotsShelfIpService.ctor");
 
    auto port = std::to_string(PotsShelfIpPort);
    portCfg_.reset(new IpPortCfgParm
@@ -61,31 +59,25 @@ PotsShelfIpService::PotsShelfIpService()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsShelfIpService_dtor = "PotsShelfIpService.dtor";
-
 PotsShelfIpService::~PotsShelfIpService()
 {
-   Debug::ftnt(PotsShelfIpService_dtor);
+   Debug::ftnt("PotsShelfIpService.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsShelfIpService_CreateHandler = "PotsShelfIpService.CreateHandler";
-
 InputHandler* PotsShelfIpService::CreateHandler(IpPort* port) const
 {
-   Debug::ft(PotsShelfIpService_CreateHandler);
+   Debug::ft("PotsShelfIpService.CreateHandler");
 
    return new PotsShelfHandler(port);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsShelfIpService_CreateText = "PotsShelfIpService.CreateText";
-
 CliText* PotsShelfIpService::CreateText() const
 {
-   Debug::ft(PotsShelfIpService_CreateText);
+   Debug::ft("PotsShelfIpService.CreateText");
 
    return new PotsShelfServiceText;
 }

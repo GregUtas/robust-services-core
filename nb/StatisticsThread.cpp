@@ -50,25 +50,21 @@ Duration StatisticsThread::SleepInterval =
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsThread_ctor = "StatisticsThread.ctor";
-
 StatisticsThread::StatisticsThread() :
    Thread(BackgroundFaction, Singleton< StatisticsDaemon >::Instance()),
    countdown_(WakeupsBetweenReports),
    delayed_(false)
 {
-   Debug::ft(StatisticsThread_ctor);
+   Debug::ft("StatisticsThread.ctor");
 
    SetInitialized();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsThread_dtor = "StatisticsThread.dtor";
-
 StatisticsThread::~StatisticsThread()
 {
-   Debug::ftnt(StatisticsThread_dtor);
+   Debug::ftnt("StatisticsThread.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -127,11 +123,9 @@ Duration StatisticsThread::CalcFirstDelay()
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsThread_Destroy = "StatisticsThread.Destroy";
-
 void StatisticsThread::Destroy()
 {
-   Debug::ft(StatisticsThread_Destroy);
+   Debug::ft("StatisticsThread.Destroy");
 
    Singleton< StatisticsThread >::Destroy();
 }
@@ -150,11 +144,9 @@ void StatisticsThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsThread_Enter = "StatisticsThread.Enter";
-
 void StatisticsThread::Enter()
 {
-   Debug::ft(StatisticsThread_Enter);
+   Debug::ft("StatisticsThread.Enter");
 
    auto reg = Singleton< StatisticsRegistry >::Instance();
    auto sleep = CalcFirstDelay();
@@ -211,11 +203,9 @@ void StatisticsThread::Enter()
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsThread_ExitOnRestart = "StatisticsThread.ExitOnRestart";
-
 bool StatisticsThread::ExitOnRestart(NodeBase::RestartLevel level) const
 {
-   Debug::ft(StatisticsThread_ExitOnRestart);
+   Debug::ft("StatisticsThread.ExitOnRestart");
 
    //  Generate a statistics report if statistics will disappear
    //  during the restart.

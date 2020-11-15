@@ -70,11 +70,9 @@ void NwClearCommand::Patch(sel_t selector, void* arguments)
    ClearCommand::Patch(selector, arguments);
 }
 
-fn_name NwClearCommand_ProcessSubcommand = "NwClearCommand.ProcessSubcommand";
-
 word NwClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(NwClearCommand_ProcessSubcommand);
+   Debug::ft("NwClearCommand.ProcessSubcommand");
 
    TraceRc rc;
    auto nwt = Singleton< NwTracer >::Instance();
@@ -128,12 +126,9 @@ void NwExcludeCommand::Patch(sel_t selector, void* arguments)
    ExcludeCommand::Patch(selector, arguments);
 }
 
-fn_name NwExcludeCommand_ProcessSubcommand =
-   "NwExcludeCommand.ProcessSubcommand";
-
 word NwExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(NwExcludeCommand_ProcessSubcommand);
+   Debug::ft("NwExcludeCommand.ProcessSubcommand");
 
    TraceRc rc;
    auto nwt = Singleton< NwTracer >::Instance();
@@ -179,12 +174,9 @@ void NwIncludeCommand::Patch(sel_t selector, void* arguments)
    IncludeCommand::Patch(selector, arguments);
 }
 
-fn_name NwIncludeCommand_ProcessSubcommand =
-   "NwIncludeCommand.ProcessSubcommand";
-
 word NwIncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(NwIncludeCommand_ProcessSubcommand);
+   Debug::ft("NwIncludeCommand.ProcessSubcommand");
 
    TraceRc rc;
    auto nwt = Singleton< NwTracer >::Instance();
@@ -350,11 +342,9 @@ IpPortsCommand::IpPortsCommand() : CliCommand(IpPortsStr, IpPortsExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name IpPortsCommand_ProcessCommand = "IpPortsCommand.ProcessCommand";
-
 word IpPortsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(IpPortsCommand_ProcessCommand);
+   Debug::ft("IpPortsCommand.ProcessCommand");
 
    word port;
    bool all, v = false;
@@ -396,11 +386,9 @@ void NwQueryCommand::Patch(sel_t selector, void* arguments)
    QueryCommand::Patch(selector, arguments);
 }
 
-fn_name NwQueryCommand_ProcessSubcommand = "NwQueryCommand.ProcessSubcommand";
-
 word NwQueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(NwQueryCommand_ProcessSubcommand);
+   Debug::ft("NwQueryCommand.ProcessSubcommand");
 
    if(index != SelectionsIndex)
    {
@@ -420,11 +408,9 @@ void NwStatusCommand::Patch(sel_t selector, void* arguments)
    StatusCommand::Patch(selector, arguments);
 }
 
-fn_name NwStatusCommand_ProcessCommand = "NwStatusCommand.ProcessCommand";
-
 word NwStatusCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(NwStatusCommand_ProcessCommand);
+   Debug::ft("NwStatusCommand.ProcessCommand");
 
    StatusCommand::ProcessCommand(cli);
 
@@ -460,11 +446,9 @@ word NwStatusCommand::ProcessCommand(CliThread& cli) const
 fixed_string NetworkText = "nw";
 fixed_string NetworkExpl = "Network Increment";
 
-fn_name NwIncrement_ctor = "NwIncrement.ctor";
-
 NwIncrement::NwIncrement() : CliIncrement(NetworkText, NetworkExpl)
 {
-   Debug::ft(NwIncrement_ctor);
+   Debug::ft("NwIncrement.ctor");
 
    BindCommand(*new IpCommand);
    BindCommand(*new IpPortsCommand);
@@ -477,10 +461,8 @@ NwIncrement::NwIncrement() : CliIncrement(NetworkText, NetworkExpl)
 
 //------------------------------------------------------------------------------
 
-fn_name NwIncrement_dtor = "NwIncrement.dtor";
-
 NwIncrement::~NwIncrement()
 {
-   Debug::ftnt(NwIncrement_dtor);
+   Debug::ftnt("NwIncrement.dtor");
 }
 }

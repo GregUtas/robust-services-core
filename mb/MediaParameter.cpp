@@ -33,11 +33,9 @@ using std::string;
 
 namespace MediaBase
 {
-fn_name MediaInfo_ctor = "MediaInfo.ctor";
-
 MediaInfo::MediaInfo() : rxFrom(Switch::SilentPort)
 {
-   Debug::ft(MediaInfo_ctor);
+   Debug::ft("MediaInfo.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -66,21 +64,17 @@ bool MediaInfo::operator!=(const MediaInfo& that) const
 
 //==============================================================================
 
-fn_name MediaParameter_ctor = "MediaParameter.ctor";
-
 MediaParameter::MediaParameter(ProtocolId prid, Id pid) :
    TlvIntParameter< Switch::PortId >(prid, pid)
 {
-   Debug::ft(MediaParameter_ctor);
+   Debug::ft("MediaParameter.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MediaParameter_dtor = "MediaParameter.dtor";
-
 MediaParameter::~MediaParameter()
 {
-   Debug::ftnt(MediaParameter_dtor);
+   Debug::ftnt("MediaParameter.dtor");
 }
 
 //------------------------------------------------------------------------------

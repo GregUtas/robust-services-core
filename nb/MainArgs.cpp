@@ -37,11 +37,9 @@ std::vector< string > MainParms;
 
 //------------------------------------------------------------------------------
 
-fn_name MainArgs_ctor = "MainArgs.ctor";
-
 MainArgs::MainArgs()
 {
-   Debug::ft(MainArgs_ctor);
+   Debug::ft("MainArgs.ctor");
 
    //  Copy main()'s arguments from their temporary to their permanent location.
    //
@@ -65,11 +63,9 @@ MainArgs::~MainArgs()
 
 //------------------------------------------------------------------------------
 
-fn_name MainArgs_At = "MainArgs.At";
-
 c_string MainArgs::At(size_t n)
 {
-   Debug::ftnt(MainArgs_At);
+   Debug::ftnt("MainArgs.At");
 
    auto reg = Singleton< MainArgs >::Extant();
    if(reg == nullptr) return MainParms.at(n).c_str();
@@ -93,11 +89,9 @@ void MainArgs::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name MainArgs_Find = "MainArgs.Find";
-
 string MainArgs::Find(fixed_string tag)
 {
-   Debug::ft(MainArgs_Find);
+   Debug::ft("MainArgs.Find");
 
    auto reg = Singleton< MainArgs >::Extant();
 
@@ -136,11 +130,9 @@ void MainArgs::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name MainArgs_PushBack = "MainArgs.PushBack";
-
 void MainArgs::PushBack(const string& arg)
 {
-   Debug::ft(MainArgs_PushBack);
+   Debug::ft("MainArgs.PushBack");
 
    MainParms.push_back(arg);
 }

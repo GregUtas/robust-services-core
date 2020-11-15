@@ -34,19 +34,15 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name SysIpL3Addr_ctor1 = "SysIpL3Addr.ctor";
-
 SysIpL3Addr::SysIpL3Addr() :
    port_(NilIpPort),
    proto_(IpAny),
    socket_(nullptr)
 {
-   Debug::ft(SysIpL3Addr_ctor1);
+   Debug::ft("SysIpL3Addr.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SysIpL3Addr_ctor2 = "SysIpL3Addr.ctor(IPv4addr)";
 
 SysIpL3Addr::SysIpL3Addr(ipv4addr_t v4Addr, ipport_t port,
    IpProtocol proto, SysTcpSocket* socket) : SysIpL2Addr(v4Addr),
@@ -54,14 +50,12 @@ SysIpL3Addr::SysIpL3Addr(ipv4addr_t v4Addr, ipport_t port,
    proto_(proto),
    socket_(socket)
 {
-   Debug::ft(SysIpL3Addr_ctor2);
+   Debug::ft("SysIpL3Addr.ctor(IPv4addr)");
 
    if(socket_ != nullptr) proto_ = socket_->Protocol();
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SysIpL3Addr_ctor3 = "SysIpL3Addr.ctor(L2addr)";
 
 SysIpL3Addr::SysIpL3Addr(const SysIpL2Addr& l2Addr, ipport_t port,
    IpProtocol proto, SysTcpSocket* socket) : SysIpL2Addr(l2Addr),
@@ -69,18 +63,16 @@ SysIpL3Addr::SysIpL3Addr(const SysIpL2Addr& l2Addr, ipport_t port,
    proto_(proto),
    socket_(socket)
 {
-   Debug::ft(SysIpL3Addr_ctor3);
+   Debug::ft("SysIpL3Addr.ctor(L2addr)");
 
    if(socket_ != nullptr) proto_ = socket_->Protocol();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL3Addr_dtor = "SysIpL3Addr.dtor";
-
 SysIpL3Addr::~SysIpL3Addr()
 {
-   Debug::ftnt(SysIpL3Addr_dtor);
+   Debug::ftnt("SysIpL3Addr.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -111,11 +103,9 @@ bool SysIpL3Addr::operator!=(const SysIpL3Addr& that) const
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL3Addr_ReleaseSocket = "SysIpL3Addr.ReleaseSocket";
-
 void SysIpL3Addr::ReleaseSocket()
 {
-   Debug::ft(SysIpL3Addr_ReleaseSocket);
+   Debug::ft("SysIpL3Addr.ReleaseSocket");
 
    if(socket_ != nullptr)
    {
@@ -126,11 +116,9 @@ void SysIpL3Addr::ReleaseSocket()
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL3Addr_SetSocket = "SysIpL3Addr.SetSocket";
-
 void SysIpL3Addr::SetSocket(SysTcpSocket* socket)
 {
-   Debug::ft(SysIpL3Addr_SetSocket);
+   Debug::ft("SysIpL3Addr.SetSocket");
 
    socket_ = socket;
    if(socket_ != nullptr) proto_ = socket->Protocol();

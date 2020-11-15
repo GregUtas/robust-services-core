@@ -27,18 +27,15 @@
 #include "NtIncrement.h"
 #include "Singleton.h"
 #include "SymbolRegistry.h"
-#include "SysTypes.h"
 #include "TestDatabase.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeTools
 {
-fn_name NtModule_ctor = "NtModule.ctor";
-
 NtModule::NtModule() : Module()
 {
-   Debug::ft(NtModule_ctor);
+   Debug::ft("NtModule.ctor");
 
    //  Create the modules required by NodeTools.
    //
@@ -48,20 +45,16 @@ NtModule::NtModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name NtModule_dtor = "NtModule.dtor";
-
 NtModule::~NtModule()
 {
-   Debug::ftnt(NtModule_dtor);
+   Debug::ftnt("NtModule.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name NtModule_Shutdown = "NtModule.Shutdown";
-
 void NtModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(NtModule_Shutdown);
+   Debug::ft("NtModule.Shutdown");
 
    auto testdb = Singleton< TestDatabase >::Extant();
    if(testdb != nullptr) testdb->Shutdown(level);
@@ -69,11 +62,9 @@ void NtModule::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name NtModule_Startup = "NtModule.Startup";
-
 void NtModule::Startup(RestartLevel level)
 {
-   Debug::ft(NtModule_Startup);
+   Debug::ft("NtModule.Startup");
 
    Singleton< NtIncrement >::Instance()->Startup(level);
 

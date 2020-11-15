@@ -40,25 +40,21 @@ const char CliCharParm::CharSeparator = '|';
 
 //------------------------------------------------------------------------------
 
-fn_name CliCharParm_ctor = "CliCharParm.ctor";
-
 CliCharParm::CliCharParm
    (c_string help, c_string chars, bool opt, c_string tag) :
    CliParm(help, opt, tag),
    chars_(chars)
 {
-   Debug::ft(CliCharParm_ctor);
+   Debug::ft("CliCharParm.ctor");
 
    Debug::Assert(chars_ != nullptr);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliCharParm_dtor = "CliCharParm.dtor";
-
 CliCharParm::~CliCharParm()
 {
-   Debug::ftnt(CliCharParm_dtor);
+   Debug::ftnt("CliCharParm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -73,11 +69,9 @@ void CliCharParm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CliCharParm_GetCharParmRc = "CliCharParm.GetCharParmRc";
-
 CliParm::Rc CliCharParm::GetCharParmRc(char& c, CliThread& cli) const
 {
-   Debug::ft(CliCharParm_GetCharParmRc);
+   Debug::ft("CliCharParm.GetCharParmRc");
 
    c = SPACE;
 
@@ -150,11 +144,9 @@ void CliCharParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliCharParm_ShowValues = "CliCharParm.ShowValues";
-
 bool CliCharParm::ShowValues(string& values) const
 {
-   Debug::ft(CliCharParm_ShowValues);
+   Debug::ft("CliCharParm.ShowValues");
 
    auto last = strlen(chars_) - 1;
 

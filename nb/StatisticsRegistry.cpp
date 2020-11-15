@@ -40,11 +40,9 @@ TimePoint StatisticsRegistry::StartTime_ = TimePoint();
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsRegistry_ctor = "StatisticsRegistry.ctor";
-
 StatisticsRegistry::StatisticsRegistry()
 {
-   Debug::ft(StatisticsRegistry_ctor);
+   Debug::ft("StatisticsRegistry.ctor");
 
    stats_.Init(MaxStats, Statistic::CellDiff(), MemDynamic);
    groups_.Init(MaxGroups, StatisticsGroup::CellDiff(), MemDynamic);
@@ -65,22 +63,18 @@ StatisticsRegistry::~StatisticsRegistry()
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsRegistry_BindGroup = "StatisticsRegistry.BindGroup";
-
 bool StatisticsRegistry::BindGroup(StatisticsGroup& group)
 {
-   Debug::ft(StatisticsRegistry_BindGroup);
+   Debug::ft("StatisticsRegistry.BindGroup");
 
    return groups_.Insert(group);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsRegistry_BindStat = "StatisticsRegistry.BindStat";
-
 bool StatisticsRegistry::BindStat(Statistic& stat)
 {
-   Debug::ft(StatisticsRegistry_BindStat);
+   Debug::ft("StatisticsRegistry.BindStat");
 
    return stats_.Insert(stat);
 }
@@ -103,12 +97,10 @@ void StatisticsRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsRegistry_DisplayStats = "StatisticsRegistry.DisplayStats";
-
 void StatisticsRegistry::DisplayStats
    (ostream& stream, const Flags& options) const
 {
-   Debug::ft(StatisticsRegistry_DisplayStats);
+   Debug::ft("StatisticsRegistry.DisplayStats");
 
    stream << "For reporting period beginning at ";
    stream << StartTime_.to_str() << CRLF;
@@ -138,11 +130,9 @@ void StatisticsRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsRegistry_StartInterval = "StatisticsRegistry.StartInterval";
-
 void StatisticsRegistry::StartInterval(bool first)
 {
-   Debug::ft(StatisticsRegistry_StartInterval);
+   Debug::ft("StatisticsRegistry.StartInterval");
 
    for(auto s = stats_.First(); s != nullptr; stats_.Next(s))
    {
@@ -154,11 +144,9 @@ void StatisticsRegistry::StartInterval(bool first)
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsRegistry_Startup = "StatisticsRegistry.Startup";
-
 void StatisticsRegistry::Startup(RestartLevel level)
 {
-   Debug::ft(StatisticsRegistry_Startup);
+   Debug::ft("StatisticsRegistry.Startup");
 
    //  If StartTime_ is invalid, the registry has just been constructed or
    //  reconstructed.  Statistics can only start to be accumulated now, so
@@ -172,22 +160,18 @@ void StatisticsRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsRegistry_UnbindGroup = "StatisticsRegistry.UnbindGroup";
-
 void StatisticsRegistry::UnbindGroup(StatisticsGroup& group)
 {
-   Debug::ftnt(StatisticsRegistry_UnbindGroup);
+   Debug::ftnt("StatisticsRegistry.UnbindGroup");
 
    groups_.Erase(group);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsRegistry_UnbindStat = "StatisticsRegistry.UnbindStat";
-
 void StatisticsRegistry::UnbindStat(Statistic& stat)
 {
-   Debug::ftnt(StatisticsRegistry_UnbindStat);
+   Debug::ftnt("StatisticsRegistry.UnbindStat");
 
    stats_.Erase(stat);
 }

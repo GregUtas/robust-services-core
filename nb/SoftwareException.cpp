@@ -31,20 +31,16 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name SoftwareException_ctor1 = "SoftwareException.ctor";
-
 SoftwareException::SoftwareException(debug64_t errval, debug64_t offset,
    fn_depth depth) : Exception(true, depth),
    errval_(errval),
    errstr_(EMPTY_STR),
    offset_(offset)
 {
-   Debug::ft(SoftwareException_ctor1);
+   Debug::ft("SoftwareException.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SoftwareException_ctor2 = "SoftwareException.ctor(string)";
 
 SoftwareException::SoftwareException(const string& errstr, debug64_t offset,
    fn_depth depth) : Exception(true, depth),
@@ -52,16 +48,14 @@ SoftwareException::SoftwareException(const string& errstr, debug64_t offset,
    errstr_(errstr),
    offset_(offset)
 {
-   Debug::ft(SoftwareException_ctor2);
+   Debug::ft("SoftwareException.ctor(string)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SoftwareException_dtor = "SoftwareException.dtor";
-
 SoftwareException::~SoftwareException()
 {
-   Debug::ftnt(SoftwareException_dtor);
+   Debug::ftnt("SoftwareException.dtor");
 }
 
 //------------------------------------------------------------------------------

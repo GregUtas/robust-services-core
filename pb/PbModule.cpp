@@ -48,11 +48,9 @@ using namespace CallBase;
 
 namespace PotsBase
 {
-fn_name PbModule_ctor = "PbModule.ctor";
-
 PbModule::PbModule() : Module()
 {
-   Debug::ft(PbModule_ctor);
+   Debug::ft("PbModule.ctor");
 
    //  Create the modules required by PotsBase.
    //
@@ -62,20 +60,16 @@ PbModule::PbModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name PbModule_dtor = "PbModule.dtor";
-
 PbModule::~PbModule()
 {
-   Debug::ftnt(PbModule_dtor);
+   Debug::ftnt("PbModule.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PbModule_Shutdown = "PbModule.Shutdown";
-
 void PbModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(PbModule_Shutdown);
+   Debug::ft("PbModule.Shutdown");
 
    Singleton< PotsFeatureRegistry >::Instance()->Shutdown(level);
    Singleton< PotsProfileRegistry >::Instance()->Shutdown(level);
@@ -83,11 +77,9 @@ void PbModule::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name PbModule_Startup = "PbModule.Startup";
-
 void PbModule::Startup(RestartLevel level)
 {
-   Debug::ft(PbModule_Startup);
+   Debug::ft("PbModule.Startup");
 
    CreatePotsLogs(level);
    Singleton< PotsProfileRegistry >::Instance()->Startup(level);

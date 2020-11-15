@@ -190,8 +190,6 @@ private:
 
 //==============================================================================
 
-fn_name TestSession_ctor = "TestSession.ctor";
-
 TestSession::TestSession(const StTestData* data, TestSessionId tid) :
    sbData_(data),
    tid_(tid),
@@ -200,16 +198,14 @@ TestSession::TestSession(const StTestData* data, TestSessionId tid) :
    appBid_(NIL_ID),
    lastMsg_(nullptr)
 {
-   Debug::ft(TestSession_ctor);
+   Debug::ft("TestSession.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestSession_dtor = "TestSession.dtor";
-
 TestSession::~TestSession()
 {
-   Debug::ftnt(TestSession_dtor);
+   Debug::ftnt("TestSession.dtor");
 
    if(testPsm_ != nullptr) testPsm_->Kill();
 }
@@ -286,11 +282,9 @@ Message* TestSession::NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip)
 
 //------------------------------------------------------------------------------
 
-fn_name TestSession_SetAppPsm = "TestSession.SetAppPsm";
-
 void TestSession::SetAppPsm(ProtocolSM* psm)
 {
-   Debug::ft(TestSession_SetAppPsm);
+   Debug::ft("TestSession.SetAppPsm");
 
    //  The application PSM's factory and identifier are never cleared.  This
    //  allows its messages to be found in the trace buffer even after the PSM
@@ -309,23 +303,19 @@ void TestSession::SetAppPsm(ProtocolSM* psm)
 
 //------------------------------------------------------------------------------
 
-fn_name TestSession_SetTestPsm = "TestSession.SetTestPsm";
-
 void TestSession::SetTestPsm(TestPsm* psm)
 {
-   Debug::ft(TestSession_SetTestPsm);
+   Debug::ft("TestSession.SetTestPsm");
 
    testPsm_ = psm;
 }
 
 //==============================================================================
 
-fn_name TestFactory_ctor = "TestFactory.ctor";
-
 TestFactory::TestFactory() :
    SsmFactory(TestFactoryId, TestProtocolId, "Test Sessions")
 {
-   Debug::ft(TestFactory_ctor);
+   Debug::ft("TestFactory.ctor");
 
    AddIncomingSignal(Signal::Timeout);
    AddIncomingSignal(TestSignal::Inject);
@@ -333,44 +323,36 @@ TestFactory::TestFactory() :
 
 //------------------------------------------------------------------------------
 
-fn_name TestFactory_dtor = "TestFactory.dtor";
-
 TestFactory::~TestFactory()
 {
-   Debug::ftnt(TestFactory_dtor);
+   Debug::ftnt("TestFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestFactory_AllocIcPsm = "TestFactory.AllocIcPsm";
-
 ProtocolSM* TestFactory::AllocIcPsm
    (const Message& msg, ProtocolLayer& lower) const
 {
-   Debug::ft(TestFactory_AllocIcPsm);
+   Debug::ft("TestFactory.AllocIcPsm");
 
    return new TestPsm(lower, false);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestFactory_AllocRoot = "TestFactory.AllocRoot";
-
 RootServiceSM* TestFactory::AllocRoot
    (const Message& msg, ProtocolSM& psm) const
 {
-   Debug::ft(TestFactory_AllocRoot);
+   Debug::ft("TestFactory.AllocRoot");
 
    return new TestSsm(psm);
 }
 
 //==============================================================================
 
-fn_name TestProtocol_ctor = "TestProtocol.ctor";
-
 TestProtocol::TestProtocol() : TlvProtocol(TestProtocolId, TimerProtocolId)
 {
-   Debug::ft(TestProtocol_ctor);
+   Debug::ft("TestProtocol.ctor");
 
    //  Create the test signals.
    //
@@ -379,11 +361,9 @@ TestProtocol::TestProtocol() : TlvProtocol(TestProtocolId, TimerProtocolId)
 
 //------------------------------------------------------------------------------
 
-fn_name TestProtocol_dtor = "TestProtocol.dtor";
-
 TestProtocol::~TestProtocol()
 {
-   Debug::ftnt(TestProtocol_dtor);
+   Debug::ftnt("TestProtocol.dtor");
 }
 
 //==============================================================================
@@ -396,14 +376,12 @@ TestInjectSignal::TestInjectSignal() : TestSignal(Inject) { }
 
 //==============================================================================
 
-fn_name TestMessage_ctor = "TestMessage.ctor";
-
 TestMessage::TestMessage(ProtocolSM* dest) : Message(nullptr, 0),
    appMsg_(nullptr),
    cli_(nullptr),
    tid_(NIL_ID)
 {
-   Debug::ft(TestMessage_ctor);
+   Debug::ft("TestMessage.ctor");
 
    SetProtocol(TestProtocolId);
 
@@ -421,11 +399,9 @@ TestMessage::TestMessage(ProtocolSM* dest) : Message(nullptr, 0),
 
 //------------------------------------------------------------------------------
 
-fn_name TestMessage_dtor = "TestMessage.dtor";
-
 TestMessage::~TestMessage()
 {
-   Debug::ftnt(TestMessage_dtor);
+   Debug::ftnt("TestMessage.dtor");
 
    delete appMsg_;
    appMsg_ = nullptr;
@@ -445,11 +421,9 @@ void TestMessage::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name TestMessage_GetAppMsg = "TestMessage.GetAppMsg";
-
 Message* TestMessage::GetAppMsg()
 {
-   Debug::ft(TestMessage_GetAppMsg);
+   Debug::ft("TestMessage.GetAppMsg");
 
    auto amsg = appMsg_;
    appMsg_ = nullptr;
@@ -458,11 +432,9 @@ Message* TestMessage::GetAppMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name TestMessage_GetSubtended = "TestMessage.GetSubtended";
-
 void TestMessage::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(TestMessage_GetSubtended);
+   Debug::ft("TestMessage.GetSubtended");
 
    Message::GetSubtended(objects);
 
@@ -471,22 +443,18 @@ void TestMessage::GetSubtended(std::vector< Base* >& objects) const
 
 //------------------------------------------------------------------------------
 
-fn_name TestMessage_SetAppMsg = "TestMessage.SetAppMsg";
-
 void TestMessage::SetAppMsg(Message& msg)
 {
-   Debug::ft(TestMessage_SetAppMsg);
+   Debug::ft("TestMessage.SetAppMsg");
 
    appMsg_ = &msg;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestMessage_SetCliId = "TestMessage.SetCliId";
-
 bool TestMessage::SetCliId(CliThread& cli, TestSessionId tid)
 {
-   Debug::ft(TestMessage_SetCliId);
+   Debug::ft("TestMessage.SetCliId");
 
    if(tid_ != NIL_ID) return false;
 
@@ -497,11 +465,9 @@ bool TestMessage::SetCliId(CliThread& cli, TestSessionId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name TestMessage_UpdateTestPsm = "TestMessage.UpdateTestPsm";
-
 void TestMessage::UpdateTestPsm() const
 {
-   Debug::ft(TestMessage_UpdateTestPsm);
+   Debug::ft("TestMessage.UpdateTestPsm");
 
    auto tpsm = static_cast< TestPsm* >(Psm());
 
@@ -510,13 +476,11 @@ void TestMessage::UpdateTestPsm() const
 
 //==============================================================================
 
-fn_name TestPsm_ctor1 = "TestPsm.ctor(first)";
-
 TestPsm::TestPsm() : ProtocolSM(TestFactoryId),
    cli_(nullptr),
    tid_(NIL_ID)
 {
-   Debug::ft(TestPsm_ctor1);
+   Debug::ft("TestPsm.ctor(first)");
 
    SetState(Active);
 
@@ -526,25 +490,21 @@ TestPsm::TestPsm() : ProtocolSM(TestFactoryId),
 
 //------------------------------------------------------------------------------
 
-fn_name TestPsm_ctor2 = "TestPsm.ctor(subseq)";
-
 TestPsm::TestPsm(ProtocolLayer& adj, bool upper) :
    ProtocolSM(TestFactoryId, adj, upper),
    cli_(nullptr),
    tid_(NIL_ID)
 {
-   Debug::ft(TestPsm_ctor2);
+   Debug::ft("TestPsm.ctor(subseq)");
 
    SetState(Active);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestPsm_dtor = "TestPsm.dtor";
-
 TestPsm::~TestPsm()
 {
-   Debug::ftnt(TestPsm_dtor);
+   Debug::ftnt("TestPsm.dtor");
 
    SendFinalMsg();
 }
@@ -562,11 +522,9 @@ void TestPsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name TestPsm_Find = "TestPsm.Find";
-
 TestPsm* TestPsm::Find(const MsgPort& port)
 {
-   Debug::ft(TestPsm_Find);
+   Debug::ft("TestPsm.Find");
 
    auto ctx = port.GetContext();
 
@@ -582,11 +540,9 @@ TestPsm* TestPsm::Find(const MsgPort& port)
 
 //------------------------------------------------------------------------------
 
-fn_name TestPsm_ProcessIcMsg = "TestPsm.ProcessIcMsg";
-
 ProtocolSM::IncomingRc TestPsm::ProcessIcMsg(Message& msg, Event*& event)
 {
-   Debug::ft(TestPsm_ProcessIcMsg);
+   Debug::ft("TestPsm.ProcessIcMsg");
 
    event = new AnalyzeMsgEvent(msg);
    return EventRaised;
@@ -622,11 +578,9 @@ Message::Route TestPsm::Route() const
 
 //------------------------------------------------------------------------------
 
-fn_name TestPsm_SendFinalMsg = "TestPsm.SendFinalMsg";
-
 void TestPsm::SendFinalMsg()
 {
-   Debug::ft(TestPsm_SendFinalMsg);
+   Debug::ft("TestPsm.SendFinalMsg");
 
    //  Deregister the PSM from its session.
    //
@@ -642,11 +596,9 @@ void TestPsm::SendFinalMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name TestPsm_SetAppPsm = "TestPsm.SetAppPsm";
-
 void TestPsm::SetAppPsm(ProtocolSM* psm) const
 {
-   Debug::ft(TestPsm_SetAppPsm);
+   Debug::ft("TestPsm.SetAppPsm");
 
    if(tid_ != NIL_ID)
    {
@@ -658,11 +610,9 @@ void TestPsm::SetAppPsm(ProtocolSM* psm) const
 
 //------------------------------------------------------------------------------
 
-fn_name TestPsm_SetCliId = "TestPsm.SetCliId";
-
 bool TestPsm::SetCliId(CliThread& cli, TestSessionId tid)
 {
-   Debug::ft(TestPsm_SetCliId);
+   Debug::ft("TestPsm.SetCliId");
 
    //  If the PSM is already assigned to a session, do nothing.
    //
@@ -682,11 +632,9 @@ bool TestPsm::SetCliId(CliThread& cli, TestSessionId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name TestPsm_SetIdle = "TestPsm.SetIdle";
-
 void TestPsm::SetIdle()
 {
-   Debug::ft(TestPsm_SetIdle);
+   Debug::ft("TestPsm.SetIdle");
 
    SetState(Idle);
 }
@@ -696,11 +644,9 @@ void TestPsm::SetIdle()
 fixed_string TestInjectEventStr = "TestInjectEvent";
 fixed_string TestVerifyEventStr = "TestVerifyEvent";
 
-fn_name TestService_ctor = "TestService.ctor";
-
 TestService::TestService() : Service(TestServiceId)
 {
-   Debug::ft(TestService_ctor);
+   Debug::ft("TestService.ctor");
 
    Singleton< TestNull >::Instance();
    Singleton< TestActive >::Instance();
@@ -724,38 +670,30 @@ TestService::TestService() : Service(TestServiceId)
 
 //------------------------------------------------------------------------------
 
-fn_name TestService_dtor = "TestService.dtor";
-
 TestService::~TestService()
 {
-   Debug::ftnt(TestService_dtor);
+   Debug::ftnt("TestService.dtor");
 }
 
 //==============================================================================
 
-fn_name TestState_ctor = "TestState.ctor";
-
 TestState::TestState(Id stid) : State(TestServiceId, stid)
 {
-   Debug::ft(TestState_ctor);
+   Debug::ft("TestState.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TestState_dtor = "TestState.dtor";
 
 TestState::~TestState()
 {
-   Debug::ftnt(TestState_dtor);
+   Debug::ftnt("TestState.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestNull_ctor = "TestNull.ctor";
-
 TestNull::TestNull() : TestState(TestNull::Null)
 {
-   Debug::ft(TestNull_ctor);
+   Debug::ft("TestNull.ctor");
 
    BindMsgAnalyzer
       (TestEventHandler::AnalyzeUserMessage, Service::UserPort);
@@ -769,11 +707,9 @@ TestNull::TestNull() : TestState(TestNull::Null)
 
 //------------------------------------------------------------------------------
 
-fn_name TestActive_ctor = "TestActive.ctor";
-
 TestActive::TestActive() : TestState(TestState::Active)
 {
-   Debug::ft(TestActive_ctor);
+   Debug::ft("TestActive.ctor");
 
    BindMsgAnalyzer
       (TestEventHandler::AnalyzeUserMessage, Service::UserPort);
@@ -787,69 +723,55 @@ TestActive::TestActive() : TestState(TestState::Active)
 
 //==============================================================================
 
-fn_name TestEvent_ctor = "TestEvent.ctor";
-
 TestEvent::TestEvent(Id eid, ServiceSM& owner) : Event(eid, &owner)
 {
-   Debug::ft(TestEvent_ctor);
+   Debug::ft("TestEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TestEvent_dtor = "TestEvent.dtor";
 
 TestEvent::~TestEvent()
 {
-   Debug::ftnt(TestEvent_dtor);
+   Debug::ftnt("TestEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TestInjectEvent_ctor = "TestInjectEvent.ctor";
 
 TestInjectEvent::TestInjectEvent(ServiceSM& owner) :
    TestEvent(Inject, owner)
 {
-   Debug::ft(TestInjectEvent_ctor);
+   Debug::ft("TestInjectEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TestInjectEvent_dtor = "TestInjectEvent.dtor";
 
 TestInjectEvent::~TestInjectEvent()
 {
-   Debug::ftnt(TestInjectEvent_dtor);
+   Debug::ftnt("TestInjectEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TestVerifyEvent_ctor = "TestVerifyEvent.ctor";
 
 TestVerifyEvent::TestVerifyEvent(ServiceSM& owner) :
    TestEvent(Verify, owner)
 {
-   Debug::ft(TestVerifyEvent_ctor);
+   Debug::ft("TestVerifyEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestVerifyEvent_dtor = "TestVerifyEvent.dtor";
-
 TestVerifyEvent::~TestVerifyEvent()
 {
-   Debug::ftnt(TestVerifyEvent_dtor);
+   Debug::ftnt("TestVerifyEvent.dtor");
 }
 
 //==============================================================================
-
-fn_name TestSsm_ctor = "TestSsm.ctor";
 
 TestSsm::TestSsm(ProtocolSM& psm) : RootServiceSM(TestServiceId),
    testPsm_(nullptr),
    appPsm_(nullptr)
 {
-   Debug::ft(TestSsm_ctor);
+   Debug::ft("TestSsm.ctor");
 
    if(psm.GetFactory() == TestFactoryId)
       SetTestPsm(static_cast< TestPsm* >(&psm));
@@ -859,20 +781,16 @@ TestSsm::TestSsm(ProtocolSM& psm) : RootServiceSM(TestServiceId),
 
 //------------------------------------------------------------------------------
 
-fn_name TestSsm_dtor = "TestSsm.dtor";
-
 TestSsm::~TestSsm()
 {
-   Debug::ftnt(TestSsm_dtor);
+   Debug::ftnt("TestSsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestSsm_CalcPort = "TestSsm.CalcPort";
-
 ServicePortId TestSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(TestSsm_CalcPort);
+   Debug::ft("TestSsm.CalcPort");
 
    auto psm = ame.Msg()->Psm();
 
@@ -901,11 +819,9 @@ void TestSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name TestSsm_PsmDeleted = "TestSsm.PsmDeleted";
-
 void TestSsm::PsmDeleted(ProtocolSM& exPsm)
 {
-   Debug::ft(TestSsm_PsmDeleted);
+   Debug::ft("TestSsm.PsmDeleted");
 
    if(testPsm_ == &exPsm) testPsm_ = nullptr;
    if(appPsm_ == &exPsm) appPsm_ = nullptr;
@@ -915,11 +831,9 @@ void TestSsm::PsmDeleted(ProtocolSM& exPsm)
 
 //------------------------------------------------------------------------------
 
-fn_name TestSsm_SetAppPsm = "TestSsm.SetAppPsm";
-
 void TestSsm::SetAppPsm(ProtocolSM* psm)
 {
-   Debug::ft(TestSsm_SetAppPsm);
+   Debug::ft("TestSsm.SetAppPsm");
 
    appPsm_ = psm;
    UpdateTestPsm();
@@ -927,11 +841,9 @@ void TestSsm::SetAppPsm(ProtocolSM* psm)
 
 //------------------------------------------------------------------------------
 
-fn_name TestSsm_SetNextState = "TestSsm.SetNextState";
-
 void TestSsm::SetNextState(StateId stid)
 {
-   Debug::ft(TestSsm_SetNextState);
+   Debug::ft("TestSsm.SetNextState");
 
    RootServiceSM::SetNextState(stid);
 
@@ -943,11 +855,9 @@ void TestSsm::SetNextState(StateId stid)
 
 //------------------------------------------------------------------------------
 
-fn_name TestSsm_SetTestPsm = "TestSsm.SetTestPsm";
-
 void TestSsm::SetTestPsm(TestPsm* psm)
 {
-   Debug::ft(TestSsm_SetTestPsm);
+   Debug::ft("TestSsm.SetTestPsm");
 
    testPsm_ = psm;
    UpdateTestPsm();
@@ -955,24 +865,19 @@ void TestSsm::SetTestPsm(TestPsm* psm)
 
 //------------------------------------------------------------------------------
 
-fn_name TestSsm_UpdateTestPsm = "TestSsm.UpdateTestPsm";
-
 void TestSsm::UpdateTestPsm()
 {
-   Debug::ft(TestSsm_UpdateTestPsm);
+   Debug::ft("TestSsm.UpdateTestPsm");
 
    if(testPsm_ != nullptr) testPsm_->SetAppPsm(appPsm_);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TestAnalyzeUserMessage_ProcessEvent =
-   "TestAnalyzeUserMessage.ProcessEvent";
-
 EventHandler::Rc TestAnalyzeUserMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(TestAnalyzeUserMessage_ProcessEvent);
+   Debug::ft("TestAnalyzeUserMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto tmsg = static_cast< TestMessage* >(ame.Msg());
@@ -990,13 +895,10 @@ EventHandler::Rc TestAnalyzeUserMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name TestAnalyzeNetworkMessage_ProcessEvent =
-   "TestAnalyzeNetworkMessage.ProcessEvent";
-
 EventHandler::Rc TestAnalyzeNetworkMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(TestAnalyzeNetworkMessage_ProcessEvent);
+   Debug::ft("TestAnalyzeNetworkMessage.ProcessEvent");
 
    nextEvent = new TestVerifyEvent(ssm);
    return Continue;
@@ -1004,12 +906,10 @@ EventHandler::Rc TestAnalyzeNetworkMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name TestNuInject_ProcessEvent = "TestNuInject.ProcessEvent";
-
 EventHandler::Rc TestNuInject::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(TestNuInject_ProcessEvent);
+   Debug::ft("TestNuInject.ProcessEvent");
 
    //  Update the test PSM with the CLI thread and test session identifier.
    //
@@ -1042,12 +942,10 @@ EventHandler::Rc TestNuInject::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name TestNuVerify_ProcessEvent = "TestNuVerify.ProcessEvent";
-
 EventHandler::Rc TestNuVerify::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(TestNuVerify_ProcessEvent);
+   Debug::ft("TestNuVerify.ProcessEvent");
 
    //  Create the UPSM and enter the Active state.
    //
@@ -1059,12 +957,10 @@ EventHandler::Rc TestNuVerify::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name TestAcInject_ProcessEvent = "TestAcInject.ProcessEvent";
-
 EventHandler::Rc TestAcInject::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(TestAcInject_ProcessEvent);
+   Debug::ft("TestAcInject.ProcessEvent");
 
    //  Queue the application message on its PSM.
    //
@@ -1079,12 +975,10 @@ EventHandler::Rc TestAcInject::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name TestAcVerify_ProcessEvent = "TestAcVerify.ProcessEvent";
-
 EventHandler::Rc TestAcVerify::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(TestAcVerify_ProcessEvent);
+   Debug::ft("TestAcVerify.ProcessEvent");
 
    //  Enter the Null state when the NPSM enters the Idle state.
    //

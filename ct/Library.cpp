@@ -68,8 +68,6 @@ fixed_string Library::SubsDir = "subs";
 
 //------------------------------------------------------------------------------
 
-fn_name Library_ctor = "Library.ctor";
-
 Library::Library() :
    sourcePathCfg_(nullptr),
    dirSet_(nullptr),
@@ -80,7 +78,7 @@ Library::Library() :
    subsSet_(nullptr),
    varSet_(nullptr)
 {
-   Debug::ft(Library_ctor);
+   Debug::ft("Library.ctor");
 
    dirs_.Init(MaxDirs, CodeDir::CellDiff(), MemPermanent);
    files_.Init(MaxFiles, CodeFile::CellDiff(), MemPermanent);
@@ -93,22 +91,18 @@ Library::Library() :
 
 //------------------------------------------------------------------------------
 
-fn_name Library_dtor = "Library.dtor";
-
 Library::~Library()
 {
-   Debug::ftnt(Library_dtor);
+   Debug::ftnt("Library.dtor");
 
    //  When dirs_, files_, and vars_ are deleted, so are their elements.
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Library_AddFile = "Library.AddFile";
-
 void Library::AddFile(CodeFile& file)
 {
-   Debug::ft(Library_AddFile);
+   Debug::ft("Library.AddFile");
 
    //  Add the file to the file registry, $files, either $hdrs or $cpps,
    //  $exts if it is external, and $subs if it declares external items.
@@ -133,23 +127,19 @@ void Library::AddFile(CodeFile& file)
 
 //------------------------------------------------------------------------------
 
-fn_name Library_AddVar = "Library.AddVar";
-
 void Library::AddVar(LibrarySet& var)
 {
-   Debug::ft(Library_AddVar);
+   Debug::ft("Library.AddVar");
 
    vars_.Enq(var);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Library_Assign = "Library.Assign";
-
 word Library::Assign
    (const string& name, const string& expr, size_t pos, string& expl)
 {
-   Debug::ft(Library_Assign);
+   Debug::ft("Library.Assign");
 
    //  If V is an existing variable, it must not be read-only.
    //
@@ -307,11 +297,9 @@ CodeFile* Library::EnsureFile(const string& file, CodeDir* dir)
 
 //------------------------------------------------------------------------------
 
-fn_name Library_EnsureVar = "Library.EnsureVar";
-
 LibrarySet* Library::EnsureVar(const string& s) const
 {
-   Debug::ft(Library_EnsureVar);
+   Debug::ft("Library.EnsureVar");
 
    //  If S is a variable, return it.  If it is the name of a directory
    //  or file, create a single-member set for it and return it.
@@ -347,22 +335,18 @@ LibrarySet* Library::EnsureVar(const string& s) const
 
 //------------------------------------------------------------------------------
 
-fn_name Library_EraseVar = "Library.EraseVar";
-
 void Library::EraseVar(LibrarySet& var)
 {
-   Debug::ftnt(Library_EraseVar);
+   Debug::ftnt("Library.EraseVar");
 
    vars_.Exq(var);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Library_Evaluate = "Library.Evaluate";
-
 LibrarySet* Library::Evaluate(const string& expr, size_t pos) const
 {
-   Debug::ft(Library_Evaluate);
+   Debug::ft("Library.Evaluate");
 
    //  Purge any temporary variables that were not released when evaluating
    //  the previous expression.
@@ -382,11 +366,9 @@ LibrarySet* Library::Evaluate(const string& expr, size_t pos) const
 
 //------------------------------------------------------------------------------
 
-fn_name Library_Export = "Library.Export";
-
 void Library::Export(ostream& stream, const string& opts) const
 {
-   Debug::ft(Library_Export);
+   Debug::ft("Library.Export");
 
    if(opts.find(NamespaceView) != string::npos)
    {
@@ -442,11 +424,9 @@ void Library::Export(ostream& stream, const string& opts) const
 
 //------------------------------------------------------------------------------
 
-fn_name Library_FindDir = "Library.FindDir";
-
 CodeDir* Library::FindDir(const string& name) const
 {
-   Debug::ft(Library_FindDir);
+   Debug::ft("Library.FindDir");
 
    for(auto d = dirs_.First(); d != nullptr; dirs_.Next(d))
    {
@@ -458,11 +438,9 @@ CodeDir* Library::FindDir(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name Library_FindFile = "Library.FindFile";
-
 CodeFile* Library::FindFile(const string& name) const
 {
-   Debug::ft(Library_FindFile);
+   Debug::ft("Library.FindFile");
 
    //  Case is ignored in source code file names, so convert NAME and
    //  candidate file names to lower case before comparing them.
@@ -479,11 +457,9 @@ CodeFile* Library::FindFile(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name Library_FindVar = "Library.FindVar";
-
 LibrarySet* Library::FindVar(const string& name) const
 {
-   Debug::ft(Library_FindVar);
+   Debug::ft("Library.FindVar");
 
    //  Exclude temporary variables from the search.  There are currently no
    //  situations where including them is useful, and excluding them avoids
@@ -502,11 +478,9 @@ LibrarySet* Library::FindVar(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name Library_Import = "Library.Import";
-
 word Library::Import(const string& name, const string& path, string& expl)
 {
-   Debug::ft(Library_Import);
+   Debug::ft("Library.Import");
 
    for(auto d = dirs_.First(); d != nullptr; dirs_.Next(d))
    {
@@ -565,11 +539,9 @@ word Library::Import(const string& name, const string& path, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Library_Purge = "Library.Purge";
-
 word Library::Purge(const string& name, string& expl) const
 {
-   Debug::ft(Library_Purge);
+   Debug::ft("Library.Purge");
 
    //  If V is an existing variable, it must not be read-only.
    //
@@ -592,11 +564,9 @@ word Library::Purge(const string& name, string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name Library_Shutdown = "Library.Shutdown";
-
 void Library::Shutdown(RestartLevel level)
 {
-   Debug::ft(Library_Shutdown);
+   Debug::ft("Library.Shutdown");
 
    Restart::Release(sourcePathCfg_);
 
@@ -612,11 +582,9 @@ void Library::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Library_Startup = "Library.Startup";
-
 void Library::Startup(RestartLevel level)
 {
-   Debug::ft(Library_Startup);
+   Debug::ft("Library.Startup");
 
    //  Recreate our configuration parameter if it no longer exists.
    //
@@ -657,11 +625,9 @@ void Library::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Library_Trim = "Library.Trim";
-
 void Library::Trim(ostream& stream) const
 {
-   Debug::ft(Library_Trim);
+   Debug::ft("Library.Trim");
 
    //  There was originally a >trim command that displayed
    //  files in build order, so retain this behavior.

@@ -42,8 +42,6 @@ using std::string;
 
 namespace MediaBase
 {
-fn_name MediaPsm_ctor1 = "MediaPsm.ctor(first)";
-
 MediaPsm::MediaPsm(FactoryId fid) : ProtocolSM(fid),
    edge_(false),
    ogPsm_(nullptr),
@@ -51,12 +49,10 @@ MediaPsm::MediaPsm(FactoryId fid) : ProtocolSM(fid),
    icTone_(Tone::Silence),
    mep_(nullptr)
 {
-   Debug::ft(MediaPsm_ctor1);
+   Debug::ft("MediaPsm.ctor(first)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name MediaPsm_ctor2 = "MediaPsm.ctor(subseq)";
 
 MediaPsm::MediaPsm(FactoryId fid, ProtocolLayer& adj, bool upper) :
    ProtocolSM(fid, adj, upper),
@@ -66,16 +62,14 @@ MediaPsm::MediaPsm(FactoryId fid, ProtocolLayer& adj, bool upper) :
    icTone_(Tone::Silence),
    mep_(nullptr)
 {
-   Debug::ft(MediaPsm_ctor2);
+   Debug::ft("MediaPsm.ctor(subseq)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_dtor = "MediaPsm.dtor";
-
 MediaPsm::~MediaPsm()
 {
-   Debug::ftnt(MediaPsm_dtor);
+   Debug::ftnt("MediaPsm.dtor");
 
    //  Delete the media endpoint, if any.
    //
@@ -85,11 +79,9 @@ MediaPsm::~MediaPsm()
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_CalcIcPort = "MediaPsm.CalcIcPort";
-
 Switch::PortId MediaPsm::CalcIcPort() const
 {
-   Debug::ft(MediaPsm_CalcIcPort);
+   Debug::ft("MediaPsm.CalcIcPort");
 
    //  If the incoming tone is media, we listen to the port designated on the
    //  timeswitch.  If the incoming tone is something else, we listen to that
@@ -101,11 +93,9 @@ Switch::PortId MediaPsm::CalcIcPort() const
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_CreateMedia = "MediaPsm.CreateMedia";
-
 void MediaPsm::CreateMedia(MediaPsm& other)
 {
-   Debug::ft(MediaPsm_CreateMedia);
+   Debug::ft("MediaPsm.CreateMedia");
 
    SetOgPsm(&other);
    other.SetOgPsm(this);
@@ -115,11 +105,9 @@ void MediaPsm::CreateMedia(MediaPsm& other)
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_DisableMedia = "MediaPsm.DisableMedia";
-
 void MediaPsm::DisableMedia()
 {
-   Debug::ft(MediaPsm_DisableMedia);
+   Debug::ft("MediaPsm.DisableMedia");
 
    SetOgTone(Tone::Silence);
    SetIcTone(Tone::Silence);
@@ -147,11 +135,9 @@ void MediaPsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_EnableMedia1 = "MediaPsm.EnableMedia(other)";
-
 void MediaPsm::EnableMedia(MediaPsm& other)
 {
-   Debug::ft(MediaPsm_EnableMedia1);
+   Debug::ft("MediaPsm.EnableMedia(other)");
 
    SetOgPsm(&other);
    other.SetOgPsm(this);
@@ -160,11 +146,9 @@ void MediaPsm::EnableMedia(MediaPsm& other)
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_EnableMedia2 = "MediaPsm.EnableMedia";
-
 void MediaPsm::EnableMedia()
 {
-   Debug::ft(MediaPsm_EnableMedia2);
+   Debug::ft("MediaPsm.EnableMedia");
 
    SetOgTone(Tone::Media);
    SetIcTone(Tone::Media);
@@ -172,11 +156,9 @@ void MediaPsm::EnableMedia()
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_EndOfTransaction = "MediaPsm.EndOfTransaction";
-
 void MediaPsm::EndOfTransaction()
 {
-   Debug::ft(MediaPsm_EndOfTransaction);
+   Debug::ft("MediaPsm.EndOfTransaction");
 
    //  Give our MEP a chance to generate a media message or parameter.
    //  This occurs first so that the MEP's contribution can be included
@@ -189,11 +171,9 @@ void MediaPsm::EndOfTransaction()
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_EnsureMedia = "MediaPsm.EnsureMedia";
-
 void MediaPsm::EnsureMedia(MediaPsm& other)
 {
-   Debug::ft(MediaPsm_EnsureMedia);
+   Debug::ft("MediaPsm.EnsureMedia");
 
    //  If neither this PSM nor PEER have a peer media PSM, prepare to
    //  set up media between them.
@@ -222,11 +202,9 @@ void MediaPsm::EnsureMedia(MediaPsm& other)
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_EnsureMediaMsg = "MediaPsm.EnsureMediaMsg";
-
 void MediaPsm::EnsureMediaMsg()
 {
-   Debug::ft(MediaPsm_EnsureMediaMsg);
+   Debug::ft("MediaPsm.EnsureMediaMsg");
 
    Context::Kill(strOver(this), GetFactory());
 }
@@ -260,11 +238,9 @@ MediaPsm* MediaPsm::GetOgPsm() const
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_GetSubtended = "MediaPsm.GetSubtended";
-
 void MediaPsm::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(MediaPsm_GetSubtended);
+   Debug::ft("MediaPsm.GetSubtended");
 
    ProtocolSM::GetSubtended(objects);
 
@@ -273,11 +249,9 @@ void MediaPsm::GetSubtended(std::vector< Base* >& objects) const
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_IcPortUpdated = "MediaPsm.IcPortUpdated";
-
 void MediaPsm::IcPortUpdated() const
 {
-   Debug::ft(MediaPsm_IcPortUpdated);
+   Debug::ft("MediaPsm.IcPortUpdated");
 
    //  If we are transmitting media (as opposed to a fixed tone), tell all
    //  of our listeners that they must now listen to a different port.
@@ -291,11 +265,9 @@ void MediaPsm::IcPortUpdated() const
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_MakeEdge = "MediaPsm.MakeEdge";
-
 void MediaPsm::MakeEdge(Switch::PortId port)
 {
-   Debug::ft(MediaPsm_MakeEdge);
+   Debug::ft("MediaPsm.MakeEdge");
 
    //  If this is not currently an edge PSM, see if the port from which
    //  it is transmitting has changed.
@@ -335,22 +307,18 @@ void MediaPsm::MakeEdge(Switch::PortId port)
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_MakeRelay = "MediaPsm.MakeRelay";
-
 void MediaPsm::MakeRelay()
 {
-   Debug::ft(MediaPsm_MakeRelay);
+   Debug::ft("MediaPsm.MakeRelay");
 
    edge_ = false;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_PrepareOgMsgq = "MediaPsm.PrepareOgMsgq";
-
 void MediaPsm::PrepareOgMsgq()
 {
-   Debug::ft(MediaPsm_PrepareOgMsgq);
+   Debug::ft("MediaPsm.PrepareOgMsgq");
 
    //  If a media update is required, make sure that the outgoing message
    //  queue will have a message in which that parameter can be included.
@@ -360,11 +328,9 @@ void MediaPsm::PrepareOgMsgq()
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_ReceiveMsg = "MediaPsm.ReceiveMsg";
-
 Event* MediaPsm::ReceiveMsg(Message& msg)
 {
-   Debug::ft(MediaPsm_ReceiveMsg);
+   Debug::ft("MediaPsm.ReceiveMsg");
 
    //  Give the MEP a chance to process any media parameters before
    //  application software handles the message.  This ensure that
@@ -378,11 +344,9 @@ Event* MediaPsm::ReceiveMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_SetIcTone = "MediaPsm.SetIcTone";
-
 void MediaPsm::SetIcTone(Tone::Id icTone)
 {
-   Debug::ft(MediaPsm_SetIcTone);
+   Debug::ft("MediaPsm.SetIcTone");
 
    Switch::PortId port;
 
@@ -405,22 +369,18 @@ void MediaPsm::SetIcTone(Tone::Id icTone)
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_SetMep = "MediaPsm.SetMep";
-
 void MediaPsm::SetMep(MediaEndpt* mep)
 {
-   Debug::ftnt(MediaPsm_SetMep);
+   Debug::ftnt("MediaPsm.SetMep");
 
    mep_ = mep;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_SetOgPort = "MediaPsm.SetOgPort";
-
 void MediaPsm::SetOgPort(Switch::PortId ogport)
 {
-   Debug::ft(MediaPsm_SetOgPort);
+   Debug::ft("MediaPsm.SetOgPort");
 
    //  The outgoing port is the one to which the PSM is listening.  When it
    //  changes, the timeswitch connection must be updated if the PSM is an
@@ -537,11 +497,9 @@ void MediaPsm::SynchEdge(MediaPsm& psm) const
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_SynchRelay = "MediaPsm.SynchRelay";
-
 void MediaPsm::SynchRelay(MediaPsm& psm) const
 {
-   Debug::ft(MediaPsm_SynchRelay);
+   Debug::ft("MediaPsm.SynchRelay");
 
    //  To synchronize a relay PSM, update both what it is receiving and
    //  transmitting.
@@ -553,11 +511,9 @@ void MediaPsm::SynchRelay(MediaPsm& psm) const
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_UpdateIcMedia = "MediaPsm.UpdateIcMedia";
-
 void MediaPsm::UpdateIcMedia(TlvMessage& msg, ParameterId pid)
 {
-   Debug::ft(MediaPsm_UpdateIcMedia);
+   Debug::ft("MediaPsm.UpdateIcMedia");
 
    //  An edge PSM does not update the port from which it transmits, because
    //  it is always the port assigned to its underlying circuit.  A relay PSM,
@@ -588,11 +544,9 @@ void MediaPsm::UpdateIcMedia(TlvMessage& msg, ParameterId pid)
 
 //------------------------------------------------------------------------------
 
-fn_name MediaPsm_UpdateOgMedia = "MediaPsm.UpdateOgMedia";
-
 void MediaPsm::UpdateOgMedia(TlvMessage& msg, ParameterId pid)
 {
-   Debug::ft(MediaPsm_UpdateOgMedia);
+   Debug::ft("MediaPsm.UpdateOgMedia");
 
    if(ogMediaSent_ != ogMediaCurr_)
    {

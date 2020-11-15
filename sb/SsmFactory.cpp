@@ -32,30 +32,24 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-fn_name SsmFactory_ctor = "SsmFactory.ctor";
-
 SsmFactory::SsmFactory(Id fid, ProtocolId prid, c_string name) :
    PsmFactory(fid, MultiPort, prid, name)
 {
-   Debug::ft(SsmFactory_ctor);
+   Debug::ft("SsmFactory.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SsmFactory_dtor = "SsmFactory.dtor";
 
 SsmFactory::~SsmFactory()
 {
-   Debug::ftnt(SsmFactory_dtor);
+   Debug::ftnt("SsmFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SsmFactory_AllocContext = "SsmFactory.AllocContext";
-
 Context* SsmFactory::AllocContext() const
 {
-   Debug::ft(SsmFactory_AllocContext);
+   Debug::ft("SsmFactory.AllocContext");
 
    return new SsmContext(GetFaction());
 }
@@ -111,12 +105,10 @@ void SsmFactory::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name SsmFactory_ReceiveMsg = "SsmFactory.ReceiveMsg";
-
 Factory::Rc SsmFactory::ReceiveMsg
    (Message& msg, bool atIoLevel, TransTrace* tt, Context*& ctx)
 {
-   Debug::ft(SsmFactory_ReceiveMsg);
+   Debug::ft("SsmFactory.ReceiveMsg");
 
    auto header = msg.Header();
 

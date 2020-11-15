@@ -34,22 +34,18 @@ using std::string;
 
 namespace SessionTools
 {
-fn_name MscContextPair_ctor = "MscContextPair.ctor";
-
 MscContextPair::MscContextPair(MscContext& ctx1, MscContext& ctx2) :
    ctx1_(&ctx1),
    ctx2_(&ctx2)
 {
-   Debug::ft(MscContextPair_ctor);
+   Debug::ft("MscContextPair.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MscContextPair_dtor = "MscContextPair.dtor";
-
 MscContextPair::~MscContextPair()
 {
-   Debug::ftnt(MscContextPair_dtor);
+   Debug::ftnt("MscContextPair.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -73,12 +69,10 @@ void MscContextPair::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name MscContextPair_IsEqualTo = "MscContextPair.IsEqualTo";
-
 bool MscContextPair::IsEqualTo
    (const MscContext& ctx1, const MscContext& ctx2) const
 {
-   Debug::ft(MscContextPair_IsEqualTo);
+   Debug::ft("MscContextPair.IsEqualTo");
 
    if(ctx1_ == &ctx1) return (ctx2_ == &ctx2);
    if(ctx1_ == &ctx2) return (ctx2_ == &ctx1);
@@ -96,11 +90,9 @@ ptrdiff_t MscContextPair::LinkDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name MscContextPair_Peer = "MscContextPair.Peer";
-
 MscContext* MscContextPair::Peer(const MscContext& context) const
 {
-   Debug::ft(MscContextPair_Peer);
+   Debug::ft("MscContextPair.Peer");
 
    if(ctx1_ == &context) return ctx2_;
    if(ctx2_ == &context) return ctx1_;

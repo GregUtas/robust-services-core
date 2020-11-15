@@ -23,43 +23,36 @@
 #include "Debug.h"
 #include "Duration.h"
 #include "SysMutex.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-fn_name MutexGuard_ctor = "MutexGuard.ctor";
-
 MutexGuard::MutexGuard(SysMutex* mutex) : mutex_(mutex)
 {
    if(mutex_ == nullptr) return;
 
-   Debug::ft(MutexGuard_ctor);
+   Debug::ft("MutexGuard.ctor");
 
    mutex_->Acquire(TIMEOUT_NEVER);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MutexGuard_dtor = "MutexGuard.dtor";
-
 MutexGuard::~MutexGuard()
 {
-   Debug::ftnt(MutexGuard_dtor);
+   Debug::ftnt("MutexGuard.dtor");
 
    if(mutex_ != nullptr) Release();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MutexGuard_Release = "MutexGuard.Release";
-
 void MutexGuard::Release()
 {
    if(mutex_ != nullptr)
    {
-      Debug::ftnt(MutexGuard_Release);
+      Debug::ftnt("MutexGuard.Release");
       mutex_->Release();
       mutex_ = nullptr;
    }

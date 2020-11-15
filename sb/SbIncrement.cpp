@@ -199,11 +199,9 @@ SbClearCommand::SbClearCommand(bool bind) : NwClearCommand(false)
    if(bind) BindParm(*new SbClearWhatParm);
 }
 
-fn_name SbClearCommand_ProcessSubcommand = "SbClearCommand.ProcessSubcommand";
-
 word SbClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(SbClearCommand_ProcessSubcommand);
+   Debug::ft("SbClearCommand.ProcessSubcommand");
 
    TraceRc rc;
    word id1 = 0;
@@ -284,11 +282,9 @@ ContextsCommand::ContextsCommand() : CliCommand(ContextsStr, ContextsExpl)
    BindParm(*new DispCBVParm);
 }
 
-fn_name ContextsCommand_ProcessCommand = "ContextsCommand.ProcessCommand";
-
 word ContextsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ContextsCommand_ProcessCommand);
+   Debug::ft("ContextsCommand.ProcessCommand");
 
    bool c, v;
 
@@ -329,11 +325,9 @@ EventsCommand::EventsCommand() : CliCommand(EventsStr, EventsExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name EventsCommand_ProcessCommand = "EventsCommand.ProcessCommand";
-
 word EventsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(EventsCommand_ProcessCommand);
+   Debug::ft("EventsCommand.ProcessCommand");
 
    word sid, eid;
    bool all, one = false, v = false;
@@ -404,12 +398,9 @@ SbExcludeCommand::SbExcludeCommand(bool bind) : NwExcludeCommand(false)
    if(bind) BindParm(*new SbExcludeWhatParm);
 }
 
-fn_name SbExcludeCommand_ProcessSubcommand =
-   "SbExcludeCommand.ProcessSubcommand";
-
 word SbExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(SbExcludeCommand_ProcessSubcommand);
+   Debug::ft("SbExcludeCommand.ProcessSubcommand");
 
    TraceRc rc;
    word id1, id2;
@@ -475,11 +466,9 @@ FactoriesCommand::FactoriesCommand() : CliCommand(FactoriesStr, FactoriesExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name FactoriesCommand_ProcessCommand = "FactoriesCommand.ProcessCommand";
-
 word FactoriesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(FactoriesCommand_ProcessCommand);
+   Debug::ft("FactoriesCommand.ProcessCommand");
 
    word fid;
    bool all, v = false;
@@ -532,11 +521,9 @@ HandlersCommand::HandlersCommand() : CliCommand(HandlersStr, HandlersExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name HandlersCommand_ProcessCommand = "HandlersCommand.ProcessCommand";
-
 word HandlersCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(HandlersCommand_ProcessCommand);
+   Debug::ft("HandlersCommand.ProcessCommand");
 
    word sid, ehid;
    bool all, one = false, v = false;
@@ -601,12 +588,9 @@ SbIncludeCommand::SbIncludeCommand(bool bind) : NwIncludeCommand(false)
    if(bind) BindParm(*new SbIncludeWhatParm);
 }
 
-fn_name SbIncludeCommand_ProcessSubcommand =
-   "SbIncludeCommand.ProcessSubcommand";
-
 word SbIncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(SbIncludeCommand_ProcessSubcommand);
+   Debug::ft("SbIncludeCommand.ProcessSubcommand");
 
    TraceRc rc;
    word id1, id2;
@@ -672,11 +656,9 @@ InvPoolsCommand::InvPoolsCommand() : CliCommand(InvPoolsStr, InvPoolsExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name InvPoolsCommand_ProcessCommand = "InvPoolsCommand.ProcessCommand";
-
 word InvPoolsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(InvPoolsCommand_ProcessCommand);
+   Debug::ft("InvPoolsCommand.ProcessCommand");
 
    word sc;
    bool all, v = false;
@@ -736,11 +718,9 @@ KillCommand::KillCommand() : CliCommand(KillStr, KillExpl)
    BindParm(*new PsmPtrParm);
 }
 
-fn_name KillCommand_ProcessCommand = "KillCommand.ProcessCommand";
-
 word KillCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(KillCommand_ProcessCommand);
+   Debug::ft("KillCommand.ProcessCommand");
 
    void* p = nullptr;
    std::ostringstream prompt;
@@ -776,11 +756,9 @@ MessagesCommand::MessagesCommand() : CliCommand(MessagesStr, MessagesExpl)
    BindParm(*new DispCBVParm);
 }
 
-fn_name MessagesCommand_ProcessCommand = "MessagesCommand.ProcessCommand";
-
 word MessagesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(MessagesCommand_ProcessCommand);
+   Debug::ft("MessagesCommand.ProcessCommand");
 
    word pid, sid;
    bool allProtocols, allSignals, c, v;
@@ -870,11 +848,9 @@ MsgPortsCommand::MsgPortsCommand() : CliCommand(MsgPortsStr, MsgPortsExpl)
    BindParm(*new DispCBVParm);
 }
 
-fn_name MsgPortsCommand_ProcessCommand = "MsgPortsCommand.ProcessCommand";
-
 word MsgPortsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(MsgPortsCommand_ProcessCommand);
+   Debug::ft("MsgPortsCommand.ProcessCommand");
 
    word fid;
    bool all, c, v;
@@ -956,11 +932,9 @@ ParametersCommand::ParametersCommand() :
    BindParm(*new DispBVParm);
 }
 
-fn_name ParametersCommand_ProcessCommand = "ParametersCommand.ProcessCommand";
-
 word ParametersCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ParametersCommand_ProcessCommand);
+   Debug::ft("ParametersCommand.ProcessCommand");
 
    word prid, pid;
    bool all, one = false, v = false;
@@ -1026,11 +1000,9 @@ ProtocolsCommand::ProtocolsCommand() : CliCommand(ProtocolsStr, ProtocolsExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name ProtocolsCommand_ProcessCommand = "ProtocolsCommand.ProcessCommand";
-
 word ProtocolsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ProtocolsCommand_ProcessCommand);
+   Debug::ft("ProtocolsCommand.ProcessCommand");
 
    word prid;
    bool all, v = false;
@@ -1082,11 +1054,9 @@ PsmsCommand::PsmsCommand() : CliCommand(PsmsStr, PsmsExpl)
    BindParm(*new DispCBVParm);
 }
 
-fn_name PsmsCommand_ProcessCommand = "PsmsCommand.ProcessCommand";
-
 word PsmsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(PsmsCommand_ProcessCommand);
+   Debug::ft("PsmsCommand.ProcessCommand");
 
    word fid;
    bool all, c, v;
@@ -1151,11 +1121,9 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
 //
 SbQueryCommand::SbQueryCommand(bool bind) : NwQueryCommand(bind) { }
 
-fn_name SbQueryCommand_ProcessSubcommand = "SbQueryCommand.ProcessSubcommand";
-
 word SbQueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(SbQueryCommand_ProcessSubcommand);
+   Debug::ft("SbQueryCommand.ProcessSubcommand");
 
    if(index != SelectionsIndex)
    {
@@ -1187,11 +1155,9 @@ ServicesCommand::ServicesCommand() : CliCommand(ServicesStr, ServicesExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name ServicesCommand_ProcessCommand = "ServicesCommand.ProcessCommand";
-
 word ServicesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ServicesCommand_ProcessCommand);
+   Debug::ft("ServicesCommand.ProcessCommand");
 
    word sid;
    bool all, v = false;
@@ -1244,11 +1210,9 @@ SignalsCommand::SignalsCommand() : CliCommand(SignalsStr, SignalsExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name SignalsCommand_ProcessCommand = "SignalsCommand.ProcessCommand";
-
 word SignalsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SignalsCommand_ProcessCommand);
+   Debug::ft("SignalsCommand.ProcessCommand");
 
    word prid, sid;
    bool all, one = false, v = false;
@@ -1314,11 +1278,9 @@ SsmsCommand::SsmsCommand() : CliCommand(SsmsStr, SsmsExpl)
    BindParm(*new DispCBVParm);
 }
 
-fn_name SsmsCommand_ProcessCommand = "SsmsCommand.ProcessCommand";
-
 word SsmsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SsmsCommand_ProcessCommand);
+   Debug::ft("SsmsCommand.ProcessCommand");
 
    word sid;
    bool all, c, v;
@@ -1399,11 +1361,9 @@ StatesCommand::StatesCommand() : CliCommand(StatesStr, StatesExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name StatesCommand_ProcessCommand = "StatesCommand.ProcessCommand";
-
 word StatesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(StatesCommand_ProcessCommand);
+   Debug::ft("StatesCommand.ProcessCommand");
 
    word sid, stid;
    bool all, one = false, v = false;
@@ -1454,11 +1414,9 @@ word StatesCommand::ProcessCommand(CliThread& cli) const
 //
 //  The STATUS command.
 //
-fn_name SbStatusCommand_ProcessCommand = "SbStatusCommand.ProcessCommand";
-
 word SbStatusCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SbStatusCommand_ProcessCommand);
+   Debug::ft("SbStatusCommand.ProcessCommand");
 
    NwStatusCommand::ProcessCommand(cli);
 
@@ -1525,11 +1483,9 @@ TimersCommand::TimersCommand() : CliCommand(TimersStr, TimersExpl)
    BindParm(*new DispCBVParm);
 }
 
-fn_name TimersCommand_ProcessCommand = "TimersCommand.ProcessCommand";
-
 word TimersCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TimersCommand_ProcessCommand);
+   Debug::ft("TimersCommand.ProcessCommand");
 
    word fid;
    bool all, c, v;
@@ -1612,11 +1568,9 @@ TriggersCommand::TriggersCommand() : CliCommand(TriggersStr, TriggersExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name TriggersCommand_ProcessCommand = "TriggersCommand.ProcessCommand";
-
 word TriggersCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TriggersCommand_ProcessCommand);
+   Debug::ft("TriggersCommand.ProcessCommand");
 
    word sid, tid;
    bool all, one = false, v = false;
@@ -1671,11 +1625,9 @@ word TriggersCommand::ProcessCommand(CliThread& cli) const
 fixed_string SessionsText = "sb";
 fixed_string SessionsExpl = "SessionBase Increment";
 
-fn_name SbIncrement_ctor = "SbIncrement.ctor";
-
 SbIncrement::SbIncrement() : CliIncrement(SessionsText, SessionsExpl)
 {
-   Debug::ft(SbIncrement_ctor);
+   Debug::ft("SbIncrement.ctor");
 
    BindCommand(*new ServicesCommand);
    BindCommand(*new StatesCommand);
@@ -1703,10 +1655,8 @@ SbIncrement::SbIncrement() : CliIncrement(SessionsText, SessionsExpl)
 
 //------------------------------------------------------------------------------
 
-fn_name SbIncrement_dtor = "SbIncrement.dtor";
-
 SbIncrement::~SbIncrement()
 {
-   Debug::ftnt(SbIncrement_dtor);
+   Debug::ftnt("SbIncrement.dtor");
 }
 }

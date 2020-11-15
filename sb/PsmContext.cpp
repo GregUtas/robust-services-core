@@ -39,11 +39,9 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name PsmContext_ctor = "PsmContext.ctor";
-
 PsmContext::PsmContext(Faction faction) : MsgContext(faction)
 {
-   Debug::ft(PsmContext_ctor);
+   Debug::ft("PsmContext.ctor");
 
    portq_.Init(Pooled::LinkDiff());
    psmq_.Init(Pooled::LinkDiff());
@@ -51,11 +49,9 @@ PsmContext::PsmContext(Faction faction) : MsgContext(faction)
 
 //------------------------------------------------------------------------------
 
-fn_name PsmContext_dtor = "PsmContext.dtor";
-
 PsmContext::~PsmContext()
 {
-   Debug::ftnt(PsmContext_dtor);
+   Debug::ftnt("PsmContext.dtor");
 
    //  Delete all PSMs and ports.  PSMs are deleted ahead of ports so that
    //  SendFinalMsg can send a message down the stack.
@@ -84,11 +80,9 @@ void PsmContext::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PsmContext_EndOfTransaction = "PsmContext.EndOfTransaction";
-
 void PsmContext::EndOfTransaction()
 {
-   Debug::ft(PsmContext_EndOfTransaction);
+   Debug::ft("PsmContext.EndOfTransaction");
 
    MsgContext::EndOfTransaction();
 
@@ -125,22 +119,18 @@ void PsmContext::EndOfTransaction()
 
 //------------------------------------------------------------------------------
 
-fn_name PsmContext_EnqPort = "PsmContext.EnqPort";
-
 void PsmContext::EnqPort(MsgPort& port)
 {
-   Debug::ft(PsmContext_EnqPort);
+   Debug::ft("PsmContext.EnqPort");
 
    portq_.Enq(port);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PsmContext_EnqPsm = "PsmContext.EnqPsm";
-
 void PsmContext::EnqPsm(ProtocolSM& psm)
 {
-   Debug::ft(PsmContext_EnqPsm);
+   Debug::ft("PsmContext.EnqPsm");
 
    //  Queue the PSM before any PSMs of lower priority.
    //
@@ -186,11 +176,9 @@ void PsmContext::ExqPsm(ProtocolSM& psm)
 
 //------------------------------------------------------------------------------
 
-fn_name PsmContext_FindPort = "PsmContext.FindPort";
-
 MsgPort* PsmContext::FindPort(const Message& msg) const
 {
-   Debug::ft(PsmContext_FindPort);
+   Debug::ft("PsmContext.FindPort");
 
    auto header = msg.Header();
 
@@ -207,11 +195,9 @@ MsgPort* PsmContext::FindPort(const Message& msg) const
 
 //------------------------------------------------------------------------------
 
-fn_name PsmContext_GetSubtended = "PsmContext.GetSubtended";
-
 void PsmContext::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(PsmContext_GetSubtended);
+   Debug::ft("PsmContext.GetSubtended");
 
    MsgContext::GetSubtended(objects);
 
@@ -228,11 +214,9 @@ void PsmContext::GetSubtended(std::vector< Base* >& objects) const
 
 //------------------------------------------------------------------------------
 
-fn_name PsmContext_HenqPsm = "PsmContext.HenqPsm";
-
 void PsmContext::HenqPsm(ProtocolSM& psm)
 {
-   Debug::ft(PsmContext_HenqPsm);
+   Debug::ft("PsmContext.HenqPsm");
 
    //  Queue the PSM before any PSMs of equal or lower priority.
    //
@@ -257,11 +241,9 @@ void PsmContext::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name PsmContext_ProcessIcMsg = "PsmContext.ProcessIcMsg";
-
 void PsmContext::ProcessIcMsg(Message& msg)
 {
-   Debug::ft(PsmContext_ProcessIcMsg);
+   Debug::ft("PsmContext.ProcessIcMsg");
 
    //  Find or create the port that will receive MSG.
    //

@@ -144,11 +144,9 @@ private:
 
 fixed_string PotsCfbTimeoutEventStr = "PotsCfbTimeoutEvent";
 
-fn_name PotsCfxService_ctor = "PotsCfxService.ctor";
-
 PotsCfxService::PotsCfxService() : Service(PotsCfxServiceId, false, true)
 {
-   Debug::ft(PotsCfxService_ctor);
+   Debug::ft("PotsCfxService.ctor");
 
    Singleton< PotsCfxNull >::Instance();
    Singleton< PotsCfuActivating >::Instance();
@@ -166,58 +164,46 @@ PotsCfxService::PotsCfxService() : Service(PotsCfxServiceId, false, true)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfxService_dtor = "PotsCfxService.dtor";
-
 PotsCfxService::~PotsCfxService()
 {
-   Debug::ftnt(PotsCfxService_dtor);
+   Debug::ftnt("PotsCfxService.dtor");
 }
 
 //==============================================================================
 
-fn_name PotsCfxState_ctor = "PotsCfxState.ctor";
-
 PotsCfxState::PotsCfxState(Id stid) : State(PotsCfxServiceId, stid)
 {
-   Debug::ft(PotsCfxState_ctor);
+   Debug::ft("PotsCfxState.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfxState_dtor = "PotsCfxState.dtor";
 
 PotsCfxState::~PotsCfxState()
 {
-   Debug::ftnt(PotsCfxState_dtor);
+   Debug::ftnt("PotsCfxState.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfxNull_ctor = "PotsCfxNull.ctor";
 
 PotsCfxNull::PotsCfxNull() : PotsCfxState(PotsCfxState::Null)
 {
-   Debug::ft(PotsCfxNull_ctor);
+   Debug::ft("PotsCfxNull.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfuActivating_ctor = "PotsCfuActivating.ctor";
-
 PotsCfuActivating::PotsCfuActivating() : PotsCfxState(PotsCfxState::Activating)
 {
-   Debug::ft(PotsCfuActivating_ctor);
+   Debug::ft("PotsCfuActivating.ctor");
 
    BindMsgAnalyzer(PotsCfxEventHandler::UnAnalyzeMessage, Service::UserPort);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfbTiming_ctor = "PotsCfbTiming.ctor";
-
 PotsCfbTiming::PotsCfbTiming() : PotsCfxState(PotsCfxState::Timing)
 {
-   Debug::ft(PotsCfbTiming_ctor);
+   Debug::ft("PotsCfbTiming.ctor");
 
    BindMsgAnalyzer(PotsCfxEventHandler::TiAnalyzeMessage, Service::UserPort);
    BindEventHandler(PotsCfxEventHandler::TiTimeout, PotsCfxEvent::Timeout);
@@ -225,63 +211,49 @@ PotsCfbTiming::PotsCfbTiming() : PotsCfxState(PotsCfxState::Timing)
 
 //==============================================================================
 
-fn_name PotsCfxEvent_ctor = "PotsCfxEvent.ctor";
-
 PotsCfxEvent::PotsCfxEvent(Id eid, ServiceSM& owner) : Event(eid, &owner)
 {
-   Debug::ft(PotsCfxEvent_ctor);
+   Debug::ft("PotsCfxEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfxEvent_dtor = "PotsCfxEvent.dtor";
 
 PotsCfxEvent::~PotsCfxEvent()
 {
-   Debug::ftnt(PotsCfxEvent_dtor);
+   Debug::ftnt("PotsCfxEvent.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfbTimeoutEvent_ctor = "PotsCfbTimeoutEvent.ctor";
 
 PotsCfbTimeoutEvent::PotsCfbTimeoutEvent(ServiceSM& owner) :
    PotsCfxEvent(Timeout, owner)
 {
-   Debug::ft(PotsCfbTimeoutEvent_ctor);
+   Debug::ft("PotsCfbTimeoutEvent.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfbTimeoutEvent_dtor = "PotsCfbTimeoutEvent.dtor";
-
 PotsCfbTimeoutEvent::~PotsCfbTimeoutEvent()
 {
-   Debug::ftnt(PotsCfbTimeoutEvent_dtor);
+   Debug::ftnt("PotsCfbTimeoutEvent.dtor");
 }
 
 //==============================================================================
 
-fn_name PotsCfxUnAnalyzeMessage_ProcessEvent =
-   "PotsCfxUnAnalyzeMessage.ProcessEvent";
-
 EventHandler::Rc PotsCfxUnAnalyzeMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCfxUnAnalyzeMessage_ProcessEvent);
+   Debug::ft("PotsCfxUnAnalyzeMessage.ProcessEvent");
 
    return Pass;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfbTiAnalyzeMessage_ProcessEvent =
-   "PotsCfbTiAnalyzeMessage.ProcessEvent";
-
 EventHandler::Rc PotsCfbTiAnalyzeMessage::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCfbTiAnalyzeMessage_ProcessEvent);
+   Debug::ft("PotsCfbTiAnalyzeMessage.ProcessEvent");
 
    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
    auto sid = ame.Msg()->GetSignal();
@@ -304,12 +276,10 @@ EventHandler::Rc PotsCfbTiAnalyzeMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfbTiTimeout_ProcessEvent = "PotsCfbTiTimeout.ProcessEvent";
-
 EventHandler::Rc PotsCfbTiTimeout::ProcessEvent
    (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const
 {
-   Debug::ft(PotsCfbTiTimeout_ProcessEvent);
+   Debug::ft("PotsCfbTiTimeout.ProcessEvent");
 
    auto& cssm = static_cast< PotsCfxSsm& >(ssm);
    auto& pssm = static_cast< PotsBcSsm& >(*cssm.Parent());
@@ -325,42 +295,34 @@ EventHandler::Rc PotsCfbTiTimeout::ProcessEvent
 
 //==============================================================================
 
-fn_name PotsCfxSsm_ctor = "PotsCfxSsm.ctor";
-
 PotsCfxSsm::PotsCfxSsm(ServiceId sid) : ServiceSM(PotsCfxServiceId),
    cfxp_(nullptr),
    timer_(false)
 {
-   Debug::ft(PotsCfxSsm_ctor);
+   Debug::ft("PotsCfxSsm.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name PotsCfxSsm_dtor = "PotsCfxSsm.dtor";
 
 PotsCfxSsm::~PotsCfxSsm()
 {
-   Debug::ftnt(PotsCfxSsm_dtor);
+   Debug::ftnt("PotsCfxSsm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfxSsm_CalcPort = "PotsCfxSsm.CalcPort";
-
 ServicePortId PotsCfxSsm::CalcPort(const AnalyzeMsgEvent& ame)
 {
-   Debug::ft(PotsCfxSsm_CalcPort);
+   Debug::ft("PotsCfxSsm.CalcPort");
 
    return Parent()->CalcPort(ame);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfxSsm_Cancel = "PotsCfxSsm.Cancel";
-
 void PotsCfxSsm::Cancel()
 {
-   Debug::ft(PotsCfxSsm_Cancel);
+   Debug::ft("PotsCfxSsm.Cancel");
 
    if(timer_)
    {
@@ -385,11 +347,9 @@ void PotsCfxSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfxSsm_ForwardCall = "PotsCfxSsm.ForwardCall";
-
 EventHandler::Rc PotsCfxSsm::ForwardCall(Event*& nextEvent)
 {
-   Debug::ft(PotsCfxSsm_ForwardCall);
+   Debug::ft("PotsCfxSsm.ForwardCall");
 
    auto& pssm = static_cast< PotsBcSsm& >(*Parent());
    auto upsm = pssm.UPsm();
@@ -464,12 +424,10 @@ EventHandler::Rc PotsCfxSsm::ForwardCall(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfxSsm_ProcessInitAck = "PotsCfxSsm.ProcessInitAck";
-
 EventHandler::Rc PotsCfxSsm::ProcessInitAck
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsCfxSsm_ProcessInitAck);
+   Debug::ft("PotsCfxSsm.ProcessInitAck");
 
    auto& ire = static_cast< InitiationReqEvent& >(currEvent);
    auto sid = ire.GetModifier();
@@ -548,24 +506,20 @@ EventHandler::Rc PotsCfxSsm::ProcessInitAck
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfxSsm_ProcessInitNack = "PotsCfxSsm.ProcessInitNack";
-
 EventHandler::Rc PotsCfxSsm::ProcessInitNack
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsCfxSsm_ProcessInitNack);
+   Debug::ft("PotsCfxSsm.ProcessInitNack");
 
    return EventHandler::Resume;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfxSsm_ProcessSap = "PotsCfxSsm.ProcessSap";
-
 EventHandler::Rc PotsCfxSsm::ProcessSap
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsCfxSsm_ProcessSap);
+   Debug::ft("PotsCfxSsm.ProcessSap");
 
    auto stid = CurrState();
    auto& sap = static_cast< AnalyzeSapEvent& >(currEvent);
@@ -643,11 +597,9 @@ EventHandler::Rc PotsCfxSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfxSsm_ProcessSnp = "PotsCfxSsm.ProcessSnp";
-
 EventHandler::Rc PotsCfxSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(PotsCfxSsm_ProcessSnp);
+   Debug::ft("PotsCfxSsm.ProcessSnp");
 
    auto pssm = static_cast< PotsBcSsm* >(Parent());
 
@@ -668,12 +620,10 @@ EventHandler::Rc PotsCfxSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsCfxSsm_ReleaseCall = "PotsCfxSsm.ReleaseCall";
-
 EventHandler::Rc PotsCfxSsm::ReleaseCall
    (Event*& nextEvent, Cause::Ind cause, CipMessage* msg)
 {
-   Debug::ft(PotsCfxSsm_ReleaseCall);
+   Debug::ft("PotsCfxSsm.ReleaseCall");
 
    auto& pssm = static_cast< PotsBcSsm& >(*Parent());
 

@@ -27,93 +27,75 @@
 
 namespace NodeBase
 {
-fn_name Persistent_ctor = "Persistent.ctor";
-
 Persistent::Persistent()
 {
-   Debug::ft(Persistent_ctor);
+   Debug::ft("Persistent.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Persistent_delete1 = "Persistent.operator delete";
 
 void Persistent::operator delete(void* addr)
 {
-   Debug::ftnt(Persistent_delete1);
+   Debug::ftnt("Persistent.operator delete");
 
    Memory::Free(addr, MemPersistent);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Persistent_delete2 = "Persistent.operator delete[]";
 
 void Persistent::operator delete[](void* addr)
 {
-   Debug::ftnt(Persistent_delete2);
+   Debug::ftnt("Persistent.operator delete[]");
 
    Memory::Free(addr, MemPersistent);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Persistent_delete3 = "Persistent.operator delete(place)";
-
 void Persistent::operator delete(void* addr, void* place) noexcept
 {
-   Debug::ftnt(Persistent_delete3);
+   Debug::ftnt("Persistent.operator delete(place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Persistent_delete4 = "Persistent.operator delete[](place)";
 
 void Persistent::operator delete[](void* addr, void* place) noexcept
 {
-   Debug::ftnt(Persistent_delete4);
+   Debug::ftnt("Persistent.operator delete[](place)");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Persistent_new1 = "Persistent.operator new";
 
 void* Persistent::operator new(size_t size)
 {
-   Debug::ft(Persistent_new1);
+   Debug::ft("Persistent.operator new");
 
    return Memory::Alloc(size, MemPersistent);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name Persistent_new2 = "Persistent.operator new[]";
 
 void* Persistent::operator new[](size_t size)
 {
-   Debug::ft(Persistent_new2);
+   Debug::ft("Persistent.operator new[]");
 
    return Memory::Alloc(size, MemPersistent);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Persistent_new3 = "Persistent.operator new(place)";
-
 void* Persistent::operator new(size_t size, void* place)
 {
-   Debug::ft(Persistent_new3);
+   Debug::ft("Persistent.operator new(place)");
 
    return place;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Persistent_new4 = "Persistent.operator new[](place)";
-
 void* Persistent::operator new[](size_t size, void* place)
 {
-   Debug::ft(Persistent_new4);
+   Debug::ft("Persistent.operator new[](place)");
 
    return place;
 }

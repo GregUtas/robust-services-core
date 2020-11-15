@@ -53,27 +53,23 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name ProtocolSM_ctor1 = "ProtocolSM.ctor(first)";
-
 ProtocolSM::ProtocolSM(FactoryId fid) :
    fid_(fid),
    state_(Idle)
 {
-   Debug::ft(ProtocolSM_ctor1);
+   Debug::ft("ProtocolSM.ctor(first)");
 
    Initialize(false);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_ctor2 = "ProtocolSM.ctor(subseq)";
-
 ProtocolSM::ProtocolSM(FactoryId fid, ProtocolLayer& adj, bool upper) :
    ProtocolLayer(adj, upper),
    fid_(fid),
    state_(Idle)
 {
-   Debug::ft(ProtocolSM_ctor2);
+   Debug::ft("ProtocolSM.ctor(subseq)");
 
    //  If the layer above created this PSM, queue it after others of equal
    //  priority.  This ensures that the PSM queue will be ordered from the
@@ -85,11 +81,9 @@ ProtocolSM::ProtocolSM(FactoryId fid, ProtocolLayer& adj, bool upper) :
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_dtor = "ProtocolSM.dtor";
-
 ProtocolSM::~ProtocolSM()
 {
-   Debug::ftnt(ProtocolSM_dtor);
+   Debug::ftnt("ProtocolSM.dtor");
 
    //  Record the PSM's deletion if this context is traced.
    //
@@ -132,11 +126,9 @@ ProtocolSM::~ProtocolSM()
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_AddressesUnknown = "ProtocolSM.AddressesUnknown";
-
 bool ProtocolSM::AddressesUnknown(const Message* msg) const
 {
-   Debug::ft(ProtocolSM_AddressesUnknown);
+   Debug::ft("ProtocolSM.AddressesUnknown");
 
    if((msg != nullptr) && (msg->RxSbAddr().fid != NIL_ID)) return false;
 
@@ -147,22 +139,18 @@ bool ProtocolSM::AddressesUnknown(const Message* msg) const
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_AllocLower = "ProtocolSM.AllocLower";
-
 ProtocolLayer* ProtocolSM::AllocLower(const Message* msg)
 {
-   Debug::ft(ProtocolSM_AllocLower);
+   Debug::ft("ProtocolSM.AllocLower");
 
    return new MsgPort(*this);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_Cleanup = "ProtocolSM.Cleanup";
-
 void ProtocolSM::Cleanup()
 {
-   Debug::ft(ProtocolSM_Cleanup);
+   Debug::ft("ProtocolSM.Cleanup");
 
    SendFinal();
    ProtocolLayer::Cleanup();
@@ -170,11 +158,9 @@ void ProtocolSM::Cleanup()
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_Destroy = "ProtocolSM.Destroy";
-
 void ProtocolSM::Destroy()
 {
-   Debug::ft(ProtocolSM_Destroy);
+   Debug::ft("ProtocolSM.Destroy");
 
    SendFinal();
    delete this;
@@ -201,11 +187,9 @@ void ProtocolSM::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_DropPeer = "ProtocolSM.DropPeer";
-
 bool ProtocolSM::DropPeer(const GlobalAddress& peerPrevRemAddr)
 {
-   Debug::ft(ProtocolSM_DropPeer);
+   Debug::ft("ProtocolSM.DropPeer");
 
    return EnsurePort()->DropPeer(peerPrevRemAddr);
 }
@@ -257,11 +241,9 @@ void ProtocolSM::EndOfTransaction()
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_EnqOgMsg = "ProtocolSM.EnqOgMsg";
-
 void ProtocolSM::EnqOgMsg(Message& msg)
 {
-   Debug::ft(ProtocolSM_EnqOgMsg);
+   Debug::ft("ProtocolSM.EnqOgMsg");
 
    msg.Enqueue(ogMsgq_);
    msg.SetPsm(this);
@@ -269,11 +251,9 @@ void ProtocolSM::EnqOgMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_FindTimer = "ProtocolSM.FindTimer";
-
 Timer* ProtocolSM::FindTimer(const Base& owner, TimerId tid) const
 {
-   Debug::ft(ProtocolSM_FindTimer);
+   Debug::ft("ProtocolSM.FindTimer");
 
    //  Search for a timer that is owned by OWNER and identified by TID.
    //
@@ -302,11 +282,9 @@ ProtocolId ProtocolSM::GetProtocol() const
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_GetSubtended = "ProtocolSM.GetSubtended";
-
 void ProtocolSM::GetSubtended(std::vector< Base* >& objects) const
 {
-   Debug::ft(ProtocolSM_GetSubtended);
+   Debug::ft("ProtocolSM.GetSubtended");
 
    ProtocolLayer::GetSubtended(objects);
 
@@ -333,11 +311,9 @@ void ProtocolSM::GetSubtended(std::vector< Base* >& objects) const
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_HenqOgMsg = "ProtocolSM.HenqOgMsg";
-
 void ProtocolSM::HenqOgMsg(Message& msg)
 {
-   Debug::ft(ProtocolSM_HenqOgMsg);
+   Debug::ft("ProtocolSM.HenqOgMsg");
 
    msg.Henqueue(ogMsgq_);
    msg.SetPsm(this);
@@ -345,11 +321,9 @@ void ProtocolSM::HenqOgMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_HenqReceivedMsg = "ProtocolSM.HenqReceivedMsg";
-
 void ProtocolSM::HenqReceivedMsg(Message& msg)
 {
-   Debug::ft(ProtocolSM_HenqReceivedMsg);
+   Debug::ft("ProtocolSM.HenqReceivedMsg");
 
    msg.Henqueue(rcvdMsgq_);
    msg.SetPsm(this);
@@ -357,11 +331,9 @@ void ProtocolSM::HenqReceivedMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_HenqSentMsg = "ProtocolSM.HenqSentMsg";
-
 void ProtocolSM::HenqSentMsg(Message& msg)
 {
-   Debug::ft(ProtocolSM_HenqSentMsg);
+   Debug::ft("ProtocolSM.HenqSentMsg");
 
    msg.Henqueue(sentMsgq_);
    msg.SetPsm(this);
@@ -369,11 +341,9 @@ void ProtocolSM::HenqSentMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_Initialize = "ProtocolSM.Initialize";
-
 void ProtocolSM::Initialize(bool henq)
 {
-   Debug::ft(ProtocolSM_Initialize);
+   Debug::ft("ProtocolSM.Initialize");
 
    rcvdMsgq_.Init(Pooled::LinkDiff());
    ogMsgq_.Init(Pooled::LinkDiff());
@@ -408,11 +378,9 @@ void ProtocolSM::Initialize(bool henq)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_InjectFinalMsg = "ProtocolSM.InjectFinalMsg";
-
 void ProtocolSM::InjectFinalMsg()
 {
-   Debug::ft(ProtocolSM_InjectFinalMsg);
+   Debug::ft("ProtocolSM.InjectFinalMsg");
 
    //  This is inelegant.  A PSM that can communicate with another node
    //  should therefore override it to inject a session takedown message.
@@ -422,12 +390,10 @@ void ProtocolSM::InjectFinalMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_JoinPeer = "ProtocolSM.JoinPeer";
-
 ProtocolLayer* ProtocolSM::JoinPeer
    (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr)
 {
-   Debug::ft(ProtocolSM_JoinPeer);
+   Debug::ft("ProtocolSM.JoinPeer");
 
    auto port = EnsurePort()->JoinPeer(peer, peerPrevRemAddr);
    if(port == nullptr) return nullptr;
@@ -466,11 +432,9 @@ void ProtocolSM::Kill()
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_new = "ProtocolSM.operator new";
-
 void* ProtocolSM::operator new(size_t size)
 {
-   Debug::ft(ProtocolSM_new);
+   Debug::ft("ProtocolSM.operator new");
 
    return Singleton< ProtocolSMPool >::Instance()->DeqBlock(size);
 }
@@ -484,11 +448,9 @@ void ProtocolSM::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_PeerFactory = "ProtocolSM.PeerFactory";
-
 FactoryId ProtocolSM::PeerFactory() const
 {
-   Debug::ft(ProtocolSM_PeerFactory);
+   Debug::ft("ProtocolSM.PeerFactory");
 
    auto port = Port();
    if(port == nullptr) return NIL_ID;
@@ -497,11 +459,9 @@ FactoryId ProtocolSM::PeerFactory() const
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_Port = "ProtocolSM.Port";
-
 MsgPort* ProtocolSM::Port() const
 {
-   Debug::ft(ProtocolSM_Port);
+   Debug::ft("ProtocolSM.Port");
 
    auto lower = Lower();
    if(lower == nullptr) return nullptr;
@@ -510,11 +470,9 @@ MsgPort* ProtocolSM::Port() const
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_ProcessIcMsg = "ProtocolSM.ProcessIcMsg";
-
 ProtocolSM::IncomingRc ProtocolSM::ProcessIcMsg(Message& msg, Event*& event)
 {
-   Debug::ft(ProtocolSM_ProcessIcMsg);
+   Debug::ft("ProtocolSM.ProcessIcMsg");
 
    Context::Kill(strOver(this), fid_);
    return DiscardMessage;
@@ -522,11 +480,9 @@ ProtocolSM::IncomingRc ProtocolSM::ProcessIcMsg(Message& msg, Event*& event)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_ProcessOgMsg = "ProtocolSM.ProcessOgMsg";
-
 ProtocolSM::OutgoingRc ProtocolSM::ProcessOgMsg(Message& msg)
 {
-   Debug::ft(ProtocolSM_ProcessOgMsg);
+   Debug::ft("ProtocolSM.ProcessOgMsg");
 
    Context::Kill(strOver(this), fid_);
    return PurgeMessage;
@@ -567,11 +523,9 @@ Event* ProtocolSM::ReceiveMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_SendFinal = "ProtocolSM.SendFinal";
-
 void ProtocolSM::SendFinal()
 {
-   Debug::ft(ProtocolSM_SendFinal);
+   Debug::ft("ProtocolSM.SendFinal");
 
    if((state_ != Idle) && (Port() != nullptr))
    {
@@ -592,11 +546,9 @@ void ProtocolSM::SendFinalMsg()
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_SendMsg = "ProtocolSM.SendMsg";
-
 bool ProtocolSM::SendMsg(Message& msg)
 {
-   Debug::ft(ProtocolSM_SendMsg);
+   Debug::ft("ProtocolSM.SendMsg");
 
    //  Queue the message on our outgoing message queue.  It will not be sent
    //  to the layer below until our ProcessOgMsgq and ProcessOgMsg functions
@@ -612,11 +564,9 @@ bool ProtocolSM::SendMsg(Message& msg)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_SetState = "ProtocolSM.SetState";
-
 void ProtocolSM::SetState(StateId stid)
 {
-   Debug::ft(ProtocolSM_SetState);
+   Debug::ft("ProtocolSM.SetState");
 
    state_ = stid;
 }
@@ -645,11 +595,9 @@ bool ProtocolSM::StartTimer
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_StopTimer = "ProtocolSM.StopTimer";
-
 void ProtocolSM::StopTimer(const Base& owner, TimerId tid)
 {
-   Debug::ft(ProtocolSM_StopTimer);
+   Debug::ft("ProtocolSM.StopTimer");
 
    //  Search for a timer that is owned by OWNER and identified by TID.
    //  Stop the timer if it is found.
@@ -673,22 +621,18 @@ void ProtocolSM::StopTimer(const Base& owner, TimerId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_UnwrapMsg = "ProtocolSM.UnwrapMsg";
-
 Message* ProtocolSM::UnwrapMsg(Message& msg)
 {
-   Debug::ft(ProtocolSM_UnwrapMsg);
+   Debug::ft("ProtocolSM.UnwrapMsg");
 
    return &msg;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name ProtocolSM_UppermostPsm = "ProtocolSM.UppermostPsm";
-
 ProtocolSM* ProtocolSM::UppermostPsm() const
 {
-   Debug::ft(ProtocolSM_UppermostPsm);
+   Debug::ft("ProtocolSM.UppermostPsm");
 
    auto upper = Upper();
    if(upper == nullptr) return const_cast< ProtocolSM* >(this);

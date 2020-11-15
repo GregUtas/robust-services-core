@@ -99,11 +99,9 @@ using namespace AccessNode;
 
 //------------------------------------------------------------------------------
 
-fn_name main_cpp = "main";
-
 main_t main(int argc, char* argv[])
 {
-   Debug::ft(main_cpp);
+   Debug::ft("main");
 
    //  Echo and save the arguments.
    //

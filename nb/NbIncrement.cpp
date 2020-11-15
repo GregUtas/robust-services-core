@@ -376,11 +376,9 @@ BuffersCommand::BuffersCommand() : CliCommand(BuffersStr, BuffersExpl)
    BindParm(*new DispCBVParm);
 }
 
-fn_name BuffersCommand_ProcessCommand = "BuffersCommand.ProcessCommand";
-
 word BuffersCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(BuffersCommand_ProcessCommand);
+   Debug::ft("BuffersCommand.ProcessCommand");
 
    bool c, v;
 
@@ -606,11 +604,9 @@ void ClearCommand::Patch(sel_t selector, void* arguments)
    CliCommand::Patch(selector, arguments);
 }
 
-fn_name ClearCommand_ProcessCommand = "ClearCommand.ProcessCommand";
-
 word ClearCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ClearCommand_ProcessCommand);
+   Debug::ft("ClearCommand.ProcessCommand");
 
    id_t clearWhatIndex;
 
@@ -619,11 +615,9 @@ word ClearCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, clearWhatIndex);
 }
 
-fn_name ClearCommand_ProcessSubcommand = "ClearCommand.ProcessSubcommand";
-
 word ClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(ClearCommand_ProcessSubcommand);
+   Debug::ft("ClearCommand.ProcessSubcommand");
 
    TraceRc rc;
    auto nbt = Singleton< NbTracer >::Instance();
@@ -823,11 +817,9 @@ DelayCommand::DelayCommand() : CliCommand(DelayStr, DelayExpl)
    BindParm(*new DelayTimeParm);
 }
 
-fn_name DelayCommand_ProcessCommand = "DelayCommand.ProcessCommand";
-
 word DelayCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(DelayCommand_ProcessCommand);
+   Debug::ft("DelayCommand.ProcessCommand");
 
    word secs;
 
@@ -869,11 +861,9 @@ DisplayCommand::DisplayCommand() : CliCommand(DisplayStr, DisplayExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name DisplayCommand_ProcessCommand = "DisplayCommand.ProcessCommand";
-
 word DisplayCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(DisplayCommand_ProcessCommand);
+   Debug::ft("DisplayCommand.ProcessCommand");
 
    void* p = nullptr;
    bool v = false;
@@ -929,11 +919,9 @@ DumpCommand::DumpCommand() : CliCommand(DumpStr, DumpExpl)
    BindParm(*new ByteCountParm);
 }
 
-fn_name DumpCommand_ProcessCommand = "DumpCommand.ProcessCommand";
-
 word DumpCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(DumpCommand_ProcessCommand);
+   Debug::ft("DumpCommand.ProcessCommand");
 
    void* p = nullptr;
    word n = 0;
@@ -978,11 +966,9 @@ EchoCommand::EchoCommand() : CliCommand(EchoStr, EchoExpl)
    BindParm(*new EchoParm);
 }
 
-fn_name EchoCommand_ProcessCommand = "EchoCommand.ProcessCommand";
-
 word EchoCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(EchoCommand_ProcessCommand);
+   Debug::ft("EchoCommand.ProcessCommand");
 
    cli.ibuf->Echo();
    return 0;
@@ -1014,11 +1000,9 @@ void ExcludeCommand::Patch(sel_t selector, void* arguments)
    CliCommand::Patch(selector, arguments);
 }
 
-fn_name ExcludeCommand_ProcessCommand = "ExcludeCommand.ProcessCommand";
-
 word ExcludeCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ExcludeCommand_ProcessCommand);
+   Debug::ft("ExcludeCommand.ProcessCommand");
 
    id_t excludeWhatIndex;
 
@@ -1027,11 +1011,9 @@ word ExcludeCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, excludeWhatIndex);
 }
 
-fn_name ExcludeCommand_ProcessSubcommand = "ExcludeCommand.ProcessSubcommand";
-
 word ExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(ExcludeCommand_ProcessSubcommand);
+   Debug::ft("ExcludeCommand.ProcessSubcommand");
 
    TraceRc rc;
    auto nbt = Singleton< NbTracer >::Instance();
@@ -1376,11 +1358,9 @@ word DisplayHelp(const CliThread& cli, const string& key)
    return 0;
 }
 
-fn_name HelpCommand_ProcessCommand = "HelpCommand.ProcessCommand";
-
 word HelpCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(HelpCommand_ProcessCommand);
+   Debug::ft("HelpCommand.ProcessCommand");
 
    //     Input:                       Result:
    //  1  >help                        overview of CLI
@@ -1664,11 +1644,9 @@ void IncludeCommand::Patch(sel_t selector, void* arguments)
    CliCommand::Patch(selector, arguments);
 }
 
-fn_name IncludeCommand_ProcessCommand = "IncludeCommand.ProcessCommand";
-
 word IncludeCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(IncludeCommand_ProcessCommand);
+   Debug::ft("IncludeCommand.ProcessCommand");
 
    id_t includeWhatIndex;
 
@@ -1677,11 +1655,9 @@ word IncludeCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, includeWhatIndex);
 }
 
-fn_name IncludeCommand_ProcessSubcommand = "IncludeCommand.ProcessSubcommand";
-
 word IncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(IncludeCommand_ProcessSubcommand);
+   Debug::ft("IncludeCommand.ProcessSubcommand");
 
    TraceRc rc;
    auto nbt = Singleton< NbTracer >::Instance();
@@ -1731,11 +1707,9 @@ fixed_string IncrsExpl = "Lists all available increments.";
 
 IncrsCommand::IncrsCommand() : CliCommand(IncrsStr, IncrsExpl) { }
 
-fn_name IncrsCommand_ProcessCommand = "IncrsCommand.ProcessCommand";
-
 word IncrsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(IncrsCommand_ProcessCommand);
+   Debug::ft("IncrsCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    Singleton< CliRegistry >::Instance()->ListIncrements(*cli.obuf);
@@ -1921,12 +1895,10 @@ void LogsCommand::Patch(sel_t selector, void* arguments)
 //  explanation.  If GROUP is found and ID is 0, sets LOG to nullptr and
 //  returns true.
 //
-fn_name NodeBase_FindGroupAndLog = "NodeBase.FindGroupAndLog";
-
 bool FindGroupAndLog(const string& name, word id,
       LogGroup*& group, Log*& log, string& expl)
 {
-   Debug::ft(NodeBase_FindGroupAndLog);
+   Debug::ft("NodeBase.FindGroupAndLog");
 
    auto reg = Singleton< LogGroupRegistry >::Instance();
    group = reg->FindGroup(name);
@@ -1951,11 +1923,9 @@ bool FindGroupAndLog(const string& name, word id,
    return true;
 }
 
-fn_name LogsCommand_ProcessCommand = "LogsCommand.ProcessCommand";
-
 word LogsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(LogsCommand_ProcessCommand);
+   Debug::ft("LogsCommand.ProcessCommand");
 
    id_t index;
 
@@ -1964,11 +1934,9 @@ word LogsCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, index);
 }
 
-fn_name LogsCommand_ProcessSubcommand = "LogsCommand.ProcessSubcommand";
-
 word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(LogsCommand_ProcessSubcommand);
+   Debug::ft("LogsCommand.ProcessSubcommand");
 
    word rc = 0;
    string name, expl, key, path;
@@ -2136,11 +2104,9 @@ ModulesCommand::ModulesCommand() : CliCommand(ModulesStr, ModulesExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name ModulesCommand_ProcessCommand = "ModulesCommand.ProcessCommand";
-
 word ModulesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ModulesCommand_ProcessCommand);
+   Debug::ft("ModulesCommand.ProcessCommand");
 
    word mid;
    bool all, v = false;
@@ -2192,11 +2158,9 @@ MutexesCommand::MutexesCommand() : CliCommand(MutexesStr, MutexesExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name MutexesCommand_ProcessCommand = "MutexesCommand.ProcessCommand";
-
 word MutexesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(MutexesCommand_ProcessCommand);
+   Debug::ft("MutexesCommand.ProcessCommand");
 
    word id;
    bool all, v = false;
@@ -2248,11 +2212,9 @@ PoolsCommand::PoolsCommand() : CliCommand(PoolsStr, PoolsExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name PoolsCommand_ProcessCommand = "PoolsCommand.ProcessCommand";
-
 word PoolsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(PoolsCommand_ProcessCommand);
+   Debug::ft("PoolsCommand.ProcessCommand");
 
    word pid;
    bool all, v = false;
@@ -2304,11 +2266,9 @@ PsignalsCommand::PsignalsCommand() : CliCommand(PsignalsStr, PsignalsExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name PsignalsCommand_ProcessCommand = "PsignalsCommand.ProcessCommand";
-
 word PsignalsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(PsignalsCommand_ProcessCommand);
+   Debug::ft("PsignalsCommand.ProcessCommand");
 
    word id;
    bool all, v = false;
@@ -2365,11 +2325,9 @@ void QueryCommand::Patch(sel_t selector, void* arguments)
    CliCommand::Patch(selector, arguments);
 }
 
-fn_name QueryCommand_ProcessCommand = "QueryCommand.ProcessCommand";
-
 word QueryCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(QueryCommand_ProcessCommand);
+   Debug::ft("QueryCommand.ProcessCommand");
 
    id_t queryWhatIndex;
 
@@ -2378,11 +2336,9 @@ word QueryCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, queryWhatIndex);
 }
 
-fn_name QueryCommand_ProcessSubcommand = "QueryCommand.ProcessSubcommand";
-
 word QueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(QueryCommand_ProcessSubcommand);
+   Debug::ft("QueryCommand.ProcessSubcommand");
 
    if(!cli.EndOfInput()) return -1;
 
@@ -2444,11 +2400,9 @@ QuitCommand::QuitCommand() : CliCommand(QuitStr, QuitExpl)
    BindParm(*new QuitParm);
 }
 
-fn_name QuitCommand_ProcessCommand = "QuitCommand.ProcessCommand";
-
 word QuitCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(QuitCommand_ProcessCommand);
+   Debug::ft("QuitCommand.ProcessCommand");
 
    id_t index;
 
@@ -2497,11 +2451,9 @@ ReadCommand::ReadCommand() : CliCommand(ReadStr, ReadExpl)
    BindParm(*new ReadWhereParm);
 }
 
-fn_name ReadCommand_ProcessCommand = "ReadCommand.ProcessCommand";
-
 word ReadCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ReadCommand_ProcessCommand);
+   Debug::ft("ReadCommand.ProcessCommand");
 
    string name;
    string expl;
@@ -2614,11 +2566,9 @@ RestartCommand::RestartCommand() : CliCommand(RestartStr, RestartExpl)
    BindParm(*new RestartType);
 }
 
-fn_name RestartCommand_ProcessCommand = "RestartCommand.ProcessCommand";
-
 word RestartCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(RestartCommand_ProcessCommand);
+   Debug::ft("RestartCommand.ProcessCommand");
 
    id_t index;
    RestartLevel level;
@@ -2708,11 +2658,9 @@ void SaveCommand::Patch(sel_t selector, void* arguments)
    CliCommand::Patch(selector, arguments);
 }
 
-fn_name SaveCommand_ProcessCommand = "SaveCommand.ProcessCommand";
-
 word SaveCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SaveCommand_ProcessCommand);
+   Debug::ft("SaveCommand.ProcessCommand");
 
    id_t saveWhatIndex;
 
@@ -2721,11 +2669,9 @@ word SaveCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, saveWhatIndex);
 }
 
-fn_name SaveCommand_ProcessSubcommand = "SaveCommand.ProcessSubcommand";
-
 word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(SaveCommand_ProcessSubcommand);
+   Debug::ft("SaveCommand.ProcessSubcommand");
 
    if(index != TraceIndex) return CliCommand::ProcessSubcommand(cli, index);
 
@@ -3154,11 +3100,9 @@ void SetCommand::Patch(sel_t selector, void* arguments)
    CliCommand::Patch(selector, arguments);
 }
 
-fn_name SetCommand_ProcessCommand = "SetCommand.ProcessCommand";
-
 word SetCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SetCommand_ProcessCommand);
+   Debug::ft("SetCommand.ProcessCommand");
 
    id_t setWhatIndex;
 
@@ -3167,11 +3111,9 @@ word SetCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, setWhatIndex);
 }
 
-fn_name SetCommand_ProcessSubcommand = "SetCommand.ProcessSubcommand";
-
 word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft(SetCommand_ProcessSubcommand);
+   Debug::ft("SetCommand.ProcessSubcommand");
 
    auto rc = TraceOk;
    id_t setHowIndex;
@@ -3244,11 +3186,9 @@ SingletonsCommand::SingletonsCommand() :
    BindParm(*new DispBVParm);
 }
 
-fn_name SingletonsCommand_ProcessCommand = "SingletonsCommand.ProcessCommand";
-
 word SingletonsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SingletonsCommand_ProcessCommand);
+   Debug::ft("SingletonsCommand.ProcessCommand");
 
    bool v = false;
 
@@ -3275,11 +3215,9 @@ fixed_string StartExpl = "Starts tracing.";
 
 StartCommand::StartCommand() : CliCommand(StartStr, StartExpl) { }
 
-fn_name StartCommand_ProcessCommand = "StartCommand.ProcessCommand";
-
 word StartCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(StartCommand_ProcessCommand);
+   Debug::ft("StartCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
 
@@ -3503,11 +3441,9 @@ fixed_string PoolsHeader =
 // 0         1         2         3         4         5         6
 // 012345678901234567890123456789012345678901234567890123456789012345678
 
-fn_name StatusCommand_ProcessCommand = "StatusCommand.ProcessCommand";
-
 word StatusCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(StatusCommand_ProcessCommand);
+   Debug::ft("StatusCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
 
@@ -3608,11 +3544,9 @@ fixed_string StopExpl = "Stops tracing.";
 
 StopCommand::StopCommand() : CliCommand(StopStr, StopExpl) { }
 
-fn_name StopCommand_ProcessCommand = "StopCommand.ProcessCommand";
-
 word StopCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(StopCommand_ProcessCommand);
+   Debug::ft("StopCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
    Singleton< TraceBuffer >::Instance()->StopTracing();
@@ -3843,11 +3777,9 @@ ThreadsCommand::ThreadsCommand() : CliCommand(ThreadsStr, ThreadsExpl)
    BindParm(*new DispCBVParm);
 }
 
-fn_name ThreadsCommand_ProcessCommand = "ThreadsCommand.ProcessCommand";
-
 word ThreadsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ThreadsCommand_ProcessCommand);
+   Debug::ft("ThreadsCommand.ProcessCommand");
 
    word tid;
    bool all, c, v;
@@ -3908,11 +3840,9 @@ fixed_string ToolsExpl = "Lists available debugging tools.";
 
 ToolsCommand::ToolsCommand() : CliCommand(ToolsStr, ToolsExpl) { }
 
-fn_name ToolsCommand_ProcessCommand = "ToolsCommand.ProcessCommand";
-
 word ToolsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ToolsCommand_ProcessCommand);
+   Debug::ft("ToolsCommand.ProcessCommand");
 
    auto& tools = Singleton< ToolRegistry >::Instance()->Tools();
 
@@ -3948,11 +3878,9 @@ word ToolsCommand::ProcessCommand(CliThread& cli) const
 fixed_string RootStr = "nb";
 fixed_string RootExpl = "NodeBase Increment";
 
-fn_name NbIncrement_ctor = "NbIncrement.ctor";
-
 NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
 {
-   Debug::ft(NbIncrement_ctor);
+   Debug::ft("NbIncrement.ctor");
 
    BindCommand(*new HelpCommand);
    BindCommand(*new QuitCommand);
@@ -3995,20 +3923,16 @@ NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
 
 //------------------------------------------------------------------------------
 
-fn_name NbIncrement_dtor = "NbIncrement.dtor";
-
 NbIncrement::~NbIncrement()
 {
-   Debug::ftnt(NbIncrement_dtor);
+   Debug::ftnt("NbIncrement.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name NbIncrement_Startup = "NbIncrement.Startup";
-
 void NbIncrement::Startup(RestartLevel level)
 {
-   Debug::ftnt(NbIncrement_Startup);
+   Debug::ftnt("NbIncrement.Startup");
 
    CliIncrement::Startup(level);
 

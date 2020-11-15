@@ -67,11 +67,9 @@ ostream& operator<<(ostream& stream, TestDatabase::State state)
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_ctor = "TestDatabase.ctor";
-
 TestDatabase::TestDatabase()
 {
-   Debug::ft(TestDatabase_ctor);
+   Debug::ft("TestDatabase.ctor");
 
    Load();
    Update();
@@ -79,11 +77,9 @@ TestDatabase::TestDatabase()
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_dtor = "TestDatabase.dtor";
-
 TestDatabase::~TestDatabase()
 {
-   Debug::ftnt(TestDatabase_dtor);
+   Debug::ftnt("TestDatabase.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -117,11 +113,9 @@ void TestDatabase::Commit() const
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_Erase = "TestDatabase.Erase";
-
 word TestDatabase::Erase(const string& test, string& expl)
 {
-   Debug::ft(TestDatabase_Erase);
+   Debug::ft("TestDatabase.Erase");
 
    auto item = tests_.find(test);
 
@@ -160,11 +154,9 @@ TestDatabase::State TestDatabase::GetState(const string& testcase)
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_GetTest = "TestDatabase.GetTest";
-
 TestDatabase::LoadState TestDatabase::GetTest(string& input)
 {
-   Debug::ft(TestDatabase_GetTest);
+   Debug::ft("TestDatabase.GetTest");
 
    auto name = strGet(input);
    if(name.front() == DELIMITER) return LoadDone;
@@ -186,11 +178,9 @@ TestDatabase::LoadState TestDatabase::GetTest(string& input)
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_Insert = "TestDatabase.Insert";
-
 void TestDatabase::Insert(const string& test, const string& dir)
 {
-   Debug::ft(TestDatabase_Insert);
+   Debug::ft("TestDatabase.Insert");
 
    auto state = Unreported;
    uint32_t hash = UNHASHED;
@@ -281,11 +271,9 @@ void TestDatabase::Load()
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_Query = "TestDatabase.Query";
-
 word TestDatabase::Query(bool verbose, string& expl) const
 {
-   Debug::ft(TestDatabase_Query);
+   Debug::ft("TestDatabase.Query");
 
    size_t states[State_N] = { 0 };
 
@@ -320,11 +308,9 @@ word TestDatabase::Query(bool verbose, string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_Retest = "TestDatabase.Retest";
-
 word TestDatabase::Retest(string& expl) const
 {
-   Debug::ft(TestDatabase_Retest);
+   Debug::ft("TestDatabase.Retest");
 
    size_t count = 0;
    std::ostringstream stream;
@@ -384,11 +370,9 @@ void TestDatabase::SetState(const string& testcase, State next)
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_Shutdown = "TestDatabase.Shutdown";
-
 void TestDatabase::Shutdown(RestartLevel level)
 {
-   Debug::ft(TestDatabase_Shutdown);
+   Debug::ft("TestDatabase.Shutdown");
 
    tests_.clear();
 }

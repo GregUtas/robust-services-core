@@ -35,11 +35,9 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-fn_name SysTcpSocket_Accept = "SysTcpSocket.Accept";
-
 SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
 {
-   Debug::ft(SysTcpSocket_Accept);
+   Debug::ft("SysTcpSocket.Accept");
 
    sockaddr_in peer;
    int peersize = sizeof(peer);
@@ -60,11 +58,9 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Connect = "SysTcpSocket.Connect";
-
 word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)
 {
-   Debug::ft(SysTcpSocket_Connect);
+   Debug::ft("SysTcpSocket.Connect");
 
    sockaddr_in peer;
 
@@ -84,11 +80,9 @@ word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Disconnect = "SysTcpSocket.Disconnect";
-
 void SysTcpSocket::Disconnect()
 {
-   Debug::ft(SysTcpSocket_Disconnect);
+   Debug::ft("SysTcpSocket.Disconnect");
 
    if(!disconnecting_ && (state_ != Idle) && IsValid())
    {
@@ -124,11 +118,9 @@ bool SysTcpSocket::Listen(size_t backlog)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_LocAddr = "SysTcpSocket.LocAddr";
-
 bool SysTcpSocket::LocAddr(SysIpL3Addr& locAddr)
 {
-   Debug::ft(SysTcpSocket_LocAddr);
+   Debug::ft("SysTcpSocket.LocAddr");
 
    sockaddr_in host;
    int hostsize = sizeof(host);
@@ -153,12 +145,10 @@ void SysTcpSocket::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Poll = "SysTcpSocket.Poll";
-
 word SysTcpSocket::Poll
    (SysTcpSocket* sockets[], size_t size, const Duration& timeout)
 {
-   Debug::ft(SysTcpSocket_Poll);
+   Debug::ft("SysTcpSocket.Poll");
 
    if(size == 0) return 0;
    int delay = (timeout != TIMEOUT_NEVER ? timeout.ToMsecs() : -1);
@@ -237,11 +227,9 @@ word SysTcpSocket::Recv(byte_t* buff, size_t size)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_RemAddr = "SysTcpSocket.RemAddr";
-
 bool SysTcpSocket::RemAddr(SysIpL3Addr& remAddr)
 {
-   Debug::ft(SysTcpSocket_RemAddr);
+   Debug::ft("SysTcpSocket.RemAddr");
 
    sockaddr_in peer;
    int peersize = sizeof(peer);

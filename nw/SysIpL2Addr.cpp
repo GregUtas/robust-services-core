@@ -33,20 +33,16 @@ using std::string;
 
 namespace NetworkBase
 {
-fn_name SysIpL2Addr_ctor = "SysIpL2Addr.ctor(IPv4addr)";
-
 SysIpL2Addr::SysIpL2Addr(ipv4addr_t v4Addr) : v4Addr_(v4Addr)
 {
-   Debug::ft(SysIpL2Addr_ctor);
+   Debug::ft("SysIpL2Addr.ctor(IPv4addr)");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL2Addr_dtor = "SysIpL2Addr.dtor";
-
 SysIpL2Addr::~SysIpL2Addr()
 {
-   Debug::ftnt(SysIpL2Addr_dtor);
+   Debug::ftnt("SysIpL2Addr.dtor");
 }
 
 //------------------------------------------------------------------------------

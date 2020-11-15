@@ -37,13 +37,11 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name Tool_ctor = "Tool.ctor";
-
 Tool::Tool(FlagId tid, char abbr, bool safe) :
    abbr_(abbr),
    safe_(safe)
 {
-   Debug::ft(Tool_ctor);
+   Debug::ft("Tool.ctor");
 
    tid_.SetId(tid);
    Singleton< ToolRegistry >::Instance()->BindTool(*this);
@@ -97,11 +95,9 @@ c_string Tool::Expl() const
 
 //------------------------------------------------------------------------------
 
-fn_name Tool_IsSafe = "Tool.IsSafe";
-
 bool Tool::IsSafe() const
 {
-   Debug::ft(Tool_IsSafe);
+   Debug::ft("Tool.IsSafe");
 
    if(safe_) return true;
    return Element::RunningInLab();

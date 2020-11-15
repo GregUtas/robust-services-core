@@ -36,13 +36,11 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name RootServiceSM_ctor = "RootServiceSM.ctor";
-
 RootServiceSM::RootServiceSM(ServiceId sid) :
    ServiceSM(sid),
    ctx_(nullptr)
 {
-   Debug::ft(RootServiceSM_ctor);
+   Debug::ft("RootServiceSM.ctor");
 
    //  Register the SSM with its context.
    //
@@ -53,11 +51,9 @@ RootServiceSM::RootServiceSM(ServiceId sid) :
 
 //------------------------------------------------------------------------------
 
-fn_name RootServiceSM_dtor = "RootServiceSM.dtor";
-
 RootServiceSM::~RootServiceSM()
 {
-   Debug::ftnt(RootServiceSM_dtor);
+   Debug::ftnt("RootServiceSM.dtor");
 
    //  Deregister the SSM from its context.
    //
@@ -83,61 +79,51 @@ void RootServiceSM::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name RootServiceSM_ProcessInitAck = "RootServiceSM.ProcessInitAck";
-
 EventHandler::Rc RootServiceSM::ProcessInitAck
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(RootServiceSM_ProcessInitAck);
+   Debug::ft("RootServiceSM.ProcessInitAck");
 
    Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name RootServiceSM_ProcessInitNack = "RootServiceSM.ProcessInitNack";
 
 EventHandler::Rc RootServiceSM::ProcessInitNack
    (Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(RootServiceSM_ProcessInitNack);
+   Debug::ft("RootServiceSM.ProcessInitNack");
 
    Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name RootServiceSM_ProcessSap = "RootServiceSM.ProcessSap";
 
 EventHandler::Rc RootServiceSM::ProcessSap(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(RootServiceSM_ProcessSap);
+   Debug::ft("RootServiceSM.ProcessSap");
 
    Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name RootServiceSM_ProcessSip = "RootServiceSM.ProcessSip";
 
 EventHandler::Rc RootServiceSM::ProcessSip(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(RootServiceSM_ProcessSip);
+   Debug::ft("RootServiceSM.ProcessSip");
 
    Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
 }
 
 //------------------------------------------------------------------------------
-
-fn_name RootServiceSM_ProcessSnp = "RootServiceSM.ProcessSnp";
 
 EventHandler::Rc RootServiceSM::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
-   Debug::ft(RootServiceSM_ProcessSnp);
+   Debug::ft("RootServiceSM.ProcessSnp");
 
    Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
@@ -145,11 +131,9 @@ EventHandler::Rc RootServiceSM::ProcessSnp(Event& currEvent, Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-fn_name RootServiceSM_RaiseProtocolError = "RootServiceSM.RaiseProtocolError";
-
 Event* RootServiceSM::RaiseProtocolError(ProtocolSM& psm, ProtocolSM::Error err)
 {
-   Debug::ft(RootServiceSM_RaiseProtocolError);
+   Debug::ft("RootServiceSM.RaiseProtocolError");
 
    return new AnalyzeMsgEvent(*Context::ContextMsg());
 }

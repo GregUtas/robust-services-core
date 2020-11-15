@@ -99,11 +99,9 @@ PotsBcSsm::PotsBcSsm(ServiceId sid, const Message& msg, ProtocolSM& psm) :
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcSsm_dtor = "PotsBcSsm.dtor";
-
 PotsBcSsm::~PotsBcSsm()
 {
-   Debug::ftnt(PotsBcSsm_dtor);
+   Debug::ftnt("PotsBcSsm.dtor");
 
    auto upsm = PotsCallPsm::Cast(UPsm());
 
@@ -118,12 +116,10 @@ PotsBcSsm::~PotsBcSsm()
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcSsm_AnalyzeMsg = "PotsBcSsm.AnalyzeMsg";
-
 EventHandler::Rc PotsBcSsm::AnalyzeMsg
    (const AnalyzeMsgEvent& ame, Event*& nextEvent)
 {
-   Debug::ft(PotsBcSsm_AnalyzeMsg);
+   Debug::ft("PotsBcSsm.AnalyzeMsg");
 
    bool rel = true;
    auto errval = 0;
@@ -332,11 +328,9 @@ EventHandler::Rc PotsBcSsm::AnalyzeNPsmTimeout
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcSsm_ClearCall = "PotsBcSsm.ClearCall";
-
 EventHandler::Rc PotsBcSsm::ClearCall(Cause::Ind cause)
 {
-   Debug::ft(PotsBcSsm_ClearCall);
+   Debug::ft("PotsBcSsm.ClearCall");
 
    auto upsm = PotsCallPsm::Cast(UPsm());
 
@@ -388,11 +382,9 @@ PotsProfile* PotsBcSsm::Profile() const
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcSsm_PsmDeleted = "PotsBcSsm.PsmDeleted";
-
 void PotsBcSsm::PsmDeleted(ProtocolSM& exPsm)
 {
-   Debug::ft(PotsBcSsm_PsmDeleted);
+   Debug::ft("PotsBcSsm.PsmDeleted");
 
    auto upsm = PotsCallPsm::Cast(UPsm());
 
@@ -406,11 +398,9 @@ void PotsBcSsm::PsmDeleted(ProtocolSM& exPsm)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcSsm_SetNextSap = "PotsBcSsm.SetNextSap";
-
 void PotsBcSsm::SetNextSap(TriggerId sap)
 {
-   Debug::ft(PotsBcSsm_SetNextSap);
+   Debug::ft("PotsBcSsm.SetNextSap");
 
    switch(sap)
    {
@@ -453,11 +443,9 @@ void PotsBcSsm::SetNextSap(TriggerId sap)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcSsm_SetNextSnp = "PotsBcSsm.SetNextSnp";
-
 void PotsBcSsm::SetNextSnp(TriggerId snp)
 {
-   Debug::ft(PotsBcSsm_SetNextSnp);
+   Debug::ft("PotsBcSsm.SetNextSnp");
 
    switch(snp)
    {
@@ -552,11 +540,9 @@ void PotsBcSsm::StopTimer(TimerId tid)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsBcSsm_TimerPsm = "PotsBcSsm.TimerPsm";
-
 ProtocolSM* PotsBcSsm::TimerPsm(TimerId tid) const
 {
-   Debug::ft(PotsBcSsm_TimerPsm);
+   Debug::ft("PotsBcSsm.TimerPsm");
 
    switch(tid)
    {

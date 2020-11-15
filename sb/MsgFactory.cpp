@@ -38,41 +38,33 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-fn_name MsgFactory_ctor = "MsgFactory.ctor";
-
 MsgFactory::MsgFactory(Id fid, ContextType type, ProtocolId prid,
    c_string name) : Factory(fid, type, prid, name)
 {
-   Debug::ft(MsgFactory_ctor);
+   Debug::ft("MsgFactory.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name MsgFactory_dtor = "MsgFactory.dtor";
 
 MsgFactory::~MsgFactory()
 {
-   Debug::ftnt(MsgFactory_dtor);
+   Debug::ftnt("MsgFactory.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MsgFactory_AllocContext = "MsgFactory.AllocContext";
-
 Context* MsgFactory::AllocContext() const
 {
-   Debug::ft(MsgFactory_AllocContext);
+   Debug::ft("MsgFactory.AllocContext");
 
    return new MsgContext(GetFaction());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name MsgFactory_CaptureMsg = "MsgFactory.CaptureMsg";
-
 void MsgFactory::CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt)
 {
-   Debug::ft(MsgFactory_CaptureMsg);
+   Debug::ft("MsgFactory.CaptureMsg");
 
    auto warp = TimePoint::Now();
    auto sbt = Singleton< SbTracer >::Instance();
@@ -112,11 +104,9 @@ void MsgFactory::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name MsgFactory_ProcessIcMsg = "MsgFactory.ProcessIcMsg";
-
 void MsgFactory::ProcessIcMsg(Message& msg) const
 {
-   Debug::ft(MsgFactory_ProcessIcMsg);
+   Debug::ft("MsgFactory.ProcessIcMsg");
 
    //  This must be implemented by a subclass if required.
    //
@@ -125,12 +115,10 @@ void MsgFactory::ProcessIcMsg(Message& msg) const
 
 //------------------------------------------------------------------------------
 
-fn_name MsgFactory_ReceiveMsg = "MsgFactory.ReceiveMsg";
-
 Factory::Rc MsgFactory::ReceiveMsg
    (Message& msg, bool atIoLevel, TransTrace* tt, Context*& ctx)
 {
-   Debug::ft(MsgFactory_ReceiveMsg);
+   Debug::ft("MsgFactory.ReceiveMsg");
 
    //  Create a message context and queue the message against it.  The
    //  context already exists, however, when a subclass is invoking us.

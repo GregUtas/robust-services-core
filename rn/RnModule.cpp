@@ -24,7 +24,6 @@
 #include "Debug.h"
 #include "ModuleRegistry.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace CallBase;
 
@@ -32,11 +31,9 @@ using namespace CallBase;
 
 namespace RoutingNode
 {
-fn_name RnModule_ctor = "RnModule.ctor";
-
 RnModule::RnModule() : Module()
 {
-   Debug::ft(RnModule_ctor);
+   Debug::ft("RnModule.ctor");
 
    //  Create the modules required by RoutingNode.
    //
@@ -46,28 +43,22 @@ RnModule::RnModule() : Module()
 
 //------------------------------------------------------------------------------
 
-fn_name RnModule_dtor = "RnModule.dtor";
-
 RnModule::~RnModule()
 {
-   Debug::ftnt(RnModule_dtor);
+   Debug::ftnt("RnModule.dtor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name RnModule_Shutdown = "RnModule.Shutdown";
 
 void RnModule::Shutdown(RestartLevel level)
 {
-   Debug::ft(RnModule_Shutdown);
+   Debug::ft("RnModule.Shutdown");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name RnModule_Startup = "RnModule.Startup";
-
 void RnModule::Startup(RestartLevel level)
 {
-   Debug::ft(RnModule_Startup);
+   Debug::ft("RnModule.Startup");
 }
 }

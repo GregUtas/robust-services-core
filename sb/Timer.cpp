@@ -53,8 +53,6 @@ using std::string;
 
 namespace SessionBase
 {
-fn_name Timer_ctor = "Timer.ctor";
-
 Timer::Timer
    (ProtocolSM& psm, Base& owner, TimerId tid, secs_t secs, bool repeat) :
    psm_(&psm),
@@ -65,7 +63,7 @@ Timer::Timer
    duration_(secs),
    remaining_(secs)
 {
-   Debug::ft(Timer_ctor);
+   Debug::ft("Timer.ctor");
 
    auto reg = Singleton< TimerRegistry >::Instance();
    qid_ = reg->CalcQId(duration_);
@@ -93,11 +91,9 @@ Timer::Timer
 
 //------------------------------------------------------------------------------
 
-fn_name Timer_dtor = "Timer.dtor";
-
 Timer::~Timer()
 {
-   Debug::ftnt(Timer_dtor);
+   Debug::ftnt("Timer.dtor");
 
    //  Record the timer's deletion if this context is traced.  If the timer
    //  is being deleted because it expired and the TimerRegistry is sending
@@ -126,11 +122,9 @@ Timer::~Timer()
 
 //------------------------------------------------------------------------------
 
-fn_name Timer_Cleanup = "Timer.Cleanup";
-
 void Timer::Cleanup()
 {
-   Debug::ft(Timer_Cleanup);
+   Debug::ft("Timer.Cleanup");
 
    Deregister();
    Pooled::Cleanup();
@@ -138,11 +132,9 @@ void Timer::Cleanup()
 
 //------------------------------------------------------------------------------
 
-fn_name Timer_Deregister = "Timer.Deregister";
-
 void Timer::Deregister()
 {
-   Debug::ftnt(Timer_Deregister);
+   Debug::ftnt("Timer.Deregister");
 
    if(qid_ == NilQId) return;
 
@@ -200,11 +192,9 @@ ptrdiff_t Timer::LinkDiff()
 
 //------------------------------------------------------------------------------
 
-fn_name Timer_new = "Timer.operator new";
-
 void* Timer::operator new(size_t size)
 {
-   Debug::ft(Timer_new);
+   Debug::ft("Timer.operator new");
 
    return Singleton< TimerPool >::Instance()->DeqBlock(size);
 }
@@ -218,11 +208,9 @@ void Timer::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name Timer_Restart = "Timer.Restart";
-
 void Timer::Restart()
 {
-   Debug::ft(Timer_Restart);
+   Debug::ft("Timer.Restart");
 
    auto reg = Singleton< TimerRegistry >::Instance();
 

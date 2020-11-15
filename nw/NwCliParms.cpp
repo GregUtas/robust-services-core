@@ -98,11 +98,9 @@ PortsText::PortsText() : CliText(PortsTextExpl, PortsTextStr) { }
 
 //------------------------------------------------------------------------------
 
-fn_name NetworkBase_GetIpL3Addr = "NetworkBase.GetIpL3Addr";
-
 bool GetIpL3Addr(SysIpL3Addr& input, const CliCommand& comm, CliThread& cli)
 {
-   Debug::ft(NetworkBase_GetIpL3Addr);
+   Debug::ft("NetworkBase.GetIpL3Addr");
 
    string s;
    char c;

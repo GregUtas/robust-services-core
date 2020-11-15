@@ -122,11 +122,9 @@ ActivateCommand::ActivateCommand() : CliCommand(ActivateStr, ActivateExpl)
    BindParm(*Singleton< PotsFeatureRegistry >::Instance()->featuresActivate_);
 }
 
-fn_name ActivateCommand_ProcessCommand = "ActivateCommand.ProcessCommand";
-
 word ActivateCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ActivateCommand_ProcessCommand);
+   Debug::ft("ActivateCommand.ProcessCommand");
 
    word id1;
    id_t id2;
@@ -161,11 +159,9 @@ fixed_string CodesExpl = "Displays service codes.";
 
 CodesCommand::CodesCommand() : CliCommand(CodesStr, CodesExpl) { }
 
-fn_name CodesCommand_ProcessCommand = "CodesCommand.ProcessCommand";
-
 word CodesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(CodesCommand_ProcessCommand);
+   Debug::ft("CodesCommand.ProcessCommand");
 
    if(!cli.EndOfInput()) return -1;
 
@@ -196,11 +192,9 @@ DeactivateCommand::DeactivateCommand() :
    BindParm(*reg->featuresDeactivate_);
 }
 
-fn_name DeactivateCommand_ProcessCommand = "DeactivateCommand.ProcessCommand";
-
 word DeactivateCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(DeactivateCommand_ProcessCommand);
+   Debug::ft("DeactivateCommand.ProcessCommand");
 
    word id1;
    id_t id2;
@@ -240,11 +234,9 @@ DeregisterCommand::DeregisterCommand() :
    BindParm(*new DnMandParm);
 }
 
-fn_name DeregisterCommand_ProcessCommand = "DeregisterCommand.ProcessCommand";
-
 word DeregisterCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(DeregisterCommand_ProcessCommand);
+   Debug::ft("DeregisterCommand.ProcessCommand");
 
    word id1;
 
@@ -278,11 +270,9 @@ DnsCommand::DnsCommand() : CliCommand(DnsStr, DnsExpl)
    BindParm(*new DnOptParm);
 }
 
-fn_name DnsCommand_ProcessCommand = "DnsCommand.ProcessCommand";
-
 word DnsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(DnsCommand_ProcessCommand);
+   Debug::ft("DnsCommand.ProcessCommand");
 
    word first, last;
    bool one = false;
@@ -353,11 +343,9 @@ FeaturesCommand::FeaturesCommand() : CliCommand(FeaturesStr, FeaturesExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name FeaturesCommand_ProcessCommand = "FeaturesCommand.ProcessCommand";
-
 word FeaturesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(FeaturesCommand_ProcessCommand);
+   Debug::ft("FeaturesCommand.ProcessCommand");
 
    word id;
    bool all, v = false;
@@ -409,11 +397,9 @@ MepsCommand::MepsCommand() : CliCommand(MepsStr, MepsExpl)
    BindParm(*new DispCBVParm);
 }
 
-fn_name MepsCommand_ProcessCommand = "MepsCommand.ProcessCommand";
-
 word MepsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(MepsCommand_ProcessCommand);
+   Debug::ft("MepsCommand.ProcessCommand");
 
    word fid;
    bool all, c, v;
@@ -492,11 +478,9 @@ RegisterCommand::RegisterCommand() : CliCommand(RegisterStr, RegisterExpl)
    BindParm(*new DnMandParm);
 }
 
-fn_name RegisterCommand_ProcessCommand = "RegisterCommand.ProcessCommand";
-
 word RegisterCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(RegisterCommand_ProcessCommand);
+   Debug::ft("RegisterCommand.ProcessCommand");
 
    word id1;
 
@@ -532,11 +516,9 @@ ResetCommand::ResetCommand() : CliCommand(ResetStr, ResetExpl)
    BindParm(*new DnMandParm);
 }
 
-fn_name ResetCommand_ProcessCommand = "ResetCommand.ProcessCommand";
-
 word ResetCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(ResetCommand_ProcessCommand);
+   Debug::ft("ResetCommand.ProcessCommand");
 
    word id1;
 
@@ -598,11 +580,9 @@ void PbSizesCommand::DisplaySizes(CliThread& cli, bool all) const
    *cli.obuf << "  PotsScanInfo = " << sizeof(PotsScanInfo) << CRLF;
 }
 
-fn_name PbSizesCommand_ProcessCommand = "PbSizesCommand.ProcessCommand";
-
 word PbSizesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(PbSizesCommand_ProcessCommand);
+   Debug::ft("PbSizesCommand.ProcessCommand");
 
    bool all = false;
 
@@ -635,11 +615,9 @@ SubscribeCommand::SubscribeCommand() : CliCommand(SubscribeStr, SubscribeExpl)
    BindParm(*reg->featuresSubscribe_);
 }
 
-fn_name SubscribeCommand_ProcessCommand = "SubscribeCommand.ProcessCommand";
-
 word SubscribeCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(SubscribeCommand_ProcessCommand);
+   Debug::ft("SubscribeCommand.ProcessCommand");
 
    word id1;
    id_t id2;
@@ -678,11 +656,9 @@ TonesCommand::TonesCommand() : CliCommand(TonesStr, TonesExpl)
    BindParm(*new DispBVParm);
 }
 
-fn_name TonesCommand_ProcessCommand = "TonesCommand.ProcessCommand";
-
 word TonesCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TonesCommand_ProcessCommand);
+   Debug::ft("TonesCommand.ProcessCommand");
 
    word id;
    bool all, v = false;
@@ -735,11 +711,9 @@ TsPortsCommand::TsPortsCommand() : CliCommand(TsPortsStr, TsPortsExpl)
    BindParm(*new PortOptParm);
 }
 
-fn_name TsPortsCommand_ProcessCommand = "TsPortsCommand.ProcessCommand";
-
 word TsPortsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(TsPortsCommand_ProcessCommand);
+   Debug::ft("TsPortsCommand.ProcessCommand");
 
    word first, last;
    bool one = false;
@@ -809,11 +783,9 @@ UnsubscribeCommand::UnsubscribeCommand() :
    BindParm(*reg->featuresUnsubscribe_);
 }
 
-fn_name UnsubscribeCommand_ProcessCommand = "UnsubscribeCommand.ProcessCommand";
-
 word UnsubscribeCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft(UnsubscribeCommand_ProcessCommand);
+   Debug::ft("UnsubscribeCommand.ProcessCommand");
 
    word id1;
    id_t id2;
@@ -837,11 +809,9 @@ word UnsubscribeCommand::ProcessCommand(CliThread& cli) const
 fixed_string PotsText = "pots";
 fixed_string PotsExpl = "POTS Increment";
 
-fn_name PotsIncrement_ctor = "PotsIncrement.ctor";
-
 PotsIncrement::PotsIncrement() : CliIncrement(PotsText, PotsExpl)
 {
-   Debug::ft(PotsIncrement_ctor);
+   Debug::ft("PotsIncrement.ctor");
 
    BindCommand(*new TsPortsCommand);
    BindCommand(*new TonesCommand);
@@ -861,10 +831,8 @@ PotsIncrement::PotsIncrement() : CliIncrement(PotsText, PotsExpl)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsIncrement_dtor = "PotsIncrement.dtor";
-
 PotsIncrement::~PotsIncrement()
 {
-   Debug::ftnt(PotsIncrement_dtor);
+   Debug::ftnt("PotsIncrement.dtor");
 }
 }

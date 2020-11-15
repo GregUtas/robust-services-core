@@ -33,30 +33,24 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name CliPtrParm_ctor = "CliPtrParm.ctor";
-
 CliPtrParm::CliPtrParm(c_string help, bool opt, c_string tag) :
    CliParm(help, opt, tag)
 {
-   Debug::ft(CliPtrParm_ctor);
+   Debug::ft("CliPtrParm.ctor");
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CliPtrParm_dtor = "CliPtrParm.dtor";
 
 CliPtrParm::~CliPtrParm()
 {
-   Debug::ftnt(CliPtrParm_dtor);
+   Debug::ftnt("CliPtrParm.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CliPtrParm_GetPtrParmRc = "CliPtrParm.GetPtrParmRc";
-
 CliParm::Rc CliPtrParm::GetPtrParmRc(void*& p, CliThread& cli) const
 {
-   Debug::ft(CliPtrParm_GetPtrParmRc);
+   Debug::ft("CliPtrParm.GetPtrParmRc");
 
    p = nullptr;
 
@@ -125,11 +119,9 @@ void CliPtrParm::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name CliPtrParm_ShowValues = "CliPtrParm.ShowValues";
-
 bool CliPtrParm::ShowValues(string& values) const
 {
-   Debug::ft(CliPtrParm_ShowValues);
+   Debug::ft("CliPtrParm.ShowValues");
 
    values = CliIntParm::AnyHexParm;
    return false;

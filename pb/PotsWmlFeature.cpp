@@ -100,13 +100,12 @@ PotsFeatureProfile* PotsWmlFeature::Subscribe
    Debug::ft("PotsWmlFeature.Subscribe");
 
    word dn, timeout = 0;
-   bool dnwarn = false, towarn = false;
 
    if(cli.Command()->GetIntParmRc(dn, cli) == CliParm::Ok)
    {
       auto reg = Singleton< PotsProfileRegistry >::Instance();
-
-      dnwarn = (reg->Profile(dn) == nullptr);
+      auto dnwarn = (reg->Profile(dn) == nullptr);
+      auto towarn = false;
 
       if(cli.Command()->GetIntParmRc(timeout, cli) != CliParm::Ok)
       {
@@ -154,18 +153,17 @@ bool PotsWmlFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 
    FunctionGuard guard(Guard_MemUnprotect);
 
-   word timeout;
-   bool dnwarn = false;
-
    if(DnRouteFeatureProfile::Activate(profile, cli))
    {
       auto reg = Singleton< PotsProfileRegistry >::Instance();
-      dnwarn = (reg->Profile(GetDN()) == nullptr);
+      auto dnwarn = (reg->Profile(GetDN()) == nullptr);
+      word timeout;
 
       if(cli.Command()->GetIntParmRc(timeout, cli) == CliParm::Ok)
       {
          timeout_ = timeout;
       }
+
       if(!cli.EndOfInput()) return false;
       if(dnwarn) *cli.obuf << spaces(2) << UnregisteredDnWarning << CRLF;
       return true;

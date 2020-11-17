@@ -1425,13 +1425,8 @@ bool Data::IsDefaultConstructible() const
    if(type.find(ARRAY_STR) != string::npos) return true;
 
    auto cls = DirectClass();
-
-   if(cls != nullptr)
-   {
-      return static_cast< Class* >(cls)->IsDefaultConstructible();
-   }
-
-   return false;
+   if(cls == nullptr) return false;
+   return cls->IsDefaultConstructible();
 }
 
 //------------------------------------------------------------------------------
@@ -2717,8 +2712,7 @@ void Function::CheckCtor() const
          if(item->initOrder < last)
          {
             auto token = mems.at(item->initOrder - 1).get();
-            auto init = static_cast< MemberInit* >(token);
-            init->Log(MemberInitNotSorted);
+            token->Log(MemberInitNotSorted);
          }
 
          last = item->initOrder;
@@ -3850,8 +3844,7 @@ CxxScope* Function::GetScope() const
 CxxScope* Function::GetTemplate() const
 {
    if(tmplt_ != nullptr) return tmplt_;
-   if(IsTemplate()) return static_cast< CxxScope* >
-      (const_cast< Function* >(this));
+   if(IsTemplate()) return const_cast< Function* >(this);
    auto cls = GetClass();
    if(cls != nullptr) return cls->GetTemplate();
    return nullptr;

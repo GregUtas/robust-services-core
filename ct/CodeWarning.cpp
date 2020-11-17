@@ -198,7 +198,7 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
    //
    auto checkSet = new SetOfIds(set);
    auto checkFiles = new CodeFileSet(LibrarySet::TemporaryName(), checkSet);
-   auto order = static_cast< CodeFileSet* >(checkFiles)->SortInBuildOrder();
+   auto order = checkFiles->SortInBuildOrder();
 
    //  Run a check on each file in ORDER, as well as on each C++ item.
    //

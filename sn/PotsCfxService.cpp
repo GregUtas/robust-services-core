@@ -355,7 +355,7 @@ EventHandler::Rc PotsCfxSsm::ForwardCall(Event*& nextEvent)
    auto upsm = pssm.UPsm();
    auto npsm = pssm.NPsm();
 
-   auto nmsg = static_cast< CipMessage* >(npsm->FindRcvdMsg(CipSignal::IAM));
+   auto nmsg = npsm->FindRcvdMsg(CipSignal::IAM);
    if(nmsg == nullptr)
       return ReleaseCall(nextEvent, Cause::TemporaryFailure, nullptr);
 

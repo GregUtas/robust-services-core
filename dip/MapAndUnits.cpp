@@ -2760,7 +2760,7 @@ bool MapAndUnits::unorder_adjustment(const TokenMessage& not_sub, PowerId power)
 
    if((order_token == TOKEN_ORDER_BLD) || (order_token == TOKEN_ORDER_REM))
    {
-      if((winter.is_building == true) ^ (order_token == TOKEN_ORDER_BLD))
+      if(winter.is_building ^ (order_token == TOKEN_ORDER_BLD))
       {
          return false;
       }

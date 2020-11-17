@@ -129,11 +129,6 @@ public:
    //
    virtual ~PotsTreatment();
 
-   //  Deleted to prohibit copying.
-   //
-   PotsTreatment(const PotsTreatment& that) = delete;
-   PotsTreatment& operator=(const PotsTreatment& that) = delete;
-
    //  Returns the treatment that follows this one in its queue.
    //
    PotsTreatment* NextTreatment() const;
@@ -156,6 +151,11 @@ protected:
    //  because this class is virtual.
    //
    explicit PotsTreatment(PotsTreatmentQueue::QId qid);
+
+   //  Deleted to prohibit copying.
+   //
+   PotsTreatment(const PotsTreatment& that) = delete;
+   PotsTreatment& operator=(const PotsTreatment& that) = delete;
 private:
    //  The identifier of the PotsTreatmentQueue in which the treatment appears.
    //

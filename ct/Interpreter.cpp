@@ -167,6 +167,11 @@ public:
    //
    ~LibraryOpcode();
 
+   //  Deleted to prevent copying.
+   //
+   LibraryOpcode(const LibraryOpcode& that) = delete;
+   LibraryOpcode& operator=(const LibraryOpcode& that) = delete;
+
    //  Executes the opcode.
    //
    void Execute();

@@ -42,11 +42,6 @@ public:
    //
    virtual ~Heap();
 
-   //  Deleted to prohibit copying.
-   //
-   Heap(const Heap& that) = delete;
-   Heap& operator=(const Heap& that) = delete;
-
    //  Returns the address of the heap itself.
    //
    virtual void* Addr() const = 0;
@@ -161,6 +156,11 @@ protected:
    //  Protected because this class is virtual.
    //
    Heap();
+
+   //  Deleted to prohibit copying.
+   //
+   Heap(const Heap& that) = delete;
+   Heap& operator=(const Heap& that) = delete;
 
    //  Invoked before returning ADDR for a request of SIZE bytes.
    //

@@ -171,7 +171,6 @@ void SysHeap::Free(void* addr)
 void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
 {
    DWORD NumberOfHeaps;
-   DWORD HeapsIndex;
    DWORD HeapsLength;
    HANDLE DefaultProcessHeap;
    HRESULT Result;
@@ -247,7 +246,7 @@ void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
    }
    else
    {
-      for(HeapsIndex = 0; HeapsIndex < HeapsLength; ++HeapsIndex)
+      for(DWORD HeapsIndex = 0; HeapsIndex < HeapsLength; ++HeapsIndex)
       {
          heaps.insert(aHeaps[HeapsIndex]);
       }

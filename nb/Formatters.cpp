@@ -64,10 +64,10 @@ string spaces(size_t count)
 void strBytes(ostream& stream,
    const string& prefix, const byte_t* bytes, size_t count)
 {
-   if(count <= 0)
+   if(count > 8192)
    {
-      stream << CRLF;
-      return;
+      stream << count << " bytes truncated to 8192" << CRLF;
+      count = 8192;
    }
 
    for(size_t i = 0; i < count; ++i)

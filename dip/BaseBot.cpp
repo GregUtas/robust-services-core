@@ -867,14 +867,7 @@ void BaseBot::process_not_ccd
    Debug::ft("BaseBot.process_not_ccd");
 
    auto cd_power = parameters.front();
-   auto is_new_reconnection = false;
-
-   if(cd_powers.find(cd_power) != cd_powers.end())
-   {
-      cd_powers.erase(cd_power);
-      is_new_reconnection = true;
-   }
-
+   auto is_new_reconnection = (cd_powers.erase(cd_power) > 0);
    process_not_ccd_message(message, parameters, is_new_reconnection);
 }
 

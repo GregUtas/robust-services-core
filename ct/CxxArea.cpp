@@ -1379,7 +1379,7 @@ size_t Class::GetRange(size_t& begin, size_t& end) const
 CxxScope* Class::GetTemplate() const
 {
    if(!IsTemplate()) return nullptr;
-   return static_cast< CxxScope* >(const_cast< Class* >(this));
+   return const_cast< Class* >(this);
 }
 
 //------------------------------------------------------------------------------

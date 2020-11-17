@@ -55,11 +55,6 @@ public:
    //
    virtual ~CfgParm();
 
-   //  Deleted to prohibit copying.
-   //
-   CfgParm(const CfgParm& that) = delete;
-   CfgParm& operator=(const CfgParm& that) = delete;
-
    //  Returns the parameter's name (its tuple's key).
    //
    c_string Key() const;
@@ -89,6 +84,11 @@ protected:
    //  it to the registry.  DEF and EXPL are also saved as default_ and expl_.
    //
    CfgParm(c_string key, c_string def, c_string expl);
+
+   //  Deleted to prohibit copying.
+   //
+   CfgParm(const CfgParm& that) = delete;
+   CfgParm& operator=(const CfgParm& that) = delete;
 
    //  A subclass must override this to return a string that corresponds
    //  to the parameter's value.  If that string were passed to SetNext,

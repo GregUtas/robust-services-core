@@ -263,8 +263,10 @@ void TokenTextMap::erase(category_t cat)
 {
    Debug::ft("TokenTextMap.erase");
 
-   token_t curr_category = cat << 8;
-   token_t next_category = (cat + 1) << 8;
+   token_t curr_category = cat;
+   curr_category <<= 8;
+   token_t next_category = cat + 1;
+   next_category <<= 8;
 
    //  Erase each token and string in CAT, and also erase the reverse mapping
    //  (string to token).

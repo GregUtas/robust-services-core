@@ -101,13 +101,12 @@ PotsFeatureProfile* PotsCfnFeature::Subscribe
    Debug::ft("PotsCfnFeature.Subscribe");
 
    word dn, timeout = 0;
-   bool dnwarn = false, towarn = false;
 
    if(cli.Command()->GetIntParmRc(dn, cli) == CliParm::Ok)
    {
       auto reg = Singleton< PotsProfileRegistry >::Instance();
-
-      dnwarn = (reg->Profile(dn) == nullptr);
+      auto dnwarn = (reg->Profile(dn) == nullptr);
+      auto towarn = false;
 
       if(cli.Command()->GetIntParmRc(timeout, cli) != CliParm::Ok)
       {

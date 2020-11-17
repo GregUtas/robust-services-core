@@ -47,11 +47,6 @@ public:
    //
    virtual ~Circuit();
 
-   //  Deleted to prohibit copying.
-   //
-   Circuit(const Circuit& that) = delete;
-   Circuit& operator=(const Circuit& that) = delete;
-
    //  Returns the port to which the circuit is assigned.
    //
    Switch::PortId TsPort() const { return port_.GetId(); }
@@ -84,6 +79,11 @@ protected:
    //  Protected because this class is virtual.
    //
    Circuit();
+
+   //  Deleted to prohibit copying.
+   //
+   Circuit(const Circuit& that) = delete;
+   Circuit& operator=(const Circuit& that) = delete;
 private:
    //  The port where the circuit appears.
    //

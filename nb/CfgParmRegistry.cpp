@@ -273,7 +273,6 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
    Debug::ft("CfgParmRegistry.LoadNextTuple");
 
    string input;
-   size_t keyBeg, keyEnd, valBeg, valEnd, extra;
 
    while(Stream_->peek() != EOF)
    {
@@ -286,14 +285,14 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
 
       if(input.empty()) continue;
 
-      keyBeg = input.find_first_not_of(CfgTuple::ValidBlankChars());
+      auto keyBeg = input.find_first_not_of(CfgTuple::ValidBlankChars());
 
       if(keyBeg == string::npos) continue;
       if(input[keyBeg] == CfgTuple::CommentChar) continue;
 
       //  The next key begins at input[keyBeg].  See where it ends.
       //
-      keyEnd = input.find_first_not_of(CfgTuple::ValidKeyChars(), keyBeg);
+      auto keyEnd = input.find_first_not_of(CfgTuple::ValidKeyChars(), keyBeg);
 
       if(keyEnd == string::npos)
       {
@@ -311,7 +310,8 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
       //
       key = input.substr(keyBeg, keyEnd - keyBeg);
 
-      valBeg = input.find_first_not_of(CfgTuple::ValidBlankChars(), keyEnd);
+      auto valBeg =
+         input.find_first_not_of(CfgTuple::ValidBlankChars(), keyEnd);
 
       if(valBeg == string::npos)
       {
@@ -319,7 +319,8 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
          continue;
       }
 
-      valEnd = input.find_first_not_of(CfgTuple::ValidValueChars(), valBeg);
+      auto valEnd =
+         input.find_first_not_of(CfgTuple::ValidValueChars(), valBeg);
 
       if(valEnd == string::npos)
       {
@@ -337,7 +338,8 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
       //  as the trailing stuff only consists of blanks or a comment.
       //
       value = input.substr(valBeg, valEnd - valBeg);
-      extra = input.find_first_not_of(CfgTuple::ValidBlankChars(), valEnd);
+
+      auto extra = input.find_first_not_of(CfgTuple::ValidBlankChars(), valEnd);
       if(extra == string::npos) return true;
       if(input[extra] == CfgTuple::CommentChar) return true;
 

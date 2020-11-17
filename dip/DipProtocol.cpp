@@ -185,8 +185,7 @@ IpBuffer* DipInputHandler::AllocBuff(const byte_t* source,
 {
    Debug::ft("DipInputHandler.AllocBuff");
 
-   auto tcpSocket = static_cast< SysTcpSocket* >(socket);
-   IpBufferPtr buff(tcpSocket->AcquireIcMsg());
+   IpBufferPtr buff(socket->AcquireIcMsg());
 
    if(buff == nullptr)
    {

@@ -614,8 +614,6 @@ void CxxStats::Display(ostream& stream)
    size_t totalStr = 0;
    size_t totalVec = 0;
    size_t totalMem = 0;
-   size_t subtotal;
-   size_t itemUse;
 
    //  Memory usage by strings and vectors is not determined until the Shrink
    //  function has been invoked.
@@ -631,14 +629,16 @@ void CxxStats::Display(ostream& stream)
       stream << setw(4) << info.size << spaces(2);
       stream << setw(8) << info.in_use << spaces(2);
       totalNum += info.in_use;
-      subtotal = info.size * info.in_use;
+
+      auto subtotal = info.size * info.in_use;
       stream << setw(9) << subtotal << spaces(2);
       totalObj += subtotal;
       stream << setw(9) << info.strings << spaces(2);
       totalStr += info.strings;
       stream << setw(9) << info.vectors << spaces(2);
       totalVec += info.vectors;
-      itemUse = subtotal + info.strings + info.vectors;
+
+      auto itemUse = subtotal + info.strings + info.vectors;
       stream << setw(9) << itemUse << CRLF;
       totalMem += itemUse;
    }

@@ -80,9 +80,10 @@ uint64_t pack2(uint32_t a, uint32_t b)
 uint64_t pack3(uint16_t a, uint16_t b, uint16_t c)
 {
    uint64_t result = a;
-   result <<= 32;
-   uint32_t lower = uint32_t(b << 16) + c;
-   result += lower;
+   result <<= 16;
+   result += b;
+   result <<= 16;
+   result += c;
    return result;
 }
 
@@ -90,10 +91,13 @@ uint64_t pack3(uint16_t a, uint16_t b, uint16_t c)
 
 uint64_t pack4(uint16_t a, uint16_t b, uint16_t c, uint16_t d)
 {
-   uint64_t result = uint32_t(a << 16) + b;
-   result <<= 32;
-   uint32_t lower = uint32_t(c << 16) + d;
-   result += lower;
+   uint64_t result = a;
+   result <<= 16;
+   result += b;
+   result <<= 16;
+   result += c;
+   result <<= 16;
+   result += d;
    return result;
 }
 

@@ -784,7 +784,7 @@ TagCount DataSpec::Arrays() const
    Debug::ft("DataSpec.Arrays");
 
    TagCount count = 0;
-   auto spec = static_cast< const TypeSpec* >(this);
+   const TypeSpec* spec = this;
 
    while(spec != nullptr)
    {
@@ -1593,7 +1593,7 @@ TagCount DataSpec::Ptrs(bool arrays) const
    Debug::ft(DataSpec_Ptrs);
 
    TagCount count = 0;
-   auto spec = static_cast< const TypeSpec* >(this);
+   const TypeSpec* spec = this;
 
    while(spec != nullptr)
    {
@@ -1648,7 +1648,7 @@ TagCount DataSpec::Refs() const
    //  else an l-value reference (&) could become an rvalue reference (&&).
    //
    TagCount count = 0;
-   auto spec = static_cast< const TypeSpec* >(this);
+   const TypeSpec* spec = this;
 
    while(spec != nullptr)
    {

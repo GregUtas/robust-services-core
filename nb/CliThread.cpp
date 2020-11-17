@@ -479,7 +479,7 @@ const CliCommand* CliThread::ParseCommand() const
    string token1;
    string token2;
    string tag;
-   bool inIncr;
+   auto inIncr = true;
 
    //  Record the command in any output file.  (CliBuffer.GetLine copies
    //  each input to the console and/or the console transcript file.)
@@ -507,11 +507,7 @@ const CliCommand* CliThread::ParseCommand() const
 
    auto incr = stack_->FindIncrement(token1);
 
-   if(incr != nullptr)
-   {
-      inIncr = true;
-   }
-   else
+   if(incr == nullptr)
    {
       incr = Singleton< CliRegistry >::Instance()->FindIncrement(token1);
 

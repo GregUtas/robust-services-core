@@ -99,12 +99,8 @@ InvokerDaemon* InvokerDaemon::GetDaemon(Faction faction, size_t size)
    auto name = MakeName(faction);
    auto daemon = static_cast< InvokerDaemon* >(reg->FindDaemon(name.c_str()));
 
-   if(daemon == nullptr)
-   {
-      daemon = new InvokerDaemon(faction, size);
-   }
-
-   return daemon;
+   if(daemon != nullptr) return daemon;
+   return new InvokerDaemon(faction, size);
 }
 
 //------------------------------------------------------------------------------

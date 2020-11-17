@@ -85,12 +85,8 @@ TcpIoDaemon* TcpIoDaemon::GetDaemon(const TcpIpService* service, ipport_t port)
    auto name = MakeName(port);
    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
 
-   if(daemon == nullptr)
-   {
-      daemon = new TcpIoDaemon(service, port);
-   }
-
-   return daemon;
+   if(daemon != nullptr) return daemon;
+   return new TcpIoDaemon(service, port);
 }
 
 //------------------------------------------------------------------------------
@@ -166,12 +162,8 @@ UdpIoDaemon* UdpIoDaemon::GetDaemon(const UdpIpService* service, ipport_t port)
    auto name = MakeName(port);
    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
 
-   if(daemon == nullptr)
-   {
-      daemon = new UdpIoDaemon(service, port);
-   }
-
-   return daemon;
+   if(daemon != nullptr) return daemon;
+   return new UdpIoDaemon(service, port);
 }
 
 //------------------------------------------------------------------------------

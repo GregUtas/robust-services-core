@@ -59,11 +59,6 @@ public:
    //
    static const Id MaxId = 63;
 
-   //  Deleted to prohibit copying.
-   //
-   PotsFeature(const PotsFeature& that) = delete;
-   PotsFeature& operator=(const PotsFeature& that) = delete;
-
    //  Returns the feature's identifier.
    //
    Id Fid() const { return Id(fid_.GetId()); }
@@ -108,6 +103,11 @@ protected:
    //  Protected because subclasses should be singletons.
    //
    virtual ~PotsFeature();
+
+   //  Deleted to prohibit copying.
+   //
+   PotsFeature(const PotsFeature& that) = delete;
+   PotsFeature& operator=(const PotsFeature& that) = delete;
 
    //  Makes the feature incompatible with the one identified by FID.
    //

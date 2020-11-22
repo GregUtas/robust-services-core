@@ -65,11 +65,6 @@ public:
       CxxStats::Decr(CxxStats::STR_LITERAL);
    }
 
-   //  Deleted to prohibit copying.
-   //
-   CxxStrLiteral(const CxxStrLiteral& that) = delete;
-   CxxStrLiteral& operator=(const CxxStrLiteral& that) = delete;
-
    const T& GetStr() const { return str_; }
 
    void PushBack(uint32_t c) override { str_.push_back(c); }
@@ -103,6 +98,11 @@ public:
       return data;
    }
 private:
+   //  Deleted to prohibit copying.
+   //
+   CxxStrLiteral(const CxxStrLiteral& that) = delete;
+   CxxStrLiteral& operator=(const CxxStrLiteral& that) = delete;
+
    TypeSpec* GetTypeSpec() const override { return Ref_[E]->GetTypeSpec(); }
 
    void Print(std::ostream& stream, const Flags& options) const override

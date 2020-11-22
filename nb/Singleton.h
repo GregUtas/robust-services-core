@@ -35,18 +35,18 @@ namespace NodeBase
 //    auto c = Singleton< MyClass >::Instance();
 //  This has the side effect of creating the singleton if it doesn't yet exist.
 //
-//  MyClass must not define its constructor or destructor as public.  In this
-//  way, it can only be created via its singleton template.  It must make this
-//  template a friend class to enable access to the non-public constructor and
-//  destructor:
+//  MyClass must define its constructor or destructor as private.  That way, it
+//  can only be created via its singleton template.  It must make this template
+//  a friend class to enable access to the private constructor and destructor:
 //
-//    class MyClass : public Base  // actually a subclass of Base: see below
+//    class MyClass : public Base  // actually a *subclass* of Base: see below
 //    {
 //       friend class Singleton< MyClass >;
 //    public:
-//    private:        // or protected, if subclassing is allowed
+//       // interface for clients
+//    private:
 //       MyClass();   // cannot have any arguments
-//       ~MyClass();  // or virtual, if subclassing is allowed
+//       ~MyClass();
 //    };
 //
 //  The type of memory that a singleton wishes to use determines it ultimate
@@ -57,6 +57,8 @@ namespace NodeBase
 //    o MemProtected:  Protected
 //    o MemPermanent:  Permanent
 //    o MemImmutable:  Immutable
+//
+//  Singletons should be created during system initialization and restarts.
 //
 template< class T > class Singleton
 {
@@ -115,9 +117,10 @@ private:
    //
    ~Singleton() { Destroy(); }
 
-   //  Declaring fn_name's at file scope in a template header causes an
-   //  avalanche of link errors for multiply defined symbols.  Inlining
-   //  these functions limits them to one instantiation.
+   //  Declaring an fn_name at file scope in a template header causes an
+   //  avalanche of link errors for multiply defined symbols.  Returning
+   //  an fn_name from an inline function limits the string constant to a
+   //  single occurrence, no matter how many template instances exist.
    //
    inline static fn_name
       Singleton_Instance() { return "Singleton.Instance"; }

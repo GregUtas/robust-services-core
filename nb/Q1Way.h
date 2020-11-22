@@ -65,11 +65,6 @@ public:
       Purge();
    }
 
-   //  Deleted to prohibit copying.
-   //
-   Q1Way(const Q1Way& that) = delete;
-   Q1Way& operator=(const Q1Way& that) = delete;
-
    //  Initializes the queue so that it can be used.
    //
    void Init(ptrdiff_t diff)
@@ -339,6 +334,11 @@ public:
       item->next = (Q1Link*) BAD_POINTER;     // corrupt ELEM's next pointer
    }
 private:
+   //  Deleted to prohibit copying.
+   //
+   Q1Way(const Q1Way& that) = delete;
+   Q1Way& operator=(const Q1Way& that) = delete;
+
    //  Returns ELEM's link location.
    //
    Q1Link* Item(const T& elem) const

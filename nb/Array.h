@@ -54,11 +54,6 @@ public:
       Debug::ftnt(Array_dtor());
    }
 
-   //  Deleted to prohibit copying.
-   //
-   Array(const Array& that) = delete;
-   Array& operator=(const Array& that) = delete;
-
    //  Specifies that the array is limited to MAX elements.
    //
    void Init(size_t max)
@@ -200,6 +195,11 @@ public:
       return vector_.data();
    }
 private:
+   //  Deleted to prohibit copying.
+   //
+   Array(const Array& that) = delete;
+   Array& operator=(const Array& that) = delete;
+
    //  See the comment in Singleton.h about fn_name's in a template header.
    //
    inline static fn_name Array_ctor()    { return "Array.ctor"; }

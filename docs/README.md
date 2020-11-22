@@ -17,8 +17,9 @@ Document | Description
 [Debugging Live Systems](https://www.codeproject.com/Articles/5255828/Debugging-Live-Systems) | article on debugging capabilities
 [A Command Line Interface (CLI) Framework](https://www.codeproject.com/Articles/5269493/A-Command-Line-Interface-CLI-Framework) | article on the command line interface
 [Robust C++: Operational Aspects](https://www.codeproject.com/Articles/5274153/Robust-Cplusplus-Operational-Aspects) | article on configuration parameters, statistics, logs, and alarms
-[Robust C++: Queue Templates](https://www.codeproject.com/Articles/5271081/Robust-Cplusplus-Queue-Templates) | article on the `Q1Way` and `Q2Way` templates
 [A Template for Polymorphs](https://www.codeproject.com/Articles/5271143/A-Template-for-Polymorphs) | article on the `Registry` template
+[Robust C++: Queue Templates](https://www.codeproject.com/Articles/5271081/Robust-Cplusplus-Queue-Templates) | article on the `Q1Way` and `Q2Way` templates
+[Robust C++: Singletons](https://www.codeproject.com/Articles/5286932/Robust-Cplusplus-Singletons) | article on the `Singleton` template
 [A Wrapper for `std::vector`](https://www.codeproject.com/Tips/5271013/A-Wrapper-for-std-vector) | article on the `Array` template
 [RSC Software Design](/docs/RSC-Software-Design.pdf) | high-level design notes for various enhancements
 [_output_](/output) directory | mostly output from tests, but also a summary of all [CLI commands](/output/help.cli.txt)

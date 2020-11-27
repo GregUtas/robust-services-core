@@ -69,9 +69,12 @@ public:
    //
    static T* Instance()
    {
-      //  When initialization is being traced, tracing this function
-      //  will create singletons used by TraceBuffer, so recheck for
-      //  the singleton.
+      //  The TraceBuffer singleton is created during initialization.
+      //  If initialization is being traced when this code is entered
+      //  for that purpose, invoking Debug::ft will create TraceBuffer,
+      //  so it will have magically appeared when the original call to
+      //  this function resumes execution.  We must therefore recheck
+      //  for the singleton.
       //
       if(Instance_ != nullptr) return Instance_;
       Debug::ft(Singleton_Instance());

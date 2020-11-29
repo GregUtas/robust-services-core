@@ -51,7 +51,7 @@ class Switch : public Dynamic
 public:
    //  Allows PortId to be used within this class.
    //
-   typedef uint16_t PortId;
+   typedef int32_t PortId;
 
    //  A hard-coded port that transmits silence.
    //
@@ -59,7 +59,7 @@ public:
 
    //  The maximum valid port number.
    //
-   static const PortId MaxPortId = 65000;
+   static const PortId MaxPortId = 100000;
 
    //  Returns true if PID is a valid port identifier.
    //

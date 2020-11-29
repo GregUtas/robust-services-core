@@ -3437,9 +3437,9 @@ fixed_string HeapsHeader =
 
 fixed_string PoolsHeader =
    "Alloc  Lowest    Curr    Curr\n"
-   "Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool Name";
-// 0         1         2         3         4         5         6
-// 012345678901234567890123456789012345678901234567890123456789012345678
+   "Fails   Avail   Avail  In Use     Allocs      Frees  Expands   Pool Name";
+// 0         1         2         3         4         5         6         7
+// 01234567890123456789012345678901234567890123456789012345678901234567890123456
 
 word StatusCommand::ProcessCommand(CliThread& cli) const
 {
@@ -3497,8 +3497,8 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
          *cli.obuf << setw(8) << low;
       *cli.obuf << setw(8) << p->AvailCount();
       *cli.obuf << setw(8) << p->InUseCount();
-      *cli.obuf << setw(9) << p->AllocCount();
-      *cli.obuf << setw(9) << p->FreeCount();
+      *cli.obuf << setw(11) << p->AllocCount();
+      *cli.obuf << setw(11) << p->FreeCount();
       *cli.obuf << setw(9) << p->Expansions();
       *cli.obuf << spaces(3) << p->Name() << CRLF;
    }

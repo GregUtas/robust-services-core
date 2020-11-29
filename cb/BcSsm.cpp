@@ -267,42 +267,42 @@ void BcSsm::Display(ostream& stream,
 //------------------------------------------------------------------------------
 
 fixed_string ObcStateHeader =
-   "        AO   CI   AI   SR   AS   SC   OA        RS";          // row 1
-//     Nu                                      Ac        Di   Ex  // row 2
+   "          AO    CI    AI    SR    AS    SC    OA          RS";           //1
+//      Nu                                              Ac          Di    Ex //2
 fixed_string TbcStateHeader =
-        "   AT             SF        PC   TA";  //  LS            // row 3
-// 0         1         2         3         4         5         6
-// 0123456789012345678901234567890123456789012345678901234567890
+         "    AT                SF          PC    TA";    //  LS             //3
+// 0         1         2         3         4         5         6         7
+// 0123456789012345678901234567890123456789012345678901234567890123456789012
 
 void BcSsm::DisplayStateCounts(ostream& stream, const string& prefix)
 {
    stream << prefix << ObcStateHeader << CRLF;
 
    stream << prefix;
-   stream << setw(5) << "Nu";
+   stream << setw(6) << "Nu";
    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
-      stream << setw(5) << StateCount_[s];
-   stream << setw(5) << "Ac";
-   stream << setw(5) << StateCount_[BcState::RemoteSuspending];
-   stream << setw(5) << "Di";
-   stream << setw(5) << "Ex";
+      stream << setw(6) << StateCount_[s];
+   stream << setw(6) << "Ac";
+   stream << setw(6) << StateCount_[BcState::RemoteSuspending];
+   stream << setw(6) << "Di";
+   stream << setw(6) << "Ex";
    stream << CRLF;
 
    stream << prefix;
-   stream << setw(5) << StateCount_[BcState::Null];
+   stream << setw(6) << StateCount_[BcState::Null];
    stream << TbcStateHeader;
-   stream << setw(5) << StateCount_[BcState::Active];
-   stream << setw(5) << "LS";
-   stream << setw(5) << StateCount_[BcState::Disconnecting];
-   stream << setw(5) << StateCount_[BcState::Exception];
+   stream << setw(6) << StateCount_[BcState::Active];
+   stream << setw(6) << "LS";
+   stream << setw(6) << StateCount_[BcState::Disconnecting];
+   stream << setw(6) << StateCount_[BcState::Exception];
    stream << CRLF;
 
    stream << prefix;
-   stream << setw(10) << StateCount_[BcState::AuthorizingTermination];
-   stream << setw(15) << StateCount_[BcState::SelectingFacility];
-   stream << setw(10) << StateCount_[BcState::PresentingCall];
-   stream << setw(5) << StateCount_[BcState::TermAlerting];
-   stream << setw(10) << StateCount_[BcState::LocalSuspending];
+   stream << setw(12) << StateCount_[BcState::AuthorizingTermination];
+   stream << setw(18) << StateCount_[BcState::SelectingFacility];
+   stream << setw(12) << StateCount_[BcState::PresentingCall];
+   stream << setw(6) << StateCount_[BcState::TermAlerting];
+   stream << setw(12) << StateCount_[BcState::LocalSuspending];
    stream << CRLF;
 }
 

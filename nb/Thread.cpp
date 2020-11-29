@@ -178,7 +178,6 @@ ThreadTrace::ThreadTrace(fn_name_arg func,
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_EnterThread = "Thread.EnterThread";
 fn_name ThreadTrace_CaptureEvent = "ThreadTrace.CaptureEvent";
 
 void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, int32_t info)
@@ -1563,31 +1562,11 @@ bool Thread::EnterSwLog()
 
 main_t Thread::EnterThread(void* arg)
 {
-   Debug::ft(Thread_EnterThread);
+   Debug::ft("Thread.EnterThread");
 
-   //  Our argument is a pointer to a Thread.  The thread may start to run
-   //  before its Thread object is fully constructed.  This causes a trap,
-   //  so the thread must wait until it is constructed.  If its constructor
-   //  trapped, it will have been registered as an orphan, so immediately
-   //  exit it by returning SIGDELETED.
+   //  Our argument is a pointer to a Thread.
    //
    auto self = static_cast< Thread* >(arg);
-   auto reg = Singleton< ThreadRegistry >::Instance();
-
-   while(true)
-   {
-      auto state = reg->GetState();
-      if(state == Constructed) break;
-      if(state == Deleted) return SIGDELETED;
-   }
-
-   //  Indicate that we're ready to run.  This blocks until we're scheduled
-   //  in.  At that point, resume execution, register to catch signals, and
-   //  invoke our entry function.
-   //
-   self->Ready();
-   self->Resume(Thread_EnterThread);
-   RegisterForSignals();
    return self->Start();
 }
 
@@ -2995,10 +2974,41 @@ fn_name Thread_Start = "Thread.Start";
 
 main_t Thread::Start()
 {
+   auto started = false;
+
    while(true)
    {
       try
       {
+         if(!started)
+         {
+            //  Immediately register to catch POSIX signals.
+            //
+            RegisterForSignals();
+
+            //  A thread may start to run before its Thread object is fully
+            //  constructed.  This causes a trap, so the thread must wait
+            //  until it is constructed.  If its constructor trapped, it will
+            //  have been registered as an orphan, so immediately exit it by
+            //  returning SIGDELETED.
+            //
+            auto reg = Singleton< ThreadRegistry >::Instance();
+
+            while(true)
+            {
+               auto state = reg->GetState();
+               if(state == Constructed) break;
+               if(state == Deleted) return SIGDELETED;
+            }
+
+            //  Indicate that we're ready to run.  This blocks until we're
+            //  scheduled in.  At that point, resume execution.
+            //
+            Ready();
+            Resume(Thread_Start);
+            started = true;
+         }
+
          Debug::ft(Thread_Start);
 
          //  If the thread is preemptable, we got here after handling a trap,
@@ -3674,6 +3684,8 @@ void Thread::UpdateMutex(SysMutex* mutex)
 
 void Thread::UpdateMutexCount(bool acquired)
 {
+   if(deleting_) return;
+
    if(acquired)
       ++priv_->mutexes_;
    else

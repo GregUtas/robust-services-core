@@ -512,11 +512,11 @@ void CodeFile::AddUser(const CodeFile* file)
 
 const SetOfIds& CodeFile::Affecters() const
 {
-   Debug::ft("CodeFile.Affecters");
-
    //  If affecterIds_ is empty, build it.
    //
    if(!affecterIds_.empty()) return affecterIds_;
+
+   Debug::ft("CodeFile.Affecters");
 
    auto fileSet = new CodeFileSet(LibrarySet::TemporaryName(), nullptr);
    auto& context = fileSet->Set();

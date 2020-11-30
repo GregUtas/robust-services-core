@@ -16,5 +16,5 @@ for all configuration parameters.
 
 Note that a release build disables a number of optimizations so that
 it will actually be debuggable. Nevertheless, it runs at least three
-times as fast as a debug build, or about half as fast as a debug
+times as fast as a debug build, or about half as fast as a release
 build that is fully optimized.

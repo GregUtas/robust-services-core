@@ -2988,9 +2988,9 @@ main_t Thread::Start()
 
             //  A thread may start to run before its Thread object is fully
             //  constructed.  This causes a trap, so the thread must wait
-            //  until it is constructed.  If its constructor trapped, it will
-            //  have been registered as an orphan, so immediately exit it by
-            //  returning SIGDELETED.
+            //  until it is constructed.  If its constructor traps, it gets
+            //  registered as an orphan, so immediately exit it by returning
+            //  SIGDELETED.
             //
             auto reg = Singleton< ThreadRegistry >::Instance();
 
@@ -3012,8 +3012,8 @@ main_t Thread::Start()
          Debug::ft(Thread_Start);
 
          //  If the thread is preemptable, we got here after handling a trap,
-         //  not from Enter (which makes a thread unpreemptable).  Make the
-         //  thread unpreemptable again.
+         //  because we make each new thread unpreemptable.  Make the thread
+         //  unpreemptable again.
          //
          if(priv_->unpreempts_ == 0) MakeUnpreemptable();
 

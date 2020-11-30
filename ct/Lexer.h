@@ -56,7 +56,7 @@ public:
 
    //  Returns the character at POS.
    //
-   char At(size_t pos) const { return source_->at(pos); }
+   char At(size_t pos) const { return (*source_)[pos]; }
 
    //  Returns the number of lines in source_.
    //
@@ -137,7 +137,7 @@ public:
 
    //  Returns the character at curr_.
    //
-   char CurrChar() const { return source_->at(curr_); }
+   char CurrChar() const { return (*source_)[curr_]; }
 
    //  Returns curr_ and sets C to the character at that position.  Returns
    //  string::npos if curr_ is out of range.

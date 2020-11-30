@@ -991,13 +991,13 @@ const msecs_t PotsTrafficThread::MsecsToSleep = 100;
 const secs_t PotsTrafficThread::MaxDelaySecs = 120;
 const size_t PotsTrafficThread::NumOfSlots =
    1000 * PotsTrafficThread::MaxDelaySecs / PotsTrafficThread::MsecsToSleep + 1;
-const Address::DN PotsTrafficThread::StartDN = 30001;
-const secs_t PotsTrafficThread::HoldingTimeSecs = 35;
-const uint32_t PotsTrafficThread::DNsPer100Calls = 165;
+const Address::DN PotsTrafficThread::StartDN = 21001;
+const secs_t PotsTrafficThread::HoldingTimeSecs = 30;
+const uint32_t PotsTrafficThread::DNsPer100Calls = 150;
 const uint32_t PotsTrafficThread::MaxCallsPerMin =
    (Address::LastDN - PotsTrafficThread::StartDN + 1) *  // number of DNs
    (6000 / PotsTrafficThread::HoldingTimeSecs) /         // 100 * calls/DN/min
-   (3 * PotsTrafficThread::DNsPer100Calls / 2);          // 100 * DNs/call + 50%
+   (5 * PotsTrafficThread::DNsPer100Calls / 4);          // 100 * DNs/call + 25%
 
 //------------------------------------------------------------------------------
 
@@ -1397,6 +1397,11 @@ void PotsTrafficThread::SetRate(uint32_t rate)
       else
       {
          firstDN_ = StartDN;
+      }
+
+      if(lastDN_ + n > Address::LastDN)
+      {
+         n = Address::LastDN - lastDN_;
       }
 
       FunctionGuard guard(Guard_MemUnprotect);

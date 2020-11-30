@@ -136,7 +136,7 @@ void Lexer::CalcDepths()
 
    while(curr_ < size_)
    {
-      auto c = source_->at(curr_);
+      auto c = (*source_)[curr_];
 
       switch(c)
       {
@@ -296,7 +296,7 @@ void Lexer::CalcDepths()
                if(en)
                {
                   auto end = FindFirstOf(",}");
-                  curr_ = (source_->at(end) == ',' ? end : end - 1);
+                  curr_ = ((*source_)[end] == ',' ? end : end - 1);
                   SetDepth(start, depth, depth);
                   Advance(1);
                   continue;
@@ -322,7 +322,7 @@ size_t Lexer::CurrChar(char& c) const
    Debug::ft("Lexer.CurrChar");
 
    if(curr_ >= size_) return string::npos;
-   c = source_->at(curr_);
+   c = (*source_)[curr_];
    return curr_;
 }
 
@@ -356,7 +356,7 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
 
    while(pos < size_)
    {
-      auto c = source_->at(pos);
+      auto c = (*source_)[pos];
 
       if(c == rhc)
       {
@@ -432,7 +432,7 @@ Cxx::Directive Lexer::FindDirective()
 
    while(curr_ < size_)
    {
-      if(source_->at(curr_) == '#')
+      if((*source_)[curr_] == '#')
          return NextDirective(s);
       else
          Reposition(FindLineEnd(curr_));
@@ -457,7 +457,7 @@ size_t Lexer::FindFirstOf(const string& targs) const
    while(pos < size_)
    {
       auto f = false;
-      auto c = source_->at(pos);
+      auto c = (*source_)[pos];
 
       if(targs.find(c) != string::npos)
       {
@@ -466,7 +466,7 @@ size_t Lexer::FindFirstOf(const string& targs) const
          //  of a scope resolution operator.
          //
          if(c != ':') return pos;
-         if(source_->at(pos + 1) != ':') return pos;
+         if((*source_)[pos + 1] != ':') return pos;
          pos = NextPos(pos + 2);
          continue;
       }
@@ -512,7 +512,7 @@ bool Lexer::FindIdentifier(string& id, bool tokenize)
    while(curr_ < size_)
    {
       auto f = false;
-      auto c = source_->at(curr_);
+      auto c = (*source_)[curr_];
 
       switch(c)
       {
@@ -572,7 +572,7 @@ size_t Lexer::FindLineEnd(size_t pos) const
 
    for(NO_OP; pos < size_; ++pos)
    {
-      switch(source_->at(pos))
+      switch((*source_)[pos])
       {
       case CRLF:
          if(!bs) return pos;
@@ -614,7 +614,7 @@ bool Lexer::GetChar(uint32_t& c)
    Debug::ft("Lexer.GetChar");
 
    if(curr_ >= size_) return false;
-   c = source_->at(curr_);
+   c = (*source_)[curr_];
    ++curr_;
 
    if(c == BACKSLASH)
@@ -625,7 +625,7 @@ bool Lexer::GetChar(uint32_t& c)
       int64_t n;
 
       if(curr_ >= size_) return false;
-      c = source_->at(curr_);
+      c = (*source_)[curr_];
 
       switch(c)
       {
@@ -919,7 +919,7 @@ size_t Lexer::GetHexNum(int64_t& num, size_t max)
 
    while((curr_ < size_) && (max > 0))
    {
-      auto c = source_->at(curr_);
+      auto c = (*source_)[curr_];
       auto value = CxxChar::Attrs[c].hexValue;
       if(value < 0) return count;
       ++count;
@@ -950,7 +950,7 @@ bool Lexer::GetIncludeFile(size_t pos, string& file, bool& angle) const
 
    char delimiter;
 
-   switch(source_->at(pos))
+   switch((*source_)[pos])
    {
    case QUOTE:
       delimiter = QUOTE;
@@ -982,7 +982,7 @@ TagCount Lexer::GetIndirectionLevel(char c, bool& space)
    auto start = curr_;
    TagCount count = 0;
    while(NextCharIs(c)) ++count;
-   space = ((count > 0) && (source_->at(start - 1) == SPACE));
+   space = ((count > 0) && ((*source_)[start - 1] == SPACE));
    return count;
 }
 
@@ -997,7 +997,7 @@ size_t Lexer::GetInt(int64_t& num)
 
    while(curr_ < size_)
    {
-      auto c = source_->at(curr_);
+      auto c = (*source_)[curr_];
       auto value = CxxChar::Attrs[c].intValue;
       if(value < 0) return count;
       ++count;
@@ -1167,7 +1167,7 @@ bool Lexer::GetNum(TokenPtr& item)
    //
    if(curr_ >= size_ - 1) return false;
    auto pos = curr_ + 1;
-   auto c = source_->at(pos);
+   auto c = (*source_)[pos];
 
    if(!CxxChar::Attrs[c].validInt)
    {
@@ -1294,7 +1294,7 @@ size_t Lexer::GetOct(int64_t& num)
 
    while(curr_ < size_)
    {
-      auto c = source_->at(curr_);
+      auto c = (*source_)[curr_];
       auto value = CxxChar::Attrs[c].octValue;
       if(value < 0) return count;
       ++count;
@@ -1665,7 +1665,7 @@ void Lexer::Initialize(const string* source)
 
    for(size_t n = 0; n < size_; ++n)
    {
-      if(source_->at(n) == CRLF) ++lines_;
+      if((*source_)[n] == CRLF) ++lines_;
    }
 
    if(source_->back() != CRLF) ++lines_;
@@ -1685,7 +1685,7 @@ bool Lexer::NextCharIs(char c)
 {
    Debug::ft("Lexer.NextCharIs");
 
-   if((curr_ >= size_) || (source_->at(curr_) != c)) return false;
+   if((curr_ >= size_) || ((*source_)[curr_] != c)) return false;
    return Advance(1);
 }
 
@@ -1716,13 +1716,13 @@ string Lexer::NextIdentifier() const
    //  We assume that the code already compiles.  This means that we
    //  don't have to screen out reserved words that aren't types.
    //
-   auto c = source_->at(pos);
+   auto c = (*source_)[pos];
    if(!CxxChar::Attrs[c].validFirst) return str;
    str += c;
 
    while(++pos < size_)
    {
-      c = source_->at(pos);
+      c = (*source_)[pos];
       if(!CxxChar::Attrs[c].validNext) return str;
       str += c;
    }
@@ -1756,13 +1756,13 @@ string Lexer::NextOperator() const
    if(curr_ >= size_) return EMPTY_STR;
    string token;
    auto pos = curr_;
-   auto c = source_->at(pos);
+   auto c = (*source_)[pos];
 
    while(CxxChar::Attrs[c].validOp)
    {
       token += c;
       ++pos;
-      c = source_->at(pos);
+      c = (*source_)[pos];
    }
 
    return token;
@@ -1772,13 +1772,11 @@ string Lexer::NextOperator() const
 
 size_t Lexer::NextPos(size_t pos) const
 {
-   Debug::ft("Lexer.NextPos");
-
    //  Find the next character to be parsed.
    //
    while(pos < size_)
    {
-      auto c = source_->at(pos);
+      auto c = (*source_)[pos];
 
       switch(c)
       {
@@ -1797,7 +1795,7 @@ size_t Lexer::NextPos(size_t pos) const
          //
          if(++pos >= size_) return string::npos;
 
-         switch(source_->at(pos))
+         switch((*source_)[pos])
          {
          case '/':
             //
@@ -1832,7 +1830,7 @@ size_t Lexer::NextPos(size_t pos) const
          //  See if this is a continuation of the current line.
          //
          if(++pos >= size_) return string::npos;
-         if(source_->at(pos) != CRLF) return pos - 1;
+         if((*source_)[pos] != CRLF) return pos - 1;
          ++pos;
          break;
 
@@ -1858,7 +1856,7 @@ bool Lexer::NextStringIs(fixed_string str, bool check)
    auto pos = curr_ + size;
    if(!check || (pos >= size_)) return Reposition(pos);
 
-   auto next = source_->at(pos);
+   auto next = (*source_)[pos];
 
    switch(next)
    {
@@ -2038,7 +2036,7 @@ size_t Lexer::SkipCharLiteral(size_t pos) const
    //
    while(++pos < size_)
    {
-      auto c = source_->at(pos);
+      auto c = (*source_)[pos];
       if(c == APOSTROPHE) return pos;
       if(c == BACKSLASH) ++pos;
    }
@@ -2060,14 +2058,14 @@ size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
 
    while(++pos < size_)
    {
-      auto c = source_->at(pos);
+      auto c = (*source_)[pos];
 
       switch(c)
       {
       case QUOTE:
          next = NextPos(pos + 1);
          if(next == string::npos) return pos;
-         if(source_->at(next) != QUOTE) return pos;
+         if((*source_)[next] != QUOTE) return pos;
          fragmented = true;
          pos = next;
          break;
@@ -2090,7 +2088,7 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
    //  Extract the template specification, which must begin with a '<', end
    //  with a balanced '>', and contain identifiers or template punctuation.
    //
-   auto c = source_->at(pos);
+   auto c = (*source_)[pos];
    if(c != '<') return string::npos;
    ++pos;
 
@@ -2098,7 +2096,7 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
 
    for(depth = 1; ((pos < size_) && (depth > 0)); ++pos)
    {
-      c = source_->at(pos);
+      c = (*source_)[pos];
       if(ValidTemplateSpecChars.find(c) == string::npos) return string::npos;
 
       if(c == '>')
@@ -2119,7 +2117,7 @@ bool Lexer::ThisCharIs(char c)
 
    //  If the next character is C, advance to the character that follows it.
    //
-   if((curr_ >= size_) || (source_->at(curr_) != c)) return false;
+   if((curr_ >= size_) || ((*source_)[curr_] != c)) return false;
    ++curr_;
    return true;
 }

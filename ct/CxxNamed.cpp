@@ -1626,8 +1626,6 @@ TagCount DataSpec::Ptrs(bool arrays) const
 
 CxxScoped* DataSpec::Referent() const
 {
-   Debug::ft("DataSpec.Referent");
-
    auto ref = name_->GetReferent();
    if(ref != nullptr) return ref;
 
@@ -3650,8 +3648,6 @@ void TypeTags::Print(ostream& stream) const
 
 TagCount TypeTags::PtrCount(bool arrays) const
 {
-   Debug::ft("TypeTags.PtrCount");
-
    if(!arrays) return ptrs_;
    auto count = ptrs_ + arrays_;
    if(array_) ++count;

@@ -200,7 +200,7 @@ fixed_string units[] = {"A", "F"};
 constexpr size_t COASTS_SIZE = 7;
 
 fixed_string coasts[] =
-   {"(nc)", "(nec)", "(ec)", "(sec)", "(sc)", "(swc)", "(wc)", "(nwc)" };
+   {"(nc)", "(nec)", "(ec)", "(sec)", "(sc)", "(swc)", "(wc)", "(nwc)"};
 
 constexpr size_t SEASONS_SIZE = 4;
 

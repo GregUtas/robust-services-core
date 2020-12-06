@@ -67,10 +67,10 @@ enum ThreadState
 struct ThreadInfo
 {
    ThreadInfo(ThreadState state, SysThread* systhrd, Thread* thread);
-   ThreadInfo(const ThreadInfo& info) = default;
-   ThreadInfo(ThreadInfo&& info) = default;
-   ThreadInfo& operator=(const ThreadInfo& info) = default;
-   ThreadInfo& operator=(ThreadInfo&& info) = default;
+   ThreadInfo(const ThreadInfo& that) = default;
+   ThreadInfo(ThreadInfo&& that) = default;
+   ThreadInfo& operator=(const ThreadInfo& that) = default;
+   ThreadInfo& operator=(ThreadInfo&& that) = default;
 
    //  The thread's state;
    //

@@ -22,7 +22,7 @@
 #ifndef INTERPRETER_H_INCLUDED
 #define INTERPRETER_H_INCLUDED
 
-#include "Temporary.h"
+#include "Base.h"
 #include <cstddef>
 #include <queue>
 #include <stack>
@@ -41,7 +41,7 @@ namespace CodeTools
 {
 //  Used to evaluate the arguments to a library command.
 //
-class Interpreter : public NodeBase::Temporary
+class Interpreter : public NodeBase::Base
 {
 public:
    //  Sets the expression to be evaluated to EXPR, which

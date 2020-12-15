@@ -269,6 +269,13 @@ public:
       const std::string& info = std::string(NodeBase::EMPTY_STR),
       bool hide = false) const;
 
+   //  Logs WARNING, which occurred on LINE.  OFFSET and INFO are specific
+   //  to WARNING.
+   //
+   void LogLine(size_t line, Warning warning, NodeBase::word offset = 0,
+      const std::string& info = std::string(NodeBase::EMPTY_STR),
+      bool hide = false) const;
+
    //  Invokes FindLog(LOG, ITEM, OFFSET) on the file's editor to find the
    //  log whose .warning matches LOG, whose .offset matches OFFSET, and
    //  whose .item matches ITEM.  Returns that log.  Updates EXPL with an
@@ -368,13 +375,6 @@ private:
    //  Returns true if the file has a forward declaration for ITEM.
    //
    bool HasForwardFor(const CxxNamed* item) const;
-
-   //  Logs WARNING, which occurred on LINE.  OFFSET and INFO are specific
-   //  to WARNING.
-   //
-   void LogLine(size_t line, Warning warning, NodeBase::word offset = 0,
-      const std::string& info = std::string(NodeBase::EMPTY_STR),
-      bool hide = false) const;
 
    //  Logs WARNING, which occurred on LINE and POS within ITEM (which may be
    //  nullptr).  OFFSET and INFO are specific to WARNING.

@@ -784,9 +784,9 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
       if(end == string::npos) break;
       begin = code->find('{', end);
       if(begin == string::npos) return CreateCodeError(tmpltName, 4);
-      lexer.Initialize(code.get());
+      lexer.Initialize(*code);
       lexer.Reposition(begin);
-      begin = lexer.FindClosing('{', '}', begin);
+      begin = lexer.FindClosing('{', '}', begin + 1);
       if(begin == string::npos) return CreateCodeError(tmpltName, 5);
    }
 
@@ -1370,7 +1370,7 @@ size_t Class::GetRange(size_t& begin, size_t& end) const
    begin = GetPos();
    lexer.Reposition(begin);
    auto left = lexer.FindFirstOf("{");
-   end = lexer.FindClosing('{', '}', left);
+   end = lexer.FindClosing('{', '}', left + 1);
    return left;
 }
 

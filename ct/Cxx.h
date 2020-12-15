@@ -25,7 +25,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
+#include <memory>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include "CodeTypes.h"
 
 //------------------------------------------------------------------------------
@@ -207,10 +210,6 @@ namespace Cxx
       ClassTag_N
    };
 
-   //  Inserts a string for TAG into STREAM.
-   //
-   std::ostream& operator<<(std::ostream& stream, ClassTag tag);
-
    //  Access control.
    //
    enum Access
@@ -220,10 +219,6 @@ namespace Cxx
       Public,
       Access_N
    };
-
-   //  Inserts a string for ACCESS into STREAM.
-   //
-   std::ostream& operator<<(std::ostream& stream, Access access);
 
    //  Character encodings.
    //
@@ -236,10 +231,6 @@ namespace Cxx
       WIDE,
       Encoding_N
    };
-
-   //  Inserts a string for CODE into STREAM.
-   //
-   std::ostream& operator<<(std::ostream& stream, Encoding code);
 
    //  The maximum number of pointers that can be attached to a type.
    //
@@ -275,10 +266,60 @@ namespace Cxx
       Operation,
       Elision
    };
+
+   //  Entries in the directive hash table map a string to a Cxx::Directive.
+   //
+   typedef std::unordered_map< std::string, Cxx::Directive > DirectiveTable;
+   typedef std::pair< std::string, Cxx::Directive > DirectivePair;
+   typedef std::unique_ptr< DirectiveTable > DirectiveTablePtr;
+   extern DirectiveTablePtr Directives;
+
+   //  Entries in the keyword hash table map a string to a Cxx::Keyword.
+   //
+   typedef std::unordered_map< std::string, Cxx::Keyword > KeywordTable;
+   typedef std::pair< std::string, Cxx::Keyword > KeywordPair;
+   typedef std::unique_ptr< KeywordTable > KeywordTablePtr;
+   extern KeywordTablePtr Keywords;
+
+   //  Entries in the operator and reserved word hash tables map a string to a
+   //  Cxx::Operator.  Each operator table contains punctuation strings, while
+   //  the Reserved table contains alphabetic strings.  There are two operator
+   //  tables, one for C++ code and one for preprocessor directives.
+   //
+   typedef std::unordered_map< std::string, Cxx::Operator > OperatorTable;
+   typedef std::pair< std::string, Cxx::Operator > OperatorPair;
+   typedef std::unique_ptr< OperatorTable > OperatorTablePtr;
+   extern OperatorTablePtr CxxOps;
+   extern OperatorTablePtr PreOps;
+   extern OperatorTablePtr Reserved;
+
+   //  Entries in the types hash table map the string for a built-in type to a
+   //  Cxx::Type.
+   //
+   typedef std::unordered_map< std::string, Cxx::Type > TypesTable;
+   typedef std::pair< std::string, Cxx::Type > TypePair;
+   typedef std::unique_ptr< TypesTable > TypesTablePtr;
+   extern TypesTablePtr Types;
+
+   //  Initializes the above hash tables.
+   //
+   void Initialize();
 }
 
 //------------------------------------------------------------------------------
 //
+//  Inserts a string for ACCESS into STREAM.
+//
+std::ostream& operator<<(std::ostream& stream, Cxx::Access access);
+
+//  Inserts a string for TAG into STREAM.
+//
+std::ostream& operator<<(std::ostream& stream, Cxx::ClassTag tag);
+
+//  Inserts a string for CODE into STREAM.
+//
+std::ostream& operator<<(std::ostream& stream, Cxx::Encoding code);
+
 //  Returns a string for displaying the character C.  Returns an escape sequence
 //  if C is not a displayable ASCII character.  S is set if C appeared within a
 //  string literal, else C appeared within a character literal.

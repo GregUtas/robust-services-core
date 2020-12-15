@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  Lexer.cpp
+//  SourceCode.cpp
 //
 //  Copyright (C) 2013-2020  Greg Utas
 //
@@ -19,13 +19,20 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "Lexer.h"
+#include "SourceCode.h"
 #include <cctype>
 #include <cmath>
+#include <cstdio>
 #include <cstring>
+#include <iomanip>
+#include <ios>
+#include <istream>
+#include <iterator>
+#include <ostream>
 #include <set>
 #include <unordered_map>
 #include <utility>
+#include "CodeFile.h"
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
@@ -34,31 +41,79 @@
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
+#include "FunctionName.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
+using std::ostream;
 using std::string;
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
-Lexer::Lexer() :
-   source_(nullptr),
-   size_(0),
-   lines_(0),
-   curr_(0),
-   prev_(0),
-   scanned_(false)
+SourceLine::SourceLine(const string& source, size_t seqno) :
+   code(source),
+   line(seqno),
+   depth(DEPTH_NOT_SET),
+   cont(false),
+   type(LineType_N)
 {
-   Debug::ft("Lexer.ctor");
+   if(code.empty() || (code.back() != CRLF))
+   {
+      code.push_back(CRLF);
+   }
 }
 
 //------------------------------------------------------------------------------
 
-bool Lexer::Advance()
+void SourceLine::Display(ostream& stream) const
 {
-   Debug::ft("Lexer.Advance");
+   if(line != string::npos)
+      stream << std::setw(4) << line;
+   else
+      stream << " new";
+
+   stream << SPACE;
+
+   if(depth != DEPTH_NOT_SET)
+      stream << std::hex << std::setw(1) << int(depth) << std::dec;
+   else
+      stream << '?';
+
+   stream << (cont ? '+' : SPACE);
+   stream << LineTypeAttr::Attrs[type].symbol << SPACE;
+   stream << code;
+}
+
+//==============================================================================
+
+char SourceLoc::LastChar() const
+{
+   auto size = iter->code.size();
+   if(size == 0) return NUL;
+   auto loc = RfindFirstNotOf(iter->code, size - 1, WhitespaceChars);
+   if(loc == std::string::npos) return NUL;
+   return iter->code[loc];
+}
+
+//==============================================================================
+
+SourceCode::SourceCode():
+   file_(nullptr),
+   scanned_(false),
+   slashAsterisk_(false),
+   curr_(SourceLoc(source_.end())),
+   prev_(SourceLoc(source_.end()))
+{
+   Debug::ft("SourceCode.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+bool SourceCode::Advance()
+{
+   Debug::ft("SourceCode.Advance");
 
    prev_ = curr_;
    curr_ = NextPos(prev_);
@@ -67,45 +122,46 @@ bool Lexer::Advance()
 
 //------------------------------------------------------------------------------
 
-bool Lexer::Advance(size_t incr)
+bool SourceCode::Advance(size_t incr)
 {
-   Debug::ft("Lexer.Advance(incr)");
+   Debug::ft("SourceCode.Advance(incr)");
 
    prev_ = curr_;
-   curr_ = NextPos(prev_ + incr);
+   curr_ = NextPos(prev_, incr);
    return true;
 }
 
 //------------------------------------------------------------------------------
 
-void Lexer::CalcDepths()
+void SourceCode::CalcDepths()
 {
-   Debug::ft("Lexer.CalcDepths");
+   Debug::ft("SourceCode.CalcDepths");
 
    if(scanned_) return;
-   if(source_->empty()) return;
+   if(source_.empty()) return;
 
    scanned_ = true;   // only run this once
-   Reposition(0);     // start from the beginning of source_
+   Reset();           // start from the beginning of source_
 
    auto ns = false;   // set when "namespace" keyword is encountered
    auto en = false;   // set when "enum" keyword is encountered
    int8_t depth = 0;  // current depth for indentation
    int8_t next = 0;   // next depth for indentation
-   size_t start = 0;  // last position whose depth was set
-   size_t right;      // position of right brace that matches left brace
    string id;         // identifier extracted from source code
 
-   while(curr_ < size_)
+   SourceLoc start(source_.begin());  // last position whose depth was set
+   SourceLoc right(source_.begin());  // right brace that matches left brace
+
+   while(curr_.iter != source_.end())
    {
-      auto c = (*source_)[curr_];
+      auto c = curr_.iter->code[curr_.pos];
 
       switch(c)
       {
       case '{':
          //
          //  Finalize the depth of lines since START.  Comments between curr_
-         //  and the next parse position will be at depth NEXT.  The { gets
+         //  and the next parse position will be at depth NEXT.  The { got
          //  marked as a continuation because a semicolon doesn't immediately
          //  precede it.  Fix this.  Find the matching right brace and put it
          //  at the same depth.  Increase the depth unless the { followed the
@@ -114,11 +170,11 @@ void Lexer::CalcDepths()
          next = (ns ? depth : depth + 1);
          ns = false;
          SetDepth(start, depth, next);
-         line_[GetLineNum(curr_)].cont = false;
-         right = FindClosing('{', '}', curr_ + 1);
-         line_[GetLineNum(right)].depth = depth;
-         depth = next;
+         curr_.iter->cont = false;
          Advance(1);
+         right = FindClosing('{', '}');
+         right.iter->depth = depth;
+         depth = next;
          break;
 
       case '}':
@@ -127,7 +183,7 @@ void Lexer::CalcDepths()
          //  and the next parse position will be at the depth of the }, which
          //  was set when its left brace was encountered.
          //
-         next = line_[GetLineNum(curr_)].depth;
+         next = curr_.iter->depth;
          en = false;
          SetDepth(start, depth, next);
          depth = next;
@@ -177,7 +233,7 @@ void Lexer::CalcDepths()
                Advance(id.size());
                if(CurrChar() == ';') continue;
                curr_ = FindFirstOf(":");
-               line_[GetLineNum(curr_)].depth = depth - 1;
+               curr_.iter->depth = depth - 1;
                SetDepth(start, depth, depth);
                Advance(1);
                continue;
@@ -198,19 +254,16 @@ void Lexer::CalcDepths()
                continue;
 
             case IndentDirective:
-            {
+               //
                //  Put a preprocessor directive at depth 0 and treat it as if
                //  it ends with a semicolon so that code that follows will not
                //  be treated as a continuation.
                //
-               auto line = GetLineNum(curr_);
-               line_[line].depth = 0;
-               curr_ = source_->find(CRLF, curr_);
-               if(curr_ == string::npos) curr_ = size_ - 1;
+               curr_.iter->depth = 0;
+               curr_.pos = curr_.iter->code.size() - 1;
                SetDepth(start, depth, depth);
                Advance(1);
                continue;
-            }
 
             case IndentControl:
             {
@@ -223,7 +276,7 @@ void Lexer::CalcDepths()
                //
                Advance(id.size());
                if(CurrChar() != ':') continue;
-               line_[GetLineNum(curr_)].depth = depth - 1;
+               curr_.iter->depth = depth - 1;
                SetDepth(start, depth, depth);
                Advance(1);
                continue;
@@ -243,7 +296,7 @@ void Lexer::CalcDepths()
                //
                en = true;
                auto left = FindFirstOf("{");
-               curr_ = left - 1;
+               curr_ = Prev(left);
                SetDepth(start, depth, depth);
                Advance(1);
                continue;
@@ -258,7 +311,7 @@ void Lexer::CalcDepths()
                if(en)
                {
                   auto end = FindFirstOf(",}");
-                  curr_ = ((*source_)[end] == ',' ? end : end - 1);
+                  curr_ = end.iter->code[end.pos] == ',' ? end : Prev(end);
                   SetDepth(start, depth, depth);
                   Advance(1);
                   continue;
@@ -272,54 +325,388 @@ void Lexer::CalcDepths()
 
    //  Set the depth for any remaining lines and reinitialize the lexer.
    //
-   curr_ = size_ - 1;
+   curr_ = LastLoc();
    SetDepth(start, depth, depth);
-   Reposition(0);
+   Reset();
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::CurrChar(char& c) const
+LineType SourceCode::ClassifyLine
+   (string s, bool& cont, std::set< Warning >& warnings)
 {
-   Debug::ft("Lexer.CurrChar");
+   Debug::ft("SourceCode.ClassifyLine(string)");
 
-   if(curr_ >= size_) return string::npos;
-   c = (*source_)[curr_];
+   cont = false;
+
+   auto length = s.size();
+   if(length == 0) return BlankLine;
+
+   //  Flag the line if it is too long.
+   //
+   if(length > LINE_LENGTH_MAX) warnings.insert(LineLength);
+
+   //  Flag any tabs and convert them to spaces.
+   //
+   for(auto pos = s.find(TAB); pos != string::npos; pos = s.find(TAB))
+   {
+      warnings.insert(UseOfTab);
+      s[pos] = SPACE;
+   }
+
+   //  Flag and strip trailing spaces.
+   //
+   if(s.find_first_not_of(SPACE) == string::npos)
+   {
+      warnings.insert(TrailingSpace);
+      return BlankLine;
+   }
+
+   while(s.rfind(SPACE) == s.size() - 1)
+   {
+      warnings.insert(TrailingSpace);
+      s.pop_back();
+   }
+
+   //  Flag a line that is not indented a multiple of the standard, unless
+   //  it begins with a comment or string literal.
+   //
+   if(s.empty()) return BlankLine;
+   auto pos = s.find_first_not_of(SPACE);
+   if(pos > 0) s.erase(0, pos);
+
+   if(pos % INDENT_SIZE != 0)
+   {
+      if((s[0] != '/') && (s[0] != QUOTE)) warnings.insert(Indentation);
+   }
+
+   //  Now that the line has been reformatted, recalculate its length.
+   //
+   length = s.size();
+
+   //  Look for lines that contain nothing but a brace (or brace and semicolon).
+   //
+   if((s[0] == '{') && (length == 1)) return OpenBrace;
+
+   if(s[0] == '}')
+   {
+      if(length == 1) return CloseBrace;
+      if((s[1] == ';') && (length == 2)) return CloseBraceSemicolon;
+   }
+
+   //  Classify lines that contain only a // comment.
+   //
+   size_t slashSlashPos = s.find(COMMENT_STR);
+
+   if(slashSlashPos == 0)
+   {
+      if(length == 2) return EmptyComment;      //
+      if(s[2] == '-') return SeparatorComment;  //-
+      if(s[2] == '=') return SeparatorComment;  //=
+      if(s[2] == '/') return SeparatorComment;  ///
+      if(s[2] != SPACE) return TaggedComment;   //$ [$ != one of above]
+      return TextComment;                       //  text
+   }
+
+   //  Flag a /* comment and see if it ends on the same line.
+   //
+   pos = FindSubstr(s, COMMENT_BEGIN_STR);
+
+   if(pos != string::npos)
+   {
+      warnings.insert(UseOfSlashAsterisk);
+      if(pos == 0) return SlashAsteriskComment;
+   }
+
+   //  Look for preprocessor directives (e.g. #include, #ifndef).
+   //
+   if(s[0] == '#')
+   {
+      pos = s.find(HASH_INCLUDE_STR);
+      if(pos == 0) return IncludeDirective;
+      return HashDirective;
+   }
+
+   //  Look for using statements.
+   //
+   if(s.find("using ") == 0)
+   {
+      cont = (LastCodeChar(s, slashSlashPos) != ';');
+      return UsingStatement;
+   }
+
+   //  Look for access controls.
+   //
+   pos = s.find_first_not_of(WhitespaceChars);
+
+   if(pos != string::npos)
+   {
+      if(s.find(PUBLIC_STR) == pos) return AccessControl;
+      if(s.find(PROTECTED_STR) == pos) return AccessControl;
+      if(s.find(PRIVATE_STR) == pos) return AccessControl;
+   }
+
+   //  Look for invocations of Debug::ft and its variants.
+   //
+   if(FindSubstr(s, "Debug::ft(") != string::npos) return DebugFt;
+   if(FindSubstr(s, "Debug::ftnt(") != string::npos) return DebugFt;
+   if(FindSubstr(s, "Debug::noft(") != string::npos) return DebugFt;
+
+   //  Look for strings that provide function names for Debug::ft.  These
+   //  have the format
+   //    fn_name ClassName_FunctionName = "ClassName.FunctionName";
+   //  with an endline after the '=' if the line would exceed LineLengthMax
+   //  characters.
+   //
+   string type(FunctionName::TypeStr);
+   type.push_back(SPACE);
+
+   while(true)
+   {
+      if(s.find(type) != 0) break;
+      auto begin1 = s.find_first_not_of(SPACE, type.size());
+      if(begin1 == string::npos) break;
+      auto under = s.find('_', begin1);
+      if(under == string::npos) break;
+      auto equals = s.find('=', under);
+      if(equals == string::npos) break;
+
+      if(LastCodeChar(s, slashSlashPos) == '=')
+      {
+         cont = true;
+         return FunctionName;
+      }
+
+      auto end1 = s.find_first_not_of(ValidNextChars, under);
+      if(end1 == string::npos) break;
+      auto begin2 = s.find(QUOTE, equals);
+      if(begin2 == string::npos) break;
+      auto dot = s.find('.', begin2);
+      if(dot == string::npos) break;
+      auto end2 = s.find(QUOTE, dot);
+      if(end2 == string::npos) break;
+
+      auto front = under - begin1;
+      if(s.substr(begin1, front) == s.substr(begin2 + 1, front))
+      {
+         return FunctionName;
+      }
+      break;
+   }
+
+   pos = FindSubstr(s, "  ");
+
+   if(pos != string::npos)
+   {
+      auto next = s.find_first_not_of(SPACE, pos);
+
+      if((next != string::npos) && (next != slashSlashPos) && (s[next] != '='))
+      {
+         warnings.insert(AdjacentSpaces);
+      }
+   }
+
+   cont = (LastCodeChar(s, slashSlashPos) != ';');
+   return CodeLine;
+}
+
+//------------------------------------------------------------------------------
+
+LineType SourceCode::ClassifyLine(size_t n, bool& cont)
+{
+   Debug::ft("SourceCode.ClassifyLine(size_t)");
+
+   //  Get the code for line N and classify it.
+   //
+   string s;
+   if(!GetNthLine(n, s)) return LineType_N;
+
+   std::set< Warning > warnings;
+   auto type = ClassifyLine(s, cont, warnings);
+
+   //  A line within a /* comment can be logged spuriously.
+   //
+   if(slashAsterisk_)
+   {
+      warnings.erase(Indentation);
+      warnings.erase(AdjacentSpaces);
+   }
+
+   //  Log any warnings that were reported.
+   //
+   if(file_ != nullptr)
+   {
+      for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
+      {
+         file_->LogLine(n, *w);
+      }
+   }
+
+   //  There are some things that can only be determined by knowing what
+   //  happened on previous lines.  First, see if a /* comment ended.
+   //
+   if(slashAsterisk_)
+   {
+      auto pos = s.find(COMMENT_END_STR);
+      if(pos != string::npos) slashAsterisk_ = false;
+      return TextComment;
+   }
+
+   //  See if a /* comment began, and whether it is still open.  Note that
+   //  when a /* comment is used, a line that contains code after the */
+   //  is classified as a comment unless the /* occurred somewhere after
+   //  the start of that line.
+
+   if(warnings.find(UseOfSlashAsterisk) != warnings.end())
+   {
+      if(s.find(COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
+      if(s.find(COMMENT_BEGIN_STR) == 0) return SlashAsteriskComment;
+   }
+
+   return type;
+}
+
+//------------------------------------------------------------------------------
+
+void SourceCode::ClassifyLines()
+{
+   Debug::ft("SourceCode.ClassifyLines");
+
+   //  Categorize each line.  If the previous line failed to finish
+   //  a using statement or function name definition, carry it over
+   //  to the next line.
+   //
+   auto prevCont = false;
+   auto prevType = LineType_N;
+
+   for(auto s = source_.begin(); s != source_.end(); ++s)
+   {
+      auto currCont = false;
+      auto currType = ClassifyLine(s->line, currCont);
+
+      if(prevCont)
+      {
+         if((prevType != UsingStatement) && (prevType != FunctionName))
+         {
+            prevCont = false;
+         }
+      }
+
+      s->type = (prevCont ? prevType: currType);
+      prevCont = currCont;
+      prevType = currType;
+   }
+
+   for(auto s = source_.begin(); s != source_.end(); ++s)
+   {
+      auto t = s->type;
+
+      if(LineTypeAttr::Attrs[t].isCode) break;
+
+      if((t != EmptyComment) && (t != SlashAsteriskComment))
+      {
+         s->type = FileComment;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+SourceLoc SourceCode::CurrChar(char& c)
+{
+   Debug::ft("SourceCode.CurrChar");
+
+   c = NUL;
+   if(curr_.iter == source_.end()) return End();
+   c = curr_.iter->code[curr_.pos];
    return curr_;
 }
 
 //------------------------------------------------------------------------------
 
-string Lexer::Extract(size_t pos, size_t count) const
+void SourceCode::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
 {
-   Debug::ft("Lexer.Extract");
+   Base::Display(stream, prefix, options);
 
-   string s = source_->substr(pos, count);
+   stream << prefix << "scanned : " << scanned_ << CRLF;
+   stream << prefix << "source  : " << CRLF;
+
+   for(auto i = source_.begin(); i != source_.end(); ++i)
+   {
+      i->Display(stream);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+SourceLoc SourceCode::End()
+{
+   return SourceLoc(source_.end(), string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+SourceLoc& SourceCode::End(SourceLoc& loc)
+{
+   loc = SourceLoc(source_.end());
+   return loc;
+}
+
+//------------------------------------------------------------------------------
+
+string SourceCode::Extract(const SourceLoc& loc, size_t count)
+{
+   Debug::ft("SourceCode.Extract(count)");
+
+   string s;
+
+   for(auto i = loc.iter; ((i != source_.end()) && (count > 0)); ++i)
+   {
+      auto prev = s.size();
+      s += i->code.substr(loc.pos, count);
+      count -= (s.size() - prev);
+   }
+
    return Compress(s);
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
+string SourceCode::Extract(const SourceLoc& begin, const SourceLoc& end)
 {
-   Debug::ft("Lexer.FindClosing");
+   Debug::ft("SourceCode.Extract(range)");
+
+   string s;
+
+   for(auto loc = begin; loc != end; loc.NextChar())
+   {
+      s.push_back(loc.iter->code[loc.pos]);
+   }
+
+   return s;
+}
+
+//------------------------------------------------------------------------------
+
+SourceLoc SourceCode::FindClosing(char lhc, char rhc, SourceLoc loc)
+{
+   Debug::ft("SourceCode.FindClosing");
 
    //  Look for the RHC that matches LHC.  Skip over comments and literals.
    //
-   auto f = false;
    size_t level = 1;
+   auto f = false;
 
-   if(pos == string::npos) pos = curr_;
+   loc = NextPos(loc);
 
-   pos = NextPos(pos);
-
-   while(pos < size_)
+   while(loc.iter != source_.end())
    {
-      auto c = (*source_)[pos];
+      auto c = loc.iter->code[loc.pos];
 
       if(c == rhc)
       {
-         if(--level == 0) return pos;
+         if(--level == 0) return loc;
       }
       else if(c == lhc)
       {
@@ -327,71 +714,37 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
       }
       else if(c == QUOTE)
       {
-         pos = SkipStrLiteral(pos, f);
+         SkipStrLiteral(loc, f);
       }
       else if(c == APOSTROPHE)
       {
-         pos = SkipCharLiteral(pos);
+         SkipCharLiteral(loc);
       }
 
-      pos = NextPos(pos + 1);
+      loc = NextPos(loc, 1);
    }
 
-   return string::npos;
+   return End();
 }
 
 //------------------------------------------------------------------------------
 
-void Lexer::FindCode(OptionalCode* opt, bool compile)
+SourceLoc SourceCode::FindClosing(char lhc, char rhc)
 {
-   Debug::ft("Lexer.FindCode");
-
-   //  If the code that follows OPT is to be compiled, just return.
-   //
-   if(compile) return;
-
-   //  Skip the code that follows OPT by advancing to where the compiler should
-   //  resume.  This will be the next non-nested #elif, #else, or #endif.
-   //
-   auto begin = FindLineEnd(prev_) + 1;  // include leading blanks on first line
-   auto level = 0;
-
-   for(auto d = FindDirective(); d != Cxx::NIL_DIRECTIVE; d = FindDirective())
-   {
-      switch(d)
-      {
-      case Cxx::_IF:
-      case Cxx::_IFDEF:
-      case Cxx::_IFNDEF:
-         ++level;
-         break;
-
-      case Cxx::_ELIF:
-      case Cxx::_ELSE:
-         if(level == 0) return opt->SetSkipped(begin, curr_ - 1);
-         break;
-
-      case Cxx::_ENDIF:
-         if(level == 0) return opt->SetSkipped(begin, curr_ - 1);
-         --level;
-         break;
-      }
-
-      Reposition(FindLineEnd(curr_));
-   }
+   return FindClosing(lhc, rhc, curr_);
 }
 
 //------------------------------------------------------------------------------
 
-Cxx::Directive Lexer::FindDirective()
+Cxx::Directive SourceCode::FindDirective()
 {
-   Debug::ft("Lexer.FindDirective");
+   Debug::ft("SourceCode.FindDirective");
 
    string s;
 
-   while(curr_ < size_)
+   while(curr_.iter != source_.end())
    {
-      if((*source_)[curr_] == '#')
+      if(curr_.iter->code[curr_.pos] == '#')
          return NextDirective(s);
       else
          Reposition(FindLineEnd(curr_));
@@ -402,21 +755,20 @@ Cxx::Directive Lexer::FindDirective()
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::FindFirstOf(const string& targs) const
+SourceLoc SourceCode::FindFirstOf(const std::string& targs)
 {
-   Debug::ft("Lexer.FindFirstOf");
+   Debug::ft("SourceCode.FindFirstOf");
 
    //  Return the position of the first occurrence of a character in TARGS.
    //  Start by advancing from POS, in case it's a blank or the start of a
    //  comment.  Jump over any literals or nested expressions.
    //
-   auto pos = NextPos(curr_);
-   size_t end;
+   auto loc = NextPos(curr_);
 
-   while(pos < size_)
+   while(loc.iter != source_.end())
    {
       auto f = false;
-      auto c = (*source_)[pos];
+      auto c = loc.iter->code[loc.pos];
 
       if(targs.find(c) != string::npos)
       {
@@ -424,65 +776,67 @@ size_t Lexer::FindFirstOf(const string& targs) const
          //  a field width or a label, so don't stop at a colon that is part
          //  of a scope resolution operator.
          //
-         if(c != ':') return pos;
-         if((*source_)[pos + 1] != ':') return pos;
-         pos = NextPos(pos + 2);
+         if(c != ':') return loc;
+         if(loc.iter->code[loc.pos + 1] != ':') return loc;
+         loc = NextPos(loc, 2);
          continue;
       }
 
       switch(c)
       {
       case QUOTE:
-         pos = SkipStrLiteral(pos, f);
+         SkipStrLiteral(loc, f);
          break;
       case APOSTROPHE:
-         pos = SkipCharLiteral(pos);
+         SkipCharLiteral(loc);
          break;
       case '{':
-         pos = FindClosing('{', '}', pos + 1);
+         FindClosing('{', '}', loc.NextChar());
          break;
       case '(':
-         pos = FindClosing('(', ')', pos + 1);
+         FindClosing('(', ')', loc.NextChar());
          break;
       case '[':
-         pos = FindClosing('[', ']', pos + 1);
+         FindClosing('[', ']', loc.NextChar());
          break;
       case '<':
-         end = SkipTemplateSpec(pos);
-         if(end != string::npos) pos = end;
+      {
+         auto end = SkipTemplateSpec(loc);
+         if(end.iter != source_.end()) loc = end;
          break;
       }
+      }
 
-      if(pos == string::npos) return string::npos;
-      pos = NextPos(pos + 1);
+      if(loc.iter == source_.end()) return loc;
+      loc = NextPos(loc, 1);
    }
 
-   return string::npos;
+   return End();
 }
 
 //------------------------------------------------------------------------------
 
-bool Lexer::FindIdentifier(string& id, bool tokenize)
+bool SourceCode::FindIdentifier(std::string& id, bool tokenize)
 {
-   Debug::ft("Lexer.FindIdentifier");
+   Debug::ft("SourceCode.FindIdentifier");
 
    if(tokenize) id = "$";  // returned if non-identifier found
 
-   while(curr_ < size_)
+   while(curr_.iter != source_.end())
    {
       auto f = false;
-      auto c = (*source_)[curr_];
+      auto c = curr_.iter->code[curr_.pos];
 
       switch(c)
       {
       case QUOTE:
-         curr_ = SkipStrLiteral(curr_, f);
+         SkipStrLiteral(curr_, f);
          Advance(1);
          if(tokenize) return true;
          continue;
 
       case APOSTROPHE:
-         curr_ = SkipCharLiteral(curr_);
+         SkipCharLiteral(curr_);
          Advance(1);
          if(tokenize) return true;
          continue;
@@ -523,18 +877,18 @@ bool Lexer::FindIdentifier(string& id, bool tokenize)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::FindLineEnd(size_t pos) const
+SourceLoc SourceCode::FindLineEnd(SourceLoc loc)
 {
-   Debug::ft("Lexer.FindLineEnd");
+   Debug::ft("SourceCode.FindLineEnd");
 
    auto bs = false;
 
-   for(NO_OP; pos < size_; ++pos)
+   for(NO_OP; loc.iter != source_.end(); loc.NextChar())
    {
-      switch((*source_)[pos])
+      switch(loc.iter->code[loc.pos])
       {
       case CRLF:
-         if(!bs) return pos;
+         if(!bs) return loc;
          bs = false;
          break;
 
@@ -544,14 +898,14 @@ size_t Lexer::FindLineEnd(size_t pos) const
       }
    }
 
-   return string::npos;
+   return End();
 }
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetAccess(Cxx::Access& access)
+bool SourceCode::GetAccess(Cxx::Access& access)
 {
-   Debug::ft("Lexer.GetAccess");
+   Debug::ft("SourceCode.GetAccess");
 
    //  <Access> = ("public" | "protected" | "private")
    //
@@ -568,13 +922,13 @@ bool Lexer::GetAccess(Cxx::Access& access)
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetChar(uint32_t& c)
+bool SourceCode::GetChar(uint32_t& c)
 {
-   Debug::ft("Lexer.GetChar");
+   Debug::ft("SourceCode.GetChar");
 
-   if(curr_ >= size_) return false;
-   c = (*source_)[curr_];
-   ++curr_;
+   if(curr_.iter == source_.end()) return false;
+   c = curr_.iter->code[curr_.pos];
+   curr_.NextChar();
 
    if(c == BACKSLASH)
    {
@@ -583,8 +937,8 @@ bool Lexer::GetChar(uint32_t& c)
       //
       int64_t n;
 
-      if(curr_ >= size_) return false;
-      c = (*source_)[curr_];
+      if(curr_.iter == source_.end()) return false;
+      c = curr_.iter->code[curr_.pos];
 
       switch(c)
       {
@@ -594,53 +948,53 @@ bool Lexer::GetChar(uint32_t& c)
          c = n;
          break;
       case 'x':  // character's 2-byte hex value
-         ++curr_;
-         if(curr_ >= size_) return false;
+         curr_.NextChar();
+         if(curr_.iter == source_.end()) return false;
          GetHexNum(n, 2);
          c = n;
          break;
       case 'u':  // character's 4-byte hex value
-         ++curr_;
-         if(curr_ >= size_) return false;
+         curr_.NextChar();
+         if(curr_.iter == source_.end()) return false;
          GetHexNum(n, 4);
          c = n;
          break;
       case 'U':  // character's 8-byte hex value
-         ++curr_;
-         if(curr_ >= size_) return false;
+         curr_.NextChar();
+         if(curr_.iter == source_.end()) return false;
          GetHexNum(n, 8);
          c = n;
          break;
       case 'a':
          c = 0x07;  // bell
-         ++curr_;
+         curr_.NextChar();
          break;
       case 'b':
          c = 0x08;  // backspace
-         ++curr_;
+         curr_.NextChar();
          break;
       case 'f':
          c = 0x0c;  // form feed
-         ++curr_;
+         curr_.NextChar();
          break;
       case 'n':
          c = 0x0a;  // line feed
-         ++curr_;
+         curr_.NextChar();
          break;
       case 'r':
          c = 0x0d;  // carriage return
-         ++curr_;
+         curr_.NextChar();
          break;
       case 't':
          c = 0x09;  // horizontal tab
-         ++curr_;
+         curr_.NextChar();
          break;
       case 'v':
          c = 0x0b;  // vertical tab
-         ++curr_;
+         curr_.NextChar();
          break;
       default:
-         ++curr_;
+         curr_.NextChar();
       }
    }
 
@@ -649,9 +1003,9 @@ bool Lexer::GetChar(uint32_t& c)
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetClassTag(Cxx::ClassTag& tag, bool type)
+bool SourceCode::GetClassTag(Cxx::ClassTag& tag, bool type)
 {
-   Debug::ft("Lexer.GetClassTag");
+   Debug::ft("SourceCode.GetClassTag");
 
    //  <ClassTag> = ("class" | "struct" | "union" | "typename")
    //
@@ -669,9 +1023,9 @@ bool Lexer::GetClassTag(Cxx::ClassTag& tag, bool type)
 
 //------------------------------------------------------------------------------
 
-void Lexer::GetCVTags(KeywordSet& tags)
+void SourceCode::GetCVTags(KeywordSet& tags)
 {
-   Debug::ft("Lexer.GetCVTags");
+   Debug::ft("SourceCode.GetCVTags");
 
    string str;
 
@@ -684,7 +1038,7 @@ void Lexer::GetCVTags(KeywordSet& tags)
       case Cxx::CONST:
       case Cxx::VOLATILE:
          tags.insert(kwd);
-         Reposition(curr_ + str.size());
+         Reposition(curr_, str.size());
          continue;
 
       default:
@@ -695,9 +1049,9 @@ void Lexer::GetCVTags(KeywordSet& tags)
 
 //------------------------------------------------------------------------------
 
-Cxx::Operator Lexer::GetCxxOp()
+Cxx::Operator SourceCode::GetCxxOp()
 {
-   Debug::ft("Lexer.GetCxxOp");
+   Debug::ft("SourceCode.GetCxxOp");
 
    //  Match TOKEN to an operator.  If no match occurs, drop the last character
    //  and keep trying until no characters remain.
@@ -723,9 +1077,9 @@ Cxx::Operator Lexer::GetCxxOp()
 
 //------------------------------------------------------------------------------
 
-void Lexer::GetDataTags(KeywordSet& tags)
+void SourceCode::GetDataTags(KeywordSet& tags)
 {
-   Debug::ft("Lexer.GetDataTags");
+   Debug::ft("SourceCode.GetDataTags");
 
    string str;
 
@@ -746,7 +1100,7 @@ void Lexer::GetDataTags(KeywordSet& tags)
       case Cxx::THREAD_LOCAL:
       case Cxx::VOLATILE:
          tags.insert(kwd);
-         Reposition(curr_ + str.size());
+         Reposition(curr_, str.size());
          continue;
 
       default:
@@ -757,26 +1111,30 @@ void Lexer::GetDataTags(KeywordSet& tags)
 
 //------------------------------------------------------------------------------
 
-void Lexer::GetDepth(size_t line, int8_t& depth, bool& cont) const
+void SourceCode::GetDepth(size_t line, int8_t& depth, bool& cont)
 {
-   if(!scanned_ || (line >= lines_))
+   if(scanned_)
    {
-      depth = 0;
-      cont = false;
+      auto loc = GetLineStart(line);
+
+      if(loc.iter != source_.end())
+      {
+         depth = loc.iter->depth;
+         if(depth < 0) depth = 0;
+         cont = loc.iter->cont;
+         return;
+      }
    }
-   else
-   {
-      depth = line_[line].depth;
-      if(depth < 0) depth = 0;
-      cont = line_[line].cont;
-   }
+
+   depth = 0;
+   cont = false;
 }
 
 //------------------------------------------------------------------------------
 
-void Lexer::GetFloat(long double& num)
+void SourceCode::GetFloat(long double& num)
 {
-   Debug::ft("Lexer.GetFloat");
+   Debug::ft("SourceCode.GetFloat");
 
    //  NUM has already been set to the value that preceded the decimal point.
    //  Any exponent is parsed after returning.
@@ -789,9 +1147,9 @@ void Lexer::GetFloat(long double& num)
 
 //------------------------------------------------------------------------------
 
-void Lexer::GetFuncBackTags(KeywordSet& tags)
+void SourceCode::GetFuncBackTags(KeywordSet& tags)
 {
-   Debug::ft("Lexer.GetFuncBackTags");
+   Debug::ft("SourceCode.GetFuncBackTags");
 
    //  The only tags are "override" and "final": if present, "const"
    //  and/or "noexcept" precede them and have already been parsed.
@@ -807,7 +1165,7 @@ void Lexer::GetFuncBackTags(KeywordSet& tags)
       case Cxx::OVERRIDE:
       case Cxx::FINAL:
          tags.insert(kwd);
-         Reposition(curr_ + str.size());
+         Reposition(curr_, str.size());
          continue;
 
       default:
@@ -818,9 +1176,9 @@ void Lexer::GetFuncBackTags(KeywordSet& tags)
 
 //------------------------------------------------------------------------------
 
-void Lexer::GetFuncFrontTags(KeywordSet& tags)
+void SourceCode::GetFuncFrontTags(KeywordSet& tags)
 {
-   Debug::ft("Lexer.GetFuncFrontTags");
+   Debug::ft("SourceCode.GetFuncFrontTags");
 
    string str;
 
@@ -842,7 +1200,7 @@ void Lexer::GetFuncFrontTags(KeywordSet& tags)
       case Cxx::EXTERN:
       case Cxx::VOLATILE:
          tags.insert(kwd);
-         Reposition(curr_ + str.size());
+         Reposition(curr_, str.size());
          continue;
 
       default:
@@ -853,9 +1211,9 @@ void Lexer::GetFuncFrontTags(KeywordSet& tags)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::GetHex(int64_t& num)
+size_t SourceCode::GetHex(int64_t& num)
 {
-   Debug::ft("Lexer.GetHex");
+   Debug::ft("SourceCode.GetHex");
 
    //  The initial '0' has already been parsed.
    //
@@ -869,22 +1227,22 @@ size_t Lexer::GetHex(int64_t& num)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::GetHexNum(int64_t& num, size_t max)
+size_t SourceCode::GetHexNum(int64_t& num, size_t max)
 {
-   Debug::ft("Lexer.GetHexNum");
+   Debug::ft("SourceCode.GetHexNum");
 
    size_t count = 0;
    num = 0;
 
-   while((curr_ < size_) && (max > 0))
+   while((curr_.iter != source_.end()) && (max > 0))
    {
-      auto c = (*source_)[curr_];
+      auto c = curr_.iter->code[curr_.pos];
       auto value = CxxChar::Attrs[c].hexValue;
       if(value < 0) return count;
       ++count;
       num <<= 4;
       num += value;
-      ++curr_;
+      curr_.NextChar();
       --max;
    }
 
@@ -893,23 +1251,24 @@ size_t Lexer::GetHexNum(int64_t& num, size_t max)
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetIncludeFile(size_t pos, string& file, bool& angle) const
+bool SourceCode::GetIncludeFile(SourceLoc loc, string& file, bool& angle)
 {
-   Debug::ft("Lexer.GetIncludeFile");
+   Debug::ft("SourceCode.GetIncludeFile");
 
-   //  While staying on this line, skip spaces, look for a '#', skip spaces,
-   //  look for "include", skip spaces, and look for "filename" or <filename>.
+   //  Starting at LOC, skip spaces, look for a '#', skip spaces, look for
+   //  "include", skip spaces, and look for "filename" or <filename> while
+   //  staying on the original line.
    //
-   auto stop = source_->find(CRLF, pos);
-   pos = NextPos(pos);
-   if(pos >= stop) return false;
-   if(source_->find(HASH_INCLUDE_STR, pos) != pos) return false;
-   pos = NextPos(pos + strlen(HASH_INCLUDE_STR));
-   if(pos >= stop) return false;
+   auto line = loc.iter;
+   loc = NextPos(loc);
+   if(loc.iter != line) return false;
+   if(loc.iter->code.find(HASH_INCLUDE_STR, loc.pos) != loc.pos) return false;
+   loc = NextPos(loc, strlen(HASH_INCLUDE_STR));
+   if(loc.iter != line) return false;
 
    char delimiter;
 
-   switch((*source_)[pos])
+   switch(loc.iter->code[loc.pos])
    {
    case QUOTE:
       delimiter = QUOTE;
@@ -923,46 +1282,46 @@ bool Lexer::GetIncludeFile(size_t pos, string& file, bool& angle) const
       return false;
    }
 
-   ++pos;
-   auto end = source_->find(delimiter, pos);
-   if(end >= stop) return false;
-   file = source_->substr(pos, end - pos);
+   loc = Next(loc);
+   auto end = loc.iter->code.find(delimiter, loc.pos);
+   if(end == string::npos) return false;
+   file = loc.iter->code.substr(loc.pos, end - loc.pos);
    return true;
 }
 
 //------------------------------------------------------------------------------
 
-TagCount Lexer::GetIndirectionLevel(char c, bool& space)
+TagCount SourceCode::GetIndirectionLevel(char c, bool& space)
 {
-   Debug::ft("Lexer.GetIndirectionLevel");
+   Debug::ft("SourceCode.GetIndirectionLevel");
 
    space = false;
-   if(curr_ >= size_) return 0;
+   if(curr_.iter == source_.end()) return 0;
    auto start = curr_;
    TagCount count = 0;
    while(NextCharIs(c)) ++count;
-   space = ((count > 0) && ((*source_)[start - 1] == SPACE));
+   space = ((count > 0) && (start.iter->code[start.pos - 1] == SPACE));
    return count;
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::GetInt(int64_t& num)
+size_t SourceCode::GetInt(int64_t& num)
 {
-   Debug::ft("Lexer.GetInt");
+   Debug::ft("SourceCode.GetInt");
 
    size_t count = 0;
    num = 0;
 
-   while(curr_ < size_)
+   while(curr_.iter != source_.end())
    {
-      auto c = (*source_)[curr_];
+      auto c = curr_.iter->code[curr_.pos];
       auto value = CxxChar::Attrs[c].intValue;
       if(value < 0) return count;
       ++count;
       num *= 10;
       num += value;
-      ++curr_;
+      curr_.NextChar();
    }
 
    return count;
@@ -970,58 +1329,58 @@ size_t Lexer::GetInt(int64_t& num)
 
 //------------------------------------------------------------------------------
 
-string Lexer::GetLine(size_t pos) const
+string SourceCode::GetLine(const SourceLoc& loc)
 {
-   Debug::ft("Lexer.GetLine");
+   Debug::ft("SourceCode.GetLine");
 
-   auto first = source_->rfind(CRLF, pos);
-   if(first == string::npos)
-      first = 0;
-   else
-      ++first;
-   auto last = source_->find(CRLF, pos);
-   auto text = source_->substr(first, last - first);
-   text.insert(pos - first, 1, '$');
+   string text;
+
+   if(loc.iter != source_.end())
+   {
+      text = loc.iter->code;
+      text.insert(loc.pos, 1, '$');
+   }
+
    return text;
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::GetLineNum(size_t pos) const
+size_t SourceCode::GetLineNum(const SourceLoc& loc)
 {
-   if(pos > size_) return string::npos;
+   if(loc.iter == source_.end()) return string::npos;
+   return loc.iter->line;
+}
 
-   //  Do a binary search over the lines' starting positions.
-   //
-   word min = 0;
-   word max = lines_ - 1;
+//------------------------------------------------------------------------------
 
-   while(min < max)
+SourceLoc SourceCode::GetLineStart(size_t line)
+{
+   for(auto i = source_.begin(); i != source_.end(); ++i)
    {
-      auto mid = (min + max + 1) >> 1;
-
-      if(line_[mid].start > pos)
-         max = mid - 1;
-      else
-         min = mid;
+      if(i->line == line) return SourceLoc(i);
    }
 
-   return min;
+   return End();
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::GetLineStart(size_t line) const
+LineType SourceCode::GetLineType(size_t line) const
 {
-   if(line >= lines_) return string::npos;
-   return line_[line].start;
+   for(auto i = source_.begin(); i != source_.end(); ++i)
+   {
+      if(i->line == line) return i->type;
+   }
+
+   return LineType_N;
 }
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetName(string& name, Constraint constraint)
+bool SourceCode::GetName(string& name, Constraint constraint)
 {
-   Debug::ft("Lexer.GetName");
+   Debug::ft("SourceCode.GetName");
 
    auto id = NextIdentifier();
    if(id.empty()) return false;
@@ -1052,7 +1411,9 @@ bool Lexer::GetName(string& name, Constraint constraint)
       if(id != AUTO_STR)
       {
          if(Cxx::Keywords->lower_bound(id) != Cxx::Keywords->cend())
+         {
             return false;
+         }
       }
    }
 
@@ -1062,11 +1423,11 @@ bool Lexer::GetName(string& name, Constraint constraint)
 
 //------------------------------------------------------------------------------
 
-fn_name Lexer_GetName2 = "Lexer.GetName(oper)";
+fn_name SourceCode_GetName2 = "SourceCode.GetName(oper)";
 
-bool Lexer::GetName(string& name, Cxx::Operator& oper)
+bool SourceCode::GetName(string& name, Cxx::Operator& oper)
 {
-   Debug::ft(Lexer_GetName2);
+   Debug::ft(SourceCode_GetName2);
 
    oper = Cxx::NIL_OPERATOR;
    if(!GetName(name, AnyKeyword)) return false;
@@ -1074,13 +1435,15 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
    if(name == OPERATOR_STR)
    {
       if(GetOpOverride(oper)) return true;
-      Debug::SwLog(Lexer_GetName2, name, oper, false);
+      Debug::SwLog(SourceCode_GetName2, name, oper, false);
    }
    else
    {
       if((Cxx::Types->lower_bound(name) == Cxx::Types->cend()) &&
          (Cxx::Keywords->lower_bound(name) == Cxx::Keywords->cend()))
+      {
          return true;
+      }
    }
 
    Reposition(prev_);
@@ -1089,27 +1452,24 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetNthLine(size_t n, string& s) const
+bool SourceCode::GetNthLine(size_t n, string& s)
 {
-   if(n >= lines_)
+   auto loc = GetLineStart(n);
+
+   if(loc.iter != source_.end())
    {
-      s.clear();
-      return false;
+      s = loc.iter->code;
+      s.pop_back();
+      return true;
    }
 
-   auto curr = line_[n].start;
-
-   if(n == lines_ - 1)
-      s = source_->substr(curr, size_ - curr - 1);
-   else
-      s = source_->substr(curr, line_[n + 1].start - curr - 1);
-
-   return true;
+   s.clear();
+   return false;
 }
 
 //------------------------------------------------------------------------------
 
-string Lexer::GetNthLine(size_t n) const
+string SourceCode::GetNthLine(size_t n)
 {
    string s;
    GetNthLine(n, s);
@@ -1118,16 +1478,17 @@ string Lexer::GetNthLine(size_t n) const
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetNum(TokenPtr& item)
+bool SourceCode::GetNum(TokenPtr& item)
 {
-   Debug::ft("Lexer.GetNum");
+   Debug::ft("SourceCode.GetNum");
 
    //  It is already known that the next character is a digit, so a lot of
    //  nonsense can be avoided by seeing if that digit appears alone.
    //
-   if(curr_ >= size_ - 1) return false;
-   auto pos = curr_ + 1;
-   auto c = (*source_)[pos];
+   auto loc = curr_;
+   loc.NextChar();
+   if(loc.iter == source_.end()) return false;
+   auto c = loc.iter->code[loc.pos];
 
    if(!CxxChar::Attrs[c].validInt)
    {
@@ -1166,7 +1527,7 @@ bool Lexer::GetNum(TokenPtr& item)
       if(GetInt(num) == 0) return Retreat(start);
       c = CurrChar();
       if((c != '.') && (c != 'E') && (c != 'e')) break;
-      if(c == '.') ++curr_;
+      if(c == '.') curr_.NextChar();
 
       //  A decimal point or exponent followed the integer, so this is a
       //  floating point literal.  Get the portion after the decimal point
@@ -1243,24 +1604,24 @@ bool Lexer::GetNum(TokenPtr& item)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::GetOct(int64_t& num)
+size_t SourceCode::GetOct(int64_t& num)
 {
-   Debug::ft("Lexer.GetOct");
+   Debug::ft("SourceCode.GetOct");
 
    //  The initial '0' has already been parsed.
    //
    size_t count = 0;
    num = 0;
 
-   while(curr_ < size_)
+   while(curr_.iter != source_.end())
    {
-      auto c = (*source_)[curr_];
+      auto c = curr_.iter->code[curr_.pos];
       auto value = CxxChar::Attrs[c].octValue;
       if(value < 0) return count;
       ++count;
       num <<= 3;
       num += value;
-      ++curr_;
+      curr_.NextChar();
    }
 
    return count;
@@ -1268,9 +1629,9 @@ size_t Lexer::GetOct(int64_t& num)
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetOpOverride(Cxx::Operator& oper)
+bool SourceCode::GetOpOverride(Cxx::Operator& oper)
 {
-   Debug::ft("Lexer.GetOpOverride");
+   Debug::ft("SourceCode.GetOpOverride");
 
    //  Get the next token, which is either non-alphabetic (uninterrupted
    //  punctuation) or alphabetic (which looks like an identifier).
@@ -1292,7 +1653,7 @@ bool Lexer::GetOpOverride(Cxx::Operator& oper)
       if(match != Cxx::CxxOps->cend())
       {
          oper = Cxx::Operator(match->second);
-         curr_ += token.size();
+         curr_.pos += token.size();
 
          switch(oper)
          {
@@ -1346,9 +1707,9 @@ bool Lexer::GetOpOverride(Cxx::Operator& oper)
 
 //------------------------------------------------------------------------------
 
-Cxx::Operator Lexer::GetPreOp()
+Cxx::Operator SourceCode::GetPreOp()
 {
-   Debug::ft("Lexer.GetPreOp");
+   Debug::ft("SourceCode.GetPreOp");
 
    //  Match TOKEN to an operator.  If no match occurs, drop the last character
    //  and keep trying until no characters remain.
@@ -1374,9 +1735,9 @@ Cxx::Operator Lexer::GetPreOp()
 
 //------------------------------------------------------------------------------
 
-Cxx::Operator Lexer::GetReserved(const string& name)
+Cxx::Operator SourceCode::GetReserved(const string& name)
 {
-   Debug::ft("Lexer.GetReserved");
+   Debug::ft("SourceCode.GetReserved");
 
    //  See if NAME matches one of a selected group of reserved words.
    //
@@ -1387,22 +1748,22 @@ Cxx::Operator Lexer::GetReserved(const string& name)
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetTemplateSpec(string& spec)
+bool SourceCode::GetTemplateSpec(string& spec)
 {
-   Debug::ft("Lexer.GetTemplateSpec");
+   Debug::ft("SourceCode.GetTemplateSpec");
 
    spec.clear();
    auto end = SkipTemplateSpec(curr_);
-   if(end == string::npos) return false;
-   spec = source_->substr(curr_, end - curr_ + 1);
+   if(end.iter == source_.end()) return false;
+   spec = Extract(curr_, end);
    return Advance(spec.size());
 }
 
 //------------------------------------------------------------------------------
 
-Cxx::Type Lexer::GetType(const string& name)
+Cxx::Type SourceCode::GetType(const string& name)
 {
-   Debug::ft("Lexer.GetType");
+   Debug::ft("SourceCode.GetType");
 
    auto match = Cxx::Types->lower_bound(name);
    if(match != Cxx::Types->cend()) return match->second;
@@ -1411,50 +1772,93 @@ Cxx::Type Lexer::GetType(const string& name)
 
 //------------------------------------------------------------------------------
 
-void Lexer::Initialize(const string& source)
+bool SourceCode::Initialize(const CodeFile& file)
 {
-   Debug::ft("Lexer.Initialize");
+   Debug::ft("SourceCode.Initialize");
 
-   source_ = &source;
-   size_ = source_->size();
-   lines_ = 0;
-   line_.clear();
-   curr_ = 0;
-   prev_ = 0;
+   auto input = file.InputStream();
+   if(input == nullptr) return false;
+
+   file_ = &file;
+   source_.clear();
+
+   input->clear();
+   input->seekg(0);
+
+   string str;
+
+   for(size_t line = 0; input->peek() != EOF; ++line)
+   {
+      std::getline(*input, str);
+      str.push_back(CRLF);
+      source_.push_back(SourceLine(str, line));
+   }
+
+   input.reset();
+
    scanned_ = false;
-   if(size_ == 0) return;
-
-   for(size_t n = 0; n < size_; ++n)
-   {
-      if((*source_)[n] == CRLF) ++lines_;
-   }
-
-   if(source_->back() != CRLF) ++lines_;
-
-   for(size_t n = 0, pos = 0; n < lines_; ++n)
-   {
-      line_.push_back(LineInfo(pos));
-      pos = source_->find(CRLF, pos) + 1;
-   }
-
+   slashAsterisk_ = false;
+   curr_ = SourceLoc(source_.begin());
+   prev_ = SourceLoc(source_.begin());
    Advance();
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-bool Lexer::NextCharIs(char c)
+SourceLoc SourceCode::LastLoc()
 {
-   Debug::ft("Lexer.NextCharIs");
+   auto loc = End();
+   if(!source_.empty()) Prev(loc);
+   return loc;
+}
 
-   if((curr_ >= size_) || ((*source_)[curr_] != c)) return false;
+//------------------------------------------------------------------------------
+
+SourceLoc& SourceCode::Next(SourceLoc& loc)
+{
+   if(loc.iter == source_.end()) return loc;
+   if(++loc.pos < loc.iter->code.size()) return loc;
+   ++loc.iter;
+   loc.pos = 0;
+   return loc;
+}
+
+//------------------------------------------------------------------------------
+
+void SourceCode::NextAfter(SourceLoc loc, const string& str)
+{
+   while(loc.iter != source_.end())
+   {
+      auto pos = loc.iter->code.find(str, loc.pos);
+
+      if(pos != string::npos)
+      {
+         loc.pos = pos;
+         loc = NextPos(loc, str.size());
+         return;
+      }
+
+      loc.NextLine();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+bool SourceCode::NextCharIs(char c)
+{
+   Debug::ft("SourceCode.NextCharIs");
+
+   if(curr_.iter == source_.end()) return false;
+   if(curr_.iter->code[curr_.pos] != c) return false;
    return Advance(1);
 }
 
 //------------------------------------------------------------------------------
 
-Cxx::Directive Lexer::NextDirective(string& str) const
+Cxx::Directive SourceCode::NextDirective(string& str)
 {
-   Debug::ft("Lexer.NextDirective");
+   Debug::ft("SourceCode.NextDirective");
 
    str = NextIdentifier();
    if(str.empty()) return Cxx::NIL_DIRECTIVE;
@@ -1466,25 +1870,25 @@ Cxx::Directive Lexer::NextDirective(string& str) const
 
 //------------------------------------------------------------------------------
 
-string Lexer::NextIdentifier() const
+std::string SourceCode::NextIdentifier()
 {
-   Debug::ft("Lexer.NextIdentifier");
+   Debug::ft("SourceCode.NextIdentifier");
 
-   if(curr_ >= size_) return EMPTY_STR;
+   if(curr_.iter == source_.end()) return EMPTY_STR;
 
    string str;
-   auto pos = curr_;
+   auto loc = curr_;
 
    //  We assume that the code already compiles.  This means that we
    //  don't have to screen out reserved words that aren't types.
    //
-   auto c = (*source_)[pos];
+   auto c = loc.iter->code[loc.pos];
    if(!CxxChar::Attrs[c].validFirst) return str;
    str += c;
 
-   while(++pos < size_)
+   for(loc.NextChar(); loc.iter != source_.end(); loc.NextChar())
    {
-      c = (*source_)[pos];
+      c = loc.iter->code[loc.pos];
       if(!CxxChar::Attrs[c].validNext) return str;
       str += c;
    }
@@ -1494,9 +1898,9 @@ string Lexer::NextIdentifier() const
 
 //------------------------------------------------------------------------------
 
-Cxx::Keyword Lexer::NextKeyword(string& str) const
+Cxx::Keyword SourceCode::NextKeyword(string& str)
 {
-   Debug::ft("Lexer.NextKeyword");
+   Debug::ft("SourceCode.NextKeyword");
 
    str = NextIdentifier();
    if(str.empty()) return Cxx::NIL_KEYWORD;
@@ -1511,20 +1915,20 @@ Cxx::Keyword Lexer::NextKeyword(string& str) const
 
 //------------------------------------------------------------------------------
 
-string Lexer::NextOperator() const
+std::string SourceCode::NextOperator()
 {
-   Debug::ft("Lexer.NextOperator");
+   Debug::ft("SourceCode.NextOperator");
 
-   if(curr_ >= size_) return EMPTY_STR;
+   if(curr_.iter == source_.end()) return EMPTY_STR;
    string token;
-   auto pos = curr_;
-   auto c = (*source_)[pos];
+   auto loc = curr_;
+   auto c = loc.iter->code[loc.pos];
 
    while(CxxChar::Attrs[c].validOp)
    {
       token += c;
-      ++pos;
-      c = (*source_)[pos];
+      loc.NextChar();
+      c = loc.iter->code[loc.pos];
    }
 
    return token;
@@ -1532,13 +1936,15 @@ string Lexer::NextOperator() const
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::NextPos(size_t pos) const
+SourceLoc SourceCode::NextPos(const SourceLoc& start)
 {
+   auto loc = start;
+
    //  Find the next character to be parsed.
    //
-   while(pos < size_)
+   while(loc.iter != source_.end())
    {
-      auto c = (*source_)[pos];
+      auto c = loc.iter->code[loc.pos];
 
       switch(c)
       {
@@ -1548,34 +1954,34 @@ size_t Lexer::NextPos(size_t pos) const
          //
          //  Skip these.
          //
-         ++pos;
+         loc.NextChar();
          break;
 
       case '/':
          //
          //  See if this begins a comment (// or /*).
          //
-         if(++pos >= size_) return string::npos;
+         loc.NextChar();
+         if(loc.iter == source_.end()) return End();
 
-         switch((*source_)[pos])
+         switch(loc.iter->code[loc.pos])
          {
          case '/':
             //
             //  This is a // comment.  Continue on the next line.
             //
-            pos = source_->find(CRLF, pos);
-            if(pos == string::npos) return pos;
-            ++pos;
+            loc.NextLine();
+            if(loc.iter == source_.end()) return End();
             break;
 
          case '*':
             //
             //  This is a /* comment.  Continue where it ends.
             //
-            if(++pos >= size_) return string::npos;
-            pos = source_->find(COMMENT_END_STR, pos);
-            if(pos == string::npos) return string::npos;
-            pos += 2;
+            loc.NextChar();
+            if(loc.iter == source_.end()) return End();
+            NextAfter(loc, COMMENT_END_STR);
+            if(loc.iter == source_.end()) return End();
             break;
 
          default:
@@ -1583,7 +1989,8 @@ size_t Lexer::NextPos(size_t pos) const
             //  The / did not introduce a comment, so it is the next
             //  character of interest.
             //
-            return --pos;
+            loc.PrevChar();
+            return loc;
          }
          break;
 
@@ -1591,34 +1998,55 @@ size_t Lexer::NextPos(size_t pos) const
          //
          //  See if this is a continuation of the current line.
          //
-         if(++pos >= size_) return string::npos;
-         if((*source_)[pos] != CRLF) return pos - 1;
-         ++pos;
+         if(loc.pos < loc.iter->code.size() - 1) return loc;
+         loc.NextChar();
          break;
 
       default:
-         return pos;
+         return loc;
       }
    }
 
-   return string::npos;
+   return End();
 }
 
 //------------------------------------------------------------------------------
 
-bool Lexer::NextStringIs(fixed_string str, bool check)
+SourceLoc SourceCode::NextPos(const SourceLoc& start, size_t skip)
 {
-   Debug::ft("Lexer.NextStringIs");
+   auto loc = start;
 
-   if(curr_ >= size_) return false;
+   while(skip > 0)
+   {
+      auto end = loc.iter->code.size();
+
+      if(loc.pos + skip < end) break;
+
+      skip -= (end - loc.pos);
+      ++loc.iter;
+      loc.pos = 0;
+      if(loc.iter == source_.end()) return End();
+   }
+
+   loc.pos += skip;
+   return NextPos(loc);
+}
+
+//------------------------------------------------------------------------------
+
+bool SourceCode::NextStringIs(fixed_string str, bool check)
+{
+   Debug::ft("SourceCode.NextStringIs");
+
+   if(curr_.iter == source_.end()) return false;
 
    auto size = strlen(str);
-   if(source_->compare(curr_, size, str) != 0) return false;
+   if(curr_.iter->code.compare(curr_.pos, size, str) != 0) return false;
 
-   auto pos = curr_ + size;
-   if(!check || (pos >= size_)) return Reposition(pos);
+   SourceLoc loc(curr_.iter, curr_.pos + size);
+   if(!check) return Reposition(loc);
 
-   auto next = (*source_)[pos];
+   auto next = loc.iter->code[loc.pos];
 
    switch(next)
    {
@@ -1638,14 +2066,14 @@ bool Lexer::NextStringIs(fixed_string str, bool check)
       }
    }
 
-   return Reposition(pos);
+   return Reposition(loc);
 }
 
 //------------------------------------------------------------------------------
 
-string Lexer::NextToken() const
+string SourceCode::NextToken()
 {
-   Debug::ft("Lexer.NextToken");
+   Debug::ft("SourceCode.NextToken");
 
    auto token = NextIdentifier();
    if(!token.empty()) return token;
@@ -1654,9 +2082,9 @@ string Lexer::NextToken() const
 
 //------------------------------------------------------------------------------
 
-Cxx::Type Lexer::NextType()
+Cxx::Type SourceCode::NextType()
 {
-   Debug::ft("Lexer.NextType");
+   Debug::ft("SourceCode.NextType");
 
    auto token = NextIdentifier();
    if(token.empty()) return Cxx::NIL_TYPE;
@@ -1667,9 +2095,9 @@ Cxx::Type Lexer::NextType()
 
 //------------------------------------------------------------------------------
 
-void Lexer::Preprocess()
+void SourceCode::Preprocess()
 {
-   Debug::ft("Lexer.Preprocess");
+   Debug::ft("SourceCode.Preprocess");
 
    //  Keep fetching identifiers, erasing any that are #defined symbols that
    //  map to empty strings.  Skip preprocessor directives.
@@ -1696,8 +2124,11 @@ void Lexer::Preprocess()
 
          if(def->Empty())
          {
-            auto code = const_cast< string* >(source_);
-            for(size_t i = 0; i < id.size(); ++i) code->at(curr_ + i) = SPACE;
+            for(size_t i = 0; i < id.size(); ++i)
+            {
+               curr_.iter->code[curr_.pos + i] = SPACE;
+            }
+
             def->WasRead();
          }
       }
@@ -1708,9 +2139,9 @@ void Lexer::Preprocess()
 
 //------------------------------------------------------------------------------
 
-void Lexer::PreprocessSource() const
+void SourceCode::PreprocessSource()
 {
-   Debug::ft("Lexer.PreprocessSource");
+   Debug::ft("SourceCode.PreprocessSource");
 
    //  Clone this lexer to avoid having to restore it to its current state.
    //
@@ -1720,29 +2151,74 @@ void Lexer::PreprocessSource() const
 
 //------------------------------------------------------------------------------
 
-bool Lexer::Reposition(size_t pos)
+SourceLoc& SourceCode::Prev(SourceLoc& loc)
 {
-   Debug::ft("Lexer.Reposition");
+   if(loc.iter == source_.end())
+   {
+      --loc.iter;
+      loc.pos = loc.iter->code.size() - 1;
+   }
+   else if((loc.pos > 0) && (loc.pos < loc.iter->code.size() - 1))
+   {
+      --loc.pos;
+   }
+   else if(loc.iter != source_.begin())
+   {
+      --loc.iter;
+      loc.pos = loc.iter->code.size() - 1;
+   }
+   else
+   {
+      return End(loc);
+   }
 
-   prev_ = pos;
+   return loc;
+}
+
+//------------------------------------------------------------------------------
+
+bool SourceCode::Reposition(const SourceLoc& loc)
+{
+   Debug::ft("SourceCode.Reposition");
+
+   prev_ = loc;
    curr_ = NextPos(prev_);
    return true;
 }
 
 //------------------------------------------------------------------------------
 
-bool Lexer::Retreat(size_t pos)
+bool SourceCode::Reposition(const SourceLoc& loc, size_t incr)
 {
-   Debug::ft("Lexer.Retreat");
+   Debug::ft("SourceCode.Reposition(incr)");
 
-   prev_ = pos;
-   curr_ = pos;
+   prev_ = loc;
+   prev_.pos += incr;
+   curr_ = NextPos(prev_);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+void SourceCode::Reset()
+{
+   curr_= SourceLoc(source_.begin());
+}
+
+//------------------------------------------------------------------------------
+
+bool SourceCode::Retreat(const SourceLoc& loc)
+{
+   Debug::ft("SourceCode.Retreat");
+
+   prev_ = loc;
+   curr_ = loc;
    return false;
 }
 
 //------------------------------------------------------------------------------
 
-void Lexer::SetDepth(size_t& start, int8_t depth1, int8_t depth2)
+void SourceCode::SetDepth(SourceLoc& start, int8_t depth1, int8_t depth2)
 {
    //  START is the last position where a new line of code started, and curr_
    //  has finalized the depth of that code.  Each line from START to the one
@@ -1750,116 +2226,121 @@ void Lexer::SetDepth(size_t& start, int8_t depth1, int8_t depth2)
    //  has already been determined.  If there is more than one line in this
    //  range, the subsequent ones are continuations of the first.
    //
-   auto begin = GetLineNum(start);
-   auto mid = GetLineNum(curr_);
-   start = NextPos(curr_ + 1);
-   if(start == string::npos) start = size_ - 1;
-   auto end = GetLineNum(start);
+   auto begin1 = start.iter;
+   auto endline1 = curr_.iter->line;
+   auto begin2 = std::next(curr_.iter);
+   start = NextPos(curr_, 1);
+   auto end2 = start.iter;
+   auto endline2 = (end2 == source_.end() ? source_.size() : end2->line);
 
-   for(auto i = begin; i <= mid; ++i)
+   for(auto i = begin1; (i != source_.end()) && (i->line <= endline1); ++i)
    {
-      if(line_[i].depth == DEPTH_NOT_SET)
+      if(i->depth == DEPTH_NOT_SET)
       {
-         line_[i].depth = depth1;
-         line_[i].cont = (i != begin);
+         i->depth = depth1;
+         i->cont = (i != begin1);
       }
    }
 
-   for(auto i = mid + 1; i < end; ++i)
+   for(auto i = begin2; (i != source_.end()) && (i->line < endline2); ++i)
    {
-      if(line_[i].depth == DEPTH_NOT_SET)
+      if(i->depth == DEPTH_NOT_SET)
       {
-         line_[i].depth = depth2;
-         line_[i].cont = (i != mid + 1);
+         i->depth = depth2;
+         i->cont = (i != begin2);
       }
    }
 }
 
 //------------------------------------------------------------------------------
 
-bool Lexer::Skip()
+bool SourceCode::Skip()
 {
-   Debug::ft("Lexer.Skip");
+   Debug::ft("SourceCode.Skip");
 
    //  Advance to whatever follows the current line.
    //
-   if(curr_ >= size_) return true;
-   curr_ = source_->find(CRLF, curr_);
+   if(curr_.iter == source_.end()) return true;
+   curr_.pos = curr_.iter->code.size() - 1;
    return Advance(1);
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::SkipCharLiteral(size_t pos) const
+void SourceCode::SkipCharLiteral(SourceLoc& loc)
 {
-   Debug::ft("Lexer.SkipCharLiteral");
+   Debug::ft("SourceCode.SkipCharLiteral");
 
    //  The literal ends at the next non-escaped occurrence of an apostrophe.
    //
-   while(++pos < size_)
+   for(loc.NextChar(); loc.iter != source_.end(); loc.NextChar())
    {
-      auto c = (*source_)[pos];
-      if(c == APOSTROPHE) return pos;
-      if(c == BACKSLASH) ++pos;
+      auto c = loc.iter->code[loc.pos];
+      if(c == APOSTROPHE) return;
+      if(c == BACKSLASH) loc.NextChar();
    }
 
-   return string::npos;
+   loc = End(loc);
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
+void SourceCode::SkipStrLiteral(SourceLoc& loc, bool& fragmented)
 {
-   Debug::ft("Lexer.SkipStrLiteral");
+   Debug::ft("SourceCode.SkipStrLiteral");
 
    //  The literal ends at the next non-escaped occurrence of a quotation mark,
    //  unless it is followed by spaces and endlines, and then another quotation
    //  mark that continues the literal.
    //
-   size_t next;
-
-   while(++pos < size_)
+   for(loc.NextChar(); loc.iter != source_.end(); loc.NextChar())
    {
-      auto c = (*source_)[pos];
+      auto c = loc.iter->code[loc.pos];
 
       switch(c)
       {
       case QUOTE:
-         next = NextPos(pos + 1);
-         if(next == string::npos) return pos;
-         if((*source_)[next] != QUOTE) return pos;
+      {
+         auto next = NextPos(loc, 1);
+         if(next.iter == source_.end()) return;
+         if(next.iter->code[next.pos] != QUOTE) return;
          fragmented = true;
-         pos = next;
+         loc = next;
          break;
+      }
       case BACKSLASH:
-         ++pos;
+         loc.NextChar();
       }
    }
 
-   return string::npos;
+   End(loc);
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::SkipTemplateSpec(size_t pos) const
+SourceLoc SourceCode::SkipTemplateSpec(SourceLoc loc)
 {
-   Debug::ft("Lexer.SkipTemplateSpec");
+   Debug::ft("SourceCode.SkipTemplateSpec");
 
-   if(pos >= size_) return string::npos;
+   if(loc.iter == source_.end()) return loc;
 
    //  Extract the template specification, which must begin with a '<', end
    //  with a balanced '>', and contain identifiers or template punctuation.
    //
-   auto c = (*source_)[pos];
-   if(c != '<') return string::npos;
-   ++pos;
+   auto c = loc.iter->code[loc.pos];
+   if(c != '<') return End();
+   loc.NextChar();
 
    size_t depth;
 
-   for(depth = 1; ((pos < size_) && (depth > 0)); ++pos)
+   for(depth = 1; ((loc.iter != source_.end()) && (depth > 0)); loc.NextChar())
    {
-      c = (*source_)[pos];
-      if(ValidTemplateSpecChars.find(c) == string::npos) return string::npos;
+      c = loc.iter->code[loc.pos];
+
+      if(ValidTemplateSpecChars.find(c) == string::npos)
+      {
+         return End();
+      }
 
       if(c == '>')
          --depth;
@@ -1867,20 +2348,22 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
          ++depth;
    }
 
-   if(depth != 0) return string::npos;
-   return --pos;
+   if(depth != 0) return End();
+   loc.PrevChar();
+   return loc;
 }
 
 //------------------------------------------------------------------------------
 
-bool Lexer::ThisCharIs(char c)
+bool SourceCode::ThisCharIs(char c)
 {
-   Debug::ft("Lexer.ThisCharIs");
+   Debug::ft("SourceCode.ThisCharIs");
 
    //  If the next character is C, advance to the character that follows it.
    //
-   if((curr_ >= size_) || ((*source_)[curr_] != c)) return false;
-   ++curr_;
+   if(curr_.iter == source_.end()) return false;
+   if(curr_.iter->code[curr_.pos] != c) return false;
+   curr_.NextChar();
    return true;
 }
 }

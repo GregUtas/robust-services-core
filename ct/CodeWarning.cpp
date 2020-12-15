@@ -383,6 +383,21 @@ void CodeWarning::GetWarnings
 
 //------------------------------------------------------------------------------
 
+bool CodeWarning::HasWarning(const CodeFile* file, Warning warning)
+{
+   for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
+   {
+      if(w->file_ == file)
+      {
+         if((warning == AllWarnings) || (w->warning_ == warning)) return true;
+      }
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 void CodeWarning::Initialize()
 {
    Debug::ft("CodeWarning.Initialize");

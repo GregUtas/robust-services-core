@@ -285,7 +285,7 @@ void Parser::Enter(SourceType source, const string& venue,
    inst_ = inst;
    farthest_ = 0;
    cause_ = 0;
-   lexer_.Initialize(&code);
+   lexer_.Initialize(code);
    if(preprocess) lexer_.PreprocessSource();
 }
 

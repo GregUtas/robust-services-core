@@ -22,13 +22,14 @@
 #ifndef EDITOR_H_INCLUDED
 #define EDITOR_H_INCLUDED
 
+#include "Base.h"
 #include <cstddef>
-#include <list>
 #include <string>
 #include <vector>
 #include "CodeTypes.h"
 #include "CodeWarning.h"
 #include "CxxFwd.h"
+#include "SourceCode.h"
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -62,14 +63,12 @@ namespace CodeTools
 //  <usings>          using statements
 //  <code>            declarations and/or definitions
 //
-class Editor
+class Editor : public NodeBase::Base
 {
 public:
-   //  Creates an editor for the source code in FILE, whose code and
-   //  warnings are loaded.  If the code couldn't be loaded, EXPL is
-   //  updated with an explanation.
+   //  Creates an editor for FILE, whose code and warnings are loaded
    //
-   Editor(const CodeFile* file, std::string& expl);
+   explicit Editor(const CodeFile& file);
 
    //  Not subclassed.
    //
@@ -96,7 +95,16 @@ public:
    //
    CodeWarning* FindLog
       (const CodeWarning& log, const CxxNamed* item, word offset);
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
+   //  Accesses the source code.
+   //
+   SourceList& Code() { return source_.GetSource(); }
+
    //  Writes out the editor's file.  Returns 0 if the file was successfully
    //  written; other values indicate failure.  Updates EXPL with a reason
    //  for any failure or a message that indicates which file was written.
@@ -238,177 +246,123 @@ private:
    //
    word EraseEmptySeparators();
 
-   //  Stores a line of code.
-   //
-   struct SourceLine
-   {
-      SourceLine(const string& code, size_t line) : line(line), code(code) { }
-
-      //  The code's line number (the first line is 0, the same as CodeWarning
-      //  and Lexer).  A line added by the editor has a line number of SIZE_MAX.
-      //
-      const size_t line;
-
-      //  The code.
-      //
-      string code;
-   };
-
-   //  The code is kept in a list.
-   //
-   typedef std::list< SourceLine > SourceList;
-
-   //  Iterator for the source code.  This is an editor, so it doesn't bother
-   //  with const iterators.
-   //
-   typedef std::list< SourceLine >::iterator Iter;
-
-   //  Identifies a line of code and a position within that line.
-   //
-   struct CodeLocation
-   {
-      Iter iter;   // location in SourceList
-      size_t pos;  // position in iter->code
-
-      explicit CodeLocation(const Iter& i) : iter(i), pos(string::npos) { }
-
-      CodeLocation(const Iter& i, size_t p) : iter(i), pos(p) { }
-   };
-
    //  Returns the source code.
    //
-   const SourceList& Source() const { return source_; }
-
-   //  Returns the position after CURR.
-   //
-   CodeLocation NextPos(const CodeLocation& curr);
-
-   //  Returns the position before CURR.
-   //
-   CodeLocation PrevPos(const CodeLocation& curr);
+   const SourceList& Source() { return source_.GetSource(); }
 
    //  Returns the type of line referenced by ITER.
    //
-   LineType GetLineType(const Iter& iter) const;
-
-   //  Reads in the file's source code.  Returns 0 on success.  Any other
-   //  result indicates that the code could not be read, in which case EXPL
-   //  is updated with an explanation.
-   //
-   word GetCode(std::string& expl);
-
-   //  Adds a line of source code from the file.  NEVER used to add new code.
-   //
-   void PushBack(const string& code);
+   LineType GetLineType(const SourceIter& iter) const;
 
    //  Returns the location of LINE.  Returns source_.end() if LINE is
    //  not found.
    //
-   Iter FindLine(size_t line);
+   SourceIter FindLine(size_t line);
 
    //  Returns the location of LINE.  If LINE is not found, sets EXPL to
    //  an error message and returns source_.end().
    //
-   Iter FindLine(size_t line, string& expl);
+   SourceIter FindLine(size_t line, string& expl);
 
    //  Converts POS in the original source code to a line number and
    //  and offset.
    //
-   CodeLocation FindPos(size_t pos);
+   SourceLoc FindPos(size_t pos);
 
    //  Looks for STR starting at iter->code[off].  If STR is found, returns
    //  its location, else returns {source_.end(), string::npos}.
    //
-   CodeLocation Find(Iter iter, const string& str, size_t off = 0);
+   SourceLoc Find(SourceIter iter, const string& str, size_t off = 0);
 
    //  The same as Find(iter, s, off), but searches backwards.
    //
-   CodeLocation Rfind(Iter iter, const string& str, size_t off = string::npos);
+   SourceLoc Rfind
+      (SourceIter iter, const string& str, size_t off = string::npos);
 
    //  Returns the location of ID, starting at iter->code[pos].  Returns
    //  {source_.end(), string::npos} if ID was not found.  ID must be an
    //  identifier or keyword that is delimited by punctuation.  The search
    //  spans RANGE lines; if RANGE is nullptr, only one line is searched.
    //
-   CodeLocation FindWord
-      (Iter iter, size_t pos, const string& id, size_t* range = nullptr);
+   SourceLoc FindWord
+      (SourceIter iter, size_t pos, const string& id, size_t* range = nullptr);
 
    //  Returns the location of the first non-blank character starting at
    //  iter->code[pos].  Returns {source_.end(), string::npos} if no such
    //  character was found.
    //
-   CodeLocation FindNonBlank(Iter iter, size_t pos);
+   SourceLoc FindNonBlank(SourceIter iter, size_t pos);
 
    //  Returns the location of the first non-blank character starting at
    //  iter->code[pos], reversing.  Returns {source_.end(), string::npos}
    //  if no such character was found.
    //
-   CodeLocation RfindNonBlank(Iter iter, size_t pos);
+   SourceLoc RfindNonBlank(SourceIter iter, size_t pos);
 
    //  Returns the first occurrence of a character in CHARS, starting at
    //  iter->code[off].  Returns {source_.end(), string::npos} if none
    //  of those characters was found.
    //
-   CodeLocation FindFirstOf(Iter iter, size_t off, const string& chars);
+   SourceLoc FindFirstOf(SourceIter iter, size_t off, const string& chars);
 
    //  Returns the location of the right parenthesis after a function's
    //  argument list.  Returns {source_.end(), string::npos} on failure.
    //
-   CodeLocation FindArgsEnd(const Function* func);
+   SourceLoc FindArgsEnd(const Function* func);
 
    //  Returns the location of the semicolon after a function's declaration
    //  or the left brace that begins its definition.  Returns {source_.end(),
    //  string::npos} on failure.
    //
-   CodeLocation FindSigEnd(const CodeWarning& log);
-   CodeLocation FindSigEnd(const Function* func);
+   SourceLoc FindSigEnd(const CodeWarning& log);
+   SourceLoc FindSigEnd(const Function* func);
 
    //  Returns the line that follows FUNC.
    //
-   Iter LineAfterFunc(const Function* func);
+   SourceIter LineAfterFunc(const Function* func);
 
    //  Inserts CODE at ITER and returns its location.
    //
-   Iter Insert(const Iter& iter, const string& code);
+   SourceIter Insert(const SourceIter& iter, string code);
 
    //  Inserts PREFIX on the line identified by ITER, starting at POS.  The
    //  prefix replaces blanks but leaves at least one space between it and
    //  the first non-blank character on the line.
    //
-   void InsertPrefix(const Iter& iter, size_t pos, const string& prefix);
+   void InsertPrefix(const SourceIter& iter, size_t pos, const string& prefix);
 
    //  Inserts a line break before POS, indents the new line accordingly,
    //  and returns the location of the first non-blank character on the new
    //  line.  Returns {iter, pos} if a line break was not inserted because
    //  the new line would have been empty.
    //
-   CodeLocation InsertLineBreak(const Iter& iter, size_t pos);
+   SourceLoc InsertLineBreak(const SourceIter& iter, size_t pos);
 
    //  Deletes the line break at the end of the line referenced by CURR if
    //  the following line will also fit within LineLengthMax.  Returns true
    //  if the line break was deleted.
    //
-   bool EraseLineBreak(const Iter& curr);
+   bool EraseLineBreak(const SourceIter& curr);
 
    //  Returns the location where the special member function required to
    //  fix LOG should be inserted.  Updates ATTRS to specify whether the
    //  function should be offset with a blank line and, if so, commented.
    //
-   Iter FindSpecialFuncLoc(const CodeWarning& log, FuncDeclAttrs& attrs);
+   SourceIter FindSpecialFuncLoc(const CodeWarning& log, FuncDeclAttrs& attrs);
 
    //  Returns the location where the function CLS::NAME should be declared.
    //  Returns source_.end() if the user decides not to insert the function.
    //  Updates ATTRS if the function should be commented and/or offset with
    //  a blank line.
    //
-   Iter FindFuncDeclLoc
+   SourceIter FindFuncDeclLoc
       (const Class* cls, const string& name, FuncDeclAttrs& attrs);
 
    //  Returns the location where a new function declaration should be added
    //  after PREV and/or before NEXT.  Updates ATTRS if the function should
    //  be offset with a blank and/or commented.
    //
-   Iter UpdateFuncDeclLoc
+   SourceIter UpdateFuncDeclLoc
       (const Function* prev, const Function* next, FuncDeclAttrs& attrs);
 
    //  Updates ATTRS based on FUNC.
@@ -424,14 +378,14 @@ private:
    //  Updates ATTRS if the function should be offset with a rule and/or a
    //  blank line.
    //
-   Iter FindFuncDefnLoc(const CodeFile* file, const Class* cls,
+   SourceIter FindFuncDefnLoc(const CodeFile* file, const Class* cls,
       const string& name, string& expl, FuncDefnAttrs& attrs);
 
    //  Returns the location where a new function definition should be added
    //  after PREV and/or before NEXT.  Updates ATTRS if the function should
    //  be offset with a rule and/or a blank line.
    //
-   Iter UpdateFuncDefnLoc
+   SourceIter UpdateFuncDefnLoc
       (const Function* prev, const Function* next, FuncDefnAttrs& attrs);
 
    //  Updates ATTRS based on FUNC.
@@ -440,44 +394,44 @@ private:
 
    //  Inserts the declaration for a Patch override at ITER.
    //
-   void InsertPatchDecl(Iter& iter, const FuncDeclAttrs& attrs);
+   void InsertPatchDecl(SourceIter& iter, const FuncDeclAttrs& attrs);
 
    //  Inserts the definition for a Patch override in CLS at ITER.
    //
    void InsertPatchDefn
-      (Iter& iter, const Class* cls, const FuncDefnAttrs& attrs);
+      (SourceIter& iter, const Class* cls, const FuncDefnAttrs& attrs);
 
    //  Returns the first line that follows comments and blanks.
    //
-   Iter PrologEnd();
+   SourceIter PrologEnd();
 
    //  Returns the location of the first #include.  Returns source_.end() if
    //  no #include was found.
    //
-   Iter IncludesBegin();
+   SourceIter IncludesBegin();
 
    //  Returns the location of the statement that follows the last #include.
    //  Returns source_.end() if the last line was an #include.
    //
-   Iter IncludesEnd();
+   SourceIter IncludesEnd();
 
    //  Find the first line of code (other than #include directives, forward
    //  declarations, and using statements).  Moves up past any comments that
    //  precede this point, and returns the position where these comments
    //  begin.
    //
-   Iter CodeBegin();
+   SourceIter CodeBegin();
 
    //  Returns true if the code referenced by ITER is followed by more code,
    //  without an intervening comment or right brace.
    //
-   const bool CodeFollowsImmediately(const Iter& iter) const;
+   const bool CodeFollowsImmediately(const SourceIter& iter);
 
    //  Returns the start of any comments that precede ITER, including an
    //  fn_name definition if funcName is set.  Returns ITER if it is not
    //  preceded by any such items.
    //
-   Iter IntroStart(const Iter& iter, bool funcName);
+   SourceIter IntroStart(const SourceIter& iter, bool funcName);
 
    //  If INCLUDE specifies a file in groups 1 to 4 (see CodeFile.CalcGroup),
    //  this simplifies sorting by replacing the characters that enclose the
@@ -491,18 +445,19 @@ private:
 
    //  Inserts a FORWARD declaration at ITER.
    //
-   word InsertForward(const Iter& iter, const string& forward, string& expl);
+   word InsertForward
+      (const SourceIter& iter, const string& forward, string& expl);
 
    //  Inserts a FORWARD declaration at ITER.  It is the first declaration in
    //  namespace NSPACE, so it must be enclosed in a new namespace scope.
    //
-   word InsertNamespaceForward(const Iter& iter,
+   word InsertNamespaceForward(const SourceIter& iter,
       const string& nspace, const string& forward, string& expl);
 
    //  Invoked after removing a forward declaration.  If the declaration was
    //  in a namespace that is now empty, erases the "namespace <name> { }".
    //
-   word EraseEmptyNamespace(const Iter& iter);
+   word EraseEmptyNamespace(const SourceIter& iter);
 
    //  Returns the items within ITEM that were accessed via a using statement.
    //
@@ -520,9 +475,15 @@ private:
    //  just inserted to create a new line.  Returns the new position of the
    //  first non-blank character.
    //
-   size_t Indent(const Iter& iter, bool split);
+   size_t Indent(const SourceIter& iter, bool split);
 
-   //  Supplies the code for a Debug::Ft fn_name definition and invocation.
+   //  Supplies the code for a Debug::Ft invocation with an inline string
+   //  literal for the function's name.
+   //
+   void DebugFtCode(const Function* func, std::string& call) const;
+
+   //  Supplies the code for a Debug::Ft invocation with a separate fn_name
+   //  definition for the function's name.
    //
    void DebugFtCode
       (const Function* func, std::string& defn, std::string& call) const;
@@ -533,7 +494,7 @@ private:
 
    //  Sets EXPL to iter->code, adds the editor to Editors_, and returns 0.
    //
-   word Changed(const Iter& iter, std::string& expl);
+   word Changed(const SourceIter& iter, std::string& expl);
 
    //  Comparison function for sorting #include directives.
    //
@@ -543,18 +504,9 @@ private:
    //
    const CodeFile* const file_;
 
-   //  The number of lines read so far.
-   //
-   size_t line_;
-
    //  The source code.
    //
-   SourceList source_;
-
-   //  The result of reading the source code.  A non-zero value
-   //  indicates that an error occurred when reading the code.
-   //
-   word read_;
+   SourceCode source_;
 
    //  Set if the #include directives have been sorted.
    //

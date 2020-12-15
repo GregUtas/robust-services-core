@@ -1404,8 +1404,8 @@ bool DataSpec::MatchesExactly(const TypeSpec* that) const
 
 //------------------------------------------------------------------------------
 
-TypeMatch DataSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
-   stringVector& tmpltArgs, bool& argFound) const
+TypeMatch DataSpec::MatchTemplate(const TypeSpec* that,
+   stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const
 {
    Debug::ft("DataSpec.MatchTemplate");
 
@@ -2397,7 +2397,7 @@ void QualName::SetReferentN
 
 //------------------------------------------------------------------------------
 
-void QualName::SetTemplateArgs(const TemplateParms* tparms)
+void QualName::SetTemplateArgs(const TemplateParms* tparms) const
 {
    Debug::ft("QualName.SetTemplateArgs");
 
@@ -3398,8 +3398,8 @@ bool TypeSpec::MatchesExactly(const TypeSpec* that) const
 
 //------------------------------------------------------------------------------
 
-TypeMatch TypeSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
-   stringVector& tmpltArgs, bool& argFound) const
+TypeMatch TypeSpec::MatchTemplate(const TypeSpec* that,
+   stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "MatchTemplate", 0);
    return Incompatible;

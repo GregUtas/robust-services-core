@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  Lexer.h
+//  SourceCode.h
 //
 //  Copyright (C) 2013-2020  Greg Utas
 //
@@ -19,13 +19,15 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef LEXER_H_INCLUDED
-#define LEXER_H_INCLUDED
+#ifndef SOURCECODE_H_INCLUDED
+#define SOURCECODE_H_INCLUDED
 
+#include "Base.h"
 #include <cstddef>
 #include <cstdint>
+#include <iosfwd>
+#include <list>
 #include <string>
-#include <vector>
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
@@ -35,97 +37,263 @@
 
 namespace CodeTools
 {
-class Lexer
+//  Information about a line of code.  This duplicates data found in CodeFile
+//  (.code and .type) and Lexer (.depth and .cont, with .line being derivable).
+//
+struct SourceLine
+{
+   SourceLine(const std::string& source, size_t seqno);
+
+   void Display(std::ostream& stream) const;
+
+   //  The code.
+   //
+   std::string code;
+
+   //  The code's line number (the first line is 0, the same as elsewhere).
+   //  A line added during editing has a line number of SIZE_MAX.
+   //
+   const size_t line;
+
+   //  The line's lexical level for indentation.
+   //
+   int8_t depth;
+
+   //  Set if the code continued from the previous line.
+   //
+   bool cont;
+
+   //  The line's type.
+   //
+   LineType type;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Source code is kept in a list.
+//
+typedef std::list< SourceLine > SourceList;
+
+//  For iterating over lines of code.
+//
+typedef std::list< SourceLine >::iterator SourceIter;
+
+//------------------------------------------------------------------------------
+//
+//  For iterating over code: a line of code and a position within that line.
+//
+struct SourceLoc
+{
+   SourceIter iter;  // location in SourceList
+   size_t pos;       // position in iter->code
+
+   explicit SourceLoc(const SourceIter& i) : iter(i), pos(0) { }
+
+   SourceLoc(const SourceIter& i, size_t p) : iter(i), pos(p) { }
+
+   SourceLoc(const SourceLoc& that) = default;
+
+   SourceLoc& operator=(const SourceLoc& that) = default;
+
+   bool operator==(const SourceLoc& that) const
+   {
+      return ((this->iter == that.iter) && (this->pos == that.pos));
+   }
+
+   bool operator!=(const SourceLoc& that) const
+   {
+      return !(*this == that);
+   }
+
+   SourceLoc& NextChar()  // equivalent to operator++
+   {
+      if(++pos < iter->code.size()) return *this;
+      ++iter;
+      pos = 0;
+      return *this;
+   }
+
+   SourceLoc& NextLine()
+   {
+      ++iter;
+      pos = 0;
+      return *this;
+   }
+
+   SourceLoc& PrevChar()  // equivalent to operator--
+   {
+      if(pos > 0)
+      {
+         --pos;
+         return *this;
+      }
+
+      --iter;
+      pos = iter->code.size() - 1;
+      return *this;
+   }
+
+   //  Returns the last non-whitespace character in iter->code.  Returns
+   //  NUL if there is no non-whitespace character.
+   //
+   char LastChar() const;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Source code.  Unlike CodeFile and Lexer, which use a single string with
+//  embedded blanks to store a file's code, this breaks the code into lines for
+//  ease of editing.  The original idea was replace Lexer with this class, but
+//  it quickly became clear that this would significantly degrade performance
+//  by replacing the single string's size_t iterator with SourceLoc.
+//
+//  To support Editor, this class provides all the functions of Lexer except
+//  Lexer.FindCode.  It also provides CodeFile's functions for determining the
+//  LineType for a line of code.  The goal is to keep it synched with changes
+//  to Lexer and CodeFile's LineType code.
+//
+//  Only the following functions in this class have been tested:
+//  o Initialize
+//  o CalcDepths
+//  o ClassifyLines
+//  o functions invoked by Editor
+//  o functions invoked transitively by any of the above
+//
+//  The code was imported from Lexer and then modified, primarily to replace
+//  string's size_t iterator with SourceLoc.  Editor was also modified to use
+//  this class to store and edit its code: this made various Editor functions
+//  static, and so they were moved to this class, where their declarations
+//  follow those that correspond to Lexer functions.
+//
+class SourceCode : public NodeBase::Base
 {
 public:
    //  Initializes all fields to default values.
    //
-   Lexer();
+   SourceCode();
 
    //  Not subclassed.
    //
-   ~Lexer() = default;
+   ~SourceCode() = default;
 
-   //  Initializes the lexer to assist with parsing SOURCE and invokes
-   //  Advance() to position curr_ at the first valid parse position.
+   //  Classifies all lines of code.
    //
-   void Initialize(const std::string& source);
+   void ClassifyLines();
+
+   //  Classifies the Nth line of code and looks for some warnings.
+   //  Sets CONT if a line of code continues on the next line.
+   //
+   LineType ClassifyLine(size_t n, bool& cont);
+
+   //  Classifies a line of code (S) and updates WARNINGS with any warnings
+   //  that were found.  Sets CONT for a line of code that does not end in
+   //  a semicolon.
+   //
+   static LineType ClassifyLine
+      (std::string s, bool& cont, std::set< Warning >& warnings);
+
+   //  Returns a reference to the start of the first line of code.
+   //
+   SourceLoc FirstLine() { return SourceLoc(source_.begin()); }
+
+   //  Reads FILE's code and invokes Advance() to position curr_ at the first
+   //  valid parse position.  Returns false if the code could not be read.
+   //
+   bool Initialize(const CodeFile& file);
 
    //  Returns the character at POS.
    //
-   char At(size_t pos) const { return (*source_)[pos]; }
+   char At(const SourceLoc& loc) const { return loc.iter->code[loc.pos]; }
 
    //  Returns the number of lines in source_.
    //
-   size_t LineCount() const { return lines_; }
+   size_t LineCount() const { return source_.size(); }
 
-   //  Returns the line number on which POS occurs.  Returns string::npos
-   //  if POS is out of range.
+   //  Returns the line number on which LOC occurs.  Returns string::npos
+   //  if LOC is out of range.
    //
    //  NOTE: Internally, line numbers start at 0.  When a line number is to
    //  ====  be displayed, it must be incremented.  Similarly, a line number
    //        obtained externally (e.g. via the CLI) must be decremented.
    //
-   size_t GetLineNum(size_t pos) const;
+   size_t GetLineNum(const SourceLoc& loc);
 
    //  Returns the position of the first character in LINE.
    //
-   size_t GetLineStart(size_t line) const;
+   SourceLoc GetLineStart(size_t line);
 
-   //  Returns the line that includes POS, with a '$' inserted after POS.
+   //  Returns the line that includes LOC, with a '$' inserted after LOC.POS.
    //
-   std::string GetLine(size_t pos) const;
+   std::string GetLine(const SourceLoc& loc);
 
    //  Sets S to the string for the Nth line of code, excluding the endline,
    //  or EMPTY_STR if N was out of range.  Returns true if N was valid.
    //
-   bool GetNthLine(size_t n, std::string& s) const;
+   bool GetNthLine(size_t n, std::string& s);
 
    //  Returns the string for the Nth line of code.  Returns EMPTY_STR if N
    //  is out of range.
    //
-   std::string GetNthLine(size_t n) const;
+   std::string GetNthLine(size_t n);
 
-   //  Returns a string containing the next COUNT characters, starting at POS.
+   //  Returns the LineType for line N.  Returns LineType_N if N is out
+   //  of range.
+   //
+   LineType GetLineType(size_t n) const;
+
+   //  Returns a string containing the next COUNT characters, starting at LOC.
    //  Converts endlines to blanks and compresses adjacent blanks.
    //
-   std::string Extract(size_t pos, size_t count) const;
+   std::string Extract(const SourceLoc& loc, size_t count);
+
+   //  Returns a string containing the characters from BEGIN to END.
+   //
+   std::string Extract(const SourceLoc& begin, const SourceLoc& end);
 
    //  Returns the current parse position.
    //
    //  NOTE: Unless stated otherwise, a non-const Lexer function advances
    //  ====  curr_ to the first parse position after what was extracted.
    //
-   size_t Curr() const { return curr_; }
+   SourceLoc Curr() const { return curr_; }
 
    //  Returns the previous parse position.  Typically used to obtain the
    //  location where the last successful parse began.
    //
-   size_t Prev() const { return prev_; }
+   SourceLoc Prev() const { return prev_; }
 
    //  Returns true if curr_ has reached the end of source_.
    //
-   bool Eof() const { return curr_ >= size_; }
+   bool Eof() const { return curr_.iter == source_.end(); }
 
    //  Sets prev_ to curr_, finds the first parse position starting there,
    //  and returns true.
    //
    bool Advance();
 
-   //  Sets prev_ to curr_ + incr, finds the first parse position starting
+   //  Sets prev_ to curr_ + INCR, finds the first parse position starting
    //  there, and returns true.
    //
    bool Advance(size_t incr);
 
-   //  Sets prev_ to POS, finds the first parse position starting there, and
-   //  returns true.
+   //  Sets prev_ to LOC, finds the first parse position starting there,
+   //  and returns true.
    //
-   bool Reposition(size_t pos);
+   bool Reposition(const SourceLoc& loc);
 
-   //  Sets prev_ and curr_ to POS and returns false.  Used for backing up
+   //  Sets prev_ to LOC + INCR, finds the first parse position starting
+   //  there, and returns true.
+   //
+   bool Reposition(const SourceLoc& loc, size_t incr);
+
+   //  Repositions curr_ to the beginning of the source code.
+   //
+   void Reset();
+
+   //  Sets prev_ and curr_ to LOC and returns false.  Used for backing up
    //  to a position that is known to be valid and trying another parse.
    //
-   bool Retreat(size_t pos);
+   bool Retreat(const SourceLoc& loc);
 
    //  Skips the current line and moves to the first parse position starting
    //  with the next line.  Returns true.
@@ -134,12 +302,12 @@ public:
 
    //  Returns the character at curr_.
    //
-   char CurrChar() const { return (*source_)[curr_]; }
+   char CurrChar() const { return (*curr_.iter).code[curr_.pos]; }
 
    //  Returns curr_ and sets C to the character at that position.  Returns
-   //  string::npos if curr_ is out of range.
+   //  End() if curr_ is out of range.
    //
-   size_t CurrChar(char& c) const;
+   SourceLoc CurrChar(char& c);
 
    //  Returns true and advances curr_ if the character at curr_ matches C.
    //
@@ -160,32 +328,32 @@ public:
    //
    bool NextStringIs(NodeBase::fixed_string str, bool check = true);
 
-   //  Returns the location where the line containing POS ends.  This is the
+   //  Returns the location where the line containing LOC ends.  This is the
    //  location of the next CRLF that is not preceded by a '\'.
    //
-   size_t FindLineEnd(size_t pos) const;
+   SourceLoc FindLineEnd(SourceLoc loc);
 
    //  Until the next #define is reached, look for #defined symbols that map to
    //  empty strings and erase them so that they will not cause parsing errors.
    //
-   void PreprocessSource() const;
+   void PreprocessSource();
 
    //  Returns the next identifier (which could be a keyword).  The first
    //  character not allowed in an identifier finalizes the string.
    //
-   std::string NextIdentifier() const;
+   std::string NextIdentifier();
 
    //  Sets STR to the next preprocessor directive and returns its enum
    //  constant.  Returns NIL_DIRECTIVE if a directive wasn't found, but
    //  nonetheless sets STR to any identifier that was found.
    //
-   Cxx::Directive NextDirective(std::string& str) const;
+   Cxx::Directive NextDirective(std::string& str);
 
    //  Sets STR to the next keyword and returns its enum constant.  Returns
    //  NIL_KEYWORD if a keyword wasn't next, but nonetheless sets STR to any
    //  identifier that was found.
    //
-   Cxx::Keyword NextKeyword(std::string& str) const;
+   Cxx::Keyword NextKeyword(std::string& str);
 
    //  Updates TAGS with the next series of keywords that appear in a data
    //  declaration.  Stops when a non-keyword is reached.
@@ -208,23 +376,24 @@ public:
 
    //  Returns the next operator (punctuation only).
    //
-   std::string NextOperator() const;
+   std::string NextOperator();
 
-   //  Starts at POS and searches for a right-hand character (RHC) that matches
-   //  a left-hand one (LHC) that was just found (e.g. (), [], {}, <>).  If POS
-   //  is not provided, POS is set to curr_.  For each LHC that is found, an
+   //  Starts at LOC and searches for a right-hand character (RHC) that matches
+   //  a left-hand one (LHC) that was just found (e.g. (), [], {}, <>).  If LOC
+   //  is not provided, LOC is set to curr_.  For each LHC that is found, an
    //  additional RHC must be found.  Returns the position where the matching
-   //  RHC was found, else string::npos.
+   //  RHC was found, else End().
    //
-   size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
+   SourceLoc FindClosing(char lhc, char rhc, SourceLoc loc);
+   SourceLoc FindClosing(char lhc, char rhc);
 
-   //  Searches for the next occurrence of a character in TARGS.  Returns the
-   //  position of the first character that was found, else string::npos.  The
+   //  Searches for the next occurrence of a character in TARGS.  Returns
+   //  the position of the first character that was found, else End().  The
    //  character must be at the same lexical level, meaning that when any of
    //  { ( [ < " ' are encountered, the parse skips to the closing } ) ] > " '
    //  (if, in the case of '<', a <...> pair enclose a template specification).
    //
-   size_t FindFirstOf(const std::string& targs) const;
+   SourceLoc FindFirstOf(const std::string& targs);
 
    //  Returns true and sets SPEC to the template specification that follows
    //  the name of a template instance.
@@ -296,16 +465,13 @@ public:
    //
    TagCount GetIndirectionLevel(char c, bool& space);
 
-   //  POS is the start of a line.  If the line is an #include directive, sets
-   //  FILE to the included filename, sets ANGLE if FILE appeared within angle
-   //  brackets, and returns true.
+   //  Looks for the next #include directive starting at LOC.  If one is found,
+   //  sets FILE to the included filename, sets ANGLE if FILE appeared within
+   //  angle brackets, advances LOC to the following line, and returns true.
+   //  Returns false if no #include directive was found, in which LOC will be
+   //  End().
    //
-   bool GetIncludeFile(size_t pos, std::string& file, bool& angle) const;
-
-   //  Advances to where compilation should continue after OPT.  If COMPILE is
-   //  set, the code following OPT is to be compiled, else it is to be skipped.
-   //
-   void FindCode(OptionalCode* opt, bool compile);
+   bool GetIncludeFile(SourceLoc loc, std::string& file, bool& angle);
 
    //  Advances curr_ to the start of the next identifier, which is supplied
    //  in ID.  The identifier could be a keyword or preprocessor directive.
@@ -316,50 +482,82 @@ public:
    //
    bool FindIdentifier(std::string& id, bool tokenize);
 
-   //  Scans the code to determine lexical levels for indentation.
+   //  Calculates the lexical level for each line of code.
    //
    void CalcDepths();
 
    //  Returns the DEPTH of indentation for a line.  Sets CONT if the line
    //  continues a previous line.
    //
-   void GetDepth(size_t line, int8_t& depth, bool& cont) const;
+   void GetDepth(size_t line, int8_t& depth, bool& cont);
+
+   /////////////////////////////////////////////////////////////////////////////
+   //
+   //  End of Lexer and CodeFile functions.  Start of functions used by Editor.
+   //
+   /////////////////////////////////////////////////////////////////////////////
+
+   //  Provides access to the code.
+   //
+   SourceList& GetSource() { return source_; }
+
+   //  Returns the end of source_.
+   //
+   SourceLoc End();
+
+   //  Sets LOC to the end of source and returns it.
+   //
+   SourceLoc& End(SourceLoc& loc);
+
+   //  Returns LOC after updating it to the next character.
+   //
+   SourceLoc& Next(SourceLoc& loc);
+
+   //  Returns LOC after updating it to the previous character.
+   //
+   SourceLoc& Prev(SourceLoc& loc);
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
    //  Used by PreprocessSource, which creates a clone of "this" lexer to
    //  do the work.
    //
    void Preprocess();
 
-   //  Returns the position of the next character to parse, starting at POS.
-   //  The result is POS unless characters are skipped (namely whitespace,
-   //  comments, and character and string literals).  Returns string::npos
-   //  if the end of source_ is reached.
+   //  Returns the position of the next character to parse, starting at START.
+   //  The result is START unless characters are skipped (namely whitespace,
+   //  comments, and character and string literals).  If SKIP is provided, the
+   //  search begins at START plus SKIP characters.
    //
-   size_t NextPos(size_t pos) const;
+   SourceLoc NextPos(const SourceLoc& start);
+   SourceLoc NextPos(const SourceLoc& start, size_t skip);
 
    //  Returns the next token.  This is a non-empty string from NextIdentifier
    //  or, failing that, a sequence of valid operator characters.  The first
    //  character not allowed in an identifier (or an operator) finalizes the
    //  string.
    //
-   std::string NextToken() const;
+   std::string NextToken();
 
-   //  Advances over the literal that begins at POS.  Returns the position of
-   //  the character that closes the literal.
+   //  Advances over the literal that begins at LOC.  Updates LOC to the
+   //  position of the character that closes the literal.
    //
-   size_t SkipCharLiteral(size_t pos) const;
+   void SkipCharLiteral(SourceLoc& loc);
 
-   //  Advances over the literal that begins at POS.  Returns the position of
-   //  the character that closes the literal.  Sets FRAGMENTED if the string
-   //  is of the form ("<string>"<whitespace>)*"<string>".
+   //  Advances over the literal that begins at LOC.  Updates LOC to the
+   //  position of the character that closes the literal.  Sets FRAGMENTED
+   //  if the string is of the form ("<string>"<whitespace>)*"<string>".
    //
-   size_t SkipStrLiteral(size_t pos, bool& fragmented) const;
+   void SkipStrLiteral(SourceLoc& loc, bool& fragmented);
 
-   //  POS is the location of a '<'.  If a template specification follows,
+   //  LOC is the location of a '<'.  If a template specification follows,
    //  returns the location of the '>' at the end of the specification, else
-   //  returns string::npos.
+   //  returns the end of the source.
    //
-   size_t SkipTemplateSpec(size_t pos) const;
+   SourceLoc SkipTemplateSpec(SourceLoc loc);
 
    //  Parses an integer literal and returns it in NUM.  Returns the number
    //  of digits in NUM (zero if no literal was found).
@@ -398,53 +596,41 @@ private:
    //  line in the range.  Updates START to the next parse position after curr_
    //  before returning.
    //
-   void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
+   void SetDepth(SourceLoc& start, int8_t depth1, int8_t depth2);
 
-   //  Information about a line of source code.
+   //  Returns the position of the last character in source_.
    //
-   struct LineInfo
-   {
-      const size_t start;  // where line starts; it ends at a CRLF
-      int8_t depth;        // lexical level for indentation
-      bool cont;           // set if code continues from the previous line
+   SourceLoc LastLoc();
 
-      explicit LineInfo(size_t start) :
-         start(start),
-         depth(DEPTH_NOT_SET),
-         cont(false)
-      {
-      }
-   };
-
-   //  The code being analyzed.
+   //  Searches for STR starting at LOC. Updates LOC to the first location
+   //  after STR if found, else sets it to End().
    //
-   const std::string* source_;
+   void NextAfter(SourceLoc loc, const std::string& str);
 
-   //  The size of source_.
+   //  The source code.
    //
-   size_t size_;
+   SourceList source_;
 
-   //  The number of lines in source_.
+   //  The file, if any, from which the code was taken.
    //
-   size_t lines_;
+   const CodeFile* file_;
 
-   //  Information about each line.
+   //  Set if the code has been scanned.
    //
-   std::vector< LineInfo > line_;
+   bool scanned_;
+
+   //  Set if a /* comment is open during a lexical scan.
+   //
+   bool slashAsterisk_;
 
    //  The current position within source_.
    //
-   size_t curr_;
+   SourceLoc curr_;
 
    //  The location when Advance was invoked (that is, the character
    //  immediately after the last one that was parsed).
    //
-   size_t prev_;
-
-   //  Set if the code has been scanned to determine the indentation level
-   //  for each line.
-   //
-   bool scanned_;
+   SourceLoc prev_;
 };
 }
 #endif

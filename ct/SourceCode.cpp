@@ -1735,19 +1735,6 @@ Cxx::Operator SourceCode::GetPreOp()
 
 //------------------------------------------------------------------------------
 
-Cxx::Operator SourceCode::GetReserved(const string& name)
-{
-   Debug::ft("SourceCode.GetReserved");
-
-   //  See if NAME matches one of a selected group of reserved words.
-   //
-   auto match = Cxx::Reserved->lower_bound(name);
-   if(match != Cxx::Reserved->cend()) return match->second;
-   return Cxx::NIL_OPERATOR;
-}
-
-//------------------------------------------------------------------------------
-
 bool SourceCode::GetTemplateSpec(string& spec)
 {
    Debug::ft("SourceCode.GetTemplateSpec");
@@ -1757,17 +1744,6 @@ bool SourceCode::GetTemplateSpec(string& spec)
    if(end.iter == source_.end()) return false;
    spec = Extract(curr_, end);
    return Advance(spec.size());
-}
-
-//------------------------------------------------------------------------------
-
-Cxx::Type SourceCode::GetType(const string& name)
-{
-   Debug::ft("SourceCode.GetType");
-
-   auto match = Cxx::Types->lower_bound(name);
-   if(match != Cxx::Types->cend()) return match->second;
-   return Cxx::NIL_TYPE;
 }
 
 //------------------------------------------------------------------------------
@@ -2088,7 +2064,7 @@ Cxx::Type SourceCode::NextType()
 
    auto token = NextIdentifier();
    if(token.empty()) return Cxx::NIL_TYPE;
-   auto type = GetType(token);
+   auto type = Cxx::GetType(token);
    if(type != Cxx::NIL_TYPE) Advance(token.size());
    return type;
 }

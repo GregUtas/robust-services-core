@@ -255,16 +255,6 @@ public:
    Cxx::Operator GetCxxOp();
    Cxx::Operator GetPreOp();
 
-   //  Returns the operator associated with NAME.  This is something of a
-   //  hack, used when the item in an expression begins with an alphabetic
-   //  character.
-   //
-   static Cxx::Operator GetReserved(const std::string& name);
-
-   //  Returns the built-in type associated with NAME.
-   //
-   static Cxx::Type GetType(const std::string& name);
-
    //  If the next token is a built-in type that can appear in a compound
    //  type, returns its Cxx::Type  and advances curr_ beyond it.  Returns
    //  Cxx::NIL_TYPE and leaves curr_ unchanged in other cases.

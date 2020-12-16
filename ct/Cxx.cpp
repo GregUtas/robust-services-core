@@ -122,6 +122,30 @@ Cxx::TypesTablePtr Cxx::Types = nullptr;
 
 //------------------------------------------------------------------------------
 
+Cxx::Operator Cxx::GetReserved(const string& name)
+{
+   Debug::ft("Cxx.GetReserved");
+
+   //  See if NAME matches one of a selected group of reserved words.
+   //
+   auto match = Cxx::Reserved->lower_bound(name);
+   if(match != Cxx::Reserved->cend()) return match->second;
+   return Cxx::NIL_OPERATOR;
+}
+
+//------------------------------------------------------------------------------
+
+Cxx::Type Cxx::GetType(const string& name)
+{
+   Debug::ft("Cxx.GetType");
+
+   auto match = Cxx::Types->lower_bound(name);
+   if(match != Cxx::Types->cend()) return match->second;
+   return Cxx::NIL_TYPE;
+}
+
+//------------------------------------------------------------------------------
+
 void Cxx::Initialize()
 {
    Debug::ft("Cxx.Initialize");

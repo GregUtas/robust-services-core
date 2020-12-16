@@ -142,6 +142,51 @@ string DemangleInclude(const SourceIter& iter)
 }
 
 //------------------------------------------------------------------------------
+
+fixed_string FilePrompt = "Enter the filename in which to define";
+
+const CodeFile* FindFuncDefnFile
+   (CliThread& cli, const Class* cls, const string& name)
+{
+   Debug::ft("CodeTools.FindFuncDefnFile");
+
+   //  Look at all the functions in the class to which the new function
+   //  will be added.  If all of them are implemented in the same file,
+   //  define the new function in that file, otherwise ask the user to
+   //  specify which file should contain the function.
+   //
+   std::set< CodeFile* > impls;
+   auto funcs = cls->Funcs();
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      auto file = (*f)->GetDefnFile();
+      if((file != nullptr) && file->IsCpp()) impls.insert(file);
+   }
+
+   CodeFile* file = (impls.size() == 1 ? *impls.cbegin() : nullptr);
+
+   while(file == nullptr)
+   {
+      std::ostringstream prompt;
+      prompt << FilePrompt << CRLF << spaces(2);
+      prompt << *cls->Name() << SCOPE_STR << name;
+      prompt << " ('s' to skip this item): ";
+      auto fileName = cli.StrPrompt(prompt.str());
+      if(fileName == "s") return nullptr;
+
+      file = Singleton< Library >::Instance()->FindFile(fileName);
+      if(file == nullptr)
+      {
+         *cli.obuf << "  That file is not in the code library.";
+         cli.Flush();
+      }
+   }
+
+   return file;
+}
+
+//------------------------------------------------------------------------------
 //
 //  Adds FUNC and its overrides to FUNCS.
 //
@@ -190,6 +235,13 @@ bool IncludesAreSorted(const string& line1, const string& line2)
    if(cmp < 0) return true;
    if(cmp > 0) return false;
    return (&line1 < &line2);
+}
+
+//------------------------------------------------------------------------------
+
+bool IncludesSorted(const SourceLine& line1, const SourceLine& line2)
+{
+   return IncludesAreSorted(line1.code, line2.code);
 }
 
 //------------------------------------------------------------------------------
@@ -1795,51 +1847,6 @@ SourceIter Editor::FindFuncDeclLoc
 
 //------------------------------------------------------------------------------
 
-fixed_string FilePrompt = "Enter the filename in which to define";
-
-const CodeFile* Editor::FindFuncDefnFile
-   (CliThread& cli, const Class* cls, const string& name)
-{
-   Debug::ft("Editor.FindFuncDefnFile");
-
-   //  Look at all the functions in the class to which the new function
-   //  will be added.  If all of them are implemented in the same file,
-   //  define the new function in that file, otherwise ask the user to
-   //  specify which file should contain the function.
-   //
-   std::set< CodeFile* > impls;
-   auto funcs = cls->Funcs();
-
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      auto file = (*f)->GetDefnFile();
-      if((file != nullptr) && file->IsCpp()) impls.insert(file);
-   }
-
-   CodeFile* file = (impls.size() == 1 ? *impls.cbegin() : nullptr);
-
-   while(file == nullptr)
-   {
-      std::ostringstream prompt;
-      prompt << FilePrompt << CRLF << spaces(2);
-      prompt << *cls->Name() << SCOPE_STR << name;
-      prompt << " ('s' to skip this item): ";
-      auto fileName = cli.StrPrompt(prompt.str());
-      if(fileName == "s") return nullptr;
-
-      file = Singleton< Library >::Instance()->FindFile(fileName);
-      if(file == nullptr)
-      {
-         *cli.obuf << "  That file is not in the code library.";
-         cli.Flush();
-      }
-   }
-
-   return file;
-}
-
-//------------------------------------------------------------------------------
-
 SourceIter Editor::FindFuncDefnLoc(const CodeFile* file,
    const Class* cls, const string& name, string& expl, FuncDefnAttrs& attrs)
 {
@@ -2723,13 +2730,6 @@ SourceIter Editor::IncludesEnd()
    }
 
    return Code().end();
-}
-
-//------------------------------------------------------------------------------
-
-bool Editor::IncludesSorted(const SourceLine& line1, const SourceLine& line2)
-{
-   return IncludesAreSorted(line1.code, line2.code);
 }
 
 //------------------------------------------------------------------------------

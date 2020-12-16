@@ -369,11 +369,6 @@ private:
    //
    void UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs);
 
-   //  Returns the file where the function CLS::NAME should be defined.
-   //
-   const CodeFile* FindFuncDefnFile
-      (CliThread& cli, const Class* cls, const string& name);
-
    //  Returns the location where the function CLS::NAME should be defined.
    //  Updates ATTRS if the function should be offset with a rule and/or a
    //  blank line.
@@ -495,10 +490,6 @@ private:
    //  Sets EXPL to iter->code, adds the editor to Editors_, and returns 0.
    //
    word Changed(const SourceIter& iter, std::string& expl);
-
-   //  Comparison function for sorting #include directives.
-   //
-   static bool IncludesSorted(const SourceLine& line1, const SourceLine& line2);
 
    //  The file from which the source code was obtained.
    //

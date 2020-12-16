@@ -1374,19 +1374,6 @@ Cxx::Operator Lexer::GetPreOp()
 
 //------------------------------------------------------------------------------
 
-Cxx::Operator Lexer::GetReserved(const string& name)
-{
-   Debug::ft("Lexer.GetReserved");
-
-   //  See if NAME matches one of a selected group of reserved words.
-   //
-   auto match = Cxx::Reserved->lower_bound(name);
-   if(match != Cxx::Reserved->cend()) return match->second;
-   return Cxx::NIL_OPERATOR;
-}
-
-//------------------------------------------------------------------------------
-
 bool Lexer::GetTemplateSpec(string& spec)
 {
    Debug::ft("Lexer.GetTemplateSpec");
@@ -1396,17 +1383,6 @@ bool Lexer::GetTemplateSpec(string& spec)
    if(end == string::npos) return false;
    spec = source_->substr(curr_, end - curr_ + 1);
    return Advance(spec.size());
-}
-
-//------------------------------------------------------------------------------
-
-Cxx::Type Lexer::GetType(const string& name)
-{
-   Debug::ft("Lexer.GetType");
-
-   auto match = Cxx::Types->lower_bound(name);
-   if(match != Cxx::Types->cend()) return match->second;
-   return Cxx::NIL_TYPE;
 }
 
 //------------------------------------------------------------------------------
@@ -1660,7 +1636,7 @@ Cxx::Type Lexer::NextType()
 
    auto token = NextIdentifier();
    if(token.empty()) return Cxx::NIL_TYPE;
-   auto type = GetType(token);
+   auto type = Cxx::GetType(token);
    if(type != Cxx::NIL_TYPE) Advance(token.size());
    return type;
 }

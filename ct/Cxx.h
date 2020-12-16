@@ -304,6 +304,16 @@ namespace Cxx
    //  Initializes the above hash tables.
    //
    void Initialize();
+
+   //  Returns the operator associated with NAME.  This is something of a
+   //  hack, used when the item in an expression begins with an alphabetic
+   //  character.
+   //
+   Operator GetReserved(const std::string& name);
+
+   //  Returns the built-in type associated with NAME.
+   //
+   Type GetType(const std::string& name);
 }
 
 //------------------------------------------------------------------------------

@@ -573,7 +573,7 @@ struct LineTypeAttr
 
    //  A character symbol for the line type.
    //
-   char symbol;
+   const char symbol;
 
    //  The array that contains the above attributes for each line type.
    //

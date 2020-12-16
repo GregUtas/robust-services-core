@@ -198,7 +198,8 @@ const bool T = true;
 
 //------------------------------------------------------------------------------
 
-LineTypeAttr::LineTypeAttr(bool code, bool exe, bool merge, bool blank, char sym) :
+LineTypeAttr::LineTypeAttr
+   (bool code, bool exe, bool merge, bool blank, char sym) :
    isCode(code),
    isExecutable(exe),
    isMergeable(merge),

@@ -1,46 +1,11 @@
+nt>read restart.cold1
 
-MODULE INITIALIZATION          msecs      invoked at
-pre-Module.Startup               226    09:29:00.297
-NodeBase.NbModule...                    09:29:00.524
-...initialized                   145
-NodeTools.NtModule...                   09:29:00.678
-...initialized                    64
-CodeTools.CtModule...                   09:29:00.752
-...initialized                    31
-NetworkBase.NwModule...                 09:29:00.793
-
-    NET500 6-May-2020 09:29:00.818 on Reigi {1}
-...initialized                   132
-SessionBase.SbModule...                 09:29:00.934
-...initialized                   129
-ControlNode.CnModule...                 09:29:01.071
-...initialized                     8
-SessionTools.StModule...                09:29:01.096
-...initialized                    22
-MediaBase.MbModule...                   09:29:01.132
-...initialized                    16
-CallBase.CbModule...                    09:29:01.165
-...initialized                    35
-PotsBase.PbModule...                    09:29:01.215
-...initialized                    28
-OperationsNode.OnModule...              09:29:01.256
-...initialized                    15
-RoutingNode.RnModule...                 09:29:01.290
-...initialized                    12
-ServiceNode.SnModule...                 09:29:01.319
-...initialized                    53
-AccessNode.AnModule...                  09:29:01.387
-...initialized                    20
-                               -----
-total initialization time       1123
-
-    NODE500 6-May-2020 09:29:01.435 on Reigi {2}
-nb>read restart.cold1
-nb>nt
-nt>testcase reset
+nt>nt
+Already in nt.
+nt>tests reset
   OK.
-nt>testcase begin cold1
-symbols set testcase.name cold1
+nt>tests begin cold1
+symbols set test.name cold1
   OK.
 nt>read test.restart.prolog
 nt>stop
@@ -59,180 +24,216 @@ nt>clear selections
   OK.
 nt>include all on
   OK.
-nt>send &testcase.name
+nt>send &test.name
   OK.
 nt>sched show
 nt>sb status
+nt>read mem.inuse
+nt>heaps inuse &mem.temp
+nt>symbols set mem.temp.inuse &cli.result
+nt>heaps inuse &mem.dyn
+nt>symbols set mem.dyn.inuse &cli.result
+nt>heaps inuse &mem.pers
+nt>symbols set mem.pers.inuse &cli.result
+nt>heaps inuse &mem.prot
+nt>symbols set mem.prot.inuse &cli.result
+nt>heaps inuse &mem.perm
+nt>symbols set mem.perm.inuse &cli.result
+nt>heaps inuse &mem.imm
+nt>symbols set mem.imm.inuse &cli.result
+nt>read mem.inuse  / do it again: first time allocated symbols
+nt>heaps inuse &mem.temp
+nt>symbols set mem.temp.inuse &cli.result
+nt>heaps inuse &mem.dyn
+nt>symbols set mem.dyn.inuse &cli.result
+nt>heaps inuse &mem.pers
+nt>symbols set mem.pers.inuse &cli.result
+nt>heaps inuse &mem.prot
+nt>symbols set mem.prot.inuse &cli.result
+nt>heaps inuse &mem.perm
+nt>symbols set mem.perm.inuse &cli.result
+nt>heaps inuse &mem.imm
+nt>symbols set mem.imm.inuse &cli.result
 nt>send cout
-nt>testcase end
+nt>tests end
   OK.
 nt>delay 1
   OK.
-nt>nt>
-    NODE103 6-May-2020 09:29:06.863 on Reigi {3}
-    in NodeBase.CliThread (tid=9, nid=0x00005844)
+nt>start
+  OK.
+
+    NODE103 20-Dec-2020 13:51:15.379 on Reigi {13}
+    in NodeBase.CliThread (tid=9, nid=0x00005590)
       level  : cold
       reason : manual restart
       errval : 0x2
     Function Traceback:
-      NodeBase.ElementException.ElementException @ elementexception.cpp + 39[12]
-      NodeBase.Restart.Initiate @ restart.cpp + 63[24]
-      NodeBase.RestartCommand.ProcessCommand @ nbincrement.cpp + 2445[17]
-      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 505[19]
-      NodeBase.CliThread.ReadCommands @ clithread.cpp + 693[0]
-      NodeBase.ReadCommand.ProcessCommand @ nbincrement.cpp + 2309[0]
-      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 505[19]
-      NodeBase.CliThread.ReadCommands @ clithread.cpp + 693[0]
-      NodeBase.CliThread.Enter @ clithread.cpp + 339[17]
-      NodeBase.Thread.Start @ thread.cpp + 3365[15]
-      NodeBase.Thread.EnterThread @ thread.cpp + 1811[0]
-      register_onexit_function @ <unknown file> (err=487)
+      NodeBase.ElementException.ElementException @ elementexception.cpp + 37[12]
+      NodeBase.Restart.Initiate @ restart.cpp + 64[24]
+      NodeBase.RestartCommand.ProcessCommand @ nbincrement.cpp + 2608[17]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[19]
+      NodeBase.CliThread.ReadCommands @ clithread.cpp + 627[0]
+      NodeBase.CliThread.Enter @ clithread.cpp + 291[17]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
+      NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
       register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
-start
-  OK.
 nt>restart cold
-
+nt>
 RESTART TYPE: cold
 
 MODULE SHUTDOWN                msecs      invoked at
-Notifying threads...                    09:29:07.149
-...threads to exit: 11            48
+Notifying threads...                    13:51:15.632
 
-    THR901 6-May-2020 09:29:07.244 on Reigi {5}
-    thread=NodeBase.FileThread (tid=3, nid=0x00001558)
+    THR901 20-Dec-2020 13:51:15.702 on Reigi {15}
+    thread=NodeBase.CliThread (tid=9, nid=0x00005590)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+...threads to exit: 11            72
+
+    THR901 20-Dec-2020 13:51:15.707 on Reigi {16}
+    thread=NodeBase.LogThread (tid=8, nid=0x000048e4)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.249 on Reigi {6}
-    thread=NodeBase.ObjectPoolAudit (tid=6, nid=0x0000ad64)
+    THR901 20-Dec-2020 13:51:15.713 on Reigi {17}
+    thread=NetworkBase.UdpIoThread (tid=13, nid=0x00006324)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.270 on Reigi {12}
-    thread=NetworkBase.UdpIoThread (tid=13, nid=0x0000821c)
+    THR901 20-Dec-2020 13:51:15.716 on Reigi {18}
+    thread=NetworkBase.UdpIoThread (tid=14, nid=0x00004e9c)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.261 on Reigi {8}
-    thread=SessionBase.TimerThread (tid=10, nid=0x0000a1b8)
+    THR901 20-Dec-2020 13:51:15.720 on Reigi {19}
+    thread=SessionBase.InvokerThread (tid=11, nid=0x00005530)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.264 on Reigi {10}
-    thread=NetworkBase.UdpIoThread (tid=14, nid=0x0000ae88)
+    THR901 20-Dec-2020 13:51:15.723 on Reigi {20}
+    thread=SessionBase.TimerThread (tid=10, nid=0x00005d00)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.261 on Reigi {9}
-    thread=NodeBase.LogThread (tid=8, nid=0x0000bfd4)
+    THR901 20-Dec-2020 13:51:15.723 on Reigi {21}
+    thread=NetworkBase.TcpIoThread (tid=12, nid=0x0000181c)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.270 on Reigi {14}
-    thread=NetworkBase.TcpIoThread (tid=12, nid=0x00005410)
+    THR901 20-Dec-2020 13:51:15.734 on Reigi {23}
+    thread=NodeBase.CoutThread (tid=4, nid=0x00000b34)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.270 on Reigi {13}
-    thread=SessionBase.InvokerThread (tid=11, nid=0x00006b98)
+    THR901 20-Dec-2020 13:51:15.729 on Reigi {22}
+    thread=NodeBase.FileThread (tid=3, nid=0x000005e4)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.272 on Reigi {15}
-    thread=NodeBase.CliThread (tid=9, nid=0x00005844)
+    THR901 20-Dec-2020 13:51:15.734 on Reigi {25}
+    thread=NodeBase.StatisticsThread (tid=7, nid=0x000052c0)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.251 on Reigi {7}
-    thread=NodeBase.StatisticsThread (tid=7, nid=0x00004dc4)
+    THR901 20-Dec-2020 13:51:15.734 on Reigi {24}
+    thread=NodeBase.ObjectPoolAudit (tid=6, nid=0x0000585c)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 6-May-2020 09:29:07.267 on Reigi {11}
-    thread=NodeBase.CoutThread (tid=4, nid=0x0000b0cc)
-    signal=122 (SIGCLOSE: Non-Error Shutdown)
-
-...threads exited: 11            242
-AccessNode.AnModule...                  09:29:07.412
-...shut down                      18
-ServiceNode.SnModule...                 09:29:07.449
+...threads exited: 11            204
+AccessNode.AnModule...                  13:51:15.852
 ...shut down                      16
-RoutingNode.RnModule...                 09:29:07.487
-...shut down                      20
-OperationsNode.OnModule...              09:29:07.524
-...shut down                      21
-PotsBase.PbModule...                    09:29:07.567
+ServiceNode.SnModule...                 13:51:15.884
 ...shut down                      18
-CallBase.CbModule...                    09:29:07.605
-...shut down                      18
-MediaBase.MbModule...                   09:29:07.642
-...shut down                      17
-SessionTools.StModule...                09:29:07.680
-...shut down                      17
-ControlNode.CnModule...                 09:29:07.719
+RoutingNode.RnModule...                 13:51:15.918
 ...shut down                      16
-SessionBase.SbModule...                 09:29:07.752
+OperationsNode.OnModule...              13:51:15.950
+...shut down                      14
+PotsBase.PbModule...                    13:51:15.981
+...shut down                      14
+CallBase.CbModule...                    13:51:16.010
+...shut down                      14
+MediaBase.MbModule...                   13:51:16.040
+...shut down                      15
+SessionTools.StModule...                13:51:16.069
+...shut down                      15
+ControlNode.CnModule...                 13:51:16.100
+...shut down                      13
+SessionBase.SbModule...                 13:51:16.128
+...shut down                      16
+NetworkBase.NwModule...                 13:51:16.161
 ...shut down                      20
-NetworkBase.NwModule...                 09:29:08.032
-...shut down                      70
-CodeTools.CtModule...                   09:29:08.122
-...shut down                      18
-NodeTools.NtModule...                   09:29:08.163
-...shut down                      24
-NodeBase.NbModule...                    09:29:08.212
-...shut down                      47
+CodeTools.CtModule...                   13:51:16.197
+...shut down                      14
+NodeTools.NtModule...                   13:51:16.231
+...shut down                      15
+NodeBase.NbModule...                    13:51:16.261
+...shut down                      30
                                -----
-total shutdown time             1134
+total shutdown time              676
 
 MODULE INITIALIZATION          msecs      invoked at
-NodeBase.NbModule...                    09:29:08.309
-...initialized                   140
-NodeTools.NtModule...                   09:29:08.465
-...initialized                    16
-CodeTools.CtModule...                   09:29:08.498
+NodeBase.NbModule...                    13:51:16.325
+...initialized                   101
+NodeTools.NtModule...                   13:51:16.439
+...initialized                    13
+CodeTools.CtModule...                   13:51:16.464
 ...initialized                    15
-NetworkBase.NwModule...                 09:29:08.527
+NetworkBase.NwModule...                 13:51:16.494
 
-    NET500 6-May-2020 09:29:08.543 on Reigi {16}
-...initialized                    37
-SessionBase.SbModule...                 09:29:08.578
-...initialized                    31
-ControlNode.CnModule...                 09:29:08.625
-...initialized                    16
-SessionTools.StModule...                09:29:08.659
+    NET500 20-Dec-2020 13:51:16.510 on Reigi {26}
+...initialized                    39
+SessionBase.SbModule...                 13:51:16.547
+...initialized                    26
+ControlNode.CnModule...                 13:51:16.587
+...initialized                    12
+SessionTools.StModule...                13:51:16.613
 ...initialized                    14
-MediaBase.MbModule...                   09:29:08.692
+MediaBase.MbModule...                   13:51:16.640
 ...initialized                    15
-CallBase.CbModule...                    09:29:08.723
-...initialized                    19
-PotsBase.PbModule...                    09:29:08.760
-...initialized                    21
-OperationsNode.OnModule...              09:29:08.801
-...initialized                    21
-RoutingNode.RnModule...                 09:29:08.845
-...initialized                    21
-ServiceNode.SnModule...                 09:29:08.886
-...initialized                    24
-AccessNode.AnModule...                  09:29:08.934
-...initialized                    23
+CallBase.CbModule...                    13:51:16.670
+...initialized                    15
+PotsBase.PbModule...                    13:51:16.700
+...initialized                    15
+OperationsNode.OnModule...              13:51:16.731
+...initialized                    17
+RoutingNode.RnModule...                 13:51:16.762
+...initialized                    16
+ServiceNode.SnModule...                 13:51:16.796
+...initialized                    17
+AccessNode.AnModule...                  13:51:16.828
+...initialized                    14
                                -----
-total initialization time        667
+total initialization time        532
 
-    NODE500 6-May-2020 09:29:08.997 on Reigi {17}
+    NODE500 20-Dec-2020 13:51:16.875 on Reigi {27}
 nb>read restart.cold2
+
 nb>nt
-nt>testcase reset
+nt>tests reset
   OK.
-nt>testcase begin cold2
-symbols set testcase.name cold2
+nt>tests begin cold2
+symbols set test.name cold2
   OK.
 nt>read test.restart.epilog
 nt>stop
   OK.
-nt>save trace &testcase.name
+nt>save trace &test.name
   OK.
-nt>save funcs &testcase.name
+nt>save funcs &test.name
   OK.
 nt>clear buffer
   OK.
-nt>send &testcase.name
+nt>send &test.name
   OK.
 nt>sched show
 nt>sb status
+nt>read mem.check
+nt>heaps inuse &mem.temp
+nt>if &cli.result > &mem.temp.inuse tests failed &cli.result "Leak in temporary memory"
+nt>heaps inuse &mem.dyn
+nt>if &cli.result > &mem.dyn.inuse tests failed &cli.result "Leak in dynamic memory"
+nt>heaps inuse &mem.pers
+nt>if &cli.result > &mem.pers.inuse tests failed &cli.result "Leak in persistent memory"
+nt>heaps inuse &mem.prot
+nt>if &cli.result > &mem.prot.inuse tests failed &cli.result "Leak in protected memory"
+nt>heaps inuse &mem.perm
+nt>if &cli.result > &mem.perm.inuse tests failed &cli.result "Leak in permanent memory"
+nt>heaps inuse &mem.imm
+nt>if &cli.result > &mem.imm.inuse tests failed &cli.result "Leak in immutable memory"
 nt>send cout
-nt>testcase end
+nt>tests end
   OK.
 nt>

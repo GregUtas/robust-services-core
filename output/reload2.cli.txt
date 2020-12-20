@@ -1,56 +1,53 @@
 nt>sched show
-SCHEDULER REPORT: 6-May-2020 09:29:59.532 on Reigi
-for interval beginning at 09:29:55.184
+SCHEDULER REPORT: 20-Dec-2020 13:51:33.252 on Reigi
+for interval beginning at 13:51:29.008
 ----------------------------------------------------------------------------
-      THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST
+      THREADS          |   SINCE START OF CURRENT 15-MINUTE INTERVAL  | LAST
                        |            rtc  max   max     max  total     |5 SEC
 id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
 ----------------------------------------------------------------------------
-      idle                                                     30  0.7  76.5
- 1    root     ae1c w S   0    377    0    0   268     275     29  0.7   0.6
- 2    init     1704 s S   0    377    0    0  2746 1680604   1740 40.0  22.4
- 3    file     b4ac b     0     47    0   13   319  262894    721 16.6   0.0
- 4    cout      db8 B     0     51    0   10   287     317      7  0.2   0.0
- 5     cin     ac9c O C   0      2    0    0   234     111      0  0.0   0.0
- 6  objaud     b97c A S   0      1    0    0   231      71      0  0.0   0.0
- 7   stats     5c1c B S   0      1    0    0   242     111      0  0.0   0.0
- 8     log     8680 B S   0      1    0    0   249      66      0  0.0   0.0
- 9     cli     4770 O     0     26    3    0   672 1606861   1818 41.8   0.0
-10   tcpio     a898 P N   0      2    0    0   285    1012      1  0.0   0.0
-11   udpio     5bfc P N   0      1    0    0   263     317      0  0.0   0.0
-12   udpio     bc7c P N   0      1    0    0   263     307      0  0.0   0.0
-13   timer     c288 P S   0      4    0    0   235     145      0  0.0   0.0
-14 invoker     c054 P S   0      1    0    0   253     104      0  0.0   0.0
+      idle                                                    984 23.2  41.5
+ 1    root      a6c w C   0    414    0    0   279     344     31  0.7   0.9
+ 2    init     62b8 s C   0    414    0    0  2768 1113071   1183 27.9   2.3
+ 3    file     637c B     0     57    0    8   304   13581    215  5.1   0.0
+ 4    cout     16a4 B     0     53    0    8   272     787      8  0.2   0.0
+ 5     cin     5b6c O S   0      2    0    0   218     115      0  0.0   0.0
+ 6  objaud     5fc0 A C   0      1    0    0   216      63      0  0.0   0.0
+ 7   stats     5f90 B C   0      1    0    0   233     155      0  0.0   0.0
+ 8     log     1ed0 B C   0      1    0    0   238     101      0  0.0   0.0
+ 9     cli     621c O     0     36    0    0   602 1753857   1823 42.9   0.0
+10   timer     4994 P C   0      4    0    0   232     236      0  0.0   0.0
+11 invoker      600 P C   0      1    0    0   238     122      0  0.0   0.0
 ----------------------------------------------------------------------------
 nt>sb status
-STATUS REPORT: 6-May-2020 09:29:59.576 on Reigi
+STATUS REPORT: 20-Dec-2020 13:51:33.263 on Reigi
 MEMORY USAGE
 Alloc  Low kB     kB       Bytes                            Memory        Prot
 Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs
-    0    ---     ---         436        299        292   temporary  rw-      0
-    0    ---     ---    24223356       1867          6     dynamic  rw-      0
-    0    ---     ---         392         13          0  persistent  rw-      0
-    0   1219    1219       61496        260         15   protected  r--      7
-    0    ---     ---     3977032        193         37   permanent  rw-      0
-    0    386     386      128460       2270         58   immutable  r--    293
+    0    ---     ---         248        265        258   temporary  rw-      0
+    0    ---     ---    24021756       1413          5     dynamic  rw-      0
+    0    ---     ---         336         12          0  persistent  rw-      0
+    0   1988    1988       61264        254         15   protected  r--      1
+    0    ---     ---     4503732        342         97   permanent  rw-      0
+    0    387     387      127768       2216         60   immutable  r--    857
 
 OBJECT POOLS
 Alloc  Lowest    Curr    Curr
-Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool Name
-    0    2024    2024      24       70       46        0   MsgBuffers
-    0       *    2048       0        0        0        0   IpBuffers
-    0       *    8192       0        0        0        0   SbIpBuffers
-    0       *   10240       0        0        0        0   BtIpBuffers
-    0       *   15360       0        0        0        0   Contexts
-    0       *    8192       0        0        0        0   Messages
-    0       *   24576       0        0        0        0   MsgPorts
-    0       *   24576       0        0        0        0   ProtocolSMs
-    0       *    7168       0        0        0        0   Timers
-    0       *    1024       0        0        0        0   Events
-    0       *   14336       0        0        0        0   ServiceSMs
-    0       *    1024       0        0        0        0   MediaEndpts
+Fails   Avail   Avail  In Use     Allocs      Frees  Expands   Pool Name
+    0    2030    2032      16         70         54        0   MsgBuffers
+    0       *    2048       0          0          0        0   IpBuffers
+    0       *    8192       0          0          0        0   SbIpBuffers
+    0       *   10240       0          0          0        0   BtIpBuffers
+    0       *   15360       0          0          0        0   Contexts
+    0       *    8192       0          0          0        0   Messages
+    0       *   24576       0          0          0        0   MsgPorts
+    0       *   24576       0          0          0        0   ProtocolSMs
+    0       *    7168       0          0          0        0   Timers
+    0       *    1024       0          0          0        0   Events
+    0       *   14336       0          0          0        0   ServiceSMs
+    0       *    1024       0          0          0        0   MediaEndpts
 
-CPU IDLE TIME: 76.5%
+CPU IDLE TIME: 41.5%
 
 ACTIVE ALARMS
   No active alarms.
@@ -65,5 +62,30 @@ INGRESS WORK QUEUES
 
 FACTORY DISCARDS
   There were no discards to display.
+nt>read mem.check
+nt>heaps inuse &mem.temp
+  Bytes in use: 248
+nt>if &cli.result > &mem.temp.inuse tests failed &cli.result "Leak in temporary memory"
+  Result is false.
+nt>heaps inuse &mem.dyn
+  Bytes in use: 24021756
+nt>if &cli.result > &mem.dyn.inuse tests failed &cli.result "Leak in dynamic memory"
+  Result is false.
+nt>heaps inuse &mem.pers
+  Bytes in use: 336
+nt>if &cli.result > &mem.pers.inuse tests failed &cli.result "Leak in persistent memory"
+  Result is false.
+nt>heaps inuse &mem.prot
+  Bytes in use: 61264
+nt>if &cli.result > &mem.prot.inuse tests failed &cli.result "Leak in protected memory"
+  Result is false.
+nt>heaps inuse &mem.perm
+  Bytes in use: 4503732
+nt>if &cli.result > &mem.perm.inuse tests failed &cli.result "Leak in permanent memory"
+  Result is false.
+nt>heaps inuse &mem.imm
+  Bytes in use: 127768
+nt>if &cli.result > &mem.imm.inuse tests failed &cli.result "Leak in immutable memory"
+  Result is false.
 nt>send cout
   OK.

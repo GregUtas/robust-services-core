@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Library.h"
+#include <list>
 #include <sstream>
 #include "CfgParmRegistry.h"
 #include "CodeDir.h"

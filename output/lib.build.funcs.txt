@@ -1,21 +1,21 @@
-FUNCTION PROFILE: 20-Dec-2020 07:55:29.724 on Reigi
+FUNCTION PROFILE: 20-Dec-2020 14:13:50.796 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-   765812           0   Lexer.Advance(incr)
+   765736           0   Lexer.Advance(incr)
    415468           0   CodeTools.FindSubstr
-   333218           0   Lexer.FindIdentifier
-   313967           0   Lexer.NextIdentifier
-   222933           0   CodeFile.ClassifyLine(size_t)
-   222933           0   CodeFile.ClassifyLine(string)
-   222933           0   Lexer.GetIncludeFile
+   333193           0   Lexer.FindIdentifier
+   313944           0   Lexer.NextIdentifier
+   222942           0   CodeFile.ClassifyLine(size_t)
+   222942           0   CodeFile.ClassifyLine(string)
+   222942           0   Lexer.GetIncludeFile
     31451           0   Lexer.SkipStrLiteral
-    18714           0   Lexer.FindClosing
-    15113           0   Base.operator new
-    14285           0   CxxToken.ctor
-     7971           0   CxxToken.dtor
-     7971           0   Lexer.GetNum
-     7971           0   Literal.ctor
+    18715           0   Lexer.FindClosing
+    15111           0   Base.operator new
+    14283           0   CxxToken.ctor
+     7969           0   CxxToken.dtor
+     7969           0   Lexer.GetNum
+     7969           0   Literal.ctor
      7108           0   CodeTools.GetFileName
      7108           0   Library.EnsureFile
      7108           0   Library.FindFile
@@ -30,28 +30,28 @@ FUNCTION PROFILE: 20-Dec-2020 07:55:29.724 on Reigi
      3628           0   Lexer.SkipCharLiteral
      2814           0   Lexer.NextCharIs
      2303           0   Lexer.Advance
-     1920           0   Thread.Interrupt
-     1919           0   SysThread.Interrupt
-     1919           0   SysThread.Resume
+     1922           0   SysThread.Interrupt
+     1922           0   SysThread.Resume
+     1922           0   Thread.Interrupt
      1588           0   Lexer.Reposition
      1137           0   Lexer.GetInt
-     1098           0   MutexGuard.Release
-     1098           0   MutexGuard.ctor
-     1098           0   MutexGuard.dtor
-     1098           0   SysMutex.Acquire
-     1098           0   SysMutex.Release
+     1097           0   MutexGuard.Release
+     1097           0   MutexGuard.ctor
+     1097           0   MutexGuard.dtor
+     1097           0   SysMutex.Acquire
+     1097           0   SysMutex.Release
       933           0   FileWalker.Advance
-      890           0   SysThread.Suspend
-      889           0   SysThread.Wait
-      889           0   Thread.EnterBlockingOperation
-      889           0   Thread.ExitBlockingOperation
-      889           0   Thread.InitialTime
-      889           0   Thread.LogContextSwitch
-      889           0   Thread.Ready
-      889           0   Thread.Resume
-      889           0   Thread.Schedule
-      889           0   Thread.Suspend
-      889           0   ThreadAdmin.WarpFactor
+      889           0   SysThread.Suspend
+      888           0   SysThread.Wait
+      888           0   Thread.EnterBlockingOperation
+      888           0   Thread.ExitBlockingOperation
+      888           0   Thread.InitialTime
+      888           0   Thread.LogContextSwitch
+      888           0   Thread.Ready
+      888           0   Thread.Resume
+      888           0   Thread.Schedule
+      888           0   Thread.Suspend
+      888           0   ThreadAdmin.WarpFactor
       846           0   CodeTools.IsCodeFile
       811           0   LibraryItem.ctor
       811           0   Registry.Insert
@@ -95,9 +95,9 @@ FUNCTION PROFILE: 20-Dec-2020 07:55:29.724 on Reigi
        41           0   CliCookie.Advance
        39           0   CliTextParm.GetStringRc
        37           0   CliIncrement.FindCommand
-       36           0   SysIpL2Addr.dtor
-       36           0   SysSocket.SetBlocking
        34           0   FileWalker.Reset
+       32           0   SysIpL2Addr.dtor
+       32           0   SysSocket.SetBlocking
        25           0   CliBuffer.GetLine
        25           0   CliStack.Top
        25           0   CliThread.Flush
@@ -117,17 +117,6 @@ FUNCTION PROFILE: 20-Dec-2020 07:55:29.724 on Reigi
        21           0   FileThread.Spool(stream)
        20           0   CliThread.Report
        20           0   CliThread.Report1
-       18           0   IpPort.RecvsInSequence
-       18           0   IpPortRegistry.HostAddress
-       18           0   SysIpL2Addr.IsValid
-       18           0   SysIpL2Addr.ctor
-       18           0   SysIpL3Addr.ctor
-       18           0   SysIpL3Addr.dtor
-       18           0   SysSocket.SetError
-       18           0   SysTcpSocket.Accept
-       18           0   SysTcpSocket.Poll
-       18           0   TcpIoThread.AcceptConn
-       18           0   TcpIoThread.PollSockets
        17           0   CliCommand.GetIdentifierRc
        17           0   CliParm.GetIdentifier
        17           0   CliTextParm.GetIdentifierRc
@@ -139,8 +128,19 @@ FUNCTION PROFILE: 20-Dec-2020 07:55:29.724 on Reigi
        17           0   Library.Import
        17           0   SysFile.GetFileList
        17           0   SysFile.SetDir
-       12           0   FunctionGuard.ctor
-        8           0   Thread.MakePreemptable
+       16           0   IpPort.RecvsInSequence
+       16           0   IpPortRegistry.HostAddress
+       16           0   SysIpL2Addr.IsValid
+       16           0   SysIpL2Addr.ctor
+       16           0   SysIpL3Addr.ctor
+       16           0   SysIpL3Addr.dtor
+       16           0   SysSocket.SetError
+       16           0   SysTcpSocket.Accept
+       16           0   SysTcpSocket.Poll
+       16           0   TcpIoThread.AcceptConn
+       16           0   TcpIoThread.PollSockets
+       13           0   FunctionGuard.ctor
+        9           0   Thread.MakePreemptable
         5           0   FunctionGuard.dtor
         5           0   Lexer.GetFloat
         4           0   FunctionGuard.Release
@@ -157,6 +157,7 @@ FUNCTION PROFILE: 20-Dec-2020 07:55:29.724 on Reigi
         2           0   Heap.SetPermissions
         2           0   Registry.Empty
         2           0   SysMemory.Protect
+        2           0   TestDatabase.Commit
         1           0   BreakEnabledCfg.SetCurr
         1           0   CfgBitParm.GetCurr
         1           0   CfgBitParm.SetNext
@@ -189,7 +190,6 @@ FUNCTION PROFILE: 20-Dec-2020 07:55:29.724 on Reigi
         1           0   SysThread.Delay
         1           0   Temporary.ctor
         1           0   Temporary.operator new
-        1           0   TestDatabase.Commit
         1           0   TestDatabase.Load
         1           0   TestDatabase.SetState
         1           0   TestDatabase.Update

@@ -35,6 +35,7 @@
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "InitThread.h"
+#include "Memory.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
@@ -200,6 +201,18 @@ void BreakEnabledCfg::SetCurr()
 
 //==============================================================================
 
+ThreadAdmin* AccessAdminData()
+{
+   //  Late during the shutdown phase of a reload restart, protected memory is
+   //  released en masse.  Our singleton pointer still appears valid, however,
+   //  so verify that protected memory still exists before accessing our data.
+   //
+   if(Memory::AccessHeap(MemProtected) == nullptr) return nullptr;
+   return Singleton< ThreadAdmin >::Extant();
+}
+
+//==============================================================================
+
 ThreadAdmin::ThreadAdmin()
 {
    Debug::ft("ThreadAdmin.ctor");
@@ -274,24 +287,11 @@ ThreadAdmin::~ThreadAdmin()
 
 //------------------------------------------------------------------------------
 
-ThreadAdmin* ThreadAdmin::Access()
-{
-   //  Late during the shutdown phase of a reload restart, protected memory is
-   //  released en masse.  Our singleton pointer still appears valid, however,
-   //  so verify that protected memory still exists before accessing our data.
-   //
-   if(Memory::AccessHeap(MemProtected) == nullptr)
-      return nullptr;
-   return Singleton< ThreadAdmin >::Extant();
-}
-
-//------------------------------------------------------------------------------
-
 bool ThreadAdmin::BreakEnabled()
 {
    if(!Element::RunningInLab()) return false;
 
-   auto self = Access();
+   auto self = AccessAdminData();
    return (self != nullptr ? self->breakEnabled_->GetValue() : false);
 }
 
@@ -365,7 +365,7 @@ void ThreadAdmin::DisplayStats(ostream& stream, const Flags& options) const
 
 void ThreadAdmin::Incr(Register r)
 {
-   auto admin = Access();
+   auto admin = AccessAdminData();
 
    if(admin == nullptr) return;
    if(admin->stats_ == nullptr) return;
@@ -436,7 +436,7 @@ Duration ThreadAdmin::InitTimeout()
 {
    Debug::ft("ThreadAdmin.InitTimeout");
 
-   auto self = Access();
+   auto self = AccessAdminData();
    auto msecs = (self != nullptr ? self->initTimeoutMsecs_->GetValue() : 2000);
    return Duration(msecs, mSECS) << WarpFactor();
 }
@@ -452,7 +452,7 @@ void ThreadAdmin::Patch(sel_t selector, void* arguments)
 
 bool ThreadAdmin::ReinitOnSchedTimeout()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    return (self != nullptr ? self->reinitOnSchedTimeout_->GetValue() : true);
 }
 
@@ -460,7 +460,7 @@ bool ThreadAdmin::ReinitOnSchedTimeout()
 
 word ThreadAdmin::RtcInterval()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    return (self != nullptr ? self->rtcInterval_->GetValue() : 60);
 }
 
@@ -468,7 +468,7 @@ word ThreadAdmin::RtcInterval()
 
 word ThreadAdmin::RtcLimit()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    return (self != nullptr ? self->rtcLimit_->GetValue() : 6);
 }
 
@@ -476,7 +476,7 @@ word ThreadAdmin::RtcLimit()
 
 Duration ThreadAdmin::RtcTimeout()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    auto msecs = (self != nullptr ? self->rtcTimeoutMsecs_->GetValue() : 20);
    return Duration(msecs, mSECS);
 }
@@ -485,7 +485,7 @@ Duration ThreadAdmin::RtcTimeout()
 
 Duration ThreadAdmin::SchedTimeout()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    auto msecs = (self != nullptr ? self->schedTimeoutMsecs_->GetValue() : 100);
    return Duration(msecs, mSECS);
 }
@@ -505,7 +505,7 @@ void ThreadAdmin::Shutdown(RestartLevel level)
 
 word ThreadAdmin::StackCheckInterval()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    return (self != nullptr ? self->stackCheckInterval_->GetValue() : 1);
 }
 
@@ -513,7 +513,7 @@ word ThreadAdmin::StackCheckInterval()
 
 word ThreadAdmin::StackUsageLimit()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    return (self != nullptr ? self->stackUsageLimit_->GetValue() : 8000);
 }
 
@@ -545,7 +545,7 @@ void ThreadAdmin::Startup(RestartLevel level)
 
 word ThreadAdmin::TrapCount()
 {
-   auto admin = Access();
+   auto admin = AccessAdminData();
 
    if(admin == nullptr) return 0;
    if(admin->stats_ == nullptr) return 0;
@@ -557,7 +557,7 @@ word ThreadAdmin::TrapCount()
 
 word ThreadAdmin::TrapInterval()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    return (self != nullptr ? self->trapInterval_->GetValue() : 60);
 }
 
@@ -565,7 +565,7 @@ word ThreadAdmin::TrapInterval()
 
 word ThreadAdmin::TrapLimit()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    return (self != nullptr ? self->trapLimit_->GetValue() : 4);
 }
 
@@ -573,7 +573,7 @@ word ThreadAdmin::TrapLimit()
 
 bool ThreadAdmin::TrapOnRtcTimeout()
 {
-   auto self = Access();
+   auto self = AccessAdminData();
    return (self != nullptr ? self->trapOnRtcTimeout_->GetValue() : true);
 }
 

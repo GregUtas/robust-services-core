@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <iterator>
+#include <list>
 #include <sstream>
 #include "CodeDir.h"
 #include "CodeFile.h"

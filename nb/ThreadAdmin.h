@@ -169,10 +169,6 @@ private:
    //
    ~ThreadAdmin();
 
-   //  Returns a pointer to the singleton instance of this class.
-   //
-   static ThreadAdmin* Access();
-
    //  Thread configuration parameters.
    //
    CfgIntParmPtr  initTimeoutMsecs_;

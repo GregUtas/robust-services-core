@@ -1,41 +1,44 @@
 
 MODULE INITIALIZATION          msecs      invoked at
-pre-Module.Startup               160    07:55:09.358
-NodeBase.NbModule...                    07:55:09.518
-...initialized                   108
-NodeTools.NtModule...                   07:55:09.637
-...initialized                    44
-CodeTools.CtModule...                   07:55:09.691
-...initialized                    31
-NetworkBase.NwModule...                 07:55:09.731
+pre-Module.Startup               276    14:13:37.912
+NodeBase.NbModule...                    14:13:38.188
+...initialized                    95
+NodeTools.NtModule...                   14:13:38.291
+...initialized                    42
+CodeTools.CtModule...                   14:13:38.342
+...initialized                    33
+NetworkBase.NwModule...                 14:13:38.385
 
-    NET500 20-Dec-2020 07:55:09.748 on Reigi {1}
-...initialized                    83
-SessionBase.SbModule...                 07:55:09.821
-...initialized                   111
-ControlNode.CnModule...                 07:55:09.943
-...initialized                     7
-SessionTools.StModule...                07:55:09.962
-...initialized                    20
-MediaBase.MbModule...                   07:55:09.993
-...initialized                    14
-CallBase.CbModule...                    07:55:10.018
-...initialized                    23
-PotsBase.PbModule...                    07:55:10.052
-...initialized                    23
-OperationsNode.OnModule...              07:55:10.085
-...initialized                    11
-RoutingNode.RnModule...                 07:55:10.108
+    NET500 20-Dec-2020 14:13:38.406 on Reigi {1}
+...initialized                   123
+SessionBase.SbModule...                 14:13:38.517
+...initialized                   126
+ControlNode.CnModule...                 14:13:38.657
 ...initialized                     9
-ServiceNode.SnModule...                 07:55:10.129
-...initialized                    53
-AccessNode.AnModule...                  07:55:10.197
-...initialized                    26
+SessionTools.StModule...                14:13:38.676
+...initialized                    19
+MediaBase.MbModule...                   14:13:38.709
+...initialized                    15
+CallBase.CbModule...                    14:13:38.736
+...initialized                    23
+PotsBase.PbModule...                    14:13:38.769
+...initialized                    31
+OperationsNode.OnModule...              14:13:38.811
+...initialized                    12
+RoutingNode.RnModule...                 14:13:38.836
+...initialized                    10
+ServiceNode.SnModule...                 14:13:38.858
+...initialized                    44
+AccessNode.AnModule...                  14:13:38.912
+...initialized                    22
                                -----
-total initialization time        879
+total initialization time       1034
 
-    NODE500 20-Dec-2020 07:55:10.251 on Reigi {2}
-nb>read test.lib.all
+    NODE500 20-Dec-2020 14:13:38.958 on Reigi {2}
+nb>
+    NODE101 20-Dec-2020 14:13:43.584 on Reigi {3}
+    reason=0x7 timeout=50 msecs
+read test.lib.all
 
 nb>read test.lib.setup
 nb>quit all
@@ -62,8 +65,6 @@ ct>exclude faction &faction.audit
   OK.
 ct>exclude faction &faction.bkgd
   OK.
-ct>/ exclude faction &faction.watchdog
-ct>/ exclude faction &faction.system
 ct>sb exclude timers
   OK.
 ct>set scope counts  / only want function counts, not full traces

@@ -1,16 +1,16 @@
-FUNCTION PROFILE: 20-Dec-2020 07:56:09.204 on Reigi
+FUNCTION PROFILE: 20-Dec-2020 14:14:23.239 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
       114           0   CliBuffer.CalcType
-       88           0   SysThread.Interrupt
-       88           0   SysThread.Resume
-       88           0   Thread.Interrupt
-       79           0   MutexGuard.Release
-       79           0   MutexGuard.ctor
-       79           0   MutexGuard.dtor
-       79           0   SysMutex.Acquire
-       79           0   SysMutex.Release
+       92           0   SysThread.Interrupt
+       92           0   SysThread.Resume
+       92           0   Thread.Interrupt
+       81           0   MutexGuard.Release
+       81           0   MutexGuard.ctor
+       81           0   MutexGuard.dtor
+       81           0   SysMutex.Acquire
+       81           0   SysMutex.Release
        44           0   MsgBuffer.ctor
        44           0   MsgBuffer.operator new
        44           0   ObjectPool.DeqBlock
@@ -23,18 +23,18 @@ FUNCTION PROFILE: 20-Dec-2020 07:56:09.204 on Reigi
        31           0   FileRequest.ctor
        31           0   FileThread.Spool(written)
        26           0   FileThread.Spool(string)
+       25           0   SysThread.Suspend
+       24           0   SysThread.Wait
+       24           0   Thread.EnterBlockingOperation
+       24           0   Thread.ExitBlockingOperation
+       24           0   Thread.InitialTime
+       24           0   Thread.LogContextSwitch
+       24           0   Thread.Ready
+       24           0   Thread.Resume
+       24           0   Thread.Schedule
+       24           0   Thread.Suspend
+       24           0   ThreadAdmin.WarpFactor
        23           0   CliBuffer.FindNextNonBlank
-       23           0   SysThread.Suspend
-       22           0   SysThread.Wait
-       22           0   Thread.EnterBlockingOperation
-       22           0   Thread.ExitBlockingOperation
-       22           0   Thread.InitialTime
-       22           0   Thread.LogContextSwitch
-       22           0   Thread.Ready
-       22           0   Thread.Resume
-       22           0   Thread.Schedule
-       22           0   Thread.Suspend
-       22           0   ThreadAdmin.WarpFactor
        18           0   CliIncrement.FindCommand
        14           0   CliBuffer.GetNextInput
        14           0   CliBuffer.GetStr
@@ -62,13 +62,13 @@ FUNCTION PROFILE: 20-Dec-2020 07:56:09.204 on Reigi
         5           0   FileThread.Spool(stream)
         4           0   CliThread.Report
         4           0   CliThread.Report1
+        4           0   FunctionGuard.ctor
+        4           0   Thread.MakePreemptable
         3           0   CliBuffer.GetInt
         3           0   CliCommand.GetIntParmRc
         3           0   CliIntParm.GetIntParmRc
         3           0   CliParm.GetIntParm
-        3           0   FunctionGuard.ctor
         3           0   Interpreter.SkipBlanks
-        3           0   Thread.MakePreemptable
         2           0   CliBuffer.OpenInputFile
         2           0   CliBuffer.Read
         2           0   CliCommand.GetStringRc
@@ -81,6 +81,8 @@ FUNCTION PROFILE: 20-Dec-2020 07:56:09.204 on Reigi
         2           0   Interpreter.GetToken
         2           0   ReadCommand.ProcessCommand
         2           0   Registry.Empty
+        2           0   SysIpL2Addr.dtor
+        2           0   SysSocket.SetBlocking
         1           0   Base.operator new
         1           0   CliAppData.EventOccurred
         1           0   CliBuffer.GetSymbol
@@ -98,6 +100,8 @@ FUNCTION PROFILE: 20-Dec-2020 07:56:09.204 on Reigi
         1           0   Interpreter.HandleToken
         1           0   Interpreter.ctor
         1           0   Interpreter.dtor
+        1           0   IpPort.RecvsInSequence
+        1           0   IpPortRegistry.HostAddress
         1           0   Library.EnsureVar
         1           0   Library.Evaluate
         1           0   Library.FindVar
@@ -106,11 +110,21 @@ FUNCTION PROFILE: 20-Dec-2020 07:56:09.204 on Reigi
         1           0   NtTestData.Access
         1           0   NtTestData.Conclude
         1           0   StopCommand.ProcessCommand
+        1           0   SysIpL2Addr.IsValid
+        1           0   SysIpL2Addr.ctor
+        1           0   SysIpL3Addr.ctor
+        1           0   SysIpL3Addr.dtor
+        1           0   SysSocket.SetError
+        1           0   SysTcpSocket.Accept
+        1           0   SysTcpSocket.Poll
         1           0   SysThread.Delay
+        1           0   TcpIoThread.AcceptConn
+        1           0   TcpIoThread.PollSockets
+        1           0   TestDatabase.Commit
         1           0   TestDatabase.SetState
         1           0   TestsCommand.ProcessCommand
         1           0   TestsCommand.ProcessSubcommand
         1           0   TraceBuffer.SetTool
         1           0   TraceBuffer.StopTracing
 
-Total functions: 110
+Total functions: 124

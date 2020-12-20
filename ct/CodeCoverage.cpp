@@ -73,7 +73,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
 
    FunctionGuard guard(Guard_MakePreemptable);
 
-   //  Find all *.funcs.txt files in the output directory.  If a testcase
+   //  Find all *.funcs.txt files in the output directory.  If a test
    //  with the same file name exists, add it, along with the functions
    //  that it invoked, to the current database.
    //
@@ -104,28 +104,27 @@ word CodeCoverage::Build(std::ostringstream& expl)
       currTests_.insert(*trace);
       ++count;
 
-      //  Extract the function names from STREAM.  They begin on the fourth
-      //  line, and each one is preceded by two integers.
+      //  Extract the function names from STREAM.  Each is preceded by two
+      //  integers.
       //
       string input;
       string str;
-      int discard = -4;
 
       while(stream->peek() != EOF)
       {
          std::getline(*stream, input);
-         if(discard++ < 0) continue;
 
          str = strGet(input);
-         if(str.empty() || !isdigit(str.front())) break;
+         if(str.empty() || !isdigit(str.front())) continue;
          str = strGet(input);
-         if(str.empty() || !isdigit(str.front())) break;
+         if(str.empty() || !isdigit(str.front())) continue;
          str = strGet(input);
-         if(str.empty()) break;
+         if(str.empty()) continue;
 
-         //  If INPUT isn't empty, append it to STR.  The function name
+         //  If INPUT isn't empty, append it to STR.  This function name
          //  contains an embedded space (and might have more of them).
-         //  Replace spaces with "BLANK" to simplify Load.
+         //  To simply Load, mangle its name by replacing embedded spaces
+         //  with our "BLANK" character.
          //
          if(!input.empty())
          {
@@ -151,8 +150,6 @@ word CodeCoverage::Build(std::ostringstream& expl)
    expl << count << " *.funcs.txt file(s) processed";
    return 0;
 }
-
-//------------------------------------------------------------------------------
 
 bool CodeCoverage::Commit(const Functions& funcs)
 {
@@ -212,7 +209,7 @@ word CodeCoverage::Diff(std::ostringstream& expl) const
    {
       if(prevFuncs_.find(c->first) == prevFuncs_.cend())
       {
-         expl << CRLF << spaces(2) << c->first;
+         expl << CRLF << spaces(2) << Demangle(c->first);
          found = true;
       }
    }
@@ -227,7 +224,7 @@ word CodeCoverage::Diff(std::ostringstream& expl) const
 
       if((p != prevFuncs_.cend()) && (c->second.hash != p->second.hash))
       {
-         expl << CRLF << spaces(2) << c->first;
+         expl << CRLF << spaces(2) << Demangle(c->first);
          found = true;
       }
    }
@@ -241,7 +238,7 @@ word CodeCoverage::Diff(std::ostringstream& expl) const
       if((p->second.hash != UNHASHED) &&
          (currFuncs_.find(p->first) == currFuncs_.cend()))
       {
-         expl << CRLF << spaces(2) << p->first;
+         expl << CRLF << spaces(2) << Demangle(p->first);
          found = true;
       }
    }
@@ -252,7 +249,7 @@ word CodeCoverage::Diff(std::ostringstream& expl) const
 
 //------------------------------------------------------------------------------
 
-word CodeCoverage::Erase(string& func, string& expl)
+word CodeCoverage::Erase(const string& func, string& expl)
 {
    Debug::ft("CodeCoverage.Erase");
 
@@ -262,8 +259,8 @@ word CodeCoverage::Erase(string& func, string& expl)
       if(rc != 0) return rc;
    }
 
-   func = Mangle(func);
-   auto found = prevFuncs_.erase(func);
+   auto name = Mangle(func);
+   auto found = prevFuncs_.erase(name);
 
    if(found > 0)
    {
@@ -301,7 +298,7 @@ CodeCoverage::LoadState CodeCoverage::GetFunc
    Debug::ft("CodeCoverage.GetFunc");
 
    auto func = strGet(input);
-   if(func.empty()) return GetFunction;
+   if(func.empty()) return LoadFunction;
    if(func.front() == DELIMITER) return LoadDone;
    auto hash = strGet(input);
    if(hash.empty() || !isxdigit(hash.front()))
@@ -312,7 +309,7 @@ CodeCoverage::LoadState CodeCoverage::GetFunc
    if(!result.second)
       return GetError("Function name duplicated", rc, expl);
    loadFunc_ = result.first;
-   return GetTestcases;
+   return LoadTests;
 }
 
 //------------------------------------------------------------------------------
@@ -322,11 +319,11 @@ CodeCoverage::LoadState CodeCoverage::GetTests(string& input)
    Debug::ft("CodeCoverage.GetTests");
 
    auto test = strGet(input);
-   if(test.empty()) return GetTestcases;
-   if(test.front() == DELIMITER) return GetFunction;
+   if(test.empty()) return LoadTests;
+   if(test.front() == DELIMITER) return LoadFunction;
    loadFunc_->second.tests.insert(test);
    prevTests_.insert(test);
-   return GetTestcases;
+   return LoadTests;
 }
 
 //------------------------------------------------------------------------------
@@ -367,7 +364,7 @@ word CodeCoverage::Load(string& expl)
    expl = "Error: explanation not provided.";
    word rc = -1;
    string input;
-   auto state = GetFunction;
+   auto state = LoadFunction;
    prevFuncs_.clear();
    prevTests_.clear();
 
@@ -379,10 +376,10 @@ word CodeCoverage::Load(string& expl)
       {
          switch(state)
          {
-         case GetFunction:
+         case LoadFunction:
             state = GetFunc(input, rc, expl);
             break;
-         case GetTestcases:
+         case LoadTests:
             state = GetTests(input);
             break;
          case LoadDone:
@@ -428,9 +425,9 @@ word CodeCoverage::Merge(std::ostringstream& expl)
    auto testdb = Singleton< TestDatabase >::Instance();
    std::set< string > inclTests;
 
-   //  Update the current database with testcases that appear only in
-   //  the previous database.  Verify that a testcase is still in the
-   //  testcase database before adding it.
+   //  Update the current database with tests that appear only in the
+   //  previous database.  Verify that a test is still in the database
+   //  before adding it.
    //
    for(auto p = prevTests_.cbegin(); p != prevTests_.cend(); ++p)
    {
@@ -456,10 +453,10 @@ word CodeCoverage::Merge(std::ostringstream& expl)
       }
    }
 
-   //  Look at functions that exist in both databases.  If a testcase invoked
+   //  Look at functions that exist in both databases.  If a test invoked
    //  a function in the previous database, insert it as an invoker of that
-   //  function in the current database *if the testcase was just added to the
-   //  current database, above*.  (If the testcase wasn't added to the current
+   //  function in the current database *if the test was just added to the
+   //  current database, above*.  (If the test wasn't added to the current
    //  database, it must have been deleted or re-executed; in the latter case,
    //  it has already been inserted as an invoker of all its functions.)
    //
@@ -483,8 +480,8 @@ word CodeCoverage::Merge(std::ostringstream& expl)
       return -7;
    }
 
-   //  The latest functions and testcases have now been included, so the
-   //  current database is now also the "previous" one.
+   //  The latest functions and tests have now been included, so the current
+   //  database is now also the "previous" one.
    //
    prevFuncs_ = currFuncs_;
    prevTests_ = currTests_;
@@ -507,7 +504,7 @@ word CodeCoverage::Query(string& expl)
    std::ostringstream stats;
 
    stats << "Functions: " << prevFuncs_.size() << CRLF;
-   stats << "Testcases per function:" << CRLF;
+   stats << "Tests per function:" << CRLF;
 
    const size_t MAX_TESTS = 10;
    size_t histogram[MAX_TESTS + 1] = { 0 };
@@ -588,41 +585,53 @@ word CodeCoverage::Retest(std::ostringstream& expl) const
       return 0;
    }
 
-   std::set< string > testless;
-   std::set< string > tests;
+   std::set< string > reexecute;
+   std::set< string > uncovered;
+   std::set< string > unknown;
 
    for(auto f = modified.cbegin(); f != modified.cend(); ++f)
    {
       auto& ft = (*f)->second.tests;
 
       if(ft.empty())
-         testless.insert((*f)->first);
+         uncovered.insert((*f)->first);
       else
-         for(auto t = ft.cbegin(); t != ft.cend(); ++t) tests.insert(*t);
+         for(auto t = ft.cbegin(); t != ft.cend(); ++t) reexecute.insert(*t);
    }
 
    auto testdb = Singleton< TestDatabase >::Instance();
    std::ostringstream report;
 
-   if(!tests.empty())
+   if(!reexecute.empty())
    {
-      report << "Testcases to re-execute for modified functions:";
+      report << "Tests to re-execute for modified functions:";
 
-      for(auto t = tests.cbegin(); t != tests.cend(); ++t)
+      for(auto t = reexecute.cbegin(); t != reexecute.cend(); ++t)
       {
-         report << CRLF << spaces(2) << *t;
-         testdb->SetState(*t, TestDatabase::Reexecute);
+         if(testdb->SetState(*t, TestDatabase::Reexecute))
+            report << CRLF << spaces(2) << *t;
+         else
+            unknown.insert(*t);
       }
    }
 
-   if(!testless.empty())
+   if(!unknown.empty())
    {
-      if(!tests.empty()) report << CRLF;
-      report << "No testcases exist for these modified functions:";
+      report << CRLF << "The following tests were not found in the database:";
 
-      for(auto f = testless.cbegin(); f != testless.cend(); ++f)
+      for(auto t = unknown.cbegin(); t != unknown.cend(); ++t)
       {
-         report << CRLF << spaces(2) << *f;
+         report << CRLF << spaces(2) << *t;
+      }
+   }
+
+   if(!uncovered.empty())
+   {
+      report << CRLF << "No tests exist for these modified functions:";
+
+      for(auto f = uncovered.cbegin(); f != uncovered.cend(); ++f)
+      {
+         report << CRLF << spaces(2) << Demangle(*f);
       }
    }
 
@@ -660,7 +669,7 @@ word CodeCoverage::Under(size_t min, string& expl)
    {
       if(f->second.tests.size() < min)
       {
-         expl.append(f->first + CRLF);
+         expl.append(Demangle(f->first) + CRLF);
       }
    }
 

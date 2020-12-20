@@ -646,12 +646,12 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    //
    for(auto f = order->begin(); f != order->end(); NO_OP)
    {
-       auto file = files.At(f->fid);
-     
-       if(file->ParseStatus() != CodeFile::Unparsed)
-          f = order->erase(f);
-       else
-          ++f;
+      auto file = files.At(f->fid);
+
+      if(file->ParseStatus() != CodeFile::Unparsed)
+         f = order->erase(f);
+      else
+         ++f;
    }
 
    //  Parse substitute files first, followed by the .h's.  This allows the

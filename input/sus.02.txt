@@ -1,4 +1,4 @@
-testcase begin sus.02
+tests begin sus.02
 subscribe &dn.B sus
 / A-B: SUS(TBC)
 inject PS B &port.A
@@ -12,4 +12,4 @@ verify PS S &port.A s=x m=&port.silence
 verify PS S &port.A c=&cause.destoutoforder
 verify PS R &port.A &cause.normal
 unsubscribe &dn.B sus
-testcase end
+tests end

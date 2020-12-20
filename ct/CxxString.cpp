@@ -506,6 +506,16 @@ bool IsWordChar(char c)
 
 //------------------------------------------------------------------------------
 
+char LastCodeChar(const string& s, size_t slashSlashPos)
+{
+   if(slashSlashPos == string::npos) return s.back();
+
+   auto pos = RfindFirstNotOf(s, slashSlashPos - 1, WhitespaceChars);
+   return s.at(pos);
+}
+
+//------------------------------------------------------------------------------
+
 size_t NameCouldReferTo(const string& fqName, const string& name)
 {
    Debug::ft("CodeTools.NameCouldReferTo");

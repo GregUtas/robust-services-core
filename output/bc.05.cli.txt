@@ -1,6 +1,6 @@
 pots>start
   OK.
-pots>/ A: INVALID ADDRESS
+pots>
 pots>inject PS B &port.A
   OK.
 pots>delay 1
@@ -19,20 +19,20 @@ pots>verify PS S &port.A s=x m=&port.reorder c=&cause.invalidaddress
   OK.
 pots>verify PS R &port.A &cause.normal
   OK.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

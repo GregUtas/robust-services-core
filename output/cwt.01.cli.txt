@@ -1,8 +1,8 @@
 pots>start
   OK.
-pots>/ 1A 1B
+pots>
 pots>read cwt.In2Ack
-pots>/ INITIATE CWT
+pots>
 pots>inject PS B &port.C
   OK.
 pots>delay 1
@@ -31,16 +31,16 @@ pots>verify PC A &port.A
   OK.
 pots>verify PS S &port.C m=&port.ringback
   OK.
-pots>/ 1C
+pots>
 pots>read cwt.Nf2Tmr
-pots>/ NOTIFYING 2: STOP CWT TONE
+pots>
 pots>delay 6
   OK.
 pots>verify PS S &port.A m=&port.B
   OK.
-pots>/ 1D
+pots>
 pots>read cwt.Nd2ExC
-pots>/ NOTIFIED 2; IDLE C
+pots>
 pots>inject PS E &port.C
   OK.
 pots>delay 2
@@ -53,9 +53,9 @@ pots>verify PS S &port.A s=x c=&cause.normal
   OK.
 pots>verify PC F &port.A f &service.cwa &facility.cwt.released
   OK.
-pots>/ 1E
+pots>
 pots>read cwt.Nu1ExA
-pots>/ NULL 1: EXIT A
+pots>
 pots>inject PS E &port.A
   OK.
 pots>delay 2
@@ -68,9 +68,9 @@ pots>verify PS R &port.A &cause.normal
   OK.
 pots>verify PS S &port.B m=&port.silence c=&cause.normal
   OK.
-pots>/ IDLE B
+pots>
 pots>read cwt.Nu0ExB
-pots>/ NULL 0: IDLE B
+pots>
 pots>inject PS E &port.B
   OK.
 pots>delay 2
@@ -79,20 +79,20 @@ pots>verify PS R &port.B &cause.normal
   OK.
 pots>delay 2
   OK.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

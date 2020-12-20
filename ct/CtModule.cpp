@@ -23,11 +23,11 @@
 #include "CodeCoverage.h"
 #include "CodeWarning.h"
 #include "CtIncrement.h"
+#include "Cxx.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
-#include "Lexer.h"
 #include "Library.h"
 #include "ModuleRegistry.h"
 #include "NbModule.h"
@@ -81,7 +81,7 @@ void CtModule::Startup(RestartLevel level)
    Debug::ft("CtModule.Startup");
 
    CodeWarning::Initialize();
-   Lexer::Initialize();
+   Cxx::Initialize();
 
    //  Create/start singletons.
    //

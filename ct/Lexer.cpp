@@ -24,6 +24,8 @@
 #include <cmath>
 #include <cstring>
 #include <set>
+#include <unordered_map>
+#include <utility>
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
@@ -41,46 +43,6 @@ using std::string;
 
 namespace CodeTools
 {
-//  Indentation cases.
-//
-enum IndentRule
-{
-   IndentStandard,   // standard rules
-   IndentResume,     // numeric constant or punctuation
-   IndentCase,       // case label
-   IndentDirective,  // preprocessor directive
-   IndentFor,        // for statement
-   IndentEnum,       // enumeration
-   IndentControl,    // access control keyword
-   IndentNamespace   // namespace enclosure
-};
-
-IndentRule ClassifyIndent(string& id)
-{
-   if(id == "$") return IndentResume;
-   if(id == CASE_STR) return IndentCase;
-   if(id == DEFAULT_STR) return IndentCase;
-   if(id == FOR_STR) return IndentFor;
-   if(id.front() == '#') return IndentDirective;
-   if(id == ENUM_STR) return IndentEnum;
-   if(id == PUBLIC_STR) return IndentControl;
-   if(id == PROTECTED_STR) return IndentControl;
-   if(id == PRIVATE_STR) return IndentControl;
-   if(id == NAMESPACE_STR) return IndentNamespace;
-   return IndentStandard;
-}
-
-//------------------------------------------------------------------------------
-
-Lexer::DirectiveTablePtr Lexer::Directives = nullptr;
-Lexer::KeywordTablePtr Lexer::Keywords = nullptr;
-Lexer::OperatorTablePtr Lexer::CxxOps = nullptr;
-Lexer::OperatorTablePtr Lexer::PreOps = nullptr;
-Lexer::OperatorTablePtr Lexer::Reserved = nullptr;
-Lexer::TypesTablePtr Lexer::Types = nullptr;
-
-//------------------------------------------------------------------------------
-
 Lexer::Lexer() :
    source_(nullptr),
    size_(0),
@@ -153,7 +115,7 @@ void Lexer::CalcDepths()
          ns = false;
          SetDepth(start, depth, next);
          line_[GetLineNum(curr_)].cont = false;
-         right = FindClosing('{', '}', curr_);
+         right = FindClosing('{', '}', curr_ + 1);
          line_[GetLineNum(right)].depth = depth;
          depth = next;
          Advance(1);
@@ -347,10 +309,7 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
    auto f = false;
    size_t level = 1;
 
-   if(pos == string::npos)
-      pos = curr_;
-   else
-      ++pos;
+   if(pos == string::npos) pos = curr_;
 
    pos = NextPos(pos);
 
@@ -480,13 +439,13 @@ size_t Lexer::FindFirstOf(const string& targs) const
          pos = SkipCharLiteral(pos);
          break;
       case '{':
-         pos = FindClosing('{', '}', pos);
+         pos = FindClosing('{', '}', pos + 1);
          break;
       case '(':
-         pos = FindClosing('(', ')', pos);
+         pos = FindClosing('(', ')', pos + 1);
          break;
       case '[':
-         pos = FindClosing('[', ']', pos);
+         pos = FindClosing('[', ']', pos + 1);
          break;
       case '<':
          end = SkipTemplateSpec(pos);
@@ -747,9 +706,9 @@ Cxx::Operator Lexer::GetCxxOp()
 
    while(!token.empty())
    {
-      auto match = CxxOps->lower_bound(token);
+      auto match = Cxx::CxxOps->lower_bound(token);
 
-      if(match != CxxOps->cend())
+      if(match != Cxx::CxxOps->cend())
       {
          Advance(token.size());
          return match->second;
@@ -1078,9 +1037,9 @@ bool Lexer::GetName(string& name, Constraint constraint)
    switch(constraint)
    {
    case NonKeyword:
-      if(Types->lower_bound(id) != Types->cend()) return false;
+      if(Cxx::Types->lower_bound(id) != Cxx::Types->cend()) return false;
 
-      if(Keywords->lower_bound(id) != Keywords->cend())
+      if(Cxx::Keywords->lower_bound(id) != Cxx::Keywords->cend())
       {
          if((id != OPERATOR_STR) && (id != OVERRIDE_STR) && (id != FINAL_STR))
          {
@@ -1092,7 +1051,8 @@ bool Lexer::GetName(string& name, Constraint constraint)
    case TypeKeyword:
       if(id != AUTO_STR)
       {
-         if(Keywords->lower_bound(id) != Keywords->cend()) return false;
+         if(Cxx::Keywords->lower_bound(id) != Cxx::Keywords->cend())
+            return false;
       }
    }
 
@@ -1118,8 +1078,8 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
    }
    else
    {
-      if((Types->lower_bound(name) == Types->cend()) &&
-         (Keywords->lower_bound(name) == Keywords->cend()))
+      if((Cxx::Types->lower_bound(name) == Cxx::Types->cend()) &&
+         (Cxx::Keywords->lower_bound(name) == Cxx::Keywords->cend()))
          return true;
    }
 
@@ -1327,9 +1287,9 @@ bool Lexer::GetOpOverride(Cxx::Operator& oper)
 
    while(count > 0)
    {
-      auto match = CxxOps->lower_bound(token);
+      auto match = Cxx::CxxOps->lower_bound(token);
 
-      if(match != CxxOps->cend())
+      if(match != Cxx::CxxOps->cend())
       {
          oper = Cxx::Operator(match->second);
          curr_ += token.size();
@@ -1397,9 +1357,9 @@ Cxx::Operator Lexer::GetPreOp()
 
    while(!token.empty())
    {
-      auto match = PreOps->lower_bound(token);
+      auto match = Cxx::PreOps->lower_bound(token);
 
-      if(match != PreOps->cend())
+      if(match != Cxx::PreOps->cend())
       {
          Advance(token.size());
          return match->second;
@@ -1409,19 +1369,6 @@ Cxx::Operator Lexer::GetPreOp()
       token.pop_back();
    }
 
-   return Cxx::NIL_OPERATOR;
-}
-
-//------------------------------------------------------------------------------
-
-Cxx::Operator Lexer::GetReserved(const string& name)
-{
-   Debug::ft("Lexer.GetReserved");
-
-   //  See if NAME matches one of a selected group of reserved words.
-   //
-   auto match = Reserved->lower_bound(name);
-   if(match != Reserved->cend()) return match->second;
    return Cxx::NIL_OPERATOR;
 }
 
@@ -1440,221 +1387,11 @@ bool Lexer::GetTemplateSpec(string& spec)
 
 //------------------------------------------------------------------------------
 
-Cxx::Type Lexer::GetType(const string& name)
-{
-   Debug::ft("Lexer.GetType");
-
-   auto match = Types->lower_bound(name);
-   if(match != Types->cend()) return match->second;
-   return Cxx::NIL_TYPE;
-}
-
-//------------------------------------------------------------------------------
-
-bool Lexer::Initialize()
-{
-   Debug::ft("Lexer.Initialize(startup)");
-
-   Directives.reset(new DirectiveTable);
-   Directives->insert(DirectivePair(HASH_DEFINE_STR, Cxx::_DEFINE));
-   Directives->insert(DirectivePair(HASH_ELIF_STR, Cxx::_ELIF));
-   Directives->insert(DirectivePair(HASH_ELSE_STR, Cxx::_ELSE));
-   Directives->insert(DirectivePair(HASH_ENDIF_STR, Cxx::_ENDIF));
-   Directives->insert(DirectivePair(HASH_ERROR_STR, Cxx::_ERROR));
-   Directives->insert(DirectivePair(HASH_IF_STR, Cxx::_IF));
-   Directives->insert(DirectivePair(HASH_IFDEF_STR, Cxx::_IFDEF));
-   Directives->insert(DirectivePair(HASH_IFNDEF_STR, Cxx::_IFNDEF));
-   Directives->insert(DirectivePair(HASH_INCLUDE_STR, Cxx::_INCLUDE));
-   Directives->insert(DirectivePair(HASH_LINE_STR, Cxx::_LINE));
-   Directives->insert(DirectivePair(HASH_PRAGMA_STR, Cxx::_PRAGMA));
-   Directives->insert(DirectivePair(HASH_UNDEF_STR, Cxx::_UNDEF));
-
-   Keywords.reset(new KeywordTable);
-   Keywords->insert(KeywordPair(ALIGNAS_STR, Cxx::ALIGNAS));
-   Keywords->insert(KeywordPair(ASM_STR, Cxx::ASM));
-   Keywords->insert(KeywordPair(AUTO_STR, Cxx::AUTO));
-   Keywords->insert(KeywordPair(BREAK_STR, Cxx::BREAK));
-   Keywords->insert(KeywordPair(CASE_STR, Cxx::CASE));
-   Keywords->insert(KeywordPair(CLASS_STR, Cxx::CLASS));
-   Keywords->insert(KeywordPair(CONST_STR, Cxx::CONST));
-   Keywords->insert(KeywordPair(CONSTEXPR_STR, Cxx::CONSTEXPR));
-   Keywords->insert(KeywordPair(CONTINUE_STR, Cxx::CONTINUE));
-   Keywords->insert(KeywordPair(DEFAULT_STR, Cxx::DEFAULT));
-   Keywords->insert(KeywordPair(DO_STR, Cxx::DO));
-   Keywords->insert(KeywordPair(ENUM_STR, Cxx::ENUM));
-   Keywords->insert(KeywordPair(EXPLICIT_STR, Cxx::EXPLICIT));
-   Keywords->insert(KeywordPair(EXTERN_STR, Cxx::EXTERN));
-   Keywords->insert(KeywordPair(FINAL_STR, Cxx::FINAL));
-   Keywords->insert(KeywordPair(FOR_STR, Cxx::FOR));
-   Keywords->insert(KeywordPair(FRIEND_STR, Cxx::FRIEND));
-   Keywords->insert(KeywordPair(GOTO_STR, Cxx::GOTO));
-   Keywords->insert(KeywordPair(IF_STR, Cxx::IF));
-   Keywords->insert(KeywordPair(INLINE_STR, Cxx::INLINE));
-   Keywords->insert(KeywordPair(MUTABLE_STR, Cxx::MUTABLE));
-   Keywords->insert(KeywordPair(NAMESPACE_STR, Cxx::NAMESPACE));
-   Keywords->insert(KeywordPair(OPERATOR_STR, Cxx::OPERATOR));
-   Keywords->insert(KeywordPair(OVERRIDE_STR, Cxx::OVERRIDE));
-   Keywords->insert(KeywordPair(PRIVATE_STR, Cxx::PRIVATE));
-   Keywords->insert(KeywordPair(PROTECTED_STR, Cxx::PROTECTED));
-   Keywords->insert(KeywordPair(PUBLIC_STR, Cxx::PUBLIC));
-   Keywords->insert(KeywordPair(RETURN_STR, Cxx::RETURN));
-   Keywords->insert(KeywordPair(STATIC_ASSERT_STR, Cxx::STATIC_ASSERT));
-   Keywords->insert(KeywordPair(STATIC_STR, Cxx::STATIC));
-   Keywords->insert(KeywordPair(STRUCT_STR, Cxx::STRUCT));
-   Keywords->insert(KeywordPair(SWITCH_STR, Cxx::SWITCH));
-   Keywords->insert(KeywordPair(TEMPLATE_STR, Cxx::TEMPLATE));
-   Keywords->insert(KeywordPair(THREAD_LOCAL_STR, Cxx::THREAD_LOCAL));
-   Keywords->insert(KeywordPair(TRY_STR, Cxx::TRY));
-   Keywords->insert(KeywordPair(TYPEDEF_STR, Cxx::TYPEDEF));
-   Keywords->insert(KeywordPair(UNION_STR, Cxx::UNION));
-   Keywords->insert(KeywordPair(USING_STR, Cxx::USING));
-   Keywords->insert(KeywordPair(VIRTUAL_STR, Cxx::VIRTUAL));
-   Keywords->insert(KeywordPair(VOLATILE_STR, Cxx::VOLATILE));
-   Keywords->insert(KeywordPair(WHILE_STR, Cxx::WHILE));
-
-   //  Each string can only have one entry in a hash table.  If a string
-   //  is ambiguous, it maps to the operator with the highest precedence,
-   //  and other interpretations are commented out.  The parser resolves
-   //  the ambiguity.
-   //
-   CxxOps.reset(new OperatorTable);
-   CxxOps->insert(OperatorPair(SCOPE_STR, Cxx::SCOPE_RESOLUTION));
-   CxxOps->insert(OperatorPair(".", Cxx::REFERENCE_SELECT));
-   CxxOps->insert(OperatorPair("->", Cxx::POINTER_SELECT));
-   CxxOps->insert(OperatorPair("[", Cxx::ARRAY_SUBSCRIPT));
-   CxxOps->insert(OperatorPair("(", Cxx::FUNCTION_CALL));
-   CxxOps->insert(OperatorPair("++", Cxx::POSTFIX_INCREMENT));
-   CxxOps->insert(OperatorPair("--", Cxx::POSTFIX_DECREMENT));
-   CxxOps->insert(OperatorPair(TYPEID_STR, Cxx::TYPE_NAME));
-   CxxOps->insert(OperatorPair(CONST_CAST_STR, Cxx::CONST_CAST));
-   CxxOps->insert(OperatorPair(DYNAMIC_CAST_STR, Cxx::DYNAMIC_CAST));
-   CxxOps->insert(OperatorPair(REINTERPRET_CAST_STR, Cxx::REINTERPRET_CAST));
-   CxxOps->insert(OperatorPair(STATIC_CAST_STR, Cxx::STATIC_CAST));
-   CxxOps->insert(OperatorPair(SIZEOF_STR, Cxx::SIZEOF_TYPE));
-   CxxOps->insert(OperatorPair(ALIGNOF_STR, Cxx::ALIGNOF_TYPE));
-   CxxOps->insert(OperatorPair(NOEXCEPT_STR, Cxx::NOEXCEPT));
-// CxxOps->insert(OperatorPair("++", Cxx::PREFIX_INCREMENT));
-// CxxOps->insert(OperatorPair("--", Cxx::PREFIX_DECREMENT));
-   CxxOps->insert(OperatorPair("~", Cxx::ONES_COMPLEMENT));
-   CxxOps->insert(OperatorPair("!", Cxx::LOGICAL_NOT));
-   CxxOps->insert(OperatorPair("+", Cxx::UNARY_PLUS));
-   CxxOps->insert(OperatorPair("-", Cxx::UNARY_MINUS));
-   CxxOps->insert(OperatorPair("&", Cxx::ADDRESS_OF));
-   CxxOps->insert(OperatorPair("*", Cxx::INDIRECTION));
-   CxxOps->insert(OperatorPair(NEW_STR, Cxx::OBJECT_CREATE));
-   CxxOps->insert(OperatorPair(NEW_ARRAY_STR, Cxx::OBJECT_CREATE_ARRAY));
-   CxxOps->insert(OperatorPair(DELETE_STR, Cxx::OBJECT_DELETE));
-   CxxOps->insert(OperatorPair(DELETE_ARRAY_STR, Cxx::OBJECT_DELETE_ARRAY));
-// CxxOps->insert(OperatorPair("(", Cxx::CAST));
-   CxxOps->insert(OperatorPair(".*", Cxx::REFERENCE_SELECT_MEMBER));
-   CxxOps->insert(OperatorPair("->*", Cxx::POINTER_SELECT_MEMBER));
-// CxxOps->insert(OperatorPair("*", Cxx::MULTIPLY));
-   CxxOps->insert(OperatorPair("/", Cxx::DIVIDE));
-   CxxOps->insert(OperatorPair("%", Cxx::MODULO));
-// CxxOps->insert(OperatorPair("+", Cxx::ADD));
-// CxxOps->insert(OperatorPair("-", Cxx::SUBTRACT));
-   CxxOps->insert(OperatorPair("<<", Cxx::LEFT_SHIFT));
-   CxxOps->insert(OperatorPair(">>", Cxx::RIGHT_SHIFT));
-   CxxOps->insert(OperatorPair("<", Cxx::LESS));
-   CxxOps->insert(OperatorPair("<=", Cxx::LESS_OR_EQUAL));
-   CxxOps->insert(OperatorPair(">", Cxx::GREATER));
-   CxxOps->insert(OperatorPair(">=", Cxx::GREATER_OR_EQUAL));
-   CxxOps->insert(OperatorPair("==", Cxx::EQUALITY));
-   CxxOps->insert(OperatorPair("!=", Cxx::INEQUALITY));
-// CxxOps->insert(OperatorPair("&", Cxx::BITWISE_AND));
-   CxxOps->insert(OperatorPair("^", Cxx::BITWISE_XOR));
-   CxxOps->insert(OperatorPair("|", Cxx::BITWISE_OR));
-   CxxOps->insert(OperatorPair("&&", Cxx::LOGICAL_AND));
-   CxxOps->insert(OperatorPair("||", Cxx::LOGICAL_OR));
-   CxxOps->insert(OperatorPair("?", Cxx::CONDITIONAL));
-   CxxOps->insert(OperatorPair("=", Cxx::ASSIGN));
-   CxxOps->insert(OperatorPair("*=", Cxx::MULTIPLY_ASSIGN));
-   CxxOps->insert(OperatorPair("/=", Cxx::DIVIDE_ASSIGN));
-   CxxOps->insert(OperatorPair("%=", Cxx::MODULO_ASSIGN));
-   CxxOps->insert(OperatorPair("+=", Cxx::ADD_ASSIGN));
-   CxxOps->insert(OperatorPair("-=", Cxx::SUBTRACT_ASSIGN));
-   CxxOps->insert(OperatorPair("<<=", Cxx::LEFT_SHIFT_ASSIGN));
-   CxxOps->insert(OperatorPair(">>=", Cxx::RIGHT_SHIFT_ASSIGN));
-   CxxOps->insert(OperatorPair("&=", Cxx::BITWISE_AND_ASSIGN));
-   CxxOps->insert(OperatorPair("^=", Cxx::BITWISE_XOR_ASSIGN));
-   CxxOps->insert(OperatorPair("|=", Cxx::BITWISE_OR_ASSIGN));
-   CxxOps->insert(OperatorPair(THROW_STR, Cxx::THROW));
-   CxxOps->insert(OperatorPair(",", Cxx::STATEMENT_SEPARATOR));
-
-   PreOps.reset(new OperatorTable);
-   PreOps->insert(OperatorPair("[", Cxx::ARRAY_SUBSCRIPT));
-   PreOps->insert(OperatorPair("(", Cxx::FUNCTION_CALL));
-   PreOps->insert(OperatorPair(DEFINED_STR, Cxx::DEFINED));
-   PreOps->insert(OperatorPair("~", Cxx::ONES_COMPLEMENT));
-   PreOps->insert(OperatorPair("!", Cxx::LOGICAL_NOT));
-   PreOps->insert(OperatorPair("+", Cxx::UNARY_PLUS));
-   PreOps->insert(OperatorPair("-", Cxx::UNARY_MINUS));
-   PreOps->insert(OperatorPair("*", Cxx::MULTIPLY));
-   PreOps->insert(OperatorPair("/", Cxx::DIVIDE));
-   PreOps->insert(OperatorPair("%", Cxx::MODULO));
-   PreOps->insert(OperatorPair("+", Cxx::ADD));
-   PreOps->insert(OperatorPair("-", Cxx::SUBTRACT));
-   PreOps->insert(OperatorPair("<<", Cxx::LEFT_SHIFT));
-   PreOps->insert(OperatorPair(">>", Cxx::RIGHT_SHIFT));
-   PreOps->insert(OperatorPair("<", Cxx::LESS));
-   PreOps->insert(OperatorPair("<=", Cxx::LESS_OR_EQUAL));
-   PreOps->insert(OperatorPair(">", Cxx::GREATER));
-   PreOps->insert(OperatorPair(">=", Cxx::GREATER_OR_EQUAL));
-   PreOps->insert(OperatorPair("==", Cxx::EQUALITY));
-   PreOps->insert(OperatorPair("!=", Cxx::INEQUALITY));
-   PreOps->insert(OperatorPair("&", Cxx::BITWISE_AND));
-   PreOps->insert(OperatorPair("^", Cxx::BITWISE_XOR));
-   PreOps->insert(OperatorPair("|", Cxx::BITWISE_OR));
-   PreOps->insert(OperatorPair("&&", Cxx::LOGICAL_AND));
-   PreOps->insert(OperatorPair("||", Cxx::LOGICAL_OR));
-   PreOps->insert(OperatorPair("?", Cxx::CONDITIONAL));
-
-   Reserved.reset(new OperatorTable);
-   Reserved->insert(OperatorPair(ALIGNOF_STR, Cxx::ALIGNOF_TYPE));
-   Reserved->insert(OperatorPair(CONST_CAST_STR, Cxx::CONST_CAST));
-   Reserved->insert(OperatorPair(DELETE_STR, Cxx::OBJECT_DELETE));
-   Reserved->insert(OperatorPair(DYNAMIC_CAST_STR, Cxx::DYNAMIC_CAST));
-   Reserved->insert(OperatorPair(FALSE_STR, Cxx::FALSE));
-   Reserved->insert(OperatorPair(NEW_STR, Cxx::OBJECT_CREATE));
-   Reserved->insert(OperatorPair(NOEXCEPT_STR, Cxx::NOEXCEPT));
-   Reserved->insert(OperatorPair(NULLPTR_STR, Cxx::NULLPTR));
-   Reserved->insert(OperatorPair(REINTERPRET_CAST_STR, Cxx::REINTERPRET_CAST));
-   Reserved->insert(OperatorPair(SIZEOF_STR, Cxx::SIZEOF_TYPE));
-   Reserved->insert(OperatorPair(STATIC_CAST_STR, Cxx::STATIC_CAST));
-   Reserved->insert(OperatorPair(THROW_STR, Cxx::THROW));
-   Reserved->insert(OperatorPair(TRUE_STR, Cxx::TRUE));
-   Reserved->insert(OperatorPair(TYPEID_STR, Cxx::TYPE_NAME));
-
-   Types.reset(new TypesTable);
-   Types->insert(TypePair(AUTO_STR, Cxx::AUTO_TYPE));
-   Types->insert(TypePair(BOOL_STR, Cxx::BOOL));
-   Types->insert(TypePair(CHAR_STR, Cxx::CHAR));
-   Types->insert(TypePair(CHAR16_STR, Cxx::CHAR16));
-   Types->insert(TypePair(CHAR32_STR, Cxx::CHAR32));
-   Types->insert(TypePair(DOUBLE_STR, Cxx::DOUBLE));
-   Types->insert(TypePair(FLOAT_STR, Cxx::FLOAT));
-   Types->insert(TypePair(INT_STR, Cxx::INT));
-   Types->insert(TypePair(LONG_STR, Cxx::LONG));
-   Types->insert(TypePair(NULLPTR_T_STR, Cxx::NULLPTR_TYPE));
-   Types->insert(TypePair(SHORT_STR, Cxx::SHORT));
-   Types->insert(TypePair(SIGNED_STR, Cxx::SIGNED));
-   Types->insert(TypePair(UNSIGNED_STR, Cxx::UNSIGNED));
-   Types->insert(TypePair(VOID_STR, Cxx::VOID));
-   Types->insert(TypePair(WCHAR_STR, Cxx::WCHAR));
-   Types->insert(TypePair(DELETE_STR, Cxx::NON_TYPE));
-   Types->insert(TypePair(NEW_STR, Cxx::NON_TYPE));
-   Types->insert(TypePair(THROW_STR, Cxx::NON_TYPE));
-
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
-void Lexer::Initialize(const string* source)
+void Lexer::Initialize(const string& source)
 {
    Debug::ft("Lexer.Initialize");
 
-   source_ = source;
+   source_ = &source;
    size_ = source_->size();
    lines_ = 0;
    line_.clear();
@@ -1698,8 +1435,9 @@ Cxx::Directive Lexer::NextDirective(string& str) const
    str = NextIdentifier();
    if(str.empty()) return Cxx::NIL_DIRECTIVE;
 
-   auto match = Directives->lower_bound(str);
-   return (match != Directives->cend() ? match->second : Cxx::NIL_DIRECTIVE);
+   auto match = Cxx::Directives->lower_bound(str);
+   return
+      (match != Cxx::Directives->cend() ? match->second : Cxx::NIL_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -1743,8 +1481,8 @@ Cxx::Keyword Lexer::NextKeyword(string& str) const
    if(first == '#') return Cxx::HASH;
    if(first == '~') return Cxx::NVDTOR;
 
-   auto match = Keywords->lower_bound(str);
-   return (match != Keywords->cend() ? match->second : Cxx::NIL_KEYWORD);
+   auto match = Cxx::Keywords->lower_bound(str);
+   return (match != Cxx::Keywords->cend() ? match->second : Cxx::NIL_KEYWORD);
 }
 
 //------------------------------------------------------------------------------
@@ -1898,7 +1636,7 @@ Cxx::Type Lexer::NextType()
 
    auto token = NextIdentifier();
    if(token.empty()) return Cxx::NIL_TYPE;
-   auto type = GetType(token);
+   auto type = Cxx::GetType(token);
    if(type != Cxx::NIL_TYPE) Advance(token.size());
    return type;
 }

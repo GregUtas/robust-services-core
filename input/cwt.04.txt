@@ -1,6 +1,6 @@
 subscribe &dn.A cwt
 
-testcase verify off
+tests verify off
 read bc.AB
 / 1A 1B
 read cwt.In2Ack
@@ -10,9 +10,9 @@ read cwt.Nf2Tmr
 read cwt.Nd2Tmr
 / 2B
 read cwt.Rf2Tmr
-testcase verify on
+tests verify on
 
-testcase begin cwt.04
+tests begin cwt.04
 / 4A
 read cwt.Rd2Tmr
 / IDLE A
@@ -25,5 +25,5 @@ read cwt.Nu0Tmr
 read cwt.Nu0ExC
 
 delay 2
-testcase end
+tests end
 unsubscribe &dn.A cwt

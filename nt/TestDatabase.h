@@ -35,14 +35,14 @@
 
 namespace NodeTools
 {
-//  Database for code coverage, which maps functions to the testcases that
-//  execute them.
+//  Database for code coverage, which maps functions to the tests that execute
+//  them.
 //
 class TestDatabase : public NodeBase::Temporary
 {
    friend class NodeBase::Singleton< TestDatabase >;
 public:
-   //  The state of a testcase.
+   //  The state of a test.
    //
    enum State
    {
@@ -58,22 +58,23 @@ public:
    //
    NodeBase::word Query(bool verbose, std::string& expl) const;
 
-   //  Updates EXPL with a list of testcases that have not passed.
+   //  Updates EXPL with a list of tests that have not passed.
    //
    NodeBase::word Retest(std::string& expl) const;
 
    //  Removes TEST from the database.
    //
-   NodeBase::word Erase(const std::string& test, std::string& expl);
+   NodeBase::word Erase(const std::string& testname, std::string& expl);
 
-   //  Sets the state of a testcase to NEXT.
+   //  Sets the state of a test to NEXT.  Returns false if the test is
+   //  not in the database.
    //
-   void SetState(const std::string& testcase, State next);
+   bool SetState(const std::string& testname, State next);
 
-   //  Returns the state of a testcase.  Returns Invalid if the testcase
-   //  is not in the database.
+   //  Returns the state of a test.  Returns Invalid if the test is not
+   //  in the database.
    //
-   State GetState(const std::string& testcase);
+   State GetState(const std::string& testname);
 
    //  Overridden for restarts.
    //
@@ -89,16 +90,16 @@ private:
 
    enum LoadState
    {
-      GetTestcase,
+      LoadTest,
       LoadDone,
       LoadError
    };
 
-   //  Reads the testcase database from InputPath/test.db.txt.
+   //  Reads the test database from InputPath/test.db.txt.
    //
    void Load();
 
-   //  Updates the database by accounting for testcases that have been added,
+   //  Updates the database by accounting for tests that have been added,
    //  changed, or deleted.
    //
    void Update();
@@ -107,7 +108,7 @@ private:
    //
    void Commit() const;
 
-   //  Parses a line (INPUT) in the testcase database, which has the form
+   //  Parses a line (INPUT) in the test database, which has the form
    //    [<TestName> <TestState> <TestHash>]* "$"
    //  Returns the next type of item to look for.
    //
@@ -126,32 +127,32 @@ private:
    //
    static const uint32_t UNHASHED = UINT32_MAX;
 
-   //  Adds or updates a testcase when the command "testcase begin TEST"
-   //  is found in a script located in DIR.
+   //  Adds or updates a test when the command "tests begin TESTNAME" is
+   //  found in a script located in DIR.
    //
-   void Insert(const std::string& test, const std::string& dir);
+   void Insert(const std::string& testname, const std::string& dir);
 
-   //  Information about a testcase.
+   //  Information about a test.
    //
    struct TestInfo
    {
-      State state;    // state of testcase
-      uint32_t hash;  // hash value for testcase's script
+      State state;    // state of test
+      uint32_t hash;  // hash value for test's script
 
       TestInfo(State state, uint32_t hash) : state(state), hash(hash) { }
    };
 
-   //  A tuple for a testcase's name and its associated information.
+   //  A tuple for a test's name and its associated information.
    //
    typedef std::pair< std::string, TestInfo > TestData;
 
-   //  A database of testcases.
+   //  A database of tests.
    //
-   typedef std::map< std::string, TestInfo > Testcases;
+   typedef std::map< std::string, TestInfo > Tests;
 
-   //  The testcases in the database.
+   //  The tests in the database.
    //
-   Testcases tests_;
+   Tests tests_;
 };
 
 //  Inserts a string for STATE into STREAM.

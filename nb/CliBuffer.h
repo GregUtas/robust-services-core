@@ -57,6 +57,10 @@ public:
    //
    static const char StringChar;
 
+   //  The character that separates multiple commands entered on one line.
+   //
+   static const char BreakChar;
+
    //  The character that causes the remainder of an input line to be ignored.
    //
    static const char CommentChar;
@@ -72,10 +76,6 @@ public:
    //  The character that precedes a symbol's name to obtain its value.
    //
    static const char SymbolChar;
-
-   //  The character that separates multiple commands entered on one line.
-   //
-   static const char BreakChar;
 
    //  Highlights faulty user input during command parsing.
    //
@@ -165,6 +165,7 @@ private:
    std::streamsize GetLine(const CliThread& cli);
 
    //  Verifies that the current input line contains no illegal characters.
+   //  Also handles EscapeChar, StringChar, BreakChar, and CommentChar.
    //  Returns StreamOk or StreamBadChar.
    //
    std::streamsize ScanLine(const CliThread& cli);

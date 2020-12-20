@@ -1,5 +1,5 @@
 subscribe &dn.B cfu &dn.C
-testcase begin cfx.01
+tests begin cfx.01
 
 / A-B: VERIFY CFU INACTIVE
 read bc.AB
@@ -13,7 +13,7 @@ verify PS S &port.B m=&port.silence c=&cause.normal
 verify PS R &port.B &cause.normal
 delay 1
 contexts c
-if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
 
 / B: ACTIVATE CFU TO C (PROVISIONED)
 inject PS B &port.B
@@ -29,7 +29,7 @@ verify PS S &port.B s=d m=&port.stutter
 verify PS S &port.B s=x m=&port.conf c=&cause.confirmation
 verify PS R &port.B &cause.normal
 contexts c
-if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
 
 / A-B(CFU)-C: RINGBACK, ANSWER, RELEASE
 inject PS B &port.A
@@ -52,5 +52,5 @@ verify PS R &port.A &cause.normal
 verify PS S &port.C m=&port.silence c=&cause.normal
 verify PS R &port.C &cause.normal
 delay 2
-testcase end
+tests end
 unsubscribe &dn.B cfu

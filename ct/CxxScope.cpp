@@ -3823,7 +3823,7 @@ size_t Function::GetRange(size_t& begin, size_t& end) const
    if(impl_ == nullptr) return string::npos;
    auto lexer = GetFile()->GetLexer();
    auto left = impl_->GetPos();
-   end = lexer.FindClosing('{', '}', left);
+   end = lexer.FindClosing('{', '}', left + 1);
    return left;
 }
 
@@ -4441,7 +4441,7 @@ bool Function::IsTrivial() const
       case CloseBrace:
          return true;
 
-      case SourceCode:
+      case CodeLine:
          if(body) return false;
       }
    }
@@ -5324,8 +5324,8 @@ bool FuncSpec::MatchesExactly(const TypeSpec* that) const
 
 //------------------------------------------------------------------------------
 
-TypeMatch FuncSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
-   stringVector& tmpltArgs, bool& argFound) const
+TypeMatch FuncSpec::MatchTemplate(const TypeSpec* that,
+   stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const
 {
    Debug::SwLog(FuncSpec_Warning, "MatchTemplate", 0);
    return func_->GetTypeSpec()->MatchTemplate

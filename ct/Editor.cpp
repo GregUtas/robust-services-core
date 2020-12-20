@@ -25,8 +25,8 @@
 #include <cstdio>
 #include <cstring>
 #include <iosfwd>
-#include <istream>
 #include <iterator>
+#include <list>
 #include <memory>
 #include <sstream>
 #include "CliThread.h"
@@ -48,6 +48,7 @@
 #include "SysFile.h"
 #include "ThisThread.h"
 
+using std::ostream;
 using std::string;
 using namespace NodeBase;
 
@@ -68,32 +69,121 @@ const string BackChars = "$%@!>\"";
 
 //------------------------------------------------------------------------------
 //
-//  If CODE is an #include directive, unmangles and returns it, else
-//  simply returns it without any changes.
+//  Returns true if the code at ITER is empty.
 //
-string DemangleInclude(string code)
+bool CodeIsEmpty(const SourceIter& iter)
 {
-   if(code.empty()) return code;
+   return (iter->code.find_first_not_of(WhitespaceChars) == string::npos);
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns a string literal (flit) and fn_name identifier (fvar) that are
+//  suitable for invoking Debug::ft.
+//
+void DebugFtNames(const Function* func, string& flit, string& fvar)
+{
+   //  Get the function's name and the scope in which it appears.
+   //
+   auto sname = *func->GetScope()->Name();
+   auto fname = func->DebugName();
+
+   flit = QUOTE + sname;
+   if(!sname.empty()) flit.push_back('.');
+   flit.append(fname);
+   flit.push_back(QUOTE);
+
+   fvar = sname;
+   if(!fvar.empty()) fvar.push_back('_');
+
+   if(func->FuncType() == FuncOperator)
+   {
+      //  Something like "class_operator=" won't pass as an identifier, so use
+      //  "class_operatorN", where N is the integer value of the Operator enum.
+      //
+      auto oper = CxxOp::NameToOperator(fname);
+      fname.erase(strlen(OPERATOR_STR));
+      fname.append(std::to_string(oper));
+   }
+
+   fvar.append(fname);
+}
+
+//------------------------------------------------------------------------------
+//
+//  If the code at ITER is an #include directive, unmangles and returns it,
+//  else simply returns it without any changes.
+//
+string DemangleInclude(const SourceIter& iter)
+{
+   auto& code = iter->code;
+
    if(code.find(HASH_INCLUDE_STR) != 0) return code;
 
-   auto pos = code.find_first_of(FrontChars);
-   if(pos == string::npos) return code;
+   auto front = code.find_first_of(FrontChars);
+   if(front == string::npos) return code;
+   auto back = RfindFirstNotOf(code, code.size() - 1, WhitespaceChars);
 
-   switch(FrontChars.find_first_of(code[pos]))
+   switch(FrontChars.find_first_of(code[front]))
    {
    case 0:
    case 2:
-      code[pos] = '<';
-      code.back() = '>';
+      code[front] = '<';
+      code[back] = '>';
       break;
    case 1:
    case 3:
-      code[pos] = QUOTE;
-      code.back() = QUOTE;
+      code[front] = QUOTE;
+      code[back] = QUOTE;
       break;
    }
 
    return code;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string FilePrompt = "Enter the filename in which to define";
+
+const CodeFile* FindFuncDefnFile
+   (CliThread& cli, const Class* cls, const string& name)
+{
+   Debug::ft("CodeTools.FindFuncDefnFile");
+
+   //  Look at all the functions in the class to which the new function
+   //  will be added.  If all of them are implemented in the same file,
+   //  define the new function in that file, otherwise ask the user to
+   //  specify which file should contain the function.
+   //
+   std::set< CodeFile* > impls;
+   auto funcs = cls->Funcs();
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      auto file = (*f)->GetDefnFile();
+      if((file != nullptr) && file->IsCpp()) impls.insert(file);
+   }
+
+   CodeFile* file = (impls.size() == 1 ? *impls.cbegin() : nullptr);
+
+   while(file == nullptr)
+   {
+      std::ostringstream prompt;
+      prompt << FilePrompt << CRLF << spaces(2);
+      prompt << *cls->Name() << SCOPE_STR << name;
+      prompt << " ('s' to skip this item): ";
+      auto fileName = cli.StrPrompt(prompt.str());
+      if(fileName == "s") return nullptr;
+
+      file = Singleton< Library >::Instance()->FindFile(fileName);
+      if(file == nullptr)
+      {
+         *cli.obuf << "  That file is not in the code library.";
+         cli.Flush();
+      }
+   }
+
+   return file;
 }
 
 //------------------------------------------------------------------------------
@@ -148,6 +238,13 @@ bool IncludesAreSorted(const string& line1, const string& line2)
 }
 
 //------------------------------------------------------------------------------
+
+bool IncludesSorted(const SourceLine& line1, const SourceLine& line2)
+{
+   return IncludesAreSorted(line1.code, line2.code);
+}
+
+//------------------------------------------------------------------------------
 //
 //  Sets EXPL to "TEXT not found."  If QUOTES is set, TEXT is enclosed in
 //  quotes.  Returns 0.
@@ -180,7 +277,6 @@ void ReportFix(CliThread& cli, word rc, string& expl)
    if(rc <= 0)
    {
       *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
-      *cli.obuf << CRLF;
       cli.Flush();
    }
 
@@ -260,10 +356,8 @@ size_t Editor::Commits_ = 0;
 
 //------------------------------------------------------------------------------
 
-Editor::Editor(const CodeFile* file, string& expl) :
-   file_(file),
-   line_(0),
-   read_(1),
+Editor::Editor(const CodeFile& file) :
+   file_(&file),
    sorted_(false),
    aliased_(false)
 {
@@ -272,14 +366,28 @@ Editor::Editor(const CodeFile* file, string& expl) :
    //  Get the file's source code.  If this fails, there is no point in
    //  continuing.
    //
-   read_ = GetCode(expl);
-   if(read_ != 0) return;
+   if(!source_.Initialize(*file_)) return;
 
    //  Get the file's warnings and sort them for fixing.  The order reduces
    //  the chances of an item's position changing before it is edited.
    //
    CodeWarning::GetWarnings(file_, warnings_);
    std::sort(warnings_.begin(), warnings_.end(), CodeWarning::IsSortedToFix);
+
+   //  Mangle #include directives.  This is done to assist in sorting them.
+   //
+   string expl;
+
+   for(auto i = Code().begin(); i != Code().end(); ++i)
+   {
+      if(i->code.find(HASH_INCLUDE_STR) == 0)
+      {
+         MangleInclude(i->code, expl);
+      }
+   }
+
+   source_.CalcDepths();
+   source_.ClassifyLines();
 }
 
 //------------------------------------------------------------------------------
@@ -289,7 +397,7 @@ word Editor::AdjustLineIndentation(const CodeWarning& log, string& expl)
    Debug::ft("Editor.AdjustLineIndentation");
 
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
    Indent(s, false);
    return Changed(s, expl);
 }
@@ -382,7 +490,7 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    if(begin.pos == string::npos) return NotFound(expl, "Function name");
    auto lastLine = log.file_->GetLexer().GetLineNum(right);
    auto end = FindLine(lastLine);
-   if(end == source_.end()) return NotFound(expl, "Function last line");
+   if(end == Code().end()) return NotFound(expl, "Function last line");
    auto range = lastLine - log.line_ + 1;
 
    for(auto loc = FindWord(begin.iter, begin.pos, *defnName, &range);
@@ -416,14 +524,14 @@ word Editor::ChangeClassToStruct(const CodeWarning& log, string& expl)
    //
    auto left = Find(cls.iter, "{");
    if(left.pos == string::npos) return NotFound(expl, "Left brace");
-   left = NextPos(left);
+   source_.Next(left);
    auto acc = FindWord(left.iter, left.pos, PUBLIC_STR);
    if(acc.pos != string::npos)
    {
       auto colon = FindNonBlank(acc.iter, acc.pos + strlen(PUBLIC_STR));
       colon.iter->code.erase(colon.pos, 1);
       acc.iter->code.erase(acc.pos, strlen(PUBLIC_STR));
-      if(acc.iter->code.empty()) source_.erase(acc.iter);
+      if(CodeIsEmpty(acc.iter)) Code().erase(acc.iter);
    }
    return Changed(cls.iter, expl);
 }
@@ -440,11 +548,11 @@ word Editor::Changed()
 
 //------------------------------------------------------------------------------
 
-word Editor::Changed(const Iter& iter, string& expl)
+word Editor::Changed(const SourceIter& iter, string& expl)
 {
    Debug::ft("Editor.Changed(iter)");
 
-   expl = (iter->code.empty() ? EMPTY_STR : iter->code);
+   expl = (CodeIsEmpty(iter) ? EMPTY_STR : iter->code);
    Editors_.insert(this);
    return 0;
 }
@@ -455,38 +563,75 @@ word Editor::ChangeDebugFtName(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.ChangeDebugFtName");
 
-   //  Find the locations of the existing fn_name definition and
-   //  Debug::ft invocation.  The definition could span two lines.
+   //  Find the location of the Debug::ft invocation.
    //
    auto func = FindPos(log.item_->GetPos());
    if(func.pos == string::npos) return NotFound(expl, "Function name");
-   auto dbegin = Rfind(func.iter, "fn_name", func.pos);
-   if(dbegin.pos == string::npos)
-      return NotFound(expl, "fn_name definition");
-   auto dend = Find(dbegin.iter, ";", dbegin.pos);
-   if(dend.pos == string::npos)
-      return NotFound(expl, "fn_name semicolon");
-   auto split = (dbegin.iter != dend.iter);
    auto cloc = Find(func.iter, "Debug::ft", func.pos);
    if(cloc.pos == string::npos)
       return NotFound(expl, "Debug::ft invocation");
 
-   //  Get the replacement code for the definition and invocation.  Erase
-   //  the current ones and replace them, splitting the definition if it
-   //  is too long.
+   //  Find the location of the fn_name definition if it exists.  If one is
+   //  found, assume that it belongs to a previous function if a right brace
+   //  appears between it and the start of this function.
    //
-   string defn, call;
-   DebugFtCode(static_cast< const Function* >(log.item_), defn, call);
-   auto where = source_.erase(dbegin.iter);
-   if(split) where = source_.erase(where);
-   where = source_.insert(where, SourceLine(defn, SIZE_MAX));
-   if(defn.size() > file_->LineLengthMax())
+   auto split = false;
+   auto dbegin = Rfind(func.iter, "fn_name", func.pos);
+
+   if(dbegin.iter != Code().end())
    {
-      auto pos = defn.find('=');
-      InsertLineBreak(where, pos + 1);
+      auto valid = true;
+
+      for(auto i = dbegin.iter; valid && (i != cloc.iter); ++i)
+      {
+         if(i->code.find('}') != string::npos) valid = false;
+      }
+
+      if(valid)
+      {
+         auto dend = Find(dbegin.iter, ";", dbegin.pos);
+         if(dend.pos == string::npos)
+            return NotFound(expl, "fn_name semicolon");
+         split = (dbegin.iter != dend.iter);
+      }
+      else
+      {
+         dbegin = source_.End();
+      }
    }
-   where = source_.erase(cloc.iter);
-   source_.insert(where, SourceLine(call, SIZE_MAX));
+
+   string call;
+
+   if(dbegin.iter == Code().end())
+   {
+      //  An fn_name definition was not found, so the Debug::ft invocation
+      //  must have used a string literal.  Get its replacement.
+      //
+      DebugFtCode(static_cast< const Function* >(log.item_), call);
+   }
+   else
+   {
+      //  The Debug::ft invocation used an fn_name.  Get the replacement
+      //  code for the definition and invocation.  Erase the current ones
+      //  and replace the definition, splitting if it is too long.
+      //
+      string defn;
+
+      DebugFtCode(static_cast< const Function* >(log.item_), defn, call);
+      auto where = Code().erase(dbegin.iter);
+      if(split) where = Code().erase(where);
+      where = Code().insert(where, SourceLine(defn, SIZE_MAX));
+      if(defn.size() > file_->LineLengthMax())
+      {
+         auto pos = defn.find('=');
+         InsertLineBreak(where, pos + 1);
+      }
+   }
+
+   //  Now replace the invocation, whether a string literal or fn_name.
+   //
+   auto where = Code().erase(cloc.iter);
+   where = Code().insert(where, SourceLine(call, SIZE_MAX));
    return Changed(where, expl);
 }
 
@@ -509,7 +654,7 @@ word Editor::ChangeStructToClass(const CodeWarning& log, string& expl)
    //
    auto left = Find(str.iter, "{");
    if(left.pos == string::npos) return NotFound(expl, "Left brace");
-   left = NextPos(left);
+   source_.Next(left);
    auto acc = FindWord(left.iter, left.pos, PUBLIC_STR);
    if(acc.pos == string::npos)
    {
@@ -524,7 +669,7 @@ word Editor::ChangeStructToClass(const CodeWarning& log, string& expl)
 
 fn_name Editor_CodeBegin = "Editor.CodeBegin";
 
-Editor::Iter Editor::CodeBegin()
+SourceIter Editor::CodeBegin()
 {
    Debug::ft(Editor_CodeBegin);
 
@@ -552,7 +697,7 @@ Editor::Iter Editor::CodeBegin()
       if(*p < first) first = *p;
    }
 
-   auto s = source_.end();
+   auto s = Code().end();
 
    if(first != SIZE_MAX)
    {
@@ -562,7 +707,7 @@ Editor::Iter Editor::CodeBegin()
 
    auto ns = false;
 
-   for(--s; s != source_.begin(); --s)
+   for(--s; s != Code().begin(); --s)
    {
       auto type = GetLineType(s);
 
@@ -583,7 +728,7 @@ Editor::Iter Editor::CodeBegin()
          ns = true;
          break;
 
-      case SourceCode:
+      case CodeLine:
          //
          //  If we saw an open brace, this should be a namespace enclosure.
          //  Generate a log if it's something else, otherwise continue to
@@ -625,7 +770,7 @@ Editor::Iter Editor::CodeBegin()
 
 //------------------------------------------------------------------------------
 
-const bool Editor::CodeFollowsImmediately(const Iter& iter) const
+const bool Editor::CodeFollowsImmediately(const SourceIter& iter)
 {
    Debug::ft("Editor.CodeFollowsImmediately");
 
@@ -633,7 +778,7 @@ const bool Editor::CodeFollowsImmediately(const Iter& iter) const
    //  false if the next thing is executable code (this excludes braces and
    //  access controls), else return false.
    //
-   for(auto next = std::next(iter); next != source_.end(); ++next)
+   for(auto next = std::next(iter); next != Code().end(); ++next)
    {
       auto type = GetLineType(next);
 
@@ -656,7 +801,7 @@ word Editor::ConvertTabsToBlanks()
 
    //  Run through the source, looking for a line of code that contains a tab.
    //
-   for(auto s = source_.begin(); s != source_.end(); ++s)
+   for(auto s = Code().begin(); s != Code().end(); ++s)
    {
       auto pos = s->code.find_first_of(TAB);
 
@@ -705,46 +850,56 @@ word Editor::ConvertTabsToBlanks()
 
 //------------------------------------------------------------------------------
 
+void Editor::DebugFtCode(const Function* func, std::string& call) const
+{
+   Debug::ft("Editor.DebugFtCode(inline)");
+
+   string flit, fvar;
+   DebugFtNames(func, flit, fvar);
+
+   call = string(file_->IndentSize(), SPACE) + "Debug::ft(";
+   call.append(flit);
+   call.append(");");
+}
+
+//------------------------------------------------------------------------------
+
 void Editor::DebugFtCode
    (const Function* func, std::string& defn, std::string& call) const
 {
-   Debug::ft("Editor.DebugFtCode");
+   Debug::ft("Editor.DebugFtCode(fn_name)");
 
-   //  Assemble the following:
-   //  o fname: the function's name
-   //  o sname: the name of the scope in which the function appears
-   //  o dslit: the string literal that identifies the function
-   //  o dname: the name for the fn_name string literal
-   //
-   auto fname = func->DebugName();
-   auto sname = *func->GetScope()->Name();
+   string flit, fvar;
+   DebugFtNames(func, flit, fvar);
 
-   string dslit = QUOTE + sname;
-   if(!sname.empty()) dslit.push_back('.');
-   dslit.append(fname);
-   dslit.push_back(QUOTE);
-
-   auto dname = sname;
-   if(!sname.empty()) dname.push_back('_');
-   if(func->FuncType() == FuncOperator)
-   {
-      //  Something like "class_operator=" won't pass as an identifier, so use
-      //  "class_operatorN", where N is the integer value of the Operator enum.
-      //
-      auto oper = CxxOp::NameToOperator(fname);
-      fname.erase(strlen(OPERATOR_STR));
-      fname.append(std::to_string(oper));
-   }
-   dname.append(fname);
    defn = "fn_name";
    defn.push_back(SPACE);
-   defn.append(dname);
+   defn.append(fvar);
    defn.append(" = ");
-   defn.append(dslit);
+   defn.append(flit);
    defn.push_back(';');
    call = string(file_->IndentSize(), SPACE) + "Debug::ft(";
-   call.append(dname);
+   call.append(fvar);
    call.append(");");
+}
+
+//------------------------------------------------------------------------------
+
+void Editor::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   Base::Display(stream, prefix, options);
+
+   stream << prefix << "file     : " <<
+      (file_ != nullptr ? file_->Name() : "no file specified") << CRLF;
+   stream << CRLF;
+   stream << prefix << "sorted   : " << sorted_ << CRLF;
+   stream << prefix << "aliased  : " << aliased_ << CRLF;
+   stream << prefix << "warnings : " << warnings_.size() << CRLF;
+   stream << prefix << "source   : " << CRLF;
+
+   auto indent = prefix + spaces(2);
+   source_.Display(stream, indent, options);
 }
 
 //------------------------------------------------------------------------------
@@ -772,14 +927,14 @@ void Editor::DisplayLog(const CliThread& cli, const CodeWarning& log, bool file)
       //
       auto s = FindLine(log.line_);
 
-      if(s == source_.end())
+      if(s == Code().end())
       {
          *cli.obuf << "  Line " << log.line_ + 1 << " not found." << CRLF;
          return;
       }
 
       *cli.obuf << spaces(2);
-      *cli.obuf << DemangleInclude(s->code) << CRLF;
+      *cli.obuf << DemangleInclude(s);
    }
 }
 
@@ -793,7 +948,7 @@ word Editor::EraseAccessControl(const CodeWarning& log, string& expl)
    //  where it occurred; log.item_ is nullptr in this warning.
    //
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
    size_t len = 0;
 
    //  Look for the access control keyword and note its length.
@@ -847,7 +1002,7 @@ word Editor::EraseAdjacentSpaces(const CodeWarning& log, string& expl)
    Debug::ft("Editor.EraseAdjacentSpaces");
 
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
 
    auto& code = s->code;
    auto pos = code.find_first_not_of(WhitespaceChars);
@@ -862,7 +1017,7 @@ word Editor::EraseAdjacentSpaces(const CodeWarning& log, string& expl)
 
    if(comm != string::npos)
    {
-      if(s != source_.begin())
+      if(s != Code().begin())
       {
          auto prev = std::prev(s);
          move = (comm == prev->code.find_first_of("//"));
@@ -871,7 +1026,7 @@ word Editor::EraseAdjacentSpaces(const CodeWarning& log, string& expl)
       if(!move)
       {
          auto next = std::next(s);
-         if(next != source_.end())
+         if(next != Code().end())
          {
             move = (comm == next->code.find_first_of("//"));
          }
@@ -885,7 +1040,7 @@ word Editor::EraseAdjacentSpaces(const CodeWarning& log, string& expl)
    if(stop != string::npos)
       while(IsBlank(code[stop - 1])) --stop;
    else
-      stop = code.size();
+      stop = code.size() - 1;
 
    comm = stop;  // (comm - stop) will be number of erased spaces
 
@@ -916,7 +1071,7 @@ word Editor::EraseBlankLine(const CodeWarning& log, string& expl)
    //
    auto blank = FindPos(log.pos_);
    if(blank.pos == string::npos) return NotFound(expl, "Blank line");
-   source_.erase(blank.iter);
+   Code().erase(blank.iter);
    return Changed();
 }
 
@@ -926,14 +1081,14 @@ word Editor::EraseBlankLinePairs()
 {
    Debug::ft("Editor.EraseBlankLinePairs");
 
-   auto i1 = source_.begin();
-   if(i1 == source_.end()) return 0;
+   auto i1 = Code().begin();
+   if(i1 == Code().end()) return 0;
 
-   for(auto i2 = std::next(i1); i2 != source_.end(); i2 = std::next(i1))
+   for(auto i2 = std::next(i1); i2 != Code().end(); i2 = std::next(i1))
    {
-      if(i1->code.empty() && i2->code.empty())
+      if(CodeIsEmpty(i1) && CodeIsEmpty(i2))
       {
-         i1 = source_.erase(i1);
+         i1 = Code().erase(i1);
          Changed();
       }
       else
@@ -955,7 +1110,7 @@ word Editor::EraseCode(size_t pos, string& expl)
    //
    auto begin = FindPos(pos);
    if(begin.pos == string::npos) return NotFound(expl, "Code to be deleted");
-   source_.erase(begin.iter);
+   Code().erase(begin.iter);
    return Changed();
 }
 
@@ -980,13 +1135,13 @@ word Editor::EraseCode(size_t pos, const string& delimiters, string& expl)
    //
    if(end.iter->code.at(end.pos) == '{')
    {
-      end = PrevPos(end);
+      source_.Prev(end);
 
       if(delimiters.find(',') != string::npos)
       {
          auto comma = Rfind(begin.iter, ",", begin.pos);
 
-         if(comma.iter != source_.end())
+         if(comma.iter != Code().end())
          {
             comma.iter->code.at(comma.pos) = SPACE;
          }
@@ -1002,7 +1157,7 @@ word Editor::EraseCode(size_t pos, const string& delimiters, string& expl)
       begin.iter = IntroStart(begin.iter, false);
    }
 
-   source_.erase(begin.iter, std::next(end.iter));
+   Code().erase(begin.iter, std::next(end.iter));
    return Changed();
 }
 
@@ -1132,23 +1287,23 @@ word Editor::EraseData
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseEmptyNamespace(const Iter& iter)
+word Editor::EraseEmptyNamespace(const SourceIter& iter)
 {
    Debug::ft("Editor.EraseEmptyNamespace");
 
    //  ITER references the line that follows a forward declaration which was
    //  just deleted.  If this left an empty "namespace <ns> { }", remove it.
    //
-   if(iter == source_.end()) return 0;
+   if(iter == Code().end()) return 0;
    if(iter->code.find('}') != 0) return 0;
 
    auto up1 = std::prev(iter);
-   if(up1 == source_.begin()) return 0;
+   if(up1 == Code().begin()) return 0;
    auto up2 = std::prev(up1);
 
    if((up2->code.find(NAMESPACE_STR) == 0) && (up1->code.find('{') == 0))
    {
-      source_.erase(up2, std::next(iter));
+      Code().erase(up2, std::next(iter));
       return Changed();
    }
 
@@ -1161,12 +1316,12 @@ word Editor::EraseEmptySeparators()
 {
    Debug::ft("Editor.EraseEmptySeparators");
 
-   auto i1 = source_.begin();
-   if(i1 == source_.end()) return 0;
+   auto i1 = Code().begin();
+   if(i1 == Code().end()) return 0;
    auto i2 = std::next(i1);
-   if(i2 == source_.end()) return 0;
+   if(i2 == Code().end()) return 0;
 
-   for(auto i3 = std::next(i2); i3 != source_.end(); i3 = std::next(i2))
+   for(auto i3 = std::next(i2); i3 != Code().end(); i3 = std::next(i2))
    {
       auto t1 = GetLineType(i1);
       auto t2 = GetLineType(i2);
@@ -1178,11 +1333,11 @@ word Editor::EraseEmptySeparators()
          {
             if((t3 == CloseBrace) || (t3 == SeparatorComment))
             {
-               source_.erase(i1);
-               source_.erase(i2);
+               Code().erase(i1);
+               Code().erase(i2);
                i1 = i3;
                i2 = std::next(i1);
-               if(i2 == source_.end()) return 0;
+               if(i2 == Code().end()) return 0;
                continue;
             }
          }
@@ -1190,9 +1345,9 @@ word Editor::EraseEmptySeparators()
          {
             if(t1 == OpenBrace)
             {
-               source_.erase(i2);
-               i2 = source_.erase(i3);
-               if(i2 == source_.end()) return 0;
+               Code().erase(i2);
+               i2 = Code().erase(i3);
+               if(i2 == Code().end()) return 0;
                continue;
             }
          }
@@ -1244,7 +1399,7 @@ word Editor::EraseEnumerator(const CodeWarning& log, string& expl)
    //
    if(curr.iter->code.find_first_not_of(WhitespaceChars) == string::npos)
    {
-      source_.erase(curr.iter);
+      Code().erase(curr.iter);
    }
 
    //  If this was the last enumerator, replace the comma that follows the
@@ -1301,7 +1456,7 @@ word Editor::EraseForward(const CodeWarning& log, string& expl)
    auto forw = FindPos(log.pos_);
    if(forw.pos == string::npos)
       return NotFound(expl, "Forward declaration");
-   forw.iter = source_.erase(forw.iter);
+   forw.iter = Code().erase(forw.iter);
    Changed();
    return EraseEmptyNamespace(forw.iter);
 }
@@ -1324,26 +1479,26 @@ word Editor::EraseFunction(const Function* func, string& expl)
    size_t begin, end;
    func->GetRange(begin, end);
    auto first = FindPos(begin);
-   if(first.iter == source_.end())
+   if(first.iter == Code().end())
       return NotFound(expl, "Start of declaration");
    auto last = FindPos(end);
-   if(last.iter == source_.end()) return NotFound(expl, "End of declaration");
+   if(last.iter == Code().end()) return NotFound(expl, "End of declaration");
 
    //  Also delete any comments and fn_name definition above the function.
    //
    first.iter = IntroStart(first.iter, true);
-   source_.erase(first.iter, std::next(last.iter));
+   Code().erase(first.iter, std::next(last.iter));
    return Changed();
 }
 
 //------------------------------------------------------------------------------
 
-bool Editor::EraseLineBreak(const Iter& curr)
+bool Editor::EraseLineBreak(const SourceIter& curr)
 {
    Debug::ft("Editor.EraseLineBreak(iter)");
 
    auto next = std::next(curr);
-   if(next == source_.end()) return false;
+   if(next == Code().end()) return false;
 
    //  Check that the lines can be merged.
    //
@@ -1356,8 +1511,9 @@ bool Editor::EraseLineBreak(const Iter& curr)
        next->code, 0, next->code.size() - 1);
    if(size > file_->LineLengthMax()) return false;
 
-   //  Merge the lines.
+   //  Merge the lines after discarding CURR's endline.
    //
+   curr->code.pop_back();
    auto start = next->code.find_first_not_of(WhitespaceChars);
    if(InsertSpaceOnMerge(curr->code, next->code, start))
    {
@@ -1366,7 +1522,7 @@ bool Editor::EraseLineBreak(const Iter& curr)
 
    next->code.erase(0, start);
    curr->code.append(next->code);
-   source_.erase(next);
+   Code().erase(next);
    return true;
 }
 
@@ -1377,7 +1533,7 @@ word Editor::EraseLineBreak(const CodeWarning& log, string& expl)
    Debug::ft("Editor.EraseLineBreak(log)");
 
    auto iter = FindLine(log.line_, expl);
-   if(iter == source_.end()) return 0;
+   if(iter == Code().end()) return 0;
    auto merged = EraseLineBreak(iter);
    if(!merged) expl = "Line break was not removed.";
    return Changed(iter, expl);
@@ -1423,7 +1579,7 @@ word Editor::EraseOffsets()
 {
    Debug::ft("Editor.EraseOffsets");
 
-   for(auto i2 = source_.begin(); i2 != source_.end(); ++i2)
+   for(auto i2 = Code().begin(); i2 != Code().end(); ++i2)
    {
       switch(GetLineType(i2))
       {
@@ -1431,11 +1587,11 @@ word Editor::EraseOffsets()
       case OpenBrace:
          {
             auto i3 = std::next(i2);
-            if(i3 == source_.end()) return 0;
+            if(i3 == Code().end()) return 0;
             auto t3 = GetLineType(i3);
             if(LineTypeAttr::Attrs[t3].isBlank)
             {
-               source_.erase(i3);
+               Code().erase(i3);
             }
             break;
          }
@@ -1447,7 +1603,7 @@ word Editor::EraseOffsets()
             auto t1 = GetLineType(i1);
             if(LineTypeAttr::Attrs[t1].isBlank)
             {
-               source_.erase(i1);
+               Code().erase(i1);
             }
          }
       }
@@ -1483,7 +1639,7 @@ word Editor::EraseSemicolon(const CodeWarning& log, string& expl)
    //  of a function definition or namespace enclosure.
    //
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
    auto semi = s->code.rfind(';');
    if(semi == string::npos) return NotFound(expl, "Semicolon");
    auto brace = RfindNonBlank(s, semi - 1);
@@ -1502,13 +1658,17 @@ word Editor::EraseTrailingBlanks()
 {
    Debug::ft("Editor.EraseTrailingBlanks");
 
-   for(auto s = source_.begin(); s != source_.end(); ++s)
+   for(auto s = Code().begin(); s != Code().end(); ++s)
    {
+      auto size = s->code.size();
+
       while(!s->code.empty() && IsBlank(s->code.back()))
       {
          s->code.pop_back();
-         Changed();
       }
+
+      s->code.push_back(CRLF);
+      if(s->code.size() != size) Changed();
    }
 
    return 0;
@@ -1540,7 +1700,7 @@ word Editor::EraseVoidArgument(const CodeWarning& log, string& expl)
    //  could be the argument.  Erase it, leaving only the parentheses.
    //
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
 
    for(auto arg = FindWord(s, 0, VOID_STR); arg.pos != string::npos;
        arg = FindWord(arg.iter, arg.pos + 1, VOID_STR))
@@ -1565,24 +1725,24 @@ word Editor::EraseVoidArgument(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::Find(Iter iter, const string& str, size_t off)
+SourceLoc Editor::Find(SourceIter iter, const string& str, size_t off)
 {
    Debug::ft("Editor.Find");
 
-   while(iter != source_.end())
+   while(iter != Code().end())
    {
       auto pos = iter->code.find(str, off);
-      if(pos != string::npos) return CodeLocation(iter, pos);
+      if(pos != string::npos) return SourceLoc(iter, pos);
       ++iter;
       off = 0;
    }
 
-   return CodeLocation(iter);
+   return SourceLoc(iter);
 }
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::FindArgsEnd(const Function* func)
+SourceLoc Editor::FindArgsEnd(const Function* func)
 {
    Debug::ft("Editor.FindArgsEnd");
 
@@ -1592,38 +1752,37 @@ Editor::CodeLocation Editor::FindArgsEnd(const Function* func)
       //  Find the right parenthesis after the function's name.
       //
       auto name = FindPos(func->GetPos());
-      if(name.pos == string::npos) return CodeLocation(source_.end());
+      if(name.pos == string::npos) return source_.End();
       return FindFirstOf(name.iter, name.pos, ")");
    }
 
    //  Find the right parenthesis after the last argument's name.
    //
    auto name = FindPos(args.back()->GetPos());
-   if(name.pos == string::npos) return CodeLocation(source_.end());
+   if(name.pos == string::npos) return source_.End();
    return FindFirstOf(name.iter, name.pos, ")");
 }
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::FindFirstOf
-   (Iter iter, size_t off, const string& chars)
+SourceLoc Editor::FindFirstOf(SourceIter iter, size_t off, const string& chars)
 {
    Debug::ft("Editor.FindFirstOf");
 
-   while(iter != source_.end())
+   while(iter != Code().end())
    {
       auto pos = iter->code.find_first_of(chars, off);
-      if(pos != string::npos) return CodeLocation(iter, pos);
+      if(pos != string::npos) return SourceLoc(iter, pos);
       ++iter;
       off = 0;
    }
 
-   return CodeLocation(iter);
+   return SourceLoc(iter);
 }
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::FindFuncDeclLoc
+SourceIter Editor::FindFuncDeclLoc
    (const Class* cls, const string& name, FuncDeclAttrs& attrs)
 {
    Debug::ft("Editor.FindFuncDeclLoc");
@@ -1688,52 +1847,7 @@ Editor::Iter Editor::FindFuncDeclLoc
 
 //------------------------------------------------------------------------------
 
-fixed_string FilePrompt = "Enter the filename in which to define";
-
-const CodeFile* Editor::FindFuncDefnFile
-   (CliThread& cli, const Class* cls, const string& name)
-{
-   Debug::ft("Editor.FindFuncDefnFile");
-
-   //  Look at all the functions in the class to which the new function
-   //  will be added.  If all of them are implemented in the same file,
-   //  define the new function in that file, otherwise ask the user to
-   //  specify which file should contain the function.
-   //
-   std::set< CodeFile* > impls;
-   auto funcs = cls->Funcs();
-
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      auto file = (*f)->GetDefnFile();
-      if((file != nullptr) && file->IsCpp()) impls.insert(file);
-   }
-
-   CodeFile* file = (impls.size() == 1 ? *impls.cbegin() : nullptr);
-
-   while(file == nullptr)
-   {
-      std::ostringstream prompt;
-      prompt << FilePrompt << CRLF << spaces(2);
-      prompt << *cls->Name() << SCOPE_STR << name;
-      prompt << " ('s' to skip this item): ";
-      auto fileName = cli.StrPrompt(prompt.str());
-      if(fileName == "s") return nullptr;
-
-      file = Singleton< Library >::Instance()->FindFile(fileName);
-      if(file == nullptr)
-      {
-         *cli.obuf << "  That file is not in the code library.";
-         cli.Flush();
-      }
-   }
-
-   return file;
-}
-
-//------------------------------------------------------------------------------
-
-Editor::Iter Editor::FindFuncDefnLoc(const CodeFile* file,
+SourceIter Editor::FindFuncDefnLoc(const CodeFile* file,
    const Class* cls, const string& name, string& expl, FuncDefnAttrs& attrs)
 {
    Debug::ft("Editor.FindFuncDefnLoc");
@@ -1799,7 +1913,7 @@ Editor::Iter Editor::FindFuncDefnLoc(const CodeFile* file,
       else
       {
          expl = "A definition for this function already exists.";
-         return source_.end();
+         return Code().end();
       }
 
       special = false;
@@ -1814,27 +1928,27 @@ Editor::Iter Editor::FindFuncDefnLoc(const CodeFile* file,
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::FindLine(size_t line)
+SourceIter Editor::FindLine(size_t line)
 {
    Debug::ft("Editor.FindLine");
 
-   for(auto s = source_.begin(); s != source_.end(); ++s)
+   for(auto s = Code().begin(); s != Code().end(); ++s)
    {
       if(s->line == line) return s;
    }
 
-   return source_.end();
+   return Code().end();
 }
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::FindLine(size_t line, string& expl)
+SourceIter Editor::FindLine(size_t line, string& expl)
 {
    Debug::ft("Editor.FindLine(expl)");
 
    auto s = FindLine(line);
 
-   if(s == source_.end())
+   if(s == Code().end())
    {
       expl = "Line " + std::to_string(line + 1) + " not found.";
    }
@@ -1863,24 +1977,24 @@ CodeWarning* Editor::FindLog
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::FindNonBlank(Iter iter, size_t pos)
+SourceLoc Editor::FindNonBlank(SourceIter iter, size_t pos)
 {
    Debug::ft("Editor.FindNonBlank");
 
-   while(iter != source_.end())
+   while(iter != Code().end())
    {
       pos = iter->code.find_first_not_of(WhitespaceChars, pos);
-      if(pos != string::npos) return CodeLocation(iter, pos);
+      if(pos != string::npos) return SourceLoc(iter, pos);
       ++iter;
       pos = 0;
    }
 
-   return CodeLocation(iter);
+   return SourceLoc(iter);
 }
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::FindPos(size_t pos)
+SourceLoc Editor::FindPos(size_t pos)
 {
    Debug::ft("Editor.FindPos");
 
@@ -1889,40 +2003,40 @@ Editor::CodeLocation Editor::FindPos(size_t pos)
    //
    auto& lexer = file_->GetLexer();
    auto line = lexer.GetLineNum(pos);
-   if(line == string::npos) return CodeLocation(source_.end());
+   if(line == string::npos) return source_.End();
    auto iter = FindLine(line);
-   if(iter == source_.end()) return CodeLocation(iter);
+   if(iter == Code().end()) return SourceLoc(iter);
    auto start = lexer.GetLineStart(line);
-   return CodeLocation(iter, pos - start);
+   return SourceLoc(iter, pos - start);
 }
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::FindSigEnd(const CodeWarning& log)
+SourceLoc Editor::FindSigEnd(const CodeWarning& log)
 {
    Debug::ft("Editor.FindSigEnd(log)");
 
-   if(log.item_ == nullptr) return CodeLocation(source_.end());
-   if(log.item_->Type() != Cxx::Function) return CodeLocation(source_.end());
+   if(log.item_ == nullptr) return source_.End();
+   if(log.item_->Type() != Cxx::Function) return source_.End();
    return FindSigEnd(static_cast< const Function* >(log.item_));
 }
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::FindSigEnd(const Function* func)
+SourceLoc Editor::FindSigEnd(const Function* func)
 {
    Debug::ft("Editor.FindSigEnd(func)");
 
    //  Look for the first semicolon or left brace after the function's name.
    //
    auto loc = FindPos(func->GetPos());
-   if(loc.pos == string::npos) return CodeLocation(source_.end());
+   if(loc.pos == string::npos) return source_.End();
    return FindFirstOf(loc.iter, loc.pos, ";{");
 }
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::FindSpecialFuncLoc
+SourceIter Editor::FindSpecialFuncLoc
    (const CodeWarning& log, FuncDeclAttrs& attrs)
 {
    Debug::ft("Editor.FindSpecialFuncLoc");
@@ -1934,7 +2048,7 @@ Editor::Iter Editor::FindSpecialFuncLoc
    //  finally copy operator.
    //
    auto where = FindPos(log.item_->GetPos());
-   if(where.pos == string::npos) return source_.end();
+   if(where.pos == string::npos) return Code().end();
    auto cls = static_cast< const Class* >(log.item_);
    auto ctors = cls->FindCtors();
    auto ctor = ctors.back();
@@ -1966,7 +2080,7 @@ Editor::Iter Editor::FindSpecialFuncLoc
       break;
 
    default:
-      return source_.end();
+      return Code().end();
    };
 
    if(func == nullptr)
@@ -1981,7 +2095,7 @@ Editor::Iter Editor::FindSpecialFuncLoc
       {
          SourceLine control(PUBLIC_STR, SIZE_MAX);
          control.code.push_back(':');
-         where.iter = source_.insert(where.iter, control);
+         where.iter = Code().insert(where.iter, control);
          ++where.iter;
       }
 
@@ -2061,15 +2175,15 @@ CxxNamedSet Editor::FindUsingReferents(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::FindWord
-   (Iter iter, size_t pos, const string& id, size_t* range)
+SourceLoc Editor::FindWord
+   (SourceIter iter, size_t pos, const string& id, size_t* range)
 {
    Debug::ft("Editor.FindWord");
 
    //  Look for ID, which must be preceded and followed by characters
    //  that are not allowed in an identifier.
    //
-   while(iter != source_.end())
+   while(iter != Code().end())
    {
       if(pos < iter->code.size())
       {
@@ -2083,18 +2197,18 @@ Editor::CodeLocation Editor::FindWord
                prev = !IsWordChar(iter->code[pos - 1]);
             if(pos + id.size() < iter->code.size())
                next = !IsWordChar(iter->code[pos + id.size()]);
-            if(prev && next) return CodeLocation(iter, pos);
+            if(prev && next) return SourceLoc(iter, pos);
             pos = iter->code.find(id, pos + 1);
          }
       }
 
       if((range == nullptr) || (--*range == 0))
-         return CodeLocation(source_.end());
+         return source_.End();
       ++iter;
       pos = 0;
    }
 
-   return CodeLocation(source_.end());
+   return source_.End();
 }
 
 //------------------------------------------------------------------------------
@@ -2107,7 +2221,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
    //  Get the file's warnings and source code.
    //
-   if(read_ != 0)
+   if(Code().empty())
    {
       *cli.obuf << "Failed to load source code for " << file_->Name() << CRLF;
       return -1;
@@ -2254,11 +2368,19 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
    //  A result of -1 or greater indicates that the next file can still be
    //  processed, so return a lower value if the user wants to quit or if
-   //  an error occurred when writing a file.
+   //  an error occurred when writing a file.  On a quit, a "committed"
+   //  message has been displayed for the last file written, and it will
+   //  be displayed again (because of rc < 0) if not cleared.
    //
    if(err)
+   {
       rc = -6;
-   else if((reply == 'q') && (rc >= -1)) rc = -2;
+   }
+   else if((reply == 'q') && (rc >= -1))
+   {
+      expl.clear();
+      rc = -2;
+   }
 
    return rc;
 }
@@ -2551,10 +2673,10 @@ word Editor::Format(string& expl)
 {
    Debug::ft("Editor.Format");
 
-   if(read_ != 0)
+   if(Code().empty())
    {
       expl = "Failed to load source code for " + file_->Name();
-      return read_;
+      return -1;
    }
 
    EraseTrailingBlanks();
@@ -2565,46 +2687,7 @@ word Editor::Format(string& expl)
 
 //------------------------------------------------------------------------------
 
-word Editor::GetCode(std::string& expl)
-{
-   Debug::ft("Editor.GetCode");
-
-   auto input = file_->InputStream();
-
-   if(input == nullptr)
-   {
-      expl = "Failed to open source code for " + file_->Name() + '.';
-      return -1;
-   }
-
-   input->clear();
-   input->seekg(0);
-
-   //  Read each line of code and save it.  Before it is saved, an
-   //  #include directive is mangled for sorting purposes.
-   //
-   word rc = 0;
-   string str;
-
-   while((input->peek() != EOF) && (rc == 0))
-   {
-      std::getline(*input, str);
-
-      if(str.find(HASH_INCLUDE_STR) == 0)
-      {
-         rc = MangleInclude(str, expl);
-      }
-
-      PushBack(str);
-   }
-
-   input.reset();
-   return rc;
-}
-
-//------------------------------------------------------------------------------
-
-LineType Editor::GetLineType(const Iter& iter) const
+LineType Editor::GetLineType(const SourceIter& iter) const
 {
    bool cont;
    std::set< Warning > warnings;
@@ -2615,25 +2698,25 @@ LineType Editor::GetLineType(const Iter& iter) const
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::IncludesBegin()
+SourceIter Editor::IncludesBegin()
 {
    Debug::ft("Editor.IncludesBegin");
 
-   for(auto s = source_.begin(); s != source_.end(); ++s)
+   for(auto s = Code().begin(); s != Code().end(); ++s)
    {
       if(s->code.find(HASH_INCLUDE_STR) == 0) return s;
    }
 
-   return source_.end();
+   return Code().end();
 }
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::IncludesEnd()
+SourceIter Editor::IncludesEnd()
 {
    Debug::ft("Editor.IncludesEnd");
 
-   for(auto s = IncludesBegin(); s != source_.end(); ++s)
+   for(auto s = IncludesBegin(); s != Code().end(); ++s)
    {
       if(s->code.find(HASH_INCLUDE_STR) == 0) continue;
       if(s->code.find_first_not_of(WhitespaceChars) == string::npos) continue;
@@ -2646,19 +2729,12 @@ Editor::Iter Editor::IncludesEnd()
       return ++s;
    }
 
-   return source_.end();
+   return Code().end();
 }
 
 //------------------------------------------------------------------------------
 
-bool Editor::IncludesSorted(const SourceLine& line1, const SourceLine& line2)
-{
-   return IncludesAreSorted(line1.code, line2.code);
-}
-
-//------------------------------------------------------------------------------
-
-size_t Editor::Indent(const Iter& iter, bool split)
+size_t Editor::Indent(const SourceIter& iter, bool split)
 {
    Debug::ft("Editor.Indent");
 
@@ -2677,7 +2753,7 @@ size_t Editor::Indent(const Iter& iter, bool split)
 
    for(NO_OP; curr->line == SIZE_MAX; --curr)
    {
-      if(curr == source_.begin())
+      if(curr == Code().begin())
       {
          depth = 0;
          break;
@@ -2775,12 +2851,13 @@ word Editor::InitByConstructor(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::Insert(const Iter& iter, const string& code)
+SourceIter Editor::Insert(const SourceIter& iter, string code)
 {
    Debug::ft("Editor.Insert");
 
    Changed();
-   return source_.insert(iter, SourceLine(code, SIZE_MAX));
+   if(code.empty() || (code.back() != CRLF)) code.push_back(CRLF);
+   return Code().insert(iter, SourceLine(code, SIZE_MAX));
 }
 
 //------------------------------------------------------------------------------
@@ -2790,7 +2867,7 @@ word Editor::InsertBlankLine(const CodeWarning& log, string& expl)
    Debug::ft("Editor.InsertBlankLine");
 
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
    Insert(s, EMPTY_STR);
    return 0;
 }
@@ -2806,36 +2883,49 @@ word Editor::InsertDebugFtCall(const CodeWarning& log, string& expl)
    auto left = FindFirstOf(name.iter, name.pos, "{");
    if(left.pos == string::npos) return NotFound(expl, "Left brace");
 
-   //  Get the code for the fn_name declaration and Debug::ft invocation.
-   //  EXTRA gets set if anything follows the left brace on the same line.
+   //  Get the start of the name for an fn_name declaration and the inline
+   //  string literal for the Debug::ft invocation.  Set EXTRA if anything
+   //  follows the left brace on the same line.
    //
-   string defn, call;
-   DebugFtCode(static_cast< const Function* >(log.item_), defn, call);
+   string flit, fvar;
+   DebugFtNames(static_cast< const Function* >(log.item_), flit, fvar);
    auto extra = (left.iter->code.find_first_not_of
       (WhitespaceChars, left.pos + 1) != string::npos);
 
-   //  Check if the fn_name was already defined and the Debug::ft call
-   //  simply forgotten.
+   //  There are two possibilities:
+   //  o An fn_name is already defined (e.g. for invoking Debug::SwLog), in
+   //    which case it will be located before the end of the function.  Its
+   //    name will start with FVAR but could be longer if the function is
+   //    overloaded, so extract everything to the closing ')' in the call.
+   //  o An fn_name is not already defined, in which case the string literal
+   //    (FLIT) can be used.
    //
-   auto fn = defn;
-   fn.erase(0, strlen("fn_name "));
-   auto apos = fn.find('=');
-   fn.erase(apos - 1);
-   auto curr = Rfind(name.iter, fn, name.pos);
+   string arg;
+   size_t begin, right;
+   auto func = static_cast< const Function* >(log.item_);
+   func->GetRange(begin, right);
+   auto stop = FindPos(right);
 
-   if(curr.iter == source_.end())
+   for(auto loc = left; (loc != stop) && arg.empty(); ++loc.iter)
    {
-      //  Insert DEFN and a blank line above the function.
-      //
-      auto above = Insert(name.iter, EMPTY_STR);
-      above = Insert(above, defn);
+      auto start = loc.iter->code.find(fvar);
 
-      if(defn.size() > file_->LineLengthMax())
+      if(start != string::npos)
       {
-         auto pos = defn.find('=');
-         InsertLineBreak(above, pos + 1);
+         auto end = loc.iter->code.find_first_not_of(ValidNextChars, start);
+         if(end == string::npos) return NotFound(expl, "End of fn_name");
+         arg = loc.iter->code.substr(start, end - start);
       }
    }
+
+   //  Create the call to Debug::ft at the top of the function after first
+   //  inserting a blank line that will follow it.
+   //
+   string call;
+   if(arg.empty()) arg = flit;
+   call = string(file_->IndentSize(), SPACE) + "Debug::ft(";
+   call.append(arg);
+   call.append(");");
 
    //  Insert CALL and a blank line after the left brace.  If the left brace
    //  wasn't on a new line, push it down first.  If something followed the
@@ -2875,7 +2965,7 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
 
    FuncDeclAttrs attrs(Cxx::Public);
    auto curr = FindSpecialFuncLoc(log, attrs);
-   if(curr == source_.end()) return NotFound(expl, "Missing function's class");
+   if(curr == Code().end()) return NotFound(expl, "Missing function's class");
 
    //  Indent the code to match that at the insertion point unless the
    //  insertion point is a right brace.
@@ -3006,7 +3096,7 @@ word Editor::InsertForward(const CodeWarning& log, string& expl)
    forward.erase(nsPos + 1, srPos - nsPos + 1);
    auto begin = CodeBegin();
 
-   for(auto s = PrologEnd(); s != source_.end(); ++s)
+   for(auto s = PrologEnd(); s != Code().end(); ++s)
    {
       if(s->code.find(NAMESPACE_STR) == 0)
       {
@@ -3033,7 +3123,7 @@ word Editor::InsertForward(const CodeWarning& log, string& expl)
 //------------------------------------------------------------------------------
 
 word Editor::InsertForward
-   (const Iter& iter, const string& forward, string& expl)
+   (const SourceIter& iter, const string& forward, string& expl)
 {
    Debug::ft("Editor.InsertForward(iter)");
 
@@ -3042,7 +3132,7 @@ word Editor::InsertForward
    //  declarations that already appear in this namespace.  Note that it
    //  may already have been inserted while fixing another warning.
    //
-   for(auto s = std::next(iter, 2); s != source_.end(); ++s)
+   for(auto s = std::next(iter, 2); s != Code().end(); ++s)
    {
       auto comp = strCompare(s->code, forward);
       if(comp == 0) return Report(expl, "Previously inserted.");
@@ -3126,31 +3216,31 @@ word Editor::InsertIncludeGuard(const CodeWarning& log, string& expl)
    //  insert it at the end of the file.
    //
    auto where = IncludesBegin();
-   if(where == source_.end()) where = PrologEnd();
+   if(where == Code().end()) where = PrologEnd();
    string guardname = log.file_->MakeGuardName();
    string code = "#define " + guardname;
    where = Insert(where, EMPTY_STR);
    where = Insert(where, code);
    code = "#ifndef " + guardname;
    where = Insert(where, code);
-   Insert(source_.end(), HASH_ENDIF_STR);
+   Insert(Code().end(), HASH_ENDIF_STR);
    return Changed(where, expl);
 }
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::InsertLineBreak(const Iter& iter, size_t pos)
+SourceLoc Editor::InsertLineBreak(const SourceIter& iter, size_t pos)
 {
    Debug::ft("Editor.InsertLineBreak(pos)");
 
-   if(iter->code.size() <= pos) return CodeLocation(source_.end());
+   if(iter->code.size() <= pos) return source_.End();
    if(iter->code.find_first_not_of(WhitespaceChars, pos) == string::npos)
-      return CodeLocation(iter, pos);
+      return SourceLoc(iter, pos);
    auto code = iter->code.substr(pos);
    iter->code.erase(pos);
    auto next = Insert(std::next(iter), code);
    auto indent = Indent(next, true);
-   return CodeLocation(next, indent);
+   return SourceLoc(next, indent);
 }
 
 //------------------------------------------------------------------------------
@@ -3160,15 +3250,15 @@ word Editor::InsertLineBreak(const CodeWarning& log, string& expl)
    Debug::ft("Editor.InsertLineBreak(log)");
 
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
    expl = "Inserting a line break is not yet supported.";
    return -1;
 }
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertNamespaceForward
-   (const Iter& iter, const string& nspace, const string& forward, string& expl)
+word Editor::InsertNamespaceForward(const SourceIter& iter,
+   const string& nspace, const string& forward, string& expl)
 {
    Debug::ft("Editor.InsertNamespaceForward");
 
@@ -3204,7 +3294,7 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log, string& expl)
    //
    FuncDeclAttrs decl(Cxx::Public);
    auto s1 = FindFuncDeclLoc(cls, name, decl);
-   if(s1 == source_.end()) return -1;
+   if(s1 == Code().end()) return -1;
 
    auto file = FindFuncDefnFile(cli, cls, name);
    if(file == nullptr) return -1;
@@ -3230,7 +3320,7 @@ fixed_string PatchReturn = "void";
 fixed_string PatchSignature = "Patch(sel_t selector, void* arguments)";
 fixed_string PatchInvocation = "Patch(selector, arguments)";
 
-void Editor::InsertPatchDecl(Iter& iter, const FuncDeclAttrs& attrs)
+void Editor::InsertPatchDecl(SourceIter& iter, const FuncDeclAttrs& attrs)
 {
    Debug::ft("Editor.InsertPatchDecl");
 
@@ -3269,7 +3359,7 @@ void Editor::InsertPatchDecl(Iter& iter, const FuncDeclAttrs& attrs)
 //------------------------------------------------------------------------------
 
 void Editor::InsertPatchDefn
-   (Iter& iter, const Class* cls, const FuncDefnAttrs& attrs)
+   (SourceIter& iter, const Class* cls, const FuncDefnAttrs& attrs)
 {
    Debug::ft("Editor.InsertPatchDefn");
 
@@ -3320,7 +3410,8 @@ void Editor::InsertPatchDefn
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertPrefix(const Iter& iter, size_t pos, const string& prefix)
+void Editor::InsertPrefix
+   (const SourceIter& iter, size_t pos, const string& prefix)
 {
    Debug::ft("Editor.InsertPrefix");
 
@@ -3355,7 +3446,7 @@ word Editor::InsertUsing(const CodeWarning& log, string& expl)
    auto code = CodeBegin();
    auto usings = false;
 
-   for(auto s = PrologEnd(); s != source_.end(); ++s)
+   for(auto s = PrologEnd(); s != Code().end(); ++s)
    {
       if(s->code.find(USING_STR) == 0)
       {
@@ -3370,7 +3461,7 @@ word Editor::InsertUsing(const CodeWarning& log, string& expl)
             return Changed(s, expl);
          }
       }
-      else if((usings && s->code.empty()) || (s == code))
+      else if((usings && CodeIsEmpty(s)) || (s == code))
       {
          //  We have now passed any existing using statements, so add
          //  the new statement here.  If it is the first one, precede
@@ -3388,13 +3479,13 @@ word Editor::InsertUsing(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::IntroStart(const Iter& iter, bool funcName)
+SourceIter Editor::IntroStart(const SourceIter& iter, bool funcName)
 {
    Debug::ft("Editor.IntroStart");
 
-   Iter curr = iter;
+   SourceIter curr = iter;
 
-   while(curr != source_.begin())
+   while(curr != Code().begin())
    {
       auto type = GetLineType(--curr);
 
@@ -3416,16 +3507,16 @@ Editor::Iter Editor::IntroStart(const Iter& iter, bool funcName)
       }
    }
 
-   return source_.begin();
+   return Code().begin();
 }
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::LineAfterFunc(const Function* func)
+SourceIter Editor::LineAfterFunc(const Function* func)
 {
    Debug::ft("Editor.LineAfterFunc");
 
-   CodeLocation end(source_.end());
+   SourceLoc end(Code().end());
    size_t begin, close;
 
    auto open = func->GetRange(begin, close);
@@ -3443,11 +3534,11 @@ Editor::Iter Editor::LineAfterFunc(const Function* func)
       //  name, and then the semicolon or right brace at its end.
       //
       end = FindPos(func->GetPos());
-      if(end.pos == string::npos) return source_.end();
+      if(end.pos == string::npos) return Code().end();
       end = FindFirstOf(end.iter, end.pos, ";}");
    }
 
-   if(end.pos == string::npos) return source_.end();
+   if(end.pos == string::npos) return Code().end();
    return std::next(end.iter);
 }
 
@@ -3483,73 +3574,16 @@ word Editor::MangleInclude(string& include, string& expl) const
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::NextPos(const CodeLocation& curr)
-{
-   Debug::ft("Editor.NextPos");
-
-   auto next = curr;
-
-   while(++next.pos >= next.iter->code.size())
-   {
-      if(++next.iter == source_.end())
-      {
-         next.pos = string::npos;
-         return next;
-      }
-
-      next.pos = string::npos;  // will wrap around to 0
-   }
-
-   return next;
-}
-
-//------------------------------------------------------------------------------
-
-Editor::CodeLocation Editor::PrevPos(const CodeLocation& curr)
-{
-   Debug::ft("Editor.PrevPos");
-
-   auto prev = curr;
-
-   if(--prev.pos != string::npos) return prev;  // continue if pos was 0
-
-   if(prev.iter == source_.begin())
-   {
-      return CodeLocation(source_.end());
-   }
-
-   while(--prev.iter != source_.begin())
-   {
-      if(prev.iter->code.empty()) continue;
-      prev.pos = prev.iter->code.size() - 1;
-      return prev;
-   }
-
-   if(prev.iter->code.empty()) return CodeLocation(source_.end());
-   prev.pos = prev.iter->code.size() - 1;
-   return prev;
-}
-
-//------------------------------------------------------------------------------
-
-Editor::Iter Editor::PrologEnd()
+SourceIter Editor::PrologEnd()
 {
    Debug::ft("Editor.PrologEnd");
 
-   for(auto s = source_.begin(); s != source_.end(); ++s)
+   for(auto s = Code().begin(); s != Code().end(); ++s)
    {
       if(LineTypeAttr::Attrs[GetLineType(s)].isCode) return s;
    }
 
-   return source_.end();
-}
-
-//------------------------------------------------------------------------------
-
-void Editor::PushBack(const string& code)
-{
-   source_.push_back(SourceLine(code, line_));
-   ++line_;
+   return Code().end();
 }
 
 //------------------------------------------------------------------------------
@@ -3597,7 +3631,7 @@ void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
       //
       auto line = lexer.GetLineNum(lexer.Curr());
       auto s = FindLine(line, expl);
-      if(s == source_.end()) continue;
+      if(s == Code().end()) continue;
 
       for(auto loc = FindWord(s, 0, name); loc.pos != string::npos;
           loc = FindWord(loc.iter, loc.pos, name))
@@ -3644,7 +3678,7 @@ word Editor::RenameIncludeGuard(const CodeWarning& log, string& expl)
    //  This warning is logged against the #define.
    //
    auto def = FindLine(log.line_, expl);
-   if(def == source_.end()) return 0;
+   if(def == Code().end()) return 0;
    auto ifn = Rfind(def, HASH_IFNDEF_STR);
    if(ifn.pos == string::npos) return NotFound(expl, HASH_IFNDEF_STR);
    if(def->code.find(HASH_DEFINE_STR) == string::npos)
@@ -3667,7 +3701,7 @@ word Editor::ReplaceDebugFtName(const CodeWarning& log, string& expl)
    //  call, and then erase it.
    //
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
 
    auto lpar = s->code.find('(');
    if(lpar == string::npos) return NotFound(expl, "Left parenthesis");
@@ -3679,10 +3713,10 @@ word Editor::ReplaceDebugFtName(const CodeWarning& log, string& expl)
    string fname;
    if(!data->GetStrValue(fname)) return NotFound(expl, "fn_name definition");
    auto dloc = FindPos(data->GetPos());
-   if(dloc.iter == source_.end()) return NotFound(expl, "fn_name in source");
-   auto split = (dloc.iter->code.back() != ';');
-   auto next = source_.erase(dloc.iter);
-   if(split) source_.erase(next);
+   if(dloc.iter == Code().end()) return NotFound(expl, "fn_name in source");
+   auto split = (dloc.LastChar() != ';');
+   auto next = Code().erase(dloc.iter);
+   if(split) Code().erase(next);
    auto literal = QUOTE + fname + QUOTE;
    s->code.replace(lpar + 1, rpar - lpar - 1, literal);
    return Changed(s, expl);
@@ -3698,7 +3732,7 @@ word Editor::ReplaceNull(const CodeWarning& log, string& expl)
    //  cause a log, so just fix the first one.
    //
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
    auto null = FindWord(s, 0, NULL_STR);
    if(null.pos == string::npos) return NotFound(expl, NULL_STR, true);
    null.iter->code.erase(null.pos, strlen(NULL_STR));
@@ -3713,7 +3747,7 @@ word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
    Debug::ft("Editor.ReplaceSlashAsterisk");
 
    auto s = FindLine(log.line_, expl);
-   if(s == source_.end()) return 0;
+   if(s == Code().end()) return 0;
    auto pos1 = s->code.find(COMMENT_BEGIN_STR);
    if(pos1 == string::npos) return NotFound(expl, COMMENT_BEGIN_STR);
    auto pos2 = s->code.find(COMMENT_END_STR);
@@ -3769,7 +3803,7 @@ word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
    //  5: aaa */ aaa  prefix // and replace */ with line      *    *    *
    //                 break and return
    //
-   for(++s; s != source_.end(); ++s)
+   for(++s; s != Code().end(); ++s)
    {
       pos2 = s->code.find(COMMENT_END_STR);
       pos3 = s->code.find_first_not_of(WhitespaceChars);
@@ -3884,43 +3918,43 @@ word Editor::ResolveUsings()
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::Rfind(Iter iter, const string& str, size_t off)
+SourceLoc Editor::Rfind(SourceIter iter, const string& str, size_t off)
 {
    Debug::ft("Editor.Rfind");
 
-   if(iter == source_.end()) return CodeLocation(iter);
+   if(iter == Code().end()) return SourceLoc(iter);
 
    auto pos = iter->code.rfind(str, off);
 
    while(pos == string::npos)
    {
-      if(iter == source_.begin()) return CodeLocation(source_.end());
+      if(iter == Code().begin()) return source_.End();
       --iter;
       pos = iter->code.rfind(str);
    }
 
-   return CodeLocation(iter, pos);
+   return SourceLoc(iter, pos);
 }
 
 //------------------------------------------------------------------------------
 
-Editor::CodeLocation Editor::RfindNonBlank(Iter iter, size_t pos)
+SourceLoc Editor::RfindNonBlank(SourceIter iter, size_t pos)
 {
    Debug::ft("Editor.RfindNonBlank");
 
-   if(iter == source_.end()) return CodeLocation(iter);
-   if(pos == string::npos) pos = iter->code.size();
+   if(iter == Code().end()) return SourceLoc(iter);
+   if(pos == string::npos) pos = iter->code.size() - 1;
 
    while(true)
    {
       pos = RfindFirstNotOf(iter->code, pos, WhitespaceChars);
-      if(pos != string::npos) return CodeLocation(iter, pos);
-      if(iter == source_.begin()) break;
+      if(pos != string::npos) return SourceLoc(iter, pos);
+      if(iter == Code().begin()) break;
       --iter;
       pos = iter->code.size();
    }
 
-   return CodeLocation(source_.end());
+   return source_.End();
 }
 
 //------------------------------------------------------------------------------
@@ -3933,21 +3967,21 @@ word Editor::SortIncludes(string& expl)
    //  the #include statements into a new list, sort them, and reinsert them.
    //  BEGIN is the line above the first #include.
    //
-   auto begin = source_.cend();
+   auto begin = Code().cend();
    std::list< SourceLine > includes;
 
-   for(auto s = source_.cbegin(); s != source_.cend(); NO_OP)
+   for(auto s = Code().cbegin(); s != Code().cend(); NO_OP)
    {
       if(s->code.find(HASH_INCLUDE_STR) == 0)
       {
-         if((begin == source_.cend()) &&
-            (s != source_.cbegin()))
+         if((begin == Code().cend()) &&
+            (s != Code().cbegin()))
          {
             begin = std::prev(s);
          }
 
          includes.push_back(SourceLine(s->code, s->line));
-         s = source_.erase(s);
+         s = Code().erase(s);
       }
       else
       {
@@ -3960,16 +3994,16 @@ word Editor::SortIncludes(string& expl)
    //  Reinsert the #includes after the line where they originally appeared.
    //  If BEGIN is still cend(), the first line in the file was an #include.
    //
-   if(begin != source_.cend())
+   if(begin != Code().cend())
       ++begin;
    else
-      begin = source_.cbegin();
+      begin = Code().cbegin();
 
    includes.sort(IncludesSorted);
 
    for(auto s = includes.begin(); s != includes.end(); ++s)
    {
-      source_.insert(begin, *s);
+      Code().insert(begin, *s);
    }
 
    sorted_ = true;
@@ -4270,7 +4304,7 @@ void Editor::UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs)
 
 fn_name Editor_UpdateFuncDeclLoc = "Editor.UpdateFuncDeclLoc";
 
-Editor::Iter Editor::UpdateFuncDeclLoc
+SourceIter Editor::UpdateFuncDeclLoc
    (const Function* prev, const Function* next, FuncDeclAttrs& attrs)
 {
    Debug::ft(Editor_UpdateFuncDeclLoc);
@@ -4291,7 +4325,7 @@ Editor::Iter Editor::UpdateFuncDeclLoc
    if(next == nullptr)
    {
       Debug::SwLog(Editor_UpdateFuncDeclLoc, "prev and next are nullptr", 0);
-      return source_.end();
+      return Code().end();
    }
 
    //  Insert the function before NEXT.  If the new function is to be offset
@@ -4389,7 +4423,7 @@ void Editor::UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs)
 
 //------------------------------------------------------------------------------
 
-Editor::Iter Editor::UpdateFuncDefnLoc
+SourceIter Editor::UpdateFuncDefnLoc
    (const Function* prev, const Function* next, FuncDefnAttrs& attrs)
 {
    Debug::ft("Editor.UpdateFuncDefnLoc");
@@ -4418,7 +4452,7 @@ Editor::Iter Editor::UpdateFuncDefnLoc
       //  Insert the function at the bottom of the file.  If the last line
       //  contains a closing brace, insert the definition above that.
       //
-      auto last = std::prev(source_.end());
+      auto last = std::prev(Code().end());
       auto pred = std::prev(last);
       auto type = GetLineType(pred);
       if(type == CloseBrace) return pred;
@@ -4487,17 +4521,22 @@ word Editor::Write(string& expl)
    //  functions defined in this file had their angle brackets or quotes mangled
    //  for sorting purposes.  Fix this.
    //
-   for(auto s = source_.begin(); s != source_.end(); ++s)
+   for(auto s = Code().begin(); s != Code().end(); ++s)
    {
       if(s->code.find(HASH_INCLUDE_STR) == 0)
       {
-         s->code = DemangleInclude(s->code);
+         DemangleInclude(s);
       }
    }
 
-   for(auto s = source_.cbegin(); s != source_.cend(); ++s)
+   for(auto s = Code().cbegin(); s != Code().cend(); ++s)
    {
-      *output << s->code << CRLF;
+      *output << s->code;
+
+      if(s->code.empty() || (s->code.back() != CRLF))
+      {
+         *output << CRLF;  //@ if this occurs, find and fix root cause!
+      }
    }
 
    //  Delete the original file and replace it with the new one.

@@ -1,8 +1,8 @@
 pots>start
   OK.
-pots>/ 4A
+pots>
 pots>read cwt.Rd2Tmr
-pots>/ RENOTIFIED 2: CWT ANSWER TIMEOUT
+pots>
 pots>delay 6
   OK.
 pots>verify PC F &port.A f &service.cwb &facility.cwt.unanswered
@@ -13,9 +13,9 @@ pots>verify PM R &port.A &cause.answertimeout
   OK.
 pots>verify PS S &port.A s=x c=&cause.answertimeout
   OK.
-pots>/ IDLE A
+pots>
 pots>read cwt.Nu1ExA
-pots>/ NULL 1: EXIT A
+pots>
 pots>inject PS E &port.A
   OK.
 pots>delay 2
@@ -28,25 +28,25 @@ pots>verify PS R &port.A &cause.normal
   OK.
 pots>verify PS S &port.B m=&port.silence c=&cause.normal
   OK.
-pots>/ IDLE B
+pots>
 pots>read cwt.Nu0ExB
-pots>/ NULL 0: IDLE B
+pots>
 pots>inject PS E &port.B
   OK.
 pots>delay 2
   OK.
 pots>verify PS R &port.B &cause.normal
   OK.
-pots>/ 4B
+pots>
 pots>read cwt.Nu0Tmr
-pots>/ NULL 0: ANSWER TIMEOUT (C)
+pots>
 pots>delay 32
   OK.
 pots>verify PS S &port.C m=&port.reorder c=&cause.answertimeout
   OK.
-pots>/ 4C
+pots>
 pots>read cwt.Nu0ExC
-pots>/ NULL 0: IDLE C
+pots>
 pots>inject PS E &port.C
   OK.
 pots>delay 2
@@ -55,20 +55,20 @@ pots>verify PS R &port.C &cause.normal
   OK.
 pots>delay 2
   OK.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

@@ -1,4 +1,4 @@
-testcase begin bc.09
+tests begin bc.09
 / A-B: RINGBACK; ANSWER TIMEOUT
 inject PS B &port.A
 delay 1
@@ -14,4 +14,4 @@ verify PS S &port.A m=&port.ringback
 verify PS R &port.B &cause.answertimeout
 verify PS S &port.A m=&port.reorder c=&cause.answertimeout
 verify PS R &port.A &cause.normal
-testcase end
+tests end

@@ -1,5 +1,5 @@
 subscribe &dn.B cfn &dn.C 12
-testcase begin cfx.03
+tests begin cfx.03
 
 / A-B: ANSWER (VERIFY CFN NOT TRIGGERED)
 read bc.AB
@@ -13,7 +13,7 @@ verify PS S &port.B m=&port.silence c=&cause.normal
 verify PS R &port.B &cause.normal
 delay 1
 contexts c
-if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
 
 / A-B(CFN)-C: ANSWER; RELEASE
 inject PS B &port.A
@@ -38,5 +38,5 @@ verify PS R &port.A &cause.normal
 verify PS S &port.C m=&port.silence c=&cause.normal
 verify PS R &port.C &cause.normal
 delay 2
-testcase end
+tests end
 unsubscribe &dn.B cfn

@@ -37,8 +37,8 @@
 
 namespace CodeTools
 {
-//  Database for code coverage, which maps functions to the testcases that
-//  execute them.
+//  Database for code coverage, which maps functions to the tests that execute
+//  them.
 //
 class CodeCoverage : public NodeBase::Temporary
 {
@@ -50,27 +50,26 @@ public:
    //
    bool Insert(const std::string& func, uint32_t hash, const std::string& file);
 
-   //  Loads the code coverage database.  Returns a non-zero value on failure
-   //  and updates EXPL with an explanation.
+   //  Updates EXPL with the outcome of loading the database.  Returns a
+   //  non-zero value on failure.
    //
    NodeBase::word Load(std::string& expl);
 
-   //  Displays database information in EXPL.
+   //  Provides database information in EXPL.
    //
    NodeBase::word Query(std::string& expl);
 
-   //  Lists functions that are invoked by fewer than MIN testcases in EXPL.
+   //  Updates EXPL with the functions that are invoked by fewer than MIN tests.
    //
    NodeBase::word Under(size_t min, std::string& expl);
 
    //  Erases FUNC from the database.
    //
-   NodeBase::word Erase(std::string& func, std::string& expl);
+   NodeBase::word Erase(const std::string& func, std::string& expl);
 
-   //  Updates the code coverage database by invoking Load (if necessary),
-   //  followed by Build, Diff, Retest, Merge, and Commit (see below).
-   //  Returns a non-zero value on failure and updates EXPL with details
-   //  about what changed.
+   //  Updates the database by invoking Load (if necessary), followed by Build,
+   //  Diff, Retest, Merge, and Commit (see below).  Updates EXPL with details
+   //  about what changed.  Returns a non-zero value on failure.
    //
    NodeBase::word Update(std::string& expl);
 
@@ -86,9 +85,9 @@ private:
    //
    ~CodeCoverage();
 
-   //  Adds testcase output (*.funcs.txt files) in the output directory to
-   //  the database.  Returns a non-zero value on failure and updates EXPL
-   //  with an explanation.
+   //  Updates EXPL with the outcome of adding test output (*.funcs.txt files)
+   //  in the output directory to the database.  Returns a non-zero value on
+   //  failure.
    //
    NodeBase::word Build(std::ostringstream& expl);
 
@@ -97,13 +96,13 @@ private:
    //
    NodeBase::word Diff(std::ostringstream& expl) const;
 
-   //  Updates EXPL with a list of testcases for functions that have been
-   //  added, changed, or deleted.  Marks those testcases for re-execution
-   //  in the testcase database.
+   //  Updates EXPL with a list of tests for functions that have been added,
+   //  changed, or deleted.  Marks those tests for re-execution in the test
+   //  database.
    //
    NodeBase::word Retest(std::ostringstream& expl) const;
 
-   //  Merges the databases and commits the result.
+   //  Merges the previous and current databases and commits the result.
    //
    NodeBase::word Merge(std::ostringstream& expl);
 
@@ -118,8 +117,8 @@ private:
    //
    enum LoadState
    {
-      GetFunction,   // look for a <FuncName> <FuncHash> pair
-      GetTestcases,  // look for a [<TestName>]* "$" sequence
+      LoadFunction,  // look for a <FuncName> <FuncHash> pair
+      LoadTests,     // look for a [<TestName>]* "$" sequence
       LoadDone,      // final "$" encountered
       LoadError      // error occurred
    };
@@ -196,15 +195,15 @@ private:
    //
    Functions currFuncs_;
 
-   //  Testcases in the previous database.
+   //  Tests in the previous database.
    //
    std::set< std::string > prevTests_;
 
-   //  Testcases in the current database.
+   //  Tests in the current database.
    //
    std::set< std::string > currTests_;
 
-   //  The current function whose testcase set is being loaded.
+   //  The current function whose set of tests is being loaded.
    //
    Functions::iterator loadFunc_;
 };

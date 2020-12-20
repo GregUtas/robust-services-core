@@ -769,7 +769,7 @@ word SwFlagsCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
-//  The TESTCASE command.
+//  The TESTS command.
 //
 class TestPrologParm : public CliTextParm
 {
@@ -861,7 +861,7 @@ fixed_string TestPrologExpl = "filename (none if omitted)";
 TestPrologParm::TestPrologParm() : CliTextParm(TestPrologExpl, true, 0) { }
 
 fixed_string TestPrologTextStr = "prolog";
-fixed_string TestPrologTextExpl = "file to read before executing a testcase";
+fixed_string TestPrologTextExpl = "file to read before executing a test";
 
 TestPrologText::TestPrologText() :
    CliText(TestPrologTextExpl, TestPrologTextStr)
@@ -874,7 +874,7 @@ fixed_string TestEpilogExpl = "filename (none if omitted)";
 TestEpilogParm::TestEpilogParm() : CliTextParm(TestEpilogExpl, true, 0) { }
 
 fixed_string TestEpilogTextStr = "epilog";
-fixed_string TestEpilogTextExpl = "file to read after a testcase passes";
+fixed_string TestEpilogTextExpl = "file to read after a test passes";
 
 TestEpilogText::TestEpilogText() :
    CliText(TestEpilogTextExpl, TestEpilogTextStr)
@@ -887,7 +887,7 @@ fixed_string TestRecoverExpl = "filename (epilog if omitted)";
 TestRecoverParm::TestRecoverParm() : CliTextParm(TestRecoverExpl, true, 0) { }
 
 fixed_string TestRecoverTextStr = "recover";
-fixed_string TestRecoverTextExpl = "file to read after a testcase fails";
+fixed_string TestRecoverTextExpl = "file to read after a test fails";
 
 TestRecoverText::TestRecoverText() :
    CliText(TestRecoverTextExpl, TestRecoverTextStr)
@@ -895,13 +895,13 @@ TestRecoverText::TestRecoverText() :
    BindParm(*new TestRecoverParm);
 }
 
-fixed_string TestBeginExpl = "testcase filename";
+fixed_string TestBeginExpl = "test filename";
 
 TestBeginParm::TestBeginParm() : CliTextParm(TestBeginExpl, false, 0) { }
 
 fixed_string TestBeginTextStr = "begin";
 fixed_string TestBeginTextExpl =
-   "executes a testcase (and concludes any previous one)";
+   "executes a test (and concludes any previous one)";
 
 TestBeginText::TestBeginText() : CliText(TestBeginTextExpl, TestBeginTextStr)
 {
@@ -909,7 +909,7 @@ TestBeginText::TestBeginText() : CliText(TestBeginTextExpl, TestBeginTextStr)
 }
 
 fixed_string TestEndTextStr = "end";
-fixed_string TestEndTextExpl = "concludes a testcase";
+fixed_string TestEndTextExpl = "concludes a test";
 
 TestEndText::TestEndText() : CliText(TestEndTextExpl, TestEndTextStr) { }
 
@@ -923,7 +923,7 @@ fixed_string TestFailExpl = "explanation for failure";
 TestFailExplParm::TestFailExplParm() : CliTextParm(TestFailExpl, true, 0) { }
 
 fixed_string TestFailedTextStr = "failed";
-fixed_string TestFailedTextExpl = "records that the current testcase failed";
+fixed_string TestFailedTextExpl = "records that the current test failed";
 
 TestFailedText::TestFailedText() :
    CliText(TestFailedTextExpl, TestFailedTextStr)
@@ -933,14 +933,14 @@ TestFailedText::TestFailedText() :
 }
 
 fixed_string TestRetestTextStr = "retest";
-fixed_string TestRetestTextExpl = "lists testcases that have not passed";
+fixed_string TestRetestTextExpl = "lists tests that have not passed";
 
 TestRetestText::TestRetestText() :
    CliText(TestRetestTextExpl, TestRetestTextStr) { }
 
 fixed_string TestQueryTextStr = "query";
 fixed_string TestQueryTextExpl =
-   "shows pass/fail counts and (if verbose) all testcases";
+   "shows pass/fail counts and (if verbose) all tests";
 
 TestQueryText::TestQueryText() :
    CliText(TestQueryTextExpl, TestQueryTextStr)
@@ -948,12 +948,12 @@ TestQueryText::TestQueryText() :
    BindParm(*new DispBVParm);
 }
 
-fixed_string TestEraseExpl = "testcase name";
+fixed_string TestEraseExpl = "test name";
 
 TestEraseParm::TestEraseParm() : CliTextParm(TestEraseExpl, false, 0) { }
 
 fixed_string TestEraseTextStr = "erase";
-fixed_string TestEraseTextExpl = "removes a testcase from the database";
+fixed_string TestEraseTextExpl = "removes a test from the database";
 
 TestEraseText::TestEraseText() : CliText(TestEraseTextExpl, TestEraseTextStr)
 {
@@ -966,34 +966,33 @@ fixed_string TestResetTextExpl = "resets the testing environment";
 TestResetText::TestResetText() :
    CliText(TestResetTextExpl, TestResetTextStr) { }
 
-fixed_string TestcaseActionExpl = "subcommand...";
+fixed_string TestsActionExpl = "subcommand...";
 
-TestcaseAction::TestcaseAction() : CliTextParm(TestcaseActionExpl)
+TestsAction::TestsAction() : CliTextParm(TestsActionExpl)
 {
-   BindText(*new TestPrologText, TestcaseCommand::TestPrologIndex);
-   BindText(*new TestEpilogText, TestcaseCommand::TestEpilogIndex);
-   BindText(*new TestRecoverText, TestcaseCommand::TestRecoverIndex);
-   BindText(*new TestBeginText, TestcaseCommand::TestBeginIndex);
-   BindText(*new TestEndText, TestcaseCommand::TestEndIndex);
-   BindText(*new TestFailedText, TestcaseCommand::TestFailedIndex);
-   BindText(*new TestQueryText, TestcaseCommand::TestQueryIndex);
-   BindText(*new TestRetestText, TestcaseCommand::TestRetestIndex);
-   BindText(*new TestEraseText, TestcaseCommand::TestEraseIndex);
-   BindText(*new TestResetText, TestcaseCommand::TestResetIndex);
+   BindText(*new TestPrologText, TestsCommand::TestPrologIndex);
+   BindText(*new TestEpilogText, TestsCommand::TestEpilogIndex);
+   BindText(*new TestRecoverText, TestsCommand::TestRecoverIndex);
+   BindText(*new TestBeginText, TestsCommand::TestBeginIndex);
+   BindText(*new TestEndText, TestsCommand::TestEndIndex);
+   BindText(*new TestFailedText, TestsCommand::TestFailedIndex);
+   BindText(*new TestQueryText, TestsCommand::TestQueryIndex);
+   BindText(*new TestRetestText, TestsCommand::TestRetestIndex);
+   BindText(*new TestEraseText, TestsCommand::TestEraseIndex);
+   BindText(*new TestResetText, TestsCommand::TestResetIndex);
 }
 
-fixed_string TestcaseStr = "testcase";
-fixed_string TestcaseExpl = "Configures or executes testcases.";
+fixed_string TestsStr = "tests";
+fixed_string TestsExpl = "Configures or executes tests.";
 
-TestcaseCommand::TestcaseCommand(bool bind) :
-   CliCommand(TestcaseStr, TestcaseExpl)
+TestsCommand::TestsCommand(bool bind) : CliCommand(TestsStr, TestsExpl)
 {
-   if(bind) BindParm(*new TestcaseAction);
+   if(bind) BindParm(*new TestsAction);
 }
 
-word TestcaseCommand::ProcessCommand(CliThread& cli) const
+word TestsCommand::ProcessCommand(CliThread& cli) const
 {
-   Debug::ft("TestcaseCommand.ProcessCommand");
+   Debug::ft("TestsCommand.ProcessCommand");
 
    id_t index;
 
@@ -1002,9 +1001,9 @@ word TestcaseCommand::ProcessCommand(CliThread& cli) const
    return ProcessSubcommand(cli, index);
 }
 
-word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
+word TestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft("TestcaseCommand.ProcessSubcommand");
+   Debug::ft("TestsCommand.ProcessSubcommand");
 
    auto test = NtTestData::Access(cli);
    if(test == nullptr) return cli.Report(-7, AllocationError);
@@ -4525,7 +4524,7 @@ NtIncrement::NtIncrement() : CliIncrement(NtStr, NtExpl)
    BindCommand(*new NtLogsCommand);
    BindCommand(*new NtSetCommand);
    BindCommand(*new NtSaveCommand);
-   BindCommand(*new TestcaseCommand);
+   BindCommand(*new TestsCommand);
    BindCommand(*new SwFlagsCommand);
    BindCommand(*new SizesCommand);
    BindCommand(*new CorruptCommand);

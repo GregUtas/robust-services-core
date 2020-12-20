@@ -25,8 +25,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
-#include <unordered_map>
-#include <utility>
 #include <vector>
 #include "CodeTypes.h"
 #include "Cxx.h"
@@ -48,11 +46,10 @@ public:
    //
    ~Lexer() = default;
 
-   //  Initializes the lexer to assist with parsing SOURCE, which must not
-   //  be nullptr.  Also invokes Advance() to position curr_ at the first
-   //  valid parse position.
+   //  Initializes the lexer to assist with parsing SOURCE and invokes
+   //  Advance() to position curr_ at the first valid parse position.
    //
-   void Initialize(const std::string* source);
+   void Initialize(const std::string& source);
 
    //  Returns the character at POS.
    //
@@ -213,11 +210,11 @@ public:
    //
    std::string NextOperator() const;
 
-   //  Searches for a right-hand character (RHC) that matches a left-hand one
-   //  (LHC) that was just found (e.g. (), [], {}, <>) at POS.  If the default
-   //  value of POS is used (string::npos), POS is set to curr_.  For each LHC
-   //  that is found, an additional RHC must be found.  Returns the position
-   //  where the matching RHC was found, else string::npos.
+   //  Starts at POS and searches for a right-hand character (RHC) that matches
+   //  a left-hand one (LHC) that was just found (e.g. (), [], {}, <>).  If POS
+   //  is not provided, POS is set to curr_.  For each LHC that is found, an
+   //  additional RHC must be found.  Returns the position where the matching
+   //  RHC was found, else string::npos.
    //
    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
 
@@ -257,16 +254,6 @@ public:
    //
    Cxx::Operator GetCxxOp();
    Cxx::Operator GetPreOp();
-
-   //  Returns the operator associated with NAME.  This is something of a
-   //  hack, used when the item in an expression begins with an alphabetic
-   //  character.
-   //
-   static Cxx::Operator GetReserved(const std::string& name);
-
-   //  Returns the built-in type associated with NAME.
-   //
-   static Cxx::Type GetType(const std::string& name);
 
    //  If the next token is a built-in type that can appear in a compound
    //  type, returns its Cxx::Type  and advances curr_ beyond it.  Returns
@@ -327,10 +314,6 @@ public:
    //  continues a previous line.
    //
    void GetDepth(size_t line, int8_t& depth, bool& cont) const;
-
-   //  Initializes the keyword and operator hash tables.
-   //
-   static bool Initialize();
 private:
    //  Used by PreprocessSource, which creates a clone of "this" lexer to
    //  do the work.
@@ -407,10 +390,6 @@ private:
    //
    void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
 
-   //  Indicates that the depth of a line of code has not yet been determined.
-   //
-   static const int8_t DEPTH_NOT_SET = -1;
-
    //  Information about a line of source code.
    //
    struct LineInfo
@@ -456,40 +435,6 @@ private:
    //  for each line.
    //
    bool scanned_;
-
-   //  Entries in the directive hash table map a string to a Cxx::Directive.
-   //
-   typedef std::unordered_map< std::string, Cxx::Directive > DirectiveTable;
-   typedef std::pair< std::string, Cxx::Directive > DirectivePair;
-   typedef std::unique_ptr< DirectiveTable > DirectiveTablePtr;
-   static DirectiveTablePtr Directives;
-
-   //  Entries in the keyword hash table map a string to a Cxx::Keyword.
-   //
-   typedef std::unordered_map< std::string, Cxx::Keyword > KeywordTable;
-   typedef std::pair< std::string, Cxx::Keyword > KeywordPair;
-   typedef std::unique_ptr< KeywordTable > KeywordTablePtr;
-   static KeywordTablePtr Keywords;
-
-   //  Entries in the operator and reserved word hash tables map a string to a
-   //  Cxx::Operator.  Each operator table contains punctuation strings, while
-   //  the Reserved table contains alphabetic strings.  There are two operator
-   //  tables, one for C++ code and one for preprocessor directives.
-   //
-   typedef std::unordered_map< std::string, Cxx::Operator > OperatorTable;
-   typedef std::pair< std::string, Cxx::Operator > OperatorPair;
-   typedef std::unique_ptr< OperatorTable > OperatorTablePtr;
-   static OperatorTablePtr CxxOps;
-   static OperatorTablePtr PreOps;
-   static OperatorTablePtr Reserved;
-
-   //  Entries in the types hash table map the string for a built-in type to a
-   //  Cxx::Type.
-   //
-   typedef std::unordered_map< std::string, Cxx::Type > TypesTable;
-   typedef std::pair< std::string, Cxx::Type > TypePair;
-   typedef std::unique_ptr< TypesTable > TypesTablePtr;
-   static TypesTablePtr Types;
 };
 }
 #endif

@@ -111,6 +111,10 @@ public:
    //
    void Insert() const;
 
+   //  Returns true if FILE was logged for WARNING.
+   //
+   static bool HasWarning(const CodeFile* file, Warning warning);
+
    //  Returns the name of the function that this warning wants added to
    //  a class.  Returns an empty string if LOG does not suggest this.
    //

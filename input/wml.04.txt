@@ -1,4 +1,4 @@
-testcase begin wml.04
+tests begin wml.04
 subscribe &dn.A wml &dn.B 6
 / A: WML DEACTIVATION
 inject PS B &port.A
@@ -11,7 +11,7 @@ verify PS S &port.A s=d m=&port.dial
 verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
 verify PS R &port.A &cause.normal
 contexts c
-if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
 / A: ADDRESS TIMEOUT (WML DEACTIVATED)
 inject PS B &port.A
 delay 12
@@ -21,4 +21,4 @@ verify PS S &port.A s=d m=&port.dial
 verify PS S &port.A s=x m=&port.reorder c=&cause.addresstimeout
 verify PS R &port.A &cause.normal
 unsubscribe &dn.A wml
-testcase end
+tests end

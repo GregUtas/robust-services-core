@@ -198,37 +198,56 @@ const bool T = true;
 
 //------------------------------------------------------------------------------
 
-LineTypeAttr::LineTypeAttr(bool code, bool exe, bool merge, bool blank) :
+LineTypeAttr::LineTypeAttr
+   (bool code, bool exe, bool merge, bool blank, char sym) :
    isCode(code),
    isExecutable(exe),
    isMergeable(merge),
-   isBlank(blank)
+   isBlank(blank),
+   symbol(sym)
 {
 }
 
 const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 {
    //           c  x  m  b
-   LineTypeAttr(T, T, T, F),  // SourceCode
-   LineTypeAttr(F, F, F, T),  // BlankLine
-   LineTypeAttr(F, F, F, T),  // EmptyComment
-   LineTypeAttr(F, F, F, F),  // FileComment
-   LineTypeAttr(F, F, F, F),  // SeparatorComment
-   LineTypeAttr(F, F, F, F),  // TaggedComment
-   LineTypeAttr(F, F, F, F),  // TextComment
-   LineTypeAttr(F, F, F, F),  // SlashAsteriskComment
-   LineTypeAttr(T, F, F, F),  // OpenBrace
-   LineTypeAttr(T, F, F, F),  // CloseBrace
-   LineTypeAttr(T, F, F, F),  // CloseBraceSemicolon
-   LineTypeAttr(T, F, F, F),  // AccessControl
-   LineTypeAttr(T, T, T, F),  // DebugFt
-   LineTypeAttr(T, T, T, F),  // FunctionName
-   LineTypeAttr(T, T, F, F),  // IncludeDirective
-   LineTypeAttr(T, T, F, F),  // HashDirective
-   LineTypeAttr(T, T, F, F),  // UsingStatement
-   LineTypeAttr(F, F, F, F),  // AnyLine
-   LineTypeAttr(F, F, F, F)   // LineType_N
+   LineTypeAttr(T, T, T, F, 'c'),  // CodeLine
+   LineTypeAttr(F, F, F, T, ' '),  // BlankLine
+   LineTypeAttr(F, F, F, T, 'b'),  // EmptyComment
+   LineTypeAttr(F, F, F, F, 'f'),  // FileComment
+   LineTypeAttr(F, F, F, F, '-'),  // SeparatorComment
+   LineTypeAttr(F, F, F, F, '*'),  // TaggedComment
+   LineTypeAttr(F, F, F, F, 't'),  // TextComment
+   LineTypeAttr(F, F, F, F, '/'),  // SlashAsteriskComment
+   LineTypeAttr(T, F, F, F, '{'),  // OpenBrace
+   LineTypeAttr(T, F, F, F, '}'),  // CloseBrace
+   LineTypeAttr(T, F, F, F, ']'),  // CloseBraceSemicolon
+   LineTypeAttr(T, F, F, F, 'a'),  // AccessControl
+   LineTypeAttr(T, T, T, F, 'd'),  // DebugFt
+   LineTypeAttr(T, T, T, F, 'n'),  // FunctionName
+   LineTypeAttr(T, T, F, F, 'i'),  // IncludeDirective
+   LineTypeAttr(T, T, F, F, 'h'),  // HashDirective
+   LineTypeAttr(T, T, F, F, 'u'),  // UsingStatement
+   LineTypeAttr(F, F, F, F, '@'),  // AnyLine
+   LineTypeAttr(F, F, F, F, '?')   // LineType_N
 };
+
+//------------------------------------------------------------------------------
+
+IndentRule ClassifyIndent(string& id)
+{
+   if(id == "$") return IndentResume;
+   if(id == CASE_STR) return IndentCase;
+   if(id == DEFAULT_STR) return IndentCase;
+   if(id == FOR_STR) return IndentFor;
+   if(id.front() == '#') return IndentDirective;
+   if(id == ENUM_STR) return IndentEnum;
+   if(id == PUBLIC_STR) return IndentControl;
+   if(id == PROTECTED_STR) return IndentControl;
+   if(id == PRIVATE_STR) return IndentControl;
+   if(id == NAMESPACE_STR) return IndentNamespace;
+   return IndentStandard;
+}
 
 //------------------------------------------------------------------------------
 

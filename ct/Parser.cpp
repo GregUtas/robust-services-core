@@ -176,7 +176,7 @@ bool Parser::CheckType(QualNamePtr& name)
    //
    if(name->Size() != 1) return true;
 
-   auto type = Lexer::GetType(*name->Name());
+   auto type = Cxx::GetType(*name->Name());
    auto root = Singleton< CxxRoot >::Instance();
 
    switch(type)
@@ -285,7 +285,7 @@ void Parser::Enter(SourceType source, const string& venue,
    inst_ = inst;
    farthest_ = 0;
    cause_ = 0;
-   lexer_.Initialize(&code);
+   lexer_.Initialize(code);
    if(preprocess) lexer_.PreprocessSource();
 }
 
@@ -1321,7 +1321,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
    {
       //  See if the name is actually a keyword or operator.
       //
-      auto op = Lexer::GetReserved(*qualName->Name());
+      auto op = Cxx::GetReserved(*qualName->Name());
 
       switch(op)
       {

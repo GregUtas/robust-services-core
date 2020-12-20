@@ -6,12 +6,12 @@ set tools f on
 set scope full
 clear selections
 include all on
-send &testcase.name
+send &test.name
 sched show
 sb status
 read mem.inuse
 read mem.inuse  / do it again: first time allocated symbols
 send cout
-testcase end
+tests end
 delay 1
 start

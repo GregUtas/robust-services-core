@@ -1,8 +1,8 @@
 pots>start
   OK.
-pots>/ A-B: ANSWER
+pots>
 pots>read bc.AB
-pots>/ A-B: RINGBACK; ANSWER
+pots>
 pots>inject PS B &port.A
   OK.
 pots>delay 1
@@ -29,7 +29,7 @@ pots>verify PS S &port.A m=&port.B
   OK.
 pots>delay 2
   OK.
-pots>/ D-B: CWT
+pots>
 pots>inject PS B &port.D
   OK.
 pots>delay 1
@@ -58,7 +58,7 @@ pots>verify PC A &port.B
   OK.
 pots>verify PS S &port.D m=&port.ringback
   OK.
-pots>/ C-B(CFB)-E: RINGBACK
+pots>
 pots>inject PS B &port.C
   OK.
 pots>delay 1
@@ -67,7 +67,7 @@ pots>inject PS D &port.C &dn.B
   OK.
 pots>delay 5
   OK.
-pots>/ VERIFY C-E ALERTING AFTER B(CWT) FAILS
+pots>
 pots>verify PS S &port.C s=d m=&port.dial
   OK.
 pots>verify PS S &port.C s=x m=&port.silence
@@ -82,10 +82,10 @@ pots>verify PS S &port.E r=t
   OK.
 pots>verify PS S &port.C m=&port.ringback
   OK.
-pots>/ VERIFY A-B RECONNECTED (END OF CWT TONE)
+pots>
 pots>verify PS S &port.B m=&port.A
   OK.
-pots>/ C-E ANSWER; RELEASE
+pots>
 pots>inject PS B &port.E
   OK.
 pots>delay 2
@@ -98,8 +98,8 @@ pots>inject PS E &port.E
   OK.
 pots>delay 2
   OK.
-pots>/* ADD VERIFICATION
-pots>/ RELEASE A, B, D
+pots>
+pots>
 pots>inject PS E &port.A
   OK.
 pots>inject PS E &port.D
@@ -110,22 +110,22 @@ pots>delay 2
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

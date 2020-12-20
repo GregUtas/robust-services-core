@@ -2,17 +2,17 @@ ct>start
   OK.
 ct>read lib.20
 ct>check rsctest $files
-  763 file(s) checked.
-ct>if &cli.result != 0 testcase failed
+  794 file(s) checked.
+ct>if &cli.result != 0 tests failed
   Result is false.
 ct>delay 1
   OK.
-ct>testcase end
+ct>tests end
   OK.
 read test.lib.epilog
 ct>stop
   OK.
-ct>save funcs &testcase.name
+ct>save funcs &test.name
   OK.
 ct>clear buffer
   OK.

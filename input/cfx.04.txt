@@ -1,6 +1,6 @@
 subscribe &dn.B cwt
 subscribe &dn.B cfb &dn.E
-testcase begin cfx.04
+tests begin cfx.04
 
 / A-B: ANSWER
 read bc.AB
@@ -53,8 +53,8 @@ inject PS E &port.D
 inject PS E &port.B
 delay 2
 contexts c
-if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
 
-testcase end
+tests end
 unsubscribe &dn.B cfb
 unsubscribe &dn.B cwt

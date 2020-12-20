@@ -92,12 +92,12 @@ void TestDatabase::Commit() const
 
    FunctionGuard guard(Guard_MakePreemptable);
 
-   auto path = Element::InputPath() + PATH_SEPARATOR + "testcase.db.txt";
+   auto path = Element::InputPath() + PATH_SEPARATOR + "test.db.txt";
    auto stream = SysFile::CreateOstream(path.c_str(), true);
 
    if(stream == nullptr)
    {
-      auto expl = "Failed to create testcase database";
+      auto expl = "Failed to create test database";
       Debug::SwLog(TestDatabase_Commit, expl, 0);
       return;
    }
@@ -113,11 +113,11 @@ void TestDatabase::Commit() const
 
 //------------------------------------------------------------------------------
 
-word TestDatabase::Erase(const string& test, string& expl)
+word TestDatabase::Erase(const string& testname, string& expl)
 {
    Debug::ft("TestDatabase.Erase");
 
-   auto item = tests_.find(test);
+   auto item = tests_.find(testname);
 
    if(item != tests_.end())
    {
@@ -127,7 +127,7 @@ word TestDatabase::Erase(const string& test, string& expl)
       return 0;
    }
 
-   expl = "That testcase is not in the database.";
+   expl = "That test is not in the database.";
    return 0;
 }
 
@@ -145,9 +145,9 @@ TestDatabase::LoadState TestDatabase::GetError(const string& reason)
 
 //------------------------------------------------------------------------------
 
-TestDatabase::State TestDatabase::GetState(const string& testcase)
+TestDatabase::State TestDatabase::GetState(const string& testname)
 {
-   auto test = tests_.find(testcase);
+   auto test = tests_.find(testname);
    if(test == tests_.cend()) return Invalid;
    return test->second.state;
 }
@@ -168,17 +168,17 @@ TestDatabase::LoadState TestDatabase::GetTest(string& input)
    if((s <= Invalid) || (s > Passed)) return GetError("State out of range");
    auto hash = strGet(input);
    if(hash.empty() || !isxdigit(hash.front()))
-      return GetError("Testcase hash value not found");
+      return GetError("Test hash value not found");
    uint32_t n = std::stoul(hash, nullptr, 16);
    TestInfo info(s, n);
    auto result = tests_.insert(TestData(name, info));
-   if(!result.second) return GetError("Testcase name duplicated");
-   return GetTestcase;
+   if(!result.second) return GetError("Test name duplicated");
+   return LoadTest;
 }
 
 //------------------------------------------------------------------------------
 
-void TestDatabase::Insert(const string& test, const string& dir)
+void TestDatabase::Insert(const string& testname, const string& dir)
 {
    Debug::ft("TestDatabase.Insert");
 
@@ -187,7 +187,7 @@ void TestDatabase::Insert(const string& test, const string& dir)
 
    //  If a script named TEST exists, calculate its hash value.
    //
-   auto path = dir + PATH_SEPARATOR + test + ".txt";
+   auto path = dir + PATH_SEPARATOR + testname + ".txt";
    auto stream = SysFile::CreateIstream(path.c_str());
 
    if(stream != nullptr)
@@ -204,7 +204,7 @@ void TestDatabase::Insert(const string& test, const string& dir)
       hash = string_hash(contents.c_str());
    }
 
-   auto prev = tests_.find(test);
+   auto prev = tests_.find(testname);
 
    if(prev != tests_.end())
    {
@@ -222,7 +222,7 @@ void TestDatabase::Insert(const string& test, const string& dir)
       //  TEST was not in the database, so add it.
       //
       TestInfo info(state, hash);
-      tests_.insert(TestData(test, info));
+      tests_.insert(TestData(testname, info));
    }
 }
 
@@ -236,31 +236,31 @@ void TestDatabase::Load()
 
    FunctionGuard guard(Guard_MakePreemptable);
 
-   auto path = Element::InputPath() + PATH_SEPARATOR + "testcase.db.txt";
+   auto path = Element::InputPath() + PATH_SEPARATOR + "test.db.txt";
    auto stream = SysFile::CreateIstream(path.c_str());
 
    if(stream == nullptr)
    {
-      auto expl = "Failed to load testcase database";
+      auto expl = "Failed to load test database";
       Debug::SwLog(TestDatabase_Load, expl, 0);
       return;
    }
 
    string input;
-   auto state = GetTestcase;
+   auto state = LoadTest;
    tests_.clear();
 
    while(stream->peek() != EOF)
    {
       std::getline(*stream, input);
 
-      while(!input.empty() && (state == GetTestcase))
+      while(!input.empty() && (state == LoadTest))
       {
          state = GetTest(input);
       }
    }
 
-   if(state == GetTestcase)
+   if(state == LoadTest)
    {
       auto expl = "Reached end of database unexpectedly";
       Debug::SwLog(TestDatabase_Load, expl, 0);
@@ -294,7 +294,7 @@ word TestDatabase::Query(bool verbose, string& expl) const
 
    if(verbose)
    {
-      stream << setw(40) << "Testcase" << spaces(3) << "State" << CRLF;
+      stream << setw(40) << "Test" << spaces(3) << "State" << CRLF;
 
       for(auto t = tests_.cbegin(); t != tests_.cend(); ++t)
       {
@@ -326,7 +326,7 @@ word TestDatabase::Retest(string& expl) const
 
    if(count == 0)
    {
-      expl = "No testcases require retesting.";
+      expl = "No tests require retesting.";
       return 0;
    }
 
@@ -337,24 +337,16 @@ word TestDatabase::Retest(string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_SetState = "TestDatabase.SetState";
-
-void TestDatabase::SetState(const string& testcase, State next)
+bool TestDatabase::SetState(const string& testname, State next)
 {
-   Debug::ft(TestDatabase_SetState);
+   Debug::ft("TestDatabase.SetState");
 
-   auto test = tests_.find(testcase);
+   auto test = tests_.find(testname);
 
-   if(test == tests_.end())
-   {
-      auto expl = "Non-existent testcase: " + testcase;
-      Debug::SwLog(TestDatabase_SetState, expl, 0);
-      return;
-   };
+   if(test == tests_.end()) return false;
 
-   //  If the state has changed, update the database.  However,
-   //  a failed testcase remains failed rather than being marked
-   //  for re-execution.
+   //  If the state has changed, update the database.  However, a failed
+   //  test remains failed rather than being marked for re-execution.
    //
    auto curr = test->second.state;
 
@@ -366,6 +358,8 @@ void TestDatabase::SetState(const string& testcase, State next)
          Commit();
       }
    }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -399,9 +393,9 @@ void TestDatabase::Update()
       Debug::SwLog(TestDatabase_Update, expl, 0);
    }
 
-   //  Search each *.txt file for the command "testcase begin", which
-   //  precedes the name of a testcase, and add (update) the testcase
-   //  to (in) the database.
+   //  Search each *.txt file for the command "tests begin", which
+   //  precedes the name of a test, and add (update) the test to
+   //  (in) the database.
    //
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
@@ -420,7 +414,7 @@ void TestDatabase::Update()
       {
          std::getline(*stream, input);
          auto str = strGet(input);
-         if(str != "testcase") continue;
+         if(str != "tests") continue;
          str = strGet(input);
          if(str != "begin") continue;
          str = strGet(input);

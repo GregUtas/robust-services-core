@@ -3,16 +3,16 @@ ct>start
 ct>read lib.06
 ct>type ab ServiceSM.h & as BcSessions.h
   RootServiceSM.h, ServiceSM.h, MediaSsm.h, BcSessions.h
-ct>if &cli.result != 0 testcase failed &cli.result
+ct>if &cli.result != 0 tests failed &cli.result
   Result is false.
 ct>delay 1
   OK.
-ct>testcase end
+ct>tests end
   OK.
 read test.lib.epilog
 ct>stop
   OK.
-ct>save funcs &testcase.name
+ct>save funcs &test.name
   OK.
 ct>clear buffer
   OK.

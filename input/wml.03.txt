@@ -1,4 +1,4 @@
-testcase begin wml.03
+tests begin wml.03
 subscribe &dn.A wml &dn.B 6
 / A-B: WML USAGE; RINGBACK; RELEASE
 inject PS B &port.A
@@ -12,4 +12,4 @@ verify PS S &port.A m=&port.ringback
 verify PS R &port.A &cause.normal
 verify PS R &port.B &cause.normal
 unsubscribe &dn.A wml
-testcase end
+tests end

@@ -34,7 +34,7 @@ using namespace NodeBase;
 
 namespace NodeTools
 {
-//  Data used by the CLI Testcase command and related commands.
+//  Data used by the CLI >tests command and related commands.
 //
 class NtTestData : public CliAppData
 {
@@ -44,40 +44,39 @@ public:
    //
    static NtTestData* Access(CliThread& cli);
 
-   //  Sets the file to be read before executing the >testcase command.
+   //  Sets the file to be read before executing the >tests command.
    //
    void SetProlog(const std::string& prolog) { prolog_ = prolog.c_str(); }
 
-   //  Sets the file to be read after a testcase passes.
+   //  Sets the file to be read after a test passes.
    //
    void SetEpilog(const std::string& epilog) { epilog_ = epilog.c_str(); }
 
-   //  Sets the file to be read after a testcase fails.
+   //  Sets the file to be read after a test fails.
    //
    void SetRecover(const std::string& recover) { recover_ = recover.c_str(); }
 
-   //  Initiates the testcase named TEST.  This name is saved in the symbol
-   //  "testcase.name" for use in prolog and epilog command files (see below).
-   //  Returns 0.
+   //  Initiates TEST.  This name is saved in the symbol "test.name" for
+   //  use in prolog and epilog command files (see below).  Returns 0.
    //
    word Initiate(const std::string& test);
 
-   //  Concludes a testcase by invoking the script defined by SetEpilog or
+   //  Concludes a test by invoking the script defined by SetEpilog or
    //  SetRecover.
    //
    void Conclude();
 
-   //  Invoked to report a testcase failure.  Invokes CliThread.Report with
+   //  Invoked to report a test's failure.  Invokes CliThread.Report with
    //  RC and a string that includes EXPL.  Returns RC.
    //
    word SetFailed(word rc, const std::string& expl);
 
-   //  Displays testcase statistics in EXPL.
+   //  Displays test statistics in EXPL.
    //
    void Query(bool verbose, std::string& expl) const;
 
    //  Resets the test environment by deleting the test data, which is
-   //  recreated by Access before running another series of testcases.
+   //  recreated by Access before running another series of tests.
    //
    void Reset();
 
@@ -94,15 +93,15 @@ private:
    //
    ~NtTestData();
 
-   //  The file to be read before executing the >testcase command.
+   //  The file to be read before executing the >tests command.
    //
    TemporaryStr prolog_;
 
-   //  The file to be read after a testcase passes.
+   //  The file to be read after a test passes.
    //
    TemporaryStr epilog_;
 
-   //  The file to be read after a testcase fails.
+   //  The file to be read after a test fails.
    //
    TemporaryStr recover_;
 
@@ -110,15 +109,15 @@ private:
    //
    TemporaryStr name_;
 
-   //  Set if the current testcase failed.
+   //  Set if the current test failed.
    //
    bool failed_;
 
-   //  The number of testcases that passed.
+   //  The number of tests that passed.
    //
    size_t passCount_;
 
-   //  The number of testcases that failed.
+   //  The number of tests that failed.
    //
    size_t failCount_;
 };

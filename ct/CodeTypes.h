@@ -526,7 +526,7 @@ struct FixOptions
 //
 enum LineType
 {
-   SourceCode,            // source code
+   CodeLine,              // source code
    BlankLine,             // blank lines
    EmptyComment,          // //
    FileComment,           // comment at top of file, before any code
@@ -571,13 +571,17 @@ struct LineTypeAttr
    //
    const bool isBlank;
 
+   //  A character symbol for the line type.
+   //
+   const char symbol;
+
    //  The array that contains the above attributes for each line type.
    //
    static const LineTypeAttr Attrs[LineType_N + 1];
 private:
    //  Constructs a line type with the specified attributes.
    //
-   LineTypeAttr(bool code, bool exe, bool merge, bool blank);
+   LineTypeAttr(bool code, bool exe, bool merge, bool blank, char sym);
 };
 
 //  Returns the resulting line length if LINE1[BEGIN1..END1] and
@@ -594,6 +598,30 @@ size_t LineMergeLength
 //
 bool InsertSpaceOnMerge
    (const std::string& line1, const std::string& line2, size_t begin2);
+
+//------------------------------------------------------------------------------
+//
+//  Indentation cases.
+//
+enum IndentRule
+{
+   IndentStandard,   // standard rules
+   IndentResume,     // numeric constant or punctuation
+   IndentCase,       // case label
+   IndentDirective,  // preprocessor directive
+   IndentFor,        // for statement
+   IndentEnum,       // enumeration
+   IndentControl,    // access control keyword
+   IndentNamespace   // namespace enclosure
+};
+
+//  Indicates that the depth of a line of code has not yet been determined.
+//
+constexpr int8_t DEPTH_NOT_SET = -1;
+
+//  Returns the indentation rule for ID, which is usually a keyword.
+//
+IndentRule ClassifyIndent(std::string& id);
 
 //------------------------------------------------------------------------------
 //

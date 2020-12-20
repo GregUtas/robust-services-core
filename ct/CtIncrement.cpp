@@ -271,7 +271,7 @@ MinTestsParm::MinTestsParm() :
 
 fixed_string CoverageUnderTextStr = "under";
 fixed_string CoverageUnderTextExpl =
-   "lists functions invoked by fewer than N testcases";
+   "lists functions invoked by fewer than N tests";
 
 CoverageUnderText::CoverageUnderText() :
    CliText(CoverageUnderTextExpl, CoverageUnderTextStr)
@@ -1064,7 +1064,7 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
       word ProcessCommand(CliThread& cli) const override;
    };
 
-fixed_string StringPatternExpl = "string to look for (quoted; '$' = wildcard)";
+fixed_string StringPatternExpl = "target string (in quotes; '$' = wildcard)";
 
 StringPatternParm::StringPatternParm() :
    CliTextParm(StringPatternExpl, false, 0) { }

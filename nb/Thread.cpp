@@ -2024,17 +2024,28 @@ bool Thread::IsScheduled() const
 
 bool Thread::IsTraceable() const
 {
-   //  Do not trace a thread that has been explicitly excluded.  Trace
-   //  RootThread and InitThread during system initialization and when
-   //  explicitly included.  Trace other threads when included.
+   //  Don't trace a thread that has been explicitly excluded.
    //
    auto trace = CalcStatus(true);
    if(trace == TraceExcluded) return false;
+
+   //  Don't trace a preemptable thread if only counting function invocations.
+   //  That capability uses std::map, which isn't thread safe, and we don't
+   //  want the overhead of acquiring a lock.
+   //
+   if(priv_->unpreempts_ == 0)
+   {
+      if(FunctionTrace::GetScope() == FunctionTrace::CountsOnly) return false;
+   }
 
    switch(faction_)
    {
    case WatchdogFaction:
    case SystemFaction:
+      //
+      //  Always trace RootThread and InitThread during system initalization
+      //  and restarts.
+      //
       if(Restart::GetStage() != Running) return true;
    }
 
@@ -2988,9 +2999,9 @@ main_t Thread::Start()
 
             //  A thread may start to run before its Thread object is fully
             //  constructed.  This causes a trap, so the thread must wait
-            //  until it is constructed.  If its constructor trapped, it will
-            //  have been registered as an orphan, so immediately exit it by
-            //  returning SIGDELETED.
+            //  until it is constructed.  If its constructor traps, it gets
+            //  registered as an orphan, so immediately exit it by returning
+            //  SIGDELETED.
             //
             auto reg = Singleton< ThreadRegistry >::Instance();
 
@@ -3012,8 +3023,8 @@ main_t Thread::Start()
          Debug::ft(Thread_Start);
 
          //  If the thread is preemptable, we got here after handling a trap,
-         //  not from Enter (which makes a thread unpreemptable).  Make the
-         //  thread unpreemptable again.
+         //  because we make each new thread unpreemptable.  Make the thread
+         //  unpreemptable again.
          //
          if(priv_->unpreempts_ == 0) MakeUnpreemptable();
 

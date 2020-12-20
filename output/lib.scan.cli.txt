@@ -3,50 +3,30 @@ ct>start
 ct>read lib.08
 ct>scan $files "//e"
 Searching for "//e"
-C:/Users/gregu/Documents/rsc/rsc/nb/Class.cpp:
-  217:    //e This needs to support memory types.
-C:/Users/gregu/Documents/rsc/rsc/nb/NbCliParms.h:
-  43: //e Support localization.
-C:/Users/gregu/Documents/rsc/rsc/nb/Module.h:
-  105:    //e Returns the list of modules that must be initialized *before* this one.
 C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.cpp:
   37: //e Enhancements for symbols:
-C:/Users/gregu/Documents/rsc/rsc/nb/SysMemory.h:
-  33:    //e Define memory protection functions here.
-C:/Users/gregu/Documents/rsc/rsc/nb/SysMemory.win.cpp:
-  25: //e Implement memory protection functions here.
-C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp:
-  2050:    //e Write-disable the protected memory segment.
-  2071:    //e Write-enable the protected memory segment.
-C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp:
-  513:    //e Calculate the time warp factor as follows (to be updated):
-C:/Users/gregu/Documents/rsc/rsc/nw/UdpIoThread.cpp:
-  168:       //e An I/O thread should not allow its receive buffer to overflow.
 C:/Users/gregu/Documents/rsc/rsc/sb/Message.cpp:
-  459:    //e Support message inspection.
+  447:    //e Support message inspection.
 C:/Users/gregu/Documents/rsc/rsc/sb/SbPools.cpp:
-  208:    //e This could be sped up by placing each in-use MsgPort in a queue selected
-C:/Users/gregu/Documents/rsc/rsc/sb/SbTrace.cpp:
-  238:    //e If a StTestData::lastMsg_ or TestSession::lastMsg_ points to this record,
+  192:    //e This could be sped up by placing each in-use MsgPort in a queue selected
 C:/Users/gregu/Documents/rsc/rsc/sb/ServiceSM.cpp:
-  375:    //e Support true morphing (Object::MorphTo).
+  367:    //e Support true morphing (Object::MorphTo).
 C:/Users/gregu/Documents/rsc/rsc/sb/TlvMessage.cpp:
-  273:    //e Support parameter expansion.
-  387:    //e Support message inspection.
+  340:    //e Support message inspection.
 C:/Users/gregu/Documents/rsc/rsc/st/StIncrement.cpp:
-  483:    //e IpBuffer, SysIpL2Addr, SysIpL3Addr, and SysUdpSocket should go in a
+  470:    //e IpBuffer, SysIpL2Addr, SysIpL3Addr, and SysUdpSocket should go in a
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsCircuit.cpp:
-  361:       //e Race conditions can cause lost messages.  For example, the suspend
-ct>if &cli.result != 0 testcase failed &cli.result
+  344:       //e Race conditions can cause lost messages.  For example, the suspend
+ct>if &cli.result != 0 tests failed &cli.result
   Result is false.
 ct>delay 1
   OK.
-ct>testcase end
+ct>tests end
   OK.
 read test.lib.epilog
 ct>stop
   OK.
-ct>save funcs &testcase.name
+ct>save funcs &test.name
   OK.
 ct>clear buffer
   OK.

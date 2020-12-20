@@ -1,9 +1,9 @@
 stop
 contexts c
-if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
-save funcs &testcase.name
-save trace &testcase.name
-save msc &testcase.name
+if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
+save funcs &test.name
+save trace &test.name
+save msc &test.name
 clear buffer
 send cout
-echo Testcase &testcase.name completed.
+echo Test &test.name completed.

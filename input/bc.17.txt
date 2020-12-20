@@ -1,4 +1,4 @@
-testcase begin bc.17
+tests begin bc.17
 / A-B: RINGBACK; ANSWER; KILL CONTEXT
 swflags set &flag.calltrap on
 inject PS B &port.A
@@ -19,4 +19,4 @@ verify PS R &port.A &port.B
 verify PS R &port.B &port.B
 swflags set &flag.calltrap off
 delay 2
-testcase end
+tests end

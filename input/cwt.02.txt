@@ -1,14 +1,14 @@
 subscribe &dn.A cwt
 
-testcase verify off
+tests verify off
 read bc.AB
 / 1A 1B
 read cwt.In2Ack
 / 1C
 read cwt.Nf2Tmr
-testcase verify on
+tests verify on
 
-testcase begin cwt.02
+tests begin cwt.02
 / 2A
 read cwt.Nd2Tmr
 / 2B
@@ -41,5 +41,5 @@ verify PM R &port.A &cause.normal
 verify PS R &port.A &cause.normal
 
 delay 2
-testcase end
+tests end
 unsubscribe &dn.A cwt

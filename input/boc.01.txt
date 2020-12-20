@@ -1,4 +1,4 @@
-testcase begin boc.01
+tests begin boc.01
 subscribe &dn.A boc
 / A: BOC
 inject PS B &port.A
@@ -8,4 +8,4 @@ delay 1
 verify PS S &port.A m=&port.reorder c=&cause.incomingbarred
 verify PS R &port.A &cause.normal
 unsubscribe &dn.A boc
-testcase end
+tests end

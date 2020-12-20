@@ -75,6 +75,7 @@ logs              : Interface to the log subsystem.
 (                 : subcommand...
   list            : shows info for all logs or the logs in a specific group
     [<str>]       : log group name (default=all)
+  groups          : lists all log groups
   explain         : displays documentation for a log
     <str>         : log group name
     (100:999)     : log number
@@ -315,6 +316,7 @@ logs              : Interface to the log subsystem.
 (                 : subcommand...
   list            : shows info for all logs or the logs in a specific group
     [<str>]       : log group name (default=all)
+  groups          : lists all log groups
   explain         : displays documentation for a log
     <str>         : log group name
     (100:999)     : log number
@@ -376,25 +378,25 @@ save              : Saves what was captured by trace tools.
   ]
 )
 
-testcase          : Configures or executes testcases.
+tests             : Configures or executes tests.
 (                 : subcommand...
-  prolog          : file to read before executing a testcase
+  prolog          : file to read before executing a test
     [<str>]       : filename (none if omitted)
-  epilog          : file to read after a testcase passes
+  epilog          : file to read after a test passes
     [<str>]       : filename (none if omitted)
-  recover         : file to read after a testcase fails
+  recover         : file to read after a test fails
     [<str>]       : filename (epilog if omitted)
-  begin           : executes a testcase (and concludes any previous one)
-    <str>         : testcase filename
-  end             : concludes a testcase
-  failed          : records that the current testcase failed
+  begin           : executes a test (and concludes any previous one)
+    <str>         : test filename
+  end             : concludes a test
+  failed          : records that the current test failed
     <int>         : failure code
     [<str>]       : explanation for failure
-  query           : shows pass/fail counts and (if verbose) all testcases
+  query           : shows pass/fail counts and (if verbose) all tests
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
-  retest          : lists testcases that have not passed
-  erase           : removes a testcase from the database
-    <str>         : testcase name
+  retest          : lists tests that have not passed
+  erase           : removes a test from the database
+    <str>         : test name
   reset           : resets the testing environment
 )
 
@@ -859,25 +861,25 @@ save              : Saves what was captured by trace tools.
     [t|f]         : include internal data structures? (default=f)
 )
 
-testcase          : Configures or executes testcases.
+tests             : Configures or executes tests.
 (                 : subcommand...
-  prolog          : file to read before executing a testcase
+  prolog          : file to read before executing a test
     [<str>]       : filename (none if omitted)
-  epilog          : file to read after a testcase passes
+  epilog          : file to read after a test passes
     [<str>]       : filename (none if omitted)
-  recover         : file to read after a testcase fails
+  recover         : file to read after a test fails
     [<str>]       : filename (epilog if omitted)
-  begin           : executes a testcase (and concludes any previous one)
-    <str>         : testcase filename
-  end             : concludes a testcase
-  failed          : records that the current testcase failed
+  begin           : executes a test (and concludes any previous one)
+    <str>         : test filename
+  end             : concludes a test
+  failed          : records that the current test failed
     <int>         : failure code
     [<str>]       : explanation for failure
-  query           : shows pass/fail counts and (if verbose) all testcases
+  query           : shows pass/fail counts and (if verbose) all tests
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
-  retest          : lists testcases that have not passed
-  erase           : removes a testcase from the database
-    <str>         : testcase name
+  retest          : lists tests that have not passed
+  erase           : removes a test from the database
+    <str>         : test name
   reset           : resets the testing environment
   verify          : enables or disables the >verify command
   (               : setting...
@@ -910,25 +912,25 @@ inject            : Sends a message FROM a factory or one of its PSMs.
       <str>       : called DN (digit string)
       oclg=[<str>] : original calling DN (digit string)
       ocld=[<str>] : original called DN (digit string)
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     C             : CPG
       (0:5)       : progress: Progress::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     R             : REL
       (0:20)      : cause: Cause::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
   )
   CT              : CIP Terminator (network side)
     (1:16)        : TestSessionId
   (               : signal abbreviation...
     C             : CPG
       (0:5)       : progress: Progress::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     A             : ANM
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     R             : REL
       (0:20)      : cause: Cause::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
   )
   PX              : Proxy Call (user side)
     (1:16)        : TestSessionId
@@ -941,86 +943,86 @@ inject            : Sends a message FROM a factory or one of its PSMs.
       <str>       : called DN (digit string)
       oclg=[<str>] : original calling DN (digit string)
       ocld=[<str>] : original called DN (digit string)
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     C             : CPG
       (0:5)       : progress: Progress::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     A             : ANM
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     R             : REL
       (0:20)      : cause: Cause::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
   )
   PS              : POTS Shelf
   (               : signal abbreviation...
     B             : offhook ('begin')
-      (0:65000)   : header.port: Switch::PortId
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     D             : digits
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       <str>       : digit string: (0..9|*|#)*
     A             : alerting
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     L             : flash ('link')
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     E             : onhook ('end')
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
   )
   PC              : POTS Call (user side)
     (1:16)        : TestSessionId
   (               : signal abbreviation...
     F             : facility
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       f           : facility info
         (0:511)   : sid: ServiceId
         (0:255)   : ind: Facility::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
       c=[0:20]    : cause: Cause::Ind
       p=[0:5]     : progress: Progress::Ind
     S             : supervise
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       r=[t|f]     : ring on?
       s=[<str>]   : scan: (x|d|f|df)
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
       c=[0:20]    : cause: Cause::Ind
       [f]         : facility info
         (0:511)   : sid: ServiceId
         (0:255)   : ind: Facility::Ind
     L             : lockout
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     R             : release
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       (0:20)      : cause: Cause::Ind
   )
   PM              : POTS Multiplexer (network side)
     (1:16)        : TestSessionId
   (               : signal abbreviation...
     B             : offhook ('begin')
-      (0:65000)   : header.port: Switch::PortId
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     D             : digits
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       <str>       : digit string: (0..9|*|#)*
     A             : alerting
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     L             : flash ('link')
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     E             : onhook ('end')
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     F             : facility
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       f           : facility info
         (0:511)   : sid: ServiceId
         (0:255)   : ind: Facility::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
       c=[0:20]    : cause: Cause::Ind
       p=[0:5]     : progress: Progress::Ind
     P             : progress
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       (0:5)       : progress: Progress::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     R             : release
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       (0:20)      : cause: Cause::Ind
   )
 )
@@ -1032,12 +1034,12 @@ verify            : Checks a message RECEIVED by a factory or one of its PSMs.
   (               : signal abbreviation...
     C             : CPG
       (0:5)       : progress: Progress::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     A             : ANM
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     R             : REL
       (0:20)      : cause: Cause::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
   )
   CT              : CIP Terminator (network side)
     [0:16]        : TestSessionId (default=0: next message)
@@ -1050,13 +1052,13 @@ verify            : Checks a message RECEIVED by a factory or one of its PSMs.
       <str>       : called DN (digit string)
       oclg=[<str>] : original calling DN (digit string)
       ocld=[<str>] : original called DN (digit string)
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     C             : CPG
       (0:5)       : progress: Progress::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     R             : REL
       (0:20)      : cause: Cause::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
   )
   PX              : Proxy Call (user side)
     [0:16]        : TestSessionId (default=0: next message)
@@ -1069,92 +1071,92 @@ verify            : Checks a message RECEIVED by a factory or one of its PSMs.
       <str>       : called DN (digit string)
       oclg=[<str>] : original calling DN (digit string)
       ocld=[<str>] : original called DN (digit string)
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     C             : CPG
       (0:5)       : progress: Progress::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     A             : ANM
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     R             : REL
       (0:20)      : cause: Cause::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
   )
   PS              : POTS Shelf
   (               : signal abbreviation...
     S             : supervise
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       r=[t|f]     : ring on?
       s=[<str>]   : scan: (x|d|f|df)
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
       c=[0:20]    : cause: Cause::Ind
       [f]         : facility info
         (0:511)   : sid: ServiceId
         (0:255)   : ind: Facility::Ind
     L             : lockout
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     R             : release
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       (0:20)      : cause: Cause::Ind
   )
   PC              : POTS Call (user side)
     [0:16]        : TestSessionId (default=0: next message)
   (               : signal abbreviation...
     B             : offhook ('begin')
-      (0:65000)   : header.port: Switch::PortId
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     D             : digits
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       <str>       : digit string: (0..9|*|#)*
     A             : alerting
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     L             : flash ('link')
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     E             : onhook ('end')
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     F             : facility
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       f           : facility info
         (0:511)   : sid: ServiceId
         (0:255)   : ind: Facility::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
       c=[0:20]    : cause: Cause::Ind
       p=[0:5]     : progress: Progress::Ind
     P             : progress
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       (0:5)       : progress: Progress::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     R             : release
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       (0:20)      : cause: Cause::Ind
   )
   PM              : POTS Multiplexer (network side)
     [0:16]        : TestSessionId (default=0: next message)
   (               : signal abbreviation...
     F             : facility
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       f           : facility info
         (0:511)   : sid: ServiceId
         (0:255)   : ind: Facility::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
       c=[0:20]    : cause: Cause::Ind
       p=[0:5]     : progress: Progress::Ind
     P             : progress
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       (0:5)       : progress: Progress::Ind
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
     S             : supervise
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       r=[t|f]     : ring on?
       s=[<str>]   : scan: (x|d|f|df)
-      m=[0:65000] : media.rxFrom: Switch::PortId
+      m=[0:100000] : media.rxFrom: Switch::PortId
       c=[0:20]    : cause: Cause::Ind
       [f]         : facility info
         (0:511)   : sid: ServiceId
         (0:255)   : ind: Facility::Ind
     L             : lockout
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
     R             : release
-      (0:65000)   : header.port: Switch::PortId
+      (0:100000)  : header.port: Switch::PortId
       (0:20)      : cause: Cause::Ind
   )
 )
@@ -1164,8 +1166,8 @@ st>quit
 nb>pots
 pots>help full
 tsports           : Displays the circuit(s) in a range of timeswitch ports.
-  (0:65000)       : Switch::PortId
-  [0:65000]       : Switch::PortId
+  (0:100000)      : Switch::PortId
+  [0:100000]      : Switch::PortId
 
 tones             : Displays tones.
   [0:10]          : Tone::Id (default=all)
@@ -1268,7 +1270,7 @@ traffic           : Generates POTS calls for load testing.
 (                 : subcommand...
   states          : displays circuit and call states
   rate            : sets call rate
-    (0:48460)     : calls per minute
+    (0:84490)     : calls per minute
   query           : displays traffic statistics
 )
 
@@ -1313,7 +1315,7 @@ countlines        : Counts the number of lines of code.
 
 scan              : Scans files for lines that contain a string.
   <str>           : a set of code files
-  <str>           : string to look for (quoted; '$' = wildcard)
+  <str>           : target string (in quotes; '$' = wildcard)
 
 assign            : Assigns a set of files or directories to a variable.
   <str>           : variable name
@@ -1363,10 +1365,10 @@ check             : Checks if code follows C++ guidelines.
   <str>           : a set of code files
 
 explain           : Explains a warning generated by >check.
-  (1:123)         : warning number
+  (1:124)         : warning number
 
 fix               : Interactively fixes warnings detected by >check.
-  (0:123)         : warning number from Wnnn (0 = all warnings)
+  (0:124)         : warning number from Wnnn (0 = all warnings)
   (t|f)           : prompt before fixing?
   <str>           : a set of code files
 
@@ -1381,7 +1383,7 @@ coverage          : Supports code coverage.
 (                 : subcommand...
   load            : reads the database from InputPath/coverage.db.txt
   query           : displays information about the loaded database
-  under           : lists functions invoked by fewer than N testcases
+  under           : lists functions invoked by fewer than N tests
     (1:10)        : value of N
   erase           : removes a function from the database
     <str>         : name of function to remove

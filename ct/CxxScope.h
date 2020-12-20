@@ -1796,7 +1796,7 @@ private:
    TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
    bool ItemIsTemplateArg(const CxxNamed* item) const override;
    bool MatchesExactly(const TypeSpec* that) const override;
-   TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
+   TypeMatch MatchTemplate(const TypeSpec* that, stringVector& tmpltParms,
       stringVector& tmpltArgs, bool& argFound) const override;
    bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
       const CodeFile* file, size_t& index) const override;

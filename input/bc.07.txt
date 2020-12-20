@@ -1,4 +1,4 @@
-testcase begin bc.07
+tests begin bc.07
 / A-B: USER BUSY; RELEASE
 inject PS B &port.A
 delay 1
@@ -15,4 +15,4 @@ verify PS S &port.A s=x m=&port.silence
 verify PS S &port.A m=&port.busy c=&cause.userbusy
 verify PS R &port.A &cause.normal
 verify PS R &port.B &cause.normal
-testcase end
+tests end

@@ -36,7 +36,7 @@ pots>verify PS S &port.B r=f m=&port.A
   OK.
 pots>verify PS S &port.A m=&port.B
   OK.
-pots>/ INITIATE CWT: DENIED BY CCW
+pots>
 pots>inject PS B &port.C
   OK.
 pots>delay 1
@@ -69,20 +69,20 @@ pots>inject PS E &port.C
   OK.
 pots>delay 2
   OK.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

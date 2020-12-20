@@ -1,4 +1,4 @@
-testcase begin cip.01
+tests begin cip.01
 / INJECT IAM TO A; ANSWER; RELEASE
 inject CO 1 I r &factory.pots.call &dn.A &dn.X &dn.A m=&port.X
 delay 4
@@ -19,4 +19,4 @@ inject PS E &port.A
 delay 2
 
 verify PS R &port.A &cause.normal
-testcase end
+tests end

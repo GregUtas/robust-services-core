@@ -98,6 +98,13 @@ namespace CodeTools
    //
    std::string Compress(const std::string& s);
 
+   //  S is a line of source code, and slashSlashPos is the location of any
+   //  trailing comment on that line.  If there is no trailing comment,
+   //  returns the last character, else returns the first non-blank character
+   //  before the comment.
+   //
+   char LastCodeChar(const std::string& s, size_t slashSlashPos);
+
    //  Appends SEPARATOR to SCOPE unless it is empty, and returns the result.
    //
    std::string& Prefix(std::string& scope,

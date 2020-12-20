@@ -440,6 +440,7 @@ void CxxScoped::AddFiles(SetOfIds& imSet) const
 void CxxScoped::AddReference(const CxxNamed* item) const
 {
    auto file = item->GetFile();
+   if(file == nullptr) return;
    if(file->IsSubsFile()) return;
 
    if(Context::GetXrefUpdater() == InstanceFunction)

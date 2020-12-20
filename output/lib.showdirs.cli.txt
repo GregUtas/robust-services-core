@@ -3,12 +3,12 @@ ct>start
 ct>read lib.15
 ct>show dirs
   Directory    .h  .cpp  Path
-       subs    44     1  C:/Users/gregu/Documents/rsc/rsc/subs
-      nbase   128   126  C:/Users/gregu/Documents/rsc/rsc/nb
+       subs    46     1  C:/Users/gregu/Documents/rsc/rsc/subs
+      nbase   138   137  C:/Users/gregu/Documents/rsc/rsc/nb
       ntool     6     6  C:/Users/gregu/Documents/rsc/rsc/nt
-      ctool    34    33  C:/Users/gregu/Documents/rsc/rsc/ct
-      nwork    26    31  C:/Users/gregu/Documents/rsc/rsc/nw
-      sbase    56    58  C:/Users/gregu/Documents/rsc/rsc/sb
+      ctool    37    34  C:/Users/gregu/Documents/rsc/rsc/ct
+      nwork    27    32  C:/Users/gregu/Documents/rsc/rsc/nw
+      sbase    57    59  C:/Users/gregu/Documents/rsc/rsc/sb
       stool     8     8  C:/Users/gregu/Documents/rsc/rsc/st
       mbase    11    11  C:/Users/gregu/Documents/rsc/rsc/mb
       cbase     9    17  C:/Users/gregu/Documents/rsc/rsc/cb
@@ -20,17 +20,17 @@ ct>show dirs
       anode     4     6  C:/Users/gregu/Documents/rsc/rsc/an
       diplo    18    17  C:/Users/gregu/Documents/rsc/rsc/dip
         rsc     0     1  C:/Users/gregu/Documents/rsc/rsc/rsc
-      TOTAL   391   372
-ct>if &cli.result != 0 testcase failed &cli.result
+      TOTAL   408   386
+ct>if &cli.result != 0 tests failed &cli.result
   Result is false.
 ct>delay 1
   OK.
-ct>testcase end
+ct>tests end
   OK.
 read test.lib.epilog
 ct>stop
   OK.
-ct>save funcs &testcase.name
+ct>save funcs &test.name
   OK.
 ct>clear buffer
   OK.

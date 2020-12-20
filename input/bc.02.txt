@@ -1,4 +1,4 @@
-testcase begin bc.02
+tests begin bc.02
 / A: NO DIGITS; ADDRESS TIMEOUT
 inject PS B &port.A
 delay 12
@@ -7,4 +7,4 @@ delay 1
 verify PS S &port.A s=d m=&port.dial
 verify PS S &port.A s=x m=&port.reorder c=&cause.addresstimeout
 verify PS R &port.A &cause.normal
-testcase end
+tests end

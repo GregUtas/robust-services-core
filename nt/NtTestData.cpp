@@ -36,7 +36,7 @@ using std::string;
 
 namespace NodeTools
 {
-NtTestData::NtTestData(CliThread& cli) : CliAppData(cli, TestcaseAppId),
+NtTestData::NtTestData(CliThread& cli) : CliAppData(cli, TestAppId),
    failed_(false),
    passCount_(0),
    failCount_(0)
@@ -57,7 +57,7 @@ NtTestData* NtTestData::Access(CliThread& cli)
 {
    Debug::ft("NtTestData.Access");
 
-   auto data = cli.GetAppData(TestcaseAppId);
+   auto data = cli.GetAppData(TestAppId);
    if(data == nullptr) data = new NtTestData(cli);
    return static_cast< NtTestData* >(data);
 }
@@ -132,8 +132,7 @@ word NtTestData::Initiate(const string& test)
 {
    Debug::ft("NtTestData.Initiate");
 
-   //  If a testcase is currently running, wrap it up before starting
-   //  the new one.
+   //  If a test is currently running, wrap it up before starting the new one.
    //
    Conclude();
 
@@ -141,7 +140,7 @@ word NtTestData::Initiate(const string& test)
    failed_ = false;
 
    auto cli = Cli();
-   auto command = string("symbols set testcase.name ") + name_.c_str();
+   auto command = string("symbols set test.name ") + name_.c_str();
    cli->Execute(command);
 
    if(!prolog_.empty())
@@ -163,7 +162,7 @@ void NtTestData::Query(bool verbose, string& expl) const
    stream << "Current test session:" << CRLF;
    stream << spaces(2) << "Passed: " << passCount_ << CRLF;
    stream << spaces(2) << "Failed: " << failCount_ << CRLF;
-   stream << "Testcase database:" << CRLF;
+   stream << "Test database:" << CRLF;
 
    string info;
    Singleton< TestDatabase >::Instance()->Query(verbose, info);
@@ -177,7 +176,7 @@ void NtTestData::Reset()
 {
    Debug::ft("NtTestData.Reset");
 
-   Cli()->SetAppData(nullptr, TestcaseAppId);
+   Cli()->SetAppData(nullptr, TestAppId);
 }
 
 //------------------------------------------------------------------------------

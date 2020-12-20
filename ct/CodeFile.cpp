@@ -228,21 +228,6 @@ bool IsSortedByPosition(const Function* func1, const Function* func2)
 
 //------------------------------------------------------------------------------
 
-char LastCodeChar(const string& s, size_t slashSlashPos)
-{
-   //  S is a line of source code, and slashSlashPos is the location of any
-   //  trailing comment on that line.  If there is no trailing comment,
-   //  return the last character, else return the first non-blank character
-   //  before the comment.
-   //
-   if(slashSlashPos == string::npos) return s.back();
-
-   auto pos = RfindFirstNotOf(s, slashSlashPos - 1, WhitespaceChars);
-   return s.at(pos);
-}
-
-//------------------------------------------------------------------------------
-
 void RemoveAliasedClasses(CxxNamedSet& inclSet)
 {
    Debug::ft("CodeTools.RemoveAliasedClasses");
@@ -705,7 +690,7 @@ void CodeFile::CheckDebugFt() const
             }
             break;
 
-         case SourceCode:
+         case CodeLine:
             if(open) code = true;
             break;
          }
@@ -947,9 +932,9 @@ void CodeFile::CheckLineBreaks()
       if(!LineTypeAttr::Attrs[lineType_[n]].isMergeable) continue;
       if(!LineTypeAttr::Attrs[lineType_[n + 1]].isMergeable) continue;
       auto begin1 = lexer_.GetLineStart(n);
-      auto end1 = code_.find(CRLF, begin1) - 1;
+      auto end1 = code_.find(CRLF, begin1);
       auto begin2 = lexer_.GetLineStart(n + 1);
-      auto end2 = code_.find(CRLF, begin2) - 1;
+      auto end2 = code_.find(CRLF, begin2);
       auto size = LineMergeLength(code_, begin1, end1, code_, begin2, end2);
       if(size <= LineLengthMax())
       {
@@ -1025,7 +1010,7 @@ void CodeFile::CheckSeparation()
 
       switch(lineType_[n])
       {
-      case SourceCode:
+      case CodeLine:
          switch(prevType)
          {
          case FileComment:
@@ -1299,7 +1284,7 @@ LineType CodeFile::ClassifyLine
    }
 
    cont = (LastCodeChar(s, slashSlashPos) != ';');
-   return SourceCode;
+   return CodeLine;
 }
 
 //------------------------------------------------------------------------------
@@ -1364,21 +1349,33 @@ word CodeFile::CreateEditor(string& expl) const
    expl.clear();
    if(editor_ != nullptr) return 0;
 
-   //  Fail if the file's directory is unknown.
+   //  Fail if
+   //  o the file's directory is unknown
+   //  o no source code exists
+   //  o the editor cannot be created
    //
    if(dir_ == nullptr)
    {
       expl = "Directory not found for " + Name() + '.';
-      return -1;
+      return -3;
+   }
+
+   if(code_.empty())
+   {
+      expl = "Source code for " + Name() + "has not been imported.";
+      return -2;
    }
 
    //  Fail if the editor can't be created.
    //
-   editor_.reset(new Editor(this, expl));
+   editor_.reset(new Editor(*this));
 
-   //  Fail if the editor set EXPL to explain an error.
-   //
-   if(!expl.empty()) return -1;
+   if(editor_ == nullptr)
+   {
+      expl = "Failed to create editor for" + Name() + '.';
+      return -1;
+   }
+
    return 0;
 }
 
@@ -1396,11 +1393,10 @@ void CodeFile::Display(ostream& stream,
    stream << prefix << "parsed     : " << parsed_ << CRLF;
    stream << prefix << "checked    : " << checked_ << CRLF;
 
+   auto lead = prefix + spaces(2);
    auto& files = Singleton< Library >::Instance()->Files();
 
    stream << prefix << "inclIds : " << inclIds_.size() << CRLF;
-
-   auto lead = prefix + spaces(2);
 
    for(auto i = inclIds_.cbegin(); i != inclIds_.cend(); ++i)
    {
@@ -1416,20 +1412,11 @@ void CodeFile::Display(ostream& stream,
       stream << lead << strIndex(*u) << f->Name() << CRLF;
    }
 
-   Flags none;
+   stream << prefix << "editor : " << strPtr(editor_.get()) << CRLF;
 
-   stream << prefix << "#includes : " << incls_.size() << CRLF;
-
-   for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
+   if(editor_ != nullptr)
    {
-      (*i)->Display(stream, lead, none);
-   }
-
-   stream << prefix << "usings : " << usings_.size() << CRLF;
-
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
-   {
-      (*u)->Display(stream, lead, none);
+      editor_->Display(stream, lead, options);
    }
 }
 
@@ -1675,6 +1662,8 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 {
    Debug::ft("CodeFile.Fix");
+
+   if(!CodeWarning::HasWarning(this, opts.warning)) return 0;
 
    auto rc = CreateEditor(expl);
 
@@ -2628,19 +2617,18 @@ void CodeFile::Scan()
    input->clear();
    input->seekg(0);
 
-   code_.clear();
-
    string str;
 
    while(input->peek() != EOF)
    {
       std::getline(*input, str);
       code_ += str;
-      code_ += CRLF;
+      code_.push_back(CRLF);
    }
 
    input.reset();
-   lexer_.Initialize(&code_);
+
+   lexer_.Initialize(code_);
    lexer_.CalcDepths();
 
    auto lines = lexer_.LineCount();

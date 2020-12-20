@@ -805,7 +805,7 @@ public:
 
    //  Invokes SetTemplateArgs on the last name.
    //
-   void SetTemplateArgs(const TemplateParms* tparms);
+   void SetTemplateArgs(const TemplateParms* tparms) const;
 
    //  Sets the referent of the Nth name to ITEM.  VIEW provides information
    //  about how the name was resolved.  If name resolution failed, ITEM will
@@ -1242,8 +1242,9 @@ public:
    //  Compatible on an exact match, or something else on a partial match (if,
    //  for example, THAT is a pointer type and the template parameter is not).
    //
-   virtual TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
-      stringVector& tmpltArgs, bool& argFound) const = 0;
+   virtual TypeMatch MatchTemplate(const TypeSpec* that,
+      stringVector& tmpltParms, stringVector& tmpltArgs,
+      bool& argFound) const = 0;
 
    //  Determines how well THAT matches this type for the purpose of template
    //  instantiation.
@@ -1508,7 +1509,7 @@ private:
 
    //  Overridden to determine if THAT can instantiate a template for this type.
    //
-   TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
+   TypeMatch MatchTemplate(const TypeSpec* that, stringVector& tmpltParms,
       stringVector& tmpltArgs, bool& argFound) const override;
 
    //  Overridden to determine how well THAT matches this type for the purpose

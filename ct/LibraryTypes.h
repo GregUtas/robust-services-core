@@ -23,9 +23,9 @@
 #define LIBRARYTYPES_H_INCLUDED
 
 #include <cstddef>
+#include <list>
 #include <memory>
 #include <set>
-#include <vector>
 #include "SysTypes.h"
 
 using namespace NodeBase;
@@ -60,7 +60,7 @@ struct FileLevel
    FileLevel(NodeBase::id_t f, size_t l) : fid(f), level(l) { }
 };
 
-typedef std::vector< FileLevel > BuildOrder;
+typedef std::list< FileLevel > BuildOrder;
 typedef std::unique_ptr< BuildOrder > BuildOrderPtr;
 
 //  Tokens when parsing the expression associated with a library command.

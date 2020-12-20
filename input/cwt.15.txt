@@ -1,6 +1,6 @@
 subscribe &dn.A cwt
 
-testcase verify off
+tests verify off
 read bc.BA
 / 1A 1B
 read cwt.In2Ack
@@ -8,9 +8,9 @@ read cwt.In2Ack
 read cwt.Nf2Tmr
 / 3A
 read cwt.Nd2ExB
-testcase verify on
+tests verify on
 
-testcase begin cwt.15
+tests begin cwt.15
 / 15A
 inject PS E &port.A
 delay 2
@@ -28,5 +28,5 @@ inject PS E &port.C
 inject PS E &port.A
 
 delay 2
-testcase end
+tests end
 unsubscribe &dn.A cwt

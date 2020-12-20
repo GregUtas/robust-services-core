@@ -1,4 +1,4 @@
-testcase begin sus.03
+tests begin sus.03
 subscribe &dn.A sus
 subscribe &dn.A boc
 / A: SUS(OBC) & BOC
@@ -10,4 +10,4 @@ verify PS S &port.A m=&port.reorder c=&cause.facilityreject
 verify PS R &port.A &cause.normal
 unsubscribe &dn.A sus
 unsubscribe &dn.A boc
-testcase end
+tests end

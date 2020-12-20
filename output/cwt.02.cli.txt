@@ -1,22 +1,22 @@
 pots>start
   OK.
-pots>/ 2A
+pots>
 pots>read cwt.Nd2Tmr
-pots>/ NOTIFIED: RENOTIFY
+pots>
 pots>delay 6
   OK.
 pots>verify PS S &port.A m=&port.cwt
   OK.
-pots>/ 2B
+pots>
 pots>read cwt.Rf2Tmr
-pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>
 pots>delay 6
   OK.
 pots>verify PS S &port.A m=&port.B
   OK.
-pots>/ 2C
+pots>
 pots>read cwt.Rd2Fls
-pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>
 pots>inject PS L &port.A
   OK.
 pots>delay 2
@@ -35,9 +35,9 @@ pots>verify PS S &port.C m=&port.A
   OK.
 pots>verify PS S &port.B m=&port.held
   OK.
-pots>/ 2D
+pots>
 pots>read cwt.AdAFls
-pots>/ FLASH (FLIP TO ORIGINAL)
+pots>
 pots>inject PS L &port.A
   OK.
 pots>delay 2
@@ -52,9 +52,9 @@ pots>verify PS S &port.C m=&port.held
   OK.
 pots>verify PS S &port.B m=&port.A
   OK.
-pots>/ 2E
+pots>
 pots>read cwt.AdHFls
-pots>/ FLASH (FLIP TO WAITING)
+pots>
 pots>inject PS L &port.A
   OK.
 pots>delay 2
@@ -69,27 +69,27 @@ pots>verify PS S &port.C m=&port.A
   OK.
 pots>verify PS S &port.B m=&port.held
   OK.
-pots>/ 2F
+pots>
 pots>read cwt.MuxSus
-pots>/ ONHOOK (SUSPEND)
+pots>
 pots>inject PS E &port.A
   OK.
 pots>delay 2
   OK.
 pots>verify PC E &port.A
   OK.
-pots>/ 2G
+pots>
 pots>read cwt.MuxRes
-pots>/ OFFHOOK (RESUME)
+pots>
 pots>inject PS B &port.A
   OK.
 pots>delay 2
   OK.
 pots>verify PC B &port.A
   OK.
-pots>/ 2D (REPEATED)
+pots>
 pots>read cwt.AdAFls
-pots>/ FLASH (FLIP TO ORIGINAL)
+pots>
 pots>inject PS L &port.A
   OK.
 pots>delay 2
@@ -104,9 +104,9 @@ pots>verify PS S &port.C m=&port.held
   OK.
 pots>verify PS S &port.B m=&port.A
   OK.
-pots>/ 2H
+pots>
 pots>read cwt.AdHExA
-pots>/ ORIGINAL ACTIVE: ONHOOK A (RERING)
+pots>
 pots>inject PS E &port.A
   OK.
 pots>delay 2
@@ -119,18 +119,18 @@ pots>verify PS S &port.A r=t m=&port.silence
   OK.
 pots>verify PS S &port.B m=&port.silence c=&cause.normal
   OK.
-pots>/ 2I
+pots>
 pots>read cwt.Nu0ExB
-pots>/ NULL 0: IDLE B
+pots>
 pots>inject PS E &port.B
   OK.
 pots>delay 2
   OK.
 pots>verify PS R &port.B &cause.normal
   OK.
-pots>/ 2J
+pots>
 pots>read cwt.ReCOff
-pots>/ C RERINGING: REANSWER
+pots>
 pots>inject PS B &port.A
   OK.
 pots>delay 2
@@ -141,16 +141,16 @@ pots>verify PC F &port.A f &service.cwb &facility.cwt.reanswered m=&port.A
   OK.
 pots>verify PS S &port.C m=&port.A
   OK.
-pots>/ 2K
+pots>
 pots>read cwt.MuxSus
-pots>/ ONHOOK (SUSPEND)
+pots>
 pots>inject PS E &port.A
   OK.
 pots>delay 2
   OK.
 pots>verify PC E &port.A
   OK.
-pots>/ IDLE C (A SUSPENDED)
+pots>
 pots>inject PS E &port.C
   OK.
 pots>delay 1
@@ -163,20 +163,20 @@ pots>verify PS R &port.A &cause.normal
   OK.
 pots>delay 2
   OK.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

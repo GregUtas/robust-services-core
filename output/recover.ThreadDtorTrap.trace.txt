@@ -1,224 +1,248 @@
-START OF TRACE: 29-Nov-2020 18:06:17.161 on Reigi
+START OF TRACE: 20-Dec-2020 10:59:17.388 on Reigi
 
 mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function
 ---------  ---  -----  ---------   -------  --------
-06:17.207    0              4358       822    Thread.EnterThread
-06:17.207    0                 3         3    :   Thread.RegisterForSignals
-06:17.207    0                11         1    :   ThreadRegistry.GetState
-06:17.207    0                 5         1    :   : MutexGuard.ctor
-06:17.207    0                 3         3    :   :   SysMutex.Acquire
-06:17.207    0                 4         1    :   : MutexGuard.dtor
-06:17.207    0                 3         0    :   :   MutexGuard.Release
-06:17.207    0                 3         3    :   :   : SysMutex.Release
-06:17.207    0               800         1    :   Thread.Ready
-06:17.207    0               798         1    :   : SysThread.Wait
-06:17.207    0               797       797    :   :   SysThread.Suspend
-06:17.208    0                 5         1    :   Thread.Resume
-06:17.208    0                 1         1    :   : ThreadAdmin.WarpFactor
-06:17.208    0                 1         1    :   : Thread.InitialTime
-06:17.208    0              3536         2    : Thread.Start
-06:17.208    0                 2         2    :   SysThread.Start
-06:17.208    0                 3         1    :   RecoveryThread.Enter
-06:17.208    0                 1         1    :   : Debug.SetSwFlag
-06:17.208    0              3506         1    :   Thread.Exit
-06:17.208    0                 2         2    :   : MutexRegistry.Abandon
-06:17.208    0                 2         2    :   : Thread.LogSignal
-06:17.208    0                80         1    :   : Log.Create
-06:17.208    0                13         2    :   :   Log.Find
-06:17.208    0                 8         8    :   :   : LogGroupRegistry.FindGroup
-06:17.208    0                 2         2    :   :   : LogGroup.FindLog
-06:17.208    0                65        65    :   :   Log.Format
-06:17.208    0                51        51    :   :   :   SysTime.ctor(now)
-06:17.208    0                36         3    :   : Log.Submit
-06:17.208    0                 8         2    :   :   Log.Find
-06:17.208    0                 6         1    :   :   : Log.Find
-06:17.208    0                 2         2    :   :   :   LogGroupRegistry.FindGroup
-06:17.208    0                 1         1    :   :   :   LogGroup.FindLog
-06:17.208    0                 1         1    :   :   LogBufferRegistry.Active
-06:17.208    0                24         1    :   :   LogBuffer.Push
-06:17.208    0                 5         1    :   :   : MutexGuard.ctor
-06:17.208    0                 4         4    :   :   :   SysMutex.Acquire
-06:17.208    0                 4         1    :   :   : LogBuffer.InsertionPoint
-06:17.208    0                 1         1    :   :   :   LogBuffer.First
-06:17.208    0                 1         1    :   :   :   LogBuffer.SetNext
-06:17.208    0                 1         1    :   :   : Memory.Copy
-06:17.208    0                 0         0    :   :   :   LogBuffer.First
-06:17.208    0                 3         0    :   :   : MutexGuard.Release
-06:17.208    0                 2         2    :   :   :   SysMutex.Release
-06:17.208    0                 6         1    :   :   : Thread.Interrupt
-06:17.208    0                 5         1    :   :   :   SysThread.Interrupt
-06:17.208    0                 4         4    :   :   :   : SysThread.Resume
-06:17.208    0                 1         1    :   :   : MutexGuard.dtor
-06:17.208    0              3383         1    :   : RecoveryThread.Destroy
-06:17.208    0              3382         1    :   :   Singleton.Destroy
-06:17.208    0              3380         3    :   :   : Singletons.UnbindInstance
-06:17.208    0              3377         0    :   :   :   RecoveryThread.dtor
-06:17.208    0                 0         0    :   :   :   : Debug.SwFlagOn
-06:17.208    0                 0         0    :   :   :   : Debug.SetSwFlag
-06:17.208    0              3059         1    :   :   :   : RecoveryThread.UseBadPointer
-06:17.208    0              3058      3058    :   :   :   :   Thread.CauseTrap
-06:17.209    0                 2         2    :   :   :   :   :   :   :   :   :   Thread.ExitSwLog
-06:17.209    0              1884         2    :   :   :   :   :   :   :   :   NodeBase.SE_Handler
-06:17.209    0              1882         3    :   :   :   :   :   :   :   :   : Thread.HandleSignal
-06:17.209    0                 1         1    :   :   :   :   :   :   :   :   :   :   : Thread.ExitSwLog
-06:17.209    0              1878         0    :   :   :   :   :   :   :   :   :   SignalException.ctor
-06:17.209    0              1878         1    :   :   :   :   :   :   :   :   :   : Exception.ctor
-06:17.209    0                 6         6    :   :   :   :   :   :   :   :   :   :   Thread.ExtendTime
-06:17.209    0              1870      1870    :   :   :   :   :   :   :   :   :   :   SysThreadStack.Display
-06:17.211    0               316         1    :   :   :   : Thread.dtor
-06:17.211    0                26         1    :   :   :   :   ThreadRegistry.Destroying
-06:17.211    0                19         1    :   :   :   :   : MutexGuard.ctor
-06:17.211    0                18        18    :   :   :   :   :   SysMutex.Acquire
-06:17.211    0                 4         0    :   :   :   :   : MutexGuard.dtor
-06:17.211    0                 4         0    :   :   :   :   :   MutexGuard.Release
-06:17.211    0                 3         3    :   :   :   :   :   : SysMutex.Release
-06:17.211    0                25         1    :   :   :   :   Thread.Suspend
-06:17.211    0                15        15    :   :   :   :   : Thread.LogContextSwitch
-06:17.211    0                 4         0    :   :   :   :   :   : MutexGuard.ctor
-06:17.211    0                 3         3    :   :   :   :   :   :   SysMutex.Acquire
-06:17.211    0                 4         0    :   :   :   :   :   : MutexGuard.dtor
-06:17.211    0                 3         0    :   :   :   :   :   :   MutexGuard.Release
-06:17.211    0                 3         3    :   :   :   :   :   :   : SysMutex.Release
-06:17.211    0                 2         2    :   :   :   :   :   : SysMutex.Acquire
-06:17.211    0                 2         2    :   :   :   :   :   : SysMutex.Release
-06:17.211    0                 9         1    :   :   :   :   : Thread.Schedule
-06:17.211    0                 7         1    :   :   :   :   :   Thread.Interrupt
-06:17.211    0                 6         1    :   :   :   :   :   : SysThread.Interrupt
-06:17.211    0                 4         4    :   :   :   :   :   :   SysThread.Resume
-06:17.211    0               263         1    :   :   :   :   Thread.ReleaseResources
-06:17.211    0                36        36    :   :   :   :   : Q1Way.Init
-06:17.211    0                34         0    :   :   :   :   :   : C++.delete
-06:17.211    0                28         1    :   :   :   :   :   :   SysThread.dtor
-06:17.211    0                 4         4    :   :   :   :   :   :   : SysThread.DeleteSentry
-06:17.211    0                 2         2    :   :   :   :   :   :   : SysThread.DeleteSentry
-06:17.211    0                21        21    :   :   :   :   :   :   : SysThread.Delete
-06:17.211    0                 5         1    :   :   :   :   :   :   Permanent.operator delete
-06:17.211    0                 4         1    :   :   :   :   :   :   : Memory.Free
-06:17.211    0                 2         1    :   :   :   :   :   :   :   SysHeap.Free
-06:17.211    0                 1         1    :   :   :   :   :   :   :   : SysHeap.BlockToSize
-06:17.211    0                25         1    :   :   :   :   : ThreadRegistry.Erase
-06:17.211    0                19        14    :   :   :   :   :   MutexGuard.ctor
-06:17.211    0                 5         5    :   :   :   :   :   : SysMutex.Acquire
-06:17.211    0                 4         1    :   :   :   :   :   MutexGuard.dtor
-06:17.211    0                 3         1    :   :   :   :   :   : MutexGuard.Release
-06:17.211    0                 2         2    :   :   :   :   :   :   SysMutex.Release
-06:17.211    0               200         1    :   :   :   :   : Daemon.ThreadDeleted
-06:17.211    0                 2         2    :   :   :   :   :   Daemon.Find
-06:17.211    0                 6         1    :   :   :   :   :   Thread.Interrupt
-06:17.211    0                 5         1    :   :   :   :   :   : SysThread.Interrupt
-06:17.211    0                 3         3    :   :   :   :   :   :   SysThread.Resume
-06:17.211    0               173         0    :   :   :   :   :   C++.delete
-06:17.211    0               167       167    :   :   :   :   :   : ThreadStats.dtor
-06:17.211    0                17         0    :   :   :   :   :   :   :   C++.delete
-06:17.211    0                11         1    :   :   :   :   :   :   :   : Accumulator.dtor
-06:17.211    0                10         1    :   :   :   :   :   :   :   :   Counter.dtor
-06:17.211    0                 9         1    :   :   :   :   :   :   :   :   : Statistic.dtor
-06:17.211    0                 8         1    :   :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
-06:17.211    0                 6         6    :   :   :   :   :   :   :   :   :   : Registry.Erase
-06:17.211    0                 5         1    :   :   :   :   :   :   :   :   :   :   : Memory.Free
-06:17.211    0                 3         1    :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
-06:17.211    0                 2         2    :   :   :   :   :   :   :   :   :   :   :   : SysHeap.BlockToSize
-06:17.211    0                 5         1    :   :   :   :   :   :   :   : Dynamic.operator delete
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 3         1    :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 1         1    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                28        14    :   :   :   :   :   :   :   C++.delete
-06:17.211    0                 8         1    :   :   :   :   :   :   :   : HighWatermark.dtor
-06:17.211    0                 7         1    :   :   :   :   :   :   :   :   Statistic.dtor
-06:17.211    0                 6         1    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-06:17.211    0                 5         5    :   :   :   :   :   :   :   :   :   Registry.Erase
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 3         1    :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 1         1    :   :   :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                 5         1    :   :   :   :   :   :   :   : Dynamic.operator delete
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 3         1    :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 1         1    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                16         0    :   :   :   :   :   :   :   C++.delete
-06:17.211    0                 9         1    :   :   :   :   :   :   :   : HighWatermark.dtor
-06:17.211    0                 8         1    :   :   :   :   :   :   :   :   Statistic.dtor
-06:17.211    0                 7         1    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-06:17.211    0                 6         6    :   :   :   :   :   :   :   :   :   Registry.Erase
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 3         1    :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 1         1    :   :   :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                 6         1    :   :   :   :   :   :   :   : Dynamic.operator delete
-06:17.211    0                 5         1    :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 3         1    :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 2         2    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                33         0    :   :   :   :   :   :   :   C++.delete
-06:17.211    0                11         1    :   :   :   :   :   :   :   : HighWatermark.dtor
-06:17.211    0                10         1    :   :   :   :   :   :   :   :   Statistic.dtor
-06:17.211    0                 8         1    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-06:17.211    0                 7         7    :   :   :   :   :   :   :   :   :   Registry.Erase
-06:17.211    0                 5         1    :   :   :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 2         2    :   :   :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                21         1    :   :   :   :   :   :   :   : Dynamic.operator delete
-06:17.211    0                20         1    :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                18        15    :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 2         2    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                12         0    :   :   :   :   :   :   :   C++.delete
-06:17.211    0                 5         1    :   :   :   :   :   :   :   : Counter.dtor
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   Statistic.dtor
-06:17.211    0                 2         1    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-06:17.211    0                 1         1    :   :   :   :   :   :   :   :   :   Registry.Erase
-06:17.211    0                 6         1    :   :   :   :   :   :   :   : Dynamic.operator delete
-06:17.211    0                 5         1    :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 2         2    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                13         0    :   :   :   :   :   :   :   C++.delete
-06:17.211    0                 6         1    :   :   :   :   :   :   :   : Counter.dtor
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   Statistic.dtor
-06:17.211    0                 3         1    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-06:17.211    0                 1         1    :   :   :   :   :   :   :   :   :   Registry.Erase
-06:17.211    0                 6         1    :   :   :   :   :   :   :   : Dynamic.operator delete
-06:17.211    0                 5         1    :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 2         2    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                33         0    :   :   :   :   :   :   :   C++.delete
-06:17.211    0                26         1    :   :   :   :   :   :   :   : Counter.dtor
-06:17.211    0                25         1    :   :   :   :   :   :   :   :   Statistic.dtor
-06:17.211    0                23         1    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-06:17.211    0                22        22    :   :   :   :   :   :   :   :   :   Registry.Erase
-06:17.211    0                 5         1    :   :   :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 4         2    :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 2         2    :   :   :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                 6         1    :   :   :   :   :   :   :   : Dynamic.operator delete
-06:17.211    0                 5         1    :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 2         2    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                11         0    :   :   :   :   :   :   :   C++.delete
-06:17.211    0                 5         1    :   :   :   :   :   :   :   : Counter.dtor
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   Statistic.dtor
-06:17.211    0                 3         1    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
-06:17.211    0                 1         1    :   :   :   :   :   :   :   :   :   Registry.Erase
-06:17.211    0                 5         1    :   :   :   :   :   :   :   : Dynamic.operator delete
-06:17.211    0                 4         1    :   :   :   :   :   :   :   :   Memory.Free
-06:17.211    0                 3         1    :   :   :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 1         1    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                 5         1    :   :   :   :   :   : Dynamic.operator delete
-06:17.211    0                 4         1    :   :   :   :   :   :   Memory.Free
-06:17.211    0                 3         1    :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 2         2    :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                17         0    :   :   :   :   :   C++.delete
-06:17.211    0                 3         1    :   :   :   :   :   : ThreadPriv.dtor
-06:17.211    0                 1         1    :   :   :   :   :   :   LeakyBucketCounter.dtor
-06:17.211    0                 1         1    :   :   :   :   :   :   LeakyBucketCounter.dtor
-06:17.211    0                13         1    :   :   :   :   :   : Permanent.operator delete
-06:17.211    0                12         1    :   :   :   :   :   :   Memory.Free
-06:17.211    0                11         1    :   :   :   :   :   :   : SysHeap.Free
-06:17.211    0                 9         9    :   :   :   :   :   :   :   SysHeap.BlockToSize
-06:17.211    0                22         4    :   Thread.TrapHandler
-06:17.211    0                 1         1    :   :   Heap.SetPermissions
-06:17.211    0                 1         1    :   :   Heap.SetPermissions
-06:17.211    0                 1         1    :   : MutexRegistry.Abandon
-06:17.211    0                16         1    :   : ThreadRegistry.GetState
-06:17.211    0                 5         1    :   :   MutexGuard.ctor
-06:17.211    0                 4         4    :   :   : SysMutex.Acquire
-06:17.211    0                 9         1    :   :   MutexGuard.dtor
-06:17.211    0                 8         0    :   :   : MutexGuard.Release
-06:17.211    0                 7         7    :   :   :   SysMutex.Release
-06:17.211    0                 1         1    :   :   :   :   :   :   :   :   :   :   :   :   :   :   : SignalException.dtor
-06:17.211    0                 0         0    :   :   :   :   :   :   :   :   :   :   :   :   :   :   :   Exception.dtor
+59:17.446    0              8959      1475    Thread.EnterThread
+59:17.446    0                 9         9    :   Thread.RegisterForSignals
+59:17.446    0                51         4    :   ThreadRegistry.GetState
+59:17.446    0                31         4    :   : MutexGuard.ctor
+59:17.446    0                27        27    :   :   SysMutex.Acquire
+59:17.446    0                15         4    :   : MutexGuard.dtor
+59:17.446    0                10         4    :   :   MutexGuard.Release
+59:17.446    0                 6         6    :   :   : SysMutex.Release
+59:17.446    0              1352         4    :   Thread.Ready
+59:17.446    0              1347         4    :   : SysThread.Wait
+59:17.446    0              1342      1342    :   :   SysThread.Suspend
+59:17.448    0                37         6    :   Thread.Resume
+59:17.448    0                22        22    :   : ThreadAdmin.WarpFactor
+59:17.448    0                 8         8    :   : Thread.InitialTime
+59:17.448    0              7484         5    : Thread.Start
+59:17.448    0                 6         6    :   SysThread.Start
+59:17.448    0                12         6    :   RecoveryThread.Enter
+59:17.448    0                 6         6    :   : Debug.SetSwFlag
+59:17.448    0              7262         7    :   Thread.Exit
+59:17.448    0                 7         7    :   : MutexRegistry.Abandon
+59:17.448    0                 7         7    :   : Thread.LogSignal
+59:17.448    0               214         5    :   : Log.Create
+59:17.448    0                30         8    :   :   Log.Find
+59:17.448    0                14        14    :   :   : LogGroupRegistry.FindGroup
+59:17.448    0                 7         7    :   :   : LogGroup.FindLog
+59:17.448    0               178       178    :   :   Log.Format
+59:17.448    0               151       151    :   :   :   SysTime.ctor(now)
+59:17.448    0               210        31    :   : Log.Submit
+59:17.448    0                68        10    :   :   Log.Find
+59:17.448    0                58         4    :   :   : Log.Find
+59:17.448    0                25        25    :   :   :   LogGroupRegistry.FindGroup
+59:17.448    0                28        28    :   :   :   LogGroup.FindLog
+59:17.448    0                19        19    :   :   LogBufferRegistry.Active
+59:17.448    0                91        11    :   :   LogBuffer.Push
+59:17.448    0                11         4    :   :   : MutexGuard.ctor
+59:17.448    0                 6         6    :   :   :   SysMutex.Acquire
+59:17.448    0                16         3    :   :   : LogBuffer.InsertionPoint
+59:17.448    0                 4         4    :   :   :   LogBuffer.First
+59:17.448    0                 8         8    :   :   :   LogBuffer.SetNext
+59:17.448    0                 9         4    :   :   : Memory.Copy
+59:17.448    0                 4         4    :   :   :   LogBuffer.First
+59:17.448    0                 8         2    :   :   : MutexGuard.Release
+59:17.448    0                 5         5    :   :   :   SysMutex.Release
+59:17.448    0                32         4    :   :   : Thread.Interrupt
+59:17.448    0                27         3    :   :   :   SysThread.Interrupt
+59:17.448    0                24        24    :   :   :   : SysThread.Resume
+59:17.448    0                 3         3    :   :   : MutexGuard.dtor
+59:17.448    0              6816         3    :   : RecoveryThread.Destroy
+59:17.448    0              6813         3    :   :   Singleton.Destroy
+59:17.448    0              6809        25    :   :   : Singletons.UnbindInstance
+59:17.448    0              6783         2    :   :   :   RecoveryThread.dtor
+59:17.448    0                 2         2    :   :   :   : Debug.SwFlagOn
+59:17.448    0                 2         2    :   :   :   : Debug.SetSwFlag
+59:17.448    0              4071         3    :   :   :   : RecoveryThread.UseBadPointer
+59:17.448    0              4068      4068    :   :   :   :   Thread.CauseTrap
+59:17.450    0                 4         4    :   :   :   :   :   :   :   :   :   Thread.ExitSwLog
+59:17.450    0              2719         5    :   :   :   :   :   :   :   :   NodeBase.SE_Handler
+59:17.450    0              2713         8    :   :   :   :   :   :   :   :   : Thread.HandleSignal
+59:17.450    0                 3         3    :   :   :   :   :   :   :   :   :   :   : Thread.ExitSwLog
+59:17.450    0              2705         0    :   :   :   :   :   :   :   :   :   SignalException.ctor
+59:17.450    0              2705         3    :   :   :   :   :   :   :   :   :   : Exception.ctor
+59:17.450    0                11        11    :   :   :   :   :   :   :   :   :   :   Thread.ExtendTime
+59:17.450    0              2690      2690    :   :   :   :   :   :   :   :   :   :   SysThreadStack.Display
+59:17.452    0              2704         5    :   :   :   : Thread.dtor
+59:17.452    0                66        22    :   :   :   :   ThreadRegistry.Destroying
+59:17.452    0                25         4    :   :   :   :   : MutexGuard.ctor
+59:17.452    0                20        20    :   :   :   :   :   SysMutex.Acquire
+59:17.452    0                17         3    :   :   :   :   : MutexGuard.dtor
+59:17.452    0                13         4    :   :   :   :   :   MutexGuard.Release
+59:17.452    0                 9         9    :   :   :   :   :   : SysMutex.Release
+59:17.452    0               108         5    :   :   :   :   Thread.Suspend
+59:17.452    0                69        69    :   :   :   :   : Thread.LogContextSwitch
+59:17.452    0                11         3    :   :   :   :   :   : MutexGuard.ctor
+59:17.452    0                 7         7    :   :   :   :   :   :   SysMutex.Acquire
+59:17.452    0                41         2    :   :   :   :   :   : MutexGuard.dtor
+59:17.452    0                39        32    :   :   :   :   :   :   MutexGuard.Release
+59:17.452    0                 6         6    :   :   :   :   :   :   : SysMutex.Release
+59:17.452    0                 5         5    :   :   :   :   :   : SysMutex.Acquire
+59:17.452    0                 5         5    :   :   :   :   :   : SysMutex.Release
+59:17.452    0                33         6    :   :   :   :   : Thread.Schedule
+59:17.452    0                27         5    :   :   :   :   :   Thread.Interrupt
+59:17.452    0                21         5    :   :   :   :   :   : SysThread.Interrupt
+59:17.452    0                16        16    :   :   :   :   :   :   SysThread.Resume
+59:17.452    0              2524        13    :   :   :   :   Thread.ReleaseResources
+59:17.452    0               107       107    :   :   :   :   : Q1Way.Init
+59:17.452    0                75         0    :   :   :   :   :   : C++.delete
+59:17.452    0                36         4    :   :   :   :   :   :   SysThread.dtor
+59:17.452    0                12        12    :   :   :   :   :   :   : SysThread.DeleteSentry
+59:17.453    0                10        10    :   :   :   :   :   :   : SysThread.DeleteSentry
+59:17.453    0                10        10    :   :   :   :   :   :   : SysThread.Delete
+59:17.453    0                38         6    :   :   :   :   :   :   Permanent.operator delete
+59:17.453    0                32         9    :   :   :   :   :   :   : Memory.Free
+59:17.453    0                22        10    :   :   :   :   :   :   :   SysHeap.Free
+59:17.453    0                11        11    :   :   :   :   :   :   :   : SysHeap.BlockToSize
+59:17.453    0               127         7    :   :   :   :   : ThreadRegistry.Erase
+59:17.453    0                65         7    :   :   :   :   :   MutexGuard.ctor
+59:17.453    0                57        57    :   :   :   :   :   : SysMutex.Acquire
+59:17.453    0                55        30    :   :   :   :   :   MutexGuard.dtor
+59:17.453    0                24        11    :   :   :   :   :   : MutexGuard.Release
+59:17.453    0                13        13    :   :   :   :   :   :   SysMutex.Release
+59:17.453    0              2275        14    :   :   :   :   : Daemon.ThreadDeleted
+59:17.453    0                36        36    :   :   :   :   :   Daemon.Find
+59:17.453    0                89        27    :   :   :   :   :   Thread.Interrupt
+59:17.453    0                62        20    :   :   :   :   :   : SysThread.Interrupt
+59:17.453    0                41        41    :   :   :   :   :   :   SysThread.Resume
+59:17.453    0              2028         1    :   :   :   :   :   C++.delete
+59:17.453    0              1985      1985    :   :   :   :   :   : ThreadStats.dtor
+59:17.453    0               313         1    :   :   :   :   :   :   :   C++.delete
+59:17.453    0               192        13    :   :   :   :   :   :   :   : Accumulator.dtor
+59:17.453    0               178        31    :   :   :   :   :   :   :   :   Counter.dtor
+59:17.453    0               147        21    :   :   :   :   :   :   :   :   : Statistic.dtor
+59:17.453    0               125         7    :   :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
+59:17.453    0               118       118    :   :   :   :   :   :   :   :   :   : Registry.Erase
+59:17.453    0               104         9    :   :   :   :   :   :   :   :   :   :   : Memory.Free
+59:17.453    0                94        15    :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+59:17.453    0                78        18    :   :   :   :   :   :   :   :   :   :   :   : SysHeap.BlockToSize
+59:17.453    0                60        17    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+59:17.453    0                42        20    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.453    0                21        21    :   :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.453    0               119        17    :   :   :   :   :   :   :   : Dynamic.operator delete
+59:17.453    0               102        11    :   :   :   :   :   :   :   :   Memory.Free
+59:17.453    0                91        33    :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.453    0                57        57    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.453    0               286         0    :   :   :   :   :   :   :   C++.delete
+59:17.453    0               178        10    :   :   :   :   :   :   :   : HighWatermark.dtor
+59:17.453    0               168        27    :   :   :   :   :   :   :   :   Statistic.dtor
+59:17.453    0               140        11    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+59:17.453    0               128       128    :   :   :   :   :   :   :   :   :   Registry.Erase
+59:17.453    0               116        13    :   :   :   :   :   :   :   :   :   :   Memory.Free
+59:17.453    0               102        20    :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.453    0                82        21    :   :   :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.453    0                60        17    :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+59:17.453    0                42        21    :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+59:17.453    0                21        21    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.BlockToSize
+59:17.453    0               107        14    :   :   :   :   :   :   :   : Dynamic.operator delete
+59:17.453    0                93        35    :   :   :   :   :   :   :   :   Memory.Free
+59:17.453    0                57        20    :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.453    0                36        36    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.453    0               220         0    :   :   :   :   :   :   :   C++.delete
+59:17.453    0               141        13    :   :   :   :   :   :   :   : HighWatermark.dtor
+59:17.453    0               127        11    :   :   :   :   :   :   :   :   Statistic.dtor
+59:17.453    0               116         9    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+59:17.453    0               106       106    :   :   :   :   :   :   :   :   :   Registry.Erase
+59:17.454    0                92         9    :   :   :   :   :   :   :   :   :   :   Memory.Free
+59:17.454    0                82        16    :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.454    0                65        16    :   :   :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.454    0                49        14    :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+59:17.454    0                35        14    :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+59:17.454    0                20        20    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.BlockToSize
+59:17.454    0                78        10    :   :   :   :   :   :   :   : Dynamic.operator delete
+59:17.454    0                68        14    :   :   :   :   :   :   :   :   Memory.Free
+59:17.454    0                53        34    :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.454    0                18        18    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.454    0               338         0    :   :   :   :   :   :   :   C++.delete
+59:17.454    0               277        16    :   :   :   :   :   :   :   : HighWatermark.dtor
+59:17.454    0               260        36    :   :   :   :   :   :   :   :   Statistic.dtor
+59:17.454    0               224        16    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+59:17.454    0               207       207    :   :   :   :   :   :   :   :   :   Registry.Erase
+59:17.454    0               183        21    :   :   :   :   :   :   :   :   :   :   Memory.Free
+59:17.454    0               162        36    :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.454    0               125        40    :   :   :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.454    0                85        38    :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+59:17.454    0                46        26    :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+59:17.454    0                20        20    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.BlockToSize
+59:17.454    0                60        14    :   :   :   :   :   :   :   : Dynamic.operator delete
+59:17.454    0                45         7    :   :   :   :   :   :   :   :   Memory.Free
+59:17.454    0                38        12    :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.454    0                25        25    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.454    0               127         0    :   :   :   :   :   :   :   C++.delete
+59:17.454    0                82         7    :   :   :   :   :   :   :   : Counter.dtor
+59:17.454    0                75         9    :   :   :   :   :   :   :   :   Statistic.dtor
+59:17.454    0                66         6    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+59:17.454    0                59        59    :   :   :   :   :   :   :   :   :   Registry.Erase
+59:17.454    0                37        10    :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+59:17.454    0                26        13    :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+59:17.454    0                13        13    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.BlockToSize
+59:17.454    0                44         9    :   :   :   :   :   :   :   : Dynamic.operator delete
+59:17.454    0                35         9    :   :   :   :   :   :   :   :   Memory.Free
+59:17.454    0                25        11    :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.454    0                14        14    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.454    0               240         0    :   :   :   :   :   :   :   C++.delete
+59:17.454    0               126        27    :   :   :   :   :   :   :   : Counter.dtor
+59:17.454    0                98        10    :   :   :   :   :   :   :   :   Statistic.dtor
+59:17.454    0                88        23    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+59:17.454    0                65        65    :   :   :   :   :   :   :   :   :   Registry.Erase
+59:17.454    0                55        13    :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+59:17.454    0                41        13    :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+59:17.454    0                27        27    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.BlockToSize
+59:17.454    0               113        22    :   :   :   :   :   :   :   : Dynamic.operator delete
+59:17.454    0                91         7    :   :   :   :   :   :   :   :   Memory.Free
+59:17.454    0                83        33    :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.454    0                50        50    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.454    0               290         0    :   :   :   :   :   :   :   C++.delete
+59:17.454    0               222        28    :   :   :   :   :   :   :   : Counter.dtor
+59:17.454    0               193        14    :   :   :   :   :   :   :   :   Statistic.dtor
+59:17.454    0               179        11    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+59:17.454    0               168       168    :   :   :   :   :   :   :   :   :   Registry.Erase
+59:17.454    0               151        13    :   :   :   :   :   :   :   :   :   :   Memory.Free
+59:17.454    0               138        24    :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.454    0               113        31    :   :   :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.455    0                82        23    :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+59:17.455    0                59        28    :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+59:17.455    0                31        31    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.BlockToSize
+59:17.455    0                67        24    :   :   :   :   :   :   :   : Dynamic.operator delete
+59:17.455    0                42        10    :   :   :   :   :   :   :   :   Memory.Free
+59:17.455    0                31         7    :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.455    0                24        24    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.455    0               144         0    :   :   :   :   :   :   :   C++.delete
+59:17.455    0                90        23    :   :   :   :   :   :   :   : Counter.dtor
+59:17.455    0                67        10    :   :   :   :   :   :   :   :   Statistic.dtor
+59:17.455    0                57         8    :   :   :   :   :   :   :   :   : StatisticsRegistry.UnbindStat
+59:17.455    0                48        48    :   :   :   :   :   :   :   :   :   Registry.Erase
+59:17.455    0                37         8    :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+59:17.455    0                29        13    :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+59:17.455    0                16        16    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.BlockToSize
+59:17.455    0                53         9    :   :   :   :   :   :   :   : Dynamic.operator delete
+59:17.455    0                44        10    :   :   :   :   :   :   :   :   Memory.Free
+59:17.455    0                33        16    :   :   :   :   :   :   :   :   : SysHeap.Free
+59:17.455    0                17        17    :   :   :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.455    0                42        10    :   :   :   :   :   : Dynamic.operator delete
+59:17.455    0                31         5    :   :   :   :   :   :   Memory.Free
+59:17.455    0                25        11    :   :   :   :   :   :   : SysHeap.Free
+59:17.455    0                13        13    :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.455    0               106         0    :   :   :   :   :   C++.delete
+59:17.455    0                37         8    :   :   :   :   :   : ThreadPriv.dtor
+59:17.455    0                11        11    :   :   :   :   :   :   LeakyBucketCounter.dtor
+59:17.455    0                16        16    :   :   :   :   :   :   LeakyBucketCounter.dtor
+59:17.455    0                69         7    :   :   :   :   :   : Permanent.operator delete
+59:17.455    0                61         8    :   :   :   :   :   :   Memory.Free
+59:17.455    0                53        12    :   :   :   :   :   :   : SysHeap.Free
+59:17.455    0                40        40    :   :   :   :   :   :   :   SysHeap.BlockToSize
+59:17.455    0               196        51    :   Thread.TrapHandler
+59:17.455    0                27        27    :   :   Heap.SetPermissions
+59:17.455    0                10        10    :   :   Heap.SetPermissions
+59:17.455    0                14        14    :   : MutexRegistry.Abandon
+59:17.455    0               130        34    :   : ThreadRegistry.GetState
+59:17.455    0                49        13    :   :   MutexGuard.ctor
+59:17.455    0                36        36    :   :   : SysMutex.Acquire
+59:17.455    0                46         8    :   :   MutexGuard.dtor
+59:17.455    0                38        12    :   :   : MutexGuard.Release
+59:17.455    0                25        25    :   :   :   SysMutex.Release
+59:17.455    0                 9         9    :   :   :   :   :   :   :   :   :   :   :   :   :   :   : SignalException.dtor
+59:17.455    0                 0         0    :   :   :   :   :   :   :   :   :   :   :   :   :   :   :   Exception.dtor
 END OF TRACE

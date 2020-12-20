@@ -1,4 +1,4 @@
-testcase begin sus.04
+tests begin sus.04
 subscribe &dn.B bic
 subscribe &dn.B sus
 / A-B: SUS(TBC) & BIC
@@ -14,4 +14,4 @@ verify PS S &port.A c=&cause.destoutoforder
 verify PS R &port.A &cause.normal
 unsubscribe &dn.B bic
 unsubscribe &dn.B sus
-testcase end
+tests end

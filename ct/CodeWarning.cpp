@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <iterator>
+#include <list>
 #include <sstream>
 #include "CodeDir.h"
 #include "CodeFile.h"
@@ -379,6 +380,21 @@ void CodeWarning::GetWarnings
          warnings.push_back(*w);
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeWarning::HasWarning(const CodeFile* file, Warning warning)
+{
+   for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
+   {
+      if(w->file_ == file)
+      {
+         if((warning == AllWarnings) || (w->warning_ == warning)) return true;
+      }
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------

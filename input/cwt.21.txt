@@ -1,6 +1,6 @@
 subscribe &dn.A cwt
 
-testcase verify off
+tests verify off
 read bc.AB
 / 1A 1B
 read cwt.In2Ack
@@ -14,9 +14,9 @@ read cwt.Rf2Tmr
 read cwt.Rd2Fls
 / 2D
 read cwt.AdAFls
-testcase verify on
+tests verify on
 
-testcase begin cwt.21
+tests begin cwt.21
 / INITIATE CWT: DENIED BECAUSE CWT ALREADY ACTIVE
 inject PS B &port.D
 delay 1
@@ -36,5 +36,5 @@ inject PS E &port.B
 inject PS E &port.C
 
 delay 3
-testcase end
+tests end
 unsubscribe &dn.A cwt

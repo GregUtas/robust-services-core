@@ -1,8 +1,8 @@
 pots>start
   OK.
-pots>/ 7A
+pots>
 pots>read cwt.AdAExB
-pots>/ ACTIVE ON WAITING CALL: IDLE B
+pots>
 pots>inject PS E &port.B
   OK.
 pots>delay 12
@@ -15,9 +15,9 @@ pots>verify PS S &port.A s=x c=&cause.normal
   OK.
 pots>verify PC F &port.A f &service.cwb &facility.cwt.released
   OK.
-pots>/ IDLE C
+pots>
 pots>read cwt.Nu1ExC
-pots>/ NULL 1: IDLE C
+pots>
 pots>inject PS E &port.C
   OK.
 pots>delay 2
@@ -28,9 +28,9 @@ pots>verify PM S &port.A m=&port.silence c=&cause.normal
   OK.
 pots>verify PS S &port.A m=&port.silence c=&cause.normal
   OK.
-pots>/ IDLE A
+pots>
 pots>read cwt.Nu0ExA
-pots>/ NULL 0: IDLE A
+pots>
 pots>inject PS E &port.A
   OK.
 pots>delay 2
@@ -43,20 +43,20 @@ pots>verify PS R &port.A &cause.normal
   OK.
 pots>delay 2
   OK.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

@@ -2,7 +2,7 @@ pots>start
   OK.
 pots>subscribe &dn.A wml &dn.B 6
   OK.
-pots>/ A: WML DEACTIVATION
+pots>
 pots>inject PS B &port.A
   OK.
 pots>delay 1
@@ -23,9 +23,9 @@ pots>verify PS R &port.A &cause.normal
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>/ A: WML ACTIVATION ERROR
+pots>
 pots>inject PS B &port.A
   OK.
 pots>delay 1
@@ -52,9 +52,9 @@ pots>verify PS R &port.A &cause.normal
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>/ A: ADDRESS TIMEOUT (WML DEACTIVATED)
+pots>
 pots>inject PS B &port.A
   OK.
 pots>delay 12
@@ -71,20 +71,20 @@ pots>verify PS R &port.A &cause.normal
   OK.
 pots>unsubscribe &dn.A wml
   OK.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

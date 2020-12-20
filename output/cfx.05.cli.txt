@@ -1,8 +1,8 @@
 pots>start
   OK.
-pots>/ B-A: ANSWER
+pots>
 pots>read bc.BA
-pots>/ B-A: RINGBACK; ANSWER
+pots>
 pots>inject PS B &port.B
   OK.
 pots>delay 1
@@ -29,7 +29,7 @@ pots>verify PS S &port.B m=&port.A
   OK.
 pots>delay 2
   OK.
-pots>/ C-A(CWT)
+pots>
 pots>inject PS B &port.C
   OK.
 pots>delay 1
@@ -58,16 +58,16 @@ pots>verify PC A &port.A
   OK.
 pots>verify PS S &port.C m=&port.ringback
   OK.
-pots>/ CFN TIMEOUT: C-A(CFN)-D
+pots>
 pots>delay 15
   OK.
-pots>/ ANSWER D
+pots>
 pots>inject PS B &port.D
   OK.
 pots>delay 2
   OK.
-pots>/* ADD VERIFICATION
-pots>/ IDLE B, A, C, D
+pots>
+pots>
 pots>inject PS E &port.B
   OK.
 pots>inject PS E &port.C
@@ -80,22 +80,22 @@ pots>delay 2
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

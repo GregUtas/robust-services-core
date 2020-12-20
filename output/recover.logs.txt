@@ -1,64 +1,64 @@
 
 MODULE INITIALIZATION          msecs      invoked at
-pre-Module.Startup               273    18:03:18.738
-NodeBase.NbModule...                    18:03:19.011
-...initialized                    42
-NodeTools.NtModule...                   18:03:19.066
-...initialized                    18
-CodeTools.CtModule...                   18:03:19.096
-...initialized                    13
-NetworkBase.NwModule...                 18:03:19.123
+pre-Module.Startup               307    10:57:37.901
+NodeBase.NbModule...                    10:57:38.208
+...initialized                   102
+NodeTools.NtModule...                   10:57:38.319
+...initialized                    36
+CodeTools.CtModule...                   10:57:38.364
+...initialized                    28
+NetworkBase.NwModule...                 10:57:38.400
 
-    NET500 29-Nov-2020 18:03:19.134 on Reigi {1}
-...initialized                    72
-SessionBase.SbModule...                 18:03:19.205
-...initialized                    56
-ControlNode.CnModule...                 18:03:19.270
+    NET500 20-Dec-2020 10:57:38.416 on Reigi {1}
+...initialized                    97
+SessionBase.SbModule...                 10:57:38.505
+...initialized                   113
+ControlNode.CnModule...                 10:57:38.628
 ...initialized                     8
-SessionTools.StModule...                18:03:19.293
-...initialized                    13
-MediaBase.MbModule...                   18:03:19.317
+SessionTools.StModule...                10:57:38.647
+...initialized                    18
+MediaBase.MbModule...                   10:57:38.681
+...initialized                    16
+CallBase.CbModule...                    10:57:38.708
+...initialized                    23
+PotsBase.PbModule...                    10:57:38.740
+...initialized                    31
+OperationsNode.OnModule...              10:57:38.783
 ...initialized                    12
-CallBase.CbModule...                    18:03:19.339
-...initialized                    14
-PotsBase.PbModule...                    18:03:19.364
-...initialized                    17
-OperationsNode.OnModule...              18:03:19.392
-...initialized                    10
-RoutingNode.RnModule...                 18:03:19.415
-...initialized                    12
-ServiceNode.SnModule...                 18:03:19.438
-...initialized                    20
-AccessNode.AnModule...                  18:03:19.469
-...initialized                    17
+RoutingNode.RnModule...                 10:57:38.807
+...initialized                    11
+ServiceNode.SnModule...                 10:57:38.831
+...initialized                    42
+AccessNode.AnModule...                  10:57:38.883
+...initialized                    19
                                -----
-total initialization time        761
+total initialization time       1013
 
-    NODE500 29-Nov-2020 18:03:19.511 on Reigi {2}
+    NODE500 20-Dec-2020 10:57:38.926 on Reigi {2}
 
-    THR901 29-Nov-2020 18:05:08.458 on Reigi {3}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x00010508)
+    THR901 20-Dec-2020 10:57:54.969 on Reigi {3}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x00005750)
     signal=0 (Normal Exit)
 
-    THR902 29-Nov-2020 18:05:10.275 on Reigi {4}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0000ebe4): trap number 1
+    THR902 20-Dec-2020 10:57:56.808 on Reigi {4}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00005ec8): trap number 1
     type=Software Error
     errstr : software error test
     offset : 0x1
     Function Traceback:
       NodeBase.SoftwareException.SoftwareException @ softwareexception.cpp + 46[15]
       NodeBase.Debug.SwErr @ debug.cpp + 146[22]
-      NodeTools.RecoveryThread.DoSwErr @ ntincrement.cpp + 3965[33]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4050[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.DoSwErr @ ntincrement.cpp + 3964[33]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4049[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:12.716 on Reigi {5}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0000ebe4): trap number 2
+    THR902 20-Dec-2020 10:57:59.422 on Reigi {5}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00005ec8): trap number 2
     type=Signal
     signal : 11 (SIGSEGV: Invalid Memory Reference)
     errval : 0xc0000005
@@ -70,25 +70,25 @@ total initialization time        761
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
-      _CxxFrameHandler @ <unknown file> (err=487)
+      _CxxFrameHandler3 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       KiUserExceptionDispatcher @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4114[0]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4016[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4113[0]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4015[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR901 29-Nov-2020 18:05:12.717 on Reigi {6}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x0000ebe4)
+    THR901 20-Dec-2020 10:57:59.423 on Reigi {6}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x00005ec8)
     signal=11 (SIGSEGV: Invalid Memory Reference)
 
-    THR902 29-Nov-2020 18:05:15.153 on Reigi {7}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0001153c): trap number 3
+    THR902 20-Dec-2020 10:58:02.218 on Reigi {7}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00003164): trap number 3
     type=Signal
     signal : 11 (SIGSEGV: Invalid Memory Reference)
     errval : 0xc0000005
@@ -100,21 +100,21 @@ total initialization time        761
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
-      _CxxFrameHandler @ <unknown file> (err=487)
+      _CxxFrameHandler3 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       KiUserExceptionDispatcher @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4114[0]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4016[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4113[0]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4015[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:16.528 on Reigi {8}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0001153c): trap number 4
+    THR902 20-Dec-2020 10:58:03.661 on Reigi {8}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00003164): trap number 4
     type=Signal
     signal : 8 (SIGFPE: Erroneous Arithmetic Operation)
     errval : 0xc0000094
@@ -126,58 +126,58 @@ total initialization time        761
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
-      _CxxFrameHandler @ <unknown file> (err=487)
+      _CxxFrameHandler3 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       KiUserExceptionDispatcher @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4019[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4018[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:17.878 on Reigi {9}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0001153c): trap number 5
+    THR902 20-Dec-2020 10:58:05.151 on Reigi {9}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00003164): trap number 5
     type=Signal
     signal : 2 (SIGINT: Terminal Interrupt)
     errval : 0x0
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.HandleSignal @ thread.cpp + 1877[19]
-      NodeBase.Thread.SignalHandler @ thread.cpp + 2918[11]
+      NodeBase.Thread.SignalHandler @ thread.cpp + 2929[11]
       raise @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.DoRaise @ ntincrement.cpp + 3956[13]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4043[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.DoRaise @ ntincrement.cpp + 3955[15]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4042[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:19.236 on Reigi {10}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0001153c): trap number 6
+    THR902 20-Dec-2020 10:58:06.636 on Reigi {10}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00003164): trap number 6
     type=Signal
     signal : 4 (SIGILL: Illegal Instruction)
     errval : 0x0
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.HandleSignal @ thread.cpp + 1877[19]
-      NodeBase.Thread.SignalHandler @ thread.cpp + 2918[11]
+      NodeBase.Thread.SignalHandler @ thread.cpp + 2929[11]
       raise @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.DoRaise @ ntincrement.cpp + 3956[13]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4043[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.DoRaise @ ntincrement.cpp + 3955[15]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4042[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:20.588 on Reigi {11}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0001153c): trap number 7
+    THR902 20-Dec-2020 10:58:08.115 on Reigi {11}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00003164): trap number 7
     type=Signal
     signal : 15 (SIGTERM: Termination Request)
     errval : 0x0
@@ -185,113 +185,113 @@ total initialization time        761
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.HandleSignal @ thread.cpp + 1877[19]
-      NodeBase.Thread.SignalHandler @ thread.cpp + 2918[11]
+      NodeBase.Thread.SignalHandler @ thread.cpp + 2929[11]
       raise @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.DoRaise @ ntincrement.cpp + 3956[13]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4043[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.DoRaise @ ntincrement.cpp + 3955[15]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4042[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR906 29-Nov-2020 18:05:20.588 on Reigi {12}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x0001153c)
+    THR906 20-Dec-2020 10:58:08.115 on Reigi {12}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x00003164)
     signal=15 (SIGTERM: Termination Request)
 
-    THR902 29-Nov-2020 18:05:21.929 on Reigi {13}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00010534): trap number 8
+    THR902 20-Dec-2020 10:58:09.604 on Reigi {13}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00003f04): trap number 8
     type=Signal
     signal : 21 (SIGBREAK: Ctrl-Break)
     errval : 0x0
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.HandleSignal @ thread.cpp + 1877[19]
-      NodeBase.Thread.SignalHandler @ thread.cpp + 2918[11]
+      NodeBase.Thread.SignalHandler @ thread.cpp + 2929[11]
       raise @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.DoRaise @ ntincrement.cpp + 3956[13]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4043[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.DoRaise @ ntincrement.cpp + 3955[15]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4042[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:24.316 on Reigi {14}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00010534): trap number 9
+    THR902 20-Dec-2020 10:58:16.687 on Reigi {14}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00003f04): trap number 9
     type=Signal
     signal : 22 (SIGABRT: Abort Request)
     errval : 0x0
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.HandleSignal @ thread.cpp + 1877[19]
-      NodeBase.Thread.SignalHandler @ thread.cpp + 2918[11]
+      NodeBase.Thread.SignalHandler @ thread.cpp + 2929[11]
       raise @ <unknown file> (err=487)
       abort @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.DoAbort @ ntincrement.cpp + 3929[0]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4007[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.DoAbort @ ntincrement.cpp + 3927[8]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4006[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:27.811 on Reigi {15}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00010534): trap number 10
+    THR902 20-Dec-2020 10:58:23.809 on Reigi {15}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00003f04): trap number 10
     type=Signal
     signal : 22 (SIGABRT: Abort Request)
     errval : 0x0
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.HandleSignal @ thread.cpp + 1877[19]
-      NodeBase.Thread.SignalHandler @ thread.cpp + 2918[11]
+      NodeBase.Thread.SignalHandler @ thread.cpp + 2929[11]
       raise @ <unknown file> (err=487)
       abort @ <unknown file> (err=487)
       terminate @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.DoTerminate @ ntincrement.cpp + 3975[0]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4053[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.DoTerminate @ ntincrement.cpp + 3973[8]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4052[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:30.231 on Reigi {16}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00010534): trap number 11
+    THR902 20-Dec-2020 10:58:26.729 on Reigi {16}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00003f04): trap number 11
     type=Signal
     signal : 126 (SIGPURGE: Suicided [errval = 0] or Killed [errval > 0])
     errval : 0x0
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
-      NodeBase.Thread.Raise @ thread.cpp + 2467[19]
-      NodeTools.RecoveryThread.DoTrap @ ntincrement.cpp + 3983[0]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4056[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Raise @ thread.cpp + 2478[19]
+      NodeTools.RecoveryThread.DoTrap @ ntincrement.cpp + 3982[0]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4055[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
     Thread Data:
       NodeTools.RecoveryThread
-      this : 03FEBF50
+      this : 0357D758
       patchArea : 0x0
-      systhrd  : 040C2B78
+      systhrd  : 06B981C8
         NodeBase.SysThread
-        this : 040C2B78
+        this : 06B981C8
         patchArea : 0x0
-        nthread  : 000003BC
-        nid      : 10534
+        nthread  : 000003D4
+        nid      : 3f04
         status   : 000
-        event    : 00000304
-        guard    : 00000380
+        event    : 000003D0
+        guard    : 0000033C
         priority : 1
         signal   : 0
-      daemon   : 040019B8 NodeTools.RecoveryDaemon
+      daemon   : 03598900 NodeTools.RecoveryDaemon
       tid      : 15
       faction  : 6
       deleting : false
@@ -300,7 +300,7 @@ total initialization time        761
         diff : 8
       priv     : 
         NodeBase.ThreadPriv
-        this : 04086CD0
+        this : 03365A20
         patchArea : 0x0
         unpreempts : 1
         immUnprots : 0
@@ -323,78 +323,78 @@ total initialization time        761
         blocked    : ready
         status     : unspecified
         signal     : 126
-        stackBase  : 0186FDC8
+        stackBase  : 06ABF734
         acquiring  : 00000000
         rtcLbc     : 
           NodeBase.LeakyBucketCounter
-          this : 04086CF8
+          this : 03365A48
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14223778395080
+          lastTime : 1496131613451
           limit    : 6
           count    : 0
         trapLbc    : 
           NodeBase.LeakyBucketCounter
-          this : 04086D18
+          this : 03365A68
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14223791797250
+          lastTime : 1496296494256
           limit    : 4
-          count    : 4
+          count    : 3
         vector     : 0
-        prevTime   : 83601
+        prevTime   : 29966826
         currTime   : 0
-        readyTime  : 14223874801501
-        currStart  : 14223874802620
-        currEnd    : 14223876602620
+        readyTime  : 1496317713958
+        currStart  : 1496317717082
+        currEnd    : 1496319517082
       test   : 0
       signal : 126
 
-    THR901 29-Nov-2020 18:05:30.232 on Reigi {17}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x00010534)
+    THR901 20-Dec-2020 10:58:26.730 on Reigi {17}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x00003f04)
     signal=126 (SIGPURGE: Suicided [errval = 0] or Killed [errval > 0])
 
-    THR903 29-Nov-2020 18:05:31.637 on Reigi {18}
-    by NodeBase.CliThread (tid=9, nid=0x000116f8)
-    for NodeTools.RecoveryThread (tid=15, nid=0x000114c4)
+    THR903 20-Dec-2020 10:58:28.207 on Reigi {18}
+    by NodeBase.CliThread (tid=9, nid=0x00001cd4)
+    for NodeTools.RecoveryThread (tid=15, nid=0x0000168c)
     signal=126 (SIGPURGE: Suicided [errval = 0] or Killed [errval > 0])
 
-    THR902 29-Nov-2020 18:05:31.640 on Reigi {19}
-    in NodeTools.RecoveryThread (tid=15, nid=0x000114c4): trap number 12
+    THR902 20-Dec-2020 10:58:28.211 on Reigi {19}
+    in NodeTools.RecoveryThread (tid=15, nid=0x0000168c): trap number 12
     type=Signal
     signal : 126 (SIGPURGE: Suicided [errval = 0] or Killed [errval > 0])
     errval : 0x3
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.ExitIfSafe @ thread.cpp + 1674[31]
-      NodeBase.Thread.TrapCheck @ thread.cpp + 3495[0]
+      NodeBase.Thread.TrapCheck @ thread.cpp + 3506[0]
       NodeBase.Thread.FunctionInvoked @ thread.cpp + 1799[0]
       NodeBase.Debug.ft @ debug.cpp + 74[9]
       NodeBase.Thread.ExitBlockingOperation @ thread.cpp + 1615[10]
-      NodeBase.Thread.Pause @ thread.cpp + 2357[11]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4065[26]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Pause @ thread.cpp + 2368[11]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4064[26]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
     Thread Data:
       NodeTools.RecoveryThread
-      this : 03FEB8D0
+      this : 03581F18
       patchArea : 0x0
-      systhrd  : 040C2E78
+      systhrd  : 06B984F8
         NodeBase.SysThread
-        this : 040C2E78
+        this : 06B984F8
         patchArea : 0x0
-        nthread  : 000002FC
-        nid      : 114c4
+        nthread  : 000004C8
+        nid      : 168c
         status   : 000
-        event    : 000002F4
-        guard    : 0000039C
+        event    : 000004DC
+        guard    : 000004E0
         priority : 1
         signal   : 0
-      daemon   : 040019B8 NodeTools.RecoveryDaemon
+      daemon   : 03598900 NodeTools.RecoveryDaemon
       tid      : 15
       faction  : 6
       deleting : false
@@ -403,7 +403,7 @@ total initialization time        761
         diff : 8
       priv     : 
         NodeBase.ThreadPriv
-        this : 04085D30
+        this : 033661A0
         patchArea : 0x0
         unpreempts : 1
         immUnprots : 0
@@ -426,147 +426,147 @@ total initialization time        761
         blocked    : clock
         status     : unspecified
         signal     : 126
-        stackBase  : 07F5FA3C
+        stackBase  : 0942F838
         acquiring  : 00000000
         rtcLbc     : 
           NodeBase.LeakyBucketCounter
-          this : 04085D58
+          this : 033661C8
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14223874827652
+          lastTime : 1496317765923
           limit    : 6
           count    : 0
         trapLbc    : 
           NodeBase.LeakyBucketCounter
-          this : 04085D78
+          this : 033661E8
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14223888908966
+          lastTime : 1496332558247
           limit    : 4
           count    : 1
         vector     : 0
         prevTime   : 0
-        currTime   : 208
-        readyTime  : 14223874840798
-        currStart  : 14223888890568
+        currTime   : 1048
+        readyTime  : 1496317801301
+        currStart  : 1496332528669
         currEnd    : 200000
       test   : 0
       signal : 0
 
-    THR901 29-Nov-2020 18:05:31.640 on Reigi {20}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x000114c4)
+    THR901 20-Dec-2020 10:58:28.211 on Reigi {20}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x0000168c)
     signal=126 (SIGPURGE: Suicided [errval = 0] or Killed [errval > 0])
 
-    THR903 29-Nov-2020 18:05:34.324 on Reigi {21}
-    by NodeBase.InitThread (tid=2, nid=0x0000e65c)
-    for NodeTools.RecoveryThread (tid=15, nid=0x0000eaa8)
+    THR903 20-Dec-2020 10:58:31.136 on Reigi {21}
+    by NodeBase.InitThread (tid=2, nid=0x000059b0)
+    for NodeTools.RecoveryThread (tid=15, nid=0x000054a4)
     signal=123 (SIGYIELD: Running Unpreemptably Too Long)
 
-    THR902 29-Nov-2020 18:05:34.354 on Reigi {22}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0000eaa8): trap number 13
+    THR902 20-Dec-2020 10:58:31.148 on Reigi {22}
+    in NodeTools.RecoveryThread (tid=15, nid=0x000054a4): trap number 13
     type=Signal
     signal : 123 (SIGYIELD: Running Unpreemptably Too Long)
     errval : 0x3
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.ExitIfSafe @ thread.cpp + 1674[31]
-      NodeBase.Thread.TrapCheck @ thread.cpp + 3495[0]
+      NodeBase.Thread.TrapCheck @ thread.cpp + 3506[0]
       NodeBase.Thread.FunctionInvoked @ thread.cpp + 1799[0]
       NodeBase.Debug.ft @ debug.cpp + 74[9]
-      NodeTools.RecoveryThread.LoopForever @ ntincrement.cpp + 4084[12]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4025[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.LoopForever @ ntincrement.cpp + 4083[12]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4024[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:37.862 on Reigi {23}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0000eaa8): trap number 14
+    THR902 20-Dec-2020 10:58:34.960 on Reigi {23}
+    in NodeTools.RecoveryThread (tid=15, nid=0x000054a4): trap number 14
     type=Signal
     signal : 124 (SIGSTACK1: Stack Overflow: Attempt Recovery)
-    errval : 0x1f42
+    errval : 0x1f43
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
-      NodeBase.Thread.StackCheck @ thread.cpp + 2965[16]
+      NodeBase.Thread.StackCheck @ thread.cpp + 2976[16]
       NodeBase.Thread.FunctionInvoked @ thread.cpp + 1807[0]
       NodeBase.Debug.ft @ debug.cpp + 74[9]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4102[10]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4101[10]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
       ...1997 functions omitted.
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
-      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4104[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
+      NodeTools.RecoveryThread.RecurseForever @ ntincrement.cpp + 4103[12]
 
-    SW900 29-Nov-2020 18:05:40.908 on Reigi {24}
+    SW900 20-Dec-2020 10:58:39.029 on Reigi {24}
     in Thread.EnterBlockingOperation
     expl=mutex holder  errval=0x1
     Function Traceback:
       NodeBase.Debug.SwLog @ debug.cpp + 191[24]
       NodeBase.Thread.EnterBlockingOperation @ thread.cpp + 1535[56]
-      NodeBase.Thread.Pause @ thread.cpp + 2354[14]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4028[26]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Pause @ thread.cpp + 2365[14]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4027[26]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR907 29-Nov-2020 18:05:42.240 on Reigi {25}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x0000eaa8)
+    THR907 20-Dec-2020 10:58:40.484 on Reigi {25}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x000054a4)
     mutexes=1
 
-    THR901 29-Nov-2020 18:05:42.240 on Reigi {26}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x0000eaa8)
+    THR901 20-Dec-2020 10:58:40.485 on Reigi {26}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x000054a4)
     signal=0 (Normal Exit)
 
-    THR907 29-Nov-2020 18:05:43.591 on Reigi {27}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x00011490)
+    THR907 20-Dec-2020 10:58:41.971 on Reigi {27}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x000052d4)
     mutexes=1
 
-    THR902 29-Nov-2020 18:05:43.591 on Reigi {28}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00011490): trap number 15
+    THR902 20-Dec-2020 10:58:41.972 on Reigi {28}
+    in NodeTools.RecoveryThread (tid=15, nid=0x000052d4): trap number 15
     type=Signal
     signal : 11 (SIGSEGV: Invalid Memory Reference)
     errval : 0xc0000005
@@ -578,38 +578,38 @@ total initialization time        761
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
-      _CxxFrameHandler @ <unknown file> (err=487)
+      _CxxFrameHandler3 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       KiUserExceptionDispatcher @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4114[0]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4037[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4113[0]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4036[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:45.924 on Reigi {29}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00011490): trap number 16
+    THR902 20-Dec-2020 10:58:44.491 on Reigi {29}
+    in NodeTools.RecoveryThread (tid=15, nid=0x000052d4): trap number 16
     type=Software Error
     errstr : software error test
     offset : 0x1
     Function Traceback:
       NodeBase.SoftwareException.SoftwareException @ softwareexception.cpp + 46[15]
       NodeBase.Debug.SwErr @ debug.cpp + 146[22]
-      NodeTools.RecoveryThread.DoSwErr @ ntincrement.cpp + 3965[33]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4050[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.DoSwErr @ ntincrement.cpp + 3964[33]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4049[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:45.927 on Reigi {30}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00011490): trap number 17
+    THR902 20-Dec-2020 10:58:44.495 on Reigi {30}
+    in NodeTools.RecoveryThread (tid=15, nid=0x000052d4): trap number 17
     type=Signal
     signal : 11 (SIGSEGV: Invalid Memory Reference)
     errval : 0xc0000005
@@ -622,57 +622,57 @@ total initialization time        761
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
-      _CxxFrameHandler @ <unknown file> (err=487)
+      _CxxFrameHandler3 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       KiUserExceptionDispatcher @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4114[0]
-      NodeTools.RecoveryThread.Recover @ ntincrement.cpp + 4095[0]
-      NodeBase.Thread.Start @ thread.cpp + 3053[19]
+      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4113[0]
+      NodeTools.RecoveryThread.Recover @ ntincrement.cpp + 4094[0]
+      NodeBase.Thread.Start @ thread.cpp + 3064[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR901 29-Nov-2020 18:05:48.372 on Reigi {31}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x00011490)
+    THR901 20-Dec-2020 10:58:47.223 on Reigi {31}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x000052d4)
     signal=0 (Normal Exit)
 
-    THR900 29-Nov-2020 18:05:48.378 on Reigi {32}
-    thread=NodeBase.Thread (tid=15, nid=0x00011750)
+    THR900 20-Dec-2020 10:58:47.244 on Reigi {32}
+    thread=NodeBase.Thread (tid=15, nid=0x000049cc)
     Function Traceback:
       NodeBase.SysThreadStack.Display @ systhreadstack.win.cpp + 185[9]
       NodeBase.Thread.~Thread @ thread.cpp + 1142[16]
       NLG_Return @ <unknown file> (err=487)
       NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ singleton.h + 82[34]
-      NodeTools.RecoveryDaemon.CreateThread @ ntincrement.cpp + 3832[0]
-      NodeBase.Daemon.CreateThreads @ daemon.cpp + 125[13]
+      NodeTools.RecoveryDaemon.CreateThread @ ntincrement.cpp + 3831[0]
+      NodeBase.Daemon.CreateThreads @ daemon.cpp + 125[15]
       NodeBase.InitThread.RecreateThreads @ initthread.cpp + 405[0]
       NodeBase.InitThread.HandleInterrupt @ initthread.cpp + 294[0]
       NodeBase.InitThread.Enter @ initthread.cpp + 245[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
     Thread Data:
       NodeBase.Thread
-      this : 03FEBCD0
+      this : 03581C98
       patchArea : 0x0
-      systhrd  : 040C2F38
+      systhrd  : 06B97F58
         NodeBase.SysThread
-        this : 040C2F38
+        this : 06B97F58
         patchArea : 0x0
-        nthread  : 000003D8
-        nid      : 11750
+        nthread  : 000004C0
+        nid      : 49cc
         status   : 000
-        event    : 000002C0
-        guard    : 000003BC
+        event    : 000002BC
+        guard    : 000004F4
         priority : 1
         signal   : 0
-      daemon   : 040019B8 NodeTools.RecoveryDaemon
+      daemon   : 03598900 NodeTools.RecoveryDaemon
       tid      : 15
       faction  : 6
       deleting : false
@@ -681,12 +681,12 @@ total initialization time        761
         diff : 8
       priv     : 
         NodeBase.ThreadPriv
-        this : 040855B0
+        this : 03365700
         patchArea : 0x0
         unpreempts : 1
         immUnprots : 0
         memUnprots : 0
-        mutexes    : 1
+        mutexes    : 0
         swlogs     : 0
         entered    : false
         waiting    : false
@@ -705,21 +705,21 @@ total initialization time        761
         status     : unspecified
         signal     : 0
         stackBase  : 00000000
-        acquiring  : ThreadsLock
+        acquiring  : 00000000
         rtcLbc     : 
           NodeBase.LeakyBucketCounter
-          this : 040855D8
+          this : 03365728
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224056233379
+          lastTime : 1496522696403
           limit    : 6
           count    : 0
         trapLbc    : 
           NodeBase.LeakyBucketCounter
-          this : 040855F8
+          this : 03365748
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224056233401
+          lastTime : 1496522696461
           limit    : 4
           count    : 0
         vector     : 0
@@ -729,21 +729,21 @@ total initialization time        761
         currStart  : 0
         currEnd    : 0
 
-    SW900 29-Nov-2020 18:05:48.379 on Reigi {33}
+    SW900 20-Dec-2020 10:58:47.249 on Reigi {33}
     in ThreadRegistry.GetState
-    expl=orphan exited  errval=0x11750
+    expl=orphan exited  errval=0x49cc
     Function Traceback:
       NodeBase.Debug.SwLog @ debug.cpp + 191[24]
-      NodeBase.ThreadRegistry.GetState @ threadregistry.cpp + 299[41]
-      NodeBase.Thread.Start @ thread.cpp + 2999[11]
+      NodeBase.ThreadRegistry.GetState @ threadregistry.cpp + 299[42]
+      NodeBase.Thread.Start @ thread.cpp + 3010[8]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:48.379 on Reigi {34}
-    in NodeBase.InitThread (tid=2, nid=0x0000e65c): trap number 18
+    THR902 20-Dec-2020 10:58:47.256 on Reigi {34}
+    in NodeBase.InitThread (tid=2, nid=0x000059b0): trap number 18
     type=Signal
     signal : 11 (SIGSEGV: Invalid Memory Reference)
     errval : 0xc0000005
@@ -755,66 +755,66 @@ total initialization time        761
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
-      _CxxFrameHandler @ <unknown file> (err=487)
+      _CxxFrameHandler3 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       KiUserExceptionDispatcher @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4114[0]
-      NodeTools.RecoveryThread.RecoveryThread @ ntincrement.cpp + 3860[0]
+      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4113[0]
+      NodeTools.RecoveryThread.RecoveryThread @ ntincrement.cpp + 3859[0]
       NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ singleton.h + 82[34]
-      NodeTools.RecoveryDaemon.CreateThread @ ntincrement.cpp + 3832[0]
-      NodeBase.Daemon.CreateThreads @ daemon.cpp + 125[13]
+      NodeTools.RecoveryDaemon.CreateThread @ ntincrement.cpp + 3831[0]
+      NodeBase.Daemon.CreateThreads @ daemon.cpp + 125[15]
       NodeBase.InitThread.RecreateThreads @ initthread.cpp + 405[0]
       NodeBase.InitThread.HandleInterrupt @ initthread.cpp + 294[0]
       NodeBase.InitThread.Enter @ initthread.cpp + 245[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR903 29-Nov-2020 18:05:50.793 on Reigi {35}
-    by NodeBase.CliThread (tid=9, nid=0x000116f8)
-    for NodeTools.RecoveryThread (tid=15, nid=0x0000bfd8)
+    THR903 20-Dec-2020 10:58:49.961 on Reigi {35}
+    by NodeBase.CliThread (tid=9, nid=0x00001cd4)
+    for NodeTools.RecoveryThread (tid=15, nid=0x00005afc)
     signal=126 (SIGPURGE: Suicided [errval = 0] or Killed [errval > 0])
 
-    THR902 29-Nov-2020 18:05:50.797 on Reigi {36}
-    in NodeTools.RecoveryThread (tid=15, nid=0x0000bfd8): trap number 19
+    THR902 20-Dec-2020 10:58:49.965 on Reigi {36}
+    in NodeTools.RecoveryThread (tid=15, nid=0x00005afc): trap number 19
     type=Signal
     signal : 126 (SIGPURGE: Suicided [errval = 0] or Killed [errval > 0])
     errval : 0x3
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.ExitIfSafe @ thread.cpp + 1674[31]
-      NodeBase.Thread.TrapCheck @ thread.cpp + 3495[0]
+      NodeBase.Thread.TrapCheck @ thread.cpp + 3506[0]
       NodeBase.Thread.FunctionInvoked @ thread.cpp + 1799[0]
       NodeBase.Debug.ft @ debug.cpp + 74[9]
       NodeBase.Thread.ExitBlockingOperation @ thread.cpp + 1615[10]
-      NodeBase.Thread.Pause @ thread.cpp + 2357[11]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4065[26]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Pause @ thread.cpp + 2368[11]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4064[26]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
     Thread Data:
       NodeTools.RecoveryThread
-      this : 03FEBAD0
+      this : 03582018
       patchArea : 0x0
-      systhrd  : 0403D1C8
+      systhrd  : 06E34280
         NodeBase.SysThread
-        this : 0403D1C8
+        this : 06E34280
         patchArea : 0x0
-        nthread  : 00000380
-        nid      : bfd8
+        nthread  : 00000418
+        nid      : 5afc
         status   : 000
-        event    : 000002FC
-        guard    : 000002C4
+        event    : 00000498
+        guard    : 00000494
         priority : 1
         signal   : 0
-      daemon   : 040019B8 NodeTools.RecoveryDaemon
+      daemon   : 03598900 NodeTools.RecoveryDaemon
       tid      : 15
       faction  : 6
       deleting : false
@@ -823,7 +823,7 @@ total initialization time        761
         diff : 8
       priv     : 
         NodeBase.ThreadPriv
-        this : 04085D30
+        this : 033661A0
         patchArea : 0x0
         unpreempts : 1
         immUnprots : 0
@@ -846,75 +846,75 @@ total initialization time        761
         blocked    : clock
         status     : unspecified
         signal     : 126
-        stackBase  : 0186FD38
+        stackBase  : 06ABFCF0
         acquiring  : 00000000
         rtcLbc     : 
           NodeBase.LeakyBucketCounter
-          this : 04085D58
+          this : 033661C8
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224056307133
+          lastTime : 1496523020267
           limit    : 6
           count    : 0
         trapLbc    : 
           NodeBase.LeakyBucketCounter
-          this : 04085D78
+          this : 033661E8
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224080475073
+          lastTime : 1496550106746
           limit    : 4
           count    : 1
         vector     : 0
-        prevTime   : 287
-        currTime   : 0
-        readyTime  : 14224056315709
-        currStart  : 14224080447936
+        prevTime   : 0
+        currTime   : 808
+        readyTime  : 1496523038827
+        currStart  : 1496550078167
         currEnd    : 200000
       test   : 0
       signal : 0
 
-    THR901 29-Nov-2020 18:05:50.797 on Reigi {37}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x0000bfd8)
+    THR901 20-Dec-2020 10:58:49.966 on Reigi {37}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x00005afc)
     signal=126 (SIGPURGE: Suicided [errval = 0] or Killed [errval > 0])
 
-  * THR300 29-Nov-2020 18:05:50.797 on Reigi {38}
+  * THR300 20-Dec-2020 10:58:49.967 on Reigi {38}
     Alarm ON: DAEMON10 (Thread(s) unavailable: recover)
     daemon=recover target=1 actual=0
 
-    THR900 29-Nov-2020 18:05:56.312 on Reigi {39}
-    thread=NodeBase.Thread (tid=15, nid=0x00011624)
+    THR900 20-Dec-2020 10:58:55.812 on Reigi {39}
+    thread=NodeBase.Thread (tid=15, nid=0x000046d0)
     Function Traceback:
       NodeBase.SysThreadStack.Display @ systhreadstack.win.cpp + 185[9]
       NodeBase.Thread.~Thread @ thread.cpp + 1142[16]
       NLG_Return @ <unknown file> (err=487)
       NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ singleton.h + 82[34]
-      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4415[5]
-      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4437[12]
-      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[17]
+      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4414[5]
+      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4436[9]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[19]
       NodeBase.CliThread.ReadCommands @ clithread.cpp + 627[0]
       NodeBase.CliThread.Enter @ clithread.cpp + 291[17]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
     Thread Data:
       NodeBase.Thread
-      this : 03FEC4D0
+      this : 03582058
       patchArea : 0x0
-      systhrd  : 0403CC88
+      systhrd  : 06E34280
         NodeBase.SysThread
-        this : 0403CC88
+        this : 06E34280
         patchArea : 0x0
-        nthread  : 000003E8
-        nid      : 11624
+        nthread  : 000004CC
+        nid      : 46d0
         status   : 000
-        event    : 00000304
-        guard    : 000002D0
+        event    : 000004D4
+        guard    : 00000480
         priority : 1
         signal   : 0
-      daemon   : 040019B8 NodeTools.RecoveryDaemon
+      daemon   : 03598900 NodeTools.RecoveryDaemon
       tid      : 15
       faction  : 6
       deleting : false
@@ -923,7 +923,7 @@ total initialization time        761
         diff : 8
       priv     : 
         NodeBase.ThreadPriv
-        this : 04085B50
+        this : 03365B60
         patchArea : 0x0
         unpreempts : 1
         immUnprots : 0
@@ -950,18 +950,18 @@ total initialization time        761
         acquiring  : 00000000
         rtcLbc     : 
           NodeBase.LeakyBucketCounter
-          this : 04085B78
+          this : 03365B88
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224135562910
+          lastTime : 1496608453250
           limit    : 6
           count    : 0
         trapLbc    : 
           NodeBase.LeakyBucketCounter
-          this : 04085B98
+          this : 03365BA8
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224135562918
+          lastTime : 1496608453283
           limit    : 4
           count    : 0
         vector     : 0
@@ -971,21 +971,21 @@ total initialization time        761
         currStart  : 0
         currEnd    : 0
 
-    SW900 29-Nov-2020 18:05:56.313 on Reigi {40}
+    SW900 20-Dec-2020 10:58:55.814 on Reigi {40}
     in ThreadRegistry.GetState
-    expl=orphan exited  errval=0x11624
+    expl=orphan exited  errval=0x46d0
     Function Traceback:
       NodeBase.Debug.SwLog @ debug.cpp + 191[24]
-      NodeBase.ThreadRegistry.GetState @ threadregistry.cpp + 299[41]
-      NodeBase.Thread.Start @ thread.cpp + 2999[11]
+      NodeBase.ThreadRegistry.GetState @ threadregistry.cpp + 299[42]
+      NodeBase.Thread.Start @ thread.cpp + 3010[8]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:05:56.314 on Reigi {41}
-    in NodeBase.CliThread (tid=9, nid=0x000116f8): trap number 20
+    THR902 20-Dec-2020 10:58:55.815 on Reigi {41}
+    in NodeBase.CliThread (tid=9, nid=0x00001cd4): trap number 20
     type=Signal
     signal : 11 (SIGSEGV: Invalid Memory Reference)
     errval : 0xc0000005
@@ -997,76 +997,76 @@ total initialization time        761
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
-      _CxxFrameHandler @ <unknown file> (err=487)
+      _CxxFrameHandler3 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       KiUserExceptionDispatcher @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4114[0]
-      NodeTools.RecoveryThread.RecoveryThread @ ntincrement.cpp + 3866[0]
+      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4113[0]
+      NodeTools.RecoveryThread.RecoveryThread @ ntincrement.cpp + 3865[0]
       NodeBase.Singleton<NodeTools.RecoveryThread>.Instance @ singleton.h + 82[34]
-      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4415[5]
-      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4437[12]
-      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[17]
+      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4414[5]
+      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4436[9]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[19]
       NodeBase.CliThread.ReadCommands @ clithread.cpp + 627[0]
       NodeBase.CliThread.Enter @ clithread.cpp + 291[17]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    SW900 29-Nov-2020 18:05:59.824 on Reigi {42}
+    SW900 20-Dec-2020 10:58:59.596 on Reigi {42}
     in RecoverCommand.EnsureThread
     expl=recovery thread created  errval=0x0
     Function Traceback:
       NodeBase.Debug.SwLog @ debug.cpp + 191[24]
-      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4418[42]
-      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4437[12]
-      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[17]
+      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4417[42]
+      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4436[9]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[19]
       NodeBase.CliThread.ReadCommands @ clithread.cpp + 627[0]
       NodeBase.CliThread.Enter @ clithread.cpp + 291[17]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR900 29-Nov-2020 18:05:59.825 on Reigi {43}
-    thread=NodeBase.Thread (tid=15, nid=0x00010934)
+    THR900 20-Dec-2020 10:58:59.597 on Reigi {43}
+    thread=NodeBase.Thread (tid=15, nid=0x00001324)
     Function Traceback:
       NodeBase.SysThreadStack.Display @ systhreadstack.win.cpp + 185[9]
       NodeBase.Thread.~Thread @ thread.cpp + 1142[16]
-      NodeTools.RecoveryThread.~RecoveryThread @ ntincrement.cpp + 3880[15]
+      NodeTools.RecoveryThread.~RecoveryThread @ ntincrement.cpp + 3879[15]
       NodeTools.RecoveryThread.`scalar deleting destructor' @ <unknown file> (err=487)
-      NodeBase.Singleton<NodeTools.RecoveryThread>.Destroy @ singleton.h + 106[32]
-      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4476[0]
-      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[17]
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Destroy @ singleton.h + 106[34]
+      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4475[0]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[19]
       NodeBase.CliThread.ReadCommands @ clithread.cpp + 627[0]
       NodeBase.CliThread.Enter @ clithread.cpp + 291[17]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
     Thread Data:
       NodeBase.Thread
-      this : 03FEC4D0
+      this : 03581C18
       patchArea : 0x0
-      systhrd  : 04075F88
+      systhrd  : 06E378E0
         NodeBase.SysThread
-        this : 04075F88
+        this : 06E378E0
         patchArea : 0x0
-        nthread  : 00000378
-        nid      : 10934
+        nthread  : 00000494
+        nid      : 1324
         status   : 000
-        event    : 000003DC
-        guard    : 000003D4
+        event    : 0000048C
+        guard    : 000003D0
         priority : 1
         signal   : 0
-      daemon   : 040019B8 NodeTools.RecoveryDaemon
+      daemon   : 03598900 NodeTools.RecoveryDaemon
       tid      : 15
       faction  : 6
       deleting : false
@@ -1075,7 +1075,7 @@ total initialization time        761
         diff : 8
       priv     : 
         NodeBase.ThreadPriv
-        this : 03FEF620
+        this : 03365E80
         patchArea : 0x0
         unpreempts : 1
         immUnprots : 0
@@ -1102,76 +1102,76 @@ total initialization time        761
         acquiring  : 00000000
         rtcLbc     : 
           NodeBase.LeakyBucketCounter
-          this : 03FEF648
+          this : 03365EA8
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224170741851
+          lastTime : 1496646394346
           limit    : 6
           count    : 0
         trapLbc    : 
           NodeBase.LeakyBucketCounter
-          this : 03FEF668
+          this : 03365EC8
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224170741859
+          lastTime : 1496646394400
           limit    : 4
           count    : 0
         vector     : 0
         prevTime   : 0
         currTime   : 0
-        readyTime  : 14224170752642
-        currStart  : 14224170752628
+        readyTime  : 1496646410718
+        currStart  : 1496646410620
         currEnd    : 0
 
-    SW900 29-Nov-2020 18:06:06.228 on Reigi {44}
+    SW900 20-Dec-2020 10:59:06.261 on Reigi {44}
     in RecoverCommand.EnsureThread
     expl=recovery thread created  errval=0x0
     Function Traceback:
       NodeBase.Debug.SwLog @ debug.cpp + 191[24]
-      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4418[42]
-      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4437[12]
-      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[17]
+      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4417[42]
+      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4436[9]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[19]
       NodeBase.CliThread.ReadCommands @ clithread.cpp + 627[0]
       NodeBase.CliThread.Enter @ clithread.cpp + 291[17]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR900 29-Nov-2020 18:06:06.229 on Reigi {45}
-    thread=NodeBase.Thread (tid=15, nid=0x000114ac)
+    THR900 20-Dec-2020 10:59:06.272 on Reigi {45}
+    thread=NodeBase.Thread (tid=15, nid=0x00000448)
     Function Traceback:
       NodeBase.SysThreadStack.Display @ systhreadstack.win.cpp + 185[9]
       NodeBase.Thread.~Thread @ thread.cpp + 1142[16]
-      NodeTools.RecoveryThread.~RecoveryThread @ ntincrement.cpp + 3880[15]
+      NodeTools.RecoveryThread.~RecoveryThread @ ntincrement.cpp + 3879[15]
       NodeTools.RecoveryThread.`scalar deleting destructor' @ <unknown file> (err=487)
-      NodeBase.Singleton<NodeTools.RecoveryThread>.Destroy @ singleton.h + 106[32]
-      NodeTools.RecoveryThread.DoDelete @ ntincrement.cpp + 3938[0]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4013[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Singleton<NodeTools.RecoveryThread>.Destroy @ singleton.h + 106[34]
+      NodeTools.RecoveryThread.DoDelete @ ntincrement.cpp + 3937[0]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4012[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
     Thread Data:
       NodeBase.Thread
-      this : 03FEC4D0
+      this : 03581BD8
       patchArea : 0x0
-      systhrd  : 04075D18
+      systhrd  : 06E37730
         NodeBase.SysThread
-        this : 04075D18
+        this : 06E37730
         patchArea : 0x0
-        nthread  : 0000039C
-        nid      : 114ac
+        nthread  : 00000480
+        nid      : 0448
         status   : 000
-        event    : 000003A0
-        guard    : 000002C0
+        event    : 000004B4
+        guard    : 000004CC
         priority : 1
         signal   : 0
-      daemon   : 040019B8 NodeTools.RecoveryDaemon
+      daemon   : 03598900 NodeTools.RecoveryDaemon
       tid      : 15
       faction  : 6
       deleting : false
@@ -1180,7 +1180,7 @@ total initialization time        761
         diff : 8
       priv     : 
         NodeBase.ThreadPriv
-        this : 040858D0
+        this : 03365B60
         patchArea : 0x0
         unpreempts : 1
         immUnprots : 0
@@ -1203,98 +1203,98 @@ total initialization time        761
         blocked    : ready
         status     : unspecified
         signal     : 0
-        stackBase  : 07F5FE04
+        stackBase  : 0970FC84
         acquiring  : 00000000
         rtcLbc     : 
           NodeBase.LeakyBucketCounter
-          this : 040858F8
+          this : 03365B88
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224234779225
+          lastTime : 1496713036019
           limit    : 6
           count    : 0
         trapLbc    : 
           NodeBase.LeakyBucketCounter
-          this : 04085918
+          this : 03365BA8
           patchArea : 0x0
           interval : 60000 msecs
-          lastTime : 14224234779239
+          lastTime : 1496713036062
           limit    : 4
           count    : 0
         vector     : 0
         prevTime   : 0
         currTime   : 0
-        readyTime  : 14224234790520
-        currStart  : 14224234798522
-        currEnd    : 14224241198522
+        readyTime  : 1496713057133
+        currStart  : 1496713165686
+        currEnd    : 1496719565686
 
-    SW900 29-Nov-2020 18:06:06.230 on Reigi {46}
+    SW900 20-Dec-2020 10:59:06.274 on Reigi {46}
     in ThreadRegistry.GetState
-    expl=orphan exited  errval=0x114ac
+    expl=orphan exited  errval=0x448
     Function Traceback:
       NodeBase.Debug.SwLog @ debug.cpp + 191[24]
-      NodeBase.ThreadRegistry.GetState @ threadregistry.cpp + 299[41]
-      NodeBase.Thread.RunningThread @ thread.cpp + 2777[12]
-      NodeBase.Thread.Pause @ thread.cpp + 2342[5]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4065[26]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.ThreadRegistry.GetState @ threadregistry.cpp + 299[42]
+      NodeBase.Thread.RunningThread @ thread.cpp + 2788[12]
+      NodeBase.Thread.Pause @ thread.cpp + 2353[5]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4064[26]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    SW900 29-Nov-2020 18:06:09.651 on Reigi {47}
+    SW900 20-Dec-2020 10:59:09.822 on Reigi {47}
     in RecoverCommand.EnsureThread
     expl=recovery thread created  errval=0x0
     Function Traceback:
       NodeBase.Debug.SwLog @ debug.cpp + 191[24]
-      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4418[42]
-      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4437[12]
-      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[17]
+      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4417[42]
+      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4436[9]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[19]
       NodeBase.CliThread.ReadCommands @ clithread.cpp + 627[0]
       NodeBase.CliThread.Enter @ clithread.cpp + 291[17]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR903 29-Nov-2020 18:06:10.415 on Reigi {48}
-    by NodeBase.InitThread (tid=2, nid=0x0000e65c)
-    for NodeTools.RecoveryThread (tid=15, nid=0x00010598)
+    THR903 20-Dec-2020 10:59:10.585 on Reigi {48}
+    by NodeBase.InitThread (tid=2, nid=0x000059b0)
+    for NodeTools.RecoveryThread (tid=15, nid=0x000039f4)
     signal=123 (SIGYIELD: Running Unpreemptably Too Long)
 
-    THR903 29-Nov-2020 18:06:11.231 on Reigi {49}
-    for NodeTools.RecoveryThread (tid=15, nid=0x00010598)
+    THR903 20-Dec-2020 10:59:10.779 on Reigi {49}
+    for NodeTools.RecoveryThread (tid=15, nid=0x000039f4)
     signal=2 (SIGINT: Terminal Interrupt)
 
-    THR902 29-Nov-2020 18:06:11.264 on Reigi {50}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00010598): trap number 21
+    THR902 20-Dec-2020 10:59:10.799 on Reigi {50}
+    in NodeTools.RecoveryThread (tid=15, nid=0x000039f4): trap number 21
     type=Signal
     signal : 2 (SIGINT: Terminal Interrupt)
     errval : 0x3
     Function Traceback:
       NodeBase.SignalException.SignalException @ signalexception.cpp + 38[12]
       NodeBase.Thread.ExitIfSafe @ thread.cpp + 1674[31]
-      NodeBase.Thread.TrapCheck @ thread.cpp + 3495[0]
+      NodeBase.Thread.TrapCheck @ thread.cpp + 3506[0]
       NodeBase.Thread.FunctionInvoked @ thread.cpp + 1799[0]
       NodeBase.Debug.ft @ debug.cpp + 74[9]
-      NodeTools.RecoveryThread.LoopForever @ ntincrement.cpp + 4084[12]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4025[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.LoopForever @ ntincrement.cpp + 4083[12]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4024[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR905 29-Nov-2020 18:06:11.264 on Reigi {51}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x00010598) overrun=951 msecs
+    THR905 20-Dec-2020 10:59:10.800 on Reigi {51}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x000039f4) overrun=316 msecs
 
-    THR902 29-Nov-2020 18:06:14.735 on Reigi {52}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00010598): trap number 22
+    THR902 20-Dec-2020 10:59:14.611 on Reigi {52}
+    in NodeTools.RecoveryThread (tid=15, nid=0x000039f4): trap number 22
     type=Signal
     signal : 11 (SIGSEGV: Invalid Memory Reference)
     errval : 0xc0000005
@@ -1306,21 +1306,21 @@ total initialization time        761
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
-      _CxxFrameHandler @ <unknown file> (err=487)
+      _CxxFrameHandler3 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       KiUserExceptionDispatcher @ <unknown file> (err=487)
-      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4114[0]
-      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4016[0]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeTools.RecoveryThread.UseBadPointer @ ntincrement.cpp + 4113[0]
+      NodeTools.RecoveryThread.Enter @ ntincrement.cpp + 4015[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR902 29-Nov-2020 18:06:14.738 on Reigi {53}
-    in NodeTools.RecoveryThread (tid=15, nid=0x00010598): trap number 23
+    THR902 20-Dec-2020 10:59:14.614 on Reigi {53}
+    in NodeTools.RecoveryThread (tid=15, nid=0x000039f4): trap number 23
     type=Signal
     signal : 11 (SIGSEGV: Invalid Memory Reference)
     errval : 0xc0000005
@@ -1332,39 +1332,39 @@ total initialization time        761
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
       is_exception_typeof @ <unknown file> (err=487)
-      _CxxFrameHandler @ <unknown file> (err=487)
+      _CxxFrameHandler3 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       RtlInterlockedCompareExchange64 @ <unknown file> (err=487)
       KiUserExceptionDispatcher @ <unknown file> (err=487)
-      NodeBase.Thread.TrapHandler @ thread.cpp + 3587[0]
-      NodeBase.Thread.Start @ thread.cpp + 3137[49]
+      NodeBase.Thread.TrapHandler @ thread.cpp + 3598[0]
+      NodeBase.Thread.Start @ thread.cpp + 3148[46]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR906 29-Nov-2020 18:06:14.742 on Reigi {54}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x00010598)
+    THR906 20-Dec-2020 10:59:14.617 on Reigi {54}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x000039f4)
     signal=11 (SIGSEGV: Invalid Memory Reference)
 
-    SW900 29-Nov-2020 18:06:17.207 on Reigi {55}
+    SW900 20-Dec-2020 10:59:17.447 on Reigi {55}
     in RecoverCommand.EnsureThread
     expl=recovery thread created  errval=0x0
     Function Traceback:
       NodeBase.Debug.SwLog @ debug.cpp + 191[24]
-      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4418[42]
-      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4437[12]
-      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[17]
+      NodeTools.RecoverCommand.EnsureThread @ ntincrement.cpp + 4417[42]
+      NodeTools.RecoverCommand.ProcessCommand @ ntincrement.cpp + 4436[9]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 443[19]
       NodeBase.CliThread.ReadCommands @ clithread.cpp + 627[0]
       NodeBase.CliThread.Enter @ clithread.cpp + 291[17]
-      NodeBase.Thread.Start @ thread.cpp + 3092[0]
+      NodeBase.Thread.Start @ thread.cpp + 3102[15]
       NodeBase.Thread.EnterThread @ thread.cpp + 1571[0]
-      o_iswdigit @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
 
-    THR901 29-Nov-2020 18:06:17.208 on Reigi {56}
-    thread=NodeTools.RecoveryThread (tid=15, nid=0x0001078c)
+    THR901 20-Dec-2020 10:59:17.448 on Reigi {56}
+    thread=NodeTools.RecoveryThread (tid=15, nid=0x000026ec)
     signal=0 (Normal Exit)

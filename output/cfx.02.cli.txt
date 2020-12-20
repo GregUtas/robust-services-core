@@ -1,8 +1,8 @@
 pots>start
   OK.
-pots>/ A-B: VERIFY CFB INACTIVE
+pots>
 pots>read bc.AB
-pots>/ A-B: RINGBACK; ANSWER
+pots>
 pots>inject PS B &port.A
   OK.
 pots>delay 1
@@ -47,9 +47,9 @@ pots>delay 1
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>/ A-B(CFB)-C: ANSWER; RELEASE
+pots>
 pots>inject PS B &port.A
   OK.
 pots>delay 1
@@ -100,20 +100,20 @@ pots>verify PS R &port.C &cause.normal
   OK.
 pots>delay 2
   OK.
-pots>testcase end
+pots>tests end
   OK.
 read test.cp.epilog
 pots>stop
   OK.
 pots>contexts c
   0
-pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
   Result is false.
-pots>save funcs &testcase.name
+pots>save funcs &test.name
   OK.
-pots>save trace &testcase.name
+pots>save trace &test.name
   OK.
-pots>save msc &testcase.name
+pots>save msc &test.name
   OK.
 pots>clear buffer
   OK.

@@ -1,6 +1,6 @@
 subscribe &dn.A cwt
 
-testcase verify off
+tests verify off
 / A-B (ALERTING)
 inject PS B &port.A
 delay 1
@@ -26,9 +26,9 @@ verify PM R &port.A &cause.userbusy
 verify PS S &port.C m=&port.busy c=&cause.userbusy
 inject PS E &port.C
 delay 3
-testcase verify on
+tests verify on
 
-testcase begin cwt.20
+tests begin cwt.20
 / RE-INITIATE CWT IN MUX PASSIVE STATE: DENIED AGAIN
 inject PS B &port.C
 delay 1
@@ -47,5 +47,5 @@ delay 3
 
 inject PS E &port.A
 delay 2
-testcase end
+tests end
 unsubscribe &dn.A cwt

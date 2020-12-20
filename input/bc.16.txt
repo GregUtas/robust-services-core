@@ -1,4 +1,4 @@
-testcase begin bc.16
+tests begin bc.16
 / A-B: ALERTING TIMEOUT
 swflags set &flag.cipalertingtimeout on
 inject PS B &port.A
@@ -14,4 +14,4 @@ verify PS R &port.B &cause.alertingtimeout
 verify PS S &port.A c=&cause.alertingtimeout
 verify PS R &port.A &cause.normal
 swflags set &flag.cipalertingtimeout off
-testcase end
+tests end

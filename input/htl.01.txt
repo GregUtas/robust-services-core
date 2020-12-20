@@ -1,4 +1,4 @@
-testcase begin htl.01
+tests begin htl.01
 subscribe &dn.A htl &dn.B
 / A-B: HTL USAGE
 inject PS B &port.A
@@ -16,4 +16,4 @@ verify PS S &port.A m=&port.B
 verify PS R &port.A &cause.normal
 verify PS R &port.B &cause.normal
 unsubscribe &dn.A htl
-testcase end
+tests end

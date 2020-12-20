@@ -525,24 +525,24 @@ word StSizesCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
-//  The TESTCASE command.
+//  The TESTS command.
 //
 class TestVerifyText : public CliText
 {
 public: TestVerifyText();
 };
 
-class StTestcaseAction : public TestcaseAction
+class StTestsAction : public TestsAction
 {
-public: StTestcaseAction();
+public: StTestsAction();
 };
 
-class StTestcaseCommand : public TestcaseCommand
+class StTestsCommand : public TestsCommand
 {
 public:
    static const id_t TestVerifyIndex = LastNtIndex + 1;
 
-   StTestcaseCommand();
+   StTestsCommand();
 private:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
@@ -556,19 +556,19 @@ TestVerifyText::TestVerifyText() :
    BindParm(*new SetHowParm);
 }
 
-StTestcaseAction::StTestcaseAction()
+StTestsAction::StTestsAction()
 {
-   BindText(*new TestVerifyText, StTestcaseCommand::TestVerifyIndex);
+   BindText(*new TestVerifyText, StTestsCommand::TestVerifyIndex);
 }
 
-StTestcaseCommand::StTestcaseCommand() : TestcaseCommand(false)
+StTestsCommand::StTestsCommand() : TestsCommand(false)
 {
-   BindParm(*new StTestcaseAction);
+   BindParm(*new StTestsAction);
 }
 
-word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
+word StTestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
-   Debug::ft("StTestcaseCommand.ProcessSubcommand");
+   Debug::ft("StTestsCommand.ProcessSubcommand");
 
    switch(index)
    {
@@ -576,7 +576,7 @@ word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    case TestVerifyIndex:
       break;
    default:
-      return TestcaseCommand::ProcessSubcommand(cli, index);
+      return TestsCommand::ProcessSubcommand(cli, index);
    }
 
    auto test = StTestData::Access(cli);
@@ -585,7 +585,7 @@ word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(index == TestBeginIndex)
    {
       test->SetVerify(true);
-      return TestcaseCommand::ProcessSubcommand(cli, index);
+      return TestsCommand::ProcessSubcommand(cli, index);
    }
 
    if(index == TestVerifyIndex)
@@ -600,7 +600,7 @@ word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       return cli.Report(0, SuccessExpl);
    }
 
-   return TestcaseCommand::ProcessSubcommand(cli, index);
+   return TestsCommand::ProcessSubcommand(cli, index);
 }
 
 //------------------------------------------------------------------------------
@@ -830,7 +830,7 @@ StIncrement::StIncrement() : CliIncrement(StIncrText, StIncrExpl)
    Debug::ft("StIncrement.ctor");
 
    BindCommand(*new StSaveCommand);
-   BindCommand(*new StTestcaseCommand);
+   BindCommand(*new StTestsCommand);
    BindCommand(*new StSizesCommand);
    BindCommand(*new StCorruptCommand);
 }

@@ -1,4 +1,4 @@
-testcase begin bc.15
+tests begin bc.15
 / A-B: IAM TIMEOUT
 / caused by TBC purging CPG(EOS) and CPG(Alert) while ringing
 / idle sent on IAM timeout; offhook response creates new call
@@ -17,4 +17,4 @@ verify PS R &port.B &cause.protocoltimeout
 verify PS S &port.A s=d m=&port.dial
 verify PS R &port.A &cause.normal
 swflags set &flag.cipiamtimeout off
-testcase end
+tests end

@@ -1,5 +1,5 @@
 subscribe &dn.B cfb &dn.C
-testcase begin cfx.02
+tests begin cfx.02
 
 / A-B: VERIFY CFB INACTIVE
 read bc.AB
@@ -13,7 +13,7 @@ verify PS S &port.B m=&port.silence c=&cause.normal
 verify PS R &port.B &cause.normal
 delay 1
 contexts c
-if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+if &cli.result != 0 tests failed &cli.result "Context(s) not idled"
 
 / A-B(CFB)-C: ANSWER; RELEASE
 inject PS B &port.A
@@ -41,5 +41,5 @@ verify PS S &port.C m=&port.silence c=&cause.normal
 verify PS R &port.B &cause.normal
 verify PS R &port.C &cause.normal
 delay 2
-testcase end
+tests end
 unsubscribe &dn.B cfb

@@ -1,4 +1,4 @@
-testcase begin bic.01
+tests begin bic.01
 subscribe &dn.B bic
 / A-B: BIC
 inject PS B &port.A
@@ -12,4 +12,4 @@ verify PS S &port.A s=x m=&port.silence
 verify PS S &port.A c=&cause.outgoingbarred
 verify PS R &port.A &cause.normal
 unsubscribe &dn.B bic
-testcase end
+tests end

@@ -1,4 +1,4 @@
-testcase begin cip.02
+tests begin cip.02
 / CALL TEST DN
 inject PS B &port.A
 delay 1
@@ -25,4 +25,4 @@ delay 2
 
 verify PS R &port.A &cause.normal
 verify CT 2 R &cause.normal m=&port.silence
-testcase end
+tests end

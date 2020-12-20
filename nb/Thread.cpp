@@ -2024,17 +2024,28 @@ bool Thread::IsScheduled() const
 
 bool Thread::IsTraceable() const
 {
-   //  Do not trace a thread that has been explicitly excluded.  Trace
-   //  RootThread and InitThread during system initialization and when
-   //  explicitly included.  Trace other threads when included.
+   //  Don't trace a thread that has been explicitly excluded.
    //
    auto trace = CalcStatus(true);
    if(trace == TraceExcluded) return false;
+
+   //  Don't trace a preemptable thread if only counting function invocations.
+   //  That capability uses std::map, which isn't thread safe, and we don't
+   //  want the overhead of acquiring a lock.
+   //
+   if(priv_->unpreempts_ == 0)
+   {
+      if(FunctionTrace::GetScope() == FunctionTrace::CountsOnly) return false;
+   }
 
    switch(faction_)
    {
    case WatchdogFaction:
    case SystemFaction:
+      //
+      //  Always trace RootThread and InitThread during system initalization
+      //  and restarts.
+      //
       if(Restart::GetStage() != Running) return true;
    }
 

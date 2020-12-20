@@ -131,16 +131,16 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  Supports testcases.  Defined here so that other increments can subclass it.
+//  Supports tests.  Defined here so that other increments can subclass it.
 //
-class TestcaseAction : public CliTextParm
+class TestsAction : public CliTextParm
 {
 public:
-   TestcaseAction();
-   virtual ~TestcaseAction() = default;
+   TestsAction();
+   virtual ~TestsAction() = default;
 };
 
-class TestcaseCommand : public CliCommand
+class TestsCommand : public CliCommand
 {
 public:
    static const id_t TestPrologIndex = 1;
@@ -155,10 +155,10 @@ public:
    static const id_t TestResetIndex = 10;
    static const id_t LastNtIndex = TestResetIndex;
 
-   //  Set BIND to false if binding a subclass of TestcaseAction.
+   //  Set BIND to false if binding a subclass of TestsAction.
    //
-   explicit TestcaseCommand(bool bind = true);
-   virtual ~TestcaseCommand() = default;
+   explicit TestsCommand(bool bind = true);
+   virtual ~TestsCommand() = default;
 protected:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:

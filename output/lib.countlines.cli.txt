@@ -2,17 +2,17 @@ ct>start
   OK.
 ct>read lib.07
 ct>countlines $files
-  linecount: 212380
-ct>if &cli.result != 0 testcase failed &cli.result
+  linecount: 222933
+ct>if &cli.result != 0 tests failed &cli.result
   Result is false.
 ct>delay 1
   OK.
-ct>testcase end
+ct>tests end
   OK.
 read test.lib.epilog
 ct>stop
   OK.
-ct>save funcs &testcase.name
+ct>save funcs &test.name
   OK.
 ct>clear buffer
   OK.

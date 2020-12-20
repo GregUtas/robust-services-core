@@ -631,10 +631,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
 
    //  Create a copy of the files to be parsed.  Include files that affect them,
    //  along with substitute files.  Calculate the build order of the resulting
-   //  set.  Parse substitute files first, followed by the .h's.  This allows
-   //  the symbols visible to a file to be determined before parsing it.  Using
-   //  declarations in #included files affect visibility, so an #included file
-   //  must already have been parsed.
+   //  set.
    //
    auto library = Singleton< Library >::Instance();
    auto parseSet = new SetOfIds(fileSet);
@@ -643,8 +640,25 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    auto parseFiles = new CodeFileSet(TemporaryName(), parseSet);
    auto affects = parseFiles->Affecters();
    auto order = static_cast< CodeFileSet* >(affects)->SortInBuildOrder();
-
    auto& files = library->Files();
+
+   //  Remove files that have already been parsed.
+   //
+   for(auto f = order->begin(); f != order->end(); NO_OP)
+   {
+       auto file = files.At(f->fid);
+     
+       if(file->ParseStatus() != CodeFile::Unparsed)
+          f = order->erase(f);
+       else
+          ++f;
+   }
+
+   //  Parse substitute files first, followed by the .h's.  This allows the
+   //  symbols visible to a file to be determined before parsing it.  Using
+   //  declarations in #included files affect visibility, so an #included
+   //  file must already have been parsed.
+   //
    std::unique_ptr< Parser > parser(new Parser(opts));
    size_t total = 0;
    size_t failed = 0;
@@ -694,13 +708,18 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    parseFiles->Release();
    affects->Release();
 
-   //  Update the cross-reference.
+   //  Update the cross-reference with symbols in the files just parsed.
    //
-   Debug::Progress(string("Updating cross-reference...") + CRLF);
-
-   for(auto f = files.First(); f != nullptr; files.Next(f))
+   if(!order->empty())
    {
-      if(!f->IsSubsFile()) f->AddToXref();
+      Debug::Progress(string("Updating cross-reference...") + CRLF);
+
+      for(auto f = order->cbegin(); f != order->cend(); ++f)
+      {
+         auto file = files.At(f->fid);
+
+         if(!file->IsSubsFile()) file->AddToXref();
+      }
    }
 
    std::ostringstream summary;

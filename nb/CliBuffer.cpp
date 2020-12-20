@@ -72,12 +72,12 @@ public:
 constexpr size_t MaxInputDepth = 8;
 
 const char CliBuffer::EscapeChar = BACKSLASH;
-const char CliBuffer::CommentChar = '/';
 const char CliBuffer::StringChar = QUOTE;
+const char CliBuffer::BreakChar = ';';
+const char CliBuffer::CommentChar = '/';
 const char CliBuffer::OptSkipChar = '~';
 const char CliBuffer::OptTagChar = '=';
 const char CliBuffer::SymbolChar = '&';
-const char CliBuffer::BreakChar = ';';
 fixed_string CliBuffer::ErrorPointer = "_|";
 
 //------------------------------------------------------------------------------
@@ -627,13 +627,14 @@ std::streamsize CliBuffer::ScanLine(const CliThread& cli)
    {
       switch(buff_[i])
       {
-      case String:
+      case StringChar:
+         s.push_back(buff_[i]);
          quoted = !quoted;
          break;
 
       case CommentChar:
          //
-         //  Ignore the rest of the input unless this appears in a string.
+         //  Ignore the rest of the input unless within a string.
          //
          if(quoted)
             s.push_back(buff_[i]);
@@ -643,18 +644,25 @@ std::streamsize CliBuffer::ScanLine(const CliThread& cli)
 
       case EscapeChar:
          //
-         //  Add the escape character and the next one to the string.
+         //  Add the next character to the string.
          //
-         s.push_back(buff_[i++]);
-         if(i < buff_.size()) s.push_back(buff_[i]);
+         if(++i < buff_.size()) s.push_back(buff_[i]);
          break;
 
       case BreakChar:
          //
-         //  Save the string before the break character and start a new one.
+         //  Save the string before the break character and start a new one
+         //  unless this appears in a string.
          //
-         source.inputs_.push_back(s);
-         s.clear();
+         if(quoted)
+         {
+            s.push_back(buff_[i]);
+         }
+         else
+         {
+            source.inputs_.push_back(s);
+            s.clear();
+         }
          break;
 
       default:

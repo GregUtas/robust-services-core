@@ -1,4 +1,4 @@
-testcase begin bc.06
+tests begin bc.06
 / A: UNALLOCATED NUMBER
 inject PS B &port.A
 delay 1
@@ -9,4 +9,4 @@ delay 1
 verify PS S &port.A s=d m=&port.dial
 verify PS S &port.A s=x m=&port.silence c=&cause.unallocnumber
 verify PS R &port.A &cause.normal
-testcase end
+tests end

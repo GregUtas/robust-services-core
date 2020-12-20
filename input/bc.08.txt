@@ -1,4 +1,4 @@
-testcase begin bc.08
+tests begin bc.08
 / A-B: RINGBACK; RELEASE
 inject PS B &port.A
 delay 1
@@ -12,4 +12,4 @@ verify PS S &port.B r=t
 verify PS S &port.A m=&port.ringback
 verify PS R &port.A &cause.normal
 verify PS R &port.B &cause.normal
-testcase end
+tests end

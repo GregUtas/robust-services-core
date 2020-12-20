@@ -1,153 +1,162 @@
-FUNCTION PROFILE: 12-Aug-2019 07:45:17.787 on Reigi
+FUNCTION PROFILE: 20-Dec-2020 07:55:29.724 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-  6296524           0   Lexer.NextPos
-   715623           0   Lexer.Advance(incr)
-   315240           0   Lexer.FindIdentifier
-   297675           0   Lexer.NextIdentifier
-   247255           0   CodeTools.FindSubstr
-   212653           0   Lexer.GetIncludeFile
-   212651           0   CodeFile.ClassifyLine(size_t)
-   212650           0   CodeFile.ClassifyLine(string)
-    24934           0   Lexer.SkipStrLiteral
-    17084           0   Lexer.FindClosing
-    14034           0   Base.ctor
-    13075           0   CxxToken.ctor
-     7191           0   Lexer.GetNum
-     7190           0   Literal.ctor
-     6640           0   Library.EnsureFile
-     6639           0   CodeTools.GetFileName
-     6639           0   Library.FindFile
-     6239           0   Lexer.ThisCharIs
-     5885           0   CodeFile.AddUser
-     5885           0   CxxDirective.ctor
-     5885           0   CxxNamed.ctor
-     5885           0   SymbolDirective.ctor
-     5884           0   CxxNamed.SetLoc
-     5884           0   Include.ctor
-     3310           0   Lexer.FindFirstOf
-     2925           0   Lexer.SkipCharLiteral
-     2829           0   Thread.RunningThread
-     2642           0   Lexer.NextCharIs
-     2220           0   Lexer.Advance
-     1524           0   Lexer.Reposition
-     1113           0   Lexer.GetInt
-      865           0   SysMutex.Release
-      823           0   Thread.EnterBlockingOperation
-      823           0   Thread.LogContextSwitch
-      810           0   FileWalker.Advance
-      789           0   CodeTools.IsCodeFile
-      768           0   LibraryItem.ctor
-      764           0   Registry.Insert
-      763           0   Lexer.Initialize
-      762           0   Lexer.CalcDepths
-      760           0   SysFile.CreateIstream
-      759           0   Lexer.ctor
-      756           0   CodeFile.InputStream
-      756           0   CodeFile.ctor
-      755           0   CodeFile.Scan
-      755           0   Library.AddFile
-      752           0   CodeDir.IsSubsDir
-      751           0   SysMutex.Acquire
-      742           0   Thread.ResumeLocked
-      720           0   ThreadAdmin.WarpFactor
-      715           0   Thread.InitialMsecs
-      510           0   CliBuffer.CalcType
-      428           0   CodeFile.LogCode
-      428           0   CodeFile.LogLine
-      353           0   CodeFile.SetDir
-      351           0   Lexer.GetHex
-      320           0   CodeWarning.Insert
-      320           0   CodeWarning.ctor
-      172           0   Object.ctor
-      145           0   ObjectPool.DeqBlock
-      143           0   Q1Way.Deq
-      143           0   Thread.MakePreemptable
-      142           0   FunctionGuard.ctor
-      142           0   FunctionGuard.dtor
-      142           0   MsgBuffer.operator new
-      142           0   ObjectPool.UpdateAlarm
-      141           0   Alarm.Create
-      140           0   Thread.MakeUnpreemptable
-      139           0   Q1Way.Enq
-      139           0   Thread.EnqMsg
-      138           0   MsgBuffer.ctor
-      138           0   Thread.Interrupt
-      137           0   Pooled.ctor
-      137           0   Q1Way.Size
-      137           0   StreamRequest.ctor
-      137           0   SysThread.Interrupt
-       99           0   FileThread.Spool(written)
-       96           0   FileRequest.ctor
-       85           0   CliBuffer.FindNextNonBlank
-       76           0   FileThread.Spool(string)
-       64           0   CliBuffer.GetStr
+   765812           0   Lexer.Advance(incr)
+   415468           0   CodeTools.FindSubstr
+   333218           0   Lexer.FindIdentifier
+   313967           0   Lexer.NextIdentifier
+   222933           0   CodeFile.ClassifyLine(size_t)
+   222933           0   CodeFile.ClassifyLine(string)
+   222933           0   Lexer.GetIncludeFile
+    31451           0   Lexer.SkipStrLiteral
+    18714           0   Lexer.FindClosing
+    15113           0   Base.operator new
+    14285           0   CxxToken.ctor
+     7971           0   CxxToken.dtor
+     7971           0   Lexer.GetNum
+     7971           0   Literal.ctor
+     7108           0   CodeTools.GetFileName
+     7108           0   Library.EnsureFile
+     7108           0   Library.FindFile
+     6560           0   Lexer.ThisCharIs
+     6314           0   CodeFile.AddUser
+     6314           0   CxxDirective.ctor
+     6314           0   CxxNamed.SetLoc
+     6314           0   CxxNamed.ctor
+     6314           0   Include.ctor
+     6314           0   SymbolDirective.ctor
+     3746           0   Lexer.FindFirstOf
+     3628           0   Lexer.SkipCharLiteral
+     2814           0   Lexer.NextCharIs
+     2303           0   Lexer.Advance
+     1920           0   Thread.Interrupt
+     1919           0   SysThread.Interrupt
+     1919           0   SysThread.Resume
+     1588           0   Lexer.Reposition
+     1137           0   Lexer.GetInt
+     1098           0   MutexGuard.Release
+     1098           0   MutexGuard.ctor
+     1098           0   MutexGuard.dtor
+     1098           0   SysMutex.Acquire
+     1098           0   SysMutex.Release
+      933           0   FileWalker.Advance
+      890           0   SysThread.Suspend
+      889           0   SysThread.Wait
+      889           0   Thread.EnterBlockingOperation
+      889           0   Thread.ExitBlockingOperation
+      889           0   Thread.InitialTime
+      889           0   Thread.LogContextSwitch
+      889           0   Thread.Ready
+      889           0   Thread.Resume
+      889           0   Thread.Schedule
+      889           0   Thread.Suspend
+      889           0   ThreadAdmin.WarpFactor
+      846           0   CodeTools.IsCodeFile
+      811           0   LibraryItem.ctor
+      811           0   Registry.Insert
+      794           0   CodeDir.IsSubsDir
+      794           0   CodeFile.InputStream
+      794           0   CodeFile.Scan
+      794           0   CodeFile.ctor
+      794           0   Lexer.CalcDepths
+      794           0   Lexer.Initialize
+      794           0   Lexer.ctor
+      794           0   Library.AddFile
+      794           0   SysFile.CreateIstream
+      507           0   CliBuffer.CalcType
+      460           0   CodeFile.LogCode
+      460           0   CodeFile.LogLine
+      383           0   Lexer.GetHex
+      382           0   Lexer.GetHexNum
+      374           0   CodeFile.SetDir
+      353           0   CodeWarning.Insert
+      353           0   CodeWarning.ctor
+      162           0   MsgBuffer.ctor
+      162           0   MsgBuffer.operator new
+      162           0   ObjectPool.DeqBlock
+      162           0   Pooled.ctor
+      162           0   Q1Way.Deq
+      162           0   Q1Way.Enq
+      162           0   Q1Way.Size
+      162           0   StreamRequest.ctor
+      162           0   Thread.EnqMsg
+      115           0   FileRequest.ctor
+      115           0   FileThread.Spool(written)
+       94           0   FileThread.Spool(string)
+       90           0   CliBuffer.FindNextNonBlank
+       66           0   CliBuffer.GetStr
+       49           0   CliBuffer.GetNextInput
        48           0   CliStack.FindCommand
-       47           0   CliThread.Flush
-       45           0   CoutThread.Spool(stream)
-       43           0   FileThread.Record
-       43           0   MutexGuard.ctor
-       41           0   MutexGuard.dtor
-       40           0   CliText.AccessParm
-       39           0   Registry.Size
-       38           0   CliCookie.Advance
+       47           0   CoutThread.Spool(stream)
+       47           0   FileThread.Record
+       44           0   CliText.AccessParm
+       42           0   Registry.Size
+       41           0   CliCookie.Advance
+       39           0   CliTextParm.GetStringRc
        37           0   CliIncrement.FindCommand
-       37           0   CliTextParm.GetStringRc
        36           0   SysIpL2Addr.dtor
        36           0   SysSocket.SetBlocking
-       33           0   FileWalker.Reset
+       34           0   FileWalker.Reset
+       25           0   CliBuffer.GetLine
+       25           0   CliStack.Top
+       25           0   CliThread.Flush
+       24           0   CliBuffer.GetInput
+       24           0   CliBuffer.ScanLine
        24           0   CliCookie.Initialize
-       24           0   CliStack.Top
+       24           0   CliThread.EndOfInput
        24           0   CliThread.InvokeCommand
-       23           0   CliThread.SetResult
-       23           0   Symbol.SetValue
-       23           0   SymbolRegistry.EnsureSymbol
-       23           0   SymbolRegistry.FindSymbol
-       22           0   CoutThread.Spool(string)
-       21           0   CliCommand.GetStringRc
-       21           0   CliParm.GetString
-       21           0   CliThread.EndOfInput
+       24           0   CliThread.ParseCommand
+       24           0   CliThread.SetResult
+       24           0   CoutThread.Spool(string)
+       24           0   Symbol.SetValue
+       24           0   SymbolRegistry.EnsureSymbol
+       24           0   SymbolRegistry.FindSymbol
+       22           0   CliCommand.GetStringRc
+       22           0   CliParm.GetString
        21           0   FileThread.Spool(stream)
        20           0   CliThread.Report
        20           0   CliThread.Report1
-       18           0   CliBuffer.Echo
        18           0   IpPort.RecvsInSequence
        18           0   IpPortRegistry.HostAddress
        18           0   SysIpL2Addr.IsValid
        18           0   SysIpL2Addr.ctor
-       18           0   SysIpL2Addr.ctor(copy)
-       18           0   SysIpL2Addr.operator=(copy)
        18           0   SysIpL3Addr.ctor
        18           0   SysIpL3Addr.dtor
        18           0   SysSocket.SetError
        18           0   SysTcpSocket.Accept
+       18           0   SysTcpSocket.Poll
        18           0   TcpIoThread.AcceptConn
        18           0   TcpIoThread.PollSockets
-       17           0   CliBuffer.GetLine
+       17           0   CliCommand.GetIdentifierRc
+       17           0   CliParm.GetIdentifier
+       17           0   CliTextParm.GetIdentifierRc
+       17           0   CodeDir.Extract
+       17           0   CodeDir.ctor
+       17           0   FileWalker.ctor
        17           0   FileWalker.dtor
-       16           0   CliTextParm.GetIdentifierRc
-       16           0   CliThread.ParseCommand
-       16           0   FileWalker.ctor
-       16           0   SysFile.GetFileList
-       15           0   CliBuffer.ScanLine
-       14           0   CliCommand.GetIdentifierRc
-       14           0   CliParm.GetIdentifier
-       12           0   SysFile.SetDir
-       11           0   ImportCommand.ProcessCommand
-       11           0   Library.Import
-        9           0   CodeDir.Extract
-        9           0   CodeDir.ctor
-        3           0   CliThread.OpenInputFile
-        3           0   CliThread.ReadCommands
-        3           0   Lexer.GetFloat
+       17           0   ImportCommand.ProcessCommand
+       17           0   Library.Import
+       17           0   SysFile.GetFileList
+       17           0   SysFile.SetDir
+       12           0   FunctionGuard.ctor
+        8           0   Thread.MakePreemptable
+        5           0   FunctionGuard.dtor
+        5           0   Lexer.GetFloat
+        4           0   FunctionGuard.Release
+        4           0   Thread.MemProtect
+        4           0   Thread.MemUnprotect
+        3           0   CliBuffer.OpenInputFile
         3           0   ReadCommand.ProcessCommand
         2           0   CliCommand.GetTextParmRc
         2           0   CliParm.GetTextIndex
         2           0   CliTextParm.AccessParm
         2           0   CliTextParm.Descend
         2           0   CliTextParm.GetTextParmRc
+        2           0   Heap.SetAttrs
+        2           0   Heap.SetPermissions
         2           0   Registry.Empty
+        2           0   SysMemory.Protect
         1           0   BreakEnabledCfg.SetCurr
         1           0   CfgBitParm.GetCurr
         1           0   CfgBitParm.SetNext
@@ -156,13 +165,19 @@ FUNCTION PROFILE: 12-Aug-2019 07:45:17.787 on Reigi
         1           0   CfgParm.GetInput
         1           0   CfgParm.SetCurr
         1           0   CfgParm.SetValue
+        1           0   CfgParmRegistry.FindParm
         1           0   CfgParmsCommand.ProcessCommand
+        1           0   CliAppData.EventOccurred
         1           0   CliBuffer.GetInt
         1           0   CliBuffer.PutLine
         1           0   CliCommand.GetIntParmRc
         1           0   CliCookie.Descend(index)
         1           0   CliIntParm.GetIntParmRc
+        1           0   CliParm.GetIntParm
         1           0   CliThread.Execute
+        1           0   CliThread.GetAppData
+        1           0   CliThread.Notify
+        1           0   DelayCommand.ProcessCommand
         1           0   Lexer.GetOct
         1           0   Memory.Alloc
         1           0   NtTestData.Access
@@ -171,10 +186,17 @@ FUNCTION PROFILE: 12-Aug-2019 07:45:17.787 on Reigi
         1           0   Singletons.BindInstance
         1           0   StopCommand.ProcessCommand
         1           0   SysHeap.Alloc
+        1           0   SysThread.Delay
+        1           0   Temporary.ctor
         1           0   Temporary.operator new
         1           0   TestDatabase.Commit
+        1           0   TestDatabase.Load
+        1           0   TestDatabase.SetState
         1           0   TestDatabase.Update
-        1           0   TestcaseCommand.ProcessCommand
-        1           0   TestcaseCommand.ProcessSubcommand
+        1           0   TestDatabase.ctor
+        1           0   TestsCommand.ProcessCommand
+        1           0   TestsCommand.ProcessSubcommand
+        1           0   TraceBuffer.SetTool
+        1           0   TraceBuffer.StopTracing
 
-Total functions: 174
+Total functions: 196

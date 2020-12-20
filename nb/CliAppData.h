@@ -50,7 +50,7 @@ public:
    //
    enum Event
    {
-      EndOfTest  // current testcase completed
+      EndOfTest  // current test completed
    };
 
    //  Returns the CLI thread associated with the data.
@@ -94,7 +94,7 @@ private:
 //
 //  Identifiers for applications that register data with a CliThread.
 //
-constexpr CliAppData::Id TestcaseAppId = 0;
+constexpr CliAppData::Id TestAppId = 0;
 constexpr CliAppData::Id TestSessionAppId = 1;
 }
 #endif

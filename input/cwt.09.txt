@@ -1,12 +1,12 @@
 subscribe &dn.A cwt
 
-testcase verify off
+tests verify off
 read bc.BA
 / 1A 1B
 read cwt.In2Ack
-testcase verify on
+tests verify on
 
-testcase begin cwt.09
+tests begin cwt.09
 / 9A
 read cwt.Nf2ExB
 / 9B
@@ -18,5 +18,5 @@ inject PS E &port.C
 inject PS E &port.A
 
 delay 2
-testcase end
+tests end
 unsubscribe &dn.A cwt

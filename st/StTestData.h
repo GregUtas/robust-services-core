@@ -36,7 +36,7 @@ using namespace SessionBase;
 
 namespace SessionTools
 {
-//  Data used by the CLI Testcase command and related commands.
+//  Data used by the CLI >tests command and related commands.
 //
 class StTestData : public CliAppData
 {

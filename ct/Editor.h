@@ -28,6 +28,7 @@
 #include <vector>
 #include "CodeTypes.h"
 #include "CodeWarning.h"
+#include "Cxx.h"
 #include "CxxFwd.h"
 #include "SourceCode.h"
 #include "SysTypes.h"
@@ -135,11 +136,6 @@ private:
    //
    word FixLog(CliThread& cli, CodeWarning& log, string& expl);
 
-   //  Fixes LOG, which is associated with a function that could be virtual.
-   //  Updates EXPL with any explanation.
-   //
-   word FixFunctions(CliThread& cli, const CodeWarning& log, string& expl);
-
    //  Most of the editing functions attempt to fix the warning reported in LOG,
    //  returning 0 on success.  Any other result indicates an error, in which
    //  case EXPL provides an explanation.  A return value of -1 means that the
@@ -148,12 +144,16 @@ private:
    word AdjustLineIndentation(const CodeWarning& log, string& expl);
    word AdjustTags(const CodeWarning& log, string& expl);
    word AlignArgumentNames(const CodeWarning& log, string& expl);
+   word ChangeAccess(const CodeWarning& log, Cxx::Access acc, string& expl);
+   word ChangeClassToNamespace(const CodeWarning& log, string& expl);
    word ChangeClassToStruct(const CodeWarning& log, string& expl);
-   word ChangeDebugFtName(const CodeWarning& log, string& expl);
+   word ChangeDebugFtName(CliThread& cli, const CodeWarning& log, string& expl);
+   word ChangeOperator(const CodeWarning& log, string& expl);
    word ChangeStructToClass(const CodeWarning& log, string& expl);
    word EraseAdjacentSpaces(const CodeWarning& log, string& expl);
    word EraseAccessControl(const CodeWarning& log, string& expl);
    word EraseBlankLine(const CodeWarning& log, string& expl);
+   word EraseClass(const CodeWarning& log, string& expl);
    word EraseConst(const CodeWarning& log, string& expl);
    word EraseData(const CliThread& cli, const CodeWarning& log, string& expl);
    word EraseEnumerator(const CodeWarning& log, string& expl);
@@ -165,18 +165,30 @@ private:
    word EraseSemicolon(const CodeWarning& log, string& expl);
    word EraseVirtualTag(const CodeWarning& log, string& expl);
    word EraseVoidArgument(const CodeWarning& log, string& expl);
-   word InitByConstructor(const CodeWarning& log, string& expl);
+   word InlineDebugFtName(const CodeWarning& log, string& expl);
+   word InitByCtorCall(const CodeWarning& log, string& expl);
    word InsertBlankLine(const CodeWarning& log, string& expl);
-   word InsertDebugFtCall(const CodeWarning& log, string& expl);
+   word InsertCopyCtorCall(const CodeWarning& log, string& expl);
+   word InsertDataInit(const CodeWarning& log, string& expl);
+   word InsertDebugFtCall(CliThread& cli, const CodeWarning& log, string& expl);
    word InsertDefaultFunction(const CodeWarning& log, string& expl);
+   word InsertDisplay(CliThread& cli, const CodeWarning& log, string& expl);
+   word InsertEnumName(const CodeWarning& log, string& expl);
    word InsertForward(const CodeWarning& log, string& expl);
    word InsertInclude(const CodeWarning& log, string& expl);
    word InsertIncludeGuard(const CodeWarning& log, string& expl);
    word InsertLineBreak(const CodeWarning& log, string& expl);
+   word InsertMemberInit(const CodeWarning& log, string& expl);
    word InsertPatch(CliThread& cli, const CodeWarning& log, string& expl);
+   word InsertPODCtor(const CodeWarning& log, string& expl);
+   word InsertPureVirtual(const CodeWarning& log, string& expl);
    word InsertUsing(const CodeWarning& log, string& expl);
+   word MoveDefine(const CodeWarning& log, string& expl);
+   word MoveFunction(const CodeWarning& log, string& expl);
+   word MoveMemberInit(const CodeWarning& log, string& expl);
    word RenameIncludeGuard(const CodeWarning& log, string& expl);
-   word ReplaceDebugFtName(const CodeWarning& log, string& expl);
+   word ReplaceHeading(const CodeWarning& log, string& expl);
+   word ReplaceName(const CodeWarning& log, string& expl);
    word ReplaceNull(const CodeWarning& log, string& expl);
    word ReplaceSlashAsterisk(const CodeWarning& log, string& expl);
    word ReplaceUsing(const CodeWarning& log, string& expl);
@@ -185,17 +197,42 @@ private:
    word TagAsDefaulted(const CodeWarning& log, string& expl);
    word TagAsExplicit(const CodeWarning& log, string& expl);
    word TagAsOverride(const CodeWarning& log, string& expl);
+   word TagAsVirtual(const CodeWarning& log, string& expl);
+
+   //  Fixes LOG, which also involves modifying overrides of a function.
+   //  Updates EXPL with any explanation.
+   //
+   word FixFunctions(CliThread& cli, const CodeWarning& log, string& expl);
 
    //  Fixes LOG, which is associated with FUNC, and updates EXPL with any
    //  explanation.
    //
    word FixFunction(const Function* func, const CodeWarning& log, string& expl);
 
+   //  Fixes LOG, which also involves modifying invokers and overrides of
+   //  a function.  Updates EXPL with any explanation.
+   //
+   word FixInvokers(CliThread& cli, const CodeWarning& log, string& expl);
+
+   //  Fixes LOG, which is associated with invoking FUNC, and updates EXPL with
+   //  any explanation.
+   //
+   word FixInvoker(const Function* func, const CodeWarning& log, string& expl);
+
    //  Fixes FUNC and updates EXPL with any explanation.  OFFSET is log.offset_
    //  when the original log is associated with one of FUNC's arguments.
    //
+   word ChangeFunctionToFree(const Function* func, string& expl);
+   word ChangeFunctionToMember(const Function* func, word offset, string& expl);
+   word ChangeInvokerToFree(const Function* func, string& expl);
+   word ChangeInvokerToMember(const Function* func, word offset, string& expl);
+   word EraseArgument(const Function* func, word offset, string& expl);
+   word EraseDefault(const Function* func, word offset, string& expl);
    word EraseFunction(const Function* func, string& expl);
+   word EraseParameter(const Function* func, word offset, string& expl);
    word EraseNoexceptTag(const Function* func, string& expl);
+   word InsertArgument(const Function* func, word offset, string& expl);
+   word SplitVirtualFunction(const Function* func, string& expl);
    word TagAsConstArgument(const Function* func, word offset, string& expl);
    word TagAsConstFunction(const Function* func, string& expl);
    word TagAsConstReference(const Function* func, word offset, string& expl);
@@ -280,39 +317,38 @@ private:
       (SourceIter iter, const string& str, size_t off = string::npos);
 
    //  Returns the location of ID, starting at iter->code[pos].  Returns
-   //  {source_.end(), string::npos} if ID was not found.  ID must be an
-   //  identifier or keyword that is delimited by punctuation.  The search
-   //  spans RANGE lines; if RANGE is nullptr, only one line is searched.
+   //  source_.End() if ID was not found.  ID must be an identifier or
+   //  keyword that is delimited by punctuation.  The search spans RANGE
+   //  lines; if RANGE is nullptr, only one line is searched.
    //
    SourceLoc FindWord
       (SourceIter iter, size_t pos, const string& id, size_t* range = nullptr);
 
    //  Returns the location of the first non-blank character starting at
-   //  iter->code[pos].  Returns {source_.end(), string::npos} if no such
-   //  character was found.
+   //  iter->code[pos].  Returns source_.End() if no such character was found.
    //
    SourceLoc FindNonBlank(SourceIter iter, size_t pos);
 
    //  Returns the location of the first non-blank character starting at
-   //  iter->code[pos], reversing.  Returns {source_.end(), string::npos}
-   //  if no such character was found.
+   //  iter->code[pos], reversing.  Returns source_.End() if no such
+   //  character was found.
    //
    SourceLoc RfindNonBlank(SourceIter iter, size_t pos);
 
    //  Returns the first occurrence of a character in CHARS, starting at
-   //  iter->code[off].  Returns {source_.end(), string::npos} if none
-   //  of those characters was found.
+   //  loc.iter->code[loc.pos].  Returns source_.End() if none of those
+   //  characters was found.
    //
-   SourceLoc FindFirstOf(SourceIter iter, size_t off, const string& chars);
+   SourceLoc FindFirstOf(const SourceLoc& loc, const string& chars);
 
    //  Returns the location of the right parenthesis after a function's
-   //  argument list.  Returns {source_.end(), string::npos} on failure.
+   //  argument list.  Returns source_.End() on failure.
    //
    SourceLoc FindArgsEnd(const Function* func);
 
    //  Returns the location of the semicolon after a function's declaration
-   //  or the left brace that begins its definition.  Returns {source_.end(),
-   //  string::npos} on failure.
+   //  or the left brace that begins its definition.  Returns source_.End()
+   //  on failure.
    //
    SourceLoc FindSigEnd(const CodeWarning& log);
    SourceLoc FindSigEnd(const Function* func);
@@ -472,16 +508,10 @@ private:
    //
    size_t Indent(const SourceIter& iter, bool split);
 
-   //  Supplies the code for a Debug::Ft invocation with an inline string
-   //  literal for the function's name.
+   //  Returns the code for a Debug::Ft invocation with an inline string
+   //  literal that uses FNAME for the function's name.
    //
-   void DebugFtCode(const Function* func, std::string& call) const;
-
-   //  Supplies the code for a Debug::Ft invocation with a separate fn_name
-   //  definition for the function's name.
-   //
-   void DebugFtCode
-      (const Function* func, std::string& defn, std::string& call) const;
+   std::string DebugFtCode(const std::string& fname) const;
 
    //  Adds the editor to Editors_ and returns 0.
    //

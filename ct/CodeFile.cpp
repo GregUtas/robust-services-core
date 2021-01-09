@@ -614,10 +614,7 @@ void CodeFile::CheckDebugFt() const
 
    //  For each function in this file, find the lines on which it begins
    //  and ends.  Within those lines, look for invocations of Debug::ft.
-   //  When one is found, find the data member that is passed to Debug::ft
-   //  and see if it defines a string literal that accurately identifies
-   //  the function.  Also note an invocation of Debug::ft that is missing
-   //  or that is not the first line of code in the function.
+   //  If none are found, generate a warning.
    //
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
@@ -645,8 +642,14 @@ void CodeFile::CheckDebugFt() const
             break;
 
          case DebugFt:
+            //
+            //  Generate a warning if other code preceded the call to Debug::ft.
+            //  Also generate a warning if the name passed to Debug::ft
+            //  o does not accurately identify the function, or
+            //  o has already been used by another function, or
+            //  o is an fn_name that is only used once and can thus be inlined.
+            //
             if(code && !debug) LogLine(n, DebugFtNotFirst);
-            debug = true;
 
             if(lexer_.GetNthLine(n, statement))
             {
@@ -657,12 +660,16 @@ void CodeFile::CheckDebugFt() const
 
                Data* data = nullptr;
                auto ok = false;
+               auto lquo = statement.find(QUOTE, lpar);
 
-               if((statement[lpar + 1] == QUOTE) &&
-                  (statement[rpar - 1] == QUOTE))
+               if(lquo != string::npos)
                {
-                  fname = statement.substr(lpar + 2, rpar - lpar - 3);
-                  ok = true;
+                  auto rquo = statement.rfind(QUOTE, rpar);
+                  if(rquo != string::npos)
+                  {
+                     fname = statement.substr(lquo + 1, rquo - lquo - 1);
+                     ok = true;
+                  }
                }
                else
                {
@@ -676,17 +683,21 @@ void CodeFile::CheckDebugFt() const
                {
                   ok = (*f)->CheckDebugName(fname);
 
-                  if(!cover->Insert(fname, hash, Name()))
+                  if(!ok)
                   {
-                     LogLine(n, DebugFtNameDuplicated);
+                     LogPos(lexer_.GetLineStart(n), DebugFtNameMismatch, *f);
                   }
-                  else if(ok && (data != nullptr) && (data->Readers() <= 1))
+                  else if(!debug && !cover->Insert(fname, hash, Name()))
+                  {
+                     LogPos(lexer_.GetLineStart(n), DebugFtNameDuplicated, *f);
+                  }
+                  else if((data != nullptr) && (data->Readers() <= 1))
                   {
                      LogPos(lexer_.GetLineStart(n), DebugFtCanBeLiteral, data);
                   }
-               }
 
-               if(!ok) LogPos(begin, DebugFtNameMismatch, *f);
+                  debug = true;
+               }
             }
             break;
 
@@ -2006,6 +2017,8 @@ void CodeFile::InsertFunc(Function* func)
 
 void CodeFile::InsertInclude(IncludePtr& incl)
 {
+   Debug::ft("CodeFile.InsertInclude");
+
    incls_.push_back(std::move(incl));
 }
 

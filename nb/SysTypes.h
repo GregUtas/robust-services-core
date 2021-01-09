@@ -154,6 +154,7 @@ constexpr char TAB = '\t';
 //
 extern fixed_string EMPTY_STR;
 extern fixed_string CRLF_STR;
+extern fixed_string QUOTE_STR;
 extern fixed_string ERROR_STR;
 extern fixed_string SCOPE_STR;
 

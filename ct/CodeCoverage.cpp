@@ -184,6 +184,13 @@ bool CodeCoverage::Commit(const Functions& funcs)
 
 //------------------------------------------------------------------------------
 
+bool CodeCoverage::Defined(const string& func) const
+{
+   return (currFuncs_.find(Mangle(func)) != currFuncs_.cend());
+}
+
+//------------------------------------------------------------------------------
+
 string CodeCoverage::Demangle(const string& s)
 {
    string result(s);
@@ -334,11 +341,7 @@ bool CodeCoverage::Insert(const string& func, uint32_t hash, const string& file)
 
    auto name = Mangle(func);
    auto iter = currFuncs_.find(name);
-
-   if(iter != currFuncs_.cend())
-   {
-      return (iter->second.file == file);
-   }
+   if(iter != currFuncs_.cend()) return false;
 
    FuncInfo info(file, hash);
    auto result = currFuncs_.insert(FuncData(name, info));

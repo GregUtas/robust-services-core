@@ -2456,7 +2456,7 @@ void Function::CheckArgs() const
       {
          if(*args_[i]->Name() != *base->args_[i]->Name())
          {
-            args_[i]->Log(OverrideRenamesArgument, this, i + (this_ ? 0 : 1));
+            LogToArg(OverrideRenamesArgument, i);
          }
       }
 
@@ -2466,8 +2466,7 @@ void Function::CheckArgs() const
          {
             if(*mate_->args_[i]->Name() != *base->args_[i]->Name())
             {
-               mate_->args_[i]->Log
-                  (OverrideRenamesArgument, mate_, i + (this_ ? 0 : 1));
+               mate_->LogToArg(OverrideRenamesArgument, i);
             }
          }
       }
@@ -2486,8 +2485,7 @@ void Function::CheckArgs() const
       {
          if(*args_[i]->Name() != *mate_->args_[i]->Name())
          {
-            mate_->args_[i]->Log
-               (DefinitionRenamesArgument, mate_, i + (this_ ? 0 : 1));
+            mate_->LogToArg(DefinitionRenamesArgument, i);
          }
       }
    }
@@ -2502,7 +2500,7 @@ void Function::CheckArgs() const
       {
          if((i != 0) || !this_)
          {
-            LogToBoth(ArgumentUnused, i);
+            LogToArg(ArgumentUnused, i);
          }
       }
       else
@@ -2520,7 +2518,7 @@ void Function::CheckArgs() const
                }
                else
                {
-                  arg->Log(ArgumentCannotBeConst, this, i + (this_ ? 0 : 1));
+                  LogToArg(ArgumentCannotBeConst, i);
                }
             }
 
@@ -2549,13 +2547,13 @@ void Function::CheckArgs() const
                if((spec->Ptrs(true) == 0) && (spec->Refs() == 0))
                {
                   if(arg->Root()->Type() == Cxx::Class)
-                     LogToBoth(ArgumentCouldBeConstRef, i);
+                     LogToArg(ArgumentCouldBeConstRef, i);
                }
                else
                {
                   if(!IsTemplateArg(arg) || (spec->Ptrs(true) == 0))
                   {
-                     LogToBoth(ArgumentCouldBeConst, i);
+                     LogToArg(ArgumentCouldBeConst, i);
                   }
                }
             }
@@ -2636,7 +2634,7 @@ void Function::CheckCtor() const
    if((impl != nullptr) && (impl->FirstStatement() == nullptr) &&
       (defn->call_ == nullptr) && mems.empty())
    {
-      LogToBoth(FunctionCouldBeDefaulted);
+      Log(FunctionCouldBeDefaulted);
    }
 
    //  The compiler default is for a copy or move constructor to invoke the
@@ -2771,7 +2769,7 @@ void Function::CheckDtor() const
    auto impl = GetDefn()->impl_.get();
    if((impl != nullptr) && (impl->FirstStatement() == nullptr))
    {
-      LogToBoth(FunctionCouldBeDefaulted);
+      Log(FunctionCouldBeDefaulted);
    }
 
    auto cls = GetClass();
@@ -2829,12 +2827,12 @@ void Function::CheckFree() const
 
       if((cls != nullptr) && (cls != GetClass()))
       {
-         LogToBoth(FunctionCouldBeMember, i);
+         LogToArg(FunctionCouldBeMember, i);
          return;
       }
    }
 
-   LogToBoth(FunctionCouldBeFree);
+   Log(FunctionCouldBeFree);
 }
 
 //------------------------------------------------------------------------------
@@ -2861,7 +2859,7 @@ void Function::CheckIfCouldBeConst() const
       if((func != this) && (*func->Name() == *Name())) return;
    }
 
-   LogToBoth(FunctionCouldBeConst);
+   Log(FunctionCouldBeConst);
 }
 
 //------------------------------------------------------------------------------
@@ -2983,7 +2981,7 @@ bool Function::CheckIfUnused(Warning warning) const
 
    if(type_) return false;
    if(!IsUnused()) return false;
-   LogToBoth(warning);
+   Log(warning);
    return true;
 }
 
@@ -3040,11 +3038,11 @@ void Function::CheckNoexcept() const
 
    if(noexcept_)
    {
-      if(!can) LogToBoth(ShouldNotBeNoexcept);
+      if(!can) Log(ShouldNotBeNoexcept);
    }
    else
    {
-      if(can) LogToBoth(CouldBeNoexcept);
+      if(can) Log(CouldBeNoexcept);
    }
 }
 
@@ -3086,7 +3084,7 @@ void Function::CheckStatic() const
    //
    if(!static_)
    {
-      LogToBoth(FunctionCouldBeStatic);
+      Log(FunctionCouldBeStatic);
       return;
    }
 
@@ -3099,7 +3097,7 @@ void Function::CheckStatic() const
 
       if(cls == GetClass())
       {
-         LogToBoth(FunctionCouldBeMember, i);
+         LogToArg(FunctionCouldBeMember, i);
          return;
       }
    }
@@ -4563,26 +4561,12 @@ size_t Function::LogOffsetToArgIndex(word offset) const
 
 //------------------------------------------------------------------------------
 
-void Function::LogToBoth(Warning warning, size_t index) const
+void Function::LogToArg(Warning warning, size_t index) const
 {
-   Debug::ft("Function.LogToBoth");
+   Debug::ft("Function.LogToArg");
 
-   if(index == SIZE_MAX)
-   {
-      this->Log(warning);
-      if(mate_ != nullptr) mate_->Log(warning, mate_, 0, true);
-   }
-   else
-   {
-      auto arg = args_.at(index).get();
-      arg->Log(warning, this, index + (this_ ? 0 : 1));
-
-      if(mate_ != nullptr)
-      {
-         arg = mate_->args_.at(index).get();
-         arg->Log(warning, mate_, index + (this_ ? 0 : 1), true);
-      }
-   }
+   auto arg = GetArgs().at(index).get();
+   arg->Log(warning, this, index + (this_ ? 0 : 1));
 }
 
 //------------------------------------------------------------------------------

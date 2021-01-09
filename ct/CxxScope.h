@@ -1549,12 +1549,15 @@ private:
    void CheckStatic() const;
    void CheckFree() const;
 
-   //  Logs WARNING on both the function's declaration and its definition.
-   //  When INDEX is provided, CodeWarning.pos will be that of args_[INDEX]
-   //  rather than the function itself, but CodeWarning.item will still be
-   //  the function.
+   //  Logs WARNING on the argument at INDEX, with the fields in CodeWarning
+   //  being set as follows:
+   //  o pos_ is the position of the argument
+   //  o offset_ is the argument's index as seen in source code: it must be
+   //    decremented to obtain its internal index unless the function has a
+   //    "this" argument (see LogOffsetToArgIndex).
+   //  o item_ is the actual function
    //
-   void LogToBoth(Warning warning, size_t index = SIZE_MAX) const;
+   void LogToArg(Warning warning, size_t index) const;
 
    //  Displays the function's definition.
    //

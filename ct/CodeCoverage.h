@@ -46,9 +46,13 @@ class CodeCoverage : public NodeBase::Temporary
 public:
    //  Adds FUNC, located in FILE, to the functions that invoke Debug::ft.
    //  HASH is the hash value for its source code.  Returns FALSE if FUNC
-   //  is already in use within a different file.
+   //  is already in use.
    //
    bool Insert(const std::string& func, uint32_t hash, const std::string& file);
+
+   //  Returns true if the name FUNC is already in use.
+   //
+   bool Defined(const std::string& func) const;
 
    //  Updates EXPL with the outcome of loading the database.  Returns a
    //  non-zero value on failure.

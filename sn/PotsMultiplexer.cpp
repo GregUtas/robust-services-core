@@ -486,11 +486,9 @@ void PotsMuxPsm::SendCause(Cause::Ind cause)
 
 //------------------------------------------------------------------------------
 
-fn_name PotsMuxPsm_SendFacility = "PotsMuxPsm.SendFacility";
-
 void PotsMuxPsm::SendFacility(ServiceId sid, Facility::Ind ind)
 {
-   Debug::ft(PotsMuxPsm_SendFacility);
+   Debug::ft("PotsMuxPsm.SendFacility(sid)");
 
    facility_.sid = sid;
    facility_.ind = ind;
@@ -498,7 +496,7 @@ void PotsMuxPsm::SendFacility(ServiceId sid, Facility::Ind ind)
 
 void PotsMuxPsm::SendFacility(Facility::Ind ind)
 {
-   Debug::ft(PotsMuxPsm_SendFacility);
+   Debug::ft("PotsMuxPsm.SendFacility");
 
    SendFacility(remSid_, ind);
 }

@@ -86,11 +86,9 @@ void CliStack::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name CliStack_FindCommand = "CliStack.FindCommand";
-
 const CliCommand* CliStack::FindCommand(const string& comm) const
 {
-   Debug::ft(CliStack_FindCommand);
+   Debug::ft("CliStack.FindCommand");
 
    const CliIncrement* incr;
    return FindCommand(comm, incr);
@@ -101,7 +99,7 @@ const CliCommand* CliStack::FindCommand(const string& comm) const
 const CliCommand* CliStack::FindCommand
    (const string& comm, const CliIncrement*& incr) const
 {
-   Debug::ft(CliStack_FindCommand);
+   Debug::ft("CliStack.FindCommand(incr)");
 
    //  Search the active increments for one that recognizes TEXT as
    //  a command.  If more than one increment has TEXT as a command,

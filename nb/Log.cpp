@@ -234,11 +234,9 @@ void Log::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name Log_Find = "Log.Find";
-
 Log* Log::Find(fixed_string groupName, LogId id, LogGroup*& group)
 {
-   Debug::ftnt(Log_Find);
+   Debug::ftnt("Log.Find");
 
    auto reg = Singleton< LogGroupRegistry >::Extant();
    if(reg == nullptr) return nullptr;
@@ -256,7 +254,7 @@ const size_t MinNameSize = 1 + LogIdSize;
 
 Log* Log::Find(fixed_string log)
 {
-   Debug::ftnt(Log_Find);
+   Debug::ft("Log.Find(log)");
 
    //  The log's name starts at LOG[Indent + 1], after the <CRLF> at the
    //  start of the log and the field for an alarm status.  Find END, the

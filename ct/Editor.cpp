@@ -1809,7 +1809,7 @@ word Editor::EraseParameter(const Function* func, word offset, string& expl)
 {
    Debug::ft("Editor.EraseParameter");
 
-   //  Erase the parameter at OFFSET in this function definition or declaration.
+   //  Erase the argument at OFFSET in this function definition or declaration.
    //
    return Unimplemented(expl);  //*
 }
@@ -4120,7 +4120,7 @@ word Editor::ReplaceHeading(const CodeWarning& log, string& expl)
 
    //  Remove the existing header and replace it with the standard one,
    //  inserting the file name where appropriate.
-
+   //
    return Unimplemented(expl);  //*
 }
 
@@ -4697,7 +4697,10 @@ word Editor::TagAsVirtual(const CodeWarning& log, string& expl)
 
    //  Make this destructor virtual.
    //
-   return Unimplemented(expl);  //*
+   auto dtor = FindPos(log.item_->GetPos());
+   if(dtor.pos == string::npos) return NotFound(expl, "Destructor");
+   dtor.iter->code.insert(dtor.pos, "virtual ");
+   return Changed(dtor.iter, expl);
 }
 
 //------------------------------------------------------------------------------

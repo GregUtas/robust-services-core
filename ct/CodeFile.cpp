@@ -2017,8 +2017,6 @@ void CodeFile::InsertFunc(Function* func)
 
 void CodeFile::InsertInclude(IncludePtr& incl)
 {
-   Debug::ft("CodeFile.InsertInclude");
-
    incls_.push_back(std::move(incl));
 }
 

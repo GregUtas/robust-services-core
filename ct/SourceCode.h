@@ -42,7 +42,7 @@ namespace CodeTools
 //
 struct SourceLine
 {
-   SourceLine(const std::string& source, size_t seqno);
+   explicit SourceLine(const std::string& source, size_t seqno = SIZE_MAX);
 
    void Display(std::ostream& stream) const;
 
@@ -87,9 +87,7 @@ struct SourceLoc
    SourceIter iter;  // location in SourceList
    size_t pos;       // position in iter->code
 
-   explicit SourceLoc(const SourceIter& i) : iter(i), pos(0) { }
-
-   SourceLoc(const SourceIter& i, size_t p) : iter(i), pos(p) { }
+   explicit SourceLoc(const SourceIter& i, size_t p = 0) : iter(i), pos(p) { }
 
    SourceLoc(const SourceLoc& that) = default;
 
@@ -133,10 +131,12 @@ struct SourceLoc
       return *this;
    }
 
-   //  Returns the last non-whitespace character in iter->code.  Returns
-   //  NUL if there is no non-whitespace character.
-   //
-   char LastChar() const;
+   SourceLoc& PrevLine()
+   {
+      --iter;
+      pos = iter->code.size() - 1;
+      return *this;
+   }
 };
 
 //------------------------------------------------------------------------------
@@ -495,17 +495,13 @@ public:
    //
    SourceLoc End();
 
-   //  Sets LOC to the end of source and returns it.
+   //  Returns the location of the character after LOC.
    //
-   SourceLoc& End(SourceLoc& loc);
+   SourceLoc Next(const SourceLoc& loc);
 
-   //  Returns LOC after updating it to the next character.
+   //  Returns the location of the character before LOC.
    //
-   SourceLoc& Next(SourceLoc& loc);
-
-   //  Returns LOC after updating it to the previous character.
-   //
-   SourceLoc& Prev(SourceLoc& loc);
+   SourceLoc Prev(const SourceLoc& loc);
 
    //  Overridden to display member variables.
    //

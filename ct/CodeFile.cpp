@@ -687,7 +687,7 @@ void CodeFile::CheckDebugFt() const
                   {
                      LogPos(lexer_.GetLineStart(n), DebugFtNameMismatch, *f);
                   }
-                  else if(!debug && !cover->Insert(fname, hash, Name()))
+                  else if(!debug && !cover->Insert(fname, hash))
                   {
                      LogPos(lexer_.GetLineStart(n), DebugFtNameDuplicated, *f);
                   }
@@ -709,7 +709,7 @@ void CodeFile::CheckDebugFt() const
 
       if(!debug)
       {
-         LogPos(begin, DebugFtNotInvoked, *f);
+         (*f)->Log(DebugFtNotInvoked);
       }
    }
 }
@@ -774,7 +774,7 @@ void CodeFile::CheckFunctionOrder() const
          {
          case FuncCtor:
          case FuncDtor:
-            LogPos((*f)->GetPos(), FunctionNotSorted);
+            (*f)->Log(FunctionNotSorted);
             break;
 
          case FuncOperator:
@@ -783,7 +783,7 @@ void CodeFile::CheckFunctionOrder() const
             {
                if(prev->find(OPERATOR_STR) != 0)
                {
-                  LogPos((*f)->GetPos(), FunctionNotSorted);
+                  (*f)->Log(FunctionNotSorted);
                }
             }
             prev = curr;
@@ -793,7 +793,7 @@ void CodeFile::CheckFunctionOrder() const
             curr = (*f)->Name();
             if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
             {
-               LogPos((*f)->GetPos(), FunctionNotSorted);
+               (*f)->Log(FunctionNotSorted);
             }
             prev = curr;
          }
@@ -881,12 +881,12 @@ void CodeFile::CheckIncludeOrder() const
       //
       if(group1 > group2)
       {
-         LogPos((*i2)->GetPos(), IncludeNotSorted);
+         (*i2)->Log(IncludeNotSorted);
       }
       else if(group1 == group2)
       {
          if(strCompare(*name1, *name2) > 0)
-            LogPos((*i2)->GetPos(), IncludeNotSorted);
+            (*i2)->Log(IncludeNotSorted);
       }
 
       //  Look for a duplicated #include.
@@ -894,9 +894,7 @@ void CodeFile::CheckIncludeOrder() const
       for(auto i3 = i2; i3 != incls_.cend(); ++i3)
       {
          if(*name1 == *(*i3)->Name())
-         {
-            LogPos((*i3)->GetPos(), IncludeDuplicated);
-         }
+            (*i3)->Log(IncludeDuplicated);
       }
 
       group1 = group2;
@@ -1129,6 +1127,14 @@ LineType CodeFile::ClassifyLine
 
    auto length = s.size();
    if(length == 0) return BlankLine;
+
+   //  There is probably a CRLF at the end of the line.
+   //
+   if(s.back() == CRLF)
+   {
+      s.pop_back();
+      if(--length == 0) return BlankLine;
+   }
 
    //  Flag the line if it is too long.
    //
@@ -2293,9 +2299,7 @@ void CodeFile::LogRemoveForwards
       for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
       {
          if((*f)->ScopedName(true) == name)
-         {
-            LogPos((*f)->GetPos(), ForwardRemove);
-         }
+            (*f)->Log(ForwardRemove);
       }
    }
 
@@ -2314,16 +2318,17 @@ void CodeFile::LogRemoveIncludes
    //
    auto& files = Singleton< Library >::Instance()->Files();
 
-   for(auto i = fids.cbegin(); i != fids.cend(); ++i)
+   for(auto f = fids.cbegin(); f != fids.cend(); ++f)
    {
-      string fn;
-      auto f = files.At(*i);
-      auto x = f->IsSubsFile();
-      fn.push_back(x ? '<' : QUOTE);
-      fn += f->Name();
-      fn.push_back(x ? '>' : QUOTE);
-      auto pos = code_.find(fn);
-      if(pos != string::npos) LogPos(pos, IncludeRemove);
+      const auto& name = files.At(*f)->Name();
+
+      for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
+      {
+         if(*(*i)->Name() == name)
+         {
+            (*i)->Log(IncludeRemove);
+         }
+      }
    }
 
    DisplayFileNames(stream, fids, "Remove the #include for");
@@ -2345,7 +2350,7 @@ void CodeFile::LogRemoveUsings(ostream* stream) const
       if((*u)->IsToBeRemoved() && !(*u)->WasAdded())
       {
          delUsing.insert(*u);
-         LogPos((*u)->GetPos(), UsingRemove);
+         (*u)->Log(UsingRemove);
       }
    }
 

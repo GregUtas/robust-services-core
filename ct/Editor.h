@@ -100,11 +100,19 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
+      const string& prefix, const NodeBase::Flags& options) const override;
 private:
    //  Accesses the source code.
    //
    SourceList& Code() { return source_.GetSource(); }
+
+   //  Returns an iterator to the end of the source code.
+   //
+   SourceIter End() { return Code().end(); }
+
+   //  Returns the location at the end of the source code.
+   //
+   SourceLoc EndPos() { return source_.End(); }
 
    //  Writes out the editor's file.  Returns 0 if the file was successfully
    //  written; other values indicate failure.  Updates EXPL with a reason
@@ -156,7 +164,6 @@ private:
    word EraseClass(const CodeWarning& log, string& expl);
    word EraseConst(const CodeWarning& log, string& expl);
    word EraseData(const CliThread& cli, const CodeWarning& log, string& expl);
-   word EraseEnumerator(const CodeWarning& log, string& expl);
    word EraseExplicitTag(const CodeWarning& log, string& expl);
    word EraseForward(const CodeWarning& log, string& expl);
    word EraseLineBreak(const CodeWarning& log, string& expl);
@@ -194,7 +201,6 @@ private:
    word ReplaceUsing(const CodeWarning& log, string& expl);
    word TagAsConstData(const CodeWarning& log, string& expl);
    word TagAsConstPointer(const CodeWarning& log, string& expl);
-   word TagAsDefaulted(const CodeWarning& log, string& expl);
    word TagAsExplicit(const CodeWarning& log, string& expl);
    word TagAsOverride(const CodeWarning& log, string& expl);
    word TagAsVirtual(const CodeWarning& log, string& expl);
@@ -228,7 +234,6 @@ private:
    word ChangeInvokerToMember(const Function* func, word offset, string& expl);
    word EraseArgument(const Function* func, word offset, string& expl);
    word EraseDefault(const Function* func, word offset, string& expl);
-   word EraseFunction(const Function* func, string& expl);
    word EraseParameter(const Function* func, word offset, string& expl);
    word EraseNoexceptTag(const Function* func, string& expl);
    word InsertArgument(const Function* func, word offset, string& expl);
@@ -236,19 +241,9 @@ private:
    word TagAsConstArgument(const Function* func, word offset, string& expl);
    word TagAsConstFunction(const Function* func, string& expl);
    word TagAsConstReference(const Function* func, word offset, string& expl);
+   word TagAsDefaulted(const Function* func, string& expl);
    word TagAsNoexcept(const Function* func, string& expl);
    word TagAsStaticFunction(const Function* func, string& expl);
-
-   //  Erases the line of code addressed by POS.
-   //
-   word EraseCode(size_t pos, string& expl);
-
-   //  Erases the line of code addressed by POS.  Comments on preceding
-   //  lines, up to the next line of code, are also erased if a comment or
-   //  right brace follows the erased code.  DELIMITERS are the characters
-   //  where the code ends.
-   //
-   word EraseCode(size_t pos, const std::string& delimiters, string& expl);
 
    //  Sorts #include directives in standard order.
    //
@@ -283,72 +278,82 @@ private:
    //
    word EraseEmptySeparators();
 
-   //  Returns the source code.
-   //
-   const SourceList& Source() { return source_.GetSource(); }
-
    //  Returns the type of line referenced by ITER.
    //
    LineType GetLineType(const SourceIter& iter) const;
 
-   //  Returns the location of LINE.  Returns source_.end() if LINE is
-   //  not found.
+   //  Returns the location of LINE.  Returns EndPos() if LINE is not found.
    //
    SourceIter FindLine(size_t line);
 
-   //  Returns the location of LINE.  If LINE is not found, sets EXPL to
-   //  an error message and returns source_.end().
+   //  Returns the location of LINE.  If LINE is not found, sets EXPL to an
+   //  error message and returns EndPos().
    //
    SourceIter FindLine(size_t line, string& expl);
 
-   //  Converts POS in the original source code to a line number and
-   //  and offset.
+   //  Converts OFF in the original source code to a line number and offset.
    //
-   SourceLoc FindPos(size_t pos);
+   SourceLoc FindPos(size_t off);
 
-   //  Looks for STR starting at iter->code[off].  If STR is found, returns
-   //  its location, else returns {source_.end(), string::npos}.
+   //  Finds the start of ITEM and backs up to find the starting point for
+   //  cutting the item.  Returns EndPos() on failure.
+   //
+   SourceLoc FindCutBegin(const CxxNamed* item);
+
+   //  Looks for STR on ITER, starting at OFF.  If STR is found, returns its
+   //  position, else returns string::npos.  Ignores any trailing comment.
+   //
+   size_t LineFind(const SourceIter& iter, const string& str, size_t off = 0);
+
+   //  The same as LineFind(iter, str, off), but searches backwards.
+   //
+   size_t LineRfind(const SourceIter& iter, const string& str, size_t off = 0);
+
+   //  The same as LineFind, but continues to subsequent lines.
    //
    SourceLoc Find(SourceIter iter, const string& str, size_t off = 0);
 
-   //  The same as Find(iter, s, off), but searches backwards.
+   //  The same as LineRfind, but continues to previous lines.
    //
    SourceLoc Rfind
       (SourceIter iter, const string& str, size_t off = string::npos);
 
-   //  Returns the location of ID, starting at iter->code[pos].  Returns
-   //  source_.End() if ID was not found.  ID must be an identifier or
-   //  keyword that is delimited by punctuation.  The search spans RANGE
-   //  lines; if RANGE is nullptr, only one line is searched.
+   //  Returns the location of ID, starting at iter->code[off].  Returns
+   //  EndPos() if ID was not found.  ID must be an identifier or keyword
+   //  that is delimited by punctuation.
    //
-   SourceLoc FindWord
-      (SourceIter iter, size_t pos, const string& id, size_t* range = nullptr);
+   SourceLoc FindWord(SourceIter iter, size_t off, const string& id);
 
    //  Returns the location of the first non-blank character starting at
-   //  iter->code[pos].  Returns source_.End() if no such character was found.
+   //  iter->code[off].  Returns EndPos() if no such character was found.
    //
-   SourceLoc FindNonBlank(SourceIter iter, size_t pos);
+   SourceLoc FindNonBlank(SourceIter iter, size_t off = 0);
 
    //  Returns the location of the first non-blank character starting at
-   //  iter->code[pos], reversing.  Returns source_.End() if no such
-   //  character was found.
+   //  iter->code[off], reversing.  Returns EndPos() if no such character
+   //  was found.
    //
-   SourceLoc RfindNonBlank(SourceIter iter, size_t pos);
+   SourceLoc RfindNonBlank(SourceIter iter, size_t off = string::npos);
 
    //  Returns the first occurrence of a character in CHARS, starting at
-   //  loc.iter->code[loc.pos].  Returns source_.End() if none of those
+   //  loc.iter->code[loc.pos].  Returns EndPos() if none of those
    //  characters was found.
    //
    SourceLoc FindFirstOf(const SourceLoc& loc, const string& chars);
 
+   //  Returns the first occurrence of a character in CHARS, reversing
+   //  from loc.iter->code[loc.pos].  Returns EndPos() if none of those
+   //  characters was found.
+   //
+   SourceLoc RfindFirstOf(SourceLoc loc, const string& chars);
+
    //  Returns the location of the right parenthesis after a function's
-   //  argument list.  Returns source_.End() on failure.
+   //  argument list.  Returns EndPos() on failure.
    //
    SourceLoc FindArgsEnd(const Function* func);
 
-   //  Returns the location of the semicolon after a function's declaration
-   //  or the left brace that begins its definition.  Returns source_.End()
-   //  on failure.
+   //  Returns the location of the semicolon after a function's declaration or
+   //  the left brace that begins its definition.  Returns EndPos() on failure.
    //
    SourceLoc FindSigEnd(const CodeWarning& log);
    SourceLoc FindSigEnd(const Function* func);
@@ -357,22 +362,34 @@ private:
    //
    SourceIter LineAfterFunc(const Function* func);
 
+   //  Cuts and returns the code associated with ITEM in CUT.  Comments on
+   //  preceding lines, up to the next line of code, are also erased if a
+   //  comment or left brace follows the erased code.  Returns the location
+   //  that immediately follows the cut.  Returns EndPos() and updates EXPL
+   //  on failure.
+   //
+   SourceLoc CutCode(const CxxNamed* item, string& expl, SourceList& cut);
+
+   //  Erases the code associated with ITEM.
+   //
+   word EraseCode(const CxxNamed* item, string& expl);
+
    //  Inserts CODE at ITER and returns its location.
    //
    SourceIter Insert(const SourceIter& iter, string code);
 
-   //  Inserts PREFIX on the line identified by ITER, starting at POS.  The
+   //  Inserts PREFIX on the line identified by ITER, starting at OFF.  The
    //  prefix replaces blanks but leaves at least one space between it and
    //  the first non-blank character on the line.
    //
-   void InsertPrefix(const SourceIter& iter, size_t pos, const string& prefix);
+   void InsertPrefix(const SourceIter& iter, size_t off, const string& prefix);
 
-   //  Inserts a line break before POS, indents the new line accordingly,
+   //  Inserts a line break before OFF, indents the new line accordingly,
    //  and returns the location of the first non-blank character on the new
-   //  line.  Returns {iter, pos} if a line break was not inserted because
+   //  line.  Returns {iter, off} if a line break was not inserted because
    //  the new line would have been empty.
    //
-   SourceLoc InsertLineBreak(const SourceIter& iter, size_t pos);
+   SourceLoc InsertLineBreak(const SourceIter& iter, size_t off);
 
    //  Deletes the line break at the end of the line referenced by CURR if
    //  the following line will also fit within LineLengthMax.  Returns true
@@ -387,16 +404,15 @@ private:
    SourceIter FindSpecialFuncLoc(const CodeWarning& log, FuncDeclAttrs& attrs);
 
    //  Returns the location where the function CLS::NAME should be declared.
-   //  Returns source_.end() if the user decides not to insert the function.
-   //  Updates ATTRS if the function should be commented and/or offset with
-   //  a blank line.
+   //  Returns EndPos() if the user decides not to add the function.  Updates
+   //  ATTRS if the function should be offset with a blank line or comment.
    //
    SourceIter FindFuncDeclLoc
       (const Class* cls, const string& name, FuncDeclAttrs& attrs);
 
    //  Returns the location where a new function declaration should be added
    //  after PREV and/or before NEXT.  Updates ATTRS if the function should
-   //  be offset with a blank and/or commented.
+   //   be offset with a blank line or comment.
    //
    SourceIter UpdateFuncDeclLoc
       (const Function* prev, const Function* next, FuncDeclAttrs& attrs);
@@ -436,13 +452,13 @@ private:
    //
    SourceIter PrologEnd();
 
-   //  Returns the location of the first #include.  Returns source_.end() if
-   //  no #include was found.
+   //  Returns the location of the first #include.  Returns end() if no
+   //  #include was found.
    //
    SourceIter IncludesBegin();
 
    //  Returns the location of the statement that follows the last #include.
-   //  Returns source_.end() if the last line was an #include.
+   //  Returns End() if the last line was an #include.
    //
    SourceIter IncludesEnd();
 
@@ -511,7 +527,7 @@ private:
    //  Returns the code for a Debug::Ft invocation with an inline string
    //  literal that uses FNAME for the function's name.
    //
-   std::string DebugFtCode(const std::string& fname) const;
+   string DebugFtCode(const string& fname) const;
 
    //  Adds the editor to Editors_ and returns 0.
    //
@@ -519,7 +535,7 @@ private:
 
    //  Sets EXPL to iter->code, adds the editor to Editors_, and returns 0.
    //
-   word Changed(const SourceIter& iter, std::string& expl);
+   word Changed(const SourceIter& iter, string& expl);
 
    //  The file from which the source code was obtained.
    //

@@ -33,7 +33,6 @@
 #include "Library.h"
 #include "Registry.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::ostream;

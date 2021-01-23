@@ -330,6 +330,23 @@ public:
    //
    virtual StackArg NameToArg(Cxx::Operator op, TypeName* name);
 
+   //  Used to find the end of an item that is to be cut when editing code.
+   //  Returns the character(s) that terminate the item.  An item terminated
+   //  by an endline returns CRLF_STR.  Returning EMPTY_STR indicates that an
+   //  error has occurred and that the item should not be cut by itself.
+   //
+   virtual std::string EndChars() const { return NodeBase::EMPTY_STR; }
+
+   //  After invoking EndChars, the end of the item was found at END.  If END
+   //  should not be cut, and a character that precedes the item should be cut
+   //  instead, this function returns the preceding character(s) that can be
+   //  cut.  If none of those characters directly precedes the start of the
+   //  item, END is not cut, but neither is the previous character.  Returning
+   //  EMPTY_STR indicates that no adjustment is required.
+   //
+   virtual std::string BeginChars(char end) const
+      { return NodeBase::EMPTY_STR; }
+
    //  Constructs an argument for the item when it was accessed through VIA,
    //  NAME, and OP (either "." or "->" in VIA OP NAME).
    //
@@ -634,6 +651,10 @@ public:
    //
    CxxScoped* DirectType() const override;
 
+   //  Overridden so that a data item can be erased.
+   //
+   std::string EndChars() const override;
+
    //  Overridden to invoke FindReferent on each template argument.
    //
    void FindReferent() override;
@@ -859,6 +880,10 @@ public:
    //
    CxxScoped* DirectType() const
       override { return Last()->DirectType(); }
+
+   //  Overridden so that a data item can be erased.
+   //
+   std::string EndChars() const override;
 
    //  Overridden to find the referent and push it onto the argument stack.
    //
@@ -1699,6 +1724,7 @@ class Asm : public CxxNamed
 public:
    explicit Asm(ExprPtr& code);
    ~Asm() { CxxStats::Decr(CxxStats::ASM); }
+   std::string EndChars() const override { return ";"; }
    void EnterBlock() override { }
    bool EnterScope() override;
    void Print
@@ -1720,6 +1746,7 @@ public:
    StaticAssert(ExprPtr& expr, ExprPtr& message);
    ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
    void AddToXref() const override;
+   std::string EndChars() const override { return ";"; }
    void EnterBlock() override;
    bool EnterScope() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;

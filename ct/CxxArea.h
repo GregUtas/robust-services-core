@@ -938,6 +938,10 @@ public:
    //
    void Check() const override;
 
+   //  A namespace definition is not cut by itself.
+   //
+   std::string EndChars() const override { return NodeBase::EMPTY_STR; }
+
    //  Overridden to display the namespace and its declarations.
    //
    void Display(std::ostream& stream,

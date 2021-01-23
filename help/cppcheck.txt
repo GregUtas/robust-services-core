@@ -175,10 +175,12 @@ Global data initialization not found
   This data, which is declared at file scope, is not initialized.
 ? W47
 Data is init-only
-This data is initialized but never read or written.
+  This data is initialized but never read or written. However, its
+initialization may have side effects, so check before deleting it.
 ? W48
   Data is write-only
-This data is initialized and written but never read.
+This data is initialized and written but never read. However, the
+writes to it may have side effects, so check before deleting it.
 ? W49
 Global static data
   This data is defined at file scope in a header and is neither

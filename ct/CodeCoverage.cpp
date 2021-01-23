@@ -335,7 +335,7 @@ CodeCoverage::LoadState CodeCoverage::GetTests(string& input)
 
 //------------------------------------------------------------------------------
 
-bool CodeCoverage::Insert(const string& func, uint32_t hash, const string& file)
+bool CodeCoverage::Insert(const string& func, uint32_t hash)
 {
    Debug::ft("CodeCoverage.Insert");
 
@@ -343,7 +343,7 @@ bool CodeCoverage::Insert(const string& func, uint32_t hash, const string& file)
    auto iter = currFuncs_.find(name);
    if(iter != currFuncs_.cend()) return false;
 
-   FuncInfo info(file, hash);
+   FuncInfo info(hash);
    auto result = currFuncs_.insert(FuncData(name, info));
    return result.second;
 }

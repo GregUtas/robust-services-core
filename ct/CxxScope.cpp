@@ -732,6 +732,7 @@ void ClassData::Promote(Class* cls, Cxx::Access access, bool first, bool last)
 void ClassData::SetMemInit(const MemberInit* init)
 {
    memInit_ = init;
+   IncrWrites();
 }
 
 //------------------------------------------------------------------------------
@@ -3338,6 +3339,13 @@ void Function::DisplayInfo(ostream& stream, const Flags& options) const
    if(!options.test(DispFQ) && impl) DisplayFiles(buff);
    auto str = buff.str();
    if(str.size() > 4) stream << str;
+}
+
+//------------------------------------------------------------------------------
+
+string Function::EndChars() const
+{
+   return ((impl_ != nullptr) ? "}" : ";");
 }
 
 //------------------------------------------------------------------------------

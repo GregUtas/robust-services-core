@@ -2072,6 +2072,15 @@ void QualName::CopyContext(const CxxNamed* that)
 
 //------------------------------------------------------------------------------
 
+std::string QualName::EndChars() const
+{
+   auto ref = Referent();
+   if((ref != nullptr) && (ref->Type() == Cxx::Data)) return ";";
+   return EMPTY_STR;
+}
+
+//------------------------------------------------------------------------------
+
 void QualName::EnterBlock()
 {
    Debug::ft("QualName.EnterBlock");
@@ -2831,6 +2840,15 @@ void TypeName::Check() const
 CxxScoped* TypeName::DirectType() const
 {
    return (type_ != nullptr ? type_ : ref_);
+}
+
+//------------------------------------------------------------------------------
+
+std::string TypeName::EndChars() const
+{
+   auto ref = Referent();
+   if((ref != nullptr) && (ref->Type() == Cxx::Data)) return ";";
+   return EMPTY_STR;
 }
 
 //------------------------------------------------------------------------------

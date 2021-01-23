@@ -271,12 +271,12 @@ size_t LineMergeLength
    //  a semicolon.  If LINE2 doesn't start with a left parenthesis, a space
    //  will also have to be inserted when merging.
    //
-   auto pos1 = RfindFirstNotOf(line1, end1, WhitespaceChars);
+   auto pos1 = rfind_first_not_of(line1, end1, WhitespaceChars);
    if(pos1 == string::npos) return SIZE_MAX;
    if(line1.at(pos1) == ';') return SIZE_MAX;
    if(line1.at(pos1) == ':') return SIZE_MAX;
    if(line1.at(pos1) == '}') return SIZE_MAX;
-   auto pos2 = RfindFirstNotOf(line2, end2, WhitespaceChars);
+   auto pos2 = rfind_first_not_of(line2, end2, WhitespaceChars);
    if(pos2 == string::npos) return SIZE_MAX;
    if(line2.at(pos2) != ';') return SIZE_MAX;
    if(line1.find(COMMENT_STR, begin1) < pos1) return SIZE_MAX;

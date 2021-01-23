@@ -457,6 +457,10 @@ protected:
    //
    bool IsDecl() const { return !defn_; }
 
+   //  Increments the number of writes to the data.
+   //
+   void IncrWrites() { ++writes_; }
+
    //  Compiles any alignment directive for the data.
    //
    void ExecuteAlignment() const;
@@ -1263,6 +1267,11 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to end at a right brace or semicolon depending on whether
+   //  the function has code.
+   //
+   std::string EndChars() const override;
 
    //  Overridden to compile the function.
    //

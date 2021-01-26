@@ -1224,11 +1224,9 @@ bool DataSpec::IsConst() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_IsConstPtr = "DataSpec.IsConstPtr";
-
 bool DataSpec::IsConstPtr() const
 {
-   Debug::ft(DataSpec_IsConstPtr);
+   Debug::ft("DataSpec.IsConstPtr");
 
    auto cp = tags_.IsConstPtr();
 
@@ -1249,7 +1247,7 @@ bool DataSpec::IsConstPtr() const
 
 bool DataSpec::IsConstPtr(size_t n) const
 {
-   Debug::ft(DataSpec_IsConstPtr);
+   Debug::ft("DataSpec.IsConstPtr(size_t)");
 
    if(IsAutoDecl()) return tags_.IsConstPtr(n);
    if(tags_.IsConstPtr(n)) return true;
@@ -1328,11 +1326,9 @@ bool DataSpec::IsVolatile() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_IsVolatilePtr = "DataSpec.IsVolatilePtr";
-
 bool DataSpec::IsVolatilePtr() const
 {
-   Debug::ft(DataSpec_IsVolatilePtr);
+   Debug::ft("DataSpec.IsVolatilePtr");
 
    auto vp = tags_.IsVolatilePtr();
 
@@ -1353,7 +1349,7 @@ bool DataSpec::IsVolatilePtr() const
 
 bool DataSpec::IsVolatilePtr(size_t n) const
 {
-   Debug::ft(DataSpec_IsVolatilePtr);
+   Debug::ft("DataSpec.IsVolatilePtr(size_t)");
 
    if(IsAutoDecl()) return tags_.IsVolatilePtr(n);
    if(tags_.IsVolatilePtr(n)) return true;
@@ -2072,6 +2068,15 @@ void QualName::CopyContext(const CxxNamed* that)
    {
       n->CopyContext(that);
    }
+}
+
+//------------------------------------------------------------------------------
+
+std::string QualName::EndChars() const
+{
+   auto ref = Referent();
+   if((ref != nullptr) && (ref->Type() == Cxx::Data)) return ";";
+   return EMPTY_STR;
 }
 
 //------------------------------------------------------------------------------
@@ -2835,6 +2840,15 @@ void TypeName::Check() const
 CxxScoped* TypeName::DirectType() const
 {
    return (type_ != nullptr ? type_ : ref_);
+}
+
+//------------------------------------------------------------------------------
+
+std::string TypeName::EndChars() const
+{
+   auto ref = Referent();
+   if((ref != nullptr) && (ref->Type() == Cxx::Data)) return ";";
+   return EMPTY_STR;
 }
 
 //------------------------------------------------------------------------------

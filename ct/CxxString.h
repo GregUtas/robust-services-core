@@ -40,12 +40,19 @@ namespace CodeTools
    //
    bool IsWordChar(char c);
 
-   //  Starting at STR[POS] and working backwards, returns the position of
-   //  the first character not in ELEMS.  Returns string::npos if no such
-   //  character is found.
+   //  Starting at STR[OFF] and reversing, returns the position of the first
+   //  character in CHARS.  Returns string::npos if no such character is
+   //  found.  Starts at the end of the string if OFF is string::npos.
    //
-   size_t RfindFirstNotOf
-      (const std::string& str, size_t pos, const std::string& elems);
+   size_t rfind_first_of
+      (const std::string& str, size_t off, const std::string& chars);
+
+   //  Starting at STR[OFF] and reversing, returns the position of the first
+   //  character not in CHARS.  Returns string::npos if no such character is
+   //  found.  Starts at the end of the string if OFF is string::npos.
+   //
+   size_t rfind_first_not_of
+      (const std::string& str, size_t off, const std::string& chars);
 
    //  For lists of strings.
    //

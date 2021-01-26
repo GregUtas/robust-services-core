@@ -44,11 +44,14 @@ class CodeCoverage : public NodeBase::Temporary
 {
    friend class NodeBase::Singleton< CodeCoverage >;
 public:
-   //  Adds FUNC, located in FILE, to the functions that invoke Debug::ft.
-   //  HASH is the hash value for its source code.  Returns FALSE if FUNC
-   //  is already in use within a different file.
+   //  Adds FUNC to the functions that invoke Debug::ft.  HASH is the hash value
+   //  for its source code.  Returns FALSE if FUNC is already in use.
    //
-   bool Insert(const std::string& func, uint32_t hash, const std::string& file);
+   bool Insert(const std::string& func, uint32_t hash);
+
+   //  Returns true if the name FUNC is already in use.
+   //
+   bool Defined(const std::string& func) const;
 
    //  Updates EXPL with the outcome of loading the database.  Returns a
    //  non-zero value on failure.
@@ -165,12 +168,9 @@ private:
    //
    struct FuncInfo
    {
-      const std::string file;         // name of function's code file
       const uint32_t hash;            // hash value for function's code
       std::set< std::string > tests;  // tests that invoke the function
 
-      FuncInfo(const std::string& file, uint32_t hash) :
-         file(file), hash(hash) { }
       explicit FuncInfo(uint32_t hash) : hash(hash) { }
    };
 

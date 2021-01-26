@@ -201,6 +201,10 @@ public:
    //  Overridden to set the scope where the declaration appeared.
    //
    void SetScope(CxxScope* scope) override { scope_ = scope; }
+
+   //  By default, items derived from this class end at the next semicolon.
+   //
+   std::string EndChars() const override { return ";"; }
 protected:
    //  Protected because this class is virtual.
    //
@@ -283,6 +287,15 @@ public:
    //  Overridden to log warnings associated with the argument.
    //
    void Check() const override;
+
+   //  An argument ends at the next comma or right parenthesis.
+   //
+   std::string EndChars() const override { return ",)"; }
+
+   //  If the argument ends at a right parenthesis, cut the preceding
+   //  comma (if any) instead.
+   //
+   std::string BeginChars(char end) const override;
 
    //  Overridden to make the argument visible as a local.
    //
@@ -419,6 +432,14 @@ public:
    //
    void DisplayDecl(std::ostream& stream, bool fq) const;
 
+   //  A base class ends at the left brace that begins the class definition.
+   //
+   std::string EndChars() const override { return "{"; }
+
+   //  Causes the preceding colon, instead of the left brace, to be cut.
+   //
+   std::string BeginChars(char end) const override { return ":"; }
+
    //  Overridden to record the current scope as a subclass of the base class.
    //
    bool EnterScope() override;
@@ -512,10 +533,6 @@ public:
    //  Returns the enumerator defined by NAME.
    //
    Enumerator* FindEnumerator(const std::string& name) const;
-
-   //  Returns all of the enumerators.
-   //
-   const EnumeratorPtrVector& Etors() const { return etors_; }
 
    //  Overridden to add the enumeration's components to cross-references.
    //
@@ -652,6 +669,15 @@ public:
    //  *is* used.
    //
    bool CheckIfUnused(Warning warning) const override;
+
+   //  An enumerator ends at the next comma or right brace.
+   //
+   std::string EndChars() const override { return ",}"; }
+
+   //  If the enumerator ended at a right brace, cut the preceding comma (if
+   //  any) instead.
+   //
+   std::string BeginChars(char end) const override;
 
    //  Overridden to display the enumeration.
    //
@@ -1099,6 +1125,15 @@ public:
    //
    void AddToXref() const override;
 
+   //  A member initialization ends at the next comma or left brace.
+   //
+   std::string EndChars() const override { return ",{"; }
+
+   //  If the member initialization ends at a left brace, cut the preceding
+   //  comma or colon.
+   //
+   std::string BeginChars(char end) const override;
+
    //  Overridden to compile the member's initialization expression.
    //
    void EnterBlock() override;
@@ -1183,6 +1218,10 @@ public:
    //  Overridden to check the default type.
    //
    void Check() const override;
+
+   //  A template parameter is not cut by itself.
+   //
+   std::string EndChars() const override { return NodeBase::EMPTY_STR; }
 
    //  Overridden to make the parameter visible as a local.
    //
@@ -1279,6 +1318,10 @@ public:
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
+
+   //  A terminal is not cut by itself.
+   //
+   std::string EndChars() const override { return NodeBase::EMPTY_STR; }
 
    //  Overridden to display the terminal.
    //

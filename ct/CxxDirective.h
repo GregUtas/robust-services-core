@@ -30,6 +30,7 @@
 #include "Cxx.h"
 #include "CxxFwd.h"
 #include "CxxToken.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -43,6 +44,10 @@ public:
    //  Virtual to allow subclassing.
    //
    virtual ~CxxDirective() = default;
+
+   //  A preprocessor directive ends at the end of the line.
+   //
+   std::string EndChars() const override { return NodeBase::CRLF_STR; }
 
    //  Overridden to prevent a log when a directive appears inside a function.
    //

@@ -88,23 +88,12 @@ void SourceLine::Display(ostream& stream) const
 
 //==============================================================================
 
-char SourceLoc::LastChar() const
-{
-   auto size = iter->code.size();
-   if(size == 0) return NUL;
-   auto loc = RfindFirstNotOf(iter->code, size - 1, WhitespaceChars);
-   if(loc == std::string::npos) return NUL;
-   return iter->code[loc];
-}
-
-//==============================================================================
-
 SourceCode::SourceCode():
    file_(nullptr),
    scanned_(false),
    slashAsterisk_(false),
-   curr_(SourceLoc(source_.end())),
-   prev_(SourceLoc(source_.end()))
+   curr_(End()),
+   prev_(End())
 {
    Debug::ft("SourceCode.ctor");
 }
@@ -311,7 +300,7 @@ void SourceCode::CalcDepths()
                if(en)
                {
                   auto end = FindFirstOf(",}");
-                  curr_ = end.iter->code[end.pos] == ',' ? end : Prev(end);
+                  curr_ = (end.iter->code[end.pos] == ',' ? end : Prev(end));
                   SetDepth(start, depth, depth);
                   Advance(1);
                   continue;
@@ -593,6 +582,7 @@ void SourceCode::ClassifyLines()
       }
 
       s->type = (prevCont ? prevType: currType);
+      s->cont = currCont;
       prevCont = currCont;
       prevType = currType;
    }
@@ -643,14 +633,6 @@ void SourceCode::Display(ostream& stream,
 SourceLoc SourceCode::End()
 {
    return SourceLoc(source_.end(), string::npos);
-}
-
-//------------------------------------------------------------------------------
-
-SourceLoc& SourceCode::End(SourceLoc& loc)
-{
-   loc = SourceLoc(source_.end());
-   return loc;
 }
 
 //------------------------------------------------------------------------------
@@ -791,13 +773,13 @@ SourceLoc SourceCode::FindFirstOf(const std::string& targs)
          SkipCharLiteral(loc);
          break;
       case '{':
-         FindClosing('{', '}', loc.NextChar());
+         loc = FindClosing('{', '}', loc.NextChar());
          break;
       case '(':
-         FindClosing('(', ')', loc.NextChar());
+         loc = FindClosing('(', ')', loc.NextChar());
          break;
       case '[':
-         FindClosing('[', ']', loc.NextChar());
+         loc = FindClosing('[', ']', loc.NextChar());
          break;
       case '<':
       {
@@ -1785,19 +1767,19 @@ bool SourceCode::Initialize(const CodeFile& file)
 SourceLoc SourceCode::LastLoc()
 {
    auto loc = End();
-   if(!source_.empty()) Prev(loc);
-   return loc;
+   return (source_.empty() ? loc : Prev(loc));
 }
 
 //------------------------------------------------------------------------------
 
-SourceLoc& SourceCode::Next(SourceLoc& loc)
+SourceLoc SourceCode::Next(const SourceLoc& loc)
 {
-   if(loc.iter == source_.end()) return loc;
-   if(++loc.pos < loc.iter->code.size()) return loc;
-   ++loc.iter;
-   loc.pos = 0;
-   return loc;
+   auto next = loc;
+   if(next.iter == source_.end()) return next;
+   if(++next.pos < next.iter->code.size()) return next;
+   ++next.iter;
+   next.pos = 0;
+   return next;
 }
 
 //------------------------------------------------------------------------------
@@ -1965,8 +1947,7 @@ SourceLoc SourceCode::NextPos(const SourceLoc& start)
             //  The / did not introduce a comment, so it is the next
             //  character of interest.
             //
-            loc.PrevChar();
-            return loc;
+            return loc.PrevChar();
          }
          break;
 
@@ -2127,28 +2108,30 @@ void SourceCode::PreprocessSource()
 
 //------------------------------------------------------------------------------
 
-SourceLoc& SourceCode::Prev(SourceLoc& loc)
+SourceLoc SourceCode::Prev(const SourceLoc& loc)
 {
-   if(loc.iter == source_.end())
+   auto prev = loc;
+
+   if(prev.iter == source_.end())
    {
-      --loc.iter;
-      loc.pos = loc.iter->code.size() - 1;
+      --prev.iter;
+      prev.pos = prev.iter->code.size() - 1;
    }
-   else if((loc.pos > 0) && (loc.pos < loc.iter->code.size() - 1))
+   else if((prev.pos > 0) && (prev.pos < prev.iter->code.size() - 1))
    {
-      --loc.pos;
+      --prev.pos;
    }
-   else if(loc.iter != source_.begin())
+   else if(prev.iter != source_.begin())
    {
-      --loc.iter;
-      loc.pos = loc.iter->code.size() - 1;
+      --prev.iter;
+      prev.pos = prev.iter->code.size() - 1;
    }
    else
    {
-      return End(loc);
+      return End();
    }
 
-   return loc;
+   return prev;
 }
 
 //------------------------------------------------------------------------------
@@ -2256,7 +2239,7 @@ void SourceCode::SkipCharLiteral(SourceLoc& loc)
       if(c == BACKSLASH) loc.NextChar();
    }
 
-   loc = End(loc);
+   loc = End();
 }
 
 //------------------------------------------------------------------------------
@@ -2289,7 +2272,7 @@ void SourceCode::SkipStrLiteral(SourceLoc& loc, bool& fragmented)
       }
    }
 
-   End(loc);
+   loc = End();
 }
 
 //------------------------------------------------------------------------------
@@ -2325,8 +2308,7 @@ SourceLoc SourceCode::SkipTemplateSpec(SourceLoc loc)
    }
 
    if(depth != 0) return End();
-   loc.PrevChar();
-   return loc;
+   return loc.PrevChar();
 }
 
 //------------------------------------------------------------------------------

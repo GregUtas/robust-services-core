@@ -229,7 +229,5 @@ using ProtectedStr =
    std::basic_string<char, CharTraits, ProtectedAllocator<char>>;
 using TemporaryStr =
    std::basic_string<char, CharTraits, TemporaryAllocator<char>>;
-
-using ProtectedStrPtr = std::unique_ptr< ProtectedStr >;
 }
 #endif

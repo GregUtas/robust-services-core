@@ -69,6 +69,13 @@ void Argument::AddToXref() const
 
 //------------------------------------------------------------------------------
 
+string Argument::BeginChars(char end) const
+{
+   return (end == ')' ? "," : EMPTY_STR);
+}
+
+//------------------------------------------------------------------------------
+
 void Argument::Check() const
 {
    Debug::ft("Argument.Check");
@@ -1206,6 +1213,13 @@ void Enumerator::AddToXref() const
 
 //------------------------------------------------------------------------------
 
+string Enumerator::BeginChars(char end) const
+{
+   return (end == '}' ? "," : EMPTY_STR);
+}
+
+//------------------------------------------------------------------------------
+
 void Enumerator::Check() const
 {
    Debug::ft("Enumerator.Check");
@@ -2193,6 +2207,13 @@ void MemberInit::AddToXref() const
 {
    if(ref_ != nullptr) ref_->AddReference(this);
    init_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
+string MemberInit::BeginChars(char end) const
+{
+   return (end == '{' ? ",:" : EMPTY_STR);
 }
 
 //------------------------------------------------------------------------------

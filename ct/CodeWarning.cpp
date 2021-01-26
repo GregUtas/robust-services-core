@@ -458,7 +458,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, E,
       "Redundant const in type specification")));
    Attrs_.insert(WarningPair(DefineNotAtFileScope,
-      WarningAttrs(T, U,
+      WarningAttrs(F, U,
       "#define appears within a class or function")));
    Attrs_.insert(WarningPair(IncludeFollowsCode,
       WarningAttrs(T, U,
@@ -500,10 +500,10 @@ void CodeWarning::Initialize()
       WarningAttrs(T, D,
       "Remove forward declaration")));
    Attrs_.insert(WarningPair(ArgumentUnused,
-      WarningAttrs(T, E,
+      WarningAttrs(F, E,
       "Unused argument")));
    Attrs_.insert(WarningPair(ClassUnused,
-      WarningAttrs(T, D,
+      WarningAttrs(F, D,
       "Unused class")));
    Attrs_.insert(WarningPair(DataUnused,
       WarningAttrs(T, D,
@@ -533,10 +533,10 @@ void CodeWarning::Initialize()
       WarningAttrs(T, C,
       "Indirect reference relies on friend, not forward, declaration")));
    Attrs_.insert(WarningPair(HidesInheritedName,
-      WarningAttrs(T, R,
+      WarningAttrs(F, R,
       "Member hides inherited name")));
    Attrs_.insert(WarningPair(ClassCouldBeNamespace,
-      WarningAttrs(T, R,
+      WarningAttrs(F, R,
       "Class could be namespace")));
    Attrs_.insert(WarningPair(ClassCouldBeStruct,
       WarningAttrs(T, R,
@@ -548,19 +548,19 @@ void CodeWarning::Initialize()
       WarningAttrs(T, D,
       "Redundant access control")));
    Attrs_.insert(WarningPair(ItemCouldBePrivate,
-      WarningAttrs(T, U,
+      WarningAttrs(F, U,
       "Member could be private")));
    Attrs_.insert(WarningPair(ItemCouldBeProtected,
-      WarningAttrs(T, U,
+      WarningAttrs(F, U,
       "Member could be protected")));
    Attrs_.insert(WarningPair(PointerTypedef,
       WarningAttrs(F, X,
       "Typedef of pointer type")));
    Attrs_.insert(WarningPair(AnonymousEnum,
-      WarningAttrs(T, I,
+      WarningAttrs(F, I,
       "Anonymous enum")));
    Attrs_.insert(WarningPair(DataUninitialized,
-      WarningAttrs(T, C,
+      WarningAttrs(F, C,
       "Global data initialization not found")));
    Attrs_.insert(WarningPair(DataInitOnly,
       WarningAttrs(T, D,
@@ -590,7 +590,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, E,
       "Data need not be mutable")));
    Attrs_.insert(WarningPair(DefaultPODConstructor,
-      WarningAttrs(T, C,
+      WarningAttrs(F, C,
       "Default constructor invoked: POD members not initialized")));
    Attrs_.insert(WarningPair(DefaultConstructor,
       WarningAttrs(T, C,
@@ -608,16 +608,16 @@ void CodeWarning::Initialize()
       WarningAttrs(T, I,
       "Single-argument constructor is not explicit")));
    Attrs_.insert(WarningPair(MemberInitMissing,
-      WarningAttrs(T, C,
+      WarningAttrs(F, C,
       "Member not included in member initialization list")));
    Attrs_.insert(WarningPair(MemberInitNotSorted,
-      WarningAttrs(T, U,
+      WarningAttrs(F, U,
       "Member not sorted in standard order in member initialization list")));
    Attrs_.insert(WarningPair(DefaultDestructor,
       WarningAttrs(T, C,
       "Default destructor invoked")));
    Attrs_.insert(WarningPair(VirtualDestructor,
-      WarningAttrs(T, U,
+      WarningAttrs(F, U,
       "Base class virtual destructor is not public")));
    Attrs_.insert(WarningPair(NonVirtualDestructor,
       WarningAttrs(T, I,
@@ -644,10 +644,10 @@ void CodeWarning::Initialize()
       WarningAttrs(T, D,
       "Function not implemented")));
    Attrs_.insert(WarningPair(PureVirtualNotDefined,
-      WarningAttrs(T, C,
+      WarningAttrs(F, C,
       "Pure virtual function not implemented")));
    Attrs_.insert(WarningPair(VirtualAndPublic,
-      WarningAttrs(T, R,
+      WarningAttrs(F, R,
       "Virtual function is public")));
    Attrs_.insert(WarningPair(BoolMixedWithNumeric,
       WarningAttrs(F, X,
@@ -677,7 +677,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, R,
       "Override renames argument in direct base class")));
    Attrs_.insert(WarningPair(VirtualDefaultArgument,
-      WarningAttrs(T, R,
+      WarningAttrs(F, R,
       "Virtual function defines default argument")));
    Attrs_.insert(WarningPair(ArgumentCannotBeConst,
       WarningAttrs(F, X,
@@ -698,10 +698,10 @@ void CodeWarning::Initialize()
       WarningAttrs(T, I,
       "Function could be static")));
    Attrs_.insert(WarningPair(FunctionCouldBeFree,
-      WarningAttrs(T, R,
+      WarningAttrs(F, R,
       "Function could be free")));
    Attrs_.insert(WarningPair(StaticFunctionViaMember,
-      WarningAttrs(T, R,
+      WarningAttrs(F, R,
       "Static function invoked via operator \".\" or \"->\"")));
    Attrs_.insert(WarningPair(NonBooleanConditional,
       WarningAttrs(F, X,
@@ -728,13 +728,13 @@ void CodeWarning::Initialize()
       WarningAttrs(T, D,
       "Deletion of blank line recommended")));
    Attrs_.insert(WarningPair(LineLength,
-      WarningAttrs(T, S,
+      WarningAttrs(F, S,
       "Line length exceeds the standard maximum")));
    Attrs_.insert(WarningPair(FunctionNotSorted,
-      WarningAttrs(T, U,
+      WarningAttrs(F, U,
       "Function not sorted in standard order")));
    Attrs_.insert(WarningPair(HeadingNotStandard,
-      WarningAttrs(T, C,
+      WarningAttrs(F, C,
       "File heading is not standard")));
    Attrs_.insert(WarningPair(IncludeGuardMisnamed,
       WarningAttrs(T, R,
@@ -752,7 +752,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, R,
       "Function name passed to Debug::ft is used by another function")));
    Attrs_.insert(WarningPair(DisplayNotOverridden,
-      WarningAttrs(T, C,
+      WarningAttrs(F, C,
       "Override of Base.Display not found")));
    Attrs_.insert(WarningPair(PatchNotOverridden,
       WarningAttrs(T, C,
@@ -776,7 +776,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, J,
       "Line can merge with the next line and be under the length limit")));
    Attrs_.insert(WarningPair(CopyCtorConstructsBase,
-      WarningAttrs(T, C,
+      WarningAttrs(F, C,
       "Copy/move constructor does not invoke base copy/move constructor")));
    Attrs_.insert(WarningPair(ValueArgumentModified,
       WarningAttrs(F, X,
@@ -785,13 +785,13 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X,
       "Function returns non-const reference or pointer to member data")));
    Attrs_.insert(WarningPair(FunctionCouldBeMember,
-      WarningAttrs(T, R,
+      WarningAttrs(F, R,
       "Function could be a member of a class that is an indirect argument")));
    Attrs_.insert(WarningPair(ExplicitConstructor,
       WarningAttrs(T, E,
       "Constructor does not require explicit tag")));
    Attrs_.insert(WarningPair(BitwiseOperatorOnBoolean,
-      WarningAttrs(T, R,
+      WarningAttrs(F, R,
       "Operator | or & used on boolean")));
    Attrs_.insert(WarningPair(DebugFtCanBeLiteral,
       WarningAttrs(T, R,

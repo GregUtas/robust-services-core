@@ -15,6 +15,6 @@ found, a warning appears on the console and default values are used
 for all configuration parameters.
 
 Note that a release build disables a number of optimizations so that
-it can actually be debugged. Nevertheless, it runs at least three
-times as fast as a debug build, and about half as fast as a release
+it can actually be debugged. Nevertheless, it runs about 3.5 times
+faster than a debug build, but about half as fast as a release
 build that is fully optimized.

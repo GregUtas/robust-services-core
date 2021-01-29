@@ -31,7 +31,7 @@ even gathers information that a regular compiler would not.
 - [x] `"`_\<substr1>_`"`_\<whitespace>_`"`_\<substr2>_`"` as the continuation of a string literal
 
 ## Not Supported
-The following is a list of things (through C++11) that are known _not_ to be
+The following is a list of things (through C++11) that are known to _not_ be
 supported. In some cases, functions that would need to be enhanced to support
 them are noted.
 
@@ -110,25 +110,6 @@ See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and `Parser.Get
   All of the code is compiled together after calculating a global compile order,
   which makes the One Definition Rule global.
 
-### Operators
-- [ ] `operator.` chaining
-
-  In `TlvMessage.DeleteParm`, `parm` is incorrectly flagged as `ArgumentCouldBeConst`.
-  This occurs even though `parm.header.pid` is the target of an assignment. `StackArg` has
-  a single `via_` member, so it can’t follow a _chain_ of `.` operators. It knows that `header`
-  is modified, but it has dropped this information for `parm`.
-- [ ] `operator?` second expression (the one after the `:`)
-
-  `StackArg.via_` is incorrectly flagged as `DataCouldBeConst`. In `StackArg.SetNonConst`,
-  this is caused by
-  ```
-  auto token = (index == 0 ? item : via_);
-  ```
-  Here, `token` is a _non_-const `CxxToken*`, courtesy of `item`.  If `via_` were assigned to
-  the non-const `token`, we would know that `via_` could not be const, but this does not
-  occur. The reason is that the _first_ expression afer the `?` operator is evaluated when
-  executing the assignment operator, but not the second.
-
 ### Namespaces
 - [ ] `using` statements in namespaces (currently treated as if at file scope)
 - [ ] namespace aliases (with `using`)
@@ -173,16 +154,6 @@ overloads)
 - [ ] dynamic exception specifications
 - [ ] deduced return type (`auto`)
 - [ ] trailing return type (after `->`)
-- [ ] lvalues and rvalues
-
-  `StackArg` does not distinguish lvalues and rvalues. Consequently,
-  `Function.CanInvokeWith` cannot distinguish functions that are identical
-  apart from the use of _\<argument-type>_`&` and _\<argument-type>_`&&`. Functions
-  with the latter signature will therefore be logged as `FunctionIsUnused`
-  by `>check`.
-- [ ] A function call on a constructor is not registered when brace initialization
-is used. The constructor might therefore be logged as `FunctionIsUnused`
-by `>check`.
 
 ### Data
 - [ ] declaring more than one data instance in the same statement, either at file
@@ -230,16 +201,53 @@ template is a base class
   so the static member appears uninitialized (`<@i=0`) in the _.lib_ file created by
   `>export`.
 
-Because external headers in the [_subs_](/subs) directory do not provide function
-implementations for templates, `>check` erroneously recommends things such as
-- removing an `#include` that is needed to make a destructor visible to a
-`std::unique_ptr` template instance
-- declaring a data member `const`even though it is inserted in a `std::set` and
-must therefore support `std::move`
-- removing most of the things in _Allocators.h_ (since this code is only invoked
-from the STL, not from within RSC)
-
 ### Parser
 - [ ] `Parser.Punt` causes a software log on argument overflow
 - [ ] `Scope` and `clear` are repeated in pseudo-code generated when `>parse`
 is used with the `x` option
+
+## Erroneous Warnings from `>check`
+
+The `>check` command sometimes produces erroneous warnings. Some of these are
+related to the `StackArg` class, which tracks how executable code uses variables.
+
+- [ ] `operator.` chaining
+
+  In `TlvMessage.DeleteParm`, `parm` is incorrectly flagged as `ArgumentCouldBeConst`.
+  This occurs even though `parm.header.pid` is the target of an assignment. `StackArg` has
+  a single `via_` member, so it can’t follow a _chain_ of `.` operators. It knows that `header`
+  is modified, but it has dropped this information for `parm`.
+
+- [ ] `operator?` second expression (the one after the `:`)
+
+  `StackArg.via_` is incorrectly flagged as `DataCouldBeConst`. In `StackArg.SetNonConst`,
+  this is caused by
+  ```
+  auto token = (index == 0 ? item : via_);
+  ```
+  Here, `token` is a _non_-const `CxxToken*`, courtesy of `item`.  If `via_` were assigned to
+  the non-const `token`, we would know that `via_` could not be const, but this does not
+  occur. The reason is that the _first_ expression afer the `?` operator is evaluated when
+  executing the assignment operator, but not the second.
+
+- [ ] lvalues and rvalues
+
+  `StackArg` does not distinguish  these. Consequently, `Function.CanInvokeWith`
+can't choose between two functions that are identical except for the use of _\<argument-type>_`&`
+and _\<argument-type>_`&&`. Functions with the latter signature are therefore flagged as
+`FunctionIsUnused`.
+
+- [ ] Brace initialization
+
+  A function call on a constructor is not recorded when brace initialization is
+used. The constructor is therefore flagged as `FunctionIsUnused` unless explicitly
+invoked elsewhere.
+
+- [ ] Templates
+
+  External headers in the [_subs_](/subs) directory do not provide function
+implementations for templates, so `>check` incorrectly recommends things such as
+  - removing an `#include` that is needed to make a destructor visible to a
+`std::unique_ptr` template instance
+  - declaring a data member `const`even though it is inserted in a `std::set` and
+must therefore support `std::move`

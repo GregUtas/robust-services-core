@@ -107,7 +107,7 @@ During initialization, the program displays each module as it is initialized.
 have initialized, the CLI prompt `nb>` appears to indicate that CLI commands
 in the _nb_ directory are available. The information written to the console
 during startup is shown [here](/output/init.console.txt), and a list of all
-CLI commands is provided [here](/output/help.cli.txt).
+CLI commands is provided [here](/docs/help.cli.txt).
 
 If you enter `>read saveinit` as the first CLI command, a function trace of
 the initialization, which starts even before the invocation of `main`, is

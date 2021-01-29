@@ -8,7 +8,7 @@ Document | Description
 -------- | -----------
 ![pdf](images/pdf24.png) [RCS chapter 2](/docs/RCS-chapter-2.pdf) | chapter 2 of _Robust Communications Software_
 ![pdf](images/pdf24.png) [RCS tutorial](/docs/RCS-tutorial.pdf) | overview of _Robust Communications Software_
-![pdf](images/pdf24.png) [RSC Product Overview](/docs/RSC-Product-Overview.pdf) | roadmap for the Robust Services Core
+![pdf](images/pdf24.png) [RSC Software Overview](/docs/RSC-Software-Overview.pdf) | roadmap for the Robust Services Core
 ![CodeProject](images/cp100x30.gif) [Software Techniques for Lemmings](https://www.codeproject.com/Articles/5258540/Software-Techniques-for-Lemmings) | article on popular but dubious techniques and RSC's alternatives
 ![CodeProject](images/cp100x30.gif) [Robust C++ : P and V Considered Harmful](https://www.codeproject.com/Articles/5246597/Robust-Cplusplus-P-and-V-Considered-Harmful) | article on cooperative/proportional scheduling
 ![CodeProject](images/cp100x30.gif) [Robust C++ : Safety Net](https://www.codeproject.com/Articles/5165710/Robust-Cplusplus-Safety-Net) | article on recovering from exceptions

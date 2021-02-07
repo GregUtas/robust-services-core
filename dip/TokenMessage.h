@@ -65,13 +65,13 @@ public:
    TokenMessage& operator=(TokenMessage&& that);
 
    //  Copies the message's tokens into TOKENS, which can hold up to MAX
-   //  tokens.  Returns FALSE if the message is empty or contains more
+   //  tokens.  Returns false if the message is empty or contains more
    //  tokens than TOKENS can hold.  Returns true on success, in which
    //  case the last entry in TOKENS will be TOKEN_END_OF_MESSAGE.
    //
    bool get_tokens(Token tokens[], size_t max) const;
 
-   //  Returns TRUE if the message is empty.
+   //  Returns true if the message is empty.
    //
    bool empty() const { return (length_ == 0); }
 

@@ -45,7 +45,7 @@ class CodeCoverage : public NodeBase::Temporary
    friend class NodeBase::Singleton< CodeCoverage >;
 public:
    //  Adds FUNC to the functions that invoke Debug::ft.  HASH is the hash value
-   //  for its source code.  Returns FALSE if FUNC is already in use.
+   //  for its source code.  Returns false if FUNC is already in use.
    //
    bool Insert(const std::string& func, uint32_t hash);
 

@@ -436,7 +436,7 @@ public:
    size_t CreateCode(const ClassInst* inst, NodeBase::stringPtr& code) const;
 
    //  Updates IDX to FUNC's index within its vector and return true.  Returns
-   //  FALSE if FUNC was not found.
+   //  false if FUNC was not found.
    //
    bool GetFuncIndex(const Function* func, size_t& idx) const;
 

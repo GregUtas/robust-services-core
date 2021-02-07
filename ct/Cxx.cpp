@@ -735,8 +735,9 @@ TypeMatch Numeric::CalcMatchWith(const Numeric* that) const
       return Incompatible;
 
    case PTR:
-      if(that->type_ == INT) return Convertible;
-      return Incompatible;
+      if(that->type_ != INT) return Incompatible;
+      if(this->bitWidth_ != that->bitWidth_) return Incompatible;
+      return Convertible;
    }
 
    return Incompatible;

@@ -319,7 +319,7 @@ public:
    //
    TypeName* name;
 private:
-   //  Sets DATA's referent to this argument.  Returns FALSE on failure.
+   //  Sets DATA's referent to this argument.  Returns false on failure.
    //
    bool SetAutoTypeOn(const FuncData& data) const;
 

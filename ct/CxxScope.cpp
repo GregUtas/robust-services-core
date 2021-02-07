@@ -3827,7 +3827,7 @@ size_t Function::GetRange(size_t& begin, size_t& end) const
    //
    CxxScoped::GetRange(begin, end);
    if(impl_ == nullptr) return string::npos;
-   auto lexer = GetFile()->GetLexer();
+   auto& lexer = GetFile()->GetLexer();
    auto left = impl_->GetPos();
    end = lexer.FindClosing('{', '}', left + 1);
    return left;

@@ -678,8 +678,9 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
       auto file = files.At(f->fid);
+      if(file->IsSubsFile()) continue;
 
-      if(file->IsHeader() && (file->GetLexer().LineCount() > 0))
+      if(file->IsHeader() && !file->IsSubsFile())
       {
          if(!parser->Parse(*file)) ++failed;
          ++total;
@@ -691,16 +692,11 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    {
       auto file = files.At(f->fid);
 
-      if(file->IsCpp())
+      if(file->IsCpp() && !file->IsSubsFile())
       {
-         SetOfIds::const_iterator it = fileSet.find(f->fid);
-
-         if(it != fileSet.cend())
-         {
-            if(!parser->Parse(*file)) ++failed;
-            ++total;
-            ThisThread::Pause();
-         }
+         if(!parser->Parse(*file)) ++failed;
+         ++total;
+         ThisThread::Pause();
       }
    }
 

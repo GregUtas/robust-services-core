@@ -359,6 +359,11 @@ public:
    //
    std::string TypeString(bool arg) const override;
 
+   //  Overridden to update the argument's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+
    //  Overridden to increment the number of reads.
    //
    bool WasRead() override;
@@ -611,6 +616,11 @@ public:
    //
    std::string TypeString(bool arg) const override;
 
+   //  Overridden to update the enumeration's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+
    //  Overridden to support, for example, writing to an enum in a std::vector
    //  or passing an enum as an argument.
    //
@@ -747,6 +757,11 @@ public:
    //
    std::string TypeString(bool arg) const override;
 
+   //  Overridden to update the enumerator's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+
    //  Overridden to count references to the enumerator.
    //
    bool WasRead() override;
@@ -868,6 +883,11 @@ public:
    //  Overridden to return the class's full type.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the forward's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Overridden to return the class.
    //
@@ -1027,6 +1047,11 @@ public:
    //  Overridden to return the friend's full type.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the friends's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Overridden to find the item that the declaration refers to.
    //
@@ -1166,6 +1191,11 @@ public:
    //  Overridden to return the member's name.
    //
    std::string Trace() const override { return name_; }
+
+   //  Overridden to update the initializations's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  The constructor where the initialization appears.
    //
@@ -1263,6 +1293,11 @@ public:
    //  Overridden to return the parameter's name and pointers.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the parameter's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Overridden to return the default's type, else this item.
    //
@@ -1491,6 +1526,11 @@ public:
    //
    std::string TypeString(bool arg) const override;
 
+   //  Overridden to update the typedef's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+
    //  Overridden to support a temporary variable represented by a typedef
    //  that was, for example, returned by one function and passed to another.
    //
@@ -1630,7 +1670,12 @@ public:
 
    //  Overridden to shrink the item's name.
    //
-   void Shrink() override { name_->Shrink(); }
+   void Shrink() override;
+
+   //  Overridden to update the directive's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Overridden to find the item that the declaration refers to.
    //

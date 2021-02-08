@@ -228,6 +228,7 @@ bool Argument::SetNonConst()
 
 void Argument::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ARG_DECL, name_.capacity());
    CxxStats::Vectors(CxxStats::ARG_DECL, XrefSize());
@@ -240,6 +241,16 @@ void Argument::Shrink()
 string Argument::TypeString(bool arg) const
 {
    return spec_->TypeString(arg);
+}
+
+//------------------------------------------------------------------------------
+
+void Argument::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   spec_->UpdatePos(action, begin, count, from);
+   if(default_ != nullptr) default_->UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -1160,6 +1171,7 @@ void Enum::SetAsReferent(const CxxNamed* user)
 
 void Enum::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ENUM_DECL, name_.capacity());
 
@@ -1178,6 +1190,19 @@ void Enum::Shrink()
 string Enum::TypeString(bool arg) const
 {
    return Prefix(GetScope()->TypeString(arg)) + name_;
+}
+
+//------------------------------------------------------------------------------
+
+void Enum::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+
+   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
+   {
+      (*e)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -1360,6 +1385,7 @@ void Enumerator::SetAsReferent(const CxxNamed* user)
 
 void Enumerator::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ENUM_MEM, name_.capacity());
    CxxStats::Vectors(CxxStats::ENUM_MEM, XrefSize());
@@ -1373,6 +1399,15 @@ string Enumerator::TypeString(bool arg) const
    auto ts = enum_->TypeString(arg);
    if(!arg) ts += SCOPE_STR + *Name();
    return ts;
+}
+
+//------------------------------------------------------------------------------
+
+void Enumerator::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   if(init_ != nullptr) init_->UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -1565,6 +1600,7 @@ void Forward::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Forward::Shrink()
 {
+   CxxScoped::Shrink();
    CxxStats::Vectors(CxxStats::FORWARD_DECL, XrefSize());
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
@@ -1577,6 +1613,16 @@ string Forward::TypeString(bool arg) const
    auto ref = Referent();
    if(ref != nullptr) return ref->TypeString(arg);
    return Prefix(GetScope()->TypeString(arg)) + *Name();
+}
+
+//------------------------------------------------------------------------------
+
+void Forward::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2170,6 +2216,7 @@ void Friend::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Friend::Shrink()
 {
+   CxxScoped::Shrink();
    CxxStats::Vectors(CxxStats::FRIEND_DECL, XrefSize());
    if(name_ != nullptr) name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
@@ -2186,6 +2233,17 @@ string Friend::TypeString(bool arg) const
    auto func = GetFunction();
    if(func != nullptr) return func->TypeString(arg);
    return Prefix(GetScope()->TypeString(arg)) + QualifiedName(false, true);
+}
+
+//------------------------------------------------------------------------------
+
+void Friend::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   if(name_ != nullptr) name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
+   if(func_ != nullptr) func_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2268,9 +2326,19 @@ CxxScoped* MemberInit::Referent() const
 
 void MemberInit::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::MEMBER_INIT, name_.capacity());
    init_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void MemberInit::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   init_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2407,8 +2475,11 @@ CxxToken* TemplateParm::RootType() const
 
 void TemplateParm::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::TEMPLATE_PARM, name_.capacity());
+   if(type_ != nullptr) type_->Shrink();
+   if(default_ != nullptr) default_->Shrink();
 }
 
 //------------------------------------------------------------------------------
@@ -2418,6 +2489,16 @@ string TemplateParm::TypeString(bool arg) const
    auto ts = *Name();
    if(ptrs_ > 0) ts += string(ptrs_, '*');
    return ts;
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParm::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   if(type_ != nullptr) type_->UpdatePos(action, begin, count, from);
+   if(default_ != nullptr) default_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2494,6 +2575,7 @@ bool Terminal::NameRefersToItem(const string& name,
 
 void Terminal::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    type_.shrink_to_fit();
    CxxStats::Strings(CxxStats::TERMINAL_DECL, name_.capacity());
@@ -2725,6 +2807,7 @@ void Typedef::SetAsReferent(const CxxNamed* user)
 
 void Typedef::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::TYPE_DECL, name_.capacity());
    CxxStats::Vectors(CxxStats::TYPE_DECL, XrefSize());
@@ -2736,6 +2819,15 @@ void Typedef::Shrink()
 string Typedef::TypeString(bool arg) const
 {
    return spec_->TypeString(arg);
+}
+
+//------------------------------------------------------------------------------
+
+void Typedef::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   spec_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2920,5 +3012,22 @@ void Using::SetScope(CxxScope* scope)
    //
    if(scope->Type() == Cxx::Class) scope = scope->GetSpace();
    CxxScoped::SetScope(scope);
+}
+
+//------------------------------------------------------------------------------
+
+void Using::Shrink()
+{
+   CxxScoped::Shrink();
+   name_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Using::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
 }
 }

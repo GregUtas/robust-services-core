@@ -42,6 +42,7 @@ namespace CodeTools
 class CxxLocation
 {
    friend class CxxNamed;
+   friend class CxxStatement;
 public:
    //  Returns the file in which the item is located.  A template
    //  instance belongs to the file that caused its instantiation.
@@ -63,14 +64,19 @@ public:
    //
    bool IsInternal() const { return internal_; }
 
+   //  Updates the item's location after code has been edited.  Has the
+   //  same interface as CxxToken::UpdatePos.
+   //
+   void UpdatePos(EditorAction action, size_t begin, size_t count, size_t from);
+
    //  A position that indicates that the item was not found in the
    //  original source code.  This is used when the Editor creates
    //  an item, for example.
    //
-   static const size_t NOT_IN_SOURCE = 0x7fffffff;
+   static const size_t NOT_IN_SOURCE = 0x3fffffff;
 private:
    //  Initializes fields to default values.  Private because this class
-   //  only appears as a private member of the friend class CxxNamed.
+   //  only appears as a private member of its friend classes.
    //
    CxxLocation();
 
@@ -97,13 +103,17 @@ private:
    //  The item's location in FILE.  The file has a string member which
    //  contains the code, and this is an index into that string.
    //
-   size_t pos_ : 31;
+   size_t pos_ : 30;
+
+   //  Set if the item has been erased during editing.
+   //
+   bool erased_ : 1;
 
    //  Set if the item appeared in internally generated code, which currently
    //  means in a template instance.
    //
    bool internal_ : 1;
-   };
+};
 
 //------------------------------------------------------------------------------
 //
@@ -408,6 +418,11 @@ public:
    //
    Namespace* GetSpace() const override;
 
+   //  Overridden to update the item's position.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+
    //  Overridden to return the item's scoped name.
    //
    std::string Trace() const override { return ScopedName(true); }
@@ -474,7 +489,7 @@ private:
 
    //  The location where the item appeared.
    //
-   CxxLocation loc_;
+   mutable CxxLocation loc_;
 };
 
 //------------------------------------------------------------------------------
@@ -710,6 +725,11 @@ public:
    //  the name itself is omitted.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the name's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  The name that appears in what could be a qualified name.
    //
@@ -956,6 +976,11 @@ public:
    //  Overridden to return the referent's full root type.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the name's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Returns the last name.
    //
@@ -1640,6 +1665,11 @@ private:
    //
    std::string TypeTagsString(const TypeTags& tags) const override;
 
+   //  Overridden to update the type's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+
    //  Overridden to support a temporary variable represented by a DataSpec.
    //
    bool WasWritten(const StackArg* arg, bool direct, bool indirect)
@@ -1708,6 +1738,11 @@ public:
    //  Overridden to return the template's parameters in angle brackets.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the parameters' locations.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  The template's parameters.
    //
@@ -1729,7 +1764,9 @@ public:
    bool EnterScope() override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { code_->Shrink(); }
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    const ExprPtr code_;
 };
@@ -1753,6 +1790,8 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    const ExprPtr expr_;
    const ExprPtr message_;

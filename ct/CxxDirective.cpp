@@ -100,6 +100,23 @@ void Conditional::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    condition_->GetUsages(file, symbols);
 }
 
+//------------------------------------------------------------------------------
+
+void Conditional::Shrink()
+{
+   OptionalCode::Shrink();
+   condition_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Conditional::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   OptionalCode::UpdatePos(action, begin, count, from);
+   condition_->UpdatePos(action, begin, count, from);
+}
+
 //==============================================================================
 
 CxxDirective::CxxDirective()
@@ -212,6 +229,15 @@ void Define::Shrink()
 {
    Macro::Shrink();
    if(rhs_ != nullptr) rhs_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Define::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Macro::UpdatePos(action, begin, count, from);
+   if(rhs_ != nullptr) rhs_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -381,7 +407,18 @@ void Existential::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 void Existential::Shrink()
 {
+   OptionalCode::Shrink();
    name_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Existential::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   OptionalCode::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+   if(else_ != nullptr) else_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -500,6 +537,21 @@ void Iff::Shrink()
    Conditional::Shrink();
    elifs_.shrink_to_fit();
    CxxStats::Vectors(CxxStats::IF_DIRECTIVE, elifs_.capacity());
+}
+
+//------------------------------------------------------------------------------
+
+void Iff::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Conditional::UpdatePos(action, begin, count, from);
+
+   for(auto e = elifs_.cbegin(); e != elifs_.cend(); ++e)
+   {
+      (*e)->UpdatePos(action, begin, count, from);
+   }
+
+   if(else_ != nullptr) else_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -708,6 +760,7 @@ void Macro::SetExpr(ExprPtr& rhs)
 
 void Macro::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::DEFINE_DIRECTIVE, name_.capacity());
    CxxStats::Vectors(CxxStats::DEFINE_DIRECTIVE, XrefSize());
@@ -849,6 +902,7 @@ CxxScoped* MacroName::Referent() const
 
 void MacroName::Shrink()
 {
+   CxxNamed::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::MACRO_NAME, name_.capacity());
 }
@@ -932,6 +986,17 @@ void OptionalCode::Display(ostream& stream,
    stream << CRLF;
 }
 
+//------------------------------------------------------------------------------
+
+void OptionalCode::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Optional::UpdatePos(action, begin, count, from);
+
+   //  Although begin_ and end_ should probably be updated, they are currently
+   //  used only to display code, and this isn't done after editing it.
+}
+
 //==============================================================================
 
 Pragma::Pragma(string& text) : StringDirective(text)
@@ -963,6 +1028,7 @@ StringDirective::StringDirective(string& text)
 
 void StringDirective::Shrink()
 {
+   CxxDirective::Shrink();
    text_.shrink_to_fit();
 }
 
@@ -979,6 +1045,7 @@ SymbolDirective::SymbolDirective(string& name)
 
 void SymbolDirective::Shrink()
 {
+   CxxDirective::Shrink();
    name_.shrink_to_fit();
 }
 

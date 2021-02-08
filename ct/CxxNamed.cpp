@@ -63,6 +63,7 @@ CxxScoped* ReferentError(const string& item, debug64_t offset)
 CxxLocation::CxxLocation() :
    file_(nullptr),
    pos_(NOT_IN_SOURCE),
+   erased_(false),
    internal_(false)
 {
 }
@@ -71,7 +72,8 @@ CxxLocation::CxxLocation() :
 
 size_t CxxLocation::GetPos() const
 {
-   return (pos_ != NOT_IN_SOURCE ? pos_ : std::string::npos);
+   if(erased_) return string::npos;
+   return (pos_ != NOT_IN_SOURCE ? pos_ : string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -80,6 +82,44 @@ void CxxLocation::SetLoc(CodeFile* file, size_t pos)
 {
    file_ = file;
    pos_ = pos;
+}
+
+//------------------------------------------------------------------------------
+
+void CxxLocation::UpdatePos(EditorAction action,
+   size_t begin, size_t count, size_t from)
+{
+   switch(action)
+   {
+   case Erased:
+      if(!erased_ && (pos_ >= begin))
+      {
+         if(pos_ < (begin + count))
+            erased_ = true;
+         else
+            pos_ -= count;
+      }
+      break;
+
+   case Inserted:
+      if(!erased_ && (pos_ >= begin)) pos_ += count;
+      break;
+
+   case Pasted:
+      if(erased_)
+      {
+         if((pos_ >= from) && (pos_ < (from + count)))
+         {
+            pos_ = pos_ + begin - from;
+            erased_ = false;
+         }
+      }
+      else
+      {
+         if(pos_ >= begin) pos_ += count;
+      }
+      break;
+   }
 }
 
 //==============================================================================
@@ -109,6 +149,23 @@ void Asm::Print(ostream& stream, const Flags& options) const
    stream << ASM_STR << '(';
    code_->Print(stream, options);
    stream << ");";
+}
+
+//------------------------------------------------------------------------------
+
+void Asm::Shrink()
+{
+   CxxNamed::Shrink();
+   code_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Asm::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxNamed::UpdatePos(action, begin, count, from);
+   code_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -663,6 +720,15 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
       stream << ScopedName(true);
    else
       name->Print(stream, NoFlags);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxNamed::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+   loc_.UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -1862,6 +1928,7 @@ void DataSpec::SetUserType(Cxx::ItemType user)
 
 void DataSpec::Shrink()
 {
+   TypeSpec::Shrink();
    name_->Shrink();
 
    if(arrays_ != nullptr)
@@ -1923,6 +1990,23 @@ string DataSpec::TypeTagsString(const TypeTags& tags) const
    auto ts = name_->TypeString(true);
    tags.TypeString(ts, false);
    return ts;
+}
+
+//------------------------------------------------------------------------------
+
+void DataSpec::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   TypeSpec::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+
+   if(arrays_ != nullptr)
+   {
+      for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
+      {
+         (*a)->UpdatePos(action, begin, count, from);
+      }
+   }
 }
 
 //==============================================================================
@@ -2425,6 +2509,8 @@ void QualName::SetUserType(Cxx::ItemType user) const
 
 void QualName::Shrink()
 {
+   CxxNamed::Shrink();
+
    for(auto n = First(); n != nullptr; n = n->Next())
    {
       n->Shrink();
@@ -2463,6 +2549,19 @@ string QualName::TypeString(bool arg) const
    auto expl = "Failed to find referent for " + QualifiedName(true, true);
    Context::SwLog(QualName_TypeString, expl, 0);
    return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
+void QualName::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxNamed::UpdatePos(action, begin, count, from);
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -2560,8 +2659,19 @@ void StaticAssert::Print(ostream& stream, const Flags& options) const
 
 void StaticAssert::Shrink()
 {
-   expr_-> Shrink();
+   CxxNamed::Shrink();
+   expr_->Shrink();
    if(message_ != nullptr) message_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxNamed::UpdatePos(action, begin, count, from);
+   expr_->UpdatePos(action, begin, count, from);
+   if(message_ != nullptr) message_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2674,6 +2784,8 @@ void TemplateParms::Print(ostream& stream, const Flags& options) const
 
 void TemplateParms::Shrink()
 {
+   CxxToken::Shrink();
+
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
       (*p)->Shrink();
@@ -2696,6 +2808,19 @@ string TemplateParms::TypeString(bool arg) const
    }
 
    return ts + '>';
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -3239,6 +3364,7 @@ void TypeName::SetUserType(Cxx::ItemType user) const
 
 void TypeName::Shrink()
 {
+   CxxNamed::Shrink();
    name_.shrink_to_fit();
 
    CxxStats::Strings(CxxStats::TYPE_NAME, name_.capacity());
@@ -3279,6 +3405,22 @@ string TypeName::TypeString(bool arg) const
    }
 
    return ts + '>';
+}
+
+//------------------------------------------------------------------------------
+
+void TypeName::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxNamed::UpdatePos(action, begin, count, from);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->UpdatePos(action, begin, count, from);
+      }
+   }
 }
 
 //==============================================================================

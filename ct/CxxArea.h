@@ -171,6 +171,11 @@ public:
    //  Overridden to shrink containers.
    //
    void Shrink() override;
+
+   //  Overridden to update the position the of the area's items.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -614,6 +619,11 @@ public:
    //  specification.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the class's position.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 
    //  Overridden to support, for example, passing a "this" argument or writing
    //  to a class object in an array.

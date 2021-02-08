@@ -28,6 +28,7 @@
 #include <string>
 #include <utility>
 #include "Cxx.h"
+#include "CxxNamed.h"
 #include "CxxFwd.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
@@ -43,10 +44,12 @@ class CxxStatement : public CxxToken
 public:
    virtual ~CxxStatement() = default;
    void EnterBlock() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 protected:
    explicit CxxStatement(size_t pos);
 private:
-   const size_t pos_;
+   mutable CxxLocation loc_;
 };
 
 //------------------------------------------------------------------------------
@@ -63,7 +66,9 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { if(condition_ != nullptr) condition_->Shrink(); }
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 protected:
    explicit Condition(size_t pos);
    bool Show(std::ostream& stream) const;
@@ -100,7 +105,9 @@ public:
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override { return false; }
-   void Shrink() override { expr_->Shrink(); }
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    const ExprPtr expr_;
 };
@@ -127,6 +134,8 @@ public:
    bool InLine() const override { return false; }
    bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    ArgumentPtr arg_;
    BlockPtr handler_;
@@ -168,6 +177,8 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    BlockPtr loop_;
 };
@@ -186,7 +197,9 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { expr_->Shrink(); }
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    const ExprPtr expr_;
 };
@@ -216,6 +229,8 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    TokenPtr initial_;
    ExprPtr subsequent_;
@@ -234,7 +249,7 @@ public:
    void EnterBlock() override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { label_.shrink_to_fit(); }
+   void Shrink() override;
 private:
    std::string label_;
 };
@@ -264,6 +279,8 @@ public:
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
    Cxx::ItemType Type() const override { return Cxx::If; }
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    BlockPtr then_;
    BlockPtr else_;
@@ -284,7 +301,7 @@ public:
    void EnterBlock() override;
    void ExitBlock() const override;
    bool InLine() const override { return false; }
-   void Shrink() override { name_.shrink_to_fit(); }
+   void Shrink() override;
 private:
    std::string name_;
 };
@@ -322,7 +339,9 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { if(expr_ != nullptr) expr_->Shrink(); }
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    ExprPtr expr_;
 };
@@ -348,6 +367,8 @@ public:
    bool InLine() const override { return false; }
    bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    ExprPtr expr_;
    BlockPtr cases_;
@@ -375,6 +396,8 @@ public:
    bool InLine() const override { return false; }
    bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    BlockPtr try_;
    TokenPtrVector catches_;
@@ -402,6 +425,8 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    BlockPtr loop_;
 };

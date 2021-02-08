@@ -373,6 +373,7 @@ string Block::ScopedName(bool templates) const
 
 void Block::Shrink()
 {
+   CxxScope::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::BLOCK_DECL, name_.capacity());
 
@@ -380,6 +381,19 @@ void Block::Shrink()
    auto size = statements_.capacity() * sizeof(TokenPtr);
    size += XrefSize();
    CxxStats::Vectors(CxxStats::BLOCK_DECL, size);
+}
+
+//------------------------------------------------------------------------------
+
+void Block::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScope::UpdatePos(action, begin, count, from);
+
+   for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
+   {
+      (*s)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -740,11 +754,19 @@ void ClassData::SetMemInit(const MemberInit* init)
 void ClassData::Shrink()
 {
    Data::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::CLASS_DATA, name_.capacity());
    CxxStats::Vectors(CxxStats::CLASS_DATA, XrefSize());
    if(width_ != nullptr) width_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void ClassData::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Data::UpdatePos(action, begin, count, from);
+   if(width_ != nullptr) width_->UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -1518,6 +1540,8 @@ bool Data::SetNonConst()
 
 void Data::Shrink()
 {
+   CxxScope::Shrink();
+   if(alignas_ != nullptr) alignas_->Shrink();
    spec_->Shrink();
    if(expr_ != nullptr) expr_->Shrink();
    if(init_ != nullptr) init_->Shrink();
@@ -1528,6 +1552,18 @@ void Data::Shrink()
 string Data::TypeString(bool arg) const
 {
    return spec_->TypeString(arg);
+}
+
+//------------------------------------------------------------------------------
+
+void Data::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScope::UpdatePos(action, begin, count, from);
+   if(alignas_ != nullptr) alignas_->UpdatePos(action, begin, count, from);
+   spec_->UpdatePos(action, begin, count, from);
+   if(expr_ != nullptr) expr_->UpdatePos(action, begin, count, from);
+   if(init_ != nullptr) init_->UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -1754,11 +1790,19 @@ void FuncData::SetNext(DataPtr& next)
 void FuncData::Shrink()
 {
    Data::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::FUNC_DATA, name_.capacity());
    CxxStats::Vectors(CxxStats::FUNC_DATA, XrefSize());
    if(next_ != nullptr) next_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncData::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Data::UpdatePos(action, begin, count, from);
+   if(next_ != nullptr) next_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -4894,6 +4938,7 @@ void Function::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Function::Shrink()
 {
+   CxxScope::Shrink();
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
    if(spec_ != nullptr) spec_->Shrink();
@@ -5016,6 +5061,31 @@ string Function::TypeString(bool arg) const
 
    ts.push_back(')');
    return ts;
+}
+
+//------------------------------------------------------------------------------
+
+void Function::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScope::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
+   if(spec_ != nullptr) spec_->UpdatePos(action, begin, count, from);
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      (*a)->UpdatePos(action, begin, count, from);
+   }
+
+   if(call_ != nullptr) call_->UpdatePos(action, begin, count, from);
+
+   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+   {
+      (*m)->UpdatePos(action, begin, count, from);
+   }
+
+   if(impl_ != nullptr) impl_->UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -5386,6 +5456,14 @@ void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
+void FuncSpec::Shrink()
+{
+   TypeSpec::Shrink();
+   func_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
 const TypeTags* FuncSpec::Tags() const
 {
    return func_->GetTypeSpec()->Tags();
@@ -5417,6 +5495,15 @@ string FuncSpec::TypeString(bool arg) const
 string FuncSpec::TypeTagsString(const TypeTags& tags) const
 {
    return func_->GetTypeSpec()->TypeTagsString(tags);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   TypeSpec::UpdatePos(action, begin, count, from);
+   func_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -5579,9 +5666,18 @@ void SpaceData::SetTemplateParms(TemplateParmsPtr& parms)
 void SpaceData::Shrink()
 {
    Data::Shrink();
-
    CxxStats::Vectors(CxxStats::FILE_DATA, XrefSize());
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceData::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Data::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
 }
 }

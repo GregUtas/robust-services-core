@@ -250,6 +250,11 @@ public:
    //  Overridden to reveal that this is a code block.
    //
    Cxx::ItemType Type() const override { return Cxx::Block; }
+
+   //  Overridden to update the location of block's statements.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  The statements in the block.
    //
@@ -440,6 +445,11 @@ public:
    //  Overridden to return the data's full root type.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the data's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 
    //  Overridden to increment the number of times the data was read.
    //
@@ -665,6 +675,11 @@ public:
    //  Overridden to shrink containers.
    //
    void Shrink() override;
+
+   //  Overridden to update the data's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Overridden to clone the qualified name.
    //
@@ -780,6 +795,11 @@ public:
    //  Overridden to return the item's name.
    //
    std::string Trace() const override {return *Name(); }
+
+   //  Overridden to update the item's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 
    //  Overridden to track usage of the "mutable" attribute.
    //
@@ -899,6 +919,11 @@ public:
    //  Overridden to return the item's name.
    //
    std::string Trace() const override {return *Name(); }
+
+   //  Overridden to update the data's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Invoked by Display on each declaration in a possible series.
    //
@@ -1413,6 +1438,11 @@ public:
    //
    std::string TypeString(bool arg) const override;
 
+   //  Overridden to update the function's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+
    //  Overridden to track how many times the function was invoked.
    //
    void WasCalled() override;
@@ -1776,9 +1806,11 @@ private:
    const std::string* Name() const override { return func_->Name(); }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { func_->Shrink(); }
+   void Shrink() override;
    std::string Trace() const override;
    std::string TypeString(bool arg) const override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 
    //  The following are forwarded to the function's return type.
    //

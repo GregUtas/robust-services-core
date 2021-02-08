@@ -320,6 +320,14 @@ public:
    //
    bool IsPOD() const { return GetNumeric().IsPOD(); }
 
+   //  Invoked during editing when ACTION has occurred in an ITEM's file.
+   //  o Erased: COUNT characters erased at BEGIN
+   //  o Inserted: COUNT characters inserted at BEGIN
+   //  o Pasted: COUNT characters originally at FROM inserted at BEGIN
+   //
+   virtual void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from = std::string::npos) const { }
+
    //  Outputs PREFIX, invokes Print(stream, options) above, and inserts an
    //  endline.  This is the appropriate implementation for items that can be
    //  displayed inline or separately.  See CodeDisplayOptions for OPTIONS.
@@ -644,6 +652,11 @@ public:
    //  Overridden to reveal that this is an operation.
    //
    Cxx::ItemType Type() const override { return Cxx::Operation; }
+
+   //  Overridden to update the operations's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Returns the number of arguments that the operator can still accept.
    //  Returns SIZE_MAX if the operator takes a variable number of arguments
@@ -804,6 +817,11 @@ public:
    //  Overridden to display the expression.
    //
    std::string Trace() const override;
+
+   //  Overridden to update the expression's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Adds ITEM to the expression when it is known to be a unary operator.
    //
@@ -869,11 +887,16 @@ public:
 
    //  Overridden to shrink the array expression.
    //
-   void Shrink() override { if(expr_ != nullptr) expr_->Shrink(); }
+   void Shrink() override;
 
    //  Overridden to return "[]" if ARG is false and "*" if it is true.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the specification's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  The expression that specifies the array's size.
    //
@@ -911,7 +934,9 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { if(expr_ != nullptr) expr_->Shrink(); }
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    const ExprPtr expr_;
 };
@@ -933,6 +958,8 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    TokenPtrVector items_;
 };
@@ -952,7 +979,9 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { token_->Shrink(); }
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    TokenPtr token_;
 };

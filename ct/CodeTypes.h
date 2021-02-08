@@ -25,6 +25,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
+#include <set>
 #include <string>
 #include <vector>
 #include "Base.h"
@@ -584,6 +585,13 @@ private:
    LineTypeAttr(bool code, bool exe, bool merge, bool blank, char sym);
 };
 
+//  Classifies a line of code (S) and updates WARNINGS with any warnings
+//  that were found.  Sets CONT for a line of code that does not end in
+//  a semicolon.
+//
+LineType CalcLineType
+   (std::string s, bool& cont, std::set< Warning >& warnings);
+
 //  Returns the resulting line length if LINE1[BEGIN1..END1] and
 //  LINE2[BEGIN2..END2] were merged.  Returns SIZE_MAX if the lines
 //  should not be merged.
@@ -652,6 +660,17 @@ extern const NodeBase::Flags Stats_Mask;
 
 constexpr size_t INDENT_SIZE = 3;
 constexpr size_t LINE_LENGTH_MAX = 80;
+
+//------------------------------------------------------------------------------
+//
+//  Editor actions that require a code item to update its location.
+//
+enum EditorAction
+{
+   Erased,
+   Inserted,
+   Pasted
+};
 
 //------------------------------------------------------------------------------
 //

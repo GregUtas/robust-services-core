@@ -80,6 +80,23 @@ void AlignAs::Print(ostream& stream, const Flags& options) const
    stream << ")";
 }
 
+//------------------------------------------------------------------------------
+
+void AlignAs::Shrink()
+{
+   CxxToken::Shrink();
+   token_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void AlignAs::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+   token_->UpdatePos(action, begin, count, from);
+}
+
 //==============================================================================
 
 ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
@@ -123,9 +140,26 @@ void ArraySpec::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
+void ArraySpec::Shrink()
+{
+   CxxToken::Shrink();
+   if(expr_ != nullptr) expr_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
 string ArraySpec::TypeString(bool arg) const
 {
    return (arg ? "*" : ARRAY_STR);
+}
+
+//------------------------------------------------------------------------------
+
+void ArraySpec::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+   if(expr_ != nullptr) expr_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -207,9 +241,23 @@ void BraceInit::Print(ostream& stream, const Flags& options) const
 
 void BraceInit::Shrink()
 {
+   CxxToken::Shrink();
    ShrinkTokens(items_);
    auto size = items_.capacity() * sizeof(TokenPtr);
    CxxStats::Vectors(CxxStats::BRACE_INIT, size);
+}
+
+//------------------------------------------------------------------------------
+
+void BraceInit::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -831,6 +879,7 @@ void Expression::Print(ostream& stream, const Flags& options) const
 
 void Expression::Shrink()
 {
+   CxxToken::Shrink();
    ShrinkTokens(items_);
    auto size = items_.capacity() * sizeof(TokenPtr);
    CxxStats::Vectors(CxxStats::EXPRESSION, size);
@@ -856,6 +905,19 @@ string Expression::Trace() const
    std::ostringstream stream;
    Print(stream, NoFlags);
    return stream.str();
+}
+
+//------------------------------------------------------------------------------
+
+void Expression::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -2773,6 +2835,7 @@ void Operation::PushType(const string& name)
 
 void Operation::Shrink()
 {
+   CxxToken::Shrink();
    ShrinkTokens(args_);
    auto size = args_.capacity() * sizeof(TokenPtr);
    CxxStats::Vectors(CxxStats::OPERATION, size);
@@ -2819,6 +2882,19 @@ string Operation::Trace() const
    return CxxOp::Attrs[op_].symbol;
 }
 
+//------------------------------------------------------------------------------
+
+void Operation::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      (*a)->UpdatePos(action, begin, count, from);
+   }
+}
+
 //==============================================================================
 
 void Precedence::AddToXref() const
@@ -2849,6 +2925,23 @@ void Precedence::Print(ostream& stream, const Flags& options) const
    stream << '(';
    if(expr_ != nullptr) expr_->Print(stream, options);
    stream << ')';
+}
+
+//------------------------------------------------------------------------------
+
+void Precedence::Shrink()
+{
+   CxxToken::Shrink();
+   if(expr_ != nullptr) expr_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Precedence::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+   if(expr_ != nullptr) expr_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================

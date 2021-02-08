@@ -1804,7 +1804,6 @@ void Class::SetTemplateParms(TemplateParmsPtr& parms)
 void Class::Shrink()
 {
    CxxArea::Shrink();
-
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
    if(base_ != nullptr) base_->Shrink();
@@ -1836,6 +1835,27 @@ void Class::Shrink()
 string Class::TypeString(bool arg) const
 {
    return Prefix(GetScope()->TypeString(arg)) + *Name();
+}
+
+//------------------------------------------------------------------------------
+
+void Class::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxArea::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
+   if(base_ != nullptr) base_->UpdatePos(action, begin, count, from);
+
+   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
+   {
+      (*f)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
+   {
+      (*t)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2173,7 +2193,6 @@ bool ClassInst::NameRefersToItem(const string& name,
 void ClassInst::Shrink()
 {
    Class::Shrink();
-
    tspec_->Shrink();
 }
 
@@ -2679,6 +2698,8 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 
 void CxxArea::Shrink()
 {
+   CxxScope::Shrink();
+
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
       (*u)->Shrink();
@@ -2757,6 +2778,69 @@ void CxxArea::Shrink()
          CxxStats::Vectors(CxxStats::CLASS_INST, size);
       else
          CxxStats::Vectors(CxxStats::CLASS_DECL, size);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScope::UpdatePos(action, begin, count, from);
+
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      (*u)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      (*c)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+   {
+      (*d)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto e = enums_.cbegin(); e != enums_.cend(); ++e)
+   {
+      (*e)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
+   {
+      (*f)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      (*f)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
+   {
+      (*o)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
+   {
+      (*t)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto d = defns_.cbegin(); d != defns_.cend(); ++d)
+   {
+      (*d)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto a = assembly_.cbegin(); a != assembly_.cend(); ++a)
+   {
+      (*a)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      (*a)->UpdatePos(action, begin, count, from);
    }
 }
 
@@ -2958,7 +3042,6 @@ void Namespace::SetLoc(CodeFile* file, size_t pos)
 void Namespace::Shrink()
 {
    CxxArea::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::SPACE_DECL, name_.capacity());
 

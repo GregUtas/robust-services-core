@@ -431,7 +431,7 @@ bool InsertSpaceOnMerge(const string& line1, const string& line2, size_t begin2)
    //  Insert a space unless LINE2 is an argument list, which is the case if
    //  it begins with a parenthesis and LINE1 ends with an identifier.
    //
-   if(ValidNextChars.find(line1.back()) == string::npos) return true;
+   if(!IsWordChar(line1.back())) return true;
    return (line2.at(begin2) != '(');
 }
 

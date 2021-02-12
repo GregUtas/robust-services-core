@@ -320,13 +320,13 @@ public:
    //
    bool IsPOD() const { return GetNumeric().IsPOD(); }
 
-   //  Invoked during editing when ACTION has occurred in an ITEM's file.
+   //  Invoked during editing when ACTION has occurred in the item's file.
    //  o Erased: COUNT characters erased at BEGIN
    //  o Inserted: COUNT characters inserted at BEGIN
    //  o Pasted: COUNT characters originally at FROM inserted at BEGIN
    //
    virtual void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from = std::string::npos) const { }
+      size_t begin, size_t count, size_t from) const { }
 
    //  Outputs PREFIX, invokes Print(stream, options) above, and inserts an
    //  endline.  This is the appropriate implementation for items that can be

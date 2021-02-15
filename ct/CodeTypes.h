@@ -466,7 +466,7 @@ enum Warning
    AnonymousArgument,        // declaration of unnamed argument
    AdjacentArgumentTypes,    // adjacent arguments have the same type
    DefinitionRenamesArgument, // names in declaration and definition differ
-   OverrideRenamesArgument,  // names in override and direct base class differ
+   OverrideRenamesArgument,  // names in override and root base class differ
    VirtualDefaultArgument,   // virtual function defines default argument
    ArgumentCannotBeConst,    // for detecting const logic errors
    ArgumentCouldBeConstRef,  // object could be passed by const reference

@@ -2491,15 +2491,15 @@ void Function::CheckArgs() const
    if(type == FuncOperator) return;
 
    //  If the function is an override, look for arguments that were renamed
-   //  from the direct base class.
+   //  from the root base class.
    //
    if(override_)
    {
-      auto base = FindBaseFunc();
+      auto root = FindRootFunc();
 
       for(size_t i = 0; i < n; ++i)
       {
-         if(*args_[i]->Name() != *base->args_[i]->Name())
+         if(*args_[i]->Name() != *root->args_[i]->Name())
          {
             LogToArg(OverrideRenamesArgument, i);
          }
@@ -2509,7 +2509,7 @@ void Function::CheckArgs() const
       {
          for(size_t i = 0; i < n; ++i)
          {
-            if(*mate_->args_[i]->Name() != *base->args_[i]->Name())
+            if(*mate_->args_[i]->Name() != *root->args_[i]->Name())
             {
                mate_->LogToArg(OverrideRenamesArgument, i);
             }

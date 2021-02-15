@@ -686,7 +686,7 @@ void CodeWarning::Initialize()
       "Definition renames argument in declaration")));
    Attrs_.insert(WarningPair(OverrideRenamesArgument,
       WarningAttrs(T, R,
-      "Override renames argument in direct base class")));
+      "Override renames argument in root base class")));
    Attrs_.insert(WarningPair(VirtualDefaultArgument,
       WarningAttrs(F, R,
       "Virtual function defines default argument")));

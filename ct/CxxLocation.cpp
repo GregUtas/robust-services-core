@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxLocation.h"
-#include <string>
 
 using std::string;
 
@@ -30,18 +29,10 @@ namespace CodeTools
 {
 CxxLocation::CxxLocation() :
    file_(nullptr),
-   pos_(NOT_IN_SOURCE),
+   pos_(string::npos),
    erased_(false),
    internal_(false)
 {
-}
-
-//------------------------------------------------------------------------------
-
-size_t CxxLocation::GetPos() const
-{
-   if(erased_) return string::npos;
-   return (pos_ != NOT_IN_SOURCE ? pos_ : string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -57,6 +48,8 @@ void CxxLocation::SetLoc(CodeFile* file, size_t pos)
 void CxxLocation::UpdatePos(EditorAction action,
    size_t begin, size_t count, size_t from)
 {
+   if(pos_ == string::npos) return;
+
    switch(action)
    {
    case Erased:

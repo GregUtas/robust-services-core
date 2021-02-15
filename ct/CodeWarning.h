@@ -31,11 +31,11 @@
 #include <vector>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
+#include "CxxLocation.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
 using NodeBase::fixed_string;
-using NodeBase::SPACE;
 using NodeBase::word;
 
 //------------------------------------------------------------------------------
@@ -88,11 +88,24 @@ class CodeWarning
 {
    friend class Editor;
 public:
-   //  Almost every member is supplied to the constructor.
+   //  Almost every member is supplied to the constructor.  If POS is
+   //  string::npos, it means that the warning has no code to display.
    //
-   CodeWarning(Warning warning, const CodeFile* file,
-      size_t line, size_t pos, const CxxNamed* item,
-      word offset, const std::string& info, bool hide = false);
+   CodeWarning(Warning warning, CodeFile* file, size_t pos,
+      const CxxNamed* item, word offset, const std::string& info,
+      bool hide = false);
+
+   //  Returns the file in which the warning appeared.
+   //
+   CodeFile* File() const { return loc_.GetFile(); }
+
+   //  Returns the position at which the warning appeared.
+   //
+   size_t Pos() const { return loc_.GetPos(); }
+
+   //  Returns the line number on which the warning appeared.
+   //
+   size_t Line() const;
 
    //  Initializes the Attrs map.
    //
@@ -120,6 +133,12 @@ public:
    //
    std::string GetNewFuncName(std::string& expl) const;
 
+   //  Invoked to update the position of a warning when a file has been
+   //  edited.  Has the same interface as CxxToken::UpdatePos.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from = std::string::npos) const;
+
    //  Generates a report in STREAM for the files in SET.  The report
    //  includes line type counts and warnings found during parsing and
    //  compilation.
@@ -137,13 +156,11 @@ private:
 
    //  Returns true if the log has code to display.
    //
-   bool HasCodeToDisplay() const
-      { return ((line_ != 0) || info_.empty()); }
+   bool HasCodeToDisplay() const;
 
    //  Returns true if .info should be displayed.
    //
-   bool HasInfoToDisplay() const
-      { return (info_.find_first_not_of(SPACE) != std::string::npos); }
+   bool HasInfoToDisplay() const;
 
    //  Returns the logs that need to be fixed to resolve this log.
    //  The log itself is included in the result unless it does not
@@ -165,11 +182,11 @@ private:
    //  Updates WARNINGS with those that were logged in FILE.
    //
    static void GetWarnings
-      (const CodeFile* file, std::vector< CodeWarning >& warnings);
+      (const CodeFile* file, std::vector< CodeWarning* >& warnings);
 
    //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
    //
-   static bool IsSortedToFix(const CodeWarning& log1, const CodeWarning& log2);
+   static bool IsSortedToFix(const CodeWarning* log1, const CodeWarning* log2);
 
    //  Returns LOG's index if it has already been reported, else -1.
    //
@@ -195,17 +212,9 @@ private:
    //
    Warning warning_;
 
-   //  The file in which the warning occurred.
+   //  Where the warning occurred.
    //
-   const CodeFile* file_;
-
-   //  The line in FILE on which the warning occurred.
-   //
-   size_t line_;
-
-   //  The position in FILE where the warning occurred.
-   //
-   size_t pos_;
+   mutable CxxLocation loc_;
 
    //  The C++ item associated with the warning.
    //

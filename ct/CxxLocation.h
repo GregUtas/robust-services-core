@@ -23,8 +23,8 @@
 #define CXXLOCATION_H_INCLUDED
 
 #include <cstddef>
-#include <cstdint>
-#include "Cxx.h"
+#include <string>
+#include "CodeTypes.h"
 #include "CxxFwd.h"
 
 //------------------------------------------------------------------------------
@@ -36,8 +36,7 @@ namespace CodeTools
 class CxxLocation
 {
 public:
-   //  Initializes fields to default values.  Private because this class
-   //  only appears as a private member of its friend classes.
+   //  Initializes fields to default values.
    //
    CxxLocation();
 
@@ -49,33 +48,25 @@ public:
    //
    CxxLocation& operator=(const CxxLocation& that) = default;
 
-   //  A position that indicates that the item was not found in the
-   //  original source code.  This is used when the Editor creates
-   //  an item, for example.
-   //
-   static const size_t NOT_IN_SOURCE = 0x3fffffff;
-
    //  Records the item's location in source code.
    //
    void SetLoc(CodeFile* file, size_t pos);
 
-   //  Returns the file in which the item is located.  A template
-   //  instance belongs to the file that caused its instantiation.
-   //  An item added by the Editor belongs to the file to which it
-   //  was added.
+   //  Returns the file in which the item is located.  A template instance
+   //  belongs to the file that caused its instantiation.  An item added by
+   //  the Editor belongs to the file to which it was added.
    //
    CodeFile* GetFile() const { return file_; }
 
-   //  Returns the start of the item's position within its file, which
-   //  is an index into a string that contains the file's contents.
-   //  For a template instance, this is an offset into its internally
-   //  generated code.  For an item added by the Editor, string::npos
-   //  is returned.
+   //  Returns the start of the item's position within its file, which is an
+   //  index into a string that contains the file's contents.  For a template
+   //  instance, this is an offset into its internally generated code.  For
+   //  an item added by the Editor, string::npos is returned.
    //
-   size_t GetPos() const;
+   size_t GetPos() const { return (erased_ ? std::string::npos : pos_); }
 
-   //  Updates the item's location after code has been edited.  Has the
-   //  same interface as CxxToken::UpdatePos.
+   //  Updates the item's location after code has been edited.  Has the same
+   //  interface as CxxToken::UpdatePos.
    //
    void UpdatePos(EditorAction action, size_t begin, size_t count, size_t from);
 
@@ -92,19 +83,19 @@ private:
    //
    CodeFile* file_;
 
-   //  The item's location in FILE.  The file has a string member which
-   //  contains the code, and this is an index into that string.
+   //  The item's location in FILE.  The file has a string member that holds
+   //  the code, and this is an index into that string.
    //
-   size_t pos_ : 30;
+   size_t pos_;
 
    //  Set if the item has been erased during editing.
    //
-   bool erased_ : 1;
+   bool erased_;
 
    //  Set if the item appeared in internally generated code, which currently
    //  means in a template instance.
    //
-   bool internal_ : 1;
+   bool internal_;
 };
 }
 #endif

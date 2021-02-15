@@ -22,7 +22,7 @@
 #ifndef EDITOR_H_INCLUDED
 #define EDITOR_H_INCLUDED
 
-#include "Base.h"
+#include "Lexer.h"
 #include <cstddef>
 #include <string>
 #include <vector>
@@ -30,7 +30,6 @@
 #include "CodeWarning.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
-#include "SourceCode.h"
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -44,8 +43,7 @@ namespace CodeTools
    struct FuncDefnAttrs;
 }
 
-using NodeBase::CliThread;
-using NodeBase::word;
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -64,16 +62,20 @@ namespace CodeTools
 //  <usings>          using statements
 //  <code>            declarations and/or definitions
 //
-class Editor : public NodeBase::Base
+class Editor : public Lexer
 {
 public:
    //  Creates an editor for FILE, whose code and warnings are loaded
    //
-   explicit Editor(const CodeFile& file);
+   Editor();
 
    //  Not subclassed.
    //
    ~Editor() = default;
+
+   //  Initializes the editor.
+   //
+   void Setup(CodeFile* file);
 
    //  Interactively fixes warnings in the code detected by Check().  If
    //  an error occurs, a non-zero value is returned and EXPL is updated
@@ -102,17 +104,10 @@ public:
    void Display(std::ostream& stream,
       const string& prefix, const NodeBase::Flags& options) const override;
 private:
-   //  Accesses the source code.
+   //  Invokes Write on each editor whose file has changed.  Returns false
+   //  if an error occurrs, after updating EXPL with an explanation.
    //
-   SourceList& Code() { return source_.GetSource(); }
-
-   //  Returns an iterator to the end of the source code.
-   //
-   SourceIter End() { return Code().end(); }
-
-   //  Returns the location at the end of the source code.
-   //
-   SourceLoc EndPos() { return source_.End(); }
+   bool Commit(CliThread& cli, string& expl);
 
    //  Writes out the editor's file.  Returns 0 if the file was successfully
    //  written; other values indicate failure.  Updates EXPL with a reason
@@ -205,6 +200,146 @@ private:
    word TagAsOverride(const CodeWarning& log, string& expl);
    word TagAsVirtual(const CodeWarning& log, string& expl);
 
+   //  Removes trailing blanks.  Invoked by Format and before writing out code
+   //  that was changed.
+   //
+   word EraseTrailingBlanks();
+
+   //  Replaces multiple blank lines with a single blank line.  Invoked by
+   //  Format and before writing out code that was changed.
+   //
+   word EraseBlankLinePairs();
+
+   //  Removes a separator that is preceded or followed by a brace or separator.
+   //  Invoked by Format and before writing out code that was changed.
+   //
+   word EraseEmptySeparators();
+
+   //  Removes a blank line that
+   //  o precedes or follows an access control
+   //  o precedes or follows a left brace
+   //  o precedes a right brace
+   //  Invoked by Format and before writing out code that was changed.
+   //
+   word EraseOffsetBlankLines();
+
+   //  Converts tabs to spaces.  Invoked by Format and before writing out code
+   //  that was changed.
+   //
+   word ConvertTabsToBlanks();
+
+   //  Deletes the line break at the end of the line referenced by POS if the
+   //  following line will also fit within LineLengthMax.  Returns true if the
+   //  line break was deleted.
+   //
+   bool EraseLineBreak(size_t curr);
+
+   //  Indents POS's line.  Returns POS.
+   //
+   size_t Indent(size_t pos);
+
+   //  Inserts PREFIX at POS.  The prefix replaces blanks but leaves at least
+   //  one space between it and the first non-blank character on the line.
+   //  Returns POS.
+   //
+   size_t InsertPrefix(size_t pos, const string& prefix);
+
+   //  Inserts a line break at POS, indents the new line accordingly, and
+   //  returns POS.  Returns string::npos if a line break was not inserted.
+   //
+   size_t InsertLineBreak(size_t pos);
+
+   //  Returns the first line that follows comments and blanks.
+   //
+   size_t PrologEnd() const;
+
+   //  Returns true if POS is the start of HASH, a preprocessor directive.
+   //
+   bool IsDirective(size_t pos, fixed_string hash) const;
+
+   //  Returns the location of the first #include.  Returns end() if no
+   //  #include was found.
+   //
+   size_t IncludesBegin();
+
+   //  Returns the location of the statement that follows the last #include.
+   //  Returns string::npos if the last line was an #include.
+   //
+   size_t IncludesEnd();
+
+   //  Find the first line of code (other than #include directives, forward
+   //  declarations, and using statements).  Moves up past any comments that
+   //  precede this point, and returns the position where these comments
+   //  begin.
+   //
+   size_t CodeBegin();
+
+   //  Returns true if the code referenced by POS is followed by more code,
+   //  without an intervening comment or right brace.
+   //
+   bool CodeFollowsImmediately(size_t pos) const;
+
+   //  Returns the start of any comments that precede POS, including an
+   //  fn_name definition if funcName is set.  Returns POS if it is not
+   //  preceded by any such items.
+   //
+   size_t IntroStart(size_t pos, bool funcName);
+
+   //  This simplifies sorting by replacing the characters that enclose the
+   //  file name's in an #include directive.
+   //
+   word MangleInclude(string& include, string& expl) const;
+
+   //  Before inserting an #include or sorting all #includes, this is invoked
+   //  to make it easier to sort them.
+   //
+   void MangleIncludes();
+
+   //  Sorts #include directives in standard order.
+   //
+   word SortIncludes(string& expl);
+
+   //  Inserts an INCLUDE directive.
+   //
+   word InsertInclude(string& include, string& expl);
+
+   //  Searches for INCL starting at POS.  If it is found, it is erased and its
+   //  position is returned.  Returns string::npos is INCL is not found.
+   //
+   size_t FindAndCutInclude(size_t pos, const string& incl);
+
+   //  Invoked after removing a forward declaration at POS.  If the declaration
+   //  was in a namespace that is now empty, erases the "namespace <name> { }".
+   //
+   word EraseEmptyNamespace(size_t pos);
+
+   //  Inserts a FORWARD declaration at POS, which is a namespace definition
+   //  that should include FORWARD.
+   //
+   word InsertForward(size_t pos, const string& forward, string& expl);
+
+   //  Inserts a FORWARD declaration at POS.  It is the first declaration in
+   //  NSPACE, so it must be enclosed in a new namespace scope.
+   //
+   word InsertNamespaceForward(size_t pos,
+      const string& nspace, const string& forward, string& expl);
+
+   //  Qualifies symbols so that using statements can be removed.
+   //
+   word ResolveUsings();
+
+   //  Returns the items within ITEM that were accessed via a using statement.
+   //
+   CxxNamedSet FindUsingReferents(const CxxNamed* item) const;
+
+   //  Qualifies names used within ITEM in order to remove using statements.
+   //
+   void QualifyUsings(const CxxNamed* item);
+
+   //  Within ITEM, qualifies occurrences of REF.
+   //
+   void QualifyReferent(const CxxNamed* item, const CxxNamed* ref);
+
    //  Fixes LOG, which also involves modifying overrides of a function.
    //  Updates EXPL with any explanation.
    //
@@ -245,176 +380,41 @@ private:
    word TagAsNoexcept(const Function* func, string& expl);
    word TagAsStaticFunction(const Function* func, string& expl);
 
-   //  Sorts #include directives in standard order.
-   //
-   word SortIncludes(string& expl);
-
-   //  Qualifies symbols so that using statements can be removed.
-   //
-   word ResolveUsings();
-
-   //  Replaces multiple blank lines with a single blank line.  Always invoked
-   //  on source that was changed.
-   //
-   word EraseBlankLinePairs();
-
-   //  Removes a blank line that
-   //  o precedes or follows an access control
-   //  o precedes or follows a left brace
-   //  o precedes a right brace
-   //
-   word EraseOffsets();
-
-   //  Removes trailing blanks.  Always invoked on source that was changed.
-   //
-   word EraseTrailingBlanks();
-
-   //  Converts tabs to spaces.  Always invoked on source that was changed.
-   //
-   word ConvertTabsToBlanks();
-
-   //  Removes a separator that is preceded or followed by a brace or separator.
-   //  Always invoked on source that was changed.
-   //
-   word EraseEmptySeparators();
-
-   //  Returns the type of line referenced by ITER.
-   //
-   LineType GetLineType(const SourceIter& iter) const;
-
-   //  Returns the location of LINE.  Returns EndPos() if LINE is not found.
-   //
-   SourceIter FindLine(size_t line);
-
-   //  Returns the location of LINE.  If LINE is not found, sets EXPL to an
-   //  error message and returns EndPos().
-   //
-   SourceIter FindLine(size_t line, string& expl);
-
-   //  Converts OFF in the original source code to a line number and offset.
-   //
-   SourceLoc FindPos(size_t off);
-
-   //  Finds the start of ITEM and backs up to find the starting point for
-   //  cutting the item.  Returns EndPos() on failure.
-   //
-   SourceLoc FindCutBegin(const CxxNamed* item);
-
-   //  Looks for STR on ITER, starting at OFF.  If STR is found, returns its
-   //  position, else returns string::npos.  Ignores any trailing comment.
-   //
-   size_t LineFind(const SourceIter& iter, const string& str, size_t off = 0);
-
-   //  The same as LineFind(iter, str, off), but searches backwards.
-   //
-   size_t LineRfind(const SourceIter& iter, const string& str, size_t off = 0);
-
-   //  The same as LineFind, but continues to subsequent lines.
-   //
-   SourceLoc Find(SourceIter iter, const string& str, size_t off = 0);
-
-   //  The same as LineRfind, but continues to previous lines.
-   //
-   SourceLoc Rfind
-      (SourceIter iter, const string& str, size_t off = string::npos);
-
-   //  Returns the location of ID, starting at iter->code[off].  Returns
-   //  EndPos() if ID was not found.  ID must be an identifier or keyword
-   //  that is delimited by punctuation.
-   //
-   SourceLoc FindWord(SourceIter iter, size_t off, const string& id);
-
-   //  Returns the location of the first non-blank character starting at
-   //  iter->code[off].  Returns EndPos() if no such character was found.
-   //
-   SourceLoc FindNonBlank(SourceIter iter, size_t off = 0);
-
-   //  Returns the location of the first non-blank character starting at
-   //  iter->code[off], reversing.  Returns EndPos() if no such character
-   //  was found.
-   //
-   SourceLoc RfindNonBlank(SourceIter iter, size_t off = string::npos);
-
-   //  Returns the first occurrence of a character in CHARS, starting at
-   //  loc.iter->code[loc.pos].  Returns EndPos() if none of those
-   //  characters was found.
-   //
-   SourceLoc FindFirstOf(const SourceLoc& loc, const string& chars);
-
-   //  Returns the first occurrence of a character in CHARS, reversing
-   //  from loc.iter->code[loc.pos].  Returns EndPos() if none of those
-   //  characters was found.
-   //
-   SourceLoc RfindFirstOf(SourceLoc loc, const string& chars);
-
    //  Returns the location of the right parenthesis after a function's
-   //  argument list.  Returns EndPos() on failure.
+   //  argument list.  Returns string::npos on failure.
    //
-   SourceLoc FindArgsEnd(const Function* func);
+   size_t FindArgsEnd(const Function* func);
 
-   //  Returns the location of the semicolon after a function's declaration or
-   //  the left brace that begins its definition.  Returns EndPos() on failure.
+   //  Returns the location of the semicolon after a function's declaration
+   //  or the left brace that begins its definition.  Returns string::npos
+   //  on failure.
    //
-   SourceLoc FindSigEnd(const CodeWarning& log);
-   SourceLoc FindSigEnd(const Function* func);
+   size_t FindSigEnd(const CodeWarning& log);
+   size_t FindSigEnd(const Function* func);
 
    //  Returns the line that follows FUNC.
    //
-   SourceIter LineAfterFunc(const Function* func);
-
-   //  Cuts and returns the code associated with ITEM in CUT.  Comments on
-   //  preceding lines, up to the next line of code, are also erased if a
-   //  comment or left brace follows the erased code.  Returns the location
-   //  that immediately follows the cut.  Returns EndPos() and updates EXPL
-   //  on failure.
-   //
-   SourceLoc CutCode(const CxxNamed* item, string& expl, SourceList& cut);
-
-   //  Erases the code associated with ITEM.
-   //
-   word EraseCode(const CxxNamed* item, string& expl);
-
-   //  Inserts CODE at ITER and returns its location.
-   //
-   SourceIter Insert(const SourceIter& iter, string code);
-
-   //  Inserts PREFIX on the line identified by ITER, starting at OFF.  The
-   //  prefix replaces blanks but leaves at least one space between it and
-   //  the first non-blank character on the line.
-   //
-   void InsertPrefix(const SourceIter& iter, size_t off, const string& prefix);
-
-   //  Inserts a line break before OFF, indents the new line accordingly,
-   //  and returns the location of the first non-blank character on the new
-   //  line.  Returns {iter, off} if a line break was not inserted because
-   //  the new line would have been empty.
-   //
-   SourceLoc InsertLineBreak(const SourceIter& iter, size_t off);
-
-   //  Deletes the line break at the end of the line referenced by CURR if
-   //  the following line will also fit within LineLengthMax.  Returns true
-   //  if the line break was deleted.
-   //
-   bool EraseLineBreak(const SourceIter& curr);
+   size_t LineAfterFunc(const Function* func) const;
 
    //  Returns the location where the special member function required to
    //  fix LOG should be inserted.  Updates ATTRS to specify whether the
    //  function should be offset with a blank line and, if so, commented.
    //
-   SourceIter FindSpecialFuncLoc(const CodeWarning& log, FuncDeclAttrs& attrs);
+   size_t FindSpecialFuncLoc(const CodeWarning& log, FuncDeclAttrs& attrs);
 
    //  Returns the location where the function CLS::NAME should be declared.
-   //  Returns EndPos() if the user decides not to add the function.  Updates
-   //  ATTRS if the function should be offset with a blank line or comment.
+   //  Returns string::npos if the user decides not to add the function.
+   //  Updates ATTRS if the function should be offset with a blank line or
+   //  comment.
    //
-   SourceIter FindFuncDeclLoc
+   size_t FindFuncDeclLoc
       (const Class* cls, const string& name, FuncDeclAttrs& attrs);
 
    //  Returns the location where a new function declaration should be added
    //  after PREV and/or before NEXT.  Updates ATTRS if the function should
    //   be offset with a blank line or comment.
    //
-   SourceIter UpdateFuncDeclLoc
+   size_t UpdateFuncDeclLoc
       (const Function* prev, const Function* next, FuncDeclAttrs& attrs);
 
    //  Updates ATTRS based on FUNC.
@@ -425,125 +425,101 @@ private:
    //  Updates ATTRS if the function should be offset with a rule and/or a
    //  blank line.
    //
-   SourceIter FindFuncDefnLoc(const CodeFile* file, const Class* cls,
+   size_t FindFuncDefnLoc(const CodeFile* file, const Class* cls,
       const string& name, string& expl, FuncDefnAttrs& attrs);
 
    //  Returns the location where a new function definition should be added
    //  after PREV and/or before NEXT.  Updates ATTRS if the function should
    //  be offset with a rule and/or a blank line.
    //
-   SourceIter UpdateFuncDefnLoc
+   size_t UpdateFuncDefnLoc
       (const Function* prev, const Function* next, FuncDefnAttrs& attrs);
 
    //  Updates ATTRS based on FUNC.
    //
    void UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs);
 
-   //  Inserts the declaration for a Patch override at ITER.
-   //
-   void InsertPatchDecl(SourceIter& iter, const FuncDeclAttrs& attrs);
-
-   //  Inserts the definition for a Patch override in CLS at ITER.
-   //
-   void InsertPatchDefn
-      (SourceIter& iter, const Class* cls, const FuncDefnAttrs& attrs);
-
-   //  Returns the first line that follows comments and blanks.
-   //
-   SourceIter PrologEnd();
-
-   //  Returns the location of the first #include.  Returns end() if no
-   //  #include was found.
-   //
-   SourceIter IncludesBegin();
-
-   //  Returns the location of the statement that follows the last #include.
-   //  Returns End() if the last line was an #include.
-   //
-   SourceIter IncludesEnd();
-
-   //  Find the first line of code (other than #include directives, forward
-   //  declarations, and using statements).  Moves up past any comments that
-   //  precede this point, and returns the position where these comments
-   //  begin.
-   //
-   SourceIter CodeBegin();
-
-   //  Returns true if the code referenced by ITER is followed by more code,
-   //  without an intervening comment or right brace.
-   //
-   const bool CodeFollowsImmediately(const SourceIter& iter);
-
-   //  Returns the start of any comments that precede ITER, including an
-   //  fn_name definition if funcName is set.  Returns ITER if it is not
-   //  preceded by any such items.
-   //
-   SourceIter IntroStart(const SourceIter& iter, bool funcName);
-
-   //  If INCLUDE specifies a file in groups 1 to 4 (see CodeFile.CalcGroup),
-   //  this simplifies sorting by replacing the characters that enclose the
-   //  file name.
-   //
-   word MangleInclude(string& include, string& expl) const;
-
-   //  Inserts an INCLUDE directive.
-   //
-   word InsertInclude(string& include, string& expl);
-
-   //  Inserts a FORWARD declaration at ITER.
-   //
-   word InsertForward
-      (const SourceIter& iter, const string& forward, string& expl);
-
-   //  Inserts a FORWARD declaration at ITER.  It is the first declaration in
-   //  namespace NSPACE, so it must be enclosed in a new namespace scope.
-   //
-   word InsertNamespaceForward(const SourceIter& iter,
-      const string& nspace, const string& forward, string& expl);
-
-   //  Invoked after removing a forward declaration.  If the declaration was
-   //  in a namespace that is now empty, erases the "namespace <name> { }".
-   //
-   word EraseEmptyNamespace(const SourceIter& iter);
-
-   //  Returns the items within ITEM that were accessed via a using statement.
-   //
-   CxxNamedSet FindUsingReferents(const CxxNamed* item) const;
-
-   //  Qualifies names used within ITEM in order to remove using statements.
-   //
-   void QualifyUsings(const CxxNamed* item);
-
-   //  Within ITEM, qualifies occurrences of REF.
-   //
-   void QualifyReferent(const CxxNamed* item, const CxxNamed* ref);
-
-   //  Indents the code referenced by ITER.  SPLIT is set a line break was
-   //  just inserted to create a new line.  Returns the new position of the
-   //  first non-blank character.
-   //
-   size_t Indent(const SourceIter& iter, bool split);
-
    //  Returns the code for a Debug::Ft invocation with an inline string
-   //  literal that uses FNAME for the function's name.
+   //  literal (FNAME).
    //
    string DebugFtCode(const string& fname) const;
+
+   //  Inserts the declaration for a Patch override at POS.
+   //
+   void InsertPatchDecl(size_t& pos, const FuncDeclAttrs& attrs);
+
+   //  Inserts the definition for a Patch override in CLS at POS.
+   //
+   void InsertPatchDefn
+      (size_t& pos, const Class* cls, const FuncDefnAttrs& attrs);
+
+   //  Finds the start of ITEM and backs up to find the starting point for
+   //  cutting the item.  Returns string::npos on failure.
+   //
+   size_t FindCutBegin(const CxxNamed* item) const;
+
+   //  Cuts and returns the code associated with ITEM in CODE.  Comments on
+   //  preceding lines, up to the next line of code, are also erased if a
+   //  comment or left brace follows the erased code.  Returns the location
+   //  that immediately follows the cut.  Returns string::npos and updates
+   //  EXPL on failure.
+   //
+   size_t CutCode(const CxxNamed* item, string& expl, string& code);
+
+   //  Erases the code associated with ITEM.
+   //
+   word EraseCode(const CxxNamed* item, string& expl);
+
+   //  Erases POS's line and returns the start of the line that followed it.
+   //
+   size_t EraseLine(size_t pos);
+
+   //  Inserts CODE at POS.  Adds an endline if one isn't found.  Returns POS.
+   //
+   size_t InsertLine(size_t pos, const string& code);
+
+   //  Erases COUNT characters starting at POS and then inserts CODE.  Should
+   //  not be used if an erased susbstring is reinserted by CODE.
+   //
+   size_t Replace(size_t pos, size_t count, const std::string& code);
 
    //  Adds the editor to Editors_ and returns 0.
    //
    word Changed();
 
-   //  Sets EXPL to iter->code, adds the editor to Editors_, and returns 0.
+   //  Sets EXPL to POS's line of code, adds the editor to Editors_, and
+   //  returns 0.
    //
-   word Changed(const SourceIter& iter, string& expl);
+   word Changed(size_t pos, string& expl);
+
+   //  Erases COUNT characters starting at POS.
+   //
+   size_t Erase(size_t pos, size_t count);
+
+   //  Inserts CODE at POS.
+   //
+   size_t Insert(size_t pos, const string& code);
+
+   //  Pastes CODE, which originally started at FROM, at POS.
+   //
+   size_t Paste(size_t pos, const string& code, size_t from);
+
+   //  Updates the positions of warnings after an edit.
+   //
+   void UpdateWarnings(EditorAction action,
+      size_t begin, size_t count, size_t from = string::npos) const;
 
    //  The file from which the source code was obtained.
    //
-   const CodeFile* const file_;
+   CodeFile* file_;
 
-   //  The source code.
+   //  The code being edited.
    //
-   SourceCode source_;
+   string source_;
+
+   //  The file's warnings.
+   //
+   std::vector< CodeWarning* > warnings_;
 
    //  Set if the #include directives have been sorted.
    //
@@ -554,9 +530,10 @@ private:
    //
    bool aliased_;
 
-   //  The file's warnings.
+   //  The last position from which code was erased.  Only this position
+   //  can be used in a Paste operation.
    //
-   std::vector< CodeWarning > warnings_;
+   size_t lastCut_;
 
    //  The editors that have modified their original code.  This allows an
    //  editor to modify other files (e.g. when a fix requires changes in

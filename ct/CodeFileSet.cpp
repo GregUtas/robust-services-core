@@ -32,7 +32,6 @@
 #include "Debug.h"
 #include "Editor.h"
 #include "Formatters.h"
-#include "Lexer.h"
 #include "Library.h"
 #include "NbCliParms.h"
 #include "Parser.h"

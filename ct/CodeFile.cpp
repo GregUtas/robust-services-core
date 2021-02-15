@@ -21,6 +21,7 @@
 //
 #include "CodeFile.h"
 #include <cctype>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <istream>
@@ -29,7 +30,6 @@
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
-#include "CliThread.h"
 #include "CodeCoverage.h"
 #include "CodeDir.h"
 #include "CodeFileSet.h"
@@ -44,9 +44,7 @@
 #include "CxxScoped.h"
 #include "CxxToken.h"
 #include "Debug.h"
-#include "Editor.h"
 #include "Formatters.h"
-#include "FunctionName.h"
 #include "Library.h"
 #include "Parser.h"
 #include "Registry.h"
@@ -602,7 +600,7 @@ void CodeFile::Check()
 
 //------------------------------------------------------------------------------
 
-void CodeFile::CheckDebugFt() const
+void CodeFile::CheckDebugFt()
 {
    Debug::ft("CodeFile.CheckDebugFt");
 
@@ -651,7 +649,7 @@ void CodeFile::CheckDebugFt() const
             //
             if(code && !debug) LogLine(n, DebugFtNotFirst);
 
-            if(lexer_.GetNthLine(n, statement))
+            if(lexer_.GetNthLine(n, statement, true))
             {
                auto lpar = statement.find('(');
                if(lpar == string::npos) break;
@@ -1118,205 +1116,31 @@ void CodeFile::CheckUsings() const
 
 //------------------------------------------------------------------------------
 
-LineType CodeFile::ClassifyLine
-   (string s, bool& cont, std::set< Warning >& warnings) const
+LineType CodeFile::CalcLineType(size_t n, bool& cont)
 {
-   Debug::ft("CodeFile.ClassifyLine(string)");
-
-   cont = false;
-
-   auto length = s.size();
-   if(length == 0) return BlankLine;
-
-   //  There is probably a CRLF at the end of the line.
-   //
-   if(s.back() == CRLF)
-   {
-      s.pop_back();
-      if(--length == 0) return BlankLine;
-   }
-
-   //  Flag the line if it is too long.
-   //
-   if(length > LineLengthMax()) warnings.insert(LineLength);
-
-   //  Flag any tabs and convert them to spaces.
-   //
-   for(auto pos = s.find(TAB); pos != string::npos; pos = s.find(TAB))
-   {
-      warnings.insert(UseOfTab);
-      s[pos] = SPACE;
-   }
-
-   //  Flag and strip trailing spaces.
-   //
-   if(s.find_first_not_of(SPACE) == string::npos)
-   {
-      warnings.insert(TrailingSpace);
-      return BlankLine;
-   }
-
-   while(s.rfind(SPACE) == s.size() - 1)
-   {
-      warnings.insert(TrailingSpace);
-      s.pop_back();
-   }
-
-   //  Flag a line that is not indented a multiple of the standard, unless
-   //  it begins with a comment or string literal.
-   //
-   if(s.empty()) return BlankLine;
-   auto pos = s.find_first_not_of(SPACE);
-   if(pos > 0) s.erase(0, pos);
-
-   if(pos % IndentSize() != 0)
-   {
-      if((s[0] != '/') && (s[0] != QUOTE)) warnings.insert(Indentation);
-   }
-
-   //  Now that the line has been reformatted, recalculate its length.
-   //
-   length = s.size();
-
-   //  Look for lines that contain nothing but a brace (or brace and semicolon).
-   //
-   if((s[0] == '{') && (length == 1)) return OpenBrace;
-
-   if(s[0] == '}')
-   {
-      if(length == 1) return CloseBrace;
-      if((s[1] == ';') && (length == 2)) return CloseBraceSemicolon;
-   }
-
-   //  Classify lines that contain only a // comment.
-   //
-   size_t slashSlashPos = s.find(COMMENT_STR);
-
-   if(slashSlashPos == 0)
-   {
-      if(length == 2) return EmptyComment;      //
-      if(s[2] == '-') return SeparatorComment;  //-
-      if(s[2] == '=') return SeparatorComment;  //=
-      if(s[2] == '/') return SeparatorComment;  ///
-      if(s[2] != SPACE) return TaggedComment;   //$ [$ != one of above]
-      return TextComment;                       //  text
-   }
-
-   //  Flag a /* comment and see if it ends on the same line.
-   //
-   pos = FindSubstr(s, COMMENT_BEGIN_STR);
-
-   if(pos != string::npos)
-   {
-      warnings.insert(UseOfSlashAsterisk);
-      if(pos == 0) return SlashAsteriskComment;
-   }
-
-   //  Look for preprocessor directives (e.g. #include, #ifndef).
-   //
-   if(s[0] == '#')
-   {
-      pos = s.find(HASH_INCLUDE_STR);
-      if(pos == 0) return IncludeDirective;
-      return HashDirective;
-   }
-
-   //  Look for using statements.
-   //
-   if(s.find("using ") == 0)
-   {
-      cont = (LastCodeChar(s, slashSlashPos) != ';');
-      return UsingStatement;
-   }
-
-   //  Look for access controls.
-   //
-   pos = s.find_first_not_of(WhitespaceChars);
-
-   if(pos != string::npos)
-   {
-      if(s.find(PUBLIC_STR) == pos) return AccessControl;
-      if(s.find(PROTECTED_STR) == pos) return AccessControl;
-      if(s.find(PRIVATE_STR) == pos) return AccessControl;
-   }
-
-   //  Look for invocations of Debug::ft and its variants.
-   //
-   if(FindSubstr(s, "Debug::ft(") != string::npos) return DebugFt;
-   if(FindSubstr(s, "Debug::ftnt(") != string::npos) return DebugFt;
-   if(FindSubstr(s, "Debug::noft(") != string::npos) return DebugFt;
-
-   //  Look for strings that provide function names for Debug::ft.  These
-   //  have the format
-   //    fn_name ClassName_FunctionName = "ClassName.FunctionName";
-   //  with an endline after the '=' if the line would exceed LineLengthMax
-   //  characters.
-   //
-   string type(FunctionName::TypeStr);
-   type.push_back(SPACE);
-
-   while(true)
-   {
-      if(s.find(type) != 0) break;
-      auto begin1 = s.find_first_not_of(SPACE, type.size());
-      if(begin1 == string::npos) break;
-      auto under = s.find('_', begin1);
-      if(under == string::npos) break;
-      auto equals = s.find('=', under);
-      if(equals == string::npos) break;
-
-      if(LastCodeChar(s, slashSlashPos) == '=')
-      {
-         cont = true;
-         return FunctionName;
-      }
-
-      auto end1 = s.find_first_not_of(ValidNextChars, under);
-      if(end1 == string::npos) break;
-      auto begin2 = s.find(QUOTE, equals);
-      if(begin2 == string::npos) break;
-      auto dot = s.find('.', begin2);
-      if(dot == string::npos) break;
-      auto end2 = s.find(QUOTE, dot);
-      if(end2 == string::npos) break;
-
-      auto front = under - begin1;
-      if(s.substr(begin1, front) == s.substr(begin2 + 1, front))
-      {
-         return FunctionName;
-      }
-      break;
-   }
-
-   pos = FindSubstr(s, "  ");
-
-   if(pos != string::npos)
-   {
-      auto next = s.find_first_not_of(SPACE, pos);
-
-      if((next != string::npos) && (next != slashSlashPos) && (s[next] != '='))
-      {
-         warnings.insert(AdjacentSpaces);
-      }
-   }
-
-   cont = (LastCodeChar(s, slashSlashPos) != ';');
-   return CodeLine;
-}
-
-//------------------------------------------------------------------------------
-
-LineType CodeFile::ClassifyLine(size_t n, bool& cont)
-{
-   Debug::ft("CodeFile.ClassifyLine(size_t)");
+   Debug::ft("CodeFile.CalcLineType");
 
    //  Get the code for line N and classify it.
    //
    string s;
-   if(!lexer_.GetNthLine(n, s)) return LineType_N;
+   if(!lexer_.GetNthLine(n, s, true)) return LineType_N;
 
    std::set< Warning > warnings;
-   auto type = ClassifyLine(s, cont, warnings);
+   auto type = CodeTools::CalcLineType(s, cont, warnings);
+
+   //  Flag the line if it is too long.
+   //
+   if(s.size() > LineLengthMax() + 1) warnings.insert(LineLength);
+
+   //  Flag a line that is not indented a multiple of the standard unless
+   //  it begins with a comment or string literal.
+   //
+   auto pos = s.find_first_not_of(SPACE);
+
+   if((pos != string::npos) && (pos % IndentSize() != 0))
+   {
+      if((s[pos] != '/') && (s[pos] != QUOTE)) warnings.insert(Indentation);
+   }
 
    //  A line within a /* comment can be logged spuriously.
    //
@@ -1338,7 +1162,7 @@ LineType CodeFile::ClassifyLine(size_t n, bool& cont)
    //
    if(slashAsterisk_)
    {
-      auto pos = s.find(COMMENT_END_STR);
+      pos = s.find(COMMENT_END_STR);
       if(pos != string::npos) slashAsterisk_ = false;
       return TextComment;
    }
@@ -1355,45 +1179,6 @@ LineType CodeFile::ClassifyLine(size_t n, bool& cont)
    }
 
    return type;
-}
-
-//------------------------------------------------------------------------------
-
-word CodeFile::CreateEditor(string& expl) const
-{
-   Debug::ft("CodeFile.CreateEditor");
-
-   expl.clear();
-   if(editor_ != nullptr) return 0;
-
-   //  Fail if
-   //  o the file's directory is unknown
-   //  o no source code exists
-   //  o the editor cannot be created
-   //
-   if(dir_ == nullptr)
-   {
-      expl = "Directory not found for " + Name() + '.';
-      return -3;
-   }
-
-   if(code_.empty())
-   {
-      expl = "Source code for " + Name() + "has not been imported.";
-      return -2;
-   }
-
-   //  Fail if the editor can't be created.
-   //
-   editor_.reset(new Editor(*this));
-
-   if(editor_ == nullptr)
-   {
-      expl = "Failed to create editor for" + Name() + '.';
-      return -1;
-   }
-
-   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -1429,12 +1214,11 @@ void CodeFile::Display(ostream& stream,
       stream << lead << strIndex(*u) << f->Name() << CRLF;
    }
 
-   stream << prefix << "editor : " << strPtr(editor_.get()) << CRLF;
+   stream << prefix << "lexer :" << CRLF;
+   lexer_.Display(stream, lead, options);
 
-   if(editor_ != nullptr)
-   {
-      editor_->Display(stream, lead, options);
-   }
+   stream << prefix << "editor :" << CRLF;
+   editor_.Display(stream, lead, options);
 }
 
 //------------------------------------------------------------------------------
@@ -1551,13 +1335,13 @@ void CodeFile::FindDeclIds()
 
 //------------------------------------------------------------------------------
 
-CodeWarning* CodeFile::FindLog(const CodeWarning& log,
-   const CxxNamed* item, word offset, std::string& expl) const
+CodeWarning* CodeFile::FindLog
+   (const CodeWarning& log, const CxxNamed* item, word offset)
 {
    Debug::ft("CodeFile.FindLog");
 
-   if(CreateEditor(expl) != 0) return nullptr;
-   return editor_->FindLog(log, item, offset);
+   editor_.Setup(this);
+   return editor_.FindLog(log, item, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -1627,7 +1411,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
       qualName->SetReferent(ref, nullptr);
       UsingPtr use(new Using(qualName, false, true));
       use->SetScope(scope);
-      use->SetLoc(this, CxxLocation::NOT_IN_SOURCE);
+      use->SetLoc(this, string::npos);
       scope->AddUsing(use);
    }
 }
@@ -1676,23 +1460,14 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 //------------------------------------------------------------------------------
 
-word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
+word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 {
    Debug::ft("CodeFile.Fix");
 
    if(!CodeWarning::HasWarning(this, opts.warning)) return 0;
 
-   auto rc = CreateEditor(expl);
-
-   if(rc < -1) return rc;  // don't continue with other files
-
-   if(rc == -1)  // continue with other files
-   {
-      *cli.obuf << expl << CRLF;
-      return 0;
-   }
-
-   rc = editor_->Fix(cli, opts, expl);
+   editor_.Setup(this);
+   auto rc = editor_.Fix(cli, opts, expl);
 
    if(rc >= -1) return 0;  // continue with other files
    return rc;              // don't continue with other files
@@ -1700,16 +1475,14 @@ word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 
 //------------------------------------------------------------------------------
 
-word CodeFile::Format(string& expl) const
+word CodeFile::Format(string& expl)
 {
    Debug::ft("CodeFile.Format");
 
    Debug::Progress(Name() + CRLF);
 
-   auto rc = CreateEditor(expl);
-   if(rc != 0) return rc;
-
-   return editor_->Format(expl);
+   editor_.Setup(this);
+   return editor_.Format(expl);
 }
 
 //------------------------------------------------------------------------------
@@ -1740,45 +1513,12 @@ void CodeFile::GetDeclaredBaseClasses(CxxNamedSet& bases) const
 
 //------------------------------------------------------------------------------
 
-int8_t CodeFile::GetDepth(size_t line) const
-{
-   int8_t depth;
-   bool cont;
-   lexer_.GetDepth(line, depth, cont);
-
-   if(line >= lineType_.size()) return depth;
-
-   if(!LineTypeAttr::Attrs[lineType_[line]].isCode) return depth;
-
-   switch(lineType_[line])
-   {
-   case IncludeDirective:
-   case HashDirective:
-      //
-      //  Don't indent these.
-      //
-      return 0;
-
-   default:
-      //
-      //  For code.
-      //
-      return (cont ? depth + 1 : depth);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-Editor* CodeFile::GetEditor(string& expl) const
+Editor& CodeFile::GetEditor()
 {
    Debug::ft("CodeFile.GetEditor");
 
-   if(editor_ == nullptr)
-   {
-      CreateEditor(expl);
-   }
-
-   return editor_.get();
+   editor_.Setup(this);
+   return editor_;
 }
 
 //------------------------------------------------------------------------------
@@ -2098,7 +1838,7 @@ size_t CodeFile::LineLengthMax() const
 
 fn_name CodeFile_LogAddForwards = "CodeFile.LogAddForwards";
 
-void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
+void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items)
 {
    Debug::ft(CodeFile_LogAddForwards);
 
@@ -2133,7 +1873,7 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
 
    for(auto n = names.cbegin(); n != names.cend(); ++n)
    {
-      LogPos(0, ForwardAdd, nullptr, 0, *n);
+      LogPos(string::npos, ForwardAdd, nullptr, 0, *n);
    }
 
    DisplaySymbols(stream, items, "Add a forward declaration for");
@@ -2141,7 +1881,7 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids) const
+void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids)
 {
    Debug::ft("CodeFile.LogAddIncludes");
 
@@ -2159,7 +1899,7 @@ void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids) const
       fn.push_back(x ? '<' : QUOTE);
       fn += f->Name();
       fn.push_back(x ? '>' : QUOTE);
-      LogPos(0, IncludeAdd, nullptr, 0, fn);
+      LogPos(string::npos, IncludeAdd, nullptr, 0, fn);
    }
 
    DisplayFileNames(stream, fids, "Add an #include for");
@@ -2167,7 +1907,7 @@ void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogAddUsings(ostream* stream) const
+void CodeFile::LogAddUsings(ostream* stream)
 {
    Debug::ft("CodeFile.LogAddUsings");
 
@@ -2229,7 +1969,7 @@ void CodeFile::LogAddUsings(ostream* stream) const
             usings.insert(space);
          }
 
-         LogPos(0, UsingAdd, nullptr, 0, name);
+         LogPos(string::npos, UsingAdd, nullptr, 0, name);
       }
    }
 
@@ -2238,8 +1978,8 @@ void CodeFile::LogAddUsings(ostream* stream) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
-   const CxxNamed* item, word offset, const string& info, bool hide) const
+void CodeFile::LogCode(Warning warning, size_t pos,
+   const CxxNamed* item, word offset, const string& info, bool hide)
 {
    Debug::ft("CodeFile.LogCode");
 
@@ -2248,43 +1988,34 @@ void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
    if(isSubsFile_) return;
    if(Context::ParsingTemplateInstance()) return;
 
-   //  Log the warning if it is valid.
-   //
-   if((warning < Warning_N) &&
-      (line < lineType_.size()) &&
-      (pos < code_.size()))
-   {
-      CodeWarning log(warning, this, line, pos, item, offset, info, hide);
-      log.Insert();
-   }
+   CodeWarning log(warning, this, pos, item, offset, info, hide);
+   log.Insert();
 }
 
 //------------------------------------------------------------------------------
 
 void CodeFile::LogLine(size_t line, Warning warning,
-   word offset, const string& info, bool hide) const
+   word offset, const string& info, bool hide)
 {
    Debug::ft("CodeFile.LogLine");
 
    auto pos = lexer_.GetLineStart(line);
-   LogCode(warning, line, pos, nullptr, offset, info, hide);
+   LogCode(warning, pos, nullptr, offset, info, hide);
 }
 
 //------------------------------------------------------------------------------
 
 void CodeFile::LogPos(size_t pos, Warning warning,
-   const CxxNamed* item, word offset, const string& info, bool hide) const
+   const CxxNamed* item, word offset, const string& info, bool hide)
 {
    Debug::ft("CodeFile.LogPos");
 
-   auto line = lexer_.GetLineNum(pos);
-   LogCode(warning, line, pos, item, offset, info, hide);
+   LogCode(warning, pos, item, offset, info, hide);
 }
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogRemoveForwards
-   (ostream* stream, const CxxNamedSet& items) const
+void CodeFile::LogRemoveForwards(ostream* stream, const CxxNamedSet& items)
 {
    Debug::ft("CodeFile.LogRemoveForwards");
 
@@ -2308,8 +2039,7 @@ void CodeFile::LogRemoveForwards
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogRemoveIncludes
-   (ostream* stream, const SetOfIds& fids) const
+void CodeFile::LogRemoveIncludes(ostream* stream, const SetOfIds& fids)
 {
    Debug::ft("CodeFile.LogRemoveIncludes");
 
@@ -2336,7 +2066,7 @@ void CodeFile::LogRemoveIncludes
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogRemoveUsings(ostream* stream) const
+void CodeFile::LogRemoveUsings(ostream* stream)
 {
    Debug::ft("CodeFile.LogRemoveUsings");
 
@@ -2548,6 +2278,30 @@ void CodeFile::PruneLocalForwards
 
 //------------------------------------------------------------------------------
 
+bool CodeFile::ReadCode(string& code) const
+{
+   Debug::ft("CodeFile.ReadCode");
+
+   auto input = InputStream();
+   if(input == nullptr) return false;
+   input->clear();
+   input->seekg(0);
+
+   string str;
+
+   while(input->peek() != EOF)
+   {
+      std::getline(*input, str);
+      code += str;
+      code.push_back(CRLF);
+   }
+
+   input.reset();
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::RemoveHeaderIds(SetOfIds& inclIds) const
 {
    Debug::ft("CodeFile.RemoveHeaderIds");
@@ -2627,24 +2381,8 @@ void CodeFile::Scan()
    Debug::ft("CodeFile.Scan");
 
    if(!code_.empty()) return;
-
-   auto input = InputStream();
-   if(input == nullptr) return;
-   input->clear();
-   input->seekg(0);
-
-   string str;
-
-   while(input->peek() != EOF)
-   {
-      std::getline(*input, str);
-      code_ += str;
-      code_.push_back(CRLF);
-   }
-
-   input.reset();
-
-   lexer_.Initialize(code_);
+   if(!ReadCode(code_)) return;
+   lexer_.Initialize(code_, this);
    lexer_.CalcDepths();
 
    auto lines = lexer_.LineCount();
@@ -2664,7 +2402,7 @@ void CodeFile::Scan()
    for(size_t n = 0; n < lines; ++n)
    {
       auto currCont = false;
-      auto currType = ClassifyLine(n, currCont);
+      auto currType = CalcLineType(n, currCont);
 
       if(prevCont)
       {
@@ -2954,6 +2692,17 @@ void CodeFile::Trim(ostream* stream)
 
       DisplaySymbolsAndFiles(stream, qualify,
          "To remove dependencies on using statements, qualify");
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->UpdatePos(action, begin, count, from);
    }
 }
 }

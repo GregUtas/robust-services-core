@@ -164,7 +164,7 @@ private:
    //  a template instance.
    //
    void Enter(SourceType source, const std::string& venue, const TypeName* inst,
-      const std::string& code, bool preprocess, const CodeFile* file = nullptr);
+      const std::string& code, bool preprocess, CodeFile* file = nullptr);
 
    //  Parses declarations at file scope.  SPACE is the current namespace.
    //

@@ -276,7 +276,7 @@ void Parser::DisplayStats(ostream& stream)
 //------------------------------------------------------------------------------
 
 void Parser::Enter(SourceType source, const string& venue,
-      const TypeName* inst, const string& code, bool preprocess)
+   const TypeName* inst, const string& code, bool preprocess, CodeFile* file)
 {
    Debug::ft("Parser.Enter");
 
@@ -285,7 +285,7 @@ void Parser::Enter(SourceType source, const string& venue,
    inst_ = inst;
    farthest_ = 0;
    cause_ = 0;
-   lexer_.Initialize(code);
+   lexer_.Initialize(code, file);
    if(preprocess) lexer_.PreprocessSource();
 }
 
@@ -297,7 +297,7 @@ void Parser::Failure(const string& venue) const
 {
    Debug::ft(Parser_Failure);  //@
 
-   auto code = lexer_.GetLine(farthest_);
+   auto code = lexer_.MarkPos(farthest_);
    auto line = lexer_.GetLineNum(farthest_);
    std::ostringstream text;
    text << venue << ", line " << line + 1 << ": " << code;
@@ -313,7 +313,7 @@ bool Parser::Fault(DirectiveError err) const
    Debug::ft(Parser_Fault);
 
    auto curr = CurrPos();
-   auto code = lexer_.GetLine(curr);
+   auto code = lexer_.MarkPos(curr);
    auto line = lexer_.GetLineNum(curr);
    std::ostringstream text;
    text << venue_ << ", line " << line + 1 << ':' << CRLF << Log::Tab << code;
@@ -4232,7 +4232,7 @@ bool Parser::Parse(CodeFile& file)
    depth_ = SysThreadStack::FuncDepth();
    Context::SetFile(&file);
    Context::PushScope(gns);
-   Enter(IsFile, file.Name(), nullptr, file.GetCode(), true);
+   Enter(IsFile, file.Name(), nullptr, file.GetCode(), true, &file);
    GetFileDecls(gns);
    Context::PopScope();
    if(traced) ThisThread::StopTracing();

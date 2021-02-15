@@ -28,8 +28,8 @@
 #include <string>
 #include <utility>
 #include "Cxx.h"
-#include "CxxNamed.h"
 #include "CxxFwd.h"
+#include "CxxLocation.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
 

@@ -21,7 +21,6 @@
 //
 #include "CodeTypes.h"
 #include <ostream>
-#include "CodeWarning.h"
 #include "CxxString.h"
 #include "Debug.h"
 #include "FunctionName.h"

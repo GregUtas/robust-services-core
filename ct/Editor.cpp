@@ -21,18 +21,19 @@
 //
 #include "Editor.h"
 #include <algorithm>
+#include <bitset>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <iosfwd>
 #include <iterator>
+#include <list>
 #include <memory>
 #include <sstream>
 #include "CliThread.h"
 #include "CodeCoverage.h"
 #include "CodeFile.h"
 #include "CxxArea.h"
-#include "CxxDirective.h"
 #include "CxxNamed.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
@@ -41,9 +42,9 @@
 #include "Debug.h"
 #include "Duration.h"
 #include "Formatters.h"
-#include "Lexer.h"
 #include "Library.h"
 #include "NbCliParms.h"
+#include "NbTypes.h"
 #include "Singleton.h"
 #include "SysFile.h"
 #include "ThisThread.h"
@@ -469,15 +470,15 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    //  This handles the following argument warnings:
    //  o AnonymousArgument: unnamed argument
    //  o DefinitionRenamesArgument: definition's name differs from declaration's
-   //  o OverrideRenamesArgument: override's name differs from base's
+   //  o OverrideRenamesArgument: override's name differs from root's
    //
    auto func = static_cast< const Function* >(log.item_);
    const Function* decl = func->GetDecl();
    const Function* defn = func->GetDefn();
-   const Function* base = (func->IsOverride() ? func->GetBase() : nullptr);
+   const Function* root = (func->IsOverride() ? func->FindRootFunc() : nullptr);
    if(decl == nullptr) return NotFound(expl, "Function's declaration");
 
-   //  Use the argument name from the base (if any), else the declaration,
+   //  Use the argument name from the root (if any), else the declaration,
    //  else the definition.
    //
    auto index = decl->LogOffsetToArgIndex(log.offset_);
@@ -485,7 +486,7 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    auto declName = *decl->GetArgs().at(index)->Name();
    string defnName;
    if(defn != nullptr) defnName = *defn->GetArgs().at(index)->Name();
-   if(base != nullptr) argName = *base->GetArgs().at(index)->Name();
+   if(root != nullptr) argName = *root->GetArgs().at(index)->Name();
    if(argName.empty()) argName = declName;
    if(argName.empty()) argName = defnName;
    if(argName.empty()) return NotFound(expl, "Candidate argument name");
@@ -495,14 +496,12 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    //
    if(log.warning_ == AnonymousArgument)
    {
-      auto arg = func->GetArgs().at(index).get();
-      auto pos = arg->GetPos();
-      if(pos == string::npos) return NotFound(expl, "Argument");
-      pos = FindFirstOf(pos, ",)");
-      if(pos == string::npos) return NotFound(expl, "End of argument");
+      auto type = func->GetArgs().at(index)->GetTypeSpec()->GetPos();
+      type = FindFirstOf(type, ",)");
+      if(type == string::npos) return NotFound(expl, "End of argument");
       argName.insert(0, 1, SPACE);
-      Insert(pos + 1, argName);
-      return Changed(pos, expl);
+      Insert(type, argName);
+      return Changed(type, expl);
    }
 
    size_t begin, end;
@@ -515,6 +514,7 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
        pos = FindWord(pos + 1, defnName))
    {
       Replace(pos, defnName.size(), argName);
+      end = end + argName.size() - defnName.size();
       Changed();
    }
 
@@ -664,7 +664,7 @@ word Editor::ChangeDebugFtName
    if(lpos == string::npos) return NotFound(expl, "fn_name left quote");
    auto rpos = source_.find(QUOTE, lpos + 1);
    if(rpos == string::npos) return NotFound(expl, "fn_name right quote");
-   Replace(lpos + 1, rpos - lpos - 1, fname);
+   Replace(lpos, rpos - lpos + 1, fname);
 
    if(LineSize(lpos) - 1 > file_->LineLengthMax())
    {
@@ -898,7 +898,7 @@ bool Editor::CodeFollowsImmediately(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-bool Editor::Commit(CliThread& cli, string& expl)
+bool Editor::Commit(const CliThread& cli, string& expl)
 {
    Debug::ft("Editor.Commit");
 
@@ -929,7 +929,7 @@ word Editor::ConvertTabsToBlanks()
    Debug::ft("Editor.ConvertTabsToBlanks");
 
    auto indent = file_->IndentSize();
-   auto tab = string(1, TAB);
+   string tab(1, TAB);
 
    //  Run through the source, looking for tabs.
    //
@@ -1034,7 +1034,7 @@ size_t Editor::CutCode(const CxxNamed* item, string& expl, string& code)
          if(FindComment(prev) != string::npos)
             source_[prev] = SPACE;
          else
-            source_.erase(prev, 1);
+            Erase(prev, 1);
 
          if(IsFirstNonBlank(end))
             end = CurrBegin(end) - 1;
@@ -1140,7 +1140,7 @@ void Editor::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void Editor::DisplayLog(const CliThread& cli, const CodeWarning& log, bool file)
+bool Editor::DisplayLog(const CliThread& cli, const CodeWarning& log, bool file) const
 {
    Debug::ft("Editor.DisplayLog");
 
@@ -1167,19 +1167,20 @@ void Editor::DisplayLog(const CliThread& cli, const CodeWarning& log, bool file)
       if(code.empty())
       {
          *cli.obuf << "Code not found." << CRLF;
-         return;
+         return false;
       }
 
       if(code.find_first_not_of(WhitespaceChars) == string::npos)
       {
          *cli.obuf << "[line contains only whitespace]" << CRLF;
-         return;
+         return true;
       }
 
       *cli.obuf << DemangleInclude(code);
    }
-}
 
+   return true;
+}
 
 //------------------------------------------------------------------------------
 
@@ -1633,6 +1634,8 @@ word Editor::EraseForward(const CodeWarning& log, string& expl)
 
 size_t Editor::EraseLine(size_t pos)
 {
+   Debug::ft("Editor.EraseLine");
+
    auto begin = CurrBegin(pos);
    auto end = CurrEnd(pos);
    Erase(begin, end - begin + 1);
@@ -1661,18 +1664,22 @@ bool Editor::EraseLineBreak(size_t pos)
        GetCode(next), 0, LineSize(next) - 1);
    if(size > file_->LineLengthMax()) return false;
 
-   //  Merge the lines after discarding CURR's endline.
+   //  Merge the lines after replacing or erasing CURR's endline.
    //
    auto code1 = source_.substr(curr, LineSize(curr) - 1);
    auto code2 = source_.substr(next, LineSize(next));
    auto start = LineFindFirst(next);
 
    if(InsertSpaceOnMerge(code1, code2, start - next))
+   {
       Replace(next - 1, 1, SPACE_STR);
+      Erase(next, start - next);
+   }
    else
-      Erase(next - 1, 1);
+   {
+      Erase(next - 1, start - next + 1);
+   }
 
-   Erase(next, start);
    return true;
 }
 
@@ -1873,7 +1880,7 @@ word Editor::EraseVoidArgument(const CodeWarning& log, string& expl)
       if(source_[rpar] != ')') continue;
       if(OnSameLine(arg, lpar) && OnSameLine(arg, rpar))
       {
-         Erase(lpar + 1, rpar - lpar + 1);
+         Erase(lpar + 1, rpar - lpar - 1);
          return Changed(arg, expl);
       }
       Erase(arg, strlen(VOID_STR));
@@ -1887,6 +1894,8 @@ word Editor::EraseVoidArgument(const CodeWarning& log, string& expl)
 
 size_t Editor::FindAndCutInclude(size_t pos, const string& incl)
 {
+   Debug::ft("Editor.FindAndCutInclude");
+
    for(NO_OP; pos != string::npos; pos = NextBegin(pos))
    {
       if(GetCode(pos) == incl)
@@ -1908,7 +1917,8 @@ size_t Editor::FindArgsEnd(const Function* func)
    if(name == string::npos) return string::npos;
    auto lpar = FindFirstOf(name, "(");
    if(lpar == string::npos) return string::npos;
-   return FindClosing('(', ')', lpar + 1);
+   auto rpar = FindClosing('(', ')', lpar + 1);
+   return rpar;
 }
 
 //------------------------------------------------------------------------------
@@ -2319,55 +2329,57 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
       //  This item is eligible for fixing.  Display it.
       //
-      DisplayLog(cli, **item, first);
-      first = false;
-
-      //  See if the user wishes to fix the item.  Valid responses are
-      //  o 'y' = fix it, which invokes the appropriate function
-      //  o 'n' = don't fix it
-      //  o 's' = skip this file
-      //  o 'q' = done fixing warnings
-      //
-      expl.clear();
-      reply = 'y';
-
-      if(opts.prompt)
+      if(DisplayLog(cli, **item, first))
       {
-         reply = cli.CharPrompt(FixPrompt, YNSQChars, YNSQHelp);
-      }
+         first = false;
 
-      switch(reply)
-      {
-      case 'y':
-      {
-         auto logs = (*item)->LogsToFix(expl);
+         //  See if the user wishes to fix the item.  Valid responses are
+         //  o 'y' = fix it, which invokes the appropriate function
+         //  o 'n' = don't fix it
+         //  o 's' = skip this file
+         //  o 'q' = done fixing warnings
+         //
+         expl.clear();
+         reply = 'y';
 
-         if(!expl.empty())
+         if(opts.prompt)
          {
-            *cli.obuf << spaces(2) << expl << CRLF;
-            expl.clear();
+            reply = cli.CharPrompt(FixPrompt, YNSQChars, YNSQHelp);
          }
 
-         for(auto log = logs.begin(); log != logs.end(); ++log)
+         switch(reply)
          {
-            auto& editor = (*log)->File()->GetEditor();
-            rc = editor.FixLog(cli, **log, expl);
-            ReportFix(cli, rc, expl);
+         case 'y':
+         {
+            auto logs = (*item)->LogsToFix(expl);
+
+            if(!expl.empty())
+            {
+               *cli.obuf << spaces(2) << expl << CRLF;
+               expl.clear();
+            }
+
+            for(auto log = logs.begin(); log != logs.end(); ++log)
+            {
+               auto& editor = (*log)->File()->GetEditor();
+               rc = editor.FixLog(cli, **log, expl);
+               ReportFix(cli, rc, expl);
+            }
+
+            break;
          }
 
-         break;
-      }
+         case 'n':
+            break;
 
-      case 'n':
-         break;
+         case 's':
+         case 'q':
+            exit = true;
+            break;
 
-      case 's':
-      case 'q':
-         exit = true;
-         break;
-
-      default:
-         return Report(expl, "Internal error: unknown response.", -6);
+         default:
+            return Report(expl, "Internal error: unknown response.", -6);
+         }
       }
 
       cli.Flush();
@@ -2797,7 +2809,7 @@ word Editor::Format(string& expl)
 
 //------------------------------------------------------------------------------
 
-size_t Editor::IncludesBegin()
+size_t Editor::IncludesBegin() const
 {
    Debug::ft("Editor.IncludesBegin");
 
@@ -2893,11 +2905,11 @@ word Editor::InitByCtorCall(const CodeWarning& log, string& expl)
    if(first == string::npos) return NotFound(expl, "Start of code");
    auto name = FindWord(first, *log.item_->Name());
    if(name == string::npos) return NotFound(expl, "Variable name");
-   Erase(first, name - first);
+   Erase(first, name - first - 1);
 
    //  Erase <class>.
    //
-   auto eq = FindFirstOf(name, "=");
+   auto eq = FindFirstOf(first, "=");
    if(eq == string::npos) return NotFound(expl, "Assignment operator");
    auto cbegin = FindNonBlank(eq + 1);
    if(cbegin == string::npos) return NotFound(expl, "Start of class name");
@@ -2913,11 +2925,13 @@ word Editor::InitByCtorCall(const CodeWarning& log, string& expl)
    Paste(first, cname, cbegin);
    if(log.item_->IsConst()) first = Insert(first, "const ");
 
-   //  Remove the '=' and any blank space around it.
+   //  Remove the '=' and the spaces around it.
    //
    eq = FindFirstOf(first, "=");
    if(eq == string::npos) return NotFound(expl, "Assignment operator");
-   Erase(eq, 1);
+   auto left = RfindNonBlank(eq - 1);
+   auto right = FindNonBlank(eq + 1);
+   Erase(left + 1, right - left - 1);
 
    //  If the arguments were on a separate line, it may be possible to remove
    //  the line break.
@@ -3049,7 +3063,7 @@ word Editor::InsertDebugFtCall
    auto func = static_cast< const Function* >(log.item_);
    func->GetRange(begin, right);
 
-   for(auto pos = left; (pos != right) && arg.empty(); pos = NextBegin(pos))
+   for(auto pos = left; (pos < right) && arg.empty(); pos = NextBegin(pos))
    {
       auto start = LineFind(pos, fvar);
 
@@ -3392,7 +3406,7 @@ word Editor::InsertIncludeGuard(const CodeWarning& log, string& expl)
    code = "#ifndef " + guardName;
    InsertLine(pos, code);
    code = string(HASH_ENDIF_STR) + CRLF_STR;
-   source_.insert(source_.size(), code);
+   Insert(source_.size(), code);
    return Changed(pos, expl);
 }
 
@@ -3400,6 +3414,8 @@ word Editor::InsertIncludeGuard(const CodeWarning& log, string& expl)
 
 size_t Editor::InsertLine(size_t pos, const string& code)
 {
+   Debug::ft("Editor.InsertLine");
+
    if(pos >= source_.size()) return string::npos;
    auto copy = code;
    if(copy.empty() || (copy.back() != CRLF)) copy.push_back(CRLF);
@@ -3511,7 +3527,7 @@ fixed_string PatchReturn = "void";
 fixed_string PatchSignature = "Patch(sel_t selector, void* arguments)";
 fixed_string PatchInvocation = "Patch(selector, arguments)";
 
-void Editor::InsertPatchDecl(size_t& pos, const FuncDeclAttrs& attrs)
+void Editor::InsertPatchDecl(const size_t& pos, const FuncDeclAttrs& attrs)
 {
    Debug::ft("Editor.InsertPatchDecl");
 
@@ -3550,7 +3566,7 @@ void Editor::InsertPatchDecl(size_t& pos, const FuncDeclAttrs& attrs)
 //------------------------------------------------------------------------------
 
 void Editor::InsertPatchDefn
-   (size_t& pos, const Class* cls, const FuncDefnAttrs& attrs)
+   (const size_t& pos, const Class* cls, const FuncDefnAttrs& attrs)
 {
    Debug::ft("Editor.InsertPatchDefn");
 
@@ -3697,7 +3713,7 @@ word Editor::InsertUsing(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-size_t Editor::IntroStart(size_t pos, bool funcName)
+size_t Editor::IntroStart(size_t pos, bool funcName) const
 {
    Debug::ft("Editor.IntroStart");
 
@@ -3795,7 +3811,6 @@ void Editor::MangleIncludes()
 {
    Debug::ft("Editor.MangleIncludes");
 
-   string code;
    string expl;
 
    for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
@@ -3853,8 +3868,7 @@ size_t Editor::Paste(size_t pos, const std::string& code, size_t from)
 
    if(from != lastCut_)
    {
-      Debug::SwLog
-         (Editor_Paste, "Illegal Paste operation: " + code, from);
+      Debug::SwLog(Editor_Paste, "Illegal Paste operation: " + code, from);
       return string::npos;
    }
 
@@ -3889,7 +3903,6 @@ void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
 
    //  Within ITEM, prefix NS wherever SYMBOL appears as an identifier.
    //
-   string expl;
    const Namespace* ns = ref->GetSpace();
    auto symbol = ref->Name();
 
@@ -3981,6 +3994,8 @@ word Editor::RenameIncludeGuard(const CodeWarning& log, string& expl)
 
 size_t Editor::Replace(size_t pos, size_t count, const std::string& code)
 {
+   Debug::ft("Editor.Replace");
+
    Erase(pos, count);
    Insert(pos, code);
    return pos;
@@ -4253,7 +4268,6 @@ word Editor::SortIncludes(string& expl)
    //  Run through the #includes.  When one doesn't match the sort order,
    //  find the correct one, cut it, and paste it into the current location.
    //
-   string code;
    auto targ = includes.cbegin();
 
    for(auto pos = IncludesBegin();
@@ -4306,12 +4320,8 @@ word Editor::TagAsConstArgument(const Function* func, word offset, string& expl)
    //  Find the line on which the argument's type appears, and insert
    //  "const" before that type.
    //
-   auto& args = func->GetArgs();
    auto index = func->LogOffsetToArgIndex(offset);
-   auto arg = args.at(index).get();
-   if(arg == nullptr) return NotFound(expl, "Argument");
-   auto type = arg->GetTypeSpec()->GetPos();
-   if(type == string::npos) return NotFound(expl, "Argument type");
+   auto type = func->GetArgs().at(index)->GetTypeSpec()->GetPos();
    Insert(type, "const ");
    return Changed(type, expl);
 }
@@ -4556,7 +4566,7 @@ word Editor::TagAsVirtual(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-void Editor::UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs)
+void Editor::UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs) const
 {
    Debug::ft("Editor.UpdateFuncDeclAttrs");
 
@@ -4659,7 +4669,7 @@ size_t Editor::UpdateFuncDeclLoc
 
 //------------------------------------------------------------------------------
 
-void Editor::UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs)
+void Editor::UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs) const
 {
    Debug::ft("Editor.UpdateFuncDefnAttrs");
 

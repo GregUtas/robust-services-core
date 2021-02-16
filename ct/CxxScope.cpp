@@ -3515,7 +3515,7 @@ bool Function::EnterScope()
    found_ = true;
    if(defn || AtFileScope()) GetFile()->InsertFunc(this);
    if(!defn) CheckOverride();
-   GetArea()->InsertFunc(this, defn);
+   GetArea()->InsertFunc(this);
    EnterBlock();
    return !defn;
 }

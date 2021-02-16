@@ -82,10 +82,9 @@ public:
    //
    bool AddStaticAssert(StaticAssertPtr& assert);
 
-   //  Adds FUNC to the area, taking ownership of it.  DEFN is set if
-   //  the function is a definition rather than a declaration.
+   //  Adds FUNC to the area, taking ownership of it.
    //
-   void InsertFunc(Function* func, bool defn);
+   void InsertFunc(Function* func);
 
    //  Returns the area's classes.
    //
@@ -990,7 +989,7 @@ public:
 
    //  Overridden to preserve the location where the namespace first occurred.
    //
-   void SetLoc(CodeFile* file, size_t pos) override;
+   void SetLoc(CodeFile* file, size_t pos) const override;
 
    //  Overridden to handle the global namespace.
    //

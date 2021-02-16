@@ -2658,9 +2658,9 @@ const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
 
 //------------------------------------------------------------------------------
 
-void CxxArea::InsertFunc(Function* func, bool defn)
+void CxxArea::InsertFunc(Function* func)
 {
-   if(!defn)
+   if(func->IsDecl())
    {
       AddItem(func);
 
@@ -2786,6 +2786,9 @@ void CxxArea::Shrink()
 void CxxArea::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
+   //  This does not forward to decls_, whose items reside at file scope
+   //  in a .cpp and are therefore updated by CodeFile.UpdatePos.
+   //
    CxxScope::UpdatePos(action, begin, count, from);
 
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
@@ -2826,11 +2829,6 @@ void CxxArea::UpdatePos
    for(auto t = types_.cbegin(); t != types_.cend(); ++t)
    {
       (*t)->UpdatePos(action, begin, count, from);
-   }
-
-   for(auto d = defns_.cbegin(); d != defns_.cend(); ++d)
-   {
-      (*d)->UpdatePos(action, begin, count, from);
    }
 
    for(auto a = assembly_.cbegin(); a != assembly_.cend(); ++a)
@@ -3023,7 +3021,7 @@ string Namespace::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-void Namespace::SetLoc(CodeFile* file, size_t pos)
+void Namespace::SetLoc(CodeFile* file, size_t pos) const
 {
    Debug::ft("Namespace.SetLoc");
 

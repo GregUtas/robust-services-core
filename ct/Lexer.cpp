@@ -583,7 +583,7 @@ size_t Lexer::FindFirstOf(size_t pos, const string& chars)
    Debug::ft("Lexer.FindFirstOf(pos)");
 
    Reposition(pos);
-   return Lexer::FindFirstOf(chars);
+   return FindFirstOf(chars);
 }
 
 //------------------------------------------------------------------------------
@@ -1624,7 +1624,7 @@ bool Lexer::IsFirstNonBlank(size_t pos) const
 {
    Debug::ft("Lexer.IsFirstNonBlank");
 
-  return (LineFindFirst(CurrBegin(pos)) == pos);
+   return (LineFindFirst(CurrBegin(pos)) == pos);
 }
 
 //------------------------------------------------------------------------------
@@ -2160,9 +2160,9 @@ size_t Lexer::Rfind(size_t pos, const string& str)
 {
    Debug::ft("Lexer.Rfind");
 
-   for(auto loc = LineRfind(pos, str); pos != string::npos;
-       pos = PrevBegin(pos))
+   for(NO_OP; pos != string::npos; pos = CurrBegin(pos) - 1)
    {
+      auto loc = LineRfind(pos, str);
       if(loc != string::npos) return loc;
    }
 
@@ -2175,9 +2175,9 @@ size_t Lexer::RfindFirstOf(size_t pos, const string& chars)
 {
    Debug::ft("Lexer.RfindFirstOf");
 
-   for(auto loc = LineRfindFirstOf(pos, chars); pos != string::npos;
-       pos = PrevBegin(pos))
+   for(NO_OP; pos != string::npos; pos = CurrBegin(pos) - 1)
    {
+      auto loc = LineRfindFirstOf(pos, chars);
       if(loc != string::npos) return loc;
    }
 
@@ -2190,9 +2190,9 @@ size_t Lexer::RfindNonBlank(size_t pos)
 {
    Debug::ft("Lexer.RfindNonBlank");
 
-   for(auto loc = LineRfindNonBlank(pos); pos != string::npos;
-       pos = PrevBegin(pos))
+   for(NO_OP; pos != string::npos; pos = CurrBegin(pos) - 1)
    {
+      auto loc = LineRfindNonBlank(pos);
       if(loc != string::npos) return loc;
    }
 

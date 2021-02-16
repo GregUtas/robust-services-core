@@ -459,7 +459,7 @@ private:
 
    //  Logs an IncludeRemove for each file in FIDS.
    //
-   void LogRemoveIncludes(std::ostream* stream, const SetOfIds& fids);
+   void LogRemoveIncludes(std::ostream* stream, const SetOfIds& fids) const;
 
    //  Logs a ForwardAdd for each item in ITEMS.
    //
@@ -467,7 +467,7 @@ private:
 
    //  Logs a ForwardRemove for each item in ITEMS.
    //
-   void LogRemoveForwards(std::ostream* stream, const CxxNamedSet& items);
+   void LogRemoveForwards(std::ostream* stream, const CxxNamedSet& items) const;
 
    //  Logs a UsingAdd for using statements that were added by FindOrAddUsing.
    //
@@ -476,7 +476,7 @@ private:
    //  Logs a UsingRemove for each of the file's using statements that is
    //  marked for removal.
    //
-   void LogRemoveUsings(std::ostream* stream);
+   void LogRemoveUsings(std::ostream* stream) const;
 
    //  The file's identifier in the code base.
    //
@@ -580,7 +580,7 @@ private:
 
    //  For editing the file's source code.
    //
-   mutable Editor editor_;
+   Editor editor_;
 };
 }
 #endif

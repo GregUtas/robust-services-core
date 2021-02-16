@@ -607,7 +607,7 @@ void CxxNamed::SetContext(size_t pos)
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::SetLoc(CodeFile* file, size_t pos)
+void CxxNamed::SetLoc(CodeFile* file, size_t pos) const
 {
    Debug::ft("CxxNamed.SetLoc");
 

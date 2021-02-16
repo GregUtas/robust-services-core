@@ -107,7 +107,7 @@ private:
    //  Invokes Write on each editor whose file has changed.  Returns false
    //  if an error occurrs, after updating EXPL with an explanation.
    //
-   bool Commit(CliThread& cli, string& expl);
+   bool Commit(const CliThread& cli, string& expl);
 
    //  Writes out the editor's file.  Returns 0 if the file was successfully
    //  written; other values indicate failure.  Updates EXPL with a reason
@@ -123,9 +123,10 @@ private:
    WarningStatus FixStatus(const CodeWarning& log) const;
 
    //  Displays the code associated with LOG on the CLI.  FILE is set if the
-   //  name of the file in which LOG occurs should be displayed.
+   //  name of the file in which LOG occurs should be displayed.  Returns false
+   //  if the code associated with LOG could not be found.
    //
-   void DisplayLog(const CliThread& cli, const CodeWarning& log, bool file);
+   bool DisplayLog(const CliThread& cli, const CodeWarning& log, bool file) const;
 
    //  Fixes LOG.  Returns 0 on success.  A return value of -1 means that the
    //  file should be skipped; other values denote more serious errors.  EXPL
@@ -232,7 +233,7 @@ private:
    //  following line will also fit within LineLengthMax.  Returns true if the
    //  line break was deleted.
    //
-   bool EraseLineBreak(size_t curr);
+   bool EraseLineBreak(size_t pos);
 
    //  Indents POS's line.  Returns POS.
    //
@@ -260,7 +261,7 @@ private:
    //  Returns the location of the first #include.  Returns end() if no
    //  #include was found.
    //
-   size_t IncludesBegin();
+   size_t IncludesBegin() const;
 
    //  Returns the location of the statement that follows the last #include.
    //  Returns string::npos if the last line was an #include.
@@ -283,7 +284,7 @@ private:
    //  fn_name definition if funcName is set.  Returns POS if it is not
    //  preceded by any such items.
    //
-   size_t IntroStart(size_t pos, bool funcName);
+   size_t IntroStart(size_t pos, bool funcName) const;
 
    //  This simplifies sorting by replacing the characters that enclose the
    //  file name's in an #include directive.
@@ -419,7 +420,7 @@ private:
 
    //  Updates ATTRS based on FUNC.
    //
-   void UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs);
+   void UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs) const;
 
    //  Returns the location where the function CLS::NAME should be defined.
    //  Updates ATTRS if the function should be offset with a rule and/or a
@@ -437,7 +438,7 @@ private:
 
    //  Updates ATTRS based on FUNC.
    //
-   void UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs);
+   void UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs) const;
 
    //  Returns the code for a Debug::Ft invocation with an inline string
    //  literal (FNAME).
@@ -446,12 +447,12 @@ private:
 
    //  Inserts the declaration for a Patch override at POS.
    //
-   void InsertPatchDecl(size_t& pos, const FuncDeclAttrs& attrs);
+   void InsertPatchDecl(const size_t& pos, const FuncDeclAttrs& attrs);
 
    //  Inserts the definition for a Patch override in CLS at POS.
    //
    void InsertPatchDefn
-      (size_t& pos, const Class* cls, const FuncDefnAttrs& attrs);
+      (const size_t& pos, const Class* cls, const FuncDefnAttrs& attrs);
 
    //  Finds the start of ITEM and backs up to find the starting point for
    //  cutting the item.  Returns string::npos on failure.

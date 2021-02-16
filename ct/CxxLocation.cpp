@@ -49,6 +49,7 @@ void CxxLocation::UpdatePos(EditorAction action,
    size_t begin, size_t count, size_t from)
 {
    if(pos_ == string::npos) return;
+   if(internal_) return;
 
    switch(action)
    {

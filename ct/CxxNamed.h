@@ -54,7 +54,7 @@ public:
 
    //  Sets the file and offset at which this item was found.
    //
-   virtual void SetLoc(CodeFile* file, size_t pos);
+   virtual void SetLoc(CodeFile* file, size_t pos) const;
 
    //  Sets the context in which this item was found:
    //  o Invokes SetScope(Context::Scope()) unless the item already has a scope
@@ -65,7 +65,7 @@ public:
    void SetContext(size_t pos);
 
    //  Sets the item's context based on THAT.  Used when an item is created
-   //  internally (e.g. a "this" argument).
+   //  internally (e.g. the "this" argument for a member function).
    //
    virtual void CopyContext(const CxxNamed* that);
 
@@ -397,7 +397,7 @@ protected:
 private:
    //  Indicates that the item appeared in internally generated code.
    //
-   void SetInternal() { loc_.SetInternal(); }
+   void SetInternal() const { loc_.SetInternal(); }
 
    //  Invoked when ResolveName finds DECL, a forward or friend declaration,
    //  when resolving the Nth name in a possibly qualified name.  If it

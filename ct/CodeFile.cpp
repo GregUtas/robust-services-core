@@ -2015,7 +2015,7 @@ void CodeFile::LogPos(size_t pos, Warning warning,
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogRemoveForwards(ostream* stream, const CxxNamedSet& items)
+void CodeFile::LogRemoveForwards(ostream* stream, const CxxNamedSet& items) const
 {
    Debug::ft("CodeFile.LogRemoveForwards");
 
@@ -2039,7 +2039,7 @@ void CodeFile::LogRemoveForwards(ostream* stream, const CxxNamedSet& items)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogRemoveIncludes(ostream* stream, const SetOfIds& fids)
+void CodeFile::LogRemoveIncludes(ostream* stream, const SetOfIds& fids) const
 {
    Debug::ft("CodeFile.LogRemoveIncludes");
 
@@ -2066,7 +2066,7 @@ void CodeFile::LogRemoveIncludes(ostream* stream, const SetOfIds& fids)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogRemoveUsings(ostream* stream)
+void CodeFile::LogRemoveUsings(ostream* stream) const
 {
    Debug::ft("CodeFile.LogRemoveUsings");
 

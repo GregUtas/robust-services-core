@@ -1095,6 +1095,12 @@ public:
    //
    size_t LogOffsetToArgIndex(NodeBase::word offset) const;
 
+   //  Returns true for a function declaration (which might also define the
+   //  function).  Returns false for the definition of a previously declared
+   //  function.
+   //
+   bool IsDecl() const { return !defn_; }
+
    //  Returns the function's declaration.
    //
    const Function* GetDecl() const { return (defn_ ? mate_ : this); }

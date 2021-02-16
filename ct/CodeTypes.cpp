@@ -238,7 +238,7 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 
 LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
 {
-   Debug::ft("CodeTools.ClassifyLine(string)");
+   Debug::ft("CodeTools.CalcLineType");
 
    cont = false;
 

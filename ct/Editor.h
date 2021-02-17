@@ -266,7 +266,7 @@ private:
    //  Returns the location of the statement that follows the last #include.
    //  Returns string::npos if the last line was an #include.
    //
-   size_t IncludesEnd();
+   size_t IncludesEnd() const;
 
    //  Find the first line of code (other than #include directives, forward
    //  declarations, and using statements).  Moves up past any comments that
@@ -416,7 +416,7 @@ private:
    //   be offset with a blank line or comment.
    //
    size_t UpdateFuncDeclLoc
-      (const Function* prev, const Function* next, FuncDeclAttrs& attrs);
+      (const Function* prev, const Function* next, FuncDeclAttrs& attrs) const;
 
    //  Updates ATTRS based on FUNC.
    //
@@ -434,7 +434,7 @@ private:
    //  be offset with a rule and/or a blank line.
    //
    size_t UpdateFuncDefnLoc
-      (const Function* prev, const Function* next, FuncDefnAttrs& attrs);
+      (const Function* prev, const Function* next, FuncDefnAttrs& attrs) const;
 
    //  Updates ATTRS based on FUNC.
    //

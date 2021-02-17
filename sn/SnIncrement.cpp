@@ -60,10 +60,10 @@ public:
    SnSizesCommand() = default;
 private:
    word ProcessCommand(CliThread& cli) const override;
-   void DisplaySizes(CliThread& cli, bool all) const override;
+   void DisplaySizes(const CliThread& cli, bool all) const override;
 };
 
-void SnSizesCommand::DisplaySizes(CliThread& cli, bool all) const
+void SnSizesCommand::DisplaySizes(const CliThread& cli, bool all) const
 {
    if(all)
    {

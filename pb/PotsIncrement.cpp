@@ -551,7 +551,7 @@ word ResetCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SIZES command.
 //
-void PbSizesCommand::DisplaySizes(CliThread& cli, bool all) const
+void PbSizesCommand::DisplaySizes(const CliThread& cli, bool all) const
 {
    if(all)
    {

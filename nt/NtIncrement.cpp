@@ -599,7 +599,7 @@ SizesCommand::SizesCommand() : CliCommand(SizesStr, SizesExpl)
    BindParm(*new SizesParm);
 }
 
-void SizesCommand::DisplaySizes(CliThread& cli, bool all) const
+void SizesCommand::DisplaySizes(const CliThread& cli, bool all) const
 {
    *cli.obuf << "  Base = " << sizeof(Base) << CRLF;
    *cli.obuf << "  Class = " << sizeof(Class) << CRLF;
@@ -1230,7 +1230,7 @@ HeapCommands::HeapCommands() : CliCommandSet(HeapStr, HeapExpl)
 
 //------------------------------------------------------------------------------
 
-word CheckHeap(bool shouldExist, CliThread& cli, Heap*& heap)
+word CheckHeap(bool shouldExist, const CliThread& cli, Heap*& heap)
 {
    heap = Singleton< TestHeap >::Extant();
 

@@ -431,7 +431,7 @@ word Editor::AdjustTags(const CodeWarning& log, string& expl)
    auto changed = false;
 
    for(auto pos = source_.find(tag, log.Pos()); pos < stop;
-       pos = source_.find(tag, pos + 1))
+      pos = source_.find(tag, pos + 1))
    {
       if(IsBlank(source_[pos - 1]))
       {
@@ -511,7 +511,7 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    if(func == decl) defnName = declName;
 
    for(auto pos = FindWord(begin, defnName); pos < end;
-       pos = FindWord(pos + 1, defnName))
+      pos = FindWord(pos + 1, defnName))
    {
       Replace(pos, defnName.size(), argName);
       end = end + argName.size() - defnName.size();
@@ -1415,7 +1415,7 @@ word Editor::EraseConst(const CodeWarning& log, string& expl)
    //  makes a pointer const.
    //
    for(auto pos = FindWord(log.Pos(), CONST_STR); pos != string::npos;
-       pos = FindWord(pos + 1, CONST_STR))
+      pos = FindWord(pos + 1, CONST_STR))
    {
       auto prev = RfindNonBlank(pos - 1);
 
@@ -1870,7 +1870,7 @@ word Editor::EraseVoidArgument(const CodeWarning& log, string& expl)
    if(begin == string::npos) return NotFound(expl, "Position of void argument");
 
    for(auto arg = FindWord(begin, VOID_STR); arg != string::npos;
-       arg = FindWord(arg + 1, VOID_STR))
+      arg = FindWord(arg + 1, VOID_STR))
    {
       auto lpar = RfindNonBlank(arg - 1);
       if(lpar == string::npos) continue;
@@ -2823,7 +2823,7 @@ size_t Editor::IncludesBegin() const
 
 //------------------------------------------------------------------------------
 
-size_t Editor::IncludesEnd()
+size_t Editor::IncludesEnd() const
 {
    Debug::ft("Editor.IncludesEnd");
 
@@ -4605,7 +4605,7 @@ void Editor::UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs) con
 fn_name Editor_UpdateFuncDeclLoc = "Editor.UpdateFuncDeclLoc";
 
 size_t Editor::UpdateFuncDeclLoc
-   (const Function* prev, const Function* next, FuncDeclAttrs& attrs)
+   (const Function* prev, const Function* next, FuncDeclAttrs& attrs) const
 {
    Debug::ft(Editor_UpdateFuncDeclLoc);
 
@@ -4724,7 +4724,7 @@ void Editor::UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs) con
 //------------------------------------------------------------------------------
 
 size_t Editor::UpdateFuncDefnLoc
-   (const Function* prev, const Function* next, FuncDefnAttrs& attrs)
+   (const Function* prev, const Function* next, FuncDefnAttrs& attrs) const
 {
    Debug::ft("Editor.UpdateFuncDefnLoc");
 

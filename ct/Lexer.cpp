@@ -77,6 +77,7 @@ void LineInfo::Display(ostream& stream) const
 
 Lexer::Lexer() :
    source_(nullptr),
+   file_(nullptr),
    curr_(0),
    prev_(0),
    edited_(false)

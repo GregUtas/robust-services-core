@@ -142,9 +142,22 @@ public:
          return Parameter::MessageContainsIllegalParm;
       return Parameter::Ok;
    }
-private:
-   struct ParmIterator;  // forward declaration
-public:
+
+   //  A forward declaration.
+   //
+   struct TlvMsgLayout;
+
+   //  For iterating through a TLV message's parameters.
+   //
+   class ParmIterator
+   {
+      friend class TlvMessage;
+
+      const TlvMsgLayout* mptr;  // reference to message
+      TlvParmPtr pptr;           // reference to current parameter
+      size_t pindex;             // parameter's offset within message
+   };
+
    //  Returns the first parameter that matches PID.  Returns nullptr if no
    //  such parameter exists.
    //
@@ -303,15 +316,6 @@ private:
       { return "TlvMessage.CopyType"; }
    inline static NodeBase::fn_name TlvMessage_VerifyParm()
       { return "TlvMessage.VerifyParm"; }
-
-   //  Iterator for a TLV message's parameters.
-   //
-   struct ParmIterator
-   {
-      const TlvMsgLayout* mptr;  // reference to message
-      TlvParmPtr pptr;           // reference to current parameter
-      size_t pindex;             // parameter's offset within message
-   };
 };
 }
 #endif

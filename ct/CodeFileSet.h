@@ -30,7 +30,7 @@
 
 namespace CodeTools
 {
-//  A collection of library items (code files or directories).
+//  A collection of code files.
 //
 class CodeFileSet : public CodeSet
 {

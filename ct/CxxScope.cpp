@@ -205,7 +205,7 @@ void Block::EnterBlock()
    Debug::ft("Block.EnterBlock");
 
    Context::SetPos(GetLoc());
-   Context::PushScope(this);
+   Context::PushScope(this, true);
 
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
@@ -924,7 +924,7 @@ void CxxScope::OpenScope(string& name)
 
          if(scope != nullptr)
          {
-            Context::PushScope(scope);
+            Context::PushScope(scope, false);
             pushes_++;
          }
          else
@@ -937,7 +937,7 @@ void CxxScope::OpenScope(string& name)
    }
 
    SetScope(scope);
-   Context::PushScope(this);
+   Context::PushScope(this, false);
    pushes_++;
 }
 
@@ -1206,7 +1206,7 @@ bool Data::ExecuteInit(bool push)
    if(push)
    {
       Context::Enter(this);
-      Context::PushScope(this);
+      Context::PushScope(this, true);
    }
 
    //  If some form of initialization exists, one of the following will
@@ -3428,7 +3428,7 @@ void Function::EnterBlock()
    if(parms_ != nullptr) parms_->EnterBlock();
 
    Context::Enter(this);
-   Context::PushScope(this);
+   Context::PushScope(this, true);
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {

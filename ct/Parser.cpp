@@ -108,7 +108,7 @@ Parser::Parser(CxxScope* scope) :
    //  Make this the active parser and set the scope for parsing.
    //
    Context::PushParser(this);
-   Context::PushScope(scope);
+   Context::PushScope(scope, false);
 }
 
 //------------------------------------------------------------------------------
@@ -657,7 +657,7 @@ bool Parser::GetBlock(BlockPtr& block)
    auto braced = lexer_.NextCharIs('{');
    block.reset(new Block(braced));
    block->SetContext(start);
-   Context::PushScope(block.get());
+   Context::PushScope(block.get(), true);
 
    while(true)
    {
@@ -1029,7 +1029,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
    cls.reset(new Class(className, tag));
    cls->SetContext(begin);
    cls->SetTemplateParms(parms);
-   Context::PushScope(cls.get());
+   Context::PushScope(cls.get(), false);
    cls->SetAlignment(align);
    cls->AddBase(base);
    GetMemberDecls(cls.get());
@@ -2167,7 +2167,7 @@ bool Parser::GetFuncImpl(Function* func)
 
    auto start = CurrPos();
 
-   Context::PushScope(func);
+   Context::PushScope(func, true);
 
    BlockPtr block;
    if(!GetBlock(block))
@@ -2326,7 +2326,7 @@ bool Parser::GetInlines(Class* cls)
 
    //  This jumps around to parse functions, so adjust farthest_ accordingly.
    //
-   Context::PushScope(cls);
+   Context::PushScope(cls, false);
 
    auto end = CurrPos();
    auto funcs = cls->Funcs();
@@ -2440,7 +2440,7 @@ bool Parser::GetNamespace()
    auto outer = Context::Scope();
    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
    inner->SetLoc(Context::File(), begin);
-   Context::PushScope(inner);
+   Context::PushScope(inner, false);
    GetFileDecls(inner);
    Context::PopScope();
 
@@ -4231,7 +4231,7 @@ bool Parser::Parse(CodeFile& file)
    auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    depth_ = SysThreadStack::FuncDepth();
    Context::SetFile(&file);
-   Context::PushScope(gns);
+   Context::PushScope(gns, false);
    Enter(IsFile, file.Name(), nullptr, file.GetCode(), true, &file);
    GetFileDecls(gns);
    Context::PopScope();
@@ -4289,7 +4289,7 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
    do
    {
       BaseDeclPtr base;
-      Context::PushScope(inst);
+      Context::PushScope(inst, false);
       GetBaseDecl(base);
       if(!lexer_.NextCharIs('{')) break;
       inst->AddBase(base);
@@ -4329,7 +4329,7 @@ bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
 
    //  Parse the function definition.
    //
-   Context::PushScope(area);
+   Context::PushScope(area, false);
    string str;
    auto kwd = NextKeyword(str);
 

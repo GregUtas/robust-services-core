@@ -62,6 +62,18 @@ namespace CodeTools
 //  <usings>          using statements
 //  <code>            declarations and/or definitions
 //
+//  The Editor holds its file's source code in the string source_, so here are
+//  two common causes of bugs:
+//  o Finding a position in the code, editing the code, and then reusing that
+//    position fter the underlying text has shifted.
+//  o Manipulating source_ using string functions such as erase, insert, or
+//    replace instead of analogous Editor functions.  The latter invoke the
+//    function UpdatePos to update the positions of the C++ items that were
+//    created during parsing.  If this is not done, errors can occur during
+//    subsequent edits.  It is only safe to manipulate source_ directly when
+//    replacing one string with another of the same size.  This is done, for
+//    example, when mangling/demangling #include directives.
+//
 class Editor : public Lexer
 {
 public:
@@ -409,7 +421,7 @@ private:
    //  comment.
    //
    size_t FindFuncDeclLoc
-      (const Class* cls, const string& name, FuncDeclAttrs& attrs);
+      (const Class* cls, const string& name, FuncDeclAttrs& attrs) const;
 
    //  Returns the location where a new function declaration should be added
    //  after PREV and/or before NEXT.  Updates ATTRS if the function should
@@ -427,7 +439,7 @@ private:
    //  blank line.
    //
    size_t FindFuncDefnLoc(const CodeFile* file, const Class* cls,
-      const string& name, string& expl, FuncDefnAttrs& attrs);
+      const string& name, string& expl, FuncDefnAttrs& attrs) const;
 
    //  Returns the location where a new function definition should be added
    //  after PREV and/or before NEXT.  Updates ATTRS if the function should

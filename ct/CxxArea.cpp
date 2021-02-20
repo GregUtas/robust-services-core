@@ -49,7 +49,7 @@ namespace CodeTools
 Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    name_(name.release()),
    tag_(tag),
-   currAccess_(Cxx::Access_N),
+   currAccess_(tag == Cxx::ClassType ? Cxx::Private : Cxx::Public),
    copied_(false)
 {
    Debug::ft("Class.ctor[>ct]");
@@ -81,129 +81,92 @@ void Class::AccessibilityOf
    //
    view->accessibility = Inaccessible;
 
-   //  Create a list of ITEM's class scopes.  There will be more than one
-   //  only if ITEM is an inner class.  Simultaneously, determine ITEM's
-   //  access control at each class scope.
-   //    If ITEM is a forward declaration of an inner class, the distance
-   //  to it is one less than the distance to the definition of the inner
-   //  class.  This occurs because the inner class is added to itemClasses,
-   //  whereas the forward declaration is not.  Correct for this so that
-   //  CxxSymbols.FindNearestItem will resolve the class's name to its
-   //  definition instead of to its forward declaration.
+   //  We shouldn't be here if ITEM doesn't belong to a class.
    //
-   std::vector< Class* > itemClasses;
-   std::vector< Cxx::Access > controls;
-
    auto itemClass = item->GetClass();
-   size_t n = 0;
-   auto type = item->Type();
-   auto f = (type == Cxx::Forward ? 1 : 0);
-
-   for(auto c = itemClass; c != nullptr; c = c->OuterClass(), ++n)
-   {
-      itemClasses.push_back(c);
-
-      //  On the first pass, make ITEM public to the first level (its outer
-      //  class) and apply its access control to the next level.  As we
-      //  ascend through outer classes, incorporate their access controls.
-      //
-      if(n == 0)
-      {
-         controls.push_back(Cxx::Public);
-         controls.push_back(item->GetAccess());
-         n = 1;
-      }
-      else
-      {
-         controls.push_back(std::min(controls[n - 1], c->GetAccess()));
-      }
-   }
-
-   if(itemClasses.empty())
+   if(itemClass == nullptr)
    {
       auto expl = "Item is not a class member: " + item->ScopedName(true);
       Context::SwLog(Class_AccessibilityOf, expl, 0);
       return;
    }
 
-   //  Find SCOPE's class.  If it doesn't have one, it must be a friend
-   //  of ITEM's class unless ITEM is public at file scope.
+   //  If ITEM is a forward declaration, increase its distance from SCOPE
+   //  so that CxxSymbols.FindNearestItem will resolve the class's name to
+   //  its definition instead of to the forward declaration.
    //
-   auto usingClass = scope->GetClass();
+   auto itemType = item->Type();
+   auto f = (itemType == Cxx::Forward ? 1 : 0);
 
-   if(usingClass != nullptr)
+   //  The purpose of this function isn't only to check accessibility, but
+   //  also to determine whether an item's access control could be changed
+   //  to something more restrictive.  This affects the order of the logic.
+   //
+   std::vector< Class* > userClasses;
+   auto userClass = scope->GetClass();
+
+   if(userClass != nullptr)
    {
-      //  See if SCOPE has a class scope in common with ITEM.  If so, N
-      //  will be the index to that class in itemClasses, and M will be
-      //  its distance above SCOPE.
+      //  SCOPE can see ITEM if userClass is the same as itemClass.
       //
-      size_t m = 0;
-      n = SIZE_MAX;
-
-      for(auto c = usingClass; c != nullptr; c = c->OuterClass(), ++m)
+      if(userClass == itemClass)
       {
-         n = IndexOf(itemClasses, c);
-         if(n != SIZE_MAX) break;
-      }
-
-      if(n == 0)
-      {
-         //  SCOPE is either in ITEM's class or one of its inner classes.
-         //  It can therefore access ITEM.
-         //
-         view->distance = m + f;
+         view->distance = f;
          view->accessibility = Declared;
+         item->RecordAccess(Context::ScopeVisibility());
          return;
       }
-      else if(n != SIZE_MAX)
-      {
-         //  SCOPE is either in ITEM's outer class or another inner class
-         //  that shares an outer class with ITEM.  In either case, ITEM is
-         //  only accessible if it is public to the outer class.  Note that
-         //  an inner class, or its forward declaration, is always visible
-         //  to the outer class.
-         //
-         if(controls[n - 1] == Cxx::Public)
-         {
-            view->distance = m + n + f;
-            view->accessibility = Declared;
-            if((item == itemClass) || (item->Referent() == itemClass)) return;
-            item->RecordAccess(Cxx::Public);
-            return;
-         }
-      }
-      else
-      {
-         //  If SCOPE and ITEM don't share a common outer class, see if SCOPE's
-         //  class derives from ITEM's class.  If so, SCOPE can see a protected
-         //  ITEM, but not a private ITEM unless it is a friend.
-         //
-         view->distance = usingClass->ClassDistance(this);
 
-         if(view->distance != NOT_A_SUBCLASS)
-         {
-            auto frnd = itemClass->FindFriend(scope);
-
-            if(frnd != nullptr)
-            {
-               view->accessibility = Inherited;
-               view->friend_ = true;
-               if(controls[1] == Cxx::Private) frnd->IncrUsers();
-            }
-            else if(controls[1] != Cxx::Private)
-            {
-               view->accessibility = Inherited;
-               item->RecordAccess(Cxx::Protected);
-            }
-
-            return;
-         }
-      }
-
-      //  If the using class is a template instance of ITEM's class, it
-      //  can use an inline function in the class template.
+      //  SCOPE can see ITEM if userClass is an inner class of itemClass.
       //
-      if((type == Cxx::Function) && (usingClass->GetTemplate() == this) &&
+      userClasses.push_back(userClass);
+      auto control = Context::ScopeVisibility();
+
+      for(auto c = userClass->OuterClass(); c != nullptr; c = c->OuterClass())
+      {
+         control = std::min(control, c->GetAccess());
+
+         if(c == itemClass)
+         {
+            view->distance = userClasses.size() + f;
+            view->accessibility = Declared;
+            item->RecordAccess(control);
+            return;
+         }
+
+         userClasses.push_back(c);
+      }
+
+      //  SCOPE can see ITEM if it is a friend of itemClass.
+      //
+      view->distance = userClass->ClassDistance(this);
+      auto access =
+         (view->distance == NOT_A_SUBCLASS ? Unrestricted : Inherited);
+
+      auto frnd = itemClass->FindFriend(scope);
+
+      if(frnd != nullptr)
+      {
+         view->accessibility = access;
+         view->friend_ = true;
+         if(control == Cxx::Private) frnd->IncrUsers();
+         return;
+      }
+
+      //  SCOPE can see ITEM if it inherits from this class (the one that
+      //  defined ITEM), as long as ITEM is not private.
+      //
+      if((access == Inherited) && (item->GetAccess() != Cxx::Private))
+      {
+         view->accessibility = Inherited;
+         item->RecordAccess(Cxx::Protected);
+         return;
+      }
+
+      //  If ITEM is an inline function in a class template, SCOPE can see
+      //  ITEM if userClass is an instance of the class template.
+      //
+      if((itemType == Cxx::Function) && (userClass->GetTemplate() == this) &&
          static_cast< const Function* >(item)->IsInline())
       {
          view->distance = 1;
@@ -214,7 +177,7 @@ void Class::AccessibilityOf
       //  Don't enforce access controls on a class template.  Violations
       //  will be detected on template instances.
       //
-      if(usingClass->IsTemplate())
+      if(userClass->IsTemplate())
       {
          view->accessibility = Unrestricted;
          return;
@@ -223,9 +186,9 @@ void Class::AccessibilityOf
       //  If the using class is a template instance, it can use a template
       //  argument, even if the argument is private.
       //
-      if(usingClass->IsInTemplateInstance())
+      if(userClass->IsInTemplateInstance())
       {
-         auto spec = usingClass->GetTemplateArgs();
+         auto spec = userClass->GetTemplateArgs();
 
          if(spec->ItemIsTemplateArg(item))
          {
@@ -235,24 +198,79 @@ void Class::AccessibilityOf
       }
    }
 
-   view->distance = scope->ScopeDistance(itemClasses.back()->GetSpace());
+   //  Find the distance from SCOPE to ITEM.  Start by seeing whether
+   //  they share a common base class.  userClasses already contains
+   //  the classes that wrap SCOPE, so do the same for ITEM.  At the
+   //  same time, find the access control that applies to ITEM on the
+   //  path from its class to its outermost class.
+   //
+   std::vector< Class* > itemClasses;
+   std::vector< Cxx::Access > controls;
+   auto control = item->GetAccess();
+
+   for(auto c = itemClass; c != nullptr; c = c->OuterClass())
+   {
+      itemClasses.push_back(c);
+      controls.push_back(std::min(control, c->GetAccess()));
+   }
+
+   size_t m = 0;
+   auto n = SIZE_MAX;
+
+   for(auto c = userClasses.cbegin(); c != userClasses.cend(); ++c, ++m)
+   {
+      n = IndexOf(itemClasses, *c);
+      if(n != SIZE_MAX) break;
+   }
+
+   //  If N isn't SIZE_MAX, ITEM and SCOPE share a base class.  Otherwise
+   //  SCOPE must access ITEM through its namespace.
+   //
+   if(n != SIZE_MAX)
+      view->distance = m + n + f;
+   else
+      view->distance = scope->ScopeDistance(itemClasses.back()->GetSpace()) + f;
 
    //  Don't enforce access controls on a function template.  Violations
    //  will be detected on template instances.
    //
-   auto usingFunc = scope->GetFunction();
+   auto userFunc = scope->GetFunction();
 
-   if((usingFunc != nullptr) && usingFunc->IsTemplate())
+   if((userFunc != nullptr) && userFunc->IsTemplate())
    {
       view->accessibility = Unrestricted;
       return;
    }
 
-   //  ITEM must be public at file scope unless SCOPE is a friend.
+   //  Determine which control applies.  If n=1, userClass is an inner class
+   //  of the same class that defines itemClass, so SCOPE can see ITEM if the
+   //  latter is a class (rather than one of its members, to which controls
+   //  still apply).
+   //
+   if(n == SIZE_MAX)
+   {
+      control = controls.back();
+   }
+   else
+   {
+      if((n <= 1) && (itemType == Cxx::Class))
+      {
+         view->accessibility = item->FileScopeAccessiblity();
+         return;
+      }
+      else
+      {
+         control = controls[n];
+      }
+   }
+
+   //  See if SCOPE is a friend of ITEM's class.  If it isn't, it might still
+   //  be able to access ITEM if ITEM is an inner class and SCOPE is a friend
+   //  of the outer class.
    //
    auto frnd = itemClass->FindFriend(scope);
 
-   if((frnd == nullptr) && (type == Cxx::Class))
+   if((frnd == nullptr) && (itemType == Cxx::Class))
    {
       auto decl = item->Declarer();
       if(decl != nullptr) frnd = decl->FindFriend(scope);
@@ -262,11 +280,13 @@ void Class::AccessibilityOf
    {
       view->accessibility = Unrestricted;
       view->friend_ = true;
-      if(controls.back() != Cxx::Public) frnd->IncrUsers();
+      if(control != Cxx::Public) frnd->IncrUsers();
       return;
    }
 
-   if(controls.back() == Cxx::Public)
+   //  If we get here, ITEM must be public for SCOPE to see it.
+   //
+   if(control == Cxx::Public)
    {
       view->accessibility = item->FileScopeAccessiblity();
       item->RecordAccess(Cxx::Public);

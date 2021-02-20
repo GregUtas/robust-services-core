@@ -770,7 +770,7 @@ word Editor::ChangeStructToClass(const CodeWarning& log, string& expl)
    {
       string control(PUBLIC_STR);
       control.push_back(':');
-      InsertLine(left, control);
+      InsertLine(NextBegin(left), control);
    }
    return Changed(pos, expl);
 }
@@ -1222,7 +1222,7 @@ word Editor::EraseAccessControl(const CodeWarning& log, string& expl)
          break;
       }
 
-      access = FindWord(access, PROTECTED_STR);
+      access = FindWord(begin, PROTECTED_STR);
 
       if(access != string::npos)
       {
@@ -1230,7 +1230,7 @@ word Editor::EraseAccessControl(const CodeWarning& log, string& expl)
          break;
       }
 
-      access = FindWord(access, PRIVATE_STR);
+      access = FindWord(begin, PRIVATE_STR);
 
       if(access != string::npos)
       {
@@ -1950,7 +1950,7 @@ size_t Editor::FindCutBegin(const CxxNamed* item) const
 //------------------------------------------------------------------------------
 
 size_t Editor::FindFuncDeclLoc
-   (const Class* cls, const string& name, FuncDeclAttrs& attrs)
+   (const Class* cls, const string& name, FuncDeclAttrs& attrs) const
 {
    Debug::ft("Editor.FindFuncDeclLoc");
 
@@ -2015,7 +2015,7 @@ size_t Editor::FindFuncDeclLoc
 //------------------------------------------------------------------------------
 
 size_t Editor::FindFuncDefnLoc(const CodeFile* file,
-   const Class* cls, const string& name, string& expl, FuncDefnAttrs& attrs)
+   const Class* cls, const string& name, string& expl, FuncDefnAttrs& attrs) const
 {
    Debug::ft("Editor.FindFuncDefnLoc");
 
@@ -2507,7 +2507,7 @@ word Editor::FixFunctions(CliThread& cli, const CodeWarning& log, string& expl)
       ReportFix(cli, rc, expl);
    }
 
-   return 1;
+   return 0;
 }
 
 //------------------------------------------------------------------------------

@@ -1294,7 +1294,16 @@ void Enumerator::EnterBlock()
 
    if(init_ != nullptr)
    {
+      //  When an enumerator's definition is compiled, the scope is the class
+      //  itself.  Overwrite the class's access control with the enumerator's
+      //  so a protected or private enumerator can use its class's non-public
+      //  members without a log occurring when Class::AccessibilityOf invokes
+      //  ScopeVisibility.
+      //
+      auto access = Context::SetAccess(GetAccess());
       init_->EnterBlock();
+      Context::SetAccess(access);
+
       auto result = Context::PopArg(true);
       auto numeric = result.NumericType();
 
@@ -2722,10 +2731,19 @@ bool Typedef::EnterScope()
 {
    Debug::ft("Typedef.EnterScope");
 
+   //  When a typedef in a class is compiled, the scope is the class itself.
+   //  Overwrite the class's access control with the typedef's so a protected
+   //  or private typedef can use its class's non-public members without a log
+   //  occurring when Class::AccessibilityOf invokes ScopeVisibility.
+   //
    Context::SetPos(GetLoc());
    Context::Enter(this);
    if(AtFileScope()) GetFile()->InsertType(this);
+
+   auto access = Context::SetAccess(GetAccess());
    spec_->EnteringScope(GetScope());
+   Context::SetAccess(access);
+
    refs_ = 0;
    return true;
 }

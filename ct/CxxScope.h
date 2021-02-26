@@ -1344,10 +1344,10 @@ public:
    //
    QualName* GetQualName() const override { return name_.get(); }
 
-   //  Overridden to return the offset of the left brace (if any),
-   //  in which case END is updated to the location of the right brace.
+   //  Overridden to support a function definition by setting LEFT and END
+   //  to the locations of its left and right braces.
    //
-   size_t GetRange(size_t& begin, size_t& end) const override;
+   bool GetRange(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to handle an inline friend function.
    //

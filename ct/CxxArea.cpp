@@ -1393,17 +1393,16 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
 //------------------------------------------------------------------------------
 
-size_t Class::GetRange(size_t& begin, size_t& end) const
+bool Class::GetRange(size_t& begin, size_t& left, size_t& end) const
 {
-   //  Set BEGIN to where the class definition begins, and END to the offset of
-   //  its closing right brace.  Return the offset of the opening left brace.
-   //
    auto lexer = GetFile()->GetLexer();
    begin = GetPos();
+   if(begin == string::npos) return false;
    lexer.Reposition(begin);
-   auto left = lexer.FindFirstOf("{");
+   left = lexer.FindFirstOf("{");
+   if(left == string::npos) return false;
    end = lexer.FindClosing('{', '}', left + 1);
-   return left;
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------

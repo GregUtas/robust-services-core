@@ -555,9 +555,10 @@ public:
    //
    QualName* GetQualName() const override { return name_.get(); }
 
-   //  Overridden to return the offset of the left brace.
+   //  Overridden to set LEFT and END to the positions of the left and right
+   //  braces.
    //
-   size_t GetRange(size_t& begin, size_t& end) const override;
+   bool GetRange(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to return the class if it is a class template.
    //

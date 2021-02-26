@@ -81,11 +81,16 @@ public:
    //
    size_t GetPos() const { return loc_.GetPos(); }
 
-   //  Sets BEGIN and END to where the item begins and ends, and returns
-   //  the location of its opening left brace (if applicable).  The default
-   //  sets BEGIN and END to string::npos and also returns string::npos.
+   //  Sets BEGIN and END to where the item begins and ends, and LEFT to the
+   //  position of its opening left brace (if applicable, else string::npos).
+   //  If LEFT applies, END will be the position of the matching right brace.
+   //  Returns false if the item
+   //  o doesn't end at a semicolon, although the item could provide an
+   //    override if this proved useful;
+   //  o is part of a template instantiation and therefore doesn't appear
+   //    in a source file.
    //
-   virtual size_t GetRange(size_t& begin, size_t& end) const;
+   virtual bool GetRange(size_t& begin, size_t& left, size_t& end) const;
 
    //  Returns the scope (namespace, class, or block) where the item is
    //  declared.

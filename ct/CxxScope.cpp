@@ -3881,20 +3881,17 @@ CodeFile* Function::GetDefnFile() const
 
 //------------------------------------------------------------------------------
 
-size_t Function::GetRange(size_t& begin, size_t& end) const
+bool Function::GetRange(size_t& begin, size_t& left, size_t& end) const
 {
-   //  If the function has an implementation, return the offset of the
-   //  left brace at the beginning of the function body, and set END to
-   //  the location of the matching right brace.
-   //
-   CxxScoped::GetRange(begin, end);
-   if(begin == string::npos) return string::npos;
-   if(impl_ == nullptr) return string::npos;
+   CxxScoped::GetRange(begin, left, end);
+   left = string::npos;
+   if(impl_ == nullptr) return (end != string::npos);
 
    auto& lexer = GetFile()->GetLexer();
-   auto left = impl_->GetPos();
+   left = impl_->GetPos();
+   if(left == string::npos) return false;
    end = lexer.FindClosing('{', '}', left + 1);
-   return left;
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -4489,8 +4486,8 @@ bool Function::IsTrivial() const
    auto file = GetImplFile();
    if(file == nullptr) return true;
 
-   size_t begin, end;
-   GetRange(begin, end);
+   size_t begin, left, end;
+   if(!GetRange(begin, left, end)) return false;
 
    auto last = file->GetLexer().GetLineNum(end);
    auto body = false;

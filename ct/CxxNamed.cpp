@@ -264,11 +264,12 @@ void CxxNamed::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
+bool CxxNamed::GetRange(size_t& begin, size_t& left, size_t& end) const
 {
    begin = string::npos;
+   left = string::npos;
    end = string::npos;
-   return string::npos;
+   return false;
 }
 
 //------------------------------------------------------------------------------

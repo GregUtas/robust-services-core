@@ -626,13 +626,11 @@ CodeFile* CxxScoped::GetImplFile() const
 
 //------------------------------------------------------------------------------
 
-size_t CxxScoped::GetRange(size_t& begin, size_t& end) const
+bool CxxScoped::GetRange(size_t& begin, size_t& left, size_t& end) const
 {
    if(IsInTemplateInstance())
    {
-      begin = string::npos;
-      end = string::npos;
-      return string::npos;
+      return CxxNamed::GetRange(begin, left, end);
    }
 
    auto lexer = GetFile()->GetLexer();
@@ -641,9 +639,10 @@ size_t CxxScoped::GetRange(size_t& begin, size_t& end) const
       begin = GetPos();
    else
       begin = spec->GetPos();
+   if(begin == string::npos) return false;
    lexer.Reposition(begin);
    end = lexer.FindFirstOf(";");
-   return string::npos;
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------

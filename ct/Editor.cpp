@@ -508,10 +508,8 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
       return Changed(type, expl);
    }
 
-   size_t begin, end;
-   func->GetRange(begin, end);
-   if(begin == string::npos) return NotFound(expl, "Function name");
-   if(end == string::npos) return NotFound(expl, "End of function");
+   size_t begin, left, end;
+   if(!func->GetRange(begin, left, end)) return NotFound(expl, "Function");
    if(func == decl) defnName = declName;
 
    for(auto pos = FindWord(begin, defnName); pos < end;
@@ -3056,15 +3054,18 @@ word Editor::InsertDebugFtCall
 
    auto name = log.item_->GetPos();
    if(name == string::npos) return NotFound(expl, "Function name");
-   auto left = FindFirstOf(name, "{");
-   if(left == string::npos) return NotFound(expl, "Left brace");
+
+   size_t begin, left, right;
+   auto func = static_cast< const Function* >(log.item_);
+   func->GetRange(begin, left, right);
+   if(left == string::npos) return NotFound(expl, "Function definition");
 
    //  Get the start of the name for an fn_name declaration and the inline
    //  string literal for the Debug::ft invocation.  Set EXTRA if anything
    //  follows the left brace on the same line.
    //
    string flit, fvar;
-   DebugFtNames(static_cast< const Function* >(log.item_), flit, fvar);
+   DebugFtNames(func, flit, fvar);
    auto extra = (LineFindNext(left + 1) != string::npos);
 
    //  There are two possibilities:
@@ -3076,9 +3077,6 @@ word Editor::InsertDebugFtCall
    //    (FLIT) can be used.
    //
    string arg;
-   size_t begin, right;
-   auto func = static_cast< const Function* >(log.item_);
-   func->GetRange(begin, right);
 
    for(auto pos = left; (pos < right) && arg.empty(); pos = NextBegin(pos))
    {
@@ -3703,9 +3701,8 @@ size_t Editor::LineAfterFunc(const Function* func) const
 {
    Debug::ft("Editor.LineAfterFunc");
 
-   size_t begin;
-   size_t end;
-   func->GetRange(begin, end);
+   size_t begin, left, end;
+   func->GetRange(begin, left, end);
    return NextBegin(end);
 }
 
@@ -3855,8 +3852,8 @@ void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
    }
 
    auto qual = ns->ScopedName(false) + SCOPE_STR;
-   size_t pos, end;
-   item->GetRange(pos, end);
+   size_t pos, left, end;
+   if(!item->GetRange(pos, left, end)) return;
    Reposition(pos);
    string name;
 
@@ -4507,8 +4504,8 @@ void Editor::UpdateFuncDeclAttrs
 
    if(func == nullptr) return;
 
-   size_t begin, end;
-   func->GetRange(begin, end);
+   size_t begin, left, end;
+   if(!func->GetRange(begin, left, end)) return;
 
    //  Indent the code to match that of FUNC.
    //
@@ -4619,8 +4616,8 @@ void Editor::UpdateFuncDefnAttrs
    //  See if FUNC is preceded or followed by a rule and/or blank line.
    //
    bool blank = false;
-   size_t begin, end;
-   func->GetRange(begin, end);
+   size_t begin, left, end;
+   if(!func->GetRange(begin, left, end)) return;
    auto pos = NextBegin(end);
    auto type = GetLineType(pos);
 

@@ -132,13 +132,11 @@ public:
    //
    Cxx::Access GetAccess() const override { return access_; }
 
-   //  Sets BEGIN to GetPos() of the item or, if GetTypeSpec() returns a
-   //  valid type specification, then GetPos() of that specification.  Sets
-   //  END to the location of the next semicolon and returns string::npos.
-   //  Not supported for a template instance or its contents, as its code
-   //  does not reside in a file (BEGIN and END will both be string::npos).
+   //  Sets BEGIN to GetPos() of the item or, if GetTypeSpec() returns
+   //  a valid type specification, then GetPos() of that specification.
+   //  Sets END to the location of the next semicolon.
    //
-   size_t GetRange(size_t& begin, size_t& end) const override;
+   bool GetRange(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to return the scope where the declaration appeared.
    //

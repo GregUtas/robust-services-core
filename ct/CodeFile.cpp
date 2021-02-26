@@ -605,7 +605,7 @@ void CodeFile::CheckDebugFt()
    Debug::ft("CodeFile.CheckDebugFt");
 
    auto cover = Singleton< CodeCoverage >::Instance();
-   size_t begin, end;
+   size_t begin, left, end;
    string statement;
    string dname;
    string fname;
@@ -618,12 +618,11 @@ void CodeFile::CheckDebugFt()
    {
       //  The function must have an implementation to be checked.  A function
       //  in a header is only expected to invoke Debug::ft if it's part of a
-      //  template; checking functions in a template instance would therefore
-      //  be redundant.
+      //  template.
       //
+      if((*f)->GetImpl() == nullptr) continue;
       if(IsHeader() && ((*f)->GetTemplateType() == NonTemplate)) continue;
-      if((*f)->IsInTemplateInstance()) continue;
-      if((*f)->GetRange(begin, end) == string::npos) continue;
+      if(!(*f)->GetRange(begin, left, end)) continue;
 
       auto last = lexer_.GetLineNum(end);
       auto open = false, debug = false, code = false;

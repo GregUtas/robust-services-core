@@ -142,11 +142,11 @@ public:
          return Parameter::MessageContainsIllegalParm;
       return Parameter::Ok;
    }
-
+protected:
    //  A forward declaration.
    //
    struct TlvMsgLayout;
-
+public:
    //  For iterating through a TLV message's parameters.
    //
    class ParmIterator

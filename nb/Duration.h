@@ -79,12 +79,16 @@ public:
    //
    Duration(int64_t value, TimeUnits units);
 
-   //  For initializing a member.
+   //  Constructs a duration of 0.
    //
    Duration();
 
-   ~Duration() = default;
+   //  Copy constructor.
+   //
    Duration(const Duration& that) = default;
+
+   //  Copy operator.
+   //
    Duration& operator=(const Duration& that) = default;
 
    //  Returns a string that represents the duration in UNITS.

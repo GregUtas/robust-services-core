@@ -49,12 +49,16 @@ public:
    //
    explicit TimePoint(int64_t value);
 
-   //  Initializes a member to an invalid timepoint.
+   //  Constructs an invalid timestamp.
    //
    TimePoint();
 
-   ~TimePoint() = default;
+   //  Copy constructor.
+   //
    TimePoint(const TimePoint& that) = default;
+
+   //  Copy operator.
+   //
    TimePoint& operator=(const TimePoint& that) = default;
 
    //  Returns the time when the executable initialized.

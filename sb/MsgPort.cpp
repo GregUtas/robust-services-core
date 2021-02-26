@@ -28,7 +28,6 @@
 #include "FactoryRegistry.h"
 #include "Formatters.h"
 #include "IpPortRegistry.h"
-#include "Message.h"
 #include "MsgHeader.h"
 #include "ObjectPoolRegistry.h"
 #include "ProtocolSM.h"

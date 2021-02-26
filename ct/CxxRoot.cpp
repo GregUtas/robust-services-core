@@ -59,7 +59,6 @@ class MacroDATE : public Macro
 {
 public:
    MacroDATE();
-   ~MacroDATE() = default;
    CxxToken* GetValue() const override;
    CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }
@@ -98,7 +97,6 @@ class MacroFILE : public Macro
 {
 public:
    MacroFILE();
-   ~MacroFILE() = default;
    CxxToken* GetValue() const override;
    CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }
@@ -143,7 +141,6 @@ class MacroFunc : public Macro
 {
 public:
    MacroFunc();
-   ~MacroFunc() = default;
    CxxToken* GetValue() const override;
    CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }
@@ -188,7 +185,6 @@ class MacroLINE : public Macro
 {
 public:
    MacroLINE();
-   ~MacroLINE() = default;
    CxxToken* GetValue() const override;
    CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }
@@ -226,7 +222,6 @@ class MacroTIME : public Macro
 {
 public:
    MacroTIME();
-   ~MacroTIME() = default;
    CxxToken* GetValue() const override;
    CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }

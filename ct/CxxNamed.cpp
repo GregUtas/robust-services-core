@@ -326,8 +326,8 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::Log(Warning warning, const CxxNamed* item,
-   word offset, bool hide, const string& info) const
+void CxxNamed::Log(Warning warning,
+   const CxxNamed* item, word offset, const string& info) const
 {
    Debug::ft("CxxNamed.Log");
 
@@ -341,12 +341,12 @@ void CxxNamed::Log(Warning warning, const CxxNamed* item,
       auto that = inst->FindTemplateAnalog(this);
       if(that == nullptr) return;
       if(item != nullptr) item = inst->FindTemplateAnalog(item);
-      that->Log(warning, item, offset, hide, info);
+      that->Log(warning, item, offset, info);
       return;
    }
 
    if(item == nullptr) item = this;
-   GetFile()->LogPos(GetPos(), warning, item, offset, info, hide);
+   GetFile()->LogPos(GetPos(), warning, item, offset, info);
 }
 
 //------------------------------------------------------------------------------
@@ -2663,7 +2663,7 @@ void TemplateParms::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void TemplateParms::EnterScope() const
+void TemplateParms::EnterScope()
 {
    Debug::ft("TemplateParms.EnterScope");
 

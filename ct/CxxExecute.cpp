@@ -433,6 +433,13 @@ void Context::Reset()
 
 //------------------------------------------------------------------------------
 
+CxxScope* Context::Scope()
+{
+   return (Frame_ != nullptr ? Frame_->Scope() : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 Cxx::Access Context::ScopeVisibility()
 {
    if(ScopeAccess() == Cxx::Private) return Cxx::Private;

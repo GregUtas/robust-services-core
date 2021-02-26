@@ -822,7 +822,7 @@ bool Parser::GetCatch(TokenPtr& statement)
    if(!NextKeywordIs(CATCH_STR)) return Backup(start, 29);
    if(!lexer_.NextCharIs('(')) return Backup(start, 30);
 
-   if(lexer_.Extract(CurrPos(), 3) == ELLIPSES_STR)
+   if(lexer_.Substr(CurrPos(), 3) == ELLIPSES_STR)
    {
       auto end = lexer_.FindClosing('(', ')');
       if(end == string::npos) return Backup(start, 31);
@@ -3925,7 +3925,7 @@ bool Parser::HandleError(DirectivePtr& dir)
    if(!lexer_.NextStringIs(HASH_ERROR_STR)) return Fault(DirectiveMismatch);
    auto begin = CurrPos();
    auto end = lexer_.FindLineEnd(begin);
-   auto text = lexer_.Extract(begin, end - begin);
+   auto text = lexer_.Substr(begin, end - begin);
 
    dir = ErrorPtr(new Error(text));
    dir->SetContext(start);
@@ -4041,7 +4041,7 @@ bool Parser::HandleLine(DirectivePtr& dir)
    if(!lexer_.NextStringIs(HASH_LINE_STR)) return Fault(DirectiveMismatch);
    auto begin = CurrPos();
    auto end = lexer_.FindLineEnd(begin);
-   auto text = lexer_.Extract(begin, end - begin);
+   auto text = lexer_.Substr(begin, end - begin);
 
    dir = LinePtr(new Line(text));
    dir->SetContext(start);
@@ -4092,7 +4092,7 @@ bool Parser::HandlePragma(DirectivePtr& dir)
    if(!lexer_.NextStringIs(HASH_PRAGMA_STR)) return Fault(DirectiveMismatch);
    auto begin = CurrPos();
    auto end = lexer_.FindLineEnd(begin);
-   auto text = lexer_.Extract(begin, end - begin);
+   auto text = lexer_.Substr(begin, end - begin);
 
    dir = PragmaPtr(new Pragma(text));
    dir->SetContext(start);
@@ -4801,7 +4801,7 @@ bool Parser::Skip(size_t end, const ExprPtr& expr, size_t cause)
 
    auto start = CurrPos();
    string code = "<@ ";
-   code += lexer_.Extract(start, end - start);
+   code += lexer_.Substr(start, end - start);
    code += " @>";
 
    auto line = lexer_.GetLineNum(start);
@@ -4834,7 +4834,7 @@ bool Parser::Success(fn_name_arg func, size_t start) const
 
    auto prev = lexer_.Prev();
    auto count = (prev > start ? prev - start : 0);
-   auto parsed = lexer_.Extract(start, count);
+   auto parsed = lexer_.Substr(start, count);
    auto size = parsed.size();
 
    if(size <= COUT_LENGTH_MAX)

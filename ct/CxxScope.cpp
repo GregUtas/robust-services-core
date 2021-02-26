@@ -1348,11 +1348,8 @@ bool Data::InitByDefault()
    }
    else
    {
+      cls->WasCalled(PureCtor, this);
       if(!cls->HasPODMember()) SetInited();
-      auto warning =
-         (decl->inited_ ? DefaultConstructor : DefaultPODConstructor);
-      Log(warning, cls, -1);
-      cls->Log(warning);
    }
 
    return decl->inited_;
@@ -1755,6 +1752,17 @@ void FuncData::ExitBlock() const
    Debug::ft("FuncData.ExitBlock");
 
    Context::EraseLocal(this);
+
+   auto spec = GetTypeSpec();
+   if(!spec->IsIndirect())
+   {
+      auto root = spec->Root();
+      if((root != nullptr) && (root->Type() == Cxx::Class))
+      {
+         static_cast< Class* >(root)->WasCalled(PureDtor, this);
+      }
+   }
+
    if(next_ != nullptr) next_->ExitBlock();
 }
 
@@ -2647,10 +2655,12 @@ void Function::CheckCtor() const
    //
    if(GetAccess() == Cxx::Public)
    {
-      if(!GetClass()->Subclasses()->empty()) Log(PublicConstructor);
+      if(GetClass()->IsBaseClass()) Log(PublicConstructor);
    }
 
-   if(FuncRole() == PureCtor)
+   auto role = FuncRole();
+
+   if(role == PureCtor)
    {
       //  This is a not a copy or move constructor.  It should probably be
       //  tagged explicit if it is not invoked implicitly and can take one
@@ -2668,6 +2678,15 @@ void Function::CheckCtor() const
       else if(explicit_ && ((max == 0) || (min >= 2)))
       {
          Log(ExplicitConstructor);
+      }
+
+      if(base_ == nullptr)
+      {
+         auto base = GetClass()->BaseClass();
+         if(base != nullptr)
+         {
+            base->WasCalled(role, this);
+         }
       }
    }
 
@@ -2688,7 +2707,6 @@ void Function::CheckCtor() const
    //  simply make a bitwise copy.  Otherwise, it may not be the desired
    //  behavior unless the base copy or move constructor is deleted.
    //
-   auto role = FuncRole();
    if((role == CopyCtor) || (role == MoveCtor))
    {
       if((defn->call_ == nullptr) && !IsDefaulted())
@@ -2818,7 +2836,7 @@ void Function::CheckDtor() const
    }
 
    auto cls = GetClass();
-   if(cls->Subclasses()->empty()) return;
+   if(!cls->IsBaseClass()) return;
 
    if(virtual_)
    {
@@ -3870,7 +3888,9 @@ size_t Function::GetRange(size_t& begin, size_t& end) const
    //  the location of the matching right brace.
    //
    CxxScoped::GetRange(begin, end);
+   if(begin == string::npos) return string::npos;
    if(impl_ == nullptr) return string::npos;
+
    auto& lexer = GetFile()->GetLexer();
    auto left = impl_->GetPos();
    end = lexer.FindClosing('{', '}', left + 1);
@@ -5139,10 +5159,12 @@ void Function::WasCalled()
 {
    Debug::ft("Function.WasCalled");
 
-   //  Don't record a recursive invocation.  It's a minor thing, but a
-   //  function should be logged as unused if its only invoker is itself.
+   //  Don't record a recursive invocation: a function should be logged
+   //  as unused if its only invoker is itself.
    //
-   if(Context::Scope()->GetFunction() == this) return;
+   auto scope = Context::Scope();
+   if(scope == nullptr) return;
+   if(scope->GetFunction() == this) return;
 
    ++GetDecl()->calls_;
 
@@ -5162,12 +5184,10 @@ void Function::WasCalled()
 
    case FuncCtor:
       //
-      //  If this is an invocation by a derived class's constructor,
-      //  set this constructor as its base.  Its constructor could
-      //  also cause the invocation of other constructors, but its
-      //  superclass constructor will be the first.
+      //  If this is an invocation by a derived class's constructor, set
+      //  this constructor as its base.
       //
-      auto func = Context::Scope()->GetFunction();
+      auto func = scope->GetFunction();
 
       if((func != nullptr) && (func->FuncType() == FuncCtor))
       {

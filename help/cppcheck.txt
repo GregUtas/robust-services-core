@@ -208,22 +208,27 @@ Data could be const pointer
 Data need not be mutable
   This data does not need to be declared as mutable.
 ? W56
-Default constructor invoked: POD members not initialized
+Implicit constructor invoked: POD members not initialized
   This class relies on the constructor provided by the compiler
 but has POD (plain ordinary data) members. Those members will
 *not* be initialized when an instance of the class is created.
+An informational version of this warning (prefixed by 'i') is
+generated when the class is defined externally, typically as a
+struct in code written in C rather than C++.
 ? W57
-Default constructor invoked
-  Instances of this class are created, but it does not declare
-a constructor.
+Implicit constructor invoked
+  Instances of this class are created, but it does not define a
+constructor.  This warning is also generated when a base class
+does not define a constructor: a base class should usually have
+a protected constructor, but an implicit constructor is public.
 ? W58
-Default copy constructor invoked
+Implicit copy constructor invoked
   Instances of this class are created by copying, but it does
-not declare a copy constructor.
+not define a copy constructor.
 ? W59
-Default copy (assignment) operator invoked
+Implicit copy (assignment) operator invoked
   Instances of this class are copied by assignment, but it does
-not declare a copy operator.
+not define a copy operator.
 ? W60
 Base class constructor is public
   This class is used as a base but its constructor is public,
@@ -242,9 +247,12 @@ Member not sorted in standard order in member initialization list
 but not in the order in which the class declared it. The compiler
 initializes it in that order, so it should appear in that order.
 ? W64
-Default destructor invoked
-  Instances of this class are deleted, but it does not declare a
-destructor.
+Implicit destructor invoked
+  Instances of this class are deleted, but it does not define a
+destructor, and it has at least one pointer member that may need
+to release resources.  This warning is also generated for a base
+class that does not define a destructor, because it should define
+one that is virtual.
 ? W65
 Base class virtual destructor is not public
   This class is used as a base. Its destructor is virtual but needs

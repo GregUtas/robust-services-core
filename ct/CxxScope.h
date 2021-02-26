@@ -1725,8 +1725,8 @@ private:
    //
    bool defaulted_ : 1;
 
-   //  How many times the function was invoked.
-   //  ONLY INCREMENTED ON THE DECLARATION.
+   //  How many times the function was invoked.  Only incremented on the
+   //  declaration.
    //
    size_t calls_ : 16;
 

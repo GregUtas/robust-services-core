@@ -214,13 +214,13 @@ enum FunctionType
 //
 enum FunctionRole
 {
-   FuncOther,  // none of those below
    PureCtor,   // constructor for a new object
+   PureDtor,   // destructor
    CopyCtor,   // copy constructor
    MoveCtor,   // move constructor
-   PureDtor,   // destructor
    CopyOper,   // copy (assignment) operator
-   MoveOper    // move (assignment) operator
+   MoveOper,   // move (assignment) operator
+   FuncOther   // none of those above
 };
 
 //------------------------------------------------------------------------------
@@ -438,15 +438,15 @@ enum Warning
    DataCouldBeConst,         // data item could be declared as const
    DataCouldBeConstPtr,      // data item could be declared as a const pointer
    DataNeedNotBeMutable,     // no const function modifies this data member
-   DefaultPODConstructor,    // use of default constructor; class has POD member
-   DefaultConstructor,       // use of default constructor
-   DefaultCopyConstructor,   // use of default copy constructor
-   DefaultCopyOperator,      // use of default copy (assignment) operator
+   ImplicitPODConstructor,   // use of implicit constructor; has POD member
+   ImplicitConstructor,      // use of implicit constructor
+   ImplicitCopyConstructor,  // use of implicit copy constructor
+   ImplicitCopyOperator,     // use of implicit copy (assignment) operator
    PublicConstructor,        // base class has public constructor
    NonExplicitConstructor,   // constructor should be tagged explicit
    MemberInitMissing,        // item missing from member initialization list
    MemberInitNotSorted,      // item missorted in member initialization list
-   DefaultDestructor,        // use of default destructor
+   ImplicitDestructor,       // use of implicit destructor
    VirtualDestructor,        // virtual destructor is not public
    NonVirtualDestructor,     // non-virtual base class destructor not protected
    VirtualFunctionInvoked,   // constructor or destructor calls virtual function

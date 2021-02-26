@@ -1490,18 +1490,16 @@ void Operation::Execute() const
       if(IsOverloaded(arg1))
          arg1 = Context::PopArg(false);
       else
-         arg1.WasRead();
+         Record(op_, arg1, &arg2);
       PushMember(arg1, arg2);
       return;
 
    case Cxx::ARRAY_SUBSCRIPT:
       //
-      //  Push ARG1 after decrementing its indirection level.
+      //  Push ARG1 again.
       //
       if(IsOverloaded(arg1, arg2)) return;
-      arg1.WasRead();
-      arg2.WasRead();
-      arg1.WasIndexed();
+      Record(op_, arg1, &arg2);
       Context::PushArg(arg1.EraseName());
       return;
 
@@ -1514,11 +1512,10 @@ void Operation::Execute() const
    case Cxx::PREFIX_INCREMENT:
    case Cxx::PREFIX_DECREMENT:
       //
-      //  A read-write on ARG1.  Push ARG1 again.
+      //  Push ARG1 again.
       //
       if(IsOverloaded(arg1)) return;
-      arg1.WasRead();
-      arg1.WasWritten();
+      Record(op_, arg1, &arg2);
       Context::PushArg(arg1.EraseName());
       return;
 
@@ -1526,7 +1523,7 @@ void Operation::Execute() const
       //
       //  Push a typeid result.
       //
-      arg1.WasRead();
+      Record(op_, arg1, &arg2);
       PushType("type_info");
       return;
 
@@ -1536,10 +1533,10 @@ void Operation::Execute() const
    case Cxx::STATIC_CAST:
    case Cxx::CAST:
       //
-      //  A read on ARG2.  Push ARG1 (a TypeSpec).
+      //  Push ARG1 (a TypeSpec).
       //
       CheckCast(arg2, arg1);
-      arg2.WasRead();
+      Record(op_, arg1, &arg2);
       Context::PushArg(arg1.EraseName());
       return;
 
@@ -1548,7 +1545,7 @@ void Operation::Execute() const
       //
       //  Push a size_t result.
       //
-      arg1.WasRead();
+      Record(op_, arg1, &arg2);
       PushType("size_t");
       return;
 
@@ -1556,7 +1553,7 @@ void Operation::Execute() const
       //
       //  Push a bool result.
       //
-      arg1.WasRead();
+      Record(op_, arg1, &arg2);
       PushType("bool");
       return;
 
@@ -1567,7 +1564,7 @@ void Operation::Execute() const
       //  Push ARG1 again.
       //
       if(IsOverloaded(arg1)) return;
-      arg1.WasRead();
+      Record(op_, arg1, &arg2);
       Context::PushArg(arg1.EraseName());
       return;
 
@@ -1576,7 +1573,7 @@ void Operation::Execute() const
       //  Push ARG1 again after checking that it's a boolean.
       //
       if(IsOverloaded(arg1)) return;
-      arg1.WasRead();
+      Record(op_, arg1, &arg2);
       arg1.CheckIfBool();
       Context::PushArg(arg1.EraseName());
       return;
@@ -1586,7 +1583,7 @@ void Operation::Execute() const
       //  Push ARG1 after incrementing its indirection level.
       //
       if(IsOverloaded(arg1)) return;
-      arg1.WasRead();
+      Record(op_, arg1, &arg2);
       arg1.IncrPtrs();
       Context::PushArg(arg1.EraseName());
       return;
@@ -1596,7 +1593,7 @@ void Operation::Execute() const
       //  Push ARG1 after decrementing its indirection level.
       //
       if(IsOverloaded(arg1)) return;
-      arg1.WasRead();
+      Record(op_, arg1, &arg2);
       arg1.DecrPtrs();
       Context::PushArg(arg1.EraseName());
       return;
@@ -1631,8 +1628,7 @@ void Operation::Execute() const
    case Cxx::BITWISE_OR:
       CheckBitwiseOp(arg1, arg2);
       if(IsOverloaded(arg1, arg2)) return;
-      arg1.WasRead();
-      arg2.WasRead();
+      Record(op_, arg1, &arg2);
       PushResult(arg1, arg2);
       return;
 
@@ -1643,8 +1639,7 @@ void Operation::Execute() const
    case Cxx::EQUALITY:
    case Cxx::INEQUALITY:
       if(IsOverloaded(arg1, arg2)) return;
-      arg1.WasRead();
-      arg2.WasRead();
+      Record(op_, arg1, &arg2);
       PushResult(arg1, arg2);
       return;
 
@@ -1655,8 +1650,7 @@ void Operation::Execute() const
          Context::Log(OperatorOverloaded);
          return;
       }
-      arg1.WasRead();
-      arg2.WasRead();
+      Record(op_, arg1, &arg2);
       arg1.CheckIfBool();
       arg2.CheckIfBool();
       PushResult(arg1, arg2);
@@ -1671,8 +1665,7 @@ void Operation::Execute() const
          if(!Context::PopArg(arg3)) return;
          if(!Context::PopArg(arg2)) return;
          if(!Context::PopArg(arg1)) return;
-         arg1.WasRead();
-         arg2.WasRead();
+         Record(op_, arg1, &arg2);
          arg3.WasRead();
          arg1.CheckIfBool();
          if(arg2.item->TypeString(true) == NULLPTR_T_STR)
@@ -1686,8 +1679,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1, arg2)) return;
       arg2.SetAsAutoType();
       arg1.SetAutoType();
-      arg1.WasWritten();
-      arg2.WasRead();
+      Record(op_, arg1, &arg2);
       arg2.AssignedTo(arg1, Copied);
       PushResult(arg1, arg2);
       return;
@@ -1704,9 +1696,7 @@ void Operation::Execute() const
    case Cxx::BITWISE_OR_ASSIGN:
       CheckBitwiseOp(arg1, arg2);
       if(IsOverloaded(arg1, arg2)) return;
-      arg1.WasRead();
-      arg1.WasWritten();
-      arg2.WasRead();
+      Record(op_, arg1, &arg2);
       PushResult(arg1, arg2);
       return;
 
@@ -1721,7 +1711,7 @@ void Operation::Execute() const
       //
       //  Push the result of the second statement.
       //
-      arg2.WasRead();
+      Record(op_, arg1, &arg2);
       Context::PushArg(arg2.EraseName());
       return;
 
@@ -1844,10 +1834,9 @@ void Operation::ExecuteCall()
    auto size = args.size();
    if(proc.IsDefaultCtor(args))
    {
+      auto role = (size == 1 ? PureCtor : CopyCtor);
       cls = proc.item->GetClass();
-      auto warning = (size == 1 ? DefaultConstructor : DefaultCopyConstructor);
-      Context::Log(warning, cls, -1);
-      cls->Log(warning);
+      cls->WasCalled(role, nullptr);
       if(size > 1) args[1].WasRead();
       Context::PushArg(StackArg(cls, 0, true));
       return;
@@ -1891,17 +1880,7 @@ void Operation::ExecuteDelete(const StackArg& arg) const
    arg.item->RecordUsage();
 
    auto cls = static_cast< Class* >(arg.item->Root());
-   auto dtor = cls->FindDtor(Context::Scope());
-
-   if(dtor != nullptr)
-   {
-      Context::WasCalled(dtor);
-      dtor->RecordUsage();
-      return;
-   }
-
-   Context::Log(DefaultDestructor, cls, -1);
-   cls->Log(DefaultDestructor);
+   cls->WasCalled(PureDtor, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1963,8 +1942,7 @@ void Operation::ExecuteNew() const
    auto ctor = cls->FindCtor(nullptr, Context::Scope());
    if(ctor == nullptr)
    {
-      Context::Log(DefaultConstructor, cls, -1);
-      cls->Log(DefaultConstructor);
+      cls->WasCalled(PureCtor, nullptr);
       return;
    }
 
@@ -2158,7 +2136,12 @@ bool Operation::ExecuteOverload
    {
       Context::PopArg(false).SetAsAutoType();
       arg1.SetAutoType();
+      Record(op_, arg1, arg2);
       arg1 = *arg2;
+   }
+   else
+   {
+      Record(op_, arg1, arg2);
    }
 
    //  If OPER was an assignment operator in a base class, the default
@@ -2167,8 +2150,7 @@ bool Operation::ExecuteOverload
    //
    if((op_ == Cxx::ASSIGN) && (oper->GetClass() != cls))
    {
-      Context::Log(DefaultCopyOperator, cls, -1);
-      cls->Log(DefaultCopyOperator);
+      cls->WasCalled(CopyOper, nullptr);
       Context::PopArg(false);
       Context::PushArg(StackArg(cls, 0, false));
    }
@@ -2829,6 +2811,112 @@ void Operation::PushType(const string& name)
 
    auto expl = "Failed to find type for " + name;
    Context::SwLog(Operation_PushType, expl, 0);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Operation_Record = "Operation.Record";
+
+void Operation::Record(Cxx::Operator op, StackArg& arg1, const StackArg* arg2)
+{
+   Debug::ft(Operation_Record);
+
+   switch(op)
+   {
+   case Cxx::REFERENCE_SELECT:
+   case Cxx::POINTER_SELECT:
+   case Cxx::TYPE_NAME:
+   case Cxx::SIZEOF_TYPE:
+   case Cxx::ALIGNOF_TYPE:
+   case Cxx::NOEXCEPT:
+   case Cxx::ONES_COMPLEMENT:
+   case Cxx::UNARY_PLUS:
+   case Cxx::UNARY_MINUS:
+   case Cxx::LOGICAL_NOT:
+   case Cxx::ADDRESS_OF:
+   case Cxx::INDIRECTION:
+      arg1.WasRead();
+      return;
+
+   case Cxx::ARRAY_SUBSCRIPT:
+      arg1.WasRead();
+      arg2->WasRead();
+      arg1.WasIndexed();
+      return;
+
+   case Cxx::FUNCTION_CALL:
+   case Cxx::OBJECT_CREATE:
+   case Cxx::OBJECT_CREATE_ARRAY:
+   case Cxx::OBJECT_DELETE:
+   case Cxx::OBJECT_DELETE_ARRAY:
+   case Cxx::THROW:
+      return;
+
+   case Cxx::POSTFIX_INCREMENT:
+   case Cxx::POSTFIX_DECREMENT:
+   case Cxx::PREFIX_INCREMENT:
+   case Cxx::PREFIX_DECREMENT:
+      arg1.WasRead();
+      arg1.WasWritten();
+      return;
+
+   case Cxx::CONST_CAST:
+   case Cxx::DYNAMIC_CAST:
+   case Cxx::REINTERPRET_CAST:
+   case Cxx::STATIC_CAST:
+   case Cxx::CAST:
+   case Cxx::STATEMENT_SEPARATOR:
+      arg2->WasRead();
+      return;
+
+   case Cxx::REFERENCE_SELECT_MEMBER:
+   case Cxx::POINTER_SELECT_MEMBER:
+   case Cxx::MULTIPLY:
+   case Cxx::DIVIDE:
+   case Cxx::MODULO:
+   case Cxx::ADD:
+   case Cxx::SUBTRACT:
+   case Cxx::LEFT_SHIFT:
+   case Cxx::RIGHT_SHIFT:
+   case Cxx::LESS:
+   case Cxx::LESS_OR_EQUAL:
+   case Cxx::GREATER:
+   case Cxx::GREATER_OR_EQUAL:
+   case Cxx::EQUALITY:
+   case Cxx::INEQUALITY:
+   case Cxx::BITWISE_AND:
+   case Cxx::BITWISE_XOR:
+   case Cxx::BITWISE_OR:
+   case Cxx::LOGICAL_AND:
+   case Cxx::LOGICAL_OR:
+   case Cxx::CONDITIONAL:
+      arg1.WasRead();
+      arg2->WasRead();
+      return;
+
+   case Cxx::ASSIGN:
+      arg1.WasWritten();
+      arg2->WasRead();
+      return;
+
+   case Cxx::MULTIPLY_ASSIGN:
+   case Cxx::DIVIDE_ASSIGN:
+   case Cxx::MODULO_ASSIGN:
+   case Cxx::ADD_ASSIGN:
+   case Cxx::SUBTRACT_ASSIGN:
+   case Cxx::LEFT_SHIFT_ASSIGN:
+   case Cxx::RIGHT_SHIFT_ASSIGN:
+   case Cxx::BITWISE_AND_ASSIGN:
+   case Cxx::BITWISE_XOR_ASSIGN:
+   case Cxx::BITWISE_OR_ASSIGN:
+      arg1.WasRead();
+      arg1.WasWritten();
+      arg2->WasRead();
+      return;
+
+   default:
+      Debug::SwLog(Operation_Record, "unexpected operator", op);
+   }
 }
 
 //------------------------------------------------------------------------------

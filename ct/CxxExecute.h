@@ -113,6 +113,10 @@ public:
    //
    StackArg(Function* f, TypeName* name);
 
+   //  Destructor.
+   //
+   ~StackArg() = default;
+
    //  Copy constructor.
    //
    StackArg(const StackArg& that) = default;
@@ -417,7 +421,7 @@ struct ActiveScope
 {
    //  The scope.
    //
-   CxxScope* scope;
+   CxxScope* const scope;
 
    //  The scope's access control.  It is set to Cxx::Private when what is
    //  being parsed does not need to be visible even if the scope is visible.
@@ -698,7 +702,7 @@ public:
 
    //  Returns the current scope.
    //
-   static CxxScope* Scope() { return Frame_->Scope(); }
+   static CxxScope* Scope();
 
    //  Returns the access control for the scope being compiled.
    //

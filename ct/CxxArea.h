@@ -329,14 +329,14 @@ public:
    //
    virtual BaseDecl* GetBaseDecl() const { return base_.get(); }
 
+   //  Returns true if the class is a base class.
+   //
+   bool IsBaseClass() const { return !subs_.empty(); }
+
    //  Returns the class's outer class.  Returns nullptr if the class is
    //  not an inner class.
    //
    Class* OuterClass() const;
-
-   //  Returns the class's direct subclasses.
-   //
-   const ClassVector* Subclasses() const { return &subs_; }
 
    //  Returns the class's friends.
    //
@@ -393,20 +393,15 @@ public:
    Function* FindCtor(StackArgVector* args,
       const CxxScope* scope = nullptr, SymbolView* view = nullptr);
 
-   //  Returns all constructors.  Returns a nullptr entry if none are found.
-   //
-   std::vector< Function* > FindCtors() const;
-
    //  Returns the destructor.  Returns nullptr if the class doesn't define one,
-   //  in which case it has a default, public destructor.  If SCOPE is provided,
-   //  VIEW is updated with the destructor's accessibility to SCOPE.
+   //  in which case it has a default, public destructor.
    //
-   Function* FindDtor
-      (const CxxScope* scope = nullptr, SymbolView* view = nullptr) const;
+   Function* FindDtor() const;
 
    //  Returns the function that provides ROLE.  If not found, the search
    //  continues up the class hierarchy if BASE is set.  Not supported for
-   //  FuncOther and PureCtor, since there can be multiple such functions.
+   //  FuncOther.  For PureCtor, looks for a constructor with no arguments;
+   //  returns nullptr if one doesn't exist.
    //
    Function* FindFuncByRole(FunctionRole role, bool base) const;
 
@@ -444,7 +439,9 @@ public:
    //
    bool GetFuncIndex(const Function* func, size_t& idx) const;
 
-   //  Returns true if the class has a default (zero-argument) constructor.
+   //  Returns true if the class has a default constructor or if its members
+   //  are default constructible--and if its base class chain is also default
+   //  constructible.
    //
    bool IsDefaultConstructible();
 
@@ -624,6 +621,11 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
+   //  Tracks invocations of implicitly defined special member functions.  ITEM
+   //  is specific to ROLE and may be included in any resulting warning.
+   //
+   void WasCalled(FunctionRole role, const CxxNamed* item);
+
    //  Overridden to support, for example, passing a "this" argument or writing
    //  to a class object in an array.
    //
@@ -695,6 +697,10 @@ private:
    //
    UsageAttributes GetUsageAttrs() const;
 
+   //  Checks that a base class defines a constructor and destructor.
+   //
+   void CheckBaseClass() const;
+
    //  Checks that the class follows the Rule of Three and its variants.
    //
    void CheckRuleOfThree() const;
@@ -722,6 +728,10 @@ private:
    //  The current access control level when parsing the class.
    //
    Cxx::Access currAccess_ : 8;
+
+   //  Set if an implicitly defined special member function was invoked.
+   //
+   bool implicit_ : 8;
 
    //  Set if the class was block-copied.
    //

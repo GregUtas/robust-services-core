@@ -121,7 +121,7 @@ public:
    //  Returns a string containing the next COUNT characters, starting at POS.
    //  Converts endlines to blanks and compresses adjacent blanks.
    //
-   std::string Extract(size_t pos, size_t count) const;
+   std::string Substr(size_t pos, size_t count) const;
 
    //  Returns the current parse position.
    //

@@ -621,9 +621,9 @@ void CodeFile::CheckDebugFt()
       //  template; checking functions in a template instance would therefore
       //  be redundant.
       //
-      if((*f)->GetRange(begin, end) == string::npos) continue;
-      if(IsHeader() && ((*f)->GetTemplateType() == NonTemplate)) return;
+      if(IsHeader() && ((*f)->GetTemplateType() == NonTemplate)) continue;
       if((*f)->IsInTemplateInstance()) continue;
+      if((*f)->GetRange(begin, end) == string::npos) continue;
 
       auto last = lexer_.GetLineNum(end);
       auto open = false, debug = false, code = false;
@@ -1523,6 +1523,13 @@ Editor& CodeFile::GetEditor()
 
 //------------------------------------------------------------------------------
 
+const Lexer& CodeFile::GetLexer() const
+{
+   return (editor_.IsInitialized() ? editor_ : lexer_);
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::GetLineCounts() const
 {
    //  Don't count lines in substitute files.
@@ -1979,7 +1986,7 @@ void CodeFile::LogAddUsings(ostream* stream)
 //------------------------------------------------------------------------------
 
 void CodeFile::LogCode(Warning warning, size_t pos,
-   const CxxNamed* item, word offset, const string& info, bool hide)
+   const CxxNamed* item, word offset, const string& info)
 {
    Debug::ft("CodeFile.LogCode");
 
@@ -1988,29 +1995,28 @@ void CodeFile::LogCode(Warning warning, size_t pos,
    if(isSubsFile_) return;
    if(Context::ParsingTemplateInstance()) return;
 
-   CodeWarning log(warning, this, pos, item, offset, info, hide);
+   CodeWarning log(warning, this, pos, item, offset, info);
    log.Insert();
 }
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogLine(size_t line, Warning warning,
-   word offset, const string& info, bool hide)
+void CodeFile::LogLine(size_t line, Warning warning)
 {
    Debug::ft("CodeFile.LogLine");
 
    auto pos = lexer_.GetLineStart(line);
-   LogCode(warning, pos, nullptr, offset, info, hide);
+   LogCode(warning, pos, nullptr);
 }
 
 //------------------------------------------------------------------------------
 
 void CodeFile::LogPos(size_t pos, Warning warning,
-   const CxxNamed* item, word offset, const string& info, bool hide)
+   const CxxNamed* item, word offset, const string& info)
 {
    Debug::ft("CodeFile.LogPos");
 
-   LogCode(warning, pos, item, offset, info, hide);
+   LogCode(warning, pos, item, offset, info);
 }
 
 //------------------------------------------------------------------------------

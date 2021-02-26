@@ -628,6 +628,13 @@ CodeFile* CxxScoped::GetImplFile() const
 
 size_t CxxScoped::GetRange(size_t& begin, size_t& end) const
 {
+   if(IsInTemplateInstance())
+   {
+      begin = string::npos;
+      end = string::npos;
+      return string::npos;
+   }
+
    auto lexer = GetFile()->GetLexer();
    auto spec = GetTypeSpec();
    if(spec == nullptr)
@@ -2140,7 +2147,7 @@ void Friend::SetAsReferent(const CxxNamed* user)
    if(parms_ != nullptr) parms_->Print(name, NoFlags);
    name << tag_ << SPACE;
    name << ScopedName(true);
-   user->Log(FriendAsForward, nullptr, 0, false, name.str());
+   user->Log(FriendAsForward, nullptr, 0, name.str());
 }
 
 //------------------------------------------------------------------------------

@@ -135,6 +135,8 @@ public:
    //  Sets BEGIN to GetPos() of the item or, if GetTypeSpec() returns a
    //  valid type specification, then GetPos() of that specification.  Sets
    //  END to the location of the next semicolon and returns string::npos.
+   //  Not supported for a template instance or its contents, as its code
+   //  does not reside in a file (BEGIN and END will both be string::npos).
    //
    size_t GetRange(size_t& begin, size_t& end) const override;
 

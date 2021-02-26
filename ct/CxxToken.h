@@ -53,7 +53,7 @@ struct CxxUsageSets
                            // directives but which the global cross-reference
                            // should report as being used
 
-   CxxUsageSets() = default;  // create empty CxxNamedSets
+   CxxUsageSets() = default;  // creates empty CxxNamedSets
 
    //  Adds ITEM to the specified set (AddForward adds ITEM to FRIENDS if
    //  it is a friend declaration).  These functions exist so that a debug
@@ -726,6 +726,10 @@ private:
    //
    void CheckBitwiseOp(const StackArg& arg1, const StackArg& arg2) const;
 
+   //  Registers reads and writes on ARG1 and ARG2 based on OP.
+   //
+   static void Record(Cxx::Operator op, StackArg& arg1, const StackArg* arg2);
+
    //  Displays operator new or operator new[].
    //
    void DisplayNew(std::ostream& stream) const;
@@ -742,7 +746,7 @@ private:
    //  The overload that implemented the operator, if any.  Recorded for
    //  symbol usage purposes.
    //
-   mutable Function* overload_;
+   mutable const Function* overload_;
 
    //  The operator's arguments.
    //
@@ -983,7 +987,7 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 private:
-   TokenPtr token_;
+   const TokenPtr token_;
 };
 }
 #endif

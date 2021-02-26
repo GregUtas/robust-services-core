@@ -23,7 +23,6 @@
 #define CODEWARNING_H_INCLUDED
 
 #include <cstddef>
-#include <cstdint>
 #include <iosfwd>
 #include <map>
 #include <string>
@@ -50,18 +49,13 @@ struct WarningAttrs
    //
    const bool fixable;
 
-   //  The warning's sort order.  A warning with a lower value is fixed
-   //  before one with a higher value.  This helps simplify the editor.
-   //
-   const uint8_t order;
-
    //  A string that explains the warning.
    //
    fixed_string expl;
 
    //  Constructs a warning with the specified attributes.
    //
-   WarningAttrs(bool fix, uint8_t order, fixed_string expl);
+   WarningAttrs(bool fix, fixed_string expl);
 };
 
 //------------------------------------------------------------------------------
@@ -92,8 +86,7 @@ public:
    //  string::npos, it means that the warning has no code to display.
    //
    CodeWarning(Warning warning, CodeFile* file, size_t pos,
-      const CxxNamed* item, word offset, const std::string& info,
-      bool hide = false);
+      const CxxNamed* item, word offset, const std::string& info);
 
    //  Returns the file in which the warning appeared.
    //
@@ -162,6 +155,10 @@ private:
    //
    bool HasInfoToDisplay() const;
 
+   //  Returns true if the log is informational and cannot be fixed.
+   //
+   bool IsInformational() const;
+
    //  Returns the logs that need to be fixed to resolve this log.
    //  The log itself is included in the result unless it does not
    //  need to be fixed.
@@ -173,13 +170,8 @@ private:
    //
    CodeWarning* FindMateLog(std::string& expl) const;
 
-   //  If this log indicates that a compiler-provided special member
-   //  function was invoked, it returns the log associated with the
-   //  class that does not define that special member function.
-   //
-   CodeWarning* FindRootLog(std::string& expl);
-
-   //  Updates WARNINGS with those that were logged in FILE.
+   //  Updates WARNINGS with those that were logged in FILE.  Excludes
+   //  informational warnings, which cannot be fixed.
    //
    static void GetWarnings
       (const CodeFile* file, std::vector< CodeWarning* >& warnings);
@@ -220,17 +212,16 @@ private:
    //
    const CxxNamed* item_;
 
-   //  Warning specific; displayed if > 0.
+   //  Warning specific.  If > 0, displayed after line number (used, for
+   //  example, to specify that a function's Nth argument is associated
+   //  with the warning).  If < 0, denotes an informational warning that
+   //  cannot be fixed but that is associated with one that can.
    //
    word offset_;
 
    //  Warning specific.
    //
    std::string info_;
-
-   //  If set, prevents a warning from being displayed.
-   //
-   bool hide_;
 
    //  Whether a warning can be, or has been, fixed by the Editor.
    //

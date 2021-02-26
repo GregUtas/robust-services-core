@@ -238,9 +238,10 @@ public:
    //
    const std::string& GetCode() const { return code_; }
 
-   //  Provides read-only access to the lexer.
+   //  Provides read-only access to the lexer.  But if the editor has been
+   //  initialized, it is returned instead.
    //
-   const Lexer& GetLexer() const { return lexer_; }
+   const Lexer& GetLexer() const;
 
    //  Returns a stream for reading the file.
    //
@@ -251,15 +252,11 @@ public:
    //
    void LogPos(size_t pos, Warning warning,
       const CxxNamed* item = nullptr, NodeBase::word offset = 0,
-      const std::string& info = std::string(NodeBase::EMPTY_STR),
-      bool hide = false);
+      const std::string& info = std::string(NodeBase::EMPTY_STR));
 
-   //  Logs WARNING, which occurred on LINE.  OFFSET and INFO are specific
-   //  to WARNING.
+   //  Logs WARNING, which occurred on LINE.
    //
-   void LogLine(size_t line, Warning warning, NodeBase::word offset = 0,
-      const std::string& info = std::string(NodeBase::EMPTY_STR),
-      bool hide = false);
+   void LogLine(size_t line, Warning warning);
 
    //  Invokes FindLog(LOG, ITEM, OFFSET) on the file's editor to find the
    //  log whose .warning matches LOG, whose .offset matches OFFSET, and
@@ -375,8 +372,7 @@ private:
    //
    void LogCode(Warning warning,
       size_t pos, const CxxNamed* item, NodeBase::word offset = 0,
-      const std::string& info = std::string(NodeBase::EMPTY_STR),
-      bool hide = false);
+      const std::string& info = std::string(NodeBase::EMPTY_STR));
 
    //  Returns false if >trim does not apply to this file (e.g. a substitute
    //  file).

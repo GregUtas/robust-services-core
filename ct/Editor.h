@@ -81,13 +81,13 @@ public:
    //
    Editor();
 
-   //  Not subclassed.
-   //
-   ~Editor() = default;
-
    //  Initializes the editor.
    //
    void Setup(CodeFile* file);
+
+   //  Returns true if the editor has been set up.
+   //
+   bool IsInitialized() const { return (file_ != nullptr); }
 
    //  Interactively fixes warnings in the code detected by Check().  If
    //  an error occurs, a non-zero value is returned and EXPL is updated
@@ -262,6 +262,11 @@ private:
    //
    size_t InsertLineBreak(size_t pos);
 
+   //  Inserts the string "//" followed by repetitions of C to fill out the
+   //  line.  POS is where to insert.  Returns POS.
+   //
+   size_t InsertRule(size_t pos, char c);
+
    //  Returns the first line that follows comments and blanks.
    //
    size_t PrologEnd() const;
@@ -413,7 +418,8 @@ private:
    //  fix LOG should be inserted.  Updates ATTRS to specify whether the
    //  function should be offset with a blank line and, if so, commented.
    //
-   size_t FindSpecialFuncLoc(const CodeWarning& log, FuncDeclAttrs& attrs);
+   size_t FindSpecialFuncLoc
+      (const CodeWarning& log, FuncDeclAttrs& attrs) const;
 
    //  Returns the location where the function CLS::NAME should be declared.
    //  Returns string::npos if the user decides not to add the function.
@@ -425,7 +431,7 @@ private:
 
    //  Returns the location where a new function declaration should be added
    //  after PREV and/or before NEXT.  Updates ATTRS if the function should
-   //   be offset with a blank line or comment.
+   //  be offset with a blank line or comment.
    //
    size_t UpdateFuncDeclLoc
       (const Function* prev, const Function* next, FuncDeclAttrs& attrs) const;
@@ -433,6 +439,17 @@ private:
    //  Updates ATTRS based on FUNC.
    //
    void UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs) const;
+
+   //  Inserts what goes after a function declaration.  POS is where to insert.
+   //  Returns POS.
+   //
+   size_t InsertAfterFuncDecl(size_t pos, const FuncDeclAttrs& attrs);
+
+   //  Inserts what goes before a function declaration.  POS is where to insert.
+   //  point, and COMMENT is any comment.  Returns POS.
+   //
+   size_t InsertBeforeFuncDecl
+      (size_t pos, const FuncDeclAttrs& attrs, const string& comment);
 
    //  Returns the location where the function CLS::NAME should be defined.
    //  Updates ATTRS if the function should be offset with a rule and/or a
@@ -451,6 +468,16 @@ private:
    //  Updates ATTRS based on FUNC.
    //
    void UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs) const;
+
+   //  Inserts what goes after a function definition.  POS is where to insert.
+   //  Returns POS.
+   //
+   size_t InsertAfterFuncDefn(size_t pos, const FuncDefnAttrs& attrs);
+
+   //  Inserts what goes before a function definition.  POS is where to insert.
+   //  Returns POS.
+   //
+   size_t InsertBeforeFuncDefn(size_t pos, const FuncDefnAttrs& attrs);
 
    //  Returns the code for a Debug::Ft invocation with an inline string
    //  literal (FNAME).

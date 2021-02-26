@@ -50,6 +50,7 @@ Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    name_(name.release()),
    tag_(tag),
    currAccess_(tag == Cxx::ClassType ? Cxx::Private : Cxx::Public),
+   implicit_(false),
    copied_(false)
 {
    Debug::ft("Class.ctor[>ct]");
@@ -501,14 +502,30 @@ void Class::Check() const
       (*f)->Check();
    }
 
-   if(!subs_.empty() && (FindDtor() == nullptr))
-   {
-      Log(NonVirtualDestructor);
-   }
-
+   CheckBaseClass();
    CheckIfUnused(ClassUnused);
    CheckOverrides();
    CheckRuleOfThree();
+}
+
+//------------------------------------------------------------------------------
+
+void Class::CheckBaseClass() const
+{
+   Debug::ft("Class.CheckBaseClass");
+
+   if(!IsBaseClass()) return;
+
+   auto func = FindDtor();
+   if(func == nullptr) Log(ImplicitDestructor);
+
+   auto funcs = Funcs();
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      if((*f)->FuncRole() == PureCtor) return;
+   }
+
+   Log(ImplicitConstructor);
 }
 
 //------------------------------------------------------------------------------
@@ -911,7 +928,7 @@ void Class::Display(ostream& stream,
 
       lead += spaces(INDENT_SIZE);
 
-      if(!subs_.empty())
+      if(IsBaseClass())
       {
          stream << prefix << spaces(INDENT_SIZE) << "subclasses:" << CRLF;
 
@@ -1105,31 +1122,18 @@ Function* Class::FindCtor
 
 //------------------------------------------------------------------------------
 
-std::vector< Function* > Class::FindCtors() const
+Function* Class::FindDtor() const
 {
-   Debug::ft("Class.FindCtors");
+   Debug::ft("Class.FindDtor");
 
-   std::vector< Function* > ctors;
    const FunctionPtrVector* funcs = Funcs();
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      if((*f)->FuncRole() == PureCtor) ctors.push_back(f->get());
+      if((*f)->Name()->front() == '~') return f->get();
    }
 
-   if(ctors.empty()) ctors.push_back(nullptr);
-   return ctors;
-}
-
-//------------------------------------------------------------------------------
-
-Function* Class::FindDtor(const CxxScope* scope, SymbolView* view) const
-{
-   Debug::ft("Class.FindDtor");
-
-   auto name = *Name();
-   name.insert(0, 1, '~');
-   return FindFunc(name, nullptr, false, scope, view);
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1181,7 +1185,6 @@ Function* Class::FindFuncByRole(FunctionRole role, bool base) const
    switch(role)
    {
    case FuncOther:
-   case PureCtor:
       Context::SwLog(Class_FindFuncByRole, "Role not supported", role);
       return nullptr;
    }
@@ -1198,9 +1201,18 @@ Function* Class::FindFuncByRole(FunctionRole role, bool base) const
       funcs = Funcs();
    }
 
+   //  If looking for a constructor, it must have no arguments (which,
+   //  internally, is actually one, because it gets an implicit "this").
+   //
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      if((*f)->FuncRole() == role) return f->get();
+      if((*f)->FuncRole() == role)
+      {
+         if((role != PureCtor) || ((*f)->GetArgs().size() == 1))
+         {
+            return f->get();
+         }
+      }
    }
 
    if(!base) return nullptr;
@@ -1410,8 +1422,9 @@ Class::UsageAttributes Class::GetUsageAttrs() const
 
    UsageAttributes attrs;
 
-   if(!subs_.empty()) attrs.set(IsBase);
+   if(IsBaseClass()) attrs.set(IsBase);
    if(!tmplts_.empty()) attrs.set(HasInstantiations);
+   if(implicit_) attrs.set(IsConstructed);
 
    auto classes = Classes();
    for(auto c = classes->cbegin(); c != classes->cend(); ++c)
@@ -1871,11 +1884,87 @@ void Class::UpdatePos
    {
       (*f)->UpdatePos(action, begin, count, from);
    }
+}
 
-   for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
+//------------------------------------------------------------------------------
+
+const Warning RoleToWarning[FuncOther + 1] =
+{
+   ImplicitConstructor,      //  PureCtor
+   ImplicitDestructor,       //  PureDtor
+   ImplicitCopyConstructor,  //  CopyCtor
+   ImplicitCopyConstructor,  //  MoveCtor
+   ImplicitCopyOperator,     //  CopyOper
+   ImplicitCopyOperator,     //  MoveOper
+   Warning_N                 //  FuncOther
+};
+
+void Class::WasCalled(FunctionRole role, const CxxNamed* item)
+{
+   Debug::ft("Class.WasCalled");
+
+   //  The special member function associated with ROLE was invoked.  If
+   //  that function is defined, tell it that it was invoked.
+   //
+   auto func = FindFuncByRole(role, false);
+
+   if(func != nullptr)
    {
-      (*t)->UpdatePos(action, begin, count, from);
+      func->WasCalled();
+      return;
    }
+
+   //  The special member function is implicitly defined.  Decide whether to
+   //  generate a log.  An implicit constructor, copy constructor, or copy
+   //  operator always results in a log, and a destructor results in a log if
+   //  the class has a pointer member (which might mean that it needs to free
+   //  free memory).  Propagate the call up the class hierarchy if a log is
+   //  not generated.
+   //
+   implicit_ = true;
+
+   auto log = false;
+   auto data = Datas();
+
+   if(role == PureDtor)
+   {
+      for(auto d = data->cbegin(); d != data->cend(); ++d)
+      {
+         if(!(*d)->IsStatic() && ((*d)->GetTypeSpec()->Ptrs(false) > 0))
+         {
+            log = true;
+            break;
+         }
+      }
+   }
+   else
+   {
+      log = true;
+   }
+
+   if(log)
+   {
+      auto warning = RoleToWarning[role];
+
+      if((warning == ImplicitConstructor) && HasPODMember())
+      {
+         warning = ImplicitPODConstructor;
+      }
+
+      if(warning != Warning_N)
+      {
+         Log(warning);
+
+         if(item != nullptr)
+            item->Log(warning, item, -1);
+         else
+            Context::Log(warning, this, -1);
+         return;
+      }
+   }
+
+   auto base = BaseClass();
+   if(base != nullptr) base->WasCalled(role, item);
 }
 
 //------------------------------------------------------------------------------

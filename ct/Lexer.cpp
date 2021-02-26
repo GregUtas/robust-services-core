@@ -380,16 +380,6 @@ void Lexer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-string Lexer::Extract(size_t pos, size_t count) const
-{
-   Debug::ft("Lexer.Extract");
-
-   string s = source_->substr(pos, count);
-   return Compress(s);
-}
-
-//------------------------------------------------------------------------------
-
 size_t Lexer::Find(size_t pos, const string& str)
 {
    Debug::ft("Lexer.Find");
@@ -2331,6 +2321,16 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
 
    if(depth != 0) return string::npos;
    return --pos;
+}
+
+//------------------------------------------------------------------------------
+
+string Lexer::Substr(size_t pos, size_t count) const
+{
+   Debug::ft("Lexer.Substr");
+
+   string s = source_->substr(pos, count);
+   return Compress(s);
 }
 
 //------------------------------------------------------------------------------

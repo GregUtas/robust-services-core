@@ -35,7 +35,7 @@ namespace PotsBase
 class PotsCcwService : public Service
 {
    friend class Singleton< PotsCcwService >;
-private:
+
    PotsCcwService();
    ~PotsCcwService();
    ServiceSM* AllocModifier() const override;

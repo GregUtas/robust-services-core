@@ -3746,7 +3746,7 @@ word StrTimeCommand::ProcessCommand(CliThread& cli) const
 class RecoveryDaemon : public Daemon
 {
    friend class Singleton< RecoveryDaemon >;
-private:
+
    RecoveryDaemon();
    ~RecoveryDaemon();
    Thread* CreateThread() override;

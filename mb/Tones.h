@@ -96,7 +96,7 @@ private:
 class ToneSilent : public Tone
 {
    friend class Singleton< ToneSilent >;
-private:
+
    ToneSilent();
    ~ToneSilent() = default;
    std::string Name() const override;
@@ -105,7 +105,7 @@ private:
 class ToneDial : public Tone
 {
    friend class Singleton< ToneDial >;
-private:
+
    ToneDial();
    ~ToneDial() = default;
    std::string Name() const override;
@@ -114,7 +114,7 @@ private:
 class ToneStutteredDial : public Tone
 {
    friend class Singleton< ToneStutteredDial >;
-private:
+
    ToneStutteredDial();
    ~ToneStutteredDial() = default;
    std::string Name() const override;
@@ -123,7 +123,7 @@ private:
 class ToneConfirmation : public Tone
 {
    friend class Singleton< ToneConfirmation >;
-private:
+
    ToneConfirmation();
    ~ToneConfirmation() = default;
    std::string Name() const override;
@@ -132,7 +132,7 @@ private:
 class ToneRingback : public Tone
 {
    friend class Singleton< ToneRingback >;
-private:
+
    ToneRingback();
    ~ToneRingback() = default;
    std::string Name() const override;
@@ -141,7 +141,7 @@ private:
 class ToneBusy : public Tone
 {
    friend class Singleton< ToneBusy >;
-private:
+
    ToneBusy();
    ~ToneBusy() = default;
    std::string Name() const override;
@@ -150,7 +150,7 @@ private:
 class ToneCallWaiting : public Tone
 {
    friend class Singleton< ToneCallWaiting >;
-private:
+
    ToneCallWaiting();
    ~ToneCallWaiting() = default;
    std::string Name() const override;
@@ -159,7 +159,7 @@ private:
 class ToneReorder : public Tone
 {
    friend class Singleton< ToneReorder >;
-private:
+
    ToneReorder();
    ~ToneReorder() = default;
    std::string Name() const override;
@@ -168,7 +168,7 @@ private:
 class ToneReceiverOffHook : public Tone
 {
    friend class Singleton< ToneReceiverOffHook >;
-private:
+
    ToneReceiverOffHook();
    ~ToneReceiverOffHook() = default;
    std::string Name() const override;
@@ -177,7 +177,7 @@ private:
 class ToneHeld : public Tone
 {
    friend class Singleton< ToneHeld >;
-private:
+
    ToneHeld();
    ~ToneHeld() = default;
    std::string Name() const override;

@@ -37,49 +37,49 @@ namespace NodeBase
 class SigWrite : public PosixSignal
 {
    friend class Singleton< SigWrite >;
-private:
+
    SigWrite();
 };
 
 class SigClose : public PosixSignal
 {
    friend class Singleton< SigClose >;
-private:
+
    SigClose();
 };
 
 class SigYield : public PosixSignal
 {
    friend class Singleton< SigYield >;
-private:
+
    SigYield();
 };
 
 class SigStack1 : public PosixSignal
 {
    friend class Singleton< SigStack1 >;
-private:
+
    SigStack1();
 };
 
 class SigStack2 : public PosixSignal
 {
    friend class Singleton< SigStack2 >;
-private:
+
    SigStack2();
 };
 
 class SigPurge : public PosixSignal
 {
    friend class Singleton< SigPurge >;
-private:
+
    SigPurge();
 };
 
 class SigDeleted : public PosixSignal
 {
    friend class Singleton< SigDeleted >;
-private:
+
    SigDeleted();
 };
 

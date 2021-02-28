@@ -73,21 +73,21 @@ protected:
 class PotsWmlNull : public PotsWmlState
 {
    friend class Singleton< PotsWmlNull >;
-private:
+
    PotsWmlNull();
 };
 
 class PotsWmlActivating : public PotsWmlState
 {
    friend class Singleton< PotsWmlActivating >;
-private:
+
    PotsWmlActivating();
 };
 
 class PotsWmlTiming : public PotsWmlState
 {
    friend class Singleton< PotsWmlTiming >;
-private:
+
    PotsWmlTiming();
 };
 
@@ -121,7 +121,7 @@ protected:
 class PotsWmlAcAnalyzeMessage : public PotsWmlEventHandler
 {
    friend class Singleton< PotsWmlAcAnalyzeMessage >;
-private:
+
    PotsWmlAcAnalyzeMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -130,7 +130,7 @@ private:
 class PotsWmlTiAnalyzeMessage : public PotsWmlEventHandler
 {
    friend class Singleton< PotsWmlTiAnalyzeMessage >;
-private:
+
    PotsWmlTiAnalyzeMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -139,7 +139,7 @@ private:
 class PotsWmlTiTimeout : public PotsWmlEventHandler
 {
    friend class Singleton< PotsWmlTiTimeout >;
-private:
+
    PotsWmlTiTimeout() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;

@@ -159,7 +159,7 @@ private:
 class SbIncrement : public NodeBase::CliIncrement
 {
    friend class NodeBase::Singleton< SbIncrement >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    SbIncrement();

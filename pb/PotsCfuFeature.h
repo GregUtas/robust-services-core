@@ -36,7 +36,7 @@ namespace PotsBase
 class PotsCfuFeature : public PotsFeature
 {
    friend class Singleton< PotsCfuFeature >;
-private:
+
    PotsCfuFeature();
    ~PotsCfuFeature();
    CliText* Attrs() const override;

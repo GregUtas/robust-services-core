@@ -52,7 +52,7 @@ private:
 class PotsIncrement : public CliIncrement
 {
    friend class Singleton< PotsIncrement >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    PotsIncrement();

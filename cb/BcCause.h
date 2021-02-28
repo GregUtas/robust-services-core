@@ -78,7 +78,6 @@ namespace Cause
 //
 struct CauseInfo
 {
-public:
    //  Constructs the nil instance.
    //
    CauseInfo();

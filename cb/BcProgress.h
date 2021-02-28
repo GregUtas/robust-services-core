@@ -63,7 +63,6 @@ namespace Progress
 //
 struct ProgressInfo
 {
-public:
    //  Constructs the nil instance.
    //
    ProgressInfo();

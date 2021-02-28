@@ -34,7 +34,7 @@ namespace NodeBase
 class SigBreak : public PosixSignal
 {
    friend class Singleton< SigBreak >;
-private:
+
    SigBreak();
 };
 

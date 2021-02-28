@@ -47,7 +47,7 @@ private:
 class PotsCfuActivate : public Service
 {
    friend class Singleton< PotsCfuActivate >;
-private:
+
    PotsCfuActivate();
    ~PotsCfuActivate();
    ServiceSM* AllocModifier() const override;
@@ -58,7 +58,7 @@ private:
 class PotsCfuDeactivate : public Service
 {
    friend class Singleton< PotsCfuDeactivate >;
-private:
+
    PotsCfuDeactivate();
    ~PotsCfuDeactivate();
    ServiceSM* AllocModifier() const override;
@@ -69,7 +69,7 @@ private:
 class PotsCfuService : public Service
 {
    friend class Singleton< PotsCfuService >;
-private:
+
    PotsCfuService();
    ~PotsCfuService();
    ServiceSM* AllocModifier() const override;

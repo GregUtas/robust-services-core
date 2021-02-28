@@ -262,7 +262,7 @@ fixed_string ParserTraceToolExpl = "traces parser's \"code generation\"";
 class ParserTraceTool : public Tool
 {
    friend class Singleton< ParserTraceTool >;
-private:
+
    ParserTraceTool() : Tool(ParserTracer, 'p', false) { }
    c_string Name() const override { return ParserTraceToolName; }
    c_string Expl() const override { return ParserTraceToolExpl; }

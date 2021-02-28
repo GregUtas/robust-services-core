@@ -38,7 +38,6 @@ namespace MediaBase
 //
 struct MediaInfo
 {
-public:
    //  Sets rxFrom to the address for silent tone.
    //
    MediaInfo();

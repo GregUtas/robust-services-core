@@ -1,6 +1,6 @@
 LINE COUNTS
    76999   source code not in one of the categories below
-   39908   blank line
+   40153   blank line
    17829   blank comment
    10358   comment at the top of a file (e.g. for the file's name or license info)
     7696   comment followed by repeated characters to draw a rule (e.g. //---- ...)
@@ -10,13 +10,13 @@ LINE COUNTS
    15595   bare left brace
    13796   bare right brace
     1800   bare right brace with semicolon
-    2414   access control
+    2162   access control
     4723   invocation of Debug::ft
      688   definition of an fn_name
     6194   #include directive
     1128   preprocessor directive other than #include
      904   using statement
-  220414   TOTAL
+  220407   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   125  C-style cast
@@ -38,7 +38,6 @@ WARNING COUNTS (* if supported by >fix)
 * W032   186  Unused function
 * W033     1  Unused typedef
   W037    10  Member hides inherited name
-* W041   252  Redundant access control
   W042   136  Member could be private
   W043    52  Member could be protected
   W044    13  Typedef of pointer type
@@ -321,7 +320,7 @@ W006 reinterpret_cast
   C:/Users/gregu/Documents/rsc/rsc/nb/Symbol.cpp(96):    auto fake = reinterpret_cast< const Symbol* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysMutex.cpp(41):    auto fake = reinterpret_cast< const SysMutex* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTypes.cpp(34):    auto bytes = reinterpret_cast< uint8_t* >(&value);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1214):    auto p = reinterpret_cast< char* >(BAD_POINTER);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1213):    auto p = reinterpret_cast< char* >(BAD_POINTER);
   C:/Users/gregu/Documents/rsc/rsc/nb/Tool.cpp(67):    auto fake = reinterpret_cast< const Tool* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionStats.cpp(76):    auto fake = reinterpret_cast< const FunctionStats* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1740):    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
@@ -1003,7 +1002,7 @@ W009 Pointer arithmetic
   C:/Users/gregu/Documents/rsc/rsc/nb/LogBuffer.cpp(310):    auto after = (ptr_t) next_ + size;
   C:/Users/gregu/Documents/rsc/rsc/nb/LogBuffer.cpp(311):    auto wrap = after >= (buff_ + size_);
   C:/Users/gregu/Documents/rsc/rsc/nb/LogBuffer.cpp(338):       after = buff_ + size;
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2963):    ptrdiff_t stacksize = &local - priv_->stackBase_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2962):    ptrdiff_t stacksize = &local - priv_->stackBase_;
   C:/Users/gregu/Documents/rsc/rsc/nw/IoThread.cpp(189):       source += rcvd;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.cpp(137):       Memory::Copy((buff_ + hdrSize_ + paySize), source, size);
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.cpp(137):       Memory::Copy((buff_ + hdrSize_ + paySize), source, size);
@@ -1740,259 +1739,6 @@ W037 Member hides inherited name
   C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(74):    static ptrdiff_t CellDiff();
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.h(166):    static ptrdiff_t LinkDiff();
   C:/Users/gregu/Documents/rsc/rsc/sb/Timer.h(111):    static ptrdiff_t LinkDiff();
-W041 Redundant access control
-  C:/Users/gregu/Documents/rsc/rsc/an/AnIncrement.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/an/AnModule.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/an/PotsShelf.h(104): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcCause.h(81): public:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProgress.h(66): public:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(60): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(73): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(86): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(99): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(112): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(147): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(155): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(163): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(171): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(179): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(186): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(193): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(422): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(447): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcRouting.h(41): public:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcRouting.h(70): public:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1231): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1241): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1251): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1261): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1271): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1288): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/CbModule.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(322): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(332): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(342): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(352): private:
-  C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(552): private:
-  C:/Users/gregu/Documents/rsc/rsc/cn/CnModule.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/ct/CtIncrement.h(37): private:
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxRoot.cpp(265): private:
-  C:/Users/gregu/Documents/rsc/rsc/dip/BotTracer.cpp(43): private:
-  C:/Users/gregu/Documents/rsc/rsc/dip/BotTracer.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/dip/DipModule.h(41): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/MediaParameter.h(41): public:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(99): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(108): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(117): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(126): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(135): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(144): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(153): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(162): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(171): private:
-  C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(180): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(54): public:
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(51): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(64): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(80): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(88): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(96): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbSignals.cpp(40): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbSignals.cpp(47): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbSignals.cpp(54): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbSignals.cpp(61): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbSignals.cpp(68): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbSignals.cpp(75): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbSignals.cpp(82): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.cpp(50): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.cpp(67): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.cpp(97): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPoolRegistry.cpp(54): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysSignals.cpp(36): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysSignals.cpp(43): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysSignals.cpp(50): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysSignals.cpp(57): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysSignals.cpp(64): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysSignals.cpp(71): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysSignals.win.cpp(37): private:
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(319): public:
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3749): private:
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.h(175): private:
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtModule.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/nw/NwIncrement.h(156): private:
-  C:/Users/gregu/Documents/rsc/rsc/nw/NwTracer.cpp(46): private:
-  C:/Users/gregu/Documents/rsc/rsc/on/OnModule.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PbModule.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsBicFeature.h(35): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsBocFeature.h(35): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsCfbFeature.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsCfnFeature.h(40): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsCfuFeature.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsCwtFeature.h(35): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsCxfFeature.h(35): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsHtlFeature.h(40): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsIncrement.h(55): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(55): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(68): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(81): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(94): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(107): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(120): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(133): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(141): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(159): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(172): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(187): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(194): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(207): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(240): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(258): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(265): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(272): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp(289): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsSusFeature.h(35): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsTwcFeature.h(35): private:
-  C:/Users/gregu/Documents/rsc/rsc/pb/PotsWmlFeature.h(40): private:
-  C:/Users/gregu/Documents/rsc/rsc/rn/RnModule.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(43): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(57): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(71): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(85): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h(99): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbIncrement.h(162): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbTracer.cpp(53): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbTracer.cpp(67): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/SbTracer.cpp(81): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/TimerProtocol.h(44): private:
-  C:/Users/gregu/Documents/rsc/rsc/sb/TimerProtocol.h(61): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsBicService.cpp(46): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsBicService.h(48): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsBocService.cpp(46): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsBocService.h(48): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCcwService.cpp(63): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCcwService.cpp(70): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCcwService.cpp(77): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCcwService.h(38): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfbService.h(50): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfnService.h(50): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfuService.h(50): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfuService.h(61): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfuService.h(72): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.cpp(71): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.cpp(78): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.cpp(85): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.cpp(119): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.cpp(128): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.cpp(137): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.h(53): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(75): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(82): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(89): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(245): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(254): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(263): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(272): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(281): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(290): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(299): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(308): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(317): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(326): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(335): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(344): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(353): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(362): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(371): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp(380): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(78): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(85): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(105): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(112): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(119): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(168): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(177): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(186): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(195): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(204): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp(213): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.h(55): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.h(64): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.h(73): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsDiscService.cpp(37): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsHtlService.cpp(47): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsHtlService.h(48): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.cpp(59): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.cpp(66): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.cpp(93): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.cpp(102): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.cpp(111): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.cpp(120): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.cpp(129): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.h(55): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.h(107): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.h(184): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(57): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(65): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(73): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(81): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(89): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(97): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(105): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(113): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(121): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(129): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(137): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(145): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(153): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(161): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(169): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h(177): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(121): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(186): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(204): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(212): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(220): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(228): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(236): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(244): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(252): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(260): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(268): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(276): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(284): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(292): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(300): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(308): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(316): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(324): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSusService.cpp(46): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsSusService.h(62): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.cpp(76): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.cpp(83): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.cpp(90): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.cpp(124): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.cpp(133): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.cpp(142): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.h(48): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.h(57): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.h(66): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/SnIncrement.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/sn/SnModule.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/StIncrement.h(55): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/StModule.h(39): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(57): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(80): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(87): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(140): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(149): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(158): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(167): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(176): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(185): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.h(56): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.h(230): private:
-  C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.h(305): private:
 W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(176):    static bool IsValidDigit(Digit d)
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(183):    Rc AddDigit(Digit d);
@@ -2047,7 +1793,7 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/dip/Token.h(99):    bool is_number() const;
   C:/Users/gregu/Documents/rsc/rsc/dip/TokenMessage.h(128):    size_t set_from(const Token* stream, size_t length);
   C:/Users/gregu/Documents/rsc/rsc/mb/MediaEndpt.h(104):    virtual void EndOfTransaction();
-  C:/Users/gregu/Documents/rsc/rsc/mb/MediaParameter.h(52):    bool operator==(const MediaInfo& that) const;
+  C:/Users/gregu/Documents/rsc/rsc/mb/MediaParameter.h(51):    bool operator==(const MediaInfo& that) const;
   C:/Users/gregu/Documents/rsc/rsc/mb/MediaPsm.h(131):    Tone::Id GetOgTone() const { return ogTone_; }
   C:/Users/gregu/Documents/rsc/rsc/mb/MediaPsm.h(169):    void SetOgPort(Switch::PortId ogport);
   C:/Users/gregu/Documents/rsc/rsc/mb/MediaPsm.h(188):    Event* ReceiveMsg(Message& msg) override;
@@ -2246,7 +1992,7 @@ W053 Data could be const
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgIntParm.h(96):    word max_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParm.h(155):    Q1Link link_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgTuple.h(119):    Q1Link link_;
-  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(62):    istreamPtr file_;
+  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(61):    istreamPtr file_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CliIncrement.h(107):    RegCell iid_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CliIntParm.h(79):    word min_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CliIntParm.h(83):    word max_;
@@ -3983,7 +3729,7 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.cpp(60): void CfgStrParm::Explain(string& expl) const
   C:/Users/gregu/Documents/rsc/rsc/nb/CinThread.cpp(65): void CinThread::ClearClient(const Thread* client)
   C:/Users/gregu/Documents/rsc/rsc/nb/ClassRegistry.cpp(89): Class* ClassRegistry::Lookup(ClassId cid) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(597): bool CliBuffer::ReadingFromFile() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(596): bool CliBuffer::ReadingFromFile() const
   C:/Users/gregu/Documents/rsc/rsc/nb/CliCookie.cpp(118): uint32_t CliCookie::Index(uint32_t depth) const
   C:/Users/gregu/Documents/rsc/rsc/nb/Debug.cpp(55): void Debug::Assert(bool condition, debug64_t errval)
   C:/Users/gregu/Documents/rsc/rsc/nb/Debug.cpp(71): void Debug::ft(fn_name_arg func)
@@ -4129,39 +3875,39 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/ThisThread.cpp(81): TraceRc ThisThread::StartTracing(const string& opts)
   C:/Users/gregu/Documents/rsc/rsc/nb/ThisThread.cpp(88): void ThisThread::StopTracing()
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(106): std::atomic_flag& AccessFtLock()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(456): ContextSwitch* ContextSwitches::AddSwitch()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1165): Thread* Thread::ActiveThread()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1177): SysMutex* Thread::BlockingMutex() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1184): TraceStatus Thread::CalcStatus(bool dynamic) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1202): bool Thread::CanBeScheduled() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1261): bool Thread::ClearActiveThread(Thread* active)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1744): Thread* Thread::FindRunningThread()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1770): void Thread::FunctionInvoked(fn_name_arg func)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1816): void Thread::FunctionInvoked(fn_name_arg func, const std::nothrow_t&)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1836): BlockingReason Thread::GetBlockingReason() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1843): signal_t Thread::GetSignal() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1850): TraceStatus Thread::GetStatus() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2011): bool Thread::IsLocked() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2018): bool Thread::IsScheduled() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2025): bool Thread::IsTraceable() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2081): Thread* Thread::LockedThread()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2141): TraceRc Thread::LogContextSwitches(bool on)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2322): uint8_t Thread::MutexCount() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2329): SysThreadId Thread::NativeThreadId() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2348): DelayRc Thread::Pause(Duration time)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2390): double Thread::PercentIdle()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2673): void Thread::ResetDebugFlags()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2770): Thread* Thread::RunningThread()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2798): Thread* Thread::RunningThread(const std::nothrow_t&)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2854): void Thread::SetStatus(TraceStatus status)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2952): void Thread::StackCheck()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3242): TraceRc Thread::StartTracing(const string& opts)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3274): void Thread::StopTracing()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3443): bool Thread::TraceRunningThread(Thread*& thr)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3471): bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3498): void Thread::TrapCheck()
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3689): void Thread::UpdateMutex(SysMutex* mutex)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3696): void Thread::UpdateMutexCount(bool acquired)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(455): ContextSwitch* ContextSwitches::AddSwitch()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1164): Thread* Thread::ActiveThread()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1176): SysMutex* Thread::BlockingMutex() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1183): TraceStatus Thread::CalcStatus(bool dynamic) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1201): bool Thread::CanBeScheduled() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1260): bool Thread::ClearActiveThread(Thread* active)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1743): Thread* Thread::FindRunningThread()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1769): void Thread::FunctionInvoked(fn_name_arg func)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1815): void Thread::FunctionInvoked(fn_name_arg func, const std::nothrow_t&)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1835): BlockingReason Thread::GetBlockingReason() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1842): signal_t Thread::GetSignal() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1849): TraceStatus Thread::GetStatus() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2010): bool Thread::IsLocked() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2017): bool Thread::IsScheduled() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2024): bool Thread::IsTraceable() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2080): Thread* Thread::LockedThread()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2140): TraceRc Thread::LogContextSwitches(bool on)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2321): uint8_t Thread::MutexCount() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2328): SysThreadId Thread::NativeThreadId() const
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2347): DelayRc Thread::Pause(Duration time)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2389): double Thread::PercentIdle()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2672): void Thread::ResetDebugFlags()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2769): Thread* Thread::RunningThread()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2797): Thread* Thread::RunningThread(const std::nothrow_t&)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2853): void Thread::SetStatus(TraceStatus status)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2951): void Thread::StackCheck()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3241): TraceRc Thread::StartTracing(const string& opts)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3273): void Thread::StopTracing()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3442): bool Thread::TraceRunningThread(Thread*& thr)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3470): bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3497): void Thread::TrapCheck()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3688): void Thread::UpdateMutex(SysMutex* mutex)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3695): void Thread::UpdateMutexCount(bool acquired)
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(204): ThreadAdmin* AccessAdminData()
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(290): bool ThreadAdmin::BreakEnabled()
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(366): void ThreadAdmin::Incr(Register r)
@@ -4291,11 +4037,11 @@ W107 Function does not invoke Debug::ft as first statement
   C:/Users/gregu/Documents/rsc/rsc/nb/MutexGuard.cpp(55):       Debug::ftnt("MutexGuard.Release");
   C:/Users/gregu/Documents/rsc/rsc/nb/Q1Link.cpp(49):    Debug::ftnt(Q1Link_dtor);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThread.win.cpp(73):    Debug::ft("NodeBase.SE_Handler");
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1668):    Debug::ft("Thread.ExitIfSafe");
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2561):    Debug::ft("Thread.Ready");
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2924):    Debug::ft("Thread.SignalHandler");
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3023):          Debug::ft(Thread_Start);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3517):       Debug::ft(Thread_TrapHandler);  //@
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1667):    Debug::ft("Thread.ExitIfSafe");
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2560):    Debug::ft("Thread.Ready");
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2923):    Debug::ft("Thread.SignalHandler");
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3022):          Debug::ft(Thread_Start);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3516):       Debug::ft(Thread_TrapHandler);  //@
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3992):       Debug::ft(RecoveryThread_Enter);
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.cpp(689):    Debug::ft(Context_ProcessWork);
 W110 Override of Base.Display not found
@@ -4316,7 +4062,7 @@ W110 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(37): class FileWalker : public FileList
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.h(38): class SysTickTimer : public Immutable
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(272): class ThreadStats : public Dynamic
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(360): class ContextSwitches : public Permanent
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(359): class ContextSwitches : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(55): class ThreadsStats : public Dynamic
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.h(64): class TraceBuffer : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionProfiler.h(49): class FunctionProfiler : public Temporary
@@ -4336,8 +4082,8 @@ W110 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(56): class PotsCallIpService : public UdpIpService
 W111 Override of Object.Patch not found
   C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(61): class ProtectedHeap : public NbHeap
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(360): class ContextSwitches : public Permanent
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(752): class ThreadPriv : public Permanent
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(359): class ContextSwitches : public Permanent
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(751): class ThreadPriv : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/sb/EventHandler.h(48): class EventHandler : public NodeBase::Immutable
   C:/Users/gregu/Documents/rsc/rsc/sb/TimerProtocol.h(88): class TimeoutParameter : public TlvParameter
 W117 Line can merge with the next line and be under the length limit
@@ -4410,7 +4156,7 @@ W119 Argument passed by value is modified
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(55/1): size_t log2(size_t n, bool up)
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(122/1): size_t round_to_2_exp_n(size_t n, size_t e, bool up)
   C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp(90/1): void Base::Nullify(size_t n)
-  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(193/3):    (const CliThread& cli, const string& expl, std::streamsize p)
+  C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp(192/3):    (const CliThread& cli, const string& expl, std::streamsize p)
   C:/Users/gregu/Documents/rsc/rsc/nb/CliText.cpp(39/2): CliText::CliText(c_string help, c_string text, bool opt, uint32_t size) :
   C:/Users/gregu/Documents/rsc/rsc/nb/CliTextParm.cpp(142/2): void CliTextParm::Explain(ostream& stream, col_t indent) const
   C:/Users/gregu/Documents/rsc/rsc/nb/CliThread.cpp(733/2):    (const string& expl, size_t begin, size_t end, col_t indent) const
@@ -4428,10 +4174,10 @@ W119 Argument passed by value is modified
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(134/1): void SysTime::AddMsecs(msecs_t msecs)
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(392/1): void SysTime::SubDays(size_t days)
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(425/1): void SysTime::SubMsecs(msecs_t msecs)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1261/1): bool Thread::ClearActiveThread(Thread* active)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1857/1): bool Thread::HandleSignal(signal_t sig, uint32_t code)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2348/1): DelayRc Thread::Pause(Duration time)
-  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3426/1): void Thread::Trace(Thread* thr,
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1260/1): bool Thread::ClearActiveThread(Thread* active)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1856/1): bool Thread::HandleSignal(signal_t sig, uint32_t code)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2347/1): DelayRc Thread::Pause(Duration time)
+  C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3425/1): void Thread::Trace(Thread* thr,
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.cpp(186/1): bool TraceBuffer::AllocBuffers(size_t n)
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.cpp(361/1): TraceRc TraceBuffer::DisplayTrace(ostream* stream, const string& opts)
   C:/Users/gregu/Documents/rsc/rsc/nw/IoThread.cpp(143/2):    (const IpPort& port, const byte_t* source, size_t size) const
@@ -4464,16 +4210,12 @@ C:/Users/gregu/Documents/rsc/rsc/an/AnIncrement.cpp
 C:/Users/gregu/Documents/rsc/rsc/an/AnIncrement.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/an/AnModule.cpp
   W022 Add using statement
     0: namespace NodeBase
 C:/Users/gregu/Documents/rsc/rsc/an/AnModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/an/PotsShelf.h
   W020 Using statement in header
     34: using namespace SessionBase;
@@ -4483,8 +4225,6 @@ C:/Users/gregu/Documents/rsc/rsc/an/PotsShelf.h
     0: namespace NodeBase
   W032 Unused function
     64:    CliText* CreateText() const override;
-  W041 Redundant access control
-    104: private:
   W092 Function could be free
     115:    static void DiscardMsg(const Message& msg, Switch::PortId port);
   W110 Override of Base.Display not found
@@ -4575,8 +4315,6 @@ C:/Users/gregu/Documents/rsc/rsc/cb/BcCause.h
   W020 Using statement in header
     32: using namespace NodeBase;
     33: using namespace SessionBase;
-  W041 Redundant access control
-    81: public:
 C:/Users/gregu/Documents/rsc/rsc/cb/BcEvents.cpp
   W022 Add using statement
     0: namespace NodeBase
@@ -4633,8 +4371,6 @@ C:/Users/gregu/Documents/rsc/rsc/cb/BcProgress.h
   W020 Using statement in header
     32: using namespace NodeBase;
     33: using namespace SessionBase;
-  W041 Redundant access control
-    66: public:
 C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp
   W006 reinterpret_cast
     445:    reinterpret_cast< const RouteResult* >(bytes)->Display(stream, prefix);
@@ -4651,19 +4387,6 @@ C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp
     0: namespace NetworkBase
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    60: private:
-    73: private:
-    86: private:
-    99: private:
-    112: private:
-    147: private:
-    155: private:
-    163: private:
-    171: private:
-    179: private:
-    186: private:
-    193: private:
   W099 Line contains adjacent spaces
     455:    id_t        idx;
     456:    word        fid, rid;
@@ -4696,9 +4419,6 @@ C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h
     250:    void InjectFinalMsg() override;
     319:    CliText* CreateText() const override;
     360:    CliText* CreateText() const override;
-  W041 Redundant access control
-    422: private:
-    447: private:
   W042 Member could be private
     237:    void EnsureMediaMsg() override;
     241:    IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
@@ -4712,9 +4432,6 @@ C:/Users/gregu/Documents/rsc/rsc/cb/BcRouting.cpp
 C:/Users/gregu/Documents/rsc/rsc/cb/BcRouting.h
   W020 Using statement in header
     31: using namespace SessionBase;
-  W041 Redundant access control
-    41: public:
-    70: public:
 C:/Users/gregu/Documents/rsc/rsc/cb/BcService.cpp
   W022 Add using statement
     0: namespace NodeBase
@@ -4727,13 +4444,6 @@ C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h
   W037 Member hides inherited name
     314:    static const Id NextId = FirstId + 50;
     881:    static const Id NextId                 = FirstUn + 7;
-  W041 Redundant access control
-    1231: private:
-    1241: private:
-    1251: private:
-    1261: private:
-    1271: private:
-    1288: private:
   W042 Member could be private
     1013:    virtual EventHandler::Rc RaiseInvalidInformation(Event*& nextEvent);
     1014:    virtual EventHandler::Rc RaiseSelectRoute(Event*& nextEvent);
@@ -4820,8 +4530,6 @@ C:/Users/gregu/Documents/rsc/rsc/cb/CbModule.cpp
 C:/Users/gregu/Documents/rsc/rsc/cb/CbModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp
   W005 Functional cast
     127:       auto rc = AddDigit(Digit(ds.digits_[i]));
@@ -4879,12 +4587,6 @@ C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h
     212:    static const Id FirstId = BcEvent::NextId;
     218:    static const Id NextId        = FirstId + 4;
     302:    static const Id NextId              = FirstId + 7;
-  W041 Redundant access control
-    322: private:
-    332: private:
-    342: private:
-    352: private:
-    552: private:
   W042 Member could be private
     494:    ProxyBcPsm* FirstBroadcast() const;
   W075 Virtual function is public
@@ -4913,8 +4615,6 @@ C:/Users/gregu/Documents/rsc/rsc/cn/CnModule.cpp
 C:/Users/gregu/Documents/rsc/rsc/cn/CnModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.cpp
   W106 Function does not invoke Debug::ft
     187: bool CodeCoverage::Defined(const string& func) const
@@ -5089,9 +4789,6 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CtIncrement.cpp
     118:    static LibrarySet* Evaluate(const CliThread& cli);
   W092 Function could be free
     118:    static LibrarySet* Evaluate(const CliThread& cli);
-C:/Users/gregu/Documents/rsc/rsc/ct/CtIncrement.h
-  W041 Redundant access control
-    37: private:
 C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.cpp
   W005 Functional cast
     559:       if(Attrs[i].symbol.compare(sym) == 0) return Cxx::Operator(i);
@@ -5551,9 +5248,6 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h
     1641:    void EnterScope();
   W092 Function could be free
     917:    void CheckIfTemplateArgument(const CxxScoped* ref) const;
-C:/Users/gregu/Documents/rsc/rsc/ct/CxxRoot.cpp
-  W041 Redundant access control
-    265: private:
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp
   W004 C-style cast
     3924:    if(tmplt_ != nullptr) return (CxxScope*) this;
@@ -6426,14 +6120,9 @@ C:/Users/gregu/Documents/rsc/rsc/dip/BotTrace.h
     35: using namespace NodeBase;
   W032 Unused function
     69:    DipHeader* Header() const;
-C:/Users/gregu/Documents/rsc/rsc/dip/BotTracer.cpp
-  W041 Redundant access control
-    43: private:
 C:/Users/gregu/Documents/rsc/rsc/dip/BotTracer.h
   W020 Using statement in header
     30: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/dip/BotType.h
   W018 Remove #include directive
     21: #include "BaseBot.h"
@@ -6448,8 +6137,6 @@ C:/Users/gregu/Documents/rsc/rsc/dip/DipModule.h
     30: using namespace NodeBase;
   W027 Unused class
     38: class DipModule : public Module
-  W041 Redundant access control
-    41: private:
 C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.cpp
   W005 Functional cast
     425: ipport_t BotTcpService::Port() const { return ipport_t(port_); }
@@ -6688,10 +6375,8 @@ C:/Users/gregu/Documents/rsc/rsc/mb/MediaParameter.h
     31: using namespace SessionBase;
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    41: public:
   W042 Member could be private
-    52:    bool operator==(const MediaInfo& that) const;
+    51:    bool operator==(const MediaInfo& that) const;
 C:/Users/gregu/Documents/rsc/rsc/mb/MediaPsm.cpp
   W006 reinterpret_cast
     529:       auto cxi = reinterpret_cast< MediaInfo* >(pptr->bytes);
@@ -6776,17 +6461,6 @@ C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h
     70:    Id Tid() const { return Id(tid_.GetId()); }
   W037 Member hides inherited name
     74:    static ptrdiff_t CellDiff();
-  W041 Redundant access control
-    99: private:
-    108: private:
-    117: private:
-    126: private:
-    135: private:
-    144: private:
-    153: private:
-    162: private:
-    171: private:
-    180: private:
   W065 Base class virtual destructor is not public
     87:    virtual ~Tone();
 C:/Users/gregu/Documents/rsc/rsc/nb/Alarm.cpp
@@ -6998,14 +6672,12 @@ C:/Users/gregu/Documents/rsc/rsc/nb/CliBoolParm.h
   W060 Base class constructor is public
     39:    explicit CliBoolParm(c_string help,
 C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.cpp
-  W041 Redundant access control
-    54: public:
   W053 Data could be const
-    62:    istreamPtr file_;
+    61:    istreamPtr file_;
   W106 Function does not invoke Debug::ft
-    597: bool CliBuffer::ReadingFromFile() const
+    596: bool CliBuffer::ReadingFromFile() const
   W119 Argument passed by value is modified
-    193/3:    (const CliThread& cli, const string& expl, std::streamsize p)
+    192/3:    (const CliThread& cli, const string& expl, std::streamsize p)
 C:/Users/gregu/Documents/rsc/rsc/nb/CliBuffer.h
   W042 Member could be private
     130:    bool ReadingFromFile() const;
@@ -7361,12 +7033,6 @@ C:/Users/gregu/Documents/rsc/rsc/nb/MainArgs.h
 C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp
   W005 Functional cast
     234:       auto type = MemoryType(m);
-  W041 Redundant access control
-    51: private:
-    64: private:
-    80: private:
-    88: private:
-    96: private:
   W106 Function does not invoke Debug::ft
     196: Heap* EnsureHeap(MemoryType type)
     213: Heap* Memory::AccessHeap(MemoryType type)
@@ -7522,22 +7188,9 @@ C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h
     228:    explicit SaveCommand(bool bind = true);
     245:    ClearWhatParm();
     263:    explicit ClearCommand(bool bind = true);
-C:/Users/gregu/Documents/rsc/rsc/nb/NbSignals.cpp
-  W041 Redundant access control
-    40: private:
-    47: private:
-    54: private:
-    61: private:
-    68: private:
-    75: private:
-    82: private:
 C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.cpp
   W005 Functional cast
     212:             stream << Faction(f) << CRLF;
-  W041 Redundant access control
-    50: private:
-    67: private:
-    97: private:
   W106 Function does not invoke Debug::ft
     172: TraceStatus NbTracer::FactionStatus(Faction faction) const
 C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.h
@@ -7661,8 +7314,6 @@ C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.h
   W092 Function could be free
     262:    static ObjectBlock* ObjToBlock(const Pooled* obj);
 C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPoolRegistry.cpp
-  W041 Redundant access control
-    54: private:
   W106 Function does not invoke Debug::ft
     279: ObjectPool* ObjectPoolRegistry::Pool(ObjectPoolId pid) const
 C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPoolRegistry.h
@@ -7973,17 +7624,6 @@ C:/Users/gregu/Documents/rsc/rsc/nb/SysMutex.h
     113:    Thread* Owner() const;
   W053 Data could be const
     138:    RegCell mid_;
-C:/Users/gregu/Documents/rsc/rsc/nb/SysSignals.cpp
-  W041 Redundant access control
-    36: private:
-    43: private:
-    50: private:
-    57: private:
-    64: private:
-    71: private:
-C:/Users/gregu/Documents/rsc/rsc/nb/SysSignals.win.cpp
-  W041 Redundant access control
-    37: private:
 C:/Users/gregu/Documents/rsc/rsc/nb/SysThread.h
   W082 Adjacent arguments have the same type
     113:    static SysThread_t Create(const ThreadEntry entry,
@@ -8109,13 +7749,11 @@ C:/Users/gregu/Documents/rsc/rsc/nb/ThisThread.cpp
     88: void ThisThread::StopTracing()
 C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp
   W006 reinterpret_cast
-    1214:    auto p = reinterpret_cast< char* >(BAD_POINTER);
+    1213:    auto p = reinterpret_cast< char* >(BAD_POINTER);
   W009 Pointer arithmetic
-    2963:    ptrdiff_t stacksize = &local - priv_->stackBase_;
+    2962:    ptrdiff_t stacksize = &local - priv_->stackBase_;
   W028 Unused data
     125: const SysTickTimer* TickTimer = SysTickTimer::Instance();
-  W041 Redundant access control
-    319: public:
   W042 Member could be private
     150:    static void* operator new(size_t size);
   W092 Function could be free
@@ -8128,56 +7766,56 @@ C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp
     285:    AccumulatorPtr   totTime_;
   W106 Function does not invoke Debug::ft
     106: std::atomic_flag& AccessFtLock()
-    456: ContextSwitch* ContextSwitches::AddSwitch()
-    1165: Thread* Thread::ActiveThread()
-    1177: SysMutex* Thread::BlockingMutex() const
-    1184: TraceStatus Thread::CalcStatus(bool dynamic) const
-    1202: bool Thread::CanBeScheduled() const
-    1261: bool Thread::ClearActiveThread(Thread* active)
-    1744: Thread* Thread::FindRunningThread()
-    1770: void Thread::FunctionInvoked(fn_name_arg func)
-    1816: void Thread::FunctionInvoked(fn_name_arg func, const std::nothrow_t&)
-    1836: BlockingReason Thread::GetBlockingReason() const
-    1843: signal_t Thread::GetSignal() const
-    1850: TraceStatus Thread::GetStatus() const
-    2011: bool Thread::IsLocked() const
-    2018: bool Thread::IsScheduled() const
-    2025: bool Thread::IsTraceable() const
-    2081: Thread* Thread::LockedThread()
-    2141: TraceRc Thread::LogContextSwitches(bool on)
-    2322: uint8_t Thread::MutexCount() const
-    2329: SysThreadId Thread::NativeThreadId() const
-    2348: DelayRc Thread::Pause(Duration time)
-    2390: double Thread::PercentIdle()
-    2673: void Thread::ResetDebugFlags()
-    2770: Thread* Thread::RunningThread()
-    2798: Thread* Thread::RunningThread(const std::nothrow_t&)
-    2854: void Thread::SetStatus(TraceStatus status)
-    2952: void Thread::StackCheck()
-    3242: TraceRc Thread::StartTracing(const string& opts)
-    3274: void Thread::StopTracing()
-    3443: bool Thread::TraceRunningThread(Thread*& thr)
-    3471: bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
-    3498: void Thread::TrapCheck()
-    3689: void Thread::UpdateMutex(SysMutex* mutex)
-    3696: void Thread::UpdateMutexCount(bool acquired)
+    455: ContextSwitch* ContextSwitches::AddSwitch()
+    1164: Thread* Thread::ActiveThread()
+    1176: SysMutex* Thread::BlockingMutex() const
+    1183: TraceStatus Thread::CalcStatus(bool dynamic) const
+    1201: bool Thread::CanBeScheduled() const
+    1260: bool Thread::ClearActiveThread(Thread* active)
+    1743: Thread* Thread::FindRunningThread()
+    1769: void Thread::FunctionInvoked(fn_name_arg func)
+    1815: void Thread::FunctionInvoked(fn_name_arg func, const std::nothrow_t&)
+    1835: BlockingReason Thread::GetBlockingReason() const
+    1842: signal_t Thread::GetSignal() const
+    1849: TraceStatus Thread::GetStatus() const
+    2010: bool Thread::IsLocked() const
+    2017: bool Thread::IsScheduled() const
+    2024: bool Thread::IsTraceable() const
+    2080: Thread* Thread::LockedThread()
+    2140: TraceRc Thread::LogContextSwitches(bool on)
+    2321: uint8_t Thread::MutexCount() const
+    2328: SysThreadId Thread::NativeThreadId() const
+    2347: DelayRc Thread::Pause(Duration time)
+    2389: double Thread::PercentIdle()
+    2672: void Thread::ResetDebugFlags()
+    2769: Thread* Thread::RunningThread()
+    2797: Thread* Thread::RunningThread(const std::nothrow_t&)
+    2853: void Thread::SetStatus(TraceStatus status)
+    2951: void Thread::StackCheck()
+    3241: TraceRc Thread::StartTracing(const string& opts)
+    3273: void Thread::StopTracing()
+    3442: bool Thread::TraceRunningThread(Thread*& thr)
+    3470: bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
+    3497: void Thread::TrapCheck()
+    3688: void Thread::UpdateMutex(SysMutex* mutex)
+    3695: void Thread::UpdateMutexCount(bool acquired)
   W107 Function does not invoke Debug::ft as first statement
-    1668:    Debug::ft("Thread.ExitIfSafe");
-    2561:    Debug::ft("Thread.Ready");
-    2924:    Debug::ft("Thread.SignalHandler");
-    3023:          Debug::ft(Thread_Start);
-    3517:       Debug::ft(Thread_TrapHandler);  //@
+    1667:    Debug::ft("Thread.ExitIfSafe");
+    2560:    Debug::ft("Thread.Ready");
+    2923:    Debug::ft("Thread.SignalHandler");
+    3022:          Debug::ft(Thread_Start);
+    3516:       Debug::ft(Thread_TrapHandler);  //@
   W110 Override of Base.Display not found
     272: class ThreadStats : public Dynamic
-    360: class ContextSwitches : public Permanent
+    359: class ContextSwitches : public Permanent
   W111 Override of Object.Patch not found
-    360: class ContextSwitches : public Permanent
-    752: class ThreadPriv : public Permanent
+    359: class ContextSwitches : public Permanent
+    751: class ThreadPriv : public Permanent
   W119 Argument passed by value is modified
-    1261/1: bool Thread::ClearActiveThread(Thread* active)
-    1857/1: bool Thread::HandleSignal(signal_t sig, uint32_t code)
-    2348/1: DelayRc Thread::Pause(Duration time)
-    3426/1: void Thread::Trace(Thread* thr,
+    1260/1: bool Thread::ClearActiveThread(Thread* active)
+    1856/1: bool Thread::HandleSignal(signal_t sig, uint32_t code)
+    2347/1: DelayRc Thread::Pause(Duration time)
+    3425/1: void Thread::Trace(Thread* thr,
 C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h
   W026 Unused argument
     316/2:       (BlockingReason why, fn_name_arg func) { return true; }
@@ -8390,8 +8028,6 @@ C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp
     2771:    auto fake = reinterpret_cast< const RegistryItem* >(&local);
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    3749: private:
   W053 Data could be const
     1604:    Q1Link link_;
     2096:    Q2Link link_;
@@ -8429,8 +8065,6 @@ C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.h
     32: using namespace NodeBase;
   W028 Unused data
     80:    static const id_t LastNtIndex = FuncTraceScope;
-  W041 Redundant access control
-    175: private:
   W060 Base class constructor is public
     44:    CorruptWhatParm();
     56:    explicit CorruptCommand(bool bind = true);
@@ -8445,8 +8079,6 @@ C:/Users/gregu/Documents/rsc/rsc/nt/NtModule.cpp
 C:/Users/gregu/Documents/rsc/rsc/nt/NtModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/nt/NtTestData.cpp
   W007 Cast down the inheritance hierarchy
     62:    return static_cast< NtTestData* >(data);
@@ -8597,8 +8229,6 @@ C:/Users/gregu/Documents/rsc/rsc/nw/NwDaemons.h
     72:    static std::string MakeName(ipport_t port);
     119:    static std::string MakeName(ipport_t port);
 C:/Users/gregu/Documents/rsc/rsc/nw/NwIncrement.h
-  W041 Redundant access control
-    156: private:
   W060 Base class constructor is public
     39:    NwClearWhatParm();
     54:    explicit NwClearCommand(bool bind = true);
@@ -8608,9 +8238,6 @@ C:/Users/gregu/Documents/rsc/rsc/nw/NwIncrement.h
     110:    explicit NwIncludeCommand(bool bind = true);
     127:    explicit NwQueryCommand(bool bind = true);
     142:    NwStatusCommand() = default;
-C:/Users/gregu/Documents/rsc/rsc/nw/NwTracer.cpp
-  W041 Redundant access control
-    46: private:
 C:/Users/gregu/Documents/rsc/rsc/nw/NwTracer.h
   W042 Member could be private
     55:    bool PeersEmpty() const;
@@ -8799,16 +8426,12 @@ C:/Users/gregu/Documents/rsc/rsc/on/OnModule.cpp
 C:/Users/gregu/Documents/rsc/rsc/on/OnModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PbModule.cpp
   W022 Add using statement
     0: namespace NodeBase
 C:/Users/gregu/Documents/rsc/rsc/pb/PbModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsBicFeature.cpp
   W022 Add using statement
     0: namespace NodeBase
@@ -8817,8 +8440,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsBicFeature.cpp
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsBicFeature.h
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    35: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsBocFeature.cpp
   W022 Add using statement
     0: namespace NodeBase
@@ -8827,8 +8448,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsBocFeature.cpp
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsBocFeature.h
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    35: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsCfbFeature.cpp
   W022 Add using statement
     0: namespace CallBase
@@ -8840,8 +8459,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsCfbFeature.h
     30: using namespace NodeBase;
   W022 Add using statement
     0: namespace CallBase
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsCfnFeature.cpp
   W022 Add using statement
     0: namespace CallBase
@@ -8853,8 +8470,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsCfnFeature.h
     31: using namespace NodeBase;
   W022 Add using statement
     0: namespace CallBase
-  W041 Redundant access control
-    40: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsCfuFeature.cpp
   W022 Add using statement
     0: namespace CallBase
@@ -8866,8 +8481,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsCfuFeature.h
     30: using namespace NodeBase;
   W022 Add using statement
     0: namespace CallBase
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsCircuit.cpp
   W022 Add using statement
     0: namespace CallBase
@@ -8904,8 +8517,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsCwtFeature.cpp
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsCwtFeature.h
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    35: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsCxfFeature.cpp
   W022 Add using statement
     0: namespace NodeBase
@@ -8914,8 +8525,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsCxfFeature.cpp
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsCxfFeature.h
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    35: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsFeature.cpp
   W006 reinterpret_cast
     84:    auto fake = reinterpret_cast< const PotsFeature* >(&local);
@@ -8994,8 +8603,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsHtlFeature.h
   W020 Using statement in header
     30: using namespace NodeBase;
     31: using namespace CallBase;
-  W041 Redundant access control
-    40: private:
   W053 Data could be const
     59:    Address::DN dn_;
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsIncrement.cpp
@@ -9008,8 +8615,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsIncrement.h
     29: using namespace SessionTools;
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    55: private:
   W060 Base class constructor is public
     40:    PbSizesCommand() = default;
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsMessages.cpp
@@ -9063,25 +8668,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.cpp
     0: namespace MediaBase
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    55: private:
-    68: private:
-    81: private:
-    94: private:
-    107: private:
-    120: private:
-    133: private:
-    141: private:
-    159: private:
-    172: private:
-    187: private:
-    194: private:
-    207: private:
-    240: private:
-    258: private:
-    265: private:
-    272: private:
-    289: private:
   W099 Line contains adjacent spaces
     575:    id_t             index;
     576:    word             sid, ind;
@@ -9132,8 +8718,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsSusFeature.cpp
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsSusFeature.h
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    35: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsTwcFeature.cpp
   W022 Add using statement
     0: namespace NodeBase
@@ -9142,8 +8726,6 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsTwcFeature.cpp
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsTwcFeature.h
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    35: private:
 C:/Users/gregu/Documents/rsc/rsc/pb/PotsWmlFeature.cpp
   W022 Add using statement
     0: namespace CallBase
@@ -9155,16 +8737,12 @@ C:/Users/gregu/Documents/rsc/rsc/pb/PotsWmlFeature.h
     31: using namespace NodeBase;
   W022 Add using statement
     0: namespace CallBase
-  W041 Redundant access control
-    40: private:
 C:/Users/gregu/Documents/rsc/rsc/rn/RnModule.cpp
   W022 Add using statement
     0: namespace NodeBase
 C:/Users/gregu/Documents/rsc/rsc/rn/RnModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/rsc/main.cpp
   W015 #include not sorted in standard order
     64: #include "AnModule.h"
@@ -9611,13 +9189,6 @@ C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.cpp
     50:    auto pid = ssm.CalcPort(static_cast< const AnalyzeMsgEvent& >(currEvent));
     120:    auto& fte = static_cast< ForceTransitionEvent& >(currEvent);
     134:    auto& ire = static_cast< InitiationReqEvent& >(currEvent);
-C:/Users/gregu/Documents/rsc/rsc/sb/SbHandlers.h
-  W041 Redundant access control
-    43: private:
-    57: private:
-    71: private:
-    85: private:
-    99: private:
 C:/Users/gregu/Documents/rsc/rsc/sb/SbIncrement.cpp
   W004 C-style cast
     733:    ((ProtocolSM*) p)->Kill();
@@ -9634,8 +9205,6 @@ C:/Users/gregu/Documents/rsc/rsc/sb/SbIncrement.h
     55:    static const NodeBase::id_t LastSbIndex    = LastNwIndex + 9;
     85:    static const NodeBase::id_t LastSbIndex   = LastNwIndex + 6;
     115:    static const NodeBase::id_t LastSbIndex   = LastNwIndex + 5;
-  W041 Redundant access control
-    162: private:
 C:/Users/gregu/Documents/rsc/rsc/sb/SbInputHandler.cpp
   W006 reinterpret_cast
     75:    auto header = reinterpret_cast< const MsgHeader* >(source);
@@ -9691,11 +9260,6 @@ C:/Users/gregu/Documents/rsc/rsc/sb/SbTrace.h
   W092 Function could be free
     241:    static std::string OutputId(const std::string& label, NodeBase::id_t id);
     482:    static void DisplayEvent(std::ostream& stream, ServiceId sid, EventId eid);
-C:/Users/gregu/Documents/rsc/rsc/sb/SbTracer.cpp
-  W041 Redundant access control
-    53: private:
-    67: private:
-    81: private:
 C:/Users/gregu/Documents/rsc/rsc/sb/SbTracer.h
   W082 Adjacent arguments have the same type
     128:    NodeBase::TraceRc SelectSignal
@@ -9853,9 +9417,6 @@ C:/Users/gregu/Documents/rsc/rsc/sb/TimerProtocol.cpp
   W006 reinterpret_cast
     106:    auto toi = reinterpret_cast< const TimeoutInfo* >(bytes);
 C:/Users/gregu/Documents/rsc/rsc/sb/TimerProtocol.h
-  W041 Redundant access control
-    44: private:
-    61: private:
   W064 Implicit destructor invoked
     75: struct TimeoutInfo
   W111 Override of Object.Patch not found
@@ -10077,28 +9638,20 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsBicService.cpp
   W022 Add using statement
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    46: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsBicService.h
   W020 Using statement in header
     29: using namespace NodeBase;
     30: using namespace SessionBase;
-  W041 Redundant access control
-    48: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsBocService.cpp
   W007 Cast down the inheritance hierarchy
     79:    auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
   W022 Add using statement
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    46: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsBocService.h
   W020 Using statement in header
     29: using namespace NodeBase;
     30: using namespace SessionBase;
-  W041 Redundant access control
-    48: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsCallFactory.cpp
   W007 Cast down the inheritance hierarchy
     104:    auto& pmsg = static_cast< const Pots_UN_Message& >(msg);
@@ -10147,16 +9700,10 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsCcwService.cpp
   W022 Add using statement
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    63: private:
-    70: private:
-    77: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsCcwService.h
   W020 Using statement in header
     28: using namespace NodeBase;
     29: using namespace SessionBase;
-  W041 Redundant access control
-    38: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfbService.cpp
   W007 Cast down the inheritance hierarchy
     53:    auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
@@ -10168,8 +9715,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfbService.h
   W020 Using statement in header
     29: using namespace NodeBase;
     30: using namespace SessionBase;
-  W041 Redundant access control
-    50: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfnService.cpp
   W007 Cast down the inheritance hierarchy
     53:    auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
@@ -10181,8 +9726,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfnService.h
   W020 Using statement in header
     29: using namespace NodeBase;
     30: using namespace SessionBase;
-  W041 Redundant access control
-    50: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfuService.cpp
   W007 Cast down the inheritance hierarchy
     53:    auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
@@ -10194,10 +9737,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfuService.h
   W020 Using statement in header
     29: using namespace NodeBase;
     30: using namespace SessionBase;
-  W041 Redundant access control
-    50: private:
-    61: private:
-    72: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.cpp
   W007 Cast down the inheritance hierarchy
     258:    auto& ame = static_cast< AnalyzeMsgEvent& >(currEvent);
@@ -10225,13 +9764,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.cpp
     0: namespace CallBase
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    71: private:
-    78: private:
-    85: private:
-    119: private:
-    128: private:
-    137: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.h
   W020 Using statement in header
     42: using namespace NodeBase;
@@ -10239,8 +9771,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsCfxService.h
     44: using namespace CallBase;
   W026 Unused argument
     61/1:    explicit PotsCfxSsm(ServiceId sid);
-  W041 Redundant access control
-    53: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp
   W006 reinterpret_cast
     1363:          auto ring = reinterpret_cast< PotsRingInfo* >(pptr->bytes);
@@ -10284,26 +9814,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwmService.cpp
     0: namespace SessionBase
   W026 Unused argument
     436/2:    EventHandler::Rc ReleaseInactive(Cause::Ind cause, Event*& nextEvent);
-  W041 Redundant access control
-    75: private:
-    82: private:
-    89: private:
-    245: private:
-    254: private:
-    263: private:
-    272: private:
-    281: private:
-    290: private:
-    299: private:
-    308: private:
-    317: private:
-    326: private:
-    335: private:
-    344: private:
-    353: private:
-    362: private:
-    371: private:
-    380: private:
   W053 Data could be const
     187:    Cause::Ind cause_;
   W092 Function could be free
@@ -10352,18 +9862,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.cpp
     0: namespace MediaBase
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    78: private:
-    85: private:
-    105: private:
-    112: private:
-    119: private:
-    168: private:
-    177: private:
-    186: private:
-    195: private:
-    204: private:
-    213: private:
   W042 Member could be private
     252:    void StartTimer(TimerId tid, secs_t duration);
   W053 Data could be const
@@ -10380,10 +9878,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsCwtService.h
     30: using namespace SessionBase;
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    55: private:
-    64: private:
-    73: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsDiscService.cpp
   W007 Cast down the inheritance hierarchy
     114:    auto& pssm = static_cast< BcSsm& >(*Parent());
@@ -10392,8 +9886,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsDiscService.cpp
     0: namespace CallBase
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    37: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsHtlService.cpp
   W007 Cast down the inheritance hierarchy
     80:    auto& pssm = static_cast< const PotsBcSsm& >(parentSsm);
@@ -10402,14 +9894,10 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsHtlService.cpp
   W022 Add using statement
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    47: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsHtlService.h
   W020 Using statement in header
     29: using namespace NodeBase;
     30: using namespace SessionBase;
-  W041 Redundant access control
-    48: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.cpp
   W007 Cast down the inheritance hierarchy
     190:    auto& pmsg = static_cast< const PotsMessage& >(msg);
@@ -10432,14 +9920,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.cpp
     0: namespace MediaBase
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    59: private:
-    66: private:
-    93: private:
-    102: private:
-    111: private:
-    120: private:
-    129: private:
   W117 Line can merge with the next line and be under the length limit
     616:    BindEventHandler
     630:    BindEventHandler
@@ -10454,10 +9934,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsMultiplexer.h
     156/1:    PotsMuxSsm(const Message& msg, ProtocolSM& psm);
   W032 Unused function
     75:    PotsMuxPsm(ProtocolLayer& adj, bool upper, Switch::PortId port);
-  W041 Redundant access control
-    55: private:
-    107: private:
-    184: private:
   W042 Member could be private
     158:    void SetProfile(PotsProfile* prof) { prof_ = prof; }
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxyHandlers.cpp
@@ -10535,24 +10011,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxySessions.h
     28: using namespace CallBase;
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    39: private:
-    57: private:
-    65: private:
-    73: private:
-    81: private:
-    89: private:
-    97: private:
-    105: private:
-    113: private:
-    121: private:
-    129: private:
-    137: private:
-    145: private:
-    153: private:
-    161: private:
-    169: private:
-    177: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h
   W020 Using statement in header
     45: using namespace CallBase;
@@ -10561,25 +10019,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h
     48: using namespace SessionBase;
   W032 Unused function
     76:    CliText* CreateText() const override;
-  W041 Redundant access control
-    121: private:
-    186: private:
-    204: private:
-    212: private:
-    220: private:
-    228: private:
-    236: private:
-    244: private:
-    252: private:
-    260: private:
-    268: private:
-    276: private:
-    284: private:
-    292: private:
-    300: private:
-    308: private:
-    316: private:
-    324: private:
   W042 Member could be private
     419:    ProtocolSM* TimerPsm(TimerId tid) const;
   W092 Function could be free
@@ -10600,14 +10039,10 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsSusService.cpp
   W022 Add using statement
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    46: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsSusService.h
   W020 Using statement in header
     30: using namespace NodeBase;
     31: using namespace SessionBase;
-  W041 Redundant access control
-    62: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/PotsTreatmentRegistry.cpp
   W022 Add using statement
     0: namespace CallBase::Cause
@@ -10669,13 +10104,6 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.cpp
   W022 Add using statement
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    76: private:
-    83: private:
-    90: private:
-    124: private:
-    133: private:
-    142: private:
   W117 Line can merge with the next line and be under the length limit
     341:    BindMsgAnalyzer
     351:    BindMsgAnalyzer
@@ -10684,26 +10112,18 @@ C:/Users/gregu/Documents/rsc/rsc/sn/PotsWmlService.h
   W020 Using statement in header
     29: using namespace NodeBase;
     30: using namespace SessionBase;
-  W041 Redundant access control
-    48: private:
-    57: private:
-    66: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/SnIncrement.cpp
   W022 Add using statement
     0: namespace NodeBase
 C:/Users/gregu/Documents/rsc/rsc/sn/SnIncrement.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/sn/SnModule.cpp
   W022 Add using statement
     0: namespace NodeBase
 C:/Users/gregu/Documents/rsc/rsc/sn/SnModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/st/MscAddress.cpp
   W006 reinterpret_cast
     85:    auto fake = reinterpret_cast< const MscAddress* >(&local);
@@ -10776,8 +10196,6 @@ C:/Users/gregu/Documents/rsc/rsc/st/StIncrement.h
     29: using namespace NodeTools;
   W022 Add using statement
     0: namespace NodeBase
-  W041 Redundant access control
-    55: private:
   W060 Base class constructor is public
     40:    StSizesCommand() = default;
 C:/Users/gregu/Documents/rsc/rsc/st/StModule.cpp
@@ -10786,8 +10204,6 @@ C:/Users/gregu/Documents/rsc/rsc/st/StModule.cpp
 C:/Users/gregu/Documents/rsc/rsc/st/StModule.h
   W020 Using statement in header
     28: using namespace NodeBase;
-  W041 Redundant access control
-    39: private:
 C:/Users/gregu/Documents/rsc/rsc/st/StTestData.cpp
   W007 Cast down the inheritance hierarchy
     63:    return static_cast< StTestData* >(data);
@@ -10819,16 +10235,6 @@ C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp
   W022 Add using statement
     0: namespace NodeBase
     0: namespace SessionBase
-  W041 Redundant access control
-    57: private:
-    80: private:
-    87: private:
-    140: private:
-    149: private:
-    158: private:
-    167: private:
-    176: private:
-    185: private:
   W117 Line can merge with the next line and be under the length limit
     698:    BindMsgAnalyzer
     702:    BindEventHandler
@@ -10840,10 +10246,6 @@ C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.h
   W020 Using statement in header
     43: using namespace NodeBase;
     44: using namespace SessionBase;
-  W041 Redundant access control
-    56: private:
-    230: private:
-    305: private:
   W042 Member could be private
     265:    void UpdateTestPsm();
     345:    TestPsm* GetTestPsm() const { return testPsm_; }

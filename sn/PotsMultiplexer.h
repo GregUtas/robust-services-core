@@ -52,7 +52,7 @@ namespace PotsBase
 class PotsMuxFactory : public SsmFactory
 {
    friend class Singleton< PotsMuxFactory >;
-private:
+
    PotsMuxFactory();
    ~PotsMuxFactory();
    CliText* CreateText() const override;
@@ -104,7 +104,7 @@ private:
 class PotsMuxService : public Service
 {
    friend class Singleton< PotsMuxService >;
-private:
+
    PotsMuxService();
    ~PotsMuxService();
 };
@@ -181,7 +181,7 @@ private:
 class PotsDiscService : public Service
 {
    friend class Singleton< PotsDiscService >;
-private:
+
    PotsDiscService();
    ~PotsDiscService();
    ServiceSM* AllocModifier() const override;

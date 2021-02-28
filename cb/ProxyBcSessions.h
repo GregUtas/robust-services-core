@@ -319,7 +319,7 @@ protected:
 class ProxyBcAnalyzeProxyMessage : public ProxyBcEventHandler
 {
    friend class Singleton< ProxyBcAnalyzeProxyMessage >;
-private:
+
    ProxyBcAnalyzeProxyMessage() = default;
    ~ProxyBcAnalyzeProxyMessage() = default;
    Rc ProcessEvent
@@ -329,7 +329,7 @@ private:
 class ProxyBcProgressHandler : public ProxyBcEventHandler
 {
    friend class Singleton< ProxyBcProgressHandler >;
-private:
+
    ProxyBcProgressHandler() = default;
    ~ProxyBcProgressHandler() = default;
    Rc ProcessEvent
@@ -339,7 +339,7 @@ private:
 class ProxyBcAnswerHandler : public ProxyBcEventHandler
 {
    friend class Singleton< ProxyBcAnswerHandler >;
-private:
+
    ProxyBcAnswerHandler() = default;
    ~ProxyBcAnswerHandler() = default;
    Rc ProcessEvent
@@ -349,7 +349,7 @@ private:
 class ProxyBcReleaseHandler : public ProxyBcEventHandler
 {
    friend class Singleton< ProxyBcReleaseHandler >;
-private:
+
    ProxyBcReleaseHandler() = default;
    ~ProxyBcReleaseHandler() = default;
    Rc ProcessEvent
@@ -549,7 +549,7 @@ private:
 class ProxyBcFactory : public CipFactory
 {
    friend class Singleton< ProxyBcFactory >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    ProxyBcFactory();

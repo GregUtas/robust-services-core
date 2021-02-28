@@ -54,7 +54,7 @@ namespace SessionTools
 class TestInjectSignal : public TestSignal
 {
    friend class Singleton< TestInjectSignal >;
-private:
+
    TestInjectSignal();
 };
 
@@ -77,14 +77,14 @@ protected:
 class TestNull : public TestState
 {
    friend class Singleton< TestNull >;
-private:
+
    TestNull();
 };
 
 class TestActive : public TestState
 {
    friend class Singleton< TestActive >;
-private:
+
    TestActive();
 };
 
@@ -137,7 +137,7 @@ protected:
 class TestAnalyzeUserMessage : public TestEventHandler
 {
    friend class Singleton< TestAnalyzeUserMessage >;
-private:
+
    TestAnalyzeUserMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -146,7 +146,7 @@ private:
 class TestAnalyzeNetworkMessage : public TestEventHandler
 {
    friend class Singleton< TestAnalyzeNetworkMessage >;
-private:
+
    TestAnalyzeNetworkMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -155,7 +155,7 @@ private:
 class TestNuInject : public TestEventHandler
 {
    friend class Singleton< TestNuInject >;
-private:
+
    TestNuInject() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -164,7 +164,7 @@ private:
 class TestNuVerify : public TestEventHandler
 {
    friend class Singleton< TestNuVerify >;
-private:
+
    TestNuVerify() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -173,7 +173,7 @@ private:
 class TestAcInject : public TestEventHandler
 {
    friend class Singleton< TestAcInject >;
-private:
+
    TestAcInject() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -182,7 +182,7 @@ private:
 class TestAcVerify : public TestEventHandler
 {
    friend class Singleton< TestAcVerify >;
-private:
+
    TestAcVerify() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;

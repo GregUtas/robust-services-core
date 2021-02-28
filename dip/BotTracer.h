@@ -36,7 +36,7 @@ namespace Diplomacy
 class BotTracer : public Permanent
 {
    friend class Singleton< BotTracer >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    BotTracer();

@@ -36,7 +36,7 @@ namespace ServiceNode
 class SnModule : public Module
 {
    friend class Singleton< SnModule >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    SnModule();

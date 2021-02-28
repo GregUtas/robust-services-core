@@ -53,7 +53,7 @@ namespace SessionTools
 class TestProtocol : public TlvProtocol
 {
    friend class Singleton< TestProtocol >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    TestProtocol();
@@ -227,7 +227,7 @@ private:
 class TestService : public Service
 {
    friend class Singleton< TestService >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    TestService();
@@ -302,7 +302,7 @@ private:
 class TestFactory : public SsmFactory
 {
    friend class Singleton< TestFactory >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    TestFactory();

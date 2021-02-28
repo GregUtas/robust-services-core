@@ -60,21 +60,21 @@ protected:
 class PotsCcwNull : public PotsCcwState
 {
    friend class Singleton< PotsCcwNull >;
-private:
+
    PotsCcwNull();
 };
 
 class PotsCcwActive : public PotsCcwState
 {
    friend class Singleton< PotsCcwActive >;
-private:
+
    PotsCcwActive();
 };
 
 class PotsCcwAcCollectInformation : public EventHandler
 {
    friend class Singleton< PotsCcwAcCollectInformation >;
-private:
+
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
    PotsCcwAcCollectInformation() = default;

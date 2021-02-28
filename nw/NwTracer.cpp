@@ -43,7 +43,7 @@ fixed_string NetworkTraceToolExpl = "traces sockets";
 class NetworkTraceTool : public Tool
 {
    friend class Singleton< NetworkTraceTool >;
-private:
+
    NetworkTraceTool() : Tool(NetworkTracer, 'n', true) { }
    c_string Name() const override { return NetworkTraceToolName; }
    c_string Expl() const override { return NetworkTraceToolExpl; }

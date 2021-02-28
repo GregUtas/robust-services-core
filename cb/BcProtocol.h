@@ -419,7 +419,7 @@ protected:
 class CipObcFactory : public CipFactory
 {
    friend class Singleton< CipObcFactory >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    CipObcFactory();
@@ -444,7 +444,7 @@ private:
 class CipTbcFactory : public CipFactory
 {
    friend class Singleton< CipTbcFactory >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    CipTbcFactory();

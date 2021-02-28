@@ -36,7 +36,7 @@ namespace SessionTools
 class StModule : public Module
 {
    friend class Singleton< StModule >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    StModule();

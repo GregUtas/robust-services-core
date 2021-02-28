@@ -153,7 +153,7 @@ protected:
 class NwIncrement : public NodeBase::CliIncrement
 {
    friend class NodeBase::Singleton< NwIncrement >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    NwIncrement();

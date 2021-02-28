@@ -32,7 +32,7 @@ namespace PotsBase
 class PotsSusFeature : public PotsFeature
 {
    friend class Singleton< PotsSusFeature >;
-private:
+
    PotsSusFeature();
    ~PotsSusFeature();
    CliText* Attrs() const override;

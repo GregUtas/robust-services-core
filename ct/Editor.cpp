@@ -931,35 +931,25 @@ word Editor::ConvertTabsToBlanks()
    Debug::ft("Editor.ConvertTabsToBlanks");
 
    auto indent = file_->IndentSize();
-   string tab(1, TAB);
 
    //  Run through the source, looking for tabs.
    //
-   for(size_t begin = 0; begin != string::npos; begin = NextBegin(begin))
+   for(size_t pos = source_.find(TAB); pos != string::npos;
+      pos = source_.find(TAB, pos))
    {
-      auto pos = LineFind(begin, tab);
+      //  Find the start of this line.  If the tab appears in a comment,
+      //  ignore it.  Otherwise determine how many spaces to insert when
+      //  replacing the tab.
+      //
+      auto begin = CurrBegin(pos);
+      auto end = LineFind(begin, COMMENT_STR);
+      if(pos >= end) continue;
 
-      if(pos != string::npos)
-      {
-         //  A tab has been found.  Replace it with the number of spaces
-         //  needed to reach the next tab stop, namely the next multiple
-         //  of INDENT.  This code doesn't bother to skip over character
-         //  and string literals, which should use \t or TAB or something
-         //  that is actually visible.
-         //
-         for(NO_OP; source_[pos] != CRLF; ++pos)
-         {
-            if(source_[pos] == TAB)
-            {
-               auto count = (pos - begin) % indent;
-               if(count == 0) count = indent;
-               Erase(pos, 1);
-               Insert(pos, spaces(count));
-            }
-         }
-
-         Changed();
-      }
+      auto count = (pos - begin) % indent;
+      if(count == 0) count = indent;
+      Erase(pos, 1);
+      Insert(pos, spaces(count));
+      Changed();
    }
 
    return 0;
@@ -1034,9 +1024,15 @@ size_t Editor::CutCode(const CxxNamed* item, string& expl, string& code)
          auto prev = RfindFirstOf(begin - 1, beginchars);
 
          if(FindComment(prev) != string::npos)
+         {
             source_[prev] = SPACE;
+         }
          else
+         {
             Erase(prev, 1);
+            --begin;
+            --end;
+         }
 
          if(IsFirstNonBlank(end))
             end = CurrBegin(end) - 1;
@@ -1853,10 +1849,10 @@ word Editor::EraseVirtualTag(const CodeWarning& log, string& expl)
    //
    auto type = log.item_->GetTypeSpec()->GetPos();
    if(type == string::npos) return NotFound(expl, "Function type");
-   auto virt = source_.rfind(VIRTUAL_STR, type);
+   auto virt = LineRfind(type, VIRTUAL_STR);
    if(virt == string::npos) return NotFound(expl, VIRTUAL_STR, true);
    Erase(virt, strlen(VIRTUAL_STR) + 1);
-   return Changed(type, expl);
+   return Changed(virt, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -1883,7 +1879,7 @@ word Editor::EraseVoidArgument(const CodeWarning& log, string& expl)
       if(OnSameLine(arg, lpar) && OnSameLine(arg, rpar))
       {
          Erase(lpar + 1, rpar - lpar - 1);
-         return Changed(arg, expl);
+         return Changed(lpar, expl);
       }
       Erase(arg, strlen(VOID_STR));
       return Changed(arg, expl);
@@ -2894,25 +2890,26 @@ word Editor::InlineDebugFtName(const CodeWarning& log, string& expl)
    //  Find the fn_name data, in-line its string literal in the Debug::ft
    //  call, and then erase it.
    //
+   string fname;
+   auto data = static_cast< const Data* >(log.item_);
+   if(data == nullptr) return NotFound(expl, "fn_name declaration");
+   if(!data->GetStrValue(fname)) return NotFound(expl, "fn_name definition");
+
+   auto dpos = data->GetPos();
+   if(dpos == string::npos) return NotFound(expl, "fn_name in source");
+   auto split = (LineFind(dpos, ";") == string::npos);
+   auto next = EraseLine(dpos);
+   if(split) EraseLine(next);
+
+   auto literal = QUOTE + fname + QUOTE;
    auto begin = CurrBegin(log.Pos());
    if(begin == string::npos) return NotFound(expl, "Position of Debug::ft");
    auto lpar = source_.find('(', begin);
    if(lpar == string::npos) return NotFound(expl, "Left parenthesis");
    auto rpar = source_.find(')', lpar);
    if(rpar == string::npos) return NotFound(expl, "Right parenthesis");
-   auto data = static_cast< const Data* >(log.item_);
-   if(data == nullptr) return NotFound(expl, "fn_name declaration");
-
-   string fname;
-   if(!data->GetStrValue(fname)) return NotFound(expl, "fn_name definition");
-   auto dpos = data->GetPos();
-   if(dpos == string::npos) return NotFound(expl, "fn_name in source");
-   auto split = (LineFind(dpos, ";") == string::npos);
-   auto next = EraseLine(dpos);
-   if(split) EraseLine(next);
-   auto literal = QUOTE + fname + QUOTE;
    Replace(lpar + 1, rpar - lpar - 1, literal);
-   return Changed(begin, expl);
+   return Changed(lpar, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -2952,7 +2949,12 @@ size_t Editor::InsertAfterFuncDefn(size_t pos, const FuncDefnAttrs& attrs)
    if(attrs.blank == BlankAfter)
    {
       InsertLine(pos, EMPTY_STR);
-      if(attrs.rule) InsertRule(pos, '-');
+
+      if(attrs.rule)
+      {
+         InsertRule(pos, '-');
+         InsertLine(pos, EMPTY_STR);
+      }
    }
 
    return pos;
@@ -3006,8 +3008,14 @@ size_t Editor::InsertBeforeFuncDefn(size_t pos, const FuncDefnAttrs& attrs)
    if(attrs.blank == BlankBefore)
    {
       InsertLine(pos, EMPTY_STR);
-      if(attrs.rule) InsertRule(pos, '-');
+
+      if(attrs.rule)
+      {
+         InsertRule(pos, '-');
+         InsertLine(pos, EMPTY_STR);
+      }
    }
+
    return pos;
 }
 
@@ -3282,7 +3290,7 @@ word Editor::InsertForward(size_t pos, const string& forward, string& expl)
       auto first = LineFindFirst(pos);
       if(source_[first] == '{') continue;
 
-      auto comp = source_.compare(first, forward.size(), forward);
+      auto comp = source_.compare(pos, forward.size(), forward);
       if(comp == 0) return Report(expl, "Previously inserted.");
 
       if((comp > 0) || (source_[first] == '}'))
@@ -3439,14 +3447,20 @@ word Editor::InsertNamespaceForward
    //
    InsertLine(pos, EMPTY_STR);
    InsertLine(pos, "}");
-   auto forw = InsertLine(pos, forward);
+   InsertLine(pos, forward);
    InsertLine(pos, "{");
    InsertLine(pos, nspace);
    InsertLine(pos, EMPTY_STR);
-   return Changed(forw, expl);
+   pos = Find(pos, forward);
+   return Changed(pos, expl);
 }
 
 //------------------------------------------------------------------------------
+
+fixed_string PatchComment = "Overridden for patching.";
+fixed_string PatchReturn = "void";
+fixed_string PatchSignature = "Patch(sel_t selector, void* arguments)";
+fixed_string PatchInvocation = "Patch(selector, arguments)";
 
 word Editor::InsertPatch(CliThread& cli, const CodeWarning& log, string& expl)
 {
@@ -3481,15 +3495,11 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log, string& expl)
    //
    InsertPatchDecl(pos1, decl);
    editor.InsertPatchDefn(pos2, cls, defn);
-   return 0;
+   pos1 = Find(pos1, PatchSignature);
+   return Changed(pos1, expl);
 }
 
 //------------------------------------------------------------------------------
-
-fixed_string PatchComment = "Overridden for patching.";
-fixed_string PatchReturn = "void";
-fixed_string PatchSignature = "Patch(sel_t selector, void* arguments)";
-fixed_string PatchInvocation = "Patch(selector, arguments)";
 
 void Editor::InsertPatchDecl(const size_t& pos, const FuncDeclAttrs& attrs)
 {
@@ -3559,13 +3569,12 @@ size_t Editor::InsertPrefix(size_t pos, const string& prefix)
    auto first = LineFindFirst(pos);
    if(first == string::npos) return string::npos;
 
-   if(pos + prefix.size() < first)
+   if(pos + prefix.size() <= first)
    {
       Replace(pos, prefix.size(), prefix);
    }
    else
    {
-      Insert(pos, SPACE_STR);
       Insert(pos, prefix);
    }
 
@@ -3702,7 +3711,7 @@ size_t Editor::LineAfterFunc(const Function* func) const
    Debug::ft("Editor.LineAfterFunc");
 
    size_t begin, left, end;
-   func->GetRange(begin, left, end);
+   if(!func->GetRange(begin, left, end)) return string::npos;
    return NextBegin(end);
 }
 
@@ -3857,10 +3866,8 @@ void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
    Reposition(pos);
    string name;
 
-   while(FindIdentifier(name, false))
+   while(FindIdentifier(name, false) && (Curr() <= end))
    {
-      if(Curr() > end) return;
-
       if(name == *symbol)
       {
          //  Qualify NAME with NS if it is not already qualified.
@@ -4020,8 +4027,15 @@ word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
       return Changed(pos1, expl);
    }
 
+   //  Subsequent lines will be commented with "//", which will be indented
+   //  appropriately and followed by two spaces.
+   //
+   auto info = const_cast< const Editor& >(*this).GetLineInfo(pos0);
+   auto comment = spaces(info->depth * file_->IndentSize());
+   comment += COMMENT_STR + spaces(2);
+
    //  Now continue with subsequent lines:
-   //  o pos1: original start of /*
+   //  o pos0: start of the current line
    //  o pos2: start of */ (if on this line)
    //  o pos3: first non-blank after start of line and preceding */
    //  o pos4: first non-blank following */ (if any)
@@ -4047,8 +4061,7 @@ word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
 
       if(pos2 == string::npos)  // [1]
       {
-         if(pos3 > pos1) pos3 = pos1;
-         InsertPrefix(pos3, COMMENT_STR);
+         InsertPrefix(pos0, comment);
          Changed();
       }
       else if((pos3 == string::npos) && (pos4 == string::npos))  // [2]
@@ -4060,23 +4073,21 @@ word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
       {
          Erase(pos2, strlen(COMMENT_END_STR));
          Changed();
-         pos2 = InsertLineBreak(pos2);
-         return Changed(pos2, expl);
+         InsertLineBreak(pos2);
+         return Changed(PrevBegin(pos2), expl);
       }
       else if((pos3 != string::npos) && (pos4 == string::npos))  // [4]
       {
          Erase(pos2, strlen(COMMENT_END_STR));
-         if(pos3 > pos1) pos3 = pos1;
-         InsertPrefix(pos3, COMMENT_STR);
-         return Changed(pos3, expl);
+         InsertPrefix(pos0, comment);
+         return Changed(pos0, expl);
       }
       else  // [5]
       {
          Erase(pos2, strlen(COMMENT_END_STR));
          InsertLineBreak(pos2);
-         if(pos3 > pos1) pos3 = pos1;
-         InsertPrefix(pos3, COMMENT_STR);
-         return Changed(pos3, expl);
+         InsertPrefix(pos0, comment);
+         return Changed(pos0, expl);
       }
    }
 
@@ -4376,7 +4387,7 @@ word Editor::TagAsExplicit(const CodeWarning& log, string& expl)
    //
    auto ctor = log.item_->GetPos();
    if(ctor == string::npos) return NotFound(expl, "Constructor");
-   auto prev = source_.rfind(CONSTEXPR_STR, ctor);
+   auto prev = LineRfind(ctor, CONSTEXPR_STR);
    if(prev != string::npos) ctor = prev;
    Insert(ctor, "explicit ");
    return Changed(ctor, expl);
@@ -4446,11 +4457,11 @@ word Editor::TagAsStaticFunction(const Function* func, string& expl)
    //
    if(func->GetDecl() == func)
    {
-      auto front = source_.rfind(VIRTUAL_STR, type);
+      auto front = LineRfind(type, VIRTUAL_STR);
       if(front != string::npos) Erase(front, strlen(VIRTUAL_STR) + 1);
-      front = source_.rfind(INLINE_STR, type);
+      front = LineRfind(type, INLINE_STR);
       if(front != string::npos) type = front;
-      front = source_.rfind(EXTERN_STR, type);
+      front = LineRfind(type, EXTERN_STR);
       if(front != string::npos) type = front;
       Insert(type, "static ");
       Changed();
@@ -4586,13 +4597,20 @@ size_t Editor::UpdateFuncDeclLoc
          continue;
       }
 
-      //  If an access control precedes NEXT, a blank line is not required
-      //  after the new function.
+      //  If the new function does not require an access control, it needs to
+      //  be inserted after this access control so that the control will also
+      //  apply to the new function.  If it requires an access control, a blank
+      //  line need not follow it, because this access control will.
       //
-      if(GetLineType(pred) == AccessControl)
+      if(type == AccessControl)
       {
-         attrs.blank = BlankNone;
-         return pred;
+         if(attrs.control)
+         {
+            attrs.blank = BlankNone;
+            return pred;
+         }
+
+         return NextBegin(pred);
       }
 
       break;

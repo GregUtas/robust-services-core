@@ -1228,9 +1228,10 @@ public:
    //
    void IncrThisWrites() const;
 
-   //  Invoked when the function accessed ITEM.
+   //  Invoked when the function accessed ITEM; if VIA is provided, ITEM was
+   //  accessed as VIA.ITEM or VIA->ITEM.
    //
-   void ItemAccessed(const CxxNamed* item);
+   void ItemAccessed(const CxxNamed* item, const StackArg* via);
 
    //  Registers an invocation of the function.  ARGS is a list of resolved
    //  arguments, in the same order as declared by the function.  A read is

@@ -277,6 +277,10 @@ class NbIncrement : public CliIncrement
 {
    friend class Singleton< NbIncrement >;
 public:
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
+
    //  Overridden for restarts.
    //
    void Startup(RestartLevel level) override;

@@ -65,7 +65,8 @@ namespace CodeTools
 //  The Editor holds its file's source code in the string source_, so here are
 //  two common causes of bugs:
 //  o Finding a position in the code, editing the code, and then reusing that
-//    position fter the underlying text has shifted.
+//    position after the underlying text has shifted.  An edit can even change
+//    CodeWarning.Pos(), so it may need to be reread or accessed later.
 //  o Manipulating source_ using string functions such as erase, insert, or
 //    replace instead of analogous Editor functions.  The latter invoke the
 //    function UpdatePos to update the positions of the C++ items that were
@@ -119,7 +120,7 @@ private:
    //  Invokes Write on each editor whose file has changed.  Returns false
    //  if an error occurrs, after updating EXPL with an explanation.
    //
-   bool Commit(const CliThread& cli, string& expl);
+   static bool Commit(const CliThread& cli, string& expl);
 
    //  Writes out the editor's file.  Returns 0 if the file was successfully
    //  written; other values indicate failure.  Updates EXPL with a reason
@@ -251,9 +252,9 @@ private:
    //
    size_t Indent(size_t pos);
 
-   //  Inserts PREFIX at POS.  The prefix replaces blanks but leaves at least
-   //  one space between it and the first non-blank character on the line.
-   //  Returns POS.
+   //  Inserts PREFIX at POS.  The prefix replaces as many blanks as its
+   //  length.  If there are fewer blanks, the rest of the line will get
+   //  shifted right.  Returns POS.
    //
    size_t InsertPrefix(size_t pos, const string& prefix);
 
@@ -361,7 +362,7 @@ private:
    //  Fixes LOG, which also involves modifying overrides of a function.
    //  Updates EXPL with any explanation.
    //
-   word FixFunctions(CliThread& cli, const CodeWarning& log, string& expl);
+   static word FixFunctions(CliThread& cli, const CodeWarning& log, string& expl);
 
    //  Fixes LOG, which is associated with FUNC, and updates EXPL with any
    //  explanation.

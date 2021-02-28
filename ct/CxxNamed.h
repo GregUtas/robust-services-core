@@ -391,9 +391,10 @@ protected:
       (Class* cls, const TypeName* args, bool end) const { return true; }
 
    //  Invoked when the item is accessed.  Invokes ItemAccessed on the context
-   //  function.
+   //  function.  If the item was accessed through the reference select (.) or
+   //  pointer select (->) operator, VIA is the item that preceded the operator.
    //
-   void Accessed() const;
+   void Accessed(const StackArg* via) const;
 
    //  Invoked by overrides of RecordUsage.
    //

@@ -696,7 +696,7 @@ StackArg ClassData::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 
    //  Create an argument for this member, which was accessed through VIA.
    //
-   Accessed();
+   Accessed(&via);
    StackArg arg(this, name, via, op);
    if(mutable_) arg.SetAsMutable();
    return arg;
@@ -2274,7 +2274,7 @@ bool Function::CanBeNoexcept() const
 
    //  The only functions that should be noexcept are virtual functions whose
    //  base class defined the function as noexcept.  This should be enforced
-   //  by the compiler but must be check to avoid generating a warning.
+   //  by the compiler but must be checked to avoid generating a warning.
    //
    auto bf = FindBaseFunc();
 
@@ -4555,7 +4555,7 @@ bool Function::IsUnused() const
 
 //------------------------------------------------------------------------------
 
-void Function::ItemAccessed(const CxxNamed* item)
+void Function::ItemAccessed(const CxxNamed* item, const StackArg* via)
 {
    Debug::ft("Function.ItemAccessed");
 
@@ -4603,7 +4603,11 @@ void Function::ItemAccessed(const CxxNamed* item)
 
    if(item->IsDeclaredInFunction()) return;
    if(item->GetAccess() != Cxx::Public) SetNonPublic();
-   if(!item->IsStatic()) SetNonStatic();
+
+   if((via == nullptr) || via->IsThis())
+   {
+      if(!item->IsStatic()) SetNonStatic();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -4683,7 +4687,7 @@ StackArg Function::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
    //  o discarding an unnecessary "this" argument when a static function is
    //    selected as the result of argument matching (see UpdateThisArg).
    //
-   Accessed();
+   Accessed(&via);
    Context::PushArg(StackArg(this, name));
    if(op == Cxx::REFERENCE_SELECT) via.IncrPtrs();
    via.SetAsThis(true);

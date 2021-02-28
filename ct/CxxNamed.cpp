@@ -128,13 +128,13 @@ CxxNamed::~CxxNamed()
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::Accessed() const
+void CxxNamed::Accessed(const StackArg* via) const
 {
    Debug::ft("CxxNamed.Accessed");
 
    auto func = Context::Scope()->GetFunction();
    if(func == nullptr) return;
-   func->ItemAccessed(this);
+   func->ItemAccessed(this, via);
 }
 
 //------------------------------------------------------------------------------
@@ -372,7 +372,7 @@ StackArg CxxNamed::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft("CxxNamed.NameToArg");
 
-   Accessed();
+   Accessed(nullptr);
    return StackArg(this, name);
 }
 

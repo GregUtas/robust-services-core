@@ -20,12 +20,17 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Lexer.h"
+#include <bitset>
 #include <cctype>
 #include <cmath>
 #include <cstring>
+#include <iomanip>
+#include <ios>
+#include <ostream>
 #include <set>
 #include <unordered_map>
 #include <utility>
+#include "CodeFile.h"
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
@@ -34,22 +39,48 @@
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
+#include "NbTypes.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
+using std::ostream;
 using std::string;
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
+fixed_string LineNumberUnknown = "Line numbers not supported while editing.";
+
+//==============================================================================
+
+LineInfo::LineInfo(size_t start) :
+   begin(start),
+   depth(DEPTH_NOT_SET),
+   cont(false)
+{
+}
+
+//------------------------------------------------------------------------------
+
+void LineInfo::Display(ostream& stream) const
+{
+   if(depth != DEPTH_NOT_SET)
+      stream << std::hex << std::setw(1) << int(depth) << std::dec;
+   else
+      stream << '?';
+
+   stream << (cont ? '+' : SPACE);
+}
+
+//==============================================================================
+
 Lexer::Lexer() :
    source_(nullptr),
-   size_(0),
-   lines_(0),
+   file_(nullptr),
    curr_(0),
    prev_(0),
-   scanned_(false)
+   edited_(false)
 {
    Debug::ft("Lexer.ctor");
 }
@@ -82,10 +113,8 @@ void Lexer::CalcDepths()
 {
    Debug::ft("Lexer.CalcDepths");
 
-   if(scanned_) return;
    if(source_->empty()) return;
 
-   scanned_ = true;   // only run this once
    Reposition(0);     // start from the beginning of source_
 
    auto ns = false;   // set when "namespace" keyword is encountered
@@ -96,7 +125,7 @@ void Lexer::CalcDepths()
    size_t right;      // position of right brace that matches left brace
    string id;         // identifier extracted from source code
 
-   while(curr_ < size_)
+   for(auto size = source_->size(); curr_ < size; NO_OP)
    {
       auto c = (*source_)[curr_];
 
@@ -114,9 +143,9 @@ void Lexer::CalcDepths()
          next = (ns ? depth : depth + 1);
          ns = false;
          SetDepth(start, depth, next);
-         line_[GetLineNum(curr_)].cont = false;
+         GetLineInfo(curr_)->cont = false;
          right = FindClosing('{', '}', curr_ + 1);
-         line_[GetLineNum(right)].depth = depth;
+         GetLineInfo(right)->depth = depth;
          depth = next;
          Advance(1);
          break;
@@ -127,7 +156,7 @@ void Lexer::CalcDepths()
          //  and the next parse position will be at the depth of the }, which
          //  was set when its left brace was encountered.
          //
-         next = line_[GetLineNum(curr_)].depth;
+         next = GetLineInfo(curr_)->depth;
          en = false;
          SetDepth(start, depth, next);
          depth = next;
@@ -177,7 +206,7 @@ void Lexer::CalcDepths()
                Advance(id.size());
                if(CurrChar() == ';') continue;
                curr_ = FindFirstOf(":");
-               line_[GetLineNum(curr_)].depth = depth - 1;
+               GetLineInfo(curr_)->depth = depth - 1;
                SetDepth(start, depth, depth);
                Advance(1);
                continue;
@@ -198,22 +227,20 @@ void Lexer::CalcDepths()
                continue;
 
             case IndentDirective:
-            {
+               //
                //  Put a preprocessor directive at depth 0 and treat it as if
                //  it ends with a semicolon so that code that follows will not
                //  be treated as a continuation.
                //
-               auto line = GetLineNum(curr_);
-               line_[line].depth = 0;
+               GetLineInfo(curr_)->depth = 0;
                curr_ = source_->find(CRLF, curr_);
-               if(curr_ == string::npos) curr_ = size_ - 1;
+               if(curr_ == string::npos) curr_ = size - 1;
                SetDepth(start, depth, depth);
                Advance(1);
                continue;
-            }
 
             case IndentControl:
-            {
+               //
                //  If this keyword is not followed by a colon, it controls the
                //  visibility of a base class and can be handled like a normal
                //  identifier.  If it *is* followed by a colon, it controls the
@@ -223,11 +250,10 @@ void Lexer::CalcDepths()
                //
                Advance(id.size());
                if(CurrChar() != ':') continue;
-               line_[GetLineNum(curr_)].depth = depth - 1;
+               GetLineInfo(curr_)->depth = depth - 1;
                SetDepth(start, depth, depth);
                Advance(1);
                continue;
-            }
 
             case IndentNamespace:
                //
@@ -270,11 +296,29 @@ void Lexer::CalcDepths()
       }
    }
 
-   //  Set the depth for any remaining lines and reinitialize the lexer.
+   //  Reinitialize the lexer.
    //
-   curr_ = size_ - 1;
-   SetDepth(start, depth, depth);
    Reposition(0);
+}
+
+//------------------------------------------------------------------------------
+
+bool Lexer::CodeMatches(size_t pos, const std::string& str) const
+{
+   Debug::ft("Lexer.CodeMatches");
+
+   if(pos >= source_->size()) return false;
+   return (source_->compare(pos, str.size(), str) == 0);
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::CurrBegin(size_t pos) const
+{
+   if(pos >= source_->size()) return string::npos;
+   if((*source_)[pos] == CRLF) --pos;
+   auto crlf = source_->rfind(CRLF, pos);
+   return (crlf == string::npos ? 0 : crlf + 1);
 }
 
 //------------------------------------------------------------------------------
@@ -283,19 +327,72 @@ size_t Lexer::CurrChar(char& c) const
 {
    Debug::ft("Lexer.CurrChar");
 
-   if(curr_ >= size_) return string::npos;
+   if(curr_ >= source_->size())
+   {
+      c = NUL;
+      return string::npos;
+   }
+
    c = (*source_)[curr_];
    return curr_;
 }
 
 //------------------------------------------------------------------------------
 
-string Lexer::Extract(size_t pos, size_t count) const
+size_t Lexer::CurrEnd(size_t pos) const
 {
-   Debug::ft("Lexer.Extract");
+   if(pos >= source_->size()) return string::npos;
+   auto crlf = source_->find(CRLF, pos);
+   return (crlf == string::npos ? source_->size() - 1 : crlf);
+}
 
-   string s = source_->substr(pos, count);
-   return Compress(s);
+//------------------------------------------------------------------------------
+
+void Lexer::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   Base::Display(stream, prefix, options);
+
+   stream << prefix << "source  : " << source_ << CRLF;
+   stream << prefix << "file    : " << file_ << CRLF;
+   stream << prefix << "curr    : " << curr_ << CRLF;
+   stream << prefix << "prev    : " << prev_ << CRLF;
+
+   if(!options.test(DispVerbose)) return;
+
+   stream << prefix << "source : " << CRLF;
+
+   const auto& info = GetLinesInfo();
+
+   for(auto i = info.cbegin(); i != info.cend(); ++i)
+   {
+      i->Display(stream);
+
+      if(file_ != nullptr)
+      {
+         auto type = GetLineType(i->begin);
+         stream << LineTypeAttr::Attrs[type].symbol << SPACE;
+      }
+
+      stream << SPACE << GetCode(i->begin);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::Find(size_t pos, const string& str)
+{
+   Debug::ft("Lexer.Find");
+
+   for(Reposition(pos); curr_ != string::npos; Advance(1))
+   {
+      if(source_->compare(curr_, str.size(), str) == 0)
+      {
+         return curr_;
+      }
+   }
+
+   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -310,10 +407,9 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
    size_t level = 1;
 
    if(pos == string::npos) pos = curr_;
-
    pos = NextPos(pos);
 
-   while(pos < size_)
+   for(auto size = source_->size(); pos < size; pos = NextPos(pos + 1))
    {
       auto c = (*source_)[pos];
 
@@ -333,8 +429,6 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
       {
          pos = SkipCharLiteral(pos);
       }
-
-      pos = NextPos(pos + 1);
    }
 
    return string::npos;
@@ -383,13 +477,26 @@ void Lexer::FindCode(OptionalCode* opt, bool compile)
 
 //------------------------------------------------------------------------------
 
+size_t Lexer::FindComment(size_t pos) const
+{
+   Debug::ft("Lexer.FindComment");
+
+   auto end = CurrEnd(pos);
+   auto targ = source_->find(COMMENT_STR, pos);
+   if(targ < end) return targ;
+   targ = source_->find(COMMENT_BEGIN_STR, pos);
+   return (targ < end ? targ : string::npos);
+}
+
+//------------------------------------------------------------------------------
+
 Cxx::Directive Lexer::FindDirective()
 {
    Debug::ft("Lexer.FindDirective");
 
    string s;
 
-   while(curr_ < size_)
+   while(curr_ < source_->size())
    {
       if((*source_)[curr_] == '#')
          return NextDirective(s);
@@ -413,7 +520,7 @@ size_t Lexer::FindFirstOf(const string& targs) const
    auto pos = NextPos(curr_);
    size_t end;
 
-   while(pos < size_)
+   for(auto size = source_->size(); pos < size; NO_OP)
    {
       auto f = false;
       auto c = (*source_)[pos];
@@ -462,13 +569,23 @@ size_t Lexer::FindFirstOf(const string& targs) const
 
 //------------------------------------------------------------------------------
 
+size_t Lexer::FindFirstOf(size_t pos, const string& chars)
+{
+   Debug::ft("Lexer.FindFirstOf(pos)");
+
+   Reposition(pos);
+   return FindFirstOf(chars);
+}
+
+//------------------------------------------------------------------------------
+
 bool Lexer::FindIdentifier(string& id, bool tokenize)
 {
    Debug::ft("Lexer.FindIdentifier");
 
    if(tokenize) id = "$";  // returned if non-identifier found
 
-   while(curr_ < size_)
+   for(auto size = source_->size(); curr_ < size; NO_OP)
    {
       auto f = false;
       auto c = (*source_)[curr_];
@@ -529,7 +646,7 @@ size_t Lexer::FindLineEnd(size_t pos) const
 
    auto bs = false;
 
-   for(NO_OP; pos < size_; ++pos)
+   for(auto size = source_->size(); pos < size; ++pos)
    {
       switch((*source_)[pos])
       {
@@ -542,6 +659,41 @@ size_t Lexer::FindLineEnd(size_t pos) const
          bs = !bs;
          break;
       }
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::FindNonBlank(size_t pos)
+{
+   Debug::ft("Lexer.FindNonBlank");
+
+   for(Reposition(pos); curr_ != string::npos; Advance(1))
+   {
+      if(!IsBlank((*source_)[curr_]))
+      {
+         return curr_;
+      }
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::FindWord(size_t pos, const string& id)
+{
+   Debug::ft("Lexer.FindWord");
+
+   Reposition(pos);
+   string name;
+
+   while(FindIdentifier(name, false))
+   {
+      if(name == id) return curr_;
+      Advance(name.size());
    }
 
    return string::npos;
@@ -572,7 +724,9 @@ bool Lexer::GetChar(uint32_t& c)
 {
    Debug::ft("Lexer.GetChar");
 
-   if(curr_ >= size_) return false;
+   auto size = source_->size();
+   if(curr_ >= size) return false;
+
    c = (*source_)[curr_];
    ++curr_;
 
@@ -583,7 +737,7 @@ bool Lexer::GetChar(uint32_t& c)
       //
       int64_t n;
 
-      if(curr_ >= size_) return false;
+      if(curr_ >= size) return false;
       c = (*source_)[curr_];
 
       switch(c)
@@ -595,19 +749,19 @@ bool Lexer::GetChar(uint32_t& c)
          break;
       case 'x':  // character's 2-byte hex value
          ++curr_;
-         if(curr_ >= size_) return false;
+         if(curr_ >= size) return false;
          GetHexNum(n, 2);
          c = n;
          break;
       case 'u':  // character's 4-byte hex value
          ++curr_;
-         if(curr_ >= size_) return false;
+         if(curr_ >= size) return false;
          GetHexNum(n, 4);
          c = n;
          break;
       case 'U':  // character's 8-byte hex value
          ++curr_;
-         if(curr_ >= size_) return false;
+         if(curr_ >= size) return false;
          GetHexNum(n, 8);
          c = n;
          break;
@@ -669,6 +823,20 @@ bool Lexer::GetClassTag(Cxx::ClassTag& tag, bool type)
 
 //------------------------------------------------------------------------------
 
+string Lexer::GetCode(size_t pos, bool crlf) const
+{
+   Debug::ft("Lexer.GetCode");
+
+   auto begin = CurrBegin(pos);
+   if(begin == string::npos) return EMPTY_STR;
+   auto end = CurrEnd(pos);
+   auto code = source_->substr(begin, end - begin + 1);
+   if(!crlf && !code.empty() && (code.back() == CRLF)) code.pop_back();
+   return code;
+}
+
+//------------------------------------------------------------------------------
+
 void Lexer::GetCVTags(KeywordSet& tags)
 {
    Debug::ft("Lexer.GetCVTags");
@@ -683,9 +851,15 @@ void Lexer::GetCVTags(KeywordSet& tags)
       {
       case Cxx::CONST:
       case Cxx::VOLATILE:
-         tags.insert(kwd);
+      {
+         auto result = tags.insert(kwd);
+         if(!result.second && (kwd == Cxx::CONST))
+         {
+            if(file_ != nullptr) file_->LogPos(curr_, RedundantConst);
+         }
          Reposition(curr_ + str.size());
          continue;
+      }
 
       default:
          return;
@@ -752,23 +926,6 @@ void Lexer::GetDataTags(KeywordSet& tags)
       default:
          return;
       }
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void Lexer::GetDepth(size_t line, int8_t& depth, bool& cont) const
-{
-   if(!scanned_ || (line >= lines_))
-   {
-      depth = 0;
-      cont = false;
-   }
-   else
-   {
-      depth = line_[line].depth;
-      if(depth < 0) depth = 0;
-      cont = line_[line].cont;
    }
 }
 
@@ -876,7 +1033,7 @@ size_t Lexer::GetHexNum(int64_t& num, size_t max)
    size_t count = 0;
    num = 0;
 
-   while((curr_ < size_) && (max > 0))
+   for(auto size = source_->size(); (curr_ < size) && (max > 0); ++curr_)
    {
       auto c = (*source_)[curr_];
       auto value = CxxChar::Attrs[c].hexValue;
@@ -884,7 +1041,6 @@ size_t Lexer::GetHexNum(int64_t& num, size_t max)
       ++count;
       num <<= 4;
       num += value;
-      ++curr_;
       --max;
    }
 
@@ -937,7 +1093,7 @@ TagCount Lexer::GetIndirectionLevel(char c, bool& space)
    Debug::ft("Lexer.GetIndirectionLevel");
 
    space = false;
-   if(curr_ >= size_) return 0;
+   if(curr_ >= source_->size()) return 0;
    auto start = curr_;
    TagCount count = 0;
    while(NextCharIs(c)) ++count;
@@ -954,7 +1110,7 @@ size_t Lexer::GetInt(int64_t& num)
    size_t count = 0;
    num = 0;
 
-   while(curr_ < size_)
+   for(auto size = source_->size(); curr_ < size; ++curr_)
    {
       auto c = (*source_)[curr_];
       auto value = CxxChar::Attrs[c].intValue;
@@ -962,7 +1118,6 @@ size_t Lexer::GetInt(int64_t& num)
       ++count;
       num *= 10;
       num += value;
-      ++curr_;
    }
 
    return count;
@@ -970,37 +1125,38 @@ size_t Lexer::GetInt(int64_t& num)
 
 //------------------------------------------------------------------------------
 
-string Lexer::GetLine(size_t pos) const
+const LineInfo* Lexer::GetLineInfo(size_t pos) const
 {
-   Debug::ft("Lexer.GetLine");
-
-   auto first = source_->rfind(CRLF, pos);
-   if(first == string::npos)
-      first = 0;
-   else
-      ++first;
-   auto last = source_->find(CRLF, pos);
-   auto text = source_->substr(first, last - first);
-   text.insert(pos - first, 1, '$');
-   return text;
+   auto i = GetLineInfoIndex(pos);
+   if(i == SIZE_MAX) return nullptr;
+   return &lines_[i];
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::GetLineNum(size_t pos) const
+LineInfo* Lexer::GetLineInfo(size_t pos)
 {
-   if(pos > size_) return string::npos;
+   auto i = GetLineInfoIndex(pos);
+   if(i == SIZE_MAX) return nullptr;
+   return &lines_[i];
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::GetLineInfoIndex(size_t pos) const
+{
+   if(pos >= source_->size()) return SIZE_MAX;
 
    //  Do a binary search over the lines' starting positions.
    //
-   word min = 0;
-   word max = lines_ - 1;
+   size_t min = 0;
+   size_t max = lines_.size() - 1;
 
    while(min < max)
    {
       auto mid = (min + max + 1) >> 1;
 
-      if(line_[mid].start > pos)
+      if(lines_[mid].begin > pos)
          max = mid - 1;
       else
          min = mid;
@@ -1011,10 +1167,46 @@ size_t Lexer::GetLineNum(size_t pos) const
 
 //------------------------------------------------------------------------------
 
+LineType Lexer::GetLineType(size_t pos) const
+{
+   auto type = LineType_N;
+
+   if(!edited_ && (file_ != nullptr))
+   {
+      auto line = GetLineInfoIndex(pos);
+      if(line == SIZE_MAX) return type;
+      return file_->GetLineType(line);
+   }
+
+   auto code = GetCode(pos);
+   bool cont;
+   std::set< Warning > warnings;
+   return CalcLineType(code, cont, warnings);
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::GetLineNum(size_t pos) const
+{
+   return GetLineInfoIndex(pos);
+}
+
+//------------------------------------------------------------------------------
+
 size_t Lexer::GetLineStart(size_t line) const
 {
-   if(line >= lines_) return string::npos;
-   return line_[line].start;
+   if(edited_)
+   {
+      Debug::SwLog("Lexer.GetLineStart", LineNumberUnknown, line);
+      return string::npos;
+   }
+
+   if(line < lines_.size())
+   {
+      return lines_[line].begin;
+   }
+
+   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -1089,21 +1281,21 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetNthLine(size_t n, string& s) const
+bool Lexer::GetNthLine(size_t n, string& s, bool crlf) const
 {
-   if(n >= lines_)
+   s.clear();
+
+   if(edited_)
    {
-      s.clear();
+      Debug::SwLog("Lexer.GetNthLine", LineNumberUnknown, n);
       return false;
    }
 
-   auto curr = line_[n].start;
-
-   if(n == lines_ - 1)
-      s = source_->substr(curr, size_ - curr - 1);
-   else
-      s = source_->substr(curr, line_[n + 1].start - curr - 1);
-
+   auto pos = GetLineStart(n);
+   if(pos == string::npos) return false;
+   s = GetCode(pos);
+   if(s.empty()) return false;
+   if(!crlf && (s.back() == CRLF)) s.pop_back();
    return true;
 }
 
@@ -1112,7 +1304,7 @@ bool Lexer::GetNthLine(size_t n, string& s) const
 string Lexer::GetNthLine(size_t n) const
 {
    string s;
-   GetNthLine(n, s);
+   GetNthLine(n, s, false);
    return s;
 }
 
@@ -1125,7 +1317,7 @@ bool Lexer::GetNum(TokenPtr& item)
    //  It is already known that the next character is a digit, so a lot of
    //  nonsense can be avoided by seeing if that digit appears alone.
    //
-   if(curr_ >= size_ - 1) return false;
+   if(curr_ >= source_->size() - 1) return false;
    auto pos = curr_ + 1;
    auto c = (*source_)[pos];
 
@@ -1252,7 +1444,7 @@ size_t Lexer::GetOct(int64_t& num)
    size_t count = 0;
    num = 0;
 
-   while(curr_ < size_)
+   for(auto size = source_->size(); curr_ < size; ++curr_)
    {
       auto c = (*source_)[curr_];
       auto value = CxxChar::Attrs[c].octValue;
@@ -1260,7 +1452,6 @@ size_t Lexer::GetOct(int64_t& num)
       ++count;
       num <<= 3;
       num += value;
-      ++curr_;
    }
 
    return count;
@@ -1387,33 +1578,229 @@ bool Lexer::GetTemplateSpec(string& spec)
 
 //------------------------------------------------------------------------------
 
-void Lexer::Initialize(const string& source)
+void Lexer::Initialize(const string& source, CodeFile* file)
 {
    Debug::ft("Lexer.Initialize");
 
    source_ = &source;
-   size_ = source_->size();
-   lines_ = 0;
-   line_.clear();
+   file_ = file;
+   lines_.clear();
    curr_ = 0;
    prev_ = 0;
-   scanned_ = false;
-   if(size_ == 0) return;
+   if(source_->empty()) return;
 
-   for(size_t n = 0; n < size_; ++n)
+   //  Initialize the information for each line.
+   //
+   for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
    {
-      if((*source_)[n] == CRLF) ++lines_;
-   }
-
-   if(source_->back() != CRLF) ++lines_;
-
-   for(size_t n = 0, pos = 0; n < lines_; ++n)
-   {
-      line_.push_back(LineInfo(pos));
-      pos = source_->find(CRLF, pos) + 1;
+      lines_.push_back(LineInfo(pos));
    }
 
    Advance();
+}
+
+//------------------------------------------------------------------------------
+
+bool Lexer::IsBlankLine(size_t pos) const
+{
+   Debug::ft("Lexer.IsBlankLine");
+
+   auto begin = CurrBegin(pos);
+   return (source_->find_first_not_of(WhitespaceChars, begin) > CurrEnd(pos));
+}
+
+//------------------------------------------------------------------------------
+
+bool Lexer::IsFirstNonBlank(size_t pos) const
+{
+   Debug::ft("Lexer.IsFirstNonBlank");
+
+   return (LineFindFirst(CurrBegin(pos)) == pos);
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineFind(size_t pos, const string& str)
+{
+   Debug::ft("Lexer.LineFind");
+
+   auto end = CurrEnd(pos);
+   if(end == string::npos) return string::npos;
+
+   for(Reposition(pos); curr_ <= end; Advance(1))
+   {
+      if(source_->compare(curr_, str.size(), str) == 0)
+      {
+         return curr_;
+      }
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineFindFirst(size_t pos) const
+{
+   Debug::ft("Lexer.LineFindFirst");
+
+   auto begin = CurrBegin(pos);
+   if(begin == string::npos) return string::npos;
+   auto loc = source_->find_first_not_of(WhitespaceChars, begin);
+   return (loc < CurrEnd(pos) ? loc : string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineFindFirstOf(size_t pos, const std::string& chars)
+{
+   Debug::ft("Lexer.LineFindFirstOf");
+
+   auto end = CurrEnd(pos);
+   if(end == string::npos) return string::npos;
+
+   for(Reposition(pos); curr_ <= end; Advance(1))
+   {
+      if(chars.find((*source_)[curr_]) != string::npos)
+      {
+         return curr_;
+      }
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineFindNext(size_t pos) const
+{
+   Debug::ft("Lexer.LineFindNext");
+
+   if(pos >= source_->size()) return string::npos;
+   auto loc = source_->find_first_not_of(WhitespaceChars, pos);
+   return (loc < CurrEnd(pos) ? loc : string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineFindNonBlank(size_t pos)
+{
+   Debug::ft("Lexer.LineFindNonBlank");
+
+   auto end = CurrEnd(pos);
+   if(end == string::npos) return string::npos;
+
+   for(Reposition(pos); curr_ <= end; Advance(1))
+   {
+      if(!IsBlank((*source_)[curr_]))
+      {
+         return curr_;
+      }
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineRfind(size_t pos, const string& str)
+{
+   Debug::ft("Lexer.LineRfind");
+
+   //  The lexer doesn't support reverse scanning, which would involve writing
+   //  "reverse" versions of NextPos, FindFirstOf, and various other functions.
+   //  So we fake it by scanning forward for the last occurrence.
+   //
+   auto begin = CurrBegin(pos);
+   if(begin == string::npos) return string::npos;
+
+   auto loc = string::npos;
+
+   for(Reposition(begin); curr_ <= pos; Advance(1))
+   {
+      if(source_->compare(curr_, str.size(), str) == 0)
+      {
+         loc = curr_;
+      }
+   }
+
+   return loc;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineRfindFirstOf(size_t pos, const std::string& chars)
+{
+   Debug::ft("Lexer.LineRfindFirstOf");
+
+   auto begin = CurrBegin(pos);
+   if(begin == string::npos) return string::npos;
+
+   auto loc = string::npos;
+
+   for(Reposition(begin); curr_ <= pos; Advance(1))
+   {
+      if(chars.find((*source_)[curr_]) != string::npos)
+      {
+         loc = curr_;
+      }
+   }
+
+   return loc;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineRfindNonBlank(size_t pos)
+{
+   Debug::ft("Lexer.LineRfindNonBlank");
+
+   auto begin = CurrBegin(pos);
+   if(begin == string::npos) return string::npos;
+
+   auto loc = string::npos;
+
+   for(Reposition(begin); curr_ <= pos; Advance(1))
+   {
+      if(!IsBlank((*source_)[curr_]))
+      {
+         loc = curr_;
+      }
+   }
+
+   return loc;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineSize(size_t pos) const
+{
+   return CurrEnd(pos) - CurrBegin(pos) + 1;
+}
+
+//------------------------------------------------------------------------------
+
+string Lexer::MarkPos(size_t pos) const
+{
+   Debug::ft("Lexer.MarkPos");
+
+   auto first = source_->rfind(CRLF, pos);
+   if(first == string::npos)
+      first = 0;
+   else
+      ++first;
+   auto last = source_->find(CRLF, pos);
+   auto text = source_->substr(first, last - first);
+   text.insert(pos - first, 1, '$');
+   return text;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::NextBegin(size_t pos) const
+{
+   auto end = CurrEnd(pos);
+   return (end >= source_->size() - 1 ? string::npos : end + 1);
 }
 
 //------------------------------------------------------------------------------
@@ -1422,7 +1809,7 @@ bool Lexer::NextCharIs(char c)
 {
    Debug::ft("Lexer.NextCharIs");
 
-   if((curr_ >= size_) || ((*source_)[curr_] != c)) return false;
+   if((curr_ >= source_->size()) || ((*source_)[curr_] != c)) return false;
    return Advance(1);
 }
 
@@ -1446,7 +1833,8 @@ string Lexer::NextIdentifier() const
 {
    Debug::ft("Lexer.NextIdentifier");
 
-   if(curr_ >= size_) return EMPTY_STR;
+   auto size = source_->size();
+   if(curr_ >= size) return EMPTY_STR;
 
    string str;
    auto pos = curr_;
@@ -1458,7 +1846,7 @@ string Lexer::NextIdentifier() const
    if(!CxxChar::Attrs[c].validFirst) return str;
    str += c;
 
-   while(++pos < size_)
+   while(++pos < size)
    {
       c = (*source_)[pos];
       if(!CxxChar::Attrs[c].validNext) return str;
@@ -1491,7 +1879,8 @@ string Lexer::NextOperator() const
 {
    Debug::ft("Lexer.NextOperator");
 
-   if(curr_ >= size_) return EMPTY_STR;
+   auto size = source_->size();
+   if(curr_ >= size) return EMPTY_STR;
    string token;
    auto pos = curr_;
    auto c = (*source_)[pos];
@@ -1512,7 +1901,7 @@ size_t Lexer::NextPos(size_t pos) const
 {
    //  Find the next character to be parsed.
    //
-   while(pos < size_)
+   for(auto size = source_->size(); pos < size; NO_OP)
    {
       auto c = (*source_)[pos];
 
@@ -1531,7 +1920,7 @@ size_t Lexer::NextPos(size_t pos) const
          //
          //  See if this begins a comment (// or /*).
          //
-         if(++pos >= size_) return string::npos;
+         if(++pos >= size) return string::npos;
 
          switch((*source_)[pos])
          {
@@ -1548,7 +1937,7 @@ size_t Lexer::NextPos(size_t pos) const
             //
             //  This is a /* comment.  Continue where it ends.
             //
-            if(++pos >= size_) return string::npos;
+            if(++pos >= size) return string::npos;
             pos = source_->find(COMMENT_END_STR, pos);
             if(pos == string::npos) return string::npos;
             pos += 2;
@@ -1567,7 +1956,7 @@ size_t Lexer::NextPos(size_t pos) const
          //
          //  See if this is a continuation of the current line.
          //
-         if(++pos >= size_) return string::npos;
+         if(++pos >= size) return string::npos;
          if((*source_)[pos] != CRLF) return pos - 1;
          ++pos;
          break;
@@ -1586,13 +1975,14 @@ bool Lexer::NextStringIs(fixed_string str, bool check)
 {
    Debug::ft("Lexer.NextStringIs");
 
-   if(curr_ >= size_) return false;
+   auto size = source_->size();
+   if(curr_ >= size) return false;
 
-   auto size = strlen(str);
-   if(source_->compare(curr_, size, str) != 0) return false;
+   auto len = strlen(str);
+   if(source_->compare(curr_, len, str) != 0) return false;
 
-   auto pos = curr_ + size;
-   if(!check || (pos >= size_)) return Reposition(pos);
+   auto pos = curr_ + len;
+   if(!check || (pos >= size)) return Reposition(pos);
 
    auto next = (*source_)[pos];
 
@@ -1608,7 +1998,7 @@ bool Lexer::NextStringIs(fixed_string str, bool check)
       //  check prevents an identifier that starts with a keyword from
       //  being recognized as that keyword.
       //
-      if(CxxChar::Attrs[str[size - 1]].validNext)
+      if(CxxChar::Attrs[str[len - 1]].validNext)
       {
          if(CxxChar::Attrs[next].validNext) return false;
       }
@@ -1639,6 +2029,36 @@ Cxx::Type Lexer::NextType()
    auto type = Cxx::GetType(token);
    if(type != Cxx::NIL_TYPE) Advance(token.size());
    return type;
+}
+
+//------------------------------------------------------------------------------
+
+bool Lexer::NoCodeFollows(size_t pos) const
+{
+   Debug::ft("Lexer.NoCodeFollows");
+
+   auto crlf = source_->find_first_of(CRLF, pos);
+   pos = source_->find_first_not_of(WhitespaceChars, pos);
+   if(pos >= crlf) return true;
+   if(CodeMatches(pos, COMMENT_STR)) return true;
+
+   if(CodeMatches(pos, COMMENT_BEGIN_STR))
+   {
+      pos = source_->find(COMMENT_END_STR, pos + 2);
+      if(pos >= crlf) return true;
+      return NoCodeFollows(pos + 2);
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool Lexer::OnSameLine(size_t pos1, size_t pos2) const
+{
+   Debug::ft("Lexer.OnSameLine");
+
+   return (CurrEnd(pos1) == CurrEnd(pos2));
 }
 
 //------------------------------------------------------------------------------
@@ -1696,6 +2116,15 @@ void Lexer::PreprocessSource() const
 
 //------------------------------------------------------------------------------
 
+size_t Lexer::PrevBegin(size_t pos) const
+{
+   if(pos >= source_->size()) pos = source_->size() - 1;
+   auto begin = CurrBegin(pos);
+   return (begin == 0 ? string::npos : CurrBegin(begin - 1));
+}
+
+//------------------------------------------------------------------------------
+
 bool Lexer::Reposition(size_t pos)
 {
    Debug::ft("Lexer.Reposition");
@@ -1718,35 +2147,81 @@ bool Lexer::Retreat(size_t pos)
 
 //------------------------------------------------------------------------------
 
+size_t Lexer::Rfind(size_t pos, const string& str)
+{
+   Debug::ft("Lexer.Rfind");
+
+   for(NO_OP; pos != string::npos; pos = CurrBegin(pos) - 1)
+   {
+      auto loc = LineRfind(pos, str);
+      if(loc != string::npos) return loc;
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::RfindFirstOf(size_t pos, const string& chars)
+{
+   Debug::ft("Lexer.RfindFirstOf");
+
+   for(NO_OP; pos != string::npos; pos = CurrBegin(pos) - 1)
+   {
+      auto loc = LineRfindFirstOf(pos, chars);
+      if(loc != string::npos) return loc;
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::RfindNonBlank(size_t pos)
+{
+   Debug::ft("Lexer.RfindNonBlank");
+
+   for(NO_OP; pos != string::npos; pos = CurrBegin(pos) - 1)
+   {
+      auto loc = LineRfindNonBlank(pos);
+      if(loc != string::npos) return loc;
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
 void Lexer::SetDepth(size_t& start, int8_t depth1, int8_t depth2)
 {
-   //  START is the last position where a new line of code started, and curr_
-   //  has finalized the depth of that code.  Each line from START to the one
-   //  above the next parse position is therefore at DEPTH unless its depth
-   //  has already been determined.  If there is more than one line in this
-   //  range, the subsequent ones are continuations of the first.
+   //  START is the last position where a line of code whose depth has not
+   //  been determined started, and curr_ has finalized the depth of that
+   //  code.  Each line from START to the one above the next parse position
+   //  is therefore at DEPTH unless its depth has already been determined.
+   //  If there is more than one line in this range, the subsequent ones
+   //  are continuations of the first.
    //
-   auto begin = GetLineNum(start);
-   auto mid = GetLineNum(curr_);
+   auto begin = GetLineInfoIndex(start);
+   auto mid = GetLineInfoIndex(curr_);
    start = NextPos(curr_ + 1);
-   if(start == string::npos) start = size_ - 1;
-   auto end = GetLineNum(start);
+   auto end = GetLineInfoIndex(start);
+   if(end == SIZE_MAX) end = lines_.size();
 
    for(auto i = begin; i <= mid; ++i)
    {
-      if(line_[i].depth == DEPTH_NOT_SET)
+      if(lines_[i].depth == DEPTH_NOT_SET)
       {
-         line_[i].depth = depth1;
-         line_[i].cont = (i != begin);
+         lines_[i].depth = depth1;
+         lines_[i].cont = (i != begin);
       }
    }
 
    for(auto i = mid + 1; i < end; ++i)
    {
-      if(line_[i].depth == DEPTH_NOT_SET)
+      if(lines_[i].depth == DEPTH_NOT_SET)
       {
-         line_[i].depth = depth2;
-         line_[i].cont = (i != mid + 1);
+         lines_[i].depth = depth2;
+         lines_[i].cont = (i != mid + 1);
       }
    }
 }
@@ -1759,7 +2234,7 @@ bool Lexer::Skip()
 
    //  Advance to whatever follows the current line.
    //
-   if(curr_ >= size_) return true;
+   if(curr_ >= source_->size()) return true;
    curr_ = source_->find(CRLF, curr_);
    return Advance(1);
 }
@@ -1772,7 +2247,7 @@ size_t Lexer::SkipCharLiteral(size_t pos) const
 
    //  The literal ends at the next non-escaped occurrence of an apostrophe.
    //
-   while(++pos < size_)
+   for(auto size = source_->size(); ++pos < size; NO_OP)
    {
       auto c = (*source_)[pos];
       if(c == APOSTROPHE) return pos;
@@ -1794,7 +2269,7 @@ size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
    //
    size_t next;
 
-   while(++pos < size_)
+   for(auto size = source_->size(); ++pos < size; NO_OP)
    {
       auto c = (*source_)[pos];
 
@@ -1821,7 +2296,8 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
 {
    Debug::ft("Lexer.SkipTemplateSpec");
 
-   if(pos >= size_) return string::npos;
+   auto size = source_->size();
+   if(pos >= size) return string::npos;
 
    //  Extract the template specification, which must begin with a '<', end
    //  with a balanced '>', and contain identifiers or template punctuation.
@@ -1832,7 +2308,7 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
 
    size_t depth;
 
-   for(depth = 1; ((pos < size_) && (depth > 0)); ++pos)
+   for(depth = 1; ((pos < size) && (depth > 0)); ++pos)
    {
       c = (*source_)[pos];
       if(ValidTemplateSpecChars.find(c) == string::npos) return string::npos;
@@ -1849,14 +2325,43 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
 
 //------------------------------------------------------------------------------
 
+string Lexer::Substr(size_t pos, size_t count) const
+{
+   Debug::ft("Lexer.Substr");
+
+   string s = source_->substr(pos, count);
+   return Compress(s);
+}
+
+//------------------------------------------------------------------------------
+
 bool Lexer::ThisCharIs(char c)
 {
    Debug::ft("Lexer.ThisCharIs");
 
    //  If the next character is C, advance to the character that follows it.
    //
-   if((curr_ >= size_) || ((*source_)[curr_] != c)) return false;
+   if((curr_ >= source_->size()) || ((*source_)[curr_] != c)) return false;
    ++curr_;
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+void Lexer::Update()
+{
+   Debug::ft("Lexer.Update");
+
+   //  The code has been modified, so regenerate our LineInfo records.
+   //
+   edited_ = true;
+   lines_.clear();
+
+   for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
+   {
+      lines_.push_back(LineInfo(pos));
+   }
+
+   CalcDepths();
 }
 }

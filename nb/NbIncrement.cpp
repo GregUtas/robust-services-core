@@ -3930,6 +3930,13 @@ NbIncrement::~NbIncrement()
 
 //------------------------------------------------------------------------------
 
+void NbIncrement::Patch(sel_t selector, void* arguments)
+{
+   CliIncrement::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
 void NbIncrement::Startup(RestartLevel level)
 {
    Debug::ftnt("NbIncrement.Startup");

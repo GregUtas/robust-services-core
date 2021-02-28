@@ -250,6 +250,11 @@ public:
    //  Overridden to reveal that this is a code block.
    //
    Cxx::ItemType Type() const override { return Cxx::Block; }
+
+   //  Overridden to update the location of block's statements.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  The statements in the block.
    //
@@ -440,6 +445,11 @@ public:
    //  Overridden to return the data's full root type.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the data's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 
    //  Overridden to increment the number of times the data was read.
    //
@@ -665,6 +675,11 @@ public:
    //  Overridden to shrink containers.
    //
    void Shrink() override;
+
+   //  Overridden to update the data's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Overridden to clone the qualified name.
    //
@@ -780,6 +795,11 @@ public:
    //  Overridden to return the item's name.
    //
    std::string Trace() const override {return *Name(); }
+
+   //  Overridden to update the item's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 
    //  Overridden to track usage of the "mutable" attribute.
    //
@@ -899,6 +919,11 @@ public:
    //  Overridden to return the item's name.
    //
    std::string Trace() const override {return *Name(); }
+
+   //  Overridden to update the data's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Invoked by Display on each declaration in a possible series.
    //
@@ -1070,6 +1095,12 @@ public:
    //
    size_t LogOffsetToArgIndex(NodeBase::word offset) const;
 
+   //  Returns true for a function declaration (which might also define the
+   //  function).  Returns false for the definition of a previously declared
+   //  function.
+   //
+   bool IsDecl() const { return !defn_; }
+
    //  Returns the function's declaration.
    //
    const Function* GetDecl() const { return (defn_ ? mate_ : this); }
@@ -1197,9 +1228,10 @@ public:
    //
    void IncrThisWrites() const;
 
-   //  Invoked when the function accessed ITEM.
+   //  Invoked when the function accessed ITEM; if VIA is provided, ITEM was
+   //  accessed as VIA.ITEM or VIA->ITEM.
    //
-   void ItemAccessed(const CxxNamed* item);
+   void ItemAccessed(const CxxNamed* item, const StackArg* via);
 
    //  Registers an invocation of the function.  ARGS is a list of resolved
    //  arguments, in the same order as declared by the function.  A read is
@@ -1313,10 +1345,10 @@ public:
    //
    QualName* GetQualName() const override { return name_.get(); }
 
-   //  Overridden to return the offset of the left brace (if any),
-   //  in which case END is updated to the location of the right brace.
+   //  Overridden to support a function definition by setting LEFT and END
+   //  to the locations of its left and right braces.
    //
-   size_t GetRange(size_t& begin, size_t& end) const override;
+   bool GetRange(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to handle an inline friend function.
    //
@@ -1412,6 +1444,11 @@ public:
    //  function's name is omitted if ARG is set.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the function's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 
    //  Overridden to track how many times the function was invoked.
    //
@@ -1689,8 +1726,8 @@ private:
    //
    bool defaulted_ : 1;
 
-   //  How many times the function was invoked.
-   //  ONLY INCREMENTED ON THE DECLARATION.
+   //  How many times the function was invoked.  Only incremented on the
+   //  declaration.
    //
    size_t calls_ : 16;
 
@@ -1776,9 +1813,11 @@ private:
    const std::string* Name() const override { return func_->Name(); }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { func_->Shrink(); }
+   void Shrink() override;
    std::string Trace() const override;
    std::string TypeString(bool arg) const override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 
    //  The following are forwarded to the function's return type.
    //

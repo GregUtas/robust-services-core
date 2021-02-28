@@ -49,7 +49,8 @@ namespace CodeTools
 Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    name_(name.release()),
    tag_(tag),
-   currAccess_(Cxx::Access_N),
+   currAccess_(tag == Cxx::ClassType ? Cxx::Private : Cxx::Public),
+   implicit_(false),
    copied_(false)
 {
    Debug::ft("Class.ctor[>ct]");
@@ -81,129 +82,92 @@ void Class::AccessibilityOf
    //
    view->accessibility = Inaccessible;
 
-   //  Create a list of ITEM's class scopes.  There will be more than one
-   //  only if ITEM is an inner class.  Simultaneously, determine ITEM's
-   //  access control at each class scope.
-   //    If ITEM is a forward declaration of an inner class, the distance
-   //  to it is one less than the distance to the definition of the inner
-   //  class.  This occurs because the inner class is added to itemClasses,
-   //  whereas the forward declaration is not.  Correct for this so that
-   //  CxxSymbols.FindNearestItem will resolve the class's name to its
-   //  definition instead of to its forward declaration.
+   //  We shouldn't be here if ITEM doesn't belong to a class.
    //
-   std::vector< Class* > itemClasses;
-   std::vector< Cxx::Access > controls;
-
    auto itemClass = item->GetClass();
-   size_t n = 0;
-   auto type = item->Type();
-   auto f = (type == Cxx::Forward ? 1 : 0);
-
-   for(auto c = itemClass; c != nullptr; c = c->OuterClass(), ++n)
-   {
-      itemClasses.push_back(c);
-
-      //  On the first pass, make ITEM public to the first level (its outer
-      //  class) and apply its access control to the next level.  As we
-      //  ascend through outer classes, incorporate their access controls.
-      //
-      if(n == 0)
-      {
-         controls.push_back(Cxx::Public);
-         controls.push_back(item->GetAccess());
-         n = 1;
-      }
-      else
-      {
-         controls.push_back(std::min(controls[n - 1], c->GetAccess()));
-      }
-   }
-
-   if(itemClasses.empty())
+   if(itemClass == nullptr)
    {
       auto expl = "Item is not a class member: " + item->ScopedName(true);
       Context::SwLog(Class_AccessibilityOf, expl, 0);
       return;
    }
 
-   //  Find SCOPE's class.  If it doesn't have one, it must be a friend
-   //  of ITEM's class unless ITEM is public at file scope.
+   //  If ITEM is a forward declaration, increase its distance from SCOPE
+   //  so that CxxSymbols.FindNearestItem will resolve the class's name to
+   //  its definition instead of to the forward declaration.
    //
-   auto usingClass = scope->GetClass();
+   auto itemType = item->Type();
+   auto f = (itemType == Cxx::Forward ? 1 : 0);
 
-   if(usingClass != nullptr)
+   //  The purpose of this function isn't only to check accessibility, but
+   //  also to determine whether an item's access control could be changed
+   //  to something more restrictive.  This affects the order of the logic.
+   //
+   std::vector< Class* > userClasses;
+   auto userClass = scope->GetClass();
+
+   if(userClass != nullptr)
    {
-      //  See if SCOPE has a class scope in common with ITEM.  If so, N
-      //  will be the index to that class in itemClasses, and M will be
-      //  its distance above SCOPE.
+      //  SCOPE can see ITEM if userClass is the same as itemClass.
       //
-      size_t m = 0;
-      n = SIZE_MAX;
-
-      for(auto c = usingClass; c != nullptr; c = c->OuterClass(), ++m)
+      if(userClass == itemClass)
       {
-         n = IndexOf(itemClasses, c);
-         if(n != SIZE_MAX) break;
-      }
-
-      if(n == 0)
-      {
-         //  SCOPE is either in ITEM's class or one of its inner classes.
-         //  It can therefore access ITEM.
-         //
-         view->distance = m + f;
+         view->distance = f;
          view->accessibility = Declared;
+         item->RecordAccess(Context::ScopeVisibility());
          return;
       }
-      else if(n != SIZE_MAX)
-      {
-         //  SCOPE is either in ITEM's outer class or another inner class
-         //  that shares an outer class with ITEM.  In either case, ITEM is
-         //  only accessible if it is public to the outer class.  Note that
-         //  an inner class, or its forward declaration, is always visible
-         //  to the outer class.
-         //
-         if(controls[n - 1] == Cxx::Public)
-         {
-            view->distance = m + n + f;
-            view->accessibility = Declared;
-            if((item == itemClass) || (item->Referent() == itemClass)) return;
-            item->RecordAccess(Cxx::Public);
-            return;
-         }
-      }
-      else
-      {
-         //  If SCOPE and ITEM don't share a common outer class, see if SCOPE's
-         //  class derives from ITEM's class.  If so, SCOPE can see a protected
-         //  ITEM, but not a private ITEM unless it is a friend.
-         //
-         view->distance = usingClass->ClassDistance(this);
 
-         if(view->distance != NOT_A_SUBCLASS)
-         {
-            auto frnd = itemClass->FindFriend(scope);
-
-            if(frnd != nullptr)
-            {
-               view->accessibility = Inherited;
-               view->friend_ = true;
-               if(controls[1] == Cxx::Private) frnd->IncrUsers();
-            }
-            else if(controls[1] != Cxx::Private)
-            {
-               view->accessibility = Inherited;
-               item->RecordAccess(Cxx::Protected);
-            }
-
-            return;
-         }
-      }
-
-      //  If the using class is a template instance of ITEM's class, it
-      //  can use an inline function in the class template.
+      //  SCOPE can see ITEM if userClass is an inner class of itemClass.
       //
-      if((type == Cxx::Function) && (usingClass->GetTemplate() == this) &&
+      userClasses.push_back(userClass);
+      auto control = Context::ScopeVisibility();
+
+      for(auto c = userClass->OuterClass(); c != nullptr; c = c->OuterClass())
+      {
+         control = std::min(control, c->GetAccess());
+
+         if(c == itemClass)
+         {
+            view->distance = userClasses.size() + f;
+            view->accessibility = Declared;
+            item->RecordAccess(control);
+            return;
+         }
+
+         userClasses.push_back(c);
+      }
+
+      //  SCOPE can see ITEM if it is a friend of itemClass.
+      //
+      view->distance = userClass->ClassDistance(this);
+      auto access =
+         (view->distance == NOT_A_SUBCLASS ? Unrestricted : Inherited);
+
+      auto frnd = itemClass->FindFriend(scope);
+
+      if(frnd != nullptr)
+      {
+         view->accessibility = access;
+         view->friend_ = true;
+         if(control == Cxx::Private) frnd->IncrUsers();
+         return;
+      }
+
+      //  SCOPE can see ITEM if it inherits from this class (the one that
+      //  defined ITEM), as long as ITEM is not private.
+      //
+      if((access == Inherited) && (item->GetAccess() != Cxx::Private))
+      {
+         view->accessibility = Inherited;
+         item->RecordAccess(Cxx::Protected);
+         return;
+      }
+
+      //  If ITEM is an inline function in a class template, SCOPE can see
+      //  ITEM if userClass is an instance of the class template.
+      //
+      if((itemType == Cxx::Function) && (userClass->GetTemplate() == this) &&
          static_cast< const Function* >(item)->IsInline())
       {
          view->distance = 1;
@@ -214,7 +178,7 @@ void Class::AccessibilityOf
       //  Don't enforce access controls on a class template.  Violations
       //  will be detected on template instances.
       //
-      if(usingClass->IsTemplate())
+      if(userClass->IsTemplate())
       {
          view->accessibility = Unrestricted;
          return;
@@ -223,9 +187,9 @@ void Class::AccessibilityOf
       //  If the using class is a template instance, it can use a template
       //  argument, even if the argument is private.
       //
-      if(usingClass->IsInTemplateInstance())
+      if(userClass->IsInTemplateInstance())
       {
-         auto spec = usingClass->GetTemplateArgs();
+         auto spec = userClass->GetTemplateArgs();
 
          if(spec->ItemIsTemplateArg(item))
          {
@@ -235,24 +199,79 @@ void Class::AccessibilityOf
       }
    }
 
-   view->distance = scope->ScopeDistance(itemClasses.back()->GetSpace());
+   //  Find the distance from SCOPE to ITEM.  Start by seeing whether
+   //  they share a common base class.  userClasses already contains
+   //  the classes that wrap SCOPE, so do the same for ITEM.  At the
+   //  same time, find the access control that applies to ITEM on the
+   //  path from its class to its outermost class.
+   //
+   std::vector< Class* > itemClasses;
+   std::vector< Cxx::Access > controls;
+   auto control = item->GetAccess();
+
+   for(auto c = itemClass; c != nullptr; c = c->OuterClass())
+   {
+      itemClasses.push_back(c);
+      controls.push_back(std::min(control, c->GetAccess()));
+   }
+
+   size_t m = 0;
+   auto n = SIZE_MAX;
+
+   for(auto c = userClasses.cbegin(); c != userClasses.cend(); ++c, ++m)
+   {
+      n = IndexOf(itemClasses, *c);
+      if(n != SIZE_MAX) break;
+   }
+
+   //  If N isn't SIZE_MAX, ITEM and SCOPE share a base class.  Otherwise
+   //  SCOPE must access ITEM through its namespace.
+   //
+   if(n != SIZE_MAX)
+      view->distance = m + n + f;
+   else
+      view->distance = scope->ScopeDistance(itemClasses.back()->GetSpace()) + f;
 
    //  Don't enforce access controls on a function template.  Violations
    //  will be detected on template instances.
    //
-   auto usingFunc = scope->GetFunction();
+   auto userFunc = scope->GetFunction();
 
-   if((usingFunc != nullptr) && usingFunc->IsTemplate())
+   if((userFunc != nullptr) && userFunc->IsTemplate())
    {
       view->accessibility = Unrestricted;
       return;
    }
 
-   //  ITEM must be public at file scope unless SCOPE is a friend.
+   //  Determine which control applies.  If n=1, userClass is an inner class
+   //  of the same class that defines itemClass, so SCOPE can see ITEM if the
+   //  latter is a class (rather than one of its members, to which controls
+   //  still apply).
+   //
+   if(n == SIZE_MAX)
+   {
+      control = controls.back();
+   }
+   else
+   {
+      if((n <= 1) && (itemType == Cxx::Class))
+      {
+         view->accessibility = item->FileScopeAccessiblity();
+         return;
+      }
+      else
+      {
+         control = controls[n];
+      }
+   }
+
+   //  See if SCOPE is a friend of ITEM's class.  If it isn't, it might still
+   //  be able to access ITEM if ITEM is an inner class and SCOPE is a friend
+   //  of the outer class.
    //
    auto frnd = itemClass->FindFriend(scope);
 
-   if((frnd == nullptr) && (type == Cxx::Class))
+   if((frnd == nullptr) && (itemType == Cxx::Class))
    {
       auto decl = item->Declarer();
       if(decl != nullptr) frnd = decl->FindFriend(scope);
@@ -262,11 +281,13 @@ void Class::AccessibilityOf
    {
       view->accessibility = Unrestricted;
       view->friend_ = true;
-      if(controls.back() != Cxx::Public) frnd->IncrUsers();
+      if(control != Cxx::Public) frnd->IncrUsers();
       return;
    }
 
-   if(controls.back() == Cxx::Public)
+   //  If we get here, ITEM must be public for SCOPE to see it.
+   //
+   if(control == Cxx::Public)
    {
       view->accessibility = item->FileScopeAccessiblity();
       item->RecordAccess(Cxx::Public);
@@ -481,14 +502,30 @@ void Class::Check() const
       (*f)->Check();
    }
 
-   if(!subs_.empty() && (FindDtor() == nullptr))
-   {
-      Log(NonVirtualDestructor);
-   }
-
+   CheckBaseClass();
    CheckIfUnused(ClassUnused);
    CheckOverrides();
    CheckRuleOfThree();
+}
+
+//------------------------------------------------------------------------------
+
+void Class::CheckBaseClass() const
+{
+   Debug::ft("Class.CheckBaseClass");
+
+   if(!IsBaseClass()) return;
+
+   auto func = FindDtor();
+   if(func == nullptr) Log(ImplicitDestructor);
+
+   auto funcs = Funcs();
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      if((*f)->FuncRole() == PureCtor) return;
+   }
+
+   Log(ImplicitConstructor);
 }
 
 //------------------------------------------------------------------------------
@@ -891,7 +928,7 @@ void Class::Display(ostream& stream,
 
       lead += spaces(INDENT_SIZE);
 
-      if(!subs_.empty())
+      if(IsBaseClass())
       {
          stream << prefix << spaces(INDENT_SIZE) << "subclasses:" << CRLF;
 
@@ -1085,31 +1122,18 @@ Function* Class::FindCtor
 
 //------------------------------------------------------------------------------
 
-std::vector< Function* > Class::FindCtors() const
+Function* Class::FindDtor() const
 {
-   Debug::ft("Class.FindCtors");
+   Debug::ft("Class.FindDtor");
 
-   std::vector< Function* > ctors;
    const FunctionPtrVector* funcs = Funcs();
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      if((*f)->FuncRole() == PureCtor) ctors.push_back(f->get());
+      if((*f)->Name()->front() == '~') return f->get();
    }
 
-   if(ctors.empty()) ctors.push_back(nullptr);
-   return ctors;
-}
-
-//------------------------------------------------------------------------------
-
-Function* Class::FindDtor(const CxxScope* scope, SymbolView* view) const
-{
-   Debug::ft("Class.FindDtor");
-
-   auto name = *Name();
-   name.insert(0, 1, '~');
-   return FindFunc(name, nullptr, false, scope, view);
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1161,7 +1185,6 @@ Function* Class::FindFuncByRole(FunctionRole role, bool base) const
    switch(role)
    {
    case FuncOther:
-   case PureCtor:
       Context::SwLog(Class_FindFuncByRole, "Role not supported", role);
       return nullptr;
    }
@@ -1178,9 +1201,18 @@ Function* Class::FindFuncByRole(FunctionRole role, bool base) const
       funcs = Funcs();
    }
 
+   //  If looking for a constructor, it must have no arguments (which,
+   //  internally, is actually one, because it gets an implicit "this").
+   //
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      if((*f)->FuncRole() == role) return f->get();
+      if((*f)->FuncRole() == role)
+      {
+         if((role != PureCtor) || ((*f)->GetArgs().size() == 1))
+         {
+            return f->get();
+         }
+      }
    }
 
    if(!base) return nullptr;
@@ -1361,17 +1393,16 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
 //------------------------------------------------------------------------------
 
-size_t Class::GetRange(size_t& begin, size_t& end) const
+bool Class::GetRange(size_t& begin, size_t& left, size_t& end) const
 {
-   //  Set BEGIN to where the class definition begins, and END to the offset of
-   //  its closing right brace.  Return the offset of the opening left brace.
-   //
    auto lexer = GetFile()->GetLexer();
    begin = GetPos();
+   if(begin == string::npos) return false;
    lexer.Reposition(begin);
-   auto left = lexer.FindFirstOf("{");
+   left = lexer.FindFirstOf("{");
+   if(left == string::npos) return false;
    end = lexer.FindClosing('{', '}', left + 1);
-   return left;
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -1390,8 +1421,9 @@ Class::UsageAttributes Class::GetUsageAttrs() const
 
    UsageAttributes attrs;
 
-   if(!subs_.empty()) attrs.set(IsBase);
+   if(IsBaseClass()) attrs.set(IsBase);
    if(!tmplts_.empty()) attrs.set(HasInstantiations);
+   if(implicit_) attrs.set(IsConstructed);
 
    auto classes = Classes();
    for(auto c = classes->cbegin(); c != classes->cend(); ++c)
@@ -1804,7 +1836,6 @@ void Class::SetTemplateParms(TemplateParmsPtr& parms)
 void Class::Shrink()
 {
    CxxArea::Shrink();
-
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
    if(base_ != nullptr) base_->Shrink();
@@ -1836,6 +1867,103 @@ void Class::Shrink()
 string Class::TypeString(bool arg) const
 {
    return Prefix(GetScope()->TypeString(arg)) + *Name();
+}
+
+//------------------------------------------------------------------------------
+
+void Class::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxArea::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
+   if(base_ != nullptr) base_->UpdatePos(action, begin, count, from);
+
+   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
+   {
+      (*f)->UpdatePos(action, begin, count, from);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+const Warning RoleToWarning[FuncOther + 1] =
+{
+   ImplicitConstructor,      //  PureCtor
+   ImplicitDestructor,       //  PureDtor
+   ImplicitCopyConstructor,  //  CopyCtor
+   ImplicitCopyConstructor,  //  MoveCtor
+   ImplicitCopyOperator,     //  CopyOper
+   ImplicitCopyOperator,     //  MoveOper
+   Warning_N                 //  FuncOther
+};
+
+void Class::WasCalled(FunctionRole role, const CxxNamed* item)
+{
+   Debug::ft("Class.WasCalled");
+
+   //  The special member function associated with ROLE was invoked.  If
+   //  that function is defined, tell it that it was invoked.
+   //
+   auto func = FindFuncByRole(role, false);
+
+   if(func != nullptr)
+   {
+      func->WasCalled();
+      return;
+   }
+
+   //  The special member function is implicitly defined.  Decide whether to
+   //  generate a log.  An implicit constructor, copy constructor, or copy
+   //  operator always results in a log, and a destructor results in a log if
+   //  the class has a pointer member (which might mean that it needs to free
+   //  free memory).  Propagate the call up the class hierarchy if a log is
+   //  not generated.
+   //
+   implicit_ = true;
+
+   auto log = false;
+   auto data = Datas();
+
+   if(role == PureDtor)
+   {
+      for(auto d = data->cbegin(); d != data->cend(); ++d)
+      {
+         if(!(*d)->IsStatic() && ((*d)->GetTypeSpec()->Ptrs(false) > 0))
+         {
+            log = true;
+            break;
+         }
+      }
+   }
+   else
+   {
+      log = true;
+   }
+
+   if(log)
+   {
+      auto warning = RoleToWarning[role];
+
+      if((warning == ImplicitConstructor) && HasPODMember())
+      {
+         warning = ImplicitPODConstructor;
+      }
+
+      if(warning != Warning_N)
+      {
+         Log(warning);
+
+         if(item != nullptr)
+            item->Log(warning, item, -1);
+         else
+            Context::Log(warning, this, -1);
+         return;
+      }
+   }
+
+   auto base = BaseClass();
+   if(base != nullptr) base->WasCalled(role, item);
 }
 
 //------------------------------------------------------------------------------
@@ -2173,7 +2301,6 @@ bool ClassInst::NameRefersToItem(const string& name,
 void ClassInst::Shrink()
 {
    Class::Shrink();
-
    tspec_->Shrink();
 }
 
@@ -2639,9 +2766,9 @@ const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
 
 //------------------------------------------------------------------------------
 
-void CxxArea::InsertFunc(Function* func, bool defn)
+void CxxArea::InsertFunc(Function* func)
 {
-   if(!defn)
+   if(func->IsDecl())
    {
       AddItem(func);
 
@@ -2679,6 +2806,8 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 
 void CxxArea::Shrink()
 {
+   CxxScope::Shrink();
+
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
       (*u)->Shrink();
@@ -2757,6 +2886,67 @@ void CxxArea::Shrink()
          CxxStats::Vectors(CxxStats::CLASS_INST, size);
       else
          CxxStats::Vectors(CxxStats::CLASS_DECL, size);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   //  This does not forward to decls_, whose items reside at file scope
+   //  in a .cpp and are therefore updated by CodeFile.UpdatePos.
+   //
+   CxxScope::UpdatePos(action, begin, count, from);
+
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      (*u)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      (*c)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+   {
+      (*d)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto e = enums_.cbegin(); e != enums_.cend(); ++e)
+   {
+      (*e)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
+   {
+      (*f)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      (*f)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
+   {
+      (*o)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
+   {
+      (*t)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto a = assembly_.cbegin(); a != assembly_.cend(); ++a)
+   {
+      (*a)->UpdatePos(action, begin, count, from);
+   }
+
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      (*a)->UpdatePos(action, begin, count, from);
    }
 }
 
@@ -2939,7 +3129,7 @@ string Namespace::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-void Namespace::SetLoc(CodeFile* file, size_t pos)
+void Namespace::SetLoc(CodeFile* file, size_t pos) const
 {
    Debug::ft("Namespace.SetLoc");
 
@@ -2958,7 +3148,6 @@ void Namespace::SetLoc(CodeFile* file, size_t pos)
 void Namespace::Shrink()
 {
    CxxArea::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::SPACE_DECL, name_.capacity());
 

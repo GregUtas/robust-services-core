@@ -228,6 +228,7 @@ bool Argument::SetNonConst()
 
 void Argument::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ARG_DECL, name_.capacity());
    CxxStats::Vectors(CxxStats::ARG_DECL, XrefSize());
@@ -240,6 +241,16 @@ void Argument::Shrink()
 string Argument::TypeString(bool arg) const
 {
    return spec_->TypeString(arg);
+}
+
+//------------------------------------------------------------------------------
+
+void Argument::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   spec_->UpdatePos(action, begin, count, from);
+   if(default_ != nullptr) default_->UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -615,17 +626,23 @@ CodeFile* CxxScoped::GetImplFile() const
 
 //------------------------------------------------------------------------------
 
-size_t CxxScoped::GetRange(size_t& begin, size_t& end) const
+bool CxxScoped::GetRange(size_t& begin, size_t& left, size_t& end) const
 {
+   if(IsInTemplateInstance())
+   {
+      return CxxNamed::GetRange(begin, left, end);
+   }
+
    auto lexer = GetFile()->GetLexer();
    auto spec = GetTypeSpec();
    if(spec == nullptr)
       begin = GetPos();
    else
       begin = spec->GetPos();
+   if(begin == string::npos) return false;
    lexer.Reposition(begin);
    end = lexer.FindFirstOf(";");
-   return string::npos;
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -1160,6 +1177,7 @@ void Enum::SetAsReferent(const CxxNamed* user)
 
 void Enum::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ENUM_DECL, name_.capacity());
 
@@ -1178,6 +1196,19 @@ void Enum::Shrink()
 string Enum::TypeString(bool arg) const
 {
    return Prefix(GetScope()->TypeString(arg)) + name_;
+}
+
+//------------------------------------------------------------------------------
+
+void Enum::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+
+   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
+   {
+      (*e)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -1269,7 +1300,16 @@ void Enumerator::EnterBlock()
 
    if(init_ != nullptr)
    {
+      //  When an enumerator's definition is compiled, the scope is the class
+      //  itself.  Overwrite the class's access control with the enumerator's
+      //  so a protected or private enumerator can use its class's non-public
+      //  members without a log occurring when Class::AccessibilityOf invokes
+      //  ScopeVisibility.
+      //
+      auto access = Context::SetAccess(GetAccess());
       init_->EnterBlock();
+      Context::SetAccess(access);
+
       auto result = Context::PopArg(true);
       auto numeric = result.NumericType();
 
@@ -1360,6 +1400,7 @@ void Enumerator::SetAsReferent(const CxxNamed* user)
 
 void Enumerator::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ENUM_MEM, name_.capacity());
    CxxStats::Vectors(CxxStats::ENUM_MEM, XrefSize());
@@ -1373,6 +1414,15 @@ string Enumerator::TypeString(bool arg) const
    auto ts = enum_->TypeString(arg);
    if(!arg) ts += SCOPE_STR + *Name();
    return ts;
+}
+
+//------------------------------------------------------------------------------
+
+void Enumerator::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   if(init_ != nullptr) init_->UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -1565,6 +1615,7 @@ void Forward::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Forward::Shrink()
 {
+   CxxScoped::Shrink();
    CxxStats::Vectors(CxxStats::FORWARD_DECL, XrefSize());
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
@@ -1577,6 +1628,16 @@ string Forward::TypeString(bool arg) const
    auto ref = Referent();
    if(ref != nullptr) return ref->TypeString(arg);
    return Prefix(GetScope()->TypeString(arg)) + *Name();
+}
+
+//------------------------------------------------------------------------------
+
+void Forward::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2085,7 +2146,7 @@ void Friend::SetAsReferent(const CxxNamed* user)
    if(parms_ != nullptr) parms_->Print(name, NoFlags);
    name << tag_ << SPACE;
    name << ScopedName(true);
-   user->Log(FriendAsForward, nullptr, 0, false, name.str());
+   user->Log(FriendAsForward, nullptr, 0, name.str());
 }
 
 //------------------------------------------------------------------------------
@@ -2170,6 +2231,7 @@ void Friend::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Friend::Shrink()
 {
+   CxxScoped::Shrink();
    CxxStats::Vectors(CxxStats::FRIEND_DECL, XrefSize());
    if(name_ != nullptr) name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
@@ -2186,6 +2248,17 @@ string Friend::TypeString(bool arg) const
    auto func = GetFunction();
    if(func != nullptr) return func->TypeString(arg);
    return Prefix(GetScope()->TypeString(arg)) + QualifiedName(false, true);
+}
+
+//------------------------------------------------------------------------------
+
+void Friend::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   if(name_ != nullptr) name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
+   if(func_ != nullptr) func_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2268,9 +2341,19 @@ CxxScoped* MemberInit::Referent() const
 
 void MemberInit::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::MEMBER_INIT, name_.capacity());
    init_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void MemberInit::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   init_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2407,8 +2490,11 @@ CxxToken* TemplateParm::RootType() const
 
 void TemplateParm::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::TEMPLATE_PARM, name_.capacity());
+   if(type_ != nullptr) type_->Shrink();
+   if(default_ != nullptr) default_->Shrink();
 }
 
 //------------------------------------------------------------------------------
@@ -2418,6 +2504,16 @@ string TemplateParm::TypeString(bool arg) const
    auto ts = *Name();
    if(ptrs_ > 0) ts += string(ptrs_, '*');
    return ts;
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParm::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   if(type_ != nullptr) type_->UpdatePos(action, begin, count, from);
+   if(default_ != nullptr) default_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2494,6 +2590,7 @@ bool Terminal::NameRefersToItem(const string& name,
 
 void Terminal::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    type_.shrink_to_fit();
    CxxStats::Strings(CxxStats::TERMINAL_DECL, name_.capacity());
@@ -2640,10 +2737,19 @@ bool Typedef::EnterScope()
 {
    Debug::ft("Typedef.EnterScope");
 
+   //  When a typedef in a class is compiled, the scope is the class itself.
+   //  Overwrite the class's access control with the typedef's so a protected
+   //  or private typedef can use its class's non-public members without a log
+   //  occurring when Class::AccessibilityOf invokes ScopeVisibility.
+   //
    Context::SetPos(GetLoc());
    Context::Enter(this);
    if(AtFileScope()) GetFile()->InsertType(this);
+
+   auto access = Context::SetAccess(GetAccess());
    spec_->EnteringScope(GetScope());
+   Context::SetAccess(access);
+
    refs_ = 0;
    return true;
 }
@@ -2725,6 +2831,7 @@ void Typedef::SetAsReferent(const CxxNamed* user)
 
 void Typedef::Shrink()
 {
+   CxxScoped::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::TYPE_DECL, name_.capacity());
    CxxStats::Vectors(CxxStats::TYPE_DECL, XrefSize());
@@ -2736,6 +2843,15 @@ void Typedef::Shrink()
 string Typedef::TypeString(bool arg) const
 {
    return spec_->TypeString(arg);
+}
+
+//------------------------------------------------------------------------------
+
+void Typedef::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   spec_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2920,5 +3036,22 @@ void Using::SetScope(CxxScope* scope)
    //
    if(scope->Type() == Cxx::Class) scope = scope->GetSpace();
    CxxScoped::SetScope(scope);
+}
+
+//------------------------------------------------------------------------------
+
+void Using::Shrink()
+{
+   CxxScoped::Shrink();
+   name_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Using::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
 }
 }

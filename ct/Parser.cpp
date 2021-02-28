@@ -108,7 +108,7 @@ Parser::Parser(CxxScope* scope) :
    //  Make this the active parser and set the scope for parsing.
    //
    Context::PushParser(this);
-   Context::PushScope(scope);
+   Context::PushScope(scope, false);
 }
 
 //------------------------------------------------------------------------------
@@ -276,7 +276,7 @@ void Parser::DisplayStats(ostream& stream)
 //------------------------------------------------------------------------------
 
 void Parser::Enter(SourceType source, const string& venue,
-      const TypeName* inst, const string& code, bool preprocess)
+   const TypeName* inst, const string& code, bool preprocess, CodeFile* file)
 {
    Debug::ft("Parser.Enter");
 
@@ -285,7 +285,7 @@ void Parser::Enter(SourceType source, const string& venue,
    inst_ = inst;
    farthest_ = 0;
    cause_ = 0;
-   lexer_.Initialize(code);
+   lexer_.Initialize(code, file);
    if(preprocess) lexer_.PreprocessSource();
 }
 
@@ -297,7 +297,7 @@ void Parser::Failure(const string& venue) const
 {
    Debug::ft(Parser_Failure);  //@
 
-   auto code = lexer_.GetLine(farthest_);
+   auto code = lexer_.MarkPos(farthest_);
    auto line = lexer_.GetLineNum(farthest_);
    std::ostringstream text;
    text << venue << ", line " << line + 1 << ": " << code;
@@ -313,7 +313,7 @@ bool Parser::Fault(DirectiveError err) const
    Debug::ft(Parser_Fault);
 
    auto curr = CurrPos();
-   auto code = lexer_.GetLine(curr);
+   auto code = lexer_.MarkPos(curr);
    auto line = lexer_.GetLineNum(curr);
    std::ostringstream text;
    text << venue_ << ", line " << line + 1 << ':' << CRLF << Log::Tab << code;
@@ -657,7 +657,7 @@ bool Parser::GetBlock(BlockPtr& block)
    auto braced = lexer_.NextCharIs('{');
    block.reset(new Block(braced));
    block->SetContext(start);
-   Context::PushScope(block.get());
+   Context::PushScope(block.get(), true);
 
    while(true)
    {
@@ -822,7 +822,7 @@ bool Parser::GetCatch(TokenPtr& statement)
    if(!NextKeywordIs(CATCH_STR)) return Backup(start, 29);
    if(!lexer_.NextCharIs('(')) return Backup(start, 30);
 
-   if(lexer_.Extract(CurrPos(), 3) == ELLIPSES_STR)
+   if(lexer_.Substr(CurrPos(), 3) == ELLIPSES_STR)
    {
       auto end = lexer_.FindClosing('(', ')');
       if(end == string::npos) return Backup(start, 31);
@@ -1029,7 +1029,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
    cls.reset(new Class(className, tag));
    cls->SetContext(begin);
    cls->SetTemplateParms(parms);
-   Context::PushScope(cls.get());
+   Context::PushScope(cls.get(), false);
    cls->SetAlignment(align);
    cls->AddBase(base);
    GetMemberDecls(cls.get());
@@ -2167,7 +2167,7 @@ bool Parser::GetFuncImpl(Function* func)
 
    auto start = CurrPos();
 
-   Context::PushScope(func);
+   Context::PushScope(func, true);
 
    BlockPtr block;
    if(!GetBlock(block))
@@ -2326,7 +2326,7 @@ bool Parser::GetInlines(Class* cls)
 
    //  This jumps around to parse functions, so adjust farthest_ accordingly.
    //
-   Context::PushScope(cls);
+   Context::PushScope(cls, false);
 
    auto end = CurrPos();
    auto funcs = cls->Funcs();
@@ -2440,7 +2440,7 @@ bool Parser::GetNamespace()
    auto outer = Context::Scope();
    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
    inner->SetLoc(Context::File(), begin);
-   Context::PushScope(inner);
+   Context::PushScope(inner, false);
    GetFileDecls(inner);
    Context::PopScope();
 
@@ -3925,7 +3925,7 @@ bool Parser::HandleError(DirectivePtr& dir)
    if(!lexer_.NextStringIs(HASH_ERROR_STR)) return Fault(DirectiveMismatch);
    auto begin = CurrPos();
    auto end = lexer_.FindLineEnd(begin);
-   auto text = lexer_.Extract(begin, end - begin);
+   auto text = lexer_.Substr(begin, end - begin);
 
    dir = ErrorPtr(new Error(text));
    dir->SetContext(start);
@@ -4041,7 +4041,7 @@ bool Parser::HandleLine(DirectivePtr& dir)
    if(!lexer_.NextStringIs(HASH_LINE_STR)) return Fault(DirectiveMismatch);
    auto begin = CurrPos();
    auto end = lexer_.FindLineEnd(begin);
-   auto text = lexer_.Extract(begin, end - begin);
+   auto text = lexer_.Substr(begin, end - begin);
 
    dir = LinePtr(new Line(text));
    dir->SetContext(start);
@@ -4092,7 +4092,7 @@ bool Parser::HandlePragma(DirectivePtr& dir)
    if(!lexer_.NextStringIs(HASH_PRAGMA_STR)) return Fault(DirectiveMismatch);
    auto begin = CurrPos();
    auto end = lexer_.FindLineEnd(begin);
-   auto text = lexer_.Extract(begin, end - begin);
+   auto text = lexer_.Substr(begin, end - begin);
 
    dir = PragmaPtr(new Pragma(text));
    dir->SetContext(start);
@@ -4231,8 +4231,8 @@ bool Parser::Parse(CodeFile& file)
    auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    depth_ = SysThreadStack::FuncDepth();
    Context::SetFile(&file);
-   Context::PushScope(gns);
-   Enter(IsFile, file.Name(), nullptr, file.GetCode(), true);
+   Context::PushScope(gns, false);
+   Enter(IsFile, file.Name(), nullptr, file.GetCode(), true, &file);
    GetFileDecls(gns);
    Context::PopScope();
    if(traced) ThisThread::StopTracing();
@@ -4289,7 +4289,7 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
    do
    {
       BaseDeclPtr base;
-      Context::PushScope(inst);
+      Context::PushScope(inst, false);
       GetBaseDecl(base);
       if(!lexer_.NextCharIs('{')) break;
       inst->AddBase(base);
@@ -4329,7 +4329,7 @@ bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
 
    //  Parse the function definition.
    //
-   Context::PushScope(area);
+   Context::PushScope(area, false);
    string str;
    auto kwd = NextKeyword(str);
 
@@ -4801,7 +4801,7 @@ bool Parser::Skip(size_t end, const ExprPtr& expr, size_t cause)
 
    auto start = CurrPos();
    string code = "<@ ";
-   code += lexer_.Extract(start, end - start);
+   code += lexer_.Substr(start, end - start);
    code += " @>";
 
    auto line = lexer_.GetLineNum(start);
@@ -4834,7 +4834,7 @@ bool Parser::Success(fn_name_arg func, size_t start) const
 
    auto prev = lexer_.Prev();
    auto count = (prev > start ? prev - start : 0);
-   auto parsed = lexer_.Extract(start, count);
+   auto parsed = lexer_.Substr(start, count);
    auto size = parsed.size();
 
    if(size <= COUT_LENGTH_MAX)

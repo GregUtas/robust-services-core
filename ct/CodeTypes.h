@@ -25,6 +25,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
+#include <set>
 #include <string>
 #include <vector>
 #include "Base.h"
@@ -213,13 +214,13 @@ enum FunctionType
 //
 enum FunctionRole
 {
-   FuncOther,  // none of those below
    PureCtor,   // constructor for a new object
+   PureDtor,   // destructor
    CopyCtor,   // copy constructor
    MoveCtor,   // move constructor
-   PureDtor,   // destructor
    CopyOper,   // copy (assignment) operator
-   MoveOper    // move (assignment) operator
+   MoveOper,   // move (assignment) operator
+   FuncOther   // none of those above
 };
 
 //------------------------------------------------------------------------------
@@ -437,15 +438,15 @@ enum Warning
    DataCouldBeConst,         // data item could be declared as const
    DataCouldBeConstPtr,      // data item could be declared as a const pointer
    DataNeedNotBeMutable,     // no const function modifies this data member
-   DefaultPODConstructor,    // use of default constructor; class has POD member
-   DefaultConstructor,       // use of default constructor
-   DefaultCopyConstructor,   // use of default copy constructor
-   DefaultCopyOperator,      // use of default copy (assignment) operator
+   ImplicitPODConstructor,   // use of implicit constructor; has POD member
+   ImplicitConstructor,      // use of implicit constructor
+   ImplicitCopyConstructor,  // use of implicit copy constructor
+   ImplicitCopyOperator,     // use of implicit copy (assignment) operator
    PublicConstructor,        // base class has public constructor
    NonExplicitConstructor,   // constructor should be tagged explicit
    MemberInitMissing,        // item missing from member initialization list
    MemberInitNotSorted,      // item missorted in member initialization list
-   DefaultDestructor,        // use of default destructor
+   ImplicitDestructor,       // use of implicit destructor
    VirtualDestructor,        // virtual destructor is not public
    NonVirtualDestructor,     // non-virtual base class destructor not protected
    VirtualFunctionInvoked,   // constructor or destructor calls virtual function
@@ -465,7 +466,7 @@ enum Warning
    AnonymousArgument,        // declaration of unnamed argument
    AdjacentArgumentTypes,    // adjacent arguments have the same type
    DefinitionRenamesArgument, // names in declaration and definition differ
-   OverrideRenamesArgument,  // names in override and direct base class differ
+   OverrideRenamesArgument,  // names in override and root base class differ
    VirtualDefaultArgument,   // virtual function defines default argument
    ArgumentCannotBeConst,    // for detecting const logic errors
    ArgumentCouldBeConstRef,  // object could be passed by const reference
@@ -584,6 +585,13 @@ private:
    LineTypeAttr(bool code, bool exe, bool merge, bool blank, char sym);
 };
 
+//  Classifies a line of code (S) and updates WARNINGS with any warnings
+//  that were found.  Sets CONT for a line of code that does not end in
+//  a semicolon.
+//
+LineType CalcLineType
+   (std::string s, bool& cont, std::set< Warning >& warnings);
+
 //  Returns the resulting line length if LINE1[BEGIN1..END1] and
 //  LINE2[BEGIN2..END2] were merged.  Returns SIZE_MAX if the lines
 //  should not be merged.
@@ -652,6 +660,17 @@ extern const NodeBase::Flags Stats_Mask;
 
 constexpr size_t INDENT_SIZE = 3;
 constexpr size_t LINE_LENGTH_MAX = 80;
+
+//------------------------------------------------------------------------------
+//
+//  Editor actions that require a code item to update its location.
+//
+enum EditorAction
+{
+   Erased,
+   Inserted,
+   Pasted
+};
 
 //------------------------------------------------------------------------------
 //

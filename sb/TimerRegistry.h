@@ -26,6 +26,7 @@
 #include "Duration.h"
 #include "NbTypes.h"
 #include "Q2Way.h"
+#include "SbTypes.h"
 #include "Timer.h"
 
 //------------------------------------------------------------------------------

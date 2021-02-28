@@ -374,6 +374,11 @@ public:
    //  Overridden to shrink containers.
    //
    void Shrink() override;
+
+   //  Overridden to update the #define's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  The expression, if any, that assigns a value to the macro.
    //
@@ -428,14 +433,19 @@ public:
    //
    virtual bool AddElse(const Else* e) { return false; }
 
+   //  Overridden to return true if compiled code follows this directive.
+   //
+   virtual bool HasCompiledCode() const { return compile_; }
+
    //  Overridden to display source code if it was not compiled.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to return true if compiled code follows this directive.
+   //  Overridden to update the code's location.
    //
-   virtual bool HasCompiledCode() const { return compile_; }
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -497,7 +507,12 @@ public:
 
    //  Overridden to shrink the conditional expression.
    //
-   void Shrink() override { condition_->Shrink(); }
+   void Shrink() override;
+
+   //  Overridden to update the directive's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -543,6 +558,11 @@ public:
    //  Overridden to shrink the item's name.
    //
    void Shrink() override;
+
+   //  Overridden to update the directive's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 protected:
    //  MACRO is the symbol whose existence an #ifdef or #ifndef is checking.
    //  Protected because this class is virtual.
@@ -698,6 +718,11 @@ public:
    //  Overridden to shrink containers.
    //
    void Shrink() override;
+
+   //  Overridden to update the #if's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Any #elifs that follow the #if.
    //

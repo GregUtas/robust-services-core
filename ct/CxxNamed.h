@@ -30,6 +30,7 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "CxxLocation.h"
 #include "CxxString.h"
 #include "SysTypes.h"
 
@@ -37,76 +38,6 @@
 
 namespace CodeTools
 {
-//  Where a C++ item was declared or defined.
-//
-class CxxLocation
-{
-   friend class CxxNamed;
-public:
-   //  Returns the file in which the item is located.  A template
-   //  instance belongs to the file that caused its instantiation.
-   //  An item added by the Editor belongs to the file to which it
-   //  was added.
-   //
-   CodeFile* GetFile() const { return file_; }
-
-   //  Returns the start of the item's position within its file, which
-   //  is an index into a string that contains the file's contents.
-   //  For a template instance, this is an offset into its internally
-   //  generated code.  For an item added by the Editor, string::npos
-   //  is returned.
-   //
-   size_t GetPos() const;
-
-   //  Returns true for an internally generated item, such as the code
-   //  for a template instance.
-   //
-   bool IsInternal() const { return internal_; }
-
-   //  A position that indicates that the item was not found in the
-   //  original source code.  This is used when the Editor creates
-   //  an item, for example.
-   //
-   static const size_t NOT_IN_SOURCE = 0x7fffffff;
-private:
-   //  Initializes fields to default values.  Private because this class
-   //  only appears as a private member of the friend class CxxNamed.
-   //
-   CxxLocation();
-
-   //  Copy constructor.
-   //
-   CxxLocation(const CxxLocation& that) = default;
-
-   //  Copy operator.
-   //
-   CxxLocation& operator=(const CxxLocation& that) = default;
-
-   //  Records the item's location in source code.
-   //
-   void SetLoc(CodeFile* file, size_t pos);
-
-   //  Marks the item as internally generated.
-   //
-   void SetInternal() { internal_ = true; }
-
-   //  The file in which the item appeared.
-   //
-   CodeFile* file_;
-
-   //  The item's location in FILE.  The file has a string member which
-   //  contains the code, and this is an index into that string.
-   //
-   size_t pos_ : 31;
-
-   //  Set if the item appeared in internally generated code, which currently
-   //  means in a template instance.
-   //
-   bool internal_ : 1;
-   };
-
-//------------------------------------------------------------------------------
-//
 //  The base class for C++ entities that define a name.  Each of these knows
 //  the file in which it was found.
 //
@@ -123,7 +54,7 @@ public:
 
    //  Sets the file and offset at which this item was found.
    //
-   virtual void SetLoc(CodeFile* file, size_t pos);
+   virtual void SetLoc(CodeFile* file, size_t pos) const;
 
    //  Sets the context in which this item was found:
    //  o Invokes SetScope(Context::Scope()) unless the item already has a scope
@@ -134,7 +65,7 @@ public:
    void SetContext(size_t pos);
 
    //  Sets the item's context based on THAT.  Used when an item is created
-   //  internally (e.g. a "this" argument).
+   //  internally (e.g. the "this" argument for a member function).
    //
    virtual void CopyContext(const CxxNamed* that);
 
@@ -150,11 +81,16 @@ public:
    //
    size_t GetPos() const { return loc_.GetPos(); }
 
-   //  Sets BEGIN and END to where the item begins and ends, and returns
-   //  the location of its opening left brace (if applicable).  The default
-   //  sets BEGIN and END to string::npos and also returns string::npos.
+   //  Sets BEGIN and END to where the item begins and ends, and LEFT to the
+   //  position of its opening left brace (if applicable, else string::npos).
+   //  If LEFT applies, END will be the position of the matching right brace.
+   //  Returns false if the item
+   //  o doesn't end at a semicolon, although the item could provide an
+   //    override if this proved useful;
+   //  o is part of a template instantiation and therefore doesn't appear
+   //    in a source file.
    //
-   virtual size_t GetRange(size_t& begin, size_t& end) const;
+   virtual bool GetRange(size_t& begin, size_t& left, size_t& end) const;
 
    //  Returns the scope (namespace, class, or block) where the item is
    //  declared.
@@ -373,12 +309,11 @@ public:
    virtual void GetDirectTemplateArgs(CxxUsageSets& symbols) const;
 
    //  Logs WARNING at the position where this item is located.  ITEM,
-   //  OFFSET, and INFO are specific to WARNING, and HIDE is set to prevent
-   //  the warning from being displayed.  If ITEM is nullptr, "this" is
-   //  included in the log.
+   //  OFFSET, and INFO are specific to WARNING.  If ITEM is nullptr,
+   //  "this" is included included in the log.
    //
    void Log(Warning warning, const CxxNamed* item = nullptr,
-      NodeBase::word offset = 0, bool hide = false,
+      NodeBase::word offset = 0,
       const std::string& info = NodeBase::EMPTY_STR) const;
 
    //  The default returns ScopedName(templates).  Overridden by functions
@@ -407,6 +342,11 @@ public:
    //  Overridden to use GetScope to find an item's namespace.
    //
    Namespace* GetSpace() const override;
+
+   //  Overridden to update the item's position.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 
    //  Overridden to return the item's scoped name.
    //
@@ -451,9 +391,10 @@ protected:
       (Class* cls, const TypeName* args, bool end) const { return true; }
 
    //  Invoked when the item is accessed.  Invokes ItemAccessed on the context
-   //  function.
+   //  function.  If the item was accessed through the reference select (.) or
+   //  pointer select (->) operator, VIA is the item that preceded the operator.
    //
-   void Accessed() const;
+   void Accessed(const StackArg* via) const;
 
    //  Invoked by overrides of RecordUsage.
    //
@@ -461,7 +402,7 @@ protected:
 private:
    //  Indicates that the item appeared in internally generated code.
    //
-   void SetInternal() { loc_.SetInternal(); }
+   void SetInternal() const { loc_.SetInternal(); }
 
    //  Invoked when ResolveName finds DECL, a forward or friend declaration,
    //  when resolving the Nth name in a possibly qualified name.  If it
@@ -474,7 +415,7 @@ private:
 
    //  The location where the item appeared.
    //
-   CxxLocation loc_;
+   mutable CxxLocation loc_;
 };
 
 //------------------------------------------------------------------------------
@@ -710,6 +651,11 @@ public:
    //  the name itself is omitted.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the name's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  The name that appears in what could be a qualified name.
    //
@@ -956,6 +902,11 @@ public:
    //  Overridden to return the referent's full root type.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the name's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Returns the last name.
    //
@@ -1640,6 +1591,11 @@ private:
    //
    std::string TypeTagsString(const TypeTags& tags) const override;
 
+   //  Overridden to update the type's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+
    //  Overridden to support a temporary variable represented by a DataSpec.
    //
    bool WasWritten(const StackArg* arg, bool direct, bool indirect)
@@ -1682,7 +1638,7 @@ public:
 
    //  Invokes EnterScope on each parameter.
    //
-   void EnterScope() const;
+   void EnterScope();
 
    //  Returns the template's parameters.
    //
@@ -1708,6 +1664,11 @@ public:
    //  Overridden to return the template's parameters in angle brackets.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the parameters' locations.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  The template's parameters.
    //
@@ -1729,7 +1690,9 @@ public:
    bool EnterScope() override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { code_->Shrink(); }
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    const ExprPtr code_;
 };
@@ -1753,6 +1716,8 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    const ExprPtr expr_;
    const ExprPtr message_;

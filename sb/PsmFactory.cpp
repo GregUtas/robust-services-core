@@ -26,6 +26,7 @@
 #include "Message.h"
 #include "MsgHeader.h"
 #include "MsgPort.h"
+#include "ProtocolSM.h"
 #include "PsmContext.h"
 
 using namespace NodeBase;

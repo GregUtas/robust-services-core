@@ -23,7 +23,6 @@
 #define CODEWARNING_H_INCLUDED
 
 #include <cstddef>
-#include <cstdint>
 #include <iosfwd>
 #include <map>
 #include <string>
@@ -31,11 +30,11 @@
 #include <vector>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
+#include "CxxLocation.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
 using NodeBase::fixed_string;
-using NodeBase::SPACE;
 using NodeBase::word;
 
 //------------------------------------------------------------------------------
@@ -50,18 +49,13 @@ struct WarningAttrs
    //
    const bool fixable;
 
-   //  The warning's sort order.  A warning with a lower value is fixed
-   //  before one with a higher value.  This helps simplify the editor.
-   //
-   const uint8_t order;
-
    //  A string that explains the warning.
    //
    fixed_string expl;
 
    //  Constructs a warning with the specified attributes.
    //
-   WarningAttrs(bool fix, uint8_t order, fixed_string expl);
+   WarningAttrs(bool fix, fixed_string expl);
 };
 
 //------------------------------------------------------------------------------
@@ -88,11 +82,23 @@ class CodeWarning
 {
    friend class Editor;
 public:
-   //  Almost every member is supplied to the constructor.
+   //  Almost every member is supplied to the constructor.  If POS is
+   //  string::npos, it means that the warning has no code to display.
    //
-   CodeWarning(Warning warning, const CodeFile* file,
-      size_t line, size_t pos, const CxxNamed* item,
-      word offset, const std::string& info, bool hide = false);
+   CodeWarning(Warning warning, CodeFile* file, size_t pos,
+      const CxxNamed* item, word offset, const std::string& info);
+
+   //  Returns the file in which the warning appeared.
+   //
+   CodeFile* File() const { return loc_.GetFile(); }
+
+   //  Returns the position at which the warning appeared.
+   //
+   size_t Pos() const { return loc_.GetPos(); }
+
+   //  Returns the line number on which the warning appeared.
+   //
+   size_t Line() const;
 
    //  Initializes the Attrs map.
    //
@@ -120,6 +126,12 @@ public:
    //
    std::string GetNewFuncName(std::string& expl) const;
 
+   //  Invoked to update the position of a warning when a file has been
+   //  edited.  Has the same interface as CxxToken::UpdatePos.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from = std::string::npos) const;
+
    //  Generates a report in STREAM for the files in SET.  The report
    //  includes line type counts and warnings found during parsing and
    //  compilation.
@@ -137,13 +149,15 @@ private:
 
    //  Returns true if the log has code to display.
    //
-   bool HasCodeToDisplay() const
-      { return ((line_ != 0) || info_.empty()); }
+   bool HasCodeToDisplay() const;
 
    //  Returns true if .info should be displayed.
    //
-   bool HasInfoToDisplay() const
-      { return (info_.find_first_not_of(SPACE) != std::string::npos); }
+   bool HasInfoToDisplay() const;
+
+   //  Returns true if the log is informational and cannot be fixed.
+   //
+   bool IsInformational() const;
 
    //  Returns the logs that need to be fixed to resolve this log.
    //  The log itself is included in the result unless it does not
@@ -156,20 +170,15 @@ private:
    //
    CodeWarning* FindMateLog(std::string& expl) const;
 
-   //  If this log indicates that a compiler-provided special member
-   //  function was invoked, it returns the log associated with the
-   //  class that does not define that special member function.
-   //
-   CodeWarning* FindRootLog(std::string& expl);
-
-   //  Updates WARNINGS with those that were logged in FILE.
+   //  Updates WARNINGS with those that were logged in FILE.  Excludes
+   //  informational warnings, which cannot be fixed.
    //
    static void GetWarnings
-      (const CodeFile* file, std::vector< CodeWarning >& warnings);
+      (const CodeFile* file, std::vector< CodeWarning* >& warnings);
 
    //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
    //
-   static bool IsSortedToFix(const CodeWarning& log1, const CodeWarning& log2);
+   static bool IsSortedToFix(const CodeWarning* log1, const CodeWarning* log2);
 
    //  Returns LOG's index if it has already been reported, else -1.
    //
@@ -195,33 +204,24 @@ private:
    //
    Warning warning_;
 
-   //  The file in which the warning occurred.
+   //  Where the warning occurred.
    //
-   const CodeFile* file_;
-
-   //  The line in FILE on which the warning occurred.
-   //
-   size_t line_;
-
-   //  The position in FILE where the warning occurred.
-   //
-   size_t pos_;
+   mutable CxxLocation loc_;
 
    //  The C++ item associated with the warning.
    //
    const CxxNamed* item_;
 
-   //  Warning specific; displayed if > 0.
+   //  Warning specific.  If > 0, displayed after line number (used, for
+   //  example, to specify that a function's Nth argument is associated
+   //  with the warning).  If < 0, denotes an informational warning that
+   //  cannot be fixed but that is associated with one that can.
    //
    word offset_;
 
    //  Warning specific.
    //
    std::string info_;
-
-   //  If set, prevents a warning from being displayed.
-   //
-   bool hide_;
 
    //  Whether a warning can be, or has been, fixed by the Editor.
    //

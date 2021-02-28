@@ -22,6 +22,8 @@
 #include "CodeTypes.h"
 #include <ostream>
 #include "CxxString.h"
+#include "Debug.h"
+#include "FunctionName.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -234,6 +236,178 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 
 //------------------------------------------------------------------------------
 
+LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
+{
+   Debug::ft("CodeTools.CalcLineType");
+
+   cont = false;
+
+   if(s.empty()) return BlankLine;
+
+   //  There is probably a CRLF at the end of the line.
+   //
+   if(s.back() == CRLF)
+   {
+      s.pop_back();
+      if(s.empty()) return BlankLine;
+   }
+
+   //  Flag any tabs and convert them to spaces.
+   //
+   for(auto pos = s.find(TAB); pos != string::npos; pos = s.find(TAB))
+   {
+      warnings.insert(UseOfTab);
+      s[pos] = SPACE;
+   }
+
+   //  Flag and strip trailing spaces.
+   //
+   auto pos = s.find_first_not_of(SPACE);
+
+   if(pos == string::npos)
+   {
+      warnings.insert(TrailingSpace);
+      return BlankLine;
+   }
+
+   if(pos > 0) s.erase(0, pos);
+
+   while(s.back() == SPACE)
+   {
+      warnings.insert(TrailingSpace);
+      s.pop_back();
+   }
+
+   auto length = s.size();
+
+   //  Look for lines that contain nothing but a brace (or brace and semicolon).
+   //
+   if((s[0] == '{') && (length == 1)) return OpenBrace;
+
+   if(s[0] == '}')
+   {
+      if(length == 1) return CloseBrace;
+      if((s[1] == ';') && (length == 2)) return CloseBraceSemicolon;
+   }
+
+   //  Classify lines that contain only a // comment.
+   //
+   size_t slashSlashPos = s.find(COMMENT_STR);
+
+   if(slashSlashPos == 0)
+   {
+      if(length == 2) return EmptyComment;      //
+      if(s[2] == '-') return SeparatorComment;  //-
+      if(s[2] == '=') return SeparatorComment;  //=
+      if(s[2] == '/') return SeparatorComment;  ///
+      if(s[2] != SPACE) return TaggedComment;   //$ [$ != one of above]
+      return TextComment;                       //  text
+   }
+
+   //  Flag a /* comment and see if it ends on the same line.
+   //
+   pos = FindSubstr(s, COMMENT_BEGIN_STR);
+
+   if(pos != string::npos)
+   {
+      warnings.insert(UseOfSlashAsterisk);
+      if(pos == 0) return SlashAsteriskComment;
+   }
+
+   //  Look for preprocessor directives (e.g. #include, #ifndef).
+   //
+   if(s[0] == '#')
+   {
+      pos = s.find(HASH_INCLUDE_STR);
+      if(pos == 0) return IncludeDirective;
+      return HashDirective;
+   }
+
+   //  Look for using statements.
+   //
+   if(s.find("using ") == 0)
+   {
+      cont = (LastCodeChar(s, slashSlashPos) != ';');
+      return UsingStatement;
+   }
+
+   //  Look for access controls.
+   //
+   pos = s.find_first_not_of(WhitespaceChars);
+
+   if(pos != string::npos)
+   {
+      if(s.find(PUBLIC_STR) == pos) return AccessControl;
+      if(s.find(PROTECTED_STR) == pos) return AccessControl;
+      if(s.find(PRIVATE_STR) == pos) return AccessControl;
+   }
+
+   //  Look for invocations of Debug::ft and its variants.
+   //
+   if(FindSubstr(s, "Debug::ft(") != string::npos) return DebugFt;
+   if(FindSubstr(s, "Debug::ftnt(") != string::npos) return DebugFt;
+   if(FindSubstr(s, "Debug::noft(") != string::npos) return DebugFt;
+
+   //  Look for strings that provide function names for Debug::ft.  These
+   //  have the format
+   //    fn_name ClassName_FunctionName = "ClassName.FunctionName";
+   //  with an endline after the '=' if the line would exceed LineLengthMax
+   //  characters.
+   //
+   string type(FunctionName::TypeStr);
+   type.push_back(SPACE);
+
+   while(true)
+   {
+      if(s.find(type) != 0) break;
+      auto begin1 = s.find_first_not_of(SPACE, type.size());
+      if(begin1 == string::npos) break;
+      auto under = s.find('_', begin1);
+      if(under == string::npos) break;
+      auto equals = s.find('=', under);
+      if(equals == string::npos) break;
+
+      if(LastCodeChar(s, slashSlashPos) == '=')
+      {
+         cont = true;
+         return FunctionName;
+      }
+
+      auto end1 = s.find_first_not_of(ValidNextChars, under);
+      if(end1 == string::npos) break;
+      auto begin2 = s.find(QUOTE, equals);
+      if(begin2 == string::npos) break;
+      auto dot = s.find('.', begin2);
+      if(dot == string::npos) break;
+      auto end2 = s.find(QUOTE, dot);
+      if(end2 == string::npos) break;
+
+      auto front = under - begin1;
+      if(s.substr(begin1, front) == s.substr(begin2 + 1, front))
+      {
+         return FunctionName;
+      }
+      break;
+   }
+
+   pos = FindSubstr(s, "  ");
+
+   if(pos != string::npos)
+   {
+      auto next = s.find_first_not_of(SPACE, pos);
+
+      if((next != string::npos) && (next != slashSlashPos) && (s[next] != '='))
+      {
+         warnings.insert(AdjacentSpaces);
+      }
+   }
+
+   cont = (LastCodeChar(s, slashSlashPos) != ';');
+   return CodeLine;
+}
+
+//------------------------------------------------------------------------------
+
 IndentRule ClassifyIndent(string& id)
 {
    if(id == "$") return IndentResume;
@@ -256,7 +430,7 @@ bool InsertSpaceOnMerge(const string& line1, const string& line2, size_t begin2)
    //  Insert a space unless LINE2 is an argument list, which is the case if
    //  it begins with a parenthesis and LINE1 ends with an identifier.
    //
-   if(ValidNextChars.find(line1.back()) == string::npos) return true;
+   if(!IsWordChar(line1.back())) return true;
    return (line2.at(begin2) != '(');
 }
 

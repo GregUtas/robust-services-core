@@ -67,10 +67,6 @@ enum ThreadState
 struct ThreadInfo
 {
    ThreadInfo(ThreadState state, SysThread* systhrd, Thread* thread);
-   ThreadInfo(const ThreadInfo& that) = default;
-   ThreadInfo(ThreadInfo&& that) = default;
-   ThreadInfo& operator=(const ThreadInfo& that) = default;
-   ThreadInfo& operator=(ThreadInfo&& that) = default;
 
    //  The thread's state;
    //
@@ -78,7 +74,7 @@ struct ThreadInfo
 
    //  The wrapper for the native thread.
    //
-   SysThread* systhrd_;
+   SysThread* const systhrd_;
 
    //  The full RSC thread object.
    //

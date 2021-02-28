@@ -113,6 +113,10 @@ public:
    //
    StackArg(Function* f, TypeName* name);
 
+   //  Destructor.
+   //
+   ~StackArg() = default;
+
    //  Copy constructor.
    //
    StackArg(const StackArg& that) = default;
@@ -319,7 +323,7 @@ public:
    //
    TypeName* name;
 private:
-   //  Sets DATA's referent to this argument.  Returns FALSE on failure.
+   //  Sets DATA's referent to this argument.  Returns false on failure.
    //
    bool SetAutoTypeOn(const FuncData& data) const;
 
@@ -411,6 +415,26 @@ constexpr char TraceFunctions = 'f';
 
 //------------------------------------------------------------------------------
 //
+//  Tracks the scope being parsed or executed.
+//
+struct ActiveScope
+{
+   //  The scope.
+   //
+   CxxScope* const scope;
+
+   //  The scope's access control.  It is set to Cxx::Private when what is
+   //  being parsed does not need to be visible even if the scope is visible.
+   //
+   Cxx::Access access;
+
+   //  Constructor.
+   //
+   ActiveScope(CxxScope* s, Cxx::Access a) : scope(s), access(a) { }
+};
+
+//------------------------------------------------------------------------------
+//
 //  Used when parsing and compiling code.
 //
 class ParseFrame
@@ -450,7 +474,7 @@ public:
 
    //  Enters a scope.
    //
-   void PushScope(CxxScope* scope);
+   void PushScope(const ActiveScope& scope);
 
    //  Exits the current scope.
    //
@@ -459,6 +483,15 @@ public:
    //  Returns the current scope.
    //
    CxxScope* Scope() const;
+
+   //  Returns the current scope's access control.
+   //
+   Cxx::Access ScopeAccess() const;
+
+   //  Returns the current scope's access control after replacing it with
+   //  ACCESS.
+   //
+   Cxx::Access SetAccess(Cxx::Access access);
 
    //  Pushes an operator.
    //
@@ -524,7 +557,7 @@ private:
 
    //  The scopes in which compilation is occurring.
    //
-   std::vector< CxxScope* > scopes_;
+   std::vector< ActiveScope > scopes_;
 
    //  The stack of arguments.
    //
@@ -659,9 +692,9 @@ public:
    //
    static void EraseLocal(const CxxScoped* local) { Frame_->EraseLocal(local); }
 
-   //  Enters a scope.
+   //  Enters a scope, and parsing its private definition if HIDDEN is set.
    //
-   static void PushScope(CxxScope* scope) { Frame_->PushScope(scope); }
+   static void PushScope(CxxScope* scope, bool hidden);
 
    //  Exits the current scope.
    //
@@ -669,7 +702,22 @@ public:
 
    //  Returns the current scope.
    //
-   static CxxScope* Scope() { return Frame_->Scope(); }
+   static CxxScope* Scope();
+
+   //  Returns the access control for the scope being compiled.
+   //
+   static Cxx::Access ScopeAccess() { return Frame_->ScopeAccess(); }
+
+   //  Returns the current scope's access control after replacing it with
+   //  ACCESS.
+   //
+   static Cxx::Access SetAccess(Cxx::Access access)
+      { return Frame_->SetAccess(access); }
+
+   //  Returns the level of access associated with the scope that is
+   //  currently being compiled.
+   //
+   static Cxx::Access ScopeVisibility();
 
    //  If parsing a template instance, returns the scope in which its
    //  instantiation occurred, else returns the current scope.

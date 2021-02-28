@@ -24,13 +24,12 @@
 
 #include "LibraryItem.h"
 #include <cstddef>
-#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
 #include "CxxString.h"
-#include "Lexer.h"
+#include "Editor.h"
 #include "LibraryTypes.h"
 #include "RegCell.h"
 #include "SysTypes.h"
@@ -40,10 +39,7 @@ namespace CodeTools
    struct CxxUsageSets;
 }
 
-namespace NodeBase
-{
-   class CliThread;
-}
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -172,21 +168,10 @@ public:
    //
    void SetParsed(bool passed);
 
-   //  Classifies a line of code (S) and updates WARNINGS with any warnings
-   //  that were found.  Sets CONT for a line of code that does not end in
-   //  a semicolon.
-   //
-   LineType ClassifyLine
-      (std::string s, bool& cont, std::set< Warning >& warnings) const;
-
    //  Returns the LineType for line N.  Returns LineType_N if N is out
    //  of range.
    //
    LineType GetLineType(size_t n) const;
-
-   //  Returns the level of indentation for a line.
-   //
-   int8_t GetDepth(size_t line) const;
 
    //  Returns the file's indentation size.
    //
@@ -238,24 +223,25 @@ public:
    //  Invokes the editor to interactively fix warnings found by Check().
    //
    NodeBase::word Fix(NodeBase::CliThread& cli,
-      const FixOptions& opts, std::string& expl) const;
+      const FixOptions& opts, std::string& expl);
 
    //  Invokes the editor to format the file's source code.
    //
-   NodeBase::word Format(std::string& expl) const;
+   NodeBase::word Format(std::string& expl);
 
-   //  Returns a pointer to the original source code.
+   //  Updates CODE with the file's raw source code.  Returns false if
+   //  the file could not be opened.
+   //
+   bool ReadCode(std::string& code) const;
+
+   //  Returns the file's preprocessed source code.
    //
    const std::string& GetCode() const { return code_; }
 
-   //  Provides read-only access to the lexer.
+   //  Provides read-only access to the lexer.  But if the editor has been
+   //  initialized, it is returned instead.
    //
-   const Lexer& GetLexer() const { return lexer_; }
-
-   //  Provides access to the editor, creating it if necessary.  Updates
-   //  EXPL with an error message if the editor could not be created.
-   //
-   Editor* GetEditor(std::string& expl) const;
+   const Lexer& GetLexer() const;
 
    //  Returns a stream for reading the file.
    //
@@ -266,23 +252,18 @@ public:
    //
    void LogPos(size_t pos, Warning warning,
       const CxxNamed* item = nullptr, NodeBase::word offset = 0,
-      const std::string& info = std::string(NodeBase::EMPTY_STR),
-      bool hide = false) const;
+      const std::string& info = std::string(NodeBase::EMPTY_STR));
 
-   //  Logs WARNING, which occurred on LINE.  OFFSET and INFO are specific
-   //  to WARNING.
+   //  Logs WARNING, which occurred on LINE.
    //
-   void LogLine(size_t line, Warning warning, NodeBase::word offset = 0,
-      const std::string& info = std::string(NodeBase::EMPTY_STR),
-      bool hide = false) const;
+   void LogLine(size_t line, Warning warning);
 
    //  Invokes FindLog(LOG, ITEM, OFFSET) on the file's editor to find the
    //  log whose .warning matches LOG, whose .offset matches OFFSET, and
-   //  whose .item matches ITEM.  Returns that log.  Updates EXPL with an
-   //  error message if the editor could not be created.
+   //  whose .item matches ITEM.  Returns that log.
    //
    CodeWarning* FindLog(const CodeWarning& log,
-      const CxxNamed* item, NodeBase::word offset, std::string& expl) const;
+      const CxxNamed* item, NodeBase::word offset);
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
    //  report includes line type counts and warnings found during parsing and
@@ -298,6 +279,16 @@ public:
    //  formatting options.
    //
    void DisplayItems(std::ostream& stream, const std::string& opts) const;
+
+   //  Provides access to the editor.
+   //
+   Editor& GetEditor();
+
+   //  Invoked to update the position of items when a file has been edited.
+   //  Has the same interface as CxxToken::UpdatePos.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from = string::npos) const;
 
    //  Shrinks containers.
    //
@@ -319,7 +310,7 @@ private:
    //  Classifies the Nth line of code and looks for some warnings.
    //  Sets CONT if a line of code continues on the next line.
    //
-   LineType ClassifyLine(size_t n, bool& cont);
+   LineType CalcLineType(size_t n, bool& cont);
 
    //  Returns the file's prolog (comments that should appear at the top
    //  of the file).
@@ -360,7 +351,7 @@ private:
 
    //  Checks invocations of Debug::ft.
    //
-   void CheckDebugFt() const;
+   void CheckDebugFt();
 
    //  Returns the data member identified by NAME.
    //
@@ -376,13 +367,12 @@ private:
    //
    bool HasForwardFor(const CxxNamed* item) const;
 
-   //  Logs WARNING, which occurred on LINE and POS within ITEM (which may be
-   //  nullptr).  OFFSET and INFO are specific to WARNING.
+   //  Logs WARNING, which occurred at POS within ITEM (which may be nullptr).
+   //  OFFSET and INFO are specific to WARNING.
    //
-   void LogCode(Warning warning, size_t line, size_t pos,
-      const CxxNamed* item, NodeBase::word offset = 0,
-      const std::string& info = std::string(NodeBase::EMPTY_STR),
-      bool hide = false) const;
+   void LogCode(Warning warning,
+      size_t pos, const CxxNamed* item, NodeBase::word offset = 0,
+      const std::string& info = std::string(NodeBase::EMPTY_STR));
 
    //  Returns false if >trim does not apply to this file (e.g. a substitute
    //  file).
@@ -461,7 +451,7 @@ private:
 
    //  Logs an IncludeAdd for each file in FIDS.
    //
-   void LogAddIncludes(std::ostream* stream, const SetOfIds& fids) const;
+   void LogAddIncludes(std::ostream* stream, const SetOfIds& fids);
 
    //  Logs an IncludeRemove for each file in FIDS.
    //
@@ -469,7 +459,7 @@ private:
 
    //  Logs a ForwardAdd for each item in ITEMS.
    //
-   void LogAddForwards(std::ostream* stream, const CxxNamedSet& items) const;
+   void LogAddForwards(std::ostream* stream, const CxxNamedSet& items);
 
    //  Logs a ForwardRemove for each item in ITEMS.
    //
@@ -477,17 +467,12 @@ private:
 
    //  Logs a UsingAdd for using statements that were added by FindOrAddUsing.
    //
-   void LogAddUsings(std::ostream* stream) const;
+   void LogAddUsings(std::ostream* stream);
 
    //  Logs a UsingRemove for each of the file's using statements that is
    //  marked for removal.
    //
    void LogRemoveUsings(std::ostream* stream) const;
-
-   //  Creates the editor.  On failure, returns a non-zero value and updates
-   //  EXPL with an explanation.
-   //
-   NodeBase::word CreateEditor(std::string& expl) const;
 
    //  The file's identifier in the code base.
    //
@@ -591,7 +576,7 @@ private:
 
    //  For editing the file's source code.
    //
-   mutable EditorPtr editor_;
+   Editor editor_;
 };
 }
 #endif

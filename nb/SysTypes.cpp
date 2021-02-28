@@ -43,6 +43,7 @@ const uintptr_t BAD_POINTER = BadPointer();
 const Flags NoFlags = Flags();
 fixed_string EMPTY_STR = "";
 fixed_string CRLF_STR = "\n";
+fixed_string SPACE_STR = " ";
 fixed_string QUOTE_STR = "\"";
 fixed_string ERROR_STR = "#ERR!";
 fixed_string SCOPE_STR = "::";

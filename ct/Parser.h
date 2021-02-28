@@ -163,8 +163,8 @@ private:
    //  purposes, and INST is the template's name and arguments if parsing
    //  a template instance.
    //
-   void Enter(SourceType source, const std::string& venue,
-      const TypeName* inst, const std::string& code, bool preprocess);
+   void Enter(SourceType source, const std::string& venue, const TypeName* inst,
+      const std::string& code, bool preprocess, CodeFile* file = nullptr);
 
    //  Parses declarations at file scope.  SPACE is the current namespace.
    //
@@ -248,7 +248,7 @@ private:
    //
    bool GetUsing(UsingPtr& use, TypedefPtr& type);
 
-   //  Returns true on finding a namespace declaration.
+   //  Returns true on finding a namespace definition.
    //
    bool GetNamespace();
 

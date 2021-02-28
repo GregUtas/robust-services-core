@@ -205,7 +205,7 @@ void Block::EnterBlock()
    Debug::ft("Block.EnterBlock");
 
    Context::SetPos(GetLoc());
-   Context::PushScope(this);
+   Context::PushScope(this, true);
 
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
@@ -373,6 +373,7 @@ string Block::ScopedName(bool templates) const
 
 void Block::Shrink()
 {
+   CxxScope::Shrink();
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::BLOCK_DECL, name_.capacity());
 
@@ -380,6 +381,19 @@ void Block::Shrink()
    auto size = statements_.capacity() * sizeof(TokenPtr);
    size += XrefSize();
    CxxStats::Vectors(CxxStats::BLOCK_DECL, size);
+}
+
+//------------------------------------------------------------------------------
+
+void Block::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScope::UpdatePos(action, begin, count, from);
+
+   for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
+   {
+      (*s)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -682,7 +696,7 @@ StackArg ClassData::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 
    //  Create an argument for this member, which was accessed through VIA.
    //
-   Accessed();
+   Accessed(&via);
    StackArg arg(this, name, via, op);
    if(mutable_) arg.SetAsMutable();
    return arg;
@@ -740,11 +754,19 @@ void ClassData::SetMemInit(const MemberInit* init)
 void ClassData::Shrink()
 {
    Data::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::CLASS_DATA, name_.capacity());
    CxxStats::Vectors(CxxStats::CLASS_DATA, XrefSize());
    if(width_ != nullptr) width_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void ClassData::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Data::UpdatePos(action, begin, count, from);
+   if(width_ != nullptr) width_->UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -902,7 +924,7 @@ void CxxScope::OpenScope(string& name)
 
          if(scope != nullptr)
          {
-            Context::PushScope(scope);
+            Context::PushScope(scope, false);
             pushes_++;
          }
          else
@@ -915,7 +937,7 @@ void CxxScope::OpenScope(string& name)
    }
 
    SetScope(scope);
-   Context::PushScope(this);
+   Context::PushScope(this, false);
    pushes_++;
 }
 
@@ -1184,7 +1206,7 @@ bool Data::ExecuteInit(bool push)
    if(push)
    {
       Context::Enter(this);
-      Context::PushScope(this);
+      Context::PushScope(this, true);
    }
 
    //  If some form of initialization exists, one of the following will
@@ -1326,11 +1348,8 @@ bool Data::InitByDefault()
    }
    else
    {
+      cls->WasCalled(PureCtor, this);
       if(!cls->HasPODMember()) SetInited();
-      auto warning =
-         (decl->inited_ ? DefaultConstructor : DefaultPODConstructor);
-      Log(warning, cls, -1);
-      cls->Log(warning);
    }
 
    return decl->inited_;
@@ -1518,6 +1537,8 @@ bool Data::SetNonConst()
 
 void Data::Shrink()
 {
+   CxxScope::Shrink();
+   if(alignas_ != nullptr) alignas_->Shrink();
    spec_->Shrink();
    if(expr_ != nullptr) expr_->Shrink();
    if(init_ != nullptr) init_->Shrink();
@@ -1528,6 +1549,18 @@ void Data::Shrink()
 string Data::TypeString(bool arg) const
 {
    return spec_->TypeString(arg);
+}
+
+//------------------------------------------------------------------------------
+
+void Data::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScope::UpdatePos(action, begin, count, from);
+   if(alignas_ != nullptr) alignas_->UpdatePos(action, begin, count, from);
+   spec_->UpdatePos(action, begin, count, from);
+   if(expr_ != nullptr) expr_->UpdatePos(action, begin, count, from);
+   if(init_ != nullptr) init_->UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -1719,6 +1752,17 @@ void FuncData::ExitBlock() const
    Debug::ft("FuncData.ExitBlock");
 
    Context::EraseLocal(this);
+
+   auto spec = GetTypeSpec();
+   if(!spec->IsIndirect())
+   {
+      auto root = spec->Root();
+      if((root != nullptr) && (root->Type() == Cxx::Class))
+      {
+         static_cast< Class* >(root)->WasCalled(PureDtor, this);
+      }
+   }
+
    if(next_ != nullptr) next_->ExitBlock();
 }
 
@@ -1754,11 +1798,19 @@ void FuncData::SetNext(DataPtr& next)
 void FuncData::Shrink()
 {
    Data::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::FUNC_DATA, name_.capacity());
    CxxStats::Vectors(CxxStats::FUNC_DATA, XrefSize());
    if(next_ != nullptr) next_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncData::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Data::UpdatePos(action, begin, count, from);
+   if(next_ != nullptr) next_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2222,7 +2274,7 @@ bool Function::CanBeNoexcept() const
 
    //  The only functions that should be noexcept are virtual functions whose
    //  base class defined the function as noexcept.  This should be enforced
-   //  by the compiler but must be check to avoid generating a warning.
+   //  by the compiler but must be checked to avoid generating a warning.
    //
    auto bf = FindBaseFunc();
 
@@ -2447,15 +2499,15 @@ void Function::CheckArgs() const
    if(type == FuncOperator) return;
 
    //  If the function is an override, look for arguments that were renamed
-   //  from the direct base class.
+   //  from the root base class.
    //
    if(override_)
    {
-      auto base = FindBaseFunc();
+      auto root = FindRootFunc();
 
       for(size_t i = 0; i < n; ++i)
       {
-         if(*args_[i]->Name() != *base->args_[i]->Name())
+         if(*args_[i]->Name() != *root->args_[i]->Name())
          {
             LogToArg(OverrideRenamesArgument, i);
          }
@@ -2465,7 +2517,7 @@ void Function::CheckArgs() const
       {
          for(size_t i = 0; i < n; ++i)
          {
-            if(*mate_->args_[i]->Name() != *base->args_[i]->Name())
+            if(*mate_->args_[i]->Name() != *root->args_[i]->Name())
             {
                mate_->LogToArg(OverrideRenamesArgument, i);
             }
@@ -2603,10 +2655,12 @@ void Function::CheckCtor() const
    //
    if(GetAccess() == Cxx::Public)
    {
-      if(!GetClass()->Subclasses()->empty()) Log(PublicConstructor);
+      if(GetClass()->IsBaseClass()) Log(PublicConstructor);
    }
 
-   if(FuncRole() == PureCtor)
+   auto role = FuncRole();
+
+   if(role == PureCtor)
    {
       //  This is a not a copy or move constructor.  It should probably be
       //  tagged explicit if it is not invoked implicitly and can take one
@@ -2624,6 +2678,15 @@ void Function::CheckCtor() const
       else if(explicit_ && ((max == 0) || (min >= 2)))
       {
          Log(ExplicitConstructor);
+      }
+
+      if(base_ == nullptr)
+      {
+         auto base = GetClass()->BaseClass();
+         if(base != nullptr)
+         {
+            base->WasCalled(role, this);
+         }
       }
    }
 
@@ -2644,7 +2707,6 @@ void Function::CheckCtor() const
    //  simply make a bitwise copy.  Otherwise, it may not be the desired
    //  behavior unless the base copy or move constructor is deleted.
    //
-   auto role = FuncRole();
    if((role == CopyCtor) || (role == MoveCtor))
    {
       if((defn->call_ == nullptr) && !IsDefaulted())
@@ -2774,7 +2836,7 @@ void Function::CheckDtor() const
    }
 
    auto cls = GetClass();
-   if(cls->Subclasses()->empty()) return;
+   if(!cls->IsBaseClass()) return;
 
    if(virtual_)
    {
@@ -3384,7 +3446,7 @@ void Function::EnterBlock()
    if(parms_ != nullptr) parms_->EnterBlock();
 
    Context::Enter(this);
-   Context::PushScope(this);
+   Context::PushScope(this, true);
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -3471,7 +3533,7 @@ bool Function::EnterScope()
    found_ = true;
    if(defn || AtFileScope()) GetFile()->InsertFunc(this);
    if(!defn) CheckOverride();
-   GetArea()->InsertFunc(this, defn);
+   GetArea()->InsertFunc(this);
    EnterBlock();
    return !defn;
 }
@@ -3819,18 +3881,17 @@ CodeFile* Function::GetDefnFile() const
 
 //------------------------------------------------------------------------------
 
-size_t Function::GetRange(size_t& begin, size_t& end) const
+bool Function::GetRange(size_t& begin, size_t& left, size_t& end) const
 {
-   //  If the function has an implementation, return the offset of the
-   //  left brace at the beginning of the function body, and set END to
-   //  the location of the matching right brace.
-   //
-   CxxScoped::GetRange(begin, end);
-   if(impl_ == nullptr) return string::npos;
-   auto lexer = GetFile()->GetLexer();
-   auto left = impl_->GetPos();
+   CxxScoped::GetRange(begin, left, end);
+   left = string::npos;
+   if(impl_ == nullptr) return (end != string::npos);
+
+   auto& lexer = GetFile()->GetLexer();
+   left = impl_->GetPos();
+   if(left == string::npos) return false;
    end = lexer.FindClosing('{', '}', left + 1);
-   return left;
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -4425,8 +4486,8 @@ bool Function::IsTrivial() const
    auto file = GetImplFile();
    if(file == nullptr) return true;
 
-   size_t begin, end;
-   GetRange(begin, end);
+   size_t begin, left, end;
+   if(!GetRange(begin, left, end)) return false;
 
    auto last = file->GetLexer().GetLineNum(end);
    auto body = false;
@@ -4494,7 +4555,7 @@ bool Function::IsUnused() const
 
 //------------------------------------------------------------------------------
 
-void Function::ItemAccessed(const CxxNamed* item)
+void Function::ItemAccessed(const CxxNamed* item, const StackArg* via)
 {
    Debug::ft("Function.ItemAccessed");
 
@@ -4542,7 +4603,11 @@ void Function::ItemAccessed(const CxxNamed* item)
 
    if(item->IsDeclaredInFunction()) return;
    if(item->GetAccess() != Cxx::Public) SetNonPublic();
-   if(!item->IsStatic()) SetNonStatic();
+
+   if((via == nullptr) || via->IsThis())
+   {
+      if(!item->IsStatic()) SetNonStatic();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -4622,7 +4687,7 @@ StackArg Function::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
    //  o discarding an unnecessary "this" argument when a static function is
    //    selected as the result of argument matching (see UpdateThisArg).
    //
-   Accessed();
+   Accessed(&via);
    Context::PushArg(StackArg(this, name));
    if(op == Cxx::REFERENCE_SELECT) via.IncrPtrs();
    via.SetAsThis(true);
@@ -4894,6 +4959,7 @@ void Function::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Function::Shrink()
 {
+   CxxScope::Shrink();
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
    if(spec_ != nullptr) spec_->Shrink();
@@ -5020,6 +5086,31 @@ string Function::TypeString(bool arg) const
 
 //------------------------------------------------------------------------------
 
+void Function::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScope::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
+   if(spec_ != nullptr) spec_->UpdatePos(action, begin, count, from);
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      (*a)->UpdatePos(action, begin, count, from);
+   }
+
+   if(call_ != nullptr) call_->UpdatePos(action, begin, count, from);
+
+   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+   {
+      (*m)->UpdatePos(action, begin, count, from);
+   }
+
+   if(impl_ != nullptr) impl_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
 void Function::UpdateThisArg(StackArgVector& args) const
 {
    Debug::ft("Function.UpdateThisArg");
@@ -5069,10 +5160,12 @@ void Function::WasCalled()
 {
    Debug::ft("Function.WasCalled");
 
-   //  Don't record a recursive invocation.  It's a minor thing, but a
-   //  function should be logged as unused if its only invoker is itself.
+   //  Don't record a recursive invocation: a function should be logged
+   //  as unused if its only invoker is itself.
    //
-   if(Context::Scope()->GetFunction() == this) return;
+   auto scope = Context::Scope();
+   if(scope == nullptr) return;
+   if(scope->GetFunction() == this) return;
 
    ++GetDecl()->calls_;
 
@@ -5092,12 +5185,10 @@ void Function::WasCalled()
 
    case FuncCtor:
       //
-      //  If this is an invocation by a derived class's constructor,
-      //  set this constructor as its base.  Its constructor could
-      //  also cause the invocation of other constructors, but its
-      //  superclass constructor will be the first.
+      //  If this is an invocation by a derived class's constructor, set
+      //  this constructor as its base.
       //
-      auto func = Context::Scope()->GetFunction();
+      auto func = scope->GetFunction();
 
       if((func != nullptr) && (func->FuncType() == FuncCtor))
       {
@@ -5386,6 +5477,14 @@ void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
+void FuncSpec::Shrink()
+{
+   TypeSpec::Shrink();
+   func_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
 const TypeTags* FuncSpec::Tags() const
 {
    return func_->GetTypeSpec()->Tags();
@@ -5417,6 +5516,15 @@ string FuncSpec::TypeString(bool arg) const
 string FuncSpec::TypeTagsString(const TypeTags& tags) const
 {
    return func_->GetTypeSpec()->TypeTagsString(tags);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   TypeSpec::UpdatePos(action, begin, count, from);
+   func_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -5579,9 +5687,18 @@ void SpaceData::SetTemplateParms(TemplateParmsPtr& parms)
 void SpaceData::Shrink()
 {
    Data::Shrink();
-
    CxxStats::Vectors(CxxStats::FILE_DATA, XrefSize());
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceData::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Data::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+   if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
 }
 }

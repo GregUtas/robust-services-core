@@ -459,7 +459,7 @@ word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The SIZES command.
 //
-void StSizesCommand::DisplaySizes(CliThread& cli, bool all) const
+void StSizesCommand::DisplaySizes(const CliThread& cli, bool all) const
 {
    if(all)
    {

@@ -60,30 +60,6 @@ CxxScoped* ReferentError(const string& item, debug64_t offset)
 
 //==============================================================================
 
-CxxLocation::CxxLocation() :
-   file_(nullptr),
-   pos_(NOT_IN_SOURCE),
-   internal_(false)
-{
-}
-
-//------------------------------------------------------------------------------
-
-size_t CxxLocation::GetPos() const
-{
-   return (pos_ != NOT_IN_SOURCE ? pos_ : std::string::npos);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxLocation::SetLoc(CodeFile* file, size_t pos)
-{
-   file_ = file;
-   pos_ = pos;
-}
-
-//==============================================================================
-
 Asm::Asm(ExprPtr& code) : code_(std::move(code))
 {
    Debug::ft("Asm.ctor");
@@ -111,6 +87,23 @@ void Asm::Print(ostream& stream, const Flags& options) const
    stream << ");";
 }
 
+//------------------------------------------------------------------------------
+
+void Asm::Shrink()
+{
+   CxxNamed::Shrink();
+   code_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Asm::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxNamed::UpdatePos(action, begin, count, from);
+   code_->UpdatePos(action, begin, count, from);
+}
+
 //==============================================================================
 
 CxxNamed::CxxNamed()
@@ -135,13 +128,13 @@ CxxNamed::~CxxNamed()
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::Accessed() const
+void CxxNamed::Accessed(const StackArg* via) const
 {
    Debug::ft("CxxNamed.Accessed");
 
    auto func = Context::Scope()->GetFunction();
    if(func == nullptr) return;
-   func->ItemAccessed(this);
+   func->ItemAccessed(this, via);
 }
 
 //------------------------------------------------------------------------------
@@ -271,11 +264,12 @@ void CxxNamed::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
+bool CxxNamed::GetRange(size_t& begin, size_t& left, size_t& end) const
 {
    begin = string::npos;
+   left = string::npos;
    end = string::npos;
-   return string::npos;
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -333,8 +327,8 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::Log(Warning warning, const CxxNamed* item,
-   word offset, bool hide, const string& info) const
+void CxxNamed::Log(Warning warning,
+   const CxxNamed* item, word offset, const string& info) const
 {
    Debug::ft("CxxNamed.Log");
 
@@ -348,12 +342,12 @@ void CxxNamed::Log(Warning warning, const CxxNamed* item,
       auto that = inst->FindTemplateAnalog(this);
       if(that == nullptr) return;
       if(item != nullptr) item = inst->FindTemplateAnalog(item);
-      that->Log(warning, item, offset, hide, info);
+      that->Log(warning, item, offset, info);
       return;
    }
 
    if(item == nullptr) item = this;
-   GetFile()->LogPos(GetPos(), warning, item, offset, info, hide);
+   GetFile()->LogPos(GetPos(), warning, item, offset, info);
 }
 
 //------------------------------------------------------------------------------
@@ -378,7 +372,7 @@ StackArg CxxNamed::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft("CxxNamed.NameToArg");
 
-   Accessed();
+   Accessed(nullptr);
    return StackArg(this, name);
 }
 
@@ -614,7 +608,7 @@ void CxxNamed::SetContext(size_t pos)
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::SetLoc(CodeFile* file, size_t pos)
+void CxxNamed::SetLoc(CodeFile* file, size_t pos) const
 {
    Debug::ft("CxxNamed.SetLoc");
 
@@ -663,6 +657,15 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
       stream << ScopedName(true);
    else
       name->Print(stream, NoFlags);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxNamed::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+   loc_.UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -1862,6 +1865,7 @@ void DataSpec::SetUserType(Cxx::ItemType user)
 
 void DataSpec::Shrink()
 {
+   TypeSpec::Shrink();
    name_->Shrink();
 
    if(arrays_ != nullptr)
@@ -1923,6 +1927,23 @@ string DataSpec::TypeTagsString(const TypeTags& tags) const
    auto ts = name_->TypeString(true);
    tags.TypeString(ts, false);
    return ts;
+}
+
+//------------------------------------------------------------------------------
+
+void DataSpec::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   TypeSpec::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
+
+   if(arrays_ != nullptr)
+   {
+      for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
+      {
+         (*a)->UpdatePos(action, begin, count, from);
+      }
+   }
 }
 
 //==============================================================================
@@ -2425,6 +2446,8 @@ void QualName::SetUserType(Cxx::ItemType user) const
 
 void QualName::Shrink()
 {
+   CxxNamed::Shrink();
+
    for(auto n = First(); n != nullptr; n = n->Next())
    {
       n->Shrink();
@@ -2463,6 +2486,19 @@ string QualName::TypeString(bool arg) const
    auto expl = "Failed to find referent for " + QualifiedName(true, true);
    Context::SwLog(QualName_TypeString, expl, 0);
    return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
+void QualName::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxNamed::UpdatePos(action, begin, count, from);
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -2560,8 +2596,19 @@ void StaticAssert::Print(ostream& stream, const Flags& options) const
 
 void StaticAssert::Shrink()
 {
-   expr_-> Shrink();
+   CxxNamed::Shrink();
+   expr_->Shrink();
    if(message_ != nullptr) message_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxNamed::UpdatePos(action, begin, count, from);
+   expr_->UpdatePos(action, begin, count, from);
+   if(message_ != nullptr) message_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -2617,7 +2664,7 @@ void TemplateParms::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void TemplateParms::EnterScope() const
+void TemplateParms::EnterScope()
 {
    Debug::ft("TemplateParms.EnterScope");
 
@@ -2674,6 +2721,8 @@ void TemplateParms::Print(ostream& stream, const Flags& options) const
 
 void TemplateParms::Shrink()
 {
+   CxxToken::Shrink();
+
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
       (*p)->Shrink();
@@ -2696,6 +2745,19 @@ string TemplateParms::TypeString(bool arg) const
    }
 
    return ts + '>';
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================
@@ -3239,6 +3301,7 @@ void TypeName::SetUserType(Cxx::ItemType user) const
 
 void TypeName::Shrink()
 {
+   CxxNamed::Shrink();
    name_.shrink_to_fit();
 
    CxxStats::Strings(CxxStats::TYPE_NAME, name_.capacity());
@@ -3279,6 +3342,22 @@ string TypeName::TypeString(bool arg) const
    }
 
    return ts + '>';
+}
+
+//------------------------------------------------------------------------------
+
+void TypeName::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxNamed::UpdatePos(action, begin, count, from);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->UpdatePos(action, begin, count, from);
+      }
+   }
 }
 
 //==============================================================================

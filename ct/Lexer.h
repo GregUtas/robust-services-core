@@ -22,8 +22,10 @@
 #ifndef LEXER_H_INCLUDED
 #define LEXER_H_INCLUDED
 
+#include "Base.h"
 #include <cstddef>
 #include <cstdint>
+#include <iosfwd>
 #include <string>
 #include <vector>
 #include "CodeTypes.h"
@@ -35,7 +37,27 @@
 
 namespace CodeTools
 {
-class Lexer
+//  Information about a line of source code.
+//
+struct LineInfo
+{
+   size_t begin;  // offset where line starts; it ends at a CRLF
+   int8_t depth;  // lexical level for indentation
+   bool cont;     // set if code continues from the previous line
+
+   //  Constructs a line that begins at START.
+   //
+   explicit LineInfo(size_t start);
+
+   //  Displays the line in STREAM, prefixed with its depth and a '+' if it
+   //  is a continuation.
+   //
+   void Display(std::ostream& stream) const;
+};
+
+//------------------------------------------------------------------------------
+
+class Lexer : public NodeBase::Base
 {
 public:
    //  Initializes all fields to default values.
@@ -44,12 +66,18 @@ public:
 
    //  Not subclassed.
    //
-   ~Lexer() = default;
+   virtual ~Lexer() = default;
 
    //  Initializes the lexer to assist with parsing SOURCE and invokes
    //  Advance() to position curr_ at the first valid parse position.
+   //  FILE is the file, if any, from which the code was taken.
    //
-   void Initialize(const std::string& source);
+   void Initialize(const std::string& source, CodeFile* file = nullptr);
+
+   //  Returns the code on POS's line, removing its endline if CRLF if FALSE.
+   //  Returns EMPTY_STR if POS is out of range.
+   //
+   std::string GetCode(size_t pos, bool crlf = true) const;
 
    //  Returns the character at POS.
    //
@@ -57,10 +85,10 @@ public:
 
    //  Returns the number of lines in source_.
    //
-   size_t LineCount() const { return lines_; }
+   size_t LineCount() const { return lines_.size(); }
 
-   //  Returns the line number on which POS occurs.  Returns string::npos
-   //  if POS is out of range.
+   //  Returns the line number on which POS occurs.  If the code has been
+   //  edited, this may not match the line number in the original code.
    //
    //  NOTE: Internally, line numbers start at 0.  When a line number is to
    //  ====  be displayed, it must be incremented.  Similarly, a line number
@@ -68,28 +96,32 @@ public:
    //
    size_t GetLineNum(size_t pos) const;
 
-   //  Returns the position of the first character in LINE.
+   //  Returns the position of the first character in LINE.  Returns
+   //  string::npos if LINE is out of range.  Cannot be used on code once
+   //  it has been edited.
    //
    size_t GetLineStart(size_t line) const;
 
-   //  Returns the line that includes POS, with a '$' inserted after POS.
+   //  Sets S to the string for the Nth line of code, removing its endline
+   //  if CRLF is FALSE.  Clears S and returns false if N is out range.
+   //  Cannot be used on code once it has been edited.
    //
-   std::string GetLine(size_t pos) const;
+   bool GetNthLine(size_t n, std::string& s, bool crlf) const;
 
-   //  Sets S to the string for the Nth line of code, excluding the endline,
-   //  or EMPTY_STR if N was out of range.  Returns true if N was valid.
-   //
-   bool GetNthLine(size_t n, std::string& s) const;
-
-   //  Returns the string for the Nth line of code.  Returns EMPTY_STR if N
-   //  is out of range.
+   //  Returns the string for the Nth line of code after removing its endline.
+   //  Returns EMPTY_STR if N is out of range.  Cannot be used on code once it
+   //  has been edited.
    //
    std::string GetNthLine(size_t n) const;
+
+   //  Returns the line that includes POS, with a '$' inserted after POS.
+   //
+   std::string MarkPos(size_t pos) const;
 
    //  Returns a string containing the next COUNT characters, starting at POS.
    //  Converts endlines to blanks and compresses adjacent blanks.
    //
-   std::string Extract(size_t pos, size_t count) const;
+   std::string Substr(size_t pos, size_t count) const;
 
    //  Returns the current parse position.
    //
@@ -105,7 +137,7 @@ public:
 
    //  Returns true if curr_ has reached the end of source_.
    //
-   bool Eof() const { return curr_ >= size_; }
+   bool Eof() const { return curr_ >= source_->size(); }
 
    //  Sets prev_ to curr_, finds the first parse position starting there,
    //  and returns true.
@@ -206,10 +238,6 @@ public:
    //
    void GetFuncBackTags(KeywordSet& tags);
 
-   //  Returns the next operator (punctuation only).
-   //
-   std::string NextOperator() const;
-
    //  Starts at POS and searches for a right-hand character (RHC) that matches
    //  a left-hand one (LHC) that was just found (e.g. (), [], {}, <>).  If POS
    //  is not provided, POS is set to curr_.  For each LHC that is found, an
@@ -297,6 +325,145 @@ public:
    //
    void FindCode(OptionalCode* opt, bool compile);
 
+   //  Scans the code to determine lexical levels for indentation.
+   //
+   void CalcDepths();
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
+protected:
+   //  A type for the LineInfo associated with each line of source code.
+   //
+   typedef std::vector< LineInfo > LineInfoVector;
+
+   //  Returns the information associated with each line of source code.
+   //
+   const LineInfoVector& GetLinesInfo() const { return lines_; }
+
+   //  Returns the LineInfo for POS's line.
+   //
+   const LineInfo* GetLineInfo(size_t pos) const;
+
+   //  Returns the start of the line that contains POS.
+   //
+   size_t CurrBegin(size_t pos) const;
+
+   //  Returns the end of the line that contains POS.  It will be at an endline.
+   //
+   size_t CurrEnd(size_t pos) const;
+
+   //  Returns the start of the line that precedes POS's line.
+   //
+   size_t PrevBegin(size_t pos) const;
+
+   //  Returns the start of the line that follows POS's line.
+   //
+   size_t NextBegin(size_t pos) const;
+
+   //  Returns the type of line in which POS occurs.
+   //
+   LineType GetLineType(size_t pos) const;
+
+   //  Returns true if POS's line is empty or contains only whitespace.
+   //
+   bool IsBlankLine(size_t pos) const;
+
+   //  Returns the length of POS's line, including its CRLF.
+   //
+   size_t LineSize(size_t pos) const;
+
+   //  Returns true if there is no CRLF between POS1 and POS2.
+   //
+   bool OnSameLine(size_t pos1, size_t pos2) const;
+
+   //  Returns true if the code starting at POS matches STR.
+   //
+   bool CodeMatches(size_t pos, const std::string& str) const;
+
+   //  Returns the position of any comment that follows POS on its line.
+   //
+   size_t FindComment(size_t pos) const;
+
+   //  Returns the position of the first non-blank character on POS's line.
+   //  Does *not* skip non-code (that is, literals and comments).
+   //
+   size_t LineFindFirst(size_t pos) const;
+
+   //  Returns the position of the next non-blank character on POS's line,
+   //  starting at POS.  Does *not* skip non-code.
+   //
+   size_t LineFindNext(size_t pos) const;
+
+   //  Returns true if POS is the location of the first non-blank on its line.
+   //
+   bool IsFirstNonBlank(size_t pos) const;
+
+   //  Returns true if the rest of the line that follows POS contains no code.
+   //
+   bool NoCodeFollows(size_t pos) const;
+
+   //  Looks for STR starting at POS.  If STR is found, returns its position,
+   //  else returns string::npos.  Ignores non-code and does not proceed to
+   //  subsequent lines.
+   //
+   size_t LineFind(size_t pos, const std::string& str);
+
+   //  The same as LineFind(pos, str), but searches backwards.
+   //
+   size_t LineRfind(size_t pos, const std::string& str);
+
+   //  Returns the first occurrence of a character in CHARS, starting at POS.
+   //  Does not proceed to subsequent lines.  Returns string::npos if no such
+   //  character was found.
+   //
+   size_t LineFindFirstOf(size_t pos, const std::string& chars);
+
+   //  The same as LineFindFirstOf, but searches backwards.
+   //
+   size_t LineRfindFirstOf(size_t pos, const std::string& chars);
+
+   //  The same as LineFind, but looks for the next non-blank character.
+   //
+   size_t LineFindNonBlank(size_t pos);
+
+   //  The same as LineFindNonBlank, but searches backwards.
+   //
+   size_t LineRfindNonBlank(size_t pos);
+
+   //  The same as LineFind, but continues to subsequent lines.
+   //
+   size_t Find(size_t pos, const std::string& str);
+
+   //  The same as LineRfind, but continues to previous lines.
+   //
+   size_t Rfind(size_t pos, const std::string& str);
+
+   //  The same as Find, but looks for the next non-blank character.
+   //
+   size_t FindNonBlank(size_t pos);
+
+   //  The same as FindNonBlank, but searches backwards.
+   //
+   size_t RfindNonBlank(size_t pos);
+
+   //  Returns the first occurrence of a character in CHARS, starting at POS.
+   //  Returns string::npos if none of those characters was found.
+   //
+   size_t FindFirstOf(size_t pos, const std::string& chars);
+
+   //  Returns the first occurrence of a character in CHARS, starting at POS
+   //  and reversing.  Returns string::npos if no such character was found.
+   //
+   size_t RfindFirstOf(size_t pos, const std::string& chars);
+
+   //  Returns the location of ID, starting at POS.  Returns string::npos
+   //  if STR was not found.  STR must be an identifier or keyword that is
+   //  delimited by punctuation.
+   //
+   size_t FindWord(size_t pos, const std::string& id);
+
    //  Advances curr_ to the start of the next identifier, which is supplied
    //  in ID.  The identifier could be a keyword or preprocessor directive.
    //  Returns true if an identifier was found, else false.  If TOKENIZE is
@@ -306,14 +473,9 @@ public:
    //
    bool FindIdentifier(std::string& id, bool tokenize);
 
-   //  Scans the code to determine lexical levels for indentation.
+   //  Invoked to adjust LineInfo records after editing the code.
    //
-   void CalcDepths();
-
-   //  Returns the DEPTH of indentation for a line.  Sets CONT if the line
-   //  continues a previous line.
-   //
-   void GetDepth(size_t line, int8_t& depth, bool& cont) const;
+   void Update();
 private:
    //  Used by PreprocessSource, which creates a clone of "this" lexer to
    //  do the work.
@@ -333,6 +495,10 @@ private:
    //  string.
    //
    std::string NextToken() const;
+
+   //  Returns the next operator (punctuation only).
+   //
+   std::string NextOperator() const;
 
    //  Advances over the literal that begins at POS.  Returns the position of
    //  the character that closes the literal.
@@ -390,37 +556,26 @@ private:
    //
    void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
 
-   //  Information about a line of source code.
+   //  Returns the index to the LineInfo for POS's line.  Returns SIZE_MAX if
+   //  POS is out of range.
    //
-   struct LineInfo
-   {
-      const size_t start;  // where line starts; it ends at a CRLF
-      int8_t depth;        // lexical level for indentation
-      bool cont;           // set if code continues from the previous line
+   size_t GetLineInfoIndex(size_t pos) const;
 
-      explicit LineInfo(size_t start) :
-         start(start),
-         depth(DEPTH_NOT_SET),
-         cont(false)
-      {
-      }
-   };
+   //  Returns the LineInfo for POS's line.
+   //
+   LineInfo* GetLineInfo(size_t pos);
 
    //  The code being analyzed.
    //
    const std::string* source_;
 
-   //  The size of source_.
+   //  The file, if any, from which the code was taken.
    //
-   size_t size_;
-
-   //  The number of lines in source_.
-   //
-   size_t lines_;
+   CodeFile* file_;
 
    //  Information about each line.
    //
-   std::vector< LineInfo > line_;
+   LineInfoVector lines_;
 
    //  The current position within source_.
    //
@@ -431,10 +586,9 @@ private:
    //
    size_t prev_;
 
-   //  Set if the code has been scanned to determine the indentation level
-   //  for each line.
+   //  Set if the code has been edited.
    //
-   bool scanned_;
+   bool edited_;
 };
 }
 #endif

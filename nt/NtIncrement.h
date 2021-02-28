@@ -124,7 +124,7 @@ public:
    SizesCommand();
    virtual ~SizesCommand() = default;
 protected:
-   virtual void DisplaySizes(CliThread& cli, bool all) const;
+   virtual void DisplaySizes(const CliThread& cli, bool all) const;
 private:
    word ProcessCommand(CliThread& cli) const override;
 };

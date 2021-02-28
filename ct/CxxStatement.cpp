@@ -97,6 +97,23 @@ void Case::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    expr_->GetUsages(file, symbols);
 }
 
+//------------------------------------------------------------------------------
+
+void Case::Shrink()
+{
+   CxxStatement::Shrink();
+   expr_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Case::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxStatement::UpdatePos(action, begin, count, from);
+   expr_->UpdatePos(action, begin, count, from);
+}
+
 //==============================================================================
 
 Catch::Catch(size_t pos) : CxxStatement(pos)
@@ -197,8 +214,19 @@ bool Catch::LocateItem(const CxxNamed* item, size_t& n) const
 
 void Catch::Shrink()
 {
+   CxxStatement::Shrink();
    if(arg_ != nullptr) arg_->Shrink();
    handler_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Catch::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxStatement::UpdatePos(action, begin, count, from);
+   if(arg_ != nullptr) arg_->UpdatePos(action, begin, count, from);
+   handler_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -256,6 +284,23 @@ bool Condition::Show(ostream& stream) const
    return true;
 }
 
+//------------------------------------------------------------------------------
+
+void Condition::Shrink()
+{
+   CxxStatement::Shrink();
+   if(condition_ != nullptr) condition_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Condition::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxStatement::UpdatePos(action, begin, count, from);
+   if(condition_ != nullptr) condition_->UpdatePos(action, begin, count, from);
+}
+
 //==============================================================================
 
 Continue::Continue(size_t pos) : CxxStatement(pos)
@@ -274,16 +319,26 @@ void Continue::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-CxxStatement::CxxStatement(size_t pos) : pos_(pos)
+CxxStatement::CxxStatement(size_t pos)
 {
    Debug::ft("CxxStatement.ctor");
+
+   loc_.SetLoc(nullptr, pos);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxStatement::EnterBlock()
 {
-   Context::SetPos(pos_);
+   Context::SetPos(loc_.GetPos());
+}
+
+//------------------------------------------------------------------------------
+
+void CxxStatement::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   loc_.UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -399,6 +454,15 @@ void Do::Shrink()
    loop_->Shrink();
 }
 
+//------------------------------------------------------------------------------
+
+void Do::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Condition::UpdatePos(action, begin, count, from);
+   loop_->UpdatePos(action, begin, count, from);
+}
+
 //==============================================================================
 
 Expr::Expr(ExprPtr& expression, size_t pos) : CxxStatement(pos),
@@ -440,6 +504,23 @@ void Expr::Print(ostream& stream, const Flags& options) const
 {
    expr_->Print(stream, options);
    stream << ';';
+}
+
+//------------------------------------------------------------------------------
+
+void Expr::Shrink()
+{
+   CxxStatement::Shrink();
+   expr_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Expr::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxStatement::UpdatePos(action, begin, count, from);
+   expr_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -620,10 +701,22 @@ void For::Print(ostream& stream, const Flags& options) const
 
 void For::Shrink()
 {
-   if(initial_ != nullptr) initial_->Shrink();
    Condition::Shrink();
+   if(initial_ != nullptr) initial_->Shrink();
    if(subsequent_ != nullptr) subsequent_->Shrink();
    loop_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void For::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Condition::UpdatePos(action, begin, count, from);
+   if(initial_ != nullptr) initial_->UpdatePos(action, begin, count, from);
+   if(subsequent_ != nullptr)
+      subsequent_->UpdatePos(action, begin, count, from);
+   loop_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -653,6 +746,14 @@ void Goto::EnterBlock()
 void Goto::Print(std::ostream& stream, const NodeBase::Flags& options) const
 {
    stream << GOTO_STR << SPACE << label_ << ';';
+}
+
+//------------------------------------------------------------------------------
+
+void Goto::Shrink()
+{
+   CxxStatement::Shrink();
+   label_.shrink_to_fit();
 }
 
 //==============================================================================
@@ -793,6 +894,16 @@ void If::Shrink()
    if(else_ != nullptr) else_->Shrink();
 }
 
+//------------------------------------------------------------------------------
+
+void If::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Condition::UpdatePos(action, begin, count, from);
+   then_->UpdatePos(action, begin, count, from);
+   if(else_ != nullptr) else_->UpdatePos(action, begin, count, from);
+}
+
 //==============================================================================
 
 Label::Label(string& name, size_t pos) : CxxStatement(pos)
@@ -832,6 +943,14 @@ void Label::ExitBlock() const
 
    //  A full compiler would remove the label from a symbol table
    //  here, but we don't bother to do anything with labels.
+}
+
+//------------------------------------------------------------------------------
+
+void Label::Shrink()
+{
+   CxxStatement::Shrink();
+   name_.shrink_to_fit();
 }
 
 //==============================================================================
@@ -917,6 +1036,23 @@ void Return::Print(ostream& stream, const Flags& options) const
    stream << ';';
 }
 
+//------------------------------------------------------------------------------
+
+void Return::Shrink()
+{
+   CxxStatement::Shrink();
+   if(expr_ != nullptr) expr_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Return::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxStatement::UpdatePos(action, begin, count, from);
+   if(expr_ != nullptr) expr_->UpdatePos(action, begin, count, from);
+}
+
 //==============================================================================
 
 Switch::Switch(size_t pos) : CxxStatement(pos)
@@ -999,8 +1135,19 @@ bool Switch::LocateItem(const CxxNamed* item, size_t& n) const
 
 void Switch::Shrink()
 {
+   CxxStatement::Shrink();
    expr_->Shrink();
    cases_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Switch::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxStatement::UpdatePos(action, begin, count, from);
+   expr_->UpdatePos(action, begin, count, from);
+   cases_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -1130,11 +1277,26 @@ bool Try::LocateItem(const CxxNamed* item, size_t& n) const
 
 void Try::Shrink()
 {
+   CxxStatement::Shrink();
    try_->Shrink();
 
    for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
    {
       (*c)->Shrink();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void Try::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxStatement::UpdatePos(action, begin, count, from);
+   try_->UpdatePos(action, begin, count, from);
+
+   for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
+   {
+      (*c)->UpdatePos(action, begin, count, from);
    }
 }
 
@@ -1235,5 +1397,14 @@ void While::Shrink()
 {
    Condition::Shrink();
    loop_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void While::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   Condition::UpdatePos(action, begin, count, from);
+   loop_->UpdatePos(action, begin, count, from);
 }
 }

@@ -25,6 +25,7 @@
 #include "DaemonRegistry.h"
 #include "Debug.h"
 #include "InvokerThread.h"
+#include "SbTypes.h"
 #include "Singleton.h"
 #include "TimerThread.h"
 

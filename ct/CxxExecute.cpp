@@ -27,6 +27,7 @@
 #include "CodeFile.h"
 #include "CxxArea.h"
 #include "CxxDirective.h"
+#include "CxxLocation.h"
 #include "CxxNamed.h"
 #include "CxxScope.h"
 #include "CxxString.h"
@@ -394,6 +395,15 @@ void Context::PushParser(const Parser* parser)
 
 //------------------------------------------------------------------------------
 
+void Context::PushScope(CxxScope* scope, bool hidden)
+{
+   auto access = (hidden ? Cxx::Private : scope->GetAccess());
+   ActiveScope active(scope, access);
+   Frame_->PushScope(active);
+}
+
+//------------------------------------------------------------------------------
+
 void Context::PushXrefFrame(XrefUpdater updater)
 {
    XrefFrames_.push_back(XrefFrame(updater));
@@ -419,6 +429,34 @@ void Context::Reset()
    File_ = nullptr;
    CheckPos_ = false;
    Block::ResetUsings();
+}
+
+//------------------------------------------------------------------------------
+
+CxxScope* Context::Scope()
+{
+   return (Frame_ != nullptr ? Frame_->Scope() : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+Cxx::Access Context::ScopeVisibility()
+{
+   if(ScopeAccess() == Cxx::Private) return Cxx::Private;
+   if(ParsingTemplateInstance()) return Cxx::Private;
+
+   //  If the scope is in a class, that class (and its chain of outer classes,
+   //  if any) also affect its visibility.
+   //
+   auto scope = Scope();
+   auto access = scope->GetAccess();
+
+   for(auto c = scope->GetClass(); c != nullptr; c = c->OuterClass())
+   {
+      if(c->GetAccess() < access) access = c->GetAccess();
+   }
+
+   return access;
 }
 
 //------------------------------------------------------------------------------
@@ -1016,7 +1054,7 @@ void ParseFrame::PushOptional(OptionalCode* code)
 
 //------------------------------------------------------------------------------
 
-void ParseFrame::PushScope(CxxScope* scope)
+void ParseFrame::PushScope(const ActiveScope& scope)
 {
    Debug::ft("ParseFrame.PushScope");
 
@@ -1041,7 +1079,23 @@ void ParseFrame::Reset()
 
 CxxScope* ParseFrame::Scope() const
 {
-   return scopes_.back();
+   return scopes_.back().scope;
+}
+
+//------------------------------------------------------------------------------
+
+Cxx::Access ParseFrame::ScopeAccess() const
+{
+   return scopes_.back().access;
+}
+
+//------------------------------------------------------------------------------
+
+Cxx::Access ParseFrame::SetAccess(Cxx::Access access)
+{
+   auto curr = scopes_.back().access;
+   scopes_.back().access = access;
+   return curr;
 }
 
 //------------------------------------------------------------------------------

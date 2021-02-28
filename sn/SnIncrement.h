@@ -36,7 +36,7 @@ namespace PotsBase
 class SnIncrement : public CliIncrement
 {
    friend class Singleton< SnIncrement >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    SnIncrement();

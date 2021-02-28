@@ -68,21 +68,21 @@ protected:
 class PotsCfxNull : public PotsCfxState
 {
    friend class Singleton< PotsCfxNull >;
-private:
+
    PotsCfxNull();
 };
 
 class PotsCfuActivating : public PotsCfxState
 {
    friend class Singleton< PotsCfuActivating >;
-private:
+
    PotsCfuActivating();
 };
 
 class PotsCfbTiming : public PotsCfxState
 {
    friend class Singleton< PotsCfbTiming >;
-private:
+
    PotsCfbTiming();
 };
 
@@ -116,7 +116,7 @@ protected:
 class PotsCfxUnAnalyzeMessage : public PotsCfxEventHandler
 {
    friend class Singleton< PotsCfxUnAnalyzeMessage >;
-private:
+
    PotsCfxUnAnalyzeMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -125,7 +125,7 @@ private:
 class PotsCfbTiAnalyzeMessage : public PotsCfxEventHandler
 {
    friend class Singleton< PotsCfbTiAnalyzeMessage >;
-private:
+
    PotsCfbTiAnalyzeMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -134,7 +134,7 @@ private:
 class PotsCfbTiTimeout : public PotsCfxEventHandler
 {
    friend class Singleton< PotsCfbTiTimeout >;
-private:
+
    PotsCfbTiTimeout() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;

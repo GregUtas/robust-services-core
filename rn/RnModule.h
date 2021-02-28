@@ -36,7 +36,7 @@ namespace RoutingNode
 class RnModule : public Module
 {
    friend class Singleton< RnModule >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    RnModule();

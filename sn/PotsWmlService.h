@@ -45,7 +45,7 @@ private:
 class PotsWmlService : public Service
 {
    friend class Singleton< PotsWmlService >;
-private:
+
    PotsWmlService();
    ~PotsWmlService();
    ServiceSM* AllocModifier() const override;
@@ -54,7 +54,7 @@ private:
 class PotsWmlActivate : public Service
 {
    friend class Singleton< PotsWmlActivate >;
-private:
+
    PotsWmlActivate();
    ~PotsWmlActivate();
    ServiceSM* AllocModifier() const override;
@@ -63,7 +63,7 @@ private:
 class PotsWmlDeactivate : public Service
 {
    friend class Singleton< PotsWmlDeactivate >;
-private:
+
    PotsWmlDeactivate();
    ~PotsWmlDeactivate();
    ServiceSM* AllocModifier() const override;

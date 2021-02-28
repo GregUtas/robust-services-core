@@ -36,7 +36,7 @@ namespace PotsBase
 class PbModule : public Module
 {
    friend class Singleton< PbModule >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    PbModule();

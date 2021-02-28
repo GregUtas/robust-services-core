@@ -118,7 +118,7 @@ private:
 class PotsCallFactory : public BcFactory
 {
    friend class Singleton< PotsCallFactory >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    PotsCallFactory();
@@ -183,7 +183,7 @@ private:
 class PotsBcService : public ProxyBcService
 {
    friend class Singleton< PotsBcService >;
-private:
+
    //  Private because this singleton is not subclassed.  Registers all
    //  POTS states, event handlers, and triggers.
    //
@@ -201,7 +201,7 @@ private:
 class PotsBcNull : public ProxyBcNull
 {
    friend class Singleton< PotsBcNull >;
-private:
+
    PotsBcNull();
    ~PotsBcNull() = default;
 };
@@ -209,7 +209,7 @@ private:
 class PotsBcAuthorizingOrigination : public ProxyBcAuthorizingOrigination
 {
    friend class Singleton< PotsBcAuthorizingOrigination >;
-private:
+
    PotsBcAuthorizingOrigination();
    ~PotsBcAuthorizingOrigination() = default;
 };
@@ -217,7 +217,7 @@ private:
 class PotsBcCollectingInformation : public ProxyBcCollectingInformation
 {
    friend class Singleton< PotsBcCollectingInformation >;
-private:
+
    PotsBcCollectingInformation();
    ~PotsBcCollectingInformation() = default;
 };
@@ -225,7 +225,7 @@ private:
 class PotsBcAnalyzingInformation : public ProxyBcAnalyzingInformation
 {
    friend class Singleton< PotsBcAnalyzingInformation >;
-private:
+
    PotsBcAnalyzingInformation();
    ~PotsBcAnalyzingInformation() = default;
 };
@@ -233,7 +233,7 @@ private:
 class PotsBcSelectingRoute : public ProxyBcSelectingRoute
 {
    friend class Singleton< PotsBcSelectingRoute >;
-private:
+
    PotsBcSelectingRoute();
    ~PotsBcSelectingRoute() = default;
 };
@@ -241,7 +241,7 @@ private:
 class PotsBcAuthorizingCallSetup : public ProxyBcAuthorizingCallSetup
 {
    friend class Singleton< PotsBcAuthorizingCallSetup >;
-private:
+
    PotsBcAuthorizingCallSetup();
    ~PotsBcAuthorizingCallSetup() = default;
 };
@@ -249,7 +249,7 @@ private:
 class PotsBcSendingCall : public ProxyBcSendingCall
 {
    friend class Singleton< PotsBcSendingCall >;
-private:
+
    PotsBcSendingCall();
    ~PotsBcSendingCall() = default;
 };
@@ -257,7 +257,7 @@ private:
 class PotsBcOrigAlerting : public ProxyBcOrigAlerting
 {
    friend class Singleton< PotsBcOrigAlerting >;
-private:
+
    PotsBcOrigAlerting();
    ~PotsBcOrigAlerting() = default;
 };
@@ -265,7 +265,7 @@ private:
 class PotsBcAuthorizingTermination : public ProxyBcAuthorizingTermination
 {
    friend class Singleton< PotsBcAuthorizingTermination >;
-private:
+
    PotsBcAuthorizingTermination();
    ~PotsBcAuthorizingTermination() = default;
 };
@@ -273,7 +273,7 @@ private:
 class PotsBcSelectingFacility : public ProxyBcSelectingFacility
 {
    friend class Singleton< PotsBcSelectingFacility >;
-private:
+
    PotsBcSelectingFacility();
    ~PotsBcSelectingFacility() = default;
 };
@@ -281,7 +281,7 @@ private:
 class PotsBcPresentingCall : public ProxyBcPresentingCall
 {
    friend class Singleton< PotsBcPresentingCall >;
-private:
+
    PotsBcPresentingCall();
    ~PotsBcPresentingCall() = default;
 };
@@ -289,7 +289,7 @@ private:
 class PotsBcTermAlerting : public ProxyBcTermAlerting
 {
    friend class Singleton< PotsBcTermAlerting >;
-private:
+
    PotsBcTermAlerting();
    ~PotsBcTermAlerting() = default;
 };
@@ -297,7 +297,7 @@ private:
 class PotsBcActive : public ProxyBcActive
 {
    friend class Singleton< PotsBcActive >;
-private:
+
    PotsBcActive();
    ~PotsBcActive() = default;
 };
@@ -305,7 +305,7 @@ private:
 class PotsBcLocalSuspending : public ProxyBcLocalSuspending
 {
    friend class Singleton< PotsBcLocalSuspending >;
-private:
+
    PotsBcLocalSuspending();
    ~PotsBcLocalSuspending() = default;
 };
@@ -313,7 +313,7 @@ private:
 class PotsBcRemoteSuspending : public ProxyBcRemoteSuspending
 {
    friend class Singleton< PotsBcRemoteSuspending >;
-private:
+
    PotsBcRemoteSuspending();
    ~PotsBcRemoteSuspending() = default;
 };
@@ -321,7 +321,7 @@ private:
 class PotsBcException : public ProxyBcException
 {
    friend class Singleton< PotsBcException >;
-private:
+
    PotsBcException();
    ~PotsBcException() = default;
 };

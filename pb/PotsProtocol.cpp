@@ -52,7 +52,7 @@ namespace PotsBase
 class PotsAlertingSignal : public PotsSignal
 {
    friend class Singleton< PotsAlertingSignal >;
-private:
+
    PotsAlertingSignal();
    CliText* CreateText() const override;
 };
@@ -65,7 +65,7 @@ public: AlertingText();
 class PotsDigitsSignal : public PotsSignal
 {
    friend class Singleton< PotsDigitsSignal >;
-private:
+
    PotsDigitsSignal();
    CliText* CreateText() const override;
 };
@@ -78,7 +78,7 @@ public: DigitsText();
 class PotsFacilitySignal : public PotsSignal
 {
    friend class Singleton< PotsFacilitySignal >;
-private:
+
    PotsFacilitySignal();
    CliText* CreateText() const override;
 };
@@ -91,7 +91,7 @@ public: FacilityText();
 class PotsFlashSignal : public PotsSignal
 {
    friend class Singleton< PotsFlashSignal >;
-private:
+
    PotsFlashSignal();
    CliText* CreateText() const override;
 };
@@ -104,7 +104,7 @@ public: FlashText();
 class PotsReleaseSignal : public PotsSignal
 {
    friend class Singleton< PotsReleaseSignal >;
-private:
+
    PotsReleaseSignal();
    CliText* CreateText() const override;
 };
@@ -117,7 +117,7 @@ public: ReleaseText();
 class PotsLockoutSignal : public PotsSignal
 {
    friend class Singleton< PotsLockoutSignal >;
-private:
+
    PotsLockoutSignal();
    CliText* CreateText() const override;
 };
@@ -130,7 +130,7 @@ public: LockoutText();
 class PotsOffhookSignal : public PotsSignal
 {
    friend class Singleton< PotsOffhookSignal >;
-private:
+
    PotsOffhookSignal();
    CliText* CreateText() const override;
 };
@@ -138,7 +138,7 @@ private:
 class PotsOnhookSignal : public PotsSignal
 {
    friend class Singleton< PotsOnhookSignal >;
-private:
+
    PotsOnhookSignal();
    CliText* CreateText() const override;
 };
@@ -156,7 +156,7 @@ public: OnhookText();
 class PotsProgressSignal : public PotsSignal
 {
    friend class Singleton< PotsProgressSignal >;
-private:
+
    PotsProgressSignal();
    CliText* CreateText() const override;
 };
@@ -169,7 +169,7 @@ public: ProgressText();
 class PotsSuperviseSignal : public PotsSignal
 {
    friend class Singleton< PotsSuperviseSignal >;
-private:
+
    PotsSuperviseSignal();
    CliText* CreateText() const override;
 };
@@ -184,14 +184,14 @@ public: SuperviseText();
 class PotsCauseParameter : public CauseParameter
 {
    friend class Singleton< PotsCauseParameter >;
-private:
+
    PotsCauseParameter();
 };
 
 class PotsDigitsParameter : public AddressParameter
 {
    friend class Singleton< PotsDigitsParameter >;
-private:
+
    PotsDigitsParameter();
    CliParm* CreateCliParm(Usage use) const override;
 };
@@ -204,7 +204,7 @@ public: DigitsParm();
 class PotsFacilityParameter : public PotsParameter
 {
    friend class Singleton< PotsFacilityParameter >;
-private:
+
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    CliParm* CreateCliParm(Usage use) const override;
@@ -237,7 +237,7 @@ public: FacilityIndParm();
 class PotsHeaderParameter : public PotsParameter
 {
    friend class Singleton< PotsHeaderParameter >;
-private:
+
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    CliParm* CreateCliParm(Usage use) const override;
@@ -255,21 +255,21 @@ public: HeaderParm();
 class PotsMediaParameter : public MediaParameter
 {
    friend class Singleton< PotsMediaParameter >;
-private:
+
    PotsMediaParameter();
 };
 
 class PotsProgressParameter : public ProgressParameter
 {
    friend class Singleton< PotsProgressParameter >;
-private:
+
    PotsProgressParameter();
 };
 
 class PotsRingParameter : public PotsParameter
 {
    friend class Singleton< PotsRingParameter >;
-private:
+
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    CliParm* CreateCliParm(Usage use) const override;
@@ -286,7 +286,7 @@ public: RingParm();
 class PotsScanParameter : public PotsParameter
 {
    friend class Singleton< PotsScanParameter >;
-private:
+
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    CliParm* CreateCliParm(Usage use) const override;

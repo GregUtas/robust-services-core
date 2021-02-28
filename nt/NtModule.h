@@ -36,7 +36,7 @@ namespace NodeTools
 class NtModule : public Module
 {
    friend class Singleton< NtModule >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    NtModule();

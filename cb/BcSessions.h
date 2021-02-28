@@ -1228,7 +1228,7 @@ protected:
 class BcNuAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcNuAnalyzeRemoteMessage >;
-private:
+
    BcNuAnalyzeRemoteMessage() = default;
    ~BcNuAnalyzeRemoteMessage() = default;
    Rc ProcessEvent
@@ -1238,7 +1238,7 @@ private:
 class BcScAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcScAnalyzeRemoteMessage >;
-private:
+
    BcScAnalyzeRemoteMessage() = default;
    ~BcScAnalyzeRemoteMessage() = default;
    Rc ProcessEvent
@@ -1248,7 +1248,7 @@ private:
 class BcOaAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcOaAnalyzeRemoteMessage >;
-private:
+
    BcOaAnalyzeRemoteMessage() = default;
    ~BcOaAnalyzeRemoteMessage() = default;
    Rc ProcessEvent
@@ -1258,7 +1258,7 @@ private:
 class BcPcAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcPcAnalyzeRemoteMessage >;
-private:
+
    BcPcAnalyzeRemoteMessage() = default;
    ~BcPcAnalyzeRemoteMessage() = default;
    Rc ProcessEvent
@@ -1268,7 +1268,7 @@ private:
 class BcAcAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcAcAnalyzeRemoteMessage >;
-private:
+
    BcAcAnalyzeRemoteMessage() = default;
    ~BcAcAnalyzeRemoteMessage() = default;
    Rc ProcessEvent
@@ -1285,7 +1285,7 @@ private:
 class TestCallFactory : public BcFactory
 {
    friend class Singleton< TestCallFactory >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    TestCallFactory();

@@ -36,7 +36,7 @@ namespace PotsBase
 class PotsProxyService : public ProxyBcService
 {
    friend class Singleton< PotsProxyService >;
-private:
+
    //  Private because this singleton is not subclassed.  Registers all
    //  POTS states, event handlers, and triggers.
    //
@@ -54,7 +54,7 @@ private:
 class PotsProxyNull : public ProxyBcNull
 {
    friend class Singleton< PotsProxyNull >;
-private:
+
    PotsProxyNull();
    ~PotsProxyNull() = default;
 };
@@ -62,7 +62,7 @@ private:
 class PotsProxyAuthorizingOrigination : public ProxyBcAuthorizingOrigination
 {
    friend class Singleton< PotsProxyAuthorizingOrigination >;
-private:
+
    PotsProxyAuthorizingOrigination();
    ~PotsProxyAuthorizingOrigination() = default;
 };
@@ -70,7 +70,7 @@ private:
 class PotsProxyCollectingInformation : public ProxyBcCollectingInformation
 {
    friend class Singleton< PotsProxyCollectingInformation >;
-private:
+
    PotsProxyCollectingInformation();
    ~PotsProxyCollectingInformation() = default;
 };
@@ -78,7 +78,7 @@ private:
 class PotsProxyAnalyzingInformation : public ProxyBcAnalyzingInformation
 {
    friend class Singleton< PotsProxyAnalyzingInformation >;
-private:
+
    PotsProxyAnalyzingInformation();
    ~PotsProxyAnalyzingInformation() = default;
 };
@@ -86,7 +86,7 @@ private:
 class PotsProxySelectingRoute : public ProxyBcSelectingRoute
 {
    friend class Singleton< PotsProxySelectingRoute >;
-private:
+
    PotsProxySelectingRoute();
    ~PotsProxySelectingRoute() = default;
 };
@@ -94,7 +94,7 @@ private:
 class PotsProxyAuthorizingCallSetup : public ProxyBcAuthorizingCallSetup
 {
    friend class Singleton< PotsProxyAuthorizingCallSetup >;
-private:
+
    PotsProxyAuthorizingCallSetup();
    ~PotsProxyAuthorizingCallSetup() = default;
 };
@@ -102,7 +102,7 @@ private:
 class PotsProxySendingCall : public ProxyBcSendingCall
 {
    friend class Singleton< PotsProxySendingCall >;
-private:
+
    PotsProxySendingCall();
    ~PotsProxySendingCall() = default;
 };
@@ -110,7 +110,7 @@ private:
 class PotsProxyOrigAlerting : public ProxyBcOrigAlerting
 {
    friend class Singleton< PotsProxyOrigAlerting >;
-private:
+
    PotsProxyOrigAlerting();
    ~PotsProxyOrigAlerting() = default;
 };
@@ -118,7 +118,7 @@ private:
 class PotsProxyAuthorizingTermination : public ProxyBcAuthorizingTermination
 {
    friend class Singleton< PotsProxyAuthorizingTermination >;
-private:
+
    PotsProxyAuthorizingTermination();
    ~PotsProxyAuthorizingTermination() = default;
 };
@@ -126,7 +126,7 @@ private:
 class PotsProxySelectingFacility : public ProxyBcSelectingFacility
 {
    friend class Singleton< PotsProxySelectingFacility >;
-private:
+
    PotsProxySelectingFacility();
    ~PotsProxySelectingFacility() = default;
 };
@@ -134,7 +134,7 @@ private:
 class PotsProxyPresentingCall : public ProxyBcPresentingCall
 {
    friend class Singleton< PotsProxyPresentingCall >;
-private:
+
    PotsProxyPresentingCall();
    ~PotsProxyPresentingCall() = default;
 };
@@ -142,7 +142,7 @@ private:
 class PotsProxyTermAlerting : public ProxyBcTermAlerting
 {
    friend class Singleton< PotsProxyTermAlerting >;
-private:
+
    PotsProxyTermAlerting();
    ~PotsProxyTermAlerting() = default;
 };
@@ -150,7 +150,7 @@ private:
 class PotsProxyActive : public ProxyBcActive
 {
    friend class Singleton< PotsProxyActive >;
-private:
+
    PotsProxyActive();
    ~PotsProxyActive() = default;
 };
@@ -158,7 +158,7 @@ private:
 class PotsProxyLocalSuspending : public ProxyBcLocalSuspending
 {
    friend class Singleton< PotsProxyLocalSuspending >;
-private:
+
    PotsProxyLocalSuspending();
    ~PotsProxyLocalSuspending() = default;
 };
@@ -166,7 +166,7 @@ private:
 class PotsProxyRemoteSuspending : public ProxyBcRemoteSuspending
 {
    friend class Singleton< PotsProxyRemoteSuspending >;
-private:
+
    PotsProxyRemoteSuspending();
    ~PotsProxyRemoteSuspending() = default;
 };
@@ -174,7 +174,7 @@ private:
 class PotsProxyException : public ProxyBcException
 {
    friend class Singleton< PotsProxyException >;
-private:
+
    PotsProxyException();
    ~PotsProxyException() = default;
 };

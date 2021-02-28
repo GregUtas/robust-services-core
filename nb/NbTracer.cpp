@@ -47,7 +47,7 @@ fixed_string TraceBufferToolExpl = "internal use";
 class TraceBufferTool : public Tool
 {
    friend class Singleton< TraceBufferTool >;
-private:
+
    TraceBufferTool() : Tool(ToolBuffer, NUL, true) { }
    ~TraceBufferTool() = default;
    c_string Name() const override { return TraceBufferToolName; }
@@ -64,7 +64,7 @@ fixed_string FunctionTraceToolExpl = "traces function calls";
 class FunctionTraceTool : public Tool
 {
    friend class Singleton< FunctionTraceTool >;
-private:
+
    FunctionTraceTool() : Tool(FunctionTracer, 'f', true) { }
    ~FunctionTraceTool() = default;
    c_string Name() const override { return FunctionTraceToolName; }
@@ -94,7 +94,7 @@ fixed_string MemoryTraceToolExpl = "traces memory allocations/deallocations";
 class MemoryTraceTool : public Tool
 {
    friend class Singleton< MemoryTraceTool >;
-private:
+
    MemoryTraceTool() : Tool(MemoryTracer, 'm', true) { }
    ~MemoryTraceTool() = default;
    c_string Name() const override { return MemoryTraceToolName; }

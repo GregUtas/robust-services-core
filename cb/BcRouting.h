@@ -38,7 +38,6 @@ namespace CallBase
 //
 struct AnalysisResult
 {
-public:
    //  Constructs the nil instance.
    //
    AnalysisResult();
@@ -67,7 +66,6 @@ public:
 //
 struct RouteResult
 {
-public:
    //  The type for identifying a destination that can receive a session.
    //
    typedef uint32_t Id;

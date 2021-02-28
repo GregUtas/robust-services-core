@@ -47,7 +47,7 @@ private:
 class PotsCfnService : public Service
 {
    friend class Singleton< PotsCfnService >;
-private:
+
    PotsCfnService();
    ~PotsCfnService();
    ServiceSM* AllocModifier() const override;

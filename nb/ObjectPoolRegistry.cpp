@@ -51,7 +51,7 @@ fixed_string ObjPoolTraceToolExpl = "traces pooled objects";
 class ObjPoolTraceTool : public Tool
 {
    friend class Singleton< ObjPoolTraceTool >;
-private:
+
    ObjPoolTraceTool() : Tool(ObjPoolTracer, 'o', true) { }
    c_string Name() const override { return ObjPoolTraceToolName; }
    c_string Expl() const override { return ObjPoolTraceToolExpl; }

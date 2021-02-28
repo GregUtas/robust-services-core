@@ -33,42 +33,42 @@ namespace NodeBase
 class SigAbort : public PosixSignal
 {
    friend class Singleton< SigAbort >;
-private:
+
    SigAbort();
 };
 
 class SigFpe : public PosixSignal
 {
    friend class Singleton< SigFpe >;
-private:
+
    SigFpe();
 };
 
 class SigIll : public PosixSignal
 {
    friend class Singleton< SigIll >;
-private:
+
    SigIll();
 };
 
 class SigInt : public PosixSignal
 {
    friend class Singleton< SigInt >;
-private:
+
    SigInt();
 };
 
 class SigSegv : public PosixSignal
 {
    friend class Singleton< SigSegv >;
-private:
+
    SigSegv();
 };
 
 class SigTerm : public PosixSignal
 {
    friend class Singleton< SigTerm >;
-private:
+
    SigTerm();
 };
 

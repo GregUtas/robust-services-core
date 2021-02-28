@@ -57,7 +57,7 @@ namespace CallBase
 class CipIamSignal : public CipSignal
 {
    friend class Singleton< CipIamSignal >;
-private:
+
    CipIamSignal();
    CliText* CreateText() const override;
 };
@@ -70,7 +70,7 @@ public: IamText();
 class CipCpgSignal : public CipSignal
 {
    friend class Singleton< CipCpgSignal >;
-private:
+
    CipCpgSignal();
    CliText* CreateText() const override;
 };
@@ -83,7 +83,7 @@ public: CpgText();
 class CipAnmSignal : public CipSignal
 {
    friend class Singleton< CipAnmSignal >;
-private:
+
    CipAnmSignal();
    CliText* CreateText() const override;
 };
@@ -96,7 +96,7 @@ public: AnmText();
 class CipRelSignal : public CipSignal
 {
    friend class Singleton< CipRelSignal >;
-private:
+
    CipRelSignal();
    CliText* CreateText() const override;
 };
@@ -109,7 +109,7 @@ public: RelText();
 class CipRouteParameter : public CipParameter
 {
    friend class Singleton< CipRouteParameter >;
-private:
+
    CipRouteParameter();
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
@@ -144,7 +144,7 @@ protected:
 class CipCallingParameter : public CipAddressParameter
 {
    friend class Singleton< CipCallingParameter >;
-private:
+
    CipCallingParameter();
    CliParm* CreateCliParm(Usage use) const override;
 };
@@ -152,7 +152,7 @@ private:
 class CipCalledParameter : public CipAddressParameter
 {
    friend class Singleton< CipCalledParameter >;
-private:
+
    CipCalledParameter();
    CliParm* CreateCliParm(Usage use) const override;
 };
@@ -160,7 +160,7 @@ private:
 class CipOriginalCallingParameter : public CipAddressParameter
 {
    friend class Singleton< CipOriginalCallingParameter >;
-private:
+
    CipOriginalCallingParameter();
    CliParm* CreateCliParm(Usage use) const override;
 };
@@ -168,7 +168,7 @@ private:
 class CipOriginalCalledParameter : public CipAddressParameter
 {
    friend class Singleton< CipOriginalCalledParameter >;
-private:
+
    CipOriginalCalledParameter();
    CliParm* CreateCliParm(Usage use) const override;
 };
@@ -176,21 +176,21 @@ private:
 class CipProgressParameter : public ProgressParameter
 {
    friend class Singleton< CipProgressParameter >;
-private:
+
    CipProgressParameter();
 };
 
 class CipCauseParameter : public CauseParameter
 {
    friend class Singleton< CipCauseParameter >;
-private:
+
    CipCauseParameter();
 };
 
 class CipMediaParameter : public MediaParameter
 {
    friend class Singleton< CipMediaParameter >;
-private:
+
    CipMediaParameter();
 };
 

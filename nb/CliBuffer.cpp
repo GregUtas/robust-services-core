@@ -51,7 +51,6 @@ namespace NodeBase
 //
 struct CliSource
 {
-public:
    CliSource() : file_(nullptr) { }
 
    explicit CliSource(istreamPtr& file) : file_(std::move(file)) { }

@@ -34,7 +34,7 @@ namespace CodeTools
 class CtIncrement : public NodeBase::CliIncrement
 {
    friend class NodeBase::Singleton< CtIncrement >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    CtIncrement();

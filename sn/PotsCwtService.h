@@ -52,7 +52,7 @@ protected:
 class PotsCwaService : public PotsCwtService
 {
    friend class Singleton< PotsCwaService >;
-private:
+
    PotsCwaService();
    ~PotsCwaService();
    ServiceSM* AllocModifier() const override;
@@ -61,7 +61,7 @@ private:
 class PotsCwbService : public PotsCwtService
 {
    friend class Singleton< PotsCwbService >;
-private:
+
    PotsCwbService();
    ~PotsCwbService();
    ServiceSM* AllocModifier() const override;
@@ -70,7 +70,7 @@ private:
 class PotsCwmService : public Service
 {
    friend class Singleton< PotsCwmService >;
-private:
+
    PotsCwmService();
    ~PotsCwmService();
    ServiceSM* AllocModifier() const override;

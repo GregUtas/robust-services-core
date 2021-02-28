@@ -34,7 +34,7 @@ namespace PotsBase
 class PotsDiscNull : public State
 {
    friend class Singleton< PotsDiscNull >;
-private:
+
    PotsDiscNull();
 };
 

@@ -48,7 +48,7 @@ namespace NodeBase
 class ImmutableHeap : public NbHeap
 {
    friend class Singleton< ImmutableHeap >;
-private:
+
    ImmutableHeap();
    ~ImmutableHeap();
 
@@ -61,7 +61,7 @@ private:
 class ProtectedHeap : public NbHeap
 {
    friend class Singleton< ProtectedHeap >;
-private:
+
    ProtectedHeap();
    ~ProtectedHeap();
 
@@ -77,7 +77,7 @@ private:
 class PersistentHeap : public SysHeap
 {
    friend class Singleton< PersistentHeap >;
-private:
+
    PersistentHeap();
    ~PersistentHeap();
 };
@@ -85,7 +85,7 @@ private:
 class DynamicHeap : public SysHeap
 {
    friend class Singleton< DynamicHeap >;
-private:
+
    DynamicHeap();
    ~DynamicHeap();
 };
@@ -93,7 +93,7 @@ private:
 class TemporaryHeap : public SysHeap
 {
    friend class Singleton< TemporaryHeap >;
-private:
+
    TemporaryHeap();
    ~TemporaryHeap();
 };

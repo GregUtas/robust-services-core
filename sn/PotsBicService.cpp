@@ -43,7 +43,7 @@ namespace PotsBase
 class PotsBicNull : public State
 {
    friend class Singleton< PotsBicNull >;
-private:
+
    PotsBicNull();
 };
 

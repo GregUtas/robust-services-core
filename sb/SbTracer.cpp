@@ -50,7 +50,7 @@ fixed_string TransTraceToolExpl = "traces SessionBase transactions";
 class TransTraceTool : public Tool
 {
    friend class Singleton< TransTraceTool >;
-private:
+
    TransTraceTool() : Tool(TransTracer, 't', true) { }
    c_string Name() const override { return TransTraceToolName; }
    c_string Expl() const override { return TransTraceToolExpl; }
@@ -64,7 +64,7 @@ fixed_string BufferTraceToolExpl = "traces SessionBase IP buffers";
 class BufferTraceTool : public Tool
 {
    friend class Singleton< BufferTraceTool >;
-private:
+
    BufferTraceTool() : Tool(BufferTracer, 'b', true) { }
    c_string Name() const override { return BufferTraceToolName; }
    c_string Expl() const override { return BufferTraceToolExpl; }
@@ -78,7 +78,7 @@ fixed_string ContextTraceToolExpl = "traces SessionBase contexts";
 class ContextTraceTool : public Tool
 {
    friend class Singleton< ContextTraceTool >;
-private:
+
    ContextTraceTool() : Tool(ContextTracer, 'c', true) { }
    c_string Name() const override { return ContextTraceToolName; }
    c_string Expl() const override { return ContextTraceToolExpl; }

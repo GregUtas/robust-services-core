@@ -40,7 +40,7 @@ namespace SessionBase
 class SbAnalyzeMessage : public EventHandler
 {
    friend class NodeBase::Singleton< SbAnalyzeMessage >;
-private:
+
    SbAnalyzeMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -54,7 +54,7 @@ private:
 class SbAnalyzeSap : public EventHandler
 {
    friend class NodeBase::Singleton< SbAnalyzeSap >;
-private:
+
    SbAnalyzeSap() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -68,7 +68,7 @@ private:
 class SbAnalyzeSnp : public EventHandler
 {
    friend class NodeBase::Singleton< SbAnalyzeSnp >;
-private:
+
    SbAnalyzeSnp() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -82,7 +82,7 @@ private:
 class SbForceTransition : public EventHandler
 {
    friend class NodeBase::Singleton< SbForceTransition >;
-private:
+
    SbForceTransition() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
@@ -96,7 +96,7 @@ private:
 class SbInitiationReq : public EventHandler
 {
    friend class NodeBase::Singleton< SbInitiationReq >;
-private:
+
    SbInitiationReq() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;

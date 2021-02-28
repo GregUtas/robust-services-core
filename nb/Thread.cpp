@@ -316,7 +316,6 @@ ThreadStats::~ThreadStats()
 //
 struct ContextSwitch
 {
-public:
    //  Initializes the record.
    //
    ContextSwitch();

@@ -172,7 +172,7 @@ private:
 class NtIncrement : public CliIncrement
 {
    friend class Singleton< NtIncrement >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    NtIncrement();

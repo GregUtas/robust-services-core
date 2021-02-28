@@ -36,7 +36,7 @@ namespace ControlNode
 class CnModule : public Module
 {
    friend class Singleton< CnModule >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    CnModule();

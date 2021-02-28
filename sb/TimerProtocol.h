@@ -41,7 +41,7 @@ namespace SessionBase
 class TimerProtocol : public TlvProtocol
 {
    friend class NodeBase::Singleton< TimerProtocol >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    TimerProtocol();
@@ -58,7 +58,7 @@ private:
 class TimeoutSignal : public Signal
 {
    friend class NodeBase::Singleton< TimeoutSignal >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    TimeoutSignal();

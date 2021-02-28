@@ -101,7 +101,7 @@ private:
 class PotsShelfFactory : public MsgFactory
 {
    friend class Singleton< PotsShelfFactory >;
-private:
+
    //  Private because this singleton is not subclassed.
    //
    PotsShelfFactory();

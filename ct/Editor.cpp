@@ -1210,7 +1210,7 @@ word Editor::EraseAccessControl(const CodeWarning& log, string& expl)
 
    //  Look for the access control keyword and note its length.
    //
-   auto access = FindWord(begin, PUBLIC_STR);
+   auto access = LineFind(begin, PUBLIC_STR);
 
    while(true)
    {
@@ -1220,7 +1220,7 @@ word Editor::EraseAccessControl(const CodeWarning& log, string& expl)
          break;
       }
 
-      access = FindWord(begin, PROTECTED_STR);
+      access = LineFind(begin, PROTECTED_STR);
 
       if(access != string::npos)
       {
@@ -1228,7 +1228,7 @@ word Editor::EraseAccessControl(const CodeWarning& log, string& expl)
          break;
       }
 
-      access = FindWord(begin, PRIVATE_STR);
+      access = LineFind(begin, PRIVATE_STR);
 
       if(access != string::npos)
       {

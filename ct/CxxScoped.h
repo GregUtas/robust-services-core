@@ -57,7 +57,7 @@ public:
    //  how ITEM was accessed when true is returned.
    //
    virtual bool NameRefersToItem(const std::string& name,
-      const CxxScope* scope, const CodeFile* file, SymbolView* view) const;
+      const CxxScope* scope, CodeFile* file, SymbolView* view) const;
 
    //  Returns true if the item is a member of AREA.  The search stops after
    //  it reaches the first namespace.
@@ -93,7 +93,7 @@ public:
 
    //  Updates imSet with the files that declare and define the item.
    //
-   virtual void AddFiles(SetOfIds& imSet) const;
+   virtual void AddFiles(LibItemSet& imSet) const;
 
    //  Returns true if the item's cross-reference should be included in the
    //  global cross-reference.  The default excludes items that are, or that
@@ -1371,11 +1371,6 @@ public:
    //
    bool EnterScope() override { return true; }
 
-   //  Overridden to indicate that a terminal does not appear in a file.
-   //
-   NodeBase::id_t GetDeclFid() const override
-      { return NodeBase::NIL_ID; }
-
    //  Overridden to return the terminal's attributes as an integer.
    //
    Numeric GetNumeric() const override { return attrs_; }
@@ -1391,7 +1386,7 @@ public:
    //  Overridden for when NAME refers to a terminal.
    //
    bool NameRefersToItem(const std::string& name, const CxxScope* scope,
-      const CodeFile* file, SymbolView* view) const override;
+      CodeFile* file, SymbolView* view) const override;
 
    //  Overridden to shrink containers.
    //

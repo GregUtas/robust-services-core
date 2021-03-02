@@ -20,15 +20,14 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeDir.h"
-#include <cstdint>
 #include <ostream>
-#include "Algorithms.h"
+#include <set>
 #include "CodeFile.h"
+#include "CodeFileSet.h"
 #include "CxxString.h"
 #include "Debug.h"
 #include "Library.h"
 #include "NbCliParms.h"
-#include "Registry.h"
 #include "Singleton.h"
 #include "SysFile.h"
 #include "ThisThread.h"
@@ -56,26 +55,18 @@ CodeDir::~CodeDir()
 
 //------------------------------------------------------------------------------
 
-ptrdiff_t CodeDir::CellDiff()
-{
-   uintptr_t local;
-   auto fake = reinterpret_cast< const CodeDir* >(&local);
-   return ptrdiff(&fake->did_, fake);
-}
-
-//------------------------------------------------------------------------------
-
 size_t CodeDir::CppCount() const
 {
    Debug::ft("CodeDir.CppCount");
 
    size_t count = 0;
 
-   auto& files = Singleton< Library >::Instance()->Files();
+   auto& files = Singleton< Library >::Instance()->Files().Items();
 
-   for(auto f = files.First(); f != nullptr; files.Next(f))
+   for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      if((f->Dir() == this) && f->IsCpp()) ++count;
+      auto file = static_cast< CodeFile* >(*f);
+      if((file->Dir() == this) && file->IsCpp()) ++count;
    }
 
    return count;
@@ -142,11 +133,12 @@ size_t CodeDir::HeaderCount() const
 
    size_t count = 0;
 
-   auto& files = Singleton< Library >::Instance()->Files();
+   auto& files = Singleton< Library >::Instance()->Files().Items();
 
-   for(auto f = files.First(); f != nullptr; files.Next(f))
+   for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      if((f->Dir() == this) && f->IsHeader()) ++count;
+      auto file = static_cast< CodeFile* >(*f);
+      if((file->Dir() == this) && file->IsHeader()) ++count;
    }
 
    return count;

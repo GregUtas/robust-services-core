@@ -37,14 +37,15 @@ class CodeFileSet : public CodeSet
 public:
    //  Identifies SET with NAME.
    //
-   CodeFileSet(const std::string& name, SetOfIds* set);
+   CodeFileSet(const std::string& name, const LibItemSet* items);
 
    //  Override the operators supported by a set of code files.
    //
    LibrarySet* AffectedBy() const override;
    LibrarySet* Affecters() const override;
    LibrarySet* CommonAffecters() const override;
-   LibrarySet* Create(const std::string& name, SetOfIds* set) const override;
+   LibrarySet* Create
+      (const std::string& name, const LibItemSet* items) const override;
    LibrarySet* Directories() const override;
    LibrarySet* FileName(const LibrarySet* that) const override;
    LibrarySet* FileType(const LibrarySet* that) const override;
@@ -102,7 +103,7 @@ public:
 
    //  Returns the build order of the set.
    //
-   BuildOrderPtr SortInBuildOrder() const;
+   BuildOrder SortInBuildOrder() const;
 private:
    //  Private to restrict deletion.  Not subclassed.
    //

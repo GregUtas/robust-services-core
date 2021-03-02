@@ -35,13 +35,17 @@ namespace CodeTools
 class CodeDirSet : public CodeSet
 {
 public:
-   //  Identifies SET with NAME.
+   //  Identifies ITEMS with NAME.
    //
-   CodeDirSet(const std::string& name, SetOfIds* set);
+   CodeDirSet(const std::string& name, const LibItemSet* items);
 
-   //  Override the operators supported by a set of code directories.
+   //  Creates a set of directories (ITEMS) that is associated with NAME.
    //
-   LibrarySet* Create(const std::string& name, SetOfIds* set) const override;
+   LibrarySet* Create
+      (const std::string& name, const LibItemSet* items) const override;
+
+   //  Returns the files in the directories.
+   //
    LibrarySet* Files() const override;
 
    //  Returns the type of set.

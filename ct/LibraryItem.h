@@ -54,7 +54,7 @@ protected:
 
    //  Provides non-const access to the item's name.
    //
-   std::string* AccessName() { return &name_; }
+   std::string& AccessName() { return name_; }
 private:
    //  The item's name.
    //

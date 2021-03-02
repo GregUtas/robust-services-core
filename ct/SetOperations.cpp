@@ -22,9 +22,9 @@
 #include "SetOperations.h"
 #include <algorithm>
 #include <iterator>
-#include <memory>
 #include <set>
 #include "Debug.h"
+#include "LibraryItem.h"
 
 using namespace NodeBase;
 
@@ -32,7 +32,8 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
-void SetDifference(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
+void SetDifference
+   (LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2)
 {
    Debug::ft("CodeTools.SetDifference(-)");
 
@@ -43,19 +44,20 @@ void SetDifference(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 
 //------------------------------------------------------------------------------
 
-void SetDifference(SetOfIds& lhs, const SetOfIds& rhs)
+void SetDifference(LibItemSet& lhs, const LibItemSet& rhs)
 {
    Debug::ft("CodeTools.SetDifference(-=)");
 
-   std::unique_ptr< SetOfIds > temp(new SetOfIds);
+   LibItemSet temp;
    std::set_difference(lhs.cbegin(), lhs.cend(),
-      rhs.cbegin(), rhs.cend(), std::inserter(*temp, temp->begin()));
-   lhs.swap(*temp);
+      rhs.cbegin(), rhs.cend(), std::inserter(temp, temp.begin()));
+   lhs.swap(temp);
 }
 
 //------------------------------------------------------------------------------
 
-void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
+void SetIntersection
+   (LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2)
 {
    Debug::ft("CodeTools.SetIntersection(&)");
 
@@ -66,19 +68,20 @@ void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 
 //------------------------------------------------------------------------------
 
-void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs)
+void SetIntersection(LibItemSet& lhs, const LibItemSet& rhs)
 {
    Debug::ft("CodeTools.SetIntersection(&=)");
 
-   std::unique_ptr< SetOfIds > temp(new SetOfIds);
+   LibItemSet temp;
    std::set_intersection(lhs.cbegin(), lhs.cend(),
-      rhs.cbegin(), rhs.cend(), std::inserter(*temp, temp->begin()));
-   lhs.swap(*temp);
+      rhs.cbegin(), rhs.cend(), std::inserter(temp, temp.begin()));
+   lhs.swap(temp);
 }
 
 //------------------------------------------------------------------------------
 
-void SetUnion(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
+void SetUnion
+   (LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2)
 {
    Debug::ft("CodeTools.SetUnion(|)");
 
@@ -89,13 +92,13 @@ void SetUnion(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 
 //------------------------------------------------------------------------------
 
-void SetUnion(SetOfIds& lhs, const SetOfIds& rhs)
+void SetUnion(LibItemSet& lhs, const LibItemSet& rhs)
 {
    Debug::ft("CodeTools.SetUnion(|=)");
 
-   std::unique_ptr< SetOfIds > temp(new SetOfIds);
+   LibItemSet temp;
    std::set_union(lhs.cbegin(), lhs.cend(),
-      rhs.cbegin(), rhs.cend(), std::inserter(*temp, temp->begin()));
-   lhs.swap(*temp);
+      rhs.cbegin(), rhs.cend(), std::inserter(temp, temp.begin()));
+   lhs.swap(temp);
 }
 }

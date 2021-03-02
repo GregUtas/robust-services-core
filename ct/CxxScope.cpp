@@ -851,17 +851,17 @@ void CxxScope::CloseScope()
 
 //------------------------------------------------------------------------------
 
-id_t CxxScope::GetDistinctDeclFid() const
+CodeFile* CxxScope::GetDistinctDeclFile() const
 {
    auto defn = GetDefnFile();
 
    if(defn != nullptr)
    {
       auto decl = GetDeclFile();
-      if(decl != defn) return decl->Fid();
+      if(decl != defn) return decl;
    }
 
-   return NIL_ID;
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -4714,7 +4714,7 @@ size_t Function::MinArgs() const
 //------------------------------------------------------------------------------
 
 bool Function::NameRefersToItem(const string& name,
-   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView* view) const
 {
    Debug::ft("Function.NameRefersToItem");
 
@@ -5426,7 +5426,7 @@ TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
 //------------------------------------------------------------------------------
 
 bool FuncSpec::NamesReferToArgs(const NameVector& names,
-   const CxxScope* scope, const CodeFile* file, size_t& index) const
+   const CxxScope* scope, CodeFile* file, size_t& index) const
 {
    Debug::SwLog(FuncSpec_Warning, "NamesReferToArgs", 0);
    return func_->GetTypeSpec()->NamesReferToArgs(names, scope, file, index);

@@ -25,7 +25,6 @@
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
-#include "CodeSet.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
@@ -445,12 +444,12 @@ void CxxScoped::AccessibilityTo(const CxxScope* scope, SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::AddFiles(SetOfIds& imSet) const
+void CxxScoped::AddFiles(LibItemSet& imSet) const
 {
    auto decl = GetDeclFile();
    auto defn = GetDefnFile();
-   if(decl != nullptr) imSet.insert(decl->Fid());
-   if(defn != nullptr) imSet.insert(defn->Fid());
+   if(decl != nullptr) imSet.insert(decl);
+   if(defn != nullptr) imSet.insert(defn);
 }
 
 //------------------------------------------------------------------------------
@@ -759,7 +758,7 @@ bool CxxScoped::LocateItem(const CxxNamed* item, size_t& n) const
 fn_name CxxScoped_NameRefersToItem = "CxxScoped.NameRefersToItem";
 
 bool CxxScoped::NameRefersToItem(const string& name,
-   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView* view) const
 {
    Debug::ft(CxxScoped_NameRefersToItem);
 
@@ -778,8 +777,8 @@ bool CxxScoped::NameRefersToItem(const string& name,
    //  namespace, which is arbitrarily assigned to the first file where it
    //  appears, even though it can appear in many others.
    //
-   SetOfIds::const_iterator it = file->Affecters().find(itemFile->Fid());
-   auto affected = (it != file->Affecters().cend());
+   auto iter = file->Affecters().find(itemFile);
+   auto affected = (iter != file->Affecters().cend());
    if(!affected && (itemType != Cxx::Namespace)) return false;
 
    //  See how SCOPE can access this item: this information is provided in
@@ -2578,7 +2577,7 @@ bool Terminal::IsAuto() const
 //------------------------------------------------------------------------------
 
 bool Terminal::NameRefersToItem(const string& name,
-   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView* view) const
 {
    Debug::ft("Terminal.NameRefersToItem");
 

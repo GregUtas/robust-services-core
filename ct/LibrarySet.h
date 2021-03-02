@@ -26,9 +26,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include "LibraryTypes.h"
-#include "Q2Link.h"
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -45,12 +45,12 @@ namespace CodeTools
 
 namespace CodeTools
 {
-//  A collection of library items (code files or directories).
+//  A collection of library items (directories, files, or variables).
 //
 class LibrarySet : public LibraryItem
 {
    friend class Library;
-   friend class NodeBase::Q2Way< LibrarySet >;
+   friend LibrarySetPtr::deleter_type;
 public:
    //  Prefix for the name of a read-only set.
    //
@@ -75,6 +75,11 @@ public:
    //  Returns the type of set.  Must be overridden by subclasses.
    //
    virtual LibSetType GetType() const;
+
+   //  Returns the items in the set.
+   //
+   const LibItemSet& Items() const { return items_; }
+   LibItemSet& Items() { return items_; }
 
    //  Returns 0 after checking code files in the set for conformance to
    //  C++ coding guidelines.  If STREAM is not nullptr, produces a report
@@ -148,7 +153,8 @@ public:
    //  Operators.  The default implementations invoke OpError (see below)
    //  and must be overridden by a subclass that supports the operator.
    //
-   virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
+   virtual LibrarySet* Create
+      (const std::string& name, const LibItemSet* items) const;
    virtual LibrarySet* Assign(LibrarySet* rhs);
    virtual LibrarySet* Intersection(const LibrarySet* rhs) const;
    virtual LibrarySet* Difference(const LibrarySet* rhs) const;
@@ -212,19 +218,15 @@ private:
    //
    LibrarySet* OpError() const;
 
-   //  Returns the offset to link_.
+   //  The set of items.
    //
-   static ptrdiff_t LinkDiff();
+   std::set< LibraryItem* > items_;
 
-   //  Link for the queue of sets.
-   //
-   NodeBase::Q2Link link_;
-
-   //  Set for a temporary variable.
+   //  Set if this set is a temporary variable.
    //
    bool temp_;
 
-   //  Sequence number for temporary variables.
+   //  Sequence number for generating names for temporary variables.
    //
    static uint8_t SeqNo_;
 };

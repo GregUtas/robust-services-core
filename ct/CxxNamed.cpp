@@ -25,7 +25,6 @@
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
-#include "CodeSet.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
@@ -34,9 +33,7 @@
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Lexer.h"
-#include "Library.h"
 #include "Parser.h"
-#include "Registry.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -233,15 +230,6 @@ Class* CxxNamed::GetClass() const
 
 //------------------------------------------------------------------------------
 
-id_t CxxNamed::GetDeclFid() const
-{
-   auto file = GetDeclFile();
-   if(file == nullptr) return NIL_ID;
-   return file->Fid();
-}
-
-//------------------------------------------------------------------------------
-
 void CxxNamed::GetDirectClasses(CxxUsageSets& symbols) const
 {
    Debug::ft("CxxNamed.GetDirectClasses");
@@ -319,10 +307,9 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
    auto file1 = this->GetFile();
    auto file2 = item->GetFile();
-   auto& files = Singleton< Library >::Instance()->Files();
-   auto& affecters = files.At(file2->Fid())->Affecters();
-   SetOfIds::const_iterator it = affecters.find(file1->Fid());
-   return (it != affecters.cend());
+   auto& affecters = file2->Affecters();
+   auto iter = affecters.find(file1);
+   return (iter != affecters.cend());
 }
 
 //------------------------------------------------------------------------------
@@ -380,7 +367,7 @@ StackArg CxxNamed::NameToArg(Cxx::Operator op, TypeName* name)
 
 fn_name CxxNamed_ResolveName = "CxxNamed.ResolveName";
 
-CxxScoped* CxxNamed::ResolveName(const CodeFile* file,
+CxxScoped* CxxNamed::ResolveName(CodeFile* file,
    const CxxScope* scope, const Flags& mask, SymbolView* view) const
 {
    Debug::ft(CxxNamed_ResolveName);
@@ -1485,7 +1472,7 @@ TypeMatch DataSpec::MatchTemplateArg(const TypeSpec* that) const
 //------------------------------------------------------------------------------
 
 bool DataSpec::NamesReferToArgs(const NameVector& names,
-   const CxxScope* scope, const CodeFile* file, size_t& index) const
+   const CxxScope* scope, CodeFile* file, size_t& index) const
 {
    Debug::ft("DataSpec.NamesReferToArgs");
 
@@ -3115,7 +3102,7 @@ void TypeName::MemberAccessed(Class* cls, CxxScoped* mem) const
 //------------------------------------------------------------------------------
 
 bool TypeName::NamesReferToArgs(const NameVector& names,
-   const CxxScope* scope, const CodeFile* file, size_t& index) const
+   const CxxScope* scope, CodeFile* file, size_t& index) const
 {
    Debug::ft("TypeName.NamesReferToArgs");
 
@@ -3537,7 +3524,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
 //------------------------------------------------------------------------------
 
 bool TypeSpec::NamesReferToArgs(const NameVector& names,
-   const CxxScope* scope, const CodeFile* file, size_t& index) const
+   const CxxScope* scope, CodeFile* file, size_t& index) const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "NamesReferToArgs", 0);
    return false;

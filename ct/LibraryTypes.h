@@ -34,34 +34,41 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
-//  A synonym for a sorted list of unique file or directory identifiers.
-//
-typedef std::set< NodeBase::id_t > SetOfIds;
-
-//  What a SetOfIds represents.
+//  What a set of library items can contain.
 //
 enum LibSetType
 {
-   ERR_SET,   // illegal expression
+   ERR_SET,   // illegal set
    DIR_SET,   // a set of directories
    FILE_SET,  // a set of files
    VAR_SET,   // a set of variables
    ANY_SET    // a set of directories or files
 };
 
-//  Synonym for a list of unique file or directory identifiers, sorted by
-//  build order.
+//  Forward declarations.
+//
+class CodeDir;
+class CodeFile;
+class LibraryItem;
+class LibrarySet;
+
+using LibItemSet = std::set< LibraryItem* >;
+
+using CodeDirPtr = std::unique_ptr< CodeDir >;
+using CodeFilePtr = std::unique_ptr< CodeFile >;
+using LibrarySetPtr = std::unique_ptr< LibrarySet >;
+
+//  For sorting code files in build order.
 //
 struct FileLevel
 {
-   const NodeBase::id_t fid;  // the file's identifier
-   const size_t level;        // the file's level in the build
+   CodeFile* file;      // the file
+   const size_t level;  // the file's level in the build
 
-   FileLevel(NodeBase::id_t f, size_t l) : fid(f), level(l) { }
+   FileLevel(CodeFile* f, size_t l) : file(f), level(l) { }
 };
 
-typedef std::list< FileLevel > BuildOrder;
-typedef std::unique_ptr< BuildOrder > BuildOrderPtr;
+using BuildOrder = std::list< FileLevel >;
 
 //  Tokens when parsing the expression associated with a library command.
 //

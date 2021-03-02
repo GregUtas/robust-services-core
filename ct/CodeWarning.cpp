@@ -24,6 +24,7 @@
 #include <iomanip>
 #include <iterator>
 #include <list>
+#include <set>
 #include <sstream>
 #include "CodeDir.h"
 #include "CodeFile.h"
@@ -36,8 +37,6 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
-#include "Library.h"
-#include "Registry.h"
 #include "Singleton.h"
 #include "ThisThread.h"
 
@@ -138,7 +137,7 @@ word CodeWarning::FindWarning(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
+void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
 {
    Debug::ft("CodeWarning.GenerateReport");
 
@@ -152,24 +151,21 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
    //  statements, for example, are affected by earlier recommendations for
    //  #included files.
    //
-   auto checkSet = new SetOfIds(set);
-   auto checkFiles = new CodeFileSet(LibrarySet::TemporaryName(), checkSet);
+   auto checkFiles = new CodeFileSet(LibrarySet::TemporaryName(), &files);
    auto order = checkFiles->SortInBuildOrder();
 
    //  Run a check on each file in ORDER, as well as on each C++ item.
    //
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   for(auto f = order->cbegin(); f != order->cend(); ++f)
+   for(auto f = order.cbegin(); f != order.cend(); ++f)
    {
-      auto file = files.At(f->fid);
+      auto file = f->file;
       if(file->IsHeader()) file->Check();
       ThisThread::Pause();
    }
 
-   for(auto f = order->cbegin(); f != order->cend(); ++f)
+   for(auto f = order.cbegin(); f != order.cend(); ++f)
    {
-      auto file = files.At(f->fid);
+      auto file = f->file;
       if(file->IsCpp()) file->Check();
       ThisThread::Pause();
    }
@@ -182,9 +178,9 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
    //  Count the lines of each type.
    //
-   for(auto f = set.cbegin(); f != set.cend(); ++f)
+   for(auto f = order.cbegin(); f != order.cend(); ++f)
    {
-      files.At(*f)->GetLineCounts();
+      f->file->GetLineCounts();
    }
 
    std::vector< CodeWarning > warnings;
@@ -195,7 +191,7 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
    //
    for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
    {
-      if(set.find(w->File()->Fid()) != set.cend())
+      if(files.find(w->File()) != files.cend())
       {
          if(!w->IsInformational()) ++WarningCounts_[w->warning_];
          warnings.push_back(*w);

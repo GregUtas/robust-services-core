@@ -31,7 +31,6 @@
 #include "Formatters.h"
 #include "Library.h"
 #include "NbCliParms.h"
-#include "Registry.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 
@@ -44,7 +43,8 @@ using std::string;
 
 namespace CodeTools
 {
-CodeDirSet::CodeDirSet(const string& name, SetOfIds* set) : CodeSet(name, set)
+CodeDirSet::CodeDirSet(const string& name, const LibItemSet* items) :
+   CodeSet(name, items)
 {
    Debug::ft("CodeDirSet.ctor");
 }
@@ -58,11 +58,12 @@ CodeDirSet::~CodeDirSet()
 
 //------------------------------------------------------------------------------
 
-LibrarySet* CodeDirSet::Create(const string& name, SetOfIds* set) const
+LibrarySet* CodeDirSet::Create
+   (const string& name, const LibItemSet* items) const
 {
    Debug::ft("CodeDirSet.Create");
 
-   return new CodeDirSet(name, set);
+   return new CodeDirSet(name, items);
 }
 
 //------------------------------------------------------------------------------
@@ -73,22 +74,20 @@ LibrarySet* CodeDirSet::Files() const
 
    //  Iterate over all code files to find those whose directory is in DIRSET.
    //
-   auto& dirSet = Set();
+   auto& dirSet = Items();
    auto result = new CodeFileSet(TemporaryName(), nullptr);
-   auto& fileSet = result->Set();
-   auto& files = Singleton< Library >::Instance()->Files();
+   auto& files = Singleton< Library >::Instance()->Files().Items();
 
-   for(auto f = files.First(); f != nullptr; files.Next(f))
+   for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      auto d = f->Dir();
+      auto file = static_cast< CodeFile* >(*f);
+      auto dir = file->Dir();
 
-      if(d != nullptr)
+      if(dir != nullptr)
       {
-         SetOfIds::const_iterator it = dirSet.find(d->Did());
-
-         if(it != dirSet.cend())
+         if(dirSet.find(dir) != dirSet.cend())
          {
-            fileSet.insert(f->Fid());
+            result->Items().insert(file);
          }
       }
    }
@@ -102,7 +101,7 @@ word CodeDirSet::List(ostream& stream, string& expl) const
 {
    Debug::ft("CodeDirSet.List");
 
-   auto& dirSet = Set();
+   auto& dirSet = Items();
 
    if(dirSet.empty())
    {
@@ -110,12 +109,11 @@ word CodeDirSet::List(ostream& stream, string& expl) const
       return 0;
    }
 
-   auto& dirs = Singleton< Library >::Instance()->Directories();
-
    for(auto d = dirSet.cbegin(); d != dirSet.cend(); ++d)
    {
-      stream << spaces(2) << setw(12) << std::right << dirs.At(*d)->Name();
-      stream << spaces(2) << std::left << dirs.At(*d)->Path() << CRLF;
+      auto dir = static_cast< CodeDir* >(*d);
+      stream << spaces(2) << setw(12) << std::right << dir->Name();
+      stream << spaces(2) << std::left << dir->Path() << CRLF;
    }
 
    return 0;
@@ -127,12 +125,12 @@ word CodeDirSet::Show(string& result) const
 {
    Debug::ft("CodeDirSet.Show");
 
-   auto& dirSet = Set();
-   auto& dirs = Singleton< Library >::Instance()->Directories();
+   auto& dirSet = Items();
 
    for(auto d = dirSet.cbegin(); d != dirSet.cend(); ++d)
    {
-      result = result + dirs.At(*d)->Name() + ", ";
+      auto dir = static_cast< CodeDir* >(*d);
+      result = result + dir->Name() + ", ";
    }
 
    return Shown(result);

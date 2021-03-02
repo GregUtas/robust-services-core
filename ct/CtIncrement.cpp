@@ -28,13 +28,16 @@
 #include <cstddef>
 #include <iomanip>
 #include <memory>
+#include <set>
 #include <sstream>
 #include <string>
 #include "CliBuffer.h"
 #include "CliThread.h"
 #include "CodeCoverage.h"
 #include "CodeDir.h"
+#include "CodeDirSet.h"
 #include "CodeFile.h"
+#include "CodeFileSEt.h"
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxExecute.h"
@@ -45,11 +48,9 @@
 #include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
-#include "LibrarySet.h"
 #include "LibraryTypes.h"
 #include "NbCliParms.h"
 #include "Parser.h"
-#include "Registry.h"
 #include "Singleton.h"
 #include "Symbol.h"
 #include "SysFile.h"
@@ -648,51 +649,6 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
-//  The FILEID command.
-//
-class FileIdMandParm : public CliIntParm
-{
-public: FileIdMandParm();
-};
-
-class FileIdCommand : public CliCommand
-{
-public:
-   FileIdCommand();
-private:
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-fixed_string FileIdMandExpl = "file's identifier";
-
-FileIdMandParm::FileIdMandParm() :
-   CliIntParm(FileIdMandExpl, 1, 4095) { }
-
-fixed_string FileIdStr = "fileid";
-fixed_string FileIdExpl = "Displays information about a code file.";
-
-FileIdCommand::FileIdCommand() : CliCommand(FileIdStr, FileIdExpl)
-{
-   BindParm(*new FileIdMandParm);
-}
-
-word FileIdCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft("FileIdCommand.ProcessCommand");
-
-   word fid;
-
-   if(!GetIntParm(fid, cli)) return -1;
-   if(!cli.EndOfInput()) return -1;
-
-   auto file = Singleton< Library >::Instance()->Files().At(fid);
-   if(file == nullptr) return cli.Report(-2, NoFileExpl);
-   file->Display(*cli.obuf, spaces(2), VerboseOpt);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-//
 //  The FILEINFO command.
 //
 class CodeFileParm : public CliTextParm
@@ -1208,16 +1164,17 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
 
          size_t hdrs = 0;
          size_t cpps = 0;
-         auto& dirs = Singleton< Library >::Instance()->Directories();
+         auto& dirs = Singleton< Library >::Instance()->Directories().Items();
 
-         for(auto d = dirs.First(); d != nullptr; dirs.Next(d))
+         for(auto d = dirs.cbegin(); d != dirs.cend(); ++d)
          {
-            auto h = d->HeaderCount();
-            *cli.obuf << setw(11) << d->Name();
+            auto dir = static_cast< CodeDir* >(*d);
+            auto h = dir->HeaderCount();
+            *cli.obuf << setw(11) << dir->Name();
             *cli.obuf << setw(6) << h;
-            auto c = d->CppCount();
+            auto c = dir->CppCount();
             *cli.obuf << setw(6) << c;
-            *cli.obuf << spaces(2) << d->Path() << CRLF;
+            *cli.obuf << spaces(2) << dir->Path() << CRLF;
             hdrs += h;
             cpps += c;
          }
@@ -1230,13 +1187,14 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
    case FailedIndex:
       {
          auto found = false;
-         auto& files = Singleton< Library >::Instance()->Files();
+         auto& files = Singleton< Library >::Instance()->Files().Items();
 
-         for(auto f = files.First(); f != nullptr; files.Next(f))
+         for(auto f = files.cbegin(); f != files.cend(); ++f)
          {
-            if(f->ParseStatus() == CodeFile::Failed)
+            auto file = static_cast< CodeFile* >(*f);
+            if(file->ParseStatus() == CodeFile::Failed)
             {
-               *cli.obuf << spaces(2) << f->Name() << CRLF;
+               *cli.obuf << spaces(2) << file->Name() << CRLF;
                found = true;
             }
          }
@@ -1635,7 +1593,6 @@ CtIncrement::CtIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new PurgeCommand);
    BindCommand(*new SortCommand);
    BindCommand(*new FileInfoCommand);
-   BindCommand(*new FileIdCommand);
    BindCommand(*new TraceCommand);
    BindCommand(*new ParseCommand);
    BindCommand(*new CheckCommand);

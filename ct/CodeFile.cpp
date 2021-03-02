@@ -21,7 +21,6 @@
 //
 #include "CodeFile.h"
 #include <cctype>
-#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <istream>
@@ -47,7 +46,6 @@
 #include "Formatters.h"
 #include "Library.h"
 #include "Parser.h"
-#include "Registry.h"
 #include "SetOperations.h"
 #include "Singleton.h"
 #include "SysFile.h"
@@ -72,7 +70,7 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
    //
    for(auto f = symbols.forwards.cbegin(); f != symbols.forwards.cend(); ++f)
    {
-      auto fid = (*f)->GetDeclFid();
+      auto file = (*f)->GetDeclFile();
       auto include = true;
 
       for(auto b = symbols.bases.cbegin(); b != symbols.bases.cend(); ++b)
@@ -81,7 +79,7 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 
          for(auto c = base->BaseClass(); c != nullptr; c = c->BaseClass())
          {
-            if(c->GetDeclFid() == fid)
+            if(c->GetDeclFile() == file)
             {
                include = false;
                break;
@@ -97,20 +95,20 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 
 //------------------------------------------------------------------------------
 
-void DisplayFileNames(ostream* stream, const SetOfIds& fids, fixed_string title)
+void DisplayFileNames
+   (ostream* stream, const LibItemSet& files, fixed_string title)
 {
-   //  Display, in STREAM, the names of files identified in FIDS.
-   //  TITLE provides an explanation for the list.
+   //  Display, in STREAM, the names of files in FILES.  TITLE provides an
+   //  explanation for the list.
    //
    if(stream == nullptr) return;
-   if(fids.empty()) return;
+   if(files.empty()) return;
 
-   auto& files = Singleton< Library >::Instance()->Files();
    *stream << spaces(3) << title << CRLF;
 
-   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
+   for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      *stream << spaces(6) << files.At(*a)->Name() << CRLF;
+      *stream << spaces(6) << (*f)->Name() << CRLF;
    }
 }
 
@@ -200,7 +198,7 @@ void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
 
 //------------------------------------------------------------------------------
 
-void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& tBaseIds)
+void GetTransitiveBases(const CxxNamedSet& bases, LibItemSet& tBaseSet)
 {
    Debug::ft("CodeTools.GetTransitiveBases");
 
@@ -210,7 +208,7 @@ void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& tBaseIds)
 
       for(auto c = base; c != nullptr; c = c->BaseClass())
       {
-         tBaseIds.insert(c->GetDeclFid());
+         tBaseSet.insert(c->GetDeclFile());
       }
    }
 }
@@ -428,17 +426,15 @@ void CodeFile::AddDirectTypes
 
 //------------------------------------------------------------------------------
 
-void CodeFile::AddIncludeIds
-   (const CxxNamedSet& inclSet, SetOfIds& inclIds) const
+void CodeFile::AddIncludes
+   (const CxxNamedSet& declSet, LibItemSet& inclSet) const
 {
-   Debug::ft("CodeFile.AddIncludeIds");
+   Debug::ft("CodeFile.AddIncludes");
 
-   auto thisFid = Fid();
-
-   for(auto n = inclSet.cbegin(); n != inclSet.cend(); ++n)
+   for(auto n = declSet.cbegin(); n != declSet.cend(); ++n)
    {
-      auto fid = (*n)->GetDeclFid();
-      if((fid != NIL_ID) && (fid != thisFid)) inclIds.insert(fid);
+      auto file = (*n)->GetDeclFile();
+      if((file != nullptr) && (file != this)) inclSet.insert(file);
    }
 }
 
@@ -484,43 +480,42 @@ void CodeFile::AddUsage(const CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::AddUser(const CodeFile* file)
+void CodeFile::AddUser(CodeFile* file)
 {
    Debug::ft("CodeFile.AddUser");
 
-   userIds_.insert(file->Fid());
+   userSet_.insert(file);
 }
 
 //------------------------------------------------------------------------------
 
-const SetOfIds& CodeFile::Affecters() const
+const LibItemSet& CodeFile::Affecters()
 {
-   //  If affecterIds_ is empty, build it.
+   //  If affecterSet_ is empty, build it.
    //
-   if(!affecterIds_.empty()) return affecterIds_;
+   if(!affecterSet_.empty()) return affecterSet_;
 
    Debug::ft("CodeFile.Affecters");
 
    auto fileSet = new CodeFileSet(LibrarySet::TemporaryName(), nullptr);
-   auto& context = fileSet->Set();
-   context.insert(Fid());
+   auto& context = fileSet->Items();
+   context.insert(this);
    auto asSet = fileSet->Affecters();
-   affecterIds_ = static_cast< CodeFileSet* >(asSet)->Set();
+   affecterSet_ = static_cast< CodeFileSet* >(asSet)->Items();
    fileSet->Release();
-   return affecterIds_;
+   return affecterSet_;
 }
 
 //------------------------------------------------------------------------------
 
-size_t CodeFile::CalcGroup(const CodeFile* file) const
+size_t CodeFile::CalcGroup(CodeFile* file) const
 {
    Debug::ft("CodeFile.CalcGroup(file)");
 
    if(file == nullptr) return 0;
    auto ext = file->IsSubsFile();
-   auto fid = file->Fid();
-   if(declIds_.find(fid) != declIds_.cend()) return (ext ? 1 : 2);
-   if(baseIds_.find(fid) != baseIds_.cend()) return (ext ? 3 : 4);
+   if(declSet_.find(file) != declSet_.cend()) return (ext ? 1 : 2);
+   if(baseSet_.find(file) != baseSet_.cend()) return (ext ? 3 : 4);
    return (ext ? 5 : 6);
 }
 
@@ -554,15 +549,6 @@ bool CodeFile::CanBeTrimmed() const
    if(code_.empty()) return false;
    if(isSubsFile_) return false;
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-ptrdiff_t CodeFile::CellDiff()
-{
-   uintptr_t local;
-   auto fake = reinterpret_cast< const CodeFile* >(&local);
-   return ptrdiff(&fake->fid_, fake);
 }
 
 //------------------------------------------------------------------------------
@@ -854,7 +840,7 @@ void CodeFile::CheckIncludeOrder() const
    Debug::ft("CodeFile.CheckIncludeOrder");
 
    //  The desired order for #include directives is
-   //    1. files in declIds_ or baseIds_
+   //    1. files in declSet_ or baseSet_
    //    2. external files
    //    3. internal files
    //  with each group in alphabetical order.  External and internal files are
@@ -1187,7 +1173,6 @@ void CodeFile::Display(ostream& stream,
 {
    LibraryItem::Display(stream, prefix, options);
 
-   stream << prefix << "fid        : " << fid_.to_str() << CRLF;
    stream << prefix << "dir        : " << dir_ << CRLF;
    stream << prefix << "isHeader   : " << isHeader_ << CRLF;
    stream << prefix << "isSubsFile : " << isSubsFile_ << CRLF;
@@ -1195,22 +1180,21 @@ void CodeFile::Display(ostream& stream,
    stream << prefix << "checked    : " << checked_ << CRLF;
 
    auto lead = prefix + spaces(2);
-   auto& files = Singleton< Library >::Instance()->Files();
 
-   stream << prefix << "inclIds : " << inclIds_.size() << CRLF;
+   stream << prefix << "inclSet : " << inclSet_.size() << CRLF;
 
-   for(auto i = inclIds_.cbegin(); i != inclIds_.cend(); ++i)
+   for(auto i = inclSet_.cbegin(); i != inclSet_.cend(); ++i)
    {
-      auto f = files.At(*i);
-      stream << lead << strIndex(*i) << f->Name() << CRLF;
+      auto f = static_cast< const CodeFile* >(*i);
+      stream << lead << f->Name() << CRLF;
    }
 
-   stream << prefix << "userIds : " << userIds_.size() << CRLF;
+   stream << prefix << "userSet : " << userSet_.size() << CRLF;
 
-   for(auto u = userIds_.cbegin(); u != userIds_.cend(); ++u)
+   for(auto u = userSet_.cbegin(); u != userSet_.cend(); ++u)
    {
-      auto f = files.At(*u);
-      stream << lead << strIndex(*u) << f->Name() << CRLF;
+      auto f = static_cast< const CodeFile* >(*u);
+      stream << lead << f->Name() << CRLF;
    }
 
    stream << prefix << "lexer :" << CRLF;
@@ -1291,42 +1275,42 @@ Data* CodeFile::FindData(const string& name) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::FindDeclIds()
+void CodeFile::FindDeclSet()
 {
-   Debug::ft("CodeFile.FindDeclIds");
+   Debug::ft("CodeFile.FindDeclSet");
 
-   //  If this is a .cpp, find declIds_, the headers that declare items that
-   //  the .cpp defines.  Also find classIds_, the transitive base classes of
+   //  If this is a .cpp, find declSet_, the headers that declare items that
+   //  the .cpp defines.  Also find classSet_, the transitive base classes of
    //  the classes that the .cpp implements.
    //
    if(!IsCpp()) return;
 
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
-      auto fid = (*f)->GetDistinctDeclFid();
-      if(fid != NIL_ID) declIds_.insert(fid);
+      auto file = (*f)->GetDistinctDeclFile();
+      if(file != nullptr) declSet_.insert(file);
 
       auto c = (*f)->GetClass();
       if(c != nullptr)
       {
          for(auto b = c->BaseClass(); b != nullptr; b = b->BaseClass())
          {
-            classIds_.insert(b->GetDeclFid());
+            classSet_.insert(b->GetDeclFile());
          }
       }
    }
 
    for(auto d = data_.cbegin(); d != data_.cend(); ++d)
    {
-      auto fid = (*d)->GetDistinctDeclFid();
-      if(fid != NIL_ID) declIds_.insert(fid);
+      auto file = (*d)->GetDistinctDeclFile();
+      if(file != nullptr) declSet_.insert(file);
 
       auto c = (*d)->GetClass();
       if(c != nullptr)
       {
          for(auto b = c->BaseClass(); b != nullptr; b = b->BaseClass())
          {
-            classIds_.insert(b->GetDeclFid());
+            classSet_.insert(b->GetDeclFile());
          }
       }
    }
@@ -1418,7 +1402,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
 //------------------------------------------------------------------------------
 
 Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
-   const CxxScoped* item, const CxxScope* scope) const
+   const CxxScoped* item, const CxxScope* scope)
 {
    Debug::ft("CodeFile.FindUsingFor");
 
@@ -1443,14 +1427,13 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
    if(!item->IsForward())
    {
       SetDifference(search, item->GetFile()->Affecters());
-      search.insert(item->GetFile()->Fid());
+      search.insert(item->GetFile());
    }
-
-   auto& files = Singleton< Library >::Instance()->Files();
 
    for(auto f = search.cbegin(); f != search.cend(); ++f)
    {
-      u = files.At(*f)->GetUsingFor(fqName, prefix, item, scope);
+      auto file = static_cast< const CodeFile* >(*f);
+      u = file->GetUsingFor(fqName, prefix, item, scope);
       if(u != nullptr) return u;
    }
 
@@ -1486,7 +1469,7 @@ word CodeFile::Format(string& expl)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::GenerateReport(ostream* stream, const SetOfIds& set)
+void CodeFile::GenerateReport(ostream* stream, const LibItemSet& set)
 {
    Debug::ft("CodeFile.GenerateReport");
 
@@ -1603,11 +1586,10 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
    //
    if(IsCpp())
    {
-      auto& files = Singleton< Library >::Instance()->Files();
-
-      for(auto d = declIds_.cbegin(); d != declIds_.cend(); ++d)
+      for(auto d = declSet_.cbegin(); d != declSet_.cend(); ++d)
       {
-         auto classes = files.At(*d)->Classes();
+         auto file = static_cast< const CodeFile* >(*d);
+         auto classes = file->Classes();
 
          for(auto c = classes->cbegin(); c != classes->cend(); ++c)
          {
@@ -1652,17 +1634,17 @@ bool CodeFile::HasForwardFor(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-const SetOfIds& CodeFile::Implementers()
+const LibItemSet& CodeFile::Implementers()
 {
    Debug::ft("CodeFile.Implementers");
 
-   //  If implIds_ is empty, build it.
+   //  If implSet_ is empty, build it.
    //
-   if(!implIds_.empty()) return implIds_;
+   if(!implSet_.empty()) return implSet_;
 
    auto fileSet = new CodeFileSet(LibrarySet::TemporaryName(), nullptr);
-   auto& imSet = fileSet->Set();
-   imSet.insert(Fid());
+   auto& imSet = fileSet->Items();
+   imSet.insert(this);
 
    //  Find all the files that declare or define the functions and data
    //  that this file defines or declares, and add them to the set.
@@ -1682,9 +1664,9 @@ const SetOfIds& CodeFile::Implementers()
       (*d)->AddFiles(imSet);
    }
 
-   implIds_ = imSet;
+   implSet_ = imSet;
    fileSet->Release();
-   return implIds_;
+   return implSet_;
 }
 
 //------------------------------------------------------------------------------
@@ -1887,7 +1869,7 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids)
+void CodeFile::LogAddIncludes(ostream* stream, const LibItemSet& files)
 {
    Debug::ft("CodeFile.LogAddIncludes");
 
@@ -1895,20 +1877,18 @@ void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids)
    //  it should be added.  Put the filename in angle brackets or quotes,
    //  whichever is appropriate.
    //
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   for(auto i = fids.cbegin(); i != fids.cend(); ++i)
+   for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
       string fn;
-      auto f = files.At(*i);
-      auto x = f->IsSubsFile();
+      auto file = static_cast< const CodeFile* >(*f);
+      auto x = file->IsSubsFile();
       fn.push_back(x ? '<' : QUOTE);
-      fn += f->Name();
+      fn += file->Name();
       fn.push_back(x ? '>' : QUOTE);
       LogPos(string::npos, IncludeAdd, nullptr, 0, fn);
    }
 
-   DisplayFileNames(stream, fids, "Add an #include for");
+   DisplayFileNames(stream, files, "Add an #include for");
 }
 
 //------------------------------------------------------------------------------
@@ -2044,18 +2024,17 @@ void CodeFile::LogRemoveForwards(ostream* stream, const CxxNamedSet& items) cons
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogRemoveIncludes(ostream* stream, const SetOfIds& fids) const
+void CodeFile::LogRemoveIncludes
+   (ostream* stream, const LibItemSet& files) const
 {
    Debug::ft("CodeFile.LogRemoveIncludes");
 
    //  For each file in FIDS, generate a log saying that the #include for
    //  it should be removed.
    //
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   for(auto f = fids.cbegin(); f != fids.cend(); ++f)
+   for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      const auto& name = files.At(*f)->Name();
+      const auto& name = static_cast< const CodeFile* >(*f)->Name();
 
       for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
       {
@@ -2066,7 +2045,7 @@ void CodeFile::LogRemoveIncludes(ostream* stream, const SetOfIds& fids) const
       }
    }
 
-   DisplayFileNames(stream, fids, "Remove the #include for");
+   DisplayFileNames(stream, files, "Remove the #include for");
 }
 
 //------------------------------------------------------------------------------
@@ -2167,24 +2146,20 @@ const stringVector& CodeFile::Prolog() const
 //------------------------------------------------------------------------------
 
 void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
-   const SetOfIds& inclIds, CxxNamedSet& addForws) const
+   const LibItemSet& trimSet, CxxNamedSet& addForws) const
 {
    Debug::ft("CodeFile.PruneForwardCandidates");
 
    //  Go through the possible forward declarations and remove those that
-   //  are not needed.
-   //
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   //  Find the files that affect (that is, are transitively #included
-   //  by) inclIds (the files that will be #included).
+   //  are not needed.  Start by finding the files that affect (that is, are
+   //  transitively #included by) trimSet (the files that will be #included).
    //
    auto inclSet = new CodeFileSet(LibrarySet::TemporaryName(), nullptr);
-   auto& incls = inclSet->Set();
-   SetUnion(incls, inclIds);
-   auto affecterSet = inclSet->Affecters();
+   auto& incls = inclSet->Items();
+   SetUnion(incls, trimSet);
+   auto affecters = inclSet->Affecters();
    inclSet->Release();
-   auto& affecterIds = static_cast< CodeFileSet* >(affecterSet)->Set();
+   auto& affecterSet = static_cast< CodeFileSet* >(affecters)->Items();
 
    for(auto add = addForws.begin(); add != addForws.end(); NO_OP)
    {
@@ -2202,14 +2177,12 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
 
       if(!remove)
       {
-         auto addFid = addFile->Fid();
-
          //  Do not add a forward declaration for a type that will be #included,
          //  even transitively.
          //
-         for(auto a = affecterIds.cbegin(); a != affecterIds.cend(); ++a)
+         for(auto a = affecterSet.cbegin(); a != affecterSet.cend(); ++a)
          {
-            remove = (*a == addFid);
+            remove = (*a == addFile);
             if(remove) break;
          }
 
@@ -2218,9 +2191,9 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
          //
          if(!remove)
          {
-            for(auto a = affecterIds.cbegin(); a != affecterIds.cend(); ++a)
+            for(auto a = affecterSet.cbegin(); a != affecterSet.cend(); ++a)
             {
-               auto incl = files.At(*a);
+               auto incl = static_cast< const CodeFile* >(*a);
 
                if(incl != this)
                {
@@ -2237,7 +2210,7 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
          ++add;
    }
 
-   affecterSet->Release();
+   affecters->Release();
 }
 
 //------------------------------------------------------------------------------
@@ -2307,34 +2280,33 @@ bool CodeFile::ReadCode(string& code) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::RemoveHeaderIds(SetOfIds& inclIds) const
+void CodeFile::RemoveHeaders(LibItemSet& inclSet) const
 {
-   Debug::ft("CodeFile.RemoveHeaderIds");
+   Debug::ft("CodeFile.RemoveHeaders");
 
    //  If this is a .cpp, it implements items declared one or more headers
-   //  (declIds_).  The .cpp need not #include anything that one of those
+   //  (declSet_).  The .cpp need not #include anything that one of those
    //  headers will already #include.
    //
-   auto& files = Singleton< Library >::Instance()->Files();
-
    if(IsCpp())
    {
-      for(auto d = declIds_.cbegin(); d != declIds_.cend(); ++d)
+      for(auto d = declSet_.cbegin(); d != declSet_.cend(); ++d)
       {
-         SetDifference(inclIds, files.At(*d)->TrimList());
+         auto file = static_cast< const CodeFile* >(*d);
+         SetDifference(inclSet, file->TrimList());
       }
 
-      //  Ensure that all files in declIds_ are #included.  It is possible for
+      //  Ensure that all files in declSet_ are #included.  It is possible for
       //  one to get dropped if, for example, the .cpp uses a subclass of an
       //  item that it implements.
       //
-      SetUnion(inclIds, declIds_);
+      SetUnion(inclSet, declSet_);
    }
 }
 
 //------------------------------------------------------------------------------
 
-void CodeFile::RemoveInvalidIncludes(SetOfIds& addIds) const
+void CodeFile::RemoveInvalidIncludes(LibItemSet& addSet)
 {
    Debug::ft("CodeFile.RemoveInvalidIncludes");
 
@@ -2345,21 +2317,18 @@ void CodeFile::RemoveInvalidIncludes(SetOfIds& addIds) const
    //  The latter two can occur when a template uses one of its instances
    //  to resolve symbols accessed through a template parameter.
    //
-   auto lib = Singleton< Library >::Instance();
-   auto fid = Fid();
+   addSet.erase(this);
 
-   addIds.erase(fid);
-
-   for(auto f = addIds.cbegin(); f != addIds.cend(); NO_OP)
+   for(auto f = addSet.cbegin(); f != addSet.cend(); NO_OP)
    {
-      auto file = lib->Files().At(*f);
+      auto file = static_cast< CodeFile* >(*f);
 
       if(file != nullptr)
       {
          auto& affecters = file->Affecters();
 
-         if(file->IsCpp() || (affecters.find(fid) != affecters.cend()))
-            f = addIds.erase(f);
+         if(file->IsCpp() || (affecters.find(this) != affecters.cend()))
+            f = addSet.erase(f);
          else
             ++f;
       }
@@ -2368,14 +2337,14 @@ void CodeFile::RemoveInvalidIncludes(SetOfIds& addIds) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::SaveBaseIds(const CxxNamedSet& bases)
+void CodeFile::SaveBaseSet(const CxxNamedSet& bases)
 {
-   Debug::ft("CodeFile.SaveBaseIds");
+   Debug::ft("CodeFile.SaveBaseSet");
 
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
       auto base = static_cast< const Class* >(*b);
-      baseIds_.insert(base->GetDeclFid());
+      baseSet_.insert(base->GetDeclFile());
    }
 }
 
@@ -2448,9 +2417,8 @@ void CodeFile::Scan()
 
          if(used != nullptr)
          {
-            auto id = used->Fid();
-            inclIds_.insert(id);
-            trimIds_.insert(id);
+            inclSet_.insert(used);
+            trimSet_.insert(used);
             used->AddUser(this);
          }
 
@@ -2540,13 +2508,13 @@ void CodeFile::Trim(ostream* stream)
 
    //  If this file should be trimmed, find the headers that declare items
    //  that this file defines, and assemble information about the symbols
-   //  that this file uses.  FindDeclIds must be invoked before GetUsageInfo
-   //  because the latter uses declIds_.
+   //  that this file uses.  FindDeclSet must be invoked before GetUsageInfo
+   //  because the latter uses declSet_.
    //
    if(!CanBeTrimmed()) return;
 
    if(stream != nullptr) *stream << Name() << CRLF;
-   FindDeclIds();
+   FindDeclSet();
 
    CxxUsageSets symbols;
    GetUsageInfo(symbols);
@@ -2557,91 +2525,91 @@ void CodeFile::Trim(ostream* stream)
    auto& friends = symbols.friends;
    auto& users = symbols.users;
 
-   SaveBaseIds(bases);
+   SaveBaseSet(bases);
 
    //  Remove direct and indirect symbols declared by the file itself.
-   //  Find inclSet, the types that were used directly or in executable
+   //  Find inclTypes, the types that were used directly or in executable
    //  code.  It will contain all the types that should be #included.
    //
-   CxxNamedSet inclSet;
+   CxxNamedSet inclTypes;
    EraseInternals(directs);
    EraseInternals(indirects);
-   AddDirectTypes(directs, inclSet);
+   AddDirectTypes(directs, inclTypes);
 
    //  Display the symbols that the file uses.
    //
    DisplaySymbolsAndFiles(stream, bases, "Base usage:");
-   DisplaySymbolsAndFiles(stream, inclSet, "Direct usage:");
+   DisplaySymbolsAndFiles(stream, inclTypes, "Direct usage:");
    DisplaySymbolsAndFiles(stream, indirects, "Indirect usage:");
    DisplaySymbolsAndFiles(stream, forwards, "Forward usage:");
    DisplaySymbolsAndFiles(stream, friends, "Friend usage:");
 
-   //  Expand inclSet with types used indirectly but defined outside
+   //  Expand inclTypes with types used indirectly but defined outside
    //  the code base.  Then expand it with forward declarations that
    //  resolved an indirect reference in this file.
    //
-   AddIndirectExternalTypes(indirects, inclSet);
-   AddForwardDependencies(symbols, inclSet);
+   AddIndirectExternalTypes(indirects, inclTypes);
+   AddForwardDependencies(symbols, inclTypes);
 
-   //  A derived class must #include its base class, so shrink inclSet
+   //  A derived class must #include its base class, so shrink inclTypes
    //  by removing items defined in an indirect base class.  Then shrink
    //  it by removing items defined in a base class of another item that
    //  will be #included.  Finally, shrink it again by removing classes
    //  that are named in a typedef that will be #included.
    //
-   RemoveIndirectBaseItems(bases, inclSet);
-   RemoveIncludedBaseItems(inclSet);
-   RemoveAliasedClasses(inclSet);
+   RemoveIndirectBaseItems(bases, inclTypes);
+   RemoveIncludedBaseItems(inclTypes);
+   RemoveAliasedClasses(inclTypes);
 
    //  For a .cpp, BASES includes base classes defined in its header.
    //  Regenerate it so that it is limited to base classes for those
    //  declared in the .cpp.  Before doing this, find the files that
    //  define base classes, including transitive base classes, of
-   //  classes defined or implemented in this file.  This set (tBaseIds)
+   //  classes defined or implemented in this file.  This set (tBaseSet)
    //  will be needed later, when analyzing using statements.
    //
-   SetOfIds tBaseIds;
-   GetTransitiveBases(bases, tBaseIds);
+   LibItemSet tBaseSet;
+   GetTransitiveBases(bases, tBaseSet);
    if(IsCpp()) GetDeclaredBaseClasses(bases);
 
    //  An #include should always appear for a base class.  Add them to
-   //  inclSet in case any of them were removed.
+   //  inclTypes in case any of them were removed.
    //
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
-      inclSet.insert(*b);
+      inclTypes.insert(*b);
    }
 
-   //  Assemble inclIds, all the files that need to be #included.  It
+   //  Assemble inclSet, all the files that need to be #included.  It
    //  starts with all of the files (excluding this one) that declare
-   //  items in inclSet.  A .cpp can then remove any file that will be
+   //  items in inclTypes.  A .cpp can then remove any file that will be
    //  #included by a header that declares an item that the .cpp defines.
    //
-   SetOfIds inclIds;
-   AddIncludeIds(inclSet, inclIds);
-   RemoveHeaderIds(inclIds);
+   LibItemSet inclSet;
+   AddIncludes(inclTypes, inclSet);
+   RemoveHeaders(inclSet);
 
-   //  Output addIds, the #includes that should be added.  It contains
-   //  inclIds, minus any spurious files and what is already #included.
+   //  Output addSet, the #includes that should be added.  It contains
+   //  inclSet, minus any spurious files and what is already #included.
    //
-   SetOfIds addIds;
-   SetDifference(addIds, inclIds, inclIds_);
-   RemoveInvalidIncludes(addIds);
-   LogAddIncludes(stream, addIds);
+   LibItemSet addSet;
+   SetDifference(addSet, inclSet, inclSet_);
+   RemoveInvalidIncludes(addSet);
+   LogAddIncludes(stream, addSet);
 
-   //  Output delIds, which are the #includes that should be removed.  It
+   //  Output delSet, which are the #includes that should be removed.  It
    //  contains what is already #included, minus everything that needs to
    //  be #included.
    //
-   SetOfIds delIds;
-   SetDifference(delIds, inclIds_, inclIds);
-   LogRemoveIncludes(stream, delIds);
+   LibItemSet delSet;
+   SetDifference(delSet, inclSet_, inclSet);
+   LogRemoveIncludes(stream, delSet);
 
    //  Save the files that *should* be #included.
    //
-   trimIds_.clear();
-   SetUnion(trimIds_, inclIds_, addIds);
-   SetDifference(trimIds_, delIds);
+   trimSet_.clear();
+   SetUnion(trimSet_, inclSet_, addSet);
+   SetDifference(trimSet_, delSet);
 
    //  Now determine the forward declarations that should be added.  Types
    //  used indirectly, as well as friend declarations, provide candidates.
@@ -2650,7 +2618,7 @@ void CodeFile::Trim(ostream* stream)
    //
    CxxNamedSet addForws;
    FindForwardCandidates(symbols, addForws);
-   PruneForwardCandidates(forwards, inclIds, addForws);
+   PruneForwardCandidates(forwards, inclSet, addForws);
 
    //  Determine which of the file's current forward declarations to keep.
    //

@@ -32,7 +32,6 @@
 namespace CodeTools
 {
    class LibraryOpcode;
-   class LibrarySet;
 }
 
 //------------------------------------------------------------------------------

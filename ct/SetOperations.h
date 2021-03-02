@@ -31,27 +31,28 @@ namespace CodeTools
    //  Implements lhs = rhs1 - rhs2.
    //
    void SetDifference
-      (SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2);
+      (LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2);
 
    //  Implements lhs = lhs - rhs.
    //
-   void SetDifference(SetOfIds& lhs, const SetOfIds& rhs);
+   void SetDifference(LibItemSet& lhs, const LibItemSet& rhs);
 
    //  Implements lhs = rhs1 & rhs2.
    //
    void SetIntersection
-      (SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2);
+      (LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2);
 
    //  Implements lhs = lhs & rhs.
    //
-   void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs);
+   void SetIntersection(LibItemSet& lhs, const LibItemSet& rhs);
 
    //  Implements lhs = rhs1 | rhs2.
    //
-   void SetUnion(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2);
+   void SetUnion
+      (LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2);
 
    //  Implements lhs = lhs | rhs.
    //
-   void SetUnion(SetOfIds& lhs, const SetOfIds& rhs);
+   void SetUnion(LibItemSet& lhs, const LibItemSet& rhs);
 }
 #endif

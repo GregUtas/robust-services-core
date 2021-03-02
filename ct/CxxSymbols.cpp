@@ -591,7 +591,7 @@ CxxScope* CxxSymbols::FindScope(const CxxScope* scope, string& name) const
 
 fn_name CxxSymbols_FindSymbol = "CxxSymbols.FindSymbol";
 
-CxxScoped* CxxSymbols::FindSymbol(const CodeFile* file,
+CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
    const CxxScope* scope, const string& name, const Flags& mask,
    SymbolView* view, const CxxArea* area) const
 {
@@ -727,7 +727,7 @@ CxxScoped* CxxSymbols::FindSymbol(const CodeFile* file,
 
 //------------------------------------------------------------------------------
 
-void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
+void CxxSymbols::FindSymbols(CodeFile* file, const CxxScope* scope,
    const string& name, const Flags& mask, SymbolVector& list,
    ViewVector& views, const CxxArea* area) const
 {

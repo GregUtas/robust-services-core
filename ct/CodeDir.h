@@ -52,10 +52,6 @@ public:
    //
    NodeBase::word Extract(std::string& expl);
 
-   //  Returns the directory's identifier.
-   //
-   NodeBase::id_t Did() const { return did_.GetId(); }
-
    //  Returns the directory's path.
    //
    const std::string& Path() const { return path_; }
@@ -71,10 +67,6 @@ public:
    //  Returns the number of .cpp files in the directory.
    //
    size_t CppCount() const;
-
-   //  Returns the offset to did_.
-   //
-   static ptrdiff_t CellDiff();
 
    //  Overridden to display member variables.
    //

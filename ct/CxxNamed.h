@@ -180,10 +180,6 @@ public:
    //
    virtual CodeFile* GetDeclFile() const { return GetFile(); }
 
-   //  Returns the identifier of the file in which the item was declared.
-   //
-   virtual NodeBase::id_t GetDeclFid() const;
-
    //  Returns the file that *defined* the item.  Returns nullptr if the
    //  item has no definition or if it was defined where it was declared.
    //
@@ -372,7 +368,7 @@ protected:
    //  Resolves the item's qualified name.  FILE, SCOPE, MASK, and VIEW are
    //  the same as the arguments for CxxSymbols::FindSymbol.
    //
-   CxxScoped* ResolveName(const CodeFile* file, const CxxScope* scope,
+   CxxScoped* ResolveName(CodeFile* file, const CxxScope* scope,
       const NodeBase::Flags& mask, SymbolView* view) const;
 
    //  Invoked when ResolveName finds TYPE, a typedef.  If it returns false,
@@ -548,7 +544,7 @@ public:
    //  name's template arguments.  INDEX is the current index into NAMES.
    //
    bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
-      const CodeFile* file, size_t& index) const;
+      CodeFile* file, size_t& index) const;
 
    //  Returns true if ITEM is the referent of a template argument.
    //
@@ -1250,7 +1246,7 @@ public:
    //  and its template arguments.  INDEX is the current index into NAMES.
    //
    virtual bool NamesReferToArgs(const NameVector& names,
-      const CxxScope* scope, const CodeFile* file, size_t& index) const = 0;
+      const CxxScope* scope, CodeFile* file, size_t& index) const = 0;
 
    //  Overridden to reveal that this is a type specification.
    //
@@ -1501,7 +1497,7 @@ private:
    //  and its template arguments.  INDEX is the current index into NAMES.
    //
    bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
-      const CodeFile* file, size_t& index) const override;
+      CodeFile* file, size_t& index) const override;
 
    //  Overridden to display the type.
    //

@@ -30,6 +30,7 @@
 #include "CodeWarning.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 namespace NodeBase

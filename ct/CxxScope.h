@@ -33,6 +33,7 @@
 #include "CxxFwd.h"
 #include "CxxString.h"
 #include "CxxToken.h"
+#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -66,12 +67,11 @@ public:
    //
    TemplateParm* NameToTemplateParm(const std::string& name) const;
 
-   //  Returns the identifier of the file that declares the item if it is
-   //  *not* the file that also defines the item.  This can only occur for
-   //  static data (an initialization) or a function (an implementation).
-   //  Returns NIL_ID in all other cases.
+   //  Returns the file that declares the item if it is *not* the file that
+   //  defines the item.  This can only occur for static data or a function.
+   //  Returns nullptr if the same file declares and defines the item.
    //
-   NodeBase::id_t GetDistinctDeclFid() const;
+   CodeFile* GetDistinctDeclFile() const;
 
    //  Returns the current access control level when parsing within the scope.
    //
@@ -1417,7 +1417,7 @@ public:
    //  Overridden for when NAME refers to a function template instance.
    //
    bool NameRefersToItem(const std::string& name, const CxxScope* scope,
-      const CodeFile* file, SymbolView* view) const override;
+      CodeFile* file, SymbolView* view) const override;
 
    //  Overridden to return the function's qualified name.
    //
@@ -1850,7 +1850,7 @@ private:
    TypeMatch MatchTemplate(const TypeSpec* that, stringVector& tmpltParms,
       stringVector& tmpltArgs, bool& argFound) const override;
    bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
-      const CodeFile* file, size_t& index) const override;
+      CodeFile* file, size_t& index) const override;
 
    //  The following are forwarded to the function's return type but also
    //  generate a log because they should not be invoked.

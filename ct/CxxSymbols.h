@@ -98,14 +98,14 @@ public:
    //  with details on how it was found.  MASK specifies the types of items to
    //  search for (see the constants defined above).
    //
-   CxxScoped* FindSymbol(const CodeFile* file, const CxxScope* scope,
+   CxxScoped* FindSymbol(CodeFile* file, const CxxScope* scope,
       const std::string& name, const NodeBase::Flags& mask, SymbolView* view,
       const CxxArea* area = nullptr) const;
 
    //  The same as FindSymbol, but returns all matching symbols in LIST,
    //  along with their VIEWS.
    //
-   void FindSymbols(const CodeFile* file, const CxxScope* scope,
+   void FindSymbols(CodeFile* file, const CxxScope* scope,
       const std::string& name, const NodeBase::Flags& mask, SymbolVector& list,
       ViewVector& views, const CxxArea* area = nullptr) const;
 

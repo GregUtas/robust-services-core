@@ -486,7 +486,7 @@ public:
    //  Overridden to update imSet with files that declare or define any of
    //  the class's members.
    //
-   void AddFiles(SetOfIds& imSet) const override;
+   void AddFiles(LibItemSet& imSet) const override;
 
    //  Overridden to add the class's components to cross-references.
    //
@@ -871,7 +871,7 @@ public:
    //  Overridden for when NAME refers to a class template instance.
    //
    bool NameRefersToItem(const std::string& name, const CxxScope* scope,
-      const CodeFile* file, SymbolView* view) const override;
+      CodeFile* file, SymbolView* view) const override;
 
    //  Overridden to record usage of the instance's template.
    //

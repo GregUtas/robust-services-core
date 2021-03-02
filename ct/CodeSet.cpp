@@ -34,12 +34,11 @@ using std::string;
 
 namespace CodeTools
 {
-CodeSet::CodeSet(const string& name, SetOfIds* set) : LibrarySet(name),
-   set_(set)
+CodeSet::CodeSet(const string& name, const LibItemSet* items) : LibrarySet(name)
 {
    Debug::ft("CodeSet.ctor");
 
-   if(set_ == nullptr) set_.reset(new SetOfIds);
+   if(items != nullptr) Items() = *items;
 }
 
 //------------------------------------------------------------------------------
@@ -57,14 +56,11 @@ LibrarySet* CodeSet::Assign(LibrarySet* rhs)
 
    auto that = static_cast< CodeSet* >(rhs);
 
+   this->Items() = that->Items();
+
    if(that->IsTemporary())
    {
-      set_.reset(that->set_.release());
       that->Release();
-   }
-   else
-   {
-      *set_ = *that->set_;
    }
 
    return this;
@@ -76,7 +72,7 @@ word CodeSet::Count(string& result) const
 {
    Debug::ft("CodeSet.Count");
 
-   auto count = set_->size();
+   auto count = Items().size();
    return Counted(result, &count);
 }
 
@@ -86,10 +82,10 @@ LibrarySet* CodeSet::Difference(const LibrarySet* rhs) const
 {
    Debug::ft("CodeSet.Difference");
 
-   auto result = new SetOfIds;
+   LibItemSet result;
    auto that = static_cast< const CodeSet* >(rhs);
-   SetDifference(*result, *this->set_, *that->set_);
-   return Create(TemporaryName(), result);
+   SetDifference(result, this->Items(), that->Items());
+   return Create(TemporaryName(), &result);
 }
 
 //------------------------------------------------------------------------------
@@ -99,19 +95,13 @@ void CodeSet::Display(ostream& stream,
 {
    LibrarySet::Display(stream, prefix, options);
 
-   stream << prefix << "set  : " << set_.get() << CRLF;
+   stream << prefix << "items (" << Items().size() << ") :" << CRLF;
 
-   if(set_ != nullptr)
+   auto lead = prefix + spaces(2);
+
+   for(auto i = Items().cbegin(); i != Items().cend(); ++i)
    {
-      stream << prefix << spaces(2) << "size  : " << set_->size() << CRLF;
-      stream << prefix << spaces(2) << "items : " << CRLF;
-
-      auto lead = prefix + spaces(4);
-
-      for(auto i = set_->cbegin(); i != set_->cend(); ++i)
-      {
-         stream << lead << *i << CRLF;
-      }
+      stream << lead << strObj(*i, false) << CRLF;
    }
 }
 
@@ -121,10 +111,10 @@ LibrarySet* CodeSet::Intersection(const LibrarySet* rhs) const
 {
    Debug::ft("CodeSet.Intersection");
 
-   auto result = new SetOfIds;
+   LibItemSet result;
    auto that = static_cast< const CodeSet* >(rhs);
-   SetIntersection(*result, *this->set_, *that->set_);
-   return Create(TemporaryName(), result);
+   SetIntersection(result, this->Items(), that->Items());
+   return Create(TemporaryName(), &result);
 }
 
 //------------------------------------------------------------------------------
@@ -133,9 +123,9 @@ LibrarySet* CodeSet::Union(const LibrarySet* rhs) const
 {
    Debug::ft("CodeSet.Union");
 
-   auto result = new SetOfIds;
+   LibItemSet result;
    auto that = static_cast< const CodeSet* >(rhs);
-   SetUnion(*result, *this->set_, *that->set_);
-   return Create(TemporaryName(), result);
+   SetUnion(result, this->Items(), that->Items());
+   return Create(TemporaryName(), &result);
 }
 }

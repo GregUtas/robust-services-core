@@ -43,7 +43,6 @@ class Block;
 class Class;
 class ClassData;
 class ClassInst;
-class CodeDir;
 class CodeFile;
 class CxxArea;
 class CxxDirective;

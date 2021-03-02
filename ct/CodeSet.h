@@ -23,7 +23,6 @@
 #define CODESET_H_INCLUDED
 
 #include "LibrarySet.h"
-#include <memory>
 #include <string>
 #include "LibraryTypes.h"
 
@@ -31,17 +30,11 @@
 
 namespace CodeTools
 {
-//  A collection of code items (code files or directories).
+//  A collection of code items (files or directories).
 //
 class CodeSet : public LibrarySet
 {
 public:
-   //  Returns the set.
-   //
-   const SetOfIds& Set() const { return *set_; }
-
-   SetOfIds& Set() { return *set_; }
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -58,10 +51,10 @@ public:
    //
    NodeBase::word Count(std::string& result) const override;
 protected:
-   //  Creates a set that is identified by NAME.  SET is the actual set, if
+   //  Creates a set that is identified by NAME.  ITEMS is the actual set, if
    //  known.  Protected because this class is virtual.
    //
-   CodeSet(const std::string& name, SetOfIds* set);
+   CodeSet(const std::string& name, const LibItemSet* items);
 
    //  Protected to restrict deletion.
    //
@@ -69,12 +62,7 @@ protected:
 private:
    //  Overridden to allow assignment.
    //
-   NodeBase::word PreAssign(std::string& expl) const override
-      { return 0; }
-
-   //  The set's contents.
-   //
-   std::unique_ptr< SetOfIds > set_;
+   NodeBase::word PreAssign(std::string& expl) const override { return 0; }
 };
 }
 #endif

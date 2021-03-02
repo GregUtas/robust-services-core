@@ -132,11 +132,10 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from = std::string::npos) const;
 
-   //  Generates a report in STREAM for the files in SET.  The report
-   //  includes line type counts and warnings found during parsing and
-   //  compilation.
+   //  Generates a report in STREAM for FILES.  The report includes line
+   //  type counts and warnings found during parsing and compilation.
    //
-   static void GenerateReport(std::ostream* stream, const SetOfIds& set);
+   static void GenerateReport(std::ostream* stream, const LibItemSet& files);
 private:
    //  Comparison operators.
    //

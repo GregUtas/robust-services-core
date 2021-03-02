@@ -40,7 +40,6 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Library.h"
-#include "Registry.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 
@@ -890,12 +889,7 @@ void CxxStats::Shrink()
       info.vectors = 0;
    }
 
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   for(auto f = files.First(); f != nullptr; files.Next(f))
-   {
-      f->Shrink();
-   }
+   Singleton< Library >::Instance()->Shrink();
 
    auto root = Singleton< CxxRoot >::Instance();
    root->Shrink();

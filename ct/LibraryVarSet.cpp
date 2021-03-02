@@ -20,9 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LibraryVarSet.h"
+#include <list>
 #include "Debug.h"
 #include "Library.h"
-#include "Q2Way.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -50,7 +50,7 @@ word LibraryVarSet::Count(string& result) const
 {
    Debug::ft("LibraryVarSet.Count");
 
-   auto size = Singleton< Library >::Instance()->Variables().Size();
+   auto size = Singleton< Library >::Instance()->Variables().size();
    return Counted(result, &size);
 }
 
@@ -62,9 +62,9 @@ word LibraryVarSet::Show(string& result) const
 
    auto& vars = Singleton< Library >::Instance()->Variables();
 
-   for(auto v = vars.First(); v != nullptr; vars.Next(v))
+   for(auto v = vars.cbegin(); v != vars.cend(); ++v)
    {
-      if(!v->IsTemporary()) result = result + v->Name() + ", ";
+      if(!(*v)->IsTemporary()) result = result + (*v)->Name() + ", ";
    }
 
    return Shown(result);

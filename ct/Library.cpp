@@ -20,7 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Library.h"
-#include <list>
+#include <iterator>
+#include <set>
 #include <sstream>
 #include "CfgParmRegistry.h"
 #include "CodeDir.h"
@@ -36,7 +37,6 @@
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "Interpreter.h"
-#include "LibraryTypes.h"
 #include "LibraryVarSet.h"
 #include "NbCliParms.h"
 #include "Restart.h"
@@ -63,8 +63,6 @@ fixed_string VarsStr  = "$vars";
 
 //------------------------------------------------------------------------------
 
-const size_t Library::MaxDirs = 500;
-const size_t Library::MaxFiles = 30000;
 fixed_string Library::SubsDir = "subs";
 
 //------------------------------------------------------------------------------
@@ -81,10 +79,6 @@ Library::Library() :
 {
    Debug::ft("Library.ctor");
 
-   dirs_.Init(MaxDirs, CodeDir::CellDiff(), MemPermanent);
-   files_.Init(MaxFiles, CodeFile::CellDiff(), MemPermanent);
-   vars_.Init(LibrarySet::LinkDiff());
-
    sourcePathCfg_.reset(new CfgStrParm
       ("SourcePath", EMPTY_STR, "source code directory"));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*sourcePathCfg_);
@@ -96,7 +90,12 @@ Library::~Library()
 {
    Debug::ftnt("Library.dtor");
 
-   //  When dirs_, files_, and vars_ are deleted, so are their elements.
+   //  When dirs_ and files_ are deleted, so are their elements.
+   //
+   for(auto v = vars_.cbegin(); v != vars_.cend(); ++v)
+   {
+      delete *v;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -106,24 +105,22 @@ void Library::AddFile(CodeFile& file)
    Debug::ft("Library.AddFile");
 
    //  Add the file to the file registry, $files, either $hdrs or $cpps,
-   //  $exts if it is external, and $subs if it declares external items.
+   //  $exts if it is unknown, and $subs if it declares external items.
    //
-   files_.Insert(file);
-
-   auto fid = file.Fid();
-   fileSet_->Set().insert(fid);
+   files_.push_back(CodeFilePtr(&file));
+   fileSet_->Items().insert(&file);
 
    if(file.IsHeader())
    {
-      hdrSet_->Set().insert(fid);
-      if(file.IsSubsFile()) subsSet_->Set().insert(fid);
+      hdrSet_->Items().insert(&file);
+      if(file.IsSubsFile()) subsSet_->Items().insert(&file);
    }
    else
    {
-      cppSet_->Set().insert(fid);
+      cppSet_->Items().insert(&file);
    }
 
-   if(file.IsExtFile()) extSet_->Set().insert(fid);
+   if(file.IsExtFile()) extSet_->Items().insert(&file);
 }
 
 //------------------------------------------------------------------------------
@@ -132,7 +129,7 @@ void Library::AddVar(LibrarySet& var)
 {
    Debug::ft("Library.AddVar");
 
-   vars_.Enq(var);
+   vars_.push_back(&var);
 }
 
 //------------------------------------------------------------------------------
@@ -246,12 +243,24 @@ void Library::Display(ostream& stream,
    Base::Display(stream, prefix, options);
 
    stream << prefix << "sourcePathCfg : " << sourcePathCfg_.get() << CRLF;
+
    stream << prefix << "dirs : " << CRLF;
-   dirs_.Display(stream, prefix + spaces(2), options);
+   for(auto d = dirs_.cbegin(); d != dirs_.cend(); ++d)
+   {
+      (*d)->Display(stream, prefix + spaces(2), options);
+   }
+
    stream << prefix << "files : " << CRLF;
-   files_.Display(stream, prefix + spaces(2), options);
+   for(auto f = files_.cbegin(); f != files_.cend(); ++f)
+   {
+      (*f)->Display(stream, prefix + spaces(2), options);
+   }
+
    stream << prefix << "vars : " << CRLF;
-   vars_.Display(stream, prefix + spaces(2), options);
+   for(auto v = vars_.cbegin(); v != vars_.cend(); ++v)
+   {
+      (*v)->Display(stream, prefix + spaces(2), options);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -278,14 +287,14 @@ CodeFile* Library::EnsureFile(const string& file, CodeDir* dir)
             //  Now we know FILE's directory.
             //
             f->SetDir(dir);
-            extSet_->Set().erase(f->Fid());
-            if(f->IsSubsFile()) subsSet_->Set().insert(f->Fid());
+            extSet_->Items().erase(f);
+            if(f->IsSubsFile()) subsSet_->Items().insert(f);
          }
          else if(f->Dir() != dir)
          {
             //c The same filename in different directories is not supported.
             //
-            Debug::SwLog(Library_EnsureFile, file, f->Fid());
+            Debug::SwLog(Library_EnsureFile, file, 0);
             return nullptr;
          }
       }
@@ -315,8 +324,8 @@ LibrarySet* Library::EnsureVar(const string& s) const
    {
       string name = LibrarySet::TemporaryChar + d->Name();
       auto result = new CodeDirSet(name, nullptr);
-      auto& dirSet = result->Set();
-      dirSet.insert(d->Did());
+      auto& dirSet = result->Items();
+      dirSet.insert(d);
       return result;
    }
 
@@ -326,8 +335,8 @@ LibrarySet* Library::EnsureVar(const string& s) const
    {
       string name = LibrarySet::TemporaryChar + f->Name();
       auto result = new CodeFileSet(name, nullptr);
-      auto& fileSet = result->Set();
-      fileSet.insert(f->Fid());
+      auto& fileSet = result->Items();
+      fileSet.insert(f);
       return result;
    }
 
@@ -336,11 +345,18 @@ LibrarySet* Library::EnsureVar(const string& s) const
 
 //------------------------------------------------------------------------------
 
-void Library::EraseVar(LibrarySet& var)
+void Library::EraseVar(const LibrarySet* var)
 {
    Debug::ftnt("Library.EraseVar");
 
-   vars_.Exq(var);
+   for(auto v = vars_.cbegin(); v != vars_.cend(); ++v)
+   {
+      if(*v == var)
+      {
+         vars_.erase(v);
+         return;
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -352,10 +368,10 @@ LibrarySet* Library::Evaluate(const string& expr, size_t pos) const
    //  Purge any temporary variables that were not released when evaluating
    //  the previous expression.
    //
-   for(auto curr = vars_.First(); curr != nullptr; NO_OP)
+   for(auto curr = vars_.begin(); curr != vars_.end(); NO_OP)
    {
-      auto next = vars_.Next(*curr);
-      curr->Release();
+      auto next = std::next(curr);
+      (*curr)->Release();
       curr = next;
    }
 
@@ -391,9 +407,9 @@ void Library::Export(ostream& stream, const string& opts) const
    {
       stream << "FILE VIEW" << CRLF << CRLF;
 
-      for(auto f = files_.First(); f != nullptr; files_.Next(f))
+      for(auto f = files_.cbegin(); f != files_.cend(); ++f)
       {
-         f->DisplayItems(stream, opts);
+         (*f)->DisplayItems(stream, opts);
       }
 
       rule = true;
@@ -406,9 +422,9 @@ void Library::Export(ostream& stream, const string& opts) const
 
       ClassVector roots;
 
-      for(auto f = files_.First(); f != nullptr; files_.Next(f))
+      for(auto f = files_.cbegin(); f != files_.cend(); ++f)
       {
-         auto classes = f->Classes();
+         auto classes = (*f)->Classes();
 
          for(auto c = classes->cbegin(); c != classes->cend(); ++c)
          {
@@ -429,9 +445,9 @@ CodeDir* Library::FindDir(const string& name) const
 {
    Debug::ft("Library.FindDir");
 
-   for(auto d = dirs_.First(); d != nullptr; dirs_.Next(d))
+   for(auto d = dirs_.cbegin(); d != dirs_.cend(); ++d)
    {
-      if(d->Name() == name) return d;
+      if((*d)->Name() == name) return d->get();
    }
 
    return nullptr;
@@ -448,9 +464,9 @@ CodeFile* Library::FindFile(const string& name) const
    //
    auto key = strLower(GetFileName(name));
 
-   for(auto f = files_.First(); f != nullptr; files_.Next(f))
+   for(auto f = files_.cbegin(); f != files_.cend(); ++f)
    {
-      if(strLower(f->Name()) == key) return f;
+      if(strLower((*f)->Name()) == key) return f->get();
    }
 
    return nullptr;
@@ -469,9 +485,9 @@ LibrarySet* Library::FindVar(const string& name) const
    //  variable, a trap occurs if, for example, one operator releases the
    //  variable but a second operator also tries to use it.
    //
-   for(auto v = vars_.First(); v != nullptr; vars_.Next(v))
+   for(auto v = vars_.cbegin(); v != vars_.cend(); ++v)
    {
-      if(!v->IsTemporary() && (v->Name() == name)) return v;
+      if(!(*v)->IsTemporary() && ((*v)->Name() == name)) return *v;
    }
 
    return nullptr;
@@ -483,13 +499,13 @@ word Library::Import(const string& name, const string& path, string& expl)
 {
    Debug::ft("Library.Import");
 
-   for(auto d = dirs_.First(); d != nullptr; dirs_.Next(d))
+   for(auto d = dirs_.cbegin(); d != dirs_.cend(); ++d)
    {
       //  Both DIR and PATH should be new, but don't complain if they're
       //  already registered together.
       //
-      auto dirExists = (d->Name() == name);
-      auto pathExists = (d->Path() == path);
+      auto dirExists = ((*d)->Name() == name);
+      auto pathExists = ((*d)->Path() == path);
 
       if(dirExists && pathExists)
       {
@@ -502,7 +518,7 @@ word Library::Import(const string& name, const string& path, string& expl)
          std::ostringstream stream;
 
          stream << "Directory " << name << " already exists for "
-            << d->Path() << '.';
+            << (*d)->Path() << '.';
          expl = stream.str();
          return -1;
       }
@@ -511,7 +527,8 @@ word Library::Import(const string& name, const string& path, string& expl)
       {
          std::ostringstream stream;
 
-         stream << path << " already exists for directory " << d->Name() << '.';
+         stream << path << " already exists for directory "
+            << (*d)->Name() << '.';
          expl = stream.str();
          return -1;
       }
@@ -521,18 +538,17 @@ word Library::Import(const string& name, const string& path, string& expl)
    //  On success, add the directory to $dirs, else delete it.
    //
    auto dir = new CodeDir(name, path);
-   dirs_.Insert(*dir);
+   dirs_.push_back(CodeDirPtr(dir));
 
    auto rc = dir->Extract(expl);
 
    if(rc == 0)
    {
-      dirSet_->Set().insert(dir->Did());
+      dirSet_->Items().insert(dir);
    }
    else
    {
-      dirs_.Erase(*dir);
-      delete dir;
+      dirs_.pop_back();
    }
 
    return rc;
@@ -540,7 +556,7 @@ word Library::Import(const string& name, const string& path, string& expl)
 
 //------------------------------------------------------------------------------
 
-word Library::Purge(const string& name, string& expl) const
+word Library::Purge(const string& name, string& expl)
 {
    Debug::ft("Library.Purge");
 
@@ -565,20 +581,23 @@ word Library::Purge(const string& name, string& expl) const
 
 //------------------------------------------------------------------------------
 
+void Library::Shrink()
+{
+   Debug::ft("Library.Shrink");
+
+   for(auto f = files_.cbegin(); f != files_.cend(); ++f)
+   {
+      (*f)->Shrink();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Library::Shutdown(RestartLevel level)
 {
    Debug::ft("Library.Shutdown");
 
    Restart::Release(sourcePathCfg_);
-
-   //  The library is preserved during restarts.
-   //
-   if(level == RestartReboot)
-   {
-      vars_.Purge();
-      files_.Purge();
-      dirs_.Purge();
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -603,24 +622,12 @@ void Library::Startup(RestartLevel level)
 
    //  Create the fixed sets.
    //
-   auto set = new SetOfIds;
-   dirSet_ = new CodeDirSet(DirsStr, set);
-
-   set = new SetOfIds;
-   fileSet_ = new CodeFileSet(FilesStr, set);
-
-   set = new SetOfIds;
-   hdrSet_ = new CodeFileSet(HdrsStr, set);
-
-   set = new SetOfIds;
-   cppSet_ = new CodeFileSet(CppsStr, set);
-
-   set = new SetOfIds;
-   extSet_ = new CodeFileSet(ExtsStr, set);
-
-   set = new SetOfIds;
-   subsSet_ = new CodeFileSet(SubsStr, set);
-
+   dirSet_ = new CodeDirSet(DirsStr, nullptr);
+   fileSet_ = new CodeFileSet(FilesStr, nullptr);
+   hdrSet_ = new CodeFileSet(HdrsStr, nullptr);
+   cppSet_ = new CodeFileSet(CppsStr, nullptr);
+   extSet_ = new CodeFileSet(ExtsStr, nullptr);
+   subsSet_ = new CodeFileSet(SubsStr, nullptr);
    varSet_ = new LibraryVarSet(VarsStr);
 }
 
@@ -635,16 +642,16 @@ void Library::Trim(ostream& stream) const
    //
    auto order = fileSet_->SortInBuildOrder();
 
-   for(auto f = order->cbegin(); f != order->cend(); ++f)
+   for(auto f = order.cbegin(); f != order.cend(); ++f)
    {
-      auto file = files_.At(f->fid);
+      auto file = f->file;
       if(file->IsHeader()) file->Trim(&stream);
       ThisThread::Pause();
    }
 
-   for(auto f = order->cbegin(); f != order->cend(); ++f)
+   for(auto f = order.cbegin(); f != order.cend(); ++f)
    {
-      auto file = files_.At(f->fid);
+      auto file = f->file;
       if(file->IsCpp()) file->Trim(&stream);
       ThisThread::Pause();
    }

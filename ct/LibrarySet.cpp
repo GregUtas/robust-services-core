@@ -21,7 +21,7 @@
 //
 #include "LibrarySet.h"
 #include <ostream>
-#include "Algorithms.h"
+#include <set>
 #include "Debug.h"
 #include "Formatters.h"
 #include "Library.h"
@@ -52,7 +52,7 @@ LibrarySet::LibrarySet(const string& name) : LibraryItem(name),
    if(name.front() == TemporaryChar)
    {
       temp_ = true;
-      s->erase(0, 1);
+      s.erase(0, 1);
    }
 
    Singleton< Library >::Instance()->AddVar(*this);
@@ -64,7 +64,7 @@ LibrarySet::~LibrarySet()
 {
    Debug::ftnt("LibrarySet.dtor");
 
-   Singleton< Library >::Extant()->EraseVar(*this);
+   Singleton< Library >::Extant()->EraseVar(this);
 }
 
 //------------------------------------------------------------------------------
@@ -140,7 +140,8 @@ word LibrarySet::Countlines(string& result) const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::Create(const string& name, SetOfIds* set) const
+LibrarySet* LibrarySet::Create
+   (const string& name, const LibItemSet* items) const
 {
    return OpError();
 }
@@ -166,9 +167,15 @@ void LibrarySet::Display(ostream& stream,
 {
    LibraryItem::Display(stream, prefix, options);
 
-   stream << prefix << "link : " << CRLF;
-   link_.Display(stream, prefix + spaces(2));
+   auto indent = prefix + spaces(2);
+
    stream << prefix << "temp : " << temp_ << CRLF;
+   stream << prefix << "items (" << items_.size() << ") : " << CRLF;
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      stream << indent << (*i)->Name() << '(' << *i << ')' << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -255,15 +262,6 @@ bool LibrarySet::IsReadOnly() const
 bool LibrarySet::IsTemporary() const
 {
    return temp_;
-}
-
-//------------------------------------------------------------------------------
-
-ptrdiff_t LibrarySet::LinkDiff()
-{
-   uintptr_t local;
-   auto fake = reinterpret_cast< const LibrarySet* >(&local);
-   return ptrdiff(&fake->link_, fake);
 }
 
 //------------------------------------------------------------------------------

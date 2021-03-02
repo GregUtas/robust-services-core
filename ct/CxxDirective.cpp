@@ -31,7 +31,6 @@
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Library.h"
-#include "Registry.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -727,7 +726,7 @@ CxxToken* Macro::GetValue() const
 //------------------------------------------------------------------------------
 
 bool Macro::NameRefersToItem(const string& name,
-   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView* view) const
 {
    Debug::ft("Macro.NameRefersToItem");
 
@@ -959,7 +958,7 @@ void OptionalCode::Display(ostream& stream,
 
    if(begin_ == string::npos) return;
 
-   auto file = Singleton< Library >::Instance()->Files().At(GetDeclFid());
+   auto file = GetDeclFile();
 
    if(file == nullptr)
    {

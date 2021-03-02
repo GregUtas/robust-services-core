@@ -31,7 +31,6 @@
 #include "CxxString.h"
 #include "Editor.h"
 #include "LibraryTypes.h"
-#include "RegCell.h"
 #include "SysTypes.h"
 
 namespace CodeTools
@@ -59,10 +58,6 @@ public:
    //  Not subclassed.
    //
    ~CodeFile();
-
-   //  Returns the file's identifier.
-   //
-   NodeBase::id_t Fid() const { return fid_.GetId(); }
 
    //  Returns the file's path.  If FULL is not set, the path to the source
    //  code directory is removed from the front of the path.
@@ -104,25 +99,25 @@ public:
    //  this file or SCOPE because it matches fqName to at least PREFIX.
    //
    Using* FindUsingFor(const std::string& fqName, size_t prefix,
-      const CxxScoped* item, const CxxScope* scope) const;
+      const CxxScoped* item, const CxxScope* scope);
 
    //  Returns the files #included by this file.
    //
-   const SetOfIds& InclList() const { return inclIds_; }
+   const LibItemSet& InclList() const { return inclSet_; }
 
    //  Returns the files that #include this file.
    //
-   const SetOfIds& UserList() const { return userIds_; }
+   const LibItemSet& UserList() const { return userSet_; }
 
-   //  Returns implIds_ (the files that implement this one), constructing
+   //  Returns implSet_ (the files that implement this one), constructing
    //  it first if necessary.
    //
-   const SetOfIds& Implementers();
+   const LibItemSet& Implementers();
 
-   //  Returns affecterIds_ (the files that affect this one), constructing
+   //  Returns affecterSet_ (the files that affect this one), constructing
    //  it first if necessary.
    //
-   const SetOfIds& Affecters() const;
+   const LibItemSet& Affecters();
 
    //  Returns the file's code items.
    //
@@ -188,15 +183,15 @@ public:
 
    //  Returns the group to which the file specified by FILE, FN, or
    //  INCL belongs:
-   //    group 1: an external file in declIds_
-   //    group 2: an internal file in declIds_
-   //    group 3: an external file in baseIds_
-   //    group 4: an internal file in baseIds_
+   //    group 1: an external file in declSet_
+   //    group 2: an internal file in declSet_
+   //    group 3: an external file in baseSet_
+   //    group 4: an internal file in baseSet_
    //    group 5: an external file (one in angle brackets)
    //    group 6: an internal file (one in quotes)
    //  Returns 0 if an error occurred.
    //
-   size_t CalcGroup(const CodeFile* file) const;
+   size_t CalcGroup(CodeFile* file) const;
    size_t CalcGroup(const std::string& fn) const;
    size_t CalcGroup(const Include& incl) const;
 
@@ -269,7 +264,7 @@ public:
    //  report includes line type counts and warnings found during parsing and
    //  compilation.
    //
-   static void GenerateReport(std::ostream* stream, const SetOfIds& set);
+   static void GenerateReport(std::ostream* stream, const LibItemSet& set);
 
    //  Adds the file's line types to the global count.
    //
@@ -294,10 +289,6 @@ public:
    //
    void Shrink();
 
-   //  Returns the offset to link_.
-   //
-   static ptrdiff_t CellDiff();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -305,7 +296,7 @@ public:
 private:
    //  Adds FILE as one that #includes this file.
    //
-   void AddUser(const CodeFile* file);
+   void AddUser(CodeFile* file);
 
    //  Classifies the Nth line of code and looks for some warnings.
    //  Sets CONT if a line of code continues on the next line.
@@ -382,12 +373,12 @@ private:
    //  Finds the identifiers of files that declare items that this file
    //  (if a .cpp) defines.
    //
-   void FindDeclIds();
+   void FindDeclSet();
 
    //  Saves the identifiers of files that define direct base classes used
    //  by this file.  BASES is from CxxUsageSets.bases.
    //
-   void SaveBaseIds(const CxxNamedSet& bases);
+   void SaveBaseSet(const CxxNamedSet& bases);
 
    //  Updates SYMBOLS with information about symbols used in this file.
    //
@@ -412,27 +403,27 @@ private:
    //
    void GetDeclaredBaseClasses(CxxNamedSet& bases) const;
 
-   //  Adds the files that declare items in inclSet to inclIds, excluding
+   //  Adds the files that declare items in declSet to inclSet, excluding
    //  this file.
    //
-   void AddIncludeIds(const CxxNamedSet& inclSet, SetOfIds& inclIds) const;
+   void AddIncludes(const CxxNamedSet& declSet, LibItemSet& inclSet) const;
 
-   //  Updates inclIds by removing the files that are #included by any
-   //  file in declIds_.  This applies to a .cpp only, where declIds_ is
+   //  Updates inclSet by removing the files that are #included by any
+   //  file in declSet_.  This applies to a .cpp only, where declSet_ is
    //  the set of headers that declare items that the .cpp defines.
    //
-   void RemoveHeaderIds(SetOfIds& inclIds) const;
+   void RemoveHeaders(LibItemSet& inclSet) const;
 
    //  Removes forward declaration candidates from addForws based on various
    //  criteria.  FORWARDS contains the forward declarations already used by
-   //  the file, and inclIds identifies the files that it should #include.
+   //  the file, and trimSet identifies the files that it should #include.
    //
    void PruneForwardCandidates(const CxxNamedSet& forwards,
-      const SetOfIds& inclIds, CxxNamedSet& addForws) const;
+      const LibItemSet& trimSet, CxxNamedSet& addForws) const;
 
    //  Returns the files that should be #included by this file.
    //
-   const SetOfIds& TrimList() const { return trimIds_; }
+   const LibItemSet& TrimList() const { return trimSet_; }
 
    //  Looks at the file's existing forward declarations.  Those that are not
    //  needed are removed from addForws (if present) and added to delForws.
@@ -444,18 +435,18 @@ private:
    //
    void FindOrAddUsing(const CxxNamed* user);
 
-   //  Removes, from addIds, files that should not be added to this file's
+   //  Removes, from addSet, files that should not be added to this file's
    //  #include directives.
    //
-   void RemoveInvalidIncludes(SetOfIds& addIds) const;
+   void RemoveInvalidIncludes(LibItemSet& addSet);
 
    //  Logs an IncludeAdd for each file in FIDS.
    //
-   void LogAddIncludes(std::ostream* stream, const SetOfIds& fids);
+   void LogAddIncludes(std::ostream* stream, const LibItemSet& files);
 
    //  Logs an IncludeRemove for each file in FIDS.
    //
-   void LogRemoveIncludes(std::ostream* stream, const SetOfIds& fids) const;
+   void LogRemoveIncludes(std::ostream* stream, const LibItemSet& files) const;
 
    //  Logs a ForwardAdd for each item in ITEMS.
    //
@@ -473,10 +464,6 @@ private:
    //  marked for removal.
    //
    void LogRemoveUsings(std::ostream* stream) const;
-
-   //  The file's identifier in the code base.
-   //
-   const NodeBase::RegCell fid_;
 
    //  The file's directory.
    //
@@ -502,41 +489,41 @@ private:
    //
    std::vector< LineType > lineType_;
 
-   //  The identifiers of #included files.
+   //  The #included files.
    //
-   SetOfIds inclIds_;
+   LibItemSet inclSet_;
 
-   //  The identifiers of #included files.  When >trim is run on this file,
-   //  this is modified to the files that *should* be #included.
+   //  The #included files.  When >trim is run on this file, this is modified
+   //  to be the files that *should* be #included.
    //
-   SetOfIds trimIds_;
+   LibItemSet trimSet_;
 
-   //  The identifiers of files that #include this one.
+   //  The files that #include this one.
    //
-   SetOfIds userIds_;
+   LibItemSet userSet_;
 
-   //  The identifiers of files that implement this one.
+   //  The files that implement this one.
    //
-   SetOfIds implIds_;
+   LibItemSet implSet_;
 
-   //  The identifiers of files that declare items that this file defines.
+   //  The files that declare items that this file defines.
    //
-   SetOfIds declIds_;
+   LibItemSet declSet_;
 
-   //  The identifiers of files that define direct base classes that this
-   //  file uses or implements.
+   //  The files that define direct base classes that this file uses or
+   //  implements.
    //
-   SetOfIds baseIds_;
+   LibItemSet baseSet_;
 
-   //  The identifiers of files that define transitive base classes of the
-   //  classes implemented in this file.
+   //  The files that define transitive base classes of the classes implemented
+   //  in this file.
    //
-   SetOfIds classIds_;
+   LibItemSet classSet_;
 
    //  The files that affect this one (those that it transitively #includes).
    //  Computed when first needed, after which the cached result is returned.
    //
-   mutable SetOfIds affecterIds_;
+   LibItemSet affecterSet_;
 
    //  The file's preprocessor directives and the C++ items that it defines.
    //

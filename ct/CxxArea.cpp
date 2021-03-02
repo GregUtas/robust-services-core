@@ -360,7 +360,7 @@ bool Class::AddDirective(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-void Class::AddFiles(SetOfIds& imSet) const
+void Class::AddFiles(LibItemSet& imSet) const
 {
    Debug::ft("Class.AddFiles");
 
@@ -368,21 +368,21 @@ void Class::AddFiles(SetOfIds& imSet) const
 
    for(auto c = classes->cbegin(); c != classes->cend(); ++c)
    {
-      (*c)->AddFiles(imSet);
+      if(!(*c)->IsInTemplateInstance()) (*c)->AddFiles(imSet);
    }
 
    auto funcs = Funcs();
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      (*f)->AddFiles(imSet);
+      if(!(*f)->IsInTemplateInstance()) (*f)->AddFiles(imSet);
    }
 
    auto data = Datas();
 
    for(auto d = data->cbegin(); d != data->cend(); ++d)
    {
-      (*d)->AddFiles(imSet);
+      if(!(*d)->IsInTemplateInstance()) (*d)->AddFiles(imSet);
    }
 }
 
@@ -2267,7 +2267,7 @@ void ClassInst::Instantiate()
 //------------------------------------------------------------------------------
 
 bool ClassInst::NameRefersToItem(const string& name,
-   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView* view) const
 {
    Debug::ft("ClassInst.NameRefersToItem");
 

@@ -25,20 +25,17 @@
 #include "Base.h"
 #include <cstddef>
 #include <iosfwd>
+#include <list>
 #include <string>
 #include "CfgStrParm.h"
+#include "LibraryTypes.h"
 #include "NbTypes.h"
-#include "Q2Way.h"
-#include "Registry.h"
 #include "SysTypes.h"
 
 namespace CodeTools
 {
-   class CodeDir;
    class CodeDirSet;
-   class CodeFile;
    class CodeFileSet;
-   class LibrarySet;
    class LibraryVarSet;
 }
 
@@ -96,7 +93,7 @@ public:
 
    //  Removes VAR from the list of variables.
    //
-   void EraseVar(LibrarySet& var);
+   void EraseVar(const LibrarySet* var);
 
    //  Assigns the results of EXPR to NAME.  POS is where EXPR started in the
    //  input stream.  Updates EXPL to indicate success or failure.  Returns 0
@@ -119,7 +116,7 @@ public:
    //  Deletes the variable known by NAME.  Updates EXPL to indicate success
    //  or failure.  Returns 0 on success.
    //
-   NodeBase::word Purge(const std::string& name, std::string& expl) const;
+   NodeBase::word Purge(const std::string& name, std::string& expl);
 
    //  Returns the set associated with EXPR, which starts at offset POS of
    //  the input line.  The caller must invoke Release on the result after
@@ -127,34 +124,30 @@ public:
    //
    LibrarySet* Evaluate(const std::string& expr, size_t pos) const;
 
-   //  Returns the registry of directories.  Used for iteration.
+   //  Returns all directories.  Used for iteration.
    //
-   const NodeBase::Registry< CodeDir >& Directories() const { return dirs_; }
+   const CodeDirSet& Directories() const { return *dirSet_; }
 
-   //  Returns the registry of files.  Used for iteration.
+   //  Returns all files.  Used for iteration.
    //
-   const NodeBase::Registry< CodeFile >& Files() const { return files_; }
-
-   //> The maximum number of directories supported.
-   //
-   static const size_t MaxDirs;
-
-   //> The maximum number of files supported.
-   //
-   static const size_t MaxFiles;
+   const CodeFileSet& Files() const { return *fileSet_; }
 
    //  The name of the directory that contains substitute files (see
    //  the definition of subsSet_, below).
    //
    static NodeBase::fixed_string SubsDir;
 
-   //  Returns the identifiers of files that declare external types.
+   //  Returns all files that declare external types.
    //
-   const CodeFileSet* SubsFiles() const { return subsSet_; }
+   const CodeFileSet& SubsFiles() const { return *subsSet_; }
 
-   //  Returns the queue of variables.  Used for iteration.
+   //  Returns all variables.  Used for iteration.
    //
-   const NodeBase::Q2Way< LibrarySet >& Variables() const { return vars_; }
+   const std::list< LibrarySet* > Variables() const { return vars_; }
+
+   //  Shrinks containers.
+   //
+   void Shrink();
 
    //  Overridden to display member variables.
    //
@@ -183,15 +176,15 @@ private:
 
    //  The directories in the code base.
    //
-   NodeBase::Registry< CodeDir > dirs_;
+   std::list< std::unique_ptr < CodeDir >> dirs_;
 
    //  The files in the code base.
    //
-   NodeBase::Registry< CodeFile > files_;
+   std::list< std::unique_ptr < CodeFile >> files_;
 
    //  The currently defined variables.
    //
-   NodeBase::Q2Way< LibrarySet > vars_;
+   std::list< LibrarySet* > vars_;
 
    //  A variable for the set of all directories.
    //
@@ -216,9 +209,9 @@ private:
    CodeFileSet* extSet_;
 
    //  A variable for the set of all substitute files.  Substitute
-   //  files declare items that are external to the code base, and
-   //  therefore acts as substitutes for the unparsed external files
-   //  (extSet_).
+   //  files declare items that are external to the code base so
+   //  that the full versions of those files (e.g. STL headers) do
+   //  not have to be compiled.
    //
    CodeFileSet* subsSet_;
 

@@ -30,6 +30,7 @@
 #include "Cxx.h"
 #include "CxxFwd.h"
 #include "CxxToken.h"
+#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -279,7 +280,7 @@ public:
    //  Overridden for when NAME refers to a macro set for the compiler.
    //
    bool NameRefersToItem(const std::string& name, const CxxScope* scope,
-      const CodeFile* file, SymbolView* view) const override;
+      CodeFile* file, SymbolView* view) const override;
 
    //  Overridden to record usage of the macro.
    //

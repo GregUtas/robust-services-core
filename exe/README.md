@@ -1,6 +1,11 @@
 # Executables
 
-This directory contains RSC executables.
+This directory used to contain RSC executables.  They are still
+available, but commits are now being made to the master branch,
+with stable points tagged as releases. If you go to [RSC's tags
+page](https://github.com/GregUtas/robust-services-core/tags),
+you will see all the release tags. The download for each release
+includes the following: 
 * _rscwin32d.exe_: debug build for 32-bit Windows (Windows 10)
 * _rscwin64d.exe_: debug build for 64-bit Windows (Windows 10)
 * _rscwin32r.exe_: release build for 32-bit Windows (Windows 10)

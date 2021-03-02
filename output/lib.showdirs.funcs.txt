@@ -1,4 +1,4 @@
-FUNCTION PROFILE: 20-Dec-2020 14:14:38.414 on Reigi
+FUNCTION PROFILE: 2-Mar-2021 09:35:49.669 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
@@ -6,11 +6,11 @@ FUNCTION PROFILE: 20-Dec-2020 14:14:38.414 on Reigi
        88           0   SysThread.Interrupt
        88           0   SysThread.Resume
        88           0   Thread.Interrupt
-       80           0   MutexGuard.Release
-       80           0   MutexGuard.ctor
-       80           0   MutexGuard.dtor
-       80           0   SysMutex.Acquire
-       80           0   SysMutex.Release
+       79           0   MutexGuard.Release
+       79           0   MutexGuard.ctor
+       79           0   MutexGuard.dtor
+       79           0   SysMutex.Acquire
+       79           0   SysMutex.Release
        44           0   MsgBuffer.ctor
        44           0   MsgBuffer.operator new
        44           0   ObjectPool.DeqBlock
@@ -23,24 +23,23 @@ FUNCTION PROFILE: 20-Dec-2020 14:14:38.414 on Reigi
        31           0   FileRequest.ctor
        31           0   FileThread.Spool(written)
        26           0   FileThread.Spool(string)
-       24           0   SysThread.Suspend
        23           0   CliBuffer.FindNextNonBlank
-       23           0   SysThread.Wait
-       23           0   Thread.EnterBlockingOperation
-       23           0   Thread.ExitBlockingOperation
-       23           0   Thread.InitialTime
-       23           0   Thread.LogContextSwitch
-       23           0   Thread.Ready
-       23           0   Thread.Resume
-       23           0   Thread.Schedule
-       23           0   Thread.Suspend
-       23           0   ThreadAdmin.WarpFactor
+       23           0   SysThread.Suspend
+       22           0   SysThread.Wait
+       22           0   Thread.EnterBlockingOperation
+       22           0   Thread.ExitBlockingOperation
+       22           0   Thread.InitialTime
+       22           0   Thread.LogContextSwitch
+       22           0   Thread.Ready
+       22           0   Thread.Resume
+       22           0   Thread.Schedule
+       22           0   Thread.Suspend
+       22           0   ThreadAdmin.WarpFactor
        18           0   CliIncrement.FindCommand
        17           0   CodeDir.CppCount
        17           0   CodeDir.HeaderCount
        15           0   CliBuffer.GetStr
        14           0   CliBuffer.GetNextInput
-       14           0   CliStack.FindCommand
        13           0   CoutThread.Spool(stream)
        13           0   FileThread.Record
         8           0   CliCookie.Advance
@@ -52,6 +51,8 @@ FUNCTION PROFILE: 20-Dec-2020 14:14:38.414 on Reigi
         7           0   CliBuffer.GetLine
         7           0   CliBuffer.ScanLine
         7           0   CliCookie.Initialize
+        7           0   CliStack.FindCommand
+        7           0   CliStack.FindCommand(incr)
         7           0   CliStack.Top
         7           0   CliThread.EndOfInput
         7           0   CliThread.InvokeCommand
@@ -61,8 +62,6 @@ FUNCTION PROFILE: 20-Dec-2020 14:14:38.414 on Reigi
         7           0   Symbol.SetValue
         7           0   SymbolRegistry.EnsureSymbol
         5           0   FileThread.Spool(stream)
-        4           0   FunctionGuard.ctor
-        4           0   Thread.MakePreemptable
         3           0   CliBuffer.GetInt
         3           0   CliCommand.GetIntParmRc
         3           0   CliCommand.GetTextParmRc
@@ -73,7 +72,9 @@ FUNCTION PROFILE: 20-Dec-2020 14:14:38.414 on Reigi
         3           0   CliTextParm.GetTextParmRc
         3           0   CliThread.Report
         3           0   CliThread.Report1
+        3           0   FunctionGuard.ctor
         3           0   Registry.Empty
+        3           0   Thread.MakePreemptable
         2           0   CliBuffer.OpenInputFile
         2           0   CliCommand.GetStringRc
         2           0   CliParm.GetString
@@ -93,7 +94,6 @@ FUNCTION PROFILE: 20-Dec-2020 14:14:38.414 on Reigi
         1           0   ShowCommand.ProcessCommand
         1           0   StopCommand.ProcessCommand
         1           0   SysThread.Delay
-        1           0   TestDatabase.Commit
         1           0   TestDatabase.SetState
         1           0   TestsCommand.ProcessCommand
         1           0   TestsCommand.ProcessSubcommand

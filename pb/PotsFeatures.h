@@ -27,6 +27,7 @@
 #include "PotsFeature.h"
 
 using namespace CallBase;
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

@@ -28,6 +28,7 @@
 #include "Duration.h"
 #include "NbTypes.h"
 
+using namespace CallBase;
 using namespace NodeBase;
 
 //------------------------------------------------------------------------------

@@ -31,6 +31,7 @@
 #include "SbTypes.h"
 #include "Switch.h"
 
+using namespace NodeBase;
 using namespace SessionBase;
 using namespace MediaBase;
 using namespace NetworkBase;

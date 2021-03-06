@@ -35,6 +35,7 @@
 
 using namespace NodeBase;
 using namespace CallBase;
+using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

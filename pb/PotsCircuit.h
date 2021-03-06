@@ -39,6 +39,8 @@ namespace PotsBase
 
 using namespace MediaBase;
 using namespace CallBase;
+using namespace NodeBase;
+using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

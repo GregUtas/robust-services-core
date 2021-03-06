@@ -31,7 +31,9 @@
 #include "NbTypes.h"
 #include "SbTypes.h"
 
+using namespace MediaBase;
 using namespace NodeBase;
+using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

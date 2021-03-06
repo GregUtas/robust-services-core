@@ -51,6 +51,8 @@ namespace CallBase
 }
 
 using namespace MediaBase;
+using namespace NodeBase;
+using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

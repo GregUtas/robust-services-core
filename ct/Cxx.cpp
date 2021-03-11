@@ -743,6 +743,149 @@ TypeMatch Numeric::CalcMatchWith(const Numeric* that) const
 }
 
 //==============================================================================
+//
+//  Removes, from SET, an item that is
+//    (a) a template parameter,
+//    (b) a template argument in TYPE, or
+//    (c) a name found in NAMES.
+//  There are situation in which (b) or (c), but not both, detects a template
+//  argument.  Ideally this would be cleaned up, but the effort does not seem
+//  worthwhile.
+//
+void EraseTemplateArgs
+   (CxxNamedSet& set, const TypeName* type, const stringVector& names)
+{
+   for(auto i = set.cbegin(); i != set.cend(); NO_OP)
+   {
+      auto name = (*i)->ScopedName(true);
+      auto erase = ((*i)->Type() == Cxx::TemplateParm);
+      erase = erase || type->ItemIsTemplateArg(*i);
+
+      if(!erase)
+      {
+         for(auto n = names.cbegin(); n != names.cend(); ++n)
+         {
+            if(name == *n)
+            {
+               erase = true;
+               break;
+            }
+         }
+      }
+
+      if(erase)
+         i = set.erase(i);
+      else
+         ++i;
+   }
+}
+
+//------------------------------------------------------------------------------
+//
+//  LHS = LHS U RHS.
+//
+void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
+{
+   for(auto i = rhs.cbegin(); i != rhs.cend(); ++i)
+   {
+      lhs.insert(*i);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CxxUsageSets::AddBase(CxxNamed* item)
+{
+   if(item->GetFile() == nullptr) return;
+   bases.insert(item);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxUsageSets::AddDirect(CxxNamed* item)
+{
+   if(item->GetFile() == nullptr) return;
+   directs.insert(item);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxUsageSets::AddForward(CxxNamed* item)
+{
+   if(item->GetFile() == nullptr) return;
+   if(item->Type() == Cxx::Friend)
+      friends.insert(item);
+   else
+      forwards.insert(item);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxUsageSets::AddIndirect(CxxNamed* item)
+{
+   if(item->GetFile() == nullptr) return;
+   indirects.insert(item);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxUsageSets::AddInherit(CxxNamed* item)
+{
+   if(item->GetFile() == nullptr) return;
+   inherits.insert(item);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxUsageSets::AddUser(CxxNamed* item)
+{
+   if(item->GetFile() == nullptr) return;
+   users.insert(item);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxUsageSets::EraseLocals()
+{
+   Debug::ft("CxxUsageSets.EraseLocals");
+
+   for(auto d = directs.cbegin(); d != directs.cend(); NO_OP)
+   {
+      if((*d)->ScopedName(false).find(LOCALS_STR) != string::npos)
+         d = directs.erase(d);
+      else
+         ++d;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CxxUsageSets::EraseTemplateArgs(const TypeName* type)
+{
+   Debug::ft("CxxUsageSets.EraseTemplateArgs");
+
+   stringVector names;
+   type->GetNames(names);
+   CodeTools::EraseTemplateArgs(directs, type, names);
+   CodeTools::EraseTemplateArgs(indirects, type, names);
+   CodeTools::EraseTemplateArgs(forwards, type, names);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxUsageSets::Union(const CxxUsageSets& set)
+{
+   Debug::ft("CxxUsageSets.Union");
+
+   CodeTools::Union(bases, set.bases);
+   CodeTools::Union(directs, set.directs);
+   CodeTools::Union(indirects, set.indirects);
+   CodeTools::Union(forwards, set.forwards);
+   CodeTools::Union(friends, set.friends);
+   CodeTools::Union(users, set.users);
+}
+
+//==============================================================================
 
 CxxStats CxxStats::Info[CxxStats::Item_N] =
 {

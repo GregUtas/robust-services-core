@@ -61,7 +61,7 @@ Case::Case(ExprPtr& expression, size_t pos) : CxxStatement(pos),
 
 //------------------------------------------------------------------------------
 
-void Case::AddToXref() const
+void Case::AddToXref()
 {
    expr_->AddToXref();
 }
@@ -92,7 +92,7 @@ void Case::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void Case::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Case::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    expr_->GetUsages(file, symbols);
 }
@@ -125,7 +125,7 @@ Catch::Catch(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Catch::AddToXref() const
+void Catch::AddToXref()
 {
    if(arg_ != nullptr) arg_->AddToXref();
    handler_->AddToXref();
@@ -195,7 +195,7 @@ CxxScoped* Catch::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-void Catch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Catch::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(arg_ != nullptr) arg_->GetUsages(file, symbols);
    handler_->GetUsages(file, symbols);
@@ -238,7 +238,7 @@ Condition::Condition(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Condition::AddToXref() const
+void Condition::AddToXref()
 {
    if(condition_ != nullptr) condition_->AddToXref();
 }
@@ -263,7 +263,7 @@ void Condition::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void Condition::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Condition::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(condition_ != nullptr) condition_->GetUsages(file, symbols);
 }
@@ -352,7 +352,7 @@ Do::Do(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
-void Do::AddToXref() const
+void Do::AddToXref()
 {
    loop_->AddToXref();
    Condition::AddToXref();
@@ -413,7 +413,7 @@ CxxScoped* Do::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-void Do::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Do::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    loop_->GetUsages(file, symbols);
    Condition::GetUsages(file, symbols);
@@ -475,7 +475,7 @@ Expr::Expr(ExprPtr& expression, size_t pos) : CxxStatement(pos),
 
 //------------------------------------------------------------------------------
 
-void Expr::AddToXref() const
+void Expr::AddToXref()
 {
    expr_->AddToXref();
 }
@@ -493,7 +493,7 @@ void Expr::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void Expr::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Expr::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    expr_->GetUsages(file, symbols);
 }
@@ -534,7 +534,7 @@ For::For(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
-void For::AddToXref() const
+void For::AddToXref()
 {
    if(initial_ != nullptr) initial_->AddToXref();
    Condition::AddToXref();
@@ -664,7 +664,7 @@ CxxScoped* For::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-void For::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void For::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(initial_ != nullptr) initial_->GetUsages(file, symbols);
    Condition::GetUsages(file, symbols);
@@ -768,7 +768,7 @@ If::If(size_t pos) : Condition(pos),
 
 //------------------------------------------------------------------------------
 
-void If::AddToXref() const
+void If::AddToXref()
 {
    Condition::AddToXref();
    then_->AddToXref();
@@ -840,7 +840,7 @@ CxxScoped* If::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-void If::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void If::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    Condition::GetUsages(file, symbols);
    then_->GetUsages(file, symbols);
@@ -988,7 +988,7 @@ Return::Return(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Return::AddToXref() const
+void Return::AddToXref()
 {
    if(expr_ != nullptr) expr_->AddToXref();
 }
@@ -1016,7 +1016,7 @@ void Return::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void Return::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Return::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
 }
@@ -1064,7 +1064,7 @@ Switch::Switch(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Switch::AddToXref() const
+void Switch::AddToXref()
 {
    expr_->AddToXref();
    cases_->AddToXref();
@@ -1116,7 +1116,7 @@ CxxScoped* Switch::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-void Switch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Switch::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    expr_->GetUsages(file, symbols);
    cases_->GetUsages(file, symbols);
@@ -1161,7 +1161,7 @@ Try::Try(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Try::AddToXref() const
+void Try::AddToXref()
 {
    try_->AddToXref();
 
@@ -1247,7 +1247,7 @@ CxxScoped* Try::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-void Try::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Try::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    try_->GetUsages(file, symbols);
 
@@ -1311,7 +1311,7 @@ While::While(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
-void While::AddToXref() const
+void While::AddToXref()
 {
    Condition::AddToXref();
    loop_->AddToXref();
@@ -1359,7 +1359,7 @@ CxxScoped* While::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-void While::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void While::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    Condition::GetUsages(file, symbols);
    loop_->GetUsages(file, symbols);

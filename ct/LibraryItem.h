@@ -23,13 +23,15 @@
 #define LIBRARYITEM_H_INCLUDED
 
 #include "Base.h"
+#include <set>
 #include <string>
+#include "CxxFwd.h"
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
-//  Base class for items in the code library (directories, files, variables).
+//  Base class for items in the code library.
 //
 class LibraryItem : public NodeBase::Base
 {
@@ -38,27 +40,19 @@ public:
    //
    virtual ~LibraryItem();
 
-   //  Returns the item's name.
+   //  Returns the item's name.  The default implementation generates a
+   //  log and returns an empty string.
    //
-   const std::string& Name() const { return name_; }
+   virtual const std::string& Name() const;
 
-   //  Overridden to display member variables.
+   //  Updates ITEMS with code items declared within the item.  The
+   //  default implementation generates a log.
    //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
+   virtual void GetDecls(std::set< CxxNamed* >& items);
 protected:
-   //  Creates an item that will be referred to by NAME.  Protected because
-   //  this class is virtual.
+   //  Protected because this class is virtual.
    //
-   explicit LibraryItem(const std::string& name);
-
-   //  Provides non-const access to the item's name.
-   //
-   std::string& AccessName() { return name_; }
-private:
-   //  The item's name.
-   //
-   std::string name_;
+   LibraryItem();
 };
 }
 #endif

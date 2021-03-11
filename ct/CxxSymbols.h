@@ -32,7 +32,8 @@
 #include <vector>
 #include "CxxFwd.h"
 #include "CxxString.h"
-#include "CxxToken.h"
+#include "LibraryItem.h"
+#include "LibraryTypes.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -60,7 +61,8 @@ extern const NodeBase::Flags TERM_MASK;    // terminal (built-in type)
 extern const NodeBase::Flags TYPE_MASK;    // typedef
 
 //  Combinations of the above, used when searching in various situations.
-//  o CODE_REFS includes all items except locals and terminals.
+//  o CODE_REFS includes all items except namespaces, locals, and terminals.
+//  o ITEM_REFS includes all items except locals and terminals.
 //  o FRIEND_CLASSES are used when a friend is a class.
 //  o FRIEND_FUNCS are used when a friend is a function.
 //  o SCOPE_REFS are items that can precede a scope resolution operator.
@@ -71,6 +73,7 @@ extern const NodeBase::Flags TYPE_MASK;    // typedef
 //  o VALUE_REFS are storage references or constants.
 //
 extern const NodeBase::Flags CODE_REFS;
+extern const NodeBase::Flags ITEM_REFS;
 extern const NodeBase::Flags FRIEND_CLASSES;
 extern const NodeBase::Flags FRIEND_FUNCS;
 extern const NodeBase::Flags SCOPE_REFS;
@@ -108,6 +111,12 @@ public:
    void FindSymbols(CodeFile* file, const CxxScope* scope,
       const std::string& name, const NodeBase::Flags& mask, SymbolVector& list,
       ViewVector& views, const CxxArea* area = nullptr) const;
+
+   //  The same as FindSymbol, but returns all matching symbols in LIST.
+   //  Used to find items that can match a name entered in a CLI command.
+   //
+   void FindItems(const std::string& name,
+      const NodeBase::Flags& mask, SymbolVector& list) const;
 
    //  Returns the scope (namespace, class, or function) referred to by
    //  NAME, which was used in SCOPE.
@@ -237,7 +246,7 @@ size_t FindNearestItem(const SymbolVector& list);
 template< typename T > void EraseSymbol(const CxxScoped* item,
    std::unordered_multimap< std::string, T >& table)
 {
-   auto str = Normalize(*item->Name());
+   auto str = Normalize(item->Name());
    auto last = table.upper_bound(str);
 
    for(auto i = table.lower_bound(str); i != last; ++i)
@@ -253,7 +262,6 @@ template< typename T > void EraseSymbol(const CxxScoped* item,
 //------------------------------------------------------------------------------
 //
 //  Looks for NAME in TABLE.  Returns a list of matching symbols in LIST.
-//  NAME be unqualified.
 //
 template< typename T > void ListSymbols(const std::string& name,
    const std::unordered_multimap< std::string, T >& table, SymbolVector& list)

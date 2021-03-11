@@ -23,52 +23,53 @@
 #define LIBRARYTYPES_H_INCLUDED
 
 #include <cstddef>
-#include <list>
+#include <iosfwd>
 #include <memory>
 #include <set>
-#include "SysTypes.h"
-
-using namespace NodeBase;
+#include <vector>
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
+//  Forward declarations.
+//
+class LibraryItem;
+class LibrarySet;
+class CodeFile;
+class CodeDir;
+
+using LibItemSet = std::set< LibraryItem* >;
+using CodeDirPtr = std::unique_ptr< CodeDir >;
+using CodeFilePtr = std::unique_ptr< CodeFile >;
+
 //  What a set of library items can contain.
 //
 enum LibSetType
 {
-   ERR_SET,   // illegal set
    DIR_SET,   // a set of directories
    FILE_SET,  // a set of files
-   VAR_SET,   // a set of variables
-   ANY_SET    // a set of directories or files
+   ITEM_SET,  // a set of C++ code items
+   VAR_SET,   // a set of library variables
+   ANY_SET,   // a set of directories or files
+   ERR_SET    // illegal set
 };
 
-//  Forward declarations.
+//  Inserts a string for TYPE into STREAM.
 //
-class CodeDir;
-class CodeFile;
-class LibraryItem;
-class LibrarySet;
-
-using LibItemSet = std::set< LibraryItem* >;
-
-using CodeDirPtr = std::unique_ptr< CodeDir >;
-using CodeFilePtr = std::unique_ptr< CodeFile >;
-using LibrarySetPtr = std::unique_ptr< LibrarySet >;
+std::ostream& operator<<(std::ostream& stream, LibSetType type);
 
 //  For sorting code files in build order.
 //
 struct FileLevel
 {
-   CodeFile* file;      // the file
-   const size_t level;  // the file's level in the build
+   CodeFile* file;  // the file
+   size_t level;    // the file's level in the build
 
    FileLevel(CodeFile* f, size_t l) : file(f), level(l) { }
 };
 
-using BuildOrder = std::list< FileLevel >;
+using BuildOrder = std::vector< FileLevel >;
 
 //  Tokens when parsing the expression associated with a library command.
 //
@@ -95,6 +96,14 @@ enum LibTokenType
    OpCommonAffecters,
    OpNeededBy,
    OpNeeders,
+   OpDefinitions,
+   OpDeclaredBy,
+   OpReferencedBy,
+   OpFileDeclarers,
+   OpCodeDeclarers,
+   OpFileReferencers,
+   OpCodeReferencers,
+   OpReferencedIn,
    OpIdentifier,
    Operator_N = OpIdentifier  //  OpIdentifier is not actually an operator
 };
@@ -115,14 +124,15 @@ enum LibExprErr
    RightOperandMissing,
    DirSetExpected,
    FileSetExpected,
+   ItemSetExpected,
    IncompatibleArguments,
    InterpreterError,
    LibExprErr_N
 };
 
-//  Returns a string that explains ERR.
+//  Inserts a string for ERR into STREAM.
 //
-c_string strError(LibExprErr err);
+std::ostream& operator<<(std::ostream& stream, LibExprErr err);
 
 //------------------------------------------------------------------------------
 //

@@ -28,15 +28,9 @@
 #include <string>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
-#include "CxxString.h"
 #include "Editor.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
-
-namespace CodeTools
-{
-   struct CxxUsageSets;
-}
 
 using std::string;
 
@@ -95,6 +89,10 @@ public:
    //
    bool IsSubsFile() const { return isSubsFile_; }
 
+   //  Finds the namespace definition that contains ITEM.
+   //
+   SpaceDefn* FindNamespaceDefn(const CxxNamed* item) const;
+
    //  Returns the using statement, if any, that makes ITEM visible within
    //  this file or SCOPE because it matches fqName to at least PREFIX.
    //
@@ -146,7 +144,7 @@ public:
 
    //  Records that ITEM was used in the file's executable code.
    //
-   void AddUsage(const CxxNamed* item);
+   void AddUsage(CxxNamed* item);
 
    enum ParseState
    {
@@ -202,7 +200,7 @@ public:
    //  Includes, in the cross-reference, symbols that appear in the
    //  file's items.
    //
-   void AddToXref() const;
+   void AddToXref();
 
    //  Checks the file after it has been parsed, looking for additional
    //  warnings when a report is to be generated.
@@ -279,6 +277,10 @@ public:
    //
    Editor& GetEditor();
 
+   //  Updates SYMBOLS with information about symbols used in this file.
+   //
+   void GetUsageInfo(CxxUsageSets& symbols) const;
+
    //  Invoked to update the position of items when a file has been edited.
    //  Has the same interface as CxxToken::UpdatePos.
    //
@@ -288,6 +290,14 @@ public:
    //  Shrinks containers.
    //
    void Shrink();
+
+   //  Overridden to update ITEMS with ones declared within the file.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
+   //  Overridden to return the file's name.
+   //
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display member variables.
    //
@@ -380,10 +390,6 @@ private:
    //
    void SaveBaseSet(const CxxNamedSet& bases);
 
-   //  Updates SYMBOLS with information about symbols used in this file.
-   //
-   void GetUsageInfo(CxxUsageSets& symbols) const;
-
    //  Removes, from SET, items that this file declared.
    //
    void EraseInternals(CxxNamedSet& set) const;
@@ -465,6 +471,10 @@ private:
    //
    void LogRemoveUsings(std::ostream* stream) const;
 
+   //  The file's name.
+   //
+   const std::string name_;
+
    //  The file's directory.
    //
    CodeDir* dir_;
@@ -543,7 +553,7 @@ private:
 
    //  The file's items, in the order in which they appeared.
    //
-   CxxNamedVector items_;
+   std::vector< CxxNamed* > items_;
 
    //  The items used in the file's executable code.
    //

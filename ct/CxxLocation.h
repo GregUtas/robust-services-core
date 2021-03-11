@@ -25,7 +25,7 @@
 #include <cstddef>
 #include <string>
 #include "CodeTypes.h"
-#include "CxxFwd.h"
+#include "LibraryTypes.h"
 
 //------------------------------------------------------------------------------
 

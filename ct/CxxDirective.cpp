@@ -60,7 +60,7 @@ Conditional::Conditional()
 
 //------------------------------------------------------------------------------
 
-void Conditional::AddToXref() const
+void Conditional::AddToXref()
 {
    condition_->AddToXref();
 }
@@ -94,7 +94,7 @@ bool Conditional::EnterScope()
 
 //------------------------------------------------------------------------------
 
-void Conditional::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Conditional::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    condition_->GetUsages(file, symbols);
 }
@@ -163,7 +163,7 @@ void Define::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    AlignLeft(stream, prefix);
-   stream << HASH_DEFINE_STR << SPACE << *Name();
+   stream << HASH_DEFINE_STR << SPACE << Name();
 
    if(rhs_ != nullptr)
    {
@@ -380,7 +380,7 @@ bool Existential::AddElse(const Else* e)
 
 //------------------------------------------------------------------------------
 
-void Existential::AddToXref() const
+void Existential::AddToXref()
 {
    name_->AddToXref();
 }
@@ -390,13 +390,13 @@ void Existential::AddToXref() const
 void Existential::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   stream << *Name() << CRLF;
+   stream << Name() << CRLF;
    OptionalCode::Display(stream, prefix, options);
 }
 
 //------------------------------------------------------------------------------
 
-void Existential::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Existential::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    auto ref = name_->Referent();
    if(ref != nullptr) symbols.AddDirect(ref);
@@ -606,7 +606,7 @@ void Include::Display(ostream& stream,
    AlignLeft(stream, prefix);
    stream << HASH_INCLUDE_STR << SPACE;
    stream << (angle_ ? '<' : QUOTE);
-   stream << *Name();
+   stream << Name();
    stream << (angle_ ? '>' : QUOTE);
    stream << CRLF;
 }
@@ -618,9 +618,8 @@ CodeFile* Include::FindFile() const
    Debug::ft("Include.FindFile");
 
    auto lib = Singleton< Library >::Instance();
-   auto name = Name();
-   if(name == nullptr) return nullptr;
-   return lib->FindFile(*name);
+   if(Name().empty()) return nullptr;
+   return lib->FindFile(Name());
 }
 
 //------------------------------------------------------------------------------
@@ -628,7 +627,7 @@ CodeFile* Include::FindFile() const
 void Include::Shrink()
 {
    SymbolDirective::Shrink();
-   CxxStats::Strings(CxxStats::INCLUDE_DIRECTIVE, Name()->capacity());
+   CxxStats::Strings(CxxStats::INCLUDE_DIRECTIVE, Name().capacity());
 }
 
 //==============================================================================
@@ -679,7 +678,7 @@ void Macro::Display(ostream& stream,
 {
    AlignLeft(stream, prefix);
    stream << HASH_DEFINE_STR << SPACE;
-   stream << *Name();
+   stream << Name();
 
    if(!options.test(DispCode))
    {
@@ -807,7 +806,7 @@ MacroName::~MacroName()
 
 //------------------------------------------------------------------------------
 
-void MacroName::AddToXref() const
+void MacroName::AddToXref()
 {
    if(ref_ != nullptr) ref_->AddReference(this);
 }
@@ -831,7 +830,7 @@ CxxScope* MacroName::GetScope() const
 
 //------------------------------------------------------------------------------
 
-void MacroName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void MacroName::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    //  Add our referent as a direct usage.
    //
@@ -1064,7 +1063,7 @@ void Undef::Display(ostream& stream,
 {
    AlignLeft(stream, prefix);
    stream << HASH_UNDEF_STR << SPACE;
-   stream << *Name();
+   stream << Name();
    stream << CRLF;
 }
 
@@ -1073,6 +1072,6 @@ void Undef::Display(ostream& stream,
 void Undef::Shrink()
 {
    SymbolDirective::Shrink();
-   CxxStats::Strings(CxxStats::UNDEF_DIRECTIVE, Name()->capacity());
+   CxxStats::Strings(CxxStats::UNDEF_DIRECTIVE, Name().capacity());
 }
 }

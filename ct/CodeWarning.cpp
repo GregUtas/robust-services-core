@@ -23,7 +23,6 @@
 #include <algorithm>
 #include <iomanip>
 #include <iterator>
-#include <list>
 #include <set>
 #include <sstream>
 #include "CodeDir.h"
@@ -906,7 +905,7 @@ bool CodeWarning::Suppress() const
       auto func = static_cast< const Function* >(item_);
       auto index = func->LogOffsetToArgIndex(offset_);
       auto& arg = func->GetArgs().at(index);
-      if(*arg->GetTypeSpec()->Name() == "nothrow_t") return true;
+      if(arg->GetTypeSpec()->Name() == "nothrow_t") return true;
       break;
    }
 
@@ -915,8 +914,8 @@ bool CodeWarning::Suppress() const
       break;
 
    case FunctionUnused:
-      if(item_->Name()->find("operator new") == 0) return true;
-      if(item_->Name()->find("operator delete") == 0) return true;
+      if(item_->Name().find("operator new") == 0) return true;
+      if(item_->Name().find("operator delete") == 0) return true;
       if(fn == "Allocators.h") return true;
       if(fn == "BaseBot.h") return true;
       if(fn == "MapAndUnits.h") return true;
@@ -953,12 +952,12 @@ bool CodeWarning::Suppress() const
 
    case AnonymousArgument:
    {
-      if(*item_->Name() == "operator++") return true;
-      if(*item_->Name() == "operator--") return true;
+      if(item_->Name() == "operator++") return true;
+      if(item_->Name() == "operator--") return true;
       auto func = static_cast< const Function* >(item_);
       auto index = func->LogOffsetToArgIndex(offset_);
       auto& arg = func->GetArgs().at(index);
-      if(*arg->GetTypeSpec()->Name() == "nothrow_t") return true;
+      if(arg->GetTypeSpec()->Name() == "nothrow_t") return true;
       break;
    }
 
@@ -998,29 +997,29 @@ bool CodeWarning::Suppress() const
          if(fn == "CxxString.cpp") return true;
       }
 
-      auto name = func->Name();
+      auto& name = func->Name();
 
-      if(name->find("Display") == 0) return true;
-      if(name->find("Print") == 0) return true;
-      if(name->find("Output") == 0) return true;
-      if(name->find("Show") == 0) return true;
-      if(name->find("CellDiff") == 0) return true;
-      if(name->find("LinkDiff") == 0) return true;
-      if(name->find("Shrink") == 0) return true;
-      if(name->compare("Patch") == 0) return true;
-      if(name->compare("CreateText") == 0) return true;
-      if(name->compare("CreateCliParm") == 0) return true;
-      if(name->compare("AddToXref") == 0) return true;
-      if(name->compare("Check") == 0) return true;
-      if(name->compare("GetUsages") == 0) return true;
-      if(name->compare("InLine") == 0) return true;
-      if(name->compare("TypeString") == 0) return true;
-      if(name->compare("Trace") == 0) return true;
-      if(name->compare("UpdatePos") == 0) return true;
-      if(name->compare("operator<<") == 0) return true;
-      if(name->compare("operator==") == 0) return true;
-      if(name->compare("operator!=") == 0) return true;
-      if(name->compare("operator<") == 0) return true;
+      if(name.find("Display") == 0) return true;
+      if(name.find("Print") == 0) return true;
+      if(name.find("Output") == 0) return true;
+      if(name.find("Show") == 0) return true;
+      if(name.find("CellDiff") == 0) return true;
+      if(name.find("LinkDiff") == 0) return true;
+      if(name.find("Shrink") == 0) return true;
+      if(name.compare("Patch") == 0) return true;
+      if(name.compare("CreateText") == 0) return true;
+      if(name.compare("CreateCliParm") == 0) return true;
+      if(name.compare("AddToXref") == 0) return true;
+      if(name.compare("Check") == 0) return true;
+      if(name.compare("GetUsages") == 0) return true;
+      if(name.compare("InLine") == 0) return true;
+      if(name.compare("TypeString") == 0) return true;
+      if(name.compare("Trace") == 0) return true;
+      if(name.compare("UpdatePos") == 0) return true;
+      if(name.compare("operator<<") == 0) return true;
+      if(name.compare("operator==") == 0) return true;
+      if(name.compare("operator!=") == 0) return true;
+      if(name.compare("operator<") == 0) return true;
 
       auto spec = func->GetTypeSpec();
 
@@ -1049,7 +1048,7 @@ bool CodeWarning::Suppress() const
             if(cls->DerivesFrom("Signal")) return true;
             if(cls->DerivesFrom("Parameter")) return true;
             if(cls->DerivesFrom("BcState")) return true;
-            if(cls->DerivesFrom("PotsFeature")) return (*name == "Attrs");
+            if(cls->DerivesFrom("PotsFeature")) return (name == "Attrs");
          }
       }
       break;
@@ -1082,11 +1081,11 @@ bool CodeWarning::Suppress() const
       //  Classes in example applications do not need to override Patch.
       //
       auto cls = static_cast< const Class* >(item_);
-      auto sname = cls->GetSpace()->Name();
+      auto& sname = cls->GetSpace()->Name();
 
-      if((*sname != "NodeBase") &&
-         (*sname != "NetworkBase") &&
-         (*sname != "SessionBase"))
+      if((sname != "NodeBase") &&
+         (sname != "NetworkBase") &&
+         (sname != "SessionBase"))
       {
          return true;
       }
@@ -1110,7 +1109,7 @@ bool CodeWarning::Suppress() const
 
       //  Placement delete must be noexcept.
       //
-      if(item_->Name()->find("operator delete") == 0)
+      if(item_->Name().find("operator delete") == 0)
       {
          auto func = static_cast< const Function* >(item_);
          return (func->MinArgs() > 1);

@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
+#include <set>
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
@@ -31,7 +32,6 @@
 #include "CxxRoot.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
-#include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -313,7 +313,7 @@ bool Class::AddAnonymousUnion(const ClassPtr& cls)
    //  There is nothing to do unless CLS is an anonymous union.
    //
    if(cls->GetClassTag() != Cxx::UnionType) return false;
-   if(!cls->Name()->empty()) return false;
+   if(!cls->Name().empty()) return false;
    auto access = cls->GetAccess();
 
    //  Remove the union's members and add them to this class.
@@ -415,7 +415,7 @@ bool Class::AddSubclass(Class* cls)
 
 //------------------------------------------------------------------------------
 
-void Class::AddToXref() const
+void Class::AddToXref()
 {
    CxxArea::AddToXref();
 
@@ -663,8 +663,8 @@ void Class::CheckOverrides() const
 
       if(func->IsOverride())
       {
-         if(patch && (*func->Name() == "Patch")) patch = false;
-         if(display && (*func->Name() == "Display")) display = false;
+         if(patch && (func->Name() == "Patch")) patch = false;
+         if(display && (func->Name() == "Display")) display = false;
       }
 
       if(func->FuncType() == FuncStandard) simple = false;
@@ -776,7 +776,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
 
    //  If this is a class template, get its source code.
    //
-   auto& tmpltName = *Name();
+   auto& tmpltName = Name();
    if(!IsTemplate()) return CreateCodeError(tmpltName, 0);
 
    if(code_ == nullptr)
@@ -811,7 +811,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
    //  changes as the result of symbol substitution.
    //
    Lexer lexer;
-   auto& instName = *inst->Name();
+   auto& instName = inst->Name();
    auto begin = code->find(tmpltName);
 
    while(true)
@@ -880,7 +880,7 @@ bool Class::DerivesFrom(const string& name) const
 
    for(auto s = BaseClass(); s != nullptr; s = s->BaseClass())
    {
-      if(*s->Name() == name) return true;
+      if(s->Name() == name) return true;
    }
 
    return false;
@@ -971,7 +971,7 @@ void Class::DisplayBase(ostream& stream, const Flags& options) const
       alignas_->Print(stream, options);
    }
 
-   if(Name()->front() != '$')
+   if(Name().front() != '$')
    {
       stream << SPACE;
       strName(stream, options.test(DispFQ), name_.get());
@@ -1007,7 +1007,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    //
    if(!IsTemplate())
    {
-      auto expl = *Name() + " is not a class template";
+      auto expl = Name() + " is not a class template";
       Context::SwLog(Class_EnsureInstance, expl, 0);
       return nullptr;
    }
@@ -1018,7 +1018,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    auto file = Context::File();
    if(file == nullptr) return nullptr;
    auto scope = GetScope();
-   auto name = *Name() + type->TypeString(true);
+   auto name = Name() + type->TypeString(true);
    auto area = static_cast< CxxArea* >(GetScope());
    SymbolView view;
    auto inst = syms->FindSymbol(file, scope, name, CLASS_MASK, &view, area);
@@ -1029,7 +1029,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    //
    SymbolVector list;
    ViewVector views;
-   syms->FindSymbols(file, scope, *Name(), CLASS_MASK, list, views, area);
+   syms->FindSymbols(file, scope, Name(), CLASS_MASK, list, views, area);
 
    Class* base = this;
 
@@ -1117,7 +1117,7 @@ Function* Class::FindCtor
       args->insert(args->begin(), StackArg(this, 1, false));
    }
 
-   return FindFunc(*Name(), args, false, scope, view);
+   return FindFunc(Name(), args, false, scope, view);
 }
 
 //------------------------------------------------------------------------------
@@ -1130,7 +1130,7 @@ Function* Class::FindDtor() const
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      if((*f)->Name()->front() == '~') return f->get();
+      if((*f)->Name().front() == '~') return f->get();
    }
 
    return nullptr;
@@ -1318,7 +1318,21 @@ Cxx::Access Class::GetCurrAccess() const
 
 //------------------------------------------------------------------------------
 
-void Class::GetDirectClasses(CxxUsageSets& symbols) const
+void Class::GetDecls(std::set< CxxNamed* >& items)
+{
+   CxxArea::GetDecls(items);
+
+   items.insert(this);
+
+   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
+   {
+      (*f)->GetDecls(items);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void Class::GetDirectClasses(CxxUsageSets& symbols)
 {
    Debug::ft("Class.GetDirectClasses");
 
@@ -1348,7 +1362,7 @@ bool Class::GetFuncIndex(const Function* func, size_t& idx) const
 {
    Debug::ft("Class.GetFuncIndex");
 
-   auto list = FuncVector(*func->Name());
+   auto list = FuncVector(func->Name());
 
    for(idx = 0; idx < list->size(); ++idx)
    {
@@ -1527,7 +1541,7 @@ Class::UsageAttributes Class::GetUsageAttrs() const
 
 //------------------------------------------------------------------------------
 
-void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    //  If this is a class template, obtain usage information from its first
    //  instance in case some symbols in the template could not be resolved.
@@ -1714,7 +1728,7 @@ TypeMatch Class::MatchTemplate(const TypeName& type) const
    //
    if(!IsTemplate())
    {
-      auto expl = *Name() + " is not a class template";
+      auto expl = Name() + " is not a class template";
       Context::SwLog(Class_MatchTemplate, expl, 0);
       return Incompatible;
    }
@@ -1729,7 +1743,7 @@ TypeMatch Class::MatchTemplate(const TypeName& type) const
    auto thatArgs = type.Args();
    if(thisArgs->size() != thatArgs->size())
    {
-      auto expl = "Invalid number of template arguments for " + *Name();
+      auto expl = "Invalid number of template arguments for " + Name();
       Context::SwLog(Class_MatchTemplate, expl, thatArgs->size());
       return Incompatible;
    }
@@ -1866,7 +1880,7 @@ void Class::Shrink()
 
 string Class::TypeString(bool arg) const
 {
-   return Prefix(GetScope()->TypeString(arg)) + *Name();
+   return Prefix(GetScope()->TypeString(arg)) + Name();
 }
 
 //------------------------------------------------------------------------------
@@ -2158,11 +2172,11 @@ CxxScoped* ClassInst::FindInstanceAnalog(const CxxNamed* item) const
       size_t idx;
       auto func = static_cast< const Function* >(item);
       if(!tmplt_->GetFuncIndex(func, idx)) return nullptr;
-      auto list = FuncVector(*item->Name());
+      auto list = FuncVector(item->Name());
       return list->at(idx).get();
    }
 
-   return FindMember(*item->Name(), false);
+   return FindMember(item->Name(), false);
 }
 
 //------------------------------------------------------------------------------
@@ -2200,7 +2214,7 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxNamed* item) const
       size_t idx;
       auto func = static_cast< const Function* >(item);
       if(!GetFuncIndex(func, idx)) return nullptr;
-      auto list = tmplt_->FuncVector(*item->Name());
+      auto list = tmplt_->FuncVector(item->Name());
       return list->at(idx).get();
    }
 
@@ -2212,12 +2226,12 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxNamed* item) const
    }
    }
 
-   return tmplt_->FindMember(*item->Name(), false);
+   return tmplt_->FindMember(item->Name(), false);
 }
 
 //------------------------------------------------------------------------------
 
-void ClassInst::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void ClassInst::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    //  This is invoked by a class template in order to obtain symbol usage
    //  information from one of its instances.
@@ -2309,7 +2323,7 @@ void ClassInst::Shrink()
 string ClassInst::TypeString(bool arg) const
 {
    return Prefix(GetScope()->TypeString(arg)) +
-      *tspec_->Name() + tspec_->TypeString(arg);
+      tspec_->Name() + tspec_->TypeString(arg);
 }
 
 //==============================================================================
@@ -2448,7 +2462,7 @@ bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
 
 //------------------------------------------------------------------------------
 
-void CxxArea::AddToXref() const
+void CxxArea::AddToXref()
 {
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
@@ -2569,7 +2583,7 @@ Class* CxxArea::FindClass(const string& name) const
 
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
-      if(*(*c)->Name() == name) return c->get();
+      if((*c)->Name() == name) return c->get();
    }
 
    return nullptr;
@@ -2583,7 +2597,7 @@ Data* CxxArea::FindData(const string& name) const
 
    for(auto d = data_.cbegin(); d != data_.cend(); ++d)
    {
-      if(*(*d)->Name() == name) return d->get();
+      if((*d)->Name() == name) return d->get();
    }
 
    return nullptr;
@@ -2597,7 +2611,7 @@ Enum* CxxArea::FindEnum(const string& name) const
 
    for(auto e = enums_.cbegin(); e != enums_.cend(); ++e)
    {
-      if(*(*e)->Name() == name) return e->get();
+      if((*e)->Name() == name) return e->get();
    }
 
    return nullptr;
@@ -2652,7 +2666,7 @@ Function* CxxArea::FindFunc(const string& name, StackArgVector* args,
    for(size_t i = 0; i < list->size(); ++i)
    {
       auto func = list->at(i).get();
-      auto& temp = *func->Name();
+      auto& temp = func->Name();
 
       if(temp == name)
       {
@@ -2730,7 +2744,7 @@ Typedef* CxxArea::FindType(const string& name) const
 
    for(auto t = types_.cbegin(); t != types_.cend(); ++t)
    {
-      if(*(*t)->Name() == name) return t->get();
+      if((*t)->Name() == name) return t->get();
    }
 
    return nullptr;
@@ -2766,6 +2780,46 @@ const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
 
 //------------------------------------------------------------------------------
 
+void CxxArea::GetDecls(std::set< CxxNamed* >& items)
+{
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      (*c)->GetDecls(items);
+   }
+
+   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+   {
+      (*d)->GetDecls(items);
+   }
+
+   for(auto e = enums_.cbegin(); e != enums_.cend(); ++e)
+   {
+      (*e)->GetDecls(items);
+   }
+
+   for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
+   {
+      (*f)->GetDecls(items);
+   }
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      (*f)->GetDecls(items);
+   }
+
+   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
+   {
+      (*o)->GetDecls(items);
+   }
+
+   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
+   {
+      (*t)->GetDecls(items);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void CxxArea::InsertFunc(Function* func)
 {
    if(func->IsDecl())
@@ -2789,11 +2843,11 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 {
    Debug::ft("CxxArea.MatchFunc");
 
-   auto list = FuncVector(*curr->Name());
+   auto list = FuncVector(curr->Name());
 
    for(auto f = list->cbegin(); f != list->cend(); ++f)
    {
-      if(*(*f)->Name() == *curr->Name())
+      if((*f)->Name() == curr->Name())
       {
          if((*f)->SignatureMatches(curr, base)) return f->get();
       }
@@ -3012,9 +3066,9 @@ void Namespace::Check() const
 void Namespace::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   auto name = Name()->c_str();
+   auto name = Name();
 
-   if(name[0] == NUL) name = SCOPE_STR;
+   if(name.empty()) name = SCOPE_STR;
 
    if(!options.test(DispCode))
    {
@@ -3098,7 +3152,7 @@ Namespace* Namespace::FindNamespace(const string& name) const
    //
    for(auto s = spaces_.cbegin(); s != spaces_.cend(); ++s)
    {
-      if(*(*s)->Name() == name) return s->get();
+      if((*s)->Name() == name) return s->get();
    }
 
    return nullptr;
@@ -3121,10 +3175,10 @@ string Namespace::ScopedName(bool templates) const
    {
       //  This namespace is directly below the global namespace.
       //
-      return *Name();
+      return Name();
    }
 
-   return scope->ScopedName(templates) + SCOPE_STR + *Name();
+   return scope->ScopedName(templates) + SCOPE_STR + Name();
 }
 
 //------------------------------------------------------------------------------
@@ -3140,6 +3194,7 @@ void Namespace::SetLoc(CodeFile* file, size_t pos) const
 
    SpaceDefnPtr space(new SpaceDefn(this));
    space->SetLoc(file, pos);
+   space->SetScope(Context::Scope());
    file->InsertSpace(space);
 }
 
@@ -3166,6 +3221,6 @@ string Namespace::TypeString(bool arg) const
 {
    auto scope = GetScope();
    if(scope == nullptr) return EMPTY_STR;
-   return Prefix(scope->TypeString(arg)) + *Name();
+   return Prefix(scope->TypeString(arg)) + Name();
 }
 }

@@ -20,8 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LibrarySet.h"
-#include <ostream>
+#include <algorithm>
+#include <iterator>
 #include <set>
+#include <sstream>
 #include "Debug.h"
 #include "Formatters.h"
 #include "Library.h"
@@ -36,23 +38,32 @@ using std::string;
 
 namespace CodeTools
 {
+bool IsSortedAlphabetically(const string& s1, const string& s2)
+{
+   auto comp = strCompare(s1, s2);
+   if(comp < 0) return true;
+   if(comp > 0) return false;
+   return (&s1 < &s2);
+}
+
+//==============================================================================
+
 const char LibrarySet::ReadOnlyChar = '$';
 const char LibrarySet::TemporaryChar = '%';
 uint8_t LibrarySet::SeqNo_ = 0;
 
 //------------------------------------------------------------------------------
 
-LibrarySet::LibrarySet(const string& name) : LibraryItem(name),
+LibrarySet::LibrarySet(const string& name) :
+   name_(name),
    temp_(false)
 {
    Debug::ft("LibrarySet.ctor");
 
-   auto s = AccessName();
-
-   if(name.front() == TemporaryChar)
+   if(name_.front() == TemporaryChar)
    {
       temp_ = true;
-      s.erase(0, 1);
+      name_.erase(0, 1);
    }
 
    Singleton< Library >::Instance()->AddVar(*this);
@@ -71,21 +82,21 @@ LibrarySet::~LibrarySet()
 
 LibrarySet* LibrarySet::AffectedBy() const
 {
-   return OpError();
+   return OpError("ab");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::Affecters() const
 {
-   return OpError();
+   return OpError("as");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::Assign(LibrarySet* rhs)
 {
-   return OpError();
+   return OpError("assign");
 }
 
 //------------------------------------------------------------------------------
@@ -99,9 +110,23 @@ word LibrarySet::Check(CliThread& cli, ostream* stream, string& expl) const
 
 //------------------------------------------------------------------------------
 
+LibrarySet* LibrarySet::CodeDeclarers() const
+{
+   return OpError("cd");
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* LibrarySet::CodeReferencers() const
+{
+   return OpError("cr");
+}
+
+//------------------------------------------------------------------------------
+
 LibrarySet* LibrarySet::CommonAffecters() const
 {
-   return OpError();
+   return OpError("ca");
 }
 
 //------------------------------------------------------------------------------
@@ -115,14 +140,14 @@ word LibrarySet::Count(string& result) const
 
 //------------------------------------------------------------------------------
 
-word LibrarySet::Counted(string& result, const size_t* count)
+word LibrarySet::Counted(string& result, const size_t count)
 {
    Debug::ft("LibrarySet.Counted");
 
    result = "Count: ";
 
-   if(count != nullptr)
-      result += std::to_string(*count);
+   if(count != 0)
+      result += std::to_string(count);
    else
       result += EmptySet;
 
@@ -143,21 +168,35 @@ word LibrarySet::Countlines(string& result) const
 LibrarySet* LibrarySet::Create
    (const string& name, const LibItemSet* items) const
 {
-   return OpError();
+   return OpError("create");
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* LibrarySet::DeclaredBy() const
+{
+   return OpError("db");
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* LibrarySet::Definitions() const
+{
+   return OpError("df");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::Difference(const LibrarySet* rhs) const
 {
-   return OpError();
+   return OpError("-");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::Directories() const
 {
-   return OpError();
+   return OpError("d");
 }
 
 //------------------------------------------------------------------------------
@@ -180,23 +219,37 @@ void LibrarySet::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+LibrarySet* LibrarySet::FileDeclarers() const
+{
+   return OpError("fd");
+}
+
+//------------------------------------------------------------------------------
+
 LibrarySet* LibrarySet::FileName(const LibrarySet* that) const
 {
-   return OpError();
+   return OpError("fn");
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* LibrarySet::FileReferencers() const
+{
+   return OpError("fr");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::Files() const
 {
-   return OpError();
+   return OpError("f");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::FileType(const LibrarySet* that) const
 {
-   return OpError();
+   return OpError("ft");
 }
 
 //------------------------------------------------------------------------------
@@ -221,7 +274,7 @@ word LibrarySet::Format(string& expl) const
 
 LibrarySet* LibrarySet::FoundIn(const LibrarySet* that) const
 {
-   return OpError();
+   return OpError("in");
 }
 
 //------------------------------------------------------------------------------
@@ -240,14 +293,14 @@ LibSetType LibrarySet::GetType() const
 
 LibrarySet* LibrarySet::Implements() const
 {
-   return OpError();
+   return OpError("im");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::Intersection(const LibrarySet* rhs) const
 {
-   return OpError();
+   return OpError("&");
 }
 
 //------------------------------------------------------------------------------
@@ -266,32 +319,48 @@ bool LibrarySet::IsTemporary() const
 
 //------------------------------------------------------------------------------
 
-word LibrarySet::List(ostream& stream, string& expl) const
+word LibrarySet::List(ostream& stream) const
 {
    Debug::ft("LibrarySet.List");
 
-   return NotImplemented(expl);
+   if(Items().empty())
+   {
+      stream << spaces(2) << EmptySet << CRLF;
+      return 0;
+   }
+
+   stringVector strings;
+   to_str(strings, true);
+
+   std::sort(strings.begin(), strings.end(), IsSortedAlphabetically);
+
+   for(auto i = strings.cbegin(); i != strings.cend(); ++i)
+   {
+      stream << spaces(2) << *i << CRLF;
+   }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::MatchString(const LibrarySet* that) const
 {
-   return OpError();
+   return OpError("ms");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::NeededBy() const
 {
-   return OpError();
+   return OpError("nb");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::Needers() const
 {
-   return OpError();
+   return OpError("ns");
 }
 
 //------------------------------------------------------------------------------
@@ -324,9 +393,11 @@ word LibrarySet::NotImplemented(string& expl) const
 
 fn_name LibrarySet_OpError = "LibrarySet.OpError";
 
-LibrarySet* LibrarySet::OpError() const
+LibrarySet* LibrarySet::OpError(fixed_string op) const
 {
-   Debug::SwLog(LibrarySet_OpError, "invalid set type", GetType());
+   std::ostringstream stream;
+   stream << "Operator " << op << " is invalid for set type " << GetType();
+   Debug::SwLog(LibrarySet_OpError, stream.str(), 0);
    return nullptr;
 }
 
@@ -346,6 +417,20 @@ word LibrarySet::PreAssign(string& expl) const
    Debug::ft("LibrarySet.PreAssign");
 
    return NotImplemented(expl);
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* LibrarySet::ReferencedBy() const
+{
+   return OpError("rb");
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* LibrarySet::ReferencedIn(const LibrarySet* that) const
+{
+   return OpError("ri");
 }
 
 //------------------------------------------------------------------------------
@@ -374,7 +459,23 @@ word LibrarySet::Show(string& result) const
 {
    Debug::ft("LibrarySet.Show");
 
-   return NotImplemented(result);
+   if(Items().empty())
+   {
+      result = EmptySet;
+      return 0;
+   }
+
+   stringVector strings;
+   to_str(strings, false);
+
+   std::sort(strings.begin(), strings.end(), IsSortedAlphabetically);
+
+   for(auto i = strings.cbegin(); i != strings.cend(); ++i)
+   {
+      result += *i + ", ";
+   }
+
+   return Shown(result);
 }
 
 //------------------------------------------------------------------------------
@@ -383,7 +484,7 @@ word LibrarySet::Shown(string& result)
 {
    Debug::ft("LibrarySet.Shown");
 
-   if(result.rfind(", ") != string::npos)
+   if(result.rfind(", ") == result.size() - 2)
       result.erase(result.size() - 2, 2);
    else if(result.empty())
       result = EmptySet;
@@ -413,22 +514,33 @@ string LibrarySet::TemporaryName()
 
 //------------------------------------------------------------------------------
 
+fn_name LibrarySet_to_str = "LibrarySet.to_str";
+
+void LibrarySet::to_str(stringVector& strings, bool verbose) const
+{
+   Debug::ft(LibrarySet_to_str);
+
+   Debug::SwLog(LibrarySet_to_str, strOver(this), 0);
+}
+
+//------------------------------------------------------------------------------
+
 LibrarySet* LibrarySet::Union(const LibrarySet* rhs) const
 {
-   return OpError();
+   return OpError("|");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::UsedBy(bool self) const
 {
-   return OpError();
+   return OpError("ub");
 }
 
 //------------------------------------------------------------------------------
 
 LibrarySet* LibrarySet::Users(bool self) const
 {
-   return OpError();
+   return OpError("us");
 }
 }

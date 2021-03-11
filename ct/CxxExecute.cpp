@@ -240,7 +240,7 @@ void Context::EraseTracepoint
 
 //------------------------------------------------------------------------------
 
-const TypeName* Context::FindXrefItem(const string& name)
+TypeName* Context::FindXrefItem(const string& name)
 {
    //  The top frame is currently an InstanceFunction that is resolving any
    //  items pushed by the TemplateFunction in the frame below it.
@@ -411,7 +411,7 @@ void Context::PushXrefFrame(XrefUpdater updater)
 
 //------------------------------------------------------------------------------
 
-void Context::PushXrefItem(const TypeName* item)
+void Context::PushXrefItem(TypeName* item)
 {
    if(!XrefFrames_.empty())
    {
@@ -878,11 +878,11 @@ void ParseFrame::InsertLocal(CxxScoped* local)
 
    //  Delete any item with the same name that is defined in the same block.
    //
-   auto name = local->Name();
+   auto& name = local->Name();
    auto scope = local->GetScope();
    SymbolVector list;
 
-   ListSymbols(*name, locals_, list);
+   ListSymbols(name, locals_, list);
 
    for(auto s = list.cbegin(); s != list.cend(); ++s)
    {
@@ -892,7 +892,7 @@ void ParseFrame::InsertLocal(CxxScoped* local)
       }
    }
 
-   locals_.insert(LocalPair(Normalize(*name), local));
+   locals_.insert(LocalPair(Normalize(name), local));
 }
 
 //------------------------------------------------------------------------------
@@ -1202,7 +1202,7 @@ StackArg::StackArg(CxxToken* t, TypeName* name,
    }
    else
    {
-      if(*via.item->Name() == THIS_STR)
+      if(via.item->Name() == THIS_STR)
       {
          //  Tag this as a member of the context class, and tag it as
          //  read-only if "this" was read-only.
@@ -1328,7 +1328,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    //
    if(notMutable && notPointer)
    {
-      if((this->via_ == nullptr) || (*this->via_->Name() == THIS_STR))
+      if((this->via_ == nullptr) || (this->via_->Name() == THIS_STR))
       {
          ContextFunctionIsNonConst();
       }
@@ -1478,7 +1478,7 @@ void StackArg::ContextFunctionIsNonConst()
 
 bool StackArg::IsBool() const
 {
-   return (*item->Name() == BOOL_STR);
+   return (item->Name() == BOOL_STR);
 }
 
 //------------------------------------------------------------------------------
@@ -1494,7 +1494,7 @@ bool StackArg::IsDefaultCtor(const StackArgVector& args) const
    //
    auto cls = item->GetClass();
    if(cls == nullptr) return false;
-   if(*item->Name() != *cls->Name()) return false;
+   if(item->Name() != cls->Name()) return false;
 
    //  A default constructor has one argument ("this").  A default copy
    //  constructor has a second argument, namely a reference to the class
@@ -1779,7 +1779,7 @@ void StackArg::SetAutoType()
       return;
    }
 
-   auto expl = "Failed to set auto type for " + *item->Name();
+   auto expl = "Failed to set auto type for " + item->Name();
    Context::SwLog(StackArg_SetAutoType, expl, 0);
 }
 
@@ -1914,7 +1914,7 @@ void StackArg::SetNonConst(size_t index) const
 
    if(token->SetNonConst()) return;
 
-   auto expl = "const " + *token->Name() + " cannot be const";
+   auto expl = "const " + token->Name() + " cannot be const";
    Context::SwLog(StackArg_SetNonConst, expl, 0);
 }
 
@@ -2026,7 +2026,7 @@ void StackArg::WasWritten() const
 
    if(!mutable_ && (ptrs > 0 ? constptr_ : const_))
    {
-      auto expl = "Write to const " + *item->Name();
+      auto expl = "Write to const " + item->Name();
       Context::SwLog(StackArg_WasWritten, expl, 0);
    }
    else
@@ -2159,11 +2159,11 @@ XrefFrame::XrefFrame(XrefUpdater updater) : updater_(updater) { }
 
 //------------------------------------------------------------------------------
 
-const TypeName* XrefFrame::FindItem(const string& name) const
+TypeName* XrefFrame::FindItem(const string& name) const
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
-      if(*(*i)->Name() == name) return *i;
+      if((*i)->Name() == name) return *i;
    }
 
    return nullptr;
@@ -2171,7 +2171,7 @@ const TypeName* XrefFrame::FindItem(const string& name) const
 
 //------------------------------------------------------------------------------
 
-void XrefFrame::PushItem(const TypeName* item)
+void XrefFrame::PushItem(TypeName* item)
 {
    if(updater_ == TemplateFunction)
    {

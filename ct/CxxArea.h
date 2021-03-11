@@ -31,6 +31,7 @@
 #include "CxxFwd.h"
 #include "CxxNamed.h"
 #include "CxxScoped.h"
+#include "CxxToken.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -156,7 +157,7 @@ public:
 
    //  Overridden to add the area's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to log warnings associated with the area's declarations.
    //
@@ -166,6 +167,10 @@ public:
    //
    CxxArea* GetArea() const
       override { return const_cast< CxxArea* >(this); }
+
+   //  Adds the area's declarations to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
 
    //  Overridden to shrink containers.
    //
@@ -490,7 +495,7 @@ public:
 
    //  Overridden to add the class's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -538,6 +543,10 @@ public:
    //
    void GetConvertibleTypes(StackArgVector& types, bool expl) override;
 
+   //  Adds the class and its declarations to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
    //  Overridden to add the class to SYMBOLS.  The purpose of this function is
    //  to find a class that was resolved by a forward or friend declaration but
    //  whose definition should be #included.  If the class is already #included,
@@ -545,7 +554,7 @@ public:
    //  removing the #include for its definition when it isn't used directly in
    //  any other situation.
    //
-   void GetDirectClasses(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) override;
 
    //  Returns the current access control level when parsing the class.
    //
@@ -572,7 +581,7 @@ public:
    //  Overridden to update SYMBOLS with the type usage of each of the
    //  class's components.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to look at using statements that are local to the class.
    //
@@ -589,7 +598,7 @@ public:
 
    //  Overridden to return the class's name.
    //
-   const std::string* Name() const override { return name_->Name(); }
+   const std::string& Name() const override { return name_->Name(); }
 
    //  Overridden to create an argument when the class is used to access a
    //  constructor.
@@ -598,7 +607,7 @@ public:
 
    //  Overridden to record usage of the class.
    //
-   void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() override { AddUsage(); }
 
    //  Overridden to support class templates.
    //
@@ -800,7 +809,7 @@ public:
    //  template adds them itself because each template instance is the same
    //  (apart from its template arguments, which we would want to exclude).
    //
-   void AddToXref() const override { }
+   void AddToXref() override { }
 
    //  Overridden to return the class template's base class.
    //
@@ -846,7 +855,7 @@ public:
    //  that each of its components (class template and template arguments)
    //  is added individually.
    //
-   void GetDirectClasses(CxxUsageSets& symbols) const override { }
+   void GetDirectClasses(CxxUsageSets& symbols) override { }
 
    //  Overridden to return the instance's class template.
    //
@@ -858,7 +867,7 @@ public:
 
    //  Overridden to obtain usages for the class template.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to instantiate the class template instance.
    //
@@ -875,7 +884,7 @@ public:
 
    //  Overridden to record usage of the instance's template.
    //
-   void RecordUsage() const override { tmplt_->RecordUsage(); }
+   void RecordUsage() override { tmplt_->RecordUsage(); }
 
    //  Overridden to count references.
    //
@@ -996,7 +1005,7 @@ public:
 
    //  Overridden to return the namespace's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to preserve the location where the namespace first occurred.
    //

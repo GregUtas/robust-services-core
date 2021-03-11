@@ -20,16 +20,21 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeFileSet.h"
+#include <algorithm>
 #include <cstddef>
 #include <iosfwd>
+#include <iterator>
 #include <memory>
 #include <sstream>
-#include <vector>
 #include "CliThread.h"
 #include "CodeDir.h"
 #include "CodeDirSet.h"
 #include "CodeFile.h"
+#include "CodeItemSet.h"
 #include "CodeTypes.h"
+#include "Cxx.h"
+#include "CxxNamed.h"
+#include "CxxScoped.h"
 #include "Debug.h"
 #include "Editor.h"
 #include "Formatters.h"
@@ -49,6 +54,18 @@ using std::string;
 
 namespace CodeTools
 {
+bool IsSortedByFileLevel(const FileLevel& item1, const FileLevel& item2)
+{
+   if(item1.level < item2.level) return true;
+   if(item1.level > item2.level) return false;
+   auto result = strCompare(item1.file->Path(), item2.file->Path());
+   if(result == -1) return true;
+   if(result == 1) return false;
+   return (&item1 < &item2);
+}
+
+//==============================================================================
+
 CodeFileSet::CodeFileSet(const string& name, const LibItemSet* items) :
    CodeSet(name, items)
 {
@@ -247,7 +264,7 @@ word CodeFileSet::Countlines(string& result) const
       count += file->GetLexer().LineCount();
    }
 
-   result = result + std::to_string(count);
+   result += std::to_string(count);
    return 0;
 }
 
@@ -259,6 +276,31 @@ LibrarySet* CodeFileSet::Create
    Debug::ft("CodeFileSet.Create");
 
    return new CodeFileSet(name, items);
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* CodeFileSet::DeclaredBy() const
+{
+   Debug::ft("CodeFileSet.DeclaredBy");
+
+   auto& fileSet = Items();
+   auto result = new CodeItemSet(TemporaryName(), nullptr);
+   auto& declSet = result->Items();
+
+   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   {
+      std::set< CxxNamed* > items;
+      auto file = static_cast< CodeFile* >(*f);
+      file->GetDecls(items);
+
+      for(auto i = items.cbegin(); i != items.cend(); ++i)
+      {
+         declSet.insert(*i);
+      }
+   }
+
+   return result;
 }
 
 //------------------------------------------------------------------------------
@@ -311,6 +353,18 @@ LibrarySet* CodeFileSet::FileName(const LibrarySet* that) const
       }
    }
 
+   return result;
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* CodeFileSet::Files() const
+{
+   Debug::ft("CodeFileSet.Files");
+
+   //  Return the same set.
+   //
+   auto result = new CodeFileSet(TemporaryName(), &Items());
    return result;
 }
 
@@ -503,29 +557,6 @@ LibrarySet* CodeFileSet::Implements() const
 
 //------------------------------------------------------------------------------
 
-word CodeFileSet::List(ostream& stream, string& expl) const
-{
-   Debug::ft("CodeFileSet.List");
-
-   auto& fileSet = Items();
-
-   if(fileSet.empty())
-   {
-      stream << spaces(2) << EmptySet << CRLF;
-      return 0;
-   }
-
-   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
-   {
-      auto file = static_cast< CodeFile* >(*f);
-      stream << spaces(2) << file->Path() << CRLF;
-   }
-
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
 LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
 {
    Debug::ft("CodeFileSet.MatchString");
@@ -713,6 +744,40 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
 
 //------------------------------------------------------------------------------
 
+LibrarySet* CodeFileSet::ReferencedBy() const
+{
+   Debug::ft("CodeFileSet.ReferencedBy");
+
+   auto& fileSet = Items();
+   auto result = new CodeItemSet(TemporaryName(), nullptr);
+
+   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   {
+      auto file = static_cast< CodeFile* >(*f);
+      CxxUsageSets usages;
+      file->GetUsageInfo(usages);
+      result->CopyUsages(usages);
+   }
+
+   return result;
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* CodeFileSet::ReferencedIn(const LibrarySet* that) const
+{
+   Debug::ft("CodeFileSet.ReferencedIn");
+
+   auto declared = DeclaredBy();
+   auto referenced = that->ReferencedBy();
+   auto result = declared->Intersection(referenced);
+   declared->Release();
+   referenced->Release();
+   return result;
+}
+
+//------------------------------------------------------------------------------
+
 word CodeFileSet::Scan
    (ostream& stream, const string& pattern, string& expl) const
 {
@@ -753,23 +818,6 @@ word CodeFileSet::Scan
    }
 
    return 0;
-}
-
-//------------------------------------------------------------------------------
-
-word CodeFileSet::Show(string& result) const
-{
-   Debug::ft("CodeFileSet.Show");
-
-   auto& fileSet = Items();
-
-   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
-   {
-      auto file = static_cast< CodeFile* >(*f);
-      result = result + file->Name() + ", ";
-   }
-
-   return Shown(result);
 }
 
 //------------------------------------------------------------------------------
@@ -929,7 +977,27 @@ BuildOrder CodeFileSet::SortInBuildOrder() const
       }
    }
 
+   std::sort(order.begin(), order.end(), IsSortedByFileLevel);
    return order;
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFileSet::to_str(stringVector& strings, bool verbose) const
+{
+   Debug::ft("CodeFileSet.to_str");
+
+   auto& fileSet = Items();
+
+   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   {
+      auto file = static_cast< CodeFile* >(*f);
+
+      if(verbose)
+         strings.push_back(file->Path());
+      else
+         strings.push_back(file->Name());
+   }
 }
 
 //------------------------------------------------------------------------------

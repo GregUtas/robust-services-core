@@ -35,6 +35,10 @@
 
 namespace CodeTools
 {
+//  For lists of strings.
+//
+typedef std::vector< std::string > stringVector;
+
 //  C++ keyword strings.
 //
 extern NodeBase::fixed_string ALIGNAS_STR;

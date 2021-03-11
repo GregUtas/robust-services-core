@@ -40,7 +40,8 @@ using std::string;
 //
 namespace CodeTools
 {
-CodeDir::CodeDir(const string& name, const string& path) : LibraryItem(name),
+CodeDir::CodeDir(const string& name, const string& path) :
+   name_(name),
    path_(path)
 {
    Debug::ft("CodeDir.ctor");
@@ -79,7 +80,7 @@ void CodeDir::Display(ostream& stream,
 {
    LibraryItem::Display(stream, prefix, options);
 
-   stream << prefix << "did  : " << did_.to_str() << CRLF;
+   stream << prefix << "name : " << name_ << CRLF;
    stream << prefix << "path : " << path_ << CRLF;
 }
 
@@ -123,6 +124,21 @@ word CodeDir::Extract(string& expl)
 
    expl = SuccessExpl;
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+void CodeDir::GetDecls(std::set< CxxNamed* >& items)
+{
+   Debug::ft("CodeDir.GetDecls");
+
+   auto& files = Singleton< Library >::Instance()->Files().Items();
+
+   for(auto f = files.cbegin(); f != files.cend(); ++f)
+   {
+      auto file = static_cast< CodeFile* >(*f);
+      file->GetDecls(items);
+   }
 }
 
 //------------------------------------------------------------------------------

@@ -28,6 +28,7 @@
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
+#include "CxxString.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -78,7 +79,7 @@ bool Block::AddStatement(CxxToken* s)
 
 //------------------------------------------------------------------------------
 
-void Block::AddToXref() const
+void Block::AddToXref()
 {
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
@@ -256,7 +257,7 @@ Function* Block::GetFunction() const
 
 //------------------------------------------------------------------------------
 
-void Block::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Block::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
@@ -427,7 +428,7 @@ ClassData::~ClassData()
 
 //------------------------------------------------------------------------------
 
-void ClassData::AddToXref() const
+void ClassData::AddToXref()
 {
    Data::AddToXref();
 
@@ -660,7 +661,14 @@ bool ClassData::EnterScope()
 
 //------------------------------------------------------------------------------
 
-void ClassData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void ClassData::GetDecls(std::set< CxxNamed* >& items)
+{
+   if(IsDecl()) items.insert(this);
+}
+
+//------------------------------------------------------------------------------
+
+void ClassData::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    Data::GetUsages(file, symbols);
 
@@ -882,7 +890,7 @@ TemplateParm* CxxScope::NameToTemplateParm(const string& name) const
 
          for(auto p = parms->cbegin(); p != parms->cend(); ++p)
          {
-            if(*(*p)->Name() == name) return p->get();
+            if((*p)->Name() == name) return p->get();
          }
       }
 
@@ -957,7 +965,7 @@ void CxxScope::ReplaceTemplateParms
 
    for(size_t i = 0; i < tmpltParms->size(); ++i)
    {
-      auto& parmName = *tmpltParms->at(i)->Name();
+      auto& parmName = tmpltParms->at(i)->Name();
 
       //  If the instance arguments ran out, use template parameter defaults.
       //
@@ -1053,7 +1061,7 @@ Data::~Data()
 
 //------------------------------------------------------------------------------
 
-void Data::AddToXref() const
+void Data::AddToXref()
 {
    if(alignas_ != nullptr) alignas_->AddToXref();
    spec_->AddToXref();
@@ -1251,7 +1259,7 @@ void Data::GetInitName(QualNamePtr& qualName) const
 {
    Debug::ft("Data.GetInitName");
 
-   qualName.reset(new QualName(*Name()));
+   qualName.reset(new QualName(Name()));
 }
 
 //------------------------------------------------------------------------------
@@ -1288,7 +1296,7 @@ TypeName* Data::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
-void Data::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Data::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
    spec_->GetUsages(file, symbols);
@@ -1410,13 +1418,13 @@ bool Data::InitByExpr(CxxToken* expr)
          }
          else
          {
-            auto expl = "Invalid arguments for " + *spec_->Name();
+            auto expl = "Invalid arguments for " + spec_->Name();
             Context::SwLog(Data_InitByExpr, expl, op->ArgsSize());
          }
       }
       else
       {
-         auto expl = "Invalid expression for " + *spec_->Name();
+         auto expl = "Invalid expression for " + spec_->Name();
          Context::SwLog(Data_InitByExpr, expl, expr->Type());
       }
    }
@@ -1600,7 +1608,7 @@ bool Data::WasWritten(const StackArg* arg, bool direct, bool indirect)
       if(indirect)
       {
          string expl("Indirection through ");
-         expl += *arg->item->Name();
+         expl += arg->item->Name();
 
          Context::SwLog(Data_WasWritten, expl, 0);
       }
@@ -1645,7 +1653,7 @@ FuncData::~FuncData()
 
 //------------------------------------------------------------------------------
 
-void FuncData::AddToXref() const
+void FuncData::AddToXref()
 {
    Data::AddToXref();
 
@@ -1768,7 +1776,7 @@ void FuncData::ExitBlock() const
 
 //------------------------------------------------------------------------------
 
-void FuncData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void FuncData::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    Data::GetUsages(file, symbols);
 
@@ -1978,7 +1986,7 @@ void Function::AddThisArg()
    //  defined as const.  Include the template parameters in the name of a
    //  function template's "this" argument.
    //
-   TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
+   TypeSpecPtr typeSpec(new DataSpec(cls->Name().c_str()));
    typeSpec->CopyContext(this);
    typeSpec->Tags()->SetConst(const_);
    typeSpec->Tags()->SetPointer(0, true, false);
@@ -1994,7 +2002,7 @@ void Function::AddThisArg()
 
 //------------------------------------------------------------------------------
 
-void Function::AddToXref() const
+void Function::AddToXref()
 {
    if(deleted_) return;
 
@@ -2050,7 +2058,10 @@ void Function::AddToXref() const
       }
    }
 
-   if(call_ != nullptr) call_->AddToXref();
+   if(call_ != nullptr)
+   {
+      call_->AddToXref();
+   }
 
    for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
    {
@@ -2114,19 +2125,19 @@ void Function::AdjustRecvConstness
       return;
    }
 
-   if(*recvArg.item->Name() != THIS_STR) return;
+   if(recvArg.item->Name() != THIS_STR) return;
 
    auto target = RemoveConsts(TypeString(true));
-   auto list = GetArea()->FuncVector(*Name());
+   auto list = GetArea()->FuncVector(Name());
 
    for(size_t i = 0; i < list->size(); ++i)
    {
       auto func = list->at(i).get();
       if(!func->IsConst()) continue;
 
-      auto& temp = *func->Name();
+      auto& temp = func->Name();
 
-      if(temp == *Name())
+      if(temp == Name())
       {
          auto actual = RemoveConsts(func->TypeString(true));
 
@@ -2338,7 +2349,7 @@ Function* Function::CanInvokeWith
 
       for(size_t i = 0; i < parms->size(); ++i)
       {
-         tmpltParms.push_back(*parms->at(i)->Name());
+         tmpltParms.push_back(parms->at(i)->Name());
          tmpltArgs.push_back(EMPTY_STR);
       }
    }
@@ -2507,7 +2518,7 @@ void Function::CheckArgs() const
 
       for(size_t i = 0; i < n; ++i)
       {
-         if(*args_[i]->Name() != *root->args_[i]->Name())
+         if(args_[i]->Name() != root->args_[i]->Name())
          {
             LogToArg(OverrideRenamesArgument, i);
          }
@@ -2517,7 +2528,7 @@ void Function::CheckArgs() const
       {
          for(size_t i = 0; i < n; ++i)
          {
-            if(*mate_->args_[i]->Name() != *root->args_[i]->Name())
+            if(mate_->args_[i]->Name() != root->args_[i]->Name())
             {
                mate_->LogToArg(OverrideRenamesArgument, i);
             }
@@ -2536,7 +2547,7 @@ void Function::CheckArgs() const
    {
       for(size_t i = 0; i < n; ++i)
       {
-         if(*args_[i]->Name() != *mate_->args_[i]->Name())
+         if(args_[i]->Name() != mate_->args_[i]->Name())
          {
             mate_->LogToArg(DefinitionRenamesArgument, i);
          }
@@ -2735,7 +2746,7 @@ void Function::CheckCtor() const
    for(size_t i = 0; i < mems.size(); ++i)
    {
       auto mem = mems.at(i).get();
-      auto data = cls->FindData(*mem->Name());
+      auto data = cls->FindData(mem->Name());
 
       for(size_t j = 0; j < items.size(); ++j)
       {
@@ -2801,7 +2812,7 @@ bool Function::CheckDebugName(const string& str) const
    auto name = DebugName();
    auto scope = GetScope()->Name();
 
-   if(scope->empty())
+   if(scope.empty())
    {
       if(str.find(name) != 0) return false;
       auto size = name.size();
@@ -2811,9 +2822,9 @@ bool Function::CheckDebugName(const string& str) const
 
    auto dot = str.find('.');
    if(dot == string::npos) return false;
-   if(str.find(*scope) != 0) return false;
+   if(str.find(scope) != 0) return false;
    if(str.find(name, dot) != dot + 1) return false;
-   auto size = scope->size() + 1 + name.size();
+   auto size = scope.size() + 1 + name.size();
    if(str.size() == size) return true;
    return (LeftPunctuation.find(str[size]) != string::npos);
 }
@@ -2913,13 +2924,13 @@ void Function::CheckIfCouldBeConst() const
    //  and that takes the same arguments).  If so, it can only differ in
    //  constness, which prevents this function from being const.
    //
-   auto list = GetClass()->FuncVector(*Name());
+   auto list = GetClass()->FuncVector(Name());
 
    for(auto f = list->cbegin(); f != list->cend(); ++f)
    {
       auto func = f->get();
 
-      if((func != this) && (*func->Name() == *Name())) return;
+      if((func != this) && (func->Name() == Name())) return;
    }
 
    Log(FunctionCouldBeConst);
@@ -3180,7 +3191,7 @@ string Function::DebugName() const
       return "dtor";
    }
 
-   return *Name();
+   return Name();
 }
 
 //------------------------------------------------------------------------------
@@ -3619,7 +3630,7 @@ Function* Function::FindBaseFunc() const
          {
             auto oper = o->get();
 
-            if((*oper->Name() == *this->Name()) && SignatureMatches(oper, true))
+            if((oper->Name() == this->Name()) && SignatureMatches(oper, true))
             {
                return oper;
             }
@@ -3636,7 +3647,7 @@ Function* Function::FindBaseFunc() const
          {
             auto func = f->get();
 
-            if((*func->Name() == *this->Name()) && SignatureMatches(func, true))
+            if((func->Name() == this->Name()) && SignatureMatches(func, true))
             {
                return (func->virtual_ ? func : nullptr);
             }
@@ -3732,7 +3743,7 @@ CxxScoped* Function::FindTemplateAnalog(const CxxNamed* item) const
       //
       size_t n = 0;
       if(!LocateItem(item, n)) return nullptr;
-      return func->FindNthItem(*item->Name(), n);
+      return func->FindNthItem(item->Name(), n);
    }
 
    default:
@@ -3841,7 +3852,7 @@ FunctionType Function::FuncType() const
 {
    if(Operator() != Cxx::NIL_OPERATOR) return FuncOperator;
    if(spec_ != nullptr) return FuncStandard;
-   if(Name()->find('~') != string::npos) return FuncDtor;
+   if(Name().find('~') != string::npos) return FuncDtor;
    if(parms_ != nullptr) return FuncStandard;
    return FuncCtor;
 }
@@ -3859,6 +3870,13 @@ Cxx::Access Function::GetAccess() const
 CodeFile* Function::GetDeclFile() const
 {
    return (defn_ ? mate_->GetFile() : GetFile());
+}
+
+//------------------------------------------------------------------------------
+
+void Function::GetDecls(std::set< CxxNamed* >& items)
+{
+   if(IsDecl()) items.insert(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3948,7 +3966,7 @@ TemplateType Function::GetTemplateType() const
 
 //------------------------------------------------------------------------------
 
-void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(deleted_) return;
 
@@ -4179,7 +4197,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    //  If it has already been instantiated, return it.
    //
    auto ts = type->TypeString(true);
-   auto instName = *Name() + ts;
+   auto instName = Name() + ts;
    RemoveRefs(instName);
    auto area = GetArea();
    auto func = area->FindFunc(instName, nullptr, false, nullptr, nullptr);
@@ -4277,7 +4295,7 @@ Function* Function::InstantiateFunction(stringVector& tmpltArgs) const
 
    if(tmpltArgs.size() != parms->size())
    {
-      auto expl = "Invalid number of template arguments for " + *Name();
+      auto expl = "Invalid number of template arguments for " + Name();
       Context::SwLog(Function_InstantiateFunction2, expl, tmpltArgs.size());
       return nullptr;
    }
@@ -4289,7 +4307,7 @@ Function* Function::InstantiateFunction(stringVector& tmpltArgs) const
 
    //  Build the TypeName for the function instance and instantiate it.
    //
-   auto name = *Name();
+   auto name = Name();
    TypeNamePtr type(new TypeName(name));
    auto scope = Context::Scope();
    std::unique_ptr< Parser > parser(new Parser(scope));
@@ -4319,7 +4337,7 @@ void Function::Invoke(StackArgVector* args)
 
    if(size1 > size2)
    {
-      auto expl = "Too many arguments for " + *Name();
+      auto expl = "Too many arguments for " + Name();
       Context::SwLog(Function_Invoke, expl, size1 - size2);
       size1 = size2;
    }
@@ -4594,7 +4612,7 @@ void Function::ItemAccessed(const CxxNamed* item, const StackArg* via)
    //  public, and it is (implicitly) declared in the function, so it is about
    //  to escape detection.
    //
-   if(*item->Name() == THIS_STR)
+   if(item->Name() == THIS_STR)
    {
       SetNonPublic();
       SetNonStatic();
@@ -4789,7 +4807,7 @@ void Function::PushThisArg(StackArgVector& args) const
 
 //------------------------------------------------------------------------------
 
-void Function::RecordUsage() const
+void Function::RecordUsage()
 {
    Debug::ft("Function.RecordUsage");
 
@@ -5049,13 +5067,13 @@ string Function::TypeString(bool arg) const
       switch(ft)
       {
       case FuncCtor:
-         ts = *GetClass()->Name() + '*';
+         ts = GetClass()->Name() + '*';
          break;
       case FuncDtor:
          ts = VOID_STR;
          break;
       default:
-         auto expl = "Return type not found for " + *Name();
+         auto expl = "Return type not found for " + Name();
          Context::SwLog(Function_TypeString, expl, ft);
          return ERROR_STR;
       }
@@ -5067,7 +5085,7 @@ string Function::TypeString(bool arg) const
    //
    if(!arg)
    {
-      ts += SPACE + Prefix(GetScope()->TypeString(false)) + *Name();
+      ts += SPACE + Prefix(GetScope()->TypeString(false)) + Name();
    }
 
    //  Append the function's argument types.
@@ -5134,7 +5152,7 @@ void Function::UpdateThisArg(StackArgVector& args) const
                auto pos = Context::GetPos();
                auto item = static_cast< CxxNamed* >(args.front().item);
                file->LogPos
-                  (pos, StaticFunctionViaMember, item, 0, *GetClass()->Name());
+                  (pos, StaticFunctionViaMember, item, 0, GetClass()->Name());
             }
          }
 
@@ -5235,7 +5253,7 @@ string Function::XrefName(bool templates) const
 {
    auto name = CxxScoped::XrefName(templates);
 
-   if(!Singleton< CxxSymbols >::Instance()->IsUniqueName(GetScope(), *Name()))
+   if(!Singleton< CxxSymbols >::Instance()->IsUniqueName(GetScope(), Name()))
    {
       std::ostringstream stream;
       Flags options(FQ_Mask);
@@ -5255,6 +5273,44 @@ string Function::XrefName(bool templates) const
    }
 
    return name;
+}
+
+//==============================================================================
+
+SpaceDefn::SpaceDefn(const Namespace* ns) :
+   space_(ns)
+{
+   Debug::ft("SpaceDefn.ctor");
+
+   CxxStats::Incr(CxxStats::SPACE_DEFN);
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceDefn::AddToXref()
+{
+   space_->AddReference(this);
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceDefn::GetDecls(std::set< CxxNamed* >& items)
+{
+   items.insert(this);
+}
+
+//------------------------------------------------------------------------------
+
+const std::string& SpaceDefn::Name() const
+{
+   return space_->Name();
+}
+
+//------------------------------------------------------------------------------
+
+string SpaceDefn::ScopedName(bool templates) const
+{
+   return space_->ScopedName(templates);
 }
 
 //==============================================================================
@@ -5651,7 +5707,7 @@ bool SpaceData::EnterScope()
    //  of previously declared data (i.e. class static data or
    //  data that was declared extern).
    //
-   auto decl = GetArea()->FindData(*Name());
+   auto decl = GetArea()->FindData(Name());
    auto defn = ((decl != nullptr) && decl->IsPreviousDeclOf(this));
 
    if(defn)
@@ -5662,6 +5718,13 @@ bool SpaceData::EnterScope()
    if(defn || AtFileScope()) GetFile()->InsertData(this);
    ExecuteInit(true);
    return !defn;
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceData::GetDecls(std::set< CxxNamed* >& items)
+{
+   if(IsDecl()) items.insert(this);
 }
 
 //------------------------------------------------------------------------------

@@ -32,6 +32,7 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -591,11 +592,11 @@ public:
    //  resolved by a template instance so that it can be added to the
    //  cross-reference.
    //
-   void PushItem(const TypeName* item);
+   void PushItem(TypeName* item);
 
    //  Returns any unresolved item that matches NAME.
    //
-   const TypeName* FindItem(const std::string& name) const;
+   TypeName* FindItem(const std::string& name) const;
 private:
    //  Where the item that is updating the cross-reference appears.
    //
@@ -603,7 +604,7 @@ private:
 
    //  The items that need to be resolved for the function.
    //
-   std::vector< const TypeName* > items_;
+   std::vector< TypeName* > items_;
 };
 
 //------------------------------------------------------------------------------
@@ -826,11 +827,11 @@ public:
 
    //  Adds ITEM to those that the current function needs to resolve.
    //
-   static void PushXrefItem(const TypeName* item);
+   static void PushXrefItem(TypeName* item);
 
    //  Returns any unresolved item that matches NAME.
    //
-   static const TypeName* FindXrefItem(const std::string& name);
+   static TypeName* FindXrefItem(const std::string& name);
 
    //  Returns true if the option identified by OPT is on.
    //

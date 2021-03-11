@@ -38,7 +38,6 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxString.h"
-#include "CxxToken.h"
 #include "Debug.h"
 #include "Duration.h"
 #include "Formatters.h"
@@ -72,6 +71,32 @@ const string BackChars = "$%@!>\"";
 
 //------------------------------------------------------------------------------
 //
+//  Returns true if ITEM1 and ITEM2 appear in the same statement: specifically,
+//  if a semicolon does not appear between their positions.
+//
+bool AreInSameStatement(const CxxNamed* item1, const CxxNamed* item2)
+{
+   if((item1 != nullptr) && (item2 != nullptr))
+   {
+      auto file1 = item1->GetFile();
+      auto file2 = item2->GetFile();
+      if(file1 != file2) return false;
+
+      auto pos1 = item1->GetPos();
+      auto pos2 = item2->GetPos();
+      if(pos1 == pos2) return true;
+
+      auto& editor = file1->GetEditor();
+      auto begin = (pos1 < pos2 ? pos1 : pos2);
+      auto end = (pos1 > pos2 ? pos1 : pos2);
+      return (editor.FindFirstOf(begin, ";") > end);
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Returns an unquoted string (FLIT) and fn_name identifier (FVAR) that are
 //  suitable for invoking Debug::ft.
 //
@@ -81,7 +106,7 @@ void DebugFtNames(const Function* func, string& flit, string& fvar)
 
    //  Get the function's name and the scope in which it appears.
    //
-   auto sname = *func->GetScope()->Name();
+   auto sname = func->GetScope()->Name();
    auto fname = func->DebugName();
 
    flit = sname;
@@ -190,7 +215,7 @@ CodeFile* FindFuncDefnFile(CliThread& cli, const Class* cls, const string& name)
    {
       std::ostringstream prompt;
       prompt << FilePrompt << CRLF << spaces(2);
-      prompt << *cls->Name() << SCOPE_STR << name;
+      prompt << cls->Name() << SCOPE_STR << name;
       prompt << " ('s' to skip this item): ";
       auto fileName = cli.StrPrompt(prompt.str());
       if(fileName == "s") return nullptr;
@@ -487,10 +512,10 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    //
    auto index = decl->LogOffsetToArgIndex(log.offset_);
    string argName;
-   auto declName = *decl->GetArgs().at(index)->Name();
+   auto declName = decl->GetArgs().at(index)->Name();
    string defnName;
-   if(defn != nullptr) defnName = *defn->GetArgs().at(index)->Name();
-   if(root != nullptr) argName = *root->GetArgs().at(index)->Name();
+   if(defn != nullptr) defnName = defn->GetArgs().at(index)->Name();
+   if(root != nullptr) argName = root->GetArgs().at(index)->Name();
    if(argName.empty()) argName = declName;
    if(argName.empty()) argName = defnName;
    if(argName.empty()) return NotFound(expl, "Candidate argument name");
@@ -1460,28 +1485,20 @@ word Editor::EraseData
    //
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {
+      if(AreInSameStatement(decl, *r)) continue;
+      if(AreInSameStatement(defn, *r)) continue;
+
       auto file = (*r)->GetFile();
-      auto pos = (*r)->GetPos();
-
-      if((file == decl->GetFile()) && (pos == decl->GetPos()))
-         continue;
-
-      if(defn != nullptr)
-      {
-         if((file == defn->GetFile()) && (pos == defn->GetPos()))
-            continue;
-      }
-
       auto& editor = file->GetEditor();
 
       if(expl.empty())
       {
          editor.EraseCode(*r, expl);
+
          if(!expl.empty())
          {
             if(expl.back() == CRLF) expl.pop_back();
-            expl += " (" + file->Name() + ", line ";
-            expl += std::to_string(file->GetLexer().GetLineNum(pos)) += ")\n";
+            expl += " (" + (*r)->strLocation() + ")\n";
          }
       }
 
@@ -1975,7 +1992,7 @@ size_t Editor::FindFuncDeclLoc
          case FuncOther:
             if((*f)->IsOverride())
             {
-               if((*f)->Name()->compare(name) > 0)
+               if((*f)->Name().compare(name) > 0)
                {
                   next = f->get();
                }
@@ -2071,7 +2088,7 @@ size_t Editor::FindFuncDefnLoc(const CodeFile* file, const Class* cls,
       }
 
       auto currName = (*f)->Name();
-      auto sort = currName->compare(name);
+      auto sort = currName.compare(name);
 
       if(sort > 0)
       {
@@ -2081,7 +2098,7 @@ size_t Editor::FindFuncDefnLoc(const CodeFile* file, const Class* cls,
       else if(sort < 0)
       {
          if(special ||
-            (prev == nullptr) || (currName->compare(*prev->Name()) > 0))
+            (prev == nullptr) || (currName.compare(prev->Name()) > 0))
          {
             prev = (*f)->GetDefn();
          }
@@ -2192,7 +2209,7 @@ size_t Editor::FindSpecialFuncLoc
 
 //------------------------------------------------------------------------------
 
-CxxNamedSet Editor::FindUsingReferents(const CxxNamed* item) const
+CxxNamedSet Editor::FindUsingReferents(CxxNamed* item) const
 {
    Debug::ft("Editor.FindUsingReferents");
 
@@ -2844,7 +2861,7 @@ word Editor::InitByCtorCall(const CodeWarning& log, string& expl)
    if(begin == string::npos) return NotFound(expl, "Initialization statement");
    auto first = LineFindFirst(begin);
    if(first == string::npos) return NotFound(expl, "Start of code");
-   auto name = FindWord(first, *log.item_->Name());
+   auto name = FindWord(first, log.item_->Name());
    if(name == string::npos) return NotFound(expl, "Variable name");
    Erase(first, name - first - 1);
 
@@ -3141,7 +3158,7 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
    if(pos == string::npos) return NotFound(expl, "Function's class");
 
    auto code = spaces(attrs.indent);
-   auto className = *log.item_->Name();
+   auto className = log.item_->Name();
 
    switch(attrs.role)
    {
@@ -3530,7 +3547,7 @@ void Editor::InsertPatchDefn
    InsertLine(pos, "}");
 
    auto base = cls->BaseClass();
-   auto code = *base->Name();
+   auto code = base->Name();
    code.append(SCOPE_STR);
    code.append(PatchInvocation);
    code.push_back(';');
@@ -3540,7 +3557,7 @@ void Editor::InsertPatchDefn
 
    code = PatchReturn;
    code.push_back(SPACE);
-   code.append(*cls->Name());
+   code.append(cls->Name());
    code.append(SCOPE_STR);
    code.append(PatchSignature);
    InsertLine(pos, code);
@@ -3844,7 +3861,7 @@ void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
    //  Within ITEM, prefix NS wherever SYMBOL appears as an identifier.
    //
    const Namespace* ns = ref->GetSpace();
-   auto symbol = ref->Name();
+   auto symbol = &ref->Name();
 
    switch(ref->Type())
    {
@@ -3856,7 +3873,7 @@ void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
       {
          auto tmplt = ref->GetTemplate();
          ns = tmplt->GetSpace();
-         symbol = tmplt->Name();
+         symbol = &tmplt->Name();
       }
    }
 
@@ -3890,7 +3907,7 @@ void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
 
 //------------------------------------------------------------------------------
 
-void Editor::QualifyUsings(const CxxNamed* item)
+void Editor::QualifyUsings(CxxNamed* item)
 {
    Debug::ft("Editor.QualifyUsings");
 
@@ -4310,7 +4327,7 @@ word Editor::TagAsConstPointer(const CodeWarning& log, string& expl)
    //
    auto data = log.item_->GetPos();
    if(data == string::npos) return NotFound(expl, "Data member");
-   auto name = FindWord(data, *log.item_->Name());
+   auto name = FindWord(data, log.item_->Name());
    if(name == string::npos) return NotFound(expl, "Member name");
    auto ptr = Rfind(name, "*");
    if(ptr == string::npos) return NotFound(expl, "Pointer tag");

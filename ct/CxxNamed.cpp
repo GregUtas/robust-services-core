@@ -32,6 +32,7 @@
 #include "CxxScoped.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
+#include "Formatters.h"
 #include "Lexer.h"
 #include "Parser.h"
 #include "Singleton.h"
@@ -136,7 +137,7 @@ void CxxNamed::Accessed(const StackArg* via) const
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::AddUsage() const
+void CxxNamed::AddUsage()
 {
    Debug::ft("CxxNamed.AddUsage");
 
@@ -184,7 +185,7 @@ void CxxNamed::DisplayReferent(ostream& stream, bool fq) const
    else
    {
       stream << ref->GetFile()->Name();
-      if(!fq) stream << ": " << *ref->Name();
+      if(!fq) stream << ": " << ref->Name();
    }
 }
 
@@ -230,7 +231,7 @@ Class* CxxNamed::GetClass() const
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::GetDirectClasses(CxxUsageSets& symbols) const
+void CxxNamed::GetDirectClasses(CxxUsageSets& symbols)
 {
    Debug::ft("CxxNamed.GetDirectClasses");
 
@@ -347,7 +348,7 @@ StackArg CxxNamed::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 
    //  This should only be invoked on ClassData.
    //
-   auto expl = "Unexpected member selection by " + *via.item->Name();
+   auto expl = "Unexpected member selection by " + via.item->Name();
    Context::SwLog(CxxNamed_MemberToArg, expl, op);
 
    return NameToArg(op, nullptr);
@@ -397,7 +398,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
       //
       if(qname->Size() == 1)
       {
-         item = Context::FindLocal(*Name(), view);
+         item = Context::FindLocal(Name(), view);
 
          if(item != nullptr)
          {
@@ -409,7 +410,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
       //  Start with the first name in the qualified name.  Return if
       //  it refers to itself, which can occur for a friend declaration.
       //
-      name = *qname->At(0)->Name();
+      name = qname->At(0)->Name();
       item = syms->FindSymbol(file, scope, name, selector, view);
       qname->SetReferentN(0, item, view);
       if(item == this) return item;
@@ -438,7 +439,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          if(idx >= size) return item;
          space = static_cast< Namespace* >(item);
          if(!name.empty()) name += SCOPE_STR;
-         name += *qname->At(idx)->Name();
+         name += qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -487,7 +488,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          //  when TYPE is a namespace.
          //
          if(idx >= size) return item;
-         name = *qname->At(idx)->Name();
+         name = qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -513,7 +514,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          //  else return the enum itself.
          //
          if(idx >= size) return item;
-         name = *qname->At(idx)->Name();
+         name = qname->At(idx)->Name();
          item = static_cast< Enum* >(item)->FindEnumerator(name);
          *view = DeclaredLocally;
          qname->SetReferentN(idx, item, view);
@@ -648,6 +649,26 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
 
 //------------------------------------------------------------------------------
 
+string CxxNamed::to_str() const
+{
+   std::ostringstream stream;
+
+   //  If this isn't the global namespace, remove any leading scope
+   //  resolution operator.
+   //
+   auto name = ScopedName(true);
+   if((name.compare(0, 2, SCOPE_STR) == 0) && (name.size() > 2))
+   {
+      name.erase(0, 2);
+   }
+
+   stream << name << " @ " << strLocation();
+   stream << " [" << strClass(this, false) << ']';
+   return stream.str();
+}
+
+//------------------------------------------------------------------------------
+
 void CxxNamed::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -729,7 +750,7 @@ void DataSpec::AddArray(ArraySpecPtr& array)
 
 //------------------------------------------------------------------------------
 
-void DataSpec::AddToXref() const
+void DataSpec::AddToXref()
 {
    if(IsAutoDecl()) return;
 
@@ -889,7 +910,7 @@ void DataSpec::EnteringScope(const CxxScope* scope)
 
    Context::SetPos(GetLoc());
 
-   if(scope->NameToTemplateParm(*Name()) != nullptr)
+   if(scope->NameToTemplateParm(Name()) != nullptr)
    {
       SetTemplateRole(TemplateParameter);
    }
@@ -995,7 +1016,7 @@ TypeTags DataSpec::GetAllTags() const
 
 //------------------------------------------------------------------------------
 
-void DataSpec::GetDirectClasses(CxxUsageSets& symbols) const
+void DataSpec::GetDirectClasses(CxxUsageSets& symbols)
 {
    Debug::ft("DataSpec.GetDirectClasses");
 
@@ -1063,7 +1084,7 @@ TypeSpec* DataSpec::GetTypeSpec() const
 
 //------------------------------------------------------------------------------
 
-void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    //  Don't obtain usages for an auto type.  If the type ends up being
    //  used to invoke a function, for example, this usage will be noted.
@@ -1194,7 +1215,7 @@ bool DataSpec::IsAuto() const
 
 bool DataSpec::IsAutoDecl() const
 {
-   return (*Name() == AUTO_STR);
+   return (Name() == AUTO_STR);
 }
 
 //------------------------------------------------------------------------------
@@ -1980,7 +2001,7 @@ QualName::~QualName()
 
 //------------------------------------------------------------------------------
 
-void QualName::AddToXref() const
+void QualName::AddToXref()
 {
    for(auto n = First(); n != nullptr; n = n->Next())
    {
@@ -2030,7 +2051,7 @@ bool QualName::CheckCtorDefn() const
 
    auto size = Size();
    if(size <= 1) return false;
-   return (*At(size - 1)->Name() == *At(size - 2)->Name());
+   return (At(size - 1)->Name() == At(size - 2)->Name());
 }
 
 //------------------------------------------------------------------------------
@@ -2094,7 +2115,7 @@ void QualName::EnterBlock()
    Debug::ft("QualName.EnterBlock");
 
    Context::SetPos(GetLoc());
-   auto name = *Name();
+   auto& name = Name();
    if(name == NULL_STR) Log(UseOfNull);
 
    //  If a "." or "->" operator is waiting for its second argument,
@@ -2120,7 +2141,7 @@ void QualName::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void QualName::GetDirectClasses(CxxUsageSets& symbols) const
+void QualName::GetDirectClasses(CxxUsageSets& symbols)
 {
    Debug::ft("QualName.GetDirectClasses");
 
@@ -2189,7 +2210,7 @@ TypeName* QualName::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
-void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    //  Get the usages for each individual name.
    //
@@ -2226,7 +2247,8 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //
    if(type == Cxx::Function)
    {
-      ref = static_cast< Function* >(ref)->FindRootFunc();
+      auto func = static_cast< Function* >(ref);
+      if(func->FuncRole() == FuncOther) ref = func->FindRootFunc();
    }
 
    symbols.AddDirect(ref);
@@ -2490,37 +2512,6 @@ void QualName::UpdatePos
 
 //==============================================================================
 
-SpaceDefn::SpaceDefn(const Namespace* ns) :
-   space_(ns)
-{
-   Debug::ft("SpaceDefn.ctor");
-
-   CxxStats::Incr(CxxStats::SPACE_DEFN);
-}
-
-//------------------------------------------------------------------------------
-
-void SpaceDefn::AddToXref() const
-{
-   space_->AddReference(this);
-}
-
-//------------------------------------------------------------------------------
-
-const std::string* SpaceDefn::Name() const
-{
-   return space_->Name();
-}
-
-//------------------------------------------------------------------------------
-
-string SpaceDefn::ScopedName(bool templates) const
-{
-   return space_->ScopedName(templates);
-}
-
-//==============================================================================
-
 StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
    expr_(std::move(expr)),
    message_(std::move(message))
@@ -2532,7 +2523,7 @@ StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
 
 //------------------------------------------------------------------------------
 
-void StaticAssert::AddToXref() const
+void StaticAssert::AddToXref()
 {
    expr_->AddToXref();
 }
@@ -2563,7 +2554,7 @@ bool StaticAssert::EnterScope()
 
 //------------------------------------------------------------------------------
 
-void StaticAssert::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void StaticAssert::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    expr_->GetUsages(file, symbols);
 }
@@ -2596,155 +2587,6 @@ void StaticAssert::UpdatePos
    CxxNamed::UpdatePos(action, begin, count, from);
    expr_->UpdatePos(action, begin, count, from);
    if(message_ != nullptr) message_->UpdatePos(action, begin, count, from);
-}
-
-//==============================================================================
-
-TemplateParms::TemplateParms(TemplateParmPtr& parm)
-{
-   Debug::ft("TemplateParms.ctor");
-
-   parms_.push_back(std::move(parm));
-   CxxStats::Incr(CxxStats::TEMPLATE_PARMS);
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::AddParm(TemplateParmPtr& parm)
-{
-   Debug::ft("TemplateParms.AddParm");
-
-   parms_.push_back(std::move(parm));
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::AddToXref() const
-{
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->AddToXref();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::Check() const
-{
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->Check();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::EnterBlock()
-{
-   Debug::ft("TemplateParms.EnterBlock");
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->EnterBlock();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::EnterScope()
-{
-   Debug::ft("TemplateParms.EnterScope");
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->EnterScope();
-   }
-
-   //  Each template parameter added itself as a local so that it could
-   //  be resolved if used to specify a default value for a subsequent
-   //  template parameter.  Thus this hack to erase those locals...
-   //
-   ExitBlock();
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::ExitBlock() const
-{
-   Debug::ft("TemplateParms.ExitBlock");
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->ExitBlock();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
-{
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->GetUsages(file, symbols);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::Print(ostream& stream, const Flags& options) const
-{
-   stream << TEMPLATE_STR << '<';
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->Print(stream, options);
-      if(*p != parms_.back()) stream << ", ";
-   }
-
-   stream << "> ";
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::Shrink()
-{
-   CxxToken::Shrink();
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->Shrink();
-   }
-
-   auto size = parms_.capacity() * sizeof(TemplateParmPtr);
-   CxxStats::Vectors(CxxStats::TEMPLATE_PARMS, size);
-}
-
-//------------------------------------------------------------------------------
-
-string TemplateParms::TypeString(bool arg) const
-{
-   string ts = "<";
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      ts += (*p)->TypeString(false);
-      if(*p != parms_.back()) ts += ',';
-   }
-
-   return ts + '>';
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::UpdatePos
-   (EditorAction action, size_t begin, size_t count, size_t from) const
-{
-   CxxToken::UpdatePos(action, begin, count, from);
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->UpdatePos(action, begin, count, from);
-   }
 }
 
 //==============================================================================
@@ -2818,9 +2660,9 @@ void TypeName::AddTemplateArg(TypeSpecPtr& arg)
 
 //------------------------------------------------------------------------------
 
-void TypeName::AddToXref() const
+void TypeName::AddToXref()
 {
-   auto ref = ReferentDefn();
+   auto ref = Referent();
 
    if(ref != nullptr)
    {
@@ -2837,9 +2679,9 @@ void TypeName::AddToXref() const
 
          if(item != nullptr)
          {
-            if(*item->Name() == name_)
+            if(item->Name() == name_)
                item->AddReference(this);
-            else if((type_ != nullptr) && (*type_->Name() == name_))
+            else if((type_ != nullptr) && (type_->Name() == name_))
                type_->AddReference(this);
          }
       }
@@ -2858,6 +2700,11 @@ void TypeName::AddToXref() const
       {
          (*a)->AddToXref();
       }
+   }
+
+   if(type_ != nullptr)
+   {
+      type_->AddReference(this);
    }
 }
 
@@ -2917,7 +2764,7 @@ void TypeName::FindReferent()
 
 //------------------------------------------------------------------------------
 
-void TypeName::GetDirectClasses(CxxUsageSets& symbols) const
+void TypeName::GetDirectClasses(CxxUsageSets& symbols)
 {
    Debug::ft("TypeName.GetDirectClasses");
 
@@ -2974,7 +2821,7 @@ TypeName* TypeName::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
-void TypeName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void TypeName::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(direct_) GetDirectClasses(symbols);
 
@@ -3013,7 +2860,7 @@ bool TypeName::HasTemplateParmFor(const CxxScope* scope) const
    {
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
-         if(scope->NameToTemplateParm(*(*a)->Name()) != nullptr) return true;
+         if(scope->NameToTemplateParm((*a)->Name()) != nullptr) return true;
       }
    }
 
@@ -3122,7 +2969,7 @@ bool TypeName::NamesReferToArgs(const NameVector& names,
 void TypeName::Print(ostream& stream, const Flags& options) const
 {
    if(scoped_) stream << SCOPE_STR;
-   stream << *Name();
+   stream << Name();
 
    if(args_ != nullptr)
    {
@@ -3248,7 +3095,7 @@ void TypeName::SetTemplateArgs(const TemplateParms* tparms)
 
    for(auto p = parms->cbegin(); p != parms->cend(); ++p)
    {
-      TypeSpecPtr spec(new DataSpec((*p)->Name()->c_str()));
+      TypeSpecPtr spec(new DataSpec((*p)->Name().c_str()));
       spec->CopyContext(this);
       AddTemplateArg(spec);
    }
@@ -3512,7 +3359,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
    }
    else if((match == Abridgeable) || (match == Promotable))
    {
-      if((*this->Name() == BOOL_STR) || that.IsBool())
+      if((this->Name() == BOOL_STR) || that.IsBool())
       {
          Context::Log(BoolMixedWithNumeric);
       }

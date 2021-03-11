@@ -30,6 +30,7 @@
 #include "Cxx.h"
 #include "CxxFwd.h"
 #include "Lexer.h"
+#include "LibraryTypes.h"
 #include "SysTime.h"
 #include "SysTypes.h"
 

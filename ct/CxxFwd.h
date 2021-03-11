@@ -26,7 +26,6 @@
 #include <set>
 #include <string>
 #include <vector>
-#include "Cxx.h"
 
 //------------------------------------------------------------------------------
 
@@ -43,7 +42,6 @@ class Block;
 class Class;
 class ClassData;
 class ClassInst;
-class CodeFile;
 class CxxArea;
 class CxxDirective;
 class CxxLocation;
@@ -187,7 +185,6 @@ typedef std::vector< Typedef* > TypedefVector;
 typedef std::vector< Using* > UsingVector;
 
 typedef std::set< std::string > stringSet;
-typedef std::set< Cxx::Keyword > KeywordSet;
-typedef std::set< const CxxNamed* > CxxNamedSet;
+typedef std::set< CxxNamed* > CxxNamedSet;
 }
 #endif

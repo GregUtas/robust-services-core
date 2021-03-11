@@ -20,22 +20,22 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeDirSet.h"
+#include <cstddef>
 #include <iomanip>
 #include <ios>
-#include <ostream>
+#include <iosfwd>
 #include <set>
+#include <sstream>
+#include <vector>
 #include "CodeDir.h"
 #include "CodeFile.h"
 #include "CodeFileSet.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Library.h"
-#include "NbCliParms.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
-using std::ostream;
 using std::setw;
 using std::string;
 
@@ -64,6 +64,18 @@ LibrarySet* CodeDirSet::Create
    Debug::ft("CodeDirSet.Create");
 
    return new CodeDirSet(name, items);
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* CodeDirSet::Directories() const
+{
+   Debug::ft("CodeDirSet.Directories");
+
+   //  Return the same set.
+   //
+   auto result = new CodeDirSet(TemporaryName(), &Items());
+   return result;
 }
 
 //------------------------------------------------------------------------------
@@ -97,42 +109,38 @@ LibrarySet* CodeDirSet::Files() const
 
 //------------------------------------------------------------------------------
 
-word CodeDirSet::List(ostream& stream, string& expl) const
+void CodeDirSet::to_str(stringVector& strings, bool verbose) const
 {
-   Debug::ft("CodeDirSet.List");
+   Debug::ft("CodeDirSet.to_str");
 
    auto& dirSet = Items();
 
-   if(dirSet.empty())
-   {
-      stream << spaces(2) << EmptySet << CRLF;
-      return 0;
-   }
+   size_t width = 0;
 
    for(auto d = dirSet.cbegin(); d != dirSet.cend(); ++d)
    {
       auto dir = static_cast< CodeDir* >(*d);
-      stream << spaces(2) << setw(12) << std::right << dir->Name();
-      stream << spaces(2) << std::left << dir->Path() << CRLF;
+      auto size = dir->Name().size();
+      if(size > width) width = size;
    }
 
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-word CodeDirSet::Show(string& result) const
-{
-   Debug::ft("CodeDirSet.Show");
-
-   auto& dirSet = Items();
+   auto indent = spaces(2);
 
    for(auto d = dirSet.cbegin(); d != dirSet.cend(); ++d)
    {
       auto dir = static_cast< CodeDir* >(*d);
-      result = result + dir->Name() + ", ";
-   }
 
-   return Shown(result);
+      if(verbose)
+      {
+         std::ostringstream stream;
+         stream << setw(width) << std::left << dir->Name();
+         stream << indent << dir->Path();
+         strings.push_back(stream.str());
+      }
+      else
+      {
+         strings.push_back(dir->Name());
+      }
+   }
 }
 }

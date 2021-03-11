@@ -84,10 +84,6 @@ private:
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   NodeBase::word List(std::ostream& stream, std::string& expl) const override;
-
-   //  Returns a non-zero value and updates EXPL with an explanation.
-   //
    NodeBase::word Parse
       (std::string& expl, const std::string& opts) const override;
 
@@ -100,13 +96,13 @@ private:
    NodeBase::word Scan(std::ostream& stream,
       const std::string& pattern, std::string& expl) const override;
 
-   //  Returns a non-zero value and updates RESULT with an explanation.
-   //
-   NodeBase::word Show(std::string& result) const override;
-
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
    NodeBase::word Sort(std::ostream& stream, std::string& expl) const override;
+
+   //  Returns a string for each item in the set.
+   //
+   void to_str(stringVector& strings, bool verbose) const override;
 
    //  The error to be reported.
    //

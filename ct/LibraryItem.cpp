@@ -20,19 +20,17 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LibraryItem.h"
-#include <ostream>
 #include "Debug.h"
 #include "SysTypes.h"
 
 using namespace NodeBase;
-using std::ostream;
 using std::string;
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
-LibraryItem::LibraryItem(const string& name) : name_(name)
+LibraryItem::LibraryItem()
 {
    Debug::ft("LibraryItem.ctor");
 }
@@ -46,11 +44,27 @@ LibraryItem::~LibraryItem()
 
 //------------------------------------------------------------------------------
 
-void LibraryItem::Display(ostream& stream,
-   const string& prefix, const Flags& options) const
-{
-   Base::Display(stream, prefix, options);
+fn_name LibraryItem_GetDecls = "LibraryItem.GetDecls";
 
-   stream << prefix << "name : " << name_ << CRLF;
+void LibraryItem::GetDecls(std::set< CxxNamed* >& items)
+{
+   Debug::ft(LibraryItem_GetDecls);
+
+   Debug::SwLog(LibraryItem_GetDecls, strOver(this), 0);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LibraryItem_Name = "LibraryItem.Name";
+
+const std::string& LibraryItem::Name() const
+{
+   Debug::ft(LibraryItem_Name);
+
+   static string null_string(EMPTY_STR);
+
+   if(null_string.empty()) null_string.clear();
+   Debug::SwLog(LibraryItem_Name, strOver(this), 0);
+   return null_string;
 }
 }

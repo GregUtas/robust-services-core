@@ -520,16 +520,24 @@ size_t NameCouldReferTo(const string& fqName, const string& name)
 {
    Debug::ft("CodeTools.NameCouldReferTo");
 
-   //  NAME must match a tail portion (or all of) fqName.  On a partial
-   //  match, check that the match actually reached a scope operator.
+   //  NAME must match a tail portion (or all of) fqName.  On a partial match,
+   //  check that the match directly followed a scope operator.  Finally, if
+   //  fqName has the form "Scope::Class::Class", a constructor call isn't to
+   //  "Class::Class", but simply to "Class", so back up to "Scope::".
    //
-   auto pos = fqName.rfind(name);
-   if(pos == string::npos) return string::npos;
+   auto pos1 = fqName.rfind(name);
+   if(pos1 == string::npos) return string::npos;
 
-   if(pos + name.size() == fqName.size())
+   if(pos1 + name.size() == fqName.size())
    {
-      if(pos == 0) return 0;
-      if(fqName.compare(pos - 2, 2, SCOPE_STR) == 0) return pos;
+      if(pos1 == 0) return 0;
+
+      if(fqName.compare(pos1 - 2, 2, SCOPE_STR) == 0)
+      {
+         auto className = fqName.substr(0, pos1 - 2);
+         auto pos2 = NameCouldReferTo(className, name);
+         return (pos2 != string::npos ? pos2 : pos1);
+      }
    }
 
    return string::npos;

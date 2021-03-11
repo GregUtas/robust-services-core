@@ -95,15 +95,9 @@ public:
    //
    virtual void AddFiles(LibItemSet& imSet) const;
 
-   //  Returns true if the item's cross-reference should be included in the
-   //  global cross-reference.  The default excludes items that are, or that
-   //  appear in, template instances.
-   //
-   virtual bool IncludeInXref() const;
-
    //  Records ITEM as a reference to this item.
    //
-   virtual void AddReference(const CxxNamed* item) const;
+   virtual void AddReference(CxxNamed* item) const;
 
    //  Returns the item's cross-reference (the items that reference it).
    //
@@ -278,7 +272,7 @@ public:
 
    //  Overridden to add the argument's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -320,7 +314,7 @@ public:
 
    //  Overridden to update SYMBOLS with the argument's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to indicate that inline display is supported.
    //
@@ -336,7 +330,7 @@ public:
 
    //  Overridden to return the argument's name, if any.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display the argument.
    //
@@ -431,7 +425,7 @@ public:
 
    //  Overridden to add the declaration's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Displays the base class declaration.
    //
@@ -459,7 +453,7 @@ public:
 
    //  Overridden to update SYMBOLS with the declaration's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to indicate that inline display is supported.
    //
@@ -467,7 +461,7 @@ public:
 
    //  Overridden to return the base class's name.
    //
-   const std::string* Name() const override { return name_->Name(); }
+   const std::string& Name() const override { return name_->Name(); }
 
    //  Overridden to return the base class's qualified name.
    //
@@ -541,7 +535,7 @@ public:
 
    //  Overridden to add the enumeration's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -575,6 +569,10 @@ public:
    //
    void ExitBlock() const override;
 
+   //  Adds the enumeration and its enumerators to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
    //  Overridden to indicate that an enum can be converted to an integer.
    //
    Numeric GetNumeric() const override { return Numeric::Enum; }
@@ -586,7 +584,7 @@ public:
 
    //  Overridden to update SYMBOLS with the enum's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to determine if the enum and all its enumerators are unused.
    //
@@ -594,11 +592,11 @@ public:
 
    //  Overridden to return the enumeration's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to record usage of the enumeration.
    //
-   void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() override { AddUsage(); }
 
    //  Overridden to count references.
    //
@@ -665,7 +663,7 @@ public:
 
    //  Overridden to add the enumerator's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -708,6 +706,10 @@ public:
    //
    void ExitBlock() const override;
 
+   //  Adds the enumerator to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
    //  Overridden to indicate that an enum can be converted to an integer.
    //
    Numeric GetNumeric() const override { return Numeric::Enum; }
@@ -719,7 +721,7 @@ public:
 
    //  Overridden to update SYMBOLS with the enumerator's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to determine if the enumerator is unused.
    //
@@ -727,7 +729,7 @@ public:
 
    //  Overridden to return the enumerator's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to note that the enumeration required ACCESS.
    //
@@ -735,7 +737,7 @@ public:
 
    //  Overridden to record usage of the enumerator.
    //
-   void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() override { AddUsage(); }
 
    //  Overridden to prefix the enum as a scope.
    //
@@ -804,7 +806,7 @@ public:
 
    //  Overridden to add the declaration to its referent.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to return the referent if known, else the forward declaration.
    //
@@ -827,9 +829,13 @@ public:
    //
    bool EnterScope() override;
 
+   //  Adds the declaration to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
    //  Overridden to add the forward's referent to SYMBOLS.
    //
-   void GetDirectClasses(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) override;
 
    //  Overridden to return the class's qualified name.
    //
@@ -839,10 +845,6 @@ public:
    //
    const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
-
-   //  Overridden to exclude resolved forward declarations.
-   //
-   bool IncludeInXref() const override;
 
    //  Overridden to reveal that this is a forward declaration.
    //
@@ -854,7 +856,7 @@ public:
 
    //  Overridden to returns the class's name.
    //
-   const std::string* Name() const override { return name_->Name(); }
+   const std::string& Name() const override { return name_->Name(); }
 
    //  Overridden to return the class.
    //
@@ -948,7 +950,7 @@ public:
 
    //  Overridden to add the declaration to its referent.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to return the referent if known, else the friend declaration.
    //
@@ -968,9 +970,13 @@ public:
    //
    bool EnterScope() override;
 
+   //  Adds the declaration to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
    //  Overridden to add the friend's referent to SYMBOLS.
    //
-   void GetDirectClasses(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) override;
 
    //  Overridden to return the friend if it is a function.
    //
@@ -987,11 +993,7 @@ public:
 
    //  Overridden to update SYMBOLS with the declaration's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
-
-   //  Overridden to exclude resolved friend declarations.
-   //
-   bool IncludeInXref() const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to indicate that inline display is not supported.
    //
@@ -1007,7 +1009,7 @@ public:
 
    //  Overridden to return the friend's name.
    //
-   const std::string* Name() const override;
+   const std::string& Name() const override;
 
    //  Overridden to return the friend's qualified name.
    //
@@ -1148,7 +1150,7 @@ public:
 
    //  Overridden to add the statement's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  A member initialization ends at the next comma or left brace.
    //
@@ -1165,7 +1167,7 @@ public:
 
    //  Overridden to update SYMBOLS with the statement's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to reveal that this is a member initialization.
    //
@@ -1173,7 +1175,7 @@ public:
 
    //  Overridden to return the member's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display the initialization statement.
    //
@@ -1239,7 +1241,7 @@ public:
 
    //  Overridden to add the parameter's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to return the default's type, else this item.
    //
@@ -1267,11 +1269,11 @@ public:
 
    //  Overridden to update SYMBOLS with the parameter's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to return the parameter's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display the parameter.
    //
@@ -1348,7 +1350,7 @@ public:
 
    //  Overridden to not track references to terminals.
    //
-   void AddReference(const CxxNamed* item) const override { }
+   void AddReference(CxxNamed* item) const override { }
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1381,7 +1383,7 @@ public:
 
    //  Overridden to return the terminal's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden for when NAME refers to a terminal.
    //
@@ -1445,7 +1447,7 @@ public:
 
    //  Overridden to add the typedef's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1472,6 +1474,10 @@ public:
    //
    void ExitBlock() const override;
 
+   //  Adds the typedef to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
    //  Overridden to return the definition's underlying numeric type.
    //
    Numeric GetNumeric() const override { return spec_->GetNumeric(); }
@@ -1486,7 +1492,7 @@ public:
 
    //  Overridden to update SYMBOLS with the typedef's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to determine if the typedef is unused.
    //
@@ -1494,7 +1500,7 @@ public:
 
    //  Overridden to return the alias introduced by the typedef.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display the typedef in a function.
    //
@@ -1601,7 +1607,7 @@ public:
 
    //  Overridden to add the declaration to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -1639,7 +1645,7 @@ public:
 
    //  Overridden to return the name of what is being used.
    //
-   const std::string* Name() const override { return name_->Name(); }
+   const std::string& Name() const override { return name_->Name(); }
 
    //  Overridden to return the qualified name of what is being used.
    //

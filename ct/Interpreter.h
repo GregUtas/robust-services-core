@@ -29,10 +29,17 @@
 #include <string>
 #include "LibraryTypes.h"
 
+namespace NodeBase
+{
+   class CliThread;
+}
+
 namespace CodeTools
 {
    class LibraryOpcode;
 }
+
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -54,7 +61,7 @@ public:
 
    //  Evaluates the expression.
    //
-   LibrarySet* Evaluate();
+   LibrarySet* Evaluate(CliThread& cli);
 
    //  Returns true if S is an operator.
    //
@@ -74,7 +81,7 @@ private:
 
    //  Processes the token that was just found.
    //
-   LibExprErr HandleToken();
+   LibExprErr HandleToken(CliThread& cli);
 
    //  Applies any operator on top of the stack.  OPERAND is set
    //  if an operand was just pushed onto the stack.

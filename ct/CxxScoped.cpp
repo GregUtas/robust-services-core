@@ -60,7 +60,7 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
 
 //------------------------------------------------------------------------------
 
-void Argument::AddToXref() const
+void Argument::AddToXref()
 {
    spec_->AddToXref();
    if(default_ != nullptr) default_->AddToXref();
@@ -92,7 +92,7 @@ void Argument::CheckVoid() const
 
    if(name_.empty())
    {
-      if(*spec_->Name() == VOID_STR)
+      if(spec_->Name() == VOID_STR)
       {
          //  Deleting the empty argument "(void)" makes it much easier to
          //  compare function signatures and match arguments to functions.
@@ -146,7 +146,7 @@ void Argument::ExitBlock() const
 
 //------------------------------------------------------------------------------
 
-void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    spec_->GetUsages(file, symbols);
    if(default_ != nullptr) default_->GetUsages(file, symbols);
@@ -188,7 +188,7 @@ void Argument::Print(ostream& stream, const Flags& options) const
 
    if(spec_->GetFuncSpec() == nullptr)
    {
-      if(!name_.empty()) stream << SPACE << *Name();
+      if(!name_.empty()) stream << SPACE << Name();
    }
 
    spec_->DisplayArrays(stream);
@@ -304,7 +304,7 @@ BaseDecl::BaseDecl(QualNamePtr& name, Cxx::Access access) :
 
 //------------------------------------------------------------------------------
 
-void BaseDecl::AddToXref() const
+void BaseDecl::AddToXref()
 {
    name_->AddToXref();
 }
@@ -355,7 +355,7 @@ void BaseDecl::FindReferent()
 
    //  The base class wasn't found.
    //
-   auto log = "Unknown base class: " + *Name() + " [" + strLocation() + ']';
+   auto log = "Unknown base class: " + Name() + " [" + strLocation() + ']';
    Debug::SwLog(BaseDecl_FindReferent, log, 0, false);
 }
 
@@ -368,7 +368,7 @@ Class* BaseDecl::GetClass() const
 
 //------------------------------------------------------------------------------
 
-void BaseDecl::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void BaseDecl::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    //  Our class was used as a base class.  Its name cannot include template
    //  arguments, because subclassing a template instance is not supported.
@@ -454,7 +454,7 @@ void CxxScoped::AddFiles(LibItemSet& imSet) const
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::AddReference(const CxxNamed* item) const
+void CxxScoped::AddReference(CxxNamed* item) const
 {
    auto file = item->GetFile();
    if(file == nullptr) return;
@@ -468,7 +468,7 @@ void CxxScoped::AddReference(const CxxNamed* item) const
       //  often invoke an override in a derived class.  This should be aliased
       //  back to the base class declaration of the function.
       //
-      auto prev = Context::FindXrefItem(*item->Name());
+      auto prev = Context::FindXrefItem(item->Name());
       if(prev == nullptr) return;
 
       auto ref = item->Referent();
@@ -599,7 +599,7 @@ CxxScoped* CxxScoped::FindInheritedName() const
    if(cls == nullptr) return nullptr;
    auto base = cls->BaseClass();
    if(base == nullptr) return nullptr;
-   return base->FindName(*Name(), nullptr);
+   return base->FindName(Name(), nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -609,7 +609,7 @@ CxxScoped* CxxScoped::FindNthItem(const std::string& name, size_t& n) const
    Debug::ft("CxxScoped.FindNthItem");
 
    if(n == 0) return nullptr;
-   if(name == *Name()) --n;
+   if(name == Name()) --n;
    if(n == 0) return const_cast< CxxScoped* >(this);
    return nullptr;
 }
@@ -642,13 +642,6 @@ bool CxxScoped::GetRange(size_t& begin, size_t& left, size_t& end) const
    lexer.Reposition(begin);
    end = lexer.FindFirstOf(";");
    return (end != string::npos);
-}
-
-//------------------------------------------------------------------------------
-
-bool CxxScoped::IncludeInXref() const
-{
-   return !IsInTemplateInstance();
 }
 
 //------------------------------------------------------------------------------
@@ -749,7 +742,7 @@ bool CxxScoped::LocateItem(const CxxNamed* item, size_t& n) const
       return true;
    }
 
-   if(*item->Name() == *Name()) ++n;
+   if(item->Name() == Name()) ++n;
    return false;
 }
 
@@ -767,7 +760,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
 
    if(itemFile == nullptr)
    {
-      auto expl = "No file for item: " + *Name();
+      auto expl = "No file for item: " + Name();
       Context::SwLog(CxxScoped_NameRefersToItem, expl, itemType);
       return false;
    }
@@ -941,7 +934,7 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
 
 //------------------------------------------------------------------------------
 
-void Enum::AddToXref() const
+void Enum::AddToXref()
 {
    if(alignas_ != nullptr) alignas_->AddToXref();
    if(spec_ != nullptr) spec_->AddToXref();
@@ -1110,10 +1103,22 @@ Enumerator* Enum::FindEnumerator(const string& name) const
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {
-      if(*(*e)->Name() == name) return e->get();
+      if((*e)->Name() == name) return e->get();
    }
 
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+void Enum::GetDecls(std::set< CxxNamed* >& items)
+{
+   items.insert(this);
+
+   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
+   {
+      (*e)->GetDecls(items);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1125,7 +1130,7 @@ TypeSpec* Enum::GetTypeSpec() const
 
 //------------------------------------------------------------------------------
 
-void Enum::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Enum::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
    if(spec_ != nullptr) spec_->GetUsages(file, symbols);
@@ -1236,7 +1241,7 @@ Enumerator::~Enumerator()
 
 //------------------------------------------------------------------------------
 
-void Enumerator::AddToXref() const
+void Enumerator::AddToXref()
 {
    if(init_ != nullptr) init_->AddToXref();
 }
@@ -1275,7 +1280,7 @@ bool Enumerator::CheckIfUnused(Warning warning) const
 void Enumerator::Display
    (ostream& stream, const string& prefix, const Flags& options) const
 {
-   stream << prefix << *Name();
+   stream << prefix << Name();
 
    if(init_ != nullptr)
    {
@@ -1341,6 +1346,13 @@ void Enumerator::ExitBlock() const
 
 //------------------------------------------------------------------------------
 
+void Enumerator::GetDecls(std::set< CxxNamed* >& items)
+{
+   items.insert(this);
+}
+
+//------------------------------------------------------------------------------
+
 void Enumerator::GetScopedNames(stringVector& names, bool templates) const
 {
    Debug::ft("Enumerator.GetScopedNames");
@@ -1351,7 +1363,7 @@ void Enumerator::GetScopedNames(stringVector& names, bool templates) const
    //  as an alternative.
    //
    CxxScoped::GetScopedNames(names, templates);
-   auto prev = *enum_->Name();
+   auto prev = enum_->Name();
    if(prev.empty()) return;
    prev += SCOPE_STR;
    auto name = names.front();
@@ -1362,7 +1374,7 @@ void Enumerator::GetScopedNames(stringVector& names, bool templates) const
 
 //------------------------------------------------------------------------------
 
-void Enumerator::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Enumerator::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(init_ != nullptr) init_->GetUsages(file, symbols);
 }
@@ -1381,7 +1393,7 @@ void Enumerator::RecordAccess(Cxx::Access access) const
 
 string Enumerator::ScopedName(bool templates) const
 {
-   return Prefix(enum_->ScopedName(templates)) + *Name();
+   return Prefix(enum_->ScopedName(templates)) + Name();
 }
 
 //------------------------------------------------------------------------------
@@ -1411,7 +1423,7 @@ void Enumerator::Shrink()
 string Enumerator::TypeString(bool arg) const
 {
    auto ts = enum_->TypeString(arg);
-   if(!arg) ts += SCOPE_STR + *Name();
+   if(!arg) ts += SCOPE_STR + Name();
    return ts;
 }
 
@@ -1440,7 +1452,7 @@ bool Enumerator::WasRead()
 
 string Enumerator::XrefName(bool templates) const
 {
-   return Prefix(enum_->XrefName(templates), ".") + *Name();
+   return Prefix(enum_->XrefName(templates), ".") + Name();
 }
 
 //==============================================================================
@@ -1468,7 +1480,7 @@ Forward::~Forward()
 
 //------------------------------------------------------------------------------
 
-void Forward::AddToXref() const
+void Forward::AddToXref()
 {
    if(Referent() == nullptr) return;
    name_->AddToXref();
@@ -1547,23 +1559,19 @@ bool Forward::EnterScope()
 
 //------------------------------------------------------------------------------
 
-void Forward::GetDirectClasses(CxxUsageSets& symbols) const
+void Forward::GetDecls(std::set< CxxNamed* >& items)
+{
+   items.insert(this);
+}
+
+//------------------------------------------------------------------------------
+
+void Forward::GetDirectClasses(CxxUsageSets& symbols)
 {
    Debug::ft("Forward.GetDirectClasses");
 
    auto ref = Referent();
    if(ref != nullptr) symbols.AddDirect(ref);
-}
-
-//------------------------------------------------------------------------------
-
-bool Forward::IncludeInXref() const
-{
-   //  Exclude a forward declaration from the global cross-reference unless
-   //  it wasn't resolved.
-   //
-   auto ref = Referent();
-   return (ref == nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1626,7 +1634,7 @@ string Forward::TypeString(bool arg) const
 {
    auto ref = Referent();
    if(ref != nullptr) return ref->TypeString(arg);
-   return Prefix(GetScope()->TypeString(arg)) + *Name();
+   return Prefix(GetScope()->TypeString(arg)) + Name();
 }
 
 //------------------------------------------------------------------------------
@@ -1675,7 +1683,7 @@ Friend::~Friend()
 
 //------------------------------------------------------------------------------
 
-void Friend::AddToXref() const
+void Friend::AddToXref()
 {
    if(Referent() == nullptr) return;
    name_->AddToXref();
@@ -1802,8 +1810,8 @@ CxxScoped* Friend::FindForward() const
    auto func = GetFunction();
    auto qname = GetQualName();
    auto size = qname->Size();
-   string name = *qname->First()->Name();
-   size_t idx = (*item->Name() == name ? 1 : 0);
+   auto name = qname->First()->Name();
+   size_t idx = (item->Name() == name ? 1 : 0);
    Namespace* space;
    Class* cls;
 
@@ -1823,7 +1831,7 @@ CxxScoped* Friend::FindForward() const
          //
          if(idx >= size) return item;
          space = static_cast< Namespace* >(item);
-         name = *qname->At(idx)->Name();
+         name = qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -1859,7 +1867,7 @@ CxxScoped* Friend::FindForward() const
          //  when TYPE is a namespace.
          //
          if(idx >= size) return item;
-         name = *qname->At(idx)->Name();
+         name = qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -1944,7 +1952,14 @@ void Friend::FindReferent()
 
 //------------------------------------------------------------------------------
 
-void Friend::GetDirectClasses(CxxUsageSets& symbols) const
+void Friend::GetDecls(std::set< CxxNamed* >& items)
+{
+   items.insert(this);
+}
+
+//------------------------------------------------------------------------------
+
+void Friend::GetDirectClasses(CxxUsageSets& symbols)
 {
    Debug::ft("Friend.GetDirectClasses");
 
@@ -1979,7 +1994,7 @@ CxxScoped* Friend::GetReferent() const
 
 //------------------------------------------------------------------------------
 
-void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    auto ref = Referent();
    if(ref == nullptr) return;
@@ -2042,17 +2057,6 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-bool Friend::IncludeInXref() const
-{
-   //  Exclude a friend declaration from the global cross-reference unless
-   //  it wasn't resolved.
-   //
-   auto ref = Referent();
-   return (ref == nullptr);
-}
-
-//------------------------------------------------------------------------------
-
 void Friend::IncrUsers()
 {
    Debug::ft("Friend.IncrUsers");
@@ -2064,7 +2068,7 @@ void Friend::IncrUsers()
 
 //------------------------------------------------------------------------------
 
-const string* Friend::Name() const
+const string& Friend::Name() const
 {
    auto func = GetFunction();
    if(func != nullptr) return func->Name();
@@ -2275,7 +2279,7 @@ MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
 
 //------------------------------------------------------------------------------
 
-void MemberInit::AddToXref() const
+void MemberInit::AddToXref()
 {
    if(ref_ != nullptr) ref_->AddReference(this);
    init_->AddToXref();
@@ -2305,14 +2309,14 @@ void MemberInit::EnterBlock()
    else
    {
       string expl("Failed to find member ");
-      expl += *ctor_->GetClass()->Name() + SCOPE_STR + name_;
+      expl += ctor_->GetClass()->Name() + SCOPE_STR + name_;
       Context::SwLog(MemberInit_EnterBlock, expl, 0);
    }
 }
 
 //------------------------------------------------------------------------------
 
-void MemberInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void MemberInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    init_->GetUsages(file, symbols);
 }
@@ -2372,7 +2376,7 @@ TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
 
 //------------------------------------------------------------------------------
 
-void TemplateParm::AddToXref() const
+void TemplateParm::AddToXref()
 {
    if(type_ != nullptr) type_->AddToXref();
    if(default_ != nullptr) default_->AddToXref();
@@ -2434,7 +2438,7 @@ void TemplateParm::ExitBlock() const
 
 //------------------------------------------------------------------------------
 
-void TemplateParm::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void TemplateParm::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(type_ != nullptr) type_->GetUsages(file, symbols);
    if(default_ != nullptr) default_->GetUsages(file, symbols);
@@ -2449,7 +2453,7 @@ void TemplateParm::Print(ostream& stream, const Flags& options) const
    else
       type_->Print(stream, options);
 
-   stream << SPACE << *Name();
+   stream << SPACE << Name();
    if(ptrs_ > 0) stream << string(ptrs_, '*');
 
    if(default_ != nullptr)
@@ -2500,7 +2504,7 @@ void TemplateParm::Shrink()
 
 string TemplateParm::TypeString(bool arg) const
 {
-   auto ts = *Name();
+   auto ts = Name();
    if(ptrs_ > 0) ts += string(ptrs_, '*');
    return ts;
 }
@@ -2544,7 +2548,7 @@ Terminal::~Terminal()
 void Terminal::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   stream << prefix << "terminal " << *Name();
+   stream << prefix << "terminal " << Name();
    stream << ';';
 
    if(!options.test(DispFQ))
@@ -2571,7 +2575,7 @@ bool Terminal::IsAuto() const
 {
    Debug::ft("Terminal.IsAuto");
 
-   return (*Name() == AUTO_STR);
+   return (Name() == AUTO_STR);
 }
 
 //------------------------------------------------------------------------------
@@ -2624,7 +2628,7 @@ Typedef::~Typedef()
 
 //------------------------------------------------------------------------------
 
-void Typedef::AddToXref() const
+void Typedef::AddToXref()
 {
    spec_->AddToXref();
    if(alignas_ != nullptr) alignas_->AddToXref();
@@ -2672,7 +2676,7 @@ void Typedef::Display(ostream& stream,
    if(using_)
    {
       stream << USING_STR << SPACE;
-      stream << (fq ? ScopedName(true) : *Name()) << SPACE;
+      stream << (fq ? ScopedName(true) : Name()) << SPACE;
 
       if(alignas_ != nullptr)
       {
@@ -2691,7 +2695,7 @@ void Typedef::Display(ostream& stream,
 
       if(spec_->GetFuncSpec() == nullptr)
       {
-         stream << SPACE << (fq ? ScopedName(true) : *Name());
+         stream << SPACE << (fq ? ScopedName(true) : Name());
       }
 
       spec_->DisplayArrays(stream);
@@ -2764,6 +2768,13 @@ void Typedef::ExitBlock() const
 
 //------------------------------------------------------------------------------
 
+void Typedef::GetDecls(std::set< CxxNamed* >& items)
+{
+   items.insert(this);
+}
+
+//------------------------------------------------------------------------------
+
 TypeName* Typedef::GetTemplateArgs() const
 {
    return spec_->GetTemplateArgs();
@@ -2771,7 +2782,7 @@ TypeName* Typedef::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
-void Typedef::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Typedef::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    spec_->GetUsages(file, symbols);
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
@@ -2783,14 +2794,14 @@ void Typedef::Print(ostream& stream, const Flags& options) const
 {
    if(using_)
    {
-      stream << USING_STR << SPACE << *Name() << " = ";
+      stream << USING_STR << SPACE << Name() << " = ";
       spec_->Print(stream, options);
    }
    else
    {
       stream << TYPEDEF_STR << SPACE;
       spec_->Print(stream, options);
-      if(spec_->GetFuncSpec() == nullptr) stream << SPACE << *Name();
+      if(spec_->GetFuncSpec() == nullptr) stream << SPACE << Name();
    }
 
    spec_->DisplayArrays(stream);
@@ -2869,7 +2880,7 @@ Using::Using(QualNamePtr& name, bool space, bool added) :
 
 //------------------------------------------------------------------------------
 
-void Using::AddToXref() const
+void Using::AddToXref()
 {
    name_->AddToXref();
 }

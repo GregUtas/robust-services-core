@@ -23,6 +23,7 @@
 #include <cstring>
 #include <iosfwd>
 #include <sstream>
+#include <vector>
 #include "CliBuffer.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -92,18 +93,18 @@ void LibraryErrSet::Display(ostream& stream,
 
 word LibraryErrSet::Error(string& expl) const
 {
+   std::ostringstream stream;
+
    if(err_ == InterpreterError)
    {
-      expl = strError(err_);
+      stream << err_;
+      expl = stream.str();
       return -7;
    }
 
-   std::ostringstream stream;
-
    auto pointer = CliBuffer::ErrorPointer;
    stream << spaces(pos_ - strlen(pointer)) << pointer << CRLF;
-   stream << spaces(2) << strError(err_);
-
+   stream << spaces(2) << err_;
    expl = stream.str();
    return -2;
 }
@@ -122,15 +123,6 @@ word LibraryErrSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 word LibraryErrSet::Format(string& expl) const
 {
    Debug::ft("LibraryErrSet.Format");
-
-   return Error(expl);
-}
-
-//------------------------------------------------------------------------------
-
-word LibraryErrSet::List(ostream& stream, string& expl) const
-{
-   Debug::ft("LibraryErrSet.List");
 
    return Error(expl);
 }
@@ -165,19 +157,21 @@ word LibraryErrSet::Scan
 
 //------------------------------------------------------------------------------
 
-word LibraryErrSet::Show(string& result) const
-{
-   Debug::ft("LibraryErrSet.Show");
-
-   return Error(result);
-}
-
-//------------------------------------------------------------------------------
-
 word LibraryErrSet::Sort(ostream& stream, string& expl) const
 {
    Debug::ft("LibraryErrSet.Sort");
 
    return Error(expl);
+}
+
+//------------------------------------------------------------------------------
+
+void LibraryErrSet::to_str(stringVector& strings, bool verbose) const
+{
+   Debug::ft("LibraryErrSet.to_str");
+
+   string result;
+   Error(result);
+   strings.push_back(result);
 }
 }

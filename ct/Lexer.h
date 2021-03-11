@@ -31,6 +31,7 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -254,6 +255,12 @@ public:
    //
    size_t FindFirstOf(const std::string& targs) const;
 
+   //  Returns the first occurrence of a character in CHARS, starting at POS.
+   //  Returns string::npos if none of those characters was found.  Invokes
+   //  Reposition, which changes the current position.
+   //
+   size_t FindFirstOf(size_t pos, const std::string& chars);
+
    //  Returns true and sets SPEC to the template specification that follows
    //  the name of a template instance.
    //
@@ -447,11 +454,6 @@ protected:
    //  The same as FindNonBlank, but searches backwards.
    //
    size_t RfindNonBlank(size_t pos);
-
-   //  Returns the first occurrence of a character in CHARS, starting at POS.
-   //  Returns string::npos if none of those characters was found.
-   //
-   size_t FindFirstOf(size_t pos, const std::string& chars);
 
    //  Returns the first occurrence of a character in CHARS, starting at POS
    //  and reversing.  Returns string::npos if no such character was found.

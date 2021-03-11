@@ -44,16 +44,18 @@ public:
    LibrarySet* AffectedBy() const override;
    LibrarySet* Affecters() const override;
    LibrarySet* CommonAffecters() const override;
-   LibrarySet* Create
-      (const std::string& name, const LibItemSet* items) const override;
+   LibrarySet* DeclaredBy() const override;
    LibrarySet* Directories() const override;
    LibrarySet* FileName(const LibrarySet* that) const override;
+   LibrarySet* Files() const override;
    LibrarySet* FileType(const LibrarySet* that) const override;
    LibrarySet* FoundIn(const LibrarySet* that) const override;
    LibrarySet* Implements() const override;
    LibrarySet* MatchString(const LibrarySet* that) const override;
    LibrarySet* NeededBy() const override;
    LibrarySet* Needers() const override;
+   LibrarySet* ReferencedBy() const override;
+   LibrarySet* ReferencedIn(const LibrarySet* that) const override;
    LibrarySet* UsedBy(bool self) const override;
    LibrarySet* Users(bool self) const override;
 
@@ -79,10 +81,6 @@ public:
    //
    LibSetType GetType() const override { return FILE_SET; }
 
-   //  Displays the full filenames in STREAM.
-   //
-   NodeBase::word List(std::ostream& stream, std::string& expl) const override;
-
    //  Parses the code files in the set.
    //
    NodeBase::word Parse
@@ -97,9 +95,9 @@ public:
    //
    NodeBase::word Sort(std::ostream& stream, std::string& expl) const override;
 
-   //  Displays the filenames in RESULT.
+   //  Returns a string for each file in the set.
    //
-   NodeBase::word Show(std::string& result) const override;
+   void to_str(stringVector& strings, bool verbose) const override;
 
    //  Returns the build order of the set.
    //
@@ -108,6 +106,11 @@ private:
    //  Private to restrict deletion.  Not subclassed.
    //
    ~CodeFileSet();
+
+   //  Overridden to create a set of files.
+   //
+   LibrarySet* Create
+      (const std::string& name, const LibItemSet* items) const override;
 };
 }
 #endif

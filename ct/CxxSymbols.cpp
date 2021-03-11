@@ -61,17 +61,19 @@ const Flags TYPE_MASK = Flags(1 << Cxx::Typedef);
 
 const Flags CODE_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK |
    ETOR_MASK | FORW_MASK | FRIEND_MASK | FUNC_MASK | MACRO_MASK | TYPE_MASK);
+const Flags ITEM_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK | ETOR_MASK |
+   FORW_MASK | FRIEND_MASK | FUNC_MASK | MACRO_MASK | SPACE_MASK | TYPE_MASK);
 const Flags FRIEND_CLASSES = Flags(CLASS_MASK | FORW_MASK |
    FRIEND_MASK | TYPE_MASK);
 const Flags FRIEND_FUNCS = Flags(FRIEND_CLASSES | FUNC_MASK);
 const Flags SCOPE_REFS = Flags(CLASS_MASK | ENUM_MASK | SPACE_MASK | TYPE_MASK);
-const Flags TARG_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK |
-   ETOR_MASK | FORW_MASK | FRIEND_MASK | TERM_MASK | MACRO_MASK | TYPE_MASK);
+const Flags TARG_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK | ETOR_MASK |
+   FORW_MASK | FRIEND_MASK | TERM_MASK | MACRO_MASK | TYPE_MASK);
 const Flags TYPE_REFS = Flags(CLASS_MASK | TERM_MASK | TYPE_MASK);
 const Flags TYPESPEC_REFS = Flags(CLASS_MASK | ENUM_MASK |
    FORW_MASK | FRIEND_MASK | TERM_MASK | TYPE_MASK);
-const Flags USING_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK |
-   ETOR_MASK | FORW_MASK | FRIEND_MASK | FUNC_MASK | SPACE_MASK | TYPE_MASK);
+const Flags USING_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK | ETOR_MASK |
+   FORW_MASK | FRIEND_MASK | FUNC_MASK | SPACE_MASK | TYPE_MASK);
 const Flags VALUE_REFS = Flags(DATA_MASK | ETOR_MASK | MACRO_MASK | TERM_MASK);
 
 //------------------------------------------------------------------------------
@@ -141,6 +143,25 @@ void DisplayReferences(ostream& stream, const CxxNamedVector& refs)
    }
 
    stream << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+void FilterItems(const std::string& name,
+   const SymbolVector& items, SymbolVector& list)
+{
+   Debug::ft("CodeTools.FilterItems");
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      stringVector fqNames;
+      (*i)->GetScopedNames(fqNames, false);
+
+      for(auto fqn = fqNames.begin(); fqn != fqNames.end(); ++fqn)
+      {
+         if(NameCouldReferTo(*fqn, name) != string::npos) list.push_back(*i);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -222,7 +243,7 @@ template< typename T > void GetSymbols
    for(auto i = table.cbegin(); i != table.cend(); ++i)
    {
       auto item = i->second;
-      if(item->IncludeInXref()) items.push_back(item);
+      if(!item->IsInternal()) items.push_back(item);
    }
 }
 
@@ -242,22 +263,15 @@ bool IsSortedByName(const CxxScoped* item1, const CxxScoped* item2)
    }
    else
    {
-      auto fn1 = file1->Path(false);
-      auto fn2 = file2->Path(false);
-      auto result = fn1.compare(fn2);
+      auto result = strCompare(file1->Path(false), file2->Path(false));
       if(result < 0) return true;
       if(result > 0) return false;
    }
 
-   //  The first comparison ignores case, whereas the second one does not.
-   //  This yields consistent ordering when two names only differ in case.
-   //
-   auto name1 = item1->XrefName(true);
-   auto name2 = item2->XrefName(true);
-   auto result = strCompare(name1, name2);
+   auto result = strCompare(item1->XrefName(true), item2->XrefName(true));
    if(result < 0) return true;
    if(result > 0) return false;
-   result = name1.compare(name2);
+   result = strCompare(strClass(item1), strClass(item2));
    if(result < 0) return true;
    if(result > 0) return false;
    return (item1 < item2);
@@ -501,6 +515,47 @@ void CxxSymbols::EraseTerm(const Terminal* term)
 void CxxSymbols::EraseType(const Typedef* type)
 {
    EraseSymbol(type, *types_);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxSymbols::FindItems
+   (const string& name, const Flags& mask, SymbolVector& list) const
+{
+   Debug::ft("CxxSymbols.FindItems");
+
+   auto key = Normalize(name);
+
+   //  Start by looking for a terminal.
+   //
+   if(mask.test(Cxx::Terminal))
+   {
+      ListSymbols(key, *terms_, list);
+      if(!list.empty()) return;
+   }
+
+   //  NAME wasn't a terminal, so look at other types of symbols.
+   //
+   SymbolVector items;
+
+   if(mask.test(Cxx::Class)) ListSymbols(key, *classes_, items);
+   if(mask.test(Cxx::Data)) ListSymbols(key, *data_, items);
+   if(mask.test(Cxx::Enum)) ListSymbols(key, *enums_, items);
+   if(mask.test(Cxx::Enumerator)) ListSymbols(key, *etors_, items);
+   if(mask.test(Cxx::Macro)) ListMacros(key, items);
+   if(mask.test(Cxx::Typedef)) ListSymbols(key, *types_, items);
+   if(mask.test(Cxx::Namespace)) ListSymbols(key, *spaces_, items);
+   if(mask.test(Cxx::Function)) ListSymbols(key, *funcs_, items);
+   if(mask.test(Cxx::Forward)) ListSymbols(key, *forws_, items);
+
+   FilterItems(name, items, list);
+   if(!list.empty()) return;
+
+   //  There was no match, so consider friend declarations, which
+   //  can double as forward declarations.
+   //
+   if(mask.test(Cxx::Friend)) ListSymbols(key, *friends_, items);
+   FilterItems(name, items, list);
 }
 
 //------------------------------------------------------------------------------
@@ -810,77 +865,77 @@ void CxxSymbols::FindTerminal(const string& name, SymbolVector& list) const
 
 void CxxSymbols::InsertClass(Class* cls)
 {
-   classes_->insert(ClassPair(Normalize(*cls->Name()), cls));
+   classes_->insert(ClassPair(Normalize(cls->Name()), cls));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertData(Data* data)
 {
-   data_->insert(DataPair(Normalize(*data->Name()), data));
+   data_->insert(DataPair(Normalize(data->Name()), data));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertEnum(Enum* item)
 {
-   enums_->insert(EnumPair(Normalize(*item->Name()), item));
+   enums_->insert(EnumPair(Normalize(item->Name()), item));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertEtor(Enumerator* etor)
 {
-   etors_->insert(EtorPair(Normalize(*etor->Name()), etor));
+   etors_->insert(EtorPair(Normalize(etor->Name()), etor));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertForw(Forward* forw)
 {
-   forws_->insert(ForwPair(Normalize(*forw->Name()), forw));
+   forws_->insert(ForwPair(Normalize(forw->Name()), forw));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertFriend(Friend* frnd)
 {
-   friends_->insert(FriendPair(Normalize(*frnd->Name()), frnd));
+   friends_->insert(FriendPair(Normalize(frnd->Name()), frnd));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertFunc(Function* func)
 {
-   funcs_->insert(FuncPair(Normalize(*func->Name()), func));
+   funcs_->insert(FuncPair(Normalize(func->Name()), func));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertMacro(Macro* macro)
 {
-   macros_->insert(MacroPair(Normalize(*macro->Name()), macro));
+   macros_->insert(MacroPair(Normalize(macro->Name()), macro));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertSpace(Namespace* space)
 {
-   spaces_->insert(SpacePair(Normalize(*space->Name()), space));
+   spaces_->insert(SpacePair(Normalize(space->Name()), space));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertTerm(Terminal* term)
 {
-   terms_->insert(TermPair(Normalize(*term->Name()), term));
+   terms_->insert(TermPair(Normalize(term->Name()), term));
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::InsertType(Typedef* type)
 {
-   types_->insert(TypePair(Normalize(*type->Name()), type));
+   types_->insert(TypePair(Normalize(type->Name()), type));
 }
 
 //------------------------------------------------------------------------------

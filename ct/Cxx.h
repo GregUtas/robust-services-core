@@ -30,6 +30,7 @@
 #include <unordered_map>
 #include <utility>
 #include "CodeTypes.h"
+#include "CxxFwd.h"
 
 //------------------------------------------------------------------------------
 
@@ -336,6 +337,11 @@ std::ostream& operator<<(std::ostream& stream, Cxx::Encoding code);
 //
 std::string CharString(uint32_t c, bool s);
 
+//  For noting the keyword tags that appear when declaring or defining
+//  functions or data.
+//
+typedef std::set< Cxx::Keyword > KeywordSet;
+
 //------------------------------------------------------------------------------
 //
 //  Attributes of C++ keywords.
@@ -577,6 +583,48 @@ private:
    //  Set if signed (else unsigned).
    //
    bool signed_ : 8;
+};
+
+//------------------------------------------------------------------------------
+//
+//  For assembling the symbols used by a file or code item.
+//
+struct CxxUsageSets
+{
+   CxxNamedSet bases;      // types used as base class
+   CxxNamedSet directs;    // types used directly
+   CxxNamedSet indirects;  // types named in a pointer or reference
+   CxxNamedSet forwards;   // types resolved via a forward declaration
+   CxxNamedSet friends;    // types resolved via a friend declaration
+   CxxNamedSet users;      // names resolved via a using statement
+   CxxNamedSet inherits;   // types not needed to calculate #include or using
+                           // directives but which the global cross-reference
+                           // should report as being used
+
+   CxxUsageSets() = default;  // creates empty CxxNamedSets
+
+   //  Adds ITEM to the specified set (AddForward adds ITEM to FRIENDS if
+   //  it is a friend declaration).  These functions exist so that a debug
+   //  breakpoint can be set within them to find the origin of an item.
+   //
+   void AddBase(CxxNamed* item);
+   void AddDirect(CxxNamed* item);
+   void AddIndirect(CxxNamed* item);
+   void AddForward(CxxNamed* item);
+   void AddUser(CxxNamed* item);
+   void AddInherit(CxxNamed* item);
+
+   //  Removes, from each set, items that are template arguments for TYPE.
+   //
+   void EraseTemplateArgs(const TypeName* type);
+
+   //  Removes local variables from DIRECTS.
+   //
+   void EraseLocals();
+
+   //  this = this U SET.
+   //
+   void Union(const CxxUsageSets& set);
 };
 
 //------------------------------------------------------------------------------

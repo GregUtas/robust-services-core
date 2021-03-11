@@ -22,7 +22,7 @@
 #ifndef CXXTOKEN_H_INCLUDED
 #define CXXTOKEN_H_INCLUDED
 
-#include "Base.h"
+#include "LibraryItem.h"
 #include <cstddef>
 #include <cstdint>
 #include <ios>
@@ -33,57 +33,16 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
-//  For assembling the symbols used by a file.
-//
-struct CxxUsageSets
-{
-   CxxNamedSet bases;      // types used as base class
-   CxxNamedSet directs;    // types used directly
-   CxxNamedSet indirects;  // types named in a pointer or reference
-   CxxNamedSet forwards;   // types resolved via a forward declaration
-   CxxNamedSet friends;    // types resolved via a friend declaration
-   CxxNamedSet users;      // names resolved via a using statement
-   CxxNamedSet inherits;   // types not needed to calculate #include or using
-                           // directives but which the global cross-reference
-                           // should report as being used
-
-   CxxUsageSets() = default;  // creates empty CxxNamedSets
-
-   //  Adds ITEM to the specified set (AddForward adds ITEM to FRIENDS if
-   //  it is a friend declaration).  These functions exist so that a debug
-   //  breakpoint can be set within them to find the origin of an item.
-   //
-   void AddBase(const CxxNamed* item);
-   void AddDirect(const CxxNamed* item);
-   void AddIndirect(const CxxNamed* item);
-   void AddForward(const CxxNamed* item);
-   void AddUser(const CxxNamed* item);
-   void AddInherit(const CxxNamed* item);
-
-   //  Removes, from each set, items that are template arguments for TYPE.
-   //
-   void EraseTemplateArgs(const TypeName* type);
-
-   //  Removes local variables from DIRECTS.
-   //
-   void EraseLocals();
-
-   //  this = this U SET.
-   //
-   void Union(const CxxUsageSets& set);
-};
-
-//------------------------------------------------------------------------------
-//
 //  The base class for all C++ entities created by the parser.
 //
-class CxxToken : public NodeBase::Base
+class CxxToken : public LibraryItem
 {
 public:
    //  Virtual to allow subclassing.
@@ -99,12 +58,6 @@ public:
    //  functions are not currently included in this scheme.
    //
    virtual bool IsForward() const { return false; }
-
-   //  Returns the item's name.  The default version generates a log and
-   //  returns nullptr.  All subclasses of CxxNamed have names, although
-   //  the name may be an empty string (e.g. for an unnamed argument).
-   //
-   virtual const std::string* Name() const;
 
    //  Returns the item's qualified name member, if any.
    //
@@ -251,16 +204,16 @@ public:
    //  This is used to record usages (for #include purposes) that are difficult
    //  to detect simply on the basis of symbol usage.
    //
-   virtual void RecordUsage() const { }
+   virtual void RecordUsage() { }
 
    //  Invokes CxxScoped.AddReference on items that this one references.
    //
-   virtual void AddToXref() const { }
+   virtual void AddToXref() { }
 
    //  Updates SYMBOLS with how this item (in FILE) used other types.  See
    //  UsageType for a list of how various uses of a type are distinguished.
    //
-   virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const { }
+   virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) { }
 
    //  Searches this item for ITEM.  Returns true if it was found.  Increments
    //  N each time that an item with the same name was encountered.
@@ -328,6 +281,10 @@ public:
    virtual void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const { }
 
+   //  Subclasses that declare items must override this.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override { }
+
    //  Outputs PREFIX, invokes Print(stream, options) above, and inserts an
    //  endline.  This is the appropriate implementation for items that can be
    //  displayed inline or separately.  See CodeDisplayOptions for OPTIONS.
@@ -361,10 +318,6 @@ private:
    //  (above) returns the item that returned nullptr.
    //
    virtual CxxToken* RootType() const { return const_cast< CxxToken* >(this); }
-
-   //  Invoked when a function call is made to the item.
-   //
-   virtual void WasCalled() { }
 };
 
 //------------------------------------------------------------------------------
@@ -388,7 +341,7 @@ public:
 
    //  Overridden to return the referent's name.
    //
-   const std::string* Name() const override;
+   const std::string& Name() const override;
 
    //  Overridden to return the output of the literal's Print function.
    //
@@ -615,7 +568,7 @@ public:
 
    //  Overridden to add each argument's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Invoked when a unary operator is encountered.  This operator returns
    //  true if it will elide forward to the unary, and false if the new
@@ -634,7 +587,7 @@ public:
 
    //  Overridden to update SYMBOLS with each argument's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to display the operator and its arguments.
    //
@@ -746,7 +699,7 @@ private:
    //  The overload that implemented the operator, if any.  Recorded for
    //  symbol usage purposes.
    //
-   mutable const Function* overload_;
+   mutable Function* overload_;
 
    //  The operator's arguments.
    //
@@ -794,7 +747,7 @@ public:
 
    //  Overridden to add each token's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to return the last item in the expression.
    //
@@ -807,7 +760,7 @@ public:
 
    //  Overridden to update SYMBOLS with each token's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to display the expression.
    //
@@ -874,7 +827,7 @@ public:
 
    //  Overridden to add the specification's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to invoke EnterBlock on expr_.
    //
@@ -882,7 +835,7 @@ public:
 
    //  Overridden to update SYMBOLS with the specification's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to display the array's size within brackets.
    //
@@ -933,9 +886,9 @@ public:
    explicit Precedence(ExprPtr& expr)
       : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
    ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
-   void AddToXref() const override;
+   void AddToXref() override;
    void EnterBlock() override;
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -956,9 +909,9 @@ public:
    BraceInit();
    ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
-   void AddToXref() const override;
+   void AddToXref() override;
    void EnterBlock() override;
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -978,9 +931,9 @@ class AlignAs : public CxxToken
 public:
    explicit AlignAs(TokenPtr& token);
    ~AlignAs() { CxxStats::Decr(CxxStats::ALIGNAS); }
-   void AddToXref() const override;
+   void AddToXref() override;
    void EnterBlock() override;
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -988,6 +941,65 @@ public:
       size_t begin, size_t count, size_t from) const override;
 private:
    const TokenPtr token_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Parameters associated with a template declaration.
+//
+class TemplateParms : public CxxToken
+{
+public:
+   //  Creates a template declaration in which PARM is the first parameter
+   //  (e.g. T/typename/1 for template <typename T*...).
+   //
+   explicit TemplateParms(TemplateParmPtr& parm);
+
+   //  Not subclassed.
+   //
+   ~TemplateParms() { CxxStats::Decr(CxxStats::TEMPLATE_PARMS); }
+
+   //  Adds another parameter to the template.
+   //
+   void AddParm(TemplateParmPtr& parm);
+
+   //  Invokes EnterScope on each parameter.
+   //
+   void EnterScope() const;
+
+   //  Returns the template's parameters.
+   //
+   const TemplateParmPtrVector* Parms() const { return &parms_; }
+
+   //  The following invoke the corresponding function on each parameter.
+   //
+   void AddToXref() override;
+   void Check() const override;
+   void EnterBlock() override;
+   void ExitBlock() const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+
+   //  Overridden to display the template's full specification.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+
+   //  Overridden to shrink containers.
+   //
+   void Shrink() override;
+
+   //  Overridden to return the template's parameters in angle brackets.
+   //
+   std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the parameters' locations.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+private:
+   //  The template's parameters.
+   //
+   TemplateParmPtrVector parms_;
 };
 }
 #endif

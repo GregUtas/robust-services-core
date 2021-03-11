@@ -32,12 +32,19 @@
 #include "NbTypes.h"
 #include "SysTypes.h"
 
+namespace NodeBase
+{
+   class CliThread;
+}
+
 namespace CodeTools
 {
    class CodeDirSet;
    class CodeFileSet;
    class LibraryVarSet;
 }
+
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -60,10 +67,6 @@ public:
    NodeBase::word Import
       (const std::string& name, const std::string& path, std::string& expl);
 
-   //  Returns the directory identified by NAME.
-   //
-   CodeDir* FindDir(const std::string& name) const;
-
    //  Returns FILE's entry in the code base.  If FILE does not have an
    //  entry, one is created.  DIR is FILE's directory, if known.
    //
@@ -81,15 +84,11 @@ public:
    //
    void AddVar(LibrarySet& var);
 
-   //  Returns the variable identified by NAME.
-   //
-   LibrarySet* FindVar(const std::string& name) const;
-
    //  If S is a variable, it is returned.  If S is the name of a directory
    //  or file, a single-member temporary set for it is created and returned.
    //  On failure, nullptr is returned.
    //
-   LibrarySet* EnsureVar(const std::string& s) const;
+   LibrarySet* EnsureVar(CliThread& cli, const std::string& s) const;
 
    //  Removes VAR from the list of variables.
    //
@@ -99,7 +98,7 @@ public:
    //  input stream.  Updates EXPL to indicate success or failure.  Returns 0
    //  on success.
    //
-   NodeBase::word Assign(const std::string& name,
+   NodeBase::word Assign(CliThread& cli, const std::string& name,
       const std::string& expr, size_t pos, std::string& expl);
 
    //  Displays the library's contents in STREAM.  The characters in OPTS
@@ -122,7 +121,8 @@ public:
    //  the input line.  The caller must invoke Release on the result after
    //  using it.
    //
-   LibrarySet* Evaluate(const std::string& expr, size_t pos) const;
+   LibrarySet* Evaluate
+      (CliThread& cli, const std::string& expr, size_t pos) const;
 
    //  Returns all directories.  Used for iteration.
    //
@@ -170,19 +170,27 @@ private:
    //
    ~Library();
 
+   //  Returns the directory identified by NAME.
+   //
+   CodeDir* FindDir(const std::string& name) const;
+
+   //  Returns the variable identified by NAME.
+   //
+   LibrarySet* FindVar(const std::string& name) const;
+
    //  Configuration parameter for the source code directory.
    //
    NodeBase::CfgStrParmPtr sourcePathCfg_;
 
-   //  The directories in the code base.
+   //  The directories in the code base.  Sorted by name, ignoring case.
    //
    std::list< std::unique_ptr < CodeDir >> dirs_;
 
-   //  The files in the code base.
+   //  The files in the code base.  Sorted by name, ignoring case.
    //
    std::list< std::unique_ptr < CodeFile >> files_;
 
-   //  The currently defined variables.
+   //  The currently defined variables.  Sorted by name, ignoring case.
    //
    std::list< LibrarySet* > vars_;
 

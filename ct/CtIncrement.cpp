@@ -116,7 +116,7 @@ public:
    //  Reads the rest of the input line and returns the result of
    //  evaluating it.
    //
-   static LibrarySet* Evaluate(const CliThread& cli);
+   static LibrarySet* Evaluate(CliThread& cli);
 protected:
    //  The arguments are from the base class.  Protected because this
    //  class is virtual.
@@ -127,7 +127,7 @@ protected:
 LibraryCommand::LibraryCommand(c_string comm, c_string help) :
    CliCommand(comm, help) { }
 
-LibrarySet* LibraryCommand::Evaluate(const CliThread& cli)
+LibrarySet* LibraryCommand::Evaluate(CliThread& cli)
 {
    Debug::ft("LibraryCommand.Evaluate");
 
@@ -137,7 +137,7 @@ LibrarySet* LibraryCommand::Evaluate(const CliThread& cli)
    cli.ibuf->Read(expr);
    if(!cli.EndOfInput()) return nullptr;
 
-   auto result = Singleton< Library >::Instance()->Evaluate(expr, pos);
+   auto result = Singleton< Library >::Instance()->Evaluate(cli, expr, pos);
    return result;
 }
 
@@ -175,7 +175,8 @@ word AssignCommand::ProcessCommand(CliThread& cli) const
    cli.ibuf->Read(expr);
    if(!cli.EndOfInput()) return -1;
 
-   auto rc = Singleton< Library >::Instance()->Assign(name, expr, pos, expl);
+   auto lib = Singleton< Library >::Instance();
+   auto rc = lib->Assign(cli, name, expr, pos, expl);
    return cli.Report(rc, expl);
 }
 
@@ -870,11 +871,8 @@ word ListCommand::ProcessCommand(CliThread& cli) const
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
-   string expl;
-
-   auto rc = set->List(*cli.obuf, expl);
+   auto rc = set->List(*cli.obuf);
    set->Release();
-   if(rc != 0) return cli.Report(rc, expl);
    return rc;
 }
 
@@ -1055,7 +1053,7 @@ word ScanCommand::ProcessCommand(CliThread& cli) const
    expr = line.substr(0, quote1);
    pattern = line.substr(quote1 + 1, quote2 - (quote1 + 1));
 
-   auto set = Singleton< Library >::Instance()->Evaluate(expr, pos);
+   auto set = Singleton< Library >::Instance()->Evaluate(cli, expr, pos);
    if(set == nullptr) return cli.Report(-7, AllocationError);
    auto rc = set->Scan(*cli.obuf, pattern, expl);
    set->Release();
@@ -1481,8 +1479,7 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(line, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto lib = Singleton< Library >::Instance();
-   auto file = lib->FindFile(filename);
+   auto file = Singleton< Library >::Instance()->FindFile(filename);
 
    if(file == nullptr)
    {

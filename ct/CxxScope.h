@@ -31,7 +31,6 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
-#include "CxxString.h"
 #include "CxxToken.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
@@ -185,7 +184,7 @@ public:
 
    //  Overridden to add the block's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to log warnings within the code.
    //
@@ -214,7 +213,7 @@ public:
 
    //  Overridden to update SYMBOLS with each statement's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to look at using statements that are local to a function.
    //
@@ -231,7 +230,7 @@ public:
 
    //  Overridden to return the block's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display a block in-line if it has one statement or none.
    //
@@ -363,7 +362,7 @@ public:
 
    //  Overridden to add the data's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -401,7 +400,7 @@ public:
 
    //  Overridden to update SYMBOLS with the data's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to indicate whether the data is const.
    //
@@ -646,6 +645,10 @@ public:
    //
    bool EnterScope() override;
 
+   //  Adds a data declaration to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
    //  Overridden to return the item's qualified name.
    //
    QualName* GetQualName() const override { return name_.get(); }
@@ -657,7 +660,7 @@ public:
 
    //  Overridden to return the item's name.
    //
-   const std::string* Name() const override { return name_->Name(); }
+   const std::string& Name() const override { return name_->Name(); }
 
    //  Overridden to return the item's qualified name.
    //
@@ -666,7 +669,7 @@ public:
 
    //  Overridden to record usage of the item.
    //
-   void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() override { AddUsage(); }
 
    //  Overridden to support static member data in a template.
    //
@@ -734,7 +737,7 @@ public:
 
    //  Overridden to add the data's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -753,9 +756,13 @@ public:
    //
    bool EnterScope() override;
 
+   //  Adds a data declaration to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
    //  Overridden to update SYMBOLS with the data's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to return true if the member appears in a union.
    //
@@ -769,7 +776,7 @@ public:
 
    //  Overridden to return the item's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to support an implicit "this".
    //
@@ -782,7 +789,7 @@ public:
 
    //  Overridden to record usage of the item.
    //
-   void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() override { AddUsage(); }
 
    //  Overridden to track usage of the "mutable" attribute.
    //
@@ -794,7 +801,7 @@ public:
 
    //  Overridden to return the item's name.
    //
-   std::string Trace() const override {return *Name(); }
+   std::string Trace() const override {return Name(); }
 
    //  Overridden to update the item's location.
    //
@@ -876,7 +883,7 @@ public:
 
    //  Overridden to add the data's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to log warnings associated with the data.
    //
@@ -897,7 +904,7 @@ public:
 
    //  Overridden to update SYMBOLS with the data's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to indicate that inline display is supported.
    //
@@ -905,7 +912,7 @@ public:
 
    //  Overridden to return the item's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display the data declaration and definition.
    //
@@ -918,7 +925,7 @@ public:
 
    //  Overridden to return the item's name.
    //
-   std::string Trace() const override {return *Name(); }
+   std::string Trace() const override {return Name(); }
 
    //  Overridden to update the data's location.
    //
@@ -1277,7 +1284,7 @@ public:
 
    //  Overridden to add the function's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to log warnings associated with the function.
    //
@@ -1326,6 +1333,10 @@ public:
    //  Overridden to return the file that declared the function.
    //
    CodeFile* GetDeclFile() const override;
+
+   //  Adds a function declaration to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
 
    //  Overridden to return the file (if any) that defined the function.
    //
@@ -1383,7 +1394,7 @@ public:
    //  Overridden to update SYMBOLS with the type usage of each of the
    //  function's components.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to indicate whether the function itself is const.
    //
@@ -1412,7 +1423,7 @@ public:
 
    //  Overridden to return the function's name.
    //
-   const std::string* Name() const override { return name_->Name(); }
+   const std::string& Name() const override { return name_->Name(); }
 
    //  Overridden for when NAME refers to a function template instance.
    //
@@ -1426,7 +1437,7 @@ public:
 
    //  Overridden to record usage of the function.
    //
-   void RecordUsage() const override;
+   void RecordUsage() override;
 
    //  Overridden to support function templates.
    //
@@ -1450,9 +1461,10 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
-   //  Overridden to track how many times the function was invoked.
+   //  Tracks how many times the function was invoked, and propagates
+   //  constructor and destructor invocations up the class hierarchy.
    //
-   void WasCalled() override;
+   void WasCalled();
 
    //  Overridden to count a read as an invocation.
    //
@@ -1785,6 +1797,44 @@ private:
 
 //------------------------------------------------------------------------------
 //
+//  A namespace definition: one occurrence of namespace NS { ... }.
+//
+class SpaceDefn : public CxxScope
+{
+public:
+   //  NS aggregates *all* items defined in namespace NS, whereas this class
+   //  represents a single occurrence of a namespace definition that defines
+   //  some of the namespace's items.
+   //
+   explicit SpaceDefn(const Namespace* ns);
+
+   //  Not subclassed.
+   //
+   ~SpaceDefn() { CxxStats::Decr(CxxStats::SPACE_DEFN); }
+
+   //  Overridden to add itself as a reference to space_.
+   //
+   void AddToXref() override;
+
+   //  Adds the namespace to ITEMS.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
+   //  Overridden to forward to space_.
+   //
+   const std::string& Name() const override;
+
+   //  Overridden to forward to space_.
+   //
+   std::string ScopedName(bool templates) const override;
+private:
+   //  The primary class for the namespace.
+   //
+   const Namespace* const space_;
+};
+
+//------------------------------------------------------------------------------
+//
 //  A function type.
 //
 class FuncSpec : public TypeSpec
@@ -1810,7 +1860,7 @@ private:
    void EnteringScope(const CxxScope* scope) override;
    bool IsConst() const override { return func_->IsConst(); }
    bool IsVolatile() const override { return func_->IsVolatile(); }
-   const std::string* Name() const override { return func_->Name(); }
+   const std::string& Name() const override { return func_->Name(); }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;

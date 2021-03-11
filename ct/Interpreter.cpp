@@ -23,6 +23,7 @@
 #include <cctype>
 #include "CodeDirSet.h"
 #include "CodeFileSet.h"
+#include "CodeItemSet.h"
 #include "Debug.h"
 #include "Library.h"
 #include "LibraryErrSet.h"
@@ -98,8 +99,8 @@ const OperatorInfo OperatorInfo::Attrs[Operator_N] =
    OperatorInfo("-",  2, ANY_SET,  ANY_SET,  ANY_SET),   // OpDifference
    OperatorInfo("|",  2, ANY_SET,  ANY_SET,  ANY_SET),   // OpUnion
    OperatorInfo("|",  2, ANY_SET,  ANY_SET,  ANY_SET),   // OpAutoUnion
-   OperatorInfo("d",  1, DIR_SET,  FILE_SET, ERR_SET),   // OpDirectories
-   OperatorInfo("f",  1, FILE_SET, DIR_SET,  ERR_SET),   // OpFiles
+   OperatorInfo("d",  1, DIR_SET,  ANY_SET,  ERR_SET),   // OpDirectories
+   OperatorInfo("f",  1, FILE_SET, ANY_SET,  ERR_SET),   // OpFiles
    OperatorInfo("fn", 2, FILE_SET, FILE_SET, FILE_SET),  // OpFileName
    OperatorInfo("ft", 2, FILE_SET, FILE_SET, FILE_SET),  // OpFileType
    OperatorInfo("ms", 2, FILE_SET, FILE_SET, FILE_SET),  // OpMatchString
@@ -111,7 +112,15 @@ const OperatorInfo OperatorInfo::Attrs[Operator_N] =
    OperatorInfo("as", 1, FILE_SET, FILE_SET, ERR_SET),   // OpAffecters
    OperatorInfo("ca", 1, FILE_SET, FILE_SET, ERR_SET),   // OpCommonAffecters
    OperatorInfo("nb", 1, FILE_SET, FILE_SET, ERR_SET),   // OpNeededBy
-   OperatorInfo("ns", 1, FILE_SET, FILE_SET, ERR_SET)    // OpNeeders
+   OperatorInfo("ns", 1, FILE_SET, FILE_SET, ERR_SET),   // OpNeeders
+   OperatorInfo("df", 1, ITEM_SET, ITEM_SET, ERR_SET),   // OpDefinitions
+   OperatorInfo("db", 1, ITEM_SET, ANY_SET,  ERR_SET),   // OpDeclaredBy
+   OperatorInfo("rb", 1, ITEM_SET, ANY_SET,  ERR_SET),   // OpReferencedBy
+   OperatorInfo("fd", 1, FILE_SET, ITEM_SET, ERR_SET),   // OpFileDeclarers
+   OperatorInfo("cd", 1, ITEM_SET, ITEM_SET, ERR_SET),   // OpCodeDeclarers
+   OperatorInfo("fr", 1, FILE_SET, ITEM_SET, ERR_SET),   // OpFileReferencers
+   OperatorInfo("cr", 1, ITEM_SET, ITEM_SET, ERR_SET),   // OpCodeReferencers
+   OperatorInfo("ri", 2, ITEM_SET, FILE_SET, FILE_SET)   // OpReferencedIn
 };
 
 //------------------------------------------------------------------------------
@@ -282,11 +291,25 @@ LibraryOpcode::LibraryOpcode(LibTokenType op, std::stack< LibrarySet* >& args) :
    case FILE_SET:
       lhs_ = new CodeFileSet(LibrarySet::TemporaryName(), nullptr);
       break;
+   case ITEM_SET:
+      lhs_ = new CodeItemSet(LibrarySet::TemporaryName(), nullptr);
+      break;
    case ANY_SET:
-      if(type1 == DIR_SET)
+      switch(type1)
+      {
+      case DIR_SET:
          lhs_ = new CodeDirSet(LibrarySet::TemporaryName(), nullptr);
-      else
+         break;
+      case FILE_SET:
          lhs_ = new CodeFileSet(LibrarySet::TemporaryName(), nullptr);
+         break;
+      case ITEM_SET:
+         lhs_ = new CodeItemSet(LibrarySet::TemporaryName(), nullptr);
+         break;
+      default:
+         err_ = InterpreterError;
+         return;
+      }
       break;
    default:
       err_ = InterpreterError;
@@ -328,6 +351,11 @@ bool LibraryOpcode::CheckArgType(LibSetType accepted, LibSetType entered)
    case DIR_SET:
       if(entered == DIR_SET) return true;
       err_ = DirSetExpected;
+      return false;
+
+   case ITEM_SET:
+      if(entered == ITEM_SET) return true;
+      err_ = ItemSetExpected;
       return false;
 
    case ANY_SET:
@@ -401,6 +429,30 @@ void LibraryOpcode::Execute()
       break;
    case OpNeeders:
       result = lhs_->Assign(rhs1_->Needers());
+      break;
+   case OpDefinitions:
+      result = lhs_->Assign(rhs1_->Definitions());
+      break;
+   case OpDeclaredBy:
+      result = lhs_->Assign(rhs1_->DeclaredBy());
+      break;
+   case OpReferencedBy:
+      result = lhs_->Assign(rhs1_->ReferencedBy());
+      break;
+   case OpFileDeclarers:
+      result = lhs_->Assign(rhs1_->FileDeclarers());
+      break;
+   case OpCodeDeclarers:
+      result = lhs_->Assign(rhs1_->CodeDeclarers());
+      break;
+   case OpFileReferencers:
+      result = lhs_->Assign(rhs1_->FileReferencers());
+      break;
+   case OpCodeReferencers:
+      result = lhs_->Assign(rhs1_->CodeReferencers());
+      break;
+   case OpReferencedIn:
+      result = lhs_->Assign(rhs1_->ReferencedIn(rhs2_));
       break;
    default:
       Debug::SwLog(LibraryOpcode_Execute, "unexpected opcode", op_);
@@ -614,6 +666,7 @@ LibrarySet* Interpreter::Error(LibExprErr err) const
 
    case DirSetExpected:
    case FileSetExpected:
+   case ItemSetExpected:
       //
       //c To properly highlight where the error occurred, the operator
       //  that detected this problem should set curr_.  This would involve
@@ -641,7 +694,7 @@ LibrarySet* Interpreter::Error(LibExprErr err) const
 
 fn_name Interpreter_Evaluate = "Interpreter.Evaluate";
 
-LibrarySet* Interpreter::Evaluate()
+LibrarySet* Interpreter::Evaluate(CliThread& cli)
 {
    Debug::ft(Interpreter_Evaluate);
 
@@ -654,7 +707,7 @@ LibrarySet* Interpreter::Evaluate()
    {
       err = GetToken();
       if(err != ExpressionOk) break;
-      err = HandleToken();
+      err = HandleToken(cli);
    }
 
    //  A successful parse concludes with EndOfExpression and no pending
@@ -761,7 +814,7 @@ LibExprErr Interpreter::GetToken()
 
 fn_name Interpreter_HandleToken = "Interpreter.HandleToken";
 
-LibExprErr Interpreter::HandleToken()
+LibExprErr Interpreter::HandleToken(CliThread& cli)
 {
    Debug::ft(Interpreter_HandleToken);
 
@@ -775,19 +828,18 @@ LibExprErr Interpreter::HandleToken()
       //  Find this operand or create it.  Push it onto the stack and apply
       //  any pending operator.
       //
-      set = Singleton< Library >::Instance()->EnsureVar(token_);
+      set = Singleton< Library >::Instance()->EnsureVar(cli, token_);
       operand = true;
 
       if(set == nullptr)
       {
-         //  This hack handles the string after the fn, ft, and ms operators.
+         //  This hack handles the string after the binary operators fn, ft,
+         //  ms, and ri, which all have a CodeFileSet as their second operand.
          //  It creates a temporary variable whose name includes the string.
          //
          if(!operators_.empty())
          {
-            if((operators_.top() == OpFileName) ||
-               (operators_.top() == OpFileType) ||
-               (operators_.top() == OpMatchString))
+            if(OperatorInfo::Attrs[operators_.top()].rhs2 == FILE_SET)
             {
                string suffix = LibrarySet::TemporaryChar + token_;
                set = new CodeFileSet(suffix, nullptr);

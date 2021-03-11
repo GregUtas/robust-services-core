@@ -32,6 +32,7 @@
 #include "CxxFwd.h"
 #include "CxxLocation.h"
 #include "CxxString.h"
+#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -138,7 +139,7 @@ public:
    //  is set.  Consequently, QualifiedName(false, false) == *Name().
    //
    virtual std::string QualifiedName(bool scopes, bool templates)
-      const { return *Name(); }
+      const { return Name(); }
 
    //  Returns the item's fully qualified name.  Template arguments are omitted
    //  unless TEMPLATES is set.
@@ -295,7 +296,7 @@ public:
    //  be #included transitively).  The default version invokes the function
    //  on GetTypeSpec().
    //
-   virtual void GetDirectClasses(CxxUsageSets& symbols) const;
+   virtual void GetDirectClasses(CxxUsageSets& symbols);
 
    //  Invoked to add template arguments that are direct (that is, that don't
    //  have a pointer) to SYMBOLS.  The definition of such arguments must be
@@ -321,6 +322,11 @@ public:
    //  fully qualified name is displayed.
    //
    void DisplayReferent(std::ostream& stream, bool fq) const;
+
+   //  Returns a string that identifies the item and its type and location.
+   //  Intended primarily for CLI commands.
+   //
+   std::string to_str() const;
 
    //  Returns a string that identifies the item's source code location.
    //
@@ -394,7 +400,7 @@ protected:
 
    //  Invoked by overrides of RecordUsage.
    //
-   void AddUsage() const;
+   void AddUsage();
 private:
    //  Indicates that the item appeared in internally generated code.
    //
@@ -412,40 +418,6 @@ private:
    //  The location where the item appeared.
    //
    mutable CxxLocation loc_;
-};
-
-//------------------------------------------------------------------------------
-//
-//  A namespace definition: one occurrence of namespace NS { ... }.
-//
-class SpaceDefn : public CxxNamed
-{
-public:
-   //  NS aggregates *all* items defined in namespace NS, whereas this class
-   //  represents a single occurrence of a namespace definition that defines
-   //  some of the namespace's items.
-   //
-   explicit SpaceDefn(const Namespace* ns);
-
-   //  Not subclassed.
-   //
-   ~SpaceDefn() { CxxStats::Decr(CxxStats::SPACE_DEFN); }
-
-   //  Overridden to add itself as a reference to space_.
-   //
-   void AddToXref() const override;
-
-   //  Overridden to forward to space_.
-   //
-   const std::string* Name() const override;
-
-   //  Overridden to forward to space_.
-   //
-   std::string ScopedName(bool templates) const override;
-private:
-   //  The primary class for the namespace.
-   //
-   const Namespace* const space_;
 };
 
 //------------------------------------------------------------------------------
@@ -578,7 +550,7 @@ public:
 
    //  Overridden to invoke AddReference on the name's referent.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to check template arguments.
    //
@@ -599,7 +571,7 @@ public:
    //  Overridden to invoke GetDirectClasses on DirectType() and on
    //  each template argument.
    //
-   void GetDirectClasses(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) override;
 
    //  Overridden to invoke GetDirectTemplateArgs on each template
    //  argument.
@@ -612,11 +584,11 @@ public:
 
    //  Overridden to update SYMBOLS with the name's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to return the name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display the name.
    //
@@ -808,7 +780,7 @@ public:
 
    //  Overridden to add the name's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to check each name and any template parameters.
    //
@@ -833,7 +805,7 @@ public:
 
    //  Overridden to invoke GetDirectClasses on the last name.
    //
-   void GetDirectClasses(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) override;
 
    //  Overridden to invoke GetDirectTemplateArgs on each name.
    //
@@ -850,11 +822,11 @@ public:
 
    //  Overridden to update SYMBOLS with the name's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to return the last name.
    //
-   const std::string* Name() const override { return Last()->Name(); }
+   const std::string& Name() const override { return Last()->Name(); }
 
    //  Overridden to display the name, including any template arguments.
    //
@@ -1330,7 +1302,7 @@ private:
 
    //  Overridden to add the specification's components to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to align thatArg's type with the this type, which is that of a
    //  template parameter that might be specialized.
@@ -1400,7 +1372,7 @@ private:
 
    //  Overridden to invoke GetDirectClasses on its qualified name.
    //
-   void GetDirectClasses(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) override;
 
    //  If this is a direct template argument (i.e. one without pointer tags)
    //  but it was only made visible by a forward or friend declaration, its
@@ -1428,7 +1400,7 @@ private:
 
    //  Overridden to update SYMBOLS with the specification's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to return true if the type has a bounded array specification.
    //
@@ -1491,7 +1463,7 @@ private:
 
    //  Overridden to return the type's name.
    //
-   const std::string* Name() const override { return name_->Name(); }
+   const std::string& Name() const override { return name_->Name(); }
 
    //  Returns true if NAMES, used in SCOPE and FILE, could refer to this type
    //  and its template arguments.  INDEX is the current index into NAMES.
@@ -1612,67 +1584,6 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  Parameters associated with a template declaration.  Even though this is
-//  subclassed from CxxToken, it is put here to make TemplateParm's definition
-//  visible, as the unique_ptrs in parms_ must be able to see its destructor.
-//
-class TemplateParms : public CxxToken
-{
-public:
-   //  Creates a template declaration in which PARM is the first parameter
-   //  (e.g. T/typename/1 for template <typename T*...).
-   //
-   explicit TemplateParms(TemplateParmPtr& parm);
-
-   //  Not subclassed.
-   //
-   ~TemplateParms() { CxxStats::Decr(CxxStats::TEMPLATE_PARMS); }
-
-   //  Adds another parameter to the template.
-   //
-   void AddParm(TemplateParmPtr& parm);
-
-   //  Invokes EnterScope on each parameter.
-   //
-   void EnterScope();
-
-   //  Returns the template's parameters.
-   //
-   const TemplateParmPtrVector* Parms() const { return &parms_; }
-
-   //  The following invoke the corresponding function on each parameter.
-   //
-   void AddToXref() const override;
-   void Check() const override;
-   void EnterBlock() override;
-   void ExitBlock() const override;
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
-
-   //  Overridden to display the template's full specification.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
-   //  Overridden to return the template's parameters in angle brackets.
-   //
-   std::string TypeString(bool arg) const override;
-
-   //  Overridden to update the parameters' locations.
-   //
-   void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from) const override;
-private:
-   //  The template's parameters.
-   //
-   TemplateParmPtrVector parms_;
-};
-
-//------------------------------------------------------------------------------
-//
 //  Inline assembly code ("asm" keyword).  It is unnamed but must know
 //  where it appears.
 //
@@ -1704,11 +1615,11 @@ class StaticAssert : public CxxNamed
 public:
    StaticAssert(ExprPtr& expr, ExprPtr& message);
    ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
-   void AddToXref() const override;
+   void AddToXref() override;
    std::string EndChars() const override { return ";"; }
    void EnterBlock() override;
    bool EnterScope() override;
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;

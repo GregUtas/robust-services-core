@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  CodeDirSet.h
+//  CodeItemSet.h
 //
 //  Copyright (C) 2013-2020  Greg Utas
 //
@@ -19,44 +19,65 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef CODEDIRSET_H_INCLUDED
-#define CODEDIRSET_H_INCLUDED
+#ifndef CODEITEMSET_H_INCLUDED
+#define CODEITEMSET_H_INCLUDED
 
 #include "CodeSet.h"
 #include <string>
+#include "CxxFwd.h"
 #include "LibraryTypes.h"
+
+namespace CodeTools
+{
+   struct CxxUsageSets;
+}
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
-//  A set of code directories.
+//  A collection of C++ code items.
 //
-class CodeDirSet : public CodeSet
+class CodeItemSet : public CodeSet
 {
 public:
-   //  Identifies ITEMS with NAME.
+   //  Identifies SET with NAME.
    //
-   CodeDirSet(const std::string& name, const LibItemSet* items);
+   CodeItemSet(const std::string& name, const LibItemSet* items);
 
-   //  Override the operators supported by a set of directories.
+   //  Copies the items in USAGES into the set.
    //
+   void CopyUsages(const CxxUsageSets& usages);
+
+   //  Override the operators supported by a set of code files.
+   //
+   LibrarySet* CodeDeclarers() const override;
+   LibrarySet* CodeReferencers() const override;
+   LibrarySet* DeclaredBy() const override;
+   LibrarySet* Definitions() const override;
    LibrarySet* Directories() const override;
+   LibrarySet* FileDeclarers() const override;
+   LibrarySet* FileReferencers() const override;
    LibrarySet* Files() const override;
+   LibrarySet* ReferencedBy() const override;
 
    //  Returns the type of set.
    //
-   LibSetType GetType() const override { return DIR_SET; }
+   LibSetType GetType() const override { return ITEM_SET; }
 
-   //  Returns a string for each directory in the set.
+   //  Returns a string for each item in the set.
    //
    void to_str(stringVector& strings, bool verbose) const override;
 private:
    //  Private to restrict deletion.  Not subclassed.
    //
-   ~CodeDirSet();
+   ~CodeItemSet();
 
-   //  Overridden to create a set of directories.
+   //  Copies ITEMS into the set.
+   //
+   void CopyItems(const CxxNamedSet& items);
+
+   //  Overridden to create a set of C++ items.
    //
    LibrarySet* Create
       (const std::string& name, const LibItemSet* items) const override;

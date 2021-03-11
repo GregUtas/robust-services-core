@@ -176,7 +176,7 @@ bool Parser::CheckType(QualNamePtr& name)
    //
    if(name->Size() != 1) return true;
 
-   auto type = Cxx::GetType(*name->Name());
+   auto type = Cxx::GetType(name->Name());
    auto root = Singleton< CxxRoot >::Instance();
 
    switch(type)
@@ -234,7 +234,7 @@ bool Parser::CheckType(QualNamePtr& name)
       return false;
 
    default:
-      Debug::SwLog(Parser_CheckType, *name->Name(), type, false);
+      Debug::SwLog(Parser_CheckType, name->Name(), type, false);
    }
 
    return false;
@@ -1280,7 +1280,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
          end = lexer_.FindClosing('(', ')');
          if(end == string::npos) return Backup(start, 63);
          if(!GetArgList(token)) return Backup(start, 64);
-         memberName = *baseName->Name();
+         memberName = baseName->Name();
          MemberInitPtr mem(new MemberInit(func.get(), memberName, token));
          mem->SetContext(begin);
          func->AddMemberInit(mem);
@@ -1321,7 +1321,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
    {
       //  See if the name is actually a keyword or operator.
       //
-      auto op = Cxx::GetReserved(*qualName->Name());
+      auto op = Cxx::GetReserved(qualName->Name());
 
       switch(op)
       {
@@ -2175,7 +2175,7 @@ bool Parser::GetFuncImpl(Function* func)
       //  The function implementation was not parsed successfully.
       //  Skip it and continue with the next item.
       //
-      Failure(venue_ + ": " + *func->Name());
+      Failure(venue_ + ": " + func->Name());
       lexer_.Reposition(start);
       if(!lexer_.NextCharIs('{')) return false;
       auto end = lexer_.FindClosing('{', '}');
@@ -2930,7 +2930,7 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
       name->PushBack(type);
    }
 
-   if(*name->Name() == OPERATOR_STR)
+   if(name->Name() == OPERATOR_STR)
    {
       Cxx::Operator oper;
 
@@ -3613,8 +3613,8 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec, string& name)
       //  name, if any, stripping the "(*" prefix and ")" suffix.
       //
       auto funcName = func->Name();
-      if(funcName == nullptr) return true;
-      name = *funcName;
+      if(funcName.empty()) return true;
+      name = funcName;
       name.erase(0, 2);
       name.pop_back();
    }
@@ -4785,7 +4785,7 @@ bool Parser::SetCompoundType
       return true;
 
    default:
-      Debug::SwLog(Parser_SetCompoundType, *name->Name(), type, false);
+      Debug::SwLog(Parser_SetCompoundType, name->Name(), type, false);
    }
 
    return false;

@@ -350,11 +350,11 @@ private:
 
    //  Returns the items within ITEM that were accessed via a using statement.
    //
-   CxxNamedSet FindUsingReferents(const CxxNamed* item) const;
+   CxxNamedSet FindUsingReferents(CxxNamed* item) const;
 
    //  Qualifies names used within ITEM in order to remove using statements.
    //
-   void QualifyUsings(const CxxNamed* item);
+   void QualifyUsings(CxxNamed* item);
 
    //  Within ITEM, qualifies occurrences of REF.
    //

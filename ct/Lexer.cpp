@@ -1167,25 +1167,6 @@ size_t Lexer::GetLineInfoIndex(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-LineType Lexer::GetLineType(size_t pos) const
-{
-   auto type = LineType_N;
-
-   if(!edited_ && (file_ != nullptr))
-   {
-      auto line = GetLineInfoIndex(pos);
-      if(line == SIZE_MAX) return type;
-      return file_->GetLineType(line);
-   }
-
-   auto code = GetCode(pos);
-   bool cont;
-   std::set< Warning > warnings;
-   return CalcLineType(code, cont, warnings);
-}
-
-//------------------------------------------------------------------------------
-
 size_t Lexer::GetLineNum(size_t pos) const
 {
    return GetLineInfoIndex(pos);
@@ -1207,6 +1188,25 @@ size_t Lexer::GetLineStart(size_t line) const
    }
 
    return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+LineType Lexer::GetLineType(size_t pos) const
+{
+   auto type = LineType_N;
+
+   if(!edited_ && (file_ != nullptr))
+   {
+      auto line = GetLineInfoIndex(pos);
+      if(line == SIZE_MAX) return type;
+      return file_->GetLineType(line);
+   }
+
+   auto code = GetCode(pos);
+   bool cont;
+   std::set< Warning > warnings;
+   return CalcLineType(code, cont, warnings);
 }
 
 //------------------------------------------------------------------------------

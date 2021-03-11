@@ -48,9 +48,9 @@ public:
    //
    LibSetType GetType() const override { return VAR_SET; }
 
-   //  Displays library variable names in RESULT and returns 0.
+   //  Returns a string for each variable in the set.
    //
-   NodeBase::word Show(std::string& result) const override;
+   void to_str(stringVector& strings, bool verbose) const override;
 private:
    //  Private to restrict deletion.  Not subclassed.
    //

@@ -26,8 +26,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
-#include <memory>
 #include <string>
+#include "CodeTypes.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
@@ -36,10 +36,7 @@ namespace NodeBase
    class CliThread;
 }
 
-namespace CodeTools
-{
-   struct FixOptions;
-}
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -50,7 +47,6 @@ namespace CodeTools
 class LibrarySet : public LibraryItem
 {
    friend class Library;
-   friend LibrarySetPtr::deleter_type;
 public:
    //  Prefix for the name of a read-only set.
    //
@@ -72,14 +68,18 @@ public:
    //
    bool IsTemporary() const;
 
-   //  Returns the type of set.  Must be overridden by subclasses.
-   //
-   virtual LibSetType GetType() const;
-
    //  Returns the items in the set.
    //
    const LibItemSet& Items() const { return items_; }
    LibItemSet& Items() { return items_; }
+
+   //  Deletes the set unless it is registered on the queue of sets.
+   //
+   void Release();
+
+   //  Returns the type of set.  Must be overridden by subclasses.
+   //
+   virtual LibSetType GetType() const;
 
    //  Returns 0 after checking code files in the set for conformance to
    //  C++ coding guidelines.  If STREAM is not nullptr, produces a report
@@ -112,12 +112,6 @@ public:
    //
    virtual NodeBase::word Format(std::string& expl) const;
 
-   //  On success, returns 0 and updates STREAM with a list of the items in
-   //  the set, one per line.  Returns another value on failure and updates
-   //  EXPL with an explanation.
-   //
-   virtual NodeBase::word List(std::ostream& stream, std::string& expl) const;
-
    //  On success, returns 0 after parsing items in the set.  EXPL describes
    //  the outcome.  The first character in TRACE indicates whether to create
    //  a parse file never ('n'), on failures only ('f'), or always ('a').
@@ -134,27 +128,15 @@ public:
    virtual NodeBase::word Scan(std::ostream& stream,
       const std::string& pattern, std::string& expl) const;
 
-   //  On success, returns 0 and updates RESULT with the items in the set,
-   //  separated by commas.  Returns another value on failure and updates
-   //  RESULT with an explanation.
-   //
-   virtual NodeBase::word Show(std::string& result) const;
-
    //  On success, returns 0 and updates STREAM with the build order of
    //  the set.  Returns another value on failure and updates EXPL with
    //  an explanation.
    //
    virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
 
-   //  Deletes the set unless it is registered on the queue of sets.
-   //
-   void Release();
-
    //  Operators.  The default implementations invoke OpError (see below)
    //  and must be overridden by a subclass that supports the operator.
    //
-   virtual LibrarySet* Create
-      (const std::string& name, const LibItemSet* items) const;
    virtual LibrarySet* Assign(LibrarySet* rhs);
    virtual LibrarySet* Intersection(const LibrarySet* rhs) const;
    virtual LibrarySet* Difference(const LibrarySet* rhs) const;
@@ -173,6 +155,35 @@ public:
    virtual LibrarySet* CommonAffecters() const;
    virtual LibrarySet* NeededBy() const;
    virtual LibrarySet* Needers() const;
+   virtual LibrarySet* Definitions() const;
+   virtual LibrarySet* DeclaredBy() const;
+   virtual LibrarySet* ReferencedBy() const;
+   virtual LibrarySet* FileDeclarers() const;
+   virtual LibrarySet* CodeDeclarers() const;
+   virtual LibrarySet* FileReferencers() const;
+   virtual LibrarySet* CodeReferencers() const;
+   virtual LibrarySet* ReferencedIn(const LibrarySet* that) const;
+
+   //  Update STRINGS with a string for each item in the set.  The strings
+   //  will either be displayed one per line (VERBOSE is true) or separated
+   //  by commas (VERBOSE is false).
+   //
+   virtual void to_str(stringVector& strings, bool verbose) const = 0;
+
+   //  On success, returns 0 and updates STREAM with a list of the items in
+   //  the set, one per line.  Returns another value on failure.
+   //
+   NodeBase::word List(std::ostream& stream) const;
+
+   //  On success, returns 0 and updates RESULT with the items in the set,
+   //  separated by commas.  Returns another value on failure and updates
+   //  RESULT with an explanation.
+   //
+   NodeBase::word Show(std::string& result) const;
+
+   //  Overridden to return the item's name.
+   //
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display member variables.
    //
@@ -190,9 +201,16 @@ protected:
    //
    virtual ~LibrarySet();
 
+   //  Creates a set that contains ITEMS and is identified by NAME.  The default
+   //  implementation invokes OpError (see below) and must be overridden by each
+   //  subclass.
+   //
+   virtual LibrarySet* Create
+      (const std::string& name, const LibItemSet* items) const;
+
    //  Reports COUNT items in RESULT and returns 0.
    //
-   static NodeBase::word Counted(std::string& result, const size_t* count);
+   static NodeBase::word Counted(std::string& result, const size_t count);
 
    //  If RESULT is not empty, deletes a presumed trailing ", ", else sets
    //  RESULT to indicate that nothing was found.  Returns 0.
@@ -216,7 +234,11 @@ private:
 
    //  Generates a log and returns nullptr.
    //
-   LibrarySet* OpError() const;
+   LibrarySet* OpError(fixed_string op) const;
+
+   //  The set's name.
+   //
+   std::string name_;
 
    //  The set of items.
    //

@@ -27,7 +27,6 @@
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
-#include "CxxString.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -50,7 +49,7 @@ AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 
 //------------------------------------------------------------------------------
 
-void AlignAs::AddToXref() const
+void AlignAs::AddToXref()
 {
    token_->AddToXref();
 }
@@ -66,7 +65,7 @@ void AlignAs::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void AlignAs::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void AlignAs::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    token_->GetUsages(file, symbols);
 }
@@ -108,7 +107,7 @@ ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
 
 //------------------------------------------------------------------------------
 
-void ArraySpec::AddToXref() const
+void ArraySpec::AddToXref()
 {
    if(expr_ != nullptr) expr_->AddToXref();
 }
@@ -124,7 +123,7 @@ void ArraySpec::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void ArraySpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void ArraySpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
 }
@@ -182,7 +181,7 @@ BraceInit::BraceInit()
 
 //------------------------------------------------------------------------------
 
-void BraceInit::AddToXref() const
+void BraceInit::AddToXref()
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
@@ -213,7 +212,7 @@ void BraceInit::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void BraceInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void BraceInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
@@ -328,16 +327,6 @@ bool CxxToken::IsPointer(bool arrays) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxToken_Name = "CxxToken.Name";
-
-const string* CxxToken::Name() const
-{
-   Context::SwLog(CxxToken_Name, strOver(this), 0);
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 void CxxToken::Print(ostream& stream, const Flags& options) const
 {
    stream << "// " << ERROR_STR << '(' << strClass(this, false) << ')';
@@ -412,149 +401,6 @@ bool CxxToken::WasWritten(const StackArg* arg, bool direct, bool indirect)
    auto expl = "Write not supported to " + Trace();
    Context::SwLog(CxxToken_WasWritten, expl, Type());
    return false;
-}
-
-//==============================================================================
-//
-//  Removes, from SET, an item that is
-//    (a) a template parameter,
-//    (b) a template argument in TYPE, or
-//    (c) a name found in NAMES.
-//  There are situation in which (b) or (c), but not both, detects a template
-//  argument.  Ideally this would be cleaned up, but the effort does not seem
-//  worthwhile.
-//
-void EraseTemplateArgs
-   (CxxNamedSet& set, const TypeName* type, const stringVector& names)
-{
-   for(auto i = set.cbegin(); i != set.cend(); NO_OP)
-   {
-      auto name = (*i)->ScopedName(true);
-      auto erase = ((*i)->Type() == Cxx::TemplateParm);
-      erase = erase || type->ItemIsTemplateArg(*i);
-
-      if(!erase)
-      {
-         for(auto n = names.cbegin(); n != names.cend(); ++n)
-         {
-            if(name == *n)
-            {
-               erase = true;
-               break;
-            }
-         }
-      }
-
-      if(erase)
-         i = set.erase(i);
-      else
-         ++i;
-   }
-}
-
-//------------------------------------------------------------------------------
-//
-//  LHS = LHS U RHS.
-//
-void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
-{
-   for(auto i = rhs.cbegin(); i != rhs.cend(); ++i)
-   {
-      lhs.insert(*i);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void CxxUsageSets::AddBase(const CxxNamed* item)
-{
-   if(item->GetFile() == nullptr) return;
-   bases.insert(item);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxUsageSets::AddDirect(const CxxNamed* item)
-{
-   if(item->GetFile() == nullptr) return;
-   directs.insert(item);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxUsageSets::AddForward(const CxxNamed* item)
-{
-   if(item->GetFile() == nullptr) return;
-   if(item->Type() == Cxx::Friend)
-      friends.insert(item);
-   else
-      forwards.insert(item);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxUsageSets::AddIndirect(const CxxNamed* item)
-{
-   if(item->GetFile() == nullptr) return;
-   indirects.insert(item);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxUsageSets::AddInherit(const CxxNamed* item)
-{
-   if(item->GetFile() == nullptr) return;
-   inherits.insert(item);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxUsageSets::AddUser(const CxxNamed* item)
-{
-   if(item->GetFile() == nullptr) return;
-   users.insert(item);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxUsageSets::EraseLocals()
-{
-   Debug::ft("CxxUsageSets.EraseLocals");
-
-   for(auto d = directs.cbegin(); d != directs.cend(); NO_OP)
-   {
-      if((*d)->ScopedName(false).find(LOCALS_STR) != string::npos)
-         d = directs.erase(d);
-      else
-         ++d;
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void CxxUsageSets::EraseTemplateArgs(const TypeName* type)
-{
-   Debug::ft("CxxUsageSets.EraseTemplateArgs");
-
-   stringVector names;
-   type->GetNames(names);
-   CodeTools::EraseTemplateArgs(directs, type, names);
-   CodeTools::EraseTemplateArgs(indirects, type, names);
-   CodeTools::EraseTemplateArgs(forwards, type, names);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxUsageSets::Union(const CxxUsageSets& set)
-{
-   Debug::ft("CxxUsageSets.Union");
-
-   CodeTools::Union(bases, set.bases);
-   CodeTools::Union(directs, set.directs);
-   CodeTools::Union(indirects, set.indirects);
-   CodeTools::Union(forwards, set.forwards);
-   CodeTools::Union(friends, set.friends);
-   CodeTools::Union(users, set.users);
 }
 
 //==============================================================================
@@ -711,7 +557,7 @@ bool Expression::AddItem(TokenPtr& item)
 
 //------------------------------------------------------------------------------
 
-void Expression::AddToXref() const
+void Expression::AddToXref()
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
@@ -857,7 +703,7 @@ void Expression::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void Expression::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Expression::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
@@ -1134,7 +980,7 @@ void Literal::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-const string* Literal::Name() const
+const string& Literal::Name() const
 {
    return Referent()->Name();
 }
@@ -1226,7 +1072,7 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 
 //------------------------------------------------------------------------------
 
-void Operation::AddToXref() const
+void Operation::AddToXref()
 {
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -1778,7 +1624,7 @@ void Operation::ExecuteCall()
       case Cxx::OBJECT_CREATE:
       case Cxx::OBJECT_CREATE_ARRAY:
          func = func->GetArea()->FindFunc
-            (*func->Name(), &args, true, scope, nullptr);
+            (func->Name(), &args, true, scope, nullptr);
       }
       break;
 
@@ -1786,6 +1632,10 @@ void Operation::ExecuteCall()
       cls = static_cast< Class* >(proc.item);
       cls->Instantiate();
       func = cls->FindCtor(&args, scope);
+      if((proc.name != nullptr) && (func != nullptr))
+      {
+         proc.name->SetReferent(func, nullptr);
+      }
       break;
 
    case Cxx::Terminal:
@@ -2032,7 +1882,7 @@ bool Operation::ExecuteOverload
       //  This is only legal when ARG1 is an aggregate, and operator= will
       //  not be used.
       //
-      if(*arg2->item->Name() == AUTO_STR) return false;
+      if(arg2->item->Name() == AUTO_STR) return false;
       break;
    }
 
@@ -2240,7 +2090,7 @@ Function* Operation::FindNewOrDelete
 
 //------------------------------------------------------------------------------
 
-void Operation::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Operation::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -2545,9 +2395,9 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       Context::SwLog(Operation_PushMember, expl, (op_ << 4) + ptrs);
    }
 
-   auto name = arg2.item->Name();
+   auto& name = arg2.item->Name();
 
-   if(name == nullptr)
+   if(name.empty())
    {
       auto expl = "Name not found for " + arg2.Trace();
       Context::SwLog(Operation_PushMember, expl, 0);
@@ -2556,11 +2406,11 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
    SymbolView view;
    auto scope = Context::Scope();
-   auto mem = cls->FindMember(*name, true, scope, &view);
+   auto mem = cls->FindMember(name, true, scope, &view);
 
    if(mem == nullptr)
    {
-      auto expl = "Member " + *cls->Name() + SCOPE_STR + *name + " not found";
+      auto expl = "Member " + cls->Name() + SCOPE_STR + name + " not found";
       Context::SwLog(Operation_PushMember, expl, 0);
       return;
    }
@@ -2584,7 +2434,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    }
    else
    {
-      auto expl = "Unexpected access to " + *cls->Name() + SCOPE_STR + *name;
+      auto expl = "Unexpected access to " + cls->Name() + SCOPE_STR + name;
       Context::SwLog(Operation_PushMember, expl, arg2.item->Type());
    }
 
@@ -2601,7 +2451,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       }
       else
       {
-         auto expl = "Invalid type for " + *cls->Name() + SCOPE_STR + *name;
+         auto expl = "Invalid type for " + cls->Name() + SCOPE_STR + name;
          Context::SwLog(Operation_PushMember, expl, mem->Type());
       }
    }
@@ -2985,7 +2835,7 @@ void Operation::UpdatePos
 
 //==============================================================================
 
-void Precedence::AddToXref() const
+void Precedence::AddToXref()
 {
    if(expr_ != nullptr) expr_->AddToXref();
 }
@@ -3001,7 +2851,7 @@ void Precedence::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void Precedence::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+void Precedence::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
 }
@@ -3041,5 +2891,154 @@ void StringLiteral::PushBack(uint32_t c)
    Debug::ft(StringLiteral_PushBack);
 
    Debug::SwLog(StringLiteral_PushBack, strOver(this), 0);
+}
+
+//==============================================================================
+
+TemplateParms::TemplateParms(TemplateParmPtr& parm)
+{
+   Debug::ft("TemplateParms.ctor");
+
+   parms_.push_back(std::move(parm));
+   CxxStats::Incr(CxxStats::TEMPLATE_PARMS);
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::AddParm(TemplateParmPtr& parm)
+{
+   Debug::ft("TemplateParms.AddParm");
+
+   parms_.push_back(std::move(parm));
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::AddToXref()
+{
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::Check() const
+{
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->Check();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::EnterBlock()
+{
+   Debug::ft("TemplateParms.EnterBlock");
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->EnterBlock();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::EnterScope() const
+{
+   Debug::ft("TemplateParms.EnterScope");
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->EnterScope();
+   }
+
+   //  Each template parameter added itself as a local so that it could
+   //  be resolved if used to specify a default value for a subsequent
+   //  template parameter.  Thus this hack to erase those locals...
+   //
+   ExitBlock();
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::ExitBlock() const
+{
+   Debug::ft("TemplateParms.ExitBlock");
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->ExitBlock();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
+{
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->GetUsages(file, symbols);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::Print(ostream& stream, const Flags& options) const
+{
+   stream << TEMPLATE_STR << '<';
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->Print(stream, options);
+      if(*p != parms_.back()) stream << ", ";
+   }
+
+   stream << "> ";
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::Shrink()
+{
+   CxxToken::Shrink();
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->Shrink();
+   }
+
+   auto size = parms_.capacity() * sizeof(TemplateParmPtr);
+   CxxStats::Vectors(CxxStats::TEMPLATE_PARMS, size);
+}
+
+//------------------------------------------------------------------------------
+
+string TemplateParms::TypeString(bool arg) const
+{
+   string ts = "<";
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      ts += (*p)->TypeString(false);
+      if(*p != parms_.back()) ts += ',';
+   }
+
+   return ts + '>';
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->UpdatePos(action, begin, count, from);
+   }
 }
 }

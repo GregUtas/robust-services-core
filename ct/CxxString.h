@@ -24,7 +24,6 @@
 
 #include <cstddef>
 #include <string>
-#include <vector>
 #include "CodeTypes.h"
 #include "SysTypes.h"
 
@@ -53,10 +52,6 @@ namespace CodeTools
    //
    size_t rfind_first_not_of
       (const std::string& str, size_t off, const std::string& chars);
-
-   //  For lists of strings.
-   //
-   typedef std::vector< std::string > stringVector;
 
    //  For matching a name and template arguments, as they appears in source
    //  code, to a template instance.

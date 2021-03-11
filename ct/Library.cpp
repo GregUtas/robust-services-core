@@ -24,15 +24,18 @@
 #include <set>
 #include <sstream>
 #include "CfgParmRegistry.h"
+#include "CliThread.h"
 #include "CodeDir.h"
 #include "CodeDirSet.h"
 #include "CodeFile.h"
 #include "CodeFileSet.h"
+#include "CodeItemSet.h"
 #include "CodeTypes.h"
 #include "CxxArea.h"
 #include "CxxFwd.h"
 #include "CxxRoot.h"
 #include "CxxString.h"
+#include "CxxSymbols.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
@@ -66,6 +69,32 @@ fixed_string VarsStr  = "$vars";
 fixed_string Library::SubsDir = "subs";
 
 //------------------------------------------------------------------------------
+
+CxxNamed* FindItem(CliThread& cli, const string& name)
+{
+   Debug::ft("CodeTools.FindItem");
+
+   SymbolVector items;
+   Singleton< CxxSymbols >::Instance()->FindItems(name, ITEM_REFS, items);
+   if(items.empty()) return nullptr;
+   if(items.size() == 1) return items.front();
+
+   auto indent = spaces(2);
+   std::ostringstream stream;
+   stream << name << " could refer to the following:" << CRLF;
+
+   for(auto i = 0; i < items.size(); ++i)
+   {
+      stream << indent << '[' << i + 1 << "] " << items[i]->to_str() << CRLF;
+   }
+
+   stream << "Enter the index of the intended item (0 to skip): ";
+   auto index = cli.IntPrompt(stream.str(), 0, items.size());
+   if(index == 0) return nullptr;
+   return items[index - 1];
+}
+
+//==============================================================================
 
 Library::Library() :
    sourcePathCfg_(nullptr),
@@ -107,6 +136,11 @@ void Library::AddFile(CodeFile& file)
    //  Add the file to the file registry, $files, either $hdrs or $cpps,
    //  $exts if it is unknown, and $subs if it declares external items.
    //
+   auto& name = file.Name();
+   auto f = files_.cbegin();
+   while((f != files_.cend()) && (strCompare((*f)->Name(), name) < 0)) ++f;
+   files_.insert(f, CodeFilePtr(&file));
+
    files_.push_back(CodeFilePtr(&file));
    fileSet_->Items().insert(&file);
 
@@ -129,13 +163,16 @@ void Library::AddVar(LibrarySet& var)
 {
    Debug::ft("Library.AddVar");
 
-   vars_.push_back(&var);
+   auto& name = var.Name();
+   auto v = vars_.cbegin();
+   while((v != vars_.cend()) && (strCompare((*v)->Name(), name) < 0)) ++v;
+   vars_.insert(v, &var);
 }
 
 //------------------------------------------------------------------------------
 
-word Library::Assign
-   (const string& name, const string& expr, size_t pos, string& expl)
+word Library::Assign(CliThread& cli,
+   const string& name, const string& expr, size_t pos, string& expl)
 {
    Debug::ft("Library.Assign");
 
@@ -182,7 +219,7 @@ word Library::Assign
    //  Evaluate the expression and ensure that the result is something
    //  the can be assigned to a variable.
    //
-   auto s = Evaluate(expr, pos);
+   auto s = Evaluate(cli, expr, pos);
 
    if(s == nullptr)
    {
@@ -307,7 +344,7 @@ CodeFile* Library::EnsureFile(const string& file, CodeDir* dir)
 
 //------------------------------------------------------------------------------
 
-LibrarySet* Library::EnsureVar(const string& s) const
+LibrarySet* Library::EnsureVar(CliThread& cli, const string& s) const
 {
    Debug::ft("Library.EnsureVar");
 
@@ -322,7 +359,7 @@ LibrarySet* Library::EnsureVar(const string& s) const
 
    if(d != nullptr)
    {
-      string name = LibrarySet::TemporaryChar + d->Name();
+      string name = LibrarySet::TemporaryName();
       auto result = new CodeDirSet(name, nullptr);
       auto& dirSet = result->Items();
       dirSet.insert(d);
@@ -333,10 +370,21 @@ LibrarySet* Library::EnsureVar(const string& s) const
 
    if(f != nullptr)
    {
-      string name = LibrarySet::TemporaryChar + f->Name();
+      string name = LibrarySet::TemporaryName();
       auto result = new CodeFileSet(name, nullptr);
       auto& fileSet = result->Items();
       fileSet.insert(f);
+      return result;
+   }
+
+   auto i = FindItem(cli, s);
+
+   if(i != nullptr)
+   {
+      string name = LibrarySet::TemporaryName();
+      auto result = new CodeItemSet(name, nullptr);
+      auto& itemSet = result->Items();
+      itemSet.insert(i);
       return result;
    }
 
@@ -361,7 +409,8 @@ void Library::EraseVar(const LibrarySet* var)
 
 //------------------------------------------------------------------------------
 
-LibrarySet* Library::Evaluate(const string& expr, size_t pos) const
+LibrarySet* Library::Evaluate
+   (CliThread& cli, const string& expr, size_t pos) const
 {
    Debug::ft("Library.Evaluate");
 
@@ -376,7 +425,7 @@ LibrarySet* Library::Evaluate(const string& expr, size_t pos) const
    }
 
    std::unique_ptr< Interpreter > interpreter(new Interpreter(expr, pos));
-   auto set = interpreter->Evaluate();
+   auto set = interpreter->Evaluate(cli);
    interpreter.reset();
    return set;
 }
@@ -538,7 +587,9 @@ word Library::Import(const string& name, const string& path, string& expl)
    //  On success, add the directory to $dirs, else delete it.
    //
    auto dir = new CodeDir(name, path);
-   dirs_.push_back(CodeDirPtr(dir));
+   auto d = dirs_.cbegin();
+   while((d != dirs_.cend()) && (strCompare((*d)->Name(), name) < 0)) ++d;
+   dirs_.insert(d, CodeDirPtr(dir));
 
    auto rc = dir->Extract(expl);
 
@@ -637,8 +688,10 @@ void Library::Trim(ostream& stream) const
 {
    Debug::ft("Library.Trim");
 
-   //  There was originally a >trim command that displayed
-   //  files in build order, so retain this behavior.
+   //  There was originally a >trim command that displayed files
+   //  in build order, so retain this behavior.  This also allows
+   //  CodeFile.Trim to depend on that order.  Even if this isn't
+   //  currently required, it eventually could be.
    //
    auto order = fileSet_->SortInBuildOrder();
 

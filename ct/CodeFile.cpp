@@ -41,6 +41,7 @@
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
+#include "CxxString.h"
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -375,7 +376,8 @@ void RemoveIndirectBaseItems(const CxxNamedSet& bases, CxxNamedSet& inclSet)
 
 //==============================================================================
 
-CodeFile::CodeFile(const string& name, CodeDir* dir) : LibraryItem(name),
+CodeFile::CodeFile(const string& name, CodeDir* dir) :
+   name_(name),
    dir_(dir),
    isHeader_(false),
    isSubsFile_(false),
@@ -461,7 +463,7 @@ void CodeFile::AddIndirectExternalTypes
 
 //------------------------------------------------------------------------------
 
-void CodeFile::AddToXref() const
+void CodeFile::AddToXref()
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
@@ -471,7 +473,7 @@ void CodeFile::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::AddUsage(const CxxNamed* item)
+void CodeFile::AddUsage(CxxNamed* item)
 {
    Debug::ft("CodeFile.AddUsage");
 
@@ -535,6 +537,73 @@ size_t CodeFile::CalcGroup(const Include& incl) const
    Debug::ft("CodeFile.CalcGroup(incl)");
 
    return CalcGroup(incl.FindFile());
+}
+
+//------------------------------------------------------------------------------
+
+LineType CodeFile::CalcLineType(size_t n, bool& cont)
+{
+   Debug::ft("CodeFile.CalcLineType");
+
+   //  Get the code for line N and classify it.
+   //
+   string s;
+   if(!lexer_.GetNthLine(n, s, true)) return LineType_N;
+
+   std::set< Warning > warnings;
+   auto type = CodeTools::CalcLineType(s, cont, warnings);
+
+   //  Flag the line if it is too long.
+   //
+   if(s.size() > LineLengthMax() + 1) warnings.insert(LineLength);
+
+   //  Flag a line that is not indented a multiple of the standard unless
+   //  it begins with a comment or string literal.
+   //
+   auto pos = s.find_first_not_of(SPACE);
+
+   if((pos != string::npos) && (pos % IndentSize() != 0))
+   {
+      if((s[pos] != '/') && (s[pos] != QUOTE)) warnings.insert(Indentation);
+   }
+
+   //  A line within a /* comment can be logged spuriously.
+   //
+   if(slashAsterisk_)
+   {
+      warnings.erase(Indentation);
+      warnings.erase(AdjacentSpaces);
+   }
+
+   //  Log any warnings that were reported.
+   //
+   for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
+   {
+      LogLine(n, *w);
+   }
+
+   //  There are some things that can only be determined by knowing what
+   //  happened on previous lines.  First, see if a /* comment ended.
+   //
+   if(slashAsterisk_)
+   {
+      pos = s.find(COMMENT_END_STR);
+      if(pos != string::npos) slashAsterisk_ = false;
+      return TextComment;
+   }
+
+   //  See if a /* comment began, and whether it is still open.  Note that
+   //  when a /* comment is used, a line that contains code after the */
+   //  is classified as a comment unless the /* occurred somewhere after
+   //  the start of that line.
+   //
+   if(warnings.find(UseOfSlashAsterisk) != warnings.end())
+   {
+      if(s.find(COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
+      if(s.find(COMMENT_BEGIN_STR) == 0) return SlashAsteriskComment;
+   }
+
+   return type;
 }
 
 //------------------------------------------------------------------------------
@@ -745,7 +814,7 @@ void CodeFile::CheckFunctionOrder() const
          {
          case FuncOperator:
          case FuncStandard:
-            prev = (*f)->Name();
+            prev = &(*f)->Name();
             //  [[fallthrough]]
          case FuncDtor:
             state = FuncStandard;
@@ -761,7 +830,7 @@ void CodeFile::CheckFunctionOrder() const
             break;
 
          case FuncOperator:
-            curr = (*f)->Name();
+            curr = &(*f)->Name();
             if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
             {
                if(prev->find(OPERATOR_STR) != 0)
@@ -773,7 +842,7 @@ void CodeFile::CheckFunctionOrder() const
             break;
 
          case FuncStandard:
-            curr = (*f)->Name();
+            curr = &(*f)->Name();
             if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
             {
                (*f)->Log(FunctionNotSorted);
@@ -852,12 +921,12 @@ void CodeFile::CheckIncludeOrder() const
    auto i1 = incls_.cbegin();
    if(i1 == incls_.cend()) return;
    auto group1 = CalcGroup(**i1);
-   auto name1 = (*i1)->Name();
+   auto name1 = &(*i1)->Name();
 
    for(auto i2 = std::next(i1); i2 != incls_.cend(); ++i2)
    {
       auto group2 = CalcGroup(**i2);
-      auto name2 = (*i2)->Name();
+      auto name2 = &(*i2)->Name();
 
       //  After the first #include, they should be sorted by group,
       //  and alphabetically within each group.
@@ -876,7 +945,7 @@ void CodeFile::CheckIncludeOrder() const
       //
       for(auto i3 = i2; i3 != incls_.cend(); ++i3)
       {
-         if(*name1 == *(*i3)->Name())
+         if(*name1 == (*i3)->Name())
             (*i3)->Log(IncludeDuplicated);
       }
 
@@ -1101,78 +1170,12 @@ void CodeFile::CheckUsings() const
 
 //------------------------------------------------------------------------------
 
-LineType CodeFile::CalcLineType(size_t n, bool& cont)
-{
-   Debug::ft("CodeFile.CalcLineType");
-
-   //  Get the code for line N and classify it.
-   //
-   string s;
-   if(!lexer_.GetNthLine(n, s, true)) return LineType_N;
-
-   std::set< Warning > warnings;
-   auto type = CodeTools::CalcLineType(s, cont, warnings);
-
-   //  Flag the line if it is too long.
-   //
-   if(s.size() > LineLengthMax() + 1) warnings.insert(LineLength);
-
-   //  Flag a line that is not indented a multiple of the standard unless
-   //  it begins with a comment or string literal.
-   //
-   auto pos = s.find_first_not_of(SPACE);
-
-   if((pos != string::npos) && (pos % IndentSize() != 0))
-   {
-      if((s[pos] != '/') && (s[pos] != QUOTE)) warnings.insert(Indentation);
-   }
-
-   //  A line within a /* comment can be logged spuriously.
-   //
-   if(slashAsterisk_)
-   {
-      warnings.erase(Indentation);
-      warnings.erase(AdjacentSpaces);
-   }
-
-   //  Log any warnings that were reported.
-   //
-   for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
-   {
-      LogLine(n, *w);
-   }
-
-   //  There are some things that can only be determined by knowing what
-   //  happened on previous lines.  First, see if a /* comment ended.
-   //
-   if(slashAsterisk_)
-   {
-      pos = s.find(COMMENT_END_STR);
-      if(pos != string::npos) slashAsterisk_ = false;
-      return TextComment;
-   }
-
-   //  See if a /* comment began, and whether it is still open.  Note that
-   //  when a /* comment is used, a line that contains code after the */
-   //  is classified as a comment unless the /* occurred somewhere after
-   //  the start of that line.
-   //
-   if(warnings.find(UseOfSlashAsterisk) != warnings.end())
-   {
-      if(s.find(COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
-      if(s.find(COMMENT_BEGIN_STR) == 0) return SlashAsteriskComment;
-   }
-
-   return type;
-}
-
-//------------------------------------------------------------------------------
-
 void CodeFile::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    LibraryItem::Display(stream, prefix, options);
 
+   stream << prefix << "name       : " << name_ << CRLF;
    stream << prefix << "dir        : " << dir_ << CRLF;
    stream << prefix << "isHeader   : " << isHeader_ << CRLF;
    stream << prefix << "isSubsFile : " << isSubsFile_ << CRLF;
@@ -1267,7 +1270,7 @@ Data* CodeFile::FindData(const string& name) const
 
    for(auto d = data_.cbegin(); d != data_.cend(); ++d)
    {
-      if(*(*d)->Name() == name) return *d;
+      if((*d)->Name() == name) return *d;
    }
 
    return nullptr;
@@ -1325,6 +1328,25 @@ CodeWarning* CodeFile::FindLog
 
    editor_.Setup(this);
    return editor_.FindLog(log, item, offset);
+}
+
+//------------------------------------------------------------------------------
+
+SpaceDefn* CodeFile::FindNamespaceDefn(const CxxNamed* item) const
+{
+   Debug::ft("CodeFile.FindNamespaceDefn");
+
+   if(item->GetFile() != this) return nullptr;
+
+   SpaceDefn* ns = nullptr;
+   auto pos = item->GetPos();
+
+   for(auto s = spaces_.cbegin(); s != spaces_.cend(); ++s)
+   {
+      if((*s)->GetPos() < pos) ns = s->get();
+   }
+
+   return ns;
 }
 
 //------------------------------------------------------------------------------
@@ -1490,6 +1512,18 @@ void CodeFile::GetDeclaredBaseClasses(CxxNamedSet& bases) const
    {
       auto base = (*c)->BaseClass();
       if(base != nullptr) bases.insert(base);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::GetDecls(std::set< CxxNamed* >& items)
+{
+   Debug::ft("CodeFile.GetDecls");
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->GetDecls(items);
    }
 }
 
@@ -1764,7 +1798,7 @@ Include* CodeFile::InsertInclude(const string& fn)
 
    for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
    {
-      if(*(*i)->Name() == fn)
+      if((*i)->Name() == fn)
       {
          items_.push_back(i->get());
          return i->get();
@@ -2038,7 +2072,7 @@ void CodeFile::LogRemoveIncludes
 
       for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
       {
-         if(*(*i)->Name() == name)
+         if((*i)->Name() == name)
          {
             (*i)->Log(IncludeRemove);
          }

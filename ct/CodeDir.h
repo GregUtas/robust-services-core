@@ -25,7 +25,6 @@
 #include "LibraryItem.h"
 #include <cstddef>
 #include <string>
-#include "RegCell.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -68,14 +67,22 @@ public:
    //
    size_t CppCount() const;
 
+   //  Overridden to update ITEMS with ones declared by the directory's files.
+   //
+   void GetDecls(std::set< CxxNamed* >& items) override;
+
+   //  Overridden to return the item's name.
+   //
+   const std::string& Name() const override { return name_; }
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
-   //  The directory's identifier in the code base.
+   //  The set's name.
    //
-   const NodeBase::RegCell did_;
+   const std::string name_;
 
    //  The directory's path.
    //

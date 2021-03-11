@@ -76,7 +76,7 @@ public:
 
    //  Overridden to return the symbol's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to shrink the item's name.
    //
@@ -172,7 +172,7 @@ public:
 
    //  Overridden to add the name to the cross-reference.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to find the referent and push it onto the argument stack.
    //
@@ -184,11 +184,11 @@ public:
 
    //  Overridden to update SYMBOLS with the name's type usage.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to return the macro's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden to display the name, including any template arguments.
    //
@@ -275,7 +275,7 @@ public:
 
    //  Overridden to return the macro's name.
    //
-   const std::string* Name() const override { return &name_; }
+   const std::string& Name() const override { return name_; }
 
    //  Overridden for when NAME refers to a macro set for the compiler.
    //
@@ -284,7 +284,7 @@ public:
 
    //  Overridden to record usage of the macro.
    //
-   void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() override { AddUsage(); }
 
    //  Overridden to return the underlying type.
    //
@@ -491,7 +491,7 @@ public:
 
    //  Overridden to add the condition's symbols to cross-references.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to display the condition.
    //
@@ -504,7 +504,7 @@ public:
 
    //  Overridden to include symbols that appear in the condition.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to shrink the conditional expression.
    //
@@ -541,7 +541,7 @@ public:
 
    //  Overridden to add name_ to the cross-reference.
    //
-   void AddToXref() const override;
+   void AddToXref() override;
 
    //  Overridden to display the directive.
    //
@@ -550,11 +550,11 @@ public:
 
    //  Overridden to update SYMBOLS with name_'s referent.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to return the symbol's name.
    //
-   const std::string* Name() const override { return name_->Name(); }
+   const std::string& Name() const override { return name_->Name(); }
 
    //  Overridden to shrink the item's name.
    //

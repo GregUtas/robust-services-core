@@ -20,13 +20,37 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LibraryTypes.h"
+#include <ostream>
+#include "SysTypes.h"
 
 using namespace NodeBase;
+using std::ostream;
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
+fixed_string LibSetTypeStrings[ERR_SET + 1] =
+{
+   "DirSet",      // DIR_SET
+   "FileSet",     // FILE_SET
+   "C++ItemSet",  // ITEM_SET
+   "LibVarSet",   // VAR_SET
+   "AnySet",      // ANY_SET
+   ERROR_STR      // ERR_SET
+};
+
+ostream& operator<<(ostream& stream, LibSetType type)
+{
+   if((type >= 0) && (type < ERR_SET))
+      stream << LibSetTypeStrings[type];
+   else
+      stream << LibSetTypeStrings[ERR_SET];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
 fixed_string LibExprErrStrings[LibExprErr_N + 1] =
 {
    "OK.",                           // ExpressionOk
@@ -41,14 +65,18 @@ fixed_string LibExprErrStrings[LibExprErr_N + 1] =
    "Missing right-hand argument.",  // RightOperandMissing
    "Directory set expected.",       // DirSetExpected
    "File set expected.",            // FileSetExpected
+   "C++ item set expected.",        // ItemSetExpected
    "Set types do not match.",       // IncompatibleArguments
    "Internal error.",               // InterpreterError
-   ERROR_STR
+   ERROR_STR                        // LibExprErr_N
 };
 
-c_string strError(LibExprErr err)
+ostream& operator<<(ostream& stream, LibExprErr err)
 {
-   if((err >= 0) && (err < LibExprErr_N)) return LibExprErrStrings[err];
-   return LibExprErrStrings[LibExprErr_N];
+   if((err >= 0) && (err < LibExprErr_N))
+      stream << LibExprErrStrings[err];
+   else
+      stream << LibExprErrStrings[LibExprErr_N];
+   return stream;
 }
 }

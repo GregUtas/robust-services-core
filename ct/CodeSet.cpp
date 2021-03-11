@@ -72,8 +72,7 @@ word CodeSet::Count(string& result) const
 {
    Debug::ft("CodeSet.Count");
 
-   auto count = Items().size();
-   return Counted(result, &count);
+   return Counted(result, Items().size());
 }
 
 //------------------------------------------------------------------------------

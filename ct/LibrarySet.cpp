@@ -42,8 +42,6 @@ bool IsSortedAlphabetically(const string& s1, const string& s2)
    auto comp = strCompare(s1, s2);
    if(comp < 0) return true;
    if(comp > 0) return false;
-   if(s1 < s2) return true;
-   if(s1 > s2) return false;
    return (&s1 < &s2);
 }
 

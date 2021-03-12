@@ -251,11 +251,11 @@ word CliThread::DisplayHelp(const string& path, const string& key) const
          {
             auto keyStart = key.substr(0, line.size() - 1);
             auto lineStart = line.substr(0, line.size() - 1);
-            if(strCompare(lineStart, keyStart) == 0) found = true;
+            if(strCompare(lineStart, keyStart, false) == 0) found = true;
          }
          else
          {
-            if(strCompare(line, key) == 0) found = true;
+            if(strCompare(line, key, false) == 0) found = true;
          }
          break;
 

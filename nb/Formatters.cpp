@@ -171,7 +171,7 @@ string strClass(const void* obj, bool ns)
 
 //------------------------------------------------------------------------------
 
-int strCompare(const string& s1, const string& s2)
+int strCompare(const string& s1, const string& s2, bool repeat)
 {
    auto size1 = s1.size();
    auto size2 = s2.size();
@@ -186,7 +186,7 @@ int strCompare(const string& s1, const string& s2)
 
    if(size1 < size2) return -1;
    if(size1 > size2) return 1;
-   return 0;
+   return (repeat ? s1.compare(s2) : 0);
 }
 
 //------------------------------------------------------------------------------

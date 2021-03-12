@@ -88,9 +88,11 @@ namespace NodeBase
    std::string strUpper(const std::string& s);
 
    //  Returns -1, 0, or 1 if S1 is less than, equal to, or greater than S2.
-   //  Case is ignored.
+   //  Case is ignored unless the result is 0, in which case the comparison
+   //  is repeated without ignoring case if REPEAT is set.
    //
-   int strCompare(const std::string& s1, const std::string& s2);
+   int strCompare
+      (const std::string& s1, const std::string& s2, bool repeat = true);
 
    //  Returns a string of length BREADTH.  S is centered in the string and
    //  is surrounded by BLANKS spaces, divided between prefix and postfix

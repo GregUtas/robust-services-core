@@ -952,29 +952,31 @@ BuildOrder CodeFileSet::SortInBuildOrder() const
          }
       }
 
-      //  Stop if no more files could be built.  This should only occur
-      //  after all files have been built.
+      //  Remove, from every #includes list, all the files that were just
+      //  added to the build.  Stop when no more files were added.
       //
-      if(build.empty())
+      if(!build.empty())
       {
-         if(found != size)
+         for(size_t i = 0; i < incls.size(); ++i)
          {
-            Debug::SwLog(CodeFileSet_SortInBuildOrder,
-               "files not built", files.size() - found);
+            if(!incls[i].empty())
+            {
+               SetDifference(incls[i], build);
+            }
          }
+      }
+      else
+      {
          break;
       }
+   }
 
-      //  Remove, from every #includes list, all of the files that were
-      //  just included in the build.
+   if(found != size)
+   {
+      //  Some files were not included in the build.
       //
-      for(size_t i = 0; i < incls.size(); ++i)
-      {
-         if(!incls[i].empty())
-         {
-            SetDifference(incls[i], build);
-         }
-      }
+      Debug::SwLog(CodeFileSet_SortInBuildOrder,
+         "files not built", files.size() - found);
    }
 
    std::sort(order.begin(), order.end(), IsSortedByFileLevel);

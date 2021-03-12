@@ -24,7 +24,7 @@
 #include <iterator>
 #include <set>
 #include "Debug.h"
-#include "LibraryItem.h"
+#include "Formatters.h"
 
 using namespace NodeBase;
 
@@ -32,14 +32,21 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
+bool IsSortedByName(const LibraryItem* item1, const LibraryItem* item2)
+{
+   return (strCompare(item1->Name(), item2->Name()) < 0);
+}
+
+//------------------------------------------------------------------------------
+
 void SetDifference
    (LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2)
 {
    Debug::ft("CodeTools.SetDifference(-)");
 
    lhs.clear();
-   std::set_difference(rhs1.cbegin(), rhs1.cend(),
-      rhs2.cbegin(), rhs2.cend(), std::inserter(lhs, lhs.begin()));
+   std::set_difference(rhs1.cbegin(), rhs1.cend(), rhs2.cbegin(),
+      rhs2.cend(), std::inserter(lhs, lhs.begin()), IsSortedByName);
 }
 
 //------------------------------------------------------------------------------
@@ -49,8 +56,8 @@ void SetDifference(LibItemSet& lhs, const LibItemSet& rhs)
    Debug::ft("CodeTools.SetDifference(-=)");
 
    LibItemSet temp;
-   std::set_difference(lhs.cbegin(), lhs.cend(),
-      rhs.cbegin(), rhs.cend(), std::inserter(temp, temp.begin()));
+   std::set_difference(lhs.cbegin(), lhs.cend(), rhs.cbegin(),
+      rhs.cend(), std::inserter(temp, temp.begin()), IsSortedByName);
    lhs.swap(temp);
 }
 
@@ -62,8 +69,8 @@ void SetIntersection
    Debug::ft("CodeTools.SetIntersection(&)");
 
    lhs.clear();
-   std::set_intersection(rhs1.cbegin(), rhs1.cend(),
-      rhs2.cbegin(), rhs2.cend(), std::inserter(lhs, lhs.begin()));
+   std::set_intersection(rhs1.cbegin(), rhs1.cend(), rhs2.cbegin(),
+      rhs2.cend(), std::inserter(lhs, lhs.begin()), IsSortedByName);
 }
 
 //------------------------------------------------------------------------------
@@ -73,8 +80,8 @@ void SetIntersection(LibItemSet& lhs, const LibItemSet& rhs)
    Debug::ft("CodeTools.SetIntersection(&=)");
 
    LibItemSet temp;
-   std::set_intersection(lhs.cbegin(), lhs.cend(),
-      rhs.cbegin(), rhs.cend(), std::inserter(temp, temp.begin()));
+   std::set_intersection(lhs.cbegin(), lhs.cend(), rhs.cbegin(),
+      rhs.cend(), std::inserter(temp, temp.begin()), IsSortedByName);
    lhs.swap(temp);
 }
 
@@ -86,8 +93,8 @@ void SetUnion
    Debug::ft("CodeTools.SetUnion(|)");
 
    lhs.clear();
-   std::set_union(rhs1.cbegin(), rhs1.cend(),
-      rhs2.cbegin(), rhs2.cend(), std::inserter(lhs, lhs.begin()));
+   std::set_union(rhs1.cbegin(), rhs1.cend(), rhs2.cbegin(),
+      rhs2.cend(), std::inserter(lhs, lhs.begin()), IsSortedByName);
 }
 
 //------------------------------------------------------------------------------
@@ -97,8 +104,8 @@ void SetUnion(LibItemSet& lhs, const LibItemSet& rhs)
    Debug::ft("CodeTools.SetUnion(|=)");
 
    LibItemSet temp;
-   std::set_union(lhs.cbegin(), lhs.cend(),
-      rhs.cbegin(), rhs.cend(), std::inserter(temp, temp.begin()));
+   std::set_union(lhs.cbegin(), lhs.cend(), rhs.cbegin(),
+      rhs.cend(), std::inserter(temp, temp.begin()), IsSortedByName);
    lhs.swap(temp);
 }
 }

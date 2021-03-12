@@ -22,7 +22,7 @@
 #ifndef SETOPERATIONS_H_INCLUDED
 #define SETOPERATIONS_H_INCLUDED
 
-#include "LibraryTypes.h"
+#include "LibraryItem.h"
 
 //------------------------------------------------------------------------------
 

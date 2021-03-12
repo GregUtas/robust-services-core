@@ -22,7 +22,6 @@
 #include "LibrarySet.h"
 #include <algorithm>
 #include <iterator>
-#include <set>
 #include <sstream>
 #include "Debug.h"
 #include "Formatters.h"
@@ -43,6 +42,8 @@ bool IsSortedAlphabetically(const string& s1, const string& s2)
    auto comp = strCompare(s1, s2);
    if(comp < 0) return true;
    if(comp > 0) return false;
+   if(s1 < s2) return true;
+   if(s1 > s2) return false;
    return (&s1 < &s2);
 }
 
@@ -323,14 +324,14 @@ word LibrarySet::List(ostream& stream) const
 {
    Debug::ft("LibrarySet.List");
 
-   if(Items().empty())
+   stringVector strings;
+   to_str(strings, true);
+
+   if(strings.empty())
    {
       stream << spaces(2) << EmptySet << CRLF;
       return 0;
    }
-
-   stringVector strings;
-   to_str(strings, true);
 
    std::sort(strings.begin(), strings.end(), IsSortedAlphabetically);
 
@@ -459,14 +460,14 @@ word LibrarySet::Show(string& result) const
 {
    Debug::ft("LibrarySet.Show");
 
-   if(Items().empty())
+   stringVector strings;
+   to_str(strings, false);
+
+   if(strings.empty())
    {
       result = EmptySet;
       return 0;
    }
-
-   stringVector strings;
-   to_str(strings, false);
 
    std::sort(strings.begin(), strings.end(), IsSortedAlphabetically);
 

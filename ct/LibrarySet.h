@@ -242,7 +242,7 @@ private:
 
    //  The set of items.
    //
-   std::set< LibraryItem* > items_;
+   LibItemSet items_;
 
    //  Set if this set is a temporary variable.
    //

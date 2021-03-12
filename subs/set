@@ -49,7 +49,8 @@ namespace std
       iterator upper_bound(const T& key);
    };
 
-   template< typename T > iterator_t< T > inserter(set< T >& items, iterator_t< T >& iter);
+   template< typename T, typename C > iterator_t< T >
+      inserter(set< T, C >& items, iterator_t< T >& iter);
 }
 
 #endif

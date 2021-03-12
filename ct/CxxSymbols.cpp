@@ -268,9 +268,14 @@ bool IsSortedByName(const CxxScoped* item1, const CxxScoped* item2)
       if(result > 0) return false;
    }
 
-   auto result = strCompare(item1->XrefName(true), item2->XrefName(true));
+   auto name1 = item1->XrefName(true);
+   auto name2 = item2->XrefName(true);
+   auto result = strCompare(name1, name2);
    if(result < 0) return true;
    if(result > 0) return false;
+   if(name1 < name2) return true;
+   if(name1 > name2) return false;
+
    result = strCompare(strClass(item1), strClass(item2));
    if(result < 0) return true;
    if(result > 0) return false;

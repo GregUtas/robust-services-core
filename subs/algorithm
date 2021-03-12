@@ -17,13 +17,30 @@ namespace std
 
    template< typename T > iterator_t< T > set_difference
       (const iterator_t< T >& src1beg, const iterator_t< T >& src1end,
-       const iterator_t< T >& src2beg, const iterator_t< T >& src2end, iterator_t< T >& dstbeg);
+      const iterator_t< T >& src2beg, const iterator_t< T >& src2end,
+      iterator_t< T >& dstbeg);
+   template< typename T > iterator_t< T > set_difference
+      (const iterator_t< T >& src1beg, const iterator_t< T >& src1end,
+      const iterator_t< T >& src2beg, const iterator_t< T >& src2end,
+      iterator_t< T >& dstbeg, const bool (*sorted)(T& first, T& second));
+
    template< typename T > iterator_t< T > set_intersection
       (const iterator_t< T >& src1beg, const iterator_t< T >& src1end,
-      const iterator_t< T >& src2beg, const iterator_t< T >& src2end, iterator_t< T >& dstbeg);
+      const iterator_t< T >& src2beg, const iterator_t< T >& src2end,
+      iterator_t< T >& dstbeg);
+   template< typename T > iterator_t< T > set_intersection
+      (const iterator_t< T >& src1beg, const iterator_t< T >& src1end,
+      const iterator_t< T >& src2beg, const iterator_t< T >& src2end,
+      iterator_t< T >& dstbeg, const bool (*sorted)(T& first, T& second));
+
    template< typename T > iterator_t< T > set_union
       (const iterator_t< T >& src1beg, const iterator_t< T >& src1end,
-      const iterator_t< T >& src2beg, const iterator_t< T >& src2end, iterator_t< T >& dstbeg);
+      const iterator_t< T >& src2beg, const iterator_t< T >& src2end,
+      iterator_t< T >& dstbeg);
+   template< typename T > iterator_t< T > set_union
+      (const iterator_t< T >& src1beg, const iterator_t< T >& src1end,
+      const iterator_t< T >& src2beg, const iterator_t< T >& src2end,
+      iterator_t< T >& dstbeg, const bool (*sorted)(T& first, T& second));
 }
 
 #endif

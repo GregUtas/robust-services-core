@@ -30,6 +30,7 @@
 #include "Cxx.h"
 #include "CxxFwd.h"
 #include "CxxToken.h"
+#include "LibraryItem.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 

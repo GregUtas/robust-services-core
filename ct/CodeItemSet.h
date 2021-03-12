@@ -25,6 +25,7 @@
 #include "CodeSet.h"
 #include <string>
 #include "CxxFwd.h"
+#include "LibraryItem.h"
 #include "LibraryTypes.h"
 
 namespace CodeTools

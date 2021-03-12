@@ -24,7 +24,7 @@
 
 #include "LibrarySet.h"
 #include <string>
-#include "LibraryTypes.h"
+#include "LibraryItem.h"
 
 //------------------------------------------------------------------------------
 

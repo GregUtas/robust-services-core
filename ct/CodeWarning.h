@@ -31,6 +31,7 @@
 #include "CodeTypes.h"
 #include "CxxFwd.h"
 #include "CxxLocation.h"
+#include "LibraryItem.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 

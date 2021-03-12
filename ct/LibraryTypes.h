@@ -25,7 +25,6 @@
 #include <cstddef>
 #include <iosfwd>
 #include <memory>
-#include <set>
 #include <vector>
 
 //------------------------------------------------------------------------------
@@ -34,12 +33,10 @@ namespace CodeTools
 {
 //  Forward declarations.
 //
-class LibraryItem;
 class LibrarySet;
 class CodeFile;
 class CodeDir;
 
-using LibItemSet = std::set< LibraryItem* >;
 using CodeDirPtr = std::unique_ptr< CodeDir >;
 using CodeFilePtr = std::unique_ptr< CodeFile >;
 

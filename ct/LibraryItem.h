@@ -64,7 +64,10 @@ struct LibItemSort
 {
    bool operator() (const LibraryItem* item1, const LibraryItem* item2) const
    {
-      return (NodeBase::strCompare(item1->Name(), item2->Name()) < 0);
+      auto result = NodeBase::strCompare(item1->Name(), item2->Name());
+      if(result < 0) return true;
+      if(result > 0) return false;
+      return (item1 < item2);
    }
 };
 

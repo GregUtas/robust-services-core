@@ -31,6 +31,11 @@
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
+namespace CodeTools
+{
+   struct CxxUsageSets;
+}
+
 namespace NodeBase
 {
    class CliThread;
@@ -60,10 +65,6 @@ public:
    //
    static std::string TemporaryName();
 
-   //  Returns true if the set is read-only for CLI commands.
-   //
-   bool IsReadOnly() const;
-
    //  Returns true if the set is a temporary result that will not be saved.
    //
    bool IsTemporary() const;
@@ -72,10 +73,6 @@ public:
    //
    const LibItemSet& Items() const { return items_; }
    LibItemSet& Items() { return items_; }
-
-   //  Deletes the set unless it is registered on the queue of sets.
-   //
-   void Release();
 
    //  Returns the type of set.  Must be overridden by subclasses.
    //
@@ -134,13 +131,17 @@ public:
    //
    virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
 
+   //  Returns the build order of the set.
+   //
+   virtual BuildOrder SortInBuildOrder() const;
+
    //  Operators.  The default implementations invoke OpError (see below)
    //  and must be overridden by a subclass that supports the operator.
    //
-   virtual LibrarySet* Assign(LibrarySet* rhs);
-   virtual LibrarySet* Intersection(const LibrarySet* rhs) const;
-   virtual LibrarySet* Difference(const LibrarySet* rhs) const;
-   virtual LibrarySet* Union(const LibrarySet* rhs) const;
+   virtual LibrarySet* Assign(LibrarySet* that);
+   virtual LibrarySet* Intersection(const LibrarySet* that) const;
+   virtual LibrarySet* Difference(const LibrarySet* that) const;
+   virtual LibrarySet* Union(const LibrarySet* that) const;
    virtual LibrarySet* Directories() const;
    virtual LibrarySet* Files() const;
    virtual LibrarySet* FileName(const LibrarySet* that) const;
@@ -155,20 +156,11 @@ public:
    virtual LibrarySet* CommonAffecters() const;
    virtual LibrarySet* NeededBy() const;
    virtual LibrarySet* Needers() const;
-   virtual LibrarySet* Definitions() const;
    virtual LibrarySet* DeclaredBy() const;
+   virtual LibrarySet* Declarers() const;
+   virtual LibrarySet* Definitions() const;
    virtual LibrarySet* ReferencedBy() const;
-   virtual LibrarySet* FileDeclarers() const;
-   virtual LibrarySet* CodeDeclarers() const;
-   virtual LibrarySet* FileReferencers() const;
-   virtual LibrarySet* CodeReferencers() const;
-   virtual LibrarySet* ReferencedIn(const LibrarySet* that) const;
-
-   //  Update STRINGS with a string for each item in the set.  The strings
-   //  will either be displayed one per line (VERBOSE is true) or separated
-   //  by commas (VERBOSE is false).
-   //
-   virtual void to_str(stringVector& strings, bool verbose) const = 0;
+   virtual LibrarySet* Referencers() const;
 
    //  On success, returns 0 and updates STREAM with a list of the items in
    //  the set, one per line.  Returns another value on failure.
@@ -198,6 +190,7 @@ protected:
    explicit LibrarySet(const std::string& name);
 
    //  Removes the set from the queue of sets.  Protected to restrict deletion.
+   //  Virtual to allow subclassing.
    //
    virtual ~LibrarySet();
 
@@ -211,11 +204,6 @@ protected:
    //  Reports COUNT items in RESULT and returns 0.
    //
    static NodeBase::word Counted(std::string& result, const size_t count);
-
-   //  If RESULT is not empty, deletes a presumed trailing ", ", else sets
-   //  RESULT to indicate that nothing was found.  Returns 0.
-   //
-   static NodeBase::word Shown(std::string& result);
 private:
    //  Deleted to prohibit copying.
    //
@@ -227,10 +215,38 @@ private:
    //
    virtual NodeBase::word PreAssign(std::string& expl) const;
 
-   //  Update EXPL to indicate that this function is not implemented by the
-   //  type of set in question.
+   //  Copies the items in USAGES into the set.
+   //
+   virtual void CopyUsages(const CxxUsageSets& usages);
+
+   //  Update STRINGS with a string for each item in the set.  The strings
+   //  will either be displayed one per line (VERBOSE is true) or separated
+   //  by commas (VERBOSE is false).
+   //
+   virtual void to_str(stringVector& strings, bool verbose) const = 0;
+
+   //  Deletes the set if it is a temporary result.
+   //
+   void Release();
+
+   //  Returns true if the set is read-only for CLI commands.
+   //
+   bool IsReadOnly() const;
+
+   //  If RESULT is not empty, deletes a presumed trailing ", ", else sets
+   //  RESULT to indicate that nothing was found.  Returns 0.
+   //
+   static NodeBase::word Shown(std::string& result);
+
+   //  Update EXPL to indicate that a function is not implemented by the type
+   //  of set in question.
    //
    NodeBase::word NotImplemented(std::string& expl) const;
+
+   //  Returns a string to indicate that a function is not implemented by the
+   //  type of set in question.
+   //
+   std::string NotApplicable() const;
 
    //  Generates a log and returns nullptr.
    //
@@ -250,7 +266,7 @@ private:
 
    //  Sequence number for generating names for temporary variables.
    //
-   static uint8_t SeqNo_;
+   static uint32_t SeqNo_;
 };
 }
 #endif

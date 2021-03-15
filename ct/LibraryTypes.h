@@ -93,14 +93,11 @@ enum LibTokenType
    OpCommonAffecters,
    OpNeededBy,
    OpNeeders,
-   OpDefinitions,
    OpDeclaredBy,
+   OpDeclarers,
+   OpDefinitions,
    OpReferencedBy,
-   OpFileDeclarers,
-   OpCodeDeclarers,
-   OpFileReferencers,
-   OpCodeReferencers,
-   OpReferencedIn,
+   OpReferencers,
    OpIdentifier,
    Operator_N = OpIdentifier  //  OpIdentifier is not actually an operator
 };

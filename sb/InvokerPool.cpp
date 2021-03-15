@@ -27,7 +27,6 @@
 #include "CfgParmRegistry.h"
 #include "Context.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
 #include "InvokerPoolRegistry.h"

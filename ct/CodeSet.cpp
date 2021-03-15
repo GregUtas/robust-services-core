@@ -50,19 +50,11 @@ CodeSet::~CodeSet()
 
 //------------------------------------------------------------------------------
 
-LibrarySet* CodeSet::Assign(LibrarySet* rhs)
+LibrarySet* CodeSet::Assign(LibrarySet* that)
 {
    Debug::ft("CodeSet.Assign");
 
-   auto that = static_cast< CodeSet* >(rhs);
-
    this->Items() = that->Items();
-
-   if(that->IsTemporary())
-   {
-      that->Release();
-   }
-
    return this;
 }
 
@@ -77,12 +69,11 @@ word CodeSet::Count(string& result) const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* CodeSet::Difference(const LibrarySet* rhs) const
+LibrarySet* CodeSet::Difference(const LibrarySet* that) const
 {
    Debug::ft("CodeSet.Difference");
 
    LibItemSet result;
-   auto that = static_cast< const CodeSet* >(rhs);
    SetDifference(result, this->Items(), that->Items());
    return Create(TemporaryName(), &result);
 }
@@ -106,24 +97,22 @@ void CodeSet::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-LibrarySet* CodeSet::Intersection(const LibrarySet* rhs) const
+LibrarySet* CodeSet::Intersection(const LibrarySet* that) const
 {
    Debug::ft("CodeSet.Intersection");
 
    LibItemSet result;
-   auto that = static_cast< const CodeSet* >(rhs);
    SetIntersection(result, this->Items(), that->Items());
    return Create(TemporaryName(), &result);
 }
 
 //------------------------------------------------------------------------------
 
-LibrarySet* CodeSet::Union(const LibrarySet* rhs) const
+LibrarySet* CodeSet::Union(const LibrarySet* that) const
 {
    Debug::ft("CodeSet.Union");
 
    LibItemSet result;
-   auto that = static_cast< const CodeSet* >(rhs);
    SetUnion(result, this->Items(), that->Items());
    return Create(TemporaryName(), &result);
 }

@@ -56,7 +56,6 @@ public:
    LibrarySet* NeededBy() const override;
    LibrarySet* Needers() const override;
    LibrarySet* ReferencedBy() const override;
-   LibrarySet* ReferencedIn(const LibrarySet* that) const override;
    LibrarySet* UsedBy(bool self) const override;
    LibrarySet* Users(bool self) const override;
 
@@ -96,13 +95,13 @@ public:
    //
    NodeBase::word Sort(std::ostream& stream, std::string& expl) const override;
 
+   //  Returns the build order of the set.
+   //
+   BuildOrder SortInBuildOrder() const override;
+
    //  Returns a string for each file in the set.
    //
    void to_str(stringVector& strings, bool verbose) const override;
-
-   //  Returns the build order of the set.
-   //
-   BuildOrder SortInBuildOrder() const;
 private:
    //  Private to restrict deletion.  Not subclassed.
    //

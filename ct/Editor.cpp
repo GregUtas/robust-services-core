@@ -2891,10 +2891,22 @@ word Editor::InitByCtorCall(const CodeWarning& log, string& expl)
    auto right = FindNonBlank(eq + 1);
    Erase(left + 1, right - left - 1);
 
-   //  If the arguments were on a separate line, it may be possible to remove
-   //  the line break.
+   //  If there are no arguments, remove the parentheses.
    //
-   if(!OnSameLine(begin, lpar)) EraseLineBreak(begin);
+   lpar = FindFirstOf(left, "(");
+   if(lpar == string::npos) return NotFound(expl, "Left parenthesis");
+   auto rpar = FindClosing('(', ')', lpar + 1);
+   if(rpar == string::npos) return NotFound(expl, "Right parenthesis");
+   if(source_.find_first_not_of(WhitespaceChars, lpar + 1) == rpar)
+   {
+      Erase(lpar, rpar - lpar + 1);
+   }
+
+   //  If the code spanned two lines, it may be possible to remove the
+   //  line break.
+   //
+   auto semi = FindFirstOf(lpar - 1, ";");
+   if(!OnSameLine(begin, semi)) EraseLineBreak(begin);
    return Changed(begin, expl);
 }
 

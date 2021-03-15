@@ -53,56 +53,6 @@ CodeItemSet::~CodeItemSet()
 
 //------------------------------------------------------------------------------
 
-LibrarySet* CodeItemSet::CodeDeclarers() const
-{
-   Debug::ft("CodeItemSet.CodeDeclarers");
-
-   auto& itemSet = Items();
-   auto result = new CodeFileSet(TemporaryName(), nullptr);
-   auto& declSet = result->Items();
-
-   for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
-   {
-      auto item = static_cast< CxxNamed* >(*i);
-      auto scope = item->GetScope();
-
-      if(scope->Type() == Cxx::Namespace)
-      {
-         scope = item->GetFile()->FindNamespaceDefn(item);
-      }
-
-      if(scope != nullptr) declSet.insert(scope);
-   }
-
-   return result;
-}
-
-//------------------------------------------------------------------------------
-
-LibrarySet* CodeItemSet::CodeReferencers() const
-{
-   Debug::ft("CodeItemSet.CodeReferencers");
-
-   auto& itemSet = Items();
-   auto result = new CodeFileSet(TemporaryName(), nullptr);
-   auto& refSet = result->Items();
-
-   for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
-   {
-      auto item = static_cast< CxxScoped* >(*i);
-      auto& xref = item->Xref();
-
-      for(auto r = xref.cbegin(); r != xref.cend(); ++r)
-      {
-         refSet.insert(*r);
-      }
-   }
-
-   return result;
-}
-
-//------------------------------------------------------------------------------
-
 void CodeItemSet::CopyItems(const CxxNamedSet& items)
 {
    auto& itemSet = Items();
@@ -146,13 +96,39 @@ LibrarySet* CodeItemSet::DeclaredBy() const
 
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
-      std::set< CxxNamed* > items;
-      (*i)->GetDecls(items);
+      std::set< CxxNamed* > decls;
+      (*i)->GetDecls(decls);
 
-      for(auto i = items.cbegin(); i != items.cend(); ++i)
+      for(auto d = decls.cbegin(); d != decls.cend(); ++d)
       {
-         declSet.insert(*i);
+         declSet.insert(*d);
       }
+   }
+
+   return result;
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* CodeItemSet::Declarers() const
+{
+   Debug::ft("CodeItemSet.Declarers");
+
+   auto& itemSet = Items();
+   auto result = new CodeFileSet(TemporaryName(), nullptr);
+   auto& declSet = result->Items();
+
+   for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
+   {
+      auto item = static_cast< CxxNamed* >(*i);
+      auto scope = item->GetScope();
+
+      if(scope->Type() == Cxx::Namespace)
+      {
+         scope = item->GetFile()->FindNamespaceDefn(item);
+      }
+
+      if(scope != nullptr) declSet.insert(scope);
    }
 
    return result;
@@ -210,47 +186,6 @@ LibrarySet* CodeItemSet::Directories() const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* CodeItemSet::FileDeclarers() const
-{
-   Debug::ft("CodeItemSet.FileDeclarers");
-
-   auto& itemSet = Items();
-   auto result = new CodeFileSet(TemporaryName(), nullptr);
-   auto& fileSet = result->Items();
-
-   for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
-   {
-      auto item = static_cast< CxxNamed* >(*i);
-      auto file = item->GetDeclFile();
-      if(file != nullptr) fileSet.insert(file);
-   }
-
-   return result;
-}
-
-//------------------------------------------------------------------------------
-
-LibrarySet* CodeItemSet::FileReferencers() const
-{
-   Debug::ft("CodeItemSet.FileReferencers");
-
-   auto referencers = CodeReferencers();
-   auto& refSet = referencers->Items();
-   auto result = new CodeFileSet(TemporaryName(), nullptr);
-   auto& fileSet = result->Items();
-
-   for(auto i = refSet.cbegin(); i != refSet.cend(); ++i)
-   {
-      auto item = static_cast< CxxNamed* >(*i);
-      auto file = item->GetFile();
-      if(file != nullptr) fileSet.insert(file);
-   }
-
-   return result;
-}
-
-//------------------------------------------------------------------------------
-
 LibrarySet* CodeItemSet::Files() const
 {
    Debug::ft("CodeItemSet.Files");
@@ -284,6 +219,30 @@ LibrarySet* CodeItemSet::ReferencedBy() const
       CxxUsageSets usages;
       item->GetUsages(*item->GetFile(), usages);
       result->CopyUsages(usages);
+   }
+
+   return result;
+}
+
+//------------------------------------------------------------------------------
+
+LibrarySet* CodeItemSet::Referencers() const
+{
+   Debug::ft("CodeItemSet.Referencers");
+
+   auto& itemSet = Items();
+   auto result = new CodeFileSet(TemporaryName(), nullptr);
+   auto& refSet = result->Items();
+
+   for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
+   {
+      auto item = static_cast< CxxScoped* >(*i);
+      auto& xref = item->Xref();
+
+      for(auto r = xref.cbegin(); r != xref.cend(); ++r)
+      {
+         refSet.insert(*r);
+      }
    }
 
    return result;

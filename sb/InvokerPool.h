@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <iosfwd>
 #include <string>
+#include "Duration.h"
 #include "Factory.h"
 #include "NbTypes.h"
 #include "RegCell.h"

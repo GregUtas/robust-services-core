@@ -49,7 +49,7 @@ bool IsSortedAlphabetically(const string& s1, const string& s2)
 
 const char LibrarySet::ReadOnlyChar = '$';
 const char LibrarySet::TemporaryChar = '%';
-uint8_t LibrarySet::SeqNo_ = 0;
+uint32_t LibrarySet::SeqNo_ = 0;
 
 //------------------------------------------------------------------------------
 
@@ -93,9 +93,10 @@ LibrarySet* LibrarySet::Affecters() const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::Assign(LibrarySet* rhs)
+LibrarySet* LibrarySet::Assign(LibrarySet* that)
 {
-   return OpError("assign");
+   OpError("assign");
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -109,23 +110,21 @@ word LibrarySet::Check(CliThread& cli, ostream* stream, string& expl) const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::CodeDeclarers() const
-{
-   return OpError("cd");
-}
-
-//------------------------------------------------------------------------------
-
-LibrarySet* LibrarySet::CodeReferencers() const
-{
-   return OpError("cr");
-}
-
-//------------------------------------------------------------------------------
-
 LibrarySet* LibrarySet::CommonAffecters() const
 {
    return OpError("ca");
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LibrarySet_CopyUsages = "LibrarySet.CopyUsages";
+
+void LibrarySet::CopyUsages(const CxxUsageSets& usages)
+{
+   Debug::ft(LibrarySet_CopyUsages);
+
+   auto errstr = NotApplicable();
+   Debug::SwLog(LibrarySet_CopyUsages, errstr, GetType());
 }
 
 //------------------------------------------------------------------------------
@@ -179,6 +178,13 @@ LibrarySet* LibrarySet::DeclaredBy() const
 
 //------------------------------------------------------------------------------
 
+LibrarySet* LibrarySet::Declarers() const
+{
+   return OpError("ds");
+}
+
+//------------------------------------------------------------------------------
+
 LibrarySet* LibrarySet::Definitions() const
 {
    return OpError("df");
@@ -186,7 +192,7 @@ LibrarySet* LibrarySet::Definitions() const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::Difference(const LibrarySet* rhs) const
+LibrarySet* LibrarySet::Difference(const LibrarySet* that) const
 {
    return OpError("-");
 }
@@ -218,23 +224,9 @@ void LibrarySet::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::FileDeclarers() const
-{
-   return OpError("fd");
-}
-
-//------------------------------------------------------------------------------
-
 LibrarySet* LibrarySet::FileName(const LibrarySet* that) const
 {
    return OpError("fn");
-}
-
-//------------------------------------------------------------------------------
-
-LibrarySet* LibrarySet::FileReferencers() const
-{
-   return OpError("fr");
 }
 
 //------------------------------------------------------------------------------
@@ -297,7 +289,7 @@ LibrarySet* LibrarySet::Implements() const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::Intersection(const LibrarySet* rhs) const
+LibrarySet* LibrarySet::Intersection(const LibrarySet* that) const
 {
    return OpError("&");
 }
@@ -364,27 +356,21 @@ LibrarySet* LibrarySet::Needers() const
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_NotImplemented = "LibrarySet.NotImplemented";
+string LibrarySet::NotApplicable() const
+{
+   std::ostringstream stream;
+   stream << "This function is not implemented for a " << GetType();
+   auto errstr = stream.str();
+   return errstr;
+}
+
+//------------------------------------------------------------------------------
 
 word LibrarySet::NotImplemented(string& expl) const
 {
-   switch(GetType())
-   {
-   case DIR_SET:
-      expl = "This command is not implemented for directories.";
-      break;
-   case FILE_SET:
-      expl = "This command is not implemented for code files.";
-      break;
-   case VAR_SET:
-      expl = "This command is not implemented for variables.";
-      break;
-   default:
-      Debug::SwLog(LibrarySet_NotImplemented, "unexpected set type", GetType());
-      expl = "Internal error.";
-      return -8;
-   }
-
+   std::ostringstream stream;
+   stream << "This command is not implemented for a " << GetType();
+   expl = stream.str();
    return -3;
 }
 
@@ -427,9 +413,9 @@ LibrarySet* LibrarySet::ReferencedBy() const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::ReferencedIn(const LibrarySet* that) const
+LibrarySet* LibrarySet::Referencers() const
 {
-   return OpError("ri");
+   return OpError("rs");
 }
 
 //------------------------------------------------------------------------------
@@ -501,13 +487,26 @@ word LibrarySet::Sort(ostream& stream, string& expl) const
 
 //------------------------------------------------------------------------------
 
+fn_name LibrarySet_SortInBuildOrder = "LibrarySet.SortInBuildOrder";
+
+BuildOrder LibrarySet::SortInBuildOrder() const
+{
+   Debug::ft(LibrarySet_SortInBuildOrder);
+
+   BuildOrder order;
+   auto errstr = NotApplicable();
+   Debug::SwLog(LibrarySet_SortInBuildOrder, errstr, GetType());
+   return order;
+}
+
+//------------------------------------------------------------------------------
+
 string LibrarySet::TemporaryName()
 {
    Debug::ft("LibrarySet.TemporaryName");
 
    string name = "%temp";
-   name += std::to_string(int(SeqNo_));
-   SeqNo_++;
+   name += std::to_string(SeqNo_++);
    return name;
 }
 
@@ -524,7 +523,7 @@ void LibrarySet::to_str(stringVector& strings, bool verbose) const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::Union(const LibrarySet* rhs) const
+LibrarySet* LibrarySet::Union(const LibrarySet* that) const
 {
    return OpError("|");
 }

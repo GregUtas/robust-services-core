@@ -89,8 +89,8 @@ LibrarySet* CodeFileSet::AffectedBy() const
    //  Start with the initial set and add files that directly include any
    //  member of the set.
    //
-   CodeFileSet* prev = nullptr;
-   auto curr = static_cast< CodeFileSet* >(Users(true));
+   LibrarySet* prev = nullptr;
+   auto curr = Users(true);
    size_t prevSize = this->Items().size();
    size_t currSize = curr->Items().size();
 
@@ -99,14 +99,12 @@ LibrarySet* CodeFileSet::AffectedBy() const
    //
    while(prevSize < currSize)
    {
-      if(prev != nullptr) prev->Release();
       prev = curr;
       prevSize = currSize;
-      curr = static_cast< CodeFileSet* >(prev->Users(true));
+      curr = prev->Users(true);
       currSize = curr->Items().size();
    }
 
-   if(prev != nullptr) prev->Release();
    return curr;
 }
 
@@ -119,8 +117,8 @@ LibrarySet* CodeFileSet::Affecters() const
    //  What affects this set are what it includes, transitively.  Start with
    //  the initial set and add files that any member directly includes.
    //
-   CodeFileSet* prev = nullptr;
-   auto curr = static_cast< CodeFileSet* >(UsedBy(true));
+   LibrarySet* prev = nullptr;
+   auto curr = UsedBy(true);
    size_t prevSize = this->Items().size();
    size_t currSize = curr->Items().size();
 
@@ -129,14 +127,12 @@ LibrarySet* CodeFileSet::Affecters() const
    //
    while(prevSize < currSize)
    {
-      if(prev != nullptr) prev->Release();
       prev = curr;
       prevSize = currSize;
-      curr = static_cast< CodeFileSet* >(prev->UsedBy(true));
+      curr = prev->UsedBy(true);
       currSize = curr->Items().size();
    }
 
-   if(prev != nullptr) prev->Release();
    return curr;
 }
 
@@ -172,8 +168,8 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
    //  As long as one of them has been parsed, we can parse the others because
    //  the target (operating system and word size) is already known.
    //
-   auto abSet = static_cast< CodeFileSet* >(this->AffectedBy());
-   auto asSet = static_cast< CodeFileSet* >(this->Affecters());
+   auto abSet = this->AffectedBy();
+   auto asSet = this->Affecters();
    LibItemSet parseSet;
    SetUnion(parseSet, abSet->Items(), asSet->Items());
    size_t parsed = 0;
@@ -204,11 +200,8 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
    {
       auto parseFiles = new CodeFileSet(TemporaryName(), &parseSet);
       rc = parseFiles->Parse(expl, "-");
-      parseFiles->Release();
    }
 
-   abSet->Release();
-   asSet->Release();
    if(rc != 0) return rc;
    expl.clear();
 
@@ -364,8 +357,7 @@ LibrarySet* CodeFileSet::Files() const
 
    //  Return the same set.
    //
-   auto result = new CodeFileSet(TemporaryName(), &Items());
-   return result;
+   return new CodeFileSet(TemporaryName(), &Items());
 }
 
 //------------------------------------------------------------------------------
@@ -527,17 +519,14 @@ LibrarySet* CodeFileSet::Implements() const
    //  vice versa, everything that affects the file, and that is affected
    //  by it, must have been parsed.
    //
-   auto abSet = static_cast< CodeFileSet* >(this->AffectedBy());
-   auto asSet = static_cast< CodeFileSet* >(this->Affecters());
+   auto abSet = this->AffectedBy();
+   auto asSet = this->Affecters();
    LibItemSet parseSet;
    SetUnion(parseSet, abSet->Items(), asSet->Items());
 
    string expl;
    auto parseFiles = new CodeFileSet(TemporaryName(), &parseSet);
    parseFiles->Parse(expl, "-");
-   abSet->Release();
-   asSet->Release();
-   parseFiles->Release();
 
    //  Iterate over the set of code files, adding files that implement ones
    //  already in the set.
@@ -602,12 +591,10 @@ LibrarySet* CodeFileSet::NeededBy() const
    while(prevCount < currCount)
    {
       asSet = nbSet->Affecters();
-      if(nbSet != this) nbSet->Release();
       nbSet = asSet->Implements();
       if(nbSet == nullptr) return nbSet;
-      asSet->Release();
       prevCount = currCount;
-      currCount = static_cast< CodeFileSet* >(nbSet)->Items().size();
+      currCount = nbSet->Items().size();
    }
 
    return nbSet;
@@ -632,12 +619,10 @@ LibrarySet* CodeFileSet::Needers() const
    while(prevCount < currCount)
    {
       abSet = nsSet->AffectedBy();
-      if(nsSet != this) nsSet->Release();
       nsSet = abSet->Implements();
       if(nsSet == nullptr) return nsSet;
-      abSet->Release();
       prevCount = currCount;
-      currCount = static_cast< CodeFileSet* >(nsSet)->Items().size();
+      currCount = nsSet->Items().size();
    }
 
    return nsSet;
@@ -667,7 +652,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
 
    auto parseFiles = new CodeFileSet(TemporaryName(), &parseSet);
    auto affects = parseFiles->Affecters();
-   auto order = static_cast< CodeFileSet* >(affects)->SortInBuildOrder();
+   auto order = affects->SortInBuildOrder();
 
    //  Remove files that have already been parsed.
    //
@@ -721,8 +706,6 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    }
 
    parser.reset();
-   parseFiles->Release();
-   affects->Release();
 
    //  Update the cross-reference with symbols in the files just parsed.
    //
@@ -759,20 +742,6 @@ LibrarySet* CodeFileSet::ReferencedBy() const
       result->CopyUsages(usages);
    }
 
-   return result;
-}
-
-//------------------------------------------------------------------------------
-
-LibrarySet* CodeFileSet::ReferencedIn(const LibrarySet* that) const
-{
-   Debug::ft("CodeFileSet.ReferencedIn");
-
-   auto declared = DeclaredBy();
-   auto referenced = that->ReferencedBy();
-   auto result = declared->Intersection(referenced);
-   declared->Release();
-   referenced->Release();
    return result;
 }
 

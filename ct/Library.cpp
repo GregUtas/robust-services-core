@@ -88,9 +88,8 @@ CxxNamed* FindItem(CliThread& cli, const string& name)
       stream << indent << '[' << i + 1 << "] " << items[i]->to_str() << CRLF;
    }
 
-   stream << "Enter the index of the intended item (0 to skip): ";
-   auto index = cli.IntPrompt(stream.str(), 0, items.size());
-   if(index == 0) return nullptr;
+   stream << "Enter the index of the intended item: ";
+   auto index = cli.IntPrompt(stream.str(), 1, items.size());
    return items[index - 1];
 }
 
@@ -231,7 +230,6 @@ word Library::Assign(CliThread& cli,
 
    if(rc != 0)
    {
-      s->Release();
       return rc;
    }
 
@@ -414,8 +412,8 @@ LibrarySet* Library::Evaluate
 {
    Debug::ft("Library.Evaluate");
 
-   //  Purge any temporary variables that were not released when evaluating
-   //  the previous expression.
+   //  Purge any temporary variables created while processing the previous
+   //  command.
    //
    for(auto curr = vars_.begin(); curr != vars_.end(); NO_OP)
    {

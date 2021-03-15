@@ -503,8 +503,7 @@ const LibItemSet& CodeFile::Affecters()
    auto& context = fileSet->Items();
    context.insert(this);
    auto asSet = fileSet->Affecters();
-   affecterSet_ = static_cast< CodeFileSet* >(asSet)->Items();
-   fileSet->Release();
+   affecterSet_ = asSet->Items();
    return affecterSet_;
 }
 
@@ -1699,7 +1698,6 @@ const LibItemSet& CodeFile::Implementers()
    }
 
    implSet_ = imSet;
-   fileSet->Release();
    return implSet_;
 }
 
@@ -2192,8 +2190,7 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
    auto& incls = inclSet->Items();
    SetUnion(incls, trimSet);
    auto affecters = inclSet->Affecters();
-   inclSet->Release();
-   auto& affecterSet = static_cast< CodeFileSet* >(affecters)->Items();
+   auto& affecterSet = affecters->Items();
 
    for(auto add = addForws.begin(); add != addForws.end(); NO_OP)
    {
@@ -2243,8 +2240,6 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
       else
          ++add;
    }
-
-   affecters->Release();
 }
 
 //------------------------------------------------------------------------------

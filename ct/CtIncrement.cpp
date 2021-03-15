@@ -217,7 +217,6 @@ word CheckCommand::ProcessCommand(CliThread& cli) const
 
    string expl;
    auto rc = set->Check(cli, stream, expl);
-   set->Release();
 
    if(rc == 0)
    {
@@ -429,9 +428,7 @@ word CountCommand::ProcessCommand(CliThread& cli) const
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
    string result;
-
    auto rc = set->Count(result);
-   set->Release();
    return cli.Report(rc, result);
 }
 
@@ -464,9 +461,7 @@ word CountlinesCommand::ProcessCommand(CliThread& cli) const
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
    string result;
-
    auto rc = set->Countlines(result);
-   set->Release();
    return cli.Report(rc, result);
 }
 
@@ -748,7 +743,6 @@ word FixCommand::ProcessCommand(CliThread& cli) const
 
    string expl;
    auto rc = set->Fix(cli, options, expl);
-   set->Release();
    if(rc == 0) return 0;
    return cli.Report(rc, expl);
 }
@@ -781,9 +775,7 @@ word FormatCommand::ProcessCommand(CliThread& cli) const
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
    string expl;
-
    auto rc = set->Format(expl);
-   set->Release();
    return cli.Report(rc, expl);
 }
 
@@ -872,7 +864,6 @@ word ListCommand::ProcessCommand(CliThread& cli) const
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
    auto rc = set->List(*cli.obuf);
-   set->Release();
    return rc;
 }
 
@@ -963,7 +954,6 @@ word ParseCommand::ProcessCommand(CliThread& cli) const
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
    auto rc = set->Parse(expl, opts);
-   set->Release();
    return cli.Report(rc, expl);
 }
 
@@ -1055,8 +1045,8 @@ word ScanCommand::ProcessCommand(CliThread& cli) const
 
    auto set = Singleton< Library >::Instance()->Evaluate(cli, expr, pos);
    if(set == nullptr) return cli.Report(-7, AllocationError);
+
    auto rc = set->Scan(*cli.obuf, pattern, expl);
-   set->Release();
    if(rc != 0) return cli.Report(rc, expl);
    return rc;
 }
@@ -1274,9 +1264,7 @@ word SortCommand::ProcessCommand(CliThread& cli) const
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
    string expl;
-
    auto rc = set->Sort(*cli.obuf, expl);
-   set->Release();
    if(rc != 0) return cli.Report(rc, expl);
    return rc;
 }
@@ -1534,9 +1522,7 @@ word TypeCommand::ProcessCommand(CliThread& cli) const
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
    string result;
-
    auto rc = set->Show(result);
-   set->Release();
    return cli.Report(rc, result);
 }
 

@@ -42,10 +42,10 @@ public:
 
    //  Override the operators supported by both directories and files.
    //
-   LibrarySet* Assign(LibrarySet* rhs) override;
-   LibrarySet* Difference(const LibrarySet* rhs) const override;
-   LibrarySet* Intersection(const LibrarySet* rhs) const override;
-   LibrarySet* Union(const LibrarySet* rhs) const override;
+   LibrarySet* Assign(LibrarySet* that) override;
+   LibrarySet* Difference(const LibrarySet* that) const override;
+   LibrarySet* Intersection(const LibrarySet* that) const override;
+   LibrarySet* Union(const LibrarySet* that) const override;
 
    //  Updates STREAM with the number of files in the set and returns 0.
    //
@@ -56,7 +56,7 @@ protected:
    //
    CodeSet(const std::string& name, const LibItemSet* items);
 
-   //  Protected to restrict deletion.
+   //  Protected to restrict deletion.  Virtual to allow subclassing.
    //
    virtual ~CodeSet();
 private:

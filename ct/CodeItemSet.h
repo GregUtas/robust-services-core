@@ -28,11 +28,6 @@
 #include "LibraryItem.h"
 #include "LibraryTypes.h"
 
-namespace CodeTools
-{
-   struct CxxUsageSets;
-}
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -48,18 +43,16 @@ public:
 
    //  Copies the items in USAGES into the set.
    //
-   void CopyUsages(const CxxUsageSets& usages);
+   void CopyUsages(const CxxUsageSets& usages) override;
 
    //  Override the operators supported by a set of code files.
    //
-   LibrarySet* CodeDeclarers() const override;
-   LibrarySet* CodeReferencers() const override;
+   LibrarySet* Declarers() const override;
    LibrarySet* DeclaredBy() const override;
    LibrarySet* Definitions() const override;
    LibrarySet* Directories() const override;
-   LibrarySet* FileDeclarers() const override;
-   LibrarySet* FileReferencers() const override;
    LibrarySet* Files() const override;
+   LibrarySet* Referencers() const override;
    LibrarySet* ReferencedBy() const override;
 
    //  Returns the type of set.

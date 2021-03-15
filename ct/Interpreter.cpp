@@ -113,14 +113,11 @@ const OperatorInfo OperatorInfo::Attrs[Operator_N] =
    OperatorInfo("ca", 1, FILE_SET, FILE_SET, ERR_SET),   // OpCommonAffecters
    OperatorInfo("nb", 1, FILE_SET, FILE_SET, ERR_SET),   // OpNeededBy
    OperatorInfo("ns", 1, FILE_SET, FILE_SET, ERR_SET),   // OpNeeders
-   OperatorInfo("df", 1, ITEM_SET, ITEM_SET, ERR_SET),   // OpDefinitions
    OperatorInfo("db", 1, ITEM_SET, ANY_SET,  ERR_SET),   // OpDeclaredBy
+   OperatorInfo("ds", 1, ITEM_SET, ITEM_SET, ERR_SET),   // OpDeclarers
+   OperatorInfo("df", 1, ITEM_SET, ITEM_SET, ERR_SET),   // OpDefinitions
    OperatorInfo("rb", 1, ITEM_SET, ANY_SET,  ERR_SET),   // OpReferencedBy
-   OperatorInfo("fd", 1, FILE_SET, ITEM_SET, ERR_SET),   // OpFileDeclarers
-   OperatorInfo("cd", 1, ITEM_SET, ITEM_SET, ERR_SET),   // OpCodeDeclarers
-   OperatorInfo("fr", 1, FILE_SET, ITEM_SET, ERR_SET),   // OpFileReferencers
-   OperatorInfo("cr", 1, ITEM_SET, ITEM_SET, ERR_SET),   // OpCodeReferencers
-   OperatorInfo("ri", 2, ITEM_SET, FILE_SET, FILE_SET)   // OpReferencedIn
+   OperatorInfo("rs", 1, ITEM_SET, ITEM_SET, ERR_SET),   // OpReferencers
 };
 
 //------------------------------------------------------------------------------
@@ -200,11 +197,11 @@ private:
 
    //  The first argument.
    //
-   LibrarySet* rhs1_;
+   const LibrarySet* rhs1_;
 
    //  The second argument, if any.
    //
-   LibrarySet* rhs2_;
+   const LibrarySet* rhs2_;
 
    //  The operation to perform.
    //
@@ -325,14 +322,9 @@ LibraryOpcode::~LibraryOpcode()
 {
    Debug::ftnt("LibraryOpcode.dtor");
 
-   //  lhs_ will become someone else's rhs_, so don't delete it.
-   //  And until it does, the operand stack owns it.
-   //
-   if(rhs1_ != nullptr) rhs1_->Release();
-   rhs1_ = nullptr;
-
-   if(rhs2_ != nullptr) rhs2_->Release();
-   rhs2_ = nullptr;
+   //  lhs_ will become someone else's rhs_, so don't delete it.  If rhs1_
+   //  or rhs2_ is a temporary, it will be deleted when the next command is
+   //  executed.
 }
 
 //------------------------------------------------------------------------------
@@ -430,29 +422,20 @@ void LibraryOpcode::Execute()
    case OpNeeders:
       result = lhs_->Assign(rhs1_->Needers());
       break;
-   case OpDefinitions:
-      result = lhs_->Assign(rhs1_->Definitions());
-      break;
    case OpDeclaredBy:
       result = lhs_->Assign(rhs1_->DeclaredBy());
+      break;
+   case OpDeclarers:
+      result = lhs_->Assign(rhs1_->Declarers());
+      break;
+   case OpDefinitions:
+      result = lhs_->Assign(rhs1_->Definitions());
       break;
    case OpReferencedBy:
       result = lhs_->Assign(rhs1_->ReferencedBy());
       break;
-   case OpFileDeclarers:
-      result = lhs_->Assign(rhs1_->FileDeclarers());
-      break;
-   case OpCodeDeclarers:
-      result = lhs_->Assign(rhs1_->CodeDeclarers());
-      break;
-   case OpFileReferencers:
-      result = lhs_->Assign(rhs1_->FileReferencers());
-      break;
-   case OpCodeReferencers:
-      result = lhs_->Assign(rhs1_->CodeReferencers());
-      break;
-   case OpReferencedIn:
-      result = lhs_->Assign(rhs1_->ReferencedIn(rhs2_));
+   case OpReferencers:
+      result = lhs_->Assign(rhs1_->Referencers());
       break;
    default:
       Debug::SwLog(LibraryOpcode_Execute, "unexpected opcode", op_);
@@ -492,14 +475,9 @@ Interpreter::~Interpreter()
 {
    Debug::ftnt("Interpreter.dtor");
 
-   //  Invoke Release on operands (LibrarySets).  This will cause
-   //  a temporary to delete itself.
-   //
    while(!operands_.empty())
    {
-      auto operand = operands_.top();
       operands_.pop();
-      operand->Release();
    }
 
    //  Delete any opcodes.  The opcode destructor invokes Release

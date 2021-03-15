@@ -21,6 +21,7 @@
 //
 #include "LibraryItem.h"
 #include "Debug.h"
+#include "Formatters.h"
 #include "SysTypes.h"
 
 using namespace NodeBase;
@@ -66,5 +67,16 @@ const std::string& LibraryItem::Name() const
    if(null_string.empty()) null_string.clear();
    Debug::SwLog(LibraryItem_Name, strOver(this), 0);
    return null_string;
+}
+
+//==============================================================================
+
+bool LibItemSort::operator()
+   (const LibraryItem* item1, const LibraryItem* item2) const
+{
+   auto result = strCompare(item1->Name(), item2->Name());
+   if(result < 0) return true;
+   if(result > 0) return false;
+   return (item1 < item2);
 }
 }

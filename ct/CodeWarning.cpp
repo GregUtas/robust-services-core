@@ -150,8 +150,8 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
    //  statements, for example, are affected by earlier recommendations for
    //  #included files.
    //
-   auto checkFiles = new CodeFileSet(LibrarySet::TemporaryName(), &files);
-   auto order = checkFiles->SortInBuildOrder();
+   auto check =new CodeFileSet(LibrarySet::TemporaryName(), &files);
+   auto order = check->SortInBuildOrder();
 
    //  Run a check on each file in ORDER, as well as on each C++ item.
    //
@@ -297,8 +297,6 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       }
       while((item != last) && (item->File() == f));
    }
-
-   checkFiles->Release();
 }
 
 //------------------------------------------------------------------------------

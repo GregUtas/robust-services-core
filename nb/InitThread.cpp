@@ -27,7 +27,6 @@
 #include "Daemon.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "Formatters.h"
 #include "Log.h"
 #include "ModuleRegistry.h"

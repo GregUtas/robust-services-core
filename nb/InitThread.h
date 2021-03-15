@@ -23,6 +23,7 @@
 #define INITTHREAD_H_INCLUDED
 
 #include "Thread.h"
+#include "Duration.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
 

@@ -143,7 +143,7 @@ public:
 
    //  Returns all variables.  Used for iteration.
    //
-   const std::list< LibrarySet* > Variables() const { return vars_; }
+   const std::list< LibrarySet* >& Variables() const { return vars_; }
 
    //  Shrinks containers.
    //

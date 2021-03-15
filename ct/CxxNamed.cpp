@@ -1284,40 +1284,24 @@ bool DataSpec::IsUsedInNameOnly() const
 {
    Debug::ft("DataSpec.IsUsedInNameOnly");
 
-   //  The type did not have to be defined before it appeared in this
-   //  specification if one of the following is true:
-   //  o It has pointer or reference tags, ignoring arrays.
-   //  o It is the type for a function's argument or return value.
-   //  o It is a template argument--unless it is a template instance
-   //    or appears in code.
-   //  o It appears in a typedef--unless it is a template.
+   //  This specification uses a type in name only (that is, it only needs to
+   //  have been declared, but not defined) if one of the following is true:
+   //  o The type has pointer or reference tags (but is not an array).
+   //  o The type is used as a template argument--unless it is appearing in a
+   //    template instance or code.
    //
    auto count = Ptrs(false);
    if(count > 0) return true;
    if(Refs() > 0) return true;
 
-   auto user = GetUserType();
-   if(user == Cxx::Function) return true;
-
-   CxxNamed* ref = nullptr;
-
    if(GetTemplateRole() != TemplateNone)
    {
-      ref = name_->GetReferent();
+      auto ref = name_->GetReferent();
       if((ref != nullptr) && ref->IsInTemplateInstance()) return false;
-      return (user != Cxx::Operation);
+      return (GetUserType() != Cxx::Operation);
    }
 
-   if(user != Cxx::Typedef) return false;
-
-   ref = name_->GetReferent();
-   if((ref != nullptr) && (ref->Type() == Cxx::Class))
-   {
-      if(ref->IsInTemplateInstance()) return false;
-      if(ref->GetTemplate() != nullptr) return false;
-   }
-
-   return true;
+   return false;
 }
 
 //------------------------------------------------------------------------------

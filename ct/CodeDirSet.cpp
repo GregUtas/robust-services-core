@@ -74,8 +74,7 @@ LibrarySet* CodeDirSet::Directories() const
 
    //  Return the same set.
    //
-   auto result = new CodeDirSet(TemporaryName(), &Items());
-   return result;
+   return new CodeDirSet(TemporaryName(), &Items());
 }
 
 //------------------------------------------------------------------------------

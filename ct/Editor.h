@@ -534,15 +534,15 @@ private:
    //
    word Changed(size_t pos, string& expl);
 
-   //  Erases COUNT characters starting at POS.
+   //  Erases COUNT characters starting at POS.  Returns POS.
    //
    size_t Erase(size_t pos, size_t count);
 
-   //  Inserts CODE at POS.
+   //  Inserts CODE at POS.  Returns POS..
    //
    size_t Insert(size_t pos, const string& code);
 
-   //  Pastes CODE, which originally started at FROM, at POS.
+   //  Pastes CODE, which originally started at FROM, at POS.  Returns POS.
    //
    size_t Paste(size_t pos, const string& code, size_t from);
 

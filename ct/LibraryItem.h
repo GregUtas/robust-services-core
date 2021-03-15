@@ -26,7 +26,6 @@
 #include <set>
 #include <string>
 #include "CxxFwd.h"
-#include "Formatters.h"
 
 //------------------------------------------------------------------------------
 
@@ -62,16 +61,9 @@ protected:
 //
 struct LibItemSort
 {
-   bool operator() (const LibraryItem* item1, const LibraryItem* item2) const
-   {
-      auto result = NodeBase::strCompare(item1->Name(), item2->Name());
-      if(result < 0) return true;
-      if(result > 0) return false;
-      return (item1 < item2);
-   }
+   bool operator() (const LibraryItem* item1, const LibraryItem* item2) const;
 };
 
 using LibItemSet = std::set< LibraryItem*, LibItemSort >;
-//* using LibItemSet = std::set< LibraryItem* >;
 }
 #endif

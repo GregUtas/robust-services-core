@@ -14,8 +14,13 @@ in turn, uses the [_lib.create_](/input/lib.create.txt) script). You can
 modify these scripts to import your own code.
 
 As the library is built, `#include` relationships are noted.  This allows
-`#include` dependencies to be analyzed by the operators `us`, `ub`, `as`,
-`ab`, `ca`, `ns`, and `nb`, which are described in the full help documentation.
+`#include` dependencies to be analyzed by the operators `ub`, `us`, `ab`,
+`as`, and `ca`. After the `>parse` command has compiled the code, further
+dependencies, even ones between C++ code items, can be analyzed using the
+operators `nb`, `ns`, `db`, `df`, `ds`, `rb`, and `rs`. For a summary of these
+operators, see the help documentation. For a more detailed discussion, see the
+[article](https://www.codeproject.com/Articles/5246833/A-Static-Analysis-Tool-for-Cplusplus)
+on CodeProject.
 
 ## Using the library
 

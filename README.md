@@ -88,7 +88,7 @@ RSC requires C++11.
 RSC is currently implemented on Windows, where it runs as a console application.
 However, it defines an abstraction layer, in the form of generic C++ _.h_'s and
 platform-specific _.cpp_'s, that should allow it to be ported to other systems
-fairly easily. Two debug executables, for 32-bit and 64-bit Windows, are
+fairly easily. Debug and release executables, for 32-bit and 64-bit Windows, are
 provided [here](/exe).
 
 The directories that contain RSC's source code, and the dependencies between

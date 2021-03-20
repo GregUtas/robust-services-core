@@ -844,7 +844,7 @@ Class* DataSpec::DirectClass() const
 
    auto root = Root();
    if(root->Type() != Cxx::Class) return nullptr;
-   if(IsIndirect()) return nullptr;
+   if(IsIndirect(false)) return nullptr;
    return static_cast< Class* >(root);
 }
 
@@ -1271,11 +1271,11 @@ bool DataSpec::IsConstPtr(size_t n) const
 
 //------------------------------------------------------------------------------
 
-bool DataSpec::IsIndirect() const
+bool DataSpec::IsIndirect(bool arrays) const
 {
    Debug::ft("DataSpec.IsIndirect");
 
-   return ((Refs() > 0) || (Ptrs(true) > 0));
+   return ((Refs() > 0) || (Ptrs(arrays) > 0));
 }
 
 //------------------------------------------------------------------------------

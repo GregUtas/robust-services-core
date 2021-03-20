@@ -1431,9 +1431,10 @@ private:
    //
    bool IsConstPtr(size_t n) const override;
 
-   //  Overridden to return true if the type has pointer or reference tags.
+   //  Overridden to return true if the type has pointer or reference tags,
+   //  or if it is an array and ARRAYS is true.
    //
-   bool IsIndirect() const override;
+   bool IsIndirect(bool arrays) const override;
 
    //  Overridden to return true if the type is volatile.
    //

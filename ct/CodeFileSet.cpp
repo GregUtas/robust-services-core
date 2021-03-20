@@ -34,7 +34,6 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxNamed.h"
-#include "CxxScoped.h"
 #include "Debug.h"
 #include "Editor.h"
 #include "Formatters.h"

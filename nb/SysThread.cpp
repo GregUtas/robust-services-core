@@ -34,8 +34,8 @@ using std::string;
 
 namespace NodeBase
 {
-SysThread::SysThread(const Thread* client,
-   const ThreadEntry entry, Priority prio, size_t size) :
+SysThread::SysThread
+   (Thread* client, ThreadEntry entry, Priority prio, size_t size) :
    nthread_(nullptr),
    nid_(NIL_ID),
    event_(CreateSentry()),

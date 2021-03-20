@@ -155,7 +155,8 @@ public:
    //
    size_t Refs() const;
 
-   //  Returns true if the argument is indirect.
+   //  Returns true if the argument is indirect.  An array decays to a
+   //  pointer, so an array is considered indirect here.
    //
    bool IsIndirect() const { return ((Ptrs(true) > 0) || (Refs() > 0)); }
 

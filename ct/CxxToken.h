@@ -73,6 +73,12 @@ public:
    //
    virtual TypeSpec* GetTypeSpec() const { return nullptr; }
 
+   //  If the item is a class (and not a pointer or reference to a class),
+   //  returns that class.  Returns nullptr otherwise.  The default version
+   //  invokes DirectClass on GetTypeSpec.
+   //
+   virtual Class* DirectClass() const;
+
    //  Returns true if the item is const.
    //
    virtual bool IsConst() const { return false; }
@@ -103,9 +109,9 @@ public:
    virtual bool IsAuto() const { return false; }
 
    //  Returns true if the item is indirect (that is, if it is a pointer
-   //  or reference).
+   //  or reference).  If ARRAYS is set, an array is considered indirect.
    //
-   virtual bool IsIndirect() const { return false; }
+   virtual bool IsIndirect(bool arrays) const { return false; }
 
    //  Returns true if the item is undergoing initialization.
    //
@@ -303,12 +309,6 @@ protected:
    //  Copy operator.
    //
    CxxToken& operator=(const CxxToken& that) = default;
-
-   //  If the item is a class (and not a pointer or reference to a class),
-   //  returns that class.  Returns nullptr otherwise.  The default version
-   //  invokes DirectClass on GetTypeSpec.
-   //
-   virtual Class* DirectClass() const;
 
    //  Shrinks TOKENS.
    //
@@ -941,65 +941,6 @@ public:
       size_t begin, size_t count, size_t from) const override;
 private:
    const TokenPtr token_;
-};
-
-//------------------------------------------------------------------------------
-//
-//  Parameters associated with a template declaration.
-//
-class TemplateParms : public CxxToken
-{
-public:
-   //  Creates a template declaration in which PARM is the first parameter
-   //  (e.g. T/typename/1 for template <typename T*...).
-   //
-   explicit TemplateParms(TemplateParmPtr& parm);
-
-   //  Not subclassed.
-   //
-   ~TemplateParms() { CxxStats::Decr(CxxStats::TEMPLATE_PARMS); }
-
-   //  Adds another parameter to the template.
-   //
-   void AddParm(TemplateParmPtr& parm);
-
-   //  Invokes EnterScope on each parameter.
-   //
-   void EnterScope() const;
-
-   //  Returns the template's parameters.
-   //
-   const TemplateParmPtrVector* Parms() const { return &parms_; }
-
-   //  The following invoke the corresponding function on each parameter.
-   //
-   void AddToXref() override;
-   void Check() const override;
-   void EnterBlock() override;
-   void ExitBlock() const override;
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
-
-   //  Overridden to display the template's full specification.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
-   //  Overridden to return the template's parameters in angle brackets.
-   //
-   std::string TypeString(bool arg) const override;
-
-   //  Overridden to update the parameters' locations.
-   //
-   void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from) const override;
-private:
-   //  The template's parameters.
-   //
-   TemplateParmPtrVector parms_;
 };
 }
 #endif

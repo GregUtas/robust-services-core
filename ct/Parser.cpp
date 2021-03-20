@@ -4537,7 +4537,7 @@ bool Parser::ParseInClass(Cxx::Keyword kwd, Class* cls)
          if(HandleDirective(dirItem))
          {
             if(dirItem == nullptr) return true;
-            return cls->AddDirective(dirItem);
+            return cls->GetFile()->InsertDirective(dirItem);
          }
          break;
       case 'N':

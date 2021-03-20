@@ -31,7 +31,6 @@
 #include "CxxFwd.h"
 #include "CxxNamed.h"
 #include "CxxScoped.h"
-#include "CxxToken.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -304,10 +303,6 @@ public:
    //
    void AddBase(BaseDeclPtr& base);
 
-   //  Adds DIR as a preprocessor directive within the class.
-   //
-   bool AddDirective(DirectivePtr& dir);
-
    //  Adds DECL as a friend of the class.
    //
    bool AddFriend(FriendPtr& decl);
@@ -342,6 +337,10 @@ public:
    //  not an inner class.
    //
    Class* OuterClass() const;
+
+   //  Returns true if the class is a singleton.
+   //
+   bool IsSingleton() const;
 
    //  Returns the class's friends.
    //
@@ -453,6 +452,10 @@ public:
    //  Returns data members and their initialization requirements in MEMBERS.
    //
    void GetMemberInitAttrs(DataInitVector& members) const;
+
+   //  Records a destructor invocation on class members.
+   //
+   void DestructMembers() const;
 
    //  Invokes EnterBlock on any template parameters.
    //
@@ -759,10 +762,6 @@ private:
    //  The class's friends.
    //
    FriendPtrVector friends_;
-
-   //  The class's preprocessor directives.
-   //
-   DirectivePtrVector dirs_;
 
    //  The class's items in the order in which they appeared.
    //

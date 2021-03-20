@@ -506,3 +506,21 @@ probably intended.
 Function name passed to Debug::ft could be inlined string literal
   The fn_name argument to this Debug::ft call is not used elsewhere,
 so it could be replaced with an inlined string literal.
+? W125
+Non-const cast is not a downcast
+  This cast is unnecessary unless its purpose is to select the const
+version of a function that also has a non-const overload.
+? W126
+Use static_cast or dynamic_cast instead of more severe cast
+  This C-style cast, const_cast, or reinterpret_cast is a downcast that
+can be replaced by static_cast or dynamic_cast.
+? W127
+Data could be free
+  This static data can be moved out of its class and into the .cpp that
+initializes it.
+? W128
+Singleton's constructor should be private
+  A class that uses the Singleton template should have a private constructor.
+? W129
+Singleton's destructor should be private
+  A class that uses the Singleton template should have a private destructor.

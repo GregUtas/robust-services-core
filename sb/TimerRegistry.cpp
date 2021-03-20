@@ -139,8 +139,7 @@ void TimerRegistry::Display(ostream& stream,
 
       if(t != nullptr)
       {
-         auto psm = reinterpret_cast< const Base* >(t->Psm());
-         stream << lead << strIndex(i) << strObj(psm) << CRLF;
+         stream << lead << strIndex(i) << strObj(t->Psm()) << CRLF;
          return;
       }
    }
@@ -151,8 +150,7 @@ void TimerRegistry::Display(ostream& stream,
 
       if(t != nullptr)
       {
-         auto psm = reinterpret_cast< const Base* >(t->Psm());
-         stream << lead << strIndex(i) << strObj(psm) << CRLF;
+         stream << lead << strIndex(i) << strObj(t->Psm()) << CRLF;
          return;
       }
    }

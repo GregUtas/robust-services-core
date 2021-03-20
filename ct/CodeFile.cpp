@@ -42,7 +42,6 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxString.h"
-#include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Library.h"

@@ -97,6 +97,22 @@ bool AreInSameStatement(const CxxNamed* item1, const CxxNamed* item2)
 
 //------------------------------------------------------------------------------
 //
+//  Asks the user to decide choose declName or defnName as an argument's name.
+//
+string ChooseArgumentName
+   (CliThread& cli, const string& declName, const string& defnName)
+{
+   Debug::ft("CodeTools.ChooseArgumentName");
+
+   std::ostringstream stream;
+   stream << "Choose argument name. Enter 1 for " << QUOTE << declName << QUOTE;
+   stream << " or 2 for " << QUOTE << defnName << QUOTE << ": ";
+   auto choice = cli.IntPrompt(stream.str(), 1, 2);
+   return (choice == 1 ? declName : defnName);
+}
+
+//------------------------------------------------------------------------------
+//
 //  Returns an unquoted string (FLIT) and fn_name identifier (FVAR) that are
 //  suitable for invoking Debug::ft.
 //
@@ -353,7 +369,7 @@ string strCode(const string& code, size_t level)
 string strComment(const string& text, size_t indent)
 {
    auto comment = spaces(indent) + "//";
-   if(!text.empty()) comment += "  " + text;
+   if(!text.empty()) comment += spaces(2) + text;
    comment.push_back(CRLF);
    return comment;
 }
@@ -488,64 +504,6 @@ word Editor::AdjustTags(const CodeWarning& log, string& expl)
    target.push_back(tag);
    target.push_back(SPACE);
    return NotFound(expl, target.c_str());
-}
-
-//------------------------------------------------------------------------------
-
-word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
-{
-   Debug::ft("Editor.AlignArgumentNames");
-
-   //  This handles the following argument warnings:
-   //  o AnonymousArgument: unnamed argument
-   //  o DefinitionRenamesArgument: definition's name differs from declaration's
-   //  o OverrideRenamesArgument: override's name differs from root's
-   //
-   auto func = static_cast< const Function* >(log.item_);
-   const Function* decl = func->GetDecl();
-   const Function* defn = func->GetDefn();
-   const Function* root = (func->IsOverride() ? func->FindRootFunc() : nullptr);
-   if(decl == nullptr) return NotFound(expl, "Function's declaration");
-
-   //  Use the argument name from the root (if any), else the declaration,
-   //  else the definition.
-   //
-   auto index = decl->LogOffsetToArgIndex(log.offset_);
-   string argName;
-   auto declName = decl->GetArgs().at(index)->Name();
-   string defnName;
-   if(defn != nullptr) defnName = defn->GetArgs().at(index)->Name();
-   if(root != nullptr) argName = root->GetArgs().at(index)->Name();
-   if(argName.empty()) argName = declName;
-   if(argName.empty()) argName = defnName;
-   if(argName.empty()) return NotFound(expl, "Candidate argument name");
-
-   //  The declaration and definition are logged separately, so fix only
-   //  the one that has a problem.
-   //
-   if(log.warning_ == AnonymousArgument)
-   {
-      auto type = func->GetArgs().at(index)->GetTypeSpec()->GetPos();
-      type = FindFirstOf(type, ",)");
-      if(type == string::npos) return NotFound(expl, "End of argument");
-      argName.insert(0, 1, SPACE);
-      Insert(type, argName);
-      return Changed(type, expl);
-   }
-
-   size_t begin, left, end;
-   if(!func->GetRange(begin, left, end)) return NotFound(expl, "Function");
-   if(func == decl) defnName = declName;
-
-   for(auto pos = FindWord(begin, defnName); pos < end;
-      pos = FindWord(pos + 1, defnName))
-   {
-      Replace(pos, defnName.size(), argName);
-      end = end + argName.size() - defnName.size();
-      Changed();
-   }
-
-   return Changed(begin, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -2675,11 +2633,11 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
    case VoidAsArgument:
       return EraseVoidArgument(log, expl);
    case AnonymousArgument:
-      return AlignArgumentNames(log, expl);
+      return RenameArgument(cli, log, expl);
    case DefinitionRenamesArgument:
-      return AlignArgumentNames(log, expl);
+      return RenameArgument(cli, log, expl);
    case OverrideRenamesArgument:
-      return AlignArgumentNames(log, expl);
+      return RenameArgument(cli, log, expl);
    case VirtualDefaultArgument:
       return FixInvokers(cli, log, expl);
    case ArgumentCouldBeConstRef:
@@ -2810,7 +2768,7 @@ size_t Editor::Indent(size_t pos)
    auto code = GetCode(pos);
    if(code.empty() || (code.front() == CRLF)) return pos;
 
-   auto info = const_cast< const Editor& >(*this).GetLineInfo(pos);
+   auto info = GetLineInfo(pos);
    int depth = 0;
 
    if(info->depth != SIZE_MAX)
@@ -3933,6 +3891,79 @@ void Editor::QualifyUsings(CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
+word Editor::RenameArgument
+   (CliThread& cli, const CodeWarning& log, string& expl)
+{
+   Debug::ft("Editor.RenameArgument");
+
+   //  This handles the following argument warnings:
+   //  o AnonymousArgument: unnamed argument
+   //  o DefinitionRenamesArgument: definition's name differs from declaration's
+   //  o OverrideRenamesArgument: override's name differs from root's
+   //
+   auto func = static_cast< const Function* >(log.item_);
+   const Function* decl = func->GetDecl();
+   const Function* defn = func->GetDefn();
+   const Function* root = (func->IsOverride() ? func->FindRootFunc() : nullptr);
+   if(decl == nullptr) return NotFound(expl, "Function's declaration");
+
+   //  Use the argument name from the root (if any), else the declaration,
+   //  else the definition.
+   //
+   auto index = decl->LogOffsetToArgIndex(log.offset_);
+   string argName;
+   auto declName = decl->GetArgs().at(index)->Name();
+   string defnName;
+   if(defn != nullptr) defnName = defn->GetArgs().at(index)->Name();
+   if(root != nullptr) argName = root->GetArgs().at(index)->Name();
+   if(argName.empty()) argName = declName;
+   if(argName.empty()) argName = defnName;
+   if(argName.empty()) return NotFound(expl, "Candidate argument name");
+
+   //  The declaration and definition are logged separately, so fix only
+   //  the one that has a problem.
+   //
+   switch(log.warning_)
+   {
+   case AnonymousArgument:
+   {
+      auto type = func->GetArgs().at(index)->GetTypeSpec()->GetPos();
+      type = FindFirstOf(type, ",)");
+      if(type == string::npos) return NotFound(expl, "End of argument");
+      argName.insert(0, 1, SPACE);
+      Insert(type, argName);
+      return Changed(type, expl);
+   }
+
+   case DefinitionRenamesArgument:
+      //
+      //  See which name the user wants to use.
+      //
+      if(!declName.empty() && !defnName.empty())
+      {
+         argName = ChooseArgumentName(cli, declName, defnName);
+         if(argName == defnName) func = decl;
+      }
+   };
+
+   size_t begin, left, end;
+   if(!func->GetRange(begin, left, end)) return NotFound(expl, "Function");
+   if(func == decl) defnName = declName;
+   auto& editor = func->GetFile()->GetEditor();
+
+   for(auto pos = editor.FindWord(begin, defnName); pos < end;
+      pos = editor.FindWord(pos + 1, defnName))
+   {
+      editor.Replace(pos, defnName.size(), argName);
+      end = end + argName.size() - defnName.size();
+      editor.Changed();
+   }
+
+   return editor.Changed(begin, expl);
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::RenameIncludeGuard(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.RenameIncludeGuard");
@@ -4059,7 +4090,7 @@ word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
    //  Subsequent lines will be commented with "//", which will be indented
    //  appropriately and followed by two spaces.
    //
-   auto info = const_cast< const Editor& >(*this).GetLineInfo(pos0);
+   auto info = GetLineInfo(pos0);
    auto comment = spaces(info->depth * file_->IndentSize());
    comment += COMMENT_STR + spaces(2);
 

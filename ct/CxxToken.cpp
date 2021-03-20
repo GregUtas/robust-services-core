@@ -1157,6 +1157,8 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
 
    //  Some casts are always logged.
    //
+   auto constCast = false;
+
    switch(op_)
    {
    case Cxx::REINTERPRET_CAST:
@@ -1176,8 +1178,11 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
       {
       case Cxx::CONST_CAST:
       case Cxx::CAST:
-         if(inArg.IsConst() && inArg.IsIndirect())
+         if((inArg.IsConst()) && (inArg.IsIndirect() == outArg.IsIndirect()))
+         {
             Context::Log(CastingAwayConstness);
+            constCast = true;
+         }
          break;
 
       default:
@@ -1207,6 +1212,22 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
       if(outClass->DerivesFrom(inClass))
       {
          Context::Log(Downcasting);
+         outClass->RecordUsage();
+
+         if((op_ != Cxx::STATIC_CAST) && (op_ != Cxx::DYNAMIC_CAST))
+         {
+            if(!constCast && !outClass->IsInTemplateInstance())
+            {
+               Context::Log(ExcessiveCast);
+            }
+         }
+      }
+      else if((inClass == outClass) || (inClass->DerivesFrom(outClass)))
+      {
+         if(!constCast && !Context::ParsingTemplateInstance())
+         {
+            Context::Log(UnnecessaryCast);
+         }
       }
    }
 }
@@ -2891,154 +2912,5 @@ void StringLiteral::PushBack(uint32_t c)
    Debug::ft(StringLiteral_PushBack);
 
    Debug::SwLog(StringLiteral_PushBack, strOver(this), 0);
-}
-
-//==============================================================================
-
-TemplateParms::TemplateParms(TemplateParmPtr& parm)
-{
-   Debug::ft("TemplateParms.ctor");
-
-   parms_.push_back(std::move(parm));
-   CxxStats::Incr(CxxStats::TEMPLATE_PARMS);
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::AddParm(TemplateParmPtr& parm)
-{
-   Debug::ft("TemplateParms.AddParm");
-
-   parms_.push_back(std::move(parm));
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::AddToXref()
-{
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->AddToXref();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::Check() const
-{
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->Check();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::EnterBlock()
-{
-   Debug::ft("TemplateParms.EnterBlock");
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->EnterBlock();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::EnterScope() const
-{
-   Debug::ft("TemplateParms.EnterScope");
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->EnterScope();
-   }
-
-   //  Each template parameter added itself as a local so that it could
-   //  be resolved if used to specify a default value for a subsequent
-   //  template parameter.  Thus this hack to erase those locals...
-   //
-   ExitBlock();
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::ExitBlock() const
-{
-   Debug::ft("TemplateParms.ExitBlock");
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->ExitBlock();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
-{
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->GetUsages(file, symbols);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::Print(ostream& stream, const Flags& options) const
-{
-   stream << TEMPLATE_STR << '<';
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->Print(stream, options);
-      if(*p != parms_.back()) stream << ", ";
-   }
-
-   stream << "> ";
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::Shrink()
-{
-   CxxToken::Shrink();
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->Shrink();
-   }
-
-   auto size = parms_.capacity() * sizeof(TemplateParmPtr);
-   CxxStats::Vectors(CxxStats::TEMPLATE_PARMS, size);
-}
-
-//------------------------------------------------------------------------------
-
-string TemplateParms::TypeString(bool arg) const
-{
-   string ts = "<";
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      ts += (*p)->TypeString(false);
-      if(*p != parms_.back()) ts += ',';
-   }
-
-   return ts + '>';
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::UpdatePos
-   (EditorAction action, size_t begin, size_t count, size_t from) const
-{
-   CxxToken::UpdatePos(action, begin, count, from);
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->UpdatePos(action, begin, count, from);
-   }
 }
 }

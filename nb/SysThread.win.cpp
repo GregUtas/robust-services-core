@@ -147,8 +147,8 @@ void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
 
 //------------------------------------------------------------------------------
 
-SysThread_t SysThread::Create(const ThreadEntry entry,
-   const Thread* client, size_t stackSize, SysThreadId& nid)
+SysThread_t SysThread::Create
+   (ThreadEntry entry, Thread* client, size_t stackSize, SysThreadId& nid)
 {
    Debug::ft("SysThread.Create");
 

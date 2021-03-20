@@ -511,6 +511,11 @@ enum Warning
    ExplicitConstructor,      // constructor need not be tagged explicit
    BitwiseOperatorOnBoolean, // operator | or & used on boolean
    DebugFtCanBeLiteral,      // could pass an inline string literal to Debug::ft
+   UnnecessaryCast,          // non-const cast to a base class or the same class
+   ExcessiveCast,            // could use static_cast or dynamic_cast
+   DataCouldBeFree,          // data could move from header to implementation
+   ConstructorNotPrivate,    // singleton should have private constructor
+   DestructorNotPrivate,     // singleton should have private destructor
    Warning_N                 // number of warnings
 };
 

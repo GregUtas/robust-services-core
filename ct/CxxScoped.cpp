@@ -703,11 +703,11 @@ bool CxxScoped::IsDefinedIn(const CxxArea* area) const
 
 //------------------------------------------------------------------------------
 
-bool CxxScoped::IsIndirect() const
+bool CxxScoped::IsIndirect(bool arrays) const
 {
    auto spec = GetTypeSpec();
    if(spec == nullptr) return false;
-   return spec->IsIndirect();
+   return spec->IsIndirect(arrays);
 }
 
 //------------------------------------------------------------------------------
@@ -2517,6 +2517,155 @@ void TemplateParm::UpdatePos
    CxxScoped::UpdatePos(action, begin, count, from);
    if(type_ != nullptr) type_->UpdatePos(action, begin, count, from);
    if(default_ != nullptr) default_->UpdatePos(action, begin, count, from);
+}
+
+//==============================================================================
+
+TemplateParms::TemplateParms(TemplateParmPtr& parm)
+{
+   Debug::ft("TemplateParms.ctor");
+
+   parms_.push_back(std::move(parm));
+   CxxStats::Incr(CxxStats::TEMPLATE_PARMS);
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::AddParm(TemplateParmPtr& parm)
+{
+   Debug::ft("TemplateParms.AddParm");
+
+   parms_.push_back(std::move(parm));
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::AddToXref()
+{
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::Check() const
+{
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->Check();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::EnterBlock()
+{
+   Debug::ft("TemplateParms.EnterBlock");
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->EnterBlock();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::EnterScope() const
+{
+   Debug::ft("TemplateParms.EnterScope");
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->EnterScope();
+   }
+
+   //  Each template parameter added itself as a local so that it could
+   //  be resolved if used to specify a default value for a subsequent
+   //  template parameter.  Thus this hack to erase those locals...
+   //
+   ExitBlock();
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::ExitBlock() const
+{
+   Debug::ft("TemplateParms.ExitBlock");
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->ExitBlock();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
+{
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->GetUsages(file, symbols);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::Print(ostream& stream, const Flags& options) const
+{
+   stream << TEMPLATE_STR << '<';
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->Print(stream, options);
+      if(*p != parms_.back()) stream << ", ";
+   }
+
+   stream << "> ";
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::Shrink()
+{
+   CxxToken::Shrink();
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->Shrink();
+   }
+
+   auto size = parms_.capacity() * sizeof(TemplateParmPtr);
+   CxxStats::Vectors(CxxStats::TEMPLATE_PARMS, size);
+}
+
+//------------------------------------------------------------------------------
+
+string TemplateParms::TypeString(bool arg) const
+{
+   string ts = "<";
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      ts += (*p)->TypeString(false);
+      if(*p != parms_.back()) ts += ',';
+   }
+
+   return ts + '>';
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->UpdatePos(action, begin, count, from);
+   }
 }
 
 //==============================================================================

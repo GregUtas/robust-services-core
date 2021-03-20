@@ -27,11 +27,11 @@
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
-#include "CxxDirective.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
+#include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -345,17 +345,6 @@ void Class::AddBase(BaseDeclPtr& base)
    if(base == nullptr) return;
    if(!base->EnterScope()) return;
    base_ = std::move(base);
-}
-
-//------------------------------------------------------------------------------
-
-bool Class::AddDirective(DirectivePtr& dir)
-{
-   Debug::ft("Class.AddDirective");
-
-   AddItem(dir.get());
-   dirs_.push_back(std::move(dir));
-   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -884,6 +873,29 @@ bool Class::DerivesFrom(const string& name) const
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+void Class::DestructMembers() const
+{
+   Debug::ft("Class.DestructMembers");
+
+   auto datas = Datas();
+
+   for(auto d = datas->cbegin(); d != datas->cend(); ++d)
+   {
+      if(!(*d)->IsStatic())
+      {
+         auto cls = (*d)->DirectClass();
+
+         if(cls != nullptr)
+         {
+            auto dtor = cls->FindDtor();
+            if(dtor != nullptr) dtor->WasCalled();
+         }
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1653,8 +1665,8 @@ bool Class::IsDefaultConstructible()
 {
    Debug::ft("Class.IsDefaultConstructible");
 
-   //  A class is default constructible if it
-   //  o is not a union;
+   //  A class is default constructible if
+   //  o it is not a union;
    //  o it implements a default constructor or all of its data is default
    //    constructible, in which case the compiler provides the constructor;
    //  o its chain of base classes is default constructible.
@@ -1694,6 +1706,20 @@ bool Class::IsImplemented() const
    for(auto o = opers->cbegin(); o != opers->cend(); ++o)
    {
       if((*o)->IsImplemented()) return true;
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool Class::IsSingleton() const
+{
+   Debug::ft("Class.IsSingleton");
+
+   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
+   {
+      if((*f)->Name() == "Singleton") return true;
    }
 
    return false;

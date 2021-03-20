@@ -161,7 +161,6 @@ private:
    //
    word AdjustLineIndentation(const CodeWarning& log, string& expl);
    word AdjustTags(const CodeWarning& log, string& expl);
-   word AlignArgumentNames(const CodeWarning& log, string& expl);
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc, string& expl);
    word ChangeClassToNamespace(const CodeWarning& log, string& expl);
    word ChangeClassToStruct(const CodeWarning& log, string& expl);
@@ -203,6 +202,7 @@ private:
    word MoveDefine(const CodeWarning& log, string& expl);
    word MoveFunction(const CodeWarning& log, string& expl);
    word MoveMemberInit(const CodeWarning& log, string& expl);
+   word RenameArgument(CliThread& cli, const CodeWarning& log, string& expl);
    word RenameIncludeGuard(const CodeWarning& log, string& expl);
    word ReplaceHeading(const CodeWarning& log, string& expl);
    word ReplaceName(const CodeWarning& log, string& expl);

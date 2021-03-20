@@ -458,6 +458,7 @@ void ClassData::Check() const
       CheckConstness(could);
 
       CheckIfInitialized();
+      CheckIfRelocatable();
       CheckIfHiding();
       CheckAccessControl();
       CheckIfMutated();
@@ -508,6 +509,33 @@ void ClassData::CheckIfMutated() const
    Debug::ft("ClassData.CheckIfMutated");
 
    if(mutable_ && !mutated_) Log(DataNeedNotBeMutable);
+}
+
+//------------------------------------------------------------------------------
+
+void ClassData::CheckIfRelocatable() const
+{
+   Debug::ft("ClassData.CheckIfRelocatable");
+
+   //  Static data that is only referenced within the .cpp that initializes
+   //  it can be moved out of the class and into the .cpp.
+   //
+   if(IsStatic())
+   {
+      if(GetDeclFile()->IsCpp()) return;
+      auto file = GetDefnFile();
+      if(file == nullptr) return;
+      if(GetClass()->IsTemplate()) return;
+
+      auto& xref = Xref();
+
+      for(auto i = xref.cbegin(); i != xref.cend(); ++i)
+      {
+         if((*i)->GetFile() != file) return;
+      }
+
+      Log(DataCouldBeFree);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1332,18 +1360,8 @@ bool Data::InitByDefault()
 {
    Debug::ft("Data.InitByDefault");
 
-   if(extern_) return false;
-
-   auto spec = GetTypeSpec();
-   if(spec == nullptr) return false;
-   auto root = spec->Root();
-   if(root == nullptr) return false;
-   if(root->Type() != Cxx::Class) return false;
-   if(spec->Ptrs(false) > 0) return false;
-   if(spec->Refs() > 0) return false;
-
-   auto decl = GetDecl();
-   auto cls = static_cast< Class* >(root);
+   auto cls = DirectClass();
+   if(cls == nullptr) return false;
    cls->Instantiate();
    auto ctor = cls->FindCtor(nullptr);
 
@@ -1360,7 +1378,7 @@ bool Data::InitByDefault()
       if(!cls->HasPODMember()) SetInited();
    }
 
-   return decl->inited_;
+   return GetDecl()->inited_;
 }
 
 //------------------------------------------------------------------------------
@@ -1761,16 +1779,8 @@ void FuncData::ExitBlock() const
 
    Context::EraseLocal(this);
 
-   auto spec = GetTypeSpec();
-   if(!spec->IsIndirect())
-   {
-      auto root = spec->Root();
-      if((root != nullptr) && (root->Type() == Cxx::Class))
-      {
-         static_cast< Class* >(root)->WasCalled(PureDtor, this);
-      }
-   }
-
+   auto cls = DirectClass();
+   if(cls != nullptr) cls->WasCalled(PureDtor, this);
    if(next_ != nullptr) next_->ExitBlock();
 }
 
@@ -2662,6 +2672,12 @@ void Function::CheckCtor() const
    auto impl = defn->impl_.get();
    if(!IsImplemented()) return;
 
+   auto cls = GetClass();
+   if(cls->IsSingleton() && GetAccess() != Cxx::Private)
+   {
+      Log(ConstructorNotPrivate);
+   }
+
    //  A base class constructor should not be public.
    //
    if(GetAccess() == Cxx::Public)
@@ -2740,7 +2756,6 @@ void Function::CheckCtor() const
    //  each initialized member in ITEMS, and record when it was initialized.
    //
    DataInitVector items;
-   auto cls = GetClass();
    cls->GetMemberInitAttrs(items);
 
    for(size_t i = 0; i < mems.size(); ++i)
@@ -2847,6 +2862,11 @@ void Function::CheckDtor() const
    }
 
    auto cls = GetClass();
+   if(cls->IsSingleton() && GetAccess() != Cxx::Private)
+   {
+      Log(DestructorNotPrivate);
+   }
+
    if(!cls->IsBaseClass()) return;
 
    if(virtual_)
@@ -5192,17 +5212,18 @@ void Function::WasCalled()
    switch(type)
    {
    case FuncDtor:
+   {
+      //  Destruct members and invoke destructors up the class hierarchy.
       //
-      //  Record invocations up the class hierarchy.
-      //
-      for(auto dtor = GetBase(); dtor != nullptr; dtor = dtor->base_)
-      {
-         ++dtor->calls_;
-      }
+      GetClass()->DestructMembers();
+
+      auto dtor = GetBase();
+      if(dtor != nullptr) dtor->WasCalled();
       break;
+   }
 
    case FuncCtor:
-      //
+   {
       //  If this is an invocation by a derived class's constructor, set
       //  this constructor as its base.
       //
@@ -5213,13 +5234,18 @@ void Function::WasCalled()
          if(func->GetBase() == nullptr) func->GetDecl()->base_ = GetDecl();
       }
 
-      //  Now record invocations up the class hierarchy.
+      //  Record invocations up the class hierarchy.  Although destructors
+      //  are invoked on class members (above), this doesn't invoke their
+      //  constructors.  Doing so would add little value because it is done
+      //  indirectly, in EnterBlock, and it would also have to consider this
+      //  constructor's member initialization statements.
       //
       for(auto ctor = GetBase(); ctor != nullptr; ctor = ctor->base_)
       {
          ++ctor->calls_;
       }
       break;
+   }
    }
 
    //  For a function template instance, record an invocation on the

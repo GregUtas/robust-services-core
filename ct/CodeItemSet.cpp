@@ -27,7 +27,6 @@
 #include "CodeFile.h"
 #include "CodeFileSet.h"
 #include "Cxx.h"
-#include "CxxNamed.h"
 #include "CxxScope.h"
 #include "Debug.h"
 

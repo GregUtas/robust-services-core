@@ -89,8 +89,7 @@ private:
    //  PRIO is the priority at which it will run, and SIZE is its stack
    //  size (a size of 0 uses the default size).
    //
-   SysThread(const Thread* client,
-      const ThreadEntry entry, Priority prio, size_t size);
+   SysThread(Thread* client, ThreadEntry entry, Priority prio, size_t size);
 
    //  Wraps an existing native thread.  Used to create RootThread.
    //
@@ -110,8 +109,8 @@ private:
    //  to the new thread's native identifier.  Returns the thread's native
    //  handle.
    //
-   static SysThread_t Create(const ThreadEntry entry,
-      const Thread* client, size_t stackSize, SysThreadId& nid);
+   static SysThread_t Create
+      (ThreadEntry entry, Thread* client, size_t stackSize, SysThreadId& nid);
 
    //  Used by the constructor to wrap the thread that is running main().
    //  Returns the thread's native handle after possibly performing some

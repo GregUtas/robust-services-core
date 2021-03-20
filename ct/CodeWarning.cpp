@@ -746,6 +746,21 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(DebugFtCanBeLiteral,
       WarningAttrs(T,
       "Function name passed to Debug::ft could be inlined string literal")));
+   Attrs_.insert(WarningPair(UnnecessaryCast,
+      WarningAttrs(F,
+      "Non-const cast is not a downcast")));
+   Attrs_.insert(WarningPair(ExcessiveCast,
+      WarningAttrs(F,
+      "Use static_cast or dynamic_cast instead of more severe cast")));
+   Attrs_.insert(WarningPair(DataCouldBeFree,
+      WarningAttrs(F,
+      "Data could be free")));
+   Attrs_.insert(WarningPair(ConstructorNotPrivate,
+      WarningAttrs(F,
+      "Singleton's constructor should be private")));
+   Attrs_.insert(WarningPair(DestructorNotPrivate,
+      WarningAttrs(F,
+      "Singleton's destructor should be private")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));

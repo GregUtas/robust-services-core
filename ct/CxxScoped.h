@@ -23,13 +23,13 @@
 #define CXXSCOPED_H_INCLUDED
 
 #include "CxxNamed.h"
+#include "CxxToken.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
-#include "CxxToken.h"
 #include "LibraryItem.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
@@ -169,7 +169,7 @@ public:
    //  Overridden to invoke IsIndirect on GetTypeSpec unless the latter
    //  returns nullptr, in which case it returns false.
    //
-   bool IsIndirect() const override;
+   bool IsIndirect(bool arrays) const override;
 
    //  Returns true if this scope is either fqSuper or a subscope of it.
    //
@@ -1326,6 +1326,69 @@ private:
    //  The parameter's default value, if any.
    //
    const TypeSpecPtr default_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Parameters associated with a template declaration.
+//
+//  This is defined here, rather than in CxxToken, because its parms_
+//  member causes the instantiation of std::unique_ptr< TemplateParm >,
+//  which needs to see the definition of TemplateParm (above).
+//
+class TemplateParms : public CxxToken
+{
+public:
+   //  Creates a template declaration in which PARM is the first parameter
+   //  (e.g. T/typename/1 for template <typename T*...).
+   //
+   explicit TemplateParms(TemplateParmPtr& parm);
+
+   //  Not subclassed.
+   //
+   ~TemplateParms() { CxxStats::Decr(CxxStats::TEMPLATE_PARMS); }
+
+   //  Adds another parameter to the template.
+   //
+   void AddParm(TemplateParmPtr& parm);
+
+   //  Invokes EnterScope on each parameter.
+   //
+   void EnterScope() const;
+
+   //  Returns the template's parameters.
+   //
+   const TemplateParmPtrVector* Parms() const { return &parms_; }
+
+   //  The following invoke the corresponding function on each parameter.
+   //
+   void AddToXref() override;
+   void Check() const override;
+   void EnterBlock() override;
+   void ExitBlock() const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+
+   //  Overridden to display the template's full specification.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+
+   //  Overridden to shrink containers.
+   //
+   void Shrink() override;
+
+   //  Overridden to return the template's parameters in angle brackets.
+   //
+   std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the parameters' locations.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+private:
+   //  The template's parameters.
+   //
+   TemplateParmPtrVector parms_;
 };
 
 //------------------------------------------------------------------------------

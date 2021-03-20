@@ -352,6 +352,7 @@ protected:
    //  Returns the LineInfo for POS's line.
    //
    const LineInfo* GetLineInfo(size_t pos) const;
+   LineInfo* GetLineInfo(size_t pos);
 
    //  Returns the start of the line that contains POS.
    //
@@ -562,10 +563,6 @@ private:
    //  POS is out of range.
    //
    size_t GetLineInfoIndex(size_t pos) const;
-
-   //  Returns the LineInfo for POS's line.
-   //
-   LineInfo* GetLineInfo(size_t pos);
 
    //  The code being analyzed.
    //

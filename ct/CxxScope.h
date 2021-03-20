@@ -820,6 +820,11 @@ private:
    //
    void CheckIfInitialized() const;
 
+   //  Checks if static data could be free (i.e. moved out of the class and
+   //  into the .cpp that initializes it).
+   //
+   void CheckIfRelocatable() const;
+
    //  Checks if mutable data does not need to be mutable.
    //
    void CheckIfMutated() const;

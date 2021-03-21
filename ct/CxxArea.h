@@ -154,6 +154,10 @@ public:
    //
    virtual Function* MatchFunc(const Function* curr, bool base) const;
 
+   //  Returns the first item in this area that matches NAME.
+   //
+   virtual CxxScoped* FindItem(const std::string& name) const;
+
    //  Overridden to add the area's components to cross-references.
    //
    void AddToXref() override;
@@ -199,10 +203,6 @@ protected:
    //  Returns the enumerator identified by NAME and declared in this area.
    //
    Enumerator* FindEnumerator(const std::string& name) const;
-
-   //  Returns the first item in this area that matches NAME.
-   //
-   virtual CxxScoped* FindItem(const std::string& name) const;
 private:
    //  Defined so that a class can register ITEM in the order in which it was
    //  declared.
@@ -478,13 +478,13 @@ public:
    //  scope (usually a namespace), which is what would occur in the default
    //  version.  This is done to see if SCOPE is a subclass of the class.
    //
-   void AccessibilityTo(const CxxScope* scope, SymbolView* view) const override;
+   void AccessibilityTo(const CxxScope* scope, SymbolView& view) const override;
 
    //  Overridden to determine how ITEM, which is declared in this class, is
    //  visible to SCOPE.
    //
    void AccessibilityOf(const CxxScope* scope,
-      const CxxScoped* item, SymbolView* view) const override;
+      const CxxScoped* item, SymbolView& view) const override;
 
    //  Overridden to promote CLS's members to their outer scope if CLS is
    //  an anonymous union.
@@ -879,7 +879,7 @@ public:
    //  Overridden for when NAME refers to a class template instance.
    //
    bool NameRefersToItem(const std::string& name, const CxxScope* scope,
-      CodeFile* file, SymbolView* view) const override;
+      CodeFile* file, SymbolView& view) const override;
 
    //  Overridden to record usage of the instance's template.
    //
@@ -960,7 +960,7 @@ public:
    //  is accessible to SCOPE.
    //
    void AccessibilityOf(const CxxScope* scope,
-      const CxxScoped* item, SymbolView* view) const override;
+      const CxxScoped* item, SymbolView& view) const override;
 
    //  Overridden to log warnings associated with the namespace's declarations.
    //

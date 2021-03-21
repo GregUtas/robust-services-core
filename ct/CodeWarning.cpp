@@ -761,6 +761,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(DestructorNotPrivate,
       WarningAttrs(F,
       "Singleton's destructor should be private")));
+   Attrs_.insert(WarningPair(RedundantScope,
+      WarningAttrs(F,
+      "Redundant scope")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));

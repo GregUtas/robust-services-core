@@ -644,7 +644,7 @@ fn_name CxxSymbols_FindSymbol = "CxxSymbols.FindSymbol";
 
 CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
    const CxxScope* scope, const string& name, const Flags& mask,
-   SymbolView* view, const CxxArea* area) const
+   SymbolView& view, const CxxArea* area) const
 {
    Debug::ft(CxxSymbols_FindSymbol);
 
@@ -657,7 +657,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
 
    if(size == 1)
    {
-      *view = views1.front();
+      view = views1.front();
       return list1.front();
    }
 
@@ -720,7 +720,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
 
       if(idx != SIZE_MAX)
       {
-         *view = views2[idx];
+         view = views2[idx];
          return list2[idx];
       }
 
@@ -772,7 +772,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
       }
    }
 
-   *view = views2.front();
+   view = views2.front();
    return list2.front();
 }
 
@@ -819,7 +819,7 @@ void CxxSymbols::FindSymbols(CodeFile* file, const CxxScope* scope,
       {
          SymbolView view;
 
-         if((*i)->NameRefersToItem(name, scope, file, &view))
+         if((*i)->NameRefersToItem(name, scope, file, view))
          {
             list.push_back(*i);
             views.push_back(view);
@@ -841,7 +841,7 @@ void CxxSymbols::FindSymbols(CodeFile* file, const CxxScope* scope,
       {
          SymbolView view;
 
-         if((*i)->NameRefersToItem(name, scope, file, &view))
+         if((*i)->NameRefersToItem(name, scope, file, view))
          {
             list.push_back(*i);
             views.push_back(view);

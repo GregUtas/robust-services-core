@@ -1260,7 +1260,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
             auto name = baseName->QualifiedName(true, true);
             auto file = Context::File();
             SymbolView view;
-            call = base->NameRefersToItem(name, func.get(), file, &view);
+            call = base->NameRefersToItem(name, func.get(), file, view);
          }
       }
 
@@ -2365,7 +2365,7 @@ string Parser::GetLINE() const
 
    std::ostringstream stream;
 
-   if(ParsingTemplateInstance()) stream << venue_ << SPACE;
+   if(!ParsingSourceCode()) stream << venue_ << SPACE;
    stream << lexer_.GetLineNum(CurrPos()) + 1;
    return stream.str();
 }
@@ -4687,7 +4687,7 @@ bool Parser::ParseTypeSpec(const string& code, TypeSpecPtr& spec)
 
    Enter(IsTypeSpec, "internal TypeSpec", nullptr, code, false);
    auto parsed = GetTypeSpec(spec);
-   spec->SetUserType(Cxx::TypeSpec);
+   spec->SetUserType(TS_Internal);
    return parsed;
 }
 
@@ -4822,7 +4822,7 @@ bool Parser::Success(fn_name_arg func, size_t start) const
    Debug::ft("Parser.Success");
 
    if(!Context::OptionIsOn(TraceParse)) return true;
-   if(ParsingTemplateInstance()) return true;
+   if(!ParsingSourceCode()) return true;
 
    //  Note that when the parse advances over the first keyword expected by a
    //  function before invoking it, that keyword does not appear at the front

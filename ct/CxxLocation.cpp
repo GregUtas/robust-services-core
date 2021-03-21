@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxLocation.h"
+#include "CxxExecute.h"
 
 using std::string;
 
@@ -31,7 +32,7 @@ CxxLocation::CxxLocation() :
    file_(nullptr),
    pos_(string::npos),
    erased_(false),
-   internal_(false)
+   internal_(!Context::ParsingSourceCode())
 {
 }
 

@@ -61,7 +61,6 @@ public:
    //  o Invokes SetScope(Context::Scope()) unless the item already has a scope
    //  o invokes SetAccess(item's scope->GetCurrAccess())
    //  o invokes SetLoc(Context::File(), pos)
-   //  o invokes SetInternal() if Context::ParsingTemplateInstance() is true
    //
    void SetContext(size_t pos);
 
@@ -375,7 +374,7 @@ protected:
    //  the same as the arguments for CxxSymbols::FindSymbol.
    //
    CxxScoped* ResolveName(CodeFile* file, const CxxScope* scope,
-      const NodeBase::Flags& mask, SymbolView* view) const;
+      const NodeBase::Flags& mask, SymbolView& view) const;
 
    //  Invoked when ResolveName finds TYPE, a typedef.  If it returns false,
    //  ResolveName returns TYPE.  Otherwise, name resolution continues with
@@ -402,10 +401,6 @@ protected:
    //
    void AddUsage();
 private:
-   //  Indicates that the item appeared in internally generated code.
-   //
-   void SetInternal() const { loc_.SetInternal(); }
-
    //  Invoked when ResolveName finds DECL, a forward or friend declaration,
    //  when resolving the Nth name in a possibly qualified name.  If it
    //  returns false, ResolveName returns DECL.  Otherwise, name resolution
@@ -486,7 +481,7 @@ public:
 
    //  Invokes SetUserType on each template argument.
    //
-   void SetUserType(Cxx::ItemType user) const;
+   void SetUserType(TypeSpecUser user) const;
 
    //  Makes each template argument a template parameter.
    //
@@ -736,7 +731,7 @@ public:
 
    //  Invokes SetUserType on each name.
    //
-   void SetUserType(Cxx::ItemType user) const;
+   void SetUserType(TypeSpecUser user) const;
 
    //  Invokes SetTemplateArgs on the last name.
    //
@@ -1077,11 +1072,11 @@ public:
 
    //  Sets the type of item to which the type belongs.
    //
-   virtual void SetUserType(Cxx::ItemType user);
+   virtual void SetUserType(TypeSpecUser user);
 
    //  Returns the type of item in which the type appears.
    //
-   Cxx::ItemType GetUserType() const { return user_; }
+   TypeSpecUser GetUserType() const { return user_; }
 
    //  Returns the type's role, if any, in a template.
    //
@@ -1232,9 +1227,9 @@ protected:
    //
    TypeSpec(const TypeSpec& that);
 private:
-   //  The item type to which the type belongs.  The default is Cxx::Operation.
+   //  The item type to which the type belongs.  The default is TS_Unknown.
    //
-   Cxx::ItemType user_ : 8;
+   TypeSpecUser user_ : 8;
 
    //  The type's role in a template.
    //
@@ -1535,7 +1530,7 @@ private:
 
    //  Overridden to propagate USER to name_.
    //
-   void SetUserType(Cxx::ItemType user) override;
+   void SetUserType(TypeSpecUser user) override;
 
    //  Overridden to shrink containers.
    //

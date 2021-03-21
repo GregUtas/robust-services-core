@@ -867,13 +867,13 @@ CxxScope::~CxxScope()
 //------------------------------------------------------------------------------
 
 void CxxScope::AccessibilityOf
-   (const CxxScope* scope, const CxxScoped* item, SymbolView* view) const
+   (const CxxScope* scope, const CxxScoped* item, SymbolView& view) const
 {
    Debug::ft("CxxScope.AccessibilityOf");
 
-   view->distance = scope->ScopeDistance(this);
-   view->accessibility =
-      (view->distance == NOT_A_SUBSCOPE ? Inaccessible : Unrestricted);
+   view.distance = scope->ScopeDistance(this);
+   view.accessibility =
+      (view.distance == NOT_A_SUBSCOPE ? Inaccessible : Unrestricted);
 }
 
 //------------------------------------------------------------------------------
@@ -1077,7 +1077,7 @@ Data::Data(TypeSpecPtr& spec) :
 {
    Debug::ft("Data.ctor");
 
-   spec_->SetUserType(Cxx::Data);
+   spec_->SetUserType(TS_Data);
 }
 
 //------------------------------------------------------------------------------
@@ -1368,7 +1368,7 @@ bool Data::InitByDefault()
    if(ctor != nullptr)
    {
       SymbolView view;
-      cls->AccessibilityOf(Context::Scope(), ctor, &view);
+      cls->AccessibilityOf(Context::Scope(), ctor, view);
       ctor->WasCalled();
       SetInited();
    }
@@ -1911,7 +1911,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
 {
    Debug::ft("Function.ctor(spec)");
 
-   spec_->SetUserType(Cxx::Function);
+   spec_->SetUserType(TS_Function);
    if(type_) return;
 
    auto qname = name_->QualifiedName(true, false);
@@ -3532,11 +3532,11 @@ bool Function::EnterScope()
    //  If this function requires a "this" argument, add it now.
    //
    AddThisArg();
+   Context::Enter(this);
    if(parms_ != nullptr) parms_->EnterScope();
 
    //  Enter our return type and arguments.
    //
-   Context::Enter(this);
    EnterSignature();
    CloseScope();
 
@@ -3575,7 +3575,12 @@ void Function::EnterSignature()
 {
    Debug::ft("Function.EnterSignature");
 
-   if(spec_ != nullptr) spec_->EnteringScope(this);
+   if(spec_ != nullptr)
+   {
+      if(GetArea()->FindItem(Name()) != nullptr)
+         spec_->SetUserType(TS_Definition);
+      spec_->EnteringScope(this);
+   }
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -4752,7 +4757,7 @@ size_t Function::MinArgs() const
 //------------------------------------------------------------------------------
 
 bool Function::NameRefersToItem(const string& name,
-   const CxxScope* scope, CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView& view) const
 {
    Debug::ft("Function.NameRefersToItem");
 
@@ -4783,8 +4788,11 @@ bool Function::NameRefersToItem(const string& name,
    if(iname == tname)
    {
       size_t index = 1;
-      if(!tspec_->NamesReferToArgs(names, Context::PrevScope(), file, index))
-         return false;
+      if(Context::ParsingTemplateInstance())
+         scope = Context::OuterFrame()->Scope();
+      else
+         scope = Context::Scope();
+      if(!tspec_->NamesReferToArgs(names, scope, file, index)) return false;
       return (index == names.size());
    }
 
@@ -5723,10 +5731,17 @@ bool SpaceData::EnterScope()
 {
    Debug::ft("SpaceData.EnterScope");
 
+   //  Note that a separate definition for class static data is
+   //  parsed at namespace scope, so it comes through here.
+   //
    Context::SetPos(GetLoc());
    if(parms_ != nullptr) parms_->EnterScope();
    ExecuteAlignment();
-   GetTypeSpec()->EnteringScope(this);
+
+   auto spec = GetTypeSpec();
+   if(GetArea()->FindItem(Name()) != nullptr)
+      spec->SetUserType(TS_Definition);
+   spec->EnteringScope(this);
    CloseScope();
 
    //  See whether this is a new declaration or the definition

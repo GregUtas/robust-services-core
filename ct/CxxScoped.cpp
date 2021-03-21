@@ -54,7 +54,7 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
    Debug::ft("Argument.ctor");
 
    std::swap(name_, name);
-   spec_->SetUserType(Cxx::Function);
+   spec_->SetUserType(TS_Argument);
    CxxStats::Incr(CxxStats::ARG_DECL);
 }
 
@@ -344,7 +344,7 @@ void BaseDecl::FindReferent()
    //  Find the class to which this base class declaration refers.
    //
    SymbolView view;
-   auto item = ResolveName(GetFile(), GetScope(), CLASS_MASK, &view);
+   auto item = ResolveName(GetFile(), GetScope(), CLASS_MASK, view);
 
    if(item != nullptr)
    {
@@ -435,7 +435,7 @@ CxxScoped::~CxxScoped()
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::AccessibilityTo(const CxxScope* scope, SymbolView* view) const
+void CxxScoped::AccessibilityTo(const CxxScope* scope, SymbolView& view) const
 {
    Debug::ft("CxxScoped.AccessibilityTo");
 
@@ -751,7 +751,7 @@ bool CxxScoped::LocateItem(const CxxNamed* item, size_t& n) const
 fn_name CxxScoped_NameRefersToItem = "CxxScoped.NameRefersToItem";
 
 bool CxxScoped::NameRefersToItem(const string& name,
-   const CxxScope* scope, CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView& view) const
 {
    Debug::ft(CxxScoped_NameRefersToItem);
 
@@ -781,7 +781,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
    auto checkUsing = true;
    AccessibilityTo(scope, view);
 
-   switch(view->accessibility)
+   switch(view.accessibility)
    {
    case Inaccessible:
       return false;
@@ -852,7 +852,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
       //
       if(file->FindUsingFor(*fqn, pos - 4, this, scope) != nullptr)
       {
-         view->using_ = true;
+         view.using_ = true;
          return true;
       }
    }
@@ -952,6 +952,7 @@ void Enum::AddType(TypeSpecPtr& type)
    Debug::ft("Enum.AddType");
 
    spec_ = std::move(type);
+   if(spec_ != nullptr) spec_->SetUserType(TS_Enum);
 }
 
 //------------------------------------------------------------------------------
@@ -1938,7 +1939,7 @@ void Friend::FindReferent()
       searched_ = true;
       grantor_ = GetScope();
       SetScope(grantor_->GetSpace());
-      ref = ResolveName(GetFile(), grantor_, mask, &view);
+      ref = ResolveName(GetFile(), grantor_, mask, view);
       if(ref != nullptr) using_ = view.using_;
    }
 
@@ -2016,9 +2017,9 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
    case Cxx::Class:
       {
-         // o The outer class for an inner one must be directly visible.
-         // o The class template for a class template instance should (must,
-         //   if in another namespace) be declared forward.
+         //  o The outer class for an inner one must be directly visible.
+         //  o The class template for a class template instance should
+         //    (must, if in another namespace) be declared forward.
          //
          auto outer = ref->Declarer();
 
@@ -2371,6 +2372,7 @@ TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
    Debug::ft("TemplateParm.ctor");
 
    std::swap(name_, name);
+   if(default_ != nullptr) default_->SetUserType(TS_TemplateParm);
    CxxStats::Incr(CxxStats::TEMPLATE_PARM);
 }
 
@@ -2730,11 +2732,11 @@ bool Terminal::IsAuto() const
 //------------------------------------------------------------------------------
 
 bool Terminal::NameRefersToItem(const string& name,
-   const CxxScope* scope, CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView& view) const
 {
    Debug::ft("Terminal.NameRefersToItem");
 
-   *view = DeclaredGlobally;
+   view = DeclaredGlobally;
    return true;
 }
 
@@ -2760,7 +2762,7 @@ Typedef::Typedef(string& name, TypeSpecPtr& spec) :
    Debug::ft("Typedef.ctor");
 
    std::swap(name_, name);
-   spec_->SetUserType(Cxx::Typedef);
+   spec_->SetUserType(TS_Typedef);
    Singleton< CxxSymbols >::Instance()->InsertType(this);
    CxxStats::Incr(CxxStats::TYPE_DECL);
 }
@@ -3167,7 +3169,7 @@ CxxScoped* Using::Referent() const
    if(ref != nullptr) return ref;
 
    SymbolView view;
-   return ResolveName(GetFile(), GetScope(), USING_REFS, &view);
+   return ResolveName(GetFile(), GetScope(), USING_REFS, view);
 }
 
 //------------------------------------------------------------------------------

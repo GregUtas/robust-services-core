@@ -122,6 +122,15 @@ public:
    //
    SourceType GetSourceType() const { return source_; }
 
+   //  Returns true if original source code is being parsed.
+   //
+   bool ParsingSourceCode() const { return (source_ == IsFile); }
+
+   //  Returns true if a template instance is currently being parsed.
+   //
+   bool ParsingTemplateInstance()
+      const { return ((source_ == IsClassInst) || (source_ == IsFuncInst)); }
+
    //  Returns the name of what is being parsed (e.g. a file or a template
    //  instance).
    //
@@ -145,11 +154,6 @@ public:
    //  Returns the parser's previous position within its Lexer.
    //
    size_t GetPrev() const { return lexer_.Prev(); }
-
-   //  Returns true if a template instance is currently being parsed.
-   //
-   bool ParsingTemplateInstance()
-      const { return ((source_ == IsClassInst) || (source_ == IsFuncInst)); }
 
    //  Zeroes the statistics.
    //

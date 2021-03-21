@@ -288,7 +288,7 @@ string Context::Location()
    stream << parser->GetVenue();
    stream << ", line " << parser->GetLineNum(GetPos()) + 1;
 
-   if(parser->GetSourceType() == Parser::IsFile)
+   if(parser->ParsingSourceCode())
    {
       auto scope = Scope();
 
@@ -322,7 +322,7 @@ void Context::OnLine(size_t line, bool compiling)
 {
    auto parser = GetParser();
    if(parser == nullptr) return;
-   if(parser->GetSourceType() != Parser::IsFile) return;
+   if(!parser->ParsingSourceCode()) return;
 
    for(auto b = Tracepoints_.cbegin(); b != Tracepoints_.cend(); ++b)
    {
@@ -335,6 +335,35 @@ void Context::OnLine(size_t line, bool compiling)
 bool Context::OptionIsOn(char opt)
 {
    return (GetOptions().find(opt) != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+const ParseFrame* Context::OuterFrame()
+{
+   Debug::ft("Context.OuterFrame");
+
+   auto size = Frames_.size();
+   if(size <= 1) return nullptr;
+   return Frames_.at(size - 2).get();
+}
+
+//------------------------------------------------------------------------------
+
+const CxxScope* Context::OuterScope()
+{
+   Debug::ft("Context.OuterScope");
+
+   if(Frames_.empty()) return nullptr;
+   return Frames_.back()->OuterScope();
+}
+
+//------------------------------------------------------------------------------
+
+bool Context::ParsingSourceCode()
+{
+   if(Frame_ == nullptr) return false;
+   return Frame_->GetParser()->ParsingSourceCode();
 }
 
 //------------------------------------------------------------------------------
@@ -367,19 +396,6 @@ void Context::PopParser(const Parser* parser)
 void Context::PopXrefFrame()
 {
    XrefFrames_.pop_back();
-}
-
-//------------------------------------------------------------------------------
-
-CxxScope* Context::PrevScope()
-{
-   Debug::ft("Context.PrevScope");
-
-   if(!ParsingTemplateInstance()) return Scope();
-
-   auto size = Frames_.size();
-   auto& frame = Frames_.at(size - 2);
-   return frame->Scope();
 }
 
 //------------------------------------------------------------------------------
@@ -442,8 +458,10 @@ CxxScope* Context::Scope()
 
 Cxx::Access Context::ScopeVisibility()
 {
+   Debug::ft("Context.ScopeVisibility");
+
    if(ScopeAccess() == Cxx::Private) return Cxx::Private;
-   if(ParsingTemplateInstance()) return Cxx::Private;
+   if(!ParsingSourceCode()) return Cxx::Private;
 
    //  If the scope is in a class, that class (and its chain of outer classes,
    //  if any) also affect its visibility.
@@ -830,7 +848,7 @@ void ParseFrame::Execute()
 
 fn_name ParseFrame_FindLocal = "ParseFrame.FindLocal";
 
-CxxScoped* ParseFrame::FindLocal(const string& name, SymbolView* view) const
+CxxScoped* ParseFrame::FindLocal(const string& name, SymbolView& view) const
 {
    Debug::ft(ParseFrame_FindLocal);
 
@@ -842,7 +860,7 @@ CxxScoped* ParseFrame::FindLocal(const string& name, SymbolView* view) const
 
    if(!list.empty())
    {
-      *view = DeclaredGlobally;
+      view = DeclaredGlobally;
       return list.front();
    }
 
@@ -852,7 +870,7 @@ CxxScoped* ParseFrame::FindLocal(const string& name, SymbolView* view) const
 
    if(!list.empty())
    {
-      *view = DeclaredLocally;
+      view = DeclaredLocally;
 
       if(list.size() > 1)
       {
@@ -901,6 +919,17 @@ OptionalCode* ParseFrame::Optional() const
 {
    if(opts_.empty()) return nullptr;
    return opts_.back();
+}
+
+//------------------------------------------------------------------------------
+
+CxxScope* ParseFrame::OuterScope() const
+{
+   Debug::ft("ParseFrame.OuterScope");
+
+   auto size = scopes_.size();
+   if(size <= 1) return nullptr;
+   return scopes_.at(size - 2).scope;
 }
 
 //------------------------------------------------------------------------------

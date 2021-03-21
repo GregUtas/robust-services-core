@@ -88,7 +88,7 @@ public:
    //  a subscope of this scope, and Inaccessible otherwise.
    //
    virtual void AccessibilityOf
-      (const CxxScope* scope, const CxxScoped* item, SymbolView* view) const;
+      (const CxxScope* scope, const CxxScoped* item, SymbolView& view) const;
 protected:
    //  Protected because this class is virtual.
    //
@@ -1433,7 +1433,7 @@ public:
    //  Overridden for when NAME refers to a function template instance.
    //
    bool NameRefersToItem(const std::string& name, const CxxScope* scope,
-      CodeFile* file, SymbolView* view) const override;
+      CodeFile* file, SymbolView& view) const override;
 
    //  Overridden to return the function's qualified name.
    //

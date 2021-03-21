@@ -74,13 +74,13 @@ Class::~Class()
 fn_name Class_AccessibilityOf = "Class.AccessibilityOf";
 
 void Class::AccessibilityOf
-   (const CxxScope* scope, const CxxScoped* item, SymbolView* view) const
+   (const CxxScope* scope, const CxxScoped* item, SymbolView& view) const
 {
    Debug::ft(Class_AccessibilityOf);
 
    //  Start by assuming the worst.
    //
-   view->accessibility = Inaccessible;
+   view.accessibility = Inaccessible;
 
    //  We shouldn't be here if ITEM doesn't belong to a class.
    //
@@ -112,8 +112,8 @@ void Class::AccessibilityOf
       //
       if(userClass == itemClass)
       {
-         view->distance = f;
-         view->accessibility = Declared;
+         view.distance = f;
+         view.accessibility = Declared;
          item->RecordAccess(Context::ScopeVisibility());
          return;
       }
@@ -129,8 +129,8 @@ void Class::AccessibilityOf
 
          if(c == itemClass)
          {
-            view->distance = userClasses.size() + f;
-            view->accessibility = Declared;
+            view.distance = userClasses.size() + f;
+            view.accessibility = Declared;
             item->RecordAccess(control);
             return;
          }
@@ -140,16 +140,16 @@ void Class::AccessibilityOf
 
       //  SCOPE can see ITEM if it is a friend of itemClass.
       //
-      view->distance = userClass->ClassDistance(this);
+      view.distance = userClass->ClassDistance(this);
       auto access =
-         (view->distance == NOT_A_SUBCLASS ? Unrestricted : Inherited);
+         (view.distance == NOT_A_SUBCLASS ? Unrestricted : Inherited);
 
       auto frnd = itemClass->FindFriend(scope);
 
       if(frnd != nullptr)
       {
-         view->accessibility = access;
-         view->friend_ = true;
+         view.accessibility = access;
+         view.friend_ = true;
          if(control == Cxx::Private) frnd->IncrUsers();
          return;
       }
@@ -159,7 +159,7 @@ void Class::AccessibilityOf
       //
       if((access == Inherited) && (item->GetAccess() != Cxx::Private))
       {
-         view->accessibility = Inherited;
+         view.accessibility = Inherited;
          item->RecordAccess(Cxx::Protected);
          return;
       }
@@ -170,8 +170,8 @@ void Class::AccessibilityOf
       if((itemType == Cxx::Function) && (userClass->GetTemplate() == this) &&
          static_cast< const Function* >(item)->IsInline())
       {
-         view->distance = 1;
-         view->accessibility = Declared;
+         view.distance = 1;
+         view.accessibility = Declared;
          return;
       }
 
@@ -180,7 +180,7 @@ void Class::AccessibilityOf
       //
       if(userClass->IsTemplate())
       {
-         view->accessibility = Unrestricted;
+         view.accessibility = Unrestricted;
          return;
       }
 
@@ -193,7 +193,7 @@ void Class::AccessibilityOf
 
          if(spec->ItemIsTemplateArg(item))
          {
-            view->accessibility = Unrestricted;
+            view.accessibility = Unrestricted;
             return;
          }
       }
@@ -228,9 +228,9 @@ void Class::AccessibilityOf
    //  SCOPE must access ITEM through its namespace.
    //
    if(n != SIZE_MAX)
-      view->distance = m + n + f;
+      view.distance = m + n + f;
    else
-      view->distance = scope->ScopeDistance(itemClasses.back()->GetSpace()) + f;
+      view.distance = scope->ScopeDistance(itemClasses.back()->GetSpace()) + f;
 
    //  Don't enforce access controls on a function template.  Violations
    //  will be detected on template instances.
@@ -239,7 +239,7 @@ void Class::AccessibilityOf
 
    if((userFunc != nullptr) && userFunc->IsTemplate())
    {
-      view->accessibility = Unrestricted;
+      view.accessibility = Unrestricted;
       return;
    }
 
@@ -256,7 +256,7 @@ void Class::AccessibilityOf
    {
       if((n <= 1) && (itemType == Cxx::Class))
       {
-         view->accessibility = item->FileScopeAccessiblity();
+         view.accessibility = item->FileScopeAccessiblity();
          return;
       }
       else
@@ -279,8 +279,8 @@ void Class::AccessibilityOf
 
    if(frnd != nullptr)
    {
-      view->accessibility = Unrestricted;
-      view->friend_ = true;
+      view.accessibility = Unrestricted;
+      view.friend_ = true;
       if(control != Cxx::Public) frnd->IncrUsers();
       return;
    }
@@ -289,7 +289,7 @@ void Class::AccessibilityOf
    //
    if(control == Cxx::Public)
    {
-      view->accessibility = item->FileScopeAccessiblity();
+      view.accessibility = item->FileScopeAccessiblity();
       item->RecordAccess(Cxx::Public);
       return;
    }
@@ -297,7 +297,7 @@ void Class::AccessibilityOf
 
 //------------------------------------------------------------------------------
 
-void Class::AccessibilityTo(const CxxScope* scope, SymbolView* view) const
+void Class::AccessibilityTo(const CxxScope* scope, SymbolView& view) const
 {
    Debug::ft("Class.AccessibilityTo");
 
@@ -1033,7 +1033,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    auto name = Name() + type->TypeString(true);
    auto area = static_cast< CxxArea* >(GetScope());
    SymbolView view;
-   auto inst = syms->FindSymbol(file, scope, name, CLASS_MASK, &view, area);
+   auto inst = syms->FindSymbol(file, scope, name, CLASS_MASK, view, area);
    if(inst != nullptr) return static_cast< ClassInst* >(inst);
 
    //  The instance doesn't exist, so create it.  If the template
@@ -1798,7 +1798,7 @@ bool Class::MemberIsAccessibleTo
    if(scope == nullptr) return true;
    if(view == nullptr) view = &local;
 
-   member->AccessibilityTo(scope, view);
+   member->AccessibilityTo(scope, *view);
    if(view->accessibility != Inaccessible) return true;
 
    //  We should never get here when compiling well-formed code, so there is
@@ -1851,7 +1851,7 @@ bool Class::SetCurrAccess(Cxx::Access access)
    {
       auto parser = Context::GetParser();
 
-      if(!parser->ParsingTemplateInstance())
+      if(parser->ParsingSourceCode())
       {
          auto file = Context::File();
          file->LogPos(parser->GetPrev(), RedundantAccessControl);
@@ -2307,7 +2307,7 @@ void ClassInst::Instantiate()
 //------------------------------------------------------------------------------
 
 bool ClassInst::NameRefersToItem(const string& name,
-   const CxxScope* scope, CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView& view) const
 {
    Debug::ft("ClassInst.NameRefersToItem");
 
@@ -2328,8 +2328,11 @@ bool ClassInst::NameRefersToItem(const string& name,
    if(iname == tname)
    {
       size_t index = 1;
-      if(!tspec_->NamesReferToArgs(names, Context::PrevScope(), file, index))
-         return false;
+      if(Context::ParsingTemplateInstance())
+         scope = Context::OuterFrame()->Scope();
+      else
+         scope = Context::Scope();
+      if(!tspec_->NamesReferToArgs(names, scope, file, index)) return false;
       return (index == names.size());
    }
 
@@ -3056,12 +3059,12 @@ Namespace::~Namespace()
 //------------------------------------------------------------------------------
 
 void Namespace::AccessibilityOf
-   (const CxxScope* scope, const CxxScoped* item, SymbolView* view) const
+   (const CxxScope* scope, const CxxScoped* item, SymbolView& view) const
 {
    Debug::ft("Namespace.AccessibilityOf");
 
-   view->accessibility = (item->GetFile()->IsCpp() ? Restricted : Unrestricted);
-   view->distance = scope->ScopeDistance(this);
+   view.accessibility = (item->GetFile()->IsCpp() ? Restricted : Unrestricted);
+   view.distance = scope->ScopeDistance(this);
 }
 
 //------------------------------------------------------------------------------

@@ -141,7 +141,7 @@ void CxxNamed::AddUsage()
 {
    Debug::ft("CxxNamed.AddUsage");
 
-   if(Context::ParsingTemplateInstance()) return;
+   if(!Context::ParsingSourceCode()) return;
    if(IsInTemplateInstance()) return;
    auto file = Context::File();
    if(file == nullptr) return;
@@ -169,7 +169,7 @@ void CxxNamed::CopyContext(const CxxNamed* that)
    SetScope(scope);
    SetAccess(that->GetAccess());
    loc_.SetLoc(that->GetFile(), that->GetPos());
-   SetInternal();
+   loc_.SetInternal();
 }
 
 //------------------------------------------------------------------------------
@@ -369,7 +369,7 @@ StackArg CxxNamed::NameToArg(Cxx::Operator op, TypeName* name)
 fn_name CxxNamed_ResolveName = "CxxNamed.ResolveName";
 
 CxxScoped* CxxNamed::ResolveName(CodeFile* file,
-   const CxxScope* scope, const Flags& mask, SymbolView* view) const
+   const CxxScope* scope, const Flags& mask, SymbolView& view) const
 {
    Debug::ft(CxxNamed_ResolveName);
 
@@ -377,6 +377,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
    string name;
    Namespace* space;
    Class* cls;
+   auto cmdts = view.cmdts;
    auto func = GetFunction();
    auto qname = GetQualName();
    auto size = qname->Size();
@@ -389,20 +390,20 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
       //  The name is prefixed by "::", so begin the search in the
       //  global namespace, starting with the first name.
       //
-      *view = DeclaredGlobally;
+      view = DeclaredGlobally;
       item = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    }
    else
    {
       //  Look for a terminal or local variable.
       //
-      if(qname->Size() == 1)
+      if(size == 1)
       {
          item = Context::FindLocal(Name(), view);
 
          if(item != nullptr)
          {
-            qname->SetReferentN(0, item, view);
+            qname->SetReferentN(0, item, &view);
             return item;
          }
       }
@@ -412,7 +413,20 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
       //
       name = qname->At(0)->Name();
       item = syms->FindSymbol(file, scope, name, selector, view);
-      qname->SetReferentN(0, item, view);
+
+      if(size > 1)
+      {
+         for(auto outer = scope->GetScope(); outer != nullptr;
+            outer = outer->GetScope())
+         {
+            if((outer->Name() == name) && !cmdts && !qname->IsInternal())
+            {
+               Log(RedundantScope, qname, 1);
+            }
+         }
+      }
+
+      qname->SetReferentN(0, item, &view);
       if(item == this) return item;
    }
 
@@ -446,17 +460,17 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
             selector = mask;
             if(func != nullptr)
             {
-               *view = DeclaredLocally;
+               view = DeclaredLocally;
                item = space->MatchFunc(func, false);
             }
          }
          if(item == nullptr)
          {
-            *view = NotAccessible;
+            view = NotAccessible;
             item = syms->FindSymbol(file, scope, name, selector, view, space);
-            if(name.find(SCOPE_STR) != string::npos) view->using_ = false;
+            if(name.find(SCOPE_STR) != string::npos) view.using_ = false;
          }
-         qname->SetReferentN(idx - 1, item, view);
+         qname->SetReferentN(idx - 1, item, &view);
          if(item == nullptr) return nullptr;
          break;
 
@@ -478,7 +492,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
             if(!ResolveTemplate(cls, args, (idx >= size))) break;
             cls = cls->EnsureInstance(args);
             item = cls;
-            qname->SetReferentN(idx - 1, item, view);  // updated value
+            qname->SetReferentN(idx - 1, item, &view);  // updated value
             if(item == nullptr) return nullptr;
             if(idx < size) cls->Instantiate();
          }
@@ -494,16 +508,16 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          {
             if(func != nullptr)
             {
-               *view = DeclaredLocally;
+               view = DeclaredLocally;
                item = cls->MatchFunc(func, true);
             }
          }
          if(item == nullptr)
          {
-            *view = NotAccessible;
-            item = cls->FindMember(name, true, scope, view);
+            view = NotAccessible;
+            item = cls->FindMember(name, true, scope, &view);
          }
-         qname->SetReferentN(idx - 1, item, view);
+         qname->SetReferentN(idx - 1, item, &view);
          if(item == nullptr) return nullptr;
          if(item->GetClass() != cls) qname->At(idx - 1)->SubclassAccess(cls);
          break;
@@ -516,8 +530,8 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          if(idx >= size) return item;
          name = qname->At(idx)->Name();
          item = static_cast< Enum* >(item)->FindEnumerator(name);
-         *view = DeclaredLocally;
-         qname->SetReferentN(idx, item, view);
+         view = DeclaredLocally;
+         qname->SetReferentN(idx, item, &view);
          return item;
 
       case Cxx::Typedef:
@@ -532,7 +546,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
             auto root = tdef->Root();
             if(root == nullptr) return tdef;
             item = static_cast< CxxScoped* >(root);
-            qname->SetReferentN(idx - 1, item, view);  // updated value
+            qname->SetReferentN(idx - 1, item, &view);  // updated value
             if(idx < size) item->Instantiate();
          }
          break;
@@ -544,7 +558,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
             auto ref = item->Referent();
             if(ref == nullptr) return item;
             item = ref;
-            qname->SetReferentN(idx - 1, item, view);  // updated value
+            qname->SetReferentN(idx - 1, item, &view);  // updated value
          }
          break;
 
@@ -591,7 +605,6 @@ void CxxNamed::SetContext(size_t pos)
 
    SetAccess(scope->GetCurrAccess());
    loc_.SetLoc(Context::File(), pos);
-   if(Context::ParsingTemplateInstance()) SetInternal();
 }
 
 //------------------------------------------------------------------------------
@@ -947,7 +960,8 @@ void DataSpec::FindReferent()
    if(ResolveTemplateArg()) return;
 
    SymbolView view;
-   auto item = ResolveName(file, scope, TYPESPEC_REFS, &view);
+   view.cmdts = (GetUserType() == TS_Definition);
+   auto item = ResolveName(file, scope, TYPESPEC_REFS, view);
 
    if(item != nullptr)
    {
@@ -980,7 +994,7 @@ void DataSpec::FindReferent()
       //  case, report that the referent was found.
       //
       view = NotAccessible;
-      item = syms->FindSymbol(file, scope, qname, VALUE_REFS, &view);
+      item = syms->FindSymbol(file, scope, qname, VALUE_REFS, view);
       if(item != nullptr) SetReferent(item, &view);
       //  [[fallthrough]]
    case TemplateParameter:
@@ -1298,7 +1312,7 @@ bool DataSpec::IsUsedInNameOnly() const
    {
       auto ref = name_->GetReferent();
       if((ref != nullptr) && ref->IsInTemplateInstance()) return false;
-      return (GetUserType() != Cxx::Operation);
+      return (GetUserType() != TS_TemplateParm);
    }
 
    return false;
@@ -1845,7 +1859,7 @@ void DataSpec::SetTemplateRole(TemplateRole role) const
 
 //------------------------------------------------------------------------------
 
-void DataSpec::SetUserType(Cxx::ItemType user)
+void DataSpec::SetUserType(TypeSpecUser user)
 {
    Debug::ft("DataSpec.SetUserType");
 
@@ -2349,7 +2363,7 @@ CxxScoped* QualName::Referent() const
    if(ref != nullptr) return ref;
 
    SymbolView view;
-   auto item = ResolveName(Context::File(), Context::Scope(), CODE_REFS, &view);
+   auto item = ResolveName(Context::File(), Context::Scope(), CODE_REFS, view);
    if(item == nullptr) return ReferentError(QualifiedName(true, true), 0);
 
    //  Verify that the item has a referent in case it's a typedef or a
@@ -2425,7 +2439,7 @@ void QualName::SetTemplateArgs(const TemplateParms* tparms) const
 
 //------------------------------------------------------------------------------
 
-void QualName::SetUserType(Cxx::ItemType user) const
+void QualName::SetUserType(TypeSpecUser user) const
 {
    Debug::ft("QualName.SetUserType");
 
@@ -3102,7 +3116,7 @@ void TypeName::SetTemplateRole(TemplateRole role) const
 
 //------------------------------------------------------------------------------
 
-void TypeName::SetUserType(Cxx::ItemType user) const
+void TypeName::SetUserType(TypeSpecUser user) const
 {
    Debug::ft("TypeName.SetUserType");
 
@@ -3181,7 +3195,7 @@ void TypeName::UpdatePos
 //==============================================================================
 
 TypeSpec::TypeSpec() :
-   user_(Cxx::Operation),
+   user_(TS_Anonymous),
    role_(TemplateNone)
 {
    Debug::ft("TypeSpec.ctor");
@@ -3394,7 +3408,7 @@ void TypeSpec::SetPtrs(TagCount count)
 
 //------------------------------------------------------------------------------
 
-void TypeSpec::SetUserType(Cxx::ItemType user)
+void TypeSpec::SetUserType(TypeSpecUser user)
 {
    Debug::ft("TypeSpec.SetUserType");
 

@@ -468,7 +468,7 @@ public:
 
    //  Resolves NAME if it is a terminal or a local variable.
    //
-   CxxScoped* FindLocal(const std::string& name, SymbolView* view) const;
+   CxxScoped* FindLocal(const std::string& name, SymbolView& view) const;
 
    //  Removes LOCAL from the local variables in the current scope.
    //
@@ -485,6 +485,10 @@ public:
    //  Returns the current scope.
    //
    CxxScope* Scope() const;
+
+   //  Returns the scope in which the current one appeared.
+   //
+   CxxScope* OuterScope() const;
 
    //  Returns the current scope's access control.
    //
@@ -687,7 +691,7 @@ public:
 
    //  Resolves NAME if it is a terminal or a local variable.
    //
-   static CxxScoped* FindLocal(const std::string& name, SymbolView* view)
+   static CxxScoped* FindLocal(const std::string& name, SymbolView& view)
       { return Frame_->FindLocal(name, view); }
 
    //  Removes LOCAL from the local variables in the current scope.
@@ -721,10 +725,13 @@ public:
    //
    static Cxx::Access ScopeVisibility();
 
-   //  If parsing a template instance, returns the scope in which its
-   //  instantiation occurred, else returns the current scope.
+   //  Returns the scope in which the current one appeared.
    //
-   static CxxScope* PrevScope();
+   static const CxxScope* OuterScope();
+
+   //  Returns the parse frame below the current one.
+   //
+   static const ParseFrame* OuterFrame();
 
    //  Enters conditional compilation.
    //
@@ -801,9 +808,9 @@ public:
    //
    static CodeFile* File() { return File_; }
 
-   //  Returns true if source code is being parsed.
+   //  Returns true if original source code is currently being parsed.
    //
-   static bool ParsingSourceCode() { return (File_ != nullptr); }
+   static bool ParsingSourceCode();
 
    //  Returns true if a template instance is currently being parsed.
    //

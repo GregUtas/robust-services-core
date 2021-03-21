@@ -725,7 +725,7 @@ CxxToken* Macro::GetValue() const
 //------------------------------------------------------------------------------
 
 bool Macro::NameRefersToItem(const string& name,
-   const CxxScope* scope, CodeFile* file, SymbolView* view) const
+   const CxxScope* scope, CodeFile* file, SymbolView& view) const
 {
    Debug::ft("Macro.NameRefersToItem");
 
@@ -734,7 +734,7 @@ bool Macro::NameRefersToItem(const string& name,
    //
    if(GetFile() == nullptr)
    {
-      *view = DeclaredGlobally;
+      view = DeclaredGlobally;
       return true;
    }
 
@@ -863,7 +863,7 @@ CxxScoped* MacroName::Referent() const
    auto file = Context::File();
    auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    SymbolView view;
-   ref_ = syms->FindSymbol(file, scope, name_, MACRO_MASK, &view);
+   ref_ = syms->FindSymbol(file, scope, name_, MACRO_MASK, view);
 
    if(ref_ != nullptr)
    {

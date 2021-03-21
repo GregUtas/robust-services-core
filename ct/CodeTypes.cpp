@@ -468,6 +468,7 @@ size_t LineMergeLength
 SymbolView::SymbolView() :
    accessibility(Inaccessible),
    match(Compatible),
+   cmdts(false),
    using_(false),
    friend_(false),
    resolved(false),
@@ -478,9 +479,10 @@ SymbolView::SymbolView() :
 //------------------------------------------------------------------------------
 
 SymbolView::SymbolView(Accessibility a,
-   TypeMatch m, bool u, bool f, bool r, Distance d) :
+   TypeMatch m, bool c, bool u, bool f, bool r, Distance d) :
    accessibility(a),
    match(m),
+   cmdts(c),
    using_(u),
    friend_(f),
    resolved(r),
@@ -491,10 +493,10 @@ SymbolView::SymbolView(Accessibility a,
 //------------------------------------------------------------------------------
 
 const SymbolView NotAccessible
-   (Inaccessible, Compatible, false, false, true, 0);
+   (Inaccessible, Compatible, false, false, false, true, 0);
 const SymbolView DeclaredGlobally
-   (Unrestricted, Compatible, false, false, true, 0);
+   (Unrestricted, Compatible, false, false, false, true, 0);
 const SymbolView DeclaredLocally
-   (Declared, Compatible, false, false, true, 0);
+   (Declared, Compatible, false, false, false, true, 0);
 }
 

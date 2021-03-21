@@ -102,7 +102,7 @@ public:
    //  search for (see the constants defined above).
    //
    CxxScoped* FindSymbol(CodeFile* file, const CxxScope* scope,
-      const std::string& name, const NodeBase::Flags& mask, SymbolView* view,
+      const std::string& name, const NodeBase::Flags& mask, SymbolView& view,
       const CxxArea* area = nullptr) const;
 
    //  The same as FindSymbol, but returns all matching symbols in LIST,

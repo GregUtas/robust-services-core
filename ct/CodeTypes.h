@@ -298,6 +298,7 @@ enum TypeMatch
 //------------------------------------------------------------------------------
 //
 //  Information about a symbol's accessibility within a specific scope.
+//  CMDTS is an input; all other fields are returned as results.
 //
 struct SymbolView
 {
@@ -307,7 +308,8 @@ struct SymbolView
 
    //  Initializes the instance to the specified values.
    //
-   SymbolView(Accessibility a, TypeMatch m, bool u, bool f, bool r, Distance d);
+   SymbolView(Accessibility a, TypeMatch m,
+      bool c, bool u, bool f, bool r, Distance d);
 
    //  The symbol's accessibility.
    //
@@ -316,6 +318,11 @@ struct SymbolView
    //  How well the symbol's arguments matched those supplied.
    //
    TypeMatch match : 8;
+
+   //  Set as an argument to indicate that the symbol appears in a TypeSpec
+   //  when defining a class member function or data.
+   //
+   bool cmdts: 1;
 
    //  Set if the symbol was resolved by a using statement.
    //
@@ -343,6 +350,23 @@ struct SymbolView
 extern const SymbolView NotAccessible;
 extern const SymbolView DeclaredGlobally;
 extern const SymbolView DeclaredLocally;
+
+//------------------------------------------------------------------------------
+//
+//  Where a TypeSpec occurs.
+//
+enum TypeSpecUser
+{
+   TS_Anonymous,     // unspecified
+   TS_Argument,      // function argument
+   TS_Definition,    // data or function definition
+   TS_Data,          // data declaration
+   TS_Enum,          // enum
+   TS_Function,      // function declaration
+   TS_TemplateParm,  // template parameter
+   TS_Typedef,       // typedef
+   TS_Internal       // internally generated TypeSpec
+};
 
 //------------------------------------------------------------------------------
 //
@@ -516,6 +540,7 @@ enum Warning
    DataCouldBeFree,          // data could move from header to implementation
    ConstructorNotPrivate,    // singleton should have private constructor
    DestructorNotPrivate,     // singleton should have private destructor
+   RedundantScope,           // scope name not required to resolve symbol
    Warning_N                 // number of warnings
 };
 

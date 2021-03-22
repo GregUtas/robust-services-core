@@ -1348,9 +1348,9 @@ fixed_string ModeExpl = "action at tracepoint...";
 
 ModeParm::ModeParm() : CliTextParm(ModeExpl)
 {
-   BindText(*new BreakText, ModeParm::Break);
-   BindText(*new StartText, ModeParm::Start);
-   BindText(*new StopText, ModeParm::Stop);
+   BindText(*new BreakText, Break);
+   BindText(*new StartText, Start);
+   BindText(*new StopText, Stop);
 }
 
 class InsertText : public CliText
@@ -1420,10 +1420,10 @@ fixed_string ActionExpl = "subcommand...";
 
 TraceAction::TraceAction() : CliTextParm(ActionExpl)
 {
-   BindText(*new InsertText, TraceAction::Insert);
-   BindText(*new RemoveText, TraceAction::Remove);
-   BindText(*new ClearText, TraceAction::Clear);
-   BindText(*new ListText, TraceAction::List);
+   BindText(*new InsertText, Insert);
+   BindText(*new RemoveText, Remove);
+   BindText(*new ClearText, Clear);
+   BindText(*new ListText, List);
 }
 
 TraceCommand::TraceCommand() : CliCommand(TraceStr, TraceExpl)

@@ -43,10 +43,9 @@ secs_t StatisticsThread::LongIntervalSecs = 900;  // must be a multiple of 60
 secs_t StatisticsThread::ShortIntervalSecs = 5;   // must be a divisor of 60
 
 size_t StatisticsThread::WakeupsBetweenReports =
-   StatisticsThread::LongIntervalSecs / StatisticsThread::ShortIntervalSecs;
+   LongIntervalSecs / ShortIntervalSecs;
 
-Duration StatisticsThread::SleepInterval =
-   Duration(StatisticsThread::ShortIntervalSecs, SECS);
+Duration StatisticsThread::SleepInterval = Duration(ShortIntervalSecs, SECS);
 
 //------------------------------------------------------------------------------
 
@@ -203,7 +202,7 @@ void StatisticsThread::Enter()
 
 //------------------------------------------------------------------------------
 
-bool StatisticsThread::ExitOnRestart(NodeBase::RestartLevel level) const
+bool StatisticsThread::ExitOnRestart(RestartLevel level) const
 {
    Debug::ft("StatisticsThread.ExitOnRestart");
 

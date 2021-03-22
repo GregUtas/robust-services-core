@@ -118,11 +118,11 @@ public:
 
    //  Maps a directory number to an index, with the first valid DN being 1.
    //
-   static uint32_t DNToIndex(Address::DN dn) { return dn - FirstDN + 1; }
+   static uint32_t DNToIndex(DN dn) { return dn - FirstDN + 1; }
 
    //  Maps an index to a directory number, with 1 being the first valid DN.
    //
-   static Address::DN IndexToDN(uint32_t i) { return i + FirstDN - 1; }
+   static DN IndexToDN(uint32_t i) { return i + FirstDN - 1; }
 protected:
    //  Protected because this class is virtual.
    //

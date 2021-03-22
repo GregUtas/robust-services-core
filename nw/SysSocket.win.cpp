@@ -209,7 +209,7 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
 {
    Debug::ft(SysSocket_SetService);
 
-   auto rc = SysSocket::AllocOk;
+   auto rc = AllocOk;
    size_t max, rxSize, txSize;
    int maxsize = sizeof(max);
 

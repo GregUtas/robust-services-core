@@ -302,8 +302,8 @@ fixed_string SetHowExpl = "setting...";
 
 SetHowParm::SetHowParm() : CliTextParm(SetHowExpl)
 {
-   BindText(*new OnText, SetHowParm::On);
-   BindText(*new OffText, SetHowParm::Off);
+   BindText(*new OnText, On);
+   BindText(*new OffText, Off);
 }
 
 //------------------------------------------------------------------------------
@@ -372,12 +372,12 @@ fixed_string RelationParmExpl = "relational operator...";
 
 RelationParm::RelationParm() : CliTextParm(RelationParmExpl)
 {
-   BindText(*new EqText, RelationParm::Eq);
-   BindText(*new NEqText, RelationParm::NEq);
-   BindText(*new LtText, RelationParm::Lt);
-   BindText(*new LtEqText, RelationParm::LtEq);
-   BindText(*new GtText, RelationParm::Gt);
-   BindText(*new GtEqText, RelationParm::GtEq);
+   BindText(*new EqText, Eq);
+   BindText(*new NEqText, NEq);
+   BindText(*new LtText, Lt);
+   BindText(*new LtEqText, LtEq);
+   BindText(*new GtText, Gt);
+   BindText(*new GtEqText, GtEq);
 }
 
 //------------------------------------------------------------------------------

@@ -691,7 +691,7 @@ TestState::~TestState()
 
 //------------------------------------------------------------------------------
 
-TestNull::TestNull() : TestState(TestNull::Null)
+TestNull::TestNull() : TestState(Null)
 {
    Debug::ft("TestNull.ctor");
 

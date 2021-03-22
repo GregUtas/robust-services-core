@@ -362,7 +362,7 @@ void Memory::DisplayHeaps(ostream& stream, const string& prefix)
 
    for(auto h = heaps.cbegin(); h != heaps.cend(); ++h)
    {
-      auto type = Memory::AddrToType(*h);
+      auto type = AddrToType(*h);
 
       stream << prefix << setw(4) << index++;
 

@@ -261,7 +261,7 @@ ostringstreamPtr LogBuffer::GetLogs
    }
 
    size_t count = 0;
-   const LogBuffer::Entry* prev = nullptr;
+   const Entry* prev = nullptr;
 
    while((stream->str().size() < BundledLogSizeThreshold) && (curr != nullptr))
    {

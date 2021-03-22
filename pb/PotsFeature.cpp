@@ -34,7 +34,7 @@ using std::string;
 
 namespace PotsBase
 {
-PotsFeature::PotsFeature(PotsFeature::Id fid, bool deactivation,
+PotsFeature::PotsFeature(Id fid, bool deactivation,
    c_string abbr, c_string name) :
    deactivation_(deactivation),
    abbr_(abbr),
@@ -112,7 +112,7 @@ void PotsFeature::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void PotsFeature::SetIncompatible(PotsFeature::Id fid)
+void PotsFeature::SetIncompatible(Id fid)
 {
    Debug::ft("PotsFeature.SetIncompatible");
 

@@ -78,8 +78,7 @@ public:
    //  Returns true if the feature cannot be assigned to a subscriber
    //  who has already been assigned the feature identified by FID.
    //
-   bool IsIncompatible(PotsFeature::Id fid) const
-      { return incompatible_[fid]; }
+   bool IsIncompatible(Id fid) const { return incompatible_[fid]; }
 
    //  Creates an instance of the feature and adds it to PROFILE.  CLI
    //  is the thread from which the feature is being provisioned.
@@ -97,8 +96,7 @@ protected:
    //  deactivation, and ABBR and NAME are its abbreviation and full
    //  name.
    //
-   PotsFeature(PotsFeature::Id fid, bool deactivation,
-      c_string abbr, c_string name);
+   PotsFeature(Id fid, bool deactivation, c_string abbr, c_string name);
 
    //  Protected because subclasses should be singletons.
    //
@@ -111,7 +109,7 @@ protected:
 
    //  Makes the feature incompatible with the one identified by FID.
    //
-   void SetIncompatible(PotsFeature::Id fid);
+   void SetIncompatible(Id fid);
 private:
    //  Returns the parameters used to provision the feature.
    //
@@ -139,7 +137,7 @@ private:
 
    //  Flags that specify which features are incompatible with this one.
    //
-   bool incompatible_[PotsFeature::MaxId + 1];
+   bool incompatible_[MaxId + 1];
 };
 }
 #endif

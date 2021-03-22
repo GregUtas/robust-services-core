@@ -536,7 +536,7 @@ NbHeap::BlockState NbHeap::Corrupt(int reason, bool restart) const
       Restart::Initiate(Restart::LevelToClear(Type()), HeapCorruption, reason);
    }
 
-   return NbHeap::Invalid;
+   return Invalid;
 }
 
 //------------------------------------------------------------------------------

@@ -990,14 +990,14 @@ c_string TrafficCall::strState(State state)
 const msecs_t PotsTrafficThread::MsecsToSleep = 100;
 const secs_t PotsTrafficThread::MaxDelaySecs = 120;
 const size_t PotsTrafficThread::NumOfSlots =
-   1000 * PotsTrafficThread::MaxDelaySecs / PotsTrafficThread::MsecsToSleep + 1;
+   1000 * MaxDelaySecs / MsecsToSleep + 1;
 const Address::DN PotsTrafficThread::StartDN = 21001;
 const secs_t PotsTrafficThread::HoldingTimeSecs = 30;
 const uint32_t PotsTrafficThread::DNsPer100Calls = 150;
 const uint32_t PotsTrafficThread::MaxCallsPerMin =
-   (Address::LastDN - PotsTrafficThread::StartDN + 1) *  // number of DNs
-   (6000 / PotsTrafficThread::HoldingTimeSecs) /         // 100 * calls/DN/min
-   (5 * PotsTrafficThread::DNsPer100Calls / 4);          // 100 * DNs/call + 25%
+   (Address::LastDN - StartDN + 1) *  // number of DNs
+   (6000 / HoldingTimeSecs) /         // 100 * calls/DN/min
+   (5 * DNsPer100Calls / 4);          // 100 * DNs/call + 25%
 
 //------------------------------------------------------------------------------
 

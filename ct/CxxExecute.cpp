@@ -531,7 +531,7 @@ void Context::SetPos(const CxxScoped* scope)
    if(scope->GetFile() == File_)
       SetPos(scope->GetPos());
    else
-      Context::SwLog(Context_SetPos, scope->Trace(), 0);
+      SwLog(Context_SetPos, scope->Trace(), 0);
 }
 
 //------------------------------------------------------------------------------

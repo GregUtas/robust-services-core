@@ -83,7 +83,7 @@ public:
 
       //  The profile's state.
       //
-      PotsProfile::State state_;
+      State state_;
 
       //  The address of the object that is receiving messages from the circuit.
       //

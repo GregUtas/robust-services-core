@@ -97,7 +97,7 @@ private:
 
    //  Overridden to generate a statistics report during cold restarts.
    //
-   bool ExitOnRestart(NodeBase::RestartLevel level) const override;
+   bool ExitOnRestart(RestartLevel level) const override;
 
    //  The next time at which the thread wants to run.
    //

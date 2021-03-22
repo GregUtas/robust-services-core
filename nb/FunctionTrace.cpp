@@ -464,13 +464,13 @@ void CtorChain::HandleFunction(FunctionTrace* func)
    //  See if this function might have been invoked to initialize a member
    //  of the next constructor's class.
    //
-   if(!CtorChain::CheckForInitializer(func))
+   if(!CheckForInitializer(func))
    {
       //  No, so see if this function's depth is such that it finalizes
       //  any constructor chains.  (This is not possible for a function
       //  that could be an initializer, since its depth is insufficient.)
       //
-      CtorChain::CheckForEndOfChains(func);
+      CheckForEndOfChains(func);
    }
 
    //  A new operator precedes a constructor chain whose outer constructor

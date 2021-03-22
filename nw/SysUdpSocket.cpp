@@ -80,7 +80,7 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
 
    auto size = buff.OutgoingBytes(src);
 
-   if(size > SysUdpSocket::MaxUdpSize_)
+   if(size > MaxUdpSize_)
    {
       Debug::SwLog(SysUdpSocket_SendBuff, "size too large", size);
       return SendFailed;

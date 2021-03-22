@@ -139,7 +139,7 @@ PotsCcwState::~PotsCcwState()
 
 //------------------------------------------------------------------------------
 
-PotsCcwNull::PotsCcwNull() : PotsCcwState(PotsCcwNull::Null)
+PotsCcwNull::PotsCcwNull() : PotsCcwState(Null)
 {
    Debug::ft("PotsCcwNull.ctor");
 }

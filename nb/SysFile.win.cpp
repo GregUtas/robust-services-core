@@ -146,7 +146,7 @@ FileListPtr SysFile::GetFileList(const char* dirName, const char* fileSpec)
 
    if(dirName != nullptr)
    {
-      if(!SysFile::SetDir(dirName)) return nullptr;
+      if(!SetDir(dirName)) return nullptr;
    }
 
    FileListPtr list(new FileWalker(dirName, fileSpec));

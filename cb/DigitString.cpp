@@ -88,7 +88,7 @@ DigitString::Rc DigitString::AddDigits(const string& s)
 {
    Debug::ft("DigitString.AddDigits(string)");
 
-   DigitString::Rc rc;
+   Rc rc;
    auto len = s.size();
 
    for(size_t i = 0; i < len; ++i)

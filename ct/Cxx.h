@@ -270,15 +270,15 @@ namespace Cxx
 
    //  Entries in the directive hash table map a string to a Cxx::Directive.
    //
-   typedef std::unordered_map< std::string, Cxx::Directive > DirectiveTable;
-   typedef std::pair< std::string, Cxx::Directive > DirectivePair;
+   typedef std::unordered_map< std::string, Directive > DirectiveTable;
+   typedef std::pair< std::string, Directive > DirectivePair;
    typedef std::unique_ptr< DirectiveTable > DirectiveTablePtr;
    extern DirectiveTablePtr Directives;
 
    //  Entries in the keyword hash table map a string to a Cxx::Keyword.
    //
-   typedef std::unordered_map< std::string, Cxx::Keyword > KeywordTable;
-   typedef std::pair< std::string, Cxx::Keyword > KeywordPair;
+   typedef std::unordered_map< std::string, Keyword > KeywordTable;
+   typedef std::pair< std::string, Keyword > KeywordPair;
    typedef std::unique_ptr< KeywordTable > KeywordTablePtr;
    extern KeywordTablePtr Keywords;
 
@@ -287,8 +287,8 @@ namespace Cxx
    //  the Reserved table contains alphabetic strings.  There are two operator
    //  tables, one for C++ code and one for preprocessor directives.
    //
-   typedef std::unordered_map< std::string, Cxx::Operator > OperatorTable;
-   typedef std::pair< std::string, Cxx::Operator > OperatorPair;
+   typedef std::unordered_map< std::string, Operator > OperatorTable;
+   typedef std::pair< std::string, Operator > OperatorPair;
    typedef std::unique_ptr< OperatorTable > OperatorTablePtr;
    extern OperatorTablePtr CxxOps;
    extern OperatorTablePtr PreOps;
@@ -297,8 +297,8 @@ namespace Cxx
    //  Entries in the types hash table map the string for a built-in type to a
    //  Cxx::Type.
    //
-   typedef std::unordered_map< std::string, Cxx::Type > TypesTable;
-   typedef std::pair< std::string, Cxx::Type > TypePair;
+   typedef std::unordered_map< std::string, Type > TypesTable;
+   typedef std::pair< std::string, Type > TypePair;
    typedef std::unique_ptr< TypesTable > TypesTablePtr;
    extern TypesTablePtr Types;
 

@@ -81,7 +81,7 @@ std::atomic_size_t SeqNo_ = 0;
 
 const size_t Log::MaxExplSize = 48;
 const col_t Log::Indent = 4;
-const string Log::Tab = spaces(Log::Indent);
+const string Log::Tab = spaces(Indent);
 
 fn_name Log_ctor = "Log.ctor";
 

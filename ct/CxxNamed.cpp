@@ -1464,7 +1464,7 @@ TypeMatch DataSpec::MatchTemplate(const TypeSpec* that,
 
       argFound = true;
       auto thatType = that->TypeString(true);
-      if(thisPtrs > 0) CodeTools::AdjustPtrs(thatType, -thisPtrs);
+      if(thisPtrs > 0) AdjustPtrs(thatType, -thisPtrs);
 
       //  If the type of the template parameter has already been set, assume
       //  that this type matches it.  Strictly comparing thatArg == thatType

@@ -5,11 +5,16 @@ available, but commits are now being made to the master branch,
 with stable points tagged as releases. If you go to RSC's
 [tags](https://github.com/GregUtas/robust-services-core/tags) page,
 you will see all the release tags. The download for each release
-includes the following: 
+includes the following:
 * _rscwin32d.exe_: debug build for 32-bit Windows (Windows 10)
 * _rscwin64d.exe_: debug build for 64-bit Windows (Windows 10)
 * _rscwin32r.exe_: release build for 32-bit Windows (Windows 10)
 * _rscwin64r.exe_: release build for 64-bit Windows (Windows 10)
+
+These executables are provided so that you don't have to build RSC
+yourself. They are _not_ installers, and you must still have the full
+repository installed, along with the VS2017 (or similar) environment
+that an _.exe_ requires.
 
 Save an executable in a directory--this one is a good choice--that
 allows it to locate the [configuration file](/input/element.config.txt).

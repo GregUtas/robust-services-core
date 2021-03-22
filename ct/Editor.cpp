@@ -1772,6 +1772,20 @@ word Editor::EraseParameter(const Function* func, word offset, string& expl)
 
 //------------------------------------------------------------------------------
 
+word Editor::EraseScope(const CodeWarning& log, string& expl)
+{
+   Debug::ft("Editor.EraseScope");
+
+   auto begin = log.item_->GetPos();
+   if(begin == string::npos) return NotFound(expl, "Qualified name");
+   auto op = source_.find(SCOPE_STR, begin);
+   if(op == string::npos) return NotFound(expl, "Scope resolution operator");
+   Erase(begin, op - begin + 2);
+   return Changed(begin, expl);
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::EraseSemicolon(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.EraseSemicolon");
@@ -2704,6 +2718,12 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
       return ChangeOperator(log, expl);
    case DebugFtCanBeLiteral:
       return InlineDebugFtName(log, expl);
+   case ConstructorNotPrivate:
+      return ChangeAccess(log, Cxx::Private, expl);
+   case DestructorNotPrivate:
+      return ChangeAccess(log, Cxx::Private, expl);
+   case RedundantScope:
+      return EraseScope(log, expl);
    }
 
    return Report(expl, "Fixing this warning is not supported.", 0);

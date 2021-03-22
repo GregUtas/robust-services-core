@@ -179,6 +179,7 @@ private:
    word EraseMutableTag(const CodeWarning& log, string& expl);
    word EraseOverrideTag(const CodeWarning& log, string& expl);
    word EraseSemicolon(const CodeWarning& log, string& expl);
+   word EraseScope(const CodeWarning& log, string& expl);
    word EraseVirtualTag(const CodeWarning& log, string& expl);
    word EraseVoidArgument(const CodeWarning& log, string& expl);
    word InlineDebugFtName(const CodeWarning& log, string& expl);

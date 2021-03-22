@@ -410,6 +410,11 @@ private:
    virtual bool ResolveForward
       (CxxScoped* decl, size_t n) const { return false; }
 
+   //  Checks for a redundant scope name in a qualified name.
+   //
+   void CheckForRedundantScope
+      (const CxxScope* scope, const QualName* qname) const;
+
    //  The location where the item appeared.
    //
    mutable CxxLocation loc_;
@@ -1072,7 +1077,7 @@ public:
 
    //  Sets the type of item to which the type belongs.
    //
-   virtual void SetUserType(TypeSpecUser user);
+   virtual void SetUserType(TypeSpecUser user) const;
 
    //  Returns the type of item in which the type appears.
    //
@@ -1229,7 +1234,7 @@ protected:
 private:
    //  The item type to which the type belongs.  The default is TS_Unknown.
    //
-   TypeSpecUser user_ : 8;
+   mutable TypeSpecUser user_ : 8;
 
    //  The type's role in a template.
    //
@@ -1530,7 +1535,7 @@ private:
 
    //  Overridden to propagate USER to name_.
    //
-   void SetUserType(TypeSpecUser user) override;
+   void SetUserType(TypeSpecUser user) const override;
 
    //  Overridden to shrink containers.
    //

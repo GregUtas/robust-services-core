@@ -118,10 +118,6 @@ public:
       IsQualName    // a string containing a qualified name
    };
 
-   //  Returns what is being parsed.
-   //
-   SourceType GetSourceType() const { return source_; }
-
    //  Returns true if original source code is being parsed.
    //
    bool ParsingSourceCode() const { return (source_ == IsFile); }

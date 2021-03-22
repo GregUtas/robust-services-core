@@ -161,6 +161,39 @@ bool CxxNamed::AtFileScope() const
 
 //------------------------------------------------------------------------------
 
+void CxxNamed::CheckForRedundantScope
+   (const CxxScope* scope, const QualName* qname) const
+{
+   Debug::ft("CxxNamed.CheckForRedundantScope");
+
+   //  QNAME is a qualified name, usually of the form FIRST::ITEM, that was
+   //  used in SCOPE.  We want to see if FIRST can be removed.  So we start
+   //  with the namespace or class that defines SCOPE (AREA) and proceed out
+   //  through enclosing scopes, looking for one whose name matches FIRST.
+   //  If the matching AREA is INNER, FIRST is redundant (e.g. Class::ITEM
+   //  used in one of Class's member functions).  If AREA is further out,
+   //  then FIRST is redundant if INNER does not also declare an ITEM (e.g.
+   //  Namespace::ITEM when no ambiguous Class::ITEM exists).
+   //
+   auto& first = qname->At(0)->Name();
+   auto inner = scope->GetArea();
+
+   for(CxxScope* area = inner; area != nullptr; area = area->GetScope())
+   {
+      if(area->Name() == first)
+      {
+         if((area == inner) ||
+            (inner->FindItem(qname->At(1)->Name()) == nullptr))
+         {
+            Log(RedundantScope, qname);
+            return;
+         }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void CxxNamed::CopyContext(const CxxNamed* that)
 {
    Debug::ft("CxxNamed.CopyContext");
@@ -413,21 +446,13 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
       //
       name = qname->At(0)->Name();
       item = syms->FindSymbol(file, scope, name, selector, view);
-
-      if(size > 1)
-      {
-         for(auto outer = scope->GetScope(); outer != nullptr;
-            outer = outer->GetScope())
-         {
-            if((outer->Name() == name) && !cmdts && !qname->IsInternal())
-            {
-               Log(RedundantScope, qname, 1);
-            }
-         }
-      }
-
       qname->SetReferentN(0, item, &view);
       if(item == this) return item;
+
+      if((size > 1) && !cmdts && !qname->IsInternal())
+      {
+         CheckForRedundantScope(scope, qname);
+      }
    }
 
    //  Continue with the name at IDX.
@@ -1859,7 +1884,7 @@ void DataSpec::SetTemplateRole(TemplateRole role) const
 
 //------------------------------------------------------------------------------
 
-void DataSpec::SetUserType(TypeSpecUser user)
+void DataSpec::SetUserType(TypeSpecUser user) const
 {
    Debug::ft("DataSpec.SetUserType");
 
@@ -1900,13 +1925,24 @@ string DataSpec::Trace() const
 string DataSpec::TypeString(bool arg) const
 {
    string ts;
-   auto role = GetTemplateRole();
 
    //  Use the referent if it is known.  However, a template parameter has
    //  no referent, and a template argument could be an unresolved forward
    //  declaration.  In such cases, just use the full name.
    //
+   //  Shameless hack.  If a static function returns a type defined in its
+   //  class (e.g. an enum), code invoked from Function.AddThisArg arrives
+   //  here when comparing function signatures.  This results in a spurious
+   //  RedundantScope warning for the return type Class::Enum.  To suppress
+   //  this, set our user type to TS_Definition, which is the value that it
+   //  will soon take on when Function.EnterSignature is reached in that
+   //  scenario.
+   //
+   auto hack = (GetUserType() == TS_Function);
+   if(hack) SetUserType(TS_Definition);
    auto ref = Referent();
+   if(hack) SetUserType(TS_Function);
+
    auto tags = GetAllTags();
 
    if(ref != nullptr)
@@ -1915,7 +1951,7 @@ string DataSpec::TypeString(bool arg) const
    }
    else
    {
-      if(role == TemplateNone) return ERROR_STR;
+      if(GetTemplateRole() == TemplateNone) return ERROR_STR;
       ts = QualifiedName(true, true);
    }
 
@@ -3408,7 +3444,7 @@ void TypeSpec::SetPtrs(TagCount count)
 
 //------------------------------------------------------------------------------
 
-void TypeSpec::SetUserType(TypeSpecUser user)
+void TypeSpec::SetUserType(TypeSpecUser user) const
 {
    Debug::ft("TypeSpec.SetUserType");
 

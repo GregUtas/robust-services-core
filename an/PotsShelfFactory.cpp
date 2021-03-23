@@ -30,6 +30,7 @@
 #include "PotsLogs.h"
 #include "PotsProtocol.h"
 #include "SbAppIds.h"
+#include "SbTypes.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 

@@ -26,16 +26,13 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
+#include "Message.h"
 #include "NbTypes.h"
+#include "Q1Link.h"
 #include "RegCell.h"
 #include "SbTypes.h"
 #include "Signal.h"
 #include "SysTypes.h"
-
-namespace NodeBase
-{
-   template< class T > class Q1Way;
-}
 
 namespace SessionBase
 {

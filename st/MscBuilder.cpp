@@ -27,7 +27,6 @@
 #include "FactoryRegistry.h"
 #include "Formatters.h"
 #include "LocalAddress.h"
-#include "Message.h"
 #include "MscAddress.h"
 #include "MscContextPair.h"
 #include "Protocol.h"

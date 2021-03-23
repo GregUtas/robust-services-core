@@ -26,7 +26,6 @@
 #include <ostream>
 #include <set>
 #include "CodeFile.h"
-#include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxArea.h"
 #include "CxxDirective.h"

@@ -28,7 +28,6 @@
 #include "IpPortCfgParm.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
-#include "SbTypes.h"
 #include "Switch.h"
 
 using namespace NodeBase;

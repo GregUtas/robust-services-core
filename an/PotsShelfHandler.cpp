@@ -34,6 +34,7 @@
 #include "PotsTrafficThread.h"
 #include "SbAppIds.h"
 #include "SbIpBuffer.h"
+#include "SbTypes.h"
 #include "Singleton.h"
 #include "TlvParameter.h"
 

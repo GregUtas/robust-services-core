@@ -27,6 +27,7 @@
 #include <iosfwd>
 #include <string>
 #include "Factory.h"
+#include "Message.h"
 #include "MscContext.h"
 #include "NbTypes.h"
 #include "Q1Way.h"
@@ -41,7 +42,6 @@ namespace NodeBase
 
 namespace SessionBase
 {
-   struct LocalAddress;
    class MsgTrace;
 }
 

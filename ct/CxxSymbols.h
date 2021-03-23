@@ -30,6 +30,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include "CodeTypes.h"
 #include "CxxFwd.h"
 #include "CxxString.h"
 #include "LibraryItem.h"

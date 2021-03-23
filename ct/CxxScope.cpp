@@ -1076,8 +1076,6 @@ Data::Data(TypeSpecPtr& spec) :
    writes_(0)
 {
    Debug::ft("Data.ctor");
-
-   spec_->SetUserType(TS_Data);
 }
 
 //------------------------------------------------------------------------------
@@ -2001,6 +1999,7 @@ void Function::AddThisArg()
    typeSpec->Tags()->SetConst(const_);
    typeSpec->Tags()->SetPointer(0, true, false);
    typeSpec->SetReferent(cls, nullptr);
+   typeSpec->SetUserType(TS_Function);
    auto parms = cls->GetTemplateParms();
    if(parms != nullptr) typeSpec->GetQualName()->SetTemplateArgs(parms);
    string argName(THIS_STR);

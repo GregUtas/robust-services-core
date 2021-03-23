@@ -54,7 +54,6 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
    Debug::ft("Argument.ctor");
 
    std::swap(name_, name);
-   spec_->SetUserType(TS_Argument);
    CxxStats::Incr(CxxStats::ARG_DECL);
 }
 
@@ -952,7 +951,6 @@ void Enum::AddType(TypeSpecPtr& type)
    Debug::ft("Enum.AddType");
 
    spec_ = std::move(type);
-   if(spec_ != nullptr) spec_->SetUserType(TS_Enum);
 }
 
 //------------------------------------------------------------------------------
@@ -2372,7 +2370,6 @@ TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
    Debug::ft("TemplateParm.ctor");
 
    std::swap(name_, name);
-   if(default_ != nullptr) default_->SetUserType(TS_TemplateParm);
    CxxStats::Incr(CxxStats::TEMPLATE_PARM);
 }
 
@@ -2762,7 +2759,6 @@ Typedef::Typedef(string& name, TypeSpecPtr& spec) :
    Debug::ft("Typedef.ctor");
 
    std::swap(name_, name);
-   spec_->SetUserType(TS_Typedef);
    Singleton< CxxSymbols >::Instance()->InsertType(this);
    CxxStats::Incr(CxxStats::TYPE_DECL);
 }

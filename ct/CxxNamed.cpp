@@ -410,7 +410,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
    string name;
    Namespace* space;
    Class* cls;
-   auto cmdts = view.cmdts;
+   auto defts = view.defts;
    auto func = GetFunction();
    auto qname = GetQualName();
    auto size = qname->Size();
@@ -449,7 +449,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
       qname->SetReferentN(0, item, &view);
       if(item == this) return item;
 
-      if((size > 1) && !cmdts && !qname->IsInternal())
+      if((size > 1) && !defts && !qname->IsInternal())
       {
          CheckForRedundantScope(scope, qname);
       }
@@ -985,7 +985,7 @@ void DataSpec::FindReferent()
    if(ResolveTemplateArg()) return;
 
    SymbolView view;
-   view.cmdts = (GetUserType() == TS_Definition);
+   view.defts = (GetUserType() == TS_Definition);
    auto item = ResolveName(file, scope, TYPESPEC_REFS, view);
 
    if(item != nullptr)
@@ -1333,11 +1333,12 @@ bool DataSpec::IsUsedInNameOnly() const
    if(count > 0) return true;
    if(Refs() > 0) return true;
 
-   if(GetTemplateRole() != TemplateNone)
+   auto role = GetTemplateRole();
+   if(role != TemplateNone)
    {
       auto ref = name_->GetReferent();
       if((ref != nullptr) && ref->IsInTemplateInstance()) return false;
-      return (GetUserType() != TS_TemplateParm);
+      return (role != TemplateArgument);
    }
 
    return false;
@@ -1889,7 +1890,11 @@ void DataSpec::SetUserType(TypeSpecUser user) const
    Debug::ft("DataSpec.SetUserType");
 
    TypeSpec::SetUserType(user);
-   name_->SetUserType(user);
+
+   for(auto n = name_->First(); n != nullptr; n = n->Next())
+   {
+      n->SetUserType(user);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2471,18 +2476,6 @@ void QualName::SetTemplateArgs(const TemplateParms* tparms) const
    Debug::ft("QualName.SetTemplateArgs");
 
    Last()->SetTemplateArgs(tparms);
-}
-
-//------------------------------------------------------------------------------
-
-void QualName::SetUserType(TypeSpecUser user) const
-{
-   Debug::ft("QualName.SetUserType");
-
-   for(auto n = First(); n != nullptr; n = n->Next())
-   {
-      n->SetUserType(user);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -3231,7 +3224,7 @@ void TypeName::UpdatePos
 //==============================================================================
 
 TypeSpec::TypeSpec() :
-   user_(TS_Anonymous),
+   user_(TS_Unspecified),
    role_(TemplateNone)
 {
    Debug::ft("TypeSpec.ctor");
@@ -3440,15 +3433,6 @@ StackArg TypeSpec::ResultType() const
 void TypeSpec::SetPtrs(TagCount count)
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "SetPtrs", 0);
-}
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::SetUserType(TypeSpecUser user) const
-{
-   Debug::ft("TypeSpec.SetUserType");
-
-   user_ = user;
 }
 
 //------------------------------------------------------------------------------

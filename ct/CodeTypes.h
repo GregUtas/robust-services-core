@@ -320,9 +320,9 @@ struct SymbolView
    TypeMatch match : 8;
 
    //  Set as an argument to indicate that the symbol appears in a TypeSpec
-   //  when defining a class member function or data.
+   //  when defining a function or data that was previously declared.
    //
-   bool cmdts: 1;
+   bool defts: 1;
 
    //  Set if the symbol was resolved by a using statement.
    //
@@ -357,15 +357,9 @@ extern const SymbolView DeclaredLocally;
 //
 enum TypeSpecUser
 {
-   TS_Anonymous,     // unspecified
-   TS_Argument,      // function argument
-   TS_Definition,    // data or function definition
-   TS_Data,          // data declaration
-   TS_Enum,          // enum
-   TS_Function,      // function declaration
-   TS_TemplateParm,  // template parameter
-   TS_Typedef,       // typedef
-   TS_Internal       // internally generated TypeSpec
+   TS_Unspecified,  // default value
+   TS_Definition,   // data or function definition, distinct from declaration
+   TS_Function,     // function declaration
 };
 
 //------------------------------------------------------------------------------

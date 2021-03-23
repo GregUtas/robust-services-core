@@ -734,10 +734,6 @@ public:
    //
    Cxx::Operator Operator() const { return Last()->Operator(); }
 
-   //  Invokes SetUserType on each name.
-   //
-   void SetUserType(TypeSpecUser user) const;
-
    //  Invokes SetTemplateArgs on the last name.
    //
    void SetTemplateArgs(const TemplateParms* tparms) const;
@@ -1075,10 +1071,6 @@ public:
    //
    TypeSpec& operator=(const TypeSpec& that) = delete;
 
-   //  Sets the type of item to which the type belongs.
-   //
-   virtual void SetUserType(TypeSpecUser user) const;
-
    //  Returns the type of item in which the type appears.
    //
    TypeSpecUser GetUserType() const { return user_; }
@@ -1176,6 +1168,10 @@ public:
    //  Sets the type's role in a template.
    //
    virtual void SetTemplateRole(TemplateRole role) const { role_ = role; }
+
+   //  Sets the type of item to which the type belongs.
+   //
+   virtual void SetUserType(TypeSpecUser user) const { user_ = user; }
 
    //  Determines if THAT can instantiate a template for this type.
    //  o If this type is a template parameter in tmpltParms, argFound is set,

@@ -4687,7 +4687,6 @@ bool Parser::ParseTypeSpec(const string& code, TypeSpecPtr& spec)
 
    Enter(IsTypeSpec, "internal TypeSpec", nullptr, code, false);
    auto parsed = GetTypeSpec(spec);
-   spec->SetUserType(TS_Internal);
    return parsed;
 }
 

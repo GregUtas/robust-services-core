@@ -22,7 +22,7 @@ of the game's startup and initial season.  This should give you an idea of the d
 capabilities available in RSC.  The last thing in the _extras_ directory is a Win32 debug
 executable of the observer bot (_obsbot.exe_).  If you launch it with the `-L3` option, it will
 capture the level of information shown in that trace.  The trace is saved to a file using
-the `>save` command.  CLI commands are documented [here](/output/help.cli.txt), but only
+the `>save` command.  CLI commands are documented [here](/help/cli.txt), but only
 those available in the `NodeBase` and `NetworkBase` namespaces are available to a bot.  If
 you start it with `-L2`, the function trace is omitted.  Launching with `-L1` also omits
 socket events, leaving only the messages.  Finally, launching with `-L0` will capture no

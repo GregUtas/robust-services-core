@@ -23,7 +23,7 @@ experience as its chief software architect) the core network server that
 handles all of the calls in AT&T's cellular network. A pattern language that
 summarizes the patterns appears in the
 [second chapter](/docs/RCS-chapter-2.pdf) of _Robust Communications Software_.
-The document [_RSC Product Overview_](/docs/RSC-Product-Overview.pdf)
+The document [_RSC Software Overview_](/docs/RSC-Software-Overview.pdf)
 describes which of them are currently available in this repository and points
 to the primary code files that implement them, and this
 [tutorial](/docs/RCS-tutorial.pdf) provides more information about some of

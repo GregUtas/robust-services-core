@@ -31,7 +31,7 @@ for a while, the call rate is dropped to 0, which gradually causes all calls to 
 ## Configuring user profiles
 
 Users (phone numbers) are created in the `>pots` CLI increment.  The CLI commands
-available in that increment are described [here](/output/help.cli.txt),
+available in that increment are described [here](/help/cli.txt),
 starting after the line `pots>help full`.
 
 Phone numbers are five digits in length, in the range 20000-99999.  _Supplementary services_,

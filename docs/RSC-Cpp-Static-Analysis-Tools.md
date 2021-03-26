@@ -2,7 +2,7 @@
 
 The C++ static analysis tools are accessed through the `ct` increment,
 which is entered with the CLI command `>ct`. The commands available
-in that increment are described [here](/output/help.cli.txt),
+in that increment are described [here](/help/cli.txt),
 starting after the line `ct>help full`.
 
 ## Defining the library

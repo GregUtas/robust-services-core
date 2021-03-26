@@ -36,6 +36,11 @@ class Element : public Protected
 {
    friend class Singleton< Element >;
 public:
+   //  Returns true if the element's name was not set, which probably means
+   //  that the configuration file was not found.
+   //
+   static bool IsUnnamed();
+
    //  Returns the element's name.
    //
    static std::string Name();

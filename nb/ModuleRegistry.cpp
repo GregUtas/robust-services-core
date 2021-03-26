@@ -30,6 +30,7 @@
 #include <string>
 #include "Debug.h"
 #include "Duration.h"
+#include "Element.h"
 #include "Formatters.h"
 #include "Log.h"
 #include "MainArgs.h"
@@ -69,6 +70,31 @@ const FactionFlags& AllFactions()
    }
 
    return AllFactions_;
+}
+
+//------------------------------------------------------------------------------
+
+const fixed_string ReadMe =
+   "https://github.com/GregUtas/robust-services-core/blob/master/README.md";
+
+void OutputNodeRunningLog()
+{
+   Debug::ft("NodeBase.OutputNodeRunningLog");
+
+   auto log = Log::Create(NodeLogGroup, NodeRunning);
+
+   if(log != nullptr)
+   {
+      if(Element::IsUnnamed())
+      {
+         *log << CRLF;
+         *log << "CONFIGURATION FILE NOT FOUND. See" << CRLF;
+         *log << spaces(2) << ReadMe << CRLF;
+         *log << "for instructions on how to install RSC." << CRLF;
+      }
+
+      Log::Submit(log);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -227,10 +253,7 @@ void ModuleRegistry::Restart()
          }
 
          Startup(Restart::Level_);
-         {
-            auto log = Log::Create(NodeLogGroup, NodeRunning);
-            if(log != nullptr) Log::Submit(log);
-         }
+         OutputNodeRunningLog();
          Restart::Level_ = RestartNone;
          Restart::Stage_ = Running;
          Thread::EnableFactions(AllFactions());

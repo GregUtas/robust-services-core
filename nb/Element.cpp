@@ -40,6 +40,10 @@ using std::string;
 
 namespace NodeBase
 {
+const fixed_string DefaultElementName = "Unnamed Element";
+
+//------------------------------------------------------------------------------
+
 Element::Element()
 {
    Debug::ft("Element.ctor");
@@ -49,7 +53,7 @@ Element::Element()
    auto reg = Singleton< CfgParmRegistry >::Instance();
 
    nameCfg_.reset(new CfgStrParm
-      ("ElementName", "Unnamed Element", "element's name"));
+      ("ElementName", DefaultElementName, "element's name"));
    reg->BindParm(*nameCfg_);
 
    runningInLabCfg_.reset(new CfgBoolParm
@@ -126,10 +130,17 @@ const string Element::InputPath()
 
 //------------------------------------------------------------------------------
 
+bool Element::IsUnnamed()
+{
+   return (Name() == DefaultElementName);
+}
+
+//------------------------------------------------------------------------------
+
 string Element::Name()
 {
    auto element = Singleton< Element >::Extant();
-   if(element == nullptr) return "Unnamed Element";
+   if(element == nullptr) return DefaultElementName;
    return element->nameCfg_->GetValue();
 }
 

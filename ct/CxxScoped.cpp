@@ -79,7 +79,7 @@ void Argument::Check() const
    Debug::ft("Argument.Check");
 
    spec_->Check();
-   if(name_.empty()) LogToFunc(AnonymousArgument);
+   if(name_.empty() && IsUnused()) LogToFunc(AnonymousArgument);
    if(modified_ && spec_->Refs() == 0) LogToFunc(ValueArgumentModified);
 }
 
@@ -153,6 +153,25 @@ void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+bool Argument::IsDummy() const
+{
+   Debug::ft("Argument.IsDummy");
+
+   auto& type = GetTypeSpec()->Name();
+
+   if(type == "nothrow_t") return true;
+
+   if(type == "int")
+   {
+      auto& fname = static_cast< Function* >(GetScope())->Name();
+      return ((fname == "operator++") || (fname == "operator--"));
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 Class* Argument::IsThisCandidate() const
 {
    Debug::ft("Argument.IsThisCandidate");
@@ -165,6 +184,16 @@ Class* Argument::IsThisCandidate() const
    if(IsConst()) return nullptr;
    if(spec_->Ptrs(true) + spec_->Refs() == 1) return cls;
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+bool Argument::IsUnused() const
+{
+   Debug::ft("Argument.IsUnused");
+
+   if((reads_ > 0) || (writes_ > 0)) return false;
+   return (IsDummy() ? false : true);
 }
 
 //------------------------------------------------------------------------------

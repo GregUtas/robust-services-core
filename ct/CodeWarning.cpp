@@ -32,7 +32,6 @@
 #include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
-#include "CxxScoped.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -918,10 +917,6 @@ bool CodeWarning::Suppress() const
    case ArgumentUnused:
    {
       if(fn == "BaseBot.h") return true;
-      auto func = static_cast< const Function* >(item_);
-      auto index = func->LogOffsetToArgIndex(offset_);
-      auto& arg = func->GetArgs().at(index);
-      if(arg->GetTypeSpec()->Name() == "nothrow_t") return true;
       break;
    }
 
@@ -930,8 +925,6 @@ bool CodeWarning::Suppress() const
       break;
 
    case FunctionUnused:
-      if(item_->Name().find("operator new") == 0) return true;
-      if(item_->Name().find("operator delete") == 0) return true;
       if(fn == "Allocators.h") return true;
       if(fn == "BaseBot.h") return true;
       if(fn == "MapAndUnits.h") return true;
@@ -965,17 +958,6 @@ bool CodeWarning::Suppress() const
       if(fn == "BcSessions.h") return true;
       if(fn == "ProxyBcSessions.h") return true;
       break;
-
-   case AnonymousArgument:
-   {
-      if(item_->Name() == "operator++") return true;
-      if(item_->Name() == "operator--") return true;
-      auto func = static_cast< const Function* >(item_);
-      auto index = func->LogOffsetToArgIndex(offset_);
-      auto& arg = func->GetArgs().at(index);
-      if(arg->GetTypeSpec()->Name() == "nothrow_t") return true;
-      break;
-   }
 
    case FunctionCouldBeStatic:
    case FunctionCouldBeFree:

@@ -327,7 +327,7 @@ public:
 
    //  Overridden to determine if the argument is unused.
    //
-   bool IsUnused() const override { return ((reads_ + writes_) == 0); }
+   bool IsUnused() const override;
 
    //  Overridden to return the argument's name, if any.
    //
@@ -374,6 +374,10 @@ private:
    //  Checks for a "(void)" argument.
    //
    void CheckVoid() const;
+
+   //  Returns true if this is a dummy argument.
+   //
+   bool IsDummy() const;
 
    //  Logs WARNING on the argument's function.
    //

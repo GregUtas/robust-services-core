@@ -1577,6 +1577,25 @@ private:
    //
    void SetNonStatic();
 
+   //  Returns true if the function identified by NAME in this function's class
+   //  is used.
+   //
+   bool IsUsed(const std::string& name) const;
+
+   //  The copy constructor or copy operator is declared but not invoked.
+   //  Returns true unless the destructor exists or the other copy function
+   //  is invoked.
+   //
+   bool IsUnusedCopyFunction() const;
+
+   //  Returns true if this function is a comparison operator.
+   //
+   bool IsComparisonOperator() const;
+
+   //  Returns true if any comparison operator in this function's class is used.
+   //
+   bool HasUsedComparisonOperator() const;
+
    //  If this is a function template, returns its first instance.
    //
    Function* FirstInstance() const;

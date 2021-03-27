@@ -3074,6 +3074,19 @@ bool Function::CheckIfUnused(Warning warning) const
 
    if(type_) return false;
    if(!IsUnused()) return false;
+
+   auto& name = Name();
+   if(name.find("operator new") == 0) return false;
+   if(name.find("operator delete") == 0) return false;
+   if(IsComparisonOperator() && HasUsedComparisonOperator()) return false;
+
+   switch(FuncRole())
+   {
+   case CopyCtor:
+   case CopyOper:
+      return IsUnusedCopyFunction();
+   }
+
    Log(warning);
    return true;
 }
@@ -4171,6 +4184,17 @@ bool Function::HasInvokers() const
 
 //------------------------------------------------------------------------------
 
+bool Function::HasUsedComparisonOperator() const
+{
+   Debug::ft("Function.HasUsedComparisonOperator");
+
+   return (IsUsed("operator==") || IsUsed("operator!=") ||
+      IsUsed("operator<") || IsUsed("operator<=") ||
+      IsUsed("operator>") || IsUsed("operator>="));
+}
+
+//------------------------------------------------------------------------------
+
 void Function::IncrThisReads() const
 {
    Debug::ft("Function.IncrThisReads");
@@ -4430,6 +4454,19 @@ void Function::InvokeDefaultBaseCtor() const
 
 //------------------------------------------------------------------------------
 
+bool Function::IsComparisonOperator() const
+{
+   Debug::ft("Function.IsComparisonOperator");
+
+   auto& name = Name();
+
+   return ((name == "operator==") || (name == "operator!=") ||
+      (name == "operator<") || (name == "operator<=") ||
+      (name == "operator>") || (name == "operator>="));
+}
+
+//------------------------------------------------------------------------------
+
 bool Function::IsDeleted() const
 {
    Debug::ft("Function.IsDeleted");
@@ -4593,6 +4630,36 @@ bool Function::IsUnused() const
    if(type == FuncCtor) return true;
    if(IsInvokedInBase()) return false;
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool Function::IsUnusedCopyFunction() const
+{
+   Debug::ft("Function.IsUnusedCopyFunction");
+
+   auto cls = GetClass();
+   if(cls == nullptr) return false;
+   auto func = cls->FindFuncByRole(PureDtor, false);
+   if(func != nullptr) return false;
+   func = cls->FindFuncByRole(CopyCtor, false);
+   if((func != nullptr) && func->HasInvokers()) return false;
+   func = cls->FindFuncByRole(CopyOper, false);
+   if((func != nullptr) && func->HasInvokers()) return false;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool Function::IsUsed(const string& name) const
+{
+   Debug::ft("Function.IsUsed");
+
+   auto cls = GetClass();
+   if(cls == nullptr) return false;
+   auto func = cls->FindFunc(name, nullptr, false, nullptr, nullptr);
+   if(func == nullptr) return false;
+   return !func->IsUnused();
 }
 
 //------------------------------------------------------------------------------

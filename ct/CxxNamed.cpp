@@ -3610,7 +3610,7 @@ void TypeTags::SetConstPtr() const
    if(ptrs_ > 0)
       constPtr_ |= (1 << (ptrs_ - 1));
    else
-      Context::SwLog(TypeTags_SetConstPtr, "No pointer tags", 0);
+      Context::SwLog(TypeTags_SetConstPtr, "Item has no pointer tags", 0);
 }
 
 //------------------------------------------------------------------------------
@@ -3619,7 +3619,7 @@ bool TypeTags::SetPointer(size_t n, bool readonly, bool unstable)
 {
    Debug::ft("TypeTags.SetPointer");
 
-   //  Note that a "const" or "volatile" attributed cannot be cleared once set.
+   //  Note that a "const" or "volatile" attribute cannot be cleared once set.
    //
    if(n < Cxx::MAX_PTRS)
    {

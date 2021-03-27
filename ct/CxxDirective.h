@@ -46,6 +46,10 @@ public:
    //
    virtual ~CxxDirective() = default;
 
+   //  Returns true if the directive is an #include guard.
+   //
+   virtual bool IsIncludeGuard() const { return false; }
+
    //  A preprocessor directive ends at the end of the line.
    //
    std::string EndChars() const override { return NodeBase::CRLF_STR; }
@@ -141,6 +145,10 @@ public:
    //
    ~Undef() { CxxStats::Decr(CxxStats::UNDEF_DIRECTIVE); }
 
+   //  Overridden to log the directive.
+   //
+   void Check() const override;
+
    //  Overridden to display the directive.
    //
    void Display(std::ostream& stream,
@@ -168,7 +176,7 @@ public:
 
    //  Returns true if the name was defined when it was encountered.
    //
-   bool WasDefined() const;
+   bool WasPredefined() const;
 
    //  Overridden to add the name to the cross-reference.
    //
@@ -222,7 +230,7 @@ private:
 
    //  Whether the name was defined when it was encountered.
    //
-   mutable bool defined_;
+   mutable bool predefined_;
 };
 
 //------------------------------------------------------------------------------
@@ -350,6 +358,11 @@ public:
    //
    CxxToken* AutoType() const override;
 
+   //  Overridden to log a #define that does not map to an empty string,
+   //  which still allows #include guards and pseudo keywords.
+   //
+   void Check() const override;
+
    //  Overridden to return true if the macro name has appeared in a #define.
    //
    bool IsDefined() const override { return defined_; }
@@ -433,6 +446,10 @@ public:
    //  Adds an #else to the directive.
    //
    virtual bool AddElse(const Else* e) { return false; }
+
+   //  Adds an #endif to the directive.
+   //
+   virtual bool AddEndif(const Endif* e) { return false; }
 
    //  Overridden to return true if compiled code follows this directive.
    //
@@ -535,9 +552,13 @@ public:
    //
    virtual ~Existential() = default;
 
-   //  Overridden to add an #else to the directive.
+   //  Overridden to add an #else.
    //
    bool AddElse(const Else* e) override;
+
+   //  Overridden to add an #endif.
+   //
+   bool AddEndif(const Endif* e) override;
 
    //  Overridden to add name_ to the cross-reference.
    //
@@ -556,6 +577,10 @@ public:
    //
    const std::string& Name() const override { return name_->Name(); }
 
+   //  Overridden to return the symbol's referent.
+   //
+   CxxScoped* Referent() const override { return name_->Referent(); }
+
    //  Overridden to shrink the item's name.
    //
    void Shrink() override;
@@ -570,9 +595,13 @@ protected:
    //
    explicit Existential(MacroNamePtr& macro);
 
-   //  Returns true if name_ has been defined.
+   //  Returns the #endif.
    //
-   bool SymbolDefined() const { return name_->WasDefined(); }
+   const Endif* GetEndif() const { return endif_; }
+
+   //  Returns true if name_ has already been defined.
+   //
+   bool SymbolPredefined() const { return name_->WasPredefined(); }
 private:
    //  The symbol whose definition the directive is checking.
    //
@@ -581,6 +610,10 @@ private:
    //  Any #else clause associated with the directive.
    //
    const Else* else_;
+
+   //  The #endif associated with the directive.
+   //
+   const Endif* endif_;
 };
 
 //------------------------------------------------------------------------------
@@ -669,6 +702,10 @@ public:
    //
    ~Ifdef() { CxxStats::Decr(CxxStats::IFDEF_DIRECTIVE); }
 
+   //  Overridden to log anything other than a platform target.
+   //
+   void Check() const override;
+
    //  Overridden to display the directive.
    //
    void Display(std::ostream& stream,
@@ -702,6 +739,14 @@ public:
    //
    bool AddElse(const Else* e) override;
 
+   //  Overridden to add an #endif.
+   //
+   bool AddEndif(const Endif* e) override;
+
+   //  Overridden to log the directive.
+   //
+   void Check() const override;
+
    //  Overridden to display the directive.
    //
    void Display(std::ostream& stream,
@@ -732,6 +777,10 @@ private:
    //  Any #else that follows the #if.
    //
    const Else* else_;
+
+   //  The #endif associated with the directive.
+   //
+   const Endif* endif_;
 };
 
 //------------------------------------------------------------------------------
@@ -749,6 +798,10 @@ public:
    //
    ~Ifndef() { CxxStats::Decr(CxxStats::IFNDEF_DIRECTIVE); }
 
+   //  Overridden to log anything but an #include guard.
+   //
+   void Check() const override;
+
    //  Overridden to display the directive.
    //
    void Display(std::ostream& stream,
@@ -757,6 +810,10 @@ public:
    //  Overridden to handle the code that follows the #ifndef.
    //
    bool EnterScope() override;
+
+   //  Overridden to return true if this is an #include guard.
+   //
+   bool IsIncludeGuard() const override;
 };
 
 //------------------------------------------------------------------------------
@@ -807,6 +864,10 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to return true if this is an #include guard.
+   //
+   bool IsIncludeGuard() const override;
 };
 
 //------------------------------------------------------------------------------

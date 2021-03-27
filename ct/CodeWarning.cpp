@@ -97,7 +97,11 @@ CodeWarning::CodeWarning(Warning warning, CodeFile* file, size_t pos,
 {
    Debug::ft("CodeWarning.ctor");
 
+   //  Make the warning non-internal so that CxxLocation.UpdatePos will
+   //  will update its position when code is edited.
+   //
    loc_.SetLoc(file, pos);
+   loc_.SetInternal(false);
    if(Attrs_.at(warning).fixable) status = NotFixed;
 }
 
@@ -763,6 +767,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(RedundantScope,
       WarningAttrs(T,
       "Redundant scope")));
+   Attrs_.insert(WarningPair(PreprocessorDirective,
+      WarningAttrs(F,
+      "C-style preprocessor directive")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));
@@ -1117,6 +1124,10 @@ bool CodeWarning::Suppress() const
    case RemoveLineBreak:
       if(fn == "BcStates.cpp") return true;
       if(fn == "CodeWarning.cpp") return true;
+      break;
+
+   case PreprocessorDirective:
+      if(item_->Name() == "FIELD_LOAD") return true;
       break;
    }
 

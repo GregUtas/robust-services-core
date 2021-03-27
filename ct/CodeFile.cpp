@@ -22,7 +22,6 @@
 #include "CodeFile.h"
 #include <cctype>
 #include <cstdio>
-#include <cstring>
 #include <istream>
 #include <iterator>
 #include <list>
@@ -640,6 +639,7 @@ void CodeFile::Check()
    Debug::Progress(Name() + CRLF);
    Trim(nullptr);
    CheckProlog();
+   CheckDirectives();
    CheckIncludeGuard();
    CheckUsings();
    CheckSeparation();
@@ -766,6 +766,18 @@ void CodeFile::CheckDebugFt()
 
 //------------------------------------------------------------------------------
 
+void CodeFile::CheckDirectives() const
+{
+   Debug::ft("CodeFile.CheckDirectives");
+
+   for(auto d = dirs_.cbegin(); d != dirs_.cend(); ++d)
+   {
+      (*d)->Check();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::CheckFunctionOrder() const
 {
    Debug::ft("CodeFile.CheckFunctionOrder");
@@ -859,45 +871,25 @@ void CodeFile::CheckIncludeGuard()
 
    if(IsCpp()) return;
 
+   for(auto d = dirs_.cbegin(); d != dirs_.cend(); ++d)
+   {
+      if((*d)->IsIncludeGuard()) return;
+   }
+
+   //  An #include guard wasn't found.  Log this against the first
+   //  line of code, which will usually be an #include directive.
+   //
    size_t pos = string::npos;
    size_t n;
 
    for(n = 0; (n < lineType_.size()) && (pos == string::npos); ++n)
    {
-      if(!LineTypeAttr::Attrs[lineType_[n]].isCode) continue;
-
-      switch(lineType_[n])
+      if(LineTypeAttr::Attrs[lineType_[n]].isCode)
       {
-      case HashDirective:
-         pos = lexer_.GetLineStart(n);
-         break;
-      default:
          LogLine(n, IncludeGuardMissing);
          return;
       }
    }
-
-   if((pos == string::npos) || (code_.find(HASH_IFNDEF_STR, pos) != pos))
-   {
-      if(code_.find(HASH_PRAGMA_STR, pos) == pos)
-      {
-         pos += strlen(HASH_PRAGMA_STR);
-         pos = code_.find_first_not_of(WhitespaceChars, pos);
-         if(code_.find("once", pos) == pos) return;
-      }
-
-      LogLine(n, IncludeGuardMissing);
-      return;
-   }
-
-   lexer_.Reposition(pos + strlen(HASH_IFNDEF_STR));
-
-   //  Assume that this is an include guard.  Check its name
-   //  against the standard.
-   //
-   auto name = MakeGuardName();
-   auto symbol = lexer_.NextIdentifier();
-   if(symbol != name) LogLine(n, IncludeGuardMisnamed);
 }
 
 //------------------------------------------------------------------------------
@@ -1844,6 +1836,15 @@ void CodeFile::InsertUsing(Using* use)
 {
    items_.push_back(use);
    usings_.push_back(use);
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeFile::IsLastItem(const CxxNamed* item) const
+{
+   Debug::ft("CodeFile.IsLastItem");
+
+   return (items_.empty() ? false : (items_.back() == item));
 }
 
 //------------------------------------------------------------------------------

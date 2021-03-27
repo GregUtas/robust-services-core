@@ -535,6 +535,7 @@ enum Warning
    ConstructorNotPrivate,    // singleton should have private constructor
    DestructorNotPrivate,     // singleton should have private destructor
    RedundantScope,           // scope name not required to resolve symbol
+   PreprocessorDirective,    // C-style preprocessor directive
    Warning_N                 // number of warnings
 };
 

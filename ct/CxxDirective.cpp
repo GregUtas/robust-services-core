@@ -159,6 +159,15 @@ CxxToken* Define::AutoType() const
 
 //------------------------------------------------------------------------------
 
+void Define::Check() const
+{
+   Debug::ftnt("Define.Check");
+
+   if(rhs_ != nullptr) Log(PreprocessorDirective);
+}
+
+//------------------------------------------------------------------------------
+
 void Define::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -360,7 +369,8 @@ bool Error::EnterScope()
 //==============================================================================
 
 Existential::Existential(MacroNamePtr& macro) :
-   else_(nullptr)
+   else_(nullptr),
+   endif_(nullptr)
 {
    Debug::ft("Existential.ctor");
 
@@ -375,6 +385,17 @@ bool Existential::AddElse(const Else* e)
 
    if(else_ != nullptr) return false;
    else_ = e;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool Existential::AddEndif(const Endif* e)
+{
+   Debug::ft("Existential.AddEndif");
+
+   if(endif_ != nullptr) return false;
+   endif_ = e;
    return true;
 }
 
@@ -431,6 +452,22 @@ Ifdef::Ifdef(MacroNamePtr& macro) : Existential(macro)
 
 //------------------------------------------------------------------------------
 
+void Ifdef::Check() const
+{
+   Debug::ft("Ifdef.Check");
+
+   //  A platform target in a .cpp should include or exclude the entire file.
+   //
+   auto file = GetFile();
+
+   if(file->IsCpp() && !file->IsLastItem(GetEndif()))
+   {
+      Log(PreprocessorDirective);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Ifdef::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -450,7 +487,7 @@ bool Ifdef::EnterScope()
    //
    Context::SetPos(GetLoc());
    Context::PushOptional(this);
-   if(!Existential::SymbolDefined()) return false;
+   if(!Existential::SymbolPredefined()) return false;
    SetCompile();
    return true;
 }
@@ -458,7 +495,8 @@ bool Ifdef::EnterScope()
 //==============================================================================
 
 Iff::Iff() :
-   else_(nullptr)
+   else_(nullptr),
+   endif_(nullptr)
 {
    Debug::ft("Iff.ctor");
 
@@ -485,6 +523,26 @@ bool Iff::AddElse(const Else* e)
    if(else_ != nullptr) return false;
    else_ = e;
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool Iff::AddEndif(const Endif* e)
+{
+   Debug::ft("Iff.AddEndif");
+
+   if(endif_ != nullptr) return false;
+   endif_ = e;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+void Iff::Check() const
+{
+   Debug::ft("Iff.Check");
+
+   Log(PreprocessorDirective);
 }
 
 //------------------------------------------------------------------------------
@@ -564,6 +622,25 @@ Ifndef::Ifndef(MacroNamePtr& macro) : Existential(macro)
 
 //------------------------------------------------------------------------------
 
+void Ifndef::Check() const
+{
+   Debug::ft("Ifndef.Check");
+
+   if(IsIncludeGuard())
+   {
+      if(Name() != GetFile()->MakeGuardName())
+      {
+         Log(IncludeGuardMisnamed);
+      }
+   }
+   else
+   {
+      Log(PreprocessorDirective);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Ifndef::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -583,9 +660,25 @@ bool Ifndef::EnterScope()
    //
    Context::SetPos(GetLoc());
    Context::PushOptional(this);
-   if(Existential::SymbolDefined()) return false;
+   if(Existential::SymbolPredefined()) return false;
    SetCompile();
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool Ifndef::IsIncludeGuard() const
+{
+   Debug::ft("Ifndef.IsIncludeGuard");
+
+   //  For this to be an #include guard, it must appear in a header,
+   //  the #endif must be the last item in the file, and the guard
+   //  symbol after the #ifndef must have appeared in a #define.
+   //
+   auto file = GetFile();
+   if(!file->IsHeader()) return false;
+   if(!file->IsLastItem(GetEndif())) return false;
+   return (Referent() != nullptr);
 }
 
 //==============================================================================
@@ -787,7 +880,7 @@ bool Macro::WasRead()
 
 MacroName::MacroName(string& name) :
    ref_(nullptr),
-   defined_(false)
+   predefined_(false)
 {
    Debug::ft("MacroName.ctor");
 
@@ -868,7 +961,7 @@ CxxScoped* MacroName::Referent() const
    if(ref_ != nullptr)
    {
       auto macro = static_cast< Macro* >(ref_);
-      defined_ = macro->IsDefined();
+      predefined_ = macro->IsDefined();
       macro->WasRead();
       return ref_;
    }
@@ -921,14 +1014,14 @@ string MacroName::TypeString(bool arg) const
 
 //------------------------------------------------------------------------------
 
-bool MacroName::WasDefined() const
+bool MacroName::WasPredefined() const
 {
-   Debug::ft("MacroName.WasDefined");
+   Debug::ft("MacroName.WasPredefined");
 
    //  Make sure that the referent has been searched for.
    //
    Referent();
-   return defined_;
+   return predefined_;
 }
 
 //==============================================================================
@@ -1013,6 +1106,15 @@ void Pragma::Display(ostream& stream,
    stream << HASH_PRAGMA_STR << SPACE << GetText() << CRLF;
 }
 
+//------------------------------------------------------------------------------
+
+bool Pragma::IsIncludeGuard() const
+{
+   Debug::ft("Pragma.IsIncludeGuard");
+
+   return (GetText() == "once");
+}
+
 //==============================================================================
 
 StringDirective::StringDirective(string& text)
@@ -1054,6 +1156,15 @@ Undef::Undef(string& name) : SymbolDirective(name)
    Debug::ft("Undef.ctor");
 
    CxxStats::Incr(CxxStats::UNDEF_DIRECTIVE);
+}
+
+//------------------------------------------------------------------------------
+
+void Undef::Check() const
+{
+   Debug::ft("Undef.Check");
+
+   Log(PreprocessorDirective);
 }
 
 //------------------------------------------------------------------------------

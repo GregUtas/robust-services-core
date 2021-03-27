@@ -146,6 +146,10 @@ public:
    //
    void AddUsage(CxxNamed* item);
 
+   //  Returns true if ITEM is the last item in the file.
+   //
+   bool IsLastItem(const CxxNamed* item) const;
+
    enum ParseState
    {
       Unparsed,
@@ -322,7 +326,11 @@ private:
    //
    void CheckProlog();
 
-   //  Looks for and checks an #include guard.
+   //  Checks the file's preprocessor directives.
+   //
+   void CheckDirectives() const;
+
+   //  Checks that a header has an #include guard.
    //
    void CheckIncludeGuard();
 

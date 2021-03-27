@@ -696,11 +696,11 @@ word Editor::ChangeFunctionToFree(const Function* func, string& expl)
 {
    Debug::ft("Editor.ChangeFunctionToFree");
 
-   //  o If the function is invoked externally, move its declaration out of
+   //  o If the function is invoked externally, move its declaration to after
    //    its class, into the enclosing namespace, else just erase it.
    //  o In the definition, replace the class name with the namespace in the
-   //    signature and fn_name or Debug::ft string literal.  If it uses any
-   //    static items from the class, prefix the class name to those items.
+   //    fn_name or Debug::ft string literal.  If it uses any static items
+   //    from the class, prefix the class name to those items.
    //  o Move the definition to the correct location.
    //
    return Unimplemented(expl);
@@ -4022,24 +4022,24 @@ word Editor::RenameIncludeGuard(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.RenameIncludeGuard");
 
-   //  This warning is logged against the #define.
+   //  This warning is logged against the #ifndef.
    //
-   auto def = CurrBegin(log.Pos());
-   if(def == string::npos) return NotFound(expl, "Position of #define");
-   if(!IsDirective(def, HASH_DEFINE_STR))
-      return NotFound(expl, HASH_DEFINE_STR);
+   auto ifn = CurrBegin(log.Pos());
+   if(ifn == string::npos) return NotFound(expl, "Position of #define");
+   if(!IsDirective(ifn, HASH_IFNDEF_STR))
+      return NotFound(expl, HASH_IFNDEF_STR);
    auto guard = log.File()->MakeGuardName();
-   def += strlen(HASH_DEFINE_STR) + 1;
-   auto end = CurrEnd(def) - 1;
-   Erase(def, end - def + 1);
-   Insert(def, guard);
-   auto ifn = Rfind(def, HASH_IFNDEF_STR);
-   if(ifn == string::npos) return NotFound(expl, HASH_IFNDEF_STR);
    ifn += strlen(HASH_IFNDEF_STR) + 1;
-   end = CurrEnd(ifn) - 1;
+   auto end = CurrEnd(ifn) - 1;
    Erase(ifn, end - ifn + 1);
    Insert(ifn, guard);
-   return Changed(NextBegin(ifn), expl);
+   auto def = Find(ifn, HASH_DEFINE_STR);
+   if(def == string::npos) return NotFound(expl, HASH_DEFINE_STR);
+   def += strlen(HASH_DEFINE_STR) + 1;
+   end = CurrEnd(def) - 1;
+   Erase(def, end - def + 1);
+   Insert(def, guard);
+   return Changed(def, expl);
 }
 
 //------------------------------------------------------------------------------

@@ -202,7 +202,7 @@ void CxxNamed::CopyContext(const CxxNamed* that)
    SetScope(scope);
    SetAccess(that->GetAccess());
    loc_.SetLoc(that->GetFile(), that->GetPos());
-   loc_.SetInternal();
+   loc_.SetInternal(true);
 }
 
 //------------------------------------------------------------------------------

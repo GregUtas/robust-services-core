@@ -3904,10 +3904,13 @@ bool Parser::HandleEndif(DirectivePtr& dir)
    auto start = CurrPos();
 
    if(!lexer_.NextStringIs(HASH_ENDIF_STR)) return Fault(DirectiveMismatch);
-   if(!Context::PopOptional()) return Fault(EndifUnexpected);
+   auto ifx = Context::Optional();
+   if(ifx == nullptr) return Fault(EndifUnexpected);
+   Context::PopOptional();
 
    EndifPtr endif(new Endif);
    endif->SetContext(start);
+   if(!ifx->AddEndif(endif.get())) return Fault(EndifUnexpected);
    dir = std::move(endif);
    return true;
 }

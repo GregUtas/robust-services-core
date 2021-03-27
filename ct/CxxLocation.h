@@ -70,9 +70,9 @@ public:
    //
    void UpdatePos(EditorAction action, size_t begin, size_t count, size_t from);
 
-   //  Marks the item as internally generated.
+   //  Sets the field that specifies whether the item was internally generated.
    //
-   void SetInternal() { internal_ = true; }
+   void SetInternal(bool internal) { internal_ = internal; }
 
    //  Returns true for an internally generated item, such as the code
    //  for a template instance.

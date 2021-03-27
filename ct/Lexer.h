@@ -203,11 +203,6 @@ public:
    //
    void PreprocessSource() const;
 
-   //  Returns the next identifier (which could be a keyword).  The first
-   //  character not allowed in an identifier finalizes the string.
-   //
-   std::string NextIdentifier() const;
-
    //  Sets STR to the next preprocessor directive and returns its enum
    //  constant.  Returns NIL_DIRECTIVE if a directive wasn't found, but
    //  nonetheless sets STR to any identifier that was found.
@@ -491,6 +486,11 @@ private:
    //  if the end of source_ is reached.
    //
    size_t NextPos(size_t pos) const;
+
+   //  Returns the next identifier (which could be a keyword).  The first
+   //  character not allowed in an identifier finalizes the string.
+   //
+   std::string NextIdentifier() const;
 
    //  Returns the next token.  This is a non-empty string from NextIdentifier
    //  or, failing that, a sequence of valid operator characters.  The first

@@ -40,7 +40,7 @@ using std::string;
 
 namespace NodeBase
 {
-const fixed_string DefaultElementName = "Unnamed Element";
+fixed_string DefaultElementName = "Unnamed Element";
 
 //------------------------------------------------------------------------------
 
@@ -132,6 +132,8 @@ const string Element::InputPath()
 
 bool Element::IsUnnamed()
 {
+   Debug::ft("Element.IsUnnamed");
+
    return (Name() == DefaultElementName);
 }
 

@@ -74,7 +74,7 @@ const FactionFlags& AllFactions()
 
 //------------------------------------------------------------------------------
 
-const fixed_string ReadMe =
+fixed_string ReadMe =
    "https://github.com/GregUtas/robust-services-core/blob/master/README.md";
 
 void OutputNodeRunningLog()

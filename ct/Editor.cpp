@@ -38,6 +38,7 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxString.h"
+#include "CxxSymbols.h"
 #include "Debug.h"
 #include "Duration.h"
 #include "Formatters.h"
@@ -537,6 +538,10 @@ word Editor::ChangeClassToStruct(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.ChangeClassToStruct");
 
+   //  Start by changing the class's forward declarations.
+   //
+   ChangeForwards(log.item_, CLASS_STR, STRUCT_STR);
+
    //  Look for the class's name and then back up to "class".
    //
    auto pos = log.item_->GetPos();
@@ -662,6 +667,31 @@ word Editor::ChangeDebugFtName
 
 //------------------------------------------------------------------------------
 
+void Editor::ChangeForwards
+   (const CxxNamed* item, fixed_string from, fixed_string to)
+{
+   Debug::ft("Editor.ChangeForwards");
+
+   SymbolVector forwards;
+   auto syms = Singleton< CxxSymbols >::Instance();
+
+   syms->FindItems(item->Name(), FORW_MASK | FRIEND_MASK, forwards);
+
+   for(auto f = forwards.cbegin(); f != forwards.cend(); ++f)
+   {
+      if(!(*f)->IsInternal() && ((*f)->Referent() == item))
+      {
+         auto& editor = (*f)->GetFile()->GetEditor();
+         auto pos = (*f)->GetPos();
+         auto cpos = editor.Find(pos, from);
+         if(cpos == string::npos) continue;
+         editor.Replace(pos, strlen(from), to);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::ChangeFunctionToFree(const Function* func, string& expl)
 {
    Debug::ft("Editor.ChangeFunctionToFree");
@@ -737,6 +767,10 @@ word Editor::ChangeOperator(const CodeWarning& log, string& expl)
 word Editor::ChangeStructToClass(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.ChangeStructToClass");
+
+   //  Start by changing the structs's forward declarations.
+   //
+   ChangeForwards(log.item_, STRUCT_STR, CLASS_STR);
 
    //  Look for the struct's name and then back up to "struct".
    //

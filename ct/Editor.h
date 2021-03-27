@@ -361,6 +361,11 @@ private:
    //
    void QualifyReferent(const CxxNamed* item, const CxxNamed* ref);
 
+   //  Change ITEM from a class/struct (FROM) to a struct/class (TO).
+   //
+   static void ChangeForwards
+      (const CxxNamed* item, fixed_string from, fixed_string to);
+
    //  Fixes LOG, which also involves modifying overrides of a function.
    //  Updates EXPL with any explanation.
    //

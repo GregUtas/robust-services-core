@@ -9,6 +9,7 @@ Document | Description
 ![pdf](images/pdf24.png) [RCS chapter 2](/docs/RCS-chapter-2.pdf) | chapter 2 of _Robust Communications Software_
 ![pdf](images/pdf24.png) [RCS tutorial](/docs/RCS-tutorial.pdf) | overview of _Robust Communications Software_
 ![pdf](images/pdf24.png) [RSC Software Overview](/docs/RSC-Software-Overview.pdf) | roadmap for the Robust Services Core
+<img src="images/md.png" alt="markdown" height="30"> [Preface](/docs/RSC-Articles.md) | preface to the CodeProject articles
 ![CodeProject](images/cp100x30.gif) [Software Techniques for Lemmings](https://www.codeproject.com/Articles/5258540/Software-Techniques-for-Lemmings) | article on popular but dubious techniques and RSC's alternatives
 ![CodeProject](images/cp100x30.gif) [Robust C++ : P and V Considered Harmful](https://www.codeproject.com/Articles/5246597/Robust-Cplusplus-P-and-V-Considered-Harmful) | article on cooperative/proportional scheduling
 ![CodeProject](images/cp100x30.gif) [Robust C++ : Safety Net](https://www.codeproject.com/Articles/5165710/Robust-Cplusplus-Safety-Net) | article on recovering from exceptions
@@ -21,9 +22,9 @@ Document | Description
 ![CodeProject](images/cp100x30.gif) [Robust C++: Queue Templates](https://www.codeproject.com/Articles/5271081/Robust-Cplusplus-Queue-Templates) | article on the `Q1Way` and `Q2Way` templates
 ![CodeProject](images/cp100x30.gif) [Robust C++: Singletons](https://www.codeproject.com/Articles/5286932/Robust-Cplusplus-Singletons) | article on the `Singleton` template
 ![CodeProject](images/cp100x30.gif) [A Wrapper for `std::vector`](https://www.codeproject.com/Tips/5271013/A-Wrapper-for-std-vector) | article on the `Array` template
-![pdf](images/pdf24.png) [RSC Software Design](/docs/RSC-Software-Design.pdf) | high-level design notes for various enhancements
-<img src="images/txt.jpg" alt="txt" height="30"> [help.cli](/docs/help.cli.txt) | summary of all CLI commands
 <img src="images/md.png" alt="markdown" height="30"> [RSC Windows Build Options](/docs/RSC-Windows-Build-Options.md) | build options used in VS2017
+<img src="images/txt.jpg" alt="txt" height="30"> [help.cli](/docs/help.cli.txt) | summary of all CLI commands
+![pdf](images/pdf24.png) [RSC Software Design](/docs/RSC-Software-Design.pdf) | high-level design notes for various enhancements
 <img src="images/md.png" alt="markdown" height="30"> [RSC Coding Guidelines](/docs/RSC-Coding-Guidelines.md) | C++ coding guidelines
 
 ## C++ Static Analysis

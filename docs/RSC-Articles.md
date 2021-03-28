@@ -7,26 +7,26 @@ This is a preface to the RSC articles on CodeProject.
 RSC is a framework for developing robust C++ applications. Its repository
 contains over 220K lines of code organized into static libraries. Each
 static library is implemented in its own namespace so that the layer that
-code belongs to will be obvious.
+code belongs to is clear.
 
 ### Downloading Code
 
 The _.zip_ file attached to an article contains most of the repository but
-excludes the [output](/output) directory, which only contains files that are
-generated when running tests.
+excludes the [_output_](/output) directory, which only contains files that
+are generated when running tests.
 
 An article's _.zip_ file seldom contains RSC's latest release. It is usually
 updated only when the code that it discusses has evolved.
 
-See the [tags](/tags) page for stable releases. Unless a release only
-changed documentation, it includes executables. However, RSC must be
-properly installed to run them. The main [README](README.md) page contains
-installation instructions.
+See the [tags](https://github.com/GregUtas/robust-services-core/tags) page
+for stable releases. Unless a release only changed documentation, it includes
+executables. However, RSC must be properly installed to run them. The main
+[README](README.md) page contains installation instructions.
 
 ### Finding Code
 
 Unless otherwise noted, the code in an article resides in the namespace
-`NodeBase`, which is implemented in the [nb](/nb) directory. `NodeBase`
+`NodeBase`, which is implemented in the [_nb_](/nb) directory. `NodeBase`
 is RSC's lowest layer. It contains about 55K lines of code that provide
 base classes for things such as
 
@@ -51,21 +51,22 @@ _*.win.cpp_ files) run to about 3K lines of code.
 ### Using RSC
 
 When buildling on RSC, you'll always use `NodeBase`. If your application
-uses UDP- or TCP-based protocols, investigate the `NetworkBase` namespace
-in the [nw](/nw) directory, and the `SessionBase` namespace in the [sb](/sb)
-directory. There are currently no CodeProject articles about those layers,
-but various [documents](/docs/README.md) in the repository discuss them.
+uses UDP- or TCP-based protocols, investigate the namespace `NetworkBase` 
+in the [_nw_](/nw) directory, and the namespace `SessionBase` in the
+[_sb_](/sb) directory. There are currently no articles about those layers,
+but some [documents](/docs/README.md) discuss them.
 
 ### Modifying RSC
 
 If you don't want to build on RSC, you can copy and modify its code to meet
 your needs, subject to the terms of its GPL-3.0 license. But because RSC is
-an integrated _framework_, you'll have a bit of work to do. Unlike a library,
-RSC's classes collaborate freely and are not designed for standalone use.
+an integrated _framework_, you'll have some work to do. Unlike a library,
+RSC's classes collaborate freely rather than being designed for standalone
+use.
 
 ### Deleted Code
 
-The code within an article omits details that are irrelevant to the article's
+The code in an article omits details that are irrelevant to the article's
 purpose. They are nonetheless important and need to be considered if copying
 and modifying RSC software. These details include
 

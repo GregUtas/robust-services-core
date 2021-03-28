@@ -29,6 +29,17 @@ to the primary code files that implement them, and this
 [tutorial](/docs/RCS-tutorial.pdf) provides more information about some of
 them.
 
+## C++ static analysis tools
+
+The development of RSC has been somewhat sidetracked by the development of C++
+static analysis tools. These tools detect violations of various C++ design
+guidelines, such as those found in Scott Meyers' _Effective C++_. They also
+analyze `#include` directives to determine which ones to add or delete. Their
+editor then allows you to easily and interactively fix about half of the 130
+or so warning types.  Even if you're not developing applications with RSC, you
+might find these tools useful. An overview of them is provided
+[here](docs/RSC-Cpp-Static-Analysis-Tools.md).
+
 ## POTS application
 
 Including an application with a framework serves to test it and illustrate its
@@ -40,16 +51,6 @@ everyone has a reasonable understanding of what it does. You should therefore
 be able to figure out what the POTS code is doing without reading a large
 specification. An overview of the POTS application is provided
 [here](/docs/RSC-POTS-Application.md).
-
-## C++ static analysis tools
-
-The development of RSC has been somewhat sidetracked by the development of C++
-static analysis tools. These tools detect violations of various C++ design
-guidelines, such as those found in Scott Meyers' _Effective C++_. They also
-analyze `#include` directives to determine which ones should be added or
-deleted. Even if you're not developing applications with RSC, you might find
-these tools useful. An overview of them is provided
-[here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
 ## Diplomacy AI client
 

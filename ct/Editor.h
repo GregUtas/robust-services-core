@@ -40,7 +40,7 @@ namespace NodeBase
 
 namespace CodeTools
 {
-   struct FuncDeclAttrs;
+   struct ItemDeclAttrs;
    struct FuncDefnAttrs;
 }
 
@@ -140,7 +140,8 @@ private:
    //  name of the file in which LOG occurs should be displayed.  Returns false
    //  if the code associated with LOG could not be found.
    //
-   bool DisplayLog(const CliThread& cli, const CodeWarning& log, bool file) const;
+   bool DisplayLog
+      (const CliThread& cli, const CodeWarning& log, bool file) const;
 
    //  Fixes LOG.  Returns 0 on success.  A return value of -1 means that the
    //  file should be skipped; other values denote more serious errors.  EXPL
@@ -221,23 +222,10 @@ private:
    //
    word EraseTrailingBlanks();
 
-   //  Replaces multiple blank lines with a single blank line.  Invoked by
-   //  Format and before writing out code that was changed.
+   //  Checks adjacent lines to see if one of them should be deleted.  Invoked
+   //  by Format and before writing out code that was changed.
    //
-   word EraseBlankLinePairs();
-
-   //  Removes a separator that is preceded or followed by a brace or separator.
-   //  Invoked by Format and before writing out code that was changed.
-   //
-   word EraseEmptySeparators();
-
-   //  Removes a blank line that
-   //  o precedes or follows an access control
-   //  o precedes or follows a left brace
-   //  o precedes a right brace
-   //  Invoked by Format and before writing out code that was changed.
-   //
-   word EraseOffsetBlankLines();
+   word CheckLinePairs();
 
    //  Converts tabs to spaces.  Invoked by Format and before writing out code
    //  that was changed.
@@ -369,7 +357,8 @@ private:
    //  Fixes LOG, which also involves modifying overrides of a function.
    //  Updates EXPL with any explanation.
    //
-   static word FixFunctions(CliThread& cli, const CodeWarning& log, string& expl);
+   static word FixFunctions
+      (CliThread& cli, const CodeWarning& log, string& expl);
 
    //  Fixes LOG, which is associated with FUNC, and updates EXPL with any
    //  explanation.
@@ -418,46 +407,46 @@ private:
    size_t FindSigEnd(const CodeWarning& log);
    size_t FindSigEnd(const Function* func);
 
-   //  Returns the line that follows FUNC.
+   //  Returns the line that follows ITEM.
    //
-   size_t LineAfterFunc(const Function* func) const;
+   size_t LineAfterItem(const CxxNamed* item) const;
+
+   //  Returns the location where the item CLS::NAME, of TYPE, should be
+   //  declared.  Returns string::npos if the user decides not to add the
+   //  item.  Updates ATTRS if the item should be offset with a blank line
+   //  or comment.
+   //
+   size_t FindItemDeclLoc
+      (const Class* cls, const string& name, ItemDeclAttrs& attrs) const;
+
+   //  Returns the location where an item's declaration should be added
+   //  after PREV and/or before NEXT.  Updates ATTRS if the item should
+   //  be offset with a blank line or comment.
+   //
+   size_t UpdateItemDeclLoc
+      (const CxxNamed* prev, const CxxNamed* next, ItemDeclAttrs& attrs) const;
+
+   //  Updates ATTRS based on ITEM.
+   //
+   void UpdateItemDeclAttrs(const CxxNamed* item, ItemDeclAttrs& attrs) const;
+
+   //  Inserts what goes after a function declaration.  POS is where to insert.
+   //  Returns POS.
+   //
+   size_t InsertAfterItemDecl(size_t pos, const ItemDeclAttrs& attrs);
+
+   //  Inserts what goes before a function declaration.  POS is where to insert.
+   //  point, and COMMENT is any comment.  Returns POS.
+   //
+   size_t InsertBeforeItemDecl
+      (size_t pos, const ItemDeclAttrs& attrs, const string& comment);
 
    //  Returns the location where the special member function required to
    //  fix LOG should be inserted.  Updates ATTRS to specify whether the
    //  function should be offset with a blank line and, if so, commented.
    //
    size_t FindSpecialFuncLoc
-      (const CodeWarning& log, FuncDeclAttrs& attrs) const;
-
-   //  Returns the location where the function CLS::NAME should be declared.
-   //  Returns string::npos if the user decides not to add the function.
-   //  Updates ATTRS if the function should be offset with a blank line or
-   //  comment.
-   //
-   size_t FindFuncDeclLoc
-      (const Class* cls, const string& name, FuncDeclAttrs& attrs) const;
-
-   //  Returns the location where a new function declaration should be added
-   //  after PREV and/or before NEXT.  Updates ATTRS if the function should
-   //  be offset with a blank line or comment.
-   //
-   size_t UpdateFuncDeclLoc
-      (const Function* prev, const Function* next, FuncDeclAttrs& attrs) const;
-
-   //  Updates ATTRS based on FUNC.
-   //
-   void UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs) const;
-
-   //  Inserts what goes after a function declaration.  POS is where to insert.
-   //  Returns POS.
-   //
-   size_t InsertAfterFuncDecl(size_t pos, const FuncDeclAttrs& attrs);
-
-   //  Inserts what goes before a function declaration.  POS is where to insert.
-   //  point, and COMMENT is any comment.  Returns POS.
-   //
-   size_t InsertBeforeFuncDecl
-      (size_t pos, const FuncDeclAttrs& attrs, const string& comment);
+      (const CodeWarning& log, ItemDeclAttrs& attrs) const;
 
    //  Returns the location where the function CLS::NAME should be defined.
    //  Updates ATTRS if the function should be offset with a rule and/or a
@@ -494,7 +483,7 @@ private:
 
    //  Inserts the declaration for a Patch override at POS.
    //
-   void InsertPatchDecl(const size_t& pos, const FuncDeclAttrs& attrs);
+   void InsertPatchDecl(const size_t& pos, const ItemDeclAttrs& attrs);
 
    //  Inserts the definition for a Patch override in CLS at POS.
    //

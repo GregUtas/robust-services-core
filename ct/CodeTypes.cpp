@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeTypes.h"
+#include <cstring>
 #include <ostream>
 #include "CxxString.h"
 #include "Debug.h"
@@ -333,14 +334,9 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
 
    //  Look for access controls.
    //
-   pos = s.find_first_not_of(WhitespaceChars);
-
-   if(pos != string::npos)
-   {
-      if(s.find(PUBLIC_STR) == pos) return AccessControl;
-      if(s.find(PROTECTED_STR) == pos) return AccessControl;
-      if(s.find(PRIVATE_STR) == pos) return AccessControl;
-   }
+   if(IsAccessControl(s, PUBLIC_STR)) return AccessControl;
+   if(IsAccessControl(s, PROTECTED_STR)) return AccessControl;
+   if(IsAccessControl(s, PRIVATE_STR)) return AccessControl;
 
    //  Look for invocations of Debug::ft and its variants.
    //
@@ -432,6 +428,23 @@ bool InsertSpaceOnMerge(const string& line1, const string& line2, size_t begin2)
    //
    if(!IsWordChar(line1.back())) return true;
    return (line2.at(begin2) != '(');
+}
+
+//------------------------------------------------------------------------------
+
+bool IsAccessControl(const std::string& s, fixed_string acc)
+{
+   auto pos = s.find_first_not_of(WhitespaceChars);
+
+   if((pos != string::npos) && (s.find(acc) == pos))
+   {
+      pos = s.find_first_not_of(WhitespaceChars, pos + strlen(acc));
+      if(pos == string::npos) return true;
+      if(s[pos] != ':') return false;
+      return (s.find_first_not_of(WhitespaceChars, pos + 1) == string::npos);
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------

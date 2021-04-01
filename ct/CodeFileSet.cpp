@@ -32,6 +32,7 @@
 #include "CodeFile.h"
 #include "CodeItemSet.h"
 #include "CodeTypes.h"
+#include "CodeWarning.h"
 #include "Cxx.h"
 #include "CxxNamed.h"
 #include "Debug.h"
@@ -204,7 +205,7 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
    if(rc != 0) return rc;
    expl.clear();
 
-   CodeFile::GenerateReport(stream, fileSet);
+   CodeWarning::GenerateReport(stream, fileSet);
 
    std::ostringstream summary;
    summary << fileSet.size() << " file(s) checked.";

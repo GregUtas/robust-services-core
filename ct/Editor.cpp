@@ -57,6 +57,179 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
+//  Indicates where a blank line should be added when inserting new code.
+//
+enum BlankLocation
+{
+   BlankNone,
+   BlankBefore,
+   BlankAfter
+};
+
+//==============================================================================
+//
+//  Attributes when declaring a C++ item.
+//
+struct ItemDeclAttrs
+{
+   //  Initializes the attributes for an item of type T, with access control A.
+   //
+   ItemDeclAttrs(Cxx::ItemType t, Cxx::Access a);
+
+   //  Initializes the attributes for ITEM.
+   //
+   explicit ItemDeclAttrs(const CxxNamed* item);
+
+   //  Returns the order, within a class, where the item should be declared.
+   //
+   size_t CalcDeclOrder() const;
+
+   //  The following are provided as inputs.
+   //
+   Cxx::ItemType type;   // type of item being declared
+   Cxx::Access access;   // desired access control
+   FunctionRole role;    // if a function, the type being added
+   bool over;            // set if a function is an override
+
+   //  The following are calculated internally.
+   //
+   bool oper;            // set for an operator
+   bool virt;            // set to make a function virtual
+   bool control;         // set to insert access control
+   size_t indent;        // number of spaces for indentation
+   BlankLocation blank;  // where to insert a blank line
+   bool comment;         // set to include a comment
+};
+
+//------------------------------------------------------------------------------
+
+ItemDeclAttrs::ItemDeclAttrs(Cxx::ItemType t, Cxx::Access a) :
+   type(t),
+   access(a),
+   role(FuncOther),
+   over(false),
+   oper(false),
+   virt(false),
+   control(false),
+   indent(0),
+   blank(BlankNone),
+   comment(false)
+{
+   Debug::ft("ItemDeclAttrs.ctor(type)");
+}
+
+//------------------------------------------------------------------------------
+
+ItemDeclAttrs::ItemDeclAttrs(const CxxNamed* item) :
+   type(item->Type()),
+   access(item->GetAccess()),
+   role(FuncOther),
+   over(false),
+   oper(false),
+   virt(false),
+   control(false),
+   indent(0),
+   blank(BlankNone),
+   comment(false)
+{
+   Debug::ft("ItemDeclAttrs.ctor(item)");
+
+   if(type == Cxx::Function)
+   {
+      auto func = static_cast< const Function* >(item);
+      role = func->FuncRole();
+      over = func->IsOverride();
+      oper = (func->FuncType() == FuncOperator);
+      virt = func->IsVirtual();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ItemDeclAttrs_CalcDeclOrder = "ItemDeclAttrs.CalcDeclOrder";
+
+size_t ItemDeclAttrs::CalcDeclOrder() const
+{
+   Debug::ft(ItemDeclAttrs_CalcDeclOrder);
+
+   //  Items have to be declared in some order, so this tries to organize
+   //  them in a consistent way. The first thing that determines order is
+   //  the item's access control.
+   //
+   size_t order = 0;
+
+   switch(access)
+   {
+   case Cxx::Public:
+      order = 0;
+      break;
+   case Cxx::Protected:
+      order = 16;
+      break;
+   default:
+      order = 32;
+   }
+
+   //  Within each access control, the order is enums, typdefs, inner classes,
+   //  functions, and lastly data.  Within functions, special member functions
+   //  are first, followed by operators, regular functions, virtual functions,
+   //  and finally overrides.
+   //
+   switch(type)
+   {
+   case Cxx::Enum:
+      return order + 1;
+   case Cxx::Typedef:
+      return order + 2;
+   case Cxx::Class:
+      return order + 3;
+
+   case Cxx::Function:
+   {
+      switch(role)
+      {
+      case PureCtor:
+         return order + 4;
+      case PureDtor:
+         return order + 5;
+      case CopyCtor:
+         return order + 6;
+      case MoveCtor:
+         return order + 7;
+      case CopyOper:
+         return order + 8;
+      case MoveOper:
+         return order + 9;
+      default:
+         if(oper) return order + 10;
+         if(virt) return order + 12;
+         if(over) return order + 13;
+         return order + 11;
+      }
+   }
+
+   case Cxx::Data:
+      return order + 15;
+   }
+
+   Debug::SwLog(ItemDeclAttrs_CalcDeclOrder, "unexpected item type", type);
+   return order;
+}
+
+//==============================================================================
+//
+//  Attributes when inserting a function definition.
+//
+struct FuncDefnAttrs
+{
+   FuncDefnAttrs() : blank(BlankNone), rule(false) { }
+
+   BlankLocation blank;  // where to insert a blank line
+   bool rule;            // set to insert a rule
+};
+
+//==============================================================================
+//
 //  User prompts.
 //
 fixed_string YNSQChars = "ynsq";
@@ -250,6 +423,25 @@ CodeFile* FindFuncDefnFile(CliThread& cli, const Class* cls, const string& name)
 
 //------------------------------------------------------------------------------
 //
+//  Adds a class's items to FUNCS and then sorts them by position.
+//
+void GetItems(const Class* cls, CxxNamedVector& ivec)
+{
+   Debug::ft("CodeTools.GetItems");
+
+   auto& items = cls->Items();
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      if((*i)->GetPos() != string::npos)
+         ivec.push_back(*i);
+   }
+
+   std::sort(ivec.begin(), ivec.end(), IsSortedByPos);
+}
+
+//------------------------------------------------------------------------------
+//
 //  Adds FUNC and its overrides to FUNCS.
 //
 void GetOverrides(const Function* func, std::vector< const Function* >& funcs)
@@ -385,55 +577,6 @@ word Unimplemented(string& expl)
 }
 
 //==============================================================================
-//
-//  Indicates where a blank line should be added when inserting new code.
-//
-enum BlankLocation
-{
-   BlankNone,
-   BlankBefore,
-   BlankAfter
-};
-
-//------------------------------------------------------------------------------
-//
-//  Attributes when inserting a function declaration.
-//
-struct FuncDeclAttrs
-{
-   explicit FuncDeclAttrs(Cxx::Access acc) :
-      access(acc),
-      control(true),
-      role(FuncOther),
-      virt(false),
-      indent(0),
-      blank(BlankNone),
-      comment(false)
-   {
-   }
-
-   Cxx::Access access;   // desired access control
-   bool control;         // set to insert access control
-   FunctionRole role;    // the type of function being added
-   bool virt;            // set to make function virtual
-   size_t indent;        // number of spaces for indentation
-   BlankLocation blank;  // where to insert a blank line
-   bool comment;         // set to include a comment
-};
-
-//------------------------------------------------------------------------------
-//
-//  Attributes when inserting a function definition.
-//
-struct FuncDefnAttrs
-{
-   FuncDefnAttrs() : blank(BlankNone), rule(false) { }
-
-   BlankLocation blank;  // where to insert a blank line
-   bool rule;            // set to insert a rule
-};
-
-//==============================================================================
 
 std::set< Editor* > Editor::Editors_ = std::set< Editor* >();
 size_t Editor::Commits_ = 0;
@@ -514,9 +657,20 @@ word Editor::ChangeAccess
 {
    Debug::ft("Editor.ChangeAccess");
 
-   //  Move the item and insert the access control keyword if necessary.
+   //  Move the item's declaration and update its access control.
    //
-   return Unimplemented(expl);
+   string code;
+   auto item = const_cast< CxxNamed* >(log.item_);
+   ItemDeclAttrs attrs(item);
+   attrs.access = acc;
+   auto from = CutCode(item, expl, code);
+   auto to = FindItemDeclLoc(item->GetClass(), item->Name(), attrs);
+   attrs.comment = false;
+   InsertAfterItemDecl(to, attrs);
+   Paste(to, code, from);
+   InsertBeforeItemDecl(to, attrs, EMPTY_STR);
+   item->SetAccess(acc);
+   return Changed(item->GetPos(), expl);
 }
 
 //------------------------------------------------------------------------------
@@ -796,6 +950,89 @@ word Editor::ChangeStructToClass(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
+word Editor::CheckLinePairs()
+{
+   Debug::ft("Editor.CheckLinePairs");
+
+   auto p1 = 0;
+   auto t1 = GetLineType(p1);
+
+   for(auto p2 = NextBegin(p1); p2 != string::npos; p2 = NextBegin(p1))
+   {
+      auto t2 = GetLineType(p2);
+
+      switch(t1)
+      {
+      case BlankLine:
+         switch(t2)
+         {
+         case BlankLine:
+         case EmptyComment:
+         case OpenBrace:
+         case CloseBrace:
+         case CloseBraceSemicolon:
+         case AccessControl:
+            EraseLine(p1);
+            t1 = t2;
+            continue;
+         }
+         break;
+
+      case EmptyComment:
+         switch(t2)
+         {
+         case BlankLine:
+         case EmptyComment:
+            EraseLine(p2);
+            continue;
+
+         case OpenBrace:
+         case CloseBrace:
+         case CloseBraceSemicolon:
+         case AccessControl:
+            EraseLine(p1);
+            t1 = t2;
+            continue;
+         }
+         break;
+
+      case OpenBrace:
+         switch(t2)
+         {
+         case BlankLine:
+         case EmptyComment:
+            EraseLine(p2);
+            continue;
+         }
+         break;
+
+      case AccessControl:
+         switch(t2)
+         {
+         case BlankLine:
+         case EmptyComment:
+            EraseLine(p2);
+            continue;
+
+         case CloseBraceSemicolon:
+         case AccessControl:
+            EraseLine(p1);
+            t1 = t2;
+            continue;
+         }
+         break;
+      }
+
+      p1 = p2;
+      t1 = t2;
+      continue;
+   }
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_CodeBegin = "Editor.CodeBegin";
 
 size_t Editor::CodeBegin()
@@ -1011,7 +1248,8 @@ size_t Editor::CutCode(const CxxNamed* item, string& expl, string& code)
    {
       auto start = begin;
 
-      if((item->Type() == Cxx::Function) && (endchars.find('}') != string::npos))
+      if((item->Type() == Cxx::Function) &&
+         (endchars.find('}') != string::npos))
       {
          //  To find the right brace at the end of a function definition, the
          //  search must start after its initial left brace.
@@ -1155,7 +1393,8 @@ void Editor::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-bool Editor::DisplayLog(const CliThread& cli, const CodeWarning& log, bool file) const
+bool Editor::DisplayLog
+   (const CliThread& cli, const CodeWarning& log, bool file) const
 {
    Debug::ft("Editor.DisplayLog");
 
@@ -1363,34 +1602,6 @@ word Editor::EraseBlankLine(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseBlankLinePairs()
-{
-   Debug::ft("Editor.EraseBlankLinePairs");
-
-   size_t b1 = 0;
-
-   for(auto b2 = NextBegin(b1); b2 != string::npos; b2 = NextBegin(b1))
-   {
-      if(IsBlankLine(b1) && (IsBlankLine(b2) || (GetLineType(b1) == EmptyComment)))
-      {
-         //  Delete a blank line that was preceded by a blank line or an
-         //  empty comment.
-         //
-         EraseLine(b2);
-         Changed();
-         if(b2 >= source_.size()) return 0;
-      }
-      else
-      {
-         b1 = b2;
-      }
-   }
-
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
 word Editor::EraseClass(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.EraseClass");
@@ -1559,56 +1770,6 @@ word Editor::EraseEmptyNamespace(size_t pos)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseEmptySeparators()
-{
-   Debug::ft("Editor.EraseEmptySeparators");
-
-   size_t b1 = 0;
-   auto b2 = NextBegin(b1);
-   if(b2 == string::npos) return 0;
-
-   for(auto b3 = NextBegin(b2); b3 != string::npos; b3 = NextBegin(b2))
-   {
-      auto t1 = GetLineType(b1);
-      auto t2 = GetLineType(b2);
-      auto t3 = GetLineType(b3);
-
-      if(LineTypeAttr::Attrs[t2].isBlank)
-      {
-         if(t1 == SeparatorComment)
-         {
-            if((t3 == CloseBrace) || (t3 == SeparatorComment))
-            {
-               EraseLine(b2);
-               EraseLine(b1);
-               b1 = b3;
-               b2 = NextBegin(b1);
-               if(b2 == string::npos) return 0;
-               continue;
-            }
-         }
-         else if(t3 == SeparatorComment)
-         {
-            if(t1 == OpenBrace)
-            {
-               EraseLine(b3);
-               EraseLine(b2);
-               b2 = NextBegin(b1);
-               if(b2 == string::npos) return 0;
-               continue;
-            }
-         }
-      }
-
-      b1 = b2;
-      b2 = b3;
-   }
-
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
 word Editor::EraseExplicitTag(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.EraseExplicitTag");
@@ -1735,45 +1896,6 @@ word Editor::EraseNoexceptTag(const Function* func, string& expl)
    size_t space = (IsFirstNonBlank(endsig) ? 0 : 1);
    Erase(endsig - space, strlen(NOEXCEPT_STR) + space);
    return Changed(endsig, expl);
-}
-
-//------------------------------------------------------------------------------
-
-word Editor::EraseOffsetBlankLines()
-{
-   Debug::ft("Editor.EraseOffsetBlankLines");
-
-   for(size_t begin2 = 0; begin2 != string::npos; begin2 = NextBegin(begin2))
-   {
-      switch(GetLineType(begin2))
-      {
-      case AccessControl:
-      case OpenBrace:
-         {
-            auto begin3 = NextBegin(begin2);
-            if(begin3 == string::npos) return 0;
-            auto type3 = GetLineType(begin3);
-            if(LineTypeAttr::Attrs[type3].isBlank)
-            {
-               EraseLine(begin3);
-            }
-            break;
-         }
-         //  [[fallthrough]]
-      case CloseBrace:
-      case CloseBraceSemicolon:
-         {
-            auto begin1 = PrevBegin(begin2);
-            auto type1 = GetLineType(begin1);
-            if(LineTypeAttr::Attrs[type1].isBlank)
-            {
-               EraseLine(begin1);
-            }
-         }
-      }
-   }
-
-   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -1970,82 +2092,6 @@ size_t Editor::FindCutBegin(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-size_t Editor::FindFuncDeclLoc
-   (const Class* cls, const string& name, FuncDeclAttrs& attrs) const
-{
-   Debug::ft("Editor.FindFuncDeclLoc");
-
-   //  This supports special member functions and overrides, as it is hard to
-   //  imagine a warning that requires adding something else.  A function is
-   //  inserted in access control order: public, protected, private.  Within
-   //  that access control, an override is added alphabetically, among other
-   //  overrides, and the order for special member functions is constructor,
-   //  destructor, copy constructor, and copy operator, before other functions.
-   //  We also determine if the function needs to insert its access control.
-   //
-   auto funcs = cls->Funcs();
-   const Function* prev = nullptr;
-   const Function* next = nullptr;
-
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      auto access = (*f)->GetAccess();
-
-      if(access == attrs.access)
-      {
-         switch(attrs.role)
-         {
-         case FuncOther:
-            if((*f)->IsOverride())
-            {
-               if((*f)->Name().compare(name) > 0)
-               {
-                  next = f->get();
-               }
-            }
-            break;
-
-         default:
-            if((*f)->FuncRole() > attrs.role)
-            {
-               next = f->get();
-            }
-         }
-
-         if(next != nullptr)
-         {
-            //  The insertion point has been found, and the new function
-            //  does not need to insert its access control.
-            //
-            attrs.control = false;
-            break;
-         }
-      }
-      else if(access < attrs.access)
-      {
-         //  This function has a more restricted access control, so insert
-         //  the new function before it.
-         //
-         next = f->get();
-         break;
-      }
-
-      //  If we get here, the function will be inserted somewhere after the
-      //  current one.
-      //
-      prev = f->get();
-      attrs.control = (prev->GetAccess() != attrs.access);
-   }
-
-   //  We now know the functions between which the new function should be
-   //  inserted (PREV and NEXT), so find its precise insertion location
-   //  and attributes.
-   //
-   return UpdateFuncDeclLoc(prev, next, attrs);
-}
-
-//------------------------------------------------------------------------------
-
 size_t Editor::FindFuncDefnLoc(const CodeFile* file, const Class* cls,
    const string& name, string& expl, FuncDefnAttrs& attrs) const
 {
@@ -2127,6 +2173,47 @@ size_t Editor::FindFuncDefnLoc(const CodeFile* file, const Class* cls,
 
 //------------------------------------------------------------------------------
 
+size_t Editor::FindItemDeclLoc
+   (const Class* cls, const string& name, ItemDeclAttrs& attrs) const
+{
+   Debug::ft("Editor.FindItemDeclLoc");
+
+   auto where = attrs.CalcDeclOrder();
+   CxxNamedVector items;
+   GetItems(cls, items);
+   const CxxNamed* prev = nullptr;
+   const CxxNamed* next = nullptr;
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      ItemDeclAttrs currAttrs(*i);
+      auto order = currAttrs.CalcDeclOrder();
+
+      if(where < order)
+      {
+         next = *i;
+         break;
+      }
+      else if(where == order)
+      {
+         if(strCompare((*i)->Name(), name) > 0)
+         {
+            next = *i;
+            break;
+         }
+      }
+
+      prev = *i;
+   }
+
+   //  We now know the items between which the new item should be inserted
+   //  (PREV and NEXT), so update its insertion attributes.
+   //
+   return UpdateItemDeclLoc(prev, next, attrs);
+}
+
+//------------------------------------------------------------------------------
+
 CodeWarning* Editor::FindLog
    (const CodeWarning& log, const CxxNamed* item, word offset)
 {
@@ -2169,7 +2256,7 @@ size_t Editor::FindSigEnd(const Function* func)
 //------------------------------------------------------------------------------
 
 size_t Editor::FindSpecialFuncLoc
-   (const CodeWarning& log, FuncDeclAttrs& attrs) const
+   (const CodeWarning& log, ItemDeclAttrs& attrs) const
 {
    Debug::ft("Editor.FindSpecialFuncLoc");
 
@@ -2208,9 +2295,7 @@ size_t Editor::FindSpecialFuncLoc
       return string::npos;
    };
 
-   //  FindFuncDeclLoc knows where to put special member functions.
-   //
-   return FindFuncDeclLoc(cls, EMPTY_STR, attrs);
+   return FindItemDeclLoc(cls, EMPTY_STR, attrs);
 }
 
 //------------------------------------------------------------------------------
@@ -2770,9 +2855,7 @@ word Editor::Format(string& expl)
    Debug::ft("Editor.Format");
 
    EraseTrailingBlanks();
-   EraseBlankLinePairs();
-   EraseEmptySeparators();
-   EraseOffsetBlankLines();
+   CheckLinePairs();
    ConvertTabsToBlanks();
    return Write(expl);
 }
@@ -2969,20 +3052,6 @@ size_t Editor::Insert(size_t pos, const string& code)
 
 //------------------------------------------------------------------------------
 
-size_t Editor::InsertAfterFuncDecl(size_t pos, const FuncDeclAttrs& attrs)
-{
-   Debug::ft("Editor.InsertAfterFuncDecl");
-
-   if(attrs.blank == BlankAfter)
-   {
-      InsertLine(pos, EMPTY_STR);
-   }
-
-   return pos;
-}
-
-//------------------------------------------------------------------------------
-
 size_t Editor::InsertAfterFuncDefn(size_t pos, const FuncDefnAttrs& attrs)
 {
    Debug::ft("Editor.InsertAfterFuncDefn");
@@ -3003,6 +3072,20 @@ size_t Editor::InsertAfterFuncDefn(size_t pos, const FuncDefnAttrs& attrs)
 
 //------------------------------------------------------------------------------
 
+size_t Editor::InsertAfterItemDecl(size_t pos, const ItemDeclAttrs& attrs)
+{
+   Debug::ft("Editor.InsertAfterItemDecl");
+
+   if(attrs.blank == BlankAfter)
+   {
+      InsertLine(pos, EMPTY_STR);
+   }
+
+   return pos;
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::InsertArgument(const Function* func, word offset, string& expl)
 {
    Debug::ft("Editor.InsertArgument");
@@ -3011,33 +3094,6 @@ word Editor::InsertArgument(const Function* func, word offset, string& expl)
    //  value for this argument pass the default value explicitly.
    //
    return Unimplemented(expl);
-}
-
-//------------------------------------------------------------------------------
-
-size_t Editor::InsertBeforeFuncDecl
-   (size_t pos, const FuncDeclAttrs& attrs, const string& comment)
-{
-   Debug::ft("Editor.InsertBeforeFuncDecl");
-
-   if(attrs.comment)
-   {
-      InsertLine(pos, strComment(EMPTY_STR, attrs.indent));
-      Insert(pos, strComment(comment, attrs.indent));
-   }
-
-   if(attrs.control)
-   {
-      std::ostringstream access;
-      access << attrs.access << ':';
-      InsertLine(pos, access.str());
-   }
-   else if(attrs.blank == BlankBefore)
-   {
-      InsertLine(pos, EMPTY_STR);
-   }
-
-   return pos;
 }
 
 //------------------------------------------------------------------------------
@@ -3055,6 +3111,33 @@ size_t Editor::InsertBeforeFuncDefn(size_t pos, const FuncDefnAttrs& attrs)
          InsertRule(pos, '-');
          InsertLine(pos, EMPTY_STR);
       }
+   }
+
+   return pos;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Editor::InsertBeforeItemDecl
+   (size_t pos, const ItemDeclAttrs& attrs, const string& comment)
+{
+   Debug::ft("Editor.InsertBeforeItemDecl");
+
+   if(attrs.comment)
+   {
+      InsertLine(pos, strComment(EMPTY_STR, attrs.indent));
+      Insert(pos, strComment(comment, attrs.indent));
+   }
+
+   if(attrs.control)
+   {
+      std::ostringstream access;
+      access << attrs.access << ':';
+      InsertLine(pos, access.str());
+   }
+   else if(attrs.blank == BlankBefore)
+   {
+      InsertLine(pos, EMPTY_STR);
    }
 
    return pos;
@@ -3177,7 +3260,7 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
       return Report(expl, "This cannot be fixed: it is in an external class.");
    }
 
-   FuncDeclAttrs attrs(Cxx::Public);
+   ItemDeclAttrs attrs(Cxx::Function, Cxx::Public);
    auto pos = FindSpecialFuncLoc(log, attrs);
    if(pos == string::npos) return NotFound(expl, "Function's class");
 
@@ -3211,7 +3294,7 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
 
    code.push_back(';');
 
-   InsertAfterFuncDecl(pos, attrs);
+   InsertAfterItemDecl(pos, attrs);
    InsertLine(pos, code);
 
    string comment;
@@ -3232,7 +3315,7 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
       break;
    }
 
-   InsertBeforeFuncDecl(pos, attrs, comment);
+   InsertBeforeItemDecl(pos, attrs, comment);
    pos = source_.find(code, pos);
    return Changed(pos, expl);
 }
@@ -3519,8 +3602,9 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log, string& expl)
    //  so access that file's editor and find out where the function should be
    //  defined in that file.
    //
-   FuncDeclAttrs decl(Cxx::Public);
-   auto pos1 = FindFuncDeclLoc(cls, name, decl);
+   ItemDeclAttrs decl(Cxx::Function, Cxx::Public);
+   decl.over = true;
+   auto pos1 = FindItemDeclLoc(cls, name, decl);
    if(pos1 == string::npos) return -1;
 
    auto file = FindFuncDefnFile(cli, cls, name);
@@ -3542,11 +3626,11 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertPatchDecl(const size_t& pos, const FuncDeclAttrs& attrs)
+void Editor::InsertPatchDecl(const size_t& pos, const ItemDeclAttrs& attrs)
 {
    Debug::ft("Editor.InsertPatchDecl");
 
-   InsertAfterFuncDecl(pos, attrs);
+   InsertAfterItemDecl(pos, attrs);
 
    string code = PatchReturn;
    code.push_back(SPACE);
@@ -3556,7 +3640,7 @@ void Editor::InsertPatchDecl(const size_t& pos, const FuncDeclAttrs& attrs)
    code.push_back(';');
    InsertLine(pos, strCode(code, 1));
 
-   InsertBeforeFuncDecl(pos, attrs, PatchComment);
+   InsertBeforeItemDecl(pos, attrs, PatchComment);
 }
 
 //------------------------------------------------------------------------------
@@ -3747,12 +3831,12 @@ bool Editor::IsDirective(size_t pos, fixed_string hash) const
 
 //------------------------------------------------------------------------------
 
-size_t Editor::LineAfterFunc(const Function* func) const
+size_t Editor::LineAfterItem(const CxxNamed* item) const
 {
-   Debug::ft("Editor.LineAfterFunc");
+   Debug::ft("Editor.LineAfterItem");
 
    size_t begin, left, end;
-   if(!func->GetRange(begin, left, end)) return string::npos;
+   if(!item->GetRange(begin, left, end)) return string::npos;
    return NextBegin(end);
 }
 
@@ -4622,122 +4706,6 @@ word Editor::TagAsVirtual(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-void Editor::UpdateFuncDeclAttrs
-   (const Function* func, FuncDeclAttrs& attrs) const
-{
-   Debug::ft("Editor.UpdateFuncDeclAttrs");
-
-   if(func == nullptr) return;
-
-   size_t begin, left, end;
-   if(!func->GetRange(begin, left, end)) return;
-
-   //  Indent the code to match that of FUNC.
-   //
-   attrs.indent = LineFindFirst(begin) - CurrBegin(begin);
-
-   //  If FUNC is commented, a blank line should also precede or follow it.
-   //
-   auto type = GetLineType(PrevBegin(begin));
-   auto& line = LineTypeAttr::Attrs[type];
-
-   if(!line.isCode && (type != BlankLine))
-   {
-      attrs.comment = true;
-      attrs.blank = BlankBefore;
-      return;
-   }
-
-   //  FUNC isn't commented, so see if a blank line precedes or follows it.
-   //
-   if(type == BlankLine)
-   {
-      attrs.blank = BlankBefore;
-      return;
-   }
-
-   if(GetLineType(NextBegin(end)) == BlankLine)
-   {
-      attrs.blank = BlankBefore;
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_UpdateFuncDeclLoc = "Editor.UpdateFuncDeclLoc";
-
-size_t Editor::UpdateFuncDeclLoc
-   (const Function* prev, const Function* next, FuncDeclAttrs& attrs) const
-{
-   Debug::ft(Editor_UpdateFuncDeclLoc);
-
-   //  PREV and NEXT are the functions that precede and follow the function
-   //  whose declaration is to be inserted.
-   //
-   UpdateFuncDeclAttrs(prev, attrs);
-   UpdateFuncDeclAttrs(next, attrs);
-
-   if(prev != nullptr)
-   {
-      //  Insert the function after PREV.
-      //
-      return LineAfterFunc(prev);
-   }
-
-   if(next == nullptr)
-   {
-      Debug::SwLog(Editor_UpdateFuncDeclLoc, "prev and next are nullptr", 0);
-      return string::npos;
-   }
-
-   //  Insert the function before NEXT.  If the new function is to be offset
-   //  with a blank, it will follow the new function.
-   //
-   if(attrs.blank != BlankNone) attrs.blank = BlankAfter;
-
-   auto pred = PrevBegin(next->GetPos());
-
-   while(true)
-   {
-      auto type = GetLineType(pred);
-
-      if(!LineTypeAttr::Attrs[type].isCode)
-      {
-         if(type == BlankLine) break;
-
-         //  This is a comment, so keep moving up to find the insertion point.
-         //
-         pred = PrevBegin(pred);
-         continue;
-      }
-
-      //  If the new function does not require an access control, it needs to
-      //  be inserted after this access control so that the control will also
-      //  apply to the new function.  If it requires an access control, a blank
-      //  line need not follow it, because this access control will.
-      //
-      if(type == AccessControl)
-      {
-         if(attrs.control)
-         {
-            attrs.blank = BlankNone;
-            return pred;
-         }
-
-         return NextBegin(pred);
-      }
-
-      break;
-   }
-
-   //  PRED is a blank line or code other than an access control.  Insert the
-   //  new function above the line that follows PRED.
-   //
-   return NextBegin(pred);
-}
-
-//------------------------------------------------------------------------------
-
 void Editor::UpdateFuncDefnAttrs
    (const Function* func, FuncDefnAttrs& attrs) const
 {
@@ -4808,7 +4776,7 @@ size_t Editor::UpdateFuncDefnLoc
    {
       //  Insert the function after the one that precedes it.
       //
-      return LineAfterFunc(prev);
+      return LineAfterItem(prev);
    }
 
    if(next == nullptr)
@@ -4857,6 +4825,142 @@ size_t Editor::UpdateFuncDefnLoc
    }
 
    return pred;
+}
+
+//------------------------------------------------------------------------------
+
+void Editor::UpdateItemDeclAttrs
+   (const CxxNamed* item, ItemDeclAttrs& attrs) const
+{
+   Debug::ft("Editor.UpdateItemDeclAttrs");
+
+   if(item == nullptr) return;
+
+   size_t begin, left, end;
+   if(!item->GetRange(begin, left, end)) return;
+
+   //  Indent the code to match that of ITEM.
+   //
+   attrs.indent = LineFindFirst(begin) - CurrBegin(begin);
+
+   //  If ITEM is commented, a blank line should also precede or follow it.
+   //
+   auto type = GetLineType(PrevBegin(begin));
+   auto& line = LineTypeAttr::Attrs[type];
+
+   if(!line.isCode && (type != BlankLine))
+   {
+      attrs.comment = true;
+      attrs.blank = BlankBefore;
+      return;
+   }
+
+   //  ITEM isn't commented, so see if a blank line precedes or follows it.
+   //
+   if(type == BlankLine)
+   {
+      attrs.blank = BlankBefore;
+      return;
+   }
+
+   if(GetLineType(NextBegin(end)) == BlankLine)
+   {
+      attrs.blank = BlankBefore;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_UpdateItemDeclLoc = "Editor.UpdateItemDeclLoc";
+
+size_t Editor::UpdateItemDeclLoc
+   (const CxxNamed* prev, const CxxNamed* next, ItemDeclAttrs& attrs) const
+{
+   Debug::ft(Editor_UpdateItemDeclLoc);
+
+   //  PREV and NEXT are the items that precede and follow the item whose
+   //  declaration is to be inserted.
+   //
+   UpdateItemDeclAttrs(prev, attrs);
+   UpdateItemDeclAttrs(next, attrs);
+
+   if(prev != nullptr)
+   {
+      //  Insert the item immediately after PREV.  If PREV has the desired
+      //  access control, we can reuse it, so we're done.
+      //
+      auto pos = LineAfterItem(prev);
+      if(prev->GetAccess() == attrs.access) return pos;
+
+      if((next != nullptr) && (next->GetAccess() == attrs.access))
+      {
+         //  NEXT has the desired access control, which we can reuse by
+         //  moving the insertion point down one line.  If a blank line
+         //  was going to precede the item, it must now follow it instead.
+         //
+         pos = NextBegin(pos);
+         if(attrs.blank == BlankBefore) attrs.blank = BlankAfter;
+      }
+      else
+      {
+         //  An access control will precede and follow the item, so no
+         //  blank line will be needed to set it off.
+         //
+         attrs.control = true;
+         attrs.blank = BlankNone;
+      }
+
+      return pos;
+   }
+
+   if(next == nullptr)
+   {
+      Debug::SwLog(Editor_UpdateItemDeclLoc, "prev and next are nullptr", 0);
+      return string::npos;
+   }
+
+   //  Insert the item before NEXT.  If the item is to be set off with a
+   //  blank, the blank must follow it.
+   //
+   if(attrs.blank != BlankNone) attrs.blank = BlankAfter;
+
+   auto pred = PrevBegin(next->GetPos());
+
+   while(true)
+   {
+      auto type = GetLineType(pred);
+
+      if(!LineTypeAttr::Attrs[type].isCode)
+      {
+         if(type == BlankLine) break;
+
+         //  This is a comment, so keep moving up to find the insertion point.
+         //
+         pred = PrevBegin(pred);
+         continue;
+      }
+
+      if(type == AccessControl)
+      {
+         //  This access control belongs to NEXT.  If it isn't the desired
+         //  control, insert the item here, which pushes that control down.
+         //  An access control will now precede and follow the item, so no
+         //  blank line will be needed to set it off.
+         //
+         if(next->GetAccess() != attrs.access)
+         {
+            attrs.control = true;
+            attrs.blank = BlankNone;
+            return pred;
+         }
+      }
+
+      break;
+   }
+
+   //  Insert the item above the line that follows PRED.
+   //
+   return NextBegin(pred);
 }
 
 //------------------------------------------------------------------------------

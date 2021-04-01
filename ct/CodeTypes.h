@@ -621,6 +621,10 @@ private:
 LineType CalcLineType
    (std::string s, bool& cont, std::set< Warning >& warnings);
 
+//  Returns true if a S is a bare access control for keyword ACC.
+//
+bool IsAccessControl(const std::string& s, NodeBase::fixed_string acc);
+
 //  Returns the resulting line length if LINE1[BEGIN1..END1] and
 //  LINE2[BEGIN2..END2] were merged.  Returns SIZE_MAX if the lines
 //  should not be merged.

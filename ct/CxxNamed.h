@@ -57,6 +57,10 @@ public:
    //
    virtual void SetLoc(CodeFile* file, size_t pos) const;
 
+   //  Sets the access control that applies to the item.
+   //
+   virtual void SetAccess(Cxx::Access access) { }
+
    //  Sets the context in which this item was found:
    //  o Invokes SetScope(Context::Scope()) unless the item already has a scope
    //  o invokes SetAccess(item's scope->GetCurrAccess())
@@ -366,10 +370,6 @@ protected:
    //
    virtual void SetScope(CxxScope* scope) { }
 
-   //  Sets the access control that applies to the item.
-   //
-   virtual void SetAccess(Cxx::Access access) { }
-
    //  Resolves the item's qualified name.  FILE, SCOPE, MASK, and VIEW are
    //  the same as the arguments for CxxSymbols::FindSymbol.
    //
@@ -419,6 +419,14 @@ private:
    //
    mutable CxxLocation loc_;
 };
+
+//  For sorting items by GetFile() and GetPos().
+//
+bool IsSortedByFilePos(const CxxNamed* item1, const CxxNamed* item2);
+
+//  For sorting items by GetPos() when all are in the same file.
+//
+bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2);
 
 //------------------------------------------------------------------------------
 //

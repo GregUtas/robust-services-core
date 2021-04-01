@@ -262,12 +262,6 @@ public:
    CodeWarning* FindLog(const CodeWarning& log,
       const CxxNamed* item, NodeBase::word offset);
 
-   //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
-   //  report includes line type counts and warnings found during parsing and
-   //  compilation.
-   //
-   static void GenerateReport(std::ostream* stream, const LibItemSet& set);
-
    //  Adds the file's line types to the global count.
    //
    void GetLineCounts() const;

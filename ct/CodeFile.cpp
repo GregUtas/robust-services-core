@@ -216,9 +216,7 @@ void GetTransitiveBases(const CxxNamedSet& bases, LibItemSet& tBaseSet)
 
 bool IsSortedByPosition(const Function* func1, const Function* func2)
 {
-   if(func1->GetPos() < func2->GetPos()) return true;
-   if(func1->GetPos() > func2->GetPos()) return false;
-   return (func1 < func2);
+   return IsSortedByPos(func1, func2);
 }
 
 //------------------------------------------------------------------------------
@@ -1481,15 +1479,6 @@ word CodeFile::Format(string& expl)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::GenerateReport(ostream* stream, const LibItemSet& set)
-{
-   Debug::ft("CodeFile.GenerateReport");
-
-   CodeWarning::GenerateReport(stream, set);
-}
-
-//------------------------------------------------------------------------------
-
 void CodeFile::GetDeclaredBaseClasses(CxxNamedSet& bases) const
 {
    Debug::ft("CodeFile.GetDeclaredBaseClasses");
@@ -2032,7 +2021,8 @@ void CodeFile::LogPos(size_t pos, Warning warning,
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogRemoveForwards(ostream* stream, const CxxNamedSet& items) const
+void CodeFile::LogRemoveForwards
+   (ostream* stream, const CxxNamedSet& items) const
 {
    Debug::ft("CodeFile.LogRemoveForwards");
 

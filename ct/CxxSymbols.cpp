@@ -30,6 +30,7 @@
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
+#include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
@@ -279,36 +280,6 @@ bool IsSortedByName(const CxxScoped* item1, const CxxScoped* item2)
 
 //------------------------------------------------------------------------------
 
-bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2)
-{
-   auto file1 = item1->GetFile();
-   auto file2 = item2->GetFile();
-   if(file1 == nullptr)
-   {
-      if(file2 != nullptr) return true;
-   }
-   else if(file2 == nullptr)
-   {
-      return false;
-   }
-   else
-   {
-      auto fn1 = file1->Path(false);
-      auto fn2 = file2->Path(false);
-      auto result = fn1.compare(fn2);
-      if(result < 0) return true;
-      if(result > 0) return false;
-   }
-
-   auto pos1 = item1->GetPos();
-   auto pos2 = item2->GetPos();
-   if(pos1 < pos2) return true;
-   if(pos1 > pos2) return false;
-   return (item1 < item2);
-}
-
-//------------------------------------------------------------------------------
-
 bool IsSortedByScope(const CxxScoped* item1, const CxxScoped* item2)
 {
    //  The first comparison ignores case, whereas the second one does not.
@@ -364,7 +335,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
             refs.push_back(*r);
          }
 
-         std::sort(refs.begin(), refs.end(), IsSortedByPos);
+         std::sort(refs.begin(), refs.end(), IsSortedByFilePos);
 
          auto name = (*n)->XrefName(true);
          if(name.empty()) continue;
@@ -401,7 +372,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
          refs.push_back(*r);
       }
 
-      std::sort(refs.begin(), refs.end(), IsSortedByPos);
+      std::sort(refs.begin(), refs.end(), IsSortedByFilePos);
 
       auto file = (*i)->GetFile();
       if(file != itemFile)

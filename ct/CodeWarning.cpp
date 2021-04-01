@@ -153,7 +153,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
    //  statements, for example, are affected by earlier recommendations for
    //  #included files.
    //
-   auto check =new CodeFileSet(LibrarySet::TemporaryName(), &files);
+   auto check = new CodeFileSet(LibrarySet::TemporaryName(), &files);
    auto order = check->SortInBuildOrder();
 
    //  Run a check on each file in ORDER, as well as on each C++ item.
@@ -501,10 +501,10 @@ void CodeWarning::Initialize()
       WarningAttrs(T,
       "Redundant access control")));
    Attrs_.insert(WarningPair(ItemCouldBePrivate,
-      WarningAttrs(F,
+      WarningAttrs(T,
       "Member could be private")));
    Attrs_.insert(WarningPair(ItemCouldBeProtected,
-      WarningAttrs(F,
+      WarningAttrs(T,
       "Member could be protected")));
    Attrs_.insert(WarningPair(PointerTypedef,
       WarningAttrs(F,
@@ -570,7 +570,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T,
       "Implicit destructor invoked")));
    Attrs_.insert(WarningPair(VirtualDestructor,
-      WarningAttrs(F,
+      WarningAttrs(T,
       "Base class virtual destructor is not public")));
    Attrs_.insert(WarningPair(NonVirtualDestructor,
       WarningAttrs(T,
@@ -759,10 +759,10 @@ void CodeWarning::Initialize()
       WarningAttrs(F,
       "Data could be free")));
    Attrs_.insert(WarningPair(ConstructorNotPrivate,
-      WarningAttrs(F,
+      WarningAttrs(T,
       "Singleton's constructor should be private")));
    Attrs_.insert(WarningPair(DestructorNotPrivate,
-      WarningAttrs(F,
+      WarningAttrs(T,
       "Singleton's destructor should be private")));
    Attrs_.insert(WarningPair(RedundantScope,
       WarningAttrs(T,

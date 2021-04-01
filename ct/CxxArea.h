@@ -320,6 +320,10 @@ public:
    //
    bool SetCurrAccess(Cxx::Access access);
 
+   //  Returns all of the items declared in the class.
+   //
+   const CxxNamedVector& Items() const { return items_; }
+
    //  Returns the class's direct base class.
    //
    virtual Class* BaseClass()

@@ -471,19 +471,14 @@ void ClassData::CheckAccessControl() const
 {
    Debug::ft("ClassData.CheckAccessControl");
 
-   //  This checks for data that
-   //  o could have a more restricted access control, or
-   //  o that is not private.
-   //  Neither of these is particularly useful for static const data.
-   //
-   if(IsStatic() && IsConst()) return;
    CxxScope::CheckAccessControl();
 
-   //  Do not log data as non-private if
-   //  o it is static and const (already checked above)
+   //  This also logs data that isn't private, unless
+   //  o it is static and const
    //  o it is declared in a .cpp
    //  o it belongs to a struct or union
    //
+   if(IsStatic() && IsConst()) return;
    if(GetAccess() == Cxx::Private) return;
    if(GetFile()->IsCpp()) return;
    if(GetClass()->GetClassTag() != Cxx::ClassType) return;
@@ -2485,13 +2480,20 @@ void Function::CheckAccessControl() const
    //
    if(deleted_) return;
 
-   //  Don't check the access control of destructors.  If this is an override,
-   //  don't suggest a more restricted access control unless the function has
-   //  a broader access control than the root function.
+   //  Don't check the access control of destructors or operators (except
+   //  for operator=).
    //
-   auto type = FuncType();
-   if(type == FuncDtor) return;
+   switch(FuncType())
+   {
+   case FuncDtor:
+      return;
+   case FuncOperator:
+      if(Name() != "operator=") return;
+   }
 
+   //  If this is an override, don't suggest a more restricted access control
+   //  unless the function has a broader access control than the root function.
+   //
    if(override_)
    {
       if(GetAccess() <= FindRootFunc()->GetAccess()) return;
@@ -2876,7 +2878,10 @@ void Function::CheckDtor() const
          if((dtor != nullptr) && (dtor->GetAccess() != Cxx::Public)) return;
       }
 
-      if(GetAccess() != Cxx::Public) Log(VirtualDestructor);
+      if((GetAccess() != Cxx::Public) && !cls->IsSingletonBase())
+      {
+         Log(VirtualDestructor);
+      }
    }
    else
    {
@@ -3075,11 +3080,6 @@ bool Function::CheckIfUnused(Warning warning) const
    if(type_) return false;
    if(!IsUnused()) return false;
 
-   auto& name = Name();
-   if(name.find("operator new") == 0) return false;
-   if(name.find("operator delete") == 0) return false;
-   if(IsComparisonOperator() && HasUsedComparisonOperator()) return false;
-
    switch(FuncRole())
    {
    case CopyCtor:
@@ -3087,6 +3087,7 @@ bool Function::CheckIfUnused(Warning warning) const
       return IsUnusedCopyFunction();
    }
 
+   if(FuncType() == FuncOperator) return false;
    Log(warning);
    return true;
 }
@@ -4184,17 +4185,6 @@ bool Function::HasInvokers() const
 
 //------------------------------------------------------------------------------
 
-bool Function::HasUsedComparisonOperator() const
-{
-   Debug::ft("Function.HasUsedComparisonOperator");
-
-   return (IsUsed("operator==") || IsUsed("operator!=") ||
-      IsUsed("operator<") || IsUsed("operator<=") ||
-      IsUsed("operator>") || IsUsed("operator>="));
-}
-
-//------------------------------------------------------------------------------
-
 void Function::IncrThisReads() const
 {
    Debug::ft("Function.IncrThisReads");
@@ -4454,19 +4444,6 @@ void Function::InvokeDefaultBaseCtor() const
 
 //------------------------------------------------------------------------------
 
-bool Function::IsComparisonOperator() const
-{
-   Debug::ft("Function.IsComparisonOperator");
-
-   auto& name = Name();
-
-   return ((name == "operator==") || (name == "operator!=") ||
-      (name == "operator<") || (name == "operator<=") ||
-      (name == "operator>") || (name == "operator>="));
-}
-
-//------------------------------------------------------------------------------
-
 bool Function::IsDeleted() const
 {
    Debug::ft("Function.IsDeleted");
@@ -4647,19 +4624,6 @@ bool Function::IsUnusedCopyFunction() const
    func = cls->FindFuncByRole(CopyOper, false);
    if((func != nullptr) && func->HasInvokers()) return false;
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-bool Function::IsUsed(const string& name) const
-{
-   Debug::ft("Function.IsUsed");
-
-   auto cls = GetClass();
-   if(cls == nullptr) return false;
-   auto func = cls->FindFunc(name, nullptr, false, nullptr, nullptr);
-   if(func == nullptr) return false;
-   return !func->IsUnused();
 }
 
 //------------------------------------------------------------------------------

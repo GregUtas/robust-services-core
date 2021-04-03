@@ -95,6 +95,7 @@ struct ItemDeclAttrs
    //
    bool oper;            // set for an operator
    bool virt;            // set to make a function virtual
+   bool stat;            // set for a static function or data
    bool control;         // set to insert access control
    size_t indent;        // number of spaces for indentation
    BlankLocation blank;  // where to insert a blank line
@@ -110,6 +111,7 @@ ItemDeclAttrs::ItemDeclAttrs(Cxx::ItemType t, Cxx::Access a) :
    over(false),
    oper(false),
    virt(false),
+   stat(false),
    control(false),
    indent(0),
    blank(BlankNone),
@@ -127,6 +129,7 @@ ItemDeclAttrs::ItemDeclAttrs(const CxxNamed* item) :
    over(false),
    oper(false),
    virt(false),
+   stat(false),
    control(false),
    indent(0),
    blank(BlankNone),
@@ -134,13 +137,21 @@ ItemDeclAttrs::ItemDeclAttrs(const CxxNamed* item) :
 {
    Debug::ft("ItemDeclAttrs.ctor(item)");
 
-   if(type == Cxx::Function)
+   switch(type)
+   {
+   case Cxx::Function:
    {
       auto func = static_cast< const Function* >(item);
       role = func->FuncRole();
       over = func->IsOverride();
       oper = (func->FuncType() == FuncOperator);
       virt = func->IsVirtual();
+   }
+   //  [[fallthrough]]
+
+   case Cxx::Data:
+      stat = item->IsStatic();
+      break;
    }
 }
 
@@ -164,52 +175,52 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
       order = 0;
       break;
    case Cxx::Protected:
-      order = 16;
+      order = 20;
       break;
    default:
-      order = 32;
+      order = 40;
    }
 
-   //  Within each access control, the order is enums, typdefs, inner classes,
-   //  functions, and lastly data.  Within functions, special member functions
-   //  are first, followed by operators, regular functions, virtual functions,
-   //  and finally overrides.
-   //
    switch(type)
    {
-   case Cxx::Enum:
+   case Cxx::Friend:
       return order + 1;
-   case Cxx::Typedef:
+   case Cxx::Forward:
       return order + 2;
-   case Cxx::Class:
+   case Cxx::Enum:
       return order + 3;
+   case Cxx::Typedef:
+      return order + 4;
+   case Cxx::Class:
+      return order + 5;
 
    case Cxx::Function:
    {
       switch(role)
       {
       case PureCtor:
-         return order + 4;
-      case PureDtor:
-         return order + 5;
-      case CopyCtor:
          return order + 6;
-      case MoveCtor:
+      case PureDtor:
          return order + 7;
-      case CopyOper:
+      case CopyCtor:
          return order + 8;
-      case MoveOper:
+      case MoveCtor:
          return order + 9;
-      default:
-         if(oper) return order + 10;
-         if(virt) return order + 12;
-         if(over) return order + 13;
+      case CopyOper:
+         return order + 10;
+      case MoveOper:
          return order + 11;
+      default:
+         if(oper) return order + 12;
+         if(virt) return order + 14;
+         if(over) return order + 15;
+         return order + 13;
       }
    }
 
    case Cxx::Data:
-      return order + 15;
+      if(stat) return order + 17;
+      return order + 16;
    }
 
    Debug::SwLog(ItemDeclAttrs_CalcDeclOrder, "unexpected item type", type);

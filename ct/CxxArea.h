@@ -346,6 +346,11 @@ public:
    //
    bool IsSingleton() const;
 
+   //  Returns true if all of the class is a singleton or its derived
+   //  classes are all singletons.
+   //
+   bool IsSingletonBase() const;
+
    //  Returns the class's friends.
    //
    const FriendPtrVector* Friends() const { return &friends_; }
@@ -400,6 +405,10 @@ public:
    //
    Function* FindCtor(StackArgVector* args,
       const CxxScope* scope = nullptr, SymbolView* view = nullptr);
+
+   //  Returns the class's constructors.
+   //
+   void FindCtors(FunctionVector& ctors) const;
 
    //  Returns the destructor.  Returns nullptr if the class doesn't define one,
    //  in which case it has a default, public destructor.

@@ -536,13 +536,7 @@ void CxxScoped::CheckAccessControl() const
 {
    Debug::ft("CxxScoped.CheckAccessControl");
 
-   //  If an item is used, log it if its access control could be
-   //  more restrictive.
-   //
-   auto cls = GetClass();
-   if(cls == nullptr) return;
-   if(IsInTemplateInstance()) return;
-   if(IsUnused()) return;
+   if(SkipAccessControlCheck()) return;
 
    auto used = BroadestAccessUsed();
 
@@ -655,14 +649,17 @@ CodeFile* CxxScoped::GetImplFile() const
 
 bool CxxScoped::GetRange(size_t& begin, size_t& left, size_t& end) const
 {
-   if(IsInTemplateInstance())
+   if(IsInternal())
    {
       return CxxNamed::GetRange(begin, left, end);
    }
 
+   //  GetTypeSpec returns an internal "int" for an enum that doesn't define
+   //  an underlying type, so the position of the enum itself must be used.
+   //
    auto lexer = GetFile()->GetLexer();
    auto spec = GetTypeSpec();
-   if(spec == nullptr)
+   if((spec == nullptr) || spec->IsInternal())
       begin = GetPos();
    else
       begin = spec->GetPos();
@@ -679,6 +676,20 @@ bool CxxScoped::IsAuto() const
    auto spec = GetTypeSpec();
    if(spec == nullptr) return false;
    return spec->IsAuto();
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxScoped::IsClassMember() const
+{
+   if(Type() != Cxx::Class)
+   {
+      auto cls = GetClass();
+      if(cls == nullptr) return false;
+      return (cls->GetClassTag() == Cxx::ClassType);
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -926,6 +937,18 @@ void CxxScoped::RecordTemplateAccess(Cxx::Access access) const
    if(item != nullptr) item->RecordAccess(access);
 }
 
+//------------------------------------------------------------------------------
+
+bool CxxScoped::SkipAccessControlCheck() const
+{
+   Debug::ft("CxxScoped.SkipAccessControlCheck");
+
+   if(!IsClassMember()) return true;
+   if(IsInTemplateInstance()) return true;
+   if(IsUnused()) return true;
+   return false;
+}
+
 //==============================================================================
 
 Enum::Enum(string& name) : refs_(0)
@@ -1004,6 +1027,8 @@ void Enum::Check() const
 void Enum::CheckAccessControl() const
 {
    Debug::ft("Enum.CheckAccessControl");
+
+   if(SkipAccessControlCheck()) return;
 
    //  Whether the access control can be further restricted depends on
    //  each of the enumerators as well as the enumeration type itself.

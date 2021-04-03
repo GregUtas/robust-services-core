@@ -60,6 +60,12 @@ public:
    virtual bool NameRefersToItem(const std::string& name,
       const CxxScope* scope, CodeFile* file, SymbolView& view) const;
 
+   //  Returns true if the item is declared in a class rather than a struct
+   //  or union.  Returns false if the item is a class itself, even an inner
+   //  class.
+   //
+   bool IsClassMember() const;
+
    //  Returns true if the item is a member of AREA.  The search stops after
    //  it reaches the first namespace.
    //
@@ -208,6 +214,10 @@ protected:
    //  Logs an item whose name hides a name defined in a base class.
    //
    virtual void CheckIfHiding() const;
+
+   //  Returns true if access control checking should be skipped for this item.
+   //
+   bool SkipAccessControlCheck() const;
 
    //  Logs an item whose access control could be more restrictive.
    //

@@ -1134,6 +1134,23 @@ Function* Class::FindCtor
 
 //------------------------------------------------------------------------------
 
+void Class::FindCtors(FunctionVector& ctors) const
+{
+   Debug::ft("Class.FindCtors");
+
+   auto funcs = Funcs();
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      if((*f)->FuncRole() == PureCtor)
+      {
+         ctors.push_back(f->get());
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 Function* Class::FindDtor() const
 {
    Debug::ft("Class.FindDtor");
@@ -1723,6 +1740,41 @@ bool Class::IsSingleton() const
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool Class::IsSingletonBase() const
+{
+   Debug::ft("Class.IsSingletonBase");
+
+   //  This class is a singleton base if
+   //  o all classes derived and instantiated from it are singleton bases and
+   //  o the class itself is either a singleton *or* has no public constructor
+   //    (so could serve as a singleton base because it is virtual).
+   //
+   for(auto s = subs_.cbegin(); s != subs_.cend(); ++s)
+   {
+      if(!(*s)->IsSingletonBase()) return false;
+   }
+
+   for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
+   {
+      if(!(*t)->IsSingletonBase()) return false;
+   }
+
+   if(IsSingleton()) return true;
+
+   FunctionVector ctors;
+   FindCtors(ctors);
+   if(ctors.empty()) return false;
+
+   for(auto c = ctors.cbegin(); c != ctors.cend(); ++c)
+   {
+      if((*c)->GetAccess() == Cxx::Public) return false;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------

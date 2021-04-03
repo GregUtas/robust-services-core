@@ -46,6 +46,14 @@ void CxxLocation::SetLoc(CodeFile* file, size_t pos)
 
 //------------------------------------------------------------------------------
 
+void CxxLocation::SetLoc(CodeFile* file, size_t pos, bool internal)
+{
+   SetLoc(file, pos);
+   internal_ = internal;
+}
+
+//------------------------------------------------------------------------------
+
 void CxxLocation::UpdatePos(EditorAction action,
    size_t begin, size_t count, size_t from)
 {

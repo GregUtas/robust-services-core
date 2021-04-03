@@ -323,7 +323,7 @@ CxxStatement::CxxStatement(size_t pos)
 {
    Debug::ft("CxxStatement.ctor");
 
-   loc_.SetLoc(nullptr, pos);
+   loc_.SetLoc(Context::File(), pos);
 }
 
 //------------------------------------------------------------------------------

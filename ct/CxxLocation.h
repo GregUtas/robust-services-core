@@ -51,6 +51,7 @@ public:
    //  Records the item's location in source code.
    //
    void SetLoc(CodeFile* file, size_t pos);
+   void SetLoc(CodeFile* file, size_t pos, bool internal);
 
    //  Returns the file in which the item is located.  A template instance
    //  belongs to the file that caused its instantiation.  An item added by

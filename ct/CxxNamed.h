@@ -56,6 +56,7 @@ public:
    //  Sets the file and offset at which this item was found.
    //
    virtual void SetLoc(CodeFile* file, size_t pos) const;
+   void SetLoc(CodeFile* file, size_t pos, bool internal) const;
 
    //  Sets the access control that applies to the item.
    //

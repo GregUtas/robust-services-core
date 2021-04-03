@@ -100,8 +100,7 @@ CodeWarning::CodeWarning(Warning warning, CodeFile* file, size_t pos,
    //  Make the warning non-internal so that CxxLocation.UpdatePos will
    //  will update its position when code is edited.
    //
-   loc_.SetLoc(file, pos);
-   loc_.SetInternal(false);
+   loc_.SetLoc(file, pos, false);
    if(Attrs_.at(warning).fixable) status = NotFixed;
 }
 

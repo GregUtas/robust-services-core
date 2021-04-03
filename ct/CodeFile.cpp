@@ -2442,7 +2442,7 @@ void CodeFile::Scan()
          }
 
          IncludePtr incl(new Include(file, angle));
-         incl->SetLoc(this, lexer_.GetLineStart(n));
+         incl->SetLoc(this, lexer_.GetLineStart(n), false);
          InsertInclude(incl);
       }
    }

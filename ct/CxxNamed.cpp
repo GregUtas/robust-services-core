@@ -240,8 +240,7 @@ void CxxNamed::CopyContext(const CxxNamed* that)
    auto scope = that->GetScope();
    SetScope(scope);
    SetAccess(that->GetAccess());
-   loc_.SetLoc(that->GetFile(), that->GetPos());
-   loc_.SetInternal(true);
+   loc_.SetLoc(that->GetFile(), that->GetPos(), true);
 }
 
 //------------------------------------------------------------------------------
@@ -678,6 +677,16 @@ void CxxNamed::SetLoc(CodeFile* file, size_t pos) const
    Debug::ft("CxxNamed.SetLoc");
 
    loc_.SetLoc(file, pos);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxNamed::SetLoc(CodeFile* file, size_t pos, bool internal) const
+{
+   Debug::ft("CxxNamed.SetLoc(internal)");
+
+   SetLoc(file, pos);
+   loc_.SetInternal(internal);
 }
 
 //------------------------------------------------------------------------------

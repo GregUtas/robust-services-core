@@ -24,7 +24,6 @@
 
 #include "BcProtocol.h"
 #include "BcSessions.h"
-#include "Trigger.h"
 #include <cstddef>
 #include "BcCause.h"
 #include "BcProgress.h"
@@ -362,10 +361,9 @@ class ProxyBcReleaseHandler : public ProxyBcEventHandler
 //
 //  Proxy call triggers.
 //
-class ProxyBcTrigger : public Trigger
+namespace ProxyBcTrigger
 {
-public:
-   static const Id FirstId = BcTrigger::NextId;
+   constexpr TriggerId FirstId = BcTrigger::NextId;
 
    //  This SNP indicates that the subscriber's UPSM is being released as
    //  a result of redirecting the call.  It occurs during services such as
@@ -373,27 +371,21 @@ public:
    //  that depend on the subscriber's UPSM to remove themselves from the
    //  call, even though the call is continuing.
    //
-   static const Id UserReleasedSnp = FirstId + 0;
+   constexpr TriggerId UserReleasedSnp = FirstId + 0;
 
    //  This SAP indicates that a proxy UPSM has answered the call.  It is
    //  defined because the default behavior is to release all other UPSMs
    //  (including the subscriber) and connect the call to the proxy UPSM
    //  that answered.
    //
-   static const Id ProxyAnswerSap  = FirstId + 1;
+   constexpr TriggerId ProxyAnswerSap = FirstId + 1;
 
    //  This SNP indicates that a proxy UPSM has been awarded the call and
    //  that all other UPSMs are about to be released.
    //
-   static const Id ProxyAnswerSnp  = FirstId + 2;
-   static const Id NextId          = FirstId + 3;
-
-   //  Deleted because this class only has static members.  It defines
-   //  trigger identifiers to which active modifier SSMs can react, but
-   //  no actual triggers (for Initiators) use these identifiers as yet.
-   //
-   ProxyBcTrigger() = delete;
-};
+   constexpr TriggerId ProxyAnswerSnp = FirstId + 2;
+   constexpr TriggerId NextId = FirstId + 3;
+}
 
 //------------------------------------------------------------------------------
 //

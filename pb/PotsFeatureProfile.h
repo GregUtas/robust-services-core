@@ -72,7 +72,7 @@ protected:
    //
    explicit PotsFeatureProfile(PotsFeature::Id fid);
 
-   //  Protected because subclasses should be singletons.
+   //  Protected to restrict deletion.  Virtual to allow subclassing.
    //
    virtual ~PotsFeatureProfile();
 private:

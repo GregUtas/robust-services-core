@@ -88,7 +88,7 @@ std::vector< CodeWarning > CodeWarning::Warnings_ =
 //------------------------------------------------------------------------------
 
 CodeWarning::CodeWarning(Warning warning, CodeFile* file, size_t pos,
-   const CxxNamed* item, word offset, const string& info) :
+   const CxxToken* item, word offset, const string& info) :
    warning_(warning),
    item_(item),
    offset_(offset),

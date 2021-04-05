@@ -53,6 +53,14 @@ protected:
    //  Protected because this class is virtual.
    //
    LibraryItem();
+
+   //  Copy constructor.
+   //
+   LibraryItem(const LibraryItem& that) = default;
+
+   //  Copy operator.
+   //
+   LibraryItem& operator=(const LibraryItem& that) = default;
 };
 
 //  For sorting a LibraryItem* set.  This provides consistent ordering so that

@@ -41,6 +41,7 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxString.h"
+#include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Library.h"
@@ -1310,7 +1311,7 @@ void CodeFile::FindDeclSet()
 //------------------------------------------------------------------------------
 
 CodeWarning* CodeFile::FindLog
-   (const CodeWarning& log, const CxxNamed* item, word offset)
+   (const CodeWarning& log, const CxxToken* item, word offset)
 {
    Debug::ft("CodeFile.FindLog");
 
@@ -1986,7 +1987,7 @@ void CodeFile::LogAddUsings(ostream* stream)
 //------------------------------------------------------------------------------
 
 void CodeFile::LogCode(Warning warning, size_t pos,
-   const CxxNamed* item, word offset, const string& info)
+   const CxxToken* item, word offset, const string& info)
 {
    Debug::ft("CodeFile.LogCode");
 
@@ -2012,7 +2013,7 @@ void CodeFile::LogLine(size_t line, Warning warning)
 //------------------------------------------------------------------------------
 
 void CodeFile::LogPos(size_t pos, Warning warning,
-   const CxxNamed* item, word offset, const string& info)
+   const CxxToken* item, word offset, const string& info)
 {
    Debug::ft("CodeFile.LogPos");
 

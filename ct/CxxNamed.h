@@ -30,7 +30,6 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
-#include "CxxLocation.h"
 #include "CxxString.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
@@ -53,71 +52,10 @@ public:
    //
    CxxNamed& operator=(const CxxNamed& that) = delete;
 
-   //  Sets the file and offset at which this item was found.
-   //
-   virtual void SetLoc(CodeFile* file, size_t pos) const;
-   void SetLoc(CodeFile* file, size_t pos, bool internal) const;
-
-   //  Sets the access control that applies to the item.
-   //
-   virtual void SetAccess(Cxx::Access access) { }
-
-   //  Sets the context in which this item was found:
-   //  o Invokes SetScope(Context::Scope()) unless the item already has a scope
-   //  o invokes SetAccess(item's scope->GetCurrAccess())
-   //  o invokes SetLoc(Context::File(), pos)
-   //
-   void SetContext(size_t pos);
-
-   //  Sets the item's context based on THAT.  Used when an item is created
-   //  internally (e.g. the "this" argument for a member function).
-   //
-   virtual void CopyContext(const CxxNamed* that);
-
-   //  Returns the item's location information.
-   //
-   const CxxLocation& GetLoc() const { return loc_; }
-
-   //  Returns the file in which this item was found.
-   //
-   CodeFile* GetFile() const { return loc_.GetFile(); }
-
-   //  Returns the offset at which the item was found.
-   //
-   size_t GetPos() const { return loc_.GetPos(); }
-
-   //  Sets BEGIN and END to where the item begins and ends, and LEFT to the
-   //  position of its opening left brace (if applicable, else string::npos).
-   //  If LEFT applies, END will be the position of the matching right brace.
-   //  Returns false if the item
-   //  o doesn't end at a semicolon, although the item could provide an
-   //    override if this proved useful;
-   //  o is part of a template instantiation and therefore doesn't appear
-   //    in a source file.
-   //
-   virtual bool GetRange(size_t& begin, size_t& left, size_t& end) const;
-
-   //  Returns the scope (namespace, class, or block) where the item is
-   //  declared.
-   //
-   virtual CxxScope* GetScope() const { return nullptr; }
-
-   //  Returns true if the item is static.  Note that, for the purposes
-   //  of this function:
-   //  o only data and functions can be classified as non-static;
-   //  o class membership for non-static data and functions must be
-   //    checked separately, using if(item->GetClass() != nullptr).
-   //
-   virtual bool IsStatic() const { return true; }
-
    //  Returns true if the item was declared in a function's code block
    //  or argument list.
    //
    virtual bool IsDeclaredInFunction() const { return false; }
-
-   //  Returns true if the item appeared in internally generated code.
-   //
-   bool IsInternal() const { return loc_.IsInternal(); }
 
    //  Sets the template parameters when the item declares a template.
    //  The default version generates a log and must be overridden by an
@@ -133,10 +71,6 @@ public:
    //  Returns true if the item declares template parameters.
    //
    bool IsTemplate() const { return GetTemplateParms() != nullptr; }
-
-   //  Returns the template, if any, associated with a class or function.
-   //
-   virtual CxxScope* GetTemplate() const { return nullptr; }
 
    //  Returns the qualified name as it appeared in the source code.  Includes
    //  prefixed scopes if SCOPES is set and template arguments if TEMPLATES is
@@ -174,10 +108,6 @@ public:
    //
    virtual Function* GetFunction() const { return nullptr; }
 
-   //  Returns the access control that applies to the item.
-   //
-   virtual Cxx::Access GetAccess() const { return Cxx::Public; }
-
    //  Returns the file that *declared* the item.  Declaration is distinct
    //  from definition for extern data and functions, and often for static
    //  class data.  Such items appear twice, with one being the declaration
@@ -193,11 +123,6 @@ public:
    //  Returns true if the item was declared at file scope.
    //
    bool AtFileScope() const;
-
-   //  Returns the item's mate.  Returns nullptr unless the item is declared
-   //  and defined separately, in which case it returns the other instance.
-   //
-   virtual CxxNamed* GetMate() const { return nullptr; }
 
    //  Invoked before adding the item to the current scope (Context::Scope()).
    //  Returning false indicates that
@@ -247,42 +172,12 @@ public:
    //
    virtual void Instantiate() { }
 
-   //  If the item is, or belongs to, a template instance, returns the instance.
-   //
-   virtual CxxScope* GetTemplateInstance() const;
-
-   //  Returns true if the item is, or belongs to, a template instance.
-   //
-   bool IsInTemplateInstance() const;
-
-   //  If this item appears in a template instance, returns the template
-   //  item that corresponds to ITEM.
-   //
-   virtual CxxScoped* FindTemplateAnalog(const CxxNamed* item) const;
-
    //  Constructs an argument for the item when it is named directly, perhaps
    //  through an implicit "this".  OP is the operator that is on top of the
    //  operator stack (Cxx::NIL_OPERATOR if the stack is empty).  The result
    //  is pushed onto the argument stack.  NAME was used to access the item.
    //
    virtual StackArg NameToArg(Cxx::Operator op, TypeName* name);
-
-   //  Used to find the end of an item that is to be cut when editing code.
-   //  Returns the character(s) that terminate the item.  An item terminated
-   //  by an endline returns CRLF_STR.  Returning EMPTY_STR indicates that an
-   //  error has occurred and that the item should not be cut by itself.
-   //
-   virtual std::string EndChars() const { return NodeBase::EMPTY_STR; }
-
-   //  After invoking EndChars, the end of the item was found at END.  If END
-   //  should not be cut, and a character that precedes the item should be cut
-   //  instead, this function returns the preceding character(s) that can be
-   //  cut.  If none of those characters directly precedes the start of the
-   //  item, END is not cut, but neither is the previous character.  Returning
-   //  EMPTY_STR indicates that no adjustment is required.
-   //
-   virtual std::string BeginChars(char end) const
-      { return NodeBase::EMPTY_STR; }
 
    //  Constructs an argument for the item when it was accessed through VIA,
    //  NAME, and OP (either "." or "->" in VIA OP NAME).
@@ -308,14 +203,6 @@ public:
    //  function on GetTypeSpec().
    //
    virtual void GetDirectTemplateArgs(CxxUsageSets& symbols) const;
-
-   //  Logs WARNING at the position where this item is located.  ITEM,
-   //  OFFSET, and INFO are specific to WARNING.  If ITEM is nullptr,
-   //  "this" is included included in the log.
-   //
-   void Log(Warning warning, const CxxNamed* item = nullptr,
-      NodeBase::word offset = 0,
-      const std::string& info = NodeBase::EMPTY_STR) const;
 
    //  The default returns ScopedName(templates).  Overridden by functions
    //  to append argument types when the function's name is ambiguous.
@@ -349,11 +236,6 @@ public:
    //
    Namespace* GetSpace() const override;
 
-   //  Overridden to update the item's position.
-   //
-   void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from) const override;
-
    //  Overridden to return the item's scoped name.
    //
    std::string Trace() const override { return ScopedName(true); }
@@ -365,11 +247,6 @@ protected:
    //  Copy constructor.
    //
    CxxNamed(const CxxNamed& that);
-
-   //  Sets the scope where the item was found.  For classes derived from
-   //  CxxScoped, this is usually the scope where the item is declared.
-   //
-   virtual void SetScope(CxxScope* scope) { }
 
    //  Resolves the item's qualified name.  FILE, SCOPE, MASK, and VIEW are
    //  the same as the arguments for CxxSymbols::FindSymbol.
@@ -415,19 +292,7 @@ private:
    //
    void CheckForRedundantScope
       (const CxxScope* scope, const QualName* qname) const;
-
-   //  The location where the item appeared.
-   //
-   mutable CxxLocation loc_;
 };
-
-//  For sorting items by GetFile() and GetPos().
-//
-bool IsSortedByFilePos(const CxxNamed* item1, const CxxNamed* item2);
-
-//  For sorting items by GetPos() when all are in the same file.
-//
-bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2);
 
 //------------------------------------------------------------------------------
 //
@@ -793,7 +658,7 @@ public:
 
    //  Overridden to propagate the context to each name.
    //
-   void CopyContext(const CxxNamed* that) override;
+   void CopyContext(const CxxToken* that) override;
 
    //  Overridden to forward to the last name.
    //
@@ -1334,7 +1199,7 @@ private:
 
    //  Overridden to propagate the context to the type's qualified name.
    //
-   void CopyContext(const CxxNamed* that) override;
+   void CopyContext(const CxxToken* that) override;
 
    //  Overridden to return the class, if any, to which the type ultimately
    //  refers, provided that it is not a pointer or reference to that class.

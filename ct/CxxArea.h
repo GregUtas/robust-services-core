@@ -852,7 +852,7 @@ public:
 
    //  Overridden to return the template item that corresponds to ITEM.
    //
-   CxxScoped* FindTemplateAnalog(const CxxNamed* item) const override;
+   CxxScoped* FindTemplateAnalog(const CxxToken* item) const override;
 
    //  Overridden to return the template's base class declaration.
    //

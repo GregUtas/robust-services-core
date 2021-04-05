@@ -293,7 +293,7 @@ bool Block::InLine() const
 
 //------------------------------------------------------------------------------
 
-bool Block::LocateItem(const CxxNamed* item, size_t& n) const
+bool Block::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("Block.LocateItem");
 
@@ -3736,7 +3736,7 @@ Function* Function::FindRootFunc() const
 
 fn_name Function_FindTemplateAnalog = "Function.FindTemplateAnalog";
 
-CxxScoped* Function::FindTemplateAnalog(const CxxNamed* item) const
+CxxScoped* Function::FindTemplateAnalog(const CxxToken* item) const
 {
    Debug::ft(Function_FindTemplateAnalog);
 
@@ -4685,7 +4685,7 @@ void Function::ItemAccessed(const CxxNamed* item, const StackArg* via)
 
 //------------------------------------------------------------------------------
 
-bool Function::LocateItem(const CxxNamed* item, size_t& n) const
+bool Function::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("Function.LocateItem");
 

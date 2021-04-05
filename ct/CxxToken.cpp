@@ -21,6 +21,7 @@
 //
 #include "CxxToken.h"
 #include <sstream>
+#include "CodeFile.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxNamed.h"
@@ -40,6 +41,45 @@ using std::string;
 
 namespace CodeTools
 {
+bool IsSortedByFilePos(const CxxToken* item1, const CxxToken* item2)
+{
+   auto file1 = item1->GetFile();
+   auto file2 = item2->GetFile();
+   if(file1 == nullptr)
+   {
+      if(file2 != nullptr) return true;
+   }
+   else if(file2 == nullptr)
+   {
+      return false;
+   }
+   else
+   {
+      auto fn1 = file1->Path(false);
+      auto fn2 = file2->Path(false);
+      auto result = fn1.compare(fn2);
+      if(result < 0) return true;
+      if(result > 0) return false;
+   }
+
+   auto pos1 = item1->GetPos();
+   auto pos2 = item2->GetPos();
+   if(pos1 < pos2) return true;
+   if(pos1 > pos2) return false;
+   return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByPos(const CxxToken* item1, const CxxToken* item2)
+{
+   if(item1->GetPos() < item2->GetPos()) return true;
+   if(item1->GetPos() > item2->GetPos()) return false;
+   return (item1 < item2);
+}
+
+//==============================================================================
+
 AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 {
    Debug::ft("AlignAs.ctor");
@@ -268,9 +308,27 @@ CxxToken::CxxToken()
 
 //------------------------------------------------------------------------------
 
+CxxToken::CxxToken(const CxxToken& that) : LibraryItem(that),
+   loc_(that.loc_)
+{
+   Debug::ft("CxxToken.ctor(copy)");
+}
+
+//------------------------------------------------------------------------------
+
 CxxToken::~CxxToken()
 {
    Debug::ftnt("CxxToken.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void CxxToken::CopyContext(const CxxToken* that)
+{
+   Debug::ft("CxxToken.CopyContext");
+
+   loc_.SetLoc(that->GetFile(), that->GetPos());
+   loc_.SetInternal(true);
 }
 
 //------------------------------------------------------------------------------
@@ -307,6 +365,27 @@ void CxxToken::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+CxxScoped* CxxToken::FindTemplateAnalog(const CxxToken* item) const
+{
+   Debug::ft("CxxToken.FindTemplateAnalog");
+
+   auto inst = GetTemplateInstance();
+   if(inst == nullptr) return nullptr;
+   return inst->FindTemplateAnalog(item);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxToken::GetRange(size_t& begin, size_t& left, size_t& end) const
+{
+   begin = string::npos;
+   left = string::npos;
+   end = string::npos;
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 TypeName* CxxToken::GetTemplateArgs() const
 {
    Debug::ft("CxxToken.GetTemplateArgs");
@@ -317,12 +396,62 @@ TypeName* CxxToken::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
+CxxScope* CxxToken::GetTemplateInstance() const
+{
+   auto scope = GetScope();
+   if(scope == nullptr) return nullptr;
+   return scope->GetTemplateInstance();
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxToken::IsInTemplateInstance() const
+{
+   return (GetTemplateInstance() != nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 bool CxxToken::IsPointer(bool arrays) const
 {
    auto spec = GetTypeSpec();
    if(spec == nullptr) return (GetNumeric().Type() == Numeric::PTR);
    auto ptrs = spec->Ptrs(arrays);
    return (ptrs > 0);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxToken::Log(Warning warning,
+   const CxxToken* item, word offset, const string& info) const
+{
+   Debug::ft("CxxToken.Log");
+
+   //  If this warning is associated with a template instance, log it
+   //  against the template.
+   //
+   auto inst = GetTemplateInstance();
+
+   if(inst != nullptr)
+   {
+      auto that = inst->FindTemplateAnalog(this);
+      if(that == nullptr) return;
+      if(item != nullptr) item = inst->FindTemplateAnalog(item);
+      that->Log(warning, item, offset, info);
+      return;
+   }
+
+   if(item == nullptr) item = this;
+   GetFile()->LogPos(GetPos(), warning, item, offset, info);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken& CxxToken::operator=(const CxxToken& that)
+{
+   Debug::ft("CxxToken.operator=");
+
+   this->loc_ = that.loc_;
 }
 
 //------------------------------------------------------------------------------
@@ -382,12 +511,48 @@ CxxToken* CxxToken::Root() const
 
 //------------------------------------------------------------------------------
 
+void CxxToken::SetContext(size_t pos)
+{
+   Debug::ft("CxxToken.SetContext");
+
+   loc_.SetLoc(Context::File(), pos);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxToken::SetLoc(CodeFile* file, size_t pos) const
+{
+   Debug::ft("CxxToken.SetLoc");
+
+   loc_.SetLoc(file, pos);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxToken::SetLoc(CodeFile* file, size_t pos, bool internal) const
+{
+   Debug::ft("CxxToken.SetLoc(internal)");
+
+   SetLoc(file, pos);
+   loc_.SetInternal(internal);
+}
+
+//------------------------------------------------------------------------------
+
 void CxxToken::ShrinkTokens(const TokenPtrVector& tokens)
 {
    for(auto t = tokens.cbegin(); t != tokens.cend(); ++t)
    {
       (*t)->Shrink();
    }
+}
+
+//------------------------------------------------------------------------------
+
+void CxxToken::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   loc_.UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------

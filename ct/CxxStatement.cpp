@@ -203,7 +203,7 @@ void Catch::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
-bool Catch::LocateItem(const CxxNamed* item, size_t& n) const
+bool Catch::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("Catch.LocateItem");
 
@@ -428,7 +428,7 @@ bool Do::InLine() const
 
 //------------------------------------------------------------------------------
 
-bool Do::LocateItem(const CxxNamed* item, size_t& n) const
+bool Do::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("Do.LocateItem");
 
@@ -681,7 +681,7 @@ bool For::InLine() const
 
 //------------------------------------------------------------------------------
 
-bool For::LocateItem(const CxxNamed* item, size_t& n) const
+bool For::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("For.LocateItem");
 
@@ -859,7 +859,7 @@ bool If::InLine() const
 
 //------------------------------------------------------------------------------
 
-bool If::LocateItem(const CxxNamed* item, size_t& n) const
+bool If::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("If.LocateItem");
 
@@ -1124,7 +1124,7 @@ void Switch::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
-bool Switch::LocateItem(const CxxNamed* item, size_t& n) const
+bool Switch::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("Switch.LocateItem");
 
@@ -1259,7 +1259,7 @@ void Try::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
-bool Try::LocateItem(const CxxNamed* item, size_t& n) const
+bool Try::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("Try.LocateItem");
 
@@ -1374,7 +1374,7 @@ bool While::InLine() const
 
 //------------------------------------------------------------------------------
 
-bool While::LocateItem(const CxxNamed* item, size_t& n) const
+bool While::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("While.LocateItem");
 

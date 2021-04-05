@@ -39,6 +39,7 @@
 #include "CxxScoped.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
+#include "CxxToken.h"
 #include "Debug.h"
 #include "Duration.h"
 #include "Formatters.h"
@@ -78,7 +79,7 @@ struct ItemDeclAttrs
 
    //  Initializes the attributes for ITEM.
    //
-   explicit ItemDeclAttrs(const CxxNamed* item);
+   explicit ItemDeclAttrs(const CxxToken* item);
 
    //  Returns the order, within a class, where the item should be declared.
    //
@@ -122,7 +123,7 @@ ItemDeclAttrs::ItemDeclAttrs(Cxx::ItemType t, Cxx::Access a) :
 
 //------------------------------------------------------------------------------
 
-ItemDeclAttrs::ItemDeclAttrs(const CxxNamed* item) :
+ItemDeclAttrs::ItemDeclAttrs(const CxxToken* item) :
    type(item->Type()),
    access(item->GetAccess()),
    role(FuncOther),
@@ -259,7 +260,7 @@ const string BackChars = "$%@!>\"";
 //  Returns true if ITEM1 and ITEM2 appear in the same statement: specifically,
 //  if a semicolon does not appear between their positions.
 //
-bool AreInSameStatement(const CxxNamed* item1, const CxxNamed* item2)
+bool AreInSameStatement(const CxxToken* item1, const CxxToken* item2)
 {
    if((item1 != nullptr) && (item2 != nullptr))
    {
@@ -671,7 +672,7 @@ word Editor::ChangeAccess
    //  Move the item's declaration and update its access control.
    //
    string code;
-   auto item = const_cast< CxxNamed* >(log.item_);
+   auto item = const_cast< CxxToken* >(log.item_);
    ItemDeclAttrs attrs(item);
    attrs.access = acc;
    auto from = CutCode(item, expl, code);
@@ -833,7 +834,7 @@ word Editor::ChangeDebugFtName
 //------------------------------------------------------------------------------
 
 void Editor::ChangeForwards
-   (const CxxNamed* item, fixed_string from, fixed_string to)
+   (const CxxToken* item, fixed_string from, fixed_string to)
 {
    Debug::ft("Editor.ChangeForwards");
 
@@ -1222,7 +1223,7 @@ word Editor::ConvertTabsToBlanks()
 
 //------------------------------------------------------------------------------
 
-size_t Editor::CutCode(const CxxNamed* item, string& expl, string& code)
+size_t Editor::CutCode(const CxxToken* item, string& expl, string& code)
 {
    Debug::ft("Editor.CutCode");
 
@@ -1625,7 +1626,7 @@ word Editor::EraseClass(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseCode(const CxxNamed* item, string& expl)
+word Editor::EraseCode(const CxxToken* item, string& expl)
 {
    Debug::ft("Editor.EraseCode");
 
@@ -2077,7 +2078,7 @@ size_t Editor::FindArgsEnd(const Function* func)
 
 //------------------------------------------------------------------------------
 
-size_t Editor::FindCutBegin(const CxxNamed* item) const
+size_t Editor::FindCutBegin(const CxxToken* item) const
 {
    Debug::ft("Editor.FindCutBegin");
 
@@ -2192,8 +2193,8 @@ size_t Editor::FindItemDeclLoc
    auto where = attrs.CalcDeclOrder();
    CxxNamedVector items;
    GetItems(cls, items);
-   const CxxNamed* prev = nullptr;
-   const CxxNamed* next = nullptr;
+   const CxxToken* prev = nullptr;
+   const CxxToken* next = nullptr;
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
@@ -2226,7 +2227,7 @@ size_t Editor::FindItemDeclLoc
 //------------------------------------------------------------------------------
 
 CodeWarning* Editor::FindLog
-   (const CodeWarning& log, const CxxNamed* item, word offset)
+   (const CodeWarning& log, const CxxToken* item, word offset)
 {
    Debug::ft("Editor.FindLog");
 
@@ -2311,7 +2312,7 @@ size_t Editor::FindSpecialFuncLoc
 
 //------------------------------------------------------------------------------
 
-CxxNamedSet Editor::FindUsingReferents(CxxNamed* item) const
+CxxNamedSet Editor::FindUsingReferents(CxxToken* item) const
 {
    Debug::ft("Editor.FindUsingReferents");
 
@@ -3842,7 +3843,7 @@ bool Editor::IsDirective(size_t pos, fixed_string hash) const
 
 //------------------------------------------------------------------------------
 
-size_t Editor::LineAfterItem(const CxxNamed* item) const
+size_t Editor::LineAfterItem(const CxxToken* item) const
 {
    Debug::ft("Editor.LineAfterItem");
 
@@ -3907,7 +3908,7 @@ word Editor::MoveDefine(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.MoveDefine");
 
-   //  Move the #define directly after the #include directives.
+   //  Move this #define directly after the #include directives.
    //
    return Unimplemented(expl);
 }
@@ -3973,7 +3974,7 @@ size_t Editor::PrologEnd() const
 
 //------------------------------------------------------------------------------
 
-void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
+void Editor::QualifyReferent(const CxxToken* item, const CxxToken* ref)
 {
    Debug::ft("Editor.QualifyReferent");
 
@@ -4026,7 +4027,7 @@ void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
 
 //------------------------------------------------------------------------------
 
-void Editor::QualifyUsings(CxxNamed* item)
+void Editor::QualifyUsings(CxxToken* item)
 {
    Debug::ft("Editor.QualifyUsings");
 
@@ -4636,6 +4637,11 @@ word Editor::TagAsOverride(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.TagAsOverride");
 
+   //  Remove the function's virtual tag, if any.
+   //
+   EraseVirtualTag(log, expl);
+   expl.clear();
+
    //  Insert "override" after the last non-blank character at the end
    //  of the function's signature.
    //
@@ -4841,7 +4847,7 @@ size_t Editor::UpdateFuncDefnLoc
 //------------------------------------------------------------------------------
 
 void Editor::UpdateItemDeclAttrs
-   (const CxxNamed* item, ItemDeclAttrs& attrs) const
+   (const CxxToken* item, ItemDeclAttrs& attrs) const
 {
    Debug::ft("Editor.UpdateItemDeclAttrs");
 
@@ -4885,7 +4891,7 @@ void Editor::UpdateItemDeclAttrs
 fn_name Editor_UpdateItemDeclLoc = "Editor.UpdateItemDeclLoc";
 
 size_t Editor::UpdateItemDeclLoc
-   (const CxxNamed* prev, const CxxNamed* next, ItemDeclAttrs& attrs) const
+   (const CxxToken* prev, const CxxToken* next, ItemDeclAttrs& attrs) const
 {
    Debug::ft(Editor_UpdateItemDeclLoc);
 

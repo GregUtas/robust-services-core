@@ -48,6 +48,10 @@ public:
    //
    virtual ~CxxScoped();
 
+   //  Sets the scope where the declaration appeared.
+   //
+   virtual void SetScope(CxxScope* scope) { scope_ = scope; }
+
    //  Returns the file where the item is implemented.
    //
    CodeFile* GetImplFile() const;
@@ -124,6 +128,14 @@ public:
    //
    virtual bool CheckIfUnused(Warning warning) const;
 
+   //  Overridden to copy THAT's scope and access control.
+   //
+   void CopyContext(const CxxToken* that) override;
+
+   //  By default, items derived from this class end at the next semicolon.
+   //
+   std::string EndChars() const override { return ";"; }
+
    //  Overridden to decrement N if this item's name matches NAME, and to
    //  return this item if N has reached 0.
    //
@@ -189,7 +201,7 @@ public:
    //  Overridden to return true if this item matches ITEM and to increment
    //  N if this item's name matches ITEM.
    //
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
 
    //  Overridden to return the item itself.
    //
@@ -199,13 +211,11 @@ public:
    //
    void SetAccess(Cxx::Access access) override { access_ = access; }
 
-   //  Overridden to set the scope where the declaration appeared.
+   //  Overridden to
+   //  o invoke SetScope(Context::Scope()) unless the item already has a scope;
+   //  o invoke SetAccess(item's scope->GetCurrAccess()).
    //
-   void SetScope(CxxScope* scope) override { scope_ = scope; }
-
-   //  By default, items derived from this class end at the next semicolon.
-   //
-   std::string EndChars() const override { return ";"; }
+   void SetContext(size_t pos) override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -289,6 +299,11 @@ public:
    //
    CxxToken* AutoType() const override { return spec_.get(); }
 
+   //  If the argument ends at a right parenthesis, cut the preceding
+   //  comma (if any) instead.
+   //
+   std::string BeginChars(char end) const override;
+
    //  Overridden to log warnings associated with the argument.
    //
    void Check() const override;
@@ -296,11 +311,6 @@ public:
    //  An argument ends at the next comma or right parenthesis.
    //
    std::string EndChars() const override { return ",)"; }
-
-   //  If the argument ends at a right parenthesis, cut the preceding
-   //  comma (if any) instead.
-   //
-   std::string BeginChars(char end) const override;
 
    //  Overridden to make the argument visible as a local.
    //
@@ -442,6 +452,10 @@ public:
    //
    void AddToXref() override;
 
+   //  Causes the preceding colon, instead of the left brace, to be cut.
+   //
+   std::string BeginChars(char end) const override { return ":"; }
+
    //  Displays the base class declaration.
    //
    void DisplayDecl(std::ostream& stream, bool fq) const;
@@ -449,10 +463,6 @@ public:
    //  A base class ends at the left brace that begins the class definition.
    //
    std::string EndChars() const override { return "{"; }
-
-   //  Causes the preceding colon, instead of the left brace, to be cut.
-   //
-   std::string BeginChars(char end) const override { return ":"; }
 
    //  Overridden to record the current scope as a subclass of the base class.
    //
@@ -684,6 +694,11 @@ public:
    //
    CxxToken* AutoType() const override { return (CxxToken*) enum_; }
 
+   //  If the enumerator ended at a right brace, cut the preceding comma (if
+   //  any) instead.
+   //
+   std::string BeginChars(char end) const override;
+
    //  Overridden to log warnings associated with the enumerator.
    //
    void Check() const override;
@@ -696,11 +711,6 @@ public:
    //  An enumerator ends at the next comma or right brace.
    //
    std::string EndChars() const override { return ",}"; }
-
-   //  If the enumerator ended at a right brace, cut the preceding comma (if
-   //  any) instead.
-   //
-   std::string BeginChars(char end) const override;
 
    //  Overridden to display the enumeration.
    //
@@ -1167,14 +1177,14 @@ public:
    //
    void AddToXref() override;
 
-   //  A member initialization ends at the next comma or left brace.
-   //
-   std::string EndChars() const override { return ",{"; }
-
    //  If the member initialization ends at a left brace, cut the preceding
    //  comma or colon.
    //
    std::string BeginChars(char end) const override;
+
+   //  A member initialization ends at the next comma or left brace.
+   //
+   std::string EndChars() const override { return ",{"; }
 
    //  Overridden to compile the member's initialization expression.
    //
@@ -1434,14 +1444,14 @@ public:
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
 
-   //  A terminal is not cut by itself.
-   //
-   std::string EndChars() const override { return NodeBase::EMPTY_STR; }
-
    //  Overridden to display the terminal.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  A terminal is not cut by itself.
+   //
+   std::string EndChars() const override { return NodeBase::EMPTY_STR; }
 
    //  Overridden to push the terminal onto the stack.
    //

@@ -2259,7 +2259,7 @@ CxxScoped* ClassInst::FindInstanceAnalog(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-CxxScoped* ClassInst::FindTemplateAnalog(const CxxNamed* item) const
+CxxScoped* ClassInst::FindTemplateAnalog(const CxxToken* item) const
 {
    Debug::ft("ClassInst.FindTemplateAnalog");
 

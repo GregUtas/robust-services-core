@@ -132,7 +132,7 @@ public:
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -173,7 +173,7 @@ public:
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -225,7 +225,7 @@ public:
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -274,7 +274,7 @@ public:
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -365,7 +365,7 @@ public:
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -394,7 +394,7 @@ public:
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -421,7 +421,7 @@ public:
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;

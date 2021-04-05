@@ -111,7 +111,7 @@ public:
    //  matches OFFSET, and whose .item matches ITEM.
    //
    CodeWarning* FindLog
-      (const CodeWarning& log, const CxxNamed* item, word offset);
+      (const CodeWarning& log, const CxxToken* item, word offset);
 
    //  Overridden to display member variables.
    //
@@ -339,20 +339,20 @@ private:
 
    //  Returns the items within ITEM that were accessed via a using statement.
    //
-   CxxNamedSet FindUsingReferents(CxxNamed* item) const;
+   CxxNamedSet FindUsingReferents(CxxToken* item) const;
 
    //  Qualifies names used within ITEM in order to remove using statements.
    //
-   void QualifyUsings(CxxNamed* item);
+   void QualifyUsings(CxxToken* item);
 
    //  Within ITEM, qualifies occurrences of REF.
    //
-   void QualifyReferent(const CxxNamed* item, const CxxNamed* ref);
+   void QualifyReferent(const CxxToken* item, const CxxToken* ref);
 
    //  Change ITEM from a class/struct (FROM) to a struct/class (TO).
    //
    static void ChangeForwards
-      (const CxxNamed* item, fixed_string from, fixed_string to);
+      (const CxxToken* item, fixed_string from, fixed_string to);
 
    //  Fixes LOG, which also involves modifying overrides of a function.
    //  Updates EXPL with any explanation.
@@ -409,7 +409,7 @@ private:
 
    //  Returns the line that follows ITEM.
    //
-   size_t LineAfterItem(const CxxNamed* item) const;
+   size_t LineAfterItem(const CxxToken* item) const;
 
    //  Returns the location where the item CLS::NAME, of TYPE, should be
    //  declared.  Returns string::npos if the user decides not to add the
@@ -424,11 +424,11 @@ private:
    //  be offset with a blank line or comment.
    //
    size_t UpdateItemDeclLoc
-      (const CxxNamed* prev, const CxxNamed* next, ItemDeclAttrs& attrs) const;
+      (const CxxToken* prev, const CxxToken* next, ItemDeclAttrs& attrs) const;
 
    //  Updates ATTRS based on ITEM.
    //
-   void UpdateItemDeclAttrs(const CxxNamed* item, ItemDeclAttrs& attrs) const;
+   void UpdateItemDeclAttrs(const CxxToken* item, ItemDeclAttrs& attrs) const;
 
    //  Inserts what goes after a function declaration.  POS is where to insert.
    //  Returns POS.
@@ -493,7 +493,7 @@ private:
    //  Finds the start of ITEM and backs up to find the starting point for
    //  cutting the item.  Returns string::npos on failure.
    //
-   size_t FindCutBegin(const CxxNamed* item) const;
+   size_t FindCutBegin(const CxxToken* item) const;
 
    //  Cuts and returns the code associated with ITEM in CODE.  Comments on
    //  preceding lines, up to the next line of code, are also erased if a
@@ -501,11 +501,11 @@ private:
    //  that immediately follows the cut.  Returns string::npos and updates
    //  EXPL on failure.
    //
-   size_t CutCode(const CxxNamed* item, string& expl, string& code);
+   size_t CutCode(const CxxToken* item, string& expl, string& code);
 
    //  Erases the code associated with ITEM.
    //
-   word EraseCode(const CxxNamed* item, string& expl);
+   word EraseCode(const CxxToken* item, string& expl);
 
    //  Erases POS's line and returns the start of the line that followed it.
    //

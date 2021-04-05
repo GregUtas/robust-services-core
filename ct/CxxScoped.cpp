@@ -574,6 +574,18 @@ bool CxxScoped::CheckIfUnused(Warning warning) const
 
 //------------------------------------------------------------------------------
 
+void CxxScoped::CopyContext(const CxxToken* that)
+{
+   Debug::ft("CxxScoped.CopyContext");
+
+   CxxNamed::CopyContext(that);
+
+   SetScope(that->GetScope());
+   SetAccess(that->GetAccess());
+}
+
+//------------------------------------------------------------------------------
+
 void CxxScoped::DisplayFiles(ostream& stream) const
 {
    auto decl = GetDeclFile();
@@ -771,7 +783,7 @@ bool CxxScoped::IsSuperscopeOf(const string& fqSub, bool tmplt) const
 
 //------------------------------------------------------------------------------
 
-bool CxxScoped::LocateItem(const CxxNamed* item, size_t& n) const
+bool CxxScoped::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("CxxScoped.LocateItem");
 
@@ -935,6 +947,27 @@ void CxxScoped::RecordTemplateAccess(Cxx::Access access) const
 
    auto item = FindTemplateAnalog(this);
    if(item != nullptr) item->RecordAccess(access);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxScoped::SetContext(size_t pos)
+{
+   Debug::ft("CxxScoped.SetContext");
+
+   CxxNamed::SetContext(pos);
+
+   //  If the item has already set its scope, don't overwrite it.
+   //
+   auto scope = GetScope();
+
+   if(scope == nullptr)
+   {
+      scope = Context::Scope();
+      SetScope(scope);
+   }
+
+   SetAccess(scope->GetCurrAccess());
 }
 
 //------------------------------------------------------------------------------

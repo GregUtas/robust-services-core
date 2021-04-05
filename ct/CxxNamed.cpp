@@ -45,45 +45,6 @@ using std::string;
 
 namespace CodeTools
 {
-bool IsSortedByFilePos(const CxxNamed* item1, const CxxNamed* item2)
-{
-   auto file1 = item1->GetFile();
-   auto file2 = item2->GetFile();
-   if(file1 == nullptr)
-   {
-      if(file2 != nullptr) return true;
-   }
-   else if(file2 == nullptr)
-   {
-      return false;
-   }
-   else
-   {
-      auto fn1 = file1->Path(false);
-      auto fn2 = file2->Path(false);
-      auto result = fn1.compare(fn2);
-      if(result < 0) return true;
-      if(result > 0) return false;
-   }
-
-   auto pos1 = item1->GetPos();
-   auto pos2 = item2->GetPos();
-   if(pos1 < pos2) return true;
-   if(pos1 > pos2) return false;
-   return (item1 < item2);
-}
-
-//------------------------------------------------------------------------------
-
-bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2)
-{
-   if(item1->GetPos() < item2->GetPos()) return true;
-   if(item1->GetPos() > item2->GetPos()) return false;
-   return (item1 < item2);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CodeTools_ReferentError = "CodeTools.ReferentError";
 
 CxxScoped* ReferentError(const string& item, debug64_t offset)
@@ -150,8 +111,7 @@ CxxNamed::CxxNamed()
 
 //------------------------------------------------------------------------------
 
-CxxNamed::CxxNamed(const CxxNamed& that) : CxxToken(that),
-   loc_(that.loc_)
+CxxNamed::CxxNamed(const CxxNamed& that) : CxxToken(that)
 {
    Debug::ft("CxxNamed.ctor(copy)");
 }
@@ -233,18 +193,6 @@ void CxxNamed::CheckForRedundantScope
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::CopyContext(const CxxNamed* that)
-{
-   Debug::ft("CxxNamed.CopyContext");
-
-   auto scope = that->GetScope();
-   SetScope(scope);
-   SetAccess(that->GetAccess());
-   loc_.SetLoc(that->GetFile(), that->GetPos(), true);
-}
-
-//------------------------------------------------------------------------------
-
 void CxxNamed::DisplayReferent(ostream& stream, bool fq) const
 {
    auto ref = Referent();
@@ -269,17 +217,6 @@ void CxxNamed::FindReferent()
    Debug::ft(CxxNamed_FindReferent);
 
    Context::SwLog(CxxNamed_FindReferent, strOver(this), 0);
-}
-
-//------------------------------------------------------------------------------
-
-CxxScoped* CxxNamed::FindTemplateAnalog(const CxxNamed* item) const
-{
-   Debug::ft("CxxNamed.FindTemplateAnalog");
-
-   auto inst = GetTemplateInstance();
-   if(inst == nullptr) return nullptr;
-   return inst->FindTemplateAnalog(item);
 }
 
 //------------------------------------------------------------------------------
@@ -324,16 +261,6 @@ void CxxNamed::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-bool CxxNamed::GetRange(size_t& begin, size_t& left, size_t& end) const
-{
-   begin = string::npos;
-   left = string::npos;
-   end = string::npos;
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 void CxxNamed::GetScopedNames(stringVector& names, bool templates) const
 {
    names.push_back(SCOPE_STR + ScopedName(templates));
@@ -346,22 +273,6 @@ Namespace* CxxNamed::GetSpace() const
    auto item = GetScope();
    if(item == nullptr) return nullptr;
    return item->GetSpace();
-}
-
-//------------------------------------------------------------------------------
-
-CxxScope* CxxNamed::GetTemplateInstance() const
-{
-   auto scope = GetScope();
-   if(scope == nullptr) return nullptr;
-   return scope->GetTemplateInstance();
-}
-
-//------------------------------------------------------------------------------
-
-bool CxxNamed::IsInTemplateInstance() const
-{
-   return (GetTemplateInstance() != nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -382,31 +293,6 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
    auto& affecters = file2->Affecters();
    auto iter = affecters.find(file1);
    return (iter != affecters.cend());
-}
-
-//------------------------------------------------------------------------------
-
-void CxxNamed::Log(Warning warning,
-   const CxxNamed* item, word offset, const string& info) const
-{
-   Debug::ft("CxxNamed.Log");
-
-   //  If this warning is associated with a template instance, log it
-   //  against the template.
-   //
-   auto inst = GetTemplateInstance();
-
-   if(inst != nullptr)
-   {
-      auto that = inst->FindTemplateAnalog(this);
-      if(that == nullptr) return;
-      if(item != nullptr) item = inst->FindTemplateAnalog(item);
-      that->Log(warning, item, offset, info);
-      return;
-   }
-
-   if(item == nullptr) item = this;
-   GetFile()->LogPos(GetPos(), warning, item, offset, info);
 }
 
 //------------------------------------------------------------------------------
@@ -652,45 +538,6 @@ string CxxNamed::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::SetContext(size_t pos)
-{
-   Debug::ft("CxxNamed.SetContext");
-
-   //  If the item has already set its scope, don't overwrite it.
-   //
-   auto scope = GetScope();
-
-   if(scope == nullptr)
-   {
-      scope = Context::Scope();
-      SetScope(scope);
-   }
-
-   SetAccess(scope->GetCurrAccess());
-   loc_.SetLoc(Context::File(), pos);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxNamed::SetLoc(CodeFile* file, size_t pos) const
-{
-   Debug::ft("CxxNamed.SetLoc");
-
-   loc_.SetLoc(file, pos);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxNamed::SetLoc(CodeFile* file, size_t pos, bool internal) const
-{
-   Debug::ft("CxxNamed.SetLoc(internal)");
-
-   SetLoc(file, pos);
-   loc_.SetInternal(internal);
-}
-
-//------------------------------------------------------------------------------
-
 void CxxNamed::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::ft("CxxNamed.SetReferent");
@@ -751,15 +598,6 @@ string CxxNamed::to_str() const
    stream << name << " @ " << strLocation();
    stream << " [" << strClass(this, false) << ']';
    return stream.str();
-}
-
-//------------------------------------------------------------------------------
-
-void CxxNamed::UpdatePos
-   (EditorAction action, size_t begin, size_t count, size_t from) const
-{
-   CxxToken::UpdatePos(action, begin, count, from);
-   loc_.UpdatePos(action, begin, count, from);
 }
 
 //------------------------------------------------------------------------------
@@ -913,7 +751,7 @@ TypeSpec* DataSpec::Clone() const
 
 //------------------------------------------------------------------------------
 
-void DataSpec::CopyContext(const CxxNamed* that)
+void DataSpec::CopyContext(const CxxToken* that)
 {
    Debug::ft("DataSpec.CopyContext");
 
@@ -2174,7 +2012,7 @@ void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
 
 //------------------------------------------------------------------------------
 
-void QualName::CopyContext(const CxxNamed* that)
+void QualName::CopyContext(const CxxToken* that)
 {
    Debug::ft("QualName.CopyContext");
 

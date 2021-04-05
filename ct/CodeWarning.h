@@ -87,7 +87,7 @@ public:
    //  string::npos, it means that the warning has no code to display.
    //
    CodeWarning(Warning warning, CodeFile* file, size_t pos,
-      const CxxNamed* item, word offset, const std::string& info);
+      const CxxToken* item, word offset, const std::string& info);
 
    //  Returns the file in which the warning appeared.
    //
@@ -210,7 +210,7 @@ private:
 
    //  The C++ item associated with the warning.
    //
-   const CxxNamed* item_;
+   const CxxToken* item_;
 
    //  Warning specific.  If > 0, displayed after line number (used, for
    //  example, to specify that a function's Nth argument is associated

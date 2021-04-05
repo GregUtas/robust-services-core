@@ -226,7 +226,7 @@ public:
 
    //  Overridden to search the block's code for ITEM.
    //
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
 
    //  Overridden to return the block's name.
    //
@@ -1333,7 +1333,7 @@ public:
    //  Overridden to return the template item that corresponds to ITEM
    //  if this is a function in a template instance.
    //
-   CxxScoped* FindTemplateAnalog(const CxxNamed* item) const override;
+   CxxScoped* FindTemplateAnalog(const CxxToken* item) const override;
 
    //  Overridden to return the file that declared the function.
    //
@@ -1419,7 +1419,7 @@ public:
 
    //  Overridden to search the function's arguments and code for ITEM.
    //
-   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   bool LocateItem(const CxxToken* item, size_t& n) const override;
 
    //  Overridden to include VIA as a "this" argument.
    //

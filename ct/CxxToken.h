@@ -33,6 +33,7 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "CxxLocation.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
@@ -49,9 +50,55 @@ public:
    //
    virtual ~CxxToken();
 
+   //  Sets the file and offset at which this item was found.
+   //
+   virtual void SetLoc(CodeFile* file, size_t pos) const;
+   void SetLoc(CodeFile* file, size_t pos, bool internal) const;
+
+   //  Returns the item's location information.
+   //
+   const CxxLocation& GetLoc() const { return loc_; }
+
+   //  Invokes SetLoc(Context::File(), pos).
+   //
+   virtual void SetContext(size_t pos);
+
+   //  Sets the item's context based on THAT.  Used when an item is created
+   //  internally (e.g. during template instantiation).
+   //
+   virtual void CopyContext(const CxxToken* that);
+
+   //  Returns the file in which this item was found.
+   //
+   CodeFile* GetFile() const { return loc_.GetFile(); }
+
+   //  Returns the offset at which the item was found.
+   //
+   size_t GetPos() const { return loc_.GetPos(); }
+
+   //  Returns true if the item appeared in internally generated code.
+   //
+   bool IsInternal() const { return loc_.IsInternal(); }
+
+   //  Sets BEGIN and END to where the item begins and ends, and LEFT to the
+   //  position of its opening left brace (if applicable, else string::npos).
+   //  If LEFT applies, END will be the position of the matching right brace.
+   //  Returns false if the item
+   //  o doesn't end at a semicolon, although the item could provide an
+   //    override if this proved useful;
+   //  o is part of a template instantiation and therefore doesn't appear
+   //    in a source file.
+   //
+   virtual bool GetRange(size_t& begin, size_t& left, size_t& end) const;
+
    //  Returns the item's type.
    //
    virtual Cxx::ItemType Type() const { return Cxx::Undefined; }
+
+   //  Returns the scope (namespace, class, or block) where the item is
+   //  declared.
+   //
+   virtual CxxScope* GetScope() const { return nullptr; }
 
    //  Returns true if the type is a forward declaration: namely, if its
    //  Type() is Cxx::Forward or Cxx::Friend.  Declarations of data and
@@ -103,6 +150,22 @@ public:
    //
    virtual bool IsVolatilePtr(size_t n) const { return false; }
 
+   //  Returns true if the item is static.  Note that, for the purposes
+   //  of this function:
+   //  o only data and functions can be classified as non-static;
+   //  o class membership for non-static data and functions must be
+   //    checked separately, using if(item->GetClass() != nullptr).
+   //
+   virtual bool IsStatic() const { return true; }
+
+   //  Sets the access control that applies to the item.
+   //
+   virtual void SetAccess(Cxx::Access access) { }
+
+   //  Returns the access control that applies to the item.
+   //
+   virtual Cxx::Access GetAccess() const { return Cxx::Public; }
+
    //  Returns true if the item's type is "auto" and its actual type has
    //  yet to be determined.
    //
@@ -132,16 +195,38 @@ public:
    //
    virtual Class* GetClass() const { return nullptr; }
 
+   //  Returns the item's mate.  Returns nullptr unless the item is declared
+   //  and defined separately, in which case it returns the other instance.
+   //
+   virtual CxxNamed* GetMate() const { return nullptr; }
+
    //  Returns the class in which the item was declared.  Returns the outer
    //  class, if any, if the item itself is a class.
    //
    virtual Class* Declarer() const { return GetClass(); }
+
+   //  Returns the template, if any, associated with a class or function.
+   //
+   virtual CxxScope* GetTemplate() const { return nullptr; }
 
    //  Returns the template specification associated with the item, if any.
    //  The default implementation invokes GetQualName and, if the result is
    //  not nullptr, asks it for its template arguments.
    //
    virtual TypeName* GetTemplateArgs() const;
+
+   //  If the item is, or belongs to, a template instance, returns the instance.
+   //
+   virtual CxxScope* GetTemplateInstance() const;
+
+   //  Returns true if the item is, or belongs to, a template instance.
+   //
+   bool IsInTemplateInstance() const;
+
+   //  If this item appears in a template instance, returns the template
+   //  item that corresponds to ITEM.
+   //
+   virtual CxxScoped* FindTemplateAnalog(const CxxToken* item) const;
 
    //  Returns details about how the item can be converted to an integer.
    //  By default, conversion is not possible.
@@ -224,7 +309,7 @@ public:
    //  Searches this item for ITEM.  Returns true if it was found.  Increments
    //  N each time that an item with the same name was encountered.
    //
-   virtual bool LocateItem(const CxxNamed* item, size_t& n)
+   virtual bool LocateItem(const CxxToken* item, size_t& n)
       const { return false; }
 
    //  Searches this item for the Nth occurrence of an item that matches NAME.
@@ -279,13 +364,38 @@ public:
    //
    bool IsPOD() const { return GetNumeric().IsPOD(); }
 
+   //  Logs WARNING at the position where this item is located.  ITEM,
+   //  OFFSET, and INFO are specific to WARNING.  If ITEM is nullptr,
+   //  "this" is included included in the log.
+   //
+   void Log(Warning warning, const CxxToken* item = nullptr,
+      NodeBase::word offset = 0,
+      const std::string& info = NodeBase::EMPTY_STR) const;
+
+   //  Used to find the end of an item that is to be cut when editing code.
+   //  Returns the character(s) that terminate the item.  An item terminated
+   //  by an endline returns CRLF_STR.  Returning EMPTY_STR indicates that an
+   //  error has occurred and that the item should not be cut by itself.
+   //
+   virtual std::string EndChars() const { return NodeBase::EMPTY_STR; }
+
+   //  After invoking EndChars, the end of the item was found at END.  If END
+   //  should not be cut, and a character that precedes the item should be cut
+   //  instead, this function returns the preceding character(s) that can be
+   //  cut.  If none of those characters directly precedes the start of the
+   //  item, END is not cut, but neither is the previous character.  Returning
+   //  EMPTY_STR indicates that no adjustment is required.
+   //
+   virtual std::string BeginChars(char end) const
+      { return NodeBase::EMPTY_STR; }
+
    //  Invoked during editing when ACTION has occurred in the item's file.
    //  o Erased: COUNT characters erased at BEGIN
    //  o Inserted: COUNT characters inserted at BEGIN
    //  o Pasted: COUNT characters originally at FROM inserted at BEGIN
    //
    virtual void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from) const { }
+      size_t begin, size_t count, size_t from) const;
 
    //  Subclasses that declare items must override this.
    //
@@ -304,11 +414,11 @@ protected:
 
    //  Copy constructor.
    //
-   CxxToken(const CxxToken& that) = default;
+   CxxToken(const CxxToken& that);
 
    //  Copy operator.
    //
-   CxxToken& operator=(const CxxToken& that) = default;
+   CxxToken& operator=(const CxxToken& that);
 
    //  Shrinks TOKENS.
    //
@@ -318,7 +428,19 @@ private:
    //  (above) returns the item that returned nullptr.
    //
    virtual CxxToken* RootType() const { return const_cast< CxxToken* >(this); }
+
+   //  The location where the item appeared.
+   //
+   mutable CxxLocation loc_;
 };
+
+//  For sorting items by GetFile() and GetPos().
+//
+bool IsSortedByFilePos(const CxxToken* item1, const CxxToken* item2);
+
+//  For sorting items by GetPos() when all are in the same file.
+//
+bool IsSortedByPos(const CxxToken* item1, const CxxToken* item2);
 
 //------------------------------------------------------------------------------
 //

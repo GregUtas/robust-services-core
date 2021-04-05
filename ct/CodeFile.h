@@ -248,7 +248,7 @@ public:
    //  WARNING.
    //
    void LogPos(size_t pos, Warning warning,
-      const CxxNamed* item = nullptr, NodeBase::word offset = 0,
+      const CxxToken* item = nullptr, NodeBase::word offset = 0,
       const std::string& info = std::string(NodeBase::EMPTY_STR));
 
    //  Logs WARNING, which occurred on LINE.
@@ -260,7 +260,7 @@ public:
    //  whose .item matches ITEM.  Returns that log.
    //
    CodeWarning* FindLog(const CodeWarning& log,
-      const CxxNamed* item, NodeBase::word offset);
+      const CxxToken* item, NodeBase::word offset);
 
    //  Adds the file's line types to the global count.
    //
@@ -374,7 +374,7 @@ private:
    //  OFFSET and INFO are specific to WARNING.
    //
    void LogCode(Warning warning,
-      size_t pos, const CxxNamed* item, NodeBase::word offset = 0,
+      size_t pos, const CxxToken* item, NodeBase::word offset = 0,
       const std::string& info = std::string(NodeBase::EMPTY_STR));
 
    //  Returns false if >trim does not apply to this file (e.g. a substitute

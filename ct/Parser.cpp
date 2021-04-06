@@ -352,6 +352,8 @@ bool Parser::GetAlignAs(AlignAsPtr& align)
 {
    Debug::ft("Parser.GetAlignAs");
 
+   auto start = CurrPos();
+
    if(!NextKeywordIs(ALIGNAS_STR)) return true;
    if(!lexer_.NextCharIs('(')) return false;
    auto end = lexer_.FindClosing('(', ')');
@@ -369,6 +371,7 @@ bool Parser::GetAlignAs(AlignAsPtr& align)
       return false;
 
    if(!lexer_.NextCharIs(')')) return false;
+   token->SetContext(start);
    align.reset(new AlignAs(token));
    return true;
 }
@@ -377,7 +380,7 @@ bool Parser::GetAlignAs(AlignAsPtr& align)
 
 fn_name Parser_GetAlignOf = "Parser.GetAlignOf";
 
-bool Parser::GetAlignOf(ExprPtr& expr)
+bool Parser::GetAlignOf(ExprPtr& expr, size_t pos)
 {
    Debug::ft(Parser_GetAlignOf);
 
@@ -394,6 +397,7 @@ bool Parser::GetAlignOf(ExprPtr& expr)
    arg.reset(spec.release());
 
    TokenPtr token(new Operation(Cxx::ALIGNOF_TYPE));
+   token->SetContext(pos);
    auto op = static_cast< Operation* >(token.get());
    op->AddArg(arg, false);
    expr->AddItem(token);
@@ -408,6 +412,7 @@ bool Parser::GetArgList(TokenPtr& call)
 {
    Debug::ft(Parser_GetArgList);
 
+   auto prev = lexer_.Prev();
    auto start = CurrPos();
 
    //  The left parenthesis has already been parsed.
@@ -430,6 +435,7 @@ bool Parser::GetArgList(TokenPtr& call)
    }
 
    call.reset(new Operation(Cxx::FUNCTION_CALL));
+   call->SetContext(prev);
    auto op = static_cast< Operation* >(call.get());
 
    for(size_t i = 0; i < temps.size(); ++i)
@@ -546,6 +552,7 @@ bool Parser::GetArraySpec(ArraySpecPtr& array)
    GetCxxExpr(size, end);
    if(!lexer_.NextCharIs(']')) return Backup(start, 11);
    array.reset(new ArraySpec(size));
+   array->SetContext(start);
    return Success(Parser_GetArraySpec, start);
 }
 
@@ -697,6 +704,7 @@ bool Parser::GetBraceInit(ExprPtr& expr)
 {
    Debug::ft(Parser_GetBraceInit);
 
+   auto prev = lexer_.Prev();
    auto start = CurrPos();
 
    //  The left brace has already been parsed.  A comma is actually allowed
@@ -725,6 +733,7 @@ bool Parser::GetBraceInit(ExprPtr& expr)
    }
 
    TokenPtr token(new BraceInit);
+   token->SetContext(prev);
    auto brace = static_cast< BraceInit* >(token.get());
 
    for(size_t i = 0; i < temps.size(); ++i)
@@ -787,6 +796,7 @@ bool Parser::GetCast(ExprPtr& expr)
 {
    Debug::ft(Parser_GetCast);
 
+   auto prev = lexer_.Prev();
    auto start = CurrPos();
 
    //  The left parenthesis has already been parsed.
@@ -798,6 +808,7 @@ bool Parser::GetCast(ExprPtr& expr)
    if(!GetCxxExpr(item, expr->EndPos(), false)) return Backup(start, 28);
 
    TokenPtr token(new Operation(Cxx::CAST));
+   token->SetContext(prev);
    auto cast = static_cast< Operation* >(token.get());
    TokenPtr arg1(spec.release());
    TokenPtr arg2(item.release());
@@ -845,7 +856,7 @@ bool Parser::GetCatch(TokenPtr& statement)
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetChar(ExprPtr& expr, Cxx::Encoding code)
+bool Parser::GetChar(ExprPtr& expr, Cxx::Encoding code, size_t pos)
 {
    Debug::ft("Parser.GetChar");
 
@@ -878,6 +889,7 @@ bool Parser::GetChar(ExprPtr& expr, Cxx::Encoding code)
       return false;
    }
 
+   item->SetContext(pos);
    expr->AddItem(item);
    return true;
 }
@@ -1109,7 +1121,7 @@ bool Parser::GetCompoundType(QualNamePtr& name, Cxx::Type type)
 
 fn_name Parser_GetConditional = "Parser.GetConditional";
 
-bool Parser::GetConditional(ExprPtr& expr)
+bool Parser::GetConditional(ExprPtr& expr, size_t pos)
 {
    Debug::ft(Parser_GetConditional);
 
@@ -1127,6 +1139,7 @@ bool Parser::GetConditional(ExprPtr& expr)
    if(!GetCxxExpr(exp0, expr->EndPos(), false)) return Backup(start, 52);
 
    TokenPtr token(new Operation(Cxx::CONDITIONAL));
+   token->SetContext(pos);
    auto cond = static_cast< Operation* >(token.get());
    TokenPtr test(new Elision);
    TokenPtr value1(exp1.release());
@@ -1332,21 +1345,23 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
       case Cxx::FALSE:
       case Cxx::TRUE:
          item.reset(new BoolLiteral(op == Cxx::TRUE));
+         item->SetContext(qualName->GetPos());
          if(expr->AddItem(item)) return true;
          return Backup(start, 71);
 
       case Cxx::NULLPTR:
          item.reset(new NullPtr);
+         item->SetContext(qualName->GetPos());
          if(expr->AddItem(item)) return true;
          return Backup(start, 72);
 
       case Cxx::OBJECT_CREATE:
-         if(GetNew(expr, op)) return true;
+         if(GetNew(expr, op, qualName->GetPos())) return true;
          return Backup(start, 73);
 
       case Cxx::OBJECT_DELETE:
          if(lexer_.NextStringIs(ARRAY_STR)) op = Cxx::OBJECT_DELETE_ARRAY;
-         if(GetDelete(expr, op)) return true;
+         if(GetDelete(expr, op, qualName->GetPos())) return true;
          return Backup(start, 74);
 
       case Cxx::STATIC_CAST:
@@ -1360,28 +1375,28 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
             lexer_.Reposition(start);
             auto pos = lexer_.FindFirstOf("<");
             lexer_.Reposition(pos);
-            if(GetCxxCast(expr, op)) return true;
+            if(GetCxxCast(expr, op, qualName->GetPos())) return true;
             return Backup(start, 75);
          }
 
       case Cxx::SIZEOF_TYPE:
-         if(GetSizeOf(expr)) return true;
+         if(GetSizeOf(expr, qualName->GetPos())) return true;
          return Backup(start, 77);
 
       case Cxx::ALIGNOF_TYPE:
-         if(GetAlignOf(expr)) return true;
+         if(GetAlignOf(expr, qualName->GetPos())) return true;
          return Backup(start, 101);
 
       case Cxx::THROW:
-         if(GetThrow(expr)) return true;
+         if(GetThrow(expr, qualName->GetPos())) return true;
          return Backup(start, 76);
 
       case Cxx::TYPE_NAME:
-         if(GetTypeId(expr)) return true;
+         if(GetTypeId(expr, qualName->GetPos())) return true;
          return Backup(start, 78);
 
       case Cxx::NOEXCEPT:
-         if(GetNoExcept(expr)) return true;
+         if(GetNoExcept(expr, qualName->GetPos())) return true;
          return Backup(start, 228);
 
       default:
@@ -1399,7 +1414,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
 
 fn_name Parser_GetCxxCast = "Parser.GetCxxCast";
 
-bool Parser::GetCxxCast(ExprPtr& expr, Cxx::Operator op)
+bool Parser::GetCxxCast(ExprPtr& expr, Cxx::Operator op, size_t pos)
 {
    Debug::ft(Parser_GetCxxCast);
 
@@ -1415,6 +1430,7 @@ bool Parser::GetCxxCast(ExprPtr& expr, Cxx::Operator op)
    if(!GetParExpr(item, false)) return Backup(start, 84);
 
    TokenPtr token(new Operation(op));
+   token->SetContext(pos);
    auto cast = static_cast< Operation* >(token.get());
    TokenPtr arg1(spec.release());
    TokenPtr arg2(item.release());
@@ -1442,11 +1458,11 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
       switch(c)
       {
       case QUOTE:
-         if(GetStr(expr, Cxx::ASCII)) break;
+         if(GetStr(expr, Cxx::ASCII, start)) break;
          return Skip(end, expr);
 
       case APOSTROPHE:
-         if(GetChar(expr, Cxx::ASCII)) break;
+         if(GetChar(expr, Cxx::ASCII, start)) break;
          return Skip(end, expr);
 
       case '{':
@@ -1530,8 +1546,8 @@ bool Parser::GetCxxLiteralOrAlpha(ExprPtr& expr)
    if(code != Cxx::Encoding_N)
    {
       c = lexer_.CurrChar();
-      if(c == QUOTE) return GetStr(expr, code);
-      if(c == APOSTROPHE) return GetChar(expr, code);
+      if(c == QUOTE) return GetStr(expr, code, start);
+      if(c == APOSTROPHE) return GetChar(expr, code, start);
    }
 
    //  This wasn't a character or string literal,
@@ -1564,7 +1580,7 @@ bool Parser::GetDefault(TokenPtr& statement)
 
 fn_name Parser_GetDefined = "Parser.GetDefined";
 
-bool Parser::GetDefined(ExprPtr& expr)
+bool Parser::GetDefined(ExprPtr& expr, size_t pos)
 {
    Debug::ft(Parser_GetDefined);
 
@@ -1576,14 +1592,15 @@ bool Parser::GetDefined(ExprPtr& expr)
    string name;
 
    auto par = lexer_.NextCharIs('(');
-   auto pos = CurrPos();
+   auto mpos = CurrPos();
    if(!lexer_.GetName(name)) return Backup(start, 88);
    if(par && !lexer_.NextCharIs(')')) return Backup(start, 89);
 
    TokenPtr token(new Operation(Cxx::DEFINED));
+   token->SetContext(pos);
    auto op = static_cast< Operation* >(token.get());
    MacroNamePtr macro(new MacroName(name));
-   macro->SetContext(pos);
+   macro->SetContext(mpos);
    TokenPtr arg = std::move(macro);
    op->AddArg(arg, false);
    expr->AddItem(token);
@@ -1594,7 +1611,7 @@ bool Parser::GetDefined(ExprPtr& expr)
 
 fn_name Parser_GetDelete = "Parser.GetDelete";
 
-bool Parser::GetDelete(ExprPtr& expr, Cxx::Operator op)
+bool Parser::GetDelete(ExprPtr& expr, Cxx::Operator op, size_t pos)
 {
    Debug::ft(Parser_GetDelete);
 
@@ -1606,6 +1623,7 @@ bool Parser::GetDelete(ExprPtr& expr, Cxx::Operator op)
    if(!GetCxxExpr(item, expr->EndPos(), false)) return Backup(start, 90);
 
    TokenPtr token(new Operation(op));
+   token->SetContext(pos);
    auto delOp = static_cast< Operation* >(token.get());
    TokenPtr arg(item.release());
    delOp->AddArg(arg, false);
@@ -2453,7 +2471,7 @@ bool Parser::GetNamespace()
 
 fn_name Parser_GetNew = "Parser.GetNew";
 
-bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
+bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos)
 {
    Debug::ft(Parser_GetNew);
 
@@ -2480,6 +2498,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    //  and any arguments after that are additional ArraySpecs.
    //
    TokenPtr token(new Operation(op));
+   token->SetContext(pos);
    auto newOp = static_cast< Operation* >(token.get());
    expr->AddItem(token);
 
@@ -2496,6 +2515,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    else
    {
       token.reset(new Operation(Cxx::FUNCTION_CALL));
+      token->SetContext(start);
    }
 
    newOp->AddArg(token, false);
@@ -2543,7 +2563,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
 
 fn_name Parser_GetNoExcept = "Parser.GetNoExcept";
 
-bool Parser::GetNoExcept(ExprPtr& expr)
+bool Parser::GetNoExcept(ExprPtr& expr, size_t pos)
 {
    Debug::ft(Parser_GetNoExcept);
 
@@ -2555,6 +2575,7 @@ bool Parser::GetNoExcept(ExprPtr& expr)
    GetCxxExpr(item, expr->EndPos(), false);
 
    TokenPtr token(new Operation(Cxx::NOEXCEPT));
+   token->SetContext(pos);
    auto op = static_cast< Operation* >(token.get());
    TokenPtr arg(item.release());
    if(arg != nullptr) op->AddArg(arg, false);
@@ -2601,9 +2622,9 @@ bool Parser::GetOp(ExprPtr& expr, bool cxx)
    case Cxx::FUNCTION_CALL:
       return HandleParentheses(expr);
    case Cxx::ARRAY_SUBSCRIPT:
-      return GetSubscript(expr);
+      return GetSubscript(expr, start);
    case Cxx::CONDITIONAL:
-      return GetConditional(expr);
+      return GetConditional(expr, start);
    case Cxx::ONES_COMPLEMENT:
       return HandleTilde(expr, start);
    case Cxx::SCOPE_RESOLUTION:
@@ -2613,6 +2634,7 @@ bool Parser::GetOp(ExprPtr& expr, bool cxx)
       break;
    default:
       item.reset(new Operation(op));
+      item->SetContext(start);
    }
 
    if(expr->AddItem(item)) return true;
@@ -2662,7 +2684,7 @@ bool Parser::GetPreAlpha(ExprPtr& expr)
 
    if(name == DEFINED_STR)
    {
-      if(GetDefined(expr)) return true;
+      if(GetDefined(expr, start)) return true;
       return Backup(start, 153);
    }
 
@@ -2681,6 +2703,7 @@ bool Parser::GetPrecedence(ExprPtr& expr)
 {
    Debug::ft(Parser_GetPrecedence);
 
+   auto prev = lexer_.Prev();
    auto start = CurrPos();
 
    //  The left parenthesis has already been parsed.
@@ -2689,6 +2712,7 @@ bool Parser::GetPrecedence(ExprPtr& expr)
    if(!GetParExpr(item, true)) return Backup(start, 155);
 
    TokenPtr token(new Precedence(item));
+   token->SetContext(prev);
    expr->AddItem(token);
    return Success(Parser_GetPrecedence, start);
 }
@@ -2711,11 +2735,11 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
       switch(c)
       {
       case QUOTE:
-         if(GetStr(expr, Cxx::ASCII)) break;
+         if(GetStr(expr, Cxx::ASCII, start)) break;
          return Skip(end, expr);
 
       case APOSTROPHE:
-         if(GetChar(expr, Cxx::ASCII)) break;
+         if(GetChar(expr, Cxx::ASCII, start)) break;
          return Skip(end, expr);
 
       case '{':
@@ -2974,7 +2998,7 @@ bool Parser::GetReturn(TokenPtr& statement)
 
 fn_name Parser_GetSizeOf = "Parser.GetSizeOf";
 
-bool Parser::GetSizeOf(ExprPtr& expr)
+bool Parser::GetSizeOf(ExprPtr& expr, size_t pos)
 {
    Debug::ft(Parser_GetSizeOf);
 
@@ -3012,6 +3036,7 @@ bool Parser::GetSizeOf(ExprPtr& expr)
    while(false);
 
    TokenPtr token(new Operation(Cxx::SIZEOF_TYPE));
+   token->SetContext(pos);
    auto op = static_cast< Operation* >(token.get());
    op->AddArg(arg, false);
    expr->AddItem(token);
@@ -3157,7 +3182,7 @@ bool Parser::GetStaticAssert(StaticAssertPtr& statement)
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code)
+bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code, size_t pos)
 {
    Debug::ft("Parser.GetStr");
 
@@ -3186,6 +3211,8 @@ bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code)
    default:
       return false;
    }
+
+   str->SetContext(pos);
 
    uint32_t c;
 
@@ -3235,7 +3262,7 @@ bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code)
 
 fn_name Parser_GetSubscript = "Parser.GetSubscript";
 
-bool Parser::GetSubscript(ExprPtr& expr)
+bool Parser::GetSubscript(ExprPtr& expr, size_t pos)
 {
    Debug::ft(Parser_GetSubscript);
 
@@ -3254,6 +3281,7 @@ bool Parser::GetSubscript(ExprPtr& expr)
    //  Once that is finished, the expression for the array index can be added.
    //
    TokenPtr token(new Operation(Cxx::ARRAY_SUBSCRIPT));
+   token->SetContext(pos);
    auto op = static_cast< Operation* >(token.get());
    expr->AddItem(token);
    TokenPtr index(item.release());
@@ -3357,7 +3385,7 @@ bool Parser::GetTemplateParms(TemplateParmsPtr& parms)
 
 fn_name Parser_GetThrow = "Parser.GetThrow";
 
-bool Parser::GetThrow(ExprPtr& expr)
+bool Parser::GetThrow(ExprPtr& expr, size_t pos)
 {
    Debug::ft(Parser_GetThrow);
 
@@ -3369,6 +3397,7 @@ bool Parser::GetThrow(ExprPtr& expr)
    GetCxxExpr(item, expr->EndPos(), false);
 
    TokenPtr token(new Operation(Cxx::THROW));
+   token->SetContext(pos);
    auto op = static_cast< Operation* >(token.get());
    TokenPtr arg(item.release());
    if(arg != nullptr) op->AddArg(arg, false);
@@ -3453,7 +3482,7 @@ bool Parser::GetTypedef(TypedefPtr& type)
 
 fn_name Parser_GetTypeId = "Parser.GetTypeId";
 
-bool Parser::GetTypeId(ExprPtr& expr)
+bool Parser::GetTypeId(ExprPtr& expr, size_t pos)
 {
    Debug::ft(Parser_GetTypeId);
 
@@ -3465,6 +3494,7 @@ bool Parser::GetTypeId(ExprPtr& expr)
    if(!GetParExpr(type, false)) return Backup(start, 201);
 
    TokenPtr token(new Operation(Cxx::TYPE_NAME));
+   token->SetContext(pos);
    auto op = static_cast< Operation* >(token.get());
    TokenPtr arg(type.release());
    op->AddArg(arg, false);
@@ -4104,7 +4134,7 @@ bool Parser::HandlePragma(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-bool Parser::HandleTilde(ExprPtr& expr, size_t start)
+bool Parser::HandleTilde(ExprPtr& expr, size_t pos)
 {
    Debug::ft("Parser.HandleTilde");
 
@@ -4125,8 +4155,8 @@ bool Parser::HandleTilde(ExprPtr& expr, size_t start)
          if((op == Cxx::POINTER_SELECT) || (op == Cxx::REFERENCE_SELECT))
          {
             QualNamePtr name;
-            lexer_.Reposition(start);
-            if(!GetQualName(name)) return Backup(start, 212);
+            lexer_.Reposition(pos);
+            if(!GetQualName(name)) return Backup(pos, 212);
             item.reset(name.release());
          }
       }
@@ -4134,9 +4164,14 @@ bool Parser::HandleTilde(ExprPtr& expr, size_t start)
 
    //  If ITEM is still empty, the '~' should be a ones complement operator.
    //
-   if(item == nullptr) item.reset(new Operation(Cxx::ONES_COMPLEMENT));
+   if(item == nullptr)
+   {
+      item.reset(new Operation(Cxx::ONES_COMPLEMENT));
+      item->SetContext(pos);
+   }
+
    if(expr->AddItem(item)) return true;
-   return Backup(start, 213);
+   return Backup(pos, 213);
 }
 
 //------------------------------------------------------------------------------

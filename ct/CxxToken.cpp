@@ -441,8 +441,15 @@ void CxxToken::Log(Warning warning,
       return;
    }
 
+   auto file = GetFile();
+   auto pos = GetPos();
+
+   if(file == nullptr)
+      file = Context::File();
+   if(pos == string::npos)
+      pos = Context::GetPos();
    if(item == nullptr) item = this;
-   GetFile()->LogPos(GetPos(), warning, item, offset, info);
+   file->LogPos(pos, warning, item, offset, info);
 }
 
 //------------------------------------------------------------------------------
@@ -663,6 +670,13 @@ fn_name Expression_AddItem = "Expression.AddItem";
 bool Expression::AddItem(TokenPtr& item)
 {
    Debug::ft(Expression_AddItem);
+
+   //  The first item sets the position where the expression begins.
+   //
+   if(items_.empty())
+   {
+      SetContext(item->GetPos());
+   }
 
    if(item->Type() == Cxx::Operation)
    {
@@ -1309,7 +1323,7 @@ void Operation::CheckBitwiseOp(const StackArg& arg1, const StackArg& arg2) const
       case Cxx::BITWISE_OR_ASSIGN:
          if(arg1.IsBool() || arg2.IsBool())
          {
-            Context::Log(BitwiseOperatorOnBoolean);
+            Log(BitwiseOperatorOnBoolean);
          }
    }
 }
@@ -1327,11 +1341,11 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
    switch(op_)
    {
    case Cxx::REINTERPRET_CAST:
-      Context::Log(ReinterpretCast);
+      Log(ReinterpretCast);
       break;
 
    case Cxx::CAST:
-      Context::Log(UseOfCast);
+      Log(UseOfCast);
       break;
    }
 
@@ -1345,7 +1359,7 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
       case Cxx::CAST:
          if((inArg.IsConst()) && (inArg.IsIndirect() == outArg.IsIndirect()))
          {
-            Context::Log(CastingAwayConstness);
+            Log(CastingAwayConstness);
             constCast = true;
          }
          break;
@@ -1376,14 +1390,14 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
    {
       if(outClass->DerivesFrom(inClass))
       {
-         Context::Log(Downcasting);
+         Log(Downcasting);
          outClass->RecordUsage();
 
          if((op_ != Cxx::STATIC_CAST) && (op_ != Cxx::DYNAMIC_CAST))
          {
             if(!constCast && !outClass->IsInTemplateInstance())
             {
-               Context::Log(ExcessiveCast);
+               Log(ExcessiveCast);
             }
          }
       }
@@ -1391,7 +1405,7 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
       {
          if(!constCast && Context::ParsingSourceCode())
          {
-            Context::Log(UnnecessaryCast);
+            Log(UnnecessaryCast);
          }
       }
    }
@@ -1679,7 +1693,7 @@ void Operation::Execute() const
    case Cxx::LOGICAL_OR:
       if(IsOverloaded(arg1, arg2))
       {
-         Context::Log(OperatorOverloaded);
+         Log(OperatorOverloaded);
          return;
       }
       Record(op_, arg1, &arg2);
@@ -2669,7 +2683,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
    {
       if(lhs.IsBool() || rhs.IsBool())
       {
-         Context::Log(BoolMixedWithNumeric);
+         Log(BoolMixedWithNumeric);
       }
    }
 
@@ -2713,7 +2727,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
             break;
 
          case Numeric::ENUM:
-            Context::Log(EnumTypesDiffer);
+            Log(EnumTypesDiffer);
             err = false;
             break;
          }
@@ -2728,7 +2742,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
             //
             if(rhs.NumericType().Type() == Numeric::PTR)
             {
-               Context::Log(PointerArithmetic);
+               Log(PointerArithmetic);
                err = false;
                diff = true;
                break;
@@ -2742,7 +2756,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
             //
             if(rhs.NumericType().Type() == Numeric::INT)
             {
-               Context::Log(PointerArithmetic);
+               Log(PointerArithmetic);
                err = false;
             }
             break;

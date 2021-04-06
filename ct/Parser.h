@@ -470,10 +470,11 @@ private:
 
    //  Updates EXPR with the results of parsing a literal.  CODE specifies
    //  the encoding tag, if any, that preceded a character or string literal.
+   //  POS is the position of the ' or ".
    //
    bool GetNum(ExprPtr& expr);
-   bool GetChar(ExprPtr& expr, Cxx::Encoding code);
-   bool GetStr(ExprPtr& expr, Cxx::Encoding code);
+   bool GetChar(ExprPtr& expr, Cxx::Encoding code, size_t pos);
+   bool GetStr(ExprPtr& expr, Cxx::Encoding code, size_t pos);
 
    //  Updates EXPR with the results of parsing an expression enclosed by
    //  parentheses.  It tries, in order,
@@ -487,33 +488,33 @@ private:
    bool GetPrecedence(ExprPtr& expr);
 
    //  Updates EXPR with the results of parsing an expression that begins
-   //  with a '~', which could either be a ones complement operator or a
-   //  direct destructor invocation.  START was the location of the '~',
+   //  with a '~' at POS, which could either be a ones complement operator
+   //  or a direct destructor invocation.  POS was the location of the '~',
    //  which has already been parsed as an operator.
    //
-   bool HandleTilde(ExprPtr& expr, size_t start);
+   bool HandleTilde(ExprPtr& expr, size_t pos);
 
-   //  Updates EXPR with the results of parsing an array index.
+   //  Updates EXPR with the results of parsing an array index found at POS.
    //
-   bool GetSubscript(ExprPtr& expr);
+   bool GetSubscript(ExprPtr& expr, size_t pos);
 
    //  Updates EXPR with the results of parsing a brace initialization list.
    //
    bool GetBraceInit(ExprPtr& expr);
 
    //  Updates EXPR with the results of parsing an expression that begins with
-   //  the specified operator.
+   //  the specified operator, which is located at POS.
    //
-   bool GetAlignOf(ExprPtr& expr);
-   bool GetCxxCast(ExprPtr& expr, Cxx::Operator op);
-   bool GetConditional(ExprPtr& expr);
-   bool GetDefined(ExprPtr& expr);
-   bool GetDelete(ExprPtr& expr, Cxx::Operator op);
-   bool GetNew(ExprPtr& expr, Cxx::Operator op);
-   bool GetNoExcept(ExprPtr& expr);
-   bool GetSizeOf(ExprPtr& expr);
-   bool GetThrow(ExprPtr& expr);
-   bool GetTypeId(ExprPtr& expr);
+   bool GetAlignOf(ExprPtr& expr, size_t pos);
+   bool GetCxxCast(ExprPtr& expr, Cxx::Operator op, size_t pos);
+   bool GetConditional(ExprPtr& expr, size_t pos);
+   bool GetDefined(ExprPtr& expr, size_t pos);
+   bool GetDelete(ExprPtr& expr, Cxx::Operator op, size_t pos);
+   bool GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos);
+   bool GetNoExcept(ExprPtr& expr, size_t pos);
+   bool GetSizeOf(ExprPtr& expr, size_t pos);
+   bool GetThrow(ExprPtr& expr, size_t pos);
+   bool GetTypeId(ExprPtr& expr, size_t pos);
 
    //  Updates STATEMENT with the results of parsing a statement that begins
    //  with the specified keyword.  GetBasic handles assignments, function

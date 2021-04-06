@@ -1303,7 +1303,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
          auto func = Context::Scope()->GetFunction();
          if((func != nullptr) && (func->GetAccess() != Cxx::Private))
          {
-            Context::Log(ReturnsNonConstMember);
+            func->Log(ReturnsNonConstMember);
          }
       }
    }

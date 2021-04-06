@@ -30,7 +30,6 @@
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
-#include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"

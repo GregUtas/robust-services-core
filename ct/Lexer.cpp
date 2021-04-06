@@ -1327,6 +1327,7 @@ bool Lexer::GetNum(TokenPtr& item)
       auto value = CxxChar::Attrs[CurrChar()].intValue;
       if(value < 0) return false;
       item.reset(new IntLiteral(value, tags));
+      item->SetContext(curr_);
       return Advance(1);
    }
 
@@ -1388,6 +1389,7 @@ bool Lexer::GetNum(TokenPtr& item)
          tags.size_ = FloatLiteral::SIZE_F;
 
       item.reset(new FloatLiteral(fp, tags));
+      item->SetContext(start);
 
       return true;
    }
@@ -1430,6 +1432,7 @@ bool Lexer::GetNum(TokenPtr& item)
 
    IntLiteral::Tags tags(radix, uns, size);
    item.reset(new IntLiteral(num, tags));
+   item->SetContext(start);
    return Advance();
 }
 

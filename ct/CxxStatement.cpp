@@ -68,6 +68,13 @@ void Case::AddToXref()
 
 //------------------------------------------------------------------------------
 
+void Case::Check() const
+{
+   expr_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void Case::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -245,6 +252,13 @@ void Condition::AddToXref()
 
 //------------------------------------------------------------------------------
 
+void Condition::Check() const
+{
+   if(condition_ != nullptr) condition_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void Condition::EnterBlock()
 {
    Debug::ft("Condition.EnterBlock");
@@ -363,6 +377,7 @@ void Do::AddToXref()
 void Do::Check() const
 {
    loop_->Check();
+   Condition::Check();
 }
 
 //------------------------------------------------------------------------------
@@ -482,6 +497,13 @@ void Expr::AddToXref()
 
 //------------------------------------------------------------------------------
 
+void Expr::Check() const
+{
+   expr_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void Expr::EnterBlock()
 {
    Debug::ft("Expr.EnterBlock");
@@ -547,6 +569,8 @@ void For::AddToXref()
 void For::Check() const
 {
    if(initial_ != nullptr) initial_->Check();
+   Condition::Check();
+   if(subsequent_ != nullptr) subsequent_->Check();
    loop_->Check();
 }
 
@@ -779,6 +803,7 @@ void If::AddToXref()
 
 void If::Check() const
 {
+   Condition::Check();
    then_->Check();
    if(else_ != nullptr) else_->Check();
 }
@@ -995,6 +1020,13 @@ void Return::AddToXref()
 
 //------------------------------------------------------------------------------
 
+void Return::Check() const
+{
+   if(expr_ != nullptr) expr_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void Return::EnterBlock()
 {
    Debug::ft("Return.EnterBlock");
@@ -1074,6 +1106,7 @@ void Switch::AddToXref()
 
 void Switch::Check() const
 {
+   expr_->Check();
    cases_->Check();
 }
 
@@ -1321,6 +1354,7 @@ void While::AddToXref()
 
 void While::Check() const
 {
+   Condition::Check();
    loop_->Check();
 }
 

@@ -62,6 +62,7 @@ public:
    virtual ~Condition() = default;
    void AddCondition(ExprPtr& c) { condition_ = std::move(c); }
    void AddToXref() override;
+   void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print
@@ -100,6 +101,7 @@ public:
    Case(ExprPtr& expression, size_t pos);
    ~Case() { CxxStats::Decr(CxxStats::CASE); }
    void AddToXref() override;
+   void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
@@ -193,6 +195,7 @@ public:
    Expr(ExprPtr& expression, size_t pos);
    ~Expr() { CxxStats::Decr(CxxStats::EXPR); }
    void AddToXref() override;
+   void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print
@@ -335,6 +338,7 @@ public:
    ~Return() { CxxStats::Decr(CxxStats::RETURN); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
    void AddToXref() override;
+   void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print

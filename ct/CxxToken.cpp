@@ -96,6 +96,13 @@ void AlignAs::AddToXref()
 
 //------------------------------------------------------------------------------
 
+void AlignAs::Check() const
+{
+   token_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void AlignAs::EnterBlock()
 {
    Debug::ft("AlignAs.EnterBlock");
@@ -150,6 +157,13 @@ ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
 void ArraySpec::AddToXref()
 {
    if(expr_ != nullptr) expr_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
+void ArraySpec::Check() const
+{
+   if(expr_ != nullptr) expr_->Check();
 }
 
 //------------------------------------------------------------------------------
@@ -226,6 +240,16 @@ void BraceInit::AddToXref()
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void BraceInit::Check() const
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->Check();
    }
 }
 
@@ -422,10 +446,12 @@ bool CxxToken::IsPointer(bool arrays) const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxToken_Log = "CxxToken.Log";
+
 void CxxToken::Log(Warning warning,
    const CxxToken* item, word offset, const string& info) const
 {
-   Debug::ft("CxxToken.Log");
+   Debug::ft(CxxToken_Log);
 
    //  If this warning is associated with a template instance, log it
    //  against the template.
@@ -441,15 +467,32 @@ void CxxToken::Log(Warning warning,
       return;
    }
 
+   auto err = 0;
    auto file = GetFile();
    auto pos = GetPos();
 
    if(file == nullptr)
+   {
       file = Context::File();
+      err += 2;
+   }
+
    if(pos == string::npos)
+   {
       pos = Context::GetPos();
+      err += 1;
+   }
+
+   if(err != 0)
+   {
+      auto expl = string("Location not set for ") + strClass(this, false);
+      Context::SwLog(CxxToken_Log, expl, err);
+   }
+
    if(item == nullptr) item = this;
    file->LogPos(pos, warning, item, offset, info);
+   if(item == nullptr) item = this;
+   GetFile()->LogPos(GetPos(), warning, item, offset, info);
 }
 
 //------------------------------------------------------------------------------
@@ -857,6 +900,16 @@ CxxToken* Expression::Back()
 
    if(items_.empty()) return nullptr;
    return items_.back()->Back();
+}
+
+//------------------------------------------------------------------------------
+
+void Expression::Check() const
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->Check();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1307,6 +1360,16 @@ CxxToken* Operation::Back()
    if(attrs.arguments == 0) return args_.back().get();
    if(size >= attrs.arguments) return args_.back().get();
    return this;
+}
+
+//------------------------------------------------------------------------------
+
+void Operation::Check() const
+{
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      (*a)->Check();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3038,6 +3101,13 @@ void Operation::UpdatePos
 void Precedence::AddToXref()
 {
    if(expr_ != nullptr) expr_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
+void Precedence::Check() const
+{
+   if(expr_ != nullptr) expr_->Check();
 }
 
 //------------------------------------------------------------------------------

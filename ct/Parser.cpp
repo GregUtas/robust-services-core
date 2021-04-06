@@ -2515,7 +2515,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos)
    else
    {
       token.reset(new Operation(Cxx::FUNCTION_CALL));
-      token->SetContext(start);
+      token->SetContext(pos);
    }
 
    newOp->AddArg(token, false);

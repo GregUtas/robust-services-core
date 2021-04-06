@@ -703,6 +703,10 @@ public:
    //
    CxxToken* Back() override;
 
+   //  Overridden to log warnings associated with the operator.
+   //
+   void Check() const override;
+
    //  Overridden to push this operator and its arguments onto the stack.
    //
    void EnterBlock() override;
@@ -875,6 +879,10 @@ public:
    //
    CxxToken* Back() override;
 
+   //  Overridden to log warnings associated with the expression.
+   //
+   void Check() const override;
+
    //  Overridden to invoke Context::Execute after invoking EnterBlock on
    //  each token in items_.
    //
@@ -951,6 +959,10 @@ public:
    //
    void AddToXref() override;
 
+   //  Overridden to log warnings associated with expr_.
+   //
+   void Check() const override;
+
    //  Overridden to invoke EnterBlock on expr_.
    //
    void EnterBlock() override;
@@ -1009,6 +1021,7 @@ public:
       : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
    ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
    void AddToXref() override;
+   void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print
@@ -1032,6 +1045,7 @@ public:
    ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
    void AddToXref() override;
+   void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print
@@ -1054,6 +1068,7 @@ public:
    explicit AlignAs(TokenPtr& token);
    ~AlignAs() { CxxStats::Decr(CxxStats::ALIGNAS); }
    void AddToXref() override;
+   void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void Print

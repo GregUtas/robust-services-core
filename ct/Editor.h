@@ -161,6 +161,7 @@ private:
    //  file should be skipped; other values denote more serious errors.
    //
    word AdjustLineIndentation(const CodeWarning& log, string& expl);
+   word AdjustOperatorSpacing(const CodeWarning& log, string& expl);
    word AdjustTags(const CodeWarning& log, string& expl);
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc, string& expl);
    word ChangeClassToNamespace(const CodeWarning& log, string& expl);

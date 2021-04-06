@@ -769,6 +769,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(PreprocessorDirective,
       WarningAttrs(F,
       "C-style preprocessor directive")));
+   Attrs_.insert(WarningPair(OperatorSpacing,
+      WarningAttrs(T,
+      "add/remove spaces before/after operator")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));

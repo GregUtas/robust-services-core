@@ -684,6 +684,10 @@ public:
    //
    void SetOp(Cxx::Operator op) { op_ = op; }
 
+   //  Sets the flag for the function call to operator new.
+   //
+   void SetNew() { fcnew_ = true; }
+
    //  Compiles the operation.  Obtains its arguments from the stack.
    //
    void Execute() const;
@@ -820,7 +824,11 @@ private:
 
    //  The operator.
    //
-   Cxx::Operator op_;
+   Cxx::Operator op_ : 8;
+
+   //  Set for a function call associated with operator new.
+   //
+   bool fcnew_;
 
    //  The overload that implemented the operator, if any.  Recorded for
    //  symbol usage purposes.

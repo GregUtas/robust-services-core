@@ -31,6 +31,7 @@
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -1253,6 +1254,7 @@ CxxScoped* NullPtr::Referent() const
 
 Operation::Operation(Cxx::Operator op) :
    op_(op),
+   fcnew_(false),
    overload_(nullptr)
 {
    Debug::ft("Operation.ctor");
@@ -1362,10 +1364,54 @@ CxxToken* Operation::Back()
    return this;
 }
 
-//------------------------------------------------------------------------------
-
 void Operation::Check() const
 {
+   if(!IsInternal())
+   {
+      auto& attrs = CxxOp::Attrs[op_];
+      auto& lexer = GetFile()->GetLexer();
+      auto pos = GetPos();
+      auto lchar = lexer.At(pos - 1);
+      auto rchar = lexer.At(pos + attrs.symbol.size());
+
+      switch(attrs.spacing[0])
+      {
+      case 'n':
+         if((WhitespaceChars.find(lchar) != string::npos) &&
+            (lexer.LineFindFirst(pos) != pos))
+         {
+            if((op_ != Cxx::FUNCTION_CALL) || !fcnew_)
+            {
+               Log(OperatorSpacing);
+            }
+         }
+         break;
+
+      case 's':
+         if((WhitespaceChars.find(lchar) == string::npos) && (lchar != '('))
+         {
+            Log(OperatorSpacing);
+         }
+         break;
+      }
+
+      switch(attrs.spacing[1])
+      {
+      case 'n':
+         if((WhitespaceChars.find(rchar) != string::npos) && (rchar != CRLF))
+         {
+            Log(OperatorSpacing);
+         }
+         break;
+      case 's':
+         if((WhitespaceChars.find(rchar) == string::npos) && (rchar != ')'))
+         {
+            Log(OperatorSpacing);
+         }
+         break;
+      }
+   }
+
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->Check();

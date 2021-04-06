@@ -618,6 +618,56 @@ word Editor::AdjustLineIndentation(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
+word Editor::AdjustOperatorSpacing(const CodeWarning& log, string& expl)
+{
+   Debug::ft("Editor.AdjustOperatorSpacing");
+
+   auto oper = static_cast< const Operation* >(log.item_);
+   auto& attrs = CxxOp::Attrs[oper->Op()];
+   auto pos = oper->GetPos();
+   auto prev = pos - 1;
+   auto next = pos + attrs.symbol.size();
+
+   if(attrs.spacing[0] == 'n')
+   {
+      auto begin = LineRfindNonBlank(prev);
+      if(begin < prev)
+      {
+         auto count = prev - begin;
+         Erase(begin + 1, count);
+         next -= count;
+      }
+   }
+   else if(attrs.spacing[0] == 's')
+   {
+      if(WhitespaceChars.find(At(prev)) == string::npos)
+      {
+         Insert(prev + 1, SPACE_STR);
+         ++next;
+      }
+   }
+
+   if(attrs.spacing[1] == 'n')
+   {
+      auto end = LineFindNonBlank(next);
+      if(end > next)
+      {
+         Erase(next, end - next);
+      }
+   }
+   else if(attrs.spacing[1] == 's')
+   {
+      if(WhitespaceChars.find(At(next)) == string::npos)
+      {
+         Insert(next, SPACE_STR);
+      }
+   }
+
+   return Changed(prev, expl);
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::AdjustTags(const CodeWarning& log, string& expl)
 {
    Debug::ft("Editor.AdjustTags");
@@ -2855,6 +2905,8 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
       return ChangeAccess(log, Cxx::Private, expl);
    case RedundantScope:
       return EraseScope(log, expl);
+   case OperatorSpacing:
+      return AdjustOperatorSpacing(log, expl);
    }
 
    return Report(expl, "Fixing this warning is not supported.", 0);
@@ -3398,7 +3450,7 @@ word Editor::InsertForward(const CodeWarning& log, string& expl)
          if(comp == 0) return InsertForward(pos, forward, expl);
          if(comp > 0) return InsertNamespaceForward(pos, nspace, forward, expl);
       }
-      else if(CodeMatches(pos, USING_STR)|| (pos == begin))
+      else if(CodeMatches(pos, USING_STR) || (pos == begin))
       {
          //  We have now passed any existing forward declarations, so add
          //  the new declaration here, along with its namespace.

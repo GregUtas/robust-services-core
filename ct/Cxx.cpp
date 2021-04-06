@@ -41,7 +41,6 @@
 #include "Formatters.h"
 #include "Library.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::setw;
@@ -449,89 +448,98 @@ CxxWord::CxxWord
 
 //==============================================================================
 
+fixed_string XX = "xx";
+fixed_string XN = "xn";
+fixed_string NX = "nx";
+fixed_string NN = "nn";
+fixed_string NS = "ns";
+fixed_string SN = "sn";
+fixed_string SS = "ss";
+
 const CxxOp CxxOp::Attrs[Cxx::NIL_OPERATOR + 1] =
 {
    //                    str arg pri ovl rl sym
-   CxxOp(           SCOPE_STR, 2, 18, F, F, F),  // SCOPE_RESOLUTION
-   CxxOp(                 ".", 2, 17, F, F, F),  // REFERENCE_SELECT
-   CxxOp(                "->", 2, 17, T, F, F),  // POINTER_SELECT
-   CxxOp(                 "[", 2, 17, T, F, F),  // ARRAY_SUBSCRIPT
-   CxxOp(                 "(", 0, 17, F, F, F),  // FUNCTION_CALL
-   CxxOp(                "++", 1, 17, T, F, F),  // POSTFIX_INCREMENT
-   CxxOp(                "--", 1, 17, T, F, F),  // POSTFIX_DECREMENT
-   CxxOp(         DEFINED_STR, 1, 17, F, F, F),  // DEFINED
-   CxxOp(          TYPEID_STR, 1, 17, F, F, F),  // TYPE_NAME
-   CxxOp(      CONST_CAST_STR, 2, 17, F, F, F),  // CONST_CAST
-   CxxOp(    DYNAMIC_CAST_STR, 2, 17, F, F, F),  // DYNAMIC_CAST
-   CxxOp(REINTERPRET_CAST_STR, 2, 17, F, F, F),  // REINTERPRET_CAST
-   CxxOp(     STATIC_CAST_STR, 2, 17, F, F, F),  // STATIC_CAST
-   CxxOp(          SIZEOF_STR, 1, 16, F, T, F),  // SIZEOF_TYPE
-   CxxOp(         ALIGNOF_STR, 1, 16, F, T, F),  // ALIGNOF_TYPE
-   CxxOp(        NOEXCEPT_STR, 1, 16, F, T, F),  // NOEXCEPT
-   CxxOp(                "++", 1, 16, T, T, F),  // PREFIX_INCREMENT
-   CxxOp(                "--", 1, 16, T, T, F),  // PREFIX_DECREMENT
-   CxxOp(                 "~", 1, 16, T, T, F),  // ONES_COMPLEMENT
-   CxxOp(                 "!", 1, 16, T, T, F),  // LOGICAL_NOT
-   CxxOp(                 "+", 1, 16, T, T, F),  // UNARY_PLUS
-   CxxOp(                 "-", 1, 16, T, T, F),  // UNARY_MINUS
-   CxxOp(                 "&", 1, 16, T, T, F),  // ADDRESS_OF
-   CxxOp(                 "*", 1, 16, T, T, F),  // INDIRECTION
-   CxxOp(             NEW_STR, 0, 16, T, T, F),  // OBJECT_CREATE
-   CxxOp(       NEW_ARRAY_STR, 0, 16, T, T, F),  // OBJECT_CREATE_ARRAY
-   CxxOp(          DELETE_STR, 1, 16, T, T, F),  // OBJECT_DELETE
-   CxxOp(    DELETE_ARRAY_STR, 1, 16, T, T, F),  // OBJECT_DELETE_ARRAY
-   CxxOp(                 "(", 2, 16, T, T, F),  // CAST
-   CxxOp(                ".*", 2, 15, F, F, F),  // REFERENCE_SELECT_MEMBER
-   CxxOp(               "->*", 2, 15, T, F, F),  // POINTER_SELECT_MEMBER
-   CxxOp(                 "*", 2, 14, T, F, T),  // MULTIPLY
-   CxxOp(                 "/", 2, 14, T, F, F),  // DIVIDE
-   CxxOp(                 "%", 2, 14, T, F, F),  // MODULO
-   CxxOp(                 "+", 2, 13, T, F, T),  // ADD
-   CxxOp(                 "-", 2, 13, T, F, F),  // SUBTRACT
-   CxxOp(                "<<", 2, 12, T, F, F),  // LEFT_SHIFT
-   CxxOp(                ">>", 2, 12, T, F, F),  // RIGHT_SHIFT
-   CxxOp(                 "<", 2, 11, T, F, T),  // LESS
-   CxxOp(                "<=", 2, 11, T, F, T),  // LESS_OR_EQUAL
-   CxxOp(                 ">", 2, 11, T, F, T),  // GREATER
-   CxxOp(                ">=", 2, 11, T, F, T),  // GREATER_OR_EQUAL
-   CxxOp(                "==", 2, 10, T, F, T),  // EQUALITY
-   CxxOp(                "!=", 2, 10, T, F, T),  // INEQUALITY
-   CxxOp(                 "&", 2,  9, T, F, T),  // BITWISE_AND
-   CxxOp(                 "^", 2,  8, T, F, T),  // BITWISE_XOR
-   CxxOp(                 "|", 2,  7, T, F, T),  // BITWISE_OR
-   CxxOp(                "&&", 2,  6, T, F, T),  // LOGICAL_AND
-   CxxOp(                "||", 2,  5, T, F, T),  // LOGICAL_OR
-   CxxOp(                 "?", 3,  4, F, F, F),  // CONDITIONAL
-   CxxOp(                 "=", 2,  3, T, T, F),  // ASSIGN
-   CxxOp(                "*=", 2,  3, T, T, F),  // MULTIPLY_ASSIGN
-   CxxOp(                "/=", 2,  3, T, T, F),  // DIVIDE_ASSIGN
-   CxxOp(                "%=", 2,  3, T, T, F),  // MODULO_ASSIGN
-   CxxOp(                "+=", 2,  3, T, T, F),  // ADD_ASSIGN
-   CxxOp(                "-=", 2,  3, T, T, F),  // SUBTRACT_ASSIGN
-   CxxOp(               "<<=", 2,  3, T, T, F),  // LEFT_SHIFT_ASSIGN
-   CxxOp(               ">>=", 2,  3, T, T, F),  // RIGHT_SHIFT_ASSIGN
-   CxxOp(                "&=", 2,  3, T, T, F),  // BITWISE_AND_ASSIGN
-   CxxOp(                "^=", 2,  3, T, T, F),  // BITWISE_XOR_ASSIGN
-   CxxOp(                "|=", 2,  3, T, T, F),  // BITWISE_OR_ASSIGN
-   CxxOp(           THROW_STR, 0,  2, F, T, F),  // THROW
-   CxxOp(                 ",", 2,  1, F, F, F),  // STATEMENT_SEPARATOR
-   CxxOp(                 "$", 0,  0, F, F, F),  // START_OF_EXPRESSION
-   CxxOp(           ERROR_STR, 0,  0, F, F, F),  // FALSE
-   CxxOp(           ERROR_STR, 0,  0, F, F, F),  // TRUE
-   CxxOp(           ERROR_STR, 0,  0, F, F, F),  // NULLPTR
-   CxxOp(           ERROR_STR, 0,  0, F, F, F)   // NIL_OPERATOR
+   CxxOp(           SCOPE_STR, 2, 18, F, F, F, XN),  // SCOPE_RESOLUTION
+   CxxOp(                 ".", 2, 17, F, F, F, NN),  // REFERENCE_SELECT
+   CxxOp(                "->", 2, 17, T, F, F, NN),  // POINTER_SELECT
+   CxxOp(                 "[", 2, 17, T, F, F, NN),  // ARRAY_SUBSCRIPT
+   CxxOp(                 "(", 0, 17, F, F, F, NN),  // FUNCTION_CALL
+   CxxOp(                "++", 1, 17, T, F, F, NX),  // POSTFIX_INCREMENT
+   CxxOp(                "--", 1, 17, T, F, F, NX),  // POSTFIX_DECREMENT
+   CxxOp(         DEFINED_STR, 1, 17, F, F, F, XN),  // DEFINED
+   CxxOp(          TYPEID_STR, 1, 17, F, F, F, XN),  // TYPE_NAME
+   CxxOp(      CONST_CAST_STR, 2, 17, F, F, F, XN),  // CONST_CAST
+   CxxOp(    DYNAMIC_CAST_STR, 2, 17, F, F, F, XN),  // DYNAMIC_CAST
+   CxxOp(REINTERPRET_CAST_STR, 2, 17, F, F, F, XN),  // REINTERPRET_CAST
+   CxxOp(     STATIC_CAST_STR, 2, 17, F, F, F, XN),  // STATIC_CAST
+   CxxOp(          SIZEOF_STR, 1, 16, F, T, F, XN),  // SIZEOF_TYPE
+   CxxOp(         ALIGNOF_STR, 1, 16, F, T, F, XN),  // ALIGNOF_TYPE
+   CxxOp(        NOEXCEPT_STR, 1, 16, F, T, F, XN),  // NOEXCEPT
+   CxxOp(                "++", 1, 16, T, T, F, XN),  // PREFIX_INCREMENT
+   CxxOp(                "--", 1, 16, T, T, F, XN),  // PREFIX_DECREMENT
+   CxxOp(                 "~", 1, 16, T, T, F, XN),  // ONES_COMPLEMENT
+   CxxOp(                 "!", 1, 16, T, T, F, XN),  // LOGICAL_NOT
+   CxxOp(                 "+", 1, 16, T, T, F, XN),  // UNARY_PLUS
+   CxxOp(                 "-", 1, 16, T, T, F, XN),  // UNARY_MINUS
+   CxxOp(                 "&", 1, 16, T, T, F, XN),  // ADDRESS_OF
+   CxxOp(                 "*", 1, 16, T, T, F, XN),  // INDIRECTION
+   CxxOp(             NEW_STR, 0, 16, T, T, F, XX),  // OBJECT_CREATE
+   CxxOp(       NEW_ARRAY_STR, 0, 16, T, T, F, XX),  // OBJECT_CREATE_ARRAY
+   CxxOp(          DELETE_STR, 1, 16, T, T, F, XX),  // OBJECT_DELETE
+   CxxOp(    DELETE_ARRAY_STR, 1, 16, T, T, F, XX),  // OBJECT_DELETE_ARRAY
+   CxxOp(                 "(", 2, 16, T, T, F, SN),  // CAST
+   CxxOp(                ".*", 2, 15, F, F, F, NN),  // REFERENCE_SELECT_MEMBER
+   CxxOp(               "->*", 2, 15, T, F, F, NN),  // POINTER_SELECT_MEMBER
+   CxxOp(                 "*", 2, 14, T, F, T, SS),  // MULTIPLY
+   CxxOp(                 "/", 2, 14, T, F, F, SS),  // DIVIDE
+   CxxOp(                 "%", 2, 14, T, F, F, SS),  // MODULO
+   CxxOp(                 "+", 2, 13, T, F, T, SS),  // ADD
+   CxxOp(                 "-", 2, 13, T, F, F, SS),  // SUBTRACT
+   CxxOp(                "<<", 2, 12, T, F, F, SS),  // LEFT_SHIFT
+   CxxOp(                ">>", 2, 12, T, F, F, SS),  // RIGHT_SHIFT
+   CxxOp(                 "<", 2, 11, T, F, T, SS),  // LESS
+   CxxOp(                "<=", 2, 11, T, F, T, SS),  // LESS_OR_EQUAL
+   CxxOp(                 ">", 2, 11, T, F, T, SS),  // GREATER
+   CxxOp(                ">=", 2, 11, T, F, T, SS),  // GREATER_OR_EQUAL
+   CxxOp(                "==", 2, 10, T, F, T, SS),  // EQUALITY
+   CxxOp(                "!=", 2, 10, T, F, T, SS),  // INEQUALITY
+   CxxOp(                 "&", 2,  9, T, F, T, SS),  // BITWISE_AND
+   CxxOp(                 "^", 2,  8, T, F, T, SS),  // BITWISE_XOR
+   CxxOp(                 "|", 2,  7, T, F, T, SS),  // BITWISE_OR
+   CxxOp(                "&&", 2,  6, T, F, T, SS),  // LOGICAL_AND
+   CxxOp(                "||", 2,  5, T, F, T, SS),  // LOGICAL_OR
+   CxxOp(                 "?", 3,  4, F, F, F, SS),  // CONDITIONAL
+   CxxOp(                 "=", 2,  3, T, T, F, SS),  // ASSIGN
+   CxxOp(                "*=", 2,  3, T, T, F, SS),  // MULTIPLY_ASSIGN
+   CxxOp(                "/=", 2,  3, T, T, F, SS),  // DIVIDE_ASSIGN
+   CxxOp(                "%=", 2,  3, T, T, F, SS),  // MODULO_ASSIGN
+   CxxOp(                "+=", 2,  3, T, T, F, SS),  // ADD_ASSIGN
+   CxxOp(                "-=", 2,  3, T, T, F, SS),  // SUBTRACT_ASSIGN
+   CxxOp(               "<<=", 2,  3, T, T, F, SS),  // LEFT_SHIFT_ASSIGN
+   CxxOp(               ">>=", 2,  3, T, T, F, SS),  // RIGHT_SHIFT_ASSIGN
+   CxxOp(                "&=", 2,  3, T, T, F, SS),  // BITWISE_AND_ASSIGN
+   CxxOp(                "^=", 2,  3, T, T, F, SS),  // BITWISE_XOR_ASSIGN
+   CxxOp(                "|=", 2,  3, T, T, F, SS),  // BITWISE_OR_ASSIGN
+   CxxOp(           THROW_STR, 0,  2, F, T, F, SS),  // THROW
+   CxxOp(                 ",", 2,  1, F, F, F, NS),  // STATEMENT_SEPARATOR
+   CxxOp(                 "$", 0,  0, F, F, F, XX),  // START_OF_EXPRESSION
+   CxxOp(           ERROR_STR, 0,  0, F, F, F, XX),  // FALSE
+   CxxOp(           ERROR_STR, 0,  0, F, F, F, XX),  // TRUE
+   CxxOp(           ERROR_STR, 0,  0, F, F, F, XX),  // NULLPTR
+   CxxOp(           ERROR_STR, 0,  0, F, F, F, XX)   // NIL_OPERATOR
 };
 
 //------------------------------------------------------------------------------
 
 CxxOp::CxxOp(const string& sym, size_t args,
-   size_t prio, bool over, bool push, bool symm) :
+   size_t prio, bool over, bool push, bool symm, fixed_string sp) :
    symbol(sym),
    arguments(args),
    priority(prio),
    overloadable(over),
    rightToLeft(push),
-   symmetric(symm)
+   symmetric(symm),
+   spacing(sp)
 {
    Debug::ft("CxxOp.ctor");
 }

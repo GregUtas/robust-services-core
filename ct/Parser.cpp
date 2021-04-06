@@ -2518,6 +2518,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos)
       token->SetContext(pos);
    }
 
+   static_cast< Operation* >(token.get())->SetNew();
    newOp->AddArg(token, false);
    start = CurrPos();
 

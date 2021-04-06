@@ -335,7 +335,7 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-protected:
+
    //  A type for the LineInfo associated with each line of source code.
    //
    typedef std::vector< LineInfo > LineInfoVector;
@@ -406,7 +406,7 @@ protected:
    //  Returns true if the rest of the line that follows POS contains no code.
    //
    bool NoCodeFollows(size_t pos) const;
-
+protected:
    //  Looks for STR starting at POS.  If STR is found, returns its position,
    //  else returns string::npos.  Ignores non-code and does not proceed to
    //  subsequent lines.

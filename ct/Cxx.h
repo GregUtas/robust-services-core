@@ -31,6 +31,7 @@
 #include <utility>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -494,14 +495,20 @@ struct CxxOp
    //
    const bool symmetric;
 
+   //  Whether spaces should precede and follow the operator when formatted.
+   //  Values are 'x'=unchecked, 'n'=no space, and 's'=space.  Each entry is
+   //  two characters long: [0] for preceding, and [1] for following.
+   //
+   NodeBase::fixed_string spacing;
+
    //  The array that contains the above attributes for each operator.
    //
    static const CxxOp Attrs[Cxx::NIL_OPERATOR + 1];
 private:
    //  Constructs an operator with the specified attributes.
    //
-   CxxOp(const std::string& sym, size_t args,
-      size_t prio, bool over, bool push, bool symm);
+   CxxOp(const std::string& sym, size_t args, size_t prio,
+      bool over, bool push, bool symm, NodeBase::fixed_string sp);
 };
 
 //------------------------------------------------------------------------------

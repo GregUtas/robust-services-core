@@ -536,6 +536,7 @@ enum Warning
    DestructorNotPrivate,     // singleton should have private destructor
    RedundantScope,           // scope name not required to resolve symbol
    PreprocessorDirective,    // C-style preprocessor directive
+   OperatorSpacing,          // add/remove spaces before/after operator
    Warning_N                 // number of warnings
 };
 

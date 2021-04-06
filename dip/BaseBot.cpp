@@ -2361,21 +2361,21 @@ void BaseBot::set_title(token_t msg, bool rcvd)
 
    case TOKEN_COMMAND_NME:
       if(!rcvd)
-         title_ = "<-NME: "+ name_ + SPACE + version_;
+         title_ = "<-NME: " + name_ + SPACE + version_;
       else
-         title_ = "NME: "+ name_ + SPACE + version_;
+         title_ = "NME: " + name_ + SPACE + version_;
       break;
 
    case TOKEN_COMMAND_IAM:
       if(!rcvd)
-         title_ = "<-IAM: "+ name_ + SPACE + version_;
+         title_ = "<-IAM: " + name_ + SPACE + version_;
       else
-         title_ = "IAM: "+ name_ + SPACE + version_;
+         title_ = "IAM: " + name_ + SPACE + version_;
       break;
 
    case TOKEN_COMMAND_HLO:
       if(!rcvd)
-         title_ = "<-HLO: "+ name_ + SPACE + version_;
+         title_ = "<-HLO: " + name_ + SPACE + version_;
       else
       {
          if(!observer_)

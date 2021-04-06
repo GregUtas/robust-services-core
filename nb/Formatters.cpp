@@ -88,10 +88,10 @@ void strBytes(ostream& stream,
 
          for(auto j = 0; j < 16; ++j)
          {
-            if(bytes[i-15+j] <= 32)
+            if(bytes[i - 15 + j] <= 32)
                stream << '.';
             else
-               stream << bytes[i-15+j];
+               stream << bytes[i - 15 + j];
          }
 
          stream << CRLF;
@@ -112,7 +112,7 @@ void strBytes(ostream& stream,
 
       for(size_t j = 0; j < extra; ++j)
       {
-         if(bytes[count-extra+j] <= 32)
+         if(bytes[count - extra + j] <= 32)
             stream << '.';
          else
             stream << bytes[count - extra + j];

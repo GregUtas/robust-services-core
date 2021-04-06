@@ -171,7 +171,7 @@ void CliTextParm::Explain(ostream& stream, col_t indent) const
       indent = 2;
    }
 
-   stream << spaces(indent-2);
+   stream << spaces(indent - 2);
    if(opt && (tag != nullptr)) stream << tag << CliBuffer::OptTagChar;
    if(opt) stream << OptParmBegin; else stream << MandParmBegin;
 
@@ -186,7 +186,7 @@ void CliTextParm::Explain(ostream& stream, col_t indent) const
       t->Explain(stream, indent);
    }
 
-   stream << spaces(indent-2);
+   stream << spaces(indent - 2);
    if(opt) stream << OptParmEnd; else stream << MandParmEnd;
    stream << CRLF;
 }

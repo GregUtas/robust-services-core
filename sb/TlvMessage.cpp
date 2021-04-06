@@ -415,7 +415,7 @@ size_t TlvMessage::ParmOffset(ParmIterator& pit) const
 
 void TlvMessage::Patch(sel_t selector, void* arguments)
 {
-   Message::Patch (selector, arguments);
+   Message::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

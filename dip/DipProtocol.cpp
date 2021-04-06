@@ -59,22 +59,22 @@ void DipMessage::Display(ostream& stream) const
    switch(header.signal)
    {
    case IM_MESSAGE:
-      reinterpret_cast < const IM_Message* >(this)->Display(stream);
+      reinterpret_cast< const IM_Message* >(this)->Display(stream);
       break;
    case RM_MESSAGE:
-      reinterpret_cast < const RM_Message* >(this)->Display(stream);
+      reinterpret_cast< const RM_Message* >(this)->Display(stream);
       break;
    case DM_MESSAGE:
-      reinterpret_cast < const DM_Message* >(this)->Display(stream);
+      reinterpret_cast< const DM_Message* >(this)->Display(stream);
       break;
    case FM_MESSAGE:
-      reinterpret_cast < const FM_Message* >(this)->Display(stream);
+      reinterpret_cast< const FM_Message* >(this)->Display(stream);
       break;
    case EM_MESSAGE:
-      reinterpret_cast < const EM_Message* >(this)->Display(stream);
+      reinterpret_cast< const EM_Message* >(this)->Display(stream);
       break;
    case BM_MESSAGE:
-      reinterpret_cast < const BM_Message* >(this)->Display(stream);
+      reinterpret_cast< const BM_Message* >(this)->Display(stream);
       break;
    default:
       stream << "Unknown signal: " << header.signal << CRLF;

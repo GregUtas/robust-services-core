@@ -91,7 +91,7 @@ SbIpBufferPtr TextTlvMessage::Parse()
 
 void TextTlvMessage::Patch(sel_t selector, void* arguments)
 {
-   TlvMessage::Patch (selector, arguments);
+   TlvMessage::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

@@ -529,7 +529,7 @@ word ResetCommand::ProcessCommand(CliThread& cli) const
    if(pro == nullptr) return cli.Report(-3, NotRegisteredExpl);
 
    auto cct = pro->GetCircuit();
-   if(cct == nullptr) return cli.Report (-3, NoCircuitExpl);
+   if(cct == nullptr) return cli.Report(-3, NoCircuitExpl);
 
    auto msg = new Pots_NU_Message(nullptr, 20);
    PotsHeaderInfo phi;

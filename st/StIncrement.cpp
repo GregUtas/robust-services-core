@@ -323,7 +323,7 @@ word InjectCommand::ProcessCommand(CliThread& cli) const
             if(rc == Parameter::Ok) continue;
 
             *cli.obuf << spaces(2) << BadParameterExpl << "pid="
-               << int(p->Pid()) << " (" << strClass(p)<< "),"
+               << int(p->Pid()) << " (" << strClass(p) << "),"
                << CRLF << "rc: " << Parameter::ExplainRc(rc) << CRLF;
             failed = true;
          }

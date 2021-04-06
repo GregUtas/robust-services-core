@@ -240,7 +240,7 @@ word CodeCoverage::Diff(std::ostringstream& expl) const
    expl << CRLF << "Deleted functions: ";
    found = false;
 
-   for(auto p = prevFuncs_.cbegin(); p!= prevFuncs_.cend(); ++p)
+   for(auto p = prevFuncs_.cbegin(); p != prevFuncs_.cend(); ++p)
    {
       if((p->second.hash != UNHASHED) &&
          (currFuncs_.find(p->first) == currFuncs_.cend()))
@@ -573,7 +573,7 @@ word CodeCoverage::Retest(std::ostringstream& expl) const
       }
    }
 
-   for(auto p = prevFuncs_.cbegin(); p!= prevFuncs_.cend(); ++p)
+   for(auto p = prevFuncs_.cbegin(); p != prevFuncs_.cend(); ++p)
    {
       if((p->second.hash != UNHASHED) &&
          (currFuncs_.find(p->first) == currFuncs_.cend()))

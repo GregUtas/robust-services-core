@@ -149,7 +149,7 @@ void SysSocket::Invalidate()
 {
    Debug::ftnt("SysSocket.Invalidate");
 
-   socket_= INVALID_SOCKET;
+   socket_ = INVALID_SOCKET;
 }
 
 //------------------------------------------------------------------------------

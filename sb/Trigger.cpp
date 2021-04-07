@@ -106,7 +106,7 @@ void Trigger::UnbindInitiator(Initiator& init)
    if(!initq_.Exq(init))
    {
       Debug::SwLog(Trigger_UnbindInitiator,
-         "Exq failed", pack2(init.Sid() ,tid_));
+         "Exq failed", pack2(init.Sid(), tid_));
    }
 }
 }

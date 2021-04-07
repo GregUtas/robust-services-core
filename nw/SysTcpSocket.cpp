@@ -91,7 +91,7 @@ SysTcpSocket::~SysTcpSocket()
    //  a restart, however, the socket is deleted to unblock TcpIoThread so
    //  that it can exit.
    //
-   if(iotActive_ || (appState_ == Acquired ) ||
+   if(iotActive_ || (appState_ == Acquired) ||
       ((appState_ == Initial) && (state_ != Idle)))
    {
       if(Restart::GetStage() == Running)

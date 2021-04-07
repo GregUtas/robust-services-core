@@ -3782,7 +3782,7 @@ public:
    };
 
    void SetTest(Test test) { test_ = test; }
-   void SetTestSignal(signal_t signal) {signal_ = signal; }
+   void SetTestSignal(signal_t signal) { signal_ = signal; }
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 private:

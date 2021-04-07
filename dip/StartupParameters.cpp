@@ -117,7 +117,7 @@ void StartupParameters::SetFromCommandLine()
             auto nation = value.substr(0, 3);
             for(auto i = 0; i < 3; ++i) nation[i] = toupper(nation[i]);
             power = nation;
-            passcode = std::stoi(value.substr(4,4));
+            passcode = std::stoi(value.substr(4, 4));
          }
          else
          {

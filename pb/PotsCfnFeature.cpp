@@ -59,8 +59,8 @@ fixed_string PotsCfnTimerOptExpl = "timeout (default=30)";
 fixed_string PotsCfnTimerTag = "to";
 
 PotsCfnTimerOptParm::PotsCfnTimerOptParm() :
-   CliIntParm(PotsCfnTimerOptExpl, 2*PotsProtocol::RingingCycleTime,
-   7*PotsProtocol::RingingCycleTime, true, PotsCfnTimerTag) { }
+   CliIntParm(PotsCfnTimerOptExpl, 2 * PotsProtocol::RingingCycleTime,
+   7 * PotsProtocol::RingingCycleTime, true, PotsCfnTimerTag) { }
 
 fixed_string PotsCfnAbbrName = "cfn";
 fixed_string PotsCfnFullName = "Call Forwarding No Answer";

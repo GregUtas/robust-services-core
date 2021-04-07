@@ -45,7 +45,7 @@ namespace NodeBase
 {
 //  A handle for reading the configuration file.
 //
-istreamPtr Stream_= nullptr;
+istreamPtr Stream_ = nullptr;
 
 //  The current line number in the configuration file.
 //

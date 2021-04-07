@@ -382,7 +382,7 @@ void* ServiceSM::operator new(size_t size)
 
 void ServiceSM::Patch(sel_t selector, void* arguments)
 {
-   Pooled::Patch(selector,arguments);
+   Pooled::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

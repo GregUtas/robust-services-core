@@ -345,7 +345,7 @@ NbHeap::NbHeap(MemoryType type, size_t size) : Heap(),
    //  block while checking that it does not infringe on the management data.
    //
    size = (size_t(1) << log2(size_, true)) >> 1;
-   auto addr = heapAddr + size_ ;
+   auto addr = heapAddr + size_;
    auto level = SizeToLevel(size);
    auto avail = heapAddr + size_ - heap_->minAddr;
 
@@ -468,7 +468,7 @@ NbHeap::index_t NbHeap::BlockToIndex
    //  BLOCK's index is found by adding the index of the first block in
    //  LEVEL to the number of blocks that precede BLOCK within LEVEL.
    //
-   auto first = (size_t(1) << (level - heap_->minLevel)) - 1 ;
+   auto first = (size_t(1) << (level - heap_->minLevel)) - 1;
    auto offset = (uintptr_t(block) - heap_->leftAddr) >> Log2Size(level);
    return first + offset;
 }
@@ -735,7 +735,7 @@ HeapBlock* NbHeap::IndexToBlock(index_t index, level_t level) const
    //  block in LEVEL from INDEX and then skipping over the number of
    //  blocks that precede BLOCK within LEVEL.
    //
-   auto first = (size_t(1) << (level - heap_->minLevel)) - 1 ;
+   auto first = (size_t(1) << (level - heap_->minLevel)) - 1;
    auto offset = index - first;
    return (HeapBlock*) (heap_->leftAddr + (offset << Log2Size(level)));
 }

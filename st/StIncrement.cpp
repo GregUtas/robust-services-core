@@ -607,7 +607,7 @@ word StTestsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The VERIFY command.
 //
-const SkipInfo NilSkipInfo = {0, 0};
+const SkipInfo NilSkipInfo = { 0, 0 };
 
 class VerifyCommand : public CliCommand
 {

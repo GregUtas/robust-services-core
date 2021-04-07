@@ -348,7 +348,7 @@ ContextSwitch::ContextSwitch() :
    out(0),
    nid(0),
    tid(0),
-   locked (false)
+   locked(false)
 {
 }
 

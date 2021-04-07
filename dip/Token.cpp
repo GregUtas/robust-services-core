@@ -195,16 +195,16 @@ fixed_string INVALID_TOKEN_STR = "???";
 
 constexpr size_t UNITS_SIZE = 2;
 
-fixed_string units[] = {"A", "F"};
+fixed_string units[] = { "A", "F" };
 
 constexpr size_t COASTS_SIZE = 7;
 
 fixed_string coasts[] =
-   {"(nc)", "(nec)", "(ec)", "(sec)", "(sc)", "(swc)", "(wc)", "(nwc)"};
+   { "(nc)", "(nec)", "(ec)", "(sec)", "(sc)", "(swc)", "(wc)", "(nwc)" };
 
 constexpr size_t SEASONS_SIZE = 4;
 
-fixed_string seasons[] = {"Spring", "Summer", "Fall", "Autumn", "Winter"};
+fixed_string seasons[] = { "Spring", "Summer", "Fall", "Autumn", "Winter" };
 
 //------------------------------------------------------------------------------
 

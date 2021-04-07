@@ -167,7 +167,7 @@ CxxToken* MacroFunc::GetValue() const
       return unknown_.get();
    }
 
-   auto fn =scope->ScopedName(true);
+   auto fn = scope->ScopedName(true);
 
    if(!funcs_.empty())
    {

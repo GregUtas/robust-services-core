@@ -242,7 +242,7 @@ MemoryType Memory::AddrToType(const void* addr)
 
 //------------------------------------------------------------------------------
 
-const size_t PowerOf2[] = {1, 2, 4, 8, 16, 32, 64, 128};
+const size_t PowerOf2[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
 
 size_t Memory::Align(size_t size, size_t log2align)
 {

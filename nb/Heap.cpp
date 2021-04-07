@@ -70,7 +70,7 @@ void* Heap::Addr() const
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_Alloc= "Heap.Alloc";
+fn_name Heap_Alloc = "Heap.Alloc";
 
 void* Heap::Alloc(size_t size)
 {
@@ -262,7 +262,7 @@ void Heap::SetTrace(bool enabled)
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_Size= "Heap.Size";
+fn_name Heap_Size = "Heap.Size";
 
 size_t Heap::Size() const
 {
@@ -274,7 +274,7 @@ size_t Heap::Size() const
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_Type= "Heap.Type";
+fn_name Heap_Type = "Heap.Type";
 
 MemoryType Heap::Type() const
 {

@@ -252,7 +252,7 @@ void PotsToneTreatment::Display(ostream& stream,
 
    auto reg = Singleton< ToneRegistry >::Instance();
 
-   stream << prefix << "tone     : " << int(tone_) ;
+   stream << prefix << "tone     : " << int(tone_);
    stream << " [" << strClass(reg->GetTone(tone_), false) << ']' << CRLF;
    stream << prefix << "duration : " << duration_ << CRLF;
 }

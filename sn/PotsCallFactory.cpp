@@ -182,7 +182,7 @@ void PotsCallFactory::PortAllocated
    }
    else
    {
-      auto ppsm = static_cast < const PotsCallPsm* >(port.Upper());
+      auto ppsm = static_cast< const PotsCallPsm* >(port.Upper());
       cct = static_cast< PotsCircuit* >(tsw->GetCircuit(ppsm->TsPort()));
    }
 

@@ -84,7 +84,7 @@ Service* ServiceRegistry::GetService(ServiceId sid) const
 
 void ServiceRegistry::Patch(sel_t selector, void* arguments)
 {
-   Immutable::Patch(selector,arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

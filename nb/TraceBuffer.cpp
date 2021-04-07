@@ -77,7 +77,7 @@ BufferTrace::BufferTrace() : TraceRecord(ToolBuffer)
 //------------------------------------------------------------------------------
 
 const string NilTraceStr("ERROR: invalid trace record");
-const string ResumeTraceStr("BREAK OF TRACE " + string(65,'='));
+const string ResumeTraceStr("BREAK OF TRACE " + string(65, '='));
 
 bool BufferTrace::Display(ostream& stream, const string& opts)
 {

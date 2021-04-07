@@ -200,6 +200,11 @@ template is a base class
   The code for this is not included when generating the code for a template instance,
   so the static member appears uninitialized (`<@i=0`) in the _.lib_ file created by
   `>export`.
+- [ ] `std::list::sort`: The _subs_ file for `list` declares the sort function
+as `bool (*sorted)(T& first, T& second)`. Therefore, if its parameters differ
+from the `list` template arguments, a log occurs during function matching. The
+log occurs, for example, if the sort function uses a base class of T rather than
+T itself.
 
 ### Parser
 - [ ] `Parser.Punt` causes a software log on argument overflow

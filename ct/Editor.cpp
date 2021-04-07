@@ -1058,6 +1058,25 @@ word Editor::CheckLinePairs()
          }
          break;
 
+      case SeparatorComment:
+         if(t2 == BlankLine)
+         {
+            //  Erase any repeated blank lines.  If another separator
+            //  comment follows, we just cut a function definition, so
+            //  erase the first separator comment and blank line.
+            //
+            auto p3 = NextBegin(p2);
+            while(GetLineType(p3) == BlankLine) EraseLine(p3);
+            if(GetLineType(p3) == SeparatorComment)
+            {
+               EraseLine(p2);
+               EraseLine(p1);
+               t1 = SeparatorComment;
+               continue;
+            }
+         }
+         break;
+
       case OpenBrace:
          switch(t2)
          {

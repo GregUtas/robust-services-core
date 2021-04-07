@@ -20,11 +20,11 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeFile.h"
+#include <algorithm>
 #include <cctype>
 #include <cstdio>
 #include <istream>
 #include <iterator>
-#include <list>
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
@@ -211,13 +211,6 @@ void GetTransitiveBases(const CxxNamedSet& bases, LibItemSet& tBaseSet)
          tBaseSet.insert(c->GetDeclFile());
       }
    }
-}
-
-//------------------------------------------------------------------------------
-
-bool IsSortedByPosition(const Function* func1, const Function* func2)
-{
-   return IsSortedByPos(func1, func2);
 }
 
 //------------------------------------------------------------------------------
@@ -787,7 +780,7 @@ void CodeFile::CheckFunctionOrder() const
    //  functions created in template instances, which were added to this
    //  file if it caused their instantiation.
    //
-   std::list< const Function* > defns;
+   std::vector< const Function* > defns;
 
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
@@ -799,7 +792,7 @@ void CodeFile::CheckFunctionOrder() const
    //  Now sort the functions according to where they were defined and
    //  check that the functions within the same scope are sorted.
    //
-   defns.sort(IsSortedByPosition);
+   std::sort(defns.begin(), defns.end(), IsSortedByPos);
 
    CxxScope* scope = nullptr;
    auto state = FuncCtor;

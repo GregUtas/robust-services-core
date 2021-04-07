@@ -312,9 +312,10 @@ public:
    void SetExpression(TokenPtr& expr) { expr_.reset(expr.release()); }
 
    //  Sets the right-hand side of the assignment statement that
-   //  initializes the data.
+   //  initializes the data.  EQPOS is the location of the assignment
+   //  operator.
    //
-   void SetAssignment(ExprPtr& expr);
+   void SetAssignment(ExprPtr& expr, size_t eqpos);
 
    //  Returns true if the data is extern.
    //
@@ -801,7 +802,7 @@ public:
 
    //  Overridden to return the item's name.
    //
-   std::string Trace() const override {return Name(); }
+   std::string Trace() const override { return Name(); }
 
    //  Overridden to update the item's location.
    //
@@ -930,7 +931,7 @@ public:
 
    //  Overridden to return the item's name.
    //
-   std::string Trace() const override {return Name(); }
+   std::string Trace() const override { return Name(); }
 
    //  Overridden to update the data's location.
    //

@@ -2371,6 +2371,7 @@ void CodeFile::Scan()
    if(!ReadCode(code_)) return;
    lexer_.Initialize(code_, this);
    lexer_.CalcDepths();
+   lexer_.CheckPunctuation();
 
    auto lines = lexer_.LineCount();
 
@@ -2399,7 +2400,7 @@ void CodeFile::Scan()
          }
       }
 
-      lineType_[n] = (prevCont ? prevType: currType);
+      lineType_[n] = (prevCont ? prevType : currType);
       prevCont = currCont;
       prevType = currType;
    }

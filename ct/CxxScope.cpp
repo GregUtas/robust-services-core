@@ -443,6 +443,8 @@ void ClassData::Check() const
 
    Data::Check();
 
+   if(width_ != nullptr) width_->Check();
+
    if(IsDecl())
    {
       CheckUsage();
@@ -1096,7 +1098,11 @@ void Data::Check() const
 {
    Debug::ft("Data.Check");
 
+   if(alignas_ != nullptr) alignas_->Check();
    spec_->Check();
+   if(expr_ != nullptr) expr_->Check();
+   if(init_ != nullptr) init_->Check();
+
    if(!defn_ && (mate_ != nullptr)) mate_->Check();
 }
 
@@ -1492,7 +1498,7 @@ void Data::SetAlignment(AlignAsPtr& align)
 
 //------------------------------------------------------------------------------
 
-void Data::SetAssignment(ExprPtr& expr)
+void Data::SetAssignment(ExprPtr& expr, size_t eqpos)
 {
    Debug::ft("Data.SetAssignment");
 
@@ -1508,6 +1514,7 @@ void Data::SetAssignment(ExprPtr& expr)
    TokenPtr arg1(name.release());
    init_->AddItem(arg1);
    TokenPtr op(new Operation(Cxx::ASSIGN));
+   op->SetContext(eqpos);
    init_->AddItem(op);
    TokenPtr arg2(expr.release());
    init_->AddItem(arg2);
@@ -1680,6 +1687,9 @@ void FuncData::Check() const
    //  Don't check a function's internal variables for potential constness.
    //
    Data::Check();
+
+   if(next_ != nullptr) next_->Check();
+
    CheckUsage();
    CheckConstness(false);
 }
@@ -2445,6 +2455,18 @@ void Function::Check() const
       (*a)->Check();
    }
 
+   if(call_ != nullptr)
+   {
+      call_->Check();
+   }
+
+   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+   {
+      (*m)->Check();
+   }
+
+   if(impl_ != nullptr) impl_->Check();
+
    if(!defn_)
    {
       auto w = CheckIfDefined();
@@ -2461,8 +2483,6 @@ void Function::Check() const
       if(w != FunctionNotDefined) CheckMemberUsage();
       if(mate_ != nullptr) mate_->Check();
    }
-
-   if(impl_ != nullptr) impl_->Check();
 }
 
 //------------------------------------------------------------------------------

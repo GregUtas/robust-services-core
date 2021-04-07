@@ -537,6 +537,7 @@ enum Warning
    RedundantScope,           // scope name not required to resolve symbol
    PreprocessorDirective,    // C-style preprocessor directive
    OperatorSpacing,          // add/remove spaces before/after operator
+   PunctuationSpacing,       // add/remove spaces before/after punctuation
    Warning_N                 // number of warnings
 };
 

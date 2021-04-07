@@ -429,7 +429,7 @@ private:
 
    //  Set if the argument's value was directly modified.
    //
-   bool modified_: 1;
+   bool modified_ : 1;
 };
 
 //------------------------------------------------------------------------------
@@ -455,6 +455,10 @@ public:
    //  Causes the preceding colon, instead of the left brace, to be cut.
    //
    std::string BeginChars(char end) const override { return ":"; }
+
+   //  Overridden to log warnings associated with the declaration.
+   //
+   void Check() const override;
 
    //  Displays the base class declaration.
    //
@@ -507,7 +511,7 @@ public:
 
    //  Overridden to shrink containers.
    //
-   void Shrink() override{ name_->Shrink(); }
+   void Shrink() override { name_->Shrink(); }
 
    //  Overridden to return the declaration's full root type.
    //
@@ -1173,7 +1177,7 @@ public:
    //
    CxxToken* GetInit() const { return init_.get(); }
 
-   //  Overridden to add the statement's components to cross-references.
+   //  Overridden to add the initialization's components to cross-references.
    //
    void AddToXref() override;
 
@@ -1182,11 +1186,15 @@ public:
    //
    std::string BeginChars(char end) const override;
 
+   //  Overridden to log warnings associated with the initialization.
+   //
+   void Check() const override;
+
    //  A member initialization ends at the next comma or left brace.
    //
    std::string EndChars() const override { return ",{"; }
 
-   //  Overridden to compile the member's initialization expression.
+   //  Overridden to compile the initialization expression.
    //
    void EnterBlock() override;
 
@@ -1202,7 +1210,7 @@ public:
    //
    const std::string& Name() const override { return name_; }
 
-   //  Overridden to display the initialization statement.
+   //  Overridden to display the initialization.
    //
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;

@@ -406,6 +406,10 @@ public:
    //  Returns true if the rest of the line that follows POS contains no code.
    //
    bool NoCodeFollows(size_t pos) const;
+
+   //  Checks the spacing of punctuation.
+   //
+   void CheckPunctuation() const;
 protected:
    //  Looks for STR starting at POS.  If STR is found, returns its position,
    //  else returns string::npos.  Ignores non-code and does not proceed to
@@ -563,6 +567,10 @@ private:
    //  POS is out of range.
    //
    size_t GetLineInfoIndex(size_t pos) const;
+
+   //  Returns true if the colon at POS shouldn't be preceded by a space.
+   //
+   bool NoSpaceBeforeColon(size_t pos) const;
 
    //  The code being analyzed.
    //

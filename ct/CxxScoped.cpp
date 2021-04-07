@@ -79,6 +79,8 @@ void Argument::Check() const
    Debug::ft("Argument.Check");
 
    spec_->Check();
+   if(default_ != nullptr) default_->Check();
+
    if(name_.empty() && IsUnused()) LogToFunc(AnonymousArgument);
    if(modified_ && spec_->Refs() == 0) LogToFunc(ValueArgumentModified);
 }
@@ -335,6 +337,13 @@ BaseDecl::BaseDecl(QualNamePtr& name, Cxx::Access access) :
 void BaseDecl::AddToXref()
 {
    name_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
+void BaseDecl::Check() const
+{
+   name_->Check();
 }
 
 //------------------------------------------------------------------------------
@@ -1044,15 +1053,18 @@ void Enum::Check() const
 {
    Debug::ft("Enum.Check");
 
-   if(name_.empty()) Log(AnonymousEnum);
-   CheckIfUnused(EnumUnused);
-   CheckIfHiding();
-   CheckAccessControl();
+   if(alignas_ != nullptr) alignas_->Check();
+   if(spec_ != nullptr) spec_->Check();
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {
       (*e)->Check();
    }
+
+   if(name_.empty()) Log(AnonymousEnum);
+   CheckIfUnused(EnumUnused);
+   CheckIfHiding();
+   CheckAccessControl();
 }
 
 //------------------------------------------------------------------------------
@@ -1345,6 +1357,8 @@ void Enumerator::Check() const
 {
    Debug::ft("Enumerator.Check");
 
+   if(init_ != nullptr) init_->Check();
+
    CheckIfUnused(EnumeratorUnused);
    CheckIfHiding();
 }
@@ -1587,6 +1601,7 @@ void Forward::Check() const
 {
    Debug::ft("Forward.Check");
 
+   name_->Check();
    if(parms_ != nullptr) parms_->Check();
 
    if(Referent() == nullptr)
@@ -1790,6 +1805,7 @@ void Friend::Check() const
 {
    Debug::ft("Friend.Check");
 
+   name_->Check();
    if(parms_ != nullptr) parms_->Check();
 
    //  Log an unknown friend.
@@ -2380,6 +2396,13 @@ string MemberInit::BeginChars(char end) const
 
 //------------------------------------------------------------------------------
 
+void MemberInit::Check() const
+{
+   init_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name MemberInit_EnterBlock = "MemberInit.EnterBlock";
 
 void MemberInit::EnterBlock()
@@ -2875,6 +2898,8 @@ void Typedef::Check() const
    Debug::ft("Typedef.Check");
 
    spec_->Check();
+   if(alignas_ != nullptr) alignas_->Check();
+
    CheckIfUnused(TypedefUnused);
    CheckIfHiding();
    CheckAccessControl();
@@ -3126,6 +3151,8 @@ void Using::Check() const
    Debug::ft("Using.Check");
 
    if(added_) return;
+
+   name_->Check();
 
    //  A using statement should be avoided in a header except to import
    //  items from a base class.

@@ -606,9 +606,9 @@ Editor::Editor() :
 
 //------------------------------------------------------------------------------
 
-word Editor::AdjustLineIndentation(const CodeWarning& log, string& expl)
+word Editor::AdjustIndentation(const CodeWarning& log, string& expl)
 {
-   Debug::ft("Editor.AdjustLineIndentation");
+   Debug::ft("Editor.AdjustIndentation");
 
    auto begin = CurrBegin(log.Pos());
    if(begin == string::npos) return NotFound(expl, "Position for indentation");
@@ -618,52 +618,82 @@ word Editor::AdjustLineIndentation(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-word Editor::AdjustOperatorSpacing(const CodeWarning& log, string& expl)
+word Editor::AdjustOperator(const CodeWarning& log, string& expl)
 {
-   Debug::ft("Editor.AdjustOperatorSpacing");
+   Debug::ft("Editor.AdjustOperator");
 
    auto oper = static_cast< const Operation* >(log.item_);
    auto& attrs = CxxOp::Attrs[oper->Op()];
-   auto pos = oper->GetPos();
-   auto prev = pos - 1;
-   auto next = pos + attrs.symbol.size();
 
-   if(attrs.spacing[0] == 'n')
+   if(AdjustSpacing(oper->GetPos(), attrs.symbol.size(), attrs.spacing))
+      return Changed(oper->GetPos(), expl);
+   return NotFound(expl, "operator adjustment");
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::AdjustPunctuation(const CodeWarning& log, string& expl)
+{
+   Debug::ft("Editor.AdjustPunctuation");
+
+   if(log.info_.size() != 2) return NotFound(expl, "log information");
+   if(AdjustSpacing(log.Pos(), 1, log.info_)) return Changed(log.Pos(), expl);
+   return NotFound(expl, "punctuation adjustment");
+}
+
+//------------------------------------------------------------------------------
+
+bool Editor::AdjustSpacing(size_t pos, size_t len, const string& spacing)
+{
+   Debug::ft("Editor.AdjustSpacing");
+
+   auto changed = false;
+   auto prev = pos - 1;
+   auto next = pos + len;
+
+   if(spacing[0] == '@')
    {
+      auto info = GetLineInfo(pos);
       auto begin = LineRfindNonBlank(prev);
+      if(begin < info->depth) begin = info->depth;
+
       if(begin < prev)
       {
          auto count = prev - begin;
          Erase(begin + 1, count);
          next -= count;
+         changed = true;
       }
    }
-   else if(attrs.spacing[0] == 's')
+   else if(spacing[0] == '_')
    {
       if(WhitespaceChars.find(At(prev)) == string::npos)
       {
-         Insert(prev + 1, SPACE_STR);
+         Insert(pos, SPACE_STR);
          ++next;
+         changed = true;
       }
    }
 
-   if(attrs.spacing[1] == 'n')
+   if(spacing[1] == '@')
    {
       auto end = LineFindNonBlank(next);
       if(end > next)
       {
          Erase(next, end - next);
+         changed = true;
       }
    }
-   else if(attrs.spacing[1] == 's')
+   else if(spacing[1] == '_')
    {
       if(WhitespaceChars.find(At(next)) == string::npos)
       {
          Insert(next, SPACE_STR);
+         changed = true;
       }
    }
 
-   return Changed(prev, expl);
+   return changed;
 }
 
 //------------------------------------------------------------------------------
@@ -2574,7 +2604,7 @@ word Editor::FixFunction
    case ArgumentCouldBeConst:
       return TagAsConstArgument(func, log.offset_, expl);
    case FunctionCouldBeConst:
-      return TagAsConstFunction(func, expl);;
+      return TagAsConstFunction(func, expl);
    case FunctionCouldBeStatic:
       return TagAsStaticFunction(func, expl);
    case FunctionCouldBeFree:
@@ -2869,7 +2899,7 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
    case UseOfTab:
       return ConvertTabsToBlanks();
    case Indentation:
-      return AdjustLineIndentation(log, expl);
+      return AdjustIndentation(log, expl);
    case TrailingSpace:
       return EraseTrailingBlanks();
    case AdjacentSpaces:
@@ -2925,7 +2955,9 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
    case RedundantScope:
       return EraseScope(log, expl);
    case OperatorSpacing:
-      return AdjustOperatorSpacing(log, expl);
+      return AdjustOperator(log, expl);
+   case PunctuationSpacing:
+      return AdjustPunctuation(log, expl);
    }
 
    return Report(expl, "Fixing this warning is not supported.", 0);

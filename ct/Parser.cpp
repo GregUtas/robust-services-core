@@ -956,6 +956,8 @@ bool Parser::GetClassData(DataPtr& data)
       if(!GetCxxExpr(width, end)) return Backup(start, 38);
    }
 
+   auto eqpos = CurrPos();
+
    if(lexer_.NextStringIs("="))
    {
       if(lexer_.NextCharIs('{'))
@@ -979,7 +981,7 @@ bool Parser::GetClassData(DataPtr& data)
    data->SetConstexpr(cexp);
    static_cast< ClassData* >(data.get())->SetMutable(mute);
    static_cast< ClassData* >(data.get())->SetWidth(width);
-   data->SetAssignment(init);
+   data->SetAssignment(init, eqpos);
    return Success(Parser_GetClassData, start);
 }
 
@@ -1997,6 +1999,8 @@ bool Parser::GetFuncData(DataPtr& data)
 
       while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
 
+      auto eqpos = CurrPos();
+
       if(lexer_.NextStringIs("="))
       {
          if(lexer_.NextCharIs('{'))
@@ -2031,7 +2035,7 @@ bool Parser::GetFuncData(DataPtr& data)
       curr->SetContext(pos);
       curr->SetStatic(stat);
       curr->SetConstexpr(cexp);
-      curr->SetAssignment(init);
+      curr->SetAssignment(init, eqpos);
       prev = curr;
    }
    while(lexer_.NextCharIs(','));
@@ -3087,6 +3091,8 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    if(!GetQualName(dataName)) return Backup(start, 176);
    if(dataName->Operator() != Cxx::NIL_OPERATOR) return Backup(start, 177);
 
+   auto eqpos = string::npos;
+
    if(lexer_.NextCharIs('('))
    {
       auto end = lexer_.FindClosing('(', ')');
@@ -3096,6 +3102,8 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    else
    {
       while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
+
+      eqpos = CurrPos();
 
       if(lexer_.NextStringIs("="))
       {
@@ -3122,7 +3130,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    data->SetThreadLocal(tloc);
    data->SetConstexpr(cexp);
    data->SetExpression(expr);
-   data->SetAssignment(init);
+   data->SetAssignment(init, eqpos);
    return Success(Parser_GetSpaceData, start);
 }
 

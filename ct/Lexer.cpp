@@ -303,6 +303,85 @@ void Lexer::CalcDepths()
 
 //------------------------------------------------------------------------------
 
+void Lexer::CheckPunctuation() const
+{
+   auto frag = false;
+
+   for(size_t pos = 0; pos < source_->size(); pos = NextPos(pos + 1))
+   {
+      switch((*source_)[pos])
+      {
+      case '{':
+         if(WhitespaceChars.find((*source_)[pos - 1]) == string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_{");
+         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "{_");
+         break;
+
+      case '}':
+         if(WhitespaceChars.find((*source_)[pos - 1]) == string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_}");
+         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+         {
+            if((*source_)[pos + 1] == ';') continue;
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "}_");
+         }
+         break;
+
+      case ';':
+         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@;");
+         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, ";_");
+         break;
+
+      case ',':
+         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@,");
+         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, ",_");
+         break;
+
+      case ')':
+         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@)");
+         break;
+
+      case ']':
+         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@]");
+         break;
+
+      case ':':
+         if((*source_)[pos + 1] == ':')
+         {
+            ++pos;
+            continue;
+         }
+
+         if(WhitespaceChars.find((*source_)[pos - 1]) == string::npos)
+         {
+            if(NoSpaceBeforeColon(pos)) continue;
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_:");
+         }
+
+         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, ":_");
+         break;
+
+      case APOSTROPHE:
+         pos = SkipCharLiteral(pos);
+         break;
+
+      case QUOTE:
+         pos = SkipStrLiteral(pos, frag);
+         break;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 bool Lexer::CodeMatches(size_t pos, const std::string& str) const
 {
    Debug::ft("Lexer.CodeMatches");
@@ -2051,6 +2130,30 @@ bool Lexer::NoCodeFollows(size_t pos) const
       if(pos >= crlf) return true;
       return NoCodeFollows(pos + 2);
    }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool Lexer::NoSpaceBeforeColon(size_t pos) const
+{
+   Debug::ft("Lexer.NoSpaceBeforeColon");
+
+   auto size = strlen(PUBLIC_STR);
+   auto begin = pos - size;
+   if(source_->compare(begin, size, PUBLIC_STR) == 0) return true;
+
+   size = strlen(PROTECTED_STR);
+   begin = pos - size;
+   if(source_->compare(begin, size, PROTECTED_STR) == 0) return true;
+
+   size = strlen(PRIVATE_STR);
+   begin = pos - size;
+   if(source_->compare(begin, size, PRIVATE_STR) == 0) return true;
+
+   if(source_->rfind(CASE_STR, pos) >= CurrBegin(pos)) return true;
+   if(source_->rfind(DEFAULT_STR, pos) >= CurrBegin(pos)) return true;
 
    return false;
 }

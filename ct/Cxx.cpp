@@ -448,13 +448,13 @@ CxxWord::CxxWord
 
 //==============================================================================
 
-fixed_string XX = "xx";
-fixed_string XN = "xn";
-fixed_string NX = "nx";
-fixed_string NN = "nn";
-fixed_string NS = "ns";
-fixed_string SN = "sn";
-fixed_string SS = "ss";
+fixed_string XX = "  ";
+fixed_string XN = " @";
+fixed_string NX = "@ ";
+fixed_string NN = "@@";
+fixed_string NS = "@_";
+fixed_string SN = "_@";
+fixed_string SS = "__";
 
 const CxxOp CxxOp::Attrs[Cxx::NIL_OPERATOR + 1] =
 {

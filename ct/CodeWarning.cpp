@@ -240,18 +240,20 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
 
       do
       {
+         auto f = item->File();
+
          *stream << (item->IsInformational() ? 'i' : SPACE);
-         *stream << SPACE << item->File()->Path();
+         *stream << SPACE << f->Path();
          *stream << '(' << item->Line() + 1;
          if(item->offset_ > 0) *stream << '/' << item->offset_;
          *stream << "): ";
 
          if(item->HasCodeToDisplay())
          {
-            *stream << item->File()->GetLexer().GetCode(item->Pos(), false);
+            *stream << f->GetLexer().GetCode(item->Pos(), false);
          }
 
-         if(item->HasInfoToDisplay()) *stream << item->info_;
+         if(item->HasInfoToDisplay()) *stream << " // " << item->info_;
          *stream << CRLF;
          ++item;
       }
@@ -289,10 +291,10 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
             if(item->HasCodeToDisplay())
             {
                *stream << f->GetLexer().GetCode(item->Pos(), false);
-               if(!item->info_.empty()) *stream << " // ";
             }
 
-            *stream << item->info_ << CRLF;
+            if(item->HasInfoToDisplay()) *stream << " // " << item->info_;
+            *stream << CRLF;
             ++item;
          }
          while((item != last) && (item->warning_ == w) && (item->File() == f));
@@ -771,7 +773,10 @@ void CodeWarning::Initialize()
       "C-style preprocessor directive")));
    Attrs_.insert(WarningPair(OperatorSpacing,
       WarningAttrs(T,
-      "add/remove spaces before/after operator")));
+      "Add/remove spaces before/after operator")));
+   Attrs_.insert(WarningPair(PunctuationSpacing,
+      WarningAttrs(T,
+      "Add/remove spaces before/after punctuation")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));
@@ -1131,6 +1136,9 @@ bool CodeWarning::Suppress() const
    case PreprocessorDirective:
       if(item_->Name() == "FIELD_LOAD") return true;
       break;
+
+   case OperatorSpacing:
+      if(fn == "Cxx.cpp") return true;
    }
 
    return false;

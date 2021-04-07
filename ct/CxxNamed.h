@@ -1487,6 +1487,7 @@ public:
    StaticAssert(ExprPtr& expr, ExprPtr& message);
    ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
    void AddToXref() override;
+   void Check() const override;
    std::string EndChars() const override { return ";"; }
    void EnterBlock() override;
    bool EnterScope() override;

@@ -496,7 +496,7 @@ struct CxxOp
    const bool symmetric;
 
    //  Whether spaces should precede and follow the operator when formatted.
-   //  Values are 'x'=unchecked, 'n'=no space, and 's'=space.  Each entry is
+   //  Values are ' '=unchecked, '@'=no space, and '_'=space.  Each entry is
    //  two characters long: [0] for preceding, and [1] for following.
    //
    NodeBase::fixed_string spacing;

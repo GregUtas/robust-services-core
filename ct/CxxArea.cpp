@@ -412,7 +412,6 @@ void Class::AddToXref()
    if(alignas_ != nullptr) alignas_->AddToXref();
 
    auto base = GetBaseDecl();
-
    if(base != nullptr) base->AddToXref();
 
    for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
@@ -485,6 +484,10 @@ void Class::Check() const
    CxxArea::Check();
 
    if(parms_ != nullptr) parms_->Check();
+   if(alignas_ != nullptr) alignas_->Check();
+
+   auto base = GetBaseDecl();
+   if(base != nullptr) base->Check();
 
    for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
    {
@@ -1694,7 +1697,7 @@ bool Class::IsDefaultConstructible()
 
       auto data = Datas();
 
-      for(size_t i = 0 ; i < data->size(); ++i)
+      for(size_t i = 0; i < data->size(); ++i)
       {
          if(!data->at(i)->IsDefaultConstructible()) return false;
       }

@@ -736,6 +736,16 @@ TagCount DataSpec::Arrays() const
 
 void DataSpec::Check() const
 {
+   name_->Check();
+
+   if(arrays_ != nullptr)
+   {
+      for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
+      {
+         (*a)->Check();
+      }
+   }
+
    if(tags_.ptrDet_) Log(PtrTagDetached);
    if(tags_.refDet_) Log(RefTagDetached);
 }
@@ -2443,6 +2453,13 @@ void StaticAssert::AddToXref()
 
 //------------------------------------------------------------------------------
 
+void StaticAssert::Check() const
+{
+   expr_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void StaticAssert::EnterBlock()
 {
    Debug::ft("StaticAssert.EnterBlock");
@@ -2838,7 +2855,7 @@ TypeMatch TypeName::MatchTemplate(const TypeName* that,
 
    auto match = Compatible;
 
-   for(size_t i = 0 ; i < thisSize; ++i)
+   for(size_t i = 0; i < thisSize; ++i)
    {
       auto result = this->args_->at(i)->MatchTemplate
          (that->args_->at(i).get(), tmpltParms, tmpltArgs, argFound);
@@ -3571,7 +3588,7 @@ void TypeTags::TypeString(std::string& name, bool arg) const
    }
    else
    {
-      for(auto i = 0 ; i < arrays_; ++i) name += ARRAY_STR;
+      for(auto i = 0; i < arrays_; ++i) name += ARRAY_STR;
    }
 
    if(!arg && (refs_ > 0)) name += string(refs_, '&');

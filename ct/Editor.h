@@ -160,8 +160,9 @@ private:
    //  case EXPL provides an explanation.  A return value of -1 means that the
    //  file should be skipped; other values denote more serious errors.
    //
-   word AdjustLineIndentation(const CodeWarning& log, string& expl);
-   word AdjustOperatorSpacing(const CodeWarning& log, string& expl);
+   word AdjustIndentation(const CodeWarning& log, string& expl);
+   word AdjustOperator(const CodeWarning& log, string& expl);
+   word AdjustPunctuation(const CodeWarning& log, string& expl);
    word AdjustTags(const CodeWarning& log, string& expl);
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc, string& expl);
    word ChangeClassToNamespace(const CodeWarning& log, string& expl);
@@ -258,6 +259,11 @@ private:
    //  line.  POS is where to insert.  Returns POS.
    //
    size_t InsertRule(size_t pos, char c);
+
+   //  Adjust the spacing around source_[POS, POS + LEN) based on SPACING.
+   //  Returns true if an adjustment occurred.
+   //
+   bool AdjustSpacing(size_t pos, size_t len, const string& spacing);
 
    //  Returns the first line that follows comments and blanks.
    //
@@ -519,7 +525,7 @@ private:
    //  Erases COUNT characters starting at POS and then inserts CODE.  Should
    //  not be used if an erased susbstring is reinserted by CODE.
    //
-   size_t Replace(size_t pos, size_t count, const std::string& code);
+   size_t Replace(size_t pos, size_t count, const string& code);
 
    //  Adds the editor to Editors_ and returns 0.
    //

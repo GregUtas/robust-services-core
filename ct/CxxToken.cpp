@@ -1364,6 +1364,8 @@ CxxToken* Operation::Back()
    return this;
 }
 
+//------------------------------------------------------------------------------
+
 void Operation::Check() const
 {
    if(!IsInternal())
@@ -1376,7 +1378,7 @@ void Operation::Check() const
 
       switch(attrs.spacing[0])
       {
-      case 'n':
+      case '@':
          if((WhitespaceChars.find(lchar) != string::npos) &&
             (lexer.LineFindFirst(pos) != pos))
          {
@@ -1387,7 +1389,7 @@ void Operation::Check() const
          }
          break;
 
-      case 's':
+      case '_':
          if((WhitespaceChars.find(lchar) == string::npos) && (lchar != '('))
          {
             Log(OperatorSpacing);
@@ -1397,13 +1399,13 @@ void Operation::Check() const
 
       switch(attrs.spacing[1])
       {
-      case 'n':
+      case '@':
          if((WhitespaceChars.find(rchar) != string::npos) && (rchar != CRLF))
          {
             Log(OperatorSpacing);
          }
          break;
-      case 's':
+      case '_':
          if((WhitespaceChars.find(rchar) == string::npos) && (rchar != ')'))
          {
             Log(OperatorSpacing);

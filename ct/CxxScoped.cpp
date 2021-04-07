@@ -69,6 +69,8 @@ void Argument::AddToXref()
 
 string Argument::BeginChars(char end) const
 {
+   Debug::ft("Argument.BeginChars");
+
    return (end == ')' ? "," : EMPTY_STR);
 }
 
@@ -1348,6 +1350,8 @@ void Enumerator::AddToXref()
 
 string Enumerator::BeginChars(char end) const
 {
+   Debug::ft("Enumerator.BeginChars");
+
    return (end == '}' ? "," : EMPTY_STR);
 }
 
@@ -2391,6 +2395,8 @@ void MemberInit::AddToXref()
 
 string MemberInit::BeginChars(char end) const
 {
+   Debug::ft("MemberInit.BeginChars");
+
    return (end == '{' ? ",:" : EMPTY_STR);
 }
 

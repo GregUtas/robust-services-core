@@ -1387,23 +1387,34 @@ size_t Editor::CutCode(const CxxToken* item, string& expl, string& code)
 
       if(!beginchars.empty())
       {
-         auto prev = RfindFirstOf(begin - 1, beginchars);
-
-         if(FindComment(prev) != string::npos)
+         if(beginchars[0] != '$')
          {
-            source_[prev] = SPACE;
+            auto prev = RfindFirstOf(begin - 1, beginchars);
+
+            if(FindComment(prev) != string::npos)
+            {
+               source_[prev] = SPACE;
+            }
+            else
+            {
+               Erase(prev, 1);
+               --begin;
+               --end;
+            }
+
+            if(IsFirstNonBlank(end))
+               end = CurrBegin(end) - 1;
+            else
+               --end;
          }
          else
          {
-            Erase(prev, 1);
-            --begin;
-            --end;
+            //  This cuts from the start of ITEM to END, along with any
+            //  spaces that follow END.
+            //
+            begin = item->GetPos();
+            end = source_.find_first_not_of(WhitespaceChars, end + 1) - 1;
          }
-
-         if(IsFirstNonBlank(end))
-            end = CurrBegin(end) - 1;
-         else
-            --end;
       }
 
       //  When the code ends at a right brace, also cut any semicolon that

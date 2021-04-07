@@ -891,6 +891,10 @@ public:
    //
    void AddToXref() override;
 
+   //  Overridden to support multiple declarations on the same line.
+   //
+   std::string BeginChars(char end) const override;
+
    //  Overridden to log warnings associated with the data.
    //
    void Check() const override;
@@ -899,6 +903,10 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to support multiple declarations on the same line.
+   //
+   std::string EndChars() const override;
 
    //  Overridden to make the item visible as a local.
    //

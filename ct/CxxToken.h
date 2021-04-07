@@ -384,7 +384,8 @@ public:
    //  instead, this function returns the preceding character(s) that can be
    //  cut.  If none of those characters directly precedes the start of the
    //  item, END is not cut, but neither is the previous character.  Returning
-   //  EMPTY_STR indicates that no adjustment is required.
+   //  EMPTY_STR indicates that no adjustment is required.  Returning "$" cuts
+   //  END but cuts nothing before the item's position.
    //
    virtual std::string BeginChars(char end) const
       { return NodeBase::EMPTY_STR; }

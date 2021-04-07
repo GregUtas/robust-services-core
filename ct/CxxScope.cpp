@@ -1680,6 +1680,16 @@ void FuncData::AddToXref()
 
 //------------------------------------------------------------------------------
 
+std::string FuncData::BeginChars(char end) const
+{
+   Debug::ft("FuncData.BeginChars");
+
+   if(first_ != this) return ",";
+   return (next_ == nullptr ? EMPTY_STR : "$");
+}
+
+//------------------------------------------------------------------------------
+
 void FuncData::Check() const
 {
    Debug::ft("FuncData.Check");
@@ -1743,6 +1753,15 @@ void FuncData::DisplayItem(ostream& stream, const Flags& options) const
       stream << ", ";
       next_->Print(stream, options);
    }
+}
+
+//------------------------------------------------------------------------------
+
+std::string FuncData::EndChars() const
+{
+   Debug::ft("FuncData.EndChars");
+
+   return (next_ == nullptr ? ";" : ",");
 }
 
 //------------------------------------------------------------------------------
@@ -3471,6 +3490,8 @@ void Function::DisplayInfo(ostream& stream, const Flags& options) const
 
 string Function::EndChars() const
 {
+   Debug::ft("Function.EndChars");
+
    return ((impl_ != nullptr) ? "}" : ";");
 }
 

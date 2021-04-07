@@ -2038,6 +2038,8 @@ void QualName::CopyContext(const CxxToken* that)
 
 std::string QualName::EndChars() const
 {
+   Debug::ft("QualName.EndChars");
+
    auto ref = Referent();
    if((ref != nullptr) && (ref->Type() == Cxx::Data)) return ";";
    return EMPTY_STR;
@@ -2672,6 +2674,8 @@ CxxScoped* TypeName::DirectType() const
 
 std::string TypeName::EndChars() const
 {
+   Debug::ft("TypeName.EndChars");
+
    auto ref = Referent();
    if((ref != nullptr) && (ref->Type() == Cxx::Data)) return ";";
    return EMPTY_STR;

@@ -360,7 +360,7 @@ word CoverageCommand::ProcessCommand(CliThread& cli) const
    auto database = Singleton< CodeCoverage >::Instance();
    id_t index;
    word min;
-   string name, path, expl;
+   string name, expl;
    word rc;
 
    if(!GetTextIndex(index, cli)) return -1;
@@ -981,7 +981,7 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft("PurgeCommand.ProcessCommand");
 
-   string name, expr, expl;
+   string name, expl;
 
    if(!GetIdentifier(name, cli, Symbol::ValidNameChars(),
       Symbol::InvalidInitialChars())) return -1;

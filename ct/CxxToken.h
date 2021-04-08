@@ -76,6 +76,10 @@ public:
    //
    size_t GetPos() const { return loc_.GetPos(); }
 
+   //  Marks the item as having been generated internally.
+   //
+   void SetInternal(bool internal) { loc_.SetInternal(internal); }
+
    //  Returns true if the item appeared in internally generated code.
    //
    bool IsInternal() const { return loc_.IsInternal(); }

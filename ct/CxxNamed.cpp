@@ -648,6 +648,7 @@ DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
 {
    Debug::ft("DataSpec.ctor(copy)");
 
+   SetInternal(true);
    name_.reset(new QualName(*that.name_.get()));
    CxxStats::Incr(CxxStats::DATA_SPEC);
 }
@@ -746,8 +747,11 @@ void DataSpec::Check() const
       }
    }
 
-   if(tags_.ptrDet_) Log(PtrTagDetached);
-   if(tags_.refDet_) Log(RefTagDetached);
+   if(!IsInternal())
+   {
+      if(tags_.ptrDet_) Log(PtrTagDetached);
+      if(tags_.refDet_) Log(RefTagDetached);
+   }
 }
 
 //------------------------------------------------------------------------------

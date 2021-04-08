@@ -202,8 +202,8 @@ template is a base class
   `>export`.
 - [ ] `std::list::sort`: The _subs_ file for `list` declares the sort function
 as `bool (*sorted)(T& first, T& second)`. Therefore, if its parameters differ
-from the `list` template arguments, a log occurs during function matching. The
-log occurs, for example, if the sort function uses a base class of T rather than
+from the `list` template arguments, a log occurs during function matching. For
+example, the log occurs if the sort function uses a base class of T rather than
 T itself.
 
 ### Parser

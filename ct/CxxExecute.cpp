@@ -1491,6 +1491,7 @@ void StackArg::CheckIfBool() const
    }
 
    Context::Log(NonBooleanConditional);
+   item->Log(NonBooleanConditional, item, -1);
 }
 
 //------------------------------------------------------------------------------

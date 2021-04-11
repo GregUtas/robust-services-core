@@ -772,7 +772,7 @@ private:
 
    //  Handles the invocation of a function call.
    //
-   static void ExecuteCall();
+   void ExecuteCall() const;
 
    //  Finds the version of operator new, new[], delete, or delete[] to
    //  invoke for ARG.  DEL is set if looking for delete/delete[].  POD

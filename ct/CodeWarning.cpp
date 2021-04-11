@@ -578,7 +578,7 @@ void CodeWarning::Initialize()
       "Base class non-virtual destructor is public")));
    Attrs_.insert(WarningPair(VirtualFunctionInvoked,
       WarningAttrs(F,
-      "Virtual function in own class invoked by constructor or destructor")));
+      "Virtual function invoked by constructor or destructor")));
    Attrs_.insert(WarningPair(RuleOf3DtorNoCopyCtor,
       WarningAttrs(T,
       "Destructor defined, but not copy constructor")));

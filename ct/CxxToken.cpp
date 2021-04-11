@@ -1882,7 +1882,7 @@ void Operation::Execute() const
 
 fn_name Operation_ExecuteCall = "Operation.ExecuteCall";
 
-void Operation::ExecuteCall()
+void Operation::ExecuteCall() const
 {
    Debug::ft(Operation_ExecuteCall);
 
@@ -1986,7 +1986,8 @@ void Operation::ExecuteCall()
       //  Invoke the function, which pushes its return value onto the stack.
       //
       func->UpdateThisArg(args);
-      func->Invoke(&args);
+      auto warning = func->Invoke(&args);
+      if(warning != Warning_N) Log(warning);
       return;
    }
 

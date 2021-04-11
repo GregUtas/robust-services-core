@@ -265,11 +265,12 @@ as virtual to properly destruct a class that derives from it. If
 the intention is to force another function to be used to destruct
 instances, the destructor should not be public.
 ? W67
-Virtual function in own class invoked by constructor or destructor
-  This is dangerous because an object's class changes as the chain
-of constructors or destructors is invoked. If a virtual function
-is invoked during this time, it may not be the intended one, and
-it might even be pure virtual, resulting in an exception.
+Virtual function invoked by constructor or destructor
+  This constructor or destructor invokes a virtual function that its
+class does not override.  The function will therefore be invoked on
+a base class: a derived class does not yet exist (in the case of a
+constructor) or no longer exists (in the case of a destructor). The
+function might even be pure virtual, resulting in an exception.
 ? W68
 Destructor defined, but not copy constructor
   If a class defines a destructor, it probably owns something that

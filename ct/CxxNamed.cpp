@@ -3300,6 +3300,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
       if((this->Name() == BOOL_STR) || that.IsBool())
       {
          Context::Log(BoolMixedWithNumeric);
+         that.item->Log(BoolMixedWithNumeric, that.item, -1);
       }
    }
 

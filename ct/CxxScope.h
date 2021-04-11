@@ -1257,9 +1257,10 @@ public:
    //  Registers an invocation of the function.  ARGS is a list of resolved
    //  arguments, in the same order as declared by the function.  A read is
    //  noted for each argument, and a write if it was passed as a non-const
-   //  pointer or reference.
+   //  pointer or reference.  Returns something other than Warning_N if a
+   //  warning should be logged on the function call.
    //
-   void Invoke(StackArgVector* args);
+   Warning Invoke(StackArgVector* args);
 
    //  Returns true if the function was invoked.  Considers virtuality.
    //
@@ -1527,8 +1528,8 @@ private:
    //
    void SetDefn(Function* func);
 
-   //  Returns true if this function is overridden by CLS or one of its
-   //  subclasses.
+   //  Returns true if this function, located above CLS, is overridden by CLS
+   //  or one of its subclasses.  Returns false if this function is *in* CLS.
    //
    bool IsOverriddenAtOrBelow(const Class* cls) const;
 

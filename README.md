@@ -36,7 +36,7 @@ static analysis tools. These tools detect violations of various C++ design
 guidelines, such as those found in Scott Meyers' _Effective C++_. They also
 analyze `#include` directives to determine which ones to add or delete. Their
 editor then allows you to easily and interactively fix about half of the 130
-or so warning types.  Even if you're not developing applications with RSC, you
+or so warning types. Even if you're not developing applications with RSC, you
 might find these tools useful. An overview of them is provided
 [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
@@ -106,7 +106,7 @@ Windows build options used for RSC are described
 ## Running the executable
 
 During initialization, the program displays each module as it is initialized.
-(A _module_ is currently equivalent to a static library.)  After all modules
+(A _module_ is equivalent to a static library.)  After all modules
 have initialized, the CLI prompt `nb>` appears to indicate that CLI commands
 in the _nb_ directory are available. The information written to the console
 during startup is shown [here](/output/init.console.txt), and a list of all

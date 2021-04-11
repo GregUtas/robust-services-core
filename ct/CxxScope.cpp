@@ -4407,7 +4407,7 @@ Function* Function::InstantiateFunction(stringVector& tmpltArgs) const
 
 fn_name Function_Invoke = "Function.Invoke";
 
-void Function::Invoke(StackArgVector* args)
+Warning Function::Invoke(StackArgVector* args)
 {
    Debug::ft(Function_Invoke);
 
@@ -4441,9 +4441,9 @@ void Function::Invoke(StackArgVector* args)
    Context::PushArg(ResultType());
    Context::WasCalled(this);
 
-   //  Generate a warning if a constructor or destructor just invoked a
-   //  standard virtual function that is overridden by its own class or
-   //  one of its subclasses.
+   //  Generate a warning if a constructor or destructor invoked a
+   //  standard virtual function that is overridden by one of its
+   //  subclasses but not by its own class.
    //
    if(IsVirtual() && (FuncType() == FuncStandard))
    {
@@ -4459,12 +4459,14 @@ void Function::Invoke(StackArgVector* args)
             {
                if(IsOverriddenAtOrBelow(cls))
                {
-                  Context::Log(VirtualFunctionInvoked);
+                  return VirtualFunctionInvoked;
                }
             }
          }
       }
    }
+
+   return Warning_N;
 }
 
 //------------------------------------------------------------------------------

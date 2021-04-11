@@ -2052,7 +2052,7 @@ void Class::WasCalled(FunctionRole role, const CxxNamed* item)
          if(item != nullptr)
             item->Log(warning, item, -1);
          else
-            Context::Log(warning, this, -1);
+            this->Log(warning, this, -1);
          return;
       }
    }

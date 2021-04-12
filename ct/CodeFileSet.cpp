@@ -163,42 +163,27 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
       }
    }
 
-   //  To avoid generating spurious warnings, all files affected by those to be
-   //  checked, as well as all files that affect them, must have been parsed.
-   //  As long as one of them has been parsed, we can parse the others because
-   //  the target (operating system and word size) is already known.
+   //  To avoid generating spurious warnings, the following must be parsed:
+   //  (a) files affected by those to be checked;
+   //  (b) files that affect those in (a).
    //
+   auto inclSet = new CodeFileSet(TemporaryName(), &fileSet);
    auto abSet = this->AffectedBy();
-   auto asSet = this->Affecters();
-   LibItemSet parseSet;
-   SetUnion(parseSet, abSet->Items(), asSet->Items());
-   size_t parsed = 0;
-
-   for(auto f = parseSet.cbegin(); f != parseSet.cend(); ++f)
-   {
-      auto file = static_cast< CodeFile* >(*f);
-      if(file->ParseStatus() != CodeFile::Unparsed) ++parsed;
-   }
-
-   if(parsed == 0)
-   {
-      expl = "No files have been parsed.  This must be done first.";
-      return rc;
-   }
-
+   SetUnion(inclSet->Items(), abSet->Items());
+   auto parseSet = GetParseSet(inclSet->Items());
+   auto& parseItems = parseSet->Items();
    auto skip = true;
-   auto unparsed = parseSet.size() - parsed;
 
-   if(unparsed > 0)
+   if(parseItems.size() > 0)
    {
-      *cli.obuf << unparsed << " files should be parsed to avoid spurious";
-      *cli.obuf << CRLF << "results.  ";
+      *cli.obuf << parseItems.size() << " files should be parsed to";
+      *cli.obuf << CRLF << " avoid spurious results.  ";
       skip = cli.BoolPrompt("Do you wish to skip this?");
    }
 
    if(!skip)
    {
-      auto parseFiles = new CodeFileSet(TemporaryName(), &parseSet);
+      auto parseFiles = new CodeFileSet(TemporaryName(), &parseSet->Items());
       rc = parseFiles->Parse(expl, "-");
    }
 
@@ -511,6 +496,37 @@ LibrarySet* CodeFileSet::FoundIn(const LibrarySet* that) const
 
 //------------------------------------------------------------------------------
 
+LibrarySet* CodeFileSet::GetParseSet(const LibItemSet& files) const
+{
+   Debug::ft("CodeFileSet.GetParseSet");
+
+   //  Expand FILES with substitute files and those that affect FILES.
+   //
+   auto library = Singleton< Library >::Instance();
+   LibItemSet parseSet(files);
+   SetUnion(parseSet, library->SubsFiles().Items());
+
+   auto parseFiles = new CodeFileSet(TemporaryName(), &parseSet);
+   auto affects = parseFiles->Affecters();
+   auto& items = affects->Items();
+
+   //  Remove files that have already been parsed.
+   //
+   for(auto f = items.begin(); f != items.end(); NO_OP)
+   {
+      auto file = static_cast< CodeFile* >(*f);
+
+      if(file->ParseStatus() != CodeFile::Unparsed)
+         f = items.erase(f);
+      else
+         ++f;
+   }
+
+   return affects;
+}
+
+//------------------------------------------------------------------------------
+
 LibrarySet* CodeFileSet::Implements() const
 {
    Debug::ft("CodeFileSet.Implements");
@@ -642,27 +658,8 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
       return 0;
    }
 
-   //  Create a copy of the files to be parsed.  Include files that affect them,
-   //  along with substitute files.  Calculate the build order of the resulting
-   //  set.
-   //
-   auto library = Singleton< Library >::Instance();
-   LibItemSet parseSet(fileSet);
-   SetUnion(parseSet, library->SubsFiles().Items());
-
-   auto parseFiles = new CodeFileSet(TemporaryName(), &parseSet);
-   auto affects = parseFiles->Affecters();
-   auto order = affects->SortInBuildOrder();
-
-   //  Remove files that have already been parsed.
-   //
-   for(auto f = order.begin(); f != order.end(); NO_OP)
-   {
-      if(f->file->ParseStatus() != CodeFile::Unparsed)
-         f = order.erase(f);
-      else
-         ++f;
-   }
+   auto parseSet = GetParseSet(fileSet);
+   auto order = parseSet->SortInBuildOrder();
 
    //  Parse substitute files first, followed by the .h's.  This allows the
    //  symbols visible to a file to be determined before parsing it.  Using

@@ -876,7 +876,7 @@ NbHeap::BlockState NbHeap::ValidateBlock
             return Corrupt(PrevNextInvalid, restart);
          if((HeapBlock*) block->link.next->prev != block)
             return Corrupt(NextPrevInvalid, restart);
-         //  [[ fallthrough ]]
+         //  [[fallthrough]]
       }
 
    case Allocated:

@@ -565,7 +565,7 @@ string Normalize(const string& name)
       case ',':
       case SPACE:
          result += next + name[i];
-         //  [fallthrough]
+         //  [[fallthrough]]
       case ':':
          next.clear();
          break;

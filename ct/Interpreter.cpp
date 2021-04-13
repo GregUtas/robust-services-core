@@ -619,7 +619,7 @@ LibrarySet* Interpreter::Error(LibExprErr err) const
       //  If this was the error, it really meant...
       //
       err = EmptyExpression;
-      //  [fallthrough]]
+      //  [[fallthrough]]
    case EmptyExpression:
       loc = 1;
       break;

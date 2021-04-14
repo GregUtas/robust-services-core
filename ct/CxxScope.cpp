@@ -4580,19 +4580,17 @@ bool Function::IsTrivial() const
 
    if(IsDefaulted()) return true;
    if(tmplt_ != nullptr) return false;
-   if(GetDefn()->impl_ == nullptr) return false;
 
-   auto file = GetImplFile();
-   if(file == nullptr) return true;
-
+   auto defn = GetDefn();
+   if(defn->impl_ == nullptr) return false;
    size_t begin, left, end;
-   if(!GetRange(begin, left, end)) return false;
+   if(!defn->GetRange(begin, left, end)) return false;
 
-   auto& lexer = file->GetLexer();
+   auto& lexer = defn->GetFile()->GetLexer();
    auto last = lexer.GetLineNum(end);
    auto body = false;
 
-   for(auto n = lexer.GetLineNum(begin); n < last; ++n)  //* n <= ?
+   for(auto n = lexer.GetLineNum(begin); n <= last; ++n)
    {
       auto type = lexer.LineToType(n);
 

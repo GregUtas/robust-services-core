@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #ifdef OS_WIN
+
 #include "SysFile.h"
 #include <cstdint>
 #include <direct.h>

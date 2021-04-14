@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #ifdef OS_WIN
+
 #include "SysUdpSocket.h"
 #include <winsock2.h>
 #include "Debug.h"

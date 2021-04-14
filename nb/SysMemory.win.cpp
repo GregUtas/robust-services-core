@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #ifdef OS_WIN
+
 #include "SysMemory.h"
 #include <Windows.h>
 #include "Debug.h"

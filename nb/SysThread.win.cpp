@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #ifdef OS_WIN
+
 #include "SysThread.h"
 #include <csignal>
 #include <cstdint>
@@ -62,7 +63,7 @@ signal_t AccessViolationType(const _EXCEPTION_POINTERS* ex)
 }
 
 //------------------------------------------------------------------------------
-
+//
 //  Converts a Windows structured exception to a C++ exception.
 //
 void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)

@@ -42,9 +42,10 @@ namespace CodeTools
 //
 struct LineInfo
 {
-   size_t begin;  // offset where line starts; it ends at a CRLF
-   int8_t depth;  // lexical level for indentation
-   bool cont;     // set if code continues from the previous line
+   size_t begin;   // offset where line starts; it ends at a CRLF
+   int8_t depth;   // lexical level for indentation
+   bool cont;      // set if code continues from the previous line
+   LineType type;  // line's type
 
    //  Constructs a line that begins at START.
    //
@@ -331,6 +332,11 @@ public:
    //
    void CalcDepths();
 
+   //  Scans the code to determine each line's LineType.  LOG is set if warnings
+   //  are to be generated.
+   //
+   void CalcLineTypes(bool log);
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -365,9 +371,13 @@ public:
    //
    size_t NextBegin(size_t pos) const;
 
+   //  Returns the type of line for the Nth line.
+   //
+   LineType LineToType(size_t n) const;
+
    //  Returns the type of line in which POS occurs.
    //
-   LineType GetLineType(size_t pos) const;
+   LineType PosToType(size_t pos) const;
 
    //  Returns true if POS's line is empty or contains only whitespace.
    //
@@ -406,6 +416,18 @@ public:
    //  Returns true if the rest of the line that follows POS contains no code.
    //
    bool NoCodeFollows(size_t pos) const;
+
+   //  Characters in the string returned by CheckVerticalSpacing.
+   //
+   static const char LineOK = '-';
+   static const char InsertBlank = 'b';
+   static const char ChangeToEmptyComment = 'c';
+   static const char DeleteLine = 'd';
+
+   //  Check vertical spacing.  Returns a string that indicates how each line
+   //  should be modified (see above).
+   //
+   std::string CheckVerticalSpacing();
 
    //  Checks the spacing of punctuation.
    //
@@ -479,6 +501,17 @@ protected:
    //
    void Update();
 private:
+   //  Clears all LineInfo records and create new ones that contain the
+   //  start position of each line.
+   //
+   void FindLines();
+
+   //  Classifies the Nth line of code and looks for some warnings.  LOG
+   //  is set if warnings should be generated.  Sets CONT when a line of
+   //  code continues on the next line.
+   //
+   LineType CalcLineType(size_t n, bool log, bool& cont);
+
    //  Used by PreprocessSource, which creates a clone of "this" lexer to
    //  do the work.
    //
@@ -580,6 +613,10 @@ private:
    //
    CodeFile* file_;
 
+   //  Set if a /* comment is open during CalcLineTypes.
+   //
+   bool slashAsterisk_;
+
    //  Information about each line.
    //
    LineInfoVector lines_;
@@ -592,10 +629,6 @@ private:
    //  immediately after the last one that was parsed).
    //
    size_t prev_;
-
-   //  Set if the code has been edited.
-   //
-   bool edited_;
 };
 }
 #endif

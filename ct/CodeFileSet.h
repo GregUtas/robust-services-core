@@ -113,7 +113,7 @@ private:
       (const std::string& name, const LibItemSet* items) const override;
 
    //  Returns the set of files that need to be parsed when parsing FILES.
-   //  It includes those files that affect FILES but omits files that have
+   //  It adds files that affect FILES and then removes files that have
    //  already been parsed.
    //
    LibrarySet* GetParseSet(const LibItemSet& files) const;

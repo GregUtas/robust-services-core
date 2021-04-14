@@ -165,19 +165,6 @@ public:
    //
    void SetParsed(bool passed);
 
-   //  Returns the LineType for line N.  Returns LineType_N if N is out
-   //  of range.
-   //
-   LineType GetLineType(size_t n) const;
-
-   //  Returns the file's indentation size.
-   //
-   size_t IndentSize() const;
-
-   //  Returns the file's maximum line length.
-   //
-   size_t LineLengthMax() const;
-
    //  Returns a standard name for an #include guard.  Returns EMPTY_STR
    //  if the file is not a header file.
    //
@@ -204,7 +191,7 @@ public:
    //  Includes, in the cross-reference, symbols that appear in the
    //  file's items.
    //
-   void AddToXref();
+   void AddToXref() const;
 
    //  Checks the file after it has been parsed, looking for additional
    //  warnings when a report is to be generated.
@@ -306,11 +293,6 @@ private:
    //
    void AddUser(CodeFile* file);
 
-   //  Classifies the Nth line of code and looks for some warnings.
-   //  Sets CONT if a line of code continues on the next line.
-   //
-   LineType CalcLineType(size_t n, bool& cont);
-
    //  Returns the file's prolog (comments that should appear at the top
    //  of the file).
    //
@@ -340,9 +322,9 @@ private:
    //
    void CheckUsings() const;
 
-   //  Checks vertical separation.
+   //  Checks vertical formatting.
    //
-   void CheckSeparation();
+   void CheckVerticalSpacing();
 
    //  Checks for unnecessary line breaks.
    //
@@ -497,10 +479,6 @@ private:
    //
    Lexer lexer_;
 
-   //  The type of each line in code_.
-   //
-   std::vector< LineType > lineType_;
-
    //  The #included files.
    //
    LibItemSet inclSet_;
@@ -560,10 +538,6 @@ private:
    //  The items used in the file's executable code.
    //
    CxxNamedSet usages_;
-
-   //  Set if a /* comment is open during a lexical scan.
-   //
-   bool slashAsterisk_;
 
    //  The file's parse status.
    //

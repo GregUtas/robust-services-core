@@ -103,9 +103,15 @@ public:
    //
    word Format(string& expl);
 
+   //  Returns the start of any comments that precede POS, including an
+   //  fn_name definition if funcName is set.  Returns POS if it is not
+   //  preceded by any such items.
+   //
+   size_t IntroStart(size_t pos, bool funcName) const;
+
    //  Returns the number of commits made during >fix or >format commands.
    //
-   static size_t CommitCount() { return Commits_; }
+   static size_t CommitCount();
 
    //  Returns the log, if any, whose .warning matches LOG, whose .offset
    //  matches OFFSET, and whose .item matches ITEM.
@@ -167,6 +173,7 @@ private:
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc, string& expl);
    word ChangeClassToNamespace(const CodeWarning& log, string& expl);
    word ChangeClassToStruct(const CodeWarning& log, string& expl);
+   word ChangeDataToFree(const CodeWarning& log, string& expl);
    word ChangeDebugFtName(CliThread& cli, const CodeWarning& log, string& expl);
    word ChangeOperator(const CodeWarning& log, string& expl);
    word ChangeStructToClass(const CodeWarning& log, string& expl);
@@ -224,10 +231,10 @@ private:
    //
    word EraseTrailingBlanks();
 
-   //  Checks adjacent lines to see if one of them should be deleted.  Invoked
-   //  by Format and before writing out code that was changed.
+   //  Adds and removes lines to realign vertical spacing.  Invoked by Format
+   //  and before writing out code that was changed.
    //
-   word CheckLinePairs();
+   word AdjustVerticalSeparation();
 
    //  Converts tabs to spaces.  Invoked by Format and before writing out code
    //  that was changed.
@@ -294,12 +301,6 @@ private:
    //  without an intervening comment or right brace.
    //
    bool CodeFollowsImmediately(size_t pos) const;
-
-   //  Returns the start of any comments that precede POS, including an
-   //  fn_name definition if funcName is set.  Returns POS if it is not
-   //  preceded by any such items.
-   //
-   size_t IntroStart(size_t pos, bool funcName) const;
 
    //  This simplifies sorting by replacing the characters that enclose the
    //  file name's in an #include directive.
@@ -390,7 +391,7 @@ private:
    word ChangeInvokerToFree(const Function* func, string& expl);
    word ChangeInvokerToMember(const Function* func, word offset, string& expl);
    word EraseArgument(const Function* func, word offset, string& expl);
-   word EraseDefault(const Function* func, word offset, string& expl);
+   word EraseDefaultValue(const Function* func, word offset, string& expl);
    word EraseParameter(const Function* func, word offset, string& expl);
    word EraseNoexceptTag(const Function* func, string& expl);
    word InsertArgument(const Function* func, word offset, string& expl);
@@ -578,17 +579,6 @@ private:
    //  can be used in a Paste operation.
    //
    size_t lastCut_;
-
-   //  The editors that have modified their original code.  This allows an
-   //  editor to modify other files (e.g. when a fix requires changes in
-   //  both a function's declaration and definition).  After the changes
-   //  have been made, all modified files can be committed.
-   //
-   static std::set< Editor* > Editors_;
-
-   //  The number of files committed so far.
-   //
-   static size_t Commits_;
 };
 }
 #endif

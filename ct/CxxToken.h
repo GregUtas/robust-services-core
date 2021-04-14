@@ -78,7 +78,7 @@ public:
 
    //  Marks the item as having been generated internally.
    //
-   void SetInternal(bool internal) { loc_.SetInternal(internal); }
+   void SetInternal(bool internal) const { loc_.SetInternal(internal); }
 
    //  Returns true if the item appeared in internally generated code.
    //

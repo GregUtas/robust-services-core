@@ -45,7 +45,6 @@
 #include "Formatters.h"
 #include "Library.h"
 #include "NbCliParms.h"
-#include "NbTypes.h"
 #include "Singleton.h"
 #include "SysFile.h"
 #include "ThisThread.h"
@@ -58,6 +57,17 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
+//  The editors that have modified their original code.  This allows multiple
+//  files to be changed (e.g. when a fix requires changes in both a function's
+//  declaration and definition).  After all changes needed for a fix have been
+//  made, all modified files can be committed.
+//
+std::set< Editor* > Editors_ = std::set< Editor* >();
+
+//  The number of files committed so far.
+//
+size_t Commits_ = 0;
+
 //  Indicates where a blank line should be added when inserting new code.
 //
 enum BlankLocation
@@ -149,7 +159,6 @@ ItemDeclAttrs::ItemDeclAttrs(const CxxToken* item) :
       virt = func->IsVirtual();
    }
    //  [[fallthrough]]
-
    case Cxx::Data:
       stat = item->IsStatic();
       break;
@@ -435,6 +444,24 @@ CodeFile* FindFuncDefnFile(CliThread& cli, const Class* cls, const string& name)
 
 //------------------------------------------------------------------------------
 //
+//  Updates BEGIN and END, where ITEM begins and ends.  BEGIN includes any
+//  comment that immediately precedes ITEM.  Returns false if ITEM could
+//  not be located.
+//
+bool GetCommentedRange(const CxxToken* item, size_t& begin, size_t& end)
+{
+   Debug::ft("CodeTools.GetCommentedRange");
+
+   size_t left;
+   if(!item->GetRange(begin, left, end)) return false;
+
+   auto& editor = item->GetFile()->GetEditor();
+   begin = editor.IntroStart(begin, (item->Type() == Cxx::Function));
+   return true;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Adds a class's items to FUNCS and then sorts them by position.
 //
 void GetItems(const Class* cls, CxxNamedVector& ivec)
@@ -507,11 +534,37 @@ bool IncludesAreSorted(const string& line1, const string& line2)
 
 //------------------------------------------------------------------------------
 //
+//  Returns true if a comment precedes ITEM.
+//
+bool ItemIsCommented(const CxxToken* item)
+{
+   Debug::ft("CodeTools.ItemIsCommented");
+
+   auto& editor = item->GetFile()->GetEditor();
+   auto pos = item->GetPos();
+   pos = editor.PrevBegin(pos);
+
+   auto type = editor.PosToType(pos);
+   switch(type)
+   {
+   case EmptyComment:
+   case TextComment:
+   case SlashAsteriskComment:
+      return true;
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Sets EXPL to "TEXT not found."  If QUOTES is set, TEXT is enclosed in
 //  quotes.  Returns 0.
 //
 word NotFound(string& expl, fixed_string text, bool quotes = false)
 {
+   Debug::ft("CodeTools.NotFound");
+
    if(quotes) expl = QUOTE;
    expl += text;
    if(quotes) expl.push_back(QUOTE);
@@ -526,6 +579,8 @@ word NotFound(string& expl, fixed_string text, bool quotes = false)
 //
 word Report(string& expl, fixed_string text, word rc = 0)
 {
+   Debug::ft("CodeTools.Report");
+
    expl = text;
    if(expl.back() != CRLF) expl.push_back(CRLF);
    return rc;
@@ -537,6 +592,8 @@ word Report(string& expl, fixed_string text, word rc = 0)
 //
 word Report(string& expl, const std::ostringstream& stream, word rc = 0)
 {
+   Debug::ft("CodeTools.Report(stream)");
+
    expl = stream.str();
    if(expl.back() != CRLF) expl.push_back(CRLF);
    return rc;
@@ -548,6 +605,8 @@ word Report(string& expl, const std::ostringstream& stream, word rc = 0)
 //
 void ReportFix(CliThread& cli, word rc, string& expl)
 {
+   Debug::ft("CodeTools.ReportFix(cli)");
+
    if(rc <= 0)
    {
       *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
@@ -564,7 +623,7 @@ void ReportFix(CliThread& cli, word rc, string& expl)
 //
 string strCode(const string& code, size_t level)
 {
-   return spaces(level * INDENT_SIZE) + code + CRLF;
+   return spaces(level * IndentSize()) + code + CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -585,15 +644,12 @@ string strComment(const string& text, size_t indent)
 //
 word Unimplemented(string& expl)
 {
+   Debug::ft("CodeTools.Unimplemented");
+
    return Report(expl, "Fixing this warning is not yet implemented.", -1);
 }
 
 //==============================================================================
-
-std::set< Editor* > Editor::Editors_ = std::set< Editor* >();
-size_t Editor::Commits_ = 0;
-
-//------------------------------------------------------------------------------
 
 Editor::Editor() :
    file_(nullptr),
@@ -744,6 +800,51 @@ word Editor::AdjustTags(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
+word Editor::AdjustVerticalSeparation()
+{
+   Debug::ft("Editor.AdjustVerticalSeparation");
+
+   auto done = false;
+
+   for(auto n = 1; !done && (n <= 4); ++n)
+   {
+      auto actions = CheckVerticalSpacing();
+      done = true;
+
+      for(size_t pos = 0, i = 0; pos != string::npos; ++i)
+      {
+         switch(actions[i])
+         {
+         case LineOK:
+            pos = NextBegin(pos);
+            break;
+
+         case InsertBlank:
+            InsertLine(pos, EMPTY_STR);
+            pos = NextBegin(pos);
+            pos = NextBegin(pos);
+            done = false;
+            break;
+
+         case ChangeToEmptyComment:
+            Insert(pos, COMMENT_STR);
+            pos = NextBegin(pos);
+            done = false;
+            break;
+
+         case DeleteLine:
+            EraseLine(pos);
+            done = false;
+            break;
+         }
+      }
+   }
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::ChangeAccess
    (const CodeWarning& log, Cxx::Access acc, string& expl)
 {
@@ -835,6 +936,110 @@ word Editor::Changed(size_t pos, string& expl)
 
 //------------------------------------------------------------------------------
 
+word Editor::ChangeDataToFree(const CodeWarning& log, string& expl)
+{
+   Debug::ft("Editor.ChangeDataToFree");
+
+   auto decl = static_cast< const Data* >(log.item_);
+   auto defn = decl->GetMate();
+   if(defn == nullptr) return NotFound(expl, "Data definition");
+   auto cls = decl->GetClass();
+   auto qual = cls->Name() + SCOPE_STR;
+   auto cpp = defn->GetFile();
+   auto& refs = decl->Xref();
+   auto ext = false;
+
+   //  Remove the class name qualifier on references to the data and note
+   //  whether any references occur outside the file that defines the data.
+   //
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+   {
+      if(AreInSameStatement(decl, *r)) continue;
+      if(AreInSameStatement(defn, *r)) continue;
+
+      auto file = (*r)->GetFile();
+      if(file != cpp) ext = true;
+
+      auto& editor = file->GetEditor();
+      auto pos = editor.LineRfind((*r)->GetPos(), qual);
+      if(pos != string::npos)
+      {
+         editor.Erase(pos, qual.size());
+      }
+   }
+
+   //  Find the extent of the data's definition.  The definition will move
+   //  to file scope, so remove any indentation.  Cut the definition after
+   //  erasing its "static" tag and prefixing an "extern" tag.
+   //
+   size_t begin, end;
+   if(!GetCommentedRange(decl, begin, end))
+      return NotFound(expl, "Data definition");
+
+   for(auto pos = CurrBegin(end); pos >= begin; pos = PrevBegin(pos))
+   {
+      auto blanks = LineFindFirst(pos) - pos;
+      Erase(pos, blanks);
+   }
+
+   begin = CurrBegin(decl->GetPos());
+   auto pos = LineFind(begin, STATIC_STR);
+   if(pos == string::npos) return NotFound(expl, STATIC_STR, true);
+   Erase(pos, strlen(STATIC_STR) + 1);
+   auto code = string(EXTERN_STR) + SPACE;
+   Insert(begin, code);
+
+   code.clear();
+   CutCode(decl, expl, code);
+   if(!expl.empty()) return Report(expl, "Failed to cut data definition");
+
+   if(ext)
+   {
+      //  The data was referenced outside of the .cpp that defines it, so
+      //  move its declaration directly before the class that declared it.
+      //  This code is currently unreachable, because DataCouldBeFree is
+      //  only logged on a data that is not used outside the .cpp.
+      //
+      if(!GetCommentedRange(cls, begin, end))
+         return NotFound(expl, "Data's class");
+      pos = CurrBegin(begin);
+      InsertLine(pos, EMPTY_STR);
+      InsertLine(pos, code);
+   }
+   else
+   {
+      //  The data was only referenced within the .cpp that defines it, so
+      //  discard its declaration while saving any comment that preceded it.
+      //
+      code.erase(code.find(EXTERN_STR));
+   }
+
+   //  If the original declaration was deleted and had a comment, and the
+   //  definition is not commented, paste the declaration's comment before
+   //  the definition after adding a space below it.
+   //
+   auto& editor = cpp->GetEditor();
+
+   if(!ext && !code.empty() && !ItemIsCommented(defn))
+   {
+      defn->GetRange(begin, pos, end);
+      editor.InsertLine(editor.NextBegin(end), EMPTY_STR);
+      editor.Insert(editor.CurrBegin(begin), code);
+   }
+
+   //  Remove the class name from the definition.
+   //
+   pos = editor.LineRfind(defn->GetPos(), qual);
+   if(pos != string::npos)
+      editor.Erase(pos, qual.size());
+   else
+      return NotFound(expl, "Data definition class qualifier");
+
+   return editor.Changed(pos, expl);
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::ChangeDebugFtName
    (CliThread& cli, const CodeWarning& log, string& expl)
 {
@@ -902,7 +1107,7 @@ word Editor::ChangeDebugFtName
    if(rpos == string::npos) return NotFound(expl, "fn_name right quote");
    Replace(lpos, rpos - lpos + 1, fname);
 
-   if(LineSize(lpos) - 1 > file_->LineLengthMax())
+   if(LineSize(lpos) - 1 > LineLengthMax())
    {
       auto epos = FindFirstOf(dpos, "=");
       if(epos != string::npos) InsertLineBreak(epos + 1);
@@ -1042,108 +1247,6 @@ word Editor::ChangeStructToClass(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-word Editor::CheckLinePairs()
-{
-   Debug::ft("Editor.CheckLinePairs");
-
-   auto p1 = 0;
-   auto t1 = GetLineType(p1);
-
-   for(auto p2 = NextBegin(p1); p2 != string::npos; p2 = NextBegin(p1))
-   {
-      auto t2 = GetLineType(p2);
-
-      switch(t1)
-      {
-      case BlankLine:
-         switch(t2)
-         {
-         case BlankLine:
-         case EmptyComment:
-         case OpenBrace:
-         case CloseBrace:
-         case CloseBraceSemicolon:
-         case AccessControl:
-            EraseLine(p1);
-            t1 = t2;
-            continue;
-         }
-         break;
-
-      case EmptyComment:
-         switch(t2)
-         {
-         case BlankLine:
-         case EmptyComment:
-            EraseLine(p2);
-            continue;
-
-         case OpenBrace:
-         case CloseBrace:
-         case CloseBraceSemicolon:
-         case AccessControl:
-            EraseLine(p1);
-            t1 = t2;
-            continue;
-         }
-         break;
-
-      case SeparatorComment:
-         if(t2 == BlankLine)
-         {
-            //  Erase any repeated blank lines.  If another separator
-            //  comment follows, we just cut a function definition, so
-            //  erase the first separator comment and blank line.
-            //
-            auto p3 = NextBegin(p2);
-            while(GetLineType(p3) == BlankLine) EraseLine(p3);
-            if(GetLineType(p3) == SeparatorComment)
-            {
-               EraseLine(p2);
-               EraseLine(p1);
-               t1 = SeparatorComment;
-               continue;
-            }
-         }
-         break;
-
-      case OpenBrace:
-         switch(t2)
-         {
-         case BlankLine:
-         case EmptyComment:
-            EraseLine(p2);
-            continue;
-         }
-         break;
-
-      case AccessControl:
-         switch(t2)
-         {
-         case BlankLine:
-         case EmptyComment:
-            EraseLine(p2);
-            continue;
-
-         case CloseBraceSemicolon:
-         case AccessControl:
-            EraseLine(p1);
-            t1 = t2;
-            continue;
-         }
-         break;
-      }
-
-      p1 = p2;
-      t1 = t2;
-      continue;
-   }
-
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Editor_CodeBegin = "Editor.CodeBegin";
 
 size_t Editor::CodeBegin()
@@ -1178,7 +1281,7 @@ size_t Editor::CodeBegin()
 
    for(pos = PrevBegin(pos); pos != 0; pos = PrevBegin(pos))
    {
-      auto type = GetLineType(pos);
+      auto type = PosToType(pos);
 
       if(!LineTypeAttr::Attrs[type].isCode && (type != FileComment))
       {
@@ -1252,7 +1355,7 @@ bool Editor::CodeFollowsImmediately(size_t pos) const
    //
    for(pos = NextBegin(pos); pos != string::npos; pos = NextBegin(pos))
    {
-      auto type = GetLineType(pos);
+      auto type = PosToType(pos);
 
       if(LineTypeAttr::Attrs[type].isExecutable) return true;
       if(LineTypeAttr::Attrs[type].isBlank) continue;
@@ -1291,11 +1394,15 @@ bool Editor::Commit(const CliThread& cli, string& expl)
 
 //------------------------------------------------------------------------------
 
+size_t Editor::CommitCount() { return Commits_; }
+
+//------------------------------------------------------------------------------
+
 word Editor::ConvertTabsToBlanks()
 {
    Debug::ft("Editor.ConvertTabsToBlanks");
 
-   auto indent = file_->IndentSize();
+   auto indent = IndentSize();
 
    //  Run through the source, looking for tabs.
    //
@@ -1478,7 +1585,7 @@ string Editor::DebugFtCode(const string& fname) const
 {
    Debug::ft("Editor.DebugFtCode");
 
-   auto call = string(file_->IndentSize(), SPACE) + "Debug::ft(";
+   auto call = string(IndentSize(), SPACE) + "Debug::ft(";
    call.append(fname);
    call.append(");");
    return call;
@@ -1497,20 +1604,6 @@ void Editor::Display(ostream& stream,
    stream << prefix << "sorted   : " << sorted_ << CRLF;
    stream << prefix << "aliased  : " << aliased_ << CRLF;
    stream << prefix << "warnings : " << warnings_.size() << CRLF;
-
-   if(!options.test(DispVerbose)) return;
-
-   stream << prefix << "source : " << CRLF;
-
-   const auto& info = GetLinesInfo();
-
-   for(auto i = info.cbegin(); i != info.cend(); ++i)
-   {
-      i->Display(stream);
-      auto type = GetLineType(i->begin);
-      stream << LineTypeAttr::Attrs[type].symbol << SPACE;
-      stream << SPACE << GetCode(i->begin);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -1564,6 +1657,7 @@ size_t Editor::Erase(size_t pos, size_t count)
 {
    Debug::ft("Editor.Erase");
 
+   if(count == 0) return pos;
    source_.erase(pos, count);
    lastCut_ = pos;
    Update();
@@ -1816,15 +1910,12 @@ word Editor::EraseData
       auto file = (*r)->GetFile();
       auto& editor = file->GetEditor();
 
-      if(expl.empty())
-      {
-         editor.EraseCode(*r, expl);
+      editor.EraseCode(*r, expl);
 
-         if(!expl.empty())
-         {
-            if(expl.back() == CRLF) expl.pop_back();
-            expl += " (" + (*r)->strLocation() + ")\n";
-         }
+      if(!expl.empty())
+      {
+         if(expl.back() == CRLF) expl.pop_back();
+         expl += " (" + (*r)->strLocation() + ")\n";
       }
 
       if(!expl.empty())
@@ -1855,9 +1946,9 @@ word Editor::EraseData
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseDefault(const Function* func, word offset, string& expl)
+word Editor::EraseDefaultValue(const Function* func, word offset, string& expl)
 {
-   Debug::ft("Editor.EraseDefault");
+   Debug::ft("Editor.EraseDefaultValue");
 
    //  Erase this argument's default value.
    //
@@ -1945,14 +2036,14 @@ bool Editor::EraseLineBreak(size_t pos)
 
    //  Check that the lines can be merged.
    //
-   auto type = GetLineType(curr);
+   auto type = PosToType(curr);
    if(!LineTypeAttr::Attrs[type].isMergeable) return false;
-   type = GetLineType(next);
+   type = PosToType(next);
    if(!LineTypeAttr::Attrs[type].isMergeable) return false;
    auto size = LineMergeLength
       (GetCode(curr), 0, LineSize(curr) - 1,
        GetCode(next), 0, LineSize(next) - 1);
-   if(size > file_->LineLengthMax()) return false;
+   if(size > LineLengthMax()) return false;
 
    //  Merge the lines after replacing or erasing CURR's endline.
    //
@@ -2609,7 +2700,7 @@ word Editor::FixFunction
    case VirtualAndPublic:
       return SplitVirtualFunction(func, expl);
    case VirtualDefaultArgument:
-      return EraseDefault(func, log.offset_, expl);
+      return EraseDefaultValue(func, log.offset_, expl);
    case ArgumentCouldBeConstRef:
       return TagAsConstReference(func, log.offset_, expl);
    case ArgumentCouldBeConst:
@@ -2917,7 +3008,7 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
       return EraseAdjacentSpaces(log, expl);
    case AddBlankLine:
       return InsertBlankLine(log, expl);
-   case RemoveBlankLine:
+   case RemoveLine:
       return EraseBlankLine(log, expl);
    case LineLength:
       return InsertLineBreak(log, expl);
@@ -2959,6 +3050,8 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
       return ChangeOperator(log, expl);
    case DebugFtCanBeLiteral:
       return InlineDebugFtName(log, expl);
+   case DataCouldBeFree:
+      return ChangeDataToFree(log, expl);
    case ConstructorNotPrivate:
       return ChangeAccess(log, Cxx::Private, expl);
    case DestructorNotPrivate:
@@ -2981,7 +3074,7 @@ word Editor::Format(string& expl)
    Debug::ft("Editor.Format");
 
    EraseTrailingBlanks();
-   CheckLinePairs();
+   AdjustVerticalSeparation();
    ConvertTabsToBlanks();
    return Write(expl);
 }
@@ -3042,7 +3135,7 @@ size_t Editor::Indent(size_t pos)
       //  avoids indenting comments, braces, and access controls, which
       //  are not executable.
       //
-      auto type = GetLineType(info->begin);
+      auto type = PosToType(info->begin);
       if(info->cont && LineTypeAttr::Attrs[type].isExecutable) ++depth;
    }
 
@@ -3055,7 +3148,7 @@ size_t Editor::Indent(size_t pos)
       return pos;
    }
 
-   auto indent = depth * file_->IndentSize();
+   auto indent = depth * IndentSize();
 
    if(first != indent)
    {
@@ -3478,7 +3571,7 @@ word Editor::InsertForward(const CodeWarning& log, string& expl)
 
    //  LOGS provides the forward's namespace and any template parameters.
    //
-   string forward = spaces(file_->IndentSize()) + log.info_ + ';';
+   string forward = spaces(IndentSize()) + log.info_ + ';';
    auto srPos = forward.find(SCOPE_STR);
    if(srPos == string::npos) return NotFound(expl, "Forward's namespace.");
 
@@ -3851,7 +3944,7 @@ size_t Editor::InsertRule(size_t pos, char c)
    Debug::ft("Editor.InsertRule");
 
    string rule = COMMENT_STR;
-   rule.append(LINE_LENGTH_MAX - 2, c);
+   rule.append(LineLengthMax() - 2, c);
    InsertLine(pos, rule);
    return pos;
 }
@@ -3914,13 +4007,13 @@ size_t Editor::IntroStart(size_t pos, bool funcName) const
 
    for(auto curr = PrevBegin(pos); curr != string::npos; curr = PrevBegin(curr))
    {
-      auto type = GetLineType(curr);
+      auto type = PosToType(curr);
 
       switch(type)
       {
       case EmptyComment:
       case TextComment:
-      case TaggedComment:
+      case SlashAsteriskComment:
          //
          //  These are attached to the code that follows, so include them.
          //
@@ -4080,7 +4173,7 @@ size_t Editor::PrologEnd() const
 
    for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
    {
-      if(LineTypeAttr::Attrs[GetLineType(pos)].isCode) return pos;
+      if(LineTypeAttr::Attrs[PosToType(pos)].isCode) return pos;
    }
 
    return string::npos;
@@ -4355,7 +4448,7 @@ word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
    //  appropriately and followed by two spaces.
    //
    auto info = GetLineInfo(pos0);
-   auto comment = spaces(info->depth * file_->IndentSize());
+   auto comment = spaces(info->depth * IndentSize());
    comment += COMMENT_STR + spaces(2);
 
    //  Now continue with subsequent lines:
@@ -4850,13 +4943,13 @@ void Editor::UpdateFuncDefnAttrs
    size_t begin, left, end;
    if(!func->GetRange(begin, left, end)) return;
    auto pos = NextBegin(end);
-   auto type = GetLineType(pos);
+   auto type = PosToType(pos);
 
    if(type == BlankLine)
    {
       blank = true;
-      type = GetLineType(NextBegin(pos));
-      if(type == SeparatorComment)
+      type = PosToType(NextBegin(pos));
+      if(type == RuleComment)
       {
          attrs.rule = true;
          attrs.blank = BlankBefore;
@@ -4868,11 +4961,11 @@ void Editor::UpdateFuncDefnAttrs
    while(true)
    {
       pos = PrevBegin(pos);
-      type = GetLineType(pos);
+      type = PosToType(pos);
 
       switch(type)
       {
-      case SeparatorComment:
+      case RuleComment:
          attrs.rule = true;
          attrs.blank = BlankBefore;
          return;
@@ -4923,9 +5016,9 @@ size_t Editor::UpdateFuncDefnLoc
       //  so insert the definition above that one.
       //
       auto pos = PrevBegin(string::npos);
-      auto type = GetLineType(pos);
+      auto type = PosToType(pos);
       if(type != CloseBrace) return string::npos;
-      type = GetLineType(PrevBegin(pos));
+      type = PosToType(PrevBegin(pos));
       if(type != CloseBrace) return string::npos;
       return pos;
    }
@@ -4940,7 +5033,7 @@ size_t Editor::UpdateFuncDefnLoc
 
    while(true)
    {
-      auto type = GetLineType(pred);
+      auto type = PosToType(pred);
 
       switch(type)
       {
@@ -4948,7 +5041,7 @@ size_t Editor::UpdateFuncDefnLoc
          pred = PrevBegin(pred);
          continue;
       case FunctionName:
-         while(GetLineType(--pred) == FunctionName);
+         while(PosToType(--pred) == FunctionName);
          return ++pred;
       default:
          return pred;
@@ -4976,7 +5069,7 @@ void Editor::UpdateItemDeclAttrs
 
    //  If ITEM is commented, a blank line should also precede or follow it.
    //
-   auto type = GetLineType(PrevBegin(begin));
+   auto type = PosToType(PrevBegin(begin));
    auto& line = LineTypeAttr::Attrs[type];
 
    if(!line.isCode && (type != BlankLine))
@@ -4994,7 +5087,7 @@ void Editor::UpdateItemDeclAttrs
       return;
    }
 
-   if(GetLineType(NextBegin(end)) == BlankLine)
+   if(PosToType(NextBegin(end)) == BlankLine)
    {
       attrs.blank = BlankBefore;
    }
@@ -5059,7 +5152,7 @@ size_t Editor::UpdateItemDeclLoc
 
    while(true)
    {
-      auto type = GetLineType(pred);
+      auto type = PosToType(pred);
 
       if(!LineTypeAttr::Attrs[type].isCode)
       {

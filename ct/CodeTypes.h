@@ -145,6 +145,16 @@ extern NodeBase::fixed_string NULL_STR;
 
 //------------------------------------------------------------------------------
 //
+//  Returns the indentation size for source code.
+//
+size_t IndentSize();
+
+//  Returns the maximum line length for source code.
+//
+size_t LineLengthMax();
+
+//------------------------------------------------------------------------------
+//
 //  Valid initial characters in an identifier.  '#' and '~' are included so that
 //  preprocessor directives and destructor names can be treated as keywords and
 //  identifiers, respectively.
@@ -505,7 +515,7 @@ enum Warning
    TrailingSpace,            // space after last non-blank character
    AdjacentSpaces,           // extra embedded space in source code
    AddBlankLine,             // add blank line
-   RemoveBlankLine,          // adjacent blank lines
+   RemoveLine,               // remove unnecessary line
    LineLength,               // line length exceeds LineLengthMax() characters
    FunctionNotSorted,        // function does not appear in alphabetical order
    HeadingNotStandard,       // lines at top of file do not follow template
@@ -554,7 +564,7 @@ struct FixOptions
 
 //------------------------------------------------------------------------------
 //
-//  Types of source code lines.  Used for line counts.
+//  Types of source code lines.
 //
 enum LineType
 {
@@ -562,8 +572,7 @@ enum LineType
    BlankLine,             // blank lines
    EmptyComment,          // //
    FileComment,           // comment at top of file, before any code
-   SeparatorComment,      // //# (# = repeated -, =, or /)
-   TaggedComment,         // //$ ($ = any character except -, =, or /)
+   RuleComment,           // //# (# = repeated -, =, or /)
    TextComment,           // //  text
    SlashAsteriskComment,  // /*
    OpenBrace,             // {
@@ -692,9 +701,6 @@ extern const NodeBase::Flags Code_Mask;
 extern const NodeBase::Flags NoAC_Mask;
 extern const NodeBase::Flags NoTP_Mask;
 extern const NodeBase::Flags Stats_Mask;
-
-constexpr size_t INDENT_SIZE = 3;
-constexpr size_t LINE_LENGTH_MAX = 80;
 
 //------------------------------------------------------------------------------
 //

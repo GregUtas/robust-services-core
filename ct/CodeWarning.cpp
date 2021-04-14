@@ -678,9 +678,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(AddBlankLine,
       WarningAttrs(T,
       "Insertion of blank line recommended")));
-   Attrs_.insert(WarningPair(RemoveBlankLine,
+   Attrs_.insert(WarningPair(RemoveLine,
       WarningAttrs(T,
-      "Deletion of blank line recommended")));
+      "Deletion of line recommended")));
    Attrs_.insert(WarningPair(LineLength,
       WarningAttrs(F,
       "Line length exceeds the standard maximum")));
@@ -757,7 +757,7 @@ void CodeWarning::Initialize()
       WarningAttrs(F,
       "Use static_cast or dynamic_cast instead of more severe cast")));
    Attrs_.insert(WarningPair(DataCouldBeFree,
-      WarningAttrs(F,
+      WarningAttrs(T,
       "Data could be free")));
    Attrs_.insert(WarningPair(ConstructorNotPrivate,
       WarningAttrs(T,

@@ -177,7 +177,7 @@ void Block::Display(ostream& stream,
                return;
             }
 
-            stream << CRLF << prefix << spaces(INDENT_SIZE);
+            stream << CRLF << prefix << spaces(IndentSize());
             statements_.front()->Print(stream, options);
             break;
          }
@@ -186,7 +186,7 @@ void Block::Display(ostream& stream,
    default:
       if(!nested_) stream << CRLF;
       stream << prefix << '{' << CRLF;
-      auto lead = prefix + spaces(INDENT_SIZE);
+      auto lead = prefix + spaces(IndentSize());
 
       for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
       {
@@ -553,12 +553,12 @@ void ClassData::Display(ostream& stream,
       //
       if(first_)
       {
-         auto lead = spaces(INDENT_SIZE * (depth_ - 1));
+         auto lead = spaces(IndentSize() * (depth_ - 1));
          stream << prefix << lead << access << ": " << UNION_STR << CRLF;
          stream << prefix << lead << '{' << CRLF;
       }
 
-      stream << spaces(INDENT_SIZE * depth_);
+      stream << spaces(IndentSize() * depth_);
       access = Cxx::Public;
    }
 
@@ -600,7 +600,7 @@ void ClassData::Display(ostream& stream,
 
    if(last_)
    {
-      stream << prefix << spaces(INDENT_SIZE * (depth_ - 1)) << "};" << CRLF;
+      stream << prefix << spaces(IndentSize() * (depth_ - 1)) << "};" << CRLF;
    }
 }
 
@@ -1189,7 +1189,7 @@ void Data::DisplayAssignment(ostream& stream, const Flags& options) const
 
    auto expr = buffer.str();
 
-   if(expr.size() <= LINE_LENGTH_MAX)
+   if(expr.size() <= LineLengthMax())
       stream << expr;
    else
       stream << "{ /*" << expr.size() << " characters */ }";
@@ -3296,7 +3296,7 @@ void Function::Display(ostream& stream,
    if(!options.test(DispCode) && !tmplts_.empty())
    {
       stream << prefix << "instantiations (" << tmplts_.size() << "):" << CRLF;
-      auto lead = prefix + spaces(INDENT_SIZE);
+      auto lead = prefix + spaces(IndentSize());
 
       for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
       {
@@ -3415,7 +3415,7 @@ void Function::DisplayDefn(ostream& stream,
       stream << " :";
       DisplayInfo(stream, options);
       stream << CRLF;
-      auto lead = prefix + spaces(INDENT_SIZE);
+      auto lead = prefix + spaces(IndentSize());
 
       if(call != nullptr)
       {
@@ -4588,12 +4588,13 @@ bool Function::IsTrivial() const
    size_t begin, left, end;
    if(!GetRange(begin, left, end)) return false;
 
-   auto last = file->GetLexer().GetLineNum(end);
+   auto& lexer = file->GetLexer();
+   auto last = lexer.GetLineNum(end);
    auto body = false;
 
-   for(auto n = file->GetLexer().GetLineNum(begin); n < last; ++n)
+   for(auto n = lexer.GetLineNum(begin); n < last; ++n)  //* n <= ?
    {
-      auto type = file->GetLineType(n);
+      auto type = lexer.LineToType(n);
 
       if(!LineTypeAttr::Attrs[type].isCode) continue;
 

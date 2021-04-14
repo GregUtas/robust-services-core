@@ -169,7 +169,6 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "blank comment",
    "comment at the top of a file (e.g. for the file's name or license info)",
    "comment followed by repeated characters to draw a rule (e.g. //---- ...)",
-   "comment followed by a character that classifies it (e.g. //c <text>)",
    "comment not in one of the categories above (e.g. //  <text>)",
    "C-style comment",
    "bare left brace",
@@ -218,8 +217,7 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
    LineTypeAttr(F, F, F, T, ' '),  // BlankLine
    LineTypeAttr(F, F, F, T, 'b'),  // EmptyComment
    LineTypeAttr(F, F, F, F, 'f'),  // FileComment
-   LineTypeAttr(F, F, F, F, '-'),  // SeparatorComment
-   LineTypeAttr(F, F, F, F, '*'),  // TaggedComment
+   LineTypeAttr(F, F, F, F, '-'),  // RuleComment
    LineTypeAttr(F, F, F, F, 't'),  // TextComment
    LineTypeAttr(F, F, F, F, '/'),  // SlashAsteriskComment
    LineTypeAttr(T, F, F, F, '{'),  // OpenBrace
@@ -297,12 +295,11 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
 
    if(slashSlashPos == 0)
    {
-      if(length == 2) return EmptyComment;      //
-      if(s[2] == '-') return SeparatorComment;  //-
-      if(s[2] == '=') return SeparatorComment;  //=
-      if(s[2] == '/') return SeparatorComment;  ///
-      if(s[2] != SPACE) return TaggedComment;   //$ [$ != one of above]
-      return TextComment;                       //  text
+      if(length == 2) return EmptyComment;  //
+      if(s[2] == '-') return RuleComment;   //-
+      if(s[2] == '=') return RuleComment;   //=
+      if(s[2] == '/') return RuleComment;   ///
+      return TextComment;                   //  text
    }
 
    //  Flag a /* comment and see if it ends on the same line.
@@ -421,6 +418,13 @@ IndentRule ClassifyIndent(string& id)
 
 //------------------------------------------------------------------------------
 
+size_t IndentSize()
+{
+   return 3;
+}
+
+//------------------------------------------------------------------------------
+
 bool InsertSpaceOnMerge(const string& line1, const string& line2, size_t begin2)
 {
    //  Insert a space unless LINE2 is an argument list, which is the case if
@@ -445,6 +449,13 @@ bool IsAccessControl(const std::string& s, fixed_string acc)
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+size_t LineLengthMax()
+{
+   return 80;
 }
 
 //------------------------------------------------------------------------------

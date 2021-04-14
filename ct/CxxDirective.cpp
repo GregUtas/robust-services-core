@@ -45,10 +45,10 @@ void AlignLeft(ostream& stream, const string& prefix)
 {
    //  If PREFIX is more than one indentation, indent one level less.
    //
-   if(prefix.size() < INDENT_SIZE)
+   if(prefix.size() < IndentSize())
       stream << prefix;
    else
-      stream << prefix.substr(INDENT_SIZE);
+      stream << prefix.substr(IndentSize());
 }
 
 //------------------------------------------------------------------------------

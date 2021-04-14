@@ -917,7 +917,7 @@ void Class::Display(ostream& stream,
       DisplayFiles(stream);
    }
 
-   auto lead = prefix + spaces(INDENT_SIZE);
+   auto lead = prefix + spaces(IndentSize());
    auto qual = options;
    auto nonqual = options;
    qual.set(DispFQ);
@@ -941,11 +941,11 @@ void Class::Display(ostream& stream,
    {
       DisplayObjects(*Datas(), stream, lead, nonqual);
 
-      lead += spaces(INDENT_SIZE);
+      lead += spaces(IndentSize());
 
       if(IsBaseClass())
       {
-         stream << prefix << spaces(INDENT_SIZE) << "subclasses:" << CRLF;
+         stream << prefix << spaces(IndentSize()) << "subclasses:" << CRLF;
 
          for(auto s = subs_.cbegin(); s != subs_.cend(); ++s)
          {
@@ -955,7 +955,7 @@ void Class::Display(ostream& stream,
 
       if(!tmplts_.empty())
       {
-         stream << prefix << spaces(INDENT_SIZE)
+         stream << prefix << spaces(IndentSize())
             << "instantiations (" << tmplts_.size() << "):" << CRLF;
 
          for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
@@ -1002,7 +1002,7 @@ void Class::DisplayHierarchy(ostream& stream, const string& prefix) const
 {
    stream << prefix << ScopedName(true) << CRLF;
 
-   auto lead = prefix + spaces(INDENT_SIZE);
+   auto lead = prefix + spaces(IndentSize());
 
    for(auto s = subs_.cbegin(); s != subs_.cend(); ++s)
    {
@@ -2215,7 +2215,7 @@ void ClassInst::Display(ostream& stream,
    }
    else
    {
-      auto lead = prefix + spaces(INDENT_SIZE);
+      auto lead = prefix + spaces(IndentSize());
       auto qual = options;
       auto opts = options;
       qual.set(DispFQ);
@@ -3162,7 +3162,7 @@ void Namespace::Display(ostream& stream,
    stream << prefix << NAMESPACE_STR << SPACE << name << CRLF;
    stream << prefix << '{' << CRLF;
 
-   auto lead = prefix + spaces(INDENT_SIZE);
+   auto lead = prefix + spaces(IndentSize());
    auto nonqual = options;
    nonqual.reset(DispFQ);
 

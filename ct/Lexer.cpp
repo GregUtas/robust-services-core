@@ -50,14 +50,11 @@ using std::string;
 
 namespace CodeTools
 {
-fixed_string LineNumberUnknown = "Line numbers not supported while editing.";
-
-//==============================================================================
-
 LineInfo::LineInfo(size_t start) :
    begin(start),
    depth(DEPTH_NOT_SET),
-   cont(false)
+   cont(false),
+   type(LineType_N)
 {
 }
 
@@ -71,6 +68,7 @@ void LineInfo::Display(ostream& stream) const
       stream << '?';
 
    stream << (cont ? '+' : SPACE);
+   stream << LineTypeAttr::Attrs[type].symbol << SPACE;
 }
 
 //==============================================================================
@@ -78,9 +76,9 @@ void LineInfo::Display(ostream& stream) const
 Lexer::Lexer() :
    source_(nullptr),
    file_(nullptr),
+   slashAsterisk_(false),
    curr_(0),
-   prev_(0),
-   edited_(false)
+   prev_(0)
 {
    Debug::ft("Lexer.ctor");
 }
@@ -113,7 +111,10 @@ void Lexer::CalcDepths()
 {
    Debug::ft("Lexer.CalcDepths");
 
-   if(source_->empty()) return;
+   if(lines_.empty())
+   {
+      FindLines();
+   }
 
    Reposition(0);     // start from the beginning of source_
 
@@ -303,6 +304,129 @@ void Lexer::CalcDepths()
 
 //------------------------------------------------------------------------------
 
+LineType Lexer::CalcLineType(size_t n, bool log, bool& cont)
+{
+   Debug::ft("Lexer.CalcLineType");
+
+   //  Get the code for line N and classify it.
+   //
+   string s;
+   if(!GetNthLine(n, s, true)) return LineType_N;
+
+   std::set< Warning > warnings;
+   auto type = CodeTools::CalcLineType(s, cont, warnings);
+
+   //  Flag the line if it is too long.
+   //
+   if(s.size() > LineLengthMax() + 1) warnings.insert(LineLength);
+
+   //  Flag a line that is not indented a multiple of the standard unless
+   //  it begins with a comment or string literal.
+   //
+   auto pos = s.find_first_not_of(SPACE);
+
+   if((pos != string::npos) && (pos % IndentSize() != 0))
+   {
+      if((s[pos] != '/') && (s[pos] != QUOTE)) warnings.insert(Indentation);
+   }
+
+   //  A line within a /* comment can be logged spuriously.
+   //
+   if(slashAsterisk_)
+   {
+      warnings.erase(Indentation);
+      warnings.erase(AdjacentSpaces);
+   }
+
+   //  Log any warnings that were reported.
+   //
+   if(log)
+   {
+      for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
+      {
+         file_->LogLine(n, *w);
+      }
+   }
+
+   //  There are some things that can only be determined by knowing what
+   //  happened on previous lines.  First, see if a /* comment ended.
+   //
+   if(slashAsterisk_)
+   {
+      pos = s.find(COMMENT_END_STR);
+      if(pos != string::npos) slashAsterisk_ = false;
+      return TextComment;
+   }
+
+   //  See if a /* comment began, and whether it is still open.  Note that
+   //  when a /* comment is used, a line that contains code after the */
+   //  is classified as a comment unless the /* occurred on the same line
+   //  and was preceded by code.
+   //
+   if(warnings.find(UseOfSlashAsterisk) != warnings.end())
+   {
+      if(s.find(COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
+      if(s.find(COMMENT_BEGIN_STR) == 0) return SlashAsteriskComment;
+   }
+
+   return type;
+}
+
+//------------------------------------------------------------------------------
+
+void Lexer::CalcLineTypes(bool log)
+{
+   Debug::ft("Lexer.CalcLineTypes");
+
+   if(lines_.empty())
+   {
+      FindLines();
+      CalcDepths();
+   }
+
+   slashAsterisk_ = false;
+
+   //  Categorize each line.  If the previous line failed to finish
+   //  a using statement or function name definition, carry it over
+   //  to the next line.
+   //
+   auto lines = lines_.size();
+   auto prevCont = false;
+   auto prevType = LineType_N;
+
+   for(size_t n = 0; n < lines; ++n)
+   {
+      auto currCont = false;
+      auto currType = CalcLineType(n, log, currCont);
+
+      if(prevCont)
+      {
+         if((prevType != UsingStatement) && (prevType != FunctionName))
+         {
+            prevCont = false;
+         }
+      }
+
+      lines_[n].type = (prevCont ? prevType : currType);
+      prevCont = currCont;
+      prevType = currType;
+   }
+
+   for(size_t n = 0; n < lines; ++n)
+   {
+      auto t = lines_[n].type;
+
+      if(LineTypeAttr::Attrs[t].isCode) break;
+
+      if((t != EmptyComment) && (t != SlashAsteriskComment))
+      {
+         lines_[n].type = FileComment;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Lexer::CheckPunctuation() const
 {
    auto frag = false;
@@ -382,6 +506,140 @@ void Lexer::CheckPunctuation() const
 
 //------------------------------------------------------------------------------
 
+string Lexer::CheckVerticalSpacing()
+{
+   auto size = lines_.size();
+   if(size <= 1) return EMPTY_STR;
+
+   string action(size, LineOK);
+   auto prevType = lines_[0].type;
+
+   for(size_t currLine = 1; currLine < size; ++currLine)
+   {
+      auto currType = lines_[currLine].type;
+      auto nextType = (currLine < size ? lines_[currLine + 1].type : BlankLine);
+
+      switch(currType)
+      {
+      case CodeLine:
+         switch(prevType)
+         {
+         case FileComment:
+         case FunctionName:
+         case IncludeDirective:
+         case UsingStatement:
+            action[currLine] = InsertBlank;
+            break;
+         }
+         break;
+
+      case BlankLine:
+      case EmptyComment:
+         switch(prevType)
+         {
+         case BlankLine:
+         case EmptyComment:
+         case OpenBrace:
+            action[currLine] = DeleteLine;
+            break;
+
+         case RuleComment:
+            switch(nextType)
+            {
+            case RuleComment:
+               action[currLine - 1] = DeleteLine;
+               action[currLine] = DeleteLine;
+               break;
+
+            case TextComment:
+               //
+               //  Change a blank line between a rule comment and an actual
+               //  comment to an empty comment.
+               //
+               if(currType == BlankLine)
+                  action[currLine] = ChangeToEmptyComment;
+               break;
+            }
+            break;
+         }
+         break;
+
+      case RuleComment:
+         if(!LineTypeAttr::Attrs[prevType].isBlank)
+            action[currLine] = InsertBlank;
+         if(!LineTypeAttr::Attrs[nextType].isBlank)
+            action[currLine + 1] = InsertBlank;
+         break;
+
+      case OpenBrace:
+      case CloseBrace:
+      case CloseBraceSemicolon:
+         if(LineTypeAttr::Attrs[prevType].isBlank)
+            action[currLine - 1] = DeleteLine;
+         break;
+
+      case AccessControl:
+         if(LineTypeAttr::Attrs[prevType].isBlank)
+            action[currLine - 1] = DeleteLine;
+         if(LineTypeAttr::Attrs[nextType].isBlank)
+            action[currLine + 1] = DeleteLine;
+
+         switch(nextType)
+         {
+         case CloseBraceSemicolon:
+         case AccessControl:
+            action[currLine] = DeleteLine;
+            break;
+         }
+         break;
+
+      case FunctionName:
+         switch(prevType)
+         {
+         case BlankLine:
+         case EmptyComment:
+         case OpenBrace:
+         case FunctionName:
+            break;
+         case TextComment:
+            if(file_->IsCpp())
+               action[currLine] = InsertBlank;
+            break;
+         default:
+            action[currLine] = InsertBlank;
+         }
+         break;
+
+      case IncludeDirective:
+         if(prevType == HashDirective)
+         {
+            action[currLine] = InsertBlank;
+         }
+         break;
+
+      case UsingStatement:
+         if(prevType == IncludeDirective)
+         {
+            action[currLine] = InsertBlank;
+         }
+         break;
+
+      case FileComment:
+      case TextComment:
+      case SlashAsteriskComment:
+      case DebugFt:
+      case HashDirective:
+         break;
+      }
+
+      prevType = currType;
+   }
+
+   return action;
+}
+
+//------------------------------------------------------------------------------
+
 bool Lexer::CodeMatches(size_t pos, const std::string& str) const
 {
    Debug::ft("Lexer.CodeMatches");
@@ -446,13 +704,6 @@ void Lexer::Display(ostream& stream,
    for(auto i = info.cbegin(); i != info.cend(); ++i)
    {
       i->Display(stream);
-
-      if(file_ != nullptr)
-      {
-         auto type = GetLineType(i->begin);
-         stream << LineTypeAttr::Attrs[type].symbol << SPACE;
-      }
-
       stream << SPACE << GetCode(i->begin);
    }
 }
@@ -741,6 +992,21 @@ size_t Lexer::FindLineEnd(size_t pos) const
    }
 
    return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+void Lexer::FindLines()
+{
+   Debug::ft("Lexer.FindLines");
+
+   lines_.clear();
+   if(source_->empty()) return;
+
+   for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
+   {
+      lines_.push_back(LineInfo(pos));
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1255,37 +1521,8 @@ size_t Lexer::GetLineNum(size_t pos) const
 
 size_t Lexer::GetLineStart(size_t line) const
 {
-   if(edited_)
-   {
-      Debug::SwLog("Lexer.GetLineStart", LineNumberUnknown, line);
-      return string::npos;
-   }
-
-   if(line < lines_.size())
-   {
-      return lines_[line].begin;
-   }
-
+   if(line < lines_.size()) return lines_[line].begin;
    return string::npos;
-}
-
-//------------------------------------------------------------------------------
-
-LineType Lexer::GetLineType(size_t pos) const
-{
-   auto type = LineType_N;
-
-   if(!edited_ && (file_ != nullptr))
-   {
-      auto line = GetLineInfoIndex(pos);
-      if(line == SIZE_MAX) return type;
-      return file_->GetLineType(line);
-   }
-
-   auto code = GetCode(pos);
-   bool cont;
-   std::set< Warning > warnings;
-   return CalcLineType(code, cont, warnings);
 }
 
 //------------------------------------------------------------------------------
@@ -1363,13 +1600,6 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
 bool Lexer::GetNthLine(size_t n, string& s, bool crlf) const
 {
    s.clear();
-
-   if(edited_)
-   {
-      Debug::SwLog("Lexer.GetNthLine", LineNumberUnknown, n);
-      return false;
-   }
-
    auto pos = GetLineStart(n);
    if(pos == string::npos) return false;
    s = GetCode(pos);
@@ -1666,18 +1896,9 @@ void Lexer::Initialize(const string& source, CodeFile* file)
 
    source_ = &source;
    file_ = file;
-   lines_.clear();
    curr_ = 0;
    prev_ = 0;
-   if(source_->empty()) return;
-
-   //  Initialize the information for each line.
-   //
-   for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
-   {
-      lines_.push_back(LineInfo(pos));
-   }
-
+   FindLines();
    Advance();
 }
 
@@ -1858,6 +2079,16 @@ size_t Lexer::LineRfindNonBlank(size_t pos)
 size_t Lexer::LineSize(size_t pos) const
 {
    return CurrEnd(pos) - CurrBegin(pos) + 1;
+}
+
+//------------------------------------------------------------------------------
+
+LineType Lexer::LineToType(size_t n) const
+{
+   Debug::ft("Lexer.LineToType");
+
+   if(n < lines_.size()) return lines_[n].type;
+   return LineType_N;
 }
 
 //------------------------------------------------------------------------------
@@ -2169,6 +2400,17 @@ bool Lexer::OnSameLine(size_t pos1, size_t pos2) const
 
 //------------------------------------------------------------------------------
 
+LineType Lexer::PosToType(size_t pos) const
+{
+   Debug::ft("Lexer.PosToType");
+
+   auto line = GetLineInfoIndex(pos);
+   if(line == SIZE_MAX) return LineType_N;
+   return LineToType(line);
+}
+
+//------------------------------------------------------------------------------
+
 void Lexer::Preprocess()
 {
    Debug::ft("Lexer.Preprocess");
@@ -2460,14 +2702,8 @@ void Lexer::Update()
 
    //  The code has been modified, so regenerate our LineInfo records.
    //
-   edited_ = true;
-   lines_.clear();
-
-   for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
-   {
-      lines_.push_back(LineInfo(pos));
-   }
-
+   FindLines();
    CalcDepths();
+   CalcLineTypes(false);
 }
 }

@@ -1140,7 +1140,7 @@ void Enum::Display(ostream& stream,
    auto opts = options;
    stream << CRLF << prefix << '{' << CRLF;
 
-   auto lead = prefix + spaces(INDENT_SIZE);
+   auto lead = prefix + spaces(IndentSize());
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {

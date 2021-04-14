@@ -1480,8 +1480,9 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
       return cli.Report(0, SuccessExpl);
    }
 
-   auto source = file->GetLexer().GetNthLine(line - 1);
-   auto type = file->GetLineType(line - 1);
+   auto& lexer = file->GetLexer();
+   auto source = lexer.GetNthLine(line - 1);
+   auto type = lexer.LineToType(line - 1);
 
    if(!LineTypeAttr::Attrs[type].isExecutable)
    {

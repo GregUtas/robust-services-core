@@ -78,7 +78,7 @@ void Case::Check() const
 void Case::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   auto lead = prefix.substr(0, prefix.size() - INDENT_SIZE);
+   auto lead = prefix.substr(0, prefix.size() - IndentSize());
    stream << lead << CASE_STR << SPACE;
    expr_->Print(stream, options);
    stream << ':' << CRLF;
@@ -944,7 +944,7 @@ Label::Label(string& name, size_t pos) : CxxStatement(pos)
 void Label::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   auto lead = prefix.substr(0, prefix.size() - INDENT_SIZE);
+   auto lead = prefix.substr(0, prefix.size() - IndentSize());
    stream << lead << name_ << ':' << CRLF;
 }
 

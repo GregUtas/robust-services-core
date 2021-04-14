@@ -44,6 +44,7 @@
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "Library.h"
 #include "Parser.h"
 #include "SetOperations.h"
@@ -371,7 +372,6 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) :
    dir_(dir),
    isHeader_(false),
    isSubsFile_(false),
-   slashAsterisk_(false),
    parsed_(Unparsed),
    checked_(false)
 {
@@ -453,7 +453,7 @@ void CodeFile::AddIndirectExternalTypes
 
 //------------------------------------------------------------------------------
 
-void CodeFile::AddToXref()
+void CodeFile::AddToXref() const
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
@@ -530,73 +530,6 @@ size_t CodeFile::CalcGroup(const Include& incl) const
 
 //------------------------------------------------------------------------------
 
-LineType CodeFile::CalcLineType(size_t n, bool& cont)
-{
-   Debug::ft("CodeFile.CalcLineType");
-
-   //  Get the code for line N and classify it.
-   //
-   string s;
-   if(!lexer_.GetNthLine(n, s, true)) return LineType_N;
-
-   std::set< Warning > warnings;
-   auto type = CodeTools::CalcLineType(s, cont, warnings);
-
-   //  Flag the line if it is too long.
-   //
-   if(s.size() > LineLengthMax() + 1) warnings.insert(LineLength);
-
-   //  Flag a line that is not indented a multiple of the standard unless
-   //  it begins with a comment or string literal.
-   //
-   auto pos = s.find_first_not_of(SPACE);
-
-   if((pos != string::npos) && (pos % IndentSize() != 0))
-   {
-      if((s[pos] != '/') && (s[pos] != QUOTE)) warnings.insert(Indentation);
-   }
-
-   //  A line within a /* comment can be logged spuriously.
-   //
-   if(slashAsterisk_)
-   {
-      warnings.erase(Indentation);
-      warnings.erase(AdjacentSpaces);
-   }
-
-   //  Log any warnings that were reported.
-   //
-   for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
-   {
-      LogLine(n, *w);
-   }
-
-   //  There are some things that can only be determined by knowing what
-   //  happened on previous lines.  First, see if a /* comment ended.
-   //
-   if(slashAsterisk_)
-   {
-      pos = s.find(COMMENT_END_STR);
-      if(pos != string::npos) slashAsterisk_ = false;
-      return TextComment;
-   }
-
-   //  See if a /* comment began, and whether it is still open.  Note that
-   //  when a /* comment is used, a line that contains code after the */
-   //  is classified as a comment unless the /* occurred somewhere after
-   //  the start of that line.
-   //
-   if(warnings.find(UseOfSlashAsterisk) != warnings.end())
-   {
-      if(s.find(COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
-      if(s.find(COMMENT_BEGIN_STR) == 0) return SlashAsteriskComment;
-   }
-
-   return type;
-}
-
-//------------------------------------------------------------------------------
-
 bool CodeFile::CanBeTrimmed() const
 {
    Debug::ft("CodeFile.CanBeTrimmed");
@@ -634,7 +567,7 @@ void CodeFile::Check()
    CheckDirectives();
    CheckIncludeGuard();
    CheckUsings();
-   CheckSeparation();
+   CheckVerticalSpacing();
    CheckLineBreaks();
    CheckFunctionOrder();
    CheckDebugFt();
@@ -649,6 +582,7 @@ void CodeFile::CheckDebugFt()
 {
    Debug::ft("CodeFile.CheckDebugFt");
 
+   const auto& lines = lexer_.GetLinesInfo();
    auto cover = Singleton< CodeCoverage >::Instance();
    size_t begin, left, end;
    string statement;
@@ -677,7 +611,7 @@ void CodeFile::CheckDebugFt()
 
       for(auto n = lexer_.GetLineNum(begin); n < last; ++n)
       {
-         switch(lineType_[n])
+         switch(lines[n].type)
          {
          case OpenBrace:
             open = true;
@@ -871,12 +805,13 @@ void CodeFile::CheckIncludeGuard()
    //  An #include guard wasn't found.  Log this against the first
    //  line of code, which will usually be an #include directive.
    //
+   const auto& lines = lexer_.GetLinesInfo();
    size_t pos = string::npos;
    size_t n;
 
-   for(n = 0; (n < lineType_.size()) && (pos == string::npos); ++n)
+   for(n = 0; (n < lines.size()) && (pos == string::npos); ++n)
    {
-      if(LineTypeAttr::Attrs[lineType_[n]].isCode)
+      if(LineTypeAttr::Attrs[lines[n].type].isCode)
       {
          LogLine(n, IncludeGuardMissing);
          return;
@@ -944,11 +879,12 @@ void CodeFile::CheckIncludes()
 
    //  Log any #include directive that follows code.
    //
+   const auto& lines = lexer_.GetLinesInfo();
    auto code = false;
 
-   for(size_t i = 0; i < lineType_.size(); ++i)
+   for(size_t i = 0; i < lines.size(); ++i)
    {
-      switch(lineType_[i])
+      switch(lines[i].type)
       {
       case HashDirective:
          break;
@@ -956,7 +892,7 @@ void CodeFile::CheckIncludes()
          if(code) LogLine(i, IncludeFollowsCode);
          break;
       default:
-         if(LineTypeAttr::Attrs[lineType_[i]].isCode) code = true;
+         if(LineTypeAttr::Attrs[lines[i].type].isCode) code = true;
       }
    }
 }
@@ -970,10 +906,12 @@ void CodeFile::CheckLineBreaks()
    //  Look for lines that could be combined and stay within the maximum
    //  line length.
    //
-   for(size_t n = 0; n < lineType_.size() - 1; ++n)
+   const auto& lines = lexer_.GetLinesInfo();
+
+   for(size_t n = 0; n < lines.size() - 1; ++n)
    {
-      if(!LineTypeAttr::Attrs[lineType_[n]].isMergeable) continue;
-      if(!LineTypeAttr::Attrs[lineType_[n + 1]].isMergeable) continue;
+      if(!LineTypeAttr::Attrs[lines[n].type].isMergeable) continue;
+      if(!LineTypeAttr::Attrs[lines[n + 1].type].isMergeable) continue;
       auto begin1 = lexer_.GetLineStart(n);
       auto end1 = code_.find(CRLF, begin1);
       auto begin2 = lexer_.GetLineStart(n + 1);
@@ -999,16 +937,18 @@ void CodeFile::CheckProlog()
    //  //  FileName.ext
    //  //  FileProlog [multiple lines]
    //
-   auto pos = lexer_.GetLineStart(0);
+   const auto& lines = lexer_.GetLinesInfo();
+
+   auto pos = lines[0].begin;
    auto ok = (code_.find(DoubleRule, pos) == pos);
    if(!ok) return LogLine(0, HeadingNotStandard);
 
-   pos = lexer_.GetLineStart(1);
+   pos = lines[1].begin;
    ok = (code_.find(COMMENT_STR, pos) == pos);
-   ok = ok && (lineType_[1] == EmptyComment);
+   ok = ok && (lines[1].type == EmptyComment);
    if(!ok) return LogLine(1, HeadingNotStandard);
 
-   pos = lexer_.GetLineStart(2);
+   pos = lines[2].begin;
    ok = (code_.find(COMMENT_STR, pos) == pos);
    ok = ok && (code_.find(Name(), pos) == pos + 4);
    if(!ok) return LogLine(2, HeadingNotStandard);
@@ -1018,110 +958,16 @@ void CodeFile::CheckProlog()
 
    for(size_t i = 0; i < prolog.size(); ++i)
    {
-      pos = lexer_.GetLineStart(line);
+      pos = lines[line].begin;
       ok = ok && (code_.find(COMMENT_STR, pos) == pos);
 
       if(prolog[i].empty())
-         ok = ok && (lineType_[line] == EmptyComment);
+         ok = ok && (lines[line].type == EmptyComment);
       else
          ok = ok && (code_.find(prolog[i], pos) == pos + 4);
 
       if(!ok) return LogLine(line, HeadingNotStandard);
       ++line;
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void CodeFile::CheckSeparation()
-{
-   Debug::ft("CodeFile.CheckSeparation");
-
-   //  Look for warnings that involve looking at adjacent lines or the
-   //  file's contents as a whole.
-   //
-   LineType prevType = BlankLine;
-   slashAsterisk_ = false;
-
-   for(size_t n = 0; n < lineType_.size(); ++n)
-   {
-      //  Based on the type of line just found, look for warnings that can
-      //  only be found based on the type of line that preceded this one.
-      //
-      auto nextType =
-         (n == lineType_.size() - 1 ? BlankLine : lineType_[n + 1]);
-
-      switch(lineType_[n])
-      {
-      case CodeLine:
-         switch(prevType)
-         {
-         case FileComment:
-         case FunctionName:
-         case IncludeDirective:
-         case UsingStatement:
-            LogLine(n, AddBlankLine);
-            break;
-         }
-         break;
-
-      case BlankLine:
-      case EmptyComment:
-         switch(prevType)
-         {
-         case BlankLine:
-         case EmptyComment:
-         case OpenBrace:
-            LogLine(n, RemoveBlankLine);
-            break;
-         }
-         break;
-
-      case TextComment:
-      case TaggedComment:
-      case SlashAsteriskComment:
-      case DebugFt:
-         break;
-
-      case SeparatorComment:
-         if(!LineTypeAttr::Attrs[prevType].isBlank)
-            LogLine(n, AddBlankLine);
-         if(!LineTypeAttr::Attrs[nextType].isBlank)
-            LogLine(n + 1, AddBlankLine);
-         break;
-
-      case OpenBrace:
-      case CloseBrace:
-      case CloseBraceSemicolon:
-         if(LineTypeAttr::Attrs[prevType].isBlank)
-            LogLine(n - 1, RemoveBlankLine);
-         break;
-
-      case AccessControl:
-         if(LineTypeAttr::Attrs[prevType].isBlank)
-            LogLine(n - 1, RemoveBlankLine);
-         if(LineTypeAttr::Attrs[nextType].isBlank)
-            LogLine(n + 1, RemoveBlankLine);
-         break;
-
-      case FunctionName:
-         switch(prevType)
-         {
-         case BlankLine:
-         case EmptyComment:
-         case OpenBrace:
-         case FunctionName:
-            break;
-         case TextComment:
-            if(IsCpp()) LogLine(n, AddBlankLine);
-            break;
-         default:
-            LogLine(n, AddBlankLine);
-         }
-         break;
-      }
-
-      prevType = lineType_[n];
    }
 }
 
@@ -1146,6 +992,29 @@ void CodeFile::CheckUsings() const
          {
             (*u2)->Log(UsingDuplicated);
          }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::CheckVerticalSpacing()
+{
+   Debug::ft("CodeFile.CheckVerticalSpacing");
+
+   auto actions = lexer_.CheckVerticalSpacing();
+
+   for(size_t n = 0; n < actions.size(); ++n)
+   {
+      switch(actions[n])
+      {
+      case Lexer::InsertBlank:
+         LogLine(n, AddBlankLine);
+         break;
+
+      case Lexer::DeleteLine:
+         LogLine(n, RemoveLine);
+         break;
       }
    }
 }
@@ -1200,7 +1069,7 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
    stream << CRLF;
    if(parsed_ == Unparsed) return;
 
-   auto lead = spaces(INDENT_SIZE);
+   auto lead = spaces(IndentSize());
    Flags options(FQ_Mask);
    if(opts.find(ItemStatistics) != string::npos) options.set(DispStats);
 
@@ -1525,20 +1394,14 @@ void CodeFile::GetLineCounts() const
    //
    if(isSubsFile_) return;
 
-   CodeWarning::AddLineType(AnyLine, lineType_.size());
+   const auto& lines = lexer_.GetLinesInfo();
 
-   for(size_t n = 0; n < lineType_.size(); ++n)
+   CodeWarning::AddLineType(AnyLine, lines.size());
+
+   for(size_t n = 0; n < lines.size(); ++n)
    {
-      CodeWarning::AddLineType(lineType_[n], 1);
+      CodeWarning::AddLineType(lines[n].type, 1);
    }
-}
-
-//------------------------------------------------------------------------------
-
-LineType CodeFile::GetLineType(size_t n) const
-{
-   if(n >= lineType_.size()) return LineType_N;
-   return lineType_[n];
 }
 
 //------------------------------------------------------------------------------
@@ -1673,13 +1536,6 @@ const LibItemSet& CodeFile::Implementers()
 
    implSet_ = imSet;
    return implSet_;
-}
-
-//------------------------------------------------------------------------------
-
-size_t CodeFile::IndentSize() const
-{
-   return INDENT_SIZE;
 }
 
 //------------------------------------------------------------------------------
@@ -1828,13 +1684,6 @@ bool CodeFile::IsLastItem(const CxxNamed* item) const
    Debug::ft("CodeFile.IsLastItem");
 
    return (items_.empty() ? false : (items_.back() == item));
-}
-
-//------------------------------------------------------------------------------
-
-size_t CodeFile::LineLengthMax() const
-{
-   return LINE_LENGTH_MAX;
 }
 
 //------------------------------------------------------------------------------
@@ -2371,54 +2220,12 @@ void CodeFile::Scan()
    if(!ReadCode(code_)) return;
    lexer_.Initialize(code_, this);
    lexer_.CalcDepths();
+   lexer_.CalcLineTypes(true);
    lexer_.CheckPunctuation();
-
-   auto lines = lexer_.LineCount();
-
-   for(size_t n = 0; n < lines; ++n)
-   {
-      lineType_.push_back(LineType_N);
-   }
-
-   //  Categorize each line.  If the previous line failed to finish
-   //  a using statement or function name definition, carry it over
-   //  to the next line.
-   //
-   auto prevCont = false;
-   auto prevType = LineType_N;
-
-   for(size_t n = 0; n < lines; ++n)
-   {
-      auto currCont = false;
-      auto currType = CalcLineType(n, currCont);
-
-      if(prevCont)
-      {
-         if((prevType != UsingStatement) && (prevType != FunctionName))
-         {
-            prevCont = false;
-         }
-      }
-
-      lineType_[n] = (prevCont ? prevType : currType);
-      prevCont = currCont;
-      prevType = currType;
-   }
-
-   for(size_t n = 0; n < lines; ++n)
-   {
-      auto t = lineType_[n];
-
-      if(LineTypeAttr::Attrs[t].isCode) break;
-
-      if((t != EmptyComment) && (t != SlashAsteriskComment))
-      {
-         lineType_[n] = FileComment;
-      }
-   }
 
    //  Preprocess #include directives.
    //
+   auto lines = lexer_.LineCount();
    auto lib = Singleton< Library >::Instance();
    string file;
    bool angle;

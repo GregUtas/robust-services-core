@@ -722,7 +722,13 @@ bool Parser::GetBraceInit(ExprPtr& expr)
       {
          auto next = lexer_.FindFirstOf(",}");
          if(next == string::npos) return Backup(start, 20);
-         if(!GetCxxExpr(item, next)) break;
+
+         if(!GetCxxExpr(item, next))
+         {
+            if(!lexer_.NextCharIs('{')) break;
+            if(!GetBraceInit(item)) break;
+         }
+
          TokenPtr init(item.release());
          temps.push_back(std::move(init));
          auto comma = lexer_.NextCharIs(',');

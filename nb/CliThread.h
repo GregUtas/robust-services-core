@@ -65,6 +65,14 @@ public:
    //
    bool EndOfInput() const;
 
+   //  Displays STREAM.
+   //
+   void Inform(const std::ostringstream& stream);
+
+   //  Displays STR.
+   //
+   void Inform(const std::string& str);
+
    //  Used to report the result of a command that returned RC.  EXPL is
    //  displayed as a success or failure explanation with INDENT leading
    //  blanks.  Returns RC.

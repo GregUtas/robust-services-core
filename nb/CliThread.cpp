@@ -384,6 +384,25 @@ CliAppData* CliThread::GetAppData(CliAppData::Id aid) const
 
 //------------------------------------------------------------------------------
 
+void CliThread::Inform(const std::ostringstream& stream)
+{
+   Debug::ft("CliThread.Inform(stream)");
+
+   Inform(stream.str());
+}
+
+//------------------------------------------------------------------------------
+
+void CliThread::Inform(const string& str)
+{
+   Debug::ft("CliThread.Inform(string)");
+
+   *obuf << str;
+   Flush();
+}
+
+//------------------------------------------------------------------------------
+
 word CliThread::IntPrompt(const string& prompt, word min, word max)
 {
    Debug::ft("CliThread.IntPrompt");

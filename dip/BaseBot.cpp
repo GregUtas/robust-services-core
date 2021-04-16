@@ -2250,10 +2250,8 @@ void BaseBot::send_to_console(std::ostringstream& report)
 {
    Debug::ft("BaseBot.send_to_console");
 
-   auto cli = Singleton< CliThread >::Instance();
    report << CRLF;
-   *cli->obuf << report.str();
-   cli->Flush();
+   Singleton< CliThread >::Instance()->Inform(report);
 }
 
 //------------------------------------------------------------------------------

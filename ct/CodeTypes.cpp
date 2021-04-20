@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeTypes.h"
-#include <cstring>
 #include <ostream>
+#include "Cxx.h"
 #include "CxxString.h"
 #include "Debug.h"
 #include "FunctionName.h"
@@ -195,6 +195,29 @@ ostream& operator<<(ostream& stream, LineType type)
 
 //------------------------------------------------------------------------------
 
+fixed_string FunctionRoleStrings[FuncRole_N + 1] =
+{
+   "constructor",       // PureCtor
+   "destructor",        // PureDtor
+   "copy constructor",  // CopyCtor
+   "move constructor",  // MoveCtor
+   "copy operator",     // CopyOper
+   "move operator",     // MoveOper
+   "member function",   // FuncOther
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, FunctionRole role)
+{
+   if((role >= 0) && (role < FuncRole_N))
+      stream << FunctionRoleStrings[role];
+   else
+      stream << FunctionRoleStrings[FuncRole_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
 const bool F = false;
 const bool T = true;
 
@@ -331,9 +354,7 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
 
    //  Look for access controls.
    //
-   if(IsAccessControl(s, PUBLIC_STR)) return AccessControl;
-   if(IsAccessControl(s, PROTECTED_STR)) return AccessControl;
-   if(IsAccessControl(s, PRIVATE_STR)) return AccessControl;
+   if(IsAccessControl(s)) return AccessControl;
 
    //  Look for invocations of Debug::ft and its variants.
    //
@@ -436,19 +457,15 @@ bool InsertSpaceOnMerge(const string& line1, const string& line2, size_t begin2)
 
 //------------------------------------------------------------------------------
 
-bool IsAccessControl(const std::string& s, fixed_string acc)
+bool IsAccessControl(const std::string& s)
 {
-   auto pos = s.find_first_not_of(WhitespaceChars);
-
-   if((pos != string::npos) && (s.find(acc) == pos))
-   {
-      pos = s.find_first_not_of(WhitespaceChars, pos + strlen(acc));
-      if(pos == string::npos) return true;
-      if(s[pos] != ':') return false;
-      return (s.find_first_not_of(WhitespaceChars, pos + 1) == string::npos);
-   }
-
-   return false;
+   //  If S is an access control, check that nothing follows it.
+   //
+   auto acc = FindAccessControl(s);
+   if(acc == Cxx::Access_N) return false;
+   auto pos = s.find(':');
+   if(pos == string::npos) return false;
+   return (s.find_first_not_of(WhitespaceChars, pos + 1) == string::npos);
 }
 
 //------------------------------------------------------------------------------

@@ -380,6 +380,29 @@ string CharString(uint32_t c, bool s)
    return stream.str();
 }
 
+//------------------------------------------------------------------------------
+
+Cxx::Access FindAccessControl(const std::string& s)
+{
+   auto pos = s.find_first_not_of(WhitespaceChars);
+   if(pos == string::npos) return Cxx::Access_N;
+
+   for(int acc = Cxx::Private; acc != Cxx::Access_N; ++acc)
+   {
+      auto kwd = AccessStrings[acc];
+
+      if(s.compare(pos, strlen(kwd), kwd) == 0)
+      {
+         pos = s.find_first_not_of(WhitespaceChars, pos + strlen(kwd));
+         if(pos == string::npos) return Cxx::Access_N;
+         if(s[pos] != ':') return Cxx::Access_N;
+         return static_cast< Cxx::Access >(acc);
+      }
+   }
+
+   return Cxx::Access_N;
+}
+
 //==============================================================================
 
 const bool F = false;

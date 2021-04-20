@@ -492,8 +492,6 @@ void CxxToken::Log(Warning warning,
 
    if(item == nullptr) item = this;
    file->LogPos(pos, warning, item, offset, info);
-   if(item == nullptr) item = this;
-   GetFile()->LogPos(GetPos(), warning, item, offset, info);
 }
 
 //------------------------------------------------------------------------------
@@ -1942,7 +1940,7 @@ void Operation::ExecuteCall() const
 
    case Cxx::Class:
       cls = static_cast< Class* >(proc.item);
-      cls->Instantiate();
+      cls->Instantiate(false);
       func = cls->FindCtor(&args, scope);
       if((proc.name != nullptr) && (func != nullptr))
       {
@@ -2147,7 +2145,7 @@ bool Operation::ExecuteOverload
    if(root->Type() == Cxx::Class)
    {
       cls = static_cast< Class* >(root);
-      cls->Instantiate();
+      cls->Instantiate(false);
    }
 
    //  Search for an overload in ARG1 and its base classes.  The arguments
@@ -2345,7 +2343,7 @@ Function* Operation::FindNewOrDelete
    {
       area = static_cast< Class* >(targ);
       pod = false;
-      static_cast< Class* >(targ)->Instantiate();
+      static_cast< Class* >(targ)->Instantiate(true);
    }
    else
    {
@@ -2697,7 +2695,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    }
 
    auto cls = static_cast< Class* >(root);
-   cls->Instantiate();
+   cls->Instantiate(false);
 
    auto ptrs = arg1.Ptrs(true);
    auto err = (op_ == Cxx::REFERENCE_SELECT ? (ptrs != 0) : (ptrs != 1));

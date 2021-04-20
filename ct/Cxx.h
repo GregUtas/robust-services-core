@@ -320,6 +320,10 @@ namespace Cxx
 
 //------------------------------------------------------------------------------
 //
+//  The access control keywords.  The entry for Cxx::Access_N is ERROR_STR.
+//
+extern NodeBase::fixed_string AccessStrings[Cxx::Access_N + 1];
+
 //  Inserts a string for ACCESS into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, Cxx::Access access);
@@ -338,6 +342,11 @@ std::ostream& operator<<(std::ostream& stream, Cxx::Encoding code);
 //
 std::string CharString(uint32_t c, bool s);
 
+//  Returns the access control specified in S.  Returns Cxx::Access_N if S
+//  does not specify an access control.
+//
+Cxx::Access FindAccessControl(const std::string& s);
+
 //  For noting the keyword tags that appear when declaring or defining
 //  functions or data.
 //
@@ -349,11 +358,6 @@ typedef std::set< Cxx::Keyword > KeywordSet;
 //
 struct CxxWord
 {
-   //  Define the copy operator to suppress the compiler warning caused
-   //  by our const string member.
-   //
-   CxxWord& operator=(const CxxWord& that) = delete;
-
    //  What to look for when a particular keyword is found at file scope,
    //  in a class, and in a function, respectively:
    //      A (access control)   b (break)
@@ -440,11 +444,6 @@ struct CxxChar
 //
 struct CxxOp
 {
-   //  Define the copy operator to suppress the compiler warning caused
-   //  by our const string member.
-   //
-   CxxOp& operator=(const CxxOp& that) = delete;
-
    //  OPER was selected before the number of arguments was known.  Now
    //  that the number is known, verify that it is correct, updating it
    //  if it was ambiguous before ARGS was known.
@@ -608,7 +607,7 @@ struct CxxUsageSets
                            // directives but which the global cross-reference
                            // should report as being used
 
-   CxxUsageSets() = default;  // creates empty CxxNamedSets
+   CxxUsageSets() = default;
 
    //  Adds ITEM to the specified set (AddForward adds ITEM to FRIENDS if
    //  it is a friend declaration).  These functions exist so that a debug
@@ -641,11 +640,6 @@ struct CxxUsageSets
 class CxxStats
 {
 public:
-   //  Define the copy operator to suppress the compiler warning caused
-   //  by our const string member.
-   //
-   CxxStats& operator=(const CxxStats& that) = delete;
-
    //  The classes whose memory usage is tracked.
    //
    enum Item

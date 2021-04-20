@@ -89,6 +89,10 @@ public:
    CodeWarning(Warning warning, CodeFile* file, size_t pos,
       const CxxToken* item, word offset, const std::string& info);
 
+   //  Returns the warning.
+   //
+   Warning GetWarning() const { return warning_; }
+
    //  Returns the file in which the warning appeared.
    //
    CodeFile* File() const { return loc_.GetFile(); }
@@ -121,17 +125,6 @@ public:
    //  Returns true if FILE was logged for WARNING.
    //
    static bool HasWarning(const CodeFile* file, Warning warning);
-
-   //  Returns the name of the function that this warning wants added to
-   //  a class.  Returns an empty string if LOG does not suggest this.
-   //
-   std::string GetNewFuncName(std::string& expl) const;
-
-   //  Invoked to update the position of a warning when a file has been
-   //  edited.  Has the same interface as CxxToken::UpdatePos.
-   //
-   void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from = std::string::npos) const;
 
    //  Generates a report in STREAM for FILES.  The report includes line
    //  type counts and warnings found during parsing and compilation.
@@ -175,6 +168,17 @@ private:
    //
    static void GetWarnings
       (const CodeFile* file, std::vector< CodeWarning* >& warnings);
+
+   //  Returns the name of the function that this warning wants added to
+   //  a class.  Returns an empty string if LOG does not suggest this.
+   //
+   std::string GetNewFuncName() const;
+
+   //  Invoked to update the position of a warning when a file has been
+   //  edited.  Has the same interface as CxxToken::UpdatePos.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from = std::string::npos) const;
 
    //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
    //
@@ -225,7 +229,7 @@ private:
 
    //  Whether a warning can be, or has been, fixed by the Editor.
    //
-   WarningStatus status;
+   WarningStatus status_;
 
    //  Maps a warning to its attributes.
    //

@@ -50,6 +50,7 @@ Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    name_(name.release()),
    tag_(tag),
    currAccess_(tag == Cxx::ClassType ? Cxx::Private : Cxx::Public),
+   created_(false),
    implicit_(false),
    copied_(false)
 {
@@ -494,30 +495,71 @@ void Class::Check() const
       (*f)->Check();
    }
 
-   CheckBaseClass();
    CheckIfUnused(ClassUnused);
-   CheckOverrides();
+   CheckConstructors();
+   CheckDestructor();
    CheckRuleOfThree();
+   CheckOverrides();
 }
 
 //------------------------------------------------------------------------------
 
-void Class::CheckBaseClass() const
+void Class::CheckConstructors() const
 {
-   Debug::ft("Class.CheckBaseClass");
+   Debug::ft("Class.CheckConstructors");
 
-   if(!IsBaseClass()) return;
+   //  A singleton's constructor should be private.
+   //  A base class constructor should not be public.
+   //
+   auto base = IsBaseClass();
+   auto solo = IsSingleton();
 
-   auto func = FindDtor();
-   if(func == nullptr) Log(ImplicitDestructor);
+   FunctionVector ctors;
+   FindCtors(ctors);
 
-   auto funcs = Funcs();
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   for(auto c = ctors.begin(); c != ctors.end(); ++c)
    {
-      if((*f)->FuncRole() == PureCtor) return;
-   }
+      auto acc = (*c)->GetAccess();
 
-   Log(ImplicitConstructor);
+      if(solo && (acc != Cxx::Private))
+         (*c)->Log(ConstructorNotPrivate);
+      else if(base && (acc == Cxx::Public))
+         (*c)->Log(PublicConstructor);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void Class::CheckDestructor() const
+{
+   Debug::ft("Class.CheckDestructor");
+
+   //  o A singleton's destructor should be private.
+   //  o A base class destructor should be virtual.
+   //  o A base class destructor should be public unless it is a base class
+   //    for singletons or has a base class with a non-public destructor, in
+   //    which case a destructor is so declared to prohibit direct deletion.
+   //
+   auto base = IsBaseClass();
+   auto solo = IsSingleton();
+   auto dtor = FindDtor();
+   if(dtor == nullptr) return;
+   auto acc = dtor->GetAccess();
+
+   if(solo && (acc != Cxx::Private))
+      dtor->Log(DestructorNotPrivate);
+   else if(base && !dtor->IsVirtual())
+      dtor->Log(NonVirtualDestructor);
+   else if(base && (acc != Cxx::Public) && !IsSingletonBase())
+   {
+      for(auto c = BaseClass(); c != nullptr; c = c->BaseClass())
+      {
+         auto d = c->FindDtor();
+         if((d != nullptr) && (d->GetAccess() != Cxx::Public)) return;
+      }
+
+      dtor->Log(VirtualDestructor);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -684,39 +726,23 @@ void Class::CheckRuleOfThree() const
    auto moveCtorLoc = GetFuncDefinition(moveCtor);
    auto copyOperLoc = GetFuncDefinition(copyOper);
    auto moveOperLoc = GetFuncDefinition(moveOper);
-   word copyCtorTrivial = -1;
-   word copyOperTrivial = -1;
-   if((copyCtor != nullptr) && copyCtor->IsTrivial()) copyCtorTrivial = 0;
-   if((copyOper != nullptr) && copyOper->IsTrivial()) copyOperTrivial = 0;
 
    //  The copy constructor and copy operator should be declared together.
-   //  However, a non-static, const data member causes a compiler warning
-   //  if the copy operator is not implemented, so allow deletion of the
-   //  copy operator without declaring a copy constructor.
    //
-   switch(copyCtorLoc)
+   if(copyCtorLoc == LocalDeclared)
    {
-   case NotDeclared:
-      if((copyOperLoc == LocalDeclared) && copyOper->IsImplemented())
+      if((copyOperLoc == NotDeclared) || (copyOperLoc == BaseDefined))
       {
-         Log(RuleOf3CopyOperNoCtor, this, copyOperTrivial);
+         Log(RuleOf3CopyCtorNoOper);
       }
-      break;
-   case LocalDeclared:
-      if(copyOperLoc == LocalDeclared) break;
-      if(copyOperLoc == BaseDeleted) break;
-      Log(RuleOf3CopyCtorNoOper, this, copyCtorTrivial);
-      break;
    }
 
-   switch(copyOperLoc)
+   if(copyOperLoc == LocalDeclared)
    {
-   case LocalDeclared:
-      if(!copyOper->IsImplemented()) break;
-      if(copyCtorLoc == LocalDeclared) break;
-      if(copyCtorLoc == BaseDeleted) break;
-      Log(RuleOf3CopyOperNoCtor, this, copyOperTrivial);
-      break;
+      if((copyCtorLoc == NotDeclared) || (copyCtorLoc == BaseDefined))
+      {
+         Log(RuleOf3CopyOperNoCtor);
+      }
    }
 
    //  If the destructor is not trivial, then the copy constructor and copy
@@ -725,17 +751,14 @@ void Class::CheckRuleOfThree() const
    //
    if((dtorLoc == LocalDeclared) && !dtor->IsTrivial())
    {
-      if((moveCtorLoc == NotDeclared) &&
-         (moveOperLoc == NotDeclared))
+      if((moveCtorLoc == NotDeclared) && (moveOperLoc == NotDeclared))
       {
-         if((copyCtorLoc == NotDeclared) ||
-            (copyCtorLoc == BaseDefined))
+         if((copyCtorLoc == NotDeclared) || (copyCtorLoc == BaseDefined))
          {
             Log(RuleOf3DtorNoCopyCtor);
          }
 
-         if((copyOperLoc == NotDeclared) ||
-            (copyOperLoc == BaseDefined))
+         if((copyOperLoc == NotDeclared) || (copyOperLoc == BaseDefined))
          {
             Log(RuleOf3DtorNoCopyOper);
          }
@@ -1214,9 +1237,8 @@ Function* Class::FindFuncByRole(FunctionRole role, bool base) const
 {
    Debug::ft(Class_FindFuncByRole);
 
-   switch(role)
+   if(role == FuncOther)
    {
-   case FuncOther:
       Context::SwLog(Class_FindFuncByRole, "Role not supported", role);
       return nullptr;
    }
@@ -1309,7 +1331,7 @@ void Class::GetConvertibleTypes(StackArgVector& types, bool expl)
 {
    Debug::ft("Class.GetConvertibleTypes");
 
-   Instantiate();
+   Instantiate(false);
 
    for(auto cls = this; cls != nullptr; cls = cls->BaseClass())
    {
@@ -1681,6 +1703,15 @@ bool Class::HasPODMember() const
 
 //------------------------------------------------------------------------------
 
+void Class::Instantiate(bool created)
+{
+   Debug::ft("Class.Instantiate");
+
+   if(created) created_ = true;
+}
+
+//------------------------------------------------------------------------------
+
 bool Class::IsDefaultConstructible()
 {
    Debug::ft("Class.IsDefaultConstructible");
@@ -1751,22 +1782,20 @@ bool Class::IsSingletonBase() const
 {
    Debug::ft("Class.IsSingletonBase");
 
-   //  This class is a singleton base if
-   //  o all classes derived and instantiated from it are singleton bases and
-   //  o the class itself is either a singleton *or* has no public constructor
-   //    (so could serve as a singleton base because it is virtual).
-   //
+   if(IsSingleton()) return false;
+
    for(auto s = subs_.cbegin(); s != subs_.cend(); ++s)
    {
-      if(!(*s)->IsSingletonBase()) return false;
+      if(!(*s)->IsSingleton() && !(*s)->IsSingletonBase()) return false;
    }
 
    for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
    {
-      if(!(*t)->IsSingletonBase()) return false;
+      if(!(*t)->IsSingleton() && !(*t)->IsSingletonBase()) return false;
    }
 
-   if(IsSingleton()) return true;
+   auto dtor = FindDtor();
+   if((dtor == nullptr) || (dtor->GetAccess() == Cxx::Public)) return false;
 
    FunctionVector ctors;
    FindCtors(ctors);
@@ -1982,7 +2011,7 @@ void Class::UpdatePos
 
 //------------------------------------------------------------------------------
 
-const Warning RoleToWarning[FuncOther + 1] =
+const Warning RoleToWarning[FuncRole_N] =
 {
    ImplicitConstructor,      //  PureCtor
    ImplicitDestructor,       //  PureDtor
@@ -2011,54 +2040,75 @@ void Class::WasCalled(FunctionRole role, const CxxNamed* item)
    //  The special member function is implicitly defined.  Decide whether to
    //  generate a log.  An implicit constructor, copy constructor, or copy
    //  operator always results in a log, and a destructor results in a log if
-   //  the class has a pointer member (which might mean that it needs to free
-   //  free memory).  Propagate the call up the class hierarchy if a log is
-   //  not generated.
+   //  the class is a base, a singleton, or has a pointer member (which might
+   //  mean that it needs to free free memory).  Propagate the call up the
+   //  class hierarchy if a log is not generated.
    //
    implicit_ = true;
 
-   auto log = false;
+   auto base = IsBaseClass();
+   auto solo = IsSingleton();
+   auto log = true;
    auto data = Datas();
 
    if(role == PureDtor)
    {
-      for(auto d = data->cbegin(); d != data->cend(); ++d)
+      log = false;
+
+      if(base)
+         log = true;
+      else if(solo)
+         log = true;
+      else
       {
-         if(!(*d)->IsStatic() && ((*d)->GetTypeSpec()->Ptrs(false) > 0))
+         for(auto d = data->cbegin(); d != data->cend(); ++d)
          {
-            log = true;
-            break;
+            if(!(*d)->IsStatic() && ((*d)->GetTypeSpec()->Ptrs(false) > 0))
+            {
+               log = true;
+               break;
+            }
          }
       }
-   }
-   else
-   {
-      log = true;
    }
 
    if(log)
    {
       auto warning = RoleToWarning[role];
 
-      if((warning == ImplicitConstructor) && HasPODMember())
+      switch(warning)
       {
-         warning = ImplicitPODConstructor;
+      case ImplicitConstructor:
+         if(HasPODMember())
+            warning = ImplicitPODConstructor;
+         else if(solo)
+            warning = ConstructorNotPrivate;
+         else if(base)
+            warning = PublicConstructor;
+         break;
+
+      case ImplicitDestructor:
+         if(solo)
+            warning = DestructorNotPrivate;
+         else if(base)
+            warning = NonVirtualDestructor;
+         break;
       }
 
       if(warning != Warning_N)
       {
          Log(warning);
 
-         if(item != nullptr)
+         if((item != nullptr) && (item != this))
             item->Log(warning, item, -1);
-         else
-            this->Log(warning, this, -1);
          return;
       }
    }
 
-   auto base = BaseClass();
-   if(base != nullptr) base->WasCalled(role, item);
+   if(BaseClass() != nullptr)
+   {
+      BaseClass()->WasCalled(role, item);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2096,7 +2146,7 @@ ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
    tmplt_(tmplt),
    tspec_(nullptr),
    refs_(0),
-   created_(false),
+   instantiated_(false),
    compiled_(false)
 {
    Debug::ft("ClassInst.ctor");
@@ -2180,13 +2230,13 @@ void ClassInst::Display(ostream& stream,
    auto code = options.test(DispCode);
    stream << prefix;
    Class::DisplayBase(stream, options);
-   if(!created_) stream << ";";
+   if(!instantiated_) stream << ";";
 
    std::ostringstream buff;
    buff << " // ";
    if(options.test(DispStats)) buff << "r=" << refs_ << SPACE;
 
-   if(!created_)
+   if(!instantiated_)
    {
       if(!code) buff << "<@uninst" << CRLF;
       auto str = buff.str();
@@ -2240,7 +2290,7 @@ CxxScoped* ClassInst::FindInstanceAnalog(const CxxNamed* item) const
 {
    Debug::ft("ClassInst.FindInstanceAnalog");
 
-   if(!created_) return nullptr;
+   if(!instantiated_) return nullptr;
 
    auto type = item->Type();
 
@@ -2325,7 +2375,7 @@ void ClassInst::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
-void ClassInst::Instantiate()
+void ClassInst::Instantiate(bool created)
 {
    Debug::ft("ClassInst.Instantiate");
 
@@ -2334,8 +2384,9 @@ void ClassInst::Instantiate()
    //  its template is being instantiated.  This causes the instantiation
    //  of any templates that this one requires.
    //
-   if(created_) return;
-   created_ = true;
+   Class::Instantiate(created);
+   if(instantiated_) return;
+   instantiated_ = true;
 
    CxxScopedVector locals;
    tspec_->Instantiating(locals);

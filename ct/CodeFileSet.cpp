@@ -177,7 +177,7 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
    if(parseItems.size() > 0)
    {
       *cli.obuf << parseItems.size() << " files should be parsed to";
-      *cli.obuf << CRLF << " avoid spurious results.  ";
+      *cli.obuf << CRLF << " avoid spurious results. ";
       skip = cli.BoolPrompt("Do you wish to skip this?");
    }
 
@@ -432,7 +432,6 @@ word CodeFileSet::Format(string& expl) const
 
    auto& fileSet = Items();
    size_t failed = 0;
-   size_t changed = 0;
    string err;
 
    //  Iterate over the set of code files and reformat them.
@@ -446,23 +445,15 @@ word CodeFileSet::Format(string& expl) const
       if(file->GetLexer().LineCount() > 0)
       {
          auto rc = file->Format(err);
-
-         if(rc != 0)
-         {
-            if(rc < 0)
-               ++failed;
-            else
-               ++changed;
-         }
-
+         if(rc < 0) ++failed;
          Debug::Progress((rc >= 0 ? CRLF_STR : " ERROR: " + err + CRLF));
       }
    }
 
-   std::ostringstream summary;
-   summary << "Total: " << fileSet.size() << ", changed: " << changed;
-   if(failed > 0) summary << ", failed: " << failed;
-   expl += summary.str();
+   std::ostringstream stream;
+   stream << "Total=" << fileSet.size();
+   if(failed > 0) stream << ", failed=" << failed;
+   expl += stream.str();
    return 0;
 }
 

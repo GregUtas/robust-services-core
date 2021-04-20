@@ -93,7 +93,7 @@ CodeWarning::CodeWarning(Warning warning, CodeFile* file, size_t pos,
    item_(item),
    offset_(offset),
    info_(info),
-   status(NotSupported)
+   status_(NotSupported)
 {
    Debug::ft("CodeWarning.ctor");
 
@@ -101,7 +101,7 @@ CodeWarning::CodeWarning(Warning warning, CodeFile* file, size_t pos,
    //  will update its position when code is edited.
    //
    loc_.SetLoc(file, pos, false);
-   if(Attrs_.at(warning).fixable) status = NotFixed;
+   if(Attrs_.at(warning).fixable) status_ = NotFixed;
 }
 
 //------------------------------------------------------------------------------
@@ -278,7 +278,8 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       do
       {
          auto w = item->warning_;
-         *stream << spaces(2) << WarningCode(w) << SPACE << w << CRLF;
+         *stream << (Attrs_.at(Warning(w)).fixable ? '*' : SPACE);
+         *stream << SPACE << WarningCode(w) << SPACE << w << CRLF;
 
          do
          {
@@ -305,7 +306,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
 
 //------------------------------------------------------------------------------
 
-string CodeWarning::GetNewFuncName(string& expl) const
+string CodeWarning::GetNewFuncName() const
 {
    Debug::ft("CodeWarning.GetNewFuncName");
 
@@ -317,7 +318,6 @@ string CodeWarning::GetNewFuncName(string& expl) const
       return "Patch";
    }
 
-   expl = "The function associated with this warning is unknown.";
    return EMPTY_STR;
 }
 
@@ -556,7 +556,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T,
       "Implicit copy (assignment) operator invoked")));
    Attrs_.insert(WarningPair(PublicConstructor,
-      WarningAttrs(F,
+      WarningAttrs(T,
       "Base class constructor is public")));
    Attrs_.insert(WarningPair(NonExplicitConstructor,
       WarningAttrs(T,

@@ -97,9 +97,8 @@ public:
    //
    word Fix(CliThread& cli, const FixOptions& opts, string& expl);
 
-   //  Formats the code.  Returns 0 if the file was unchanged, a positive
-   //  number after successful changes, and a negative number on failure,
-   //  in which case EXPL provides an explanation.
+   //  Formats the code.  Returns a negative value on failure, in which
+   //  case EXPL provides provides an explanation.
    //
    word Format(string& expl);
 
@@ -113,11 +112,9 @@ public:
    //
    static size_t CommitCount();
 
-   //  Returns the log, if any, whose .warning matches LOG, whose .offset
-   //  matches OFFSET, and whose .item matches ITEM.
+   //  Returns the log, if any, that matches WARNING, ITEM, and OFFSET.
    //
-   CodeWarning* FindLog
-      (const CodeWarning& log, const CxxToken* item, word offset);
+   CodeWarning* FindLog(Warning warning, const CxxToken* item, word offset);
 
    //  Overridden to display member variables.
    //
@@ -125,15 +122,13 @@ public:
       const string& prefix, const NodeBase::Flags& options) const override;
 private:
    //  Invokes Write on each editor whose file has changed.  Returns false
-   //  if an error occurrs, after updating EXPL with an explanation.
+   //  if an error occurrs.
    //
-   static bool Commit(const CliThread& cli, string& expl);
+   static bool Commit(const CliThread& cli);
 
-   //  Writes out the editor's file.  Returns 0 if the file was successfully
-   //  written; other values indicate failure.  Updates EXPL with a reason
-   //  for any failure or a message that indicates which file was written.
+   //  Writes out the editor's file.
    //
-   word Write(string& expl);
+   word Write();
 
    //  Returns the status of LOG.
    //  o NotFixed: will try to fix
@@ -150,81 +145,80 @@ private:
       (const CliThread& cli, const CodeWarning& log, bool file) const;
 
    //  Fixes LOG.  Returns 0 on success.  A return value of -1 means that the
-   //  file should be skipped; other values denote more serious errors.  EXPL
-   //  is updated to provide any explanation, even when returning 0.  When the
-   //  code has been edited, EXPL usually contains the revised line of code.
+   //  file should be skipped; other values denote more serious errors.
    //
-   word FixWarning(CliThread& cli, const CodeWarning& log, string& expl);
+   word FixWarning(CliThread& cli, CodeWarning& log);
 
    //  Invokes FixWarning if LOG's status is NotFixed and updates its status
    //  to Pending on success.
    //
-   word FixLog(CliThread& cli, CodeWarning& log, string& expl);
+   word FixLog(CliThread& cli, CodeWarning& log);
 
-   //  Most of the editing functions attempt to fix the warning reported in LOG,
-   //  returning 0 on success.  Any other result indicates an error, in which
-   //  case EXPL provides an explanation.  A return value of -1 means that the
-   //  file should be skipped; other values denote more serious errors.
+   //  Invoked when fixing LOG returned RC.
    //
-   word AdjustIndentation(const CodeWarning& log, string& expl);
-   word AdjustOperator(const CodeWarning& log, string& expl);
-   word AdjustPunctuation(const CodeWarning& log, string& expl);
-   word AdjustTags(const CodeWarning& log, string& expl);
-   word ChangeAccess(const CodeWarning& log, Cxx::Access acc, string& expl);
-   word ChangeClassToNamespace(const CodeWarning& log, string& expl);
-   word ChangeClassToStruct(const CodeWarning& log, string& expl);
-   word ChangeDataToFree(const CodeWarning& log, string& expl);
-   word ChangeDebugFtName(CliThread& cli, const CodeWarning& log, string& expl);
-   word ChangeOperator(const CodeWarning& log, string& expl);
-   word ChangeStructToClass(const CodeWarning& log, string& expl);
-   word EraseAdjacentSpaces(const CodeWarning& log, string& expl);
-   word EraseAccessControl(const CodeWarning& log, string& expl);
-   word EraseBlankLine(const CodeWarning& log, string& expl);
-   word EraseClass(const CodeWarning& log, string& expl);
-   word EraseConst(const CodeWarning& log, string& expl);
-   word EraseData(const CliThread& cli, const CodeWarning& log, string& expl);
-   word EraseExplicitTag(const CodeWarning& log, string& expl);
-   word EraseForward(const CodeWarning& log, string& expl);
-   word EraseLineBreak(const CodeWarning& log, string& expl);
-   word EraseMutableTag(const CodeWarning& log, string& expl);
-   word EraseOverrideTag(const CodeWarning& log, string& expl);
-   word EraseSemicolon(const CodeWarning& log, string& expl);
-   word EraseScope(const CodeWarning& log, string& expl);
-   word EraseVirtualTag(const CodeWarning& log, string& expl);
-   word EraseVoidArgument(const CodeWarning& log, string& expl);
-   word InlineDebugFtName(const CodeWarning& log, string& expl);
-   word InitByCtorCall(const CodeWarning& log, string& expl);
-   word InsertBlankLine(const CodeWarning& log, string& expl);
-   word InsertCopyCtorCall(const CodeWarning& log, string& expl);
-   word InsertDataInit(const CodeWarning& log, string& expl);
-   word InsertDebugFtCall(CliThread& cli, const CodeWarning& log, string& expl);
-   word InsertDefaultFunction(const CodeWarning& log, string& expl);
-   word InsertDisplay(CliThread& cli, const CodeWarning& log, string& expl);
-   word InsertEnumName(const CodeWarning& log, string& expl);
-   word InsertForward(const CodeWarning& log, string& expl);
-   word InsertInclude(const CodeWarning& log, string& expl);
-   word InsertIncludeGuard(const CodeWarning& log, string& expl);
-   word InsertLineBreak(const CodeWarning& log, string& expl);
-   word InsertMemberInit(const CodeWarning& log, string& expl);
-   word InsertPatch(CliThread& cli, const CodeWarning& log, string& expl);
-   word InsertPODCtor(const CodeWarning& log, string& expl);
-   word InsertPureVirtual(const CodeWarning& log, string& expl);
-   word InsertUsing(const CodeWarning& log, string& expl);
-   word MoveDefine(const CodeWarning& log, string& expl);
-   word MoveFunction(const CodeWarning& log, string& expl);
-   word MoveMemberInit(const CodeWarning& log, string& expl);
-   word RenameArgument(CliThread& cli, const CodeWarning& log, string& expl);
-   word RenameIncludeGuard(const CodeWarning& log, string& expl);
-   word ReplaceHeading(const CodeWarning& log, string& expl);
-   word ReplaceName(const CodeWarning& log, string& expl);
-   word ReplaceNull(const CodeWarning& log, string& expl);
-   word ReplaceSlashAsterisk(const CodeWarning& log, string& expl);
-   word ReplaceUsing(const CodeWarning& log, string& expl);
-   word TagAsConstData(const CodeWarning& log, string& expl);
-   word TagAsConstPointer(const CodeWarning& log, string& expl);
-   word TagAsExplicit(const CodeWarning& log, string& expl);
-   word TagAsOverride(const CodeWarning& log, string& expl);
-   word TagAsVirtual(const CodeWarning& log, string& expl);
+   static void ReportFix(CliThread& cli, CodeWarning* log, word rc);
+
+   //  Most of the editing functions attempt to fix the warning reported in LOG.
+   //
+   word AdjustIndentation(const CodeWarning& log);
+   word AdjustOperator(const CodeWarning& log);
+   word AdjustPunctuation(const CodeWarning& log);
+   word AdjustTags(const CodeWarning& log);
+   word ChangeAccess(const CodeWarning& log, Cxx::Access acc);
+   word ChangeAccess(CxxToken* item, ItemDeclAttrs& attrs);
+   word ChangeClassToNamespace(const CodeWarning& log);
+   word ChangeClassToStruct(const CodeWarning& log);
+   word ChangeDataToFree(const CodeWarning& log);
+   word ChangeDebugFtName(CliThread& cli, const CodeWarning& log);
+   word ChangeOperator(const CodeWarning& log);
+   word ChangeStructToClass(const CodeWarning& log);
+   word EraseAdjacentSpaces(const CodeWarning& log);
+   word EraseAccessControl(const CodeWarning& log);
+   word EraseBlankLine(const CodeWarning& log);
+   word EraseClass(const CodeWarning& log);
+   word EraseConst(const CodeWarning& log);
+   word EraseData(const CliThread& cli, const CodeWarning& log);
+   word EraseExplicitTag(const CodeWarning& log);
+   word EraseForward(const CodeWarning& log);
+   word EraseLineBreak(const CodeWarning& log);
+   word EraseMutableTag(const CodeWarning& log);
+   word EraseOverrideTag(const CodeWarning& log);
+   word EraseSemicolon(const CodeWarning& log);
+   word EraseScope(const CodeWarning& log);
+   word EraseVirtualTag(const CodeWarning& log);
+   word EraseVoidArgument(const CodeWarning& log);
+   word InlineDebugFtName(const CodeWarning& log);
+   word InitByCtorCall(const CodeWarning& log);
+   word InsertBlankLine(const CodeWarning& log);
+   word InsertCopyCtorCall(const CodeWarning& log);
+   word InsertDataInit(const CodeWarning& log);
+   word InsertDebugFtCall(CliThread& cli, const CodeWarning& log);
+   word InsertDisplay(CliThread& cli, const CodeWarning& log);
+   word InsertEnumName(const CodeWarning& log);
+   word InsertForward(const CodeWarning& log);
+   word InsertInclude(const CodeWarning& log);
+   word InsertIncludeGuard(const CodeWarning& log);
+   word InsertLineBreak(const CodeWarning& log);
+   word InsertMemberInit(const CodeWarning& log);
+   word InsertPatch(CliThread& cli, const CodeWarning& log);
+   word InsertPODCtor(const CodeWarning& log);
+   word InsertPureVirtual(const CodeWarning& log);
+   word InsertUsing(const CodeWarning& log);
+   word MoveDefine(const CodeWarning& log);
+   word MoveFunction(const CodeWarning& log);
+   word MoveMemberInit(const CodeWarning& log);
+   word RenameArgument(CliThread& cli, const CodeWarning& log);
+   word RenameIncludeGuard(const CodeWarning& log);
+   word ReplaceHeading(const CodeWarning& log);
+   word ReplaceName(const CodeWarning& log);
+   word ReplaceNull(const CodeWarning& log);
+   word ReplaceSlashAsterisk(const CodeWarning& log);
+   word ReplaceUsing(const CodeWarning& log);
+   word TagAsConstData(const CodeWarning& log);
+   word TagAsConstPointer(const CodeWarning& log);
+   word TagAsExplicit(const CodeWarning& log);
+   word TagAsOverride(const CodeWarning& log);
+   word TagAsVirtual(const CodeWarning& log);
 
    //  Removes trailing blanks.  Invoked by Format and before writing out code
    //  that was changed.
@@ -305,7 +299,7 @@ private:
    //  This simplifies sorting by replacing the characters that enclose the
    //  file name's in an #include directive.
    //
-   word MangleInclude(string& include, string& expl) const;
+   word MangleInclude(string& include) const;
 
    //  Before inserting an #include or sorting all #includes, this is invoked
    //  to make it easier to sort them.
@@ -314,11 +308,11 @@ private:
 
    //  Sorts #include directives in standard order.
    //
-   word SortIncludes(string& expl);
+   word SortIncludes();
 
    //  Inserts an INCLUDE directive.
    //
-   word InsertInclude(string& include, string& expl);
+   word InsertInclude(string& include);
 
    //  Searches for INCL starting at POS.  If it is found, it is erased and its
    //  position is returned.  Returns string::npos is INCL is not found.
@@ -333,13 +327,13 @@ private:
    //  Inserts a FORWARD declaration at POS, which is a namespace definition
    //  that should include FORWARD.
    //
-   word InsertForward(size_t pos, const string& forward, string& expl);
+   word InsertForward(size_t pos, const string& forward);
 
    //  Inserts a FORWARD declaration at POS.  It is the first declaration in
    //  NSPACE, so it must be enclosed in a new namespace scope.
    //
    word InsertNamespaceForward(size_t pos,
-      const string& nspace, const string& forward, string& expl);
+      const string& nspace, const string& forward);
 
    //  Qualifies symbols so that using statements can be removed.
    //
@@ -362,46 +356,62 @@ private:
    static void ChangeForwards
       (const CxxToken* item, fixed_string from, fixed_string to);
 
+   //  ITEM has a log that requires adding a special member function.  Looks
+   //  for other logs that also require this and fixes them together.
+   //
+   word InsertSpecialFunctions(CliThread& cli, const CxxToken* item);
+
+   //  Adds the special member function specified by ROLE to CLS.
+   //
+   word InsertSpecialFuncDecl
+      (CliThread& cli, const Class* cls, FunctionRole role);
+
+   //  Inserts a shell for implementing a special member function in CLS,
+   //  based on ATTRS, when it cannot be defaulted or deleted.
+   //
+   void InsertSpecialFuncDefn(const Class* cls, const FuncDefnAttrs& attrs);
+
+   //  Fixes LOG, which involves changing or inserting a special member
+   //  function.
+   //
+   word ChangeSpecialFunction(CliThread& cli, const CodeWarning& log);
+
    //  Fixes LOG, which also involves modifying overrides of a function.
-   //  Updates EXPL with any explanation.
    //
-   static word FixFunctions
-      (CliThread& cli, const CodeWarning& log, string& expl);
+   static word FixFunctions(CliThread& cli, CodeWarning& log);
 
-   //  Fixes LOG, which is associated with FUNC, and updates EXPL with any
-   //  explanation.
+   //  Fixes LOG, which is associated with FUNC.
    //
-   word FixFunction(const Function* func, const CodeWarning& log, string& expl);
+   word FixFunction(const Function* func, const CodeWarning& log);
 
-   //  Fixes LOG, which also involves modifying invokers and overrides of
-   //  a function.  Updates EXPL with any explanation.
+   //  Fixes LOG, which also involves modifying invokers and overrides
+   //  of a function.
    //
-   word FixInvokers(CliThread& cli, const CodeWarning& log, string& expl);
+   word FixInvokers(CliThread& cli, const CodeWarning& log);
 
-   //  Fixes LOG, which is associated with invoking FUNC, and updates EXPL with
-   //  any explanation.
+   //  Fixes LOG, which is associated with invoking FUNC.
    //
-   word FixInvoker(const Function* func, const CodeWarning& log, string& expl);
+   word FixInvoker(const Function* func, const CodeWarning& log);
 
-   //  Fixes FUNC and updates EXPL with any explanation.  OFFSET is log.offset_
-   //  when the original log is associated with one of FUNC's arguments.
+   //  Fixes FUNC.  OFFSET is log.offset_ when the original log is
+   //  associated with one of FUNC's arguments.
    //
-   word ChangeFunctionToFree(const Function* func, string& expl);
-   word ChangeFunctionToMember(const Function* func, word offset, string& expl);
-   word ChangeInvokerToFree(const Function* func, string& expl);
-   word ChangeInvokerToMember(const Function* func, word offset, string& expl);
-   word EraseArgument(const Function* func, word offset, string& expl);
-   word EraseDefaultValue(const Function* func, word offset, string& expl);
-   word EraseParameter(const Function* func, word offset, string& expl);
-   word EraseNoexceptTag(const Function* func, string& expl);
-   word InsertArgument(const Function* func, word offset, string& expl);
-   word SplitVirtualFunction(const Function* func, string& expl);
-   word TagAsConstArgument(const Function* func, word offset, string& expl);
-   word TagAsConstFunction(const Function* func, string& expl);
-   word TagAsConstReference(const Function* func, word offset, string& expl);
-   word TagAsDefaulted(const Function* func, string& expl);
-   word TagAsNoexcept(const Function* func, string& expl);
-   word TagAsStaticFunction(const Function* func, string& expl);
+   word ChangeFunctionToFree(const Function* func);
+   word ChangeFunctionToMember(const Function* func, word offset);
+   word ChangeInvokerToFree(const Function* func);
+   word ChangeInvokerToMember(const Function* func, word offset);
+   word EraseArgument(const Function* func, word offset);
+   word EraseDefaultValue(const Function* func, word offset);
+   word EraseParameter(const Function* func, word offset);
+   word EraseNoexceptTag(const Function* func);
+   word InsertArgument(const Function* func, word offset);
+   word SplitVirtualFunction(const Function* func);
+   word TagAsConstArgument(const Function* func, word offset);
+   word TagAsConstFunction(const Function* func);
+   word TagAsConstReference(const Function* func, word offset);
+   word TagAsDefaulted(const Function* func);
+   word TagAsNoexcept(const Function* func);
+   word TagAsStaticFunction(const Function* func);
 
    //  Returns the location of the right parenthesis after a function's
    //  argument list.  Returns string::npos on failure.
@@ -419,84 +429,84 @@ private:
    //
    size_t LineAfterItem(const CxxToken* item) const;
 
-   //  Returns the location where the item CLS::NAME, of TYPE, should be
-   //  declared.  Returns string::npos if the user decides not to add the
-   //  item.  Updates ATTRS if the item should be offset with a blank line
+   //  Updates ATTRS with the location where the item CLS::NAME, of TYPE,
+   //  should be declared and whether it should be offset with a blank line
    //  or comment.
    //
-   size_t FindItemDeclLoc
+   word FindItemDeclLoc
       (const Class* cls, const string& name, ItemDeclAttrs& attrs) const;
 
-   //  Returns the location where an item's declaration should be added
-   //  after PREV and/or before NEXT.  Updates ATTRS if the item should
-   //  be offset with a blank line or comment.
+   //  Updates ATTRS with the location in CLS where the special member
+   //  function specified in ATTRS should be inserted and whether that
+   //  function should be offset with a blank line and comment.
    //
-   size_t UpdateItemDeclLoc
+   word FindSpecialFuncDeclLoc
+      (CliThread& cli, const Class* cls, ItemDeclAttrs& attrs) const;
+
+   //  Updates ATTRS with the location where an item's declaration should be
+   //  added after PREV and/or before NEXT, and whether it should be offset
+   //  with a blank line or comment.
+   //
+   word UpdateItemDeclLoc
       (const CxxToken* prev, const CxxToken* next, ItemDeclAttrs& attrs) const;
 
    //  Updates ATTRS based on ITEM.
    //
-   void UpdateItemDeclAttrs(const CxxToken* item, ItemDeclAttrs& attrs) const;
+   word UpdateItemDeclAttrs(const CxxToken* item, ItemDeclAttrs& attrs) const;
 
-   //  Inserts what goes after a function declaration.  POS is where to insert.
-   //  Returns POS.
+   //  ATTRS has been updated with the position where a new item should be
+   //  inserted in CLS.  Determine whether the item's access control needs
+   //  to be inserted and whether an access control for the following item
+   //  needs to be inserted.
    //
-   size_t InsertAfterItemDecl(size_t pos, const ItemDeclAttrs& attrs);
+   word UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const;
 
-   //  Inserts what goes before a function declaration.  POS is where to insert.
-   //  point, and COMMENT is any comment.  Returns POS.
+   //  Inserts what goes after a function declaration.
    //
-   size_t InsertBeforeItemDecl
-      (size_t pos, const ItemDeclAttrs& attrs, const string& comment);
+   void InsertAfterItemDecl(const ItemDeclAttrs& attrs);
 
-   //  Returns the location where the special member function required to
-   //  fix LOG should be inserted.  Updates ATTRS to specify whether the
-   //  function should be offset with a blank line and, if so, commented.
+   //  Inserts what goes before a function declaration.  COMMENT is any comment.
    //
-   size_t FindSpecialFuncLoc
-      (const CodeWarning& log, ItemDeclAttrs& attrs) const;
+   void InsertBeforeItemDecl
+      (const ItemDeclAttrs& attrs, const string& comment);
 
-   //  Returns the location where the function CLS::NAME should be defined.
-   //  Updates ATTRS if the function should be offset with a rule and/or a
-   //  blank line.
+   //  Updates ATTRS with the position where the function CLS::NAME should
+   //  be defined and whether it should be offset with a rule and blank line.
    //
-   size_t FindFuncDefnLoc(const CodeFile* file, const Class* cls,
-      const string& name, string& expl, FuncDefnAttrs& attrs) const;
+   word FindFuncDefnLoc(const CodeFile* file, const Class* cls,
+      const string& name, FuncDefnAttrs& attrs) const;
 
-   //  Returns the location where a new function definition should be added
-   //  after PREV and/or before NEXT.  Updates ATTRS if the function should
-   //  be offset with a rule and/or a blank line.
+   //  Updates ATTRS with the position where a new function definition should
+   //  be added after PREV and/or before NEXT, and whether it should be offset
+   //  with a rule and blank line.
    //
-   size_t UpdateFuncDefnLoc
+   word UpdateFuncDefnLoc
       (const Function* prev, const Function* next, FuncDefnAttrs& attrs) const;
 
    //  Updates ATTRS based on FUNC.
    //
-   void UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs) const;
+   word UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs) const;
 
-   //  Inserts what goes after a function definition.  POS is where to insert.
-   //  Returns POS.
+   //  Inserts what goes after a function definition based on ATTRS.
    //
-   size_t InsertAfterFuncDefn(size_t pos, const FuncDefnAttrs& attrs);
+   void InsertAfterFuncDefn(const FuncDefnAttrs& attrs);
 
-   //  Inserts what goes before a function definition.  POS is where to insert.
-   //  Returns POS.
+   //  Inserts what goes before a function definition based on ATTRS.
    //
-   size_t InsertBeforeFuncDefn(size_t pos, const FuncDefnAttrs& attrs);
+   void InsertBeforeFuncDefn(const FuncDefnAttrs& attrs);
 
    //  Returns the code for a Debug::Ft invocation with an inline string
    //  literal (FNAME).
    //
    string DebugFtCode(const string& fname) const;
 
-   //  Inserts the declaration for a Patch override at POS.
+   //  Inserts the declaration for a Patch override based on ATTRS.
    //
-   void InsertPatchDecl(const size_t& pos, const ItemDeclAttrs& attrs);
+   void InsertPatchDecl(const ItemDeclAttrs& attrs);
 
-   //  Inserts the definition for a Patch override in CLS at POS.
+   //  Inserts the definition for a Patch override in CLS based on ATTRS.
    //
-   void InsertPatchDefn
-      (const size_t& pos, const Class* cls, const FuncDefnAttrs& attrs);
+   void InsertPatchDefn(const Class* cls, const FuncDefnAttrs& attrs);
 
    //  Finds the start of ITEM and backs up to find the starting point for
    //  cutting the item.  Returns string::npos on failure.
@@ -506,14 +516,13 @@ private:
    //  Cuts and returns the code associated with ITEM in CODE.  Comments on
    //  preceding lines, up to the next line of code, are also erased if a
    //  comment or left brace follows the erased code.  Returns the location
-   //  that immediately follows the cut.  Returns string::npos and updates
-   //  EXPL on failure.
+   //  that immediately follows the cut.  Returns string::npos on failure.
    //
-   size_t CutCode(const CxxToken* item, string& expl, string& code);
+   size_t CutCode(const CxxToken* item, string& code);
 
    //  Erases the code associated with ITEM.
    //
-   word EraseCode(const CxxToken* item, string& expl);
+   word EraseCode(const CxxToken* item);
 
    //  Erases POS's line and returns the start of the line that followed it.
    //
@@ -532,10 +541,10 @@ private:
    //
    word Changed();
 
-   //  Sets EXPL to POS's line of code, adds the editor to Editors_, and
-   //  returns 0.
+   //  Invokes SetExpl with POS's line of code, adds the editor to the set of
+   //  those that need their files written out, and returns EditSucceeded.
    //
-   word Changed(size_t pos, string& expl);
+   word Changed(size_t pos);
 
    //  Erases COUNT characters starting at POS.  Returns POS.
    //

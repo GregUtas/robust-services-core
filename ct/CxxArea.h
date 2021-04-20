@@ -320,6 +320,10 @@ public:
    //
    bool SetCurrAccess(Cxx::Access access);
 
+   //  Records true if the class was instantiated directly (not as a base).
+   //
+   bool IsInstantiated() const { return created_; }
+
    //  Returns all of the items declared in the class.
    //
    const CxxNamedVector& Items() const { return items_; }
@@ -346,8 +350,9 @@ public:
    //
    bool IsSingleton() const;
 
-   //  Returns true if all of the class is a singleton or its derived
-   //  classes are all singletons.
+   //  Returns true if this class isn't a singleton, all its derived
+   //  classes or instantiations are singletons, and its destructor
+   //  and constructor(s) are not public.
    //
    bool IsSingletonBase() const;
 
@@ -604,6 +609,10 @@ public:
    Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const override;
 
+   //  Overridden to record whether an instance of the class was created.
+   //
+   void Instantiate(bool created) override;
+
    //  Overridden to look for an implemented function.
    //
    bool IsImplemented() const override;
@@ -723,9 +732,13 @@ private:
    //
    UsageAttributes GetUsageAttrs() const;
 
-   //  Checks that a base class defines a constructor and destructor.
+   //  Checks the constructors.
    //
-   void CheckBaseClass() const;
+   void CheckConstructors() const;
+
+   //  Checks the destructor.
+   //
+   void CheckDestructor() const;
 
    //  Checks that the class follows the Rule of Three and its variants.
    //
@@ -754,6 +767,10 @@ private:
    //  The current access control level when parsing the class.
    //
    Cxx::Access currAccess_ : 8;
+
+   //  Set if an object in the class was created directly.
+   //
+   bool created_ : 8;
 
    //  Set if an implicitly defined special member function was invoked.
    //
@@ -883,7 +900,7 @@ public:
 
    //  Overridden to instantiate the class template instance.
    //
-   void Instantiate() override;
+   void Instantiate(bool created) override;
 
    //  Overridden to return this class template instance.
    //
@@ -932,7 +949,7 @@ private:
 
    //  Set when Instantiate is invoked.
    //
-   bool created_;
+   bool instantiated_;
 
    //  Set if the instance was successfully compiled.
    //

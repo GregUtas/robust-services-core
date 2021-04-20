@@ -481,9 +481,9 @@ Line can merge with the next line and be under the length limit
   This line does does not need to be split for length reasons.
 ? W118
 Copy/move constructor does not invoke base copy/move constructor
-  If a copy or move constructor in a derived class does not invoke its
-base equivalent, the compiler will invoke the base *constructor*, which
-may not be what was intended.
+  If a derived class defines a copy or move constructor that does
+not invoke its base equivalent, the compiler will invoke the base
+*constructor*, which may not be what was intended.
 ? W119
 Argument passed by value is modified
   Unless the intention was to pass the argument by reference, it is

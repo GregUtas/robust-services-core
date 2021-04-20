@@ -1040,11 +1040,11 @@ public:
    //
    void SetOperator(Cxx::Operator oper);
 
-   //  Invoked if the function is defined as "=delete".
+   //  Invoked if the function is defined as deleted.
    //
    void SetDeleted() { deleted_ = true; }
 
-   //  Invoked if the function is defined as "=default".
+   //  Invoked if the function is defined as defaulted.
    //
    void SetDefaulted() { defaulted_ = true; }
 

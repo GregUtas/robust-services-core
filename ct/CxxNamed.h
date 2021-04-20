@@ -168,9 +168,10 @@ public:
    virtual void SetAsReferent(const CxxNamed* user) { }
 
    //  Invoked to instantiate a class template instance when it is declared as
-   //  a member or named in executable code.
+   //  a member or named in executable code.  Also invoked (with CREATED set)
+   //  when an object in a class is created on the stack or from the heap.
    //
-   virtual void Instantiate() { }
+   virtual void Instantiate(bool created) { }
 
    //  Constructs an argument for the item when it is named directly, perhaps
    //  through an implicit "this".  OP is the operator that is on top of the
@@ -312,10 +313,6 @@ public:
    //  Copy constructor.
    //
    TypeName(const TypeName& that);
-
-   //  Deleted to prohibit copy assignment.
-   //
-   TypeName& operator=(const TypeName& that) = delete;
 
    //  In a qualified name, adds TYPE as the name that follows this one.
    //  A scope resolution operator separates the two names.
@@ -570,10 +567,6 @@ public:
    //
    QualName(const QualName& that);
 
-   //  Deleted to prohibit copy assignment.
-   //
-   QualName& operator=(const QualName& that) = delete;
-
    //  Adds TYPE to the name.  In a qualified name, TYPE is preceded by a
    //  scope resolution operator.
    //
@@ -774,14 +767,6 @@ public:
    //
    explicit TypeTags(const TypeSpec& spec);
 
-   //  Copy constructor.
-   //
-   TypeTags(const TypeTags& that) = default;
-
-   //  Copy operator.
-   //
-   TypeTags& operator=(const TypeTags& that) = default;
-
    //  Sets the type's constness to READONLY.
    //
    void SetConst(bool readonly) const { const_ = readonly; }
@@ -940,10 +925,6 @@ public:
    //  Virtual to allow subclassing.
    //
    virtual ~TypeSpec() = default;
-
-   //  Deleted to prohibit copy assignment.
-   //
-   TypeSpec& operator=(const TypeSpec& that) = delete;
 
    //  Returns the type of item in which the type appears.
    //
@@ -1137,10 +1118,6 @@ public:
    //        function template.
    //
    DataSpec(const DataSpec& that);
-
-   //  Deleted to prohibit copy assignment.
-   //
-   DataSpec& operator=(const DataSpec& that) = delete;
 
    //  A DataSpec for a bool.
    //

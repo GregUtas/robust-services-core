@@ -595,13 +595,13 @@ void CodeFile::CheckDebugFt()
    //
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
-      //  The function must have an implementation to be checked.  A function
-      //  in a header is only expected to invoke Debug::ft if it's part of a
-      //  template.
+      //  A function in a header is only expected to invoke Debug::ft if
+      //  it's part of a template.  A function must also have a left
+      //  brace (an implementation) to be checked.
       //
-      if((*f)->GetImpl() == nullptr) continue;
       if(IsHeader() && ((*f)->GetTemplateType() == NonTemplate)) continue;
       if(!(*f)->GetRange(begin, left, end)) continue;
+      if(left == string::npos) continue;
 
       auto last = lexer_.GetLineNum(end);
       auto open = false, debug = false, code = false;
@@ -1178,7 +1178,7 @@ CodeWarning* CodeFile::FindLog
    Debug::ft("CodeFile.FindLog");
 
    editor_.Setup(this);
-   return editor_.FindLog(log, item, offset);
+   return editor_.FindLog(log.GetWarning(), item, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -1834,9 +1834,19 @@ void CodeFile::LogCode(Warning warning, size_t pos,
    Debug::ft("CodeFile.LogCode");
 
    //  Don't log warnings in a substitute file or a template instance.
+   //  When a template instance is being compiled, however, it might
+   //  log a warning against an item defined in a regular file.
    //
    if(isSubsFile_) return;
-   if(Context::ParsingTemplateInstance()) return;
+
+   if(item != nullptr)
+   {
+      if(item->IsInternal()) return;
+   }
+   else
+   {
+      if(Context::ParsingTemplateInstance()) return;
+   }
 
    CodeWarning log(warning, this, pos, item, offset, info);
    log.Insert();

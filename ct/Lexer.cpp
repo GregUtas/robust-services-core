@@ -448,6 +448,7 @@ void Lexer::CheckPunctuation() const
          if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
          {
             if((*source_)[pos + 1] == ';') continue;
+            if((*source_)[pos + 1] == ',') continue;
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "}_");
          }
          break;

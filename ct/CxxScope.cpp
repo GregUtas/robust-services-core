@@ -1339,6 +1339,9 @@ bool Data::InitByAssign()
 
    if(init_ == nullptr) return false;
 
+   auto cls = DirectClass();
+   if(cls != nullptr) cls->Instantiate(true);
+
    init_->EnterBlock();
    auto result = Context::PopArg(true);
    spec_->MustMatchWith(result);
@@ -1361,7 +1364,7 @@ bool Data::InitByDefault()
 
    auto cls = DirectClass();
    if(cls == nullptr) return false;
-   cls->Instantiate();
+   cls->Instantiate(true);
    auto ctor = cls->FindCtor(nullptr);
 
    if(ctor != nullptr)
@@ -1401,7 +1404,7 @@ bool Data::InitByExpr(CxxToken* expr)
 
    if(cls != nullptr)
    {
-      cls->Instantiate();
+      cls->Instantiate(true);
 
       //  Push CLS as the constructor name that will handle expr_, which is
       //  a FUNCTION_CALL Operation that contains an argument list but which
@@ -2712,19 +2715,6 @@ void Function::CheckCtor() const
    auto impl = defn->impl_.get();
    if(!IsImplemented()) return;
 
-   auto cls = GetClass();
-   if(cls->IsSingleton() && GetAccess() != Cxx::Private)
-   {
-      Log(ConstructorNotPrivate);
-   }
-
-   //  A base class constructor should not be public.
-   //
-   if(GetAccess() == Cxx::Public)
-   {
-      if(GetClass()->IsBaseClass()) Log(PublicConstructor);
-   }
-
    auto role = FuncRole();
 
    if(role == PureCtor)
@@ -2795,6 +2785,7 @@ void Function::CheckCtor() const
    //  initialized. Go through the member initialization list, if any, find
    //  each initialized member in ITEMS, and record when it was initialized.
    //
+   auto cls = GetClass();
    DataInitVector items;
    cls->GetMemberInitAttrs(items);
 
@@ -2899,32 +2890,6 @@ void Function::CheckDtor() const
    if((impl != nullptr) && (impl->FirstStatement() == nullptr))
    {
       Log(FunctionCouldBeDefaulted);
-   }
-
-   auto cls = GetClass();
-   if(cls->IsSingleton() && GetAccess() != Cxx::Private)
-   {
-      Log(DestructorNotPrivate);
-   }
-
-   if(!cls->IsBaseClass()) return;
-
-   if(virtual_)
-   {
-      for(auto s = cls->BaseClass(); s != nullptr; s = s->BaseClass())
-      {
-         auto dtor = s->FindDtor();
-         if((dtor != nullptr) && (dtor->GetAccess() != Cxx::Public)) return;
-      }
-
-      if((GetAccess() != Cxx::Public) && !cls->IsSingletonBase())
-      {
-         Log(VirtualDestructor);
-      }
-   }
-   else
-   {
-      if(GetAccess() == Cxx::Public) Log(NonVirtualDestructor);
    }
 }
 

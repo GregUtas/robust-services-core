@@ -167,12 +167,6 @@ public:
    //
    virtual void SetAsReferent(const CxxNamed* user) { }
 
-   //  Invoked to instantiate a class template instance when it is declared as
-   //  a member or named in executable code.  Also invoked (with CREATED set)
-   //  when an object in a class is created on the stack or from the heap.
-   //
-   virtual void Instantiate(bool created) { }
-
    //  Constructs an argument for the item when it is named directly, perhaps
    //  through an implicit "this".  OP is the operator that is on top of the
    //  operator stack (Cxx::NIL_OPERATOR if the stack is empty).  The result
@@ -655,8 +649,7 @@ public:
 
    //  Overridden to forward to the last name.
    //
-   CxxScoped* DirectType() const
-      override { return Last()->DirectType(); }
+   CxxScoped* DirectType() const override { return Last()->DirectType(); }
 
    //  Overridden so that a data item can be erased.
    //
@@ -766,6 +759,18 @@ public:
    //  Creates an instance using SPEC's attributes.
    //
    explicit TypeTags(const TypeSpec& spec);
+
+   //  Destructor.
+   //
+   ~TypeTags() = default;
+
+   //  Copy constructor.
+   //
+   TypeTags(const TypeTags& that) = default;
+
+   //  Copy operator.
+   //
+   TypeTags& operator=(const TypeTags& that) = default;
 
    //  Sets the type's constness to READONLY.
    //

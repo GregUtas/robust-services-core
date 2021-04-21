@@ -180,6 +180,12 @@ public:
    //
    virtual bool IsIndirect(bool arrays) const { return false; }
 
+   //  Invoked to instantiate a class template instance when it is declared as
+   //  a member or named in executable code.  Also invoked (with CREATED set)
+   //  when an object in a class is created on the stack or from the heap.
+   //
+   virtual void Instantiate(bool created) { }
+
    //  Returns true if the item is undergoing initialization.
    //
    virtual bool IsInitializing() const { return false; }
@@ -521,6 +527,7 @@ public:
       const Size size_ : 8;
 
       Tags(Radix r, bool u, Size s) : radix_(r), unsigned_(u), size_(s) { }
+      ~Tags() = default;
       Tags(const Tags& that) = default;
       Tags& operator=(const Tags& that) = default;
    };
@@ -563,6 +570,7 @@ public:
       Size size_ : 8;
 
       Tags(bool e, Size s) : exp_(e), size_(s) { }
+      ~Tags() = default;
       Tags(const Tags& that) = default;
       Tags& operator=(const Tags& that) = default;
    };
@@ -634,8 +642,7 @@ public:
    void Print(std::ostream& stream, const NodeBase::Flags& options)
       const override { stream << NULLPTR_STR; }
    CxxScoped* Referent() const override;
-   std::string TypeString(bool arg)
-      const override { return NULLPTR_T_STR; }
+   std::string TypeString(bool arg) const override { return NULLPTR_T_STR; }
 private:
    Numeric GetNumeric() const override { return Numeric::Pointer; }
 };

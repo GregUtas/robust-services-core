@@ -417,8 +417,7 @@ public:
 
    //  Overridden to determine if the data is unused.
    //
-   bool IsUnused() const
-      override { return ((reads_ == 0) && (writes_ == 0)); }
+   bool IsUnused() const override { return ((reads_ == 0) && (writes_ == 0)); }
 
    size_t Readers() const { return reads_; }
 

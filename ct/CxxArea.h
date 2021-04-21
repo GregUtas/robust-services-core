@@ -168,8 +168,7 @@ public:
 
    //  Overridden to return the area itself.
    //
-   CxxArea* GetArea() const
-      override { return const_cast< CxxArea* >(this); }
+   CxxArea* GetArea() const override { return const_cast< CxxArea* >(this); }
 
    //  Adds the area's declarations to ITEMS.
    //
@@ -556,8 +555,7 @@ public:
 
    //  Overridden to return the class.
    //
-   Class* GetClass() const
-      override { return const_cast< Class* >(this); }
+   Class* GetClass() const override { return const_cast< Class* >(this); }
 
    //  Overridden to return the types for which the class has conversion
    //  operators.
@@ -864,8 +862,7 @@ public:
    //  Overridden to return the class template instance when it already exists
    //  and is found as a referent by another user.
    //
-   ClassInst* EnsureInstance(const TypeName* type)
-      override { return this; }
+   ClassInst* EnsureInstance(const TypeName* type) override { return this; }
 
    //  Overridden to return the template item that corresponds to ITEM.
    //
@@ -873,8 +870,7 @@ public:
 
    //  Overridden to return the template's base class declaration.
    //
-   BaseDecl* GetBaseDecl() const
-      override { return tmplt_->GetBaseDecl(); }
+   BaseDecl* GetBaseDecl() const override { return tmplt_->GetBaseDecl(); }
 
    //  Overridden to return the instance's class template.
    //

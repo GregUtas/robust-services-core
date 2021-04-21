@@ -54,11 +54,11 @@ protected:
    //
    LibraryItem();
 
-   //  Copy constructor.
+   //  Protected because this class is virtual.
    //
    LibraryItem(const LibraryItem& that) = default;
 
-   //  Copy operator.
+   //  Protected because this class is virtual.
    //
    LibraryItem& operator=(const LibraryItem& that) = default;
 };

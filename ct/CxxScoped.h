@@ -1754,8 +1754,7 @@ public:
 
    //  Overridden to stop at a typedef.
    //
-   bool ResolveTypedef(Typedef* type, size_t n) const
-      override { return false; }
+   bool ResolveTypedef(Typedef* type, size_t n) const override { return false; }
 
    //  Overridden to return the scoped name of what is being used.
    //

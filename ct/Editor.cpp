@@ -69,6 +69,8 @@ std::set< Editor* > Editors_ = std::set< Editor* >();
 //
 size_t Commits_ = 0;
 
+//------------------------------------------------------------------------------
+//
 //  Return codes from editor functions.
 //
 const word EditAbort = -2;     // stream error or fix not implemented
@@ -96,7 +98,15 @@ void SetExpl(const string& expl);
 //
 string GetExpl();
 
-//  Indicates where a blank line should be added when inserting new code.
+//------------------------------------------------------------------------------
+//
+//  Characters that enclose the file name of an #include directive,
+//  depending on the group to which it belongs.
+//
+const string FrontChars = "$%@!<\"";
+const string BackChars = "$%@!>\"";
+
+//  Where to add a blank line when inserting new code.
 //
 enum BlankLocation
 {
@@ -104,6 +114,28 @@ enum BlankLocation
    BlankBefore,
    BlankAfter
 };
+
+//------------------------------------------------------------------------------
+//
+//  Strings for user interaction.
+//
+fixed_string FixPrompt = "  Fix?";
+fixed_string YNSQHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
+fixed_string YNSQChars = "ynsq";
+fixed_string FixSkipped = "This fix will be skipped.";
+fixed_string NotImplemented = "Fixing this warning is not yet supported.";
+fixed_string UnspecifiedFailure = "Internal error. Edit failed.";
+
+fixed_string AccessPrompt = "Enter 0=skip 1=public 2=protected 3=private: ";
+fixed_string ArgPrompt = "Choose the argument's name. ";
+fixed_string DefnPrompt = "Enter 0=skip 1=default 2=delete: ";
+fixed_string FilePrompt = "Enter the filename in which to define ";
+fixed_string ShellPrompt = "Do you want to create a shell for the definition?";
+fixed_string SuffixPrompt = "Enter a suffix for the name: ";
+fixed_string VirtualPrompt = "Enter 0=skip 1=virtual 2=non-virtual: ";
+
+fixed_string ClassInstantiated = "Objects of this class are created, "
+                                 "so its constructor must remain public.";
 
 //==============================================================================
 //
@@ -319,34 +351,6 @@ FuncDefnAttrs::FuncDefnAttrs(FunctionRole r) :
 
 //==============================================================================
 //
-//  Strings for user interaction.
-//
-fixed_string FixPrompt = "  Fix?";
-fixed_string YNSQHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
-fixed_string YNSQChars = "ynsq";
-fixed_string FixSkipped = "This fix will be skipped.";
-fixed_string NotImplemented = "Fixing this warning is not yet supported.";
-fixed_string UnspecifiedFailure = "Internal error. Edit failed.";
-
-fixed_string AccessPrompt = "Enter 0=skip 1=public 2=protected 3=private: ";
-fixed_string ArgPrompt = "Choose the argument's name. ";
-fixed_string DefnPrompt = "Enter 0=skip 1=default 2=delete: ";
-fixed_string FilePrompt = "Enter the filename in which to define ";
-fixed_string ShellPrompt = "Do you want to create a shell for the definition?";
-fixed_string SuffixPrompt = "Enter a suffix for the name: ";
-fixed_string VirtualPrompt = "Enter 0=skip 1=virtual 2=non-virtual: ";
-
-fixed_string ClassInstantiated = "This class is instantiated, so its "
-                                 "constructor cannot be protected.";
-
-//  Characters that enclose the file name of an #include directive,
-//  depending on the group to which it belongs.
-//
-const string FrontChars = "$%@!<\"";
-const string BackChars = "$%@!>\"";
-
-//------------------------------------------------------------------------------
-//
 //  Returns true if ITEM1 and ITEM2 appear in the same statement: specifically,
 //  if a semicolon does not appear between their positions.
 //
@@ -464,7 +468,7 @@ string CreateSpecialFunctionComment(const ItemDeclAttrs& attrs)
          comment = "Deleted to prohibit copy assignment";
          break;
       default:
-         comment = "* Comment required";
+         comment = "[Add comment.]";
       }
    }
    else if(attrs.virt)
@@ -475,7 +479,7 @@ string CreateSpecialFunctionComment(const ItemDeclAttrs& attrs)
    }
    else if(attrs.access == Cxx::Protected)
    {
-      //  For a base class constructor.
+      //  For a base class (other than the destructor).
       //
       comment = "Protected because this class is virtual";
    }
@@ -1035,8 +1039,7 @@ word Editor::AdjustVerticalSeparation()
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeAccess
-   (const CodeWarning& log, Cxx::Access acc)
+word Editor::ChangeAccess(const CodeWarning& log, Cxx::Access acc)
 {
    Debug::ft("Editor.ChangeAccess(log)");
 
@@ -1246,8 +1249,7 @@ word Editor::ChangeDataToFree(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeDebugFtName
-   (CliThread& cli, const CodeWarning& log)
+word Editor::ChangeDebugFtName(CliThread& cli, const CodeWarning& log)
 {
    Debug::ft("Editor.ChangeDebugFtName");
 
@@ -1365,8 +1367,7 @@ word Editor::ChangeFunctionToFree(const Function* func)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeFunctionToMember
-   (const Function* func, word offset)
+word Editor::ChangeFunctionToMember(const Function* func, word offset)
 {
    Debug::ft("Editor.ChangeFunctionToMember");
 
@@ -1393,8 +1394,7 @@ word Editor::ChangeInvokerToFree(const Function* func)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeInvokerToMember
-   (const Function* func, word offset)
+word Editor::ChangeInvokerToMember(const Function* func, word offset)
 {
    Debug::ft("Editor.ChangeInvokerToMember");
 
@@ -1421,8 +1421,7 @@ word Editor::ChangeOperator(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeSpecialFunction
-   (CliThread& cli, const CodeWarning& log)
+word Editor::ChangeSpecialFunction(CliThread& cli, const CodeWarning& log)
 {
    Debug::ft("Editor.ChangeSpecialFunction");
 
@@ -1997,9 +1996,9 @@ word Editor::EraseAdjacentSpaces(const CodeWarning& log)
    Debug::ft("Editor.EraseAdjacentSpaces");
 
    auto begin = CurrBegin(log.Pos());
-   if(begin == string::npos) return NotFound("Adjacent spaces position");
+   if(begin == string::npos) return NotFound("Line with adjacent spaces");
    auto pos = LineFindFirst(begin);
-   if(pos == string::npos) return EditFailed;
+   if(pos == string::npos) return NotFound("Adjacent spaces");
 
    //  If this line has a trailing comment that is aligned with one on the
    //  previous or the next line, keep the comments aligned by moving the
@@ -2156,8 +2155,7 @@ word Editor::EraseConst(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseData
-   (const CliThread& cli, const CodeWarning& log)
+word Editor::EraseData(const CliThread& cli, const CodeWarning& log)
 {
    Debug::ft("Editor.EraseData");
 
@@ -2691,7 +2689,7 @@ word Editor::FindItemDeclLoc
    //  We now know the items between which the new item should be inserted
    //  (PREV and NEXT), so update its insertion attributes.
    //
-   return UpdateItemDeclLoc(prev, next, attrs);
+   return UpdateItemDeclLoc(cls, prev, next, attrs);
 }
 
 //------------------------------------------------------------------------------
@@ -2799,7 +2797,7 @@ word Editor::FindSpecialFuncDeclLoc
    {
       *cli.obuf << "Define the " << attrs.role << ". " << CRLF;
       auto response = cli.IntPrompt(DefnPrompt, 0, 2);
-      if(response == 0) return EditFailed;
+      if(response == 0) return Report(FixSkipped);
       attrs.deleted = (response == 2);
    }
 
@@ -2992,8 +2990,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
 //------------------------------------------------------------------------------
 
-word Editor::FixFunction
-   (const Function* func, const CodeWarning& log)
+word Editor::FixFunction(const Function* func, const CodeWarning& log)
 {
    Debug::ft("Editor.FixFunction");
 
@@ -3075,8 +3072,7 @@ word Editor::FixFunctions(CliThread& cli, CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::FixInvoker
-   (const Function* func, const CodeWarning& log)
+word Editor::FixInvoker(const Function* func, const CodeWarning& log)
 {
    Debug::ft("Editor.FixInvoker");
 
@@ -3697,8 +3693,7 @@ word Editor::InsertDataInit(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertDebugFtCall
-   (CliThread& cli, const CodeWarning& log)
+word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)
 {
    Debug::ft("Editor.InsertDebugFtCall");
 
@@ -4184,7 +4179,7 @@ word Editor::InsertSpecialFuncDecl
 
    ItemDeclAttrs attrs(Cxx::Function, Cxx::Public, role);
    auto rc = FindSpecialFuncDeclLoc(cli, cls, attrs);
-   if(rc != EditContinue) return Report(UnspecifiedFailure, rc);
+   if(rc != EditContinue) return rc;
 
    auto code = spaces(attrs.indent);
    auto className = cls->Name();
@@ -4347,8 +4342,7 @@ FunctionRole WarningToRole(Warning log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertSpecialFunctions
-   (CliThread& cli, const CxxToken* item)
+word Editor::InsertSpecialFunctions(CliThread& cli, const CxxToken* item)
 {
    Debug::ft("Editor.InsertSpecialFunctions");
 
@@ -4730,8 +4724,7 @@ void Editor::QualifyUsings(CxxToken* item)
 
 //------------------------------------------------------------------------------
 
-word Editor::RenameArgument
-   (CliThread& cli, const CodeWarning& log)
+word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)
 {
    Debug::ft("Editor.RenameArgument");
 
@@ -5240,8 +5233,7 @@ word Editor::TagAsConstPointer(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::TagAsConstReference
-   (const Function* func, word offset)
+word Editor::TagAsConstReference(const Function* func, word offset)
 {
    Debug::ft("Editor.TagAsConstReference");
 
@@ -5447,7 +5439,7 @@ word Editor::UpdateFuncDefnAttrs
    bool before = false;
    bool after = false;
    size_t begin, left, end;
-   if(!func->GetRange(begin, left, end)) return EditFailed;
+   if(!func->GetRange(begin, left, end)) return NotFound("Adjacent function");
    auto pos = NextBegin(end);
    auto type = PosToType(pos);
 
@@ -5526,9 +5518,9 @@ word Editor::UpdateFuncDefnLoc
       //
       auto pos = PrevBegin(string::npos);
       auto type = PosToType(pos);
-      if(type != CloseBrace) return EditFailed;
+      if(type != CloseBrace) return NotFound("File's second last }");
       type = PosToType(PrevBegin(pos));
-      if(type != CloseBrace) return EditFailed;
+      if(type != CloseBrace) return NotFound("File's last }");
       attrs.pos = pos;
       return EditContinue;
    }
@@ -5576,7 +5568,7 @@ word Editor::UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const
    size_t begin, left, end;
    if(!cls->GetRange(begin, left, end))
    {
-      return EditFailed;
+      return NotFound("Item's class");
    }
 
    auto prev =
@@ -5602,17 +5594,27 @@ word Editor::UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const
       }
    }
 
-   //  The item is not being inserted directly above an access control.
-   //  If its access control is not in effect at the insertion point,
-   //  it must be inserted, and the access control that was in effect
-   //  must be inserted after the item unless we've reached the end of
-   //  the class.
-   //
    if(prev != attrs.access)
    {
+      //  The item's access control is not in effect at the insertion point,
+      //  so it must be inserted, and the access control that was in effect
+      //  must be inserted after the item unless we've reached the end of
+      //  the class.
+      //
       attrs.thisctrl = true;
       if(attrs.blank == BlankBefore) attrs.blank = BlankAfter;
       if(PosToType(attrs.pos) != CloseBraceSemicolon) attrs.nextctrl = prev;
+   }
+   else
+   {
+      //  If the item is being insert *at* its access control, insert it
+      //  immediately after that control.
+      //
+      if(FindAccessControl(GetCode(attrs.pos)) == attrs.access)
+      {
+         attrs.pos = NextBegin(attrs.pos);
+         if(attrs.blank == BlankBefore) attrs.blank = BlankAfter;
+      }
    }
 
    return EditContinue;
@@ -5628,7 +5630,7 @@ word Editor::UpdateItemDeclAttrs
    if(item == nullptr) return EditContinue;
 
    size_t begin, left, end;
-   if(!item->GetRange(begin, left, end)) return EditFailed;
+   if(!item->GetRange(begin, left, end)) return NotFound("Adjacent item");
 
    //  Indent the code to match that of ITEM.
    //
@@ -5660,8 +5662,8 @@ word Editor::UpdateItemDeclAttrs
 
 fn_name Editor_UpdateItemDeclLoc = "Editor.UpdateItemDeclLoc";
 
-word Editor::UpdateItemDeclLoc
-   (const CxxToken* prev, const CxxToken* next, ItemDeclAttrs& attrs) const
+word Editor::UpdateItemDeclLoc(const Class* cls,
+   const CxxToken* prev, const CxxToken* next, ItemDeclAttrs& attrs) const
 {
    Debug::ft(Editor_UpdateItemDeclLoc);
 
@@ -5673,16 +5675,19 @@ word Editor::UpdateItemDeclLoc
    rc = UpdateItemDeclAttrs(next, attrs);
    if(rc != EditContinue) return rc;
 
-   if(prev != nullptr)
-   {
-      attrs.pos = LineAfterItem(prev);
-      return UpdateItemControls(prev->GetClass(), attrs);
-   }
-
+   //  Special member functions are added in order of FunctionRole, so add
+   //  them bottom-up so that they will appear in the desired order.
+   //
    if(next == nullptr)
    {
-      Debug::SwLog(Editor_UpdateItemDeclLoc, "prev and next are nullptr", 0);
-      return EditFailed;
+      //  Insert the item before the class's final closing brace.
+      //
+      size_t begin, left, end;
+      if(!cls->GetRange(begin, left, end)) return NotFound("Item's class");
+      attrs.pos = CurrBegin(end);
+      if((prev == nullptr) && (next == nullptr)) attrs.comment = true;
+      if(attrs.blank == BlankAfter) attrs.blank = BlankBefore;
+      return EditContinue;
    }
 
    //  Insert the item before NEXT.  If the item is to be set off with a

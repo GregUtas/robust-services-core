@@ -444,11 +444,11 @@ private:
       (CliThread& cli, const Class* cls, ItemDeclAttrs& attrs) const;
 
    //  Updates ATTRS with the location where an item's declaration should be
-   //  added after PREV and/or before NEXT, and whether it should be offset
-   //  with a blank line or comment.
+   //  added in CLS, after PREV and/or before NEXT, and whether it should be
+   //  offset with a blank line or comment.
    //
-   word UpdateItemDeclLoc
-      (const CxxToken* prev, const CxxToken* next, ItemDeclAttrs& attrs) const;
+   word UpdateItemDeclLoc(const Class* cls,
+      const CxxToken* prev, const CxxToken* next, ItemDeclAttrs& attrs) const;
 
    //  Updates ATTRS based on ITEM.
    //

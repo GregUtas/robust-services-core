@@ -1860,7 +1860,11 @@ void Operation::Execute() const
       //
       //  There can be an expression, but it is optional.
       //
-      if(!args_.empty()) Context::PopArg(arg1);
+      if(!args_.empty())
+      {
+         Context::PopArg(arg1);
+         arg1.item->Instantiate(true);
+      }
       return;
 
    case Cxx::STATEMENT_SEPARATOR:

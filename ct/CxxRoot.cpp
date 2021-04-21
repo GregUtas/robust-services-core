@@ -60,8 +60,7 @@ class MacroDATE : public Macro
 public:
    MacroDATE();
    CxxToken* GetValue() const override;
-   CxxScoped* Referent() const
-      override { return StrLiteral::GetReferent(); }
+   CxxScoped* Referent() const override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
    mutable StrLiteralPtr date_;
@@ -98,8 +97,7 @@ class MacroFILE : public Macro
 public:
    MacroFILE();
    CxxToken* GetValue() const override;
-   CxxScoped* Referent() const
-      override { return StrLiteral::GetReferent(); }
+   CxxScoped* Referent() const override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
    mutable StrLiteralPtrVector files_;
@@ -142,8 +140,7 @@ class MacroFunc : public Macro
 public:
    MacroFunc();
    CxxToken* GetValue() const override;
-   CxxScoped* Referent() const
-      override { return StrLiteral::GetReferent(); }
+   CxxScoped* Referent() const override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
    mutable StrLiteralPtrVector funcs_;
@@ -186,8 +183,7 @@ class MacroLINE : public Macro
 public:
    MacroLINE();
    CxxToken* GetValue() const override;
-   CxxScoped* Referent() const
-      override { return StrLiteral::GetReferent(); }
+   CxxScoped* Referent() const override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
    mutable StrLiteralPtrVector lines_;
@@ -223,8 +219,7 @@ class MacroTIME : public Macro
 public:
    MacroTIME();
    CxxToken* GetValue() const override;
-   CxxScoped* Referent() const
-      override { return StrLiteral::GetReferent(); }
+   CxxScoped* Referent() const override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
    mutable StrLiteralPtr time_;

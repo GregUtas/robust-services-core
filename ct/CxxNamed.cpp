@@ -1219,6 +1219,20 @@ bool DataSpec::IsIndirect(bool arrays) const
 
 //------------------------------------------------------------------------------
 
+bool DataSpec::IsPOD() const
+{
+   //  An array of objects is not POD if its class has a constructor.
+   //
+   if(!TypeSpec::IsPOD()) return false;
+   auto root = Root();
+   if(root == nullptr) return true;
+   if(root->Type() != Cxx::Class) return true;
+   if(Ptrs(false) > 0) return true;
+   return (static_cast< Class* >(root)->FindCtor(nullptr) == nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 bool DataSpec::IsUsedInNameOnly() const
 {
    Debug::ft("DataSpec.IsUsedInNameOnly");

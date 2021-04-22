@@ -48,19 +48,17 @@ public:
    //
    explicit SysIpL2Addr(const std::string& text);
 
-   //  Copy/move constructors.
-   //
-   SysIpL2Addr(const SysIpL2Addr& that) = default;
-   SysIpL2Addr(SysIpL2Addr&& that) = default;
-
-   //  Copy/move operators.
-   //
-   SysIpL2Addr& operator=(const SysIpL2Addr& that) = default;
-   SysIpL2Addr& operator=(SysIpL2Addr&& that) = default;
-
    //  Virtual to allow subclassing.
    //
    virtual ~SysIpL2Addr();
+
+   //  Copy constructor.
+   //
+   SysIpL2Addr(const SysIpL2Addr& that) = default;
+
+   //  Copy operator.
+   //
+   SysIpL2Addr& operator=(const SysIpL2Addr& that) = default;
 
    //  Constructs the loopback address (127.0.0.1) in host order.
    //

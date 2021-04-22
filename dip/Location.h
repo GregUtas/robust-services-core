@@ -62,6 +62,10 @@ struct Location
    //
    Location(const TokenMessage& unit);
 
+   //  Not subclassed.
+   //
+   ~Location() = default;
+
    //  Copy constructor.
    //
    Location(const Location& that) = default;

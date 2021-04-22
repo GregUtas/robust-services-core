@@ -577,8 +577,7 @@ EventHandler::Rc BcSsm::RaiseLocalProgress
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc BcSsm::RaiseLocalRelease
-   (Event*& nextEvent, Cause::Ind cause)
+EventHandler::Rc BcSsm::RaiseLocalRelease(Event*& nextEvent, Cause::Ind cause)
 {
    Debug::ft("BcSsm.RaiseLocalRelease");
 
@@ -641,8 +640,7 @@ Event* BcSsm::RaiseProtocolError(ProtocolSM& psm, ProtocolSM::Error err)
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc BcSsm::RaiseReleaseCall
-   (Event*& nextEvent, Cause::Ind cause)
+EventHandler::Rc BcSsm::RaiseReleaseCall(Event*& nextEvent, Cause::Ind cause)
 {
    Debug::ft("BcSsm.RaiseReleaseCall");
 
@@ -706,8 +704,7 @@ EventHandler::Rc BcSsm::RaiseRemoteProgress
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc BcSsm::RaiseRemoteRelease
-   (Event*& nextEvent, Cause::Ind cause)
+EventHandler::Rc BcSsm::RaiseRemoteRelease(Event*& nextEvent, Cause::Ind cause)
 {
    Debug::ft("BcSsm.RaiseRemoteRelease");
 

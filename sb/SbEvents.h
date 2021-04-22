@@ -158,8 +158,7 @@ private:
 
    //  Overridden to remember the initiator that is processing this event.
    //
-   void SetCurrInitiator(const Initiator* init) override
-      { currInit_ = init; }
+   void SetCurrInitiator(const Initiator* init) override { currInit_ = init; }
 
    //  Overridden to capture the underlying event associated with the SAP.
    //

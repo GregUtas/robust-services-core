@@ -59,19 +59,17 @@ public:
    SysIpL3Addr
       (const std::string& name, const std::string& service, IpProtocol& proto);
 
-   //  Copy/move constructors.
-   //
-   SysIpL3Addr(const SysIpL3Addr& that) = default;
-   SysIpL3Addr(SysIpL3Addr&& that) = default;
-
-   //  Copy/move operators.
-   //
-   SysIpL3Addr& operator=(const SysIpL3Addr& that) = default;
-   SysIpL3Addr& operator=(SysIpL3Addr&& that) = default;
-
    //  Virtual to allow subclassing.
    //
    virtual ~SysIpL3Addr();
+
+   //  Copy constructor.
+   //
+   SysIpL3Addr(const SysIpL3Addr& that) = default;
+
+   //  Copy operator.
+   //
+   SysIpL3Addr& operator=(const SysIpL3Addr& that) = default;
 
    //  Sets the socket for the address.
    //

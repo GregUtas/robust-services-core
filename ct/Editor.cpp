@@ -89,8 +89,7 @@ const word EditCompleted = 1;  // warning closed; don't write info to CLI
 //
 string Expl_;
 
-//  Generates a log if Expl_ is not empty.  Then sets Expl_ to EXPL, adding
-//  a CRLF if EXPL doesn't have one.
+//  Sets Expl_ to EXPL, adding a CRLF if EXPL doesn't have one.
 //
 void SetExpl(const string& expl);
 
@@ -445,9 +444,10 @@ word ChooseDtorAttributes(CliThread& cli, ItemDeclAttrs& attrs)
 //------------------------------------------------------------------------------
 //
 //  Creates a comment for the special member function that will be added
-//  according to ATTRS.
+//  to CLS according to ATTRS.
 //
-string CreateSpecialFunctionComment(const ItemDeclAttrs& attrs)
+string CreateSpecialFunctionComment
+   (const Class* cls, const ItemDeclAttrs& attrs)
 {
    Debug::ft("CodeTools.CreateSpecialFunctionComment");
 
@@ -467,6 +467,10 @@ string CreateSpecialFunctionComment(const ItemDeclAttrs& attrs)
       case MoveOper:
          comment = "Deleted to prohibit copy assignment";
          break;
+      case PureCtor:
+      case PureDtor:
+         comment = "Deleted because this class only has static members.";
+         break;
       default:
          comment = "[Add comment.]";
       }
@@ -475,7 +479,10 @@ string CreateSpecialFunctionComment(const ItemDeclAttrs& attrs)
    {
       //  For a base class destructor.
       //
-      comment = "Virtual to allow subclassing";
+      if(cls->IsSingletonBase())
+         comment = "Protected because subclasses should be singletons";
+      else
+         comment = "Virtual to allow subclassing";
    }
    else if(attrs.access == Cxx::Protected)
    {
@@ -488,6 +495,12 @@ string CreateSpecialFunctionComment(const ItemDeclAttrs& attrs)
       //  For a singleton's constructor or destructor.
       //
       comment = "Private because this is a singleton";
+   }
+   else if(attrs.role == PureDtor)
+   {
+      //  For a leaf class destructor.
+      //
+      comment = "Not subclassed";
    }
    else
    {
@@ -646,8 +659,7 @@ bool GetCommentedRange(const CxxToken* item, size_t& begin, size_t& end)
 {
    Debug::ft("CodeTools.GetCommentedRange");
 
-   size_t left;
-   if(!item->GetRange(begin, left, end)) return false;
+   if(!item->GetSpan2(begin, end)) return false;
 
    auto& editor = item->GetFile()->GetEditor();
    begin = editor.IntroStart(begin, (item->Type() == Cxx::Function));
@@ -795,16 +807,9 @@ word Report(const std::ostringstream& stream, word rc = EditFailed)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_SetExpl = "CodeTools.SetExpl";
-
 void SetExpl(const string& expl)
 {
-   Debug::ft(CodeTools_SetExpl);
-
-   if(!Expl_.empty())
-   {
-      Debug::SwLog(CodeTools_SetExpl, Expl_, 0);
-   }
+   Debug::ft("CodeTools.SetExpl");
 
    Expl_ = expl;
    if(!expl.empty() && expl.back() != CRLF) Expl_.push_back(CRLF);
@@ -1231,7 +1236,7 @@ word Editor::ChangeDataToFree(const CodeWarning& log)
 
    if(!ext && !code.empty() && !ItemIsCommented(defn))
    {
-      defn->GetRange(begin, pos, end);
+      defn->GetSpan2(begin, end);
       editor.InsertLine(editor.NextBegin(end), EMPTY_STR);
       editor.Insert(editor.CurrBegin(begin), code);
    }
@@ -1854,6 +1859,61 @@ string Editor::DebugFtCode(const string& fname) const
    call.append(fname);
    call.append(");");
    return call;
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::DeleteSpecialFunction(CliThread& cli, const CodeWarning& log)
+{
+   Debug::ft("Editor.DeleteSpecialFunction");
+
+   //  This is logged on a class when the function doesn't yet exist.
+   //
+   if(log.item_->Type() == Cxx::Class)
+   {
+      return InsertSpecialFunctions(cli, log.item_);
+   }
+
+   switch(log.warning_)
+   {
+   case CopyCtorNotDeleted:
+   case CopyOperNotDeleted:
+      break;
+   default:
+      return Report("Unsupported warning");
+   }
+
+   //  If the function has a definition, erase it.
+   //
+   auto decl = static_cast< const Function* >(log.item_);
+   auto defn = decl->GetDefn();
+   if(defn != decl)
+   {
+      auto rc = EraseCode(defn);
+      if(rc != EditContinue) return rc;
+   }
+
+   //  Find the function declaration and insert " = delete" before its
+   //  closing semicolon.
+   //
+   size_t begin, end;
+   if(!decl->GetSpan2(begin, end)) return NotFound("Function declaration");
+   auto pos = CurrBegin(end);
+   auto semi = source_.find(';', pos);
+   if(semi == string::npos) return NotFound("Function semicolon");
+   Insert(semi, " = delete");
+
+   //  Ensure that the function's access control is public.
+   //
+   ItemDeclAttrs attrs(decl);
+   if(attrs.access != Cxx::Public)
+   {
+      attrs.access = Cxx::Public;
+      auto item = const_cast< CxxToken* >(log.item_);
+      return ChangeAccess(item, attrs);
+   }
+
+   return Changed(semi);
 }
 
 //------------------------------------------------------------------------------
@@ -2740,6 +2800,7 @@ word Editor::FindSpecialFuncDeclLoc
    Debug::ft("Editor.FindSpecialFuncDeclLoc");
 
    auto base = cls->IsBaseClass();
+   auto sbase = cls->IsSingletonBase();
    auto inst = cls->IsInstantiated();
    auto solo = cls->IsSingleton();
    auto prompt = true;
@@ -2761,7 +2822,7 @@ word Editor::FindSpecialFuncDeclLoc
       break;
 
    case CopyCtor:
-      if(solo)
+      if(sbase || solo)
       {
          attrs.deleted = true;
       }
@@ -2772,7 +2833,7 @@ word Editor::FindSpecialFuncDeclLoc
       break;
 
    case CopyOper:
-      if(solo)
+      if(sbase || solo)
       {
          attrs.deleted = true;
       }
@@ -3363,6 +3424,10 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
       return AdjustOperator(log);
    case PunctuationSpacing:
       return AdjustPunctuation(log);
+   case CopyCtorNotDeleted:
+      return DeleteSpecialFunction(cli, log);
+   case CopyOperNotDeleted:
+      return DeleteSpecialFunction(cli, log);
    }
 
    return Report(NotImplemented);
@@ -3702,7 +3767,7 @@ word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)
 
    size_t begin, left, right;
    auto func = static_cast< const Function* >(log.item_);
-   func->GetRange(begin, left, right);
+   func->GetSpan3(begin, left, right);
    if(left == string::npos) return NotFound("Function definition");
 
    //  Get the start of the name for an fn_name declaration and the inline
@@ -4223,7 +4288,7 @@ word Editor::InsertSpecialFuncDecl
    InsertLine(attrs.pos, code);
    code.pop_back();
 
-   auto comment = CreateSpecialFunctionComment(attrs);
+   auto comment = CreateSpecialFunctionComment(cls, attrs);
    InsertBeforeItemDecl(attrs, comment);
 
    if(attrs.shell)
@@ -4301,7 +4366,7 @@ void Editor::InsertSpecialFuncDefn
 
 //------------------------------------------------------------------------------
 
-const size_t MaxRoleWarning = 12;
+const size_t MaxRoleWarning = 14;
 
 struct RoleWarning
 {
@@ -4322,9 +4387,11 @@ const RoleWarning SpecialMemberFunctionLogs[MaxRoleWarning] =
    { CopyCtor, ImplicitCopyConstructor },
    { CopyCtor, RuleOf3DtorNoCopyCtor },
    { CopyCtor, RuleOf3CopyOperNoCtor },
+   { CopyCtor, CopyCtorNotDeleted },
    { CopyOper, ImplicitCopyOperator },
    { CopyOper, RuleOf3DtorNoCopyOper },
-   { CopyOper, RuleOf3CopyCtorNoOper }
+   { CopyOper, RuleOf3CopyCtorNoOper },
+   { CopyOper, CopyOperNotDeleted }
 };
 
 //  Maps a warning to the type of function associated with it.
@@ -4365,18 +4432,28 @@ word Editor::InsertSpecialFunctions(CliThread& cli, const CxxToken* item)
    }
 
    //  Handle the Rule of 3: if adding the destructor, copy constructor,
-   //  or copy operator, add any of the others that are missing.
+   //  or copy operator, add any of the others that are missing.  Don't,
+   //  however, try to add a function that is deleted in a base class.
    //
    if((roles.find(PureDtor) != roles.cend()) ||
       (roles.find(CopyCtor) != roles.cend()) ||
       (roles.find(CopyOper) != roles.cend()))
    {
       auto dtor = cls->FindFuncByRole(PureDtor, false);
-      auto copy = cls->FindFuncByRole(CopyCtor, false);
-      auto oper = cls->FindFuncByRole(CopyOper, false);
+      auto copy = cls->FindFuncByRole(CopyCtor, true);
+      auto oper = cls->FindFuncByRole(CopyOper, true);
+
       if(dtor == nullptr) roles.insert(PureDtor);
-      if(copy == nullptr) roles.insert(CopyCtor);
-      if(oper == nullptr) roles.insert(CopyOper);
+
+      if(copy == nullptr)
+         roles.insert(CopyCtor);
+      else if((copy->GetClass() != cls) && !copy->IsDeleted())
+         roles.insert(CopyCtor);
+
+      if(oper == nullptr)
+         roles.insert(CopyOper);
+      else if((oper->GetClass() != cls) && !oper->IsDeleted())
+         roles.insert(CopyOper);
    }
 
    auto prompt = (roles.size() > 1);
@@ -4532,8 +4609,8 @@ size_t Editor::LineAfterItem(const CxxToken* item) const
 {
    Debug::ft("Editor.LineAfterItem");
 
-   size_t begin, left, end;
-   if(!item->GetRange(begin, left, end)) return string::npos;
+   size_t begin, end;
+   if(!item->GetSpan2(begin, end)) return string::npos;
    return NextBegin(end);
 }
 
@@ -4681,8 +4758,8 @@ void Editor::QualifyReferent(const CxxToken* item, const CxxToken* ref)
    }
 
    auto qual = ns->ScopedName(false) + SCOPE_STR;
-   size_t pos, left, end;
-   if(!item->GetRange(pos, left, end)) return;
+   size_t pos, end;
+   if(!item->GetSpan2(pos, end)) return;
    Reposition(pos);
    string name;
 
@@ -4778,8 +4855,8 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)
       }
    };
 
-   size_t begin, left, end;
-   if(!func->GetRange(begin, left, end)) return NotFound("Function");
+   size_t begin, end;
+   if(!func->GetSpan2(begin, end)) return NotFound("Function");
    if(func == decl) defnName = declName;
    auto& editor = func->GetFile()->GetEditor();
 
@@ -5252,7 +5329,6 @@ word Editor::TagAsConstReference(const Function* func, word offset)
    Insert(prev + 1, "&");
    auto rc = TagAsConstArgument(func, offset);
    if(rc != EditSucceeded) return rc;
-   Expl_.clear();
    return Changed(prev);
 }
 
@@ -5343,7 +5419,6 @@ word Editor::TagAsOverride(const CodeWarning& log)
    //
    auto rc = EraseVirtualTag(log);
    if(rc != EditSucceeded) return rc;
-   Expl_.clear();
 
    //  Insert "override" after the last non-blank character at the end
    //  of the function's signature.
@@ -5438,8 +5513,8 @@ word Editor::UpdateFuncDefnAttrs
    //
    bool before = false;
    bool after = false;
-   size_t begin, left, end;
-   if(!func->GetRange(begin, left, end)) return NotFound("Adjacent function");
+   size_t begin, end;
+   if(!func->GetSpan2(begin, end)) return NotFound("Adjacent function");
    auto pos = NextBegin(end);
    auto type = PosToType(pos);
 
@@ -5565,8 +5640,8 @@ word Editor::UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const
    //  If we reach an access control that is more restrictive than the
    //  one for the item, insert the item directly above it.
    //
-   size_t begin, left, end;
-   if(!cls->GetRange(begin, left, end))
+   size_t begin, end;
+   if(!cls->GetSpan2(begin, end))
    {
       return NotFound("Item's class");
    }
@@ -5629,8 +5704,8 @@ word Editor::UpdateItemDeclAttrs
 
    if(item == nullptr) return EditContinue;
 
-   size_t begin, left, end;
-   if(!item->GetRange(begin, left, end)) return NotFound("Adjacent item");
+   size_t begin, end;
+   if(!item->GetSpan2(begin, end)) return NotFound("Adjacent item");
 
    //  Indent the code to match that of ITEM.
    //
@@ -5660,12 +5735,10 @@ word Editor::UpdateItemDeclAttrs
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_UpdateItemDeclLoc = "Editor.UpdateItemDeclLoc";
-
 word Editor::UpdateItemDeclLoc(const Class* cls,
    const CxxToken* prev, const CxxToken* next, ItemDeclAttrs& attrs) const
 {
-   Debug::ft(Editor_UpdateItemDeclLoc);
+   Debug::ft("Editor.UpdateItemDeclLoc");
 
    //  PREV and NEXT are the items that precede and follow the item whose
    //  declaration is to be inserted.
@@ -5682,8 +5755,8 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
    {
       //  Insert the item before the class's final closing brace.
       //
-      size_t begin, left, end;
-      if(!cls->GetRange(begin, left, end)) return NotFound("Item's class");
+      size_t begin, end;
+      if(!cls->GetSpan2(begin, end)) return NotFound("Item's class");
       attrs.pos = CurrBegin(end);
       if((prev == nullptr) && (next == nullptr)) attrs.comment = true;
       if(attrs.blank == BlankAfter) attrs.blank = BlankBefore;

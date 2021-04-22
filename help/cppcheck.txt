@@ -545,3 +545,13 @@ Add/remove spaces before/after operator
 ? W133
 Add/remove spaces before/after punctuation
   The spacing of this punctuation is not standard.
+? W134
+Copy constructor should be deleted
+  A class that uses the Singleton template should delete its copy constructor.
+If a base class is intended only for singletons, *it* should delete the copy
+constructor instead.
+? W135
+Copy operator should be deleted
+  A class that uses the Singleton template should delete its copy operator.
+If a base class is intended only for singletons, *it* should delete the copy
+operator instead.

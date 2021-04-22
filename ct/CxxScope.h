@@ -49,6 +49,14 @@ public:
    //
    virtual ~CxxScope();
 
+   //  Deleted to prohibit copying.
+   //
+   CxxScope(const CxxScope& that) = delete;
+
+   //  Deleted to prohibit copying.
+   //
+   CxxScope& operator=(const CxxScope& that) = delete;
+
    //  Closes the scope(s) associated with an item.  Invoked when the item
    //  has been fully parsed.
    //
@@ -406,6 +414,10 @@ public:
    //  Overridden to indicate whether the data is const.
    //
    bool IsConst() const override;
+
+   //  Overridden to use the data's type to determine if it is POD.
+   //
+   bool IsPOD() const override { return spec_->IsPOD(); }
 
    //  Returns true if the data's initialization is currently being compiled.
    //
@@ -1373,7 +1385,7 @@ public:
    //  Overridden to support a function definition by setting LEFT and END
    //  to the locations of its left and right braces.
    //
-   bool GetRange(size_t& begin, size_t& left, size_t& end) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to handle an inline friend function.
    //

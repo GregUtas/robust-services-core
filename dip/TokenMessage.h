@@ -55,7 +55,7 @@ public:
    //
    TokenMessage(const TokenMessage& that);
 
-   //  Destructor.  Invokes clear().
+   //  Not subclassed.  Invokes clear().
    //
    ~TokenMessage();
 

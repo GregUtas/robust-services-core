@@ -40,6 +40,10 @@ public:
    //
    CxxLocation();
 
+   //  Not subclassed.
+   //
+   ~CxxLocation() = default;
+
    //  Copy constructor.
    //
    CxxLocation(const CxxLocation& that) = default;

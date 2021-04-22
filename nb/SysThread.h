@@ -50,6 +50,11 @@ class SysThread : public Permanent
    friend class RootThread;
    friend class InitThread;
 public:
+   //  Deleted to prohibit copying.
+   //
+   SysThread(const SysThread& that) = delete;
+   SysThread& operator=(const SysThread& that) = delete;
+
    //  Returns the native identifier of the running thread.
    //
    static SysThreadId RunningThreadId();
@@ -98,11 +103,6 @@ private:
    //  Releases resources.
    //
    ~SysThread();
-
-   //  Deleted to prohibit copying.
-   //
-   SysThread(const SysThread& that) = delete;
-   SysThread& operator=(const SysThread& that) = delete;
 
    //  Used by the constructor to create an actual native thread.  ENTRY,
    //  CLIENT, and stackSize were passed to the constructor.  Updates NID

@@ -401,7 +401,15 @@ CxxScoped* CxxToken::FindTemplateAnalog(const CxxToken* item) const
 
 //------------------------------------------------------------------------------
 
-bool CxxToken::GetRange(size_t& begin, size_t& left, size_t& end) const
+bool CxxToken::GetSpan2(size_t& begin, size_t& end) const
+{
+   size_t left;
+   return GetSpan3(begin, left, end);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxToken::GetSpan3(size_t& begin, size_t& left, size_t& end) const
 {
    begin = string::npos;
    left = string::npos;

@@ -89,6 +89,18 @@ public:
    CodeWarning(Warning warning, CodeFile* file, size_t pos,
       const CxxToken* item, word offset, const std::string& info);
 
+   //  Not subclassed.
+   //
+   ~CodeWarning() = default;
+
+   //  Copy constructor.  Needed to allow sorting.
+   //
+   CodeWarning(const CodeWarning& that) = default;
+
+   //  Copy operator.  Needed to allow sorting.
+   //
+   CodeWarning& operator=(const CodeWarning& that) = default;
+
    //  Returns the warning.
    //
    Warning GetWarning() const { return warning_; }

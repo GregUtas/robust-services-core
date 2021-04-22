@@ -51,10 +51,6 @@ public:
    //
    Token(const Token& that) : full_(that.full_) { }
 
-   //  Destructor.
-   //
-   ~Token() = default;
-
    //  Copy operator.
    //
    Token& operator=(const Token& that);

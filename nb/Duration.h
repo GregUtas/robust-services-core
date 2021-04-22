@@ -83,6 +83,10 @@ public:
    //
    Duration();
 
+   //  Not subclassed.
+   //
+   ~Duration() = default;
+
    //  Copy constructor.
    //
    Duration(const Duration& that) = default;

@@ -777,6 +777,12 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(PunctuationSpacing,
       WarningAttrs(T,
       "Add/remove spaces before/after punctuation")));
+   Attrs_.insert(WarningPair(CopyCtorNotDeleted,
+      WarningAttrs(T,
+      "Copy constructor should be deleted")));
+   Attrs_.insert(WarningPair(CopyOperNotDeleted,
+      WarningAttrs(T,
+      "Copy operator should be deleted")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));

@@ -600,7 +600,7 @@ void CodeFile::CheckDebugFt()
       //  brace (an implementation) to be checked.
       //
       if(IsHeader() && ((*f)->GetTemplateType() == NonTemplate)) continue;
-      if(!(*f)->GetRange(begin, left, end)) continue;
+      if(!(*f)->GetSpan3(begin, left, end)) continue;
       if(left == string::npos) continue;
 
       auto last = lexer_.GetLineNum(end);

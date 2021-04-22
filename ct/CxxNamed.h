@@ -760,7 +760,7 @@ public:
    //
    explicit TypeTags(const TypeSpec& spec);
 
-   //  Destructor.
+   //  Not subclassed.
    //
    ~TypeTags() = default;
 
@@ -1266,6 +1266,10 @@ private:
    //  yet to be determined.
    //
    bool IsAuto() const override;
+
+   //  Overridden to return false for an array of objects.
+   //
+   bool IsPOD() const override;
 
    //  Overridden to return true if ITEM is the referent of a template argument.
    //

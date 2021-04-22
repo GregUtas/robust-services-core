@@ -3943,21 +3943,6 @@ CodeFile* Function::GetDefnFile() const
 
 //------------------------------------------------------------------------------
 
-bool Function::GetRange(size_t& begin, size_t& left, size_t& end) const
-{
-   CxxScoped::GetRange(begin, left, end);
-   left = string::npos;
-   if(impl_ == nullptr) return (end != string::npos);
-
-   auto& lexer = GetFile()->GetLexer();
-   left = impl_->GetPos();
-   if(left == string::npos) return false;
-   end = lexer.FindClosing('{', '}', left + 1);
-   return (end != string::npos);
-}
-
-//------------------------------------------------------------------------------
-
 CxxScope* Function::GetScope() const
 {
    //  An inline friend function is considered to be defined in the same
@@ -3966,6 +3951,21 @@ CxxScope* Function::GetScope() const
    auto scope = CxxScoped::GetScope();
    if(!friend_) return scope;
    return scope->GetScope();
+}
+
+//------------------------------------------------------------------------------
+
+bool Function::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   CxxScoped::GetSpan3(begin, left, end);
+   left = string::npos;
+   if(impl_ == nullptr) return (end != string::npos);
+
+   auto& lexer = GetFile()->GetLexer();
+   left = impl_->GetPos();
+   if(left == string::npos) return false;
+   end = lexer.FindClosing('{', '}', left + 1);
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -4548,8 +4548,8 @@ bool Function::IsTrivial() const
 
    auto defn = GetDefn();
    if(defn->impl_ == nullptr) return false;
-   size_t begin, left, end;
-   if(!defn->GetRange(begin, left, end)) return false;
+   size_t begin, end;
+   if(!defn->GetSpan2(begin, end)) return false;
 
    auto& lexer = defn->GetFile()->GetLexer();
    auto last = lexer.GetLineNum(end);

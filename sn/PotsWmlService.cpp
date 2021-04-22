@@ -480,8 +480,7 @@ EventHandler::Rc PotsWmlSsm::ProcessInitNack
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc PotsWmlSsm::ProcessSap
-   (Event& currEvent, Event*& nextEvent)
+EventHandler::Rc PotsWmlSsm::ProcessSap(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsWmlSsm.ProcessSap");
 

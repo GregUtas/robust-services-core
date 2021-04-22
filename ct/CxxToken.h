@@ -93,7 +93,11 @@ public:
    //  o is part of a template instantiation and therefore doesn't appear
    //    in a source file.
    //
-   virtual bool GetRange(size_t& begin, size_t& left, size_t& end) const;
+   virtual bool GetSpan3(size_t& begin, size_t& left, size_t& end) const;
+
+   //  Used when the LEFT argument for GetSpan3 is not needed.
+   //
+   bool GetSpan2(size_t& begin, size_t& end) const;
 
    //  Returns the item's type.
    //
@@ -372,7 +376,7 @@ public:
 
    //  Returns true if the item's type is POD.
    //
-   bool IsPOD() const { return GetNumeric().IsPOD(); }
+   virtual bool IsPOD() const { return GetNumeric().IsPOD(); }
 
    //  Logs WARNING at the position where this item is located.  ITEM,
    //  OFFSET, and INFO are specific to WARNING.  If ITEM is nullptr,

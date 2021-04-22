@@ -45,6 +45,10 @@ struct LocalAddress
    //
    LocalAddress();
 
+   //  Not subclassed.
+   //
+   ~LocalAddress() = default;
+
    //  Copy/move constructors.
    //
    LocalAddress(const LocalAddress& that) = default;

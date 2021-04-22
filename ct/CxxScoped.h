@@ -149,7 +149,7 @@ public:
    //  a valid type specification, then GetPos() of that specification.
    //  Sets END to the location of the next semicolon.
    //
-   bool GetRange(size_t& begin, size_t& left, size_t& end) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to return the scope where the declaration appeared.
    //

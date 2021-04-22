@@ -586,7 +586,7 @@ public:
    //  Overridden to set LEFT and END to the positions of the left and right
    //  braces.
    //
-   bool GetRange(size_t& begin, size_t& left, size_t& end) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to return the class if it is a class template.
    //

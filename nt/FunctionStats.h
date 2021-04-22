@@ -47,6 +47,14 @@ public:
    //
    ~FunctionStats() = default;
 
+   //  Deleted to prohibit copying.
+   //
+   FunctionStats(const FunctionStats& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   FunctionStats& operator=(const FunctionStats& that) = delete;
+
    //  Returns a pointer to the function's name.
    //
    fn_name Func() const { return func_; }

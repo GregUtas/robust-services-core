@@ -1461,7 +1461,7 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
 //------------------------------------------------------------------------------
 
-bool Class::GetRange(size_t& begin, size_t& left, size_t& end) const
+bool Class::GetSpan3(size_t& begin, size_t& left, size_t& end) const
 {
    auto lexer = GetFile()->GetLexer();
    begin = GetPos();
@@ -1695,7 +1695,7 @@ bool Class::HasPODMember() const
 
    for(auto d = data->cbegin(); d != data->cend(); ++d)
    {
-      if((*d)->IsPOD()) return true;
+      if(!(*d)->IsStatic() && (*d)->IsPOD()) return true;
    }
 
    return false;
@@ -2040,9 +2040,9 @@ void Class::WasCalled(FunctionRole role, const CxxNamed* item)
    //  The special member function is implicitly defined.  Decide whether to
    //  generate a log.  An implicit constructor, copy constructor, or copy
    //  operator always results in a log, and a destructor results in a log if
-   //  the class is a base, a singleton, or has a pointer member (which might
-   //  mean that it needs to free free memory).  Propagate the call up the
-   //  class hierarchy if a log is not generated.
+   //  the class is a base, a singleton, or isn't a struct and has a pointer
+   //  member (which might mean that it needs to free free memory).  Propagate
+   //  the call up the class hierarchy if a log is not generated.
    //
    implicit_ = true;
 
@@ -2061,12 +2061,15 @@ void Class::WasCalled(FunctionRole role, const CxxNamed* item)
          log = true;
       else
       {
-         for(auto d = data->cbegin(); d != data->cend(); ++d)
+         if(GetClassTag() == Cxx::ClassType)
          {
-            if(!(*d)->IsStatic() && ((*d)->GetTypeSpec()->Ptrs(false) > 0))
+            for(auto d = data->cbegin(); d != data->cend(); ++d)
             {
-               log = true;
-               break;
+               if(!(*d)->IsStatic() && ((*d)->GetTypeSpec()->Ptrs(false) > 0))
+               {
+                  log = true;
+                  break;
+               }
             }
          }
       }
@@ -2101,7 +2104,6 @@ void Class::WasCalled(FunctionRole role, const CxxNamed* item)
 
          if((item != nullptr) && (item != this))
             item->Log(warning, item, -1);
-         return;
       }
    }
 

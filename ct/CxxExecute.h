@@ -114,7 +114,7 @@ public:
    //
    StackArg(Function* f, TypeName* name);
 
-   //  Destructor.
+   //  Not subclassed.
    //
    ~StackArg() = default;
 
@@ -632,6 +632,18 @@ public:
    //  Constructs a tracepoint to perform ACT when reaching FILE/LINE.
    //
    Tracepoint(const CodeFile* file, size_t line, Action act);
+
+   //  Not subclassed.
+   //
+   ~Tracepoint() = default;
+
+   //  Copy constructor.  Needed to allow sorting.
+   //
+   Tracepoint(const Tracepoint& that) = default;
+
+   //  Copy operator.  Needed to allow sorting.
+   //
+   Tracepoint& operator=(const Tracepoint& that) = default;
 
    //  For supporting Context::Tracepoints_.
    //

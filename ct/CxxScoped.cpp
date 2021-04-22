@@ -670,11 +670,11 @@ CodeFile* CxxScoped::GetImplFile() const
 
 //------------------------------------------------------------------------------
 
-bool CxxScoped::GetRange(size_t& begin, size_t& left, size_t& end) const
+bool CxxScoped::GetSpan3(size_t& begin, size_t& left, size_t& end) const
 {
    if(IsInternal())
    {
-      return CxxNamed::GetRange(begin, left, end);
+      return CxxNamed::GetSpan3(begin, left, end);
    }
 
    //  GetTypeSpec returns an internal "int" for an enum that doesn't define

@@ -53,6 +53,10 @@ public:
    //
    TimePoint();
 
+   //  Not subclassed.
+   //
+   ~TimePoint() = default;
+
    //  Copy constructor.
    //
    TimePoint(const TimePoint& that) = default;

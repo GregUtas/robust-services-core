@@ -553,6 +553,8 @@ enum Warning
    PreprocessorDirective,    // C-style preprocessor directive
    OperatorSpacing,          // add/remove spaces before/after operator
    PunctuationSpacing,       // add/remove spaces before/after punctuation
+   CopyCtorNotDeleted,       // base for singletons should delete copy ctor
+   CopyOperNotDeleted,       // base for singletons should delete copy operator
    Warning_N                 // number of warnings
 };
 

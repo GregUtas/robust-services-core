@@ -376,6 +376,10 @@ private:
    //
    word ChangeSpecialFunction(CliThread& cli, const CodeWarning& log);
 
+   //  Fixes LOG, which involves deletig a special member function.
+   //
+   word DeleteSpecialFunction(CliThread& cli, const CodeWarning& log);
+
    //  Fixes LOG, which also involves modifying overrides of a function.
    //
    static word FixFunctions(CliThread& cli, CodeWarning& log);

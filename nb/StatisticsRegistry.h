@@ -47,6 +47,14 @@ class StatisticsRegistry : public Dynamic
    friend class Statistic;
    friend class StatisticsGroup;
 public:
+   //  Deleted to prohibit copying.
+   //
+   StatisticsRegistry(const StatisticsRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   StatisticsRegistry& operator=(const StatisticsRegistry& that) = delete;
+
    //> The maximum number of statistics that can register.
    //
    static const size_t MaxStats;
@@ -85,11 +93,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    StatisticsRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~StatisticsRegistry();
 

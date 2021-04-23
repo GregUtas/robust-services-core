@@ -77,6 +77,14 @@ public:
    //
    ~Parser();
 
+   //  Deleted to prohibit copying.
+   //
+   Parser(const Parser& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Parser& operator=(const Parser& that) = delete;
+
    //  Parses FILE.  Returns true on success.
    //
    bool Parse(CodeFile& file);

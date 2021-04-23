@@ -66,10 +66,6 @@ namespace NodeBase
 class CtorChain
 {
 public:
-   //  This class has no resources to release.
-   //
-   ~CtorChain() = default;
-
    //  Determines where to insert CTOR.  Returns CTOR unless this
    //  relocates it, in which case it returns the function that
    //  now occupies CTOR's slot.

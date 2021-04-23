@@ -45,6 +45,14 @@ namespace Diplomacy
 class BotTrace : public TimedRecord
 {
 public:
+   //  Deleted to prohibit copying.
+   //
+   BotTrace(const BotTrace& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   BotTrace& operator=(const BotTrace& that) = delete;
+
    //  Types of buffer trace records.
    //
    static const Id IcMsg = 1;  // incoming message
@@ -58,11 +66,6 @@ public:
    //  Releases buff_.  Not subclassed.
    //
    ~BotTrace();
-
-   //  Deleted to prohibit copying.
-   //
-   BotTrace(const BotTrace& that) = delete;
-   BotTrace& operator=(const BotTrace& that) = delete;
 
    //  Returns the message's header.
    //

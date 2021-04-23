@@ -114,6 +114,14 @@ public:
       Skip    // used internally only: skip optional parameter
    };
 
+   //  Deleted to prohibit copying.
+   //
+   CliParm(const CliParm& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   CliParm& operator=(const CliParm& that) = delete;
+
    //  Precedes explanatory text.
    //
    static fixed_string ParmExplPrefix;

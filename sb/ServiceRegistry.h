@@ -38,6 +38,14 @@ class ServiceRegistry : public NodeBase::Immutable
    friend class NodeBase::Singleton< ServiceRegistry >;
    friend class Service;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ServiceRegistry(const ServiceRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ServiceRegistry& operator=(const ServiceRegistry& that) = delete;
+
    //  Returns the service registered against SID.
    //
    Service* GetService(ServiceId sid) const;
@@ -51,11 +59,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ServiceRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ServiceRegistry();
 

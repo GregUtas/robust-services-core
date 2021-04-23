@@ -63,14 +63,17 @@ public:
    //
    typedef TriggerId Id;
 
-   //> Highest valid trigger identifier.
-   //
-   static const Id MaxId = INT8_MAX;
-
    //  Deleted to prohibit copying.
    //
    Trigger(const Trigger& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    Trigger& operator=(const Trigger& that) = delete;
+
+   //> Highest valid trigger identifier.
+   //
+   static const Id MaxId = INT8_MAX;
 
    //  Returns true if TID is a valid trigger identifier.
    //

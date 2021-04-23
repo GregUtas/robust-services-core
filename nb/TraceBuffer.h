@@ -65,6 +65,14 @@ class TraceBuffer : public Permanent
 {
    friend class Singleton< TraceBuffer >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   TraceBuffer(const TraceBuffer& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   TraceBuffer& operator=(const TraceBuffer& that) = delete;
+
    //> The minimum and maximum sizes of the buffer (in log2).
    //
    static const size_t MinSize;
@@ -73,11 +81,6 @@ public:
    //  A string indicating that no item was selected for tracing.
    //
    static fixed_string NoneSelected;
-
-   //  Deleted to prohibit copying.
-   //
-   TraceBuffer(const TraceBuffer& that) = delete;
-   TraceBuffer& operator=(const TraceBuffer& that) = delete;
 
    //  Enables or disables the tool identified by TID based on VALUE.
    //
@@ -244,12 +247,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Creates a buffer of MinSize.  Private because this singleton is not
-   //  subclassed.
+   //  Creates a buffer of MinSize.  Private because this is a singleton.
    //
    TraceBuffer();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TraceBuffer();
 

@@ -53,6 +53,9 @@ public:
    //  Deleted to prohibit copying.
    //
    SysThread(const SysThread& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    SysThread& operator=(const SysThread& that) = delete;
 
    //  Returns the native identifier of the running thread.

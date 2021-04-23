@@ -38,6 +38,14 @@ class CxxRoot : public NodeBase::Base
    friend class NodeBase::Singleton< CxxRoot >;
    friend NamespacePtr::deleter_type;
 public:
+   //  Deleted to prohibit copying.
+   //
+   CxxRoot(const CxxRoot& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   CxxRoot& operator=(const CxxRoot& that) = delete;
+
    //  Returns the global namespace.
    //
    Namespace* GlobalNamespace() const { return gns_.get(); }
@@ -91,11 +99,11 @@ public:
    //
    void Startup(NodeBase::RestartLevel level) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CxxRoot();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CxxRoot();
 

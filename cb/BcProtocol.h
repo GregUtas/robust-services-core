@@ -76,11 +76,11 @@ public:
    //
    static const TimerId IamTimeoutId = 1;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CipProtocol();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CipProtocol();
 };
@@ -306,11 +306,11 @@ public:
    ipport_t Port() const override { return portCfg_->GetPort(); }
    Faction GetFaction() const override { return PayloadFaction; }
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CipUdpService();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CipUdpService();
 
@@ -343,11 +343,11 @@ public:
    size_t MaxConns() const override { return TcpIoThread::MaxConns; }
    size_t MaxBacklog() const override { return 200; }
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CipTcpService();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CipTcpService();
 
@@ -420,11 +420,11 @@ class CipObcFactory : public CipFactory
 {
    friend class Singleton< CipObcFactory >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CipObcFactory();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CipObcFactory();
 
@@ -445,11 +445,11 @@ class CipTbcFactory : public CipFactory
 {
    friend class Singleton< CipTbcFactory >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CipTbcFactory();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CipTbcFactory();
 

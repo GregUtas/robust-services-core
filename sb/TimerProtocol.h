@@ -42,11 +42,11 @@ class TimerProtocol : public TlvProtocol
 {
    friend class NodeBase::Singleton< TimerProtocol >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TimerProtocol();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TimerProtocol();
 };
@@ -59,11 +59,11 @@ class TimeoutSignal : public Signal
 {
    friend class NodeBase::Singleton< TimeoutSignal >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TimeoutSignal();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TimeoutSignal();
 };
@@ -94,11 +94,11 @@ public:
    void DisplayMsg(std::ostream& stream, const std::string& prefix,
       const NodeBase::byte_t* bytes, size_t count) const override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TimeoutParameter();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TimeoutParameter();
 };

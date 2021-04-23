@@ -36,12 +36,20 @@ namespace Diplomacy
 class BotTracer : public Permanent
 {
    friend class Singleton< BotTracer >;
+public:
+   //  Deleted to prohibit copying.
+   //
+   BotTracer(const BotTracer& that) = delete;
 
-   //  Private because this singleton is not subclassed.
+   //  Deleted to prohibit copy assignment.
+   //
+   BotTracer& operator=(const BotTracer& that) = delete;
+private:
+   //  Private because this is a singleton.
    //
    BotTracer();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~BotTracer();
 };

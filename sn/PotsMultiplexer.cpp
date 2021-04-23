@@ -58,6 +58,7 @@ class PotsMuxNull : public PotsMuxState
    friend class Singleton< PotsMuxNull >;
 
    PotsMuxNull();
+   ~PotsMuxNull() = default;
 };
 
 class PotsMuxPassive : public PotsMuxState
@@ -65,6 +66,7 @@ class PotsMuxPassive : public PotsMuxState
    friend class Singleton< PotsMuxPassive >;
 
    PotsMuxPassive();
+   ~PotsMuxPassive() = default;
 };
 
 class PotsMuxInitiateEvent : public PotsMuxEvent
@@ -92,6 +94,7 @@ class PotsMuxNuAnalyzeNetworkMessage : public PotsMuxEventHandler
    friend class Singleton< PotsMuxNuAnalyzeNetworkMessage >;
 
    PotsMuxNuAnalyzeNetworkMessage() = default;
+   ~PotsMuxNuAnalyzeNetworkMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -101,6 +104,7 @@ class PotsMuxNuInitiate : public PotsMuxEventHandler
    friend class Singleton< PotsMuxNuInitiate >;
 
    PotsMuxNuInitiate() = default;
+   ~PotsMuxNuInitiate() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -110,6 +114,7 @@ class PotsMuxPaAnalyzeUserMessage : public PotsMuxEventHandler
    friend class Singleton< PotsMuxPaAnalyzeUserMessage >;
 
    PotsMuxPaAnalyzeUserMessage() = default;
+   ~PotsMuxPaAnalyzeUserMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -119,6 +124,7 @@ class PotsMuxPaAnalyzeNetworkMessage : public PotsMuxEventHandler
    friend class Singleton< PotsMuxPaAnalyzeNetworkMessage >;
 
    PotsMuxPaAnalyzeNetworkMessage() = default;
+   ~PotsMuxPaAnalyzeNetworkMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -128,6 +134,7 @@ class PotsMuxPaRelay : public PotsMuxEventHandler
    friend class Singleton< PotsMuxPaRelay >;
 
    PotsMuxPaRelay() = default;
+   ~PotsMuxPaRelay() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };

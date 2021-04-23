@@ -131,11 +131,11 @@ private:
    //
    static const uint32_t DNsPer100Calls;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsTrafficThread();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsTrafficThread();
 

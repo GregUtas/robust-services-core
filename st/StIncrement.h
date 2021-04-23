@@ -54,11 +54,11 @@ class StIncrement : public CliIncrement
 {
    friend class Singleton< StIncrement >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    StIncrement();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~StIncrement();
 

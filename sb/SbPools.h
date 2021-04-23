@@ -50,11 +50,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    SbIpBufferPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~SbIpBufferPool();
 };
@@ -79,11 +79,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ContextPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ContextPool();
 };
@@ -104,11 +104,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    MessagePool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~MessagePool();
 };
@@ -138,11 +138,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    MsgPortPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~MsgPortPool();
 };
@@ -172,11 +172,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ProtocolSMPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ProtocolSMPool();
 
@@ -222,11 +222,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TimerPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TimerPool();
 
@@ -251,11 +251,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ServiceSMPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ServiceSMPool();
 };
@@ -276,11 +276,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    EventPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~EventPool();
 };
@@ -307,11 +307,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    BtIpBufferPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~BtIpBufferPool();
 };

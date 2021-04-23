@@ -44,6 +44,14 @@ class PosixSignalRegistry : public Immutable
    friend class Singleton< PosixSignalRegistry >;
    friend class PosixSignal;
 public:
+   //  Deleted to prohibit copying.
+   //
+   PosixSignalRegistry(const PosixSignalRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   PosixSignalRegistry& operator=(const PosixSignalRegistry& that) = delete;
+
    //  Returns the signal identified by VALUE.
    //
    PosixSignal* Find(signal_t value) const;
@@ -78,11 +86,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PosixSignalRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PosixSignalRegistry();
 

@@ -45,6 +45,14 @@ class CliRegistry : public Immutable
    friend class Singleton< CliRegistry >;
    friend class CliIncrement;
 public:
+   //  Deleted to prohibit copying.
+   //
+   CliRegistry(const CliRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   CliRegistry& operator=(const CliRegistry& that) = delete;
+
    //  Returns the increment registered against NAME, if any.
    //
    CliIncrement* FindIncrement(const std::string& name) const;
@@ -62,11 +70,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CliRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CliRegistry();
 

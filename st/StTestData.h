@@ -44,6 +44,9 @@ public:
    //  Deleted to prohibit copying.
    //
    StTestData(const StTestData& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    StTestData& operator=(const StTestData& that) = delete;
 
    //  Returns the test data registered against CLI.  If the data

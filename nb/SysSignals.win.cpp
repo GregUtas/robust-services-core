@@ -37,6 +37,7 @@ class SigBreak : public PosixSignal
    friend class Singleton< SigBreak >;
 
    SigBreak();
+   ~SigBreak() = default;
 };
 
 SigBreak::SigBreak() : PosixSignal(SIGBREAK, "SIGBREAK",

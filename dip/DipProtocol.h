@@ -233,11 +233,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    BotTcpService();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~BotTcpService() = default;
 
@@ -268,10 +268,6 @@ public:
    //  Registers the input handler with PORT.
    //
    explicit DipInputHandler(IpPort* port);
-
-   //  Not subclassed.
-   //
-   ~DipInputHandler() = default;
 
    //  Overridden to allocate a DipIpBuffer for a Diplomacy message that has
    //  received over TCP.
@@ -357,11 +353,11 @@ public:
    //
    static const size_t BlockSize;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    DipIpBufferPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~DipIpBufferPool();
 };

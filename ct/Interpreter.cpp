@@ -42,11 +42,6 @@ namespace CodeTools
 //
 struct OperatorInfo
 {
-   //  Define the copy operator to suppress the compiler warning caused
-   //  by our const string member.
-   //
-   OperatorInfo& operator=(const OperatorInfo& that) = delete;
-
    //  If OP is a valid operator, updates TYPE and returns true,
    //  else returns false.
    //
@@ -172,11 +167,6 @@ public:
    //  to be deleted if they were temporary.
    //
    ~LibraryOpcode();
-
-   //  Deleted to prevent copying.
-   //
-   LibraryOpcode(const LibraryOpcode& that) = delete;
-   LibraryOpcode& operator=(const LibraryOpcode& that) = delete;
 
    //  Executes the opcode.
    //

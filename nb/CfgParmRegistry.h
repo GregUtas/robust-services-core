@@ -49,6 +49,9 @@ public:
    //  Deleted to prohibit copying.
    //
    CfgParmRegistry(const CfgParmRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    CfgParmRegistry& operator=(const CfgParmRegistry& that) = delete;
 
    //  Searches the registry and returns a tuple that matches KEY.
@@ -89,11 +92,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CfgParmRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CfgParmRegistry();
 

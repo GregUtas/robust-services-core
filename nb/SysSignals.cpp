@@ -35,6 +35,7 @@ class SigAbort : public PosixSignal
    friend class Singleton< SigAbort >;
 
    SigAbort();
+   ~SigAbort() = default;
 };
 
 class SigFpe : public PosixSignal
@@ -42,6 +43,7 @@ class SigFpe : public PosixSignal
    friend class Singleton< SigFpe >;
 
    SigFpe();
+   ~SigFpe() = default;
 };
 
 class SigIll : public PosixSignal
@@ -49,6 +51,7 @@ class SigIll : public PosixSignal
    friend class Singleton< SigIll >;
 
    SigIll();
+   ~SigIll() = default;
 };
 
 class SigInt : public PosixSignal
@@ -56,6 +59,7 @@ class SigInt : public PosixSignal
    friend class Singleton< SigInt >;
 
    SigInt();
+   ~SigInt() = default;
 };
 
 class SigSegv : public PosixSignal
@@ -63,6 +67,7 @@ class SigSegv : public PosixSignal
    friend class Singleton< SigSegv >;
 
    SigSegv();
+   ~SigSegv() = default;
 };
 
 class SigTerm : public PosixSignal
@@ -70,6 +75,7 @@ class SigTerm : public PosixSignal
    friend class Singleton< SigTerm >;
 
    SigTerm();
+   ~SigTerm() = default;
 };
 
 //------------------------------------------------------------------------------

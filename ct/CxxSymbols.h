@@ -92,6 +92,14 @@ class CxxSymbols: public NodeBase::Base
 {
    friend class NodeBase::Singleton< CxxSymbols >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   CxxSymbols(const CxxSymbols& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   CxxSymbols& operator=(const CxxSymbols& that) = delete;
+
    //  Returns any terminal(s) that match NAME.
    //
    void FindTerminal(const std::string& name, SymbolVector& list) const;
@@ -210,11 +218,11 @@ private:
    typedef std::unique_ptr< TermTable > TermTablePtr;
    typedef std::unique_ptr< TypeTable > TypeTablePtr;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CxxSymbols();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CxxSymbols();
 

@@ -54,6 +54,10 @@ public:
       CxxStats::Decr(CxxStats::CHAR_LITERAL);
    }
 
+   CxxCharLiteral(const CxxCharLiteral& that) = delete;
+
+   CxxCharLiteral& operator=(const CxxCharLiteral& that) = delete;
+
    void Print(std::ostream& stream, const Flags& options) const override
    {
       stream << E << APOSTROPHE << CharString(c_, false) << APOSTROPHE;
@@ -72,11 +76,6 @@ public:
       return ERROR_STR;
    }
 private:
-   //  Deleted to prohibit copying.
-   //
-   CxxCharLiteral(const CxxCharLiteral& that) = delete;
-   CxxCharLiteral& operator=(const CxxCharLiteral& that) = delete;
-
    CxxScoped* Referent() const override
    {
       switch(E)

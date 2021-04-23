@@ -59,6 +59,7 @@ class CipIamSignal : public CipSignal
    friend class Singleton< CipIamSignal >;
 
    CipIamSignal();
+   ~CipIamSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -72,6 +73,7 @@ class CipCpgSignal : public CipSignal
    friend class Singleton< CipCpgSignal >;
 
    CipCpgSignal();
+   ~CipCpgSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -85,6 +87,7 @@ class CipAnmSignal : public CipSignal
    friend class Singleton< CipAnmSignal >;
 
    CipAnmSignal();
+   ~CipAnmSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -98,6 +101,7 @@ class CipRelSignal : public CipSignal
    friend class Singleton< CipRelSignal >;
 
    CipRelSignal();
+   ~CipRelSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -111,6 +115,7 @@ class CipRouteParameter : public CipParameter
    friend class Singleton< CipRouteParameter >;
 
    CipRouteParameter();
+   ~CipRouteParameter() = default;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    CliParm* CreateCliParm(Usage use) const override;
@@ -138,7 +143,7 @@ class CipAddressParameter : public AddressParameter
 {
 protected:
    explicit CipAddressParameter(Id pid);
-   virtual ~CipAddressParameter();
+   virtual ~CipAddressParameter() = default;
 };
 
 class CipCallingParameter : public CipAddressParameter
@@ -146,6 +151,7 @@ class CipCallingParameter : public CipAddressParameter
    friend class Singleton< CipCallingParameter >;
 
    CipCallingParameter();
+   ~CipCallingParameter() = default;
    CliParm* CreateCliParm(Usage use) const override;
 };
 
@@ -154,6 +160,7 @@ class CipCalledParameter : public CipAddressParameter
    friend class Singleton< CipCalledParameter >;
 
    CipCalledParameter();
+   ~CipCalledParameter() = default;
    CliParm* CreateCliParm(Usage use) const override;
 };
 
@@ -162,6 +169,7 @@ class CipOriginalCallingParameter : public CipAddressParameter
    friend class Singleton< CipOriginalCallingParameter >;
 
    CipOriginalCallingParameter();
+   ~CipOriginalCallingParameter() = default;
    CliParm* CreateCliParm(Usage use) const override;
 };
 
@@ -170,6 +178,7 @@ class CipOriginalCalledParameter : public CipAddressParameter
    friend class Singleton< CipOriginalCalledParameter >;
 
    CipOriginalCalledParameter();
+   ~CipOriginalCalledParameter() = default;
    CliParm* CreateCliParm(Usage use) const override;
 };
 
@@ -178,6 +187,7 @@ class CipProgressParameter : public ProgressParameter
    friend class Singleton< CipProgressParameter >;
 
    CipProgressParameter();
+   ~CipProgressParameter() = default;
 };
 
 class CipCauseParameter : public CauseParameter
@@ -185,6 +195,7 @@ class CipCauseParameter : public CauseParameter
    friend class Singleton< CipCauseParameter >;
 
    CipCauseParameter();
+   ~CipCauseParameter() = default;
 };
 
 class CipMediaParameter : public MediaParameter
@@ -192,6 +203,7 @@ class CipMediaParameter : public MediaParameter
    friend class Singleton< CipMediaParameter >;
 
    CipMediaParameter();
+   ~CipMediaParameter() = default;
 };
 
 //==============================================================================
@@ -508,10 +520,6 @@ Parameter::TestRc CipRouteParameter::VerifyMsg
 
 CipAddressParameter::CipAddressParameter(Id pid) :
    AddressParameter(CipProtocolId, pid) { }
-
-//------------------------------------------------------------------------------
-
-CipAddressParameter::~CipAddressParameter() = default;
 
 //==============================================================================
 

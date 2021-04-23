@@ -43,6 +43,14 @@ class ProtocolRegistry : public NodeBase::Immutable
    friend class NodeBase::Singleton< ProtocolRegistry >;
    friend class Protocol;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ProtocolRegistry(const ProtocolRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ProtocolRegistry& operator=(const ProtocolRegistry& that) = delete;
+
    //  Returns the protocol registered against PRID.
    //
    Protocol* GetProtocol(ProtocolId prid) const;
@@ -56,11 +64,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ProtocolRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ProtocolRegistry();
 

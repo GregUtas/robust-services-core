@@ -44,6 +44,14 @@ class CodeCoverage : public NodeBase::Temporary
 {
    friend class NodeBase::Singleton< CodeCoverage >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   CodeCoverage(const CodeCoverage& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   CodeCoverage& operator=(const CodeCoverage& that) = delete;
+
    //  Adds FUNC to the functions that invoke Debug::ft.  HASH is the hash value
    //  for its source code.  Returns false if FUNC is already in use.
    //
@@ -80,11 +88,11 @@ public:
    //
    void Shutdown(NodeBase::RestartLevel level) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CodeCoverage();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CodeCoverage();
 

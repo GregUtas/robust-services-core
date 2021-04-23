@@ -92,6 +92,9 @@ public:
    //  Deleted to prohibit copying.
    //
    SysMutex(const SysMutex& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    SysMutex& operator=(const SysMutex& that) = delete;
 
    //  Acquires the mutex.  TIMEOUT specifies how long to wait.

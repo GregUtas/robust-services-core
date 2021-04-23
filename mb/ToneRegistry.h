@@ -41,6 +41,14 @@ class ToneRegistry : public Dynamic
    friend class Singleton< ToneRegistry >;
    friend class Tone;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ToneRegistry(const ToneRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ToneRegistry& operator=(const ToneRegistry& that) = delete;
+
    //  Returns the port associated with the tone identified by TID.
    //
    static Switch::PortId ToneToPort(Tone::Id tid);
@@ -54,11 +62,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ToneRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ToneRegistry();
 

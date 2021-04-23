@@ -60,6 +60,9 @@ public:
    //  Deleted to prohibit copying.
    //
    IpPort(const IpPort& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    IpPort& operator=(const IpPort& that) = delete;
 
    //  Returns the IP port.

@@ -66,6 +66,9 @@ public:
    //  Deleted to prohibit copying.
    //
    PotsProfile(const PotsProfile& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    PotsProfile& operator=(const PotsProfile& that) = delete;
 
    //  Returns the profile's DN.

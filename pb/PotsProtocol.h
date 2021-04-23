@@ -75,11 +75,11 @@ public:
    static const TimerId SuspendTimeoutId = 4;     // for suspend timeout
    static const TimerId TreatmentTimeoutId = 5;   // for a timed treatment
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsProtocol();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsProtocol();
 };
@@ -223,14 +223,6 @@ public:
    static const Ind InitiationAck = 2;   // service initiation succeeded
    static const Ind InitiationNack = 3;  // service initiation failed
    static const Ind NextInd = 4;         // next available indicator
-
-   //  Deleted because this class is not intended to be instantiated.
-   //
-   Facility() = delete;
-
-   //  Allow subclasses to define application-specific service indicators.
-   //
-   virtual ~Facility() = default;
 };
 
 //------------------------------------------------------------------------------

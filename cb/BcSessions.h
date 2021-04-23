@@ -1288,11 +1288,11 @@ class TestCallFactory : public BcFactory
 {
    friend class Singleton< TestCallFactory >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TestCallFactory();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TestCallFactory();
 

@@ -47,6 +47,8 @@ class FactoryStats : public Dynamic
 public:
    FactoryStats();
    ~FactoryStats();
+   FactoryStats(const FactoryStats& that) = delete;
+   FactoryStats& operator=(const FactoryStats& that) = delete;
 
    CounterPtr       icMsgsIntra_;
    CounterPtr       icMsgsInter_;

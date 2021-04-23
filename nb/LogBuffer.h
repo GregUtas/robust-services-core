@@ -52,6 +52,14 @@ public:
    //
    ~LogBuffer();
 
+   //  Deleted to prohibit copying.
+   //
+   LogBuffer(const LogBuffer& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   LogBuffer& operator=(const LogBuffer& that) = delete;
+
    //  Returns true if the buffer is empty.
    //
    bool Empty() const { return First() == nullptr; }

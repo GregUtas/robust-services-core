@@ -69,6 +69,9 @@ public:
    //  Deleted to prohibit copying.
    //
    FunctionProfiler(const FunctionProfiler& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    FunctionProfiler& operator=(const FunctionProfiler& that) = delete;
 
    //  Builds the report and invokes Output.

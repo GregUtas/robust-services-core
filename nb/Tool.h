@@ -38,6 +38,14 @@ class Tool : public Immutable
 {
    friend class Registry< Tool >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   Tool(const Tool& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Tool& operator=(const Tool& that) = delete;
+
    //  Returns the tool's identifier.
    //
    id_t Tid() const { return tid_.GetId(); }
@@ -90,11 +98,6 @@ protected:
    //  Protected because subclasses should be singletons.
    //
    virtual ~Tool();
-
-   //  Deleted to prohibit copying.
-   //
-   Tool(const Tool& that) = delete;
-   Tool& operator=(const Tool& that) = delete;
 private:
    //  The tool's identifier.
    //

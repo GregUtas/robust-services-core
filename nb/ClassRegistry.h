@@ -37,6 +37,14 @@ class ClassRegistry : public Immutable
    friend class Singleton< ClassRegistry >;
    friend class Class;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ClassRegistry(const ClassRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ClassRegistry& operator=(const ClassRegistry& that) = delete;
+
    //  Returns the class registered against CID.
    //
    Class* Lookup(ClassId cid) const;
@@ -62,11 +70,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ClassRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ClassRegistry();
 

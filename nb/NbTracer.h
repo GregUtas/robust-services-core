@@ -64,6 +64,14 @@ class NbTracer : public Permanent
 {
    friend class Singleton< NbTracer >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   NbTracer(const NbTracer& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   NbTracer& operator=(const NbTracer& that) = delete;
+
    //  Traces FAC according to STATUS.
    //
    TraceRc SelectFaction(Faction faction, TraceStatus status);
@@ -92,11 +100,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    NbTracer();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~NbTracer();
 

@@ -53,6 +53,14 @@ public:
    //
    typedef int32_t PortId;
 
+   //  Deleted to prohibit copying.
+   //
+   Switch(const Switch& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Switch& operator=(const Switch& that) = delete;
+
    //  A hard-coded port that transmits silence.
    //
    static const PortId SilentPort = 1;
@@ -81,11 +89,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    Switch();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~Switch();
 

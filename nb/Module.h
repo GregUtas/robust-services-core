@@ -78,14 +78,17 @@ class Module : public Immutable
 {
    friend class Registry< Module >;
 public:
-   //> Highest valid module identifier.
-   //
-   static const ModuleId MaxId;
-
    //  Deleted to prohibit copying.
    //
    Module(const Module& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    Module& operator=(const Module& that) = delete;
+
+   //> Highest valid module identifier.
+   //
+   static const ModuleId MaxId;
 
    //  Returns the module's identifier.
    //

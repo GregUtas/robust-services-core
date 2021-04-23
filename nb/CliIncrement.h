@@ -53,6 +53,9 @@ public:
    //  Deleted to prohibit copying.
    //
    CliIncrement(const CliIncrement& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    CliIncrement& operator=(const CliIncrement& that) = delete;
 
    //  Used by the CLI to search for a command whose name matches TEXT.

@@ -46,6 +46,14 @@ class Alarm : public Immutable
 {
    friend class AlarmsCommand;
 public:
+   //  Deleted to prohibit copying.
+   //
+   Alarm(const Alarm& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Alarm& operator=(const Alarm& that) = delete;
+
    //> The maximum length of an alarm's name.
    //
    static const size_t MaxNameSize;

@@ -259,6 +259,7 @@ class ParserTraceTool : public Tool
    friend class Singleton< ParserTraceTool >;
 
    ParserTraceTool() : Tool(ParserTracer, 'p', false) { }
+   ~ParserTraceTool() = default;
    c_string Name() const override { return ParserTraceToolName; }
    c_string Expl() const override { return ParserTraceToolExpl; }
 };

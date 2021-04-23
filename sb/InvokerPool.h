@@ -58,14 +58,17 @@ class InvokerPool : public NodeBase::Dynamic
    friend class NodeBase::Registry< InvokerPool >;
    friend class SbInputHandler;
 public:
-   //> The maximum number of invoker threads allowed in a pool.
-   //
-   static const size_t MaxInvokers;
-
    //  Deleted to prohibit copying.
    //
    InvokerPool(const InvokerPool& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    InvokerPool& operator=(const InvokerPool& that) = delete;
+
+   //> The maximum number of invoker threads allowed in a pool.
+   //
+   static const size_t MaxInvokers;
 
    //  Returns the pool's scheduler faction.
    //

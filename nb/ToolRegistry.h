@@ -45,6 +45,14 @@ class ToolRegistry : public Immutable
    friend class Singleton< ToolRegistry >;
    friend class Tool;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ToolRegistry(const ToolRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ToolRegistry& operator=(const ToolRegistry& that) = delete;
+
    //  Returns the tool registered against ID.
    //
    Tool* GetTool(FlagId id) const;
@@ -70,11 +78,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ToolRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ToolRegistry();
 

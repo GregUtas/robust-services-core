@@ -71,11 +71,11 @@ public:
    void DisplayStats
       (std::ostream& stream, id_t id, const Flags& options) const override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsStatistics();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsStatistics();
 

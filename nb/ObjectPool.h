@@ -56,6 +56,14 @@ class ObjectPool : public Protected
    friend class ObjectPoolSizeCfg;
    friend class Registry< ObjectPool >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ObjectPool(const ObjectPool& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ObjectPool& operator=(const ObjectPool& that) = delete;
+
    //> Highest valid object pool identifier.
    //
    static const ObjectPoolId MaxId;
@@ -79,11 +87,6 @@ public:
    //  and discarded.
    //
    static const PooledObjectSeqNo MaxSeqNo = UINT8_MAX;
-
-   //  Deleted to prohibit copying.
-   //
-   ObjectPool(const ObjectPool& that) = delete;
-   ObjectPool& operator=(const ObjectPool& that) = delete;
 
    //  Returns the pool's name.
    //

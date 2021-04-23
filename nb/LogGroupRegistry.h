@@ -45,6 +45,14 @@ class LogGroupRegistry : public Immutable
    friend class Singleton< LogGroupRegistry >;
    friend class LogGroup;
 public:
+   //  Deleted to prohibit copying.
+   //
+   LogGroupRegistry(const LogGroupRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   LogGroupRegistry& operator=(const LogGroupRegistry& that) = delete;
+
    //> The maximum number of log groups.
    //
    static const id_t MaxGroups;
@@ -82,11 +90,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    LogGroupRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~LogGroupRegistry();
 

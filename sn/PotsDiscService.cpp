@@ -36,6 +36,7 @@ class PotsDiscNull : public State
    friend class Singleton< PotsDiscNull >;
 
    PotsDiscNull();
+   ~PotsDiscNull() = default;
 };
 
 class PotsDiscSsm : public ServiceSM

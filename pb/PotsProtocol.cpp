@@ -54,6 +54,7 @@ class PotsAlertingSignal : public PotsSignal
    friend class Singleton< PotsAlertingSignal >;
 
    PotsAlertingSignal();
+   ~PotsAlertingSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -67,6 +68,7 @@ class PotsDigitsSignal : public PotsSignal
    friend class Singleton< PotsDigitsSignal >;
 
    PotsDigitsSignal();
+   ~PotsDigitsSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -80,6 +82,7 @@ class PotsFacilitySignal : public PotsSignal
    friend class Singleton< PotsFacilitySignal >;
 
    PotsFacilitySignal();
+   ~PotsFacilitySignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -93,6 +96,7 @@ class PotsFlashSignal : public PotsSignal
    friend class Singleton< PotsFlashSignal >;
 
    PotsFlashSignal();
+   ~PotsFlashSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -106,6 +110,7 @@ class PotsReleaseSignal : public PotsSignal
    friend class Singleton< PotsReleaseSignal >;
 
    PotsReleaseSignal();
+   ~PotsReleaseSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -119,6 +124,7 @@ class PotsLockoutSignal : public PotsSignal
    friend class Singleton< PotsLockoutSignal >;
 
    PotsLockoutSignal();
+   ~PotsLockoutSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -132,6 +138,7 @@ class PotsOffhookSignal : public PotsSignal
    friend class Singleton< PotsOffhookSignal >;
 
    PotsOffhookSignal();
+   ~PotsOffhookSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -140,6 +147,7 @@ class PotsOnhookSignal : public PotsSignal
    friend class Singleton< PotsOnhookSignal >;
 
    PotsOnhookSignal();
+   ~PotsOnhookSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -158,6 +166,7 @@ class PotsProgressSignal : public PotsSignal
    friend class Singleton< PotsProgressSignal >;
 
    PotsProgressSignal();
+   ~PotsProgressSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -171,6 +180,7 @@ class PotsSuperviseSignal : public PotsSignal
    friend class Singleton< PotsSuperviseSignal >;
 
    PotsSuperviseSignal();
+   ~PotsSuperviseSignal() = default;
    CliText* CreateText() const override;
 };
 
@@ -186,6 +196,7 @@ class PotsCauseParameter : public CauseParameter
    friend class Singleton< PotsCauseParameter >;
 
    PotsCauseParameter();
+   ~PotsCauseParameter() = default;
 };
 
 class PotsDigitsParameter : public AddressParameter
@@ -193,6 +204,7 @@ class PotsDigitsParameter : public AddressParameter
    friend class Singleton< PotsDigitsParameter >;
 
    PotsDigitsParameter();
+   ~PotsDigitsParameter() = default;
    CliParm* CreateCliParm(Usage use) const override;
 };
 
@@ -205,13 +217,14 @@ class PotsFacilityParameter : public PotsParameter
 {
    friend class Singleton< PotsFacilityParameter >;
 
+   PotsFacilityParameter();
+   ~PotsFacilityParameter() = default;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    CliParm* CreateCliParm(Usage use) const override;
    TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
-   PotsFacilityParameter();
 };
 
 class FacilityMandParm : public CliText
@@ -238,13 +251,14 @@ class PotsHeaderParameter : public PotsParameter
 {
    friend class Singleton< PotsHeaderParameter >;
 
+   PotsHeaderParameter();
+   ~PotsHeaderParameter() = default;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    CliParm* CreateCliParm(Usage use) const override;
    TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
-   PotsHeaderParameter();
 };
 
 class HeaderParm : public CliIntParm
@@ -257,6 +271,7 @@ class PotsMediaParameter : public MediaParameter
    friend class Singleton< PotsMediaParameter >;
 
    PotsMediaParameter();
+   ~PotsMediaParameter() = default;
 };
 
 class PotsProgressParameter : public ProgressParameter
@@ -264,18 +279,20 @@ class PotsProgressParameter : public ProgressParameter
    friend class Singleton< PotsProgressParameter >;
 
    PotsProgressParameter();
+   ~PotsProgressParameter() = default;
 };
 
 class PotsRingParameter : public PotsParameter
 {
    friend class Singleton< PotsRingParameter >;
 
+   PotsRingParameter();
+   ~PotsRingParameter() = default;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    CliParm* CreateCliParm(Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
-   PotsRingParameter();
 };
 
 class RingParm : public CliBoolParm
@@ -287,12 +304,13 @@ class PotsScanParameter : public PotsParameter
 {
    friend class Singleton< PotsScanParameter >;
 
+   PotsScanParameter();
+   ~PotsScanParameter() = default;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    CliParm* CreateCliParm(Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
-   PotsScanParameter();
 };
 
 class ScanParm : public CliTextParm

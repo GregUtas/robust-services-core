@@ -53,6 +53,14 @@ public:
    //
    ~CodeFile();
 
+   //  Deleted to prohibit copying.
+   //
+   CodeFile(const CodeFile& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   CodeFile& operator=(const CodeFile& that) = delete;
+
    //  Returns the file's path.  If FULL is not set, the path to the source
    //  code directory is removed from the front of the path.
    //

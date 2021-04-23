@@ -38,12 +38,12 @@ class PotsProxyService : public ProxyBcService
 {
    friend class Singleton< PotsProxyService >;
 
-   //  Private because this singleton is not subclassed.  Registers all
+   //  Private because this is a singleton.  Registers all
    //  POTS states, event handlers, and triggers.
    //
    PotsProxyService();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsProxyService();
 };

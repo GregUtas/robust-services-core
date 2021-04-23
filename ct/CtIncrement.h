@@ -35,11 +35,11 @@ class CtIncrement : public NodeBase::CliIncrement
 {
    friend class NodeBase::Singleton< CtIncrement >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CtIncrement();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CtIncrement();
 };

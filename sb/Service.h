@@ -48,14 +48,17 @@ public:
    //
    typedef ServiceId Id;
 
-   //> Highest valid service identifier.
-   //
-   static const Id MaxId = 511;
-
    //  Deleted to prohibit copying.
    //
    Service(const Service& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    Service& operator=(const Service& that) = delete;
+
+   //> Highest valid service identifier.
+   //
+   static const Id MaxId = 511;
 
    //  Returns the service's identifier.
    //

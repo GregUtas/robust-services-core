@@ -41,6 +41,14 @@ class NwTracer : public NodeBase::Permanent
 {
    friend class NodeBase::Singleton< NwTracer >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   NwTracer(const NwTracer& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   NwTracer& operator=(const NwTracer& that) = delete;
+
    //  Traces PEER according to STATUS.
    //
    NodeBase::TraceRc SelectPeer
@@ -83,11 +91,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    NwTracer();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~NwTracer();
 

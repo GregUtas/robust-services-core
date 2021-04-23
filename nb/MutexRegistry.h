@@ -44,6 +44,14 @@ class MutexRegistry : public Permanent
    friend class Singleton< MutexRegistry >;
    friend class SysMutex;
 public:
+   //  Deleted to prohibit copying.
+   //
+   MutexRegistry(const MutexRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   MutexRegistry& operator=(const MutexRegistry& that) = delete;
+
    //> The maximum number of mutexes.
    //
    static const id_t MaxMutexes;
@@ -69,11 +77,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    MutexRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~MutexRegistry();
 

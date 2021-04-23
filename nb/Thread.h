@@ -66,6 +66,14 @@ class Thread : public Permanent
    friend class SysMutex;
    friend class ThreadRegistry;
 public:
+   //  Deleted to prohibit copying.
+   //
+   Thread(const Thread& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Thread& operator=(const Thread& that) = delete;
+
    //> Highest valid thread identifier.
    //
    static const ThreadId MaxId;

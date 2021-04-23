@@ -50,6 +50,14 @@ class PotsFeatureRegistry : public Immutable
    friend class SubscribeCommand;
    friend class UnsubscribeCommand;
 public:
+   //  Deleted to prohibit copying.
+   //
+   PotsFeatureRegistry(const PotsFeatureRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   PotsFeatureRegistry& operator=(const PotsFeatureRegistry& that) = delete;
+
    //  Visits all entries in the registry to build the CLI parameter trees
    //  that support the subscribe, activate, deactivate, and unsubscribe
    //  commands.  Also ensures that if feature A is defined as incompatible
@@ -66,11 +74,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsFeatureRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsFeatureRegistry();
 

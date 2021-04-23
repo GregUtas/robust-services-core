@@ -38,11 +38,11 @@ class DipModule : public Module
 {
    friend class Singleton< DipModule >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    DipModule();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~DipModule() = default;
 

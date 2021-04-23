@@ -69,11 +69,11 @@ private:
    //
    static Duration SleepInterval;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    StatisticsThread();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~StatisticsThread();
 

@@ -47,6 +47,9 @@ public:
    //  Deleted to prohibit copying.
    //
    SymbolRegistry(const SymbolRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    SymbolRegistry& operator=(const SymbolRegistry& that) = delete;
 
    //  Creates or finds the record for the symbol identified by NAME and
@@ -82,11 +85,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    SymbolRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~SymbolRegistry();
 

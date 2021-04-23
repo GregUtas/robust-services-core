@@ -114,6 +114,14 @@ class SbTracer : public NodeBase::Permanent
 {
    friend class NodeBase::Singleton< SbTracer >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   SbTracer(const SbTracer& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   SbTracer& operator=(const SbTracer& that) = delete;
+
    //  Traces FID according to STATUS.
    //
    NodeBase::TraceRc SelectFactory(FactoryId fid, NodeBase::TraceStatus status);
@@ -161,11 +169,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    SbTracer();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~SbTracer();
 

@@ -56,6 +56,14 @@ class Library : public NodeBase::Base
 {
    friend class NodeBase::Singleton< Library >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   Library(const Library& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Library& operator=(const Library& that) = delete;
+
    //  Returns the path to the source directory, the root for all .h and
    //  .cpp files.  Does not include a trailing PATH_SEPARATOR character.
    //
@@ -162,11 +170,11 @@ public:
    //
    void Startup(NodeBase::RestartLevel level) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    Library();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~Library();
 

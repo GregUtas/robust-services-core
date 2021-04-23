@@ -52,6 +52,7 @@ class TransTraceTool : public Tool
    friend class Singleton< TransTraceTool >;
 
    TransTraceTool() : Tool(TransTracer, 't', true) { }
+   ~TransTraceTool() = default;
    c_string Name() const override { return TransTraceToolName; }
    c_string Expl() const override { return TransTraceToolExpl; }
 };
@@ -66,6 +67,7 @@ class BufferTraceTool : public Tool
    friend class Singleton< BufferTraceTool >;
 
    BufferTraceTool() : Tool(BufferTracer, 'b', true) { }
+   ~BufferTraceTool() = default;
    c_string Name() const override { return BufferTraceToolName; }
    c_string Expl() const override { return BufferTraceToolExpl; }
 };
@@ -80,6 +82,7 @@ class ContextTraceTool : public Tool
    friend class Singleton< ContextTraceTool >;
 
    ContextTraceTool() : Tool(ContextTracer, 'c', true) { }
+   ~ContextTraceTool() = default;
    c_string Name() const override { return ContextTraceToolName; }
    c_string Expl() const override { return ContextTraceToolExpl; }
 };

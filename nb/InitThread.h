@@ -75,11 +75,11 @@ private:
    static const Flags RecreateMask;
    static const Flags ScheduleMask;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    InitThread();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~InitThread();
 

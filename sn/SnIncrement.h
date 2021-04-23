@@ -37,11 +37,11 @@ class SnIncrement : public CliIncrement
 {
    friend class Singleton< SnIncrement >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    SnIncrement();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~SnIncrement();
 };

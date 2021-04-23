@@ -36,17 +36,13 @@ namespace NodeBase
 class MsgBuffer : public Pooled
 {
 public:
-   //  Records the time when the message was allocated.
+   //  Virtual to allow subclassing.
    //
-   MsgBuffer();
+   virtual ~MsgBuffer();
 
    //  Copy constructor.
    //
    MsgBuffer(const MsgBuffer& that);
-
-   //  Virtual to allow subclassing.
-   //
-   virtual ~MsgBuffer();
 
    //  Returns the time when the message was created.
    //
@@ -73,6 +69,10 @@ public:
    //  Overridden to obtain a buffer from its object pool.
    //
    static void* operator new(size_t size);
+protected:
+   //  Records the time when the message was allocated.
+   //
+   MsgBuffer();
 private:
    //  The time when the message arrived at I/O level.
    //

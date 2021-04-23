@@ -62,6 +62,14 @@ public:
    //
    typedef id_t QId;
 
+   //  Deleted to prohibit copying.
+   //
+   PotsTreatmentQueue(const PotsTreatmentQueue& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   PotsTreatmentQueue& operator=(const PotsTreatmentQueue& that) = delete;
+
    //  The treatment queues that can be selected by a cause value.
    //
    static const QId IdleQId = 1;        // sends a Release (causing dial tone)
@@ -78,11 +86,6 @@ public:
    //  Deregisters the queue.  Not subclassed.
    //
    ~PotsTreatmentQueue();
-
-   //  Deleted to prohibit copying.
-   //
-   PotsTreatmentQueue(const PotsTreatmentQueue& that) = delete;
-   PotsTreatmentQueue& operator=(const PotsTreatmentQueue& that) = delete;
 
    //  Returns the first treatment in the queue.
    //
@@ -129,6 +132,14 @@ public:
    //
    virtual ~PotsTreatment();
 
+   //  Deleted to prohibit copying.
+   //
+   PotsTreatment(const PotsTreatment& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   PotsTreatment& operator=(const PotsTreatment& that) = delete;
+
    //  Returns the treatment that follows this one in its queue.
    //
    PotsTreatment* NextTreatment() const;
@@ -151,11 +162,6 @@ protected:
    //  because this class is virtual.
    //
    explicit PotsTreatment(PotsTreatmentQueue::QId qid);
-
-   //  Deleted to prohibit copying.
-   //
-   PotsTreatment(const PotsTreatment& that) = delete;
-   PotsTreatment& operator=(const PotsTreatment& that) = delete;
 private:
    //  The identifier of the PotsTreatmentQueue in which the treatment appears.
    //

@@ -37,11 +37,11 @@ class PbModule : public Module
 {
    friend class Singleton< PbModule >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PbModule();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PbModule();
 

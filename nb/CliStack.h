@@ -47,6 +47,9 @@ public:
    //  Deleted to prohibit copying.
    //
    CliStack(const CliStack& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    CliStack& operator=(const CliStack& that) = delete;
 
    //  Returns the increment on top of the stack.

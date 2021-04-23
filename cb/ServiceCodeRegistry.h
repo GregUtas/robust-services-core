@@ -40,6 +40,14 @@ class ServiceCodeRegistry : public Protected
 {
    friend class Singleton< ServiceCodeRegistry >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ServiceCodeRegistry(const ServiceCodeRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ServiceCodeRegistry& operator=(const ServiceCodeRegistry& that) = delete;
+
    //  Associates the service identified by SID when the service code
    //  identified by SC.
    //
@@ -58,11 +66,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ServiceCodeRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ServiceCodeRegistry();
 

@@ -38,6 +38,14 @@ class FactoryRegistry : public NodeBase::Immutable
    friend class NodeBase::Singleton< FactoryRegistry >;
    friend class Factory;
 public:
+   //  Deleted to prohibit copying.
+   //
+   FactoryRegistry(const FactoryRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   FactoryRegistry& operator=(const FactoryRegistry& that) = delete;
+
    //  Returns the factory registered against FID.
    //
    Factory* GetFactory(FactoryId fid) const;
@@ -63,11 +71,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    FactoryRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~FactoryRegistry();
 

@@ -285,11 +285,11 @@ public:
    //
    void Startup(RestartLevel level) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    NbIncrement();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~NbIncrement();
 };

@@ -60,11 +60,11 @@ private:
       RecoveringBlocks  // recovering unclaimed blocks
    };
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ObjectPoolAudit();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ObjectPoolAudit();
 

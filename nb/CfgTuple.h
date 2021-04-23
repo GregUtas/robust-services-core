@@ -45,6 +45,14 @@ namespace NodeBase
 class CfgTuple : public Protected
 {
 public:
+   //  Deleted to prohibit copying.
+   //
+   CfgTuple(const CfgTuple& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   CfgTuple& operator=(const CfgTuple& that) = delete;
+
    //  The character that prefixes comments in the file that contains
    //  element configuration parameters.  This character, and any that
    //  follow it on the same line, are ignored.
@@ -58,11 +66,6 @@ public:
    //  Removes the tuple from CfgParmRegistry.  Not subclassed.
    //
    ~CfgTuple();
-
-   //  Deleted to prohibit copying.
-   //
-   CfgTuple(const CfgTuple& that) = delete;
-   CfgTuple& operator=(const CfgTuple& that) = delete;
 
    //  Returns the tuple's key.
    //

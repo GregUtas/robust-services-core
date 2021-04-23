@@ -56,6 +56,7 @@ class TestInjectSignal : public TestSignal
    friend class Singleton< TestInjectSignal >;
 
    TestInjectSignal();
+   ~TestInjectSignal() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -79,6 +80,7 @@ class TestNull : public TestState
    friend class Singleton< TestNull >;
 
    TestNull();
+   ~TestNull() = default;
 };
 
 class TestActive : public TestState
@@ -86,6 +88,7 @@ class TestActive : public TestState
    friend class Singleton< TestActive >;
 
    TestActive();
+   ~TestActive() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -139,6 +142,7 @@ class TestAnalyzeUserMessage : public TestEventHandler
    friend class Singleton< TestAnalyzeUserMessage >;
 
    TestAnalyzeUserMessage() = default;
+   ~TestAnalyzeUserMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -148,6 +152,7 @@ class TestAnalyzeNetworkMessage : public TestEventHandler
    friend class Singleton< TestAnalyzeNetworkMessage >;
 
    TestAnalyzeNetworkMessage() = default;
+   ~TestAnalyzeNetworkMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -157,6 +162,7 @@ class TestNuInject : public TestEventHandler
    friend class Singleton< TestNuInject >;
 
    TestNuInject() = default;
+   ~TestNuInject() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -166,6 +172,7 @@ class TestNuVerify : public TestEventHandler
    friend class Singleton< TestNuVerify >;
 
    TestNuVerify() = default;
+   ~TestNuVerify() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -175,6 +182,7 @@ class TestAcInject : public TestEventHandler
    friend class Singleton< TestAcInject >;
 
    TestAcInject() = default;
+   ~TestAcInject() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -184,6 +192,7 @@ class TestAcVerify : public TestEventHandler
    friend class Singleton< TestAcVerify >;
 
    TestAcVerify() = default;
+   ~TestAcVerify() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };

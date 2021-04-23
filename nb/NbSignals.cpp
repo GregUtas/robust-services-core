@@ -39,6 +39,7 @@ class SigWrite : public PosixSignal
    friend class Singleton< SigWrite >;
 
    SigWrite();
+   ~SigWrite() = default;
 };
 
 class SigClose : public PosixSignal
@@ -46,6 +47,7 @@ class SigClose : public PosixSignal
    friend class Singleton< SigClose >;
 
    SigClose();
+   ~SigClose() = default;
 };
 
 class SigYield : public PosixSignal
@@ -53,6 +55,7 @@ class SigYield : public PosixSignal
    friend class Singleton< SigYield >;
 
    SigYield();
+   ~SigYield() = default;
 };
 
 class SigStack1 : public PosixSignal
@@ -60,6 +63,7 @@ class SigStack1 : public PosixSignal
    friend class Singleton< SigStack1 >;
 
    SigStack1();
+   ~SigStack1() = default;
 };
 
 class SigStack2 : public PosixSignal
@@ -67,6 +71,7 @@ class SigStack2 : public PosixSignal
    friend class Singleton< SigStack2 >;
 
    SigStack2();
+   ~SigStack2() = default;
 };
 
 class SigPurge : public PosixSignal
@@ -74,6 +79,7 @@ class SigPurge : public PosixSignal
    friend class Singleton< SigPurge >;
 
    SigPurge();
+   ~SigPurge() = default;
 };
 
 class SigDeleted : public PosixSignal
@@ -81,6 +87,7 @@ class SigDeleted : public PosixSignal
    friend class Singleton< SigDeleted >;
 
    SigDeleted();
+   ~SigDeleted() = default;
 };
 
 //------------------------------------------------------------------------------

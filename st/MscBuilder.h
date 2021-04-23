@@ -64,6 +64,14 @@ namespace SessionTools
 class MscBuilder : public Temporary
 {
 public:
+   //  Deleted to prohibit copying.
+   //
+   MscBuilder(const MscBuilder& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   MscBuilder& operator=(const MscBuilder& that) = delete;
+
    //> The maximum number of columns supported in an MSC.
    //
    static const MscColumn MaxCols = 14;
@@ -84,11 +92,6 @@ public:
    //  Deletes the data used to build MSCs.  Not subclassed.
    //
    ~MscBuilder();
-
-   //  Deleted to prohibit copying.
-   //
-   MscBuilder(const MscBuilder& that) = delete;
-   MscBuilder& operator=(const MscBuilder& that) = delete;
 
    //  Builds the MSCs.
    //

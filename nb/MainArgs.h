@@ -40,6 +40,14 @@ class MainArgs : public Immutable
 {
    friend class Singleton< MainArgs >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   MainArgs(const MainArgs& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   MainArgs& operator=(const MainArgs& that) = delete;
+
    //  Returns the number of arguments that were passed to main().
    //
    static size_t Size();
@@ -66,11 +74,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    MainArgs();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~MainArgs();
 

@@ -44,6 +44,14 @@ class AlarmRegistry : public Immutable
    friend class Singleton< AlarmRegistry >;
    friend class Alarm;
 public:
+   //  Deleted to prohibit copying.
+   //
+   AlarmRegistry(const AlarmRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   AlarmRegistry& operator=(const AlarmRegistry& that) = delete;
+
    //> The maximum number of alarms.
    //
    static const id_t MaxAlarms;
@@ -73,11 +81,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    AlarmRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~AlarmRegistry();
 

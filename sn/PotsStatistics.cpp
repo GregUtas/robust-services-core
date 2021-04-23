@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsStatistics.h"
-#include <memory>
 #include <ostream>
 #include <string>
 #include "Debug.h"

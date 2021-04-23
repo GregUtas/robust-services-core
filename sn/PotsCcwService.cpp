@@ -62,6 +62,7 @@ class PotsCcwNull : public PotsCcwState
    friend class Singleton< PotsCcwNull >;
 
    PotsCcwNull();
+   ~PotsCcwNull() = default;
 };
 
 class PotsCcwActive : public PotsCcwState
@@ -69,15 +70,17 @@ class PotsCcwActive : public PotsCcwState
    friend class Singleton< PotsCcwActive >;
 
    PotsCcwActive();
+   ~PotsCcwActive() = default;
 };
 
 class PotsCcwAcCollectInformation : public EventHandler
 {
    friend class Singleton< PotsCcwAcCollectInformation >;
 
+   PotsCcwAcCollectInformation() = default;
+   ~PotsCcwAcCollectInformation() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
-   PotsCcwAcCollectInformation() = default;
 };
 
 class PotsCcwSsm : public ServiceSM

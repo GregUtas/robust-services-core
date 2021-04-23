@@ -54,6 +54,14 @@ public:
       State_N      // number of states
    };
 
+   //  Deleted to prohibit copying.
+   //
+   TestDatabase(const TestDatabase& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   TestDatabase& operator=(const TestDatabase& that) = delete;
+
    //  Displays database statistics in EXPL.
    //
    NodeBase::word Query(bool verbose, std::string& expl) const;
@@ -80,11 +88,11 @@ public:
    //
    void Shutdown(NodeBase::RestartLevel level) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TestDatabase();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TestDatabase();
 

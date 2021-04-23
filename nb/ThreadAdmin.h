@@ -44,6 +44,14 @@ class ThreadAdmin : public Protected
 {
    friend class Singleton< ThreadAdmin >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ThreadAdmin(const ThreadAdmin& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ThreadAdmin& operator=(const ThreadAdmin& that) = delete;
+
    //  Returns the time allowed for the system to initialize.
    //
    static Duration InitTimeout();
@@ -161,11 +169,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ThreadAdmin();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ThreadAdmin();
 

@@ -40,6 +40,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyNuAnalyzeLocalMessage() = default;
+   ~PotsProxyNuAnalyzeLocalMessage() = default;
 };
 
 class PotsProxyNuOriginate : public EventHandler
@@ -50,6 +51,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyNuOriginate() = default;
+   ~PotsProxyNuOriginate() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -62,6 +64,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyCiCollectInformation() = default;
+   ~PotsProxyCiCollectInformation() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -74,6 +77,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyScAnalyzeLocalMessage() = default;
+   ~PotsProxyScAnalyzeLocalMessage() = default;
 };
 
 class PotsProxyScSendCall : public EventHandler
@@ -84,6 +88,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyScSendCall() = default;
+   ~PotsProxyScSendCall() = default;
 };
 
 class PotsProxyScRemoteProgress : public EventHandler
@@ -94,6 +99,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyScRemoteProgress() = default;
+   ~PotsProxyScRemoteProgress() = default;
 };
 
 class PotsProxyScRemoteAlerting : public EventHandler
@@ -104,6 +110,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyScRemoteAlerting() = default;
+   ~PotsProxyScRemoteAlerting() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -116,6 +123,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyPcAnalyzeLocalMessage() = default;
+   ~PotsProxyPcAnalyzeLocalMessage() = default;
 };
 
 class PotsProxyPcLocalProgress : public EventHandler
@@ -126,6 +134,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyPcLocalProgress() = default;
+   ~PotsProxyPcLocalProgress() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -138,6 +147,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyTaAnalyzeLocalMessage() = default;
+   ~PotsProxyTaAnalyzeLocalMessage() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -150,6 +160,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyAcAnalyzeLocalMessage() = default;
+   ~PotsProxyAcAnalyzeLocalMessage() = default;
 };
 
 class PotsProxyAcLocalSuspend : public EventHandler
@@ -160,6 +171,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyAcLocalSuspend() = default;
+   ~PotsProxyAcLocalSuspend() = default;
 };
 
 class PotsProxyAcRemoteSuspend : public EventHandler
@@ -170,6 +182,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyAcRemoteSuspend() = default;
+   ~PotsProxyAcRemoteSuspend() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -182,6 +195,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyLsLocalResume() = default;
+   ~PotsProxyLsLocalResume() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -194,6 +208,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyRsRemoteResume() = default;
+   ~PotsProxyRsRemoteResume() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -206,6 +221,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyLocalAlerting() = default;
+   ~PotsProxyLocalAlerting() = default;
 };
 
 class PotsProxyLocalAnswer : public EventHandler
@@ -216,6 +232,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyLocalAnswer() = default;
+   ~PotsProxyLocalAnswer() = default;
 };
 
 class PotsProxyRemoteAnswer : public EventHandler
@@ -226,6 +243,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyRemoteAnswer() = default;
+   ~PotsProxyRemoteAnswer() = default;
 };
 
 class PotsProxyLocalRelease : public EventHandler
@@ -236,6 +254,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyLocalRelease() = default;
+   ~PotsProxyLocalRelease() = default;
 };
 
 class PotsProxyRemoteRelease : public EventHandler
@@ -246,6 +265,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyRemoteRelease() = default;
+   ~PotsProxyRemoteRelease() = default;
 };
 
 class PotsProxyReleaseCall : public EventHandler
@@ -256,6 +276,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsProxyReleaseCall() = default;
+   ~PotsProxyReleaseCall() = default;
 };
 }
 #endif

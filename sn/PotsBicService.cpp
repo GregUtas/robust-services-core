@@ -45,6 +45,7 @@ class PotsBicNull : public State
    friend class Singleton< PotsBicNull >;
 
    PotsBicNull();
+   ~PotsBicNull() = default;
 };
 
 class PotsBicSsm : public ServiceSM

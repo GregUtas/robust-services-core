@@ -54,6 +54,9 @@ public:
    //  Deleted to prohibit copying.
    //
    Initiator(const Initiator& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    Initiator& operator=(const Initiator& that) = delete;
 
    //  Returns the service associated with the initiator.

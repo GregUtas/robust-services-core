@@ -1471,6 +1471,8 @@ class LbcPool : public Temporary
 {
    friend class Singleton< LbcPool >;
 public:
+   LbcPool(const LbcPool& that) = delete;
+   LbcPool& operator=(const LbcPool& that) = delete;
    LeakyBucketCounter lbc_;
 private:
    LbcPool() = default;
@@ -1608,15 +1610,18 @@ class Q1WayPool : public Temporary
 {
    friend class Singleton< Q1WayPool >;
 public:
-   static const size_t MaxItems = 8;
+   Q1WayPool(const Q1WayPool& that) = delete;
+   Q1WayPool& operator=(const Q1WayPool& that) = delete;
    void Reallocate();
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 
+   static const size_t MaxItems = 8;
    std::unique_ptr< Q1WayItem > items_[MaxItems + 1];
    Q1Way< Q1WayItem > itemq_;
 private:
    Q1WayPool();
+   ~Q1WayPool() = default;
 };
 
 class Q1WayItemIndexParm : public CliIntParm
@@ -2100,15 +2105,18 @@ class Q2WayPool : public Temporary
 {
    friend class Singleton< Q2WayPool >;
 public:
-   static const size_t MaxItems = 8;
+   Q2WayPool(const Q2WayPool& that) = delete;
+   Q2WayPool& operator=(const Q2WayPool& that) = delete;
    void Reallocate();
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 
+   static const size_t MaxItems = 8;
    std::unique_ptr< Q2WayItem > items_[MaxItems + 1];
    Q2Way< Q2WayItem > itemq_;
 private:
    Q2WayPool();
+   ~Q2WayPool() = default;
 };
 
 class Q2WayItemIndexParm : public CliIntParm
@@ -2644,14 +2652,17 @@ class RegistryPool : public Temporary
 {
    friend class Singleton< RegistryPool >;
 public:
-   static const size_t MaxItems = 8;
+   RegistryPool(const RegistryPool& that) = delete;
+   RegistryPool& operator=(const RegistryPool& that) = delete;
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 
+   static const size_t MaxItems = 8;
    std::unique_ptr< RegistryItem > items_[MaxItems + 1];
    Registry< RegistryItem > registry_;
 private:
    RegistryPool();
+   ~RegistryPool() = default;
 };
 
 class RegistryItemIndexParm : public CliIntParm
@@ -3166,8 +3177,10 @@ class SysTimePool : public Temporary
 {
    friend class Singleton< SysTimePool >;
 public:
-   static const size_t MaxIndex = 3;
+   SysTimePool(const SysTimePool& that) = delete;
+   SysTimePool& operator=(const SysTimePool& that) = delete;
 
+   static const size_t MaxIndex = 3;
    SysTime time_[MaxIndex + 1];
 private:
    SysTimePool() = default;

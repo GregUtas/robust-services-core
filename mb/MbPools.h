@@ -42,11 +42,11 @@ public:
    //
    static const size_t BlockSize;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    MediaEndptPool();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~MediaEndptPool();
 };

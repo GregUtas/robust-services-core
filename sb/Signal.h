@@ -49,14 +49,17 @@ public:
    //
    typedef SignalId Id;
 
-   //> Highest valid signal identifier.
-   //
-   static const Id MaxId = 63;
-
    //  Deleted to prohibit copying.
    //
    Signal(const Signal& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    Signal& operator=(const Signal& that) = delete;
+
+   //> Highest valid signal identifier.
+   //
+   static const Id MaxId = 63;
 
    //  Returns true if SID is a valid signal identifier.
    //

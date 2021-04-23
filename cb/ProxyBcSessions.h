@@ -544,11 +544,11 @@ class ProxyBcFactory : public CipFactory
 {
    friend class Singleton< ProxyBcFactory >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ProxyBcFactory();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ProxyBcFactory();
 

@@ -55,6 +55,14 @@ public:
    //
    typedef uint8_t Id;
 
+   //  Deleted to prohibit copying.
+   //
+   PotsFeature(const PotsFeature& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   PotsFeature& operator=(const PotsFeature& that) = delete;
+
    //> The maximum number of POTS features.
    //
    static const Id MaxId = 63;
@@ -101,11 +109,6 @@ protected:
    //  Protected because subclasses should be singletons.
    //
    virtual ~PotsFeature();
-
-   //  Deleted to prohibit copying.
-   //
-   PotsFeature(const PotsFeature& that) = delete;
-   PotsFeature& operator=(const PotsFeature& that) = delete;
 
    //  Makes the feature incompatible with the one identified by FID.
    //

@@ -50,6 +50,9 @@ public:
    //  Deleted to prohibit copying.
    //
    Symbol(const Symbol& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    Symbol& operator=(const Symbol& that) = delete;
 
    //  Returns a string containing the characters that are valid in a

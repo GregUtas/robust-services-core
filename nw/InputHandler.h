@@ -61,6 +61,9 @@ public:
    //  Deleted to prohibit copying.
    //
    InputHandler(const InputHandler& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    InputHandler& operator=(const InputHandler& that) = delete;
 
    //  Returns the port that the handler serves.

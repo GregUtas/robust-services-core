@@ -50,6 +50,9 @@ public:
    //  Deleted to prohibit copying.
    //
    Pooled(const Pooled& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    Pooled& operator=(const Pooled& that) = delete;
 
    //  Returns true if the object is marked corrupt.

@@ -56,6 +56,9 @@ public:
    //  Deleted to prohibit copying.
    //
    Q2Link(const Q2Link& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    Q2Link& operator=(const Q2Link& that) = delete;
 
    //  Returns true if the item is on a queue.

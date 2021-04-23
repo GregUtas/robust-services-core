@@ -43,11 +43,11 @@ public:
    //
    void Startup(NodeBase::RestartLevel level) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CtModule();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CtModule();
 };

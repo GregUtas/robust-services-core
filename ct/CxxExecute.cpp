@@ -125,6 +125,14 @@ public:
    //
    ~ErrTrace();
 
+   //  Deleted to prohibit copying.
+   //
+   ErrTrace(const ErrTrace& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ErrTrace& operator=(const ErrTrace& that) = delete;
+
    //  Overridden to display the trace record.
    //
    bool Display(ostream& stream, const string& opts) override;

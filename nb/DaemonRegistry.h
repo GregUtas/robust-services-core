@@ -43,6 +43,14 @@ class DaemonRegistry : public Permanent
    friend class Singleton< DaemonRegistry >;
    friend class Daemon;
 public:
+   //  Deleted to prohibit copying.
+   //
+   DaemonRegistry(const DaemonRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   DaemonRegistry& operator=(const DaemonRegistry& that) = delete;
+
    //  Returns the daemon identified by NAME.
    //
    Daemon* FindDaemon(fixed_string name) const;
@@ -68,11 +76,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    DaemonRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~DaemonRegistry();
 

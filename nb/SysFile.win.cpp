@@ -40,6 +40,8 @@ class FileWalker : public FileList
 public:
    FileWalker(const char* dirName, const char* fileSpec);
    ~FileWalker();
+   FileWalker(const FileWalker& that) = delete;
+   FileWalker& operator=(const FileWalker& that) = delete;
    void GetName(string& fileName) const override;
    bool IsSubdir() const override;
    bool AtEnd() const override;

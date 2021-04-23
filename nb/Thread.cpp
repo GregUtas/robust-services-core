@@ -157,10 +157,6 @@ private:
    //
    ThreadTrace(fn_name_arg func, fn_depth depth, Id rid, int32_t info);
 
-   //  Not subclassed.
-   //
-   ~ThreadTrace() = default;
-
    //  Additional debug information.
    //
    const int32_t info_;
@@ -363,6 +359,9 @@ public:
    //  Deleted to prohibit copying.
    //
    ContextSwitches(const ContextSwitches& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    ContextSwitches& operator=(const ContextSwitches& that) = delete;
 
    //  Returns true if context switches are being logged.
@@ -389,11 +388,11 @@ public:
    //
    void DisplaySwitches(ostream& stream) const;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ContextSwitches();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ContextSwitches();
 

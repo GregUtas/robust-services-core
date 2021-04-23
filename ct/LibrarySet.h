@@ -53,6 +53,14 @@ class LibrarySet : public LibraryItem
 {
    friend class Library;
 public:
+   //  Deleted to prohibit copying.
+   //
+   LibrarySet(const LibrarySet& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   LibrarySet& operator=(const LibrarySet& that) = delete;
+
    //  Prefix for the name of a read-only set.
    //
    static const char ReadOnlyChar;
@@ -205,11 +213,6 @@ protected:
    //
    static NodeBase::word Counted(std::string& result, const size_t count);
 private:
-   //  Deleted to prohibit copying.
-   //
-   LibrarySet(const LibrarySet& that) = delete;
-   LibrarySet& operator=(const LibrarySet& that) = delete;
-
    //  Returns 0 if this set can be assigned to a variable.  Returns another
    //  value and updates EXPL with an explanation if it cannot be assigned.
    //

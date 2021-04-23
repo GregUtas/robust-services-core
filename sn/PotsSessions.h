@@ -63,11 +63,11 @@ public:
    ipport_t Port() const override { return portCfg_->GetPort(); }
    Faction GetFaction() const override { return PayloadFaction; }
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsCallIpService();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsCallIpService();
 
@@ -119,11 +119,11 @@ class PotsCallFactory : public BcFactory
 {
    friend class Singleton< PotsCallFactory >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsCallFactory();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsCallFactory();
 
@@ -184,12 +184,12 @@ class PotsBcService : public ProxyBcService
 {
    friend class Singleton< PotsBcService >;
 
-   //  Private because this singleton is not subclassed.  Registers all
+   //  Private because this is a singleton.  Registers all
    //  POTS states, event handlers, and triggers.
    //
    PotsBcService();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsBcService();
 };

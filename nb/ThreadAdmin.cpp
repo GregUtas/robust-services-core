@@ -57,6 +57,8 @@ class ThreadsStats : public Dynamic
 public:
    ThreadsStats();
    ~ThreadsStats();
+   ThreadsStats(const ThreadsStats& that) = delete;
+   ThreadsStats& operator=(const ThreadsStats& that) = delete;
 
    CounterPtr creations_;
    CounterPtr deletions_;

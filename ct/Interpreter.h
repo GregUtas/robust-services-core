@@ -59,6 +59,14 @@ public:
    //
    ~Interpreter();
 
+   //  Deleted to prohibit copying.
+   //
+   Interpreter(const Interpreter& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Interpreter& operator=(const Interpreter& that) = delete;
+
    //  Evaluates the expression.
    //
    LibrarySet* Evaluate(CliThread& cli);

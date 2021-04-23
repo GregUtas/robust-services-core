@@ -40,6 +40,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcNuAnalyzeLocalMessage() = default;
+   ~PotsBcNuAnalyzeLocalMessage() = default;
 };
 
 class PotsBcNuOriginate : public EventHandler
@@ -50,6 +51,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcNuOriginate() = default;
+   ~PotsBcNuOriginate() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -62,6 +64,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAoAnalyzeLocalMessage() = default;
+   ~PotsBcAoAnalyzeLocalMessage() = default;
 };
 
 class PotsBcAoAuthorizeOrigination : public EventHandler
@@ -72,6 +75,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAoAuthorizeOrigination() = default;
+   ~PotsBcAoAuthorizeOrigination() = default;
 };
 
 class PotsBcAoOriginationDenied : public EventHandler
@@ -82,6 +86,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAoOriginationDenied() = default;
+   ~PotsBcAoOriginationDenied() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -94,6 +99,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcCiAnalyzeLocalMessage() = default;
+   ~PotsBcCiAnalyzeLocalMessage() = default;
 };
 
 class PotsBcCiCollectInformation : public EventHandler
@@ -104,6 +110,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcCiCollectInformation() = default;
+   ~PotsBcCiCollectInformation() = default;
 };
 
 class PotsBcCiLocalInformation : public EventHandler
@@ -114,6 +121,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcCiLocalInformation() = default;
+   ~PotsBcCiLocalInformation() = default;
 };
 
 class PotsBcCiCollectionTimeout : public EventHandler
@@ -124,6 +132,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcCiCollectionTimeout() = default;
+   ~PotsBcCiCollectionTimeout() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -136,6 +145,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAiAnalyzeInformation() = default;
+   ~PotsBcAiAnalyzeInformation() = default;
 };
 
 class PotsBcAiInvalidInformation : public EventHandler
@@ -146,6 +156,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAiInvalidInformation() = default;
+   ~PotsBcAiInvalidInformation() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -158,6 +169,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcSrSelectRoute() = default;
+   ~PotsBcSrSelectRoute() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -170,6 +182,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAsAuthorizeCallSetup() = default;
+   ~PotsBcAsAuthorizeCallSetup() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -182,6 +195,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcScAnalyzeLocalMessage() = default;
+   ~PotsBcScAnalyzeLocalMessage() = default;
 };
 
 class PotsBcScSendCall : public EventHandler
@@ -192,6 +206,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcScSendCall() = default;
+   ~PotsBcScSendCall() = default;
 };
 
 class PotsBcScRemoteBusy : public EventHandler
@@ -202,6 +217,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcScRemoteBusy() = default;
+   ~PotsBcScRemoteBusy() = default;
 };
 
 class PotsBcScRemoteProgress : public EventHandler
@@ -212,6 +228,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcScRemoteProgress() = default;
+   ~PotsBcScRemoteProgress() = default;
 };
 
 class PotsBcScRemoteAlerting : public EventHandler
@@ -222,6 +239,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcScRemoteAlerting() = default;
+   ~PotsBcScRemoteAlerting() = default;
 };
 
 class PotsBcScRemoteRelease : public EventHandler
@@ -232,6 +250,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcScRemoteRelease() = default;
+   ~PotsBcScRemoteRelease() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -244,6 +263,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcOaRemoteNoAnswer() = default;
+   ~PotsBcOaRemoteNoAnswer() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -256,6 +276,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcNuTerminate() = default;
+   ~PotsBcNuTerminate() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -268,6 +289,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAtAuthorizeTermination() = default;
+   ~PotsBcAtAuthorizeTermination() = default;
 };
 
 class PotsBcAtTerminationDenied : public EventHandler
@@ -278,6 +300,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAtTerminationDenied() = default;
+   ~PotsBcAtTerminationDenied() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -290,6 +313,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcSfAnalyzeLocalMessage() = default;
+   ~PotsBcSfAnalyzeLocalMessage() = default;
 };
 
 class PotsBcSfSelectFacility : public EventHandler
@@ -300,6 +324,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcSfSelectFacility() = default;
+   ~PotsBcSfSelectFacility() = default;
 };
 
 class PotsBcSfLocalBusy : public EventHandler
@@ -310,6 +335,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcSfLocalBusy() = default;
+   ~PotsBcSfLocalBusy() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -322,6 +348,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcPcAnalyzeLocalMessage() = default;
+   ~PotsBcPcAnalyzeLocalMessage() = default;
 };
 
 class PotsBcPcPresentCall : public EventHandler
@@ -332,6 +359,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcPcPresentCall() = default;
+   ~PotsBcPcPresentCall() = default;
 };
 
 class PotsBcPcFacilityFailure : public EventHandler
@@ -342,6 +370,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcPcFacilityFailure() = default;
+   ~PotsBcPcFacilityFailure() = default;
 };
 
 class PotsBcPcLocalAlerting : public EventHandler
@@ -352,6 +381,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcPcLocalAlerting() = default;
+   ~PotsBcPcLocalAlerting() = default;
 };
 
 class PotsBcPcRemoteRelease : public EventHandler
@@ -362,6 +392,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcPcRemoteRelease() = default;
+   ~PotsBcPcRemoteRelease() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -374,6 +405,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcTaAnalyzeLocalMessage() = default;
+   ~PotsBcTaAnalyzeLocalMessage() = default;
 };
 
 class PotsBcTaLocalNoAnswer : public EventHandler
@@ -384,6 +416,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcTaLocalNoAnswer() = default;
+   ~PotsBcTaLocalNoAnswer() = default;
 };
 
 class PotsBcTaRemoteRelease : public EventHandler
@@ -394,6 +427,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcTaRemoteRelease() = default;
+   ~PotsBcTaRemoteRelease() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -406,6 +440,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAcAnalyzeLocalMessage() = default;
+   ~PotsBcAcAnalyzeLocalMessage() = default;
 };
 
 class PotsBcAcLocalSuspend : public EventHandler
@@ -416,6 +451,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAcLocalSuspend() = default;
+   ~PotsBcAcLocalSuspend() = default;
 };
 
 class PotsBcAcRemoteSuspend : public EventHandler
@@ -426,6 +462,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcAcRemoteSuspend() = default;
+   ~PotsBcAcRemoteSuspend() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -438,6 +475,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcLsLocalResume() = default;
+   ~PotsBcLsLocalResume() = default;
 };
 
 class PotsBcLsRemoteRelease : public EventHandler
@@ -448,6 +486,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcLsRemoteRelease() = default;
+   ~PotsBcLsRemoteRelease() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -460,6 +499,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcRsRemoteResume() = default;
+   ~PotsBcRsRemoteResume() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -472,6 +512,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcExAnalyzeLocalMessage() = default;
+   ~PotsBcExAnalyzeLocalMessage() = default;
 };
 
 class PotsBcExApplyTreatment : public EventHandler
@@ -482,6 +523,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcExApplyTreatment() = default;
+   ~PotsBcExApplyTreatment() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -494,6 +536,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcLocalAnswer() = default;
+   ~PotsBcLocalAnswer() = default;
 };
 
 class PotsBcRemoteAnswer : public EventHandler
@@ -504,6 +547,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcRemoteAnswer() = default;
+   ~PotsBcRemoteAnswer() = default;
 };
 
 class PotsBcLocalRelease : public EventHandler
@@ -514,6 +558,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcLocalRelease() = default;
+   ~PotsBcLocalRelease() = default;
 };
 
 class PotsBcReleaseCall : public EventHandler
@@ -524,6 +569,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcReleaseCall() = default;
+   ~PotsBcReleaseCall() = default;
 };
 
 class PotsBcReleaseUser : public EventHandler
@@ -534,6 +580,7 @@ protected:
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
    PotsBcReleaseUser() = default;
+   ~PotsBcReleaseUser() = default;
 };
 }
 #endif

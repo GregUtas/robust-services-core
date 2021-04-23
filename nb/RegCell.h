@@ -57,6 +57,9 @@ public:
    //  Deleted to prohibit copying.
    //
    RegCell(const RegCell& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    RegCell& operator=(const RegCell& that) = delete;
 
    //  Before an object is registered, this function allow its index within

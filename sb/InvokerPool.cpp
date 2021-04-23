@@ -65,6 +65,8 @@ class InvokerPoolStats : public Dynamic
 public:
    InvokerPoolStats();
    ~InvokerPoolStats();
+   InvokerPoolStats(const InvokerPoolStats& that) = delete;
+   InvokerPoolStats& operator=(const InvokerPoolStats& that) = delete;
 
    HighWatermarkPtr maxTrans_;
    CounterPtr       requeues_;
@@ -113,6 +115,9 @@ public:
    //  Deleted to prohibit copying.
    //
    InvokerWork(const InvokerWork& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    InvokerWork& operator=(const InvokerWork& that) = delete;
 
    //  Queue of contexts that have messages waiting to be processed.

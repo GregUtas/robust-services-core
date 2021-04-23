@@ -44,6 +44,14 @@ class IpPortRegistry : public NodeBase::Protected
    friend class NodeBase::Singleton< IpPortRegistry >;
    friend class IpPort;
 public:
+   //  Deleted to prohibit copying.
+   //
+   IpPortRegistry(const IpPortRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   IpPortRegistry& operator=(const IpPortRegistry& that) = delete;
+
    //  Returns the element's IP address (hostname).
    //
    static SysIpL2Addr HostAddress();
@@ -80,11 +88,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    IpPortRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~IpPortRegistry();
 

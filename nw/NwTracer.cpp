@@ -45,6 +45,7 @@ class NetworkTraceTool : public Tool
    friend class Singleton< NetworkTraceTool >;
 
    NetworkTraceTool() : Tool(NetworkTracer, 'n', true) { }
+   ~NetworkTraceTool() = default;
    c_string Name() const override { return NetworkTraceToolName; }
    c_string Expl() const override { return NetworkTraceToolExpl; }
 };

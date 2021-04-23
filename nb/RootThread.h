@@ -54,11 +54,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    RootThread();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~RootThread();
 

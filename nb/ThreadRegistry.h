@@ -91,6 +91,14 @@ class ThreadRegistry : public Permanent
    friend class Thread;
    friend class ModuleRegistry;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ThreadRegistry(const ThreadRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ThreadRegistry& operator=(const ThreadRegistry& that) = delete;
+
    //  Returns the thread whose native identifier is NID.
    //
    Thread* FindThread(SysThreadId nid) const;
@@ -128,11 +136,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ThreadRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ThreadRegistry();
 

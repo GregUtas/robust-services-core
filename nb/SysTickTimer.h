@@ -38,6 +38,14 @@ namespace NodeBase
 class SysTickTimer : public Immutable
 {
 public:
+   //  Deleted to prohibit copying.
+   //
+   SysTickTimer(const SysTickTimer& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   SysTickTimer& operator=(const SysTickTimer& that) = delete;
+
    //  Returns the timer after creating it if it doesn't yet exist.
    //
    static SysTickTimer* Instance();
@@ -78,11 +86,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    SysTickTimer();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~SysTickTimer();
 

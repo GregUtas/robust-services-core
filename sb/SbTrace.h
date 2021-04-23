@@ -146,6 +146,14 @@ private:
 class BuffTrace : public NodeBase::TimedRecord
 {
 public:
+   //  Deleted to prohibit copying.
+   //
+   BuffTrace(const BuffTrace& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   BuffTrace& operator=(const BuffTrace& that) = delete;
+
    //  Types of buffer trace records.
    //
    static const Id IcMsg = 1;  // incoming message
@@ -159,11 +167,6 @@ public:
    //  Releases buff_.  Not subclassed.
    //
    ~BuffTrace();
-
-   //  Deleted to prohibit copying.
-   //
-   BuffTrace(const BuffTrace& that) = delete;
-   BuffTrace& operator=(const BuffTrace& that) = delete;
 
    //  Starting at BT, finds the next message with SID that was received
    //  by FID.  Updates SKIP with information about signals (if any) that

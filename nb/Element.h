@@ -36,6 +36,14 @@ class Element : public Protected
 {
    friend class Singleton< Element >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   Element(const Element& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Element& operator=(const Element& that) = delete;
+
    //  Returns true if the element's name was not set, which probably means
    //  that the configuration file was not found.
    //
@@ -89,11 +97,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    Element();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~Element();
 

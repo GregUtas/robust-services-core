@@ -43,14 +43,17 @@ public:
    //
    typedef StateId Id;
 
-   //> Highest valid state identifier;
-   //
-   static const Id MaxId;
-
    //  Deleted to prohibit copying.
    //
    State(const State& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    State& operator=(const State& that) = delete;
+
+   //> Highest valid state identifier;
+   //
+   static const Id MaxId;
 
    //  Returns the state's identifier.
    //

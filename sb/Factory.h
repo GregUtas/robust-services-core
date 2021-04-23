@@ -57,6 +57,14 @@ public:
    //
    typedef FactoryId Id;
 
+   //  Deleted to prohibit copying.
+   //
+   Factory(const Factory& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Factory& operator=(const Factory& that) = delete;
+
    //> Highest valid factory identifier.
    //
    static const Id MaxId = UINT8_MAX;
@@ -77,11 +85,6 @@ public:
       PortAllocFailed,      // failed to create PSM for context
       ContextCorrupt        // message rejected because context was corrupt
    };
-
-   //  Deleted to prohibit copying.
-   //
-   Factory(const Factory& that) = delete;
-   Factory& operator=(const Factory& that) = delete;
 
    //  Returns the factory's identifier.
    //

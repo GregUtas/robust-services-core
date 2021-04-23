@@ -38,6 +38,14 @@ class PosixSignal : public Immutable
 {
    friend class Registry< PosixSignal >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   PosixSignal(const PosixSignal& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   PosixSignal& operator=(const PosixSignal& that) = delete;
+
    //> Highest valid signal identifier.
    //
    static const signal_t MaxId;
@@ -55,11 +63,6 @@ public:
       NoError,      // no log from trap handler
       Attribute_N   // number of attributes
    };
-
-   //  Deleted to prohibit copying.
-   //
-   PosixSignal(const PosixSignal& that) = delete;
-   PosixSignal& operator=(const PosixSignal& that) = delete;
 
    //  Returns the signal's value on this platform.
    //

@@ -76,6 +76,14 @@ public:
       registry_ = nullptr;
    }
 
+   //  Deleted to prohibit copying.
+   //
+   Registry(const Registry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Registry& operator=(const Registry& that) = delete;
+
    //  Allocates memory of type MEM for the registry's array.  MAX is the
    //  maximum number of objects that can register.  All objects must derive
    //  from the same base class, with DIFF being the distance from the top of
@@ -536,11 +544,6 @@ public:
       }
    }
 private:
-   //  Deleted to prohibit copying.
-   //
-   Registry(const Registry& that) = delete;
-   Registry& operator=(const Registry& that) = delete;
-
    //  Returns ELEM's cell location.
    //
    RegCell* Cell(const T& item) const

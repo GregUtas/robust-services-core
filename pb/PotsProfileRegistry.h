@@ -46,6 +46,14 @@ class PotsProfileRegistry : public Protected
    friend class Singleton< PotsProfileRegistry >;
    friend class PotsProfile;
 public:
+   //  Deleted to prohibit copying.
+   //
+   PotsProfileRegistry(const PotsProfileRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   PotsProfileRegistry& operator=(const PotsProfileRegistry& that) = delete;
+
    //  Returns DN's profile.
    //
    PotsProfile* Profile(Address::DN dn) const;
@@ -72,11 +80,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsProfileRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsProfileRegistry();
 

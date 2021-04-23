@@ -43,6 +43,14 @@ class Statistic : public Dynamic
 {
    friend class StatisticsRegistry;
 public:
+   //  Deleted to prohibit copying.
+   //
+   Statistic(const Statistic& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Statistic& operator=(const Statistic& that) = delete;
+
    //> The maximum length of the string that explains the statistic.
    //
    static const size_t MaxExplSize;
@@ -50,11 +58,6 @@ public:
    //  Virtual to allow subclassing.
    //
    virtual ~Statistic();
-
-   //  Deleted to prohibit copying.
-   //
-   Statistic(const Statistic& that) = delete;
-   Statistic& operator=(const Statistic& that) = delete;
 
    //  Returns the value during the current measurement period.
    //

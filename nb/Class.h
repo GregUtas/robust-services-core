@@ -48,6 +48,14 @@ class Class : public Immutable
 {
    friend class Registry< Class >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   Class(const Class& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Class& operator=(const Class& that) = delete;
+
    //  Overridden by a subclass to call any of SetVptr, SetTemplate, and
    //  SetQuasiSingleton after its singleton is created.  The singleton is
    //  created during system initialization by
@@ -121,11 +129,6 @@ protected:
    //  should be singletons.
    //
    virtual ~Class();
-
-   //  Deleted to prohibit copying.
-   //
-   Class(const Class& that) = delete;
-   Class& operator=(const Class& that) = delete;
 
    //  Performs the equivalent of operator new on the object's class
    //  to allocate SIZE bytes when creating an object.  The default

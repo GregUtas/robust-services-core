@@ -48,6 +48,14 @@ namespace NodeBase
 class Singletons : public Permanent
 {
 public:
+   //  Deleted to prohibit copying.
+   //
+   Singletons(const Singletons& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Singletons& operator=(const Singletons& that) = delete;
+
    //  Returns the registry of singletons.
    //
    static Singletons* Instance();
@@ -77,18 +85,13 @@ private:
    //
    static const size_t MaxSingletons;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    Singletons();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~Singletons();
-
-   //  Deleted to prohibit copying.
-   //
-   Singletons(const Singletons& that) = delete;
-   Singletons& operator=(const Singletons& that) = delete;
 
    //  Information about each singleton.
    //

@@ -70,6 +70,7 @@ class PotsCfxNull : public PotsCfxState
    friend class Singleton< PotsCfxNull >;
 
    PotsCfxNull();
+   ~PotsCfxNull() = default;
 };
 
 class PotsCfuActivating : public PotsCfxState
@@ -77,6 +78,7 @@ class PotsCfuActivating : public PotsCfxState
    friend class Singleton< PotsCfuActivating >;
 
    PotsCfuActivating();
+   ~PotsCfuActivating() = default;
 };
 
 class PotsCfbTiming : public PotsCfxState
@@ -84,6 +86,7 @@ class PotsCfbTiming : public PotsCfxState
    friend class Singleton< PotsCfbTiming >;
 
    PotsCfbTiming();
+   ~PotsCfbTiming() = default;
 };
 
 class PotsCfxEvent : public Event
@@ -118,6 +121,7 @@ class PotsCfxUnAnalyzeMessage : public PotsCfxEventHandler
    friend class Singleton< PotsCfxUnAnalyzeMessage >;
 
    PotsCfxUnAnalyzeMessage() = default;
+   ~PotsCfxUnAnalyzeMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -127,6 +131,7 @@ class PotsCfbTiAnalyzeMessage : public PotsCfxEventHandler
    friend class Singleton< PotsCfbTiAnalyzeMessage >;
 
    PotsCfbTiAnalyzeMessage() = default;
+   ~PotsCfbTiAnalyzeMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -136,6 +141,7 @@ class PotsCfbTiTimeout : public PotsCfxEventHandler
    friend class Singleton< PotsCfbTiTimeout >;
 
    PotsCfbTiTimeout() = default;
+   ~PotsCfbTiTimeout() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -516,8 +522,7 @@ EventHandler::Rc PotsCfxSsm::ProcessInitNack
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc PotsCfxSsm::ProcessSap
-   (Event& currEvent, Event*& nextEvent)
+EventHandler::Rc PotsCfxSsm::ProcessSap(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCfxSsm.ProcessSap");
 

@@ -46,6 +46,14 @@ class LogGroup : public Immutable
 {
    friend class Log;
 public:
+   //  Deleted to prohibit copying.
+   //
+   LogGroup(const LogGroup& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   LogGroup& operator=(const LogGroup& that) = delete;
+
    //> The maximum length of a log group's name.
    //
    static const size_t MaxNameSize;
@@ -66,11 +74,6 @@ public:
    //  Not subclassed.
    //
    ~LogGroup();
-
-   //  Deleted to prohibit copying.
-   //
-   LogGroup(const LogGroup& that) = delete;
-   LogGroup& operator=(const LogGroup& that) = delete;
 
    //  Returns the group's name.
    //

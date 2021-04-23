@@ -43,6 +43,9 @@ public:
    //  Deleted to prohibit copying.
    //
    TimerRegistry(const TimerRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    TimerRegistry& operator=(const TimerRegistry& that) = delete;
 
    //  Invokes SendTimeout on each timer that has expired.
@@ -62,11 +65,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TimerRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TimerRegistry();
 

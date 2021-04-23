@@ -42,6 +42,14 @@ class InvokerPoolRegistry : public NodeBase::Dynamic
    friend class NodeBase::Singleton< InvokerPoolRegistry >;
    friend class InvokerPool;
 public:
+   //  Deleted to prohibit copying.
+   //
+   InvokerPoolRegistry(const InvokerPoolRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   InvokerPoolRegistry& operator=(const InvokerPoolRegistry& that) = delete;
+
    //  Returns the pool registered against FACTION.
    //
    InvokerPool* Pool(NodeBase::Faction faction) const;
@@ -71,11 +79,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    InvokerPoolRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~InvokerPoolRegistry();
 

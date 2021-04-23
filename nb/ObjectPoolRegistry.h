@@ -44,6 +44,14 @@ class ObjectPoolRegistry : public Protected
    friend class ObjectPool;
    friend class ObjectPoolAudit;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ObjectPoolRegistry(const ObjectPoolRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   ObjectPoolRegistry& operator=(const ObjectPoolRegistry& that) = delete;
+
    //  Returns the pool registered against PID.
    //
    ObjectPool* Pool(ObjectPoolId pid) const;
@@ -73,11 +81,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ObjectPoolRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~ObjectPoolRegistry();
 

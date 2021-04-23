@@ -46,6 +46,7 @@ class PotsHtlNull : public State
    friend class Singleton< PotsHtlNull >;
 
    PotsHtlNull();
+   ~PotsHtlNull() = default;
 };
 
 class PotsHtlSsm : public ServiceSM

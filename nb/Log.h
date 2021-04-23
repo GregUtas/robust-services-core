@@ -49,6 +49,14 @@ class Log : public Immutable
 {
    friend class Alarm;
 public:
+   //  Deleted to prohibit copying.
+   //
+   Log(const Log& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Log& operator=(const Log& that) = delete;
+
    //  The maximum identifier for a log.
    //
    static const LogId MaxId = 999;

@@ -45,6 +45,14 @@ class PotsTreatmentRegistry : public Protected
    friend class Singleton< PotsTreatmentRegistry >;
    friend class PotsTreatmentQueue;
 public:
+   //  Deleted to prohibit copying.
+   //
+   PotsTreatmentRegistry(const PotsTreatmentRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   PotsTreatmentRegistry& operator=(const PotsTreatmentRegistry& that) = delete;
+
    //  Sets CAUSE to map to QID.
    //
    void SetCauseToTreatmentQ(Cause::Ind cause, PotsTreatmentQueue::QId qid);
@@ -66,11 +74,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsTreatmentRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsTreatmentRegistry();
 

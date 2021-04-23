@@ -52,6 +52,14 @@ public:
    //
    typedef ParameterId Id;
 
+   //  Deleted to prohibit copying.
+   //
+   Parameter(const Parameter& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Parameter& operator=(const Parameter& that) = delete;
+
    //> Highest valid parameter identifier.
    //
    static const Id MaxId;
@@ -71,11 +79,6 @@ public:
    static const Usage Illegal = 0;    // parameter illegal for signal
    static const Usage Optional = 1;   // parameter optional for signal
    static const Usage Mandatory = 2;  // parameter mandatory for signal
-
-   //  Deleted to prohibit copying.
-   //
-   Parameter(const Parameter& that) = delete;
-   Parameter& operator=(const Parameter& that) = delete;
 
    //  Returns the parameter's identifier.
    //

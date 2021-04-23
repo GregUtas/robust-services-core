@@ -67,6 +67,14 @@ public:
    //
    virtual ~Daemon();
 
+   //  Deleted to prohibit copying.
+   //
+   Daemon(const Daemon& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Daemon& operator=(const Daemon& that) = delete;
+
    //  Creates threads when there are fewer than size_.  May be invoked during
    //  initializations and restarts.
    //

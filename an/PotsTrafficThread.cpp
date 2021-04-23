@@ -68,6 +68,9 @@ public:
    //  Deleted to prohibit copying.
    //
    TrafficCall(const TrafficCall& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    TrafficCall& operator=(const TrafficCall& that) = delete;
 
    enum State
@@ -227,6 +230,9 @@ public:
    //  Deleted to prohibit copying.
    //
    TrafficCallPool(const TrafficCallPool& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    TrafficCallPool& operator=(const TrafficCallPool& that) = delete;
 
    //  Gets a TrafficCall from the pool.

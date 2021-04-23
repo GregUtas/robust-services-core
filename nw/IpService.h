@@ -43,6 +43,14 @@ class IpService : public NodeBase::Immutable
 {
    friend class NodeBase::Registry< IpService >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   IpService(const IpService& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   IpService& operator=(const IpService& that) = delete;
+
    //> The maximum number of IP services.
    //
    static const NodeBase::id_t MaxId;
@@ -130,11 +138,6 @@ protected:
    //  subclasses should be singletons.
    //
    virtual ~IpService();
-
-   //  Deleted to prohibit copying.
-   //
-   IpService(const IpService& that) = delete;
-   IpService& operator=(const IpService& that) = delete;
 private:
    //  Creates an InputHandler that will host the service on PORT.
    //

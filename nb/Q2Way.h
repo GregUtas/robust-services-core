@@ -68,6 +68,14 @@ public:
       head_.next = nullptr;              // expected by Q2Link destructor
    }
 
+   //  Deleted to prohibit copying.
+   //
+   Q2Way(const Q2Way& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Q2Way& operator=(const Q2Way& that) = delete;
+
    //  Initializes the queue so that it is ready for use.
    //
    void Init(ptrdiff_t diff)
@@ -310,11 +318,6 @@ public:
       }
    }
 private:
-   //  Deleted to prohibit copying.
-   //
-   Q2Way(const Q2Way& that) = delete;
-   Q2Way& operator=(const Q2Way& that) = delete;
-
    //  Returns ELEM's link location.
    //
    Q2Link* Item(const T& elem) const

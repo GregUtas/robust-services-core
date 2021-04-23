@@ -43,6 +43,14 @@ class IpServiceRegistry : public NodeBase::Immutable
    friend class NodeBase::Singleton< IpServiceRegistry >;
    friend class IpService;
 public:
+   //  Deleted to prohibit copying.
+   //
+   IpServiceRegistry(const IpServiceRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   IpServiceRegistry& operator=(const IpServiceRegistry& that) = delete;
+
    //  Returns the service registered against NAME.
    //
    IpService* GetService(const std::string& name) const;
@@ -64,11 +72,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    IpServiceRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~IpServiceRegistry();
 

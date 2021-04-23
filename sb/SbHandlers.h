@@ -42,6 +42,7 @@ class SbAnalyzeMessage : public EventHandler
    friend class NodeBase::Singleton< SbAnalyzeMessage >;
 
    SbAnalyzeMessage() = default;
+   ~SbAnalyzeMessage() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -56,6 +57,7 @@ class SbAnalyzeSap : public EventHandler
    friend class NodeBase::Singleton< SbAnalyzeSap >;
 
    SbAnalyzeSap() = default;
+   ~SbAnalyzeSap() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -70,6 +72,7 @@ class SbAnalyzeSnp : public EventHandler
    friend class NodeBase::Singleton< SbAnalyzeSnp >;
 
    SbAnalyzeSnp() = default;
+   ~SbAnalyzeSnp() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -84,6 +87,7 @@ class SbForceTransition : public EventHandler
    friend class NodeBase::Singleton< SbForceTransition >;
 
    SbForceTransition() = default;
+   ~SbForceTransition() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -98,6 +102,7 @@ class SbInitiationReq : public EventHandler
    friend class NodeBase::Singleton< SbInitiationReq >;
 
    SbInitiationReq() = default;
+   ~SbInitiationReq() = default;
    Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };

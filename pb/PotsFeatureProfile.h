@@ -47,6 +47,9 @@ public:
    //  Deleted to prohibit copying.
    //
    PotsFeatureProfile(const PotsFeatureProfile& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    PotsFeatureProfile& operator=(const PotsFeatureProfile& that) = delete;
 
    //  Activates the feature.  The default version generates a log and must

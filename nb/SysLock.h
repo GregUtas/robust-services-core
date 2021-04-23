@@ -54,6 +54,9 @@ public:
    //  Deleted to prohibit copying.
    //
    SysLock(const SysLock& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    SysLock& operator=(const SysLock& that) = delete;
 
    //  Acquires the mutex with an infinite timeout.  Returns immediately

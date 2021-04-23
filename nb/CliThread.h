@@ -214,11 +214,11 @@ public:
    //
    ostringstreamPtr obuf;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    CliThread();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~CliThread();
 

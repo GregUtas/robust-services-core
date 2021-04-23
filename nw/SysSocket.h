@@ -59,6 +59,14 @@ uint16_t ntohs(uint16_t netshort);
 class SysSocket : public NodeBase::Dynamic
 {
 public:
+   //  Deleted to prohibit copying.
+   //
+   SysSocket(const SysSocket& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   SysSocket& operator=(const SysSocket& that) = delete;
+
    //> Arbitrary limit on the size of IP messages (in bytes).  Note
    //  that a protocol running over UDP is typically restricted to
    //  a smaller size.
@@ -182,11 +190,6 @@ protected:
    //  subclassing.
    //
    virtual ~SysSocket();
-
-   //  Deleted to prohibit copying.
-   //
-   SysSocket(const SysSocket& that) = delete;
-   SysSocket& operator=(const SysSocket& that) = delete;
 
    //  Returns the native socket.
    //

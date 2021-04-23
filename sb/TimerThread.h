@@ -40,7 +40,7 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TimerThread();
 
@@ -48,7 +48,7 @@ private:
    //
    NodeBase::c_string AbbrName() const override;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TimerThread();
 

@@ -44,6 +44,14 @@ public:
    //
    typedef uint8_t Id;
 
+   //  Deleted to prohibit copying.
+   //
+   Tone(const Tone& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Tone& operator=(const Tone& that) = delete;
+
    //  Identifiers for various tones.
    //
    static const Id Silence = 1;
@@ -59,11 +67,6 @@ public:
    static const Id MaxId = 10;
 
    static const Id Media = UINT8_MAX;  // not connected to a tone
-
-   //  Deleted to prohibit copying.
-   //
-   Tone(const Tone& that) = delete;
-   Tone& operator=(const Tone& that) = delete;
 
    //  Returns the tone's identifier.
    //

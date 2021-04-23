@@ -37,11 +37,11 @@ class OnModule : public Module
 {
    friend class Singleton< OnModule >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    OnModule();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~OnModule();
 

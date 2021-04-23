@@ -54,6 +54,14 @@ public:
    //
    typedef EventHandlerId Id;
 
+   //  Deleted to prohibit copying.
+   //
+   EventHandler(const EventHandler& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   EventHandler& operator=(const EventHandler& that) = delete;
+
    //> Highest valid event handler identifier.
    //
    static const Id MaxId = UINT8_MAX;

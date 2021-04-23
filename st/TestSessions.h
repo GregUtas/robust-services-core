@@ -54,11 +54,11 @@ class TestProtocol : public TlvProtocol
 {
    friend class Singleton< TestProtocol >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TestProtocol();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TestProtocol();
 };
@@ -228,11 +228,11 @@ class TestService : public Service
 {
    friend class Singleton< TestService >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TestService();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TestService();
 };
@@ -303,11 +303,11 @@ class TestFactory : public SsmFactory
 {
    friend class Singleton< TestFactory >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    TestFactory();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~TestFactory();
 
@@ -331,14 +331,17 @@ class TestSession : public Dynamic
    friend std::unique_ptr< TestSession >::deleter_type;
    friend class StTestData;
 public:
-   //> The maximum number of test PSMs that can be simultaneously active.
-   //
-   static const TestSessionId MaxId = 16;
-
    //  Deleted to prohibit copying.
    //
    TestSession(const TestSession& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
    TestSession& operator=(const TestSession& that) = delete;
+
+   //> The maximum number of test PSMs that can be simultaneously active.
+   //
+   static const TestSessionId MaxId = 16;
 
    //  Returns the test PSM associated with this entry.
    //

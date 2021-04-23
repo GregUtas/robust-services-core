@@ -51,11 +51,11 @@ public:
    ipport_t Port() const override { return portCfg_->GetPort(); }
    Faction GetFaction() const override { return PayloadFaction; }
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsShelfIpService();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsShelfIpService();
 
@@ -102,11 +102,11 @@ class PotsShelfFactory : public MsgFactory
 {
    friend class Singleton< PotsShelfFactory >;
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    PotsShelfFactory();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~PotsShelfFactory();
 

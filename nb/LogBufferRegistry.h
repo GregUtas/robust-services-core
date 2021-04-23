@@ -44,6 +44,14 @@ class LogBufferRegistry : public Immutable
 {
    friend class Singleton< LogBufferRegistry >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   LogBufferRegistry(const LogBufferRegistry& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   LogBufferRegistry& operator=(const LogBufferRegistry& that) = delete;
+
    //> The maximum number of log buffers.
    //
    static const id_t MaxBuffers = 8;
@@ -84,11 +92,11 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    LogBufferRegistry();
 
-   //  Private because this singleton is not subclassed.
+   //  Private because this is a singleton.
    //
    ~LogBufferRegistry();
 

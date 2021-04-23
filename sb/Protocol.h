@@ -60,6 +60,14 @@ public:
    //
    typedef ProtocolId Id;
 
+   //  Deleted to prohibit copying.
+   //
+   Protocol(const Protocol& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Protocol& operator=(const Protocol& that) = delete;
+
    //> Highest valid protocol identifier.
    //
    static const Id MaxId = UINT8_MAX;
@@ -128,11 +136,6 @@ protected:
    //  ProtocolRegistry.  Protected because subclasses should be singletons.
    //
    virtual ~Protocol();
-
-   //  Deleted to prohibit copying.
-   //
-   Protocol(const Protocol& that) = delete;
-   Protocol& operator=(const Protocol& that) = delete;
 private:
    //  Adds SIGNAL to the protocol.  Invoked by Signal's base class
    //  constructor.

@@ -41,6 +41,14 @@ class StatisticsGroup : public Dynamic
 {
    friend class StatisticsRegistry;
 public:
+   //  Deleted to prohibit copying.
+   //
+   StatisticsGroup(const StatisticsGroup& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   StatisticsGroup& operator=(const StatisticsGroup& that) = delete;
+
    //> The maximum length of a string that explains a group's purpose.
    //
    static const size_t MaxExplSize;
@@ -52,11 +60,6 @@ public:
    //  Virtual to allow subclassing.
    //
    virtual ~StatisticsGroup();
-
-   //  Deleted to prohibit copying.
-   //
-   StatisticsGroup(const StatisticsGroup& that) = delete;
-   StatisticsGroup& operator=(const StatisticsGroup& that) = delete;
 
    //  Returns the group's location in the global StatisticsRegistry.
    //

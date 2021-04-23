@@ -118,7 +118,7 @@ enum BlankLocation
 //
 //  Strings for user interaction.
 //
-fixed_string FixPrompt = "  Fix?";
+fixed_string FixPrompt = "Fix?";
 fixed_string YNSQHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
 fixed_string YNSQChars = "ynsq";
 fixed_string FixSkipped = "This fix will be skipped.";
@@ -127,7 +127,7 @@ fixed_string UnspecifiedFailure = "Internal error. Edit failed.";
 
 fixed_string AccessPrompt = "Enter 0=skip 1=public 2=protected 3=private: ";
 fixed_string ArgPrompt = "Choose the argument's name. ";
-fixed_string DefnPrompt = "Enter 0=skip 1=default 2=delete: ";
+fixed_string DefnPrompt = "0=skip 1=default 2=delete: ";
 fixed_string FilePrompt = "Enter the filename in which to define ";
 fixed_string ShellPrompt = "Do you want to create a shell for the definition?";
 fixed_string SuffixPrompt = "Enter a suffix for the name: ";
@@ -240,6 +240,13 @@ ItemDeclAttrs::ItemDeclAttrs(const CxxToken* item) :
 
    auto cls = item->GetClass();
    if(cls != nullptr) isstruct = (cls->GetClassTag() != Cxx::ClassType);
+
+   auto& editor = item->GetFile()->GetEditor();
+   size_t begin, end;
+   if(item->GetSpan2(begin, end))
+   {
+      indent = editor.LineFindFirst(begin) - editor.CurrBegin(begin);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -386,9 +393,9 @@ string ChooseArgumentName
    Debug::ft("CodeTools.ChooseArgumentName");
 
    std::ostringstream stream;
-   stream << ArgPrompt << CRLF;
-   stream << "1=" << QUOTE << declName << QUOTE << SPACE;
-   stream << "2=" << QUOTE << defnName << QUOTE << ": ";
+   stream << spaces(2) << ArgPrompt << CRLF;
+   stream << spaces(4) << "1=" << QUOTE << declName << QUOTE << SPACE;
+   stream << spaces(4) << "2=" << QUOTE << defnName << QUOTE << ": ";
    auto choice = cli.IntPrompt(stream.str(), 1, 2);
    return (choice == 1 ? declName : defnName);
 }
@@ -402,9 +409,12 @@ word ChooseDtorAttributes(CliThread& cli, ItemDeclAttrs& attrs)
 {
    Debug::ft("CodeTools.ChooseDtorAttributes");
 
+   std::ostringstream stream;
+   stream << spaces(2) << AccessPrompt;
+   auto response = cli.IntPrompt(stream.str(), 0, 3);
+
    auto access = Cxx::Access_N;
    auto virt = false;
-   auto response = cli.IntPrompt(AccessPrompt, 0, 3);
 
    switch(response)
    {
@@ -421,7 +431,9 @@ word ChooseDtorAttributes(CliThread& cli, ItemDeclAttrs& attrs)
       return EditFailed;
    }
 
-   response = cli.IntPrompt(VirtualPrompt, 0, 2);
+   stream.str(EMPTY_STR);
+   stream << spaces(2) << VirtualPrompt;
+   response = cli.IntPrompt(stream.str(), 0, 2);
 
    switch(response)
    {
@@ -469,7 +481,7 @@ string CreateSpecialFunctionComment
          break;
       case PureCtor:
       case PureDtor:
-         comment = "Deleted because this class only has static members.";
+         comment = "Deleted because this class only has static members";
          break;
       default:
          comment = "[Add comment.]";
@@ -597,7 +609,7 @@ bool EnsureUniqueDebugFtName(CliThread& cli, const string& flit, string& fname)
    while(cover->Defined(fname))
    {
       std::ostringstream stream;
-      stream << fname << " is already in use. " << SuffixPrompt;
+      stream << spaces(2) << fname << " is already in use. " << SuffixPrompt;
       auto suffix = cli.StrPrompt(stream.str());
       if(suffix.empty()) return false;
       fname = flit + '(' + suffix + ')';
@@ -633,8 +645,8 @@ CodeFile* FindFuncDefnFile(CliThread& cli, const Class* cls, const string& name)
    while(file == nullptr)
    {
       std::ostringstream prompt;
-      prompt << FilePrompt << CRLF << spaces(2);
-      prompt << cls->Name() << SCOPE_STR << name;
+      prompt << spaces(2) << FilePrompt << CRLF;
+      prompt << spaces(4) << cls->Name() << SCOPE_STR << name;
       prompt << " ('s' to skip this item): ";
       auto fileName = cli.StrPrompt(prompt.str());
       if(fileName == "s") return nullptr;
@@ -1447,7 +1459,7 @@ word Editor::ChangeSpecialFunction(CliThread& cli, const CodeWarning& log)
    switch(log.warning_)
    {
    case PublicConstructor:
-      if(cls->IsInstantiated()) return Report(ClassInstantiated);
+      if(cls->WasCreated(false)) return Report(ClassInstantiated);
       attrs.access = Cxx::Protected;
       break;
 
@@ -1878,6 +1890,7 @@ word Editor::DeleteSpecialFunction(CliThread& cli, const CodeWarning& log)
    {
    case CopyCtorNotDeleted:
    case CopyOperNotDeleted:
+   case CtorCouldBeDeleted:
       break;
    default:
       return Report("Unsupported warning");
@@ -2801,9 +2814,9 @@ word Editor::FindSpecialFuncDeclLoc
 
    auto base = cls->IsBaseClass();
    auto sbase = cls->IsSingletonBase();
-   auto inst = cls->IsInstantiated();
+   auto inst = cls->WasCreated(false);
    auto solo = cls->IsSingleton();
-   auto prompt = true;
+   auto prompt = false;
    Function* prototype = cls->FindFuncByRole(PureDtor, false);
    if(prototype == nullptr) prototype = cls->FindFuncByRole(CopyCtor, false);
    if(prototype == nullptr) prototype = cls->FindFuncByRole(CopyOper, false);
@@ -2813,25 +2826,24 @@ word Editor::FindSpecialFuncDeclLoc
    switch(attrs.role)
    {
    case PureCtor:
+      prototype = nullptr;
+
       if(solo)
          attrs.access = Cxx::Private;
       else if(base && !inst)
          attrs.access = Cxx::Protected;
-      prompt = false;
-      prototype = nullptr;
+      else if(!inst)
+         prompt = true;
+      break;
+
+   case PureDtor:
+      if(base)
+         attrs.virt = true;
+      else
+         if(solo) attrs.access = Cxx::Private;
       break;
 
    case CopyCtor:
-      if(sbase || solo)
-      {
-         attrs.deleted = true;
-      }
-      else
-      {
-         if(base && !inst) attrs.access = Cxx::Protected;
-      }
-      break;
-
    case CopyOper:
       if(sbase || solo)
       {
@@ -2840,13 +2852,8 @@ word Editor::FindSpecialFuncDeclLoc
       else
       {
          if(base && !inst) attrs.access = Cxx::Protected;
+         prompt = true;
       }
-      break;
-
-   case PureDtor:
-      if(base) attrs.virt = true;
-      if(solo) attrs.access = Cxx::Private;
-      prompt = false;
       break;
    };
 
@@ -2854,10 +2861,11 @@ word Editor::FindSpecialFuncDeclLoc
    //  If it will be defaulted and a related function is not trivial, ask
    //  if the user wants to create a shell for implmenting the function.
    //
-   if(prompt && !attrs.deleted)
+   if(prompt)
    {
-      *cli.obuf << "Define the " << attrs.role << ". " << CRLF;
-      auto response = cli.IntPrompt(DefnPrompt, 0, 2);
+      std::ostringstream stream;
+      stream << spaces(2) << "Define the " << attrs.role << ": " << DefnPrompt;
+      auto response = cli.IntPrompt(stream.str(), 0, 2);
       if(response == 0) return Report(FixSkipped);
       attrs.deleted = (response == 2);
    }
@@ -2870,9 +2878,11 @@ word Editor::FindSpecialFuncDeclLoc
    {
       if((prototype != nullptr) && !prototype->IsTrivial())
       {
-         *cli.obuf << "The " << prototype->FuncRole();
-         *cli.obuf << " is not trivial." << CRLF;
-         attrs.shell = cli.BoolPrompt(ShellPrompt);
+         std::ostringstream stream;
+         stream << "The " << prototype->FuncRole();
+         stream << " is not trivial." << CRLF;
+         stream << spaces(2) << ShellPrompt;
+         attrs.shell = cli.BoolPrompt(stream.str());
       }
    }
 
@@ -2967,7 +2977,9 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
          if(opts.prompt)
          {
-            reply = cli.CharPrompt(FixPrompt, YNSQChars, YNSQHelp);
+            std::ostringstream stream;
+            stream << spaces(2) << FixPrompt;
+            reply = cli.CharPrompt(stream.str(), YNSQChars, YNSQHelp);
          }
 
          switch(reply)
@@ -3013,14 +3025,14 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
    if(found)
    {
       if(exit || (rc < EditFailed))
-         *cli.obuf << spaces(2) << "Remaining warnings skipped." << CRLF;
+         *cli.obuf << "Remaining warnings skipped." << CRLF;
       else
-         *cli.obuf << spaces(2) << "End of warnings." << CRLF;
+         *cli.obuf << "End of warnings." << CRLF;
    }
    else if(fixed)
    {
-      *cli.obuf << spaces(2) << "Selected warning(s) in ";
-      *cli.obuf << file_->Name() << " previously fixed." << CRLF;
+      *cli.obuf << "Selected warning(s) in " << file_->Name();
+      *cli.obuf << " previously fixed." << CRLF;
    }
    else
    {
@@ -3428,6 +3440,8 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
       return DeleteSpecialFunction(cli, log);
    case CopyOperNotDeleted:
       return DeleteSpecialFunction(cli, log);
+   case CtorCouldBeDeleted:
+      return DeleteSpecialFunction(cli, log);
    }
 
    return Report(NotImplemented);
@@ -3712,9 +3726,10 @@ void Editor::InsertBeforeItemDecl
 
    if(attrs.thisctrl)
    {
-      std::ostringstream access;
-      access << attrs.access << ':';
-      InsertLine(attrs.pos, access.str());
+      std::ostringstream stream;
+      if(attrs.indent > 0) stream << spaces(attrs.indent - IndentSize());
+      stream << attrs.access << ':';
+      InsertLine(attrs.pos, stream.str());
    }
    else if(attrs.blank == BlankBefore)
    {
@@ -4366,7 +4381,7 @@ void Editor::InsertSpecialFuncDefn
 
 //------------------------------------------------------------------------------
 
-const size_t MaxRoleWarning = 14;
+const size_t MaxRoleWarning = 15;
 
 struct RoleWarning
 {
@@ -4381,6 +4396,7 @@ const RoleWarning SpecialMemberFunctionLogs[MaxRoleWarning] =
    { PureCtor, ImplicitConstructor },
    { PureCtor, PublicConstructor },
    { PureCtor, ConstructorNotPrivate },
+   { PureCtor, CtorCouldBeDeleted },
    { PureDtor, ImplicitDestructor },
    { PureDtor, NonVirtualDestructor },
    { PureDtor, DestructorNotPrivate },
@@ -4433,33 +4449,36 @@ word Editor::InsertSpecialFunctions(CliThread& cli, const CxxToken* item)
 
    //  Handle the Rule of 3: if adding the destructor, copy constructor,
    //  or copy operator, add any of the others that are missing.  Don't,
-   //  however, try to add a function that is deleted in a base class.
+   //  however, try to add a function that is deleted in a base class,
+   //  and don't try to add a copy constructor or copy operator to a
+   //  class derived from a base class for singletons.
    //
    if((roles.find(PureDtor) != roles.cend()) ||
       (roles.find(CopyCtor) != roles.cend()) ||
       (roles.find(CopyOper) != roles.cend()))
    {
       auto dtor = cls->FindFuncByRole(PureDtor, false);
-      auto copy = cls->FindFuncByRole(CopyCtor, true);
-      auto oper = cls->FindFuncByRole(CopyOper, true);
 
       if(dtor == nullptr) roles.insert(PureDtor);
 
-      if(copy == nullptr)
-         roles.insert(CopyCtor);
-      else if((copy->GetClass() != cls) && !copy->IsDeleted())
-         roles.insert(CopyCtor);
+      if(!cls->HasSingletonBase())
+      {
+         auto copy = cls->FindFuncByRole(CopyCtor, true);
+         auto oper = cls->FindFuncByRole(CopyOper, true);
 
-      if(oper == nullptr)
-         roles.insert(CopyOper);
-      else if((oper->GetClass() != cls) && !oper->IsDeleted())
-         roles.insert(CopyOper);
+         if(copy == nullptr)
+            roles.insert(CopyCtor);
+         else if((copy->GetClass() != cls) && !copy->IsDeleted())
+            roles.insert(CopyCtor);
+
+         if(oper == nullptr)
+            roles.insert(CopyOper);
+         else if((oper->GetClass() != cls) && !oper->IsDeleted())
+            roles.insert(CopyOper);
+      }
    }
 
-   auto prompt = (roles.size() > 1);
-   word rc = EditCompleted;
-
-   if(prompt)
+   if(roles.size() > 1)
    {
       *cli.obuf << "This will also prompt to add related functions..." << CRLF;
       cli.Flush();
@@ -4474,21 +4493,8 @@ word Editor::InsertSpecialFunctions(CliThread& cli, const CxxToken* item)
       if(roles.find(role) != roles.cend())
       {
          roles.erase(role);
-
-         auto add = true;
-
-         if(prompt)
-         {
-            std::ostringstream stream;
-            stream << "Add the " << role << '?';
-            add = cli.BoolPrompt(stream.str());
-         }
-
-         if(add)
-         {
-            rc = InsertSpecialFuncDecl(cli, cls, role);
-            ReportFix(cli, nullptr, rc);
-         }
+         auto rc = InsertSpecialFuncDecl(cli, cls, role);
+         ReportFix(cli, nullptr, rc);
 
          if(rc == EditSucceeded)
          {
@@ -5760,7 +5766,7 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
       attrs.pos = CurrBegin(end);
       if((prev == nullptr) && (next == nullptr)) attrs.comment = true;
       if(attrs.blank == BlankAfter) attrs.blank = BlankBefore;
-      return EditContinue;
+      return UpdateItemControls(cls, attrs);
    }
 
    //  Insert the item before NEXT.  If the item is to be set off with a
@@ -5792,7 +5798,7 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
             //  above; UpdateItemControls will set the exact position.
             //
             attrs.pos = pred;
-            return UpdateItemControls(next->GetClass(), attrs);
+            return UpdateItemControls(cls, attrs);
          }
 
          //  This is the desired access control.  Insert the item after
@@ -5808,7 +5814,7 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
    //  Insert the item above the line that follows PRED.
    //
    attrs.pos = NextBegin(pred);
-   return UpdateItemControls(next->GetClass(), attrs);
+   return UpdateItemControls(cls, attrs);
 }
 
 //------------------------------------------------------------------------------

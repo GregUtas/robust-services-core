@@ -249,7 +249,8 @@ std::ostream& operator<<(std::ostream& stream, FunctionRole role);
 enum FunctionDefinition
 {
    NotDeclared,    // not declared in this class or a base class
-   LocalDeclared,  // declared by class (implemented, defaulted, or deleted)
+   LocalDeclared,  // declared by class (implemented or defaulted)
+   LocalDeleted,   // deleted by this class
    BaseDefined,    // defined by base class (implemented or defaulted)
    BaseDeleted     // deleted by base class
 };
@@ -555,6 +556,7 @@ enum Warning
    PunctuationSpacing,       // add/remove spaces before/after punctuation
    CopyCtorNotDeleted,       // base for singletons should delete copy ctor
    CopyOperNotDeleted,       // base for singletons should delete copy operator
+   CtorCouldBeDeleted,       // could be namespace but has non-public members
    Warning_N                 // number of warnings
 };
 

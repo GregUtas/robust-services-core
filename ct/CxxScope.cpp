@@ -1340,7 +1340,7 @@ bool Data::InitByAssign()
    if(init_ == nullptr) return false;
 
    auto cls = DirectClass();
-   if(cls != nullptr) cls->Instantiate(true);
+   if(cls != nullptr) cls->Creating();
 
    init_->EnterBlock();
    auto result = Context::PopArg(true);
@@ -1364,7 +1364,7 @@ bool Data::InitByDefault()
 
    auto cls = DirectClass();
    if(cls == nullptr) return false;
-   cls->Instantiate(true);
+   cls->Creating();
    auto ctor = cls->FindCtor(nullptr);
 
    if(ctor != nullptr)
@@ -1404,7 +1404,7 @@ bool Data::InitByExpr(CxxToken* expr)
 
    if(cls != nullptr)
    {
-      cls->Instantiate(true);
+      cls->Creating();
 
       //  Push CLS as the constructor name that will handle expr_, which is
       //  a FUNCTION_CALL Operation that contains an argument list but which
@@ -3957,6 +3957,8 @@ CxxScope* Function::GetScope() const
 
 bool Function::GetSpan3(size_t& begin, size_t& left, size_t& end) const
 {
+   Debug::ft("Function.GetSpan3");
+
    CxxScoped::GetSpan3(begin, left, end);
    left = string::npos;
    if(impl_ == nullptr) return (end != string::npos);

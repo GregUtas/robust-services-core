@@ -49,14 +49,6 @@ public:
    //
    virtual ~CxxScope();
 
-   //  Deleted to prohibit copying.
-   //
-   CxxScope(const CxxScope& that) = delete;
-
-   //  Deleted to prohibit copying.
-   //
-   CxxScope& operator=(const CxxScope& that) = delete;
-
    //  Closes the scope(s) associated with an item.  Invoked when the item
    //  has been fully parsed.
    //

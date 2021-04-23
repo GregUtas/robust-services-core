@@ -1640,7 +1640,7 @@ TypeMatch StackArg::MatchWith(const StackArg& that,
    if(thisRoot->Type() == Cxx::Class)
    {
       auto thisClass = static_cast< Class* >(thisRoot);
-      thisClass->Instantiate(false);
+      thisClass->Instantiate();
 
       if(this->Ptrs(true) == that.Ptrs(true))
       {

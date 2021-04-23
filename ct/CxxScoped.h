@@ -48,6 +48,10 @@ public:
    //
    virtual ~CxxScoped();
 
+   //  Deleted to prohibit copying.
+   //
+   CxxScoped(const CxxScoped& that) = delete;
+
    //  Sets the scope where the declaration appeared.
    //
    virtual void SetScope(CxxScope* scope) { scope_ = scope; }

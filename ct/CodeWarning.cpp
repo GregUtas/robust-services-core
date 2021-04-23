@@ -783,6 +783,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(CopyOperNotDeleted,
       WarningAttrs(T,
       "Copy operator should be deleted")));
+   Attrs_.insert(WarningPair(CtorCouldBeDeleted,
+      WarningAttrs(T,
+      "Constructor could be deleted")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));

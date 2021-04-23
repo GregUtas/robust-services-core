@@ -443,7 +443,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
             item = cls;
             qname->SetReferentN(idx - 1, item, &view);  // updated value
             if(item == nullptr) return nullptr;
-            if(idx < size) cls->Instantiate(false);
+            if(idx < size) cls->Instantiate();
          }
          while(false);
 
@@ -496,7 +496,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
             if(root == nullptr) return tdef;
             item = static_cast< CxxScoped* >(root);
             qname->SetReferentN(idx - 1, item, &view);  // updated value
-            if(idx < size) item->Instantiate(false);
+            if(idx < size) item->Instantiate();
          }
          break;
 
@@ -1112,7 +1112,7 @@ void DataSpec::Instantiating(CxxScopedVector& locals) const
 
    if(ref != nullptr)
    {
-      ref->Instantiate(false);
+      ref->Instantiate();
 
       if(ref->Type() == Cxx::TemplateParm)
       {
@@ -2344,7 +2344,7 @@ bool QualName::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
    if(end) return true;
    auto inst = cls->EnsureInstance(args);
    if(inst == nullptr) return false;
-   inst->Instantiate(false);
+   inst->Instantiate();
    return true;
 }
 

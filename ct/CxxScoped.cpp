@@ -672,6 +672,8 @@ CodeFile* CxxScoped::GetImplFile() const
 
 bool CxxScoped::GetSpan3(size_t& begin, size_t& left, size_t& end) const
 {
+   Debug::ft("CxxScoped.GetSpan3");
+
    if(IsInternal())
    {
       return CxxNamed::GetSpan3(begin, left, end);

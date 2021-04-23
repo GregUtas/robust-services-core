@@ -403,6 +403,8 @@ CxxScoped* CxxToken::FindTemplateAnalog(const CxxToken* item) const
 
 bool CxxToken::GetSpan2(size_t& begin, size_t& end) const
 {
+   Debug::ft("CxxToken.GetSpan2");
+
    size_t left;
    return GetSpan3(begin, left, end);
 }
@@ -411,6 +413,8 @@ bool CxxToken::GetSpan2(size_t& begin, size_t& end) const
 
 bool CxxToken::GetSpan3(size_t& begin, size_t& left, size_t& end) const
 {
+   Debug::ft("CxxToken.GetSpan3");
+
    begin = string::npos;
    left = string::npos;
    end = string::npos;
@@ -1871,7 +1875,7 @@ void Operation::Execute() const
       if(!args_.empty())
       {
          Context::PopArg(arg1);
-         arg1.item->Instantiate(true);
+         arg1.item->Creating();
       }
       return;
 
@@ -1952,7 +1956,7 @@ void Operation::ExecuteCall() const
 
    case Cxx::Class:
       cls = static_cast< Class* >(proc.item);
-      cls->Instantiate(false);
+      cls->Instantiate();
       func = cls->FindCtor(&args, scope);
       if((proc.name != nullptr) && (func != nullptr))
       {
@@ -2157,7 +2161,7 @@ bool Operation::ExecuteOverload
    if(root->Type() == Cxx::Class)
    {
       cls = static_cast< Class* >(root);
-      cls->Instantiate(false);
+      cls->Instantiate();
    }
 
    //  Search for an overload in ARG1 and its base classes.  The arguments
@@ -2355,7 +2359,8 @@ Function* Operation::FindNewOrDelete
    {
       area = static_cast< Class* >(targ);
       pod = false;
-      static_cast< Class* >(targ)->Instantiate(true);
+      if(!del) area->Creating();
+      area->Instantiate();
    }
    else
    {
@@ -2707,7 +2712,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    }
 
    auto cls = static_cast< Class* >(root);
-   cls->Instantiate(false);
+   cls->Instantiate();
 
    auto ptrs = arg1.Ptrs(true);
    auto err = (op_ == Cxx::REFERENCE_SELECT ? (ptrs != 0) : (ptrs != 1));

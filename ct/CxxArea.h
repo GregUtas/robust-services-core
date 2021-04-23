@@ -319,9 +319,10 @@ public:
    //
    bool SetCurrAccess(Cxx::Access access);
 
-   //  Records true if the class was instantiated directly (not as a base).
+   //  Records true if an object in the class was created.  If BASE is set,
+   //  also returns true if any subclass was created.
    //
-   bool IsInstantiated() const { return created_; }
+   bool WasCreated(bool base) const;
 
    //  Returns all of the items declared in the class.
    //
@@ -354,6 +355,10 @@ public:
    //  and constructor(s) are not public.
    //
    bool IsSingletonBase() const;
+
+   //  Returns true if a base class of this one is a singleton base.
+   //
+   bool HasSingletonBase() const;
 
    //  Returns the class's friends.
    //
@@ -408,7 +413,7 @@ public:
    //  VIEW with the constructor's accessibility to SCOPE if SCOPE is provided.
    //
    Function* FindCtor(StackArgVector* args,
-      const CxxScope* scope = nullptr, SymbolView* view = nullptr);
+      const CxxScope* scope = nullptr, SymbolView* view = nullptr) const;
 
    //  Returns the class's constructors.
    //
@@ -426,9 +431,9 @@ public:
    //
    Function* FindFuncByRole(FunctionRole role, bool base) const;
 
-   //  Determines where and how a function is implemented.
+   //  Determines where and how the function specified by ROLE is defined.
    //
-   FunctionDefinition GetFuncDefinition(const Function* func) const;
+   FunctionDefinition GetFuncDefinition(FunctionRole role) const;
 
    //  Returns the friend declaration for SCOPE if one exists.
    //
@@ -530,6 +535,10 @@ public:
    //
    bool CheckIfUnused(Warning warning) const override;
 
+   //  Overridden to record that an object in the class was created.
+   //
+   void Creating() override;
+
    //  Overridden to return the outer class.
    //
    Class* Declarer() const override { return OuterClass(); }
@@ -606,10 +615,6 @@ public:
    //
    Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const override;
-
-   //  Overridden to record whether an instance of the class was created.
-   //
-   void Instantiate(bool created) override;
 
    //  Overridden to look for an implemented function.
    //
@@ -707,7 +712,9 @@ private:
       HasInstantiations,
       HasPublicInnerClass,
       HasNonPublicInnerClass,
+      HasPublicSpecialFunction,
       HasPublicMemberFunction,
+      HasNonPublicSpecialFunction,
       HasNonPublicMemberFunction,
       HasPublicStaticFunction,
       HasNonPublicStaticFunction,
@@ -846,6 +853,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to ensure that the class template is instantiated.
+   //
+   void Creating() override;
+
    //  Overridden to check if CLS if of the form T<args2>, where this class
    //  is of the form T<args1>.  If so, return true if args2 are compatible
    //  with args1.  If CLS is not a class template instance of T, returns the
@@ -896,7 +907,7 @@ public:
 
    //  Overridden to instantiate the class template instance.
    //
-   void Instantiate(bool created) override;
+   void Instantiate() override;
 
    //  Overridden to return this class template instance.
    //

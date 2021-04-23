@@ -517,6 +517,15 @@ void Class::CheckConstructors() const
    FunctionVector ctors;
    FindCtors(ctors);
 
+   if(ctors.empty())
+   {
+      if(solo)
+         Log(ConstructorNotPrivate);
+      else if(base)
+         Log(PublicConstructor);
+      return;
+   }
+
    for(auto c = ctors.begin(); c != ctors.end(); ++c)
    {
       auto acc = (*c)->GetAccess();
@@ -543,7 +552,16 @@ void Class::CheckDestructor() const
    auto base = IsBaseClass();
    auto solo = IsSingleton();
    auto dtor = FindDtor();
-   if(dtor == nullptr) return;
+
+   if(dtor == nullptr)
+   {
+      if(solo)
+         Log(DestructorNotPrivate);
+      else if(base)
+         Log(NonVirtualDestructor);
+      return;
+   }
+
    auto acc = dtor->GetAccess();
 
    if(solo && (acc != Cxx::Private))
@@ -575,9 +593,9 @@ bool Class::CheckIfUnused(Warning warning) const
    //  or data, suggest making it a struct unless it has private items,
    //  in which case it should be a class.
    //
-   if((attrs.test(HasPublicInnerClass)) ||
-      (attrs.test(HasPublicMemberFunction)) ||
-      (attrs.test(HasPublicMemberData)))
+   if(attrs.test(HasPublicInnerClass) ||
+      attrs.test(HasPublicMemberFunction) ||
+      attrs.test(HasPublicMemberData))
    {
       auto base = BaseClass();
       if((base != nullptr) && (base->GetClassTag() == Cxx::ClassType))
@@ -585,12 +603,12 @@ bool Class::CheckIfUnused(Warning warning) const
          if(tag_ == Cxx::ClassType) return false;
       }
 
-      if((attrs.test(IsBase)) ||
-         (attrs.test(HasNonPublicInnerClass)) ||
-         (attrs.test(HasNonPublicMemberFunction)) ||
-         (attrs.test(HasNonPublicMemberData)) ||
-         (attrs.test(HasNonPublicStaticFunction)) ||
-         (attrs.test(HasNonPublicStaticData)))
+      if(attrs.test(IsBase) ||
+         attrs.test(HasNonPublicInnerClass) ||
+         attrs.test(HasNonPublicMemberFunction) ||
+         attrs.test(HasNonPublicMemberData) ||
+         attrs.test(HasNonPublicStaticFunction) ||
+         attrs.test(HasNonPublicStaticData))
       {
          if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
       }
@@ -603,24 +621,34 @@ bool Class::CheckIfUnused(Warning warning) const
    }
 
    //  If the class only has public static functions and data, or enums and
-   //  typedefs, suggest making it a namespace unless it is derived, used as
-   //  a base class, or instantiated.
+   //  typedefs, suggest making it a namespace unless it is derived, created,
+   //  or instantiated.
    //
-   if((attrs.test(HasPublicStaticFunction)) ||
-      (attrs.test(HasPublicStaticData)) ||
-      (attrs.test(HasEnum)) ||
-      (attrs.test(HasTypedef)))
+   if(attrs.test(HasPublicStaticFunction) ||
+      attrs.test(HasPublicStaticData) ||
+      attrs.test(HasEnum) ||
+      attrs.test(HasTypedef))
    {
       if(BaseClass() != nullptr) return false;
 
-      if((attrs.test(IsBase)) || (attrs.test(HasInstantiations)) ||
-         (attrs.test(HasNonPublicInnerClass)) ||
-         (attrs.test(HasNonPublicMemberFunction)) ||
-         (attrs.test(HasNonPublicMemberData)) ||
-         (attrs.test(HasNonPublicStaticFunction)) ||
-         (attrs.test(HasNonPublicStaticData)))
+      if(WasCreated(true) ||
+         attrs.test(HasInstantiations) ||
+         attrs.test(HasNonPublicInnerClass) ||
+         attrs.test(HasNonPublicMemberFunction) ||
+         attrs.test(HasNonPublicMemberData))
       {
          if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
+         return false;
+      }
+
+      if(attrs.test(HasNonPublicStaticFunction) ||
+         attrs.test(HasNonPublicStaticData))
+      {
+         auto ctor = FindCtor(nullptr);
+         if((ctor == nullptr) || !ctor->IsDeleted())
+         {
+            Log(CtorCouldBeDeleted);
+         }
          return false;
       }
 
@@ -716,30 +744,44 @@ void Class::CheckRuleOfThree() const
 
    if(GetFile()->IsSubsFile()) return;
 
-   auto dtor = FindDtor();
-   auto copyCtor = FindFuncByRole(CopyCtor, true);
-   auto moveCtor = FindFuncByRole(MoveCtor, true);
-   auto copyOper = FindFuncByRole(CopyOper, true);
-   auto moveOper = FindFuncByRole(MoveOper, true);
-   auto dtorLoc = GetFuncDefinition(dtor);
-   auto copyCtorLoc = GetFuncDefinition(copyCtor);
-   auto moveCtorLoc = GetFuncDefinition(moveCtor);
-   auto copyOperLoc = GetFuncDefinition(copyOper);
-   auto moveOperLoc = GetFuncDefinition(moveOper);
-
-   //  The copy constructor and copy operator should be declared together.
+   //  The warnings logged here all involve defining a copy constructor or
+   //  copy operator.  Both should be deleted by a base class specifically
+   //  intended for singletons, or by a singleton that is not derived from
+   //  such a class. So if this class has such a base class, none of these
+   //  warnings apply to it.
    //
-   if(copyCtorLoc == LocalDeclared)
+   if(HasSingletonBase()) return;
+
+   auto dtor = FindDtor();
+   auto copyCtor = GetFuncDefinition(CopyCtor);
+   auto copyOper = GetFuncDefinition(CopyOper);
+
+   if(IsSingleton() || IsSingletonBase())
    {
-      if((copyOperLoc == NotDeclared) || (copyOperLoc == BaseDefined))
+      if((copyCtor != LocalDeleted) && (copyCtor != BaseDeleted))
+      {
+         Log(CopyCtorNotDeleted);
+      }
+
+      if((copyOper != LocalDeleted) && (copyOper != BaseDeleted))
+      {
+         Log(CopyOperNotDeleted);
+      }
+
+      return;
+   }
+
+   if((copyCtor == LocalDeclared) || (copyCtor == LocalDeleted))
+   {
+      if((copyOper == NotDeclared) || (copyOper == BaseDefined))
       {
          Log(RuleOf3CopyCtorNoOper);
       }
    }
 
-   if(copyOperLoc == LocalDeclared)
+   if((copyOper == LocalDeclared) || (copyOper == LocalDeleted))
    {
-      if((copyCtorLoc == NotDeclared) || (copyCtorLoc == BaseDefined))
+      if((copyCtor == NotDeclared) || (copyCtor == BaseDefined))
       {
          Log(RuleOf3CopyOperNoCtor);
       }
@@ -749,16 +791,19 @@ void Class::CheckRuleOfThree() const
    //  operator should be defined or deleted unless the move constructor or
    //  move operator is defined, in which case they need not be defined.
    //
-   if((dtorLoc == LocalDeclared) && !dtor->IsTrivial())
+   if((dtor != nullptr) && !dtor->IsTrivial())
    {
+      auto moveCtorLoc = GetFuncDefinition(MoveCtor);
+      auto moveOperLoc = GetFuncDefinition(MoveOper);
+
       if((moveCtorLoc == NotDeclared) && (moveOperLoc == NotDeclared))
       {
-         if((copyCtorLoc == NotDeclared) || (copyCtorLoc == BaseDefined))
+         if((copyCtor == NotDeclared) || (copyCtor == BaseDefined))
          {
             Log(RuleOf3DtorNoCopyCtor);
          }
 
-         if((copyOperLoc == NotDeclared) || (copyOperLoc == BaseDefined))
+         if((copyOper == NotDeclared) || (copyOper == BaseDefined))
          {
             Log(RuleOf3DtorNoCopyOper);
          }
@@ -875,6 +920,15 @@ ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
    inst->CopyContext(this);
    tmplts_.push_back(std::move(tmplt));
    return inst;
+}
+
+//------------------------------------------------------------------------------
+
+void Class::Creating()
+{
+   Debug::ft("Class.Creating");
+
+   created_ = true;
 }
 
 //------------------------------------------------------------------------------
@@ -1124,7 +1178,7 @@ void Class::ExitParms() const
 //------------------------------------------------------------------------------
 
 Function* Class::FindCtor
-   (StackArgVector* args, const CxxScope* scope, SymbolView* view)
+   (StackArgVector* args, const CxxScope* scope, SymbolView* view) const
 {
    Debug::ft("Class.FindCtor");
 
@@ -1152,7 +1206,8 @@ Function* Class::FindCtor
    //
    if(args->empty() || !args->front().IsThis())
    {
-      args->insert(args->begin(), StackArg(this, 1, false));
+      auto self = const_cast< Class* >(this);
+      args->insert(args->begin(), StackArg(self, 1, false));
    }
 
    return FindFunc(Name(), args, false, scope, view);
@@ -1331,7 +1386,7 @@ void Class::GetConvertibleTypes(StackArgVector& types, bool expl)
 {
    Debug::ft("Class.GetConvertibleTypes");
 
-   Instantiate(false);
+   Instantiate();
 
    for(auto cls = this; cls != nullptr; cls = cls->BaseClass())
    {
@@ -1395,12 +1450,17 @@ void Class::GetDirectClasses(CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
-FunctionDefinition Class::GetFuncDefinition(const Function* func) const
+FunctionDefinition Class::GetFuncDefinition(FunctionRole role) const
 {
    Debug::ft("Class.GetFuncDefinition");
 
+   auto func = FindFuncByRole(role, true);
    if(func == nullptr) return NotDeclared;
-   if(func->GetScope() == this) return LocalDeclared;
+
+   if(func->GetScope() == this)
+   {
+      return (func->IsDeleted() ? LocalDeleted : LocalDeclared);
+   }
 
    if(!func->IsImplemented() || (func->GetAccess() == Cxx::Private))
    {
@@ -1463,6 +1523,8 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
 bool Class::GetSpan3(size_t& begin, size_t& left, size_t& end) const
 {
+   Debug::ft("Class.GetSpan3");
+
    auto lexer = GetFile()->GetLexer();
    begin = GetPos();
    if(begin == string::npos) return false;
@@ -1512,14 +1574,18 @@ Class::UsageAttributes Class::GetUsageAttrs() const
       {
          if((*o)->GetAccess() == Cxx::Public)
          {
-            if((*o)->IsStatic())
+            if((*o)->FuncRole() != FuncOther)
+               attrs.set(HasPublicSpecialFunction);
+            else if((*o)->IsStatic())
                attrs.set(HasPublicStaticFunction);
             else
                attrs.set(HasPublicMemberFunction);
          }
          else
          {
-            if((*o)->IsStatic())
+            if((*o)->FuncRole() != FuncOther)
+               attrs.set(HasNonPublicSpecialFunction);
+            else if((*o)->IsStatic())
                attrs.set(HasNonPublicStaticFunction);
             else
                attrs.set(HasNonPublicMemberFunction);
@@ -1532,26 +1598,28 @@ Class::UsageAttributes Class::GetUsageAttrs() const
    {
       if((*f)->HasInvokers())
       {
-         if((*f)->FuncType() == FuncCtor)
+         if((*f)->FuncRole() == PureCtor)
          {
             attrs.set(IsConstructed);
          }
+
+         if((*f)->GetAccess() == Cxx::Public)
+         {
+            if((*f)->FuncRole() != FuncOther)
+               attrs.set(HasPublicSpecialFunction);
+            else if((*f)->IsStatic())
+               attrs.set(HasPublicStaticFunction);
+            else
+               attrs.set(HasPublicMemberFunction);
+         }
          else
          {
-            if((*f)->GetAccess() == Cxx::Public)
-            {
-               if((*f)->IsStatic())
-                  attrs.set(HasPublicStaticFunction);
-               else
-                  attrs.set(HasPublicMemberFunction);
-            }
+            if((*f)->FuncRole() != FuncOther)
+               attrs.set(HasNonPublicSpecialFunction);
+            else if((*f)->IsStatic())
+               attrs.set(HasNonPublicStaticFunction);
             else
-            {
-               if((*f)->IsStatic())
-                  attrs.set(HasNonPublicStaticFunction);
-               else
-                  attrs.set(HasNonPublicMemberFunction);
-            }
+               attrs.set(HasNonPublicMemberFunction);
          }
       }
    }
@@ -1703,11 +1771,16 @@ bool Class::HasPODMember() const
 
 //------------------------------------------------------------------------------
 
-void Class::Instantiate(bool created)
+bool Class::HasSingletonBase() const
 {
-   Debug::ft("Class.Instantiate");
+   Debug::ft("Class.HasSingletonBase");
 
-   if(created) created_ = true;
+   for(auto c = BaseClass(); c != nullptr; c = c->BaseClass())
+   {
+      if(c->IsSingletonBase()) return true;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1782,7 +1855,19 @@ bool Class::IsSingletonBase() const
 {
    Debug::ft("Class.IsSingletonBase");
 
+   if(WasCreated(false)) return false;
    if(IsSingleton()) return false;
+
+   if(subs_.size() + tmplts_.size() == 0)
+   {
+      auto ctor = FindDtor();
+      if(ctor == nullptr) return false;
+      if(ctor->GetAccess() != Cxx::Protected) return false;
+
+      auto dtor = FindDtor();
+      if(dtor == nullptr) return false;
+      if(dtor->GetAccess() != Cxx::Protected) return false;
+   }
 
    for(auto s = subs_.cbegin(); s != subs_.cend(); ++s)
    {
@@ -1792,18 +1877,6 @@ bool Class::IsSingletonBase() const
    for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
    {
       if(!(*t)->IsSingleton() && !(*t)->IsSingletonBase()) return false;
-   }
-
-   auto dtor = FindDtor();
-   if((dtor == nullptr) || (dtor->GetAccess() == Cxx::Public)) return false;
-
-   FunctionVector ctors;
-   FindCtors(ctors);
-   if(ctors.empty()) return false;
-
-   for(auto c = ctors.cbegin(); c != ctors.cend(); ++c)
-   {
-      if((*c)->GetAccess() == Cxx::Public) return false;
    }
 
    return true;
@@ -2115,6 +2188,23 @@ void Class::WasCalled(FunctionRole role, const CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
+bool Class::WasCreated(bool base) const
+{
+   Debug::ft("Class.WasCreated");
+
+   if(created_) return true;
+   if(!base) return false;
+
+   for(auto c = BaseClass(); c != nullptr; c = c->BaseClass())
+   {
+      if (c->WasCreated(true)) return true;
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 string Class::XrefName(bool templates) const
 {
    auto name = CxxScoped::XrefName(templates);
@@ -2183,6 +2273,16 @@ void ClassInst::Check() const
    //
    if(tmplt_->Instances()->front().get() != this) return;
    Class::Check();
+}
+
+//------------------------------------------------------------------------------
+
+void ClassInst::Creating()
+{
+   Debug::ft("ClassInst.Creating");
+
+   Class::Creating();
+   Instantiate();
 }
 
 //------------------------------------------------------------------------------
@@ -2377,7 +2477,7 @@ void ClassInst::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
-void ClassInst::Instantiate(bool created)
+void ClassInst::Instantiate()
 {
    Debug::ft("ClassInst.Instantiate");
 
@@ -2386,7 +2486,6 @@ void ClassInst::Instantiate(bool created)
    //  its template is being instantiated.  This causes the instantiation
    //  of any templates that this one requires.
    //
-   Class::Instantiate(created);
    if(instantiated_) return;
    instantiated_ = true;
 

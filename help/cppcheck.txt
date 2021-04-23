@@ -555,3 +555,7 @@ Copy operator should be deleted
   A class that uses the Singleton template should delete its copy operator.
 If a base class is intended only for singletons, *it* should delete the copy
 operator instead.
+? W136
+Constructor could be deleted
+  This class could be a namespace but has non-public static members. If no
+object of this class should be created, delete its constructor.

@@ -184,11 +184,14 @@ public:
    //
    virtual bool IsIndirect(bool arrays) const { return false; }
 
-   //  Invoked to instantiate a class template instance when it is declared as
-   //  a member or named in executable code.  Also invoked (with CREATED set)
-   //  when an object in a class is created on the stack or from the heap.
+   //  Invoked when an object is created on the stack or from the heap.
    //
-   virtual void Instantiate(bool created) { }
+   virtual void Creating() { }
+
+   //  Invoked to instantiate a class template instance when it is declared as
+   //  a member or named in executable code.
+   //
+   virtual void Instantiate() { }
 
    //  Returns true if the item is undergoing initialization.
    //

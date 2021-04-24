@@ -528,6 +528,8 @@ void Class::CheckConstructors() const
 
    for(auto c = ctors.begin(); c != ctors.end(); ++c)
    {
+      if((*c)->IsDeleted()) continue;
+
       auto acc = (*c)->GetAccess();
 
       if(solo && (acc != Cxx::Private))

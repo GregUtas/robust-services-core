@@ -757,7 +757,7 @@ void CodeWarning::Initialize()
       WarningAttrs(F,
       "Use static_cast or dynamic_cast instead of more severe cast")));
    Attrs_.insert(WarningPair(DataCouldBeFree,
-      WarningAttrs(T,
+      WarningAttrs(F,
       "Data could be free")));
    Attrs_.insert(WarningPair(ConstructorNotPrivate,
       WarningAttrs(T,

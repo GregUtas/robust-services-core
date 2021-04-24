@@ -214,6 +214,10 @@ struct PotsScanInfo
 class Facility
 {
 public:
+   //  Deleted because this class only has static members.
+   //
+   Facility() = delete;
+
    //  The type for a service indicator.
    //
    typedef uint8_t Ind;

@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsCxfFeature.h"
-#include "CliText.h"
 #include "PotsFeatureProfile.h"
+#include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "FunctionGuard.h"
@@ -39,19 +39,10 @@ public:
    ~PotsCxfFeatureProfile();
 };
 
-//------------------------------------------------------------------------------
-
-class PotsCxfAttrs : public CliText
-{
-public: PotsCxfAttrs();
-};
+//==============================================================================
 
 fixed_string PotsCxfAbbrName = "cxf";
 fixed_string PotsCxfFullName = "Call Transfer";
-
-PotsCxfAttrs::PotsCxfAttrs() : CliText(PotsCxfFullName, PotsCxfAbbrName) { }
-
-//==============================================================================
 
 PotsCxfFeature::PotsCxfFeature() :
    PotsFeature(CXF, false, PotsCxfAbbrName, PotsCxfFullName)
@@ -71,7 +62,10 @@ PotsCxfFeature::~PotsCxfFeature()
 
 //------------------------------------------------------------------------------
 
-CliText* PotsCxfFeature::Attrs() const { return new PotsCxfAttrs; }
+CliText* PotsCxfFeature::Attrs() const
+{
+   return new CliText(PotsCxfFullName, PotsCxfAbbrName);
+}
 
 //------------------------------------------------------------------------------
 

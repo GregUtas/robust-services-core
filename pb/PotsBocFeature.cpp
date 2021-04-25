@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsBocFeature.h"
-#include "CliText.h"
 #include "PotsFeatureProfile.h"
+#include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "PotsFeatures.h"
@@ -38,19 +38,10 @@ public:
    ~PotsBocFeatureProfile();
 };
 
-class PotsBocAttrs : public CliText
-{
-public: PotsBocAttrs();
-};
-
 //==============================================================================
 
 fixed_string PotsBocAbbrName = "boc";
 fixed_string PotsBocFullName = "Barring of Outgoing Calls";
-
-PotsBocAttrs::PotsBocAttrs() : CliText(PotsBocFullName, PotsBocAbbrName) { }
-
-//------------------------------------------------------------------------------
 
 PotsBocFeature::PotsBocFeature() :
    PotsFeature(BOC, false, PotsBocAbbrName, PotsBocFullName)
@@ -75,7 +66,10 @@ PotsBocFeature::~PotsBocFeature()
 
 //------------------------------------------------------------------------------
 
-CliText* PotsBocFeature::Attrs() const { return new PotsBocAttrs; }
+CliText* PotsBocFeature::Attrs() const
+{
+   return new CliText(PotsBocFullName, PotsBocAbbrName);
+}
 
 //------------------------------------------------------------------------------
 

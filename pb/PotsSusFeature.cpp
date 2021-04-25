@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsSusFeature.h"
-#include "CliText.h"
 #include "PotsFeatureProfile.h"
+#include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "FunctionGuard.h"
@@ -39,19 +39,10 @@ public:
    ~PotsSusFeatureProfile();
 };
 
-class PotsSusAttrs : public CliText
-{
-public: PotsSusAttrs();
-};
-
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fixed_string PotsSusAbbrName = "sus";
 fixed_string PotsSusFullName = "Suspended Service";
-
-PotsSusAttrs::PotsSusAttrs() : CliText(PotsSusFullName, PotsSusAbbrName) { }
-
-//==============================================================================
 
 PotsSusFeature::PotsSusFeature() :
    PotsFeature(SUS, false, PotsSusAbbrName, PotsSusFullName)
@@ -68,7 +59,10 @@ PotsSusFeature::~PotsSusFeature()
 
 //------------------------------------------------------------------------------
 
-CliText* PotsSusFeature::Attrs() const { return new PotsSusAttrs; }
+CliText* PotsSusFeature::Attrs() const
+{
+   return new CliText(PotsSusFullName, PotsSusAbbrName);
+}
 
 //------------------------------------------------------------------------------
 

@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsCwtFeature.h"
-#include "CliText.h"
 #include "PotsFeatureProfile.h"
+#include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "FunctionGuard.h"
@@ -39,19 +39,10 @@ public:
    ~PotsCwtFeatureProfile();
 };
 
-class PotsCwtAttrs : public CliText
-{
-public: PotsCwtAttrs();
-};
-
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fixed_string PotsCwtAbbrName = "cwt";
 fixed_string PotsCwtFullName = "Call Waiting";
-
-PotsCwtAttrs::PotsCwtAttrs() : CliText(PotsCwtFullName, PotsCwtAbbrName) { }
-
-//==============================================================================
 
 PotsCwtFeature::PotsCwtFeature() :
    PotsFeature(CWT, false, PotsCwtAbbrName, PotsCwtFullName)
@@ -70,7 +61,10 @@ PotsCwtFeature::~PotsCwtFeature()
 
 //------------------------------------------------------------------------------
 
-CliText* PotsCwtFeature::Attrs() const { return new PotsCwtAttrs; }
+CliText* PotsCwtFeature::Attrs() const
+{
+   return new CliText(PotsCwtFullName, PotsCwtAbbrName);
+}
 
 //------------------------------------------------------------------------------
 

@@ -22,13 +22,13 @@
 #include "PotsProtocol.h"
 #include "BcAddress.h"
 #include "BcProgress.h"
-#include "CliBoolParm.h"
-#include "CliIntParm.h"
 #include "CliText.h"
-#include "CliTextParm.h"
 #include "MediaParameter.h"
 #include <sstream>
+#include "CliBoolParm.h"
 #include "CliCommand.h"
+#include "CliIntParm.h"
+#include "CliTextParm.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -58,11 +58,6 @@ class PotsAlertingSignal : public PotsSignal
    CliText* CreateText() const override;
 };
 
-class AlertingText : public CliText
-{
-public: AlertingText();
-};
-
 class PotsDigitsSignal : public PotsSignal
 {
    friend class Singleton< PotsDigitsSignal >;
@@ -70,11 +65,6 @@ class PotsDigitsSignal : public PotsSignal
    PotsDigitsSignal();
    ~PotsDigitsSignal() = default;
    CliText* CreateText() const override;
-};
-
-class DigitsText : public CliText
-{
-public: DigitsText();
 };
 
 class PotsFacilitySignal : public PotsSignal
@@ -86,11 +76,6 @@ class PotsFacilitySignal : public PotsSignal
    CliText* CreateText() const override;
 };
 
-class FacilityText : public CliText
-{
-public: FacilityText();
-};
-
 class PotsFlashSignal : public PotsSignal
 {
    friend class Singleton< PotsFlashSignal >;
@@ -98,11 +83,6 @@ class PotsFlashSignal : public PotsSignal
    PotsFlashSignal();
    ~PotsFlashSignal() = default;
    CliText* CreateText() const override;
-};
-
-class FlashText : public CliText
-{
-public: FlashText();
 };
 
 class PotsReleaseSignal : public PotsSignal
@@ -114,11 +94,6 @@ class PotsReleaseSignal : public PotsSignal
    CliText* CreateText() const override;
 };
 
-class ReleaseText : public CliText
-{
-public: ReleaseText();
-};
-
 class PotsLockoutSignal : public PotsSignal
 {
    friend class Singleton< PotsLockoutSignal >;
@@ -126,11 +101,6 @@ class PotsLockoutSignal : public PotsSignal
    PotsLockoutSignal();
    ~PotsLockoutSignal() = default;
    CliText* CreateText() const override;
-};
-
-class LockoutText : public CliText
-{
-public: LockoutText();
 };
 
 class PotsOffhookSignal : public PotsSignal
@@ -151,16 +121,6 @@ class PotsOnhookSignal : public PotsSignal
    CliText* CreateText() const override;
 };
 
-class OffhookText : public CliText
-{
-public: OffhookText();
-};
-
-class OnhookText : public CliText
-{
-public: OnhookText();
-};
-
 class PotsProgressSignal : public PotsSignal
 {
    friend class Singleton< PotsProgressSignal >;
@@ -170,11 +130,6 @@ class PotsProgressSignal : public PotsSignal
    CliText* CreateText() const override;
 };
 
-class ProgressText : public CliText
-{
-public: ProgressText();
-};
-
 class PotsSuperviseSignal : public PotsSignal
 {
    friend class Singleton< PotsSuperviseSignal >;
@@ -182,11 +137,6 @@ class PotsSuperviseSignal : public PotsSignal
    PotsSuperviseSignal();
    ~PotsSuperviseSignal() = default;
    CliText* CreateText() const override;
-};
-
-class SuperviseText : public CliText
-{
-public: SuperviseText();
 };
 
 //  Classes for individual POTS parameters.
@@ -206,11 +156,6 @@ class PotsDigitsParameter : public AddressParameter
    PotsDigitsParameter();
    ~PotsDigitsParameter() = default;
    CliParm* CreateCliParm(Usage use) const override;
-};
-
-class DigitsParm : public CliTextParm
-{
-public: DigitsParm();
 };
 
 class PotsFacilityParameter : public PotsParameter
@@ -237,16 +182,6 @@ class FacilityOptParm : public CliText
 public: FacilityOptParm();
 };
 
-class ServiceIdParm : public CliIntParm
-{
-public: ServiceIdParm();
-};
-
-class FacilityIndParm : public CliIntParm
-{
-public: FacilityIndParm();
-};
-
 class PotsHeaderParameter : public PotsParameter
 {
    friend class Singleton< PotsHeaderParameter >;
@@ -259,11 +194,6 @@ class PotsHeaderParameter : public PotsParameter
    TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
-};
-
-class HeaderParm : public CliIntParm
-{
-public: HeaderParm();
 };
 
 class PotsMediaParameter : public MediaParameter
@@ -295,11 +225,6 @@ class PotsRingParameter : public PotsParameter
       (CliThread& cli, const Message& msg, Usage use) const override;
 };
 
-class RingParm : public CliBoolParm
-{
-public: RingParm();
-};
-
 class PotsScanParameter : public PotsParameter
 {
    friend class Singleton< PotsScanParameter >;
@@ -311,11 +236,6 @@ class PotsScanParameter : public PotsParameter
    CliParm* CreateCliParm(Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
-};
-
-class ScanParm : public CliTextParm
-{
-public: ScanParm();
 };
 
 //==============================================================================
@@ -362,142 +282,121 @@ PotsSignal::PotsSignal(Id sid) : Signal(PotsProtocolId, sid) { }
 
 PotsAlertingSignal::PotsAlertingSignal() : PotsSignal(Alerting) { }
 
-CliText* PotsAlertingSignal::CreateText() const
-{
-   return new AlertingText;
-}
-
 fixed_string AlertingTextStr = "A";
 fixed_string AlertingTextExpl = "alerting";
 
-AlertingText::AlertingText() : CliText(AlertingTextExpl, AlertingTextStr) { }
+CliText* PotsAlertingSignal::CreateText() const
+{
+   return new CliText(AlertingTextExpl, AlertingTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 PotsDigitsSignal::PotsDigitsSignal() : PotsSignal(Digits) { }
 
-CliText* PotsDigitsSignal::CreateText() const
-{
-   return new DigitsText;
-}
-
 fixed_string DigitsTextStr = "D";
 fixed_string DigitsTextExpl = "digits";
 
-DigitsText::DigitsText() : CliText(DigitsTextExpl, DigitsTextStr) { }
+CliText* PotsDigitsSignal::CreateText() const
+{
+   return new CliText(DigitsTextExpl, DigitsTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 PotsFacilitySignal::PotsFacilitySignal() : PotsSignal(Facility) { }
 
-CliText* PotsFacilitySignal::CreateText() const
-{
-   return new FacilityText;
-}
-
 fixed_string FacilitySigStr = "F";
 fixed_string FacilitySigExpl = "facility";
 
-FacilityText::FacilityText() : CliText(FacilitySigExpl, FacilitySigStr) { }
+CliText* PotsFacilitySignal::CreateText() const
+{
+   return new CliText(FacilitySigExpl, FacilitySigStr);
+}
 
 //------------------------------------------------------------------------------
 
 PotsFlashSignal::PotsFlashSignal() : PotsSignal(Flash) { }
 
-CliText* PotsFlashSignal::CreateText() const
-{
-   return new FlashText;
-}
-
 fixed_string FlashTextStr = "L";
 fixed_string FlashTextExpl = "flash ('link')";
 
-FlashText::FlashText() : CliText(FlashTextExpl, FlashTextStr) { }
+CliText* PotsFlashSignal::CreateText() const
+{
+   return new CliText(FlashTextExpl, FlashTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 PotsLockoutSignal::PotsLockoutSignal() : PotsSignal(Lockout) { }
 
-CliText* PotsLockoutSignal::CreateText() const
-{
-   return new LockoutText;
-}
-
 fixed_string LockoutTextStr = "L";
 fixed_string LockoutTextExpl = "lockout";
 
-LockoutText::LockoutText() : CliText(LockoutTextExpl, LockoutTextStr) { }
+CliText* PotsLockoutSignal::CreateText() const
+{
+   return new CliText(LockoutTextExpl, LockoutTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 PotsOffhookSignal::PotsOffhookSignal() : PotsSignal(Offhook) { }
 
-CliText* PotsOffhookSignal::CreateText() const
-{
-   return new OffhookText;
-}
-
 fixed_string OffhookTextStr = "B";
 fixed_string OffhookTextExpl = "offhook ('begin')";
 
-OffhookText::OffhookText() : CliText(OffhookTextExpl, OffhookTextStr) { }
+CliText* PotsOffhookSignal::CreateText() const
+{
+   return new CliText(OffhookTextExpl, OffhookTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 PotsOnhookSignal::PotsOnhookSignal() : PotsSignal(Onhook) { }
 
-CliText* PotsOnhookSignal::CreateText() const
-{
-   return new OnhookText;
-}
-
 fixed_string OnhookTextStr = "E";
 fixed_string OnhookTextExpl = "onhook ('end')";
 
-OnhookText::OnhookText() : CliText(OnhookTextExpl, OnhookTextStr) { }
+CliText* PotsOnhookSignal::CreateText() const
+{
+   return new CliText(OnhookTextExpl, OnhookTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 PotsProgressSignal::PotsProgressSignal() : PotsSignal(Progress) { }
 
-CliText* PotsProgressSignal::CreateText() const
-{
-   return new ProgressText;
-}
-
 fixed_string ProgressTextStr = "P";
 fixed_string ProgressTextExpl = "progress";
 
-ProgressText::ProgressText() : CliText(ProgressTextExpl, ProgressTextStr) { }
+CliText* PotsProgressSignal::CreateText() const
+{
+   return new CliText(ProgressTextExpl, ProgressTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 PotsReleaseSignal::PotsReleaseSignal() : PotsSignal(Release) { }
 
-CliText* PotsReleaseSignal::CreateText() const
-{
-   return new ReleaseText;
-}
-
 fixed_string ReleaseTextStr = "R";
 fixed_string ReleaseTextExpl = "release";
 
-ReleaseText::ReleaseText() : CliText(ReleaseTextExpl, ReleaseTextStr) { }
+CliText* PotsReleaseSignal::CreateText() const
+{
+   return new CliText(ReleaseTextExpl, ReleaseTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 PotsSuperviseSignal::PotsSuperviseSignal() : PotsSignal(Supervise) { }
 
-CliText* PotsSuperviseSignal::CreateText() const
-{
-   return new SuperviseText;
-}
-
 fixed_string SuperviseTextStr = "S";
 fixed_string SuperviseTextExpl = "supervise";
 
-SuperviseText::SuperviseText() :
-   CliText(SuperviseTextExpl, SuperviseTextStr) { }
+CliText* PotsSuperviseSignal::CreateText() const
+{
+   return new CliText(SuperviseTextExpl, SuperviseTextStr);
+}
 
 //==============================================================================
 
@@ -525,11 +424,9 @@ PotsDigitsParameter::PotsDigitsParameter() :
 
 fixed_string DigitsExpl = "digit string: (0..9|*|#)*";
 
-DigitsParm::DigitsParm() : CliTextParm(DigitsExpl, false, 0) { }
-
 CliParm* PotsDigitsParameter::CreateCliParm(Usage use) const
 {
-   return new DigitsParm;
+   return new CliTextParm(DigitsExpl, false, 0);
 }
 
 //==============================================================================
@@ -544,13 +441,7 @@ PotsFacilityParameter::PotsFacilityParameter() : PotsParameter(Facility)
 
 fixed_string ServiceIdExpl = "sid: ServiceId";
 
-ServiceIdParm::ServiceIdParm() :
-   CliIntParm(ServiceIdExpl, 0, Service::MaxId) { }
-
 fixed_string FacilityIndExpl = "ind: Facility::Ind";
-
-FacilityIndParm::FacilityIndParm() :
-   CliIntParm(FacilityIndExpl, 0, UINT8_MAX) { }
 
 fixed_string FacilityParmStr = "f";
 fixed_string FacilityParmExpl = "facility info";
@@ -558,15 +449,15 @@ fixed_string FacilityParmExpl = "facility info";
 FacilityMandParm::FacilityMandParm() :
    CliText(FacilityParmExpl, FacilityParmStr)
 {
-   BindParm(*new ServiceIdParm);
-   BindParm(*new FacilityIndParm);
+   BindParm(*new CliIntParm(ServiceIdExpl, 0, Service::MaxId));
+   BindParm(*new CliIntParm(FacilityIndExpl, 0, UINT8_MAX));
 }
 
 FacilityOptParm::FacilityOptParm() :
    CliText(FacilityParmExpl, FacilityParmStr, true)
 {
-   BindParm(*new ServiceIdParm);
-   BindParm(*new FacilityIndParm);
+   BindParm(*new CliIntParm(ServiceIdExpl, 0, Service::MaxId));
+   BindParm(*new CliIntParm(FacilityIndExpl, 0, UINT8_MAX));
 }
 
 CliParm* PotsFacilityParameter::CreateCliParm(Usage use) const
@@ -729,11 +620,9 @@ PotsHeaderParameter::PotsHeaderParameter() : PotsParameter(Header)
 
 fixed_string HeaderParmExpl = "header.port: Switch::PortId";
 
-HeaderParm::HeaderParm() : CliIntParm(HeaderParmExpl, 0, Switch::MaxPortId) { }
-
 CliParm* PotsHeaderParameter::CreateCliParm(Usage use) const
 {
-   return new HeaderParm;
+   return new CliIntParm(HeaderParmExpl, 0, Switch::MaxPortId);
 }
 
 //------------------------------------------------------------------------------
@@ -844,11 +733,9 @@ PotsRingParameter::PotsRingParameter() : PotsParameter(Ring)
 fixed_string RingParmExpl = "ring on?";
 fixed_string RingTag = "r";
 
-RingParm::RingParm() : CliBoolParm(RingParmExpl, true, RingTag) { }
-
 CliParm* PotsRingParameter::CreateCliParm(Usage use) const
 {
-   return new RingParm;
+   return new CliBoolParm(RingParmExpl, true, RingTag);
 }
 
 //------------------------------------------------------------------------------
@@ -928,11 +815,9 @@ PotsScanParameter::PotsScanParameter() : PotsParameter(Scan)
 fixed_string ScanParmExpl = "scan: (x|d|f|df)";
 fixed_string ScanTag = "s";
 
-ScanParm::ScanParm() : CliTextParm(ScanParmExpl, true, 0, ScanTag) { }
-
 CliParm* PotsScanParameter::CreateCliParm(Usage use) const
 {
-   return new ScanParm;
+   return new CliTextParm(ScanParmExpl, true, 0, ScanTag);
 }
 
 //------------------------------------------------------------------------------

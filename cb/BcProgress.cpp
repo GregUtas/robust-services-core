@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "BcProgress.h"
-#include "CliIntParm.h"
 #include <ostream>
+#include "CliIntParm.h"
 #include "Debug.h"
 
 using std::ostream;
@@ -80,29 +80,14 @@ ProgressParameter::~ProgressParameter()
 
 //------------------------------------------------------------------------------
 
-class ProgressMandParm : public CliIntParm
-{
-public: ProgressMandParm();
-};
-
-class ProgressOptParm : public CliIntParm
-{
-public: ProgressOptParm();
-};
-
 fixed_string ProgressParmExpl = "progress: Progress::Ind";
 fixed_string ProgressTag = "p";
 
-ProgressMandParm::ProgressMandParm() :
-   CliIntParm(ProgressParmExpl, 0, Progress::MaxInd) { }
-
-ProgressOptParm::ProgressOptParm() :
-   CliIntParm(ProgressParmExpl, 0, Progress::MaxInd, true, ProgressTag) { }
-
 CliParm* ProgressParameter::CreateCliParm(Usage use) const
 {
-   if(use == Mandatory) return new ProgressMandParm;
-   return new ProgressOptParm;
+   return (use == Mandatory ?
+      new CliIntParm(ProgressParmExpl, 0, Progress::MaxInd) :
+      new CliIntParm(ProgressParmExpl, 0, Progress::MaxInd, true, ProgressTag));
 }
 
 //------------------------------------------------------------------------------

@@ -562,7 +562,7 @@ void Class::CheckDestructor() const
          Log(DestructorNotPrivate);
       else if(base)
       {
-         if((ctor == nullptr) || !ctor->IsDeleted)
+         if((ctor == nullptr) || !ctor->IsDeleted())
             Log(NonVirtualDestructor);
       }
       return;

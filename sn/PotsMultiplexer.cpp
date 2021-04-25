@@ -20,10 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsMultiplexer.h"
-#include "CliText.h"
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
+#include "CliText.h"
 #include "Context.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -47,12 +47,6 @@ using std::string;
 
 namespace PotsBase
 {
-class PotsMuxFactoryText : public CliText
-{
-public:
-   PotsMuxFactoryText();
-};
-
 class PotsMuxNull : public PotsMuxState
 {
    friend class Singleton< PotsMuxNull >;
@@ -141,14 +135,6 @@ class PotsMuxPaRelay : public PotsMuxEventHandler
 
 //------------------------------------------------------------------------------
 
-fixed_string PotsMuxFactoryStr = "PM";
-fixed_string PotsMuxFactoryExpl = "POTS Multiplexer (network side)";
-
-PotsMuxFactoryText::PotsMuxFactoryText() :
-   CliText(PotsMuxFactoryExpl, PotsMuxFactoryStr) { }
-
-//------------------------------------------------------------------------------
-
 PotsMuxFactory::PotsMuxFactory() :
    SsmFactory(PotsMuxFactoryId, PotsProtocolId, "POTS Multiplexer")
 {
@@ -221,11 +207,14 @@ RootServiceSM* PotsMuxFactory::AllocRoot
 
 //------------------------------------------------------------------------------
 
+fixed_string PotsMuxFactoryStr = "PM";
+fixed_string PotsMuxFactoryExpl = "POTS Multiplexer (network side)";
+
 CliText* PotsMuxFactory::CreateText() const
 {
    Debug::ft("PotsMuxFactory.CreateText");
 
-   return new PotsMuxFactoryText;
+   return new CliText(PotsMuxFactoryExpl, PotsMuxFactoryStr);
 }
 
 //------------------------------------------------------------------------------

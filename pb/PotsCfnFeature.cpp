@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsCfnFeature.h"
-#include "CliIntParm.h"
 #include "CliText.h"
 #include <sstream>
 #include <string>
@@ -43,11 +42,6 @@ using std::string;
 
 namespace PotsBase
 {
-class PotsCfnTimerOptParm : public CliIntParm
-{
-public: PotsCfnTimerOptParm();
-};
-
 class PotsCfnAttrs : public CliText
 {
 public: PotsCfnAttrs();
@@ -58,17 +52,15 @@ public: PotsCfnAttrs();
 fixed_string PotsCfnTimerOptExpl = "timeout (default=30)";
 fixed_string PotsCfnTimerTag = "to";
 
-PotsCfnTimerOptParm::PotsCfnTimerOptParm() :
-   CliIntParm(PotsCfnTimerOptExpl, 2 * PotsProtocol::RingingCycleTime,
-   7 * PotsProtocol::RingingCycleTime, true, PotsCfnTimerTag) { }
-
 fixed_string PotsCfnAbbrName = "cfn";
 fixed_string PotsCfnFullName = "Call Forwarding No Answer";
 
 PotsCfnAttrs::PotsCfnAttrs() : CliText(PotsCfnFullName, PotsCfnAbbrName)
 {
    BindParm(*new DnTagParm);
-   BindParm(*new PotsCfnTimerOptParm);
+   BindParm(*new CliIntParm(PotsCfnTimerOptExpl,
+      2 * PotsProtocol::RingingCycleTime,
+      7 * PotsProtocol::RingingCycleTime, true, PotsCfnTimerTag));
 }
 
 //==============================================================================

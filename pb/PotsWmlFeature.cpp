@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsWmlFeature.h"
-#include "CliIntParm.h"
 #include "CliText.h"
 #include <sstream>
 #include <string>
@@ -43,11 +42,6 @@ using std::string;
 
 namespace PotsBase
 {
-class PotsWmlTimerOptParm : public CliIntParm
-{
-public: PotsWmlTimerOptParm();
-};
-
 class PotsWmlAttrs : public CliText
 {
 public: PotsWmlAttrs();
@@ -58,16 +52,14 @@ public: PotsWmlAttrs();
 fixed_string PotsWmlTimerOptExpl = "timeout (default=5)";
 fixed_string PotsWmlTimerTag = "to";
 
-PotsWmlTimerOptParm::PotsWmlTimerOptParm() : CliIntParm(PotsWmlTimerOptExpl, 3,
-   PotsProtocol::FirstDigitTimeout - 1, true, PotsWmlTimerTag) { }
-
 fixed_string PotsWmlAbbrName = "wml";
 fixed_string PotsWmlFullName = "Warm Line";
 
 PotsWmlAttrs::PotsWmlAttrs() : CliText(PotsWmlFullName, PotsWmlAbbrName)
 {
    BindParm(*new DnTagParm);
-   BindParm(*new PotsWmlTimerOptParm);
+   BindParm(*new CliIntParm(PotsWmlTimerOptExpl, 3,
+      PotsProtocol::FirstDigitTimeout - 1, true, PotsWmlTimerTag));
 }
 
 //==============================================================================

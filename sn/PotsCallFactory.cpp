@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsSessions.h"
-#include "CliText.h"
 #include "BcCause.h"
+#include "CliText.h"
 #include "Debug.h"
 #include "LocalAddress.h"
 #include "MsgHeader.h"
@@ -39,20 +39,6 @@
 
 namespace PotsBase
 {
-class PotsCallFactoryText : public CliText
-{
-public:
-   PotsCallFactoryText();
-};
-
-fixed_string PotsCallFactoryStr = "PC";
-fixed_string PotsCallFactoryExpl = "POTS Call (user side)";
-
-PotsCallFactoryText::PotsCallFactoryText() :
-   CliText(PotsCallFactoryExpl, PotsCallFactoryStr) { }
-
-//------------------------------------------------------------------------------
-
 PotsCallFactory::PotsCallFactory() :
    BcFactory(PotsCallFactoryId, PotsProtocolId, "POTS Basic Call")
 {
@@ -153,11 +139,14 @@ RootServiceSM* PotsCallFactory::AllocRoot
 
 //------------------------------------------------------------------------------
 
+fixed_string PotsCallFactoryStr = "PC";
+fixed_string PotsCallFactoryExpl = "POTS Call (user side)";
+
 CliText* PotsCallFactory::CreateText() const
 {
    Debug::ft("PotsCallFactory.CreateText");
 
-   return new PotsCallFactoryText;
+   return new CliText(PotsCallFactoryExpl, PotsCallFactoryStr);
 }
 
 //------------------------------------------------------------------------------

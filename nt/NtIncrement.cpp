@@ -20,11 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NtIncrement.h"
-#include "CliBoolParm.h"
-#include "CliCharParm.h"
 #include "CliCommandSet.h"
-#include "CliIntParm.h"
-#include "CliPtrParm.h"
 #include "CliText.h"
 #include "Daemon.h"
 #include "NbHeap.h"
@@ -45,6 +41,8 @@
 #include <utility>
 #include "Algorithms.h"
 #include "Class.h"
+#include "CliBoolParm.h"
+#include "CliPtrParm.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Duration.h"
@@ -87,19 +85,12 @@ namespace NodeTools
 {
 //  The CORRUPT command.
 //
-class FreeqOffsetParm : public CliIntParm
-{
-public: FreeqOffsetParm();
-};
-
 class ObjectPoolText : public CliText
 {
 public: ObjectPoolText();
 };
 
 fixed_string FreeqOffsetExpl = "offset into free queue (0 = head)";
-
-FreeqOffsetParm::FreeqOffsetParm() : CliIntParm(FreeqOffsetExpl, 0, 1024) { }
 
 fixed_string ObjectPoolTextStr = "pool";
 fixed_string ObjectPoolTextExpl = "object pool";
@@ -108,7 +99,7 @@ ObjectPoolText::ObjectPoolText() :
    CliText(ObjectPoolTextExpl, ObjectPoolTextStr)
 {
    BindParm(*new ObjPoolIdMandParm);
-   BindParm(*new FreeqOffsetParm);
+   BindParm(*new CliIntParm(FreeqOffsetExpl, 0, 1024));
 }
 
 fixed_string CorruptWhatExpl = "what to corrupt...";
@@ -174,14 +165,7 @@ LogsSortText::LogsSortText() : CliText(LogsSortTextExpl, LogsSortTextStr)
    BindParm(*new OstreamMandParm);
 }
 
-class FloodCountParm : public CliIntParm
-{
-public: FloodCountParm();
-};
-
 fixed_string FloodCountExpl = "number of SW900 logs to generate";
-
-FloodCountParm::FloodCountParm() : CliIntParm(FloodCountExpl, 1, 250) { }
 
 class LogsFloodText : public CliText
 {
@@ -193,7 +177,7 @@ fixed_string LogsFloodTextExpl = "enters a loop that generates SW900 logs";
 
 LogsFloodText::LogsFloodText() : CliText(LogsFloodTextExpl, LogsFloodTextStr)
 {
-   BindParm(*new FloodCountParm);
+   BindParm(*new CliIntParm(FloodCountExpl, 1, 250));
 }
 
 class NtLogsAction : public LogsAction
@@ -368,21 +352,6 @@ word NtLogsCommand::Sort
 //
 //  The SAVE command.
 //
-class FuncsSortByCalls : public CliText
-{
-public: FuncsSortByCalls();
-};
-
-class FuncsSortByTimes : public CliText
-{
-public: FuncsSortByTimes();
-};
-
-class FuncsSortByNames : public CliText
-{
-public: FuncsSortByNames();
-};
-
 class FuncsSortHowParm : public CliTextParm
 {
 public: FuncsSortHowParm();
@@ -396,20 +365,11 @@ public: FuncsText();
 fixed_string FuncsSortByCallsTextStr = "calls";
 fixed_string FuncsSortByCallsTextExpl = "by number of invocations";
 
-FuncsSortByCalls::FuncsSortByCalls() :
-   CliText(FuncsSortByCallsTextExpl, FuncsSortByCallsTextStr) { }
-
 fixed_string FuncsSortByTimesTextStr = "times";
 fixed_string FuncsSortByTimesTextExpl = "by net time in function";
 
-FuncsSortByTimes::FuncsSortByTimes() :
-   CliText(FuncsSortByTimesTextExpl, FuncsSortByTimesTextStr) { }
-
 fixed_string FuncsSortByNamesTextStr = "names";
 fixed_string FuncsSortByNamesTextExpl = "by function name";
-
-FuncsSortByNames::FuncsSortByNames() :
-   CliText(FuncsSortByNamesTextExpl, FuncsSortByNamesTextStr) { }
 
 fixed_string FuncsSortHowExpl = "how to sort (default=calls)";
 
@@ -419,9 +379,12 @@ const id_t SortByNamesIndex = 3;
 
 FuncsSortHowParm::FuncsSortHowParm() : CliTextParm(FuncsSortHowExpl, true)
 {
-   BindText(*new FuncsSortByCalls, SortByCallsIndex);
-   BindText(*new FuncsSortByTimes, SortByTimesIndex);
-   BindText(*new FuncsSortByNames, SortByNamesIndex);
+   BindText(*new CliText
+      (FuncsSortByCallsTextExpl, FuncsSortByCallsTextStr), SortByCallsIndex);
+   BindText(*new CliText
+      (FuncsSortByTimesTextExpl, FuncsSortByTimesTextStr), SortByTimesIndex);
+   BindText(*new CliText
+      (FuncsSortByNamesTextExpl, FuncsSortByNamesTextStr), SortByNamesIndex);
 }
 
 fixed_string FuncsTextStr = "funcs";
@@ -490,16 +453,6 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The SET command.
 //
-class FuncScopeFullTrace : public CliText
-{
-public: FuncScopeFullTrace();
-};
-
-class FuncScopeCountsOnly : public CliText
-{
-public: FuncScopeCountsOnly();
-};
-
 class FuncScopeParm : public CliTextParm
 {
 public: FuncScopeParm();
@@ -513,14 +466,8 @@ public: ScopeText();
 fixed_string FuncScopeFullTraceTextStr = "full";
 fixed_string FuncScopeFullTraceTextExpl = "full trace of invocations";
 
-FuncScopeFullTrace::FuncScopeFullTrace() :
-   CliText(FuncScopeFullTraceTextExpl, FuncScopeFullTraceTextStr) { }
-
 fixed_string FuncScopeCountsOnlyTextStr = "counts";
 fixed_string FuncScopeCountsOnlyTextExpl = "count invocations per function";
-
-FuncScopeCountsOnly::FuncScopeCountsOnly() :
-   CliText(FuncScopeCountsOnlyTextExpl, FuncScopeCountsOnlyTextStr) { }
 
 fixed_string FuncScopeExpl = "how to trace function invocations";
 
@@ -529,8 +476,10 @@ const id_t FuncScopeCountsOnlyIndex = 2;
 
 FuncScopeParm::FuncScopeParm() : CliTextParm(FuncScopeExpl)
 {
-   BindText(*new FuncScopeFullTrace, FuncScopeFullTraceIndex);
-   BindText(*new FuncScopeCountsOnly, FuncScopeCountsOnlyIndex);
+   BindText(*new CliText(FuncScopeFullTraceTextExpl,
+      FuncScopeFullTraceTextStr), FuncScopeFullTraceIndex);
+   BindText(*new CliText(FuncScopeCountsOnlyTextExpl,
+      FuncScopeCountsOnlyTextStr), FuncScopeCountsOnlyIndex);
 }
 
 fixed_string ScopeTextStr = "scope";
@@ -582,21 +531,14 @@ word NtSetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The SIZES command.
 //
-class SizesParm : public CliBoolParm
-{
-public: SizesParm();
-};
-
 fixed_string SizesParmExpl = "display sizes in base classes? (default=f)";
-
-SizesParm::SizesParm() : CliBoolParm(SizesParmExpl, true) { }
 
 fixed_string SizesStr = "sizes";
 fixed_string SizesExpl = "Displays class sizes.";
 
 SizesCommand::SizesCommand() : CliCommand(SizesStr, SizesExpl)
 {
-   BindParm(*new SizesParm);
+   BindParm(*new CliBoolParm(SizesParmExpl, true));
 }
 
 void SizesCommand::DisplaySizes(const CliThread& cli, bool all) const
@@ -637,24 +579,9 @@ word SizesCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SWFLAGS command.
 //
-class FlagIdParm : public CliIntParm
-{
-public: FlagIdParm();
-};
-
 class FlagsSetText : public CliText
 {
 public: FlagsSetText();
-};
-
-class FlagsClearText : public CliText
-{
-public: FlagsClearText();
-};
-
-class FlagsQueryText : public CliText
-{
-public: FlagsQueryText();
 };
 
 class FlagsAction : public CliTextParm
@@ -676,36 +603,30 @@ private:
 
 fixed_string FlagIdExpl = "flag identifier";
 
-FlagIdParm::FlagIdParm() : CliIntParm(FlagIdExpl, 0, MaxFlagId) { }
-
 fixed_string FlagsSetTextStr = "set";
 fixed_string FlagsSetTextExpl = "modifies a flag's setting";
 
 FlagsSetText::FlagsSetText() : CliText(FlagsSetTextExpl, FlagsSetTextStr)
 {
-   BindParm(*new FlagIdParm);
+   BindParm(*new CliIntParm(FlagIdExpl, 0, MaxFlagId));
    BindParm(*new SetHowParm);
 }
 
 fixed_string FlagsClearTextStr = "clear";
 fixed_string FlagsClearTextExpl = "clears all flags";
 
-FlagsClearText::FlagsClearText() :
-   CliText(FlagsClearTextExpl, FlagsClearTextStr) { }
-
 fixed_string FlagsQueryTextStr = "query";
 fixed_string FlagsQueryTextExpl = "lists flags that are on";
-
-FlagsQueryText::FlagsQueryText() :
-   CliText(FlagsQueryTextExpl, FlagsQueryTextStr) { }
 
 fixed_string FlagsActionExpl = "subcommand...";
 
 FlagsAction::FlagsAction() : CliTextParm(FlagsActionExpl)
 {
    BindText(*new FlagsSetText, SwFlagsCommand::FlagsSetIndex);
-   BindText(*new FlagsClearText, SwFlagsCommand::FlagsClearIndex);
-   BindText(*new FlagsQueryText, SwFlagsCommand::FlagsQueryIndex);
+   BindText(*new CliText
+      (FlagsClearTextExpl, FlagsClearTextStr), SwFlagsCommand::FlagsClearIndex);
+   BindText(*new CliText
+      (FlagsQueryTextExpl, FlagsQueryTextStr), SwFlagsCommand::FlagsQueryIndex);
 }
 
 fixed_string SwFlagsStr = "swflags";
@@ -771,19 +692,9 @@ word SwFlagsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The TESTS command.
 //
-class TestPrologParm : public CliTextParm
-{
-public: TestPrologParm();
-};
-
 class TestPrologText : public CliText
 {
 public: TestPrologText();
-};
-
-class TestEpilogParm : public CliTextParm
-{
-public: TestEpilogParm();
 };
 
 class TestEpilogText : public CliText
@@ -791,19 +702,9 @@ class TestEpilogText : public CliText
 public: TestEpilogText();
 };
 
-class TestRecoverParm : public CliTextParm
-{
-public: TestRecoverParm();
-};
-
 class TestRecoverText : public CliText
 {
 public: TestRecoverText();
-};
-
-class TestBeginParm : public CliTextParm
-{
-public: TestBeginParm();
 };
 
 class TestBeginText : public CliText
@@ -811,29 +712,9 @@ class TestBeginText : public CliText
 public: TestBeginText();
 };
 
-class TestEndText : public CliText
-{
-public: TestEndText();
-};
-
-class TestFailCodeParm : public CliIntParm
-{
-public: TestFailCodeParm();
-};
-
-class TestFailExplParm : public CliTextParm
-{
-public: TestFailExplParm();
-};
-
 class TestFailedText : public CliText
 {
 public: TestFailedText();
-};
-
-class TestRetestText : public CliText
-{
-public: TestRetestText();
 };
 
 class TestQueryText : public CliText
@@ -841,24 +722,12 @@ class TestQueryText : public CliText
 public: TestQueryText();
 };
 
-class TestEraseParm : public CliTextParm
-{
-public: TestEraseParm();
-};
-
 class TestEraseText : public CliText
 {
 public: TestEraseText();
 };
 
-class TestResetText : public CliText
-{
-public: TestResetText();
-};
-
 fixed_string TestPrologExpl = "filename (none if omitted)";
-
-TestPrologParm::TestPrologParm() : CliTextParm(TestPrologExpl, true, 0) { }
 
 fixed_string TestPrologTextStr = "prolog";
 fixed_string TestPrologTextExpl = "file to read before executing a test";
@@ -866,12 +735,10 @@ fixed_string TestPrologTextExpl = "file to read before executing a test";
 TestPrologText::TestPrologText() :
    CliText(TestPrologTextExpl, TestPrologTextStr)
 {
-   BindParm(*new TestPrologParm);
+   BindParm(*new CliTextParm(TestPrologExpl, true, 0));
 }
 
 fixed_string TestEpilogExpl = "filename (none if omitted)";
-
-TestEpilogParm::TestEpilogParm() : CliTextParm(TestEpilogExpl, true, 0) { }
 
 fixed_string TestEpilogTextStr = "epilog";
 fixed_string TestEpilogTextExpl = "file to read after a test passes";
@@ -879,12 +746,10 @@ fixed_string TestEpilogTextExpl = "file to read after a test passes";
 TestEpilogText::TestEpilogText() :
    CliText(TestEpilogTextExpl, TestEpilogTextStr)
 {
-   BindParm(*new TestEpilogParm);
+   BindParm(*new CliTextParm(TestEpilogExpl, true, 0));
 }
 
 fixed_string TestRecoverExpl = "filename (epilog if omitted)";
-
-TestRecoverParm::TestRecoverParm() : CliTextParm(TestRecoverExpl, true, 0) { }
 
 fixed_string TestRecoverTextStr = "recover";
 fixed_string TestRecoverTextExpl = "file to read after a test fails";
@@ -892,12 +757,10 @@ fixed_string TestRecoverTextExpl = "file to read after a test fails";
 TestRecoverText::TestRecoverText() :
    CliText(TestRecoverTextExpl, TestRecoverTextStr)
 {
-   BindParm(*new TestRecoverParm);
+   BindParm(*new CliTextParm(TestRecoverExpl, true, 0));
 }
 
 fixed_string TestBeginExpl = "test filename";
-
-TestBeginParm::TestBeginParm() : CliTextParm(TestBeginExpl, false, 0) { }
 
 fixed_string TestBeginTextStr = "begin";
 fixed_string TestBeginTextExpl =
@@ -905,22 +768,15 @@ fixed_string TestBeginTextExpl =
 
 TestBeginText::TestBeginText() : CliText(TestBeginTextExpl, TestBeginTextStr)
 {
-   BindParm(*new TestBeginParm);
+   BindParm(*new CliTextParm(TestBeginExpl, false, 0));
 }
 
 fixed_string TestEndTextStr = "end";
 fixed_string TestEndTextExpl = "concludes a test";
 
-TestEndText::TestEndText() : CliText(TestEndTextExpl, TestEndTextStr) { }
-
 fixed_string TestFailCodeExpl = "failure code";
 
-TestFailCodeParm::TestFailCodeParm() :
-   CliIntParm(TestFailCodeExpl, WORD_MIN, WORD_MAX) { }
-
 fixed_string TestFailExpl = "explanation for failure";
-
-TestFailExplParm::TestFailExplParm() : CliTextParm(TestFailExpl, true, 0) { }
 
 fixed_string TestFailedTextStr = "failed";
 fixed_string TestFailedTextExpl = "records that the current test failed";
@@ -928,15 +784,12 @@ fixed_string TestFailedTextExpl = "records that the current test failed";
 TestFailedText::TestFailedText() :
    CliText(TestFailedTextExpl, TestFailedTextStr)
 {
-   BindParm(*new TestFailCodeParm);
-   BindParm(*new TestFailExplParm);
+   BindParm(*new CliIntParm(TestFailCodeExpl, WORD_MIN, WORD_MAX));
+   BindParm(*new CliTextParm(TestFailExpl, true, 0));
 }
 
 fixed_string TestRetestTextStr = "retest";
 fixed_string TestRetestTextExpl = "lists tests that have not passed";
-
-TestRetestText::TestRetestText() :
-   CliText(TestRetestTextExpl, TestRetestTextStr) { }
 
 fixed_string TestQueryTextStr = "query";
 fixed_string TestQueryTextExpl =
@@ -950,21 +803,16 @@ TestQueryText::TestQueryText() :
 
 fixed_string TestEraseExpl = "test name";
 
-TestEraseParm::TestEraseParm() : CliTextParm(TestEraseExpl, false, 0) { }
-
 fixed_string TestEraseTextStr = "erase";
 fixed_string TestEraseTextExpl = "removes a test from the database";
 
 TestEraseText::TestEraseText() : CliText(TestEraseTextExpl, TestEraseTextStr)
 {
-   BindParm(*new TestEraseParm);
+   BindParm(*new CliTextParm(TestEraseExpl, false, 0));
 }
 
 fixed_string TestResetTextStr = "reset";
 fixed_string TestResetTextExpl = "resets the testing environment";
-
-TestResetText::TestResetText() :
-   CliText(TestResetTextExpl, TestResetTextStr) { }
 
 fixed_string TestsActionExpl = "subcommand...";
 
@@ -974,12 +822,15 @@ TestsAction::TestsAction() : CliTextParm(TestsActionExpl)
    BindText(*new TestEpilogText, TestsCommand::TestEpilogIndex);
    BindText(*new TestRecoverText, TestsCommand::TestRecoverIndex);
    BindText(*new TestBeginText, TestsCommand::TestBeginIndex);
-   BindText(*new TestEndText, TestsCommand::TestEndIndex);
+   BindText(*new CliText
+      (TestEndTextExpl, TestEndTextStr), TestsCommand::TestEndIndex);
    BindText(*new TestFailedText, TestsCommand::TestFailedIndex);
    BindText(*new TestQueryText, TestsCommand::TestQueryIndex);
-   BindText(*new TestRetestText, TestsCommand::TestRetestIndex);
+   BindText(*new CliText
+      (TestRetestTextExpl, TestRetestTextStr), TestsCommand::TestRetestIndex);
    BindText(*new TestEraseText, TestsCommand::TestEraseIndex);
-   BindText(*new TestResetText, TestsCommand::TestResetIndex);
+   BindText(*new CliText
+      (TestResetTextExpl, TestResetTextStr), TestsCommand::TestResetIndex);
 }
 
 fixed_string TestsStr = "tests";
@@ -1102,51 +953,20 @@ TestHeap::TestHeap() : NbHeap(Type_, Size_) { }
 
 //------------------------------------------------------------------------------
 
-class HeapSizeParm : public CliIntParm
-{
-public: HeapSizeParm();
-};
-
-class HeapTypeParm : public CliCharParm
-{
-public: HeapTypeParm();
-};
-
-class HeapBlockSizeParm : public CliIntParm
-{
-public: HeapBlockSizeParm();
-};
-
-class HeapBlockAddrParm : public CliPtrParm
-{
-public: HeapBlockAddrParm();
-};
-
-//------------------------------------------------------------------------------
-
 fixed_string HeapSizeExpl = "heap's size";
-
-HeapSizeParm::HeapSizeParm() : CliIntParm(HeapSizeExpl, 0, 2048) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string HeapTypeExpl = "heap's memory type (temporary|dynamic|protected)";
 fixed_string HeapTypeChars = "tdp";
 
-HeapTypeParm::HeapTypeParm() : CliCharParm(HeapTypeExpl, HeapTypeChars) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string HeapBlockAddrExpl = "block's address";
 
-HeapBlockAddrParm::HeapBlockAddrParm() : CliPtrParm(HeapBlockAddrExpl) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string HeapBlockSizeExpl = "block's size";
-
-HeapBlockSizeParm::HeapBlockSizeParm() :
-   CliIntParm(HeapBlockSizeExpl, 0, 1 * kBs) { }
 
 //------------------------------------------------------------------------------
 
@@ -1262,8 +1082,8 @@ fixed_string HeapCreateExpl = "Creates the heap.";
 HeapCreateCommand::HeapCreateCommand() :
    CliCommand(HeapCreateStr, HeapCreateExpl)
 {
-   BindParm(*new HeapTypeParm);
-   BindParm(*new HeapSizeParm);
+   BindParm(*new CliCharParm(HeapTypeExpl, HeapTypeChars));
+   BindParm(*new CliIntParm(HeapSizeExpl, 0, 2048));
 }
 
 word HeapCreateCommand::ProcessCommand(CliThread& cli) const
@@ -1336,7 +1156,7 @@ fixed_string HeapAllocExpl = "Allocates a block.";
 HeapAllocCommand::HeapAllocCommand() :
    CliCommand(HeapAllocStr, HeapAllocExpl)
 {
-   BindParm(*new HeapBlockSizeParm);
+   BindParm(*new CliIntParm(HeapBlockSizeExpl, 0, 1 * kBs));
 }
 
 word HeapAllocCommand::ProcessCommand(CliThread& cli) const
@@ -1365,7 +1185,7 @@ fixed_string HeapBlockToSizeExpl = "Returns a block's size.";
 HeapBlockToSizeCommand::HeapBlockToSizeCommand() :
    CliCommand(HeapBlockToSizeStr, HeapBlockToSizeExpl)
 {
-   BindParm(*new HeapBlockAddrParm);
+   BindParm(*new CliPtrParm(HeapBlockAddrExpl));
 }
 
 word HeapBlockToSizeCommand::ProcessCommand(CliThread& cli) const
@@ -1414,7 +1234,7 @@ fixed_string HeapFreeExpl = "Frees a block.";
 HeapFreeCommand::HeapFreeCommand() :
    CliCommand(HeapFreeStr, HeapFreeExpl)
 {
-   BindParm(*new HeapBlockAddrParm);
+   BindParm(*new CliPtrParm(HeapBlockAddrExpl));
 }
 
 word HeapFreeCommand::ProcessCommand(CliThread& cli) const
@@ -1442,7 +1262,7 @@ fixed_string HeapValidateExpl = "Validates the heap (if 0) or a block.";
 HeapValidateCommand::HeapValidateCommand() :
    CliCommand(HeapValidateStr, HeapValidateExpl)
 {
-   BindParm(*new HeapBlockAddrParm);
+   BindParm(*new CliPtrParm(HeapBlockAddrExpl));
 }
 
 word HeapValidateCommand::ProcessCommand(CliThread& cli) const
@@ -1479,16 +1299,6 @@ private:
    ~LbcPool() = default;
 };
 
-class LbcLimitParm : public CliIntParm
-{
-public: LbcLimitParm();
-};
-
-class LbcTimeParm : public CliIntParm
-{
-public: LbcTimeParm();
-};
-
 class LeakyBucketCounterCommands : public CliCommandSet
 {
 public:
@@ -1515,13 +1325,9 @@ private:
 
 fixed_string LbcLimitExpl = "capacity of bucket (limit)";
 
-LbcLimitParm::LbcLimitParm() : CliIntParm(LbcLimitExpl, 1, 3600) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string LbcTimeExpl = "time to empty bucket (seconds)";
-
-LbcTimeParm::LbcTimeParm() : CliIntParm(LbcTimeExpl, 1, 3600) { }
 
 //------------------------------------------------------------------------------
 
@@ -1542,8 +1348,8 @@ fixed_string LbcInitExpl = "Initializes the counter.";
 
 LbcInitCommand::LbcInitCommand() : CliCommand(LbcInitStr, LbcInitExpl)
 {
-   BindParm(*new LbcLimitParm);
-   BindParm(*new LbcTimeParm);
+   BindParm(*new CliIntParm(LbcLimitExpl, 1, 3600));
+   BindParm(*new CliIntParm(LbcTimeExpl, 1, 3600));
 }
 
 word LbcInitCommand::ProcessCommand(CliThread& cli) const
@@ -1622,11 +1428,6 @@ public:
 private:
    Q1WayPool();
    ~Q1WayPool() = default;
-};
-
-class Q1WayItemIndexParm : public CliIntParm
-{
-public: Q1WayItemIndexParm();
 };
 
 class Q1WayCommands : public CliCommandSet
@@ -1749,9 +1550,6 @@ ptrdiff_t Q1WayItem::LinkDiff()
 //------------------------------------------------------------------------------
 
 fixed_string Q1WayItemIndexExpl = "item number (0 = nullptr)";
-
-Q1WayItemIndexParm::Q1WayItemIndexParm() :
-   CliIntParm(Q1WayItemIndexExpl, 0, Q1WayPool::MaxItems) { }
 
 //------------------------------------------------------------------------------
 
@@ -1880,7 +1678,7 @@ fixed_string Enq1Expl = "Adds an item to the end of the queue.";
 
 Enq1Command::Enq1Command() : CliCommand(Enq1Str, Enq1Expl)
 {
-   BindParm(*new Q1WayItemIndexParm);
+   BindParm(*new CliIntParm(Q1WayItemIndexExpl, 0, Q1WayPool::MaxItems));
 }
 
 word Enq1Command::ProcessCommand(CliThread& cli) const
@@ -1909,7 +1707,7 @@ fixed_string Exq1Expl = "Removes an item from anywhere in the queue.";
 
 Exq1Command::Exq1Command() : CliCommand(Exq1Str, Exq1Expl)
 {
-   BindParm(*new Q1WayItemIndexParm);
+   BindParm(*new CliIntParm(Q1WayItemIndexExpl, 0, Q1WayPool::MaxItems));
 }
 
 word Exq1Command::ProcessCommand(CliThread& cli) const
@@ -1962,7 +1760,7 @@ fixed_string Henq1Expl = "Adds an item to the front of the queue.";
 
 Henq1Command::Henq1Command() : CliCommand(Henq1Str, Henq1Expl)
 {
-   BindParm(*new Q1WayItemIndexParm);
+   BindParm(*new CliIntParm(Q1WayItemIndexExpl, 0, Q1WayPool::MaxItems));
 }
 
 word Henq1Command::ProcessCommand(CliThread& cli) const
@@ -1991,8 +1789,8 @@ fixed_string Insertq1Expl = "Inserts item#2 after item#1.";
 
 Insertq1Command::Insertq1Command() : CliCommand(Insertq1Str, Insertq1Expl)
 {
-   BindParm(*new Q1WayItemIndexParm);
-   BindParm(*new Q1WayItemIndexParm);
+   BindParm(*new CliIntParm(Q1WayItemIndexExpl, 0, Q1WayPool::MaxItems));
+   BindParm(*new CliIntParm(Q1WayItemIndexExpl, 0, Q1WayPool::MaxItems));
 }
 
 word Insertq1Command::ProcessCommand(CliThread& cli) const
@@ -2022,7 +1820,7 @@ fixed_string Nextq1Expl = "Returns the next item in the queue.";
 
 Nextq1Command::Nextq1Command() : CliCommand(Nextq1Str, Nextq1Expl)
 {
-   BindParm(*new Q1WayItemIndexParm);
+   BindParm(*new CliIntParm(Q1WayItemIndexExpl, 0, Q1WayPool::MaxItems));
 }
 
 word Nextq1Command::ProcessCommand(CliThread& cli) const
@@ -2117,11 +1915,6 @@ public:
 private:
    Q2WayPool();
    ~Q2WayPool() = default;
-};
-
-class Q2WayItemIndexParm : public CliIntParm
-{
-public: Q2WayItemIndexParm();
 };
 
 class Q2WayCommands : public CliCommandSet
@@ -2253,9 +2046,6 @@ ptrdiff_t Q2WayItem::LinkDiff()
 
 fixed_string Q2WayItemIndexExpl = "item number (0 = nullptr)";
 
-Q2WayItemIndexParm::Q2WayItemIndexParm() :
-   CliIntParm(Q2WayItemIndexExpl, 0, Q2WayPool::MaxItems) { }
-
 //------------------------------------------------------------------------------
 
 Q2WayPool::Q2WayPool()
@@ -2384,7 +2174,7 @@ fixed_string Enq2Expl = "Adds an item to the end of the queue.";
 
 Enq2Command::Enq2Command() : CliCommand(Enq2Str, Enq2Expl)
 {
-   BindParm(*new Q2WayItemIndexParm);
+   BindParm(*new CliIntParm(Q2WayItemIndexExpl, 0, Q2WayPool::MaxItems));
 }
 
 word Enq2Command::ProcessCommand(CliThread& cli) const
@@ -2413,7 +2203,7 @@ fixed_string Exq2Expl = "Removes an item from anywhere in the queue.";
 
 Exq2Command::Exq2Command() : CliCommand(Exq2Str, Exq2Expl)
 {
-   BindParm(*new Q2WayItemIndexParm);
+   BindParm(*new CliIntParm(Q2WayItemIndexExpl, 0, Q2WayPool::MaxItems));
 }
 
 word Exq2Command::ProcessCommand(CliThread& cli) const
@@ -2468,7 +2258,7 @@ fixed_string Henq2Expl = "Adds an item to the front of the queue.";
 
 Henq2Command::Henq2Command() : CliCommand(Henq2Str, Henq2Expl)
 {
-   BindParm(*new Q2WayItemIndexParm);
+   BindParm(*new CliIntParm(Q2WayItemIndexExpl, 0, Q2WayPool::MaxItems));
 }
 
 word Henq2Command::ProcessCommand(CliThread& cli) const
@@ -2522,7 +2312,7 @@ fixed_string Nextq2Expl = "Returns the next item in the queue.";
 
 Nextq2Command::Nextq2Command() : CliCommand(Nextq2Str, Nextq2Expl)
 {
-   BindParm(*new Q2WayItemIndexParm);
+   BindParm(*new CliIntParm(Q2WayItemIndexExpl, 0, Q2WayPool::MaxItems));
 }
 
 word Nextq2Command::ProcessCommand(CliThread& cli) const
@@ -2569,7 +2359,7 @@ fixed_string Prevq2Expl = "Returns the previous item.";
 
 Prevq2Command::Prevq2Command() : CliCommand(Prevq2Str, Prevq2Expl)
 {
-   BindParm(*new Q2WayItemIndexParm);
+   BindParm(*new CliIntParm(Q2WayItemIndexExpl, 0, Q2WayPool::MaxItems));
 }
 
 word Prevq2Command::ProcessCommand(CliThread& cli) const
@@ -2663,26 +2453,6 @@ public:
 private:
    RegistryPool();
    ~RegistryPool() = default;
-};
-
-class RegistryItemIndexParm : public CliIntParm
-{
-public: RegistryItemIndexParm();
-};
-
-class RegistryIdMandParm : public CliIntParm
-{
-public: RegistryIdMandParm();
-};
-
-class RegistryIdOptParm : public CliIntParm
-{
-public: RegistryIdOptParm();
-};
-
-class RegistrySizeParm : public CliIntParm
-{
-public: RegistrySizeParm();
 };
 
 class RegistryCommands : public CliCommandSet
@@ -2795,9 +2565,6 @@ void RegistryItem::Display(ostream& stream,
 
 fixed_string RegistryItemIndexExpl = "item number (0 = nullptr)";
 
-RegistryItemIndexParm::RegistryItemIndexParm() :
-   CliIntParm(RegistryItemIndexExpl, 0, RegistryPool::MaxItems) { }
-
 //------------------------------------------------------------------------------
 
 RegistryPool::RegistryPool()
@@ -2824,18 +2591,9 @@ void RegistryPool::Display(ostream& stream,
 
 fixed_string RegistryIdExpl = "registrant id";
 
-RegistryIdMandParm::RegistryIdMandParm() :
-   CliIntParm(RegistryIdExpl, 0, 31) { }
-
-RegistryIdOptParm::RegistryIdOptParm() :
-   CliIntParm(RegistryIdExpl, 0, 31, true) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string RegistrySizeExpl = "maximum number of items in registry";
-
-RegistrySizeParm::RegistrySizeParm() :
-   CliIntParm(RegistrySizeExpl, 0, RegistryPool::MaxItems) { }
 
 //------------------------------------------------------------------------------
 
@@ -2863,7 +2621,7 @@ fixed_string InitExpl = "Initializes the registry.";
 
 InitCommand::InitCommand() : CliCommand(InitStr, InitExpl)
 {
-   BindParm(*new RegistrySizeParm);
+   BindParm(*new CliIntParm(RegistrySizeExpl, 0, RegistryPool::MaxItems));
 }
 
 word InitCommand::ProcessCommand(CliThread& cli) const
@@ -2889,8 +2647,8 @@ fixed_string InsertExpl = "Adds an item to the registry.";
 
 InsertCommand::InsertCommand() : CliCommand(InsertStr, InsertExpl)
 {
-   BindParm(*new RegistryItemIndexParm);
-   BindParm(*new RegistryIdOptParm);
+   BindParm(*new CliIntParm(RegistryItemIndexExpl, 0, RegistryPool::MaxItems));
+   BindParm(*new CliIntParm(RegistryIdExpl, 0, 31, true));
 }
 
 word InsertCommand::ProcessCommand(CliThread& cli) const
@@ -2931,8 +2689,8 @@ fixed_string RemoveExpl = "Removes an item from the registry.";
 
 RemoveCommand::RemoveCommand() : CliCommand(RemoveStr, RemoveExpl)
 {
-   BindParm(*new RegistryItemIndexParm);
-   BindParm(*new RegistryIdOptParm);
+   BindParm(*new CliIntParm(RegistryItemIndexExpl, 0, RegistryPool::MaxItems));
+   BindParm(*new CliIntParm(RegistryIdExpl, 0, 31, true));
 }
 
 word RemoveCommand::ProcessCommand(CliThread& cli) const
@@ -2969,7 +2727,7 @@ fixed_string AtExpl = "Accesses an item in the registry.";
 
 AtCommand::AtCommand() : CliCommand(AtStr, AtExpl)
 {
-   BindParm(*new RegistryIdMandParm);
+   BindParm(*new CliIntParm(RegistryIdExpl, 0, 31));
 }
 
 word AtCommand::ProcessCommand(CliThread& cli) const
@@ -2997,7 +2755,7 @@ fixed_string FirstExpl = "Returns the first item in the registry.";
 
 FirstCommand::FirstCommand() : CliCommand(FirstStr, FirstExpl)
 {
-   BindParm(*new RegistryIdOptParm);
+   BindParm(*new CliIntParm(RegistryIdExpl, 0, 31, true));
 }
 
 word FirstCommand::ProcessCommand(CliThread& cli) const
@@ -3042,7 +2800,7 @@ fixed_string NextExpl = "Returns the next item in the registry.";
 
 NextCommand::NextCommand() : CliCommand(NextStr, NextExpl)
 {
-   BindParm(*new RegistryItemIndexParm);
+   BindParm(*new CliIntParm(RegistryItemIndexExpl, 0, RegistryPool::MaxItems));
 }
 
 word NextCommand::ProcessCommand(CliThread& cli) const
@@ -3111,7 +2869,7 @@ fixed_string PrevExpl = "Returns the previous item in the registry.";
 
 PrevCommand::PrevCommand() : CliCommand(PrevStr, PrevExpl)
 {
-   BindParm(*new RegistryItemIndexParm);
+   BindParm(*new CliIntParm(RegistryItemIndexExpl, 0, RegistryPool::MaxItems));
 }
 
 word PrevCommand::ProcessCommand(CliThread& cli) const
@@ -3185,26 +2943,6 @@ public:
 private:
    SysTimePool() = default;
    ~SysTimePool() = default;
-};
-
-class SysTimeIndexParm : public CliIntParm
-{
-public: SysTimeIndexParm();
-};
-
-class SysTimeIntervalParm : public CliIntParm
-{
-public: SysTimeIntervalParm();
-};
-
-class SysTimeMsecsParm : public CliIntParm
-{
-public: SysTimeMsecsParm();
-};
-
-class SysTimeDaysParm : public CliIntParm
-{
-public: SysTimeDaysParm();
 };
 
 class SysTimeCommands : public CliCommandSet
@@ -3329,30 +3067,18 @@ private:
 
 fixed_string SysTimeIndexExpl = "item number";
 
-SysTimeIndexParm::SysTimeIndexParm() :
-   CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string SysTimeIntervalExpl =
    "interval (must evenly divide the field's range)";
 
-SysTimeIntervalParm::SysTimeIntervalParm() :
-   CliIntParm(SysTimeIntervalExpl, 1, 500) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string SysTimeMsecsExpl = "number of milliseconds";
 
-SysTimeMsecsParm::SysTimeMsecsParm() :
-   CliIntParm(SysTimeMsecsExpl, WORD_MIN, WORD_MAX) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string SysTimeDaysExpl = "number of days";
-
-SysTimeDaysParm::SysTimeDaysParm() :
-   CliIntParm(SysTimeDaysExpl, WORD_MIN, WORD_MAX) { }
 
 //------------------------------------------------------------------------------
 
@@ -3384,7 +3110,7 @@ fixed_string TimeCtor1Expl = "Constructs the current time.";
 
 TimeCtor1Command::TimeCtor1Command() : CliCommand(TimeCtor1Str, TimeCtor1Expl)
 {
-   BindParm(*new SysTimeIndexParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
 }
 
 word TimeCtor1Command::ProcessCommand(CliThread& cli) const
@@ -3408,7 +3134,7 @@ fixed_string TimeCtor2Expl = "Constructs a specified time.";
 
 TimeCtor2Command::TimeCtor2Command() : CliCommand(TimeCtor2Str, TimeCtor2Expl)
 {
-   BindParm(*new SysTimeIndexParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
    BindParm(*new SysTimeYearParm);
    BindParm(*new SysTimeMonthParm);
    BindParm(*new SysTimeDayParm);
@@ -3446,7 +3172,7 @@ fixed_string DayOfWeekExpl = "Returns the time's day of the week.";
 
 DayOfWeekCommand::DayOfWeekCommand() : CliCommand(DayOfWeekStr, DayOfWeekExpl)
 {
-   BindParm(*new SysTimeIndexParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
 }
 
 word DayOfWeekCommand::ProcessCommand(CliThread& cli) const
@@ -3470,7 +3196,7 @@ fixed_string DayOfYearExpl = "Returns the time's day of the year.";
 
 DayOfYearCommand::DayOfYearCommand() : CliCommand(DayOfYearStr, DayOfYearExpl)
 {
-   BindParm(*new SysTimeIndexParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
 }
 
 word DayOfYearCommand::ProcessCommand(CliThread& cli) const
@@ -3517,7 +3243,7 @@ fixed_string TruncateExpl = "Truncates the time at a specified field.";
 
 TruncateCommand::TruncateCommand() : CliCommand(TruncateStr, TruncateExpl)
 {
-   BindParm(*new SysTimeIndexParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
    BindParm(*new SysTimeFieldParm);
 }
 
@@ -3544,9 +3270,9 @@ fixed_string RoundExpl = "Rounds off the time at a specified field.";
 
 RoundCommand::RoundCommand() : CliCommand(RoundStr, RoundExpl)
 {
-   BindParm(*new SysTimeIndexParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
    BindParm(*new SysTimeFieldParm);
-   BindParm(*new SysTimeIntervalParm);
+   BindParm(*new CliIntParm(SysTimeIntervalExpl, 1, 500));
 }
 
 word RoundCommand::ProcessCommand(CliThread& cli) const
@@ -3573,8 +3299,8 @@ fixed_string AddMsecsExpl = "Adds milliseconds to the time.";
 
 AddMsecsCommand::AddMsecsCommand() : CliCommand(AddMsecsStr, AddMsecsExpl)
 {
-   BindParm(*new SysTimeIndexParm);
-   BindParm(*new SysTimeMsecsParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
+   BindParm(*new CliIntParm(SysTimeMsecsExpl, WORD_MIN, WORD_MAX));
 }
 
 word AddMsecsCommand::ProcessCommand(CliThread& cli) const
@@ -3599,8 +3325,8 @@ fixed_string SubMsecsExpl = "Subtracts milliseconds from the time.";
 
 SubMsecsCommand::SubMsecsCommand() : CliCommand(SubMsecsStr, SubMsecsExpl)
 {
-   BindParm(*new SysTimeIndexParm);
-   BindParm(*new SysTimeMsecsParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
+   BindParm(*new CliIntParm(SysTimeMsecsExpl, WORD_MIN, WORD_MAX));
 }
 
 word SubMsecsCommand::ProcessCommand(CliThread& cli) const
@@ -3626,7 +3352,7 @@ fixed_string MsecsFromNowExpl = "Returns the milliseconds from now to a time.";
 MsecsFromNowCommand::MsecsFromNowCommand() :
    CliCommand(MsecsFromNowStr, MsecsFromNowExpl)
 {
-   BindParm(*new SysTimeIndexParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
 }
 
 word MsecsFromNowCommand::ProcessCommand(CliThread& cli) const
@@ -3652,8 +3378,8 @@ fixed_string MsecsUntilExpl =
 MsecsUntilCommand::MsecsUntilCommand() :
    CliCommand(MsecsUntilStr, MsecsUntilExpl)
 {
-   BindParm(*new SysTimeIndexParm);
-   BindParm(*new SysTimeIndexParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
 }
 
 word MsecsUntilCommand::ProcessCommand(CliThread& cli) const
@@ -3680,8 +3406,8 @@ fixed_string AddDaysExpl = "Adds days to the time.";
 
 AddDaysCommand::AddDaysCommand() : CliCommand(AddDaysStr, AddDaysExpl)
 {
-   BindParm(*new SysTimeIndexParm);
-   BindParm(*new SysTimeDaysParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
+   BindParm(*new CliIntParm(SysTimeDaysExpl, WORD_MIN, WORD_MAX));
 }
 
 word AddDaysCommand::ProcessCommand(CliThread& cli) const
@@ -3706,8 +3432,8 @@ fixed_string SubDaysExpl = "Subtracts days from the time.";
 
 SubDaysCommand::SubDaysCommand() : CliCommand(SubDaysStr, SubDaysExpl)
 {
-   BindParm(*new SysTimeIndexParm);
-   BindParm(*new SysTimeDaysParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
+   BindParm(*new CliIntParm(SysTimeDaysExpl, WORD_MIN, WORD_MAX));
 }
 
 word SubDaysCommand::ProcessCommand(CliThread& cli) const
@@ -3732,7 +3458,7 @@ fixed_string StrTimeExpl = "Displays the time in various formats.";
 
 StrTimeCommand::StrTimeCommand() : CliCommand(StrTimeStr, StrTimeExpl)
 {
-   BindParm(*new SysTimeIndexParm);
+   BindParm(*new CliIntParm(SysTimeIndexExpl, 1, SysTimePool::MaxIndex));
 }
 
 word StrTimeCommand::ProcessCommand(CliThread& cli) const
@@ -4129,94 +3855,14 @@ void RecoveryThread::UseBadPointer()
 //
 //  The RECOVER command, for testing the Thread safety net.
 //
-class AbortText : public CliText
-{
-public: AbortText();
-};
-
-class BadPtrText : public CliText
-{
-public: BadPtrText();
-};
-
-class CtorTrapText : public CliText
-{
-public: CtorTrapText();
-};
-
-class CreateText : public CliText
-{
-public: CreateText();
-};
-
 class DeleteText : public CliText
 {
 public: DeleteText();
 };
 
-class DivideText : public CliText
-{
-public: DivideText();
-};
-
-class DtorTrapText : public CliText
-{
-public: DtorTrapText();
-};
-
-class LoopText : public CliText
-{
-public: LoopText();
-};
-
-class MutexBlockText : public CliText
-{
-public: MutexBlockText();
-};
-
-class MutexExitText : public CliText
-{
-public: MutexExitText();
-};
-
-class MutexTrapText : public CliText
-{
-public: MutexTrapText();
-};
-
 class RaiseText : public CliText
 {
 public: RaiseText();
-};
-
-class ReturnText : public CliText
-{
-public: ReturnText();
-};
-
-class SignalParm : public CliTextParm
-{
-public: SignalParm();
-};
-
-class StackText : public CliText
-{
-public: StackText();
-};
-
-class SwErrText : public CliText
-{
-public: SwErrText();
-};
-
-class TerminateText : public CliText
-{
-public: TerminateText();
-};
-
-class ThisParm : public CliBoolParm
-{
-public: ThisParm();
 };
 
 class TrapText : public CliText
@@ -4240,40 +3886,37 @@ private:
 
 //------------------------------------------------------------------------------
 
+fixed_string SignalParmExpl = "signal's name ('SIG...')";
+
+//------------------------------------------------------------------------------
+
 fixed_string AbortTextStr = "abort";
 fixed_string AbortTextExpl = "call abort()";
-
-AbortText::AbortText() : CliText(AbortTextExpl, AbortTextStr) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string BadPtrTextStr = "badptr";
 fixed_string BadPtrTextExpl = "dereference an invalid pointer";
 
-BadPtrText::BadPtrText() : CliText(BadPtrTextExpl, BadPtrTextStr) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string CtorTrapTextStr = "ctortrap";
 fixed_string CtorTrapTextExpl = "trap in recovery thread constructor";
-
-CtorTrapText::CtorTrapText() : CliText(CtorTrapTextExpl, CtorTrapTextStr) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string CreateTextStr = "create";
 fixed_string CreateTextExpl = "create the recovery thread";
 
-CreateText::CreateText() : CliText(CreateTextExpl, CreateTextStr) { }
-
 //------------------------------------------------------------------------------
 
+fixed_string ThisParmExpl = "perform by 'this' (t) or by another thread (f)";
 fixed_string DeleteTextStr = "delete";
 fixed_string DeleteTextExpl = "delete the recovery thread";
 
 DeleteText::DeleteText() : CliText(DeleteTextExpl, DeleteTextStr)
 {
-   BindParm(*new ThisParm);
+   BindParm(*new CliBoolParm(ThisParmExpl));
 }
 
 //------------------------------------------------------------------------------
@@ -4281,42 +3924,30 @@ DeleteText::DeleteText() : CliText(DeleteTextExpl, DeleteTextStr)
 fixed_string DivideTextStr = "divide";
 fixed_string DivideTextExpl = "divide by zero";
 
-DivideText::DivideText() : CliText(DivideTextExpl, DivideTextStr) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string DtorTrapTextStr = "dtortrap";
 fixed_string DtorTrapTextExpl = "trap in recovery thread destructor";
-
-DtorTrapText::DtorTrapText() : CliText(DtorTrapTextExpl, DtorTrapTextStr) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string LoopTextStr = "loop";
 fixed_string LoopTextExpl = "enter an infinite loop";
 
-LoopText::LoopText() : CliText(LoopTextExpl, LoopTextStr) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string MutexBlockStr = "mutexblock";
 fixed_string MutexBlockExpl = "block while holding a mutex";
-
-MutexBlockText::MutexBlockText() : CliText(MutexBlockExpl, MutexBlockStr) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string MutexExitStr = "mutexexit";
 fixed_string MutexExitExpl = "exit while holding a mutex";
 
-MutexExitText::MutexExitText() : CliText(MutexExitExpl, MutexExitStr) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string MutexTrapStr = "mutextrap";
 fixed_string MutexTrapExpl = "trap while holding a mutex";
-
-MutexTrapText::MutexTrapText() : CliText(MutexTrapExpl, MutexTrapStr) { }
 
 //------------------------------------------------------------------------------
 
@@ -4325,7 +3956,7 @@ fixed_string RaiseTextExpl = "raise a signal";
 
 RaiseText::RaiseText() : CliText(RaiseTextExpl, RaiseTextStr)
 {
-   BindParm(*new SignalParm);
+   BindParm(*new CliTextParm(SignalParmExpl, false, 0));
 }
 
 //------------------------------------------------------------------------------
@@ -4333,41 +3964,20 @@ RaiseText::RaiseText() : CliText(RaiseTextExpl, RaiseTextStr)
 fixed_string ReturnTextStr = "return";
 fixed_string ReturnTextExpl = "return from the recovery thread";
 
-ReturnText::ReturnText() : CliText(ReturnTextExpl, ReturnTextStr) { }
-
-//------------------------------------------------------------------------------
-
-fixed_string SignalParmExpl = "signal's name ('SIG...')";
-
-SignalParm::SignalParm() : CliTextParm(SignalParmExpl, false, 0) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string StackTextStr = "stack";
 fixed_string StackTextExpl = "cause a stack overflow";
-
-StackText::StackText() : CliText(StackTextExpl, StackTextStr) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string SwErrTextStr = "swerr";
 fixed_string SwErrTextExpl = "cause a software exception";
 
-SwErrText::SwErrText() : CliText(SwErrTextExpl, SwErrTextStr) { }
-
 //------------------------------------------------------------------------------
 
 fixed_string TerminateTextStr = "terminate";
 fixed_string TerminateTextExpl = "call terminate()";
-
-TerminateText::TerminateText() :
-   CliText(TerminateTextExpl, TerminateTextStr) { }
-
-//------------------------------------------------------------------------------
-
-fixed_string ThisParmExpl = "perform by 'this' (t) or by another thread (f)";
-
-ThisParm::ThisParm() : CliBoolParm(ThisParmExpl) { }
 
 //------------------------------------------------------------------------------
 
@@ -4376,8 +3986,8 @@ fixed_string TrapTextExpl = "cause a trap";
 
 TrapText::TrapText() : CliText(TrapTextExpl, TrapTextStr)
 {
-   BindParm(*new ThisParm);
-   BindParm(*new SignalParm);
+   BindParm(*new CliBoolParm(ThisParmExpl));
+   BindParm(*new CliTextParm(SignalParmExpl, false, 0));
 }
 
 //------------------------------------------------------------------------------
@@ -4386,23 +3996,37 @@ fixed_string RecoverWhatExpl = "what to recover from...";
 
 RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
 {
-   BindText(*new CreateText, RecoveryThread::Create);
-   BindText(*new ReturnText, RecoveryThread::Return);
-   BindText(*new AbortText, RecoveryThread::Abort);
-   BindText(*new BadPtrText, RecoveryThread::DerefenceBadPtr);
-   BindText(*new CtorTrapText, RecoveryThread::CtorTrap);
-   BindText(*new DivideText, RecoveryThread::DivideByZero);
-   BindText(*new LoopText, RecoveryThread::InfiniteLoop);
-   BindText(*new MutexBlockText, RecoveryThread::MutexBlock);
-   BindText(*new MutexExitText, RecoveryThread::MutexExit);
-   BindText(*new MutexTrapText, RecoveryThread::MutexTrap);
+   BindText(*new CliText
+      (CreateTextExpl, CreateTextStr), RecoveryThread::Create);
+   BindText(*new CliText
+      (ReturnTextExpl, ReturnTextStr), RecoveryThread::Return);
+   BindText(*new CliText
+      (AbortTextExpl, AbortTextStr), RecoveryThread::Abort);
+   BindText(*new CliText
+      (BadPtrTextExpl, BadPtrTextStr), RecoveryThread::DerefenceBadPtr);
+   BindText(*new CliText
+      (CtorTrapTextExpl, CtorTrapTextStr), RecoveryThread::CtorTrap);
+   BindText(*new CliText
+      (DivideTextExpl, DivideTextStr), RecoveryThread::DivideByZero);
+   BindText(*new CliText
+      (LoopTextExpl, LoopTextStr), RecoveryThread::InfiniteLoop);
+   BindText(*new CliText
+      (MutexBlockExpl, MutexBlockStr), RecoveryThread::MutexBlock);
+   BindText(*new CliText
+      (MutexExitExpl, MutexExitStr), RecoveryThread::MutexExit);
+   BindText(*new CliText
+      (MutexTrapExpl, MutexTrapStr), RecoveryThread::MutexTrap);
    BindText(*new RaiseText, RecoveryThread::RaiseSignal);
-   BindText(*new SwErrText, RecoveryThread::SwErr);
-   BindText(*new TerminateText, RecoveryThread::Terminate);
+   BindText(*new CliText
+      (SwErrTextExpl, SwErrTextStr), RecoveryThread::SwErr);
+   BindText(*new CliText
+      (TerminateTextExpl, TerminateTextStr), RecoveryThread::Terminate);
    BindText(*new TrapText, RecoveryThread::Trap);
-   BindText(*new StackText, RecoveryThread::OverflowStack);
+   BindText(*new CliText
+      (StackTextExpl, StackTextStr), RecoveryThread::OverflowStack);
    BindText(*new DeleteText, RecoveryThread::Delete);
-   BindText(*new DtorTrapText, RecoveryThread::DtorTrap);
+   BindText(*new CliText
+      (DtorTrapTextExpl, DtorTrapTextStr), RecoveryThread::DtorTrap);
 }
 
 //------------------------------------------------------------------------------

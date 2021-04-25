@@ -20,9 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsShelf.h"
-#include "CliText.h"
 #include <string>
 #include "CfgParmRegistry.h"
+#include "CliText.h"
 #include "Debug.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -31,19 +31,6 @@
 
 namespace PotsBase
 {
-class PotsShelfServiceText : public CliText
-{
-public: PotsShelfServiceText();
-};
-
-fixed_string PotsShelfServiceStr = "POTS Shelf/UDP";
-fixed_string PotsShelfServiceExpl = "POTS Shelf Protocol";
-
-PotsShelfServiceText::PotsShelfServiceText() :
-   CliText(PotsShelfServiceStr, PotsShelfServiceExpl) { }
-
-//------------------------------------------------------------------------------
-
 fixed_string PotsShelfIpPortKey = "PotsShelfIpPort";
 fixed_string PotsShelfIpPortExpl = "POTS Shelf Protocol: UDP port";
 
@@ -75,10 +62,13 @@ InputHandler* PotsShelfIpService::CreateHandler(IpPort* port) const
 
 //------------------------------------------------------------------------------
 
+fixed_string PotsShelfServiceStr = "POTS Shelf/UDP";
+fixed_string PotsShelfServiceExpl = "POTS Shelf Protocol";
+
 CliText* PotsShelfIpService::CreateText() const
 {
    Debug::ft("PotsShelfIpService.CreateText");
 
-   return new PotsShelfServiceText;
+   return new CliText(PotsShelfServiceStr, PotsShelfServiceExpl);
 }
 }

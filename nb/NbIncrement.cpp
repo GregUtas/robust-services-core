@@ -20,9 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbIncrement.h"
-#include "CliBoolParm.h"
-#include "CliIntParm.h"
-#include "CliPtrParm.h"
 #include "CliText.h"
 #include <cctype>
 #include <cstddef>
@@ -37,7 +34,9 @@
 #include "CallbackRequest.h"
 #include "CfgParm.h"
 #include "CfgParmRegistry.h"
+#include "CliBoolParm.h"
 #include "CliBuffer.h"
+#include "CliPtrParm.h"
 #include "CliRegistry.h"
 #include "CliStack.h"
 #include "CliThread.h"
@@ -94,25 +93,10 @@ namespace NodeBase
 {
 //  The ALARMS command.
 //
-class AlarmParm : public CliTextParm
-{
-public: AlarmParm();
-};
-
 fixed_string AlarmExpl = "alarm name";
-
-AlarmParm::AlarmParm() : CliTextParm(AlarmExpl, false, 0) { }
-
-class AlarmsListText : public CliText
-{
-public: AlarmsListText();
-};
 
 fixed_string AlarmsListTextStr = "list";
 fixed_string AlarmsListTextExpl = "lists alarms";
-
-AlarmsListText::AlarmsListText() :
-   CliText(AlarmsListTextExpl, AlarmsListTextStr) { }
 
 class AlarmsExplainText : public CliText
 {
@@ -125,7 +109,7 @@ fixed_string AlarmsExplainTextExpl = "displays documentation for an alarm";
 AlarmsExplainText::AlarmsExplainText() :
    CliText(AlarmsExplainTextExpl, AlarmsExplainTextStr)
 {
-   BindParm(*new AlarmParm);
+   BindParm(*new CliTextParm(AlarmExpl, false, 0));
 }
 
 class AlarmsClearText : public CliText
@@ -139,7 +123,7 @@ fixed_string AlarmsClearTextExpl = "clears an alarm";
 AlarmsClearText::AlarmsClearText() :
    CliText(AlarmsClearTextExpl, AlarmsClearTextStr)
 {
-   BindParm(*new AlarmParm);
+   BindParm(*new CliTextParm(AlarmExpl, false, 0));
 }
 
 class AlarmsAction : public CliTextParm
@@ -156,7 +140,8 @@ fixed_string AlarmsActionExpl = "subcommand...";
 
 AlarmsAction::AlarmsAction() : CliTextParm(AlarmsActionExpl)
 {
-   BindText(*new AlarmsListText, AlarmsListIndex);
+   BindText(*new CliText
+      (AlarmsListTextExpl, AlarmsListTextStr), AlarmsListIndex);
    BindText(*new AlarmsExplainText, AlarmsExplainIndex);
    BindText(*new AlarmsClearText, AlarmsClearIndex);
 }
@@ -248,19 +233,9 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The AUDIT command.
 //
-class AuditSecondsParm : public CliIntParm
-{
-public: AuditSecondsParm();
-};
-
 class AuditIntervalText : public CliText
 {
 public: AuditIntervalText();
-};
-
-class AuditForceText : public CliText
-{
-public: AuditForceText();
 };
 
 class AuditAction : public CliTextParm
@@ -278,23 +253,17 @@ private:
 
 fixed_string AuditSecondsExpl = "seconds between audits (0 = disabled)";
 
-AuditSecondsParm::AuditSecondsParm() :
-   CliIntParm(AuditSecondsExpl, 0, 60) { }
-
 fixed_string AuditIntervalStr = "interval";
 fixed_string AuditIntervalExpl = "sets the audit's frequency";
 
 AuditIntervalText::AuditIntervalText() :
    CliText(AuditIntervalExpl, AuditIntervalStr)
 {
-   BindParm(*new AuditSecondsParm);
+   BindParm(*new CliIntParm(AuditSecondsExpl, 0, 60));
 }
 
 fixed_string AuditForceStr = "force";
 fixed_string AuditForceExpl = "forces the audit to run immediately";
-
-AuditForceText::AuditForceText() :
-   CliText(AuditForceExpl, AuditForceStr) { }
 
 const id_t AuditIntervalIndex = 1;
 const id_t AuditForceIndex = 2;
@@ -304,7 +273,7 @@ fixed_string AuditActionExpl = "subcommand...";
 AuditAction::AuditAction() : CliTextParm(AuditActionExpl)
 {
    BindText(*new AuditIntervalText, AuditIntervalIndex);
-   BindText(*new AuditForceText, AuditForceIndex);
+   BindText(*new CliText(AuditForceExpl, AuditForceStr), AuditForceIndex);
 }
 
 fixed_string AuditStr = "audit";
@@ -401,21 +370,6 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
 //
 //  The CFGPARMS command.
 //
-class CfgParmName : public CliTextParm
-{
-public: CfgParmName();
-};
-
-class CfgParmValue : public CliTextParm
-{
-public: CfgParmValue();
-};
-
-class CfgParmsListText : public CliText
-{
-public: CfgParmsListText();
-};
-
 class CfgParmsExplText : public CliText
 {
 public: CfgParmsExplText();
@@ -446,17 +400,10 @@ private:
 
 fixed_string CfgParmNameExpl = "name of configuration parameter";
 
-CfgParmName::CfgParmName() : CliTextParm(CfgParmNameExpl, false, 0) { }
-
 fixed_string CfgParmValueExpl = "value of configuration parameter";
-
-CfgParmValue::CfgParmValue() : CliTextParm(CfgParmValueExpl, false, 0) { }
 
 fixed_string CfgParmsListStr = "list";
 fixed_string CfgParmsListExpl = "lists all configuration parameters";
-
-CfgParmsListText::CfgParmsListText() :
-   CliText(CfgParmsListExpl, CfgParmsListStr) { }
 
 fixed_string CfgParmsExplStr = "explain";
 fixed_string CfgParmsExplExpl = "explains a configuration parameter";
@@ -464,7 +411,7 @@ fixed_string CfgParmsExplExpl = "explains a configuration parameter";
 CfgParmsExplText::CfgParmsExplText() :
    CliText(CfgParmsExplExpl, CfgParmsExplStr)
 {
-   BindParm(*new CfgParmName);
+   BindParm(*new CliTextParm(CfgParmNameExpl, false, 0));
 }
 
 fixed_string CfgParmsGetStr = "get";
@@ -472,7 +419,7 @@ fixed_string CfgParmsGetExpl = "returns a configuration parameter's value";
 
 CfgParmsGetText::CfgParmsGetText() : CliText(CfgParmsGetExpl, CfgParmsGetStr)
 {
-   BindParm(*new CfgParmName);
+   BindParm(*new CliTextParm(CfgParmNameExpl, false, 0));
 }
 
 fixed_string CfgParmsSetStr = "set";
@@ -480,8 +427,8 @@ fixed_string CfgParmsSetExpl = "sets a configuration parameter's value";
 
 CfgParmsSetText::CfgParmsSetText() : CliText(CfgParmsSetExpl, CfgParmsSetStr)
 {
-   BindParm(*new CfgParmName);
-   BindParm(*new CfgParmValue);
+   BindParm(*new CliTextParm(CfgParmNameExpl, false, 0));
+   BindParm(*new CliTextParm(CfgParmValueExpl, false, 0));
 }
 
 const id_t CfgParmsListIndex = 1;
@@ -493,7 +440,7 @@ fixed_string CfgParmsActionExpl = "subcommand...";
 
 CfgParmsAction::CfgParmsAction() : CliTextParm(CfgParmsActionExpl)
 {
-   BindText(*new CfgParmsListText, CfgParmsListIndex);
+   BindText(*new CliText(CfgParmsListExpl, CfgParmsListStr), CfgParmsListIndex);
    BindText(*new CfgParmsExplText, CfgParmsExplIndex);
    BindText(*new CfgParmsGetText, CfgParmsGetIndex);
    BindText(*new CfgParmsSetText, CfgParmsSetIndex);
@@ -792,11 +739,6 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The DELAY command.
 //
-class DelayTimeParm : public CliIntParm
-{
-public: DelayTimeParm();
-};
-
 class DelayCommand : public CliCommand
 {
 public:
@@ -807,14 +749,12 @@ private:
 
 fixed_string DelayTimeExpl = "time (secs)";
 
-DelayTimeParm::DelayTimeParm() : CliIntParm(DelayTimeExpl, 0, 180) { }
-
 fixed_string DelayStr = "delay";
 fixed_string DelayExpl = "Pauses before executing the next command.";
 
 DelayCommand::DelayCommand() : CliCommand(DelayStr, DelayExpl)
 {
-   BindParm(*new DelayTimeParm);
+   BindParm(*new CliIntParm(DelayTimeExpl, 0, 180));
 }
 
 word DelayCommand::ProcessCommand(CliThread& cli) const
@@ -835,14 +775,7 @@ word DelayCommand::ProcessCommand(CliThread& cli) const
 //
 //  The DISPLAY command.
 //
-class ObjPtrMandParm : public CliPtrParm
-{
-public: ObjPtrMandParm();
-};
-
 fixed_string ObjPtrMandText = "pointer to an object derived from Base";
-
-ObjPtrMandParm::ObjPtrMandParm() : CliPtrParm(ObjPtrMandText) { }
 
 class DisplayCommand : public CliCommand
 {
@@ -857,7 +790,7 @@ fixed_string DisplayExpl = "Displays an object derived from NodeBase::Base.";
 
 DisplayCommand::DisplayCommand() : CliCommand(DisplayStr, DisplayExpl)
 {
-   BindParm(*new ObjPtrMandParm);
+   BindParm(*new CliPtrParm(ObjPtrMandText));
    BindParm(*new DispBVParm);
 }
 
@@ -883,17 +816,6 @@ word DisplayCommand::ProcessCommand(CliThread& cli) const
 //
 //  The DUMP command.
 //
-class MemAddrParm : public CliPtrParm
-{
-public: MemAddrParm();
-};
-
-class ByteCountParm : public CliIntParm
-{
-public:
-   ByteCountParm();
-};
-
 class DumpCommand : public CliCommand
 {
 public:
@@ -904,19 +826,15 @@ private:
 
 fixed_string MemAddrText = "memory address";
 
-MemAddrParm::MemAddrParm() : CliPtrParm(MemAddrText) { }
-
 fixed_string ByteCountExpl = "number of bytes to display";
-
-ByteCountParm::ByteCountParm() : CliIntParm(ByteCountExpl, 1, 1024) { }
 
 fixed_string DumpStr = "dump";
 fixed_string DumpExpl = "Displays memory in hex.";
 
 DumpCommand::DumpCommand() : CliCommand(DumpStr, DumpExpl)
 {
-   BindParm(*new MemAddrParm);
-   BindParm(*new ByteCountParm);
+   BindParm(*new CliPtrParm(MemAddrText));
+   BindParm(*new CliIntParm(ByteCountExpl, 1, 1024));
 }
 
 word DumpCommand::ProcessCommand(CliThread& cli) const
@@ -941,11 +859,6 @@ word DumpCommand::ProcessCommand(CliThread& cli) const
 //
 //  The ECHO command.
 //
-class EchoParm : public CliTextParm
-{
-public: EchoParm();
-};
-
 class EchoCommand : public CliCommand
 {
 public:
@@ -956,14 +869,12 @@ private:
 
 fixed_string EchoParmExpl = "the string to be written to the console";
 
-EchoParm::EchoParm() : CliTextParm(EchoParmExpl, false, 0) { }
-
 fixed_string EchoStr = "echo";
 fixed_string EchoExpl = "Writes the rest of the input line to the console.";
 
 EchoCommand::EchoCommand() : CliCommand(EchoStr, EchoExpl)
 {
-   BindParm(*new EchoParm);
+   BindParm(*new CliTextParm(EchoParmExpl, false, 0));
 }
 
 word EchoCommand::ProcessCommand(CliThread& cli) const
@@ -1042,34 +953,9 @@ word ExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The HEAPS command.
 //
-class HeapsListText : public CliText
-{
-public: HeapsListText();
-};
-
 class HeapsInUseText : public CliText
 {
 public: HeapsInUseText();
-};
-
-class HeapsResetText : public CliText
-{
-public: HeapsResetText();
-};
-
-class HeapsStartText : public CliText
-{
-public: HeapsStartText();
-};
-
-class HeapsStopText : public CliText
-{
-public: HeapsStopText();
-};
-
-class HeapsDisplayText : public CliText
-{
-public: HeapsDisplayText();
 };
 
 class HeapsTraceAction : public CliTextParm
@@ -1080,11 +966,6 @@ public: HeapsTraceAction();
 class HeapsTraceText : public CliText
 {
 public: HeapsTraceText();
-};
-
-class HeapsValidateText : public CliText
-{
-public: HeapsValidateText();
 };
 
 class HeapsAction : public CliTextParm
@@ -1103,9 +984,6 @@ private:
 fixed_string HeapsListTextStr = "list";
 fixed_string HeapsListTextExpl = "lists all heaps";
 
-HeapsListText::HeapsListText() :
-   CliText(HeapsListTextExpl, HeapsListTextStr) { }
-
 fixed_string HeapsInUseTextStr = "inuse";
 fixed_string HeapsInUseTextExpl = "returns the number of bytes allocated";
 
@@ -1123,35 +1001,27 @@ const id_t HeapsDisplayIndex = 4;
 fixed_string HeapsResetTextStr = "reset";
 fixed_string HeapsResetTextExpl = "clears allocated blocks";
 
-HeapsResetText::HeapsResetText() :
-   CliText(HeapsResetTextExpl, HeapsResetTextStr) { }
-
 fixed_string HeapsStartTextStr = "start";
 fixed_string HeapsStartTextExpl = "starts tracing of allocated blocks";
-
-HeapsStartText::HeapsStartText() :
-   CliText(HeapsStartTextExpl, HeapsStartTextStr) { }
 
 fixed_string HeapsStopTextStr = "stop";
 fixed_string HeapsStopTextExpl = "stops tracing of allocated blocks";
 
-HeapsStopText::HeapsStopText() :
-   CliText(HeapsStopTextExpl, HeapsStopTextStr) { }
-
 fixed_string HeapsDisplayTextStr = "display";
 fixed_string HeapsDisplayTextExpl = "displays allocated blocks";
-
-HeapsDisplayText::HeapsDisplayText() :
-   CliText(HeapsDisplayTextExpl, HeapsDisplayTextStr) { }
 
 fixed_string HeapsTraceActionExpl = "tracing subcommand...";
 
 HeapsTraceAction::HeapsTraceAction() : CliTextParm(HeapsTraceActionExpl)
 {
-   BindText(*new HeapsResetText, HeapsResetIndex);
-   BindText(*new HeapsStartText, HeapsStartIndex);
-   BindText(*new HeapsStopText, HeapsStopIndex);
-   BindText(*new HeapsDisplayText, HeapsDisplayIndex);
+   BindText(*new CliText
+      (HeapsResetTextExpl, HeapsResetTextStr), HeapsResetIndex);
+   BindText(*new CliText
+      (HeapsStartTextExpl, HeapsStartTextStr), HeapsStartIndex);
+   BindText(*new CliText
+      (HeapsStopTextExpl, HeapsStopTextStr), HeapsStopIndex);
+   BindText(*new CliText
+      (HeapsDisplayTextExpl, HeapsDisplayTextStr), HeapsDisplayIndex);
 }
 
 fixed_string HeapsTraceTextStr = "trace";
@@ -1167,9 +1037,6 @@ HeapsTraceText::HeapsTraceText() :
 fixed_string HeapsValidateTextStr = "validate";
 fixed_string HeapsValidateTextExpl = "validates all heaps";
 
-HeapsValidateText::HeapsValidateText() :
-   CliText(HeapsValidateTextExpl, HeapsValidateTextStr) { }
-
 const id_t HeapsListIndex = 1;
 const id_t HeapsInUseIndex = 2;
 const id_t HeapsTraceIndex = 3;
@@ -1179,10 +1046,11 @@ fixed_string HeapsActionExpl = "subcommand...";
 
 HeapsAction::HeapsAction() : CliTextParm(HeapsActionExpl)
 {
-   BindText(*new HeapsListText, HeapsListIndex);
+   BindText(*new CliText(HeapsListTextExpl, HeapsListTextStr), HeapsListIndex);
    BindText(*new HeapsInUseText, HeapsInUseIndex);
    BindText(*new HeapsTraceText, HeapsTraceIndex);
-   BindText(*new HeapsValidateText, HeapsValidateIndex);
+   BindText(*new CliText
+      (HeapsValidateTextExpl, HeapsValidateTextStr), HeapsValidateIndex);
 }
 
 fixed_string HeapsStr = "heaps";
@@ -1286,16 +1154,6 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The HELP command.
 //
-class HelpIncrParm : public CliTextParm
-{
-public: HelpIncrParm();
-};
-
-class HelpCommParm : public CliTextParm
-{
-public: HelpCommParm();
-};
-
 class HelpCommand : public CliCommand
 {
 public:
@@ -1306,16 +1164,7 @@ private:
 
 fixed_string HelpIncrExpl = "name of increment";
 
-HelpIncrParm::HelpIncrParm() : CliTextParm(HelpIncrExpl, true, 0) { }
-
 fixed_string HelpCommExpl = "name of command ('full' = all commands)";
-
-HelpCommParm::HelpCommParm() : CliTextParm(HelpCommExpl, true, 0) { }
-
-class HelpFullText : public CliText
-{
-public: HelpFullText();
-};
 
 class HelpFullParm : public CliTextParm
 {
@@ -1325,11 +1174,9 @@ public: HelpFullParm();
 fixed_string HelpFullStr = "full";
 fixed_string HelpFullExpl = "displays full documentation";
 
-HelpFullText::HelpFullText() : CliText(HelpFullExpl, HelpFullStr) { }
-
 HelpFullParm::HelpFullParm() : CliTextParm(HelpFullExpl, true)
 {
-   BindText(*new HelpFullText, 1);
+   BindText(*new CliText(HelpFullExpl, HelpFullStr), 1);
 }
 
 fixed_string HelpStr = "help";
@@ -1337,8 +1184,8 @@ fixed_string HelpExpl = "Provides help for an increment or command.";
 
 HelpCommand::HelpCommand() : CliCommand(HelpStr, HelpExpl)
 {
-   BindParm(*new HelpIncrParm);
-   BindParm(*new HelpCommParm);
+   BindParm(*new CliTextParm(HelpIncrExpl, true, 0));
+   BindParm(*new CliTextParm(HelpCommExpl, true, 0));
    BindParm(*new HelpFullParm);
 }
 
@@ -1472,36 +1319,9 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
 //
 //  The IF command.
 //
-class IfSymbol : public CliIntParm
-{
-public:
-   IfSymbol();
-};
-
-class IfValue : public CliIntParm
-{
-public:
-   IfValue();
-};
-
-class CommandMandParm : public CliTextParm
-{
-public: CommandMandParm();
-};
-
-class ElseText : public CliText
-{
-public: ElseText();
-};
-
 class ElseParm : public CliTextParm
 {
 public: ElseParm();
-};
-
-class CommandOptParm : public CliTextParm
-{
-public: CommandOptParm();
 };
 
 class IfCommand : public CliCommand
@@ -1514,28 +1334,18 @@ private:
 
 fixed_string IfSymbolExpl = "symbol for an integer (e.g. &cli.result)";
 
-IfSymbol::IfSymbol() : CliIntParm(IfSymbolExpl, WORD_MIN, WORD_MAX) { }
-
 fixed_string IfValueExpl = "value for comparison";
-
-IfValue::IfValue() : CliIntParm(IfValueExpl, WORD_MIN, WORD_MAX) { }
 
 fixed_string CommandMandExpl = "command to execute if condition is true";
 
-CommandMandParm::CommandMandParm() : CliTextParm(CommandMandExpl, false, 0) { }
-
 fixed_string CommandOptExpl = "command to execute if condition is false";
-
-CommandOptParm::CommandOptParm() : CliTextParm(CommandOptExpl, true, 0) { }
 
 fixed_string ElseStr = "else";
 fixed_string ElseExpl = "precedes command to execute if condition is false";
 
-ElseText::ElseText() : CliText(ElseExpl, ElseStr) { }
-
 ElseParm::ElseParm() : CliTextParm(ElseExpl, true)
 {
-   BindText(*new ElseText, 1);
+   BindText(*new CliText(ElseExpl, ElseStr), 1);
 }
 
 fixed_string IfStr = "if";
@@ -1543,12 +1353,12 @@ fixed_string IfExpl = "Conditionally executes a CLI command.";
 
 IfCommand::IfCommand() : CliCommand(IfStr, IfExpl)
 {
-   BindParm(*new IfSymbol);
+   BindParm(*new CliIntParm(IfSymbolExpl, WORD_MIN, WORD_MAX));
    BindParm(*new RelationParm);
-   BindParm(*new IfValue);
-   BindParm(*new CommandMandParm);
+   BindParm(*new CliIntParm(IfValueExpl, WORD_MIN, WORD_MAX));
+   BindParm(*new CliTextParm(CommandMandExpl, false, 0));
    BindParm(*new ElseParm);
-   BindParm(*new CommandOptParm);
+   BindParm(*new CliTextParm(CommandOptExpl, true, 0));
 }
 
 fn_name IfCommand_ProcessCommand = "IfCommand.ProcessCommand";
@@ -1735,16 +1545,8 @@ LogsListText::LogsListText() :
    BindParm(*new LogGroupOptParm);
 }
 
-class LogsGroupsText : public CliText
-{
-public: LogsGroupsText();
-};
-
 fixed_string LogsGroupsTextStr = "groups";
 fixed_string LogsGroupsTextExpl = "lists all log groups";
-
-LogsGroupsText::LogsGroupsText() :
-   CliText(LogsGroupsTextExpl, LogsGroupsTextStr) { }
 
 class LogsExplainText : public CliText
 {
@@ -1776,14 +1578,7 @@ LogsSuppressText::LogsSuppressText() :
    BindParm(*new SetHowParm);
 }
 
-class LogThrottleParm : public CliIntParm
-{
-public: LogThrottleParm();
-};
-
 fixed_string LogThrottleExpl = "report every Nth log (0=none, 1=all)";
-
-LogThrottleParm::LogThrottleParm() : CliIntParm(LogThrottleExpl, 0, 100) { }
 
 class LogsThrottleText : public CliText
 {
@@ -1798,19 +1593,11 @@ LogsThrottleText::LogsThrottleText() :
 {
    BindParm(*new LogGroupMandParm);
    BindParm(*new LogIdMandParm);
-   BindParm(*new LogThrottleParm);
+   BindParm(*new CliIntParm(LogThrottleExpl, 0, 100));
 }
-
-class LogsCountText : public CliText
-{
-public: LogsCountText();
-};
 
 fixed_string LogsCountTextStr = "count";
 fixed_string LogsCountTextExpl = "displays the number of logs reported so far";
-
-LogsCountText::LogsCountText() :
-   CliText(LogsCountTextExpl, LogsCountTextStr) { }
 
 class LogsBuffersText : public CliText
 {
@@ -1826,14 +1613,7 @@ LogsBuffersText::LogsBuffersText() :
    BindParm(*new DispBVParm);
 }
 
-class LogCountParm : public CliIntParm
-{
-public: LogCountParm();
-};
-
 fixed_string LogCountExpl = "number of logs to send (0=all)";
-
-LogCountParm::LogCountParm() : CliIntParm(LogCountExpl, 0, 1000) { }
 
 class LogsWriteText : public CliText
 {
@@ -1846,7 +1626,7 @@ fixed_string LogsWriteTextExpl = "writes a buffer's logs to its log file";
 LogsWriteText::LogsWriteText() : CliText(LogsWriteTextExpl, LogsWriteTextStr)
 {
    BindParm(*new LogBufferIdParm);
-   BindParm(*new LogCountParm);
+   BindParm(*new CliIntParm(LogCountExpl, 0, 1000));
 }
 
 class LogsFreeText : public CliText
@@ -1867,11 +1647,13 @@ fixed_string LogsActionExpl = "subcommand...";
 LogsAction::LogsAction() : CliTextParm(LogsActionExpl)
 {
    BindText(*new LogsListText, LogsCommand::ListIndex);
-   BindText(*new LogsGroupsText, LogsCommand::GroupsIndex);
+   BindText(*new CliText
+      (LogsGroupsTextExpl, LogsGroupsTextStr), LogsCommand::GroupsIndex);
    BindText(*new LogsExplainText, LogsCommand::ExplainIndex);
    BindText(*new LogsThrottleText, LogsCommand::ThrottleIndex);
    BindText(*new LogsSuppressText, LogsCommand::SuppressIndex);
-   BindText(*new LogsCountText, LogsCommand::CountIndex);
+   BindText(*new CliText
+      (LogsCountTextExpl, LogsCountTextStr), LogsCommand::CountIndex);
    BindText(*new LogsBuffersText, LogsCommand::BuffersIndex);
    BindText(*new LogsWriteText, LogsCommand::WriteIndex);
    BindText(*new LogsFreeText, LogsCommand::FreeIndex);
@@ -2364,11 +2146,6 @@ word QueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The QUIT command.
 //
-class QuitAllText : public CliText
-{
-public: QuitAllText();
-};
-
 class QuitParm : public CliTextParm
 {
 public: QuitParm();
@@ -2385,11 +2162,9 @@ private:
 fixed_string QuitAllStr = "all";
 fixed_string QuitAllExpl = "exits all increments";
 
-QuitAllText::QuitAllText() : CliText(QuitAllExpl, QuitAllStr) { }
-
 QuitParm::QuitParm() : CliTextParm(QuitAllExpl, true)
 {
-   BindText(*new QuitAllText, 1);
+   BindText(*new CliText(QuitAllExpl, QuitAllStr), 1);
 }
 
 fixed_string QuitStr = "quit";
@@ -2426,11 +2201,6 @@ word QuitCommand::ProcessCommand(CliThread& cli) const
 //
 //  The READ command.
 //
-class ReadWhereParm : public CliTextParm
-{
-public: ReadWhereParm();
-};
-
 class ReadCommand : public CliCommand
 {
 public:
@@ -2441,14 +2211,12 @@ private:
 
 fixed_string ReadWhereExpl = "read input from <str>.txt";
 
-ReadWhereParm::ReadWhereParm() : CliTextParm(ReadWhereExpl, false, 0) { }
-
 fixed_string ReadStr = "read";
 fixed_string ReadExpl = "Reads commands from a file.";
 
 ReadCommand::ReadCommand() : CliCommand(ReadStr, ReadExpl)
 {
-   BindParm(*new ReadWhereParm);
+   BindParm(*new CliTextParm(ReadWhereExpl, false, 0));
 }
 
 word ReadCommand::ProcessCommand(CliThread& cli) const
@@ -2478,31 +2246,6 @@ word ReadCommand::ProcessCommand(CliThread& cli) const
 //
 //  The RESTART command.
 //
-class WarmText : public CliText
-{
-public: WarmText();
-};
-
-class ColdText : public CliText
-{
-public: ColdText();
-};
-
-class ReloadText : public CliText
-{
-public: ReloadText();
-};
-
-class RebootText : public CliText
-{
-public: RebootText();
-};
-
-class ExitText : public CliText
-{
-public: ExitText();
-};
-
 class RestartType : public CliTextParm
 {
 public: RestartType();
@@ -2519,27 +2262,17 @@ private:
 fixed_string WarmTextStr = "warm";
 fixed_string WarmTextExpl = "exits and recreates threads";
 
-WarmText::WarmText() : CliText(WarmTextExpl, WarmTextStr) { }
-
 fixed_string ColdTextStr = "cold";
 fixed_string ColdTextExpl = "deletes sessions (plus warm actions)";
-
-ColdText::ColdText() : CliText(ColdTextExpl, ColdTextStr) { }
 
 fixed_string ReloadTextStr = "reload";
 fixed_string ReloadTextExpl = "reloads data (plus cold and warm actions)";
 
-ReloadText::ReloadText() : CliText(ReloadTextExpl, ReloadTextStr) { }
-
 fixed_string RebootTextStr = "reboot";
 fixed_string RebootTextExpl = "exits and restarts the entire system";
 
-RebootText::RebootText() : CliText(RebootTextExpl, RebootTextStr) { }
-
 fixed_string ExitTextStr = "exit";
 fixed_string ExitTextExpl = "exits and does not restart the system";
-
-ExitText::ExitText() : CliText(ExitTextExpl, ExitTextStr) { }
 
 fixed_string RestartStr = "restart";
 fixed_string RestartExpl = "Shuts down the system.";
@@ -2554,11 +2287,11 @@ fixed_string RestartTypeExpl = "type of shutdown...";
 
 RestartType::RestartType() : CliTextParm(RestartTypeExpl)
 {
-   BindText(*new WarmText, WarmIndex);
-   BindText(*new ColdText, ColdIndex);
-   BindText(*new ReloadText, ReloadIndex);
-   BindText(*new RebootText, RebootIndex);
-   BindText(*new ExitText, ExitIndex);
+   BindText(*new CliText(WarmTextExpl, WarmTextStr), WarmIndex);
+   BindText(*new CliText(ColdTextExpl, ColdTextStr), ColdIndex);
+   BindText(*new CliText(ReloadTextExpl, ReloadTextStr), ReloadIndex);
+   BindText(*new CliText(RebootTextExpl, RebootTextStr), RebootIndex);
+   BindText(*new CliText(ExitTextExpl, ExitTextStr), ExitIndex);
 }
 
 RestartCommand::RestartCommand() : CliCommand(RestartStr, RestartExpl)
@@ -2613,14 +2346,7 @@ word RestartCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SAVE command.
 //
-class SetOptionsParm : public CliTextParm
-{
-public: SetOptionsParm();
-};
-
 fixed_string SetOptionsExpl = "options: t=suppress times; c=don't move ctors";
-
-SetOptionsParm::SetOptionsParm() : CliTextParm(SetOptionsExpl, true, 0) { }
 
 const string& ValidSetOptions = "tc";
 
@@ -2635,7 +2361,7 @@ fixed_string TraceTextExpl = "events captured by tools that are currently ON";
 TraceText::TraceText() : CliText(TraceTextExpl, TraceTextStr)
 {
    BindParm(*new OstreamMandParm);
-   BindParm(*new SetOptionsParm);
+   BindParm(*new CliTextParm(SetOptionsExpl, true, 0));
 }
 
 fixed_string SaveWhatExpl = "what to save...";
@@ -2718,16 +2444,6 @@ class SchedShowText : public CliText
 public: SchedShowText();
 };
 
-class SchedStartText : public CliText
-{
-public: SchedStartText();
-};
-
-class SchedStopText : public CliText
-{
-public: SchedStopText();
-};
-
 class SchedKillText : public CliText
 {
 public: SchedKillText();
@@ -2757,14 +2473,8 @@ SchedShowText::SchedShowText() : CliText(SchedShowTextExpl, SchedShowTextStr)
 fixed_string SchedStartTextStr = "start";
 fixed_string SchedStartTextExpl = "starts tracing context switches";
 
-SchedStartText::SchedStartText() :
-   CliText(SchedStartTextExpl, SchedStartTextStr) { }
-
 fixed_string SchedStopTextStr = "stop";
 fixed_string SchedStopTextExpl = "stops tracing context switches";
-
-SchedStopText::SchedStopText() :
-   CliText(SchedStopTextExpl, SchedStopTextStr) { }
 
 fixed_string SchedKillTextStr = "kill";
 fixed_string SchedKillTextExpl = "kills a thread";
@@ -2784,8 +2494,10 @@ fixed_string SchedActionExpl = "subcommand...";
 SchedAction::SchedAction() : CliTextParm(SchedActionExpl)
 {
    BindText(*new SchedShowText, SchedShowIndex);
-   BindText(*new SchedStartText, SchedStartIndex);
-   BindText(*new SchedStopText, SchedStopIndex);
+   BindText(*new CliText
+      (SchedStartTextExpl, SchedStartTextStr), SchedStartIndex);
+   BindText(*new CliText
+      (SchedStopTextExpl, SchedStopTextStr), SchedStopIndex);
    BindText(*new SchedKillText, SchedKillIndex);
 }
 
@@ -2882,24 +2594,9 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SEND command.
 //
-class CoutText : public CliText
-{
-public: CoutText();
-};
-
-class PrevText : public CliText
-{
-public: PrevText();
-};
-
 class FileText : public CliText
 {
 public: FileText();
-};
-
-class AppendParm : public CliBoolParm
-{
-public: AppendParm();
 };
 
 class SendWhereParm : public CliTextParm
@@ -2918,23 +2615,17 @@ private:
 fixed_string CoutTextStr = "cout";
 fixed_string CoutTextExpl = "to the console";
 
-CoutText::CoutText() : CliText(CoutTextExpl, CoutTextStr) { }
-
 fixed_string PrevTextStr = "prev";
 fixed_string PrevTextExpl = "to the previous location";
 
-PrevText::PrevText() : CliText(PrevTextExpl, PrevTextStr) { }
-
 fixed_string AppendExpl = "append if file already exists? (default=f)";
-
-AppendParm::AppendParm() : CliBoolParm(AppendExpl, true) { }
 
 fixed_string FileTextStr = "";
 fixed_string FileTextExpl = "to the file specified";
 
 FileText::FileText() : CliText(FileTextExpl, FileTextStr)
 {
-   BindParm(*new AppendParm);
+   BindParm(*new CliBoolParm(AppendExpl, true));
 }
 
 const id_t SendCoutIndex = 1;
@@ -2945,8 +2636,8 @@ fixed_string SendWhereExpl = "where to send CLI output";
 
 SendWhereParm::SendWhereParm() : CliTextParm(SendWhereExpl)
 {
-   BindText(*new CoutText, SendCoutIndex);
-   BindText(*new PrevText, SendPrevIndex);
+   BindText(*new CliText(CoutTextExpl, CoutTextStr), SendCoutIndex);
+   BindText(*new CliText(PrevTextExpl, PrevTextStr), SendPrevIndex);
    BindText(*new FileText, SendFileIndex);
 }
 
@@ -3009,29 +2700,14 @@ word SendCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SET command.
 //
-class BuffSizeParm : public CliIntParm
-{
-public: BuffSizeParm();
-};
-
 class BuffSizeText : public CliText
 {
 public: BuffSizeText();
 };
 
-class BuffWrapParm : public CliBoolParm
-{
-public: BuffWrapParm();
-};
-
 class BuffWrapText : public CliText
 {
 public: BuffWrapText();
-};
-
-class ToolListParm : public CliTextParm
-{
-public: ToolListParm();
 };
 
 class ToolListText : public CliText
@@ -3041,32 +2717,26 @@ public: ToolListText();
 
 fixed_string BuffSizeExpl = "buffer size (=2^N events)";
 
-BuffSizeParm::BuffSizeParm() :
-   CliIntParm(BuffSizeExpl, TraceBuffer::MinSize, TraceBuffer::MaxSize) { }
-
 fixed_string BuffSizeTextStr = "buffsize";
 fixed_string BuffSizeTextExpl = "capacity of trace buffer";
 
 BuffSizeText::BuffSizeText() : CliText(BuffSizeTextExpl, BuffSizeTextStr)
 {
-   BindParm(*new BuffSizeParm);
+   BindParm(*new CliIntParm(BuffSizeExpl,
+      TraceBuffer::MinSize, TraceBuffer::MaxSize));
 }
 
 fixed_string BuffWrapExpl = "allow trace buffer to wrap around?";
-
-BuffWrapParm::BuffWrapParm() : CliBoolParm(BuffWrapExpl) { }
 
 fixed_string BuffWrapTextStr = "wrap";
 fixed_string BuffWrapTextExpl = "whether trace buffer can wrap around";
 
 BuffWrapText::BuffWrapText() : CliText(BuffWrapTextExpl, BuffWrapTextStr)
 {
-   BindParm(*new BuffWrapParm);
+   BindParm(*new CliBoolParm(BuffWrapExpl));
 }
 
 fixed_string ToolListExpl = "tools to set: string of tool abbreviations";
-
-ToolListParm::ToolListParm() : CliTextParm(ToolListExpl, false, 0) { }
 
 fixed_string ToolListTextStr = "tools";
 fixed_string ToolListTextExpl =
@@ -3074,7 +2744,7 @@ fixed_string ToolListTextExpl =
 
 ToolListText::ToolListText() : CliText(ToolListTextExpl, ToolListTextStr)
 {
-   BindParm(*new ToolListParm);
+   BindParm(*new CliTextParm(ToolListExpl, false, 0));
    BindParm(*new SetHowParm);
 }
 
@@ -3229,26 +2899,6 @@ word StartCommand::ProcessCommand(CliThread& cli) const
 //
 //  The STATS command.
 //
-class StatisticsGroupOptParm : public CliIntParm
-{
-public: StatisticsGroupOptParm();
-};
-
-class MemberIdOptParm : public CliIntParm
-{
-public: MemberIdOptParm();
-};
-
-class RolloverParm : public CliBoolParm
-{
-public: RolloverParm();
-};
-
-class GroupsText : public CliText
-{
-public: GroupsText();
-};
-
 class StatsShowText : public CliText
 {
 public: StatsShowText();
@@ -3275,39 +2925,29 @@ private:
 fixed_string GroupsTextStr = "groups";
 fixed_string GroupsTextExpl = "lists all statistics groups";
 
-GroupsText::GroupsText() : CliText(GroupsTextExpl, GroupsTextStr) { }
-
 fixed_string StatisticsGroupOptExpl = "group number (default=all)";
 
-StatisticsGroupOptParm::StatisticsGroupOptParm() :
-   CliIntParm(StatisticsGroupOptExpl, 0, UINT8_MAX, true) { }
-
 fixed_string MemberIdOptExpl = "member number (group specific; default=all)";
-
-MemberIdOptParm::MemberIdOptParm() :
-   CliIntParm(MemberIdOptExpl, 0, UINT16_MAX, true) { }
 
 fixed_string StatsShowTextStr = "show";
 fixed_string StatsShowTextExpl = "displays statistics";
 
 StatsShowText::StatsShowText() : CliText(StatsShowTextExpl, StatsShowTextStr)
 {
-   BindParm(*new StatisticsGroupOptParm);
-   BindParm(*new MemberIdOptParm);
+   BindParm(*new CliIntParm(StatisticsGroupOptExpl, 0, UINT8_MAX, true));
+   BindParm(*new CliIntParm(MemberIdOptExpl, 0, UINT16_MAX, true));
    BindParm(*new DispBVParm);
    BindParm(*new OstreamOptParm);
 }
 
 fixed_string RolloverExpl = "clear history prior to this interval? (default=f)";
 
-RolloverParm::RolloverParm() : CliBoolParm(RolloverExpl, true) { }
-
 fixed_string RolloverTextStr = "rollover";
 fixed_string RolloverTextExpl = "starts a new interval";
 
 RolloverText::RolloverText() : CliText(RolloverTextExpl, RolloverTextStr)
 {
-   BindParm(*new RolloverParm);
+   BindParm(*new CliBoolParm(RolloverExpl, true));
 }
 
 const id_t StatsGroupsIndex = 1;
@@ -3318,7 +2958,7 @@ fixed_string StatsActionExpl = "subcommand...";
 
 StatsAction::StatsAction() : CliTextParm(StatsActionExpl)
 {
-   BindText(*new GroupsText, StatsGroupsIndex);
+   BindText(*new CliText(GroupsTextExpl, GroupsTextStr), StatsGroupsIndex);
    BindText(*new StatsShowText, StatsShowIndex);
    BindText(*new RolloverText, StatsRolloverIndex);
 }
@@ -3557,21 +3197,6 @@ word StopCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SYMBOLS command.
 //
-class SymbolOptName : public CliTextParm
-{
-public: SymbolOptName();
-};
-
-class SymbolMandName : public CliTextParm
-{
-public: SymbolMandName();
-};
-
-class SymbolValue : public CliTextParm
-{
-public: SymbolValue();
-};
-
 class SymbolsListText : public CliText
 {
 public: SymbolsListText();
@@ -3602,22 +3227,16 @@ private:
 
 fixed_string SymbolOptNameExpl = "symbol's name (lists all if omitted)";
 
-SymbolOptName::SymbolOptName() : CliTextParm(SymbolOptNameExpl, true, 0) { }
-
 fixed_string SymbolMandNameExpl = "symbol's name";
 
-SymbolMandName::SymbolMandName() : CliTextParm(SymbolMandNameExpl, false, 0) { }
-
 fixed_string SymbolValueExpl = "symbol's value (symbol deleted if omitted)";
-
-SymbolValue::SymbolValue() : CliTextParm(SymbolValueExpl, true, 0) { }
 
 fixed_string SymbolsListStr = "list";
 fixed_string SymbolsListExpl = "lists symbols";
 
 SymbolsListText::SymbolsListText() : CliText(SymbolsListExpl, SymbolsListStr)
 {
-   BindParm(*new SymbolOptName);
+   BindParm(*new CliTextParm(SymbolOptNameExpl, true, 0));
 }
 
 fixed_string SymbolsSetStr = "set";
@@ -3625,8 +3244,8 @@ fixed_string SymbolsSetExpl = "sets a symbol's value";
 
 SymbolsSetText::SymbolsSetText() : CliText(SymbolsSetExpl, SymbolsSetStr)
 {
-   BindParm(*new SymbolMandName);
-   BindParm(*new SymbolValue);
+   BindParm(*new CliTextParm(SymbolMandNameExpl, false, 0));
+   BindParm(*new CliTextParm(SymbolValueExpl, true, 0));
 }
 
 fixed_string SymbolsAssignStr = "assign";
@@ -3636,8 +3255,8 @@ fixed_string SymbolsAssignsExpl =
 SymbolsAssignText::SymbolsAssignText() :
    CliText(SymbolsAssignsExpl, SymbolsAssignStr)
 {
-   BindParm(*new SymbolMandName);
-   BindParm(*new CfgParmName);
+   BindParm(*new CliTextParm(SymbolMandNameExpl, false, 0));
+   BindParm(*new CliTextParm(CfgParmNameExpl, false, 0));
 }
 
 const id_t SymbolsListIndex = 1;

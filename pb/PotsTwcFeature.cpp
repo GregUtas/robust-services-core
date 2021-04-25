@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsTwcFeature.h"
-#include "CliText.h"
 #include "PotsFeatureProfile.h"
+#include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "FunctionGuard.h"
@@ -57,17 +57,8 @@ public:
 
 //==============================================================================
 
-class PotsTwcAttrs : public CliText
-{
-public: PotsTwcAttrs();
-};
-
 fixed_string PotsTwcAbbrName = "twc";
 fixed_string PotsTwcFullName = "Three-Way Calling";
-
-PotsTwcAttrs::PotsTwcAttrs() : CliText(PotsTwcFullName, PotsTwcAbbrName) { }
-
-//==============================================================================
 
 PotsTwcFeature::PotsTwcFeature() :
    PotsFeature(TWC, false, PotsTwcAbbrName, PotsTwcFullName)
@@ -87,7 +78,10 @@ PotsTwcFeature::~PotsTwcFeature()
 
 //------------------------------------------------------------------------------
 
-CliText* PotsTwcFeature::Attrs() const { return new PotsTwcAttrs; }
+CliText* PotsTwcFeature::Attrs() const
+{
+   return new CliText(PotsTwcFullName, PotsTwcAbbrName);
+}
 
 //------------------------------------------------------------------------------
 

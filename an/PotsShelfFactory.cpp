@@ -20,10 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsShelf.h"
-#include "CliText.h"
 #include <sstream>
 #include <string>
 #include "Algorithms.h"
+#include "CliText.h"
 #include "Debug.h"
 #include "Log.h"
 #include "PotsCircuit.h"
@@ -38,20 +38,6 @@
 
 namespace PotsBase
 {
-class PotsShelfFactoryText : public CliText
-{
-public:
-   PotsShelfFactoryText();
-};
-
-fixed_string PotsShelfFactoryStr = "PS";
-fixed_string PotsShelfFactoryExpl = "POTS Shelf";
-
-PotsShelfFactoryText::PotsShelfFactoryText() :
-   CliText(PotsShelfFactoryExpl, PotsShelfFactoryStr) { }
-
-//------------------------------------------------------------------------------
-
 PotsShelfFactory::PotsShelfFactory() :
    MsgFactory(PotsShelfFactoryId, SingleMsg, PotsProtocolId, "POTS Shelf")
 {
@@ -98,11 +84,14 @@ Message* PotsShelfFactory::AllocOgMsg(SignalId sid) const
 
 //------------------------------------------------------------------------------
 
+fixed_string PotsShelfFactoryStr = "PS";
+fixed_string PotsShelfFactoryExpl = "POTS Shelf";
+
 CliText* PotsShelfFactory::CreateText() const
 {
    Debug::ft("PotsShelfFactory.CreateText");
 
-   return new PotsShelfFactoryText;
+   return new CliText(PotsShelfFactoryExpl, PotsShelfFactoryStr);
 }
 
 //------------------------------------------------------------------------------

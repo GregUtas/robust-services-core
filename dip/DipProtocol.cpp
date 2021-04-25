@@ -22,10 +22,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "DipProtocol.h"
-#include "CliText.h"
 #include <ostream>
 #include <string>
 #include "BotThread.h"
+#include "CliText.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Memory.h"
@@ -362,19 +362,6 @@ void DipInputHandler::SocketFailed(SysSocket* socket) const
 
 //==============================================================================
 
-class BotTcpServiceText : public CliText
-{
-public: BotTcpServiceText();
-};
-
-fixed_string BotTcpServiceStr = "DAI/TCP";
-fixed_string BotTcpServiceExpl = "Diplomacy AI Protocol";
-
-BotTcpServiceText::BotTcpServiceText() :
-   CliText(BotTcpServiceExpl, BotTcpServiceStr) { }
-
-//------------------------------------------------------------------------------
-
 BotTcpService::BotTcpService() : port_(NilIpPort)
 {
    Debug::ft("BotTcpService.ctor");
@@ -391,11 +378,14 @@ InputHandler* BotTcpService::CreateHandler(IpPort* port) const
 
 //------------------------------------------------------------------------------
 
+fixed_string BotTcpServiceStr = "DAI/TCP";
+fixed_string BotTcpServiceExpl = "Diplomacy AI Protocol";
+
 CliText* BotTcpService::CreateText() const
 {
    Debug::ft("BotTcpService.CreateText");
 
-   return new BotTcpServiceText;
+   return new CliText(BotTcpServiceExpl, BotTcpServiceStr);
 }
 
 //------------------------------------------------------------------------------

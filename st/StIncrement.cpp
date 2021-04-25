@@ -20,15 +20,14 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StIncrement.h"
-#include "CliBoolParm.h"
 #include "CliCommand.h"
-#include "CliIntParm.h"
 #include "CliText.h"
-#include "CliTextParm.h"
 #include <iosfwd>
 #include <memory>
 #include <sstream>
 #include <string>
+#include "CliBoolParm.h"
+#include "CliIntParm.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Event.h"
@@ -84,11 +83,6 @@ namespace SessionTools
 {
 //  The CORRUPT command.
 //
-class ContextText : public CliText
-{
-public: ContextText();
-};
-
 class StCorruptWhatParm : public CorruptWhatParm
 {
 public: StCorruptWhatParm();
@@ -107,11 +101,10 @@ private:
 fixed_string ContextTextStr = "context";
 fixed_string ContextTextExpl = "first in-use context";
 
-ContextText::ContextText() : CliText(ContextTextExpl, ContextTextStr) { }
-
 StCorruptWhatParm::StCorruptWhatParm()
 {
-   BindText(*new ContextText, StCorruptCommand::ContextIndex);
+   BindText(*new CliText
+      (ContextTextExpl, ContextTextStr), StCorruptCommand::ContextIndex);
 }
 
 StCorruptCommand::StCorruptCommand() : CorruptCommand(false)
@@ -141,45 +134,13 @@ word StCorruptCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  Parameters for the Inject and Verify commands.
 //
-class TestSessionIdMandParm : public CliIntParm
-{
-public: TestSessionIdMandParm();
-};
-
-class TestSessionIdOptParm : public CliIntParm
-{
-public: TestSessionIdOptParm();
-};
-
-class WhichFactoryParm : public CliTextParm
-{
-public: WhichFactoryParm();
-};
-
-class WhichSignalParm : public CliTextParm
-{
-public: WhichSignalParm();
-};
-
 fixed_string TestSessionIdMandExpl = "TestSessionId";
-
-TestSessionIdMandParm::TestSessionIdMandParm() :
-   CliIntParm(TestSessionIdMandExpl, 1, TestSession::MaxId) { }
 
 fixed_string TestSessionIdOptExpl = "TestSessionId (default=0: next message)";
 
-TestSessionIdOptParm::TestSessionIdOptParm() :
-   CliIntParm(TestSessionIdOptExpl, 0, TestSession::MaxId, true) { }
-
 fixed_string WhichFactoryExpl = "factory abbreviation...";
 
-WhichFactoryParm::WhichFactoryParm() :
-   CliTextParm(WhichFactoryExpl, false, Factory::MaxId + 1) { }
-
 fixed_string WhichSignalExpl = "signal abbreviation...";
-
-WhichSignalParm::WhichSignalParm() :
-   CliTextParm(WhichSignalExpl, false, Signal::MaxId + 1) { }
 
 //------------------------------------------------------------------------------
 //
@@ -206,7 +167,7 @@ InjectCommand::InjectCommand() : CliCommand(InjectStr, InjectExpl)
    //  Add the parameter that will contain the factories that support this
    //  command.
    //
-   auto fparm = new WhichFactoryParm;
+   auto fparm = new CliTextParm(WhichFactoryExpl, false, Factory::MaxId + 1);
    BindParm(*fparm);
 
    for(auto fac = facs.First(); fac != nullptr; facs.Next(fac))
@@ -225,13 +186,14 @@ InjectCommand::InjectCommand() : CliCommand(InjectStr, InjectExpl)
       //
       if(fac->GetType() != SingleMsg)
       {
-         ftext->BindParm(*new TestSessionIdMandParm);
+         ftext->BindParm(*new CliIntParm
+            (TestSessionIdMandExpl, 1, TestSession::MaxId));
       }
 
       auto prid = fac->GetProtocol();
       auto pro = preg->GetProtocol(prid);
 
-      auto sparm = new WhichSignalParm;
+      auto sparm = new CliTextParm(WhichSignalExpl, false, Signal::MaxId + 1);
       ftext->BindParm(*sparm);
 
       for(auto s = pro->FirstSignal(); s != nullptr; pro->NextSignal(s))
@@ -371,11 +333,6 @@ word InjectCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SAVE command.
 //
-class DebugTraceParm : public CliBoolParm
-{
-public: DebugTraceParm();
-};
-
 class MscText : public CliText
 {
 public: MscText();
@@ -398,15 +355,13 @@ private:
 
 fixed_string DebugTraceExpl = "include internal data structures? (default=f)";
 
-DebugTraceParm::DebugTraceParm() : CliBoolParm(DebugTraceExpl, true) { }
-
 fixed_string MscTextStr = "msc";
 fixed_string MscTextExpl = "message sequence chart";
 
 MscText::MscText() : CliText(MscTextExpl, MscTextStr)
 {
    BindParm(*new OstreamMandParm);
-   BindParm(*new DebugTraceParm);
+   BindParm(*new CliBoolParm(DebugTraceExpl, true));
 }
 
 StSaveWhatParm::StSaveWhatParm()
@@ -631,7 +586,7 @@ VerifyCommand::VerifyCommand() : CliCommand(VerifyStr, VerifyExpl)
    //  Add the parameter that will contain the factories that support this
    //  command.
    //
-   auto fparm = new WhichFactoryParm;
+   auto fparm = new CliTextParm(WhichFactoryExpl, false, Factory::MaxId + 1);
    BindParm(*fparm);
 
    for(auto fac = facs.First(); fac != nullptr; facs.Next(fac))
@@ -650,7 +605,8 @@ VerifyCommand::VerifyCommand() : CliCommand(VerifyStr, VerifyExpl)
       //
       if(fac->GetType() != SingleMsg)
       {
-         ftext->BindParm(*new TestSessionIdOptParm);
+         ftext->BindParm(*new CliIntParm
+            (TestSessionIdOptExpl, 0, TestSession::MaxId, true));
       }
 
       //  Find the factory's protocol and create a parameter that will
@@ -659,7 +615,7 @@ VerifyCommand::VerifyCommand() : CliCommand(VerifyStr, VerifyExpl)
       auto prid = fac->GetProtocol();
       auto pro = preg->GetProtocol(prid);
 
-      auto sparm = new WhichSignalParm;
+      auto sparm = new CliTextParm(WhichSignalExpl, false, Signal::MaxId + 1);
       ftext->BindParm(*sparm);
 
       for(auto s = pro->FirstSignal(); s != nullptr; pro->NextSignal(s))

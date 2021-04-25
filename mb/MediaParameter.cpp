@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MediaParameter.h"
-#include "CliIntParm.h"
 #include <ostream>
+#include "CliIntParm.h"
 #include "Debug.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -79,29 +79,14 @@ MediaParameter::~MediaParameter()
 
 //------------------------------------------------------------------------------
 
-class MediaMandParm : public CliIntParm
-{
-public: MediaMandParm();
-};
-
-class MediaOptParm : public CliIntParm
-{
-public: MediaOptParm();
-};
-
 fixed_string MediaParmExpl = "media.rxFrom: Switch::PortId";
 fixed_string MediaTag = "m";
 
-MediaMandParm::MediaMandParm() :
-   CliIntParm(MediaParmExpl, 0, Switch::MaxPortId) { }
-
-MediaOptParm::MediaOptParm() :
-   CliIntParm(MediaParmExpl, 0, Switch::MaxPortId, true, MediaTag) { }
-
 CliParm* MediaParameter::CreateCliParm(Usage use) const
 {
-   if(use == Mandatory) return new MediaMandParm;
-   return new MediaOptParm;
+   return (use == Mandatory ?
+      new CliIntParm(MediaParmExpl, 0, Switch::MaxPortId) :
+      new CliIntParm(MediaParmExpl, 0, Switch::MaxPortId, true, MediaTag));
 }
 
 //------------------------------------------------------------------------------

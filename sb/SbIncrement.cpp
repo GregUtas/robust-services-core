@@ -21,12 +21,12 @@
 //
 #include "SbIncrement.h"
 #include "CliCommand.h"
-#include "CliPtrParm.h"
 #include "CliText.h"
 #include <iomanip>
 #include <iosfwd>
 #include <sstream>
 #include <string>
+#include "CliPtrParm.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Duration.h"
@@ -76,19 +76,9 @@ class FactoryText : public CliText
 public: FactoryText();
 };
 
-class FactoriesText : public CliText
-{
-public: FactoriesText();
-};
-
 class ProtocolText : public CliText
 {
 public: ProtocolText();
-};
-
-class ProtocolsText : public CliText
-{
-public: ProtocolsText();
 };
 
 class ServiceText : public CliText
@@ -96,24 +86,9 @@ class ServiceText : public CliText
 public: ServiceText();
 };
 
-class ServicesText : public CliText
-{
-public: ServicesText();
-};
-
 class SignalText : public CliText
 {
 public: SignalText();
-};
-
-class SignalsText : public CliText
-{
-public: SignalsText();
-};
-
-class TimersText : public CliText
-{
-public: TimersText();
 };
 
 fixed_string FactoryTextStr = "factory";
@@ -127,9 +102,6 @@ FactoryText::FactoryText() : CliText(FactoryTextExpl, FactoryTextStr)
 fixed_string FactoriesTextStr = "factories";
 fixed_string FactoriesTextExpl = "all included/excluded factories";
 
-FactoriesText::FactoriesText() :
-   CliText(FactoriesTextExpl, FactoriesTextStr) { }
-
 fixed_string ProtocolTextStr = "protocol";
 fixed_string ProtocolTextExpl = "messages in a specific protocol";
 
@@ -140,9 +112,6 @@ ProtocolText::ProtocolText() : CliText(ProtocolTextExpl, ProtocolTextStr)
 
 fixed_string ProtocolsTextStr = "protocols";
 fixed_string ProtocolsTextExpl = "all included/excluded protocols";
-
-ProtocolsText::ProtocolsText() :
-   CliText(ProtocolsTextExpl, ProtocolsTextStr) { }
 
 fixed_string ServiceTextStr = "service";
 fixed_string ServiceTextExpl =
@@ -156,8 +125,6 @@ ServiceText::ServiceText() : CliText(ServiceTextExpl, ServiceTextStr)
 fixed_string ServicesTextStr = "services";
 fixed_string ServicesTextExpl = "all included/excluded services";
 
-ServicesText::ServicesText() : CliText(ServicesTextExpl, ServicesTextStr) { }
-
 fixed_string SignalTextStr = "signal";
 fixed_string SignalTextExpl = "messages with a specific protocol and signal";
 
@@ -170,12 +137,8 @@ SignalText::SignalText() : CliText(SignalTextExpl, SignalTextStr)
 fixed_string SignalsTextStr = "signals";
 fixed_string SignalsTextExpl = "all included/excluded signals";
 
-SignalsText::SignalsText() : CliText(SignalsTextExpl, SignalsTextStr) { }
-
 fixed_string TimersTextStr = "timers";
 fixed_string TimersTextExpl = "timer registry work";
-
-TimersText::TimersText() : CliText(TimersTextExpl, TimersTextStr) { }
 
 //------------------------------------------------------------------------------
 //
@@ -184,14 +147,19 @@ TimersText::TimersText() : CliText(TimersTextExpl, TimersTextStr) { }
 SbClearWhatParm::SbClearWhatParm()
 {
    BindText(*new FactoryText, SbClearCommand::FactoryIndex);
-   BindText(*new FactoriesText, SbClearCommand::FactoriesIndex);
+   BindText(*new CliText
+      (FactoriesTextExpl, FactoriesTextStr), SbClearCommand::FactoriesIndex);
    BindText(*new ProtocolText, SbClearCommand::ProtocolIndex);
-   BindText(*new ProtocolsText, SbClearCommand::ProtocolsIndex);
+   BindText(*new CliText
+      (ProtocolsTextExpl, ProtocolsTextStr), SbClearCommand::ProtocolsIndex);
    BindText(*new SignalText, SbClearCommand::SignalIndex);
-   BindText(*new SignalsText, SbClearCommand::SignalsIndex);
+   BindText(*new CliText
+      (SignalsTextExpl, SignalsTextStr), SbClearCommand::SignalsIndex);
    BindText(*new ServiceText, SbClearCommand::ServiceIndex);
-   BindText(*new ServicesText, SbClearCommand::ServicesIndex);
-   BindText(*new TimersText, SbClearCommand::TimersIndex);
+   BindText(*new CliText
+      (ServicesTextExpl, ServicesTextStr), SbClearCommand::ServicesIndex);
+   BindText(*new CliText
+      (TimersTextExpl, TimersTextStr), SbClearCommand::TimersIndex);
 }
 
 SbClearCommand::SbClearCommand(bool bind) : NwClearCommand(false)
@@ -390,7 +358,8 @@ SbExcludeWhatParm::SbExcludeWhatParm()
    BindText(*new ProtocolText, SbExcludeCommand::ProtocolIndex);
    BindText(*new SignalText, SbExcludeCommand::SignalIndex);
    BindText(*new ServiceText, SbExcludeCommand::ServiceIndex);
-   BindText(*new TimersText, SbExcludeCommand::TimersIndex);
+   BindText(*new CliText
+      (TimersTextExpl, TimersTextStr), SbExcludeCommand::TimersIndex);
 }
 
 SbExcludeCommand::SbExcludeCommand(bool bind) : NwExcludeCommand(false)
@@ -580,7 +549,8 @@ SbIncludeWhatParm::SbIncludeWhatParm()
    BindText(*new ProtocolText, SbIncludeCommand::ProtocolIndex);
    BindText(*new SignalText, SbIncludeCommand::SignalIndex);
    BindText(*new ServiceText, SbIncludeCommand::ServiceIndex);
-   BindText(*new TimersText, SbIncludeCommand::TimersIndex);
+   BindText(*new CliText
+      (TimersTextExpl, TimersTextStr), SbIncludeCommand::TimersIndex);
 }
 
 SbIncludeCommand::SbIncludeCommand(bool bind) : NwIncludeCommand(false)
@@ -693,11 +663,6 @@ word InvPoolsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The KILL command.
 //
-class PsmPtrParm : public CliPtrParm
-{
-public: PsmPtrParm();
-};
-
 class KillCommand : public CliCommand
 {
 public:
@@ -708,14 +673,12 @@ private:
 
 fixed_string PsmPtrText = "pointer to a PSM";
 
-PsmPtrParm::PsmPtrParm() : CliPtrParm(PsmPtrText) { }
-
 fixed_string KillStr = "kill";
 fixed_string KillExpl = "Kills a PSM's context.";
 
 KillCommand::KillCommand() : CliCommand(KillStr, KillExpl)
 {
-   BindParm(*new PsmPtrParm);
+   BindParm(*new CliPtrParm(PsmPtrText));
 }
 
 word KillCommand::ProcessCommand(CliThread& cli) const

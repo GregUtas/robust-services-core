@@ -20,9 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsSessions.h"
-#include "CliText.h"
 #include <string>
 #include "CfgParmRegistry.h"
+#include "CliText.h"
 #include "Debug.h"
 #include "Singleton.h"
 
@@ -30,19 +30,6 @@
 
 namespace PotsBase
 {
-class PotsCallServiceText : public CliText
-{
-public: PotsCallServiceText();
-};
-
-fixed_string PotsCallServiceStr = "POTS Call/UDP";
-fixed_string PotsCallServiceExpl = "POTS Call Protocol";
-
-PotsCallServiceText::PotsCallServiceText() :
-   CliText(PotsCallServiceStr, PotsCallServiceExpl) { }
-
-//------------------------------------------------------------------------------
-
 fixed_string PotsCallIpPortKey = "PotsCallIpPort";
 fixed_string PotsCallIpPortExpl = "POTS Call Protocol: UDP port";
 
@@ -74,10 +61,13 @@ InputHandler* PotsCallIpService::CreateHandler(IpPort* port) const
 
 //------------------------------------------------------------------------------
 
+fixed_string PotsCallServiceStr = "POTS Call/UDP";
+fixed_string PotsCallServiceExpl = "POTS Call Protocol";
+
 CliText* PotsCallIpService::CreateText() const
 {
    Debug::ft("PotsCallIpService.CreateText");
 
-   return new PotsCallServiceText;
+   return new CliText(PotsCallServiceStr, PotsCallServiceExpl);
 }
 }

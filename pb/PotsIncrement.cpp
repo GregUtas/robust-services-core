@@ -21,7 +21,6 @@
 //
 #include "PotsIncrement.h"
 #include "CliCommand.h"
-#include "CliIntParm.h"
 #include <sstream>
 #include <string>
 #include "BcAddress.h"
@@ -64,42 +63,11 @@ namespace PotsBase
 {
 //  Parameters that support basic types.
 //
-class PortMandParm : public CliIntParm
-{
-public: PortMandParm();
-};
-
-class PortOptParm : public CliIntParm
-{
-public: PortOptParm();
-};
-
-class PotsFeatureOptParm : public CliIntParm
-{
-public: PotsFeatureOptParm();
-};
-
-class ToneOptParm : public CliIntParm
-{
-public: ToneOptParm();
-};
-
 fixed_string PortExpl = "Switch::PortId";
-
-PortMandParm::PortMandParm() : CliIntParm(PortExpl, 0, Switch::MaxPortId) { }
-
-PortOptParm::PortOptParm() :
-   CliIntParm(PortExpl, 0, Switch::MaxPortId, true) { }
 
 fixed_string PotsFeatureOptExpl = "PotsFeature::Id";
 
-PotsFeatureOptParm::PotsFeatureOptParm() :
-   CliIntParm(PotsFeatureOptExpl, 0, PotsFeature::MaxId, true) { }
-
 fixed_string ToneOptExpl = "Tone::Id (default=all)";
-
-ToneOptParm::ToneOptParm() :
-   CliIntParm(ToneOptExpl, 0, Tone::MaxId, true) { }
 
 //------------------------------------------------------------------------------
 //
@@ -339,7 +307,7 @@ fixed_string FeaturesExpl = "Displays features that can be assigned to a DN.";
 
 FeaturesCommand::FeaturesCommand() : CliCommand(FeaturesStr, FeaturesExpl)
 {
-   BindParm(*new PotsFeatureOptParm);
+   BindParm(*new CliIntParm(PotsFeatureOptExpl, 0, PotsFeature::MaxId, true));
    BindParm(*new DispBVParm);
 }
 
@@ -652,7 +620,7 @@ fixed_string TonesExpl = "Displays tones.";
 
 TonesCommand::TonesCommand() : CliCommand(TonesStr, TonesExpl)
 {
-   BindParm(*new ToneOptParm);
+   BindParm(*new CliIntParm(ToneOptExpl, 0, Tone::MaxId, true));
    BindParm(*new DispBVParm);
 }
 
@@ -707,8 +675,8 @@ fixed_string TsPortsExpl =
 
 TsPortsCommand::TsPortsCommand() : CliCommand(TsPortsStr, TsPortsExpl)
 {
-   BindParm(*new PortMandParm);
-   BindParm(*new PortOptParm);
+   BindParm(*new CliIntParm(PortExpl, 0, Switch::MaxPortId));
+   BindParm(*new CliIntParm(PortExpl, 0, Switch::MaxPortId, true));
 }
 
 word TsPortsCommand::ProcessCommand(CliThread& cli) const

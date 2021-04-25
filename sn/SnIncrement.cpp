@@ -21,10 +21,10 @@
 //
 #include "SnIncrement.h"
 #include "CliCommand.h"
-#include "CliIntParm.h"
 #include "PotsIncrement.h"
 #include <sstream>
 #include <string>
+#include "CliIntParm.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -40,18 +40,6 @@
 
 namespace PotsBase
 {
-class TreatmentQIdOptParm : public CliIntParm
-{
-public: TreatmentQIdOptParm();
-};
-
-fixed_string TreatmentQIdOptExpl = "PotsTreatmentRegistry::QId (default=all)";
-
-TreatmentQIdOptParm::TreatmentQIdOptParm() :
-   CliIntParm(TreatmentQIdOptExpl, 0, PotsTreatmentQueue::MaxQId, true) { }
-
-//------------------------------------------------------------------------------
-//
 //  The SIZES command.
 //
 class SnSizesCommand : public PbSizesCommand
@@ -92,6 +80,8 @@ word SnSizesCommand::ProcessCommand(CliThread& cli) const
 //
 //  The TREATMENTS command.
 //
+fixed_string TreatmentQIdOptExpl = "PotsTreatmentRegistry::QId (default=all)";
+
 class TreatmentsCommand : public CliCommand
 {
 public:
@@ -106,7 +96,8 @@ fixed_string TreatmentsExpl = "Displays treatments.";
 TreatmentsCommand::TreatmentsCommand() :
    CliCommand(TreatmentsStr, TreatmentsExpl)
 {
-   BindParm(*new TreatmentQIdOptParm);
+   BindParm(*new CliIntParm
+      (TreatmentQIdOptExpl, 0, PotsTreatmentQueue::MaxQId, true));
    BindParm(*new DispBVParm);
 }
 

@@ -21,11 +21,11 @@
 //
 #include "AnIncrement.h"
 #include "CliCommand.h"
-#include "CliIntParm.h"
 #include "CliText.h"
 #include "CliTextParm.h"
 #include <sstream>
 #include "BcSessions.h"
+#include "CliIntParm.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -43,24 +43,9 @@ namespace PotsBase
 {
 //  The TRAFFIC command.
 //
-class TrafficStatesText : public CliText
-{
-public: TrafficStatesText();
-};
-
-class CallRateParm : public CliIntParm
-{
-public: CallRateParm();
-};
-
 class TrafficRateText : public CliText
 {
 public: TrafficRateText();
-};
-
-class TrafficQueryText : public CliText
-{
-public: TrafficQueryText();
 };
 
 class TrafficAction : public CliTextParm
@@ -79,13 +64,7 @@ private:
 fixed_string TrafficStatesTextStr = "states";
 fixed_string TrafficStatesTextExpl = "displays circuit and call states";
 
-TrafficStatesText::TrafficStatesText() :
-   CliText(TrafficStatesTextExpl, TrafficStatesTextStr) { }
-
 fixed_string CallRateExpl = "calls per minute";
-
-CallRateParm::CallRateParm() :
-   CliIntParm(CallRateExpl, 0, PotsTrafficThread::MaxCallsPerMin) { }
 
 fixed_string TrafficRateTextStr = "rate";
 fixed_string TrafficRateTextExpl = "sets call rate";
@@ -93,14 +72,12 @@ fixed_string TrafficRateTextExpl = "sets call rate";
 TrafficRateText::TrafficRateText() :
    CliText(TrafficRateTextExpl, TrafficRateTextStr)
 {
-   BindParm(*new CallRateParm);
+   BindParm(*new CliIntParm
+      (CallRateExpl, 0, PotsTrafficThread::MaxCallsPerMin));
 }
 
 fixed_string TrafficQueryTextStr = "query";
 fixed_string TrafficQueryTextExpl = "displays traffic statistics";
-
-TrafficQueryText::TrafficQueryText() :
-   CliText(TrafficQueryTextExpl, TrafficQueryTextStr) { }
 
 const id_t TrafficStatesIndex = 1;
 const id_t TrafficRateIndex = 2;
@@ -110,9 +87,11 @@ fixed_string TrafficActionExpl = "subcommand...";
 
 TrafficAction::TrafficAction() : CliTextParm(TrafficActionExpl)
 {
-   BindText(*new TrafficStatesText, TrafficStatesIndex);
+   BindText(*new CliText
+      (TrafficStatesTextExpl, TrafficStatesTextStr), TrafficStatesIndex);
    BindText(*new TrafficRateText, TrafficRateIndex);
-   BindText(*new TrafficQueryText, TrafficQueryIndex);
+   BindText(*new CliText
+      (TrafficQueryTextExpl, TrafficQueryTextStr), TrafficQueryIndex);
 }
 
 fixed_string TrafficStr = "traffic";

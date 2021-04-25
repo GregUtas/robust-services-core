@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "BcCause.h"
-#include "CliIntParm.h"
 #include <ostream>
+#include "CliIntParm.h"
 #include "Debug.h"
 
 using std::ostream;
@@ -94,28 +94,14 @@ CauseParameter::~CauseParameter()
 
 //------------------------------------------------------------------------------
 
-class CauseMandParm : public CliIntParm
-{
-public: CauseMandParm();
-};
-
-class CauseOptParm : public CliIntParm
-{
-public: CauseOptParm();
-};
-
 fixed_string CauseParmExpl = "cause: Cause::Ind";
 fixed_string CauseTag = "c";
 
-CauseMandParm::CauseMandParm() : CliIntParm(CauseParmExpl, 0, Cause::MaxInd) { }
-
-CauseOptParm::CauseOptParm() :
-   CliIntParm(CauseParmExpl, 0, Cause::MaxInd, true, CauseTag) { }
-
 CliParm* CauseParameter::CreateCliParm(Usage use) const
 {
-   if(use == Mandatory) return new CauseMandParm;
-   return new CauseOptParm;
+   return (use == Mandatory ?
+      new CliIntParm(CauseParmExpl, 0, Cause::MaxInd) :
+      new CliIntParm(CauseParmExpl, 0, Cause::MaxInd, true, CauseTag));
 }
 
 //------------------------------------------------------------------------------

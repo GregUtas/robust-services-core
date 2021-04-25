@@ -23,9 +23,7 @@
 #include "BcAddress.h"
 #include "BcCause.h"
 #include "BcProgress.h"
-#include "CliIntParm.h"
 #include "CliText.h"
-#include "CliTextParm.h"
 #include "MediaParameter.h"
 #include <sstream>
 #include <string>
@@ -33,6 +31,8 @@
 #include "BcRouting.h"
 #include "CfgParmRegistry.h"
 #include "CliCommand.h"
+#include "CliIntParm.h"
+#include "CliTextParm.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "FactoryRegistry.h"
@@ -63,11 +63,6 @@ class CipIamSignal : public CipSignal
    CliText* CreateText() const override;
 };
 
-class IamText : public CliText
-{
-public: IamText();
-};
-
 class CipCpgSignal : public CipSignal
 {
    friend class Singleton< CipCpgSignal >;
@@ -75,11 +70,6 @@ class CipCpgSignal : public CipSignal
    CipCpgSignal();
    ~CipCpgSignal() = default;
    CliText* CreateText() const override;
-};
-
-class CpgText : public CliText
-{
-public: CpgText();
 };
 
 class CipAnmSignal : public CipSignal
@@ -91,11 +81,6 @@ class CipAnmSignal : public CipSignal
    CliText* CreateText() const override;
 };
 
-class AnmText : public CliText
-{
-public: AnmText();
-};
-
 class CipRelSignal : public CipSignal
 {
    friend class Singleton< CipRelSignal >;
@@ -103,11 +88,6 @@ class CipRelSignal : public CipSignal
    CipRelSignal();
    ~CipRelSignal() = default;
    CliText* CreateText() const override;
-};
-
-class RelText : public CliText
-{
-public: RelText();
 };
 
 class CipRouteParameter : public CipParameter
@@ -127,16 +107,6 @@ class CipRouteParameter : public CipParameter
 class RouteParm : public CliText
 {
 public: RouteParm();
-};
-
-class RouteSelParm : public CliIntParm
-{
-public: RouteSelParm();
-};
-
-class RouteIdParm : public CliIntParm
-{
-public: RouteIdParm();
 };
 
 class CipAddressParameter : public AddressParameter
@@ -208,19 +178,6 @@ class CipMediaParameter : public MediaParameter
 
 //==============================================================================
 
-class CipUdpServiceText : public CliText
-{
-public: CipUdpServiceText();
-};
-
-fixed_string CipUdpServiceStr = "CIP/UDP";
-fixed_string CipUdpServiceExpl = "Call Interworking Protocol";
-
-CipUdpServiceText::CipUdpServiceText() :
-   CliText(CipUdpServiceExpl, CipUdpServiceStr) { }
-
-//------------------------------------------------------------------------------
-
 fixed_string CipUdpPortKey = "CipUdpPort";
 fixed_string CipUdpPortExpl = "Call Interworking Protocol: UDP port";
 
@@ -252,27 +209,17 @@ InputHandler* CipUdpService::CreateHandler(IpPort* port) const
 
 //------------------------------------------------------------------------------
 
+fixed_string CipUdpServiceStr = "CIP/UDP";
+fixed_string CipUdpServiceExpl = "Call Interworking Protocol";
+
 CliText* CipUdpService::CreateText() const
 {
    Debug::ft("CipUdpService.CreateText");
 
-   return new CipUdpServiceText;
+   return new CliText(CipUdpServiceExpl, CipUdpServiceStr);
 }
 
 //==============================================================================
-
-class CipTcpServiceText : public CliText
-{
-public: CipTcpServiceText();
-};
-
-fixed_string CipTcpServiceStr = "CIP/TCP";
-fixed_string CipTcpServiceExpl = "Call Interworking Protocol";
-
-CipTcpServiceText::CipTcpServiceText() :
-   CliText(CipTcpServiceExpl, CipTcpServiceStr) { }
-
-//------------------------------------------------------------------------------
 
 fixed_string CipTcpPortKey = "CipTcpPort";
 fixed_string CipTcpPortExpl = "Call Interworking Protocol: TCP port";
@@ -305,11 +252,14 @@ InputHandler* CipTcpService::CreateHandler(IpPort* port) const
 
 //------------------------------------------------------------------------------
 
+fixed_string CipTcpServiceStr = "CIP/TCP";
+fixed_string CipTcpServiceExpl = "Call Interworking Protocol";
+
 CliText* CipTcpService::CreateText() const
 {
    Debug::ft("CipTcpService.CreateText");
 
-   return new CipTcpServiceText;
+   return new CliText(CipTcpServiceExpl, CipTcpServiceStr);
 }
 
 //------------------------------------------------------------------------------
@@ -362,57 +312,49 @@ CipSignal::CipSignal(Id sid) : Signal(CipProtocolId, sid) { }
 
 CipIamSignal::CipIamSignal() : CipSignal(IAM) { }
 
-CliText* CipIamSignal::CreateText() const
-{
-   return new IamText;
-}
-
 fixed_string IamTextStr = "I";
 fixed_string IamTextExpl = "IAM";
 
-IamText::IamText() : CliText(IamTextExpl, IamTextStr) { }
+CliText* CipIamSignal::CreateText() const
+{
+   return new CliText(IamTextExpl, IamTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 CipCpgSignal::CipCpgSignal() : CipSignal(CPG) { }
 
-CliText* CipCpgSignal::CreateText() const
-{
-   return new CpgText;
-}
-
 fixed_string CpgTextStr = "C";
 fixed_string CpgTextExpl = "CPG";
 
-CpgText::CpgText() : CliText(CpgTextExpl, CpgTextStr) { }
+CliText* CipCpgSignal::CreateText() const
+{
+   return new CliText(CpgTextExpl, CpgTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 CipAnmSignal::CipAnmSignal() : CipSignal(ANM) { }
 
-CliText* CipAnmSignal::CreateText() const
-{
-   return new AnmText;
-}
-
 fixed_string AnmTextStr = "A";
 fixed_string AnmTextExpl = "ANM";
 
-AnmText::AnmText() : CliText(AnmTextExpl, AnmTextStr) { }
+CliText* CipAnmSignal::CreateText() const
+{
+   return new CliText(AnmTextExpl, AnmTextStr);
+}
 
 //------------------------------------------------------------------------------
 
 CipRelSignal::CipRelSignal() : CipSignal(REL) { }
 
-CliText* CipRelSignal::CreateText() const
-{
-   return new RelText;
-}
-
 fixed_string RelTextStr = "R";
 fixed_string RelTextExpl = "REL";
 
-RelText::RelText() : CliText(RelTextExpl, RelTextStr) { }
+CliText* CipRelSignal::CreateText() const
+{
+   return new CliText(RelTextExpl, RelTextStr);
+}
 
 //==============================================================================
 
@@ -429,19 +371,15 @@ CipRouteParameter::CipRouteParameter() : CipParameter(Route)
 
 fixed_string RouteSelExpl = "selector (FactoryId)";
 
-RouteSelParm::RouteSelParm() : CliIntParm(RouteSelExpl, 0, Factory::MaxId) { }
-
 fixed_string RouteIdExpl = "identifier (factory-specific)";
-
-RouteIdParm::RouteIdParm() : CliIntParm(RouteIdExpl, WORD_MIN, WORD_MAX) { }
 
 fixed_string RouteParmStr = "r";
 fixed_string RouteParmExpl = "RouteResult";
 
 RouteParm::RouteParm() : CliText(RouteParmExpl, RouteParmStr)
 {
-   BindParm(*new RouteSelParm);
-   BindParm(*new RouteIdParm);
+   BindParm(*new CliIntParm(RouteSelExpl, 0, Factory::MaxId));
+   BindParm(*new CliIntParm(RouteIdExpl, WORD_MIN, WORD_MAX));
 }
 
 CliParm* CipRouteParameter::CreateCliParm(Usage use) const
@@ -531,18 +469,11 @@ CipCallingParameter::CipCallingParameter() :
 
 //------------------------------------------------------------------------------
 
-class CallingParm : public CliTextParm
-{
-public: CallingParm();
-};
-
 fixed_string CallingExpl = "calling DN (digit string)";
-
-CallingParm::CallingParm() : CliTextParm(CallingExpl, false, 0) { }
 
 CliParm* CipCallingParameter::CreateCliParm(Usage use) const
 {
-   return new CallingParm;
+   return new CliTextParm(CallingExpl, false, 0);
 }
 
 //==============================================================================
@@ -555,18 +486,11 @@ CipCalledParameter::CipCalledParameter() :
 
 //------------------------------------------------------------------------------
 
-class CalledParm : public CliTextParm
-{
-public: CalledParm();
-};
-
 fixed_string CalledExpl = "called DN (digit string)";
-
-CalledParm::CalledParm() : CliTextParm(CalledExpl, false, 0) { }
 
 CliParm* CipCalledParameter::CreateCliParm(Usage use) const
 {
-   return new CalledParm;
+   return new CliTextParm(CalledExpl, false, 0);
 }
 
 //==============================================================================
@@ -579,20 +503,12 @@ CipOriginalCallingParameter::CipOriginalCallingParameter() :
 
 //------------------------------------------------------------------------------
 
-class OriginalCallingParm : public CliTextParm
-{
-public: OriginalCallingParm();
-};
-
 fixed_string OriginalCallingExpl = "original calling DN (digit string)";
 fixed_string OriginalCallingTag = "oclg";
 
-OriginalCallingParm::OriginalCallingParm() :
-   CliTextParm(OriginalCallingExpl, true, 0, OriginalCallingTag) { }
-
 CliParm* CipOriginalCallingParameter::CreateCliParm(Usage use) const
 {
-   return new OriginalCallingParm;
+   return new CliTextParm(OriginalCallingExpl, true, 0, OriginalCallingTag);
 }
 
 //==============================================================================
@@ -605,20 +521,12 @@ CipOriginalCalledParameter::CipOriginalCalledParameter() :
 
 //------------------------------------------------------------------------------
 
-class OriginalCalledParm : public CliTextParm
-{
-public: OriginalCalledParm();
-};
-
 fixed_string OriginalCalledExpl = "original called DN (digit string)";
 fixed_string OriginalCalledTag = "ocld";
 
-OriginalCalledParm::OriginalCalledParm() :
-   CliTextParm(OriginalCalledExpl, true, 0, OriginalCalledTag) { }
-
 CliParm* CipOriginalCalledParameter::CreateCliParm(Usage use) const
 {
-   return new OriginalCalledParm;
+   return new CliTextParm(OriginalCalledExpl, true, 0, OriginalCalledTag);
 }
 
 //==============================================================================
@@ -1183,20 +1091,6 @@ Message* CipFactory::ReallocOgMsg(SbIpBufferPtr& buff) const
 
 //==============================================================================
 
-class CipObcFactoryText : public CliText
-{
-public:
-   CipObcFactoryText();
-};
-
-fixed_string CipObcFactoryStr = "CO";
-fixed_string CipObcFactoryExpl = "CIP Originator (network side)";
-
-CipObcFactoryText::CipObcFactoryText() :
-   CliText(CipObcFactoryExpl, CipObcFactoryStr) { }
-
-//------------------------------------------------------------------------------
-
 CipObcFactory::CipObcFactory() :
    CipFactory(CipObcFactoryId, "Outgoing CIP Calls")
 {
@@ -1230,28 +1124,17 @@ ProtocolSM* CipObcFactory::AllocOgPsm(const Message& msg) const
 
 //------------------------------------------------------------------------------
 
+fixed_string CipObcFactoryStr = "CO";
+fixed_string CipObcFactoryExpl = "CIP Originator (network side)";
+
 CliText* CipObcFactory::CreateText() const
 {
    Debug::ft("CipObcFactory.CreateText");
 
-   return new CipObcFactoryText;
+   return new CliText(CipObcFactoryExpl, CipObcFactoryStr);
 }
 
 //==============================================================================
-
-class CipTbcFactoryText : public CliText
-{
-public:
-   CipTbcFactoryText();
-};
-
-fixed_string CipTbcFactoryStr = "CT";
-fixed_string CipTbcFactoryExpl = "CIP Terminator (network side)";
-
-CipTbcFactoryText::CipTbcFactoryText() :
-   CliText(CipTbcFactoryExpl, CipTbcFactoryStr) { }
-
-//------------------------------------------------------------------------------
 
 CipTbcFactory::CipTbcFactory() :
    CipFactory(CipTbcFactoryId, "Incoming CIP Calls")
@@ -1303,10 +1186,13 @@ RootServiceSM* CipTbcFactory::AllocRoot
 
 //------------------------------------------------------------------------------
 
+fixed_string CipTbcFactoryStr = "CT";
+fixed_string CipTbcFactoryExpl = "CIP Terminator (network side)";
+
 CliText* CipTbcFactory::CreateText() const
 {
    Debug::ft("CipTbcFactory.CreateText");
 
-   return new CipTbcFactoryText;
+   return new CliText(CipTbcFactoryExpl, CipTbcFactoryStr);
 }
 }

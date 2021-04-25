@@ -20,9 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CtIncrement.h"
-#include "CliBoolParm.h"
 #include "CliCommand.h"
-#include "CliIntParm.h"
 #include "CliText.h"
 #include "CliTextParm.h"
 #include <cstddef>
@@ -31,7 +29,9 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include "CliBoolParm.h"
 #include "CliBuffer.h"
+#include "CliIntParm.h"
 #include "CliThread.h"
 #include "CodeCoverage.h"
 #include "CodeDir.h"
@@ -66,41 +66,13 @@ namespace CodeTools
 {
 //  Parameters used by more than one command.
 //
-class CodeSetExprParm : public CliTextParm
-{
-public: CodeSetExprParm();
-};
-
-class FileSetExprParm : public CliTextParm
-{
-public: FileSetExprParm();
-};
-
-class SetExprParm : public CliTextParm
-{
-public: SetExprParm();
-};
-
-class VarMandName : public CliTextParm
-{
-public: VarMandName();
-};
-
 fixed_string CodeSetExprExpl = "a set of code files or directories";
-
-CodeSetExprParm::CodeSetExprParm() : CliTextParm(CodeSetExprExpl, false, 0) { }
 
 fixed_string FileSetExprExpl = "a set of code files";
 
-FileSetExprParm::FileSetExprParm() : CliTextParm(FileSetExprExpl, false, 0) { }
-
 fixed_string SetExprExpl = "a set of code files or directories";
 
-SetExprParm::SetExprParm() : CliTextParm(SetExprExpl, false, 0) { }
-
 fixed_string VarMandNameExpl = "variable name";
-
-VarMandName::VarMandName() : CliTextParm(VarMandNameExpl, false, 0) { }
 
 //------------------------------------------------------------------------------
 //
@@ -159,8 +131,8 @@ fixed_string AssignExpl =
 
 AssignCommand::AssignCommand() : CliCommand(AssignStr, AssignExpl)
 {
-   BindParm(*new VarMandName);
-   BindParm(*new CodeSetExprParm);
+   BindParm(*new CliTextParm(VarMandNameExpl, false, 0));
+   BindParm(*new CliTextParm(CodeSetExprExpl, false, 0));
 }
 
 word AssignCommand::ProcessCommand(CliThread& cli) const
@@ -198,7 +170,7 @@ fixed_string CheckExpl = "Checks if code follows C++ guidelines.";
 CheckCommand::CheckCommand() : LibraryCommand(CheckStr, CheckExpl)
 {
    BindParm(*new OstreamMandParm);
-   BindParm(*new FileSetExprParm);
+   BindParm(*new CliTextParm(FileSetExprExpl, false, 0));
 }
 
 word CheckCommand::ProcessCommand(CliThread& cli) const
@@ -231,44 +203,20 @@ word CheckCommand::ProcessCommand(CliThread& cli) const
 //
 //  The COVERAGE command.
 //
-class CoverageLoadText : public CliText
-{
-public: CoverageLoadText();
-};
-
 fixed_string CoverageLoadTextStr = "load";
 fixed_string CoverageLoadTextExpl =
    "reads the database from InputPath/coverage.db.txt";
 
-CoverageLoadText::CoverageLoadText() :
-   CliText(CoverageLoadTextExpl, CoverageLoadTextStr) { }
-
-class CoverageQueryText : public CliText
-{
-public: CoverageQueryText();
-};
-
 fixed_string CoverageQueryTextStr = "query";
 fixed_string CoverageQueryTextExpl =
    "displays information about the loaded database";
-
-CoverageQueryText::CoverageQueryText() :
-   CliText(CoverageQueryTextExpl, CoverageQueryTextStr) { }
 
 class CoverageUnderText : public CliText
 {
 public: CoverageUnderText();
 };
 
-class MinTestsParm : public CliIntParm
-{
-public: MinTestsParm();
-};
-
 fixed_string MinTestsParmExpl = "value of N";
-
-MinTestsParm::MinTestsParm() :
-   CliIntParm(MinTestsParmExpl, 1, 10) { }
 
 fixed_string CoverageUnderTextStr = "under";
 fixed_string CoverageUnderTextExpl =
@@ -277,7 +225,7 @@ fixed_string CoverageUnderTextExpl =
 CoverageUnderText::CoverageUnderText() :
    CliText(CoverageUnderTextExpl, CoverageUnderTextStr)
 {
-   BindParm(*new MinTestsParm);
+   BindParm(*new CliIntParm(MinTestsParmExpl, 1, 10));
 }
 
 class CoverageEraseText : public CliText
@@ -285,14 +233,7 @@ class CoverageEraseText : public CliText
 public: CoverageEraseText();
 };
 
-class FuncNameParm : public CliTextParm
-{
-public: FuncNameParm();
-};
-
 fixed_string FuncNameParmExpl = "name of function to remove";
-
-FuncNameParm::FuncNameParm() : CliTextParm(FuncNameParmExpl, false, 0) { }
 
 fixed_string CoverageEraseTextStr = "erase";
 fixed_string CoverageEraseTextExpl = "removes a function from the database";
@@ -300,20 +241,12 @@ fixed_string CoverageEraseTextExpl = "removes a function from the database";
 CoverageEraseText::CoverageEraseText() :
    CliText(CoverageEraseTextExpl, CoverageEraseTextStr)
 {
-   BindParm(*new FuncNameParm);
+   BindParm(*new CliTextParm(FuncNameParmExpl, false, 0));
 }
-
-class CoverageUpdateText : public CliText
-{
-public: CoverageUpdateText();
-};
 
 fixed_string CoverageUpdateStr = "update";
 fixed_string CoverageUpdateExpl =
    "updates database with modified functions and rerun tests";
-
-CoverageUpdateText::CoverageUpdateText() :
-   CliText(CoverageUpdateExpl, CoverageUpdateStr) { }
 
 class CoverageAction : public CliTextParm
 {
@@ -330,11 +263,14 @@ fixed_string CoverageActionExpl = "subcommand...";
 
 CoverageAction::CoverageAction() : CliTextParm(CoverageActionExpl)
 {
-   BindText(*new CoverageLoadText, CoverageLoadIndex);
-   BindText(*new CoverageQueryText, CoverageQueryIndex);
+   BindText(*new CliText
+      (CoverageLoadTextExpl, CoverageLoadTextStr), CoverageLoadIndex);
+   BindText(*new CliText
+      (CoverageQueryTextExpl, CoverageQueryTextStr), CoverageQueryIndex);
    BindText(*new CoverageUnderText, CoverageUnderIndex);
    BindText(*new CoverageEraseText, CoverageEraseIndex);
-   BindText(*new CoverageUpdateText, CoverageUpdateIndex);
+   BindText(*new CliText
+      (CoverageUpdateExpl, CoverageUpdateStr), CoverageUpdateIndex);
 }
 
 class CoverageCommand : public LibraryCommand
@@ -417,7 +353,7 @@ fixed_string CountExpl = "Counts the items in a set.";
 
 CountCommand::CountCommand() : LibraryCommand(CountStr, CountExpl)
 {
-   BindParm(*new SetExprParm);
+   BindParm(*new CliTextParm(SetExprExpl, false, 0));
 }
 
 word CountCommand::ProcessCommand(CliThread& cli) const
@@ -450,7 +386,7 @@ fixed_string CountlinesExpl = "Counts the number of lines of code.";
 CountlinesCommand::CountlinesCommand() :
    LibraryCommand(CountlinesStr, CountlinesExpl)
 {
-   BindParm(*new FileSetExprParm);
+   BindParm(*new CliTextParm(FileSetExprExpl, false, 0));
 }
 
 word CountlinesCommand::ProcessCommand(CliThread& cli) const
@@ -469,14 +405,7 @@ word CountlinesCommand::ProcessCommand(CliThread& cli) const
 //
 //  The EXPLAIN command.
 //
-class WarningIdParm : public CliIntParm
-{
-public: WarningIdParm();
-};
-
 fixed_string WarningIdExpl = "warning number";
-
-WarningIdParm::WarningIdParm() : CliIntParm(WarningIdExpl, 1, Warning_N - 1) { }
 
 class ExplainCommand : public CliCommand
 {
@@ -491,7 +420,7 @@ fixed_string ExplainExpl = "Explains a warning generated by >check.";
 
 ExplainCommand::ExplainCommand() : CliCommand(ExplainStr, ExplainExpl)
 {
-   BindParm(*new WarningIdParm);
+   BindParm(*new CliIntParm(WarningIdExpl, 1, Warning_N - 1));
 }
 
 word ExplainCommand::ProcessCommand(CliThread& cli) const
@@ -522,14 +451,7 @@ word ExplainCommand::ProcessCommand(CliThread& cli) const
 //
 //  The EXPORT command.
 //
-class ViewsParm : public CliTextParm
-{
-public: ViewsParm();
-};
-
 fixed_string ViewsExpl = "options (enter \">help export full\" for details)";
-
-ViewsParm::ViewsParm() : CliTextParm(ViewsExpl, true, 0) { }
 
 class ExportCommand : public CliCommand
 {
@@ -545,7 +467,7 @@ fixed_string ExportExpl = "Exports library information.";
 ExportCommand::ExportCommand() : CliCommand(ExportStr, ExportExpl)
 {
    BindParm(*new OstreamMandParm);
-   BindParm(*new ViewsParm);
+   BindParm(*new CliTextParm(ViewsExpl, true, 0));
 }
 
 const string& DefaultExportOptions()
@@ -647,11 +569,6 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
 //
 //  The FILEINFO command.
 //
-class CodeFileParm : public CliTextParm
-{
-public: CodeFileParm();
-};
-
 class FileInfoCommand : public CliCommand
 {
 public:
@@ -662,14 +579,12 @@ private:
 
 fixed_string CodeFileExpl = "filename (including extension)";
 
-CodeFileParm::CodeFileParm() : CliTextParm(CodeFileExpl, false, 0) { }
-
 fixed_string FileInfoStr = "fileinfo";
 fixed_string FileInfoExpl = "Displays information about a code file.";
 
 FileInfoCommand::FileInfoCommand() : CliCommand(FileInfoStr, FileInfoExpl)
 {
-   BindParm(*new CodeFileParm);
+   BindParm(*new CliTextParm(CodeFileExpl, false, 0));
 }
 
 word FileInfoCommand::ProcessCommand(CliThread& cli) const
@@ -691,23 +606,9 @@ word FileInfoCommand::ProcessCommand(CliThread& cli) const
 //
 //  The FIX command.
 //
-class WarningParm : public CliIntParm
-{
-public: WarningParm();
-};
-
 fixed_string WarningExpl = "warning number from Wnnn (0 = all warnings)";
 
-WarningParm::WarningParm() : CliIntParm(WarningExpl, 0, Warning_N - 1) { }
-
-class PromptParm : public CliBoolParm
-{
-public: PromptParm();
-};
-
 fixed_string PromptExpl = "prompt before fixing?";
-
-PromptParm::PromptParm() : CliBoolParm(PromptExpl) { }
 
 class FixCommand : public LibraryCommand
 {
@@ -722,9 +623,9 @@ fixed_string FixExpl = "Interactively fixes warnings detected by >check.";
 
 FixCommand::FixCommand() : LibraryCommand(FixStr, FixExpl)
 {
-   BindParm(*new WarningParm);
-   BindParm(*new PromptParm);
-   BindParm(*new FileSetExprParm);
+   BindParm(*new CliIntParm(WarningExpl, 0, Warning_N - 1));
+   BindParm(*new CliBoolParm(PromptExpl));
+   BindParm(*new CliTextParm(FileSetExprExpl, false, 0));
 }
 
 word FixCommand::ProcessCommand(CliThread& cli) const
@@ -764,7 +665,7 @@ fixed_string FormatExpl = "Reformats code files.";
 
 FormatCommand::FormatCommand() : LibraryCommand(FormatStr, FormatExpl)
 {
-   BindParm(*new CodeSetExprParm);
+   BindParm(*new CliTextParm(CodeSetExprExpl, false, 0));
 }
 
 word FormatCommand::ProcessCommand(CliThread& cli) const
@@ -783,16 +684,6 @@ word FormatCommand::ProcessCommand(CliThread& cli) const
 //
 //  The IMPORT command.
 //
-class DirMandName : public CliTextParm
-{
-public: DirMandName();
-};
-
-class PathMandParm : public CliTextParm
-{
-public: PathMandParm();
-};
-
 class ImportCommand : public CliCommand
 {
 public:
@@ -803,19 +694,15 @@ private:
 
 fixed_string DirMandNameExpl = "directory name";
 
-DirMandName::DirMandName() : CliTextParm(DirMandNameExpl, false, 0) { }
-
 fixed_string PathMandExpl = "path within SourcePath configuration parameter";
-
-PathMandParm::PathMandParm() : CliTextParm(PathMandExpl, false, 0) { }
 
 fixed_string ImportStr = "import";
 fixed_string ImportExpl = "Adds a directory to the code base.";
 
 ImportCommand::ImportCommand() : CliCommand(ImportStr, ImportExpl)
 {
-   BindParm(*new DirMandName);
-   BindParm(*new PathMandParm);
+   BindParm(*new CliTextParm(DirMandNameExpl, false, 0));
+   BindParm(*new CliTextParm(PathMandExpl, false, 0));
 }
 
 word ImportCommand::ProcessCommand(CliThread& cli) const
@@ -853,7 +740,7 @@ fixed_string ListExpl = "Displays the items in a set, one per line.";
 
 ListCommand::ListCommand() : LibraryCommand(ListStr, ListExpl)
 {
-   BindParm(*new CodeSetExprParm);
+   BindParm(*new CliTextParm(CodeSetExprExpl, false, 0));
 }
 
 word ListCommand::ProcessCommand(CliThread& cli) const
@@ -871,26 +758,11 @@ word ListCommand::ProcessCommand(CliThread& cli) const
 //
 //  The PARSE command.
 //
-class ParseOptionsParm : public CliTextParm
-{
-public: ParseOptionsParm();
-};
-
 fixed_string ParseOptionsExpl =
    "options (enter \">help parse full\" for details)";
 
-ParseOptionsParm::ParseOptionsParm() :
-   CliTextParm(ParseOptionsExpl, false, 0) { }
-
-class DefineFileParm : public CliTextParm
-{
-public: DefineFileParm();
-};
-
 fixed_string DefineFileExpl =
    "file for #define symbols (.txt in input directory)";
-
-DefineFileParm::DefineFileParm() : CliTextParm(DefineFileExpl, false, 0) { }
 
 class ParseCommand : public LibraryCommand
 {
@@ -905,9 +777,9 @@ fixed_string ParseExpl = "Parses code files.";
 
 ParseCommand::ParseCommand() : LibraryCommand(ParseStr, ParseExpl)
 {
-   BindParm(*new ParseOptionsParm);
-   BindParm(*new DefineFileParm);
-   BindParm(*new FileSetExprParm);
+   BindParm(*new CliTextParm(ParseOptionsExpl, false, 0));
+   BindParm(*new CliTextParm(DefineFileExpl, false, 0));
+   BindParm(*new CliTextParm(FileSetExprExpl, false, 0));
 }
 
 const string& ValidParseOptions()
@@ -974,7 +846,7 @@ fixed_string PurgeExpl = "Deletes a variable.";
 
 PurgeCommand::PurgeCommand() : CliCommand(PurgeStr, PurgeExpl)
 {
-   BindParm(*new VarMandName);
+   BindParm(*new CliTextParm(VarMandNameExpl, false, 0));
 }
 
 word PurgeCommand::ProcessCommand(CliThread& cli) const
@@ -995,31 +867,23 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SCAN command.
 //
-   class StringPatternParm : public CliTextParm
-   {
-   public: StringPatternParm();
-   };
-
-   class ScanCommand : public CliCommand
-   {
-   public:
-      ScanCommand();
-   private:
-      word ProcessCommand(CliThread& cli) const override;
-   };
+class ScanCommand : public CliCommand
+{
+public:
+   ScanCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
 
 fixed_string StringPatternExpl = "target string (in quotes; '$' = wildcard)";
-
-StringPatternParm::StringPatternParm() :
-   CliTextParm(StringPatternExpl, false, 0) { }
 
 fixed_string ScanStr = "scan";
 fixed_string ScanExpl = "Scans files for lines that contain a string.";
 
 ScanCommand::ScanCommand() : CliCommand(ScanStr, ScanExpl)
 {
-   BindParm(*new FileSetExprParm);
-   BindParm(*new StringPatternParm);
+   BindParm(*new CliTextParm(FileSetExprExpl, false, 0));
+   BindParm(*new CliTextParm(StringPatternExpl, false, 0));
 }
 
 word ScanCommand::ProcessCommand(CliThread& cli) const
@@ -1055,26 +919,6 @@ word ScanCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SHOW command.
 //
-class DirsText : public CliText
-{
-public: DirsText();
-};
-
-class FailedText : public CliText
-{
-public: FailedText();
-};
-
-class ItemsText : public CliText
-{
-public: ItemsText();
-};
-
-class StatsText : public CliText
-{
-public: StatsText();
-};
-
 class ShowWhatParm : public CliTextParm
 {
 public: ShowWhatParm();
@@ -1084,7 +928,7 @@ class ShowCommand : public LibraryCommand
 {
 public:
    static const id_t DirsIndex = 1;
-   static const id_t FailedIndex = 2;
+   static const id_t FailIndex = 2;
    static const id_t ItemsIndex = 3;
    static const id_t StatsIndex = 4;
 
@@ -1096,31 +940,23 @@ private:
 fixed_string DirsTextStr = "dirs";
 fixed_string DirsTextExpl = "code directories";
 
-DirsText::DirsText() : CliText(DirsTextExpl, DirsTextStr) { }
-
-fixed_string FailedTextStr = "failed";
-fixed_string FailedTextExpl = "code files that failed to parse";
-
-FailedText::FailedText() : CliText(FailedTextExpl, FailedTextStr) { }
+fixed_string FailTextStr = "failed";
+fixed_string FailTextExpl = "code files that failed to parse";
 
 fixed_string ItemsTextStr = "items";
 fixed_string ItemsTextExpl = "memory usage by item type";
 
-ItemsText::ItemsText() : CliText(ItemsTextExpl, ItemsTextStr) { }
-
 fixed_string StatsTextStr = "stats";
 fixed_string StatsTextExpl = "parser statistics";
-
-StatsText::StatsText() : CliText(StatsTextExpl, StatsTextStr) { }
 
 fixed_string ShowWhatExpl = "what to show...";
 
 ShowWhatParm::ShowWhatParm() : CliTextParm(ShowWhatExpl)
 {
-   BindText(*new DirsText, ShowCommand::DirsIndex);
-   BindText(*new FailedText, ShowCommand::FailedIndex);
-   BindText(*new ItemsText, ShowCommand::ItemsIndex);
-   BindText(*new StatsText, ShowCommand::StatsIndex);
+   BindText(*new CliText(DirsTextExpl, DirsTextStr), ShowCommand::DirsIndex);
+   BindText(*new CliText(FailTextExpl, FailTextStr), ShowCommand::FailIndex);
+   BindText(*new CliText(ItemsTextExpl, ItemsTextStr), ShowCommand::ItemsIndex);
+   BindText(*new CliText(StatsTextExpl, StatsTextStr), ShowCommand::StatsIndex);
 }
 
 fixed_string ShowStr = "show";
@@ -1172,7 +1008,7 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
       }
       break;
 
-   case FailedIndex:
+   case FailIndex:
       {
          auto found = false;
          auto& files = Singleton< Library >::Instance()->Files().Items();
@@ -1253,7 +1089,7 @@ fixed_string SortExpl = "Sorts files by build dependency order.";
 
 SortCommand::SortCommand() : LibraryCommand(SortStr, SortExpl)
 {
-   BindParm(*new FileSetExprParm);
+   BindParm(*new CliTextParm(FileSetExprExpl, false, 0));
 }
 
 word SortCommand::ProcessCommand(CliThread& cli) const
@@ -1284,38 +1120,9 @@ private:
 fixed_string TraceStr = "trace";
 fixed_string TraceExpl = "Manage tracepoints for >parse command.";
 
-class FileNameParm : public CliTextParm
-{
-public: FileNameParm();
-};
-
 fixed_string FileNameExpl = "name of source code file";
 
-FileNameParm::FileNameParm() : CliTextParm(FileNameExpl, false, 0) { }
-
-class LineNumberParm : public CliIntParm
-{
-public: LineNumberParm();
-};
-
 fixed_string LineNumberExpl = "line number (must contain source code)";
-
-LineNumberParm::LineNumberParm() : CliIntParm(LineNumberExpl, 0, 999999) { }
-
-class BreakText : public CliText
-{
-public: BreakText();
-};
-
-class StartText : public CliText
-{
-public: StartText();
-};
-
-class StopText : public CliText
-{
-public: StopText();
-};
 
 class ModeParm : public CliTextParm
 {
@@ -1332,25 +1139,19 @@ public:
 fixed_string BreakTextStr = "break";
 fixed_string BreakTextExpl = "breakpoint (at Debug::noop in Context::SetPos)";
 
-BreakText::BreakText() : CliText(BreakTextExpl, BreakTextStr) { }
-
 fixed_string StartTextStr = "start";
 fixed_string StartTextExpl = "start tracing (must preconfigure settings)";
 
-StartText::StartText() : CliText(StartTextExpl, StartTextStr) { }
-
 fixed_string StopTextStr = "stop";
 fixed_string StopTextExpl = "stop tracing";
-
-StopText::StopText() : CliText(StopTextExpl, StopTextStr) { }
 
 fixed_string ModeExpl = "action at tracepoint...";
 
 ModeParm::ModeParm() : CliTextParm(ModeExpl)
 {
-   BindText(*new BreakText, Break);
-   BindText(*new StartText, Start);
-   BindText(*new StopText, Stop);
+   BindText(*new CliText(BreakTextExpl, BreakTextStr), Break);
+   BindText(*new CliText(StartTextExpl, StartTextStr), Start);
+   BindText(*new CliText(StopTextExpl, StopTextStr), Stop);
 }
 
 class InsertText : public CliText
@@ -1361,16 +1162,6 @@ public: InsertText();
 class RemoveText : public CliText
 {
 public: RemoveText();
-};
-
-class ClearText : public CliText
-{
-public: ClearText();
-};
-
-class ListText : public CliText
-{
-public: ListText();
 };
 
 class TraceAction : public CliTextParm
@@ -1392,8 +1183,8 @@ fixed_string InsertTextExpl = "add tracepoint";
 InsertText::InsertText() : CliText(InsertTextExpl, InsertTextStr)
 {
    BindParm(*new ModeParm);
-   BindParm(*new FileNameParm);
-   BindParm(*new LineNumberParm);
+   BindParm(*new CliTextParm(FileNameExpl, false, 0));
+   BindParm(*new CliIntParm(LineNumberExpl, 0, 999999));
 }
 
 fixed_string RemoveTextStr = "remove";
@@ -1402,19 +1193,15 @@ fixed_string RemoveTextExpl = "delete tracepoint";
 RemoveText::RemoveText() : CliText(RemoveTextExpl, RemoveTextStr)
 {
    BindParm(*new ModeParm);
-   BindParm(*new FileNameParm);
-   BindParm(*new LineNumberParm);
+   BindParm(*new CliTextParm(FileNameExpl, false, 0));
+   BindParm(*new CliIntParm(LineNumberExpl, 0, 999999));
 }
 
 fixed_string ClearTextStr = "clear";
 fixed_string ClearTextExpl = "delete all tracepoints";
 
-ClearText::ClearText() : CliText(ClearTextExpl, ClearTextStr) { }
-
 fixed_string ListTextStr = "list";
 fixed_string ListTextExpl = "list tracepoints";
-
-ListText::ListText() : CliText(ListTextExpl, ListTextStr) { }
 
 fixed_string ActionExpl = "subcommand...";
 
@@ -1422,8 +1209,8 @@ TraceAction::TraceAction() : CliTextParm(ActionExpl)
 {
    BindText(*new InsertText, Insert);
    BindText(*new RemoveText, Remove);
-   BindText(*new ClearText, Clear);
-   BindText(*new ListText, List);
+   BindText(*new CliText(ClearTextExpl, ClearTextStr), Clear);
+   BindText(*new CliText(ListTextExpl, ListTextStr), List);
 }
 
 TraceCommand::TraceCommand() : CliCommand(TraceStr, TraceExpl)
@@ -1512,7 +1299,7 @@ fixed_string TypeExpl = "Displays the items in a set, separated by commas.";
 
 TypeCommand::TypeCommand() : LibraryCommand(TypeStr, TypeExpl)
 {
-   BindParm(*new SetExprParm);
+   BindParm(*new CliTextParm(SetExprExpl, false, 0));
 }
 
 word TypeCommand::ProcessCommand(CliThread& cli) const

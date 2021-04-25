@@ -278,106 +278,50 @@ SelectionsText::SelectionsText() :
 
 //------------------------------------------------------------------------------
 
-class OnText : public CliText
-{
-public: OnText();
-};
-
-class OffText : public CliText
-{
-public: OffText();
-};
-
 fixed_string OnTextStr = "on";
 fixed_string OnTextExpl = "on";
 
-OnText::OnText() : CliText(OnTextExpl, OnTextStr) { }
-
 fixed_string OffTextStr = "off";
 fixed_string OffTextExpl = "off";
-
-OffText::OffText() : CliText(OffTextExpl, OffTextStr) { }
 
 fixed_string SetHowExpl = "setting...";
 
 SetHowParm::SetHowParm() : CliTextParm(SetHowExpl)
 {
-   BindText(*new OnText, On);
-   BindText(*new OffText, Off);
+   BindText(*new CliText(OnTextExpl, OnTextStr), On);
+   BindText(*new CliText(OffTextExpl, OffTextStr), Off);
 }
 
 //------------------------------------------------------------------------------
 
-class NEqText : public CliText
-{
-public: NEqText();
-};
-
-class LtText : public CliText
-{
-public: LtText();
-};
-
-class LtEqText : public CliText
-{
-public: LtEqText();
-};
-
-class EqText : public CliText
-{
-public: EqText();
-};
-
-class GtEqText : public CliText
-{
-public: GtEqText();
-};
-
-class GtText : public CliText
-{
-public: GtText();
-};
-
 fixed_string EqTextStr = "==";
 fixed_string EqTextExpl = "equal to";
-
-EqText::EqText() : CliText(EqTextExpl, EqTextStr) { }
 
 fixed_string NEqTextStr = "!=";
 fixed_string NEqTextExpl = "not equal to";
 
-NEqText::NEqText() : CliText(NEqTextExpl, NEqTextStr) { }
-
 fixed_string LtTextStr = "<";
 fixed_string LtTextExpl = "less than";
-
-LtText::LtText() : CliText(LtTextExpl, LtTextStr) { }
 
 fixed_string LtEqTextStr = "<=";
 fixed_string LtEqTextExpl = "less than or equal to";
 
-LtEqText::LtEqText() : CliText(LtEqTextExpl, LtEqTextStr) { }
-
 fixed_string GtTextStr = ">";
 fixed_string GtTextExpl = "greater than";
 
-GtText::GtText() : CliText(GtTextExpl, GtTextStr) { }
-
 fixed_string GtEqTextStr = ">=";
 fixed_string GtEqTextExpl = "greater than or equal to";
-
-GtEqText::GtEqText() : CliText(GtEqTextExpl, GtEqTextStr) { }
 
 fixed_string RelationParmExpl = "relational operator...";
 
 RelationParm::RelationParm() : CliTextParm(RelationParmExpl)
 {
-   BindText(*new EqText, Eq);
-   BindText(*new NEqText, NEq);
-   BindText(*new LtText, Lt);
-   BindText(*new LtEqText, LtEq);
-   BindText(*new GtText, Gt);
-   BindText(*new GtEqText, GtEq);
+   BindText(*new CliText(EqTextExpl, EqTextStr), Eq);
+   BindText(*new CliText(NEqTextExpl, NEqTextStr), NEq);
+   BindText(*new CliText(LtTextExpl, LtTextStr), Lt);
+   BindText(*new CliText(LtEqTextExpl, LtEqTextStr), LtEq);
+   BindText(*new CliText(GtTextExpl, GtTextStr), Gt);
+   BindText(*new CliText(GtEqTextExpl, GtEqTextStr), GtEq);
 }
 
 //------------------------------------------------------------------------------
@@ -389,94 +333,45 @@ SysTimeDayParm::SysTimeDayParm() :
 
 //------------------------------------------------------------------------------
 
-class SysTimeYearText : public CliText
-{
-public: SysTimeYearText();
-};
-
-class SysTimeMonthText : public CliText
-{
-public: SysTimeMonthText();
-};
-
-class SysTimeDayText : public CliText
-{
-public: SysTimeDayText();
-};
-
-class SysTimeHourText : public CliText
-{
-public: SysTimeHourText();
-};
-
-class SysTimeMinText : public CliText
-{
-public: SysTimeMinText();
-};
-
-class SysTimeSecText : public CliText
-{
-public: SysTimeSecText();
-};
-
-class SysTimeMsecText : public CliText
-{
-public: SysTimeMsecText();
-};
-
 fixed_string SysTimeYearTextStr = "year";
 fixed_string SysTimeYearTextExpl = "year field";
-
-SysTimeYearText::SysTimeYearText() :
-   CliText(SysTimeYearTextExpl, SysTimeYearTextStr) { }
 
 fixed_string SysTimeMonthTextStr = "month";
 fixed_string SysTimeMonthTextExpl = "month field";
 
-SysTimeMonthText::SysTimeMonthText() :
-   CliText(SysTimeMonthTextExpl, SysTimeMonthTextStr) { }
-
 fixed_string SysTimeDayTextStr = "day";
 fixed_string SysTimeDayTextExpl = "day field";
-
-SysTimeDayText::SysTimeDayText() :
-   CliText(SysTimeDayTextExpl, SysTimeDayTextStr) { }
 
 fixed_string SysTimeHourTextStr = "hour";
 fixed_string SysTimeHourTextExpl = "hours field";
 
-SysTimeHourText::SysTimeHourText() :
-   CliText(SysTimeHourTextExpl, SysTimeHourTextStr) { }
-
 fixed_string SysTimeMinTextStr = "min";
 fixed_string SysTimeMinTextExpl = "minutes field";
-
-SysTimeMinText::SysTimeMinText() :
-   CliText(SysTimeMinTextExpl, SysTimeMinTextStr) { }
 
 fixed_string SysTimeSecTextStr = "sec";
 fixed_string SysTimeSecTextExpl = "seconds field";
 
-SysTimeSecText::SysTimeSecText() :
-   CliText(SysTimeSecTextExpl, SysTimeSecTextStr) { }
-
 fixed_string SysTimeMsecTextStr = "msec";
 fixed_string SysTimeMsecTextExpl = "milliseconds field";
-
-SysTimeMsecText::SysTimeMsecText() :
-   CliText(SysTimeMsecTextExpl, SysTimeMsecTextStr) { }
 
 fixed_string SysTimeFieldExpl = "time field";
 
 SysTimeFieldParm::SysTimeFieldParm() : CliTextParm(SysTimeFieldExpl)
 {
-   BindText(*new SysTimeYearText, YearsField + 1);
-   BindText(*new SysTimeMonthText, MonthsField + 1);
-   BindText(*new SysTimeDayText, DaysField + 1);
-   BindText(*new SysTimeHourText, HoursField + 1);
-   BindText(*new SysTimeMinText, MinsField + 1);
-   BindText(*new SysTimeSecText, SecsField + 1);
-   BindText(*new SysTimeMsecText, MsecsField + 1);
+   BindText(*new CliText
+      (SysTimeYearTextExpl, SysTimeYearTextStr), YearsField + 1);
+   BindText(*new CliText
+      (SysTimeMonthTextExpl, SysTimeMonthTextStr), MonthsField + 1);
+   BindText(*new CliText
+      (SysTimeDayTextExpl, SysTimeDayTextStr), DaysField + 1);
+   BindText(*new CliText
+      (SysTimeHourTextExpl, SysTimeHourTextStr), HoursField + 1);
+   BindText(*new CliText
+      (SysTimeMinTextExpl, SysTimeMinTextStr), MinsField + 1);
+   BindText(*new CliText
+      (SysTimeSecTextExpl, SysTimeSecTextStr), SecsField + 1);
+   BindText(*new CliText
+      (SysTimeMsecTextExpl, SysTimeMsecTextStr), MsecsField + 1);
 }
 
 //------------------------------------------------------------------------------

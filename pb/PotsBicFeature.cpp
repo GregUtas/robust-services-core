@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsBicFeature.h"
-#include "CliText.h"
 #include "PotsFeatureProfile.h"
+#include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "PotsFeatures.h"
@@ -36,11 +36,6 @@ class PotsBicFeatureProfile : public PotsFeatureProfile
 public:
    PotsBicFeatureProfile();
    ~PotsBicFeatureProfile();
-};
-
-class PotsBicAttrs : public CliText
-{
-public: PotsBicAttrs();
 };
 
 //==============================================================================
@@ -62,10 +57,6 @@ PotsBicFeatureProfile::~PotsBicFeatureProfile()
 fixed_string PotsBicAbbrName = "bic";
 fixed_string PotsBicFullName = "Barring of Incoming Calls";
 
-PotsBicAttrs::PotsBicAttrs() : CliText(PotsBicFullName, PotsBicAbbrName) { }
-
-//------------------------------------------------------------------------------
-
 PotsBicFeature::PotsBicFeature() :
    PotsFeature(BIC, false, PotsBicAbbrName, PotsBicFullName)
 {
@@ -86,7 +77,10 @@ PotsBicFeature::~PotsBicFeature()
 
 //------------------------------------------------------------------------------
 
-CliText* PotsBicFeature::Attrs() const { return new PotsBicAttrs; }
+CliText* PotsBicFeature::Attrs() const
+{
+   return new CliText(PotsBicFullName, PotsBicAbbrName);
+}
 
 //------------------------------------------------------------------------------
 

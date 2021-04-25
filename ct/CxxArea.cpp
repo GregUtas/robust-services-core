@@ -553,6 +553,7 @@ void Class::CheckDestructor() const
    //
    auto base = IsBaseClass();
    auto solo = IsSingleton();
+   auto ctor = FindCtor(nullptr);
    auto dtor = FindDtor();
 
    if(dtor == nullptr)
@@ -560,7 +561,10 @@ void Class::CheckDestructor() const
       if(solo)
          Log(DestructorNotPrivate);
       else if(base)
-         Log(NonVirtualDestructor);
+      {
+         if((ctor == nullptr) || !ctor->IsDeleted)
+            Log(NonVirtualDestructor);
+      }
       return;
    }
 

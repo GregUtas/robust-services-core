@@ -43,6 +43,8 @@ class CxxStatement : public CxxToken
 {
 public:
    virtual ~CxxStatement() = default;
+   CxxStatement(const CxxStatement& that) = delete;
+   CxxStatement& operator=(const CxxStatement& that) = delete;
    void EnterBlock() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;

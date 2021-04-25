@@ -152,7 +152,9 @@ public:
    class ParmIterator
    {
       friend class TlvMessage;
-
+   public:
+      ParmIterator() : mptr(nullptr), pptr(nullptr), pindex(0) { }
+   private:
       const TlvMsgLayout* mptr;  // reference to message
       TlvParmPtr pptr;           // reference to current parameter
       size_t pindex;             // parameter's offset within message

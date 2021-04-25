@@ -46,6 +46,10 @@ public:
    //
    virtual ~CxxDirective() = default;
 
+   //  Deleted to prohibit copying.
+   //
+   CxxDirective(const CxxDirective& that) = delete;
+
    //  Returns true if the directive is an #include guard.
    //
    virtual bool IsIncludeGuard() const { return false; }
@@ -173,6 +177,10 @@ public:
    //  Not subclassed.
    //
    ~MacroName();
+
+   //  Deleted to prohibit copying.
+   //
+   MacroName(const MacroName& that) = delete;
 
    //  Returns true if the name was defined when it was encountered.
    //

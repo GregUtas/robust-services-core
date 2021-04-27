@@ -23,7 +23,6 @@
 #include <algorithm>
 #include <bitset>
 #include <cctype>
-#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <iosfwd>
@@ -35,6 +34,7 @@
 #include "CodeCoverage.h"
 #include "CodeFile.h"
 #include "CxxArea.h"
+#include "CxxLocation.h"
 #include "CxxNamed.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
@@ -877,10 +877,10 @@ word Editor::AdjustIndentation(const CodeWarning& log)
 {
    Debug::ft("Editor.AdjustIndentation");
 
-   auto begin = CurrBegin(log.Pos());
-   if(begin == string::npos) return NotFound("Position for indentation");
-   Indent(begin);
-   return Changed(begin);
+   //  Adjust the code's indentation to match its lexical depth.
+   //
+   auto pos = log.loc_.GetPos();
+   return Indent(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -1060,15 +1060,14 @@ word Editor::ChangeAccess(const CodeWarning& log, Cxx::Access acc)
 {
    Debug::ft("Editor.ChangeAccess(log)");
 
-   auto item = const_cast< CxxToken* >(log.item_);
-   ItemDeclAttrs attrs(item);
+   ItemDeclAttrs attrs(log.item_);
    attrs.access = acc;
-   return ChangeAccess(item, attrs);
+   return ChangeAccess(log.item_, attrs);
 }
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeAccess(CxxToken* item, ItemDeclAttrs& attrs)
+word Editor::ChangeAccess(const CxxToken* item, ItemDeclAttrs& attrs)
 {
    Debug::ft("Editor.ChangeAccess(item)");
 
@@ -1089,7 +1088,7 @@ word Editor::ChangeAccess(CxxToken* item, ItemDeclAttrs& attrs)
    InsertAfterItemDecl(attrs);
    Paste(attrs.pos, code, from);
    InsertBeforeItemDecl(attrs, EMPTY_STR);
-   item->SetAccess(attrs.access);
+   const_cast< CxxToken* >(item)->SetAccess(attrs.access);
    return Changed(item->GetPos());
 }
 
@@ -1136,6 +1135,8 @@ word Editor::ChangeClassToStruct(const CodeWarning& log)
       Erase(access, strlen(PUBLIC_STR));
       if(IsBlankLine(access)) EraseLine(access);
    }
+
+   ((Class*) log.item_)->SetClassTag(Cxx::StructType);
    return Changed(pos);
 }
 
@@ -1490,8 +1491,7 @@ word Editor::ChangeSpecialFunction(CliThread& cli, const CodeWarning& log)
       return Report("Internal error: unexpected warning type.");
    }
 
-   auto item = const_cast< CxxToken* >(log.item_);
-   return ChangeAccess(item, attrs);
+   return ChangeAccess(log.item_, attrs);
 }
 
 //------------------------------------------------------------------------------
@@ -1523,6 +1523,8 @@ word Editor::ChangeStructToClass(const CodeWarning& log)
       control.push_back(':');
       InsertLine(NextBegin(left), control);
    }
+
+   ((Class*) log.item_)->SetClassTag(Cxx::ClassType);
    return Changed(pos);
 }
 
@@ -1638,9 +1640,9 @@ bool Editor::CodeFollowsImmediately(size_t pos) const
    {
       auto type = PosToType(pos);
 
-      if(LineTypeAttr::Attrs[type].isExecutable) return true;
-      if(LineTypeAttr::Attrs[type].isBlank) continue;
       if(type == AccessControl) continue;
+      if(LineTypeAttr::Attrs[type].isBlank) continue;
+      if(LineTypeAttr::Attrs[type].isParsePos) return true;
       return false;
    }
 
@@ -2369,29 +2371,15 @@ bool Editor::EraseLineBreak(size_t pos)
 {
    Debug::ft("Editor.EraseLineBreak(pos)");
 
-   auto curr = CurrBegin(pos);
-   if(curr == string::npos) return false;
-   auto next = NextBegin(curr);
-   if(next == string::npos) return false;
-
-   //  Check that the lines can be merged.
-   //
-   auto type = PosToType(curr);
-   if(!LineTypeAttr::Attrs[type].isMergeable) return false;
-   type = PosToType(next);
-   if(!LineTypeAttr::Attrs[type].isMergeable) return false;
-   auto size = LineMergeLength
-      (GetCode(curr), 0, LineSize(curr) - 1,
-       GetCode(next), 0, LineSize(next) - 1);
-   if(size > LineLengthMax()) return false;
+   auto space = CheckLineMerge(GetLineNum(pos));
+   if(space < 0) return false;
 
    //  Merge the lines after replacing or erasing CURR's endline.
    //
-   auto code1 = source_.substr(curr, LineSize(curr) - 1);
-   auto code2 = source_.substr(next, LineSize(next));
+   auto next = NextBegin(pos);
    auto start = LineFindFirst(next);
 
-   if(InsertSpaceOnMerge(code1, code2, start - next))
+   if(space != 0)
    {
       Replace(next - 1, 1, SPACE_STR);
       Erase(next, start - next);
@@ -3499,41 +3487,24 @@ size_t Editor::IncludesEnd() const
 
 //------------------------------------------------------------------------------
 
-size_t Editor::Indent(size_t pos)
+word Editor::Indent(size_t pos)
 {
    Debug::ft("Editor.Indent");
 
-   auto code = GetCode(pos);
-   if(code.empty() || (code.front() == CRLF)) return pos;
-
    auto info = GetLineInfo(pos);
-   int depth = 0;
-
-   if(info->depth != SIZE_MAX)
-   {
-      depth = info->depth;
-
-      //  If the line is executable code, indent it one level more.  This
-      //  avoids indenting comments, braces, and access controls, which
-      //  are not executable.
-      //
-      auto type = PosToType(info->begin);
-      if(info->cont && LineTypeAttr::Attrs[type].isExecutable) ++depth;
-   }
-
-   auto first = code.find_first_not_of(WhitespaceChars);
-   if(first == string::npos) return pos;
-
+   if(info == nullptr) return NotFound("Position for indentation");
+   auto begin = CurrBegin(pos);
+   auto first = LineFindFirst(pos);
+   auto curr = first - begin;
+   auto depth = info->depth;
+   if(info->cont) ++depth;
    auto indent = depth * IndentSize();
 
-   if(first != indent)
-   {
-      Erase(info->begin, first);
-      Insert(info->begin, spaces(indent));
-      Changed();
-   }
-
-   return pos;
+   if(indent > curr)
+      Insert(pos, spaces(indent - pos));
+   else
+      Erase(pos, curr - indent);
+   return Changed(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -4041,18 +4012,19 @@ size_t Editor::InsertLine(size_t pos, const string& code)
 
 //------------------------------------------------------------------------------
 
-size_t Editor::InsertLineBreak(size_t pos)
+word Editor::InsertLineBreak(size_t pos)
 {
    Debug::ft("Editor.InsertLineBreak(pos)");
 
    auto begin = CurrBegin(pos);
-   if(begin == string::npos) return string::npos;
+   if(begin == string::npos) return NotFound("Line break insertion position");
    auto end = CurrEnd(pos);
-   if((pos == begin) || (pos == end)) return string::npos;
-   if(IsBlankLine(pos)) return string::npos;
+   if((pos == begin) || (pos == end)) return
+      Report("Error: inserting line break at beginning or end of line.");
+   if(IsBlankLine(pos)) return
+      Report("Error: inserting line break in an empty line");
    Insert(pos, CRLF_STR);
-   Indent(NextBegin(pos));
-   return pos;
+   return Indent(NextBegin(pos));
 }
 
 //------------------------------------------------------------------------------

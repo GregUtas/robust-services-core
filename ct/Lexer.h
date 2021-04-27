@@ -337,10 +337,11 @@ public:
    //
    void CalcLineTypes(bool log);
 
-   //  Overridden to display member variables.
+   //  Returns 0 or 1 if line N and the following line can be merged and remain
+   //  within the line length limit, with 1 indicating that a space needs to be
+   //  inserted when merging them.  Returns -1 if the lines cannot merge.
    //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
+   int CheckLineMerge(size_t n) const;
 
    //  A type for the LineInfo associated with each line of source code.
    //
@@ -432,6 +433,11 @@ public:
    //  Checks the spacing of punctuation.
    //
    void CheckPunctuation() const;
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
    //  Looks for STR starting at POS.  If STR is found, returns its position,
    //  else returns string::npos.  Ignores non-code and does not proceed to

@@ -1513,7 +1513,7 @@ void Data::SetAssignment(ExprPtr& expr, size_t eqpos)
 
    QualNamePtr name;
    GetInitName(name);
-   name->CopyContext(this);
+   name->CopyContext(this, false);
    TokenPtr arg1(name.release());
    init_->AddItem(arg1);
    TokenPtr op(new Operation(Cxx::ASSIGN));
@@ -2022,7 +2022,7 @@ void Function::AddThisArg()
    //  function template's "this" argument.
    //
    TypeSpecPtr typeSpec(new DataSpec(cls->Name().c_str()));
-   typeSpec->CopyContext(this);
+   typeSpec->CopyContext(this, true);
    typeSpec->Tags()->SetConst(const_);
    typeSpec->Tags()->SetPointer(0, true, false);
    typeSpec->SetReferent(cls, nullptr);
@@ -2031,7 +2031,7 @@ void Function::AddThisArg()
    if(parms != nullptr) typeSpec->GetQualName()->SetTemplateArgs(parms);
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
-   arg->CopyContext(this);
+   arg->CopyContext(this, true);
    args_.insert(args_.begin(), std::move(arg));
    this_ = true;
 }
@@ -5028,7 +5028,7 @@ void Function::SetTemplateArgs(const TypeName* spec)
    Debug::ft("Function.SetTemplateArgs");
 
    tspec_.reset(new TypeName(*spec));
-   tspec_->CopyContext(spec);
+   tspec_->CopyContext(spec, true);
 }
 
 //------------------------------------------------------------------------------
@@ -5814,6 +5814,7 @@ void SpaceData::GetInitName(QualNamePtr& qualName) const
    Debug::ft("SpaceData.GetInitName");
 
    qualName.reset(new QualName(*name_));
+   qualName->SetDataInit();
 }
 
 //------------------------------------------------------------------------------

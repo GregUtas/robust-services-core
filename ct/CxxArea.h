@@ -455,6 +455,10 @@ public:
    //
    Cxx::ClassTag GetClassTag() const { return tag_; }
 
+   //  Sets the type of class.
+   //
+   void SetClassTag(Cxx::ClassTag tag) { tag_ = tag; }
+
    //  Updates CODE with the code for the template instance INST, returning the
    //  location where parsing should begin.  Returns string::npos on an error.
    //
@@ -767,7 +771,7 @@ private:
 
    //  The type of class.
    //
-   const Cxx::ClassTag tag_ : 8;
+   Cxx::ClassTag tag_ : 8;
 
    //  The current access control level when parsing the class.
    //

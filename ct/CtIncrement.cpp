@@ -1271,7 +1271,7 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
    auto source = lexer.GetNthLine(line - 1);
    auto type = lexer.LineToType(line - 1);
 
-   if(!LineTypeAttr::Attrs[type].isExecutable)
+   if(!LineTypeAttr::Attrs[type].isParsePos)
    {
       *cli.obuf << source << CRLF;
       return cli.Report(-3, "That line does not contain executable code.");

@@ -23,7 +23,6 @@
 #include "CliCommand.h"
 #include "CliText.h"
 #include "CliTextParm.h"
-#include "NwCliParms.h"
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -34,6 +33,7 @@
 #include "IpPortRegistry.h"
 #include "IpService.h"
 #include "NbCliParms.h"
+#include "NwCliParms.h"
 #include "NwTracer.h"
 #include "NwTypes.h"
 #include "Q1Way.h"
@@ -206,19 +206,9 @@ word NwIncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The IP command.
 //
-class HostNameText : public CliText
-{
-public: HostNameText();
-};
-
 class NameToAddrText : public CliText
 {
 public: NameToAddrText();
-};
-
-class AddrToNameText : public IpAddrParm
-{
-public: AddrToNameText();
 };
 
 class IpAction : public CliTextParm
@@ -238,13 +228,8 @@ fixed_string AddrToNameTextStr = "addrtoname";
 fixed_string AddrToNameTextExpl =
    "maps an IP address to a host name/service name";
 
-AddrToNameText::AddrToNameText() :
-   IpAddrParm(AddrToNameTextExpl, AddrToNameTextStr) { }
-
 fixed_string HostNameTextStr = "hostname";
 fixed_string HostNameTextExpl = "returns the name of this element";
-
-HostNameText::HostNameText() : CliText(HostNameTextExpl, HostNameTextStr) { }
 
 fixed_string NameToAddrTextStr = "nametoaddr";
 fixed_string NameToAddrTextExpl =
@@ -265,9 +250,10 @@ fixed_string IpActionExpl = "function to execute...";
 
 IpAction::IpAction() : CliTextParm(IpActionExpl)
 {
-   BindText(*new HostNameText, HostNameIndex);
+   BindText(*new CliText(HostNameTextExpl, HostNameTextStr), HostNameIndex);
    BindText(*new NameToAddrText, NameToAddrIndex);
-   BindText(*new AddrToNameText, AddrToNameIndex);
+   BindText(*new IpAddrParm
+      (AddrToNameTextExpl, AddrToNameTextStr), AddrToNameIndex);
 }
 
 fixed_string IpStr = "ip";

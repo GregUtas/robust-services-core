@@ -348,12 +348,11 @@ CxxToken::~CxxToken()
 
 //------------------------------------------------------------------------------
 
-void CxxToken::CopyContext(const CxxToken* that)
+void CxxToken::CopyContext(const CxxToken* that, bool internal)
 {
    Debug::ft("CxxToken.CopyContext");
 
-   loc_.SetLoc(that->GetFile(), that->GetPos());
-   loc_.SetInternal(true);
+   loc_.SetLoc(that->GetFile(), that->GetPos(), internal);
 }
 
 //------------------------------------------------------------------------------

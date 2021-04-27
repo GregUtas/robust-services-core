@@ -59,15 +59,13 @@ public: HostNameMandParm();
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for an IP address and optional port number.  Must be subclassed
-//  to provide HELP and TEXT.
+//  Parameter for an IP address and optional port number.
 //
 class IpAddrParm : public NodeBase::CliText
 {
 public:
-   virtual ~IpAddrParm() = default;
-protected:
    IpAddrParm(NodeBase::c_string help, NodeBase::c_string text);
+   virtual ~IpAddrParm() = default;
 };
 
 //------------------------------------------------------------------------------

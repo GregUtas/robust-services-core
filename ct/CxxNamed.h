@@ -525,16 +525,16 @@ private:
    //  Set if a scope resolution operator precedes the name.
    //  Initialized to false; must be set by SetScoped.
    //
-   bool scoped_ : 1;
+   bool scoped_;
 
    //  Set if ref_ was made visible by a using statement.
    //
-   mutable bool using_ : 1;
+   mutable bool using_;
 
    //  Set if the name was used directly (e.g. to access a member, to
    //  invoke a function, or as the target of an assignment).
    //
-   bool direct_: 1;
+   bool direct_;
 };
 
 //------------------------------------------------------------------------------
@@ -565,6 +565,10 @@ public:
    //  scope resolution operator.
    //
    void PushBack(TypeNamePtr& type);
+
+   //  Marks the name as referring to a static class member in its definition.
+   //
+   void SetDataInit() { init_ = true; }
 
    //  Returns the first name.
    //
@@ -645,7 +649,7 @@ public:
 
    //  Overridden to propagate the context to each name.
    //
-   void CopyContext(const CxxToken* that) override;
+   void CopyContext(const CxxToken* that, bool internal) override;
 
    //  Overridden to forward to the last name.
    //
@@ -671,6 +675,15 @@ public:
    //
    QualName* GetQualName() const
       override { return const_cast< QualName* >(this); }
+
+   //  Overridden to return the parser's enclosing scope when initializing data
+   //  at file scope.  This prevents the RedundantScope from being logged on a
+   //  qualified name.  The problem is that Context::Scope() is the data item
+   //  itself when compiling its initialization statement, but the scope should
+   //  be the namespace in which the initialzation appears until compilation of
+   //  the assignment operator's rvalue.
+   //
+   CxxScope* GetScope() const override;
 
    //  Overridden to see if one of the names specifies a template instance.
    //
@@ -743,6 +756,10 @@ private:
    //  The first name in what might be a qualified name.
    //
    TypeNamePtr first_;
+
+   //  Set if the name is used when initializing data at file scope.
+   //
+   bool init_;
 };
 
 //------------------------------------------------------------------------------
@@ -1181,7 +1198,7 @@ private:
 
    //  Overridden to propagate the context to the type's qualified name.
    //
-   void CopyContext(const CxxToken* that) override;
+   void CopyContext(const CxxToken* that, bool internal) override;
 
    //  Overridden to return the class, if any, to which the type ultimately
    //  refers, provided that it is not a pointer or reference to that class.

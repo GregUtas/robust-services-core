@@ -358,7 +358,7 @@ const ParseFrame* Context::OuterFrame()
 
 //------------------------------------------------------------------------------
 
-const CxxScope* Context::OuterScope()
+CxxScope* Context::OuterScope()
 {
    Debug::ft("Context.OuterScope");
 

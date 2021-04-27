@@ -609,9 +609,9 @@ struct LineTypeAttr
    //
    const bool isCode;
 
-   //  The line contains code that is compiled after it is parsed.
+   //  The line contains code whose position is registered when parsing.
    //
-   const bool isExecutable;
+   const bool isParsePos;
 
    //  The line can be merged with another line.
    //
@@ -631,34 +631,18 @@ struct LineTypeAttr
 private:
    //  Constructs a line type with the specified attributes.
    //
-   LineTypeAttr(bool code, bool exe, bool merge, bool blank, char sym);
+   LineTypeAttr(bool code, bool pos, bool merge, bool blank, char sym);
 };
 
 //  Classifies a line of code (S) and updates WARNINGS with any warnings
 //  that were found.  Sets CONT for a line of code that does not end in
 //  a semicolon.
 //
-LineType CalcLineType
-   (std::string s, bool& cont, std::set< Warning >& warnings);
+LineType CalcLineType(std::string s, bool& cont, std::set< Warning >& warnings);
 
 //  Returns true if a S is a bare access control.
 //
 bool IsAccessControl(const std::string& s);
-
-//  Returns the resulting line length if LINE1[BEGIN1..END1] and
-//  LINE2[BEGIN2..END2] were merged.  Returns SIZE_MAX if the lines
-//  should not be merged.
-//
-size_t LineMergeLength
-   (const std::string& line1, size_t begin1, size_t end1,
-    const std::string& line2, size_t begin2, size_t end2);
-
-//  Returns true if a space needs to be inserted at the end of LINE1
-//  when merging it with LINE2, whose first non-blank character is at
-//  index BEGIN2.
-//
-bool InsertSpaceOnMerge
-   (const std::string& line1, const std::string& line2, size_t begin2);
 
 //------------------------------------------------------------------------------
 //

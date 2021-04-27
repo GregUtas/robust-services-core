@@ -585,11 +585,11 @@ bool CxxScoped::CheckIfUnused(Warning warning) const
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::CopyContext(const CxxToken* that)
+void CxxScoped::CopyContext(const CxxToken* that, bool internal)
 {
    Debug::ft("CxxScoped.CopyContext");
 
-   CxxNamed::CopyContext(that);
+   CxxNamed::CopyContext(that, internal);
 
    SetScope(that->GetScope());
    SetAccess(that->GetAccess());

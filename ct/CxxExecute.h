@@ -561,7 +561,7 @@ private:
    //
    std::unordered_multimap< std::string, CxxScoped* > locals_;
 
-   //  The scopes in which compilation is occurring.
+   //  The nested scopes in which compilation is occurring.
    //
    std::vector< ActiveScope > scopes_;
 
@@ -739,7 +739,7 @@ public:
 
    //  Returns the scope in which the current one appeared.
    //
-   static const CxxScope* OuterScope();
+   static CxxScope* OuterScope();
 
    //  Returns the parse frame below the current one.
    //

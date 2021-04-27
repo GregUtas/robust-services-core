@@ -373,9 +373,10 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
       qname->SetReferentN(0, item, &view);
       if(item == this) return item;
 
-      if((size > 1) && !defts && !qname->IsInternal())
+      if((size > 1) && !defts)
       {
-         CheckForRedundantScope(scope, qname);
+         auto qscope = qname->GetScope();
+         if(qscope != nullptr) CheckForRedundantScope(qscope, qname);
       }
    }
 
@@ -765,13 +766,13 @@ TypeSpec* DataSpec::Clone() const
 
 //------------------------------------------------------------------------------
 
-void DataSpec::CopyContext(const CxxToken* that)
+void DataSpec::CopyContext(const CxxToken* that, bool internal)
 {
    Debug::ft("DataSpec.CopyContext");
 
-   CxxNamed::CopyContext(that);
+   CxxNamed::CopyContext(that, internal);
 
-   name_->CopyContext(that);
+   name_->CopyContext(that, internal);
 }
 
 //------------------------------------------------------------------------------
@@ -1909,7 +1910,7 @@ void DataSpec::UpdatePos
 
 //==============================================================================
 
-QualName::QualName(TypeNamePtr& type)
+QualName::QualName(TypeNamePtr& type) : init_(false)
 {
    Debug::ft("QualName.ctor(type)");
 
@@ -1919,7 +1920,7 @@ QualName::QualName(TypeNamePtr& type)
 
 //------------------------------------------------------------------------------
 
-QualName::QualName(const string& name)
+QualName::QualName(const string& name) : init_(false)
 {
    Debug::ft("QualName.ctor(string)");
 
@@ -1930,7 +1931,8 @@ QualName::QualName(const string& name)
 
 //------------------------------------------------------------------------------
 
-QualName::QualName(const QualName& that) : CxxNamed(that)
+QualName::QualName(const QualName& that) : CxxNamed(that),
+  init_(that.init_)
 {
    Debug::ft("QualName.ctor(copy)");
 
@@ -2040,15 +2042,15 @@ void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
 
 //------------------------------------------------------------------------------
 
-void QualName::CopyContext(const CxxToken* that)
+void QualName::CopyContext(const CxxToken* that, bool internal)
 {
    Debug::ft("QualName.CopyContext");
 
-   CxxNamed::CopyContext(that);
+   CxxNamed::CopyContext(that, internal);
 
    for(auto n = First(); n != nullptr; n = n->Next())
    {
-      n->CopyContext(that);
+      n->CopyContext(that, internal);
    }
 }
 
@@ -2148,6 +2150,23 @@ void QualName::GetNames(stringVector& names) const
    {
       n->GetNames(names);
    }
+}
+
+//------------------------------------------------------------------------------
+
+CxxScope* QualName::GetScope() const
+{
+   //  Currently, this is only invoked when CxxNamed.ResolveName is deciding
+   //  whether to check if this name contains a redundant scope.  The current
+   //  scope is usually the correct one, but we don't want to bother checking
+   //  internally generated names, and we need to use the parser's enclosing
+   //  scope when initializing data outside a function.
+   //
+   auto scope = Context::Scope();
+   if(scope == nullptr) return nullptr;
+   if(IsInternal()) return nullptr;
+   if(!init_) return scope;
+   return Context::OuterScope();
 }
 
 //------------------------------------------------------------------------------
@@ -2580,7 +2599,7 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
       for(auto a = that.args_->cbegin(); a != that.args_->cend(); ++a)
       {
          TypeSpecPtr arg((*a)->Clone());
-         arg->CopyContext(a->get());
+         arg->CopyContext(a->get(), true);
          args_->push_back(std::move(arg));
       }
    }
@@ -3048,7 +3067,7 @@ void TypeName::SetTemplateArgs(const TemplateParms* tparms)
    for(auto p = parms->cbegin(); p != parms->cend(); ++p)
    {
       TypeSpecPtr spec(new DataSpec((*p)->Name().c_str()));
-      spec->CopyContext(this);
+      spec->CopyContext(this, true);
       AddTemplateArg(spec);
    }
 }

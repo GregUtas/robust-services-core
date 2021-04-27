@@ -1996,7 +1996,7 @@ bool Parser::GetFuncData(DataPtr& data)
          //  is cloned and modified to create the subsequent declaration.
          //
          typeSpec.reset(prev->GetTypeSpec()->Clone());
-         typeSpec->CopyContext(prev);
+         typeSpec->CopyContext(prev, true);
          *typeSpec->Tags() = TypeTags();
          GetTypeTags(typeSpec.get());
          pos = CurrPos();

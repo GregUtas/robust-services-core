@@ -427,6 +427,49 @@ void Lexer::CalcLineTypes(bool log)
 
 //------------------------------------------------------------------------------
 
+int Lexer::CheckLineMerge(size_t n) const
+{
+   if(n + 1 >= lines_.size()) return -1;
+   const auto& line1 = lines_[n];
+   if(!LineTypeAttr::Attrs[line1.type].isMergeable) return -1;
+   const auto& line2 = lines_[n + 1];
+   if(!LineTypeAttr::Attrs[line2.type].isMergeable) return -1;
+
+   auto begin1 = line1.begin;
+   auto end1 = line2.begin - 1;
+   auto begin2 = line2.begin;
+   auto end2 = source_->find(CRLF, begin2);
+
+   //  The second line must end with a semicolon.  The first line must not
+   //  end in a trailing comment, semicolon, colon, or right brace and must
+   //  not start with an "if" or "else".  If mergin, a space may also have
+   //  to be inserted.
+   //
+   while(WhitespaceChars.find((*source_)[end2]) != string::npos) --end2;
+   if((end2 < begin2) || (end2 == string::npos)) return -1;
+   if((*source_)[end2] != ';') return -1;
+
+   while(WhitespaceChars.find((*source_)[end1]) != string::npos) --end1;
+   if((end1 < begin1) || (end2 == string::npos)) return -1;
+   auto c = (*source_)[end1];
+   if((c == ';') || (c == ':') || (c == '}')) return -1;
+
+   auto first1 = source_->find_first_not_of(WhitespaceChars, begin1);
+   if(source_->find(COMMENT_STR, first1) < end1) return -1;
+   if(source_->compare(first1, strlen(IF_STR), IF_STR) == 0) return -1;
+   if(source_->compare(first1, strlen(ELSE_STR), ELSE_STR) == 0) return -1;
+
+   auto first2 = source_->find_first_not_of(WhitespaceChars, begin2);
+   auto size = (end1 - begin1 + 1) + (end2 - first2 + 1);
+   auto space = (!IsWordChar(c) || ((*source_)[first2] != '('));
+   if(space) ++size;
+
+   if(size > LineLengthMax()) return -1;
+   return (space ? 1 : 0);
+}
+
+//------------------------------------------------------------------------------
+
 void Lexer::CheckPunctuation() const
 {
    auto frag = false;

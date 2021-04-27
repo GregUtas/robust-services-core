@@ -903,23 +903,17 @@ void CodeFile::CheckLineBreaks()
 {
    Debug::ft("CodeFile.CheckLineBreaks");
 
-   //  Look for lines that could be combined and stay within the maximum
-   //  line length.
+   //  There is no point checking the last line.  And if a line can merge
+   //  with the next one, the next line can then be skipped.
    //
-   const auto& lines = lexer_.GetLinesInfo();
+   auto limit = lexer_.LineCount() - 1;
 
-   for(size_t n = 0; n < lines.size() - 1; ++n)
+   for(size_t n = 0; n < limit; ++n)
    {
-      if(!LineTypeAttr::Attrs[lines[n].type].isMergeable) continue;
-      if(!LineTypeAttr::Attrs[lines[n + 1].type].isMergeable) continue;
-      auto begin1 = lexer_.GetLineStart(n);
-      auto end1 = code_.find(CRLF, begin1);
-      auto begin2 = lexer_.GetLineStart(n + 1);
-      auto end2 = code_.find(CRLF, begin2);
-      auto size = LineMergeLength(code_, begin1, end1, code_, begin2, end2);
-      if(size <= LineLengthMax())
+      if(lexer_.CheckLineMerge(n) >= 0)
       {
          LogLine(n, RemoveLineBreak);
+         ++n;
       }
    }
 }

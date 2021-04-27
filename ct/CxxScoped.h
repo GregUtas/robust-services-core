@@ -134,7 +134,7 @@ public:
 
    //  Overridden to copy THAT's scope and access control.
    //
-   void CopyContext(const CxxToken* that) override;
+   void CopyContext(const CxxToken* that, bool internal) override;
 
    //  By default, items derived from this class end at the next semicolon.
    //

@@ -165,7 +165,7 @@ private:
    word AdjustPunctuation(const CodeWarning& log);
    word AdjustTags(const CodeWarning& log);
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc);
-   word ChangeAccess(CxxToken* item, ItemDeclAttrs& attrs);
+   word ChangeAccess(const CxxToken* item, ItemDeclAttrs& attrs);
    word ChangeClassToNamespace(const CodeWarning& log);
    word ChangeClassToStruct(const CodeWarning& log);
    word ChangeDataToFree(const CodeWarning& log);
@@ -241,9 +241,9 @@ private:
    //
    bool EraseLineBreak(size_t pos);
 
-   //  Indents POS's line.  Returns POS.
+   //  Indents POS's line.
    //
-   size_t Indent(size_t pos);
+   word Indent(size_t pos);
 
    //  Inserts PREFIX at POS.  The prefix replaces as many blanks as its
    //  length.  If there are fewer blanks, the rest of the line will get
@@ -251,10 +251,9 @@ private:
    //
    size_t InsertPrefix(size_t pos, const string& prefix);
 
-   //  Inserts a line break at POS, indents the new line accordingly, and
-   //  returns POS.  Returns string::npos if a line break was not inserted.
+   //  Inserts a line break at POS and indents the new line accordingly.
    //
-   size_t InsertLineBreak(size_t pos);
+   word InsertLineBreak(size_t pos);
 
    //  Inserts the string "//" followed by repetitions of C to fill out the
    //  line.  POS is where to insert.  Returns POS.
@@ -471,8 +470,7 @@ private:
 
    //  Inserts what goes before a function declaration.  COMMENT is any comment.
    //
-   void InsertBeforeItemDecl
-      (const ItemDeclAttrs& attrs, const string& comment);
+   void InsertBeforeItemDecl(const ItemDeclAttrs& attrs, const string& comment);
 
    //  Updates ATTRS with the position where the function CLS::NAME should
    //  be defined and whether it should be offset with a rule and blank line.

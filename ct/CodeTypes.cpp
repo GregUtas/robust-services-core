@@ -224,9 +224,9 @@ const bool T = true;
 //------------------------------------------------------------------------------
 
 LineTypeAttr::LineTypeAttr
-   (bool code, bool exe, bool merge, bool blank, char sym) :
+   (bool code, bool pos, bool merge, bool blank, char sym) :
    isCode(code),
-   isExecutable(exe),
+   isParsePos(pos),
    isMergeable(merge),
    isBlank(blank),
    symbol(sym)
@@ -235,7 +235,7 @@ LineTypeAttr::LineTypeAttr
 
 const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 {
-   //           c  x  m  b
+   //           c  p  m  b
    LineTypeAttr(T, T, T, F, 'c'),  // CodeLine
    LineTypeAttr(F, F, F, T, ' '),  // BlankLine
    LineTypeAttr(F, F, F, T, 'b'),  // EmptyComment
@@ -446,17 +446,6 @@ size_t IndentSize()
 
 //------------------------------------------------------------------------------
 
-bool InsertSpaceOnMerge(const string& line1, const string& line2, size_t begin2)
-{
-   //  Insert a space unless LINE2 is an argument list, which is the case if
-   //  it begins with a parenthesis and LINE1 ends with an identifier.
-   //
-   if(!IsWordChar(line1.back())) return true;
-   return (line2.at(begin2) != '(');
-}
-
-//------------------------------------------------------------------------------
-
 bool IsAccessControl(const std::string& s)
 {
    //  If S is an access control, check that nothing follows it.
@@ -473,35 +462,6 @@ bool IsAccessControl(const std::string& s)
 size_t LineLengthMax()
 {
    return 80;
-}
-
-//------------------------------------------------------------------------------
-
-size_t LineMergeLength
-   (const string& line1, size_t begin1, size_t end1,
-    const string& line2, size_t begin2, size_t end2)
-{
-   //  LINE1 must not end in a trailing comment, semicolon, colon, or right
-   //  brace and must not start with an "if" or "else".  LINE2 must end with
-   //  a semicolon.  If LINE2 doesn't start with a left parenthesis, a space
-   //  will also have to be inserted when merging.
-   //
-   auto pos1 = rfind_first_not_of(line1, end1, WhitespaceChars);
-   if(pos1 == string::npos) return SIZE_MAX;
-   if(line1.at(pos1) == ';') return SIZE_MAX;
-   if(line1.at(pos1) == ':') return SIZE_MAX;
-   if(line1.at(pos1) == '}') return SIZE_MAX;
-   auto pos2 = rfind_first_not_of(line2, end2, WhitespaceChars);
-   if(pos2 == string::npos) return SIZE_MAX;
-   if(line2.at(pos2) != ';') return SIZE_MAX;
-   if(line1.find(COMMENT_STR, begin1) < pos1) return SIZE_MAX;
-   auto first1 = line1.find_first_not_of(WhitespaceChars, begin1);
-   if(line1.find(IF_STR, first1) == first1) return SIZE_MAX;
-   if(line1.find(ELSE_STR, first1) == first1) return SIZE_MAX;
-   begin2 = line2.find_first_not_of(WhitespaceChars, begin2);
-   auto size = (pos1 - begin1 + 1) + (pos2 - begin2 + 1);
-   if(InsertSpaceOnMerge(line1, line2, begin2)) ++size;
-   return size;
 }
 
 //==============================================================================

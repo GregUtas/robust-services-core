@@ -920,10 +920,10 @@ ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
    Debug::ft("Class.CreateInstance");
 
    QualNamePtr newName(new QualName(name));
-   newName->CopyContext(this);
+   newName->CopyContext(this, true);
    ClassInstPtr tmplt(new ClassInst(newName, this, type));
    auto inst = tmplt.get();
-   inst->CopyContext(this);
+   inst->CopyContext(this, true);
    tmplts_.push_back(std::move(tmplt));
    return inst;
 }
@@ -2250,7 +2250,7 @@ ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
    Debug::ft("ClassInst.ctor");
 
    tspec_.reset(new TypeName(*spec));
-   tspec_->CopyContext(spec);
+   tspec_->CopyContext(spec, true);
    CxxStats::Incr(CxxStats::CLASS_INST);
    CxxStats::Decr(CxxStats::CLASS_DECL);
 }

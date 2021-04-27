@@ -63,10 +63,11 @@ public:
    //
    virtual void SetContext(size_t pos);
 
-   //  Sets the item's context based on THAT.  Used when an item is created
-   //  internally (e.g. during template instantiation).
+   //  Sets the item's context based on THAT.  Typically used when an item
+   //  is created internally (e.g. during template instantiation), in which
+   //  case INTERNAL is set.
    //
-   virtual void CopyContext(const CxxToken* that);
+   virtual void CopyContext(const CxxToken* that, bool internal);
 
    //  Returns the file in which this item was found.
    //

@@ -1987,18 +1987,18 @@ CxxScoped* Friend::FindForward() const
          break;
 
       case Cxx::Typedef:
-         {
-            //  See if the item wants to resolve the typedef.
-            //
-            auto tdef = static_cast< Typedef* >(item);
-            tdef->SetAsReferent(this);
-            if(!ResolveTypedef(tdef, idx - 1)) return tdef;
-            auto root = tdef->Root();
-            if(root == nullptr) return tdef;
-            item = static_cast< CxxScoped* >(root);
-            qname->SetReferentN(idx - 1, item, nullptr);  // updated value
-         }
+      {
+         //  See if the item wants to resolve the typedef.
+         //
+         auto tdef = static_cast< Typedef* >(item);
+         tdef->SetAsReferent(this);
+         if(!ResolveTypedef(tdef, idx - 1)) return tdef;
+         auto root = tdef->Root();
+         if(root == nullptr) return tdef;
+         item = static_cast< CxxScoped* >(root);
+         qname->SetReferentN(idx - 1, item, nullptr);  // updated value
          break;
+      }
 
       default:
          auto expl = name + " is an invalid friend";
@@ -2123,25 +2123,25 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
       break;
 
    case Cxx::Class:
-      {
-         //  o The outer class for an inner one must be directly visible.
-         //  o The class template for a class template instance should
-         //    (must, if in another namespace) be declared forward.
-         //
-         auto outer = ref->Declarer();
+   {
+      //  o The outer class for an inner one must be directly visible.
+      //  o The class template for a class template instance should
+      //    (must, if in another namespace) be declared forward.
+      //
+      auto outer = ref->Declarer();
 
-         if(outer != nullptr)
-         {
-            if(outer->GetTemplate() != nullptr)
-               outer = outer->GetClassTemplate();
-            symbols.AddDirect(outer);
-         }
-         else if(ref->GetTemplateArgs() != nullptr)
-         {
-            symbols.AddIndirect(ref->GetTemplate());
-         }
+      if(outer != nullptr)
+      {
+         if(outer->GetTemplate() != nullptr)
+            outer = outer->GetClassTemplate();
+         symbols.AddDirect(outer);
+      }
+      else if(ref->GetTemplateArgs() != nullptr)
+      {
+         symbols.AddIndirect(ref->GetTemplate());
       }
       break;
+   }
 
    case Cxx::Function:
       //

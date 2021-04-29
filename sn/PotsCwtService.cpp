@@ -886,28 +886,28 @@ EventHandler::Rc PotsCwtPeAnalyzeUserMessage::ProcessEvent
    switch(sid)
    {
    case PotsSignal::Facility:
+   {
+      auto pmsg = static_cast< Pots_UN_Message* >(ame.Msg());
+      auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
+
+      if(pfi->sid == PotsCwbServiceId)
       {
-         auto pmsg = static_cast< Pots_UN_Message* >(ame.Msg());
-         auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
+         cwtssm.StopTimer(PotsCwbSsm::InitiationTimeoutId);
 
-         if(pfi->sid == PotsCwbServiceId)
+         if(pfi->ind == Facility::InitiationAck)
          {
-            cwtssm.StopTimer(PotsCwbSsm::InitiationTimeoutId);
-
-            if(pfi->ind == Facility::InitiationAck)
-            {
-               nextEvent = new PotsCwtAckEvent(cwtssm);
-            }
-            else
-            {
-               nextEvent = new PotsCwtReleaseEvent
-                  (cwtssm, Facility::InitiationNack);
-            }
-
-            return Continue;
+            nextEvent = new PotsCwtAckEvent(cwtssm);
          }
+         else
+         {
+            nextEvent = new PotsCwtReleaseEvent
+               (cwtssm, Facility::InitiationNack);
+         }
+
+         return Continue;
       }
       break;
+   }
 
    case Signal::Timeout:
       auto tmsg = static_cast< TlvMessage* >(ame.Msg());

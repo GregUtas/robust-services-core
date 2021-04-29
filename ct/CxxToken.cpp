@@ -1438,14 +1438,14 @@ void Operation::CheckBitwiseOp(const StackArg& arg1, const StackArg& arg2) const
 
    switch(op_)
    {
-      case Cxx::BITWISE_AND:
-      case Cxx::BITWISE_OR:
-      case Cxx::BITWISE_AND_ASSIGN:
-      case Cxx::BITWISE_OR_ASSIGN:
-         if(arg1.IsBool() || arg2.IsBool())
-         {
-            Log(BitwiseOperatorOnBoolean);
-         }
+   case Cxx::BITWISE_AND:
+   case Cxx::BITWISE_OR:
+   case Cxx::BITWISE_AND_ASSIGN:
+   case Cxx::BITWISE_OR_ASSIGN:
+      if(arg1.IsBool() || arg2.IsBool())
+      {
+         Log(BitwiseOperatorOnBoolean);
+      }
    }
 }
 
@@ -1824,23 +1824,23 @@ void Operation::Execute() const
       return;
 
    case Cxx::CONDITIONAL:
-      //
+   {
       //  A read on each of the three arguments.  Push ARG2.
-      {
-         StackArg arg3 = NilStackArg;
+      //
+      StackArg arg3 = NilStackArg;
 
-         if(!Context::PopArg(arg3)) return;
-         if(!Context::PopArg(arg2)) return;
-         if(!Context::PopArg(arg1)) return;
-         Record(op_, arg1, &arg2);
-         arg3.WasRead();
-         arg1.CheckIfBool();
-         if(arg2.item->TypeString(true) == NULLPTR_T_STR)
-            Context::PushArg(arg3.EraseName());
-         else
-            Context::PushArg(arg2.EraseName());
-      }
+      if(!Context::PopArg(arg3)) return;
+      if(!Context::PopArg(arg2)) return;
+      if(!Context::PopArg(arg1)) return;
+      Record(op_, arg1, &arg2);
+      arg3.WasRead();
+      arg1.CheckIfBool();
+      if(arg2.item->TypeString(true) == NULLPTR_T_STR)
+         Context::PushArg(arg3.EraseName());
+      else
+         Context::PushArg(arg2.EraseName());
       return;
+   }
 
    case Cxx::ASSIGN:
       if(IsOverloaded(arg1, arg2)) return;
@@ -2197,11 +2197,12 @@ bool Operation::ExecuteOverload
    {
    case Cxx::POSTFIX_INCREMENT:
    case Cxx::POSTFIX_DECREMENT:
-      {
-         auto dummyArg = Singleton< CxxRoot >::Instance()->IntTerm();
-         args.push_back(StackArg(dummyArg, 0, false));
-      }
+   {
+      auto dummyArg = Singleton< CxxRoot >::Instance()->IntTerm();
+      args.push_back(StackArg(dummyArg, 0, false));
       break;
+   }
+
    case Cxx::ASSIGN:
       //
       //c If ARG2 is of type "auto", it is a hack for brace initialization.

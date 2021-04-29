@@ -1559,9 +1559,9 @@ private:
    //  tmpltArgs.  The result indicates how well thatType matches or specializes
    //  thisType.  Also sets argFound if thisType contains a template parameter.
    //
-   static TypeMatch MatchTemplate
-      (const std::string& thisType, const std::string& thatType,
-         stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound);
+   static TypeMatch MatchTemplate(const std::string& thisType,
+      const std::string& thatType, stringVector& tmpltParms,
+      stringVector& tmpltArgs, bool& argFound);
 
    //  Instantiates a function template instance according to tmpltArgs, which
    //  contains the TypeString that specializes each template parameter in the

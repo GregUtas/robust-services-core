@@ -69,20 +69,20 @@ PotsBcSsm::PotsBcSsm(ServiceId sid, const Message& msg, ProtocolSM& psm) :
    switch(fid)
    {
    case PotsCallFactoryId:
-      //
+   {
       //  Make the POTS PSM an edge PSM and find the subscriber's profile.
-      {
-         auto& ppsm = static_cast< PotsCallPsm& >(psm);
-         auto port = ppsm.TsPort();
-         ppsm.MakeEdge(port);
+      //
+      auto& ppsm = static_cast< PotsCallPsm& >(psm);
+      auto port = ppsm.TsPort();
+      ppsm.MakeEdge(port);
 
-         auto tsw = Singleton< Switch >::Instance();
-         auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(port));
-         auto prof = cct->Profile();
-         SetProfile(prof);
-         SetUPsm(ppsm);
-      }
+      auto tsw = Singleton< Switch >::Instance();
+      auto cct = static_cast< PotsCircuit* >(tsw->GetCircuit(port));
+      auto prof = cct->Profile();
+      SetProfile(prof);
+      SetUPsm(ppsm);
       break;
+   }
 
    case CipTbcFactoryId:
       SetNPsm(static_cast< CipPsm& >(psm));
@@ -242,42 +242,42 @@ EventHandler::Rc PotsBcSsm::AnalyzeMsg
       break;
 
    case PotsSignal::Facility:
-      //
+   {
       //  In a basic call, this is only valid when it initiates a service.
+      //
+      auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
+
+      if(pfi != nullptr)
       {
-         auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
-
-         if(pfi != nullptr)
+         if(pfi->ind == Facility::InitiationReq)
          {
-            if(pfi->ind == Facility::InitiationReq)
-            {
-               nextEvent = new InitiationReqEvent(*this, pfi->sid);
-               return EventHandler::Initiate;
-            }
-
-            errval = pfi->ind;
+            nextEvent = new InitiationReqEvent(*this, pfi->sid);
+            return EventHandler::Initiate;
          }
+
+         errval = pfi->ind;
       }
       break;
+   }
 
    case PotsSignal::Progress:
-      //
+   {
       //  In a basic call, this only occurs during a media update, which
       //  PSMs handle without any service level processing.  If we get
       //  here, some other progress indicator arrived.
-      {
-         auto ppi = pmsg->FindType< ProgressInfo >(PotsParameter::Progress);
-         if(ppi != nullptr) errval = ppi->progress;
-      }
+      //
+      auto ppi = pmsg->FindType< ProgressInfo >(PotsParameter::Progress);
+      if(ppi != nullptr) errval = ppi->progress;
       break;
+   }
 
    case PotsSignal::Release:
-      //
+   {
       //  This occurs when a multiplexer releases a call.
-      {
-         auto pci = pmsg->FindType< CauseInfo >(PotsParameter::Cause);
-         return RaiseReleaseCall(nextEvent, pci->cause);
-      }
+      //
+      auto pci = pmsg->FindType< CauseInfo >(PotsParameter::Cause);
+      return RaiseReleaseCall(nextEvent, pci->cause);
+   }
    }
 
    //p Including the PotsCircuit state in this log aids debugging, but it

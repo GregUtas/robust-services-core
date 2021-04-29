@@ -3501,7 +3501,7 @@ word Editor::Indent(size_t pos)
    auto indent = depth * IndentSize();
 
    if(indent > curr)
-      Insert(pos, spaces(indent - pos));
+      Insert(pos, spaces(indent - curr));
    else
       Erase(pos, curr - indent);
    return Changed(pos);

@@ -353,13 +353,13 @@ ProtocolSM::IncomingRc PotsMuxPsm::ProcessIcMsg(Message& msg, Event*& event)
       break;
 
    case PotsSignal::Progress:
-      //
+   {
       //  If this is only a media update, do not raise the AnalyzeMsgEvent.
-      {
-         auto ppi = pmsg.FindType< ProgressInfo >(PotsParameter::Progress);
-         if(ppi->progress == Progress::MediaUpdate) return DiscardMessage;
-      }
+      //
+      auto ppi = pmsg.FindType< ProgressInfo >(PotsParameter::Progress);
+      if(ppi->progress == Progress::MediaUpdate) return DiscardMessage;
       break;
+   }
 
    default:
       Context::Kill("invalid signal", sid);

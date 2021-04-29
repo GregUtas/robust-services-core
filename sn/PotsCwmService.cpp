@@ -1906,36 +1906,36 @@ EventHandler::Rc PotsCwmAcAnalyzeUserMessage::ProcessEvent
    switch(sid)
    {
    case Signal::Timeout:
+   {
+      auto tmsg = static_cast< TlvMessage* >(ame.Msg());
+      auto toi = tmsg->FindType< TimeoutInfo >(Parameter::Timeout);
+
+      switch(toi->tid)
       {
-         auto tmsg = static_cast< TlvMessage* >(ame.Msg());
-         auto toi = tmsg->FindType< TimeoutInfo >(Parameter::Timeout);
+      case PotsCwmSsm::ToneTimeoutId:
+         cwt.ClearTimer(PotsCwmSsm::ToneTimeoutId);
+         nextEvent = new PotsCwmToneTimeoutEvent(cwt);
+         return Continue;
 
-         switch(toi->tid)
-         {
-         case PotsCwmSsm::ToneTimeoutId:
-            cwt.ClearTimer(PotsCwmSsm::ToneTimeoutId);
-            nextEvent = new PotsCwmToneTimeoutEvent(cwt);
-            return Continue;
+      case PotsCwmSsm::RenotifyTimeoutId:
+         cwt.ClearTimer(PotsCwmSsm::RenotifyTimeoutId);
+         nextEvent = new PotsCwmRenotifyEvent(cwt);
+         return Continue;
 
-         case PotsCwmSsm::RenotifyTimeoutId:
-            cwt.ClearTimer(PotsCwmSsm::RenotifyTimeoutId);
-            nextEvent = new PotsCwmRenotifyEvent(cwt);
-            return Continue;
+      case PotsCwmSsm::ReconnectTimeoutId:
+         cwt.ClearTimer(PotsCwmSsm::ReconnectTimeoutId);
+         nextEvent = new PotsCwmReconnectEvent(cwt);
+         return Continue;
 
-         case PotsCwmSsm::ReconnectTimeoutId:
-            cwt.ClearTimer(PotsCwmSsm::ReconnectTimeoutId);
-            nextEvent = new PotsCwmReconnectEvent(cwt);
-            return Continue;
-
-         case PotsCwmSsm::ReanswerTimeoutId:
-            cwt.ClearTimer(PotsCwmSsm::ReanswerTimeoutId);
-            nextEvent = new PotsCwmReanswerTimeoutEvent(cwt);
-            return Continue;
-         }
-
-         Context::Kill("invalid TimerId", toi->tid);
-         return Suspend;
+      case PotsCwmSsm::ReanswerTimeoutId:
+         cwt.ClearTimer(PotsCwmSsm::ReanswerTimeoutId);
+         nextEvent = new PotsCwmReanswerTimeoutEvent(cwt);
+         return Continue;
       }
+
+      Context::Kill("invalid TimerId", toi->tid);
+      return Suspend;
+   }
 
    case PotsSignal::Flash:
       nextEvent = new PotsCwmFlipflopEvent(cwt);

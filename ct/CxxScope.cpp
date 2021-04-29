@@ -4726,9 +4726,9 @@ void Function::LogToArg(Warning warning, size_t index) const
 
 //------------------------------------------------------------------------------
 
-TypeMatch Function::MatchTemplate
-   (const string& thisType, const string& thatType,
-      stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound)
+TypeMatch Function::MatchTemplate(const string& thisType,
+   const string& thatType, stringVector& tmpltParms,
+   stringVector& tmpltArgs, bool& argFound)
 {
    Debug::ft("Function.MatchTemplate");
 

@@ -857,54 +857,54 @@ NbHeap::BlockState NbHeap::ValidateBlock
       break;
 
    case Available:
-      //
+   {
       //  The block is on the free queue, so check its links and fence.
-      {
-         auto block = IndexToBlock(index, level);
+      //
+      auto block = IndexToBlock(index, level);
 
-         if(!AddrIsValid(block->link.prev, true))
-            return Corrupt(PrevInvalid, restart);
-         if(!AddrIsValid(block->link.next, true))
-            return Corrupt(NextInvalid, restart);
+      if(!AddrIsValid(block->link.prev, true))
+         return Corrupt(PrevInvalid, restart);
+      if(!AddrIsValid(block->link.next, true))
+         return Corrupt(NextInvalid, restart);
 
-         if(block->fence[0] != HeapBlock::FencePattern)
-            return Corrupt(FenceInvalid, restart);
-         if(block->fence[1] != HeapBlock::FencePattern)
-            return Corrupt(FenceInvalid, restart);
+      if(block->fence[0] != HeapBlock::FencePattern)
+         return Corrupt(FenceInvalid, restart);
+      if(block->fence[1] != HeapBlock::FencePattern)
+         return Corrupt(FenceInvalid, restart);
 
-         if((HeapBlock*) block->link.prev->next != block)
-            return Corrupt(PrevNextInvalid, restart);
-         if((HeapBlock*) block->link.next->prev != block)
-            return Corrupt(NextPrevInvalid, restart);
-         //  [[fallthrough]]
-      }
+      if((HeapBlock*) block->link.prev->next != block)
+         return Corrupt(PrevNextInvalid, restart);
+      if((HeapBlock*) block->link.next->prev != block)
+         return Corrupt(NextPrevInvalid, restart);
+      //  [[fallthrough]]
+   }
 
    case Allocated:
-      //
+   {
       //  The block's sibling should not be merged.  Its parent
       //  should be Split, and its children should be Merged.
-      {
-         auto sibling = IndexToSibling(index);
-         auto other = GetState(sibling);
+      //
+      auto sibling = IndexToSibling(index);
+      auto other = GetState(sibling);
 
-         if(other == Merged)
-            return Corrupt(SiblingStateInvalid, restart);
+      if(other == Merged)
+         return Corrupt(SiblingStateInvalid, restart);
 
-         auto parent = IndexToParent(index);
-         other = GetState(parent);
-         if(other != Split)
-            return Corrupt(ParentStateInvalid, restart);
+      auto parent = IndexToParent(index);
+      other = GetState(parent);
+      if(other != Split)
+         return Corrupt(ParentStateInvalid, restart);
 
-         auto child = IndexToChild(index);
-         if(child > heap_->maxIndex) break;
-         other = GetState(child);
-         if(other != Merged)
-            return Corrupt(ChildStateInvalid, restart);
-         other = GetState(child + 1);
-         if(other != Merged)
-            return Corrupt(ChildStateInvalid, restart);
-         break;
-      }
+      auto child = IndexToChild(index);
+      if(child > heap_->maxIndex) break;
+      other = GetState(child);
+      if(other != Merged)
+         return Corrupt(ChildStateInvalid, restart);
+      other = GetState(child + 1);
+      if(other != Merged)
+         return Corrupt(ChildStateInvalid, restart);
+      break;
+   }
    }
 
    return state;

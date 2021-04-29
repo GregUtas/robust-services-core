@@ -1376,16 +1376,16 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
       case Cxx::CONST_CAST:
       case Cxx::DYNAMIC_CAST:
       case Cxx::REINTERPRET_CAST:
-         //
+      {
          //  GetQualName also extracted what was in the angle brackets.
          //  Back up so that this cast operator can extract it.
-         {
-            lexer_.Reposition(start);
-            auto pos = lexer_.FindFirstOf("<");
-            lexer_.Reposition(pos);
-            if(GetCxxCast(expr, op, qualName->GetPos())) return true;
-            return Backup(start, 75);
-         }
+         //
+         lexer_.Reposition(start);
+         auto pos = lexer_.FindFirstOf("<");
+         lexer_.Reposition(pos);
+         if(GetCxxCast(expr, op, qualName->GetPos())) return true;
+         return Backup(start, 75);
+      }
 
       case Cxx::SIZEOF_TYPE:
          if(GetSizeOf(expr, qualName->GetPos())) return true;

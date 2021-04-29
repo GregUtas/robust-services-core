@@ -981,51 +981,51 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case DirsIndex:
+   {
+      //  Display the number of .h and .cpp files found in each directory.
+      //
+      *cli.obuf << "  Directory    .h  .cpp  Path" << CRLF;
+
+      size_t hdrs = 0;
+      size_t cpps = 0;
+      auto& dirs = Singleton< Library >::Instance()->Directories().Items();
+
+      for(auto d = dirs.cbegin(); d != dirs.cend(); ++d)
       {
-         //  Display the number of .h and .cpp files found in each directory.
-         //
-         *cli.obuf << "  Directory    .h  .cpp  Path" << CRLF;
-
-         size_t hdrs = 0;
-         size_t cpps = 0;
-         auto& dirs = Singleton< Library >::Instance()->Directories().Items();
-
-         for(auto d = dirs.cbegin(); d != dirs.cend(); ++d)
-         {
-            auto dir = static_cast< CodeDir* >(*d);
-            auto h = dir->HeaderCount();
-            *cli.obuf << setw(11) << dir->Name();
-            *cli.obuf << setw(6) << h;
-            auto c = dir->CppCount();
-            *cli.obuf << setw(6) << c;
-            *cli.obuf << spaces(2) << dir->Path() << CRLF;
-            hdrs += h;
-            cpps += c;
-         }
-
-         *cli.obuf << setw(11) << "TOTAL" << setw(6) << hdrs
-            << setw(6) << cpps << CRLF;
+         auto dir = static_cast< CodeDir* >(*d);
+         auto h = dir->HeaderCount();
+         *cli.obuf << setw(11) << dir->Name();
+         *cli.obuf << setw(6) << h;
+         auto c = dir->CppCount();
+         *cli.obuf << setw(6) << c;
+         *cli.obuf << spaces(2) << dir->Path() << CRLF;
+         hdrs += h;
+         cpps += c;
       }
+
+      *cli.obuf << setw(11) << "TOTAL" << setw(6) << hdrs
+         << setw(6) << cpps << CRLF;
       break;
+   }
 
    case FailIndex:
+   {
+      auto found = false;
+      auto& files = Singleton< Library >::Instance()->Files().Items();
+
+      for(auto f = files.cbegin(); f != files.cend(); ++f)
       {
-         auto found = false;
-         auto& files = Singleton< Library >::Instance()->Files().Items();
-
-         for(auto f = files.cbegin(); f != files.cend(); ++f)
+         auto file = static_cast< CodeFile* >(*f);
+         if(file->ParseStatus() == CodeFile::Failed)
          {
-            auto file = static_cast< CodeFile* >(*f);
-            if(file->ParseStatus() == CodeFile::Failed)
-            {
-               *cli.obuf << spaces(2) << file->Name() << CRLF;
-               found = true;
-            }
+            *cli.obuf << spaces(2) << file->Name() << CRLF;
+            found = true;
          }
-
-         if(!found) return cli.Report(0, "No files failed to parse.");
       }
+
+      if(!found) return cli.Report(0, "No files failed to parse.");
       break;
+   }
 
    case ItemsIndex:
       CxxStats::Display(*cli.obuf);

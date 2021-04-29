@@ -160,22 +160,22 @@ EventHandler::Rc PotsBcCiAnalyzeLocalMessage::ProcessEvent
    switch(sid)
    {
    case PotsSignal::Digits:
+   {
+      auto pmsg = static_cast< Pots_UN_Message* >(ame.Msg());
+
+      pssm.StopTimer(PotsProtocol::CollectionTimeoutId);
+
+      auto digs = pmsg->FindType< DigitString >(PotsParameter::Digits);
+      auto dsrc = pssm.DialedDigits().AddDigits(*digs);
+
+      if((dsrc == DigitString::IllegalDigit) ||
+         (dsrc == DigitString::Overflow))
       {
-         auto pmsg = static_cast< Pots_UN_Message* >(ame.Msg());
-
-         pssm.StopTimer(PotsProtocol::CollectionTimeoutId);
-
-         auto digs = pmsg->FindType< DigitString >(PotsParameter::Digits);
-         auto dsrc = pssm.DialedDigits().AddDigits(*digs);
-
-         if((dsrc == DigitString::IllegalDigit) ||
-            (dsrc == DigitString::Overflow))
-         {
-            return pssm.RaiseCollectionTimeout(nextEvent);
-         }
-
-         return pssm.RaiseLocalInformation(nextEvent);
+         return pssm.RaiseCollectionTimeout(nextEvent);
       }
+
+      return pssm.RaiseLocalInformation(nextEvent);
+   }
 
    case PotsSignal::Onhook:
       pssm.StopTimer(PotsProtocol::CollectionTimeoutId);

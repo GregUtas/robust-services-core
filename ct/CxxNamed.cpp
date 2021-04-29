@@ -485,32 +485,32 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
          return item;
 
       case Cxx::Typedef:
-         {
-            //  See if the item wants to resolve the typedef.  In case the
-            //  typedef is that of a template, instantiate it if a template
-            //  member is being named.
-            //
-            auto tdef = static_cast< Typedef* >(item);
-            tdef->SetAsReferent(this);
-            if(!ResolveTypedef(tdef, idx - 1)) return tdef;
-            auto root = tdef->Root();
-            if(root == nullptr) return tdef;
-            item = static_cast< CxxScoped* >(root);
-            qname->SetReferentN(idx - 1, item, &view);  // updated value
-            if(idx < size) item->Instantiate();
-         }
+      {
+         //  See if the item wants to resolve the typedef.  In case the
+         //  typedef is that of a template, instantiate it if a template
+         //  member is being named.
+         //
+         auto tdef = static_cast< Typedef* >(item);
+         tdef->SetAsReferent(this);
+         if(!ResolveTypedef(tdef, idx - 1)) return tdef;
+         auto root = tdef->Root();
+         if(root == nullptr) return tdef;
+         item = static_cast< CxxScoped* >(root);
+         qname->SetReferentN(idx - 1, item, &view);  // updated value
+         if(idx < size) item->Instantiate();
          break;
+      }
 
       case Cxx::Forward:
       case Cxx::Friend:
-         {
-            if(!ResolveForward(item, idx - 1)) return item;
-            auto ref = item->Referent();
-            if(ref == nullptr) return item;
-            item = ref;
-            qname->SetReferentN(idx - 1, item, &view);  // updated value
-         }
+      {
+         if(!ResolveForward(item, idx - 1)) return item;
+         auto ref = item->Referent();
+         if(ref == nullptr) return item;
+         item = ref;
+         qname->SetReferentN(idx - 1, item, &view);  // updated value
          break;
+      }
 
       default:
          auto expl = "Invalid type found while resolving " + name;
@@ -1076,11 +1076,11 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
       break;
 
    case Cxx::Class:
-      {
-         auto tmplt = ref->GetTemplate();
-         if(tmplt != nullptr) ref = tmplt;
-      }
+   {
+      auto tmplt = ref->GetTemplate();
+      if(tmplt != nullptr) ref = tmplt;
       //  [[fallthrough]]
+   }
    default:
       //  Although a .cpp can use a type indirectly, it is unusual.  In most
       //  cases, a pointer or reference type will be initialized, in which case
@@ -1932,7 +1932,7 @@ QualName::QualName(const string& name) : init_(false)
 //------------------------------------------------------------------------------
 
 QualName::QualName(const QualName& that) : CxxNamed(that),
-  init_(that.init_)
+   init_(that.init_)
 {
    Debug::ft("QualName.ctor(copy)");
 

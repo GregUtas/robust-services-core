@@ -566,7 +566,7 @@ public:
    //
    void PushBack(TypeNamePtr& type);
 
-   //  Marks the name as referring to a static class member in its definition.
+   //  Marks a data item's name used to initialize it at file scope.
    //
    void SetDataInit() { init_ = true; }
 

@@ -114,18 +114,6 @@ public:
    //
    CxxScoped* ResolveInstanceArgument(const QualName* name) const;
 
-   //  Things that can be parsed.
-   //
-   enum SourceType
-   {
-      IsUnknown,
-      IsFile,       // source code in a file
-      IsClassInst,  // code for a class template instance
-      IsFuncInst,   // code for a function template instance
-      IsTypeSpec,   // a string containing a type specification
-      IsQualName    // a string containing a qualified name
-   };
-
    //  Returns true if original source code is being parsed.
    //
    bool ParsingSourceCode() const { return (source_ == IsFile); }
@@ -167,6 +155,18 @@ public:
    //
    static void DisplayStats(std::ostream& stream);
 private:
+   //  Things that can be parsed.
+   //
+   enum SourceType
+   {
+      IsUnknown,
+      IsFile,       // source code in a file
+      IsClassInst,  // code for a class template instance
+      IsFuncInst,   // code for a function template instance
+      IsTypeSpec,   // a string containing a type specification
+      IsQualName    // a string containing a qualified name
+   };
+
    //  Prepares to parse CODE, of type SOURCE.  PREPROCESS is set if the
    //  code should be preprocessed.  VENUE identifies the code for logging
    //  purposes, and INST is the template's name and arguments if parsing

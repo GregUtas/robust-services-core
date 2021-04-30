@@ -344,8 +344,7 @@ PotsWmlActivating::PotsWmlActivating() : PotsWmlState(PotsWmlState::Activating)
 {
    Debug::ft("PotsWmlActivating.ctor");
 
-   BindMsgAnalyzer
-      (PotsWmlEventHandler::AcAnalyzeMessage, Service::UserPort);
+   BindMsgAnalyzer(PotsWmlEventHandler::AcAnalyzeMessage, Service::UserPort);
 }
 
 //------------------------------------------------------------------------------
@@ -354,10 +353,8 @@ PotsWmlTiming::PotsWmlTiming() : PotsWmlState(PotsWmlState::Timing)
 {
    Debug::ft("PotsWmlTiming.ctor");
 
-   BindMsgAnalyzer
-      (PotsWmlEventHandler::TiAnalyzeMessage, Service::UserPort);
-   BindEventHandler
-      (PotsWmlEventHandler::TiTimeout, PotsWmlEvent::Timeout);
+   BindMsgAnalyzer(PotsWmlEventHandler::TiAnalyzeMessage, Service::UserPort);
+   BindEventHandler(PotsWmlEventHandler::TiTimeout, PotsWmlEvent::Timeout);
 }
 
 //==============================================================================

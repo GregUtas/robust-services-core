@@ -154,6 +154,9 @@ public:
       friend class TlvMessage;
    public:
       ParmIterator() : mptr(nullptr), pptr(nullptr), pindex(0) { }
+      ~ParmIterator() = default;
+      ParmIterator(const ParmIterator& that) = default;
+      ParmIterator& operator=(const ParmIterator& that) = default;
    private:
       const TlvMsgLayout* mptr;  // reference to message
       TlvParmPtr pptr;           // reference to current parameter

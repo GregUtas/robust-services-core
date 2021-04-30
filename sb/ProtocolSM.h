@@ -369,7 +369,7 @@ private:
 
    //  The factory that created this PSM.
    //
-   FactoryId fid_;
+   const FactoryId fid_;
 
    //  The PSM's state.
    //

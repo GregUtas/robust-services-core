@@ -42,10 +42,10 @@ namespace CodeTools
 //
 struct LineInfo
 {
-   size_t begin;   // offset where line starts; it ends at a CRLF
-   int8_t depth;   // lexical level for indentation
-   bool cont;      // set if code continues from the previous line
-   LineType type;  // line's type
+   const size_t begin;  // offset where line starts; it ends at a CRLF
+   int depth;           // lexical level for indentation
+   bool cont;           // set if code continues from the previous line
+   LineType type;       // line's type
 
    //  Constructs a line that begins at START.
    //
@@ -56,6 +56,10 @@ struct LineInfo
    //
    void Display(std::ostream& stream) const;
 };
+
+//  Indicates that the depth of a line of code has not yet been determined.
+//
+constexpr int DEPTH_NOT_SET = -1;
 
 //------------------------------------------------------------------------------
 
@@ -400,6 +404,11 @@ public:
    //
    size_t FindComment(size_t pos) const;
 
+   //  Returns true if line N has code and then a comment at OFFSET from
+   //  its start.
+   //
+   bool LineHasTrailingCommentAt(size_t n, size_t offset) const;
+
    //  Returns the position of the first non-blank character on POS's line.
    //  Does *not* skip non-code (that is, literals and comments).
    //
@@ -418,6 +427,55 @@ public:
    //
    bool NoCodeFollows(size_t pos) const;
 
+   //  Looks for STR starting at POS.  If STR is found, returns its position,
+   //  else returns string::npos.  Ignores non-code and does not proceed to
+   //  subsequent lines.
+   //
+   size_t LineFind(size_t pos, const std::string& str) const;
+
+   //  The same as LineFind(pos, str), but searches backwards.
+   //
+   size_t LineRfind(size_t pos, const std::string& str) const;
+
+   //  Returns the first occurrence of a character in CHARS, starting at POS.
+   //  Does not proceed to subsequent lines.  Returns string::npos if no such
+   //  character was found.
+   //
+   size_t LineFindFirstOf(size_t pos, const std::string& chars) const;
+
+   //  The same as LineFindFirstOf, but searches backwards.
+   //
+   size_t LineRfindFirstOf(size_t pos, const std::string& chars) const;
+
+   //  The same as LineFind, but looks for the next non-blank character.
+   //
+   size_t LineFindNonBlank(size_t pos) const;
+
+   //  The same as LineFindNonBlank, but searches backwards.
+   //
+   size_t LineRfindNonBlank(size_t pos) const;
+
+   //  The same as LineFind, but continues to subsequent lines.
+   //
+   size_t Find(size_t pos, const std::string& str) const;
+
+   //  The same as LineRfind, but continues to previous lines.
+   //
+   size_t Rfind(size_t pos, const std::string& str) const;
+
+   //  The same as Find, but looks for the next non-blank character.
+   //
+   size_t FindNonBlank(size_t pos) const;
+
+   //  The same as FindNonBlank, but searches backwards.
+   //
+   size_t RfindNonBlank(size_t pos) const;
+
+   //  Returns the first occurrence of a character in CHARS, starting at POS
+   //  and reversing.  Returns string::npos if no such character was found.
+   //
+   size_t RfindFirstOf(size_t pos, const std::string& chars) const;
+
    //  Characters in the string returned by CheckVerticalSpacing.
    //
    static const char LineOK = '-';
@@ -434,60 +492,16 @@ public:
    //
    void CheckPunctuation() const;
 
+   //  Checks the depth of line N.  Returns -1 if the depth is correct, else
+   //  returns the correct number of indentation levels.
+   //
+   NodeBase::word CheckDepth(size_t n) const;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
-   //  Looks for STR starting at POS.  If STR is found, returns its position,
-   //  else returns string::npos.  Ignores non-code and does not proceed to
-   //  subsequent lines.
-   //
-   size_t LineFind(size_t pos, const std::string& str);
-
-   //  The same as LineFind(pos, str), but searches backwards.
-   //
-   size_t LineRfind(size_t pos, const std::string& str);
-
-   //  Returns the first occurrence of a character in CHARS, starting at POS.
-   //  Does not proceed to subsequent lines.  Returns string::npos if no such
-   //  character was found.
-   //
-   size_t LineFindFirstOf(size_t pos, const std::string& chars);
-
-   //  The same as LineFindFirstOf, but searches backwards.
-   //
-   size_t LineRfindFirstOf(size_t pos, const std::string& chars);
-
-   //  The same as LineFind, but looks for the next non-blank character.
-   //
-   size_t LineFindNonBlank(size_t pos);
-
-   //  The same as LineFindNonBlank, but searches backwards.
-   //
-   size_t LineRfindNonBlank(size_t pos);
-
-   //  The same as LineFind, but continues to subsequent lines.
-   //
-   size_t Find(size_t pos, const std::string& str);
-
-   //  The same as LineRfind, but continues to previous lines.
-   //
-   size_t Rfind(size_t pos, const std::string& str);
-
-   //  The same as Find, but looks for the next non-blank character.
-   //
-   size_t FindNonBlank(size_t pos);
-
-   //  The same as FindNonBlank, but searches backwards.
-   //
-   size_t RfindNonBlank(size_t pos);
-
-   //  Returns the first occurrence of a character in CHARS, starting at POS
-   //  and reversing.  Returns string::npos if no such character was found.
-   //
-   size_t RfindFirstOf(size_t pos, const std::string& chars);
-
    //  Returns the location of ID, starting at POS.  Returns string::npos
    //  if STR was not found.  STR must be an identifier or keyword that is
    //  delimited by punctuation.
@@ -594,22 +608,21 @@ private:
    //
    Cxx::Directive FindDirective();
 
-   //  Sets all lines from positions START to curr_ to DEPTH1, and all lines
-   //  after curr_ to the next parse position to DEPTH2.  If either range spans
+   //  Sets all lines from nextLine_ to curr_ to DEPTH1, and all lines after
+   //  curr_ to the next parse position to DEPTH2.  If either range spans
    //  multiple lines, subsequent lines are marked as continuations of the first
-   //  line in the range.  Updates START to the next parse position after curr_
-   //  before returning.
+   //  line in the range.
    //
-   void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
-
-   //  Returns the index to the LineInfo for POS's line.  Returns SIZE_MAX if
-   //  POS is out of range.
-   //
-   size_t GetLineInfoIndex(size_t pos) const;
+   void SetDepth(int depth1, int depth2);
 
    //  Returns true if the colon at POS shouldn't be preceded by a space.
    //
    bool NoSpaceBeforeColon(size_t pos) const;
+
+   //  Returns the indentation level of the line after POS. Divides by
+   //  IndentSize(), so truncation can occur.
+   //
+   size_t NextLineIndentation(size_t pos) const;
 
    //  The code being analyzed.
    //
@@ -635,6 +648,10 @@ private:
    //  immediately after the last one that was parsed).
    //
    size_t prev_;
+
+   //  The next line whose depth needs to be set by SetDepth.
+   //
+   size_t nextLine_;
 };
 }
 #endif

@@ -644,32 +644,6 @@ LineType CalcLineType(std::string s, bool& cont, std::set< Warning >& warnings);
 //
 bool IsAccessControl(const std::string& s);
 
-//------------------------------------------------------------------------------
-//
-//  Indentation cases.
-//
-enum IndentRule
-{
-   IndentStandard,   // standard rules
-   IndentResume,     // numeric constant or punctuation
-   IndentCase,       // case label
-   IndentDirective,  // preprocessor directive
-   IndentFor,        // for statement
-   IndentEnum,       // enumeration
-   IndentControl,    // access control keyword
-   IndentNamespace   // namespace enclosure
-};
-
-//  Indicates that the depth of a line of code has not yet been determined.
-//
-constexpr int8_t DEPTH_NOT_SET = -1;
-
-//  Returns the indentation rule for ID, which is usually a keyword.
-//
-IndentRule ClassifyIndent(std::string& id);
-
-//------------------------------------------------------------------------------
-//
 //  Options for the Display function.
 //
 enum CodeDisplayOptions

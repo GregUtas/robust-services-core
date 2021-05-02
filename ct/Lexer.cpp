@@ -50,6 +50,100 @@ using std::string;
 
 namespace CodeTools
 {
+//  Contexts where a left brace can appear.
+//
+enum LeftBraceRole
+{
+   LB_None,  // left brace not yet found (bottom stack entry)
+   LB_Area,  // class/struct/union declaration
+   LB_Func,  // function definition or block
+   LB_Enum,  // enumeration
+   LB_Init,  // brace initialization
+   LB_Space  // namespace
+};
+
+//  Cases that govern indentation.
+//
+enum IndentRule
+{
+   IndentStandard,     // standard rules
+   IndentContinue,     // numeric constant or punctuation
+   IndentArea,         // class/struct/union
+   IndentCase,         // case label
+   IndentConditional,  // do/for/if/while
+   IndentControl,      // access control
+   IndentDirective,    // other preprocessor directive
+   IndentElse,         // else
+   IndentEnum,         // enumeration
+   IndentNamespace     // namespace
+};
+
+//------------------------------------------------------------------------------
+//
+//  Returns the indentation rule for ID, which is usually a keyword.
+//
+IndentRule ClassifyIndent(string& id)
+{
+   switch(id.front())
+   {
+   case '$':
+      return IndentContinue;
+   case '#':
+      return IndentDirective;
+   case 'c':
+      if(id == CASE_STR) return IndentCase;
+      if(id == CLASS_STR) return IndentArea;
+      break;
+   case 'p':
+      if(id == PUBLIC_STR) return IndentControl;
+      if(id == PRIVATE_STR) return IndentControl;
+      if(id == PROTECTED_STR) return IndentControl;
+      break;
+   case 'i':
+      if(id == IF_STR) return IndentConditional;
+      break;
+   case 'n':
+      if(id == NAMESPACE_STR) return IndentNamespace;
+      break;
+   case 'f':
+      if(id == FOR_STR) return IndentConditional;
+      break;
+   case 'd':
+      if(id == DEFAULT_STR) return IndentCase;
+      if(id == DO_STR) return IndentConditional;
+      break;
+   case 'e':
+      if(id == ELSE_STR) return IndentElse;
+      if(id == ENUM_STR) return IndentEnum;
+      break;
+   case 'w':
+      if(id == WHILE_STR) return IndentConditional;
+      break;
+   case 's':
+      if(id == STRUCT_STR) return IndentArea;
+      break;
+   case 'u':
+      if(id == UNION_STR) return IndentArea;
+      break;
+   }
+
+   return IndentStandard;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns true if in a nested brace initialization.
+//
+bool InNestedBraceInit(const std::vector< LeftBraceRole >& roles)
+{
+   Debug::ft("CodeTools.InNestedBraceInit");
+
+   if(roles.size() < 2) return false;
+   return (roles.at(roles.size() - 2) == LB_Init);
+}
+
+//==============================================================================
+
 LineInfo::LineInfo(size_t start) :
    begin(start),
    depth(DEPTH_NOT_SET),
@@ -78,7 +172,8 @@ Lexer::Lexer() :
    file_(nullptr),
    slashAsterisk_(false),
    curr_(0),
-   prev_(0)
+   prev_(0),
+   nextLine_(0)
 {
    Debug::ft("Lexer.ctor");
 }
@@ -107,70 +202,237 @@ bool Lexer::Advance(size_t incr)
 
 //------------------------------------------------------------------------------
 
+const string BraceInitPrevChars("=,{(");
+
+fn_name Lexer_CalcDepths = "Lexer.CalcDepths";
+
 void Lexer::CalcDepths()
 {
-   Debug::ft("Lexer.CalcDepths");
+   Debug::ft(Lexer_CalcDepths);
 
    if(lines_.empty())
    {
       FindLines();
    }
 
-   Reposition(0);     // start from the beginning of source_
+   char prevChar;         // previous character
+   string id;             // identifier extracted from code
+   Cxx::Keyword kwd;      // keyword extracted from code
+   auto ctor = false;     // if parsing a constructor's initialization list
+   auto ternary = false;  // if parsing operator?
+   int currDepth = 0;     // current depth for indentation
+   int nextDepth = 0;     // next depth for indentation
+   int lbDepth;           // depth for left brace
+   bool lbCont;           // if left brace's line should be a continuation
+   size_t rbPos;          // position of matching right brace
+   int semiDepth = -1;    // depth to restore when reaching next semicolon
+   size_t commaPos;       // position of comma that sets depths to that point
+   LineInfo* currInfo;    // LineInfo entry at current position
 
-   auto ns = false;   // set when "namespace" keyword is encountered
-   auto en = false;   // set when "enum" keyword is encountered
-   int8_t depth = 0;  // current depth for indentation
-   int8_t next = 0;   // next depth for indentation
-   size_t start = 0;  // last position whose depth was set
-   size_t right;      // position of right brace that matches left brace
-   string id;         // identifier extracted from source code
+   std::vector< LeftBraceRole > lbStack;
+   std::vector< size_t > lbDepths;
+   lbStack.push_back(LB_None);
+   lbDepths.push_back(SIZE_MAX);
+   kwd = Cxx::NIL_KEYWORD;
+   commaPos = string::npos;
+
+   Reposition(0);
+   nextLine_ = 0;
 
    for(auto size = source_->size(); curr_ < size; NO_OP)
    {
-      auto c = (*source_)[curr_];
+      auto currChar = source_->at(curr_);
 
-      switch(c)
+      switch(currChar)
       {
       case '{':
          //
-         //  Finalize the depth of lines since START.  Comments between curr_
-         //  and the next parse position will be at depth NEXT.  The { gets
-         //  marked as a continuation because a semicolon doesn't immediately
-         //  precede it.  Fix this.  Find the matching right brace and put it
-         //  at the same depth.  Increase the depth unless the { followed the
-         //  keyword "namespace".
+         //  Push this left brace's role onto the stack.
          //
-         next = (ns ? depth : depth + 1);
-         ns = false;
-         SetDepth(start, depth, next);
-         GetLineInfo(curr_)->cont = false;
-         right = FindClosing('{', '}', curr_ + 1);
-         GetLineInfo(right)->depth = depth;
-         depth = next;
+         prevChar = source_->at(prev_);
+
+         if(BraceInitPrevChars.find(prevChar) != string::npos)
+            lbStack.push_back(LB_Init);
+         else if(kwd == Cxx::CLASS)
+            lbStack.push_back(LB_Area);
+         else if(kwd == Cxx::NAMESPACE)
+            lbStack.push_back(LB_Space);
+         else if(kwd == Cxx::ENUM)
+            lbStack.push_back(LB_Enum);
+         else
+            lbStack.push_back(LB_Func);
+
+         lbDepth = currDepth;
+
+         //  Find the next depth.  Indentation usually occurs, but not always:
+         //  o If the left brace immediately followed a label, the indentation
+         //    remains the same, but the left brace is indented one level less
+         //    (the same as the label itself).  For lbDepths, however, pretend
+         //    that the left brace is at the current depth so that when the
+         //    right brace pops the level off the stack, it will be correct.
+         //  o After the first namespace scope, the indentation is flexible.
+         //    Whether to indent is up to the source code.
+         //
+         if(kwd == Cxx::CASE)
+         {
+            if(prevChar == ':')
+            {
+               lbDepth = currDepth - 1;
+               nextDepth = currDepth;
+            }
+            else
+            {
+               nextDepth = currDepth + 1;
+            }
+         }
+         else if((lbStack.back() == LB_Space) && (lbStack.size() == 2))
+         {
+            if(NextLineIndentation(curr_) > 0)
+               nextDepth = currDepth + 1;
+            else
+               nextDepth = currDepth;
+         }
+         else if(ctor)
+         {
+            ctor = false;
+            lbDepth = currDepth - 1;
+         }
+         else
+         {
+            nextDepth = currDepth + 1;
+         }
+
+         //  Save the left brace's depth and record its depth unless it is
+         //  already set.  If it is not first on its line, its depth is
+         //  whatever was appropriate for this line.  It is a continuation
+         //  (meaning that it must be indented) if
+         //  o the depth of the previous line is not set, and
+         //  o the right brace is also on the same line, and
+         //  o it does not appear in a nested brace initialization (because
+         //    the successive elements should not be indented).
+         //
+         lbDepths.push_back(kwd == Cxx::CASE ? currDepth : lbDepth);
+         rbPos = FindClosing('{', '}', curr_ + 1);
+
+         currInfo = GetLineInfo(curr_);
+         if(currInfo->depth == DEPTH_NOT_SET)
+         {
+            auto lbFirst = (LineFindFirst(curr_) == curr_);
+            currInfo->depth = (lbFirst ? lbDepth : currDepth);
+
+            auto prevInfo = GetLineInfo(PrevBegin(curr_));
+            if((prevInfo != nullptr) && (prevInfo->depth == DEPTH_NOT_SET))
+            {
+               if(OnSameLine(curr_, rbPos) && !InNestedBraceInit(lbStack))
+                  currInfo->cont = true;
+            }
+         }
+
+         //  Set the depth of the matching right brace unless it is already
+         //  set (because it is on the same line as the left brace).
+         //
+         currInfo = GetLineInfo(rbPos);
+         if(currInfo->depth == DEPTH_NOT_SET) currInfo->depth = lbDepth;
+
+         //  Finalize the depth of lines to this point.  Comments between curr_
+         //  and the next parse position will be at nextDepth.  If we didn't
+         //  set the depth of the left brace above, SetDepth will mark it as
+         //  a continuation, which calls for indentation, so only allow this
+         //  if the right brace is also on the same line (except in a nested
+         //  brace initialization, where successive elements should not be
+         //  indented).
+         //
+         SetDepth(currDepth, nextDepth);
+         currDepth = nextDepth;
+         kwd = Cxx::NIL_KEYWORD;
+         if(curr_ >= commaPos) commaPos = string::npos;
          Advance(1);
          break;
 
       case '}':
          //
-         //  Finalize the depth of lines since START.  Comments between curr_
-         //  and the next parse position will be at the depth of the }, which
-         //  was set when its left brace was encountered.
+         //  Finalize the depth of lines to this point.  Comments between
+         //  curr_ and the next parse position will be at the depth of the
+         //  right brace, which was set when its left brace was found.
          //
-         next = GetLineInfo(curr_)->depth;
-         en = false;
-         SetDepth(start, depth, next);
-         depth = next;
+         if(curr_ >= commaPos) commaPos = string::npos;
+         nextDepth = lbDepths.back();
+         lbStack.pop_back();
+         lbDepths.pop_back();
+         SetDepth(currDepth, nextDepth);
+         currDepth = nextDepth;
          Advance(1);
          break;
 
       case ';':
          //
-         //  Finalize the depth of lines since START unless a for statement is
-         //  open.  Clear NS to handle the case "using namespace <name>".
+         //  Finalize the depth of lines to this point.  The last keyword is
+         //  no longer in effect.  If we were parsing an unbraced conditional,
+         //  undo its indentation by returning to semiDepth.
          //
-         SetDepth(start, depth, depth);
-         ns = false;
+         nextDepth = (semiDepth >= 0 ? semiDepth : currDepth);
+         SetDepth(currDepth, nextDepth);
+         currDepth = nextDepth;
+         semiDepth = -1;
+         kwd = Cxx::NIL_KEYWORD;
+         Advance(1);
+         break;
+
+      case ':':
+         //
+         //  A colon can appear
+         //  (a) in a scope resolution operator
+         //  (b) before a base class list
+         //  (c) after operator?
+         //  (d) before a field width
+         //  (e) before a constructor initialization list: indent its entries
+         //  (f) after a label (handled below, in IndentCase)
+         //  (g) after an access control (handled below, in IndentControl)
+         do
+         {
+            if(source_->at(curr_ + 1) == ':')
+            {
+               Advance(1);  // (a)
+               break;
+            }
+
+            if(kwd == Cxx::CLASS) break;  // (b)
+
+            if(ternary)
+            {
+               ternary = false;  // (c)
+               break;
+            }
+
+            auto pos = FindFirstOf("{;");
+            if(source_->at(pos) == ';') break;  // (d)
+
+            ctor = true;
+            nextDepth = currDepth + 1;
+            SetDepth(currDepth, nextDepth);  // (e)
+            currDepth = nextDepth;
+         } while(false);
+
+         Advance(1);
+         break;
+
+      case ',':
+         //
+         //  A comma finalizes the depths to this point if the next line
+         //  should not be treated as a continuation.  This occurs after
+         //  o the definition of an enumerator
+         //  o an item in a constructor's initialization list
+         //  o an item in a brace initialization
+         //  Note that commaPos is simply set to the next delimiter for
+         //  these items, so it may actually be a left or right brace.
+         //  The case statements that handle a brace therefore clear it.
+         //
+         if(commaPos == curr_)
+         {
+            commaPos = string::npos;
+            SetDepth(currDepth, currDepth);
+         }
+
          Advance(1);
          break;
 
@@ -181,63 +443,147 @@ void Lexer::CalcDepths()
          //  it using FindIdentifier, which also skips string and character
          //  literals.
          //
-         if(ValidOpChars.find_first_of(c) != string::npos)
+         if(ValidOpChars.find_first_of(currChar) != string::npos)
          {
+            if(currChar == '?') ternary = true;
             Advance(1);
          }
          else if(FindIdentifier(id, true))
          {
-            switch(ClassifyIndent(id))
+            auto rule = ClassifyIndent(id);
+
+            switch(rule)
             {
-            case IndentResume:
+            case IndentStandard:
                //
-               //  The parse position has already advanced to the next parse
-               //  position.
+               //  The following are not preceded by a semicolon, so they would
+               //  normally be treated as continuations:
+               //    o enumerators
+               //    o elements in a brace initialization
+               //    o elements in a constructor initialization list
+               //  However, each of these should be indented to the same level.
+               //  Do this by setting the depth for each one as it is found and
+               //  then advancing to the position that follows it, taking care
+               //  not to skip over a brace.
                //
+               switch(lbStack.back())
+               {
+               case LB_Enum:
+                  if(commaPos == string::npos)
+                     commaPos = FindFirstOf(",}");
+                  break;
+
+               case LB_Init:
+                  if(commaPos == string::npos)
+                     commaPos = FindFirstOf(",}{");
+                  break;
+
+               default:
+                  if(ctor && (commaPos == string::npos))
+                     commaPos = FindFirstOf(",{");
+               }
+               break;
+
+            case IndentContinue:
+               //
+               //  We have already advanced to the next parse position.
+               //  Literals in a brace initialization arrive here, so
+               //  handle them as above so they don't get marked as
+               //  continuations.
+               //
+               if(lbStack.back() == LB_Init)
+               {
+                  if(commaPos == string::npos)
+                     commaPos = FindFirstOf(",}{");
+               }
                continue;
 
             case IndentCase:
                //
                //  "default:" is also treated as a case label, but continue
                //  if the keyword is specifying a defaulted function.  Put a
-               //  case label at DEPTH - 1 and treat it as if it ends with a
-               //  semicolon so that the code that follows will not be seen
+               //  case label at currDepth - 1 and finalize depths up to this
+               //  point so that the code that follows will not be seen as a
                //  as a continuation.
                //
+               kwd = Cxx::CASE;
                Advance(id.size());
                if(CurrChar() == ';') continue;
                curr_ = FindFirstOf(":");
-               GetLineInfo(curr_)->depth = depth - 1;
-               SetDepth(start, depth, depth);
+               GetLineInfo(curr_)->depth = currDepth - 1;
+               SetDepth(currDepth, currDepth);
                Advance(1);
                continue;
 
-            case IndentFor:
+            case IndentConditional:
                //
-               //  A for statement contains semicolons, but code between the
-               //  parentheses is a continuation if on a subsequent line.
+               //  The code between the parentheses is a continuation if on
+               //  a subsequent line.  Finalizing it immediately also skips
+               //  the semicolons in a for statement.
                //
                Advance(id.size());
 
                if(NextCharIs('('))
                {
                   curr_ = FindClosing('(', ')');
-                  SetDepth(start, depth, depth);
+                  SetDepth(currDepth, currDepth);
                   Advance(1);
                }
+
+               //  If a left brace does not follow the condition, indent the
+               //  statement that follows, and restore the current depth when
+               //  the next semicolon is reached.  Unbraced conditionals can
+               //  nest, so don't overwrite the outermost one.
+               //
+               if(source_->at(curr_) == '{') continue;
+               if(semiDepth < 0) semiDepth = currDepth;
+               ++currDepth;
+               continue;
+
+            case IndentElse:
+               //
+               //  This is handled the same way as what follows a conditional,
+               //  except that an "else if" is handled by allowing the "if" to
+               //  enter IndentConditional (abpve) and get processed as usual
+               //  if it appears on the same line.
+               //
+               curr_ += id.size();
+               SetDepth(currDepth, currDepth);
+               Advance();
+               if(source_->at(curr_) == '{') continue;
+               if(NextIdentifier() == IF_STR)
+               {
+                  if(source_->rfind(CRLF, curr_) < source_->rfind('e', curr_))
+                     continue;
+               }
+               if(semiDepth < 0) semiDepth = currDepth;
+               ++currDepth;
                continue;
 
             case IndentDirective:
                //
-               //  Put a preprocessor directive at depth 0 and treat it as if
-               //  it ends with a semicolon so that code that follows will not
-               //  be treated as a continuation.
+               //  Put a preprocessor directive at depth 0 and finalize depths
+               //  up to this point so that the code that follows will not be
+               //  seen as a as a continuation.  Conditionally compiled code
+               //  will only be indented if the line that follows is indented.
                //
                GetLineInfo(curr_)->depth = 0;
                curr_ = source_->find(CRLF, curr_);
                if(curr_ == string::npos) curr_ = size - 1;
-               SetDepth(start, depth, depth);
-               Advance(1);
+               SetDepth(currDepth, currDepth);
+
+               if(id == HASH_ENDIF_STR)
+               {
+                  if(currDepth > 0) --currDepth;
+               }
+               else if(id.compare(0, 3, "#if") == 0)
+               {
+                  currDepth = NextLineIndentation(curr_);
+               }
+
+               curr_ = source_->find_first_not_of(WhitespaceChars, curr_);
+               if(curr_ == string::npos) curr_ = size - 1;
+               Advance();
                continue;
 
             case IndentControl:
@@ -246,50 +592,42 @@ void Lexer::CalcDepths()
                //  visibility of a base class and can be handled like a normal
                //  identifier.  If it *is* followed by a colon, it controls the
                //  visibility of the members that follow.  Put it at DEPTH - 1
-               //  and treat it as if it ends with a semicolon so that the code
-               //  that follows will not be treated as a continuation.
+               //  and finalize depths up to this point so that the code that
+               //  follows will not be seen as a as a continuation.
                //
                Advance(id.size());
                if(CurrChar() != ':') continue;
-               GetLineInfo(curr_)->depth = depth - 1;
-               SetDepth(start, depth, depth);
+               GetLineInfo(curr_)->depth = currDepth - 1;
+               SetDepth(currDepth, currDepth);
+               Advance(1);
+               continue;
+
+            case IndentEnum:
+               //
+               //  Advance to the left brace.
+               //
+               kwd = Cxx::ENUM;
+               SetDepth(currDepth, currDepth);
+               curr_ = FindFirstOf("{") - 1;
                Advance(1);
                continue;
 
             case IndentNamespace:
                //
-               //  Set this flag to prevent indentation after the left brace.
+               //  Update KWD in case a left brace follows.
                //
-               ns = true;
+               kwd = Cxx::NAMESPACE;
                break;
 
-            case IndentEnum:
-            {
-               //  Set this flag to prevent enumerators from being treated as
-               //  continuations and advance to the left brace.
+            case IndentArea:
                //
-               en = true;
-               auto left = FindFirstOf("{");
-               curr_ = left - 1;
-               SetDepth(start, depth, depth);
-               Advance(1);
-               continue;
-            }
+               //  Update KWD in case a left brace follows.
+               //
+               kwd = Cxx::CLASS;
+               break;
 
             default:
-               //
-               //  Within an enum, don't treat enumerations as continuations,
-               //  which is done by setting the depth for each enumeration as
-               //  it is found and skipping to the position after each comma.
-               //
-               if(en)
-               {
-                  auto end = FindFirstOf(",}");
-                  curr_ = ((*source_)[end] == ',' ? end : end - 1);
-                  SetDepth(start, depth, depth);
-                  Advance(1);
-                  continue;
-               }
+               Debug::SwLog(Lexer_CalcDepths, "unexpected IndentRule", rule);
             }
 
             Advance(id.size());
@@ -320,21 +658,10 @@ LineType Lexer::CalcLineType(size_t n, bool log, bool& cont)
    //
    if(s.size() > LineLengthMax() + 1) warnings.insert(LineLength);
 
-   //  Flag a line that is not indented a multiple of the standard unless
-   //  it begins with a comment or string literal.
-   //
-   auto pos = s.find_first_not_of(SPACE);
-
-   if((pos != string::npos) && (pos % IndentSize() != 0))
-   {
-      if((s[pos] != '/') && (s[pos] != QUOTE)) warnings.insert(Indentation);
-   }
-
    //  A line within a /* comment can be logged spuriously.
    //
    if(slashAsterisk_)
    {
-      warnings.erase(Indentation);
       warnings.erase(AdjacentSpaces);
    }
 
@@ -353,7 +680,7 @@ LineType Lexer::CalcLineType(size_t n, bool log, bool& cont)
    //
    if(slashAsterisk_)
    {
-      pos = s.find(COMMENT_END_STR);
+      auto pos = s.find(COMMENT_END_STR);
       if(pos != string::npos) slashAsterisk_ = false;
       return TextComment;
    }
@@ -423,6 +750,63 @@ void Lexer::CalcLineTypes(bool log)
          lines_[n].type = FileComment;
       }
    }
+
+   for(size_t n = 0; n < lines; ++n)
+   {
+      auto indent = CheckDepth(n);
+
+      if(indent >= 0)
+      {
+         file_->LogPos(lines_[n].begin, Indentation, nullptr, indent);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+word Lexer::CheckDepth(size_t n) const
+{
+   //  Return if the depth was not set or line only contains whitespace.
+   //
+   const auto& info = lines_[n];
+   auto desired = info.depth;
+   if(desired == DEPTH_NOT_SET) return -1;
+   auto first = source_->find_first_not_of(WhitespaceChars, info.begin);
+   if(first == string::npos) return -1;
+   if((n < lines_.size() - 1) && (first >= lines_[n + 1].begin)) return -1;
+
+   //  Return if the indentation matches the desired depth.
+   //
+   auto comment = (source_->compare(first, 2, COMMENT_STR) == 0);
+   if(info.cont && !comment) ++desired;
+   auto actual = first - info.begin;
+   if(actual == (IndentSize() * desired)) return -1;
+
+   //  A comment if exempt if it is not indented (probably because it
+   //  comments out code) or if it is aligned with a trailing comment
+   //  on the next or a previous line.
+   //
+   if(comment)
+   {
+      if(actual == 0) return -1;
+      if(LineHasTrailingCommentAt(n - 1, actual)) return -1;
+      if(LineHasTrailingCommentAt(n - 2, actual)) return -1;
+      if(LineHasTrailingCommentAt(n + 1, actual)) return -1;
+   }
+
+   //  A string literal is exempt if it is too long to be indented or
+   //  if it contains a continuation.
+   //
+   if(source_->at(first) == QUOTE)
+   {
+      if(LineSize(info.begin) + IndentSize() > LineLengthMax()) return -1;
+      auto prev = RfindNonBlank(lines_[n].begin - 1);
+      if(source_->at(prev) == QUOTE) return -1;
+      auto last = RfindNonBlank(lines_[n + 1].begin - 1);
+      if(source_->at(last) == QUOTE) return -1;
+   }
+
+   return desired;
 }
 
 //------------------------------------------------------------------------------
@@ -754,15 +1138,15 @@ void Lexer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::Find(size_t pos, const string& str)
+size_t Lexer::Find(size_t pos, const string& str) const
 {
    Debug::ft("Lexer.Find");
 
-   for(Reposition(pos); curr_ != string::npos; Advance(1))
+   for(pos = NextPos(pos); pos != string::npos; pos = NextPos(pos + 1))
    {
-      if(source_->compare(curr_, str.size(), str) == 0)
+      if(source_->compare(pos, str.size(), str) == 0)
       {
-         return curr_;
+         return pos;
       }
    }
 
@@ -1055,15 +1439,15 @@ void Lexer::FindLines()
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::FindNonBlank(size_t pos)
+size_t Lexer::FindNonBlank(size_t pos) const
 {
    Debug::ft("Lexer.FindNonBlank");
 
-   for(Reposition(pos); curr_ != string::npos; Advance(1))
+   for(pos = NextPos(pos); pos != string::npos; pos = NextPos(pos + 1))
    {
-      if(!IsBlank((*source_)[curr_]))
+      if(!IsBlank((*source_)[pos]))
       {
-         return curr_;
+         return pos;
       }
    }
 
@@ -1298,9 +1682,6 @@ void Lexer::GetDataTags(KeywordSet& tags)
 
       switch(kwd)
       {
-      //  "const" and "volatile" go with the type, not the data,
-      //  but can still appear before the other keywords.  Barf.
-      //
       case Cxx::CONST:
       case Cxx::CONSTEXPR:
       case Cxx::EXTERN:
@@ -1308,6 +1689,10 @@ void Lexer::GetDataTags(KeywordSet& tags)
       case Cxx::MUTABLE:
       case Cxx::THREAD_LOCAL:
       case Cxx::VOLATILE:
+         //
+         //  "const" and "volatile" go with the type, not the data,
+         //  but can still appear before the other keywords.  Barf.
+         //
          tags.insert(kwd);
          Reposition(curr_ + str.size());
          continue;
@@ -1516,7 +1901,7 @@ size_t Lexer::GetInt(int64_t& num)
 
 const LineInfo* Lexer::GetLineInfo(size_t pos) const
 {
-   auto i = GetLineInfoIndex(pos);
+   auto i = GetLineNum(pos);
    if(i == SIZE_MAX) return nullptr;
    return &lines_[i];
 }
@@ -1525,14 +1910,14 @@ const LineInfo* Lexer::GetLineInfo(size_t pos) const
 
 LineInfo* Lexer::GetLineInfo(size_t pos)
 {
-   auto i = GetLineInfoIndex(pos);
+   auto i = GetLineNum(pos);
    if(i == SIZE_MAX) return nullptr;
    return &lines_[i];
 }
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::GetLineInfoIndex(size_t pos) const
+size_t Lexer::GetLineNum(size_t pos) const
 {
    if(pos >= source_->size()) return SIZE_MAX;
 
@@ -1552,13 +1937,6 @@ size_t Lexer::GetLineInfoIndex(size_t pos) const
    }
 
    return min;
-}
-
-//------------------------------------------------------------------------------
-
-size_t Lexer::GetLineNum(size_t pos) const
-{
-   return GetLineInfoIndex(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -1967,18 +2345,18 @@ bool Lexer::IsFirstNonBlank(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::LineFind(size_t pos, const string& str)
+size_t Lexer::LineFind(size_t pos, const string& str) const
 {
    Debug::ft("Lexer.LineFind");
 
    auto end = CurrEnd(pos);
    if(end == string::npos) return string::npos;
 
-   for(Reposition(pos); curr_ <= end; Advance(1))
+   for(pos = NextPos(pos); pos <= end; pos = NextPos(pos + 1))
    {
-      if(source_->compare(curr_, str.size(), str) == 0)
+      if(source_->compare(pos, str.size(), str) == 0)
       {
-         return curr_;
+         return pos;
       }
    }
 
@@ -1999,18 +2377,18 @@ size_t Lexer::LineFindFirst(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::LineFindFirstOf(size_t pos, const std::string& chars)
+size_t Lexer::LineFindFirstOf(size_t pos, const std::string& chars) const
 {
    Debug::ft("Lexer.LineFindFirstOf");
 
    auto end = CurrEnd(pos);
    if(end == string::npos) return string::npos;
 
-   for(Reposition(pos); curr_ <= end; Advance(1))
+   for(pos = NextPos(pos); pos <= end; pos = NextPos(pos + 1))
    {
-      if(chars.find((*source_)[curr_]) != string::npos)
+      if(chars.find((*source_)[pos]) != string::npos)
       {
-         return curr_;
+         return pos;
       }
    }
 
@@ -2030,18 +2408,18 @@ size_t Lexer::LineFindNext(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::LineFindNonBlank(size_t pos)
+size_t Lexer::LineFindNonBlank(size_t pos) const
 {
    Debug::ft("Lexer.LineFindNonBlank");
 
    auto end = CurrEnd(pos);
    if(end == string::npos) return string::npos;
 
-   for(Reposition(pos); curr_ <= end; Advance(1))
+   for(pos = NextPos(pos); pos <= end; pos = NextPos(pos + 1))
    {
-      if(!IsBlank((*source_)[curr_]))
+      if(!IsBlank((*source_)[pos]))
       {
-         return curr_;
+         return pos;
       }
    }
 
@@ -2050,7 +2428,19 @@ size_t Lexer::LineFindNonBlank(size_t pos)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::LineRfind(size_t pos, const string& str)
+bool Lexer::LineHasTrailingCommentAt(size_t n, size_t offset) const
+{
+   if(n >= lines_.size()) return false;
+   auto& info = lines_[n];
+   auto first = LineFindFirst(info.begin);
+   auto pos = FindComment(info.begin);
+   if(first == pos) return false;
+   return ((pos - info.begin) == offset);
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::LineRfind(size_t pos, const string& str) const
 {
    Debug::ft("Lexer.LineRfind");
 
@@ -2063,11 +2453,11 @@ size_t Lexer::LineRfind(size_t pos, const string& str)
 
    auto loc = string::npos;
 
-   for(Reposition(begin); curr_ <= pos; Advance(1))
+   for(begin = NextPos(begin); begin <= pos; begin = NextPos(begin + 1))
    {
-      if(source_->compare(curr_, str.size(), str) == 0)
+      if(source_->compare(begin, str.size(), str) == 0)
       {
-         loc = curr_;
+         loc = begin;
       }
    }
 
@@ -2076,7 +2466,7 @@ size_t Lexer::LineRfind(size_t pos, const string& str)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::LineRfindFirstOf(size_t pos, const std::string& chars)
+size_t Lexer::LineRfindFirstOf(size_t pos, const std::string& chars) const
 {
    Debug::ft("Lexer.LineRfindFirstOf");
 
@@ -2085,11 +2475,11 @@ size_t Lexer::LineRfindFirstOf(size_t pos, const std::string& chars)
 
    auto loc = string::npos;
 
-   for(Reposition(begin); curr_ <= pos; Advance(1))
+   for(begin = NextPos(begin); begin <= pos; begin = NextPos(begin + 1))
    {
-      if(chars.find((*source_)[curr_]) != string::npos)
+      if(chars.find((*source_)[begin]) != string::npos)
       {
-         loc = curr_;
+         loc = begin;
       }
    }
 
@@ -2098,7 +2488,7 @@ size_t Lexer::LineRfindFirstOf(size_t pos, const std::string& chars)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::LineRfindNonBlank(size_t pos)
+size_t Lexer::LineRfindNonBlank(size_t pos) const
 {
    Debug::ft("Lexer.LineRfindNonBlank");
 
@@ -2107,11 +2497,11 @@ size_t Lexer::LineRfindNonBlank(size_t pos)
 
    auto loc = string::npos;
 
-   for(Reposition(begin); curr_ <= pos; Advance(1))
+   for(begin = NextPos(begin); begin <= pos; begin = NextPos(begin + 1))
    {
-      if(!IsBlank((*source_)[curr_]))
+      if(!IsBlank((*source_)[begin]))
       {
-         loc = curr_;
+         loc = begin;
       }
    }
 
@@ -2228,6 +2618,21 @@ Cxx::Keyword Lexer::NextKeyword(string& str) const
 
    auto match = Cxx::Keywords->lower_bound(str);
    return (match != Cxx::Keywords->cend() ? match->second : Cxx::NIL_KEYWORD);
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::NextLineIndentation(size_t pos) const
+{
+   Debug::ft("Lexer.NextLineIndentation");
+
+   for(pos = NextBegin(pos); pos != string::npos; pos = NextBegin(pos))
+   {
+      auto indent = LineFindFirst(pos);
+      if(indent != string::npos) return ((indent - pos) / IndentSize());
+   }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -2448,7 +2853,7 @@ LineType Lexer::PosToType(size_t pos) const
 {
    Debug::ft("Lexer.PosToType");
 
-   auto line = GetLineInfoIndex(pos);
+   auto line = GetLineNum(pos);
    if(line == SIZE_MAX) return LineType_N;
    return LineToType(line);
 }
@@ -2539,7 +2944,7 @@ bool Lexer::Retreat(size_t pos)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::Rfind(size_t pos, const string& str)
+size_t Lexer::Rfind(size_t pos, const std::string& str) const
 {
    Debug::ft("Lexer.Rfind");
 
@@ -2554,7 +2959,7 @@ size_t Lexer::Rfind(size_t pos, const string& str)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::RfindFirstOf(size_t pos, const string& chars)
+size_t Lexer::RfindFirstOf(size_t pos, const std::string& chars) const
 {
    Debug::ft("Lexer.RfindFirstOf");
 
@@ -2569,7 +2974,7 @@ size_t Lexer::RfindFirstOf(size_t pos, const string& chars)
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::RfindNonBlank(size_t pos)
+size_t Lexer::RfindNonBlank(size_t pos) const
 {
    Debug::ft("Lexer.RfindNonBlank");
 
@@ -2584,7 +2989,7 @@ size_t Lexer::RfindNonBlank(size_t pos)
 
 //------------------------------------------------------------------------------
 
-void Lexer::SetDepth(size_t& start, int8_t depth1, int8_t depth2)
+void Lexer::SetDepth(int depth1, int depth2)
 {
    //  START is the last position where a line of code whose depth has not
    //  been determined started, and curr_ has finalized the depth of that
@@ -2593,27 +2998,32 @@ void Lexer::SetDepth(size_t& start, int8_t depth1, int8_t depth2)
    //  If there is more than one line in this range, the subsequent ones
    //  are continuations of the first.
    //
-   auto begin = GetLineInfoIndex(start);
-   auto mid = GetLineInfoIndex(curr_);
-   start = NextPos(curr_ + 1);
-   auto end = GetLineInfoIndex(start);
+   auto begin = nextLine_;
+   auto mid = GetLineNum(curr_);
+   auto pos = NextPos(curr_ + 1);
+   auto end = GetLineNum(pos);
    if(end == SIZE_MAX) end = lines_.size();
+   nextLine_ = end;
+   auto first = begin;
+   if(lines_[begin].depth != DEPTH_NOT_SET) ++first;
 
    for(auto i = begin; i <= mid; ++i)
    {
-      if(lines_[i].depth == DEPTH_NOT_SET)
+      auto& info = lines_[i];
+      if(info.depth == DEPTH_NOT_SET)
       {
-         lines_[i].depth = depth1;
-         lines_[i].cont = (i != begin);
+         info.depth = depth1;
+         info.cont = (i != first);
       }
    }
 
    for(auto i = mid + 1; i < end; ++i)
    {
-      if(lines_[i].depth == DEPTH_NOT_SET)
+      auto& info = lines_[i];
+      if(info.depth == DEPTH_NOT_SET)
       {
-         lines_[i].depth = depth2;
-         lines_[i].cont = (i != mid + 1);
+         info.depth = depth2;
+         info.cont = (i != mid + 1);
       }
    }
 }

@@ -668,7 +668,7 @@ void CodeWarning::Initialize()
       "Tab character in source code")));
    Attrs_.insert(WarningPair(Indentation,
       WarningAttrs(T,
-      "Line indentation is not a multiple of the standard value")));
+      "Line indentation is not standard")));
    Attrs_.insert(WarningPair(TrailingSpace,
       WarningAttrs(T,
       "Line contains trailing space")));

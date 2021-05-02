@@ -231,8 +231,8 @@ ItemDeclAttrs::ItemDeclAttrs(const CxxToken* item) :
       over = func->IsOverride();
       oper = (func->FuncType() == FuncOperator);
       virt = func->IsVirtual();
+      //  [[fallthrough]]
    }
-   //  [[fallthrough]]
    case Cxx::Data:
       stat = item->IsStatic();
       break;
@@ -1532,7 +1532,7 @@ word Editor::ChangeStructToClass(const CodeWarning& log)
 
 fn_name Editor_CodeBegin = "Editor.CodeBegin";
 
-size_t Editor::CodeBegin()
+size_t Editor::CodeBegin() const
 {
    Debug::ft(Editor_CodeBegin);
 
@@ -4109,10 +4109,13 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log)
    rc = editor.FindFuncDefnLoc(file, cls, name, defn);
    if(rc != EditContinue) return rc;
 
-   //  Insert the function's declaration and definition.
+   //  Insert the function's declaration and definition.  The definition is
+   //  inserted first because, if both are in the same file, the definition
+   //  will follow the definition, so the position already found for it will
+   //  become invalid if the declaration is inserted above it.
    //
-   InsertPatchDecl(decl);
    editor.InsertPatchDefn(cls, defn);
+   InsertPatchDecl(decl);
    auto pos = Find(defn.pos, PatchSignature);
    return Changed(pos);
 }

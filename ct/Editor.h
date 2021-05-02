@@ -288,7 +288,7 @@ private:
    //  precede this point, and returns the position where these comments
    //  begin.
    //
-   size_t CodeBegin();
+   size_t CodeBegin() const;
 
    //  Returns true if the code referenced by POS is followed by more code,
    //  without an intervening comment or right brace.

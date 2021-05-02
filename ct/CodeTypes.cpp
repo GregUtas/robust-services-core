@@ -422,23 +422,6 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
 
 //------------------------------------------------------------------------------
 
-IndentRule ClassifyIndent(string& id)
-{
-   if(id == "$") return IndentResume;
-   if(id == CASE_STR) return IndentCase;
-   if(id == DEFAULT_STR) return IndentCase;
-   if(id == FOR_STR) return IndentFor;
-   if(id.front() == '#') return IndentDirective;
-   if(id == ENUM_STR) return IndentEnum;
-   if(id == PUBLIC_STR) return IndentControl;
-   if(id == PROTECTED_STR) return IndentControl;
-   if(id == PRIVATE_STR) return IndentControl;
-   if(id == NAMESPACE_STR) return IndentNamespace;
-   return IndentStandard;
-}
-
-//------------------------------------------------------------------------------
-
 size_t IndentSize()
 {
    return 3;

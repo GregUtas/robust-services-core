@@ -55,9 +55,9 @@ the parser and other `CodeTools` classes.
 - [ ] `#pragma`: parsed, but only `#pragma once` has any effect
 - [ ] `#undef`: parsed but has no effect
 
-  The conditional that follows `#if` or `#elif` is ignored because the evaluation
-  of expressions that yield a constant has not been implemented. This capability
-  would also be useful for other purposes.
+  The conditional that follows `#if` or `#elif` is ignored because folding (the
+  evaluation of expressions that yield a constant) has not been implemented. This
+  capability would also be useful for other purposes.
   
   `#undef` could be supported but, given that all files are compiled together,
   would require checking as to whether it appeared in the transitive `#include`
@@ -125,7 +125,8 @@ See `Parser.GetNamespace`. Supporting any of these would also affect symbol reso
 - [ ] anonymous structs (`Parser.GetClassDecl`)
 - [ ] an `enum`, `typedef`, or function in an anonymous union (allowed by parser, but
 `CxxArea.FindEnum`, `CxxArea.FindFunc`, and `CxxArea.FindType` do not look for them)
-- [ ] including a union instance immediately after defining it (`Parser.GetClassDecl`)
+- [ ] including a `class`/`struct`/`union`/`enum` instance immediately before
+the semicolon at the end of its definition (`Parser.GetClassDecl`)
 - [ ] pointer-to-member (the type _\<class>_`::*` and operators `.*` and `->*`)
 - [ ] argument-dependent lookup in a class's scope
   - `getline` requires a `std::` prefix to be resolved but should find the version in `<string>`

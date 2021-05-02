@@ -389,10 +389,10 @@ Arguments to binary operator have different enum types
 Tab character in source code
   Replace tabs with spaces. This is automatic when using >fix.
 ? W97
-Line indentation is not a multiple of the standard value
-  This line is not indented by a multiple of 3, 4, 8, or whatever is
-used as the standard. RSC uses 3, which is visually adequate without
-wasting horizontal space.
+Line indentation is not standard
+  This line is either not indented by a multiple of IndentSize(), or it
+doesn't follow standard RSC practice. The default for IndentSize() is 3,
+which is visually adequate without wasting horizontal space.
 ? W98
 Line contains trailing space
   Trailing space(s) can be removed. This is automatic when using >fix.

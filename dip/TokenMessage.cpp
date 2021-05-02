@@ -371,7 +371,7 @@ TokenMessage TokenMessage::operator+(const TokenMessage& that)
       combined.message_ = TokensPtr(new Token[length_ + that.length_ + 1]);
       memcpy(combined.message_.get(), message_.get(), length_ * sizeof(Token));
       memcpy(&combined.message_[length_], that.message_.get(),
-             that.length_ * sizeof(Token));
+         that.length_ * sizeof(Token));
       combined.message_[length_ + that.length_] = TOKEN_END_OF_MESSAGE;
       combined.length_ = length_ + that.length_;
       combined.parm_count_ = parm_count_ + that.parm_count_;
@@ -411,7 +411,7 @@ TokenMessage TokenMessage::operator&(const TokenMessage& that)
       combined.message_ = TokensPtr(new Token[length_ + that.length_ + 3]);
       memcpy(combined.message_.get(), message_.get(), length_ * sizeof(Token));
       memcpy(&combined.message_[length_ + 1], that.message_.get(),
-             that.length_ * sizeof(Token));
+         that.length_ * sizeof(Token));
       combined.message_[length_] = TOKEN_OPEN_BRACKET;
       combined.message_[length_ + that.length_ + 1] = TOKEN_CLOSE_BRACKET;
       combined.message_[length_ + that.length_ + 2] = TOKEN_END_OF_MESSAGE;

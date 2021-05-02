@@ -66,7 +66,7 @@ private:
 
 PotsHtlInitiator::PotsHtlInitiator() : Initiator(PotsHtlServiceId,
    PotsCallServiceId, BcTrigger::CollectInformationSap,
-   PotsCollectInformationSap::PotsHtlPriority)
+      PotsCollectInformationSap::PotsHtlPriority)
 {
    Debug::ft("PotsHtlInitiator.ctor");
 }

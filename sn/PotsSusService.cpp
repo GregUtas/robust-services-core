@@ -92,7 +92,7 @@ EventHandler::Rc PotsSusInitiator::ProcessEvent
 
 PotsOSusInitiator::PotsOSusInitiator() :
    PotsSusInitiator(BcTrigger::AuthorizeOriginationSap,
-   PotsAuthorizeOriginationSap::PotsSusPriority)
+      PotsAuthorizeOriginationSap::PotsSusPriority)
 {
    Debug::ft("PotsOSusInitiator.ctor");
 }
@@ -101,7 +101,7 @@ PotsOSusInitiator::PotsOSusInitiator() :
 
 PotsTSusInitiator::PotsTSusInitiator() :
    PotsSusInitiator(BcTrigger::AuthorizeTerminationSap,
-   PotsAuthorizeTerminationSap::PotsSusPriority)
+      PotsAuthorizeTerminationSap::PotsSusPriority)
 {
    Debug::ft("PotsTSusInitiator.ctor");
 }

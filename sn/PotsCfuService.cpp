@@ -38,7 +38,7 @@ namespace PotsBase
 {
 PotsCfuInitiator::PotsCfuInitiator() : Initiator(PotsCfuServiceId,
    PotsCallServiceId, BcTrigger::AuthorizeTerminationSap,
-   PotsAuthorizeTerminationSap::PotsCfuPriority)
+      PotsAuthorizeTerminationSap::PotsCfuPriority)
 {
    Debug::ft("PotsCfuInitiator.ctor");
 }

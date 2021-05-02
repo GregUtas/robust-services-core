@@ -879,12 +879,12 @@ void FunctionTrace::Process(const string& opts)
    if(buff->HasBeenProcessed()) return;
 
    buff->Lock();
-      ThreadInfo.clear();
-      AdjustDepths();
-      FindInvokerDepths();
-      RemoveCxxDeletes();
-      if(opts.find(NoCtorRelocation) == string::npos) FixCtorChains();
-      CalcFuncTimes();
+   ThreadInfo.clear();
+   AdjustDepths();
+   FindInvokerDepths();
+   RemoveCxxDeletes();
+   if(opts.find(NoCtorRelocation) == string::npos) FixCtorChains();
+   CalcFuncTimes();
    buff->Unlock();
 }
 

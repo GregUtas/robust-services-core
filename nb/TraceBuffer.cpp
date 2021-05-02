@@ -274,10 +274,10 @@ void TraceBuffer::ClaimBlocks()
    mask.reset(FunctionTracer);
 
    Lock();
-      for(Next(rec, mask); rec != nullptr; Next(rec, mask))
-      {
-         rec->ClaimBlocks();
-      }
+   for(Next(rec, mask); rec != nullptr; Next(rec, mask))
+   {
+      rec->ClaimBlocks();
+   }
    Unlock();
 }
 
@@ -296,24 +296,24 @@ TraceRc TraceBuffer::Clear()
    auto count = 0;
 
    Lock();
-      auto last = (ovfl_ ? size_ : bnext_);
+   auto last = (ovfl_ ? size_ : bnext_);
 
-      for(size_t i = 0; i < last; ++i)
+   for(size_t i = 0; i < last; ++i)
+   {
+      auto rec = buff_[i];
+
+      if(rec != nullptr)
       {
-         auto rec = buff_[i];
+         buff_[i] = nullptr;
+         delete rec;
 
-         if(rec != nullptr)
+         if(++count >= 100)
          {
-            buff_[i] = nullptr;
-            delete rec;
-
-            if(++count >= 100)
-            {
-               ThisThread::PauseOver(90);
-               count = 0;
-            }
+            ThisThread::PauseOver(90);
+            count = 0;
          }
       }
+   }
    Unlock();
 
    bnext_ = 0;
@@ -721,10 +721,10 @@ void TraceBuffer::Shutdown(RestartLevel level)
    auto mask = Flags().set();
 
    Lock();
-      for(Next(rec, mask); rec != nullptr; Next(rec, mask))
-      {
-         rec->Shutdown(level);
-      }
+   for(Next(rec, mask); rec != nullptr; Next(rec, mask))
+   {
+      rec->Shutdown(level);
+   }
    Unlock();
 }
 

@@ -282,7 +282,7 @@ private:
 
 PotsCwtInitiator::PotsCwtInitiator() :
    Initiator(PotsCwbServiceId, PotsCallServiceId,
-   BcTrigger::LocalBusySap, PotsLocalBusySap::PotsCwtPriority)
+      BcTrigger::LocalBusySap, PotsLocalBusySap::PotsCwtPriority)
 {
    Debug::ft("PotsCwtInitiator.ctor");
 }

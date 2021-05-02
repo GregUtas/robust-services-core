@@ -108,7 +108,7 @@ void MapAndUnits::adjudicate_builds()
       auto& orders = winter_orders[p];
 
       for(auto a = orders.adjustments.begin();
-          a != orders.adjustments.end(); ++a)
+         a != orders.adjustments.end(); ++a)
       {
          a->second = TOKEN_RESULT_SUC;
       }
@@ -331,7 +331,7 @@ void MapAndUnits::advance_attack_rings()
                }
             }
             while((ring_unit.ring_status == RING_ADVANCES_IF_VACANT) ||
-                  (ring_unit.ring_status == RING_ADVANCES_REGARDLESS));
+               (ring_unit.ring_status == RING_ADVANCES_REGARDLESS));
          }
       }
    }
@@ -409,7 +409,7 @@ void MapAndUnits::apply_builds()
       auto& orders = winter_orders[p];
 
       for(auto a = orders.adjustments.begin();
-          a != orders.adjustments.end(); ++a)
+         a != orders.adjustments.end(); ++a)
       {
          if(orders.is_building)
          {
@@ -709,7 +709,7 @@ RingUnitStatus MapAndUnits::calc_ring_status
    //  Find the strength of the most and second most supported units.
    //
    for(auto a = attacks.lower_bound(to_prov);
-       a != attacks.upper_bound(to_prov); ++a)
+      a != attacks.upper_bound(to_prov); ++a)
    {
       auto& attacker = units[a->second];
       auto supports = attacker.supports.size();
@@ -968,7 +968,7 @@ bool MapAndUnits::check_for_futile_convoys()
          //  Resolve the attacks on each fleet except the subverted one.
          //
          for(auto f = subverted_army.convoyers.begin();
-             f != subverted_army.convoyers.end(); ++f)
+            f != subverted_army.convoyers.end(); ++f)
          {
             if(*f != subverted_client_province)
             {
@@ -1467,7 +1467,7 @@ ProvinceId MapAndUnits::find_dislodger
    //  Find the number of supports for the two strongest attacks.
    //
    for(auto a = attacks.lower_bound(province);
-       a != attacks.upper_bound(province); ++a)
+      a != attacks.upper_bound(province); ++a)
    {
       auto& attacker = units[a->second];
       auto attacker_supports = attacker.supports.size();
@@ -1579,7 +1579,7 @@ void MapAndUnits::generate_cd_disbands(PowerId power, WinterOrders& orders)
    {
       if((orders.adjustments.size() < orders.number_of_orders_required) &&
          (orders.adjustments.find(units[d->second].loc) ==
-            orders.adjustments.end()))
+         orders.adjustments.end()))
       {
          orders.adjustments.insert(Adjustments::value_type
             (units[d->second].loc, TOKEN_ORDER_NOTE_MBV));
@@ -1965,7 +1965,7 @@ void MapAndUnits::resolve_balanced_head_to_head_battles()
    //  and B-A).  The clash is balanced, so neither one will advance.
    //
    for(auto b = balanced_head_to_heads.begin();
-       b != balanced_head_to_heads.end(); ++b)
+      b != balanced_head_to_heads.end(); ++b)
    {
       auto& unit1 = units[*b];
       auto& unit2 = units[unit1.dest.province];
@@ -2059,10 +2059,10 @@ void MapAndUnits::resolve_circles_of_subversion()
             auto& subverting_army = units[s->first];
 
             for(auto f = subverting_army.convoyers.begin();
-                f != subverting_army.convoyers.end(); ++f)
+               f != subverting_army.convoyers.end(); ++f)
             {
                for(auto a = attacks.lower_bound(*f);
-                   a != attacks.upper_bound(*f); ++a)
+                  a != attacks.upper_bound(*f); ++a)
                {
                   auto& attacker = units[a->second];
                   attacker.mark_move_bounced();
@@ -2113,7 +2113,7 @@ void MapAndUnits::resolve_unbalanced_head_to_head_battles()
    //  another attack on the weaker province is just as strong or stronger.
    //
    for(auto u = unbalanced_head_to_heads.begin();
-       u != unbalanced_head_to_heads.end(); ++u)
+      u != unbalanced_head_to_heads.end(); ++u)
    {
       auto& stronger = units[*u];
       auto& weaker = units[stronger.dest.province];

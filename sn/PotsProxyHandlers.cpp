@@ -331,7 +331,7 @@ EventHandler::Rc PotsProxyTaAnalyzeLocalMessage::ProcessEvent
    }
 
    Debug::SwLog(PotsProxyTaAnalyzeLocalMessage_ProcessEvent,
-         "unexpected signal", sid);
+      "unexpected signal", sid);
    return pssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 

@@ -81,7 +81,7 @@ class SigTerm : public PosixSignal
 //------------------------------------------------------------------------------
 
 SigAbort::SigAbort() : PosixSignal(SIGABRT, "SIGABRT",
-"Abort Request", 0, PS_Native()) { }
+   "Abort Request", 0, PS_Native()) { }
 
 //------------------------------------------------------------------------------
 

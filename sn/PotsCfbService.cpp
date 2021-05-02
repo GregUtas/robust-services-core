@@ -38,7 +38,7 @@ namespace PotsBase
 {
 PotsCfbInitiator::PotsCfbInitiator() :
    Initiator(PotsCfbServiceId, PotsCallServiceId,
-   BcTrigger::LocalBusySap, PotsLocalBusySap::PotsCfbPriority)
+      BcTrigger::LocalBusySap, PotsLocalBusySap::PotsCfbPriority)
 {
    Debug::ft("PotsCfbInitiator.ctor");
 }

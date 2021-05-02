@@ -105,7 +105,7 @@ void CinThread::Enter()
       auto& source = SysConsole::In();
 
       EnterBlockingOperation(BlockedOnStream, CinThread_Enter);
-         std::getline(source, buff_);
+      std::getline(source, buff_);
       ExitBlockingOperation(CinThread_Enter);
 
       //  Unless there was an error, sleep after notifying the client that

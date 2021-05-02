@@ -178,7 +178,7 @@ private:
 
 PotsWmlInitiator::PotsWmlInitiator() : Initiator(PotsWmlServiceId,
    PotsCallServiceId, BcTrigger::CollectInformationSap,
-   PotsCollectInformationSap::PotsWmlPriority)
+      PotsCollectInformationSap::PotsWmlPriority)
 {
    Debug::ft("PotsWmlInitiator.ctor");
 }

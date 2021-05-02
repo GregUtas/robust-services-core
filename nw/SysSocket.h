@@ -162,7 +162,7 @@ public:
    //  DATA is event specific.
    //
    NwTrace* TracePeer(NodeBase::TraceRecordId rid, ipport_t port,
-         const SysIpL3Addr& peer, NodeBase::word data);
+      const SysIpL3Addr& peer, NodeBase::word data);
 
    //  Overridden to display member variables.
    //

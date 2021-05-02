@@ -795,7 +795,7 @@ public:
    //
    bool locked_;
 
-    //  Set if the thread's current message is being traced.
+   //  Set if the thread's current message is being traced.
    //
    bool traceMsg_;
 

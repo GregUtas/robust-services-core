@@ -1678,7 +1678,7 @@ void LogsCommand::Patch(sel_t selector, void* arguments)
 //  returns true.
 //
 bool FindGroupAndLog(const string& name, word id,
-      LogGroup*& group, Log*& log, string& expl)
+   LogGroup*& group, Log*& log, string& expl)
 {
    Debug::ft("NodeBase.FindGroupAndLog");
 

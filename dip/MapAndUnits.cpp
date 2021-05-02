@@ -120,7 +120,7 @@ bool MapAndUnits::any_orders_entered() const
 
    case TOKEN_SEASON_WIN:
       return (!our_winter_orders.adjustments.empty() ||
-             (our_winter_orders.number_of_waives != 0));
+         (our_winter_orders.number_of_waives != 0));
    }
 
    Debug::SwLog(MapAndUnits_any_orders_entered,
@@ -227,7 +227,7 @@ TokenMessage MapAndUnits::build_sub() const
 
    case TOKEN_SEASON_WIN:
       for(auto o = our_winter_orders.adjustments.begin();
-          o != our_winter_orders.adjustments.end(); ++o)
+         o != our_winter_orders.adjustments.end(); ++o)
       {
          unit_order = our_power;
 
@@ -892,7 +892,7 @@ Location MapAndUnits::find_result_unit_initial_location
       if(!r->second.is_building) continue;
 
       for(auto b = r->second.adjustments.begin();
-          b != r->second.adjustments.end(); ++b)
+         b != r->second.adjustments.end(); ++b)
       {
          if(b->first.province == province)
          {
@@ -1016,7 +1016,7 @@ size_t MapAndUnits::get_adjustment_results(TokenMessage ord_messages[]) const
       auto& orders = winter_orders.at(p);
 
       for(auto o = orders.adjustments.begin();
-          o != orders.adjustments.end(); ++o, ++count)
+         o != orders.adjustments.end(); ++o, ++count)
       {
          ord_messages[count] = encode_build_result(p, orders, o->first);
       }
@@ -1366,7 +1366,7 @@ bool MapAndUnits::has_route_to_province
                for(auto n = neighbours2.begin(); n != neighbours2.end(); ++n)
                {
                   for(auto loc = n->second.begin();
-                      loc != n->second.end(); ++loc)
+                     loc != n->second.end(); ++loc)
                   {
                      candidates.insert(loc->province);
                   }
@@ -1922,7 +1922,7 @@ Token MapAndUnits::process_order(const TokenMessage& order, PowerId power)
          else if(check_on_submission)
          {
             if(!has_route_to_province
-                  (*client, client_dest.province_id(), unit->loc.province))
+               (*client, client_dest.province_id(), unit->loc.province))
                return TOKEN_ORDER_NOTE_FAR;
             else if(!can_move_to_province(*unit, client_dest.province_id()))
                return TOKEN_ORDER_NOTE_FAR;
@@ -1955,7 +1955,7 @@ Token MapAndUnits::process_order(const TokenMessage& order, PowerId power)
          else if(client->unit_type != TOKEN_UNIT_AMY)
             return TOKEN_ORDER_NOTE_NSA;
          else if(!has_route_to_province
-                     (*client, client_dest.province_id(), NIL_PROVINCE))
+               (*client, client_dest.province_id(), NIL_PROVINCE))
             return TOKEN_ORDER_NOTE_FAR;
       }
 

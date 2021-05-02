@@ -38,7 +38,7 @@ namespace PotsBase
 {
 PotsCfnInitiator::PotsCfnInitiator() : Initiator(PotsCfnServiceId,
    PotsCallServiceId, BcTrigger::LocalAlertingSnp,
-   PotsLocalAlertingSnp::PotsCfnPriority)
+      PotsLocalAlertingSnp::PotsCfnPriority)
 {
    Debug::ft("PotsCfnInitiator.ctor");
 }

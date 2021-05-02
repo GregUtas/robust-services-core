@@ -655,7 +655,7 @@ void ObjectPool::DisplayStats(ostream& stream, const Flags& options) const
 //------------------------------------------------------------------------------
 
 bool ObjectPool::DisplayUsed(ostream& stream,
-      const string& prefix, const Flags& options) const
+   const string& prefix, const Flags& options) const
 {
    PooledObjectId bid;
    auto time = 200;

@@ -65,7 +65,7 @@ private:
 
 PotsBocInitiator::PotsBocInitiator() : Initiator(PotsBocServiceId,
    PotsCallServiceId, BcTrigger::AuthorizeOriginationSap,
-   PotsAuthorizeOriginationSap::PotsBocPriority)
+      PotsAuthorizeOriginationSap::PotsBocPriority)
 {
    Debug::ft("PotsBocInitiator.ctor");
 }

@@ -456,7 +456,7 @@ void ClassData::Check() const
       auto copy = cls->FindFuncByRole(CopyOper, true);
       auto move = cls->FindFuncByRole(MoveOper, true);
       auto could = (((copy == nullptr) || copy->IsDeleted()) &&
-                    ((move == nullptr) || move->IsDeleted()));
+         ((move == nullptr) || move->IsDeleted()));
       CheckConstness(could);
 
       CheckIfInitialized();

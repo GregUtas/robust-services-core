@@ -97,7 +97,7 @@ SigWrite::SigWrite() : PosixSignal(SIGWRITE, "SIGWRITE",
 
 SigClose::SigClose() : PosixSignal(SIGCLOSE, "SIGCLOSE",
    "Non-Error Shutdown", 12,
-   PS_Interrupt() | PS_Final() | PS_NoLog() | PS_NoError()) { }
+      PS_Interrupt() | PS_Final() | PS_NoLog() | PS_NoError()) { }
 
 SigYield::SigYield() : PosixSignal(SIGYIELD, "SIGYIELD",
    "Running Unpreemptably Too Long", 4, NoFlags) { }
@@ -110,7 +110,7 @@ SigStack2::SigStack2() : PosixSignal(SIGSTACK2, "SIGSTACK2",
 
 SigPurge::SigPurge() : PosixSignal(SIGPURGE, "SIGPURGE",
    "Suicided [errval = 0] or Killed [errval > 0]", 16,
-   PS_Interrupt() | PS_Final()) { }
+      PS_Interrupt() | PS_Final()) { }
 
 SigDeleted::SigDeleted() : PosixSignal(SIGDELETED, "SIGDELETED",
    "Thread Deleted", 0, PS_Final()) { }

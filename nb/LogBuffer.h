@@ -33,8 +33,6 @@
 
 namespace NodeBase
 {
-class LogBuffer : public Permanent
-{
 //  Circular buffer for holding logs that are waiting to be written to a log
 //  file.  A buffer is allocated during each restart and therefore provides a
 //  record of the system's most recent incarnation.  If a buffer contains logs
@@ -42,6 +40,8 @@ class LogBuffer : public Permanent
 //  restart for debugging purposes and must be freed using a CLI command when
 //  no longer required.
 //
+class LogBuffer : public Permanent
+{
    friend class LogsWritten;
 public:
    //  Creates a buffer of length SIZE.

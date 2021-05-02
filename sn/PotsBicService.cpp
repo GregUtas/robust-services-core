@@ -65,7 +65,7 @@ private:
 
 PotsBicInitiator::PotsBicInitiator() : Initiator(PotsBicServiceId,
    PotsCallServiceId, BcTrigger::AuthorizeTerminationSap,
-   PotsAuthorizeTerminationSap::PotsBicPriority)
+      PotsAuthorizeTerminationSap::PotsBicPriority)
 {
    Debug::ft("PotsBicInitiator.ctor");
 }

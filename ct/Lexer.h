@@ -486,7 +486,7 @@ public:
    //  Check vertical spacing.  Returns a string that indicates how each line
    //  should be modified (see above).
    //
-   std::string CheckVerticalSpacing();
+   std::string CheckVerticalSpacing() const;
 
    //  Checks the spacing of punctuation.
    //

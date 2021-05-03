@@ -2051,7 +2051,7 @@ Token MapAndUnits::process_order(const TokenMessage& order, PowerId power)
       if(!winter->is_building)
          return TOKEN_ORDER_NOTE_NMB;
       else if(winter->adjustments.size() +
-              winter->number_of_waives >= winter->number_of_orders_required)
+            winter->number_of_waives >= winter->number_of_orders_required)
          return TOKEN_ORDER_NOTE_NMB;
 
       auto winter_order = order.get_parm(0);
@@ -2073,14 +2073,14 @@ Token MapAndUnits::process_order(const TokenMessage& order, PowerId power)
       else if(!game_map[build_loc.province].is_supply_centre)
          return TOKEN_ORDER_NOTE_NSC;
       else if(game_map[build_loc.province].home_powers.find(power) ==
-              game_map[build_loc.province].home_powers.end())
+            game_map[build_loc.province].home_powers.end())
          return TOKEN_ORDER_NOTE_HSC;
       else if(game_map[build_loc.province].owner.power_id() != power)
          return TOKEN_ORDER_NOTE_YSC;
       else if(units.find(build_loc.province) != units.end())
          return TOKEN_ORDER_NOTE_ESC;
       else if(game_map[build_loc.province].neighbours.find(build_loc.coast) ==
-              game_map[build_loc.province].neighbours.end())
+            game_map[build_loc.province].neighbours.end())
          return TOKEN_ORDER_NOTE_CST;
 
       Location first_coast(build_loc.province, 0);
@@ -2119,7 +2119,7 @@ Token MapAndUnits::process_order(const TokenMessage& order, PowerId power)
       if(!winter->is_building)
          return TOKEN_ORDER_NOTE_NMB;
       else if(winter->adjustments.size() +
-              winter->number_of_waives >= winter->number_of_orders_required)
+            winter->number_of_waives >= winter->number_of_orders_required)
          return TOKEN_ORDER_NOTE_NMB;
       else if(order.at(0).power_id() != power)
          return TOKEN_ORDER_NOTE_NYU;

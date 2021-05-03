@@ -762,10 +762,10 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
             if(nextEvent->Eid() != Event::AnalyzeSap)
                phase = ModifierSapPhase;
             else if(static_cast< AnalyzeSapEvent* >(nextEvent)
-                     ->CurrInitiator() != nullptr)
+                  ->CurrInitiator() != nullptr)
                phase = InitiatorReentryPhase;
             else if(static_cast< AnalyzeSapEvent* >(nextEvent)
-                     ->CurrSsm() != nullptr)
+                  ->CurrSsm() != nullptr)
                phase = ModifierReentryPhase;
             else
                Context::Kill("failed to route event",

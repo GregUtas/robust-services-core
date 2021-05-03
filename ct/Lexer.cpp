@@ -226,7 +226,9 @@ void Lexer::CalcDepths()
    bool lbCont;           // if left brace's line should be a continuation
    size_t rbPos;          // position of matching right brace
    int semiDepth = -1;    // depth to restore when reaching next semicolon
-   size_t commaPos;       // position of comma that sets depths to that point
+   size_t commaPos;       // position of comma that sets depths
+   size_t rparPos;        // position of right parenthese that sets depths
+   bool elseif = false;   // if "else if" being processed
    LineInfo* currInfo;    // LineInfo entry at current position
 
    std::vector< LeftBraceRole > lbStack;
@@ -235,6 +237,7 @@ void Lexer::CalcDepths()
    lbDepths.push_back(SIZE_MAX);
    kwd = Cxx::NIL_KEYWORD;
    commaPos = string::npos;
+   rparPos = string::npos;
 
    Reposition(0);
    nextLine_ = 0;
@@ -366,15 +369,21 @@ void Lexer::CalcDepths()
 
       case ';':
          //
-         //  Finalize the depth of lines to this point.  The last keyword is
-         //  no longer in effect.  If we were parsing an unbraced conditional,
+         //  If a right parenthesis is pending, this semicolon appears at the
+         //  beginning of a for statement, so continue.  Otherwise, finalize
+         //  the depth of lines to this point.  The last keyword is then no
+         //  onger in effect.  And if we were parsing an unbraced conditional,
          //  undo its indentation by returning to semiDepth.
          //
-         nextDepth = (semiDepth >= 0 ? semiDepth : currDepth);
-         SetDepth(currDepth, nextDepth);
-         currDepth = nextDepth;
-         semiDepth = -1;
-         kwd = Cxx::NIL_KEYWORD;
+         if(rparPos == string::npos)
+         {
+            nextDepth = (semiDepth >= 0 ? semiDepth : currDepth);
+            SetDepth(currDepth, nextDepth);
+            currDepth = nextDepth;
+            semiDepth = -1;
+            kwd = Cxx::NIL_KEYWORD;
+         }
+
          Advance(1);
          break;
 
@@ -416,9 +425,38 @@ void Lexer::CalcDepths()
          Advance(1);
          break;
 
+      case ')':
+         //
+         //  If this is the end of a parenthesized condition, finalize its
+         //  depths.  If a left brace does not follow, indent the following
+         //  statement and restore the current depth when the next semicolon
+         //  semicolon is reached.  Unbraced conditionals can nest, so don't
+         //  let a subsequent one update the depth set for the semicolon.
+         //
+         if(curr_ >= rparPos)
+         {
+            rparPos = string::npos;
+            SetDepth(currDepth, currDepth);
+            Advance(1);
+
+            if(elseif)
+            {
+               elseif = false;
+               currDepth -= 2;
+            }
+
+            if(source_->at(curr_) == '{') continue;
+            if(semiDepth < 0) semiDepth = currDepth;
+            ++currDepth;
+            continue;
+         }
+
+         Advance(1);
+         continue;
+
       case ',':
          //
-         //  A comma finalizes the depths to this point if the next line
+         //  A comma finalizes depths to this point when the next line
          //  should not be treated as a continuation.  This occurs after
          //  o the definition of an enumerator
          //  o an item in a constructor's initialization list
@@ -427,7 +465,7 @@ void Lexer::CalcDepths()
          //  these items, so it may actually be a left or right brace.
          //  The case statements that handle a brace therefore clear it.
          //
-         if(commaPos == curr_)
+         if(curr_ >= commaPos)
          {
             commaPos = string::npos;
             SetDepth(currDepth, currDepth);
@@ -517,47 +555,56 @@ void Lexer::CalcDepths()
 
             case IndentConditional:
                //
-               //  The code between the parentheses is a continuation if on
-               //  a subsequent line.  Finalizing it immediately also skips
-               //  the semicolons in a for statement.
+               //  If a parenthesized expression follows (it does, other
+               //  than at the beginning of a do-while), find the closing
+               //  right parenthesis.  In an "else if", finalize the depth
+               //  to this point and indent the statement that follows an
+               //  extra level.
                //
                Advance(id.size());
 
                if(NextCharIs('('))
                {
-                  curr_ = FindClosing('(', ')');
-                  SetDepth(currDepth, currDepth);
+                  if(rparPos == string::npos)
+                     rparPos = FindClosing('(', ')');
+
+                  if(elseif)
+                  {
+                     SetDepth(currDepth, currDepth);
+                     currDepth += 2;
+                  }
+
                   Advance(1);
                }
 
-               //  If a left brace does not follow the condition, indent the
-               //  statement that follows, and restore the current depth when
-               //  the next semicolon is reached.  Unbraced conditionals can
-               //  nest, so don't overwrite the outermost one.
-               //
-               if(source_->at(curr_) == '{') continue;
-               if(semiDepth < 0) semiDepth = currDepth;
-               ++currDepth;
                continue;
 
             case IndentElse:
                //
-               //  This is handled the same way as what follows a conditional,
-               //  except that an "else if" is handled by allowing the "if" to
-               //  enter IndentConditional (abpve) and get processed as usual
-               //  if it appears on the same line.
+               //  For "else if", continue so that the "if" can enter the
+               //  IndentConditional case above and get processed as usual.
                //
-               curr_ += id.size();
-               SetDepth(currDepth, currDepth);
-               Advance();
+               Advance(id.size());
                if(source_->at(curr_) == '{') continue;
                if(NextIdentifier() == IF_STR)
                {
                   if(source_->rfind(CRLF, curr_) < source_->rfind('e', curr_))
+                  {
+                     elseif = true;
                      continue;
+                  }
                }
+
+               //  A statement immediately follows this else.  Its depth should
+               //  be increased.  But curr_ has now reached its start, so back
+               //  up to the end of "else" before invoking SetDepth.  Indent and
+               //  return to the current depth upon reaching the next semicolon.
+               //
+               curr_ = source_->rfind('e', curr_ - 1);
+               SetDepth(currDepth, currDepth);
                if(semiDepth < 0) semiDepth = currDepth;
                ++currDepth;
+               Advance(1);
                continue;
 
             case IndentDirective:
@@ -608,8 +655,7 @@ void Lexer::CalcDepths()
                //
                kwd = Cxx::ENUM;
                SetDepth(currDepth, currDepth);
-               curr_ = FindFirstOf("{") - 1;
-               Advance(1);
+               curr_ = FindFirstOf("{");
                continue;
 
             case IndentNamespace:
@@ -934,7 +980,7 @@ void Lexer::CheckPunctuation() const
 
 //------------------------------------------------------------------------------
 
-string Lexer::CheckVerticalSpacing()
+string Lexer::CheckVerticalSpacing() const
 {
    auto size = lines_.size();
    if(size <= 1) return EMPTY_STR;

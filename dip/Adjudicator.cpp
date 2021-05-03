@@ -917,7 +917,7 @@ void MapAndUnits::cancel_inconsistent_supports()
                supporter.support_void = true;
             }
             else if((client.order_type_copy != MOVE_ORDER) &&
-                    (client.order_type_copy != MOVE_BY_CONVOY_ORDER))
+                  (client.order_type_copy != MOVE_BY_CONVOY_ORDER))
             {
                //  The client was ordered as supported, but its move failed.
                //
@@ -1622,7 +1622,7 @@ void MapAndUnits::identify_attack_rings_and_head_to_head_battles()
             }
          }
          else if((attacker.order_type_copy != MOVE_ORDER) &&
-                 (attacker.order_type_copy != MOVE_BY_CONVOY_ORDER))
+               (attacker.order_type_copy != MOVE_BY_CONVOY_ORDER))
          {
             //  This unit will not move, which also means that we've reached
             //  the end of the current chain.

@@ -337,6 +337,19 @@ public:
    //
    void SetDefn(Data* data);
 
+   //  Returns true if this is a data declaration.
+   //
+   bool IsDecl() const { return !defn_; }
+
+   //  Returns the data's declaration.
+   //
+   const Data* GetDecl() const { return (defn_ ? mate_ : this); }
+
+   //  Returns the data's definition (if distinct from its declaration),
+   //  else its declaration.
+   //
+   const Data* GetDefn() const;
+
    //  Returns true if the data is default constructible.  This function's
    //  purpose is to determine if the data will be initialized if omitted
    //  from a constructor initialization list.  This is only the case for
@@ -466,10 +479,6 @@ protected:
    //
    explicit Data(TypeSpecPtr& spec);
 
-   //  Returns true if this is a data declaration.
-   //
-   bool IsDecl() const { return !defn_; }
-
    //  Increments the number of writes to the data.
    //
    void IncrWrites() { ++writes_; }
@@ -528,13 +537,7 @@ protected:
 private:
    //  Returns the data's declaration.
    //
-   const Data* GetDecl() const { return (defn_ ? mate_ : this); }
    Data* GetDecl() { return (defn_ ? mate_ : this); }
-
-   //  Returns the data's definition (if distinct from its declaration),
-   //  else its declaration.
-   //
-   const Data* GetDefn() const;
 
    //  Returns the name to be used in the initialization statement.
    //

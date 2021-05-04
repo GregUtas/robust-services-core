@@ -158,6 +158,10 @@ private:
    //
    static void ReportFix(CliThread& cli, CodeWarning* log, word rc);
 
+   //  Invoked when LOG also changed another file, whose edit returned RC.
+   //
+   void ReportFixInFile(CliThread& cli, CodeWarning* log, word rc) const;
+
    //  Most of the editing functions attempt to fix the warning reported in LOG.
    //
    word AdjustIndentation(const CodeWarning& log);
@@ -168,7 +172,6 @@ private:
    word ChangeAccess(const CxxToken* item, ItemDeclAttrs& attrs);
    word ChangeClassToNamespace(const CodeWarning& log);
    word ChangeClassToStruct(const CodeWarning& log);
-   word ChangeDataToFree(const CodeWarning& log);
    word ChangeDebugFtName(CliThread& cli, const CodeWarning& log);
    word ChangeOperator(const CodeWarning& log);
    word ChangeStructToClass(const CodeWarning& log);
@@ -177,7 +180,6 @@ private:
    word EraseBlankLine(const CodeWarning& log);
    word EraseClass(const CodeWarning& log);
    word EraseConst(const CodeWarning& log);
-   word EraseData(const CliThread& cli, const CodeWarning& log);
    word EraseExplicitTag(const CodeWarning& log);
    word EraseForward(const CodeWarning& log);
    word EraseLineBreak(const CodeWarning& log);
@@ -214,8 +216,6 @@ private:
    word ReplaceNull(const CodeWarning& log);
    word ReplaceSlashAsterisk(const CodeWarning& log);
    word ReplaceUsing(const CodeWarning& log);
-   word TagAsConstData(const CodeWarning& log);
-   word TagAsConstPointer(const CodeWarning& log);
    word TagAsExplicit(const CodeWarning& log);
    word TagAsOverride(const CodeWarning& log);
    word TagAsVirtual(const CodeWarning& log);
@@ -285,8 +285,9 @@ private:
 
    //  Find the first line of code (other than #include directives, forward
    //  declarations, and using statements).  Moves up past any comments that
-   //  precede this point, and returns the position where these comments
-   //  begin.
+   //  precede that point, and returns the position where these comments
+   //  begin.  This could be, for example, the line after a namespace
+   //  definition's left brace.
    //
    size_t CodeBegin() const;
 
@@ -354,6 +355,28 @@ private:
    //
    static void ChangeForwards
       (const CxxToken* item, fixed_string from, fixed_string to);
+
+   //  Fixes LOG, which also involves modifying a data definition.
+   //
+   static word FixDatas(CliThread& cli, CodeWarning& log);
+
+   //  Fixes LOG, which is associated with DATA.
+   //
+   word FixData(const Data* data, const CodeWarning& log);
+
+   //  Fixes DATA or ITEM, which references DATA.
+   //
+   word ChangeDataToFree(const CxxNamed* item, const Data* data);
+   word TagAsConstData(const Data* data);
+   word TagAsConstPointer(const Data* data);
+
+   //  Fixes LOG, which also involves modifying all references to data.
+   //
+   static word FixReferences(CliThread& cli, CodeWarning& log);
+
+   //  Fixes LOG, which involves modifying ITEM.
+   //
+   word FixReference(const CxxNamed* item, const CodeWarning& log);
 
    //  ITEM has a log that requires adding a special member function.  Looks
    //  for other logs that also require this and fixes them together.

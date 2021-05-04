@@ -95,11 +95,6 @@ public:
    //
    MemoryProtection GetAttrs() const { return attrs_; }
 
-   //  Invoked when the heap's memory protection has changed.
-   //  Returns 0.
-   //
-   int SetAttrs(MemoryProtection attrs);
-
    //  Returns the number of bytes currently allocated from the heap.
    //
    size_t BytesInUse() const { return inUse_; }
@@ -173,6 +168,11 @@ protected:
    //
    void Freeing(void* addr, size_t size);
 private:
+   //  Invoked when the heap's memory protection has changed.
+   //  Returns 0.
+   //
+   int SetAttrs(MemoryProtection attrs);
+
    //  The heap's current memory protection attributes.
    //
    MemoryProtection attrs_;

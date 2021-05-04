@@ -75,11 +75,6 @@ public:
    //
    Id Rid() const { return rid_; }
 
-   //  Nullifies a record.  This causes it to be ignored when dumping
-   //  trace records.
-   //
-   void Nullify() { owner_ = NIL_ID; }
-
    //  Invoked to display the record in STREAM.  OPTS specifies options:
    //  o NoTimeData ('t') suppresses timing data that would otherwise
    //    result in undesirable mismatches in a >diff between traces
@@ -102,6 +97,11 @@ protected:
    //  overridden by subclasses.
    //
    virtual c_string EventString() const;
+
+   //  Nullifies a record.  This causes it to be ignored when dumping
+   //  trace records.
+   //
+   void Nullify() { owner_ = NIL_ID; }
 private:
    //  Must be overridden to claim any Pooled object owned by a subclass.
    //  TraceBuffer::ClaimBlocks must also be modified to add the owner

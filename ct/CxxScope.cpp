@@ -3082,6 +3082,7 @@ bool Function::CheckIfUnused(Warning warning) const
    }
 
    if(type_) return false;
+   if(override_) return false;
    if(!IsUnused()) return false;
 
    switch(FuncRole())

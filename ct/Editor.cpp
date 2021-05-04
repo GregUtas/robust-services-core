@@ -680,6 +680,17 @@ bool GetCommentedRange(const CxxToken* item, size_t& begin, size_t& end)
 
 //------------------------------------------------------------------------------
 
+void GetDatas(const Data* data, std::vector< const Data* >& datas)
+{
+   Debug::ft("CodeTools.GetDatas");
+
+   datas.push_back(data);
+   auto defn = static_cast< const Data* >(data->GetMate());
+   if(defn != nullptr) datas.push_back(defn);
+}
+
+//------------------------------------------------------------------------------
+
 string GetExpl()
 {
    Debug::ft("CodeTools.GetExpl");
@@ -726,6 +737,25 @@ void GetOverrides(const Function* func, std::vector< const Function* >& funcs)
    for(auto f = overs.cbegin(); f != overs.cend(); ++f)
    {
       GetOverrides(*f, funcs);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void GetReferences(const Data* data, std::vector< const CxxNamed* >& items)
+{
+   Debug::ft("CodeTools.GetReferences");
+
+   auto& refs = data->Xref();
+   auto mate = data->GetMate();
+
+   //  Assemble references to the data.
+   //
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+   {
+      if(AreInSameStatement(data, *r)) continue;
+      if(AreInSameStatement(mate, *r)) continue;
+      items.push_back(*r);
    }
 }
 
@@ -1164,105 +1194,27 @@ word Editor::Changed(size_t pos)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeDataToFree(const CodeWarning& log)
+word Editor::ChangeDataToFree(const CxxNamed* item, const Data* data)
 {
    Debug::ft("Editor.ChangeDataToFree");
 
-   auto decl = static_cast< const Data* >(log.item_);
-   auto defn = decl->GetMate();
-   if(defn == nullptr) return NotFound("Data definition");
-   auto cls = decl->GetClass();
-   auto qual = cls->Name() + SCOPE_STR;
-   auto cpp = defn->GetFile();
-   auto& refs = decl->Xref();
-   auto ext = false;
-
-   //  Remove the class name qualifier on references to the data and note
-   //  whether any references occur outside the file that defines the data.
+   //  This is invoked to remove static member data from its class and insert
+   //  it into namespace.  This only occurs when the data is used in a single
+   //  .cpp (which might also be where the class is defined).  It is invoked
+   //  in three ways, and ITEM is nullptr except in the first of these:
+   //     1. On ITEM, a reference to DATA
+   //     2. On DATA's declaration.
+   //     3. On DATA's definition, if distinct.
+   //  The first simply has to remove the class qualifier used to reference
+   //  the data.  The other two are far more complicated, and the details
+   //  depend on whether there is a separate definition.  In the end, code
+   //  in the declaration and/or definition will be cut, fragments possibly
+   //  combined, and pasted at the top of the .cpp.  The original items will
+   //  then be deleted and the new code incrementally compiled.  This is a
+   //  far more generic solution than trying to update all affected objects
+   //  to account for the data moving from a class to a namespace.
    //
-   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
-   {
-      if(AreInSameStatement(decl, *r)) continue;
-      if(AreInSameStatement(defn, *r)) continue;
-
-      auto file = (*r)->GetFile();
-      if(file != cpp) ext = true;
-
-      auto& editor = file->GetEditor();
-      auto pos = editor.LineRfind((*r)->GetPos(), qual);
-      if(pos != string::npos)
-      {
-         editor.Erase(pos, qual.size());
-      }
-   }
-
-   //  Find the extent of the data's definition.  The definition will move
-   //  to file scope, so remove any indentation.  Cut the definition after
-   //  erasing its "static" tag and prefixing an "extern" tag.
-   //
-   size_t begin, end;
-   if(!GetCommentedRange(decl, begin, end))
-      return NotFound("Data definition");
-
-   for(auto pos = CurrBegin(end); pos >= begin; pos = PrevBegin(pos))
-   {
-      auto blanks = LineFindFirst(pos) - pos;
-      Erase(pos, blanks);
-   }
-
-   begin = CurrBegin(decl->GetPos());
-   auto pos = LineFind(begin, STATIC_STR);
-   if(pos == string::npos) return NotFound(STATIC_STR, true);
-   Erase(pos, strlen(STATIC_STR) + 1);
-   auto code = string(EXTERN_STR) + SPACE;
-   Insert(begin, code);
-
-   code.clear();
-   if(CutCode(decl, code) == string::npos) return EditFailed;
-
-   if(ext)
-   {
-      //  The data was referenced outside of the .cpp that defines it, so
-      //  move its declaration directly before the class that declared it.
-      //  This code is currently unreachable, because DataCouldBeFree is
-      //  only logged on a data that is not used outside the .cpp.
-      //
-      if(!GetCommentedRange(cls, begin, end))
-         return NotFound("Data's class");
-      pos = CurrBegin(begin);
-      InsertLine(pos, EMPTY_STR);
-      InsertLine(pos, code);
-   }
-   else
-   {
-      //  The data was only referenced within the .cpp that defines it, so
-      //  discard its declaration while saving any comment that preceded it.
-      //
-      code.erase(code.find(EXTERN_STR));
-   }
-
-   //  If the original declaration was deleted and had a comment, and the
-   //  definition is not commented, paste the declaration's comment before
-   //  the definition after adding a space below it.
-   //
-   auto& editor = cpp->GetEditor();
-
-   if(!ext && !code.empty() && !ItemIsCommented(defn))
-   {
-      defn->GetSpan2(begin, end);
-      editor.InsertLine(editor.NextBegin(end), EMPTY_STR);
-      editor.Insert(editor.CurrBegin(begin), code);
-   }
-
-   //  Remove the class name from the definition.
-   //
-   pos = editor.LineRfind(defn->GetPos(), qual);
-   if(pos != string::npos)
-      editor.Erase(pos, qual.size());
-   else
-      return NotFound("Data definition class qualifier");
-
-   return editor.Changed(pos);
+   return Unimplemented();
 }
 
 //------------------------------------------------------------------------------
@@ -2230,63 +2182,6 @@ word Editor::EraseConst(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseData(const CliThread& cli, const CodeWarning& log)
-{
-   Debug::ft("Editor.EraseData");
-
-   auto decl = static_cast< const Data* >(log.item_);
-   auto defn = decl->GetMate();
-   auto& refs = decl->Xref();
-
-   //  Erase any references to the data.
-   //
-   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
-   {
-      if(AreInSameStatement(decl, *r)) continue;
-      if(AreInSameStatement(defn, *r)) continue;
-
-      auto file = (*r)->GetFile();
-      auto& editor = file->GetEditor();
-
-      if(editor.EraseCode(*r) != EditSucceeded)
-      {
-         auto expl = GetExpl();
-
-         if(!expl.empty())
-         {
-            if(expl.back() == CRLF) expl.pop_back();
-            expl += " (" + (*r)->strLocation() + ')';
-            *cli.obuf << spaces(2) << expl << CRLF;
-         }
-      }
-   }
-
-   //  Erase the data definition, if any.
-   //
-   if((defn != nullptr) && (defn != decl))
-   {
-      auto& editor = defn->GetFile()->GetEditor();
-
-      if(editor.EraseCode(defn) != EditSucceeded)
-      {
-         auto expl = GetExpl();
-
-         if(!expl.empty())
-         {
-            if(expl.back() == CRLF) expl.pop_back();
-            expl += " (definition)";
-            *cli.obuf << spaces(2) << expl << CRLF;
-         }
-      }
-   }
-
-   //  Erase the data declaration.
-   //
-   return EraseCode(log.item_);
-}
-
-//------------------------------------------------------------------------------
-
 word Editor::EraseDefaultValue(const Function* func, word offset)
 {
    Debug::ft("Editor.EraseDefaultValue");
@@ -2827,8 +2722,8 @@ word Editor::FindSpecialFuncDeclLoc
    case PureDtor:
       if(base)
          attrs.virt = true;
-      else
-         if(solo) attrs.access = Cxx::Private;
+      else if(solo)
+         attrs.access = Cxx::Private;
       break;
 
    case CopyCtor:
@@ -3051,6 +2946,58 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
 //------------------------------------------------------------------------------
 
+word Editor::FixData(const Data* data, const CodeWarning& log)
+{
+   Debug::ft("Editor.FixData");
+
+   switch(log.warning_)
+   {
+   case DataUnused:
+      return EraseCode(data);
+   case DataInitOnly:
+      return EraseCode(data);
+   case DataWriteOnly:
+      return EraseCode(data);
+   case DataCouldBeConst:
+      return TagAsConstData(data);
+   case DataCouldBeConstPtr:
+      return TagAsConstPointer(data);
+   case DataCouldBeFree:
+      return ChangeDataToFree(nullptr, data);
+   }
+
+   return Report("Internal error: unsupported data warning.");
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::FixDatas(CliThread& cli, CodeWarning& log)
+{
+   Debug::ft("Editor.FixDatas");
+
+   if(log.item_->Type() != Cxx::Data)
+   {
+      return Report("Internal error: warning is not for data.");
+   }
+
+   //  Fix the data's declaration and definition (if distinct).
+   //
+   auto data = static_cast< const Data* >(log.item_);
+   std::vector< const Data* > datas;
+   GetDatas(data, datas);
+
+   for(auto d = datas.cbegin(); d != datas.cend(); ++d)
+   {
+      auto& editor = (*d)->GetFile()->GetEditor();
+      auto rc = editor.FixData(*d, log);
+      editor.ReportFixInFile(cli, &log, rc);
+   }
+
+   return EditCompleted;
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::FixFunction(const Function* func, const CodeWarning& log)
 {
    Debug::ft("Editor.FixFunction");
@@ -3108,24 +3055,9 @@ word Editor::FixFunctions(CliThread& cli, CodeWarning& log)
 
    for(auto f = funcs.cbegin(); f != funcs.cend(); ++f)
    {
-      auto file = (*f)->GetFile();
-      auto& editor = file->GetEditor();
+      auto& editor = (*f)->GetFile()->GetEditor();
       auto rc = editor.FixFunction(*f, log);
-      auto expl = GetExpl();
-      auto fn = file->Name();
-
-      if(expl.empty())
-      {
-         fn += ": ";
-         expl = fn + SuccessExpl;
-      }
-      else
-      {
-         fn += ":\n" + spaces(4);
-         expl = fn + expl;
-      }
-
-      ReportFix(cli, &log, rc);
+      editor.ReportFixInFile(cli, &log, rc);
    }
 
    return EditCompleted;
@@ -3180,6 +3112,54 @@ word Editor::FixLog(CliThread& cli, CodeWarning& log)
    }
 
    return FixWarning(cli, log);
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::FixReference(const CxxNamed* item, const CodeWarning& log)
+{
+   Debug::ft("Editor.FixReference");
+
+   switch(log.warning_)
+   {
+   case DataUnused:
+      return EraseCode(item);
+   case DataInitOnly:
+      return EraseCode(item);
+   case DataWriteOnly:
+      return EraseCode(item);
+   case DataCouldBeFree:
+      return ChangeDataToFree(item, static_cast< const Data* >(log.item_));
+   }
+
+   return Report("Internal error: unsupported data warning.");
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::FixReferences(CliThread& cli, CodeWarning& log)
+{
+   Debug::ft("Editor.FixReferences");
+
+   if(log.item_->Type() != Cxx::Data)
+   {
+      return Report("Internal error: warning is not for dadta.");
+   }
+
+   //  Fix references to the data, followed by the data itself.
+   //
+   auto data = static_cast< const Data* >(log.item_);
+   std::vector< const CxxNamed* > refs;
+   GetReferences(data, refs);
+
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+   {
+      auto& editor = (*r)->GetFile()->GetEditor();
+      auto rc = editor.FixReference(*r, log);
+      editor.ReportFixInFile(cli, &log, rc);
+   }
+
+   return FixDatas(cli, log);
 }
 
 //------------------------------------------------------------------------------
@@ -3251,7 +3231,7 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case ClassUnused:
       return EraseClass(log);
    case DataUnused:
-      return EraseData(cli, log);
+      return FixReferences(cli, log);
    case EnumUnused:
       return EraseCode(log.item_);
    case EnumeratorUnused:
@@ -3287,13 +3267,13 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case DataUninitialized:
       return InsertDataInit(log);
    case DataInitOnly:
-      return EraseData(cli, log);
+      return FixReferences(cli, log);
    case DataWriteOnly:
-      return EraseData(cli, log);
+      return FixReferences(cli, log);
    case DataCouldBeConst:
-      return TagAsConstData(log);
+      return FixDatas(cli, log);
    case DataCouldBeConstPtr:
-      return TagAsConstPointer(log);
+      return FixDatas(cli, log);
    case DataNeedNotBeMutable:
       return EraseMutableTag(log);
    case ImplicitPODConstructor:
@@ -3413,7 +3393,7 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case DebugFtCanBeLiteral:
       return InlineDebugFtName(log);
    case DataCouldBeFree:
-      return ChangeDataToFree(log);
+      return FixReferences(cli, log);
    case ConstructorNotPrivate:
       return ChangeSpecialFunction(cli, log);
    case DestructorNotPrivate:
@@ -5080,6 +5060,30 @@ void Editor::ReportFix(CliThread& cli, CodeWarning* log, word rc)
 
 //------------------------------------------------------------------------------
 
+void Editor::ReportFixInFile(CliThread& cli, CodeWarning* log, word rc) const
+{
+   Debug::ft("Editor.ReportFixInFile");
+
+   auto fn = file_->Name();
+   auto expl = GetExpl();
+
+   if(expl.empty())
+   {
+      fn += ": ";
+      expl = fn + SuccessExpl;
+   }
+   else
+   {
+      fn += ":\n" + spaces(4);
+      expl = fn + expl;
+   }
+
+   SetExpl(expl);
+   ReportFix(cli, log, rc);
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::ResolveUsings()
 {
    Debug::ft("Editor.ResolveUsings");
@@ -5241,17 +5245,18 @@ word Editor::TagAsConstArgument(const Function* func, word offset)
 
 //------------------------------------------------------------------------------
 
-word Editor::TagAsConstData(const CodeWarning& log)
+word Editor::TagAsConstData(const Data* data)
 {
    Debug::ft("Editor.TagAsConstData");
 
-   //  Find the line on which the data's type appears, and insert
-   //  "const" before that type.
+   //  Insert "const" before the data declaration's type.
    //
-   auto type = log.item_->GetTypeSpec()->GetPos();
-   if(type == string::npos) return NotFound("Data type");
-   Insert(type, "const ");
-   return Changed(type);
+   auto type = data->GetTypeSpec();
+   auto pos = type->GetPos();
+   if(pos == string::npos) return NotFound("Data type");
+   Insert(pos, "const ");
+   type->Tags()->SetConst(true);
+   return Changed(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -5266,12 +5271,13 @@ word Editor::TagAsConstFunction(const Function* func)
    auto endsig = FindArgsEnd(func);
    if(endsig == string::npos) return NotFound("End of argument list");
    Insert(endsig + 1, " const");
+   const_cast< Function* >(func)->SetConst(true);
    return Changed(endsig);
 }
 
 //------------------------------------------------------------------------------
 
-word Editor::TagAsConstPointer(const CodeWarning& log)
+word Editor::TagAsConstPointer(const Data* data)
 {
    Debug::ft("Editor.TagAsConstPointer");
 
@@ -5279,13 +5285,13 @@ word Editor::TagAsConstPointer(const CodeWarning& log)
    //  back up from the data item's name.  Search for the name on this line
    //  in case other edits have altered its position.
    //
-   auto data = log.item_->GetPos();
-   if(data == string::npos) return NotFound("Data member");
-   auto name = FindWord(data, log.item_->Name());
+   auto type = data->GetTypeSpec();
+   auto name = FindWord(data->GetPos(), data->Name());
    if(name == string::npos) return NotFound("Member name");
    auto ptr = Rfind(name, "*");
    if(ptr == string::npos) return NotFound("Pointer tag");
    Insert(ptr + 1, " const");
+   type->Tags()->SetConstPtr();
    return Changed(ptr);
 }
 

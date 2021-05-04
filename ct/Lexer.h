@@ -358,7 +358,6 @@ public:
    //  Returns the LineInfo for POS's line.
    //
    const LineInfo* GetLineInfo(size_t pos) const;
-   LineInfo* GetLineInfo(size_t pos);
 
    //  Returns the start of the line that contains POS.
    //
@@ -502,6 +501,10 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
+   //  Returns the LineInfo for POS's line.
+   //
+   LineInfo* GetLineInfo(size_t pos);
+
    //  Returns the location of ID, starting at POS.  Returns string::npos
    //  if STR was not found.  STR must be an identifier or keyword that is
    //  delimited by punctuation.

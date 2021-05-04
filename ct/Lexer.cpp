@@ -223,7 +223,6 @@ void Lexer::CalcDepths()
    int currDepth = 0;     // current depth for indentation
    int nextDepth = 0;     // next depth for indentation
    int lbDepth;           // depth for left brace
-   bool lbCont;           // if left brace's line should be a continuation
    size_t rbPos;          // position of matching right brace
    int semiDepth = -1;    // depth to restore when reaching next semicolon
    size_t commaPos;       // position of comma that sets depths
@@ -1028,10 +1027,13 @@ string Lexer::CheckVerticalSpacing() const
             case TextComment:
                //
                //  Change a blank line between a rule comment and an actual
-               //  comment to an empty comment.
+               //  comment to an empty comment if the rule is not indented.
                //
-               if(currType == BlankLine)
+               if((currType == BlankLine) &&
+                  (source_->at(lines_[currLine - 1].begin) == '/'))
+               {
                   action[currLine] = ChangeToEmptyComment;
+               }
                break;
             }
             break;

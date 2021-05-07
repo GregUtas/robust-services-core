@@ -21,6 +21,7 @@
 //
 #include "CodeWarning.h"
 #include <algorithm>
+#include <cstring>
 #include <iomanip>
 #include <iterator>
 #include <set>
@@ -1147,7 +1148,15 @@ bool CodeWarning::Suppress() const
       break;
 
    case OperatorSpacing:
-      if(fn == "Cxx.cpp") return true;
+   case PunctuationSpacing:
+      if(fn == "Cxx.cpp")
+      {
+         auto& lexer = loc_.GetFile()->GetLexer();
+         auto size = strlen("CxxOp");
+         auto code = lexer.Substr(loc_.GetPos() - size, size);
+         if(code == "CxxOp") return true;
+      }
+      break;
    }
 
    return false;

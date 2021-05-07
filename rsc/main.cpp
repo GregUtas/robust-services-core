@@ -60,8 +60,8 @@
 #include "MainArgs.h"
 #include "RootThread.h"
 #include "Singleton.h"
-#include "SysTypes.h"  // modules follow
-#include "AnModule.h"
+#include "SysTypes.h"
+#include "AnModule.h"  // modules begin here
 //& #include "CbModule.h"
 #include "CnModule.h"
 #include "CtModule.h"

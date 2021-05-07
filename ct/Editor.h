@@ -170,9 +170,9 @@ private:
    word AdjustTags(const CodeWarning& log);
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc);
    word ChangeAccess(const CxxToken* item, ItemDeclAttrs& attrs);
+   word ChangeAssignmentToCtorCall(const CodeWarning& log);
    word ChangeClassToNamespace(const CodeWarning& log);
    word ChangeClassToStruct(const CodeWarning& log);
-   word ChangeDebugFtName(CliThread& cli, const CodeWarning& log);
    word ChangeOperator(const CodeWarning& log);
    word ChangeStructToClass(const CodeWarning& log);
    word EraseAdjacentSpaces(const CodeWarning& log);
@@ -189,8 +189,7 @@ private:
    word EraseScope(const CodeWarning& log);
    word EraseVirtualTag(const CodeWarning& log);
    word EraseVoidArgument(const CodeWarning& log);
-   word InlineDebugFtName(const CodeWarning& log);
-   word InitByCtorCall(const CodeWarning& log);
+   word InlineDebugFtArgument(const CodeWarning& log);
    word InsertBlankLine(const CodeWarning& log);
    word InsertCopyCtorCall(const CodeWarning& log);
    word InsertDataInit(const CodeWarning& log);
@@ -210,6 +209,7 @@ private:
    word MoveFunction(const CodeWarning& log);
    word MoveMemberInit(const CodeWarning& log);
    word RenameArgument(CliThread& cli, const CodeWarning& log);
+   word RenameDebugFtArgument(CliThread& cli, const CodeWarning& log);
    word RenameIncludeGuard(const CodeWarning& log);
    word ReplaceHeading(const CodeWarning& log);
    word ReplaceName(const CodeWarning& log);
@@ -228,7 +228,7 @@ private:
    //  Adds and removes lines to realign vertical spacing.  Invoked by Format
    //  and before writing out code that was changed.
    //
-   word AdjustVerticalSeparation();
+   word AdjustVertically();
 
    //  Converts tabs to spaces.  Invoked by Format and before writing out code
    //  that was changed.
@@ -263,7 +263,7 @@ private:
    //  Adjust the spacing around source_[POS, POS + LEN) based on SPACING.
    //  Returns true if an adjustment occurred.
    //
-   bool AdjustSpacing(size_t pos, size_t len, const string& spacing);
+   bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
 
    //  Returns the first line that follows comments and blanks.
    //
@@ -354,7 +354,7 @@ private:
    //  Change ITEM from a class/struct (FROM) to a struct/class (TO).
    //
    static void ChangeForwards
-      (const CxxToken* item, fixed_string from, fixed_string to);
+      (const CxxToken* item, Cxx::ClassTag from, Cxx::ClassTag to);
 
    //  Fixes LOG, which also involves modifying a data definition.
    //

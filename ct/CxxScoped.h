@@ -833,6 +833,10 @@ public:
    //
    Forward(QualNamePtr& name, Cxx::ClassTag tag);
 
+   //  Sets the type of class.
+   //
+   void SetClassTag(Cxx::ClassTag tag) { tag_ = tag; }
+
    //  Not subclassed.
    //
    ~Forward();
@@ -930,7 +934,7 @@ private:
 
    //  The class's type.
    //
-   const Cxx::ClassTag tag_ : 8;
+   Cxx::ClassTag tag_ : 8;
 
    //  The class's name.
    //

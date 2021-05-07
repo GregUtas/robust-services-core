@@ -440,6 +440,17 @@ struct CxxChar
 
 //------------------------------------------------------------------------------
 //
+//  For adjusting horizontal spacing.
+//
+namespace Spacing
+{
+   constexpr char Unchecked = ' ';  // spacing not determined
+   constexpr char NoGap = '@';      // remove space if there is one
+   constexpr char Gap = '_';        // insert space if there isn't one
+}
+
+//------------------------------------------------------------------------------
+//
 //  Attributes of C++ operators.
 //
 struct CxxOp
@@ -495,8 +506,8 @@ struct CxxOp
    const bool symmetric;
 
    //  Whether spaces should precede and follow the operator when formatted.
-   //  Values are ' '=unchecked, '@'=no space, and '_'=space.  Each entry is
-   //  two characters long: [0] for preceding, and [1] for following.
+   //  Values are from Spacing, above.  Each entry is two characters long: [0]
+   //  for the position before the operator and [1] for the position after it.
    //
    NodeBase::fixed_string spacing;
 

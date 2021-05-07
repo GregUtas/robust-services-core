@@ -24,8 +24,8 @@
 #include "SysSocket.h"
 #include <iosfwd>
 #include <sstream>
-#include <winsock2.h>  // must precede windows.h
-#include <windows.h>
+#include <winsock2.h>
+#include <windows.h>   // must follow winsock2.h
 #include <winerror.h>
 #include "Debug.h"
 #include "IpService.h"

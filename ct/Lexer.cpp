@@ -337,12 +337,7 @@ void Lexer::CalcDepths()
          if(currInfo->depth == DEPTH_NOT_SET) currInfo->depth = lbDepth;
 
          //  Finalize the depth of lines to this point.  Comments between curr_
-         //  and the next parse position will be at nextDepth.  If we didn't
-         //  set the depth of the left brace above, SetDepth will mark it as
-         //  a continuation, which calls for indentation, so only allow this
-         //  if the right brace is also on the same line (except in a nested
-         //  brace initialization, where successive elements should not be
-         //  indented).
+         //  and the next parse position will be at nextDepth.
          //
          SetDepth(currDepth, nextDepth);
          currDepth = nextDepth;
@@ -371,7 +366,7 @@ void Lexer::CalcDepths()
          //  If a right parenthesis is pending, this semicolon appears at the
          //  beginning of a for statement, so continue.  Otherwise, finalize
          //  the depth of lines to this point.  The last keyword is then no
-         //  onger in effect.  And if we were parsing an unbraced conditional,
+         //  longer in effect.  And if we were parsing an unbraced conditional,
          //  undo its indentation by returning to semiDepth.
          //
          if(rparPos == string::npos)
@@ -925,6 +920,26 @@ void Lexer::CheckPunctuation() const
          }
          break;
 
+      case '(':
+         if(WhitespaceChars.find((*source_)[pos + 1]) != string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "(@");
+         break;
+
+      case ')':
+         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@)");
+         break;
+
+      case '[':
+         if(WhitespaceChars.find((*source_)[pos + 1]) != string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "[@");
+         break;
+
+      case ']':
+         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@]");
+         break;
+
       case ';':
          if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@;");
@@ -937,16 +952,6 @@ void Lexer::CheckPunctuation() const
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@,");
          if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, ",_");
-         break;
-
-      case ')':
-         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
-            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@)");
-         break;
-
-      case ']':
-         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
-            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@]");
          break;
 
       case ':':

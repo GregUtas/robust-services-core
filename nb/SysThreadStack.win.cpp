@@ -28,8 +28,8 @@
 #include <new>
 #include <sstream>
 #include <string>
-#include <windows.h>  // must precede dbghelp.h
-#include <dbghelp.h>
+#include <windows.h>
+#include <dbghelp.h>  // must follow windows.h
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"

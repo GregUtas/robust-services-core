@@ -1388,7 +1388,7 @@ void Operation::Check() const
 
       switch(attrs.spacing[0])
       {
-      case '@':
+      case Spacing::NoGap:
          if((WhitespaceChars.find(lchar) != string::npos) &&
             (lexer.LineFindFirst(pos) != pos))
          {
@@ -1399,7 +1399,7 @@ void Operation::Check() const
          }
          break;
 
-      case '_':
+      case Spacing::Gap:
          if((WhitespaceChars.find(lchar) == string::npos) && (lchar != '('))
          {
             Log(OperatorSpacing);
@@ -1409,13 +1409,13 @@ void Operation::Check() const
 
       switch(attrs.spacing[1])
       {
-      case '@':
+      case Spacing::NoGap:
          if((WhitespaceChars.find(rchar) != string::npos) && (rchar != CRLF))
          {
             Log(OperatorSpacing);
          }
          break;
-      case '_':
+      case Spacing::Gap:
          if((WhitespaceChars.find(rchar) == string::npos) && (rchar != ')'))
          {
             Log(OperatorSpacing);

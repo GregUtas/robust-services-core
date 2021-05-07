@@ -153,14 +153,10 @@ SysThread_t SysThread::Create
 {
    Debug::ft("SysThread.Create");
 
-   auto result = _beginthreadex(
-      nullptr,                           // default security attributes
-      stackSize,                         // stack size
-      (_beginthreadex_proc_type) entry,  // thread entry function
-      (void*) client,                    // argument to entry function
-      0,                                 // default creation flags
-      &nid);                             // updates thread's identifier
-
+   //  Create a native thread.
+   //
+   auto result = _beginthreadex(nullptr, stackSize,
+      (_beginthreadex_proc_type) entry, (void*) client, 0, &nid);
    auto handle = (HANDLE) result;
 
    if(handle != nullptr)
@@ -181,13 +177,11 @@ SysSentry_t SysThread::CreateSentry()
 
    //  On another platform, this is likely to be a combination of a
    //  condition variable and mutex, wrapped within an object that is
-   //  private to this file.
+   //  private to this file.  The first false argument indicates that
+   //  the event should be automatically reset when signalled, and the
+   //  second indicates that it is not signalled in its inital state.
    //
-   return CreateEvent(
-      nullptr,   // default security attributes
-      false,     // automatically reset when signalled
-      false,     // initial state not signalled
-      nullptr);  // unnamed
+   return CreateEvent(nullptr, false, false, nullptr);
 }
 
 //------------------------------------------------------------------------------

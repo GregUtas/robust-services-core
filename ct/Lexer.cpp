@@ -26,6 +26,7 @@
 #include <cstring>
 #include <iomanip>
 #include <ios>
+#include <memory>
 #include <ostream>
 #include <set>
 #include <unordered_map>
@@ -35,6 +36,7 @@
 #include "CxxDirective.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
+#include "CxxStatement.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
@@ -480,7 +482,7 @@ void Lexer::CalcDepths()
             if(currChar == '?') ternary = true;
             Advance(1);
          }
-         else if(FindIdentifier(id, true))
+         else if(FindIdentifier(curr_, id, true))
          {
             auto rule = ClassifyIndent(id);
 
@@ -580,7 +582,7 @@ void Lexer::CalcDepths()
                //
                Advance(id.size());
                if(source_->at(curr_) == '{') continue;
-               if(NextIdentifier() == IF_STR)
+               if(NextIdentifier(curr_) == IF_STR)
                {
                   if(source_->rfind(CRLF, curr_) < source_->rfind('e', curr_))
                   {
@@ -984,8 +986,70 @@ void Lexer::CheckPunctuation() const
 
 //------------------------------------------------------------------------------
 
+void Lexer::CheckSwitch(const Switch& code) const
+{
+   Debug::ft("Lexer.CheckSwitch");
+
+   size_t begin, pos, end;
+   if(!code.GetSpan3(begin, pos, end)) return;
+   if(pos == string::npos) return;
+
+   //  Starting at the switch statement's left brace, find successive
+   //  identifiers.  If a case or default label was not immediately
+   //  preceded by a jump statement, log a warning if there isn't a
+   //  fallthrough comment between it and the last identifier.  Skip
+   //  nested code and the rest of a jump statement.
+   //
+   auto info = GetLineInfo(pos);
+   auto depth = info->depth;
+   auto found = true;
+   auto idPos = string::npos;
+   string id;
+
+   while(FindIdentifier(pos, id, false) && (pos <= end))
+   {
+      info = GetLineInfo(pos);
+
+      if(info->depth == depth)
+      {
+         if((id == CASE_STR) || (id == DEFAULT_STR))
+         {
+            if(!found && (idPos != string::npos))
+            {
+               auto fpos = source_->rfind(FALLTHROUGH_STR, pos);
+               if((fpos == string::npos) || (fpos < idPos))
+                  file_->LogPos(pos, NoJumpOrFallthrough);
+            }
+
+            found = false;
+            idPos = string::npos;
+         }
+      }
+      else if(info->depth == depth + 1)
+      {
+         if((id == BREAK_STR) || (id == RETURN_STR) || (id == CONTINUE_STR) ||
+            (id == THROW_STR) || (id == GOTO_STR))
+         {
+            found = true;
+            pos = FindFirstOf(";", pos);
+         }
+         else
+         {
+            found = false;
+            idPos = pos;
+         }
+      }
+
+      pos = NextPos(pos + id.size());
+   }
+}
+
+//------------------------------------------------------------------------------
+
 string Lexer::CheckVerticalSpacing() const
 {
+   Debug::ft("Lexer.CheckVerticalSpacing");
+
    auto size = lines_.size();
    if(size <= 1) return EMPTY_STR;
 
@@ -1320,7 +1384,7 @@ Cxx::Directive Lexer::FindDirective()
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::FindFirstOf(const string& targs) const
+size_t Lexer::FindFirstOf(const string& targs, size_t pos) const
 {
    Debug::ft("Lexer.FindFirstOf");
 
@@ -1328,7 +1392,8 @@ size_t Lexer::FindFirstOf(const string& targs) const
    //  Start by advancing from POS, in case it's a blank or the start of a
    //  comment.  Jump over any literals or nested expressions.
    //
-   auto pos = NextPos(curr_);
+   if(pos == string::npos) pos = curr_;
+   pos = NextPos(pos);
    size_t end;
 
    for(auto size = source_->size(); pos < size; NO_OP)
@@ -1380,69 +1445,56 @@ size_t Lexer::FindFirstOf(const string& targs) const
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::FindFirstOf(size_t pos, const string& chars)
-{
-   Debug::ft("Lexer.FindFirstOf(pos)");
-
-   Reposition(pos);
-   return FindFirstOf(chars);
-}
-
-//------------------------------------------------------------------------------
-
-bool Lexer::FindIdentifier(string& id, bool tokenize)
+bool Lexer::FindIdentifier(size_t& pos, string& id, bool tokenize) const
 {
    Debug::ft("Lexer.FindIdentifier");
 
    if(tokenize) id = "$";  // returned if non-identifier found
 
-   for(auto size = source_->size(); curr_ < size; NO_OP)
+   for(auto size = source_->size(); pos < size; NO_OP)
    {
       auto f = false;
-      auto c = (*source_)[curr_];
+      auto c = (*source_)[pos];
 
       switch(c)
       {
       case QUOTE:
-         curr_ = SkipStrLiteral(curr_, f);
-         Advance(1);
+         pos = SkipStrLiteral(pos, f);
+         pos = NextPos(pos + 1);
          if(tokenize) return true;
          continue;
 
       case APOSTROPHE:
-         curr_ = SkipCharLiteral(curr_);
-         Advance(1);
+         pos = SkipCharLiteral(pos);
+         pos = NextPos(pos + 1);
          if(tokenize) return true;
          continue;
 
       default:
          if(CxxChar::Attrs[c].validFirst)
          {
-            id = NextIdentifier();
+            id = NextIdentifier(pos);
             return true;
          }
 
          if(CxxChar::Attrs[c].validOp)
          {
             if(tokenize) return true;
-            id = NextOperator();
-            Advance(id.size());
+            id = NextOperator(pos);
+            pos = NextPos(pos + id.size());
             continue;
          }
 
          if(CxxChar::Attrs[c].validInt)
          {
-            TokenPtr num;
-
-            if(GetNum(num))
+            if(SkipNum(pos))
             {
-               num.reset();
                if(tokenize) return true;
                continue;
             }
          }
 
-         Advance(1);
+         pos = NextPos(pos + 1);
       }
    }
 
@@ -1509,17 +1561,17 @@ size_t Lexer::FindNonBlank(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-size_t Lexer::FindWord(size_t pos, const string& id)
+size_t Lexer::FindWord(size_t pos, const string& id) const
 {
    Debug::ft("Lexer.FindWord");
 
-   Reposition(pos);
+   pos = NextPos(pos);
    string name;
 
-   while(FindIdentifier(name, false))
+   while(FindIdentifier(pos, name, false))
    {
-      if(name == id) return curr_;
-      Advance(name.size());
+      if(name == id) return pos;
+      pos = NextPos(pos + name.size());
    }
 
    return string::npos;
@@ -1533,7 +1585,7 @@ bool Lexer::GetAccess(Cxx::Access& access)
 
    //  <Access> = ("public" | "protected" | "private")
    //
-   auto str = NextIdentifier();
+   auto str = NextIdentifier(curr_);
 
    if(str.size() < strlen(PUBLIC_STR)) return false;
    else if(str == PUBLIC_STR) access = Cxx::Public;
@@ -1635,7 +1687,7 @@ bool Lexer::GetClassTag(Cxx::ClassTag& tag, bool type)
 
    //  <ClassTag> = ("class" | "struct" | "union" | "typename")
    //
-   auto str = NextIdentifier();
+   auto str = NextIdentifier(curr_);
 
    if(str.size() < strlen(CLASS_STR)) return false;
    else if(str == CLASS_STR) tag = Cxx::ClassType;
@@ -1681,8 +1733,10 @@ void Lexer::GetCVTags(KeywordSet& tags)
          auto result = tags.insert(kwd);
          if(!result.second && (kwd == Cxx::CONST))
          {
-            if(file_ != nullptr) file_->LogPos(curr_, RedundantConst);
+            if(file_ != nullptr)
+               file_->LogPos(curr_, RedundantConst);
          }
+
          Reposition(curr_ + str.size());
          continue;
       }
@@ -1702,7 +1756,7 @@ Cxx::Operator Lexer::GetCxxOp()
    //  Match TOKEN to an operator.  If no match occurs, drop the last character
    //  and keep trying until no characters remain.
    //
-   auto token = NextOperator();
+   auto token = NextOperator(curr_);
 
    while(!token.empty())
    {
@@ -2006,7 +2060,7 @@ bool Lexer::GetName(string& name, Constraint constraint)
 {
    Debug::ft("Lexer.GetName");
 
-   auto id = NextIdentifier();
+   auto id = NextIdentifier(curr_);
    if(id.empty()) return false;
 
    //  There are two exceptions to CONSTRAINT:
@@ -2331,7 +2385,7 @@ Cxx::Operator Lexer::GetPreOp()
    //  Match TOKEN to an operator.  If no match occurs, drop the last character
    //  and keep trying until no characters remain.
    //
-   auto token = NextOperator();
+   auto token = NextOperator(curr_);
 
    while(!token.empty())
    {
@@ -2619,7 +2673,7 @@ Cxx::Directive Lexer::NextDirective(string& str) const
 {
    Debug::ft("Lexer.NextDirective");
 
-   str = NextIdentifier();
+   str = NextIdentifier(curr_);
    if(str.empty()) return Cxx::NIL_DIRECTIVE;
 
    auto match = Cxx::Directives->lower_bound(str);
@@ -2629,15 +2683,15 @@ Cxx::Directive Lexer::NextDirective(string& str) const
 
 //------------------------------------------------------------------------------
 
-string Lexer::NextIdentifier() const
+string Lexer::NextIdentifier(size_t pos) const
 {
    Debug::ft("Lexer.NextIdentifier");
 
    auto size = source_->size();
-   if(curr_ >= size) return EMPTY_STR;
+   if(pos == string::npos) pos = curr_;
+   if(pos >= size) return EMPTY_STR;
 
    string str;
-   auto pos = curr_;
 
    //  We assume that the code already compiles.  This means that we
    //  don't have to screen out reserved words that aren't types.
@@ -2662,7 +2716,7 @@ Cxx::Keyword Lexer::NextKeyword(string& str) const
 {
    Debug::ft("Lexer.NextKeyword");
 
-   str = NextIdentifier();
+   str = NextIdentifier(curr_);
    if(str.empty()) return Cxx::NIL_KEYWORD;
 
    auto first = str.front();
@@ -2690,14 +2744,14 @@ size_t Lexer::NextLineIndentation(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-string Lexer::NextOperator() const
+string Lexer::NextOperator(size_t pos) const
 {
    Debug::ft("Lexer.NextOperator");
 
    auto size = source_->size();
-   if(curr_ >= size) return EMPTY_STR;
+   if(pos == string::npos) pos = curr_;
+   if(pos >= size) return EMPTY_STR;
    string token;
-   auto pos = curr_;
    auto c = (*source_)[pos];
 
    while(CxxChar::Attrs[c].validOp)
@@ -2828,9 +2882,9 @@ string Lexer::NextToken() const
 {
    Debug::ft("Lexer.NextToken");
 
-   auto token = NextIdentifier();
+   auto token = NextIdentifier(curr_);
    if(!token.empty()) return token;
-   return NextOperator();
+   return NextOperator(curr_);
 }
 
 //------------------------------------------------------------------------------
@@ -2839,7 +2893,7 @@ Cxx::Type Lexer::NextType()
 {
    Debug::ft("Lexer.NextType");
 
-   auto token = NextIdentifier();
+   auto token = NextIdentifier(curr_);
    if(token.empty()) return Cxx::NIL_TYPE;
    auto type = Cxx::GetType(token);
    if(type != Cxx::NIL_TYPE) Advance(token.size());
@@ -2913,7 +2967,7 @@ LineType Lexer::PosToType(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Lexer::Preprocess()
+void Lexer::Preprocess() const
 {
    Debug::ft("Lexer.Preprocess");
 
@@ -2923,13 +2977,14 @@ void Lexer::Preprocess()
    auto syms = Singleton< CxxSymbols >::Instance();
    auto file = Context::File();
    auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   auto pos = NextPos(0);
    string id;
 
-   while(FindIdentifier(id, false))
+   while(FindIdentifier(pos, id, false))
    {
       if(id.front() == '#')
       {
-         Reposition(FindLineEnd(curr_));
+         pos = NextPos(FindLineEnd(pos));
          continue;
       }
 
@@ -2943,25 +2998,13 @@ void Lexer::Preprocess()
          if(def->Empty())
          {
             auto code = const_cast< string* >(source_);
-            for(size_t i = 0; i < id.size(); ++i) code->at(curr_ + i) = SPACE;
+            for(size_t i = 0; i < id.size(); ++i) code->at(pos + i) = SPACE;
             def->WasRead();
          }
       }
 
-      Advance(id.size());
+      pos = NextPos(pos + id.size());
    }
-}
-
-//------------------------------------------------------------------------------
-
-void Lexer::PreprocessSource() const
-{
-   Debug::ft("Lexer.PreprocessSource");
-
-   //  Clone this lexer to avoid having to restore it to its current state.
-   //
-   auto clone = *this;
-   clone.Preprocess();
 }
 
 //------------------------------------------------------------------------------
@@ -3110,6 +3153,31 @@ size_t Lexer::SkipCharLiteral(size_t pos) const
    }
 
    return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+bool Lexer::SkipNum(size_t& pos) const
+{
+   Debug::ft("Lexer.SkipNum");
+
+   if(pos >= source_->size()) return false;
+   auto c = (*source_)[pos];
+   if(CxxChar::Attrs[c].intValue < 0) return false;
+
+   while(++pos < source_->size())
+   {
+      c = (*source_)[pos];
+      auto& attrs = CxxChar::Attrs[c];
+
+      if(!attrs.validInt && (attrs.hexValue < 0))
+      {
+         pos = NextPos(pos);
+         return true;
+      }
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------

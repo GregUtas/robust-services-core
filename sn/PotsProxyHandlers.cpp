@@ -247,10 +247,8 @@ EventHandler::Rc PotsProxyPcAnalyzeLocalMessage::ProcessEvent
       switch(cpi->progress)
       {
       case Progress::EndOfSelection:
-         if(pssm.NPsm()->GetState() == CipPsm::IamRcvd)
-            return pssm.RaiseLocalProgress(nextEvent, cpi->progress);
-         else
-            return Suspend;
+         if(pssm.NPsm()->GetState() != CipPsm::IamRcvd) return Suspend;
+         return pssm.RaiseLocalProgress(nextEvent, cpi->progress);
       case Progress::Alerting:
          return pssm.RaiseLocalAlerting(nextEvent);
       default:

@@ -21,10 +21,12 @@
 //
 #include "CxxStatement.h"
 #include <sstream>
+#include "CodeFile.h"
 #include "CodeTypes.h"
 #include "CxxExecute.h"
 #include "CxxNamed.h"
 #include "Debug.h"
+#include "Lexer.h"
 #include "SysTypes.h"
 
 using namespace NodeBase;
@@ -95,6 +97,13 @@ void Case::EnterBlock()
    expr_->EnterBlock();
    auto result = Context::PopArg(true);
    DataSpec::Int->MustMatchWith(result);
+}
+
+//------------------------------------------------------------------------------
+
+bool Case::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   return GetColonSpan(begin, left, end);
 }
 
 //------------------------------------------------------------------------------
@@ -198,6 +207,13 @@ CxxScoped* Catch::FindNthItem(const std::string& name, size_t& n) const
    Debug::ft("Catch.FindNthItem");
 
    return handler_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
+bool Catch::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   return GetParSpan(begin, left, end);
 }
 
 //------------------------------------------------------------------------------
@@ -337,22 +353,71 @@ CxxStatement::CxxStatement(size_t pos)
 {
    Debug::ft("CxxStatement.ctor");
 
-   loc_.SetLoc(Context::File(), pos);
+   SetContext(pos);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxStatement::EnterBlock()
 {
-   Context::SetPos(loc_.GetPos());
+   Context::SetPos(GetPos());
 }
 
 //------------------------------------------------------------------------------
 
-void CxxStatement::UpdatePos
-   (EditorAction action, size_t begin, size_t count, size_t from) const
+bool CxxStatement::GetColonSpan(size_t& begin, size_t& left, size_t& end) const
 {
-   loc_.UpdatePos(action, begin, count, from);
+   //  Note that FindFirstOf skips scope resolution operators, which could
+   //  be necessary if this is a case label.
+   //
+   begin = GetPos();
+   left = string::npos;
+   end = GetFile()->GetLexer().FindFirstOf(":", begin);
+   return (end != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxStatement::GetParSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   auto& lexer = GetFile()->GetLexer();
+   begin = GetPos();
+   auto lpar = lexer.FindFirstOf("(", begin);
+   if(lpar == string::npos) return false;
+   auto rpar = lexer.FindClosing('(', ')', lpar + 1);
+   if(rpar == string::npos) return false;
+   return GetSpan(rpar, left, end);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxStatement::GetSpan(size_t begin, size_t& left, size_t& end) const
+{
+   auto& lexer = GetFile()->GetLexer();
+   left = lexer.FindFirstOf(";{", begin);
+   if(left == string::npos) return false;
+
+   if(lexer.At(left) == ';')
+   {
+      end = left;
+      left = string::npos;
+      return true;
+   }
+
+   end = lexer.FindClosing('{', '}', left + 1);
+   return (end != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxStatement::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   //  This default supports a simple statement that ends at a semicolon.
+   //
+   begin = GetPos();
+   left = string::npos;
+   end = GetFile()->GetLexer().FindFirstOf(";", begin);
+   return (end != string::npos);
 }
 
 //==============================================================================
@@ -424,6 +489,17 @@ CxxScoped* Do::FindNthItem(const std::string& name, size_t& n) const
    Debug::ft("Do.FindNthItem");
 
    return loop_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
+bool Do::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   auto& lexer = GetFile()->GetLexer();
+   begin = GetPos();
+   if(!GetSpan(begin, left, end)) return false;
+   end = lexer.FindFirstOf(";", end);
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -688,6 +764,13 @@ CxxScoped* For::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+bool For::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   return GetParSpan(begin, left, end);
+}
+
+//------------------------------------------------------------------------------
+
 void For::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(initial_ != nullptr) initial_->GetUsages(file, symbols);
@@ -865,6 +948,15 @@ CxxScoped* If::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+bool If::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   if(!GetParSpan(begin, left, end)) return false;
+   if(else_ == nullptr) return true;
+   return GetSpan(end + 1, left, end);
+}
+
+//------------------------------------------------------------------------------
+
 void If::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    Condition::GetUsages(file, symbols);
@@ -968,6 +1060,13 @@ void Label::ExitBlock() const
 
    //  A full compiler would remove the label from a symbol table
    //  here, but we don't bother to do anything with labels.
+}
+
+//------------------------------------------------------------------------------
+
+bool Label::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   return GetColonSpan(begin, left, end);
 }
 
 //------------------------------------------------------------------------------
@@ -1108,6 +1207,8 @@ void Switch::Check() const
 {
    expr_->Check();
    cases_->Check();
+
+   GetFile()->GetLexer().CheckSwitch(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -1145,6 +1246,13 @@ CxxScoped* Switch::FindNthItem(const std::string& name, size_t& n) const
    Debug::ft("Switch.FindNthItem");
 
    return cases_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
+bool Switch::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   return GetParSpan(begin, left, end);
 }
 
 //------------------------------------------------------------------------------
@@ -1280,6 +1388,14 @@ CxxScoped* Try::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+bool Try::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   begin = GetPos();
+   return GetSpan(begin, left, end);
+}
+
+//------------------------------------------------------------------------------
+
 void Try::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    try_->GetUsages(file, symbols);
@@ -1389,6 +1505,13 @@ CxxScoped* While::FindNthItem(const std::string& name, size_t& n) const
    Debug::ft("While.FindNthItem");
 
    return loop_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
+bool While::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+{
+   return GetParSpan(begin, left, end);
 }
 
 //------------------------------------------------------------------------------

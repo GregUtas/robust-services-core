@@ -29,7 +29,6 @@
 #include <utility>
 #include "Cxx.h"
 #include "CxxFwd.h"
-#include "CxxLocation.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
 
@@ -46,12 +45,28 @@ public:
    CxxStatement(const CxxStatement& that) = delete;
    CxxStatement& operator=(const CxxStatement& that) = delete;
    void EnterBlock() override;
-   void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to support a single statement that ends at a semicolon.
+   //
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
 protected:
    explicit CxxStatement(size_t pos);
-private:
-   mutable CxxLocation loc_;
+
+   //  Looks for a statement sequence that starts at BEGIN.  If it contains a
+   //  single statement, LEFT is set to string::npos and END to the position of
+   //  its semicolon.  If it contains multiple statements, LEFT is set to the
+   //  position of its left brace and END to the position of its right brace.
+   //
+   bool GetSpan(size_t begin, size_t& left, size_t& end) const;
+
+   //  Implements GetSpan3 for a statement that consists of a parenthesized
+   //  expression followed by a statement sequence.
+   //
+   bool GetParSpan(size_t& begin, size_t& left, size_t& end) const;
+
+   //  Implements GetSpan3 for a label that ends with a colon.
+   //
+   bool GetColonSpan(size_t& begin, size_t& left, size_t& end) const;
 };
 
 //------------------------------------------------------------------------------
@@ -107,6 +122,7 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
    void Shrink() override;
@@ -134,6 +150,7 @@ public:
    void EnterBlock() override;
    void ExitBlock() const override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
    bool LocateItem(const CxxToken* item, size_t& n) const override;
@@ -175,6 +192,7 @@ public:
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
    bool LocateItem(const CxxToken* item, size_t& n) const override;
@@ -228,6 +246,7 @@ public:
    void EnterBlock() override;
    void ExitBlock() const override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
    bool LocateItem(const CxxToken* item, size_t& n) const override;
@@ -277,6 +296,7 @@ public:
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
    bool LocateItem(const CxxToken* item, size_t& n) const override;
@@ -305,6 +325,7 @@ public:
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    void ExitBlock() const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
    bool InLine() const override { return false; }
    void Shrink() override;
 private:
@@ -369,6 +390,7 @@ public:
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
    bool LocateItem(const CxxToken* item, size_t& n) const override;
@@ -398,6 +420,7 @@ public:
    void EnterBlock() override;
    void ExitBlock() const override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
    bool LocateItem(const CxxToken* item, size_t& n) const override;
@@ -425,6 +448,7 @@ public:
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
    bool LocateItem(const CxxToken* item, size_t& n) const override;

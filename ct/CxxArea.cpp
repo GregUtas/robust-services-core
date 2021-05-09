@@ -1534,8 +1534,7 @@ bool Class::GetSpan3(size_t& begin, size_t& left, size_t& end) const
    auto lexer = GetFile()->GetLexer();
    begin = GetPos();
    if(begin == string::npos) return false;
-   lexer.Reposition(begin);
-   left = lexer.FindFirstOf("{");
+   left = lexer.FindFirstOf("{", begin);
    if(left == string::npos) return false;
    end = lexer.FindClosing('{', '}', left + 1);
    return (end != string::npos);

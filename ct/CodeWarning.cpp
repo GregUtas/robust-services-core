@@ -787,6 +787,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(CtorCouldBeDeleted,
       WarningAttrs(T,
       "Constructor could be deleted")));
+   Attrs_.insert(WarningPair(NoJumpOrFallthrough,
+      WarningAttrs(F,
+      "No jump or fallthrough")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));

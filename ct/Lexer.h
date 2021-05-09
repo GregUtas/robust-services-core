@@ -34,6 +34,11 @@
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
+namespace CodeTools
+{
+   class Switch;
+}
+
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -206,7 +211,7 @@ public:
    //  Until the next #define is reached, look for #defined symbols that map to
    //  empty strings and erase them so that they will not cause parsing errors.
    //
-   void PreprocessSource() const;
+   void Preprocess() const;
 
    //  Sets STR to the next preprocessor directive and returns its enum
    //  constant.  Returns NIL_DIRECTIVE if a directive wasn't found, but
@@ -248,18 +253,14 @@ public:
    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
 
    //  Searches for the next occurrence of a character in TARGS.  Returns the
-   //  position of the first character that was found, else string::npos.  The
-   //  character must be at the same lexical level, meaning that when any of
-   //  { ( [ < " ' are encountered, the parse skips to the closing } ) ] > " '
-   //  (if, in the case of '<', a <...> pair enclose a template specification).
+   //  position of the first character that was found, else string::npos.  If
+   //  POS is not provided, POS is set to curr_.  The character must be at the
+   //  same lexical level: that is, when any of { ( [ < " ' are encountered,
+   //  the parse skips to the closing } ) ] > " ' (if, in the case of '<', a
+   //  <...> pair enclose a template specification).
    //
-   size_t FindFirstOf(const std::string& targs) const;
-
-   //  Returns the first occurrence of a character in CHARS, starting at POS.
-   //  Returns string::npos if none of those characters was found.  Invokes
-   //  Reposition, which changes the current position.
-   //
-   size_t FindFirstOf(size_t pos, const std::string& chars);
+   size_t FindFirstOf
+      (const std::string& targs, size_t pos = std::string::npos) const;
 
    //  Returns true and sets SPEC to the template specification that follows
    //  the name of a template instance.
@@ -475,6 +476,28 @@ public:
    //
    size_t RfindFirstOf(size_t pos, const std::string& chars) const;
 
+   //  Returns the position of the next character to parse, starting at POS.
+   //  The result is POS unless characters are skipped (namely whitespace,
+   //  comments, and character and string literals).  Returns string::npos
+   //  if the end of source_ is reached.
+   //
+   size_t NextPos(size_t pos) const;
+
+   //  Advances POS to the start of the next identifier, which is supplied
+   //  in ID.  The identifier could be a keyword or preprocessor directive.
+   //  Returns true if an identifier was found, else false.  If TOKENIZE is
+   //  set, true is returned if a numeric or punctuation is found, in which
+   //  case ID is set to "$" and curr_ advances to the first position after
+   //  a numeric, whereas it remains at punctuation.
+   //
+   bool FindIdentifier(size_t& pos, std::string& id, bool tokenize) const;
+
+   //  Returns the location of ID, starting at POS.  Returns string::npos
+   //  if STR was not found.  STR must be an identifier or keyword that is
+   //  delimited by punctuation.
+   //
+   size_t FindWord(size_t pos, const std::string& id) const;
+
    //  Characters in the string returned by CheckVerticalSpacing.
    //
    static const char LineOK = '-';
@@ -496,6 +519,11 @@ public:
    //
    NodeBase::word CheckDepth(size_t n) const;
 
+   //  Checks that each case label in the switch statement reference by CODE
+   //  is either preceded by a break statement or a [[fallthrough]].
+   //
+   void CheckSwitch(const Switch& code) const;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -504,21 +532,6 @@ protected:
    //  Returns the LineInfo for POS's line.
    //
    LineInfo* GetLineInfo(size_t pos);
-
-   //  Returns the location of ID, starting at POS.  Returns string::npos
-   //  if STR was not found.  STR must be an identifier or keyword that is
-   //  delimited by punctuation.
-   //
-   size_t FindWord(size_t pos, const std::string& id);
-
-   //  Advances curr_ to the start of the next identifier, which is supplied
-   //  in ID.  The identifier could be a keyword or preprocessor directive.
-   //  Returns true if an identifier was found, else false.  If TOKENIZE is
-   //  set, true is returned if a numeric or punctuation is found, in which
-   //  case ID is set to "$" and curr_ advances to the first position after
-   //  a numeric, whereas it remains at punctuation.
-   //
-   bool FindIdentifier(std::string& id, bool tokenize);
 
    //  Invoked to adjust LineInfo records after editing the code.
    //
@@ -535,22 +548,10 @@ private:
    //
    LineType CalcLineType(size_t n, bool log, bool& cont);
 
-   //  Used by PreprocessSource, which creates a clone of "this" lexer to
-   //  do the work.
+   //  Returns the next identifier (which could be a keyword), starting at POS.
+   //  The first character not allowed in an identifier finalizes the string.
    //
-   void Preprocess();
-
-   //  Returns the position of the next character to parse, starting at POS.
-   //  The result is POS unless characters are skipped (namely whitespace,
-   //  comments, and character and string literals).  Returns string::npos
-   //  if the end of source_ is reached.
-   //
-   size_t NextPos(size_t pos) const;
-
-   //  Returns the next identifier (which could be a keyword).  The first
-   //  character not allowed in an identifier finalizes the string.
-   //
-   std::string NextIdentifier() const;
+   std::string NextIdentifier(size_t pos) const;
 
    //  Returns the next token.  This is a non-empty string from NextIdentifier
    //  or, failing that, a sequence of valid operator characters.  The first
@@ -559,9 +560,9 @@ private:
    //
    std::string NextToken() const;
 
-   //  Returns the next operator (punctuation only).
+   //  Returns the next operator (punctuation only), starting at POS.
    //
-   std::string NextOperator() const;
+   std::string NextOperator(size_t pos) const;
 
    //  Advances over the literal that begins at POS.  Returns the position of
    //  the character that closes the literal.
@@ -605,6 +606,12 @@ private:
    //  and adds them to NUM.
    //
    void GetFloat(long double& num);
+
+   //  Skips a number that starts at POS.  Returns false if a number does not
+   //  appear at POS, else updates POS to the position after the number and
+   //  returns true.
+   //
+   bool SkipNum(size_t& pos) const;
 
    //  Advances curr_ to the start of the next preprocessor directive, which
    //  is returned.

@@ -689,8 +689,7 @@ bool CxxScoped::GetSpan3(size_t& begin, size_t& left, size_t& end) const
    else
       begin = spec->GetPos();
    if(begin == string::npos) return false;
-   lexer.Reposition(begin);
-   end = lexer.FindFirstOf(";");
+   end = lexer.FindFirstOf(";", begin);
    return (end != string::npos);
 }
 

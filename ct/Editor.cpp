@@ -310,6 +310,7 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
          if(over) return order + 17;
          return order + 15;
       }
+      break;
    }
 
    case Cxx::Data:
@@ -377,7 +378,7 @@ bool AreInSameStatement(const CxxToken* item1, const CxxToken* item2)
       auto& editor = file1->GetEditor();
       auto begin = (pos1 < pos2 ? pos1 : pos2);
       auto end = (pos1 > pos2 ? pos1 : pos2);
-      return (editor.FindFirstOf(begin, ";") > end);
+      return (editor.FindFirstOf(";", begin) > end);
    }
 
    return false;
@@ -1143,11 +1144,11 @@ word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)  //i
 
    //  Erase <class>.
    //
-   auto eq = FindFirstOf(first, "=");
+   auto eq = FindFirstOf("=", first);
    if(eq == string::npos) return NotFound("Assignment operator");
    auto cbegin = FindNonBlank(eq + 1);
    if(cbegin == string::npos) return NotFound("Start of class name");
-   auto lpar = FindFirstOf(eq, "(");
+   auto lpar = FindFirstOf("(", eq);
    if(lpar == string::npos) return NotFound("Left parenthesis");
    auto cend = RfindNonBlank(lpar - 1);
    if(cend == string::npos) return NotFound("End of class name");
@@ -1161,7 +1162,7 @@ word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)  //i
 
    //  Remove the '=' and the spaces around it.
    //
-   eq = FindFirstOf(first, "=");
+   eq = FindFirstOf("=", first);
    if(eq == string::npos) return NotFound("Assignment operator");
    auto left = RfindNonBlank(eq - 1);
    auto right = FindNonBlank(eq + 1);
@@ -1169,7 +1170,7 @@ word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)  //i
 
    //  If there are no arguments, remove the parentheses.
    //
-   lpar = FindFirstOf(left, "(");
+   lpar = FindFirstOf("(", left);
    if(lpar == string::npos) return NotFound("Left parenthesis");
    auto rpar = FindClosing('(', ')', lpar + 1);
    if(rpar == string::npos) return NotFound("Right parenthesis");
@@ -1181,7 +1182,7 @@ word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)  //i
    //  If the code spanned two lines, it may be possible to remove the
    //  line break.
    //
-   auto semi = FindFirstOf(lpar - 1, ";");
+   auto semi = FindFirstOf(";", lpar - 1);
    if(!OnSameLine(begin, semi)) EraseLineBreak(begin);
    return Changed(begin);
 }
@@ -1694,11 +1695,11 @@ size_t Editor::CutCode(const CxxToken* item, string& code)
          //  To find the right brace at the end of a function definition, the
          //  search must start after its initial left brace.
          //
-         start = FindFirstOf(begin, "{");
+         start = FindFirstOf("{", begin);
          ++start;
       }
 
-      end = FindFirstOf(start, endchars);
+      end = FindFirstOf(endchars, start);
       if(end == string::npos)
       {
          NotFound("End of code to be edited");
@@ -2372,7 +2373,7 @@ word Editor::EraseSemicolon(const CodeWarning& log)  //i
    //
    auto begin = CurrBegin(log.Pos());
    if(begin == string::npos) return NotFound("Position of semicolon");
-   auto semi = FindFirstOf(begin, ";");
+   auto semi = FindFirstOf(";", begin);
    if(semi == string::npos) return NotFound("Semicolon");
    auto brace = RfindNonBlank(semi - 1);
    if(brace == string::npos) return NotFound("Right brace");
@@ -2478,7 +2479,7 @@ size_t Editor::FindArgsEnd(const Function* func)
 
    auto name = func->GetPos();
    if(name == string::npos) return string::npos;
-   auto lpar = FindFirstOf(name, "(");
+   auto lpar = FindFirstOf("(", name);
    if(lpar == string::npos) return string::npos;
    auto rpar = FindClosing('(', ')', lpar + 1);
    return rpar;
@@ -2669,7 +2670,7 @@ size_t Editor::FindSigEnd(const Function* func)
 
    //  Look for the first semicolon or left brace after the function's name.
    //
-   return FindFirstOf(func->GetPos(), ";{");
+   return FindFirstOf(";{", func->GetPos());
 }
 
 //------------------------------------------------------------------------------
@@ -4463,6 +4464,7 @@ size_t Editor::IntroStart(size_t pos, bool funcName) const
          if(!funcName) return start;
          found = true;
          start = curr;
+         break;
 
       default:
          return start;
@@ -4636,28 +4638,26 @@ void Editor::QualifyReferent(const CxxToken* item, const CxxToken* ref)  //i
    auto qual = ns->ScopedName(false) + SCOPE_STR;
    size_t pos, end;
    if(!item->GetSpan2(pos, end)) return;
-   Reposition(pos);
+   pos = NextPos(pos);
    string name;
 
-   while(FindIdentifier(name, false) && (Curr() <= end))
+   while(FindIdentifier(pos, name, false) && (Curr() <= end))
    {
       if(name == *symbol)
       {
          //  Qualify NAME with NS if it is not already qualified.
          //
-         pos = Curr();
-
          if(source_.rfind(SCOPE_STR, pos) != (pos - strlen(SCOPE_STR)))
          {
             Insert(pos, qual);
             Changed();
-            Advance(qual.size());
+            pos = NextPos(pos + qual.size());
          }
       }
 
       //  Look for the next name after the current one.
       //
-      Advance(name.size());
+      pos = NextPos(pos + name.size());
    }
 }
 
@@ -4712,7 +4712,7 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)  //i
    case AnonymousArgument:
    {
       auto type = func->GetArgs().at(index)->GetTypeSpec()->GetPos();
-      type = FindFirstOf(type, ",)");
+      type = FindFirstOf(",)", type);
       if(type == string::npos) return NotFound("End of argument");
       argName.insert(0, 1, SPACE);
       Insert(type, argName);
@@ -4794,7 +4794,7 @@ word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //i
       //  An fn_name definition was not found, so the Debug::ft invocation
       //  must have used a string literal.  Replace it.
       //
-      auto lpar = FindFirstOf(cpos, "(");
+      auto lpar = FindFirstOf("(", cpos);
       if(lpar == string::npos) return NotFound("Left parenthesis");
       auto rpar = FindClosing('(', ')', lpar + 1);
       if(rpar == string::npos) return NotFound("Right parenthesis");
@@ -4815,7 +4815,7 @@ word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //i
 
    if(LineSize(lpos) - 1 > LineLengthMax())
    {
-      auto epos = FindFirstOf(dpos, "=");
+      auto epos = FindFirstOf("=", dpos);
       if(epos != string::npos) InsertLineBreak(epos + 1);
    }
 
@@ -5336,7 +5336,7 @@ word Editor::TagAsDefaulted(const Function* func)
    }
    else
    {
-      auto right = FindFirstOf(endsig + 1, "}");
+      auto right = FindFirstOf("}", endsig + 1);
       if(right == string::npos) return NotFound("Right brace");
       Erase(endsig, right - endsig + 1);
       Insert(endsig, "= default;");

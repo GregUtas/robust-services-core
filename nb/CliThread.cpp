@@ -654,6 +654,7 @@ void CliThread::ReadCommands()
             //  Redisplay the prompt again only if reading from the console.
             //
             skip = ibuf->ReadingFromFile();
+            break;
 
          case StreamBadChar:
             //

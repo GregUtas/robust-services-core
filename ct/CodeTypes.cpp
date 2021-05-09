@@ -76,6 +76,7 @@ fixed_string ELSE_STR             = "else";
 fixed_string ENUM_STR             = "enum";
 fixed_string EXPLICIT_STR         = "explicit";
 fixed_string EXTERN_STR           = "extern";
+fixed_string FALLTHROUGH_STR      = "[[fallthrough]]";
 fixed_string FALSE_STR            = "false";
 fixed_string FINAL_STR            = "final";
 fixed_string FLOAT_STR            = "float";

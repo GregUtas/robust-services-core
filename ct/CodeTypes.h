@@ -67,6 +67,7 @@ extern NodeBase::fixed_string ELSE_STR;
 extern NodeBase::fixed_string ENUM_STR;
 extern NodeBase::fixed_string EXPLICIT_STR;
 extern NodeBase::fixed_string EXTERN_STR;
+extern NodeBase::fixed_string FALLTHROUGH_STR;
 extern NodeBase::fixed_string FALSE_STR;
 extern NodeBase::fixed_string FINAL_STR;
 extern NodeBase::fixed_string FLOAT_STR;
@@ -557,6 +558,7 @@ enum Warning
    CopyCtorNotDeleted,       // base for singletons should delete copy ctor
    CopyOperNotDeleted,       // base for singletons should delete copy operator
    CtorCouldBeDeleted,       // could be namespace but has non-public members
+   NoJumpOrFallthrough,      // no jump or [[fallthrough]] above case or default
    Warning_N                 // number of warnings
 };
 

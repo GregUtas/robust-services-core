@@ -286,7 +286,7 @@ void Parser::Enter(SourceType source, const string& venue,
    farthest_ = 0;
    cause_ = 0;
    lexer_.Initialize(code, file);
-   if(preprocess) lexer_.PreprocessSource();
+   if(preprocess) lexer_.Preprocess();
 }
 
 //------------------------------------------------------------------------------
@@ -3845,7 +3845,7 @@ bool Parser::HandleDefine()
       macro->SetExpr(expr);
    }
 
-   lexer_.PreprocessSource();
+   lexer_.Preprocess();
    return true;
 }
 

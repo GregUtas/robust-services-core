@@ -88,11 +88,11 @@ void* SysMemory::Alloc(void* addr, size_t size, MemoryProtection attrs)
 
 fn_name SysMemory_Free = "SysMemory.Free";
 
-bool SysMemory::Free(void* addr, size_t size)
+bool SysMemory::Free(void* addr)
 {
    Debug::ft(SysMemory_Free);
 
-   if(VirtualFree(addr, size, MEM_RELEASE)) return true;
+   if(VirtualFree(addr, 0, MEM_RELEASE)) return true;
 
    auto err = GetLastError();
    Debug::SwLog(SysMemory_Free, "failed to free memory", err);

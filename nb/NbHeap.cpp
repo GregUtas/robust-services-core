@@ -381,7 +381,7 @@ NbHeap::~NbHeap()
 
    std::unique_ptr< SysMutex > lock(heap_->lock.release());
    SetPermissions(MemReadWrite);
-   SysMemory::Free(heap_, 0);
+   SysMemory::Free(heap_);
    heap_ = nullptr;
    lock->Release();
    lock.reset();

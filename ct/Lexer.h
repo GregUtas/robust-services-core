@@ -396,9 +396,10 @@ public:
    //
    bool OnSameLine(size_t pos1, size_t pos2) const;
 
-   //  Returns true if the code starting at POS matches STR.
+   //  Uses string::compare to compare the code starting at POS with STR.
+   //  Returns -2 if POS is out of range.
    //
-   bool CodeMatches(size_t pos, const std::string& str) const;
+   int CompareCode(size_t pos, const std::string& str) const;
 
    //  Returns the position of any comment that follows POS on its line.
    //

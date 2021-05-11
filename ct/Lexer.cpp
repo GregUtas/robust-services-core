@@ -245,7 +245,7 @@ void Lexer::CalcDepths()
 
    for(auto size = source_->size(); curr_ < size; NO_OP)
    {
-      auto currChar = source_->at(curr_);
+      auto currChar = (*source_)[curr_];
 
       switch(currChar)
       {
@@ -253,7 +253,7 @@ void Lexer::CalcDepths()
          //
          //  Push this left brace's role onto the stack.
          //
-         prevChar = source_->at(prev_);
+         prevChar = (*source_)[prev_];
 
          if(BraceInitPrevChars.find(prevChar) != string::npos)
             lbStack.push_back(LB_Init);
@@ -395,7 +395,7 @@ void Lexer::CalcDepths()
          //  (g) after an access control (handled below, in IndentControl)
          do
          {
-            if(source_->at(curr_ + 1) == ':')
+            if((*source_)[curr_ + 1] == ':')
             {
                Advance(1);  // (a)
                break;
@@ -410,7 +410,7 @@ void Lexer::CalcDepths()
             }
 
             auto pos = FindFirstOf("{;");
-            if(source_->at(pos) == ';') break;  // (d)
+            if((*source_)[pos] == ';') break;  // (d)
 
             ctor = true;
             nextDepth = currDepth + 1;
@@ -441,7 +441,7 @@ void Lexer::CalcDepths()
                currDepth -= 2;
             }
 
-            if(source_->at(curr_) == '{') continue;
+            if((*source_)[curr_] == '{') continue;
             if(semiDepth < 0) semiDepth = currDepth;
             ++currDepth;
             continue;
@@ -581,7 +581,7 @@ void Lexer::CalcDepths()
                //  IndentConditional case above and get processed as usual.
                //
                Advance(id.size());
-               if(source_->at(curr_) == '{') continue;
+               if((*source_)[curr_] == '{') continue;
                if(NextIdentifier(curr_) == IF_STR)
                {
                   if(source_->rfind(CRLF, curr_) < source_->rfind('e', curr_))
@@ -839,13 +839,13 @@ word Lexer::CheckDepth(size_t n) const
    //  A string literal is exempt if it is too long to be indented or
    //  if it contains a continuation.
    //
-   if(source_->at(first) == QUOTE)
+   if((*source_)[first] == QUOTE)
    {
       if(LineSize(info.begin) + IndentSize() > LineLengthMax()) return -1;
       auto prev = RfindNonBlank(lines_[n].begin - 1);
-      if(source_->at(prev) == QUOTE) return -1;
+      if((*source_)[prev] == QUOTE) return -1;
       auto last = RfindNonBlank(lines_[n + 1].begin - 1);
-      if(source_->at(last) == QUOTE) return -1;
+      if((*source_)[last] == QUOTE) return -1;
    }
 
    return desired;
@@ -1099,7 +1099,7 @@ string Lexer::CheckVerticalSpacing() const
                //  comment to an empty comment if the rule is not indented.
                //
                if((currType == BlankLine) &&
-                  (source_->at(lines_[currLine - 1].begin) == '/'))
+                  ((*source_)[lines_[currLine - 1].begin] == '/'))
                {
                   action[currLine] = ChangeToEmptyComment;
                }
@@ -1185,12 +1185,12 @@ string Lexer::CheckVerticalSpacing() const
 
 //------------------------------------------------------------------------------
 
-bool Lexer::CodeMatches(size_t pos, const std::string& str) const
+int Lexer::CompareCode(size_t pos, const std::string& str) const
 {
-   Debug::ft("Lexer.CodeMatches");
+   Debug::ft("Lexer.CompareCode");
 
-   if(pos >= source_->size()) return false;
-   return (source_->compare(pos, str.size(), str) == 0);
+   if(pos >= source_->size()) return -2;
+   return source_->compare(pos, str.size(), str);
 }
 
 //------------------------------------------------------------------------------
@@ -2909,9 +2909,9 @@ bool Lexer::NoCodeFollows(size_t pos) const
    auto crlf = source_->find_first_of(CRLF, pos);
    pos = source_->find_first_not_of(WhitespaceChars, pos);
    if(pos >= crlf) return true;
-   if(CodeMatches(pos, COMMENT_STR)) return true;
+   if(CompareCode(pos, COMMENT_STR) == 0) return true;
 
-   if(CodeMatches(pos, COMMENT_BEGIN_STR))
+   if(CompareCode(pos, COMMENT_BEGIN_STR) == 0)
    {
       pos = source_->find(COMMENT_END_STR, pos + 2);
       if(pos >= crlf) return true;
@@ -2998,7 +2998,7 @@ void Lexer::Preprocess() const
          if(def->Empty())
          {
             auto code = const_cast< string* >(source_);
-            for(size_t i = 0; i < id.size(); ++i) code->at(pos + i) = SPACE;
+            for(size_t i = 0; i < id.size(); ++i) (*code)[pos + i] = SPACE;
             def->WasRead();
          }
       }

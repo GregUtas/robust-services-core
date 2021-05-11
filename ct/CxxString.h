@@ -50,8 +50,8 @@ namespace CodeTools
    //  character not in CHARS.  Returns string::npos if no such character is
    //  found.  Starts at the end of the string if OFF is string::npos.
    //
-   size_t rfind_first_not_of
-      (const std::string& str, size_t off, const std::string& chars);
+   size_t rfind_first_not_of(const std::string& str,
+      const std::string& chars, size_t off = std::string::npos);
 
    //  For matching a name and template arguments, as they appears in source
    //  code, to a template instance.

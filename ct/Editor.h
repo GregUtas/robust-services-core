@@ -269,10 +269,6 @@ private:
    //
    size_t PrologEnd() const;
 
-   //  Returns true if POS is the start of HASH, a preprocessor directive.
-   //
-   bool IsDirective(size_t pos, fixed_string hash) const;
-
    //  Returns the location of the first #include.  Returns end() if no
    //  #include was found.
    //

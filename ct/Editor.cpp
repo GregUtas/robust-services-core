@@ -574,7 +574,7 @@ string DemangleInclude(string& code)
 
    auto front = code.find_first_of(FrontChars);
    if(front == string::npos) return code;
-   auto back = rfind_first_not_of(code, code.size() - 1, WhitespaceChars);
+   auto back = rfind_first_not_of(code, WhitespaceChars);
 
    switch(FrontChars.find_first_of(code[front]))
    {
@@ -928,7 +928,7 @@ bool Editor::AdjustHorizontally(size_t pos, size_t len, const string& spacing)
    }
    else if(spacing[0] == Spacing::Gap)
    {
-      if(WhitespaceChars.find(At(prev)) == string::npos)
+      if(!IsBlank(source_[prev]))
       {
          Insert(pos, SPACE_STR);
          ++next;
@@ -947,7 +947,7 @@ bool Editor::AdjustHorizontally(size_t pos, size_t len, const string& spacing)
    }
    else if(spacing[1] == Spacing::Gap)
    {
-      if(WhitespaceChars.find(At(next)) == string::npos)
+      if(!IsBlank(source_[next]))
       {
          Insert(next, SPACE_STR);
          changed = true;
@@ -2190,13 +2190,13 @@ word Editor::EraseEmptyNamespace(size_t pos)  //i
    //  else just report success.
    //
    if(pos == string::npos) return EditSucceeded;
-   if(!CodeMatches(pos, "}")) return EditSucceeded;
+   if(source_[pos] != '}') return EditSucceeded;
 
    auto p1 = PrevBegin(pos);
    if(p1 == 0) return EditSucceeded;
    auto p2 = PrevBegin(p1);
 
-   if(CodeMatches(p2, NAMESPACE_STR) && (source_[p1] == '{'))
+   if((CompareCode(p2, NAMESPACE_STR) == 0) && (source_[p1] == '{'))
    {
       auto end = CurrEnd(pos);
       Erase(p2, end - p2 + 1);
@@ -2502,7 +2502,7 @@ size_t Editor::FindCutBegin(const CxxToken* item) const
    {
       next = source_.find_first_of(",(:;{}", next);
       if(next >= targ) break;
-      if(CodeMatches(next, SCOPE_STR))
+      if(CompareCode(next, SCOPE_STR) == 0)
          ++next;
       else
          pos = next + 1;
@@ -3422,7 +3422,7 @@ size_t Editor::IncludesBegin() const
 
    for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
    {
-      if(IsDirective(pos, HASH_INCLUDE_STR)) return pos;
+      if(CompareCode(pos, HASH_INCLUDE_STR) == 0) return pos;
    }
 
    return string::npos;
@@ -3436,7 +3436,7 @@ size_t Editor::IncludesEnd() const
 
    for(auto pos = IncludesBegin(); pos != string::npos; pos = NextBegin(pos))
    {
-      if(IsDirective(pos, HASH_INCLUDE_STR)) continue;
+      if(CompareCode(pos, HASH_INCLUDE_STR) == 0) continue;
       if(NoCodeFollows(pos)) continue;
 
       //  We found something else.  Back up to the last #include and return
@@ -3763,17 +3763,17 @@ word Editor::InsertForward(const CodeWarning& log)  //i
 
    for(auto pos = PrologEnd(); pos != string::npos; pos = NextBegin(pos))
    {
-      if(CodeMatches(pos, NAMESPACE_STR))
+      if(CompareCode(pos, NAMESPACE_STR) == 0)
       {
          //  If this namespace matches NSPACE, add the declaration to it.
          //  If this namespace's name is alphabetically after NSPACE, add
          //  the declaration before it, along with its namespace.
          //
-         auto comp = source_.compare(pos, nspace.size(), nspace);
+         auto comp = CompareCode(pos, nspace);
          if(comp == 0) return InsertForward(pos, forward);
          if(comp > 0) return InsertNamespaceForward(pos, nspace, forward);
       }
-      else if(CodeMatches(pos, USING_STR) || (pos == begin))
+      else if((CompareCode(pos, USING_STR) == 0) || (pos == begin))
       {
          //  We have now passed any existing forward declarations, so add
          //  the new declaration here, along with its namespace.
@@ -3789,7 +3789,7 @@ word Editor::InsertForward(const CodeWarning& log)  //i
 
 word Editor::InsertForward(size_t pos, const string& forward)  //i
 {
-   Debug::ft("Editor.InsertForward(iter)");
+   Debug::ft("Editor.InsertForward(pos)");
 
    //  POS references a namespace that matches the one for a new forward
    //  declaration.  Insert the new declaration alphabetically within the
@@ -3801,7 +3801,7 @@ word Editor::InsertForward(size_t pos, const string& forward)  //i
       auto first = LineFindFirst(pos);
       if(source_[first] == '{') continue;
 
-      auto comp = source_.compare(pos, forward.size(), forward);
+      auto comp = CompareCode(pos, forward);
       if(comp == 0) return Report("Previously inserted.");
 
       if((comp > 0) || (source_[first] == '}'))
@@ -4399,14 +4399,14 @@ word Editor::InsertUsing(const CodeWarning& log)  //i
 
    for(auto pos = PrologEnd(); pos != string::npos; pos = NextBegin(pos))
    {
-      if(CodeMatches(pos, USING_STR))
+      if(CompareCode(pos, USING_STR) == 0)
       {
          //  If this using statement is alphabetically after STATEMENT,
          //  add the new statement before it.
          //
          usings = true;
 
-         if(source_.compare(pos, statement.size(), statement) > 0)
+         if(CompareCode(pos, statement) > 0)
          {
             InsertLine(pos, statement);
             return Changed(pos);
@@ -4476,13 +4476,6 @@ size_t Editor::IntroStart(size_t pos, bool funcName) const
 
 //------------------------------------------------------------------------------
 
-bool Editor::IsDirective(size_t pos, fixed_string hash) const
-{
-   return (source_.compare(pos, strlen(hash), hash) == 0);
-}
-
-//------------------------------------------------------------------------------
-
 size_t Editor::LineAfterItem(const CxxToken* item) const
 {
    Debug::ft("Editor.LineAfterItem");
@@ -4530,7 +4523,7 @@ void Editor::MangleIncludes()
 
    for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
    {
-      if(IsDirective(pos, HASH_INCLUDE_STR))
+      if(CompareCode(pos, HASH_INCLUDE_STR) == 0)
       {
          auto incl = GetCode(pos);
          MangleInclude(incl);
@@ -4832,8 +4825,7 @@ word Editor::RenameIncludeGuard(const CodeWarning& log)  //i
    //
    auto ifn = CurrBegin(log.Pos());
    if(ifn == string::npos) return NotFound("Position of #define");
-   if(!IsDirective(ifn, HASH_IFNDEF_STR))
-      return NotFound(HASH_IFNDEF_STR);
+   if(CompareCode(ifn, HASH_IFNDEF_STR) != 0) return NotFound(HASH_IFNDEF_STR);
    auto guard = log.File()->MakeGuardName();
    ifn += strlen(HASH_IFNDEF_STR) + 1;
    auto end = CurrEnd(ifn) - 1;
@@ -5163,7 +5155,7 @@ word Editor::SortIncludes()
 
    for(auto pos = 0; pos != string::npos; pos = NextBegin(pos))
    {
-      if(IsDirective(pos, HASH_INCLUDE_STR))
+      if(CompareCode(pos, HASH_INCLUDE_STR) == 0)
       {
          includes.push_back(GetCode(pos));
       }
@@ -5379,7 +5371,7 @@ word Editor::TagAsNoexcept(const Function* func)
    //  after it, else insert "noexcept" after the right parenthesis.
    //
    auto cons = FindNonBlank(rpar + 1);
-   if(CodeMatches(cons, CONST_STR))
+   if(CompareCode(cons, CONST_STR) == 0)
    {
       Insert(cons + strlen(CONST_STR), " noexcept");
       return Changed(cons);
@@ -5834,7 +5826,7 @@ word Editor::Write()
    //
    for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
    {
-      if(IsDirective(pos, HASH_INCLUDE_STR))
+      if(CompareCode(pos, HASH_INCLUDE_STR) == 0)
       {
          auto incl = GetCode(pos);
          DemangleInclude(incl);

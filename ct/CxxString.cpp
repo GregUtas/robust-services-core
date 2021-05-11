@@ -510,7 +510,7 @@ char LastCodeChar(const string& s, size_t slashSlashPos)
 {
    if(slashSlashPos == string::npos) return s.back();
 
-   auto pos = rfind_first_not_of(s, slashSlashPos - 1, WhitespaceChars);
+   auto pos = rfind_first_not_of(s, WhitespaceChars, slashSlashPos - 1);
    return s.at(pos);
 }
 
@@ -762,12 +762,13 @@ size_t Replace
 
 //------------------------------------------------------------------------------
 
-size_t rfind_first_not_of(const string& str, size_t off, const string& chars)
+size_t rfind_first_not_of(const string& str, const string& chars, size_t off)
 {
+   if(off == string::npos) off = str.size() - 1;
+
    for(NO_OP; off != string::npos; --off)
    {
-      auto c = str.at(off);
-      if(chars.find(c) == string::npos) return off;
+      if(chars.find(str.at(off)) == string::npos) return off;
    }
 
    return string::npos;

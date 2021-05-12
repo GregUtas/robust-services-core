@@ -1291,6 +1291,15 @@ void Data::GetInitName(QualNamePtr& qualName) const
 
 //------------------------------------------------------------------------------
 
+bool Data::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Data.GetSpan");
+
+   return GetTypeSpan(begin, end);
+}
+
+//------------------------------------------------------------------------------
+
 bool Data::GetStrValue(string& str) const
 {
    Debug::ft("Data.GetStrValue");
@@ -1683,16 +1692,6 @@ void FuncData::AddToXref()
 
 //------------------------------------------------------------------------------
 
-std::string FuncData::BeginChars(char end) const
-{
-   Debug::ft("FuncData.BeginChars");
-
-   if(first_ != this) return ",";
-   return (next_ == nullptr ? EMPTY_STR : "$");
-}
-
-//------------------------------------------------------------------------------
-
 void FuncData::Check() const
 {
    Debug::ft("FuncData.Check");
@@ -1760,15 +1759,6 @@ void FuncData::DisplayItem(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-std::string FuncData::EndChars() const
-{
-   Debug::ft("FuncData.EndChars");
-
-   return (next_ == nullptr ? ";" : ",");
-}
-
-//------------------------------------------------------------------------------
-
 void FuncData::EnterBlock()
 {
    Debug::ft("FuncData.EnterBlock");
@@ -1807,6 +1797,42 @@ void FuncData::ExitBlock() const
    auto cls = DirectClass();
    if(cls != nullptr) cls->WasCalled(PureDtor, this);
    if(next_ != nullptr) next_->ExitBlock();
+}
+
+//------------------------------------------------------------------------------
+
+bool FuncData::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("FuncData.GetSpan");
+
+   if((first_ == this) && (next_ == nullptr))
+   {
+      //  Cut the entire data item.
+      //
+      return GetTypeSpan(begin, end);
+   }
+
+   auto& lexer = GetFile()->GetLexer();
+   auto pos = GetPos();
+
+   if(first_ == this)
+   {
+      //  For a data item, GetPos() is the position of its name, so it
+      //  excludes the type.  Cut from the name to the following comma.
+      //
+      begin = pos;
+      end = lexer.FindFirstOf(",");
+   }
+   else
+   {
+      //  Cut from the preceding comma to the position before the next
+      //  comma or semicolon.
+      //
+      begin = lexer.RfindFirstOf(pos, ",");
+      end = lexer.FindFirstOf(",;", pos) - 1;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3454,15 +3480,6 @@ void Function::DisplayInfo(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-string Function::EndChars() const
-{
-   Debug::ft("Function.EndChars");
-
-   return ((impl_ != nullptr) ? "}" : ";");
-}
-
-//------------------------------------------------------------------------------
-
 void Function::EnterBlock()
 {
    Debug::ft("Function.EnterBlock");
@@ -3956,12 +3973,11 @@ CxxScope* Function::GetScope() const
 
 //------------------------------------------------------------------------------
 
-bool Function::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+bool Function::GetSpan(size_t& begin, size_t& left, size_t& end) const
 {
-   Debug::ft("Function.GetSpan3");
+   Debug::ft("Function.GetSpan");
 
-   CxxScoped::GetSpan3(begin, left, end);
-   left = string::npos;
+   GetTypeSpan(begin, end);
    if(impl_ == nullptr) return (end != string::npos);
 
    auto& lexer = GetFile()->GetLexer();
@@ -5371,6 +5387,15 @@ void SpaceDefn::AddToXref()
 void SpaceDefn::GetDecls(std::set< CxxNamed* >& items)
 {
    items.insert(this);
+}
+
+//------------------------------------------------------------------------------
+
+bool SpaceDefn::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("SpaceDefn.GetSpan");
+
+   return GetBracedSpan(begin, left, end);
 }
 
 //------------------------------------------------------------------------------

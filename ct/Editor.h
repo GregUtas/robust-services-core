@@ -315,10 +315,11 @@ private:
    //
    size_t FindAndCutInclude(size_t pos, const string& incl);
 
-   //  Invoked after removing a forward declaration at POS.  If the declaration
-   //  was in a namespace that is now empty, erases the "namespace <name> { }".
+   //  Invoked after removing a forward declaration at POS.  NS is the namespace
+   //  that contained the declaration.  If it no longer contains any items, it
+   //  is erased.
    //
-   word EraseEmptyNamespace(size_t pos);
+   word EraseEmptyNamespace(const SpaceDefn* ns);
 
    //  Inserts a FORWARD declaration at POS, which is a namespace definition
    //  that should include FORWARD.
@@ -438,7 +439,7 @@ private:
    //  Returns the location of the right parenthesis after a function's
    //  argument list.  Returns string::npos on failure.
    //
-   size_t FindArgsEnd(const Function* func);
+   size_t FindArgsEnd(const Function* func) const;
 
    //  Returns the location of the semicolon after a function's declaration
    //  or the left brace that begins its definition.  Returns string::npos
@@ -529,10 +530,15 @@ private:
    //
    void InsertPatchDefn(const Class* cls, const FuncDefnAttrs& attrs);
 
-   //  Finds the start of ITEM and backs up to find the starting point for
-   //  cutting the item.  Returns string::npos on failure.
+   //  Invoked when an item that starts at POS will be cut.  Returns the
+   //  first position on the same line that has no punctuation before POS.
+   //  Returns string::npos on failure.
    //
-   size_t FindCutBegin(const CxxToken* item) const;
+   size_t FindCutBegin(size_t pos) const;
+
+   //  Returns true if a trailing comment starts at or after POS.
+   //
+   bool TrailingCommentFollows(size_t pos) const;
 
    //  Cuts and returns the code associated with ITEM in CODE.  Comments on
    //  preceding lines, up to the next line of code, are also erased if a

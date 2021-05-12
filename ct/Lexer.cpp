@@ -1058,8 +1058,10 @@ string Lexer::CheckVerticalSpacing() const
 
    for(size_t currLine = 1; currLine < size; ++currLine)
    {
+      auto prevLine = currLine - 1;
       auto currType = lines_[currLine].type;
-      auto nextType = (currLine < size ? lines_[currLine + 1].type : BlankLine);
+      auto nextLine = currLine + 1;
+      auto nextType = (nextLine < size ? lines_[nextLine].type : LineType_N);
 
       switch(currType)
       {
@@ -1089,7 +1091,9 @@ string Lexer::CheckVerticalSpacing() const
             switch(nextType)
             {
             case RuleComment:
-               action[currLine - 1] = DeleteLine;
+            case CloseBrace:
+            case LineType_N:
+               action[prevLine] = DeleteLine;
                action[currLine] = DeleteLine;
                break;
 
@@ -1099,7 +1103,7 @@ string Lexer::CheckVerticalSpacing() const
                //  comment to an empty comment if the rule is not indented.
                //
                if((currType == BlankLine) &&
-                  ((*source_)[lines_[currLine - 1].begin] == '/'))
+                  ((*source_)[lines_[prevLine].begin] == '/'))
                {
                   action[currLine] = ChangeToEmptyComment;
                }
@@ -1112,22 +1116,22 @@ string Lexer::CheckVerticalSpacing() const
       case RuleComment:
          if(!LineTypeAttr::Attrs[prevType].isBlank)
             action[currLine] = InsertBlank;
-         if(!LineTypeAttr::Attrs[nextType].isBlank)
-            action[currLine + 1] = InsertBlank;
+         if(!LineTypeAttr::Attrs[nextType].isBlank && (nextLine < size))
+            action[nextLine] = InsertBlank;
          break;
 
       case OpenBrace:
       case CloseBrace:
       case CloseBraceSemicolon:
          if(LineTypeAttr::Attrs[prevType].isBlank)
-            action[currLine - 1] = DeleteLine;
+            action[prevLine] = DeleteLine;
          break;
 
       case AccessControl:
          if(LineTypeAttr::Attrs[prevType].isBlank)
-            action[currLine - 1] = DeleteLine;
+            action[prevLine] = DeleteLine;
          if(LineTypeAttr::Attrs[nextType].isBlank)
-            action[currLine + 1] = DeleteLine;
+            action[nextLine] = DeleteLine;
 
          switch(nextType)
          {

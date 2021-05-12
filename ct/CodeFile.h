@@ -99,7 +99,7 @@ public:
 
    //  Finds the namespace definition that contains ITEM.
    //
-   SpaceDefn* FindNamespaceDefn(const CxxNamed* item) const;
+   SpaceDefn* FindNamespaceDefn(const CxxToken* item) const;
 
    //  Returns the using statement, if any, that makes ITEM visible within
    //  this file or SCOPE because it matches fqName to at least PREFIX.

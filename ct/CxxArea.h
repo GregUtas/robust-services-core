@@ -596,11 +596,6 @@ public:
    //
    QualName* GetQualName() const override { return name_.get(); }
 
-   //  Overridden to set LEFT and END to the positions of the left and right
-   //  braces.
-   //
-   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
-
    //  Overridden to return the class if it is a class template.
    //
    CxxScope* GetTemplate() const override;
@@ -756,6 +751,11 @@ private:
    //  Checks that the class's functions use the "override" tag when applicable.
    //
    void CheckOverrides() const;
+
+   //  Overridden to set LEFT and END to the positions of the left and right
+   //  braces.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
    //  The class's name.
    //
@@ -1006,10 +1006,6 @@ public:
    //  Overridden to log warnings associated with the namespace's declarations.
    //
    void Check() const override;
-
-   //  A namespace definition is not cut by itself.
-   //
-   std::string EndChars() const override { return NodeBase::EMPTY_STR; }
 
    //  Overridden to display the namespace and its declarations.
    //

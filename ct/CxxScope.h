@@ -556,6 +556,10 @@ private:
    //
    void SetInited();
 
+   //  Overridden to return the declaration and/or definition.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  Set for extern data.
    //
    bool extern_ : 1;
@@ -897,10 +901,6 @@ public:
    //
    void AddToXref() override;
 
-   //  Overridden to support multiple declarations on the same line.
-   //
-   std::string BeginChars(char end) const override;
-
    //  Overridden to log warnings associated with the data.
    //
    void Check() const override;
@@ -909,10 +909,6 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-
-   //  Overridden to support multiple declarations on the same line.
-   //
-   std::string EndChars() const override;
 
    //  Overridden to make the item visible as a local.
    //
@@ -955,6 +951,12 @@ private:
    //  Invoked by Display on each declaration in a possible series.
    //
    void DisplayItem(std::ostream& stream, const NodeBase::Flags& options) const;
+
+   //  Overridden to support multiple declarations on the same line by
+   //  including the preceding comma, else the following comma, else nothing
+   //  extra.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
    //  The data item's name.
    //
@@ -1328,11 +1330,6 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to end at a right brace or semicolon depending on whether
-   //  the function has code.
-   //
-   std::string EndChars() const override;
-
    //  Overridden to compile the function.
    //
    void EnterBlock() override;
@@ -1376,11 +1373,6 @@ public:
    //  Overridden to return the function's qualified name.
    //
    QualName* GetQualName() const override { return name_.get(); }
-
-   //  Overridden to support a function definition by setting LEFT and END
-   //  to the locations of its left and right braces.
-   //
-   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to handle an inline friend function.
    //
@@ -1654,6 +1646,11 @@ private:
    //
    void DisplayInfo(std::ostream& stream, const NodeBase::Flags& options) const;
 
+   //  Overridden to support a function definition by setting LEFT and END
+   //  to the locations of its left and right braces.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  The function's name.
    //
    const QualNamePtr name_;
@@ -1855,6 +1852,11 @@ public:
    //
    std::string ScopedName(bool templates) const override;
 private:
+   //  Overridden to set LEFT and END to the positions of the left and right
+   //  braces.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  The primary class for the namespace.
    //
    const Namespace* const space_;

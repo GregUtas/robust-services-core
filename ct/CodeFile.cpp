@@ -1177,7 +1177,7 @@ CodeWarning* CodeFile::FindLog
 
 //------------------------------------------------------------------------------
 
-SpaceDefn* CodeFile::FindNamespaceDefn(const CxxNamed* item) const
+SpaceDefn* CodeFile::FindNamespaceDefn(const CxxToken* item) const
 {
    Debug::ft("CodeFile.FindNamespaceDefn");
 

@@ -67,15 +67,6 @@ void Argument::AddToXref()
 
 //------------------------------------------------------------------------------
 
-string Argument::BeginChars(char end) const
-{
-   Debug::ft("Argument.BeginChars");
-
-   return (end == ')' ? "," : EMPTY_STR);
-}
-
-//------------------------------------------------------------------------------
-
 void Argument::Check() const
 {
    Debug::ft("Argument.Check");
@@ -145,6 +136,37 @@ void Argument::ExitBlock() const
 
    if(name_.empty()) return;
    Context::EraseLocal(this);
+}
+
+//------------------------------------------------------------------------------
+
+bool Argument::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Argument.GetSpan");
+
+   begin = spec_->GetPos();
+
+   auto& lexer = GetFile()->GetLexer();
+   auto prev = lexer.RfindFirstOf(begin, ",(");
+   auto next = lexer.FindFirstOf(",)", begin);
+
+   if(lexer.At(next) == ',')
+   {
+      begin = prev + 1;
+      end = next;
+   }
+   else if(lexer.At(prev) == ',')
+   {
+      begin = prev;
+      end = next - 1;
+   }
+   else
+   {
+      begin = prev + 1;
+      end = next - 1;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -407,6 +429,21 @@ Class* BaseDecl::GetClass() const
 
 //------------------------------------------------------------------------------
 
+bool BaseDecl::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("BaseDecl.GetSpan");
+
+   begin = GetPos();
+
+   auto& lexer = GetFile()->GetLexer();
+   begin = lexer.RfindFirstOf(begin, ":");
+   end = lexer.FindFirstOf("{", begin);
+   end = lexer.RfindNonBlank(end - 1);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 void BaseDecl::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    //  Our class was used as a base class.  Its name cannot include template
@@ -661,6 +698,21 @@ CxxScoped* CxxScoped::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+bool CxxScoped::GetBracedSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("CxxScoped.GetBracedSpan");
+
+   auto& lexer = GetFile()->GetLexer();
+   begin = GetPos();
+   if(begin == string::npos) return false;
+   left = lexer.FindFirstOf("{", begin);
+   if(left == string::npos) return false;
+   end = lexer.FindClosing('{', '}', left + 1);
+   return (end != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
 CodeFile* CxxScoped::GetImplFile() const
 {
    auto file = GetDefnFile();
@@ -670,19 +722,14 @@ CodeFile* CxxScoped::GetImplFile() const
 
 //------------------------------------------------------------------------------
 
-bool CxxScoped::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+bool CxxScoped::GetTypeSpan(size_t& begin, size_t& end) const
 {
-   Debug::ft("CxxScoped.GetSpan3");
-
-   if(IsInternal())
-   {
-      return CxxNamed::GetSpan3(begin, left, end);
-   }
+   Debug::ft("CxxScoped.GetTypeSpan");
 
    //  GetTypeSpec returns an internal "int" for an enum that doesn't define
    //  an underlying type, so the position of the enum itself must be used.
    //
-   auto lexer = GetFile()->GetLexer();
+   auto& lexer = GetFile()->GetLexer();
    auto spec = GetTypeSpec();
    if((spec == nullptr) || spec->IsInternal())
       begin = GetPos();
@@ -1224,6 +1271,15 @@ void Enum::GetDecls(std::set< CxxNamed* >& items)
 
 //------------------------------------------------------------------------------
 
+bool Enum::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Enum.GetSpan");
+
+   return GetBracedSpan(begin, left, end);
+}
+
+//------------------------------------------------------------------------------
+
 TypeSpec* Enum::GetTypeSpec() const
 {
    return (spec_ != nullptr ? spec_.get() : DataSpec::Int.get());
@@ -1349,15 +1405,6 @@ void Enumerator::AddToXref()
 
 //------------------------------------------------------------------------------
 
-string Enumerator::BeginChars(char end) const
-{
-   Debug::ft("Enumerator.BeginChars");
-
-   return (end == '}' ? "," : EMPTY_STR);
-}
-
-//------------------------------------------------------------------------------
-
 void Enumerator::Check() const
 {
    Debug::ft("Enumerator.Check");
@@ -1475,6 +1522,36 @@ void Enumerator::GetScopedNames(stringVector& names, bool templates) const
    auto pos = name.rfind(prev);
    name.erase(pos, prev.size());
    names.push_back(name);
+}
+
+//------------------------------------------------------------------------------
+
+bool Enumerator::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Enumerator.GetSpan");
+
+   begin = GetPos();
+
+   auto& lexer = GetFile()->GetLexer();
+   auto prev = lexer.RfindFirstOf(begin, ",{");
+   auto next = lexer.FindFirstOf(",}", begin);
+
+   if(lexer.At(next) == ',')
+   {
+      end = next;
+   }
+   else if(lexer.At(prev) == ',')
+   {
+      begin = prev;
+      end = lexer.RfindNonBlank(next - 1);
+   }
+   else
+   {
+      begin = prev + 1;
+      end = next - 1;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -1678,6 +1755,15 @@ void Forward::GetDirectClasses(CxxUsageSets& symbols)
 
    auto ref = Referent();
    if(ref != nullptr) symbols.AddDirect(ref);
+}
+
+//------------------------------------------------------------------------------
+
+bool Forward::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Forward.GetSpan");
+
+   return GetSemiSpan(begin, end);
 }
 
 //------------------------------------------------------------------------------
@@ -2101,6 +2187,15 @@ CxxScoped* Friend::GetReferent() const
 
 //------------------------------------------------------------------------------
 
+bool Friend::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Friend.GetSpan");
+
+   return GetSemiSpan(begin, end);
+}
+
+//------------------------------------------------------------------------------
+
 void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    auto ref = Referent();
@@ -2394,15 +2489,6 @@ void MemberInit::AddToXref()
 
 //------------------------------------------------------------------------------
 
-string MemberInit::BeginChars(char end) const
-{
-   Debug::ft("MemberInit.BeginChars");
-
-   return (end == '{' ? ",:" : EMPTY_STR);
-}
-
-//------------------------------------------------------------------------------
-
 void MemberInit::Check() const
 {
    init_->Check();
@@ -2428,6 +2514,31 @@ void MemberInit::EnterBlock()
       expl += ctor_->GetClass()->Name() + SCOPE_STR + name_;
       Context::SwLog(MemberInit_EnterBlock, expl, 0);
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool MemberInit::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("MemberInit.GetSpan");
+
+   begin = GetPos();
+
+   auto& lexer = GetFile()->GetLexer();
+   auto prev = lexer.RfindFirstOf(begin, ",:");
+   auto next = lexer.FindFirstOf(",{", begin);
+
+   if(lexer.At(next) == ',')
+   {
+      end = next;
+   }
+   else
+   {
+      begin = prev;
+      end = lexer.RfindNonBlank(next - 1);
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3041,6 +3152,15 @@ void Typedef::GetDecls(std::set< CxxNamed* >& items)
 
 //------------------------------------------------------------------------------
 
+bool Typedef::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Typedef.GetSpan");
+
+   return GetSemiSpan(begin, end);
+}
+
+//------------------------------------------------------------------------------
+
 TypeName* Typedef::GetTemplateArgs() const
 {
    return spec_->GetTemplateArgs();
@@ -3241,6 +3361,15 @@ void Using::FindReferent()
    auto qname = QualifiedName(true, false);
    auto log = "Unknown using: " + qname + " [" + strLocation() + ']';
    Debug::SwLog(Using_FindReferent, log, 0, false);
+}
+
+//------------------------------------------------------------------------------
+
+bool Using::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Using.GetSpan");
+
+   return GetSemiSpan(begin, end);
 }
 
 //------------------------------------------------------------------------------

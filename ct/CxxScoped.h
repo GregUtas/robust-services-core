@@ -136,10 +136,6 @@ public:
    //
    void CopyContext(const CxxToken* that, bool internal) override;
 
-   //  By default, items derived from this class end at the next semicolon.
-   //
-   std::string EndChars() const override { return ";"; }
-
    //  Overridden to decrement N if this item's name matches NAME, and to
    //  return this item if N has reached 0.
    //
@@ -148,12 +144,6 @@ public:
    //  Overridden to return the access control level for the item.
    //
    Cxx::Access GetAccess() const override { return access_; }
-
-   //  Sets BEGIN to GetPos() of the item or, if GetTypeSpec() returns
-   //  a valid type specification, then GetPos() of that specification.
-   //  Sets END to the location of the next semicolon.
-   //
-   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to return the scope where the declaration appeared.
    //
@@ -229,6 +219,17 @@ protected:
    //
    virtual void CheckIfHiding() const;
 
+   //  Implements GetSpan for an item whose contents are enclosed in braces.
+   //
+   bool GetBracedSpan(size_t& begin, size_t& left, size_t& end) const;
+
+   //  Implements GetSpan for an item that is preceded by a TypeSpec.
+   //  Sets BEGIN to GetPos() of the item or, if GetTypeSpec() returns
+   //  a valid type specification, then GetPos() of that specification.
+   //  Sets END to the location of the next semicolon.
+   //
+   bool GetTypeSpan(size_t& begin, size_t& end) const;
+
    //  Returns true if access control checking should be skipped for this item.
    //
    bool SkipAccessControlCheck() const;
@@ -303,18 +304,9 @@ public:
    //
    CxxToken* AutoType() const override { return spec_.get(); }
 
-   //  If the argument ends at a right parenthesis, cut the preceding
-   //  comma (if any) instead.
-   //
-   std::string BeginChars(char end) const override;
-
    //  Overridden to log warnings associated with the argument.
    //
    void Check() const override;
-
-   //  An argument ends at the next comma or right parenthesis.
-   //
-   std::string EndChars() const override { return ",)"; }
 
    //  Overridden to make the argument visible as a local.
    //
@@ -407,6 +399,11 @@ private:
    //
    void LogToFunc(Warning warning) const;
 
+   //  Overridden to include the following comma, else the preceding comma,
+   //  else nothing extra.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  The argument's name, if any.
    //
    std::string name_;
@@ -456,10 +453,6 @@ public:
    //
    void AddToXref() override;
 
-   //  Causes the preceding colon, instead of the left brace, to be cut.
-   //
-   std::string BeginChars(char end) const override { return ":"; }
-
    //  Overridden to log warnings associated with the declaration.
    //
    void Check() const override;
@@ -467,10 +460,6 @@ public:
    //  Displays the base class declaration.
    //
    void DisplayDecl(std::ostream& stream, bool fq) const;
-
-   //  A base class ends at the left brace that begins the class definition.
-   //
-   std::string EndChars() const override { return "{"; }
 
    //  Overridden to record the current scope as a subclass of the base class.
    //
@@ -524,6 +513,11 @@ private:
    //  Overridden to find the base class's class.
    //
    void FindReferent() override;
+
+   //  Overridden to include the preceding colon and to stop before the
+   //  following brace.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
    //  The (possibly) qualified name of the base class.
    //
@@ -658,6 +652,11 @@ public:
    bool WasWritten(const StackArg* arg, bool direct, bool indirect)
       override { return false; }
 private:
+   //  Overridden to set LEFT to the position of the left brace and END to the
+   //  position of the semicolon.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  The enumeration's name.
    //
    std::string name_;
@@ -702,11 +701,6 @@ public:
    //
    CxxToken* AutoType() const override { return (CxxToken*) enum_; }
 
-   //  If the enumerator ended at a right brace, cut the preceding comma (if
-   //  any) instead.
-   //
-   std::string BeginChars(char end) const override;
-
    //  Overridden to log warnings associated with the enumerator.
    //
    void Check() const override;
@@ -715,10 +709,6 @@ public:
    //  *is* used.
    //
    bool CheckIfUnused(Warning warning) const override;
-
-   //  An enumerator ends at the next comma or right brace.
-   //
-   std::string EndChars() const override { return ",}"; }
 
    //  Overridden to display the enumeration.
    //
@@ -805,6 +795,11 @@ public:
    //
    std::string XrefName(bool templates) const override;
 private:
+   //  Overridden to include the following comma, else the preceding comma,
+   //  else nothing extra.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  The enumerator's name.
    //
    std::string name_;
@@ -931,6 +926,10 @@ private:
    //  Overridden to return the class.
    //
    CxxToken* RootType() const override { return Referent(); }
+
+   //  Overridden to stop at the semicolon.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
    //  The class's type.
    //
@@ -1104,6 +1103,10 @@ private:
    //
    CxxToken* RootType() const override { return Referent(); }
 
+   //  Overridden to stop at the semicolon.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  Overridden to record what the item refers to.
    //
    void SetReferent(CxxScoped* item, const SymbolView* view) const override;
@@ -1189,18 +1192,9 @@ public:
    //
    void AddToXref() override;
 
-   //  If the member initialization ends at a left brace, cut the preceding
-   //  comma or colon.
-   //
-   std::string BeginChars(char end) const override;
-
    //  Overridden to log warnings associated with the initialization.
    //
    void Check() const override;
-
-   //  A member initialization ends at the next comma or left brace.
-   //
-   std::string EndChars() const override { return ",{"; }
 
    //  Overridden to compile the initialization expression.
    //
@@ -1240,6 +1234,11 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 private:
+   //  Overridden to include the following comma, else the preceding comma
+   //  or colon.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  The constructor where the initialization appears.
    //
    const Function* const ctor_;
@@ -1291,10 +1290,6 @@ public:
    //  Overridden to check the default type.
    //
    void Check() const override;
-
-   //  A template parameter is not cut by itself.
-   //
-   std::string EndChars() const override { return NodeBase::EMPTY_STR; }
 
    //  Overridden to make the parameter visible as a local.
    //
@@ -1464,10 +1459,6 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-
-   //  A terminal is not cut by itself.
-   //
-   std::string EndChars() const override { return NodeBase::EMPTY_STR; }
 
    //  Overridden to push the terminal onto the stack.
    //
@@ -1650,6 +1641,10 @@ private:
    //
    void CheckPointerType() const;
 
+   //  Overridden to stop at the semicolon.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  The name introduced by the typedef.
    //
    std::string name_;
@@ -1784,6 +1779,10 @@ private:
    //  Overridden to find the item that the declaration refers to.
    //
    void FindReferent() override;
+
+   //  Overridden to stop at the semicolon.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
    //  The declaration's (possibly) qualified name.
    //

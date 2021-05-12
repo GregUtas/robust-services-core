@@ -78,6 +78,15 @@ bool Asm::EnterScope()
 
 //------------------------------------------------------------------------------
 
+bool Asm::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Asm.GetSpan");
+
+   return GetSemiSpan(begin, end);
+}
+
+//------------------------------------------------------------------------------
+
 void Asm::Print(ostream& stream, const Flags& options) const
 {
    stream << ASM_STR << '(';
@@ -2056,17 +2065,6 @@ void QualName::CopyContext(const CxxToken* that, bool internal)
 
 //------------------------------------------------------------------------------
 
-std::string QualName::EndChars() const
-{
-   Debug::ft("QualName.EndChars");
-
-   auto ref = Referent();
-   if((ref != nullptr) && (ref->Type() == Cxx::Data)) return ";";
-   return EMPTY_STR;
-}
-
-//------------------------------------------------------------------------------
-
 void QualName::EnterBlock()
 {
    Debug::ft("QualName.EnterBlock");
@@ -2167,6 +2165,20 @@ CxxScope* QualName::GetScope() const
    if(IsInternal()) return nullptr;
    if(!init_) return scope;
    return Context::OuterScope();
+}
+
+//------------------------------------------------------------------------------
+
+bool QualName::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("QualName.GetSpan");
+
+   auto ref = Referent();
+   if((ref == nullptr) || (ref->Type() != Cxx::Data)) return false;
+
+   begin = GetPos();
+   end = GetFile()->GetLexer().FindFirstOf(";", begin);
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -2523,6 +2535,15 @@ bool StaticAssert::EnterScope()
 
 //------------------------------------------------------------------------------
 
+bool StaticAssert::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("StaticAssert.GetSpan");
+
+   return GetSemiSpan(begin, end);
+}
+
+//------------------------------------------------------------------------------
+
 void StaticAssert::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    expr_->GetUsages(file, symbols);
@@ -2709,17 +2730,6 @@ CxxScoped* TypeName::DirectType() const
 
 //------------------------------------------------------------------------------
 
-std::string TypeName::EndChars() const
-{
-   Debug::ft("TypeName.EndChars");
-
-   auto ref = Referent();
-   if((ref != nullptr) && (ref->Type() == Cxx::Data)) return ";";
-   return EMPTY_STR;
-}
-
-//------------------------------------------------------------------------------
-
 void TypeName::FindReferent()
 {
    Debug::ft("TypeName.FindReferent");
@@ -2780,6 +2790,20 @@ void TypeName::GetNames(stringVector& names) const
          (*a)->GetNames(names);
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool TypeName::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("TypeName.GetSpan");
+
+   auto ref = Referent();
+   if((ref == nullptr) || (ref->Type() != Cxx::Data)) return false;
+
+   begin = GetPos();
+   end = GetFile()->GetLexer().FindFirstOf(";", begin);
+   return (end != string::npos);
 }
 
 //------------------------------------------------------------------------------

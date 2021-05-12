@@ -1527,17 +1527,11 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
 //------------------------------------------------------------------------------
 
-bool Class::GetSpan3(size_t& begin, size_t& left, size_t& end) const
+bool Class::GetSpan(size_t& begin, size_t& left, size_t& end) const
 {
-   Debug::ft("Class.GetSpan3");
+   Debug::ft("Class.GetSpan");
 
-   auto lexer = GetFile()->GetLexer();
-   begin = GetPos();
-   if(begin == string::npos) return false;
-   left = lexer.FindFirstOf("{", begin);
-   if(left == string::npos) return false;
-   end = lexer.FindClosing('{', '}', left + 1);
-   return (end != string::npos);
+   return GetBracedSpan(begin, left, end);
 }
 
 //------------------------------------------------------------------------------

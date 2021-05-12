@@ -30,8 +30,10 @@
 #include "CxxRoot.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
+#include "Lexer.h"
 #include "Library.h"
 #include "Singleton.h"
+#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -121,6 +123,17 @@ void Conditional::UpdatePos
 CxxDirective::CxxDirective()
 {
    Debug::ft("CxxDirective.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxDirective::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("CxxDirective.GetSpan");
+
+   begin = GetPos();
+   end = GetFile()->GetLexer().CurrEnd(begin);
+   return true;
 }
 
 //==============================================================================
@@ -215,6 +228,17 @@ bool Define::EnterScope()
       value_ = result.item;
    }
 
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool Define::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Define.GetSpan");
+
+   begin = GetPos();
+   end = GetFile()->GetLexer().CurrEnd(begin);
    return true;
 }
 

@@ -400,6 +400,26 @@ CxxScoped* CxxToken::FindTemplateAnalog(const CxxToken* item) const
 
 //------------------------------------------------------------------------------
 
+bool CxxToken::GetSemiSpan(size_t& begin, size_t& end) const
+{
+   Debug::ft("CxxToken.GetSemiSpan");
+
+   begin = GetPos();
+   end = GetFile()->GetLexer().FindFirstOf(";", begin);
+   return (end != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxToken::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("CxxToken.GetSpan");
+
+   return GetSpanFailure(begin, left, end);
+}
+
+//------------------------------------------------------------------------------
+
 bool CxxToken::GetSpan2(size_t& begin, size_t& end) const
 {
    Debug::ft("CxxToken.GetSpan2");
@@ -413,6 +433,19 @@ bool CxxToken::GetSpan2(size_t& begin, size_t& end) const
 bool CxxToken::GetSpan3(size_t& begin, size_t& left, size_t& end) const
 {
    Debug::ft("CxxToken.GetSpan3");
+
+   begin = string::npos;
+   left = string::npos;
+   end = string::npos;
+   if(IsInternal()) return false;
+   return GetSpan(begin, left, end);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxToken::GetSpanFailure(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("CxxToken.GetSpanFailure");
 
    begin = string::npos;
    left = string::npos;

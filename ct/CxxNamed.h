@@ -425,10 +425,6 @@ public:
    //
    CxxScoped* DirectType() const override;
 
-   //  Overridden so that a data item can be erased.
-   //
-   std::string EndChars() const override;
-
    //  Overridden to invoke FindReferent on each template argument.
    //
    void FindReferent() override;
@@ -490,6 +486,10 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 private:
+   //  Overridden so that a data item can be erased.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  The name that appears in what could be a qualified name.
    //
    std::string name_;
@@ -655,10 +655,6 @@ public:
    //
    CxxScoped* DirectType() const override { return Last()->DirectType(); }
 
-   //  Overridden so that a data item can be erased.
-   //
-   std::string EndChars() const override;
-
    //  Overridden to find the referent and push it onto the argument stack.
    //
    void EnterBlock() override;
@@ -745,6 +741,10 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 private:
+   //  Overridden so that a data item can be erased.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  Returns the last name.
    //
    TypeName* Last() const;
@@ -1466,7 +1466,6 @@ class Asm : public CxxNamed
 public:
    explicit Asm(ExprPtr& code);
    ~Asm() { CxxStats::Decr(CxxStats::ASM); }
-   std::string EndChars() const override { return ";"; }
    void EnterBlock() override { }
    bool EnterScope() override;
    void Print
@@ -1475,6 +1474,8 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 private:
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    const ExprPtr code_;
 };
 
@@ -1491,7 +1492,6 @@ public:
    ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
    void AddToXref() override;
    void Check() const override;
-   std::string EndChars() const override { return ";"; }
    void EnterBlock() override;
    bool EnterScope() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -1501,6 +1501,8 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 private:
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    const ExprPtr expr_;
    const ExprPtr message_;
 };

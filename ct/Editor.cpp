@@ -1664,111 +1664,54 @@ size_t Editor::CutCode(const CxxToken* item, string& code)
       return string::npos;
    }
 
-   //  Find the where the code to be cut begins and ends.
-   //
-   auto begin = FindCutBegin(item);
-   if(begin == string::npos)
-   {
-      NotFound("Start of code to be edited");
-      return string::npos;
-   }
-
-   auto end = begin;
-
-   auto endchars = item->EndChars();
-   if(endchars.empty())
+   size_t begin, end;
+   if(!item->GetSpan2(begin, end))
    {
       Report("Internal error: item cannot be edited.");
       return string::npos;
    }
-   else if(endchars == CRLF_STR)
+
+   if(source_[begin] == ',')
    {
-      end = CurrEnd(begin);
+      //  The cut begins at a comma, which could be on the previous line.
+      //  If a trailing comment follows it, replace it with a space and
+      //  cut from the beginning of the next line.
+      //
+      if(TrailingCommentFollows(begin + 1))
+      {
+         source_[begin] = SPACE;
+         begin = NextBegin(begin);
+      }
    }
    else
    {
-      auto start = begin;
-
-      if((item->Type() == Cxx::Function) &&
-         (endchars.find('}') != string::npos))
-      {
-         //  To find the right brace at the end of a function definition, the
-         //  search must start after its initial left brace.
-         //
-         start = FindFirstOf("{", begin);
-         ++start;
-      }
-
-      end = FindFirstOf(endchars, start);
-      if(end == string::npos)
-      {
-         NotFound("End of code to be edited");
-         return string::npos;
-      }
-
-      //  See if the character that precedes the item should be cut instead of
-      //  the one that terminated it.  If cutting that character, replace it
-      //  with a space if a comment follows, to keep trailing comments aligned.
-      //  Otherwise erase it.  Finally, adjust END to the previous character or,
-      //  if it is the first non-blank character on its line, to the end of the
-      //  previous line.
+      //  Cut from the start of BEGIN's line unless other code precedes
+      //  the item.
       //
-      auto beginchars = item->BeginChars(source_[end]);
-
-      if(!beginchars.empty())
-      {
-         if(beginchars[0] != '$')
-         {
-            auto prev = RfindFirstOf(begin - 1, beginchars);
-
-            if(FindComment(prev) != string::npos)
-            {
-               source_[prev] = SPACE;
-            }
-            else
-            {
-               Erase(prev, 1);
-               --begin;
-               --end;
-            }
-
-            if(IsFirstNonBlank(end))
-               end = CurrBegin(end) - 1;
-            else
-               --end;
-         }
-         else
-         {
-            //  This cuts from the start of ITEM to END, along with any
-            //  spaces that follow END.
-            //
-            begin = item->GetPos();
-            end = source_.find_first_not_of(WhitespaceChars, end + 1) - 1;
-         }
-      }
-
-      //  When the code ends at a right brace, also cut any semicolon that
-      //  immediately follows.
-      //
-      if(source_[end] == '}')
-      {
-         Reposition(end + 1);
-         if(CurrChar() == ';') end = Curr();
-      }
-
-      //  Cut any comment or whitespace that follows on the last line.
-      //
-      if(NoCodeFollows(end + 1)) end = CurrEnd(end);
+      begin = FindCutBegin(begin);
    }
+
+   //  When the cuts ends at a right brace, also cut a semicolon that
+   //  follows immediately.
+   //
+   if(source_[end] == '}')
+   {
+      auto pos = NextPos(end + 1);
+      if((pos != string::npos) && (source_[pos] == ';')) end = pos;
+   }
+
+   //  Cut any comment or whitespace that follows on the last line.
+   //
+   if(NoCodeFollows(end + 1)) end = CurrEnd(end);
 
    //  If entire lines of code that aren't immediately followed by more code
    //  are being cut, also cut any comment that precedes the code, since it
    //  almost certainly refers only to the code being cut.  But don't do this
-   //  for a preprocessor directive (endchars == CRLF_STR).
+   //  for a preprocessor directive.
    //
    if((begin == CurrBegin(begin)) && (end == CurrEnd(end)))
    {
-      if(!CodeFollowsImmediately(end) && (endchars != CRLF_STR))
+      if(!CodeFollowsImmediately(end) && (source_[begin] != '#'))
       {
          begin = IntroStart(begin, false);
       }
@@ -2181,29 +2124,16 @@ word Editor::EraseDefaultValue(const Function* func, word offset)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseEmptyNamespace(size_t pos)  //i
+word Editor::EraseEmptyNamespace(const SpaceDefn* ns)
 {
    Debug::ft("Editor.EraseEmptyNamespace");
 
-   //  POS is the character after a forward declaration that was just
-   //  deleted.  If this left an empty "namespace <ns> { }", remove it,
-   //  else just report success.
-   //
-   if(pos == string::npos) return EditSucceeded;
+   if(ns == nullptr) return EditSucceeded;
+   size_t begin, left, end;
+   if(!ns->GetSpan3(begin, left, end)) return EditSucceeded;
+   auto pos = NextPos(left + 1);
    if(source_[pos] != '}') return EditSucceeded;
-
-   auto p1 = PrevBegin(pos);
-   if(p1 == 0) return EditSucceeded;
-   auto p2 = PrevBegin(p1);
-
-   if((CompareCode(p2, NAMESPACE_STR) == 0) && (source_[p1] == '{'))
-   {
-      auto end = CurrEnd(pos);
-      Erase(p2, end - p2 + 1);
-      return Changed();
-   }
-
-   return EditSucceeded;
+   return EraseCode(ns);
 }
 
 //------------------------------------------------------------------------------
@@ -2228,10 +2158,9 @@ word Editor::EraseForward(const CodeWarning& log)
    //  Erasing the forward declaration may leave an empty enclosing
    //  namespace that should be deleted.
    //
-   auto pos = EraseCode(log.item_);
-   if(pos == string::npos) return EditFailed;
-   Changed();
-   return EraseEmptyNamespace(pos);
+   auto ns = file_->FindNamespaceDefn(log.item_);
+   if(EraseCode(log.item_) == EditFailed) return EditFailed;
+   return EraseEmptyNamespace(ns);
 }
 
 //------------------------------------------------------------------------------
@@ -2473,7 +2402,7 @@ size_t Editor::FindAndCutInclude(size_t pos, const string& incl)
 
 //------------------------------------------------------------------------------
 
-size_t Editor::FindArgsEnd(const Function* func)
+size_t Editor::FindArgsEnd(const Function* func) const
 {
    Debug::ft("Editor.FindArgsEnd");
 
@@ -2487,7 +2416,7 @@ size_t Editor::FindArgsEnd(const Function* func)
 
 //------------------------------------------------------------------------------
 
-size_t Editor::FindCutBegin(const CxxToken* item) const
+size_t Editor::FindCutBegin(size_t pos) const
 {
    Debug::ft("Editor.FindCutBegin");
 
@@ -2495,20 +2424,19 @@ size_t Editor::FindCutBegin(const CxxToken* item) const
    //  If there are multiple items, cut after the last delimiter before ITEM.
    //  A scope resolution operator does not qualify as a delimiter.
    //
-   auto targ = item->GetPos();
-   size_t pos = CurrBegin(targ);
+   size_t begin = CurrBegin(pos);
 
-   for(size_t next = pos; NO_OP; ++next)
+   for(size_t next = begin; NO_OP; ++next)
    {
       next = source_.find_first_of(",(:;{}", next);
-      if(next >= targ) break;
+      if(next >= pos) break;
       if(CompareCode(next, SCOPE_STR) == 0)
          ++next;
       else
-         pos = next + 1;
+         begin = next + 1;
    }
 
-   return pos;
+   return begin;
 }
 
 //------------------------------------------------------------------------------
@@ -4631,7 +4559,6 @@ void Editor::QualifyReferent(const CxxToken* item, const CxxToken* ref)  //i
    auto qual = ns->ScopedName(false) + SCOPE_STR;
    size_t pos, end;
    if(!item->GetSpan2(pos, end)) return;
-   pos = NextPos(pos);
    string name;
 
    while(FindIdentifier(pos, name, false) && (Curr() <= end))
@@ -5474,6 +5401,17 @@ word Editor::TagAsVirtual(const CodeWarning& log)
    auto pos = Insert(log.item_->GetPos(), "virtual ");
    ((Function*) log.item_)->SetVirtual(true);
    return Changed(pos);
+}
+
+//------------------------------------------------------------------------------
+
+bool Editor::TrailingCommentFollows(size_t pos) const
+{
+   Debug::ft("Editor.TrailingCommentFollows");
+
+   pos = LineFindNext(pos);
+   if(pos == string::npos) return false;
+   return (CompareCode(pos, COMMENT_STR) == 0);
 }
 
 //------------------------------------------------------------------------------

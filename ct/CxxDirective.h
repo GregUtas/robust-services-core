@@ -31,7 +31,6 @@
 #include "CxxFwd.h"
 #include "CxxToken.h"
 #include "LibraryTypes.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -54,10 +53,6 @@ public:
    //
    virtual bool IsIncludeGuard() const { return false; }
 
-   //  A preprocessor directive ends at the end of the line.
-   //
-   std::string EndChars() const override { return NodeBase::CRLF_STR; }
-
    //  Overridden to prevent a log when a directive appears inside a function.
    //
    void EnterBlock() override { }
@@ -69,6 +64,10 @@ protected:
    //  Protected because this class is virtual.
    //
    CxxDirective();
+private:
+   //  Overridden to return the entire line of code.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -402,6 +401,10 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 private:
+   //  Overridden to return the entire line of code.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
    //  The expression, if any, that assigns a value to the macro.
    //
    ExprPtr rhs_;

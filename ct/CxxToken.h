@@ -84,15 +84,13 @@ public:
    //  Sets BEGIN and END to where the item begins and ends, and LEFT to the
    //  position of its opening left brace (if applicable, else string::npos).
    //  If LEFT applies, END will be the position of the matching right brace.
-   //  Returns false if the item
-   //  o doesn't end at a semicolon, although the item could provide an
-   //    override if this proved useful;
-   //  o is part of a template instantiation and therefore doesn't appear
-   //    in a source file.
+   //  This is invoked when preparing to erase the code associated with the
+   //  item, so it should include leading and/or trailing punctuation where
+   //  appropriate.
    //
-   virtual bool GetSpan3(size_t& begin, size_t& left, size_t& end) const;
+   bool GetSpan3(size_t& begin, size_t& left, size_t& end) const;
 
-   //  Used when the LEFT argument for GetSpan3 is not needed.
+   //  Used when the LEFT argument for GetSpan3 (above) is not of interest.
    //
    bool GetSpan2(size_t& begin, size_t& end) const;
 
@@ -386,24 +384,6 @@ public:
       NodeBase::word offset = 0,
       const std::string& info = NodeBase::EMPTY_STR) const;
 
-   //  Used to find the end of an item that is to be cut when editing code.
-   //  Returns the character(s) that terminate the item.  An item terminated
-   //  by an endline returns CRLF_STR.  Returning EMPTY_STR indicates that an
-   //  error has occurred and that the item should not be cut by itself.
-   //
-   virtual std::string EndChars() const { return NodeBase::EMPTY_STR; }
-
-   //  After invoking EndChars, the end of the item was found at END.  If END
-   //  should not be cut, and a character that precedes the item should be cut
-   //  instead, this function returns the preceding character(s) that can be
-   //  cut.  If none of those characters directly precedes the start of the
-   //  item, END is not cut, but neither is the previous character.  Returning
-   //  EMPTY_STR indicates that no adjustment is required.  Returning "$" cuts
-   //  END but cuts nothing before the item's position.
-   //
-   virtual std::string BeginChars(char end) const
-      { return NodeBase::EMPTY_STR; }
-
    //  Invoked during editing when ACTION has occurred in the item's file.
    //  o Erased: COUNT characters erased at BEGIN
    //  o Inserted: COUNT characters inserted at BEGIN
@@ -434,6 +414,22 @@ protected:
    //  Copy operator.
    //
    CxxToken& operator=(const CxxToken& that);
+
+   //  Overridden by subclasses to support GetSpan2 and GetSpan3 (above).  It
+   //  should not be invoked directly, because GetSpan2 and GetSpan3 set all
+   //  arguments to string::npos, which is useful for error checking and when
+   //  LEFT does not apply.  The default version invokes GetSpanFailure.
+   //
+   virtual bool GetSpan(size_t& begin, size_t& left, size_t& end) const;
+
+   //  Implements GetSpan for a simple item that ends at a semicolon.
+   //
+   bool GetSemiSpan(size_t& begin, size_t& end) const;
+
+   //  Used when GetSpan2 or GetSpan3 fails, either because the item did not
+   //  override GetSpan or because the item is internal.
+   //
+   bool GetSpanFailure(size_t& begin, size_t& left, size_t& end) const;
 
    //  Marks the item as having been generated internally.
    //

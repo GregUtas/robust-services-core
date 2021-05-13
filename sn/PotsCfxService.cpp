@@ -430,8 +430,7 @@ EventHandler::Rc PotsCfxSsm::ForwardCall(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc PotsCfxSsm::ProcessInitAck
-   (Event& currEvent, Event*& nextEvent)
+EventHandler::Rc PotsCfxSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCfxSsm.ProcessInitAck");
 

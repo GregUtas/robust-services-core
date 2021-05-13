@@ -99,8 +99,7 @@ public:
 
    //  Returns true if the call has no originator or terminator.
    //
-   bool Empty() const
-      { return ((orig_ == nullptr) && (term_ == nullptr)); }
+   bool Empty() const { return ((orig_ == nullptr) && (term_ == nullptr)); }
 
    //  Displays the number of calls in each state.
    //

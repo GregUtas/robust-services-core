@@ -414,8 +414,7 @@ EventHandler::Rc BcSsm::RaiseAnalyzeInformation(Event*& nextEvent)
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc BcSsm::RaiseApplyTreatment
-   (Event*& nextEvent, Cause::Ind cause)
+EventHandler::Rc BcSsm::RaiseApplyTreatment(Event*& nextEvent, Cause::Ind cause)
 {
    Debug::ft("BcSsm.RaiseApplyTreatment");
 

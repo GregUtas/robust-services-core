@@ -125,10 +125,8 @@ private:
    //  an fn_name from an inline function limits the string constant to a
    //  single occurrence, no matter how many template instances exist.
    //
-   inline static fn_name
-      Singleton_Instance() { return "Singleton.Instance"; }
-   inline static fn_name
-      Singleton_Destroy()  { return "Singleton.Destroy"; }
+   inline static fn_name Singleton_Instance() { return "Singleton.Instance"; }
+   inline static fn_name Singleton_Destroy()  { return "Singleton.Destroy"; }
 
    //  Pointer to the singleton instance.
    //

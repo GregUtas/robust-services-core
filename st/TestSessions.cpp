@@ -349,8 +349,7 @@ ProtocolSM* TestFactory::AllocIcPsm
 
 //------------------------------------------------------------------------------
 
-RootServiceSM* TestFactory::AllocRoot
-   (const Message& msg, ProtocolSM& psm) const
+RootServiceSM* TestFactory::AllocRoot(const Message& msg, ProtocolSM& psm) const
 {
    Debug::ft("TestFactory.AllocRoot");
 

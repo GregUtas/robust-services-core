@@ -87,8 +87,7 @@ void SetIntersection(LibItemSet& lhs, const LibItemSet& rhs)
 
 //------------------------------------------------------------------------------
 
-void SetUnion
-   (LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2)
+void SetUnion(LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2)
 {
    Debug::ft("CodeTools.SetUnion(|)");
 

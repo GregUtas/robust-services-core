@@ -1893,8 +1893,7 @@ void CodeFile::LogRemoveForwards
 
 //------------------------------------------------------------------------------
 
-void CodeFile::LogRemoveIncludes
-   (ostream* stream, const LibItemSet& files) const
+void CodeFile::LogRemoveIncludes(ostream* stream, const LibItemSet& files) const
 {
    Debug::ft("CodeFile.LogRemoveIncludes");
 

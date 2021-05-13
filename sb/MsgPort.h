@@ -99,8 +99,7 @@ public:
 
    //  Returns the port's factory.
    //
-   FactoryId GetFactory()
-      const override { return locAddr_.sbAddr_.fid; }
+   FactoryId GetFactory() const override { return locAddr_.sbAddr_.fid; }
 
    //  Overridden to modify the addresses in this port and PEER.  Returns
    //  the peer port on success.

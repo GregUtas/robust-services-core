@@ -622,8 +622,7 @@ PotsCwaSsm::~PotsCwaSsm()
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc PotsCwaSsm::ProcessInitAck
-   (Event& currEvent, Event*& nextEvent)
+EventHandler::Rc PotsCwaSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCwaSsm.ProcessInitAck");
 
@@ -737,8 +736,7 @@ void PotsCwbSsm::FreeContext()
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc PotsCwbSsm::ProcessInitAck
-   (Event& currEvent, Event*& nextEvent)
+EventHandler::Rc PotsCwbSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsCwbSsm.ProcessInitAck");
 

@@ -44,8 +44,8 @@ namespace NodeBase
 //  o Support '*' as a wildcard in >symbols list:
 //    fixed_string SymbolOptNameExpl =
 //      "symbol's name (lists all if blank; '*' is wildcard)";
-//    SymbolOptName::SymbolOptName()
-//       : CliTextParm(&SymbolOptNameExpl) { }
+//    SymbolOptName::SymbolOptName() :
+//       CliTextParm(&SymbolOptNameExpl) { }
 //  o Support >symbols set <name> <expr>.  If the result of expr can change,
 //    save it as a string and use Execute to evaluate it each time.
 //

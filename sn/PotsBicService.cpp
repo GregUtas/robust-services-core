@@ -146,8 +146,7 @@ ServicePortId PotsBicSsm::CalcPort(const AnalyzeMsgEvent& ame)
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc PotsBicSsm::ProcessInitAck
-   (Event& currEvent, Event*& nextEvent)
+EventHandler::Rc PotsBicSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsBicSsm.ProcessInitAck");
 

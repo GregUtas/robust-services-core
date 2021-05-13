@@ -2157,8 +2157,7 @@ size_t MapAndUnits::process_powers(const TokenMessage& powers)
       auto power = powers.at(p).power_id();
 
       if((power == NIL_POWER) ||
-         (power >= number_of_powers) ||
-         (power_used[power]))
+         (power >= number_of_powers) || (power_used[power]))
       {
          return p;
       }

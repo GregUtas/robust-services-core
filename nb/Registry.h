@@ -53,8 +53,8 @@ template< class T > class Registry
 public:
    //  Creates an empty registry.
    //
-   Registry()
-      : size_(0),
+   Registry() :
+      size_(0),
       capacity_(0),
       mem_(MemNull),
       max_(0),

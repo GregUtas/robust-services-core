@@ -71,8 +71,7 @@ private:
    //  that needs to save port.LocAddr().SbAddr() in a user profile.  Note that
    //  LocAddr()'s IP address and port will still be nil at this point.
    //
-   virtual void PortAllocated
-      (const MsgPort& port, const Message* msg) const { }
+   virtual void PortAllocated(const MsgPort& port, const Message* msg) const { }
 };
 }
 #endif

@@ -302,8 +302,7 @@ void NwTracer::QuerySelections(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-TraceRc NwTracer::SelectPeer
-   (const SysIpL3Addr& peer, TraceStatus status)
+TraceRc NwTracer::SelectPeer(const SysIpL3Addr& peer, TraceStatus status)
 {
    Debug::ft("NwTracer.SelectPeer");
 

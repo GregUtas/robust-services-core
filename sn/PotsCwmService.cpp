@@ -1087,8 +1087,7 @@ PotsMuxPsm* PotsCwmSsm::OtherNPsm(const ProtocolSM* npsm) const
 
 fn_name PotsCwmSsm_ProcessInitAck = "PotsCwmSsm.ProcessInitAck";
 
-EventHandler::Rc PotsCwmSsm::ProcessInitAck
-   (Event& currEvent, Event*& nextEvent)
+EventHandler::Rc PotsCwmSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(PotsCwmSsm_ProcessInitAck);
 

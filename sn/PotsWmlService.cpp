@@ -408,8 +408,7 @@ void PotsWmlSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-EventHandler::Rc PotsWmlSsm::ProcessInitAck
-   (Event& currEvent, Event*& nextEvent)
+EventHandler::Rc PotsWmlSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft("PotsWmlSsm.ProcessInitAck");
 

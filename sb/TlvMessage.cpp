@@ -102,8 +102,7 @@ TlvMessage::~TlvMessage()
 
 //------------------------------------------------------------------------------
 
-TlvParmPtr TlvMessage::AddBytes
-   (const byte_t* src, size_t size, ParameterId pid)
+TlvParmPtr TlvMessage::AddBytes(const byte_t* src, size_t size, ParameterId pid)
 {
    Debug::ft("TlvMessage.AddBytes");
 

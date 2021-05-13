@@ -13,22 +13,26 @@ To this end, you are welcome to request that missing language features be
 supported, and you are even _more_ than welcome to implement them.
 
 Enhancing the parser to support a language feature is not enough. It would
-be more accurate to say that `>parse` actually _compiles_ the code; there is much
-that happens outside _Parser.h_. The `>parse` command
+be more accurate to say that `>parse` actually _compiles_ the code; there is
+much that happens outside _Parser.h_. The `>parse` command
 actually has an option that causes it to emit pseudo-code for a stack machine,
 which is useful for checking whether the code was properly understood. Many
 static analysis capabilities require this level of understanding, and `>parse`
 even gathers information that a regular compiler would not.
 
 ### Recently Implemented
-- [x] keywords `asm`, `alignas`, `alignof`, `goto`, `static_assert`, `thread_local`, `volatile`
+- [x] keywords `asm`, `alignas`, `alignof`, `goto`, `static_assert`,
+  `thread_local`, `volatile`
 - [x] `#pragma once` as alternative to `#include` guard
 - [x] `using` for type aliases (as an alternative to `typedef`)
-- [x] flexible order for keyword tags (e.g. `static`) used in function and data declarations/definitions
+- [x] flexible order for keyword tags (e.g. `static`) used in function and
+  data declarations/definitions
 - [x] character escape sequences (`\`, `u8`, `u`, `U`)
 - [x] prefixes for character and string literals (`u8`, `u`, `U`, `L`)
-- [x] `= delete` and `= default` for constructor, destructor, and assignment operator
-- [x] `"`_\<substr1>_`"`_\<whitespace>_`"`_\<substr2>_`"` as the continuation of a string literal
+- [x] `= delete` and `= default` for constructor, destructor, and assignment
+  operator
+- [x] `"`_\<substr1>_`"`_\<whitespace>_`"`_\<substr2>_`"` as the continuation
+  of a string literal
 
 ## Not Supported
 The following is a list of things (through C++11) that are known to _not_ be
@@ -46,7 +50,8 @@ the parser and other `CodeTools` classes.
 - [ ] `decltype`
 - [ ] `export` (removed in C\++11; reintroduced in C\++20)
 - [ ] `register` (removed in C\++17)
-- [ ] `and`, `and_eq`, `bitand`, `bitor`, `compl`, `not`, `not_eq`, `or`, `or_eq`, `xor`, `xor_eq`
+- [ ] `and`, `and_eq`, `bitand`, `bitor`, `compl`, `not`, `not_eq`, `or`,
+  `or_eq`, `xor`, `xor_eq`
 
 ### Preprocessor
 - [ ] `#define` for any value other than an empty string or an integer literal
@@ -79,27 +84,29 @@ RSC's use of the preprocessor is restricted to
 - `#include` directives
 - `#ifndef` for `#include` guards
 - `#ifdef` to include software that supports the target platform
-- `#define` for a pseudo-keyword that maps to an empty string (`NO_OP` is the only current example)
+- `#define` for a pseudo-keyword that maps to an empty string (`NO_OP` is
+  the only current example)
 - `#define` for a few integral constants in the _subs_ directory
 
   A constant of this type is effectively treated as if it had been declared
   using `constexpr`.
 
 ### Identifiers
-- [ ] elaborated type specifiers (`class`, `struct`, `union`, or `enum` prefixed
-to an identifier to act as an inline forward declaration or to resolve an ambiguity
-caused by overloading an identifier)
+- [ ] elaborated type specifiers (`class`, `struct`, `union`, or `enum`
+  prefixed to an identifier to act as an inline forward declaration or to
+  resolve an ambiguity caused by overloading an identifier)
 - [ ] unnecessary name qualification
 
-  Declaring a function as `Class::Function` causes the the parser to fail because
-  this is one situation in which it expects an unqualified name.
+  Declaring a function as `Class::Function` causes the the parser to fail
+  because this is one situation in which it expects an unqualified name.
 
 ### Character and String Literals
 - [ ] raw string literals (`R` prefix)
 - [ ] multi-character literals (e.g. `'AB'`)
 - [ ] user-defined literals
 
-See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and `Parser.GetStr`.
+See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and
+`Parser.GetStr`.
 
 ### Declarations and Definitions
 - [ ] identical declarations of data or functions
@@ -116,21 +123,26 @@ See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and `Parser.Get
 - [ ] unnamed namespaces
 - [ ] inline namespaces
 
-See `Parser.GetNamespace`. Supporting any of these would also affect symbol resolution.
+See `Parser.GetNamespace`. Supporting any of these would also affect symbol
+resolution.
 
 ### Classes
 - [ ] multiple inheritance (`Parser.GetBaseDecl`)
 - [ ] tagging a base class as virtual (`Parser.GetBaseDecl`)
-- [ ] non-public base class (allowed by parser, but accessibility checking does not enforce it)
+- [ ] non-public base class (allowed by parser, but accessibility checking does
+  not enforce it)
 - [ ] anonymous structs (`Parser.GetClassDecl`)
-- [ ] an `enum`, `typedef`, or function in an anonymous union (allowed by parser, but
-`CxxArea.FindEnum`, `CxxArea.FindFunc`, and `CxxArea.FindType` do not look for them)
+- [ ] an `enum`, `typedef`, or function in an anonymous union (allowed by
+  parser, but `CxxArea.FindEnum`, `CxxArea.FindFunc`, and `CxxArea.FindType`
+  do not look for them)
 - [ ] including a `class`/`struct`/`union`/`enum` instance immediately before
-the semicolon at the end of its definition (`Parser.GetClassDecl`)
+  the semicolon at the end of its definition (`Parser.GetClassDecl`)
 - [ ] pointer-to-member (the type _\<class>_`::*` and operators `.*` and `->*`)
 - [ ] argument-dependent lookup in a class's scope
-  - `getline` requires a `std::` prefix to be resolved but should find the version in `<string>`
-  - `next` shouldn’t need a `std::` prefix, because `iterator` is already in `std`
+  - `getline` requires a `std::` prefix to be resolved but should find the
+     version in `<string>`
+  - `next` shouldn’t need a `std::` prefix, because `iterator` is already in
+    `std`
 
 ### Functions
 - [ ] function matching based on `volatile` (only `const` affects matching)
@@ -138,14 +150,18 @@ the semicolon at the end of its definition (`Parser.GetClassDecl`)
   - `const&`: equivalent to `const`
   - `&`: `this` must be non-const
   - `&&`: `this` must be an rvalue
-- [ ] `noexcept(`_\<expr>_`)` as a function tag (only a bare `noexcept` is supported)
+- [ ] `noexcept(`_\<expr>_`)` as a function tag (only a bare `noexcept` is
+  supported)
 - [ ] using a different type (an alias) for an argument in the definition of a
-previously declared function (`DataSpec.MatchesExactly`)
+  previously declared function (`DataSpec.MatchesExactly`)
 - [ ] argument-dependent lookup of regular functions (only done for operator
-overloads)
-- [ ] constructor inheritance (`Parser.GetUsing`, `Class.FindCtor`, and others)
-- [ ] defining a class or function within a function (`Parser.ParseInBlock` and others)
-- [ ] range-based `for` loops (`Parser.GetFor`, `Parser.GetTypeSpec`, and `Operation.Execute`)
+  overloads)
+- [ ] constructor inheritance (`Parser.GetUsing`, `Class.FindCtor`, and
+  others)
+- [ ] brace initialization in a constructor's member initialization list
+- [ ] defining a class within a function (`Parser.ParseInBlock` and others)
+- [ ] range-based `for` loops (`Parser.GetFor`, `Parser.GetTypeSpec`, and
+  `Operation.Execute`)
 - [ ] overloading the function call or comma operator
 
   The parser allows this, but calls to the overload won't be registered because
@@ -158,9 +174,10 @@ overloads)
 
 ### Data
 - [ ] declaring more than one data instance in the same statement, either at file
-scope or within a class (`Parser.GetClassData` and `Parser.GetSpaceData`)
+  scope or within a class (`Parser.GetClassData` and `Parser.GetSpaceData`)
 
-  Note that `FuncData` supports this _within_ a function (for example, `int i = 0, *pi = nullptr`).
+  Note that `FuncData` supports this _within_ a function (for example,
+  `int i = 0, *pi = nullptr`).
 - [ ] type matching based on `volatile` (only `const` affects matching)
 - [ ] unnamed bit fields (`Parser.GetClassData`)
 
@@ -168,9 +185,10 @@ scope or within a class (`Parser.GetClassData` and `Parser.GetSpaceData`)
 - [ ] accessing an enumeration or enumerator using `.` or `->` instead of `::`
 - [ ] scoped enumerations (`enum class`, `enum struct`)
 
-  Once this is supported, some enumerations at namespace scope should make use of it.
-  However, converting from a scoped enumeration to an `int` requires a `static_cast`,
-  so an enumeration that often acts as a `const int` should not be converted.
+  Once this is supported, some enumerations at namespace scope should make use
+  of it. However, converting from a scoped enumeration to an `int` requires a
+  `static_cast`, so an enumeration that often acts as a `const int` should not
+  be converted.
 - [ ] opaque enumerations
 - [ ] forward declarations of enumerations
 - [ ] argument-dependent lookup in an enumeration's scope
@@ -183,9 +201,10 @@ scope or within a class (`Parser.GetClassData` and `Parser.GetSpaceData`)
 - [ ] template arguments other than qualified names
 
   For example, `std::bitset<sizeof(uint8_t)>` would have to be written as
-  `std::bitset<bytesize>` following `constexpr size_t bytesize = sizeof(uint8_t)`.
+  `std::bitset<bytesize>` following
+  `constexpr size_t bytesize = sizeof(uint8_t)`.
 - [ ] a constructor call that requires template argument deduction when a
-template is a base class
+  template is a base class
 
   The template argument must currently be included after the class template name.
 - [ ] instantiation of the entire class template occurs when a member is used
@@ -198,19 +217,19 @@ template is a base class
 - [ ] `extern template`
 - [ ] initialization of static data members in template instances
 
-  The code for this is not included when generating the code for a template instance,
-  so the static member appears uninitialized (`<@i=0`) in the _.lib_ file created by
-  `>export`.
+  The code for this is not included when generating the code for a template
+  instance, so the static member appears uninitialized (`<@i=0`) in the _.lib_
+  file created by `>export`.
 - [ ] `std::list::sort`: The _subs_ file for `list` declares the sort function
-as `bool (*sorted)(T& first, T& second)`. Therefore, if its parameters differ
-from the `list` template arguments, a log occurs during function matching. For
-example, the log occurs if the sort function uses a base class of T rather than
-T itself.
+  as `bool (*sorted)(T& first, T& second)`. Therefore, if its parameters
+  differ from the `list` template arguments, a log occurs during function
+  matching. For example, the log occurs if the sort function uses a base class
+  of `T` rather than `T` itself.
 
 ### Parser
 - [ ] `Parser.Punt` causes a software log on argument overflow
 - [ ] `Scope` and `clear` are repeated in pseudo-code generated when `>parse`
-is used with the `x` option
+  is used with the `x` option
 
 ## False Positives and Negatives from `>check`
 

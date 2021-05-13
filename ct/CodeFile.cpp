@@ -2223,8 +2223,8 @@ void CodeFile::Scan()
    if(!code_.empty()) return;
    if(!ReadCode(code_)) return;
    lexer_.Initialize(code_, this);
-   lexer_.CalcDepths();
    lexer_.CalcLineTypes(true);
+   lexer_.CalcDepths();
    lexer_.CheckPunctuation();
 
    //  Preprocess #include directives.

@@ -149,7 +149,8 @@ bool InNestedBraceInit(const std::vector< LeftBraceRole >& roles)
 LineInfo::LineInfo(size_t start) :
    begin(start),
    depth(DEPTH_NOT_SET),
-   cont(false),
+   continuation(false),
+   mergeable(false),
    type(LineType_N)
 {
 }
@@ -163,7 +164,8 @@ void LineInfo::Display(ostream& stream) const
    else
       stream << '?';
 
-   stream << (cont ? '+' : SPACE);
+   stream << (continuation ? '+' : SPACE);
+   stream << (mergeable ? '^' : SPACE);
    stream << LineTypeAttr::Attrs[type].symbol << SPACE;
 }
 
@@ -215,22 +217,19 @@ void Lexer::CalcDepths()
    if(lines_.empty())
    {
       FindLines();
+      CalcLineTypes(false);
    }
 
-   char prevChar;         // previous character
    string id;             // identifier extracted from code
    Cxx::Keyword kwd;      // keyword extracted from code
    auto ctor = false;     // if parsing a constructor's initialization list
    auto ternary = false;  // if parsing operator?
    int currDepth = 0;     // current depth for indentation
    int nextDepth = 0;     // next depth for indentation
-   int lbDepth;           // depth for left brace
-   size_t rbPos;          // position of matching right brace
    int semiDepth = -1;    // depth to restore when reaching next semicolon
    size_t commaPos;       // position of comma that sets depths
    size_t rparPos;        // position of right parenthese that sets depths
    bool elseif = false;   // if "else if" being processed
-   LineInfo* currInfo;    // LineInfo entry at current position
 
    std::vector< LeftBraceRole > lbStack;
    std::vector< size_t > lbDepths;
@@ -250,10 +249,11 @@ void Lexer::CalcDepths()
       switch(currChar)
       {
       case '{':
-         //
+      {
          //  Push this left brace's role onto the stack.
          //
-         prevChar = (*source_)[prev_];
+         auto lbDepth = currDepth;
+         auto prevChar = (*source_)[prev_];
 
          if(BraceInitPrevChars.find(prevChar) != string::npos)
             lbStack.push_back(LB_Init);
@@ -265,8 +265,6 @@ void Lexer::CalcDepths()
             lbStack.push_back(LB_Enum);
          else
             lbStack.push_back(LB_Func);
-
-         lbDepth = currDepth;
 
          //  Find the next depth.  Indentation usually occurs, but not always:
          //  o If the left brace immediately followed a label, the indentation
@@ -316,19 +314,24 @@ void Lexer::CalcDepths()
          //    the successive elements should not be indented).
          //
          lbDepths.push_back(kwd == Cxx::CASE ? currDepth : lbDepth);
-         rbPos = FindClosing('{', '}', curr_ + 1);
 
-         currInfo = GetLineInfo(curr_);
+         auto currInfo = GetLineInfo(curr_);
+         auto rbPos = FindClosing('{', '}', curr_ + 1);
+
          if(currInfo->depth == DEPTH_NOT_SET)
          {
             auto lbFirst = (LineFindFirst(curr_) == curr_);
             currInfo->depth = (lbFirst ? lbDepth : currDepth);
 
+            auto merge = currInfo->mergeable;
+            if(lbStack.back() == LB_Init) merge = false;
+            if(!merge) currInfo->mergeable = false;
+
             auto prevInfo = GetLineInfo(PrevBegin(curr_));
             if((prevInfo != nullptr) && (prevInfo->depth == DEPTH_NOT_SET))
             {
                if(OnSameLine(curr_, rbPos) && !InNestedBraceInit(lbStack))
-                  currInfo->cont = true;
+                  currInfo->continuation = true;
             }
          }
 
@@ -341,27 +344,31 @@ void Lexer::CalcDepths()
          //  Finalize the depth of lines to this point.  Comments between curr_
          //  and the next parse position will be at nextDepth.
          //
-         SetDepth(currDepth, nextDepth);
+         auto merge = (lbStack.back() != LB_Init);
+         if(curr_ >= commaPos) commaPos = string::npos;
+         SetDepth(currDepth, nextDepth, merge);
          currDepth = nextDepth;
          kwd = Cxx::NIL_KEYWORD;
-         if(curr_ >= commaPos) commaPos = string::npos;
          Advance(1);
          break;
+      }
 
       case '}':
-         //
+      {
          //  Finalize the depth of lines to this point.  Comments between
          //  curr_ and the next parse position will be at the depth of the
          //  right brace, which was set when its left brace was found.
          //
+         auto merge = (curr_ >= commaPos);
          if(curr_ >= commaPos) commaPos = string::npos;
          nextDepth = lbDepths.back();
          lbStack.pop_back();
          lbDepths.pop_back();
-         SetDepth(currDepth, nextDepth);
+         SetDepth(currDepth, nextDepth, merge);
          currDepth = nextDepth;
          Advance(1);
          break;
+      }
 
       case ';':
          //
@@ -414,7 +421,7 @@ void Lexer::CalcDepths()
 
             ctor = true;
             nextDepth = currDepth + 1;
-            SetDepth(currDepth, nextDepth);  // (e)
+            SetDepth(currDepth, nextDepth, false);  // (e)
             currDepth = nextDepth;
          } while(false);
 
@@ -464,7 +471,7 @@ void Lexer::CalcDepths()
          if(curr_ >= commaPos)
          {
             commaPos = string::npos;
-            SetDepth(currDepth, currDepth);
+            SetDepth(currDepth, currDepth, false);
          }
 
          Advance(1);
@@ -750,7 +757,6 @@ void Lexer::CalcLineTypes(bool log)
    if(lines_.empty())
    {
       FindLines();
-      CalcDepths();
    }
 
    slashAsterisk_ = false;
@@ -759,11 +765,11 @@ void Lexer::CalcLineTypes(bool log)
    //  a using statement or function name definition, carry it over
    //  to the next line.
    //
-   auto lines = lines_.size();
+   auto size = lines_.size();
    auto prevCont = false;
    auto prevType = LineType_N;
 
-   for(size_t n = 0; n < lines; ++n)
+   for(size_t n = 0; n < size; ++n)
    {
       auto currCont = false;
       auto currType = CalcLineType(n, log, currCont);
@@ -776,12 +782,15 @@ void Lexer::CalcLineTypes(bool log)
          }
       }
 
-      lines_[n].type = (prevCont ? prevType : currType);
+      auto& info = lines_[n];
+      info.type = (prevCont ? prevType : currType);
+      info.mergeable = LineTypeAttr::Attrs[info.type].isMergeable;
+
       prevCont = currCont;
       prevType = currType;
    }
 
-   for(size_t n = 0; n < lines; ++n)
+   for(size_t n = 0; n < size; ++n)
    {
       auto t = lines_[n].type;
 
@@ -793,7 +802,7 @@ void Lexer::CalcLineTypes(bool log)
       }
    }
 
-   for(size_t n = 0; n < lines; ++n)
+   for(size_t n = 0; n < size; ++n)
    {
       auto indent = CheckDepth(n);
 
@@ -820,7 +829,7 @@ word Lexer::CheckDepth(size_t n) const
    //  Return if the indentation matches the desired depth.
    //
    auto comment = (source_->compare(first, 2, COMMENT_STR) == 0);
-   if(info.cont && !comment) ++desired;
+   if(info.continuation && !comment) ++desired;
    auto actual = first - info.begin;
    if(actual == (IndentSize() * desired)) return -1;
 
@@ -857,23 +866,21 @@ int Lexer::CheckLineMerge(size_t n) const
 {
    if(n + 1 >= lines_.size()) return -1;
    const auto& line1 = lines_[n];
-   if(!LineTypeAttr::Attrs[line1.type].isMergeable) return -1;
+   if(!line1.mergeable) return -1;
    const auto& line2 = lines_[n + 1];
-   if(!LineTypeAttr::Attrs[line2.type].isMergeable) return -1;
+   if(!line2.mergeable) return -1;
 
    auto begin1 = line1.begin;
    auto end1 = line2.begin - 1;
    auto begin2 = line2.begin;
    auto end2 = source_->find(CRLF, begin2);
 
-   //  The second line must end with a semicolon.  The first line must not
-   //  end in a trailing comment, semicolon, colon, or right brace and must
-   //  not start with an "if" or "else".  If mergin, a space may also have
-   //  to be inserted.
+   //  The first line must not end in a trailing comment, semicolon, colon,
+   //  or right brace and must not start with an "if" or "else".  If merging,
+   //  a space may also have to be inserted.
    //
    while(WhitespaceChars.find((*source_)[end2]) != string::npos) --end2;
    if((end2 < begin2) || (end2 == string::npos)) return -1;
-   if((*source_)[end2] != ';') return -1;
 
    while(WhitespaceChars.find((*source_)[end1]) != string::npos) --end1;
    if((end1 < begin1) || (end2 == string::npos)) return -1;
@@ -3089,7 +3096,7 @@ size_t Lexer::RfindNonBlank(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Lexer::SetDepth(int depth1, int depth2)
+void Lexer::SetDepth(int depth1, int depth2, bool merge)
 {
    //  START is the last position where a line of code whose depth has not
    //  been determined started, and curr_ has finalized the depth of that
@@ -3113,7 +3120,8 @@ void Lexer::SetDepth(int depth1, int depth2)
       if(info.depth == DEPTH_NOT_SET)
       {
          info.depth = depth1;
-         info.cont = (i != first);
+         info.continuation = (i != first);
+         if(!merge) info.mergeable = false;
       }
    }
 
@@ -3123,7 +3131,8 @@ void Lexer::SetDepth(int depth1, int depth2)
       if(info.depth == DEPTH_NOT_SET)
       {
          info.depth = depth2;
-         info.cont = (i != mid + 1);
+         info.continuation = (i != mid + 1);
+         if(!merge) info.mergeable = false;
       }
    }
 }
@@ -3282,7 +3291,7 @@ void Lexer::Update()
    //  The code has been modified, so regenerate our LineInfo records.
    //
    FindLines();
-   CalcDepths();
    CalcLineTypes(false);
+   CalcDepths();
 }
 }

@@ -3390,7 +3390,7 @@ word Editor::Indent(size_t pos)
    auto first = LineFindFirst(pos);
    auto curr = first - begin;
    auto depth = info->depth;
-   if(info->cont) ++depth;
+   if(info->continuation) ++depth;
    auto indent = depth * IndentSize();
 
    if(indent > curr)
@@ -5055,8 +5055,8 @@ void Editor::Setup(CodeFile* file)
    file_ = file;
    file_->ReadCode(source_);
    Initialize(source_, file_);
-   CalcDepths();
    CalcLineTypes(false);
+   CalcDepths();
 
    //  Get the file's warnings and sort them for fixing.  The order reduces
    //  the chances of an item's position changing before it is edited.

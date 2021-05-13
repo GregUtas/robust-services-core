@@ -49,7 +49,8 @@ struct LineInfo
 {
    const size_t begin;  // offset where line starts; it ends at a CRLF
    int depth;           // lexical level for indentation
-   bool cont;           // set if code continues from the previous line
+   bool continuation;   // set if code continues from the previous line
+   bool mergeable;      // set if code can merge with another line
    LineType type;       // line's type
 
    //  Constructs a line that begins at START.
@@ -621,10 +622,11 @@ private:
 
    //  Sets all lines from nextLine_ to curr_ to DEPTH1, and all lines after
    //  curr_ to the next parse position to DEPTH2.  If either range spans
-   //  multiple lines, subsequent lines are marked as continuations of the first
-   //  line in the range.
+   //  multiple lines, subsequent lines are marked as continuations of the
+   //  first line in the range.  If MERGE is false, the lines are marked as
+   //  not mergeable.
    //
-   void SetDepth(int depth1, int depth2);
+   void SetDepth(int depth1, int depth2, bool merge = true);
 
    //  Returns true if the colon at POS shouldn't be preceded by a space.
    //

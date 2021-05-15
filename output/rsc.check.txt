@@ -1,13 +1,13 @@
 LINE COUNTS
-   78794   source code not in one of the categories below
-   40682   blank line
-   18199   blank comment
+   78799   source code not in one of the categories below
+   40683   blank line
+   18202   blank comment
    10386   comment at the top of a file (e.g. for the file's name or license info)
     7840   comment followed by repeated characters to draw a rule (e.g. //---- ...)
-   20849   comment not in one of the categories above (e.g. //  <text>)
+   20851   comment not in one of the categories above (e.g. //  <text>)
        0   C-style comment
-   15748   bare left brace
-   14165   bare right brace
+   15751   bare left brace
+   14168   bare right brace
     1583   bare right brace with semicolon
     1786   access control
     4864   invocation of Debug::ft
@@ -15,7 +15,7 @@ LINE COUNTS
     6227   #include directive
     1131   preprocessor directive other than #include
      939   using statement
-  223886   TOTAL
+  223903   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   132  C-style cast
@@ -220,8 +220,8 @@ W005 Functional cast
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.cpp(697):       Attrs[ValidOctDigits[i]].octValue = int8_t(i);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1848):    *cli.obuf << ": " << Warning(log.warning_);
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(147):          type = LibTokenType(i);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2230):          fp *= std::pow(10.0, int(num));
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2337):          oper = Cxx::Operator(match->second);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2247):          fp *= std::pow(10.0, int(num));
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2354):          oper = Cxx::Operator(match->second);
   C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.cpp(415): ipport_t BotTcpService::Port() const { return ipport_t(port_); }
   C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(73):    Id Tid() const { return Id(tid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(234):       auto type = MemoryType(m);
@@ -591,8 +591,8 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(5281):    ((Function*) log.item_)->SetExplicit(true);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(5330):    ((Function*) log.item_)->SetOverride(true);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(5402):    ((Function*) log.item_)->SetVirtual(true);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3007):          auto def = static_cast< Define* >(item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3011):             auto code = const_cast< string* >(source_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3024):          auto def = static_cast< Define* >(item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3028):             auto code = const_cast< string* >(source_);
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(401):    auto op = static_cast< Operation* >(token.get());
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(439):    auto op = static_cast< Operation* >(call.get());
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(743):    auto brace = static_cast< BraceInit* >(token.get());
@@ -1050,7 +1050,7 @@ W008 Cast removes const qualification
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(5361):       const_cast< Function* >(func)->SetStatic(true, Cxx::NIL_OPERATOR);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(5377):          const_cast< Function* >(func)->SetConst(false);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(5402):    ((Function*) log.item_)->SetVirtual(true);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3011):             auto code = const_cast< string* >(source_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3028):             auto code = const_cast< string* >(source_);
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(4397):       func->SetTemplate(const_cast< Function* >(tmplt));
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(43):    return (void*) ((const_ptr_t) ptr2 - diff);
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(50):    return (void*) ((const_ptr_t) ptr1 + diff);
@@ -3628,22 +3628,22 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(133): const OperatorInfo* OperatorInfo::GetAttrs(LibTokenType type)
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(141): bool OperatorInfo::GetType(const string& op, LibTokenType& type)
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(87): IndentRule ClassifyIndent(string& id)
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(818): word Lexer::CheckDepth(size_t n) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(865): int Lexer::CheckLineMerge(size_t n) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(906): void Lexer::CheckPunctuation() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1209): size_t Lexer::CurrBegin(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1235): size_t Lexer::CurrEnd(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2020): const LineInfo* Lexer::GetLineInfo(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2029): LineInfo* Lexer::GetLineInfo(size_t pos)
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2038): size_t Lexer::GetLineNum(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2062): size_t Lexer::GetLineStart(size_t line) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2140): bool Lexer::GetNthLine(size_t n, string& s, bool crlf) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2549): bool Lexer::LineHasTrailingCommentAt(size_t n, size_t offset) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2631): size_t Lexer::LineSize(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2665): size_t Lexer::NextBegin(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2780): size_t Lexer::NextPos(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3023): size_t Lexer::PrevBegin(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3099): void Lexer::SetDepth(int depth1, int depth2, bool merge)
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(817): word Lexer::CheckDepth(size_t n) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(864): int Lexer::CheckLineMerge(size_t n) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(905): void Lexer::CheckPunctuation() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1226): size_t Lexer::CurrBegin(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1252): size_t Lexer::CurrEnd(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2037): const LineInfo* Lexer::GetLineInfo(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2046): LineInfo* Lexer::GetLineInfo(size_t pos)
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2055): size_t Lexer::GetLineNum(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2079): size_t Lexer::GetLineStart(size_t line) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2157): bool Lexer::GetNthLine(size_t n, string& s, bool crlf) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2566): bool Lexer::LineHasTrailingCommentAt(size_t n, size_t offset) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2648): size_t Lexer::LineSize(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2682): size_t Lexer::NextBegin(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2797): size_t Lexer::NextPos(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3040): size_t Lexer::PrevBegin(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3116): void Lexer::SetDepth(int depth1, int depth2, bool merge)
   C:/Users/gregu/Documents/rsc/rsc/ct/LibraryErrSet.cpp(94): word LibraryErrSet::Error(string& expl) const
   C:/Users/gregu/Documents/rsc/rsc/ct/LibraryItem.cpp(74): bool LibItemSort::operator()
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(40): bool IsSortedAlphabetically(const string& s1, const string& s2)
@@ -4141,30 +4141,30 @@ W119 Argument passed by value is modified
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(5408/1): bool Editor::TrailingCommentFollows(size_t pos) const
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(488/1): LibExprErr Interpreter::ApplyOperator(bool operand)
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(599/1): LibrarySet* Interpreter::Error(LibExprErr err) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1209/1): size_t Lexer::CurrBegin(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1269/1): size_t Lexer::Find(size_t pos, const string& str) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1286/3): size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1398/2): size_t Lexer::FindFirstOf(const string& targs, size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1517/1): size_t Lexer::FindLineEnd(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1558/1): size_t Lexer::FindNonBlank(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1575/1): size_t Lexer::FindWord(size_t pos, const string& id) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1921/2): size_t Lexer::GetHexNum(int64_t& num, size_t max)
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1944/1): bool Lexer::GetIncludeFile(size_t pos, string& file, bool& angle) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2466/1): size_t Lexer::LineFind(size_t pos, const string& str) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2498/1): size_t Lexer::LineFindFirstOf(size_t pos, const std::string& chars) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2529/1): size_t Lexer::LineFindNonBlank(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2697/1): string Lexer::NextIdentifier(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2743/1): size_t Lexer::NextLineIndentation(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2758/1): string Lexer::NextOperator(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2780/1): size_t Lexer::NextPos(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2916/1): bool Lexer::NoCodeFollows(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3023/1): size_t Lexer::PrevBegin(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3054/1): size_t Lexer::Rfind(size_t pos, const std::string& str) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3069/1): size_t Lexer::RfindFirstOf(size_t pos, const std::string& chars) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3084/1): size_t Lexer::RfindNonBlank(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3155/1): size_t Lexer::SkipCharLiteral(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3198/1): size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3231/1): size_t Lexer::SkipTemplateSpec(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1226/1): size_t Lexer::CurrBegin(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1286/1): size_t Lexer::Find(size_t pos, const string& str) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1303/3): size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1415/2): size_t Lexer::FindFirstOf(const string& targs, size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1534/1): size_t Lexer::FindLineEnd(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1575/1): size_t Lexer::FindNonBlank(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1592/1): size_t Lexer::FindWord(size_t pos, const string& id) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1938/2): size_t Lexer::GetHexNum(int64_t& num, size_t max)
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1961/1): bool Lexer::GetIncludeFile(size_t pos, string& file, bool& angle) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2483/1): size_t Lexer::LineFind(size_t pos, const string& str) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2515/1): size_t Lexer::LineFindFirstOf(size_t pos, const std::string& chars) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2546/1): size_t Lexer::LineFindNonBlank(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2714/1): string Lexer::NextIdentifier(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2760/1): size_t Lexer::NextLineIndentation(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2775/1): string Lexer::NextOperator(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2797/1): size_t Lexer::NextPos(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(2933/1): bool Lexer::NoCodeFollows(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3040/1): size_t Lexer::PrevBegin(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3071/1): size_t Lexer::Rfind(size_t pos, const std::string& str) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3086/1): size_t Lexer::RfindFirstOf(size_t pos, const std::string& chars) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3101/1): size_t Lexer::RfindNonBlank(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3172/1): size_t Lexer::SkipCharLiteral(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3215/1): size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(3248/1): size_t Lexer::SkipTemplateSpec(size_t pos) const
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(1064/2): bool Parser::GetCompoundType(QualNamePtr& name, Cxx::Type type)
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(2403/1): size_t Parser::GetLineNum(size_t pos) const
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(4221/2): void Parser::Log(Warning warning, size_t pos) const
@@ -6015,56 +6015,56 @@ C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.h
     50: class Interpreter : public NodeBase::Base
 C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp
   W005 Functional cast
-    2230:          fp *= std::pow(10.0, int(num));
-    2337:          oper = Cxx::Operator(match->second);
+    2247:          fp *= std::pow(10.0, int(num));
+    2354:          oper = Cxx::Operator(match->second);
   W007 Cast down the inheritance hierarchy
-    3007:          auto def = static_cast< Define* >(item);
-    3011:             auto code = const_cast< string* >(source_);
+    3024:          auto def = static_cast< Define* >(item);
+    3028:             auto code = const_cast< string* >(source_);
   W008 Cast removes const qualification
-    3011:             auto code = const_cast< string* >(source_);
+    3028:             auto code = const_cast< string* >(source_);
 * W106 Function does not invoke Debug::ft
     87: IndentRule ClassifyIndent(string& id)
-    818: word Lexer::CheckDepth(size_t n) const
-    865: int Lexer::CheckLineMerge(size_t n) const
-    906: void Lexer::CheckPunctuation() const
-    1209: size_t Lexer::CurrBegin(size_t pos) const
-    1235: size_t Lexer::CurrEnd(size_t pos) const
-    2020: const LineInfo* Lexer::GetLineInfo(size_t pos) const
-    2029: LineInfo* Lexer::GetLineInfo(size_t pos)
-    2038: size_t Lexer::GetLineNum(size_t pos) const
-    2062: size_t Lexer::GetLineStart(size_t line) const
-    2140: bool Lexer::GetNthLine(size_t n, string& s, bool crlf) const
-    2549: bool Lexer::LineHasTrailingCommentAt(size_t n, size_t offset) const
-    2631: size_t Lexer::LineSize(size_t pos) const
-    2665: size_t Lexer::NextBegin(size_t pos) const
-    2780: size_t Lexer::NextPos(size_t pos) const
-    3023: size_t Lexer::PrevBegin(size_t pos) const
-    3099: void Lexer::SetDepth(int depth1, int depth2, bool merge)
+    817: word Lexer::CheckDepth(size_t n) const
+    864: int Lexer::CheckLineMerge(size_t n) const
+    905: void Lexer::CheckPunctuation() const
+    1226: size_t Lexer::CurrBegin(size_t pos) const
+    1252: size_t Lexer::CurrEnd(size_t pos) const
+    2037: const LineInfo* Lexer::GetLineInfo(size_t pos) const
+    2046: LineInfo* Lexer::GetLineInfo(size_t pos)
+    2055: size_t Lexer::GetLineNum(size_t pos) const
+    2079: size_t Lexer::GetLineStart(size_t line) const
+    2157: bool Lexer::GetNthLine(size_t n, string& s, bool crlf) const
+    2566: bool Lexer::LineHasTrailingCommentAt(size_t n, size_t offset) const
+    2648: size_t Lexer::LineSize(size_t pos) const
+    2682: size_t Lexer::NextBegin(size_t pos) const
+    2797: size_t Lexer::NextPos(size_t pos) const
+    3040: size_t Lexer::PrevBegin(size_t pos) const
+    3116: void Lexer::SetDepth(int depth1, int depth2, bool merge)
   W119 Argument passed by value is modified
-    1209/1: size_t Lexer::CurrBegin(size_t pos) const
-    1269/1: size_t Lexer::Find(size_t pos, const string& str) const
-    1286/3: size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
-    1398/2: size_t Lexer::FindFirstOf(const string& targs, size_t pos) const
-    1517/1: size_t Lexer::FindLineEnd(size_t pos) const
-    1558/1: size_t Lexer::FindNonBlank(size_t pos) const
-    1575/1: size_t Lexer::FindWord(size_t pos, const string& id) const
-    1921/2: size_t Lexer::GetHexNum(int64_t& num, size_t max)
-    1944/1: bool Lexer::GetIncludeFile(size_t pos, string& file, bool& angle) const
-    2466/1: size_t Lexer::LineFind(size_t pos, const string& str) const
-    2498/1: size_t Lexer::LineFindFirstOf(size_t pos, const std::string& chars) const
-    2529/1: size_t Lexer::LineFindNonBlank(size_t pos) const
-    2697/1: string Lexer::NextIdentifier(size_t pos) const
-    2743/1: size_t Lexer::NextLineIndentation(size_t pos) const
-    2758/1: string Lexer::NextOperator(size_t pos) const
-    2780/1: size_t Lexer::NextPos(size_t pos) const
-    2916/1: bool Lexer::NoCodeFollows(size_t pos) const
-    3023/1: size_t Lexer::PrevBegin(size_t pos) const
-    3054/1: size_t Lexer::Rfind(size_t pos, const std::string& str) const
-    3069/1: size_t Lexer::RfindFirstOf(size_t pos, const std::string& chars) const
-    3084/1: size_t Lexer::RfindNonBlank(size_t pos) const
-    3155/1: size_t Lexer::SkipCharLiteral(size_t pos) const
-    3198/1: size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
-    3231/1: size_t Lexer::SkipTemplateSpec(size_t pos) const
+    1226/1: size_t Lexer::CurrBegin(size_t pos) const
+    1286/1: size_t Lexer::Find(size_t pos, const string& str) const
+    1303/3: size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
+    1415/2: size_t Lexer::FindFirstOf(const string& targs, size_t pos) const
+    1534/1: size_t Lexer::FindLineEnd(size_t pos) const
+    1575/1: size_t Lexer::FindNonBlank(size_t pos) const
+    1592/1: size_t Lexer::FindWord(size_t pos, const string& id) const
+    1938/2: size_t Lexer::GetHexNum(int64_t& num, size_t max)
+    1961/1: bool Lexer::GetIncludeFile(size_t pos, string& file, bool& angle) const
+    2483/1: size_t Lexer::LineFind(size_t pos, const string& str) const
+    2515/1: size_t Lexer::LineFindFirstOf(size_t pos, const std::string& chars) const
+    2546/1: size_t Lexer::LineFindNonBlank(size_t pos) const
+    2714/1: string Lexer::NextIdentifier(size_t pos) const
+    2760/1: size_t Lexer::NextLineIndentation(size_t pos) const
+    2775/1: string Lexer::NextOperator(size_t pos) const
+    2797/1: size_t Lexer::NextPos(size_t pos) const
+    2933/1: bool Lexer::NoCodeFollows(size_t pos) const
+    3040/1: size_t Lexer::PrevBegin(size_t pos) const
+    3071/1: size_t Lexer::Rfind(size_t pos, const std::string& str) const
+    3086/1: size_t Lexer::RfindFirstOf(size_t pos, const std::string& chars) const
+    3101/1: size_t Lexer::RfindNonBlank(size_t pos) const
+    3172/1: size_t Lexer::SkipCharLiteral(size_t pos) const
+    3215/1: size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
+    3248/1: size_t Lexer::SkipTemplateSpec(size_t pos) const
 C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h
 * W032 Unused function
     446:    size_t LineFindFirstOf(size_t pos, const std::string& chars) const;

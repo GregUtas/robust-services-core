@@ -69,12 +69,12 @@ enum LeftBraceRole
 enum IndentRule
 {
    IndentStandard,     // standard rules
-   IndentContinue,     // numeric constant or punctuation
+   IndentContinue,     // numeric/character/string literal
    IndentArea,         // class/struct/union
    IndentCase,         // case label
    IndentConditional,  // do/for/if/while
    IndentControl,      // access control
-   IndentDirective,    // other preprocessor directive
+   IndentDirective,    // preprocessor directive
    IndentElse,         // else
    IndentEnum,         // enumeration
    IndentNamespace     // namespace
@@ -433,8 +433,8 @@ void Lexer::CalcDepths()
          //  If this is the end of a parenthesized condition, finalize its
          //  depths.  If a left brace does not follow, indent the following
          //  statement and restore the current depth when the next semicolon
-         //  semicolon is reached.  Unbraced conditionals can nest, so don't
-         //  let a subsequent one update the depth set for the semicolon.
+         //  is reached.  Unbraced conditionals can nest, so don't let a
+         //  subsequent one update the depth set for the semicolon.
          //
          if(curr_ >= rparPos)
          {
@@ -481,8 +481,7 @@ void Lexer::CalcDepths()
          //
          //  Take operators one character at a time so as not to skip over a
          //  brace or semicolon.  If this isn't an operator character, bypass
-         //  it using FindIdentifier, which also skips string and character
-         //  literals.
+         //  it using FindIdentifier, which also skips literals.
          //
          if(ValidOpChars.find_first_of(currChar) != string::npos)
          {
@@ -1001,16 +1000,13 @@ void Lexer::CheckSwitch(const Switch& code) const
    if(!code.GetSpan3(begin, pos, end)) return;
    if(pos == string::npos) return;
 
-   //  Starting at the switch statement's left brace, find successive
-   //  identifiers.  If a case or default label was not immediately
-   //  preceded by a jump statement, log a warning if there isn't a
-   //  fallthrough comment between it and the last identifier.  Skip
-   //  nested code and the rest of a jump statement.
+   //  Starting at the switch statement's left brace, find the identifier
+   //  at the beginning of each statement.
    //
    auto info = GetLineInfo(pos);
    auto depth = info->depth;
-   auto found = true;
-   auto idPos = string::npos;
+   auto casePos = string::npos;
+   auto codePos = string::npos;
    string id;
 
    while(FindIdentifier(pos, id, false) && (pos <= end))
@@ -1021,33 +1017,54 @@ void Lexer::CheckSwitch(const Switch& code) const
       {
          if((id == CASE_STR) || (id == DEFAULT_STR))
          {
-            if(!found && (idPos != string::npos))
+            //  If the previous case statement did not end with a jump
+            //  statement, log a warning if there isn't a fallthrough
+            //  comment between it and the last identifier.
+            //
+            if((casePos != string::npos) && (codePos != string::npos))
             {
                auto fpos = source_->rfind(FALLTHROUGH_STR, pos);
-               if((fpos == string::npos) || (fpos < idPos))
-                  file_->LogPos(pos, NoJumpOrFallthrough);
+               if((fpos == string::npos) || (fpos < codePos))
+               {
+                  file_->LogPos(casePos, NoJumpOrFallthrough);
+               }
             }
 
-            found = false;
-            idPos = string::npos;
+            casePos = (id == CASE_STR ? pos : string::npos);
+            codePos = string::npos;
+            pos = FindFirstOf(":", pos);
+            continue;
          }
       }
-      else if(info->depth == depth + 1)
+      else
       {
-         if((id == BREAK_STR) || (id == RETURN_STR) || (id == CONTINUE_STR) ||
-            (id == THROW_STR) || (id == GOTO_STR))
+         if(info->depth == depth + 1)
          {
-            found = true;
-            pos = FindFirstOf(";", pos);
-         }
-         else
-         {
-            found = false;
-            idPos = pos;
+            //  This isn't nested code, so a jump statement clears any pending
+            //  case label.
+            //
+            if((id == BREAK_STR) || (id == RETURN_STR) ||
+               (id == CONTINUE_STR) || (id == THROW_STR) || (id == GOTO_STR))
+            {
+               casePos = string::npos;
+               pos = FindFirstOf(";", pos);
+               continue;
+            }
+            else
+            {
+               codePos = pos;
+            }
          }
       }
 
-      pos = NextPos(pos + id.size());
+      //  Continue with the next statement.
+      //
+      pos = FindFirstOf(";{", pos);
+
+      if((*source_)[pos] == '{')
+      {
+         pos = FindClosing('{', '}', pos + 1);
+      }
    }
 }
 

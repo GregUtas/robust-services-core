@@ -140,7 +140,6 @@ void Library::AddFile(CodeFile& file)
    while((f != files_.cend()) && (strCompare((*f)->Name(), name) < 0)) ++f;
    files_.insert(f, CodeFilePtr(&file));
 
-   files_.push_back(CodeFilePtr(&file));
    fileSet_->Items().insert(&file);
 
    if(file.IsHeader())

@@ -16,6 +16,7 @@
 #include <cstring>
 #include <iosfwd>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <utility>
 #include "BaseBot.h"
@@ -511,15 +512,15 @@ void TokenMessage::set_as_ascii(const string& text)
 {
    Debug::ft("TokenMessage.set_as_ascii");
 
-   auto tokens = new Token[text.size()];
+   std::unique_ptr< Token[] > tokens(new Token[text.size()]);
 
    for(size_t index = 0; index < text.size(); ++index)
    {
       tokens[index] = Token(CATEGORY_ASCII, text[index]);
    }
 
-   set_from(tokens, text.size());
-   delete[] tokens;
+   set_from(tokens.get(), text.size());
+   tokens.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -635,8 +636,8 @@ size_t TokenMessage::set_from(const string& text)
    size_t text_index = 0;
    size_t token_index = 0;
    int nesting = 0;
+   std::unique_ptr< Token[] > tokens(new Token[text.size()]);
    auto text_to_token_map = &TokenTextMap::instance()->text_to_token_map();
-   auto tokens = new Token[text.size()];
 
    while((location == NO_ERROR) && (text_index < text.size()))
    {
@@ -750,7 +751,7 @@ size_t TokenMessage::set_from(const string& text)
       }
       else
       {
-         location = set_from(tokens, token_index);
+         location = set_from(tokens.get(), token_index);
 
          if(location != NO_ERROR)
          {
@@ -762,7 +763,7 @@ size_t TokenMessage::set_from(const string& text)
       }
    }
 
-   delete[] tokens;
+   tokens.reset();
    return location;
 }
 

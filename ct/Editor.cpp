@@ -1125,7 +1125,7 @@ word Editor::ChangeAccess(const CxxToken* item, ItemDeclAttrs& attrs)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)  //i
+word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.ChangeAssignmentToCtorCall");
 
@@ -2053,7 +2053,7 @@ word Editor::EraseClass(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseCode(const CxxToken* item)  //i
+word Editor::EraseCode(const CxxToken* item)  //u
 {
    Debug::ft("Editor.EraseCode");
 
@@ -2280,7 +2280,7 @@ word Editor::EraseParameter(const Function* func, word offset)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseScope(const CodeWarning& log)  //i
+word Editor::EraseScope(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.EraseScope");
 
@@ -2293,7 +2293,7 @@ word Editor::EraseScope(const CodeWarning& log)  //i
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseSemicolon(const CodeWarning& log)  //i
+word Editor::EraseSemicolon(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.EraseSemicolon");
 
@@ -3402,7 +3402,7 @@ word Editor::Indent(size_t pos)
 
 //------------------------------------------------------------------------------
 
-word Editor::InlineDebugFtArgument(const CodeWarning& log)  //i
+word Editor::InlineDebugFtArgument(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.InlineDebugFtArgument");
 
@@ -3571,7 +3571,7 @@ word Editor::InsertDataInit(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)  //i
+word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)  //u
 {
    Debug::ft("Editor.InsertDebugFtCall");
 
@@ -3661,7 +3661,7 @@ word Editor::InsertEnumName(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertForward(const CodeWarning& log)  //i
+word Editor::InsertForward(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.InsertForward(log)");
 
@@ -3715,7 +3715,7 @@ word Editor::InsertForward(const CodeWarning& log)  //i
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertForward(size_t pos, const string& forward)  //i
+word Editor::InsertForward(size_t pos, const string& forward)  //u
 {
    Debug::ft("Editor.InsertForward(pos)");
 
@@ -3744,7 +3744,7 @@ word Editor::InsertForward(size_t pos, const string& forward)  //i
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertInclude(const CodeWarning& log)  //i
+word Editor::InsertInclude(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.InsertInclude(log)");
 
@@ -3759,7 +3759,7 @@ word Editor::InsertInclude(const CodeWarning& log)  //i
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertInclude(string& include)  //i
+word Editor::InsertInclude(string& include)  //u
 {
    Debug::ft("Editor.InsertInclude(string)");
 
@@ -3801,7 +3801,7 @@ word Editor::InsertInclude(string& include)  //i
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertIncludeGuard(const CodeWarning& log)  //i
+word Editor::InsertIncludeGuard(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.InsertIncludeGuard");
 
@@ -3878,7 +3878,7 @@ word Editor::InsertMemberInit(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertNamespaceForward  //i
+word Editor::InsertNamespaceForward  //u
    (size_t pos, const string& nspace, const string& forward)
 {
    Debug::ft("Editor.InsertNamespaceForward");
@@ -3946,7 +3946,7 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertPatchDecl(const ItemDeclAttrs& attrs)  //i
+void Editor::InsertPatchDecl(const ItemDeclAttrs& attrs)  //u
 {
    Debug::ft("Editor.InsertPatchDecl");
 
@@ -3965,7 +3965,7 @@ void Editor::InsertPatchDecl(const ItemDeclAttrs& attrs)  //i
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertPatchDefn(const Class* cls, const FuncDefnAttrs& attrs)  //i
+void Editor::InsertPatchDefn(const Class* cls, const FuncDefnAttrs& attrs)  //u
 {
    Debug::ft("Editor.InsertPatchDefn");
 
@@ -4051,7 +4051,7 @@ size_t Editor::InsertRule(size_t pos, char c)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertSpecialFuncDecl  //i
+word Editor::InsertSpecialFuncDecl  //u
    (CliThread& cli, const Class* cls, FunctionRole role)
 {
    Debug::ft("Editor.InsertSpecialFuncDecl");
@@ -4127,7 +4127,7 @@ word Editor::InsertSpecialFuncDecl  //i
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertSpecialFuncDefn  //i
+void Editor::InsertSpecialFuncDefn  //u
    (const Class* cls, const FuncDefnAttrs& attrs)
 {
    Debug::ft("Editor.InsertSpecialFuncDefn");
@@ -4311,7 +4311,7 @@ word Editor::InsertSpecialFunctions(CliThread& cli, const CxxToken* item)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertUsing(const CodeWarning& log)  //i
+word Editor::InsertUsing(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.InsertUsing");
 
@@ -4533,7 +4533,7 @@ size_t Editor::PrologEnd() const
 
 //------------------------------------------------------------------------------
 
-void Editor::QualifyReferent(const CxxToken* item, const CxxToken* ref)  //i
+void Editor::QualifyReferent(const CxxToken* item, const CxxToken* ref)  //u
 {
    Debug::ft("Editor.QualifyReferent");
 
@@ -4597,7 +4597,7 @@ void Editor::QualifyUsings(CxxToken* item)
 
 //------------------------------------------------------------------------------
 
-word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)  //i
+word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)  //u
 {
    Debug::ft("Editor.RenameArgument");
 
@@ -4668,7 +4668,7 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)  //i
 
 //------------------------------------------------------------------------------
 
-word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //i
+word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //u
 {
    Debug::ft("Editor.RenameDebugFtArgument");
 
@@ -4744,7 +4744,7 @@ word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //i
 
 //------------------------------------------------------------------------------
 
-word Editor::RenameIncludeGuard(const CodeWarning& log)  //i
+word Editor::RenameIncludeGuard(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.RenameIncludeGuard");
 
@@ -4803,7 +4803,7 @@ word Editor::ReplaceName(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::ReplaceNull(const CodeWarning& log)  //i
+word Editor::ReplaceNull(const CodeWarning& log)  //u
 {
    Debug::ft("Editor.ReplaceNull");
 

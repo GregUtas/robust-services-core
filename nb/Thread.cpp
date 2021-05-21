@@ -1006,7 +1006,7 @@ fixed_string ClosingConsoleStr = "Closing console in 10 seconds...";
 //  the design of RootThread (watchdog faction) and InitThread (system faction)
 //  requires higher priorities.  The overall priority scheme is therefore
 //
-//    watchdog > system > payload/maintenance/provisioning/background/audit
+//  watchdog > system > loadtest/payload/maintenance/operations/background/audit
 //
 const SysThread::Priority FactionMap[Faction_N] =
 {

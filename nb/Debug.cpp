@@ -94,7 +94,7 @@ Flags Debug::GetSwFlags()
 
 //------------------------------------------------------------------------------
 
-void Debug::noop()
+void Debug::noop(debug64_t info)
 {
    Debug::ft("Debug.noop");
 }

@@ -2135,7 +2135,7 @@ void Tracepoint::OnLine(const CodeFile* file, size_t line, bool compiling) const
       //  Set a breakpoint here to break when the parser reaches
       //  a specified file and line in the source code.
       //
-      Debug::noop();  //@
+      Debug::noop(0xC0DE);  //@
       break;
 
    case Start:

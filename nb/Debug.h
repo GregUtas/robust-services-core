@@ -125,7 +125,7 @@ public:
 
    //  Does nothing.  Useful for defining a breakpoint or tracepoint.
    //
-   static void noop();
+   static void noop(debug64_t info = 0);
 private:
    //  Flags that define actions performed when a function is invoked.
    //

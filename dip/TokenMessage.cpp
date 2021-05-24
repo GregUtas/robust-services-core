@@ -16,7 +16,6 @@
 #include <cstring>
 #include <iosfwd>
 #include <map>
-#include <memory>
 #include <sstream>
 #include <utility>
 #include "BaseBot.h"

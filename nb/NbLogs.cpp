@@ -52,6 +52,7 @@ void CreateNbLogs(RestartLevel level)
 
    group = new LogGroup(SoftwareLogGroup, "Debugging");
    new Log(group, SoftwareError, "Software error");
+   new Log(group, SoftwareInfo, "Software info");
 
    group = new LogGroup(ConfigLogGroup, "Configuration Parameters");
    new Log(group, ConfigFileNotFound, "Configuration file not found");

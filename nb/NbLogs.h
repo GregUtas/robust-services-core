@@ -40,6 +40,7 @@ namespace NodeBase
 
    extern fixed_string SoftwareLogGroup;
    constexpr LogId SoftwareError = DebugLog;
+   constexpr LogId SoftwareInfo = DebugLog + 1;
 
    extern fixed_string ConfigLogGroup;
    constexpr LogId ConfigFileNotFound = TroubleLog;

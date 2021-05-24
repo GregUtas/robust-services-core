@@ -1138,13 +1138,26 @@ string Lexer::CheckVerticalSpacing() const
          break;
 
       case RuleComment:
-         if(!LineTypeAttr::Attrs[prevType].isBlank)
-            action[currLine] = InsertBlank;
-         if(!LineTypeAttr::Attrs[nextType].isBlank && (nextLine < size))
-            action[nextLine] = InsertBlank;
+         if(action[currLine] != DeleteLine)
+         {
+            if(!LineTypeAttr::Attrs[prevType].isBlank)
+               action[currLine] = InsertBlank;
+            if(!LineTypeAttr::Attrs[nextType].isBlank && (nextLine < size))
+               action[nextLine] = InsertBlank;
+         }
          break;
 
       case OpenBrace:
+         for(auto line = nextLine; line < size; ++line)
+         {
+            auto type = lines_[line].type;
+
+            if(LineTypeAttr::Attrs[type].isBlank || (type == RuleComment))
+               action[line] = DeleteLine;
+            else
+               break;
+         }
+         //  [[fallthrough]]
       case CloseBrace:
       case CloseBraceSemicolon:
          if(LineTypeAttr::Attrs[prevType].isBlank)

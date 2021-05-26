@@ -25,6 +25,7 @@
 #include "LibraryItem.h"
 #include <cstddef>
 #include <iosfwd>
+#include <list>
 #include <string>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
@@ -150,6 +151,18 @@ public:
    void InsertAsm(Asm* code);
    void InsertStaticAssert(StaticAssert* assert);
 
+   //  Removes the item from those defined in this file.
+   //
+   void EraseInclude(const Include* incl);
+   void EraseSpace(const SpaceDefn* space);
+   void EraseClass(Class* cls);
+   void EraseData(Data* data);
+   void EraseEnum(const Enum* item);
+   void EraseForw(const Forward* forw);
+   void EraseFunc(Function* func);
+   void EraseType(const Typedef* type);
+   void EraseUsing(const Using* use);
+
    //  Records that ITEM was used in the file's executable code.
    //
    void AddUsage(CxxNamed* item);
@@ -199,7 +212,7 @@ public:
    //  Includes, in the cross-reference, symbols that appear in the
    //  file's items.
    //
-   void AddToXref() const;
+   void AddToXref(bool insert) const;
 
    //  Checks the file after it has been parsed, looking for additional
    //  warnings when a report is to be generated.
@@ -278,7 +291,7 @@ public:
    //  Has the same interface as CxxToken::UpdatePos.
    //
    void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from = string::npos) const;
+      size_t begin, size_t count, size_t from = string::npos);
 
    //  Shrinks containers.
    //
@@ -286,7 +299,7 @@ public:
 
    //  Overridden to update ITEMS with ones declared within the file.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to return the file's name.
    //
@@ -297,6 +310,14 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
+   //  Adds ITEM to those that appear in the file.
+   //
+   void InsertItem(CxxNamed* item);
+
+   //  Removes ITEM from those that appear in the file.
+   //
+   void EraseItem(const CxxNamed* item);
+
    //  Adds FILE as one that #includes this file.
    //
    void AddUser(CodeFile* file);
@@ -539,9 +560,9 @@ private:
    AsmVector assembly_;
    StaticAssertVector asserts_;
 
-   //  The file's items, in the order in which they appeared.
+   //  The file's items, in the order in which they appear.
    //
-   std::vector< CxxNamed* > items_;
+   std::list< CxxNamed* > items_;
 
    //  The items used in the file's executable code.
    //

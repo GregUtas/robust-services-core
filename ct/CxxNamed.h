@@ -289,6 +289,14 @@ private:
       (const CxxScope* scope, const QualName* qname) const;
 };
 
+//  For sorting items by GetFile() and GetPos().
+//
+bool IsSortedByFilePos(const CxxNamed* item1, const CxxNamed* item2);
+
+//  For sorting items by GetPos() when all are in the same file.
+//
+bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2);
+
 //------------------------------------------------------------------------------
 //
 //  One of the names in a qualified name.
@@ -415,7 +423,7 @@ public:
 
    //  Overridden to invoke AddReference on the name's referent.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to check template arguments.
    //
@@ -622,6 +630,11 @@ public:
    //
    CxxScoped* GetForward() const;
 
+   //  Invoked when instantiating a template whose specialization contains this
+   //  name.  Invokes Instantiating on each name.
+   //
+   void Instantiating(CxxScopedVector& locals) const;
+
    //  Invokes MatchTemplate on each name, returning the least favorable result.
    //
    TypeMatch MatchTemplate(const QualName* that,
@@ -641,7 +654,7 @@ public:
 
    //  Overridden to add the name's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to check each name and any template parameters.
    //
@@ -1171,7 +1184,7 @@ private:
 
    //  Overridden to add the specification's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to align thatArg's type with the this type, which is that of a
    //  template parameter that might be specialized.
@@ -1490,7 +1503,7 @@ class StaticAssert : public CxxNamed
 public:
    StaticAssert(ExprPtr& expr, ExprPtr& message);
    ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    bool EnterScope() override;

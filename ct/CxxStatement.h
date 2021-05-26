@@ -78,7 +78,7 @@ class Condition : public CxxStatement
 public:
    virtual ~Condition() = default;
    void AddCondition(ExprPtr& c) { condition_ = std::move(c); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -117,7 +117,7 @@ class Case : public CxxStatement
 public:
    Case(ExprPtr& expression, size_t pos);
    ~Case() { CxxStats::Decr(CxxStats::CASE); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -144,7 +144,7 @@ public:
    ~Catch() { CxxStats::Decr(CxxStats::CATCH); }
    void AddArg(ArgumentPtr& a) { arg_ = std::move(a); }
    void AddHandler(BlockPtr& b) { handler_ = std::move(b); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -188,7 +188,7 @@ public:
    explicit Do(size_t pos);
    ~Do() { CxxStats::Decr(CxxStats::DO); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -217,7 +217,7 @@ class Expr : public CxxStatement
 public:
    Expr(ExprPtr& expression, size_t pos);
    ~Expr() { CxxStats::Decr(CxxStats::EXPR); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -242,7 +242,7 @@ public:
    void AddInitial(TokenPtr& i) { initial_ = std::move(i); }
    void AddSubsequent(ExprPtr& s) { subsequent_ = std::move(s); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -294,7 +294,7 @@ public:
    void AddThen(BlockPtr& b) { then_ = std::move(b); }
    void AddElse(BlockPtr& b) { else_ = std::move(b); }
    void SetElseIf() { elseif_ = true; }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -366,7 +366,7 @@ public:
    explicit Return(size_t pos);
    ~Return() { CxxStats::Decr(CxxStats::RETURN); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -390,7 +390,7 @@ public:
    ~Switch() { CxxStats::Decr(CxxStats::SWITCH); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
    void AddCases(BlockPtr& b) { cases_ = std::move(b); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -420,7 +420,7 @@ public:
    ~Try() { CxxStats::Decr(CxxStats::TRY); }
    void AddTry(BlockPtr& b) { try_ = std::move(b); }
    void AddCatch(TokenPtr& t) { catches_.push_back(std::move(t)); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -450,7 +450,7 @@ public:
    explicit While(size_t pos);
    ~While() { CxxStats::Decr(CxxStats::WHILE); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;

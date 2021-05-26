@@ -184,7 +184,7 @@ public:
 
    //  Overridden to add the block's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings within the code.
    //
@@ -376,7 +376,7 @@ public:
 
    //  Overridden to add the data's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -658,7 +658,7 @@ public:
 
    //  Adds a data declaration to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to return the item's qualified name.
    //
@@ -748,7 +748,7 @@ public:
 
    //  Overridden to add the data's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -769,7 +769,7 @@ public:
 
    //  Adds a data declaration to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to update SYMBOLS with the data's type usage.
    //
@@ -899,7 +899,7 @@ public:
 
    //  Overridden to add the data's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with the data.
    //
@@ -1307,7 +1307,7 @@ public:
 
    //  Overridden to add the function's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with the function.
    //
@@ -1354,7 +1354,7 @@ public:
 
    //  Adds a function declaration to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to return the file (if any) that defined the function.
    //
@@ -1834,15 +1834,15 @@ public:
 
    //  Not subclassed.
    //
-   ~SpaceDefn() { CxxStats::Decr(CxxStats::SPACE_DEFN); }
+   ~SpaceDefn();
 
    //  Overridden to add itself as a reference to space_.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Adds the namespace to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to forward to space_.
    //
@@ -1885,6 +1885,7 @@ private:
 
    //  The following are forwarded to the function.
    //
+   void AddToXref(bool insert) override;
    void Check() const override;
    void EnteringScope(const CxxScope* scope) override;
    bool IsConst() const override { return func_->IsConst(); }

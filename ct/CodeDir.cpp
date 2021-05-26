@@ -128,7 +128,7 @@ word CodeDir::Extract(string& expl)
 
 //------------------------------------------------------------------------------
 
-void CodeDir::GetDecls(std::set< CxxNamed* >& items)
+void CodeDir::GetDecls(CxxNamedSet& items)
 {
    Debug::ft("CodeDir.GetDecls");
 

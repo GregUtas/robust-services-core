@@ -703,25 +703,6 @@ string GetExpl()
 
 //------------------------------------------------------------------------------
 //
-//  Adds a class's items to FUNCS and then sorts them by position.
-//
-void GetItems(const Class* cls, CxxNamedVector& ivec)
-{
-   Debug::ft("CodeTools.GetItems");
-
-   auto& items = cls->Items();
-
-   for(auto i = items.cbegin(); i != items.cend(); ++i)
-   {
-      if((*i)->GetPos() != string::npos)
-         ivec.push_back(*i);
-   }
-
-   std::sort(ivec.begin(), ivec.end(), IsSortedByPos);
-}
-
-//------------------------------------------------------------------------------
-//
 //  Adds FUNC and its overrides to FUNCS.
 //
 void GetOverrides(const Function* func, std::vector< const Function* >& funcs)
@@ -2058,8 +2039,8 @@ word Editor::EraseCode(const CxxToken* item)  //u
    Debug::ft("Editor.EraseCode");
 
    string code;
-   if(CutCode(item, code) != string::npos) return Changed();
-   return EditFailed;
+   if(CutCode(item, code) == string::npos) return EditFailed;
+   return Changed();
 }
 
 //------------------------------------------------------------------------------
@@ -2133,7 +2114,7 @@ word Editor::EraseEmptyNamespace(const SpaceDefn* ns)
    if(!ns->GetSpan3(begin, left, end)) return EditSucceeded;
    auto pos = NextPos(left + 1);
    if(source_[pos] != '}') return EditSucceeded;
-   return EraseCode(ns);
+   return EraseItem(ns);
 }
 
 //------------------------------------------------------------------------------
@@ -2159,8 +2140,20 @@ word Editor::EraseForward(const CodeWarning& log)
    //  namespace that should be deleted.
    //
    auto ns = file_->FindNamespaceDefn(log.item_);
-   if(EraseCode(log.item_) == EditFailed) return EditFailed;
+   if(EraseItem(log.item_) == EditFailed) return EditFailed;
    return EraseEmptyNamespace(ns);
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::EraseItem(const CxxToken* item)
+{
+   Debug::ft("Editor.EraseItem");
+
+   string code;
+   if(CutCode(item, code) == string::npos) return EditFailed;
+   delete const_cast< CxxToken* >(item);
+   return Changed();
 }
 
 //------------------------------------------------------------------------------
@@ -2528,8 +2521,7 @@ word Editor::FindItemDeclLoc
    Debug::ft("Editor.FindItemDeclLoc");
 
    auto where = attrs.CalcDeclOrder();
-   CxxNamedVector items;
-   GetItems(cls, items);
+   auto& items = cls->Items();
    const CxxToken* prev = nullptr;
    const CxxToken* next = nullptr;
 
@@ -3120,21 +3112,21 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case IncludeNotSorted:
       return SortIncludes();
    case IncludeDuplicated:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case IncludeAdd:
       return InsertInclude(log);
    case IncludeRemove:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case RemoveOverrideTag:
       return EraseOverrideTag(log);
    case UsingInHeader:
       return ReplaceUsing(log);
    case UsingDuplicated:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case UsingAdd:
       return InsertUsing(log);
    case UsingRemove:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case ForwardAdd:
       return InsertForward(log);
    case ForwardRemove:
@@ -3146,19 +3138,19 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case DataUnused:
       return FixReferences(cli, log);
    case EnumUnused:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case EnumeratorUnused:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case FriendUnused:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case FunctionUnused:
       return FixFunctions(cli, log);
    case TypedefUnused:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case ForwardUnresolved:
       return EraseForward(log);
    case FriendUnresolved:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case FriendAsForward:
       return InsertForward(log);
    case HidesInheritedName:
@@ -4056,22 +4048,22 @@ word Editor::InsertSpecialFuncDecl  //u
 {
    Debug::ft("Editor.InsertSpecialFuncDecl");
 
-   ItemDeclAttrs attrs(Cxx::Function, Cxx::Public, role);
-   auto rc = FindSpecialFuncDeclLoc(cli, cls, attrs);
+   ItemDeclAttrs declAttrs(Cxx::Function, Cxx::Public, role);
+   auto rc = FindSpecialFuncDeclLoc(cli, cls, declAttrs);
    if(rc != EditContinue) return rc;
 
-   auto code = spaces(attrs.indent);
+   auto code = spaces(declAttrs.indent);
    auto className = cls->Name();
 
    string defn;
 
-   if(!attrs.shell)
+   if(!declAttrs.shell)
    {
       defn += " = ";
-      defn += (attrs.deleted ? DELETE_STR : DEFAULT_STR);
+      defn += (declAttrs.deleted ? DELETE_STR : DEFAULT_STR);
    }
 
-   switch(attrs.role)
+   switch(declAttrs.role)
    {
    case PureCtor:
       code += className + "()";
@@ -4088,7 +4080,7 @@ word Editor::InsertSpecialFuncDecl  //u
       break;
 
    case PureDtor:
-      if(attrs.virt) code += string(VIRTUAL_STR) + SPACE;
+      if(declAttrs.virt) code += string(VIRTUAL_STR) + SPACE;
       code += '~' + className + "()";
       break;
 
@@ -4098,30 +4090,30 @@ word Editor::InsertSpecialFuncDecl  //u
 
    code += defn;
    code.push_back(';');
-   InsertAfterItemDecl(attrs);
-   InsertLine(attrs.pos, code);
+   InsertAfterItemDecl(declAttrs);
+   InsertLine(declAttrs.pos, code);
    code.pop_back();
 
-   auto comment = CreateSpecialFunctionComment(cls, attrs);
-   InsertBeforeItemDecl(attrs, comment);
+   auto comment = CreateSpecialFunctionComment(cls, declAttrs);
+   InsertBeforeItemDecl(declAttrs, comment);
 
-   if(attrs.shell)
+   if(declAttrs.shell)
    {
       auto file = FindFuncDefnFile(cli, cls, code);
       if(file == nullptr) return NotFound("File for function definition");
 
       auto& editor = file->GetEditor();
 
-      FuncDefnAttrs defn(attrs.role);
-      rc = editor.FindFuncDefnLoc(file, cls, code, defn);
+      FuncDefnAttrs defnAttrs(declAttrs.role);
+      rc = editor.FindFuncDefnLoc(file, cls, code, defnAttrs);
       if(rc != EditContinue) return rc;
 
       //  Insert the function's declaration and definition.
       //
-      editor.InsertSpecialFuncDefn(cls, defn);
+      editor.InsertSpecialFuncDefn(cls, defnAttrs);
    }
 
-   auto pos = source_.find(code, attrs.pos);
+   auto pos = source_.find(code, declAttrs.pos);
    return Changed(pos);
 }
 
@@ -4944,7 +4936,7 @@ word Editor::ReplaceUsing(const CodeWarning& log)
    //  a using statement.
    //
    ResolveUsings();
-   return EraseCode(log.item_);
+   return EraseItem(log.item_);
 }
 
 //------------------------------------------------------------------------------

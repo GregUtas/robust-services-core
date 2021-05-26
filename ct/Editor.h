@@ -551,6 +551,10 @@ private:
    //
    word EraseCode(const CxxToken* item);
 
+   //  Deletes ITEM after erasing its code.
+   //
+   word EraseItem(const CxxToken* item);
+
    //  Erases POS's line and returns the start of the line that followed it.
    //
    size_t EraseLine(size_t pos);

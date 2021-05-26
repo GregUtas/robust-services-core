@@ -79,11 +79,11 @@ bool Block::AddStatement(CxxToken* s)
 
 //------------------------------------------------------------------------------
 
-void Block::AddToXref()
+void Block::AddToXref(bool insert)
 {
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
-      (*s)->AddToXref();
+      (*s)->AddToXref(insert);
    }
 }
 
@@ -428,11 +428,11 @@ ClassData::~ClassData()
 
 //------------------------------------------------------------------------------
 
-void ClassData::AddToXref()
+void ClassData::AddToXref(bool insert)
 {
-   Data::AddToXref();
+   Data::AddToXref(insert);
 
-   if(width_ != nullptr) width_->AddToXref();
+   if(width_ != nullptr) width_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -686,7 +686,7 @@ bool ClassData::EnterScope()
 
 //------------------------------------------------------------------------------
 
-void ClassData::GetDecls(std::set< CxxNamed* >& items)
+void ClassData::GetDecls(CxxNamedSet& items)
 {
    if(IsDecl()) items.insert(this);
 }
@@ -1084,12 +1084,12 @@ Data::~Data()
 
 //------------------------------------------------------------------------------
 
-void Data::AddToXref()
+void Data::AddToXref(bool insert)
 {
-   if(alignas_ != nullptr) alignas_->AddToXref();
-   spec_->AddToXref();
-   if(expr_ != nullptr) expr_->AddToXref();
-   if(init_ != nullptr) init_->AddToXref();
+   if(alignas_ != nullptr) alignas_->AddToXref(insert);
+   spec_->AddToXref(insert);
+   if(expr_ != nullptr) expr_->AddToXref(insert);
+   if(init_ != nullptr) init_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1683,11 +1683,11 @@ FuncData::~FuncData()
 
 //------------------------------------------------------------------------------
 
-void FuncData::AddToXref()
+void FuncData::AddToXref(bool insert)
 {
-   Data::AddToXref();
+   Data::AddToXref(insert);
 
-   if(next_ != nullptr) next_->AddToXref();
+   if(next_ != nullptr) next_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2064,7 +2064,7 @@ void Function::AddThisArg()
 
 //------------------------------------------------------------------------------
 
-void Function::AddToXref()
+void Function::AddToXref(bool insert)
 {
    if(deleted_) return;
 
@@ -2098,14 +2098,14 @@ void Function::AddToXref()
       Context::PushXrefFrame(TemplateFunction);
    };
 
-   if(defn_) name_->AddToXref();
+   if(defn_) name_->AddToXref(insert);
 
-   if(parms_ != nullptr) parms_->AddToXref();
-   if(spec_ != nullptr) spec_->AddToXref();
+   if(parms_ != nullptr) parms_->AddToXref(insert);
+   if(spec_ != nullptr) spec_->AddToXref(insert);
 
    for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
    {
-      args_[i]->AddToXref();
+      args_[i]->AddToXref(insert);
    }
 
    if(base_ != nullptr)
@@ -2116,21 +2116,21 @@ void Function::AddToXref()
       //
       if(FuncType() == FuncStandard)
       {
-         base_->AddReference(this);
+         base_->AddReference(this, insert);
       }
    }
 
    if(call_ != nullptr)
    {
-      call_->AddToXref();
+      call_->AddToXref(insert);
    }
 
    for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
    {
-      (*m)->AddToXref();
+      (*m)->AddToXref(insert);
    }
 
-   if(impl_ != nullptr) impl_->AddToXref();
+   if(impl_ != nullptr) impl_->AddToXref(insert);
 
    switch(type)
    {
@@ -2144,7 +2144,7 @@ void Function::AddToXref()
       //
       if(!tmplts_.empty())
       {
-         tmplts_.front()->AddToXref();
+         tmplts_.front()->AddToXref(insert);
       }
       break;
 
@@ -2157,7 +2157,7 @@ void Function::AddToXref()
       auto instances = GetClass()->Instances();
       if(instances->empty()) break;
       auto func = instances->front()->FindInstanceAnalog(this);
-      if(func != nullptr) func->AddToXref();
+      if(func != nullptr) func->AddToXref(insert);
    }
 
    Context::PopXrefFrame();
@@ -3936,7 +3936,7 @@ CodeFile* Function::GetDeclFile() const
 
 //------------------------------------------------------------------------------
 
-void Function::GetDecls(std::set< CxxNamed* >& items)
+void Function::GetDecls(CxxNamedSet& items)
 {
    if(IsDecl()) items.insert(this);
 }
@@ -5377,14 +5377,25 @@ SpaceDefn::SpaceDefn(const Namespace* ns) :
 
 //------------------------------------------------------------------------------
 
-void SpaceDefn::AddToXref()
+SpaceDefn::~SpaceDefn()
 {
-   space_->AddReference(this);
+   Debug::ft("SpaceDefn.dtor");
+
+   GetFile()->EraseSpace(this);
+   space_->AddReference(this, false);
+   CxxStats::Decr(CxxStats::SPACE_DEFN);
 }
 
 //------------------------------------------------------------------------------
 
-void SpaceDefn::GetDecls(std::set< CxxNamed* >& items)
+void SpaceDefn::AddToXref(bool insert)
+{
+   space_->AddReference(this, insert);
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceDefn::GetDecls(CxxNamedSet& items)
 {
    items.insert(this);
 }
@@ -5430,6 +5441,13 @@ fn_name FuncSpec_Warning = "FuncSpec.Warning";
 void FuncSpec::AddArray(ArraySpecPtr& array)
 {
    func_->GetTypeSpec()->AddArray(array);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::AddToXref(bool insert)
+{
+   func_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -5828,7 +5846,7 @@ bool SpaceData::EnterScope()
 
 //------------------------------------------------------------------------------
 
-void SpaceData::GetDecls(std::set< CxxNamed* >& items)
+void SpaceData::GetDecls(CxxNamedSet& items)
 {
    if(IsDecl()) items.insert(this);
 }

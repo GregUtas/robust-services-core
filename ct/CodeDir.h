@@ -69,7 +69,7 @@ public:
 
    //  Overridden to update ITEMS with ones declared by the directory's files.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to return the item's name.
    //

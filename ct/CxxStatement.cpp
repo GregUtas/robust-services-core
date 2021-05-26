@@ -63,9 +63,9 @@ Case::Case(ExprPtr& expression, size_t pos) : CxxStatement(pos),
 
 //------------------------------------------------------------------------------
 
-void Case::AddToXref()
+void Case::AddToXref(bool insert)
 {
-   expr_->AddToXref();
+   expr_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -143,10 +143,10 @@ Catch::Catch(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Catch::AddToXref()
+void Catch::AddToXref(bool insert)
 {
-   if(arg_ != nullptr) arg_->AddToXref();
-   handler_->AddToXref();
+   if(arg_ != nullptr) arg_->AddToXref(insert);
+   handler_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -265,9 +265,9 @@ Condition::Condition(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Condition::AddToXref()
+void Condition::AddToXref(bool insert)
 {
-   if(condition_ != nullptr) condition_->AddToXref();
+   if(condition_ != nullptr) condition_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -436,10 +436,10 @@ Do::Do(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
-void Do::AddToXref()
+void Do::AddToXref(bool insert)
 {
-   loop_->AddToXref();
-   Condition::AddToXref();
+   loop_->AddToXref(insert);
+   Condition::AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -573,9 +573,9 @@ Expr::Expr(ExprPtr& expression, size_t pos) : CxxStatement(pos),
 
 //------------------------------------------------------------------------------
 
-void Expr::AddToXref()
+void Expr::AddToXref(bool insert)
 {
-   expr_->AddToXref();
+   expr_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -639,12 +639,12 @@ For::For(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
-void For::AddToXref()
+void For::AddToXref(bool insert)
 {
-   if(initial_ != nullptr) initial_->AddToXref();
-   Condition::AddToXref();
-   if(subsequent_ != nullptr) subsequent_->AddToXref();
-   loop_->AddToXref();
+   if(initial_ != nullptr) initial_->AddToXref(insert);
+   Condition::AddToXref(insert);
+   if(subsequent_ != nullptr) subsequent_->AddToXref(insert);
+   loop_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -884,11 +884,11 @@ If::If(size_t pos) : Condition(pos),
 
 //------------------------------------------------------------------------------
 
-void If::AddToXref()
+void If::AddToXref(bool insert)
 {
-   Condition::AddToXref();
-   then_->AddToXref();
-   if(else_ != nullptr) else_->AddToXref();
+   Condition::AddToXref(insert);
+   then_->AddToXref(insert);
+   if(else_ != nullptr) else_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1125,9 +1125,9 @@ Return::Return(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Return::AddToXref()
+void Return::AddToXref(bool insert)
 {
-   if(expr_ != nullptr) expr_->AddToXref();
+   if(expr_ != nullptr) expr_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1208,10 +1208,10 @@ Switch::Switch(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Switch::AddToXref()
+void Switch::AddToXref(bool insert)
 {
-   expr_->AddToXref();
-   cases_->AddToXref();
+   expr_->AddToXref(insert);
+   cases_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1317,13 +1317,13 @@ Try::Try(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Try::AddToXref()
+void Try::AddToXref(bool insert)
 {
-   try_->AddToXref();
+   try_->AddToXref(insert);
 
    for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
    {
-      (*c)->AddToXref();
+      (*c)->AddToXref(insert);
    }
 }
 
@@ -1477,10 +1477,10 @@ While::While(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
-void While::AddToXref()
+void While::AddToXref(bool insert)
 {
-   Condition::AddToXref();
-   loop_->AddToXref();
+   Condition::AddToXref(insert);
+   loop_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------

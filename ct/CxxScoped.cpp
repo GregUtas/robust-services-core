@@ -59,10 +59,10 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
 
 //------------------------------------------------------------------------------
 
-void Argument::AddToXref()
+void Argument::AddToXref(bool insert)
 {
-   spec_->AddToXref();
-   if(default_ != nullptr) default_->AddToXref();
+   spec_->AddToXref(insert);
+   if(default_ != nullptr) default_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -358,9 +358,9 @@ BaseDecl::BaseDecl(QualNamePtr& name, Cxx::Access access) :
 
 //------------------------------------------------------------------------------
 
-void BaseDecl::AddToXref()
+void BaseDecl::AddToXref(bool insert)
 {
-   name_->AddToXref();
+   name_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -530,11 +530,12 @@ void CxxScoped::AddFiles(LibItemSet& imSet) const
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::AddReference(CxxNamed* item) const
+void CxxScoped::AddReference(CxxNamed* item, bool insert) const
 {
    auto file = item->GetFile();
    if(file == nullptr) return;
    if(file->IsSubsFile()) return;
+   if(insert && (item->GetPos() == string::npos)) return;
 
    if(Context::GetXrefUpdater() == InstanceFunction)
    {
@@ -559,11 +560,20 @@ void CxxScoped::AddReference(CxxNamed* item) const
          ref = static_cast< const Function* >(ref)->FindRootFunc();
       }
 
-      ref->Xref().insert(prev);
+      //  A template instance can't be edited, so an erasure shouldn't occur
+      //  here.  But just in case...
+      //
+      if(insert)
+         ref->Xref().insert(prev);
+      else
+         ref->Xref().erase(prev);
       return;
    }
 
-   xref_.insert(item);
+   if(insert)
+      xref_.insert(item);
+   else
+      xref_.erase(item);
 }
 
 //------------------------------------------------------------------------------
@@ -1058,6 +1068,8 @@ Enum::~Enum()
 {
    Debug::ftnt("Enum.dtor");
 
+   GetFile()->EraseEnum(this);
+   GetArea()->EraseEnum(this);
    if(!name_.empty()) Singleton< CxxSymbols >::Extant()->EraseEnum(this);
    CxxStats::Decr(CxxStats::ENUM_DECL);
 }
@@ -1077,14 +1089,14 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
 
 //------------------------------------------------------------------------------
 
-void Enum::AddToXref()
+void Enum::AddToXref(bool insert)
 {
-   if(alignas_ != nullptr) alignas_->AddToXref();
-   if(spec_ != nullptr) spec_->AddToXref();
+   if(alignas_ != nullptr) alignas_->AddToXref(insert);
+   if(spec_ != nullptr) spec_->AddToXref(insert);
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {
-      (*e)->AddToXref();
+      (*e)->AddToXref(insert);
    }
 }
 
@@ -1231,6 +1243,15 @@ bool Enum::EnterScope()
 
 //------------------------------------------------------------------------------
 
+void Enum::EraseEnumerator(const Enumerator* etor)
+{
+   Debug::ft("Enum.EraseEnumerator");
+
+   EraseItemPtr(etors_, etor);
+}
+
+//------------------------------------------------------------------------------
+
 void Enum::ExitBlock() const
 {
    Debug::ft("Enum.ExitBlock");
@@ -1259,7 +1280,7 @@ Enumerator* Enum::FindEnumerator(const string& name) const
 
 //------------------------------------------------------------------------------
 
-void Enum::GetDecls(std::set< CxxNamed* >& items)
+void Enum::GetDecls(CxxNamedSet& items)
 {
    items.insert(this);
 
@@ -1374,7 +1395,7 @@ void Enum::UpdatePos
 
 //==============================================================================
 
-Enumerator::Enumerator(string& name, ExprPtr& init, const Enum* decl) :
+Enumerator::Enumerator(string& name, ExprPtr& init, Enum* decl) :
    init_(init.release()),
    enum_(decl),
    refs_(0)
@@ -1392,15 +1413,16 @@ Enumerator::~Enumerator()
 {
    Debug::ftnt("Enumerator.dtor");
 
+   enum_->EraseEnumerator(this);
    Singleton< CxxSymbols >::Extant()->EraseEtor(this);
    CxxStats::Decr(CxxStats::ENUM_MEM);
 }
 
 //------------------------------------------------------------------------------
 
-void Enumerator::AddToXref()
+void Enumerator::AddToXref(bool insert)
 {
-   if(init_ != nullptr) init_->AddToXref();
+   if(init_ != nullptr) init_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1498,7 +1520,7 @@ void Enumerator::ExitBlock() const
 
 //------------------------------------------------------------------------------
 
-void Enumerator::GetDecls(std::set< CxxNamed* >& items)
+void Enumerator::GetDecls(CxxNamedSet& items)
 {
    items.insert(this);
 }
@@ -1656,16 +1678,18 @@ Forward::~Forward()
 {
    Debug::ftnt("Forward.dtor");
 
+   GetFile()->EraseForw(this);
+   GetArea()->EraseForw(this);
    Singleton< CxxSymbols >::Extant()->EraseForw(this);
    CxxStats::Decr(CxxStats::FORWARD_DECL);
 }
 
 //------------------------------------------------------------------------------
 
-void Forward::AddToXref()
+void Forward::AddToXref(bool insert)
 {
    if(Referent() == nullptr) return;
-   name_->AddToXref();
+   name_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1742,7 +1766,7 @@ bool Forward::EnterScope()
 
 //------------------------------------------------------------------------------
 
-void Forward::GetDecls(std::set< CxxNamed* >& items)
+void Forward::GetDecls(CxxNamedSet& items)
 {
    items.insert(this);
 }
@@ -1865,20 +1889,17 @@ Friend::~Friend()
 {
    Debug::ftnt("Friend.dtor");
 
-   if(GetFunction() == nullptr)
-   {
-      Singleton< CxxSymbols >::Extant()->EraseFriend(this);
-   }
-
+   static_cast< Class* >(grantor_)->EraseFriend(this);
+   Singleton< CxxSymbols >::Extant()->EraseFriend(this);
    CxxStats::Decr(CxxStats::FRIEND_DECL);
 }
 
 //------------------------------------------------------------------------------
 
-void Friend::AddToXref()
+void Friend::AddToXref(bool insert)
 {
    if(Referent() == nullptr) return;
-   name_->AddToXref();
+   name_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2145,7 +2166,7 @@ void Friend::FindReferent()
 
 //------------------------------------------------------------------------------
 
-void Friend::GetDecls(std::set< CxxNamed* >& items)
+void Friend::GetDecls(CxxNamedSet& items)
 {
    items.insert(this);
 }
@@ -2481,10 +2502,20 @@ MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
 
 //------------------------------------------------------------------------------
 
-void MemberInit::AddToXref()
+MemberInit::~MemberInit()
 {
-   if(ref_ != nullptr) ref_->AddReference(this);
-   init_->AddToXref();
+   Debug::ft("MemberInit.dtor");
+
+   ref_->AddReference(this, false);
+   CxxStats::Decr(CxxStats::MEMBER_INIT);
+}
+
+//------------------------------------------------------------------------------
+
+void MemberInit::AddToXref(bool insert)
+{
+   if(ref_ != nullptr) ref_->AddReference(this, insert);
+   init_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2603,10 +2634,10 @@ TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
 
 //------------------------------------------------------------------------------
 
-void TemplateParm::AddToXref()
+void TemplateParm::AddToXref(bool insert)
 {
-   if(type_ != nullptr) type_->AddToXref();
-   if(default_ != nullptr) default_->AddToXref();
+   if(type_ != nullptr) type_->AddToXref(insert);
+   if(default_ != nullptr) default_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2767,11 +2798,11 @@ void TemplateParms::AddParm(TemplateParmPtr& parm)
 
 //------------------------------------------------------------------------------
 
-void TemplateParms::AddToXref()
+void TemplateParms::AddToXref(bool insert)
 {
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
-      (*p)->AddToXref();
+      (*p)->AddToXref(insert);
    }
 }
 
@@ -2997,16 +3028,18 @@ Typedef::~Typedef()
 {
    Debug::ftnt("Typedef.dtor");
 
+   GetFile()->EraseType(this);
+   GetArea()->EraseType(this);
    Singleton< CxxSymbols >::Extant()->EraseType(this);
    CxxStats::Decr(CxxStats::TYPE_DECL);
 }
 
 //------------------------------------------------------------------------------
 
-void Typedef::AddToXref()
+void Typedef::AddToXref(bool insert)
 {
-   spec_->AddToXref();
-   if(alignas_ != nullptr) alignas_->AddToXref();
+   spec_->AddToXref(insert);
+   if(alignas_ != nullptr) alignas_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -3145,7 +3178,7 @@ void Typedef::ExitBlock() const
 
 //------------------------------------------------------------------------------
 
-void Typedef::GetDecls(std::set< CxxNamed* >& items)
+void Typedef::GetDecls(CxxNamedSet& items)
 {
    items.insert(this);
 }
@@ -3266,9 +3299,20 @@ Using::Using(QualNamePtr& name, bool space, bool added) :
 
 //------------------------------------------------------------------------------
 
-void Using::AddToXref()
+Using::~Using()
 {
-   name_->AddToXref();
+   Debug::ft("Using.dtor");
+
+   GetFile()->EraseUsing(this);
+   GetArea()->EraseUsing(this);
+   CxxStats::Decr(CxxStats::USING_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+void Using::AddToXref(bool insert)
+{
+   name_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------

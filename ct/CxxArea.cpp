@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
+#include <iterator>
 #include <set>
 #include <sstream>
 #include <utility>
@@ -327,7 +328,6 @@ bool Class::AddAnonymousUnion(const ClassPtr& cls)
    {
       auto mem = std::move(srcData->at(i));
       mem->Promote(this, access, (i == 0), (i == size - 1));
-      AddItem(mem.get());
       dstData->push_back(std::move(mem));
    }
 
@@ -382,15 +382,12 @@ bool Class::AddFriend(FriendPtr& decl)
 {
    Debug::ft("Class.AddFriend");
 
-   if(decl->EnterScope()) friends_.push_back(std::move(decl));
+   if(decl->EnterScope())
+   {
+      friends_.push_back(std::move(decl));
+   }
+
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-void Class::AddItem(const CxxNamed* item)
-{
-   items_.push_back(item);
 }
 
 //------------------------------------------------------------------------------
@@ -405,19 +402,19 @@ bool Class::AddSubclass(Class* cls)
 
 //------------------------------------------------------------------------------
 
-void Class::AddToXref()
+void Class::AddToXref(bool insert)
 {
-   CxxArea::AddToXref();
+   CxxArea::AddToXref(insert);
 
-   if(parms_ != nullptr) parms_->AddToXref();
-   if(alignas_ != nullptr) alignas_->AddToXref();
+   if(parms_ != nullptr) parms_->AddToXref(insert);
+   if(alignas_ != nullptr) alignas_->AddToXref(insert);
 
    auto base = GetBaseDecl();
-   if(base != nullptr) base->AddToXref();
+   if(base != nullptr) base->AddToXref(insert);
 
    for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
    {
-      (*f)->AddToXref();
+      (*f)->AddToXref(insert);
    }
 }
 
@@ -1174,6 +1171,15 @@ bool Class::EnterScope()
 
 //------------------------------------------------------------------------------
 
+void Class::EraseFriend(const Friend* decl)
+{
+   Debug::ft("Class.EraseFriend");
+
+   EraseItemPtr(friends_, decl);
+}
+
+//------------------------------------------------------------------------------
+
 void Class::ExitParms() const
 {
    Debug::ft("Class.ExitParms");
@@ -1433,7 +1439,7 @@ Cxx::Access Class::GetCurrAccess() const
 
 //------------------------------------------------------------------------------
 
-void Class::GetDecls(std::set< CxxNamed* >& items)
+void Class::GetDecls(CxxNamedSet& items)
 {
    CxxArea::GetDecls(items);
 
@@ -1879,6 +1885,23 @@ bool Class::IsSingletonBase() const
    }
 
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+CxxNamedVector Class::Items() const
+{
+   Debug::ft("Class.Items");
+
+   auto items = CxxArea::Items();
+
+   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
+   {
+      items.push_back(f->get());
+   }
+
+   std::sort(items.begin(), items.end(), IsSortedByPos);
+   return items;
 }
 
 //------------------------------------------------------------------------------
@@ -2583,7 +2606,6 @@ bool CxxArea::AddAsm(AsmPtr& code)
 
    if(code->EnterScope())
    {
-      AddItem(code.get());
       assembly_.push_back(std::move(code));
    }
 
@@ -2600,7 +2622,6 @@ bool CxxArea::AddClass(ClassPtr& cls)
 
    if(cls->EnterScope())
    {
-      AddItem(cls.get());
       classes_.push_back(std::move(cls));
    }
 
@@ -2615,7 +2636,6 @@ bool CxxArea::AddData(DataPtr& data)
 
    if(data->EnterScope())
    {
-      AddItem(data.get());
       data_.push_back(std::move(data));
    }
    else
@@ -2634,7 +2654,6 @@ bool CxxArea::AddEnum(EnumPtr& decl)
 
    if(decl->EnterScope())
    {
-      AddItem(decl.get());
       enums_.push_back(std::move(decl));
    }
 
@@ -2649,7 +2668,6 @@ bool CxxArea::AddForw(ForwardPtr& forw)
 
    if(forw->EnterScope())
    {
-      AddItem(forw.get());
       forws_.push_back(std::move(forw));
    }
 
@@ -2688,7 +2706,6 @@ bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
 
    if(assert->EnterScope())
    {
-      AddItem(assert.get());
       asserts_.push_back(std::move(assert));
    }
 
@@ -2697,16 +2714,16 @@ bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
 
 //------------------------------------------------------------------------------
 
-void CxxArea::AddToXref()
+void CxxArea::AddToXref(bool insert)
 {
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
-      (*c)->AddToXref();
+      (*c)->AddToXref(insert);
    }
 
    for(auto t = types_.cbegin(); t != types_.cend(); ++t)
    {
-      (*t)->AddToXref();
+      (*t)->AddToXref(insert);
    }
 
    auto inst = IsInTemplateInstance();
@@ -2719,22 +2736,22 @@ void CxxArea::AddToXref()
       //
       if(!inst && (*f)->IsInTemplateInstance()) continue;
 
-      (*f)->AddToXref();
+      (*f)->AddToXref(insert);
    }
 
    for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
    {
-      (*o)->AddToXref();
+      (*o)->AddToXref(insert);
    }
 
    for(auto d = data_.cbegin(); d != data_.cend(); ++d)
    {
-      (*d)->AddToXref();
+      (*d)->AddToXref(insert);
    }
 
    for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
    {
-      (*a)->AddToXref();
+      (*a)->AddToXref(insert);
    }
 }
 
@@ -2746,7 +2763,6 @@ bool CxxArea::AddType(TypedefPtr& type)
 
    if(type->EnterScope())
    {
-      AddItem(type.get());
       types_.push_back(std::move(type));
    }
 
@@ -2808,6 +2824,86 @@ void CxxArea::Check() const
    {
       (*a)->Check();
    }
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::EraseClass(Class* cls)
+{
+   Debug::ft("CxxArea.EraseClass");
+
+   EraseItemPtr(classes_, cls);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::EraseData(Data* data)
+{
+   Debug::ft("CxxArea.EraseData");
+
+   if(data->IsDecl())
+   {
+      EraseItemPtr(data_, data);
+   }
+   else
+   {
+      EraseItemPtr(defns_, static_cast< CxxScope* >(data));
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::EraseEnum(const Enum* decl)
+{
+   Debug::ft("CxxArea.EraseEnum");
+
+   EraseItemPtr(enums_, decl);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::EraseForw(const Forward* forw)
+{
+   Debug::ft("CxxArea.EraseForw");
+
+   EraseItemPtr(forws_, forw);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::EraseFunc(Function* func)
+{
+   Debug::ft("CxxArea.EraseFunc");
+
+   if(func->IsDecl())
+   {
+      if(func->FuncType() == FuncOperator)
+         EraseItemPtr(opers_, func);
+      else
+         EraseItemPtr(funcs_, func);
+   }
+   else
+   {
+      EraseItemPtr(defns_, static_cast< CxxScope* >(func));
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::EraseType(const Typedef* type)
+{
+   Debug::ft("CxxArea.EraseType");
+
+   EraseItemPtr(types_, type);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::EraseUsing(const Using* use)
+{
+   Debug::ft("CxxArea.EraseUsing");
+
+   EraseItemPtr(usings_, use);
 }
 
 //------------------------------------------------------------------------------
@@ -3015,7 +3111,7 @@ const FunctionPtrVector* CxxArea::FuncVector(const string& name) const
 
 //------------------------------------------------------------------------------
 
-void CxxArea::GetDecls(std::set< CxxNamed* >& items)
+void CxxArea::GetDecls(CxxNamedSet& items)
 {
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
@@ -3059,8 +3155,6 @@ void CxxArea::InsertFunc(Function* func)
 {
    if(func->IsDecl())
    {
-      AddItem(func);
-
       if(func->FuncType() == FuncOperator)
          opers_.push_back(FunctionPtr(func));
       else
@@ -3070,6 +3164,67 @@ void CxxArea::InsertFunc(Function* func)
    {
       defns_.push_back(FunctionPtr(func));
    }
+}
+
+//------------------------------------------------------------------------------
+
+CxxNamedVector CxxArea::Items() const
+{
+   Debug::ft("CxxArea.Items");
+
+   CxxNamedVector items;
+
+   for(auto a = assembly_.cbegin(); a != assembly_.cend(); ++a)
+   {
+      items.push_back(a->get());
+   }
+
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      items.push_back(a->get());
+   }
+
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      items.push_back(c->get());
+   }
+
+   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+   {
+      items.push_back(d->get());
+   }
+
+   for(auto e = enums_.cbegin(); e != enums_.cend(); ++e)
+   {
+      items.push_back(e->get());
+   }
+
+   for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
+   {
+      items.push_back(f->get());
+   }
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      items.push_back(f->get());
+   }
+
+   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
+   {
+      items.push_back(o->get());
+   }
+
+   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
+   {
+      items.push_back(t->get());
+   }
+
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      items.push_back(u->get());
+   }
+
+   return items;
 }
 
 //------------------------------------------------------------------------------

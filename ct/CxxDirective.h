@@ -113,7 +113,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Include() { CxxStats::Decr(CxxStats::INCLUDE_DIRECTIVE); }
+   ~Include();
 
    //  Returns the file associated with the directive.
    //
@@ -187,7 +187,7 @@ public:
 
    //  Overridden to add the name to the cross-reference.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to find the referent and push it onto the argument stack.
    //
@@ -519,7 +519,7 @@ public:
 
    //  Overridden to add the condition's symbols to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to display the condition.
    //
@@ -573,7 +573,7 @@ public:
 
    //  Overridden to add name_ to the cross-reference.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to display the directive.
    //

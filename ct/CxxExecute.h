@@ -623,7 +623,7 @@ public:
    //
    enum Action
    {
-      Break = 1,  // break (at Debug::noop in Tracepoint::Hit)
+      Break = 1,  // break (at Debug::noop in Tracepoint::OnLine)
       Start,      // start trace
       Stop,       // stop trace
       Action_N    // out of bounds value

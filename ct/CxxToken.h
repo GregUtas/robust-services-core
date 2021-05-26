@@ -311,7 +311,7 @@ public:
 
    //  Invokes CxxScoped.AddReference on items that this one references.
    //
-   virtual void AddToXref() { }
+   virtual void AddToXref(bool insert) { }
 
    //  Updates SYMBOLS with how this item (in FILE) used other types.  See
    //  UsageType for a list of how various uses of a type are distinguished.
@@ -394,7 +394,7 @@ public:
 
    //  Subclasses that declare items must override this.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override { }
+   void GetDecls(CxxNamedSet& items) override { }
 
    //  Outputs PREFIX, invokes Print(stream, options) above, and inserts an
    //  endline.  This is the appropriate implementation for items that can be
@@ -448,14 +448,6 @@ private:
    //
    mutable CxxLocation loc_;
 };
-
-//  For sorting items by GetFile() and GetPos().
-//
-bool IsSortedByFilePos(const CxxToken* item1, const CxxToken* item2);
-
-//  For sorting items by GetPos() when all are in the same file.
-//
-bool IsSortedByPos(const CxxToken* item1, const CxxToken* item2);
 
 //------------------------------------------------------------------------------
 //
@@ -710,7 +702,7 @@ public:
 
    //  Overridden to add each argument's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Invoked when a unary operator is encountered.  This operator returns
    //  true if it will elide forward to the unary, and false if the new
@@ -897,7 +889,7 @@ public:
 
    //  Overridden to add each token's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to return the last item in the expression.
    //
@@ -981,7 +973,7 @@ public:
 
    //  Overridden to add the specification's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with expr_.
    //
@@ -1044,7 +1036,7 @@ public:
    explicit Precedence(ExprPtr& expr)
       : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
    ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -1068,7 +1060,7 @@ public:
    BraceInit();
    ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -1091,7 +1083,7 @@ class AlignAs : public CxxToken
 public:
    explicit AlignAs(TokenPtr& token);
    ~AlignAs() { CxxStats::Decr(CxxStats::ALIGNAS); }
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -1103,5 +1095,52 @@ public:
 private:
    const TokenPtr token_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Removes ITEM from VEC and moves the last item into its slot to keep
+//  VEC contiguous.
+//
+template< class T > void EraseItem(std::vector< T* >& vec, const T* item)
+{
+   for(size_t i = 0; i < vec.size(); ++i)
+   {
+      if(vec[i] == item)
+      {
+         if(i != vec.size() - 1)
+         {
+            vec[i] = vec.back();
+         }
+
+         vec.pop_back();
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+//
+//  Removes ITEM from VEC and moves the last item into its slot to keep
+//  VEC contiguous.
+//
+template< class T > void EraseItemPtr
+   (std::vector< std::unique_ptr< T >>& vec, const T* item)
+{
+   for(size_t i = 0; i < vec.size(); ++i)
+   {
+      if(vec[i].get() == item)
+      {
+         vec[i].release();
+
+         if(i != vec.size() - 1)
+         {
+            vec[i] = std::move(vec.back());
+         }
+
+         vec.pop_back();
+         return;
+      }
+   }
+}
 }
 #endif

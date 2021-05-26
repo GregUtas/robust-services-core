@@ -23,7 +23,6 @@
 #define LIBRARYITEM_H_INCLUDED
 
 #include "Base.h"
-#include <set>
 #include <string>
 #include "CxxFwd.h"
 
@@ -48,7 +47,7 @@ public:
    //  Updates ITEMS with code items declared within the item.  The
    //  default implementation generates a log.
    //
-   virtual void GetDecls(std::set< CxxNamed* >& items);
+   virtual void GetDecls(CxxNamedSet& items);
 protected:
    //  Protected because this class is virtual.
    //

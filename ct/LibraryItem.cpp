@@ -47,7 +47,7 @@ LibraryItem::~LibraryItem()
 
 fn_name LibraryItem_GetDecls = "LibraryItem.GetDecls";
 
-void LibraryItem::GetDecls(std::set< CxxNamed* >& items)
+void LibraryItem::GetDecls(CxxNamedSet& items)
 {
    Debug::ft(LibraryItem_GetDecls);
 

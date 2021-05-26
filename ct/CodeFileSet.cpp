@@ -703,7 +703,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
 
       for(auto f = order.cbegin(); f != order.cend(); ++f)
       {
-         if(!f->file->IsSubsFile()) f->file->AddToXref();
+         if(!f->file->IsSubsFile()) f->file->AddToXref(true);
       }
    }
 

@@ -389,6 +389,8 @@ CodeFile::~CodeFile()
 {
    Debug::ftnt("CodeFile.dtor");
 
+   //  There is currently no situation in which this is invoked.
+
    CxxStats::Decr(CxxStats::CODE_FILE);
 }
 
@@ -453,11 +455,11 @@ void CodeFile::AddIndirectExternalTypes
 
 //------------------------------------------------------------------------------
 
-void CodeFile::AddToXref() const
+void CodeFile::AddToXref(bool insert) const
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
-      (*i)->AddToXref();
+      (*i)->AddToXref(insert);
    }
 }
 
@@ -1087,9 +1089,63 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
    if(opts.find(OriginalFileView) != string::npos)
    {
       stream << '{' << CRLF;
-      DisplayObjects(items_, stream, lead, options);
+      for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+      {
+         (*i)->Display(stream, lead, options);
+      }
       stream << '}' << CRLF;
    }
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseClass(Class* cls)
+{
+   CodeTools::EraseItem(classes_, cls);
+   EraseItem(cls);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseData(Data* data)
+{
+   CodeTools::EraseItem(data_, data);
+   EraseItem(data);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseEnum(const Enum* item)
+{
+   CodeTools::EraseItem(enums_, item);
+   EraseItem(item);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseForw(const Forward* forw)
+{
+   CodeTools::EraseItem(forws_, forw);
+   EraseItem(forw);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseFunc(Function* func)
+{
+   CodeTools::EraseItem(funcs_, func);
+   EraseItem(func);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseInclude(const Include* incl)
+{
+   //* This should update this file's inclSet_, trimSet_, affecterSet_, and
+   //  the userSet_ of the file no longer #included.
+   //
+   EraseItemPtr(incls_, incl);
+   EraseItem(incl);
 }
 
 //------------------------------------------------------------------------------
@@ -1105,6 +1161,44 @@ void CodeFile::EraseInternals(CxxNamedSet& set) const
       else
          ++i;
    }
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseItem(const CxxNamed* item)
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      if(*i == item)
+      {
+         items_.erase(i);
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseSpace(const SpaceDefn* space)
+{
+   EraseItemPtr(spaces_, space);
+   EraseItem(space);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseType(const Typedef* type)
+{
+   CodeTools::EraseItem(types_, type);
+   EraseItem(type);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::EraseUsing(const Using* use)
+{
+   CodeTools::EraseItem(usings_, use);
+   EraseItem(use);
 }
 
 //------------------------------------------------------------------------------
@@ -1353,7 +1447,7 @@ void CodeFile::GetDeclaredBaseClasses(CxxNamedSet& bases) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::GetDecls(std::set< CxxNamed* >& items)
+void CodeFile::GetDecls(CxxNamedSet& items)
 {
    Debug::ft("CodeFile.GetDecls");
 
@@ -1550,7 +1644,7 @@ istreamPtr CodeFile::InputStream() const
 
 void CodeFile::InsertAsm(Asm* code)
 {
-   items_.push_back(code);
+   InsertItem(code);
    assembly_.push_back(code);
 }
 
@@ -1558,7 +1652,7 @@ void CodeFile::InsertAsm(Asm* code)
 
 void CodeFile::InsertClass(Class* cls)
 {
-   items_.push_back(cls);
+   InsertItem(cls);
    classes_.push_back(cls);
 }
 
@@ -1566,7 +1660,7 @@ void CodeFile::InsertClass(Class* cls)
 
 void CodeFile::InsertData(Data* data)
 {
-   items_.push_back(data);
+   InsertItem(data);
    data_.push_back(data);
 }
 
@@ -1574,7 +1668,7 @@ void CodeFile::InsertData(Data* data)
 
 bool CodeFile::InsertDirective(DirectivePtr& dir)
 {
-   items_.push_back(dir.get());
+   InsertItem(dir.get());
    dirs_.push_back(std::move(dir));
    return true;
 }
@@ -1583,7 +1677,7 @@ bool CodeFile::InsertDirective(DirectivePtr& dir)
 
 void CodeFile::InsertEnum(Enum* item)
 {
-   items_.push_back(item);
+   InsertItem(item);
    enums_.push_back(item);
 }
 
@@ -1591,7 +1685,7 @@ void CodeFile::InsertEnum(Enum* item)
 
 void CodeFile::InsertForw(Forward* forw)
 {
-   items_.push_back(forw);
+   InsertItem(forw);
    forws_.push_back(forw);
 }
 
@@ -1599,7 +1693,7 @@ void CodeFile::InsertForw(Forward* forw)
 
 void CodeFile::InsertFunc(Function* func)
 {
-   items_.push_back(func);
+   InsertItem(func);
    funcs_.push_back(func);
 }
 
@@ -1622,7 +1716,7 @@ Include* CodeFile::InsertInclude(const string& fn)
    {
       if((*i)->Name() == fn)
       {
-         items_.push_back(i->get());
+         InsertItem(i->get());
          return i->get();
       }
    }
@@ -1633,9 +1727,32 @@ Include* CodeFile::InsertInclude(const string& fn)
 
 //------------------------------------------------------------------------------
 
+void CodeFile::InsertItem(CxxNamed* item)
+{
+   //  Optimize for initial compilation, when items are always added at the end.
+   //
+   auto pos = item->GetPos();
+
+   if(!items_.empty() && (items_.back()->GetPos() > pos))
+   {
+      for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+      {
+         if((*i)->GetPos() > pos)
+         {
+            items_.insert(i, item);
+            return;
+         }
+      }
+   }
+
+   items_.push_back(item);
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::InsertMacro(Macro* macro)
 {
-   items_.push_back(macro);
+   InsertItem(macro);
    macros_.push_back(macro);
 }
 
@@ -1643,7 +1760,7 @@ void CodeFile::InsertMacro(Macro* macro)
 
 void CodeFile::InsertSpace(SpaceDefnPtr& space)
 {
-   items_.push_back(space.get());
+   InsertItem(space.get());
    spaces_.push_back(std::move(space));
 }
 
@@ -1651,7 +1768,7 @@ void CodeFile::InsertSpace(SpaceDefnPtr& space)
 
 void CodeFile::InsertStaticAssert(StaticAssert* assert)
 {
-   items_.push_back(assert);
+   InsertItem(assert);
    asserts_.push_back(assert);
 }
 
@@ -1659,7 +1776,7 @@ void CodeFile::InsertStaticAssert(StaticAssert* assert)
 
 void CodeFile::InsertType(Typedef* type)
 {
-   items_.push_back(type);
+   InsertItem(type);
    types_.push_back(type);
 }
 
@@ -1667,7 +1784,7 @@ void CodeFile::InsertType(Typedef* type)
 
 void CodeFile::InsertUsing(Using* use)
 {
-   items_.push_back(use);
+   InsertItem(use);
    usings_.push_back(use);
 }
 
@@ -2304,7 +2421,6 @@ void CodeFile::Shrink()
    data_.shrink_to_fit();
    assembly_.shrink_to_fit();
    asserts_.shrink_to_fit();
-   items_.shrink_to_fit();
 
    auto size = incls_.capacity() * sizeof(IncludePtr);
    size += dirs_.capacity() * sizeof(DirectivePtr);
@@ -2319,7 +2435,6 @@ void CodeFile::Shrink()
    size += data_.capacity() * sizeof(Data*);
    size += assembly_.capacity() * sizeof(Asm*);
    size += asserts_.capacity() * sizeof(StaticAssert*);
-   size += items_.capacity() * sizeof(StaticAssert*);
    size += usages_.size() * 3 * sizeof(CxxNamed*);
    CxxStats::Vectors(CxxStats::CODE_FILE, size);
 }
@@ -2495,11 +2610,13 @@ void CodeFile::Trim(ostream* stream)
 //------------------------------------------------------------------------------
 
 void CodeFile::UpdatePos
-   (EditorAction action, size_t begin, size_t count, size_t from) const
+   (EditorAction action, size_t begin, size_t count, size_t from)
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->UpdatePos(action, begin, count, from);
    }
+
+   items_.sort(IsSortedByPos);
 }
 }

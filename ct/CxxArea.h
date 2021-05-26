@@ -46,7 +46,7 @@ public:
    //
    virtual ~CxxArea();
 
-   //  Adds USE as a using statement in the area's scope.
+   //  Adds a using statement in the area's scope.
    //
    bool AddUsing(UsingPtr& use);
 
@@ -66,7 +66,7 @@ public:
    //
    bool AddForw(ForwardPtr& forw);
 
-   //  Adds a function or operator to the area.
+   //  Adds a function to the area.
    //
    bool AddFunc(FunctionPtr& func) const;
 
@@ -158,9 +158,37 @@ public:
    //
    virtual CxxScoped* FindItem(const std::string& name) const;
 
+   //  Removes a class from the area.
+   //
+   void EraseClass(Class* cls);
+
+   //  Removes a data member from the area.
+   //
+   void EraseData(Data* data);
+
+   //  Removes an enumeration from the area.
+   //
+   void EraseEnum(const Enum* decl);
+
+   //  Removes a forward declaration from the area.
+   //
+   void EraseForw(const Forward* forw);
+
+   //  Removes a function from the area.
+   //
+   void EraseFunc(Function* func);
+
+   //  Removes a typedef from the area.
+   //
+   void EraseType(const Typedef* type);
+
+   //  Removes a using statement from the area.
+   //
+   void EraseUsing(const Using* use);
+
    //  Overridden to add the area's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with the area's declarations.
    //
@@ -172,7 +200,7 @@ public:
 
    //  Adds the area's declarations to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to shrink containers.
    //
@@ -186,6 +214,10 @@ protected:
    //  Protected because this class is virtual.
    //
    CxxArea();
+
+   //  Returns all of the items in the area.
+   //
+   virtual CxxNamedVector Items() const;
 
    //  Returns the area's using statements.
    //
@@ -203,11 +235,6 @@ protected:
    //
    Enumerator* FindEnumerator(const std::string& name) const;
 private:
-   //  Defined so that a class can register ITEM in the order in which it was
-   //  declared.
-   //
-   virtual void AddItem(const CxxNamed* item) { }
-
    //  Invoked to add CLS to the area if CLS is an anonymous union.  Returns
    //  true if the union's members were promoted to the union's outer scope.
    //
@@ -324,10 +351,6 @@ public:
    //
    bool WasCreated(bool base) const;
 
-   //  Returns all of the items declared in the class.
-   //
-   const CxxNamedVector& Items() const { return items_; }
-
    //  Returns the class's direct base class.
    //
    virtual Class* BaseClass()
@@ -363,6 +386,10 @@ public:
    //  Returns the class's friends.
    //
    const FriendPtrVector* Friends() const { return &friends_; }
+
+   //  Removes DECL as a friend of the class.
+   //
+   void EraseFriend(const Friend* decl);
 
    //  Returns the class template, if any, associated with the class.
    //
@@ -521,10 +548,9 @@ public:
    //  the class's members.
    //
    void AddFiles(LibItemSet& imSet) const override;
-
    //  Overridden to add the class's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -577,7 +603,7 @@ public:
 
    //  Adds the class and its declarations to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to add the class to SYMBOLS.  The purpose of this function is
    //  to find a class that was resolved by a forward or friend declaration but
@@ -618,6 +644,10 @@ public:
    //  Overridden to look for an implemented function.
    //
    bool IsImplemented() const override;
+
+   //  Returns all of the items in the class, sorted by position.
+   //
+   CxxNamedVector Items() const override;
 
    //  Overridden to support BASE.
    //
@@ -677,10 +707,6 @@ protected:
    //
    void DisplayBase(std::ostream& stream, const NodeBase::Flags& options) const;
 private:
-   //  Overridden to register ITEM in the order in which it was declared.
-   //
-   void AddItem(const CxxNamed* item) override;
-
    //  Determines if MEMBER is accessible to SCOPE, updating VIEW with details
    //  on its visibility.
    //
@@ -802,10 +828,6 @@ private:
    //
    FriendPtrVector friends_;
 
-   //  The class's items in the order in which they appeared.
-   //
-   CxxNamedVector items_;
-
    //  The class's template instantiations.
    //
    ClassInstPtrVector tmplts_;
@@ -847,7 +869,7 @@ public:
    //  template adds them itself because each template instance is the same
    //  (apart from its template arguments, which we would want to exclude).
    //
-   void AddToXref() override { }
+   void AddToXref(bool insert) override { }
 
    //  Overridden to return the class template's base class.
    //

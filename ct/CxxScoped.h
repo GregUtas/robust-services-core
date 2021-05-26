@@ -110,9 +110,10 @@ public:
    //
    virtual void AddFiles(LibItemSet& imSet) const;
 
-   //  Records ITEM as a reference to this item.
+   //  Records ITEM as a reference to this item if INSERT is set, else
+   //  removes it as a reference.
    //
-   virtual void AddReference(CxxNamed* item) const;
+   virtual void AddReference(CxxNamed* item, bool insert) const;
 
    //  Returns the item's cross-reference (the items that reference it).
    //
@@ -298,7 +299,7 @@ public:
 
    //  Overridden to add the argument's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -451,7 +452,7 @@ public:
 
    //  Overridden to add the declaration's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -560,9 +561,13 @@ public:
    //
    Enumerator* FindEnumerator(const std::string& name) const;
 
+   //  Removes ETOR from the enumeration.
+   //
+   void EraseEnumerator(const Enumerator* etor);
+
    //  Overridden to add the enumeration's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -598,7 +603,7 @@ public:
 
    //  Adds the enumeration and its enumerators to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to indicate that an enum can be converted to an integer.
    //
@@ -687,7 +692,7 @@ class Enumerator : public CxxScoped
 public:
    //  Creates an enumerator with NAME and INIT, belonging to DECL.
    //
-   Enumerator(std::string& name, ExprPtr& init, const Enum* decl);
+   Enumerator(std::string& name, ExprPtr& init, Enum* decl);
 
    //  Not subclassed.
    //
@@ -695,11 +700,11 @@ public:
 
    //  Overridden to add the enumerator's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to set the type for an "auto" variable.
    //
-   CxxToken* AutoType() const override { return (CxxToken*) enum_; }
+   CxxToken* AutoType() const override { return enum_; }
 
    //  Overridden to log warnings associated with the enumerator.
    //
@@ -731,7 +736,7 @@ public:
 
    //  Adds the enumerator to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to indicate that an enum can be converted to an integer.
    //
@@ -810,7 +815,7 @@ private:
 
    //  The enumeration to which the enumerator belongs.
    //
-   const Enum* const enum_;
+   Enum* const enum_;
 
    //  How many times the enumerator was referenced.
    //
@@ -838,7 +843,7 @@ public:
 
    //  Overridden to add the declaration to its referent.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to return the referent if known, else the forward declaration.
    //
@@ -863,7 +868,7 @@ public:
 
    //  Adds the declaration to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to add the forward's referent to SYMBOLS.
    //
@@ -986,7 +991,7 @@ public:
 
    //  Overridden to add the declaration to its referent.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to return the referent if known, else the friend declaration.
    //
@@ -1008,7 +1013,7 @@ public:
 
    //  Adds the declaration to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to add the friend's referent to SYMBOLS.
    //
@@ -1138,7 +1143,7 @@ private:
 
    //  The class that granted friendship.
    //
-   const CxxScope* grantor_;
+   CxxScope* grantor_;
 
    //  If the friend is a class, its type.
    //
@@ -1182,7 +1187,7 @@ public:
 
    //  Not subclassed.
    //
-   ~MemberInit() { CxxStats::Decr(CxxStats::MEMBER_INIT); }
+   ~MemberInit();
 
    //  Returns the expression that initializes the member.
    //
@@ -1190,7 +1195,7 @@ public:
 
    //  Overridden to add the initialization's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with the initialization.
    //
@@ -1281,7 +1286,7 @@ public:
 
    //  Overridden to add the parameter's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to return the default's type, else this item.
    //
@@ -1397,7 +1402,7 @@ public:
 
    //  The following invoke the corresponding function on each parameter.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void ExitBlock() const override;
@@ -1449,7 +1454,7 @@ public:
 
    //  Overridden to not track references to terminals.
    //
-   void AddReference(CxxNamed* item) const override { }
+   void AddReference(CxxNamed* item, bool insert) const override { }
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1542,7 +1547,7 @@ public:
 
    //  Overridden to add the typedef's components to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1571,7 +1576,7 @@ public:
 
    //  Adds the typedef to ITEMS.
    //
-   void GetDecls(std::set< CxxNamed* >& items) override;
+   void GetDecls(CxxNamedSet& items) override;
 
    //  Overridden to return the definition's underlying numeric type.
    //
@@ -1680,7 +1685,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Using() { CxxStats::Decr(CxxStats::USING_DECL); }
+   ~Using();
 
    //  Returns true if the declaration/directive makes fqName visible
    //  within SCOPE to at least the position specified by PREFIX.
@@ -1706,7 +1711,7 @@ public:
 
    //  Overridden to add the declaration to cross-references.
    //
-   void AddToXref() override;
+   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with the declaration.
    //

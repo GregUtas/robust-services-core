@@ -62,9 +62,9 @@ Conditional::Conditional()
 
 //------------------------------------------------------------------------------
 
-void Conditional::AddToXref()
+void Conditional::AddToXref(bool insert)
 {
-   condition_->AddToXref();
+   condition_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -425,9 +425,9 @@ bool Existential::AddEndif(const Endif* e)
 
 //------------------------------------------------------------------------------
 
-void Existential::AddToXref()
+void Existential::AddToXref(bool insert)
 {
-   name_->AddToXref();
+   name_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -717,6 +717,16 @@ Include::Include(string& name, bool angle) : SymbolDirective(name),
 
 //------------------------------------------------------------------------------
 
+Include::~Include()
+{
+   Debug::ft("Include.dtor");
+
+   GetFile()->EraseInclude(this);
+   CxxStats::Decr(CxxStats::INCLUDE_DIRECTIVE);
+}
+
+//------------------------------------------------------------------------------
+
 void Include::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -918,14 +928,15 @@ MacroName::~MacroName()
 {
    Debug::ftnt("MacroName.dtor");
 
+   AddToXref(false);
    CxxStats::Decr(CxxStats::QUAL_NAME);
 }
 
 //------------------------------------------------------------------------------
 
-void MacroName::AddToXref()
+void MacroName::AddToXref(bool insert)
 {
-   if(ref_ != nullptr) ref_->AddReference(this);
+   if(ref_ != nullptr) ref_->AddReference(this, insert);
 }
 
 //------------------------------------------------------------------------------

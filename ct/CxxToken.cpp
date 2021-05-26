@@ -42,45 +42,6 @@ using std::string;
 
 namespace CodeTools
 {
-bool IsSortedByFilePos(const CxxToken* item1, const CxxToken* item2)
-{
-   auto file1 = item1->GetFile();
-   auto file2 = item2->GetFile();
-   if(file1 == nullptr)
-   {
-      if(file2 != nullptr) return true;
-   }
-   else if(file2 == nullptr)
-   {
-      return false;
-   }
-   else
-   {
-      auto fn1 = file1->Path(false);
-      auto fn2 = file2->Path(false);
-      auto result = fn1.compare(fn2);
-      if(result < 0) return true;
-      if(result > 0) return false;
-   }
-
-   auto pos1 = item1->GetPos();
-   auto pos2 = item2->GetPos();
-   if(pos1 < pos2) return true;
-   if(pos1 > pos2) return false;
-   return (item1 < item2);
-}
-
-//------------------------------------------------------------------------------
-
-bool IsSortedByPos(const CxxToken* item1, const CxxToken* item2)
-{
-   if(item1->GetPos() < item2->GetPos()) return true;
-   if(item1->GetPos() > item2->GetPos()) return false;
-   return (item1 < item2);
-}
-
-//==============================================================================
-
 AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 {
    Debug::ft("AlignAs.ctor");
@@ -90,9 +51,9 @@ AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 
 //------------------------------------------------------------------------------
 
-void AlignAs::AddToXref()
+void AlignAs::AddToXref(bool insert)
 {
-   token_->AddToXref();
+   token_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -155,9 +116,9 @@ ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
 
 //------------------------------------------------------------------------------
 
-void ArraySpec::AddToXref()
+void ArraySpec::AddToXref(bool insert)
 {
-   if(expr_ != nullptr) expr_->AddToXref();
+   if(expr_ != nullptr) expr_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -236,11 +197,11 @@ BraceInit::BraceInit()
 
 //------------------------------------------------------------------------------
 
-void BraceInit::AddToXref()
+void BraceInit::AddToXref(bool insert)
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
-      (*i)->AddToXref();
+      (*i)->AddToXref(insert);
    }
 }
 
@@ -823,11 +784,11 @@ bool Expression::AddItem(TokenPtr& item)
 
 //------------------------------------------------------------------------------
 
-void Expression::AddToXref()
+void Expression::AddToXref(bool insert)
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
-      (*i)->AddToXref();
+      (*i)->AddToXref(insert);
    }
 }
 
@@ -1349,11 +1310,11 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 
 //------------------------------------------------------------------------------
 
-void Operation::AddToXref()
+void Operation::AddToXref(bool insert)
 {
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
-      (*a)->AddToXref();
+      (*a)->AddToXref(insert);
    }
 }
 
@@ -3196,9 +3157,9 @@ void Operation::UpdatePos
 
 //==============================================================================
 
-void Precedence::AddToXref()
+void Precedence::AddToXref(bool insert)
 {
-   if(expr_ != nullptr) expr_->AddToXref();
+   if(expr_ != nullptr) expr_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------

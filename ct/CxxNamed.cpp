@@ -45,6 +45,46 @@ using std::string;
 
 namespace CodeTools
 {
+bool IsSortedByFilePos(const CxxNamed* item1, const CxxNamed* item2)
+{
+   auto file1 = item1->GetFile();
+   auto file2 = item2->GetFile();
+
+   if(file1 != nullptr)
+   {
+      if(file2 != nullptr)
+      {
+         auto fn1 = file1->Path(false);
+         auto fn2 = file2->Path(false);
+         auto result = fn1.compare(fn2);
+         if(result < 0) return true;
+         if(result > 0) return false;
+
+         auto pos1 = item1->GetPos();
+         auto pos2 = item2->GetPos();
+         if(pos1 < pos2) return true;
+         if(pos1 > pos2) return false;
+         return (item1 < item2);
+      }
+
+      return false;
+   }
+
+   if(file2 != nullptr) return true;
+   return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2)
+{
+   if(item1->GetPos() < item2->GetPos()) return true;
+   if(item1->GetPos() > item2->GetPos()) return false;
+   return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_ReferentError = "CodeTools.ReferentError";
 
 CxxScoped* ReferentError(const string& item, debug64_t offset)
@@ -685,17 +725,17 @@ void DataSpec::AddArray(ArraySpecPtr& array)
 
 //------------------------------------------------------------------------------
 
-void DataSpec::AddToXref()
+void DataSpec::AddToXref(bool insert)
 {
    if(IsAutoDecl()) return;
 
-   name_->AddToXref();
+   name_->AddToXref(insert);
 
    if(arrays_ != nullptr)
    {
       for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
       {
-         (*a)->AddToXref();
+         (*a)->AddToXref(insert);
       }
    }
 }
@@ -1140,6 +1180,7 @@ void DataSpec::Instantiating(CxxScopedVector& locals) const
          locals.push_back(ref);
       }
 
+      name_->Instantiating(locals);
       return;
    }
 
@@ -1645,10 +1686,21 @@ bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 {
    Debug::ft("DataSpec.ResolveTemplate");
 
-   //  Don't create a template instance if this item was only created
-   //  internally, during template matching.
+   //  This returns false to avoid creating a template instance for a template
+   //  type that was only created internally, during template matching.
    //
-   return (GetTemplateRole() != TemplateClass);
+   if(GetTemplateRole() == TemplateClass) return false;
+
+   auto tparms = args->Args();
+
+   for(auto a = tparms->cbegin(); a != tparms->cend(); ++a)
+   {
+      auto ref = (*a)->GetQualName()->GetReferent();
+      if((ref != nullptr) && (ref->Type() != Cxx::TemplateParm))
+         return true;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1965,11 +2017,11 @@ QualName::~QualName()
 
 //------------------------------------------------------------------------------
 
-void QualName::AddToXref()
+void QualName::AddToXref(bool insert)
 {
    for(auto n = First(); n != nullptr; n = n->Next())
    {
-      n->AddToXref();
+      n->AddToXref(insert);
    }
 }
 
@@ -2242,6 +2294,21 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+void QualName::Instantiating(CxxScopedVector& locals) const
+{
+   Debug::ft("QualName.Instantiating");
+
+   //  This will add, to LOCALS, a template parameter that is nested within
+   //  a template specialization.
+   //
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->Instantiating(locals);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 bool QualName::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::ft("QualName.ItemIsTemplateArg");
@@ -2497,9 +2564,9 @@ StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
 
 //------------------------------------------------------------------------------
 
-void StaticAssert::AddToXref()
+void StaticAssert::AddToXref(bool insert)
 {
-   expr_->AddToXref();
+   expr_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2634,6 +2701,11 @@ TypeName::~TypeName()
 {
    Debug::ftnt("TypeName.dtor");
 
+   if(Context::File() == nullptr)
+   {
+      AddToXref(false);
+   }
+
    CxxStats::Decr(CxxStats::TYPE_NAME);
 }
 
@@ -2650,29 +2722,27 @@ void TypeName::AddTemplateArg(TypeSpecPtr& arg)
 
 //------------------------------------------------------------------------------
 
-void TypeName::AddToXref()
+void TypeName::AddToXref(bool insert)
 {
-   auto ref = Referent();
-
-   if(ref != nullptr)
+   if(ref_ != nullptr)
    {
-      ref->AddReference(this);
+      ref_->AddReference(this, insert);
 
       //  If the referent is in a template instance, also record a reference
       //  to the analogous item in the template.  A template class instance
       //  (e.g. basic_string) is often accessed through a typedef ("string"),
       //  so make sure the reference is recorded against the correct item.
       //
-      if(ref->IsInternal())
+      if(ref_->IsInternal())
       {
-         auto item = ref->FindTemplateAnalog(ref);
+         auto item = ref_->FindTemplateAnalog(ref_);
 
          if(item != nullptr)
          {
             if(item->Name() == name_)
-               item->AddReference(this);
+               item->AddReference(this, insert);
             else if((type_ != nullptr) && (type_->Name() == name_))
-               type_->AddReference(this);
+               type_->AddReference(this, insert);
          }
       }
    }
@@ -2688,13 +2758,13 @@ void TypeName::AddToXref()
    {
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
-         (*a)->AddToXref();
+         (*a)->AddToXref(insert);
       }
    }
 
    if(type_ != nullptr)
    {
-      type_->AddReference(this);
+      type_->AddReference(this, insert);
    }
 }
 
@@ -2798,8 +2868,7 @@ bool TypeName::GetSpan(size_t& begin, size_t& left, size_t& end) const
 {
    Debug::ft("TypeName.GetSpan");
 
-   auto ref = Referent();
-   if((ref == nullptr) || (ref->Type() != Cxx::Data)) return false;
+   if((ref_ == nullptr) || (ref_->Type() != Cxx::Data)) return false;
 
    begin = GetPos();
    end = GetFile()->GetLexer().FindFirstOf(";", begin);

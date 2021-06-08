@@ -69,6 +69,17 @@ const std::string& LibraryItem::Name() const
    return null_string;
 }
 
+//------------------------------------------------------------------------------
+
+fn_name LibraryItem_Rename = "LibraryItem.Rename";
+
+void LibraryItem::Rename(const std::string& name)
+{
+   Debug::ft(LibraryItem_Rename);
+
+   Debug::SwLog(LibraryItem_Rename, strOver(this), 0);
+}
+
 //==============================================================================
 
 bool LibItemSort::operator()

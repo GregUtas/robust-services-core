@@ -46,9 +46,21 @@ namespace CodeTools
 class CxxToken : public LibraryItem
 {
 public:
-   //  Virtual to allow subclassing.
+   //  Virtual to allow subclassing.  Most items are owned in a unique_ptr,
+   //  so if the owner is deleted, the item is deleted before the owner's
+   //  destructor runs.  The item need not inform its owner of its deletion
+   //  in this case.  But if the item is being deleted on its own, the owner
+   //  needs to be informed.  The two scenarios are distinguished by invoking
+   //  Delete (below) in the latter case.
    //
    virtual ~CxxToken();
+
+   //  Deletes the item and informs its owner of its deletion.  The default
+   //  version simply deletes the item and must be overridden by an item that
+   //  the Editor can delete separately from its owner (e.g. when deleting an
+   //  unused item from its class or namespace).
+   //
+   virtual void Delete();
 
    //  Sets the file and offset at which this item was found.
    //
@@ -62,6 +74,10 @@ public:
    //  Invokes SetLoc(Context::File(), pos).
    //
    virtual void SetContext(size_t pos);
+
+   //  Invokes SetLoc(file, pos).  Used when editing compiled code.
+   //
+   void SetContext(CodeFile* file, size_t pos);
 
    //  Sets the item's context based on THAT.  Typically used when an item
    //  is created internally (e.g. during template instantiation), in which
@@ -97,6 +113,10 @@ public:
    //  Returns the item's type.
    //
    virtual Cxx::ItemType Type() const { return Cxx::Undefined; }
+
+   //  Records the scope where the item appeared.
+   //
+   virtual void SetScope(CxxScope* scope) { }
 
    //  Returns the scope (namespace, class, or block) where the item is
    //  declared.
@@ -317,6 +337,22 @@ public:
    //  UsageType for a list of how various uses of a type are distinguished.
    //
    virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) { }
+
+   //  Returns the item, if any, that begins at POS.  Objects in the class
+   //  Expression cannot be found with this function because they begin at
+   //  the same position as their first component, which would then be masked.
+   //  Masking does occur, however, with QualName (which masks its first
+   //  TypeName), Expr (which can also mask a TypeName) and DataSpec (which
+   //  masks its QualName).  Some items can only be found at the punctuation 
+   //  associated with them:
+   //  o ArraySpec: [
+   //  o Block: {
+   //  o BraceInit: {
+   //  o Operation: the operator
+   //  o Precedence: (
+   //  o TemplateParms: <
+   //
+   virtual CxxToken* PosToItem(size_t pos) const;
 
    //  Searches this item for ITEM.  Returns true if it was found.  Increments
    //  N each time that an item with the same name was encountered.
@@ -727,6 +763,10 @@ public:
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to display the operator and its arguments.
    //
    void Print
@@ -908,6 +948,10 @@ public:
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to display the expression.
    //
    void Print
@@ -987,6 +1031,10 @@ public:
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to display the array's size within brackets.
    //
    void Print
@@ -1021,6 +1069,7 @@ public:
    Elision() { CxxStats::Incr(CxxStats::ELISION); }
    ~Elision() { CxxStats::Decr(CxxStats::ELISION); }
    void EnterBlock() override { }
+   CxxToken* PosToItem(size_t pos) const override { return nullptr; }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override { }
    Cxx::ItemType Type() const override { return Cxx::Elision; }
@@ -1040,6 +1089,7 @@ public:
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -1064,6 +1114,7 @@ public:
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -1087,6 +1138,7 @@ public:
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -1095,52 +1147,5 @@ public:
 private:
    const TokenPtr token_;
 };
-
-//------------------------------------------------------------------------------
-//
-//  Removes ITEM from VEC and moves the last item into its slot to keep
-//  VEC contiguous.
-//
-template< class T > void EraseItem(std::vector< T* >& vec, const T* item)
-{
-   for(size_t i = 0; i < vec.size(); ++i)
-   {
-      if(vec[i] == item)
-      {
-         if(i != vec.size() - 1)
-         {
-            vec[i] = vec.back();
-         }
-
-         vec.pop_back();
-         return;
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-//
-//  Removes ITEM from VEC and moves the last item into its slot to keep
-//  VEC contiguous.
-//
-template< class T > void EraseItemPtr
-   (std::vector< std::unique_ptr< T >>& vec, const T* item)
-{
-   for(size_t i = 0; i < vec.size(); ++i)
-   {
-      if(vec[i].get() == item)
-      {
-         vec[i].release();
-
-         if(i != vec.size() - 1)
-         {
-            vec[i] = std::move(vec.back());
-         }
-
-         vec.pop_back();
-         return;
-      }
-   }
-}
 }
 #endif

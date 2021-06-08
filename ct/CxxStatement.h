@@ -42,9 +42,12 @@ class CxxStatement : public CxxToken
 {
 public:
    virtual ~CxxStatement() = default;
+   void Delete() override;
    CxxStatement(const CxxStatement& that) = delete;
    CxxStatement& operator=(const CxxStatement& that) = delete;
    void EnterBlock() override;
+   CxxScope* GetScope() const override { return scope_; }
+   void SetScope(CxxScope* scope) override { scope_ = scope; }
 protected:
    explicit CxxStatement(size_t pos);
 
@@ -67,6 +70,10 @@ private:
    //  Overridden to support a single statement that ends at a semicolon.
    //
    bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
+   //  The Block in which the statement appeared.
+   //
+   CxxScope* scope_;
 };
 
 //------------------------------------------------------------------------------
@@ -82,6 +89,7 @@ public:
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -124,6 +132,7 @@ public:
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
+   CxxToken* PosToItem(size_t pos) const override;
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -154,6 +163,7 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
    bool LocateItem(const CxxToken* item, size_t& n) const override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -197,6 +207,7 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
    bool LocateItem(const CxxToken* item, size_t& n) const override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -221,6 +232,7 @@ public:
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -252,6 +264,7 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
    bool LocateItem(const CxxToken* item, size_t& n) const override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -303,6 +316,7 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
    bool LocateItem(const CxxToken* item, size_t& n) const override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -370,6 +384,7 @@ public:
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
@@ -399,6 +414,7 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
    bool LocateItem(const CxxToken* item, size_t& n) const override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -430,6 +446,7 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
    bool LocateItem(const CxxToken* item, size_t& n) const override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -459,6 +476,7 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override;
    bool LocateItem(const CxxToken* item, size_t& n) const override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;

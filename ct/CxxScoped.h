@@ -52,10 +52,6 @@ public:
    //
    CxxScoped(const CxxScoped& that) = delete;
 
-   //  Sets the scope where the declaration appeared.
-   //
-   virtual void SetScope(CxxScope* scope) { scope_ = scope; }
-
    //  Returns the file where the item is implemented.
    //
    CodeFile* GetImplFile() const;
@@ -118,6 +114,10 @@ public:
    //  Returns the item's cross-reference (the items that reference it).
    //
    CxxNamedSet& Xref() const { return xref_; }
+
+   //  Invokes Rename on the item and each entry in its Xref().
+   //
+   void ChangeName(const std::string& name);
 
    //  Returns the amount of memory used by xref_ entries.
    //
@@ -211,6 +211,10 @@ public:
    //  o invoke SetAccess(item's scope->GetCurrAccess()).
    //
    void SetContext(size_t pos) override;
+
+   //  Overridden to record the scope where the item appeared.
+   //
+   void SetScope(CxxScope* scope) override { scope_ = scope; }
 protected:
    //  Protected because this class is virtual.
    //
@@ -278,7 +282,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Argument() { CxxStats::Decr(CxxStats::ARG_DECL); }
+   ~Argument();
 
    //  Sets the argument's default value.
    //
@@ -308,6 +312,10 @@ public:
    //  Overridden to log warnings associated with the argument.
    //
    void Check() const override;
+
+   //  Overridden to support the deletion of an unused argument.
+   //
+   void Delete() override;
 
    //  Overridden to make the argument visible as a local.
    //
@@ -350,10 +358,18 @@ public:
    //
    const std::string& Name() const override { return name_; }
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to display the argument.
    //
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
+
+   //  Overridden to support renaming an argument.
+   //
+   void Rename(const std::string& name) override;
 
    //  Overridden to record that the argument cannot be const.
    //
@@ -448,7 +464,7 @@ public:
 
    //  Not subclassed.
    //
-   ~BaseDecl() { CxxStats::Decr(CxxStats::BASE_DECL); }
+   ~BaseDecl();
 
    //  Overridden to add the declaration's components to cross-references.
    //
@@ -486,6 +502,10 @@ public:
    //
    const std::string& Name() const override { return name_->Name(); }
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to return the base class's qualified name.
    //
    std::string QualifiedName(bool scopes, bool templates) const
@@ -510,6 +530,11 @@ public:
    //  Overridden to return the declaration's full root type.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to update the declaration's location.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
 private:
    //  Overridden to find the base class's class.
    //
@@ -561,7 +586,7 @@ public:
    //
    Enumerator* FindEnumerator(const std::string& name) const;
 
-   //  Removes ETOR from the enumeration.
+   //  Removes ETOR from the enumeration when ETOR is being deleted.
    //
    void EraseEnumerator(const Enumerator* etor);
 
@@ -581,6 +606,10 @@ public:
    //  restrictive access control.
    //
    void CheckAccessControl() const override;
+
+   //  Overridden to support the deletion of an unused enumeration.
+   //
+   void Delete() override;
 
    //  Overridden to display the enumeration.
    //
@@ -626,9 +655,17 @@ public:
    //
    const std::string& Name() const override { return name_; }
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to record usage of the enumeration.
    //
    void RecordUsage() override { AddUsage(); }
+
+   //  Overridden to support renaming an anonymous enumeration.
+   //
+   void Rename(const std::string& name) override;
 
    //  Overridden to count references.
    //
@@ -715,6 +752,10 @@ public:
    //
    bool CheckIfUnused(Warning warning) const override;
 
+   //  Overridden to support the deletion of an unused enumerator.
+   //
+   void Delete() override;
+
    //  Overridden to display the enumeration.
    //
    void Display(std::ostream& stream,
@@ -758,6 +799,10 @@ public:
    //  Overridden to return the enumerator's name.
    //
    const std::string& Name() const override { return name_; }
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to note that the enumeration required ACCESS.
    //
@@ -853,6 +898,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to support the deletion of an unused declaration.
+   //
+   void Delete() override;
+
    //  Overridden to display the declaration.
    //
    void Display(std::ostream& stream,
@@ -894,6 +943,10 @@ public:
    //  Overridden to returns the class's name.
    //
    const std::string& Name() const override { return name_->Name(); }
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to return the class.
    //
@@ -1001,6 +1054,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to support the deletion of an unused declaration.
+   //
+   void Delete() override;
+
    //  Overridden to display the declaration.  If FQ is set, the friend's
    //  fully qualified name is displayed.
    //
@@ -1051,6 +1108,10 @@ public:
    //  Overridden to return the friend's name.
    //
    const std::string& Name() const override;
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to return the friend's qualified name.
    //
@@ -1201,6 +1262,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to support the deletion of an unused data member.
+   //
+   void Delete() override;
+
    //  Overridden to compile the initialization expression.
    //
    void EnterBlock() override;
@@ -1216,6 +1281,10 @@ public:
    //  Overridden to return the member's name.
    //
    const std::string& Name() const override { return name_; }
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to display the initialization.
    //
@@ -1316,6 +1385,10 @@ public:
    //
    const std::string& Name() const override { return name_; }
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to display the parameter.
    //
    void Print
@@ -1407,6 +1480,10 @@ public:
    void EnterBlock() override;
    void ExitBlock() const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to display the template's full specification.
    //
@@ -1557,6 +1634,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to support the deletion of an unused type.
+   //
+   void Delete() override;
+
    //  Overridden to display the typedef.
    //
    void Display(std::ostream& stream,
@@ -1601,6 +1682,10 @@ public:
    //  Overridden to return the alias introduced by the typedef.
    //
    const std::string& Name() const override { return name_; }
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to display the typedef in a function.
    //
@@ -1717,6 +1802,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to support the deletion of an unused declaration.
+   //
+   void Delete() override;
+
    //  Overridden to display the declaration.  If FQ is set, the fully
    //  qualified name is displayed.
    //
@@ -1750,6 +1839,10 @@ public:
    //  Overridden to return the name of what is being used.
    //
    const std::string& Name() const override { return name_->Name(); }
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to return the qualified name of what is being used.
    //

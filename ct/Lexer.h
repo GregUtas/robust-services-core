@@ -332,7 +332,7 @@ public:
    //  Advances to where compilation should continue after OPT.  If COMPILE is
    //  set, the code following OPT is to be compiled, else it is to be skipped.
    //
-   void FindCode(OptionalCode* opt, bool compile);
+   void FindCode(const OptionalCode* opt, bool compile);
 
    //  Scans the code to determine lexical levels for indentation.
    //

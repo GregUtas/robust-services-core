@@ -182,6 +182,10 @@ public:
    //
    static void ResetUsings();
 
+   //  Removes ITEM from the block's statements.
+   //
+   void EraseItem(const CxxToken* item);
+
    //  Overridden to add the block's components to cross-references.
    //
    void AddToXref(bool insert) override;
@@ -231,6 +235,10 @@ public:
    //  Overridden to return the block's name.
    //
    const std::string& Name() const override { return name_; }
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to display a block in-line if it has one statement or none.
    //
@@ -446,6 +454,10 @@ public:
    //
    StackArg NameToArg(Cxx::Operator op, TypeName* name) override;
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to record that the data cannot be const.
    //
    bool SetNonConst() override;
@@ -514,6 +526,10 @@ protected:
    //  are logged.
    //
    void CheckConstness(bool could) const;
+
+   //  Clears the mate's reference to this data.
+   //
+   void ClearMate() const;
 
    //  Displays any alignment directive for the data.
    //
@@ -647,6 +663,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to support the deletion of unused or write-only data.
+   //
+   void Delete() override;
+
    //  Overridden to display the data declaration and definition.
    //
    void Display(std::ostream& stream,
@@ -672,6 +692,10 @@ public:
    //  Overridden to return the item's name.
    //
    const std::string& Name() const override { return name_->Name(); }
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to return the item's qualified name.
    //
@@ -754,6 +778,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to support the deletion of unused or write-only data.
+   //
+   void Delete() override;
+
    //  Overridden to display the data declaration and definition.
    //
    void Display(std::ostream& stream,
@@ -792,6 +820,10 @@ public:
    //  Overridden to support an implicit "this".
    //
    StackArg NameToArg(Cxx::Operator op, TypeName* name) override;
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to promote the member, which currently belongs to
    //  an anonymous union, to CLS, the union's outer scope.
@@ -891,11 +923,11 @@ public:
 
    //  Appends the next data declaration in a series (e.g. bool b1, b2).
    //
-   void SetNext(DataPtr& next);
+   void SetNext(FuncDataPtr& next);
 
    //  Sets the first data declaration in a series.
    //
-   void SetFirst(const Data* first) { first_ = first; }
+   void SetFirst(FuncData* first) { first_ = first; }
 
    //  Overridden to add the data's components to cross-references.
    //
@@ -904,6 +936,10 @@ public:
    //  Overridden to log warnings associated with the data.
    //
    void Check() const override;
+
+   //  Overridden to support the deletion of unused or write-only data.
+   //
+   void Delete() override;
 
    //  Overridden to display the data declaration and definition.
    //
@@ -929,6 +965,10 @@ public:
    //  Overridden to return the item's name.
    //
    const std::string& Name() const override { return name_; }
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to display the data declaration and definition.
    //
@@ -964,11 +1004,11 @@ private:
 
    //  The next declaration in a series.
    //
-   DataPtr next_;
+   FuncDataPtr next_;
 
    //  The first declaration in a series.
    //
-   const Data* first_;
+   FuncData* first_;
 };
 
 //------------------------------------------------------------------------------
@@ -994,6 +1034,10 @@ public:
    //  Adds an argument to the function.
    //
    void AddArg(ArgumentPtr& arg);
+
+   //  Removes ARG from the function when ARG is being deleted.
+   //
+   void EraseArg(const Argument* arg);
 
    //  Specifies whether the function is tagged as extern.
    //
@@ -1071,6 +1115,10 @@ public:
    //  Adds a member initialization to a constructor initialization list.
    //
    void AddMemberInit(MemberInitPtr& init);
+
+   //  Removes INIT from the function when INIT is being deleted.
+   //
+   void EraseMemberInit(const MemberInit* init);
 
    //  Sets the starting location (opening brace) of an inline function.
    //
@@ -1185,6 +1233,10 @@ public:
    //  Returns true if this is a function template instance.
    //
    bool IsTemplateInstance() const { return tmplt_ != nullptr; }
+
+   //  Returns true if the function is a compiled function template.
+   //
+   bool ContainsTemplateParameter() const;
 
    //  Pushes an implicit "this" argument that may be needed later.
    //
@@ -1308,6 +1360,10 @@ public:
    //  Overridden to add the function's components to cross-references.
    //
    void AddToXref(bool insert) override;
+
+   //  Overridden to support the deletion of an unused function.
+   //
+   void Delete() override;
 
    //  Overridden to log warnings associated with the function.
    //
@@ -1443,6 +1499,10 @@ public:
    bool NameRefersToItem(const std::string& name, const CxxScope* scope,
       CodeFile* file, SymbolView& view) const override;
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to return the function's qualified name.
    //
    std::string QualifiedName(bool scopes, bool templates) const
@@ -1511,6 +1571,10 @@ private:
    //  functions, even if they are not tagged as such.
    //
    void AddOverride(Function* over) const;
+
+   //  Removes OVER as an override of the function.
+   //
+   void EraseOverride(const Function* over) const;
 
    //  Returns true if this function's arguments match those of THAT.
    //
@@ -1830,7 +1894,7 @@ public:
    //  represents a single occurrence of a namespace definition that defines
    //  some of the namespace's items.
    //
-   explicit SpaceDefn(const Namespace* ns);
+   explicit SpaceDefn(Namespace* ns);
 
    //  Not subclassed.
    //
@@ -1839,6 +1903,10 @@ public:
    //  Overridden to add itself as a reference to space_.
    //
    void AddToXref(bool insert) override;
+
+   //  Overridden to support the deletion of an empty namespace definition.
+   //
+   void Delete() override;
 
    //  Adds the namespace to ITEMS.
    //
@@ -1859,7 +1927,7 @@ private:
 
    //  The primary class for the namespace.
    //
-   const Namespace* const space_;
+   Namespace* const space_;
 };
 
 //------------------------------------------------------------------------------
@@ -1875,7 +1943,7 @@ public:
 
    //  Not subclassed.
    //
-   ~FuncSpec() { CxxStats::Decr(CxxStats::FUNC_SPEC); }
+   ~FuncSpec();
 private:
    //  The following are overridden to return the function signature.
    //
@@ -1887,10 +1955,12 @@ private:
    //
    void AddToXref(bool insert) override;
    void Check() const override;
+   bool ContainsTemplateParameter() const override;
    void EnteringScope(const CxxScope* scope) override;
    bool IsConst() const override { return func_->IsConst(); }
    bool IsVolatile() const override { return func_->IsVolatile(); }
    const std::string& Name() const override { return func_->Name(); }
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;

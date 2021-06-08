@@ -22,6 +22,7 @@
 #include "CxxToken.h"
 #include <sstream>
 #include "CodeFile.h"
+#include "CodeWarning.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxNamed.h"
@@ -77,6 +78,16 @@ void AlignAs::EnterBlock()
 void AlignAs::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    token_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* AlignAs::PosToItem(size_t pos) const
+{
+   auto item = CxxToken::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return token_->PosToItem(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -142,6 +153,16 @@ void ArraySpec::EnterBlock()
 void ArraySpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* ArraySpec::PosToItem(size_t pos) const
+{
+   auto item = CxxToken::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (expr_ != nullptr ? expr_->PosToItem(pos) : nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -248,6 +269,22 @@ void BraceInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* BraceInit::PosToItem(size_t pos) const
+{
+   auto item = CxxToken::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      auto item = (*i)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 void BraceInit::Print(ostream& stream, const Flags& options) const
 {
    stream << "{ ";
@@ -305,6 +342,8 @@ CxxToken::CxxToken(const CxxToken& that) : LibraryItem(that),
 CxxToken::~CxxToken()
 {
    Debug::ftnt("CxxToken.dtor");
+
+   CodeWarning::ItemDeleted(this);
 }
 
 //------------------------------------------------------------------------------
@@ -314,6 +353,15 @@ void CxxToken::CopyContext(const CxxToken* that, bool internal)
    Debug::ft("CxxToken.CopyContext");
 
    loc_.SetLoc(that->GetFile(), that->GetPos(), internal);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxToken::Delete()
+{
+   Debug::ftnt("CxxToken.Delete");
+
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -511,6 +559,14 @@ CxxToken& CxxToken::operator=(const CxxToken& that)
 
 //------------------------------------------------------------------------------
 
+CxxToken* CxxToken::PosToItem(size_t pos) const
+{
+   return ((GetPos() == pos) && !IsInternal() ?
+      const_cast< CxxToken* >(this) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void CxxToken::Print(ostream& stream, const Flags& options) const
 {
    stream << "// " << ERROR_STR << '(' << strClass(this, false) << ')';
@@ -568,9 +624,18 @@ CxxToken* CxxToken::Root() const
 
 void CxxToken::SetContext(size_t pos)
 {
-   Debug::ft("CxxToken.SetContext");
+   Debug::ft("CxxToken.SetContext(pos)");
 
    loc_.SetLoc(Context::File(), pos);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxToken::SetContext(CodeFile* file, size_t pos)
+{
+   Debug::ft("CxxToken.SetContext(file)");
+
+   loc_.SetLoc(file, pos);
 }
 
 //------------------------------------------------------------------------------
@@ -946,6 +1011,19 @@ void Expression::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
    {
       (*i)->GetUsages(file, symbols);
    }
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* Expression::PosToItem(size_t pos) const
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      auto item = (*i)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -2507,6 +2585,21 @@ bool Operation::MakeBinary()
 
 //------------------------------------------------------------------------------
 
+CxxToken* Operation::PosToItem(size_t pos) const
+{
+   auto item = CxxToken::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      item = (*a)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Operation_Print = "Operation.Print";
 
 void Operation::Print(ostream& stream, const Flags& options) const
@@ -3183,6 +3276,16 @@ void Precedence::EnterBlock()
 void Precedence::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* Precedence::PosToItem(size_t pos) const
+{
+   auto item = CxxToken::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (expr_ != nullptr ? expr_->PosToItem(pos) : nullptr);
 }
 
 //------------------------------------------------------------------------------

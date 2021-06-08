@@ -11,7 +11,7 @@
 //
 //  Windows threads
 //
-typedef unsigned (*_beginthreadex_proc_type)(void*);
+typedef unsigned (*_beginthreadex_proc_type)(void* arg);
 
 uintptr_t _beginthreadex(void* securityAttributes, unsigned stackSize,
                          _beginthreadex_proc_type entryFunction, void* argument,

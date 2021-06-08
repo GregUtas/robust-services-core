@@ -274,11 +274,6 @@ private:
    //
    size_t IncludesBegin() const;
 
-   //  Returns the location of the statement that follows the last #include.
-   //  Returns string::npos if the last line was an #include.
-   //
-   size_t IncludesEnd() const;
-
    //  Find the first line of code (other than #include directives, forward
    //  declarations, and using statements).  Moves up past any comments that
    //  precede that point, and returns the position where these comments
@@ -291,16 +286,6 @@ private:
    //  without an intervening comment or right brace.
    //
    bool CodeFollowsImmediately(size_t pos) const;
-
-   //  This simplifies sorting by replacing the characters that enclose the
-   //  file name's in an #include directive.
-   //
-   word MangleInclude(string& include) const;
-
-   //  Before inserting an #include or sorting all #includes, this is invoked
-   //  to make it easier to sort them.
-   //
-   void MangleIncludes();
 
    //  Sorts #include directives in standard order.
    //
@@ -346,7 +331,7 @@ private:
 
    //  Within ITEM, qualifies occurrences of REF.
    //
-   void QualifyReferent(const CxxToken* item, const CxxToken* ref);
+   void QualifyReferent(const CxxToken* item, CxxNamed* ref);
 
    //  Change ITEM from a class/struct (FROM) to a struct/class (TO).
    //
@@ -547,13 +532,13 @@ private:
    //
    size_t CutCode(const CxxToken* item, string& code);
 
-   //  Erases the code associated with ITEM.
-   //
-   word EraseCode(const CxxToken* item);
-
    //  Deletes ITEM after erasing its code.
    //
    word EraseItem(const CxxToken* item);
+
+   //  Deletes the assignment statement for ITEM after erasing its code.
+   //
+   word EraseAssignment(const CxxToken* item);
 
    //  Erases POS's line and returns the start of the line that followed it.
    //
@@ -589,10 +574,10 @@ private:
    //
    size_t Paste(size_t pos, const string& code, size_t from);
 
-   //  Updates the positions of warnings after an edit.
+   //  Updates the positions of lines, items, and warnings after an edit.
    //
-   void UpdateWarnings(EditorAction action,
-      size_t begin, size_t count, size_t from = string::npos) const;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from = string::npos);
 
    //  The file from which the source code was obtained.
    //

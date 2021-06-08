@@ -209,39 +209,6 @@ bool CxxNamed::AtFileScope() const
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::CheckForRedundantScope
-   (const CxxScope* scope, const QualName* qname) const
-{
-   Debug::ft("CxxNamed.CheckForRedundantScope");
-
-   //  QNAME is a qualified name, usually of the form FIRST::ITEM, that was
-   //  used in SCOPE.  We want to see if FIRST can be removed.  So we start
-   //  with the namespace or class that defines SCOPE (AREA) and proceed out
-   //  through enclosing scopes, looking for one whose name matches FIRST.
-   //  If the matching AREA is INNER, FIRST is redundant (e.g. Class::ITEM
-   //  used in one of Class's member functions).  If AREA is further out,
-   //  then FIRST is redundant if INNER does not also declare an ITEM (e.g.
-   //  Namespace::ITEM when no ambiguous Class::ITEM exists).
-   //
-   auto& first = qname->At(0)->Name();
-   auto inner = scope->GetArea();
-
-   for(CxxScope* area = inner; area != nullptr; area = area->GetScope())
-   {
-      if(area->Name() == first)
-      {
-         if((area == inner) ||
-            (inner->FindItem(qname->At(1)->Name()) == nullptr))
-         {
-            Log(RedundantScope, qname);
-            return;
-         }
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void CxxNamed::DisplayReferent(ostream& stream, bool fq) const
 {
    auto ref = Referent();
@@ -424,8 +391,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
 
       if((size > 1) && !defts)
       {
-         auto qscope = qname->GetScope();
-         if(qscope != nullptr) CheckForRedundantScope(qscope, qname);
+         qname->CheckForRedundantScope();
       }
    }
 
@@ -811,6 +777,16 @@ TypeSpec* DataSpec::Clone() const
    Debug::ft("DataSpec.Clone");
 
    return new DataSpec(*this);
+}
+
+//------------------------------------------------------------------------------
+
+bool DataSpec::ContainsTemplateParameter() const
+{
+   Debug::ft("DataSpec.ContainsTemplateParameter");
+
+   if(TypeSpec::ContainsTemplateParameter()) return true;
+   return name_->ContainsTemplateParameter();
 }
 
 //------------------------------------------------------------------------------
@@ -1566,6 +1542,28 @@ bool DataSpec::NamesReferToArgs(const NameVector& names,
 
 //------------------------------------------------------------------------------
 
+CxxToken* DataSpec::PosToItem(size_t pos) const
+{
+   auto item = TypeSpec::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = name_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(arrays_ != nullptr)
+   {
+      for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
+      {
+         item = (*a)->PosToItem(pos);
+         if(item != nullptr) return item;
+      }
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 void DataSpec::Print(ostream& stream, const Flags& options) const
 {
    if(tags_.IsConst()) stream << CONST_STR << SPACE;
@@ -1971,11 +1969,12 @@ void DataSpec::UpdatePos
 
 //==============================================================================
 
-QualName::QualName(TypeNamePtr& type) : init_(false)
+QualName::QualName(TypeNamePtr& name) : init_(false)
 {
-   Debug::ft("QualName.ctor(type)");
+   Debug::ft("QualName.ctor(name)");
 
-   first_ = std::move(type);
+   first_ = std::move(name);
+   first_->SetQualName(this);
    CxxStats::Incr(CxxStats::QUAL_NAME);
 }
 
@@ -1987,6 +1986,7 @@ QualName::QualName(const string& name) : init_(false)
 
    auto copy = name;
    first_ = (TypeNamePtr(new TypeName(copy)));
+   first_->SetQualName(this);
    CxxStats::Incr(CxxStats::QUAL_NAME);
 }
 
@@ -1999,8 +1999,8 @@ QualName::QualName(const QualName& that) : CxxNamed(that),
 
    for(auto n = that.First(); n != nullptr; n = n->Next())
    {
-      TypeNamePtr thisName(new TypeName(*n));
-      PushBack(thisName);
+      TypeNamePtr name(new TypeName(*n));
+      PushBack(name);
    }
 
    CxxStats::Incr(CxxStats::QUAL_NAME);
@@ -2013,6 +2013,20 @@ QualName::~QualName()
    Debug::ftnt("QualName.dtor");
 
    CxxStats::Decr(CxxStats::QUAL_NAME);
+}
+
+//------------------------------------------------------------------------------
+
+void QualName::AddScope(const string& name, Namespace* ns)
+{
+   Debug::ft("QualName.AddScope");
+
+   auto scope = name;
+   TypeNamePtr first(new TypeName(scope));
+   first->SetQualName(this);
+   first->PushBack(std::move(first_));
+   first_ = std::move(first);
+   first_->SetReferent(ns, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -2072,6 +2086,39 @@ bool QualName::CheckCtorDefn() const
 
 //------------------------------------------------------------------------------
 
+void QualName::CheckForRedundantScope() const
+{
+   Debug::ft("QualName.CheckForRedundantScope");
+
+   //  This name is usually of the form FIRST::ITEM.  We want to see if FIRST
+   //  can be removed, but this depends on the SCOPE where this name appears.
+   //  So we start with the namespace or class that defines SCOPE (AREA) and
+   //  proceed out through enclosing scopes, looking for one whose name
+   //  matches FIRST.  If the matching AREA is INNER, FIRST is redundant
+   //  (e.g. Class::ITEM used in one of Class's member functions).  If AREA
+   //  is further out, then FIRST is redundant if INNER does not also declare
+   //  an ITEM (e.g. Namespace::ITEM when no ambiguous Class::ITEM exists).
+   //
+   auto& first = At(0)->Name();
+   auto scope = GetScope();
+   if(scope == nullptr) return;
+   auto inner = scope->GetArea();
+
+   for(CxxScope* area = inner; area != nullptr; area = area->GetScope())
+   {
+      if(area->Name() == first)
+      {
+         if((area == inner) || (inner->FindItem(At(1)->Name()) == nullptr))
+         {
+            Log(RedundantScope);
+            return;
+         }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
 {
    Debug::ft("QualName.CheckIfTemplateArgument");
@@ -2099,6 +2146,20 @@ void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
             static_cast< Function* >(tfunc)->SetTemplateParm();
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool QualName::ContainsTemplateParameter() const
+{
+   Debug::ft("QualName.ContainsTemplateParameter");
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      if(n->ContainsTemplateParameter()) return true;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -2144,6 +2205,27 @@ void QualName::EnterBlock()
 
    auto ref = Referent();
    if(ref != nullptr) Context::PushArg(ref->NameToArg(op, Last()));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_EraseName = "QualName.EraseName";
+
+void QualName::EraseName(const TypeName* name, TypeNamePtr& next)
+{
+   Debug::ft(QualName_EraseName);
+
+   //  This should only be invoked on the first name.
+   //
+   if(first_.get() == name)
+   {
+      first_.release();
+      first_ = std::move(next);
+      if(first_ != nullptr) first_->SetScoped(false);
+      return;
+   }
+
+   Debug::SwLog(QualName_EraseName, QualifiedName(true, true), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -2363,6 +2445,22 @@ TypeMatch QualName::MatchTemplate(const QualName* that,
 
 //------------------------------------------------------------------------------
 
+CxxToken* QualName::PosToItem(size_t pos) const
+{
+   auto item = CxxNamed::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      item = n->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 void QualName::Print(ostream& stream, const Flags& options) const
 {
    for(auto n = First(); n != nullptr; n = n->Next())
@@ -2373,14 +2471,16 @@ void QualName::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void QualName::PushBack(TypeNamePtr& type)
+void QualName::PushBack(TypeNamePtr& name)
 {
    Debug::ft("QualName.PushBack");
 
+   name->SetQualName(this);
+
    if(first_ == nullptr)
-      first_ = std::move(type);
+      first_ = std::move(name);
    else
-      Last()->PushBack(type);
+      Last()->PushBack(name);
 }
 
 //------------------------------------------------------------------------------
@@ -2428,6 +2528,15 @@ CxxScoped* QualName::Referent() const
    if(ref == nullptr) return ReferentError(item->Trace(), item->Type());
    CheckIfTemplateArgument(ref);
    return ref;
+}
+
+//------------------------------------------------------------------------------
+
+void QualName::Rename(const string& name)
+{
+   Debug::ft("QualName.Rename");
+
+   Last()->Rename(name);
 }
 
 //------------------------------------------------------------------------------
@@ -2618,6 +2727,19 @@ void StaticAssert::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* StaticAssert::PosToItem(size_t pos) const
+{
+   auto item = CxxNamed::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = expr_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (message_ != nullptr ? message_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void StaticAssert::Print(ostream& stream, const Flags& options) const
 {
    stream << STATIC_ASSERT_STR << '(';
@@ -2649,6 +2771,7 @@ void StaticAssert::UpdatePos
 //==============================================================================
 
 TypeName::TypeName(string& name) :
+   qname_(nullptr),
    args_(nullptr),
    ref_(nullptr),
    class_(nullptr),
@@ -2669,6 +2792,7 @@ TypeName::TypeName(string& name) :
 
 TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    name_(that.name_),
+   qname_(nullptr),
    ref_(that.ref_),
    class_(that.class_),
    type_(that.type_),
@@ -2700,11 +2824,6 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
 TypeName::~TypeName()
 {
    Debug::ftnt("TypeName.dtor");
-
-   if(Context::File() == nullptr)
-   {
-      AddToXref(false);
-   }
 
    CxxStats::Decr(CxxStats::TYPE_NAME);
 }
@@ -2789,6 +2908,34 @@ void TypeName::Check() const
          (*a)->Check();
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool TypeName::ContainsTemplateParameter() const
+{
+   Debug::ft("TypeName.ContainsTemplateParameter");
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         if((*a)->ContainsTemplateParameter()) return true;
+      }
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+void TypeName::Delete()
+{
+   Debug::ftnt("TypeName.Delete");
+
+   AddToXref(false);
+   if(qname_ != nullptr) qname_->EraseName(this, next_);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -3030,6 +3177,25 @@ bool TypeName::NamesReferToArgs(const NameVector& names,
 
 //------------------------------------------------------------------------------
 
+CxxToken* TypeName::PosToItem(size_t pos) const
+{
+   auto item = CxxNamed::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         item = (*a)->PosToItem(pos);
+         if(item != nullptr) return item;
+      }
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 void TypeName::Print(ostream& stream, const Flags& options) const
 {
    if(scoped_) stream << SCOPE_STR;
@@ -3074,6 +3240,22 @@ string TypeName::QualifiedName(bool scopes, bool templates) const
    }
 
    return qname + '>';
+}
+
+//------------------------------------------------------------------------------
+
+void TypeName::Rename(const string& name)
+{
+   Debug::ft("TypeName.Rename");
+
+   name_ = name;
+
+   if(name == NULLPTR_STR)
+   {
+      AddToXref(false);
+      ref_ = Singleton< CxxRoot >::Instance()->NullptrTerm();
+      AddToXref(true);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3309,6 +3491,15 @@ TypeSpec* TypeSpec::Clone() const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "Clone", 0);
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+bool TypeSpec::ContainsTemplateParameter() const
+{
+   Debug::ft("TypeSpec.ContainsTemplateParameter");
+
+   return (role_ == TemplateParameter);
 }
 
 //------------------------------------------------------------------------------

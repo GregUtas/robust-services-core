@@ -30,6 +30,7 @@
 #include "CxxRoot.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
+#include "CxxVector.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -74,6 +75,7 @@ bool Block::AddStatement(CxxToken* s)
    Debug::ft("Block.AddStatement");
 
    statements_.push_back(TokenPtr(s));
+   s->SetScope(this);
    return true;
 }
 
@@ -225,6 +227,15 @@ void Block::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+void Block::EraseItem(const CxxToken* item)
+{
+   Debug::ft("Block.EraseItem");
+
+   EraseItemPtr(statements_, item);
+}
+
+//------------------------------------------------------------------------------
+
 CxxScoped* Block::FindNthItem(const std::string& name, size_t& n) const
 {
    Debug::ft("Block.FindNthItem");
@@ -303,6 +314,25 @@ bool Block::LocateItem(const CxxToken* item, size_t& n) const
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* Block::PosToItem(size_t pos) const
+{
+   if(braced_)
+   {
+      auto item = CxxScope::PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
+   {
+      auto item = (*s)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -421,7 +451,7 @@ ClassData::~ClassData()
 {
    Debug::ftnt("ClassData.dtor");
 
-   CloseScope();
+   GetFile()->EraseData(this);
    Singleton< CxxSymbols >::Extant()->EraseData(this);
    CxxStats::Decr(CxxStats::CLASS_DATA);
 }
@@ -526,13 +556,24 @@ void ClassData::CheckIfRelocatable() const
 
       auto& xref = Xref();
 
-      for(auto i = xref.cbegin(); i != xref.cend(); ++i)
+      for(auto r = xref.cbegin(); r != xref.cend(); ++r)
       {
-         if((*i)->GetFile() != file) return;
+         if((*r)->GetFile() != file) return;
       }
 
       Log(DataCouldBeFree);
    }
+}
+
+//------------------------------------------------------------------------------
+
+void ClassData::Delete()
+{
+   Debug::ftnt("ClassData.Delete");
+
+   ClearMate();
+   GetArea()->EraseData(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -758,6 +799,16 @@ StackArg ClassData::NameToArg(Cxx::Operator op, TypeName* name)
 
 //------------------------------------------------------------------------------
 
+CxxToken* ClassData::PosToItem(size_t pos) const
+{
+   auto item = Data::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (width_ != nullptr ? width_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void ClassData::Promote(Class* cls, Cxx::Access access, bool first, bool last)
 {
    Debug::ft("ClassData.Promote");
@@ -859,6 +910,8 @@ CxxScope::CxxScope() : pushes_(0)
 CxxScope::~CxxScope()
 {
    Debug::ftnt("CxxScope.dtor");
+
+   CloseScope();
 }
 
 //------------------------------------------------------------------------------
@@ -1153,6 +1206,15 @@ void Data::CheckUsage() const
          Log(DataInitOnly);
       else Log(DataUnused);
    }
+}
+
+//------------------------------------------------------------------------------
+
+void Data::ClearMate() const
+{
+   Debug::ft("Data.ClearMate");
+
+   if(mate_ != nullptr) mate_->mate_ = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1501,6 +1563,25 @@ StackArg Data::NameToArg(Cxx::Operator op, TypeName* name)
 
 //------------------------------------------------------------------------------
 
+CxxToken* Data::PosToItem(size_t pos) const
+{
+   auto item = CxxScope::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(alignas_ != nullptr) item = alignas_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = spec_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(expr_ != nullptr) item = expr_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (init_ != nullptr ? init_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void Data::SetAlignment(AlignAsPtr& align)
 {
    Debug::ft("Data.SetAlignment");
@@ -1708,6 +1789,44 @@ void FuncData::Check() const
 
 //------------------------------------------------------------------------------
 
+void FuncData::Delete()
+{
+   Debug::ftnt("FuncData.Delete");
+
+   //  If this item occurs in a series declaration, extract it.  If it is
+   //  the only item, remove it from the statement where it appears.
+   //
+   if(first_ == this)
+   {
+      if(next_ == nullptr)
+      {
+         static_cast< Block* >(GetScope())->EraseItem(this);
+      }
+      else
+      {
+         for(auto d = first_->next_.get(); d != nullptr; d = d->next_.get())
+         {
+            d->first_ = next_.get();
+         }
+      }
+   }
+   else
+   {
+      for(auto d = first_; d != nullptr; d = d->next_.get())
+      {
+         if(d->next_.get() == this)
+         {
+            d->next_.release();
+            d->next_ = std::move(next_);
+         }
+      }
+   }
+
+   delete this;
+}
+
+//------------------------------------------------------------------------------
+
 void FuncData::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -1781,7 +1900,7 @@ void FuncData::EnterBlock()
    //
    if(next_ != nullptr)
    {
-      if(anon) StackArg::SetAutoTypeFor(static_cast< FuncData& >(*next_));
+      if(anon) StackArg::SetAutoTypeFor(*next_);
       next_->EnterBlock();
    }
 }
@@ -1846,6 +1965,16 @@ void FuncData::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* FuncData::PosToItem(size_t pos) const
+{
+   auto item = Data::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (next_ != nullptr ? next_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void FuncData::Print(ostream& stream, const Flags& options) const
 {
    DisplayItem(stream, options);
@@ -1853,13 +1982,12 @@ void FuncData::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void FuncData::SetNext(DataPtr& next)
+void FuncData::SetNext(FuncDataPtr& next)
 {
    Debug::ft("FuncData.SetNext");
 
    next_.reset(next.release());
-   auto data = static_cast< FuncData* >(next_.get());
-   data->SetFirst(first_);
+   next_->SetFirst(first_);
 }
 
 //------------------------------------------------------------------------------
@@ -1922,7 +2050,7 @@ Function::Function(QualNamePtr& name) :
 
    auto qname = name_->QualifiedName(true, false);
    OpenScope(qname);
-   CxxStats::Incr(CxxStats::FUNC_DECL);
+   CxxStats::Incr(CxxStats::FUNCTION);
 }
 
 //------------------------------------------------------------------------------
@@ -1967,7 +2095,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
 
    auto qname = name_->QualifiedName(true, false);
    OpenScope(qname);
-   CxxStats::Incr(CxxStats::FUNC_DECL);
+   CxxStats::Incr(CxxStats::FUNCTION);
 }
 
 //------------------------------------------------------------------------------
@@ -1976,11 +2104,12 @@ Function::~Function()
 {
    Debug::ftnt("Function.dtor");
 
+   CxxStats::Decr(CxxStats::FUNCTION);
    if(type_) return;
 
-   CloseScope();
+   if(base_ != nullptr) base_->EraseOverride(this);
+   GetFile()->EraseFunc(this);
    Singleton< CxxSymbols >::Extant()->EraseFunc(this);
-   CxxStats::Decr(CxxStats::FUNC_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -2626,7 +2755,9 @@ void Function::CheckArgs() const
    {
       for(size_t i = 0; i < n; ++i)
       {
-         if(args_[i]->Name() != mate_->args_[i]->Name())
+         auto& mateName = mate_->args_[i]->Name();
+
+         if(!mateName.empty() && (mateName != args_[i]->Name()))
          {
             mate_->LogToArg(DefinitionRenamesArgument, i);
          }
@@ -3243,6 +3374,15 @@ void Function::CheckStatic() const
 
 //------------------------------------------------------------------------------
 
+bool Function::ContainsTemplateParameter() const
+{
+   Debug::ft("Function.ContainsTemplateParameter");
+
+   return tspec_->ContainsTemplateParameter();
+}
+
+//------------------------------------------------------------------------------
+
 string Function::DebugName() const
 {
    Debug::ft("Function.DebugName");
@@ -3256,6 +3396,17 @@ string Function::DebugName() const
    }
 
    return Name();
+}
+
+//------------------------------------------------------------------------------
+
+void Function::Delete()
+{
+   Debug::ftnt("Function.Delete");
+
+   if(mate_ != nullptr) mate_->mate_ = nullptr;
+   GetArea()->EraseFunc(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -3630,6 +3781,33 @@ void Function::EnterSignature()
    //  DeleteVoidArg, because this would cause the above iterator to fail.
    //
    if(!args_.empty() && (args_.back() == nullptr)) args_.pop_back();
+}
+
+//------------------------------------------------------------------------------
+
+void Function::EraseArg(const Argument* arg)
+{
+   Debug::ft("Function.EraseArg");
+
+   EraseItemPtr(args_, arg);
+}
+
+//------------------------------------------------------------------------------
+
+void Function::EraseMemberInit(const MemberInit* init)
+{
+   Debug::ft("Function.EraseMemberInit");
+
+   EraseItemPtr(mems_, init);
+}
+
+//------------------------------------------------------------------------------
+
+void Function::EraseOverride(const Function* over) const
+{
+   Debug::ft("Function.EraseOverride");
+
+   EraseItem(overs_, over);
 }
 
 //------------------------------------------------------------------------------
@@ -4857,6 +5035,40 @@ bool Function::NameRefersToItem(const string& name,
 
 //------------------------------------------------------------------------------
 
+CxxToken* Function::PosToItem(size_t pos) const
+{
+   auto item = CxxScope::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = name_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(parms_ != nullptr) item = parms_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(spec_ != nullptr) item = spec_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      item = (*a)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   if(call_ != nullptr) item = call_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+   {
+      item = (*m)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return (impl_ != nullptr ? impl_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void Function::PushThisArg(StackArgVector& args) const
 {
    Debug::ft("Function.PushThisArg");
@@ -5087,7 +5299,7 @@ void Function::Shrink()
    size += (tmplts_.capacity() * sizeof(Function*));
    size += (overs_.capacity() * sizeof(Function*));
    size += XrefSize();
-   CxxStats::Vectors(CxxStats::FUNC_DECL, size);
+   CxxStats::Vectors(CxxStats::FUNCTION, size);
 }
 
 //------------------------------------------------------------------------------
@@ -5367,7 +5579,7 @@ string Function::XrefName(bool templates) const
 
 //==============================================================================
 
-SpaceDefn::SpaceDefn(const Namespace* ns) :
+SpaceDefn::SpaceDefn(Namespace* ns) :
    space_(ns)
 {
    Debug::ft("SpaceDefn.ctor");
@@ -5382,7 +5594,6 @@ SpaceDefn::~SpaceDefn()
    Debug::ft("SpaceDefn.dtor");
 
    GetFile()->EraseSpace(this);
-   space_->AddReference(this, false);
    CxxStats::Decr(CxxStats::SPACE_DEFN);
 }
 
@@ -5391,6 +5602,17 @@ SpaceDefn::~SpaceDefn()
 void SpaceDefn::AddToXref(bool insert)
 {
    space_->AddReference(this, insert);
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceDefn::Delete()
+{
+   Debug::ft("SpaceDefn.Delete");
+
+   space_->AddReference(this, false);
+   space_->EraseDefn(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -5430,6 +5652,15 @@ FuncSpec::FuncSpec(FunctionPtr& func) : func_(func.release())
    Debug::ft("FuncSpec.ctor");
 
    CxxStats::Incr(CxxStats::FUNC_SPEC);
+}
+
+//------------------------------------------------------------------------------
+
+FuncSpec::~FuncSpec()
+{
+   Debug::ft("FuncSpec.dtor");
+
+   CxxStats::Decr(CxxStats::FUNC_SPEC);
 }
 
 //------------------------------------------------------------------------------
@@ -5477,6 +5708,14 @@ TypeSpec* FuncSpec::Clone() const
 {
    Debug::SwLog(FuncSpec_Warning, "Clone", 0);
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+bool FuncSpec::ContainsTemplateParameter() const
+{
+   if(TypeSpec::ContainsTemplateParameter()) return true;
+   return func_->ContainsTemplateParameter();
 }
 
 //------------------------------------------------------------------------------
@@ -5607,6 +5846,16 @@ bool FuncSpec::NamesReferToArgs(const NameVector& names,
 
 //------------------------------------------------------------------------------
 
+CxxToken* FuncSpec::PosToItem(size_t pos) const
+{
+   auto item = TypeSpec::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return func_->PosToItem(pos);
+}
+
+//------------------------------------------------------------------------------
+
 void FuncSpec::Print(ostream& stream, const Flags& options) const
 {
    func_->DisplayDecl(stream, NoFlags);
@@ -5718,7 +5967,7 @@ SpaceData::~SpaceData()
 {
    Debug::ftnt("SpaceData.dtor");
 
-   CloseScope();
+   GetFile()->EraseData(this);
    Singleton< CxxSymbols >::Extant()->EraseData(this);
    CxxStats::Decr(CxxStats::FILE_DATA);
 }
@@ -5767,6 +6016,17 @@ void SpaceData::CheckIfStatic() const
    {
       Log(GlobalStaticData);
    }
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceData::Delete()
+{
+   Debug::ftnt("SpaceData.Delete");
+
+   ClearMate();
+   GetArea()->EraseData(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -5859,6 +6119,19 @@ void SpaceData::GetInitName(QualNamePtr& qualName) const
 
    qualName.reset(new QualName(*name_));
    qualName->SetDataInit();
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* SpaceData::PosToItem(size_t pos) const
+{
+   auto item = Data::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = name_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (parms_ != nullptr ? parms_->PosToItem(pos) : nullptr);
 }
 
 //------------------------------------------------------------------------------

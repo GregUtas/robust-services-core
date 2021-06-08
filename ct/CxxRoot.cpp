@@ -34,6 +34,7 @@
 #include "CxxExecute.h"
 #include "CxxString.h"
 #include "CxxStrLiteral.h"
+#include "CxxVector.h"
 #include "Debug.h"
 #include "Parser.h"
 #include "Restart.h"

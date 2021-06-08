@@ -31,6 +31,7 @@
 #include "CxxFwd.h"
 #include "CxxNamed.h"
 #include "CxxScoped.h"
+#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -46,85 +47,37 @@ public:
    //
    virtual ~CxxArea();
 
-   //  Adds a using statement in the area's scope.
-   //
-   bool AddUsing(UsingPtr& use);
-
-   //  Adds a class to the area.
+   //  Adds an item to the area.
    //
    bool AddClass(ClassPtr& cls);
-
-   //  Adds a data member to the area.
-   //
    bool AddData(DataPtr& data);
-
-   //  Adds an enumeration to the area.
-   //
    bool AddEnum(EnumPtr& decl);
-
-   //  Adds a forward declaration to the area.
-   //
    bool AddForw(ForwardPtr& forw);
-
-   //  Adds a function to the area.
-   //
    bool AddFunc(FunctionPtr& func) const;
-
-   //  Adds a typedef to the area.
-   //
    bool AddType(TypedefPtr& type);
-
-   //  Adds inline assembly code to the area.
-   //
+   bool AddUsing(UsingPtr& use);
    bool AddAsm(AsmPtr& code);
-
-   //  Adds a static_assert to the area.
-   //
    bool AddStaticAssert(StaticAssertPtr& assert);
 
    //  Adds FUNC to the area, taking ownership of it.
    //
    void InsertFunc(Function* func);
 
-   //  Returns the area's classes.
+   //  Returns items defined in the area.
    //
    const ClassPtrVector* Classes() const { return &classes_; }
-
-   //  Returns the area's data members.
-   //
    const DataPtrVector* Datas() const { return &data_; }
-
-   //  Returns the area's enumerations.
-   //
    const EnumPtrVector* Enums() const { return &enums_; }
-
-   //  Returns the area's forward declarations.
-   //
    const ForwardPtrVector* Forws() const { return &forws_; }
-
-   //  Returns the area's functions.
-   //
    const FunctionPtrVector* Funcs() const { return &funcs_; }
-
-   //  Returns the area's operators.
-   //
    const FunctionPtrVector* Opers() const { return &opers_; }
+   const TypedefPtrVector* Types() const { return &types_; }
+   const AsmPtrVector* Assembly() const { return &assembly_; }
+   const StaticAssertPtrVector* Asserts() const { return &asserts_; }
 
    //  Returns funcs_ or opers_, based on whether NAME begins with "operator".
    //
    const FunctionPtrVector* FuncVector(const std::string& name) const;
-
-   //  Returns the area's typedefs.
-   //
-   const TypedefPtrVector* Types() const { return &types_; }
-
-   //  Returns the area's assembly code.
-   //
-   const AsmPtrVector* Assembly() const { return &assembly_; }
-
-   //  Returns the area's assertions.
-   //
-   const StaticAssertPtrVector* Asserts() const { return &asserts_; }
 
    //  Returns the class identified by NAME and declared in this area.
    //
@@ -158,32 +111,14 @@ public:
    //
    virtual CxxScoped* FindItem(const std::string& name) const;
 
-   //  Removes a class from the area.
+   //  Removes an item from the area when the item is being deleted.
    //
-   void EraseClass(Class* cls);
-
-   //  Removes a data member from the area.
-   //
-   void EraseData(Data* data);
-
-   //  Removes an enumeration from the area.
-   //
+   void EraseClass(const Class* cls);
+   void EraseData(const Data* data);
    void EraseEnum(const Enum* decl);
-
-   //  Removes a forward declaration from the area.
-   //
    void EraseForw(const Forward* forw);
-
-   //  Removes a function from the area.
-   //
-   void EraseFunc(Function* func);
-
-   //  Removes a typedef from the area.
-   //
+   void EraseFunc(const Function* func);
    void EraseType(const Typedef* type);
-
-   //  Removes a using statement from the area.
-   //
    void EraseUsing(const Using* use);
 
    //  Overridden to add the area's components to cross-references.
@@ -201,6 +136,10 @@ public:
    //  Adds the area's declarations to ITEMS.
    //
    void GetDecls(CxxNamedSet& items) override;
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to shrink containers.
    //
@@ -391,9 +330,18 @@ public:
    //
    void EraseFriend(const Friend* decl);
 
+   //  Removes CLS as a direct subclass of the class.
+   //
+   void EraseSubclass(const Class* cls);
+
    //  Returns the class template, if any, associated with the class.
    //
    virtual Class* GetClassTemplate() const;
+
+   //  Returns true if this is a class template instance created by
+   //  compiling a class template.
+   //
+   virtual bool IsCompiledTemplate() const { return false; }
 
    //  Returns a class template's instantiations.
    //
@@ -569,6 +517,10 @@ public:
    //
    void Creating() override;
 
+   //  Overridden to support the deletion of an unused class.
+   //
+   void Delete() override;
+
    //  Overridden to return the outer class.
    //
    Class* Declarer() const override { return OuterClass(); }
@@ -661,6 +613,10 @@ public:
    //  constructor.
    //
    StackArg NameToArg(Cxx::Operator op, TypeName* name) override;
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to record usage of the class.
    //
@@ -819,7 +775,7 @@ private:
    //
    //  NOTE: To access the base class, use BaseClass(), even within this class,
    //  ====  because the field is nullptr for a template instance, even if its
-   //        class template has a base class.   Similarly, use GetBaseDecl() to
+   //        class template has a base class.  Similarly, use GetBaseDecl() to
    //        access the base class declaration.
    //
    BaseDeclPtr base_;
@@ -931,13 +887,18 @@ public:
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
+   //  Overridden to return this class template instance.
+   //
+   CxxScope* GetTemplateInstance() const override { return (CxxScope*) this; }
+
    //  Overridden to instantiate the class template instance.
    //
    void Instantiate() override;
 
-   //  Overridden to return this class template instance.
+   //  Overridden to return true for a class template instance created by
+   //  compiling a class template.
    //
-   CxxScope* GetTemplateInstance() const override { return (CxxScope*) this; }
+   bool IsCompiledTemplate() const override;
 
    //  Overridden for when NAME refers to a class template instance.
    //
@@ -1008,6 +969,14 @@ public:
    //  as a nested namespace within this one.
    //
    Namespace* EnsureNamespace(const std::string& name);
+
+   //  Creates a definition for the namespace's appearance in FILE, at POS.
+   //
+   void InsertDefn(CodeFile* file, size_t pos);
+
+   //  Removes DEFN, one of the namespace's definitions.
+   //
+   void EraseDefn(const SpaceDefn* defn);
 
    //  Returns the namespace's outer namespace.
    //
@@ -1092,6 +1061,10 @@ private:
    //  Set if >check was run on the namespace.
    //
    mutable bool checked_;
+
+   //  The definitions of this namespace.
+   //
+   SpaceDefnPtrVector defns_;
 
    //  The namespaces nested inside this one.
    //

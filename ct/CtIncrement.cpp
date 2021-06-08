@@ -43,6 +43,7 @@
 #include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "CxxSymbols.h"
+#include "CxxToken.h"
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
@@ -66,6 +67,8 @@ namespace CodeTools
 {
 //  Parameters used by more than one command.
 //
+fixed_string CodeFileExpl = "filename (including extension)";
+
 fixed_string CodeSetExprExpl = "a set of code files or directories";
 
 fixed_string FileSetExprExpl = "a set of code files";
@@ -577,8 +580,6 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
-fixed_string CodeFileExpl = "filename (including extension)";
-
 fixed_string FileInfoStr = "fileinfo";
 fixed_string FileInfoExpl = "Displays information about a code file.";
 
@@ -721,6 +722,59 @@ word ImportCommand::ProcessCommand(CliThread& cli) const
    if(!subdir.empty()) path += PATH_SEPARATOR + subdir;
    auto rc = lib->Import(name, path, expl);
    return cli.Report(rc, expl);
+}
+
+//------------------------------------------------------------------------------
+//
+//  The ITEMS command.
+//
+class ItemsCommand : public LibraryCommand
+{
+public:
+   ItemsCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string ItemsStr = "items";
+fixed_string ItemsExpl = "Lists the C++ items in a file, by position.";
+
+ItemsCommand::ItemsCommand() : LibraryCommand(ItemsStr, ItemsExpl)
+{
+   BindParm(*new CliTextParm(CodeFileExpl, false, 0));
+}
+
+word ItemsCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft("ItemsCommand.ProcessCommand");
+
+   string name;
+
+   if(!GetFileName(name, cli)) return -1;
+   if(!cli.EndOfInput()) return -1;
+
+   auto file = Singleton< Library >::Instance()->FindFile(name);
+   if(file == nullptr) return cli.Report(-2, NoFileExpl);
+   auto stream = cli.FileStream();
+   if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
+
+   auto& lexer = file->GetLexer();
+
+   for(auto p = lexer.NextPos(0); p != string::npos; p = lexer.NextPos(p + 1))
+   {
+      auto item = file->PosToItem(p);
+
+      if((item != nullptr) && !item->IsInternal())
+      {
+         auto str = lexer.Substr(p, 16);
+         *stream << p << ": " << std::setw(16) << str;
+         *stream << spaces(3) << strObj(item) << CRLF;
+      }
+   }
+
+   auto filename = name + ".items.txt";
+   cli.SendToFile(filename, true);
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -1373,6 +1427,7 @@ CtIncrement::CtIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new ExportCommand);
    BindCommand(*new CoverageCommand);
    BindCommand(*new ShrinkCommand);
+   BindCommand(*new ItemsCommand);
    BindCommand(*new ExpCommand);
 
    Parser::ResetStats();

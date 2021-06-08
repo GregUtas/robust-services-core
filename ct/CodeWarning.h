@@ -70,6 +70,7 @@ std::ostream& operator<<(std::ostream& stream, Warning warning);
 enum WarningStatus
 {
    NotSupported,  // editor does not support fixing this warning
+   Nullified,     // item associated with warning was deleted
    NotFixed,      // code not changed
    Pending,       // code changed but not written to file
    Fixed          // code changed and written to file
@@ -117,6 +118,11 @@ public:
    //
    size_t Line() const;
 
+   //  Adds the log to the global set of warnings unless it is a duplicate
+   //  or suppressed.
+   //
+   void Insert() const;
+
    //  Initializes the Attrs map.
    //
    static void Initialize();
@@ -129,11 +135,6 @@ public:
    //
    static fixed_string Expl(Warning w) { return Attrs_.at(w).expl; }
 
-   //  Adds the log to the global set of warnings unless it is a duplicate
-   //  or suppressed.
-   //
-   void Insert() const;
-
    //  Returns true if FILE was logged for WARNING.
    //
    static bool HasWarning(const CodeFile* file, Warning warning);
@@ -142,6 +143,10 @@ public:
    //  type counts and warnings found during parsing and compilation.
    //
    static void GenerateReport(std::ostream* stream, const LibItemSet& files);
+
+   //  Nullifies warnings associated with ITEM, which was deleted.
+   //
+   static void ItemDeleted(const CxxToken* item);
 private:
    //  Comparison operators.
    //
@@ -175,19 +180,19 @@ private:
    //
    CodeWarning* FindMateLog(std::string& expl) const;
 
+   //  Returns the name of the function that this warning wants added to
+   //  a class.  Returns an empty string if LOG does not suggest this.
+   //
+   std::string GetNewFuncName() const;
+
    //  Updates WARNINGS with those that were logged in FILE.  Excludes
    //  informational warnings, which cannot be fixed.
    //
    static void GetWarnings
       (const CodeFile* file, std::vector< CodeWarning* >& warnings);
 
-   //  Returns the name of the function that this warning wants added to
-   //  a class.  Returns an empty string if LOG does not suggest this.
-   //
-   std::string GetNewFuncName() const;
-
-   //  Invoked to update the position of a warning when a file has been
-   //  edited.  Has the same interface as CxxToken::UpdatePos.
+   //  Updates the position of a warning when a file has been edited.  Has
+   //  the same interface as CxxToken::UpdatePos.
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from = std::string::npos) const;

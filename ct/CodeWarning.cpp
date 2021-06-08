@@ -224,7 +224,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       }
    }
 
-   *stream << string(120, '=') << CRLF;
+   *stream << string(132, '=') << CRLF;
    *stream << "WARNINGS SORTED BY TYPE/FILE/LINE (i = informational)" << CRLF;
 
    //  Sort and output the warnings by warning type/file/line.
@@ -261,7 +261,7 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       while((item != last) && (item->warning_ == w));
    }
 
-   *stream << string(120, '=') << CRLF;
+   *stream << string(132, '=') << CRLF;
    *stream << "WARNINGS SORTED BY FILE/TYPE/LINE (i = informational)" << CRLF;
 
    //  Sort and output the warnings by file/warning_ type/line.
@@ -869,6 +869,21 @@ bool CodeWarning::IsSortedToFix
    if(log1->info_ < log2->info_) return true;
    if(log1->info_ > log2->info_) return false;
    return (log1 < log2);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeWarning::ItemDeleted(const CxxToken* item)
+{
+   for(auto w = Warnings_.begin(); w != Warnings_.end(); ++w)
+   {
+      if(w->item_ == item)
+      {
+         w->item_ = nullptr;
+         w->status_ = Nullified;
+         w->loc_.SetLoc(nullptr, string::npos, true);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------

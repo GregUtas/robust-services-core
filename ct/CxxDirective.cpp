@@ -24,12 +24,12 @@
 #include <iosfwd>
 #include <sstream>
 #include "CodeFile.h"
-#include "CodeTypes.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
+#include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
 #include "Singleton.h"
@@ -54,6 +54,29 @@ void AlignLeft(ostream& stream, const string& prefix)
 }
 
 //------------------------------------------------------------------------------
+
+bool IncludesAreSorted(const IncludePtr& incl1, const IncludePtr& incl2)
+{
+   //  Check that the #includes appear in the same file.
+   //
+   if(incl1->GetFile() != incl2->GetFile()) return false;
+
+   //  #includes are sorted by group, then alphabetically within each group.
+   //  If the #includes are identical, sort them by pointer.
+   //
+   auto group1 = incl1->Group();
+   auto group2 = incl2->Group();
+   if(group1 < group2) return true;
+   if(group1 > group2) return false;
+
+   auto comp = strCompare(incl1->Name(), incl2->Name());
+   if(comp < 0) return true;
+   if(comp > 0) return false;
+
+   return (incl1 < incl2);
+}
+
+//==============================================================================
 
 Conditional::Conditional()
 {
@@ -99,6 +122,16 @@ bool Conditional::EnterScope()
 void Conditional::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    condition_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* Conditional::PosToItem(size_t pos) const
+{
+   auto item = OptionalCode::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return condition_->PosToItem(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -240,6 +273,16 @@ bool Define::GetSpan(size_t& begin, size_t& left, size_t& end) const
    begin = GetPos();
    end = GetFile()->GetLexer().CurrEnd(begin);
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* Define::PosToItem(size_t pos) const
+{
+   auto item = Macro::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (rhs_ != nullptr ? rhs_->PosToItem(pos) : nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -449,6 +492,19 @@ void Existential::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* Existential::PosToItem(size_t pos) const
+{
+   auto item = OptionalCode::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = name_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (else_ != nullptr ? else_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void Existential::Shrink()
 {
    OptionalCode::Shrink();
@@ -613,6 +669,22 @@ bool Iff::HasCompiledCode() const
 
 //------------------------------------------------------------------------------
 
+CxxToken* Iff::PosToItem(size_t pos) const
+{
+   auto item = Conditional::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto e = elifs_.cbegin(); e != elifs_.cend(); ++e)
+   {
+      item = (*e)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return (else_ != nullptr ? else_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void Iff::Shrink()
 {
    Conditional::Shrink();
@@ -705,10 +777,21 @@ bool Ifndef::IsIncludeGuard() const
    return (Referent() != nullptr);
 }
 
+//------------------------------------------------------------------------------
+
+void Ifndef::Rename(const string& name)
+{
+   Debug::ft("Ifndef.Rename");
+
+   auto ref = GetSymbol()->Referent();
+   if(ref != nullptr) ref->ChangeName(name);
+}
+
 //==============================================================================
 
 Include::Include(string& name, bool angle) : SymbolDirective(name),
-   angle_(angle)
+   angle_(angle),
+   group_(Ungrouped)
 {
    Debug::ft("Include.ctor");
 
@@ -723,6 +806,15 @@ Include::~Include()
 
    GetFile()->EraseInclude(this);
    CxxStats::Decr(CxxStats::INCLUDE_DIRECTIVE);
+}
+
+//------------------------------------------------------------------------------
+
+void Include::CalcGroup()
+{
+   Debug::ft("Include.CalcGroup");
+
+   group_ = GetFile()->CalcGroup(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -866,6 +958,15 @@ bool Macro::NameRefersToItem(const string& name,
    }
 
    return CxxScoped::NameRefersToItem(name, scope, file, view);
+}
+
+//------------------------------------------------------------------------------
+
+void Macro::Rename(const string& name)
+{
+   Debug::ft("Macro.Rename");
+
+   name_ = name;
 }
 
 //------------------------------------------------------------------------------
@@ -1026,6 +1127,15 @@ CxxScoped* MacroName::Referent() const
 
 //------------------------------------------------------------------------------
 
+void MacroName::Rename(const string& name)
+{
+   Debug::ft("MacroName.Rename");
+
+   name_ = name;
+}
+
+//------------------------------------------------------------------------------
+
 void MacroName::Shrink()
 {
    CxxNamed::Shrink();
@@ -1071,6 +1181,7 @@ Optional::Optional()
 OptionalCode::OptionalCode() :
    begin_(string::npos),
    end_(0),
+   erased_(false),
    compile_(false)
 {
    Debug::ft("OptionalCode.ctor");
@@ -1114,13 +1225,78 @@ void OptionalCode::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name OptionalCode_UpdatePos = "OptionalCode.UpdatePos";
+
 void OptionalCode::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
    Optional::UpdatePos(action, begin, count, from);
 
-   //  Although begin_ and end_ should probably be updated, they are currently
-   //  used only to display code, and this isn't done after editing it.
+   if(begin_ == string::npos) return;
+   if(IsInternal()) return;
+
+   //  Uncompiled code can only be cut and pasted in its entirety.
+   //
+    switch(action)
+   {
+   case Erased:
+     if(((begin + count) > begin_) && (begin + count < end_))
+      {
+         Debug::SwLog(OptionalCode_UpdatePos, "Partially erased", 0);
+         begin_ = string::npos;
+         end_ = 0;
+      }
+      else if(!erased_ && (begin_ >= begin))
+      {
+         if(begin_ < (begin + count))
+         {
+            erased_ = true;
+         }
+         else
+         {
+            begin_ -= count;
+            end_ -= count;
+         }
+      }
+      break;
+
+   case Inserted:
+      if(!erased_ && (begin_ >= begin))
+      {
+         begin_ += count;
+         end_ += count;
+      }
+      break;
+
+   case Pasted:
+      if(erased_)
+      {
+         if(begin_ >= from)
+         {
+            if(end_ < (from + count))
+            {
+               begin_ = begin_ + begin - from;
+               end_ = end_ + begin - from;
+               erased_ = false;
+            }
+            else
+            {
+               Debug::SwLog(OptionalCode_UpdatePos, "Partially pasted", 0);
+               begin_ = string::npos;
+               end_ = 0;
+            }
+         }
+      }
+      else
+      {
+         if(begin_ >= begin)
+         {
+            begin_ += count;
+            end_ += count;
+         }
+      }
+      break;
+   }
 }
 
 //==============================================================================

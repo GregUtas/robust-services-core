@@ -2033,8 +2033,8 @@ bool Parser::GetFuncData(DataPtr& data)
       }
       else
       {
-         DataPtr subseq(new FuncData(dataName, typeSpec));
-         curr = static_cast< FuncData* >(subseq.get());
+         FuncDataPtr subseq(new FuncData(dataName, typeSpec));
+         curr = subseq.get();
          prev->SetNext(subseq);
       }
 
@@ -2468,6 +2468,7 @@ bool Parser::GetNamespace()
    auto outer = Context::Scope();
    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
    inner->SetLoc(Context::File(), begin);
+   inner->InsertDefn(Context::File(), begin);
    Context::PushScope(inner, false);
    GetFileDecls(inner);
    Context::PopScope();
@@ -2714,7 +2715,6 @@ bool Parser::GetPrecedence(ExprPtr& expr)
 {
    Debug::ft(Parser_GetPrecedence);
 
-   auto prev = lexer_.Prev();
    auto start = CurrPos();
 
    //  The left parenthesis has already been parsed.
@@ -2723,7 +2723,8 @@ bool Parser::GetPrecedence(ExprPtr& expr)
    if(!GetParExpr(item, true)) return Backup(start, 155);
 
    TokenPtr token(new Precedence(item));
-   token->SetContext(prev);
+   auto lpar = lexer_.Rfind(start - 1, "(");
+   token->SetContext(lpar);
    expr->AddItem(token);
    return Success(Parser_GetPrecedence, start);
 }
@@ -2954,14 +2955,14 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
    TypeNamePtr type;
    auto global = lexer_.NextStringIs(SCOPE_STR);
    if(!GetTypeName(type, constraint)) return Backup(start, 167);
-   if(global) type->SetScoped();
+   if(global) type->SetScoped(true);
    name.reset(new QualName(type));
    name->SetContext(start);
 
    while(lexer_.NextStringIs(SCOPE_STR))
    {
       if(!GetTypeName(type, constraint)) return Backup(start, 168);
-      type->SetScoped();
+      type->SetScoped(true);
       name->PushBack(type);
    }
 
@@ -3380,11 +3381,13 @@ bool Parser::GetTemplateParms(TemplateParmsPtr& parms)
    auto start = CurrPos();
    if(!NextKeywordIs(TEMPLATE_STR)) return Backup(192);
    if(!lexer_.NextCharIs('<')) return Backup(start, 193);
+   auto angle = lexer_.Prev();
 
    TemplateParmPtr parm;
    if(!GetTemplateParm(parm)) return Backup(start, 194);
 
    parms.reset(new TemplateParms(parm));
+   parms->SetContext(angle);
 
    while(lexer_.NextCharIs(','))
    {
@@ -4071,7 +4074,7 @@ bool Parser::HandleInclude()
 
    if(!lexer_.NextStringIs(HASH_INCLUDE_STR)) return Fault(DirectiveMismatch);
    if(!lexer_.GetIncludeFile(start, name, angle)) return Fault(FileExpected);
-   auto incl = Context::File()->InsertInclude(name);
+   auto incl = Context::File()->InsertInclude(start, name);
    if(incl != nullptr) incl->SetContext(start);
    return lexer_.Reposition(end);
 }

@@ -117,6 +117,16 @@ void Case::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* Case::PosToItem(size_t pos) const
+{
+   auto item = CxxStatement::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return expr_->PosToItem(pos);
+}
+
+//------------------------------------------------------------------------------
+
 void Case::Shrink()
 {
    CxxStatement::Shrink();
@@ -239,6 +249,19 @@ bool Catch::LocateItem(const CxxToken* item, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+CxxToken* Catch::PosToItem(size_t pos) const
+{
+   auto item = CxxStatement::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(arg_ != nullptr) item = arg_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return handler_->PosToItem(pos);
+}
+
+//------------------------------------------------------------------------------
+
 void Catch::Shrink()
 {
    CxxStatement::Shrink();
@@ -304,6 +327,16 @@ void Condition::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* Condition::PosToItem(size_t pos) const
+{
+   auto item = CxxStatement::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (condition_ != nullptr ? condition_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void Condition::Print(ostream& stream, const Flags& options) const
 {
    Show(stream);
@@ -353,11 +386,22 @@ void Continue::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-CxxStatement::CxxStatement(size_t pos)
+CxxStatement::CxxStatement(size_t pos) :
+   scope_(nullptr)
 {
    Debug::ft("CxxStatement.ctor");
 
    SetContext(pos);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxStatement::Delete()
+{
+   Debug::ft("CxxStatement.Delete");
+
+   static_cast< Block* >(GetScope())->EraseItem(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -535,6 +579,16 @@ bool Do::LocateItem(const CxxToken* item, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+CxxToken* Do::PosToItem(size_t pos) const
+{
+   auto item = Condition::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return loop_->PosToItem(pos);
+}
+
+//------------------------------------------------------------------------------
+
 void Do::Print(ostream& stream, const Flags& options) const
 {
    stream << SPACE << DO_STR;
@@ -601,6 +655,16 @@ void Expr::EnterBlock()
 void Expr::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    expr_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* Expr::PosToItem(size_t pos) const
+{
+   auto item = CxxStatement::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return expr_->PosToItem(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -808,6 +872,22 @@ bool For::LocateItem(const CxxToken* item, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+CxxToken* For::PosToItem(size_t pos) const
+{
+   auto item = Condition::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(initial_ != nullptr) item = initial_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(subsequent_ != nullptr) item = subsequent_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return loop_->PosToItem(pos);
+}
+
+//------------------------------------------------------------------------------
+
 void For::Print(ostream& stream, const Flags& options) const
 {
    Display(stream, EMPTY_STR, Flags(LF_Mask));
@@ -998,6 +1078,19 @@ bool If::LocateItem(const CxxToken* item, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+CxxToken* If::PosToItem(size_t pos) const
+{
+   auto item = Condition::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = then_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (else_ != nullptr ? else_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void If::Print(ostream& stream, const Flags& options) const
 {
    stream << IF_STR << '(';
@@ -1167,6 +1260,16 @@ void Return::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* Return::PosToItem(size_t pos) const
+{
+   auto item = CxxStatement::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (expr_ != nullptr ? expr_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void Return::Print(ostream& stream, const Flags& options) const
 {
    stream << RETURN_STR;
@@ -1285,6 +1388,19 @@ bool Switch::LocateItem(const CxxToken* item, size_t& n) const
    Debug::ft("Switch.LocateItem");
 
    return cases_->LocateItem(item, n);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* Switch::PosToItem(size_t pos) const
+{
+   auto item = CxxStatement::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = expr_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return cases_->PosToItem(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -1441,6 +1557,25 @@ bool Try::LocateItem(const CxxToken* item, size_t& n) const
 
 //------------------------------------------------------------------------------
 
+CxxToken* Try::PosToItem(size_t pos) const
+{
+   auto item = CxxStatement::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = try_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
+   {
+      item = (*c)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 void Try::Shrink()
 {
    CxxStatement::Shrink();
@@ -1555,6 +1690,16 @@ bool While::LocateItem(const CxxToken* item, size_t& n) const
    Debug::ft("While.LocateItem");
 
    return loop_->LocateItem(item, n);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* While::PosToItem(size_t pos) const
+{
+   auto item = Condition::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return loop_->PosToItem(pos);
 }
 
 //------------------------------------------------------------------------------

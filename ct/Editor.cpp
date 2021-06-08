@@ -27,13 +27,12 @@
 #include <cstring>
 #include <iosfwd>
 #include <iterator>
-#include <list>
-#include <memory>
 #include <sstream>
 #include "CliThread.h"
 #include "CodeCoverage.h"
 #include "CodeFile.h"
 #include "CxxArea.h"
+#include "CxxDirective.h"
 #include "CxxLocation.h"
 #include "CxxNamed.h"
 #include "CxxScope.h"
@@ -99,12 +98,6 @@ string GetExpl();
 
 //------------------------------------------------------------------------------
 //
-//  Characters that enclose the file name of an #include directive,
-//  depending on the group to which it belongs.
-//
-const string FrontChars = "$%@!<\"";
-const string BackChars = "$%@!>\"";
-
 //  Where to add a blank line when inserting new code.
 //
 enum BlankLocation
@@ -122,6 +115,7 @@ fixed_string FixPrompt = "Fix?";
 fixed_string YNSQHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
 fixed_string YNSQChars = "ynsq";
 fixed_string FixSkipped = "This fix will be skipped.";
+fixed_string ItemDeleted = "The item associated with this warning was deleted.";
 fixed_string NotImplemented = "Fixing this warning is not yet supported.";
 fixed_string UnspecifiedFailure = "Internal error. Edit failed.";
 
@@ -565,36 +559,6 @@ void DebugFtNames(const Function* func, string& flit, string& fvar)
 
 //------------------------------------------------------------------------------
 //
-//  If CODE is an #include directive, unmangles and returns it, else simply
-//  returns it without any changes.
-//
-string DemangleInclude(string& code)
-{
-   if(code.find(HASH_INCLUDE_STR) != 0) return code;
-
-   auto front = code.find_first_of(FrontChars);
-   if(front == string::npos) return code;
-   auto back = rfind_first_not_of(code, WhitespaceChars);
-
-   switch(FrontChars.find_first_of(code[front]))
-   {
-   case 0:
-   case 2:
-      code[front] = '<';
-      code[back] = '>';
-      break;
-   case 1:
-   case 3:
-      code[front] = QUOTE;
-      code[back] = QUOTE;
-      break;
-   }
-
-   return code;
-}
-
-//------------------------------------------------------------------------------
-//
 //  Sets FNAME to FLIT, the argument for Debug::ft.  If it is already in use,
 //  prompts the user for a suffix to make it unique.  Returns false if FNAME
 //  is not unique and the user did not provide a satisfactory suffix, else
@@ -685,9 +649,9 @@ void GetDatas(const Data* data, std::vector< const Data* >& datas)
 {
    Debug::ft("CodeTools.GetDatas");
 
-   datas.push_back(data);
    auto defn = static_cast< const Data* >(data->GetMate());
    if(defn != nullptr) datas.push_back(defn);
+   datas.push_back(data);
 }
 
 //------------------------------------------------------------------------------
@@ -709,17 +673,17 @@ void GetOverrides(const Function* func, std::vector< const Function* >& funcs)
 {
    Debug::ft("CodeTools.GetOverrides");
 
-   funcs.push_back(func);
-
-   auto defn = static_cast< const Function* >(func->GetMate());
-   if((defn != nullptr) && (defn != func)) funcs.push_back(defn);
-
    auto& overs = func->GetOverrides();
 
    for(auto f = overs.cbegin(); f != overs.cend(); ++f)
    {
       GetOverrides(*f, funcs);
    }
+
+   auto defn = static_cast< const Function* >(func->GetMate());
+   if((defn != nullptr) && (defn != func)) funcs.push_back(defn);
+
+   funcs.push_back(func);
 }
 
 //------------------------------------------------------------------------------
@@ -728,49 +692,17 @@ void GetReferences(const Data* data, std::vector< const CxxNamed* >& items)
 {
    Debug::ft("CodeTools.GetReferences");
 
-   auto& refs = data->Xref();
+   auto& xref = data->Xref();
    auto mate = data->GetMate();
 
    //  Assemble references to the data.
    //
-   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+   for(auto r = xref.cbegin(); r != xref.cend(); ++r)
    {
       if(AreInSameStatement(data, *r)) continue;
       if(AreInSameStatement(mate, *r)) continue;
       items.push_back(*r);
    }
-}
-
-//------------------------------------------------------------------------------
-//
-//  Returns true if the #include in LINE1 should precede that in LINE2.
-//
-bool IncludesAreSorted(const string& line1, const string& line2)
-{
-   //  #includes are sorted by group, then alphabetically.  The characters
-   //  that enclose the filename distinguish the groups: [] for group 1,
-   //  () for group 2, <> for group 3, and "" for group 4.
-   //
-   auto pos1 = line1.find_first_of(FrontChars);
-   auto pos2 = line2.find_first_of(FrontChars);
-
-   if(pos2 == string::npos)
-   {
-      if(pos1 == string::npos) return (&line1 < &line2);
-      return true;
-   }
-   else if(pos1 == string::npos) return false;
-
-   auto c1 = line1[pos1];
-   auto c2 = line2[pos2];
-   auto group1 = FrontChars.find(c1);
-   auto group2 = FrontChars.find(c2);
-   if(group1 < group2) return true;
-   if(group1 > group2) return false;
-   auto cmp = strCompare(line1, line2);
-   if(cmp < 0) return true;
-   if(cmp > 0) return false;
-   return (&line1 < &line2);
 }
 
 //------------------------------------------------------------------------------
@@ -1243,7 +1175,7 @@ word Editor::ChangeDataToFree(const CxxNamed* item, const Data* data)
    Debug::ft("Editor.ChangeDataToFree");
 
    //  This is invoked to remove static member data from its class and insert
-   //  it into namespace.  This only occurs when the data is used in a single
+   //  it into a namespace.  This only occurs when the data is used in a single
    //  .cpp (which might also be where the class is defined).  It is invoked
    //  in three ways, and ITEM is nullptr except in the first of these:
    //     1. On ITEM, a reference to DATA
@@ -1767,8 +1699,7 @@ word Editor::DeleteSpecialFunction(CliThread& cli, const CodeWarning& log)
    auto defn = decl->GetDefn();
    if(defn != decl)
    {
-      auto rc = EraseCode(defn);
-      if(rc != EditContinue) return rc;
+      if(EraseItem(defn) == EditFailed) return EditFailed;
    }
 
    //  Find the function declaration and insert " = delete" before its
@@ -1804,7 +1735,6 @@ void Editor::Display(ostream& stream,
 
    stream << prefix << "file     : " <<
       (file_ != nullptr ? file_->Name() : "no file specified") << CRLF;
-   stream << CRLF;
    stream << prefix << "sorted   : " << sorted_ << CRLF;
    stream << prefix << "aliased  : " << aliased_ << CRLF;
    stream << prefix << "warnings : " << warnings_.size() << CRLF;
@@ -1849,7 +1779,7 @@ bool Editor::DisplayLog
          return true;
       }
 
-      *cli.obuf << DemangleInclude(code);
+      *cli.obuf << code;
    }
 
    return true;
@@ -1864,10 +1794,7 @@ size_t Editor::Erase(size_t pos, size_t count)
    if(count == 0) return pos;
    source_.erase(pos, count);
    lastCut_ = pos;
-   Update();
-   file_->UpdatePos(Erased, pos, count);
-   UpdateWarnings(Erased, pos, count);
-   Changed();
+   UpdatePos(Erased, pos, count);
    return pos;
 }
 
@@ -2034,17 +1961,6 @@ word Editor::EraseClass(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseCode(const CxxToken* item)  //u
-{
-   Debug::ft("Editor.EraseCode");
-
-   string code;
-   if(CutCode(item, code) == string::npos) return EditFailed;
-   return Changed();
-}
-
-//------------------------------------------------------------------------------
-
 word Editor::EraseConst(const CodeWarning& log)
 {
    Debug::ft("Editor.EraseConst");
@@ -2152,7 +2068,7 @@ word Editor::EraseItem(const CxxToken* item)
 
    string code;
    if(CutCode(item, code) == string::npos) return EditFailed;
-   delete const_cast< CxxToken* >(item);
+   const_cast< CxxToken* >(item)->Delete();
    return Changed();
 }
 
@@ -2273,20 +2189,22 @@ word Editor::EraseParameter(const Function* func, word offset)
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseScope(const CodeWarning& log)  //u
+word Editor::EraseScope(const CodeWarning& log)
 {
    Debug::ft("Editor.EraseScope");
 
-   auto begin = log.item_->GetPos();
+   auto qname = static_cast< const QualName* >(log.item_);
+   auto begin = qname->GetPos();
    auto op = source_.find(SCOPE_STR, begin);
    if(op == string::npos) return NotFound("Scope resolution operator");
    Erase(begin, op - begin + 2);
+   qname->First()->Delete();
    return Changed(begin);
 }
 
 //------------------------------------------------------------------------------
 
-word Editor::EraseSemicolon(const CodeWarning& log)  //u
+word Editor::EraseSemicolon(const CodeWarning& log)
 {
    Debug::ft("Editor.EraseSemicolon");
 
@@ -2302,6 +2220,39 @@ word Editor::EraseSemicolon(const CodeWarning& log)  //u
    if(source_[brace] != '}') return NotFound("Right brace");
    Erase(semi, 1);
    return Changed(semi);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseAssignment = "Editor.EraseAssignment";
+
+word Editor::EraseAssignment(const CxxToken* item)
+{
+   Debug::ft(Editor_EraseAssignment);
+
+   //  ITEM should be a TypeName or QualName at the beginning of an
+   //  assignment statement or a constructor's member initialization.
+   //
+   switch(item->Type())
+   {
+   case Cxx::QualName:
+   case Cxx::TypeName:
+   case Cxx::MemberInit:
+      break;
+   default:
+      Debug::SwLog(Editor_EraseAssignment, strClass(item, false), 0);
+      return EditFailed;
+   }
+
+   auto statement = item->GetFile()->PosToItem(item->GetPos());
+   string code;
+
+   if(CutCode(item, code) == string::npos) return EditFailed;
+   if(statement != nullptr)
+      statement->Delete();
+   else
+      const_cast< CxxToken* >(item)->Delete();
+   return Changed();
 }
 
 //------------------------------------------------------------------------------
@@ -2374,23 +2325,6 @@ word Editor::EraseVoidArgument(const CodeWarning& log)
    }
 
    return NotFound(VOID_STR, true);
-}
-
-//------------------------------------------------------------------------------
-
-size_t Editor::FindAndCutInclude(size_t pos, const string& incl)
-{
-   Debug::ft("Editor.FindAndCutInclude");
-
-   for(NO_OP; pos != string::npos; pos = NextBegin(pos))
-   {
-      if(GetCode(pos) == incl)
-      {
-         return EraseLine(pos);
-      }
-   }
-
-   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -2737,6 +2671,10 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
          fixed = true;
          continue;
 
+      case Nullified:
+         if(opts.warning == AllWarnings) continue;
+         return Report(ItemDeleted, EditAbort);
+
       case NotSupported:
       default:
          //
@@ -2858,11 +2796,11 @@ word Editor::FixData(const Data* data, const CodeWarning& log)
    switch(log.warning_)
    {
    case DataUnused:
-      return EraseCode(data);
+      return EraseItem(data);
    case DataInitOnly:
-      return EraseCode(data);
+      return EraseItem(data);
    case DataWriteOnly:
-      return EraseCode(data);
+      return EraseItem(data);
    case DataCouldBeConst:
       return TagAsConstData(data);
    case DataCouldBeConstPtr:
@@ -2912,7 +2850,7 @@ word Editor::FixFunction(const Function* func, const CodeWarning& log)
    case ArgumentUnused:
       return EraseParameter(func, log.offset_);
    case FunctionUnused:
-      return EraseCode(func);
+      return EraseItem(func);
    case VirtualAndPublic:
       return SplitVirtualFunction(func);
    case VirtualDefaultArgument:
@@ -3027,12 +2965,8 @@ word Editor::FixReference(const CxxNamed* item, const CodeWarning& log)
 
    switch(log.warning_)
    {
-   case DataUnused:
-      return EraseCode(item);
-   case DataInitOnly:
-      return EraseCode(item);
    case DataWriteOnly:
-      return EraseCode(item);
+      return EraseAssignment(item);
    case DataCouldBeFree:
       return ChangeDataToFree(item, static_cast< const Data* >(log.item_));
    }
@@ -3212,7 +3146,7 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case RuleOf3CopyOperNoCtor:
       return InsertSpecialFunctions(cli, log.item_);
    case FunctionNotDefined:
-      return EraseCode(log.item_);
+      return EraseItem(log.item_);
    case PureVirtualNotDefined:
       return InsertPureVirtual(log);
    case VirtualAndPublic:
@@ -3350,28 +3284,6 @@ size_t Editor::IncludesBegin() const
 
 //------------------------------------------------------------------------------
 
-size_t Editor::IncludesEnd() const
-{
-   Debug::ft("Editor.IncludesEnd");
-
-   for(auto pos = IncludesBegin(); pos != string::npos; pos = NextBegin(pos))
-   {
-      if(CompareCode(pos, HASH_INCLUDE_STR) == 0) continue;
-      if(NoCodeFollows(pos)) continue;
-
-      //  We found something else.  Back up to the last #include and return
-      //  the line that follows it.
-      //
-      pos = PrevBegin(pos);
-      while(NoCodeFollows(pos)) pos = PrevBegin(pos);
-      return NextBegin(pos);
-   }
-
-   return string::npos;
-}
-
-//------------------------------------------------------------------------------
-
 word Editor::Indent(size_t pos)
 {
    Debug::ft("Editor.Indent");
@@ -3404,11 +3316,7 @@ word Editor::InlineDebugFtArgument(const CodeWarning& log)  //u
    string fname;
    auto data = static_cast< const Data* >(log.item_);
    if(!data->GetStrValue(fname)) return NotFound("fn_name definition");
-
-   auto dpos = data->GetPos();
-   auto split = (LineFind(dpos, ";") == string::npos);
-   auto next = EraseLine(dpos);
-   if(split) EraseLine(next);
+   if(EraseItem(data) == EditFailed) return EditFailed;
 
    auto literal = QUOTE + fname + QUOTE;
    auto begin = CurrBegin(log.Pos());
@@ -3428,10 +3336,7 @@ size_t Editor::Insert(size_t pos, const string& code)
    Debug::ft("Editor.Insert");
 
    source_.insert(pos, code);
-   Update();
-   file_->UpdatePos(Inserted, pos, code.size());
-   UpdateWarnings(Inserted, pos, code.size());
-   Changed();
+   UpdatePos(Inserted, pos, code.size());
    return pos;
 }
 
@@ -3736,58 +3641,50 @@ word Editor::InsertForward(size_t pos, const string& forward)  //u
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertInclude(const CodeWarning& log)  //u
+word Editor::InsertInclude(const CodeWarning& log)
 {
-   Debug::ft("Editor.InsertInclude(log)");
+   Debug::ft("Editor.InsertInclude");
 
-   //  Create the new #include directive and add it to the list.
-   //  Its file name appears in log.info_.
+   //  The file name for the new #include directive appears in log.info_ and
+   //  is enclosed in quotes or angle brackets.
    //
-   string include = HASH_INCLUDE_STR;
-   include.push_back(SPACE);
-   include += log.info_;
-   return InsertInclude(include);
-}
+   auto filename = log.info_.substr(1, log.info_.size() - 2);
+   IncludePtr incl(new Include(filename, log.info_.front() == '<'));
+   size_t pos = string::npos;
+   incl->SetLoc(file_, pos, false);
+   incl->CalcGroup();
 
-//------------------------------------------------------------------------------
+   auto& incls = file_->Includes();
 
-word Editor::InsertInclude(string& include)  //u
-{
-   Debug::ft("Editor.InsertInclude(string)");
-
-   //  Start by mangling the new #include and all existing ones, which
-   //  makes it easier to insert the new one in the correct position.
-   //
-   auto rc = MangleInclude(include);
-   if(rc != EditContinue) return rc;
-   MangleIncludes();
-
-   //  Insert the new #include in its sort order.
-   //
-   auto end = IncludesEnd();
-
-   for(auto pos = IncludesBegin(); pos != end; pos = NextBegin(pos))
+   for(auto next = incls.cbegin(); next != incls.cend(); ++next)
    {
-      if(NoCodeFollows(pos)) continue;
-
-      if(!IncludesAreSorted(GetCode(pos), include))
+      if(IncludesAreSorted(incl, *next))
       {
-         InsertLine(pos, include);
-         return Changed(pos);
+         pos = (*next)->GetPos();
+         break;
       }
    }
 
-   //  Add the new #include to the end of the list.  If there is no
-   //  blank line at the end of the list, add one.
-   //
-   auto pos = end;
-
-   if(!IsBlankLine(end))
+   if(pos == string::npos)
    {
-      pos = InsertLine(end, EMPTY_STR);
+      //  If we get here, the new #include must be added after all the others.
+      //  The last #include should be followed by a blank line, so insert one
+      //  if necessary.
+      //
+      if(!incls.empty())
+         pos = NextBegin(incls.back()->GetPos());
+      else
+         pos = PrologEnd();
+
+      if(!IsBlankLine(pos))
+      {
+         InsertLine(pos, EMPTY_STR);
+      }
    }
 
-   InsertLine(pos, include);
+   auto code = string(HASH_INCLUDE_STR) + SPACE + log.info_;
+   InsertLine(pos, code);
+   file_->InsertInclude(incl, pos);
    return Changed(pos);
 }
 
@@ -4407,54 +4304,6 @@ size_t Editor::LineAfterItem(const CxxToken* item) const
 
 //------------------------------------------------------------------------------
 
-word Editor::MangleInclude(string& include) const
-{
-   Debug::ft("Editor.MangleInclude");
-
-   //  INCLUDE is enclosed in angle brackets or quotes.  To simplify
-   //  sorting, the following substitutions are made:
-   //  o group 1: enclosed in [ ]
-   //  o group 2: enclosed in ' '
-   //  o group 3: enclosed in ( )
-   //  o group 4: enclosed in ` `
-   //  This is fixed when the #include is written out.
-   //
-   if(include.find(HASH_INCLUDE_STR) != 0)
-      return Report("#include not at front of directive.");
-   auto first = include.find_first_of(FrontChars);
-   if(first == string::npos)
-      return Report("Failed to extract file name from #include.");
-   auto last = include.find_first_of(BackChars, first + 1);
-   if(last == string::npos)
-      return Report("Failed to extract file name from #include.");
-   auto name = include.substr(first + 1, last - first - 1);
-   auto group = file_->CalcGroup(name);
-   if(group == 0) return Report("#include specified unknown file.");
-   include[first] = FrontChars[group - 1];
-   include[last] = BackChars[group - 1];
-   return EditContinue;
-}
-
-//------------------------------------------------------------------------------
-
-void Editor::MangleIncludes()
-{
-   Debug::ft("Editor.MangleIncludes");
-
-   for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
-   {
-      if(CompareCode(pos, HASH_INCLUDE_STR) == 0)
-      {
-         auto incl = GetCode(pos);
-         MangleInclude(incl);
-         source_.erase(pos, incl.size());
-         source_.insert(pos, incl);
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
 word Editor::MoveDefine(const CodeWarning& log)
 {
    Debug::ft("Editor.MoveDefine");
@@ -4502,10 +4351,7 @@ size_t Editor::Paste(size_t pos, const std::string& code, size_t from)
 
    source_.insert(pos, code);
    lastCut_ = string::npos;
-   Update();
-   file_->UpdatePos(Pasted, pos, code.size(), from);
-   UpdateWarnings(Pasted, pos, code.size(), from);
-   Changed();
+   UpdatePos(Pasted, pos, code.size(), from);
    return pos;
 }
 
@@ -4525,19 +4371,19 @@ size_t Editor::PrologEnd() const
 
 //------------------------------------------------------------------------------
 
-void Editor::QualifyReferent(const CxxToken* item, const CxxToken* ref)  //u
+void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
 {
    Debug::ft("Editor.QualifyReferent");
 
    //  Within ITEM, prefix NS wherever SYMBOL appears as an identifier.
    //
-   const Namespace* ns = ref->GetSpace();
+   Namespace* ns = ref->GetSpace();
    auto symbol = &ref->Name();
 
    switch(ref->Type())
    {
    case Cxx::Namespace:
-      ns = static_cast< const Namespace* >(ref)->OuterSpace();
+      ns = static_cast< Namespace* >(ref)->OuterSpace();
       break;
    case Cxx::Class:
       if(ref->IsInTemplateInstance())
@@ -4561,6 +4407,12 @@ void Editor::QualifyReferent(const CxxToken* item, const CxxToken* ref)  //u
          //
          if(source_.rfind(SCOPE_STR, pos) != (pos - strlen(SCOPE_STR)))
          {
+            auto item = file_->PosToItem(pos);
+            if((item != nullptr) && (item->Type() == Cxx::QualName))
+               static_cast< QualName* >(item)->AddScope(name, ns);
+            else
+               Debug::noop(0);
+
             Insert(pos, qual);
             Changed();
             pos = NextPos(pos + qual.size());
@@ -4589,7 +4441,7 @@ void Editor::QualifyUsings(CxxToken* item)
 
 //------------------------------------------------------------------------------
 
-word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)  //u
+word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)
 {
    Debug::ft("Editor.RenameArgument");
 
@@ -4599,6 +4451,7 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)  //u
    //  o OverrideRenamesArgument: override's name differs from root's
    //
    auto func = static_cast< const Function* >(log.item_);
+   auto index = func->LogOffsetToArgIndex(log.offset_);
    const Function* decl = func->GetDecl();
    const Function* defn = func->GetDefn();
    const Function* root = (func->IsOverride() ? func->FindRootFunc() : nullptr);
@@ -4606,10 +4459,9 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)  //u
    //  Use the argument name from the root (if any), else the declaration,
    //  else the definition.
    //
-   auto index = decl->LogOffsetToArgIndex(log.offset_);
    string argName;
-   auto declName = decl->GetArgs().at(index)->Name();
    string defnName;
+   auto declName = decl->GetArgs().at(index)->Name();
    if(defn != nullptr) defnName = defn->GetArgs().at(index)->Name();
    if(root != nullptr) argName = root->GetArgs().at(index)->Name();
    if(argName.empty()) argName = declName;
@@ -4623,12 +4475,14 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)  //u
    {
    case AnonymousArgument:
    {
-      auto type = func->GetArgs().at(index)->GetTypeSpec()->GetPos();
-      type = FindFirstOf(",)", type);
-      if(type == string::npos) return NotFound("End of argument");
+      auto pos = func->GetArgs().at(index)->GetTypeSpec()->GetPos();
+      pos = FindFirstOf(",)", pos);
+      if(pos == string::npos) return NotFound("End of argument");
+      auto arg = func->GetArgs().at(index).get();
+      arg->Rename(argName);
       argName.insert(0, 1, SPACE);
-      Insert(type, argName);
-      return Changed(type);
+      Insert(pos, argName);
+      return Changed(pos);
    }
 
    case DefinitionRenamesArgument:
@@ -4647,9 +4501,14 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)  //u
    if(func == decl) defnName = declName;
    auto& editor = func->GetFile()->GetEditor();
 
+   auto arg = func->GetArgs().at(index).get();
+   arg->ChangeName(argName);
+
    for(auto pos = editor.FindWord(begin, defnName); pos < end;
-      pos = editor.FindWord(pos + 1, defnName))
+      pos = editor.FindWord(pos + defnName.size(), defnName))
    {
+      auto item = file_->PosToItem(pos);
+      if(item != nullptr) item->Rename(argName);
       editor.Replace(pos, defnName.size(), argName);
       end = end + argName.size() - defnName.size();
       editor.Changed();
@@ -4736,7 +4595,7 @@ word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //u
 
 //------------------------------------------------------------------------------
 
-word Editor::RenameIncludeGuard(const CodeWarning& log)  //u
+word Editor::RenameIncludeGuard(const CodeWarning& log)
 {
    Debug::ft("Editor.RenameIncludeGuard");
 
@@ -4745,11 +4604,15 @@ word Editor::RenameIncludeGuard(const CodeWarning& log)  //u
    auto ifn = CurrBegin(log.Pos());
    if(ifn == string::npos) return NotFound("Position of #define");
    if(CompareCode(ifn, HASH_IFNDEF_STR) != 0) return NotFound(HASH_IFNDEF_STR);
+
    auto guard = log.File()->MakeGuardName();
+   const_cast< CxxToken* >(log.item_)->Rename(guard);
+
    ifn += strlen(HASH_IFNDEF_STR) + 1;
    auto end = CurrEnd(ifn) - 1;
    Erase(ifn, end - ifn + 1);
    Insert(ifn, guard);
+
    auto def = Find(ifn, HASH_DEFINE_STR);
    if(def == string::npos) return NotFound(HASH_DEFINE_STR);
    def += strlen(HASH_DEFINE_STR) + 1;
@@ -4795,19 +4658,17 @@ word Editor::ReplaceName(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::ReplaceNull(const CodeWarning& log)  //u
+word Editor::ReplaceNull(const CodeWarning& log)
 {
    Debug::ft("Editor.ReplaceNull");
 
-   //  If there are multiple occurrences on the same line, each one will
-   //  cause a log, so just fix the first one.
-   //
-   auto begin = CurrBegin(log.Pos());
-   if(begin == string::npos) return NotFound("Position of NULL");
-   auto null = FindWord(begin, NULL_STR);
-   if(null == string::npos) return NotFound(NULL_STR, true);
-   Replace(null, strlen(NULL_STR), NULLPTR_STR);
-   return Changed(null);
+   auto pos = log.item_->GetPos();
+   if(pos == string::npos) return NotFound(NULL_STR, true);
+   if(source_.compare(pos, sizeof(NULL_STR), NULL_STR) != 0)
+      return NotFound(NULL_STR);
+   Replace(pos, strlen(NULL_STR), NULLPTR_STR);
+   const_cast< CxxToken* >(log.item_)->Rename(NULLPTR_STR);
+   return Changed(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -5063,48 +4924,30 @@ word Editor::SortIncludes()
 {
    Debug::ft("Editor.SortIncludes");
 
-   //  Start by mangling all #includes, which makes them easier to sort.
+   //  Sort our file's #include directives.  This doesn't actually move their
+   //  code, so each one retains its pre-sorted position.  This allows us to
+   //  then selection sort them.  Find each successive #include, and if its
+   //  position doesn't match the next #include in the list, cut the correct
+   //  #include and paste it in front of the current one.
    //
-   MangleIncludes();
+   file_->SortIncludes();
 
-   //  Copy all of the #includes into a list and sort them.  Look at the
-   //  entire file in case any #include appears outside the initial list.
-   //
-   std::list< string > includes;
+   auto& includes = file_->Includes();
+   auto incl = includes.cbegin();
 
-   for(auto pos = 0; pos != string::npos; pos = NextBegin(pos))
+   for(auto pos = IncludesBegin(); pos != string::npos; pos = NextBegin(pos))
    {
       if(CompareCode(pos, HASH_INCLUDE_STR) == 0)
       {
-         includes.push_back(GetCode(pos));
-      }
-   }
-
-   if(includes.empty()) return NotFound(HASH_INCLUDE_STR);
-   includes.sort(IncludesAreSorted);
-
-   //  Run through the #includes.  When one doesn't match the sort order,
-   //  find the correct one, cut it, and paste it into the current location.
-   //
-   auto targ = includes.cbegin();
-
-   for(auto pos = IncludesBegin();
-      (pos != string::npos) && (targ != includes.cend());
-      pos = NextBegin(pos), ++targ)
-   {
-      if(GetCode(pos) != *targ)
-      {
-         auto from = FindAndCutInclude(pos, *targ);
-
-         if(from != string::npos)
+         if(file_->PosToItem(pos) != incl->get())
          {
-            Paste(pos, *targ, from);
+            auto from = (*incl)->GetPos();
+            auto code = GetCode(from);
+            from = EraseLine(from);
+            Paste(pos, code, from);
          }
-         else
-         {
-            auto err = string("Failed to find ") + *targ;
-            return Report(err.c_str());
-         }
+
+         if(++incl == includes.cend()) break;
       }
    }
 
@@ -5234,7 +5077,7 @@ word Editor::TagAsDefaulted(const Function* func)
    //
    if(func->GetDecl() != func)
    {
-      return EraseCode(func);
+      return EraseItem(func);
    }
 
    //  This is the function's declaration, and possibly its definition.
@@ -5720,15 +5563,20 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
 
 //------------------------------------------------------------------------------
 
-void Editor::UpdateWarnings
-   (EditorAction action, size_t begin, size_t count, size_t from) const
+void Editor::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from)
 {
-   Debug::ft("Editor.UpdateWarnings");
+   Debug::ft("Editor.UpdatePos");
+
+   Update();
+   file_->UpdatePos(action, begin, count, from);
 
    for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
    {
       (*w)->UpdatePos(action, begin, count, from);
    }
+
+   Changed();
 }
 
 //------------------------------------------------------------------------------
@@ -5748,21 +5596,6 @@ word Editor::Write()
    {
       stream << "Failed to open output file for " << file_->Name();
       return Report(stream, EditAbort);
-   }
-
-   //  #includes for files that define base classes used in this file or declare
-   //  functions defined in this file had their angle brackets or quotes mangled
-   //  for sorting purposes.  Fix this.
-   //
-   for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
-   {
-      if(CompareCode(pos, HASH_INCLUDE_STR) == 0)
-      {
-         auto incl = GetCode(pos);
-         DemangleInclude(incl);
-         source_.erase(pos, incl.size());
-         source_.insert(pos, incl);
-      }
    }
 
    *output << source_;

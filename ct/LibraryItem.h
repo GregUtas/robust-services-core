@@ -44,6 +44,10 @@ public:
    //
    virtual const std::string& Name() const;
 
+   //  Renames the item.  The default implementation generates a log.
+   //
+   virtual void Rename(const std::string& name);
+
    //  Updates ITEMS with code items declared within the item.  The
    //  default implementation generates a log.
    //

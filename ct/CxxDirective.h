@@ -27,6 +27,7 @@
 #include <cstddef>
 #include <string>
 #include <utility>
+#include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
 #include "CxxToken.h"
@@ -115,9 +116,21 @@ public:
    //
    ~Include();
 
+   //  Returns true if the file name is enclosed in angle brackets.
+   //
+   bool IsExternal() const { return angle_; }
+
    //  Returns the file associated with the directive.
    //
    CodeFile* FindFile() const;
+
+   //  Sets the group associated with the directive.
+   //
+   void CalcGroup();
+
+   //  Returns the group associated with the directive.
+   //
+   IncludeGroup Group() const { return group_; }
 
    //  Overridden to display the directive.
    //
@@ -131,7 +144,15 @@ private:
    //  Set if the filename appeared in angle brackets.
    //
    const bool angle_;
+
+   //  The group to which the #include belongs for sorting purposes.
+   //
+   IncludeGroup group_;
 };
+
+//  For sorting #include directives.
+//
+bool IncludesAreSorted(const IncludePtr& incl1, const IncludePtr& incl2);
 
 //------------------------------------------------------------------------------
 //
@@ -219,6 +240,10 @@ public:
    //
    CxxScoped* Referent() const override;
 
+   //  Overridden to support renaming an #include guard.
+   //
+   void Rename(const std::string& name) override;
+
    //  Overridden to shrink containers.
    //
    void Shrink() override;
@@ -300,6 +325,10 @@ public:
    //  Overridden to record usage of the macro.
    //
    void RecordUsage() override { AddUsage(); }
+
+   //  Overridden to support renaming an #include guard.
+   //
+   void Rename(const std::string& name) override;
 
    //  Overridden to return the underlying type.
    //
@@ -392,6 +421,10 @@ public:
    //
    bool EnterScope() override;
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to shrink containers.
    //
    void Shrink() override;
@@ -448,7 +481,8 @@ public:
    //  Invoked when it is determined that the code following the directive
    //  should not be compiled.
    //
-   void SetSkipped(size_t begin, size_t end) { begin_ = begin; end_ = end; }
+   void SetSkipped(size_t begin, size_t end) const
+      { begin_ = begin; end_ = end; }
 
    //  Adds an #elif to the directive.
    //
@@ -489,13 +523,20 @@ private:
    //
    virtual void AddCondition(ExprPtr& c) { }
 
-   //  Where the code that follows the directive begins.
+   //  Where the code that follows the directive begins if it is *not*
+   //  to be compiled.
    //
-   size_t begin_;
+   mutable size_t begin_;
 
-   //  Where the code that follows the directive ends.
+   //  Where the code that follows the directive ends if it is *not*
+   //  to be compiled.
    //
-   size_t end_;
+   mutable size_t end_;
+
+   //  Set when code *not* to be compiled (when begin_ and end_ are
+   //  valid) has been cut.
+   //
+   mutable bool erased_;
 
    //  Set if the code that follows the directive is to be compiled.
    //
@@ -533,6 +574,10 @@ public:
    //  Overridden to include symbols that appear in the condition.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to shrink the conditional expression.
    //
@@ -588,6 +633,10 @@ public:
    //
    const std::string& Name() const override { return name_->Name(); }
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to return the symbol's referent.
    //
    CxxScoped* Referent() const override { return name_->Referent(); }
@@ -610,7 +659,12 @@ protected:
    //
    const Endif* GetEndif() const { return endif_; }
 
-   //  Returns true if name_ has already been defined.
+   //  Returns the symbol that the directive is checking.
+   //
+   MacroName* GetSymbol() const { return name_.get(); }
+
+   //  Returns true if the symbol that the directive is checking. was already
+   //  defined when encountered.
    //
    bool SymbolPredefined() const { return name_->WasPredefined(); }
 private:
@@ -772,6 +826,10 @@ public:
    //
    bool HasCompiledCode() const override;
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to shrink containers.
    //
    void Shrink() override;
@@ -825,6 +883,10 @@ public:
    //  Overridden to return true if this is an #include guard.
    //
    bool IsIncludeGuard() const override;
+
+    //  Overridden to support renaming an #include guard.
+   //
+   void Rename(const std::string& name) override;
 };
 
 //------------------------------------------------------------------------------

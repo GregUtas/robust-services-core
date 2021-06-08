@@ -33,6 +33,7 @@
 #include "CxxString.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
+#include "CxxVector.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -67,6 +68,7 @@ Class::~Class()
 {
    Debug::ftnt("Class.dtor[>ct]");
 
+   GetFile()->EraseClass(this);
    Singleton< CxxSymbols >::Extant()->EraseClass(this);
    CxxStats::Decr(CxxStats::CLASS_DECL);
 }
@@ -443,6 +445,11 @@ void Class::BlockCopied(const StackArg* arg)
 bool Class::CanConstructFrom(const StackArg& that, const string& thatType) const
 {
    Debug::ft("Class.CanConstructFrom");
+
+   //  Although we compile templates as well as is possible, only a template
+   //  *instance* can get constructed.
+   //
+   if(IsCompiledTemplate()) return false;
 
    //  Visit our functions to see if one of them is a suitable constructor.
    //
@@ -936,6 +943,16 @@ void Class::Creating()
 
 //------------------------------------------------------------------------------
 
+void Class::Delete()
+{
+   Debug::ftnt("Class.Delete");
+
+   GetArea()->EraseClass(this);
+   delete this;
+}
+
+//------------------------------------------------------------------------------
+
 bool Class::DerivesFrom(const Class* cls) const
 {
    Debug::ft("Class.DerivesFrom(class)");
@@ -1005,21 +1022,21 @@ void Class::Display(ostream& stream,
    nonqual.reset(DispNoTP);
 
    stream << CRLF << prefix << '{' << CRLF;
-   DisplayObjects(friends_, stream, lead, qual);
-   DisplayObjects(*Asserts(), stream, lead, qual);
-   DisplayObjects(*Usings(), stream, lead, qual);
-   DisplayObjects(*Forws(), stream, lead, qual);
-   DisplayObjects(*Classes(), stream, lead, nonqual);
-   DisplayObjects(*Enums(), stream, lead, nonqual);
-   DisplayObjects(*Types(), stream, lead, nonqual);
-   if(code) DisplayObjects(*Datas(), stream, lead, nonqual);
-   DisplayObjects(*Funcs(), stream, lead, nonqual);
-   DisplayObjects(*Opers(), stream, lead, nonqual);
-   DisplayObjects(*Assembly(), stream, lead, qual);
+   SortAndDisplayItemPtrs(friends_, stream, lead, qual);
+   SortAndDisplayItemPtrs(*Asserts(), stream, lead, qual);
+   SortAndDisplayItemPtrs(*Usings(), stream, lead, qual);
+   SortAndDisplayItemPtrs(*Forws(), stream, lead, qual);
+   SortAndDisplayItemPtrs(*Classes(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Enums(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Types(), stream, lead, nonqual);
+   if(code) SortAndDisplayItemPtrs(*Datas(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Funcs(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Opers(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Assembly(), stream, lead, qual);
 
    if(!code)
    {
-      DisplayObjects(*Datas(), stream, lead, nonqual);
+      SortAndDisplayItemPtrs(*Datas(), stream, lead, nonqual);
 
       lead += spaces(IndentSize());
 
@@ -1176,6 +1193,15 @@ void Class::EraseFriend(const Friend* decl)
    Debug::ft("Class.EraseFriend");
 
    EraseItemPtr(friends_, decl);
+}
+
+//------------------------------------------------------------------------------
+
+void Class::EraseSubclass(const Class* cls)
+{
+   Debug::ft("Class.EraseSubclass");
+
+   EraseItem(subs_, cls);
 }
 
 //------------------------------------------------------------------------------
@@ -2013,6 +2039,31 @@ Class* Class::OuterClass() const
 
 //------------------------------------------------------------------------------
 
+CxxToken* Class::PosToItem(size_t pos) const
+{
+   auto item = CxxArea::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = name_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(parms_ != nullptr) item = parms_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(base_ != nullptr) item = base_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
+   {
+      item = (*f)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 void Class::SetAlignment(AlignAsPtr& align)
 {
    Debug::ft("Class.SetAlignment");
@@ -2394,15 +2445,15 @@ void ClassInst::Display(ostream& stream,
       auto opts = options;
       qual.set(DispFQ);
 
-      DisplayObjects(*Friends(), stream, lead, qual);
-      DisplayObjects(*Usings(), stream, lead, qual);
-      DisplayObjects(*Forws(), stream, lead, qual);
-      DisplayObjects(*Classes(), stream, lead, opts);
-      DisplayObjects(*Enums(), stream, lead, opts);
-      DisplayObjects(*Types(), stream, lead, opts);
-      DisplayObjects(*Funcs(), stream, lead, opts);
-      DisplayObjects(*Opers(), stream, lead, opts);
-      DisplayObjects(*Datas(), stream, lead, opts);
+      SortAndDisplayItemPtrs(*Friends(), stream, lead, qual);
+      SortAndDisplayItemPtrs(*Usings(), stream, lead, qual);
+      SortAndDisplayItemPtrs(*Forws(), stream, lead, qual);
+      SortAndDisplayItemPtrs(*Classes(), stream, lead, opts);
+      SortAndDisplayItemPtrs(*Enums(), stream, lead, opts);
+      SortAndDisplayItemPtrs(*Types(), stream, lead, opts);
+      SortAndDisplayItemPtrs(*Funcs(), stream, lead, opts);
+      SortAndDisplayItemPtrs(*Opers(), stream, lead, opts);
+      SortAndDisplayItemPtrs(*Datas(), stream, lead, opts);
    }
 
    stream << prefix << "};" << CRLF;
@@ -2531,6 +2582,15 @@ void ClassInst::Instantiate()
    compiled_ = parser->ParseClassInst(this, begin);
    parser.reset();
    if(compiled_) code_.reset();
+}
+
+//------------------------------------------------------------------------------
+
+bool ClassInst::IsCompiledTemplate() const
+{
+   Debug::ft("ClassInst.IsCompiledTemplate");
+
+   return tspec_->ContainsTemplateParameter();
 }
 
 //------------------------------------------------------------------------------
@@ -2828,7 +2888,7 @@ void CxxArea::Check() const
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseClass(Class* cls)
+void CxxArea::EraseClass(const Class* cls)
 {
    Debug::ft("CxxArea.EraseClass");
 
@@ -2837,7 +2897,7 @@ void CxxArea::EraseClass(Class* cls)
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseData(Data* data)
+void CxxArea::EraseData(const Data* data)
 {
    Debug::ft("CxxArea.EraseData");
 
@@ -2847,7 +2907,7 @@ void CxxArea::EraseData(Data* data)
    }
    else
    {
-      EraseItemPtr(defns_, static_cast< CxxScope* >(data));
+      EraseItemPtr< CxxScope >(defns_, data);
    }
 }
 
@@ -2871,7 +2931,7 @@ void CxxArea::EraseForw(const Forward* forw)
 
 //------------------------------------------------------------------------------
 
-void CxxArea::EraseFunc(Function* func)
+void CxxArea::EraseFunc(const Function* func)
 {
    Debug::ft("CxxArea.EraseFunc");
 
@@ -2884,7 +2944,7 @@ void CxxArea::EraseFunc(Function* func)
    }
    else
    {
-      EraseItemPtr(defns_, static_cast< CxxScope* >(func));
+      EraseItemPtr< CxxScope >(defns_, func);
    }
 }
 
@@ -3248,6 +3308,79 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 
 //------------------------------------------------------------------------------
 
+CxxToken* CxxArea::PosToItem(size_t pos) const
+{
+   //  This does not forward to decls_, whose items reside at file scope
+   //  in a .cpp and are therefore found by CodeFile.PosToItem.
+   //
+   auto item = CxxScope::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      item = (*u)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      item = (*c)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+   {
+      item = (*d)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto e = enums_.cbegin(); e != enums_.cend(); ++e)
+   {
+      item = (*e)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
+   {
+      item = (*f)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      item = (*f)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
+   {
+      item = (*o)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
+   {
+      item = (*t)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto a = assembly_.cbegin(); a != assembly_.cend(); ++a)
+   {
+      item = (*a)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      item = (*a)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 void CxxArea::Shrink()
 {
    CxxScope::Shrink();
@@ -3472,15 +3605,15 @@ void Namespace::Display(ostream& stream,
    auto nonqual = options;
    nonqual.reset(DispFQ);
 
-   DisplayObjects(*Asserts(), stream, lead, nonqual);
-   DisplayObjects(*Enums(), stream, lead, nonqual);
-   DisplayObjects(*Types(), stream, lead, nonqual);
-   DisplayObjects(*Funcs(), stream, lead, nonqual);
-   DisplayObjects(*Opers(), stream, lead, nonqual);
-   DisplayObjects(*Assembly(), stream, lead, nonqual);
-   DisplayObjects(*Datas(), stream, lead, nonqual);
-   DisplayObjects(*Classes(), stream, lead, nonqual);
-   DisplayObjects(spaces_, stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Asserts(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Enums(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Types(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Funcs(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Opers(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Assembly(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Datas(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Classes(), stream, lead, nonqual);
+   SortAndDisplayItemPtrs(spaces_, stream, lead, nonqual);
    stream << prefix << '}' << CRLF;
 }
 
@@ -3498,6 +3631,15 @@ Namespace* Namespace::EnsureNamespace(const string& name)
    NamespacePtr space(new Namespace(name, this));
    spaces_.push_back(std::move(space));
    return spaces_.back().get();
+}
+
+//------------------------------------------------------------------------------
+
+void Namespace::EraseDefn(const SpaceDefn* defn)
+{
+   Debug::ft("Namespace.EraseDefn");
+
+   EraseItemPtr(defns_, defn);
 }
 
 //------------------------------------------------------------------------------
@@ -3550,6 +3692,19 @@ Namespace* Namespace::FindNamespace(const string& name) const
 
 //------------------------------------------------------------------------------
 
+void Namespace::InsertDefn(CodeFile* file, size_t pos)
+{
+   Debug::ft("Namespace.InsertDefn");
+
+   SpaceDefnPtr space(new SpaceDefn(this));
+   space->SetLoc(file, pos);
+   space->SetScope(this);
+   file->InsertSpace(space.get());
+   defns_.push_back(std::move(space));
+}
+
+//------------------------------------------------------------------------------
+
 string Namespace::ScopedName(bool templates) const
 {
    auto scope = GetScope();
@@ -3577,15 +3732,9 @@ void Namespace::SetLoc(CodeFile* file, size_t pos) const
 {
    Debug::ft("Namespace.SetLoc");
 
-   //  If this is the first appearance of the namespace, set its location.
-   //  Create a namespace definition for the current file.
+   //  If this is the first definition of the namespace, set its location.
    //
    if(GetFile() == nullptr) CxxArea::SetLoc(file, pos);
-
-   SpaceDefnPtr space(new SpaceDefn(this));
-   space->SetLoc(file, pos);
-   space->SetScope(Context::Scope());
-   file->InsertSpace(space);
 }
 
 //------------------------------------------------------------------------------

@@ -212,6 +212,11 @@ resolution.
   The definition of the template argument(s) must be visible
   at this point, even if they are not needed for a successful compile (e.g.
   if the template's code only uses the type `T*`, not `T`)
+- [ ] template argument deduction for function templates
+
+  This is currently somewhat weak. If more than one function template has the
+  same name and the wrong template gets selected, two workarounds are to (a)
+  adopt unique names or (b) specify the template argument explicitly.
 - [ ] explicit instantiation
 - [ ] `using` for alias templates (`Parser.GetUsing` and others)
 - [ ] `extern template`

@@ -443,7 +443,7 @@ void Library::Export(ostream& stream, const string& opts) const
       stream << "NAMESPACE VIEW" << CRLF << CRLF;
       root->Display(stream, EMPTY_STR, options);
       gns->Display(stream, EMPTY_STR, options);
-      stream << string(IndentSize(), '=') << CRLF;
+      stream << string(132, '=') << CRLF;
    }
 
    auto rule = false;
@@ -463,7 +463,7 @@ void Library::Export(ostream& stream, const string& opts) const
 
    if(opts.find(ClassHierarchyView) != string::npos)
    {
-      if(rule) stream << string(IndentSize(), '=') << CRLF;
+      if(rule) stream << string(132, '=') << CRLF;
       stream << "CLASS VIEW" << CRLF << CRLF;
 
       ClassVector roots;

@@ -73,6 +73,8 @@ public:
 
    void PushBack(uint32_t c) override { str_.push_back(c); }
 
+   void Replace(const T& str) { str_ = str; }
+
    static CxxScoped* GetReferent()
    {
       Debug::ft(CxxStrLiteral_GetReferent());

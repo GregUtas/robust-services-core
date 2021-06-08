@@ -28,7 +28,6 @@
 #include <set>
 #include <string>
 #include <vector>
-#include "Base.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -405,6 +404,22 @@ enum AssignmentType
 
 //------------------------------------------------------------------------------
 //
+//  Groups for sorting #include directives.  An "external file" is one whose
+//  name is enclosed in angle brackets rather than quotes.
+//
+enum IncludeGroup
+{
+   ExtDecl,   // external file declaring an item defined in this file
+   IntDecl,   // internal file declaring an item defined in this file
+   ExtBase,   // external file defining a base class of a class in this file
+   IntBase,   // internal file defining a base class of a class in this file
+   ExtUses,   // external file declaring an item used in this file
+   IntUses,   // internal file declaring an item used in this file
+   Ungrouped  // group not determined
+};
+
+//------------------------------------------------------------------------------
+//
 //  What type of function is updating the cross-reference.
 //
 enum XrefUpdater
@@ -681,33 +696,5 @@ enum EditorAction
    Inserted,
    Pasted
 };
-
-//------------------------------------------------------------------------------
-//
-//  Returns the index of ITEM in V.  Returns SIZE_MAX if ITEM isn't found.
-//
-template< typename T > size_t IndexOf(const std::vector< T >& v, const T& item)
-{
-   for(size_t i = 0; i < v.size(); ++i)
-   {
-      if(v[i] == item) return i;
-   }
-
-   return SIZE_MAX;
-}
-
-//------------------------------------------------------------------------------
-//
-//  Displays the objects in a vector.
-//
-template< class T > void DisplayObjects
-   (const std::vector< T >& group, std::ostream& stream,
-   const std::string& prefix, const NodeBase::Flags& options)
-{
-   for(auto i = group.cbegin(); i != group.cend(); ++i)
-   {
-      (*i)->Display(stream, prefix, options);
-   }
-}
 }
 #endif

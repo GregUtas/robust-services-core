@@ -31,6 +31,7 @@
 #include "CxxScope.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
+#include "CxxVector.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -59,6 +60,15 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
 
 //------------------------------------------------------------------------------
 
+Argument::~Argument()
+{
+   Debug::ft("Argument.dtor");
+
+   CxxStats::Decr(CxxStats::ARG_DECL);
+}
+
+//------------------------------------------------------------------------------
+
 void Argument::AddToXref(bool insert)
 {
    spec_->AddToXref(insert);
@@ -73,7 +83,6 @@ void Argument::Check() const
 
    spec_->Check();
    if(default_ != nullptr) default_->Check();
-
    if(name_.empty() && IsUnused()) LogToFunc(AnonymousArgument);
    if(modified_ && spec_->Refs() == 0) LogToFunc(ValueArgumentModified);
 }
@@ -86,7 +95,7 @@ void Argument::CheckVoid() const
 
    if(name_.empty())
    {
-      if(spec_->Name() == VOID_STR)
+      if((spec_->Name() == VOID_STR) && (spec_->Ptrs(false) == 0))
       {
          //  Deleting the empty argument "(void)" makes it much easier to
          //  compare function signatures and match arguments to functions.
@@ -96,6 +105,17 @@ void Argument::CheckVoid() const
          func->DeleteVoidArg();
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+void Argument::Delete()
+{
+   Debug::ft("Argument.Delete");
+
+   auto func = GetFunction();
+   if(func != nullptr) func->EraseArg(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -236,13 +256,26 @@ void Argument::LogToFunc(Warning warning) const
 
 //------------------------------------------------------------------------------
 
+CxxToken* Argument::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = spec_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (default_ != nullptr ? default_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void Argument::Print(ostream& stream, const Flags& options) const
 {
    spec_->Print(stream, options);
 
    if(spec_->GetFuncSpec() == nullptr)
    {
-      if(!name_.empty()) stream << SPACE << Name();
+      if(!name_.empty()) stream << SPACE << name_;
    }
 
    spec_->DisplayArrays(stream);
@@ -259,6 +292,15 @@ void Argument::Print(ostream& stream, const Flags& options) const
    stream << SPACE << "r=" << reads_;
    if(writes_ > 0) stream << SPACE << "w=" << writes_;
    stream << SPACE << COMMENT_END_STR;
+}
+
+//------------------------------------------------------------------------------
+
+void Argument::Rename(const string& name)
+{
+   Debug::ft("Argument.Rename");
+
+   name_ = name;
 }
 
 //------------------------------------------------------------------------------
@@ -354,6 +396,16 @@ BaseDecl::BaseDecl(QualNamePtr& name, Cxx::Access access) :
 
    SetAccess(access);
    CxxStats::Incr(CxxStats::BASE_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+BaseDecl::~BaseDecl()
+{
+   Debug::ft("BaseDecl.dtor");
+
+   GetClass()->EraseSubclass(static_cast< Class* >(GetScope()));
+   CxxStats::Decr(CxxStats::BASE_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -455,6 +507,16 @@ void BaseDecl::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* BaseDecl::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return name_->PosToItem(pos);
+}
+
+//------------------------------------------------------------------------------
+
 CxxScoped* BaseDecl::Referent() const
 {
    Debug::ft("BaseDecl.Referent");
@@ -489,6 +551,15 @@ void BaseDecl::SetAccess(Cxx::Access access)
 string BaseDecl::TypeString(bool arg) const
 {
    return GetClass()->TypeString(arg);
+}
+
+//------------------------------------------------------------------------------
+
+void BaseDecl::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxScoped::UpdatePos(action, begin, count, from);
+   name_->UpdatePos(action, begin, count, from);
 }
 
 //==============================================================================
@@ -586,6 +657,22 @@ Cxx::Access CxxScoped::BroadestAccessUsed() const
    if(public_) return Cxx::Public;
    if(protected_) return Cxx::Protected;
    return Cxx::Private;
+}
+
+//------------------------------------------------------------------------------
+
+void CxxScoped::ChangeName(const std::string& name)
+{
+   Debug::ft("CxxScoped.ChangeName");
+
+   Rename(name);
+
+   auto& xref = Xref();
+
+   for(auto r = xref.begin(); r != xref.end(); ++r)
+   {
+      (*r)->Rename(name);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1069,7 +1156,6 @@ Enum::~Enum()
    Debug::ftnt("Enum.dtor");
 
    GetFile()->EraseEnum(this);
-   GetArea()->EraseEnum(this);
    if(!name_.empty()) Singleton< CxxSymbols >::Extant()->EraseEnum(this);
    CxxStats::Decr(CxxStats::ENUM_DECL);
 }
@@ -1160,6 +1246,16 @@ void Enum::CheckAccessControl() const
       Log(ItemCouldBeProtected);
       return;
    }
+}
+
+//------------------------------------------------------------------------------
+
+void Enum::Delete()
+{
+   Debug::ftnt("Enum.Delete");
+
+   GetArea()->EraseEnum(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -1337,6 +1433,31 @@ bool Enum::IsUnused() const
 
 //------------------------------------------------------------------------------
 
+CxxToken* Enum::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
+   {
+      item = (*e)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+void Enum::Rename(const string& name)
+{
+   Debug::ft("Enum.Rename");
+
+   name_ = name;
+}
+
+//------------------------------------------------------------------------------
+
 void Enum::SetAlignment(AlignAsPtr& align)
 {
    Debug::ft("Enum.SetAlignment");
@@ -1413,7 +1534,6 @@ Enumerator::~Enumerator()
 {
    Debug::ftnt("Enumerator.dtor");
 
-   enum_->EraseEnumerator(this);
    Singleton< CxxSymbols >::Extant()->EraseEtor(this);
    CxxStats::Decr(CxxStats::ENUM_MEM);
 }
@@ -1447,6 +1567,16 @@ bool Enumerator::CheckIfUnused(Warning warning) const
    if(enum_->IsUnused()) return false;
    Log(warning);
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+void Enumerator::Delete()
+{
+   Debug::ftnt("Enumerator.Delete");
+
+   enum_->EraseEnumerator(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -1585,6 +1715,16 @@ void Enumerator::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* Enumerator::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (init_ != nullptr ? init_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 void Enumerator::RecordAccess(Cxx::Access access) const
 {
    Debug::ft("Enumerator.RecordAccess");
@@ -1679,7 +1819,6 @@ Forward::~Forward()
    Debug::ftnt("Forward.dtor");
 
    GetFile()->EraseForw(this);
-   GetArea()->EraseForw(this);
    Singleton< CxxSymbols >::Extant()->EraseForw(this);
    CxxStats::Decr(CxxStats::FORWARD_DECL);
 }
@@ -1715,6 +1854,16 @@ void Forward::Check() const
       Log(ForwardUnresolved);
       return;
    }
+}
+
+//------------------------------------------------------------------------------
+
+void Forward::Delete()
+{
+   Debug::ftnt("Forward.Delete");
+
+   GetArea()->EraseForw(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -1788,6 +1937,19 @@ bool Forward::GetSpan(size_t& begin, size_t& left, size_t& end) const
    Debug::ft("Forward.GetSpan");
 
    return GetSemiSpan(begin, end);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* Forward::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = name_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (parms_ != nullptr ? parms_->PosToItem(pos) : nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1889,7 +2051,6 @@ Friend::~Friend()
 {
    Debug::ftnt("Friend.dtor");
 
-   static_cast< Class* >(grantor_)->EraseFriend(this);
    Singleton< CxxSymbols >::Extant()->EraseFriend(this);
    CxxStats::Decr(CxxStats::FRIEND_DECL);
 }
@@ -1947,6 +2108,16 @@ void Friend::Check() const
 
       Log(FriendUnused);
    }
+}
+
+//------------------------------------------------------------------------------
+
+void Friend::Delete()
+{
+   Debug::ftnt("Friend.Delete");
+
+   static_cast< Class* >(grantor_)->EraseFriend(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -2300,6 +2471,22 @@ const string& Friend::Name() const
 
 //------------------------------------------------------------------------------
 
+CxxToken* Friend::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(name_ != nullptr) item = name_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(parms_ != nullptr) item = parms_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (func_ != nullptr ? func_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 string Friend::QualifiedName(bool scopes, bool templates) const
 {
    auto func = GetFunction();
@@ -2527,6 +2714,17 @@ void MemberInit::Check() const
 
 //------------------------------------------------------------------------------
 
+void MemberInit::Delete()
+{
+   Debug::ft("MemberInit.Delete");
+
+   auto func = static_cast< Function* >(GetScope());
+   if(func != nullptr) func->EraseMemberInit(this);
+   delete this;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name MemberInit_EnterBlock = "MemberInit.EnterBlock";
 
 void MemberInit::EnterBlock()
@@ -2577,6 +2775,16 @@ bool MemberInit::GetSpan(size_t& begin, size_t& left, size_t& end) const
 void MemberInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    init_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* MemberInit::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return init_->PosToItem(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -2700,6 +2908,19 @@ void TemplateParm::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    if(type_ != nullptr) type_->GetUsages(file, symbols);
    if(default_ != nullptr) default_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* TemplateParm::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   if(type_ != nullptr) item = type_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (default_ != nullptr ? default_->PosToItem(pos) : nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -2870,6 +3091,22 @@ void TemplateParms::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* TemplateParms::PosToItem(size_t pos) const
+{
+   auto item = CxxToken::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      item = (*p)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 void TemplateParms::Print(ostream& stream, const Flags& options) const
 {
    stream << TEMPLATE_STR << '<';
@@ -3029,7 +3266,6 @@ Typedef::~Typedef()
    Debug::ftnt("Typedef.dtor");
 
    GetFile()->EraseType(this);
-   GetArea()->EraseType(this);
    Singleton< CxxSymbols >::Extant()->EraseType(this);
    CxxStats::Decr(CxxStats::TYPE_DECL);
 }
@@ -3064,6 +3300,16 @@ void Typedef::CheckPointerType() const
    Debug::ft("Typedef.CheckPointerType");
 
    if(spec_->Ptrs(false) > 0) Log(PointerTypedef);
+}
+
+//------------------------------------------------------------------------------
+
+void Typedef::Delete()
+{
+   Debug::ftnt("Typedef.Delete");
+
+   GetArea()->EraseType(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -3209,6 +3455,16 @@ void Typedef::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+CxxToken* Typedef::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return spec_->PosToItem(pos);
+}
+
+//------------------------------------------------------------------------------
+
 void Typedef::Print(ostream& stream, const Flags& options) const
 {
    if(using_)
@@ -3304,7 +3560,6 @@ Using::~Using()
    Debug::ft("Using.dtor");
 
    GetFile()->EraseUsing(this);
-   GetArea()->EraseUsing(this);
    CxxStats::Decr(CxxStats::USING_DECL);
 }
 
@@ -3332,6 +3587,16 @@ void Using::Check() const
    {
       Log(UsingInHeader);
    }
+}
+
+//------------------------------------------------------------------------------
+
+void Using::Delete()
+{
+   Debug::ft("Using.Delete");
+
+   GetArea()->EraseUsing(this);
+   delete this;
 }
 
 //------------------------------------------------------------------------------
@@ -3447,6 +3712,16 @@ bool Using::IsUsingFor
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* Using::PosToItem(size_t pos) const
+{
+   auto item = CxxScoped::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return name_->PosToItem(pos);
 }
 
 //------------------------------------------------------------------------------

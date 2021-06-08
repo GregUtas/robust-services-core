@@ -32,8 +32,8 @@
 #include <vector>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
+#include "CxxScoped.h"
 #include "CxxString.h"
-#include "LibraryItem.h"
 #include "LibraryTypes.h"
 #include "NbTypes.h"
 #include "SysTypes.h"

@@ -69,7 +69,7 @@ enum LeftBraceRole
 enum IndentRule
 {
    IndentStandard,     // standard rules
-   IndentContinue,     // numeric/character/string literal
+   IndentLiteral,     // numeric/character/string literal
    IndentArea,         // class/struct/union
    IndentCase,         // case label
    IndentConditional,  // do/for/if/while
@@ -89,7 +89,7 @@ IndentRule ClassifyIndent(string& id)
    switch(id.front())
    {
    case '$':
-      return IndentContinue;
+      return IndentLiteral;
    case '#':
       return IndentDirective;
    case 'c':
@@ -524,7 +524,7 @@ void Lexer::CalcDepths()
                }
                break;
 
-            case IndentContinue:
+            case IndentLiteral:
                //
                //  We have already advanced to the next parse position.
                //  Literals in a brace initialization arrive here, so
@@ -1352,7 +1352,7 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Lexer::FindCode(OptionalCode* opt, bool compile)
+void Lexer::FindCode(const OptionalCode* opt, bool compile)
 {
    Debug::ft("Lexer.FindCode");
 

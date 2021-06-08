@@ -128,18 +128,31 @@ public:
 
    //  Returns the file's code items.
    //
+   const IncludePtrVector& Includes() const { return incls_; }
    const ClassVector* Classes() const { return &classes_; }
    const DataVector* Datas() const { return &data_; }
    const EnumVector* Enums() const { return &enums_; }
    const FunctionVector* Funcs() const { return &funcs_; }
    const TypedefVector* Types() const { return &types_; }
 
-   //  Adds the item to those defined in this file.
+   //  Adds an #include to the file during preprocessing.
    //
    void InsertInclude(IncludePtr& incl);
-   Include* InsertInclude(const std::string& fn);
+
+   //  Adds an #include to the file's list of C++ items when it is
+   //  found at POS during parsing.  FN is the #include's file name.
+   //
+   Include* InsertInclude(size_t pos, const std::string& fn);
+
+   //  Adds an #include to the file during editing.  POS specifies
+   //  where the editor inserted the #include.
+   //
+   void InsertInclude(IncludePtr& incl, size_t pos);
+
+   //  Adds the item to those defined in this file.
+   //
    bool InsertDirective(DirectivePtr& dir);
-   void InsertSpace(SpaceDefnPtr& space);
+   void InsertSpace(SpaceDefn* space);
    void InsertClass(Class* cls);
    void InsertData(Data* data);
    void InsertEnum(Enum* item);
@@ -155,11 +168,11 @@ public:
    //
    void EraseInclude(const Include* incl);
    void EraseSpace(const SpaceDefn* space);
-   void EraseClass(Class* cls);
-   void EraseData(Data* data);
+   void EraseClass(const Class* cls);
+   void EraseData(const Data* data);
    void EraseEnum(const Enum* item);
    void EraseForw(const Forward* forw);
-   void EraseFunc(Function* func);
+   void EraseFunc(const Function* func);
    void EraseType(const Typedef* type);
    void EraseUsing(const Using* use);
 
@@ -190,20 +203,6 @@ public:
    //  if the file is not a header file.
    //
    std::string MakeGuardName() const;
-
-   //  Returns the group to which the file specified by FILE, FN, or
-   //  INCL belongs:
-   //    group 1: an external file in declSet_
-   //    group 2: an internal file in declSet_
-   //    group 3: an external file in baseSet_
-   //    group 4: an internal file in baseSet_
-   //    group 5: an external file (one in angle brackets)
-   //    group 6: an internal file (one in quotes)
-   //  Returns 0 if an error occurred.
-   //
-   size_t CalcGroup(CodeFile* file) const;
-   size_t CalcGroup(const std::string& fn) const;
-   size_t CalcGroup(const Include& incl) const;
 
    //  Reads the file into code_ and preprocesses it.
    //
@@ -287,11 +286,23 @@ public:
    //
    void GetUsageInfo(CxxUsageSets& symbols) const;
 
+   //  Determines the group to which INCL belongs for sorting purposes.
+   //
+   IncludeGroup CalcGroup(const Include& incl) const;
+
+   //  Sorts the file's #include directives.
+   //
+   void SortIncludes();
+
    //  Invoked to update the position of items when a file has been edited.
    //  Has the same interface as CxxToken::UpdatePos.
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from = string::npos);
+
+   //  Returns the item, if any, located at POS in the file.
+   //
+   CxxToken* PosToItem(size_t pos) const;
 
    //  Shrinks containers.
    //
@@ -551,7 +562,7 @@ private:
    UsingVector usings_;
    ForwardVector forws_;
    MacroVector macros_;
-   SpaceDefnPtrVector spaces_;
+   SpaceDefnVector spaces_;
    ClassVector classes_;
    EnumVector enums_;
    TypedefVector types_;

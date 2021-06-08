@@ -45,6 +45,14 @@ class CxxNamed : public CxxToken
 {
 public:
    //  Virtual to allow subclassing.
+   //    Items can be deleted when the parser backs up or when code is edited.
+   //  Destructors are written assuming that items are deleted in the reverse
+   //  order of how they would be encountered in code.  References to an item
+   //  must therefore be deleted first, followed by any distinct definition,
+   //  and finally the declaration.  Definitions and declarations erase their
+   //  entries in the file or scope where they appear, and declarations also
+   //  erase themselves from the symbol table.  An item that refers to another
+   //  one erases itself from its referent's cross reference.
    //
    virtual ~CxxNamed();
 
@@ -282,11 +290,6 @@ private:
    //
    virtual bool ResolveForward
       (CxxScoped* decl, size_t n) const { return false; }
-
-   //  Checks for a redundant scope name in a qualified name.
-   //
-   void CheckForRedundantScope
-      (const CxxScope* scope, const QualName* qname) const;
 };
 
 //  For sorting items by GetFile() and GetPos().
@@ -316,6 +319,10 @@ public:
    //
    TypeName(const TypeName& that);
 
+   //  Sets the qualified name in which the name appears.
+   //
+   void SetQualName(QualName* qname) { qname_ = qname; }
+
    //  In a qualified name, adds TYPE as the name that follows this one.
    //  A scope resolution operator separates the two names.
    //
@@ -325,9 +332,9 @@ public:
    //
    TypeName* Next() const { return next_.get(); }
 
-   //  Invoked if a scope resolution operator preceded the name.
+   //  Specifies whether a scope resolution operator precedes the name.
    //
-   void SetScoped() { scoped_ = true; }
+   void SetScoped(bool scoped) { scoped_ = scoped; }
 
    //  Returns true if the name was preceded by a scope resolution operator.
    //
@@ -361,7 +368,7 @@ public:
    //
    void SetUserType(TypeSpecUser user) const;
 
-   //  Makes each template argument a template parameter.
+   //  Sets the role for each template argument.
    //
    void SetTemplateRole(TemplateRole role) const;
 
@@ -369,6 +376,10 @@ public:
    //  actually template parameters in SCOPE.
    //
    bool HasTemplateParmFor(const CxxScope* scope) const;
+
+   //  Returns true if any template argument is a template paramter.
+   //
+   bool ContainsTemplateParameter() const;
 
    //  Invoked when instantiating the template specified by the arguments.
    //  Invokes Instantiating on each template argument.
@@ -429,6 +440,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to support the deletion of a redundant scope.
+   //
+   void Delete() override;
+
    //  Overridden to return type_ if it exists, else ref_.
    //
    CxxScoped* DirectType() const override;
@@ -459,6 +474,10 @@ public:
    //
    const std::string& Name() const override { return name_; }
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to display the name.
    //
    void Print
@@ -472,6 +491,10 @@ public:
    //
    CxxScoped* Referent() const override { return ref_; }
 
+   //  Overridden to support renaming the referent.
+   //
+   void Rename(const std::string& name) override;
+
    //  Overridden to record and resolve the typedef.
    //
    bool ResolveTypedef(Typedef* type, size_t n) const override;
@@ -483,6 +506,10 @@ public:
    //  Overridden to shrink containers.
    //
    void Shrink() override;
+
+   //  Overridden to reveal that this is part of a qualified name.
+   //
+   Cxx::ItemType Type() const override { return Cxx::TypeName; }
 
    //  Overridden to return the full type for template arguments.  Note that
    //  the name itself is omitted.
@@ -501,6 +528,10 @@ private:
    //  The name that appears in what could be a qualified name.
    //
    std::string name_;
+
+   //  A pointer to the qualified name, if any, in which the name appears.
+   //
+   QualName* qname_;
 
    //  Any template arguments if the name is that of a template.
    //
@@ -553,9 +584,9 @@ private:
 class QualName : public CxxNamed
 {
 public:
-   //  Creates a name that begins with TYPE.
+   //  Creates a name that begins with NAME.
    //
-   explicit QualName(TypeNamePtr& type);
+   explicit QualName(TypeNamePtr& name);
 
    //  Creates a name that begins with NAME.
    //
@@ -569,10 +600,15 @@ public:
    //
    QualName(const QualName& that);
 
-   //  Adds TYPE to the name.  In a qualified name, TYPE is preceded by a
+   //  Adds NAME to the name.  In a qualified name, NAME is preceded by a
    //  scope resolution operator.
    //
-   void PushBack(TypeNamePtr& type);
+   void PushBack(TypeNamePtr& name);
+
+   //  Removes NAME from the qualified name when NAME is being deleted.
+   //  NEXT is the name that follows NAME.
+   //
+   void EraseName(const TypeName* name, TypeNamePtr& next);
 
    //  Marks a data item's name used to initialize it at file scope.
    //
@@ -644,6 +680,10 @@ public:
    //
    bool ItemIsTemplateArg(const CxxNamed* item) const;
 
+   //  Returns true if the name contains a template paramter.
+   //
+   bool ContainsTemplateParameter() const;
+
    //  Adds the name and any template arguments to NAMES.
    //
    void GetNames(stringVector& names) const;
@@ -652,6 +692,10 @@ public:
    //
    bool CheckCtorDefn() const;
 
+   //  Prefixes NAME, which refers to NS, as the scope for the name.
+   //
+   void AddScope(const std::string& name, Namespace* ns);
+
    //  Overridden to add the name's components to cross-references.
    //
    void AddToXref(bool insert) override;
@@ -659,6 +703,10 @@ public:
    //  Overridden to check each name and any template parameters.
    //
    void Check() const override;
+
+   //  Checks for a redundant scope name.
+   //
+   void CheckForRedundantScope() const;
 
    //  Overridden to propagate the context to each name.
    //
@@ -706,6 +754,10 @@ public:
    //
    const std::string& Name() const override { return Last()->Name(); }
 
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
+
    //  Overridden to display the name, including any template arguments.
    //
    void Print
@@ -718,6 +770,10 @@ public:
    //  Overridden to return the referent of the last name.
    //
    CxxScoped* Referent() const override;
+
+   //  Overridden to support changing the last name.
+   //
+   void Rename(const std::string& name) override;
 
    //  Overridden to forward to the Nth name.
    //
@@ -969,6 +1025,10 @@ public:
    //
    TemplateRole GetTemplateRole() const { return role_; }
 
+   //  Returns true if the type contains a template paramter.
+   //
+   virtual bool ContainsTemplateParameter() const;
+
    //  Returns the function signature for a function type.
    //
    virtual Function* GetFuncSpec() const { return nullptr; }
@@ -1209,6 +1269,10 @@ private:
    //
    TypeSpec* Clone() const override;
 
+   //  Returns true if the type contains a template paramter.
+   //
+   bool ContainsTemplateParameter() const override;
+
    //  Overridden to propagate the context to the type's qualified name.
    //
    void CopyContext(const CxxToken* that, bool internal) override;
@@ -1357,6 +1421,10 @@ private:
    //
    bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
       CodeFile* file, size_t& index) const override;
+
+   //  Overridden to find the item located at POS.
+   //
+   CxxToken* PosToItem(size_t pos) const override;
 
    //  Overridden to display the type.
    //
@@ -1508,6 +1576,7 @@ public:
    void EnterBlock() override;
    bool EnterScope() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;

@@ -41,7 +41,7 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxString.h"
-#include "CxxToken.h"
+#include "CxxVector.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -501,33 +501,21 @@ const LibItemSet& CodeFile::Affecters()
 
 //------------------------------------------------------------------------------
 
-size_t CodeFile::CalcGroup(CodeFile* file) const
-{
-   Debug::ft("CodeFile.CalcGroup(file)");
-
-   if(file == nullptr) return 0;
-   auto ext = file->IsSubsFile();
-   if(declSet_.find(file) != declSet_.cend()) return (ext ? 1 : 2);
-   if(baseSet_.find(file) != baseSet_.cend()) return (ext ? 3 : 4);
-   return (ext ? 5 : 6);
-}
-
-//------------------------------------------------------------------------------
-
-size_t CodeFile::CalcGroup(const string& fn) const
-{
-   Debug::ft("CodeFile.CalcGroup(fn)");
-
-   return CalcGroup(Singleton< Library >::Instance()->FindFile(fn));
-}
-
-//------------------------------------------------------------------------------
-
-size_t CodeFile::CalcGroup(const Include& incl) const
+IncludeGroup CodeFile::CalcGroup(const Include& incl) const
 {
    Debug::ft("CodeFile.CalcGroup(incl)");
 
-   return CalcGroup(incl.FindFile());
+   //  An IncludeGroup can only be determined after declSet_ and baseSet_
+   //  are known, which means that the file must have been parsed.
+   //
+   if(parsed_ != Passed) return Ungrouped;
+
+   auto file = incl.FindFile();
+   if(file == nullptr) return Ungrouped;
+   auto ext = incl.IsExternal();
+   if(declSet_.find(file) != declSet_.cend()) return (ext ? ExtDecl : IntDecl);
+   if(baseSet_.find(file) != baseSet_.cend()) return (ext ? ExtBase : IntBase);
+   return (ext ? ExtUses : IntUses);
 }
 
 //------------------------------------------------------------------------------
@@ -827,49 +815,32 @@ void CodeFile::CheckIncludeOrder() const
 {
    Debug::ft("CodeFile.CheckIncludeOrder");
 
-   //  The desired order for #include directives is
-   //    1. files in declSet_ or baseSet_
-   //    2. external files
-   //    3. internal files
-   //  with each group in alphabetical order.  External and internal files are
-   //  distinguished by whether they appear in angle brackets or quotes, but it
-   //  is necessary to identify the file associated with each #include directive
-   //  to determine which belong to group 1.  Directives in this group are also
-   //  tagged so that the Editor can sort them.
+   //  Determine the group for each #include and then see if they appear in
+   //  sort order.  Also look for duplicates.
    //
-   auto i1 = incls_.cbegin();
-   if(i1 == incls_.cend()) return;
-   auto group1 = CalcGroup(**i1);
-   auto name1 = &(*i1)->Name();
-
-   for(auto i2 = std::next(i1); i2 != incls_.cend(); ++i2)
+   for(auto i = incls_.begin(); i != incls_.end(); ++i)
    {
-      auto group2 = CalcGroup(**i2);
-      auto name2 = &(*i2)->Name();
+      (*i)->CalcGroup();
+   }
 
-      //  After the first #include, they should be sorted by group,
-      //  and alphabetically within each group.
-      //
-      if(group1 > group2)
+   for(auto curr = incls_.begin(); curr != incls_.end(); ++curr)
+   {
+      auto next = std::next(curr);
+      if(next == incls_.end()) return;
+
+      if(!IncludesAreSorted(*curr, *next))
       {
-         (*i2)->Log(IncludeNotSorted);
-      }
-      else if(group1 == group2)
-      {
-         if(strCompare(*name1, *name2) > 0)
-            (*i2)->Log(IncludeNotSorted);
+         (*curr)->Log(IncludeNotSorted);
       }
 
-      //  Look for a duplicated #include.
-      //
-      for(auto i3 = i2; i3 != incls_.cend(); ++i3)
+      for(NO_OP; next != incls_.end(); ++next)
       {
-         if(*name1 == (*i3)->Name())
-            (*i3)->Log(IncludeDuplicated);
+         if((*curr)->Name() == (*next)->Name())
+         {
+            (*next)->Log(IncludeDuplicated);
+            break;
+         }
       }
-
-      group1 = group2;
-      name1 = name2;
    }
 }
 
@@ -1072,17 +1043,17 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
    if(opts.find(CanonicalFileView) != string::npos)
    {
       stream << '{' << CRLF;
-      DisplayObjects(incls_, stream, lead, options);
-      DisplayObjects(macros_, stream, lead, options);
-      DisplayObjects(asserts_, stream, lead, options);
-      DisplayObjects(forws_, stream, lead, options);
-      DisplayObjects(usings_, stream, lead, options);
-      DisplayObjects(enums_, stream, lead, options);
-      DisplayObjects(types_, stream, lead, options);
-      DisplayObjects(funcs_, stream, lead, options);
-      DisplayObjects(assembly_, stream, lead, options);
-      DisplayObjects(data_, stream, lead, options);
-      DisplayObjects(classes_, stream, lead, options);
+      SortAndDisplayItemPtrs(incls_, stream, lead, options, false);
+      SortAndDisplayItems(macros_, stream, lead, options, false);
+      SortAndDisplayItems(asserts_, stream, lead, options, false);
+      SortAndDisplayItems(forws_, stream, lead, options, false);
+      SortAndDisplayItems(usings_, stream, lead, options, false);
+      SortAndDisplayItems(enums_, stream, lead, options, false);
+      SortAndDisplayItems(types_, stream, lead, options, false);
+      SortAndDisplayItems(funcs_, stream, lead, options, false);
+      SortAndDisplayItems(assembly_, stream, lead, options, false);
+      SortAndDisplayItems(data_, stream, lead, options, false);
+      SortAndDisplayItems(classes_, stream, lead, options, false);
       stream << '}' << CRLF;
    }
 
@@ -1099,7 +1070,7 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::EraseClass(Class* cls)
+void CodeFile::EraseClass(const Class* cls)
 {
    CodeTools::EraseItem(classes_, cls);
    EraseItem(cls);
@@ -1107,7 +1078,7 @@ void CodeFile::EraseClass(Class* cls)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::EraseData(Data* data)
+void CodeFile::EraseData(const Data* data)
 {
    CodeTools::EraseItem(data_, data);
    EraseItem(data);
@@ -1131,7 +1102,7 @@ void CodeFile::EraseForw(const Forward* forw)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::EraseFunc(Function* func)
+void CodeFile::EraseFunc(const Function* func)
 {
    CodeTools::EraseItem(funcs_, func);
    EraseItem(func);
@@ -1141,8 +1112,9 @@ void CodeFile::EraseFunc(Function* func)
 
 void CodeFile::EraseInclude(const Include* incl)
 {
-   //* This should update this file's inclSet_, trimSet_, affecterSet_, and
-   //  the userSet_ of the file no longer #included.
+   //* Unless INCL is a redundant #include, this should update this file's
+   //  inclSet_, trimSet_, affecterSet_, and the userSet_ of the file no
+   //  longer #included.
    //
    EraseItemPtr(incls_, incl);
    EraseItem(incl);
@@ -1181,7 +1153,7 @@ void CodeFile::EraseItem(const CxxNamed* item)
 
 void CodeFile::EraseSpace(const SpaceDefn* space)
 {
-   EraseItemPtr(spaces_, space);
+   CodeTools::EraseItem(spaces_, space);
    EraseItem(space);
 }
 
@@ -1282,7 +1254,7 @@ SpaceDefn* CodeFile::FindNamespaceDefn(const CxxToken* item) const
 
    for(auto s = spaces_.cbegin(); s != spaces_.cend(); ++s)
    {
-      if((*s)->GetPos() < pos) ns = s->get();
+      if((*s)->GetPos() < pos) ns = *s;
    }
 
    return ns;
@@ -1708,13 +1680,13 @@ void CodeFile::InsertInclude(IncludePtr& incl)
 
 fn_name CodeFile_InsertInclude = "CodeFile.InsertInclude(fn)";
 
-Include* CodeFile::InsertInclude(const string& fn)
+Include* CodeFile::InsertInclude(size_t pos, const string& fn)
 {
    Debug::ft(CodeFile_InsertInclude);
 
    for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
    {
-      if((*i)->Name() == fn)
+      if(((*i)->GetPos() == pos) && ((*i)->Name() == fn))
       {
          InsertItem(i->get());
          return i->get();
@@ -1723,6 +1695,21 @@ Include* CodeFile::InsertInclude(const string& fn)
 
    Context::SwLog(CodeFile_InsertInclude, fn, 0);
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::InsertInclude(IncludePtr& incl, size_t pos)
+{
+   Debug::ft("CodeFile.InsertInclude(pos)");
+
+   //  Set the new Include's position and add it to our sets.
+   //* This should also update this file's inclSet_, trimSet_, affecterSet_,
+   //  and the userSet_ of the file no longer #included.
+   //
+   incl->SetContext(this, pos);
+   InsertItem(incl.get());
+   incls_.push_back(std::move(incl));
 }
 
 //------------------------------------------------------------------------------
@@ -1758,10 +1745,10 @@ void CodeFile::InsertMacro(Macro* macro)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::InsertSpace(SpaceDefnPtr& space)
+void CodeFile::InsertSpace(SpaceDefn* space)
 {
-   InsertItem(space.get());
-   spaces_.push_back(std::move(space));
+   InsertItem(space);
+   spaces_.push_back(space);
 }
 
 //------------------------------------------------------------------------------
@@ -2097,6 +2084,19 @@ string CodeFile::Path(bool full) const
    }
 
    return name;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* CodeFile::PosToItem(size_t pos) const
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      auto item = (*i)->PosToItem(pos);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -2437,6 +2437,15 @@ void CodeFile::Shrink()
    size += asserts_.capacity() * sizeof(StaticAssert*);
    size += usages_.size() * 3 * sizeof(CxxNamed*);
    CxxStats::Vectors(CxxStats::CODE_FILE, size);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::SortIncludes()
+{
+   Debug::ft("CodeFile.SortIncludes");
+
+   std::sort(incls_.begin(), incls_.end(), IncludesAreSorted);
 }
 
 //------------------------------------------------------------------------------

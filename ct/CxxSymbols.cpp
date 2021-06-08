@@ -33,7 +33,6 @@
 #include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
-#include "CxxScoped.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"

@@ -3493,12 +3493,20 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
 
    stream << '(';
 
-   auto defn = GetDefn();
+   auto args = &args_;
 
-   for(size_t i = (this_ ? 1 : 0); i < defn->args_.size(); ++i)
+   if(options.test(DispNS))
    {
-      defn->args_[i]->Print(stream, options);
-      if(i != defn->args_.size() - 1) stream << ", ";
+      //  In namespace view, the definition will follow, so display
+      //  the arguments as they appear in the definition.
+      //
+      args = &GetDefn()->args_;
+   }
+
+   for(size_t i = (this_ ? 1 : 0); i < args->size(); ++i)
+   {
+      (*args)[i]->Print(stream, options);
+      if(i != args->size() - 1) stream << ", ";
    }
 
    stream << ')';

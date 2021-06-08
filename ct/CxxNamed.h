@@ -462,6 +462,10 @@ public:
    //
    void GetDirectTemplateArgs(CxxUsageSets& symbols) const override;
 
+   //  Overridden to return the type's qualified name.
+   //
+   QualName* GetQualName() const override { return qname_; }
+
    //  Overridden to return this item if it has template arguments.
    //
    TypeName* GetTemplateArgs() const override;
@@ -692,9 +696,9 @@ public:
    //
    bool CheckCtorDefn() const;
 
-   //  Prefixes NAME, which refers to NS, as the scope for the name.
+   //  Adds NAME, which refers to NS, as the scope for the name.
    //
-   void AddScope(const std::string& name, Namespace* ns);
+   void AddPrefix(const std::string& name, Namespace* ns);
 
    //  Overridden to add the name's components to cross-references.
    //

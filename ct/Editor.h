@@ -291,15 +291,6 @@ private:
    //
    word SortIncludes();
 
-   //  Inserts an INCLUDE directive.
-   //
-   word InsertInclude(string& include);
-
-   //  Searches for INCL starting at POS.  If it is found, it is erased and its
-   //  position is returned.  Returns string::npos is INCL is not found.
-   //
-   size_t FindAndCutInclude(size_t pos, const string& incl);
-
    //  Invoked after removing a forward declaration at POS.  NS is the namespace
    //  that contained the declaration.  If it no longer contains any items, it
    //  is erased.
@@ -324,10 +315,6 @@ private:
    //  Returns the items within ITEM that were accessed via a using statement.
    //
    CxxNamedSet FindUsingReferents(CxxToken* item) const;
-
-   //  Qualifies names used within ITEM in order to remove using statements.
-   //
-   void QualifyUsings(CxxToken* item);
 
    //  Within ITEM, qualifies occurrences of REF.
    //

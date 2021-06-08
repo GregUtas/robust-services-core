@@ -343,7 +343,7 @@ public:
    //  the same position as their first component, which would then be masked.
    //  Masking does occur, however, with QualName (which masks its first
    //  TypeName), Expr (which can also mask a TypeName) and DataSpec (which
-   //  masks its QualName).  Some items can only be found at the punctuation 
+   //  masks its QualName).  Some items can only be found at the punctuation
    //  associated with them:
    //  o ArraySpec: [
    //  o Block: {

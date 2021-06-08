@@ -128,6 +128,7 @@ public:
 
    //  Returns the file's code items.
    //
+   const std::list< CxxNamed* > Items() const { return items_; }
    const IncludePtrVector& Includes() const { return incls_; }
    const ClassVector* Classes() const { return &classes_; }
    const DataVector* Datas() const { return &data_; }

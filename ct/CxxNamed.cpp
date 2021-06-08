@@ -2017,16 +2017,18 @@ QualName::~QualName()
 
 //------------------------------------------------------------------------------
 
-void QualName::AddScope(const string& name, Namespace* ns)
+void QualName::AddPrefix(const string& name, Namespace* ns)
 {
-   Debug::ft("QualName.AddScope");
+   Debug::ft("QualName.AddPrefix");
 
    auto scope = name;
-   TypeNamePtr first(new TypeName(scope));
-   first->SetQualName(this);
-   first->PushBack(std::move(first_));
-   first_ = std::move(first);
-   first_->SetReferent(ns, nullptr);
+   TypeNamePtr prefix(new TypeName(scope));
+
+   first_->SetScoped(true);
+   prefix->SetQualName(this);
+   prefix->PushBack(std::move(first_));
+   prefix->SetReferent(ns, nullptr);
+   first_ = std::move(prefix);
 }
 
 //------------------------------------------------------------------------------

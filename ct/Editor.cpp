@@ -27,6 +27,7 @@
 #include <cstring>
 #include <iosfwd>
 #include <iterator>
+#include <list>
 #include <sstream>
 #include "CliThread.h"
 #include "CodeCoverage.h"
@@ -1937,6 +1938,39 @@ word Editor::EraseArgument(const Function* func, word offset)
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_EraseAssignment = "Editor.EraseAssignment";
+
+word Editor::EraseAssignment(const CxxToken* item)
+{
+   Debug::ft(Editor_EraseAssignment);
+
+   //  ITEM should be a TypeName or QualName at the beginning of an
+   //  assignment statement or a constructor's member initialization.
+   //
+   switch(item->Type())
+   {
+   case Cxx::QualName:
+   case Cxx::TypeName:
+   case Cxx::MemberInit:
+      break;
+   default:
+      Debug::SwLog(Editor_EraseAssignment, strClass(item, false), 0);
+      return EditFailed;
+   }
+
+   auto statement = item->GetFile()->PosToItem(item->GetPos());
+   string code;
+
+   if(CutCode(item, code) == string::npos) return EditFailed;
+   if(statement != nullptr)
+      statement->Delete();
+   else
+      const_cast< CxxToken* >(item)->Delete();
+   return Changed();
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::EraseBlankLine(const CodeWarning& log)
 {
    Debug::ft("Editor.EraseBlankLine");
@@ -2220,39 +2254,6 @@ word Editor::EraseSemicolon(const CodeWarning& log)
    if(source_[brace] != '}') return NotFound("Right brace");
    Erase(semi, 1);
    return Changed(semi);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_EraseAssignment = "Editor.EraseAssignment";
-
-word Editor::EraseAssignment(const CxxToken* item)
-{
-   Debug::ft(Editor_EraseAssignment);
-
-   //  ITEM should be a TypeName or QualName at the beginning of an
-   //  assignment statement or a constructor's member initialization.
-   //
-   switch(item->Type())
-   {
-   case Cxx::QualName:
-   case Cxx::TypeName:
-   case Cxx::MemberInit:
-      break;
-   default:
-      Debug::SwLog(Editor_EraseAssignment, strClass(item, false), 0);
-      return EditFailed;
-   }
-
-   auto statement = item->GetFile()->PosToItem(item->GetPos());
-   string code;
-
-   if(CutCode(item, code) == string::npos) return EditFailed;
-   if(statement != nullptr)
-      statement->Delete();
-   else
-      const_cast< CxxToken* >(item)->Delete();
-   return Changed();
 }
 
 //------------------------------------------------------------------------------
@@ -4394,7 +4395,8 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
       }
    }
 
-   auto qual = ns->ScopedName(false) + SCOPE_STR;
+   auto nsName = ns->ScopedName(false);
+   auto nsCode = nsName + SCOPE_STR;
    size_t pos, end;
    if(!item->GetSpan2(pos, end)) return;
    string name;
@@ -4408,34 +4410,17 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
          if(source_.rfind(SCOPE_STR, pos) != (pos - strlen(SCOPE_STR)))
          {
             auto item = file_->PosToItem(pos);
-            if((item != nullptr) && (item->Type() == Cxx::QualName))
-               static_cast< QualName* >(item)->AddScope(name, ns);
-            else
-               Debug::noop(0);
-
-            Insert(pos, qual);
+            auto qname = (item != nullptr ? item->GetQualName() : nullptr);
+            if(qname != nullptr) qname->AddPrefix(nsName, ns);
+            Insert(pos, nsCode);
             Changed();
-            pos = NextPos(pos + qual.size());
+            pos = NextPos(pos + nsCode.size());
          }
       }
 
       //  Look for the next name after the current one.
       //
       pos = NextPos(pos + name.size());
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void Editor::QualifyUsings(CxxToken* item)
-{
-   Debug::ft("Editor.QualifyUsings");
-
-   auto refs = FindUsingReferents(item);
-
-   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
-   {
-      QualifyReferent(item, *r);
    }
 }
 
@@ -4850,44 +4835,20 @@ word Editor::ResolveUsings()
 {
    Debug::ft("Editor.ResolveUsings");
 
-   //  This function only needs to be run once per file.
+   //  This function only needs to run once per file.
    //
    if(aliased_) return EditSucceeded;
 
-   //  Classes, data, functions, and typedefs can contain names resolved by
-   //  using statements.  Modify each of these so that using statements can
-   //  be removed.
-   //
-   auto classes = file_->Classes();
+   auto& items = file_->Items();
 
-   for(auto c = classes->cbegin(); c != classes->cend(); ++c)
+   for(auto item = items.begin(); item != items.end(); ++item)
    {
-      auto refs = FindUsingReferents(*c);
+      auto refs = FindUsingReferents(*item);
 
-      for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+      for(auto ref = refs.cbegin(); ref != refs.cend(); ++ref)
       {
-         QualifyReferent(*c, *r);
+         QualifyReferent(*item, *ref);
       }
-   }
-
-   //  Qualify names in non-class items at file scope.
-   //
-   auto data = file_->Datas();
-   for(auto d = data->cbegin(); d != data->cend(); ++d)
-   {
-      QualifyUsings(*d);
-   }
-
-   auto funcs = file_->Funcs();
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      QualifyUsings(*f);
-   }
-
-   auto types = file_->Types();
-   for(auto t = types->cbegin(); t != types->cend(); ++t)
-   {
-      QualifyUsings(*t);
    }
 
    aliased_ = true;

@@ -182,9 +182,14 @@ public:
    //
    static void ResetUsings();
 
-   //  Removes ITEM from the block's statements.
+   //  Removes ITEM from the block's statements when ITEM is being deleted.
    //
    void EraseItem(const CxxToken* item);
+
+   //  Replaces CURR with NEXT in the the block's statements when CURR is
+   //  being deleted.
+   //
+   void ReplaceItem(const CxxToken* curr, CxxToken* next);
 
    //  Overridden to add the block's components to cross-references.
    //

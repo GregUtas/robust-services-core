@@ -1602,7 +1602,7 @@ size_t Editor::CutCode(const CxxToken* item, string& code)
       //  Cut from the start of BEGIN's line unless other code precedes
       //  the item.
       //
-      begin = FindCutBegin(begin);
+      if(IsFirstNonBlank(begin)) begin = CurrBegin(begin);
    }
 
    //  When the cuts ends at a right brace, also cut a semicolon that
@@ -1616,7 +1616,10 @@ size_t Editor::CutCode(const CxxToken* item, string& code)
 
    //  Cut any comment or whitespace that follows on the last line.
    //
-   if(NoCodeFollows(end + 1)) end = CurrEnd(end);
+   if(NoCodeFollows(end + 1))
+      end = CurrEnd(end);
+   else
+      end = LineFindNonBlank(end + 1) - 1;
 
    //  If entire lines of code that aren't immediately followed by more code
    //  are being cut, also cut any comment that precedes the code, since it
@@ -2340,31 +2343,6 @@ size_t Editor::FindArgsEnd(const Function* func) const
    if(lpar == string::npos) return string::npos;
    auto rpar = FindClosing('(', ')', lpar + 1);
    return rpar;
-}
-
-//------------------------------------------------------------------------------
-
-size_t Editor::FindCutBegin(size_t pos) const
-{
-   Debug::ft("Editor.FindCutBegin");
-
-   //  Unless the line contains multiple items, cut starting at its beginning.
-   //  If there are multiple items, cut after the last delimiter before ITEM.
-   //  A scope resolution operator does not qualify as a delimiter.
-   //
-   size_t begin = CurrBegin(pos);
-
-   for(size_t next = begin; NO_OP; ++next)
-   {
-      next = source_.find_first_of(",(:;{}", next);
-      if(next >= pos) break;
-      if(CompareCode(next, SCOPE_STR) == 0)
-         ++next;
-      else
-         begin = next + 1;
-   }
-
-   return begin;
 }
 
 //------------------------------------------------------------------------------

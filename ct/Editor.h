@@ -502,12 +502,6 @@ private:
    //
    void InsertPatchDefn(const Class* cls, const FuncDefnAttrs& attrs);
 
-   //  Invoked when an item that starts at POS will be cut.  Returns the
-   //  first position on the same line that has no punctuation before POS.
-   //  Returns string::npos on failure.
-   //
-   size_t FindCutBegin(size_t pos) const;
-
    //  Returns true if a trailing comment starts at or after POS.
    //
    bool TrailingCommentFollows(size_t pos) const;

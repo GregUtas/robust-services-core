@@ -375,6 +375,23 @@ void Block::RemoveUsing(const Using* use)
 
 //------------------------------------------------------------------------------
 
+void Block::ReplaceItem(const CxxToken* curr, CxxToken* next)
+{
+   Debug::ft("Block.ReplaceItem");
+
+   for(auto s = statements_.begin(); s != statements_.end(); ++s)
+   {
+      if(s->get() == curr)
+      {
+         s->release();
+         *s = TokenPtr(next);
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Block::ResetUsings()
 {
    Debug::ft("Block.ResetUsings");
@@ -1793,31 +1810,42 @@ void FuncData::Delete()
 {
    Debug::ftnt("FuncData.Delete");
 
-   //  If this item occurs in a series declaration, extract it.  If it is
-   //  the only item, remove it from the statement where it appears.
-   //
    if(first_ == this)
    {
       if(next_ == nullptr)
       {
+         //  Delete this item, which appears alone.
+         //
          static_cast< Block* >(GetScope())->EraseItem(this);
       }
       else
       {
+         //  The item being deleted is the first in a series declaration.  The
+         //  next item becomes the first in the series.  Its TypeSpec, which was
+         //  cloned from this item, becomes the one for the series declaration,
+         //  and it becomes the first item in the data declaration statement.
+         //
          for(auto d = first_->next_.get(); d != nullptr; d = d->next_.get())
          {
             d->first_ = next_.get();
          }
+
+         auto spec = next_->GetTypeSpec();
+         spec->SetLoc(GetFile(), GetTypeSpec()->GetPos(), false);
+         static_cast< Block* >(GetScope())->ReplaceItem(this, next_.release());
       }
    }
    else
    {
+      //  Extract the item from the middle of a series declaration.
+      //
       for(auto d = first_; d != nullptr; d = d->next_.get())
       {
          if(d->next_.get() == this)
          {
             d->next_.release();
             d->next_ = std::move(next_);
+            break;
          }
       }
    }
@@ -1940,7 +1968,7 @@ bool FuncData::GetSpan(size_t& begin, size_t& left, size_t& end) const
       //  excludes the type.  Cut from the name to the following comma.
       //
       begin = pos;
-      end = lexer.FindFirstOf(",");
+      end = lexer.FindFirstOf(",", pos);
    }
    else
    {

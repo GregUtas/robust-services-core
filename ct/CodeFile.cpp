@@ -1112,12 +1112,19 @@ void CodeFile::EraseFunc(const Function* func)
 
 void CodeFile::EraseInclude(const Include* incl)
 {
-   //* Unless INCL is a redundant #include, this should update this file's
-   //  inclSet_, trimSet_, affecterSet_, and the userSet_ of the file no
-   //  longer #included.
-   //
+   Debug::ft("CodeFile.EraseInclude");
+
    EraseItemPtr(incls_, incl);
    EraseItem(incl);
+
+   //  Don't invoke IncludeRemoved if INCL was a redundant #include.
+   //
+   for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
+   {
+      if((*i)->Name() == incl->Name()) return;
+   }
+
+   IncludeRemoved(incl);
 }
 
 //------------------------------------------------------------------------------
@@ -1600,6 +1607,48 @@ const LibItemSet& CodeFile::Implementers()
 
 //------------------------------------------------------------------------------
 
+void CodeFile::IncludeAdded(const Include* incl, bool edit)
+{
+   Debug::ft("CodeFile.IncludeAdded");
+
+   auto used = incl->FindFile();
+   if(used == nullptr) return;
+
+   inclSet_.insert(used);
+   trimSet_.insert(used);
+   used->AddUser(this);
+
+   if(edit)
+   {
+      //  Recalculate the set of files that affect this one.
+      //
+      affecterSet_.clear();
+      Affecters();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::IncludeRemoved(const Include* incl)
+{
+   Debug::ft("CodeFile.IncludeRemoved");
+
+   auto used = incl->FindFile();
+   if(used == nullptr) return;
+
+   inclSet_.erase(used);
+   trimSet_.erase(used);
+   used->RemoveUser(this);
+
+   //  This is only invoked during edits, so recalculate the set of files
+   //  that affect this one.
+   //
+   affecterSet_.clear();
+   Affecters();
+}
+
+//------------------------------------------------------------------------------
+
 istreamPtr CodeFile::InputStream() const
 {
    Debug::ft("CodeFile.InputStream");
@@ -1673,7 +1722,9 @@ void CodeFile::InsertFunc(Function* func)
 
 void CodeFile::InsertInclude(IncludePtr& incl)
 {
+   auto iptr = incl.get();
    incls_.push_back(std::move(incl));
+   IncludeAdded(iptr, false);
 }
 
 //------------------------------------------------------------------------------
@@ -1703,13 +1754,11 @@ void CodeFile::InsertInclude(IncludePtr& incl, size_t pos)
 {
    Debug::ft("CodeFile.InsertInclude(pos)");
 
-   //  Set the new Include's position and add it to our sets.
-   //* This should also update this file's inclSet_, trimSet_, affecterSet_,
-   //  and the userSet_ of the file no longer #included.
-   //
+   auto iptr = incl.get();
    incl->SetContext(this, pos);
-   InsertItem(incl.get());
    incls_.push_back(std::move(incl));
+   InsertItem(iptr);
+   IncludeAdded(iptr, true);
 }
 
 //------------------------------------------------------------------------------
@@ -2319,6 +2368,15 @@ void CodeFile::RemoveInvalidIncludes(LibItemSet& addSet)
 
 //------------------------------------------------------------------------------
 
+void CodeFile::RemoveUser(CodeFile* file)
+{
+   Debug::ft("CodeFile.RemoveUser");
+
+   userSet_.erase(file);
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::SaveBaseSet(const CxxNamedSet& bases)
 {
    Debug::ft("CodeFile.SaveBaseSet");
@@ -2355,13 +2413,7 @@ void CodeFile::Scan()
       if(lexer_.GetIncludeFile(lexer_.GetLineStart(n), file, angle))
       {
          auto used = lib->EnsureFile(file);
-
-         if(used != nullptr)
-         {
-            inclSet_.insert(used);
-            trimSet_.insert(used);
-            used->AddUser(this);
-         }
+         if(used == nullptr) continue;
 
          IncludePtr incl(new Include(file, angle));
          incl->SetLoc(this, lexer_.GetLineStart(n), false);

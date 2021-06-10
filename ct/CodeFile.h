@@ -330,9 +330,22 @@ private:
    //
    void EraseItem(const CxxNamed* item);
 
+   //  Updates data when INCL's file is included.  EDIT is set when an edit
+   //  added the #include.
+   //
+   void IncludeAdded(const Include* incl, bool edit);
+
+   //  Updates data when an edit causes INCL's file to no longer be included.
+   //
+   void IncludeRemoved(const Include* incl);
+
    //  Adds FILE as one that #includes this file.
    //
    void AddUser(CodeFile* file);
+
+   //  Removes FILE as one that #includes this file.
+   //
+   void RemoveUser(CodeFile* file);
 
    //  Returns the file's prolog (comments that should appear at the top
    //  of the file).

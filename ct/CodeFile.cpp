@@ -559,6 +559,7 @@ void CodeFile::Check()
    CheckUsings();
    CheckVerticalSpacing();
    CheckLineBreaks();
+   CheckOverrideOrder();
    CheckFunctionOrder();
    CheckDebugFt();
    CheckIncludes();
@@ -615,7 +616,10 @@ void CodeFile::CheckDebugFt()
             //  o has already been used by another function, or
             //  o is an fn_name that is only used once and can thus be inlined.
             //
-            if(code && !debug) LogLine(n, DebugFtNotFirst);
+            if(code && !debug)
+            {
+               LogLine(n, DebugFtNotFirst);
+            }
 
             if(lexer_.GetNthLine(n, statement, true))
             {
@@ -888,6 +892,53 @@ void CodeFile::CheckLineBreaks()
          LogLine(n, RemoveLineBreak);
          ++n;
       }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::CheckOverrideOrder() const
+{
+   Debug::ft("CodeFile.CheckOverrideOrder");
+
+   //  For each class in this file, get its functions, sorted by position.
+   //  Check that the overrides appear last, in alphabetical order, within
+   //  each access control.  Ignore a function that shares a comment with
+   //  other items.
+   //
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      auto vec = (*c)->GetFunctions();
+      auto curr = (*c)->DefaultAccess();
+      Function* prev = nullptr;
+
+      for(auto f = vec.begin(); f != vec.end(); ++f)
+      {
+         auto access = (*f)->GetAccess();
+
+         if(access != curr)
+         {
+            curr = access;
+            prev = nullptr;
+         }
+
+         if(lexer_.IsInItemGroup(*f)) continue;
+
+         if((*f)->IsOverride())
+         {
+            if(prev != nullptr)
+            {
+               if(strCompare((*f)->Name(), prev->Name()) < 0)
+                  (*f)->Log(OverrideNotSorted);
+            }
+
+            prev = *f;
+         }
+         else
+         {
+            if(prev != nullptr) (*f)->Log(OverrideNotSorted);
+         }
+     }
    }
 }
 
@@ -1856,9 +1907,7 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items)
       {
          auto parms = cls->GetTemplateParms();
          if(parms != nullptr) parms->Print(name, NoFlags);
-
-         auto tag = cls->GetClassTag();
-         name << tag << SPACE;
+         name << cls->GetClassTag() << SPACE;
       }
       else
       {

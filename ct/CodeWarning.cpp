@@ -790,6 +790,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(NoJumpOrFallthrough,
       WarningAttrs(F,
       "No jump or fallthrough")));
+   Attrs_.insert(WarningPair(OverrideNotSorted,
+      WarningAttrs(T,
+      "Override not sorted in standard order")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));

@@ -823,16 +823,23 @@ bool CxxScoped::GetTypeSpan(size_t& begin, size_t& end) const
 {
    Debug::ft("CxxScoped.GetTypeSpan");
 
-   //  GetTypeSpec returns an internal "int" for an enum that doesn't define
-   //  an underlying type, so the position of the enum itself must be used.
-   //
-   auto& lexer = GetFile()->GetLexer();
    auto spec = GetTypeSpec();
    if((spec == nullptr) || spec->IsInternal())
       begin = GetPos();
    else
       begin = spec->GetPos();
    if(begin == string::npos) return false;
+
+   //  Functions and data can have leading keywords (e.g. static), so back up
+   //  to the end of the previous item and then step forward to the next parse
+   //  position.  The colon will find the end of an access control; a scope
+   //  resolution operator shouldn't be encountered here because we're already
+   //  at the start of the TypeSpec, which can only be preceded by keywords.
+   //
+   auto& lexer = GetFile()->GetLexer();
+   auto prev = lexer.RfindFirstOf(begin - 1, ";{}:");
+   if(prev != string::npos) begin = lexer.NextPos(prev + 1);
+
    end = lexer.FindFirstOf(";", begin);
    return (end != string::npos);
 }

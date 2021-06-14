@@ -276,7 +276,7 @@ CxxToken* BraceInit::PosToItem(size_t pos) const
 
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
-      auto item = (*i)->PosToItem(pos);
+      item = (*i)->PosToItem(pos);
       if(item != nullptr) return item;
    }
 

@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <bitset>
 #include <cctype>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <iosfwd>
@@ -45,6 +46,7 @@
 #include "Duration.h"
 #include "Formatters.h"
 #include "Library.h"
+#include "LibraryItem.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
 #include "SysFile.h"
@@ -127,6 +129,7 @@ fixed_string FilePrompt = "Enter the filename in which to define ";
 fixed_string ShellPrompt = "Do you want to create a shell for the definition?";
 fixed_string SuffixPrompt = "Enter a suffix for the name: ";
 fixed_string VirtualPrompt = "Enter 0=skip 1=virtual 2=non-virtual: ";
+fixed_string CommitFailedPrompt = "Do you want to retry?";
 
 fixed_string ClassInstantiated = "Objects of this class are created, "
                                  "so its constructor must remain public.";
@@ -587,16 +590,15 @@ bool EnsureUniqueDebugFtName(CliThread& cli, const string& flit, string& fname)
 }
 
 //------------------------------------------------------------------------------
-
+//
+//  Returns the file where a class's new function should be defined.  If all of
+//  the its functions are implemented in the same file, returns that file, else
+//  asks the user to specify the file.
+//
 CodeFile* FindFuncDefnFile(CliThread& cli, const Class* cls, const string& name)
 {
    Debug::ft("CodeTools.FindFuncDefnFile");
 
-   //  Look at all the functions in the class to which the new function
-   //  will be added.  If all of them are implemented in the same file,
-   //  define the new function in that file, otherwise ask the user to
-   //  specify which file should contain the function.
-   //
    std::set< CodeFile* > impls;
    auto funcs = cls->Funcs();
 
@@ -645,7 +647,9 @@ bool GetCommentedRange(const CxxToken* item, size_t& begin, size_t& end)
 }
 
 //------------------------------------------------------------------------------
-
+//
+//  Adds DATA and its separate definition, if it exists, to DATAS.
+//
 void GetDatas(const Data* data, std::vector< const Data* >& datas)
 {
    Debug::ft("CodeTools.GetDatas");
@@ -688,7 +692,9 @@ void GetOverrides(const Function* func, std::vector< const Function* >& funcs)
 }
 
 //------------------------------------------------------------------------------
-
+//
+//  Adds all references to DATA to ITEMS, excluding DATA and its definition.
+//
 void GetReferences(const Data* data, std::vector< const CxxNamed* >& items)
 {
    Debug::ft("CodeTools.GetReferences");
@@ -696,14 +702,41 @@ void GetReferences(const Data* data, std::vector< const CxxNamed* >& items)
    auto& xref = data->Xref();
    auto mate = data->GetMate();
 
-   //  Assemble references to the data.
-   //
    for(auto r = xref.cbegin(); r != xref.cend(); ++r)
    {
       if(AreInSameStatement(data, *r)) continue;
       if(AreInSameStatement(mate, *r)) continue;
       items.push_back(*r);
    }
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns true if ITEM, whose CODE is provided, is a non-trival inline.
+//  To be an inline, it must be a function without a separate definition, but
+//  it must have an implementation (as opposed to being deleted or defaulted).
+//  To be non-trivial, its code must span at least three lines.
+//
+bool IsNonTrivialInline(const CxxScoped* item, const string& code)
+{
+   Debug::ft("CodeTools.IsNonTrivialInline");
+
+   if(item->Type() != Cxx::Function) return false;
+   auto func = static_cast< const Function* >(item);
+
+   if(func->GetDefn() != func) return false;
+   auto impl = func->GetImpl();
+   if(impl == nullptr) return false;
+
+   for(size_t i = 0, n = 0; i < code.size(); ++i)
+   {
+      if(code[i] == CRLF)
+      {
+         if(++n > 2) return true;
+      }
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -739,9 +772,7 @@ word NotFound(fixed_string text, bool quotes = false)
 }
 
 //------------------------------------------------------------------------------
-//
-//  Sets Expl_ to TEXT and returns RC.
-//
+
 word Report(fixed_string text, word rc = EditFailed)
 {
    Debug::ft("CodeTools.Report");
@@ -751,9 +782,7 @@ word Report(fixed_string text, word rc = EditFailed)
 }
 
 //------------------------------------------------------------------------------
-//
-//  Sets Expl_ to STREAM and returns RC.
-//
+
 word Report(const std::ostringstream& stream, word rc = EditFailed)
 {
    Debug::ft("CodeTools.Report(stream)");
@@ -773,9 +802,7 @@ void SetExpl(const string& expl)
 }
 
 //------------------------------------------------------------------------------
-//
-//  Returns CODE, indented to LEVEL standard indentations.
-//
+
 string strCode(const string& code, size_t level)
 {
    return spaces(level * IndentSize()) + code + CRLF;
@@ -1489,44 +1516,51 @@ bool Editor::CodeFollowsImmediately(size_t pos) const
    //  false if the next thing is executable code (this excludes braces and
    //  access controls), else return false.
    //
-   for(pos = NextBegin(pos); pos != string::npos; pos = NextBegin(pos))
-   {
-      auto type = PosToType(pos);
-
-      if(type == AccessControl) continue;
-      if(LineTypeAttr::Attrs[type].isBlank) continue;
-      if(LineTypeAttr::Attrs[type].isParsePos) return true;
-      return false;
-   }
-
-   return false;
+   pos = NextBegin(pos);
+   if(pos == string::npos) return false;
+   return (PosToType(pos) == CodeLine);
 }
 
 //------------------------------------------------------------------------------
 
-bool Editor::Commit(const CliThread& cli)
+bool Editor::CommentFollows(size_t pos) const
+{
+   Debug::ft("Editor.CommentFollows");
+
+   pos = LineFindNext(pos);
+   if(pos == string::npos) return false;
+   if(CompareCode(pos, COMMENT_STR) == 0) return true;
+   return (CompareCode(pos, COMMENT_BEGIN_STR) == 0);
+}
+
+//------------------------------------------------------------------------------
+
+void Editor::Commit(CliThread& cli)
 {
    Debug::ft("Editor.Commit");
-
-   //  Perform an automatic >format on each file.  In particular, some edits
-   //  could have introduced blank line pairs.
-   //
-   auto err = false;
 
    while(!Editors_.empty())
    {
       string expl;
       auto editor = Editors_.cbegin();
-      if((*editor)->Format(expl) != EditCompleted)
-         err = true;
-      else
-         ++Commits_;
-      *cli.obuf << spaces(2) << expl;
-      expl.clear();
+
+      while(true)
+      {
+         auto rc = (*editor)->Format(expl);
+         *cli.obuf << spaces(2) << expl;
+         expl.clear();
+
+         if(rc == EditCompleted)
+         {
+            ++Commits_;
+            break;
+         }
+
+         if(!cli.BoolPrompt(CommitFailedPrompt)) break;
+      }
+
       Editors_.erase(editor);
    }
-
-   return !err;
 }
 
 //------------------------------------------------------------------------------
@@ -1579,60 +1613,7 @@ size_t Editor::CutCode(const CxxToken* item, string& code)
    }
 
    size_t begin, end;
-   if(!item->GetSpan2(begin, end))
-   {
-      Report("Internal error: item cannot be edited.");
-      return string::npos;
-   }
-
-   if(source_[begin] == ',')
-   {
-      //  The cut begins at a comma, which could be on the previous line.
-      //  If a trailing comment follows it, replace it with a space and
-      //  cut from the beginning of the next line.
-      //
-      if(TrailingCommentFollows(begin + 1))
-      {
-         source_[begin] = SPACE;
-         begin = NextBegin(begin);
-      }
-   }
-   else
-   {
-      //  Cut from the start of BEGIN's line unless other code precedes
-      //  the item.
-      //
-      if(IsFirstNonBlank(begin)) begin = CurrBegin(begin);
-   }
-
-   //  When the cuts ends at a right brace, also cut a semicolon that
-   //  follows immediately.
-   //
-   if(source_[end] == '}')
-   {
-      auto pos = NextPos(end + 1);
-      if((pos != string::npos) && (source_[pos] == ';')) end = pos;
-   }
-
-   //  Cut any comment or whitespace that follows on the last line.
-   //
-   if(NoCodeFollows(end + 1))
-      end = CurrEnd(end);
-   else
-      end = LineFindNonBlank(end + 1) - 1;
-
-   //  If entire lines of code that aren't immediately followed by more code
-   //  are being cut, also cut any comment that precedes the code, since it
-   //  almost certainly refers only to the code being cut.  But don't do this
-   //  for a preprocessor directive.
-   //
-   if((begin == CurrBegin(begin)) && (end == CurrEnd(end)))
-   {
-      if(!CodeFollowsImmediately(end) && (source_[begin] != '#'))
-      {
-         begin = IntroStart(begin, false);
-      }
-   }
+   GetSpan(item, begin, end);
 
    //  Extract the code bounded by [begin, end].  If BEGIN and END are not
    //  on the same line, then
@@ -2434,7 +2415,7 @@ word Editor::FindItemDeclLoc
    Debug::ft("Editor.FindItemDeclLoc");
 
    auto where = attrs.CalcDeclOrder();
-   auto& items = cls->Items();
+   auto items = cls->Items();
    const CxxToken* prev = nullptr;
    const CxxToken* next = nullptr;
 
@@ -2749,15 +2730,12 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
    //  Returning -1 or greater indicates that the next file can still be
    //  processed, so return a lower value if the user wants to quit or if
-   //  a serious error occurred.  On a quit, a "committed" message has been
-   //  displayed for the last file written, and it will be displayed again
-   //  (because of rc < 0) if EPXL is not cleared.
+   //  a serious error occurred.  In that case, clear EXPL, since it has
+   //  already been displayed when writing the last file.
    //
-   if(!Commit(cli))
-   {
-      rc = -6;
-   }
-   else if((reply == 'q') && (rc >= EditFailed))
+   Commit(cli);
+
+   if((reply == 'q') && (rc >= EditFailed))
    {
       expl.clear();
       rc = -2;
@@ -2986,13 +2964,19 @@ WarningStatus Editor::FixStatus(const CodeWarning& log) const
 {
    Debug::ft("Editor.FixStatus");
 
-   if((log.warning_ == IncludeNotSorted) ||
-      (log.warning_ == IncludeFollowsCode))
+   //  Some logs may appear multiple times, but all of them get fixed when
+   //  the first one gets fixed.
+   //
+   switch(log.warning_)
    {
-      //  If there are multiple warnings for unsorted or embedded #include
-      //  directives, they all get fixed when the first one gets fixed.
-      //
-      if(sorted_ && (log.status_ == NotFixed)) return Fixed;
+   case IncludeNotSorted:
+   case IncludeFollowsCode:
+      if((log.status_ == NotFixed) && sorted_) return Fixed;
+      break;
+
+   case OverrideNotSorted:
+      if((log.status_ == NotFixed) && OverridesWereSorted(log)) return Fixed;
+      break;
    }
 
    return log.status_;
@@ -3173,7 +3157,7 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case LineLength:
       return InsertLineBreak(log);
    case FunctionNotSorted:
-      return MoveFunction(log);
+      return SortFunctions(log);
    case HeadingNotStandard:
       return ReplaceHeading(log);
    case IncludeGuardMisnamed:
@@ -3228,6 +3212,8 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
       return DeleteSpecialFunction(cli, log);
    case CtorCouldBeDeleted:
       return DeleteSpecialFunction(cli, log);
+   case OverrideNotSorted:
+      return SortOverrides(log);
    }
 
    return Report(NotImplemented);
@@ -3245,6 +3231,83 @@ word Editor::Format(string& expl)
    auto rc = Write();
    expl = GetExpl();
    return rc;
+}
+
+//------------------------------------------------------------------------------
+
+void Editor::GetSpan(const CxxToken* item, size_t& begin, size_t& end)
+{
+   Debug::ft("Editor.GetSpan");
+
+   if(item == nullptr)
+   {
+      begin = string::npos;
+      end = string::npos;
+      return;
+   }
+
+   if(!item->GetSpan2(begin, end)) return;
+
+   if(source_[begin] == ',')
+   {
+      //  The cut begins at a comma, which could be on the previous line.
+      //  If a comment follows it, replace it with a space and cut from
+      //  the beginning of the next line.
+      //
+      if(CommentFollows(begin + 1))
+      {
+         source_[begin] = SPACE;
+         begin = NextBegin(begin);
+      }
+   }
+   else
+   {
+      //  Cut from the start of BEGIN's line unless other code precedes
+      //  the item.
+      //
+      if(IsFirstNonBlank(begin)) begin = CurrBegin(begin);
+   }
+
+   //  When the cuts ends at a right brace, also cut a semicolon that
+   //  follows immediately.
+   //
+   if(source_[end] == '}')
+   {
+      auto pos = NextPos(end + 1);
+      if((pos != string::npos) && (source_[pos] == ';')) end = pos;
+   }
+
+   //  Cut any comment or whitespace that follows on the last line.
+   //
+   if(NoCodeFollows(end + 1))
+      end = CurrEnd(end);
+   else
+      end = LineFindNonBlank(end + 1) - 1;
+
+   //  If entire lines of code that aren't immediately followed by more code
+   //  have been selected, include any comment that precedes the code, as it
+   //  almost certainly refers only to the code being cut.  But don't do this
+   //  for a preprocessor directive or function data, whose preceding comments
+   //  usually apply to code that follows, even if a blank line follows ITEM.
+   //
+   if((begin == CurrBegin(begin)) && (end == CurrEnd(end)))
+   {
+      if(source_[begin] == '#')
+      {
+         return;
+      }
+
+      if((item->Type() == Cxx::Data) &&
+         (item->GetScope()->Type() == Cxx::Block))
+      {
+         return;
+      }
+
+      if(!CodeFollowsImmediately(end))
+      {
+         begin = IntroStart(begin, false);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -4294,13 +4357,45 @@ word Editor::MoveDefine(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::MoveFunction(const CodeWarning& log)
+void Editor::MoveItem
+   (const CxxScoped* item, size_t& dest, const CxxScoped* prev)
 {
-   Debug::ft("Editor.MoveFunction");
+   Debug::ft("Editor.MoveItem");
 
-   //  Move the function's definition to the correct location.
+   //  Cut DECL and find ADJ's span.
    //
-   return Unimplemented();
+   string code;
+   auto from = CutCode(item, code);
+
+   if(from < dest)
+   {
+      dest -= code.size();
+   }
+
+   size_t begin, end;
+   GetSpan(prev, begin, end);
+
+   //  Add a blank line before and after ITEM if it is commented or if it is
+   //  a non-trivial inline.  If PREV is commented, ensure that a blank line
+   //  follows it.  If a comment begins at POS, ensure that a blank line
+   //  precedes it.
+   //
+   auto blanks = (IsNonTrivialInline(item, code) ||
+      (code.find_first_not_of(WhitespaceChars) == code.find('/')));
+
+   if(blanks || CommentFollows(dest))
+   {
+      code.push_back(CRLF);
+   }
+
+   Paste(dest, code, from);
+
+   if(blanks || CommentFollows(begin) || IsInItemGroup(prev))
+   {
+      InsertLine(dest, EMPTY_STR);
+   }
+
+   Changed();
 }
 
 //------------------------------------------------------------------------------
@@ -4312,6 +4407,26 @@ word Editor::MoveMemberInit(const CodeWarning& log)
    //  Move the member to the correct location in the initialization list.
    //
    return Unimplemented();
+}
+
+//------------------------------------------------------------------------------
+
+bool Editor::OverridesWereSorted(const CodeWarning& log) const
+{
+   Debug::ft("Editor.OverridesWereSorted");
+
+   auto cls = log.item_->GetClass();
+
+   for(auto w = warnings_.cbegin(); w != warnings_.cend(); ++w)
+   {
+      if((*w)->warning_ == OverrideNotSorted)
+      {
+         if(((*w)->status_ >= Pending) && ((*w)->item_->GetClass() == cls))
+            return true;
+      }
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -4387,8 +4502,8 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
          //
          if(source_.rfind(SCOPE_STR, pos) != (pos - strlen(SCOPE_STR)))
          {
-            auto item = file_->PosToItem(pos);
-            auto qname = (item != nullptr ? item->GetQualName() : nullptr);
+            auto elem = file_->PosToItem(pos);
+            auto qname = (elem != nullptr ? elem->GetQualName() : nullptr);
             if(qname != nullptr) qname->AddPrefix(nsName, ns);
             Insert(pos, nsCode);
             Changed();
@@ -4859,6 +4974,17 @@ void Editor::Setup(CodeFile* file)
 
 //------------------------------------------------------------------------------
 
+word Editor::SortFunctions(const CodeWarning& log)
+{
+   Debug::ft("Editor.SortFunctions");
+
+   //  Sort all function definitions in this file.
+   //
+   return Unimplemented();
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::SortIncludes()
 {
    Debug::ft("Editor.SortIncludes");
@@ -4892,7 +5018,81 @@ word Editor::SortIncludes()
 
    sorted_ = true;
    Changed();
-   return Report("All #includes sorted.", EditSucceeded);
+   return Report("All #includes in this file sorted.", EditSucceeded);
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::SortOverrides(const CodeWarning& log)
+{
+   Debug::ft("Editor.SortOverrides");
+
+   //  Get the functions for the class associated with LOG, sorted by position.
+   //  Within each access control, find all overrides and the LAST function that
+   //  is not an override.  Sort the overrides alphabetically and move them so
+   //  that they follow LAST.  A function that shares a comment with other items
+   //  is not moved, even if it is an override.
+   //
+   auto cls = log.item_->GetClass();
+   auto funcs = cls->GetFunctions();
+   Function* last = nullptr;
+   FunctionVector overrides;
+   size_t index = 0;
+   size_t pos = string::npos;
+
+   while(index < funcs.size())
+   {
+      auto acc = funcs[index]->GetAccess();
+
+      do
+      {
+         auto func = funcs[index];
+         if(func->GetAccess() != acc) break;
+
+         if(IsInItemGroup(func))
+            last = func;
+         else if(!func->IsOverride())
+            last = func;
+         else
+            overrides.push_back(func);
+      }
+      while(++index < funcs.size());
+
+      if(!overrides.empty())
+      {
+         //  Find POS, the insertion point when moving overrides.  If all
+         //  of the functions were overrides (LAST is nullptr), POS is at
+         //  the start of the first override.  If a non-override was found
+         //  (LAST is not nullptr), POS follows LAST.
+         //
+         if(last == nullptr)
+         {
+            size_t end;
+            GetSpan(overrides.front(), pos, end);
+         }
+         else
+         {
+            size_t begin;
+            GetSpan(last, begin, pos);
+            pos = NextBegin(pos);
+         }
+
+         //  Sort the overrides and then cut and paste each one to POS.
+         //
+         std::sort(overrides.begin(), overrides.end(), IsSortedByName);
+
+         for(size_t i = overrides.size() - 1; i != SIZE_MAX; --i)
+         {
+            MoveItem(overrides[i], pos, last);
+         }
+
+         overrides.clear();
+      }
+
+      last = nullptr;
+   }
+
+   return Report("All overrides in this class sorted.", EditSucceeded);
 }
 
 //------------------------------------------------------------------------------
@@ -5179,17 +5379,6 @@ word Editor::TagAsVirtual(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-bool Editor::TrailingCommentFollows(size_t pos) const
-{
-   Debug::ft("Editor.TrailingCommentFollows");
-
-   pos = LineFindNext(pos);
-   if(pos == string::npos) return false;
-   return (CompareCode(pos, COMMENT_STR) == 0);
-}
-
-//------------------------------------------------------------------------------
-
 word Editor::UpdateFuncDefnAttrs
    (const Function* func, FuncDefnAttrs& attrs) const
 {
@@ -5335,8 +5524,7 @@ word Editor::UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const
       return NotFound("Item's class");
    }
 
-   auto prev =
-      (cls->GetClassTag() == Cxx::ClassType ? Cxx::Private : Cxx::Public);
+   auto prev = cls->DefaultAccess();
 
    for(auto pos = CurrBegin(begin); pos <= attrs.pos; pos = NextBegin(pos))
    {

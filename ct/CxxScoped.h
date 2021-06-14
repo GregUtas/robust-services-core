@@ -229,8 +229,8 @@ protected:
    bool GetBracedSpan(size_t& begin, size_t& left, size_t& end) const;
 
    //  Implements GetSpan for an item that is preceded by a TypeSpec.
-   //  Sets BEGIN to GetPos() of the item or, if GetTypeSpec() returns
-   //  a valid type specification, then GetPos() of that specification.
+   //  Sets BEGIN to GetPos() of the item and then backs up to the first
+   //  parse position that precedes the TypeSpec and prefixed keywords.
    //  Sets END to the location of the next semicolon.
    //
    bool GetTypeSpan(size_t& begin, size_t& end) const;

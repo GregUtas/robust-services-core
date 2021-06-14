@@ -943,6 +943,15 @@ void Class::Creating()
 
 //------------------------------------------------------------------------------
 
+Cxx::Access Class::DefaultAccess() const
+{
+   Debug::ft("Class.DefaultAccess");
+
+   return (tag_ == Cxx::ClassType ? Cxx::Private : Cxx::Public);
+}
+
+//------------------------------------------------------------------------------
+
 void Class::Delete()
 {
    Debug::ftnt("Class.Delete");
@@ -1412,6 +1421,30 @@ CxxScoped* Class::FindName(const string& name, const Class* base) const
 
 //------------------------------------------------------------------------------
 
+bool Class::FuncToIndex(const Function* func, size_t& idx) const
+{
+   Debug::ft("Class.FuncToIndex");
+
+   auto list = FuncVector(func->Name());
+   size_t inlines = 0;
+
+   for(idx = 0; idx < list->size(); ++idx)
+   {
+      auto f = list->at(idx).get();
+      if(f->IsInline()) ++inlines;
+
+      if(f == func)
+      {
+         idx -= inlines;
+         return true;
+      }
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 Class* Class::GetClassTemplate() const
 {
    if(!IsTemplate()) return nullptr;
@@ -1510,18 +1543,26 @@ FunctionDefinition Class::GetFuncDefinition(FunctionRole role) const
 
 //------------------------------------------------------------------------------
 
-bool Class::GetFuncIndex(const Function* func, size_t& idx) const
+FunctionVector Class::GetFunctions() const
 {
-   Debug::ft("Class.GetFuncIndex");
+   Debug::ft("Class.GetFunctions");
 
-   auto list = FuncVector(func->Name());
+   FunctionVector vec;
 
-   for(idx = 0; idx < list->size(); ++idx)
+   auto funcs = Funcs();
+   for(auto f = funcs->begin(); f != funcs->end(); ++f)
    {
-      if(list->at(idx).get() == func) return true;
+      vec.push_back(f->get());
    }
 
-   return false;
+   auto opers = Opers();
+   for(auto o = opers->begin(); o != opers->end(); ++o)
+   {
+      vec.push_back(o->get());
+   }
+
+   std::sort(vec.begin(), vec.end(), IsSortedByPos);
+   return vec;
 }
 
 //------------------------------------------------------------------------------
@@ -1812,6 +1853,25 @@ bool Class::HasSingletonBase() const
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+Function* Class::IndexToFunc(const std::string& name, size_t idx) const
+{
+   Debug::ft("Class.IndexToFunc");
+
+   auto list = FuncVector(name);
+   size_t count = 0;
+
+   for(size_t i = 0; i < list->size(); ++i)
+   {
+      auto f = list->at(i).get();
+      if(f->IsInline()) continue;
+      if(count++ == idx) return f;
+   }
+
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -2477,7 +2537,7 @@ CxxScoped* ClassInst::FindInstanceAnalog(const CxxNamed* item) const
    case Cxx::Function:
       size_t idx;
       auto func = static_cast< const Function* >(item);
-      if(!tmplt_->GetFuncIndex(func, idx)) return nullptr;
+      if(!tmplt_->FuncToIndex(func, idx)) return nullptr;
       auto list = FuncVector(item->Name());
       return list->at(idx).get();
    }
@@ -2504,8 +2564,8 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxToken* item) const
       if(scope != this)
       {
          auto func = scope->GetFunction();
-         if(func != nullptr) return func->FindTemplateAnalog(item);
-         return nullptr;
+         if(func == nullptr) return nullptr;
+         return func->FindTemplateAnalog(item);
       }
    }
 
@@ -2519,9 +2579,8 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxToken* item) const
    {
       size_t idx;
       auto func = static_cast< const Function* >(item);
-      if(!GetFuncIndex(func, idx)) return nullptr;
-      auto list = tmplt_->FuncVector(item->Name());
-      return list->at(idx).get();
+      if(!FuncToIndex(func, idx)) return nullptr;
+      return tmplt_->IndexToFunc(item->Name(), idx);
    }
 
    case Cxx::Friend:

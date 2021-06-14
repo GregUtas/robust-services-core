@@ -121,10 +121,9 @@ public:
    void Display(std::ostream& stream,
       const string& prefix, const NodeBase::Flags& options) const override;
 private:
-   //  Invokes Write on each editor whose file has changed.  Returns false
-   //  if an error occurrs.
+   //  Invokes Write on each editor whose file has changed.
    //
-   static bool Commit(const CliThread& cli);
+   static void Commit(CliThread& cli);
 
    //  Writes out the editor's file.
    //
@@ -206,7 +205,6 @@ private:
    word InsertPureVirtual(const CodeWarning& log);
    word InsertUsing(const CodeWarning& log);
    word MoveDefine(const CodeWarning& log);
-   word MoveFunction(const CodeWarning& log);
    word MoveMemberInit(const CodeWarning& log);
    word RenameArgument(CliThread& cli, const CodeWarning& log);
    word RenameDebugFtArgument(CliThread& cli, const CodeWarning& log);
@@ -216,6 +214,8 @@ private:
    word ReplaceNull(const CodeWarning& log);
    word ReplaceSlashAsterisk(const CodeWarning& log);
    word ReplaceUsing(const CodeWarning& log);
+   word SortFunctions(const CodeWarning& log);
+   word SortOverrides(const CodeWarning& log);
    word TagAsExplicit(const CodeWarning& log);
    word TagAsOverride(const CodeWarning& log);
    word TagAsVirtual(const CodeWarning& log);
@@ -282,8 +282,7 @@ private:
    //
    size_t CodeBegin() const;
 
-   //  Returns true if the code referenced by POS is followed by more code,
-   //  without an intervening comment or right brace.
+   //  Returns true if the code referenced by POS is followed by more code.
    //
    bool CodeFollowsImmediately(size_t pos) const;
 
@@ -489,6 +488,16 @@ private:
    //
    void InsertBeforeFuncDefn(const FuncDefnAttrs& attrs);
 
+   //  Moves ITEM to DEST.  PREV, if provided, directly precedes ITEM.  If ITEM
+   //  precedes DEST, DEST is updated, because it moves up when ITEM is cut.
+   //
+   void MoveItem(const CxxScoped* item, size_t& dest, const CxxScoped* prev);
+
+   //  Returns true if the overrides in the class associated with LOG have
+   //  already been sorted as the result of fixing another log.
+   //
+   bool OverridesWereSorted(const CodeWarning& log) const;
+
    //  Returns the code for a Debug::Ft invocation with an inline string
    //  literal (FNAME).
    //
@@ -504,7 +513,12 @@ private:
 
    //  Returns true if a trailing comment starts at or after POS.
    //
-   bool TrailingCommentFollows(size_t pos) const;
+   bool CommentFollows(size_t pos) const;
+
+   //  Updates BEGIN and END to include ITEM's preceding whitespace and
+   //  comments, as well as trailing whitespace.
+   //
+   void GetSpan(const CxxToken* item, size_t& begin, size_t& end);
 
    //  Cuts and returns the code associated with ITEM in CODE.  Comments on
    //  preceding lines, up to the next line of code, are also erased if a

@@ -423,7 +423,8 @@ void Lexer::CalcDepths()
             nextDepth = currDepth + 1;
             SetDepth(currDepth, nextDepth, false);  // (e)
             currDepth = nextDepth;
-         } while(false);
+         }
+         while(false);
 
          Advance(1);
          break;
@@ -2489,6 +2490,41 @@ bool Lexer::IsFirstNonBlank(size_t pos) const
    Debug::ft("Lexer.IsFirstNonBlank");
 
    return (LineFindFirst(CurrBegin(pos)) == pos);
+}
+
+//------------------------------------------------------------------------------
+
+bool Lexer::IsInItemGroup(const CxxScoped* item) const
+{
+   Debug::ft("Lexer.IsInItemGroup");
+
+   if(item == nullptr) return false;
+
+   size_t begin, end;
+   item->GetSpan2(begin, end);
+
+   auto pos = NextBegin(end);
+   auto after = ((pos != string::npos) && (PosToType(pos) == CodeLine));
+   pos = PrevBegin(begin);
+   auto before = ((pos != string::npos) && (PosToType(pos) == CodeLine));
+
+   if(!before && !after) return false;
+
+   for(auto n = GetLineNum(pos); n != SIZE_MAX; --n)
+   {
+      switch(lines_[n].type)
+      {
+      case CodeLine:
+      case EmptyComment:
+         break;
+      case TextComment:
+         return true;
+      default:
+         return false;
+      }
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------

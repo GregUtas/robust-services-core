@@ -526,6 +526,13 @@ public:
    //
    void CheckSwitch(const Switch& code) const;
 
+   //  Returns true if ITEM appears with one or more other items that share the
+   //  same comment.  Specifically, other code must directly precede or follow
+   //  ITEM, and a comment must the group of items that contain ITEM.  Returns
+   //  false if ITEM is nullptr.
+   //
+   bool IsInItemGroup(const CxxScoped* item) const;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,

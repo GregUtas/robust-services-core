@@ -434,15 +434,28 @@ public:
    //
    void SetClassTag(Cxx::ClassTag tag) { tag_ = tag; }
 
+   //  Returns Cxx::Private for a class, and Cxx::Public for a struct or union.
+   //
+   Cxx::Access DefaultAccess() const;
+
    //  Updates CODE with the code for the template instance INST, returning the
    //  location where parsing should begin.  Returns string::npos on an error.
    //
    size_t CreateCode(const ClassInst* inst, NodeBase::stringPtr& code) const;
 
    //  Updates IDX to FUNC's index within its vector and return true.  Returns
-   //  false if FUNC was not found.
+   //  false if FUNC was not found.  This is used to map a template instance
+   //  function to the original in the template, so IDX is adjusted to ignore
+   //  functions tagged as inline, which do not appear in a template instance.
    //
-   bool GetFuncIndex(const Function* func, size_t& idx) const;
+   bool FuncToIndex(const Function* func, size_t& idx) const;
+
+   //  Returns the function identified by NAME and IDX.  This is used to map
+   //  a function in a template to its analog in a template instance, so IDX
+   //  bypasses functions tagged as inline, which do not appear in a template
+   //  instance.
+   //
+   Function* IndexToFunc(const std::string& name, size_t idx) const;
 
    //  Returns true if the class has a default constructor or if its members
    //  are default constructible--and if its base class chain is also default
@@ -471,6 +484,10 @@ public:
    //
    void BlockCopied(const StackArg* arg);
 
+   //  Returns the class's function declarations, sorted by position.
+   //
+   FunctionVector GetFunctions() const;
+
    //  Displays the class's subclasses, recursively.
    //
    void DisplayHierarchy(std::ostream& stream, const std::string& prefix) const;
@@ -496,6 +513,7 @@ public:
    //  the class's members.
    //
    void AddFiles(LibItemSet& imSet) const override;
+
    //  Overridden to add the class's components to cross-references.
    //
    void AddToXref(bool insert) override;

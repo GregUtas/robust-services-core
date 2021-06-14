@@ -539,7 +539,7 @@ enum Warning
    AddBlankLine,             // add blank line
    RemoveLine,               // remove unnecessary line
    LineLength,               // line length exceeds LineLengthMax() characters
-   FunctionNotSorted,        // function does not appear in alphabetical order
+   FunctionNotSorted,        // function definition not in alphabetical order
    HeadingNotStandard,       // lines at top of file do not follow template
    IncludeGuardMisnamed,     // #include guard name is not based on filename
    DebugFtNotInvoked,        // function does not invoke Debug::ft
@@ -574,6 +574,7 @@ enum Warning
    CopyOperNotDeleted,       // base for singletons should delete copy operator
    CtorCouldBeDeleted,       // could be namespace but has non-public members
    NoJumpOrFallthrough,      // no jump or [[fallthrough]] above case or default
+   OverrideNotSorted,        // override declaration not in alphabetical order
    Warning_N                 // number of warnings
 };
 

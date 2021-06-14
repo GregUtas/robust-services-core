@@ -2026,7 +2026,7 @@ void QualName::AddPrefix(const string& name, Namespace* ns)
 
    first_->SetScoped(true);
    prefix->SetQualName(this);
-   prefix->PushBack(std::move(first_));
+   prefix->PushBack(first_);
    prefix->SetReferent(ns, nullptr);
    first_ = std::move(prefix);
 }

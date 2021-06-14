@@ -24,7 +24,6 @@
 #include <iterator>
 #include <set>
 #include "Debug.h"
-#include "Formatters.h"
 
 using namespace NodeBase;
 
@@ -32,13 +31,6 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
-bool IsSortedByName(const LibraryItem* item1, const LibraryItem* item2)
-{
-   return (strCompare(item1->Name(), item2->Name()) < 0);
-}
-
-//------------------------------------------------------------------------------
-
 void SetDifference
    (LibItemSet& lhs, const LibItemSet& rhs1, const LibItemSet& rhs2)
 {

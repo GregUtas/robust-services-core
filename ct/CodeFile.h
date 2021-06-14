@@ -388,6 +388,10 @@ private:
    //
    void CheckFunctionOrder() const;
 
+   //  Checks if overrides are declared alphabetically, after other functions.
+   //
+   void CheckOverrideOrder() const;
+
    //  Checks invocations of Debug::ft.
    //
    void CheckDebugFt();

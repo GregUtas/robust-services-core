@@ -83,7 +83,7 @@ CxxNamed* FindItem(CliThread& cli, const string& name)
    std::ostringstream stream;
    stream << name << " could refer to the following:" << CRLF;
 
-   for(auto i = 0; i < items.size(); ++i)
+   for(size_t i = 0; i < items.size(); ++i)
    {
       stream << indent << '[' << i + 1 << "] " << items[i]->to_str() << CRLF;
    }

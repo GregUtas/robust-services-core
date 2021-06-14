@@ -31,6 +31,13 @@ using std::string;
 
 namespace CodeTools
 {
+bool IsSortedByName(const LibraryItem* item1, const LibraryItem* item2)
+{
+   return (strCompare(item1->Name(), item2->Name()) < 0);
+}
+
+//==============================================================================
+
 LibraryItem::LibraryItem()
 {
    Debug::ft("LibraryItem.ctor");

@@ -78,8 +78,10 @@ bool IsSortedByFilePos(const CxxNamed* item1, const CxxNamed* item2)
 
 bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2)
 {
-   if(item1->GetPos() < item2->GetPos()) return true;
-   if(item1->GetPos() > item2->GetPos()) return false;
+   auto pos1 = item1->GetPos();
+   auto pos2 = item2->GetPos();
+   if(pos1 < pos2) return true;
+   if(pos1 > pos2) return false;
    return (item1 < item2);
 }
 

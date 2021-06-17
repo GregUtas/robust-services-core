@@ -686,7 +686,7 @@ void CodeWarning::Initialize()
       WarningAttrs(F,
       "Line length exceeds the standard maximum")));
    Attrs_.insert(WarningPair(FunctionNotSorted,
-      WarningAttrs(F,
+      WarningAttrs(T,
       "Function not sorted in standard order")));
    Attrs_.insert(WarningPair(HeadingNotStandard,
       WarningAttrs(F,

@@ -222,6 +222,11 @@ public:
    //
    virtual Namespace* GetSpace() const { return nullptr; }
 
+   //  Returns the area (namespace or class) in which the item was declared.
+   //  Returns (because of an override) the item itself if it is an area.
+   //
+   virtual CxxArea* GetArea() const { return nullptr; }
+
    //  Returns the class in which the item was declared.  Returns the item
    //  itself if it is a class.
    //

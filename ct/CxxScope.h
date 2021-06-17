@@ -1191,6 +1191,7 @@ public:
    //  Returns the function's definition (if distinct from its declaration),
    //  else its declaration.
    //
+   Function* GetDefn();
    const Function* GetDefn() const;
 
    //  The following are all forwarded to the function declaration because
@@ -1888,6 +1889,18 @@ private:
    mutable FunctionVector overs_;
 };
 
+//  Returns true if the definition of FUNC1 should precede that of FUNC2.  This
+//  is NOT suitable for std::sort, because there are situations where it allows
+//  FUNC1 to precede FUNC2 or vice versa.  For example, it simply returns true
+//  if FUNC1 and FUNC2 are not in the same scope, as the sorting of functions
+//  in different scopes is outside the scope of this function. :)
+//
+bool FuncDefnsAreSorted(const Function* func1, const Function* func2);
+
+//  Returns the functions in DEFNS that belong to AREA.
+//
+FunctionVector FuncsInArea(const FunctionVector& defns, const CxxArea* area);
+
 //------------------------------------------------------------------------------
 //
 //  A namespace definition: one occurrence of namespace NS { ... }.
@@ -1949,6 +1962,10 @@ public:
    //  Not subclassed.
    //
    ~FuncSpec();
+
+   //  Deleted to prohibit copying.
+   //
+   FuncSpec(const FuncSpec& that) = delete;
 private:
    //  The following are overridden to return the function signature.
    //

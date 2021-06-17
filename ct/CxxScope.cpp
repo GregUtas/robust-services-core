@@ -45,6 +45,52 @@ using std::string;
 
 namespace CodeTools
 {
+bool FuncDefnsAreSorted(const Function* func1, const Function* func2)
+{
+   if(func1->GetScope() != func2->GetScope()) return true;
+
+   //  Sort special member functions in the cardinal order defined by
+   //  FunctionRole.
+   //
+   auto role1 = func1->FuncRole();
+   auto role2 = func2->FuncRole();
+   if(role1 < role2) return true;
+   if(role1 > role2) return false;
+
+   //  Operators can appear in any order but are sorted alphabetically
+   //  with respect to other functions.
+   //
+   auto type1 = func1->FuncType();
+   auto type2 = func1->FuncType();
+   if((type1 == FuncOperator) && (type2 == FuncOperator)) return true;
+
+   //  Sort the functions alphabetically.
+   //
+   auto result = strCompare(func1->Name(), func2->Name());
+   if(result < 0) return true;
+   if(result > 0) return false;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+FunctionVector FuncsInArea(const FunctionVector& defns, const CxxArea* area)
+{
+   FunctionVector funcs;
+
+   for(auto f = defns.cbegin(); f != defns.cend(); ++f)
+   {
+      if((*f)->GetArea() == area)
+      {
+         funcs.push_back(*f);
+      }
+   }
+
+   return funcs;
+}
+
+//==============================================================================
+
 UsingVector Block::Usings_ = UsingVector();
 
 //------------------------------------------------------------------------------
@@ -4158,6 +4204,15 @@ void Function::GetDecls(CxxNamedSet& items)
 //------------------------------------------------------------------------------
 
 const Function* Function::GetDefn() const
+{
+   if(defn_) return this;
+   if(mate_ != nullptr) return mate_;
+   return this;
+}
+
+//------------------------------------------------------------------------------
+
+Function* Function::GetDefn()
 {
    if(defn_) return this;
    if(mate_ != nullptr) return mate_;

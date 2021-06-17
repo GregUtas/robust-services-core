@@ -25,7 +25,6 @@
 #include "Lexer.h"
 #include <cstddef>
 #include <string>
-#include <vector>
 #include "CodeTypes.h"
 #include "CodeWarning.h"
 #include "Cxx.h"
@@ -40,8 +39,9 @@ namespace NodeBase
 
 namespace CodeTools
 {
+   struct ItemOffsets;
    struct ItemDeclAttrs;
-   struct FuncDefnAttrs;
+   struct ItemDefnAttrs;
 }
 
 using namespace NodeBase;
@@ -359,7 +359,7 @@ private:
    //  Inserts a shell for implementing a special member function in CLS,
    //  based on ATTRS, when it cannot be defaulted or deleted.
    //
-   void InsertSpecialFuncDefn(const Class* cls, const FuncDefnAttrs& attrs);
+   void InsertSpecialFuncDefn(const Class* cls, const ItemDefnAttrs& attrs);
 
    //  Fixes LOG, which involves changing or inserting a special member
    //  function.
@@ -455,48 +455,63 @@ private:
    //
    word UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const;
 
-   //  Inserts what goes after a function declaration.
+   //  Inserts what goes below a function declaration.
    //
-   void InsertAfterItemDecl(const ItemDeclAttrs& attrs);
+   void InsertBelowItemDecl(const ItemDeclAttrs& attrs);
 
-   //  Inserts what goes before a function declaration.  COMMENT is any comment.
+   //  Inserts what goes above a function declaration.  COMMENT is any comment.
    //
-   void InsertBeforeItemDecl(const ItemDeclAttrs& attrs, const string& comment);
+   void InsertAboveItemDecl(const ItemDeclAttrs& attrs, const string& comment);
 
-   //  Updates ATTRS with the position where the function CLS::NAME should
+   //  Updates ATTRS with the position where the function AREA::NAME should
    //  be defined and whether it should be offset with a rule and blank line.
    //
-   word FindFuncDefnLoc(const CodeFile* file, const Class* cls,
-      const string& name, FuncDefnAttrs& attrs) const;
+   word FindFuncDefnLoc(const CodeFile* file, const CxxArea* area,
+      const string& name, ItemDefnAttrs& attrs) const;
 
-   //  Updates ATTRS with the position where a new function definition should
-   //  be added after PREV and/or before NEXT, and whether it should be offset
-   //  with a rule and blank line.
+   //  Updates ATTRS with the offsets to be used when ITEM will be added (if
+   //  nullptr) or moved (if not nullptr) between PREV and/or NEXT.
    //
-   word UpdateFuncDefnLoc
-      (const Function* prev, const Function* next, FuncDefnAttrs& attrs) const;
+   void UpdateItemDefnAttrs(const CxxToken* prev,
+      const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
 
-   //  Updates ATTRS based on FUNC.
+   //  Updates ATTRS with the offsets and position to be used when ITEM will
+   //  be added (if nullptr) or moved (if not nullptr) between PREV and/or NEXT.
    //
-   word UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs) const;
+   word UpdateItemDefnLoc(const CxxToken* prev,
+      const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
 
-   //  Inserts what goes after a function definition based on ATTRS.
+   //  Updates OFFSET to indicate whether ITEM is preceded and/or followed
+   //  by a blank line and/or rule.
    //
-   void InsertAfterFuncDefn(const FuncDefnAttrs& attrs);
+   ItemOffsets GetOffsets(const CxxToken* item) const;
 
-   //  Inserts what goes before a function definition based on ATTRS.
+   //  Inserts what goes below an item definition based on ATTRS.
    //
-   void InsertBeforeFuncDefn(const FuncDefnAttrs& attrs);
+   void InsertBelowItemDefn(const ItemDefnAttrs& attrs);
+
+   //  Inserts what goes above an item definition based on ATTRS.
+   //
+   void InsertAboveItemDefn(const ItemDefnAttrs& attrs);
 
    //  Moves ITEM to DEST.  PREV, if provided, directly precedes ITEM.  If ITEM
    //  precedes DEST, DEST is updated, because it moves up when ITEM is cut.
    //
    void MoveItem(const CxxScoped* item, size_t& dest, const CxxScoped* prev);
 
+   //  Returns true if functions in the area associated with LOG have
+   //  already been sorted as the result of fixing another log.
+   //
+   bool FunctionsWereSorted(const CodeWarning& log) const;
+
    //  Returns true if the overrides in the class associated with LOG have
    //  already been sorted as the result of fixing another log.
    //
    bool OverridesWereSorted(const CodeWarning& log) const;
+
+   //  Moves FUNC's definition so it appears in standard order among FUNCS.
+   //
+   void MoveFuncDefn(FunctionVector& funcs, const Function* func);
 
    //  Returns the code for a Debug::Ft invocation with an inline string
    //  literal (FNAME).
@@ -509,7 +524,7 @@ private:
 
    //  Inserts the definition for a Patch override in CLS based on ATTRS.
    //
-   void InsertPatchDefn(const Class* cls, const FuncDefnAttrs& attrs);
+   void InsertPatchDefn(const Class* cls, const ItemDefnAttrs& attrs);
 
    //  Returns true if a trailing comment starts at or after POS.
    //

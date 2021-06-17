@@ -42,6 +42,7 @@
 #include "CxxString.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
+#include "CxxVector.h"
 #include "Debug.h"
 #include "Duration.h"
 #include "Formatters.h"
@@ -101,17 +102,6 @@ string GetExpl();
 
 //------------------------------------------------------------------------------
 //
-//  Where to add a blank line when inserting new code.
-//
-enum BlankLocation
-{
-   BlankNone,
-   BlankBefore,
-   BlankAfter
-};
-
-//------------------------------------------------------------------------------
-//
 //  Strings for user interaction.
 //
 fixed_string FixPrompt = "Fix?";
@@ -136,6 +126,15 @@ fixed_string ClassInstantiated = "Objects of this class are created, "
 
 //==============================================================================
 //
+//  Where to add a blank line when declaring a C++ item.
+//
+enum BlankLocation
+{
+   BlankNone,
+   BlankAbove,
+   BlankBelow
+};
+
 //  Attributes when declaring a C++ item.
 //
 struct ItemDeclAttrs
@@ -154,46 +153,46 @@ struct ItemDeclAttrs
 
    //  The following are provided as inputs.
    //
-   const Cxx::ItemType type;  // type of item being declared
-   Cxx::Access access;        // desired access control
-   FunctionRole role;         // if a function, the type being added
-   bool over;                 // set if a function is an override
+   const Cxx::ItemType type_;  // type of item being declared
+   Cxx::Access access_;        // desired access control
+   FunctionRole role_;         // if a function, the type being added
+   bool over_;                 // set if a function is an override
 
    //  The following are calculated internally.
    //
-   bool isstruct;         // set if item belongs to a struct
-   bool oper;             // set for an operator
-   bool virt;             // set to make a function virtual
-   bool deleted;          // set to define a function as deleted
-   bool shell;            // set to create a shell for defining a function
-   bool stat;             // set for a static function or data
-   bool thisctrl;         // set to insert access control before
-   Cxx::Access nextctrl;  // set to insert access control after
-   size_t pos;            // position for insertion
-   size_t indent;         // number of spaces for indentation
-   BlankLocation blank;   // where to insert a blank line
-   bool comment;          // set to include a comment
+   bool isstruct_;         // set if item belongs to a struct
+   bool oper_;             // set for an operator
+   bool virt_;             // set to make a function virtual
+   bool deleted_;          // set to define a function as deleted
+   bool shell_;            // set to create a shell for defining a function
+   bool stat_;             // set for a static function or data
+   bool thisctrl_;         // set to insert access control before
+   Cxx::Access nextctrl_;  // set to insert access control after
+   size_t pos_;            // position for insertion
+   size_t indent_;         // number of spaces for indentation
+   BlankLocation blank_;   // where to insert a blank line
+   bool comment_;          // set to include a comment
 };
 
 //------------------------------------------------------------------------------
 
 ItemDeclAttrs::ItemDeclAttrs(Cxx::ItemType t, Cxx::Access a, FunctionRole r) :
-   type(t),
-   access(a),
-   role(r),
-   over(false),
-   isstruct(false),
-   oper(false),
-   virt(false),
-   deleted(false),
-   shell(false),
-   stat(false),
-   thisctrl(false),
-   nextctrl(Cxx::Access_N),
-   pos(string::npos),
-   indent(0),
-   blank(BlankNone),
-   comment(false)
+   type_(t),
+   access_(a),
+   role_(r),
+   over_(false),
+   isstruct_(false),
+   oper_(false),
+   virt_(false),
+   deleted_(false),
+   shell_(false),
+   stat_(false),
+   thisctrl_(false),
+   nextctrl_(Cxx::Access_N),
+   pos_(string::npos),
+   indent_(0),
+   blank_(BlankNone),
+   comment_(false)
 {
    Debug::ft("ItemDeclAttrs.ctor(type)");
 }
@@ -201,49 +200,49 @@ ItemDeclAttrs::ItemDeclAttrs(Cxx::ItemType t, Cxx::Access a, FunctionRole r) :
 //------------------------------------------------------------------------------
 
 ItemDeclAttrs::ItemDeclAttrs(const CxxToken* item) :
-   type(item->Type()),
-   access(item->GetAccess()),
-   role(FuncOther),
-   over(false),
-   isstruct(false),
-   oper(false),
-   virt(false),
-   deleted(false),
-   shell(false),
-   stat(false),
-   thisctrl(false),
-   nextctrl(Cxx::Access_N),
-   pos(string::npos),
-   indent(0),
-   blank(BlankNone),
-   comment(false)
+   type_(item->Type()),
+   access_(item->GetAccess()),
+   role_(FuncOther),
+   over_(false),
+   isstruct_(false),
+   oper_(false),
+   virt_(false),
+   deleted_(false),
+   shell_(false),
+   stat_(false),
+   thisctrl_(false),
+   nextctrl_(Cxx::Access_N),
+   pos_(string::npos),
+   indent_(0),
+   blank_(BlankNone),
+   comment_(false)
 {
    Debug::ft("ItemDeclAttrs.ctor(item)");
 
-   switch(type)
+   switch(type_)
    {
    case Cxx::Function:
    {
       auto func = static_cast< const Function* >(item);
-      role = func->FuncRole();
-      over = func->IsOverride();
-      oper = (func->FuncType() == FuncOperator);
-      virt = func->IsVirtual();
+      role_ = func->FuncRole();
+      over_ = func->IsOverride();
+      oper_ = (func->FuncType() == FuncOperator);
+      virt_ = func->IsVirtual();
       //  [[fallthrough]]
    }
    case Cxx::Data:
-      stat = item->IsStatic();
+      stat_ = item->IsStatic();
       break;
    }
 
    auto cls = item->GetClass();
-   if(cls != nullptr) isstruct = (cls->GetClassTag() != Cxx::ClassType);
+   if(cls != nullptr) isstruct_ = (cls->GetClassTag() != Cxx::ClassType);
 
    auto& editor = item->GetFile()->GetEditor();
    size_t begin, end;
    if(item->GetSpan2(begin, end))
    {
-      indent = editor.LineFindFirst(begin) - editor.CurrBegin(begin);
+      indent_ = editor.LineFindFirst(begin) - editor.CurrBegin(begin);
    }
 }
 
@@ -261,7 +260,7 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
    //
    size_t order = 0;
 
-   switch(access)
+   switch(access_)
    {
    case Cxx::Public:
       order = 0;
@@ -273,7 +272,7 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
       order = 40;
    }
 
-   switch(type)
+   switch(type_)
    {
    case Cxx::Friend:
       return order + 3;
@@ -288,7 +287,7 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
 
    case Cxx::Function:
    {
-      switch(role)
+      switch(role_)
       {
       case PureCtor:
          return order + 8;
@@ -303,55 +302,79 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
       case MoveOper:
          return order + 13;
       default:
-         if(oper) return order + 14;
-         if(virt) return order + 16;
-         if(over) return order + 17;
+         if(oper_) return order + 14;
+         if(virt_) return order + 16;
+         if(over_) return order + 17;
          return order + 15;
       }
       break;
    }
 
    case Cxx::Data:
-      if(isstruct)
+      if(isstruct_)
       {
          //  If a struct defines its data first, this will prevent functions
          //  from being added before its data.
          //
-         if(stat) return order + 2;
+         if(stat_) return order + 2;
          return order + 1;
       }
       else
       {
-         if(stat) return order + 19;
+         if(stat_) return order + 19;
          return order + 18;
       }
    }
 
-   Debug::SwLog(ItemDeclAttrs_CalcDeclOrder, "unexpected item type", type);
+   Debug::SwLog(ItemDeclAttrs_CalcDeclOrder, "unexpected item type", type_);
    return order;
 }
 
 //==============================================================================
 //
-//  Attributes when inserting a function definition.
+//  How an item's definition is separated from other code.
 //
-struct FuncDefnAttrs
+enum ItemOffset
 {
-   explicit FuncDefnAttrs(FunctionRole r);
-
-   const FunctionRole role;  // type of function being inserted
-   size_t pos;               // insertion position
-   BlankLocation blank;      // where to insert a blank line
-   bool rule;                // set to insert a rule
+   OffsetNone,   // not offset
+   OffsetBlank,  // blank line
+   OffsetRule    // blank line and rule
 };
 
-FuncDefnAttrs::FuncDefnAttrs(FunctionRole r) :
-   role(r),
-   pos(string::npos),
-   blank(BlankNone),
-   rule(false)
+struct ItemOffsets
 {
-   Debug::ft("FuncDefnAttrs.ctor");
+   ItemOffsets() : above_(OffsetNone), below_(OffsetNone) { }
+
+   ItemOffset above_;  // offset above the item
+   ItemOffset below_;  // offset below the item
+};
+
+//------------------------------------------------------------------------------
+//
+//  Attributes when inserting an item definition.
+//
+struct ItemDefnAttrs
+{
+   explicit ItemDefnAttrs(FunctionRole role);
+   explicit ItemDefnAttrs(const Function* func);
+
+   const FunctionRole role_;  // type of function being inserted
+   size_t pos_;               // insertion position
+   ItemOffsets offsets_;      // how to offset item
+};
+
+ItemDefnAttrs::ItemDefnAttrs(FunctionRole role) :
+   role_(role),
+   pos_(string::npos)
+{
+   Debug::ft("ItemDefnAttrs.ctor(role)");
+}
+
+ItemDefnAttrs::ItemDefnAttrs(const Function* func) :
+   role_(func->FuncRole()),
+   pos_(string::npos)
+{
+   Debug::ft("ItemDefnAttrs.ctor(func)");
 }
 
 //==============================================================================
@@ -446,9 +469,9 @@ word ChooseDtorAttributes(CliThread& cli, ItemDeclAttrs& attrs)
       return EditFailed;
    }
 
-   if((attrs.access == access) && (attrs.virt == virt)) return EditCompleted;
-   attrs.access = access;
-   attrs.virt = virt;
+   if((attrs.access_ == access) && (attrs.virt_ == virt)) return EditCompleted;
+   attrs.access_ = access;
+   attrs.virt_ = virt;
    return EditSucceeded;
 }
 
@@ -464,11 +487,11 @@ string CreateSpecialFunctionComment
 
    string comment;
 
-   if(attrs.deleted)
+   if(attrs.deleted_)
    {
       //  Currently occurs only for a copy constructor/operator.
       //
-      switch(attrs.role)
+      switch(attrs.role_)
       {
       case CopyCtor:
       case MoveCtor:
@@ -486,7 +509,7 @@ string CreateSpecialFunctionComment
          comment = "[Add comment.]";
       }
    }
-   else if(attrs.virt)
+   else if(attrs.virt_)
    {
       //  For a base class destructor.
       //
@@ -495,19 +518,19 @@ string CreateSpecialFunctionComment
       else
          comment = "Virtual to allow subclassing";
    }
-   else if(attrs.access == Cxx::Protected)
+   else if(attrs.access_ == Cxx::Protected)
    {
       //  For a base class (other than the destructor).
       //
       comment = "Protected because this class is virtual";
    }
-   else if(attrs.access == Cxx::Private)
+   else if(attrs.access_ == Cxx::Private)
    {
       //  For a singleton's constructor or destructor.
       //
       comment = "Private because this is a singleton";
    }
-   else if(attrs.role == PureDtor)
+   else if(attrs.role_ == PureDtor)
    {
       //  For a leaf class destructor.
       //
@@ -518,7 +541,7 @@ string CreateSpecialFunctionComment
       //  None of the above applies.
       //
       std::ostringstream stream;
-      stream << attrs.role;
+      stream << attrs.role_;
       comment = stream.str();
       comment.front() = toupper(comment.front());
    }
@@ -536,9 +559,9 @@ void DebugFtNames(const Function* func, string& flit, string& fvar)
 {
    Debug::ft("CodeTools.DebugFtNames");
 
-   //  Get the function's name and the scope in which it appears.
+   //  Get the function's name and the area in which it appears.
    //
-   auto sname = func->GetScope()->Name();
+   auto sname = func->GetArea()->Name();
    auto fname = func->DebugName();
 
    flit = sname;
@@ -1033,7 +1056,7 @@ word Editor::ChangeAccess(const CodeWarning& log, Cxx::Access acc)
    Debug::ft("Editor.ChangeAccess(log)");
 
    ItemDeclAttrs attrs(log.item_);
-   attrs.access = acc;
+   attrs.access_ = acc;
    return ChangeAccess(log.item_, attrs);
 }
 
@@ -1056,11 +1079,11 @@ word Editor::ChangeAccess(const CxxToken* item, ItemDeclAttrs& attrs)
       return Report(UnspecifiedFailure, rc);
    }
 
-   attrs.comment = false;
-   InsertAfterItemDecl(attrs);
-   Paste(attrs.pos, code, from);
-   InsertBeforeItemDecl(attrs, EMPTY_STR);
-   const_cast< CxxToken* >(item)->SetAccess(attrs.access);
+   attrs.comment_ = false;
+   InsertBelowItemDecl(attrs);
+   Paste(attrs.pos_, code, from);
+   InsertAboveItemDecl(attrs, EMPTY_STR);
+   const_cast< CxxToken* >(item)->SetAccess(attrs.access_);
    return Changed(item->GetPos());
 }
 
@@ -1343,7 +1366,7 @@ word Editor::ChangeSpecialFunction(CliThread& cli, const CodeWarning& log)
    {
    case PublicConstructor:
       if(cls->WasCreated(false)) return Report(ClassInstantiated);
-      attrs.access = Cxx::Protected;
+      attrs.access_ = Cxx::Protected;
       break;
 
    case NonVirtualDestructor:
@@ -1355,9 +1378,9 @@ word Editor::ChangeSpecialFunction(CliThread& cli, const CodeWarning& log)
          return Report(FixSkipped);
       }
 
-      if(attrs.virt != func->IsVirtual())
+      if(attrs.virt_ != func->IsVirtual())
       {
-         if(attrs.virt)
+         if(attrs.virt_)
             rc = TagAsVirtual(log);
          else
             rc = EraseVirtualTag(log);
@@ -1367,7 +1390,7 @@ word Editor::ChangeSpecialFunction(CliThread& cli, const CodeWarning& log)
 
    case ConstructorNotPrivate:
    case DestructorNotPrivate:
-      attrs.access = Cxx::Private;
+      attrs.access_ = Cxx::Private;
       break;
    default:
       return Report("Internal error: unexpected warning type.");
@@ -1701,9 +1724,9 @@ word Editor::DeleteSpecialFunction(CliThread& cli, const CodeWarning& log)
    //  Ensure that the function's access control is public.
    //
    ItemDeclAttrs attrs(decl);
-   if(attrs.access != Cxx::Public)
+   if(attrs.access_ != Cxx::Public)
    {
-      attrs.access = Cxx::Public;
+      attrs.access_ = Cxx::Public;
       auto item = const_cast< CxxToken* >(log.item_);
       return ChangeAccess(item, attrs);
    }
@@ -2328,30 +2351,26 @@ size_t Editor::FindArgsEnd(const Function* func) const
 
 //------------------------------------------------------------------------------
 
-word Editor::FindFuncDefnLoc(const CodeFile* file, const Class* cls,
-   const string& name, FuncDefnAttrs& attrs) const
+word Editor::FindFuncDefnLoc(const CodeFile* file, const CxxArea* area,
+   const string& name, ItemDefnAttrs& attrs) const
 {
    Debug::ft("Editor.FindFuncDefnLoc(name)");
 
    //  Look at all the functions that are defined in this file and that belong
-   //  to CLS.
+   //  to AREA.
    //
-   auto funcs = file->Funcs();
+   auto defns = file->GetFuncDefnsToSort();
    const Function* prev = nullptr;
    const Function* next = nullptr;
    auto reached = false;
 
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   for(auto f = defns.cbegin(); f != defns.cend(); ++f)
    {
-      //  Ignore instantiated functions.
-      //
-      if((*f)->IsInTemplateInstance()) continue;
-
-      //  If the current function is in another class, insert the new function
+      //  If the current function is in another area, insert the new function
       //  o immediately before it, if the new function's class has been reached
       //  o somewhere after it, if the new function's class has not been reached
       //
-      if((*f)->GetClass() != cls)
+      if((*f)->GetArea() != area)
       {
          if(reached)
          {
@@ -2363,19 +2382,19 @@ word Editor::FindFuncDefnLoc(const CodeFile* file, const Class* cls,
          continue;
       }
 
-      //  The current function is in the same class.  Insert the new function
+      //  The current function is in the same area.  Insert the new function
       //  in the cardinal order defined by FunctionRole.  When the roles match,
       //  insert the new function alphabetically.
       //
       reached = true;
       auto currRole = (*f)->FuncRole();
 
-      if(attrs.role < currRole)
+      if(attrs.role_ < currRole)
       {
          next = (*f)->GetDefn();
          break;
       }
-      else if(attrs.role > currRole)
+      else if(attrs.role_ > currRole)
       {
          prev = (*f)->GetDefn();
          continue;
@@ -2404,7 +2423,7 @@ word Editor::FindFuncDefnLoc(const CodeFile* file, const Class* cls,
    //  inserted (PREV and NEXT), so find its precise insertion location
    //  and attributes.
    //
-   return UpdateFuncDefnLoc(prev, next, attrs);
+   return UpdateItemDefnLoc(prev, nullptr, next, attrs);
 }
 
 //------------------------------------------------------------------------------
@@ -2505,35 +2524,35 @@ word Editor::FindSpecialFuncDeclLoc
 
    //  Update ATTRS based on what function is being inserted.
    //
-   switch(attrs.role)
+   switch(attrs.role_)
    {
    case PureCtor:
       prototype = nullptr;
 
       if(solo)
-         attrs.access = Cxx::Private;
+         attrs.access_ = Cxx::Private;
       else if(base && !inst)
-         attrs.access = Cxx::Protected;
+         attrs.access_ = Cxx::Protected;
       else if(!inst)
          prompt = true;
       break;
 
    case PureDtor:
       if(base)
-         attrs.virt = true;
+         attrs.virt_ = true;
       else if(solo)
-         attrs.access = Cxx::Private;
+         attrs.access_ = Cxx::Private;
       break;
 
    case CopyCtor:
    case CopyOper:
       if(sbase || solo)
       {
-         attrs.deleted = true;
+         attrs.deleted_ = true;
       }
       else
       {
-         if(base && !inst) attrs.access = Cxx::Protected;
+         if(base && !inst) attrs.access_ = Cxx::Protected;
          prompt = true;
       }
       break;
@@ -2546,15 +2565,15 @@ word Editor::FindSpecialFuncDeclLoc
    if(prompt)
    {
       std::ostringstream stream;
-      stream << spaces(2) << "Define the " << attrs.role << ": " << DefnPrompt;
+      stream << spaces(2) << "Define the " << attrs.role_ << ": " << DefnPrompt;
       auto response = cli.IntPrompt(stream.str(), 0, 2);
       if(response == 0) return Report(FixSkipped);
-      attrs.deleted = (response == 2);
+      attrs.deleted_ = (response == 2);
    }
 
-   if(attrs.deleted)
+   if(attrs.deleted_)
    {
-      attrs.access = Cxx::Public;
+      attrs.access_ = Cxx::Public;
    }
    else
    {
@@ -2564,7 +2583,7 @@ word Editor::FindSpecialFuncDeclLoc
          stream << "The " << prototype->FuncRole();
          stream << " is not trivial." << CRLF;
          stream << spaces(2) << ShellPrompt;
-         attrs.shell = cli.BoolPrompt(stream.str());
+         attrs.shell_ = cli.BoolPrompt(stream.str());
       }
    }
 
@@ -2974,6 +2993,10 @@ WarningStatus Editor::FixStatus(const CodeWarning& log) const
       if((log.status_ == NotFixed) && sorted_) return Fixed;
       break;
 
+   case FunctionNotSorted:
+      if((log.status_ == NotFixed) && FunctionsWereSorted(log)) return Fixed;
+      break;
+
    case OverrideNotSorted:
       if((log.status_ == NotFixed) && OverridesWereSorted(log)) return Fixed;
       break;
@@ -3235,6 +3258,80 @@ word Editor::Format(string& expl)
 
 //------------------------------------------------------------------------------
 
+bool Editor::FunctionsWereSorted(const CodeWarning& log) const
+{
+   Debug::ft("Editor.FunctionsWereSorted");
+
+   auto area = log.item_->GetArea();
+
+   for(auto w = warnings_.cbegin(); w != warnings_.cend(); ++w)
+   {
+      if((*w)->warning_ == FunctionNotSorted)
+      {
+         if(((*w)->status_ >= Pending) && ((*w)->item_->GetArea() == area))
+            return true;
+      }
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+ItemOffsets Editor::GetOffsets(const CxxToken* item) const
+{
+   Debug::ft("Editor.GetOffsets");
+
+   ItemOffsets offsets;
+
+   if(item == nullptr) return offsets;
+
+   size_t begin, end;
+   if(!item->GetSpan2(begin, end)) return offsets;
+
+   //  See what follows ITEM.
+   //
+   auto pos = NextBegin(end);
+   auto type = PosToType(pos);
+
+   if(type == BlankLine)
+   {
+      type = PosToType(NextBegin(pos));
+
+      if(type == RuleComment)
+         offsets.below_ = OffsetRule;
+      else
+         offsets.below_ = OffsetBlank;
+   }
+
+   //  See what precedes ITEM.
+   //
+   pos = begin;
+
+   while(true)
+   {
+      pos = PrevBegin(pos);
+      type = PosToType(pos);
+
+      switch(type)
+      {
+      case BlankLine:
+         offsets.above_ = OffsetBlank;
+         //  [[fallthrough]]
+      case FunctionName:
+         continue;
+
+      case RuleComment:
+         offsets.above_ = OffsetRule;
+         //  [[fallthrough]]
+      default:
+         return offsets;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Editor::GetSpan(const CxxToken* item, size_t& begin, size_t& end)
 {
    Debug::ft("Editor.GetSpan");
@@ -3384,37 +3481,44 @@ size_t Editor::Insert(size_t pos, const string& code)
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertAfterFuncDefn(const FuncDefnAttrs& attrs)
+void Editor::InsertAboveItemDecl
+   (const ItemDeclAttrs& attrs, const string& comment)
 {
-   Debug::ft("Editor.InsertAfterFuncDefn");
+   Debug::ft("Editor.InsertAboveItemDecl");
 
-   if(attrs.blank == BlankAfter)
+   if(attrs.comment_)
    {
-      InsertLine(attrs.pos, EMPTY_STR);
+      InsertLine(attrs.pos_, strComment(EMPTY_STR, attrs.indent_));
+      Insert(attrs.pos_, strComment(comment, attrs.indent_));
+   }
 
-      if(attrs.rule)
-      {
-         InsertRule(attrs.pos, '-');
-         InsertLine(attrs.pos, EMPTY_STR);
-      }
+   if(attrs.thisctrl_)
+   {
+      std::ostringstream stream;
+      if(attrs.indent_ > 0) stream << spaces(attrs.indent_ - IndentSize());
+      stream << attrs.access_ << ':';
+      InsertLine(attrs.pos_, stream.str());
+   }
+   else if(attrs.blank_ == BlankAbove)
+   {
+      InsertLine(attrs.pos_, EMPTY_STR);
    }
 }
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertAfterItemDecl(const ItemDeclAttrs& attrs)
+void Editor::InsertAboveItemDefn(const ItemDefnAttrs& attrs)
 {
-   Debug::ft("Editor.InsertAfterItemDecl");
+   Debug::ft("Editor.InsertAboveItemDefn");
 
-   if(attrs.nextctrl != Cxx::Access_N)
+   switch(attrs.offsets_.above_)
    {
-      std::ostringstream access;
-      access << attrs.nextctrl << ':';
-      InsertLine(attrs.pos, access.str());
-   }
-   else if(attrs.blank == BlankAfter)
-   {
-      InsertLine(attrs.pos, EMPTY_STR);
+   case OffsetRule:
+      InsertLine(attrs.pos_, EMPTY_STR);
+      InsertRule(attrs.pos_, '-');
+      //  [[fallthrough]]
+   case OffsetBlank:
+      InsertLine(attrs.pos_, EMPTY_STR);
    }
 }
 
@@ -3432,45 +3536,36 @@ word Editor::InsertArgument(const Function* func, word offset)
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertBeforeFuncDefn(const FuncDefnAttrs& attrs)
+void Editor::InsertBelowItemDecl(const ItemDeclAttrs& attrs)
 {
-   Debug::ft("Editor.InsertBeforeFuncDefn");
+   Debug::ft("Editor.InsertBelowItemDecl");
 
-   if(attrs.blank == BlankBefore)
+   if(attrs.nextctrl_ != Cxx::Access_N)
    {
-      InsertLine(attrs.pos, EMPTY_STR);
-
-      if(attrs.rule)
-      {
-         InsertRule(attrs.pos, '-');
-         InsertLine(attrs.pos, EMPTY_STR);
-      }
+      std::ostringstream access;
+      access << attrs.nextctrl_ << ':';
+      InsertLine(attrs.pos_, access.str());
+   }
+   else if(attrs.blank_ == BlankBelow)
+   {
+      InsertLine(attrs.pos_, EMPTY_STR);
    }
 }
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertBeforeItemDecl
-   (const ItemDeclAttrs& attrs, const string& comment)
+void Editor::InsertBelowItemDefn(const ItemDefnAttrs& attrs)
 {
-   Debug::ft("Editor.InsertBeforeItemDecl");
+   Debug::ft("Editor.InsertBelowItemDefn");
 
-   if(attrs.comment)
+   switch(attrs.offsets_.below_)
    {
-      InsertLine(attrs.pos, strComment(EMPTY_STR, attrs.indent));
-      Insert(attrs.pos, strComment(comment, attrs.indent));
-   }
-
-   if(attrs.thisctrl)
-   {
-      std::ostringstream stream;
-      if(attrs.indent > 0) stream << spaces(attrs.indent - IndentSize());
-      stream << attrs.access << ':';
-      InsertLine(attrs.pos, stream.str());
-   }
-   else if(attrs.blank == BlankBefore)
-   {
-      InsertLine(attrs.pos, EMPTY_STR);
+   case OffsetRule:
+      InsertLine(attrs.pos_, EMPTY_STR);
+      InsertRule(attrs.pos_, '-');
+      //  [[fallthrough]]
+   case OffsetBlank:
+      InsertLine(attrs.pos_, EMPTY_STR);
    }
 }
 
@@ -3850,9 +3945,9 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log)
    //  so access that file's editor and find out where the function should be
    //  defined in that file.
    //
-   ItemDeclAttrs decl(Cxx::Function, Cxx::Public);
-   decl.over = true;
-   auto rc = FindItemDeclLoc(cls, name, decl);
+   ItemDeclAttrs declAttrs(Cxx::Function, Cxx::Public);
+   declAttrs.over_ = true;
+   auto rc = FindItemDeclLoc(cls, name, declAttrs);
    if(rc != EditContinue) return Report(UnspecifiedFailure, rc);
 
    auto file = FindFuncDefnFile(cli, cls, name);
@@ -3860,8 +3955,8 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log)
 
    auto& editor = file->GetEditor();
 
-   FuncDefnAttrs defn(FuncOther);
-   rc = editor.FindFuncDefnLoc(file, cls, name, defn);
+   ItemDefnAttrs defnAttrs(FuncOther);
+   rc = editor.FindFuncDefnLoc(file, cls, name, defnAttrs);
    if(rc != EditContinue) return rc;
 
    //  Insert the function's declaration and definition.  The definition is
@@ -3869,9 +3964,9 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log)
    //  will follow the definition, so the position already found for it will
    //  become invalid if the declaration is inserted above it.
    //
-   editor.InsertPatchDefn(cls, defn);
-   InsertPatchDecl(decl);
-   auto pos = Find(defn.pos, PatchSignature);
+   editor.InsertPatchDefn(cls, defnAttrs);
+   InsertPatchDecl(declAttrs);
+   auto pos = Find(defnAttrs.pos_, PatchSignature);
    return Changed(pos);
 }
 
@@ -3881,7 +3976,7 @@ void Editor::InsertPatchDecl(const ItemDeclAttrs& attrs)  //u
 {
    Debug::ft("Editor.InsertPatchDecl");
 
-   InsertAfterItemDecl(attrs);
+   InsertBelowItemDecl(attrs);
 
    string code = PatchReturn;
    code.push_back(SPACE);
@@ -3889,38 +3984,38 @@ void Editor::InsertPatchDecl(const ItemDeclAttrs& attrs)  //u
    code.push_back(SPACE);
    code.append(OVERRIDE_STR);
    code.push_back(';');
-   InsertLine(attrs.pos, strCode(code, 1));
+   InsertLine(attrs.pos_, strCode(code, 1));
 
-   InsertBeforeItemDecl(attrs, PatchComment);
+   InsertAboveItemDecl(attrs, PatchComment);
 }
 
 //------------------------------------------------------------------------------
 
-void Editor::InsertPatchDefn(const Class* cls, const FuncDefnAttrs& attrs)  //u
+void Editor::InsertPatchDefn(const Class* cls, const ItemDefnAttrs& attrs)  //u
 {
    Debug::ft("Editor.InsertPatchDefn");
 
-   InsertAfterFuncDefn(attrs);
+   InsertBelowItemDefn(attrs);
 
-   InsertLine(attrs.pos, "}");
+   InsertLine(attrs.pos_, "}");
 
    auto base = cls->BaseClass();
    auto code = base->Name();
    code.append(SCOPE_STR);
    code.append(PatchInvocation);
    code.push_back(';');
-   InsertLine(attrs.pos, strCode(code, 1));
+   InsertLine(attrs.pos_, strCode(code, 1));
 
-   InsertLine(attrs.pos, "{");
+   InsertLine(attrs.pos_, "{");
 
    code = PatchReturn;
    code.push_back(SPACE);
    code.append(cls->Name());
    code.append(SCOPE_STR);
    code.append(PatchSignature);
-   InsertLine(attrs.pos, code);
+   InsertLine(attrs.pos_, code);
 
-   InsertBeforeFuncDefn(attrs);
+   InsertAboveItemDefn(attrs);
 }
 
 //------------------------------------------------------------------------------
@@ -3991,18 +4086,18 @@ word Editor::InsertSpecialFuncDecl  //u
    auto rc = FindSpecialFuncDeclLoc(cli, cls, declAttrs);
    if(rc != EditContinue) return rc;
 
-   auto code = spaces(declAttrs.indent);
+   auto code = spaces(declAttrs.indent_);
    auto className = cls->Name();
 
    string defn;
 
-   if(!declAttrs.shell)
+   if(!declAttrs.shell_)
    {
       defn += " = ";
-      defn += (declAttrs.deleted ? DELETE_STR : DEFAULT_STR);
+      defn += (declAttrs.deleted_ ? DELETE_STR : DEFAULT_STR);
    }
 
-   switch(declAttrs.role)
+   switch(declAttrs.role_)
    {
    case PureCtor:
       code += className + "()";
@@ -4019,7 +4114,7 @@ word Editor::InsertSpecialFuncDecl  //u
       break;
 
    case PureDtor:
-      if(declAttrs.virt) code += string(VIRTUAL_STR) + SPACE;
+      if(declAttrs.virt_) code += string(VIRTUAL_STR) + SPACE;
       code += '~' + className + "()";
       break;
 
@@ -4029,21 +4124,21 @@ word Editor::InsertSpecialFuncDecl  //u
 
    code += defn;
    code.push_back(';');
-   InsertAfterItemDecl(declAttrs);
-   InsertLine(declAttrs.pos, code);
+   InsertBelowItemDecl(declAttrs);
+   InsertLine(declAttrs.pos_, code);
    code.pop_back();
 
    auto comment = CreateSpecialFunctionComment(cls, declAttrs);
-   InsertBeforeItemDecl(declAttrs, comment);
+   InsertAboveItemDecl(declAttrs, comment);
 
-   if(declAttrs.shell)
+   if(declAttrs.shell_)
    {
       auto file = FindFuncDefnFile(cli, cls, code);
       if(file == nullptr) return NotFound("File for function definition");
 
       auto& editor = file->GetEditor();
 
-      FuncDefnAttrs defnAttrs(declAttrs.role);
+      ItemDefnAttrs defnAttrs(declAttrs.role_);
       rc = editor.FindFuncDefnLoc(file, cls, code, defnAttrs);
       if(rc != EditContinue) return rc;
 
@@ -4052,30 +4147,30 @@ word Editor::InsertSpecialFuncDecl  //u
       editor.InsertSpecialFuncDefn(cls, defnAttrs);
    }
 
-   auto pos = source_.find(code, declAttrs.pos);
+   auto pos = source_.find(code, declAttrs.pos_);
    return Changed(pos);
 }
 
 //------------------------------------------------------------------------------
 
 void Editor::InsertSpecialFuncDefn  //u
-   (const Class* cls, const FuncDefnAttrs& attrs)
+   (const Class* cls, const ItemDefnAttrs& attrs)
 {
    Debug::ft("Editor.InsertSpecialFuncDefn");
 
-   InsertAfterFuncDefn(attrs);
-   InsertLine(attrs.pos, "}");
+   InsertBelowItemDefn(attrs);
+   InsertLine(attrs.pos_, "}");
 
    auto code = spaces(IndentSize());
    code += COMMENT_STR;
    code += "* To be implemented.";
-   InsertLine(attrs.pos, code);
-   InsertLine(attrs.pos, "{");
+   InsertLine(attrs.pos_, code);
+   InsertLine(attrs.pos_, "{");
 
    auto className = cls->Name();
    code.clear();
 
-   if(attrs.role == CopyOper)
+   if(attrs.role_ == CopyOper)
    {
       code = className;
       code += "& ";
@@ -4084,7 +4179,7 @@ void Editor::InsertSpecialFuncDefn  //u
    code += className;
    code += SCOPE_STR;
 
-   switch(attrs.role)
+   switch(attrs.role_)
    {
    case PureCtor:
       code += className + "()";
@@ -4105,8 +4200,8 @@ void Editor::InsertSpecialFuncDefn  //u
       break;
    }
 
-   InsertLine(attrs.pos, code);
-   InsertBeforeFuncDefn(attrs);
+   InsertLine(attrs.pos_, code);
+   InsertAboveItemDefn(attrs);
 }
 
 //------------------------------------------------------------------------------
@@ -4353,6 +4448,49 @@ word Editor::MoveDefine(const CodeWarning& log)
    //  Move this #define directly after the #include directives.
    //
    return Unimplemented();
+}
+
+//------------------------------------------------------------------------------
+
+void Editor::MoveFuncDefn(FunctionVector& funcs, const Function* func)
+{
+   Debug::ft("Editor.MoveFuncDefn");
+
+   //  Even when SortFunctions moves a function, it simply adds it to the end
+   //  of FUNCS.  FUNCS must therefore be re-sorted before deciding where to
+   //  insert FUNC.  The last function in FUNCS was sorted, but FUNC should
+   //  appear before it, so it will be inserted *somewhere* in FUNCS.
+   //
+   std::sort(funcs.begin(), funcs.end(), IsSortedByPos);
+   Function* prev = nullptr;
+   Function* next = nullptr;
+
+   for(auto f = funcs.cbegin(); f != funcs.cend(); ++f)
+   {
+      if(FuncDefnsAreSorted(func, *f))
+      {
+         next = *f;
+         break;
+      }
+
+      prev = *f;
+   }
+
+   //  Move FUNC so that it follows PREV and precedes NEXT.
+   //
+   ItemDefnAttrs defnAttrs(func);
+   string code;
+
+   UpdateItemDefnLoc(prev, func, next, defnAttrs);
+   InsertBelowItemDefn(defnAttrs);
+   auto from = CutCode(func, code);
+   Paste(defnAttrs.pos_, code, from);
+   InsertAboveItemDefn(defnAttrs);
+
+   string expl;
+   auto rc = Format(expl);  //x
+   if(rc != EditCompleted)
+      Debug::noop(rc);
 }
 
 //------------------------------------------------------------------------------
@@ -4978,9 +5116,57 @@ word Editor::SortFunctions(const CodeWarning& log)
 {
    Debug::ft("Editor.SortFunctions");
 
-   //  Sort all function definitions in this file.
+   //  Start by getting the functions defined in our file, sorted by position.
+   //  Extract the functions in the area associated with the log; all of them
+   //  will be sorted together.
    //
-   return Unimplemented();
+   auto defns = file_->GetFuncDefnsToSort();
+   auto area = log.item_->GetArea();
+   auto orphans = FuncsInArea(defns, area);
+   auto reached = false;
+   Function* prev = nullptr;
+   FunctionVector sorted;
+
+   for(auto f = defns.cbegin(); f != defns.cend(); ++f)
+   {
+      if((*f)->GetArea() == area)
+      {
+         reached = true;
+
+         if((prev != nullptr) && !FuncDefnsAreSorted(prev, *f))
+         {
+            //  PREV should follow F, so move F to somewhere above PREV.
+            //
+            MoveFuncDefn(sorted, *f);
+         }
+         else
+         {
+            prev = *f;
+         }
+
+         CodeTools::EraseItem(orphans, *f);
+         sorted.push_back(*f);
+      }
+      else
+      {
+         if(reached) break;
+      }
+   }
+
+   if(!reached) return NotFound("Unsorted function");
+
+   //  A function in AREA was found, and this function is in a different
+   //  area.  Move any orphans so that they appear with others in AREA.
+   //
+   while(!orphans.empty())
+   {
+      auto orphan = orphans.back();
+      orphans.pop_back();
+      MoveFuncDefn(sorted, orphan);
+      sorted.push_back(orphan);
+   }
+
+   return EditSucceeded;
 }
 
 //------------------------------------------------------------------------------
@@ -5379,142 +5565,11 @@ word Editor::TagAsVirtual(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::UpdateFuncDefnAttrs
-   (const Function* func, FuncDefnAttrs& attrs) const
-{
-   Debug::ft("Editor.UpdateFuncDefnAttrs");
-
-   if(func == nullptr) return EditContinue;
-
-   //  See if FUNC is preceded or followed by a rule, or preceded
-   //  *and* followed by a blank line.
-   //
-   bool before = false;
-   bool after = false;
-   size_t begin, end;
-   if(!func->GetSpan2(begin, end)) return NotFound("Adjacent function");
-   auto pos = NextBegin(end);
-   auto type = PosToType(pos);
-
-   if(type == BlankLine)
-   {
-      before = true;
-      type = PosToType(NextBegin(pos));
-      if(type == RuleComment)
-      {
-         attrs.rule = true;
-         attrs.blank = BlankBefore;
-         return EditContinue;
-      }
-   }
-
-   pos = begin;
-   while(true)
-   {
-      pos = PrevBegin(pos);
-      type = PosToType(pos);
-
-      switch(type)
-      {
-      case RuleComment:
-         attrs.rule = true;
-         attrs.blank = BlankBefore;
-         return EditContinue;
-
-      case BlankLine:
-         after = true;
-         //  [[fallthrough]]
-      case FunctionName:
-         continue;
-
-      default:
-         if(before && after) attrs.blank = BlankBefore;
-         return EditContinue;
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
-word Editor::UpdateFuncDefnLoc
-   (const Function* prev, const Function* next, FuncDefnAttrs& attrs) const
-{
-   Debug::ft("Editor.UpdateFuncDefnLoc");
-
-   //  PREV and NEXT are the functions that precede and follow the function
-   //  whose definition is to be inserted.
-   //
-   auto rc = UpdateFuncDefnAttrs(prev, attrs);
-   if(rc != EditContinue) return rc;
-   rc = UpdateFuncDefnAttrs(next, attrs);
-   if(rc != EditContinue) return rc;
-
-   if(prev != nullptr)
-   {
-      //  Insert the function after the one that precedes it.
-      //
-      attrs.pos = LineAfterItem(prev);
-      return EditContinue;
-   }
-
-   if(next == nullptr)
-   {
-      //  Insert a rule above the function.  There must be something else
-      //  in the file!
-      //
-      attrs.rule = true;
-      attrs.blank = BlankBefore;
-
-      //  Insert the function at the bottom of the file.  If it ends with
-      //  two closing braces, the second one ends a namespace definition,
-      //  so insert the definition above that one.
-      //
-      auto pos = PrevBegin(string::npos);
-      auto type = PosToType(pos);
-      if(type != CloseBrace) return NotFound("File's second last }");
-      type = PosToType(PrevBegin(pos));
-      if(type != CloseBrace) return NotFound("File's last }");
-      attrs.pos = pos;
-      return EditContinue;
-   }
-
-   //  Insert the function before NEXT.  If NEXT has an fn_name, insert the
-   //  definition above *that*.  If the new function is to be offset with a
-   //  blank and/or rule, they need to go *after* the new function.
-   //
-   if(attrs.blank != BlankNone) attrs.blank = BlankAfter;
-
-   auto pred = PrevBegin(next->GetPos());
-
-   while(true)
-   {
-      auto type = PosToType(pred);
-
-      switch(type)
-      {
-      case BlankLine:
-         pred = PrevBegin(pred);
-         continue;
-      case FunctionName:
-         while(PosToType(--pred) == FunctionName);
-         attrs.pos = ++pred;
-         return EditContinue;
-      default:
-         break;
-      }
-   }
-
-   attrs.pos = pred;
-   return EditContinue;
-}
-
-//------------------------------------------------------------------------------
-
 word Editor::UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const
 {
    Debug::ft("Editor.UpdateItemControls");
 
-   //  Determine the access control that will be in effect at attrs.pos.
+   //  Determine the access control that will be in effect at attrs.pos_.
    //  If we reach an access control that is more restrictive than the
    //  one for the item, insert the item directly above it.
    //
@@ -5526,19 +5581,19 @@ word Editor::UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const
 
    auto prev = cls->DefaultAccess();
 
-   for(auto pos = CurrBegin(begin); pos <= attrs.pos; pos = NextBegin(pos))
+   for(auto pos = CurrBegin(begin); pos <= attrs.pos_; pos = NextBegin(pos))
    {
       auto code = GetCode(pos);
       auto acc = FindAccessControl(code);
 
       if(acc != Cxx::Access_N)
       {
-         if(acc < attrs.access)
+         if(acc < attrs.access_)
          {
-            attrs.pos = pos;
-            attrs.thisctrl = (prev != attrs.access);
-            if(attrs.thisctrl) attrs.blank = BlankNone;
-            if(attrs.blank == BlankAfter) attrs.blank = BlankBefore;
+            attrs.pos_ = pos;
+            attrs.thisctrl_ = (prev != attrs.access_);
+            if(attrs.thisctrl_) attrs.blank_ = BlankNone;
+            if(attrs.blank_ == BlankBelow) attrs.blank_ = BlankAbove;
             return EditContinue;
          }
 
@@ -5546,26 +5601,26 @@ word Editor::UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const
       }
    }
 
-   if(prev != attrs.access)
+   if(prev != attrs.access_)
    {
       //  The item's access control is not in effect at the insertion point,
       //  so it must be inserted, and the access control that was in effect
       //  must be inserted after the item unless we've reached the end of
       //  the class.
       //
-      attrs.thisctrl = true;
-      if(attrs.blank == BlankBefore) attrs.blank = BlankAfter;
-      if(PosToType(attrs.pos) != CloseBraceSemicolon) attrs.nextctrl = prev;
+      attrs.thisctrl_ = true;
+      if(attrs.blank_ == BlankAbove) attrs.blank_ = BlankBelow;
+      if(PosToType(attrs.pos_) != CloseBraceSemicolon) attrs.nextctrl_ = prev;
    }
    else
    {
       //  If the item is being insert *at* its access control, insert it
       //  immediately after that control.
       //
-      if(FindAccessControl(GetCode(attrs.pos)) == attrs.access)
+      if(FindAccessControl(GetCode(attrs.pos_)) == attrs.access_)
       {
-         attrs.pos = NextBegin(attrs.pos);
-         if(attrs.blank == BlankBefore) attrs.blank = BlankAfter;
+         attrs.pos_ = NextBegin(attrs.pos_);
+         if(attrs.blank_ == BlankAbove) attrs.blank_ = BlankBelow;
       }
    }
 
@@ -5586,7 +5641,7 @@ word Editor::UpdateItemDeclAttrs
 
    //  Indent the code to match that of ITEM.
    //
-   attrs.indent = LineFindFirst(begin) - CurrBegin(begin);
+   attrs.indent_ = LineFindFirst(begin) - CurrBegin(begin);
 
    //  If ITEM is commented, a blank line should also precede or follow it.
    //
@@ -5595,8 +5650,8 @@ word Editor::UpdateItemDeclAttrs
 
    if(!line.isCode && (type != BlankLine))
    {
-      attrs.comment = true;
-      attrs.blank = BlankBefore;
+      attrs.comment_ = true;
+      attrs.blank_ = BlankAbove;
       return EditContinue;
    }
 
@@ -5604,7 +5659,7 @@ word Editor::UpdateItemDeclAttrs
    //
    if((type == BlankLine) && (PosToType(NextBegin(end)) == BlankLine))
    {
-      attrs.blank = BlankBefore;
+      attrs.blank_ = BlankAbove;
    }
 
    return EditContinue;
@@ -5634,16 +5689,16 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
       //
       size_t begin, end;
       if(!cls->GetSpan2(begin, end)) return NotFound("Item's class");
-      attrs.pos = CurrBegin(end);
-      if((prev == nullptr) && (next == nullptr)) attrs.comment = true;
-      if(attrs.blank == BlankAfter) attrs.blank = BlankBefore;
+      attrs.pos_ = CurrBegin(end);
+      if((prev == nullptr) && (next == nullptr)) attrs.comment_ = true;
+      if(attrs.blank_ == BlankBelow) attrs.blank_ = BlankAbove;
       return UpdateItemControls(cls, attrs);
    }
 
    //  Insert the item before NEXT.  If the item is to be set off with a
    //  blank, the blank must follow it.
    //
-   if(attrs.blank != BlankNone) attrs.blank = BlankAfter;
+   if(attrs.blank_ != BlankNone) attrs.blank_ = BlankBelow;
 
    auto pred = PrevBegin(next->GetPos());
 
@@ -5663,19 +5718,19 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
 
       if(type == AccessControl)
       {
-         if(FindAccessControl(GetCode(pred)) != attrs.access)
+         if(FindAccessControl(GetCode(pred)) != attrs.access_)
          {
             //  This isn't the desired control.  Insert the item here or
             //  above; UpdateItemControls will set the exact position.
             //
-            attrs.pos = pred;
+            attrs.pos_ = pred;
             return UpdateItemControls(cls, attrs);
          }
 
          //  This is the desired access control.  Insert the item after
          //  it so that it can be reused.
          //
-         attrs.pos = NextBegin(pred);
+         attrs.pos_ = NextBegin(pred);
          return EditContinue;
       }
 
@@ -5684,8 +5739,137 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
 
    //  Insert the item above the line that follows PRED.
    //
-   attrs.pos = NextBegin(pred);
+   attrs.pos_ = NextBegin(pred);
    return UpdateItemControls(cls, attrs);
+}
+
+//------------------------------------------------------------------------------
+
+void Editor::UpdateItemDefnAttrs(const CxxToken* prev,
+   const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+{
+   Debug::ft("Editor.UpdateItemDefnAttrs");
+
+   auto prevOffsets = GetOffsets(prev);
+   auto itemOffsets = GetOffsets(item);
+   auto nextOffsets = GetOffsets(next);
+
+   if(item == nullptr)
+   {
+      //  ITEM doesn't exist, so PREV and NEXT determine the offsets.
+      //
+      if(prev != nullptr)
+      {
+         //  The item will be added below PREV, so duplicate the offset
+         //  currently below PREV, which will get pushed below the item.
+         //
+         itemOffsets.above_ = prevOffsets.below_;
+      }
+      else if(next != nullptr)
+      {
+         //  The item will be added above NEXT, so duplicate the offset
+         //  currently above NEXT,which will get pushed above the item.
+         //
+         itemOffsets.below_ = nextOffsets.above_;
+      }
+      else
+      {
+         //  The item will be added at the end of the file.  There must be
+         //  *something* in the file, so add a rule above the item.
+         //
+         itemOffsets.above_ = OffsetRule;
+      }
+   }
+   else
+   {
+      //  ITEM already exists, so the offsets above and below it are known.
+      //
+      if(prev != nullptr)
+      {
+         //  The offset below PREV will be pushed below ITEM, so clear the
+         //  offset below ITEM unless it is greater.  An offset above ITEM
+         //  has to be inserted, so use the larger one.
+         //
+         if(prevOffsets.below_ >= itemOffsets.below_)
+            itemOffsets.below_ = OffsetNone;
+         if(itemOffsets.above_ < prevOffsets.below_)
+            itemOffsets.above_ = prevOffsets.below_;
+      }
+      else if(next != nullptr)
+      {
+         //  The offset above NEXT will be pushed above ITEM, so clear the
+         //  offset above ITEM unless it is greater.  An offset below ITEM
+         //  has to be inserted, so use the larger one.
+         //
+         if(nextOffsets.above_ >= itemOffsets.above_)
+            itemOffsets.above_ = OffsetNone;
+         if(itemOffsets.below_ < nextOffsets.above_)
+            itemOffsets.below_ = nextOffsets.above_;
+      }
+   }
+
+   attrs.offsets_.above_ = itemOffsets.above_;
+   attrs.offsets_.below_ = itemOffsets.below_;
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::UpdateItemDefnLoc(const CxxToken* prev,
+   const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+{
+   Debug::ft("Editor.UpdateItemDefnLoc");
+
+   UpdateItemDefnAttrs(prev, item, next, attrs);
+
+   if(prev != nullptr)
+   {
+      //  Insert the item after the one that precedes it.
+      //
+      attrs.pos_ = LineAfterItem(prev);
+      return EditContinue;
+   }
+
+   if(next == nullptr)
+   {
+      //  Insert the item at the bottom of the file.  If it ends with two
+      //  closing braces, the second one ends a namespace definition, so
+      //  insert the definition above that one.
+      //
+      auto pos = PrevBegin(string::npos);
+      auto type = PosToType(pos);
+      if(type != CloseBrace) return NotFound("File's second last }");
+      type = PosToType(PrevBegin(pos));
+      if(type != CloseBrace) return NotFound("File's last }");
+      attrs.pos_ = pos;
+      return EditContinue;
+   }
+
+   //  Insert the item before NEXT.  If NEXT has an fn_name, insert the
+   //  definition above *that*.
+   //
+   auto pred = PrevBegin(next->GetPos());
+
+   while(true)
+   {
+      auto type = PosToType(pred);
+
+      switch(type)
+      {
+      case BlankLine:
+         pred = PrevBegin(pred);
+         continue;
+
+      case FunctionName:
+         pred = PrevBegin(pred);
+         if(PosToType(pred) != FunctionName) pred = NextBegin(pred);
+         attrs.pos_ = pred;
+         return EditContinue;
+
+      default:
+         attrs.pos_ = NextBegin(pred);
+         return EditContinue;
+      }
+   }
 }
 
 //------------------------------------------------------------------------------

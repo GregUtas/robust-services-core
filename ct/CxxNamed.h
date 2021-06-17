@@ -106,11 +106,6 @@ public:
    virtual bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const
       { return false; }
 
-   //  Returns the area (namespace or class) in which the item was declared.
-   //  Returns (because of an override) the item itself if it is an area.
-   //
-   virtual CxxArea* GetArea() const;
-
    //  Returns the function associated with the item.  The interpretation of
    //  this varies by item type.
    //
@@ -230,6 +225,10 @@ public:
    //  shown, else the qualified name (including any templates) is shown.
    //
    void strName(std::ostream& stream, bool fq, const QualName* name) const;
+
+   //  Overridden to invoke GetArea on the item's scope (GetScope).
+   //
+   CxxArea* GetArea() const override;
 
    //  Overridden to invoke GetClass on the item's scope (GetScope).
    //

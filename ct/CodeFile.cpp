@@ -702,84 +702,59 @@ void CodeFile::CheckFunctionOrder() const
 {
    Debug::ft("CodeFile.CheckFunctionOrder");
 
-   if(IsHeader() || funcs_.empty()) return;
-
-   //  Create a list of functions that are *defined* in this file.  Skip
-   //  functions created in template instances, which were added to this
-   //  file if it caused their instantiation.
+   //  Get the functions defined in this file, sorted by position.  Each area
+   //  with functions defined in this file will be handled once, starting with
+   //  the first function's area.  The order of areas is flexible.
    //
-   std::vector< const Function* > defns;
+   auto defns = GetFuncDefnsToSort();
+   if(defns.empty()) return;
 
-   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   auto f = defns.cbegin();
+   auto prev = *f;
+   auto curr = (*f)->GetArea();
+   auto orphans = FuncsInArea(defns, curr);
+   CodeTools::EraseItem(orphans, *f);
+   std::set< CxxArea* > areas;
+   areas.insert(curr);
+
+   for(++f; f != defns.cend(); NO_OP)
    {
-      if((*f)->IsInTemplateInstance()) continue;
-      if((*f)->GetDefnFile() != this) continue;
-      defns.push_back((*f)->GetDefn());
-   }
+      auto area = (*f)->GetArea();
 
-   //  Now sort the functions according to where they were defined and
-   //  check that the functions within the same scope are sorted.
-   //
-   std::sort(defns.begin(), defns.end(), IsSortedByPos);
-
-   CxxScope* scope = nullptr;
-   auto state = FuncCtor;
-   const string* prev = nullptr;
-   const string* curr = nullptr;
-
-   for(auto f = defns.cbegin(); f != defns.cend(); ++f)
-   {
-      if((*f)->GetScope() != scope)
+      if(area == curr)
       {
-         scope = (*f)->GetScope();
-         state = FuncCtor;
-         prev = nullptr;
-         curr = nullptr;
-      }
-
-      switch(state)
-      {
-      case FuncCtor:
-         switch((*f)->FuncType())
+         if(!FuncDefnsAreSorted(prev, *f))
          {
-         case FuncOperator:
-         case FuncStandard:
-            prev = &(*f)->Name();
-            //  [[fallthrough]]
-         case FuncDtor:
-            state = FuncStandard;
-         }
-         break;
-
-      case FuncStandard:
-         switch((*f)->FuncType())
-         {
-         case FuncCtor:
-         case FuncDtor:
             (*f)->Log(FunctionNotSorted);
-            break;
-
-         case FuncOperator:
-            curr = &(*f)->Name();
-            if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
-            {
-               if(prev->find(OPERATOR_STR) != 0)
-               {
-                  (*f)->Log(FunctionNotSorted);
-               }
-            }
-            prev = curr;
-            break;
-
-         case FuncStandard:
-            curr = &(*f)->Name();
-            if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
-            {
-               (*f)->Log(FunctionNotSorted);
-            }
-            prev = curr;
          }
       }
+      else
+      {
+         //  We've reached a function in a different area.  Log any orphans
+         //  in the current area, and then handle the next one.  If an area
+         //  has already been encountered, search until a function in a new
+         //  area is found.
+         //
+         for(auto o = orphans.begin(); o != orphans.end(); ++o)
+         {
+            (*o)->Log(FunctionNotSorted);
+         }
+
+         while(true)
+         {
+            auto result = areas.insert(area);
+            if(result.second) break;
+            if(++f == defns.cend()) return;
+            area = (*f)->GetArea();
+         }
+
+         curr = area;
+         orphans = FuncsInArea(defns, curr);
+      }
+
+      CodeTools::EraseItem(orphans, *f);
+      prev = *f;
+      ++f;
    }
 }
 
@@ -1495,6 +1470,36 @@ Editor& CodeFile::GetEditor()
 
    editor_.Setup(this);
    return editor_;
+}
+
+//------------------------------------------------------------------------------
+
+FunctionVector CodeFile::GetFuncDefnsToSort() const
+{
+   Debug::ft("CodeFile.GetFuncDefnsToSort");
+
+   std::vector< Function* > defns;
+
+   if(IsHeader()) return defns;
+
+   //  Create a list of functions that are *defined* in this file.  Skip
+   //  o a function in a template instances, which is assigned to the file
+   //    that caused its instantiation
+   //  o a free function declared in this file but implemented in another
+   //  o a free function's declaration: if it also defines the function, it
+   //    is allowed to be placed flexibly so it can appear with its user or
+   //    avoid a forward reference
+   //
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      if((*f)->IsInTemplateInstance()) continue;
+      if((*f)->GetDefnFile() != this) continue;
+      if((*f)->IsDecl()) continue;
+      defns.push_back((*f)->GetDefn());
+   }
+
+   std::sort(defns.begin(), defns.end(), IsSortedByPos);
+   return defns;
 }
 
 //------------------------------------------------------------------------------

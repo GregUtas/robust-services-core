@@ -287,6 +287,11 @@ public:
    //
    void GetUsageInfo(CxxUsageSets& symbols) const;
 
+   //  Returns the functions implemented in a .cpp, sorted by position.
+   //  Excludes any function that is exempt from sorting.
+   //
+   FunctionVector GetFuncDefnsToSort() const;
+
    //  Determines the group to which INCL belongs for sorting purposes.
    //
    IncludeGroup CalcGroup(const Include& incl) const;

@@ -327,9 +327,9 @@ void CxxSymbols::DisplayXref(ostream& stream) const
       for(auto n = namespaces.begin(); n != namespaces.end(); ++n)
       {
          CxxNamedVector refs;
-         auto& xref = (*n)->Xref();
+         auto xref = (*n)->Xref();
 
-         for(auto r = xref.cbegin(); r != xref.cend(); ++r)
+         for(auto r = xref->cbegin(); r != xref->cend(); ++r)
          {
             refs.push_back(*r);
          }
@@ -364,9 +364,9 @@ void CxxSymbols::DisplayXref(ostream& stream) const
    for(auto i = items.begin(); i != items.end(); ++i)
    {
       CxxNamedVector refs;
-      auto& xref = (*i)->Xref();
+      auto xref = (*i)->Xref();
 
-      for(auto r = xref.cbegin(); r != xref.cend(); ++r)
+      for(auto r = xref->cbegin(); r != xref->cend(); ++r)
       {
          refs.push_back(*r);
       }

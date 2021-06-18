@@ -722,10 +722,10 @@ void GetReferences(const Data* data, std::vector< const CxxNamed* >& items)
 {
    Debug::ft("CodeTools.GetReferences");
 
-   auto& xref = data->Xref();
+   auto xref = data->Xref();
    auto mate = data->GetMate();
 
-   for(auto r = xref.cbegin(); r != xref.cend(); ++r)
+   for(auto r = xref->cbegin(); r != xref->cend(); ++r)
    {
       if(AreInSameStatement(data, *r)) continue;
       if(AreInSameStatement(mate, *r)) continue;
@@ -740,7 +740,7 @@ void GetReferences(const Data* data, std::vector< const CxxNamed* >& items)
 //  it must have an implementation (as opposed to being deleted or defaulted).
 //  To be non-trivial, its code must span at least three lines.
 //
-bool IsNonTrivialInline(const CxxScoped* item, const string& code)
+bool IsNonTrivialInline(const CxxNamed* item, const string& code)
 {
    Debug::ft("CodeTools.IsNonTrivialInline");
 
@@ -774,6 +774,26 @@ bool ItemIsCommented(const CxxToken* item)
    GetCommentedRange(item, begin, end);
    auto& editor = item->GetFile()->GetEditor();
    return !editor.OnSameLine(begin, item->GetPos());
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns true if an item between BEGIN and END references ITEM.
+//
+bool ItemIsUsedBetween(const CxxNamed* item, size_t begin, size_t end)
+{
+   Debug::ft("CodeTools.ItemHasReference");
+
+   auto xref = item->Xref();
+   if(xref == nullptr) return false;
+
+   for(auto r = xref->cbegin(); r != xref->cend(); ++r)
+   {
+      auto pos = (*r)->GetPos();
+      if((pos >= begin) && (pos <= end)) return true;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -3278,6 +3298,39 @@ bool Editor::FunctionsWereSorted(const CodeWarning& log) const
 
 //------------------------------------------------------------------------------
 
+CxxNamedVector Editor::GetItemsForFuncDefn(const Function* func) const
+{
+   Debug::ft("Editor.GetItemsForFuncDecl");
+
+   CxxNamedVector items;
+   auto& fileItems = file_->Items();
+
+   //  Return the items above FUNC that are referenced by FUNC.
+   //
+   for(auto i = fileItems.cbegin(); i != fileItems.cend(); ++i)
+   {
+      if(*i == func)
+      {
+         size_t begin, end;
+         func->GetSpan2(begin, end);
+
+         while(i != fileItems.cbegin())
+         {
+            --i;
+            if(!ItemIsUsedBetween(*i, begin, end)) break;
+            items.push_back(*i);
+         }
+
+         break;
+      }
+   }
+
+   std::sort(items.begin(), items.end(), IsSortedByPos);
+   return items;
+}
+
+//------------------------------------------------------------------------------
+
 ItemOffsets Editor::GetOffsets(const CxxToken* item) const
 {
    Debug::ft("Editor.GetOffsets");
@@ -4452,20 +4505,14 @@ word Editor::MoveDefine(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-void Editor::MoveFuncDefn(FunctionVector& funcs, const Function* func)
+void Editor::MoveFuncDefn(FunctionVector& sorted, const Function* func)
 {
    Debug::ft("Editor.MoveFuncDefn");
 
-   //  Even when SortFunctions moves a function, it simply adds it to the end
-   //  of FUNCS.  FUNCS must therefore be re-sorted before deciding where to
-   //  insert FUNC.  The last function in FUNCS was sorted, but FUNC should
-   //  appear before it, so it will be inserted *somewhere* in FUNCS.
-   //
-   std::sort(funcs.begin(), funcs.end(), IsSortedByPos);
    Function* prev = nullptr;
    Function* next = nullptr;
 
-   for(auto f = funcs.cbegin(); f != funcs.cend(); ++f)
+   for(auto f = sorted.cbegin(); f != sorted.cend(); ++f)
    {
       if(FuncDefnsAreSorted(func, *f))
       {
@@ -4476,27 +4523,32 @@ void Editor::MoveFuncDefn(FunctionVector& funcs, const Function* func)
       prev = *f;
    }
 
-   //  Move FUNC so that it follows PREV and precedes NEXT.
+   //  Move FUNC so that it follows PREV and precedes NEXT.  Also move any
+   //  items defined directly above FUNC and used by FUNC, which will cause
+   //  compile errors (forward references) if not moved.
    //
-   ItemDefnAttrs defnAttrs(func);
-   string code;
+   auto items = GetItemsForFuncDefn(func);
 
+   string code;
+   ItemDefnAttrs defnAttrs(func);
    UpdateItemDefnLoc(prev, func, next, defnAttrs);
    InsertBelowItemDefn(defnAttrs);
    auto from = CutCode(func, code);
-   Paste(defnAttrs.pos_, code, from);
+   auto dest = Paste(defnAttrs.pos_, code, from);
    InsertAboveItemDefn(defnAttrs);
 
-   string expl;
-   auto rc = Format(expl);  //x
-   if(rc != EditCompleted)
-      Debug::noop(rc);
+   while(!items.empty())
+   {
+      auto item = items.back();
+      items.pop_back();
+      MoveItem(item, dest, prev);
+   }
 }
 
 //------------------------------------------------------------------------------
 
 void Editor::MoveItem
-   (const CxxScoped* item, size_t& dest, const CxxScoped* prev)
+   (const CxxNamed* item, size_t& dest, const CxxScoped* prev)
 {
    Debug::ft("Editor.MoveItem");
 
@@ -5117,15 +5169,22 @@ word Editor::SortFunctions(const CodeWarning& log)
    Debug::ft("Editor.SortFunctions");
 
    //  Start by getting the functions defined in our file, sorted by position.
-   //  Extract the functions in the area associated with the log; all of them
-   //  will be sorted together.
+   //  Extract the functions in the AREA associated with the log; all of them
+   //  will be sorted together.  Step through the file until the first function
+   //  in AREA is reached.  Each of its functions will end up in one of three
+   //  groups:
+   //  o SORTED: functions that don't need to move
+   //  o UNSORTED: functions that need to move
+   //  o ORPHANS: functions located *after* the first function in another area;
+   //    all of these also need to move
    //
    auto defns = file_->GetFuncDefnsToSort();
    auto area = log.item_->GetArea();
-   auto orphans = FuncsInArea(defns, area);
    auto reached = false;
-   Function* prev = nullptr;
+   auto orphans = FuncsInArea(defns, area);
    FunctionVector sorted;
+   FunctionVector unsorted;
+   Function* prev = nullptr;
 
    for(auto f = defns.cbegin(); f != defns.cend(); ++f)
    {
@@ -5133,19 +5192,17 @@ word Editor::SortFunctions(const CodeWarning& log)
       {
          reached = true;
 
-         if((prev != nullptr) && !FuncDefnsAreSorted(prev, *f))
+         if((prev == nullptr) || FuncDefnsAreSorted(prev, *f))
          {
-            //  PREV should follow F, so move F to somewhere above PREV.
-            //
-            MoveFuncDefn(sorted, *f);
+            prev = *f;
+            sorted.push_back(*f);
          }
          else
          {
-            prev = *f;
+            unsorted.push_back(*f);
          }
 
          CodeTools::EraseItem(orphans, *f);
-         sorted.push_back(*f);
       }
       else
       {
@@ -5155,15 +5212,22 @@ word Editor::SortFunctions(const CodeWarning& log)
 
    if(!reached) return NotFound("Unsorted function");
 
-   //  A function in AREA was found, and this function is in a different
-   //  area.  Move any orphans so that they appear with others in AREA.
+   //  A function in AREA was found, and now we've reached a function in a
+   //  different area.  Add any functions in ORPHANS to UNSORTED, and then
+   //  move each unsorted function to its correct position.
    //
-   while(!orphans.empty())
+   for(auto o = orphans.cbegin(); o != orphans.cend(); ++o)
    {
-      auto orphan = orphans.back();
-      orphans.pop_back();
-      MoveFuncDefn(sorted, orphan);
-      sorted.push_back(orphan);
+      unsorted.push_back(*o);
+   }
+
+   while(!unsorted.empty())
+   {
+      auto func = unsorted.back();
+      unsorted.pop_back();
+      MoveFuncDefn(sorted, func);
+      sorted.push_back(func);
+      std::sort(sorted.begin(), sorted.end(), IsSortedByPos);
    }
 
    return EditSucceeded;
@@ -5819,6 +5883,16 @@ word Editor::UpdateItemDefnLoc(const CxxToken* prev,
 {
    Debug::ft("Editor.UpdateItemDefnLoc");
 
+   //  If PREV is NULLPTR and NEXT isn't, ITEM will be inserted before NEXT.
+   //  If NEXT is a function that uses items directly above it, insert ITEM
+   //  above those items, which are probably specific to NEXT.
+   //
+   if((prev == nullptr) && (next != nullptr) && (next->Type() == Cxx::Function))
+   {
+      auto items = GetItemsForFuncDefn(static_cast< const Function* >(next));
+      if(!items.empty()) next = items.front();
+   }
+
    UpdateItemDefnAttrs(prev, item, next, attrs);
 
    if(prev != nullptr)
@@ -5844,32 +5918,25 @@ word Editor::UpdateItemDefnLoc(const CxxToken* prev,
       return EditContinue;
    }
 
-   //  Insert the item before NEXT.  If NEXT has an fn_name, insert the
-   //  definition above *that*.
+   //  Insert the item before NEXT and any blank lines which precede it.
    //
    auto pred = PrevBegin(next->GetPos());
 
-   while(true)
+   while(pred != string::npos)
    {
-      auto type = PosToType(pred);
-
-      switch(type)
+      if(PosToType(pred) == BlankLine)
       {
-      case BlankLine:
          pred = PrevBegin(pred);
-         continue;
-
-      case FunctionName:
-         pred = PrevBegin(pred);
-         if(PosToType(pred) != FunctionName) pred = NextBegin(pred);
-         attrs.pos_ = pred;
-         return EditContinue;
-
-      default:
+      }
+      else
+      {
          attrs.pos_ = NextBegin(pred);
          return EditContinue;
       }
    }
+
+   attrs.pos_ = 0;
+   return EditContinue;
 }
 
 //------------------------------------------------------------------------------

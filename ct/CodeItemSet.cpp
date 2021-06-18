@@ -236,9 +236,9 @@ LibrarySet* CodeItemSet::Referencers() const
    for(auto i = itemSet.cbegin(); i != itemSet.cend(); ++i)
    {
       auto item = static_cast< CxxScoped* >(*i);
-      auto& xref = item->Xref();
+      auto xref = item->Xref();
 
-      for(auto r = xref.cbegin(); r != xref.cend(); ++r)
+      for(auto r = xref->cbegin(); r != xref->cend(); ++r)
       {
          refSet.insert(*r);
       }

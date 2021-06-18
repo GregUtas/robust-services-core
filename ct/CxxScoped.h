@@ -111,10 +111,6 @@ public:
    //
    virtual void AddReference(CxxNamed* item, bool insert) const;
 
-   //  Returns the item's cross-reference (the items that reference it).
-   //
-   CxxNamedSet& Xref() const { return xref_; }
-
    //  Invokes Rename on the item and each entry in its Xref().
    //
    void ChangeName(const std::string& name);
@@ -215,6 +211,10 @@ public:
    //  Overridden to record the scope where the item appeared.
    //
    void SetScope(CxxScope* scope) override { scope_ = scope; }
+
+   //  Returns the item's cross-reference (the items that reference it).
+   //
+   CxxNamedSet* Xref() const override { return &xref_; }
 protected:
    //  Protected because this class is virtual.
    //

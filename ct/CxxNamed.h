@@ -207,6 +207,10 @@ public:
    //
    virtual std::string XrefName(bool templates) const;
 
+   //  Returns the item's cross-reference (the items that reference it).
+   //
+   virtual CxxNamedSet* Xref() const { return nullptr; }
+
    //  Displays the item's referent in STREAM.  If FQ is set, the item's
    //  fully qualified name is displayed.
    //

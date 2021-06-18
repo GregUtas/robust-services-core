@@ -617,9 +617,9 @@ void ClassData::CheckIfRelocatable() const
       if(file == nullptr) return;
       if(GetClass()->IsTemplate()) return;
 
-      auto& xref = Xref();
+      auto xref = Xref();
 
-      for(auto r = xref.cbegin(); r != xref.cend(); ++r)
+      for(auto r = xref->cbegin(); r != xref->cend(); ++r)
       {
          if((*r)->GetFile() != file) return;
       }

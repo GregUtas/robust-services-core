@@ -497,7 +497,7 @@ private:
    //  Moves ITEM to DEST.  PREV, if provided, directly precedes ITEM.  If ITEM
    //  precedes DEST, DEST is updated, because it moves up when ITEM is cut.
    //
-   void MoveItem(const CxxScoped* item, size_t& dest, const CxxScoped* prev);
+   void MoveItem(const CxxNamed* item, size_t& dest, const CxxScoped* prev);
 
    //  Returns true if functions in the area associated with LOG have
    //  already been sorted as the result of fixing another log.
@@ -509,9 +509,14 @@ private:
    //
    bool OverridesWereSorted(const CodeWarning& log) const;
 
-   //  Moves FUNC's definition so it appears in standard order among FUNCS.
+   //  Returns items that immediately precede FUNC and that FUNC uses.  The
+   //  items are sorted by position.
    //
-   void MoveFuncDefn(FunctionVector& funcs, const Function* func);
+   CxxNamedVector GetItemsForFuncDefn(const Function* func) const;
+
+   //  Moves FUNC's definition so it appears in standard order among SORTED.
+   //
+   void MoveFuncDefn(FunctionVector& sorted, const Function* func);
 
    //  Returns the code for a Debug::Ft invocation with an inline string
    //  literal (FNAME).

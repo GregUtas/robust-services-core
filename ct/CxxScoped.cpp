@@ -635,9 +635,9 @@ void CxxScoped::AddReference(CxxNamed* item, bool insert) const
       //  here.  But just in case...
       //
       if(insert)
-         ref->Xref().insert(prev);
+         ref->Xref()->insert(prev);
       else
-         ref->Xref().erase(prev);
+         ref->Xref()->erase(prev);
       return;
    }
 
@@ -667,9 +667,9 @@ void CxxScoped::ChangeName(const std::string& name)
 
    Rename(name);
 
-   auto& xref = Xref();
+   auto xref = Xref();
 
-   for(auto r = xref.begin(); r != xref.end(); ++r)
+   for(auto r = xref->begin(); r != xref->end(); ++r)
    {
       (*r)->Rename(name);
    }

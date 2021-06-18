@@ -321,10 +321,6 @@ namespace Cxx
 
 //------------------------------------------------------------------------------
 //
-//  The access control keywords.  The entry for Cxx::Access_N is ERROR_STR.
-//
-extern NodeBase::fixed_string AccessStrings[Cxx::Access_N + 1];
-
 //  Inserts a string for ACCESS into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, Cxx::Access access);

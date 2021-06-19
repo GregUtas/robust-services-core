@@ -246,16 +246,18 @@ void ModuleRegistry::Restart()
 
       case StartingUp:
          Thread::EnableFactions(NoFactions);
-         if(reentered)
          {
-            Restart::Stage_ = ShuttingDown;
-            break;
-         }
+            if(reentered)
+            {
+               Restart::Stage_ = ShuttingDown;
+               break;
+            }
 
-         Startup(Restart::Level_);
-         OutputNodeRunningLog();
-         Restart::Level_ = RestartNone;
-         Restart::Stage_ = Running;
+            Startup(Restart::Level_);
+            OutputNodeRunningLog();
+            Restart::Level_ = RestartNone;
+            Restart::Stage_ = Running;
+         }
          Thread::EnableFactions(AllFactions());
          return;
 
@@ -314,13 +316,15 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    //  Schedule a subset of the factions so that pending logs will be output.
    //
    Thread::EnableFactions(ShutdownFactions());
-   for(size_t tries = 120, idle = 0; (tries > 0) && (idle <= 8); --tries)
    {
-      ThisThread::Pause(delay);
-      if(Thread::SwitchContext() != nullptr)
-         idle = 0;
-      else
-         ++idle;
+      for(size_t tries = 120, idle = 0; (tries > 0) && (idle <= 8); --tries)
+      {
+         ThisThread::Pause(delay);
+         if(Thread::SwitchContext() != nullptr)
+            idle = 0;
+         else
+            ++idle;
+      }
    }
    Thread::EnableFactions(NoFactions);
 
@@ -350,11 +354,13 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    Log::Submit(stream_);
 
    Thread::EnableFactions(AllFactions());
-   while(actual < planned)
    {
-      Thread::SwitchContext();
-      ThisThread::Pause(delay);
-      actual = before - reg->Threads().size();
+      while(actual < planned)
+      {
+         Thread::SwitchContext();
+         ThisThread::Pause(delay);
+         actual = before - reg->Threads().size();
+      }
    }
    Thread::EnableFactions(NoFactions);
 

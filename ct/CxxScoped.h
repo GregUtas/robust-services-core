@@ -1475,11 +1475,11 @@ public:
 
    //  The following invoke the corresponding function on each parameter.
    //
-   void UpdateXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void ExitBlock() const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   void UpdateXref(bool insert) override;
 
    //  Overridden to find the item located at POS.
    //

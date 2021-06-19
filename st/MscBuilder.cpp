@@ -770,39 +770,39 @@ TraceRc MscBuilder::Generate(ostream& stream)
    auto rc = TraceOk;
 
    buff->Lock();
-
-   do
    {
-      rc = ExtractEvents();
-      if(rc != TraceOk) break;
-
-      //  Create the list of contexts, which correspond to vertical
-      //  lines in an MSC.
-      //
-      rc = AnalyzeEvents();
-      if(rc != TraceOk) break;
-
-      //  If a PSM was communicating internally but doesn't have a peer
-      //  PSM, ensure that the factory with which it was communicating
-      //  has a context in the MSC.
-      //
-      EnsureFactories();
-
-      //  Output a header, followed by one or more MSCs, and finally a
-      //  trailer. More than one MSC results from displaying disjoint
-      //  MSCs separately.
-      //
-      OutputHeader();
-
-      for(group_ = 1; (ExtractGroup() == true); ++group_)
+      do
       {
-         OutputChart();
+         rc = ExtractEvents();
+         if(rc != TraceOk) break;
+
+         //  Create the list of contexts, which correspond to vertical
+         //  lines in an MSC.
+         //
+         rc = AnalyzeEvents();
+         if(rc != TraceOk) break;
+
+         //  If a PSM was communicating internally but doesn't have a peer
+         //  PSM, ensure that the factory with which it was communicating
+         //  has a context in the MSC.
+         //
+         EnsureFactories();
+
+         //  Output a header, followed by one or more MSCs, and finally a
+         //  trailer. More than one MSC results from displaying disjoint
+         //  MSCs separately.
+         //
+         OutputHeader();
+
+         for(group_ = 1; (ExtractGroup() == true); ++group_)
+         {
+            OutputChart();
+         }
+
+         OutputTrailer();
       }
-
-      OutputTrailer();
+      while(false);
    }
-   while(false);
-
    buff->Unlock();
 
    if(debug_)

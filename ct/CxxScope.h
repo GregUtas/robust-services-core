@@ -1975,7 +1975,6 @@ private:
 
    //  The following are forwarded to the function.
    //
-   void UpdateXref(bool insert) override;
    void Check() const override;
    bool ContainsTemplateParameter() const override;
    void EnteringScope(const CxxScope* scope) override;
@@ -1990,6 +1989,7 @@ private:
    std::string TypeString(bool arg) const override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+   void UpdateXref(bool insert) override;
 
    //  The following are forwarded to the function's return type.
    //

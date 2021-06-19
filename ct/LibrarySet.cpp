@@ -37,16 +37,6 @@ using std::string;
 
 namespace CodeTools
 {
-bool IsSortedAlphabetically(const string& s1, const string& s2)
-{
-   auto comp = strCompare(s1, s2);
-   if(comp < 0) return true;
-   if(comp > 0) return false;
-   return (&s1 < &s2);
-}
-
-//==============================================================================
-
 const char LibrarySet::ReadOnlyChar = '$';
 const char LibrarySet::TemporaryChar = '%';
 uint32_t LibrarySet::SeqNo_ = 0;

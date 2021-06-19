@@ -339,7 +339,7 @@ void CxxRoot::Display(ostream& stream,
    auto nonqual = options;
    nonqual.reset(DispFQ);
 
-   DisplayObjects(macros_, stream, EMPTY_STR, nonqual);
+   SortAndDisplayItemPtrs(macros_, stream, EMPTY_STR, nonqual, SortByName);
 }
 
 //------------------------------------------------------------------------------

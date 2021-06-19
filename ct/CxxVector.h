@@ -31,7 +31,9 @@
 #include <utility>
 #include <vector>
 #include "Base.h"
+#include "CodeTypes.h"
 #include "CxxNamed.h"
+#include "LibraryItem.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -55,33 +57,27 @@ template< typename T > size_t IndexOf
 
 //------------------------------------------------------------------------------
 //
-//  Displays the objects in VEC.
-//
-template< class T > void DisplayObjects
-   (const std::vector< T >& vec, std::ostream& stream,
-   const std::string& prefix, const NodeBase::Flags& options)
-{
-   for(auto i = vec.cbegin(); i != vec.cend(); ++i)
-   {
-      (*i)->Display(stream, prefix, options);
-   }
-}
-
-//------------------------------------------------------------------------------
-//
 //  Copies the objects in VEC so they can be sorted by position and displayed.
 //  FILE is set to sort the objects by file and position.
 //
 template< class T > void SortAndDisplayItems
    (const std::vector< T >& vec, std::ostream& stream,
-   const std::string& prefix, const NodeBase::Flags& options, bool file = true)
+   const std::string& prefix, const NodeBase::Flags& options, ItemSort sort)
 {
    std::vector< T > v(vec);
 
-   if(file)
+   switch(sort)
+   {
+   case SortByFilePos:
       std::sort(v.begin(), v.end(), IsSortedByFilePos);
-   else
+      break;
+   case SortByPos:
       std::sort(v.begin(), v.end(), IsSortedByPos);
+      break;
+   case SortByName:
+      std::sort(v.begin(), v.end(), IsSortedByName);
+      break;
+   }
 
    for(auto i = v.cbegin(); i != v.cend(); ++i)
    {
@@ -96,7 +92,7 @@ template< class T > void SortAndDisplayItems
 //
 template< class T > void SortAndDisplayItemPtrs
    (const std::vector< std::unique_ptr< T >>& vec, std::ostream& stream,
-   const std::string& prefix, const NodeBase::Flags& options, bool file = true)
+   const std::string& prefix, const NodeBase::Flags& options, ItemSort sort)
 {
    std::vector< T* > v;
 
@@ -105,10 +101,18 @@ template< class T > void SortAndDisplayItemPtrs
       v.push_back(i->get());
    }
 
-   if(file)
+   switch(sort)
+   {
+   case SortByFilePos:
       std::sort(v.begin(), v.end(), IsSortedByFilePos);
-   else
+      break;
+   case SortByPos:
       std::sort(v.begin(), v.end(), IsSortedByPos);
+      break;
+   case SortByName:
+      std::sort(v.begin(), v.end(), IsSortedByName);
+      break;
+   }
 
    for(auto i = v.cbegin(); i != v.cend(); ++i)
    {

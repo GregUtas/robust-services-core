@@ -94,6 +94,10 @@ namespace NodeBase
    int strCompare
       (const std::string& s1, const std::string& s2, bool repeat = true);
 
+   //  For sorting strings alphabetically, using strCompare (case ignored).
+   //
+   bool IsSortedAlphabetically(const std::string& s1, const std::string& s2);
+
    //  Returns a string of length BREADTH.  S is centered in the string and
    //  is surrounded by BLANKS spaces, divided between prefix and postfix
    //  positions.  If S contains more than (BREADTH - BLANKS) characters,

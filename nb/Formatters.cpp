@@ -40,6 +40,16 @@ fixed_string ObjSeparatorStr = "[->]: ";
 
 //------------------------------------------------------------------------------
 
+bool IsSortedAlphabetically(const string& s1, const string& s2)
+{
+   auto comp = strCompare(s1, s2);
+   if(comp < 0) return true;
+   if(comp > 0) return false;
+   return (&s1 < &s2);
+}
+
+//------------------------------------------------------------------------------
+
 void ReplaceScopeOperators(string& name)
 {
    auto pos = name.find(SCOPE_STR);

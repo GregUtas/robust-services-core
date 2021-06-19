@@ -152,7 +152,7 @@ void DisplaySymbolsAndFiles
    if(set.empty()) return;
    *stream << spaces(3) << title << CRLF;
 
-   stringSet names;
+   stringVector names;
 
    for(auto i = set.cbegin(); i != set.cend(); ++i)
    {
@@ -164,8 +164,10 @@ void DisplaySymbolsAndFiles
       else
          name += " [file unknown]";
 
-      names.insert(name);
+      names.push_back(name);
    }
+
+   std::sort(names.begin(), names.end(), IsSortedAlphabetically);
 
    for(auto n = names.cbegin(); n != names.cend(); ++n)
    {
@@ -1059,17 +1061,17 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
    if(opts.find(CanonicalFileView) != string::npos)
    {
       stream << '{' << CRLF;
-      SortAndDisplayItemPtrs(incls_, stream, lead, options, false);
-      SortAndDisplayItems(macros_, stream, lead, options, false);
-      SortAndDisplayItems(asserts_, stream, lead, options, false);
-      SortAndDisplayItems(forws_, stream, lead, options, false);
-      SortAndDisplayItems(usings_, stream, lead, options, false);
-      SortAndDisplayItems(enums_, stream, lead, options, false);
-      SortAndDisplayItems(types_, stream, lead, options, false);
-      SortAndDisplayItems(funcs_, stream, lead, options, false);
-      SortAndDisplayItems(assembly_, stream, lead, options, false);
-      SortAndDisplayItems(data_, stream, lead, options, false);
-      SortAndDisplayItems(classes_, stream, lead, options, false);
+      SortAndDisplayItemPtrs(incls_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(macros_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(asserts_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(forws_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(usings_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(enums_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(types_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(funcs_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(assembly_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(data_, stream, lead, options, SortByPos);
+      SortAndDisplayItems(classes_, stream, lead, options, SortByPos);
       stream << '}' << CRLF;
    }
 

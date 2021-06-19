@@ -194,6 +194,17 @@ extern const std::string DoubleRule;
 
 //------------------------------------------------------------------------------
 //
+//  How to sort items when displaying them.
+//
+enum ItemSort
+{
+   SortByName,    // sort by name (case ignored)
+   SortByPos,     // sort by position within file (all items in same file)
+   SortByFilePos  // sort by file, then position within file
+};
+
+//------------------------------------------------------------------------------
+//
 //  Restrictions when looking for a name (e.g. in a type or identifier).
 //
 enum Constraint
@@ -338,7 +349,7 @@ struct SymbolView
    //  Set as an argument to indicate that the symbol appears in a TypeSpec
    //  when defining a function or data that was previously declared.
    //
-   bool defts: 1;
+   bool defts : 1;
 
    //  Set if the symbol was resolved by a using statement.
    //

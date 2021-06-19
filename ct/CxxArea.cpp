@@ -1013,21 +1013,21 @@ void Class::Display(ostream& stream,
    nonqual.reset(DispNoTP);
 
    stream << CRLF << prefix << '{' << CRLF;
-   SortAndDisplayItemPtrs(friends_, stream, lead, qual);
-   SortAndDisplayItemPtrs(*Asserts(), stream, lead, qual);
-   SortAndDisplayItemPtrs(*Usings(), stream, lead, qual);
-   SortAndDisplayItemPtrs(*Forws(), stream, lead, qual);
-   SortAndDisplayItemPtrs(*Classes(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Enums(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Types(), stream, lead, nonqual);
-   if(code) SortAndDisplayItemPtrs(*Datas(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Funcs(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Opers(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Assembly(), stream, lead, qual);
+   SortAndDisplayItemPtrs(friends_, stream, lead, qual, SortByPos);
+   SortAndDisplayItemPtrs(*Asserts(), stream, lead, qual, SortByPos);
+   SortAndDisplayItemPtrs(*Usings(), stream, lead, qual, SortByPos);
+   SortAndDisplayItemPtrs(*Forws(), stream, lead, qual, SortByPos);
+   SortAndDisplayItemPtrs(*Classes(), stream, lead, nonqual, SortByPos);
+   SortAndDisplayItemPtrs(*Enums(), stream, lead, nonqual, SortByPos);
+   SortAndDisplayItemPtrs(*Types(), stream, lead, nonqual, SortByPos);
+   if(code) SortAndDisplayItemPtrs(*Datas(), stream, lead, nonqual, SortByPos);
+   SortAndDisplayItemPtrs(*Funcs(), stream, lead, nonqual, SortByPos);
+   SortAndDisplayItemPtrs(*Opers(), stream, lead, nonqual, SortByPos);
+   SortAndDisplayItemPtrs(*Assembly(), stream, lead, qual, SortByPos);
 
    if(!code)
    {
-      SortAndDisplayItemPtrs(*Datas(), stream, lead, nonqual);
+      SortAndDisplayItemPtrs(*Datas(), stream, lead, nonqual, SortByPos);
 
       lead += spaces(IndentSize());
 
@@ -2505,15 +2505,15 @@ void ClassInst::Display(ostream& stream,
       auto opts = options;
       qual.set(DispFQ);
 
-      SortAndDisplayItemPtrs(*Friends(), stream, lead, qual);
-      SortAndDisplayItemPtrs(*Usings(), stream, lead, qual);
-      SortAndDisplayItemPtrs(*Forws(), stream, lead, qual);
-      SortAndDisplayItemPtrs(*Classes(), stream, lead, opts);
-      SortAndDisplayItemPtrs(*Enums(), stream, lead, opts);
-      SortAndDisplayItemPtrs(*Types(), stream, lead, opts);
-      SortAndDisplayItemPtrs(*Funcs(), stream, lead, opts);
-      SortAndDisplayItemPtrs(*Opers(), stream, lead, opts);
-      SortAndDisplayItemPtrs(*Datas(), stream, lead, opts);
+      SortAndDisplayItemPtrs(*Friends(), stream, lead, qual, SortByPos);
+      SortAndDisplayItemPtrs(*Usings(), stream, lead, qual, SortByPos);
+      SortAndDisplayItemPtrs(*Forws(), stream, lead, qual, SortByPos);
+      SortAndDisplayItemPtrs(*Classes(), stream, lead, opts, SortByPos);
+      SortAndDisplayItemPtrs(*Enums(), stream, lead, opts, SortByPos);
+      SortAndDisplayItemPtrs(*Types(), stream, lead, opts, SortByPos);
+      SortAndDisplayItemPtrs(*Funcs(), stream, lead, opts, SortByPos);
+      SortAndDisplayItemPtrs(*Opers(), stream, lead, opts, SortByPos);
+      SortAndDisplayItemPtrs(*Datas(), stream, lead, opts, SortByPos);
    }
 
    stream << prefix << "};" << CRLF;
@@ -3664,15 +3664,15 @@ void Namespace::Display(ostream& stream,
    auto nonqual = options;
    nonqual.reset(DispFQ);
 
-   SortAndDisplayItemPtrs(*Asserts(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Enums(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Types(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Funcs(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Opers(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Assembly(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Datas(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(*Classes(), stream, lead, nonqual);
-   SortAndDisplayItemPtrs(spaces_, stream, lead, nonqual);
+   SortAndDisplayItemPtrs(*Asserts(), stream, lead, nonqual, SortByName);
+   SortAndDisplayItemPtrs(*Enums(), stream, lead, nonqual, SortByName);
+   SortAndDisplayItemPtrs(*Types(), stream, lead, nonqual, SortByName);
+   SortAndDisplayItemPtrs(*Funcs(), stream, lead, nonqual, SortByName);
+   SortAndDisplayItemPtrs(*Opers(), stream, lead, nonqual, SortByName);
+   SortAndDisplayItemPtrs(*Assembly(), stream, lead, nonqual, SortByName);
+   SortAndDisplayItemPtrs(*Datas(), stream, lead, nonqual, SortByName);
+   SortAndDisplayItemPtrs(*Classes(), stream, lead, nonqual, SortByName);
+   SortAndDisplayItemPtrs(spaces_, stream, lead, nonqual, SortByName);
    stream << prefix << '}' << CRLF;
 }
 

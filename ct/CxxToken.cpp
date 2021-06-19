@@ -52,13 +52,6 @@ AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 
 //------------------------------------------------------------------------------
 
-void AlignAs::AddToXref(bool insert)
-{
-   token_->AddToXref(insert);
-}
-
-//------------------------------------------------------------------------------
-
 void AlignAs::Check() const
 {
    token_->Check();
@@ -116,6 +109,13 @@ void AlignAs::UpdatePos
    token_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void AlignAs::UpdateXref(bool insert)
+{
+   token_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
@@ -123,13 +123,6 @@ ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
    Debug::ft("ArraySpec.ctor");
 
    CxxStats::Incr(CxxStats::ARRAY_SPEC);
-}
-
-//------------------------------------------------------------------------------
-
-void ArraySpec::AddToXref(bool insert)
-{
-   if(expr_ != nullptr) expr_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -198,6 +191,13 @@ void ArraySpec::UpdatePos
    if(expr_ != nullptr) expr_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void ArraySpec::UpdateXref(bool insert)
+{
+   if(expr_ != nullptr) expr_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 CxxScoped* BoolLiteral::Referent() const
@@ -214,16 +214,6 @@ BraceInit::BraceInit()
    Debug::ft("BraceInit.ctor");
 
    CxxStats::Incr(CxxStats::BRACE_INIT);
-}
-
-//------------------------------------------------------------------------------
-
-void BraceInit::AddToXref(bool insert)
-{
-   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
-   {
-      (*i)->AddToXref(insert);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -322,11 +312,30 @@ void BraceInit::UpdatePos
    }
 }
 
+//------------------------------------------------------------------------------
+
+void BraceInit::UpdateXref(bool insert)
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->UpdateXref(insert);
+   }
+}
+
 //==============================================================================
 
 CxxToken::CxxToken()
 {
    Debug::ft("CxxToken.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken::~CxxToken()
+{
+   Debug::ftnt("CxxToken.dtor");
+
+   CodeWarning::ItemDeleted(this);
 }
 
 //------------------------------------------------------------------------------
@@ -339,11 +348,12 @@ CxxToken::CxxToken(const CxxToken& that) : LibraryItem(that),
 
 //------------------------------------------------------------------------------
 
-CxxToken::~CxxToken()
+CxxToken& CxxToken::operator=(const CxxToken& that)
 {
-   Debug::ftnt("CxxToken.dtor");
+   Debug::ft("CxxToken.operator=");
 
-   CodeWarning::ItemDeleted(this);
+   this->loc_ = that.loc_;
+   return *this;
 }
 
 //------------------------------------------------------------------------------
@@ -545,16 +555,6 @@ void CxxToken::Log(Warning warning,
 
    if(item == nullptr) item = this;
    file->LogPos(pos, warning, item, offset, info);
-}
-
-//------------------------------------------------------------------------------
-
-CxxToken& CxxToken::operator=(const CxxToken& that)
-{
-   Debug::ft("CxxToken.operator=");
-
-   this->loc_ = that.loc_;
-   return *this;
 }
 
 //------------------------------------------------------------------------------
@@ -849,16 +849,6 @@ bool Expression::AddItem(TokenPtr& item)
 
 //------------------------------------------------------------------------------
 
-void Expression::AddToXref(bool insert)
-{
-   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
-   {
-      (*i)->AddToXref(insert);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Expression_AddUnaryOp = "Expression.AddUnaryOp";
 
 bool Expression::AddUnaryOp(TokenPtr& item)
@@ -1078,6 +1068,16 @@ void Expression::UpdatePos
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->UpdatePos(action, begin, count, from);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void Expression::UpdateXref(bool insert)
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->UpdateXref(insert);
    }
 }
 
@@ -1383,16 +1383,6 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
          op_ = Cxx::PREFIX_DECREMENT;
          break;
       }
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void Operation::AddToXref(bool insert)
-{
-   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
-   {
-      (*a)->AddToXref(insert);
    }
 }
 
@@ -3248,14 +3238,17 @@ void Operation::UpdatePos
    }
 }
 
-//==============================================================================
+//------------------------------------------------------------------------------
 
-void Precedence::AddToXref(bool insert)
+void Operation::UpdateXref(bool insert)
 {
-   if(expr_ != nullptr) expr_->AddToXref(insert);
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      (*a)->UpdateXref(insert);
+   }
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
 
 void Precedence::Check() const
 {
@@ -3312,6 +3305,13 @@ void Precedence::UpdatePos
 {
    CxxToken::UpdatePos(action, begin, count, from);
    if(expr_ != nullptr) expr_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void Precedence::UpdateXref(bool insert)
+{
+   if(expr_ != nullptr) expr_->UpdateXref(insert);
 }
 
 //==============================================================================

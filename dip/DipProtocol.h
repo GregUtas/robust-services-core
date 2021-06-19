@@ -241,17 +241,17 @@ private:
    //
    ~BotTcpService() = default;
 
-   //  Overridden to return the socket's buffer sizes.
+   //  Overridden to create the Diplomacy input handler.
    //
-   void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const override;
+   InputHandler* CreateHandler(IpPort* port) const override;
 
    //  Overridden to create a CLI parameter that identifies the protocol.
    //
    CliText* CreateText() const override;
 
-   //  Overridden to create the Diplomacy input handler.
+   //  Overridden to return the socket's buffer sizes.
    //
-   InputHandler* CreateHandler(IpPort* port) const override;
+   void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const override;
 
    //  The port on which the protocol is running.
    //
@@ -275,6 +275,11 @@ public:
    IpBuffer* AllocBuff(const byte_t* source, size_t size,
       byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const override;
 
+   //  Overridden to convert an outgoing message from host to network order.
+   //
+   byte_t* HostToNetwork(IpBuffer& buff,
+      byte_t* src, size_t size) const override;
+
    //  Overridden to convert an incoming message from network to host order.
    //
    void NetworkToHost(IpBuffer& buff,
@@ -284,11 +289,6 @@ public:
    //
    void ReceiveBuff
       (IpBufferPtr& buff, size_t size, Faction faction) const override;
-
-   //  Overridden to convert an outgoing message from host to network order.
-   //
-   byte_t* HostToNetwork(IpBuffer& buff,
-      byte_t* src, size_t size) const override;
 
    //  Overridden to queue an incoming message for BotThread.
    //
@@ -319,9 +319,9 @@ public:
    //
    void BytesAdded(size_t size);
 
-   //  Overridden to return the number of bytes currently in the message.
+   //  Overridden to obtain a buffer from its object pool.
    //
-   size_t PayloadSize() const override { return currSize_; }
+   static void* operator new(size_t size);
 
    //  Overridden to track the number of bytes currently in the message.
    //
@@ -332,9 +332,9 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
-   //  Overridden to obtain a buffer from its object pool.
+   //  Overridden to return the number of bytes currently in the message.
    //
-   static void* operator new(size_t size);
+   size_t PayloadSize() const override { return currSize_; }
 private:
    //  The number of bytes currently in the message.
    //

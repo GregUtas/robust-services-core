@@ -73,13 +73,13 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
-   //  Overridden for restarts.
-   //
-   void Shutdown(RestartLevel level) override;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
 private:
    //> The maximum size of the registry.
    //

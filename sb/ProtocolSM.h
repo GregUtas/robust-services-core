@@ -140,10 +140,6 @@ public:
    //
    StateId GetState() const { return state_; }
 
-   //  Returns the PSM's factory.
-   //
-   FactoryId GetFactory() const override { return fid_; }
-
    //  Returns the PSM's protocol.
    //
    ProtocolId GetProtocol() const;
@@ -173,13 +169,27 @@ public:
    //
    void Kill();
 
-   //  Overridden to return the PSM's port.
+   //  Overridden to obtain a PSM from its object pool.
    //
-   MsgPort* Port() const override;
+   static void* operator new(size_t size);
 
-   //  Overridden to return the PSM at the top of the stack.
+   //  Overridden to display member variables.
    //
-   ProtocolSM* UppermostPsm() const override;
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to invoke DropPeer on the PSM's port, which is created
+   //  if it does not exist.
+   //
+   bool DropPeer(const GlobalAddress& peerPrevRemAddr) override;
+
+   //  Returns the PSM's factory.
+   //
+   FactoryId GetFactory() const override { return fid_; }
+
+   //  Overridden to enumerate all objects that the PSM owns.
+   //
+   void GetSubtended(std::vector< Base* >& objects) const override;
 
    //  Overridden to invoke JoinPeer on the PSM's port, which is created if
    //  it does not exist.  On success, returns the peer layer that supports
@@ -189,27 +199,17 @@ public:
    ProtocolLayer* JoinPeer
       (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr) override;
 
-   //  Overridden to invoke DropPeer on the PSM's port, which is created
-   //  if it does not exist.
-   //
-   bool DropPeer(const GlobalAddress& peerPrevRemAddr) override;
-
-   //  Overridden to enumerate all objects that the PSM owns.
-   //
-   void GetSubtended(std::vector< Base* >& objects) const override;
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
 
-   //  Overridden to obtain a PSM from its object pool.
+   //  Overridden to return the PSM's port.
    //
-   static void* operator new(size_t size);
+   MsgPort* Port() const override;
+
+   //  Overridden to return the PSM at the top of the stack.
+   //
+   ProtocolSM* UppermostPsm() const override;
 protected:
    //  Creates the uppermost PSM that will send an initial message.  FID is
    //  the factory associated with the PSM.  Protected because this class is
@@ -240,6 +240,10 @@ protected:
    //
    virtual void SetState(StateId stid);
 
+   //  Overridden to send a final message during error recovery.
+   //
+   void Cleanup() override;
+
    //  Invoked to receive MSG.  Returns any event that should be passed to
    //  the root SSM.  May be overridden, but the base class version must be
    //  invoked.
@@ -249,22 +253,7 @@ protected:
    //  Overridden to add MSG to the outgoing message queue.
    //
    bool SendMsg(Message& msg) override;
-
-   //  Overridden to send a final message during error recovery.
-   //
-   void Cleanup() override;
 private:
-   //  Overridden to create a port that will send an initial message.  Will
-   //  be overridden by a PSM that needs to create a lower layer PSM instead
-   //  of a port.
-   //
-   ProtocolLayer* AllocLower(const Message* msg) override;
-
-   //  Overridden to return MSG, which is assumed to be arriving from a port.
-   //  Must be overridden by a PSM whose lower layer is another PSM.
-   //
-   Message* UnwrapMsg(Message& msg) override;
-
    //  Implements the incoming side of the PSM's state machine.  The PSM can
    //  set an event (EVENT) for the root SSM (usually AnalyzeMsgEvent; rarely,
    //  a protocol error event defined by the PSM) and return EventForRoot, in
@@ -350,6 +339,17 @@ private:
    //  Invokes SendFinalMsg if the PSM is not idle and has a port.
    //
    void SendFinal();
+
+   //  Overridden to create a port that will send an initial message.  Will
+   //  be overridden by a PSM that needs to create a lower layer PSM instead
+   //  of a port.
+   //
+   ProtocolLayer* AllocLower(const Message* msg) override;
+
+   //  Overridden to return MSG, which is assumed to be arriving from a port.
+   //  Must be overridden by a PSM whose lower layer is another PSM.
+   //
+   Message* UnwrapMsg(Message& msg) override;
 
    //  The queue of received messages (actually a stack).
    //

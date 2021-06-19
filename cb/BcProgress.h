@@ -91,14 +91,14 @@ protected:
    //
    virtual ~ProgressParameter();
 
+   //  Overridden to create a CLI parameter for ProgressInfo.
+   //
+   CliParm* CreateCliParm(Usage use) const override;
+
    //  Overridden to invoke Info::Display.
    //
    void DisplayMsg(std::ostream& stream, const std::string& prefix,
       const byte_t* bytes, size_t count) const override;
-
-   //  Overridden to create a CLI parameter for ProgressInfo.
-   //
-   CliParm* CreateCliParm(Usage use) const override;
 };
 }
 #endif

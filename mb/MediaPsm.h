@@ -136,14 +136,14 @@ public:
    //
    MediaSsm* GetMediaSsm() const;
 
-   //  Overridden to enumerate all objects that the PSM owns.
-   //
-   void GetSubtended(std::vector< Base* >& objects) const override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden to enumerate all objects that the PSM owns.
+   //
+   void GetSubtended(std::vector< Base* >& objects) const override;
 protected:
    //  Creates a PSM that will send an initial message.  The arguments are
    //  the same as those for the base class.  The PSM is configured as a
@@ -184,17 +184,17 @@ protected:
    //
    void SynchEdge(MediaPsm& psm) const;
 
-   //  Overridden to invoke ProcessIcMsg on the MEP.
+   //  Overridden to invoke EndOfTransaction on the MEP.
    //
-   Event* ReceiveMsg(Message& msg) override;
+   void EndOfTransaction() override;
 
    //  Overridden to invoke EnsureMediaMsg if a media update is pending.
    //
    void PrepareOgMsgq() override;
 
-   //  Overridden to invoke EndOfTransaction on the MEP.
+   //  Overridden to invoke ProcessIcMsg on the MEP.
    //
-   void EndOfTransaction() override;
+   Event* ReceiveMsg(Message& msg) override;
 private:
    //  Invoked when outgoing media information has changed, which means
    //  that a MediaInfo parameter must be sent.  Unless one already exists,

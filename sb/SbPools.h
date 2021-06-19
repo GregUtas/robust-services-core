@@ -201,26 +201,26 @@ public:
    //
    void IncrTimeouts() const;
 
+   //  Overridden to claim blocks in the TimerRegistry.
+   //
+   void ClaimBlocks() override;
+
    //  Overridden to display statistics.
    //
    void DisplayStats
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
-   //  Overridden to claim blocks in the TimerRegistry.
+   //  Overridden for patching.
    //
-   void ClaimBlocks() override;
-
-   //  Overridden for restarts.
-   //
-   void Startup(NodeBase::RestartLevel level) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //  Overridden for restarts.
    //
    void Shutdown(NodeBase::RestartLevel level) override;
 
-   //  Overridden for patching.
+   //  Overridden for restarts.
    //
-   void Patch(sel_t selector, void* arguments) override;
+   void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //

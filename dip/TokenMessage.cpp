@@ -85,6 +85,15 @@ TokenMessage::TokenMessage(const Token* stream, size_t length) :
 
 //------------------------------------------------------------------------------
 
+TokenMessage::~TokenMessage()
+{
+   Debug::ftnt("TokenMessage.dtor");
+
+   clear();
+}
+
+//------------------------------------------------------------------------------
+
 TokenMessage::TokenMessage(const TokenMessage& that) :
    length_(0),
    parm_count_(0)
@@ -99,11 +108,36 @@ TokenMessage::TokenMessage(const TokenMessage& that) :
 
 //------------------------------------------------------------------------------
 
-TokenMessage::~TokenMessage()
+TokenMessage& TokenMessage::operator=(const TokenMessage& that)
 {
-   Debug::ftnt("TokenMessage.dtor");
+   Debug::ft("TokenMessage.operator=(copy)");
+
+   if(&that == this) return *this;
 
    clear();
+
+   if(that.message_ != nullptr)
+   {
+      set_from(that.message_.get(), that.length_);
+   }
+
+   return *this;
+}
+
+//------------------------------------------------------------------------------
+
+TokenMessage& TokenMessage::operator=(TokenMessage&& that)
+{
+   Debug::ft("TokenMessage.operator=(move)");
+
+   if(&that == this) return *this;
+
+   this->length_ = that.length_;
+   this->message_ = std::move(that.message_);
+   this->parm_count_ = that.parm_count_;
+   this->parm_begins_ = std::move(that.parm_begins_);
+
+   return *this;
 }
 
 //------------------------------------------------------------------------------
@@ -297,40 +331,6 @@ void TokenMessage::log(const string& expl) const
    stream << expl << CRLF;
    stream << to_str() << CRLF;
    BaseBot::send_to_console(stream);
-}
-
-//------------------------------------------------------------------------------
-
-TokenMessage& TokenMessage::operator=(const TokenMessage& that)
-{
-   Debug::ft("TokenMessage.operator=(copy)");
-
-   if(&that == this) return *this;
-
-   clear();
-
-   if(that.message_ != nullptr)
-   {
-      set_from(that.message_.get(), that.length_);
-   }
-
-   return *this;
-}
-
-//------------------------------------------------------------------------------
-
-TokenMessage& TokenMessage::operator=(TokenMessage&& that)
-{
-   Debug::ft("TokenMessage.operator=(move)");
-
-   if(&that == this) return *this;
-
-   this->length_ = that.length_;
-   this->message_ = std::move(that.message_);
-   this->parm_count_ = that.parm_count_;
-   this->parm_begins_ = std::move(that.parm_begins_);
-
-   return *this;
 }
 
 //------------------------------------------------------------------------------

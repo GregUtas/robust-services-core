@@ -63,13 +63,6 @@ Case::Case(ExprPtr& expression, size_t pos) : CxxStatement(pos),
 
 //------------------------------------------------------------------------------
 
-void Case::AddToXref(bool insert)
-{
-   expr_->AddToXref(insert);
-}
-
-//------------------------------------------------------------------------------
-
 void Case::Check() const
 {
    expr_->Check();
@@ -142,6 +135,13 @@ void Case::UpdatePos
    expr_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void Case::UpdateXref(bool insert)
+{
+   expr_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 Catch::Catch(size_t pos) : CxxStatement(pos)
@@ -149,14 +149,6 @@ Catch::Catch(size_t pos) : CxxStatement(pos)
    Debug::ft("Catch.ctor");
 
    CxxStats::Incr(CxxStats::CATCH);
-}
-
-//------------------------------------------------------------------------------
-
-void Catch::AddToXref(bool insert)
-{
-   if(arg_ != nullptr) arg_->AddToXref(insert);
-   handler_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -279,18 +271,19 @@ void Catch::UpdatePos
    handler_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void Catch::UpdateXref(bool insert)
+{
+   if(arg_ != nullptr) arg_->UpdateXref(insert);
+   handler_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 Condition::Condition(size_t pos) : CxxStatement(pos)
 {
    Debug::ft("Condition.ctor");
-}
-
-//------------------------------------------------------------------------------
-
-void Condition::AddToXref(bool insert)
-{
-   if(condition_ != nullptr) condition_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -366,6 +359,13 @@ void Condition::UpdatePos
 {
    CxxStatement::UpdatePos(action, begin, count, from);
    if(condition_ != nullptr) condition_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void Condition::UpdateXref(bool insert)
+{
+   if(condition_ != nullptr) condition_->UpdateXref(insert);
 }
 
 //==============================================================================
@@ -476,14 +476,6 @@ Do::Do(size_t pos) : Condition(pos)
    Debug::ft("Do.ctor");
 
    CxxStats::Incr(CxxStats::DO);
-}
-
-//------------------------------------------------------------------------------
-
-void Do::AddToXref(bool insert)
-{
-   loop_->AddToXref(insert);
-   Condition::AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -615,6 +607,14 @@ void Do::UpdatePos
    loop_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void Do::UpdateXref(bool insert)
+{
+   loop_->UpdateXref(insert);
+   Condition::UpdateXref(insert);
+}
+
 //==============================================================================
 
 Expr::Expr(ExprPtr& expression, size_t pos) : CxxStatement(pos),
@@ -623,13 +623,6 @@ Expr::Expr(ExprPtr& expression, size_t pos) : CxxStatement(pos),
    Debug::ft("Expr.ctor");
 
    CxxStats::Incr(CxxStats::EXPR);
-}
-
-//------------------------------------------------------------------------------
-
-void Expr::AddToXref(bool insert)
-{
-   expr_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -692,6 +685,13 @@ void Expr::UpdatePos
    expr_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void Expr::UpdateXref(bool insert)
+{
+   expr_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 For::For(size_t pos) : Condition(pos)
@@ -699,16 +699,6 @@ For::For(size_t pos) : Condition(pos)
    Debug::ft("For.ctor");
 
    CxxStats::Incr(CxxStats::FOR);
-}
-
-//------------------------------------------------------------------------------
-
-void For::AddToXref(bool insert)
-{
-   if(initial_ != nullptr) initial_->AddToXref(insert);
-   Condition::AddToXref(insert);
-   if(subsequent_ != nullptr) subsequent_->AddToXref(insert);
-   loop_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -915,6 +905,16 @@ void For::UpdatePos
    loop_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void For::UpdateXref(bool insert)
+{
+   if(initial_ != nullptr) initial_->UpdateXref(insert);
+   Condition::UpdateXref(insert);
+   if(subsequent_ != nullptr) subsequent_->UpdateXref(insert);
+   loop_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 Goto::Goto(string& label, size_t pos) : CxxStatement(pos)
@@ -960,15 +960,6 @@ If::If(size_t pos) : Condition(pos),
    Debug::ft("If.ctor");
 
    CxxStats::Incr(CxxStats::IF);
-}
-
-//------------------------------------------------------------------------------
-
-void If::AddToXref(bool insert)
-{
-   Condition::AddToXref(insert);
-   then_->AddToXref(insert);
-   if(else_ != nullptr) else_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1125,6 +1116,15 @@ void If::UpdatePos
    if(else_ != nullptr) else_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void If::UpdateXref(bool insert)
+{
+   Condition::UpdateXref(insert);
+   then_->UpdateXref(insert);
+   if(else_ != nullptr) else_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 Label::Label(string& name, size_t pos) : CxxStatement(pos)
@@ -1218,13 +1218,6 @@ Return::Return(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Return::AddToXref(bool insert)
-{
-   if(expr_ != nullptr) expr_->AddToXref(insert);
-}
-
-//------------------------------------------------------------------------------
-
 void Return::Check() const
 {
    if(expr_ != nullptr) expr_->Check();
@@ -1300,6 +1293,13 @@ void Return::UpdatePos
    if(expr_ != nullptr) expr_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void Return::UpdateXref(bool insert)
+{
+   if(expr_ != nullptr) expr_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 Switch::Switch(size_t pos) : CxxStatement(pos)
@@ -1307,14 +1307,6 @@ Switch::Switch(size_t pos) : CxxStatement(pos)
    Debug::ft("Switch.ctor[>ct]");
 
    CxxStats::Incr(CxxStats::SWITCH);
-}
-
-//------------------------------------------------------------------------------
-
-void Switch::AddToXref(bool insert)
-{
-   expr_->AddToXref(insert);
-   cases_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1422,6 +1414,14 @@ void Switch::UpdatePos
    cases_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void Switch::UpdateXref(bool insert)
+{
+   expr_->UpdateXref(insert);
+   cases_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 Try::Try(size_t pos) : CxxStatement(pos)
@@ -1429,18 +1429,6 @@ Try::Try(size_t pos) : CxxStatement(pos)
    Debug::ft("Try.ctor");
 
    CxxStats::Incr(CxxStats::TRY);
-}
-
-//------------------------------------------------------------------------------
-
-void Try::AddToXref(bool insert)
-{
-   try_->AddToXref(insert);
-
-   for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
-   {
-      (*c)->AddToXref(insert);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -1601,6 +1589,18 @@ void Try::UpdatePos
    }
 }
 
+//------------------------------------------------------------------------------
+
+void Try::UpdateXref(bool insert)
+{
+   try_->UpdateXref(insert);
+
+   for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
+   {
+      (*c)->UpdateXref(insert);
+   }
+}
+
 //==============================================================================
 
 While::While(size_t pos) : Condition(pos)
@@ -1608,14 +1608,6 @@ While::While(size_t pos) : Condition(pos)
    Debug::ft("While.ctor");
 
    CxxStats::Incr(CxxStats::WHILE);
-}
-
-//------------------------------------------------------------------------------
-
-void While::AddToXref(bool insert)
-{
-   Condition::AddToXref(insert);
-   loop_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1727,5 +1719,13 @@ void While::UpdatePos
 {
    Condition::UpdatePos(action, begin, count, from);
    loop_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void While::UpdateXref(bool insert)
+{
+   Condition::UpdateXref(insert);
+   loop_->UpdateXref(insert);
 }
 }

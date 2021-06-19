@@ -261,8 +261,8 @@ class ParserTraceTool : public Tool
 
    ParserTraceTool() : Tool(ParserTracer, 'p', false) { }
    ~ParserTraceTool() = default;
-   c_string Name() const override { return ParserTraceToolName; }
    c_string Expl() const override { return ParserTraceToolExpl; }
+   c_string Name() const override { return ParserTraceToolName; }
 };
 
 //==============================================================================

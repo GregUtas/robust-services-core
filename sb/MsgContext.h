@@ -49,13 +49,13 @@ protected:
    //
    virtual ~MsgContext();
 
-   //  Returns the type of context.
-   //
-   ContextType Type() const override { return SingleMsg; }
-
    //  Overridden to flag the context message as handled.
    //
    void EndOfTransaction() override;
+
+   //  Returns the type of context.
+   //
+   ContextType Type() const override { return SingleMsg; }
 private:
    //  Overridden to handle the arrival of MSG.
    //

@@ -114,11 +114,6 @@ public:
    //
    static ptrdiff_t LinkDiff();
 
-   //  Overridden to display member variables.
-   //
-   void Display(ostream& stream,
-      const string& prefix, const Flags& options) const override;
-
    //  Overridden to obtain a TrafficCall from its object pool if
    //  available, else from the dynamic heap.
    //
@@ -127,6 +122,11 @@ public:
    //  Overridden to return a TrafficCall to its object pool.
    //
    static void operator delete(void* addr);
+
+   //  Overridden to display member variables.
+   //
+   void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 private:
    //> The size of the DelayMsecs_ array.
    //

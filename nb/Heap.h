@@ -135,15 +135,6 @@ public:
    //
    void DisplayBlocks(std::ostream& stream) const;
 
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
-
-   //  Overridden for patching.
-   //
-   void Patch(sel_t selector, void* arguments) override;
-
    //  Overridden to allocate a heap object on the default C++ heap.
    //
    static void* operator new(size_t size);
@@ -155,6 +146,15 @@ public:
    //  Deleted to prevent the allocation of an array of heaps.
    //
    static void* operator new[](size_t size) = delete;
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Protected because this class is virtual.
    //

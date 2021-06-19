@@ -67,18 +67,18 @@ public:
    //
    PotsProfile* NextProfile(const PotsProfile& profile) const;
 
-   //  Overridden for restarts.
+   //  Overridden to display member variables.
    //
-   void Startup(RestartLevel level) override;
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;
 
-   //  Overridden to display member variables.
+   //  Overridden for restarts.
    //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   void Startup(RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //

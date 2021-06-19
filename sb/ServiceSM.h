@@ -138,22 +138,22 @@ public:
    //
    virtual void MorphToService(ServiceId sid);
 
-   //  Overridden to enumerate all objects that the SSM owns.
+   //  Overridden to obtain an SSM from its object pool.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   static void* operator new(size_t size);
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
+   //  Overridden to enumerate all objects that the SSM owns.
+   //
+   void GetSubtended(std::vector< Base* >& objects) const override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to obtain an SSM from its object pool.
-   //
-   static void* operator new(size_t size);
 protected:
    //  Modifier SSMs are created by Service::AllocModifier.  Non-modifier SSMs
    //  subclass from RootServiceSM.  Protected because this class is virtual.

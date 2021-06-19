@@ -429,10 +429,6 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Overridden to not start a timer when sending an IAM.
-   //
-   bool UsesIamTimer() const override { return false; }
-
    //  Overridden to support broadcasting when a message is sent.
    //
    OutgoingRc ProcessOgMsg(Message& msg) override;
@@ -440,6 +436,10 @@ private:
    //  Overridden to indicate that all messages should be internal.
    //
    Message::Route Route() const override;
+
+   //  Overridden to not start a timer when sending an IAM.
+   //
+   bool UsesIamTimer() const override { return false; }
 
    //  Set to remove the PSM from the broadcast group during the current
    //  transaction.
@@ -500,14 +500,14 @@ public:
    //
    void ReleaseProxies(ProxyBcPsm* skip, Cause::Ind cause) const;
 
-   //  Overridden to set proxyCount_ to 1 when registering a proxy OBC's UPSM.
-   //
-   void SetUPsm(MediaPsm& psm) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden to set proxyCount_ to 1 when registering a proxy OBC's UPSM.
+   //
+   void SetUPsm(MediaPsm& psm) override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -552,20 +552,20 @@ class ProxyBcFactory : public CipFactory
    //
    ~ProxyBcFactory();
 
-   //  Overridden to return a CLI parameter that identifies this factory.
+   //  Overridden to create a ProxyBcPsm when a CIP IAM arrives to
+   //  originate a new proxy call.
    //
-   CliText* CreateText() const override;
+   ProtocolSM* AllocIcPsm
+      (const Message& msg, ProtocolLayer& lower) const override;
 
    //  Overridden to create the type of root SSM associated with the
    //  RouteResult parameter in MSG, which must be an incoming CIP IAM.
    //
    RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
 
-   //  Overridden to create a ProxyBcPsm when a CIP IAM arrives to
-   //  originate a new proxy call.
+   //  Overridden to return a CLI parameter that identifies this factory.
    //
-   ProtocolSM* AllocIcPsm
-      (const Message& msg, ProtocolLayer& lower) const override;
+   CliText* CreateText() const override;
 };
 }
 #endif

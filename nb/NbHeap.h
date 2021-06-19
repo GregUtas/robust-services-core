@@ -53,6 +53,28 @@ public:
    //
    void* Addr() const override { return heap_; }
 
+   //  Overridden to allocate SIZE bytes.
+   //
+   void* Alloc(size_t size) override;
+
+   //  Overridden to return the size of the block at ADDR if it is
+   //  currently allocated.
+   //
+   size_t BlockToSize(const void* addr) const override;
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden to free the memory segment at ADDR.
+   //
+   void Free(void* addr) override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
+
    //  Overridden to return the heap's size.
    //
    size_t Size() const override { return size_; }
@@ -61,31 +83,9 @@ public:
    //
    MemoryType Type() const override { return type_; }
 
-   //  Overridden to allocate SIZE bytes.
-   //
-   void* Alloc(size_t size) override;
-
-   //  Overridden to free the memory segment at ADDR.
-   //
-   void Free(void* addr) override;
-
-   //  Overridden to return the size of the block at ADDR if it is
-   //  currently allocated.
-   //
-   size_t BlockToSize(const void* addr) const override;
-
    //  Overridden to validate the heap or the block at ADDR.
    //
    bool Validate(const void* addr) const override;
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
-
-   //  Overridden for patching.
-   //
-   void Patch(sel_t selector, void* arguments) override;
 
    //  The type for a level within the heap.  Blocks at the same level have
    //  the same size.  Blocks at level N-1 are twice the size of blocks at

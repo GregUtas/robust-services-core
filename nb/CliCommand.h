@@ -55,9 +55,10 @@ public:
    //
    virtual ~CliCommand();
 
-   //  Overridden to look for an integer as the next parameter.
+   //  Explains the command.  If VERBOSE is true, all of the command's
+   //  parameters are also explained.  Returns 0.
    //
-   Rc GetIntParmRc(word& n, CliThread& cli) const override;
+   virtual word ExplainCommand(std::ostream& stream, bool verbose) const;
 
    //  Overridden to look for a boolean as the next parameter.
    //
@@ -66,18 +67,6 @@ public:
    //  Overridden to look for a character as the next parameter.
    //
    Rc GetCharParmRc(char& c, CliThread& cli) const override;
-
-   //  Overridden to look for a pointer as the next parameter.
-   //
-   Rc GetPtrParmRc(void*& p, CliThread& cli) const override;
-
-   //  Overridden to look for a string as the next parameter.
-   //
-   Rc GetTextParmRc(id_t& i, std::string& s, CliThread& cli) const override;
-
-   //  Overridden to look for an arbitrary string as the next parameter.
-   //
-   Rc GetStringRc(std::string& s, CliThread& cli) const override;
 
    //  Overridden to look for a filename as the next parameter.
    //
@@ -88,10 +77,21 @@ public:
    Rc GetIdentifierRc(std::string& s, CliThread& cli,
       const std::string& valid, const std::string& exclude) const override;
 
-   //  Explains the command.  If VERBOSE is true, all of the command's
-   //  parameters are also explained.  Returns 0.
+   //  Overridden to look for an integer as the next parameter.
    //
-   virtual word ExplainCommand(std::ostream& stream, bool verbose) const;
+   Rc GetIntParmRc(word& n, CliThread& cli) const override;
+
+   //  Overridden to look for a pointer as the next parameter.
+   //
+   Rc GetPtrParmRc(void*& p, CliThread& cli) const override;
+
+   //  Overridden to look for an arbitrary string as the next parameter.
+   //
+   Rc GetStringRc(std::string& s, CliThread& cli) const override;
+
+   //  Overridden to look for a string as the next parameter.
+   //
+   Rc GetTextParmRc(id_t& i, std::string& s, CliThread& cli) const override;
 
    //  Overridden for patching.
    //
@@ -124,16 +124,16 @@ private:
    //
    virtual word ProcessCommand(CliThread& cli) const = 0;
 
-   //  Overridden to stop looking for parameters if those below this
-   //  command have been exhausted.
-   //
-   bool Ascend() const override { return false; }
-
    //  Invoked if trying to obtain another parameter when the parse tree
    //  has been exhausted.  TYPE is the type of parameter that could not
    //  be obtained.
    //
    static Rc Exhausted(const CliThread& cli, const std::string& type);
+
+   //  Overridden to stop looking for parameters if those below this
+   //  command have been exhausted.
+   //
+   bool Ascend() const override { return false; }
 };
 }
 #endif

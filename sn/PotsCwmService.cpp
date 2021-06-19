@@ -461,9 +461,9 @@ public:
    EventHandler::Rc Reanswer();
    EventHandler::Rc StopReringing();
    void ReleaseCwt(Facility::Ind ind);
-   void SetNextState(StateId stid) override;
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
+   void SetNextState(StateId stid) override;
 private:
    PotsMuxSsm* Mux() const { return static_cast< PotsMuxSsm* >(Parent()); }
    PotsCallPsm* UPsm() const { return Mux()->UPsm(); }

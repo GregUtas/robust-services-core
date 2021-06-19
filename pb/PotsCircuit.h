@@ -146,6 +146,11 @@ public:
    //
    static void ResetStateCounts(RestartLevel level);
 
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
+
    //  Overridden to return a string that identifies the circuit.
    //
    std::string Name() const override;
@@ -154,11 +159,6 @@ public:
    //
    bool Supports(ProtocolId prid) const
       override { return (prid == PotsProtocolId); }
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
 private:
    //  The size of the trace buffer, which maintains a message history
    //  that is included in logs.

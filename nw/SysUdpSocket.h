@@ -73,14 +73,6 @@ public:
    NodeBase::word SendTo
       (const NodeBase::byte_t* data, size_t size, const SysIpL3Addr& remAddr);
 
-   //  Overridden to indicate that this socket is running UDP.
-   //
-   IpProtocol Protocol() const override { return IpUdp; }
-
-   //  Overridden to send BUFF.
-   //
-   SendRc SendBuff(IpBuffer& buff) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -89,6 +81,14 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to indicate that this socket is running UDP.
+   //
+   IpProtocol Protocol() const override { return IpUdp; }
+
+   //  Overridden to send BUFF.
+   //
+   SendRc SendBuff(IpBuffer& buff) override;
 private:
    //  The maximum size of a UDP message.
    //

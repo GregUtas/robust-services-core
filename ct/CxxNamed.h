@@ -435,10 +435,6 @@ public:
    //
    void GetNames(stringVector& names) const;
 
-   //  Overridden to invoke AddReference on the name's referent.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to check template arguments.
    //
    void Check() const override;
@@ -527,6 +523,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to invoke UpdateReference on the name's referent.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Overridden so that a data item can be erased.
    //
@@ -703,17 +703,13 @@ public:
    //
    void AddPrefix(const std::string& name, Namespace* ns);
 
-   //  Overridden to add the name's components to cross-references.
+   //  Checks for a redundant scope name.
    //
-   void AddToXref(bool insert) override;
+   void CheckForRedundantScope() const;
 
    //  Overridden to check each name and any template parameters.
    //
    void Check() const override;
-
-   //  Checks for a redundant scope name.
-   //
-   void CheckForRedundantScope() const;
 
    //  Overridden to propagate the context to each name.
    //
@@ -782,14 +778,14 @@ public:
    //
    void Rename(const std::string& name) override;
 
-   //  Overridden to forward to the Nth name.
-   //
-   bool ResolveTypedef(Typedef* type, size_t n) const override;
-
    //  Overridden to instantiate the template unless END is set.
    //
    bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
+
+   //  Overridden to forward to the Nth name.
+   //
+   bool ResolveTypedef(Typedef* type, size_t n) const override;
 
    //  Sets the last name's referent.  This is used by QualName.EnterBlock and
    //  Operation.PushMember when a name appears in executable code.  It is also
@@ -816,11 +812,11 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
-private:
-   //  Overridden so that a data item can be erased.
-   //
-   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
+   //  Overridden to add the name's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
+private:
    //  Returns the last name.
    //
    TypeName* Last() const;
@@ -828,6 +824,10 @@ private:
    //  Checks if REF (the name's referent) is a template argument.
    //
    void CheckIfTemplateArgument(const CxxScoped* ref) const;
+
+   //  Overridden so that a data item can be erased.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
    //  The first name in what might be a qualified name.
    //
@@ -1249,10 +1249,6 @@ private:
    //
    void AddArray(ArraySpecPtr& array) override;
 
-   //  Overridden to add the specification's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to align thatArg's type with the this type, which is that of a
    //  template parameter that might be specialized.
    //
@@ -1368,30 +1364,26 @@ private:
    //
    bool IsAuto() const override;
 
-   //  Overridden to return false for an array of objects.
-   //
-   bool IsPOD() const override;
-
-   //  Overridden to return true if ITEM is the referent of a template argument.
-   //
-   bool ItemIsTemplateArg(const CxxNamed* item) const override;
-
    //  Overridden to return true if the type is const.
    //
    bool IsConst() const override;
-
-   //  Overridden to return true if the type's outermost pointer is const.
-   //
-   bool IsConstPtr() const override;
 
    //  Overridden to return true if the type's Nth pointer is const.
    //
    bool IsConstPtr(size_t n) const override;
 
+   //  Overridden to return true if the type's outermost pointer is const.
+   //
+   bool IsConstPtr() const override;
+
    //  Overridden to return true if the type has pointer or reference tags,
    //  or if it is an array and ARRAYS is true.
    //
    bool IsIndirect(bool arrays) const override;
+
+   //  Overridden to return false for an array of objects.
+   //
+   bool IsPOD() const override;
 
    //  Overridden to return true if the type is volatile.
    //
@@ -1404,6 +1396,10 @@ private:
    //  Overridden to return true if the type's Nth pointer is volatile.
    //
    bool IsVolatilePtr(size_t n) const override;
+
+   //  Overridden to return true if ITEM is the referent of a template argument.
+   //
+   bool ItemIsTemplateArg(const CxxNamed* item) const override;
 
    //  Overridden to return true if the types of "this" and THAT match.
    //
@@ -1526,6 +1522,10 @@ private:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
+   //  Overridden to add the specification's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
+
    //  Overridden to support a temporary variable represented by a DataSpec.
    //
    bool WasWritten(const StackArg* arg, bool direct, bool indirect)
@@ -1578,7 +1578,6 @@ class StaticAssert : public CxxNamed
 public:
    StaticAssert(ExprPtr& expr, ExprPtr& message);
    ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
-   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    bool EnterScope() override;
@@ -1589,6 +1588,7 @@ public:
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+   void UpdateXref(bool insert) override;
 private:
    bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 

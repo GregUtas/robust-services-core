@@ -782,7 +782,7 @@ bool ItemIsCommented(const CxxToken* item)
 //
 bool ItemIsUsedBetween(const CxxNamed* item, size_t begin, size_t end)
 {
-   Debug::ft("CodeTools.ItemHasReference");
+   Debug::ft("CodeTools.ItemIsUsedBetween");
 
    auto xref = item->Xref();
    if(xref == nullptr) return false;
@@ -3300,7 +3300,7 @@ bool Editor::FunctionsWereSorted(const CodeWarning& log) const
 
 CxxNamedVector Editor::GetItemsForFuncDefn(const Function* func) const
 {
-   Debug::ft("Editor.GetItemsForFuncDecl");
+   Debug::ft("Editor.GetItemsForFuncDefn");
 
    CxxNamedVector items;
    auto& fileItems = file_->Items();
@@ -4534,6 +4534,7 @@ void Editor::MoveFuncDefn(FunctionVector& sorted, const Function* func)
    UpdateItemDefnLoc(prev, func, next, defnAttrs);
    InsertBelowItemDefn(defnAttrs);
    auto from = CutCode(func, code);
+   if(defnAttrs.pos_ > from) defnAttrs.pos_ -= code.size();
    auto dest = Paste(defnAttrs.pos_, code, from);
    InsertAboveItemDefn(defnAttrs);
 
@@ -4547,8 +4548,7 @@ void Editor::MoveFuncDefn(FunctionVector& sorted, const Function* func)
 
 //------------------------------------------------------------------------------
 
-void Editor::MoveItem
-   (const CxxNamed* item, size_t& dest, const CxxScoped* prev)
+void Editor::MoveItem(const CxxNamed* item, size_t& dest, const CxxScoped* prev)
 {
    Debug::ft("Editor.MoveItem");
 
@@ -5199,7 +5199,26 @@ word Editor::SortFunctions(const CodeWarning& log)
          }
          else
          {
-            unsorted.push_back(*f);
+            //  When functions were previously sorted, re-sorting is usually
+            //  required only because of name changes of the addition of new
+            //  functions.  In this case, when f2 and f3 are missorted in the
+            //  sequence f1-f2-f3, cut and paste operations can be reduced by
+            //  moving f2, provided that f3 follows f1.  Here, that means
+            //  moving PREV from SORTED to UNSORTED and adding *f to SORTED.
+            //
+            auto size = sorted.size();
+
+            if((size > 1) && FuncDefnsAreSorted(sorted[size - 2], *f))
+            {
+               unsorted.push_back(prev);
+               sorted.pop_back();
+               prev = *f;
+               sorted.push_back(*f);
+            }
+            else
+            {
+               unsorted.push_back(*f);
+            }
          }
 
          CodeTools::EraseItem(orphans, *f);

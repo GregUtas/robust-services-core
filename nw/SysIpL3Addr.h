@@ -97,10 +97,6 @@ public:
    //
    bool AddrToName(std::string& name, std::string& service) const;
 
-   //  Returns the address as a string ("n.n.n.n:p").
-   //
-   std::string to_str() const override;
-
    //  The same as to_str(), but also displays proto_ and socket_ unless
    //  both still have their default values (IpAny and nullptr).
    //
@@ -122,6 +118,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Returns the address as a string ("n.n.n.n:p").
+   //
+   std::string to_str() const override;
 private:
    //  The port number associated with the address.
    //

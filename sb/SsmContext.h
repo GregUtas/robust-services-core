@@ -39,30 +39,30 @@ class SsmContext : public PsmContext
    friend class RootServiceSM;
    friend class SsmFactory;
 public:
-   //  Returns the root SSM.
-   //
-   RootServiceSM* RootSsm() const override { return root_; }
-
-   //  Overridden to enumerate all objects that the context owns.
-   //
-   void GetSubtended(std::vector< Base* >& objects) const override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
+   //  Overridden to enumerate all objects that the context owns.
+   //
+   void GetSubtended(std::vector< Base* >& objects) const override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-protected:
-   //  Returns the type of context.
-   //
-   ContextType Type() const override { return MultiPort; }
 
+   //  Returns the root SSM.
+   //
+   RootServiceSM* RootSsm() const override { return root_; }
+protected:
    //  Overridden to invoke EndOfTransaction on the root SSM.
    //
    void EndOfTransaction() override;
+
+   //  Returns the type of context.
+   //
+   ContextType Type() const override { return MultiPort; }
 private:
    //  Private to restrict creation.
    //
@@ -71,14 +71,6 @@ private:
    //  Private to restrict deletion.  Not subclassed.
    //
    ~SsmContext();
-
-   //  Overridden to handle the arrival of MSG.
-   //
-   void ProcessIcMsg(Message& msg) override;
-
-   //  Overridden to determine if the context should be deleted.
-   //
-   bool IsIdle() const override;
 
    //  Allocates the root SSM that will receive MSG.  PSM is the
    //  uppermost PSM in the stack that MSG just created.
@@ -93,6 +85,14 @@ private:
    //  message trace when an error occurs.
    //
    void OutputLog(ServiceId sid, NodeBase::word errval) const;
+
+   //  Overridden to determine if the context should be deleted.
+   //
+   bool IsIdle() const override;
+
+   //  Overridden to handle the arrival of MSG.
+   //
+   void ProcessIcMsg(Message& msg) override;
 
    //  The root SSM.
    //

@@ -93,11 +93,6 @@ private:
    //
    void Restart();
 
-   //  Overridden to remove the timer from the timer registry during error
-   //  recovery.
-   //
-   void Cleanup() override;
-
    //  Overridden to obtain a timer from its object pool.
    //
    static void* operator new(size_t size);
@@ -109,6 +104,11 @@ private:
    //  Returns the offset to link_.
    //
    static ptrdiff_t LinkDiff();
+
+   //  Overridden to remove the timer from the timer registry during error
+   //  recovery.
+   //
+   void Cleanup() override;
 
    //  Nil timer queue identifier, which allows array index 0 to be used.
    //

@@ -35,11 +35,6 @@ namespace CodeTools
 class CodeSet : public LibrarySet
 {
 public:
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
-
    //  Override the operators supported by both directories and files.
    //
    LibrarySet* Assign(LibrarySet* that) override;
@@ -50,6 +45,11 @@ public:
    //  Updates STREAM with the number of files in the set and returns 0.
    //
    NodeBase::word Count(std::string& result) const override;
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
    //  Creates a set that is identified by NAME.  ITEMS is the actual set, if
    //  known.  Protected because this class is virtual.

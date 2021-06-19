@@ -57,13 +57,13 @@ class PotsMuxFactory : public SsmFactory
 
    PotsMuxFactory();
    ~PotsMuxFactory();
-   CliText* CreateText() const override;
-   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
+   Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
    ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
-   SsmContext* FindContext(const Message& msg) const override;
-   Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
    Message* AllocOgMsg(SignalId sid) const override;
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
+   CliText* CreateText() const override;
+   SsmContext* FindContext(const Message& msg) const override;
    Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
 };
 
@@ -86,11 +86,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   Message::Route Route() const override;
+   void EnsureMediaMsg() override;
    IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
    OutgoingRc ProcessOgMsg(Message& msg) override;
+   Message::Route Route() const override;
    void SendFinalMsg() override;
-   void EnsureMediaMsg() override;
 
    ServiceId remSid_;
    const Pots_UN_Message* ogMsg_;

@@ -75,18 +75,6 @@ protected:
    //
    void Unblock() override;
 private:
-   //  Overridden to return a name for the thread.
-   //
-   NodeBase::c_string AbbrName() const override;
-
-   //  Overridden to receive TCP messages on PORT.
-   //
-   void Enter() override;
-
-   //  Overridden to claim IpBuffers queued for output.
-   //
-   void ClaimBlocks() override;
-
    //  Returns the listener socket.
    //
    SysTcpSocket* Listener() const;
@@ -156,6 +144,18 @@ private:
    //  Releases resources when exiting or cleaning up the thread.
    //
    void ReleaseResources();
+
+   //  Overridden to return a name for the thread.
+   //
+   NodeBase::c_string AbbrName() const override;
+
+   //  Overridden to claim IpBuffers queued for output.
+   //
+   void ClaimBlocks() override;
+
+   //  Overridden to receive TCP messages on PORT.
+   //
+   void Enter() override;
 
    //  The sockets associated with the port served by this thread.  The
    //  first socket listens for new connections, and each of the others

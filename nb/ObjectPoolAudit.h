@@ -72,13 +72,13 @@ private:
    //
    c_string AbbrName() const override;
 
-   //  Overridden to provide the audit's entry function.
-   //
-   void Enter() override;
-
    //  Overridden to delete the singleton.
    //
    void Destroy() override;
+
+   //  Overridden to provide the audit's entry function.
+   //
+   void Enter() override;
 
    //  The time between audits.
    //

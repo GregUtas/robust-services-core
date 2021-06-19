@@ -53,9 +53,10 @@ public:
    //
    virtual bool Keepalive() const { return false; }
 
-   //  Overridden to indicate that this service runs over TCP.
+   //  Overridden to display member variables.
    //
-   IpProtocol Protocol() const override { return IpTcp; }
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to indicate that applications do not use the I/O
    //  thread's primary socket (the listener socket, if it exists)
@@ -63,14 +64,13 @@ public:
    //
    bool HasSharedSocket() const override { return false; }
 
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to indicate that this service runs over TCP.
+   //
+   IpProtocol Protocol() const override { return IpTcp; }
 protected:
    //  Creates a service that runs over TCP.  Protected because
    //  this class is virtual.

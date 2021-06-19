@@ -41,16 +41,16 @@ MsgBuffer::MsgBuffer() : rxTime_(TimePoint::Now())
 
 //------------------------------------------------------------------------------
 
-MsgBuffer::MsgBuffer(const MsgBuffer& that) : rxTime_(that.rxTime_)
+MsgBuffer::~MsgBuffer()
 {
-   Debug::ft("MsgBuffer.ctor(copy)");
+   Debug::ftnt("MsgBuffer.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-MsgBuffer::~MsgBuffer()
+MsgBuffer::MsgBuffer(const MsgBuffer& that) : rxTime_(that.rxTime_)
 {
-   Debug::ftnt("MsgBuffer.dtor");
+   Debug::ft("MsgBuffer.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------

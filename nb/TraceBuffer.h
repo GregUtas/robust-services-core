@@ -239,13 +239,13 @@ public:
    //
    void ClaimBlocks() override;
 
-   //  Overridden for restarts.
-   //
-   void Shutdown(RestartLevel level) override;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
 private:
    //  Creates a buffer of MinSize.  Private because this is a singleton.
    //

@@ -93,16 +93,16 @@ protected:
    //
    Rc GetTextParmRc(id_t& i, std::string& s, CliThread& cli) const override;
 private:
-   //  Overridden to display the string as the acceptable input.
-   //
-   bool ShowValues(std::string& values) const override;
-
    //  After matching a text string, this function prepares to look
    //  for parameters associated with the string.  If the string has
    //  no parameters, it prepares to look for the next parameter at
    //  the same parse depth.
    //
    void Descend(CliCookie& cookie) const;
+
+   //  Overridden to display the string as the acceptable input.
+   //
+   bool ShowValues(std::string& values) const override;
 
    //  The string that that may be followed by parameters.
    //

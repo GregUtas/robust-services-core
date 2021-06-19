@@ -77,14 +77,14 @@ private:
    //
    c_string AbbrName() const override;
 
+   //  Overridden to delete the singleton.
+   //
+   void Destroy() override;
+
    //  Overridden to read input from the console and either buffer it
    //  or pass it to a waiting thread.
    //
    void Enter() override;
-
-   //  Overridden to delete the singleton.
-   //
-   void Destroy() override;
 
    //  Buffer for input.
    //

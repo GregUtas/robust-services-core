@@ -73,6 +73,19 @@ IpBuffer::IpBuffer(MsgDirection dir, size_t header, size_t payload) :
 
 //------------------------------------------------------------------------------
 
+IpBuffer::~IpBuffer()
+{
+   Debug::ftnt("IpBuffer.dtor");
+
+   if(buff_ != nullptr)
+   {
+      Memory::Free(buff_, MemDynamic);
+      buff_ = nullptr;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 IpBuffer::IpBuffer(const IpBuffer& that) : MsgBuffer(that),
    buff_(nullptr),
    hdrSize_(that.hdrSize_),
@@ -90,19 +103,6 @@ IpBuffer::IpBuffer(const IpBuffer& that) : MsgBuffer(that),
    //  Copy the original buffer into the new one.
    //
    Memory::Copy(buff_, that.buff_, buffSize_);
-}
-
-//------------------------------------------------------------------------------
-
-IpBuffer::~IpBuffer()
-{
-   Debug::ftnt("IpBuffer.dtor");
-
-   if(buff_ != nullptr)
-   {
-      Memory::Free(buff_, MemDynamic);
-      buff_ = nullptr;
-   }
 }
 
 //------------------------------------------------------------------------------

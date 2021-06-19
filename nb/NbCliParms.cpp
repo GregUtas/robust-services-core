@@ -130,6 +130,63 @@ word ExplainTraceRc(const CliThread& cli, TraceRc rc)
 
 //------------------------------------------------------------------------------
 
+CliParm::Rc GetBV(const CliCommand& comm, CliThread& cli, bool& v)
+{
+   Debug::ft("NodeBase.GetBV");
+
+   char c;
+   auto rc = comm.GetCharParmRc(c, cli);
+   v = (c == 'v');
+   return rc;
+}
+
+//------------------------------------------------------------------------------
+
+CliParm::Rc GetCBV(const CliCommand& comm, CliThread& cli, bool& c, bool& v)
+{
+   Debug::ft("NodeBase.GetCBV");
+
+   char k;
+
+   c = false;
+   v = false;
+
+   auto rc = comm.GetCharParmRc(k, cli);
+
+   if(rc == CliParm::Ok)
+   {
+      if(k == 'c') c = true;
+      if(k == 'v') v = true;
+   }
+
+   return rc;
+}
+
+//------------------------------------------------------------------------------
+
+bool ValidateOptions(const string& opts, const string& valid, string& expl)
+{
+   Debug::ft("NodeBase.ValidateOptions");
+
+   string invalid;
+
+   for(size_t i = 0; i < opts.size(); ++i)
+   {
+      if(valid.find(opts[i]) == string::npos)
+      {
+         invalid.push_back(opts[i]);
+      }
+   }
+
+   if(invalid.empty()) return true;
+
+   expl = "Invalid options: ";
+   expl += invalid;
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fixed_string FactionMandExpl = "faction";
 
 FactionMandParm::FactionMandParm() :
@@ -172,40 +229,6 @@ IdOptParm::IdOptParm() : CliIntParm(IdExpl, 0, UINT16_MAX, true) { }
 fixed_string IstreamMandExpl = "filename for input (in OutputPath directory)";
 
 IstreamMandParm::IstreamMandParm() : CliTextParm(IstreamMandExpl, false, 0) { }
-
-//------------------------------------------------------------------------------
-
-CliParm::Rc GetBV(const CliCommand& comm, CliThread& cli, bool& v)
-{
-   Debug::ft("NodeBase.GetBV");
-
-   char c;
-   auto rc = comm.GetCharParmRc(c, cli);
-   v = (c == 'v');
-   return rc;
-}
-
-//------------------------------------------------------------------------------
-
-CliParm::Rc GetCBV(const CliCommand& comm, CliThread& cli, bool& c, bool& v)
-{
-   Debug::ft("NodeBase.GetCBV");
-
-   char k;
-
-   c = false;
-   v = false;
-
-   auto rc = comm.GetCharParmRc(k, cli);
-
-   if(rc == CliParm::Ok)
-   {
-      if(k == 'c') c = true;
-      if(k == 'v') v = true;
-   }
-
-   return rc;
-}
 
 //------------------------------------------------------------------------------
 
@@ -451,27 +474,4 @@ fixed_string ToolsTextStr = "tools";
 fixed_string ToolsTextExpl = "trace tools";
 
 ToolsText::ToolsText() : CliText(ToolsTextExpl, ToolsTextStr) { }
-
-//------------------------------------------------------------------------------
-
-bool ValidateOptions(const string& opts, const string& valid, string& expl)
-{
-   Debug::ft("NodeBase.ValidateOptions");
-
-   string invalid;
-
-   for(size_t i = 0; i < opts.size(); ++i)
-   {
-      if(valid.find(opts[i]) == string::npos)
-      {
-         invalid.push_back(opts[i]);
-      }
-   }
-
-   if(invalid.empty()) return true;
-
-   expl = "Invalid options: ";
-   expl += invalid;
-   return false;
-}
 }

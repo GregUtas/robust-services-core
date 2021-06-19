@@ -71,8 +71,6 @@ public:
 
    const T& GetStr() const { return str_; }
 
-   void PushBack(uint32_t c) override { str_.push_back(c); }
-
    void Replace(const T& str) { str_ = str; }
 
    static CxxScoped* GetReferent()
@@ -103,7 +101,18 @@ public:
       data->SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
       return data;
    }
+
+   void PushBack(uint32_t c) override { str_.push_back(c); }
 private:
+   //  See the comment in Singleton.h about fn_name's in a template header.
+   //
+   inline static fn_name CxxStrLiteral_CreateRef()
+      { return "CxxStrLiteral.CreateRef"; }
+   inline static fn_name CxxStrLiteral_GetReferent()
+      { return "CxxStrLiteral.GetReferent"; }
+
+   Numeric GetNumeric() const override { return Numeric::Pointer; }
+
    TypeSpec* GetTypeSpec() const override { return Ref_[E]->GetTypeSpec(); }
 
    void Print(std::ostream& stream, const Flags& options) const override
@@ -128,15 +137,6 @@ private:
       type.push_back('*');
       return type;
    }
-
-   Numeric GetNumeric() const override { return Numeric::Pointer; }
-
-   //  See the comment in Singleton.h about fn_name's in a template header.
-   //
-   inline static fn_name CxxStrLiteral_CreateRef()
-      { return "CxxStrLiteral.CreateRef"; }
-   inline static fn_name CxxStrLiteral_GetReferent()
-      { return "CxxStrLiteral.GetReferent"; }
 
    //  A string for holding the string literal.
    //

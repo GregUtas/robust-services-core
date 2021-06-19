@@ -165,14 +165,14 @@ public:
    //
    static ptrdiff_t LinkDiff();
 
-   //  Overridden to enumerate all objects that the context owns.
-   //
-   void GetSubtended(std::vector< Base* >& objects) const override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to enumerate all objects that the context owns.
+   //
+   void GetSubtended(std::vector< Base* >& objects) const override;
 
    //  Overridden for patching.
    //
@@ -195,15 +195,15 @@ protected:
    //
    virtual void EndOfTransaction() { }
 
-   //  Overridden to disassociate the context from any work queue and/or
-   //  invoker thread during error recovery.
-   //
-   void Cleanup() override;
-
    //  Returns the trace record if the context's current transaction is
    //  being traced.
    //
    TransTrace* GetTrans() const { return trans_; }
+
+   //  Overridden to disassociate the context from any work queue and/or
+   //  invoker thread during error recovery.
+   //
+   void Cleanup() override;
 private:
    //  Overridden to obtain a context from its object pool.
    //

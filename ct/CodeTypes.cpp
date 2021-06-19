@@ -163,102 +163,6 @@ const Flags Stats_Mask = Flags(1 << DispStats);
 
 //------------------------------------------------------------------------------
 
-fixed_string LineTypeStrings[LineType_N + 1] =
-{
-   "source code not in one of the categories below",
-   "blank line",
-   "blank comment",
-   "comment at the top of a file (e.g. for the file's name or license info)",
-   "comment followed by repeated characters to draw a rule (e.g. //---- ...)",
-   "comment not in one of the categories above (e.g. //  <text>)",
-   "C-style comment",
-   "bare left brace",
-   "bare right brace",
-   "bare right brace with semicolon",
-   "access control",
-   "invocation of Debug::ft",
-   "definition of an fn_name",
-   "#include directive",
-   "preprocessor directive other than #include",
-   "using statement",
-   "TOTAL",
-   ERROR_STR
-};
-
-ostream& operator<<(ostream& stream, LineType type)
-{
-   if((type >= 0) && (type < LineType_N))
-      stream << LineTypeStrings[type];
-   else
-      stream << LineTypeStrings[LineType_N];
-   return stream;
-}
-
-//------------------------------------------------------------------------------
-
-fixed_string FunctionRoleStrings[FuncRole_N + 1] =
-{
-   "constructor",       // PureCtor
-   "destructor",        // PureDtor
-   "copy constructor",  // CopyCtor
-   "move constructor",  // MoveCtor
-   "copy operator",     // CopyOper
-   "move operator",     // MoveOper
-   "member function",   // FuncOther
-   ERROR_STR
-};
-
-ostream& operator<<(ostream& stream, FunctionRole role)
-{
-   if((role >= 0) && (role < FuncRole_N))
-      stream << FunctionRoleStrings[role];
-   else
-      stream << FunctionRoleStrings[FuncRole_N];
-   return stream;
-}
-
-//------------------------------------------------------------------------------
-
-const bool F = false;
-const bool T = true;
-
-//------------------------------------------------------------------------------
-
-LineTypeAttr::LineTypeAttr
-   (bool code, bool pos, bool merge, bool blank, char sym) :
-   isCode(code),
-   isParsePos(pos),
-   isMergeable(merge),
-   isBlank(blank),
-   symbol(sym)
-{
-}
-
-const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
-{
-   //           c  p  m  b
-   LineTypeAttr(T, T, T, F, 'c'),  // CodeLine
-   LineTypeAttr(F, F, F, T, ' '),  // BlankLine
-   LineTypeAttr(F, F, F, T, 'b'),  // EmptyComment
-   LineTypeAttr(F, F, F, F, 'f'),  // FileComment
-   LineTypeAttr(F, F, F, F, '-'),  // RuleComment
-   LineTypeAttr(F, F, F, F, 't'),  // TextComment
-   LineTypeAttr(F, F, F, F, '/'),  // SlashAsteriskComment
-   LineTypeAttr(T, F, F, F, '{'),  // OpenBrace
-   LineTypeAttr(T, F, F, F, '}'),  // CloseBrace
-   LineTypeAttr(T, F, F, F, ']'),  // CloseBraceSemicolon
-   LineTypeAttr(T, F, F, F, 'a'),  // AccessControl
-   LineTypeAttr(T, T, T, F, 'd'),  // DebugFt
-   LineTypeAttr(T, T, T, F, 'n'),  // FunctionName
-   LineTypeAttr(T, T, F, F, 'i'),  // IncludeDirective
-   LineTypeAttr(T, T, F, F, 'h'),  // HashDirective
-   LineTypeAttr(T, T, F, F, 'u'),  // UsingStatement
-   LineTypeAttr(F, F, F, F, '@'),  // AnyLine
-   LineTypeAttr(F, F, F, F, '?')   // LineType_N
-};
-
-//------------------------------------------------------------------------------
-
 LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
 {
    Debug::ft("CodeTools.CalcLineType");
@@ -447,6 +351,102 @@ size_t LineLengthMax()
 {
    return 80;
 }
+
+//------------------------------------------------------------------------------
+
+fixed_string LineTypeStrings[LineType_N + 1] =
+{
+   "source code not in one of the categories below",
+   "blank line",
+   "blank comment",
+   "comment at the top of a file (e.g. for the file's name or license info)",
+   "comment followed by repeated characters to draw a rule (e.g. //---- ...)",
+   "comment not in one of the categories above (e.g. //  <text>)",
+   "C-style comment",
+   "bare left brace",
+   "bare right brace",
+   "bare right brace with semicolon",
+   "access control",
+   "invocation of Debug::ft",
+   "definition of an fn_name",
+   "#include directive",
+   "preprocessor directive other than #include",
+   "using statement",
+   "TOTAL",
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, LineType type)
+{
+   if((type >= 0) && (type < LineType_N))
+      stream << LineTypeStrings[type];
+   else
+      stream << LineTypeStrings[LineType_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string FunctionRoleStrings[FuncRole_N + 1] =
+{
+   "constructor",       // PureCtor
+   "destructor",        // PureDtor
+   "copy constructor",  // CopyCtor
+   "move constructor",  // MoveCtor
+   "copy operator",     // CopyOper
+   "move operator",     // MoveOper
+   "member function",   // FuncOther
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, FunctionRole role)
+{
+   if((role >= 0) && (role < FuncRole_N))
+      stream << FunctionRoleStrings[role];
+   else
+      stream << FunctionRoleStrings[FuncRole_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
+const bool F = false;
+const bool T = true;
+
+//------------------------------------------------------------------------------
+
+LineTypeAttr::LineTypeAttr
+   (bool code, bool pos, bool merge, bool blank, char sym) :
+   isCode(code),
+   isParsePos(pos),
+   isMergeable(merge),
+   isBlank(blank),
+   symbol(sym)
+{
+}
+
+const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
+{
+   //           c  p  m  b
+   LineTypeAttr(T, T, T, F, 'c'),  // CodeLine
+   LineTypeAttr(F, F, F, T, ' '),  // BlankLine
+   LineTypeAttr(F, F, F, T, 'b'),  // EmptyComment
+   LineTypeAttr(F, F, F, F, 'f'),  // FileComment
+   LineTypeAttr(F, F, F, F, '-'),  // RuleComment
+   LineTypeAttr(F, F, F, F, 't'),  // TextComment
+   LineTypeAttr(F, F, F, F, '/'),  // SlashAsteriskComment
+   LineTypeAttr(T, F, F, F, '{'),  // OpenBrace
+   LineTypeAttr(T, F, F, F, '}'),  // CloseBrace
+   LineTypeAttr(T, F, F, F, ']'),  // CloseBraceSemicolon
+   LineTypeAttr(T, F, F, F, 'a'),  // AccessControl
+   LineTypeAttr(T, T, T, F, 'd'),  // DebugFt
+   LineTypeAttr(T, T, T, F, 'n'),  // FunctionName
+   LineTypeAttr(T, T, F, F, 'i'),  // IncludeDirective
+   LineTypeAttr(T, T, F, F, 'h'),  // HashDirective
+   LineTypeAttr(T, T, F, F, 'u'),  // UsingStatement
+   LineTypeAttr(F, F, F, F, '@'),  // AnyLine
+   LineTypeAttr(F, F, F, F, '?')   // LineType_N
+};
 
 //==============================================================================
 

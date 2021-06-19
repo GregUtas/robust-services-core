@@ -42,14 +42,14 @@ public:
    //
    virtual ~CfgBoolParm();
 
-   //  Overridden to return the parameter's current value.
-   //
-   bool GetValue() const override { return curr_; }
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden to return the parameter's current value.
+   //
+   bool GetValue() const override { return curr_; }
 
    //  Overridden for patching.
    //

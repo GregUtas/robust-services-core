@@ -46,8 +46,8 @@ class NetworkTraceTool : public Tool
 
    NetworkTraceTool() : Tool(NetworkTracer, 'n', true) { }
    ~NetworkTraceTool() = default;
-   c_string Name() const override { return NetworkTraceToolName; }
    c_string Expl() const override { return NetworkTraceToolExpl; }
+   c_string Name() const override { return NetworkTraceToolName; }
 };
 
 //------------------------------------------------------------------------------

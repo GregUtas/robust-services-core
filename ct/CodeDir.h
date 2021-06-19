@@ -67,6 +67,11 @@ public:
    //
    size_t CppCount() const;
 
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
+
    //  Overridden to update ITEMS with ones declared by the directory's files.
    //
    void GetDecls(CxxNamedSet& items) override;
@@ -74,11 +79,6 @@ public:
    //  Overridden to return the item's name.
    //
    const std::string& Name() const override { return name_; }
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
    //  The set's name.
    //

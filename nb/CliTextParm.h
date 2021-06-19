@@ -76,14 +76,6 @@ protected:
    //
    void Explain(std::ostream& stream, col_t indent) const override;
 
-   //  Overridden to look for a string from strings_.
-   //
-   Rc GetTextParmRc(id_t& i, std::string& s, CliThread& cli) const override;
-
-   //  Overridden to look for an arbitrary string.
-   //
-   Rc GetStringRc(std::string& s, CliThread& cli) const override;
-
    //  Overridden to look for a filename.
    //
    Rc GetFileNameRc(std::string& s, CliThread& cli) const override;
@@ -92,15 +84,23 @@ protected:
    //
    Rc GetIdentifierRc(std::string& s, CliThread& cli,
       const std::string& valid, const std::string& exclude) const override;
-private:
-   //  Overridden to show the strings that are acceptable inputs.
-   //
-   bool ShowValues(std::string& values) const override;
 
+   //  Overridden to look for an arbitrary string.
+   //
+   Rc GetStringRc(std::string& s, CliThread& cli) const override;
+
+   //  Overridden to look for a string from strings_.
+   //
+   Rc GetTextParmRc(id_t& i, std::string& s, CliThread& cli) const override;
+private:
    //  Used while parsing a command.  INDEX is the offset within
    //  strings_ where a valid string was found.
    //
    void Descend(CliCookie& cookie, uint32_t index) const;
+
+   //  Overridden to show the strings that are acceptable inputs.
+   //
+   bool ShowValues(std::string& values) const override;
 
    //  The strings that are legal for the text parameter.
    //

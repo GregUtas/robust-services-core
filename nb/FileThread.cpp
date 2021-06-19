@@ -113,6 +113,13 @@ FileRequest::FileRequest(const string& name, bool trunc) :
 
 //------------------------------------------------------------------------------
 
+FileRequest::~FileRequest()
+{
+   Debug::ftnt("FileRequest.dtor");
+}
+
+//------------------------------------------------------------------------------
+
 FileRequest::FileRequest(const FileRequest& that) : StreamRequest(that),
    name_(nullptr),
    trunc_(that.trunc_)
@@ -120,13 +127,6 @@ FileRequest::FileRequest(const FileRequest& that) : StreamRequest(that),
    Debug::ft("FileRequest.ctor(copy)");
 
    name_ = stringPtr(new string(*that.name_));
-}
-
-//------------------------------------------------------------------------------
-
-FileRequest::~FileRequest()
-{
-   Debug::ftnt("FileRequest.dtor");
 }
 
 //------------------------------------------------------------------------------

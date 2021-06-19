@@ -46,13 +46,13 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Overridden to create a TcpIoThread for the port.
-   //
-   IoThread* CreateIoThread() override;
-
    //  Overridden to create a TCP socket for an application instance.
    //
    SysTcpSocket* CreateAppSocket() override;
+
+   //  Overridden to create a TcpIoThread for the port.
+   //
+   IoThread* CreateIoThread() override;
 };
 }
 #endif

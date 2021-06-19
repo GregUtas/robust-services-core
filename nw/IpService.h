@@ -113,13 +113,6 @@ public:
    //
    static ptrdiff_t CellDiff();
 
-   //  Overridden for restarts.  Invokes CreatePort and CreateHandler to
-   //  start the service on the port, if any, returned by GetPort.  May
-   //  be overridden if, for example, the service needs to be started on
-   //  multiple ports.
-   //
-   void Startup(NodeBase::RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -128,6 +121,13 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.  Invokes CreatePort and CreateHandler to
+   //  start the service on the port, if any, returned by GetPort.  May
+   //  be overridden if, for example, the service needs to be started on
+   //  multiple ports.
+   //
+   void Startup(NodeBase::RestartLevel level) override;
 protected:
    //  Registers the service with IpServiceRegistry.  Protected because
    //  this class is virtual.

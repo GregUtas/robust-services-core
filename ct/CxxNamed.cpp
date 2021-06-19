@@ -162,16 +162,16 @@ CxxNamed::CxxNamed()
 
 //------------------------------------------------------------------------------
 
-CxxNamed::CxxNamed(const CxxNamed& that) : CxxToken(that)
+CxxNamed::~CxxNamed()
 {
-   Debug::ft("CxxNamed.ctor(copy)");
+   Debug::ftnt("CxxNamed.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-CxxNamed::~CxxNamed()
+CxxNamed::CxxNamed(const CxxNamed& that) : CxxToken(that)
 {
-   Debug::ftnt("CxxNamed.dtor");
+   Debug::ft("CxxNamed.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------
@@ -660,6 +660,15 @@ DataSpec::DataSpec(const char* name) : arrays_(nullptr)
 
 //------------------------------------------------------------------------------
 
+DataSpec::~DataSpec()
+{
+   Debug::ftnt("DataSpec.dtor");
+
+   CxxStats::Decr(CxxStats::DATA_SPEC);
+}
+
+//------------------------------------------------------------------------------
+
 DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
    arrays_(nullptr),
    tags_(that.tags_)
@@ -673,15 +682,6 @@ DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
 
 //------------------------------------------------------------------------------
 
-DataSpec::~DataSpec()
-{
-   Debug::ftnt("DataSpec.dtor");
-
-   CxxStats::Decr(CxxStats::DATA_SPEC);
-}
-
-//------------------------------------------------------------------------------
-
 void DataSpec::AddArray(ArraySpecPtr& array)
 {
    Debug::ft("DataSpec.AddArray");
@@ -689,23 +689,6 @@ void DataSpec::AddArray(ArraySpecPtr& array)
    if(arrays_ == nullptr) arrays_.reset(new ArraySpecPtrVector);
    arrays_->push_back(std::move(array));
    tags_.AddArray();
-}
-
-//------------------------------------------------------------------------------
-
-void DataSpec::AddToXref(bool insert)
-{
-   if(IsAutoDecl()) return;
-
-   name_->AddToXref(insert);
-
-   if(arrays_ != nullptr)
-   {
-      for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
-      {
-         (*a)->AddToXref(insert);
-      }
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -1969,6 +1952,23 @@ void DataSpec::UpdatePos
    }
 }
 
+//------------------------------------------------------------------------------
+
+void DataSpec::UpdateXref(bool insert)
+{
+   if(IsAutoDecl()) return;
+
+   name_->UpdateXref(insert);
+
+   if(arrays_ != nullptr)
+   {
+      for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
+      {
+         (*a)->UpdateXref(insert);
+      }
+   }
+}
+
 //==============================================================================
 
 QualName::QualName(TypeNamePtr& name) : init_(false)
@@ -1994,6 +1994,15 @@ QualName::QualName(const string& name) : init_(false)
 
 //------------------------------------------------------------------------------
 
+QualName::~QualName()
+{
+   Debug::ftnt("QualName.dtor");
+
+   CxxStats::Decr(CxxStats::QUAL_NAME);
+}
+
+//------------------------------------------------------------------------------
+
 QualName::QualName(const QualName& that) : CxxNamed(that),
    init_(that.init_)
 {
@@ -2010,15 +2019,6 @@ QualName::QualName(const QualName& that) : CxxNamed(that),
 
 //------------------------------------------------------------------------------
 
-QualName::~QualName()
-{
-   Debug::ftnt("QualName.dtor");
-
-   CxxStats::Decr(CxxStats::QUAL_NAME);
-}
-
-//------------------------------------------------------------------------------
-
 void QualName::AddPrefix(const string& name, Namespace* ns)
 {
    Debug::ft("QualName.AddPrefix");
@@ -2031,16 +2031,6 @@ void QualName::AddPrefix(const string& name, Namespace* ns)
    prefix->PushBack(first_);
    prefix->SetReferent(ns, nullptr);
    first_ = std::move(prefix);
-}
-
-//------------------------------------------------------------------------------
-
-void QualName::AddToXref(bool insert)
-{
-   for(auto n = First(); n != nullptr; n = n->Next())
-   {
-      n->AddToXref(insert);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -2664,6 +2654,16 @@ void QualName::UpdatePos
    }
 }
 
+//------------------------------------------------------------------------------
+
+void QualName::UpdateXref(bool insert)
+{
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->UpdateXref(insert);
+   }
+}
+
 //==============================================================================
 
 StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
@@ -2673,13 +2673,6 @@ StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
    Debug::ft("StaticAssert.ctor");
 
    CxxStats::Incr(CxxStats::STATIC_ASSERT);
-}
-
-//------------------------------------------------------------------------------
-
-void StaticAssert::AddToXref(bool insert)
-{
-   expr_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2772,6 +2765,13 @@ void StaticAssert::UpdatePos
    if(message_ != nullptr) message_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void StaticAssert::UpdateXref(bool insert)
+{
+   expr_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 TypeName::TypeName(string& name) :
@@ -2790,6 +2790,15 @@ TypeName::TypeName(string& name) :
 
    std::swap(name_, name);
    CxxStats::Incr(CxxStats::TYPE_NAME);
+}
+
+//------------------------------------------------------------------------------
+
+TypeName::~TypeName()
+{
+   Debug::ftnt("TypeName.dtor");
+
+   CxxStats::Decr(CxxStats::TYPE_NAME);
 }
 
 //------------------------------------------------------------------------------
@@ -2825,15 +2834,6 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
 
 //------------------------------------------------------------------------------
 
-TypeName::~TypeName()
-{
-   Debug::ftnt("TypeName.dtor");
-
-   CxxStats::Decr(CxxStats::TYPE_NAME);
-}
-
-//------------------------------------------------------------------------------
-
 void TypeName::AddTemplateArg(TypeSpecPtr& arg)
 {
    Debug::ft("TypeName.AddTemplateArg");
@@ -2841,54 +2841,6 @@ void TypeName::AddTemplateArg(TypeSpecPtr& arg)
    if(args_ == nullptr) args_.reset(new TypeSpecPtrVector);
    arg->SetTemplateRole(TemplateArgument);
    args_->push_back(std::move(arg));
-}
-
-//------------------------------------------------------------------------------
-
-void TypeName::AddToXref(bool insert)
-{
-   if(ref_ != nullptr)
-   {
-      ref_->AddReference(this, insert);
-
-      //  If the referent is in a template instance, also record a reference
-      //  to the analogous item in the template.  A template class instance
-      //  (e.g. basic_string) is often accessed through a typedef ("string"),
-      //  so make sure the reference is recorded against the correct item.
-      //
-      if(ref_->IsInternal())
-      {
-         auto item = ref_->FindTemplateAnalog(ref_);
-
-         if(item != nullptr)
-         {
-            if(item->Name() == name_)
-               item->AddReference(this, insert);
-            else if((type_ != nullptr) && (type_->Name() == name_))
-               type_->AddReference(this, insert);
-         }
-      }
-   }
-   else
-   {
-      //  Record this unresolved item in case it is one that a template
-      //  needs to have resolved by a template instance.
-      //
-      if(!IsInternal()) Context::PushXrefItem(this);
-   }
-
-   if(args_ != nullptr)
-   {
-      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
-      {
-         (*a)->AddToXref(insert);
-      }
-   }
-
-   if(type_ != nullptr)
-   {
-      type_->AddReference(this, insert);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -2937,7 +2889,7 @@ void TypeName::Delete()
 {
    Debug::ftnt("TypeName.Delete");
 
-   AddToXref(false);
+   UpdateXref(false);
    if(qname_ != nullptr) qname_->EraseName(this, next_);
    delete this;
 }
@@ -3256,9 +3208,9 @@ void TypeName::Rename(const string& name)
 
    if(name == NULLPTR_STR)
    {
-      AddToXref(false);
+      UpdateXref(false);
       ref_ = Singleton< CxxRoot >::Instance()->NullptrTerm();
-      AddToXref(true);
+      UpdateXref(true);
    }
 }
 
@@ -3441,6 +3393,54 @@ void TypeName::UpdatePos
       {
          (*a)->UpdatePos(action, begin, count, from);
       }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TypeName::UpdateXref(bool insert)
+{
+   if(ref_ != nullptr)
+   {
+      ref_->UpdateReference(this, insert);
+
+      //  If the referent is in a template instance, also record a reference
+      //  to the analogous item in the template.  A template class instance
+      //  (e.g. basic_string) is often accessed through a typedef ("string"),
+      //  so make sure the reference is recorded against the correct item.
+      //
+      if(ref_->IsInternal())
+      {
+         auto item = ref_->FindTemplateAnalog(ref_);
+
+         if(item != nullptr)
+         {
+            if(item->Name() == name_)
+               item->UpdateReference(this, insert);
+            else if((type_ != nullptr) && (type_->Name() == name_))
+               type_->UpdateReference(this, insert);
+         }
+      }
+   }
+   else
+   {
+      //  Record this unresolved item in case it is one that a template
+      //  needs to have resolved by a template instance.
+      //
+      if(!IsInternal()) Context::PushXrefItem(this);
+   }
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->UpdateXref(insert);
+      }
+   }
+
+   if(type_ != nullptr)
+   {
+      type_->UpdateReference(this, insert);
    }
 }
 

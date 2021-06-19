@@ -141,22 +141,22 @@ public:
    //
    void InvalidDiscarded() const;
 
-   //  Overridden to determine if the message should be traced.
+   //  Overridden to obtain a buffer from its object pool.
    //
-   NodeBase::TraceStatus GetStatus() const override;
+   static void* operator new(size_t size);
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
+   //  Overridden to determine if the message should be traced.
+   //
+   NodeBase::TraceStatus GetStatus() const override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to obtain a buffer from its object pool.
-   //
-   static void* operator new(size_t size);
 protected:
    //  Overridden to free buff_ during recovery.
    //

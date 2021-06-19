@@ -206,10 +206,6 @@ public:
    //
    bool WasPredefined() const;
 
-   //  Overridden to add the name to the cross-reference.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to find the referent and push it onto the argument stack.
    //
    void EnterBlock() override;
@@ -251,6 +247,10 @@ public:
    //  Overridden to return the referent's full root type.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to add the name to the cross-reference.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  The macro's name.
    //
@@ -399,19 +399,6 @@ public:
    //
    void Check() const override;
 
-   //  Overridden to return true if the macro name has appeared in a #define.
-   //
-   bool IsDefined() const override { return defined_; }
-
-   //  Overridden to set RHS as the macro's definition when the macro name
-   //  appears in a #define after its name was already used.
-   //
-   void SetExpr(ExprPtr& rhs) override;
-
-   //  Returns the macro's underlying value.
-   //
-   CxxToken* GetValue() const override { return value_; }
-
    //  Overridden to display the directive.
    //
    void Display(std::ostream& stream,
@@ -421,9 +408,22 @@ public:
    //
    bool EnterScope() override;
 
+   //  Returns the macro's underlying value.
+   //
+   CxxToken* GetValue() const override { return value_; }
+
+   //  Overridden to return true if the macro name has appeared in a #define.
+   //
+   bool IsDefined() const override { return defined_; }
+
    //  Overridden to find the item located at POS.
    //
    CxxToken* PosToItem(size_t pos) const override;
+
+   //  Overridden to set RHS as the macro's definition when the macro name
+   //  appears in a #define after its name was already used.
+   //
+   void SetExpr(ExprPtr& rhs) override;
 
    //  Overridden to shrink containers.
    //
@@ -558,10 +558,6 @@ public:
    //
    void AddCondition(ExprPtr& c) override { condition_ = std::move(c); }
 
-   //  Overridden to add the condition's symbols to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to display the condition.
    //
    void Display(std::ostream& stream,
@@ -587,6 +583,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the condition's symbols to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -615,10 +615,6 @@ public:
    //  Overridden to add an #endif.
    //
    bool AddEndif(const Endif* e) override;
-
-   //  Overridden to add name_ to the cross-reference.
-   //
-   void AddToXref(bool insert) override;
 
    //  Overridden to display the directive.
    //
@@ -649,6 +645,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add name_ to the cross-reference.
+   //
+   void UpdateXref(bool insert) override;
 protected:
    //  MACRO is the symbol whose existence an #ifdef or #ifndef is checking.
    //  Protected because this class is virtual.

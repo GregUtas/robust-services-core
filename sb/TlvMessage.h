@@ -216,18 +216,6 @@ public:
    //
    virtual void DeleteParm(TlvParmLayout& parm);
 
-   //  Overridden to inspect the message's contents.
-   //
-   InspectRc InspectMsg(NodeBase::debug64_t& errval) const override;
-
-   //  Overridden to check the fence pattern before sending the message.
-   //
-   bool Send(Message::Route route) override;
-
-   //  Overridden for patching.
-   //
-   void Patch(sel_t selector, void* arguments) override;
-
    //> The byte alignment used for messages in this network.  The default
    //  value pads the header and parameters to a multiple of four bytes.
    //
@@ -240,6 +228,18 @@ public:
    {
       return NodeBase::Memory::Align(size, Log2Align);
    }
+
+   //  Overridden to inspect the message's contents.
+   //
+   InspectRc InspectMsg(NodeBase::debug64_t& errval) const override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to check the fence pattern before sending the message.
+   //
+   bool Send(Message::Route route) override;
 protected:
    //  The physical layout of a TLV message's data.
    //
@@ -307,10 +307,6 @@ protected:
    //
    static const Fence ParmDeathPattern = 0xdead;
 private:
-   //  Overridden to change the message's direction.
-   //
-   void ChangeDir(NodeBase::MsgDirection nextDir) override;
-
    //  See the comment in Singleton.h about an fn_name in a template header.
    //
    inline static NodeBase::fn_name TlvMessage_FindType()
@@ -321,6 +317,10 @@ private:
       { return "TlvMessage.CopyType"; }
    inline static NodeBase::fn_name TlvMessage_VerifyParm()
       { return "TlvMessage.VerifyParm"; }
+
+   //  Overridden to change the message's direction.
+   //
+   void ChangeDir(NodeBase::MsgDirection nextDir) override;
 };
 }
 #endif

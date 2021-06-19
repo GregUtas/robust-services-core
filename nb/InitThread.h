@@ -119,15 +119,15 @@ private:
    //
    c_string AbbrName() const override;
 
+   //  Overridden to delete the singleton.
+   //
+   void Destroy() override;
+
    //  Overridden to initialize the system and then run in the background
    //  to enforce the run-to-completion timeout, initiate context switches,
    //  and recreate application threads.
    //
    void Enter() override;
-
-   //  Overridden to delete the singleton.
-   //
-   void Destroy() override;
 
    //  An error value for debugging.
    //

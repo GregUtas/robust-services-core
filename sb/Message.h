@@ -273,22 +273,22 @@ public:
    //
    void SetTrace(const BuffTrace* bt) { bt_ = bt; }
 
-   //  Overridden to enumerate all objects that the message owns.
+   //  Overridden to obtain a message from its object pool.
    //
-   void GetSubtended(std::vector< Base* >& objects) const override;
+   static void* operator new(size_t size);
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
+   //  Overridden to enumerate all objects that the message owns.
+   //
+   void GetSubtended(std::vector< Base* >& objects) const override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to obtain a message from its object pool.
-   //
-   static void* operator new(size_t size);
 protected:
    //  Creates an incoming message to wrap BUFF.  Protected because this
    //  class is virtual.

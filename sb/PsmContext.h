@@ -40,22 +40,22 @@ class PsmContext : public MsgContext
 {
    friend class PsmFactory;
 public:
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
+
    //  Returns the first PSM in the PSM queue.
    //
    ProtocolSM* FirstPsm() const override { return psmq_.First(); }
-
-   //  Returns the next PSM in the PSM queue.
-   //
-   void NextPsm(ProtocolSM*& psm) const override { psmq_.Next(psm); }
 
    //  Overridden to enumerate all objects that the context owns.
    //
    void GetSubtended(std::vector< Base* >& objects) const override;
 
-   //  Overridden to display member variables.
+   //  Returns the next PSM in the PSM queue.
    //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
+   void NextPsm(ProtocolSM*& psm) const override { psmq_.Next(psm); }
 
    //  Overridden for patching.
    //
@@ -73,46 +73,46 @@ protected:
    //
    MsgPort* FindPort(const Message& msg) const;
 
-   //  Returns the type of context.
-   //
-   ContextType Type() const override { return SinglePort; }
-
-   //  Returns the first port in the port queue.
-   //
-   MsgPort* FirstPort() const override { return portq_.First(); }
-
-   //  Returns the next port in the port queue.
-   //
-   void NextPort(MsgPort*& port) const override { portq_.Next(port); }
-
    //  Overridden to invoke EndOfTransaction on all PSMs and then delete
    //  those in the idle state.
    //
    void EndOfTransaction() override;
 
+   //  Returns the first port in the port queue.
+   //
+   MsgPort* FirstPort() const override { return portq_.First(); }
+
    //  Overridden to determine if the context should be deleted.
    //
    bool IsIdle() const override { return psmq_.Empty(); }
+
+   //  Returns the next port in the port queue.
+   //
+   void NextPort(MsgPort*& port) const override { portq_.Next(port); }
+
+   //  Returns the type of context.
+   //
+   ContextType Type() const override { return SinglePort; }
 private:
+   //  Adds PORT to portq_.
+   //
+   void EnqPort(MsgPort& port) override;
+
    //  Adds PSM to psmq_, after any PSMs of higher or equal priority.
    //
    void EnqPsm(ProtocolSM& psm) override;
 
-   //  Adds PSM to psmq_, after any PSMs of higher priority.
+   //  Removes PORT from portq_.
    //
-   void HenqPsm(ProtocolSM& psm) override;
+   void ExqPort(MsgPort& port) override;
 
    //  Removes PSM from psmq_.
    //
    void ExqPsm(ProtocolSM& psm) override;
 
-   //  Adds PORT to portq_.
+   //  Adds PSM to psmq_, after any PSMs of higher priority.
    //
-   void EnqPort(MsgPort& port) override;
-
-   //  Removes PORT from portq_.
-   //
-   void ExqPort(MsgPort& port) override;
+   void HenqPsm(ProtocolSM& psm) override;
 
    //  Overridden to handle the arrival of MSG.
    //

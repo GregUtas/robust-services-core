@@ -62,17 +62,13 @@ private:
    //
    ~RootThread();
 
-   //  States for the root thread.
-   //
-   enum State
-   {
-      Initializing,  // system being initialized
-      Running        // system is in service
-   };
-
    //  Overridden to return a name for the thread.
    //
    c_string AbbrName() const override;
+
+   //  Overridden to delete the singleton.
+   //
+   void Destroy() override;
 
    //  Overridden to create InitThread, to ensure that InitThread finishes
    //  initializing the system, and to ensure that InitThread subsequently
@@ -81,9 +77,13 @@ private:
    //
    void Enter() override;
 
-   //  Overridden to delete the singleton.
+   //  States for the root thread.
    //
-   void Destroy() override;
+   enum State
+   {
+      Initializing,  // system being initialized
+      Running        // system is in service
+   };
 
    //  The thread's current state.
    //

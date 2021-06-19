@@ -1119,18 +1119,18 @@ public:
    //
    static void ResetStateCounts(RestartLevel level);
 
-   //  Overridden to track the number of calls in each state.
+   //  Overridden to display member variables.
    //
-   void SetNextState(StateId stid) override;
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
 
    //  Overridden to raise BcReleaseCallEvent when a protocol error occurs.
    //
    Event* RaiseProtocolError(ProtocolSM& psm, ProtocolSM::Error err) override;
 
-   //  Overridden to display member variables.
+   //  Overridden to track the number of calls in each state.
    //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   void SetNextState(StateId stid) override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -1139,12 +1139,6 @@ protected:
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //
    virtual ~BcSsm();
-
-   //  Overridden to return Service::NetworkPort if the message arrived on
-   //  the CIP PSM, and Service::UserPort if it arrived on the UPSM.  Must
-   //  be overridden by a subclass that uses any other PSM.
-   //
-   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
 
    //  Allocates the CIP PSM.
    //
@@ -1157,6 +1151,12 @@ protected:
    //  Sets the user-side PSM.
    //
    virtual void SetUPsm(MediaPsm& psm);
+
+   //  Overridden to return Service::NetworkPort if the message arrived on
+   //  the CIP PSM, and Service::UserPort if it arrived on the UPSM.  Must
+   //  be overridden by a subclass that uses any other PSM.
+   //
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
 
    //  Overridden to handle deletion of the CIP PSM.
    //
@@ -1296,15 +1296,15 @@ class TestCallFactory : public BcFactory
    //
    ~TestCallFactory();
 
-   //  Overridden to create the root SSM when MSG arrives on PSM to create a
-   //  new test session.
-   //
-   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
-
    //  Overridden to create a CIP PSM when a CIP IAM arrives.
    //
    ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
+
+   //  Overridden to create the root SSM when MSG arrives on PSM to create a
+   //  new test session.
+   //
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
 
    //  Overridden to return Cause::NilInd when a call is routed to a test DN.
    //

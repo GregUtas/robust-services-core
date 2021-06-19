@@ -96,9 +96,9 @@ class CipRouteParameter : public CipParameter
 
    CipRouteParameter();
    ~CipRouteParameter() = default;
+   CliParm* CreateCliParm(Usage use) const override;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   CliParm* CreateCliParm(Usage use) const override;
    TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
@@ -369,19 +369,6 @@ CipRouteParameter::CipRouteParameter() : CipParameter(Route)
 
 //------------------------------------------------------------------------------
 
-fixed_string RouteSelExpl = "selector (FactoryId)";
-
-fixed_string RouteIdExpl = "identifier (factory-specific)";
-
-fixed_string RouteParmStr = "r";
-fixed_string RouteParmExpl = "RouteResult";
-
-RouteParm::RouteParm() : CliText(RouteParmExpl, RouteParmStr)
-{
-   BindParm(*new CliIntParm(RouteSelExpl, 0, Factory::MaxId));
-   BindParm(*new CliIntParm(RouteIdExpl, WORD_MIN, WORD_MAX));
-}
-
 CliParm* CipRouteParameter::CreateCliParm(Usage use) const
 {
    return new RouteParm;
@@ -452,6 +439,21 @@ Parameter::TestRc CipRouteParameter::VerifyMsg
    if(route->identifier != rid) return ParmValueMismatch;
 
    return Ok;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string RouteSelExpl = "selector (FactoryId)";
+
+fixed_string RouteIdExpl = "identifier (factory-specific)";
+
+fixed_string RouteParmStr = "r";
+fixed_string RouteParmExpl = "RouteResult";
+
+RouteParm::RouteParm() : CliText(RouteParmExpl, RouteParmStr)
+{
+   BindParm(*new CliIntParm(RouteSelExpl, 0, Factory::MaxId));
+   BindParm(*new CliIntParm(RouteIdExpl, WORD_MIN, WORD_MAX));
 }
 
 //==============================================================================

@@ -103,9 +103,18 @@ public:
    //
    Message* SavedMsg() const { return savedMsg_; }
 
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
+
    //  Overridden to support asynchronous modifier requests.
    //
-   bool SaveContext() override;
+   void FreeContext(bool freeMsg) override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 
    //  Overridden to support asynchronous modifier requests.
    //
@@ -113,20 +122,11 @@ public:
 
    //  Overridden to support asynchronous modifier requests.
    //
-   void FreeContext(bool freeMsg) override;
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
-
-   //  Overridden for patching.
-   //
-   void Patch(sel_t selector, void* arguments) override;
+   bool SaveContext() override;
 protected:
    //  Overridden to support asynchronous modifier requests.
    //
-   bool Save() override;
+   void Free() override;
 
    //  Overridden to support asynchronous modifier requests.
    //
@@ -134,13 +134,21 @@ protected:
 
    //  Overridden to support asynchronous modifier requests.
    //
-   void Free() override;
+   bool Save() override;
 private:
    //  Uses OWNER to initialize the base class event and the other arguments
    //  to initialize the Analyze SAP event.  Private to restrict creation.
    //
    AnalyzeSapEvent(ServiceSM& owner, StateId currState,
       Event& currEvent, TriggerId tid);
+
+   //  Returns the SSM that is processing this event.
+   //
+   ServiceSM* CurrSsm() const { return currSsm_; }
+
+   //  Returns the initiator that is processing this event.
+   //
+   const Initiator* CurrInitiator() const { return currInit_; }
 
    //  Overridden to return the event itself, because an Analyze SAP event
    //  is passed to modifiers (of modifiers) in its original form.
@@ -152,26 +160,18 @@ private:
    //
    Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
 
-   //  Overridden to remember the SSM that is processing this event.
-   //
-   void SetCurrSsm(ServiceSM* ssm) override { currSsm_ = ssm; }
-
-   //  Overridden to remember the initiator that is processing this event.
-   //
-   void SetCurrInitiator(const Initiator* init) override { currInit_ = init; }
-
    //  Overridden to capture the underlying event associated with the SAP.
    //
    void Capture
       (ServiceId sid, const State& state, EventHandler::Rc rc) const override;
 
-   //  Returns the SSM that is processing this event.
+   //  Overridden to remember the initiator that is processing this event.
    //
-   ServiceSM* CurrSsm() const { return currSsm_; }
+   void SetCurrInitiator(const Initiator* init) override { currInit_ = init; }
 
-   //  Returns the initiator that is processing this event.
+   //  Overridden to remember the SSM that is processing this event.
    //
-   const Initiator* CurrInitiator() const { return currInit_; }
+   void SetCurrSsm(ServiceSM* ssm) override { currSsm_ = ssm; }
 
    //  The ancestor's current state.
    //

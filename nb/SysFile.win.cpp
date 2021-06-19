@@ -42,10 +42,10 @@ public:
    ~FileWalker();
    FileWalker(const FileWalker& that) = delete;
    FileWalker& operator=(const FileWalker& that) = delete;
+   bool Advance() override;
+   bool AtEnd() const override;
    void GetName(string& fileName) const override;
    bool IsSubdir() const override;
-   bool AtEnd() const override;
-   bool Advance() override;
 private:
    //  Releases iterator_;
    //

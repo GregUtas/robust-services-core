@@ -51,6 +51,47 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
+string CharString(uint32_t c, bool s)
+{
+   switch(c)
+   {
+   case 0x00: return "\\0";
+   case 0x07: return "\\a";
+   case 0x08: return "\\b";
+   case 0x0c: return "\\f";
+   case 0x0a: return "\\n";
+   case 0x0d: return "\\r";
+   case 0x09: return "\\t";
+   case 0x0b: return "\\v";
+   case BACKSLASH: return "\\\\";
+   case QUOTE:
+      if(s) return "\\\"";
+      break;
+   case APOSTROPHE:
+      if(!s) return "\\'";
+      break;
+   }
+
+   if((c >= 32) && (c <= 126))
+   {
+      return string(1, c);  // displayable, not escaped
+   }
+
+   std::ostringstream stream;
+   stream << std::hex << std::setfill('0');
+
+   if(c <= UINT8_MAX)
+      stream << BACKSLASH << 'x' << setw(2) << uint32_t(c);
+   else if(c <= UINT16_MAX)
+      stream << BACKSLASH << 'u' << setw(4) << uint32_t(c);
+   else
+      stream << BACKSLASH << 'U' << setw(8) << uint32_t(c);
+
+   return stream.str();
+}
+
+//------------------------------------------------------------------------------
+
 fixed_string AccessStrings[Cxx::Access_N + 1] =
 {
    PRIVATE_STR,
@@ -58,6 +99,29 @@ fixed_string AccessStrings[Cxx::Access_N + 1] =
    PUBLIC_STR,
    ERROR_STR
 };
+
+Cxx::Access FindAccessControl(const std::string& s)
+{
+   auto pos = s.find_first_not_of(WhitespaceChars);
+   if(pos == string::npos) return Cxx::Access_N;
+
+   for(int acc = Cxx::Private; acc != Cxx::Access_N; ++acc)
+   {
+      auto kwd = AccessStrings[acc];
+
+      if(s.compare(pos, strlen(kwd), kwd) == 0)
+      {
+         pos = s.find_first_not_of(WhitespaceChars, pos + strlen(kwd));
+         if(pos == string::npos) return Cxx::Access_N;
+         if(s[pos] != ':') return Cxx::Access_N;
+         return static_cast< Cxx::Access >(acc);
+      }
+   }
+
+   return Cxx::Access_N;
+}
+
+//------------------------------------------------------------------------------
 
 ostream& operator<<(ostream& stream, Cxx::Access access)
 {
@@ -337,70 +401,6 @@ void Cxx::Initialize()
    Types->insert(TypePair(DELETE_STR, NON_TYPE));
    Types->insert(TypePair(NEW_STR, NON_TYPE));
    Types->insert(TypePair(THROW_STR, NON_TYPE));
-}
-
-//------------------------------------------------------------------------------
-
-string CharString(uint32_t c, bool s)
-{
-   switch(c)
-   {
-   case 0x00: return "\\0";
-   case 0x07: return "\\a";
-   case 0x08: return "\\b";
-   case 0x0c: return "\\f";
-   case 0x0a: return "\\n";
-   case 0x0d: return "\\r";
-   case 0x09: return "\\t";
-   case 0x0b: return "\\v";
-   case BACKSLASH: return "\\\\";
-   case QUOTE:
-      if(s) return "\\\"";
-      break;
-   case APOSTROPHE:
-      if(!s) return "\\'";
-      break;
-   }
-
-   if((c >= 32) && (c <= 126))
-   {
-      return string(1, c);  // displayable, not escaped
-   }
-
-   std::ostringstream stream;
-   stream << std::hex << std::setfill('0');
-
-   if(c <= UINT8_MAX)
-      stream << BACKSLASH << 'x' << setw(2) << uint32_t(c);
-   else if(c <= UINT16_MAX)
-      stream << BACKSLASH << 'u' << setw(4) << uint32_t(c);
-   else
-      stream << BACKSLASH << 'U' << setw(8) << uint32_t(c);
-
-   return stream.str();
-}
-
-//------------------------------------------------------------------------------
-
-Cxx::Access FindAccessControl(const std::string& s)
-{
-   auto pos = s.find_first_not_of(WhitespaceChars);
-   if(pos == string::npos) return Cxx::Access_N;
-
-   for(int acc = Cxx::Private; acc != Cxx::Access_N; ++acc)
-   {
-      auto kwd = AccessStrings[acc];
-
-      if(s.compare(pos, strlen(kwd), kwd) == 0)
-      {
-         pos = s.find_first_not_of(WhitespaceChars, pos + strlen(kwd));
-         if(pos == string::npos) return Cxx::Access_N;
-         if(s[pos] != ':') return Cxx::Access_N;
-         return static_cast< Cxx::Access >(acc);
-      }
-   }
-
-   return Cxx::Access_N;
 }
 
 //==============================================================================

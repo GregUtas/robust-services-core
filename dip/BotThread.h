@@ -97,13 +97,13 @@ private:
    //
    c_string AbbrName() const override;
 
-   //  Overridden to dequeue log requests.
-   //
-   void Enter() override;
-
    //  Overridden to delete the singleton.
    //
    void Destroy() override;
+
+   //  Overridden to dequeue log requests.
+   //
+   void Enter() override;
 
    //  An event that will occur after a delay.
    //

@@ -106,14 +106,14 @@ protected:
    //
    virtual ~CauseParameter();
 
+   //  Overridden to create a CLI parameter for CauseInfo.
+   //
+   CliParm* CreateCliParm(Usage use) const override;
+
    //  Overridden to invoke CauseInfo::Display.
    //
    void DisplayMsg(std::ostream& stream, const std::string& prefix,
       const byte_t* bytes, size_t count) const override;
-
-   //  Overridden to create a CLI parameter for CauseInfo.
-   //
-   CliParm* CreateCliParm(Usage use) const override;
 };
 }
 #endif

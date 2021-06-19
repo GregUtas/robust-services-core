@@ -54,14 +54,6 @@ public:
    //
    const NodeBase::Registry< Factory >& Factories() const { return factories_; }
 
-   //  Overridden for restarts.
-   //
-   void Startup(NodeBase::RestartLevel level) override;
-
-   //  Overridden for restarts.
-   //
-   void Shutdown(NodeBase::RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -70,6 +62,14 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(NodeBase::RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //

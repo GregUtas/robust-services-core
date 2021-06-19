@@ -57,14 +57,14 @@ public:
    //
    ServiceId GetService(Address::SC sc) const;
 
-   //  Overridden for restarts.
-   //
-   void Startup(RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //

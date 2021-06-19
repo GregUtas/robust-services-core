@@ -58,11 +58,6 @@ public:
    //
    virtual void Patch(sel_t selector, void* arguments) { }
 
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
-
    ////////////////////////////////////////////////////////////////////////////
    //
    //  The rest of the public interface is only used by objects that are
@@ -120,6 +115,11 @@ public:
    //
    static void* operator new(size_t size) = delete;
    static void* operator new[](size_t size) = delete;
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
 protected:
    //  Protected because this class is virtual.
    //

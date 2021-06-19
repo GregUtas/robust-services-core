@@ -191,10 +191,6 @@ public:
    //
    void ReplaceItem(const CxxToken* curr, CxxToken* next);
 
-   //  Overridden to add the block's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to log warnings within the code.
    //
    void Check() const override;
@@ -267,6 +263,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the block's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  The statements in the block.
    //
@@ -387,9 +387,7 @@ public:
    //
    virtual bool IsUnionMember() const { return false; }
 
-   //  Overridden to add the data's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
+   size_t Readers() const { return reads_; }
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -417,13 +415,13 @@ public:
    //
    Numeric GetNumeric() const override { return spec_->GetNumeric(); }
 
-   //  Overridden to return the data's type.
-   //
-   TypeSpec* GetTypeSpec() const override { return spec_.get(); }
-
    //  Overridden to search the data's type for template arguments.
    //
    TypeName* GetTemplateArgs() const override;
+
+   //  Overridden to return the data's type.
+   //
+   TypeSpec* GetTypeSpec() const override { return spec_.get(); }
 
    //  Overridden to update SYMBOLS with the data's type usage.
    //
@@ -433,13 +431,13 @@ public:
    //
    bool IsConst() const override;
 
-   //  Overridden to use the data's type to determine if it is POD.
-   //
-   bool IsPOD() const override { return spec_->IsPOD(); }
-
    //  Returns true if the data's initialization is currently being compiled.
    //
    bool IsInitializing() const override { return initing_; }
+
+   //  Overridden to use the data's type to determine if it is POD.
+   //
+   bool IsPOD() const override { return spec_->IsPOD(); }
 
    //  Overridden to return true if the data is static.
    //
@@ -448,8 +446,6 @@ public:
    //  Overridden to determine if the data is unused.
    //
    bool IsUnused() const override { return ((reads_ == 0) && (writes_ == 0)); }
-
-   size_t Readers() const { return reads_; }
 
    //  Overridden to indicate whether the data is volatile.
    //
@@ -483,6 +479,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the data's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 
    //  Overridden to increment the number of times the data was read.
    //
@@ -564,10 +564,6 @@ private:
    //
    virtual void GetInitName(QualNamePtr& qualName) const;
 
-   //  Overridden to return the data's type.
-   //
-   CxxToken* RootType() const override { return spec_.get(); }
-
    //  Compiles the assignment statement that initializes the data.
    //  Returns true if such a statement existed.
    //
@@ -580,6 +576,10 @@ private:
    //  Overridden to return the declaration and/or definition.
    //
    bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
+   //  Overridden to return the data's type.
+   //
+   CxxToken* RootType() const override { return spec_.get(); }
 
    //  Set for extern data.
    //
@@ -724,10 +724,6 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 private:
-   //  Overridden to clone the qualified name.
-   //
-   void GetInitName(QualNamePtr& qualName) const override;
-
    //  Checks for static data in a header.
    //
    void CheckIfStatic() const;
@@ -735,6 +731,10 @@ private:
    //  Checks that global data is initialized.
    //
    void CheckIfInitialized() const;
+
+   //  Overridden to clone the qualified name.
+   //
+   void GetInitName(QualNamePtr& qualName) const override;
 
    //  The data item's name.  The definition of static class data contains
    //  a qualified name at file scope.  Declarations do not have qualified
@@ -774,10 +774,6 @@ public:
    //  constructor that is currently being compiled.
    //
    void SetMemInit(const MemberInit* init);
-
-   //  Overridden to add the data's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -839,10 +835,6 @@ public:
    //
    void RecordUsage() override { AddUsage(); }
 
-   //  Overridden to track usage of the "mutable" attribute.
-   //
-   void WasMutated(const StackArg* arg) override;
-
    //  Overridden to shrink containers.
    //
    void Shrink() override;
@@ -856,14 +848,18 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
+   //  Overridden to add the data's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
+
+   //  Overridden to track usage of the "mutable" attribute.
+   //
+   void WasMutated(const StackArg* arg) override;
+
    //  Overridden to track usage of the "mutable" attribute.
    //
    bool WasWritten(const StackArg* arg, bool direct, bool indirect) override;
 private:
-   //  Overridden to check that data members are private.
-   //
-   void CheckAccessControl() const override;
-
    //  Checks that static data has an initialization statement.
    //
    void CheckIfInitialized() const;
@@ -876,6 +872,10 @@ private:
    //  Checks if mutable data does not need to be mutable.
    //
    void CheckIfMutated() const;
+
+   //  Overridden to check that data members are private.
+   //
+   void CheckAccessControl() const override;
 
    //  The data item's name.
    //
@@ -934,10 +934,6 @@ public:
    //
    void SetFirst(FuncData* first) { first_ = first; }
 
-   //  Overridden to add the data's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to log warnings associated with the data.
    //
    void Check() const override;
@@ -992,6 +988,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the data's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Invoked by Display on each declaration in a possible series.
    //
@@ -1363,13 +1363,10 @@ public:
    //
    void DisplayDecl(std::ostream& stream, const NodeBase::Flags& options) const;
 
-   //  Overridden to add the function's components to cross-references.
+   //  Tracks how many times the function was invoked, and propagates
+   //  constructor and destructor invocations up the class hierarchy.
    //
-   void AddToXref(bool insert) override;
-
-   //  Overridden to support the deletion of an unused function.
-   //
-   void Delete() override;
+   void WasCalled();
 
    //  Overridden to log warnings associated with the function.
    //
@@ -1386,6 +1383,10 @@ public:
    //  Overridden to generate a log if the function is unused.
    //
    bool CheckIfUnused(Warning warning) const override;
+
+   //  Overridden to support the deletion of an unused function.
+   //
+   void Delete() override;
 
    //  Overridden to display the function.
    //
@@ -1540,10 +1541,9 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
-   //  Tracks how many times the function was invoked, and propagates
-   //  constructor and destructor invocations up the class hierarchy.
+   //  Overridden to add the function's components to cross-references.
    //
-   void WasCalled();
+   void UpdateXref(bool insert) override;
 
    //  Overridden to count a read as an invocation.
    //
@@ -1918,10 +1918,6 @@ public:
    //
    ~SpaceDefn();
 
-   //  Overridden to add itself as a reference to space_.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to support the deletion of an empty namespace definition.
    //
    void Delete() override;
@@ -1937,6 +1933,10 @@ public:
    //  Overridden to forward to space_.
    //
    std::string ScopedName(bool templates) const override;
+
+   //  Overridden to add itself as a reference to space_.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Overridden to set LEFT and END to the positions of the left and right
    //  braces.
@@ -1975,7 +1975,7 @@ private:
 
    //  The following are forwarded to the function.
    //
-   void AddToXref(bool insert) override;
+   void UpdateXref(bool insert) override;
    void Check() const override;
    bool ContainsTemplateParameter() const override;
    void EnteringScope(const CxxScope* scope) override;

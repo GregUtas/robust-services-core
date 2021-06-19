@@ -121,10 +121,6 @@ public:
    void EraseType(const Typedef* type);
    void EraseUsing(const Using* use);
 
-   //  Overridden to add the area's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to log warnings associated with the area's declarations.
    //
    void Check() const override;
@@ -149,6 +145,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the area's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -492,17 +492,22 @@ public:
    //
    void DisplayHierarchy(std::ostream& stream, const std::string& prefix) const;
 
-   //  Overridden to invoke AccessibilityOf on the class rather than on its
-   //  scope (usually a namespace), which is what would occur in the default
-   //  version.  This is done to see if SCOPE is a subclass of the class.
+   //  Tracks invocations of implicitly defined special member functions.  ITEM
+   //  is specific to ROLE and may be included in any resulting warning.
    //
-   void AccessibilityTo(const CxxScope* scope, SymbolView& view) const override;
+   void WasCalled(FunctionRole role, const CxxNamed* item);
 
    //  Overridden to determine how ITEM, which is declared in this class, is
    //  visible to SCOPE.
    //
    void AccessibilityOf(const CxxScope* scope,
       const CxxScoped* item, SymbolView& view) const override;
+
+   //  Overridden to invoke AccessibilityOf on the class rather than on its
+   //  scope (usually a namespace), which is what would occur in the default
+   //  version.  This is done to see if SCOPE is a subclass of the class.
+   //
+   void AccessibilityTo(const CxxScope* scope, SymbolView& view) const override;
 
    //  Overridden to promote CLS's members to their outer scope if CLS is
    //  an anonymous union.
@@ -513,10 +518,6 @@ public:
    //  the class's members.
    //
    void AddFiles(LibItemSet& imSet) const override;
-
-   //  Overridden to add the class's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -535,13 +536,13 @@ public:
    //
    void Creating() override;
 
-   //  Overridden to support the deletion of an unused class.
-   //
-   void Delete() override;
-
    //  Overridden to return the outer class.
    //
    Class* Declarer() const override { return OuterClass(); }
+
+   //  Overridden to support the deletion of an unused class.
+   //
+   void Delete() override;
 
    //  Overridden to return the class itself.
    //
@@ -571,6 +572,10 @@ public:
    //
    void GetConvertibleTypes(StackArgVector& types, bool expl) override;
 
+   //  Returns the current access control level when parsing the class.
+   //
+   Cxx::Access GetCurrAccess() const override;
+
    //  Adds the class and its declarations to ITEMS.
    //
    void GetDecls(CxxNamedSet& items) override;
@@ -583,10 +588,6 @@ public:
    //  any other situation.
    //
    void GetDirectClasses(CxxUsageSets& symbols) override;
-
-   //  Returns the current access control level when parsing the class.
-   //
-   Cxx::Access GetCurrAccess() const override;
 
    //  Overridden to return the class's qualified name.
    //
@@ -662,10 +663,9 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
-   //  Tracks invocations of implicitly defined special member functions.  ITEM
-   //  is specific to ROLE and may be included in any resulting warning.
+   //  Overridden to add the class's components to cross-references.
    //
-   void WasCalled(FunctionRole role, const CxxNamed* item);
+   void UpdateXref(bool insert) override;
 
    //  Overridden to support, for example, passing a "this" argument or writing
    //  to a class object in an array.
@@ -839,12 +839,6 @@ public:
    //
    CxxScoped* FindInstanceAnalog(const CxxNamed* item) const;
 
-   //  Overridden to not add any symbols to the cross-reference.  The class
-   //  template adds them itself because each template instance is the same
-   //  (apart from its template arguments, which we would want to exclude).
-   //
-   void AddToXref(bool insert) override { }
-
    //  Overridden to return the class template's base class.
    //
    Class* BaseClass() const override { return tmplt_->BaseClass(); }
@@ -901,13 +895,13 @@ public:
    //
    TypeName* GetTemplateArgs() const override { return tspec_.get(); }
 
-   //  Overridden to obtain usages for the class template.
-   //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
-
    //  Overridden to return this class template instance.
    //
    CxxScope* GetTemplateInstance() const override { return (CxxScope*) this; }
+
+   //  Overridden to obtain usages for the class template.
+   //
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
    //  Overridden to instantiate the class template instance.
    //
@@ -939,6 +933,12 @@ public:
    //  and fully qualified template arguments.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to not add any symbols to the cross-reference.  The class
+   //  template adds them itself because each template instance is the same
+   //  (apart from its template arguments, which we would want to exclude).
+   //
+   void UpdateXref(bool insert) override { }
 private:
    //  The class template of which this is an instance.
    //
@@ -1052,13 +1052,13 @@ public:
    //
    const std::string& Name() const override { return name_; }
 
-   //  Overridden to preserve the location where the namespace first occurred.
-   //
-   void SetLoc(CodeFile* file, size_t pos) const override;
-
    //  Overridden to handle the global namespace.
    //
    std::string ScopedName(bool templates) const override;
+
+   //  Overridden to preserve the location where the namespace first occurred.
+   //
+   void SetLoc(CodeFile* file, size_t pos) const override;
 
    //  Overridden to shrink containers.
    //

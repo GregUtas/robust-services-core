@@ -37,6 +37,14 @@ Token::Token(const category_t cat, const subtoken_t sub)
 
 //------------------------------------------------------------------------------
 
+Token& Token::operator=(const Token& that)
+{
+   if(&that != this) this->full_ = that.full_;
+   return *this;
+}
+
+//------------------------------------------------------------------------------
+
 int Token::get_number() const
 {
    if(!is_number()) return INVALID_TOKEN;
@@ -63,14 +71,6 @@ bool Token::is_power() const
 bool Token::is_province() const
 {
    return ((full_ & PROVINCE_MASK) == PROVINCE_MASK_CHECK);
-}
-
-//------------------------------------------------------------------------------
-
-Token& Token::operator=(const Token& that)
-{
-   if(&that != this) this->full_ = that.full_;
-   return *this;
 }
 
 //------------------------------------------------------------------------------

@@ -94,10 +94,6 @@ public:
    virtual void DisplayStats
       (std::ostream& stream, const NodeBase::Flags& options) const;
 
-   //  Overridden for restarts.
-   //
-   void Startup(NodeBase::RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -106,6 +102,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(NodeBase::RestartLevel level) override;
 protected:
    //  Defines a pool of invoker threads that will run in FACTION and adds
    //  it to the global registry of invoker pools.  parmKey is the key for
@@ -204,13 +204,13 @@ private:
    //
    static TransTrace* TraceRxNet(Message& msg, const Factory& fac);
 
-   //  Overridden to mark objects in the work queues as being in use.
-   //
-   void ClaimBlocks() override;
-
    //  Returns the offset to faction_.
    //
    static ptrdiff_t CellDiff();
+
+   //  Overridden to mark objects in the work queues as being in use.
+   //
+   void ClaimBlocks() override;
 
    //  The scheduler faction in which the pool's invokers run.
    //

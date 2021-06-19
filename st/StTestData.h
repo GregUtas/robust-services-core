@@ -77,14 +77,14 @@ public:
    //
    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
 
-   //  Overridden to clean up at the end of a test.
-   //
-   void EventOccurred(Event event) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden to clean up at the end of a test.
+   //
+   void EventOccurred(Event event) override;
 private:
    //  Private to restrict creation to the Access function.
    //

@@ -53,8 +53,8 @@ class TransTraceTool : public Tool
 
    TransTraceTool() : Tool(TransTracer, 't', true) { }
    ~TransTraceTool() = default;
-   c_string Name() const override { return TransTraceToolName; }
    c_string Expl() const override { return TransTraceToolExpl; }
+   c_string Name() const override { return TransTraceToolName; }
 };
 
 //------------------------------------------------------------------------------
@@ -68,8 +68,8 @@ class BufferTraceTool : public Tool
 
    BufferTraceTool() : Tool(BufferTracer, 'b', true) { }
    ~BufferTraceTool() = default;
-   c_string Name() const override { return BufferTraceToolName; }
    c_string Expl() const override { return BufferTraceToolExpl; }
+   c_string Name() const override { return BufferTraceToolName; }
 };
 
 //------------------------------------------------------------------------------
@@ -83,8 +83,8 @@ class ContextTraceTool : public Tool
 
    ContextTraceTool() : Tool(ContextTracer, 'c', true) { }
    ~ContextTraceTool() = default;
-   c_string Name() const override { return ContextTraceToolName; }
    c_string Expl() const override { return ContextTraceToolExpl; }
+   c_string Name() const override { return ContextTraceToolName; }
 };
 
 //------------------------------------------------------------------------------

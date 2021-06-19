@@ -91,14 +91,13 @@ private:
    //
    Context* GetContext() const { return ctx_.get(); }
 
+   //  Returns the offset to iid_.
+   //
+   static ptrdiff_t CellDiff2();
+
    //  Overridden to return a name for the thread.
    //
    NodeBase::c_string AbbrName() const override;
-
-   //  Overridden to dequeue work from the appropriate invoker pool and
-   //  process it.
-   //
-   void Enter() override;
 
    //  Overridden to deny blocking by the last unblocked invoker and to track
    //  the currently running invoker.
@@ -106,26 +105,27 @@ private:
    bool BlockingAllowed
       (NodeBase::BlockingReason why, NodeBase::fn_name_arg func) override;
 
-   //  Overridden to track the currently running invoker.
-   //
-   void ScheduledIn(NodeBase::fn_name_arg func) override;
-
    //  Overridden to support the tracing of individual contexts.
    //
    NodeBase::TraceStatus CalcStatus(bool dynamic) const override;
+
+   //  Overridden to dequeue work from the appropriate invoker pool and
+   //  process it.
+   //
+   void Enter() override;
 
    //  Overridden to log and delete the objects involved in a serious
    //  error before reentering the thread.
    //
    bool Recover() override;
 
+   //  Overridden to track the currently running invoker.
+   //
+   void ScheduledIn(NodeBase::fn_name_arg func) override;
+
    //  Overridden to handle any context assigned to the context.
    //
    void Shutdown(NodeBase::RestartLevel level) override;
-
-   //  Returns the offset to iid_.
-   //
-   static ptrdiff_t CellDiff2();
 
    //  The thread's identifier in its InvokerPool.
    //

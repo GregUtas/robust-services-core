@@ -1403,9 +1403,9 @@ public:
    ~Q1WayItem();
    Q1WayItem(const Q1WayItem& that) = delete;
    Q1WayItem& operator=(const Q1WayItem& that) = delete;
+   static ptrdiff_t LinkDiff();
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
-   static ptrdiff_t LinkDiff();
 
    const id_t index_;
 private:
@@ -1890,9 +1890,9 @@ public:
    ~Q2WayItem();
    Q2WayItem(const Q2WayItem& that) = delete;
    Q2WayItem& operator=(const Q2WayItem& that) = delete;
+   static ptrdiff_t LinkDiff();
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
-   static ptrdiff_t LinkDiff();
 
    const id_t index_;
 private:
@@ -2429,9 +2429,9 @@ public:
    ~RegistryItem();
    RegistryItem(const RegistryItem& that) = delete;
    RegistryItem& operator=(const RegistryItem& that) = delete;
+   static ptrdiff_t CellDiff();
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
-   static ptrdiff_t CellDiff();
 
    RegCell rid_;
 private:
@@ -3539,9 +3539,9 @@ private:
    void DoRaise() const;
    void DoTrap();
    c_string AbbrName() const override;
+   void Destroy() override;
    void Enter() override;
    bool Recover() override;
-   void Destroy() override;
 
    Test test_;
    signal_t signal_;
@@ -3880,8 +3880,8 @@ class RecoverCommand : public CliCommand
 public:
    RecoverCommand();
 private:
-   word ProcessCommand(CliThread& cli) const override;
    static RecoveryThread* EnsureThread(id_t subcommand);
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------

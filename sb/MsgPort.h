@@ -89,13 +89,18 @@ public:
    //
    static MsgPort* Find(const LocalAddress& locAddr);
 
-   //  Overridden to return this port.
+   //  Overridden to obtain a port from its object pool.
    //
-   MsgPort* Port() const override;
+   static void* operator new(size_t size);
 
-   //  Overridden to return the PSM at the top of the stack.
+   //  Overridden to display member variables.
    //
-   ProtocolSM* UppermostPsm() const override;
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to modify the addresses in this port and PEER.
+   //
+   bool DropPeer(const GlobalAddress& peerPrevRemAddr) override;
 
    //  Returns the port's factory.
    //
@@ -107,27 +112,18 @@ public:
    ProtocolLayer* JoinPeer
       (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr) override;
 
-   //  Overridden to modify the addresses in this port and PEER.
-   //
-   bool DropPeer(const GlobalAddress& peerPrevRemAddr) override;
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
 
-   //  Overridden to obtain a port from its object pool.
+   //  Overridden to return this port.
    //
-   static void* operator new(size_t size);
-protected:
-   //  Returns the route over which an outgoing message should be sent.
-   //
-   Message::Route Route() const override;
+   MsgPort* Port() const override;
 
+   //  Overridden to return the PSM at the top of the stack.
+   //
+   ProtocolSM* UppermostPsm() const override;
+protected:
    //  Overridden to handle deletion of the layer above this one.
    //
    void AdjacentDeleted(bool upper) override;
@@ -135,25 +131,11 @@ protected:
    //  Overridden to relinquish any socket during error recovery.
    //
    void Cleanup() override;
+
+   //  Returns the route over which an outgoing message should be sent.
+   //
+   Message::Route Route() const override;
 private:
-   //  Overridden to create the layer above for an incoming message.
-   //
-   ProtocolLayer* AllocUpper(const Message& msg) override;
-
-   //  Overridden to receive MSG when a transaction begins.
-   //
-   Event* ReceiveMsg(Message& msg) override;
-
-   //  Overridden to send MSG.  If a message has neither been sent nor
-   //  received, MSG must contain the source and destination addresses.
-   //
-   bool SendMsg(Message& msg) override;
-
-   //  Overridden to return MSG as is, which will then be passed to the
-   //  port and sent.
-   //
-   Message* WrapMsg(Message& msg) override;
-
    //  Performs initialization that is common to all constructors.
    //  MSG is the incoming message, if any.
    //
@@ -178,6 +160,24 @@ private:
    //  peer's address (remAddr_).
    //
    static MsgPort* FindPeer(const GlobalAddress& remAddr);
+
+   //  Overridden to create the layer above for an incoming message.
+   //
+   ProtocolLayer* AllocUpper(const Message& msg) override;
+
+   //  Overridden to receive MSG when a transaction begins.
+   //
+   Event* ReceiveMsg(Message& msg) override;
+
+   //  Overridden to send MSG.  If a message has neither been sent nor
+   //  received, MSG must contain the source and destination addresses.
+   //
+   bool SendMsg(Message& msg) override;
+
+   //  Overridden to return MSG as is, which will then be passed to the
+   //  port and sent.
+   //
+   Message* WrapMsg(Message& msg) override;
 
    //  The address of this port.
    //

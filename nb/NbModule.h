@@ -49,11 +49,11 @@ private:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Shutdown(RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   void Shutdown(RestartLevel level) override;
+   void Startup(RestartLevel level) override;
 };
 }
 #endif

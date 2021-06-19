@@ -67,6 +67,10 @@ public:
    //
    static ptrdiff_t LinkDiff();
 
+   //  Overridden to return a block to its object pool.
+   //
+   static void operator delete(void* addr);
+
    //  Overridden to claim blocks that this object owns.  If the object is
    //  marked corrupt, it simply returns; otherwise, it surrounds a call
    //  to Object::ClaimBlocks by setting and clearing the corrupt_ flag.
@@ -85,10 +89,6 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to return a block to its object pool.
-   //
-   static void operator delete(void* addr);
 protected:
    //  Protected because this class is virtual.
    //

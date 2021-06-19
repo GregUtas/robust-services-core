@@ -77,14 +77,14 @@ public:
    //
    virtual void Deallocate();
 
+   //  Overridden to obtain a MEP from its object pool.
+   //
+   static void* operator new(size_t size);
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
-
-   //  Overridden to obtain a MEP from its object pool.
-   //
-   static void* operator new(size_t size);
 protected:
    //  Creates a MEP that is owned by PSM.  Protected because this class is
    //  virtual.

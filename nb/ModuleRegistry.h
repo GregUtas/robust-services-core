@@ -93,13 +93,13 @@ private:
    //
    static RestartLevel NextLevel();
 
-   //  Overridden to start up all modules.
-   //
-   void Startup(RestartLevel level) override;
-
    //  Overridden to shut down all modules.
    //
    void Shutdown(RestartLevel level) override;
+
+   //  Overridden to start up all modules.
+   //
+   void Startup(RestartLevel level) override;
 
    //  The global registry of modules.
    //

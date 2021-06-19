@@ -77,14 +77,14 @@ public:
    //
    int Compare(const FunctionStats& that) const;
 
+   //  Returns the offset to link_.
+   //
+   static ptrdiff_t LinkDiff();
+
    //  Overridden to display the function's statistics.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
-
-   //  Returns the offset to link_.
-   //
-   static ptrdiff_t LinkDiff();
 private:
    //  The two-way queue link for FunctionProfiler queues.
    //

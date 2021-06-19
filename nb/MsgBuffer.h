@@ -57,6 +57,10 @@ public:
    //
    virtual TraceStatus GetStatus() const;
 
+   //  Overridden to obtain a buffer from its object pool.
+   //
+   static void* operator new(size_t size);
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -65,10 +69,6 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to obtain a buffer from its object pool.
-   //
-   static void* operator new(size_t size);
 protected:
    //  Records the time when the message was allocated.
    //

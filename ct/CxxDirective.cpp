@@ -85,13 +85,6 @@ Conditional::Conditional()
 
 //------------------------------------------------------------------------------
 
-void Conditional::AddToXref(bool insert)
-{
-   condition_->AddToXref(insert);
-}
-
-//------------------------------------------------------------------------------
-
 void Conditional::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -149,6 +142,13 @@ void Conditional::UpdatePos
 {
    OptionalCode::UpdatePos(action, begin, count, from);
    condition_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void Conditional::UpdateXref(bool insert)
+{
+   condition_->UpdateXref(insert);
 }
 
 //==============================================================================
@@ -468,13 +468,6 @@ bool Existential::AddEndif(const Endif* e)
 
 //------------------------------------------------------------------------------
 
-void Existential::AddToXref(bool insert)
-{
-   name_->AddToXref(insert);
-}
-
-//------------------------------------------------------------------------------
-
 void Existential::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -519,6 +512,13 @@ void Existential::UpdatePos
    OptionalCode::UpdatePos(action, begin, count, from);
    name_->UpdatePos(action, begin, count, from);
    if(else_ != nullptr) else_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void Existential::UpdateXref(bool insert)
+{
+   name_->UpdateXref(insert);
 }
 
 //==============================================================================
@@ -1029,15 +1029,8 @@ MacroName::~MacroName()
 {
    Debug::ftnt("MacroName.dtor");
 
-   AddToXref(false);
+   UpdateXref(false);
    CxxStats::Decr(CxxStats::QUAL_NAME);
-}
-
-//------------------------------------------------------------------------------
-
-void MacroName::AddToXref(bool insert)
-{
-   if(ref_ != nullptr) ref_->AddReference(this, insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1155,6 +1148,13 @@ string MacroName::TypeString(bool arg) const
    auto expl = "Failed to find referent for " + name_;
    Context::SwLog(MacroName_TypeString, expl, 0);
    return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
+void MacroName::UpdateXref(bool insert)
+{
+   if(ref_ != nullptr) ref_->UpdateReference(this, insert);
 }
 
 //------------------------------------------------------------------------------

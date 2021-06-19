@@ -455,16 +455,6 @@ void CodeFile::AddIndirectExternalTypes
 
 //------------------------------------------------------------------------------
 
-void CodeFile::AddToXref(bool insert) const
-{
-   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
-   {
-      (*i)->AddToXref(insert);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void CodeFile::AddUsage(CxxNamed* item)
 {
    Debug::ft("CodeFile.AddUsage");
@@ -2733,5 +2723,15 @@ void CodeFile::UpdatePos
    }
 
    items_.sort(IsSortedByPos);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::UpdateXref(bool insert) const
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->UpdateXref(insert);
+   }
 }
 }

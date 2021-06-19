@@ -61,15 +61,6 @@ public:
    MsgHeader* Header() const
       { return reinterpret_cast< MsgHeader* >(HeaderPtr()); }
 
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
-
-   //  Overridden for patching.
-   //
-   void Patch(sel_t selector, void* arguments) override;
-
    //  Obtains a buffer from the object pool used by USER.
    //
    static void* operator new(size_t size, SbPoolUser user = PayloadUser);
@@ -81,6 +72,15 @@ public:
    //  Returns a buffer to its object pool after the constructor trapped.
    //
    static void operator delete(void* addr, SbPoolUser user);
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Overridden to return the size of Header()->length.
    //

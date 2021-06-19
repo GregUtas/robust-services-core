@@ -63,12 +63,6 @@ protected:
    //
    Context* AllocContext() const override;
 private:
-   //  Overridden to handle an incoming message.  Must NOT be overridden by
-   //  applications.  Protected to restrict usage.
-   //
-   Rc ReceiveMsg
-      (Message& msg, bool atIoLevel, TransTrace* tt, Context*& ctx) override;
-
    //  Invoked to find the context to which MSG should be delivered when
    //  MsgHeader.join is set.  The default version generates a log and
    //  must be overridden by applications that use the join operation.
@@ -77,6 +71,12 @@ private:
    //  and return nullptr.
    //
    virtual SsmContext* FindContext(const Message& msg) const;
+
+   //  Overridden to handle an incoming message.  Must NOT be overridden by
+   //  applications.  Protected to restrict usage.
+   //
+   Rc ReceiveMsg
+      (Message& msg, bool atIoLevel, TransTrace* tt, Context*& ctx) override;
 };
 }
 #endif

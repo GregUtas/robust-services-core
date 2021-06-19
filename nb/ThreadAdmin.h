@@ -152,14 +152,6 @@ public:
    //
    static word TrapCount();
 
-   //  Overridden for restarts.
-   //
-   void Startup(RestartLevel level) override;
-
-   //  Overridden for restarts.
-   //
-   void Shutdown(RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -168,6 +160,14 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //

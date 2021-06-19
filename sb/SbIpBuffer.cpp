@@ -51,16 +51,16 @@ SbIpBuffer::SbIpBuffer(MsgDirection dir, size_t payload) :
 
 //------------------------------------------------------------------------------
 
-SbIpBuffer::SbIpBuffer(const SbIpBuffer& that) : IpBuffer(that)
+SbIpBuffer::~SbIpBuffer()
 {
-   Debug::ft("SbIpBuffer.ctor(copy)");
+   Debug::ftnt("SbIpBuffer.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-SbIpBuffer::~SbIpBuffer()
+SbIpBuffer::SbIpBuffer(const SbIpBuffer& that) : IpBuffer(that)
 {
-   Debug::ftnt("SbIpBuffer.dtor");
+   Debug::ft("SbIpBuffer.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------

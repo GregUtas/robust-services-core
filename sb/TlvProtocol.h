@@ -34,14 +34,14 @@ namespace SessionBase
 class TlvProtocol : public Protocol
 {
 public:
-   //  Overridden to return the signal in BUFF's message header.
-   //
-   SignalId ExtractSignal(const SbIpBuffer& buff) const override;
-
    //  Overridden to display BUFF's contents.
    //
    void DisplayMsg(std::ostream& stream,
       const std::string& prefix, const SbIpBuffer& buff) const override;
+
+   //  Overridden to return the signal in BUFF's message header.
+   //
+   SignalId ExtractSignal(const SbIpBuffer& buff) const override;
 
    //  Overridden for patching.
    //

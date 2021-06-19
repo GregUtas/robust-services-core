@@ -47,14 +47,14 @@ public:
    //
    virtual bool SetMgwPsm(ProtocolSM* psm);
 
-   //  Overridden to enumerate all objects that the SSM owns.
-   //
-   void GetSubtended(std::vector< Base* >& objects) const override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden to enumerate all objects that the SSM owns.
+   //
+   void GetSubtended(std::vector< Base* >& objects) const override;
 protected:
    //  Protected because this class is virtual.
    //

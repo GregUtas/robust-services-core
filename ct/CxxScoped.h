@@ -109,7 +109,7 @@ public:
    //  Records ITEM as a reference to this item if INSERT is set, else
    //  removes it as a reference.
    //
-   virtual void AddReference(CxxNamed* item, bool insert) const;
+   virtual void UpdateReference(CxxNamed* item, bool insert) const;
 
    //  Invokes Rename on the item and each entry in its Xref().
    //
@@ -128,6 +128,10 @@ public:
    //  log was generated.
    //
    virtual bool CheckIfUnused(Warning warning) const;
+
+   //  Returns true if this scope is either fqSuper or a subscope of it.
+   //
+   bool IsSubscopeOf(const std::string& fqSuper) const;
 
    //  Overridden to copy THAT's scope and access control.
    //
@@ -150,6 +154,11 @@ public:
    //
    bool InLine() const override { return false; }
 
+   //  Overridden to invoke IsAuto on GetTypeSpec unless the latter
+   //  returns nullptr, in which case it returns false.
+   //
+   bool IsAuto() const override;
+
    //  Overridden to invoke IsConst on GetTypeSpec unless the latter
    //  returns nullptr, in which case it returns false.
    //
@@ -170,19 +179,10 @@ public:
    //
    bool IsDeclaredInFunction() const override;
 
-   //  Overridden to invoke IsAuto on GetTypeSpec unless the latter
-   //  returns nullptr, in which case it returns false.
-   //
-   bool IsAuto() const override;
-
    //  Overridden to invoke IsIndirect on GetTypeSpec unless the latter
    //  returns nullptr, in which case it returns false.
    //
    bool IsIndirect(bool arrays) const override;
-
-   //  Returns true if this scope is either fqSuper or a subscope of it.
-   //
-   bool IsSubscopeOf(const std::string& fqSuper) const;
 
    //  Overridden to use this item's fully qualified name to determine
    //  if it is a superscope of fqSub.
@@ -301,10 +301,6 @@ public:
    //
    Class* IsThisCandidate() const;
 
-   //  Overridden to add the argument's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return spec_.get(); }
@@ -321,14 +317,14 @@ public:
    //
    void EnterBlock() override;
 
-   //  Overridden to remove the argument as a local.
-   //
-   void ExitBlock() const override;
-
    //  Overridden to invoke EnterBlock on the argument's type (spec_) and
    //  any default value (default_).
    //
    bool EnterScope() override;
+
+   //  Overridden to remove the argument as a local.
+   //
+   void ExitBlock() const override;
 
    //  Overridden to return the argument's underlying numeric type.
    //
@@ -392,6 +388,10 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
+   //  Overridden to add the argument's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
+
    //  Overridden to increment the number of reads.
    //
    bool WasRead() override;
@@ -400,10 +400,6 @@ public:
    //
    bool WasWritten(const StackArg* arg, bool direct, bool indirect) override;
 private:
-   //  Overridden to return the argument's type.
-   //
-   CxxToken* RootType() const override { return spec_.get(); }
-
    //  Checks for a "(void)" argument.
    //
    void CheckVoid() const;
@@ -420,6 +416,10 @@ private:
    //  else nothing extra.
    //
    bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
+   //  Overridden to return the argument's type.
+   //
+   CxxToken* RootType() const override { return spec_.get(); }
 
    //  The argument's name, if any.
    //
@@ -466,17 +466,13 @@ public:
    //
    ~BaseDecl();
 
-   //  Overridden to add the declaration's components to cross-references.
+   //  Displays the base class declaration.
    //
-   void AddToXref(bool insert) override;
+   void DisplayDecl(std::ostream& stream, bool fq) const;
 
    //  Overridden to log warnings associated with the declaration.
    //
    void Check() const override;
-
-   //  Displays the base class declaration.
-   //
-   void DisplayDecl(std::ostream& stream, bool fq) const;
 
    //  Overridden to record the current scope as a subclass of the base class.
    //
@@ -535,6 +531,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the declaration's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Overridden to find the base class's class.
    //
@@ -589,10 +589,6 @@ public:
    //  Removes ETOR from the enumeration when ETOR is being deleted.
    //
    void EraseEnumerator(const Enumerator* etor);
-
-   //  Overridden to add the enumeration's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -688,6 +684,10 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
+   //  Overridden to add the enumeration's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
+
    //  Overridden to support, for example, writing to an enum in a std::vector
    //  or passing an enum as an argument.
    //
@@ -734,10 +734,6 @@ public:
    //  Not subclassed.
    //
    ~Enumerator();
-
-   //  Overridden to add the enumerator's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -837,6 +833,10 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
+   //  Overridden to add the enumerator's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
+
    //  Overridden to count references to the enumerator.
    //
    bool WasRead() override;
@@ -885,10 +885,6 @@ public:
    //  Not subclassed.
    //
    ~Forward();
-
-   //  Overridden to add the declaration to its referent.
-   //
-   void AddToXref(bool insert) override;
 
    //  Overridden to return the referent if known, else the forward declaration.
    //
@@ -980,14 +976,18 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
-private:
-   //  Overridden to return the class.
-   //
-   CxxToken* RootType() const override { return Referent(); }
 
+   //  Overridden to add the declaration to its referent.
+   //
+   void UpdateXref(bool insert) override;
+private:
    //  Overridden to stop at the semicolon.
    //
    bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
+   //  Overridden to return the class.
+   //
+   CxxToken* RootType() const override { return Referent(); }
 
    //  The class's type.
    //
@@ -1041,10 +1041,6 @@ public:
    //  that would otherwise have been restricted.
    //
    void IncrUsers();
-
-   //  Overridden to add the declaration to its referent.
-   //
-   void AddToXref(bool insert) override;
 
    //  Overridden to return the referent if known, else the friend declaration.
    //
@@ -1156,10 +1152,27 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the declaration to its referent.
+   //
+   void UpdateXref(bool insert) override;
 private:
+   //  Finds the item that the declaration refers to when it was not
+   //  visible from the scope where the declaration appeared.
+   //
+   CxxScoped* FindForward() const;
+
+   //  Returns the referent.
+   //
+   CxxScoped* GetReferent() const;
+
    //  Overridden to find the item that the declaration refers to.
    //
    void FindReferent() override;
+
+   //  Overridden to stop at the semicolon.
+   //
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
    //  Overridden to record DECL and update the friend's scope.
    //
@@ -1169,22 +1182,9 @@ private:
    //
    CxxToken* RootType() const override { return Referent(); }
 
-   //  Overridden to stop at the semicolon.
-   //
-   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
-
    //  Overridden to record what the item refers to.
    //
    void SetReferent(CxxScoped* item, const SymbolView* view) const override;
-
-   //  Finds the item that the declaration refers to when it was not
-   //  visible from the scope where the declaration appeared.
-   //
-   CxxScoped* FindForward() const;
-
-   //  Returns the referent.
-   //
-   CxxScoped* GetReferent() const;
 
    //  The friend's qualified name.
    //
@@ -1254,10 +1254,6 @@ public:
    //
    CxxToken* GetInit() const { return init_.get(); }
 
-   //  Overridden to add the initialization's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to log warnings associated with the initialization.
    //
    void Check() const override;
@@ -1273,10 +1269,6 @@ public:
    //  Overridden to update SYMBOLS with the statement's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
-
-   //  Overridden to reveal that this is a member initialization.
-   //
-   Cxx::ItemType Type() const override { return Cxx::MemberInit; }
 
    //  Overridden to return the member's name.
    //
@@ -1303,10 +1295,18 @@ public:
    //
    std::string Trace() const override { return name_; }
 
+   //  Overridden to reveal that this is a member initialization.
+   //
+   Cxx::ItemType Type() const override { return Cxx::MemberInit; }
+
    //  Overridden to update the initializations's location.
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the initialization's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Overridden to include the following comma, else the preceding comma
    //  or colon.
@@ -1352,10 +1352,6 @@ public:
    //  Returns the parameter's default type.
    //
    const TypeSpec* Default() const { return default_.get(); }
-
-   //  Overridden to add the parameter's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
 
    //  Overridden to return the default's type, else this item.
    //
@@ -1414,6 +1410,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the parameter's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Overridden to return the default's type, else this item.
    //
@@ -1475,7 +1475,7 @@ public:
 
    //  The following invoke the corresponding function on each parameter.
    //
-   void AddToXref(bool insert) override;
+   void UpdateXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void ExitBlock() const override;
@@ -1529,10 +1529,6 @@ public:
    //
    void SetNumeric(const Numeric& attrs) { attrs_ = attrs; }
 
-   //  Overridden to not track references to terminals.
-   //
-   void AddReference(CxxNamed* item, bool insert) const override { }
-
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -1579,6 +1575,10 @@ public:
    //
    std::string TypeString(bool arg) const override { return type_; }
 
+   //  Overridden to not track references to terminals.
+   //
+   void UpdateReference(CxxNamed* item, bool insert) const override { }
+
    //  Overridden to support, for example, writing to a char in a std::string
    //  or passing an int as an argument.
    //
@@ -1622,10 +1622,6 @@ public:
    //
    void SetAlignment(AlignAsPtr& align);
 
-   //  Overridden to add the typedef's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -1663,13 +1659,13 @@ public:
    //
    Numeric GetNumeric() const override { return spec_->GetNumeric(); }
 
-   //  Overridden to return the underlying type.
-   //
-   TypeSpec* GetTypeSpec() const override { return spec_.get(); }
-
    //  Overridden to search the underlying type for template arguments.
    //
    TypeName* GetTemplateArgs() const override;
+
+   //  Overridden to return the underlying type.
+   //
+   TypeSpec* GetTypeSpec() const override { return spec_.get(); }
 
    //  Overridden to update SYMBOLS with the typedef's type usage.
    //
@@ -1717,16 +1713,16 @@ public:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 
+   //  Overridden to add the typedef's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
+
    //  Overridden to support a temporary variable represented by a typedef
    //  that was, for example, returned by one function and passed to another.
    //
    bool WasWritten(const StackArg* arg, bool direct, bool indirect)
       override { return false; }
 private:
-   //  Overridden to return the underlying type.
-   //
-   CxxToken* RootType() const override { return spec_.get(); }
-
    //  Checks if the typedef is for a pointer type.
    //
    void CheckPointerType() const;
@@ -1734,6 +1730,10 @@ private:
    //  Overridden to stop at the semicolon.
    //
    bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
+   //  Overridden to return the underlying type.
+   //
+   CxxToken* RootType() const override { return spec_.get(); }
 
    //  The name introduced by the typedef.
    //
@@ -1793,10 +1793,6 @@ public:
    //  Returns true if the >trim command marked the statement for removal.
    //
    bool IsToBeRemoved() const { return remove_; }
-
-   //  Overridden to add the declaration to cross-references.
-   //
-   void AddToXref(bool insert) override;
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -1873,6 +1869,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the declaration to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Overridden to find the item that the declaration refers to.
    //

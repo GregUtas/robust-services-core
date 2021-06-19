@@ -49,11 +49,11 @@ private:
 
    //  Overridden for restarts.
    //
-   void Startup(NodeBase::RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   void Shutdown(NodeBase::RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 };
 }
 #endif

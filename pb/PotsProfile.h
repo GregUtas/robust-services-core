@@ -156,18 +156,18 @@ public:
    //
    static ptrdiff_t CellDiff();
 
-   //  Overridden for restarts.
+   //  Overridden to display member variables.
    //
-   void Startup(RestartLevel level) override;
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;
 
-   //  Overridden to display member variables.
+   //  Overridden for restarts.
    //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   void Startup(RestartLevel level) override;
 protected:
    //  Protected to restrict deletion to Deregister.  Virtual to
    //  allow subclassing.

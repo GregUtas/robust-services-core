@@ -42,9 +42,45 @@ public:
    //
    virtual ~SysHeap();
 
+   //  Inserts, in HEAPS, the address of each heap allocated by this process.
+   //  Updates EXPL with an explanation if a problem occurs.
+   //
+   static void ListHeaps(std::set< void* >& heaps, std::ostringstream& expl);
+
    //  Overridden to return the heap's address.
    //
    void* Addr() const override;
+
+   //  Allocates SIZE bytes.
+   //
+   void* Alloc(size_t size) override;
+
+   //  Returns the size of the block at ADDR.
+   //
+   size_t BlockToSize(const void* addr) const override;
+
+   //  Returns true if the heap supports write-protection.
+   //
+   bool CanBeProtected() const override;
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
+
+   //  Frees the memory segment at ADDR.
+   //
+   void Free(void* addr) override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
+
+   //  Returns false on Windows, where VirtualProtect can fail if
+   //  used on a heap.  Use NbHeap for a heap that requires write
+   //  protection.
+   //
+   int SetPermissions(MemoryProtection attrs) override;
 
    //  Overridden to return the heap's size.
    //
@@ -54,45 +90,9 @@ public:
    //
    MemoryType Type() const override { return type_; }
 
-   //  Allocates SIZE bytes.
-   //
-   void* Alloc(size_t size) override;
-
-   //  Frees the memory segment at ADDR.
-   //
-   void Free(void* addr) override;
-
-   //  Returns the size of the block at ADDR.
-   //
-   size_t BlockToSize(const void* addr) const override;
-
    //  Validates the heap.
    //
    bool Validate(const void* addr) const override;
-
-   //  Returns true if the heap supports write-protection.
-   //
-   bool CanBeProtected() const override;
-
-   //  Returns false on Windows, where VirtualProtect can fail if
-   //  used on a heap.  Use NbHeap for a heap that requires write
-   //  protection.
-   //
-   int SetPermissions(MemoryProtection attrs) override;
-
-   //  Inserts, in HEAPS, the address of each heap allocated by this process.
-   //  Updates EXPL with an explanation if a problem occurs.
-   //
-   static void ListHeaps(std::set< void* >& heaps, std::ostringstream& expl);
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
-
-   //  Overridden for patching.
-   //
-   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Wrapper for the default C++ heap.
    //

@@ -71,13 +71,13 @@ private:
    //
    ~PotsCallIpService();
 
-   //  Overridden to create a CLI parameter for identifying the protocol.
-   //
-   CliText* CreateText() const override;
-
    //  Overridden to create the POTS call input handler.
    //
    InputHandler* CreateHandler(IpPort* port) const override;
+
+   //  Overridden to create a CLI parameter for identifying the protocol.
+   //
+   CliText* CreateText() const override;
 
    //  The configuration parameter for port_.
    //
@@ -99,16 +99,16 @@ public:
    //
    ~PotsCallHandler();
 private:
+   //  Discards BUFF when it is invalid.  ERRVAL is included in the log.
+   //
+   void DiscardBuff
+      (const IpBufferPtr& buff, const PotsHeaderInfo* phi, word errval) const;
+
    //  Overridden to add a SessionBase header to a message arriving over the
    //  IP stack.
    //
    void ReceiveBuff
       (IpBufferPtr& buff, size_t size, Faction faction) const override;
-
-   //  Discards BUFF when it is invalid.  ERRVAL is included in the log.
-   //
-   void DiscardBuff
-      (const IpBufferPtr& buff, const PotsHeaderInfo* phi, word errval) const;
 };
 
 //------------------------------------------------------------------------------
@@ -132,35 +132,35 @@ class PotsCallFactory : public BcFactory
    //
    static void SendRelease(const Message& msg1);
 
-   //  Overridden to return a CLI parameter that identifies the factory.
+   //  Overridden to allocate a message to receive BUFF.
    //
-   CliText* CreateText() const override;
-
-   //  Overridden to create a root SSM when MSG arrives to create a new
-   //  session.
-   //
-   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
+   Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
 
    //  Overridden to create a POTS call PSM.
    //
    ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
 
-   //  Overridden to allocate a message to receive BUFF.
-   //
-   Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
-
    //  Overridden to allocate a message that will be sent by a test tool.
    //
    Message* AllocOgMsg(SignalId sid) const override;
 
-   //  Overridden to allocate a message to save BUFF.
+   //  Overridden to create a root SSM when MSG arrives to create a new
+   //  session.
    //
-   Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
+
+   //  Overridden to return a CLI parameter that identifies the factory.
+   //
+   CliText* CreateText() const override;
 
    //  Overridden to record PORT in the user's profile.
    //
    void PortAllocated(const MsgPort& port, const Message* msg) const override;
+
+   //  Overridden to allocate a message to save BUFF.
+   //
+   Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
 
    //  Overridden to return true.
    //
@@ -443,9 +443,19 @@ public:
    //
    PotsTreatment* GetTreatment() const { return trmt_; }
 
+   //  Overridden to analyze timeout messages that can arrive on the CIP PSM.
+   //
+   EventHandler::Rc AnalyzeNPsmTimeout
+      (const TlvMessage& msg, Event*& nextEvent) override;
+
    //  Clears the call for the reason specified by CAUSE.
    //
    EventHandler::Rc ClearCall(Cause::Ind cause) override;
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
 
    //  Overridden to observe the next service alteration point.
    //
@@ -454,16 +464,6 @@ public:
    //  Overridden to observe the next service notification point.
    //
    void SetNextSnp(TriggerId snp) override;
-
-   //  Overridden to analyze timeout messages that can arrive on the CIP PSM.
-   //
-   EventHandler::Rc AnalyzeNPsmTimeout
-      (const TlvMessage& msg, Event*& nextEvent) override;
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
 protected:
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //

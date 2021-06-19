@@ -404,24 +404,6 @@ bool Class::AddSubclass(Class* cls)
 
 //------------------------------------------------------------------------------
 
-void Class::AddToXref(bool insert)
-{
-   CxxArea::AddToXref(insert);
-
-   if(parms_ != nullptr) parms_->AddToXref(insert);
-   if(alignas_ != nullptr) alignas_->AddToXref(insert);
-
-   auto base = GetBaseDecl();
-   if(base != nullptr) base->AddToXref(insert);
-
-   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
-   {
-      (*f)->AddToXref(insert);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void Class::BlockCopied(const StackArg* arg)
 {
    Debug::ft("Class.BlockCopied");
@@ -2217,6 +2199,24 @@ void Class::UpdatePos
 
 //------------------------------------------------------------------------------
 
+void Class::UpdateXref(bool insert)
+{
+   CxxArea::UpdateXref(insert);
+
+   if(parms_ != nullptr) parms_->UpdateXref(insert);
+   if(alignas_ != nullptr) alignas_->UpdateXref(insert);
+
+   auto base = GetBaseDecl();
+   if(base != nullptr) base->UpdateXref(insert);
+
+   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
+   {
+      (*f)->UpdateXref(insert);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 const Warning RoleToWarning[FuncRole_N] =
 {
    ImplicitConstructor,      //  PureCtor
@@ -2829,49 +2829,6 @@ bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
    }
 
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-void CxxArea::AddToXref(bool insert)
-{
-   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
-   {
-      (*c)->AddToXref(insert);
-   }
-
-   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
-   {
-      (*t)->AddToXref(insert);
-   }
-
-   auto inst = IsInTemplateInstance();
-
-   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
-   {
-      //  If this is not a class template instance, bypass function
-      //  template instantiations, every one of which is registered
-      //  against the function template.
-      //
-      if(!inst && (*f)->IsInTemplateInstance()) continue;
-
-      (*f)->AddToXref(insert);
-   }
-
-   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
-   {
-      (*o)->AddToXref(insert);
-   }
-
-   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
-   {
-      (*d)->AddToXref(insert);
-   }
-
-   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
-   {
-      (*a)->AddToXref(insert);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -3583,6 +3540,49 @@ void CxxArea::UpdatePos
    for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
    {
       (*a)->UpdatePos(action, begin, count, from);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void CxxArea::UpdateXref(bool insert)
+{
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      (*c)->UpdateXref(insert);
+   }
+
+   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
+   {
+      (*t)->UpdateXref(insert);
+   }
+
+   auto inst = IsInTemplateInstance();
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      //  If this is not a class template instance, bypass function
+      //  template instantiations, every one of which is registered
+      //  against the function template.
+      //
+      if(!inst && (*f)->IsInTemplateInstance()) continue;
+
+      (*f)->UpdateXref(insert);
+   }
+
+   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
+   {
+      (*o)->UpdateXref(insert);
+   }
+
+   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+   {
+      (*d)->UpdateXref(insert);
+   }
+
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      (*a)->UpdateXref(insert);
    }
 }
 

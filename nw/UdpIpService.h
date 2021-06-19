@@ -32,10 +32,6 @@ namespace NetworkBase
 class UdpIpService : public IpService
 {
 public:
-   //  Overridden to indicate that this service runs over UDP.
-   //
-   IpProtocol Protocol() const override { return IpUdp; }
-
    //  Overridden to indicate that applications share the I/O
    //  thread's primary socket when sending messages.
    //
@@ -44,6 +40,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to indicate that this service runs over UDP.
+   //
+   IpProtocol Protocol() const override { return IpUdp; }
 protected:
    //  Creates a service that runs over UDP.  Protected because
    //  this class is virtual.

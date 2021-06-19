@@ -43,8 +43,8 @@ class BotTraceTool : public Tool
 
    BotTraceTool() : Tool(DipTracer, 'd', true) { }
    ~BotTraceTool() = default;
-   c_string Name() const override { return BotTraceToolName; }
    c_string Expl() const override { return BotTraceToolExpl; }
+   c_string Name() const override { return BotTraceToolName; }
 };
 
 //------------------------------------------------------------------------------

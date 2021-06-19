@@ -139,14 +139,6 @@ public:
    //
    static ptrdiff_t CellDiff();
 
-   //  Overridden for restarts.
-   //
-   void Shutdown(RestartLevel level) override;
-
-   //  Overridden for restarts.
-   //
-   void Startup(RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -155,6 +147,14 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 private:
    //  Creates an instance of the log identified by groupName and ID, with
    //  alarmName and STATUS used to set or clear an alarm.  Applications

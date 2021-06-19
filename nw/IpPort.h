@@ -145,14 +145,6 @@ public:
    //
    static ptrdiff_t LinkDiff();
 
-   //  Overridden for restarts.
-   //
-   void Startup(NodeBase::RestartLevel level) override;
-
-   //  Overridden for restarts.
-   //
-   void Shutdown(NodeBase::RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -161,6 +153,14 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(NodeBase::RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(NodeBase::RestartLevel level) override;
 protected:
    //  Assigns SERVICE to PORT, registering it with IpPortRegistry.  If PORT
    //  is available, this eventually results in the creation of an I/O thread

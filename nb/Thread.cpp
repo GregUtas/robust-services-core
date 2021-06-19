@@ -139,10 +139,6 @@ public:
    //
    static void CaptureEvent(fn_name_arg func, Id rid, int32_t info = 0);
 
-   //  Overridden to display the trace record.
-   //
-   bool Display(ostream& stream, const string& opts) override;
-
    //  Overridden to allocate the trace record from the default heap,
    //  because the buffer for FunctionTrace records does not support
    //  subclasses with additional memory requirements.
@@ -152,6 +148,10 @@ public:
    //  Overridden to return the record to the default heap.
    //
    static void operator delete(void* addr);
+
+   //  Overridden to display the trace record.
+   //
+   bool Display(ostream& stream, const string& opts) override;
 private:
    //  Private to restrict creation to CaptureEvent.
    //

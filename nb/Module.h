@@ -94,18 +94,6 @@ public:
    //
    ModuleId Mid() const { return mid_.GetId(); }
 
-   //  Overridden but does nothing.  Provided for tracing only.  Each subclass
-   //  overrides this to create objects that need to exist before the system
-   //  starts to perform work.  These are made ready for use so that initial
-   //  payload transactions do not take more time than subsequent transactions.
-   //
-   void Startup(RestartLevel level) override;
-
-   //  Overridden but does nothing.  Provided for tracing only.  Each subclass
-   //  overrides this to deal with objects that will not survive the restart.
-   //
-   void Shutdown(RestartLevel level) override;
-
    //  Returns the offset to mid_.
    //
    static ptrdiff_t CellDiff();
@@ -118,6 +106,18 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden but does nothing.  Provided for tracing only.  Each subclass
+   //  overrides this to deal with objects that will not survive the restart.
+   //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden but does nothing.  Provided for tracing only.  Each subclass
+   //  overrides this to create objects that need to exist before the system
+   //  starts to perform work.  These are made ready for use so that initial
+   //  payload transactions do not take more time than subsequent transactions.
+   //
+   void Startup(RestartLevel level) override;
 protected:
    //  Protected because this class is virtual.
    //

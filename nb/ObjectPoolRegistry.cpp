@@ -54,8 +54,8 @@ class ObjPoolTraceTool : public Tool
 
    ObjPoolTraceTool() : Tool(ObjPoolTracer, 'o', true) { }
    ~ObjPoolTraceTool() = default;
-   c_string Name() const override { return ObjPoolTraceToolName; }
    c_string Expl() const override { return ObjPoolTraceToolExpl; }
+   c_string Name() const override { return ObjPoolTraceToolName; }
 };
 
 //------------------------------------------------------------------------------

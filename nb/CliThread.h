@@ -189,14 +189,6 @@ public:
    //
    CliCookie& Cookie() { return cookie_; }
 
-   //  Overridden for restarts.
-   //
-   void Shutdown(RestartLevel level) override;
-
-   //  Overridden for restarts.
-   //
-   void Startup(RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -205,6 +197,14 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 
    //  The input buffer.
    //
@@ -259,6 +259,10 @@ private:
    //
    c_string AbbrName() const override;
 
+   //  Overridden to delete the singleton.
+   //
+   void Destroy() override;
+
    //  Overridden to read commands from the console, invoke them, and
    //  display the results.
    //
@@ -267,10 +271,6 @@ private:
    //  Overridden to abort work on a break signal.
    //
    bool Recover() override;
-
-   //  Overridden to delete the singleton.
-   //
-   void Destroy() override;
 
    //  The default prompt for user input.
    //

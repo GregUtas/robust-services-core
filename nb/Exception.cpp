@@ -59,6 +59,13 @@ Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
 
 //------------------------------------------------------------------------------
 
+Exception::~Exception()
+{
+   Debug::ftnt("Exception.dtor");
+}
+
+//------------------------------------------------------------------------------
+
 Exception::Exception(const Exception& that) :
    exception(that),
    stack_(std::move(that.stack_))
@@ -73,13 +80,6 @@ Exception::Exception(Exception&& that) :
    stack_(std::move(that.stack_))
 {
    Debug::ft("Exception.ctor(move)");
-}
-
-//------------------------------------------------------------------------------
-
-Exception::~Exception()
-{
-   Debug::ftnt("Exception.dtor");
 }
 
 //------------------------------------------------------------------------------

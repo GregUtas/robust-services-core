@@ -198,14 +198,14 @@ public:
    //
    Message* GetAppMsg();
 
-   //  Overridden to enumerate all objects that the message owns.
-   //
-   void GetSubtended(std::vector< Base* >& objects) const override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden to enumerate all objects that the message owns.
+   //
+   void GetSubtended(std::vector< Base* >& objects) const override;
 private:
    //  The message to be injected.
    //
@@ -264,14 +264,14 @@ public:
    //
    void UpdateTestPsm();
 
-   //  Overridden to set the test PSM idle when entering the Null state.
-   //
-   void SetNextState(StateId stid) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden to set the test PSM idle when entering the Null state.
+   //
+   void SetNextState(StateId stid) override;
 private:
    //  Private to restrict deletion.  Not subclassed.
    //
@@ -311,15 +311,15 @@ class TestFactory : public SsmFactory
    //
    ~TestFactory();
 
-   //  Overridden to allocate a test SSM when a message arrives to create a
-   //  new test session.
-   //
-   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
-
    //  Overridden to create a test PSM.
    //
    ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
+
+   //  Overridden to allocate a test SSM when a message arrives to create a
+   //  new test session.
+   //
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
 };
 
 //------------------------------------------------------------------------------

@@ -334,9 +334,9 @@ public:
    //
    virtual void RecordUsage() { }
 
-   //  Invokes CxxScoped.AddReference on items that this one references.
+   //  Invokes CxxScoped.UpdateReference on items that this one references.
    //
-   virtual void AddToXref(bool insert) { }
+   virtual void UpdateXref(bool insert) { }
 
    //  Updates SYMBOLS with how this item (in FILE) used other types.  See
    //  UsageType for a list of how various uses of a type are distinguished.
@@ -433,16 +433,16 @@ public:
    virtual void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const;
 
-   //  Subclasses that declare items must override this.
-   //
-   void GetDecls(CxxNamedSet& items) override { }
-
    //  Outputs PREFIX, invokes Print(stream, options) above, and inserts an
    //  endline.  This is the appropriate implementation for items that can be
    //  displayed inline or separately.  See CodeDisplayOptions for OPTIONS.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Subclasses that declare items must override this.
+   //
+   void GetDecls(CxxNamedSet& items) override { }
 protected:
    //  Protected because this class is virtual.
    //
@@ -577,8 +577,8 @@ public:
    CxxScoped* Referent() const override;
    std::string TypeString(bool arg) const override;
 private:
-   Numeric GetNumeric() const override;
    Numeric BaseNumeric() const;
+   Numeric GetNumeric() const override;
    const int64_t num_;
    const Tags tags_;
 };
@@ -741,10 +741,6 @@ public:
    //
    void Execute() const;
 
-   //  Overridden to add each argument's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Invoked when a unary operator is encountered.  This operator returns
    //  true if it will elide forward to the unary, and false if the new
    //  operator must actually be binary.
@@ -793,6 +789,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add each argument's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Returns the number of arguments that the operator can still accept.
    //  Returns SIZE_MAX if the operator takes a variable number of arguments
@@ -932,10 +932,6 @@ public:
    //
    static void Start();
 
-   //  Overridden to add each token's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to return the last item in the expression.
    //
    CxxToken* Back() override;
@@ -974,6 +970,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add each token's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Adds ITEM to the expression when it is known to be a unary operator.
    //
@@ -1020,10 +1020,6 @@ public:
    //
    ~ArraySpec() { CxxStats::Decr(CxxStats::ARRAY_SPEC); }
 
-   //  Overridden to add the specification's components to cross-references.
-   //
-   void AddToXref(bool insert) override;
-
    //  Overridden to log warnings associated with expr_.
    //
    void Check() const override;
@@ -1057,6 +1053,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the specification's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  The expression that specifies the array's size.
    //
@@ -1090,7 +1090,6 @@ public:
    explicit Precedence(ExprPtr& expr)
       : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
    ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
-   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -1100,6 +1099,7 @@ public:
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+   void UpdateXref(bool insert) override;
 private:
    const ExprPtr expr_;
 };
@@ -1115,7 +1115,6 @@ public:
    BraceInit();
    ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
-   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -1125,6 +1124,7 @@ public:
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+   void UpdateXref(bool insert) override;
 private:
    TokenPtrVector items_;
 };
@@ -1139,7 +1139,6 @@ class AlignAs : public CxxToken
 public:
    explicit AlignAs(TokenPtr& token);
    ~AlignAs() { CxxStats::Decr(CxxStats::ALIGNAS); }
-   void AddToXref(bool insert) override;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
@@ -1149,6 +1148,7 @@ public:
    void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+   void UpdateXref(bool insert) override;
 private:
    const TokenPtr token_;
 };

@@ -147,14 +147,6 @@ public:
    //
    void Purge();
 
-   //  Overridden to indicate that this socket is running TCP.
-   //
-   IpProtocol Protocol() const override { return IpTcp; }
-
-   //  Overridden to configure the socket for a keepalive if required.
-   //
-   AllocRc SetService(const IpService* service, bool shared) override;
-
    //  The socket's state with respect to the application.
    //
    enum AppState
@@ -193,10 +185,6 @@ public:
    //
    IpBuffer* AcquireIcMsg();
 
-   //  Overridden to send BUFF.
-   //
-   SendRc SendBuff(IpBuffer& buff) override;
-
    //  Overridden to claim IpBuffers queued for output.
    //
    void ClaimBlocks() override;
@@ -209,6 +197,18 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to indicate that this socket is running TCP.
+   //
+   IpProtocol Protocol() const override { return IpTcp; }
+
+   //  Overridden to send BUFF.
+   //
+   SendRc SendBuff(IpBuffer& buff) override;
+
+   //  Overridden to configure the socket for a keepalive if required.
+   //
+   AllocRc SetService(const IpService* service, bool shared) override;
 private:
    //  Initiates a disconnect and disables further sends on the socket.
    //

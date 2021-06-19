@@ -50,14 +50,14 @@ protected:
    //
    virtual ~MsgFactory();
 
-   //  Overridden to create a MsgContext.
-   //
-   Context* AllocContext() const override;
-
    //  Captures the arrival of MSG at CTX.  TT is the record, if any, that
    //  was created to record the work.
    //
    static void CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt);
+
+   //  Overridden to create a MsgContext.
+   //
+   Context* AllocContext() const override;
 
    //  Overridden to handle a message arriving at a stateless context.
    //  Must NOT be overridden by applications.  Protected to restrict

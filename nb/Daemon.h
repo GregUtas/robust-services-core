@@ -116,10 +116,6 @@ public:
    //
    static ptrdiff_t CellDiff();
 
-   //  Overridden for restarts.
-   //
-   void Startup(RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -128,6 +124,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 protected:
    //  Protected because this class is virtual.  SIZE is the number of
    //  threads to be created and monitored.

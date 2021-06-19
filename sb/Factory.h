@@ -187,14 +187,6 @@ public:
    //
    static ptrdiff_t CellDiff();
 
-   //  Overridden for restarts.
-   //
-   void Startup(NodeBase::RestartLevel level) override;
-
-   //  Overridden for restarts.
-   //
-   void Shutdown(NodeBase::RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -203,6 +195,14 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(NodeBase::RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(NodeBase::RestartLevel level) override;
 protected:
    //  Sets the corresponding member variables and adds the factory to
    //  FactoryRegistry.  Protected because this class is virtual.

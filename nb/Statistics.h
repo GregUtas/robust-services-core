@@ -198,13 +198,13 @@ public:
    //
    void Update(size_t count) { if(count > curr_) curr_ = count; }
 
-   //  Overridden to return the value over all measurement periods.
-   //
-   uint64_t Overall() const override;
-
    //  Overridden to display the statistic.
    //
    void DisplayStat(std::ostream& stream, const Flags& options) const override;
+
+   //  Overridden to return the value over all measurement periods.
+   //
+   uint64_t Overall() const override;
 private:
    //  Overridden to start a new measurement interval.
    //
@@ -234,13 +234,13 @@ public:
    //
    void Update(size_t count) { if(count < curr_) curr_ = count; }
 
-   //  Overridden to return the value over all measurement periods.
-   //
-   uint64_t Overall() const override;
-
    //  Overridden to display the statistic.
    //
    void DisplayStat(std::ostream& stream, const Flags& options) const override;
+
+   //  Overridden to return the value over all measurement periods.
+   //
+   uint64_t Overall() const override;
 private:
    //  Overridden to start a new measurement interval.
    //

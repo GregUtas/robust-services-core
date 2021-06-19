@@ -164,9 +164,9 @@ class PotsFacilityParameter : public PotsParameter
 
    PotsFacilityParameter();
    ~PotsFacilityParameter() = default;
+   CliParm* CreateCliParm(Usage use) const override;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   CliParm* CreateCliParm(Usage use) const override;
    TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
@@ -188,9 +188,9 @@ class PotsHeaderParameter : public PotsParameter
 
    PotsHeaderParameter();
    ~PotsHeaderParameter() = default;
+   CliParm* CreateCliParm(Usage use) const override;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   CliParm* CreateCliParm(Usage use) const override;
    TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
@@ -218,9 +218,9 @@ class PotsRingParameter : public PotsParameter
 
    PotsRingParameter();
    ~PotsRingParameter() = default;
+   CliParm* CreateCliParm(Usage use) const override;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   CliParm* CreateCliParm(Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
 };
@@ -231,9 +231,9 @@ class PotsScanParameter : public PotsParameter
 
    PotsScanParameter();
    ~PotsScanParameter() = default;
+   CliParm* CreateCliParm(Usage use) const override;
    void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   CliParm* CreateCliParm(Usage use) const override;
    TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
 };
@@ -439,27 +439,6 @@ PotsFacilityParameter::PotsFacilityParameter() : PotsParameter(Facility)
 
 //------------------------------------------------------------------------------
 
-fixed_string ServiceIdExpl = "sid: ServiceId";
-
-fixed_string FacilityIndExpl = "ind: Facility::Ind";
-
-fixed_string FacilityParmStr = "f";
-fixed_string FacilityParmExpl = "facility info";
-
-FacilityMandParm::FacilityMandParm() :
-   CliText(FacilityParmExpl, FacilityParmStr)
-{
-   BindParm(*new CliIntParm(ServiceIdExpl, 0, Service::MaxId));
-   BindParm(*new CliIntParm(FacilityIndExpl, 0, UINT8_MAX));
-}
-
-FacilityOptParm::FacilityOptParm() :
-   CliText(FacilityParmExpl, FacilityParmStr, true)
-{
-   BindParm(*new CliIntParm(ServiceIdExpl, 0, Service::MaxId));
-   BindParm(*new CliIntParm(FacilityIndExpl, 0, UINT8_MAX));
-}
-
 CliParm* PotsFacilityParameter::CreateCliParm(Usage use) const
 {
    if(use == Mandatory) return new FacilityMandParm;
@@ -578,6 +557,29 @@ Parameter::TestRc PotsFacilityParameter::VerifyMsg
    if(info->ind != ind) return ParmValueMismatch;
 
    return Ok;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string ServiceIdExpl = "sid: ServiceId";
+
+fixed_string FacilityIndExpl = "ind: Facility::Ind";
+
+fixed_string FacilityParmStr = "f";
+fixed_string FacilityParmExpl = "facility info";
+
+FacilityMandParm::FacilityMandParm() :
+   CliText(FacilityParmExpl, FacilityParmStr)
+{
+   BindParm(*new CliIntParm(ServiceIdExpl, 0, Service::MaxId));
+   BindParm(*new CliIntParm(FacilityIndExpl, 0, UINT8_MAX));
+}
+
+FacilityOptParm::FacilityOptParm() :
+   CliText(FacilityParmExpl, FacilityParmStr, true)
+{
+   BindParm(*new CliIntParm(ServiceIdExpl, 0, Service::MaxId));
+   BindParm(*new CliIntParm(FacilityIndExpl, 0, UINT8_MAX));
 }
 
 //------------------------------------------------------------------------------

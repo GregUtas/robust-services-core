@@ -59,14 +59,6 @@ public:
    //
    const Registry< Daemon >& Daemons() const { return daemons_; }
 
-   //  Overridden to invoke all daemons.
-   //
-   void Shutdown(RestartLevel level) override;
-
-   //  Overridden to invoke all daemons.
-   //
-   void Startup(RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -75,6 +67,14 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to invoke all daemons.
+   //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden to invoke all daemons.
+   //
+   void Startup(RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //

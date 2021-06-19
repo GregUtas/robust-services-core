@@ -128,6 +128,10 @@ public:
    //
    virtual void FreeContext(bool freeMsg);
 
+   //  Overridden to obtain an event from its object pool.
+   //
+   static void* operator new(size_t size);
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -136,10 +140,6 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to obtain an event from its object pool.
-   //
-   static void* operator new(size_t size);
 protected:
    //  Sets the corresponding member variables.  Protected because this class
    //  is virtual.

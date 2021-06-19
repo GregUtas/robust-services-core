@@ -212,7 +212,7 @@ public:
    //  Includes, in the cross-reference, symbols that appear in the
    //  file's items.
    //
-   void AddToXref(bool insert) const;
+   void UpdateXref(bool insert) const;
 
    //  Checks the file after it has been parsed, looking for additional
    //  warnings when a report is to be generated.
@@ -314,6 +314,11 @@ public:
    //
    void Shrink();
 
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
+
    //  Overridden to update ITEMS with ones declared within the file.
    //
    void GetDecls(CxxNamedSet& items) override;
@@ -321,11 +326,6 @@ public:
    //  Overridden to return the file's name.
    //
    const std::string& Name() const override { return name_; }
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
    //  Adds ITEM to those that appear in the file.
    //

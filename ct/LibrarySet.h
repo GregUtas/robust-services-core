@@ -181,14 +181,14 @@ public:
    //
    NodeBase::word Show(std::string& result) const;
 
-   //  Overridden to return the item's name.
-   //
-   const std::string& Name() const override { return name_; }
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to return the item's name.
+   //
+   const std::string& Name() const override { return name_; }
 protected:
    //  Creates a set that with the identifier NAME.  If NAME is not prefixed
    //  by TemporaryChar, it is added to the set of library variables.  If it

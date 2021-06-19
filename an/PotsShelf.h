@@ -59,13 +59,13 @@ private:
    //
    ~PotsShelfIpService();
 
-   //  Overridden to create a CLI parameter for identifying the protocol.
-   //
-   CliText* CreateText() const override;
-
    //  Overridden to create the POTS shelf input handler.
    //
    InputHandler* CreateHandler(IpPort* port) const override;
+
+   //  Overridden to create a CLI parameter for identifying the protocol.
+   //
+   CliText* CreateText() const override;
 
    //  The configuration parameter for setting the service's port.
    //
@@ -114,26 +114,26 @@ class PotsShelfFactory : public MsgFactory
    //
    static void DiscardMsg(const Message& msg, Switch::PortId port);
 
-   //  Overridden to return a CLI parameter that identifies the factory.
-   //
-   CliText* CreateText() const override;
-
    //  Overridden to wrap an incoming message.
    //
    Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
-
-   //  Overridden to process an incoming message.
-   //
-   void ProcessIcMsg(Message& msg) const override;
 
    //  Overridden to allocate an outgoing message that will be injected via
    //  a test tool.
    //
    Message* AllocOgMsg(SignalId sid) const override;
 
+   //  Overridden to return a CLI parameter that identifies the factory.
+   //
+   CliText* CreateText() const override;
+
    //  Overridden to inject a message on behalf of a test tool.
    //
    bool InjectMsg(Message& msg) const override;
+
+   //  Overridden to process an incoming message.
+   //
+   void ProcessIcMsg(Message& msg) const override;
 
    //  Overridden to create a message wrapper when a test tool saves BUFF.
    //

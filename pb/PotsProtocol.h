@@ -421,9 +421,9 @@ private:
    //
    void EnsureMediaMsg() override;
 
-   //  Overridden to return the route for outgoing messages.
+   //  Overridden to inject a final message if the PSM's peer dies.
    //
-   Message::Route Route() const override;
+   void InjectFinalMsg() override;
 
    //  Overridden to handle an incoming message.
    //
@@ -433,13 +433,13 @@ private:
    //
    OutgoingRc ProcessOgMsg(Message& msg) override;
 
+   //  Overridden to return the route for outgoing messages.
+   //
+   Message::Route Route() const override;
+
    //  Overridden to send a final message if the PSM's context dies.
    //
    void SendFinalMsg() override;
-
-   //  Overridden to inject a final message if the PSM's peer dies.
-   //
-   void InjectFinalMsg() override;
 
    //  An empty message that will be finalized and sent at the end
    //  of the transaction.

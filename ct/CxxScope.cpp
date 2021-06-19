@@ -69,7 +69,10 @@ bool FuncDefnsAreSorted(const Function* func1, const Function* func2)
    auto result = strCompare(func1->Name(), func2->Name());
    if(result < 0) return true;
    if(result > 0) return false;
-   return true;
+
+   //  The functions have the same name, so leave them as they are.
+   //
+   return (func1->GetPos() < func2->GetPos());
 }
 
 //------------------------------------------------------------------------------
@@ -123,16 +126,6 @@ bool Block::AddStatement(CxxToken* s)
    statements_.push_back(TokenPtr(s));
    s->SetScope(this);
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-void Block::AddToXref(bool insert)
-{
-   for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
-   {
-      (*s)->AddToXref(insert);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -490,6 +483,16 @@ void Block::UpdatePos
    }
 }
 
+//------------------------------------------------------------------------------
+
+void Block::UpdateXref(bool insert)
+{
+   for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
+   {
+      (*s)->UpdateXref(insert);
+   }
+}
+
 //==============================================================================
 
 ClassData::ClassData(string& name, TypeSpecPtr& type) : Data(type),
@@ -517,15 +520,6 @@ ClassData::~ClassData()
    GetFile()->EraseData(this);
    Singleton< CxxSymbols >::Extant()->EraseData(this);
    CxxStats::Decr(CxxStats::CLASS_DATA);
-}
-
-//------------------------------------------------------------------------------
-
-void ClassData::AddToXref(bool insert)
-{
-   Data::AddToXref(insert);
-
-   if(width_ != nullptr) width_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -918,6 +912,15 @@ void ClassData::UpdatePos
 
 //------------------------------------------------------------------------------
 
+void ClassData::UpdateXref(bool insert)
+{
+   Data::UpdateXref(insert);
+
+   if(width_ != nullptr) width_->UpdateXref(insert);
+}
+
+//------------------------------------------------------------------------------
+
 void ClassData::WasMutated(const StackArg* arg)
 {
    Debug::ft("ClassData.WasMutated");
@@ -1196,16 +1199,6 @@ Data::Data(TypeSpecPtr& spec) :
 Data::~Data()
 {
    Debug::ftnt("Data.dtor");
-}
-
-//------------------------------------------------------------------------------
-
-void Data::AddToXref(bool insert)
-{
-   if(alignas_ != nullptr) alignas_->AddToXref(insert);
-   spec_->AddToXref(insert);
-   if(expr_ != nullptr) expr_->AddToXref(insert);
-   if(init_ != nullptr) init_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1747,6 +1740,16 @@ void Data::UpdatePos
 
 //------------------------------------------------------------------------------
 
+void Data::UpdateXref(bool insert)
+{
+   if(alignas_ != nullptr) alignas_->UpdateXref(insert);
+   spec_->UpdateXref(insert);
+   if(expr_ != nullptr) expr_->UpdateXref(insert);
+   if(init_ != nullptr) init_->UpdateXref(insert);
+}
+
+//------------------------------------------------------------------------------
+
 bool Data::WasRead()
 {
    if(initing_) return false;
@@ -1823,15 +1826,6 @@ FuncData::~FuncData()
    Debug::ftnt("FuncData.dtor");
 
    CxxStats::Decr(CxxStats::FUNC_DATA);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncData::AddToXref(bool insert)
-{
-   Data::AddToXref(insert);
-
-   if(next_ != nullptr) next_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2084,6 +2078,15 @@ void FuncData::UpdatePos
    if(next_ != nullptr) next_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void FuncData::UpdateXref(bool insert)
+{
+   Data::UpdateXref(insert);
+
+   if(next_ != nullptr) next_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 Function::Function(QualNamePtr& name) :
@@ -2263,107 +2266,6 @@ void Function::AddThisArg()
    arg->CopyContext(this, true);
    args_.insert(args_.begin(), std::move(arg));
    this_ = true;
-}
-
-//------------------------------------------------------------------------------
-
-void Function::AddToXref(bool insert)
-{
-   if(deleted_) return;
-
-   auto type = GetTemplateType();
-
-   switch(type)
-   {
-   case NonTemplate:
-      //
-      //  This includes a function in a template instance.  It normally doesn't
-      //  update the cross-reference, since it has no code file or line numbers.
-      //  However, a function in a template cannot resolve an item accessed by a
-      //  template parameter, so it uses a template instance to add that item to
-      //  the cross-reference.
-      //
-      if(IsInTemplateInstance())
-      {
-         if(Context::GetXrefUpdater() != TemplateFunction) return;
-         Context::PushXrefFrame(InstanceFunction);
-      }
-      else
-      {
-         Context::PushXrefFrame(StandardFunction);
-      }
-      break;
-
-   default:
-      //
-      //  This is either a function template or a function in a class template.
-      //
-      Context::PushXrefFrame(TemplateFunction);
-   };
-
-   if(defn_) name_->AddToXref(insert);
-
-   if(parms_ != nullptr) parms_->AddToXref(insert);
-   if(spec_ != nullptr) spec_->AddToXref(insert);
-
-   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
-   {
-      args_[i]->AddToXref(insert);
-   }
-
-   if(base_ != nullptr)
-   {
-      //  Record an override as a reference to the original declaration of
-      //  the virtual function.  If the override appears in a template, the
-      //  function's template analog should be considered the override.
-      //
-      if(FuncType() == FuncStandard)
-      {
-         base_->AddReference(this, insert);
-      }
-   }
-
-   if(call_ != nullptr)
-   {
-      call_->AddToXref(insert);
-   }
-
-   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
-   {
-      (*m)->AddToXref(insert);
-   }
-
-   if(impl_ != nullptr) impl_->AddToXref(insert);
-
-   switch(type)
-   {
-   case NonTemplate:
-      break;
-
-   case FuncTemplate:
-      //
-      //  Add any unresolved symbols to the cross-reference by consulting
-      //  our first template instance.
-      //
-      if(!tmplts_.empty())
-      {
-         tmplts_.front()->AddToXref(insert);
-      }
-      break;
-
-   case ClassTemplate:
-   default:
-      //
-      //  Add any unresolved symbols to the cross-reference by consulting
-      //  our analog in first template instance.
-      //
-      auto instances = GetClass()->Instances();
-      if(instances->empty()) break;
-      auto func = instances->front()->FindInstanceAnalog(this);
-      if(func != nullptr) func->AddToXref(insert);
-   }
-
-   Context::PopXrefFrame();
 }
 
 //------------------------------------------------------------------------------
@@ -5561,6 +5463,107 @@ void Function::UpdateThisArg(StackArgVector& args) const
 
 //------------------------------------------------------------------------------
 
+void Function::UpdateXref(bool insert)
+{
+   if(deleted_) return;
+
+   auto type = GetTemplateType();
+
+   switch(type)
+   {
+   case NonTemplate:
+      //
+      //  This includes a function in a template instance.  It normally doesn't
+      //  update the cross-reference, since it has no code file or line numbers.
+      //  However, a function in a template cannot resolve an item accessed by a
+      //  template parameter, so it uses a template instance to add that item to
+      //  the cross-reference.
+      //
+      if(IsInTemplateInstance())
+      {
+         if(Context::GetXrefUpdater() != TemplateFunction) return;
+         Context::PushXrefFrame(InstanceFunction);
+      }
+      else
+      {
+         Context::PushXrefFrame(StandardFunction);
+      }
+      break;
+
+   default:
+      //
+      //  This is either a function template or a function in a class template.
+      //
+      Context::PushXrefFrame(TemplateFunction);
+   };
+
+   if(defn_) name_->UpdateXref(insert);
+
+   if(parms_ != nullptr) parms_->UpdateXref(insert);
+   if(spec_ != nullptr) spec_->UpdateXref(insert);
+
+   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
+   {
+      args_[i]->UpdateXref(insert);
+   }
+
+   if(base_ != nullptr)
+   {
+      //  Record an override as a reference to the original declaration of
+      //  the virtual function.  If the override appears in a template, the
+      //  function's template analog should be considered the override.
+      //
+      if(FuncType() == FuncStandard)
+      {
+         base_->UpdateReference(this, insert);
+      }
+   }
+
+   if(call_ != nullptr)
+   {
+      call_->UpdateXref(insert);
+   }
+
+   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+   {
+      (*m)->UpdateXref(insert);
+   }
+
+   if(impl_ != nullptr) impl_->UpdateXref(insert);
+
+   switch(type)
+   {
+   case NonTemplate:
+      break;
+
+   case FuncTemplate:
+      //
+      //  Add any unresolved symbols to the cross-reference by consulting
+      //  our first template instance.
+      //
+      if(!tmplts_.empty())
+      {
+         tmplts_.front()->UpdateXref(insert);
+      }
+      break;
+
+   case ClassTemplate:
+   default:
+      //
+      //  Add any unresolved symbols to the cross-reference by consulting
+      //  our analog in first template instance.
+      //
+      auto instances = GetClass()->Instances();
+      if(instances->empty()) break;
+      auto func = instances->front()->FindInstanceAnalog(this);
+      if(func != nullptr) func->UpdateXref(insert);
+   }
+
+   Context::PopXrefFrame();
+}
+
+//------------------------------------------------------------------------------
+
 void Function::WasCalled()
 {
    Debug::ft("Function.WasCalled");
@@ -5690,18 +5693,11 @@ SpaceDefn::~SpaceDefn()
 
 //------------------------------------------------------------------------------
 
-void SpaceDefn::AddToXref(bool insert)
-{
-   space_->AddReference(this, insert);
-}
-
-//------------------------------------------------------------------------------
-
 void SpaceDefn::Delete()
 {
    Debug::ft("SpaceDefn.Delete");
 
-   space_->AddReference(this, false);
+   space_->UpdateReference(this, false);
    space_->EraseDefn(this);
    delete this;
 }
@@ -5736,6 +5732,13 @@ string SpaceDefn::ScopedName(bool templates) const
    return space_->ScopedName(templates);
 }
 
+//------------------------------------------------------------------------------
+
+void SpaceDefn::UpdateXref(bool insert)
+{
+   space_->UpdateReference(this, insert);
+}
+
 //==============================================================================
 
 FuncSpec::FuncSpec(FunctionPtr& func) : func_(func.release())
@@ -5763,13 +5766,6 @@ fn_name FuncSpec_Warning = "FuncSpec.Warning";
 void FuncSpec::AddArray(ArraySpecPtr& array)
 {
    func_->GetTypeSpec()->AddArray(array);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::AddToXref(bool insert)
-{
-   func_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -6038,6 +6034,13 @@ void FuncSpec::UpdatePos
 {
    TypeSpec::UpdatePos(action, begin, count, from);
    func_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::UpdateXref(bool insert)
+{
+   func_->UpdateXref(insert);
 }
 
 //==============================================================================

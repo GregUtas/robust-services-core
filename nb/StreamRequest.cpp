@@ -39,16 +39,16 @@ StreamRequest::StreamRequest() : stream_(nullptr)
 
 //------------------------------------------------------------------------------
 
-StreamRequest::StreamRequest(const StreamRequest& that) : MsgBuffer(that)
+StreamRequest::~StreamRequest()
 {
-   Debug::ft("StreamRequest.ctor(copy)");
+   Debug::ftnt("StreamRequest.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-StreamRequest::~StreamRequest()
+StreamRequest::StreamRequest(const StreamRequest& that) : MsgBuffer(that)
 {
-   Debug::ftnt("StreamRequest.dtor");
+   Debug::ft("StreamRequest.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------

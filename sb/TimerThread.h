@@ -44,26 +44,26 @@ private:
    //
    TimerThread();
 
-   //  Overridden to return a name for the thread.
-   //
-   NodeBase::c_string AbbrName() const override;
-
    //  Private because this is a singleton.
    //
    ~TimerThread();
+
+   //  Overridden to return a name for the thread.
+   //
+   NodeBase::c_string AbbrName() const override;
 
    //  Overridden to support excluding or including all timer threads.
    //
    NodeBase::TraceStatus CalcStatus(bool dynamic) const override;
 
+   //  Overridden to delete the singleton.
+   //
+   void Destroy() override;
+
    //  Overridden to enter a loop that tells the timer registry, once per
    //  second, to send timeout messages on behalf of expired timers.
    //
    void Enter() override;
-
-   //  Overridden to delete the singleton.
-   //
-   void Destroy() override;
 };
 }
 #endif

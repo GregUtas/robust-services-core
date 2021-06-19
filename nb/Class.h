@@ -105,10 +105,6 @@ public:
    //
    void ClaimBlocks() override;
 
-   //  Overridden for restarts.
-   //
-   void Shutdown(RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -117,6 +113,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
 protected:
    //  Sets cid_ and size_.  SIZE is the size of the type of object that
    //  a subclass supports:

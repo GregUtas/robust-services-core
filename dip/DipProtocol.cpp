@@ -425,17 +425,17 @@ DipIpBuffer::DipIpBuffer(MsgDirection dir, size_t size) :
 
 //------------------------------------------------------------------------------
 
-DipIpBuffer::DipIpBuffer(const DipIpBuffer& that) : IpBuffer(that),
-   currSize_(that.currSize_)
+DipIpBuffer::~DipIpBuffer()
 {
-   Debug::ft("DipIpBuffer.ctor(copy)");
+   Debug::ftnt("DipIpBuffer.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-DipIpBuffer::~DipIpBuffer()
+DipIpBuffer::DipIpBuffer(const DipIpBuffer& that) : IpBuffer(that),
+   currSize_(that.currSize_)
 {
-   Debug::ftnt("DipIpBuffer.dtor");
+   Debug::ft("DipIpBuffer.ctor(copy)");
 }
 
 //------------------------------------------------------------------------------

@@ -69,14 +69,6 @@ Argument::~Argument()
 
 //------------------------------------------------------------------------------
 
-void Argument::AddToXref(bool insert)
-{
-   spec_->AddToXref(insert);
-   if(default_ != nullptr) default_->AddToXref(insert);
-}
-
-//------------------------------------------------------------------------------
-
 void Argument::Check() const
 {
    Debug::ft("Argument.Check");
@@ -350,6 +342,14 @@ void Argument::UpdatePos
 
 //------------------------------------------------------------------------------
 
+void Argument::UpdateXref(bool insert)
+{
+   spec_->UpdateXref(insert);
+   if(default_ != nullptr) default_->UpdateXref(insert);
+}
+
+//------------------------------------------------------------------------------
+
 bool Argument::WasRead()
 {
    Debug::ft("Argument.WasRead");
@@ -406,13 +406,6 @@ BaseDecl::~BaseDecl()
 
    GetClass()->EraseSubclass(static_cast< Class* >(GetScope()));
    CxxStats::Decr(CxxStats::BASE_DECL);
-}
-
-//------------------------------------------------------------------------------
-
-void BaseDecl::AddToXref(bool insert)
-{
-   name_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -562,6 +555,13 @@ void BaseDecl::UpdatePos
    name_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void BaseDecl::UpdateXref(bool insert)
+{
+   name_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 CxxScoped::CxxScoped() :
@@ -597,54 +597,6 @@ void CxxScoped::AddFiles(LibItemSet& imSet) const
    auto defn = GetDefnFile();
    if(decl != nullptr) imSet.insert(decl);
    if(defn != nullptr) imSet.insert(defn);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxScoped::AddReference(CxxNamed* item, bool insert) const
-{
-   auto file = item->GetFile();
-   if(file == nullptr) return;
-   if(file->IsSubsFile()) return;
-   if(insert && (item->GetPos() == string::npos)) return;
-
-   if(Context::GetXrefUpdater() == InstanceFunction)
-   {
-      //  A function in a template instance only adds, to the cross-reference,
-      //  items that were unresolved in its template.  These items are usually
-      //  functions invoked via a template parameter, and so the instance will
-      //  often invoke an override in a derived class.  This should be aliased
-      //  back to the base class declaration of the function.
-      //
-      auto prev = Context::FindXrefItem(item->Name());
-      if(prev == nullptr) return;
-
-      auto ref = item->Referent();
-
-      if(ref->IsInTemplateInstance())
-      {
-         ref = ref->FindTemplateAnalog(ref);
-      }
-
-      if(ref->Type() == Cxx::Function)
-      {
-         ref = static_cast< const Function* >(ref)->FindRootFunc();
-      }
-
-      //  A template instance can't be edited, so an erasure shouldn't occur
-      //  here.  But just in case...
-      //
-      if(insert)
-         ref->Xref()->insert(prev);
-      else
-         ref->Xref()->erase(prev);
-      return;
-   }
-
-   if(insert)
-      xref_.insert(item);
-   else
-      xref_.erase(item);
 }
 
 //------------------------------------------------------------------------------
@@ -1145,6 +1097,54 @@ bool CxxScoped::SkipAccessControlCheck() const
    return false;
 }
 
+//------------------------------------------------------------------------------
+
+void CxxScoped::UpdateReference(CxxNamed* item, bool insert) const
+{
+   auto file = item->GetFile();
+   if(file == nullptr) return;
+   if(file->IsSubsFile()) return;
+   if(insert && (item->GetPos() == string::npos)) return;
+
+   if(Context::GetXrefUpdater() == InstanceFunction)
+   {
+      //  A function in a template instance only adds, to the cross-reference,
+      //  items that were unresolved in its template.  These items are usually
+      //  functions invoked via a template parameter, and so the instance will
+      //  often invoke an override in a derived class.  This should be aliased
+      //  back to the base class declaration of the function.
+      //
+      auto prev = Context::FindXrefItem(item->Name());
+      if(prev == nullptr) return;
+
+      auto ref = item->Referent();
+
+      if(ref->IsInTemplateInstance())
+      {
+         ref = ref->FindTemplateAnalog(ref);
+      }
+
+      if(ref->Type() == Cxx::Function)
+      {
+         ref = static_cast< const Function* >(ref)->FindRootFunc();
+      }
+
+      //  A template instance can't be edited, so an erasure shouldn't occur
+      //  here.  But just in case...
+      //
+      if(insert)
+         ref->Xref()->insert(prev);
+      else
+         ref->Xref()->erase(prev);
+      return;
+   }
+
+   if(insert)
+      xref_.insert(item);
+   else
+      xref_.erase(item);
+}
+
 //==============================================================================
 
 Enum::Enum(string& name) : refs_(0)
@@ -1178,19 +1178,6 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
    etor->SetLoc(GetFile(), pos);
    etor->SetAccess(GetAccess());
    etors_.push_back(std::move(etor));
-}
-
-//------------------------------------------------------------------------------
-
-void Enum::AddToXref(bool insert)
-{
-   if(alignas_ != nullptr) alignas_->AddToXref(insert);
-   if(spec_ != nullptr) spec_->AddToXref(insert);
-
-   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
-   {
-      (*e)->AddToXref(insert);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -1521,6 +1508,19 @@ void Enum::UpdatePos
    }
 }
 
+//------------------------------------------------------------------------------
+
+void Enum::UpdateXref(bool insert)
+{
+   if(alignas_ != nullptr) alignas_->UpdateXref(insert);
+   if(spec_ != nullptr) spec_->UpdateXref(insert);
+
+   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
+   {
+      (*e)->UpdateXref(insert);
+   }
+}
+
 //==============================================================================
 
 Enumerator::Enumerator(string& name, ExprPtr& init, Enum* decl) :
@@ -1543,13 +1543,6 @@ Enumerator::~Enumerator()
 
    Singleton< CxxSymbols >::Extant()->EraseEtor(this);
    CxxStats::Decr(CxxStats::ENUM_MEM);
-}
-
-//------------------------------------------------------------------------------
-
-void Enumerator::AddToXref(bool insert)
-{
-   if(init_ != nullptr) init_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -1789,6 +1782,13 @@ void Enumerator::UpdatePos
 
 //------------------------------------------------------------------------------
 
+void Enumerator::UpdateXref(bool insert)
+{
+   if(init_ != nullptr) init_->UpdateXref(insert);
+}
+
+//------------------------------------------------------------------------------
+
 bool Enumerator::WasRead()
 {
    Debug::ft("Enumerator.WasRead");
@@ -1828,14 +1828,6 @@ Forward::~Forward()
    GetFile()->EraseForw(this);
    Singleton< CxxSymbols >::Extant()->EraseForw(this);
    CxxStats::Decr(CxxStats::FORWARD_DECL);
-}
-
-//------------------------------------------------------------------------------
-
-void Forward::AddToXref(bool insert)
-{
-   if(Referent() == nullptr) return;
-   name_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2032,6 +2024,14 @@ void Forward::UpdatePos
    if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void Forward::UpdateXref(bool insert)
+{
+   if(Referent() == nullptr) return;
+   name_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 size_t Friend::Depth_ = 0;
@@ -2060,14 +2060,6 @@ Friend::~Friend()
 
    Singleton< CxxSymbols >::Extant()->EraseFriend(this);
    CxxStats::Decr(CxxStats::FRIEND_DECL);
-}
-
-//------------------------------------------------------------------------------
-
-void Friend::AddToXref(bool insert)
-{
-   if(Referent() == nullptr) return;
-   name_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2681,6 +2673,14 @@ void Friend::UpdatePos
    if(func_ != nullptr) func_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void Friend::UpdateXref(bool insert)
+{
+   if(Referent() == nullptr) return;
+   name_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
@@ -2700,16 +2700,8 @@ MemberInit::~MemberInit()
 {
    Debug::ft("MemberInit.dtor");
 
-   ref_->AddReference(this, false);
+   ref_->UpdateReference(this, false);
    CxxStats::Decr(CxxStats::MEMBER_INIT);
-}
-
-//------------------------------------------------------------------------------
-
-void MemberInit::AddToXref(bool insert)
-{
-   if(ref_ != nullptr) ref_->AddReference(this, insert);
-   init_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -2832,6 +2824,14 @@ void MemberInit::UpdatePos
    init_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void MemberInit::UpdateXref(bool insert)
+{
+   if(ref_ != nullptr) ref_->UpdateReference(this, insert);
+   init_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
@@ -2845,14 +2845,6 @@ TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
 
    std::swap(name_, name);
    CxxStats::Incr(CxxStats::TEMPLATE_PARM);
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParm::AddToXref(bool insert)
-{
-   if(type_ != nullptr) type_->AddToXref(insert);
-   if(default_ != nullptr) default_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -3005,6 +2997,14 @@ void TemplateParm::UpdatePos
    if(default_ != nullptr) default_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void TemplateParm::UpdateXref(bool insert)
+{
+   if(type_ != nullptr) type_->UpdateXref(insert);
+   if(default_ != nullptr) default_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 TemplateParms::TemplateParms(TemplateParmPtr& parm)
@@ -3022,16 +3022,6 @@ void TemplateParms::AddParm(TemplateParmPtr& parm)
    Debug::ft("TemplateParms.AddParm");
 
    parms_.push_back(std::move(parm));
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParms::AddToXref(bool insert)
-{
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->AddToXref(insert);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -3170,6 +3160,16 @@ void TemplateParms::UpdatePos
    }
 }
 
+//------------------------------------------------------------------------------
+
+void TemplateParms::UpdateXref(bool insert)
+{
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->UpdateXref(insert);
+   }
+}
+
 //==============================================================================
 
 Terminal::Terminal(const string& name, const string& type) :
@@ -3275,14 +3275,6 @@ Typedef::~Typedef()
    GetFile()->EraseType(this);
    Singleton< CxxSymbols >::Extant()->EraseType(this);
    CxxStats::Decr(CxxStats::TYPE_DECL);
-}
-
-//------------------------------------------------------------------------------
-
-void Typedef::AddToXref(bool insert)
-{
-   spec_->AddToXref(insert);
-   if(alignas_ != nullptr) alignas_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -3546,6 +3538,14 @@ void Typedef::UpdatePos
    spec_->UpdatePos(action, begin, count, from);
 }
 
+//------------------------------------------------------------------------------
+
+void Typedef::UpdateXref(bool insert)
+{
+   spec_->UpdateXref(insert);
+   if(alignas_ != nullptr) alignas_->UpdateXref(insert);
+}
+
 //==============================================================================
 
 Using::Using(QualNamePtr& name, bool space, bool added) :
@@ -3568,13 +3568,6 @@ Using::~Using()
 
    GetFile()->EraseUsing(this);
    CxxStats::Decr(CxxStats::USING_DECL);
-}
-
-//------------------------------------------------------------------------------
-
-void Using::AddToXref(bool insert)
-{
-   name_->AddToXref(insert);
 }
 
 //------------------------------------------------------------------------------
@@ -3786,5 +3779,12 @@ void Using::UpdatePos
 {
    CxxScoped::UpdatePos(action, begin, count, from);
    name_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void Using::UpdateXref(bool insert)
+{
+   name_->UpdateXref(insert);
 }
 }

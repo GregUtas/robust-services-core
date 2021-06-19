@@ -87,13 +87,13 @@ private:
    //
    c_string AbbrName() const override;
 
-   //  Overridden to dequeue file output requests.
-   //
-   void Enter() override;
-
    //  Overridden to delete the singleton.
    //
    void Destroy() override;
+
+   //  Overridden to dequeue file output requests.
+   //
+   void Enter() override;
 };
 }
 #endif

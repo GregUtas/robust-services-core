@@ -47,8 +47,8 @@ class SnSizesCommand : public PbSizesCommand
 public:
    SnSizesCommand() = default;
 private:
-   word ProcessCommand(CliThread& cli) const override;
    void DisplaySizes(const CliThread& cli, bool all) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 void SnSizesCommand::DisplaySizes(const CliThread& cli, bool all) const

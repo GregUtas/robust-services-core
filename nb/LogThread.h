@@ -71,23 +71,23 @@ private:
    //
    static void CopyToConsole(const ostringstreamPtr& stream);
 
-   //  Overridden to return a name for the thread.
-   //
-   c_string AbbrName() const override;
-
-   //  Overridden to dequeue log requests.
-   //
-   void Enter() override;
-
-   //  Overridden to delete the singleton.
-   //
-   void Destroy() override;
-
    //  Returns the number of message buffers reserved for work other than
    //  spooling logs.
    //
    size_t NoSpoolingMessageCount() const
       { return noSpoolingMessageCount_->GetValue(); }
+
+   //  Overridden to return a name for the thread.
+   //
+   c_string AbbrName() const override;
+
+   //  Overridden to delete the singleton.
+   //
+   void Destroy() override;
+
+   //  Overridden to dequeue log requests.
+   //
+   void Enter() override;
 
    //  The configuration parameter for the number of MsgBuffers reserved
    //  for work other than spooling logs.

@@ -236,6 +236,11 @@ protected:
    //
    void EnsureMediaMsg() override;
 
+   //  Overridden to inject a REL if the node associated with the PSM's
+   //  peer goes out of service.
+   //
+   void InjectFinalMsg() override;
+
    //  Overridden to update the PSM's state when a message is received.
    //
    IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
@@ -243,11 +248,6 @@ protected:
    //  Overridden to update the PSM's state when a message is sent.
    //
    OutgoingRc ProcessOgMsg(Message& msg) override;
-
-   //  Overridden to inject a REL if the node associated with the PSM's
-   //  peer goes out of service.
-   //
-   void InjectFinalMsg() override;
 private:
    //  Determines whether a timer is started when sending an IAM.
    //
@@ -314,13 +314,13 @@ private:
    //
    ~CipUdpService();
 
-   //  Overridden to create a CLI parameter for identifying the protocol.
-   //
-   CliText* CreateText() const override;
-
    //  Overridden to create the CIP input handler.
    //
    InputHandler* CreateHandler(IpPort* port) const override;
+
+   //  Overridden to create a CLI parameter for identifying the protocol.
+   //
+   CliText* CreateText() const override;
 
    //  The configuration parameter for setting the service's port.
    //
@@ -351,17 +351,17 @@ private:
    //
    ~CipTcpService();
 
-   //  Overridden to return the buffer sizes for an application socket.
+   //  Overridden to create the CIP input handler.
    //
-   void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const override;
+   InputHandler* CreateHandler(IpPort* port) const override;
 
    //  Overridden to create a CLI parameter for identifying the protocol.
    //
    CliText* CreateText() const override;
 
-   //  Overridden to create the CIP input handler.
+   //  Overridden to return the buffer sizes for an application socket.
    //
-   InputHandler* CreateHandler(IpPort* port) const override;
+   void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const override;
 
    //  The configuration parameter for setting the service's port.
    //
@@ -453,10 +453,6 @@ class CipTbcFactory : public CipFactory
    //
    ~CipTbcFactory();
 
-   //  Overridden to return a CLI parameter that identifies the factory.
-   //
-   CliText* CreateText() const override;
-
    //  Overridden to create a CIP PSM when a CIP IAM arrives.
    //
    ProtocolSM* AllocIcPsm
@@ -466,6 +462,10 @@ class CipTbcFactory : public CipFactory
    //  to create the recipient's half of a new session.
    //
    RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
+
+   //  Overridden to return a CLI parameter that identifies the factory.
+   //
+   CliText* CreateText() const override;
 };
 }
 #endif

@@ -58,11 +58,6 @@ public:
 
    CxxCharLiteral& operator=(const CxxCharLiteral& that) = delete;
 
-   void Print(std::ostream& stream, const Flags& options) const override
-   {
-      stream << E << APOSTROPHE << CharString(c_, false) << APOSTROPHE;
-   }
-
    static std::string TypeStr()
    {
       switch(E)
@@ -75,7 +70,25 @@ public:
       }
       return ERROR_STR;
    }
+
+   void Print(std::ostream& stream, const Flags& options) const override
+   {
+      stream << E << APOSTROPHE << CharString(c_, false) << APOSTROPHE;
+   }
 private:
+   Numeric GetNumeric() const override
+   {
+      switch(E)
+      {
+      case Cxx::ASCII: return Numeric::Char;
+      case Cxx::U8: return Numeric::Char;
+      case Cxx::U16: return Numeric::Char16;
+      case Cxx::U32: return Numeric::Char32;
+      case Cxx::WIDE: return Numeric::wChar;
+      }
+      return Numeric::Nil;
+   }
+
    CxxScoped* Referent() const override
    {
       switch(E)
@@ -90,19 +103,6 @@ private:
    }
 
    std::string TypeString(bool arg) const override { return TypeStr(); }
-
-   Numeric GetNumeric() const override
-   {
-      switch(E)
-      {
-      case Cxx::ASCII: return Numeric::Char;
-      case Cxx::U8: return Numeric::Char;
-      case Cxx::U16: return Numeric::Char16;
-      case Cxx::U32: return Numeric::Char32;
-      case Cxx::WIDE: return Numeric::wChar;
-      }
-      return Numeric::Nil;
-   }
 
    //  The character that appeared in the literal.
    //

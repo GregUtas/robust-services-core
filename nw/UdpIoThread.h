@@ -58,14 +58,6 @@ protected:
    //
    void Unblock() override;
 private:
-   //  Overridden to return a name for the thread.
-   //
-   NodeBase::c_string AbbrName() const override;
-
-   //  Overridden to receive UDP messages on PORT.
-   //
-   void Enter() override;
-
    //  Raises an alarm when an error forces the thread to exit.
    //
    void RaiseAlarm(NodeBase::debug64_t errval) const;
@@ -77,6 +69,14 @@ private:
    //  Releases resources when exiting or cleaning up the thread.
    //
    void ReleaseResources();
+
+   //  Overridden to return a name for the thread.
+   //
+   NodeBase::c_string AbbrName() const override;
+
+   //  Overridden to receive UDP messages on PORT.
+   //
+   void Enter() override;
 };
 }
 #endif

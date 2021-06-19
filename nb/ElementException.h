@@ -44,10 +44,6 @@ public:
    //
    ~ElementException();
 
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream, const std::string& prefix) const override;
-
    //  Returns the severity of the restart.
    //
    RestartLevel Level() const { return level_; }
@@ -59,6 +55,10 @@ public:
    //  Returns the error value.
    //
    debug64_t Errval() const { return errval_; }
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream, const std::string& prefix) const override;
 private:
    //  Overridden to identify the type of exception.
    //

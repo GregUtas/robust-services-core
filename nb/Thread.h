@@ -229,16 +229,6 @@ public:
    //
    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 
-   //  Overridden for restarts.  This is only invoked on threads that did
-   //  not exit and survived the restart.
-   //
-   void Startup(RestartLevel level) override;
-
-   //  Overridden for restarts.  This is only invoked on threads that did
-   //  not exit when the restart began.
-   //
-   void Shutdown(RestartLevel level) override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -247,6 +237,16 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden for restarts.  This is only invoked on threads that did
+   //  not exit when the restart began.
+   //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.  This is only invoked on threads that did
+   //  not exit and survived the restart.
+   //
+   void Startup(RestartLevel level) override;
 protected:
    //  Creates a thread that runs in the specified scheduler FACTION and
    //  is managed by DAEMON.  Protected because this class is virtual.

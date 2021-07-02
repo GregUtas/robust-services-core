@@ -4748,6 +4748,26 @@ bool Parser::ParseTypeSpec(const string& code, TypeSpecPtr& spec)
 
 //------------------------------------------------------------------------------
 
+bool Parser::ReplaceImpl(Function* func, const std::string& code)
+{
+   Debug::ft("Parser.ReplaceImpl");
+
+   //  Prepare to parse FUNC's implementation.
+   //
+   auto defn = func->GetDefn();
+   auto file = defn->GetFile();
+   Context::SetFile(file);
+   Enter(IsFile, file->Name(), nullptr, code, false, file);
+
+   size_t begin, left, end;
+   defn->GetSpan3(begin, left, end);
+   if(left == string::npos) return false;
+   lexer_.Reposition(left);
+   return GetFuncImpl(defn);
+}
+
+//------------------------------------------------------------------------------
+
 void Parser::ResetStats()
 {
    Debug::ft("Parser.ResetStats");

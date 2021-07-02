@@ -568,6 +568,12 @@ private:
    //
    size_t Replace(size_t pos, size_t count, const string& code);
 
+   //  Deletes and reparses FUNC's implementation after edits have occurred.
+   //  This is usually easier than trying to update the implementation when
+   //  items have been changed or added.  Returns true on success.
+   //
+   bool ReplaceImpl(Function* func) const;
+
    //  Adds the editor to Editors_ and returns 0.
    //
    word Changed();

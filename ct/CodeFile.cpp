@@ -655,7 +655,7 @@ void CodeFile::CheckDebugFt()
                   }
                   else if((data != nullptr) && (data->Readers() <= 1))
                   {
-                     LogPos(lexer_.GetLineStart(n), DebugFtCanBeLiteral, data);
+                     LogPos(lexer_.GetLineStart(n), DebugFtCanBeLiteral, *f);
                   }
 
                   debug = true;

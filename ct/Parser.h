@@ -114,6 +114,11 @@ public:
    //
    CxxScoped* ResolveInstanceArgument(const QualName* name) const;
 
+   //  Replaces FUNC's implementation after it has been modified.  CODE is
+   //  the full source code that contains FUNC's modified implementation.
+   //
+   bool ReplaceImpl(Function* func, const std::string& code);
+
    //  Returns true if original source code is being parsed.
    //
    bool ParsingSourceCode() const { return (source_ == IsFile); }

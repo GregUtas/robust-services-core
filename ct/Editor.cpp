@@ -40,6 +40,7 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxString.h"
+#include "CxxStrLiteral.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "CxxVector.h"
@@ -49,6 +50,7 @@
 #include "Library.h"
 #include "LibraryItem.h"
 #include "NbCliParms.h"
+#include "Parser.h"
 #include "Singleton.h"
 #include "SysFile.h"
 #include "ThisThread.h"
@@ -1109,7 +1111,7 @@ word Editor::ChangeAccess(const CxxToken* item, ItemDeclAttrs& attrs)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)  //u
+word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)
 {
    Debug::ft("Editor.ChangeAssignmentToCtorCall");
 
@@ -1168,6 +1170,8 @@ word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)  //u
    //
    auto semi = FindFirstOf(";", lpar - 1);
    if(!OnSameLine(begin, semi)) EraseLineBreak(begin);
+   auto func = log.item_->GetScope()->GetFunction();
+   ReplaceImpl(func);
    return Changed(begin);
 }
 
@@ -3498,26 +3502,40 @@ word Editor::Indent(size_t pos)
 
 //------------------------------------------------------------------------------
 
-word Editor::InlineDebugFtArgument(const CodeWarning& log)  //u
+word Editor::InlineDebugFtArgument(const CodeWarning& log)
 {
    Debug::ft("Editor.InlineDebugFtArgument");
 
-   //  Find the fn_name data, in-line its string literal in the Debug::ft
-   //  call, and then erase it.
+   //  LOG's position is where the Debug::ft call occurs, but log.item_ is
+   //  the function in which the Debug::ft call occurs.  Find the fn_name
+   //  data item and in-line its string literal in the Debug::ft call.
    //
-   string fname;
-   auto data = static_cast< const Data* >(log.item_);
-   if(!data->GetStrValue(fname)) return NotFound("fn_name definition");
-   if(EraseItem(data) == EditFailed) return EditFailed;
-
-   auto literal = QUOTE + fname + QUOTE;
    auto begin = CurrBegin(log.Pos());
    if(begin == string::npos) return NotFound("Position of Debug::ft");
    auto lpar = source_.find('(', begin);
-   if(lpar == string::npos) return NotFound("Left parenthesis");
+   if(lpar == string::npos) return NotFound("Debug::ft left parenthesis");
+   auto npos = FindNonBlank(lpar + 1);
+   if(npos == string::npos) return NotFound("Start of Debug::ft argument");
+   auto arg = file_->PosToItem(npos);
+   if(arg == nullptr) return NotFound("Debug::ft argument");
+   auto aref = arg->Referent();
+   if(aref == nullptr) return NotFound("Debug::ft fn_name");
+   if(aref->Type() != Cxx::Data) return NotFound("Debug::ft fn_name");
+
+   string fname;
+   auto data = static_cast< Data* >(aref);
+   if(!data->GetStrValue(fname)) return NotFound("fn_name definition");
+
+   auto literal = QUOTE + fname + QUOTE;
    auto rpar = source_.find(')', lpar);
-   if(rpar == string::npos) return NotFound("Right parenthesis");
+   if(rpar == string::npos) return NotFound("Debug::ft right parenthesis");
    Replace(lpar + 1, rpar - lpar - 1, literal);
+   ReplaceImpl((Function*) log.item_);
+
+   //  Erase the fn_name.  This was deferred until now so as not to invalidate
+   //  LPAR, which is an infuriatingly common type of bug when editing code.
+   //
+   if(EraseItem(data) == EditFailed) return EditFailed;
    return Changed(lpar);
 }
 
@@ -3658,7 +3676,7 @@ word Editor::InsertDataInit(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)  //u
+word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)
 {
    Debug::ft("Editor.InsertDebugFtCall");
 
@@ -3719,6 +3737,7 @@ word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)  //u
    auto call = DebugFtCode(arg);
    InsertLine(below, call);
    if(!IsFirstNonBlank(left)) InsertLineBreak(left);
+   ReplaceImpl(const_cast< Function* >(func));
    return Changed(below);
 }
 
@@ -4787,7 +4806,7 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //u
+word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)
 {
    Debug::ft("Editor.RenameDebugFtArgument");
 
@@ -4795,29 +4814,18 @@ word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //u
    //  o DebugFtNameMismatch: the string doesn't start with "Scope.Function"
    //  o DebugFtNameDuplicated: another function already uses the same string
    //
-   //  Start by finding the location of the logged Debug::ft invocation.
+   //  LOG's position is where the Debug::ft call occurs, but log.item_ is
+   //  the function in which the Debug::ft call occurs.  Find the Debug::ft
+   //  argument, which could be an fn_name or string literal.
    //
-   auto cpos = Find(log.Pos(), "Debug::ft");
-   if(cpos == string::npos) return NotFound("Debug::ft invocation");
-
-   //  Find the location of the first fn_name definition that precedes this
-   //  function.  If one is found, it belongs to a previous function if a
-   //  right brace appears between it and the start of this function.
-   //
-   auto fpos = log.item_->GetPos();
-   auto dpos = Rfind(fpos, "fn_name");
-
-   if(dpos != string::npos)
-   {
-      auto valid = true;
-
-      for(auto left = dpos; valid && (left < fpos); left = NextBegin(left))
-      {
-         if(LineFind(left, "}") != string::npos) valid = false;
-      }
-
-      if(!valid) dpos = string::npos;
-   }
+   auto begin = CurrBegin(log.Pos());
+   if(begin == string::npos) return NotFound("Position of Debug::ft");
+   auto lpar = source_.find('(', begin);
+   if(lpar == string::npos) return NotFound("Debug::ft left parenthesis");
+   auto npos = FindNonBlank(lpar + 1);
+   if(npos == string::npos) return NotFound("Start of Debug::ft argument");
+   auto arg = file_->PosToItem(npos);
+   if(arg == nullptr) return NotFound("Debug::ft argument");
 
    //  Generate the string (FLIT) and fn_name (FVAR).  If FLIT is already
    //  in use, prompt the user for a unique suffix.
@@ -4828,28 +4836,31 @@ word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //u
    if(!EnsureUniqueDebugFtName(cli, flit, fname))
       return Report(FixSkipped);
 
-   if(dpos == string::npos)
+   if(arg->Type() == Cxx::StringLiteral)
    {
-      //  An fn_name definition was not found, so the Debug::ft invocation
-      //  must have used a string literal.  Replace it.
+      //  Replace the string literal in the Debug::ft invocation.
       //
-      auto lpar = FindFirstOf("(", cpos);
-      if(lpar == string::npos) return NotFound("Left parenthesis");
-      auto rpar = FindClosing('(', ')', lpar + 1);
-      if(rpar == string::npos) return NotFound("Right parenthesis");
+      auto rpar = source_.find(')', lpar);
+      if(rpar == string::npos) return NotFound("Debug::ft right parenthesis");
       Erase(lpar + 1, rpar - lpar - 1);
       Insert(lpar + 1, fname);
-      return Changed(cpos);
+      auto slit = (StrLiteral*) arg;
+      slit->Replace(fname.substr(1, fname.size() - 2));
+      return Changed(begin);
    }
 
    //  The Debug::ft invocation used an fn_name.  It might be used elsewhere
    //  (e.g. for calls to Debug::SwLog), so keep its name and only replace
    //  its definition.
    //
+   auto data = arg->Referent();
+   if(data == nullptr) return NotFound("Debug::ft fn_name");
+   auto dpos = data->GetPos();
    auto lpos = Find(dpos, QUOTE_STR);
    if(lpos == string::npos) return NotFound("fn_name left quote");
    auto rpos = source_.find(QUOTE, lpos + 1);
    if(rpos == string::npos) return NotFound("fn_name right quote");
+   auto slit = (StrLiteral*) file_->PosToItem(lpos);
    Replace(lpos, rpos - lpos + 1, fname);
 
    if(LineSize(lpos) - 1 > LineLengthMax())
@@ -4858,6 +4869,7 @@ word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)  //u
       if(epos != string::npos) InsertLineBreak(epos + 1);
    }
 
+   if(slit != nullptr) slit->Replace(fname.substr(1, fname.size() - 2));
    return Changed(lpos);
 }
 
@@ -4911,6 +4923,16 @@ word Editor::ReplaceHeading(const CodeWarning& log)
    //  inserting the file name where appropriate.
    //
    return Unimplemented();
+}
+
+//------------------------------------------------------------------------------
+
+bool Editor::ReplaceImpl(Function* func) const
+{
+   Debug::ft("Editor.ReplaceImpl");
+
+   std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
+   return parser->ReplaceImpl(func, source_);
 }
 
 //------------------------------------------------------------------------------

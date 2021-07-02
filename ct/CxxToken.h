@@ -659,6 +659,10 @@ public:
    //  a time without knowing the actual type of the literal's class.
    //
    virtual void PushBack(uint32_t c) = 0;
+
+   //  Overridden to reveal that this is a string literal.
+   //
+   Cxx::ItemType Type() const override { return Cxx::StringLiteral; }
 protected:
    //  Protected because this class is virtual.
    //

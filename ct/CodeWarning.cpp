@@ -91,7 +91,7 @@ std::vector< CodeWarning > CodeWarning::Warnings_ =
 CodeWarning::CodeWarning(Warning warning, CodeFile* file, size_t pos,
    const CxxToken* item, word offset, const string& info) :
    warning_(warning),
-   item_(item),
+   item_(const_cast< CxxToken* >(item)),
    offset_(offset),
    info_(info),
    status_(NotSupported)

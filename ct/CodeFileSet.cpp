@@ -24,7 +24,6 @@
 #include <cstddef>
 #include <iosfwd>
 #include <iterator>
-#include <memory>
 #include <sstream>
 #include "CliThread.h"
 #include "CodeDir.h"
@@ -34,6 +33,7 @@
 #include "CodeTypes.h"
 #include "CodeWarning.h"
 #include "Cxx.h"
+#include "CxxFwd.h"
 #include "CxxNamed.h"
 #include "Debug.h"
 #include "Editor.h"

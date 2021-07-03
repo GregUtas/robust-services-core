@@ -229,9 +229,11 @@ private:
    //
    mutable CxxLocation loc_;
 
-   //  The C++ item associated with the warning.
+   //  The C++ item associated with the warning.  It is provided as a const
+   //  item, but its constness is removed so that the Editor can updated it
+   //  when modifying the code.
    //
-   const CxxToken* item_;
+   CxxToken* item_;
 
    //  Warning specific.  If > 0, displayed after line number (used, for
    //  example, to specify that a function's Nth argument is associated

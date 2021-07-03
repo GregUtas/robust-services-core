@@ -1470,7 +1470,7 @@ FunctionVector CodeFile::GetFuncDefnsToSort() const
 {
    Debug::ft("CodeFile.GetFuncDefnsToSort");
 
-   std::vector< Function* > defns;
+   FunctionVector defns;
 
    if(IsHeader()) return defns;
 

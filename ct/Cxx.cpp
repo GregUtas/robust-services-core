@@ -774,6 +774,44 @@ TypeMatch Numeric::CalcMatchWith(const Numeric* that) const
 }
 
 //==============================================================================
+
+SymbolView::SymbolView() :
+   accessibility_(Inaccessible),
+   control_(Cxx::Access_N),
+   match_(Compatible),
+   defts_(false),
+   using_(false),
+   friend_(false),
+   resolved_(false),
+   distance_(0)
+{
+}
+
+//------------------------------------------------------------------------------
+
+SymbolView::SymbolView(Accessibility a, TypeMatch m,
+   Cxx::Access c, bool t, bool u, bool f, bool r, Distance d) :
+   accessibility_(a),
+   control_(c),
+   match_(m),
+   defts_(t),
+   using_(u),
+   friend_(f),
+   resolved_(r),
+   distance_(d)
+{
+}
+
+//------------------------------------------------------------------------------
+
+const SymbolView NotAccessible
+   (Inaccessible, Compatible, Cxx::Access_N, false, false, false, true, 0);
+const SymbolView DeclaredGlobally
+   (Unrestricted, Compatible, Cxx::Access_N, false, false, false, true, 0);
+const SymbolView DeclaredLocally
+   (Declared, Compatible, Cxx::Access_N, false, false, false, true, 0);
+
+//==============================================================================
 //
 //  Removes, from SET, an item that is
 //    (a) a template parameter,

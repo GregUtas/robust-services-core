@@ -352,7 +352,7 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
    string name;
    Namespace* space;
    Class* cls;
-   auto defts = view.defts;
+   auto defts = view.defts_;
    auto func = GetFunction();
    auto qname = GetQualName();
    auto size = qname->Size();
@@ -896,7 +896,7 @@ void DataSpec::FindReferent()
    if(ResolveTemplateArg()) return;
 
    SymbolView view;
-   view.defts = (GetUserType() == TS_Definition);
+   view.defts_ = (GetUserType() == TS_Definition);
    auto item = ResolveName(file, scope, TYPESPEC_REFS, view);
 
    if(item != nullptr)

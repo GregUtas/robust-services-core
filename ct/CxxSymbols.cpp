@@ -26,7 +26,7 @@
 #include <ostream>
 #include <set>
 #include "CodeFile.h"
-#include "Cxx.h"
+#include "CodeTypes.h"
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
@@ -213,16 +213,16 @@ size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
       auto& item = list[i];
       auto& view = views[i];
 
-      view.resolved = (item->Referent() != nullptr);
+      view.resolved_ = (item->Referent() != nullptr);
 
-      if(view.distance < min)
+      if(view.distance_ < min)
       {
-         min = view.distance;
+         min = view.distance_;
          idx = i;
       }
-      else if(view.resolved && (view.distance == min))
+      else if(view.resolved_ && (view.distance_ == min))
       {
-         if((idx == SIZE_MAX) || !views[idx].resolved)
+         if((idx == SIZE_MAX) || !views[idx].resolved_)
          {
             idx = i;
          }
@@ -642,7 +642,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
 
    for(size_t i = 0; i < size; ++i)
    {
-      if(views1[i].accessibility == Declared)
+      if(views1[i].accessibility_ == Declared)
       {
          list2.push_back(list1[i]);
          views2.push_back(views1[i]);
@@ -653,7 +653,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
    {
       for(size_t i = 0; i < size; ++i)
       {
-         if(views1[i].accessibility == Inherited)
+         if(views1[i].accessibility_ == Inherited)
          {
             list2.push_back(list1[i]);
             views2.push_back(views1[i]);

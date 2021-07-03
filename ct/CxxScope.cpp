@@ -987,9 +987,9 @@ void CxxScope::AccessibilityOf
 {
    Debug::ft("CxxScope.AccessibilityOf");
 
-   view.distance = scope->ScopeDistance(this);
-   view.accessibility =
-      (view.distance == NOT_A_SUBSCOPE ? Inaccessible : Unrestricted);
+   view.distance_ = scope->ScopeDistance(this);
+   view.accessibility_ =
+      (view.distance_ == NOT_A_SUBSCOPE ? Inaccessible : Unrestricted);
 }
 
 //------------------------------------------------------------------------------
@@ -1498,6 +1498,7 @@ bool Data::InitByDefault()
    {
       SymbolView view;
       cls->AccessibilityOf(Context::Scope(), ctor, view);
+      ctor->RecordAccess(view.control_);
       ctor->WasCalled();
       SetInited();
    }

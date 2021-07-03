@@ -447,41 +447,5 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
    LineTypeAttr(F, F, F, F, '@'),  // AnyLine
    LineTypeAttr(F, F, F, F, '?')   // LineType_N
 };
-
-//==============================================================================
-
-SymbolView::SymbolView() :
-   accessibility(Inaccessible),
-   match(Compatible),
-   defts(false),
-   using_(false),
-   friend_(false),
-   resolved(false),
-   distance(0)
-{
-}
-
-//------------------------------------------------------------------------------
-
-SymbolView::SymbolView(Accessibility a,
-   TypeMatch m, bool c, bool u, bool f, bool r, Distance d) :
-   accessibility(a),
-   match(m),
-   defts(c),
-   using_(u),
-   friend_(f),
-   resolved(r),
-   distance(d)
-{
-}
-
-//------------------------------------------------------------------------------
-
-const SymbolView NotAccessible
-   (Inaccessible, Compatible, false, false, false, true, 0);
-const SymbolView DeclaredGlobally
-   (Unrestricted, Compatible, false, false, false, true, 0);
-const SymbolView DeclaredLocally
-   (Declared, Compatible, false, false, false, true, 0);
 }
 

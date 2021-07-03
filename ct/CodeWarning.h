@@ -230,7 +230,7 @@ private:
    mutable CxxLocation loc_;
 
    //  The C++ item associated with the warning.  It is provided as a const
-   //  item, but its constness is removed so that the Editor can updated it
+   //  item, but its constness is removed so that the Editor can update it
    //  when modifying the code.
    //
    CxxToken* item_;

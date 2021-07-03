@@ -2337,10 +2337,10 @@ bool Operation::ExecuteOverload
          SymbolView view;
          auto candidate = area->FindFunc(name, &args, true, scope, &view);
 
-         if((candidate != nullptr) && (view.match > match))
+         if((candidate != nullptr) && (view.match_ > match))
          {
             oper = candidate;
-            match = view.match;
+            match = view.match_;
             mem = (venue == Arg1Class);
          }
       }
@@ -2831,7 +2831,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       //
       arg2.name->MemberAccessed(cls, mem);
 
-      if((view.accessibility == Inherited) && (!view.friend_) &&
+      if((view.accessibility_ == Inherited) && (!view.friend_) &&
          (cls->ClassDistance(scope->GetClass()) == NOT_A_SUBCLASS))
       {
          mem->RecordAccess(Cxx::Public);

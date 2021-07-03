@@ -324,62 +324,6 @@ enum TypeMatch
 
 //------------------------------------------------------------------------------
 //
-//  Information about a symbol's accessibility within a specific scope.
-//  CMDTS is an input; all other fields are returned as results.
-//
-struct SymbolView
-{
-   //  Initializes the instance to NotAccessible.
-   //
-   SymbolView();
-
-   //  Initializes the instance to the specified values.
-   //
-   SymbolView(Accessibility a, TypeMatch m,
-      bool c, bool u, bool f, bool r, Distance d);
-
-   //  The symbol's accessibility.
-   //
-   Accessibility accessibility : 8;
-
-   //  How well the symbol's arguments matched those supplied.
-   //
-   TypeMatch match : 8;
-
-   //  Set as an argument to indicate that the symbol appears in a TypeSpec
-   //  when defining a function or data that was previously declared.
-   //
-   bool defts : 1;
-
-   //  Set if the symbol was resolved by a using statement.
-   //
-   bool using_ : 1;
-
-   //  Set if the symbol was accessible because of a friend declaration.
-   //
-   bool friend_ : 1;
-
-   //  Set if the symbol has a referent.  True except for unresolved
-   //  forward and friend declarations.
-   //
-   bool resolved : 1;
-
-   //  If ACCESSIBILITY is Inherited, the distance (in the class hierarchy)
-   //  from the class that defined the symbol to the class that used it.
-   //  Otherwise, the distance from the scope that defined the symbol to
-   //  the scope that used it.
-   //
-   Distance distance : 8;
-};
-
-//  For initializing SymbolView instances.
-//
-extern const SymbolView NotAccessible;
-extern const SymbolView DeclaredGlobally;
-extern const SymbolView DeclaredLocally;
-
-//------------------------------------------------------------------------------
-//
 //  Where a TypeSpec occurs.
 //
 enum TypeSpecUser

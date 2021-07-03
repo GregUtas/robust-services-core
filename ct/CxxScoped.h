@@ -243,6 +243,11 @@ protected:
    //
    virtual void CheckAccessControl() const;
 private:
+   //  Invoked when the item was successfully accessed according to VIEW.
+   //  Returns true.
+   //
+   bool ItemAccessed(const SymbolView& view) const;
+
    //  Records that the item's template analog, if any, required *at least*
    //  ACCESS to be accessible.
    //

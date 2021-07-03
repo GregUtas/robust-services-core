@@ -2628,7 +2628,7 @@ void ClassInst::Instantiate()
    //
    code_.reset();
    auto begin = tmplt_->CreateCode(this, code_);
-   std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
+   ParserPtr parser(new Parser(EMPTY_STR));
 
    if(!locals.empty())
    {

@@ -647,7 +647,7 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
    //  o the time, for correlation with any function trace (mm::ss.msecs)
    //  o when a thread is scheduled out, how long it had run (in usecs)
    //  o the activity for each thread (running locked, running unlocked,
-   //   or being scheduled out)
+   //    or being scheduled out)
    //
    auto multilocked = false;
 

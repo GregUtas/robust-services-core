@@ -4494,7 +4494,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    //
    auto fullName = ScopedName(true) + ts;
    RemoveRefs(fullName);
-   std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
+   ParserPtr parser(new Parser(EMPTY_STR));
 
    if(!locals.empty())
    {
@@ -4544,7 +4544,7 @@ Function* Function::InstantiateFunction(stringVector& tmpltArgs) const
    auto name = Name();
    TypeNamePtr type(new TypeName(name));
    auto scope = Context::Scope();
-   std::unique_ptr< Parser > parser(new Parser(scope));
+   ParserPtr parser(new Parser(scope));
 
    for(size_t i = 0; i < parms->size(); ++i)
    {
@@ -4929,7 +4929,7 @@ TypeMatch Function::MatchTemplate(const string& thisType,
    TypeSpecPtr thatSpec;
 
    auto scope = Context::Scope();
-   std::unique_ptr< Parser > parser(new Parser(scope));
+   ParserPtr parser(new Parser(scope));
    parser->ParseTypeSpec(thisType, thisSpec);
    parser->ParseTypeSpec(thatNonCVType, thatSpec);
    parser.reset();

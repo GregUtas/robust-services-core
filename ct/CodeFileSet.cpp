@@ -657,7 +657,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    //  declarations in #included files affect visibility, so an #included
    //  file must already have been parsed.
    //
-   std::unique_ptr< Parser > parser(new Parser(opts));
+   ParserPtr parser(new Parser(opts));
    size_t total = 0;
    size_t failed = 0;
 

@@ -128,6 +128,7 @@ typedef std::unique_ptr< MacroName > MacroNamePtr;
 typedef std::unique_ptr< MemberInit > MemberInitPtr;
 typedef std::unique_ptr< Namespace > NamespacePtr;
 typedef std::unique_ptr< ParseFrame > ParseFramePtr;
+typedef std::unique_ptr< Parser > ParserPtr;
 typedef std::unique_ptr< Pragma > PragmaPtr;
 typedef std::unique_ptr< QualName > QualNamePtr;
 typedef std::unique_ptr< SpaceDefn > SpaceDefnPtr;

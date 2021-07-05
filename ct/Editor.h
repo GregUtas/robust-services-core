@@ -168,7 +168,7 @@ private:
    word AdjustPunctuation(const CodeWarning& log);
    word AdjustTags(const CodeWarning& log);
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc);
-   word ChangeAccess(const CxxToken* item, ItemDeclAttrs& attrs);
+   word ChangeAccess(CxxToken* item, ItemDeclAttrs& attrs);
    word ChangeAssignmentToCtorCall(const CodeWarning& log);
    word ChangeClassToNamespace(const CodeWarning& log);
    word ChangeClassToStruct(const CodeWarning& log);
@@ -294,12 +294,12 @@ private:
    //  that contained the declaration.  If it no longer contains any items, it
    //  is erased.
    //
-   word EraseEmptyNamespace(const SpaceDefn* ns);
+   word EraseEmptyNamespace(SpaceDefn* ns);
 
    //  Inserts a FORWARD declaration at POS, which is a namespace definition
-   //  that should include FORWARD.
+   //  for NSPACE that should include FORWARD.
    //
-   word InsertForward(size_t pos, const string& forward);
+   word InsertForward(size_t pos, const string& nspace, const string& forward);
 
    //  Inserts a FORWARD declaration at POS.  It is the first declaration in
    //  NSPACE, so it must be enclosed in a new namespace scope.
@@ -330,7 +330,7 @@ private:
 
    //  Fixes LOG, which is associated with DATA.
    //
-   word FixData(const Data* data, const CodeWarning& log);
+   word FixData(Data* data, const CodeWarning& log);
 
    //  Fixes DATA or ITEM, which references DATA.
    //
@@ -344,17 +344,16 @@ private:
 
    //  Fixes LOG, which involves modifying ITEM.
    //
-   word FixReference(const CxxNamed* item, const CodeWarning& log);
+   word FixReference(CxxNamed* item, const CodeWarning& log);
 
    //  ITEM has a log that requires adding a special member function.  Looks
    //  for other logs that also require this and fixes them together.
    //
-   word InsertSpecialFunctions(CliThread& cli, const CxxToken* item);
+   word InsertSpecialFunctions(CliThread& cli, CxxToken* item);
 
    //  Adds the special member function specified by ROLE to CLS.
    //
-   word InsertSpecialFuncDecl
-      (CliThread& cli, const Class* cls, FunctionRole role);
+   word InsertSpecialFuncDecl(CliThread& cli, Class* cls, FunctionRole role);
 
    //  Inserts a shell for implementing a special member function in CLS,
    //  based on ATTRS, when it cannot be defaulted or deleted.
@@ -376,7 +375,7 @@ private:
 
    //  Fixes LOG, which is associated with FUNC.
    //
-   word FixFunction(const Function* func, const CodeWarning& log);
+   word FixFunction(Function* func, const CodeWarning& log);
 
    //  Fixes LOG, which also involves modifying invokers and overrides
    //  of a function.
@@ -397,15 +396,15 @@ private:
    word EraseArgument(const Function* func, word offset);
    word EraseDefaultValue(const Function* func, word offset);
    word EraseParameter(const Function* func, word offset);
-   word EraseNoexceptTag(const Function* func);
+   word EraseNoexceptTag(Function* func);
    word InsertArgument(const Function* func, word offset);
    word SplitVirtualFunction(const Function* func);
    word TagAsConstArgument(const Function* func, word offset);
-   word TagAsConstFunction(const Function* func);
+   word TagAsConstFunction(Function* func);
    word TagAsConstReference(const Function* func, word offset);
-   word TagAsDefaulted(const Function* func);
-   word TagAsNoexcept(const Function* func);
-   word TagAsStaticFunction(const Function* func);
+   word TagAsDefaulted(Function* func);
+   word TagAsNoexcept(Function* func);
+   word TagAsStaticFunction(Function* func);
 
    //  Returns the location of the right parenthesis after a function's
    //  argument list.  Returns string::npos on failure.
@@ -523,9 +522,9 @@ private:
    //
    string DebugFtCode(const string& fname) const;
 
-   //  Inserts the declaration for a Patch override based on ATTRS.
+   //  Inserts the declaration for a Patch override in CLS, based on ATTRS.
    //
-   void InsertPatchDecl(const ItemDeclAttrs& attrs);
+   void InsertPatchDecl(Class* cls, const ItemDeclAttrs& attrs);
 
    //  Inserts the definition for a Patch override in CLS based on ATTRS.
    //
@@ -549,11 +548,11 @@ private:
 
    //  Deletes ITEM after erasing its code.
    //
-   word EraseItem(const CxxToken* item);
+   word EraseItem(CxxToken* item);
 
    //  Deletes the assignment statement for ITEM after erasing its code.
    //
-   word EraseAssignment(const CxxToken* item);
+   word EraseAssignment(CxxToken* item);
 
    //  Erases POS's line and returns the start of the line that followed it.
    //
@@ -573,6 +572,16 @@ private:
    //  items have been changed or added.  Returns true on success.
    //
    bool ReplaceImpl(Function* func) const;
+
+   //  Parses the item inserted at file scope at or after POS in SPACE.
+   //  If SPACE is nullptr, the item is added to the global namespace.
+   //
+   bool ParseFileItem(size_t pos, Namespace* ns) const;
+
+   //  Parses the item inserted in the definition of CLS at or after POS.
+   //  ACCESS is the item's access control.
+   //
+   bool ParseClassItem(size_t pos, Class* cls, Cxx::Access access) const;
 
    //  Adds the editor to Editors_ and returns 0.
    //

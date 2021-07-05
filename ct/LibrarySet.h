@@ -41,8 +41,6 @@ namespace NodeBase
    class CliThread;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -253,7 +251,7 @@ private:
 
    //  Generates a log and returns nullptr.
    //
-   LibrarySet* OpError(fixed_string op) const;
+   LibrarySet* OpError(NodeBase::fixed_string op) const;
 
    //  The set's name.
    //

@@ -4370,6 +4370,52 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
 
 //------------------------------------------------------------------------------
 
+bool Parser::ParseClassItem(const std::string& code,
+   size_t pos, Class* cls, Cxx::Access access)
+{
+   Debug::ft("Parser.ParseClassItem");
+
+   //  This is similar to GetMemberDecls except that it sets up the compile
+   //  context and only parses a single item.
+   //
+   auto file = cls->GetFile();
+   Context::SetFile(file);
+   Enter(IsFile, file->Name(), nullptr, code, false, file);
+   Context::PushScope(cls, false);
+   cls->SetCurrAccess(access);
+   lexer_.Reposition(pos);
+
+   string str;
+   auto kwd = NextKeyword(str);
+   if(str.empty()) return false;
+   if(CxxWord::Attrs[kwd].advance) lexer_.Advance(str.size());
+   return ParseInClass(kwd, cls);
+}
+
+//------------------------------------------------------------------------------
+
+bool Parser::ParseFileItem(const std::string& code,
+   size_t pos, CodeFile* file, Namespace* space)
+{
+   Debug::ft("Parser.ParseFileItem");
+
+   //  This is similar to GetFileDecls except that it sets up the compile
+   //  context and only parses a single item.
+   //
+   Context::SetFile(file);
+   Enter(IsFile, file->Name(), nullptr, code, false, file);
+   Context::PushScope(space, false);
+   lexer_.Reposition(pos);
+
+   string str;
+   auto kwd = NextKeyword(str);
+   if(str.empty()) return false;
+   if(CxxWord::Attrs[kwd].advance) lexer_.Advance(str.size());
+   return ParseInFile(kwd, space);
+}
+
+//------------------------------------------------------------------------------
+
 bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
    CxxArea* area, const TypeName* type, const NodeBase::stringPtr& code)
 {

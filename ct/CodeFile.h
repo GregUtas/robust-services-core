@@ -33,8 +33,6 @@
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
-using std::string;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -304,7 +302,7 @@ public:
    //  Has the same interface as CxxToken::UpdatePos.
    //
    void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from = string::npos);
+      size_t begin, size_t count, size_t from = std::string::npos);
 
    //  Returns the item, if any, located at POS in the file.
    //

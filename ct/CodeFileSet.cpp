@@ -386,6 +386,8 @@ word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 {
    Debug::ft("CodeFileSet.Fix");
 
+   static bool invoked = false;
+
    auto& fileSet = Items();
 
    if(fileSet.empty())
@@ -396,11 +398,15 @@ word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 
    opts.multiple = (fileSet.size() > 1);
 
-   *cli.obuf << "Checking diffs after modifying code is recommended." << CRLF;
-   *cli.obuf << "The following is also automatic in modified files:" << CRLF;
-   *cli.obuf << "  o Whitespace at the end of a line is deleted." << CRLF;
-   *cli.obuf << "  o A repeated blank line is deleted." << CRLF;
-   *cli.obuf << "  o Spaces replace tabs based on IndentSize()." << CRLF;
+   if(!invoked)
+   {
+      *cli.obuf << "Checking diffs after fixing code is recommended." << CRLF;
+      *cli.obuf << "The following is also automatic in modified files:" << CRLF;
+      *cli.obuf << "  o Whitespace at the end of a line is deleted." << CRLF;
+      *cli.obuf << "  o A repeated blank line is deleted." << CRLF;
+      *cli.obuf << "  o Spaces replace tabs based on IndentSize()." << CRLF;
+      invoked = true;
+   }
 
    //  In order to fix warnings in a file, it must have been checked.
    //

@@ -119,6 +119,19 @@ public:
    //
    bool ReplaceImpl(Function* func, const std::string& code);
 
+   //  Parses the item that begins at or after POS in FILE, at file scope,
+   //  in SPACE.  CODE is the full source code for FILE.
+   //
+   bool ParseFileItem(const std::string& code,
+      size_t pos, CodeFile* file, Namespace* space);
+
+   //  Parses the item that begins at or after POS in CLS's definition.
+   //  ACCESS specifies its access control, and CODE is the full source
+   //  code for the file in which CLS is defined.
+   //
+   bool ParseClassItem(const std::string& code,
+      size_t pos, Class* cls, Cxx::Access access);
+
    //  Returns true if original source code is being parsed.
    //
    bool ParsingSourceCode() const { return (source_ == IsFile); }

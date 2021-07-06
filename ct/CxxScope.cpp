@@ -6103,13 +6103,33 @@ void SpaceData::CheckIfStatic() const
 {
    Debug::ft("SpaceData.CheckIfStatic");
 
-   //  Static data in a header is dubious.  Unless it is tagged extern, it
-   //  defaults to static.  However, constexpr (even though theoretically
-   //  static) is often preferable to the use of extern.
+   //  Data declared at file scope in a header has static linkage (that is,
+   //  will have a separate instance for each user of the header) unless it
+   //  is defined using constexpr or extern.  This is rarely desirable.
    //
-   if(!IsExtern() && !IsConstexpr() && GetFile()->IsHeader())
+   //  Data declared at file scope in a .cpp has external linkage (that is,
+   //  can be made visible by an extern declaration in a header) unless it
+   //  is defined as static.  Therefore, if it is not made visible this way,
+   //  it is probably intended to be static (that is, private to the .cpp).
+   //  This warning is not generated for const data, which cannot be changed.
+   //
+   if(IsConstexpr()) return;
+
+   auto file = GetFile();
+
+   if(file->IsHeader())
    {
-      Log(GlobalStaticData);
+      if(!IsExtern())
+      {
+         Log(GlobalStaticData);
+      }
+   }
+   else
+   {
+      if((GetMate() == nullptr) && !IsConst() && !IsStatic())
+      {
+         Log(DataShouldBeStatic);
+      }
    }
 }
 

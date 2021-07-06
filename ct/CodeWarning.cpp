@@ -793,6 +793,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(OverrideNotSorted,
       WarningAttrs(T,
       "Override not sorted in standard order")));
+   Attrs_.insert(WarningPair(DataShouldBeStatic,
+      WarningAttrs(T,
+      "Data at .cpp file scope is neither static nor extern")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F,
       ERROR_STR)));

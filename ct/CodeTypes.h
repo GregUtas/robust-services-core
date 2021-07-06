@@ -530,6 +530,7 @@ enum Warning
    CtorCouldBeDeleted,       // could be namespace but has non-public members
    NoJumpOrFallthrough,      // no jump or [[fallthrough]] above case or default
    OverrideNotSorted,        // override declaration not in alphabetical order
+   DataShouldBeStatic,       // non-extern data at .cpp file scope is not static
    Warning_N                 // number of warnings
 };
 

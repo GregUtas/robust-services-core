@@ -568,3 +568,8 @@ Override not sorted in standard order
   Overrides must be declared in some order, so the convention in RSC is to
 order them alphabetically within a class, following other functions. This
 makes overrides easy to find, even outside the development environment.
+? W139
+Data at .cpp file scope is neither static nor extern
+  This data item is defined at file scope in a .cpp. It is not static, but
+neither is it made externally visible by an extern declaration in a header
+file. If it is meant to be private to the .cpp, it should be static.

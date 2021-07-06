@@ -336,6 +336,7 @@ private:
    word ChangeDataToFree(const CxxNamed* item, const Data* data);
    word TagAsConstData(const Data* data);
    word TagAsConstPointer(const Data* data);
+   word TagAsStaticData(Data* data);
 
    //  Fixes LOG, which also involves modifying all references to data.
    //

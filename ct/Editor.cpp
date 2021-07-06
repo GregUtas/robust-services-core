@@ -2828,6 +2828,8 @@ word Editor::FixData(Data* data, const CodeWarning& log)
       return TagAsConstPointer(data);
    case DataCouldBeFree:
       return ChangeDataToFree(nullptr, data);
+   case DataShouldBeStatic:
+      return TagAsStaticData(data);
    }
 
    return Report("Internal error: unsupported data warning.");
@@ -3282,6 +3284,8 @@ word Editor::FixWarning(CodeWarning& log)
       return DeleteSpecialFunction(log);
    case OverrideNotSorted:
       return SortOverrides(log);
+   case DataShouldBeStatic:
+      return FixDatas(log);
    }
 
    return Report(NotImplemented);
@@ -5646,6 +5650,22 @@ word Editor::TagAsOverride(const CodeWarning& log)
    Insert(endsig + 1, " override");
    static_cast< Function* >(log.item_)->SetOverride(true);
    return Changed(endsig);
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::TagAsStaticData(Data* data)
+{
+   Debug::ft("Editor.TagAsStaticData");
+
+   //  Insert "static" before the data declaration's type.
+   //
+   auto type = data->GetTypeSpec();
+   auto pos = type->GetPos();
+   if(pos == string::npos) return NotFound("Data type");
+   Insert(pos, "static ");
+   data->SetStatic(true);
+   return Changed(pos);
 }
 
 //------------------------------------------------------------------------------

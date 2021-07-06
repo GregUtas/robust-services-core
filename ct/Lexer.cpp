@@ -2714,6 +2714,15 @@ LineType Lexer::LineToType(size_t n) const
 string Lexer::MarkPos(size_t pos) const
 {
    Debug::ft("Lexer.MarkPos");
+   
+   if(pos == string::npos)
+   {
+      auto first = source_->rfind(CRLF, source_->size() - 2);
+      auto text = source_->substr(first + 1);
+      if(text.back() == CRLF) text.pop_back();
+      text.push_back('$');
+      return text;
+   }
 
    auto first = source_->rfind(CRLF, pos);
    if(first == string::npos)

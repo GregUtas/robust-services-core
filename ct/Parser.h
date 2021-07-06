@@ -119,8 +119,9 @@ public:
    //
    bool ReplaceImpl(Function* func, const std::string& code);
 
-   //  Parses the item that begins at or after POS in FILE, at file scope,
-   //  in SPACE.  CODE is the full source code for FILE.
+   //  Parses the item that begins at or after POS in FILE, at file scope, in
+   //  SPACE.  CODE is the full source code for FILE.  If FILE is nullptr, it
+   //  is treated as a subsequent parse in the same file and namespace.
    //
    bool ParseFileItem(const std::string& code,
       size_t pos, CodeFile* file, Namespace* space);

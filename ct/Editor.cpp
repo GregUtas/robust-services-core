@@ -259,7 +259,8 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
 
    //  Items have to be declared in some order, so this tries to organize
    //  them in a consistent way. The first thing that determines order is
-   //  the item's access control.
+   //  the item's access control (except that a friend declaration always
+   //  appears first).
    //
    size_t order = 0;
 
@@ -3915,7 +3916,7 @@ word Editor::InsertInclude(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertIncludeGuard(const CodeWarning& log)  //u
+word Editor::InsertIncludeGuard(const CodeWarning& log)
 {
    Debug::ft("Editor.InsertIncludeGuard");
 
@@ -3927,12 +3928,22 @@ word Editor::InsertIncludeGuard(const CodeWarning& log)  //u
    if(pos == string::npos) pos = PrologEnd();
    string guardName = log.File()->MakeGuardName();
    string code = "#define " + guardName;
-   pos = InsertLine(pos, EMPTY_STR);
-   pos = InsertLine(pos, code);
-   code = "#ifndef " + guardName;
+   InsertLine(pos, EMPTY_STR);
    InsertLine(pos, code);
+   code = "#ifndef " + guardName;
+   auto ifnPos = InsertLine(pos, code);
+   auto defPos = source_.find(HASH_DEFINE_STR, ifnPos);
    code = string(HASH_ENDIF_STR) + CRLF_STR;
-   Insert(source_.size(), code);
+   auto endPos = Insert(source_.size(), code);
+
+   //  The same Parser instance is used because when parsing an #endif, the
+   //  parser must have noted an unresolved #if/#ifdef/#ifndef.
+   //
+   auto ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+   ParserPtr parser(new Parser(EMPTY_STR));
+   parser->ParseFileItem(source_, ifnPos, file_, ns);
+   parser->ParseFileItem(source_, defPos, nullptr, ns);
+   parser->ParseFileItem(source_, endPos, nullptr, ns);
    return Changed(pos);
 }
 

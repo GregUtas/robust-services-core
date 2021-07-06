@@ -360,7 +360,7 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "blank line",
    "blank comment",
    "comment at the top of a file (e.g. for the file's name or license info)",
-   "comment followed by repeated characters to draw a rule (e.g. //---- ...)",
+   "comment followed by a repeated character to draw a rule (e.g. //---- ...)",
    "comment not in one of the categories above (e.g. //  <text>)",
    "C-style comment",
    "bare left brace",

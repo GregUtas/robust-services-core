@@ -4402,9 +4402,13 @@ bool Parser::ParseFileItem(const std::string& code,
    //  This is similar to GetFileDecls except that it sets up the compile
    //  context and only parses a single item.
    //
-   Context::SetFile(file);
-   Enter(IsFile, file->Name(), nullptr, code, false, file);
-   Context::PushScope(space, false);
+   if(file != nullptr)
+   {
+      Context::SetFile(file);
+      Enter(IsFile, file->Name(), nullptr, code, false, file);
+      Context::PushScope(space, false);
+   }
+
    lexer_.Reposition(pos);
 
    string str;

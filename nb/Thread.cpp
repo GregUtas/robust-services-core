@@ -99,7 +99,7 @@ namespace NodeBase
 //  invoked to create SysTickTimer invoke Debug::ft, which requires FtLocks_
 //  to have been constructed.
 //
-std::map< SysThreadId, std::atomic_flag > FtLocks_;
+static std::map< SysThreadId, std::atomic_flag > FtLocks_;
 
 //  Returns the Debug::ft lock for the running thread.
 //
@@ -421,7 +421,7 @@ private:
 //
 //  Critical section lock for the array of context switches.
 //
-SysMutex ContextSwitchesLock_("ContextSwitchesLock");
+static SysMutex ContextSwitchesLock_("ContextSwitchesLock");
 
 //------------------------------------------------------------------------------
 
@@ -1026,31 +1026,31 @@ const SysThread::Priority FactionMap[Faction_N] =
 //  The thread that is running or which has been scheduled to run.
 //  Excludes RootThread and InitThread.
 //
-std::atomic< Thread* > ActiveThread_ = nullptr;
+static std::atomic< Thread* > ActiveThread_ = nullptr;
 
 //  The factions that may currently be scheduled.
 //
-FactionFlags FactionsEnabled_ = FactionFlags();
+static FactionFlags FactionsEnabled_ = FactionFlags();
 
 //  Causes a stack check each time it counts down to one.
 //
-size_t StackCheckCounter_ = 1;
+static size_t StackCheckCounter_ = 1;
 
 //  The time when the previous short interval for thread statistics began.
 //
-TimePoint PrevIntervalStart_ = TimePoint();
+static TimePoint PrevIntervalStart_ = TimePoint();
 
 //  The time when the current short interval for thread statistics began.
 //
-TimePoint CurrIntervalStart_ = TimePoint();
+static TimePoint CurrIntervalStart_ = TimePoint();
 
 //  The amount of idle time during the most recent short interval.
 //
-Duration TimeIdle_ = Duration();
+static Duration TimeIdle_ = Duration();
 
 //  The time spent in threads during the most recent short interval.
 //
-Duration TimeUsed_ = Duration();
+static Duration TimeUsed_ = Duration();
 
 //------------------------------------------------------------------------------
 

@@ -117,11 +117,11 @@ const FactionFlags& ShutdownFactions()
 //
 //  The minimum level specified when a restart was initiated.
 //
-RestartLevel level_ = RestartNone;
+static RestartLevel level_ = RestartNone;
 
 //  A stream for recording the progress of system initialization.
 //
-ostringstreamPtr stream_ = nullptr;
+static ostringstreamPtr stream_ = nullptr;
 
 //------------------------------------------------------------------------------
 //

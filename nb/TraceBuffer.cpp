@@ -161,7 +161,7 @@ TraceBuffer::~TraceBuffer()
 //  OverflowSlots_ provides a per-thread location for constructing function
 //  trace records when the buffer is full.
 //
-std::map< SysThreadId, FunctionTrace > OverflowSlots_;
+static std::map< SysThreadId, FunctionTrace > OverflowSlots_;
 
 void* TraceBuffer::AddFunction()
 {

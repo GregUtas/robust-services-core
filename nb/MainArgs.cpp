@@ -33,7 +33,7 @@ namespace NodeBase
 {
 //  For holding the arguments to main() until immutable memory is available.
 //
-std::vector< string > MainParms;
+static std::vector< string > MainParms;
 
 //------------------------------------------------------------------------------
 

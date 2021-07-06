@@ -69,16 +69,16 @@ namespace CodeTools
 //  declaration and definition).  After all changes needed for a fix have been
 //  made, all modified files can be committed.
 //
-std::set< Editor* > Editors_ = std::set< Editor* >();
+static std::set< Editor* > Editors_ = std::set< Editor* >();
 
 //  The number of files committed so far.
 //
-size_t Commits_ = 0;
+static size_t Commits_ = 0;
 
 //  The CLI thread on which Fix was invoked.  This allows an Editor function
 //  to display results with needing CliThread& as one of its parameters.
 //
-CliThread* Cli_ = nullptr;
+static CliThread* Cli_ = nullptr;
 
 //------------------------------------------------------------------------------
 //
@@ -98,7 +98,7 @@ const word EditCompleted = 1;  // warning closed; don't write info to CLI
 //  o EditContinue: an empty string, because there is nothing to report
 //  o EditCompleted: an empty string, because all results have been reported
 //
-string Expl_;
+static string Expl_;
 
 //  Sets Expl_ to EXPL, adding a CRLF if EXPL doesn't have one.
 //

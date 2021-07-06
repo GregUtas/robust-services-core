@@ -45,11 +45,11 @@ namespace NodeBase
 {
 //  A handle for reading the configuration file.
 //
-istreamPtr Stream_ = nullptr;
+static istreamPtr Stream_ = nullptr;
 
 //  The current line number in the configuration file.
 //
-size_t CurrLine_ = 0;
+static size_t CurrLine_ = 0;
 
 //> Used to derive the name of the file that contains this node's configuration
 //  parameters.  It is created by modifying the first argument to main(), which

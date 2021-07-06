@@ -3547,7 +3547,7 @@ private:
    signal_t signal_;
 };
 
-SysMutex RecoveryMutex_("RecoveryMutex");
+static SysMutex RecoveryMutex_("RecoveryMutex");
 
 //------------------------------------------------------------------------------
 

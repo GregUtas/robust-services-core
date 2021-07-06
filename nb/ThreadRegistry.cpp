@@ -122,13 +122,13 @@ void ThreadStatsGroup::DisplayStats
 //
 //  Critical section lock for the thread registry.
 //
-SysMutex ThreadsLock_("ThreadsLock");
+static SysMutex ThreadsLock_("ThreadsLock");
 
 //  The thread at which to start searching for the thread to be
 //  scheduled in.  Scheduling is currently round-robin but will
 //  eventually be changed to support proportional scheduling.
 //
-SysThreadId NextSysThreadId_ = 0;
+static SysThreadId NextSysThreadId_ = 0;
 
 //------------------------------------------------------------------------------
 

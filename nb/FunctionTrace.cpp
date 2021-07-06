@@ -182,7 +182,7 @@ struct PerThreadInfo
 //  The constructor chains that have yet to be finalized.  The map's key is
 //  the current function's native thread identifier.
 //
-std::map< SysThreadId, PerThreadInfo > ThreadInfo;
+static std::map< SysThreadId, PerThreadInfo > ThreadInfo;
 
 //==============================================================================
 

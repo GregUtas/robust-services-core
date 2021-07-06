@@ -44,7 +44,7 @@ namespace NodeBase
 {
 //  Critical section lock for the log buffer.
 //
-SysMutex LogBufferLock_("LogBufferLock");
+static SysMutex LogBufferLock_("LogBufferLock");
 
 //------------------------------------------------------------------------------
 

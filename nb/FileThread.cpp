@@ -44,11 +44,11 @@ namespace NodeBase
 {
 //  For serializing access to our message queue.
 //
-SysMutex FileThreadMsgQLock_("FileThreadMsgQLock");
+static SysMutex FileThreadMsgQLock_("FileThreadMsgQLock");
 
 //  For preventing interleaved output in the console transcript file.
 //
-SysMutex ConsoleFileLock_("ConsoleFileLock");
+static SysMutex ConsoleFileLock_("ConsoleFileLock");
 
 //------------------------------------------------------------------------------
 //

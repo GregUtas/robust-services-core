@@ -136,30 +136,29 @@ private:
    //
    WarningStatus FixStatus(const CodeWarning& log) const;
 
-   //  Displays the code associated with LOG on the CLI.  FILE is set if the
-   //  name of the file in which LOG occurs should be displayed.  Returns false
-   //  if the code associated with LOG could not be found.
+   //  Displays the code associated with LOG.  FILE is set if the name of
+   //  the file in which LOG occurs should be displayed.  Returns false if
+   //  the code associated with LOG could not be found.
    //
-   bool DisplayLog
-      (const CliThread& cli, const CodeWarning& log, bool file) const;
+   bool DisplayLog(const CodeWarning& log, bool file) const;
 
    //  Fixes LOG.  Returns 0 on success.  A return value of -1 means that the
    //  file should be skipped; other values denote more serious errors.
    //
-   word FixWarning(CliThread& cli, CodeWarning& log);
+   word FixWarning(CodeWarning& log);
 
    //  Invokes FixWarning if LOG's status is NotFixed and updates its status
    //  to Pending on success.
    //
-   word FixLog(CliThread& cli, CodeWarning& log);
+   word FixLog(CodeWarning& log);
 
    //  Invoked when fixing LOG returned RC.
    //
-   static void ReportFix(CliThread& cli, CodeWarning* log, word rc);
+   static void ReportFix(CodeWarning* log, word rc);
 
    //  Invoked when LOG also changed another file, whose edit returned RC.
    //
-   void ReportFixInFile(CliThread& cli, CodeWarning* log, word rc) const;
+   void ReportFixInFile(CodeWarning* log, word rc) const;
 
    //  Most of the editing functions attempt to fix the warning reported in LOG.
    //
@@ -192,22 +191,22 @@ private:
    word InsertBlankLine(const CodeWarning& log);
    word InsertCopyCtorCall(const CodeWarning& log);
    word InsertDataInit(const CodeWarning& log);
-   word InsertDebugFtCall(CliThread& cli, const CodeWarning& log);
-   word InsertDisplay(CliThread& cli, const CodeWarning& log);
+   word InsertDebugFtCall(const CodeWarning& log);
+   word InsertDisplay(const CodeWarning& log);
    word InsertEnumName(const CodeWarning& log);
    word InsertForward(const CodeWarning& log);
    word InsertInclude(const CodeWarning& log);
    word InsertIncludeGuard(const CodeWarning& log);
    word InsertLineBreak(const CodeWarning& log);
    word InsertMemberInit(const CodeWarning& log);
-   word InsertPatch(CliThread& cli, const CodeWarning& log);
+   word InsertPatch(const CodeWarning& log);
    word InsertPODCtor(const CodeWarning& log);
    word InsertPureVirtual(const CodeWarning& log);
    word InsertUsing(const CodeWarning& log);
    word MoveDefine(const CodeWarning& log);
    word MoveMemberInit(const CodeWarning& log);
-   word RenameArgument(CliThread& cli, const CodeWarning& log);
-   word RenameDebugFtArgument(CliThread& cli, const CodeWarning& log);
+   word RenameArgument(const CodeWarning& log);
+   word RenameDebugFtArgument(const CodeWarning& log);
    word RenameIncludeGuard(const CodeWarning& log);
    word ReplaceHeading(const CodeWarning& log);
    word ReplaceName(const CodeWarning& log);
@@ -326,7 +325,7 @@ private:
 
    //  Fixes LOG, which also involves modifying a data definition.
    //
-   static word FixDatas(CliThread& cli, CodeWarning& log);
+   static word FixDatas(CodeWarning& log);
 
    //  Fixes LOG, which is associated with DATA.
    //
@@ -340,7 +339,7 @@ private:
 
    //  Fixes LOG, which also involves modifying all references to data.
    //
-   static word FixReferences(CliThread& cli, CodeWarning& log);
+   static word FixReferences(CodeWarning& log);
 
    //  Fixes LOG, which involves modifying ITEM.
    //
@@ -349,11 +348,11 @@ private:
    //  ITEM has a log that requires adding a special member function.  Looks
    //  for other logs that also require this and fixes them together.
    //
-   word InsertSpecialFunctions(CliThread& cli, CxxToken* item);
+   word InsertSpecialFunctions(CxxToken* item);
 
    //  Adds the special member function specified by ROLE to CLS.
    //
-   word InsertSpecialFuncDecl(CliThread& cli, Class* cls, FunctionRole role);
+   word InsertSpecialFuncDecl(Class* cls, FunctionRole role);
 
    //  Inserts a shell for implementing a special member function in CLS,
    //  based on ATTRS, when it cannot be defaulted or deleted.
@@ -363,15 +362,15 @@ private:
    //  Fixes LOG, which involves changing or inserting a special member
    //  function.
    //
-   word ChangeSpecialFunction(CliThread& cli, const CodeWarning& log);
+   word ChangeSpecialFunction(const CodeWarning& log);
 
    //  Fixes LOG, which involves deletig a special member function.
    //
-   word DeleteSpecialFunction(CliThread& cli, const CodeWarning& log);
+   word DeleteSpecialFunction(const CodeWarning& log);
 
    //  Fixes LOG, which also involves modifying overrides of a function.
    //
-   static word FixFunctions(CliThread& cli, CodeWarning& log);
+   static word FixFunctions(CodeWarning& log);
 
    //  Fixes LOG, which is associated with FUNC.
    //
@@ -380,7 +379,7 @@ private:
    //  Fixes LOG, which also involves modifying invokers and overrides
    //  of a function.
    //
-   word FixInvokers(CliThread& cli, const CodeWarning& log);
+   word FixInvokers(const CodeWarning& log);
 
    //  Fixes LOG, which is associated with invoking FUNC.
    //
@@ -433,8 +432,7 @@ private:
    //  function specified in ATTRS should be inserted and whether that
    //  function should be offset with a blank line and comment.
    //
-   word FindSpecialFuncDeclLoc
-      (CliThread& cli, const Class* cls, ItemDeclAttrs& attrs) const;
+   word FindSpecialFuncDeclLoc(const Class* cls, ItemDeclAttrs& attrs) const;
 
    //  Updates ATTRS with the location where an item's declaration should be
    //  added in CLS, after PREV and/or before NEXT, and whether it should be
@@ -515,7 +513,7 @@ private:
 
    //  Moves FUNC's definition so it appears in standard order among SORTED.
    //
-   void MoveFuncDefn(FunctionVector& sorted, const Function* func);
+   void MoveFuncDefn(const FunctionVector& sorted, const Function* func);
 
    //  Returns the code for a Debug::Ft invocation with an inline string
    //  literal (FNAME).

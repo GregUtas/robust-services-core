@@ -75,6 +75,11 @@ std::set< Editor* > Editors_ = std::set< Editor* >();
 //
 size_t Commits_ = 0;
 
+//  The CLI thread on which Fix was invoked.  This allows an Editor function
+//  to display results with needing CliThread& as one of its parameters.
+//
+CliThread* Cli_ = nullptr;
+
 //------------------------------------------------------------------------------
 //
 //  Return codes from editor functions.
@@ -413,8 +418,7 @@ bool AreInSameStatement(const CxxToken* item1, const CxxToken* item2)
 //
 //  Asks the user to choose declName or defnName as an argument's name.
 //
-string ChooseArgumentName
-   (CliThread& cli, const string& declName, const string& defnName)
+string ChooseArgumentName(const string& declName, const string& defnName)
 {
    Debug::ft("CodeTools.ChooseArgumentName");
 
@@ -422,7 +426,7 @@ string ChooseArgumentName
    stream << spaces(2) << ArgPrompt << CRLF;
    stream << spaces(4) << "1=" << QUOTE << declName << QUOTE << SPACE;
    stream << spaces(4) << "2=" << QUOTE << defnName << QUOTE << ": ";
-   auto choice = cli.IntPrompt(stream.str(), 1, 2);
+   auto choice = Cli_->IntPrompt(stream.str(), 1, 2);
    return (choice == 1 ? declName : defnName);
 }
 
@@ -431,13 +435,13 @@ string ChooseArgumentName
 //  Asks the user to determine the attributes for a destructor that is
 //  currently non-virtual.
 //
-word ChooseDtorAttributes(CliThread& cli, ItemDeclAttrs& attrs)
+word ChooseDtorAttributes(ItemDeclAttrs& attrs)
 {
    Debug::ft("CodeTools.ChooseDtorAttributes");
 
    std::ostringstream stream;
    stream << spaces(2) << AccessPrompt;
-   auto response = cli.IntPrompt(stream.str(), 0, 3);
+   auto response = Cli_->IntPrompt(stream.str(), 0, 3);
 
    auto access = Cxx::Access_N;
    auto virt = false;
@@ -459,7 +463,7 @@ word ChooseDtorAttributes(CliThread& cli, ItemDeclAttrs& attrs)
 
    stream.str(EMPTY_STR);
    stream << spaces(2) << VirtualPrompt;
-   response = cli.IntPrompt(stream.str(), 0, 2);
+   response = Cli_->IntPrompt(stream.str(), 0, 2);
 
    switch(response)
    {
@@ -595,7 +599,7 @@ void DebugFtNames(const Function* func, string& flit, string& fvar)
 //  is not unique and the user did not provide a satisfactory suffix, else
 //  returns true after enclosing FNAME in quotes.
 //
-bool EnsureUniqueDebugFtName(CliThread& cli, const string& flit, string& fname)
+bool EnsureUniqueDebugFtName(const string& flit, string& fname)
 {
    Debug::ft("CodeTools.EnsureUniqueDebugFtName");
 
@@ -606,7 +610,7 @@ bool EnsureUniqueDebugFtName(CliThread& cli, const string& flit, string& fname)
    {
       std::ostringstream stream;
       stream << spaces(2) << fname << " is already in use. " << SuffixPrompt;
-      auto suffix = cli.StrPrompt(stream.str());
+      auto suffix = Cli_->StrPrompt(stream.str());
       if(suffix.empty()) return false;
       fname = flit + '(' + suffix + ')';
    }
@@ -622,7 +626,7 @@ bool EnsureUniqueDebugFtName(CliThread& cli, const string& flit, string& fname)
 //  the its functions are implemented in the same file, returns that file, else
 //  asks the user to specify the file.
 //
-CodeFile* FindFuncDefnFile(CliThread& cli, const Class* cls, const string& name)
+CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
 {
    Debug::ft("CodeTools.FindFuncDefnFile");
 
@@ -643,13 +647,13 @@ CodeFile* FindFuncDefnFile(CliThread& cli, const Class* cls, const string& name)
       prompt << spaces(2) << FilePrompt << CRLF;
       prompt << spaces(4) << cls->Name() << SCOPE_STR << name;
       prompt << " ('s' to skip this item): ";
-      auto fileName = cli.StrPrompt(prompt.str());
+      auto fileName = Cli_->StrPrompt(prompt.str());
       if(fileName == "s") return nullptr;
 
       file = Singleton< Library >::Instance()->FindFile(fileName);
       if(file == nullptr)
       {
-         cli.Inform("  That file is not in the code library.");
+         Cli_->Inform("  That file is not in the code library.");
       }
    }
 
@@ -1385,7 +1389,7 @@ word Editor::ChangeOperator(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeSpecialFunction(CliThread& cli, const CodeWarning& log)
+word Editor::ChangeSpecialFunction(const CodeWarning& log)
 {
    Debug::ft("Editor.ChangeSpecialFunction");
 
@@ -1393,7 +1397,7 @@ word Editor::ChangeSpecialFunction(CliThread& cli, const CodeWarning& log)
    //
    if(log.item_->Type() == Cxx::Class)
    {
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    }
 
    //  The function already exists, so its access control needs to change.
@@ -1411,7 +1415,7 @@ word Editor::ChangeSpecialFunction(CliThread& cli, const CodeWarning& log)
       break;
 
    case NonVirtualDestructor:
-      switch(ChooseDtorAttributes(cli, attrs))
+      switch(ChooseDtorAttributes(attrs))
       {
       case EditCompleted:
          return Report("Destructor remains unchanged.", EditCompleted);
@@ -1611,7 +1615,7 @@ void Editor::Commit(CliThread& cli)
       while(true)
       {
          auto rc = (*editor)->Format(expl);
-         *cli.obuf << spaces(2) << expl;
+         *Cli_->obuf << spaces(2) << expl;
          expl.clear();
 
          if(rc == EditCompleted)
@@ -1620,7 +1624,7 @@ void Editor::Commit(CliThread& cli)
             break;
          }
 
-         if(!cli.BoolPrompt(CommitFailedPrompt)) break;
+         if(!Cli_->BoolPrompt(CommitFailedPrompt)) break;
       }
 
       Editors_.erase(editor);
@@ -1721,7 +1725,7 @@ string Editor::DebugFtCode(const string& fname) const
 
 //------------------------------------------------------------------------------
 
-word Editor::DeleteSpecialFunction(CliThread& cli, const CodeWarning& log)
+word Editor::DeleteSpecialFunction(const CodeWarning& log)
 {
    Debug::ft("Editor.DeleteSpecialFunction");
 
@@ -1729,7 +1733,7 @@ word Editor::DeleteSpecialFunction(CliThread& cli, const CodeWarning& log)
    //
    if(log.item_->Type() == Cxx::Class)
    {
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    }
 
    switch(log.warning_)
@@ -1790,44 +1794,43 @@ void Editor::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-bool Editor::DisplayLog
-   (const CliThread& cli, const CodeWarning& log, bool file) const
+bool Editor::DisplayLog(const CodeWarning& log, bool file) const
 {
    Debug::ft("Editor.DisplayLog");
 
    if(file)
    {
-      *cli.obuf << log.File()->Name() << ':' << CRLF;
+      *Cli_->obuf << log.File()->Name() << ':' << CRLF;
    }
 
    //  Display LOG's details.
    //
-   *cli.obuf << "  Line " << log.Line() + 1;
-   if(log.offset_ > 0) *cli.obuf << '/' << log.offset_;
-   *cli.obuf << ": " << Warning(log.warning_);
-   if(log.HasInfoToDisplay()) *cli.obuf << ": " << log.info_;
-   *cli.obuf << CRLF;
+   *Cli_->obuf << "  Line " << log.Line() + 1;
+   if(log.offset_ > 0) *Cli_->obuf << '/' << log.offset_;
+   *Cli_->obuf << ": " << Warning(log.warning_);
+   if(log.HasInfoToDisplay()) *Cli_->obuf << ": " << log.info_;
+   *Cli_->obuf << CRLF;
 
    if(log.HasCodeToDisplay())
    {
       //  Display the current version of the code associated with LOG.
       //
-      *cli.obuf << spaces(2);
+      *Cli_->obuf << spaces(2);
       auto code = GetCode(log.Pos());
 
       if(code.empty())
       {
-         *cli.obuf << "Code not found." << CRLF;
+         *Cli_->obuf << "Code not found." << CRLF;
          return false;
       }
 
       if(code.find_first_not_of(WhitespaceChars) == string::npos)
       {
-         *cli.obuf << "[line contains only whitespace]" << CRLF;
+         *Cli_->obuf << "[line contains only whitespace]" << CRLF;
          return true;
       }
 
-      *cli.obuf << code;
+      *Cli_->obuf << code;
    }
 
    return true;
@@ -2549,7 +2552,7 @@ size_t Editor::FindSigEnd(const Function* func)
 //------------------------------------------------------------------------------
 
 word Editor::FindSpecialFuncDeclLoc
-   (CliThread& cli, const Class* cls, ItemDeclAttrs& attrs) const
+   (const Class* cls, ItemDeclAttrs& attrs) const
 {
    Debug::ft("Editor.FindSpecialFuncDeclLoc");
 
@@ -2606,7 +2609,7 @@ word Editor::FindSpecialFuncDeclLoc
    {
       std::ostringstream stream;
       stream << spaces(2) << "Define the " << attrs.role_ << ": " << DefnPrompt;
-      auto response = cli.IntPrompt(stream.str(), 0, 2);
+      auto response = Cli_->IntPrompt(stream.str(), 0, 2);
       if(response == 0) return Report(FixSkipped);
       attrs.deleted_ = (response == 2);
    }
@@ -2623,7 +2626,7 @@ word Editor::FindSpecialFuncDeclLoc
          stream << "The " << prototype->FuncRole();
          stream << " is not trivial." << CRLF;
          stream << spaces(2) << ShellPrompt;
-         attrs.shell_ = cli.BoolPrompt(stream.str());
+         attrs.shell_ = Cli_->BoolPrompt(stream.str());
       }
    }
 
@@ -2654,6 +2657,8 @@ CxxNamedSet Editor::FindUsingReferents(CxxToken* item) const
 word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 {
    Debug::ft("Editor.Fix");
+
+   Cli_ = &cli;
 
    //  Run through all the warnings.
    //
@@ -2707,7 +2712,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
       //  This item is eligible for fixing.  Display it.
       //
-      if(DisplayLog(cli, **item, first))
+      if(DisplayLog(**item, first))
       {
          first = false;
 
@@ -2724,7 +2729,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
          {
             std::ostringstream stream;
             stream << spaces(2) << FixPrompt;
-            reply = cli.CharPrompt(stream.str(), YNSQChars, YNSQHelp);
+            reply = Cli_->CharPrompt(stream.str(), YNSQChars, YNSQHelp);
          }
 
          switch(reply)
@@ -2735,15 +2740,15 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
             if(!expl.empty())
             {
-               *cli.obuf << spaces(2) << expl << CRLF;
+               *Cli_->obuf << spaces(2) << expl << CRLF;
                expl.clear();
             }
 
             for(auto log = logs.begin(); log != logs.end(); ++log)
             {
                auto& editor = (*log)->File()->GetEditor();
-               rc = editor.FixLog(cli, **log);
-               ReportFix(cli, *log, rc);
+               rc = editor.FixLog(**log);
+               ReportFix(*log, rc);
             }
 
             break;
@@ -2762,7 +2767,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
          }
       }
 
-      cli.Flush();
+      Cli_->Flush();
       if(!opts.prompt) ThisThread::Pause(Duration(20, mSECS));
       if(exit || (rc < EditFailed)) break;
    }
@@ -2770,20 +2775,20 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
    if(found)
    {
       if(exit || (rc < EditFailed))
-         *cli.obuf << "Remaining warnings skipped." << CRLF;
+         *Cli_->obuf << "Remaining warnings skipped." << CRLF;
       else
-         *cli.obuf << "End of warnings." << CRLF;
+         *Cli_->obuf << "End of warnings." << CRLF;
    }
    else if(fixed)
    {
-      *cli.obuf << "Selected warning(s) in " << file_->Name();
-      *cli.obuf << " previously fixed." << CRLF;
+      *Cli_->obuf << "Selected warning(s) in " << file_->Name();
+      *Cli_->obuf << " previously fixed." << CRLF;
    }
    else
    {
       if(!opts.multiple)
       {
-         *cli.obuf << "No warnings that can be fixed were found." << CRLF;
+         *Cli_->obuf << "No warnings that can be fixed were found." << CRLF;
       }
    }
 
@@ -2830,7 +2835,7 @@ word Editor::FixData(Data* data, const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::FixDatas(CliThread& cli, CodeWarning& log)
+word Editor::FixDatas(CodeWarning& log)
 {
    Debug::ft("Editor.FixDatas");
 
@@ -2849,7 +2854,7 @@ word Editor::FixDatas(CliThread& cli, CodeWarning& log)
    {
       auto& editor = (*d)->GetFile()->GetEditor();
       auto rc = editor.FixData(*d, log);
-      editor.ReportFixInFile(cli, &log, rc);
+      editor.ReportFixInFile(&log, rc);
    }
 
    return EditCompleted;
@@ -2896,7 +2901,7 @@ word Editor::FixFunction(Function* func, const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::FixFunctions(CliThread& cli, CodeWarning& log)
+word Editor::FixFunctions(CodeWarning& log)
 {
    Debug::ft("Editor.FixFunctions");
 
@@ -2916,7 +2921,7 @@ word Editor::FixFunctions(CliThread& cli, CodeWarning& log)
    {
       auto& editor = (*f)->GetFile()->GetEditor();
       auto rc = editor.FixFunction(*f, log);
-      editor.ReportFixInFile(cli, &log, rc);
+      editor.ReportFixInFile(&log, rc);
    }
 
    return EditCompleted;
@@ -2945,7 +2950,7 @@ word Editor::FixInvoker(const Function* func, const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::FixInvokers(CliThread& cli, const CodeWarning& log)
+word Editor::FixInvokers(const CodeWarning& log)
 {
    Debug::ft("Editor.FixInvokers");
 
@@ -2957,7 +2962,7 @@ word Editor::FixInvokers(CliThread& cli, const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::FixLog(CliThread& cli, CodeWarning& log)
+word Editor::FixLog(CodeWarning& log)
 {
    Debug::ft("Editor.FixLog");
 
@@ -2970,7 +2975,7 @@ word Editor::FixLog(CliThread& cli, CodeWarning& log)
       return Report("This warning has already been fixed.");
    }
 
-   return FixWarning(cli, log);
+   return FixWarning(log);
 }
 
 //------------------------------------------------------------------------------
@@ -2992,7 +2997,7 @@ word Editor::FixReference(CxxNamed* item, const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::FixReferences(CliThread& cli, CodeWarning& log)
+word Editor::FixReferences(CodeWarning& log)
 {
    Debug::ft("Editor.FixReferences");
 
@@ -3011,10 +3016,10 @@ word Editor::FixReferences(CliThread& cli, CodeWarning& log)
    {
       auto& editor = (*r)->GetFile()->GetEditor();
       auto rc = editor.FixReference(*r, log);
-      editor.ReportFixInFile(cli, &log, rc);
+      editor.ReportFixInFile(&log, rc);
    }
 
-   return FixDatas(cli, log);
+   return FixDatas(log);
 }
 
 //------------------------------------------------------------------------------
@@ -3047,7 +3052,7 @@ WarningStatus Editor::FixStatus(const CodeWarning& log) const
 
 //------------------------------------------------------------------------------
 
-word Editor::FixWarning(CliThread& cli, CodeWarning& log)
+word Editor::FixWarning(CodeWarning& log)
 {
    Debug::ft("Editor.FixWarning");
 
@@ -3092,11 +3097,11 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case ForwardRemove:
       return EraseForward(log);
    case ArgumentUnused:
-      return FixInvokers(cli, log);
+      return FixInvokers(log);
    case ClassUnused:
       return EraseClass(log);
    case DataUnused:
-      return FixReferences(cli, log);
+      return FixReferences(log);
    case EnumUnused:
       return EraseItem(log.item_);
    case EnumeratorUnused:
@@ -3104,7 +3109,7 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case FriendUnused:
       return EraseItem(log.item_);
    case FunctionUnused:
-      return FixFunctions(cli, log);
+      return FixFunctions(log);
    case TypedefUnused:
       return EraseItem(log.item_);
    case ForwardUnresolved:
@@ -3132,25 +3137,25 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case DataUninitialized:
       return InsertDataInit(log);
    case DataInitOnly:
-      return FixReferences(cli, log);
+      return FixReferences(log);
    case DataWriteOnly:
-      return FixReferences(cli, log);
+      return FixReferences(log);
    case DataCouldBeConst:
-      return FixDatas(cli, log);
+      return FixDatas(log);
    case DataCouldBeConstPtr:
-      return FixDatas(cli, log);
+      return FixDatas(log);
    case DataNeedNotBeMutable:
       return EraseMutableTag(log);
    case ImplicitPODConstructor:
       return InsertPODCtor(log);
    case ImplicitConstructor:
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    case ImplicitCopyConstructor:
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    case ImplicitCopyOperator:
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    case PublicConstructor:
-      return ChangeSpecialFunction(cli, log);
+      return ChangeSpecialFunction(log);
    case NonExplicitConstructor:
       return TagAsExplicit(log);
    case MemberInitMissing:
@@ -3158,25 +3163,25 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case MemberInitNotSorted:
       return MoveMemberInit(log);
    case ImplicitDestructor:
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    case VirtualDestructor:
       return ChangeAccess(log, Cxx::Public);
    case NonVirtualDestructor:
-      return ChangeSpecialFunction(cli, log);
+      return ChangeSpecialFunction(log);
    case RuleOf3DtorNoCopyCtor:
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    case RuleOf3DtorNoCopyOper:
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    case RuleOf3CopyCtorNoOper:
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    case RuleOf3CopyOperNoCtor:
-      return InsertSpecialFunctions(cli, log.item_);
+      return InsertSpecialFunctions(log.item_);
    case FunctionNotDefined:
       return EraseItem(log.item_);
    case PureVirtualNotDefined:
       return InsertPureVirtual(log);
    case VirtualAndPublic:
-      return FixFunctions(cli, log);
+      return FixFunctions(log);
    case FunctionNotOverridden:
       return EraseVirtualTag(log);
    case RemoveVirtualTag:
@@ -3186,23 +3191,23 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case VoidAsArgument:
       return EraseVoidArgument(log);
    case AnonymousArgument:
-      return RenameArgument(cli, log);
+      return RenameArgument(log);
    case DefinitionRenamesArgument:
-      return RenameArgument(cli, log);
+      return RenameArgument(log);
    case OverrideRenamesArgument:
-      return RenameArgument(cli, log);
+      return RenameArgument(log);
    case VirtualDefaultArgument:
-      return FixInvokers(cli, log);
+      return FixInvokers(log);
    case ArgumentCouldBeConstRef:
-      return FixFunctions(cli, log);
+      return FixFunctions(log);
    case ArgumentCouldBeConst:
-      return FixFunctions(cli, log);
+      return FixFunctions(log);
    case FunctionCouldBeConst:
-      return FixFunctions(cli, log);
+      return FixFunctions(log);
    case FunctionCouldBeStatic:
-      return FixFunctions(cli, log);
+      return FixFunctions(log);
    case FunctionCouldBeFree:
-      return FixInvokers(cli, log);
+      return FixInvokers(log);
    case StaticFunctionViaMember:
       return ChangeOperator(log);
    case UseOfTab:
@@ -3226,23 +3231,23 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case IncludeGuardMisnamed:
       return RenameIncludeGuard(log);
    case DebugFtNotInvoked:
-      return InsertDebugFtCall(cli, log);
+      return InsertDebugFtCall(log);
    case DebugFtNameMismatch:
-      return RenameDebugFtArgument(cli, log);
+      return RenameDebugFtArgument(log);
    case DebugFtNameDuplicated:
-      return RenameDebugFtArgument(cli, log);
+      return RenameDebugFtArgument(log);
    case DisplayNotOverridden:
-      return InsertDisplay(cli, log);
+      return InsertDisplay(log);
    case PatchNotOverridden:
-      return InsertPatch(cli, log);
+      return InsertPatch(log);
    case FunctionCouldBeDefaulted:
-      return FixFunctions(cli, log);
+      return FixFunctions(log);
    case InitCouldUseConstructor:
       return ChangeAssignmentToCtorCall(log);
    case CouldBeNoexcept:
-      return FixFunctions(cli, log);
+      return FixFunctions(log);
    case ShouldNotBeNoexcept:
-      return FixFunctions(cli, log);
+      return FixFunctions(log);
    case UseOfSlashAsterisk:
       return ReplaceSlashAsterisk(log);
    case RemoveLineBreak:
@@ -3250,7 +3255,7 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case CopyCtorConstructsBase:
       return InsertCopyCtorCall(log);
    case FunctionCouldBeMember:
-      return FixInvokers(cli, log);
+      return FixInvokers(log);
    case ExplicitConstructor:
       return EraseExplicitTag(log);
    case BitwiseOperatorOnBoolean:
@@ -3258,11 +3263,11 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case DebugFtCanBeLiteral:
       return InlineDebugFtArgument(log);
    case DataCouldBeFree:
-      return FixReferences(cli, log);
+      return FixReferences(log);
    case ConstructorNotPrivate:
-      return ChangeSpecialFunction(cli, log);
+      return ChangeSpecialFunction(log);
    case DestructorNotPrivate:
-      return ChangeSpecialFunction(cli, log);
+      return ChangeSpecialFunction(log);
    case RedundantScope:
       return EraseScope(log);
    case OperatorSpacing:
@@ -3270,11 +3275,11 @@ word Editor::FixWarning(CliThread& cli, CodeWarning& log)
    case PunctuationSpacing:
       return AdjustPunctuation(log);
    case CopyCtorNotDeleted:
-      return DeleteSpecialFunction(cli, log);
+      return DeleteSpecialFunction(log);
    case CopyOperNotDeleted:
-      return DeleteSpecialFunction(cli, log);
+      return DeleteSpecialFunction(log);
    case CtorCouldBeDeleted:
-      return DeleteSpecialFunction(cli, log);
+      return DeleteSpecialFunction(log);
    case OverrideNotSorted:
       return SortOverrides(log);
    }
@@ -3692,7 +3697,7 @@ word Editor::InsertDataInit(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)
+word Editor::InsertDebugFtCall(const CodeWarning& log)
 {
    Debug::ft("Editor.InsertDebugFtCall");
 
@@ -3736,7 +3741,7 @@ word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)
       //  No fn_name was defined, so use FLIT.  If another function already
       //  uses that name, prompt the user for a suffix.
       //
-      if(!EnsureUniqueDebugFtName(cli, flit, arg))
+      if(!EnsureUniqueDebugFtName(flit, arg))
          return Report(FixSkipped);
    }
 
@@ -3759,7 +3764,7 @@ word Editor::InsertDebugFtCall(CliThread& cli, const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertDisplay(CliThread& cli, const CodeWarning& log)
+word Editor::InsertDisplay(const CodeWarning& log)
 {
    Debug::ft("Editor.InsertDisplay");
 
@@ -4029,7 +4034,7 @@ fixed_string PatchReturn = "void";
 fixed_string PatchSignature = "Patch(sel_t selector, void* arguments)";
 fixed_string PatchInvocation = "Patch(selector, arguments)";
 
-word Editor::InsertPatch(CliThread& cli, const CodeWarning& log)
+word Editor::InsertPatch(const CodeWarning& log)
 {
    Debug::ft("Editor.InsertPatch");
 
@@ -4047,7 +4052,7 @@ word Editor::InsertPatch(CliThread& cli, const CodeWarning& log)
    declAttrs.over_ = true;
    auto rc = FindItemDeclLoc(cls, name, declAttrs);
    if(rc != EditContinue) return Report(UnspecifiedFailure, rc);
-   auto file = FindFuncDefnFile(cli, cls, name);
+   auto file = FindFuncDefnFile(cls, name);
    if(file == nullptr) return NotFound("File for definition");
    InsertPatchDecl(cls, declAttrs);
 
@@ -4173,13 +4178,12 @@ size_t Editor::InsertRule(size_t pos, char c)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertSpecialFuncDecl
-   (CliThread& cli, Class* cls, FunctionRole role)
+word Editor::InsertSpecialFuncDecl(Class* cls, FunctionRole role)
 {
    Debug::ft("Editor.InsertSpecialFuncDecl");
 
    ItemDeclAttrs declAttrs(Cxx::Function, Cxx::Public, role);
-   auto rc = FindSpecialFuncDeclLoc(cli, cls, declAttrs);
+   auto rc = FindSpecialFuncDeclLoc(cls, declAttrs);
    if(rc != EditContinue) return rc;
 
    auto code = spaces(declAttrs.indent_);
@@ -4230,7 +4234,7 @@ word Editor::InsertSpecialFuncDecl
 
    if(declAttrs.shell_)
    {
-      auto file = FindFuncDefnFile(cli, cls, code);
+      auto file = FindFuncDefnFile(cls, code);
       if(file == nullptr) return NotFound("File for function definition");
 
       auto& editor = file->GetEditor();
@@ -4347,7 +4351,7 @@ FunctionRole WarningToRole(Warning log)
 
 //------------------------------------------------------------------------------
 
-word Editor::InsertSpecialFunctions(CliThread& cli, CxxToken* item)
+word Editor::InsertSpecialFunctions(CxxToken* item)
 {
    Debug::ft("Editor.InsertSpecialFunctions");
 
@@ -4402,8 +4406,8 @@ word Editor::InsertSpecialFunctions(CliThread& cli, CxxToken* item)
 
    if(roles.size() > 1)
    {
-      *cli.obuf << "This will also add related functions..." << CRLF;
-      cli.Flush();
+      *Cli_->obuf << "This will also add related functions..." << CRLF;
+      Cli_->Flush();
    }
 
    //  Add each function in ROLES and update the warnings associated with it.
@@ -4415,8 +4419,8 @@ word Editor::InsertSpecialFunctions(CliThread& cli, CxxToken* item)
       if(roles.find(role) != roles.cend())
       {
          roles.erase(role);
-         auto rc = InsertSpecialFuncDecl(cli, cls, role);
-         ReportFix(cli, nullptr, rc);
+         auto rc = InsertSpecialFuncDecl(cls, role);
+         ReportFix(nullptr, rc);
 
          if(rc == EditSucceeded)
          {
@@ -4551,7 +4555,7 @@ word Editor::MoveDefine(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-void Editor::MoveFuncDefn(FunctionVector& sorted, const Function* func)
+void Editor::MoveFuncDefn(const FunctionVector& sorted, const Function* func)
 {
    Debug::ft("Editor.MoveFuncDefn");
 
@@ -4776,7 +4780,7 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
 
 //------------------------------------------------------------------------------
 
-word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)
+word Editor::RenameArgument(const CodeWarning& log)
 {
    Debug::ft("Editor.RenameArgument");
 
@@ -4826,7 +4830,7 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)
       //
       if(!declName.empty() && !defnName.empty())
       {
-         argName = ChooseArgumentName(cli, declName, defnName);
+         argName = ChooseArgumentName(declName, defnName);
          if(argName == defnName) func = decl;
       }
    };
@@ -4854,7 +4858,7 @@ word Editor::RenameArgument(CliThread& cli, const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)
+word Editor::RenameDebugFtArgument(const CodeWarning& log)
 {
    Debug::ft("Editor.RenameDebugFtArgument");
 
@@ -4881,7 +4885,7 @@ word Editor::RenameDebugFtArgument(CliThread& cli, const CodeWarning& log)
    string flit, fvar, fname;
 
    DebugFtNames(static_cast< const Function* >(log.item_), flit, fvar);
-   if(!EnsureUniqueDebugFtName(cli, flit, fname))
+   if(!EnsureUniqueDebugFtName(flit, fname))
       return Report(FixSkipped);
 
    if(arg->Type() == Cxx::StringLiteral)
@@ -5142,7 +5146,7 @@ word Editor::ReplaceUsing(const CodeWarning& log)
 //
 //  Displays EXPL when RC was returned after fixing LOG.
 //
-void Editor::ReportFix(CliThread& cli, CodeWarning* log, word rc)
+void Editor::ReportFix(CodeWarning* log, word rc)
 {
    Debug::ft("Editor.ReportFix");
 
@@ -5150,9 +5154,9 @@ void Editor::ReportFix(CliThread& cli, CodeWarning* log, word rc)
 
    if(rc < EditCompleted)
    {
-      *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
-      if(expl.empty() || (expl.back() != CRLF)) *cli.obuf << CRLF;
-      cli.Flush();
+      *Cli_->obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
+      if(expl.empty() || (expl.back() != CRLF)) *Cli_->obuf << CRLF;
+      Cli_->Flush();
    }
 
    if((log != nullptr) && (rc == EditSucceeded)) log->status_ = Pending;
@@ -5160,7 +5164,7 @@ void Editor::ReportFix(CliThread& cli, CodeWarning* log, word rc)
 
 //------------------------------------------------------------------------------
 
-void Editor::ReportFixInFile(CliThread& cli, CodeWarning* log, word rc) const
+void Editor::ReportFixInFile(CodeWarning* log, word rc) const
 {
    Debug::ft("Editor.ReportFixInFile");
 
@@ -5179,7 +5183,7 @@ void Editor::ReportFixInFile(CliThread& cli, CodeWarning* log, word rc) const
    }
 
    SetExpl(expl);
-   ReportFix(cli, log, rc);
+   ReportFix(log, rc);
 }
 
 //------------------------------------------------------------------------------

@@ -1281,10 +1281,8 @@ word Editor::ChangeDataToFree(const CxxNamed* item, const Data* data)
    //  the data.  The other two are far more complicated, and the details
    //  depend on whether there is a separate definition.  In the end, code
    //  in the declaration and/or definition will be cut, fragments possibly
-   //  combined, and pasted at the top of the .cpp.  The original items will
-   //  then be deleted and the new code incrementally compiled.  This is a
-   //  far more generic solution than trying to update all affected objects
-   //  to account for the data moving from a class to a namespace.
+   //  combined, and pasted at the top of the .cpp with a "static" tag.  The
+   //  original items will then be deleted and the new one compiled.
    //
    return Unimplemented();
 }
@@ -3950,9 +3948,9 @@ word Editor::InsertIncludeGuard(const CodeWarning& log)
    //
    auto ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    ParserPtr parser(new Parser(EMPTY_STR));
-   parser->ParseFileItem(source_, ifnPos, file_, ns);
-   parser->ParseFileItem(source_, defPos, nullptr, ns);
-   parser->ParseFileItem(source_, endPos, nullptr, ns);
+   if(!parser->ParseFileItem(source_, ifnPos, file_, ns)) ParseFailed(ifnPos);
+   if(!parser->ParseFileItem(source_, defPos, nullptr, ns)) ParseFailed(defPos);
+   if(!parser->ParseFileItem(source_, endPos, nullptr, ns)) ParseFailed(endPos);
    return Changed(pos);
 }
 
@@ -4410,8 +4408,7 @@ word Editor::InsertSpecialFunctions(CxxToken* item)
 
    if(roles.size() > 1)
    {
-      *Cli_->obuf << "This will also add related functions..." << CRLF;
-      Cli_->Flush();
+      Cli_->Inform("This will also add related functions...");
    }
 
    //  Add each function in ROLES and update the warnings associated with it.
@@ -4680,7 +4677,19 @@ bool Editor::ParseClassItem(size_t pos, Class* cls, Cxx::Access access) const
    Debug::ft("Editor.ParseClassItem");
 
    ParserPtr parser(new Parser(EMPTY_STR));
-   return parser->ParseClassItem(source_, pos, cls, access);
+   if(parser->ParseClassItem(source_, pos, cls, access)) return true;
+   return ParseFailed(pos);
+}
+
+//------------------------------------------------------------------------------
+
+bool Editor::ParseFailed(size_t pos) const
+{
+   Debug::ft("Editor.ParseFailed");
+
+   *Cli_->obuf << spaces(2) << "Incremental parsing failed:" << CRLF;
+   *Cli_->obuf << GetCode(pos);
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -4691,7 +4700,8 @@ bool Editor::ParseFileItem(size_t pos, Namespace* ns) const
 
    if(ns == nullptr) ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    ParserPtr parser(new Parser(EMPTY_STR));
-   return parser->ParseFileItem(source_, pos, file_, ns);
+   if(parser->ParseFileItem(source_, pos, file_, ns)) return true;
+   return ParseFailed(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -5877,7 +5887,9 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
    //
    if(attrs.blank_ != BlankNone) attrs.blank_ = BlankBelow;
 
-   auto pred = PrevBegin(next->GetPos());
+   size_t begin, end;
+   if(!next->GetSpan2(begin, end)) return NotFound("Next item's position");
+   auto pred = PrevBegin(begin);
 
    while(true)
    {

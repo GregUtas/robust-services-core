@@ -898,16 +898,6 @@ bool CxxScoped::IsSuperscopeOf(const string& fqSub, bool tmplt) const
 
 //------------------------------------------------------------------------------
 
-bool CxxScoped::ItemAccessed(const SymbolView& view) const
-{
-   Debug::ft("CxxScoped.ItemAccessed");
-
-   RecordAccess(view.control_);
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 bool CxxScoped::LocateItem(const CxxToken* item, size_t& n) const
 {
    Debug::ft("CxxScoped.LocateItem");
@@ -990,7 +980,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
          //  with the possible exception of a leading scope resolution
          //  operator.
          //
-         return ItemAccessed(view);
+         return true;
       case 1:
       case 3:
          //
@@ -1003,13 +993,13 @@ bool CxxScoped::NameRefersToItem(const string& name,
       //  NAME is a partial match for this item.  Report a match if SCOPE
       //  is this item's declarer or one of its subclasses.
       //
-      if(!checkUsing) return ItemAccessed(view);
+      if(!checkUsing) return true;
 
       //  Report a match if SCOPE is already in this item's scope.
       //
       fqn->erase(0, 2);
       auto prefix = fqn->substr(0, pos - 4);
-      if(scope->IsSubscopeOf(prefix)) return ItemAccessed(view);
+      if(scope->IsSubscopeOf(prefix)) return true;
 
       //  Report a match if SCOPE's class derives from this item's class.
       //
@@ -1018,7 +1008,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
       {
          auto usingClass = scope->GetClass();
          if((usingClass != nullptr) && usingClass->DerivesFrom(itemClass))
-            return ItemAccessed(view);
+            return true;
       }
 
       //  Look for a using statement that matches at least the PREFIX
@@ -1029,7 +1019,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
       if(file->FindUsingFor(*fqn, pos - 4, this, scope) != nullptr)
       {
          view.using_ = true;
-         return ItemAccessed(view);
+         return true;
       }
    }
 

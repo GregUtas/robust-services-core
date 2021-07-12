@@ -1205,6 +1205,27 @@ StackArg::StackArg(Function* f, TypeName* name) :
 
 //------------------------------------------------------------------------------
 
+StackArg::StackArg(Function* f, TypeName* name, const StackArg& via) :
+   item(f),
+   name(name),
+   via_(via.item),
+   ptrs_(0),
+   refs_(0),
+   member_(false),
+   const_(f != nullptr ? f->IsConst() : false),
+   constptr_(false),
+   mutable_(false),
+   invoke_(true),
+   this_(false),
+   implicit_(false),
+   ctor_(false),
+   read_(false)
+{
+   Debug::ft("StackArg.ctor(func, via)");
+}
+
+//------------------------------------------------------------------------------
+
 StackArg::StackArg(CxxToken* t, TypeName* name,
    const StackArg& via, Cxx::Operator op) :
    item(t),

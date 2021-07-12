@@ -582,6 +582,10 @@ private:
    //
    bool ParseClassItem(size_t pos, Class* cls, Cxx::Access access) const;
 
+   //  Displays a message when parsing at POS failed.  Returns false.
+   //
+   bool ParseFailed(size_t pos) const;
+
    //  Adds the editor to Editors_ and returns 0.
    //
    word Changed();

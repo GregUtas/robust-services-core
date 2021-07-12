@@ -181,6 +181,10 @@ public:
    //
    virtual bool IsStatic() const { return true; }
 
+   //  Returns true if the item is extern.
+   //
+   virtual bool IsExtern() const { return false; }
+
    //  Sets the access control that applies to the item.
    //
    virtual void SetAccess(Cxx::Access access) { }

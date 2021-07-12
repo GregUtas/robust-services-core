@@ -48,6 +48,36 @@ using std::string;
 
 namespace CodeTools
 {
+//  Invoked when FindFunc (which defines the other arguments) has resolved
+//  a function call to FUNC.
+//
+Function* FuncAccessed(Function* func,
+   const StackArg* proc, const CxxScope* scope, const SymbolView* view)
+{
+   Debug::ft("CodeTools.FuncAccessed");
+
+   if((func == nullptr) || (view == nullptr)) return func;
+
+   if((proc != nullptr) && (proc->via_ != nullptr))
+   {
+      auto cls = static_cast< Class* >(proc->via_->Root());
+
+      proc->name->MemberAccessed(cls, func);
+
+      if((view->accessibility_ == Inherited) && !view->friend_ &&
+         (cls->ClassDistance(scope->GetClass()) == NOT_A_SUBCLASS))
+      {
+         func->RecordAccess(Cxx::Public);
+         return func;
+      }
+   }
+
+   func->RecordAccess(view->control_);
+   return func;
+}
+
+//==============================================================================
+
 Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    name_(name.release()),
    tag_(tag),
@@ -295,7 +325,6 @@ void Class::AccessibilityOf
    {
       view.accessibility_ = item->FileScopeAccessiblity();
       view.control_ = Cxx::Public;
-      return;
    }
 }
 
@@ -1239,7 +1268,7 @@ Function* Class::FindCtor
       args->insert(args->begin(), StackArg(self, 1, false));
    }
 
-   return FindFunc(Name(), args, false, scope, view);
+   return FindFunc(Name(), nullptr, args, false, scope, view);
 }
 
 //------------------------------------------------------------------------------
@@ -1295,19 +1324,22 @@ Friend* Class::FindFriend(const CxxScope* scope) const
 
 //------------------------------------------------------------------------------
 
-Function* Class::FindFunc(const string& name, StackArgVector* args,
-   bool base, const CxxScope* scope, SymbolView* view) const
+Function* Class::FindFunc(const string& name,
+   const StackArg* proc, StackArgVector* args, bool base,
+   const CxxScope* scope, SymbolView* view) const
 {
    Debug::ft("Class.FindFunc(scope)");
 
-   auto f = CxxArea::FindFunc(name, args, false, scope, view);
-   if(MemberIsAccessibleTo(f, scope, view)) return f;
+   auto f = CxxArea::FindFunc(name, proc, args, false, scope, view);
+   if(MemberIsAccessibleTo(f, scope, view))
+      return FuncAccessed(f, proc, scope, view);
    if(!base) return nullptr;
 
    for(auto s = BaseClass(); s != nullptr; s = s->BaseClass())
    {
-      f = s->FindFunc(name, args, false, scope, view);
-      if(MemberIsAccessibleTo(f, scope, view)) return f;
+      f = s->FindFunc(name, proc, args, false, scope, view);
+      if(MemberIsAccessibleTo(f, scope, view))
+         return FuncAccessed(f, proc, scope, view);
    }
 
    return nullptr;
@@ -1969,6 +2001,12 @@ CxxNamedVector Class::Items() const
    }
 
    std::sort(items.begin(), items.end(), IsSortedByPos);
+
+   while(!items.empty() && (items.back()->GetPos() == string::npos))
+   {
+      items.pop_back();
+   }
+
    return items;
 }
 
@@ -2048,7 +2086,7 @@ bool Class::MemberIsAccessibleTo
    member->AccessibilityTo(scope, *view);
    if(view->accessibility_ != Inaccessible)
    {
-      member->RecordAccess(view->control_);
+      if(member->Type() != Cxx::Function) member->RecordAccess(view->control_);
       return true;
    }
 
@@ -3045,8 +3083,9 @@ Enumerator* CxxArea::FindEnumerator(const string& name) const
 
 //------------------------------------------------------------------------------
 
-Function* CxxArea::FindFunc(const string& name, StackArgVector* args,
-   bool base, const CxxScope* scope, SymbolView* view) const
+Function* CxxArea::FindFunc(const string& name,
+   const StackArg* proc, StackArgVector* args, bool base,
+   const CxxScope* scope, SymbolView* view) const
 {
    Debug::ft("CxxArea.FindFunc");
 
@@ -3126,13 +3165,13 @@ CxxScoped* CxxArea::FindItem(const string& name) const
 
    if(op != Cxx::NIL_OPERATOR)
    {
-      return FindFunc(name, nullptr, false, nullptr, nullptr);
+      return FindFunc(name, nullptr, nullptr, false, nullptr, nullptr);
    }
 
    CxxScoped* item = FindData(name);
    if(item != nullptr) return item;
 
-   item = FindFunc(name, nullptr, false, nullptr, nullptr);
+   item = FindFunc(name, nullptr, nullptr, false, nullptr, nullptr);
    if(item != nullptr) return item;
 
    item = FindClass(name);
@@ -3622,6 +3661,14 @@ void Namespace::AccessibilityOf
 
    view.accessibility_ = (item->GetFile()->IsCpp() ? Restricted : Unrestricted);
    view.distance_ = scope->ScopeDistance(this);
+
+   //  If ITEM is extern, increase its distance from SCOPE so that a static
+   //  item will be preferred over an extern item with the same name.
+   //
+   if((view.distance_ != NOT_A_SUBSCOPE) && item->IsExtern())
+   {
+      ++view.distance_;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3707,18 +3754,19 @@ void Namespace::EraseDefn(const SpaceDefn* defn)
 
 //------------------------------------------------------------------------------
 
-Function* Namespace::FindFunc(const string& name, StackArgVector* args,
-   bool base, const CxxScope* scope, SymbolView* view) const
+Function* Namespace::FindFunc(const string& name,
+   const StackArg* proc, StackArgVector* args, bool base,
+   const CxxScope* scope, SymbolView* view) const
 {
    Debug::ft("Namespace.FindFunc");
 
-   auto f = CxxArea::FindFunc(name, args, false, scope, view);
+   auto f = CxxArea::FindFunc(name, proc, args, false, scope, view);
    if(f != nullptr) return f;
    if(!base) return nullptr;
 
    for(auto s = OuterSpace(); s != nullptr; s = s->OuterSpace())
    {
-      f = s->FindFunc(name, args, false, scope, view);
+      f = s->FindFunc(name, proc, args, false, scope, view);
       if(f != nullptr) return f;
    }
 

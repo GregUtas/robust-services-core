@@ -1993,6 +1993,7 @@ void Operation::ExecuteCall() const
    Function* func = nullptr;
    Class* cls = nullptr;
    auto scope = Context::Scope();
+   SymbolView view;
 
    switch(proc.item->Type())
    {
@@ -2011,14 +2012,14 @@ void Operation::ExecuteCall() const
       case Cxx::OBJECT_CREATE:
       case Cxx::OBJECT_CREATE_ARRAY:
          func = func->GetArea()->FindFunc
-            (func->Name(), &args, true, scope, nullptr);
+            (func->Name(), &proc, &args, true, scope, &view);
       }
       break;
 
    case Cxx::Class:
       cls = static_cast< Class* >(proc.item);
       cls->Instantiate();
-      func = cls->FindCtor(&args, scope);
+      func = cls->FindCtor(&args, scope, &view);
       if((proc.name != nullptr) && (func != nullptr))
       {
          proc.name->SetReferent(func, nullptr);
@@ -2334,8 +2335,12 @@ bool Operation::ExecuteOverload
 
       if(area != nullptr)
       {
+         //c This invocation of FindFunc should not invoke FuncAccessed; that
+         //  should be deferred until the best candidate has been selected.
+         //
          SymbolView view;
-         auto candidate = area->FindFunc(name, &args, true, scope, &view);
+         auto candidate =
+            area->FindFunc(name, nullptr, &args, true, scope, &view);
 
          if((candidate != nullptr) && (view.match_ > match))
          {
@@ -2439,6 +2444,7 @@ Function* Operation::FindNewOrDelete
 
    Function* oper = nullptr;
    auto scope = Context::Scope();
+   SymbolView view;
    auto sName = (del ?
       CxxOp::OperatorToName(Cxx::OBJECT_DELETE) :
       CxxOp::OperatorToName(Cxx::OBJECT_CREATE));
@@ -2452,12 +2458,12 @@ Function* Operation::FindNewOrDelete
          auto vName = (del ?
             CxxOp::OperatorToName(Cxx::OBJECT_DELETE_ARRAY) :
             CxxOp::OperatorToName(Cxx::OBJECT_CREATE_ARRAY));
-         oper = area->FindFunc(vName, nullptr, true, scope, nullptr);
+         oper = area->FindFunc(vName, nullptr, nullptr, true, scope, &view);
       }
 
       if(oper == nullptr)
       {
-         oper = area->FindFunc(sName, nullptr, true, scope, nullptr);
+         oper = area->FindFunc(sName, nullptr, nullptr, true, scope, &view);
       }
 
       //  If the operator was not found in a class hierarchy, look in
@@ -2822,19 +2828,22 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
    if(arg2.name != nullptr)
    {
-      //c If MEM is a function, the following should be deferred until function
-      //  matching is concluded.
-      //  Record that MEM was accessed through CLS (cls.mem or cls->mem).  If
-      //  MEM was Inherited, it must actually be public (rather than protected)
-      //  if SCOPE was not a friend of its declarer and neither in CLS nor one
-      //  of its subclasses.
-      //
-      arg2.name->MemberAccessed(cls, mem);
-
-      if((view.accessibility_ == Inherited) && (!view.friend_) &&
-         (cls->ClassDistance(scope->GetClass()) == NOT_A_SUBCLASS))
+      if(mem->Type() != Cxx::Function)
       {
-         mem->RecordAccess(Cxx::Public);
+         //  Record that MEM was accessed through CLS (cls.mem or cls->mem).
+         //  If MEM was Inherited, it must actually be public (rather than
+         //  protected) if SCOPE was not a friend of its declarer and neither
+         //  in CLS nor one of its subclasses.  For a function, this code is
+         //  deferred until argument matching is compilete, in case another
+         //  member function with the same name is selected.
+         //
+         arg2.name->MemberAccessed(cls, mem);
+
+         if((view.accessibility_ == Inherited) && !view.friend_ &&
+            (cls->ClassDistance(scope->GetClass()) == NOT_A_SUBCLASS))
+         {
+            mem->RecordAccess(Cxx::Public);
+         }
       }
    }
    else

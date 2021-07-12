@@ -330,10 +330,6 @@ public:
    //
    void SetAssignment(ExprPtr& expr, size_t eqpos);
 
-   //  Returns true if the data is extern.
-   //
-   bool IsExtern() const { return extern_; }
-
    //  Returns true if the data is per-thread.
    //
    bool IsThreadLocal() const { return thread_local_; }
@@ -430,6 +426,10 @@ public:
    //  Overridden to indicate whether the data is const.
    //
    bool IsConst() const override;
+
+   //  Returns true if the data is extern.
+   //
+   bool IsExtern() const override { return extern_; }
 
    //  Returns true if the data's initialization is currently being compiled.
    //
@@ -1200,26 +1200,26 @@ public:
    //  is to deliberately exclude a function definition from consideration.
    //
    //  GetBase: Returns the function that this one overrides.
-   //  IsExtern: Returns true if the function was tagged "extern".
+   //  GetImpl: Returns the function's implementation.
    //  IsVirtual: Returns true if the function is virtual.
    //  IsPureVirtual: Returns true if the function is pure virtual.
-   //  IsExplicit: Returns true if the function was tagged "explicit".
+   //  IsExplicit: Returns true if the function is tagged "explicit".
    //  IsOverride: Returns true if the function is an override.
-   //  IsFinal: Returns true if the function is final.
-   //  IsStatic: Returns true if the function is static.
-   //  GetAccess: Returns the access control for the function.
-   //  GetImpl: Returns the function's implementation.
+   //  IsFinal: Returns true if the function is tagged "final".
+   //  GetAccess: Returns the function's access control.
+   //  IsStatic: Returns true if the function is tagged "static".
+   //  IsExtern: Returns true if the function is tagged "extern".
    //
    Function* GetBase() const { return GetDecl()->base_; }
-   bool IsExtern() const { return GetDecl()->extern_; }
+   const Block* GetImpl() const { return GetDefn()->impl_.get(); }
    bool IsVirtual() const { return GetDecl()->virtual_; }
    bool IsPureVirtual() const { return GetDecl()->pure_; }
    bool IsExplicit() const { return GetDecl()->explicit_; }
    bool IsOverride() const { return GetDecl()->override_; }
    bool IsFinal() const { return GetDecl()->final_; }
-   bool IsStatic() const override { return GetDecl()->static_; }
    Cxx::Access GetAccess() const override;
-   const Block* GetImpl() const { return GetDefn()->impl_.get(); }
+   bool IsExtern() const override { return GetDecl()->extern_; }
+   bool IsStatic() const override { return GetDecl()->static_; }
 
    //  Deletes the single argument "(void)", which simplifies the comparison
    //  of function signatures.

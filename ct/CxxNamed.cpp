@@ -299,13 +299,31 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 {
    Debug::ft("CxxNamed.IsPreviousDeclOf");
 
-   //  ITEM and "this" are already known to have the same name.  If "this"
-   //  existed before ITEM, ITEM must be another object.  And for them to
-   //  refer to the same entity, the file that declares "this" must be in
-   //  the transitive #include of ITEM.
+   //  ITEM and "this" are already known to have the same name.  Check that
+   //  they are distinct.
    //
    if((item == this) || (item == nullptr)) return false;
 
+   //  ITEM and "this" must belong to the same class, or to no class.
+   //
+   auto thisClass = this->GetClass();
+   auto itemClass = item->GetClass();
+   if(thisClass != itemClass) return false;
+
+   //  If ITEM is not a class member, "this" refers to it as long as neither
+   //  is static (which makes its linkage internal).  ITEM's linkage is also
+   //  internal if it is const and "this" is not extern.
+   //
+   if(itemClass == nullptr)
+   {
+      if(item->IsStatic() || this->IsStatic()) return false;
+      if(item->IsConst() && !this->IsExtern()) return false;
+      return true;
+   }
+
+   //  For "this" and ITEM to refer to the same entity, the file that declares
+   //  "this" must be in the transitive #include of ITEM.
+   //
    auto file1 = this->GetFile();
    auto file2 = item->GetFile();
    auto& affecters = file2->Affecters();

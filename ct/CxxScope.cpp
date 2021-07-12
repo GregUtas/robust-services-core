@@ -4435,7 +4435,8 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    auto instName = Name() + ts;
    RemoveRefs(instName);
    auto area = GetArea();
-   auto func = area->FindFunc(instName, nullptr, false, nullptr, nullptr);
+   auto func =
+      area->FindFunc(instName, nullptr, nullptr, false, nullptr, nullptr);
    if(func != nullptr) return func;
 
    //  Notify TYPE, which contains the template name and arguments, that its
@@ -4509,7 +4510,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    parser.reset();
    code.reset();
 
-   func = area->FindFunc(instName, nullptr, false, nullptr, nullptr);
+   func = area->FindFunc(instName, nullptr, nullptr, false, nullptr, nullptr);
    if(func == nullptr) return InstantiateError(instName, 3);
    tmplts_.push_back(func);
    return func;
@@ -4959,7 +4960,7 @@ StackArg Function::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
    //    selected as the result of argument matching (see UpdateThisArg).
    //
    Accessed(&via);
-   Context::PushArg(StackArg(this, name));
+   Context::PushArg(StackArg(this, name, via));
    if(op == Cxx::REFERENCE_SELECT) via.IncrPtrs();
    via.SetAsThis(true);
    return via;

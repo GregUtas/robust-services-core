@@ -110,6 +110,11 @@ public:
    StackArg(CxxToken* t, TypeName* name, const StackArg& via, Cxx::Operator op);
 
    //  Constructs an argument for a function that will be invoked and
+   //  that was accessed by VIA.NAME or VIA->NAME.
+   //
+   StackArg(Function* f, TypeName* name, const StackArg& via);
+
+   //  Constructs an argument for a function that will be invoked and
    //  that was accessed by NAME.
    //
    StackArg(Function* f, TypeName* name);
@@ -324,6 +329,10 @@ public:
    //  The name through which the argument was accessed.
    //
    TypeName* name;
+
+   //  The item through which this one was accessed.
+   //
+   CxxToken* via_;
 private:
    //  Sets DATA's referent to this argument.  Returns false on failure.
    //
@@ -344,10 +353,6 @@ private:
    //  Invoked to record that the context function cannot be const.
    //
    static void ContextFunctionIsNonConst();
-
-   //  The item through which this one was accessed.
-   //
-   CxxToken* via_;
 
    //  The level of pointer indirection to the argument, which can actually
    //  be negative (see usages of DecrPtrs).  The net level of indirection

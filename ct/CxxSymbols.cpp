@@ -292,6 +292,16 @@ bool IsSortedForXref(const CxxScoped* item1, const CxxScoped* item2)
 
 //------------------------------------------------------------------------------
 
+CxxScoped* ItemAccessed(CxxScoped* item, const SymbolView& view)
+{
+   Debug::ft("CodeTools.ItemAccessed");
+
+   if(item->Type() != Cxx::Function) item->RecordAccess(view.control_);
+   return item;
+}
+
+//==============================================================================
+
 CxxSymbols::CxxSymbols()
 {
    Debug::ft("CxxSymbols.ctor");
@@ -627,7 +637,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
    if(size == 1)
    {
       view = views1.front();
-      return list1.front();
+      return ItemAccessed(list1.front(), view);
    }
 
    if(size == 0) return nullptr;
@@ -690,7 +700,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
       if(idx != SIZE_MAX)
       {
          view = views2[idx];
-         return list2[idx];
+         return ItemAccessed(list2[idx], view);
       }
 
       //  The nearest item could not be determined.  This occurs if NAME is
@@ -742,7 +752,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
    }
 
    view = views2.front();
-   return list2.front();
+   return ItemAccessed(list2.front(), view);
 }
 
 //------------------------------------------------------------------------------

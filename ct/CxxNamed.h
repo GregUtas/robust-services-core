@@ -141,7 +141,7 @@ public:
    virtual bool EnterScope() { return true; }
 
    //  Returns true if this item was a previous declaration of ITEM.  This is
-   //  used after parsing data initializations and function definitions.
+   //  used after parsing data and function definitions.
    //
    bool IsPreviousDeclOf(const CxxNamed* item) const;
 

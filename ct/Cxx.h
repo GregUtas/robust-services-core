@@ -631,20 +631,20 @@ struct SymbolView
    //  Set as an argument to indicate that the symbol appears in a TypeSpec
    //  when defining a function or data that was previously declared.
    //
-   bool defts_ : 1;
+   bool defts_ : 8;
 
    //  Set if the symbol was resolved by a using statement.
    //
-   bool using_ : 1;
+   bool using_ : 8;
 
    //  Set if the symbol was accessible because of a friend declaration.
    //
-   bool friend_ : 1;
+   bool friend_ : 8;
 
    //  Set if the symbol has a referent.  True except for unresolved
    //  forward and friend declarations.
    //
-   bool resolved_ : 1;
+   bool resolved_ : 8;
 
    //  If ACCESSIBILITY is Inherited, the distance (in the class hierarchy)
    //  from the class that defined the symbol to the class that used it.

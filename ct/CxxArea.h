@@ -96,11 +96,11 @@ public:
    //  supplied, in which case the function must match those arguments.  If
    //  BASE is set, the search continues up the namespace or class hierarchy
    //  if no matching function is found in this area.  If SCOPE is provided,
-   //  VIEW is updated with the function's accessibility to SCOPE.  PROC is
+   //  VIEW is updated with the function's accessibility to SCOPE.  CALL is
    //  the expression that invoked the function.
    //
    virtual Function* FindFunc(const std::string& name,
-      const StackArg* proc, StackArgVector* args, bool base,
+      const StackArg* call, StackArgVector* args, bool base,
       const CxxScope* scope, SymbolView* view) const;
 
    //  Returns the function or operator that matches CURR's name and signature.
@@ -563,7 +563,7 @@ public:
    //  if a function matching the criteria is not found in this class.
    //
    Function* FindFunc(const std::string& name,
-      const StackArg* proc, StackArgVector* args, bool base,
+      const StackArg* call, StackArgVector* args, bool base,
       const CxxScope* scope, SymbolView* view) const override;
 
    //  Overridden to return the class.
@@ -1028,7 +1028,7 @@ public:
    //  matching the criteria is not found in this namespace.
    //
    Function* FindFunc(const std::string& name,
-      const StackArg* proc, StackArgVector* args, bool base,
+      const StackArg* call, StackArgVector* args, bool base,
       const CxxScope* scope, SymbolView* view) const override;
 
    //  Overridden to also look for an inner namespace.

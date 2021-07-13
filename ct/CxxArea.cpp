@@ -52,17 +52,17 @@ namespace CodeTools
 //  a function call to FUNC.
 //
 Function* FuncAccessed(Function* func,
-   const StackArg* proc, const CxxScope* scope, const SymbolView* view)
+   const StackArg* call, const CxxScope* scope, const SymbolView* view)
 {
    Debug::ft("CodeTools.FuncAccessed");
 
    if((func == nullptr) || (view == nullptr)) return func;
 
-   if((proc != nullptr) && (proc->via_ != nullptr))
+   if((call != nullptr) && (call->Via() != nullptr))
    {
-      auto cls = static_cast< Class* >(proc->via_->Root());
+      auto cls = static_cast< Class* >(call->Via()->Root());
 
-      proc->name->MemberAccessed(cls, func);
+      call->Name()->MemberAccessed(cls, func);
 
       if((view->accessibility_ == Inherited) && !view->friend_ &&
          (cls->ClassDistance(scope->GetClass()) == NOT_A_SUBCLASS))
@@ -1325,21 +1325,21 @@ Friend* Class::FindFriend(const CxxScope* scope) const
 //------------------------------------------------------------------------------
 
 Function* Class::FindFunc(const string& name,
-   const StackArg* proc, StackArgVector* args, bool base,
+   const StackArg* call, StackArgVector* args, bool base,
    const CxxScope* scope, SymbolView* view) const
 {
    Debug::ft("Class.FindFunc(scope)");
 
-   auto f = CxxArea::FindFunc(name, proc, args, false, scope, view);
+   auto f = CxxArea::FindFunc(name, call, args, false, scope, view);
    if(MemberIsAccessibleTo(f, scope, view))
-      return FuncAccessed(f, proc, scope, view);
+      return FuncAccessed(f, call, scope, view);
    if(!base) return nullptr;
 
    for(auto s = BaseClass(); s != nullptr; s = s->BaseClass())
    {
-      f = s->FindFunc(name, proc, args, false, scope, view);
+      f = s->FindFunc(name, call, args, false, scope, view);
       if(MemberIsAccessibleTo(f, scope, view))
-         return FuncAccessed(f, proc, scope, view);
+         return FuncAccessed(f, call, scope, view);
    }
 
    return nullptr;
@@ -3084,7 +3084,7 @@ Enumerator* CxxArea::FindEnumerator(const string& name) const
 //------------------------------------------------------------------------------
 
 Function* CxxArea::FindFunc(const string& name,
-   const StackArg* proc, StackArgVector* args, bool base,
+   const StackArg* call, StackArgVector* args, bool base,
    const CxxScope* scope, SymbolView* view) const
 {
    Debug::ft("CxxArea.FindFunc");
@@ -3755,18 +3755,18 @@ void Namespace::EraseDefn(const SpaceDefn* defn)
 //------------------------------------------------------------------------------
 
 Function* Namespace::FindFunc(const string& name,
-   const StackArg* proc, StackArgVector* args, bool base,
+   const StackArg* call, StackArgVector* args, bool base,
    const CxxScope* scope, SymbolView* view) const
 {
    Debug::ft("Namespace.FindFunc");
 
-   auto f = CxxArea::FindFunc(name, proc, args, false, scope, view);
+   auto f = CxxArea::FindFunc(name, call, args, false, scope, view);
    if(f != nullptr) return f;
    if(!base) return nullptr;
 
    for(auto s = OuterSpace(); s != nullptr; s = s->OuterSpace())
    {
-      f = s->FindFunc(name, proc, args, false, scope, view);
+      f = s->FindFunc(name, call, args, false, scope, view);
       if(f != nullptr) return f;
    }
 

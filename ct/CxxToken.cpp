@@ -1560,12 +1560,12 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
    //  Log downcasting.
    //
    Class* inClass = nullptr;
-   auto inRoot = inArg.item->Root();
+   auto inRoot = inArg.item_->Root();
    if((inRoot != nullptr) && (inRoot->Type() == Cxx::Class))
       inClass = static_cast< Class* >(inRoot);
 
    Class* outClass = nullptr;
-   auto outRoot = outArg.item->Root();
+   auto outRoot = outArg.item_->Root();
    if((outRoot != nullptr) && (outRoot->Type() == Cxx::Class))
       outClass = static_cast< Class* >(outRoot);
 
@@ -1897,7 +1897,7 @@ void Operation::Execute() const
       Record(op_, arg1, &arg2);
       arg3.WasRead();
       arg1.CheckIfBool();
-      if(arg2.item->TypeString(true) == NULLPTR_T_STR)
+      if(arg2.item_->TypeString(true) == NULLPTR_T_STR)
          Context::PushArg(arg3.EraseName());
       else
          Context::PushArg(arg2.EraseName());
@@ -1936,7 +1936,7 @@ void Operation::Execute() const
       if(!args_.empty())
       {
          Context::PopArg(arg1);
-         arg1.item->Creating();
+         arg1.item_->Creating();
       }
       return;
 
@@ -1970,14 +1970,14 @@ void Operation::ExecuteCall() const
    {
       if(arg->InvokeSet()) break;
       Context::PopArg(false);
-      if(arg->item == nullptr) return;
+      if(arg->item_ == nullptr) return;
       args.insert(args.begin(), *arg);
    }
 
    //  Pop the function.
    //
    auto proc = Context::PopArg(false);
-   if(proc.item == nullptr) return;
+   if(proc.item_ == nullptr) return;
 
    //  Use ARGS to find the right function, because the initial lookup only
    //  returned the first match.  However, there are a couple of exceptions:
@@ -1995,7 +1995,7 @@ void Operation::ExecuteCall() const
    auto scope = Context::Scope();
    SymbolView view;
 
-   switch(proc.item->Type())
+   switch(proc.item_->Type())
    {
    case Cxx::Function:
       //
@@ -2003,7 +2003,7 @@ void Operation::ExecuteCall() const
       //  it may be required.  After the matching function has been found,
       //  UpdateThisArg (below) erases the argument if it is not needed.
       //
-      func = static_cast< Function* >(proc.item);
+      func = static_cast< Function* >(proc.item_);
       func->PushThisArg(args);
 
       switch(func->Operator())
@@ -2017,12 +2017,12 @@ void Operation::ExecuteCall() const
       break;
 
    case Cxx::Class:
-      cls = static_cast< Class* >(proc.item);
+      cls = static_cast< Class* >(proc.item_);
       cls->Instantiate();
       func = cls->FindCtor(&args, scope, &view);
-      if((proc.name != nullptr) && (func != nullptr))
+      if((proc.Name() != nullptr) && (func != nullptr))
       {
-         proc.name->SetReferent(func, nullptr);
+         proc.Name()->SetReferent(func, nullptr);
       }
       break;
 
@@ -2039,7 +2039,7 @@ void Operation::ExecuteCall() const
       if((args.size() != 1) || (dstNum.Type() == Numeric::NIL))
       {
          auto expl = "Invalid type conversion: " + proc.Trace();
-         Context::SwLog(Operation_ExecuteCall, expl, proc.item->Type());
+         Context::SwLog(Operation_ExecuteCall, expl, proc.item_->Type());
          return;
       }
 
@@ -2053,7 +2053,7 @@ void Operation::ExecuteCall() const
       }
 
       args.front().WasRead();
-      Context::PushArg(StackArg(proc.item->Referent(), 0, false));
+      Context::PushArg(StackArg(proc.item_->Referent(), 0, false));
       return;
    }
 
@@ -2074,7 +2074,7 @@ void Operation::ExecuteCall() const
    if(proc.IsDefaultCtor(args))
    {
       auto role = (size == 1 ? PureCtor : CopyCtor);
-      cls = proc.item->GetClass();
+      cls = proc.item_->GetClass();
       cls->WasCalled(role, nullptr);
       if(size > 1) args[1].WasRead();
       Context::PushArg(StackArg(cls, 0, true));
@@ -2088,7 +2088,7 @@ void Operation::ExecuteCall() const
       if(i < size - 1) expl += ',';
    }
    expl += ')';
-   Context::SwLog(Operation_ExecuteCall, expl, proc.item->Type());
+   Context::SwLog(Operation_ExecuteCall, expl, proc.item_->Type());
 }
 
 //------------------------------------------------------------------------------
@@ -2116,9 +2116,9 @@ void Operation::ExecuteDelete(const StackArg& arg) const
    }
 
    if(pod) return;
-   arg.item->RecordUsage();
+   arg.item_->RecordUsage();
 
-   auto cls = static_cast< Class* >(arg.item->Root());
+   auto cls = static_cast< Class* >(arg.item_->Root());
    cls->WasCalled(PureDtor, nullptr);
 }
 
@@ -2177,7 +2177,7 @@ void Operation::ExecuteNew() const
    //  is more than one, ExecuteCall (below) will find the correct one.
    //
    if(pod) return;
-   auto cls = static_cast< Class* >(spec.item->Root());
+   auto cls = static_cast< Class* >(spec.item_->Root());
    auto ctor = cls->FindCtor(nullptr, Context::Scope());
    if(ctor == nullptr)
    {
@@ -2219,7 +2219,7 @@ bool Operation::ExecuteOverload
    //  If ARG1 is a class, make sure that it is instantiated.
    //
    Class* cls = nullptr;
-   auto root = arg1.item->Root();
+   auto root = arg1.item_->Root();
    if(root->Type() == Cxx::Class)
    {
       cls = static_cast< Class* >(root);
@@ -2233,7 +2233,7 @@ bool Operation::ExecuteOverload
    StackArgVector args;
    bool autoAssign = false;
 
-   if(arg1.item->IsAuto())
+   if(arg1.item_->IsAuto())
    {
       //  ARG1 is of type "auto".  If this is an assignment operation,
       //  FindFunc will not match on type "auto".  Push ARG2 instead,
@@ -2272,7 +2272,7 @@ bool Operation::ExecuteOverload
       //  This is only legal when ARG1 is an aggregate, and operator= will
       //  not be used.
       //
-      if(arg2->item->Name() == AUTO_STR) return false;
+      if(arg2->item_->Name() == AUTO_STR) return false;
       break;
    }
 
@@ -2325,7 +2325,7 @@ bool Operation::ExecuteOverload
          break;
 
       case Arg2Scope:
-         area = (arg2 != nullptr ? arg2->item->Root()->GetSpace() : nullptr);
+         area = (arg2 != nullptr ? arg2->item_->Root()->GetSpace() : nullptr);
          break;
 
       case CurrScope:
@@ -2419,7 +2419,7 @@ Function* Operation::FindNewOrDelete
    //  other cases, search in ARG's namespace hierarchy.
    //
    CxxArea* area = nullptr;
-   auto targ = arg.item->Root();
+   auto targ = arg.item_->Root();
    size_t ptrs = (del ? 1 : 0);
 
    if((targ->Type() == Cxx::Class) && (arg.Ptrs(true) == ptrs))
@@ -2747,7 +2747,7 @@ void Operation::Push() const
          return;
       }
 
-      switch(top->item->Type())
+      switch(top->item_->Type())
       {
       case Cxx::Function:
       case Cxx::Terminal:
@@ -2784,7 +2784,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    //  o ARG2 has a name
    //  o ARG2 is a member of ARG1
    //
-   auto root = arg1.item->Root();
+   auto root = arg1.item_->Root();
    auto type = root->Type();
 
    if(type != Cxx::Class)
@@ -2806,7 +2806,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       Context::SwLog(Operation_PushMember, expl, (op_ << 4) + ptrs);
    }
 
-   auto& name = arg2.item->Name();
+   auto& name = arg2.item_->Name();
 
    if(name.empty())
    {
@@ -2826,7 +2826,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       return;
    }
 
-   if(arg2.name != nullptr)
+   if(arg2.Name() != nullptr)
    {
       if(mem->Type() != Cxx::Function)
       {
@@ -2837,7 +2837,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
          //  deferred until argument matching is compilete, in case another
          //  member function with the same name is selected.
          //
-         arg2.name->MemberAccessed(cls, mem);
+         arg2.Name()->MemberAccessed(cls, mem);
 
          if((view.accessibility_ == Inherited) && !view.friend_ &&
             (cls->ClassDistance(scope->GetClass()) == NOT_A_SUBCLASS))
@@ -2849,13 +2849,13 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    else
    {
       auto expl = "Unexpected access to " + cls->Name() + SCOPE_STR + name;
-      Context::SwLog(Operation_PushMember, expl, arg2.item->Type());
+      Context::SwLog(Operation_PushMember, expl, arg2.item_->Type());
    }
 
    //  If ARG2 specified template arguments, use them to find (or instantiate)
    //  the correct function template instance.
    //
-   auto tmplt = arg2.item->GetTemplateArgs();
+   auto tmplt = arg2.item_->GetTemplateArgs();
 
    if(tmplt != nullptr)
    {
@@ -2873,7 +2873,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    //  Push MEM via ARG1 and op_ after recording that ARG1 was used directly.
    //
    arg1.SetAsDirect();
-   Context::PushArg(mem->MemberToArg(arg1, arg2.name, op_));
+   Context::PushArg(mem->MemberToArg(arg1, arg2.Name(), op_));
 }
 
 //------------------------------------------------------------------------------
@@ -3005,7 +3005,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
       //
       //  The result is a temporary.
       //
-      if(lhs.item->Type() == Cxx::Terminal)
+      if(lhs.item_->Type() == Cxx::Terminal)
       {
          rhs.SetAsTemporary();
          Context::PushArg(rhs.EraseName());

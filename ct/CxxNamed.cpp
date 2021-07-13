@@ -341,7 +341,7 @@ StackArg CxxNamed::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 
    //  This should only be invoked on ClassData.
    //
-   auto expl = "Unexpected member selection by " + via.item->Name();
+   auto expl = "Unexpected member selection by " + via.item_->Name();
    Context::SwLog(CxxNamed_MemberToArg, expl, op);
 
    return NameToArg(op, nullptr);
@@ -3639,7 +3639,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
       if((this->Name() == BOOL_STR) || that.IsBool())
       {
          Context::Log(BoolMixedWithNumeric);
-         that.item->Log(BoolMixedWithNumeric, that.item, -1);
+         that.item_->Log(BoolMixedWithNumeric, that.item_, -1);
       }
    }
 

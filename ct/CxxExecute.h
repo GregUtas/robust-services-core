@@ -131,6 +131,14 @@ public:
    //
    StackArg& operator=(const StackArg& that) = default;
 
+   //  Returns the name that was resolved to this item.
+   //
+   TypeName* Name() const { return name_; }
+
+   //  Returns the item that accessed this one, if any (VIA.NAME or VIA->NAME).
+   //
+   CxxToken* Via() const { return via_; }
+
    //  Invokes TypeString on ITEM and adjusts the result based on PTRS.
    //
    std::string TypeString(bool arg) const;
@@ -167,7 +175,7 @@ public:
 
    //  Clears name_ so that the argument can be pushed again.
    //
-   StackArg& EraseName() { name = nullptr; return *this; }
+   StackArg& EraseName() { name_ = nullptr; return *this; }
 
    //  Records that name_ (if it exists) was used directly.
    //
@@ -324,15 +332,7 @@ public:
 
    //  What the argument refers to.
    //
-   CxxToken* item;
-
-   //  The name through which the argument was accessed.
-   //
-   TypeName* name;
-
-   //  The item through which this one was accessed.
-   //
-   CxxToken* via_;
+   CxxToken* item_;
 private:
    //  Sets DATA's referent to this argument.  Returns false on failure.
    //
@@ -353,6 +353,15 @@ private:
    //  Invoked to record that the context function cannot be const.
    //
    static void ContextFunctionIsNonConst();
+
+   //  The name that was resolved to create this argument.
+   //
+   TypeName* name_;
+
+   //  The item, if any, through which this argument was accessed (via_.name_
+   //  or via_->name_).
+   //
+   CxxToken* via_;
 
    //  The level of pointer indirection to the argument, which can actually
    //  be negative (see usages of DecrPtrs).  The net level of indirection

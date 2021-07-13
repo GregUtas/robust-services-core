@@ -258,7 +258,7 @@ bool Define::EnterScope()
    {
       rhs_->EnterBlock();
       auto result = Context::PopArg(true);
-      value_ = result.item;
+      value_ = result.item_;
    }
 
    return true;

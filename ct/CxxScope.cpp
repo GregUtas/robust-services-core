@@ -934,7 +934,7 @@ void ClassData::WasMutated(const StackArg* arg)
 
    //  This item is using its mutability if it is currently const.
    //
-   if(arg->item == this)
+   if(arg->item_ == this)
    {
       if(arg->IsConst()) mutated_ = true;
       return;
@@ -1773,7 +1773,7 @@ bool Data::WasWritten(const StackArg* arg, bool direct, bool indirect)
    auto item = static_cast< Data* >(FindTemplateAnalog(this));
    if(item != nullptr) ++item->writes_;
 
-   auto ptrs = (arg->item == this ? arg->Ptrs(true) : spec_->Ptrs(true));
+   auto ptrs = (arg->item_ == this ? arg->Ptrs(true) : spec_->Ptrs(true));
 
    if(ptrs == 0)
    {
@@ -1786,7 +1786,7 @@ bool Data::WasWritten(const StackArg* arg, bool direct, bool indirect)
       if(indirect)
       {
          string expl("Indirection through ");
-         expl += arg->item->Name();
+         expl += arg->item_->Name();
 
          Context::SwLog(Data_WasWritten, expl, 0);
       }
@@ -2293,7 +2293,7 @@ void Function::AdjustRecvConstness
       return;
    }
 
-   if(recvArg.item->Name() != THIS_STR) return;
+   if(recvArg.item_->Name() != THIS_STR) return;
 
    auto target = RemoveConsts(TypeString(true));
    auto list = GetArea()->FuncVector(Name());
@@ -2557,7 +2557,7 @@ Function* Function::CanInvokeWith
       }
 
       auto recvResult = recvArg->GetTypeSpec()->ResultType();
-      if(recvResult.item == nullptr) return FoundFunc(nullptr, args, match);
+      if(recvResult.item_ == nullptr) return FoundFunc(nullptr, args, match);
       auto sendArg = args.at(i + sendIncr);
       auto curr = recvResult.CalcMatchWith(sendArg, recvType, sendType);
       if(curr < match) match = curr;
@@ -4022,7 +4022,7 @@ Function* Function::FoundFunc
       {
          for(auto a = args.cbegin(); a != args.cend(); ++a)
          {
-            a->item->Root()->RecordUsage();
+            a->item_->Root()->RecordUsage();
          }
       }
    }
@@ -5441,7 +5441,7 @@ void Function::UpdateThisArg(StackArgVector& args) const
             if(file != nullptr)
             {
                auto pos = Context::GetPos();
-               auto item = static_cast< CxxNamed* >(args.front().item);
+               auto item = static_cast< CxxNamed* >(args.front().item_);
                file->LogPos
                   (pos, StaticFunctionViaMember, item, 0, GetClass()->Name());
             }

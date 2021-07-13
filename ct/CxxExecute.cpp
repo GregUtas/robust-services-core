@@ -1043,7 +1043,7 @@ void ParseFrame::PushArg(const StackArg& arg)
 {
    Debug::ft(ParseFrame_PushArg);
 
-   if(arg.item == nullptr)
+   if(arg.item_ == nullptr)
    {
       if(Context::Tracing)
          Context::Trace(CxxTrace::PUSH_ARG, -1);
@@ -1052,7 +1052,7 @@ void ParseFrame::PushArg(const StackArg& arg)
       return;
    }
 
-   if(arg.item->Type() != Cxx::Elision)
+   if(arg.item_->Type() != Cxx::Elision)
    {
       args_.push_back(arg);
       Context::Trace(CxxTrace::PUSH_ARG, arg);
@@ -1164,8 +1164,8 @@ StackArg StackArg::AutoType_ = NilStackArg;
 //------------------------------------------------------------------------------
 
 StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
-   item(t),
-   name(nullptr),
+   item_(t),
+   name_(nullptr),
    via_(nullptr),
    ptrs_(p),
    refs_(0),
@@ -1185,8 +1185,8 @@ StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
 //------------------------------------------------------------------------------
 
 StackArg::StackArg(Function* f, TypeName* name) :
-   item(f),
-   name(name),
+   item_(f),
+   name_(name),
    via_(nullptr),
    ptrs_(0),
    refs_(0),
@@ -1206,9 +1206,9 @@ StackArg::StackArg(Function* f, TypeName* name) :
 //------------------------------------------------------------------------------
 
 StackArg::StackArg(Function* f, TypeName* name, const StackArg& via) :
-   item(f),
-   name(name),
-   via_(via.item),
+   item_(f),
+   name_(name),
+   via_(via.item_),
    ptrs_(0),
    refs_(0),
    member_(false),
@@ -1228,9 +1228,9 @@ StackArg::StackArg(Function* f, TypeName* name, const StackArg& via) :
 
 StackArg::StackArg(CxxToken* t, TypeName* name,
    const StackArg& via, Cxx::Operator op) :
-   item(t),
-   name(name),
-   via_(via.item),
+   item_(t),
+   name_(name),
+   via_(via.item_),
    ptrs_(0),
    refs_(0),
    member_(false),
@@ -1260,7 +1260,7 @@ StackArg::StackArg(CxxToken* t, TypeName* name,
    }
    else
    {
-      if(via.item->Name() == THIS_STR)
+      if(via.item_->Name() == THIS_STR)
       {
          //  Tag this as a member of the context class, and tag it as
          //  read-only if "this" was read-only.
@@ -1274,8 +1274,8 @@ StackArg::StackArg(CxxToken* t, TypeName* name,
 //------------------------------------------------------------------------------
 
 StackArg::StackArg(CxxToken* t, TypeName* name) :
-   item(t),
-   name(name),
+   item_(t),
+   name_(name),
    via_(nullptr),
    ptrs_(0),
    refs_(0),
@@ -1298,8 +1298,8 @@ size_t StackArg::Arrays() const
 {
    Debug::ft("StackArg.Arrays");
 
-   if(item == nullptr) return 0;
-   auto spec = item->GetTypeSpec();
+   if(item_ == nullptr) return 0;
+   auto spec = item_->GetTypeSpec();
    word count = (spec == nullptr ? 0 : spec->Arrays());
    return count;
 }
@@ -1318,8 +1318,8 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    //  o Returned   return this   THAT is a Function return type
    //
    if(that.const_) return;
-   if(this->item == nullptr) return;
-   if(that.item == nullptr) return;
+   if(this->item_ == nullptr) return;
+   if(that.item_ == nullptr) return;
 
    auto thisPtrs = this->Ptrs(true);
    auto thatPtrs = that.Ptrs(true);
@@ -1342,7 +1342,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    if(thatPtrs > 0)
       restricted = (thisPtrs > 0);  // allows const int to pointer
    else if(thatRefs > 0)
-      restricted = ((type != Copied) || that.item->IsInitializing());
+      restricted = ((type != Copied) || that.item_->IsInitializing());
 
    if(!restricted) return;
 
@@ -1363,7 +1363,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    //  the context class or the via_ itself.
    //
    auto notMutable = this->member_ && !this->mutable_;
-   auto notPointer = !this->item->IsPointer(false);
+   auto notPointer = !this->item_->IsPointer(false);
 
    if((this->via_ != nullptr) && notPointer)
    {
@@ -1399,7 +1399,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
       //
       if((thatRefs > 0) || (thatPtrs > 0))
       {
-         if(this->item->WasWritten(this, thatRefs > 0, thatPtrs > 0))
+         if(this->item_->WasWritten(this, thatRefs > 0, thatPtrs > 0))
          {
             Context::Trace(CxxTrace::INCR_WRITES, *this);
          }
@@ -1435,8 +1435,8 @@ TypeMatch StackArg::CalcMatchWith(const StackArg& that,
 
    auto best = MatchWith(that, thisType, thatType);
    if(best >= Derivable) return best;
-   if(that.item == nullptr) return Incompatible;
-   if(this->item == nullptr) return Incompatible;
+   if(that.item_ == nullptr) return Incompatible;
+   if(this->item_ == nullptr) return Incompatible;
 
    //  See if there is a match between any of the types to which the
    //  items can be converted.
@@ -1444,8 +1444,8 @@ TypeMatch StackArg::CalcMatchWith(const StackArg& that,
    StackArgVector these, those;
    these.push_back(*this);
    those.push_back(that);
-   this->item->Root()->GetConvertibleTypes(these, true);
-   that.item->Root()->GetConvertibleTypes(those, false);
+   this->item_->Root()->GetConvertibleTypes(these, true);
+   that.item_->Root()->GetConvertibleTypes(those, false);
    if((these.size() == 1) && (those.size() == 1)) return best;
 
    auto first = true;
@@ -1500,9 +1500,9 @@ bool StackArg::CanBeOverloaded() const
 {
    Debug::ft("StackArg.CanBeOverloaded");
 
-   if(item == nullptr) return false;
+   if(item_ == nullptr) return false;
    if(Ptrs(true) != 0) return false;
-   auto type = item->Root()->Type();
+   auto type = item_->Root()->Type();
    return ((type == Cxx::Class) || (type == Cxx::Enum));
 }
 
@@ -1520,7 +1520,7 @@ void StackArg::CheckIfBool() const
    }
 
    Context::Log(NonBooleanConditional);
-   item->Log(NonBooleanConditional, item, -1);
+   item_->Log(NonBooleanConditional, item_, -1);
 }
 
 //------------------------------------------------------------------------------
@@ -1537,7 +1537,7 @@ void StackArg::ContextFunctionIsNonConst()
 
 bool StackArg::IsBool() const
 {
-   return (item->Name() == BOOL_STR);
+   return (item_->Name() == BOOL_STR);
 }
 
 //------------------------------------------------------------------------------
@@ -1551,9 +1551,9 @@ bool StackArg::IsDefaultCtor(const StackArgVector& args) const
    //  searching for a constructor, name resolution returns the class, given
    //  that it and the constructor have the same name.
    //
-   auto cls = item->GetClass();
+   auto cls = item_->GetClass();
    if(cls == nullptr) return false;
-   if(item->Name() != cls->Name()) return false;
+   if(item_->Name() != cls->Name()) return false;
 
    //  A default constructor has one argument ("this").  A default copy
    //  constructor has a second argument, namely a reference to the class
@@ -1566,7 +1566,7 @@ bool StackArg::IsDefaultCtor(const StackArgVector& args) const
       return true;
    case 2:
    {
-      auto root = args[1].item->Root();
+      auto root = args[1].item_->Root();
       if(root == cls) return true;
       if(root->Type() == Cxx::Class)
       {
@@ -1626,11 +1626,11 @@ TypeMatch StackArg::MatchWith(const StackArg& that,
 {
    Debug::ft("StackArg.MatchWith");
 
-   if(this->item == nullptr) return Incompatible;
-   if(that.item == nullptr) return Incompatible;
+   if(this->item_ == nullptr) return Incompatible;
+   if(that.item_ == nullptr) return Incompatible;
    if(thisType == thatType) return Compatible;
-   if(this->item->IsAuto()) return Compatible;
-   if(that.item->IsAuto()) return Compatible;
+   if(this->item_->IsAuto()) return Compatible;
+   if(that.item_->IsAuto()) return Compatible;
 
    //  See if the types are compatible except for constness.
    //
@@ -1664,7 +1664,7 @@ TypeMatch StackArg::MatchWith(const StackArg& that,
    //  is a subclass of THIS and their levels of indirection are the
    //  same, or if THIS can be constructed from THAT.
    //
-   auto thisRoot = this->item->Root();
+   auto thisRoot = this->item_->Root();
 
    if(thisRoot->Type() == Cxx::Class)
    {
@@ -1673,7 +1673,7 @@ TypeMatch StackArg::MatchWith(const StackArg& that,
 
       if(this->Ptrs(true) == that.Ptrs(true))
       {
-         auto thatRoot = that.item->Root();
+         auto thatRoot = that.item_->Root();
          if(thatRoot->Type() == Cxx::Class)
          {
             auto thatClass = static_cast< Class* >(thatRoot);
@@ -1697,16 +1697,16 @@ Numeric StackArg::NumericType() const
 {
    Debug::ft("StackArg.NumericType");
 
-   if(item == nullptr) return Numeric::Nil;
+   if(item_ == nullptr) return Numeric::Nil;
    if(Ptrs(true) > 0) return Numeric::Pointer;
 
    //  Find the item's numeric type.  If it claims to be a pointer, find
    //  its underlying type.
    //
-   auto numeric = item->GetNumeric();
+   auto numeric = item_->GetNumeric();
    if(numeric.Type() != Numeric::PTR) return numeric;
 
-   auto root = item->Root();
+   auto root = item_->Root();
    if(root == nullptr) return Numeric::Nil;
    return root->GetNumeric();
 }
@@ -1715,7 +1715,7 @@ Numeric StackArg::NumericType() const
 
 bool StackArg::operator==(const StackArg& that) const
 {
-   return ((this->item == that.item) && (this->Ptrs(true) == that.Ptrs(true)));
+   return ((item_ == that.item_) && (Ptrs(true) == that.Ptrs(true)));
 }
 
 //------------------------------------------------------------------------------
@@ -1733,13 +1733,13 @@ size_t StackArg::Ptrs(bool arrays) const
 {
    Debug::ft(StackArg_Ptrs);
 
-   if(item == nullptr) return 0;
-   auto spec = item->GetTypeSpec();
+   if(item_ == nullptr) return 0;
+   auto spec = item_->GetTypeSpec();
    auto count = (spec == nullptr ? 0 : spec->Ptrs(arrays));
    count += ptrs_;
    if(count >= 0) return count;
 
-   auto expl = "Negative pointer count for " + item->Trace();
+   auto expl = "Negative pointer count for " + item_->Trace();
    Context::SwLog(StackArg_Ptrs, expl, count);
    return 0;
 }
@@ -1750,8 +1750,8 @@ size_t StackArg::Refs() const
 {
    Debug::ft("StackArg.Refs");
 
-   if(item == nullptr) return 0;
-   auto spec = item->GetTypeSpec();
+   if(item_ == nullptr) return 0;
+   auto spec = item_->GetTypeSpec();
    size_t count = (spec == nullptr ? 0 : spec->Refs());
    return count + refs_;
 }
@@ -1764,12 +1764,12 @@ void StackArg::SetAsAutoType() const
 {
    Debug::ft(StackArg_SetAsAutoType);
 
-   if(item != nullptr)
+   if(item_ != nullptr)
    {
-      AutoType_.item = this->item->AutoType();
+      AutoType_.item_ = this->item_->AutoType();
       AutoType_.ptrs_ = this->ptrs_;
       AutoType_.const_ = this->const_;
-      if(AutoType_.item != nullptr) return;
+      if(AutoType_.item_ != nullptr) return;
    }
 
    auto expl = "Auto type not set: item is null";
@@ -1782,7 +1782,7 @@ void StackArg::SetAsDirect() const
 {
    Debug::ft("StackArg.SetAsDirect");
 
-   if(name != nullptr) name->SetAsDirect();
+   if(name_ != nullptr) name_->SetAsDirect();
 }
 
 //------------------------------------------------------------------------------
@@ -1791,7 +1791,7 @@ void StackArg::SetAsReadOnly()
 {
    Debug::ft("StackArg.SetAsReadOnly");
 
-   if(!item->IsPointer(false))
+   if(!item_->IsPointer(false))
       const_ = true;
    else
       constptr_ = true;
@@ -1813,7 +1813,7 @@ void StackArg::SetAsWriteable()
 {
    Debug::ft("StackArg.SetAsWriteable");
 
-   if(!item->IsPointer(false))
+   if(!item_->IsPointer(false))
       const_ = false;
    else
       constptr_ = false;
@@ -1827,18 +1827,18 @@ void StackArg::SetAutoType()
 {
    Debug::ft(StackArg_SetAutoType);
 
-   if(!item->IsAuto()) return;
+   if(!item_->IsAuto()) return;
 
-   if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item)))
+   if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item_)))
    {
       //  Now that our underlying type is known, update our constness.
       //
-      const_ = item->IsConst();
-      constptr_ = item->IsConstPtr();
+      const_ = item_->IsConst();
+      constptr_ = item_->IsConstPtr();
       return;
    }
 
-   auto expl = "Failed to set auto type for " + item->Name();
+   auto expl = "Failed to set auto type for " + item_->Name();
    Context::SwLog(StackArg_SetAutoType, expl, 0);
 }
 
@@ -1861,7 +1861,7 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    //  of the expression that was just compiled.  However, it is adjusted to
    //  account for pointers and constness.
    //
-   if(item == nullptr) return false;
+   if(item_ == nullptr) return false;
 
    //  SPEC's referent is currently "auto".  Update it to the auto type.  But
    //  first, see if "const/volatile auto" or "auto* const/volatile" was used.
@@ -1878,12 +1878,12 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    //  the right-hand side will be reused by the auto variable, but it must be
    //  adjusted by ptrs_.
    //
-   if(item->Type() == Cxx::TypeSpec)
+   if(item_->Type() == Cxx::TypeSpec)
    {
       //  Make the TypeSpec's referent the auto variable's referent and also
       //  apply its pointers the auto variable.
       //
-      auto type = static_cast< TypeSpec* >(item);
+      auto type = static_cast< TypeSpec* >(item_);
       auto ptrs = ptrs_ + type->Tags()->PtrCount(true);
       spec->SetReferent(type->Referent(), nullptr);
       spec->SetPtrs(ptrs);
@@ -1893,7 +1893,7 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
       //  ITEM is derived from CxxScoped, so just make it the auto variable's
       //  referent and apply this->ptrs_ to the auto variable.
       //
-      spec->SetReferent(static_cast< CxxScoped* >(item), nullptr);
+      spec->SetReferent(static_cast< CxxScoped* >(item_), nullptr);
       spec->SetPtrs(ptrs_);
    }
 
@@ -1962,7 +1962,7 @@ void StackArg::SetNonConst(size_t index) const
 {
    Debug::ft(StackArg_SetNonConst);
 
-   auto token = (index == 0 ? item : via_);
+   auto token = (index == 0 ? item_ : via_);
    if(token == nullptr) return;
 
    if(mutable_)
@@ -1981,10 +1981,10 @@ void StackArg::SetNonConst(size_t index) const
 
 string StackArg::Trace() const
 {
-   auto s = item->Trace();
+   auto s = item_->Trace();
    AdjustPtrs(s, ptrs_);
    if(!s.empty()) s += SPACE;
-   s += '[' + strClass(item, false) + ']';
+   s += '[' + strClass(item_, false) + ']';
    return s;
 }
 
@@ -1992,8 +1992,8 @@ string StackArg::Trace() const
 
 string StackArg::TypeString(bool arg) const
 {
-   if(item == nullptr) return ERROR_STR;
-   auto ts = item->TypeString(arg);
+   if(item_ == nullptr) return ERROR_STR;
+   auto ts = item_->TypeString(arg);
    AdjustPtrs(ts, ptrs_);
 
    //  Now include constness in the result:
@@ -2029,7 +2029,7 @@ void StackArg::WasIndexed()
    //
    auto ptrs = Ptrs(true);
 
-   if(item->GetTypeSpec()->Tags()->PtrCount(false) >= ptrs)
+   if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= ptrs)
    {
       member_ = false;
       constptr_ = false;
@@ -2050,9 +2050,9 @@ void StackArg::WasRead() const
    Debug::ft("StackArg.WasRead");
 
    if(read_) return;
-   if(item == nullptr) return;
+   if(item_ == nullptr) return;
    read_ = true;
-   if(!item->WasRead()) return;
+   if(!item_->WasRead()) return;
    Context::Trace(CxxTrace::INCR_READS, *this);
 }
 
@@ -2066,16 +2066,16 @@ void StackArg::WasWritten() const
 
    auto ptrs = Ptrs(true);
 
-   if(item == nullptr) return;
+   if(item_ == nullptr) return;
    if(ptrs == 0) SetAsDirect();
-   if(!item->WasWritten(this, true, false)) return;
+   if(!item_->WasWritten(this, true, false)) return;
    Context::Trace(CxxTrace::INCR_WRITES, *this);
 
    //  See if a class was just block-copied.
    //
    if((ptrs == 0) && (Refs() == 0))
    {
-      auto root = item->Root();
+      auto root = item_->Root();
 
       if((root != nullptr) && (root->Type() == Cxx::Class))
       {
@@ -2085,7 +2085,7 @@ void StackArg::WasWritten() const
 
    if(!mutable_ && (ptrs > 0 ? constptr_ : const_))
    {
-      auto expl = "Write to const " + item->Name();
+      auto expl = "Write to const " + item_->Name();
       Context::SwLog(StackArg_WasWritten, expl, 0);
    }
    else

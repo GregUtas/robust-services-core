@@ -3474,7 +3474,6 @@ bool Parser::GetTypedef(TypedefPtr& type)
    TypeSpecPtr typeSpec;
    string typeName;
    if(!GetTypeSpec(typeSpec, typeName)) return Backup(start, 198);
-   auto pos = CurrPos();
 
    //  If typeSpec was a function type, typeName was set to its name,
    //  if any.  For other typedefs, the name follows typeSpec.
@@ -3491,7 +3490,7 @@ bool Parser::GetTypedef(TypedefPtr& type)
    if(!lexer_.NextCharIs(';')) return Backup(start, 200);
 
    type.reset(new Typedef(typeName, typeSpec));
-   type->SetContext(pos);
+   type->SetContext(begin);
    type->SetAlignment(align);
    return Success(Parser_GetTypedef, begin);
 }

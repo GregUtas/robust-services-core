@@ -1328,7 +1328,7 @@ Function* Class::FindFunc(const string& name,
    const StackArg* call, StackArgVector* args, bool base,
    const CxxScope* scope, SymbolView* view) const
 {
-   Debug::ft("Class.FindFunc(scope)");
+   Debug::ft("Class.FindFunc");
 
    auto f = CxxArea::FindFunc(name, call, args, false, scope, view);
    if(MemberIsAccessibleTo(f, scope, view))
@@ -1886,6 +1886,26 @@ Function* Class::IndexToFunc(const std::string& name, size_t idx) const
    }
 
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+void Class::InvokeCopyCtor() const
+{
+   Debug::ft("Class.InvokeCopyCtor");
+
+   auto ctor = FindFuncByRole(CopyCtor, false);
+
+   if(ctor != nullptr)
+   {
+      auto scope = Context::Scope();
+      SymbolView view;
+
+      if(MemberIsAccessibleTo(ctor, scope, &view))
+      {
+         FuncAccessed(ctor, nullptr, scope, &view);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3325,7 +3345,10 @@ CxxNamedVector CxxArea::Items() const
 
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
-      items.push_back(f->get());
+      //  Screen out function template instances, which appear in
+      //  a class that includes a function template.
+      //
+      if(!(*f)->IsInternal()) items.push_back(f->get());
    }
 
    for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)

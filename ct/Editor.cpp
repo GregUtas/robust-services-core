@@ -174,6 +174,8 @@ struct ItemDeclAttrs
    bool deleted_;          // set to define a function as deleted
    bool shell_;            // set to create a shell for defining a function
    bool stat_;             // set for a static function or data
+   const CxxToken* prev_;  // item immediately before insertion point
+   const CxxToken* next_;  // item immediately after insertion point
    bool thisctrl_;         // set to insert access control before
    Cxx::Access nextctrl_;  // set to insert access control after
    size_t pos_;            // position for insertion
@@ -195,6 +197,8 @@ ItemDeclAttrs::ItemDeclAttrs(Cxx::ItemType t, Cxx::Access a, FunctionRole r) :
    deleted_(false),
    shell_(false),
    stat_(false),
+   prev_(nullptr),
+   next_(nullptr),
    thisctrl_(false),
    nextctrl_(Cxx::Access_N),
    pos_(string::npos),
@@ -218,6 +222,8 @@ ItemDeclAttrs::ItemDeclAttrs(const CxxToken* item) :
    deleted_(false),
    shell_(false),
    stat_(false),
+   prev_(nullptr),
+   next_(nullptr),
    thisctrl_(false),
    nextctrl_(Cxx::Access_N),
    pos_(string::npos),
@@ -653,7 +659,7 @@ CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
       file = Singleton< Library >::Instance()->FindFile(fileName);
       if(file == nullptr)
       {
-         Cli_->Inform("  That file is not in the code library.");
+         Cli_->Inform("  That file is not in the code library.");  //*
       }
    }
 
@@ -2504,7 +2510,9 @@ word Editor::FindItemDeclLoc
    //  We now know the items between which the new item should be inserted
    //  (PREV and NEXT), so update its insertion attributes.
    //
-   return UpdateItemDeclLoc(cls, prev, next, attrs);
+   attrs.prev_ = prev;
+   attrs.next_ = next;
+   return UpdateItemDeclLoc(cls, attrs);
 }
 
 //------------------------------------------------------------------------------
@@ -4408,7 +4416,7 @@ word Editor::InsertSpecialFunctions(CxxToken* item)
 
    if(roles.size() > 1)
    {
-      Cli_->Inform("This will also add related functions...");
+      Cli_->Inform("This will also add related functions...");  //*
    }
 
    //  Add each function in ROLES and update the warnings associated with it.
@@ -5756,61 +5764,31 @@ word Editor::UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const
 {
    Debug::ft("Editor.UpdateItemControls");
 
-   //  Determine the access control that will be in effect at attrs.pos_.
-   //  If we reach an access control that is more restrictive than the
-   //  one for the item, insert the item directly above it.
+   //  If the access control for the previous item can be reused, there is
+   //  nothing to be done.  If there is a next item, its access control was
+   //  taken into account when deciding where to insert the new item.
    //
-   size_t begin, end;
-   if(!cls->GetSpan2(begin, end))
-   {
-      return NotFound("Item's class");
-   }
+   auto prevAccess = (attrs.prev_ != nullptr ?
+      attrs.prev_->GetAccess() : cls->DefaultAccess());
+   if(prevAccess == attrs.access_) return EditContinue;
 
-   auto prev = cls->DefaultAccess();
+   //  The previous item's access control isn't the one we want.  But if the
+   //  next item's access control is the desired one, the insertion position
+   //  has already been adjusted so that it will be acquired.  However, that
+   //  position might immediately *follow* an access control,
+   //
+   auto nextAccess = (attrs.next_ != nullptr ?
+      attrs.next_->GetAccess() : prevAccess);
+   if(nextAccess == attrs.access_) return EditContinue;
 
-   for(auto pos = CurrBegin(begin); pos <= attrs.pos_; pos = NextBegin(pos))
-   {
-      auto code = GetCode(pos);
-      auto acc = FindAccessControl(code);
-
-      if(acc != Cxx::Access_N)
-      {
-         if(acc < attrs.access_)
-         {
-            attrs.pos_ = pos;
-            attrs.thisctrl_ = (prev != attrs.access_);
-            if(attrs.thisctrl_) attrs.blank_ = BlankNone;
-            if(attrs.blank_ == BlankBelow) attrs.blank_ = BlankAbove;
-            return EditContinue;
-         }
-
-         prev = acc;
-      }
-   }
-
-   if(prev != attrs.access_)
-   {
-      //  The item's access control is not in effect at the insertion point,
-      //  so it must be inserted, and the access control that was in effect
-      //  must be inserted after the item unless we've reached the end of
-      //  the class.
-      //
-      attrs.thisctrl_ = true;
-      if(attrs.blank_ == BlankAbove) attrs.blank_ = BlankBelow;
-      if(PosToType(attrs.pos_) != CloseBraceSemicolon) attrs.nextctrl_ = prev;
-   }
-   else
-   {
-      //  If the item is being insert *at* its access control, insert it
-      //  immediately after that control.
-      //
-      if(FindAccessControl(GetCode(attrs.pos_)) == attrs.access_)
-      {
-         attrs.pos_ = NextBegin(attrs.pos_);
-         if(attrs.blank_ == BlankAbove) attrs.blank_ = BlankBelow;
-      }
-   }
-
+   //  The item's access control is not in effect at the insertion point, so
+   //  it must be inserted, and the access control that was in effect must be
+   //  inserted after the item unless we've reached the end of the class.
+   //
+   attrs.thisctrl_ = true;
+   if(attrs.blank_ == BlankAbove) attrs.blank_ = BlankBelow;
+   if(PosToType(attrs.pos_) != CloseBraceSemicolon)
+      attrs.nextctrl_ = nextAccess;
    return EditContinue;
 }
 
@@ -5854,14 +5832,15 @@ word Editor::UpdateItemDeclAttrs
 
 //------------------------------------------------------------------------------
 
-word Editor::UpdateItemDeclLoc(const Class* cls,
-   const CxxToken* prev, const CxxToken* next, ItemDeclAttrs& attrs) const
+word Editor::UpdateItemDeclLoc(const Class* cls, ItemDeclAttrs& attrs) const
 {
    Debug::ft("Editor.UpdateItemDeclLoc");
 
    //  PREV and NEXT are the items that precede and follow the item whose
    //  declaration is to be inserted.
    //
+   auto prev = attrs.prev_;
+   auto next = attrs.next_;
    auto rc = UpdateItemDeclAttrs(prev, attrs);
    if(rc != EditContinue) return rc;
    rc = UpdateItemDeclAttrs(next, attrs);
@@ -5909,15 +5888,14 @@ word Editor::UpdateItemDeclLoc(const Class* cls,
       {
          if(FindAccessControl(GetCode(pred)) != attrs.access_)
          {
-            //  This isn't the desired control.  Insert the item here or
-            //  above; UpdateItemControls will set the exact position.
+            //  This isn't the desired control.  Insert the item before it.
             //
             attrs.pos_ = pred;
             return UpdateItemControls(cls, attrs);
          }
 
-         //  This is the desired access control.  Insert the item after
-         //  it so that it can be reused.
+         //  This is the desired access control.  Insert the item after it
+         //  so that it can be reused.
          //
          attrs.pos_ = NextBegin(pred);
          return EditContinue;

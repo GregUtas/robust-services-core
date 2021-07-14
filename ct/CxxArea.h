@@ -440,6 +440,10 @@ public:
    //
    Cxx::Access DefaultAccess() const;
 
+   //  Registers an implicit invocation of the copy constructor.
+   //
+   void InvokeCopyCtor() const;
+
    //  Updates CODE with the code for the template instance INST, returning the
    //  location where parsing should begin.  Returns string::npos on an error.
    //

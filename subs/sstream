@@ -14,7 +14,7 @@ namespace std
    class basic_istringstream : public basic_istream
    {
    public:
-      basic_istringstream(const string& s);
+      explicit basic_istringstream(const string& s);
       ~basic_istringstream();
    };
 
@@ -22,7 +22,7 @@ namespace std
    {
    public:
       basic_ostringstream();
-      basic_ostringstream(const string& s);
+      explicit basic_ostringstream(const string& s);
       ~basic_ostringstream();
       string& str() const;
       void str(const string& s);

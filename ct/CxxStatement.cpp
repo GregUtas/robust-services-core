@@ -23,6 +23,7 @@
 #include <sstream>
 #include "CodeFile.h"
 #include "CodeTypes.h"
+#include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxNamed.h"
 #include "Debug.h"
@@ -1234,13 +1235,22 @@ void Return::EnterBlock()
    if(expr_ != nullptr)
    {
       //  Verify that the result is compatible with what the function is
-      //  supposed to return.
+      //  supposed to return, and then check for an implicit invocation of
+      //  a copy constructor.
       //
       expr_->EnterBlock();
       auto result = Context::PopArg(true);
       auto spec = Context::Scope()->GetFunction()->GetTypeSpec();
       Context::Scope()->GetFunction()->GetTypeSpec()->MustMatchWith(result);
       result.AssignedTo(StackArg(spec, 0, false), Returned);
+
+      if(result.item_ != nullptr)
+      {
+         if((result.item_->Type() == Cxx::Class) && !result.IsIndirect())
+         {
+            static_cast< Class* >(result.item_)->InvokeCopyCtor();
+         }
+      }
    }
 }
 

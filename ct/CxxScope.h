@@ -1926,6 +1926,10 @@ public:
    //
    void GetDecls(CxxNamedSet& items) override;
 
+   //  Overridden to return the entire namespace.
+   //
+   Namespace* GetSpace() const override { return space_; }
+
    //  Overridden to forward to space_.
    //
    const std::string& Name() const override;

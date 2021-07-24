@@ -923,7 +923,7 @@ public:
 
    //  Set if compilation is being traced.
    //
-   static bool Tracing;
+   static bool Tracing_;
 private:
    //  Pushes a parser onto the stack.
    //

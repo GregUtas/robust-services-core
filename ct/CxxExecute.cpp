@@ -177,7 +177,7 @@ bool ArgTrace::Display(ostream& stream, const string& opts)
 
 //==============================================================================
 
-bool Context::Tracing = false;
+bool Context::Tracing_ = false;
 string Context::Options_ = EMPTY_STR;
 CodeFile* Context::File_ = nullptr;
 std::vector< ParseFramePtr > Context::Frames_ = std::vector< ParseFramePtr >();
@@ -548,7 +548,7 @@ void Context::Shutdown(RestartLevel level)
 {
    Debug::ft("Context.Shutdown");
 
-   Tracing = false;
+   Tracing_ = false;
    Options_ = EMPTY_STR;
    LastLogLoc_ = EMPTY_STR;
    File_ = nullptr;
@@ -572,7 +572,7 @@ bool Context::StartTracing()
    if(x)
    {
       buff->SetTool(ParserTracer, true);
-      Tracing = true;
+      Tracing_ = true;
    }
 
    if(f)
@@ -609,7 +609,7 @@ void Context::SwLog
    LastLogLoc_ = loc;
    auto info = loc + ": " + expl;
    Trace(CxxTrace::ERROR, errval, info);
-   if(Tracing && !stack) return;  //@
+   if(Tracing_ && !stack) return;  //@
    Debug::SwLog(func, info, errval, stack);
 }
 
@@ -617,7 +617,7 @@ void Context::SwLog
 
 void Context::Trace(CxxTrace::Action act)
 {
-   if(!Tracing) return;
+   if(!Tracing_) return;
    auto rec = new ActTrace(act);
    Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
@@ -626,7 +626,7 @@ void Context::Trace(CxxTrace::Action act)
 
 void Context::Trace(CxxTrace::Action act, const StackArg& arg)
 {
-   if(!Tracing) return;
+   if(!Tracing_) return;
    auto rec = new ArgTrace(act, arg);
    Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
@@ -635,7 +635,7 @@ void Context::Trace(CxxTrace::Action act, const StackArg& arg)
 
 void Context::Trace(CxxTrace::Action act, word err, const string& expl)
 {
-   if(!Tracing) return;
+   if(!Tracing_) return;
    auto rec = new ErrTrace(act, err, expl);
    Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
@@ -644,7 +644,7 @@ void Context::Trace(CxxTrace::Action act, word err, const string& expl)
 
 void Context::Trace(CxxTrace::Action act, const CodeFile& file)
 {
-   if(!Tracing) return;
+   if(!Tracing_) return;
    auto rec = new FileTrace(act, file);
    Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
@@ -653,7 +653,7 @@ void Context::Trace(CxxTrace::Action act, const CodeFile& file)
 
 void Context::Trace(CxxTrace::Action act, const CxxToken* token)
 {
-   if(!Tracing) return;
+   if(!Tracing_) return;
    auto rec = new TokenTrace(act, token);
    Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
@@ -950,7 +950,7 @@ StackArg ParseFrame::PopArg(bool read)
 
    if(args_.empty())
    {
-      if(Context::Tracing)
+      if(Context::Tracing_)
          Context::Trace(CxxTrace::POP_ARG, -1);
       else
          Context::SwLog(ParseFrame_PopArg1, "Empty argument stack", 0);
@@ -974,7 +974,7 @@ bool ParseFrame::PopArg(StackArg& arg)
 
    if(args_.empty())
    {
-      if(Context::Tracing)
+      if(Context::Tracing_)
          Context::Trace(CxxTrace::POP_ARG, -1);
       else
          Context::SwLog(ParseFrame_PopArg2, "Empty argument stack", 0);
@@ -997,7 +997,7 @@ const Operation* ParseFrame::PopOp()
 
    if(ops_.empty())
    {
-      if(Context::Tracing)
+      if(Context::Tracing_)
          Context::Trace(CxxTrace::POP_OP, -1);
       else
          Context::SwLog(ParseFrame_PopOp, "Empty operator stack", 0);
@@ -1045,7 +1045,7 @@ void ParseFrame::PushArg(const StackArg& arg)
 
    if(arg.item_ == nullptr)
    {
-      if(Context::Tracing)
+      if(Context::Tracing_)
          Context::Trace(CxxTrace::PUSH_ARG, -1);
       else
          Context::SwLog(ParseFrame_PushArg, "Push null argument", 0);
@@ -1069,7 +1069,7 @@ void ParseFrame::PushOp(const Operation* op)
 
    if(op == nullptr)
    {
-      if(Context::Tracing)
+      if(Context::Tracing_)
          Context::Trace(CxxTrace::PUSH_OP, -1);
       else
          Context::SwLog(ParseFrame_PushOp, "Push null operator", 0);
@@ -2164,13 +2164,13 @@ void Tracepoint::OnLine(const CodeFile* file, size_t line, bool compiling) const
       auto buff = Singleton< TraceBuffer >::Instance();
       ThisThread::IncludeInTrace();
       ThisThread::StartTracing(EMPTY_STR);
-      Context::Tracing = buff->ToolIsOn(ParserTracer);
+      Context::Tracing_ = buff->ToolIsOn(ParserTracer);
       break;
    }
 
    case Stop:
       ThisThread::StopTracing();
-      Context::Tracing = false;
+      Context::Tracing_ = false;
       break;
    }
 

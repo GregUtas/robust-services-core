@@ -120,6 +120,10 @@ public:
    //
    void Display(std::ostream& stream,
       const string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to return the edited source code.
+   //
+   const string& Source() const override { return source_; }
 private:
    //  Invokes Write on each editor whose file has changed.
    //
@@ -169,13 +173,16 @@ private:
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc);
    word ChangeAccess(CxxToken* item, ItemDeclAttrs& attrs);
    word ChangeAssignmentToCtorCall(const CodeWarning& log);
+   word ChangeCast(const CodeWarning& log);
    word ChangeClassToNamespace(const CodeWarning& log);
    word ChangeClassToStruct(const CodeWarning& log);
+   static word ChangeDataToFree(const CodeWarning& log);
    word ChangeOperator(const CodeWarning& log);
    word ChangeStructToClass(const CodeWarning& log);
    word EraseAdjacentSpaces(const CodeWarning& log);
    word EraseAccessControl(const CodeWarning& log);
    word EraseBlankLine(const CodeWarning& log);
+   word EraseCast(const CodeWarning& log);
    word EraseClass(const CodeWarning& log);
    word EraseConst(const CodeWarning& log);
    word EraseExplicitTag(const CodeWarning& log);
@@ -194,6 +201,7 @@ private:
    word InsertDebugFtCall(const CodeWarning& log);
    word InsertDisplay(const CodeWarning& log);
    word InsertEnumName(const CodeWarning& log);
+   word InsertFallthrough(const CodeWarning& log);
    word InsertForward(const CodeWarning& log);
    word InsertInclude(const CodeWarning& log);
    word InsertIncludeGuard(const CodeWarning& log);
@@ -333,7 +341,6 @@ private:
 
    //  Fixes DATA or ITEM, which references DATA.
    //
-   word ChangeDataToFree(const CxxNamed* item, const Data* data);
    word TagAsConstData(const Data* data);
    word TagAsConstPointer(const Data* data);
    word TagAsStaticData(Data* data);
@@ -345,6 +352,30 @@ private:
    //  Fixes LOG, which involves modifying ITEM.
    //
    word FixReference(CxxNamed* item, const CodeWarning& log);
+
+   //  Returns the line that follows the left brace at the beginning of a
+   //  namespace definition for SPACE.
+   //
+   size_t NamespacePos(const Namespace* space) const;
+
+   //  DATA is the declaration or definition (if INIT is set) of a static
+   //  class member, and CODE defines static namespace data with NAME to
+   //  replace it.  Updates CODE to qualify any class member used in DATA.
+   //  If INIT is set, only the initialization portion of CODE is updated.
+   //
+   void QualifyClassItems
+      (const Data* data, string& code, const string& name, bool init) const;
+
+   //  Updates POS to the beginning of the first line that follows any
+   //  declarations of free static data that begin at POS.  Returns false
+   //  if POS was not updated.
+   //
+   bool FindFreeDataEnd(size_t& pos);
+
+   //  Removes static class data DECL, which is used in REFS, with static
+   //  namespace data in the .cpp that implements other members of the class.
+   //
+   word ChangeDataToFree(Data* decl, CxxNamedVector& refs);
 
    //  ITEM has a log that requires adding a special member function.  Looks
    //  for other logs that also require this and fixes them together.
@@ -509,7 +540,7 @@ private:
    //  Returns items that immediately precede FUNC and that FUNC uses.  The
    //  items are sorted by position.
    //
-   CxxNamedVector GetItemsForFuncDefn(const Function* func) const;
+   CxxItemVector GetItemsForFuncDefn(const Function* func) const;
 
    //  Moves FUNC's definition so it appears in standard order among SORTED.
    //
@@ -535,7 +566,7 @@ private:
    //  Updates BEGIN and END to include ITEM's preceding whitespace and
    //  comments, as well as trailing whitespace.
    //
-   void GetSpan(const CxxToken* item, size_t& begin, size_t& end);
+   bool GetSpan(const CxxToken* item, size_t& begin, size_t& end);
 
    //  Cuts and returns the code associated with ITEM in CODE.  Comments on
    //  preceding lines, up to the next line of code, are also erased if a
@@ -546,11 +577,11 @@ private:
 
    //  Deletes ITEM after erasing its code.
    //
-   word EraseItem(CxxToken* item);
+   static word EraseItem(CxxToken* item);
 
    //  Deletes the assignment statement for ITEM after erasing its code.
    //
-   word EraseAssignment(CxxToken* item);
+   word EraseAssignment(const CxxToken* item);
 
    //  Erases POS's line and returns the start of the line that followed it.
    //

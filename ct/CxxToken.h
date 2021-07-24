@@ -279,10 +279,9 @@ public:
    //
    virtual void GetConvertibleTypes(StackArgVector& types, bool expl) { }
 
-   //  Returns what the item refers to.  The default version generates a
-   //  log and returns nullptr.
+   //  Returns what the item refers to.
    //
-   virtual CxxScoped* Referent() const;
+   virtual CxxScoped* Referent() const { return nullptr; }
 
    //  If the item is located in a code block, this is invoked when analysis
    //  of the block begins, which corresponds to the block coming into scope.

@@ -2009,7 +2009,7 @@ bool Class::IsSingletonBase() const
 
 //------------------------------------------------------------------------------
 
-CxxNamedVector Class::Items() const
+CxxItemVector Class::Items() const
 {
    Debug::ft("Class.Items");
 
@@ -3307,11 +3307,11 @@ void CxxArea::InsertFunc(Function* func)
 
 //------------------------------------------------------------------------------
 
-CxxNamedVector CxxArea::Items() const
+CxxItemVector CxxArea::Items() const
 {
    Debug::ft("CxxArea.Items");
 
-   CxxNamedVector items;
+   CxxItemVector items;
 
    for(auto a = assembly_.cbegin(); a != assembly_.cend(); ++a)
    {

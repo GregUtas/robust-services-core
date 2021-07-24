@@ -625,6 +625,10 @@ public:
    //
    TypeName* First() const { return first_.get(); }
 
+   //  Returns the last name.
+   //
+   TypeName* Last() const;
+
    //  Returns the Nth name.
    //
    TypeName* At(size_t n) const;
@@ -817,10 +821,6 @@ public:
    //
    void UpdateXref(bool insert) override;
 private:
-   //  Returns the last name.
-   //
-   TypeName* Last() const;
-
    //  Checks if REF (the name's referent) is a template argument.
    //
    void CheckIfTemplateArgument(const CxxScoped* ref) const;

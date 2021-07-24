@@ -97,7 +97,7 @@ typedef std::pair< string, Typedef* > TypePair;
 //
 const word LAST_XREF_START_COLUMN = 122;
 
-void DisplayReferences(ostream& stream, const CxxNamedVector& refs)
+void DisplayReferences(ostream& stream, const CxxItemVector& refs)
 {
    if(refs.empty()) return;
 
@@ -336,7 +336,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
 
       for(auto n = namespaces.begin(); n != namespaces.end(); ++n)
       {
-         CxxNamedVector refs;
+         CxxItemVector refs;
          auto xref = (*n)->Xref();
 
          for(auto r = xref->cbegin(); r != xref->cend(); ++r)
@@ -373,7 +373,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
 
    for(auto i = items.begin(); i != items.end(); ++i)
    {
-      CxxNamedVector refs;
+      CxxItemVector refs;
       auto xref = (*i)->Xref();
 
       for(auto r = xref->cbegin(); r != xref->cend(); ++r)

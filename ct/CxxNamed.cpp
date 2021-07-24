@@ -2989,11 +2989,24 @@ bool TypeName::GetSpan(size_t& begin, size_t& left, size_t& end) const
 {
    Debug::ft("TypeName.GetSpan");
 
-   if((ref_ == nullptr) || (ref_->Type() != Cxx::Data)) return false;
+   auto& source = GetFile()->GetLexer().Source();
 
    begin = GetPos();
-   end = GetFile()->GetLexer().FindFirstOf(";", begin);
-   return (end != string::npos);
+
+   if(next_ != nullptr)
+   {
+      end = source.find(SCOPE_STR, begin);
+      if(end == string::npos) return false;
+      end += 1;
+   }
+   else
+   {
+      end = source.find_first_not_of(ValidNextChars, begin);
+      if(end == string::npos) return false;
+      end -= 1;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------

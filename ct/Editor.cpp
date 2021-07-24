@@ -76,9 +76,20 @@ static std::set< Editor* > Editors_ = std::set< Editor* >();
 static size_t Commits_ = 0;
 
 //  The CLI thread on which Fix was invoked.  This allows an Editor function
-//  to display results with needing CliThread& as one of its parameters.
+//  to display results without needing CliThread& as one of its parameters.
 //
 static CliThread* Cli_ = nullptr;
+
+//------------------------------------------------------------------------------
+//
+//  Displays INFO and then prompts for the name of an identifier.  Returns
+//  the name that is entered, or an empty string if the name was invalid.
+//
+string GetIdentifier(const string& prompt);
+
+//  Writes TEXT to Cli_, adding an endline if one doesn't exist.
+//
+void Inform(string text);
 
 //------------------------------------------------------------------------------
 //
@@ -125,6 +136,7 @@ fixed_string ArgPrompt = "Choose the argument's name. ";
 fixed_string DefnPrompt = "0=skip 1=default 2=delete: ";
 fixed_string FilePrompt = "Enter the filename in which to define ";
 fixed_string ShellPrompt = "Do you want to create a shell for the definition?";
+fixed_string NewNamePrompt = "Enter a new name, or an illegal name to skip: ";
 fixed_string SuffixPrompt = "Enter a suffix for the name: ";
 fixed_string VirtualPrompt = "Enter 0=skip 1=virtual 2=non-virtual: ";
 fixed_string CommitFailedPrompt = "Do you want to retry?";
@@ -659,11 +671,56 @@ CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
       file = Singleton< Library >::Instance()->FindFile(fileName);
       if(file == nullptr)
       {
-         Cli_->Inform("  That file is not in the code library.");  //*
+         Inform("That file is not in the code library.");
       }
    }
 
    return file;
+}
+
+//------------------------------------------------------------------------------
+
+Cxx::Access FindMaxAccess(const CxxNamedSet& items)
+{
+   Debug::ft("CodeTools.FindMaxAccess");
+
+   auto access = Cxx::Access_N;
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      if((*i)->GetClass() != nullptr)
+      {
+         auto a = (*i)->GetAccess();
+         if(a < access) access = a;
+      }
+   }
+
+   return access;
+}
+
+//------------------------------------------------------------------------------
+
+Cxx::Access FindMaxDataAccess(Data* decl)
+{
+   Debug::ft("CodeTools.FindMaxDataAccess");
+
+   CxxUsageSets usages;
+   decl->GetUsages(*decl->GetFile(), usages);
+
+   auto defn = decl->GetMate();
+   if(defn != nullptr)
+   {
+      defn->GetUsages(*defn->GetFile(), usages);
+      usages.directs.erase(decl);
+   }
+
+   auto max = FindMaxAccess(usages.directs);
+   auto access = FindMaxAccess(usages.indirects);
+   if(access < max) max = access;
+   access = FindMaxAccess(usages.inherits);
+   if(access < max) max = access;
+
+   return max;
 }
 
 //------------------------------------------------------------------------------
@@ -683,6 +740,37 @@ Namespace* FindNamespace(const string& nspace)
 
 //------------------------------------------------------------------------------
 //
+//  Returns the comment, if any, associated with the declaration of ITEM after
+//  removing the indentation on each line if UNINDENT is set.
+//
+string GetComment(const CxxNamed* item, bool unindent)
+{
+   Debug::ft("CodeTools.GetComment");
+
+   size_t begin, end;
+   if(!item->GetSpan2(begin, end)) return EMPTY_STR;
+
+   auto& editor = item->GetFile()->GetEditor();
+   begin = editor.CurrBegin(begin);
+   auto start = editor.IntroStart(begin, false);
+
+   if(start == begin) return EMPTY_STR;
+   auto comment = editor.Source().substr(start, begin - start);
+
+   if(!unindent) return comment;
+
+   for(begin = 0; begin < comment.size(); begin = comment.find(CRLF, begin) + 1)
+   {
+      auto pos = comment.find(COMMENT_STR, begin);
+      if(pos == string::npos) break;
+      comment.erase(begin, pos - begin);
+   }
+
+   return comment;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Updates BEGIN and END, where ITEM begins and ends.  BEGIN includes any
 //  comment that immediately precedes ITEM.  Returns false if ITEM could
 //  not be located.
@@ -696,6 +784,36 @@ bool GetCommentedRange(const CxxToken* item, size_t& begin, size_t& end)
    auto& editor = item->GetFile()->GetEditor();
    begin = editor.IntroStart(begin, (item->Type() == Cxx::Function));
    return true;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Checks that the name of static class data DECL is not in use when planning
+//  to convert DECL to static namespace data in the FILE that implements the
+//  class that currently declares it.  If the name is in use, prompts for and
+//  returns an alternate name if provided, else returns an empty string.
+//
+string GetDataName(const Data* decl, CodeFile* file)
+{
+   Debug::ft("CodeTools.GetDataName");
+
+   auto syms = Singleton< CxxSymbols >::Instance();
+   auto space = decl->GetSpace();
+   auto name = decl->Name();
+
+   while(true)
+   {
+      SymbolView view;
+      auto item = syms->FindSymbol(file, space, name, DATA_MASK, view);
+      if(item == nullptr) return name;
+
+      std::ostringstream stream;
+      stream << spaces(2) << name << " is already in use." << CRLF;
+      name = GetIdentifier(NewNamePrompt);
+      if(name.empty()) return name;
+   }
+
+   return name;
 }
 
 //------------------------------------------------------------------------------
@@ -724,6 +842,48 @@ string GetExpl()
 
 //------------------------------------------------------------------------------
 //
+//  Returns true if NAME is a valid identifier.
+//
+string GetIdentifier(const string& prompt)
+{
+   Debug::ft("CodeTools.GetIdentifier");
+
+   auto name = Cli_->StrPrompt(prompt);
+
+   if(name.empty()) return EMPTY_STR;
+
+   if(ValidFirstChars.find(name[0]) == string::npos) return EMPTY_STR;
+   if(name[0] == '#') return EMPTY_STR;
+   if(name[0] == '~') return EMPTY_STR;
+
+   for(auto i = 1; i < name.size(); ++i)
+   {
+      if(ValidNextChars.find(name[i]) == string::npos) return EMPTY_STR;
+      if(name[i] == '#') return EMPTY_STR;
+   }
+
+   return name;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns the initialization expresssion for DATA.
+//
+string GetInit(const CxxNamed* data)
+{
+   Debug::ft("CodeTools.GetInit");
+
+   size_t begin, end;
+   data->GetSpan2(begin, end);
+   auto& editor = data->GetFile()->GetEditor();
+   auto code = editor.Source().substr(begin, end - begin + 1);
+   auto eqpos = code.find('=');
+   if(eqpos == string::npos) return EMPTY_STR;
+   return code.substr(eqpos);
+}
+
+//------------------------------------------------------------------------------
+//
 //  Adds FUNC and its overrides to FUNCS.
 //
 void GetOverrides(Function* func, FunctionVector& funcs)
@@ -747,7 +907,7 @@ void GetOverrides(Function* func, FunctionVector& funcs)
 //
 //  Adds all references to DATA to ITEMS, excluding DATA and its definition.
 //
-void GetReferences(const Data* data, std::vector< CxxNamed* >& items)
+void GetReferences(const Data* data, CxxNamedVector& items)
 {
    Debug::ft("CodeTools.GetReferences");
 
@@ -760,6 +920,16 @@ void GetReferences(const Data* data, std::vector< CxxNamed* >& items)
       if(AreInSameStatement(mate, *r)) continue;
       items.push_back(*r);
    }
+}
+
+//------------------------------------------------------------------------------
+
+void Inform(string text)
+{
+   Debug::ft("CodeTools.Inform");
+
+   if(!text.empty() && (text.back() != CRLF)) text.push_back(CRLF);
+   Cli_->Inform(text);
 }
 
 //------------------------------------------------------------------------------
@@ -1204,6 +1374,17 @@ word Editor::ChangeAssignmentToCtorCall(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
+word Editor::ChangeCast(const CodeWarning& log)
+{
+   Debug::ft("Editor.ChangeCast");
+
+   //  Replace the cast operator with one of lesser severity.
+   //
+   return Unimplemented();
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::ChangeClassToNamespace(const CodeWarning& log)
 {
    Debug::ft("Editor.ChangeClassToNamespace");
@@ -1272,25 +1453,244 @@ word Editor::Changed(size_t pos)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeDataToFree(const CxxNamed* item, const Data* data)
+word Editor::ChangeDataToFree(const CodeWarning& log)
 {
-   Debug::ft("Editor.ChangeDataToFree");
+   Debug::ft("Editor.ChangeDataToFree(log)");
 
-   //  This is invoked to remove static member data from its class and insert
-   //  it into a namespace.  This only occurs when the data is used in a single
-   //  .cpp (which might also be where the class is defined).  It is invoked
-   //  in three ways, and ITEM is nullptr except in the first of these:
-   //     1. On ITEM, a reference to DATA
-   //     2. On DATA's declaration.
-   //     3. On DATA's definition, if distinct.
-   //  The first simply has to remove the class qualifier used to reference
-   //  the data.  The other two are far more complicated, and the details
-   //  depend on whether there is a separate definition.  In the end, code
-   //  in the declaration and/or definition will be cut, fragments possibly
-   //  combined, and pasted at the top of the .cpp with a "static" tag.  The
-   //  original items will then be deleted and the new one compiled.
+   //  This removes static member data from a class and adds it to a namespace.
+   //  This is supported if the data is used in a single .cpp, which might also
+   //  be where the class is defined.
    //
-   return Unimplemented();
+   //  Find the data's declaration, definition, and references.  All changes,
+   //  except for deleting the declaration, occur in the .cpp, so forward to
+   //  its editor.
+   //
+   auto decl = static_cast< Data* >(log.item_);
+   auto defn = decl->GetMate();
+   CxxNamedVector refs;
+   GetReferences(decl, refs);
+
+   auto cppItem = (defn != nullptr ? defn : refs.front());
+   auto& editor = cppItem->GetFile()->GetEditor();
+   return editor.ChangeDataToFree(decl, refs);
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::ChangeDataToFree(Data* decl, CxxNamedVector& refs)
+{
+   Debug::ft("Editor.ChangeDataToFree(data)");
+
+   auto access = FindMaxDataAccess(decl);
+
+   if(access < Cxx::Public)
+   {
+      return Report("This item uses non-public data, so it cannot be changed.");
+   }
+
+   auto oldName = decl->Name();
+   auto newName = GetDataName(decl, file_);
+
+   if(newName.empty())
+   {
+      return Report("This warning will be skipped.");
+   }
+
+   auto nameChange = (newName != oldName);
+
+   //  Assemble the code for defining the data as free, which has the form
+   //    <comment> <decl> [ '=' <init>] ';'
+   //  where <comment> and <decl> are from data's current declaration and
+   //  <init> is any initialization found in its definition or declaration.
+   //  Displaying the declaration also picks up the initialization, else it
+   //  must be obtained from the definition.  Display() prefixes the access
+   //  control (e.g. "private: "), which must be erased.
+   //
+   std::ostringstream stream;
+   decl->Display(stream, EMPTY_STR, Code_Mask);
+   auto code = stream.str();
+   auto stat = code.find(STATIC_STR);
+   code.erase(0, stat);
+   auto comment = GetComment(decl, true);
+   if(!comment.empty()) code.insert(0, comment);
+
+   auto defn = static_cast< Data* >(decl->GetMate());
+
+   if(defn != nullptr)
+   {
+      auto semi = code.find(';');
+      code.erase(semi);
+      code.push_back(SPACE);
+      code.append(GetInit(defn));
+      code.push_back(CRLF);
+   }
+
+   if(access == Cxx::Public)
+   {
+      auto& editor = decl->GetFile()->GetEditor();
+      editor.QualifyClassItems(decl, code, decl->Name(), false);
+      if(defn != nullptr) QualifyClassItems(defn, code, decl->Name(), true);
+   }
+
+   if(nameChange)
+   {
+      for(size_t pos = 0; pos < code.size(); pos += oldName.size())
+      {
+         pos = code.find(oldName, pos);
+         if(pos == string::npos) break;
+
+         auto prev = code[pos - 1];
+         auto next = code[pos + oldName.size()];
+
+         if((ValidFirstChars.find(prev) == string::npos) &&
+            (ValidNextChars.find(next) == string::npos))
+         {
+            code.replace(pos, oldName.size(), newName);
+            break;
+         }
+      }
+   }
+
+   //  Before deleting the current declaration and definition, find the
+   //  namespace in which the data currently appears.
+   //
+   auto space = decl->GetSpace();
+   auto scope = space;
+
+   size_t pos = string::npos;
+
+   if(defn != nullptr)
+   {
+      EraseItem(defn);
+      pos = lastCut_;
+   }
+
+   EraseItem(decl);
+
+   //  Decide where to insert the new declaration.  The first choice
+   //  is where the definition was located, as long as the data isn't
+   //  referenced above that location.
+   //
+   auto subsequent = true;
+
+   if(pos != string::npos)
+   {
+      for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+      {
+         if((*r)->GetPos() < pos)
+         {
+            pos = string::npos;
+            break;
+         }
+      }
+   }
+
+   //  If the new declaration couldn't be placed where the previous
+   //  definition was located, then insert it
+   //    a) at file scope, if SCOPE is the global namespace, else
+   //    b) in an existing namespace definition for SPACE, else
+   //    c) in a new namespace definition for SPACE.
+   //  In cases (a) and (b), or if it is being inserted in the same location
+   //  as the previous definition, insert the declaration after any existing
+   //  declarations of static data.
+   //
+   if(pos != string::npos)
+   {
+      FindFreeDataEnd(pos);
+      subsequent = true;
+   }
+   else
+   {
+      pos = CodeBegin();
+      auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+
+      if(space == gns)
+      {
+         subsequent = FindFreeDataEnd(pos);
+      }
+      else
+      {
+         auto nspos = NamespacePos(space);
+
+         if(nspos != string::npos)
+         {
+            pos = nspos;
+            subsequent = FindFreeDataEnd(pos);
+         }
+         else
+         {
+            string ns(NAMESPACE_STR);
+            ns.push_back(SPACE);
+            ns.append(space->Name());
+            ns.push_back(CRLF);
+            ns.push_back('{');
+            ns.push_back(CRLF);
+            code.insert(0, ns);
+            code.push_back('}');
+            code.push_back(CRLF);
+            scope = gns;
+         }
+      }
+   }
+
+   //  If the data is commented or does not appear with other static data,
+   //  set it off with blank lines.
+   //
+   if(!comment.empty() || !subsequent)
+   {
+      auto prevType = PosToType(PrevBegin(pos));
+      if(prevType == CodeLine) code.insert(0, 1, CRLF);
+      code.push_back(CRLF);
+   }
+
+   //  If the data does not appear with other static data, set it off with
+   //  a rule.
+   //
+   if(!subsequent)
+   {
+      code.append(SingleRule);
+      code.push_back(CRLF);
+      code.push_back(CRLF);
+   }
+
+   Insert(pos, code);
+   pos = Find(pos, STATIC_STR);
+
+   //  Compile the declaration and find the C++ item that was created for it.
+   //  Note that SCOPE is the global namespace if a namespace definition was
+   //  inserted.
+   //
+   ParseFileItem(pos, scope);
+
+   SymbolView view;
+   auto syms = Singleton< CxxSymbols >::Instance();
+   auto item = syms->FindSymbol(file_, space, newName, DATA_MASK, view);
+   if(item == nullptr) Inform("C++ item for new declaration not found.");
+   auto data = static_cast< Data* >(item);
+
+   //  For each reference to the previous data, remove any qualified names and
+   //  update the referent.
+   //
+   for(auto r = refs.begin(); r != refs.end(); ++r)
+   {
+      if((*r)->Type() == Cxx::TypeName)
+      {
+         auto tname = static_cast< TypeName* >(*r);
+         auto qname = tname->GetQualName();
+         while(qname->Size() > 1) EraseItem(qname->First());
+
+         if(nameChange)
+         {
+            Replace(qname->Last()->GetPos(), oldName.size(), newName);
+         }
+
+         qname->SetReferent(data, &view);
+         qname->UpdateXref(true);
+      }
+   }
+
+   if(data != nullptr) pos = data->GetPos();
+   return Changed(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -1994,7 +2394,7 @@ word Editor::EraseArgument(const Function* func, word offset)
 
 fn_name Editor_EraseAssignment = "Editor.EraseAssignment";
 
-word Editor::EraseAssignment(CxxToken* item)
+word Editor::EraseAssignment(const CxxToken* item)
 {
    Debug::ft(Editor_EraseAssignment);
 
@@ -2013,13 +2413,11 @@ word Editor::EraseAssignment(CxxToken* item)
    }
 
    auto statement = item->GetFile()->PosToItem(item->GetPos());
-   string code;
+   if(statement == nullptr) return NotFound("Item's statement");
 
-   if(CutCode(item, code) == string::npos) return EditFailed;
-   if(statement != nullptr)
-      statement->Delete();
-   else
-      item->Delete();
+   string code;
+   if(CutCode(statement, code) == string::npos) return EditFailed;
+   statement->Delete();
    return Changed();
 }
 
@@ -2033,6 +2431,17 @@ word Editor::EraseBlankLine(const CodeWarning& log)
    //
    EraseLine(log.Pos());
    return Changed();
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::EraseCast(const CodeWarning& log)
+{
+   Debug::ft("Editor.EraseCast");
+
+   //  Remove the cast operator.
+   //
+   return Unimplemented();
 }
 
 //------------------------------------------------------------------------------
@@ -2154,10 +2563,12 @@ word Editor::EraseItem(CxxToken* item)
 {
    Debug::ft("Editor.EraseItem");
 
+   auto& editor = item->GetFile()->GetEditor();
+
    string code;
-   if(CutCode(item, code) == string::npos) return EditFailed;
+   if(editor.CutCode(item, code) == string::npos) return EditFailed;
    item->Delete();
-   return Changed();
+   return editor.Changed();
 }
 
 //------------------------------------------------------------------------------
@@ -2394,6 +2805,34 @@ size_t Editor::FindArgsEnd(const Function* func) const
    if(lpar == string::npos) return string::npos;
    auto rpar = FindClosing('(', ')', lpar + 1);
    return rpar;
+}
+
+//------------------------------------------------------------------------------
+
+bool Editor::FindFreeDataEnd(size_t& pos)
+{
+   Debug::ft("Editor.FindFreeDataEnd");
+
+   auto updated = false;
+   auto items = file_->Items();
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      if((*i)->GetPos() > pos)
+      {
+         if((*i)->Type() != Cxx::Data) return updated;
+
+         auto data = static_cast< const Data* >(*i);
+         if(!data->IsStatic()) return updated;
+
+         size_t begin, end;
+         if(!GetSpan(data, begin, end)) return updated;
+         pos = NextBegin(end);
+         updated = true;
+      }
+   }
+
+   return updated;
 }
 
 //------------------------------------------------------------------------------
@@ -2703,7 +3142,8 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
       case Nullified:
          if(opts.warning == AllWarnings) continue;
-         return Report(ItemDeleted, EditAbort);
+         *Cli_->obuf << ItemDeleted << CRLF;
+         return EditAbort;
 
       case NotSupported:
       default:
@@ -2713,7 +3153,8 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
          //  so return a value that will terminate the >fix command.
          //
          if(opts.warning == AllWarnings) continue;
-         return Report(NotImplemented, EditAbort);
+         *Cli_->obuf << NotImplemented << CRLF;
+         return EditAbort;
       }
 
       //  This item is eligible for fixing.  Display it.
@@ -2769,7 +3210,8 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
             break;
 
          default:
-            return Report("Internal error: unknown response.", -6);
+            *Cli_->obuf << "Internal error: unknown response." << CRLF;
+            return -6;
          }
       }
 
@@ -2832,8 +3274,6 @@ word Editor::FixData(Data* data, const CodeWarning& log)
       return TagAsConstData(data);
    case DataCouldBeConstPtr:
       return TagAsConstPointer(data);
-   case DataCouldBeFree:
-      return ChangeDataToFree(nullptr, data);
    case DataShouldBeStatic:
       return TagAsStaticData(data);
    }
@@ -2996,8 +3436,6 @@ word Editor::FixReference(CxxNamed* item, const CodeWarning& log)
    {
    case DataWriteOnly:
       return EraseAssignment(item);
-   case DataCouldBeFree:
-      return ChangeDataToFree(item, static_cast< const Data* >(log.item_));
    }
 
    return Report("Internal error: unsupported data warning.");
@@ -3017,7 +3455,7 @@ word Editor::FixReferences(CodeWarning& log)
    //  Fix references to the data, followed by the data itself.
    //
    auto data = static_cast< const Data* >(log.item_);
-   std::vector< CxxNamed* > refs;
+   CxxNamedVector refs;
    GetReferences(data, refs);
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
@@ -3270,8 +3708,12 @@ word Editor::FixWarning(CodeWarning& log)
       return ChangeOperator(log);
    case DebugFtCanBeLiteral:
       return InlineDebugFtArgument(log);
+   case UnnecessaryCast:
+      return EraseCast(log);
+   case ExcessiveCast:
+      return ChangeCast(log);
    case DataCouldBeFree:
-      return FixReferences(log);
+      return ChangeDataToFree(log);
    case ConstructorNotPrivate:
       return ChangeSpecialFunction(log);
    case DestructorNotPrivate:
@@ -3288,6 +3730,8 @@ word Editor::FixWarning(CodeWarning& log)
       return DeleteSpecialFunction(log);
    case CtorCouldBeDeleted:
       return DeleteSpecialFunction(log);
+   case NoJumpOrFallthrough:
+      return InsertFallthrough(log);
    case OverrideNotSorted:
       return SortOverrides(log);
    case DataShouldBeStatic:
@@ -3333,11 +3777,11 @@ bool Editor::FunctionsWereSorted(const CodeWarning& log) const
 
 //------------------------------------------------------------------------------
 
-CxxNamedVector Editor::GetItemsForFuncDefn(const Function* func) const
+CxxItemVector Editor::GetItemsForFuncDefn(const Function* func) const
 {
    Debug::ft("Editor.GetItemsForFuncDefn");
 
-   CxxNamedVector items;
+   CxxItemVector items;
    auto& fileItems = file_->Items();
 
    //  Return the items above FUNC that are referenced by FUNC.
@@ -3420,7 +3864,7 @@ ItemOffsets Editor::GetOffsets(const CxxToken* item) const
 
 //------------------------------------------------------------------------------
 
-void Editor::GetSpan(const CxxToken* item, size_t& begin, size_t& end)
+bool Editor::GetSpan(const CxxToken* item, size_t& begin, size_t& end)
 {
    Debug::ft("Editor.GetSpan");
 
@@ -3428,10 +3872,10 @@ void Editor::GetSpan(const CxxToken* item, size_t& begin, size_t& end)
    {
       begin = string::npos;
       end = string::npos;
-      return;
+      return false;
    }
 
-   if(!item->GetSpan2(begin, end)) return;
+   if(!item->GetSpan2(begin, end)) return false;
 
    if(source_[begin] == ',')
    {
@@ -3448,9 +3892,12 @@ void Editor::GetSpan(const CxxToken* item, size_t& begin, size_t& end)
    else
    {
       //  Cut from the start of BEGIN's line unless other code precedes
-      //  the item.
+      //  or follows the item.
       //
-      if(IsFirstNonBlank(begin)) begin = CurrBegin(begin);
+      if(IsFirstNonBlank(begin) && NoCodeFollows(end + 1))
+      {
+         begin = CurrBegin(begin);
+      }
    }
 
    //  When the cuts ends at a right brace, also cut a semicolon that
@@ -3479,13 +3926,13 @@ void Editor::GetSpan(const CxxToken* item, size_t& begin, size_t& end)
    {
       if(source_[begin] == '#')
       {
-         return;
+         return true;
       }
 
       if((item->Type() == Cxx::Data) &&
          (item->GetScope()->Type() == Cxx::Block))
       {
-         return;
+         return true;
       }
 
       if(!CodeFollowsImmediately(end))
@@ -3493,6 +3940,8 @@ void Editor::GetSpan(const CxxToken* item, size_t& begin, size_t& end)
          begin = IntroStart(begin, false);
       }
    }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3792,6 +4241,17 @@ word Editor::InsertEnumName(const CodeWarning& log)
    Debug::ft("Editor.InsertEnumName");
 
    //  Prompt for the enum's name and insert it.
+   //
+   return Unimplemented();
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::InsertFallthrough(const CodeWarning& log)
+{
+   Debug::ft("Editor.InsertFallthrough");
+
+   //  Add a [[fallthrough]] comment at the end of this case label.
    //
    return Unimplemented();
 }
@@ -4416,7 +4876,7 @@ word Editor::InsertSpecialFunctions(CxxToken* item)
 
    if(roles.size() > 1)
    {
-      Cli_->Inform("This will also add related functions...");  //*
+      Inform("This will also add related functions...");
    }
 
    //  Add each function in ROLES and update the warnings associated with it.
@@ -4611,7 +5071,7 @@ void Editor::MoveItem(const CxxNamed* item, size_t& dest, const CxxScoped* prev)
 {
    Debug::ft("Editor.MoveItem");
 
-   //  Cut DECL and find ADJ's span.
+   //  Cut ITEM and find PREV's span.
    //
    string code;
    auto from = CutCode(item, code);
@@ -4656,6 +5116,27 @@ word Editor::MoveMemberInit(const CodeWarning& log)
    //  Move the member to the correct location in the initialization list.
    //
    return Unimplemented();
+}
+
+//------------------------------------------------------------------------------
+
+size_t Editor::NamespacePos(const Namespace* space) const
+{
+   Debug::ft("Editor.NamespacePos");
+
+   auto spaces = file_->Spaces();
+
+   for(auto s = spaces->cbegin(); s != spaces->cend(); ++s)
+   {
+      if((*s)->GetSpace() == space)
+      {
+         size_t begin, left, end;
+         if(!(*s)->GetSpan3(begin, left, end)) return string::npos;
+         return NextBegin(left);
+      }
+   }
+
+   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -4748,6 +5229,60 @@ size_t Editor::PrologEnd() const
 
 //------------------------------------------------------------------------------
 
+void Editor::QualifyClassItems
+   (const Data* data, string& code, const string& name, bool init) const
+{
+   Debug::ft("Editor.QualifyClassItems");
+
+   auto cls = data->GetClass();
+   auto qualifier = cls->Name() + SCOPE_STR;
+
+   size_t pos, end;
+   if(!data->GetSpan2(pos, end)) return;
+   size_t cpos = code.find(STATIC_STR);
+
+   if(init)
+   {
+      pos = source_.find('=', pos);
+      cpos = code.find('=', pos);
+   }
+
+   string id;
+
+   while(FindIdentifier(pos, id, false) && (pos <= end))
+   {
+      if(id != name)
+      {
+         auto item = file_->PosToItem(pos);
+
+         if(item != nullptr)
+         {
+            auto ref = item->Referent();
+
+            if((ref != nullptr) && (ref->Type() != Cxx::Class))
+            {
+               if(ref->GetClass() == cls)
+               {
+                  auto qpos = code.find(id, cpos);
+
+                  if(qpos != string::npos)
+                  {
+                     code.insert(qpos, qualifier);
+                     cpos = qpos + qualifier.size();
+                  }
+               }
+            }
+         }
+      }
+
+      //  Look for the next name after the current one.
+      //
+      pos = NextPos(pos + id.size());
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
 {
    Debug::ft("Editor.QualifyReferent");
@@ -4777,7 +5312,7 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
    if(!item->GetSpan2(pos, end)) return;
    string name;
 
-   while(FindIdentifier(pos, name, false) && (Curr() <= end))
+   while(FindIdentifier(pos, name, false) && (pos <= end))
    {
       if(name == *symbol)
       {

@@ -574,18 +574,6 @@ void CxxToken::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxToken_Referent = "CxxToken.Referent";
-
-CxxScoped* CxxToken::Referent() const
-{
-   Debug::ft(CxxToken_Referent);
-
-   Debug::SwLog(CxxToken_Referent, strOver(this), 0);
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 CxxScoped* CxxToken::ReferentDefn() const
 {
    Debug::ft("CxxToken.ReferentDefn");

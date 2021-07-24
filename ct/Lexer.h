@@ -80,6 +80,10 @@ public:
    //
    virtual ~Lexer() = default;
 
+   //  Returns the source code.
+   //
+   virtual const std::string& Source() const { return *source_; }
+
    //  Initializes the lexer to assist with parsing SOURCE and invokes
    //  Advance() to position curr_ at the first valid parse position.
    //  FILE is the file, if any, from which the code was taken.
@@ -425,7 +429,7 @@ public:
    //
    bool IsFirstNonBlank(size_t pos) const;
 
-   //  Returns true if the rest of the line that follows POS contains no code.
+   //  Returns true if the rest of the line starting at POS contains no code.
    //
    bool NoCodeFollows(size_t pos) const;
 

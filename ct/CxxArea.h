@@ -158,7 +158,7 @@ protected:
 
    //  Returns all of the items in the area.
    //
-   virtual CxxNamedVector Items() const;
+   virtual CxxItemVector Items() const;
 
    //  Returns the area's using statements.
    //
@@ -625,7 +625,7 @@ public:
 
    //  Returns all of the items in the class, sorted by position.
    //
-   CxxNamedVector Items() const override;
+   CxxItemVector Items() const override;
 
    //  Overridden to support BASE.
    //

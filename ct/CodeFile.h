@@ -128,6 +128,7 @@ public:
    //
    const std::list< CxxNamed* > Items() const { return items_; }
    const IncludePtrVector& Includes() const { return incls_; }
+   const SpaceDefnVector* Spaces() const { return &spaces_; }
    const ClassVector* Classes() const { return &classes_; }
    const DataVector* Datas() const { return &data_; }
    const EnumVector* Enums() const { return &enums_; }

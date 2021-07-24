@@ -2092,6 +2092,310 @@ void FuncData::UpdateXref(bool insert)
 
 //==============================================================================
 
+FuncSpec::FuncSpec(FunctionPtr& func) : func_(func.release())
+{
+   Debug::ft("FuncSpec.ctor");
+
+   CxxStats::Incr(CxxStats::FUNC_SPEC);
+}
+
+//------------------------------------------------------------------------------
+
+FuncSpec::~FuncSpec()
+{
+   Debug::ft("FuncSpec.dtor");
+
+   CxxStats::Decr(CxxStats::FUNC_SPEC);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name FuncSpec_Warning = "FuncSpec.Warning";
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::AddArray(ArraySpecPtr& array)
+{
+   func_->GetTypeSpec()->AddArray(array);
+}
+
+//------------------------------------------------------------------------------
+
+string FuncSpec::AlignTemplateArg(const TypeSpec* thatArg) const
+{
+   return func_->GetTypeSpec()->AlignTemplateArg(thatArg);
+}
+
+//------------------------------------------------------------------------------
+
+TagCount FuncSpec::Arrays() const
+{
+   return func_->GetTypeSpec()->Arrays();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::Check() const
+{
+   func_->Check();
+}
+
+//------------------------------------------------------------------------------
+
+TypeSpec* FuncSpec::Clone() const
+{
+   Debug::SwLog(FuncSpec_Warning, "Clone", 0);
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+bool FuncSpec::ContainsTemplateParameter() const
+{
+   if(TypeSpec::ContainsTemplateParameter()) return true;
+   return func_->ContainsTemplateParameter();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::DisplayArrays(ostream& stream) const
+{
+   func_->GetTypeSpec()->DisplayArrays(stream);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::DisplayTags(ostream& stream) const
+{
+   func_->GetTypeSpec()->DisplayTags(stream);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::EnterArrays() const
+{
+   Debug::SwLog(FuncSpec_Warning, "EnterArrays", 0);
+   func_->GetTypeSpec()->EnterArrays();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::EnteringScope(const CxxScope* scope)
+{
+   Debug::ft("FuncSpec.EnteringScope");
+
+   func_->EnterSignature();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::FindReferent()
+{
+   Debug::SwLog(FuncSpec_Warning, "FindReferent", 0);
+   func_->GetTypeSpec()->FindReferent();
+}
+
+//------------------------------------------------------------------------------
+
+TypeTags FuncSpec::GetAllTags() const
+{
+   return func_->GetTypeSpec()->GetAllTags();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::GetNames(stringVector& names) const
+{
+   Debug::SwLog(FuncSpec_Warning, "GetNames", 0);
+   func_->GetTypeSpec()->GetNames(names);
+}
+
+//------------------------------------------------------------------------------
+
+TypeName* FuncSpec::GetTemplateArgs() const
+{
+   return func_->GetTypeSpec()->GetTemplateArgs();
+}
+
+//------------------------------------------------------------------------------
+
+TypeSpec* FuncSpec::GetTypeSpec() const
+{
+   return func_->GetTypeSpec();
+}
+
+//------------------------------------------------------------------------------
+
+bool FuncSpec::HasArrayDefn() const
+{
+   return func_->GetTypeSpec()->HasArrayDefn();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::Instantiating(CxxScopedVector& locals) const
+{
+   Debug::SwLog(FuncSpec_Warning, "Instantiating", 0);
+   func_->GetTypeSpec()->Instantiating(locals);
+}
+
+//------------------------------------------------------------------------------
+
+bool FuncSpec::ItemIsTemplateArg(const CxxNamed* item) const
+{
+   Debug::SwLog(FuncSpec_Warning, "ItemIsTemplateArg", 0);
+   return func_->GetTypeSpec()->ItemIsTemplateArg(item);
+}
+
+//------------------------------------------------------------------------------
+
+bool FuncSpec::MatchesExactly(const TypeSpec* that) const
+{
+   Debug::SwLog(FuncSpec_Warning, "MatchesExactly", 0);
+   return func_->GetTypeSpec()->MatchesExactly(that);
+}
+
+//------------------------------------------------------------------------------
+
+TypeMatch FuncSpec::MatchTemplate(const TypeSpec* that,
+   stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const
+{
+   Debug::SwLog(FuncSpec_Warning, "MatchTemplate", 0);
+   return func_->GetTypeSpec()->MatchTemplate
+      (that, tmpltParms, tmpltArgs, argFound);
+}
+
+//------------------------------------------------------------------------------
+
+TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
+{
+   Debug::SwLog(FuncSpec_Warning, "MatchTemplateArg", 0);
+   return func_->GetTypeSpec()->MatchTemplateArg(that);
+}
+
+//------------------------------------------------------------------------------
+
+bool FuncSpec::NamesReferToArgs(const NameVector& names,
+   const CxxScope* scope, CodeFile* file, size_t& index) const
+{
+   Debug::SwLog(FuncSpec_Warning, "NamesReferToArgs", 0);
+   return func_->GetTypeSpec()->NamesReferToArgs(names, scope, file, index);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* FuncSpec::PosToItem(size_t pos) const
+{
+   auto item = TypeSpec::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return func_->PosToItem(pos);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::Print(ostream& stream, const Flags& options) const
+{
+   func_->DisplayDecl(stream, NoFlags);
+}
+
+//------------------------------------------------------------------------------
+
+TagCount FuncSpec::Ptrs(bool arrays) const
+{
+   return func_->GetTypeSpec()->Ptrs(arrays);
+}
+
+//------------------------------------------------------------------------------
+
+TagCount FuncSpec::Refs() const
+{
+   return func_->GetTypeSpec()->Refs();
+}
+
+//------------------------------------------------------------------------------
+
+StackArg FuncSpec::ResultType() const
+{
+   return func_->ResultType();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::SetPtrs(TagCount count)
+{
+   func_->GetTypeSpec()->SetPtrs(count);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
+{
+   Debug::SwLog(FuncSpec_Warning, "SetReferent", 0);
+   func_->GetTypeSpec()->SetReferent(item, view);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::Shrink()
+{
+   TypeSpec::Shrink();
+   func_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+const TypeTags* FuncSpec::Tags() const
+{
+   return func_->GetTypeSpec()->Tags();
+}
+
+//------------------------------------------------------------------------------
+
+TypeTags* FuncSpec::Tags()
+{
+   return func_->GetTypeSpec()->Tags();
+}
+
+//------------------------------------------------------------------------------
+
+string FuncSpec::Trace() const
+{
+   return func_->TypeString(false);
+}
+
+//------------------------------------------------------------------------------
+
+string FuncSpec::TypeString(bool arg) const
+{
+   return func_->TypeString(arg);
+}
+
+//------------------------------------------------------------------------------
+
+string FuncSpec::TypeTagsString(const TypeTags& tags) const
+{
+   return func_->GetTypeSpec()->TypeTagsString(tags);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   TypeSpec::UpdatePos(action, begin, count, from);
+   func_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::UpdateXref(bool insert)
+{
+   func_->UpdateXref(insert);
+}
+
+//==============================================================================
+
 Function::Function(QualNamePtr& name) :
    name_(name.release()),
    tspec_(nullptr),
@@ -5677,378 +5981,6 @@ string Function::XrefName(bool templates) const
 
 //==============================================================================
 
-SpaceDefn::SpaceDefn(Namespace* ns) :
-   space_(ns)
-{
-   Debug::ft("SpaceDefn.ctor");
-
-   CxxStats::Incr(CxxStats::SPACE_DEFN);
-}
-
-//------------------------------------------------------------------------------
-
-SpaceDefn::~SpaceDefn()
-{
-   Debug::ft("SpaceDefn.dtor");
-
-   GetFile()->EraseSpace(this);
-   CxxStats::Decr(CxxStats::SPACE_DEFN);
-}
-
-//------------------------------------------------------------------------------
-
-void SpaceDefn::Delete()
-{
-   Debug::ft("SpaceDefn.Delete");
-
-   space_->UpdateReference(this, false);
-   space_->EraseDefn(this);
-   delete this;
-}
-
-//------------------------------------------------------------------------------
-
-void SpaceDefn::GetDecls(CxxNamedSet& items)
-{
-   items.insert(this);
-}
-
-//------------------------------------------------------------------------------
-
-bool SpaceDefn::GetSpan(size_t& begin, size_t& left, size_t& end) const
-{
-   Debug::ft("SpaceDefn.GetSpan");
-
-   return GetBracedSpan(begin, left, end);
-}
-
-//------------------------------------------------------------------------------
-
-const std::string& SpaceDefn::Name() const
-{
-   return space_->Name();
-}
-
-//------------------------------------------------------------------------------
-
-string SpaceDefn::ScopedName(bool templates) const
-{
-   return space_->ScopedName(templates);
-}
-
-//------------------------------------------------------------------------------
-
-void SpaceDefn::UpdateXref(bool insert)
-{
-   space_->UpdateReference(this, insert);
-}
-
-//==============================================================================
-
-FuncSpec::FuncSpec(FunctionPtr& func) : func_(func.release())
-{
-   Debug::ft("FuncSpec.ctor");
-
-   CxxStats::Incr(CxxStats::FUNC_SPEC);
-}
-
-//------------------------------------------------------------------------------
-
-FuncSpec::~FuncSpec()
-{
-   Debug::ft("FuncSpec.dtor");
-
-   CxxStats::Decr(CxxStats::FUNC_SPEC);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name FuncSpec_Warning = "FuncSpec.Warning";
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::AddArray(ArraySpecPtr& array)
-{
-   func_->GetTypeSpec()->AddArray(array);
-}
-
-//------------------------------------------------------------------------------
-
-string FuncSpec::AlignTemplateArg(const TypeSpec* thatArg) const
-{
-   return func_->GetTypeSpec()->AlignTemplateArg(thatArg);
-}
-
-//------------------------------------------------------------------------------
-
-TagCount FuncSpec::Arrays() const
-{
-   return func_->GetTypeSpec()->Arrays();
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::Check() const
-{
-   func_->Check();
-}
-
-//------------------------------------------------------------------------------
-
-TypeSpec* FuncSpec::Clone() const
-{
-   Debug::SwLog(FuncSpec_Warning, "Clone", 0);
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-bool FuncSpec::ContainsTemplateParameter() const
-{
-   if(TypeSpec::ContainsTemplateParameter()) return true;
-   return func_->ContainsTemplateParameter();
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::DisplayArrays(ostream& stream) const
-{
-   func_->GetTypeSpec()->DisplayArrays(stream);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::DisplayTags(ostream& stream) const
-{
-   func_->GetTypeSpec()->DisplayTags(stream);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::EnterArrays() const
-{
-   Debug::SwLog(FuncSpec_Warning, "EnterArrays", 0);
-   func_->GetTypeSpec()->EnterArrays();
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::EnteringScope(const CxxScope* scope)
-{
-   Debug::ft("FuncSpec.EnteringScope");
-
-   func_->EnterSignature();
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::FindReferent()
-{
-   Debug::SwLog(FuncSpec_Warning, "FindReferent", 0);
-   func_->GetTypeSpec()->FindReferent();
-}
-
-//------------------------------------------------------------------------------
-
-TypeTags FuncSpec::GetAllTags() const
-{
-   return func_->GetTypeSpec()->GetAllTags();
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::GetNames(stringVector& names) const
-{
-   Debug::SwLog(FuncSpec_Warning, "GetNames", 0);
-   func_->GetTypeSpec()->GetNames(names);
-}
-
-//------------------------------------------------------------------------------
-
-TypeName* FuncSpec::GetTemplateArgs() const
-{
-   return func_->GetTypeSpec()->GetTemplateArgs();
-}
-
-//------------------------------------------------------------------------------
-
-TypeSpec* FuncSpec::GetTypeSpec() const
-{
-   return func_->GetTypeSpec();
-}
-
-//------------------------------------------------------------------------------
-
-bool FuncSpec::HasArrayDefn() const
-{
-   return func_->GetTypeSpec()->HasArrayDefn();
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::Instantiating(CxxScopedVector& locals) const
-{
-   Debug::SwLog(FuncSpec_Warning, "Instantiating", 0);
-   func_->GetTypeSpec()->Instantiating(locals);
-}
-
-//------------------------------------------------------------------------------
-
-bool FuncSpec::ItemIsTemplateArg(const CxxNamed* item) const
-{
-   Debug::SwLog(FuncSpec_Warning, "ItemIsTemplateArg", 0);
-   return func_->GetTypeSpec()->ItemIsTemplateArg(item);
-}
-
-//------------------------------------------------------------------------------
-
-bool FuncSpec::MatchesExactly(const TypeSpec* that) const
-{
-   Debug::SwLog(FuncSpec_Warning, "MatchesExactly", 0);
-   return func_->GetTypeSpec()->MatchesExactly(that);
-}
-
-//------------------------------------------------------------------------------
-
-TypeMatch FuncSpec::MatchTemplate(const TypeSpec* that,
-   stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const
-{
-   Debug::SwLog(FuncSpec_Warning, "MatchTemplate", 0);
-   return func_->GetTypeSpec()->MatchTemplate
-      (that, tmpltParms, tmpltArgs, argFound);
-}
-
-//------------------------------------------------------------------------------
-
-TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
-{
-   Debug::SwLog(FuncSpec_Warning, "MatchTemplateArg", 0);
-   return func_->GetTypeSpec()->MatchTemplateArg(that);
-}
-
-//------------------------------------------------------------------------------
-
-bool FuncSpec::NamesReferToArgs(const NameVector& names,
-   const CxxScope* scope, CodeFile* file, size_t& index) const
-{
-   Debug::SwLog(FuncSpec_Warning, "NamesReferToArgs", 0);
-   return func_->GetTypeSpec()->NamesReferToArgs(names, scope, file, index);
-}
-
-//------------------------------------------------------------------------------
-
-CxxToken* FuncSpec::PosToItem(size_t pos) const
-{
-   auto item = TypeSpec::PosToItem(pos);
-   if(item != nullptr) return item;
-
-   return func_->PosToItem(pos);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::Print(ostream& stream, const Flags& options) const
-{
-   func_->DisplayDecl(stream, NoFlags);
-}
-
-//------------------------------------------------------------------------------
-
-TagCount FuncSpec::Ptrs(bool arrays) const
-{
-   return func_->GetTypeSpec()->Ptrs(arrays);
-}
-
-//------------------------------------------------------------------------------
-
-TagCount FuncSpec::Refs() const
-{
-   return func_->GetTypeSpec()->Refs();
-}
-
-//------------------------------------------------------------------------------
-
-StackArg FuncSpec::ResultType() const
-{
-   return func_->ResultType();
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetPtrs(TagCount count)
-{
-   func_->GetTypeSpec()->SetPtrs(count);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
-{
-   Debug::SwLog(FuncSpec_Warning, "SetReferent", 0);
-   func_->GetTypeSpec()->SetReferent(item, view);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::Shrink()
-{
-   TypeSpec::Shrink();
-   func_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
-const TypeTags* FuncSpec::Tags() const
-{
-   return func_->GetTypeSpec()->Tags();
-}
-
-//------------------------------------------------------------------------------
-
-TypeTags* FuncSpec::Tags()
-{
-   return func_->GetTypeSpec()->Tags();
-}
-
-//------------------------------------------------------------------------------
-
-string FuncSpec::Trace() const
-{
-   return func_->TypeString(false);
-}
-
-//------------------------------------------------------------------------------
-
-string FuncSpec::TypeString(bool arg) const
-{
-   return func_->TypeString(arg);
-}
-
-//------------------------------------------------------------------------------
-
-string FuncSpec::TypeTagsString(const TypeTags& tags) const
-{
-   return func_->GetTypeSpec()->TypeTagsString(tags);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::UpdatePos
-   (EditorAction action, size_t begin, size_t count, size_t from) const
-{
-   TypeSpec::UpdatePos(action, begin, count, from);
-   func_->UpdatePos(action, begin, count, from);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::UpdateXref(bool insert)
-{
-   func_->UpdateXref(insert);
-}
-
-//==============================================================================
-
 SpaceData::SpaceData(QualNamePtr& name, TypeSpecPtr& type) : Data(type),
    name_(name.release())
 {
@@ -6279,5 +6211,73 @@ void SpaceData::UpdatePos
    Data::UpdatePos(action, begin, count, from);
    name_->UpdatePos(action, begin, count, from);
    if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
+}
+
+//==============================================================================
+
+SpaceDefn::SpaceDefn(Namespace* ns) :
+   space_(ns)
+{
+   Debug::ft("SpaceDefn.ctor");
+
+   CxxStats::Incr(CxxStats::SPACE_DEFN);
+}
+
+//------------------------------------------------------------------------------
+
+SpaceDefn::~SpaceDefn()
+{
+   Debug::ft("SpaceDefn.dtor");
+
+   GetFile()->EraseSpace(this);
+   CxxStats::Decr(CxxStats::SPACE_DEFN);
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceDefn::Delete()
+{
+   Debug::ft("SpaceDefn.Delete");
+
+   space_->UpdateReference(this, false);
+   space_->EraseDefn(this);
+   delete this;
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceDefn::GetDecls(CxxNamedSet& items)
+{
+   items.insert(this);
+}
+
+//------------------------------------------------------------------------------
+
+bool SpaceDefn::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("SpaceDefn.GetSpan");
+
+   return GetBracedSpan(begin, left, end);
+}
+
+//------------------------------------------------------------------------------
+
+const std::string& SpaceDefn::Name() const
+{
+   return space_->Name();
+}
+
+//------------------------------------------------------------------------------
+
+string SpaceDefn::ScopedName(bool templates) const
+{
+   return space_->ScopedName(templates);
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceDefn::UpdateXref(bool insert)
+{
+   space_->UpdateReference(this, insert);
 }
 }

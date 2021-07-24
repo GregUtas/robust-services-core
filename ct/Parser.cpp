@@ -269,7 +269,7 @@ void Parser::DisplayStats(ostream& stream)
 {
    Debug::ft("Parser.DisplayStats");
 
-   stream << "Cause       Count" << CRLF;
+   stream << "Cause     Backups" << CRLF;
 
    for(size_t i = 0; i <= MaxCause_; ++i)
    {

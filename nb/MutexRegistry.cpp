@@ -30,6 +30,7 @@
 #include "NbLogs.h"
 #include "SysMutex.h"
 #include "SysThread.h"
+#include "SysTypes.h"
 #include "Thread.h"
 
 using std::ostream;
@@ -39,7 +40,9 @@ using std::string;
 
 namespace NodeBase
 {
-const id_t MutexRegistry::MaxMutexes = 250;
+//> The maximum number of mutexes.
+//
+static const id_t MaxMutexes = 250;
 
 //------------------------------------------------------------------------------
 

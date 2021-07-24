@@ -81,10 +81,14 @@ CodeWarning::AttrsMap CodeWarning::Attrs_ = AttrsMap();
 
 size_t CodeWarning::LineTypeCounts_[] = { 0 };
 
-size_t CodeWarning::WarningCounts_[] = { 0 };
-
-std::vector< CodeWarning > CodeWarning::Warnings_ =
+//  Warnings found in all files.
+//
+static std::vector<CodeWarning> Warnings_ =
    std::vector< CodeWarning >();
+
+//  The total number of warnings of each type, globally.
+//
+static size_t WarningCounts_[Warning_N] = { 0 };
 
 //------------------------------------------------------------------------------
 

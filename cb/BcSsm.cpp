@@ -40,7 +40,9 @@ using std::string;
 
 namespace CallBase
 {
-int BcSsm::StateCount_[] = { 0 };
+//  The number of SSMs in each state.
+//
+static int StateCount_[BcState::MaxBcId + 1] = { 0 };
 
 //------------------------------------------------------------------------------
 

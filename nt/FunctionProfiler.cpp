@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "FunctionProfiler.h"
+#include <cstdint>
 #include <cstring>
 #include <map>
 #include <ostream>
@@ -42,8 +43,13 @@ using std::ostream;
 
 namespace NodeTools
 {
-const size_t FunctionProfiler::HashTableSizeLog2 = 10;
-const uint32_t FunctionProfiler::HashMask = ((1 << HashTableSizeLog2) - 1);
+//  The size (log2) of the functionq_ array.
+//
+static const size_t HashTableSizeLog2 = 10;
+
+//  The mask used to bring the hash returned by string_hash into range.
+//
+static const uint32_t HashMask = ((1 << HashTableSizeLog2) - 1);
 
 //------------------------------------------------------------------------------
 

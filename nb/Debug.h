@@ -136,10 +136,6 @@ private:
       StackChecking   // set when stack overflow prevention is active
    };
 
-   //  Flags for controlling the behavior of software during testing.
-   //
-   static Flags SwFlags_;
-
    //  Flags associated with a function call.
    //
    static Flags FcFlags_;

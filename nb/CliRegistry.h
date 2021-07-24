@@ -23,7 +23,6 @@
 #define CLIREGISTRY_H_INCLUDED
 
 #include "Immutable.h"
-#include <cstddef>
 #include <iosfwd>
 #include <string>
 #include "NbTypes.h"
@@ -85,10 +84,6 @@ private:
    //  Removes INCR from the registry.
    //
    void UnbindIncrement(CliIncrement& incr);
-
-   //> The maximum number of increments that can register.
-   //
-   static const size_t MaxIncrements;
 
    //  The global registry of CLI increments.
    //

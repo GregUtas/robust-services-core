@@ -96,8 +96,10 @@ void LogStatsGroup::DisplayStats
 }
 
 //==============================================================================
-
-const id_t LogGroupRegistry::MaxGroups = 250;
+//
+//> The maximum number of log groups.
+//
+static const id_t MaxGroups = 250;
 
 //------------------------------------------------------------------------------
 

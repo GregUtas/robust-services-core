@@ -53,10 +53,6 @@ public:
    //
    LogGroupRegistry& operator=(const LogGroupRegistry& that) = delete;
 
-   //> The maximum number of log groups.
-   //
-   static const id_t MaxGroups;
-
    //  Returns the group associated with NAME.
    //
    LogGroup* FindGroup(const std::string& name) const;

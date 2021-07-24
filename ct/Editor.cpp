@@ -503,6 +503,38 @@ word ChooseDtorAttributes(ItemDeclAttrs& attrs)
 
 //------------------------------------------------------------------------------
 //
+//  Invokes Write on each editor whose file has changed.
+//
+void Commit()
+{
+   Debug::ft("CodeTools.Commit");
+
+   while(!Editors_.empty())
+   {
+      string expl;
+      auto editor = Editors_.cbegin();
+
+      while(true)
+      {
+         auto rc = (*editor)->Format(expl);
+         *Cli_->obuf << spaces(2) << expl;
+         expl.clear();
+
+         if(rc == EditCompleted)
+         {
+            ++Commits_;
+            break;
+         }
+
+         if(!Cli_->BoolPrompt(CommitFailedPrompt)) break;
+      }
+
+      Editors_.erase(editor);
+   }
+}
+
+//------------------------------------------------------------------------------
+//
 //  Creates a comment for the special member function that will be added
 //  to CLS according to ATTRS.
 //
@@ -2007,36 +2039,6 @@ bool Editor::CommentFollows(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Editor::Commit(CliThread& cli)
-{
-   Debug::ft("Editor.Commit");
-
-   while(!Editors_.empty())
-   {
-      string expl;
-      auto editor = Editors_.cbegin();
-
-      while(true)
-      {
-         auto rc = (*editor)->Format(expl);
-         *Cli_->obuf << spaces(2) << expl;
-         expl.clear();
-
-         if(rc == EditCompleted)
-         {
-            ++Commits_;
-            break;
-         }
-
-         if(!Cli_->BoolPrompt(CommitFailedPrompt)) break;
-      }
-
-      Editors_.erase(editor);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 size_t Editor::CommitCount() { return Commits_; }
 
 //------------------------------------------------------------------------------
@@ -3245,7 +3247,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
    //  a serious error occurred.  In that case, clear EXPL, since it has
    //  already been displayed when writing the last file.
    //
-   Commit(cli);
+   Commit();
 
    if((reply == 'q') && (rc >= EditFailed))
    {

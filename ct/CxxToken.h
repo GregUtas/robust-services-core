@@ -1006,10 +1006,6 @@ private:
    //  Set if the evaluation of the expression should be forced at end_.
    //
    const bool force_;
-
-   //  Pushed onto the stack to mark the start of a new expression.
-   //
-   static const TokenPtr StartOfExpr;
 };
 
 //------------------------------------------------------------------------------

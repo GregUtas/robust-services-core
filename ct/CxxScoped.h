@@ -1226,10 +1226,6 @@ private:
    //  How many times the declaration was used.
    //
    size_t users_ : 16;
-
-   //  Used to prevent FindReferent from nesting too deeply.
-   //
-   static size_t Depth_;
 };
 
 //------------------------------------------------------------------------------

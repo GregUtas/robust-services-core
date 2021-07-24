@@ -25,6 +25,7 @@
 #include "Alarm.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -33,7 +34,9 @@ using std::string;
 
 namespace NodeBase
 {
-const id_t AlarmRegistry::MaxAlarms = 250;
+//> The maximum number of alarms.
+//
+static const id_t MaxAlarms = 250;
 
 //------------------------------------------------------------------------------
 

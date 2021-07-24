@@ -2035,8 +2035,10 @@ void Forward::UpdateXref(bool insert)
 }
 
 //==============================================================================
-
-size_t Friend::Depth_ = 0;
+//
+//  Used to prevent FindReferent from nesting too deeply.
+//
+static size_t Depth_ = 0;
 
 //------------------------------------------------------------------------------
 

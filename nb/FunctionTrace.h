@@ -180,10 +180,6 @@ private:
    //  The scope of function tracing.
    //
    static Scope Scope_;
-
-   //> The maximum depth when displaying a function call.
-   //
-   static const fn_depth MaxDispDepth;
 };
 }
 #endif

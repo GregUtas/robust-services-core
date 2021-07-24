@@ -222,7 +222,10 @@ void MsgPortPool::Patch(sel_t selector, void* arguments)
 
 const size_t ProtocolSMPool::BlockSize =
    sizeof(ProtocolSM) + (60 * BYTES_PER_WORD);
-PooledObjectId ProtocolSMPool::PsmToAudit_ = NIL_ID;
+
+//  The identifier of the PSM currently being audited.
+//
+static NodeBase::PooledObjectId PsmToAudit_ = NIL_ID;
 
 //------------------------------------------------------------------------------
 

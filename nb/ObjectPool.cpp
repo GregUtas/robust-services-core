@@ -213,8 +213,16 @@ struct ObjectPoolDynamic : public Persistent
 //==============================================================================
 
 const ObjectPoolId ObjectPool::MaxId = 250;
-const uint8_t ObjectPool::OrphanThreshold = 2;
-const size_t ObjectPool::OrphanMaxLogs = 8;
+
+//> The number of audit cycles over which a block must be unclaimed
+//  before it is recovered.
+//
+static const uint8_t OrphanThreshold = 2;
+
+//> The maximum number of logs that display the contents of an orphaned
+//  block in a given pool during each audit cycle.
+//
+static const size_t OrphanMaxLogs = 8;
 
 ObjectPool::ObjectPool
    (ObjectPoolId pid, MemoryType mem, size_t size, const string& name) :

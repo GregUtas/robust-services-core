@@ -677,8 +677,10 @@ bool CxxToken::WasWritten(const StackArg* arg, bool direct, bool indirect)
 }
 
 //==============================================================================
-
-const TokenPtr Expression::StartOfExpr =
+//
+//  Pushed onto the stack to mark the start of a new expression.
+//
+static const TokenPtr StartOfExpr =
    TokenPtr(new Operation(Cxx::START_OF_EXPRESSION));
 
 //------------------------------------------------------------------------------

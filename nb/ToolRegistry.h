@@ -23,7 +23,6 @@
 #define TOOLREGISTRY_H_INCLUDED
 
 #include "Immutable.h"
-#include <cstddef>
 #include <string>
 #include "NbTypes.h"
 #include "Registry.h"
@@ -93,10 +92,6 @@ private:
    //  Removes TOOL from the registry.
    //
    void UnbindTool(Tool& tool);
-
-   //> The maximum number of tools that can register.
-   //
-   static const size_t MaxTools;
 
    //  The global registry of debug tools.
    //

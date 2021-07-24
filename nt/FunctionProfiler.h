@@ -24,7 +24,6 @@
 
 #include "Temporary.h"
 #include <cstddef>
-#include <cstdint>
 #include <iosfwd>
 #include "Q2Way.h"
 #include "SysTypes.h"
@@ -94,14 +93,6 @@ private:
    //  Outputs the FunctionStats records after sorting them based on SORT.
    //
    TraceRc Show(std::ostream& stream, Sort sort);
-
-   //  The size (log2) of the functionq_ array.
-   //
-   static const size_t HashTableSizeLog2;
-
-   //  The mask used to bring the hash returned by string_hash into range.
-   //
-   static const uint32_t HashMask;
 
    //  The size of the functionq_ array.
    //

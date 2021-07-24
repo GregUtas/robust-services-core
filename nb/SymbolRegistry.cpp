@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SymbolRegistry.h"
+#include <cstddef>
 #include <ostream>
 #include "Debug.h"
 #include "Formatters.h"
@@ -32,7 +33,9 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t SymbolRegistry::MaxSymbols = 4000;
+//> The maximum number of symbols allowed in symbolq_.
+//
+static const size_t MaxSymbols = 4000;
 
 //------------------------------------------------------------------------------
 

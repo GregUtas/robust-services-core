@@ -53,11 +53,6 @@ public:
    //
    static const uint32_t InvalidSlot;
 
-   //  identifies a record that has not been fully constructed.  Assigned
-   //  as the initial value for rid_.
-   //
-   static const Id InvalidId;
-
    //  Virtual to allow subclassing.
    //
    virtual ~TraceRecord() = default;

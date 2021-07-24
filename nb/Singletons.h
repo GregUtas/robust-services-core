@@ -23,7 +23,6 @@
 #define SINGLETONS_H_INCLUDED
 
 #include "Permanent.h"
-#include <cstddef>
 #include "Allocators.h"
 #include "Array.h"
 #include "SysTypes.h"
@@ -81,10 +80,6 @@ public:
    //
    void Shutdown(RestartLevel level) override;
 private:
-   //> The maximum size of the registry.
-   //
-   static const size_t MaxSingletons;
-
    //  Private because this is a singleton.
    //
    Singletons();
@@ -96,10 +91,6 @@ private:
    //  Information about each singleton.
    //
    Array< SingletonTuple, PermanentAllocator< SingletonTuple >> registry_;
-
-   //  The registry of singletons.
-   //
-   static Singletons* Instance_;
 };
 }
 #endif

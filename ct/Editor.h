@@ -125,10 +125,6 @@ public:
    //
    const string& Source() const override { return source_; }
 private:
-   //  Invokes Write on each editor whose file has changed.
-   //
-   static void Commit(CliThread& cli);
-
    //  Writes out the editor's file.
    //
    word Write();

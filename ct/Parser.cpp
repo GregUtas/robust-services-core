@@ -21,6 +21,7 @@
 //
 #include "Parser.h"
 #include <cctype>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <iomanip>
@@ -57,7 +58,13 @@ using std::string;
 
 namespace CodeTools
 {
-uint32_t Parser::Backups[] = { 0 };
+//  The highest legal cause_ value.
+//
+static const size_t MaxCause_ = 300;
+
+//  Statistics on where the parser backed up.
+//
+static uint32_t Backups_[MaxCause_ + 1] = { 0 };
 
 //------------------------------------------------------------------------------
 
@@ -132,7 +139,7 @@ bool Parser::Backup(size_t cause)
 {
    Debug::ft("Parser.Backup(cause)");
 
-   ++Backups[cause];
+   ++Backups_[cause];
    return false;
 }
 
@@ -150,7 +157,7 @@ bool Parser::Backup(size_t pos, size_t cause)
       cause_ = cause;
    }
 
-   ++Backups[cause];
+   ++Backups_[cause];
    return lexer_.Retreat(pos);
 }
 
@@ -264,11 +271,11 @@ void Parser::DisplayStats(ostream& stream)
 
    stream << "Cause       Count" << CRLF;
 
-   for(size_t i = 0; i <= MaxCause; ++i)
+   for(size_t i = 0; i <= MaxCause_; ++i)
    {
-      if(Backups[i] > 0)
+      if(Backups_[i] > 0)
       {
-         stream << setw(5) << i << setw(12) << Backups[i] << CRLF;
+         stream << setw(5) << i << setw(12) << Backups_[i] << CRLF;
       }
    }
 }
@@ -4821,7 +4828,7 @@ void Parser::ResetStats()
 {
    Debug::ft("Parser.ResetStats");
 
-   for(size_t i = 0; i <= MaxCause; ++i) Backups[i] = 0;
+   for(size_t i = 0; i <= MaxCause_; ++i) Backups_[i] = 0;
 }
 
 //------------------------------------------------------------------------------

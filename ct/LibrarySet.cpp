@@ -21,6 +21,7 @@
 //
 #include "LibrarySet.h"
 #include <algorithm>
+#include <cstdint>
 #include <iterator>
 #include <sstream>
 #include "Debug.h"
@@ -37,9 +38,15 @@ using std::string;
 
 namespace CodeTools
 {
-const char LibrarySet::ReadOnlyChar = '$';
+//  Prefix for the name of a read-only set.
+//
+static const char ReadOnlyChar = '$';
+
 const char LibrarySet::TemporaryChar = '%';
-uint32_t LibrarySet::SeqNo_ = 0;
+
+//  Sequence number for generating names for temporary variables.
+//
+static uint32_t SeqNo_ = 0;
 
 //------------------------------------------------------------------------------
 

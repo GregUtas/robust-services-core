@@ -41,7 +41,9 @@ namespace PotsBase
 {
 const PotsCircuit::SignalEntry PotsCircuit::NilSignalEntry = { };
 
-int PotsCircuit::StateCount_[] = { 0 };
+//  The number of circuits in each state.
+//
+static int StateCount_[PotsCircuit::State_N] = { 0 };
 
 //------------------------------------------------------------------------------
 

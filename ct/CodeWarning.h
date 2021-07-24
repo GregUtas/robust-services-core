@@ -254,14 +254,6 @@ private:
    //
    static AttrsMap Attrs_;
 
-   //  Warnings found in all files.
-   //
-   static std::vector< CodeWarning > Warnings_;
-
-   //  The total number of warnings of each type, globally.
-   //
-   static size_t WarningCounts_[Warning_N];
-
    //  The number of lines of each type, globally.
    //
    static size_t LineTypeCounts_[LineType_N];

@@ -24,7 +24,6 @@
 
 #include "TraceRecord.h"
 #include <string>
-#include "NbTypes.h"
 #include "SysDecls.h"
 #include "SysTypes.h"
 #include "TimePoint.h"
@@ -77,10 +76,6 @@ private:
    //  The time when the record was created.
    //
    TimePoint time_;
-
-   //  The previous thread for which a record was displayed.
-   //
-   static ThreadId PrevTid_;
 };
 }
 #endif

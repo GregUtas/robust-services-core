@@ -88,10 +88,6 @@ protected:
    //
    explicit StatisticsGroup(const std::string& expl);
 private:
-   //> The header for statistics reports.
-   //
-   static fixed_string ReportHeader;
-
    //  Returns the string that explains the group.
    //
    c_string Expl() const { return expl_.c_str(); }

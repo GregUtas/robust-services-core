@@ -23,7 +23,6 @@
 #define PARSER_H_INCLUDED
 
 #include <cstddef>
-#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "CodeTypes.h"
@@ -669,14 +668,6 @@ private:
    //  Output file for parse tracing, if any.
    //
    NodeBase::ostreamPtr pTrace_;
-
-   //  The highest legal cause_ value.
-   //
-   static const size_t MaxCause = 300;
-
-   //  Statistics on where the parser backed up.
-   //
-   static uint32_t Backups[MaxCause + 1];
 };
 }
 #endif

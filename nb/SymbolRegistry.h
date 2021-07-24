@@ -23,7 +23,6 @@
 #define SYMBOLREGISTRY_H_INCLUDED
 
 #include "Permanent.h"
-#include <cstddef>
 #include <string>
 #include "NbTypes.h"
 #include "Q1Way.h"
@@ -92,10 +91,6 @@ private:
    //  Private because this is a singleton.
    //
    ~SymbolRegistry();
-
-   //> The maximum number of symbols allowed in symbolq_.
-   //
-   static const size_t MaxSymbols;
 
    //  The registry of symbols.
    //

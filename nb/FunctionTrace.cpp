@@ -524,7 +524,10 @@ void CtorChain::SetOuter(FunctionTrace* outer)
 
 const Flags FunctionTrace::FTmask = Flags(1 << FunctionTracer);
 FunctionTrace::Scope FunctionTrace::Scope_ = FullTrace;
-const fn_depth FunctionTrace::MaxDispDepth = 40;
+
+//> The maximum depth when displaying a function call.
+//
+static const fn_depth MaxDispDepth = 40;
 
 //------------------------------------------------------------------------------
 

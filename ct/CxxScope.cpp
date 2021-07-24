@@ -93,8 +93,10 @@ FunctionVector FuncsInArea(const FunctionVector& defns, const CxxArea* area)
 }
 
 //==============================================================================
-
-UsingVector Block::Usings_ = UsingVector();
+//
+//  The using statements visible within the block being compiled.
+//
+static UsingVector Usings_ = UsingVector();
 
 //------------------------------------------------------------------------------
 

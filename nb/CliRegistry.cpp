@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CliRegistry.h"
+#include <cstddef>
 #include <ostream>
 #include "CliIncrement.h"
 #include "Debug.h"
@@ -33,7 +34,9 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t CliRegistry::MaxIncrements = 30;
+//> The maximum number of increments that can register.
+//
+static const size_t MaxIncrements = 30;
 
 //------------------------------------------------------------------------------
 

@@ -179,10 +179,6 @@ private:
    //  Private because this is a singleton.
    //
    ~ProtocolSMPool();
-
-   //  The identifier of the PSM currently being audited.
-   //
-   static NodeBase::PooledObjectId PsmToAudit_;
 };
 
 //------------------------------------------------------------------------------

@@ -21,6 +21,7 @@
 //
 #include "Singletons.h"
 #include <bitset>
+#include <cstddef>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -43,9 +44,14 @@ struct SingletonTuple
 };
 
 //------------------------------------------------------------------------------
+//
+//> The maximum size of the registry.
+//
+static const size_t MaxSingletons = 32 * kBs;
 
-const size_t Singletons::MaxSingletons = 32 * kBs;
-Singletons* Singletons::Instance_ = nullptr;
+//  The registry of singletons.
+//
+static Singletons* Instance_ = nullptr;
 
 //------------------------------------------------------------------------------
 

@@ -232,10 +232,6 @@ private:
    //  The trace buffer.
    //
    SignalEntry trace_[TraceSize];
-
-   //  The number of circuits in each state.
-   //
-   static int StateCount_[State_N];
 };
 }
 #endif

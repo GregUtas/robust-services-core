@@ -62,10 +62,6 @@ public:
    //
    static const size_t MaxExplSize;
 
-   //> The maximum number of logs in a group.
-   //
-   static const id_t MaxLogs;
-
    //  Creates a group identified by NAME, which is converted to
    //  upper case.  EXPL describes the types of logs in the group.
    //

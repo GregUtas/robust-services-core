@@ -323,16 +323,6 @@ private:
    //  The pool's statistics.
    //
    std::unique_ptr< ObjectPoolStats > stats_;
-
-   //> The number of audit cycles over which a block must be unclaimed
-   //  before it is recovered.
-   //
-   static const uint8_t OrphanThreshold;
-
-   //> The maximum number of logs that display the contents of an orphaned
-   //  block in a given pool during each audit cycle.
-   //
-   static const size_t OrphanMaxLogs;
 };
 }
 #endif

@@ -991,14 +991,37 @@ c_string TrafficCall::strState(State state)
 }
 
 //==============================================================================
+//
+//  The frequency at which the thread wakes up to send messages when
+//  generating traffic.
+//
+static const msecs_t MsecsToSleep = 100;
 
-const msecs_t PotsTrafficThread::MsecsToSleep = 100;
-const secs_t PotsTrafficThread::MaxDelaySecs = 120;
-const size_t PotsTrafficThread::NumOfSlots =
-   1000 * MaxDelaySecs / MsecsToSleep + 1;
-const Address::DN PotsTrafficThread::StartDN = 21001;
-const secs_t PotsTrafficThread::HoldingTimeSecs = 30;
-const uint32_t PotsTrafficThread::DNsPer100Calls = 150;
+//  The longest time horizon at which a future event can be scheduled.
+//
+static const secs_t MaxDelaySecs = 120;
+
+//  The number of entries in the timewheel.  Successive entries are
+//  processed every MsecsToSleep.
+//
+static const size_t NumOfSlots = 1000 * MaxDelaySecs / MsecsToSleep + 1;
+
+//  The first DN that will be allocated for running traffic.  It is
+//  assumed that all DNs between this one and Address::LastDN can be
+//  allocated.
+//
+static const Address::DN StartDN = 21001;
+
+//  The average call holding time, which can be found using the
+//  >traffic query command.
+//
+static const secs_t HoldingTimeSecs = 30;
+
+//  The average number of POTS lines involved in 100 calls, which
+//  can be found using the >traffic query command.
+//
+static const uint32_t DNsPer100Calls = 150;
+
 const uint32_t PotsTrafficThread::MaxCallsPerMin =
    (Address::LastDN - StartDN + 1) *  // number of DNs
    (6000 / HoldingTimeSecs) /         // 100 * calls/DN/min

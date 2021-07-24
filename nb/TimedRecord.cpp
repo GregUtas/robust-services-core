@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <ostream>
 #include "Duration.h"
+#include "NbTypes.h"
 #include "Singleton.h"
 #include "SysThread.h"
 #include "Thread.h"
@@ -54,8 +55,10 @@ const string& ContextSwitchTab()
 }
 
 //------------------------------------------------------------------------------
-
-ThreadId TimedRecord::PrevTid_ = NIL_ID;
+//
+//  The previous thread for which a record was displayed.
+//
+static ThreadId PrevTid_ = NIL_ID;
 
 //------------------------------------------------------------------------------
 

@@ -26,7 +26,6 @@
 #include <string>
 #include "NbTypes.h"
 #include "Registry.h"
-#include "SysTypes.h"
 
 namespace NodeBase
 {
@@ -51,10 +50,6 @@ public:
    //  Deleted to prohibit copy assignment.
    //
    MutexRegistry& operator=(const MutexRegistry& that) = delete;
-
-   //> The maximum number of mutexes.
-   //
-   static const id_t MaxMutexes;
 
    //  Returns the mutex associated with NAME.
    //

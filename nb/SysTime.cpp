@@ -75,8 +75,13 @@ fixed_string WeekDayStrings[SysTime::MaxWeekDay + 2] =
 const int16_t SysTime::YearOfT0 = 1900;  // T0 = January 1 1900
 const int16_t SysTime::WeekDayOfT0 = 1;  // January 1 1900 was a Monday
 
-const int64_t SysTime::SecsInLeapYear    = 366 * 24 * 60 * 60;
-const int64_t SysTime::SecsInNonLeapYear = 365 * 24 * 60 * 60;
+//  The number of seconds in a leap year.
+//
+static const int64_t SecsInLeapYear = 366 * 24 * 60 * 60;
+
+//  The number of seconds in a non-leap year.
+//
+static const int64_t SecsInNonLeapYear = 365 * 24 * 60 * 60;
 
 //------------------------------------------------------------------------------
 

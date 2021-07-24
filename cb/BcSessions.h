@@ -1189,10 +1189,6 @@ private:
    //  The destination associated with the analysis result.
    //
    RouteResult route_;
-
-   //  The number of SSMs in each state.
-   //
-   static int StateCount_[BcState::MaxBcId + 1];
 };
 
 //------------------------------------------------------------------------------

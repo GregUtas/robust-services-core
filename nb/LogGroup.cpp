@@ -40,7 +40,10 @@ namespace NodeBase
 {
 const size_t LogGroup::MaxNameSize = 5;
 const size_t LogGroup::MaxExplSize = 48;
-const id_t LogGroup::MaxLogs = 250;
+
+//> The maximum number of logs in a group.
+//
+static const id_t MaxLogs = 250;
 
 //------------------------------------------------------------------------------
 

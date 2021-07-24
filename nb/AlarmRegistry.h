@@ -26,7 +26,6 @@
 #include <string>
 #include "NbTypes.h"
 #include "Registry.h"
-#include "SysTypes.h"
 
 namespace NodeBase
 {
@@ -51,10 +50,6 @@ public:
    //  Deleted to prohibit copy assignment.
    //
    AlarmRegistry& operator=(const AlarmRegistry& that) = delete;
-
-   //> The maximum number of alarms.
-   //
-   static const id_t MaxAlarms;
 
    //  Returns the alarm associated with NAME.
    //

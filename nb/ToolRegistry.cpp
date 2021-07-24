@@ -21,6 +21,7 @@
 //
 #include "ToolRegistry.h"
 #include <cctype>
+#include <cstddef>
 #include <ostream>
 #include "Debug.h"
 #include "Formatters.h"
@@ -33,7 +34,9 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t ToolRegistry::MaxTools = 20;
+//> The maximum number of tools that can register.
+//
+static const size_t MaxTools = 20;
 
 //------------------------------------------------------------------------------
 

@@ -32,7 +32,11 @@ using std::string;
 namespace NodeBase
 {
 const uint32_t TraceRecord::InvalidSlot = UINT32_MAX;
-const TraceRecord::Id TraceRecord::InvalidId = UINT8_MAX;
+
+//  identifies a record that has not been fully constructed.  Assigned
+//  as the initial value for rid_.
+//
+static const TraceRecord::Id InvalidId = UINT8_MAX;
 
 //------------------------------------------------------------------------------
 

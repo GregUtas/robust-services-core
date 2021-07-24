@@ -165,14 +165,6 @@ private:
    //
    static const int16_t WeekDayOfT0;
 
-   //  The number of seconds in a leap year.
-   //
-   static const int64_t SecsInLeapYear;
-
-   //  The number of seconds in a non-leap year.
-   //
-   static const int64_t SecsInNonLeapYear;
-
    //  Returns the number of days since T0 (Jan 1, 1900).
    //
    size_t DaysSinceT0() const;

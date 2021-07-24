@@ -24,7 +24,6 @@
 
 #include "LibraryItem.h"
 #include <cstddef>
-#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "CodeTypes.h"
@@ -58,10 +57,6 @@ public:
    //  Deleted to prohibit copy assignment.
    //
    LibrarySet& operator=(const LibrarySet& that) = delete;
-
-   //  Prefix for the name of a read-only set.
-   //
-   static const char ReadOnlyChar;
 
    //  Prefix for the name of a temporary set.
    //
@@ -264,10 +259,6 @@ private:
    //  Set if this set is a temporary variable.
    //
    bool temp_;
-
-   //  Sequence number for generating names for temporary variables.
-   //
-   static uint32_t SeqNo_;
 };
 }
 #endif

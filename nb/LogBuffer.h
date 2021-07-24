@@ -117,11 +117,6 @@ private:
       char log[UINT16_MAX];  // log's contents (null-terminated C string)
    };
 
-   //> When bundling logs into a stream, the number of characters that
-   //  prevents another log from being added to the stream.
-   //
-   static const size_t BundledLogSizeThreshold;
-
    //  Returns spooled_ if it is not nullptr, otherwise returns unspooled_.
    //
    const Entry* First() const;

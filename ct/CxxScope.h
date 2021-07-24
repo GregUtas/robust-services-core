@@ -283,10 +283,6 @@ private:
    //  Set if the block suddenly appeared within another one.
    //
    bool nested_;
-
-   //  The using statements visible within the block being compiled.
-   //
-   static UsingVector Usings_;
 };
 
 //------------------------------------------------------------------------------

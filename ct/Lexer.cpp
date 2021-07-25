@@ -905,6 +905,8 @@ int Lexer::CheckLineMerge(size_t n) const
 
 void Lexer::CheckPunctuation() const
 {
+   Debug::ft("Lexer.CheckPunctuation");
+
    auto frag = false;
 
    for(size_t pos = 0; pos < source_->size(); pos = NextPos(pos + 1))

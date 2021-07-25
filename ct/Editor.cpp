@@ -5168,7 +5168,7 @@ bool Editor::ParseClassItem(size_t pos, Class* cls, Cxx::Access access) const
    Debug::ft("Editor.ParseClassItem");
 
    ParserPtr parser(new Parser(EMPTY_STR));
-   if(parser->ParseClassItem(source_, pos, cls, access)) return true;
+   if(parser->ParseClassItem(source_, pos, cls, access)) return UpdateXref();
    return ParseFailed(pos);
 }
 
@@ -5191,7 +5191,7 @@ bool Editor::ParseFileItem(size_t pos, Namespace* ns) const
 
    if(ns == nullptr) ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    ParserPtr parser(new Parser(EMPTY_STR));
-   if(parser->ParseFileItem(source_, pos, file_, ns)) return true;
+   if(parser->ParseFileItem(source_, pos, file_, ns)) return UpdateXref();
    return ParseFailed(pos);
 }
 
@@ -5543,7 +5543,8 @@ bool Editor::ReplaceImpl(Function* func) const
    Debug::ft("Editor.ReplaceImpl");
 
    ParserPtr parser(new Parser(EMPTY_STR));
-   return parser->ReplaceImpl(func, source_);
+   if(parser->ReplaceImpl(func, source_)) return UpdateXref();
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -6595,6 +6596,23 @@ void Editor::UpdatePos
    }
 
    Changed();
+}
+
+//------------------------------------------------------------------------------
+
+bool Editor::UpdateXref() const
+{
+   Debug::ft("Editor.UpdateXref");
+
+   //  The cross-reference (CxxScoped.xref_) uses *sets* of items, which avoids
+   //  duplicates.  The easiest way to update the cross-reference after adding
+   //  or modifying an item is therefore to have the affected file reinvoke
+   //  UpdateXref on all of its items.  Invoking UpdateXref on only the new or
+   //  modified item would be optimal, but efficiency isn't a major factor when
+   //  editing source code.
+   //
+   file_->UpdateXref(true);
+   return true;
 }
 
 //------------------------------------------------------------------------------

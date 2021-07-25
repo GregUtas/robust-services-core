@@ -2116,6 +2116,8 @@ fn_name FuncSpec_Warning = "FuncSpec.Warning";
 
 void FuncSpec::AddArray(ArraySpecPtr& array)
 {
+   Debug::ft("FuncSpec.AddArray");
+
    func_->GetTypeSpec()->AddArray(array);
 }
 
@@ -2123,6 +2125,8 @@ void FuncSpec::AddArray(ArraySpecPtr& array)
 
 string FuncSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 {
+   Debug::ft("FuncSpec.AlignTemplateArg");
+
    return func_->GetTypeSpec()->AlignTemplateArg(thatArg);
 }
 
@@ -2130,6 +2134,8 @@ string FuncSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 
 TagCount FuncSpec::Arrays() const
 {
+   Debug::ft("FuncSpec.Arrays");
+
    return func_->GetTypeSpec()->Arrays();
 }
 
@@ -2137,6 +2143,8 @@ TagCount FuncSpec::Arrays() const
 
 void FuncSpec::Check() const
 {
+   Debug::ft("FuncSpec.Check");
+
    func_->Check();
 }
 
@@ -2152,6 +2160,8 @@ TypeSpec* FuncSpec::Clone() const
 
 bool FuncSpec::ContainsTemplateParameter() const
 {
+   Debug::ft("FuncSpec.ContainsTemplateParameter");
+
    if(TypeSpec::ContainsTemplateParameter()) return true;
    return func_->ContainsTemplateParameter();
 }
@@ -2317,6 +2327,8 @@ TagCount FuncSpec::Refs() const
 
 StackArg FuncSpec::ResultType() const
 {
+   Debug::ft("FuncSpec.ResultType");
+
    return func_->ResultType();
 }
 
@@ -2324,6 +2336,8 @@ StackArg FuncSpec::ResultType() const
 
 void FuncSpec::SetPtrs(TagCount count)
 {
+   Debug::ft("FuncSpec.SetPtrs");
+
    func_->GetTypeSpec()->SetPtrs(count);
 }
 

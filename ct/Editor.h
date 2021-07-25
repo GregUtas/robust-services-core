@@ -608,6 +608,11 @@ private:
    //
    bool ParseClassItem(size_t pos, Class* cls, Cxx::Access access) const;
 
+   //  Updates the cross-reference and returns true after an incremental
+   //  parse succeeds.
+   //
+   bool UpdateXref() const;
+
    //  Displays a message when parsing at POS failed.  Returns false.
    //
    bool ParseFailed(size_t pos) const;

@@ -1060,6 +1060,7 @@ bool CodeWarning::Suppress() const
       if(name.compare("CreateText") == 0) return true;
       if(name.compare("CreateCliParm") == 0) return true;
       if(name.compare("UpdateXref") == 0) return true;
+      if(name.compare("PosToItem") == 0) return true;
       if(name.compare("Check") == 0) return true;
       if(name.compare("GetUsages") == 0) return true;
       if(name.compare("InLine") == 0) return true;

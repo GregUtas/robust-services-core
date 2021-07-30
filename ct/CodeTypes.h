@@ -608,11 +608,14 @@ private:
    LineTypeAttr(bool code, bool pos, bool merge, bool blank, char sym);
 };
 
-//  Classifies a line of code (S) and updates WARNINGS with any warnings
-//  that were found.  Sets CONT for a line of code that does not end in
-//  a semicolon.
+//  Classifies a line of code (S).  Sets CONT for a line of code that does
+//  not end in a semicolon.
 //
-LineType CalcLineType(std::string s, bool& cont, std::set< Warning >& warnings);
+LineType CalcLineType(std::string& s, bool& cont);
+
+//  Checks a line of code (S), updating WARNINGS with formatting errors.
+//
+void CheckLine(std::string& s, std::set< Warning >& warnings);
 
 //  Returns true if a S is a bare access control.
 //

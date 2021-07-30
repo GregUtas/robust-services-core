@@ -4386,7 +4386,7 @@ bool Parser::ParseClassItem(const std::string& code,
    //
    auto file = cls->GetFile();
    Context::SetFile(file);
-   Enter(IsFile, file->Name(), nullptr, code, false, file);
+   Enter(IsFile, file->Name(), nullptr, code, true, file);
    Context::PushScope(cls, false);
    cls->SetCurrAccess(access);
    lexer_.Reposition(pos);
@@ -4411,7 +4411,7 @@ bool Parser::ParseFileItem(const std::string& code,
    if(file != nullptr)
    {
       Context::SetFile(file);
-      Enter(IsFile, file->Name(), nullptr, code, false, file);
+      Enter(IsFile, file->Name(), nullptr, code, true, file);
       Context::PushScope(space, false);
    }
 
@@ -4813,7 +4813,7 @@ bool Parser::ReplaceImpl(Function* func, const std::string& code)
    auto defn = func->GetDefn();
    auto file = defn->GetFile();
    Context::SetFile(file);
-   Enter(IsFile, file->Name(), nullptr, code, false, file);
+   Enter(IsFile, file->Name(), nullptr, code, true, file);
 
    size_t begin, left, end;
    defn->GetSpan3(begin, left, end);

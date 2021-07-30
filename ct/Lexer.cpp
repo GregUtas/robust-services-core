@@ -691,45 +691,23 @@ void Lexer::CalcDepths()
 
 //------------------------------------------------------------------------------
 
-LineType Lexer::CalcLineType(size_t n, bool log, bool& cont)
+LineType Lexer::CalcLineType(size_t n, bool& cont)
 {
    Debug::ft("Lexer.CalcLineType");
 
    //  Get the code for line N and classify it.
    //
    string s;
-   if(!GetNthLine(n, s, true)) return LineType_N;
+   if(!GetNthLine(n, s)) return LineType_N;
 
-   std::set< Warning > warnings;
-   auto type = CodeTools::CalcLineType(s, cont, warnings);
-
-   //  Flag the line if it is too long.
-   //
-   if(s.size() > LineLengthMax() + 1) warnings.insert(LineLength);
-
-   //  A line within a /* comment can be logged spuriously.
-   //
-   if(slashAsterisk_)
-   {
-      warnings.erase(AdjacentSpaces);
-   }
-
-   //  Log any warnings that were reported.
-   //
-   if(log)
-   {
-      for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
-      {
-         file_->LogLine(n, *w);
-      }
-   }
+   auto type = CodeTools::CalcLineType(s, cont);
 
    //  There are some things that can only be determined by knowing what
    //  happened on previous lines.  First, see if a /* comment ended.
    //
    if(slashAsterisk_)
    {
-      auto pos = s.find(COMMENT_END_STR);
+      auto pos = FindSubstr(s, COMMENT_END_STR);
       if(pos != string::npos) slashAsterisk_ = false;
       return TextComment;
    }
@@ -739,10 +717,12 @@ LineType Lexer::CalcLineType(size_t n, bool log, bool& cont)
    //  is classified as a comment unless the /* occurred on the same line
    //  and was preceded by code.
    //
-   if(warnings.find(UseOfSlashAsterisk) != warnings.end())
+   auto pos = FindSubstr(s, COMMENT_BEGIN_STR);
+
+   if(pos != string::npos)
    {
-      if(s.find(COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
-      if(s.find(COMMENT_BEGIN_STR) == 0) return SlashAsteriskComment;
+      if(FindSubstr(s, COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
+      if(pos == 0) return SlashAsteriskComment;
    }
 
    return type;
@@ -772,7 +752,7 @@ void Lexer::CalcLineTypes(bool log)
    for(size_t n = 0; n < size; ++n)
    {
       auto currCont = false;
-      auto currType = CalcLineType(n, log, currCont);
+      auto currType = CalcLineType(n, currCont);
 
       if(prevCont)
       {
@@ -801,16 +781,6 @@ void Lexer::CalcLineTypes(bool log)
          lines_[n].type = FileComment;
       }
    }
-
-   for(size_t n = 0; n < size; ++n)
-   {
-      auto indent = CheckDepth(n);
-
-      if(indent >= 0)
-      {
-         file_->LogPos(lines_[n].begin, Indentation, nullptr, indent);
-      }
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -828,8 +798,7 @@ word Lexer::CheckDepth(size_t n) const
 
    //  Return if the indentation matches the desired depth.
    //
-   auto comment = (source_->compare(first, 2, COMMENT_STR) == 0);
-   if(info.continuation && !comment) ++desired;
+   if(info.continuation && LineTypeAttr::Attrs[info.type].isCode) ++desired;
    auto actual = first - info.begin;
    if(actual == (IndentSize() * desired)) return -1;
 
@@ -837,6 +806,8 @@ word Lexer::CheckDepth(size_t n) const
    //  comments out code) or if it is aligned with a trailing comment
    //  on the next or a previous line.
    //
+   auto comment = (source_->compare(first, 2, COMMENT_STR) == 0);
+
    if(comment)
    {
       if(actual == 0) return -1;
@@ -858,6 +829,49 @@ word Lexer::CheckDepth(size_t n) const
    }
 
    return desired;
+}
+
+//------------------------------------------------------------------------------
+
+void Lexer::CheckLines()
+{
+   Debug::ft("Lexer.CheckLines");
+
+   auto last = lines_.size() - 1;
+   string s;
+   std::set< Warning > warnings;
+
+   for(size_t n = 0; n <= last; ++n)
+   {
+      //  Check the code for line N.  Note that CheckLine modifies S.
+      //
+      GetNthLine(n, s);
+      warnings.clear();
+      CheckLine(s, warnings);
+
+      //  Don't report a comment for adjacent spaces.
+      //
+      if(!LineTypeAttr::Attrs[lines_[n].type].isCode)
+      {
+         warnings.erase(AdjacentSpaces);
+      }
+
+      //  Check the line's indentation.
+      //
+      auto indent = CheckDepth(n);
+
+      if(indent >= 0)
+      {
+         warnings.insert(Indentation);
+      }
+
+      //  Log any warnings that were reported.
+      //
+      for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
+      {
+         file_->LogLine(n, *w);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2170,14 +2184,14 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
 
 //------------------------------------------------------------------------------
 
-bool Lexer::GetNthLine(size_t n, string& s, bool crlf) const
+bool Lexer::GetNthLine(size_t n, string& s) const
 {
    s.clear();
-   auto pos = GetLineStart(n);
-   if(pos == string::npos) return false;
-   s = GetCode(pos);
-   if(s.empty()) return false;
-   if(!crlf && (s.back() == CRLF)) s.pop_back();
+   auto last = lines_.size() - 1;
+   if(n > last) return false;
+   auto begin = lines_[n].begin;
+   auto end = (n < last ? lines_[n + 1].begin - 1 : source_->size() - 1);
+   s = source_->substr(begin, end - begin + 1);
    return true;
 }
 
@@ -2186,7 +2200,8 @@ bool Lexer::GetNthLine(size_t n, string& s, bool crlf) const
 string Lexer::GetNthLine(size_t n) const
 {
    string s;
-   GetNthLine(n, s, false);
+   GetNthLine(n, s);
+   if(!s.empty() && (s.back() == CRLF)) s.pop_back();
    return s;
 }
 
@@ -3055,9 +3070,17 @@ LineType Lexer::PosToType(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Lexer::Preprocess() const
+void Lexer::Preprocess()
 {
    Debug::ft("Lexer.Preprocess");
+
+   //  The code must be cloned before it is preprocessed.
+   //
+   if(source_ != &code_)
+   {
+      code_ = *source_;
+      source_ = &code_;
+   }
 
    //  Keep fetching identifiers, erasing any that are #defined symbols that
    //  map to empty strings.  Skip preprocessor directives.
@@ -3085,8 +3108,7 @@ void Lexer::Preprocess() const
 
          if(def->Empty())
          {
-            auto code = const_cast< string* >(source_);
-            for(size_t i = 0; i < id.size(); ++i) (*code)[pos + i] = SPACE;
+            for(size_t i = 0; i < id.size(); ++i) code_[pos + i] = SPACE;
             def->WasRead();
          }
       }

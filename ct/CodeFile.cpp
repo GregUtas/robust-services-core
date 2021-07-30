@@ -544,6 +544,9 @@ void CodeFile::Check()
    }
 
    Debug::Progress(Name() + CRLF);
+   lexer_.CalcDepths();
+   lexer_.CheckLines();
+   lexer_.CheckPunctuation();
    Trim(nullptr);
    CheckProlog();
    CheckDirectives();
@@ -613,7 +616,7 @@ void CodeFile::CheckDebugFt()
                LogLine(n, DebugFtNotFirst);
             }
 
-            if(lexer_.GetNthLine(n, statement, true))
+            if(lexer_.GetNthLine(n, statement))
             {
                auto lpar = statement.find('(');
                if(lpar == string::npos) break;
@@ -905,7 +908,7 @@ void CodeFile::CheckOverrideOrder() const
          {
             if(prev != nullptr) (*f)->Log(OverrideNotSorted);
          }
-     }
+      }
    }
 }
 
@@ -2444,8 +2447,6 @@ void CodeFile::Scan()
    if(!ReadCode(code_)) return;
    lexer_.Initialize(code_, this);
    lexer_.CalcLineTypes(true);
-   lexer_.CalcDepths();
-   lexer_.CheckPunctuation();
 
    //  Preprocess #include directives.
    //

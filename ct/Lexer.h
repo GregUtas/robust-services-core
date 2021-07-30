@@ -113,20 +113,17 @@ public:
    size_t GetLineNum(size_t pos) const;
 
    //  Returns the position of the first character in LINE.  Returns
-   //  string::npos if LINE is out of range.  Cannot be used on code once
-   //  it has been edited.
+   //  string::npos if LINE is out of range.
    //
    size_t GetLineStart(size_t line) const;
 
-   //  Sets S to the string for the Nth line of code, removing its endline
-   //  if CRLF is FALSE.  Clears S and returns false if N is out range.
-   //  Cannot be used on code once it has been edited.
+   //  Sets S to the string for the Nth line of code.  Clears S and returns
+   //  false if N is out range.
    //
-   bool GetNthLine(size_t n, std::string& s, bool crlf) const;
+   bool GetNthLine(size_t n, std::string& s) const;
 
    //  Returns the string for the Nth line of code after removing its endline.
-   //  Returns EMPTY_STR if N is out of range.  Cannot be used on code once it
-   //  has been edited.
+   //  Returns EMPTY_STR if N is out of range.
    //
    std::string GetNthLine(size_t n) const;
 
@@ -216,7 +213,7 @@ public:
    //  Until the next #define is reached, look for #defined symbols that map to
    //  empty strings and erase them so that they will not cause parsing errors.
    //
-   void Preprocess() const;
+   void Preprocess();
 
    //  Sets STR to the next preprocessor directive and returns its enum
    //  constant.  Returns NIL_DIRECTIVE if a directive wasn't found, but
@@ -511,6 +508,10 @@ public:
    static const char ChangeToEmptyComment = 'c';
    static const char DeleteLine = 'd';
 
+   //  Checks the formatting within individual lines.
+   //
+   void CheckLines();
+
    //  Check vertical spacing.  Returns a string that indicates how each line
    //  should be modified (see above).
    //
@@ -555,11 +556,10 @@ private:
    //
    void FindLines();
 
-   //  Classifies the Nth line of code and looks for some warnings.  LOG
-   //  is set if warnings should be generated.  Sets CONT when a line of
-   //  code continues on the next line.
+   //  Classifies the Nth line of code.  Sets CONT if the code continues on
+   //  the next line.
    //
-   LineType CalcLineType(size_t n, bool log, bool& cont);
+   LineType CalcLineType(size_t n, bool& cont);
 
    //  Returns the next identifier (which could be a keyword), starting at POS.
    //  The first character not allowed in an identifier finalizes the string.
@@ -651,6 +651,12 @@ private:
    //  The code being analyzed.
    //
    const std::string* source_;
+
+   //  The preprocessed code.  This is not used unless Preprocess() is
+   //  invoked, at which time the code referenced by source_ is cloned
+   //  and source_ is updated to point to this.
+   //
+   std::string code_;
 
    //  The file, if any, from which the code was taken.
    //

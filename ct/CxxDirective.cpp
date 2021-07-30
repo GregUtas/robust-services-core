@@ -1237,10 +1237,10 @@ void OptionalCode::UpdatePos
 
    //  Uncompiled code can only be cut and pasted in its entirety.
    //
-    switch(action)
+   switch(action)
    {
    case Erased:
-     if(((begin + count) > begin_) && (begin + count < end_))
+      if(((begin + count) > begin_) && (begin + count < end_))
       {
          Debug::SwLog(OptionalCode_UpdatePos, "Partially erased", 0);
          begin_ = string::npos;

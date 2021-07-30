@@ -884,7 +884,7 @@ public:
    //
    bool IsIncludeGuard() const override;
 
-    //  Overridden to support renaming an #include guard.
+   //  Overridden to support renaming an #include guard.
    //
    void Rename(const std::string& name) override;
 };

@@ -3972,7 +3972,7 @@ word Editor::Indent(size_t pos)
    auto first = LineFindFirst(pos);
    auto curr = first - begin;
    auto depth = info->depth;
-   if(info->continuation) ++depth;
+   if(info->continuation && LineTypeAttr::Attrs[info->type].isCode) ++depth;
    auto indent = depth * IndentSize();
 
    if(indent > curr)

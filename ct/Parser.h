@@ -582,7 +582,7 @@ private:
    void Log(Warning warning, size_t pos = std::string::npos) const;
 
    //  Invoked when an attempted parse fails.  Records CAUSE if POS is the
-   //  farthest point reached in the parse and returns lexer_.retreat(pos).
+   //  farthest point reached in the parse and returns lexer_.Retreat(pos).
    //
    bool Backup(size_t pos, size_t cause);
 

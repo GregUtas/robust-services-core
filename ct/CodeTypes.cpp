@@ -163,7 +163,7 @@ const Flags Stats_Mask = Flags(1 << DispStats);
 
 //------------------------------------------------------------------------------
 
-LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
+LineType CalcLineType(string& s, bool& cont)
 {
    Debug::ft("CodeTools.CalcLineType");
 
@@ -171,7 +171,7 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
 
    if(s.empty()) return BlankLine;
 
-   //  There is probably a CRLF at the end of the line.
+   //  There should be a CRLF at the end of the line.
    //
    if(s.back() == CRLF)
    {
@@ -183,17 +183,15 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
    //
    for(auto pos = s.find(TAB); pos != string::npos; pos = s.find(TAB))
    {
-      warnings.insert(UseOfTab);
       s[pos] = SPACE;
    }
 
-   //  Flag and strip trailing spaces.
+   //  Strip leading and trailing spaces.
    //
    auto pos = s.find_first_not_of(SPACE);
 
    if(pos == string::npos)
    {
-      warnings.insert(TrailingSpace);
       return BlankLine;
    }
 
@@ -201,7 +199,6 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
 
    while(s.back() == SPACE)
    {
-      warnings.insert(TrailingSpace);
       s.pop_back();
    }
 
@@ -219,7 +216,7 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
 
    //  Classify lines that contain only a // comment.
    //
-   size_t slashSlashPos = s.find(COMMENT_STR);
+   auto slashSlashPos = s.find(COMMENT_STR);
 
    if(slashSlashPos == 0)
    {
@@ -230,13 +227,12 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
       return TextComment;                   //  text
    }
 
-   //  Flag a /* comment and see if it ends on the same line.
+   //  Look for a /* comment.
    //
    pos = FindSubstr(s, COMMENT_BEGIN_STR);
 
    if(pos != string::npos)
    {
-      warnings.insert(UseOfSlashAsterisk);
       if(pos == 0) return SlashAsteriskComment;
    }
 
@@ -270,7 +266,7 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
    //  Look for strings that provide function names for Debug::ft.  These
    //  have the format
    //    fn_name ClassName_FunctionName = "ClassName.FunctionName";
-   //  with an endline after the '=' if the line would exceed LineLengthMax
+   //  with a CRLF after the '=' if the line would exceed LineLengthMax()
    //  characters.
    //
    string type(FunctionName::TypeStr);
@@ -309,6 +305,73 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
       break;
    }
 
+   cont = (LastCodeChar(s, slashSlashPos) != ';');
+   return CodeLine;
+}
+
+//------------------------------------------------------------------------------
+
+void CheckLine(string& s, std::set< Warning >& warnings)
+{
+   Debug::ft("CodeTools.CheckLine");
+
+   if(s.empty()) return;
+
+   //  There should be a CRLF at the end of the line.
+   //
+   if(s.back() == CRLF)
+   {
+      s.pop_back();
+      if(s.empty()) return;
+   }
+
+   //  Flag the line if it is too long.
+   //
+   if(s.size() > LineLengthMax()) warnings.insert(LineLength);
+
+   //  Flag any tabs and treat them as spaces.
+   //
+   for(auto pos = s.find(TAB); pos != string::npos; pos = s.find(TAB))
+   {
+      warnings.insert(UseOfTab);
+      s[pos] = SPACE;
+   }
+
+   //  Flag and strip trailing spaces.  Strip spaces at the front of the line.
+   //
+   auto pos = s.find_first_not_of(SPACE);
+
+   if(pos == string::npos)
+   {
+      warnings.insert(TrailingSpace);
+      return;
+   }
+
+   if(pos > 0) s.erase(0, pos);
+
+   while(s.back() == SPACE)
+   {
+      warnings.insert(TrailingSpace);
+      s.pop_back();
+   }
+
+   //  Return if the line is a // comment.
+   //
+   auto slashSlashPos = s.find(COMMENT_STR);
+
+   if(slashSlashPos == 0) return;
+
+   //  Flag a /* comment.
+   //
+   pos = FindSubstr(s, COMMENT_BEGIN_STR);
+
+   if(pos != string::npos)
+   {
+      warnings.insert(UseOfSlashAsterisk);
+   }
+
+   //  Flag adjacent spaces unless they precede a comment or assignment.
+   //
    pos = FindSubstr(s, "  ");
 
    if(pos != string::npos)
@@ -320,9 +383,6 @@ LineType CalcLineType(string s, bool& cont, std::set< Warning >& warnings)
          warnings.insert(AdjacentSpaces);
       }
    }
-
-   cont = (LastCodeChar(s, slashSlashPos) != ';');
-   return CodeLine;
 }
 
 //------------------------------------------------------------------------------

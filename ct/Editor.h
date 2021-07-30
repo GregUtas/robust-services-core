@@ -95,7 +95,7 @@ public:
    //  an error occurs, a non-zero value is returned and EXPL is updated
    //  with an explanation.
    //
-   word Fix(CliThread& cli, const FixOptions& opts, string& expl);
+   word Fix(CliThread& cli, const FixOptions& opts, string& expl) const;
 
    //  Formats the code.  Returns a negative value on failure, in which
    //  case EXPL provides provides an explanation.
@@ -112,10 +112,6 @@ public:
    //
    static size_t CommitCount();
 
-   //  Returns the log, if any, that matches WARNING, ITEM, and OFFSET.
-   //
-   CodeWarning* FindLog(Warning warning, const CxxToken* item, word offset);
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -127,7 +123,7 @@ public:
 private:
    //  Writes out the editor's file.
    //
-   word Write();
+   word Write() const;
 
    //  Returns the status of LOG.
    //  o NotFixed: will try to fix
@@ -650,10 +646,6 @@ private:
    //  The code being edited.
    //
    string source_;
-
-   //  The file's warnings.
-   //
-   std::vector< CodeWarning* > warnings_;
 
    //  Set if the #include directives have been sorted.
    //

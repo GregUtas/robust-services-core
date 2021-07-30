@@ -31,7 +31,6 @@
 #include "CodeCoverage.h"
 #include "CodeDir.h"
 #include "CodeFileSet.h"
-#include "CodeWarning.h"
 #include "Cxx.h"
 #include "CxxArea.h"
 #include "CxxDirective.h"
@@ -374,8 +373,7 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) :
    dir_(dir),
    isHeader_(false),
    isSubsFile_(false),
-   parsed_(Unparsed),
-   checked_(false)
+   parsed_(Unparsed)
 {
    Debug::ft("CodeFile.ctor");
 
@@ -530,18 +528,7 @@ void CodeFile::Check()
 {
    Debug::ft("CodeFile.Check");
 
-   //  We don't do a Debug::Progress on our file name, because Trim
-   //  (invoked below) already does it.
-   //
-   if(checked_) return;
-
-   //  Don't check an empty file or a substitute file.
-   //
-   if(code_.empty() || isSubsFile_)
-   {
-      checked_ = true;
-      return;
-   }
+   if(code_.empty() || isSubsFile_) return;
 
    Debug::Progress(Name() + CRLF);
    lexer_.CalcDepths();
@@ -559,7 +546,6 @@ void CodeFile::Check()
    CheckDebugFt();
    CheckIncludes();
    CheckIncludeOrder();
-   checked_ = true;
 }
 
 //------------------------------------------------------------------------------
@@ -1019,7 +1005,7 @@ void CodeFile::Display(ostream& stream,
    stream << prefix << "isHeader   : " << isHeader_ << CRLF;
    stream << prefix << "isSubsFile : " << isSubsFile_ << CRLF;
    stream << prefix << "parsed     : " << parsed_ << CRLF;
-   stream << prefix << "checked    : " << checked_ << CRLF;
+   stream << prefix << "warnings   : " << warnings_.size() << CRLF;
 
    auto lead = prefix + spaces(2);
 
@@ -1260,17 +1246,6 @@ void CodeFile::FindDeclSet()
 
 //------------------------------------------------------------------------------
 
-CodeWarning* CodeFile::FindLog
-   (const CodeWarning& log, const CxxToken* item, word offset)
-{
-   Debug::ft("CodeFile.FindLog");
-
-   editor_.Setup(this);
-   return editor_.FindLog(log.GetWarning(), item, offset);
-}
-
-//------------------------------------------------------------------------------
-
 SpaceDefn* CodeFile::FindNamespaceDefn(const CxxToken* item) const
 {
    Debug::ft("CodeFile.FindNamespaceDefn");
@@ -1403,11 +1378,30 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 //------------------------------------------------------------------------------
 
+CodeWarning* CodeFile::FindWarning
+   (Warning warning, const CxxToken* item, word offset)
+{
+   Debug::ft("CodeFile.FindWarning");
+
+   for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
+   {
+      if((w->warning_ == warning) && (w->item_ == item) &&
+         (w->offset_ == offset))
+      {
+         return &*w;
+      }
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 {
    Debug::ft("CodeFile.Fix");
 
-   if(!CodeWarning::HasWarning(this, opts.warning)) return 0;
+   if(!HasWarning(opts.warning)) return 0;
 
    editor_.Setup(this);
    auto rc = editor_.Fix(cli, opts, expl);
@@ -1615,6 +1609,22 @@ bool CodeFile::HasForwardFor(const CxxNamed* item) const
    for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
    {
       if((*f)->Referent() == item) return true;
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeFile::HasWarning(Warning warning) const
+{
+   Debug::ft("CodeFile.HasWarning");
+
+   if(warning == AllWarnings) return !warnings_.empty();
+
+   for(auto w = warnings_.cbegin(); w != warnings_.cend(); ++w)
+   {
+      if(w->warning_ == warning) return true;
    }
 
    return false;
@@ -1873,6 +1883,36 @@ void CodeFile::InsertUsing(Using* use)
 {
    InsertItem(use);
    usings_.push_back(use);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::InsertWarning(const CodeWarning& log)
+{
+   Debug::ft("CodeFile.InsertWarning");
+
+   //  Add LOG unless it is a duplicate.
+   //
+   for(size_t i = 0; i < warnings_.size(); ++i)
+   {
+      if(warnings_[i] == log) return;
+   }
+
+   warnings_.push_back(log);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::ItemDeleted(const CxxToken* item)
+{
+   Debug::ft("CodeFile.ItemDeleted");
+
+   //  Notify warnings so those associated with ITEM can nullify themselves.
+   //
+   for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
+   {
+      w->ItemDeleted(item);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2726,6 +2766,11 @@ void CodeFile::UpdatePos
    }
 
    items_.sort(IsSortedByPos);
+
+   for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
+   {
+      w->UpdatePos(action, begin, count, from);
+   }
 }
 
 //------------------------------------------------------------------------------

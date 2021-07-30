@@ -2195,7 +2195,6 @@ void Editor::Display(ostream& stream,
       (file_ != nullptr ? file_->Name() : "no file specified") << CRLF;
    stream << prefix << "sorted   : " << sorted_ << CRLF;
    stream << prefix << "aliased  : " << aliased_ << CRLF;
-   stream << prefix << "warnings : " << warnings_.size() << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -2958,24 +2957,6 @@ word Editor::FindItemDeclLoc
 
 //------------------------------------------------------------------------------
 
-CodeWarning* Editor::FindLog(Warning warning, const CxxToken* item, word offset)
-{
-   Debug::ft("Editor.FindLog");
-
-   for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
-   {
-      if(((*w)->warning_ == warning) && ((*w)->item_ == item) &&
-         ((*w)->offset_ == offset))
-      {
-         return *w;
-      }
-   }
-
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 size_t Editor::FindSigEnd(const CodeWarning& log)
 {
    Debug::ft("Editor.FindSigEnd(log)");
@@ -3101,7 +3082,7 @@ CxxNamedSet Editor::FindUsingReferents(CxxToken* item) const
 
 //------------------------------------------------------------------------------
 
-word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
+word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 {
    Debug::ft("Editor.Fix");
 
@@ -3115,15 +3096,16 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
    auto fixed = false;
    auto first = true;
    auto exit = false;
+   auto& warnings = file_->GetWarnings();
 
-   for(auto item = warnings_.begin(); item != warnings_.end(); ++item)
+   for(auto item = warnings.begin(); item != warnings.end(); ++item)
    {
       //  Skip this item if the user didn't include its warning type.
       //
       if((opts.warning != AllWarnings) &&
-         (opts.warning != (*item)->warning_)) continue;
+         (opts.warning != item->warning_)) continue;
 
-      switch(FixStatus(**item))
+      switch(FixStatus(*item))
       {
       case NotFixed:
          //
@@ -3161,7 +3143,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
       //  This item is eligible for fixing.  Display it.
       //
-      if(DisplayLog(**item, first))
+      if(DisplayLog(*item, first))
       {
          first = false;
 
@@ -3185,7 +3167,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
          {
          case 'y':
          {
-            auto logs = (*item)->LogsToFix(expl);
+            auto logs = item->LogsToFix(expl);
 
             if(!expl.empty())
             {
@@ -3764,12 +3746,13 @@ bool Editor::FunctionsWereSorted(const CodeWarning& log) const
    Debug::ft("Editor.FunctionsWereSorted");
 
    auto area = log.item_->GetArea();
+   auto& warnings = file_->GetWarnings();
 
-   for(auto w = warnings_.cbegin(); w != warnings_.cend(); ++w)
+   for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
    {
-      if((*w)->warning_ == FunctionNotSorted)
+      if(w->warning_ == FunctionNotSorted)
       {
-         if(((*w)->status_ >= Pending) && ((*w)->item_->GetArea() == area))
+         if((w->status_ >= Pending) && (w->item_->GetArea() == area))
             return true;
       }
    }
@@ -4836,7 +4819,7 @@ word Editor::InsertSpecialFunctions(CxxToken* item)
 
    for(size_t i = 0; i < MaxRoleWarning; ++i)
    {
-      auto log = FindLog(SpecialMemberFunctionLogs[i].log, item, 0);
+      auto log = file_->FindWarning(SpecialMemberFunctionLogs[i].log, item, 0);
 
       if((log != nullptr) && (log->status_ == NotFixed))
       {
@@ -5148,12 +5131,13 @@ bool Editor::OverridesWereSorted(const CodeWarning& log) const
    Debug::ft("Editor.OverridesWereSorted");
 
    auto cls = log.item_->GetClass();
+   auto& warnings = file_->GetWarnings();
 
-   for(auto w = warnings_.cbegin(); w != warnings_.cend(); ++w)
+   for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
    {
-      if((*w)->warning_ == OverrideNotSorted)
+      if(w->warning_ == OverrideNotSorted)
       {
-         if(((*w)->status_ >= Pending) && ((*w)->item_->GetClass() == cls))
+         if((w->status_ >= Pending) && (w->item_->GetClass() == cls))
             return true;
       }
    }
@@ -5789,11 +5773,8 @@ void Editor::Setup(CodeFile* file)
    CalcLineTypes(false);
    CalcDepths();
 
-   //  Get the file's warnings and sort them for fixing.  The order reduces
-   //  the chances of an item's position changing before it is edited.
-   //
-   CodeWarning::GetWarnings(file_, warnings_);
-   std::sort(warnings_.begin(), warnings_.end(), CodeWarning::IsSortedToFix);
+   auto& warnings = file->GetWarnings();
+   std::sort(warnings.begin(), warnings.end(), CodeWarning::IsSortedToFix);
 }
 
 //------------------------------------------------------------------------------
@@ -6589,12 +6570,6 @@ void Editor::UpdatePos
 
    Update();
    file_->UpdatePos(action, begin, count, from);
-
-   for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
-   {
-      (*w)->UpdatePos(action, begin, count, from);
-   }
-
    Changed();
 }
 
@@ -6617,7 +6592,7 @@ bool Editor::UpdateXref() const
 
 //------------------------------------------------------------------------------
 
-word Editor::Write()
+word Editor::Write() const
 {
    Debug::ft("Editor.Write");
 
@@ -6655,9 +6630,11 @@ word Editor::Write()
       return Report(stream, EditAbort);
    }
 
-   for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
+   auto& warnings = file_->GetWarnings();
+
+   for(auto w = warnings.begin(); w != warnings.end(); ++w)
    {
-      if((*w)->status_ == Pending) (*w)->status_ = Fixed;
+      if(w->status_ == Pending) w->status_ = Fixed;
    }
 
    stream << "..." << file_->Name() << " committed";

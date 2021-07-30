@@ -22,7 +22,6 @@
 #include "CxxToken.h"
 #include <sstream>
 #include "CodeFile.h"
-#include "CodeWarning.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxNamed.h"
@@ -335,7 +334,8 @@ CxxToken::~CxxToken()
 {
    Debug::ftnt("CxxToken.dtor");
 
-   CodeWarning::ItemDeleted(this);
+   auto file = GetFile();
+   if(file != nullptr) file->ItemDeleted(this);
 }
 
 //------------------------------------------------------------------------------

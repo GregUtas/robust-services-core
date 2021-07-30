@@ -28,6 +28,7 @@
 #include <list>
 #include <string>
 #include "CodeTypes.h"
+#include "CodeWarning.h"
 #include "CxxFwd.h"
 #include "Editor.h"
 #include "LibraryTypes.h"
@@ -224,6 +225,19 @@ public:
    //
    void Trim(std::ostream* stream);
 
+   //  Adds LOG to the warnings associated with this file.
+   //
+   void InsertWarning(const CodeWarning& log);
+
+   //  Returns the warnings associated with the file.
+   //
+   std::vector< CodeWarning >& GetWarnings() { return warnings_; }
+
+   //  Returns the log that matches WARNING, ITEM, and OFFSET.
+   //
+   CodeWarning* FindWarning
+      (Warning warning, const CxxToken* item, NodeBase::word offset);
+
    //  Invokes the editor to interactively fix warnings found by Check().
    //
    NodeBase::word Fix(NodeBase::CliThread& cli,
@@ -261,13 +275,6 @@ public:
    //  Logs WARNING, which occurred on LINE.
    //
    void LogLine(size_t line, Warning warning);
-
-   //  Invokes FindLog(LOG, ITEM, OFFSET) on the file's editor to find the
-   //  log whose .warning matches LOG, whose .offset matches OFFSET, and
-   //  whose .item matches ITEM.  Returns that log.
-   //
-   CodeWarning* FindLog(const CodeWarning& log,
-      const CxxToken* item, NodeBase::word offset);
 
    //  Adds the file's line types to the global count.
    //
@@ -308,6 +315,10 @@ public:
    //  Returns the item, if any, located at POS in the file.
    //
    CxxToken* PosToItem(size_t pos) const;
+
+   //  Invoked when ITEM is deleted.
+   //
+   void ItemDeleted(const CxxToken* item);
 
    //  Shrinks containers.
    //
@@ -517,6 +528,10 @@ private:
    //
    void LogRemoveUsings(std::ostream* stream) const;
 
+   //  Returns true if WARNING occurred somewhere in this file.
+   //
+   bool HasWarning(Warning warning) const;
+
    //  The file's name.
    //
    const std::string name_;
@@ -605,9 +620,9 @@ private:
    //
    ParseState parsed_;
 
-   //  Set if >check was run on the file.
+   //  The warnings found in the file.
    //
-   bool checked_;
+   std::vector< CodeWarning > warnings_;
 
    //  For editing the file's source code.
    //

@@ -81,11 +81,6 @@ CodeWarning::AttrsMap CodeWarning::Attrs_ = AttrsMap();
 
 size_t CodeWarning::LineTypeCounts_[] = { 0 };
 
-//  Warnings found in all files.
-//
-static std::vector<CodeWarning> Warnings_ =
-   std::vector< CodeWarning >();
-
 //  The total number of warnings of each type, globally.
 //
 static size_t WarningCounts_[Warning_N] = { 0 };
@@ -126,19 +121,7 @@ CodeWarning* CodeWarning::FindMateLog(std::string& expl) const
       expl = "Mate's file not found";
       return nullptr;
    }
-   return mateFile->FindLog(*this, mate, offset_);
-}
-
-//------------------------------------------------------------------------------
-
-word CodeWarning::FindWarning(const CodeWarning& log)
-{
-   for(size_t i = 0; i < Warnings_.size(); ++i)
-   {
-      if(Warnings_.at(i) == log) return i;
-   }
-
-   return -1;
+   return mateFile->FindWarning(warning_, mate, offset_);
 }
 
 //------------------------------------------------------------------------------
@@ -189,18 +172,22 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
       f->file->GetLineCounts();
    }
 
-   std::vector< CodeWarning > warnings;
+   std::vector< CodeWarning* > warnings;
 
    //  Count the total number of warnings of each type that appear in files
    //  belonging to the original SET, extracting them into the local set of
-   //  warnings.  Exclude warnings that are informational.
+   //  warnings.  Don't count warnings that are informational.
    //
-   for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
+   for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      if(files.find(w->File()) != files.cend())
+      auto file = static_cast< CodeFile* >(*f);
+      auto& logs = file->GetWarnings();
+
+      for(size_t i = 0; i < logs.size(); ++i)
       {
-         if(!w->IsInformational()) ++WarningCounts_[w->warning_];
-         warnings.push_back(*w);
+         auto& log = logs[i];
+         if(!log.IsInformational()) ++WarningCounts_[log.warning_];
+         warnings.push_back(&log);
       }
    }
 
@@ -240,29 +227,29 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
 
    while(item != last)
    {
-      auto w = item->warning_;
+      auto w = (*item)->warning_;
       *stream << WarningCode(w) << SPACE << w << CRLF;
 
       do
       {
-         auto f = item->File();
+         auto f = (*item)->File();
 
-         *stream << (item->IsInformational() ? 'i' : SPACE);
+         *stream << ((*item)->IsInformational() ? 'i' : SPACE);
          *stream << SPACE << f->Path();
-         *stream << '(' << item->Line() + 1;
-         if(item->offset_ > 0) *stream << '/' << item->offset_;
+         *stream << '(' << (*item)->Line() + 1;
+         if((*item)->offset_ > 0) *stream << '/' << (*item)->offset_;
          *stream << "): ";
 
-         if(item->HasCodeToDisplay())
+         if((*item)->HasCodeToDisplay())
          {
-            *stream << f->GetLexer().GetCode(item->Pos(), false);
+            *stream << f->GetLexer().GetCode((*item)->Pos(), false);
          }
 
-         if(item->HasInfoToDisplay()) *stream << " // " << item->info_;
+         if((*item)->HasInfoToDisplay()) *stream << " // " << (*item)->info_;
          *stream << CRLF;
          ++item;
       }
-      while((item != last) && (item->warning_ == w));
+      while((item != last) && ((*item)->warning_ == w));
    }
 
    *stream << string(132, '=') << CRLF;
@@ -277,35 +264,36 @@ void CodeWarning::GenerateReport(ostream* stream, const LibItemSet& files)
 
    while(item != last)
    {
-      auto f = item->File();
+      auto f = (*item)->File();
       *stream << f->Path() << CRLF;
 
       do
       {
-         auto w = item->warning_;
+         auto w = (*item)->warning_;
          *stream << (Attrs_.at(Warning(w)).fixable ? '*' : SPACE);
          *stream << SPACE << WarningCode(w) << SPACE << w << CRLF;
 
          do
          {
             *stream << spaces(2);
-            *stream << (item->IsInformational() ? 'i' : SPACE);
-            *stream << SPACE << item->Line() + 1;
-            if(item->offset_ > 0) *stream << '/' << item->offset_;
+            *stream << ((*item)->IsInformational() ? 'i' : SPACE);
+            *stream << SPACE << (*item)->Line() + 1;
+            if((*item)->offset_ > 0) *stream << '/' << (*item)->offset_;
             *stream << ": ";
 
-            if(item->HasCodeToDisplay())
+            if((*item)->HasCodeToDisplay())
             {
-               *stream << f->GetLexer().GetCode(item->Pos(), false);
+               *stream << f->GetLexer().GetCode((*item)->Pos(), false);
             }
 
-            if(item->HasInfoToDisplay()) *stream << " // " << item->info_;
+            if((*item)->HasInfoToDisplay()) *stream << " // " << (*item)->info_;
             *stream << CRLF;
             ++item;
          }
-         while((item != last) && (item->warning_ == w) && (item->File() == f));
+         while((item != last) &&
+            ((*item)->warning_ == w) && ((*item)->File() == f));
       }
-      while((item != last) && (item->File() == f));
+      while((item != last) && ((*item)->File() == f));
    }
 }
 
@@ -328,22 +316,6 @@ string CodeWarning::GetNewFuncName() const
 
 //------------------------------------------------------------------------------
 
-void CodeWarning::GetWarnings
-   (const CodeFile* file, std::vector< CodeWarning* >& warnings)
-{
-   Debug::ft("CodeWarning.GetWarnings");
-
-   for(auto w = Warnings_.begin(); w != Warnings_.end(); ++w)
-   {
-      if((w->File() == file) && !w->IsInformational())
-      {
-         warnings.push_back(&*w);
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
 bool CodeWarning::HasCodeToDisplay() const
 {
    return ((Pos() != string::npos) || info_.empty());
@@ -354,21 +326,6 @@ bool CodeWarning::HasCodeToDisplay() const
 bool CodeWarning::HasInfoToDisplay() const
 {
    return (info_.find_first_not_of(SPACE) != std::string::npos);
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeWarning::HasWarning(const CodeFile* file, Warning warning)
-{
-   for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
-   {
-      if(w->File() == file)
-      {
-         if((warning == AllWarnings) || (w->warning_ == warning)) return true;
-      }
-   }
-
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -807,13 +764,13 @@ void CodeWarning::Initialize()
 
 //------------------------------------------------------------------------------
 
-void CodeWarning::Insert() const
+void CodeWarning::Insert()
 {
    Debug::ft("CodeWarning.Insert");
 
-   if((FindWarning(*this) < 0) && !Suppress())
+   if(!Suppress())
    {
-      Warnings_.push_back(*this);
+      File()->InsertWarning(*this);
    }
 }
 
@@ -827,55 +784,17 @@ bool CodeWarning::IsInformational() const
 //------------------------------------------------------------------------------
 
 bool CodeWarning::IsSortedByFile
-   (const CodeWarning& log1, const CodeWarning& log2)
-{
-   auto result = strCompare(log1.File()->Path(), log2.File()->Path());
-   if(result == -1) return true;
-   if(result == 1) return false;
-   if(log1.warning_ < log2.warning_) return true;
-   if(log1.warning_ > log2.warning_) return false;
-   if(log1.Pos() < log2.Pos()) return true;
-   if(log1.Pos() > log2.Pos()) return false;
-   if(log1.offset_ < log2.offset_) return true;
-   if(log1.offset_ > log2.offset_) return false;
-   if(log1.info_ < log2.info_) return true;
-   if(log1.info_ > log2.info_) return false;
-   return (&log1 < &log2);
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeWarning::IsSortedByType
-   (const CodeWarning& log1, const CodeWarning& log2)
-{
-   if(log1.warning_ < log2.warning_) return true;
-   if(log1.warning_ > log2.warning_) return false;
-   auto result = strCompare(log1.File()->Path(), log2.File()->Path());
-   if(result == -1) return true;
-   if(result == 1) return false;
-   if(log1.Pos() < log2.Pos()) return true;
-   if(log1.Pos() > log2.Pos()) return false;
-   if(log1.offset_ < log2.offset_) return true;
-   if(log1.offset_ > log2.offset_) return false;
-   if(log1.info_ < log2.info_) return true;
-   if(log1.info_ > log2.info_) return false;
-   return (&log1 < &log2);
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeWarning::IsSortedToFix
    (const CodeWarning* log1, const CodeWarning* log2)
 {
    auto result = strCompare(log1->File()->Path(), log2->File()->Path());
    if(result == -1) return true;
    if(result == 1) return false;
-   if(log1->Pos() < log2->Pos()) return true;
-   if(log1->Pos() > log2->Pos()) return false;
-   if(log1->offset_ > log2->offset_) return true;
-   if(log1->offset_ < log2->offset_) return false;
    if(log1->warning_ < log2->warning_) return true;
    if(log1->warning_ > log2->warning_) return false;
+   if(log1->Pos() < log2->Pos()) return true;
+   if(log1->Pos() > log2->Pos()) return false;
+   if(log1->offset_ < log2->offset_) return true;
+   if(log1->offset_ > log2->offset_) return false;
    if(log1->info_ < log2->info_) return true;
    if(log1->info_ > log2->info_) return false;
    return (log1 < log2);
@@ -883,16 +802,51 @@ bool CodeWarning::IsSortedToFix
 
 //------------------------------------------------------------------------------
 
+bool CodeWarning::IsSortedByType
+   (const CodeWarning* log1, const CodeWarning* log2)
+{
+   if(log1->warning_ < log2->warning_) return true;
+   if(log1->warning_ > log2->warning_) return false;
+   auto result = strCompare(log1->File()->Path(), log2->File()->Path());
+   if(result == -1) return true;
+   if(result == 1) return false;
+   if(log1->Pos() < log2->Pos()) return true;
+   if(log1->Pos() > log2->Pos()) return false;
+   if(log1->offset_ < log2->offset_) return true;
+   if(log1->offset_ > log2->offset_) return false;
+   if(log1->info_ < log2->info_) return true;
+   if(log1->info_ > log2->info_) return false;
+   return (log1 < log2);
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeWarning::IsSortedToFix
+   (const CodeWarning& log1, const CodeWarning& log2)
+{
+   auto result = strCompare(log1.File()->Path(), log2.File()->Path());
+   if(result == -1) return true;
+   if(result == 1) return false;
+   if(log1.Pos() < log2.Pos()) return true;
+   if(log1.Pos() > log2.Pos()) return false;
+   if(log1.offset_ > log2.offset_) return true;
+   if(log1.offset_ < log2.offset_) return false;
+   if(log1.warning_ < log2.warning_) return true;
+   if(log1.warning_ > log2.warning_) return false;
+   if(log1.info_ < log2.info_) return true;
+   if(log1.info_ > log2.info_) return false;
+   return (&log1 < &log2);
+}
+
+//------------------------------------------------------------------------------
+
 void CodeWarning::ItemDeleted(const CxxToken* item)
 {
-   for(auto w = Warnings_.begin(); w != Warnings_.end(); ++w)
+   if(item_ == item)
    {
-      if(w->item_ == item)
-      {
-         w->item_ = nullptr;
-         w->status_ = Nullified;
-         w->loc_.SetLoc(nullptr, string::npos, true);
-      }
+      item_ = nullptr;
+      status_ = Nullified;
+      loc_.SetLoc(nullptr, string::npos, true);
    }
 }
 

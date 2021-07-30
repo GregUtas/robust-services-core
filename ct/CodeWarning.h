@@ -82,6 +82,7 @@ enum WarningStatus
 //
 class CodeWarning
 {
+   friend class CodeFile;
    friend class Editor;
 public:
    //  Almost every member is supplied to the constructor.  If POS is
@@ -102,10 +103,6 @@ public:
    //
    CodeWarning& operator=(const CodeWarning& that) = default;
 
-   //  Returns the warning.
-   //
-   Warning GetWarning() const { return warning_; }
-
    //  Returns the file in which the warning appeared.
    //
    CodeFile* File() const { return loc_.GetFile(); }
@@ -118,10 +115,14 @@ public:
    //
    size_t Line() const;
 
-   //  Adds the log to the global set of warnings unless it is a duplicate
-   //  or suppressed.
+   //  Comparison operators.
    //
-   void Insert() const;
+   bool operator==(const CodeWarning& that) const;
+   bool operator!=(const CodeWarning& that) const;
+
+   //  Unless the warning is suppressed, adds it to the file where it occurred.
+   //
+   void Insert();
 
    //  Initializes the Attrs map.
    //
@@ -135,24 +136,15 @@ public:
    //
    static fixed_string Expl(Warning w) { return Attrs_.at(w).expl; }
 
-   //  Returns true if FILE was logged for WARNING.
-   //
-   static bool HasWarning(const CodeFile* file, Warning warning);
-
    //  Generates a report in STREAM for FILES.  The report includes line
    //  type counts and warnings found during parsing and compilation.
    //
    static void GenerateReport(std::ostream* stream, const LibItemSet& files);
 
-   //  Nullifies warnings associated with ITEM, which was deleted.
+   //  Nullifies the warning if it is associated with ITEM.
    //
-   static void ItemDeleted(const CxxToken* item);
+   void ItemDeleted(const CxxToken* item);
 private:
-   //  Comparison operators.
-   //
-   bool operator==(const CodeWarning& that) const;
-   bool operator!=(const CodeWarning& that) const;
-
    //  Returns true if the log should be suppressed.
    //
    bool Suppress() const;
@@ -185,12 +177,6 @@ private:
    //
    std::string GetNewFuncName() const;
 
-   //  Updates WARNINGS with those that were logged in FILE.  Excludes
-   //  informational warnings, which cannot be fixed.
-   //
-   static void GetWarnings
-      (const CodeFile* file, std::vector< CodeWarning* >& warnings);
-
    //  Updates the position of a warning when a file has been edited.  Has
    //  the same interface as CxxToken::UpdatePos.
    //
@@ -199,19 +185,15 @@ private:
 
    //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
    //
-   static bool IsSortedToFix(const CodeWarning* log1, const CodeWarning* log2);
-
-   //  Returns LOG's index if it has already been reported, else -1.
-   //
-   static NodeBase::word FindWarning(const CodeWarning& log);
+   static bool IsSortedToFix(const CodeWarning& log1, const CodeWarning& log2);
 
    //  Returns true if LOG2 > LOG1 when sorting by file/warning/line.
    //
-   static bool IsSortedByFile(const CodeWarning& log1, const CodeWarning& log2);
+   static bool IsSortedByFile(const CodeWarning* log1, const CodeWarning* log2);
 
    //  Returns true if LOG2 > LOG1 when sorting by warning/file/line.
    //
-   static bool IsSortedByType(const CodeWarning& log1, const CodeWarning& log2);
+   static bool IsSortedByType(const CodeWarning* log1, const CodeWarning* log2);
 
    //  For inserting elements into the attributes map.
    //

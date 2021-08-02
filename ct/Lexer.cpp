@@ -172,7 +172,6 @@ void LineInfo::Display(ostream& stream) const
 //==============================================================================
 
 Lexer::Lexer() :
-   source_(nullptr),
    file_(nullptr),
    slashAsterisk_(false),
    curr_(0),
@@ -242,9 +241,9 @@ void Lexer::CalcDepths()
    Reposition(0);
    nextLine_ = 0;
 
-   for(auto size = source_->size(); curr_ < size; NO_OP)
+   for(auto size = code_.size(); curr_ < size; NO_OP)
    {
-      auto currChar = (*source_)[curr_];
+      auto currChar = code_[curr_];
 
       switch(currChar)
       {
@@ -253,7 +252,7 @@ void Lexer::CalcDepths()
          //  Push this left brace's role onto the stack.
          //
          auto lbDepth = currDepth;
-         auto prevChar = (*source_)[prev_];
+         auto prevChar = code_[prev_];
 
          if(BraceInitPrevChars.find(prevChar) != string::npos)
             lbStack.push_back(LB_Init);
@@ -402,7 +401,7 @@ void Lexer::CalcDepths()
          //  (g) after an access control (handled below, in IndentControl)
          do
          {
-            if((*source_)[curr_ + 1] == ':')
+            if(code_[curr_ + 1] == ':')
             {
                Advance(1);  // (a)
                break;
@@ -417,7 +416,7 @@ void Lexer::CalcDepths()
             }
 
             auto pos = FindFirstOf("{;");
-            if((*source_)[pos] == ';') break;  // (d)
+            if(code_[pos] == ';') break;  // (d)
 
             ctor = true;
             nextDepth = currDepth + 1;
@@ -449,7 +448,7 @@ void Lexer::CalcDepths()
                currDepth -= 2;
             }
 
-            if((*source_)[curr_] == '{') continue;
+            if(code_[curr_] == '{') continue;
             if(semiDepth < 0) semiDepth = currDepth;
             ++currDepth;
             continue;
@@ -588,10 +587,10 @@ void Lexer::CalcDepths()
                //  IndentConditional case above and get processed as usual.
                //
                Advance(id.size());
-               if((*source_)[curr_] == '{') continue;
+               if(code_[curr_] == '{') continue;
                if(NextIdentifier(curr_) == IF_STR)
                {
-                  if(source_->rfind(CRLF, curr_) < source_->rfind('e', curr_))
+                  if(code_.rfind(CRLF, curr_) < code_.rfind('e', curr_))
                   {
                      elseif = true;
                      continue;
@@ -603,7 +602,7 @@ void Lexer::CalcDepths()
                //  up to the end of "else" before invoking SetDepth.  Indent and
                //  return to the current depth upon reaching the next semicolon.
                //
-               curr_ = source_->rfind('e', curr_ - 1);
+               curr_ = code_.rfind('e', curr_ - 1);
                SetDepth(currDepth, currDepth);
                if(semiDepth < 0) semiDepth = currDepth;
                ++currDepth;
@@ -618,7 +617,7 @@ void Lexer::CalcDepths()
                //  will only be indented if the line that follows is indented.
                //
                GetLineInfo(curr_)->depth = 0;
-               curr_ = source_->find(CRLF, curr_);
+               curr_ = code_.find(CRLF, curr_);
                if(curr_ == string::npos) curr_ = size - 1;
                SetDepth(currDepth, currDepth);
 
@@ -631,7 +630,7 @@ void Lexer::CalcDepths()
                   currDepth = NextLineIndentation(curr_);
                }
 
-               curr_ = source_->find_first_not_of(WhitespaceChars, curr_);
+               curr_ = code_.find_first_not_of(WhitespaceChars, curr_);
                if(curr_ == string::npos) curr_ = size - 1;
                Advance();
                continue;
@@ -792,7 +791,7 @@ word Lexer::CheckDepth(size_t n) const
    const auto& info = lines_[n];
    auto desired = info.depth;
    if(desired == DEPTH_NOT_SET) return -1;
-   auto first = source_->find_first_not_of(WhitespaceChars, info.begin);
+   auto first = code_.find_first_not_of(WhitespaceChars, info.begin);
    if(first == string::npos) return -1;
    if((n < lines_.size() - 1) && (first >= lines_[n + 1].begin)) return -1;
 
@@ -806,7 +805,7 @@ word Lexer::CheckDepth(size_t n) const
    //  comments out code) or if it is aligned with a trailing comment
    //  on the next or a previous line.
    //
-   auto comment = (source_->compare(first, 2, COMMENT_STR) == 0);
+   auto comment = (code_.compare(first, 2, COMMENT_STR) == 0);
 
    if(comment)
    {
@@ -819,16 +818,57 @@ word Lexer::CheckDepth(size_t n) const
    //  A string literal is exempt if it is too long to be indented or
    //  if it contains a continuation.
    //
-   if((*source_)[first] == QUOTE)
+   if(code_[first] == QUOTE)
    {
       if(LineSize(info.begin) + IndentSize() > LineLengthMax()) return -1;
       auto prev = RfindNonBlank(lines_[n].begin - 1);
-      if((*source_)[prev] == QUOTE) return -1;
+      if(code_[prev] == QUOTE) return -1;
       auto last = RfindNonBlank(lines_[n + 1].begin - 1);
-      if((*source_)[last] == QUOTE) return -1;
+      if(code_[last] == QUOTE) return -1;
    }
 
    return desired;
+}
+
+//------------------------------------------------------------------------------
+
+int Lexer::CheckLineMerge(size_t n) const
+{
+   if(n + 1 >= lines_.size()) return -1;
+   const auto& line1 = lines_[n];
+   if(!line1.mergeable) return -1;
+   const auto& line2 = lines_[n + 1];
+   if(!line2.mergeable) return -1;
+
+   auto begin1 = line1.begin;
+   auto end1 = line2.begin - 1;
+   auto begin2 = line2.begin;
+   auto end2 = code_.find(CRLF, begin2);
+
+   //  The first line must not end in a trailing comment, semicolon, colon,
+   //  or right brace and must not start with an "if" or "else".  If merging,
+   //  a space may also have to be inserted.
+   //
+   while(WhitespaceChars.find(code_[end2]) != string::npos) --end2;
+   if((end2 < begin2) || (end2 == string::npos)) return -1;
+
+   while(WhitespaceChars.find(code_[end1]) != string::npos) --end1;
+   if((end1 < begin1) || (end2 == string::npos)) return -1;
+   auto c = code_[end1];
+   if((c == ';') || (c == ':') || (c == '}')) return -1;
+
+   auto first1 = code_.find_first_not_of(WhitespaceChars, begin1);
+   if(code_.find(COMMENT_STR, first1) < end1) return -1;
+   if(code_.compare(first1, strlen(IF_STR), IF_STR) == 0) return -1;
+   if(code_.compare(first1, strlen(ELSE_STR), ELSE_STR) == 0) return -1;
+
+   auto first2 = code_.find_first_not_of(WhitespaceChars, begin2);
+   auto size = (end1 - begin1 + 1) + (end2 - first2 + 1);
+   auto space = (!IsWordChar(c) || (code_[first2] != '('));
+   if(space) ++size;
+
+   if(size > LineLengthMax()) return -1;
+   return (space ? 1 : 0);
 }
 
 //------------------------------------------------------------------------------
@@ -876,123 +916,82 @@ void Lexer::CheckLines()
 
 //------------------------------------------------------------------------------
 
-int Lexer::CheckLineMerge(size_t n) const
-{
-   if(n + 1 >= lines_.size()) return -1;
-   const auto& line1 = lines_[n];
-   if(!line1.mergeable) return -1;
-   const auto& line2 = lines_[n + 1];
-   if(!line2.mergeable) return -1;
-
-   auto begin1 = line1.begin;
-   auto end1 = line2.begin - 1;
-   auto begin2 = line2.begin;
-   auto end2 = source_->find(CRLF, begin2);
-
-   //  The first line must not end in a trailing comment, semicolon, colon,
-   //  or right brace and must not start with an "if" or "else".  If merging,
-   //  a space may also have to be inserted.
-   //
-   while(WhitespaceChars.find((*source_)[end2]) != string::npos) --end2;
-   if((end2 < begin2) || (end2 == string::npos)) return -1;
-
-   while(WhitespaceChars.find((*source_)[end1]) != string::npos) --end1;
-   if((end1 < begin1) || (end2 == string::npos)) return -1;
-   auto c = (*source_)[end1];
-   if((c == ';') || (c == ':') || (c == '}')) return -1;
-
-   auto first1 = source_->find_first_not_of(WhitespaceChars, begin1);
-   if(source_->find(COMMENT_STR, first1) < end1) return -1;
-   if(source_->compare(first1, strlen(IF_STR), IF_STR) == 0) return -1;
-   if(source_->compare(first1, strlen(ELSE_STR), ELSE_STR) == 0) return -1;
-
-   auto first2 = source_->find_first_not_of(WhitespaceChars, begin2);
-   auto size = (end1 - begin1 + 1) + (end2 - first2 + 1);
-   auto space = (!IsWordChar(c) || ((*source_)[first2] != '('));
-   if(space) ++size;
-
-   if(size > LineLengthMax()) return -1;
-   return (space ? 1 : 0);
-}
-
-//------------------------------------------------------------------------------
-
 void Lexer::CheckPunctuation() const
 {
    Debug::ft("Lexer.CheckPunctuation");
 
    auto frag = false;
 
-   for(size_t pos = 0; pos < source_->size(); pos = NextPos(pos + 1))
+   for(size_t pos = 0; pos < code_.size(); pos = NextPos(pos + 1))
    {
-      switch((*source_)[pos])
+      switch(code_[pos])
       {
       case '{':
-         if(WhitespaceChars.find((*source_)[pos - 1]) == string::npos)
+         if(WhitespaceChars.find(code_[pos - 1]) == string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_{");
-         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+         if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "{_");
          break;
 
       case '}':
-         if(WhitespaceChars.find((*source_)[pos - 1]) == string::npos)
+         if(WhitespaceChars.find(code_[pos - 1]) == string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_}");
-         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+         if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
          {
-            if((*source_)[pos + 1] == ';') continue;
-            if((*source_)[pos + 1] == ',') continue;
+            if(code_[pos + 1] == ';') continue;
+            if(code_[pos + 1] == ',') continue;
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "}_");
          }
          break;
 
       case '(':
-         if(WhitespaceChars.find((*source_)[pos + 1]) != string::npos)
+         if(WhitespaceChars.find(code_[pos + 1]) != string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "(@");
          break;
 
       case ')':
-         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+         if(WhitespaceChars.find(code_[pos - 1]) != string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@)");
          break;
 
       case '[':
-         if(WhitespaceChars.find((*source_)[pos + 1]) != string::npos)
+         if(WhitespaceChars.find(code_[pos + 1]) != string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "[@");
          break;
 
       case ']':
-         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+         if(WhitespaceChars.find(code_[pos - 1]) != string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@]");
          break;
 
       case ';':
-         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+         if(WhitespaceChars.find(code_[pos - 1]) != string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@;");
-         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+         if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, ";_");
          break;
 
       case ',':
-         if(WhitespaceChars.find((*source_)[pos - 1]) != string::npos)
+         if(WhitespaceChars.find(code_[pos - 1]) != string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "@,");
-         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+         if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, ",_");
          break;
 
       case ':':
-         if((*source_)[pos + 1] == ':')
+         if(code_[pos + 1] == ':')
          {
             ++pos;
             continue;
          }
 
-         if(WhitespaceChars.find((*source_)[pos - 1]) == string::npos)
+         if(WhitespaceChars.find(code_[pos - 1]) == string::npos)
          {
             if(NoSpaceBeforeColon(pos)) continue;
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_:");
          }
 
-         if(WhitespaceChars.find((*source_)[pos + 1]) == string::npos)
+         if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, ":_");
          break;
 
@@ -1040,7 +1039,7 @@ void Lexer::CheckSwitch(const Switch& code) const
             //
             if((casePos != string::npos) && (codePos != string::npos))
             {
-               auto fpos = source_->rfind(FALLTHROUGH_STR, pos);
+               auto fpos = code_.rfind(FALLTHROUGH_STR, pos);
                if((fpos == string::npos) || (fpos < codePos))
                {
                   file_->LogPos(casePos, NoJumpOrFallthrough);
@@ -1078,7 +1077,7 @@ void Lexer::CheckSwitch(const Switch& code) const
       //
       pos = FindFirstOf(";{", pos);
 
-      if((*source_)[pos] == '{')
+      if(code_[pos] == '{')
       {
          pos = FindClosing('{', '}', pos + 1);
       }
@@ -1144,7 +1143,7 @@ string Lexer::CheckVerticalSpacing() const
                //  comment to an empty comment if the rule is not indented.
                //
                if((currType == BlankLine) &&
-                  ((*source_)[lines_[prevLine].begin] == '/'))
+                  (code_[lines_[prevLine].begin] == '/'))
                {
                   action[currLine] = ChangeToEmptyComment;
                }
@@ -1247,17 +1246,17 @@ int Lexer::CompareCode(size_t pos, const std::string& str) const
 {
    Debug::ft("Lexer.CompareCode");
 
-   if(pos >= source_->size()) return -2;
-   return source_->compare(pos, str.size(), str);
+   if(pos >= code_.size()) return -2;
+   return code_.compare(pos, str.size(), str);
 }
 
 //------------------------------------------------------------------------------
 
 size_t Lexer::CurrBegin(size_t pos) const
 {
-   if(pos >= source_->size()) return string::npos;
-   if((*source_)[pos] == CRLF) --pos;
-   auto crlf = source_->rfind(CRLF, pos);
+   if(pos >= code_.size()) return string::npos;
+   if(code_[pos] == CRLF) --pos;
+   auto crlf = code_.rfind(CRLF, pos);
    return (crlf == string::npos ? 0 : crlf + 1);
 }
 
@@ -1267,13 +1266,13 @@ size_t Lexer::CurrChar(char& c) const
 {
    Debug::ft("Lexer.CurrChar");
 
-   if(curr_ >= source_->size())
+   if(curr_ >= code_.size())
    {
       c = NUL;
       return string::npos;
    }
 
-   c = (*source_)[curr_];
+   c = code_[curr_];
    return curr_;
 }
 
@@ -1281,9 +1280,9 @@ size_t Lexer::CurrChar(char& c) const
 
 size_t Lexer::CurrEnd(size_t pos) const
 {
-   if(pos >= source_->size()) return string::npos;
-   auto crlf = source_->find(CRLF, pos);
-   return (crlf == string::npos ? source_->size() - 1 : crlf);
+   if(pos >= code_.size()) return string::npos;
+   auto crlf = code_.find(CRLF, pos);
+   return (crlf == string::npos ? code_.size() - 1 : crlf);
 }
 
 //------------------------------------------------------------------------------
@@ -1293,14 +1292,13 @@ void Lexer::Display(ostream& stream,
 {
    Base::Display(stream, prefix, options);
 
-   stream << prefix << "source  : " << source_ << CRLF;
-   stream << prefix << "file    : " << file_ << CRLF;
-   stream << prefix << "curr    : " << curr_ << CRLF;
-   stream << prefix << "prev    : " << prev_ << CRLF;
+   stream << prefix << "file : " << file_ << CRLF;
+   stream << prefix << "curr : " << curr_ << CRLF;
+   stream << prefix << "prev : " << prev_ << CRLF;
 
    if(!options.test(DispVerbose)) return;
 
-   stream << prefix << "source : " << CRLF;
+   stream << prefix << "code : " << CRLF;
 
    const auto& info = GetLinesInfo();
 
@@ -1319,7 +1317,7 @@ size_t Lexer::Find(size_t pos, const string& str) const
 
    for(pos = NextPos(pos); pos != string::npos; pos = NextPos(pos + 1))
    {
-      if(source_->compare(pos, str.size(), str) == 0)
+      if(code_.compare(pos, str.size(), str) == 0)
       {
          return pos;
       }
@@ -1342,9 +1340,9 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
    if(pos == string::npos) pos = curr_;
    pos = NextPos(pos);
 
-   for(auto size = source_->size(); pos < size; pos = NextPos(pos + 1))
+   for(auto size = code_.size(); pos < size; pos = NextPos(pos + 1))
    {
-      auto c = (*source_)[pos];
+      auto c = code_[pos];
 
       if(c == rhc)
       {
@@ -1415,9 +1413,9 @@ size_t Lexer::FindComment(size_t pos) const
    Debug::ft("Lexer.FindComment");
 
    auto end = CurrEnd(pos);
-   auto targ = source_->find(COMMENT_STR, pos);
+   auto targ = code_.find(COMMENT_STR, pos);
    if(targ < end) return targ;
-   targ = source_->find(COMMENT_BEGIN_STR, pos);
+   targ = code_.find(COMMENT_BEGIN_STR, pos);
    return (targ < end ? targ : string::npos);
 }
 
@@ -1429,9 +1427,9 @@ Cxx::Directive Lexer::FindDirective()
 
    string s;
 
-   while(curr_ < source_->size())
+   while(curr_ < code_.size())
    {
-      if((*source_)[curr_] == '#')
+      if(code_[curr_] == '#')
          return NextDirective(s);
       else
          Reposition(FindLineEnd(curr_));
@@ -1454,10 +1452,10 @@ size_t Lexer::FindFirstOf(const string& targs, size_t pos) const
    pos = NextPos(pos);
    size_t end;
 
-   for(auto size = source_->size(); pos < size; NO_OP)
+   for(auto size = code_.size(); pos < size; NO_OP)
    {
       auto f = false;
-      auto c = (*source_)[pos];
+      auto c = code_[pos];
 
       if(targs.find(c) != string::npos)
       {
@@ -1466,7 +1464,7 @@ size_t Lexer::FindFirstOf(const string& targs, size_t pos) const
          //  of a scope resolution operator.
          //
          if(c != ':') return pos;
-         if((*source_)[pos + 1] != ':') return pos;
+         if(code_[pos + 1] != ':') return pos;
          pos = NextPos(pos + 2);
          continue;
       }
@@ -1509,10 +1507,10 @@ bool Lexer::FindIdentifier(size_t& pos, string& id, bool tokenize) const
 
    if(tokenize) id = "$";  // returned if non-identifier found
 
-   for(auto size = source_->size(); pos < size; NO_OP)
+   for(auto size = code_.size(); pos < size; NO_OP)
    {
       auto f = false;
-      auto c = (*source_)[pos];
+      auto c = code_[pos];
 
       switch(c)
       {
@@ -1567,9 +1565,9 @@ size_t Lexer::FindLineEnd(size_t pos) const
 
    auto bs = false;
 
-   for(auto size = source_->size(); pos < size; ++pos)
+   for(auto size = code_.size(); pos < size; ++pos)
    {
-      switch((*source_)[pos])
+      switch(code_[pos])
       {
       case CRLF:
          if(!bs) return pos;
@@ -1592,7 +1590,7 @@ void Lexer::FindLines()
    Debug::ft("Lexer.FindLines");
 
    lines_.clear();
-   if(source_->empty()) return;
+   if(code_.empty()) return;
 
    for(size_t pos = 0; pos != string::npos; pos = NextBegin(pos))
    {
@@ -1608,7 +1606,7 @@ size_t Lexer::FindNonBlank(size_t pos) const
 
    for(pos = NextPos(pos); pos != string::npos; pos = NextPos(pos + 1))
    {
-      if(!IsBlank((*source_)[pos]))
+      if(!IsBlank(code_[pos]))
       {
          return pos;
       }
@@ -1660,10 +1658,10 @@ bool Lexer::GetChar(uint32_t& c)
 {
    Debug::ft("Lexer.GetChar");
 
-   auto size = source_->size();
+   auto size = code_.size();
    if(curr_ >= size) return false;
 
-   c = (*source_)[curr_];
+   c = code_[curr_];
    ++curr_;
 
    if(c == BACKSLASH)
@@ -1674,7 +1672,7 @@ bool Lexer::GetChar(uint32_t& c)
       int64_t n;
 
       if(curr_ >= size) return false;
-      c = (*source_)[curr_];
+      c = code_[curr_];
 
       switch(c)
       {
@@ -1766,7 +1764,7 @@ string Lexer::GetCode(size_t pos, bool crlf) const
    auto begin = CurrBegin(pos);
    if(begin == string::npos) return EMPTY_STR;
    auto end = CurrEnd(pos);
-   auto code = source_->substr(begin, end - begin + 1);
+   auto code = code_.substr(begin, end - begin + 1);
    if(!crlf && !code.empty() && (code.back() == CRLF)) code.pop_back();
    return code;
 }
@@ -1972,9 +1970,9 @@ size_t Lexer::GetHexNum(int64_t& num, size_t max)
    size_t count = 0;
    num = 0;
 
-   for(auto size = source_->size(); (curr_ < size) && (max > 0); ++curr_)
+   for(auto size = code_.size(); (curr_ < size) && (max > 0); ++curr_)
    {
-      auto c = (*source_)[curr_];
+      auto c = code_[curr_];
       auto value = CxxChar::Attrs[c].hexValue;
       if(value < 0) return count;
       ++count;
@@ -1995,16 +1993,16 @@ bool Lexer::GetIncludeFile(size_t pos, string& file, bool& angle) const
    //  While staying on this line, skip spaces, look for a '#', skip spaces,
    //  look for "include", skip spaces, and look for "filename" or <filename>.
    //
-   auto stop = source_->find(CRLF, pos);
+   auto stop = code_.find(CRLF, pos);
    pos = NextPos(pos);
    if(pos >= stop) return false;
-   if(source_->find(HASH_INCLUDE_STR, pos) != pos) return false;
+   if(code_.find(HASH_INCLUDE_STR, pos) != pos) return false;
    pos = NextPos(pos + strlen(HASH_INCLUDE_STR));
    if(pos >= stop) return false;
 
    char delimiter;
 
-   switch((*source_)[pos])
+   switch(code_[pos])
    {
    case QUOTE:
       delimiter = QUOTE;
@@ -2019,9 +2017,9 @@ bool Lexer::GetIncludeFile(size_t pos, string& file, bool& angle) const
    }
 
    ++pos;
-   auto end = source_->find(delimiter, pos);
+   auto end = code_.find(delimiter, pos);
    if(end >= stop) return false;
-   file = source_->substr(pos, end - pos);
+   file = code_.substr(pos, end - pos);
    return true;
 }
 
@@ -2032,11 +2030,11 @@ TagCount Lexer::GetIndirectionLevel(char c, bool& space)
    Debug::ft("Lexer.GetIndirectionLevel");
 
    space = false;
-   if(curr_ >= source_->size()) return 0;
+   if(curr_ >= code_.size()) return 0;
    auto start = curr_;
    TagCount count = 0;
    while(NextCharIs(c)) ++count;
-   space = ((count > 0) && ((*source_)[start - 1] == SPACE));
+   space = ((count > 0) && (code_[start - 1] == SPACE));
    return count;
 }
 
@@ -2049,9 +2047,9 @@ size_t Lexer::GetInt(int64_t& num)
    size_t count = 0;
    num = 0;
 
-   for(auto size = source_->size(); curr_ < size; ++curr_)
+   for(auto size = code_.size(); curr_ < size; ++curr_)
    {
-      auto c = (*source_)[curr_];
+      auto c = code_[curr_];
       auto value = CxxChar::Attrs[c].intValue;
       if(value < 0) return count;
       ++count;
@@ -2084,7 +2082,7 @@ LineInfo* Lexer::GetLineInfo(size_t pos)
 
 size_t Lexer::GetLineNum(size_t pos) const
 {
-   if(pos >= source_->size()) return SIZE_MAX;
+   if(pos >= code_.size()) return SIZE_MAX;
 
    //  Do a binary search over the lines' starting positions.
    //
@@ -2190,8 +2188,8 @@ bool Lexer::GetNthLine(size_t n, string& s) const
    auto last = lines_.size() - 1;
    if(n > last) return false;
    auto begin = lines_[n].begin;
-   auto end = (n < last ? lines_[n + 1].begin - 1 : source_->size() - 1);
-   s = source_->substr(begin, end - begin + 1);
+   auto end = (n < last ? lines_[n + 1].begin - 1 : code_.size() - 1);
+   s = code_.substr(begin, end - begin + 1);
    return true;
 }
 
@@ -2214,9 +2212,9 @@ bool Lexer::GetNum(TokenPtr& item)
    //  It is already known that the next character is a digit, so a lot of
    //  nonsense can be avoided by seeing if that digit appears alone.
    //
-   if(curr_ >= source_->size() - 1) return false;
+   if(curr_ >= code_.size() - 1) return false;
    auto pos = curr_ + 1;
-   auto c = (*source_)[pos];
+   auto c = code_[pos];
 
    if(!CxxChar::Attrs[c].validInt)
    {
@@ -2344,9 +2342,9 @@ size_t Lexer::GetOct(int64_t& num)
    size_t count = 0;
    num = 0;
 
-   for(auto size = source_->size(); curr_ < size; ++curr_)
+   for(auto size = code_.size(); curr_ < size; ++curr_)
    {
-      auto c = (*source_)[curr_];
+      auto c = code_[curr_];
       auto value = CxxChar::Attrs[c].octValue;
       if(value < 0) return count;
       ++count;
@@ -2472,7 +2470,7 @@ bool Lexer::GetTemplateSpec(string& spec)
    spec.clear();
    auto end = SkipTemplateSpec(curr_);
    if(end == string::npos) return false;
-   spec = source_->substr(curr_, end - curr_ + 1);
+   spec = code_.substr(curr_, end - curr_ + 1);
    return Advance(spec.size());
 }
 
@@ -2482,7 +2480,7 @@ void Lexer::Initialize(const string& source, CodeFile* file)
 {
    Debug::ft("Lexer.Initialize");
 
-   source_ = &source;
+   code_ = source;
    file_ = file;
    curr_ = 0;
    prev_ = 0;
@@ -2492,12 +2490,58 @@ void Lexer::Initialize(const string& source, CodeFile* file)
 
 //------------------------------------------------------------------------------
 
+size_t Lexer::IntroStart(size_t pos, bool funcName) const
+{
+   Debug::ft("Lexer.IntroStart");
+
+   auto start = pos;
+   auto found = false;
+
+   for(auto curr = PrevBegin(pos); curr != string::npos; curr = PrevBegin(curr))
+   {
+      auto type = PosToType(curr);
+
+      switch(type)
+      {
+      case EmptyComment:
+      case TextComment:
+      case SlashAsteriskComment:
+         //
+         //  These are attached to the code that follows, so include them.
+         //
+         start = curr;
+         break;
+
+      case BlankLine:
+         //
+         //  This can be included if it precedes or follows an fn_name.
+         //
+         if(!funcName) return start;
+         if(found) start = curr;
+         break;
+
+      case FunctionName:
+         if(!funcName) return start;
+         found = true;
+         start = curr;
+         break;
+
+      default:
+         return start;
+      }
+   }
+
+   return pos;
+}
+
+//------------------------------------------------------------------------------
+
 bool Lexer::IsBlankLine(size_t pos) const
 {
    Debug::ft("Lexer.IsBlankLine");
 
    auto begin = CurrBegin(pos);
-   return (source_->find_first_not_of(WhitespaceChars, begin) > CurrEnd(pos));
+   return (code_.find_first_not_of(WhitespaceChars, begin) > CurrEnd(pos));
 }
 
 //------------------------------------------------------------------------------
@@ -2555,7 +2599,7 @@ size_t Lexer::LineFind(size_t pos, const string& str) const
 
    for(pos = NextPos(pos); pos <= end; pos = NextPos(pos + 1))
    {
-      if(source_->compare(pos, str.size(), str) == 0)
+      if(code_.compare(pos, str.size(), str) == 0)
       {
          return pos;
       }
@@ -2572,7 +2616,7 @@ size_t Lexer::LineFindFirst(size_t pos) const
 
    auto begin = CurrBegin(pos);
    if(begin == string::npos) return string::npos;
-   auto loc = source_->find_first_not_of(WhitespaceChars, begin);
+   auto loc = code_.find_first_not_of(WhitespaceChars, begin);
    return (loc < CurrEnd(pos) ? loc : string::npos);
 }
 
@@ -2587,7 +2631,7 @@ size_t Lexer::LineFindFirstOf(size_t pos, const std::string& chars) const
 
    for(pos = NextPos(pos); pos <= end; pos = NextPos(pos + 1))
    {
-      if(chars.find((*source_)[pos]) != string::npos)
+      if(chars.find(code_[pos]) != string::npos)
       {
          return pos;
       }
@@ -2602,8 +2646,8 @@ size_t Lexer::LineFindNext(size_t pos) const
 {
    Debug::ft("Lexer.LineFindNext");
 
-   if(pos >= source_->size()) return string::npos;
-   auto loc = source_->find_first_not_of(WhitespaceChars, pos);
+   if(pos >= code_.size()) return string::npos;
+   auto loc = code_.find_first_not_of(WhitespaceChars, pos);
    return (loc < CurrEnd(pos) ? loc : string::npos);
 }
 
@@ -2618,7 +2662,7 @@ size_t Lexer::LineFindNonBlank(size_t pos) const
 
    for(pos = NextPos(pos); pos <= end; pos = NextPos(pos + 1))
    {
-      if(!IsBlank((*source_)[pos]))
+      if(!IsBlank(code_[pos]))
       {
          return pos;
       }
@@ -2656,7 +2700,7 @@ size_t Lexer::LineRfind(size_t pos, const string& str) const
 
    for(begin = NextPos(begin); begin <= pos; begin = NextPos(begin + 1))
    {
-      if(source_->compare(begin, str.size(), str) == 0)
+      if(code_.compare(begin, str.size(), str) == 0)
       {
          loc = begin;
       }
@@ -2678,7 +2722,7 @@ size_t Lexer::LineRfindFirstOf(size_t pos, const std::string& chars) const
 
    for(begin = NextPos(begin); begin <= pos; begin = NextPos(begin + 1))
    {
-      if(chars.find((*source_)[begin]) != string::npos)
+      if(chars.find(code_[begin]) != string::npos)
       {
          loc = begin;
       }
@@ -2700,7 +2744,7 @@ size_t Lexer::LineRfindNonBlank(size_t pos) const
 
    for(begin = NextPos(begin); begin <= pos; begin = NextPos(begin + 1))
    {
-      if(!IsBlank((*source_)[begin]))
+      if(!IsBlank(code_[begin]))
       {
          loc = begin;
       }
@@ -2734,20 +2778,20 @@ string Lexer::MarkPos(size_t pos) const
 
    if(pos == string::npos)
    {
-      auto first = source_->rfind(CRLF, source_->size() - 2);
-      auto text = source_->substr(first + 1);
+      auto first = code_.rfind(CRLF, code_.size() - 2);
+      auto text = code_.substr(first + 1);
       if(text.back() == CRLF) text.pop_back();
       text.push_back('$');
       return text;
    }
 
-   auto first = source_->rfind(CRLF, pos);
+   auto first = code_.rfind(CRLF, pos);
    if(first == string::npos)
       first = 0;
    else
       ++first;
-   auto last = source_->find(CRLF, pos);
-   auto text = source_->substr(first, last - first);
+   auto last = code_.find(CRLF, pos);
+   auto text = code_.substr(first, last - first);
    text.insert(pos - first, 1, '$');
    return text;
 }
@@ -2757,7 +2801,7 @@ string Lexer::MarkPos(size_t pos) const
 size_t Lexer::NextBegin(size_t pos) const
 {
    auto end = CurrEnd(pos);
-   return (end >= source_->size() - 1 ? string::npos : end + 1);
+   return (end >= code_.size() - 1 ? string::npos : end + 1);
 }
 
 //------------------------------------------------------------------------------
@@ -2766,7 +2810,7 @@ bool Lexer::NextCharIs(char c)
 {
    Debug::ft("Lexer.NextCharIs");
 
-   if((curr_ >= source_->size()) || ((*source_)[curr_] != c)) return false;
+   if((curr_ >= code_.size()) || (code_[curr_] != c)) return false;
    return Advance(1);
 }
 
@@ -2790,7 +2834,7 @@ string Lexer::NextIdentifier(size_t pos) const
 {
    Debug::ft("Lexer.NextIdentifier");
 
-   auto size = source_->size();
+   auto size = code_.size();
    if(pos == string::npos) pos = curr_;
    if(pos >= size) return EMPTY_STR;
 
@@ -2799,13 +2843,13 @@ string Lexer::NextIdentifier(size_t pos) const
    //  We assume that the code already compiles.  This means that we
    //  don't have to screen out reserved words that aren't types.
    //
-   auto c = (*source_)[pos];
+   auto c = code_[pos];
    if(!CxxChar::Attrs[c].validFirst) return str;
    str += c;
 
    while(++pos < size)
    {
-      c = (*source_)[pos];
+      c = code_[pos];
       if(!CxxChar::Attrs[c].validNext) return str;
       str += c;
    }
@@ -2851,17 +2895,17 @@ string Lexer::NextOperator(size_t pos) const
 {
    Debug::ft("Lexer.NextOperator");
 
-   auto size = source_->size();
+   auto size = code_.size();
    if(pos == string::npos) pos = curr_;
    if(pos >= size) return EMPTY_STR;
    string token;
-   auto c = (*source_)[pos];
+   auto c = code_[pos];
 
    while(CxxChar::Attrs[c].validOp)
    {
       token += c;
       ++pos;
-      c = (*source_)[pos];
+      c = code_[pos];
    }
 
    return token;
@@ -2873,9 +2917,9 @@ size_t Lexer::NextPos(size_t pos) const
 {
    //  Find the next character to be parsed.
    //
-   for(auto size = source_->size(); pos < size; NO_OP)
+   for(auto size = code_.size(); pos < size; NO_OP)
    {
-      auto c = (*source_)[pos];
+      auto c = code_[pos];
 
       switch(c)
       {
@@ -2894,13 +2938,13 @@ size_t Lexer::NextPos(size_t pos) const
          //
          if(++pos >= size) return string::npos;
 
-         switch((*source_)[pos])
+         switch(code_[pos])
          {
          case '/':
             //
             //  This is a // comment.  Continue on the next line.
             //
-            pos = source_->find(CRLF, pos);
+            pos = code_.find(CRLF, pos);
             if(pos == string::npos) return pos;
             ++pos;
             break;
@@ -2910,7 +2954,7 @@ size_t Lexer::NextPos(size_t pos) const
             //  This is a /* comment.  Continue where it ends.
             //
             if(++pos >= size) return string::npos;
-            pos = source_->find(COMMENT_END_STR, pos);
+            pos = code_.find(COMMENT_END_STR, pos);
             if(pos == string::npos) return string::npos;
             pos += 2;
             break;
@@ -2929,7 +2973,7 @@ size_t Lexer::NextPos(size_t pos) const
          //  See if this is a continuation of the current line.
          //
          if(++pos >= size) return string::npos;
-         if((*source_)[pos] != CRLF) return pos - 1;
+         if(code_[pos] != CRLF) return pos - 1;
          ++pos;
          break;
 
@@ -2947,16 +2991,16 @@ bool Lexer::NextStringIs(fixed_string str, bool check)
 {
    Debug::ft("Lexer.NextStringIs");
 
-   auto size = source_->size();
+   auto size = code_.size();
    if(curr_ >= size) return false;
 
    auto len = strlen(str);
-   if(source_->compare(curr_, len, str) != 0) return false;
+   if(code_.compare(curr_, len, str) != 0) return false;
 
    auto pos = curr_ + len;
    if(!check || (pos >= size)) return Reposition(pos);
 
-   auto next = (*source_)[pos];
+   auto next = code_[pos];
 
    switch(next)
    {
@@ -3009,14 +3053,14 @@ bool Lexer::NoCodeFollows(size_t pos) const
 {
    Debug::ft("Lexer.NoCodeFollows");
 
-   auto crlf = source_->find_first_of(CRLF, pos);
-   pos = source_->find_first_not_of(WhitespaceChars, pos);
+   auto crlf = code_.find_first_of(CRLF, pos);
+   pos = code_.find_first_not_of(WhitespaceChars, pos);
    if(pos >= crlf) return true;
    if(CompareCode(pos, COMMENT_STR) == 0) return true;
 
    if(CompareCode(pos, COMMENT_BEGIN_STR) == 0)
    {
-      pos = source_->find(COMMENT_END_STR, pos + 2);
+      pos = code_.find(COMMENT_END_STR, pos + 2);
       if(pos >= crlf) return true;
       return NoCodeFollows(pos + 2);
    }
@@ -3032,18 +3076,18 @@ bool Lexer::NoSpaceBeforeColon(size_t pos) const
 
    auto size = strlen(PUBLIC_STR);
    auto begin = pos - size;
-   if(source_->compare(begin, size, PUBLIC_STR) == 0) return true;
+   if(code_.compare(begin, size, PUBLIC_STR) == 0) return true;
 
    size = strlen(PROTECTED_STR);
    begin = pos - size;
-   if(source_->compare(begin, size, PROTECTED_STR) == 0) return true;
+   if(code_.compare(begin, size, PROTECTED_STR) == 0) return true;
 
    size = strlen(PRIVATE_STR);
    begin = pos - size;
-   if(source_->compare(begin, size, PRIVATE_STR) == 0) return true;
+   if(code_.compare(begin, size, PRIVATE_STR) == 0) return true;
 
-   if(source_->rfind(CASE_STR, pos) >= CurrBegin(pos)) return true;
-   if(source_->rfind(DEFAULT_STR, pos) >= CurrBegin(pos)) return true;
+   if(code_.rfind(CASE_STR, pos) >= CurrBegin(pos)) return true;
+   if(code_.rfind(DEFAULT_STR, pos) >= CurrBegin(pos)) return true;
 
    return false;
 }
@@ -3073,14 +3117,6 @@ LineType Lexer::PosToType(size_t pos) const
 void Lexer::Preprocess()
 {
    Debug::ft("Lexer.Preprocess");
-
-   //  The code must be cloned before it is preprocessed.
-   //
-   if(source_ != &code_)
-   {
-      code_ = *source_;
-      source_ = &code_;
-   }
 
    //  Keep fetching identifiers, erasing any that are #defined symbols that
    //  map to empty strings.  Skip preprocessor directives.
@@ -3121,7 +3157,7 @@ void Lexer::Preprocess()
 
 size_t Lexer::PrevBegin(size_t pos) const
 {
-   if(pos >= source_->size()) pos = source_->size() - 1;
+   if(pos >= code_.size()) pos = code_.size() - 1;
    auto begin = CurrBegin(pos);
    return (begin == 0 ? string::npos : CurrBegin(begin - 1));
 }
@@ -3244,8 +3280,8 @@ bool Lexer::Skip()
 
    //  Advance to whatever follows the current line.
    //
-   if(curr_ >= source_->size()) return true;
-   curr_ = source_->find(CRLF, curr_);
+   if(curr_ >= code_.size()) return true;
+   curr_ = code_.find(CRLF, curr_);
    return Advance(1);
 }
 
@@ -3257,9 +3293,9 @@ size_t Lexer::SkipCharLiteral(size_t pos) const
 
    //  The literal ends at the next non-escaped occurrence of an apostrophe.
    //
-   for(auto size = source_->size(); ++pos < size; NO_OP)
+   for(auto size = code_.size(); ++pos < size; NO_OP)
    {
-      auto c = (*source_)[pos];
+      auto c = code_[pos];
       if(c == APOSTROPHE) return pos;
       if(c == BACKSLASH) ++pos;
    }
@@ -3273,13 +3309,13 @@ bool Lexer::SkipNum(size_t& pos) const
 {
    Debug::ft("Lexer.SkipNum");
 
-   if(pos >= source_->size()) return false;
-   auto c = (*source_)[pos];
+   if(pos >= code_.size()) return false;
+   auto c = code_[pos];
    if(CxxChar::Attrs[c].intValue < 0) return false;
 
-   while(++pos < source_->size())
+   while(++pos < code_.size())
    {
-      c = (*source_)[pos];
+      c = code_[pos];
       auto& attrs = CxxChar::Attrs[c];
 
       if(!attrs.validInt && (attrs.hexValue < 0))
@@ -3304,16 +3340,16 @@ size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
    //
    size_t next;
 
-   for(auto size = source_->size(); ++pos < size; NO_OP)
+   for(auto size = code_.size(); ++pos < size; NO_OP)
    {
-      auto c = (*source_)[pos];
+      auto c = code_[pos];
 
       switch(c)
       {
       case QUOTE:
          next = NextPos(pos + 1);
          if(next == string::npos) return pos;
-         if((*source_)[next] != QUOTE) return pos;
+         if(code_[next] != QUOTE) return pos;
          fragmented = true;
          pos = next;
          break;
@@ -3331,13 +3367,13 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
 {
    Debug::ft("Lexer.SkipTemplateSpec");
 
-   auto size = source_->size();
+   auto size = code_.size();
    if(pos >= size) return string::npos;
 
    //  Extract the template specification, which must begin with a '<', end
    //  with a balanced '>', and contain identifiers or template punctuation.
    //
-   auto c = (*source_)[pos];
+   auto c = code_[pos];
    if(c != '<') return string::npos;
    ++pos;
 
@@ -3345,7 +3381,7 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
 
    for(depth = 1; ((pos < size) && (depth > 0)); ++pos)
    {
-      c = (*source_)[pos];
+      c = code_[pos];
       if(ValidTemplateSpecChars.find(c) == string::npos) return string::npos;
 
       if(c == '>')
@@ -3364,7 +3400,7 @@ string Lexer::Substr(size_t pos, size_t count) const
 {
    Debug::ft("Lexer.Substr");
 
-   string s = source_->substr(pos, count);
+   string s = code_.substr(pos, count);
    return Compress(s);
 }
 
@@ -3376,7 +3412,7 @@ bool Lexer::ThisCharIs(char c)
 
    //  If the next character is C, advance to the character that follows it.
    //
-   if((curr_ >= source_->size()) || ((*source_)[curr_] != c)) return false;
+   if((curr_ >= code_.size()) || (code_[curr_] != c)) return false;
    ++curr_;
    return true;
 }

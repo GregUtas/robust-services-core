@@ -82,6 +82,11 @@ public:
    //
    void DefineSymbols(std::istream& stream);
 
+   //  Checks all C++ items.  If FORCE is set, the items are rechecked even if
+   //  they were previously checked.
+   //
+   void Check(bool force);
+
    //  Shrinks containers.
    //
    void Shrink() const;
@@ -135,6 +140,10 @@ private:
    TerminalPtr void_;
    TerminalPtr wchar_;
    MacroPtrVector macros_;
+
+   //  Set if >check was run on all C++ items.
+   //
+   bool checked_;
 };
 }
 #endif

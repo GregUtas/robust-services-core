@@ -373,7 +373,8 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) :
    dir_(dir),
    isHeader_(false),
    isSubsFile_(false),
-   parsed_(Unparsed)
+   parsed_(Unparsed),
+   checked_(false)
 {
    Debug::ft("CodeFile.ctor");
 
@@ -524,16 +525,40 @@ bool CodeFile::CanBeTrimmed() const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::Check()
+void CodeFile::Check(bool force)
 {
    Debug::ft("CodeFile.Check");
 
    if(code_.empty() || isSubsFile_) return;
 
+   if(checked_ && !force) return;
+
+   checked_ = false;
    Debug::Progress(Name() + CRLF);
-   lexer_.CalcDepths();
-   lexer_.CheckLines();
-   lexer_.CheckPunctuation();
+
+   //  If warnings were previously logged against this file, preserve those
+   //  detected during compilation, because the file won't be recompiled.
+   //
+   std::vector< CodeWarning > saved;
+
+   for(size_t i = 0; i < warnings_.size(); ++i)
+   {
+      if(warnings_[i].Preserve())
+      {
+         saved.push_back(warnings_[i]);
+      }
+   }
+
+   warnings_.clear();
+
+   for(size_t i = 0; i < saved.size(); ++i)
+   {
+      warnings_.push_back(saved[i]);
+   }
+
+   editor_.CalcDepths();
+   editor_.CheckLines();
+   editor_.CheckPunctuation();
    Trim(nullptr);
    CheckProlog();
    CheckDirectives();
@@ -546,6 +571,7 @@ void CodeFile::Check()
    CheckDebugFt();
    CheckIncludes();
    CheckIncludeOrder();
+   checked_ = true;
 }
 
 //------------------------------------------------------------------------------
@@ -554,12 +580,14 @@ void CodeFile::CheckDebugFt()
 {
    Debug::ft("CodeFile.CheckDebugFt");
 
-   const auto& lines = lexer_.GetLinesInfo();
-   auto cover = Singleton< CodeCoverage >::Instance();
+   const auto& lines = editor_.GetLinesInfo();
+   auto coverdb = Singleton< CodeCoverage >::Instance();
    size_t begin, left, end;
    string statement;
    string dname;
    string fname;
+
+   coverdb->Clear();
 
    //  For each function in this file, find the lines on which it begins
    //  and ends.  Within those lines, look for invocations of Debug::ft.
@@ -575,13 +603,13 @@ void CodeFile::CheckDebugFt()
       if(!(*f)->GetSpan3(begin, left, end)) continue;
       if(left == string::npos) continue;
 
-      auto last = lexer_.GetLineNum(end);
+      auto last = editor_.GetLineNum(end);
       auto open = false, debug = false, code = false;
       std::ostringstream source;
       (*f)->Display(source, EMPTY_STR, Code_Mask);
       auto hash = string_hash(source.str().c_str());
 
-      for(auto n = lexer_.GetLineNum(begin); n < last; ++n)
+      for(auto n = editor_.GetLineNum(begin); n < last; ++n)
       {
          switch(lines[n].type)
          {
@@ -602,7 +630,7 @@ void CodeFile::CheckDebugFt()
                LogLine(n, DebugFtNotFirst);
             }
 
-            if(lexer_.GetNthLine(n, statement))
+            if(editor_.GetNthLine(n, statement))
             {
                auto lpar = statement.find('(');
                if(lpar == string::npos) break;
@@ -636,15 +664,15 @@ void CodeFile::CheckDebugFt()
 
                   if(!ok)
                   {
-                     LogPos(lexer_.GetLineStart(n), DebugFtNameMismatch, *f);
+                     LogPos(editor_.GetLineStart(n), DebugFtNameMismatch, *f);
                   }
-                  else if(!debug && !cover->Insert(fname, hash))
+                  else if(!debug && !coverdb->Insert(fname, hash))
                   {
-                     LogPos(lexer_.GetLineStart(n), DebugFtNameDuplicated, *f);
+                     LogPos(editor_.GetLineStart(n), DebugFtNameDuplicated, *f);
                   }
                   else if((data != nullptr) && (data->Readers() <= 1))
                   {
-                     LogPos(lexer_.GetLineStart(n), DebugFtCanBeLiteral, *f);
+                     LogPos(editor_.GetLineStart(n), DebugFtCanBeLiteral, *f);
                   }
 
                   debug = true;
@@ -755,7 +783,7 @@ void CodeFile::CheckIncludeGuard()
    //  An #include guard wasn't found.  Log this against the first
    //  line of code, which will usually be an #include directive.
    //
-   const auto& lines = lexer_.GetLinesInfo();
+   const auto& lines = editor_.GetLinesInfo();
    size_t pos = string::npos;
    size_t n;
 
@@ -812,7 +840,7 @@ void CodeFile::CheckIncludes()
 
    //  Log any #include directive that follows code.
    //
-   const auto& lines = lexer_.GetLinesInfo();
+   const auto& lines = editor_.GetLinesInfo();
    auto code = false;
 
    for(size_t i = 0; i < lines.size(); ++i)
@@ -839,11 +867,11 @@ void CodeFile::CheckLineBreaks()
    //  There is no point checking the last line.  And if a line can merge
    //  with the next one, the next line can then be skipped.
    //
-   auto limit = lexer_.LineCount() - 1;
+   auto limit = editor_.LineCount() - 1;
 
    for(size_t n = 0; n < limit; ++n)
    {
-      if(lexer_.CheckLineMerge(n) >= 0)
+      if(editor_.CheckLineMerge(n) >= 0)
       {
          LogLine(n, RemoveLineBreak);
          ++n;
@@ -878,7 +906,7 @@ void CodeFile::CheckOverrideOrder() const
             prev = nullptr;
          }
 
-         if(lexer_.IsInItemGroup(*f)) continue;
+         if(editor_.IsInItemGroup(*f)) continue;
 
          if((*f)->IsOverride())
          {
@@ -911,7 +939,7 @@ void CodeFile::CheckProlog()
    //  //  FileName.ext
    //  //  FileProlog [multiple lines]
    //
-   const auto& lines = lexer_.GetLinesInfo();
+   const auto& lines = editor_.GetLinesInfo();
 
    auto pos = lines[0].begin;
    auto ok = (code_.find(DoubleRule, pos) == pos);
@@ -976,7 +1004,7 @@ void CodeFile::CheckVerticalSpacing()
 {
    Debug::ft("CodeFile.CheckVerticalSpacing");
 
-   auto actions = lexer_.CheckVerticalSpacing();
+   auto actions = editor_.CheckVerticalSpacing();
 
    for(size_t n = 0; n < actions.size(); ++n)
    {
@@ -1005,6 +1033,7 @@ void CodeFile::Display(ostream& stream,
    stream << prefix << "isHeader   : " << isHeader_ << CRLF;
    stream << prefix << "isSubsFile : " << isSubsFile_ << CRLF;
    stream << prefix << "parsed     : " << parsed_ << CRLF;
+   stream << prefix << "checked    : " << checked_ << CRLF;
    stream << prefix << "warnings   : " << warnings_.size() << CRLF;
 
    auto lead = prefix + spaces(2);
@@ -1024,9 +1053,6 @@ void CodeFile::Display(ostream& stream,
       auto f = static_cast< const CodeFile* >(*u);
       stream << lead << f->Name() << CRLF;
    }
-
-   stream << prefix << "lexer :" << CRLF;
-   lexer_.Display(stream, lead, options);
 
    stream << prefix << "editor :" << CRLF;
    editor_.Display(stream, lead, options);
@@ -1378,32 +1404,11 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 //------------------------------------------------------------------------------
 
-CodeWarning* CodeFile::FindWarning
-   (Warning warning, const CxxToken* item, word offset)
-{
-   Debug::ft("CodeFile.FindWarning");
-
-   for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
-   {
-      if((w->warning_ == warning) && (w->item_ == item) &&
-         (w->offset_ == offset))
-      {
-         return &*w;
-      }
-   }
-
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 {
    Debug::ft("CodeFile.Fix");
 
-   if(!HasWarning(opts.warning)) return 0;
-
-   editor_.Setup(this);
+   std::sort(warnings_.begin(), warnings_.end(), CodeWarning::IsSortedToFix);
    auto rc = editor_.Fix(cli, opts, expl);
 
    if(rc >= -1) return 0;  // continue with other files
@@ -1418,7 +1423,6 @@ word CodeFile::Format(string& expl)
 
    Debug::Progress(Name() + CRLF);
 
-   editor_.Setup(this);
    return editor_.Format(expl);
 }
 
@@ -1453,16 +1457,6 @@ void CodeFile::GetDecls(CxxNamedSet& items)
 
 //------------------------------------------------------------------------------
 
-Editor& CodeFile::GetEditor()
-{
-   Debug::ft("CodeFile.GetEditor");
-
-   editor_.Setup(this);
-   return editor_;
-}
-
-//------------------------------------------------------------------------------
-
 FunctionVector CodeFile::GetFuncDefnsToSort() const
 {
    Debug::ft("CodeFile.GetFuncDefnsToSort");
@@ -1493,20 +1487,13 @@ FunctionVector CodeFile::GetFuncDefnsToSort() const
 
 //------------------------------------------------------------------------------
 
-const Lexer& CodeFile::GetLexer() const
-{
-   return (editor_.IsInitialized() ? editor_ : lexer_);
-}
-
-//------------------------------------------------------------------------------
-
 void CodeFile::GetLineCounts() const
 {
    //  Don't count lines in substitute files.
    //
    if(isSubsFile_) return;
 
-   const auto& lines = lexer_.GetLinesInfo();
+   const auto& lines = editor_.GetLinesInfo();
 
    CodeWarning::AddLineType(AnyLine, lines.size());
 
@@ -1609,22 +1596,6 @@ bool CodeFile::HasForwardFor(const CxxNamed* item) const
    for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
    {
       if((*f)->Referent() == item) return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeFile::HasWarning(Warning warning) const
-{
-   Debug::ft("CodeFile.HasWarning");
-
-   if(warning == AllWarnings) return !warnings_.empty();
-
-   for(auto w = warnings_.cbegin(); w != warnings_.cend(); ++w)
-   {
-      if(w->warning_ == warning) return true;
    }
 
    return false;
@@ -1903,6 +1874,15 @@ void CodeFile::InsertWarning(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
+bool CodeFile::IsLastItem(const CxxNamed* item) const
+{
+   Debug::ft("CodeFile.IsLastItem");
+
+   return (items_.empty() ? false : (items_.back() == item));
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::ItemDeleted(const CxxToken* item)
 {
    Debug::ft("CodeFile.ItemDeleted");
@@ -1913,15 +1893,6 @@ void CodeFile::ItemDeleted(const CxxToken* item)
    {
       w->ItemDeleted(item);
    }
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeFile::IsLastItem(const CxxNamed* item) const
-{
-   Debug::ft("CodeFile.IsLastItem");
-
-   return (items_.empty() ? false : (items_.back() == item));
 }
 
 //------------------------------------------------------------------------------
@@ -2094,7 +2065,7 @@ void CodeFile::LogLine(size_t line, Warning warning)
 {
    Debug::ft("CodeFile.LogLine");
 
-   auto pos = lexer_.GetLineStart(line);
+   auto pos = editor_.GetLineStart(line);
    LogCode(warning, pos, nullptr);
 }
 
@@ -2485,25 +2456,25 @@ void CodeFile::Scan()
 
    if(!code_.empty()) return;
    if(!ReadCode(code_)) return;
-   lexer_.Initialize(code_, this);
-   lexer_.CalcLineTypes(true);
+   editor_.Initialize(code_, this);
+   editor_.CalcLineTypes(true);
 
    //  Preprocess #include directives.
    //
-   auto lines = lexer_.LineCount();
+   auto lines = editor_.LineCount();
    auto lib = Singleton< Library >::Instance();
    string file;
    bool angle;
 
    for(size_t n = 0; n < lines; ++n)
    {
-      if(lexer_.GetIncludeFile(lexer_.GetLineStart(n), file, angle))
+      if(editor_.GetIncludeFile(editor_.GetLineStart(n), file, angle))
       {
          auto used = lib->EnsureFile(file);
          if(used == nullptr) continue;
 
          IncludePtr incl(new Include(file, angle));
-         incl->SetLoc(this, lexer_.GetLineStart(n), false);
+         incl->SetLoc(this, editor_.GetLineStart(n), false);
          InsertInclude(incl);
       }
    }

@@ -63,16 +63,16 @@ namespace CodeTools
 //  <usings>          using statements
 //  <code>            declarations and/or definitions
 //
-//  The Editor holds its file's source code in the string source_, so here are
-//  two common causes of bugs:
-//  o Finding a position in the code, editing the code, and then reusing that
+//  The Editor accesses its source code via Lexer.code_, and its file via
+//  Lexer.file_.  Here are two common causes of bugs:
+//  o Finding a position in the code, editing the code, and then using that
 //    position after the underlying text has shifted.  An edit can even change
-//    CodeWarning.Pos(), so it may need to be reread or accessed later.
-//  o Manipulating source_ using string functions such as erase, insert, or
+//    CodeWarning.Pos(), so it may also need to be reread or accessed later.
+//  o Manipulating code_ using string functions such as erase, insert, or
 //    replace instead of analogous Editor functions.  The latter invoke the
 //    function UpdatePos to update the positions of the C++ items that were
 //    created during parsing.  If this is not done, errors can occur during
-//    subsequent edits.  It is only safe to manipulate source_ directly when
+//    subsequent edits.  It is only safe to manipulate code_ directly when
 //    replacing one string with another of the same size.  This is done, for
 //    example, when mangling/demangling #include directives.
 //
@@ -82,14 +82,6 @@ public:
    //  Creates an editor for FILE, whose code and warnings are loaded
    //
    Editor();
-
-   //  Initializes the editor.
-   //
-   void Setup(CodeFile* file);
-
-   //  Returns true if the editor has been set up.
-   //
-   bool IsInitialized() const { return (file_ != nullptr); }
 
    //  Interactively fixes warnings in the code detected by Check().  If
    //  an error occurs, a non-zero value is returned and EXPL is updated
@@ -102,12 +94,6 @@ public:
    //
    word Format(string& expl);
 
-   //  Returns the start of any comments that precede POS, including an
-   //  fn_name definition if funcName is set.  Returns POS if it is not
-   //  preceded by any such items.
-   //
-   size_t IntroStart(size_t pos, bool funcName) const;
-
    //  Returns the number of commits made during >fix or >format commands.
    //
    static size_t CommitCount();
@@ -116,10 +102,6 @@ public:
    //
    void Display(std::ostream& stream,
       const string& prefix, const NodeBase::Flags& options) const override;
-
-   //  Overridden to return the edited source code.
-   //
-   const string& Source() const override { return source_; }
 private:
    //  Writes out the editor's file.
    //
@@ -141,20 +123,20 @@ private:
    //  Fixes LOG.  Returns 0 on success.  A return value of -1 means that the
    //  file should be skipped; other values denote more serious errors.
    //
-   word FixWarning(CodeWarning& log);
+   word FixWarning(const CodeWarning& log);
 
    //  Invokes FixWarning if LOG's status is NotFixed and updates its status
    //  to Pending on success.
    //
-   word FixLog(CodeWarning& log);
+   word FixLog(const CodeWarning& log);
 
    //  Invoked when fixing LOG returned RC.
    //
-   static void ReportFix(CodeWarning* log, word rc);
+   static void ReportFix(const CodeWarning* log, word rc);
 
    //  Invoked when LOG also changed another file, whose edit returned RC.
    //
-   void ReportFixInFile(CodeWarning* log, word rc) const;
+   void ReportFixInFile(const CodeWarning* log, word rc) const;
 
    //  Most of the editing functions attempt to fix the warning reported in LOG.
    //
@@ -259,7 +241,7 @@ private:
    //
    size_t InsertRule(size_t pos, char c);
 
-   //  Adjust the spacing around source_[POS, POS + LEN) based on SPACING.
+   //  Adjust the spacing around code_[POS, POS + LEN) based on SPACING.
    //  Returns true if an adjustment occurred.
    //
    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
@@ -325,7 +307,7 @@ private:
 
    //  Fixes LOG, which also involves modifying a data definition.
    //
-   static word FixDatas(CodeWarning& log);
+   static word FixDatas(const CodeWarning& log);
 
    //  Fixes LOG, which is associated with DATA.
    //
@@ -339,7 +321,7 @@ private:
 
    //  Fixes LOG, which also involves modifying all references to data.
    //
-   static word FixReferences(CodeWarning& log);
+   static word FixReferences(const CodeWarning& log);
 
    //  Fixes LOG, which involves modifying ITEM.
    //
@@ -394,7 +376,7 @@ private:
 
    //  Fixes LOG, which also involves modifying overrides of a function.
    //
-   static word FixFunctions(CodeWarning& log);
+   static word FixFunctions(const CodeWarning& log);
 
    //  Fixes LOG, which is associated with FUNC.
    //
@@ -638,14 +620,6 @@ private:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from = string::npos);
-
-   //  The file from which the source code was obtained.
-   //
-   CodeFile* file_;
-
-   //  The code being edited.
-   //
-   string source_;
 
    //  Set if the #include directives have been sorted.
    //

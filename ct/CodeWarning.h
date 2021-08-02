@@ -48,15 +48,21 @@ struct WarningAttrs
 {
    //  Set if the editor can fix the warning.
    //
-   const bool fixable;
+   const bool fixable_;
+
+   //  Set if the warning should be retained when >check is reexecuted.  This
+   //  is true for warnings detected during compilation, because they cannot
+   //  be regenerated without recompiling.
+   //
+   const bool preserve_;
 
    //  A string that explains the warning.
    //
-   fixed_string expl;
+   fixed_string expl_;
 
    //  Constructs a warning with the specified attributes.
    //
-   WarningAttrs(bool fix, fixed_string expl);
+   WarningAttrs(bool fixable, bool preserve, fixed_string expl);
 };
 
 //------------------------------------------------------------------------------
@@ -82,7 +88,6 @@ enum WarningStatus
 //
 class CodeWarning
 {
-   friend class CodeFile;
    friend class Editor;
 public:
    //  Almost every member is supplied to the constructor.  If POS is
@@ -103,6 +108,50 @@ public:
    //
    CodeWarning& operator=(const CodeWarning& that) = default;
 
+   //  Comparison operators.
+   //
+   bool operator==(const CodeWarning& that) const;
+   bool operator!=(const CodeWarning& that) const;
+
+   //  Initializes the Attrs map.
+   //
+   static void Initialize();
+
+   //  Adds N to the number of line types of type T.
+   //
+   static void AddLineType(LineType t, size_t n) { LineTypeCounts_[t] += n; }
+
+   //  Unless the warning is suppressed, adds it to the file where it occurred.
+   //
+   void Insert() const;
+
+   //  Generates a report in STREAM for FILES.  The report includes line
+   //  type counts and warnings found during parsing and compilation.
+   //
+   static void GenerateReport(std::ostream* stream, const LibItemSet& files);
+
+   //  Returns the explanation for warning W.
+   //
+   static fixed_string Expl(Warning w) { return Attrs_.at(w).expl_; }
+
+   //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
+   //
+   static bool IsSortedToFix(const CodeWarning& log1, const CodeWarning& log2);
+
+   //  Updates the position of a warning when a file has been edited.  Has
+   //  the same interface as CxxToken::UpdatePos.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from = std::string::npos) const;
+
+   //  Nullifies the warning if it is associated with ITEM.
+   //
+   void ItemDeleted(const CxxToken* item);
+
+   //  Returns true if LOG should be retained when >check is reexecuted.
+   //
+   bool Preserve() const;
+private:
    //  Returns the file in which the warning appeared.
    //
    CodeFile* File() const { return loc_.GetFile(); }
@@ -115,36 +164,11 @@ public:
    //
    size_t Line() const;
 
-   //  Comparison operators.
+   //  Searches FILE for a log that matches WARNING, ITEM, and OFFSET.
    //
-   bool operator==(const CodeWarning& that) const;
-   bool operator!=(const CodeWarning& that) const;
+   static const CodeWarning* FindWarning(const CodeFile* file,
+      Warning warning, const CxxToken* item, NodeBase::word offset);
 
-   //  Unless the warning is suppressed, adds it to the file where it occurred.
-   //
-   void Insert();
-
-   //  Initializes the Attrs map.
-   //
-   static void Initialize();
-
-   //  Adds N to the number of line types of type T.
-   //
-   static void AddLineType(LineType t, size_t n) { LineTypeCounts_[t] += n; }
-
-   //  Returns the explanation for warning W.
-   //
-   static fixed_string Expl(Warning w) { return Attrs_.at(w).expl; }
-
-   //  Generates a report in STREAM for FILES.  The report includes line
-   //  type counts and warnings found during parsing and compilation.
-   //
-   static void GenerateReport(std::ostream* stream, const LibItemSet& files);
-
-   //  Nullifies the warning if it is associated with ITEM.
-   //
-   void ItemDeleted(const CxxToken* item);
-private:
    //  Returns true if the log should be suppressed.
    //
    bool Suppress() const;
@@ -161,31 +185,26 @@ private:
    //
    bool IsInformational() const;
 
+   //  Returns true if the log was fixed or the code associated with it
+   //  was deleted.
+   //
+   bool WasResolved() const;
+
    //  Returns the logs that need to be fixed to resolve this log.
    //  The log itself is included in the result unless it does not
    //  need to be fixed.
    //
-   std::vector< CodeWarning* > LogsToFix(std::string& expl);
+   std::vector< const CodeWarning* > LogsToFix(std::string& expl) const;
 
    //  Returns the other log associated with a warning that involves
    //  fixing both a declaration and a definition.
    //
-   CodeWarning* FindMateLog(std::string& expl) const;
+   const CodeWarning* FindMateLog(std::string& expl) const;
 
    //  Returns the name of the function that this warning wants added to
    //  a class.  Returns an empty string if LOG does not suggest this.
    //
    std::string GetNewFuncName() const;
-
-   //  Updates the position of a warning when a file has been edited.  Has
-   //  the same interface as CxxToken::UpdatePos.
-   //
-   void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from = std::string::npos) const;
-
-   //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
-   //
-   static bool IsSortedToFix(const CodeWarning& log1, const CodeWarning& log2);
 
    //  Returns true if LOG2 > LOG1 when sorting by file/warning/line.
    //
@@ -230,7 +249,7 @@ private:
 
    //  Whether a warning can be, or has been, fixed by the Editor.
    //
-   WarningStatus status_;
+   mutable WarningStatus status_;
 
    //  Maps a warning to its attributes.
    //

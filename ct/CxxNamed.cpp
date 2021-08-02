@@ -2079,6 +2079,8 @@ TypeName* QualName::At(size_t n) const
 
 void QualName::Check() const
 {
+   if(Name() == NULL_STR) Log(UseOfNull);
+
    for(auto n = First(); n != nullptr; n = n->Next())
    {
       n->Check();
@@ -2195,8 +2197,6 @@ void QualName::EnterBlock()
    Debug::ft("QualName.EnterBlock");
 
    Context::SetPos(GetLoc());
-   auto& name = Name();
-   if(name == NULL_STR) Log(UseOfNull);
 
    //  If a "." or "->" operator is waiting for its second argument,
    //  push this name and return so that the operator can be executed.

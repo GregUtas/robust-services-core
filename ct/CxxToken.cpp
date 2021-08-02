@@ -1430,50 +1430,60 @@ CxxToken* Operation::Back()
 
 void Operation::Check() const
 {
-   if(!IsInternal())
+   if(IsInternal()) return;
+
+   switch(op_)
    {
-      auto& attrs = CxxOp::Attrs[op_];
-      auto& lexer = GetFile()->GetLexer();
-      auto pos = GetPos();
-      auto lchar = lexer.At(pos - 1);
-      auto rchar = lexer.At(pos + attrs.symbol.size());
+   case Cxx::REINTERPRET_CAST:
+      Log(ReinterpretCast);
+      break;
 
-      switch(attrs.spacing[0])
+   case Cxx::CAST:
+      Log(UseOfCast);
+      break;
+   }
+
+   auto& attrs = CxxOp::Attrs[op_];
+   auto& lexer = GetFile()->GetLexer();
+   auto pos = GetPos();
+   auto lchar = lexer.At(pos - 1);
+   auto rchar = lexer.At(pos + attrs.symbol.size());
+
+   switch(attrs.spacing[0])
+   {
+   case Spacing::NoGap:
+      if((WhitespaceChars.find(lchar) != string::npos) &&
+         (lexer.LineFindFirst(pos) != pos))
       {
-      case Spacing::NoGap:
-         if((WhitespaceChars.find(lchar) != string::npos) &&
-            (lexer.LineFindFirst(pos) != pos))
-         {
-            if((op_ != Cxx::FUNCTION_CALL) || !fcnew_)
-            {
-               Log(OperatorSpacing);
-            }
-         }
-         break;
-
-      case Spacing::Gap:
-         if((WhitespaceChars.find(lchar) == string::npos) && (lchar != '('))
+         if((op_ != Cxx::FUNCTION_CALL) || !fcnew_)
          {
             Log(OperatorSpacing);
          }
-         break;
       }
+      break;
 
-      switch(attrs.spacing[1])
+   case Spacing::Gap:
+      if((WhitespaceChars.find(lchar) == string::npos) && (lchar != '('))
       {
-      case Spacing::NoGap:
-         if((WhitespaceChars.find(rchar) != string::npos) && (rchar != CRLF))
-         {
-            Log(OperatorSpacing);
-         }
-         break;
-      case Spacing::Gap:
-         if((WhitespaceChars.find(rchar) == string::npos) && (rchar != ')'))
-         {
-            Log(OperatorSpacing);
-         }
-         break;
+         Log(OperatorSpacing);
       }
+      break;
+   }
+
+   switch(attrs.spacing[1])
+   {
+   case Spacing::NoGap:
+      if((WhitespaceChars.find(rchar) != string::npos) && (rchar != CRLF))
+      {
+         Log(OperatorSpacing);
+      }
+      break;
+   case Spacing::Gap:
+      if((WhitespaceChars.find(rchar) == string::npos) && (rchar != ')'))
+      {
+         Log(OperatorSpacing);
+      }
+      break;
    }
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
@@ -1507,23 +1517,8 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
 {
    Debug::ft("Operation.CheckCast");
 
-   //  Some casts are always logged.
-   //
    auto constCast = false;
 
-   switch(op_)
-   {
-   case Cxx::REINTERPRET_CAST:
-      Log(ReinterpretCast);
-      break;
-
-   case Cxx::CAST:
-      Log(UseOfCast);
-      break;
-   }
-
-   //  Log the removal of const qualification.
-   //
    if(!outArg.IsConst())
    {
       switch(op_)
@@ -2039,7 +2034,7 @@ void Operation::ExecuteCall() const
       {
       case Incompatible:
       case Abridgeable:
-         Context::Log(FunctionalCast);
+         Log(FunctionalCast);
       }
 
       args.front().WasRead();

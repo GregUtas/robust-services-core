@@ -285,7 +285,8 @@ CxxRoot::CxxRoot() :
    ulong_(nullptr),
    ulong_long_(nullptr),
    ushort_(nullptr),
-   void_(nullptr)
+   void_(nullptr),
+   checked_(false)
 {
    Debug::ft("CxxRoot.ctor");
 }
@@ -306,6 +307,19 @@ bool CxxRoot::AddMacro(MacroPtr& macro)
    macro->EnterScope();
    macros_.push_back(std::move(macro));
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+void CxxRoot::Check(bool force)
+{
+   Debug::ft("CxxRoot.Check");
+
+   if(checked_ && !force) return;
+
+   checked_ = false;
+   gns_->Check();
+   checked_ = true;
 }
 
 //------------------------------------------------------------------------------

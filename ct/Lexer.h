@@ -82,7 +82,7 @@ public:
 
    //  Returns the source code.
    //
-   virtual const std::string& Source() const { return *source_; }
+   const std::string& Source() const { return code_; }
 
    //  Initializes the lexer to assist with parsing SOURCE and invokes
    //  Advance() to position curr_ at the first valid parse position.
@@ -97,9 +97,9 @@ public:
 
    //  Returns the character at POS.
    //
-   char At(size_t pos) const { return (*source_)[pos]; }
+   char At(size_t pos) const { return code_[pos]; }
 
-   //  Returns the number of lines in source_.
+   //  Returns the number of lines in code_.
    //
    size_t LineCount() const { return lines_.size(); }
 
@@ -148,9 +148,9 @@ public:
    //
    size_t Prev() const { return prev_; }
 
-   //  Returns true if curr_ has reached the end of source_.
+   //  Returns true if curr_ has reached the end of code_.
    //
-   bool Eof() const { return curr_ >= source_->size(); }
+   bool Eof() const { return curr_ >= code_.size(); }
 
    //  Sets prev_ to curr_, finds the first parse position starting there,
    //  and returns true.
@@ -179,7 +179,7 @@ public:
 
    //  Returns the character at curr_.
    //
-   char CurrChar() const { return (*source_)[curr_]; }
+   char CurrChar() const { return code_[curr_]; }
 
    //  Returns curr_ and sets C to the character at that position.  Returns
    //  string::npos if curr_ is out of range.
@@ -482,7 +482,7 @@ public:
    //  Returns the position of the next character to parse, starting at POS.
    //  The result is POS unless characters are skipped (namely whitespace,
    //  comments, and character and string literals).  Returns string::npos
-   //  if the end of source_ is reached.
+   //  if the end of the code is reached.
    //
    size_t NextPos(size_t pos) const;
 
@@ -531,6 +531,12 @@ public:
    //
    void CheckSwitch(const Switch& code) const;
 
+   //  Returns the start of any comments that precede POS, including an
+   //  fn_name definition if funcName is set.  Returns POS if it is not
+   //  preceded by any such items.
+   //
+   size_t IntroStart(size_t pos, bool funcName) const;
+
    //  Returns true if ITEM appears with one or more other items that share the
    //  same comment.  Specifically, other code must directly precede or follow
    //  ITEM, and a comment must the group of items that contain ITEM.  Returns
@@ -550,6 +556,15 @@ protected:
    //  Invoked to adjust LineInfo records after editing the code.
    //
    void Update();
+
+   //  The code.  This is copied from the supplied code because it will
+   //  usually be modified, either during preprocessing or editing.
+   //
+   std::string code_;
+
+   //  The file, if any, from which the code was taken.
+   //
+   CodeFile* file_;
 private:
    //  Clears all LineInfo records and create new ones that contain the
    //  start position of each line.
@@ -648,20 +663,6 @@ private:
    //
    size_t NextLineIndentation(size_t pos) const;
 
-   //  The code being analyzed.
-   //
-   const std::string* source_;
-
-   //  The preprocessed code.  This is not used unless Preprocess() is
-   //  invoked, at which time the code referenced by source_ is cloned
-   //  and source_ is updated to point to this.
-   //
-   std::string code_;
-
-   //  The file, if any, from which the code was taken.
-   //
-   CodeFile* file_;
-
    //  Set if a /* comment is open during CalcLineTypes.
    //
    bool slashAsterisk_;
@@ -670,7 +671,7 @@ private:
    //
    LineInfoVector lines_;
 
-   //  The current position within source_.
+   //  The current position within code_.
    //
    size_t curr_;
 

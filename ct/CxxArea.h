@@ -1084,10 +1084,6 @@ private:
    //
    std::string name_;
 
-   //  Set if >check was run on the namespace.
-   //
-   mutable bool checked_;
-
    //  The definitions of this namespace.
    //
    SpaceDefnPtrVector defns_;

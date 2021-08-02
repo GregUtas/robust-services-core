@@ -52,6 +52,11 @@ public:
    //
    CodeCoverage& operator=(const CodeCoverage& that) = delete;
 
+   //  Clears the current database before inserting all of the functions in the
+   //  library.
+   //
+   void Clear() { currFuncs_.clear(); }
+
    //  Adds FUNC to the functions that invoke Debug::ft.  HASH is the hash value
    //  for its source code.  Returns false if FUNC is already in use.
    //

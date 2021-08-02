@@ -42,6 +42,7 @@ namespace CodeTools
 //
 class CodeFile: public LibraryItem
 {
+   friend class Editor;
 public:
    //  Creates an instance for the file identified by NAME, which is located
    //  in DIR.  DIR is nullptr if the directory is unknown.  This occurs when
@@ -136,19 +137,10 @@ public:
    const FunctionVector* Funcs() const { return &funcs_; }
    const TypedefVector* Types() const { return &types_; }
 
-   //  Adds an #include to the file during preprocessing.
-   //
-   void InsertInclude(IncludePtr& incl);
-
    //  Adds an #include to the file's list of C++ items when it is
    //  found at POS during parsing.  FN is the #include's file name.
    //
    Include* InsertInclude(size_t pos, const std::string& fn);
-
-   //  Adds an #include to the file during editing.  POS specifies
-   //  where the editor inserted the #include.
-   //
-   void InsertInclude(IncludePtr& incl, size_t pos);
 
    //  Adds the item to those defined in this file.
    //
@@ -215,9 +207,10 @@ public:
    void UpdateXref(bool insert) const;
 
    //  Checks the file after it has been parsed, looking for additional
-   //  warnings when a report is to be generated.
+   //  warnings when a report is to be generated.  If FORCE is set, the
+   //  file is rechecked even if it was previously checked.
    //
-   void Check();
+   void Check(bool force);
 
    //  Generates a report in STREAM about which #include statements are
    //  required and which symbols require qualification to remove using
@@ -231,12 +224,7 @@ public:
 
    //  Returns the warnings associated with the file.
    //
-   std::vector< CodeWarning >& GetWarnings() { return warnings_; }
-
-   //  Returns the log that matches WARNING, ITEM, and OFFSET.
-   //
-   CodeWarning* FindWarning
-      (Warning warning, const CxxToken* item, NodeBase::word offset);
+   const std::vector< CodeWarning >& GetWarnings() const { return warnings_; }
 
    //  Invokes the editor to interactively fix warnings found by Check().
    //
@@ -247,23 +235,13 @@ public:
    //
    NodeBase::word Format(std::string& expl);
 
-   //  Updates CODE with the file's raw source code.  Returns false if
-   //  the file could not be opened.
-   //
-   bool ReadCode(std::string& code) const;
-
-   //  Returns the file's preprocessed source code.
+   //  Returns the file's original source code.
    //
    const std::string& GetCode() const { return code_; }
 
-   //  Provides read-only access to the lexer.  But if the editor has been
-   //  initialized, it is returned instead.
+   //  Provides read-only access to the editor's Lexer functions.
    //
-   const Lexer& GetLexer() const;
-
-   //  Returns a stream for reading the file.
-   //
-   NodeBase::istreamPtr InputStream() const;
+   const Lexer& GetLexer() const { return editor_; }
 
    //  Logs WARNING, which occurred at POS.  OFFSET and INFO are specific to
    //  WARNING.
@@ -285,32 +263,13 @@ public:
    //
    void DisplayItems(std::ostream& stream, const std::string& opts) const;
 
-   //  Provides access to the editor.
-   //
-   Editor& GetEditor();
-
    //  Updates SYMBOLS with information about symbols used in this file.
    //
    void GetUsageInfo(CxxUsageSets& symbols) const;
 
-   //  Returns the functions implemented in a .cpp, sorted by position.
-   //  Excludes any function that is exempt from sorting.
-   //
-   FunctionVector GetFuncDefnsToSort() const;
-
    //  Determines the group to which INCL belongs for sorting purposes.
    //
    IncludeGroup CalcGroup(const Include& incl) const;
-
-   //  Sorts the file's #include directives.
-   //
-   void SortIncludes();
-
-   //  Invoked to update the position of items when a file has been edited.
-   //  Has the same interface as CxxToken::UpdatePos.
-   //
-   void UpdatePos(EditorAction action,
-      size_t begin, size_t count, size_t from = std::string::npos);
 
    //  Returns the item, if any, located at POS in the file.
    //
@@ -337,6 +296,24 @@ public:
    //
    const std::string& Name() const override { return name_; }
 private:
+   //  Returns a stream for reading the file.
+   //
+   NodeBase::istreamPtr InputStream() const;
+
+   //  Updates CODE with the file's raw source code.  Returns false if
+   //  the file could not be opened.
+   //
+   bool ReadCode(std::string& code) const;
+
+   //  Adds an #include to the file during preprocessing.
+   //
+   void InsertInclude(IncludePtr& incl);
+
+   //  Adds an #include to the file during editing.  POS specifies
+   //  where the editor inserted the #include.
+   //
+   void InsertInclude(IncludePtr& incl, size_t pos);
+
    //  Adds ITEM to those that appear in the file.
    //
    void InsertItem(CxxNamed* item);
@@ -528,9 +505,24 @@ private:
    //
    void LogRemoveUsings(std::ostream* stream) const;
 
-   //  Returns true if WARNING occurred somewhere in this file.
+   //  Provides access to the editor.
    //
-   bool HasWarning(Warning warning) const;
+   Editor& GetEditor() { return editor_; }
+
+   //  Sorts the file's #include directives.
+   //
+   void SortIncludes();
+
+   //  Returns the functions implemented in a .cpp, sorted by position.
+   //  Excludes any function that is exempt from sorting.
+   //
+   FunctionVector GetFuncDefnsToSort() const;
+
+   //  Invoked to update the position of items when a file has been edited.
+   //  Has the same interface as CxxToken::UpdatePos.
+   //
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from = std::string::npos);
 
    //  The file's name.
    //
@@ -551,10 +543,6 @@ private:
    //  The file's source code.
    //
    std::string code_;
-
-   //  Assists with parsing code_.
-   //
-   Lexer lexer_;
 
    //  The #included files.
    //
@@ -619,6 +607,10 @@ private:
    //  The file's parse status.
    //
    ParseState parsed_;
+
+   //  Set when the file has been checked for code warnings.
+   //
+   bool checked_;
 
    //  The warnings found in the file.
    //

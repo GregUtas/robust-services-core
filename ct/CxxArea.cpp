@@ -3655,8 +3655,7 @@ void CxxArea::UpdateXref(bool insert)
 //==============================================================================
 
 Namespace::Namespace(const string& name, Namespace* space) :
-   name_(name),
-   checked_(false)
+   name_(name)
 {
    Debug::ft("Namespace.ctor");
 
@@ -3699,9 +3698,6 @@ void Namespace::AccessibilityOf
 void Namespace::Check() const
 {
    Debug::ft("Namespace.Check");
-
-   if(checked_) return;
-   checked_ = true;
 
    auto name = ScopedName(false);
    if(name.empty()) name = SCOPE_STR;

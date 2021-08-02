@@ -363,6 +363,10 @@ public:
    //
    Cxx::Operator Operator() const { return oper_; }
 
+   //  Returns the minimum access control required to access the referent.
+   //
+   Cxx::Access MinControl() const { return control_; }
+
    //  Adds the suffix NAME to the name.  Adds a space first if SPACE is set.
    //
    void Append(const std::string& name, bool space);
@@ -567,6 +571,10 @@ private:
    //  The operator, if any, that follows the name.
    //
    Cxx::Operator oper_ : 8;
+
+   //  The minimum access control that was required to access the referent.
+   //
+   mutable Cxx::Access control_ : 4;
 
    //  Set if a scope resolution operator precedes the name.
    //  Initialized to false; must be set by SetScoped.

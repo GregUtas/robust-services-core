@@ -168,6 +168,10 @@ public:
    //
    bool IsIndirect() const { return ((Ptrs(true) > 0) || (Refs() > 0)); }
 
+   //  Returns the minimum access control that was required to access the item.
+   //
+   Cxx::Access MinControl() const { return control_; }
+
    //  Clears name_ so that the argument can be pushed again.
    //
    StackArg& EraseName() { name_ = nullptr; return *this; }
@@ -368,6 +372,10 @@ private:
    //  The number of reference tags attached to the argument.
    //
    TagCount refs_ : 8;
+
+   //  The minimum access control that was required to access the argument.
+   //
+   Cxx::Access control_ : 4;
 
    //  Set if the argument was accessed via "this".
    //

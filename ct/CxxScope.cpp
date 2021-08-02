@@ -2846,6 +2846,9 @@ Function* Function::CanInvokeWith
    //  this function expects.  Assume compatibility and downgrade from there.
    //  Note that a "this" argument is skipped if thisIncr is 1 instead of 0.
    //
+   //c If an argument is an overloaded function, alternates are not considered.
+   //  This eventually needs to be supported.
+   //
    match = Compatible;
 
    for(size_t i = 0; i < sendSize; ++i)
@@ -4330,14 +4333,27 @@ Function* Function::FoundFunc
 {
    Debug::ft("Function.FoundFunc");
 
-   //  If a function template has been instantiated, record that each of its
-   //  arguments was used.  This ensures that >trim will ask for each type to
-   //  be #included in the file that is using the function template.  Although
-   //  this is strictly necessary only for those arguments that were used to
-   //  determine the template specialization, it is a reasonable approximation.
-   //
    if(func != nullptr)
    {
+      //  RecordAccess is not invoked on a function until argument matching has
+      //  selected the correct overload.  When an *argument* is a function, the
+      //  same thing occurs, but now it's finally time to do that.
+      //
+      for(auto a = args.cbegin(); a != args.cend(); ++a)
+      {
+         if(a->item_->Type() == Cxx::Function)
+         {
+            auto farg = static_cast< Function* >(a->item_);
+            farg->RecordAccess(a->MinControl());
+         }
+      }
+
+      //  If a function template has been instantiated, record that each of its
+      //  arguments was used.  This ensures that >trim will ask for each type to
+      //  be #included in the file that is using the function template.  This is
+      //  strictly necessary only for the arguments that were used to determine
+      //  the template specialization, but it is a reasonable approximation.
+      //
       if(func->IsTemplateInstance())
       {
          for(auto a = args.cbegin(); a != args.cend(); ++a)

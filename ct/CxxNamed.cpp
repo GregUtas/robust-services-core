@@ -2800,6 +2800,7 @@ TypeName::TypeName(string& name) :
    type_(nullptr),
    forw_(nullptr),
    oper_(Cxx::NIL_OPERATOR),
+   control_(Cxx::Access_N),
    scoped_(false),
    using_(false),
    direct_(false)
@@ -2829,6 +2830,7 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    type_(that.type_),
    forw_(that.forw_),
    oper_(that.oper_),
+   control_(Cxx::Access_N),
    scoped_(that.scoped_),
    using_(that.using_),
    direct_(that.direct_)
@@ -3314,7 +3316,12 @@ void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
    //  argument's name was already resolved, however, its using_ flag should
    //  not be set by a subsequent invocation.
    //
-   if((view != nullptr) && view->using_ && (ref_ == nullptr)) using_ = true;
+   if(view != nullptr)
+   {
+      control_ = view->control_;
+      if(view->using_ && (ref_ == nullptr)) using_ = true;
+   }
+
    ref_ = item;
 }
 

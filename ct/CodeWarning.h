@@ -146,7 +146,7 @@ public:
 
    //  Nullifies the warning if it is associated with ITEM.
    //
-   void ItemDeleted(const CxxToken* item);
+   void ItemDeleted(const CxxToken* item) const;
 
    //  Returns true if LOG should be retained when >check is reexecuted.
    //

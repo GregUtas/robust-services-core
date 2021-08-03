@@ -2457,7 +2457,7 @@ void CodeFile::Scan()
    if(!code_.empty()) return;
    if(!ReadCode(code_)) return;
    editor_.Initialize(code_, this);
-   editor_.CalcLineTypes(true);
+   editor_.CalcLineTypes();
 
    //  Preprocess #include directives.
    //

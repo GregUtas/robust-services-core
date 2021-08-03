@@ -3397,7 +3397,7 @@ word Editor::FixLog(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::FixReference(CxxNamed* item, const CodeWarning& log)
+word Editor::FixReference(const CxxNamed* item, const CodeWarning& log)
 {
    Debug::ft("Editor.FixReference");
 

@@ -325,7 +325,7 @@ private:
 
    //  Fixes LOG, which involves modifying ITEM.
    //
-   word FixReference(CxxNamed* item, const CodeWarning& log);
+   word FixReference(const CxxNamed* item, const CodeWarning& log);
 
    //  Returns the line that follows the left brace at the beginning of a
    //  namespace definition for SPACE.

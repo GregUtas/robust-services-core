@@ -863,7 +863,7 @@ bool CodeWarning::IsSortedToFix
 
 //------------------------------------------------------------------------------
 
-void CodeWarning::ItemDeleted(const CxxToken* item)
+void CodeWarning::ItemDeleted(const CxxToken* item) const
 {
    if(item_ == item)
    {
@@ -955,10 +955,10 @@ bool CodeWarning::Preserve() const
    case Fixed:
       //
       //  Keep this warning.  It might be regenerated based on data gathered
-      //  during compilation.  When this occurs, the current instance prevents
-      //  a new version from being created and preseres its state.  A pending
+      //  during compilation.  When this occurs, this instance will prevent a
+      //  new version from being created and preserves its state.  (A pending
       //  warning might exist if a trap occurred before it could be committed,
-      //  so treat it like a fixed warning.
+      //  so treat it like a fixed warning.)
       //
       return true;
    }

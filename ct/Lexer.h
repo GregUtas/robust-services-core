@@ -339,10 +339,9 @@ public:
    //
    void CalcDepths();
 
-   //  Scans the code to determine each line's LineType.  LOG is set if warnings
-   //  are to be generated.
+   //  Scans the code to determine each line's LineType.
    //
-   void CalcLineTypes(bool log);
+   void CalcLineTypes();
 
    //  Returns 0 or 1 if line N and the following line can be merged and remain
    //  within the line length limit, with 1 indicating that a space needs to be

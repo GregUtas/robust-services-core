@@ -216,7 +216,7 @@ void Lexer::CalcDepths()
    if(lines_.empty())
    {
       FindLines();
-      CalcLineTypes(false);
+      CalcLineTypes();
    }
 
    string id;             // identifier extracted from code
@@ -729,7 +729,7 @@ LineType Lexer::CalcLineType(size_t n, bool& cont)
 
 //------------------------------------------------------------------------------
 
-void Lexer::CalcLineTypes(bool log)
+void Lexer::CalcLineTypes()
 {
    Debug::ft("Lexer.CalcLineTypes");
 
@@ -3426,7 +3426,7 @@ void Lexer::Update()
    //  The code has been modified, so regenerate our LineInfo records.
    //
    FindLines();
-   CalcLineTypes(false);
+   CalcLineTypes();
    CalcDepths();
 }
 }

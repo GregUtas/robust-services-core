@@ -1268,27 +1268,24 @@ StackArg::StackArg(CxxToken* t, TypeName* name,
 {
    Debug::ft("StackArg.ctor(via)");
 
-   //c Support a via_ chain (that is, also record via_.via_).  This
-   //  would fix the bug where b is flagged as "could be const" despite
-   //  a statement like b.c.d = n.
+   //c Support a via_ chain (that is, also record via_.via_).  This would
+   //  fix the bug where b is flagged as "could be const" in a statement
+   //  like b.c.d = n.
 
-   //  If VIA did not access the item through a pointer, tag the item
-   //  as read-only if PREV was const, and tag it as a member if VIA
-   //  was a member.
+   //  Tag the item as const if VIA was const.
+   //
+   if(via.const_) SetAsReadOnly();
+
+   //  Tag the item as a member if VIA was a member or a "this" pointer.
    //
    if(op == Cxx::REFERENCE_SELECT)
    {
-      if(via.const_) SetAsReadOnly();
       if(via.member_) member_ = true;
    }
    else
    {
       if(via.item_->Name() == THIS_STR)
       {
-         //  Tag this as a member of the context class, and tag it as
-         //  read-only if "this" was read-only.
-         //
-         if(via.const_) SetAsReadOnly();
          member_ = true;
       }
    }

@@ -236,7 +236,7 @@ static size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
 //
 //  Adds all symbols in TABLE to ITEMS.
 //
-template< typename T > static void GetSymbols
+template< typename T > void GetSymbols
    (const std::unordered_multimap< string, T >& table, CxxScopedVector& items)
 {
    for(auto i = table.cbegin(); i != table.cend(); ++i)

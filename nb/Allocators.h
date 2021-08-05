@@ -85,7 +85,7 @@ template< typename T > struct DynamicAllocator
       return true;
    }
 
-   template<typename U > bool operator!=
+   template< typename U > bool operator!=
       (const DynamicAllocator< U >& that) const noexcept
    {
       return false;
@@ -124,7 +124,7 @@ template< typename T > struct ImmutableAllocator
       return true;
    }
 
-   template<typename U > bool operator!=
+   template< typename U > bool operator!=
       (const ImmutableAllocator< U >& that) const noexcept
    {
       return false;
@@ -163,7 +163,7 @@ template< typename T > struct PermanentAllocator
       return true;
    }
 
-   template<typename U > bool operator!=
+   template< typename U > bool operator!=
       (const PermanentAllocator< U >& that) const noexcept
    {
       return false;
@@ -202,7 +202,7 @@ template< typename T > struct PersistentAllocator
       return true;
    }
 
-   template<typename U > bool operator!=
+   template< typename U > bool operator!=
       (const PersistentAllocator< U >& that) const noexcept
    {
       return false;
@@ -241,7 +241,7 @@ template< typename T > struct ProtectedAllocator
       return true;
    }
 
-   template<typename U > bool operator!=
+   template< typename U > bool operator!=
       (const ProtectedAllocator< U >& that) const noexcept
    {
       return false;
@@ -280,7 +280,7 @@ template< typename T > struct TemporaryAllocator
       return true;
    }
 
-   template<typename U > bool operator!=
+   template< typename U > bool operator!=
       (const TemporaryAllocator< U >& that) const noexcept
    {
       return false;

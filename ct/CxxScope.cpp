@@ -3434,19 +3434,20 @@ void Function::CheckFreeStatic() const
    //  is, can be made visible by an extern declaration in a header) unless it
    //  is defined as static.  Therefore, if it is not made visible this way,
    //  it is probably intended to be static (that is, private to the .cpp).
+   //  This does not apply, however, to function templates and main().
    //
    auto file = GetFile();
 
-   if(!file->IsHeader())
+   if(file->IsHeader()) return;
+   if(IsInternal()) return;
+   if(GetClass() != nullptr) return;
+   if(IsStatic()) return;
+   if(IsTemplate()) return;
+
+   if((Name() != "main") ||
+      (GetSpace() != Singleton< CxxRoot >::Instance()->GlobalNamespace()))
    {
-      if((GetClass() == nullptr) && !IsStatic())
-      {
-         if((Name() != "main") ||
-            (GetSpace() != Singleton< CxxRoot >::Instance()->GlobalNamespace()))
-         {
-            Log(FunctionShouldBeStatic);
-         }
-      }
+      Log(FunctionShouldBeStatic);
    }
 }
 

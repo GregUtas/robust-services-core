@@ -310,13 +310,19 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
    auto itemClass = item->GetClass();
    if(thisClass != itemClass) return false;
 
-   //  If ITEM is not a class member, "this" refers to it as long as neither
-   //  is static (which makes its linkage internal).  ITEM's linkage is also
-   //  internal if it is const and "this" is not extern.
+   //  If ITEM is not a class member, "this" refers to it as long ITEM isn't
+   //  static.  If ITEM *is* static, its linkage is internal, so "this" must
+   //  be in the same file--a forward declaration.  ITEM's linkage is also
+   //  internal if it is const and "this" is not extern--this only applies
+   //  to data, as a free function cannot be const.
    //
    if(itemClass == nullptr)
    {
-      if(item->IsStatic() || this->IsStatic()) return false;
+      if(item->IsStatic())
+      {
+         if(this->GetFile() != item->GetFile()) return false;
+      }
+
       if(item->IsConst() && !this->IsExtern()) return false;
       return true;
    }

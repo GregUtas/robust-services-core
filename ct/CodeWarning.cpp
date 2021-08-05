@@ -780,6 +780,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(DataShouldBeStatic,
       WarningAttrs(T, false,
       "Data at .cpp file scope is neither static nor extern")));
+   Attrs_.insert(WarningPair(FunctionShouldBeStatic,
+      WarningAttrs(T, false,
+      "Function at .cpp file scope is neither static nor extern")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, false,
       ERROR_STR)));

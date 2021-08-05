@@ -803,23 +803,6 @@ string GetComment(const CxxNamed* item, bool unindent)
 
 //------------------------------------------------------------------------------
 //
-//  Updates BEGIN and END, where ITEM begins and ends.  BEGIN includes any
-//  comment that immediately precedes ITEM.  Returns false if ITEM could
-//  not be located.
-//
-bool GetCommentedRange(const CxxToken* item, size_t& begin, size_t& end)
-{
-   Debug::ft("CodeTools.GetCommentedRange");
-
-   if(!item->GetSpan2(begin, end)) return false;
-
-   auto& lexer = item->GetFile()->GetLexer();
-   begin = lexer.IntroStart(begin, (item->Type() == Cxx::Function));
-   return true;
-}
-
-//------------------------------------------------------------------------------
-//
 //  Checks that the name of static class data DECL is not in use when planning
 //  to convert DECL to static namespace data in the FILE that implements the
 //  class that currently declares it.  If the name is in use, prompts for and
@@ -3300,7 +3283,7 @@ word Editor::FixFunction(Function* func, const CodeWarning& log)
    case FunctionCouldBeConst:
       return TagAsConstFunction(func);
    case FunctionCouldBeStatic:
-      return TagAsStaticFunction(func);
+      return TagAsStaticClassFunction(func);
    case FunctionCouldBeFree:
       return ChangeFunctionToFree(func);
    case FunctionCouldBeDefaulted:
@@ -3311,6 +3294,8 @@ word Editor::FixFunction(Function* func, const CodeWarning& log)
       return EraseNoexceptTag(func);
    case FunctionCouldBeMember:
       return ChangeFunctionToMember(func, log.offset_);
+   case FunctionShouldBeStatic:
+      return TagAsStaticFreeFunction(func);
    }
 
    return Report("Internal error: unsupported function warning.");
@@ -3705,6 +3690,8 @@ word Editor::FixWarning(const CodeWarning& log)
       return SortOverrides(log);
    case DataShouldBeStatic:
       return FixDatas(log);
+   case FunctionShouldBeStatic:
+      return FixFunctions(log);
    }
 
    return Report(NotImplemented);
@@ -6110,31 +6097,15 @@ word Editor::TagAsOverride(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::TagAsStaticData(Data* data)
+word Editor::TagAsStaticClassFunction(Function* func)
 {
-   Debug::ft("Editor.TagAsStaticData");
-
-   //  Insert "static" before the data declaration's type.
-   //
-   auto type = data->GetTypeSpec();
-   auto pos = type->GetPos();
-   if(pos == string::npos) return NotFound("Data type");
-   Insert(pos, "static ");
-   data->SetStatic(true);
-   return Changed(pos);
-}
-
-//------------------------------------------------------------------------------
-
-word Editor::TagAsStaticFunction(Function* func)
-{
-   Debug::ft("Editor.TagAsStaticFunction");
+   Debug::ft("Editor.TagAsStaticClassFunction");
 
    //  Start with the function's return type in case it's on the line above
    //  the function's name.  Then find the end of the argument list.
    //
    auto type = func->GetTypeSpec()->GetPos();
-   if(type == string::npos) return NotFound("Function type");
+   if(type == string::npos) return NotFound("Function return type");
    auto rpar = FindArgsEnd(func);
    if(rpar == string::npos) return NotFound("End of argument list");
 
@@ -6181,6 +6152,38 @@ word Editor::TagAsStaticFunction(Function* func)
    }
 
    return Changed(type);
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::TagAsStaticData(Data* data)
+{
+   Debug::ft("Editor.TagAsStaticData");
+
+   //  Insert "static" before the data declaration's type.
+   //
+   auto type = data->GetTypeSpec();
+   auto pos = type->GetPos();
+   if(pos == string::npos) return NotFound("Data type");
+   Insert(pos, "static ");
+   data->SetStatic(true);
+   return Changed(pos);
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::TagAsStaticFreeFunction(Function* func)
+{
+   Debug::ft("Editor.TagAsStaticFreeFunction");
+
+   //  Insert "static" before the function's return type.
+   //
+   auto type = func->GetTypeSpec();
+   auto pos = type->GetPos();
+   if(pos == string::npos) return NotFound("Function return type");
+   Insert(pos, "static ");
+   func->SetStatic(true, Cxx::NIL_OPERATOR);
+   return Changed(pos);
 }
 
 //------------------------------------------------------------------------------

@@ -531,6 +531,7 @@ enum Warning
    NoJumpOrFallthrough,      // no jump or [[fallthrough]] above case or default
    OverrideNotSorted,        // override declaration not in alphabetical order
    DataShouldBeStatic,       // non-extern data at .cpp file scope is not static
+   FunctionShouldBeStatic,   // non-extern func at .cpp file scope is not static
    Warning_N                 // number of warnings
 };
 

@@ -1689,7 +1689,8 @@ private:
    void CheckIfOverridden() const;
    void CheckIfCouldBeConst() const;
    void CheckMemberUsage() const;
-   void CheckStatic() const;
+   void CheckClassStatic() const;
+   void CheckFreeStatic() const;
    void CheckFree() const;
 
    //  Logs WARNING on the argument at INDEX, with the fields in CodeWarning

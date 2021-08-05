@@ -2957,6 +2957,7 @@ void Function::Check() const
       CheckIfOverridden();
       CheckIfPublicVirtual();
       CheckForVirtualDefault();
+      CheckFreeStatic();
       if(w != FunctionNotDefined) CheckMemberUsage();
       if(mate_ != nullptr) mate_->Check();
    }
@@ -3152,6 +3153,35 @@ void Function::CheckArgs() const
       auto t1 = (*a1)->TypeString(true);
       auto t2 = (*a2)->TypeString(true);
       if(t1 == t2) Log(AdjacentArgumentTypes);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void Function::CheckClassStatic() const
+{
+   Debug::ft("Function.CheckClassStatic");
+
+   //  If this function isn't static, it could be.
+   //
+   if(!static_)
+   {
+      Log(FunctionCouldBeStatic);
+      return;
+   }
+
+   //  The function is already static.  But if it has a possible "this"
+   //  argument for its class, it should probably be non-static.
+   //
+   for(size_t i = 0; i < args_.size(); ++i)
+   {
+      auto cls = args_[i]->IsThisCandidate();
+
+      if(cls == GetClass())
+      {
+         LogToArg(FunctionCouldBeMember, i);
+         return;
+      }
    }
 }
 
@@ -3396,6 +3426,32 @@ void Function::CheckFree() const
 
 //------------------------------------------------------------------------------
 
+void Function::CheckFreeStatic() const
+{
+   Debug::ft("Function.CheckFreeStatic");
+
+   //  A function declared at file scope in a .cpp has external linkage (that
+   //  is, can be made visible by an extern declaration in a header) unless it
+   //  is defined as static.  Therefore, if it is not made visible this way,
+   //  it is probably intended to be static (that is, private to the .cpp).
+   //
+   auto file = GetFile();
+
+   if(!file->IsHeader())
+   {
+      if((GetClass() == nullptr) && !IsStatic())
+      {
+         if((Name() != "main") ||
+            (GetSpace() != Singleton< CxxRoot >::Instance()->GlobalNamespace()))
+         {
+            Log(FunctionShouldBeStatic);
+         }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_CheckIfCouldBeConst = "Function.CheckIfCouldBeConst";
 
 void Function::CheckIfCouldBeConst() const
@@ -3590,7 +3646,7 @@ void Function::CheckMemberUsage() const
    if(!GetDefn()->nonpublic_ && !inline_ && !tparm_)
       CheckFree();
    else
-      CheckStatic();
+      CheckClassStatic();
 }
 
 //------------------------------------------------------------------------------
@@ -3641,35 +3697,6 @@ void Function::CheckOverride()
    if(!override_ && !final_) Log(OverrideTagMissing);
    virtual_ = true;
    override_ = true;
-}
-
-//------------------------------------------------------------------------------
-
-void Function::CheckStatic() const
-{
-   Debug::ft("Function.CheckStatic");
-
-   //  If this function isn't static, it could be.
-   //
-   if(!static_)
-   {
-      Log(FunctionCouldBeStatic);
-      return;
-   }
-
-   //  The function is already static.  But if it has a possible "this"
-   //  argument for its class, it should probably be non-static.
-   //
-   for(size_t i = 0; i < args_.size(); ++i)
-   {
-      auto cls = args_[i]->IsThisCandidate();
-
-      if(cls == GetClass())
-      {
-         LogToArg(FunctionCouldBeMember, i);
-         return;
-      }
-   }
 }
 
 //------------------------------------------------------------------------------

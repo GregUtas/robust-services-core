@@ -2897,10 +2897,11 @@ bool Parser::GetProcDefn(FunctionPtr& func)
 {
    Debug::ft(Parser_GetProcDefn);
 
-   //  <ProcDefn> = <TypeSpec> <QualName> <Arguments>
+   //  <ProcDefn> = ["static"] <TypeSpec> <QualName> <Arguments>
    //               ["const"] {"volatile"] ["noexcept"]
    //
    auto start = CurrPos();
+   auto stat = NextKeywordIs(STATIC_STR);
 
    TypeSpecPtr typeSpec;
    if(!GetTypeSpec(typeSpec)) return Backup(start, 162);
@@ -2933,6 +2934,7 @@ bool Parser::GetProcDefn(FunctionPtr& func)
    func.reset(new Function(funcName, typeSpec));
    func->SetContext(pos);
    if(!GetArguments(func)) return Backup(start, func, 227);
+   func->SetStatic(stat, Cxx::NIL_OPERATOR);
    func->SetOperator(oper);
 
    KeywordSet attrs;

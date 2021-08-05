@@ -409,7 +409,8 @@ private:
    word TagAsConstReference(const Function* func, word offset);
    word TagAsDefaulted(Function* func);
    word TagAsNoexcept(Function* func);
-   word TagAsStaticFunction(Function* func);
+   word TagAsStaticClassFunction(Function* func);
+   word TagAsStaticFreeFunction(Function* func);
 
    //  Returns the location of the right parenthesis after a function's
    //  argument list.  Returns string::npos on failure.

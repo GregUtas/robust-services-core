@@ -440,7 +440,7 @@ const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
    CxxWord("-",   "A",    "-",  T),  // PROTECTED
    CxxWord("-",   "A",    "-",  T),  // PUBLIC
    CxxWord("-",   "-",    "r",  T),  // RETURN
-   CxxWord("D",   "DP",   "D",  F),  // STATIC
+   CxxWord("DP",  "DP",   "D",  F),  // STATIC
    CxxWord("$",   "$",    "$",  T),  // STATIC_ASSERT
    CxxWord("C",   "C",    "-",  T),  // STRUCT
    CxxWord("-",   "-",    "s",  T),  // SWITCH

@@ -97,7 +97,7 @@ typedef std::pair< string, Typedef* > TypePair;
 //
 const word LAST_XREF_START_COLUMN = 122;
 
-void DisplayReferences(ostream& stream, const CxxItemVector& refs)
+static void DisplayReferences(ostream& stream, const CxxItemVector& refs)
 {
    if(refs.empty()) return;
 
@@ -146,7 +146,7 @@ void DisplayReferences(ostream& stream, const CxxItemVector& refs)
 
 //------------------------------------------------------------------------------
 
-void FilterItems(const std::string& name,
+static void FilterItems(const std::string& name,
    const SymbolVector& items, SymbolVector& list)
 {
    Debug::ft("CodeTools.FilterItems");
@@ -197,7 +197,7 @@ size_t FindNearestItem(const SymbolVector& list)
 //  been resolved.  Returns SIZE_MAX if none of the items in LIST is in a
 //  related scope.
 //
-size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
+static size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
 {
    Debug::ft("CodeTools.FindNearestItem(views)");
 
@@ -236,7 +236,7 @@ size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
 //
 //  Adds all symbols in TABLE to ITEMS.
 //
-template< typename T > void GetSymbols
+template< typename T > static void GetSymbols
    (const std::unordered_multimap< string, T >& table, CxxScopedVector& items)
 {
    for(auto i = table.cbegin(); i != table.cend(); ++i)
@@ -248,7 +248,7 @@ template< typename T > void GetSymbols
 
 //------------------------------------------------------------------------------
 
-bool IsSortedByScope(const CxxScoped* item1, const CxxScoped* item2)
+static bool IsSortedByScope(const CxxScoped* item1, const CxxScoped* item2)
 {
    //  The first comparison ignores case, whereas the second one does not.
    //  This yields consistent ordering when two names only differ in case.
@@ -261,7 +261,7 @@ bool IsSortedByScope(const CxxScoped* item1, const CxxScoped* item2)
 
 //------------------------------------------------------------------------------
 
-bool IsSortedForXref(const CxxScoped* item1, const CxxScoped* item2)
+static bool IsSortedForXref(const CxxScoped* item1, const CxxScoped* item2)
 {
    auto file1 = item1->GetFile();
    auto file2 = item2->GetFile();
@@ -292,7 +292,7 @@ bool IsSortedForXref(const CxxScoped* item1, const CxxScoped* item2)
 
 //------------------------------------------------------------------------------
 
-CxxScoped* ItemAccessed(CxxScoped* item, const SymbolView& view)
+static CxxScoped* ItemAccessed(CxxScoped* item, const SymbolView& view)
 {
    Debug::ft("CodeTools.ItemAccessed");
 

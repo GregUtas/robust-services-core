@@ -28,7 +28,7 @@ using std::ostream;
 
 namespace NodeBase
 {
-uintptr_t BadPointer()
+static uintptr_t BadPointer()
 {
    uintptr_t value = 0;
    auto bytes = reinterpret_cast< uint8_t* >(&value);

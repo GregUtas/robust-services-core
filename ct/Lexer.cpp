@@ -84,7 +84,7 @@ enum IndentRule
 //
 //  Returns the indentation rule for ID, which is usually a keyword.
 //
-IndentRule ClassifyIndent(string& id)
+static IndentRule ClassifyIndent(string& id)
 {
    switch(id.front())
    {
@@ -136,7 +136,7 @@ IndentRule ClassifyIndent(string& id)
 //
 //  Returns true if in a nested brace initialization.
 //
-bool InNestedBraceInit(const std::vector< LeftBraceRole >& roles)
+static bool InNestedBraceInit(const std::vector< LeftBraceRole >& roles)
 {
    Debug::ft("CodeTools.InNestedBraceInit");
 

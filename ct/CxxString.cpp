@@ -37,13 +37,13 @@ namespace CodeTools
 //  (the level of template nesting).  Returns string::npos if no such left
 //  angle bracket exists.
 //
-size_t FindTemplateBegin(const string& name, size_t pos, size_t depth);
+static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth);
 
 //  Starting at POS of NAME, which should be a left angle bracket, returns
 //  the position of the matching right angle bracket.  Returns string::npos
 //  if that right angle bracket is not found.
 //
-size_t FindTemplateEnd(const string& name, size_t pos);
+static size_t FindTemplateEnd(const string& name, size_t pos);
 
 //------------------------------------------------------------------------------
 
@@ -224,7 +224,7 @@ size_t FindSubstr(const string& s, const string& targ)
 
 //------------------------------------------------------------------------------
 
-size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
+static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
 {
    size_t level = 1;
 
@@ -246,7 +246,7 @@ size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
 
 //------------------------------------------------------------------------------
 
-size_t FindTemplateEnd(const string& name, size_t pos)
+static size_t FindTemplateEnd(const string& name, size_t pos)
 {
    size_t level = 1;
 

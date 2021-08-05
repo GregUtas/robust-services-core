@@ -47,7 +47,7 @@ const int PriorityMap[SysThread::Priority_N] =
 
 //------------------------------------------------------------------------------
 
-signal_t AccessViolationType(const _EXCEPTION_POINTERS* ex)
+static signal_t AccessViolationType(const _EXCEPTION_POINTERS* ex)
 {
    auto rec = ex->ExceptionRecord;
 
@@ -66,7 +66,7 @@ signal_t AccessViolationType(const _EXCEPTION_POINTERS* ex)
 //
 //  Converts a Windows structured exception to a C++ exception.
 //
-void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
+static void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
 {
    //  Reenable Debug functions before tracing this function.
    //

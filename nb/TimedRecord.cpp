@@ -41,7 +41,7 @@ namespace NodeBase
 {
 //  Used instead of TraceDump::Tab to highlight a context switch.
 //
-const string& ContextSwitchTab()
+static const string& ContextSwitchTab()
 {
    static string ContextSwitchStr;
 

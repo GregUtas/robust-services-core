@@ -473,7 +473,7 @@ ExportCommand::ExportCommand() : CliCommand(ExportStr, ExportExpl)
    BindParm(*new CliTextParm(ViewsExpl, true, 0));
 }
 
-const string& DefaultExportOptions()
+static const string& DefaultExportOptions()
 {
    static string DefaultOpts;
 
@@ -490,7 +490,7 @@ const string& DefaultExportOptions()
    return DefaultOpts;
 }
 
-const string& ValidExportOptions()
+static const string& ValidExportOptions()
 {
    static string ValidOpts;
 
@@ -836,7 +836,7 @@ ParseCommand::ParseCommand() : LibraryCommand(ParseStr, ParseExpl)
    BindParm(*new CliTextParm(FileSetExprExpl, false, 0));
 }
 
-const string& ValidParseOptions()
+static const string& ValidParseOptions()
 {
    static string ValidOpts;
 

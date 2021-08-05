@@ -43,7 +43,7 @@ using std::string;
 
 namespace CodeTools
 {
-void AlignLeft(ostream& stream, const string& prefix)
+static void AlignLeft(ostream& stream, const string& prefix)
 {
    //  If PREFIX is more than one indentation, indent one level less.
    //

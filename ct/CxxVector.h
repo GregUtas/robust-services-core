@@ -44,7 +44,7 @@ namespace CodeTools
 {
 //  Returns the index of ITEM in VEC.  Returns SIZE_MAX if ITEM isn't found.
 //
-template< typename T > size_t IndexOf
+template< typename T > static size_t IndexOf
    (const std::vector< T >& vec, const T& item)
 {
    for(size_t i = 0; i < vec.size(); ++i)
@@ -60,7 +60,7 @@ template< typename T > size_t IndexOf
 //  Copies the objects in VEC so they can be sorted by position and displayed.
 //  FILE is set to sort the objects by file and position.
 //
-template< class T > void SortAndDisplayItems
+template< class T > static void SortAndDisplayItems
    (const std::vector< T >& vec, std::ostream& stream,
    const std::string& prefix, const NodeBase::Flags& options, ItemSort sort)
 {
@@ -90,7 +90,7 @@ template< class T > void SortAndDisplayItems
 //  Copies the objects in VEC so they can be sorted by position and displayed.
 //  FILE is set to sort the objects by file and position.
 //
-template< class T > void SortAndDisplayItemPtrs
+template< class T > static void SortAndDisplayItemPtrs
    (const std::vector< std::unique_ptr< T >>& vec, std::ostream& stream,
    const std::string& prefix, const NodeBase::Flags& options, ItemSort sort)
 {
@@ -124,7 +124,7 @@ template< class T > void SortAndDisplayItemPtrs
 //
 //  Removes ITEM from VEC and shifts the following items up.
 //
-template< class T > void EraseItem(std::vector< T* >& vec, const T* item)
+template< class T > static void EraseItem(std::vector< T* >& vec, const T* item)
 {
    for(size_t i = 0; i < vec.size(); ++i)
    {
@@ -148,7 +148,7 @@ template< class T > void EraseItem(std::vector< T* >& vec, const T* item)
 //
 //  Removes ITEM from VEC and shifts the following items up.
 //
-template< class T > void EraseItemPtr
+template< class T > static void EraseItemPtr
    (std::vector< std::unique_ptr< T >>& vec, const T* item)
 {
    for(size_t i = 0; i < vec.size(); ++i)

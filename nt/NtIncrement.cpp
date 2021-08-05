@@ -1050,7 +1050,7 @@ HeapCommands::HeapCommands() : CliCommandSet(HeapStr, HeapExpl)
 
 //------------------------------------------------------------------------------
 
-word CheckHeap(bool shouldExist, const CliThread& cli, Heap*& heap)
+static word CheckHeap(bool shouldExist, const CliThread& cli, Heap*& heap)
 {
    heap = Singleton< TestHeap >::Extant();
 

@@ -252,7 +252,7 @@ size_t FindNearestItem(const SymbolVector& list);
 //
 //  Removes ITEM from TABLE.
 //
-template< typename T > void EraseSymbol(const CxxScoped* item,
+template< typename T > static void EraseSymbol(const CxxScoped* item,
    std::unordered_multimap< std::string, T >& table)
 {
    auto str = Normalize(item->Name());
@@ -272,7 +272,7 @@ template< typename T > void EraseSymbol(const CxxScoped* item,
 //
 //  Looks for NAME in TABLE.  Returns a list of matching symbols in LIST.
 //
-template< typename T > void ListSymbols(const std::string& name,
+template< typename T > static void ListSymbols(const std::string& name,
    const std::unordered_multimap< std::string, T >& table, SymbolVector& list)
 {
    //  Assemble a list of matching symbols.

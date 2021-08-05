@@ -203,7 +203,7 @@ void BreakEnabledCfg::SetCurr()
 
 //==============================================================================
 
-ThreadAdmin* AccessAdminData()
+static ThreadAdmin* AccessAdminData()
 {
    //  Late during the shutdown phase of a reload restart, protected memory is
    //  released en masse.  Our singleton pointer still appears valid, however,

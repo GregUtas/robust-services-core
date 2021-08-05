@@ -54,7 +54,7 @@ using std::string;
 
 namespace CodeTools
 {
-bool IsSortedByFileLevel(const FileLevel& item1, const FileLevel& item2)
+static bool IsSortedByFileLevel(const FileLevel& item1, const FileLevel& item2)
 {
    if(item1.level < item2.level) return true;
    if(item1.level > item2.level) return false;

@@ -89,7 +89,7 @@ bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2)
 
 fn_name CodeTools_ReferentError = "CodeTools.ReferentError";
 
-CxxScoped* ReferentError(const string& item, debug64_t offset)
+static CxxScoped* ReferentError(const string& item, debug64_t offset)
 {
    Debug::ft(CodeTools_ReferentError);
 

@@ -85,11 +85,11 @@ static CliThread* Cli_ = nullptr;
 //  Displays INFO and then prompts for the name of an identifier.  Returns
 //  the name that is entered, or an empty string if the name was invalid.
 //
-string GetIdentifier(const string& prompt);
+static string GetIdentifier(const string& prompt);
 
 //  Writes TEXT to Cli_, adding an endline if one doesn't exist.
 //
-void Inform(string text);
+static void Inform(string text);
 
 //------------------------------------------------------------------------------
 //
@@ -113,11 +113,11 @@ static string Expl_;
 
 //  Sets Expl_ to EXPL, adding a CRLF if EXPL doesn't have one.
 //
-void SetExpl(const string& expl);
+static void SetExpl(const string& expl);
 
 //  Returns Expl_ after clearing it.
 //
-string GetExpl();
+static string GetExpl();
 
 //------------------------------------------------------------------------------
 //
@@ -409,7 +409,7 @@ ItemDefnAttrs::ItemDefnAttrs(const Function* func) :
 //  Returns true if ITEM1 and ITEM2 appear in the same statement: specifically,
 //  if a semicolon does not appear between their positions.
 //
-bool AreInSameStatement(const CxxToken* item1, const CxxToken* item2)
+static bool AreInSameStatement(const CxxToken* item1, const CxxToken* item2)
 {
    Debug::ft("CodeTools.AreInSameStatement");
 
@@ -436,7 +436,7 @@ bool AreInSameStatement(const CxxToken* item1, const CxxToken* item2)
 //
 //  Asks the user to choose declName or defnName as an argument's name.
 //
-string ChooseArgumentName(const string& declName, const string& defnName)
+static string ChooseArgumentName(const string& declName, const string& defnName)
 {
    Debug::ft("CodeTools.ChooseArgumentName");
 
@@ -453,7 +453,7 @@ string ChooseArgumentName(const string& declName, const string& defnName)
 //  Asks the user to determine the attributes for a destructor that is
 //  currently non-virtual.
 //
-word ChooseDtorAttributes(ItemDeclAttrs& attrs)
+static word ChooseDtorAttributes(ItemDeclAttrs& attrs)
 {
    Debug::ft("CodeTools.ChooseDtorAttributes");
 
@@ -505,7 +505,7 @@ word ChooseDtorAttributes(ItemDeclAttrs& attrs)
 //
 //  Invokes Write on each editor whose file has changed.
 //
-void Commit()
+static void Commit()
 {
    Debug::ft("CodeTools.Commit");
 
@@ -538,7 +538,7 @@ void Commit()
 //  Creates a comment for the special member function that will be added
 //  to CLS according to ATTRS.
 //
-string CreateSpecialFunctionComment
+static string CreateSpecialFunctionComment
    (const Class* cls, const ItemDeclAttrs& attrs)
 {
    Debug::ft("CodeTools.CreateSpecialFunctionComment");
@@ -613,7 +613,7 @@ string CreateSpecialFunctionComment
 //  Returns an unquoted string (FLIT) and fn_name identifier (FVAR) that are
 //  suitable for invoking Debug::ft.
 //
-void DebugFtNames(const Function* func, string& flit, string& fvar)
+static void DebugFtNames(const Function* func, string& flit, string& fvar)
 {
    Debug::ft("CodeTools.DebugFtNames");
 
@@ -649,7 +649,7 @@ void DebugFtNames(const Function* func, string& flit, string& fvar)
 //  is not unique and the user did not provide a satisfactory suffix, else
 //  returns true after enclosing FNAME in quotes.
 //
-bool EnsureUniqueDebugFtName(const string& flit, string& fname)
+static bool EnsureUniqueDebugFtName(const string& flit, string& fname)
 {
    Debug::ft("CodeTools.EnsureUniqueDebugFtName");
 
@@ -676,7 +676,7 @@ bool EnsureUniqueDebugFtName(const string& flit, string& fname)
 //  the its functions are implemented in the same file, returns that file, else
 //  asks the user to specify the file.
 //
-CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
+static CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
 {
    Debug::ft("CodeTools.FindFuncDefnFile");
 
@@ -712,7 +712,7 @@ CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
 
 //------------------------------------------------------------------------------
 
-Cxx::Access FindMaxAccess(const CxxNamedSet& items)
+static Cxx::Access FindMaxAccess(const CxxNamedSet& items)
 {
    Debug::ft("CodeTools.FindMaxAccess");
 
@@ -732,7 +732,7 @@ Cxx::Access FindMaxAccess(const CxxNamedSet& items)
 
 //------------------------------------------------------------------------------
 
-Cxx::Access FindMaxDataAccess(Data* decl)
+static Cxx::Access FindMaxDataAccess(Data* decl)
 {
    Debug::ft("CodeTools.FindMaxDataAccess");
 
@@ -759,7 +759,7 @@ Cxx::Access FindMaxDataAccess(Data* decl)
 //
 //  Returns the namespace identified by NSPACE.
 //
-Namespace* FindNamespace(const string& nspace)
+static Namespace* FindNamespace(const string& nspace)
 {
    Debug::ft("CodeTools.FindNamespace");
 
@@ -775,7 +775,7 @@ Namespace* FindNamespace(const string& nspace)
 //  Returns the comment, if any, associated with the declaration of ITEM after
 //  removing the indentation on each line if UNINDENT is set.
 //
-string GetComment(const CxxNamed* item, bool unindent)
+static string GetComment(const CxxNamed* item, bool unindent)
 {
    Debug::ft("CodeTools.GetComment");
 
@@ -808,7 +808,7 @@ string GetComment(const CxxNamed* item, bool unindent)
 //  class that currently declares it.  If the name is in use, prompts for and
 //  returns an alternate name if provided, else returns an empty string.
 //
-string GetDataName(const Data* decl, CodeFile* file)
+static string GetDataName(const Data* decl, CodeFile* file)
 {
    Debug::ft("CodeTools.GetDataName");
 
@@ -835,7 +835,7 @@ string GetDataName(const Data* decl, CodeFile* file)
 //
 //  Adds DATA and its separate definition, if it exists, to DATAS.
 //
-void GetDatas(Data* data, DataVector& datas)
+static void GetDatas(Data* data, DataVector& datas)
 {
    Debug::ft("CodeTools.GetDatas");
 
@@ -846,7 +846,7 @@ void GetDatas(Data* data, DataVector& datas)
 
 //------------------------------------------------------------------------------
 
-string GetExpl()
+static string GetExpl()
 {
    Debug::ft("CodeTools.GetExpl");
 
@@ -859,7 +859,7 @@ string GetExpl()
 //
 //  Returns true if NAME is a valid identifier.
 //
-string GetIdentifier(const string& prompt)
+static string GetIdentifier(const string& prompt)
 {
    Debug::ft("CodeTools.GetIdentifier");
 
@@ -884,7 +884,7 @@ string GetIdentifier(const string& prompt)
 //
 //  Returns the initialization expresssion for DATA.
 //
-string GetInit(const CxxNamed* data)
+static string GetInit(const CxxNamed* data)
 {
    Debug::ft("CodeTools.GetInit");
 
@@ -901,7 +901,7 @@ string GetInit(const CxxNamed* data)
 //
 //  Adds FUNC and its overrides to FUNCS.
 //
-void GetOverrides(Function* func, FunctionVector& funcs)
+static void GetOverrides(Function* func, FunctionVector& funcs)
 {
    Debug::ft("CodeTools.GetOverrides");
 
@@ -922,7 +922,7 @@ void GetOverrides(Function* func, FunctionVector& funcs)
 //
 //  Adds all references to DATA to ITEMS, excluding DATA and its definition.
 //
-void GetReferences(const Data* data, CxxNamedVector& items)
+static void GetReferences(const Data* data, CxxNamedVector& items)
 {
    Debug::ft("CodeTools.GetReferences");
 
@@ -939,7 +939,7 @@ void GetReferences(const Data* data, CxxNamedVector& items)
 
 //------------------------------------------------------------------------------
 
-void Inform(string text)
+static void Inform(string text)
 {
    Debug::ft("CodeTools.Inform");
 
@@ -954,7 +954,7 @@ void Inform(string text)
 //  it must have an implementation (as opposed to being deleted or defaulted).
 //  To be non-trivial, its code must span at least three lines.
 //
-bool IsNonTrivialInline(const CxxNamed* item, const string& code)
+static bool IsNonTrivialInline(const CxxNamed* item, const string& code)
 {
    Debug::ft("CodeTools.IsNonTrivialInline");
 
@@ -980,7 +980,7 @@ bool IsNonTrivialInline(const CxxNamed* item, const string& code)
 //
 //  Returns true if an item between BEGIN and END references ITEM.
 //
-bool ItemIsUsedBetween(const CxxNamed* item, size_t begin, size_t end)
+static bool ItemIsUsedBetween(const CxxNamed* item, size_t begin, size_t end)
 {
    Debug::ft("CodeTools.ItemIsUsedBetween");
 
@@ -1001,7 +1001,7 @@ bool ItemIsUsedBetween(const CxxNamed* item, size_t begin, size_t end)
 //  Sets Expl_ to "TEXT not found."  If QUOTES is set, TEXT is enclosed in
 //  quotes.  Returns 0.
 //
-word NotFound(fixed_string text, bool quotes = false)
+static word NotFound(fixed_string text, bool quotes = false)
 {
    Debug::ft("CodeTools.NotFound");
 
@@ -1016,7 +1016,7 @@ word NotFound(fixed_string text, bool quotes = false)
 
 //------------------------------------------------------------------------------
 
-word Report(fixed_string text, word rc = EditFailed)
+static word Report(fixed_string text, word rc = EditFailed)
 {
    Debug::ft("CodeTools.Report");
 
@@ -1026,7 +1026,7 @@ word Report(fixed_string text, word rc = EditFailed)
 
 //------------------------------------------------------------------------------
 
-word Report(const std::ostringstream& stream, word rc = EditFailed)
+static word Report(const std::ostringstream& stream, word rc = EditFailed)
 {
    Debug::ft("CodeTools.Report(stream)");
 
@@ -1036,7 +1036,7 @@ word Report(const std::ostringstream& stream, word rc = EditFailed)
 
 //------------------------------------------------------------------------------
 
-void SetExpl(const string& expl)
+static void SetExpl(const string& expl)
 {
    Debug::ft("CodeTools.SetExpl");
 
@@ -1046,7 +1046,7 @@ void SetExpl(const string& expl)
 
 //------------------------------------------------------------------------------
 
-string strCode(const string& code, size_t level)
+static string strCode(const string& code, size_t level)
 {
    return spaces(level * IndentSize()) + code + CRLF;
 }
@@ -1055,7 +1055,7 @@ string strCode(const string& code, size_t level)
 //
 //  Returns TEXT, prefixed by "//  " and indented with INDENT leading spaces.
 //
-string strComment(const string& text, size_t indent)
+static string strComment(const string& text, size_t indent)
 {
    auto comment = spaces(indent) + "//";
    if(!text.empty()) comment += spaces(2) + text;
@@ -1068,7 +1068,7 @@ string strComment(const string& text, size_t indent)
 //  Invoked when fixing a warning still needs to be implemented.  This
 //  normally doesn't occur because WarningAttrs.fixable should be false.
 //
-word Unimplemented()
+static word Unimplemented()
 {
    Debug::ft("CodeTools.Unimplemented");
 
@@ -4765,7 +4765,7 @@ const RoleWarning SpecialMemberFunctionLogs[MaxRoleWarning] =
 
 //  Maps a warning to the type of function associated with it.
 //
-FunctionRole WarningToRole(Warning log)
+static FunctionRole WarningToRole(Warning log)
 {
    for(size_t i = 0; i < MaxRoleWarning; ++i)
    {

@@ -57,7 +57,7 @@ const FactionFlags& NoFactions = FactionFlags();
 
 //------------------------------------------------------------------------------
 
-const FactionFlags& AllFactions()
+static const FactionFlags& AllFactions()
 {
    static FactionFlags AllFactions_ = FactionFlags();
 
@@ -77,7 +77,7 @@ const FactionFlags& AllFactions()
 fixed_string ReadMe =
    "https://github.com/GregUtas/robust-services-core/blob/master/README.md";
 
-void OutputNodeRunningLog()
+static void OutputNodeRunningLog()
 {
    Debug::ft("NodeBase.OutputNodeRunningLog");
 
@@ -99,7 +99,7 @@ void OutputNodeRunningLog()
 
 //------------------------------------------------------------------------------
 
-const FactionFlags& ShutdownFactions()
+static const FactionFlags& ShutdownFactions()
 {
    static FactionFlags ShutdownFactions_ = FactionFlags();
 
@@ -127,7 +127,7 @@ static ostringstreamPtr stream_ = nullptr;
 //
 //  Returns stream_, creating it if it doesn't exist.
 //
-std::ostringstream* Stream()
+static std::ostringstream* Stream()
 {
    if(stream_ == nullptr)
    {

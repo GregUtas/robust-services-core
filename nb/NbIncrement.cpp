@@ -1189,7 +1189,7 @@ HelpCommand::HelpCommand() : CliCommand(HelpStr, HelpExpl)
    BindParm(*new HelpFullParm);
 }
 
-word DisplayHelp(const CliThread& cli, const string& key)
+static word DisplayHelp(const CliThread& cli, const string& key)
 {
    auto path = Element::HelpPath() + PATH_SEPARATOR + "cli.txt";
    auto rc = cli.DisplayHelp(path, key);
@@ -1677,7 +1677,7 @@ void LogsCommand::Patch(sel_t selector, void* arguments)
 //  explanation.  If GROUP is found and ID is 0, sets LOG to nullptr and
 //  returns true.
 //
-bool FindGroupAndLog(const string& name, word id,
+static bool FindGroupAndLog(const string& name, word id,
    LogGroup*& group, Log*& log, string& expl)
 {
    Debug::ft("NodeBase.FindGroupAndLog");

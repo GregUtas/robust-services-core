@@ -68,7 +68,7 @@ WarningAttrs::WarningAttrs(bool fixable, bool preserve, fixed_string expl) :
 
 //------------------------------------------------------------------------------
 
-string WarningCode(Warning warning)
+static string WarningCode(Warning warning)
 {
    std::ostringstream stream;
 

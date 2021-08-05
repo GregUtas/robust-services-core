@@ -47,7 +47,7 @@ const DWORD PermissionToProtection[MemoryProtection_N] =
 
 fn_name NodeBase_GetMemoryProtection = "NodeBase.GetMemoryProtection";
 
-DWORD GetMemoryProtection(MemoryProtection attrs)
+static DWORD GetMemoryProtection(MemoryProtection attrs)
 {
    if((attrs < 0) || (attrs >= MemoryProtection_N))
    {

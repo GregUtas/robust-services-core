@@ -51,7 +51,7 @@ namespace CodeTools
 //  Invoked when FindFunc (which defines the other arguments) has resolved
 //  a function call to FUNC.
 //
-Function* FuncAccessed(Function* func,
+static Function* FuncAccessed(Function* func,
    const StackArg* call, const CxxScope* scope, const SymbolView* view)
 {
    Debug::ft("CodeTools.FuncAccessed");

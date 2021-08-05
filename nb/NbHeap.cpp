@@ -123,7 +123,7 @@ enum HeapCorruptionReason
 //  Returns the index of the first child associated with INDEX.
 //  The second child's index follows immediately.
 //
-NbHeap::index_t IndexToChild(NbHeap::index_t index)
+static NbHeap::index_t IndexToChild(NbHeap::index_t index)
 {
    return (index << 1) + 1;
 }
@@ -132,7 +132,7 @@ NbHeap::index_t IndexToChild(NbHeap::index_t index)
 //
 //  Returns the index of the parent associated with INDEX.
 //
-NbHeap::index_t IndexToParent(NbHeap::index_t index)
+static NbHeap::index_t IndexToParent(NbHeap::index_t index)
 {
    return (index - 1) >> 1;
 }
@@ -141,7 +141,7 @@ NbHeap::index_t IndexToParent(NbHeap::index_t index)
 //
 //  Returns the index of the sibling associated with INDEX.
 //
-NbHeap::index_t IndexToSibling(NbHeap::index_t index)
+static NbHeap::index_t IndexToSibling(NbHeap::index_t index)
 {
    return ((index & 0x01) == 0 ? index - 1 : index + 1);
 }
@@ -152,7 +152,7 @@ NbHeap::index_t IndexToSibling(NbHeap::index_t index)
 //  size (log2) of MinBlockSizeLog2, and the size of a block doubles at each
 //  level above that.
 //
-size_t Log2Size(NbHeap::level_t level)
+static size_t Log2Size(NbHeap::level_t level)
 {
    return (MinBlockSizeLog2 + LastLevel - level);
 }
@@ -161,7 +161,7 @@ size_t Log2Size(NbHeap::level_t level)
 //
 //  Returns the size of a block at LEVEL.
 //
-size_t LevelToSize(NbHeap::level_t level)
+static size_t LevelToSize(NbHeap::level_t level)
 {
    return size_t(1) << Log2Size(level);
 }
@@ -170,7 +170,7 @@ size_t LevelToSize(NbHeap::level_t level)
 //
 //  Returns the level associated with a block of SIZE.
 //
-NbHeap::level_t SizeToLevel(size_t size)
+static NbHeap::level_t SizeToLevel(size_t size)
 {
    return LastLevel - (log2(size, true) - MinBlockSizeLog2);
 }

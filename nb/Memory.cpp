@@ -193,7 +193,7 @@ TemporaryHeap::~TemporaryHeap()
 //
 //  Returns the heap for TYPE.  If it doesn't exist, it is created.
 //
-Heap* EnsureHeap(MemoryType type)
+static Heap* EnsureHeap(MemoryType type)
 {
    switch(type)
    {

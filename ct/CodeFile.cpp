@@ -58,7 +58,8 @@ using std::string;
 
 namespace CodeTools
 {
-void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
+static void AddForwardDependencies
+   (const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 {
    Debug::ft("CodeTools.AddForwardDependencies");
 
@@ -95,7 +96,7 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 
 //------------------------------------------------------------------------------
 
-void DisplayFileNames
+static void DisplayFileNames
    (ostream* stream, const LibItemSet& files, fixed_string title)
 {
    //  Display, in STREAM, the names of files in FILES.  TITLE provides an
@@ -114,7 +115,7 @@ void DisplayFileNames
 
 //------------------------------------------------------------------------------
 
-void DisplaySymbols
+static void DisplaySymbols
    (ostream* stream, const CxxNamedSet& items, fixed_string title)
 {
    //  Display, in STREAM, the names in ITEMS, including their scope.
@@ -140,7 +141,7 @@ void DisplaySymbols
 
 //------------------------------------------------------------------------------
 
-void DisplaySymbolsAndFiles
+static void DisplaySymbolsAndFiles
    (ostream* stream, const CxxNamedSet& set, const string& title)
 {
    //  Display, in STREAM, the symbols in SET and where they are defined.
@@ -176,7 +177,8 @@ void DisplaySymbolsAndFiles
 
 //------------------------------------------------------------------------------
 
-void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
+static void FindForwardCandidates
+   (const CxxUsageSets& symbols, CxxNamedSet& addForws)
 {
    Debug::ft("CodeTools.FindForwardCandidates");
 
@@ -200,7 +202,7 @@ void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
 
 //------------------------------------------------------------------------------
 
-void GetTransitiveBases(const CxxNamedSet& bases, LibItemSet& tBaseSet)
+static void GetTransitiveBases(const CxxNamedSet& bases, LibItemSet& tBaseSet)
 {
    Debug::ft("CodeTools.GetTransitiveBases");
 
@@ -217,7 +219,7 @@ void GetTransitiveBases(const CxxNamedSet& bases, LibItemSet& tBaseSet)
 
 //------------------------------------------------------------------------------
 
-void RemoveAliasedClasses(CxxNamedSet& inclSet)
+static void RemoveAliasedClasses(CxxNamedSet& inclSet)
 {
    Debug::ft("CodeTools.RemoveAliasedClasses");
 
@@ -287,7 +289,7 @@ void RemoveAliasedClasses(CxxNamedSet& inclSet)
 
 //------------------------------------------------------------------------------
 
-void RemoveIncludedBaseItems(CxxNamedSet& inclSet)
+static void RemoveIncludedBaseItems(CxxNamedSet& inclSet)
 {
    Debug::ft("CodeTools.RemoveIncludedBaseItems");
 
@@ -333,7 +335,8 @@ void RemoveIncludedBaseItems(CxxNamedSet& inclSet)
 
 //------------------------------------------------------------------------------
 
-void RemoveIndirectBaseItems(const CxxNamedSet& bases, CxxNamedSet& inclSet)
+static void RemoveIndirectBaseItems
+   (const CxxNamedSet& bases, CxxNamedSet& inclSet)
 {
    Debug::ft("CodeTools.RemoveIndirectBaseItems");
 

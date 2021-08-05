@@ -821,7 +821,7 @@ const SymbolView DeclaredLocally
 //  argument.  Ideally this would be cleaned up, but the effort does not seem
 //  worthwhile.
 //
-void EraseTemplateArgs
+static void EraseTemplateArgs
    (CxxNamedSet& set, const TypeName* type, const stringVector& names)
 {
    for(auto i = set.cbegin(); i != set.cend(); NO_OP)
@@ -853,7 +853,7 @@ void EraseTemplateArgs
 //
 //  LHS = LHS U RHS.
 //
-void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
+static void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
 {
    for(auto i = rhs.cbegin(); i != rhs.cend(); ++i)
    {

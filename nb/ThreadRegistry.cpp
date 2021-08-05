@@ -45,7 +45,7 @@ using std::string;
 
 namespace NodeBase
 {
-bool IsSortedByThreadId(const Thread* thr1, const Thread* thr2)
+static bool IsSortedByThreadId(const Thread* thr1, const Thread* thr2)
 {
    return (thr1->Tid() < thr2->Tid());
 }

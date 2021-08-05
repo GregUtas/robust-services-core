@@ -103,7 +103,7 @@ static std::map< SysThreadId, std::atomic_flag > FtLocks_;
 
 //  Returns the Debug::ft lock for the running thread.
 //
-std::atomic_flag& AccessFtLock()
+static std::atomic_flag& AccessFtLock()
 {
    Debug::noft();
 

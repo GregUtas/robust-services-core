@@ -66,7 +66,7 @@ fixed_string AppendToExePath_ = "input/element.config.txt";
 //  Called by LoadNextTuple to flag invalid entries in ConfigFileName.
 //  ID identifies the problem, and INPUT is the invalid entry.
 //
-void BadLine(LogId id, const string& input)
+static void BadLine(LogId id, const string& input)
 {
    Debug::ft("NodeBase.BadLine");
 

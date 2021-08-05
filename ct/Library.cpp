@@ -70,7 +70,7 @@ fixed_string Library::SubsDir = "subs";
 
 //------------------------------------------------------------------------------
 
-CxxNamed* FindItem(CliThread& cli, const string& name)
+static CxxNamed* FindItem(CliThread& cli, const string& name)
 {
    Debug::ft("CodeTools.FindItem");
 

@@ -725,7 +725,7 @@ void CodeWarning::Initialize()
       "Function returns non-const reference or pointer to member data")));
    Attrs_.insert(WarningPair(FunctionCouldBeMember,
       WarningAttrs(F, false,
-      "Function could be a member of a class that is an indirect argument")));
+      "Static member function has indirect argument for its class")));
    Attrs_.insert(WarningPair(ExplicitConstructor,
       WarningAttrs(T, false,
       "Constructor does not require explicit tag")));

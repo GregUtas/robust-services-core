@@ -3403,29 +3403,6 @@ void Function::CheckForVirtualDefault() const
 
 //------------------------------------------------------------------------------
 
-void Function::CheckFree() const
-{
-   Debug::ft("Function.CheckFree");
-
-   //  This function can be free.  But if it has a possible "this" argument
-   //  for another class, it should probably be a member of that class.
-   //
-   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
-   {
-      auto cls = args_[i]->IsThisCandidate();
-
-      if((cls != nullptr) && (cls != GetClass()))
-      {
-         LogToArg(FunctionCouldBeMember, i);
-         return;
-      }
-   }
-
-   Log(FunctionCouldBeFree);
-}
-
-//------------------------------------------------------------------------------
-
 void Function::CheckFreeStatic() const
 {
    Debug::ft("Function.CheckFreeStatic");
@@ -3645,7 +3622,7 @@ void Function::CheckMemberUsage() const
    //  Otherwise it can be static.
    //
    if(!GetDefn()->nonpublic_ && !inline_ && !tparm_)
-      CheckFree();
+      Log(FunctionCouldBeFree);
    else
       CheckClassStatic();
 }

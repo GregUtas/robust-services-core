@@ -296,8 +296,9 @@ public:
    //
    bool CouldBeConst() const { return !nonconst_; }
 
-   //  If the argument is a non-const reference *or* pointer to a class
-   //  that is not external, returns that class, else returns nullptr.
+   //  If the argument is a non-const reference or a pointer to a class (other
+   //  than one that is external, a template, or a template instance), returns
+   //  that class, else returns nullptr.
    //
    Class* IsThisCandidate() const;
 

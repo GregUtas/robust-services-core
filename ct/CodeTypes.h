@@ -512,7 +512,7 @@ enum Warning
    CopyCtorConstructsBase,   // copy/move constructor relies on base constructor
    ValueArgumentModified,    // argument passed by value is modified
    ReturnsNonConstMember,    // returns non-const reference or pointer to member
-   FunctionCouldBeMember,    // static|free but has an indirect class argument
+   FunctionCouldBeMember,    // static but has an indirect class argument
    ExplicitConstructor,      // constructor need not be tagged explicit
    BitwiseOperatorOnBoolean, // operator | or & used on boolean
    DebugFtCanBeLiteral,      // could pass an inline string literal to Debug::ft

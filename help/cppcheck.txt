@@ -492,9 +492,9 @@ usually advisable to preserve its original value.
 Function returns non-const reference or pointer to member data
   Returning a non-const handle to member data is rarely appropriate.
 ? W121
-Function could be a member of a class that is an indirect argument
-  This function has a non-const argument that is a pointer or a reference
-to a class, so it should probably be a member of that class.
+Static member function has indirect argument for its class
+  This function has a non-const argument that is a pointer or reference
+to the class in which it is static, so perhaps it should be non-static.
 ? W122
 Constructor does not require explicit tag
   A constructor does not need to be tagged explicit unless it can be

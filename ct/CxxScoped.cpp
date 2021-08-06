@@ -214,14 +214,15 @@ Class* Argument::IsThisCandidate() const
 {
    Debug::ft("Argument.IsThisCandidate");
 
-   auto ref = Referent();
+   auto ref = spec_->Referent();
    if(ref == nullptr) return nullptr;
    if(ref->Type() != Cxx::Class) return nullptr;
    auto cls = static_cast< Class* >(ref);
    if(cls->GetFile()->IsSubsFile()) return nullptr;
+   if(cls->IsInternal()) return nullptr;
    if(IsConst()) return nullptr;
-   if(spec_->Ptrs(true) + spec_->Refs() == 1) return cls;
-   return nullptr;
+   if(spec_->Ptrs(true) + spec_->Refs() != 1) return nullptr;
+   return cls;
 }
 
 //------------------------------------------------------------------------------

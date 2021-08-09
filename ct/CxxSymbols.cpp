@@ -30,9 +30,9 @@
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
-#include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
+#include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -97,7 +97,7 @@ typedef std::pair< string, Typedef* > TypePair;
 //
 const word LAST_XREF_START_COLUMN = 122;
 
-static void DisplayReferences(ostream& stream, const CxxItemVector& refs)
+static void DisplayReferences(ostream& stream, const CxxTokenVector& refs)
 {
    if(refs.empty()) return;
 
@@ -336,7 +336,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
 
       for(auto n = namespaces.begin(); n != namespaces.end(); ++n)
       {
-         CxxItemVector refs;
+         CxxTokenVector refs;
          auto xref = (*n)->Xref();
 
          for(auto r = xref->cbegin(); r != xref->cend(); ++r)
@@ -373,7 +373,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
 
    for(auto i = items.begin(); i != items.end(); ++i)
    {
-      CxxItemVector refs;
+      CxxTokenVector refs;
       auto xref = (*i)->Xref();
 
       for(auto r = xref->cbegin(); r != xref->cend(); ++r)

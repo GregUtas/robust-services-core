@@ -109,7 +109,7 @@ public:
    //  Records ITEM as a reference to this item if INSERT is set, else
    //  removes it as a reference.
    //
-   virtual void UpdateReference(CxxNamed* item, bool insert) const;
+   virtual void UpdateReference(CxxToken* item, bool insert) const;
 
    //  Invokes Rename on the item and each entry in its Xref().
    //
@@ -214,7 +214,7 @@ public:
 
    //  Returns the item's cross-reference (the items that reference it).
    //
-   CxxNamedSet* Xref() const override { return &xref_; }
+   CxxTokenSet* Xref() const override { return &xref_; }
 protected:
    //  Protected because this class is virtual.
    //
@@ -254,7 +254,7 @@ private:
 
    //  Source code references to the item.
    //
-   mutable CxxNamedSet xref_;
+   mutable CxxTokenSet xref_;
 
    //  The access control level for the item.
    //
@@ -1574,7 +1574,7 @@ public:
 
    //  Overridden to not track references to terminals.
    //
-   void UpdateReference(CxxNamed* item, bool insert) const override { }
+   void UpdateReference(CxxToken* item, bool insert) const override { }
 
    //  Overridden to support, for example, writing to a char in a std::string
    //  or passing an int as an argument.

@@ -207,10 +207,6 @@ public:
    //
    virtual std::string XrefName(bool templates) const;
 
-   //  Returns the item's cross-reference (the items that reference it).
-   //
-   virtual CxxNamedSet* Xref() const { return nullptr; }
-
    //  Displays the item's referent in STREAM.  If FQ is set, the item's
    //  fully qualified name is displayed.
    //
@@ -294,14 +290,6 @@ private:
    virtual bool ResolveForward
       (CxxScoped* decl, size_t n) const { return false; }
 };
-
-//  For sorting items by GetFile() and GetPos().
-//
-bool IsSortedByFilePos(const CxxNamed* item1, const CxxNamed* item2);
-
-//  For sorting items by GetPos() when all are in the same file.
-//
-bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2);
 
 //------------------------------------------------------------------------------
 //

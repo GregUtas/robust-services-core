@@ -325,7 +325,7 @@ private:
 
    //  Fixes LOG, which involves modifying ITEM.
    //
-   word FixReference(const CxxNamed* item, const CodeWarning& log);
+   word FixReference(const CxxToken* item, const CodeWarning& log);
 
    //  Returns the line that follows the left brace at the beginning of a
    //  namespace definition for SPACE.
@@ -349,7 +349,7 @@ private:
    //  Removes static class data DECL, which is used in REFS, with static
    //  namespace data in the .cpp that implements other members of the class.
    //
-   word ChangeDataToFree(Data* decl, CxxNamedVector& refs);
+   word ChangeDataToFree(Data* decl, CxxTokenVector& refs);
 
    //  ITEM has a log that requires adding a special member function.  Looks
    //  for other logs that also require this and fixes them together.
@@ -500,7 +500,7 @@ private:
    //  Moves ITEM to DEST.  PREV, if provided, directly precedes ITEM.  If ITEM
    //  precedes DEST, DEST is updated, because it moves up when ITEM is cut.
    //
-   void MoveItem(const CxxNamed* item, size_t& dest, const CxxScoped* prev);
+   void MoveItem(const CxxToken* item, size_t& dest, const CxxScoped* prev);
 
    //  Returns true if functions in the area associated with LOG have
    //  already been sorted as the result of fixing another log.
@@ -515,7 +515,7 @@ private:
    //  Returns items that immediately precede FUNC and that FUNC uses.  The
    //  items are sorted by position.
    //
-   CxxItemVector GetItemsForFuncDefn(const Function* func) const;
+   CxxTokenVector GetItemsForFuncDefn(const Function* func) const;
 
    //  Moves FUNC's definition so it appears in standard order among SORTED.
    //

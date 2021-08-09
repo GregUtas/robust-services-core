@@ -32,7 +32,7 @@
 #include <vector>
 #include "Base.h"
 #include "CodeTypes.h"
-#include "CxxNamed.h"
+#include "CxxToken.h"
 #include "LibraryItem.h"
 #include "SysTypes.h"
 

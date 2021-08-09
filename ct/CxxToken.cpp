@@ -42,6 +42,48 @@ using std::string;
 
 namespace CodeTools
 {
+bool IsSortedByFilePos(const CxxToken* item1, const CxxToken* item2)
+{
+   auto file1 = item1->GetFile();
+   auto file2 = item2->GetFile();
+
+   if(file1 != nullptr)
+   {
+      if(file2 != nullptr)
+      {
+         auto fn1 = file1->Path(false);
+         auto fn2 = file2->Path(false);
+         auto result = fn1.compare(fn2);
+         if(result < 0) return true;
+         if(result > 0) return false;
+
+         auto pos1 = item1->GetPos();
+         auto pos2 = item2->GetPos();
+         if(pos1 < pos2) return true;
+         if(pos1 > pos2) return false;
+         return (item1 < item2);
+      }
+
+      return false;
+   }
+
+   if(file2 != nullptr) return true;
+   return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByPos(const CxxToken* item1, const CxxToken* item2)
+{
+   auto pos1 = item1->GetPos();
+   auto pos2 = item2->GetPos();
+   if(pos1 < pos2) return true;
+   if(pos1 > pos2) return false;
+   return (item1 < item2);
+}
+
+//==============================================================================
+
 AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 {
    Debug::ft("AlignAs.ctor");
@@ -3236,6 +3278,11 @@ void Operation::UpdatePos
 
 void Operation::UpdateXref(bool insert)
 {
+   if(overload_ != nullptr)
+   {
+      overload_->UpdateReference(this, insert);
+   }
+
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->UpdateXref(insert);

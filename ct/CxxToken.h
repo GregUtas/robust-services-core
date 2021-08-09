@@ -382,6 +382,10 @@ public:
    //
    virtual std::string Trace() const { return NodeBase::EMPTY_STR; }
 
+   //  Returns the item's cross-reference (the items that reference it).
+   //
+   virtual CxxTokenSet* Xref() const { return nullptr; }
+
    //  Returns true if the item can be displayed in-line.
    //
    virtual bool InLine() const { return true; }
@@ -492,6 +496,14 @@ private:
    //
    mutable CxxLocation loc_;
 };
+
+//  For sorting items by GetFile() and GetPos().
+//
+bool IsSortedByFilePos(const CxxToken* item1, const CxxToken* item2);
+
+//  For sorting items by GetPos() when all are in the same file.
+//
+bool IsSortedByPos(const CxxToken* item1, const CxxToken* item2);
 
 //------------------------------------------------------------------------------
 //

@@ -922,7 +922,7 @@ static void GetOverrides(Function* func, FunctionVector& funcs)
 //
 //  Adds all references to DATA to ITEMS, excluding DATA and its definition.
 //
-static void GetReferences(const Data* data, CxxNamedVector& items)
+static void GetReferences(const Data* data, CxxTokenVector& items)
 {
    Debug::ft("CodeTools.GetReferences");
 
@@ -954,7 +954,7 @@ static void Inform(string text)
 //  it must have an implementation (as opposed to being deleted or defaulted).
 //  To be non-trivial, its code must span at least three lines.
 //
-static bool IsNonTrivialInline(const CxxNamed* item, const string& code)
+static bool IsNonTrivialInline(const CxxToken* item, const string& code)
 {
    Debug::ft("CodeTools.IsNonTrivialInline");
 
@@ -980,7 +980,7 @@ static bool IsNonTrivialInline(const CxxNamed* item, const string& code)
 //
 //  Returns true if an item between BEGIN and END references ITEM.
 //
-static bool ItemIsUsedBetween(const CxxNamed* item, size_t begin, size_t end)
+static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
 {
    Debug::ft("CodeTools.ItemIsUsedBetween");
 
@@ -1467,7 +1467,7 @@ word Editor::ChangeDataToFree(const CodeWarning& log)
    //
    auto decl = static_cast< Data* >(log.item_);
    auto defn = decl->GetMate();
-   CxxNamedVector refs;
+   CxxTokenVector refs;
    GetReferences(decl, refs);
 
    auto cppItem = (defn != nullptr ? defn : refs.front());
@@ -1477,7 +1477,7 @@ word Editor::ChangeDataToFree(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeDataToFree(Data* decl, CxxNamedVector& refs)
+word Editor::ChangeDataToFree(Data* decl, CxxTokenVector& refs)
 {
    Debug::ft("Editor.ChangeDataToFree(data)");
 
@@ -1675,7 +1675,7 @@ word Editor::ChangeDataToFree(Data* decl, CxxNamedVector& refs)
    {
       if((*r)->Type() == Cxx::TypeName)
       {
-         auto tname = static_cast< TypeName* >(*r);
+         auto tname = static_cast< const TypeName* >(*r);
          auto qname = tname->GetQualName();
          while(qname->Size() > 1) EraseItem(qname->First());
 
@@ -3382,7 +3382,7 @@ word Editor::FixLog(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-word Editor::FixReference(const CxxNamed* item, const CodeWarning& log)
+word Editor::FixReference(const CxxToken* item, const CodeWarning& log)
 {
    Debug::ft("Editor.FixReference");
 
@@ -3409,7 +3409,7 @@ word Editor::FixReferences(const CodeWarning& log)
    //  Fix references to the data, followed by the data itself.
    //
    auto data = static_cast< const Data* >(log.item_);
-   CxxNamedVector refs;
+   CxxTokenVector refs;
    GetReferences(data, refs);
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
@@ -3734,11 +3734,11 @@ bool Editor::FunctionsWereSorted(const CodeWarning& log) const
 
 //------------------------------------------------------------------------------
 
-CxxItemVector Editor::GetItemsForFuncDefn(const Function* func) const
+CxxTokenVector Editor::GetItemsForFuncDefn(const Function* func) const
 {
    Debug::ft("Editor.GetItemsForFuncDefn");
 
-   CxxItemVector items;
+   CxxTokenVector items;
    auto& fileItems = file_->Items();
 
    //  Return the items above FUNC that are referenced by FUNC.
@@ -4979,7 +4979,7 @@ void Editor::MoveFuncDefn(const FunctionVector& sorted, const Function* func)
 
 //------------------------------------------------------------------------------
 
-void Editor::MoveItem(const CxxNamed* item, size_t& dest, const CxxScoped* prev)
+void Editor::MoveItem(const CxxToken* item, size_t& dest, const CxxScoped* prev)
 {
    Debug::ft("Editor.MoveItem");
 

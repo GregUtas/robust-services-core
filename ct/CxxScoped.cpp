@@ -1102,7 +1102,7 @@ bool CxxScoped::SkipAccessControlCheck() const
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::UpdateReference(CxxNamed* item, bool insert) const
+void CxxScoped::UpdateReference(CxxToken* item, bool insert) const
 {
    auto file = item->GetFile();
    if(file == nullptr) return;

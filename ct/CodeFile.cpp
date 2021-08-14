@@ -1513,8 +1513,9 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
 {
    Debug::ft("CodeFile.GetUsageInfo");
 
-   //  Ask each of the code items in this file to provide information
-   //  about the symbols that it uses.
+   //  Ask each of the code items in this file to provide information about
+   //  the symbols that it uses.  Skip internally generated items, which are
+   //  usually part of template instances.
    //
    for(auto m = macros_.cbegin(); m != macros_.cend(); ++m)
    {
@@ -1526,7 +1527,7 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
       //  Bypass a class template instantiation, which is registered
       //  against the file that caused its instantiation.
       //
-      if((*c)->IsInTemplateInstance()) continue;
+      if((*c)->IsInternal()) continue;
       (*c)->GetUsages(*this, symbols);
    }
 
@@ -1540,12 +1541,13 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
       //  Bypass a function template instantiation, which is registered
       //  against the file that caused its instantiation.
       //
-      if((*f)->IsInTemplateInstance()) continue;
+      if((*f)->IsInternal()) continue;
       (*f)->GetUsages(*this, symbols);
    }
 
    for(auto d = data_.cbegin(); d != data_.cend(); ++d)
    {
+      if((*d)->IsInternal()) continue;
       (*d)->GetUsages(*this, symbols);
    }
 

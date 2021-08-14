@@ -2484,6 +2484,22 @@ string QualName::QualifiedName(bool scopes, bool templates) const
 
 //------------------------------------------------------------------------------
 
+string QualName::QualifyingScope() const
+{
+   Debug::ft("QualName.QualifyingScope");
+
+   string qscope;
+
+   for(auto n = First(); n->Next() != nullptr; n = n->Next())
+   {
+      qscope += n->QualifiedName(true, true);
+   }
+
+   return qscope;
+}
+
+//------------------------------------------------------------------------------
+
 CxxScoped* QualName::Referent() const
 {
    Debug::ft("QualName.Referent");
@@ -3429,7 +3445,7 @@ void TypeName::UpdateXref(bool insert)
       //  Record this unresolved item in case it is one that a template
       //  needs to have resolved by a template instance.
       //
-      if(!IsInternal()) Context::PushXrefItem(this);
+      if(!IsInternal() && insert) Context::PushXrefItem(this);
    }
 
    if(args_ != nullptr)

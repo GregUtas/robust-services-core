@@ -601,6 +601,16 @@ void CxxToken::Log(Warning warning,
 
 //------------------------------------------------------------------------------
 
+const string& CxxToken::Name() const
+{
+   Debug::ft("CxxToken.Name");
+
+   static string empty_str;
+   return empty_str;
+}
+
+//------------------------------------------------------------------------------
+
 CxxToken* CxxToken::PosToItem(size_t pos) const
 {
    return ((GetPos() == pos) && !IsInternal() ?
@@ -1372,6 +1382,20 @@ Operation::Operation(Cxx::Operator op) :
    overload_(nullptr)
 {
    Debug::ft("Operation.ctor");
+
+   CxxStats::Incr(CxxStats::OPERATION);
+}
+
+//------------------------------------------------------------------------------
+
+Operation::~Operation()
+{
+   Debug::ft("Operation.dtor");
+
+   if(overload_ != nullptr)
+   {
+      overload_->UpdateReference(this, false);
+   }
 
    CxxStats::Incr(CxxStats::OPERATION);
 }

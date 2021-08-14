@@ -865,7 +865,34 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
       //  This is the first instantiation, so get the class template's code.
       //
       std::ostringstream stream;
-      Display(stream, EMPTY_STR, Flags(NS_Mask | Code_Mask | NoTP_Mask));
+      Flags flags(NS_Mask | Code_Mask | NoTP_Mask);
+
+      Display(stream, EMPTY_STR, flags);
+
+      //  Include any static member initializations.  Remove their template
+      //  parameters: the template name that precedes them will be replaced
+      //  with one that includes the template arguments.
+      //
+      auto datas = Datas();
+      for(auto d = datas->cbegin(); d != datas->cend(); ++d)
+      {
+         if((*d)->IsStatic())
+         {
+            auto mate = (*d)->GetMate();
+            if(mate != nullptr)
+            {
+               std::ostringstream initStream;
+               mate->Display(initStream, EMPTY_STR, flags);
+               auto initCode = initStream.str();
+               auto left = initCode.find('<');
+               auto eqpos = initCode.find('=');
+               auto right = initCode.rfind('>', eqpos);
+               initCode.erase(left, right - left + 1);
+               stream << initCode;
+            }
+         }
+      }
+
       code_.reset(new string(stream.str()));
    }
 
@@ -2402,8 +2429,8 @@ bool Class::WasCreated(bool base) const
 
 string Class::XrefName(bool templates) const
 {
-   auto name = CxxScoped::XrefName(templates);
    auto spec = GetQualName()->GetTemplateArgs();
+   auto name = CxxScoped::XrefName(spec == nullptr);
 
    if(spec != nullptr)
    {

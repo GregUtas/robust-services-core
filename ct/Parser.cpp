@@ -4362,6 +4362,15 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
       if(!lexer_.NextCharIs('}')) break;
       if(!lexer_.NextCharIs(';')) break;
       GetInlines(inst);
+
+      //  Parse any static member initializations.
+      //
+      if(!lexer_.Eof())
+      {
+         auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+         Context::PushScope(gns, false);
+         GetFileDecls(gns);
+      }
    }
    while(false);
 

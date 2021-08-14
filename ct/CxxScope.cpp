@@ -45,6 +45,29 @@ using std::string;
 
 namespace CodeTools
 {
+//  Returns true after erasing template arguments at the end of PREFIX.
+//  Returns false if no such template arguments were found.
+//
+static bool EraseTemplateArguments(string& prefix)
+{
+   Debug::ft("CodeTools.EraseTemplateArguments");
+
+   if(prefix.back() == '>')
+   {
+      auto pos = prefix.find('<');
+
+      if(pos != string::npos)
+      {
+         prefix.erase(pos);
+         return true;
+      }
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 bool FuncDefnsAreSorted(const Function* func1, const Function* func2)
 {
    if(func1->GetScope() != func2->GetScope()) return true;
@@ -509,7 +532,7 @@ ClassData::ClassData(string& name, TypeSpecPtr& type) : Data(type),
 
    std::swap(name_, name);
    Singleton< CxxSymbols >::Instance()->InsertData(this);
-   OpenScope(name_);
+   OpenScope(nullptr);
    CxxStats::Incr(CxxStats::CLASS_DATA);
 }
 
@@ -1050,31 +1073,36 @@ TemplateParm* CxxScope::NameToTemplateParm(const string& name) const
 
 fn_name CxxScope_OpenScope = "CxxScope.OpenScope";
 
-void CxxScope::OpenScope(string& name)
+void CxxScope::OpenScope(const QualName* name)
 {
    Debug::ft(CxxScope_OpenScope);
 
    //  This is invoked when parsing functions and data, whether declarations
    //  or definitions.  If NAME is qualified, this is a definition, and the
-   //  qualifier (a namespace or class) should be pushed as a scope first.
-   //  After that, the item itself is pushed as a scope.  Do not apply this to
-   //  template instances, which may contain qualified names but whose members
-   //  do not have separate declarations and definitions.
+   //  qualifying scope (a namespace or class) should be pushed first.  After
+   //  that, the item itself is pushed as a scope.
    //
    auto scope = Context::Scope();
 
-   if(!scope->IsInTemplateInstance())
+   if(name != nullptr)
    {
-      auto pos = name.rfind(SCOPE_STR, name.find('<'));
+      auto prefix = name->QualifyingScope();
 
-      if(pos != string::npos)
+      if(!prefix.empty())
       {
-         //  POS is the last scope resolution operator before any template.
-         //  Whatever precedes it qualifies NAME and should be a known scope
-         //  within SCOPE.
-         //
-         name.erase(pos);
-         scope = Singleton< CxxSymbols >::Instance()->FindScope(scope, name);
+         auto syms = Singleton< CxxSymbols >::Instance();
+         scope = syms->FindScope(scope, prefix);
+
+         if((scope == nullptr) && EraseTemplateArguments(prefix))
+         {
+            //  When compiling the definition of a static data member of a
+            //  class template, we need to erase the template parameter.
+            //  For example, the qualifying scope for Singleton.Instance_
+            //  is initially NodeBase::Singleton<T>, which is not a valid
+            //  scope, so we erase the <T> and try again.
+            //
+            scope = syms->FindScope(scope, prefix);
+         }
 
          if(scope != nullptr)
          {
@@ -1083,7 +1111,7 @@ void CxxScope::OpenScope(string& name)
          }
          else
          {
-            auto expl = "Could not find scope " + name;
+            auto expl = "Could not find scope " + prefix;
             Context::SwLog(CxxScope_OpenScope, expl, 0);
             scope = Context::Scope();
          }
@@ -1290,13 +1318,16 @@ void Data::DisplayAlignment(ostream& stream, const Flags& options) const
 
 void Data::DisplayAssignment(ostream& stream, const Flags& options) const
 {
-   //  Always display an assignment in namespace view.  In file view,
-   //  only display it where it occurs.
+   //  Always display an assignment in namespace view.  In file view, or
+   //  when generating compilable code, only display it where it occurs.
    //
+   auto defn = GetDefn();
+   if(options.test(DispCode) && (defn != this)) return;
+
    auto ns = options.test(DispNS);
    if(!ns && (init_ == nullptr)) return;
 
-   auto init = GetDefn()->init_.get();
+   auto init = defn->init_.get();
    if(init == nullptr) return;
 
    //  The source code only contains the assignment operator and the
@@ -1662,7 +1693,7 @@ void Data::SetAssignment(ExprPtr& expr, size_t eqpos)
 
    QualNamePtr name;
    GetInitName(name);
-   name->CopyContext(this, false);
+   name->CopyContext(this, IsInternal());
    TokenPtr arg1(name.release());
    init_->AddItem(arg1);
    TokenPtr op(new Operation(Cxx::ASSIGN));
@@ -2445,9 +2476,7 @@ Function::Function(QualNamePtr& name) :
    Debug::ft("Function.ctor");
 
    Singleton< CxxSymbols >::Instance()->InsertFunc(this);
-
-   auto qname = name_->QualifiedName(true, false);
-   OpenScope(qname);
+   OpenScope(name_.get());
    CxxStats::Incr(CxxStats::FUNCTION);
 }
 
@@ -2491,8 +2520,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    spec_->SetUserType(TS_Function);
    if(type_) return;
 
-   auto qname = name_->QualifiedName(true, false);
-   OpenScope(qname);
+   OpenScope(name_.get());
    CxxStats::Incr(CxxStats::FUNCTION);
 }
 
@@ -2505,7 +2533,16 @@ Function::~Function()
    CxxStats::Decr(CxxStats::FUNCTION);
    if(type_) return;
 
-   if(base_ != nullptr) base_->EraseOverride(this);
+   if(base_ != nullptr)
+   {
+      base_->EraseOverride(this);
+
+      if(FuncType() == FuncStandard)
+      {
+         base_->UpdateReference(this, false);
+      }
+   }
+
    GetFile()->EraseFunc(this);
    Singleton< CxxSymbols >::Extant()->EraseFunc(this);
 }
@@ -6021,8 +6058,7 @@ SpaceData::SpaceData(QualNamePtr& name, TypeSpecPtr& type) : Data(type),
 {
    Debug::ft("SpaceData.ctor");
 
-   auto qname = name_->QualifiedName(true, false);
-   OpenScope(qname);
+   OpenScope(name_.get());
    CxxStats::Incr(CxxStats::FILE_DATA);
 }
 

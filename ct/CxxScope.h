@@ -95,10 +95,10 @@ protected:
    CxxScope();
 
    //  Updates the scope when the parse recognizes a data or function item.
-   //  NAME is the item's name as it was parsed, which may or may not be a
-   //  qualified name.
+   //  QNAME is the item's qualified name as it was parsed, or nullptr for
+   //  class member data (which has no qualified name).
    //
-   void OpenScope(std::string& name);
+   void OpenScope(const QualName* name);
 
    //  Replaces this class's or function's template parameters, as they
    //  appear in CODE, with the template arguments in ARGS, starting at

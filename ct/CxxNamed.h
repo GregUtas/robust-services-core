@@ -661,6 +661,11 @@ public:
    //
    void SetReferentN(size_t n, CxxScoped* item, const SymbolView* view) const;
 
+   //  Returns the scopes, with any template arguments, that qualify the name.
+   //  Returns an empty string if the name is unqualified.
+   //
+   std::string QualifyingScope() const;
+
    //  Returns the last name's referent.  This is used in conjunction with
    //  SetReferent.  A class that contains a QualName instance cannot use the
    //  Referent function (overridden below) to access the referent because,

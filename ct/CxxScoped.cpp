@@ -1109,6 +1109,12 @@ void CxxScoped::UpdateReference(CxxToken* item, bool insert) const
    if(file->IsSubsFile()) return;
    if(insert && (item->GetPos() == string::npos)) return;
 
+   //  If this item is not internal (i.e. appears in original source code),
+   //  don't track references from an internal item (e.g. one that appears
+   //  in a template instance).
+   //
+   if(item->IsInternal() && !this->IsInternal()) return;
+
    if(Context::GetXrefUpdater() == InstanceFunction)
    {
       //  A function in a template instance only adds, to the cross-reference,
@@ -1117,7 +1123,10 @@ void CxxScoped::UpdateReference(CxxToken* item, bool insert) const
       //  often invoke an override in a derived class.  This should be aliased
       //  back to the base class declaration of the function.
       //
-      auto prev = Context::FindXrefItem(item->Name());
+      auto name = item->Name();
+      if(name.empty()) return;
+
+      auto prev = Context::FindXrefItem(name);
       if(prev == nullptr) return;
 
       auto ref = item->Referent();
@@ -2705,7 +2714,6 @@ MemberInit::~MemberInit()
 {
    Debug::ft("MemberInit.dtor");
 
-   ref_->UpdateReference(this, false);
    CxxStats::Decr(CxxStats::MEMBER_INIT);
 }
 
@@ -2722,6 +2730,7 @@ void MemberInit::Delete()
 {
    Debug::ft("MemberInit.Delete");
 
+   if(ref_ != nullptr) ref_->UpdateReference(this, false);
    auto func = static_cast< Function* >(GetScope());
    if(func != nullptr) func->EraseMemberInit(this);
    delete this;

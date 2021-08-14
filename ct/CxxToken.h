@@ -450,6 +450,11 @@ public:
    //  Subclasses that declare items must override this.
    //
    void GetDecls(CxxNamedSet& items) override { }
+
+   //  Overridden to return an empty string because an item derived directly
+   //  from this class has no name.
+   //
+   const std::string& Name() const override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -716,7 +721,15 @@ public:
 
    //  Not subclassed.
    //
-   ~Operation() { CxxStats::Decr(CxxStats::OPERATION); }
+   ~Operation();
+
+   //  Deleted to prohibit copying.
+   //
+   Operation(const Operation& that) = delete;
+
+   //  Deleted to prohibit copy assignment.
+   //
+   Operation& operator=(const Operation& that) = delete;
 
    //  Adds ARG as one of the operator's arguments.  PREFIXED is set if the
    //  argument appears before the operator.

@@ -45,12 +45,12 @@ namespace std
       unsigned long to_ulong() const;
    };
 
-   template< size_t T > bitset< T > operator&
-      (const bitset< T >& lhs, const bitset< T >& rhs);
-   template< size_t T > bitset< T > operator^
-      (const bitset< T >& lhs, const bitset< T >& rhs);
-   template< size_t T > bitset< T > operator|
-      (const bitset< T >& lhs, const bitset< T >& rhs);
+   template< size_t N > bitset< N > operator&
+      (const bitset< N >& lhs, const bitset< N >& rhs);
+   template< size_t N > bitset< N > operator^
+      (const bitset< N >& lhs, const bitset< N >& rhs);
+   template< size_t N > bitset< N > operator|
+      (const bitset< N >& lhs, const bitset< N >& rhs);
 }
 
 #endif

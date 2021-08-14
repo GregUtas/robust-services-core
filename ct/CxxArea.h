@@ -644,6 +644,11 @@ public:
    //
    CxxToken* PosToItem(size_t pos) const override;
 
+   //  Overridden to return the class's qualified name.
+   //
+   std::string QualifiedName(bool scopes, bool templates) const
+      override { return name_->QualifiedName(scopes, templates); }
+
    //  Overridden to record usage of the class.
    //
    void RecordUsage() override { AddUsage(); }

@@ -150,7 +150,7 @@ void CxxNamed::AddUsage()
    Debug::ft("CxxNamed.AddUsage");
 
    if(!Context::ParsingSourceCode()) return;
-   if(IsInTemplateInstance()) return;
+   if(IsInternal()) return;
    auto file = Context::File();
    if(file == nullptr) return;
    file->AddUsage(this);

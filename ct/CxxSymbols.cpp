@@ -107,7 +107,7 @@ static void DisplayReferences(ostream& stream, const CxxTokenVector& refs)
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {
-      if((*r)->IsInTemplateInstance()) continue;
+      if((*r)->IsInternal()) continue;
 
       auto file = (*r)->GetFile();
       if(file == nullptr) continue;

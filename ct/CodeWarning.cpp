@@ -1044,7 +1044,7 @@ bool CodeWarning::Suppress() const
       auto impl = func->GetImpl();
       if(impl == nullptr) return true;
       if(impl->FirstStatement() == nullptr) return true;
-      if(func->IsInTemplateInstance()) return true;
+      if(func->IsInternal()) return true;
       if(func->IsPureVirtual()) return true;
 
       auto file = func->GetImplFile();

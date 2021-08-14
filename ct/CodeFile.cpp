@@ -1479,7 +1479,7 @@ FunctionVector CodeFile::GetFuncDefnsToSort() const
    //
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
-      if((*f)->IsInTemplateInstance()) continue;
+      if((*f)->IsInternal()) continue;
       if((*f)->GetDefnFile() != this) continue;
       if((*f)->IsDecl()) continue;
       defns.push_back((*f)->GetDefn());

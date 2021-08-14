@@ -389,21 +389,21 @@ void Class::AddFiles(LibItemSet& imSet) const
 
    for(auto c = classes->cbegin(); c != classes->cend(); ++c)
    {
-      if(!(*c)->IsInTemplateInstance()) (*c)->AddFiles(imSet);
+      if(!(*c)->IsInternal()) (*c)->AddFiles(imSet);
    }
 
    auto funcs = Funcs();
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      if(!(*f)->IsInTemplateInstance()) (*f)->AddFiles(imSet);
+      if(!(*f)->IsInternal()) (*f)->AddFiles(imSet);
    }
 
    auto data = Datas();
 
    for(auto d = data->cbegin(); d != data->cend(); ++d)
    {
-      if(!(*d)->IsInTemplateInstance()) (*d)->AddFiles(imSet);
+      if(!(*d)->IsInternal()) (*d)->AddFiles(imSet);
    }
 }
 
@@ -717,7 +717,7 @@ void Class::CheckOverrides() const
    //  o Classes not derived from Base (Display).
    //  o Templates and classes not derived from Object (Patch).
    //
-   if(IsInTemplateInstance()) return;
+   if(IsInternal()) return;
    if(!DerivesFrom("Base")) return;
    auto patch = !IsTemplate() && DerivesFrom("Object");
 
@@ -1822,7 +1822,7 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
       //  template instantiations, every one of which is registered
       //  against the function template.
       //
-      if(!inst && (*f)->IsInTemplateInstance()) continue;
+      if(!inst && (*f)->IsInternal()) continue;
 
       (*f)->GetUsages(file, symbols);
    }
@@ -3658,7 +3658,7 @@ void CxxArea::UpdateXref(bool insert)
       //  template instantiations, every one of which is registered
       //  against the function template.
       //
-      if(!inst && (*f)->IsInTemplateInstance()) continue;
+      if(!inst && (*f)->IsInternal()) continue;
 
       (*f)->UpdateXref(insert);
    }

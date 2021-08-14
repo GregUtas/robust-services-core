@@ -1095,7 +1095,7 @@ bool CxxScoped::SkipAccessControlCheck() const
    Debug::ft("CxxScoped.SkipAccessControlCheck");
 
    if(!IsClassMember()) return true;
-   if(IsInTemplateInstance()) return true;
+   if(IsInternal()) return true;
    if(IsUnused()) return true;
    return false;
 }

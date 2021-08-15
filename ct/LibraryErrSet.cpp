@@ -93,6 +93,8 @@ void LibraryErrSet::Display(ostream& stream,
 
 word LibraryErrSet::Error(string& expl) const
 {
+   Debug::ft("LibraryErrSet.Error");
+
    std::ostringstream stream;
 
    if(err_ == InterpreterError)

@@ -186,6 +186,8 @@ bool CodeCoverage::Commit(const Functions& funcs)
 
 bool CodeCoverage::Defined(const string& func) const
 {
+   Debug::ft("CodeCoverage.Defined");
+
    return (currFuncs_.find(Mangle(func)) != currFuncs_.cend());
 }
 

@@ -1406,9 +1406,8 @@ public:
    static ptrdiff_t LinkDiff();
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
-
-   const id_t index_;
 private:
+   const id_t index_;
    Q1Link link_;
 };
 
@@ -1893,9 +1892,8 @@ public:
    static ptrdiff_t LinkDiff();
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
-
-   const id_t index_;
 private:
+   const id_t index_;
    Q2Link link_;
 };
 

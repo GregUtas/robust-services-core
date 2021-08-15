@@ -124,7 +124,8 @@ See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and
 - [ ] inline namespaces
 
 See `Parser.GetNamespace`. Supporting any of these would also affect symbol
-resolution.
+resolution. An unnamed namespace can be removed by defining data and functions
+that appear within it as `static`.
 
 ### Classes
 - [ ] multiple inheritance (`Parser.GetBaseDecl`)

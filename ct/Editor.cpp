@@ -6332,6 +6332,7 @@ word Editor::UpdateItemDeclLoc(const Class* cls, ItemDeclAttrs& attrs) const
             //  This isn't the desired control.  Insert the item before it.
             //
             attrs.pos_ = pred;
+            if(attrs.blank_ == BlankBelow) attrs.blank_ = BlankAbove;
             return UpdateItemControls(cls, attrs);
          }
 

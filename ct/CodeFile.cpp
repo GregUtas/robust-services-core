@@ -1181,7 +1181,7 @@ void CodeFile::EraseInternals(CxxNamedSet& set) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::EraseItem(const CxxNamed* item)
+void CodeFile::EraseItem(const CxxToken* item)
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
@@ -1801,7 +1801,7 @@ void CodeFile::InsertInclude(IncludePtr& incl, size_t pos)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::InsertItem(CxxNamed* item)
+void CodeFile::InsertItem(CxxToken* item)
 {
    //  Optimize for initial compilation, when items are always added at the end.
    //

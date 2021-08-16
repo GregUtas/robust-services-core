@@ -2135,7 +2135,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    //  Wait to parse a class's inlines until the rest of the class has
    //  been parsed.
    //
-   if(func->AtFileScope() || (source_ == IsFuncInst))
+   if(func->IsAtFileScope() || (source_ == IsFuncInst))
    {
       lexer_.Reposition(pos);
       if(!GetFuncImpl(func.get())) return Backup(start, func, 221);

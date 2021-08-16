@@ -64,6 +64,10 @@ public:
    virtual bool NameRefersToItem(const std::string& name,
       const CxxScope* scope, CodeFile* file, SymbolView& view) const;
 
+   //  Returns true if the item was declared at file scope.
+   //
+   bool IsAtFileScope() const;
+
    //  Returns true if the item is declared in a class rather than a struct
    //  or union.  Returns false if the item is a class itself, even an inner
    //  class.
@@ -1467,10 +1471,6 @@ public:
    //
    void AddParm(TemplateParmPtr& parm);
 
-   //  Invokes EnterScope on each parameter.
-   //
-   void EnterScope() const;
-
    //  Returns the template's parameters.
    //
    const TemplateParmPtrVector* Parms() const { return &parms_; }
@@ -1479,6 +1479,7 @@ public:
    //
    void Check() const override;
    void EnterBlock() override;
+   bool EnterScope() override;
    void ExitBlock() const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    void UpdateXref(bool insert) override;

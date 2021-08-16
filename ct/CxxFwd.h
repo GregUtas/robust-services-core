@@ -173,7 +173,6 @@ typedef std::vector< UsingPtr > UsingPtrVector;
 
 typedef std::vector< Asm* > AsmVector;
 typedef std::vector< Class* > ClassVector;
-typedef std::vector< const CxxNamed* > CxxNamedVector;
 typedef std::vector< CxxScoped* > CxxScopedVector;
 typedef std::vector< const CxxToken* > CxxTokenVector;
 typedef std::vector< Data* > DataVector;

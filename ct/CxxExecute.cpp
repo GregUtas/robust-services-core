@@ -204,6 +204,17 @@ static std::vector<XrefFrame> XrefFrames_ = std::vector< XrefFrame >();
 
 //------------------------------------------------------------------------------
 
+bool Context::AtFileScope()
+{
+   Debug::ft("Context.AtFileScope");
+
+   auto scope = Scope();
+   if(scope == nullptr) return false;
+   return (scope->Type() == Cxx::Namespace);
+}
+
+//------------------------------------------------------------------------------
+
 void Context::ClearTracepoints()
 {
    Debug::ft("Context.ClearTracepoints");

@@ -689,7 +689,7 @@ void CxxScoped::DisplayFiles(ostream& stream) const
    auto decl = GetDeclFile();
    auto defn = GetDefnFile();
 
-   if(AtFileScope())
+   if(IsAtFileScope())
    {
       if(decl != nullptr)
       {
@@ -795,6 +795,17 @@ bool CxxScoped::GetTypeSpan(size_t& begin, size_t& end) const
 
    end = lexer.FindFirstOf(";", begin);
    return (end != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxScoped::IsAtFileScope() const
+{
+   Debug::ft("CxxScoped.IsAtFileScope");
+
+   auto scope = GetScope();
+   if(scope == nullptr) return false;
+   return (scope->Type() == Cxx::Namespace);
 }
 
 //------------------------------------------------------------------------------
@@ -1338,7 +1349,7 @@ bool Enum::EnterScope()
    Debug::ft("Enum.EnterScope");
 
    Context::SetPos(GetLoc());
-   if(AtFileScope()) GetFile()->InsertEnum(this);
+   if(IsAtFileScope()) GetFile()->InsertEnum(this);
    EnterBlock();
    return true;
 }
@@ -1919,7 +1930,7 @@ bool Forward::EnterScope()
    Debug::ft("Forward.EnterScope");
 
    Context::SetPos(GetLoc());
-   if(AtFileScope()) GetFile()->InsertForw(this);
+   if(IsAtFileScope()) GetFile()->InsertForw(this);
    if(parms_ != nullptr) parms_->EnterScope();
    return true;
 }
@@ -3062,7 +3073,7 @@ void TemplateParms::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-void TemplateParms::EnterScope() const
+bool TemplateParms::EnterScope()
 {
    Debug::ft("TemplateParms.EnterScope");
 
@@ -3076,6 +3087,7 @@ void TemplateParms::EnterScope() const
    //  template parameter.  Thus this hack to erase those locals...
    //
    ExitBlock();
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3416,7 +3428,7 @@ bool Typedef::EnterScope()
    //
    Context::SetPos(GetLoc());
    Context::Enter(this);
-   if(AtFileScope()) GetFile()->InsertType(this);
+   if(IsAtFileScope()) GetFile()->InsertType(this);
 
    auto access = Context::SetAccess(GetAccess());
    spec_->EnteringScope(GetScope());
@@ -3654,7 +3666,7 @@ bool Using::EnterScope()
    Debug::ft("Using.EnterScope");
 
    Context::SetPos(GetLoc());
-   if(AtFileScope()) GetFile()->InsertUsing(this);
+   if(IsAtFileScope()) GetFile()->InsertUsing(this);
    FindReferent();
    return true;
 }

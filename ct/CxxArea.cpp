@@ -1055,7 +1055,7 @@ void Class::Display(ostream& stream,
    stream << prefix;
    DisplayBase(stream, options);
 
-   if(!fq && !code && AtFileScope())
+   if(!fq && !code && IsAtFileScope())
    {
       stream << " // ";
       DisplayFiles(stream);
@@ -1227,7 +1227,7 @@ bool Class::EnterScope()
 {
    Debug::ft("Class.EnterScope");
 
-   if(AtFileScope()) GetFile()->InsertClass(this);
+   if(IsAtFileScope()) GetFile()->InsertClass(this);
    if(parms_ != nullptr) parms_->EnterScope();
    if(alignas_ != nullptr) alignas_->EnterBlock();
    return true;
@@ -2036,7 +2036,7 @@ bool Class::IsSingletonBase() const
 
 //------------------------------------------------------------------------------
 
-CxxNamedVector Class::Items() const
+CxxTokenVector Class::Items() const
 {
    Debug::ft("Class.Items");
 
@@ -3334,11 +3334,11 @@ void CxxArea::InsertFunc(Function* func)
 
 //------------------------------------------------------------------------------
 
-CxxNamedVector CxxArea::Items() const
+CxxTokenVector CxxArea::Items() const
 {
    Debug::ft("CxxArea.Items");
 
-   CxxNamedVector items;
+   CxxTokenVector items;
 
    for(auto a = assembly_.cbegin(); a != assembly_.cend(); ++a)
    {

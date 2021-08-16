@@ -252,7 +252,7 @@ bool Define::EnterScope()
 
    Context::SetPos(GetLoc());
    Context::File()->InsertMacro(this);
-   if(!AtFileScope()) Log(DefineNotAtFileScope);
+   if(!IsAtFileScope()) Log(DefineNotAtFileScope);
 
    if(rhs_ != nullptr)
    {

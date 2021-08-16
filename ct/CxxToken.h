@@ -283,6 +283,19 @@ public:
    //
    virtual CxxScoped* Referent() const { return nullptr; }
 
+   //  Invoked before adding the item to the current scope (Context::Scope()).
+   //  Returning false indicates that
+   //  o for a C++ item, that it is a definition of a previous declaration;
+   //  o for a preprocessor directive, that the code that follows it should
+   //    not be compiled.
+   //
+   //  NOTE: There is currently no provision for removing an item from a scope
+   //  ====  after it has been added.  That is, there are no "undo" versions of
+   //        functions such as CodeFile.InsertX and Class.AddX.  If the item is
+   //        deleted later, its scope will be left with an invalid pointer.
+   //
+   virtual bool EnterScope() { return true; }
+
    //  If the item is located in a code block, this is invoked when analysis
    //  of the block begins, which corresponds to the block coming into scope.
    //  The default version generates a log.
@@ -1179,6 +1192,56 @@ public:
    void UpdateXref(bool insert) override;
 private:
    const TokenPtr token_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Inline assembly code ("asm" keyword).
+//
+class Asm : public CxxToken
+{
+public:
+   explicit Asm(ExprPtr& code);
+   ~Asm() { CxxStats::Decr(CxxStats::ASM); }
+   void EnterBlock() override { }
+   bool EnterScope() override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+private:
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
+   const ExprPtr code_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  A compile-time assertion ("static_assert" keyword), which contains
+//  a boolean expression followed by a string literal.
+//
+class StaticAssert : public CxxToken
+{
+public:
+   StaticAssert(ExprPtr& expr, ExprPtr& message);
+   ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
+   void Check() const override;
+   void EnterBlock() override;
+   bool EnterScope() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   CxxToken* PosToItem(size_t pos) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+   void UpdateXref(bool insert) override;
+private:
+   bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
+
+   const ExprPtr expr_;
+   const ExprPtr message_;
 };
 }
 #endif

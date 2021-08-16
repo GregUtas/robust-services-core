@@ -4100,7 +4100,7 @@ bool Function::EnterScope()
    //  and compile it.
    //
    found_ = true;
-   if(defn || AtFileScope()) GetFile()->InsertFunc(this);
+   if(defn || IsAtFileScope()) GetFile()->InsertFunc(this);
    if(!defn) CheckOverride();
    GetArea()->InsertFunc(this);
    EnterBlock();
@@ -6220,7 +6220,7 @@ bool SpaceData::EnterScope()
    else
       Singleton< CxxSymbols >::Instance()->InsertData(this);
 
-   if(defn || AtFileScope()) GetFile()->InsertData(this);
+   if(defn || IsAtFileScope()) GetFile()->InsertData(this);
    ExecuteInit(true);
    return !defn;
 }

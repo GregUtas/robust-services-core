@@ -735,6 +735,10 @@ public:
    //
    static CxxScope* Scope();
 
+   //  Returns true if currently parsing at file scope.
+   //
+   static bool AtFileScope();
+
    //  Returns the access control for the scope being compiled.
    //
    static Cxx::Access ScopeAccess() { return Frame_->ScopeAccess(); }

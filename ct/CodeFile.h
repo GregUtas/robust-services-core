@@ -316,11 +316,11 @@ private:
 
    //  Adds ITEM to those that appear in the file.
    //
-   void InsertItem(CxxNamed* item);
+   void InsertItem(CxxToken* item);
 
    //  Removes ITEM from those that appear in the file.
    //
-   void EraseItem(const CxxNamed* item);
+   void EraseItem(const CxxToken* item);
 
    //  Updates data when INCL's file is included.  EDIT is set when an edit
    //  added the #include.

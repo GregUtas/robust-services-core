@@ -241,6 +241,61 @@ void ArraySpec::UpdateXref(bool insert)
 
 //==============================================================================
 
+Asm::Asm(ExprPtr& code) : code_(std::move(code))
+{
+   Debug::ft("Asm.ctor");
+
+   CxxStats::Incr(CxxStats::ASM);
+}
+
+//------------------------------------------------------------------------------
+
+bool Asm::EnterScope()
+{
+   Debug::ft("Asm.EnterScope");
+
+   Context::SetPos(GetLoc());
+   if(Context::AtFileScope()) GetFile()->InsertAsm(this);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool Asm::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("Asm.GetSpan");
+
+   return GetSemiSpan(begin, end);
+}
+
+//------------------------------------------------------------------------------
+
+void Asm::Print(ostream& stream, const Flags& options) const
+{
+   stream << ASM_STR << '(';
+   code_->Print(stream, options);
+   stream << ");";
+}
+
+//------------------------------------------------------------------------------
+
+void Asm::Shrink()
+{
+   CxxToken::Shrink();
+   code_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void Asm::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+   code_->UpdatePos(action, begin, count, from);
+}
+
+//==============================================================================
+
 CxxScoped* BoolLiteral::Referent() const
 {
    Debug::ft("BoolLiteral.Referent");
@@ -3377,6 +3432,114 @@ void Precedence::UpdatePos
 void Precedence::UpdateXref(bool insert)
 {
    if(expr_ != nullptr) expr_->UpdateXref(insert);
+}
+
+//==============================================================================
+
+StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
+   expr_(std::move(expr)),
+   message_(std::move(message))
+{
+   Debug::ft("StaticAssert.ctor");
+
+   CxxStats::Incr(CxxStats::STATIC_ASSERT);
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::Check() const
+{
+   expr_->Check();
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::EnterBlock()
+{
+   Debug::ft("StaticAssert.EnterBlock");
+
+   Context::SetPos(GetLoc());
+   expr_->EnterBlock();
+   auto result = Context::PopArg(true);
+   result.CheckIfBool();
+}
+
+//------------------------------------------------------------------------------
+
+bool StaticAssert::EnterScope()
+{
+   Debug::ft("StaticAssert.EnterScope");
+
+   Context::SetPos(GetLoc());
+   if(Context::AtFileScope()) GetFile()->InsertStaticAssert(this);
+   EnterBlock();
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool StaticAssert::GetSpan(size_t& begin, size_t& left, size_t& end) const
+{
+   Debug::ft("StaticAssert.GetSpan");
+
+   return GetSemiSpan(begin, end);
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
+{
+   expr_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* StaticAssert::PosToItem(size_t pos) const
+{
+   auto item = CxxToken::PosToItem(pos);
+   if(item != nullptr) return item;
+
+   item = expr_->PosToItem(pos);
+   if(item != nullptr) return item;
+
+   return (message_ != nullptr ? message_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::Print(ostream& stream, const Flags& options) const
+{
+   stream << STATIC_ASSERT_STR << '(';
+   expr_->Print(stream, options);
+   stream << ", ";
+   message_->Print(stream, options);
+   stream << ");";
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::Shrink()
+{
+   CxxToken::Shrink();
+   expr_->Shrink();
+   if(message_ != nullptr) message_->Shrink();
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::UpdatePos
+   (EditorAction action, size_t begin, size_t count, size_t from) const
+{
+   CxxToken::UpdatePos(action, begin, count, from);
+   expr_->UpdatePos(action, begin, count, from);
+   if(message_ != nullptr) message_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::UpdateXref(bool insert)
+{
+   expr_->UpdateXref(insert);
 }
 
 //==============================================================================

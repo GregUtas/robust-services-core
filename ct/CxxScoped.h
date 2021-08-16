@@ -38,8 +38,7 @@
 
 namespace CodeTools
 {
-//  The base class for C++ entities that track the scope in which they appear
-//  and are typically subject to access control.
+//  The base class for C++ items that track the scope in which they appear.
 //
 class CxxScoped : public CxxNamed
 {
@@ -51,10 +50,6 @@ public:
    //  Deleted to prohibit copying.
    //
    CxxScoped(const CxxScoped& that) = delete;
-
-   //  Returns the file where the item is implemented.
-   //
-   CodeFile* GetImplFile() const;
 
    //  Returns true if NAME, used in SCOPE and FILE, could refer to this ITEM.
    //  NAME must either match the item's fully qualified name or a trailing
@@ -146,7 +141,7 @@ public:
    //
    CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
 
-   //  Overridden to return the access control level for the item.
+   //  Overridden to return the access control for the item.
    //
    Cxx::Access GetAccess() const override { return access_; }
 
@@ -154,7 +149,7 @@ public:
    //
    CxxScope* GetScope() const override { return scope_; }
 
-   //  Overridden to indicate that inline display is not supported.
+   //  Overridden to indicate that in-line display is not supported.
    //
    bool InLine() const override { return false; }
 
@@ -202,7 +197,7 @@ public:
    //
    CxxScoped* Referent() const override { return (CxxScoped*) this; }
 
-   //  Overridden to set the access control level for the item.
+   //  Overridden to set the access control that applies to the item.
    //
    void SetAccess(Cxx::Access access) override { access_ = access; }
 

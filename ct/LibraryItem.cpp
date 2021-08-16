@@ -52,17 +52,6 @@ LibraryItem::~LibraryItem()
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryItem_GetDecls = "LibraryItem.GetDecls";
-
-void LibraryItem::GetDecls(CxxNamedSet& items)
-{
-   Debug::ft(LibraryItem_GetDecls);
-
-   Debug::SwLog(LibraryItem_GetDecls, strOver(this), 0);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name LibraryItem_Name = "LibraryItem.Name";
 
 const std::string& LibraryItem::Name() const

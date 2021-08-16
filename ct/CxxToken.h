@@ -46,12 +46,20 @@ namespace CodeTools
 class CxxToken : public LibraryItem
 {
 public:
-   //  Virtual to allow subclassing.  Most items are owned in a unique_ptr,
-   //  so if the owner is deleted, the item is deleted before the owner's
-   //  destructor runs.  The item need not inform its owner of its deletion
-   //  in this case.  But if the item is being deleted on its own, the owner
-   //  needs to be informed.  The two scenarios are distinguished by invoking
-   //  Delete (below) in the latter case.
+   //  Virtual to allow subclassing.
+   //    Most items are owned in a unique_ptr, so if the owner is deleted, the
+   //  item is deleted before the owner's destructor runs.  The item need not
+   //  inform its owner of its deletion in this case.  But if the item is being
+   //  deleted on its own, the owner needs to be informed.  The two scenarios
+   //  are distinguished by invoking Delete (below) in the latter case.
+   //    An item can be deleted when the parser backs up or when code is edited.
+   //  Destructors are written assuming that items are deleted in the reverse
+   //  order of how they were encountered in code.  References to an item must
+   //  therefore be deleted first, followed by any distinct definition, and
+   //  finally the declaration.  Definitions and declarations erase their
+   //  entries in the file or scope where they appear, and declarations also
+   //  erase themselves from the symbol table.  An item that refers to another
+   //  one erases itself from its referent's cross reference.
    //
    virtual ~CxxToken();
 
@@ -100,9 +108,8 @@ public:
    //  Sets BEGIN and END to where the item begins and ends, and LEFT to the
    //  position of its opening left brace (if applicable, else string::npos).
    //  If LEFT applies, END will be the position of the matching right brace.
-   //  This is invoked when preparing to erase the code associated with the
-   //  item, so it should include leading and/or trailing punctuation where
-   //  appropriate.
+   //  This is invoked when preparing to cut the item's code, so it should
+   //  include leading and/or trailing punctuation where appropriate.
    //
    bool GetSpan3(size_t& begin, size_t& left, size_t& end) const;
 
@@ -125,7 +132,7 @@ public:
 
    //  Returns true if the type is a forward declaration: namely, if its
    //  Type() is Cxx::Forward or Cxx::Friend.  Declarations of data and
-   //  functions are not currently included in this scheme.
+   //  functions return false, as this only applies to classes.
    //
    virtual bool IsForward() const { return false; }
 
@@ -227,7 +234,7 @@ public:
    virtual Namespace* GetSpace() const { return nullptr; }
 
    //  Returns the area (namespace or class) in which the item was declared.
-   //  Returns (because of an override) the item itself if it is an area.
+   //  Returns the item itself if it is an area.
    //
    virtual CxxArea* GetArea() const { return nullptr; }
 
@@ -289,20 +296,14 @@ public:
    //  o for a preprocessor directive, that the code that follows it should
    //    not be compiled.
    //
-   //  NOTE: There is currently no provision for removing an item from a scope
-   //  ====  after it has been added.  That is, there are no "undo" versions of
-   //        functions such as CodeFile.InsertX and Class.AddX.  If the item is
-   //        deleted later, its scope will be left with an invalid pointer.
-   //
    virtual bool EnterScope() { return true; }
 
-   //  If the item is located in a code block, this is invoked when analysis
-   //  of the block begins, which corresponds to the block coming into scope.
-   //  The default version generates a log.
+   //  Invoked when the item is reached when compiling the code block (if any)
+   //  in which the item appears.  The default version generates a log.
    //
    virtual void EnterBlock();
 
-   //  If the item is located in a code block, this is invoked when analysis
+   //  If the item is located in a code block, this is invoked when compilation
    //  of the block ends, which corresponds the block going out of scope.
    //
    virtual void ExitBlock() const { }
@@ -355,17 +356,18 @@ public:
    virtual void UpdateXref(bool insert) { }
 
    //  Updates SYMBOLS with how this item (in FILE) used other types.  See
-   //  UsageType for a list of how various uses of a type are distinguished.
+   //  CxxUsageSets for how various uses of a type are distinguished.
    //
    virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) { }
 
-   //  Returns the item, if any, that begins at POS.  Objects in the class
-   //  Expression cannot be found with this function because they begin at
-   //  the same position as their first component, which would then be masked.
-   //  Masking does occur, however, with QualName (which masks its first
-   //  TypeName), Expr (which can also mask a TypeName) and DataSpec (which
-   //  masks its QualName).  Some items can only be found at the punctuation
-   //  associated with them:
+   //  Returns the item, if any, that begins at POS in the item's file; the
+   //  item therefore sees if POS matches itself or its subtending items.
+   //    Objects in the class Expression cannot be found with this function
+   //  because they begin at the same position as their first component, which
+   //  would then be masked.  Masking does occur, however, with QualName (which
+   //  masks its first TypeName), Expr (which can also mask a TypeName) and
+   //  DataSpec (which masks its QualName).  Some items can only be found at
+   //  the punctuation associated with them:
    //  o ArraySpec: [
    //  o Block: {
    //  o BraceInit: {
@@ -424,7 +426,7 @@ public:
    //  a data item or function argument to its underlying type, through typedef
    //  chains and forward and friend declarations.  The result, however, can
    //  still be a forward or friend declaration that has not yet been resolved
-   //  to a class.
+   //  to a class definition.
    //
    CxxToken* Root() const;
 
@@ -433,13 +435,13 @@ public:
    //
    bool IsPointer(bool arrays) const;
 
-   //  Returns true if the item's type is POD.
+   //  Returns true if the item's type is POD (plain ordinary data).
    //
    virtual bool IsPOD() const { return GetNumeric().IsPOD(); }
 
    //  Logs WARNING at the position where this item is located.  ITEM,
    //  OFFSET, and INFO are specific to WARNING.  If ITEM is nullptr,
-   //  "this" is included included in the log.
+   //  it is set to this item.
    //
    void Log(Warning warning, const CxxToken* item = nullptr,
       NodeBase::word offset = 0,
@@ -453,16 +455,16 @@ public:
    virtual void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const;
 
+   //  Returns a string that identifies the item's source code location.
+   //
+   std::string strLocation() const;
+
    //  Outputs PREFIX, invokes Print(stream, options) above, and inserts an
    //  endline.  This is the appropriate implementation for items that can be
    //  displayed inline or separately.  See CodeDisplayOptions for OPTIONS.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-
-   //  Subclasses that declare items must override this.
-   //
-   void GetDecls(CxxNamedSet& items) override { }
 
    //  Overridden to return an empty string because an item derived directly
    //  from this class has no name.
@@ -704,7 +706,7 @@ protected:
 
 //------------------------------------------------------------------------------
 //
-//  For "nullptr".
+//  For nullptr.
 //
 class NullPtr : public Literal
 {

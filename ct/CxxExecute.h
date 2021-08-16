@@ -189,7 +189,7 @@ public:
    //
    void SetRefs(TagCount r) { refs_ = r; }
 
-   //  Tags the argument const.
+   //  Tags the argument as const.
    //
    void SetAsConst() { const_ = true; }
 
@@ -272,8 +272,7 @@ public:
    void SetAsAutoType() const;
 
    //  If this item has the type "auto", sets its type to that which was
-   //  most recently set by SetAsAutoType.  Returns false if that type is
-   //  invalid.
+   //  most recently set by SetAsAutoType.
    //
    void SetAutoType();
 

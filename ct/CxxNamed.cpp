@@ -95,7 +95,6 @@ void CxxNamed::AddUsage()
    Debug::ft("CxxNamed.AddUsage");
 
    if(!Context::ParsingSourceCode()) return;
-   if(IsInternal()) return;
    auto file = Context::File();
    if(file == nullptr) return;
    file->AddUsage(this);
@@ -167,6 +166,30 @@ void CxxNamed::GetDirectTemplateArgs(CxxUsageSets& symbols) const
    auto spec = GetTypeSpec();
    if(spec == nullptr) return;
    spec->GetDirectTemplateArgs(symbols);
+}
+
+//------------------------------------------------------------------------------
+
+CodeFile* CxxNamed::GetDistinctDeclFile() const
+{
+   auto defn = GetDefnFile();
+
+   if(defn != nullptr)
+   {
+      auto decl = GetDeclFile();
+      if(decl != defn) return decl;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+CodeFile* CxxNamed::GetImplFile() const
+{
+   auto file = GetDefnFile();
+   if(file != nullptr) return file;
+   return GetDeclFile();
 }
 
 //------------------------------------------------------------------------------
@@ -489,19 +512,6 @@ void CxxNamed::SetTemplateParms(TemplateParmsPtr& parms)
 
    auto expl = "Template parameters not supported by " + Trace();
    Context::SwLog(CxxNamed_SetTemplateParms, expl, 0);
-}
-
-//------------------------------------------------------------------------------
-
-string CxxNamed::strLocation() const
-{
-   auto file = GetFile();
-   if(file == nullptr) return "unknown location";
-
-   std::ostringstream stream;
-   stream << file->Name() << ", line ";
-   stream << file->GetLexer().GetLineNum(GetPos()) + 1;
-   return stream.str();
 }
 
 //------------------------------------------------------------------------------

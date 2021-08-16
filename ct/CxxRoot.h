@@ -33,6 +33,8 @@
 
 namespace CodeTools
 {
+//  Class for creating and accessing built-in types.
+//
 class CxxRoot : public NodeBase::Base
 {
    friend class NodeBase::Singleton< CxxRoot >;

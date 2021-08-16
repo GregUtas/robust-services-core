@@ -32,15 +32,14 @@
 #include "Cxx.h"
 #include "CxxFwd.h"
 #include "CxxToken.h"
-#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
-//  A scope (a namespace, class, function, or local block).  The scope in
-//  which a name is defined affects its accessibility.
+//  A compilation scope.  The scope in which an item is declared affects its
+//  accessibility.
 //
 class CxxScope : public CxxScoped
 {
@@ -66,13 +65,7 @@ public:
    //
    TemplateParm* NameToTemplateParm(const std::string& name) const;
 
-   //  Returns the file that declares the item if it is *not* the file that
-   //  defines the item.  This can only occur for static data or a function.
-   //  Returns nullptr if the same file declares and defines the item.
-   //
-   CodeFile* GetDistinctDeclFile() const;
-
-   //  Returns the current access control level when parsing within the scope.
+   //  Returns the current access control when parsing within the scope.
    //
    virtual Cxx::Access GetCurrAccess() const { return Cxx::Private; }
 
@@ -312,7 +305,7 @@ public:
    //
    void SetThreadLocal(bool local) { thread_local_ = local; }
 
-   //  Specifies whether the data is initialized with a constexpr.
+   //  Specifies whether the data is defined by a constexpr.
    //
    void SetConstexpr(bool cexpr) { constexpr_ = cexpr; }
 
@@ -330,7 +323,7 @@ public:
    //
    bool IsThreadLocal() const { return thread_local_; }
 
-   //  Returns true if the data is initialized with a constexpr.
+   //  Returns true if the data is defined by a constexpr.
    //
    bool IsConstexpr() const { return constexpr_; }
 
@@ -358,7 +351,7 @@ public:
    //  Returns true if the data is default constructible.  This function's
    //  purpose is to determine if the data will be initialized if omitted
    //  from a constructor initialization list.  This is only the case for
-   //  a class that has a default (zero-argument) constructor.
+   //  a class that has a zero-argument constructor.
    //
    bool IsDefaultConstructible() const;
 
@@ -379,6 +372,8 @@ public:
    //
    virtual bool IsUnionMember() const { return false; }
 
+   //  Returns the number of times that the data was read.
+   //
    size_t Readers() const { return reads_; }
 
    //  Overridden to set the type for an "auto" variable.
@@ -419,7 +414,7 @@ public:
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
-   //  Overridden to indicate whether the data is const.
+   //  Returns true if the data is const.
    //
    bool IsConst() const override;
 
@@ -435,15 +430,15 @@ public:
    //
    bool IsPOD() const override { return spec_->IsPOD(); }
 
-   //  Overridden to return true if the data is static.
+   //  Returns true if the data is static.
    //
    bool IsStatic() const override { return static_; }
 
-   //  Overridden to determine if the data is unused.
+   //  Returns true if the data is unused.
    //
    bool IsUnused() const override { return ((reads_ == 0) && (writes_ == 0)); }
 
-   //  Overridden to indicate whether the data is volatile.
+   //  Returns true if the data is volatile.
    //
    bool IsVolatile() const override { return spec_->IsVolatile(); }
 

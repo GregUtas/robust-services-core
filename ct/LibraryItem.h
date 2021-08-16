@@ -48,10 +48,9 @@ public:
    //
    virtual void Rename(const std::string& name);
 
-   //  Updates ITEMS with code items declared within the item.  The
-   //  default implementation generates a log.
+   //  Updates ITEMS with code items declared within the item.
    //
-   virtual void GetDecls(CxxNamedSet& items);
+   virtual void GetDecls(CxxNamedSet& items) { }
 protected:
    //  Protected because this class is virtual.
    //

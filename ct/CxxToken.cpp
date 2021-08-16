@@ -764,6 +764,19 @@ void CxxToken::ShrinkTokens(const TokenPtrVector& tokens)
 
 //------------------------------------------------------------------------------
 
+string CxxToken::strLocation() const
+{
+   auto file = GetFile();
+   if(file == nullptr) return "unknown location";
+
+   std::ostringstream stream;
+   stream << file->Name() << ", line ";
+   stream << file->GetLexer().GetLineNum(GetPos()) + 1;
+   return stream.str();
+}
+
+//------------------------------------------------------------------------------
+
 void CxxToken::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {

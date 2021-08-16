@@ -1028,21 +1028,6 @@ void CxxScope::CloseScope()
 
 //------------------------------------------------------------------------------
 
-CodeFile* CxxScope::GetDistinctDeclFile() const
-{
-   auto defn = GetDefnFile();
-
-   if(defn != nullptr)
-   {
-      auto decl = GetDeclFile();
-      if(decl != defn) return decl;
-   }
-
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 TemplateParm* CxxScope::NameToTemplateParm(const string& name) const
 {
    Debug::ft("CxxScope.NameToTemplateParm");

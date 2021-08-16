@@ -38,21 +38,12 @@
 
 namespace CodeTools
 {
-//  The base class for C++ entities that define a name.  Each of these knows
-//  the file in which it was found.
+//  The base class for C++ entities that have a name.
 //
 class CxxNamed : public CxxToken
 {
 public:
    //  Virtual to allow subclassing.
-   //    Items can be deleted when the parser backs up or when code is edited.
-   //  Destructors are written assuming that items are deleted in the reverse
-   //  order of how they would be encountered in code.  References to an item
-   //  must therefore be deleted first, followed by any distinct definition,
-   //  and finally the declaration.  Definitions and declarations erase their
-   //  entries in the file or scope where they appear, and declarations also
-   //  erase themselves from the symbol table.  An item that refers to another
-   //  one erases itself from its referent's cross reference.
    //
    virtual ~CxxNamed();
 
@@ -82,7 +73,7 @@ public:
 
    //  Returns the qualified name as it appeared in the source code.  Includes
    //  prefixed scopes if SCOPES is set and template arguments if TEMPLATES is
-   //  is set.  Consequently, QualifiedName(false, false) == *Name().
+   //  is set.  Consequently, QualifiedName(false, false) == Name().
    //
    virtual std::string QualifiedName(bool scopes, bool templates)
       const { return Name(); }
@@ -122,6 +113,18 @@ public:
    //  item has no definition or if it was defined where it was declared.
    //
    virtual CodeFile* GetDefnFile() const { return nullptr; }
+
+   //  Returns the file where the item is implemented: GetDefnFile unless it
+   //  is nullptr, else GetDeclFile.
+   //
+   CodeFile* GetImplFile() const;
+
+   //  Returns the file that declares the item if it is *not* the file that
+   //  defines the item.  This can only occur for static class data, extern
+   //  data, or a function.  Returns nullptr if the same file declares and
+   //  defines the item.
+   //
+   CodeFile* GetDistinctDeclFile() const;
 
    //  Returns true if this item was a previous declaration of ITEM.  This is
    //  used after parsing data and function definitions.
@@ -185,8 +188,8 @@ public:
    //
    virtual void GetDirectTemplateArgs(CxxUsageSets& symbols) const;
 
-   //  The default returns ScopedName(templates).  Overridden by functions
-   //  to append argument types when the function's name is ambiguous.
+   //  Returns the item's name as it should appear in the cross reference.
+   //  The default returns ScopedName(templates).
    //
    virtual std::string XrefName(bool templates) const;
 
@@ -199,10 +202,6 @@ public:
    //  Intended primarily for CLI commands.
    //
    std::string to_str() const;
-
-   //  Returns a string that identifies the item's source code location.
-   //
-   std::string strLocation() const;
 
    //  Displays NAME in STREAM.  If FQ is set, the fully qualified name is
    //  shown, else the qualified name (including any templates) is shown.
@@ -260,7 +259,8 @@ protected:
    //
    void Accessed(const StackArg* via) const;
 
-   //  Invoked by overrides of RecordUsage.
+   //  Invoked by overrides of RecordUsage to record that the file being
+   //  compiled used this item.
    //
    void AddUsage();
 private:

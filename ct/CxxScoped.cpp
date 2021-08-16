@@ -763,15 +763,6 @@ bool CxxScoped::GetBracedSpan(size_t& begin, size_t& left, size_t& end) const
 
 //------------------------------------------------------------------------------
 
-CodeFile* CxxScoped::GetImplFile() const
-{
-   auto file = GetDefnFile();
-   if(file != nullptr) return file;
-   return GetDeclFile();
-}
-
-//------------------------------------------------------------------------------
-
 bool CxxScoped::GetTypeSpan(size_t& begin, size_t& end) const
 {
    Debug::ft("CxxScoped.GetTypeSpan");

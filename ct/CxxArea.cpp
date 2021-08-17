@@ -1966,29 +1966,6 @@ bool Class::IsDefaultConstructible()
 
 //------------------------------------------------------------------------------
 
-bool Class::IsImplemented() const
-{
-   Debug::ft("Class.IsImplemented");
-
-   auto funcs = Funcs();
-
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      if((*f)->IsImplemented()) return true;
-   }
-
-   auto opers = Opers();
-
-   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
-   {
-      if((*o)->IsImplemented()) return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 bool Class::IsSingleton() const
 {
    Debug::ft("Class.IsSingleton");

@@ -132,6 +132,11 @@ public:
    //
    bool IsSubscopeOf(const std::string& fqSuper) const;
 
+   //  Returns true if this item is a superscope of fqSub.  TMPLT is set if
+   //  a template should be considered a superscope of one of its instances.
+   //
+   bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const;
+
    //  Overridden to copy THAT's scope and access control.
    //
    void CopyContext(const CxxToken* that, bool internal) override;
@@ -182,11 +187,6 @@ public:
    //  returns nullptr, in which case it returns false.
    //
    bool IsIndirect(bool arrays) const override;
-
-   //  Overridden to use this item's fully qualified name to determine
-   //  if it is a superscope of fqSub.
-   //
-   bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const override;
 
    //  Overridden to return true if this item matches ITEM and to increment
    //  N if this item's name matches ITEM.

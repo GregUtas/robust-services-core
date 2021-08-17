@@ -619,10 +619,6 @@ public:
    Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const override;
 
-   //  Overridden to look for an implemented function.
-   //
-   bool IsImplemented() const override;
-
    //  Returns all of the items in the class, sorted by position.
    //
    CxxTokenVector Items() const override;

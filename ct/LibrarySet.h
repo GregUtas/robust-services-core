@@ -211,10 +211,6 @@ private:
    //
    virtual NodeBase::word PreAssign(std::string& expl) const;
 
-   //  Copies the items in USAGES into the set.
-   //
-   virtual void CopyUsages(const CxxUsageSets& usages);
-
    //  Update STRINGS with a string for each item in the set.  The strings
    //  will either be displayed one per line (VERBOSE is true) or separated
    //  by commas (VERBOSE is false).

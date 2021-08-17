@@ -89,14 +89,6 @@ public:
    //
    virtual void GetScopedNames(stringVector& names, bool templates) const;
 
-   //  Returns true if this item is a superscope of fqSub.  TMPLT is set if
-   //  a template should be considered a superscope of one of its instances.
-   //  This version returns false because the superscope's fully qualified name
-   //  is required but is only available in classes derived from CxxScoped.
-   //
-   virtual bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const
-      { return false; }
-
    //  Returns the function associated with the item.  The interpretation of
    //  this varies by item type.
    //
@@ -130,11 +122,6 @@ public:
    //  used after parsing data and function definitions.
    //
    bool IsPreviousDeclOf(const CxxNamed* item) const;
-
-   //  Returns true if the item is implemented.  Returns false for a function
-   //  without an implementation or a class without an implemented function.
-   //
-   virtual bool IsImplemented() const { return true; }
 
    //  Returns the item's direct type, which could be a typedef or forward
    //  declaration.  To follow either of these to the final underlying type,

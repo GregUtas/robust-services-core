@@ -43,7 +43,7 @@ public:
 
    //  Copies the items in USAGES into the set.
    //
-   void CopyUsages(const CxxUsageSets& usages) override;
+   void CopyUsages(const CxxUsageSets& usages);
 
    //  Override the operators supported by a set of code files.
    //

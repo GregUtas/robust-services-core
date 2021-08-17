@@ -1153,6 +1153,10 @@ public:
    //
    bool IsDefaulted() const { return GetDefn()->defaulted_; }
 
+   //  Returns true if the function has an implementation or is defaulted.
+   //
+   bool IsImplemented() const;
+
    //  Returns the function's arguments.
    //
    const ArgumentPtrVector& GetArgs() const { return args_; }
@@ -1466,10 +1470,6 @@ public:
    //  Overridden to indicate whether the function itself is const.
    //
    bool IsConst() const override { return const_; }
-
-   //  Overridden to look for an implemented or defaulted function.
-   //
-   bool IsImplemented() const override;
 
    //  Overridden to determine if the function is unused.
    //

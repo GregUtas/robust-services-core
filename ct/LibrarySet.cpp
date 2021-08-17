@@ -114,18 +114,6 @@ LibrarySet* LibrarySet::CommonAffecters() const
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_CopyUsages = "LibrarySet.CopyUsages";
-
-void LibrarySet::CopyUsages(const CxxUsageSets& usages)
-{
-   Debug::ft(LibrarySet_CopyUsages);
-
-   auto errstr = NotApplicable();
-   Debug::SwLog(LibrarySet_CopyUsages, errstr, GetType());
-}
-
-//------------------------------------------------------------------------------
-
 word LibrarySet::Count(string& result) const
 {
    Debug::ft("LibrarySet.Count");

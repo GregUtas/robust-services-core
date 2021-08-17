@@ -519,10 +519,6 @@ protected:
    //
    void SetCompile() { compile_ = true; }
 private:
-   //  Adds a condition to the directive.
-   //
-   virtual void AddCondition(ExprPtr& c) { }
-
    //  Where the code that follows the directive begins if it is *not*
    //  to be compiled.
    //
@@ -556,7 +552,7 @@ public:
 
    //  Overridden to add a condition to the directive.
    //
-   void AddCondition(ExprPtr& c) override { condition_ = std::move(c); }
+   void AddCondition(ExprPtr& c) { condition_ = std::move(c); }
 
    //  Overridden to display the condition.
    //

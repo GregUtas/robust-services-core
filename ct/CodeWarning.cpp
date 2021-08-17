@@ -785,7 +785,7 @@ void CodeWarning::Initialize()
       "Function at .cpp file scope is neither static nor extern")));
    Attrs_.insert(WarningPair(FunctionCouldBeDemoted,
       WarningAttrs(F, false,
-      "Function can be demoted to a subclass")));
+      "Function could be demoted to a subclass")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, false,
       ERROR_STR)));

@@ -36,6 +36,12 @@ class PayloadInvokerPool : public InvokerPool
 {
    friend class NodeBase::Singleton< PayloadInvokerPool >;
 public:
+   //  Returns true if the ingress work queue gets too long or the number of
+   //  available Messages gets too low, in which case an overload alarm is
+   //  also raised.
+   //
+   bool RejectIngressWork() const;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -44,12 +50,6 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to reject ingress work when the ingress work queue gets
-   //  too long or the number of available Messages gets too low, in which
-   //  case an alarm is also raised.
-   //
-   bool RejectIngressWork() const override;
 private:
    //  Private because this is a singleton.
    //

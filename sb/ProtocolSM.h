@@ -156,6 +156,17 @@ public:
    //
    FactoryId PeerFactory() const;
 
+   //  Invokes JoinPeer on the PSM's port, which is created if necessary.
+   //  On success, returns the peer PSM that supports the same protocol as
+   //  this one.  Returns nullptr if no such PSM exists or PEER is invalid.
+   //
+   ProtocolSM* JoinPeer
+      (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr);
+
+   //  Invokes DropPeer on the PSM's port, which is created if necessary.
+   //
+   bool DropPeer(const GlobalAddress& peerPrevRemAddr);
+
    //  Adds MSG to the end of the outgoing message queue.
    //
    void EnqOgMsg(Message& msg);
@@ -178,11 +189,6 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to invoke DropPeer on the PSM's port, which is created
-   //  if it does not exist.
-   //
-   bool DropPeer(const GlobalAddress& peerPrevRemAddr) override;
-
    //  Returns the PSM's factory.
    //
    FactoryId GetFactory() const override { return fid_; }
@@ -190,14 +196,6 @@ public:
    //  Overridden to enumerate all objects that the PSM owns.
    //
    void GetSubtended(std::vector< Base* >& objects) const override;
-
-   //  Overridden to invoke JoinPeer on the PSM's port, which is created if
-   //  it does not exist.  On success, returns the peer layer that supports
-   //  the same protocol as this PSM.  Returns nullptr if no such PSM exists
-   //  or PEER is an invalid port.
-   //
-   ProtocolLayer* JoinPeer
-      (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr) override;
 
    //  Overridden for patching.
    //

@@ -281,7 +281,7 @@ void MsgPort::Initialize(const Message* msg)
 
 //------------------------------------------------------------------------------
 
-ProtocolLayer* MsgPort::JoinPeer
+MsgPort* MsgPort::JoinPeer
    (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr)
 {
    Debug::ft("MsgPort.JoinPeer");

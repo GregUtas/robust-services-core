@@ -174,19 +174,6 @@ void Event::Free()
 
 //------------------------------------------------------------------------------
 
-fn_name Event_FreeContext = "Event.FreeContext";
-
-void Event::FreeContext(bool freeMsg)
-{
-   Debug::ft(Event_FreeContext);
-
-   //  Only certain events support this function.
-   //
-   Debug::SwLog(Event_FreeContext, "invalid event", eid_);
-}
-
-//------------------------------------------------------------------------------
-
 void* Event::operator new(size_t size)
 {
    Debug::ft("Event.operator new");
@@ -225,20 +212,6 @@ Event* Event::Restore(EventHandler::Rc& rc)
 
 //------------------------------------------------------------------------------
 
-fn_name Event_RestoreContext = "Event.RestoreContext";
-
-Event* Event::RestoreContext(EventHandler::Rc& rc)
-{
-   Debug::ft(Event_RestoreContext);
-
-   //  Only certain events support this function.
-   //
-   Debug::SwLog(Event_RestoreContext, "invalid event", eid_);
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Event_Save = "Event.Save";
 
 bool Event::Save()
@@ -254,20 +227,6 @@ bool Event::Save()
    }
 
    Debug::SwLog(Event_Save, "invalid location", pack2(eid_, location_));
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Event_SaveContext = "Event.SaveContext";
-
-bool Event::SaveContext()
-{
-   Debug::ft(Event_SaveContext);
-
-   //  Only certain events support this function.
-   //
-   Debug::SwLog(Event_SaveContext, "invalid event", eid_);
    return false;
 }
 

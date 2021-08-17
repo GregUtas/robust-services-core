@@ -187,10 +187,6 @@ protected:
    //
    virtual ~Context();
 
-   //  Returns the first port in the port queue.
-   //
-   virtual MsgPort* FirstPort() const { return nullptr; }
-
    //  Invoked at the end of a transaction.
    //
    virtual void EndOfTransaction() { }

@@ -98,6 +98,33 @@ public:
    //
    TriggerId GetTrigger() const { return trigger_; }
 
+   //  Saves the event's context when a modifier returns EventHandler::Suspend
+   //  o after being created by an Initiator that reacted to an SAP, or
+   //  o when already active and reacting to a subsequent SAP.
+   //  The modifier invokes this function on its parent's current SAP event.
+   //  It must then save a pointer to the SAP so that it can eventually invoke
+   //  RestoreContext (for EventHandler::Resume) or FreeContext (when forcing
+   //  its parent to take another path).  Returns true on success.
+   //
+   bool SaveContext();
+
+   //  Restores the event's context when its processing should resume.  The
+   //  appropriate return code for resuming the processing of the returned
+   //  event is provided; the return event is nullptr on error conditions.
+   //  Processing resumes
+   //  o with the next Initiator in the trigger's queue, if the modifier
+   //    invoked SaveContext when it was initiated, or
+   //  o with the next SSM in the SSMQ, if the modifier invoked SaveContext
+   //    in reaction to a subsequent SAP.
+   //
+   Event* RestoreContext(EventHandler::Rc& rc);
+
+   //  Purges the event's context when its processing should not resume.
+   //  If freeMsg is true, the saved message is also deleted; otherwise,
+   //  it is restored as the context message.
+   //
+   void FreeContext(bool freeMsg);
+
    //  Returns the message that was saved when the processing of this
    //  event was interrupted.
    //
@@ -108,21 +135,9 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to support asynchronous modifier requests.
-   //
-   void FreeContext(bool freeMsg) override;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to support asynchronous modifier requests.
-   //
-   Event* RestoreContext(EventHandler::Rc& rc) override;
-
-   //  Overridden to support asynchronous modifier requests.
-   //
-   bool SaveContext() override;
 protected:
    //  Overridden to support asynchronous modifier requests.
    //

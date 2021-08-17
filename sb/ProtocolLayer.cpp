@@ -143,16 +143,6 @@ void ProtocolLayer::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-bool ProtocolLayer::DropPeer(const GlobalAddress& peerPrevRemAddr)
-{
-   Debug::ft("ProtocolLayer.DropPeer");
-
-   Context::Kill(strOver(this), GetFactory());
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 void ProtocolLayer::EnsureLower(const Message* msg)
 {
    Debug::ft("ProtocolLayer.EnsureLower");
@@ -199,17 +189,6 @@ FactoryId ProtocolLayer::GetFactory() const
 
    Debug::SwLog(ProtocolLayer_GetFactory, strOver(this), 0);
    return NIL_ID;
-}
-
-//------------------------------------------------------------------------------
-
-ProtocolLayer* ProtocolLayer::JoinPeer
-   (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr)
-{
-   Debug::ft("ProtocolLayer.JoinPeer");
-
-   Context::Kill(strOver(this), GetFactory());
-   return nullptr;
 }
 
 //------------------------------------------------------------------------------

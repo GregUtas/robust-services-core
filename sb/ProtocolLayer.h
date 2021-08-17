@@ -101,23 +101,6 @@ public:
    //
    virtual NetworkBase::SysTcpSocket* CreateAppSocket();
 
-   //  Used during multiplexer insertion and deletion.  It configures this
-   //  layer and the port identified by PEER so that they will communicate
-   //  and sets peerPrevRemAddr to the address where PEER was previously
-   //  sending messages, in case DropPeer must be used to reroute PEER back
-   //  to that address.  Returns the peer layer (the one that supports the
-   //  same protocol as this one) on success and nullptr on failure (if PEER
-   //  is invalid or no layer above PEER supports this layer's protocol).
-   //
-   virtual ProtocolLayer* JoinPeer
-      (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr) = 0;
-
-   //  Used during multiplexer deletion.  It reconfigures the peer port so
-   //  that it once again communicates with the peerPrevRemAddr returned by
-   //  JoinPeer.  This layer's port ends up without a peer.
-   //
-   virtual bool DropPeer(const GlobalAddress& peerPrevRemAddr) = 0;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,

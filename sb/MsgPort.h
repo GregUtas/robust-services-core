@@ -89,6 +89,22 @@ public:
    //
    static MsgPort* Find(const LocalAddress& locAddr);
 
+   //  Used during multiplexer insertion and deletion.  It configures this
+   //  port and the one identified by PEER so that they will communicate,
+   //  and sets peerPrevRemAddr to the address where PEER was previously
+   //  sending messages in case DropPeer must be used to reroute PEER back
+   //  to that address.  Returns the peer port (the one that supports the
+   //  same protocol as this one) on success and nullptr on failure (if PEER
+   //  is invalid or no layer above PEER supports this layer's protocol).
+   //
+   MsgPort* JoinPeer(const LocalAddress& peer, GlobalAddress& peerPrevRemAddr);
+
+   //  Used during multiplexer deletion.  It reconfigures the peer port so
+   //  that it once again communicates with the peerPrevRemAddr returned by
+   //  JoinPeer.  This layer's port ends up without a peer.
+   //
+   bool DropPeer(const GlobalAddress& peerPrevRemAddr);
+
    //  Overridden to obtain a port from its object pool.
    //
    static void* operator new(size_t size);
@@ -98,19 +114,9 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to modify the addresses in this port and PEER.
-   //
-   bool DropPeer(const GlobalAddress& peerPrevRemAddr) override;
-
    //  Returns the port's factory.
    //
    FactoryId GetFactory() const override { return locAddr_.sbAddr_.fid; }
-
-   //  Overridden to modify the addresses in this port and PEER.  Returns
-   //  the peer port on success.
-   //
-   ProtocolLayer* JoinPeer
-      (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr) override;
 
    //  Overridden for patching.
    //

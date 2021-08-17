@@ -390,7 +390,7 @@ void ProtocolSM::InjectFinalMsg()
 
 //------------------------------------------------------------------------------
 
-ProtocolLayer* ProtocolSM::JoinPeer
+ProtocolSM* ProtocolSM::JoinPeer
    (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr)
 {
    Debug::ft("ProtocolSM.JoinPeer");

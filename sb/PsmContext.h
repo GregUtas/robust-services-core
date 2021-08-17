@@ -73,14 +73,14 @@ protected:
    //
    MsgPort* FindPort(const Message& msg) const;
 
+   //  Returns the first port in the port queue.
+   //
+   MsgPort* FirstPort() const { return portq_.First(); }
+
    //  Overridden to invoke EndOfTransaction on all PSMs and then delete
    //  those in the idle state.
    //
    void EndOfTransaction() override;
-
-   //  Returns the first port in the port queue.
-   //
-   MsgPort* FirstPort() const override { return portq_.First(); }
 
    //  Overridden to determine if the context should be deleted.
    //

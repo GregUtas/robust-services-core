@@ -126,11 +126,6 @@ protected:
    virtual void RecordDelay
       (MsgPriority prio, const NodeBase::Duration& delay) const;
 private:
-   //  Returns true if ingress work should be rejected.  Each pool
-   //  should override this to protect against overload.
-   //
-   virtual bool RejectIngressWork() const { return false; }
-
    //  Adds THREAD to the set of invokers.
    //
    bool BindThread(InvokerThread& thread);

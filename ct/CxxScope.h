@@ -1673,12 +1673,18 @@ private:
    //
    bool IsTemplateArg(const Argument* arg) const;
 
+   //  Returns the class to which the function could be demoted in the subtree
+   //  of overrides for which this function is the root.
+   //
+   const Class* HighestClassInvoked() const;
+
    //  Checks a function and logs any warnings that it detects.
    //
    void CheckArgs() const;
    void CheckCtor() const;
    void CheckDtor() const;
    Warning CheckIfDefined() const;
+   void CheckIfDemotable() const;
    void CheckIfPublicVirtual() const;
    void CheckForVirtualDefault() const;
    void CheckIfOverridden() const;

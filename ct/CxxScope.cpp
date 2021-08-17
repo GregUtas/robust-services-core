@@ -2969,8 +2969,18 @@ void Function::Check() const
    if(!defn_)
    {
       auto w = CheckIfDefined();
-      if(w != FunctionNotDefined) CheckIfUnused(FunctionUnused);
-      if(w != FunctionNotDefined) CheckNoexcept();
+
+      if(w != FunctionNotDefined)
+      {
+         if(!CheckIfUnused(FunctionUnused))
+         {
+            CheckIfDemotable();
+         }
+
+         CheckNoexcept();
+         CheckMemberUsage();
+      }
+
       CheckIfHiding();
       CheckArgs();
       CheckAccessControl();
@@ -2980,7 +2990,6 @@ void Function::Check() const
       CheckIfPublicVirtual();
       CheckForVirtualDefault();
       CheckFreeStatic();
-      if(w != FunctionNotDefined) CheckMemberUsage();
       if(mate_ != nullptr) mate_->Check();
    }
 }
@@ -3506,6 +3515,39 @@ Warning Function::CheckIfDefined() const
    auto w = (pure_ ? PureVirtualNotDefined : FunctionNotDefined);
    Log(w);
    return w;
+}
+
+//------------------------------------------------------------------------------
+
+void Function::CheckIfDemotable() const
+{
+   Debug::ft("Function.CheckIfDemotable");
+
+   //  This is only checked on the original declaration of a virtual function,
+   //  so return if this function isn't virtual, is an override, or is invoked
+   //  directly.
+   //
+   if(!virtual_ || override_ || (calls_ > 0)) return;
+
+   const Class* highest = nullptr;
+
+   for(auto o = overs_.cbegin(); o != overs_.cend(); ++o)
+   {
+      auto cls = (*o)->HighestClassInvoked();
+
+      if(cls != nullptr)
+      {
+         if(highest == nullptr)
+            highest = cls;
+         else
+            return;  // invoked in more than one subtree, so can't be demoted
+      }
+   }
+
+   if(highest != nullptr)
+   {
+      Log(FunctionCouldBeDemoted, highest, 0, highest->Name());
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -4741,6 +4783,36 @@ bool Function::HasInvokers() const
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+const Class* Function::HighestClassInvoked() const
+{
+   Debug::ft("Function.HighestClassInvoked");
+
+   //  If this function is invoked directly, or in more than one subtree of
+   //  the class hierarchy below it, return its class, else return the class
+   //  of the only subtree in which it is invoked.
+   //
+   if(calls_ > 0) return GetClass();
+
+   const Class* highest = nullptr;
+
+   for(auto o = overs_.cbegin(); o != overs_.cend(); ++o)
+   {
+      auto cls = (*o)->HighestClassInvoked();
+
+      if(cls != nullptr)
+      {
+         if(highest == nullptr)
+            highest = cls;
+         else
+            return GetClass();
+      }
+   }
+
+   return highest;
 }
 
 //------------------------------------------------------------------------------

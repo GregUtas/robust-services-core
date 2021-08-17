@@ -532,6 +532,7 @@ enum Warning
    OverrideNotSorted,        // override declaration not in alphabetical order
    DataShouldBeStatic,       // non-extern data at .cpp file scope is not static
    FunctionShouldBeStatic,   // non-extern func at .cpp file scope is not static
+   FunctionCouldBeDemoted,   // only invoked in one subtree of class hierarchy
    Warning_N                 // number of warnings
 };
 

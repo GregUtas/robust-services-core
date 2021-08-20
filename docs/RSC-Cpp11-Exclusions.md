@@ -221,11 +221,6 @@ that appear within it as `static`.
 - [ ] explicit instantiation
 - [ ] `using` for alias templates (`Parser.GetUsing` and others)
 - [ ] `extern template`
-- [ ] initialization of static data members in template instances
-
-  The code for this is not included when generating the code for a template
-  instance, so the static member appears uninitialized (`<@i=0`) in the _.lib_
-  file created by `>export`.
 - [ ] `std::list::sort`: The _subs_ file for `list` declares the sort function
   as `bool (*sorted)(T& first, T& second)`. Therefore, if its parameters
   differ from the `list` template arguments, a log occurs during function

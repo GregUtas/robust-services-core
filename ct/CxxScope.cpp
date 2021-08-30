@@ -626,24 +626,14 @@ void ClassData::CheckIfRelocatable() const
 {
    Debug::ft("ClassData.CheckIfRelocatable");
 
-   //  Static data that is only referenced within the .cpp that initializes
-   //  it can be moved out of the class and into the .cpp.
-   //
    if(IsStatic())
    {
-      if(GetDeclFile()->IsCpp()) return;
-      auto file = GetDefnFile();
-      if(file == nullptr) return;
-      if(GetClass()->IsTemplate()) return;
+      auto file = FindFileForStatic();
 
-      auto xref = Xref();
-
-      for(auto r = xref->cbegin(); r != xref->cend(); ++r)
+      if(file != nullptr)
       {
-         if((*r)->GetFile() != file) return;
+         Log(DataCouldBeFree, nullptr, 0, file->Name());
       }
-
-      Log(DataCouldBeFree);
    }
 }
 
@@ -1024,6 +1014,33 @@ void CxxScope::CloseScope()
    Debug::ftnt("CxxScope.CloseScope");
 
    for(NO_OP; pushes_ > 0; --pushes_) Context::PopScope();
+}
+
+//------------------------------------------------------------------------------
+
+CodeFile* CxxScope::FindFileForStatic() const
+{
+   Debug::ft("CxxScope.FindFileForStatic");
+
+   if(GetDeclFile()->IsCpp()) return nullptr;
+   if(GetDefnFile() == nullptr) return nullptr;
+   auto cls = GetClass();
+   if(cls == nullptr) return nullptr;
+   if(cls->IsTemplate()) return nullptr;
+
+   std::set< CodeFile* > files;
+   auto refs = GetReferences();
+
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+   {
+      files.insert((*r)->GetFile());
+      if(files.size() > 1) return nullptr;
+   }
+
+   if(files.empty()) return nullptr;
+   auto file = *files.cbegin();
+   if(file->IsHeader()) return nullptr;
+   return file;
 }
 
 //------------------------------------------------------------------------------
@@ -3681,14 +3698,23 @@ void Function::CheckMemberUsage() const
 
    //  The function can be free if
    //  (a) it only accessed public members, and
-   //  (b) it's not inline (which is probably to obey ODR), and
-   //  (c) it doesn't use a template parameter.
+   //  (b) it's not tagged inline (which is probably to obey ODR), and
+   //  (c) it doesn't use a template parameter, and
+   //  (d) it is only used in the file that defines it.
    //  Otherwise it can be static.
    //
    if(!GetDefn()->nonpublic_ && !inline_ && !tparm_)
-      Log(FunctionCouldBeFree);
-   else
-      CheckClassStatic();
+   {
+      auto file = FindFileForStatic();
+
+      if(file != nullptr)
+      {
+         Log(FunctionCouldBeFree, nullptr, 0, file->Name());
+         return;
+      }
+   }
+
+   CheckClassStatic();
 }
 
 //------------------------------------------------------------------------------
@@ -6310,6 +6336,16 @@ CxxToken* SpaceData::PosToItem(size_t pos) const
    if(item != nullptr) return item;
 
    return (parms_ != nullptr ? parms_->PosToItem(pos) : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceData::Rename(const string& name)
+{
+   Debug::ft("SpaceData.Rename");
+
+   CxxScoped::Rename(name);
+   name_->Rename(name);
 }
 
 //------------------------------------------------------------------------------

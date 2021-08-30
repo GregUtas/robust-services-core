@@ -672,6 +672,25 @@ bool CxxScoped::CheckIfUnused(Warning warning) const
 
 //------------------------------------------------------------------------------
 
+bool CxxScoped::Contains(const CxxToken* item) const
+{
+   Debug::ft("CxxScoped.Contains");
+
+   if(item == nullptr) return false;
+
+   auto file1 = this->GetFile();
+   auto file2 = item->GetFile();
+   if(file1 != file2) return false;
+
+   size_t begin, end;
+   GetSpan2(begin, end);
+
+   auto pos = item->GetPos();
+   return ((pos >= begin) && (pos <= end));
+}
+
+//------------------------------------------------------------------------------
+
 void CxxScoped::CopyContext(const CxxToken* that, bool internal)
 {
    Debug::ft("CxxScoped.CopyContext");
@@ -759,6 +778,25 @@ bool CxxScoped::GetBracedSpan(size_t& begin, size_t& left, size_t& end) const
    if(left == string::npos) return false;
    end = lexer.FindClosing('{', '}', left + 1);
    return (end != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+CxxTokenVector CxxScoped::GetReferences() const
+{
+   Debug::ft("CxxScoped.GetReferences");
+
+   CxxTokenVector items;
+   auto mate = GetMate();
+
+   for(auto r = xref_.cbegin(); r != xref_.cend(); ++r)
+   {
+      if(this->Contains(*r)) continue;
+      if((mate != nullptr) && mate->Contains(*r)) continue;
+      items.push_back(*r);
+   }
+
+   return items;
 }
 
 //------------------------------------------------------------------------------
@@ -1067,6 +1105,18 @@ void CxxScoped::RecordTemplateAccess(Cxx::Access access) const
 
    auto item = FindTemplateAnalog(this);
    if(item != nullptr) item->RecordAccess(access);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxScoped::Rename(const string& name)
+{
+   Debug::ft("CxxScoped.Rename");
+
+   for(auto r = xref_.begin(); r != xref_.end(); ++r)
+   {
+      (*r)->Rename(name);
+   }
 }
 
 //------------------------------------------------------------------------------

@@ -966,6 +966,7 @@ void Macro::Rename(const string& name)
 {
    Debug::ft("Macro.Rename");
 
+   CxxScoped::Rename(name);
    name_ = name;
 }
 

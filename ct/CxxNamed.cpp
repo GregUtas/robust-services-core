@@ -2025,12 +2025,29 @@ void QualName::CheckForRedundantScope() const
    auto scope = GetScope();
    if(scope == nullptr) return;
    auto inner = scope->GetArea();
+   auto type = inner->Type();
+   auto cls = (type == Cxx::Class ? static_cast< Class* >(inner) : nullptr);
 
    for(CxxScope* area = inner; area != nullptr; area = area->GetScope())
    {
       if(area->Name() == first)
       {
-         if((area == inner) || (inner->FindItem(At(1)->Name()) == nullptr))
+         auto log = (area == inner);
+
+         if(!log)
+         {
+            switch(type)
+            {
+            case Cxx::Namespace:
+               log = (inner->FindItem(At(1)->Name()) == nullptr);
+               break;
+            case Cxx::Class:
+               log = (cls->FindMember(At(1)->Name(), true) == nullptr);
+               break;
+            }
+         }
+
+         if(log)
          {
             Log(RedundantScope);
             return;

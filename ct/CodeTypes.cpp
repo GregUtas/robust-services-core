@@ -45,8 +45,6 @@ const string ValidIntDigits("0123456789");
 const string ValidHexDigits("0123456789abcdefABCDEF");
 const string ValidOctDigits("01234567");
 const string WhitespaceChars(" \n\t\v\f\r");
-const string SingleRule(COMMENT_STR + string(78, '-'));
-const string DoubleRule(COMMENT_STR + string(78, '='));
 
 //------------------------------------------------------------------------------
 
@@ -387,6 +385,20 @@ void CheckLine(string& s, std::set< Warning >& warnings)
 
 //------------------------------------------------------------------------------
 
+const string& DoubleRule()
+{
+   static string Rule;
+
+   if(Rule.empty())
+   {
+      Rule = COMMENT_STR + string(LineLengthMax() - 2, '=');
+   }
+
+   return Rule;
+}
+
+//------------------------------------------------------------------------------
+
 size_t IndentSize()
 {
    return 3;
@@ -466,6 +478,20 @@ ostream& operator<<(ostream& stream, FunctionRole role)
    else
       stream << FunctionRoleStrings[FuncRole_N];
    return stream;
+}
+
+//------------------------------------------------------------------------------
+
+const string& SingleRule()
+{
+   static string Rule;
+
+   if(Rule.empty())
+   {
+      Rule = COMMENT_STR + string(LineLengthMax() - 2, '-');
+   }
+
+   return Rule;
 }
 
 //------------------------------------------------------------------------------

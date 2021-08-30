@@ -32,6 +32,7 @@
 #include "Cxx.h"
 #include "CxxFwd.h"
 #include "CxxToken.h"
+#include "LibraryTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -99,6 +100,15 @@ protected:
    //
    void ReplaceTemplateParms
       (std::string& code, const TypeSpecPtrVector* args, size_t begin) const;
+
+   //  If this is a class member that is declared in a header, defined in
+   //  a .cpp, and only referenced in one file, returns that file, which is
+   //  usually the file that defines the member.  The member can then move,
+   //  as a static item at file scope, to the only file that references it
+   //  if other criteria (which are different for data and a function) are
+   //  satisfied.
+   //
+   CodeFile* FindFileForStatic() const;
 private:
    //  The number of nested calls to Context::PushScope.
    //
@@ -396,7 +406,7 @@ public:
    //  Overridden to return the definition if it is distinct from the
    //  declaration, and vice versa.
    //
-   CxxNamed* GetMate() const override { return mate_; }
+   CxxScope* GetMate() const override { return mate_; }
 
    //  Overridden to return the data's underlying numeric type.
    //
@@ -701,6 +711,10 @@ public:
    //  Overridden to record usage of the item.
    //
    void RecordUsage() override { AddUsage(); }
+
+   //  Overridden to rename the item.
+   //
+   void Rename(const std::string& name) override;
 
    //  Overridden to support static member data in a template.
    //
@@ -1206,7 +1220,7 @@ public:
    //  IsExtern: Returns true if the function is tagged "extern".
    //
    Function* GetBase() const { return GetDecl()->base_; }
-   const Block* GetImpl() const { return GetDefn()->impl_.get(); }
+   Block* GetImpl() const { return GetDefn()->impl_.get(); }
    bool IsVirtual() const { return GetDecl()->virtual_; }
    bool IsPureVirtual() const { return GetDecl()->pure_; }
    bool IsExplicit() const { return GetDecl()->explicit_; }
@@ -1426,7 +1440,7 @@ public:
    //  Overridden to return the definition if it is distinct from the
    //  declaration, and vice versa.
    //
-   CxxNamed* GetMate() const override { return mate_; }
+   CxxScope* GetMate() const override { return mate_; }
 
    //  Overridden to return the function's qualified name.
    //
@@ -1934,6 +1948,10 @@ public:
    //  Overridden to forward to space_.
    //
    std::string ScopedName(bool templates) const override;
+
+   //  Overridden to reveal that this is a namespace definition.
+   //
+   Cxx::ItemType Type() const override { return Cxx::SpaceDefn; }
 
    //  Overridden to add itself as a reference to space_.
    //

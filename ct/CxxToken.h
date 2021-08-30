@@ -246,7 +246,7 @@ public:
    //  Returns the item's mate.  Returns nullptr unless the item is declared
    //  and defined separately, in which case it returns the other instance.
    //
-   virtual CxxNamed* GetMate() const { return nullptr; }
+   virtual CxxScope* GetMate() const { return nullptr; }
 
    //  Returns the class in which the item was declared.  Returns the outer
    //  class, if any, if the item itself is a class.

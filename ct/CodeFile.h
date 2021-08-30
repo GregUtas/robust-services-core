@@ -130,12 +130,7 @@ public:
    //
    const std::list< CxxToken* > Items() const { return items_; }
    const IncludePtrVector& Includes() const { return incls_; }
-   const SpaceDefnVector* Spaces() const { return &spaces_; }
    const ClassVector* Classes() const { return &classes_; }
-   const DataVector* Datas() const { return &data_; }
-   const EnumVector* Enums() const { return &enums_; }
-   const FunctionVector* Funcs() const { return &funcs_; }
-   const TypedefVector* Types() const { return &types_; }
 
    //  Adds an #include to the file's list of C++ items when it is
    //  found at POS during parsing.  FN is the #include's file name.
@@ -267,6 +262,10 @@ public:
    //
    void GetUsageInfo(CxxUsageSets& symbols) const;
 
+   //  Removes, from SET, items that this file declared.
+   //
+   void EraseInternals(CxxNamedSet& set) const;
+
    //  Determines the group to which INCL belongs for sorting purposes.
    //
    IncludeGroup CalcGroup(const Include& incl) const;
@@ -274,6 +273,16 @@ public:
    //  Returns the item, if any, located at POS in the file.
    //
    CxxToken* PosToItem(size_t pos) const;
+
+   //  Returns the position of the item in REFS that appears first in this
+   //  file.  Returns string::npos if no item in REFS appears in this file.
+   //
+   size_t FindFirstReference(const CxxTokenVector& refs) const;
+
+   //  Returns the position of the item in USAGES that appears last in this
+   //  file.  Returns 0 if no item in USAGES appears in this file.
+   //
+   size_t FindLastUsage(const CxxNamedSet& usages) const;
 
    //  Invoked when ITEM is deleted.
    //
@@ -388,6 +397,13 @@ private:
    //
    void CheckDebugFt();
 
+   //  If the code on LINE invokes Debug::ft, updates FNAME to the string that
+   //  identifies the function, and DATA to either nullptr or the fn_name for
+   //  the function.  Returns false if LINE does not invoke Debug::ft or an
+   //  error occurs.
+   //
+   bool GetFnName(size_t line, std::string& fname, Data*& data) const;
+
    //  Returns the data member identified by NAME.
    //
    Data* FindData(const std::string& name) const;
@@ -423,10 +439,6 @@ private:
    //  by this file.  BASES is from CxxUsageSets.bases.
    //
    void SaveBaseSet(const CxxNamedSet& bases);
-
-   //  Removes, from SET, items that this file declared.
-   //
-   void EraseInternals(CxxNamedSet& set) const;
 
    //  Updates inclSet by adding types that this file used directly, which
    //  includes types used directly (in DIRECTS) or in executable code.
@@ -508,6 +520,11 @@ private:
    //  Provides access to the editor.
    //
    Editor& GetEditor() { return editor_; }
+
+   //  Returns the item that was most recently added to the file and then
+   //  clears it.
+   //
+   CxxToken* NewestItem();
 
    //  Sorts the file's #include directives.
    //
@@ -603,6 +620,10 @@ private:
    //  The items used in the file's executable code.
    //
    CxxNamedSet usages_;
+
+   //  The most recent item added to the file.
+   //
+   CxxToken* newest_;
 
    //  The file's parse status.
    //

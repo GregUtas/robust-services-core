@@ -637,7 +637,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, false,
       "Function could be static")));
    Attrs_.insert(WarningPair(FunctionCouldBeFree,
-      WarningAttrs(F, false,
+      WarningAttrs(T, false,
       "Function could be free")));
    Attrs_.insert(WarningPair(StaticFunctionViaMember,
       WarningAttrs(F, true,
@@ -785,7 +785,7 @@ void CodeWarning::Initialize()
       "Function at .cpp file scope is neither static nor extern")));
    Attrs_.insert(WarningPair(FunctionCouldBeDemoted,
       WarningAttrs(F, false,
-      "Function could be demoted to a subclass")));
+      "Function could be moved to a subclass")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, false,
       ERROR_STR)));
@@ -1043,7 +1043,7 @@ bool CodeWarning::Suppress() const
 
    case DebugFtNotInvoked:
    {
-      auto func = static_cast< const Function* >(item_);
+      auto func = static_cast< Function* >(item_);
       auto impl = func->GetImpl();
       if(impl == nullptr) return true;
       if(impl->FirstStatement() == nullptr) return true;

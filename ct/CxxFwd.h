@@ -175,6 +175,7 @@ typedef std::vector< Asm* > AsmVector;
 typedef std::vector< Class* > ClassVector;
 typedef std::vector< CxxScoped* > CxxScopedVector;
 typedef std::vector< const CxxToken* > CxxTokenVector;
+typedef std::vector< CxxToken* > CxxItemVector;
 typedef std::vector< Data* > DataVector;
 typedef std::vector< Elif* > ElifVector;
 typedef std::vector< Enum* > EnumVector;

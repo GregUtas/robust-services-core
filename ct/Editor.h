@@ -150,7 +150,7 @@ private:
    word ChangeCast(const CodeWarning& log);
    word ChangeClassToNamespace(const CodeWarning& log);
    word ChangeClassToStruct(const CodeWarning& log);
-   static word ChangeDataToFree(const CodeWarning& log);
+   static word ChangeMemberToFree(const CodeWarning& log);
    word ChangeOperator(const CodeWarning& log);
    word ChangeStructToClass(const CodeWarning& log);
    word EraseAdjacentSpaces(const CodeWarning& log);
@@ -235,11 +235,6 @@ private:
    //  Inserts a line break at POS and indents the new line accordingly.
    //
    word InsertLineBreak(size_t pos);
-
-   //  Inserts the string "//" followed by repetitions of C to fill out the
-   //  line.  POS is where to insert.  Returns POS.
-   //
-   size_t InsertRule(size_t pos, char c);
 
    //  Adjust the spacing around code_[POS, POS + LEN) based on SPACING.
    //  Returns true if an adjustment occurred.
@@ -327,29 +322,45 @@ private:
    //
    word FixReference(const CxxToken* item, const CodeWarning& log);
 
-   //  Returns the line that follows the left brace at the beginning of a
-   //  namespace definition for SPACE.
+   //  Returns the code for DEFN.  If DEFN contains a call to Debug::ft,
+   //  updates FTARG to its argument.
    //
-   size_t NamespacePos(const Namespace* space) const;
+   std::string GetDefnCode(const CxxScope* defn, CxxToken*& ftarg) const;
 
-   //  DATA is the declaration or definition (if INIT is set) of a static
-   //  class member, and CODE defines static namespace data with NAME to
-   //  replace it.  Updates CODE to qualify any class member used in DATA.
-   //  If INIT is set, only the initialization portion of CODE is updated.
+   //  DECL is a class member (data or function), and CODE defines a static
+   //  namespace item to replace it.  Updates CODE to qualify any members
+   //  that belong to DEFN's class or one of its base classes.
    //
-   void QualifyClassItems
-      (const Data* data, string& code, const string& name, bool init) const;
+   void QualifyClassItems(CxxScope* decl, string& code) const;
 
-   //  Updates POS to the beginning of the first line that follows any
-   //  declarations of free static data that begin at POS.  Returns false
-   //  if POS was not updated.
+   //  Updates CODE by going through ITEMS and qualifying each name defined
+   //  in CLS (or one of its base classes).
    //
-   bool FindFreeDataEnd(size_t& pos);
+   static void QualifyClassItems
+      (const Class* cls, const CxxNamedSet& items, string& code);
 
-   //  Removes static class data DECL, which is used in REFS, with static
-   //  namespace data in the .cpp that implements other members of the class.
+   //  A static data or function declaration with NAME is replacing a class
+   //  member that resides in SPACE.  Its definition was cut from POS and must
+   //  be placed between MIN and MAX.  Updates ATTRS with the location for the
+   //  new item and how it should be set off.
    //
-   word ChangeDataToFree(Data* decl, CxxTokenVector& refs);
+   void FindFreeItemPos(const Namespace* space, const string& name,
+      size_t pos, size_t min, size_t max, ItemDefnAttrs& attrs) const;
+
+   //  Updates BEGIN and END to the range where a new declaration for DECL
+   //  can appear when changing it from a class member to a static namespace
+   //  item in a .cpp.  It must appear before any item that references it
+   //  and after any item that the .cpp declares and that DECL uses.  Returns
+   //  the references to DECL, all of which occur in the .cpp, and updates
+   //  ITEMS with any items declared above the DECL's definition, and which
+   //  will be moved above the position of the new static namespace item.
+   //
+   CxxTokenVector FindDeclRange
+      (CxxScope* decl, size_t& begin, size_t& end, CxxItemVector& items) const;
+
+   //  Replaces member DECL with a static namespace item.
+   //
+   word ChangeMemberToFree(CxxScope* decl);
 
    //  ITEM has a log that requires adding a special member function.  Looks
    //  for other logs that also require this and fixes them together.
@@ -394,9 +405,7 @@ private:
    //  Fixes FUNC.  OFFSET is log.offset_ when the original log is
    //  associated with one of FUNC's arguments.
    //
-   word ChangeFunctionToFree(const Function* func);
    word ChangeFunctionToMember(const Function* func, word offset);
-   word ChangeInvokerToFree(const Function* func);
    word ChangeInvokerToMember(const Function* func, word offset);
    word EraseArgument(const Function* func, word offset);
    word EraseDefaultValue(const Function* func, word offset);
@@ -512,10 +521,10 @@ private:
    //
    bool OverridesWereSorted(const CodeWarning& log) const;
 
-   //  Returns items that immediately precede FUNC and that FUNC uses.  The
+   //  Returns items that immediately precede DEFN and that DEFN uses.  The
    //  items are sorted by position.
    //
-   CxxTokenVector GetItemsForFuncDefn(const Function* func) const;
+   CxxItemVector GetItemsForDefn(const CxxScope* defn) const;
 
    //  Moves FUNC's definition so it appears in standard order among SORTED.
    //
@@ -579,22 +588,24 @@ private:
 
    //  Parses the item inserted at file scope at or after POS in SPACE.
    //  If SPACE is nullptr, the item is added to the global namespace.
+   //  Returns the C++ item created by the parse, or nullptr on failure.
    //
-   bool ParseFileItem(size_t pos, Namespace* ns) const;
+   CxxToken* ParseFileItem(size_t pos, Namespace* ns) const;
 
    //  Parses the item inserted in the definition of CLS at or after POS.
-   //  ACCESS is the item's access control.
+   //  ACCESS is the item's access control.  Returns the C++ item created
+   //  by the parse, or nullptr on failure.
    //
-   bool ParseClassItem(size_t pos, Class* cls, Cxx::Access access) const;
+   CxxToken* ParseClassItem(size_t pos, Class* cls, Cxx::Access access) const;
 
    //  Updates the cross-reference and returns true after an incremental
    //  parse succeeds.
    //
    bool UpdateXref() const;
 
-   //  Displays a message when parsing at POS failed.  Returns false.
+   //  Displays a message when parsing at POS failed.  Returns nullptr.
    //
-   bool ParseFailed(size_t pos) const;
+   CxxToken* ParseFailed(size_t pos) const;
 
    //  Adds the editor to Editors_ and returns 0.
    //
@@ -622,6 +633,10 @@ private:
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from = string::npos);
 
+   //  Updates POS, a position in this file, after erasing code.
+   //
+   void UpdateAfterErase(size_t& pos) const;
+
    //  Set if the #include directives have been sorted.
    //
    bool sorted_;
@@ -634,7 +649,15 @@ private:
    //  The last position from which code was erased.  Only this position
    //  can be used in a Paste operation.
    //
-   size_t lastCut_;
+   size_t lastErasePos_;
+
+   //  The number of characters erased or inserted during the last edit.
+   //
+   size_t lastEraseSize_;
+
+   //  The number of characters erased or inserted during the last edit.
+   //
+   size_t lastInsertSize_;
 };
 }
 #endif

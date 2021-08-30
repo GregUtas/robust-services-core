@@ -260,6 +260,7 @@ namespace Cxx
       MemberInit,
       Namespace,
       QualName,
+      SpaceDefn,
       StringLiteral,
       TemplateParm,
       Typedef,

@@ -53,7 +53,7 @@ public:
    bool AddData(DataPtr& data);
    bool AddEnum(EnumPtr& decl);
    bool AddForw(ForwardPtr& forw);
-   bool AddFunc(FunctionPtr& func) const;
+   bool AddFunc(FunctionPtr& func);
    bool AddType(TypedefPtr& type);
    bool AddUsing(UsingPtr& use);
    bool AddAsm(AsmPtr& code);
@@ -112,6 +112,11 @@ public:
    //  Returns the first item in this area that matches NAME.
    //
    virtual CxxScoped* FindItem(const std::string& name) const;
+
+   //  Returns the item that was most recently added to the area and then
+   //  clears it.
+   //
+   CxxToken* NewestItem();
 
    //  Removes an item from the area when the item is being deleted.
    //
@@ -229,6 +234,10 @@ private:
    //  The area's definitions (of previously declared data or functions).
    //
    ScopePtrVector defns_;
+
+   //  The most recent item added to the area.
+   //
+   CxxToken* newest_;
 };
 
 //------------------------------------------------------------------------------

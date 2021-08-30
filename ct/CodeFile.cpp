@@ -377,6 +377,7 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) :
    dir_(dir),
    isHeader_(false),
    isSubsFile_(false),
+   newest_(nullptr),
    parsed_(Unparsed),
    checked_(false)
 {
@@ -587,9 +588,8 @@ void CodeFile::CheckDebugFt()
    const auto& lines = editor_.GetLinesInfo();
    auto coverdb = Singleton< CodeCoverage >::Instance();
    size_t begin, left, end;
-   string statement;
-   string dname;
    string fname;
+   Data* data;
 
    coverdb->Clear();
 
@@ -634,53 +634,24 @@ void CodeFile::CheckDebugFt()
                LogLine(n, DebugFtNotFirst);
             }
 
-            if(editor_.GetNthLine(n, statement))
+            if(GetFnName(n, fname, data))
             {
-               auto lpar = statement.find('(');
-               if(lpar == string::npos) break;
-               auto rpar = statement.find(')', lpar);
-               if(rpar == string::npos) break;
+               auto ok = (*f)->CheckDebugName(fname);
 
-               Data* data = nullptr;
-               auto ok = false;
-               auto lquo = statement.find(QUOTE, lpar);
-
-               if(lquo != string::npos)
+               if(!ok)
                {
-                  auto rquo = statement.rfind(QUOTE, rpar);
-                  if(rquo != string::npos)
-                  {
-                     fname = statement.substr(lquo + 1, rquo - lquo - 1);
-                     ok = true;
-                  }
+                  LogPos(editor_.GetLineStart(n), DebugFtNameMismatch, *f);
                }
-               else
+               else if(!debug && !coverdb->Insert(fname, hash))
                {
-                  dname = statement.substr(lpar + 1, rpar - lpar - 1);
-                  data = FindData(dname);
-                  if(data == nullptr) break;
-                  ok = data->GetStrValue(fname);
+                  LogPos(editor_.GetLineStart(n), DebugFtNameDuplicated, *f);
+               }
+               else if((data != nullptr) && (data->Readers() <= 1))
+               {
+                  LogPos(editor_.GetLineStart(n), DebugFtCanBeLiteral, *f);
                }
 
-               if(ok)
-               {
-                  ok = (*f)->CheckDebugName(fname);
-
-                  if(!ok)
-                  {
-                     LogPos(editor_.GetLineStart(n), DebugFtNameMismatch, *f);
-                  }
-                  else if(!debug && !coverdb->Insert(fname, hash))
-                  {
-                     LogPos(editor_.GetLineStart(n), DebugFtNameDuplicated, *f);
-                  }
-                  else if((data != nullptr) && (data->Readers() <= 1))
-                  {
-                     LogPos(editor_.GetLineStart(n), DebugFtCanBeLiteral, *f);
-                  }
-
-                  debug = true;
-               }
+               debug = true;
             }
             break;
 
@@ -946,7 +917,7 @@ void CodeFile::CheckProlog()
    const auto& lines = editor_.GetLinesInfo();
 
    auto pos = lines[0].begin;
-   auto ok = (code_.find(DoubleRule, pos) == pos);
+   auto ok = (code_.find(DoubleRule(), pos) == pos);
    if(!ok) return LogLine(0, HeadingNotStandard);
 
    pos = lines[1].begin;
@@ -1036,6 +1007,7 @@ void CodeFile::Display(ostream& stream,
    stream << prefix << "dir        : " << dir_ << CRLF;
    stream << prefix << "isHeader   : " << isHeader_ << CRLF;
    stream << prefix << "isSubsFile : " << isSubsFile_ << CRLF;
+   stream << prefix << "newest     : " << newest_ << CRLF;
    stream << prefix << "parsed     : " << parsed_ << CRLF;
    stream << prefix << "checked    : " << checked_ << CRLF;
    stream << prefix << "warnings   : " << warnings_.size() << CRLF;
@@ -1276,6 +1248,46 @@ void CodeFile::FindDeclSet()
 
 //------------------------------------------------------------------------------
 
+size_t CodeFile::FindFirstReference(const CxxTokenVector& refs) const
+{
+   Debug::ft("CodeFile.FindFirstReference");
+
+   size_t first = string::npos;
+
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+   {
+      if((*r)->GetFile() == this)
+      {
+         auto pos = (*r)->GetPos();
+         if(pos < first) first = pos;
+      }
+   }
+
+   return first;
+}
+
+//------------------------------------------------------------------------------
+
+size_t CodeFile::FindLastUsage(const CxxNamedSet& usages) const
+{
+   Debug::ft("CodeFile.FindLastUsage");
+
+   size_t last = 0;
+
+   for(auto u = usages.cbegin(); u != usages.cend(); ++u)
+   {
+      if((*u)->GetFile() == this)
+      {
+         auto pos = (*u)->GetPos();
+         if(pos > last) last = pos;
+      }
+   }
+
+   return last;
+}
+
+//------------------------------------------------------------------------------
+
 SpaceDefn* CodeFile::FindNamespaceDefn(const CxxToken* item) const
 {
    Debug::ft("CodeFile.FindNamespaceDefn");
@@ -1457,6 +1469,42 @@ void CodeFile::GetDecls(CxxNamedSet& items)
    {
       (*i)->GetDecls(items);
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeFile::GetFnName(size_t line, string& fname, Data*& data) const
+{
+   Debug::ft("CodeFile.GetFnName");
+
+   fname.clear();
+   data = nullptr;
+   string statement;
+
+   if(!editor_.GetNthLine(line, statement)) return false;
+   if(statement.find("Debug::ft") == string::npos) return false;
+
+   auto lpar = statement.find('(');
+   if(lpar == string::npos) return false;
+   auto rpar = statement.find(')', lpar);
+   if(rpar == string::npos) return false;
+
+   auto lquo = statement.find(QUOTE, lpar);
+
+   if(lquo != string::npos)
+   {
+      auto rquo = statement.rfind(QUOTE, rpar);
+      if(rquo == string::npos) return false;
+      fname = statement.substr(lquo + 1, rquo - lquo - 1);
+   }
+   else
+   {
+      auto dname = statement.substr(lpar + 1, rpar - lpar - 1);
+      data = FindData(dname);
+      if(data != nullptr) data->GetStrValue(fname);
+   }
+
+   return (!fname.empty());
 }
 
 //------------------------------------------------------------------------------
@@ -1805,6 +1853,8 @@ void CodeFile::InsertItem(CxxToken* item)
 {
    //  Optimize for initial compilation, when items are always added at the end.
    //
+   if(!item->IsInternal()) newest_ = item;
+
    auto pos = item->GetPos();
 
    if(!items_.empty() && (items_.back()->GetPos() > pos))
@@ -2178,6 +2228,17 @@ string CodeFile::MakeGuardName() const
 
    name += "_INCLUDED";
    return name;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* CodeFile::NewestItem()
+{
+   Debug::ft("CodeFile.NewestItem");
+
+   auto item = newest_;
+   newest_ = nullptr;
+   return item;
 }
 
 //------------------------------------------------------------------------------

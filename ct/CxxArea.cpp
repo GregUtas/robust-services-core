@@ -2771,7 +2771,7 @@ string ClassInst::TypeString(bool arg) const
 
 //==============================================================================
 
-CxxArea::CxxArea()
+CxxArea::CxxArea() : newest_(nullptr)
 {
    Debug::ft("CxxArea.ctor");
 }
@@ -2789,6 +2789,8 @@ bool CxxArea::AddAsm(AsmPtr& code)
 {
    Debug::ft("CxxArea.AddAsm");
 
+   if(!code->IsInternal()) newest_ = code.get();
+
    if(code->EnterScope())
    {
       assembly_.push_back(std::move(code));
@@ -2802,6 +2804,8 @@ bool CxxArea::AddAsm(AsmPtr& code)
 bool CxxArea::AddClass(ClassPtr& cls)
 {
    Debug::ft("CxxArea.AddClass");
+
+   if(!cls->IsInternal()) newest_ = cls.get();
 
    if(AddAnonymousUnion(cls)) return true;
 
@@ -2818,6 +2822,8 @@ bool CxxArea::AddClass(ClassPtr& cls)
 bool CxxArea::AddData(DataPtr& data)
 {
    Debug::ft("CxxArea.AddData");
+
+   if(!data->IsInternal()) newest_ = data.get();
 
    if(data->EnterScope())
    {
@@ -2837,6 +2843,8 @@ bool CxxArea::AddEnum(EnumPtr& decl)
 {
    Debug::ft("CxxArea.AddEnum");
 
+   if(!decl->IsInternal()) newest_ = decl.get();
+
    if(decl->EnterScope())
    {
       enums_.push_back(std::move(decl));
@@ -2851,6 +2859,8 @@ bool CxxArea::AddForw(ForwardPtr& forw)
 {
    Debug::ft("CxxArea.AddForw");
 
+   if(!forw->IsInternal()) newest_ = forw.get();
+
    if(forw->EnterScope())
    {
       forws_.push_back(std::move(forw));
@@ -2861,7 +2871,7 @@ bool CxxArea::AddForw(ForwardPtr& forw)
 
 //------------------------------------------------------------------------------
 
-bool CxxArea::AddFunc(FunctionPtr& func) const
+bool CxxArea::AddFunc(FunctionPtr& func)
 {
    Debug::ft("CxxArea.AddFunc");
 
@@ -2878,6 +2888,7 @@ bool CxxArea::AddFunc(FunctionPtr& func) const
    //  code (if supplied).  EnterScope invokes InsertFunc, which assigns us
    //  ownership of the function, so just release our FUNC argument.
    //
+   if(!func->IsInternal()) newest_ = func.get();
    func->EnterScope();
    func.release();
    return true;
@@ -2888,6 +2899,8 @@ bool CxxArea::AddFunc(FunctionPtr& func) const
 bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
 {
    Debug::ft("CxxArea.AddStaticAssert");
+
+   if(!assert->IsInternal()) newest_ = assert.get();
 
    if(assert->EnterScope())
    {
@@ -2903,6 +2916,8 @@ bool CxxArea::AddType(TypedefPtr& type)
 {
    Debug::ft("CxxArea.AddType");
 
+   if(!type->IsInternal()) newest_ = type.get();
+
    if(type->EnterScope())
    {
       types_.push_back(std::move(type));
@@ -2917,7 +2932,13 @@ bool CxxArea::AddUsing(UsingPtr& use)
 {
    Debug::ft("CxxArea.AddUsing");
 
-   if(use->EnterScope()) usings_.push_back(std::move(use));
+   if(!use->IsInternal()) newest_ = use.get();
+
+   if(use->EnterScope())
+   {
+      usings_.push_back(std::move(use));
+   }
+
    return true;
 }
 
@@ -3390,6 +3411,17 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
    }
 
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* CxxArea::NewestItem()
+{
+   Debug::ft("CxxArea.NewestItem");
+
+   auto item = newest_;
+   newest_ = nullptr;
+   return item;
 }
 
 //------------------------------------------------------------------------------

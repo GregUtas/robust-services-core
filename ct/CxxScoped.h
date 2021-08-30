@@ -74,6 +74,15 @@ public:
    //
    bool IsDefinedIn(const CxxArea* area) const;
 
+   //  Returns true if this scope is either fqSuper or a subscope of it.
+   //
+   bool IsSubscopeOf(const std::string& fqSuper) const;
+
+   //  Returns true if this item is a superscope of fqSub.  TMPLT is set if
+   //  a template should be considered a superscope of one of its instances.
+   //
+   bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const;
+
    //  Updates VIEW to indicate this item's accessibility to SCOPE.
    //
    virtual void AccessibilityTo(const CxxScope* scope, SymbolView& view) const;
@@ -96,11 +105,6 @@ public:
    //
    CxxScoped* FindInheritedName() const;
 
-   //  Displays the filename where the item is declared.  If the item is
-   //  defined in another file, that file is also displayed.
-   //
-   void DisplayFiles(std::ostream& stream) const;
-
    //  Updates imSet with the files that declare and define the item.
    //
    virtual void AddFiles(LibItemSet& imSet) const;
@@ -110,13 +114,10 @@ public:
    //
    virtual void UpdateReference(CxxToken* item, bool insert) const;
 
-   //  Invokes Rename on the item and each entry in its Xref().
+   //  Returns the references to the item, excluding its declaration and
+   //  definition.
    //
-   void ChangeName(const std::string& name);
-
-   //  Returns the amount of memory used by xref_ entries.
-   //
-   size_t XrefSize() const { return xref_.size() * 3 * sizeof(CxxNamed*); }
+   CxxTokenVector GetReferences() const;
 
    //  Returns true if the item is unused.
    //
@@ -128,14 +129,24 @@ public:
    //
    virtual bool CheckIfUnused(Warning warning) const;
 
-   //  Returns true if this scope is either fqSuper or a subscope of it.
+   //  Returns true if ITEM is in the same statement as this item: namely,
+   //  if both are in the same file and ITEM's position falls within the
+   //  span of this item.  Returns false if ITEM is nullptr.
    //
-   bool IsSubscopeOf(const std::string& fqSuper) const;
+   bool Contains(const CxxToken* item) const;
 
-   //  Returns true if this item is a superscope of fqSub.  TMPLT is set if
-   //  a template should be considered a superscope of one of its instances.
+   //  Invokes Rename on the item and each entry in its Xref().
    //
-   bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const;
+   void ChangeName(const std::string& name);
+
+   //  Displays the filename where the item is declared.  If the item is
+   //  defined in another file, that file is also displayed.
+   //
+   void DisplayFiles(std::ostream& stream) const;
+
+   //  Returns the amount of memory used by xref_ entries.
+   //
+   size_t XrefSize() const { return xref_.size() * 3 * sizeof(CxxNamed*); }
 
    //  Overridden to copy THAT's scope and access control.
    //
@@ -241,6 +252,10 @@ protected:
    //  Logs an item whose access control could be more restrictive.
    //
    virtual void CheckAccessControl() const;
+
+   //  Overridden to update all references to the item.
+   //
+   void Rename(const std::string& name) override;
 private:
    //  Records that the item's template analog, if any, required *at least*
    //  ACCESS to be accessible.

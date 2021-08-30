@@ -153,6 +153,11 @@ size_t IndentSize();
 //
 size_t LineLengthMax();
 
+//  Single (//----...) and double (///=====...) rules based on LineLengthMax.
+//
+const std::string& SingleRule();
+const std::string& DoubleRule();
+
 //------------------------------------------------------------------------------
 //
 //  Valid initial characters in an identifier.  '#' and '~' are included so that
@@ -186,11 +191,6 @@ extern const std::string ValidOctDigits;
 //  Whitespace characters.
 //
 extern const std::string WhitespaceChars;
-
-//  Single (//------...) and double (///======...) rules.
-//
-extern const std::string SingleRule;
-extern const std::string DoubleRule;
 
 //------------------------------------------------------------------------------
 //

@@ -201,7 +201,7 @@ public:
 protected:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   word Sort(const string& input, const string& output, string& expl) const;
+   static word Sort(const string& input, const string& output, string& expl);
 };
 
 NtLogsAction::NtLogsAction()
@@ -260,7 +260,7 @@ word NtLogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 }
 
 word NtLogsCommand::Sort
-   (const string& input, const string& output, string& expl) const
+   (const string& input, const string& output, string& expl)
 {
    Debug::ft("NtLogsCommand.Sort");
 

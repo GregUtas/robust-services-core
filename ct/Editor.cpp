@@ -382,13 +382,21 @@ struct ItemOffsets
 //
 struct ItemDefnAttrs
 {
+   ItemDefnAttrs();
    explicit ItemDefnAttrs(FunctionRole role);
    explicit ItemDefnAttrs(const Function* func);
 
-   const FunctionRole role_;  // type of function being inserted
-   size_t pos_;               // insertion position
-   ItemOffsets offsets_;      // how to offset item
+   FunctionRole role_;    // type of function being inserted
+   size_t pos_;           // insertion position
+   ItemOffsets offsets_;  // how to offset item
 };
+
+ItemDefnAttrs::ItemDefnAttrs() :
+   role_(FuncRole_N),
+   pos_(string::npos)
+{
+   Debug::ft("ItemDefnAttrs.ctor");
+}
 
 ItemDefnAttrs::ItemDefnAttrs(FunctionRole role) :
    role_(role),
@@ -402,34 +410,6 @@ ItemDefnAttrs::ItemDefnAttrs(const Function* func) :
    pos_(string::npos)
 {
    Debug::ft("ItemDefnAttrs.ctor(func)");
-}
-
-//==============================================================================
-//
-//  Returns true if ITEM1 and ITEM2 appear in the same statement: specifically,
-//  if a semicolon does not appear between their positions.
-//
-static bool AreInSameStatement(const CxxToken* item1, const CxxToken* item2)
-{
-   Debug::ft("CodeTools.AreInSameStatement");
-
-   if((item1 != nullptr) && (item2 != nullptr))
-   {
-      auto file1 = item1->GetFile();
-      auto file2 = item2->GetFile();
-      if(file1 != file2) return false;
-
-      auto pos1 = item1->GetPos();
-      auto pos2 = item2->GetPos();
-      if(pos1 == pos2) return true;
-
-      auto& lexer = file1->GetLexer();
-      auto begin = (pos1 < pos2 ? pos1 : pos2);
-      auto end = (pos1 > pos2 ? pos1 : pos2);
-      return (lexer.FindFirstOf(";", begin) > end);
-   }
-
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -672,6 +652,29 @@ static bool EnsureUniqueDebugFtName(const string& flit, string& fname)
 
 //------------------------------------------------------------------------------
 //
+//  Erases, from SET, items defined within DEFN.
+//
+static void EraseLocals(const CxxScope* defn, CxxNamedSet& set)
+{
+   Debug::ft("CodeTools.EraseLocals");
+
+   size_t begin, end;
+   defn->GetSpan2(begin, end);
+   auto file = defn->GetFile();
+
+   for(auto i = set.cbegin(); i != set.cend(); NO_OP)
+   {
+      auto pos = (*i)->GetPos();
+
+      if(((*i)->GetFile() == file) && (pos >= begin) && (pos <= end))
+         set.erase(*i++);
+      else
+         ++i;
+   }
+}
+
+//------------------------------------------------------------------------------
+//
 //  Returns the file where a class's new function should be defined.  If all of
 //  the its functions are implemented in the same file, returns that file, else
 //  asks the user to specify the file.
@@ -711,7 +714,9 @@ static CodeFile* FindFuncDefnFile(const Class* cls, const string& name)
 }
 
 //------------------------------------------------------------------------------
-
+//
+//  Returns the most restrictive access control in ITEMS.
+//
 static Cxx::Access FindMaxAccess(const CxxNamedSet& items)
 {
    Debug::ft("CodeTools.FindMaxAccess");
@@ -720,7 +725,7 @@ static Cxx::Access FindMaxAccess(const CxxNamedSet& items)
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
-      if((*i)->GetClass() != nullptr)
+      if(((*i)->GetClass() != nullptr) && !(*i)->IsDeclaredInFunction())
       {
          auto a = (*i)->GetAccess();
          if(a < access) access = a;
@@ -728,31 +733,6 @@ static Cxx::Access FindMaxAccess(const CxxNamedSet& items)
    }
 
    return access;
-}
-
-//------------------------------------------------------------------------------
-
-static Cxx::Access FindMaxDataAccess(Data* decl)
-{
-   Debug::ft("CodeTools.FindMaxDataAccess");
-
-   CxxUsageSets usages;
-   decl->GetUsages(*decl->GetFile(), usages);
-
-   auto defn = decl->GetMate();
-   if(defn != nullptr)
-   {
-      defn->GetUsages(*defn->GetFile(), usages);
-      usages.directs.erase(decl);
-   }
-
-   auto max = FindMaxAccess(usages.directs);
-   auto access = FindMaxAccess(usages.indirects);
-   if(access < max) max = access;
-   access = FindMaxAccess(usages.inherits);
-   if(access < max) max = access;
-
-   return max;
 }
 
 //------------------------------------------------------------------------------
@@ -803,14 +783,14 @@ static string GetComment(const CxxNamed* item, bool unindent)
 
 //------------------------------------------------------------------------------
 //
-//  Checks that the name of static class data DECL is not in use when planning
-//  to convert DECL to static namespace data in the FILE that implements the
-//  class that currently declares it.  If the name is in use, prompts for and
-//  returns an alternate name if provided, else returns an empty string.
+//  Checks that the name of member DECL is not in use when planning to convert
+//  DECL to a static namespace item in the FILE that implements the class that
+//  currently declares it.  If the name is in use, prompts for and returns an
+//  alternate name if provided, else returns an empty string.
 //
-static string GetDataName(const Data* decl, CodeFile* file)
+static string GetItemName(const CxxScope* decl, CodeFile* file)
 {
-   Debug::ft("CodeTools.GetDataName");
+   Debug::ft("CodeTools.GetItemName");
 
    auto syms = Singleton< CxxSymbols >::Instance();
    auto space = decl->GetSpace();
@@ -819,7 +799,7 @@ static string GetDataName(const Data* decl, CodeFile* file)
    while(true)
    {
       SymbolView view;
-      auto item = syms->FindSymbol(file, space, name, DATA_MASK, view);
+      auto item = syms->FindSymbol(file, space, name, CODE_REFS, view);
       if(item == nullptr) return name;
 
       std::ostringstream stream;
@@ -857,7 +837,44 @@ static string GetExpl()
 
 //------------------------------------------------------------------------------
 //
-//  Returns true if NAME is a valid identifier.
+//  Returns items used by DECL and its separate definition (DEFN), if any.
+//  Excludes DECL itself, items local to DEFN, and items local to DEFN's
+//  entire file if extOnly is set.
+//
+static CxxUsageSets GetItemUsages(CxxScope* decl, bool extOnly)
+{
+   Debug::ft("CodeTools.GetItemUsages");
+
+   CxxUsageSets usages;
+   decl->GetUsages(*decl->GetFile(), usages);
+
+   auto defn = decl->GetMate();
+   if(defn != nullptr)
+   {
+      auto file = defn->GetFile();
+      defn->GetUsages(*file, usages);
+
+      if(extOnly)
+      {
+         file->EraseInternals(usages.directs);
+         file->EraseInternals(usages.indirects);
+      }
+      else
+      {
+         EraseLocals(defn, usages.directs);
+         EraseLocals(defn, usages.indirects);
+      }
+   }
+
+   usages.directs.erase(decl);
+   usages.indirects.erase(decl);
+   return usages;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Writes PROMPT to the CLI to obtain an identifier.  Returns the identifier
+//  if it is valid, else returns an empty string.
 //
 static string GetIdentifier(const string& prompt)
 {
@@ -871,30 +888,13 @@ static string GetIdentifier(const string& prompt)
    if(name[0] == '#') return EMPTY_STR;
    if(name[0] == '~') return EMPTY_STR;
 
-   for(auto i = 1; i < name.size(); ++i)
+   for(size_t i = 1; i < name.size(); ++i)
    {
       if(ValidNextChars.find(name[i]) == string::npos) return EMPTY_STR;
       if(name[i] == '#') return EMPTY_STR;
    }
 
    return name;
-}
-
-//------------------------------------------------------------------------------
-//
-//  Returns the initialization expresssion for DATA.
-//
-static string GetInit(const CxxNamed* data)
-{
-   Debug::ft("CodeTools.GetInit");
-
-   size_t begin, end;
-   data->GetSpan2(begin, end);
-   auto& lexer = data->GetFile()->GetLexer();
-   auto code = lexer.Source().substr(begin, end - begin + 1);
-   auto eqpos = code.find('=');
-   if(eqpos == string::npos) return EMPTY_STR;
-   return code.substr(eqpos);
 }
 
 //------------------------------------------------------------------------------
@@ -919,25 +919,6 @@ static void GetOverrides(Function* func, FunctionVector& funcs)
 }
 
 //------------------------------------------------------------------------------
-//
-//  Adds all references to DATA to ITEMS, excluding DATA and its definition.
-//
-static void GetReferences(const Data* data, CxxTokenVector& items)
-{
-   Debug::ft("CodeTools.GetReferences");
-
-   auto xref = data->Xref();
-   auto mate = data->GetMate();
-
-   for(auto r = xref->cbegin(); r != xref->cend(); ++r)
-   {
-      if(AreInSameStatement(data, *r)) continue;
-      if(AreInSameStatement(mate, *r)) continue;
-      items.push_back(*r);
-   }
-}
-
-//------------------------------------------------------------------------------
 
 static void Inform(string text)
 {
@@ -945,6 +926,27 @@ static void Inform(string text)
 
    if(!text.empty() && (text.back() != CRLF)) text.push_back(CRLF);
    Cli_->Inform(text);
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns true if the string from CODE[POS] to CODE[POS+SIZE-1], which was
+//  found by searching for an identifier, is not part of a larger identifier.
+//
+static bool IsFullIdentifier(const string& code, size_t pos, size_t size)
+{
+   Debug::ft("CodeTools.IsFullIdentifier");
+
+   auto prev = code[pos - 1];
+   auto next = code[pos + size];
+
+   if((ValidFirstChars.find(prev) == string::npos) &&
+      (ValidNextChars.find(next) == string::npos))
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -998,6 +1000,25 @@ static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
 
 //------------------------------------------------------------------------------
 //
+//  Returns the most restrictive access control of the items used in DECL and
+//  its definition, if distinct.
+//
+static Cxx::Access MaxAccessUsed(CxxScope* decl)
+{
+   Debug::ft("CodeTools.MaxAccessUsed");
+
+   auto usages = GetItemUsages(decl, true);
+   auto max = FindMaxAccess(usages.directs);
+   auto access = FindMaxAccess(usages.indirects);
+   if(access < max) max = access;
+   access = FindMaxAccess(usages.inherits);
+   if(access < max) max = access;
+
+   return max;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Sets Expl_ to "TEXT not found."  If QUOTES is set, TEXT is enclosed in
 //  quotes.  Returns 0.
 //
@@ -1012,6 +1033,27 @@ static word NotFound(fixed_string text, bool quotes = false)
    expl += " not found.";
    SetExpl(expl);
    return EditFailed;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Replaces the identifier oldName with newName within CODE.
+//
+static void Rename(string& code, const string& oldName, const string& newName)
+{
+   Debug::ft("CodeTools.Rename");
+
+   for(size_t pos = 0; pos < code.size(); pos += oldName.size())
+   {
+      pos = code.find(oldName, pos);
+      if(pos == string::npos) break;
+
+      if(IsFullIdentifier(code, pos, oldName.size()))
+      {
+         code.replace(pos, oldName.size(), newName);
+         break;
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1080,7 +1122,9 @@ static word Unimplemented()
 Editor::Editor() :
    sorted_(false),
    aliased_(false),
-   lastCut_(string::npos)
+   lastErasePos_(string::npos),
+   lastEraseSize_(0),
+   lastInsertSize_(0)
 {
    Debug::ft("Editor.ctor");
 }
@@ -1453,248 +1497,6 @@ word Editor::Changed(size_t pos)
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeDataToFree(const CodeWarning& log)
-{
-   Debug::ft("Editor.ChangeDataToFree(log)");
-
-   //  This removes static member data from a class and adds it to a namespace.
-   //  This is supported if the data is used in a single .cpp, which might also
-   //  be where the class is defined.
-   //
-   //  Find the data's declaration, definition, and references.  All changes,
-   //  except for deleting the declaration, occur in the .cpp, so forward to
-   //  its editor.
-   //
-   auto decl = static_cast< Data* >(log.item_);
-   auto defn = decl->GetMate();
-   CxxTokenVector refs;
-   GetReferences(decl, refs);
-
-   auto cppItem = (defn != nullptr ? defn : refs.front());
-   auto& editor = cppItem->GetFile()->GetEditor();
-   return editor.ChangeDataToFree(decl, refs);
-}
-
-//------------------------------------------------------------------------------
-
-word Editor::ChangeDataToFree(Data* decl, CxxTokenVector& refs)
-{
-   Debug::ft("Editor.ChangeDataToFree(data)");
-
-   auto access = FindMaxDataAccess(decl);
-
-   if(access < Cxx::Public)
-   {
-      return Report("This item uses non-public data, so it cannot be changed.");
-   }
-
-   auto oldName = decl->Name();
-   auto newName = GetDataName(decl, file_);
-
-   if(newName.empty())
-   {
-      return Report("This warning will be skipped.");
-   }
-
-   auto nameChange = (newName != oldName);
-
-   //  Assemble the code for defining the data as free, which has the form
-   //    <comment> <decl> [ '=' <init>] ';'
-   //  where <comment> and <decl> are from data's current declaration and
-   //  <init> is any initialization found in its definition or declaration.
-   //  Displaying the declaration also picks up the initialization, else it
-   //  must be obtained from the definition.  Display() prefixes the access
-   //  control (e.g. "private: "), which must be erased.
-   //
-   std::ostringstream stream;
-   decl->Display(stream, EMPTY_STR, Code_Mask);
-   auto code = stream.str();
-   auto stat = code.find(STATIC_STR);
-   code.erase(0, stat);
-   auto comment = GetComment(decl, true);
-   if(!comment.empty()) code.insert(0, comment);
-
-   auto defn = static_cast< Data* >(decl->GetMate());
-
-   if(defn != nullptr)
-   {
-      auto semi = code.find(';');
-      code.erase(semi);
-      code.push_back(SPACE);
-      code.append(GetInit(defn));
-      code.push_back(CRLF);
-   }
-
-   if(access == Cxx::Public)
-   {
-      auto& editor = decl->GetFile()->GetEditor();
-      editor.QualifyClassItems(decl, code, decl->Name(), false);
-      if(defn != nullptr) QualifyClassItems(defn, code, decl->Name(), true);
-   }
-
-   if(nameChange)
-   {
-      for(size_t pos = 0; pos < code.size(); pos += oldName.size())
-      {
-         pos = code.find(oldName, pos);
-         if(pos == string::npos) break;
-
-         auto prev = code[pos - 1];
-         auto next = code[pos + oldName.size()];
-
-         if((ValidFirstChars.find(prev) == string::npos) &&
-            (ValidNextChars.find(next) == string::npos))
-         {
-            code.replace(pos, oldName.size(), newName);
-            break;
-         }
-      }
-   }
-
-   //  Before deleting the current declaration and definition, find the
-   //  namespace in which the data currently appears.
-   //
-   auto space = decl->GetSpace();
-   auto scope = space;
-
-   size_t pos = string::npos;
-
-   if(defn != nullptr)
-   {
-      EraseItem(defn);
-      pos = lastCut_;
-   }
-
-   EraseItem(decl);
-
-   //  Decide where to insert the new declaration.  The first choice
-   //  is where the definition was located, as long as the data isn't
-   //  referenced above that location.
-   //
-   auto subsequent = true;
-
-   if(pos != string::npos)
-   {
-      for(auto r = refs.cbegin(); r != refs.cend(); ++r)
-      {
-         if((*r)->GetPos() < pos)
-         {
-            pos = string::npos;
-            break;
-         }
-      }
-   }
-
-   //  If the new declaration couldn't be placed where the previous
-   //  definition was located, then insert it
-   //    a) at file scope, if SCOPE is the global namespace, else
-   //    b) in an existing namespace definition for SPACE, else
-   //    c) in a new namespace definition for SPACE.
-   //  In cases (a) and (b), or if it is being inserted in the same location
-   //  as the previous definition, insert the declaration after any existing
-   //  declarations of static data.
-   //
-   if(pos != string::npos)
-   {
-      FindFreeDataEnd(pos);
-      subsequent = true;
-   }
-   else
-   {
-      pos = CodeBegin();
-      auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
-
-      if(space == gns)
-      {
-         subsequent = FindFreeDataEnd(pos);
-      }
-      else
-      {
-         auto nspos = NamespacePos(space);
-
-         if(nspos != string::npos)
-         {
-            pos = nspos;
-            subsequent = FindFreeDataEnd(pos);
-         }
-         else
-         {
-            string ns(NAMESPACE_STR);
-            ns.push_back(SPACE);
-            ns.append(space->Name());
-            ns.push_back(CRLF);
-            ns.push_back('{');
-            ns.push_back(CRLF);
-            code.insert(0, ns);
-            code.push_back('}');
-            code.push_back(CRLF);
-            scope = gns;
-         }
-      }
-   }
-
-   //  If the data is commented or does not appear with other static data,
-   //  set it off with blank lines.
-   //
-   if(!comment.empty() || !subsequent)
-   {
-      auto prevType = PosToType(PrevBegin(pos));
-      if(prevType == CodeLine) code.insert(0, 1, CRLF);
-      code.push_back(CRLF);
-   }
-
-   //  If the data does not appear with other static data, set it off with
-   //  a rule.
-   //
-   if(!subsequent)
-   {
-      code.append(SingleRule);
-      code.push_back(CRLF);
-      code.push_back(CRLF);
-   }
-
-   Insert(pos, code);
-   pos = Find(pos, STATIC_STR);
-
-   //  Compile the declaration and find the C++ item that was created for it.
-   //  Note that SCOPE is the global namespace if a namespace definition was
-   //  inserted.
-   //
-   ParseFileItem(pos, scope);
-
-   SymbolView view;
-   auto syms = Singleton< CxxSymbols >::Instance();
-   auto item = syms->FindSymbol(file_, space, newName, DATA_MASK, view);
-   if(item == nullptr) Inform("C++ item for new declaration not found.");
-   auto data = static_cast< Data* >(item);
-
-   //  For each reference to the previous data, remove any qualified names and
-   //  update the referent.
-   //
-   for(auto r = refs.begin(); r != refs.end(); ++r)
-   {
-      if((*r)->Type() == Cxx::TypeName)
-      {
-         auto tname = static_cast< const TypeName* >(*r);
-         auto qname = tname->GetQualName();
-         while(qname->Size() > 1) EraseItem(qname->First());
-
-         if(nameChange)
-         {
-            Replace(qname->Last()->GetPos(), oldName.size(), newName);
-         }
-
-         qname->SetReferent(data, &view);
-         qname->UpdateXref(true);
-      }
-   }
-
-   if(data != nullptr) pos = data->GetPos();
-   return Changed(pos);
-}
-
-//------------------------------------------------------------------------------
-
 void Editor::ChangeForwards
    (const CxxToken* item, Cxx::ClassTag from, Cxx::ClassTag to)
 {
@@ -1723,22 +1525,6 @@ void Editor::ChangeForwards
 
 //------------------------------------------------------------------------------
 
-word Editor::ChangeFunctionToFree(const Function* func)
-{
-   Debug::ft("Editor.ChangeFunctionToFree");
-
-   //  o If the function is invoked externally, move its declaration to after
-   //    its class, into the enclosing namespace, else just erase it.
-   //  o In the definition, replace the class name with the namespace in the
-   //    fn_name or Debug::ft string literal.  If it uses any static items
-   //    from the class, prefix the class name to those items.
-   //  o Move the definition to the correct location.
-   //
-   return Unimplemented();
-}
-
-//------------------------------------------------------------------------------
-
 word Editor::ChangeFunctionToMember(const Function* func, word offset)
 {
    Debug::ft("Editor.ChangeFunctionToMember");
@@ -1747,19 +1533,6 @@ word Editor::ChangeFunctionToMember(const Function* func, word offset)
    //    OFFSET, removing that argument.
    //  o Define the function in the correct location, changing the argument
    //    at OFFSET to "this".
-   //
-   return Unimplemented();
-}
-
-//------------------------------------------------------------------------------
-
-word Editor::ChangeInvokerToFree(const Function* func)
-{
-   Debug::ft("Editor.ChangeInvokerToFree");
-
-   //  Change invokers of this function to invoke it directly instead of
-   //  through its class.  An invoker not in the same namespace may have
-   //  to prefix the function's namespace.
    //
    return Unimplemented();
 }
@@ -1775,6 +1548,229 @@ word Editor::ChangeInvokerToMember(const Function* func, word offset)
    //  header.
    //
    return Unimplemented();
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::ChangeMemberToFree(const CodeWarning& log)
+{
+   Debug::ft("Editor.ChangeMemberToFree(log)");
+
+   //  This removes a member (static data or a function) from a class and adds
+   //  it to a namespace.  This is supported if the member is used in a single
+   //  .cpp, which is provided in the log's info_ field.
+   //
+   auto decl = static_cast< CxxScope* >(log.item_);
+   auto defn = decl->GetMate();
+
+   if(defn == nullptr)
+   {
+      //  LOG shouldn't have been generated in this case.
+      //
+      return Report("This is not supported unless a .cpp defines the item.");
+   }
+
+   auto file = Singleton< Library >::Instance()->FindFile(log.info_);
+   if(file == nullptr)
+   {
+      //  LOG should have provided a valid file.
+      //
+      return NotFound("File for static definition.");
+   }
+
+   auto cpp = defn->GetFile();
+   if(cpp != file)
+   {
+      //  Moving the definition to another .cpp is not yet supported, because
+      //  it also involves adjusting the #include directives in both files.
+      //
+      return Report("Moving the definition to another .cpp is not supported.");
+   }
+
+   auto& editor = cpp->GetEditor();
+   return editor.ChangeMemberToFree(decl);
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::ChangeMemberToFree(CxxScope* decl)
+{
+   Debug::ft("Editor.ChangeMemberToFree(decl)");
+
+   auto access = MaxAccessUsed(decl);
+
+   if(access < Cxx::Public)
+   {
+      return Report("This item uses non-public data, so it cannot be changed.");
+   }
+
+   auto oldName = decl->Name();
+   auto newName = GetItemName(decl, file_);
+
+   if(newName.empty())
+   {
+      return Report("This warning will be skipped.");
+   }
+
+   //  Get the code for the item's definition and modify it as follows:
+   //  o Remove its class qualifier.
+   //  o Prefix the "static" tag.
+   //  o Prefix the declaration's comment, if any.
+   //  o Remove the "const" tag from a const member function.
+   //
+   auto defn = decl->GetMate();
+   CxxToken* ftarg = nullptr;
+   auto code = GetDefnCode(defn, ftarg);
+   auto qual = decl->GetClass()->Name() + SCOPE_STR;
+   auto lpar = code.find('(');
+   auto pos = code.rfind(qual, lpar);
+   if(pos == string::npos) return NotFound("Definition's class qualifier");
+   code.erase(pos, qual.size());
+   code.insert(0, string(STATIC_STR) + SPACE);
+
+   auto comment = GetComment(decl, true);
+   if(!comment.empty()) code.insert(0, comment);
+
+   auto isFunc = (decl->Type() == Cxx::Function);
+   if(isFunc)
+   {
+      if(decl->IsConst())
+      {
+         pos = code.find('{');
+         if(pos == string::npos) return NotFound("Function's left brace");
+         pos = code.rfind(CONST_STR, pos);
+         if(pos == string::npos) return NotFound("Function const tag");
+         code.erase(pos, strlen(CONST_STR));
+         if(code[pos - 1] == CRLF) code.erase(pos - 1, 1);
+      }
+   }
+
+   code.push_back(CRLF);
+
+   //  If the item uses public members, their names must now be qualified.
+   //
+   if(access == Cxx::Public)
+   {
+      QualifyClassItems(decl, code);
+   }
+
+   //  If the item's name is changing, replace its occurrences.
+   //
+   if(newName != oldName)
+   {
+      Rename(code, oldName, newName);
+   }
+
+   //  Find the range in which the new declaration can be placed and the
+   //  references to it.
+   //
+   size_t min, max;
+   CxxItemVector items;
+   auto refs = FindDeclRange(decl, min, max, items);
+   if(min > max)
+   {
+      return NotFound("Position for new static declaration");
+   }
+
+   //  Before deleting the member's current declaration and definition,
+   //  find the namespace to which it belongs.
+   //
+   auto space = decl->GetSpace();
+   EraseItem(defn);
+   pos = lastErasePos_;
+   UpdateAfterErase(min);
+   UpdateAfterErase(max);
+   EraseItem(decl);
+
+   //  Finalize the position of the new declaration.
+   //
+   ItemDefnAttrs attrs;
+   if(isFunc) attrs.role_ = FuncOther;
+   FindFreeItemPos(space, newName, pos, min, max, attrs);
+   pos = attrs.pos_;
+
+   if(pos == string::npos)
+   {
+      return NotFound("Position for new static declaration");
+   }
+
+   //  If the item is commented, ensure that it is offset.
+   //
+   if(!comment.empty())
+   {
+      if(attrs.offsets_.above_ == OffsetNone)
+         attrs.offsets_.above_ = OffsetBlank;
+      if(attrs.offsets_.below_ == OffsetNone)
+         attrs.offsets_.below_ = OffsetBlank;
+   }
+
+   InsertBelowItemDefn(attrs);
+   auto dest = Insert(pos, code);
+
+   while(!items.empty())
+   {
+      auto item = items.back();
+      items.pop_back();
+      InsertLine(dest, EMPTY_STR);
+      MoveItem(item, dest, nullptr);
+   }
+
+   InsertAboveItemDefn(attrs);
+
+   //  Compile the declaration and find the C++ item that was created for it.
+   //
+   pos = code_.find(code, dest);
+   pos = Find(pos, STATIC_STR);
+
+   auto item = static_cast< CxxScope* >(ParseFileItem(pos, space));
+   if(item == nullptr)
+   {
+      return Report("Parsing of new declaration failed.");
+   }
+
+   //  For each reference to the previous item, remove any qualified names and
+   //  update the referent.
+   //
+   for(auto r = refs.begin(); r != refs.end(); ++r)
+   {
+      if((*r)->Type() == Cxx::TypeName)
+      {
+         auto tname = static_cast< const TypeName* >(*r);
+         auto qname = tname->GetQualName();
+         while(qname->Size() > 1) EraseItem(qname->First());
+
+         if(newName != oldName)
+         {
+            Replace(qname->Last()->GetPos(), oldName.size(), newName);
+         }
+
+         qname->SetReferent(item, nullptr);
+         qname->UpdateXref(true);
+      }
+   }
+
+   //  In a function definition, replace the class name with the namespace in
+   //  the Debug::ft argument.
+   //
+   if(ftarg != nullptr)
+   {
+      auto ftpos = Find(pos, "Debug::ft");
+
+      if(ftpos < (pos + code.size()))
+      {
+         file_->LogPos(ftpos, DebugFtNameMismatch, item);
+         auto& log = file_->GetWarnings().back();
+         auto rc = FixLog(log);
+
+         if(rc != EditSucceeded)
+         {
+            Report("Failed to modify Debug::ft argument.");
+         }
+      }
+   }
+
+   if(item != nullptr) pos = item->GetPos();
+   return Changed(pos);
 }
 
 //------------------------------------------------------------------------------
@@ -1888,28 +1884,24 @@ size_t Editor::CodeBegin() const
 {
    Debug::ft(Editor_CodeBegin);
 
-   std::vector< size_t > positions;
-
-   auto c = file_->Classes();
-   if(!c->empty()) positions.push_back(c->front()->GetPos());
-
-   auto d = file_->Datas();
-   if(!d->empty()) positions.push_back(d->front()->GetPos());
-
-   auto e = file_->Enums();
-   if(!e->empty()) positions.push_back(e->front()->GetPos());
-
-   auto f = file_->Funcs();
-   if(!f->empty()) positions.push_back(f->front()->GetPos());
-
-   auto t = file_->Types();
-   if(!t->empty()) positions.push_back(t->front()->GetPos());
-
    size_t pos = string::npos;
+   auto items = file_->Items();
 
-   for(auto p = positions.cbegin(); p != positions.end(); ++p)
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
-      if(*p < pos) pos = *p;
+      if((*i)->IsInternal()) continue;
+
+      switch((*i)->Type())
+      {
+      case Cxx::Class:
+      case Cxx::Data:
+      case Cxx::Enum:
+      case Cxx::Function:
+      case Cxx::Typedef:
+         pos = (*i)->GetPos();
+      }
+
+      if(pos != string::npos) break;
    }
 
    auto ns = false;
@@ -2217,7 +2209,6 @@ size_t Editor::Erase(size_t pos, size_t count)
 
    if(count == 0) return pos;
    code_.erase(pos, count);
-   lastCut_ = pos;
    UpdatePos(Erased, pos, count);
    return pos;
 }
@@ -2778,30 +2769,144 @@ size_t Editor::FindArgsEnd(const Function* func) const
 
 //------------------------------------------------------------------------------
 
-bool Editor::FindFreeDataEnd(size_t& pos)
+CxxTokenVector Editor::FindDeclRange
+   (CxxScope* decl, size_t& begin, size_t& end, CxxItemVector& items) const
 {
-   Debug::ft("Editor.FindFreeDataEnd");
+   Debug::ft("Editor.FindDeclRange");
 
-   auto updated = false;
+   auto refs = decl->GetReferences();
+   end = file_->FindFirstReference(refs);
+
+   auto usages = GetItemUsages(decl, false);
+
+   //  Exclude any items declared immediately above the function and used by
+   //  it, such as its fn_name.  These will be moved with the function.
+   //
+   auto defn = decl->GetMate();
+   items = GetItemsForDefn(defn);
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      usages.directs.erase(static_cast< CxxNamed* >(*i));
+      usages.indirects.erase(static_cast< CxxNamed* >(*i));
+   }
+
+   begin = file_->FindLastUsage(usages.directs);
+   auto max = file_->FindLastUsage(usages.indirects);
+   if(max > begin) begin = max;
+
+   return refs;
+}
+
+//------------------------------------------------------------------------------
+
+void Editor::FindFreeItemPos(const Namespace* space, const string& name,
+   size_t pos, size_t min, size_t max, ItemDefnAttrs& attrs) const
+{
+   Debug::ft("Editor.FindFreeItemPos");
+
+   auto isFunc = (attrs.role_ == FuncOther);
+
+   //  If possible, place data where its previous definition was located.
+   //
+   if(!isFunc)
+   {
+      if((pos >= min) && (pos <= max))
+      {
+         attrs.pos_ = pos;
+         return;
+      }
+   }
+
+   //  Place the item between BEGIN and END as long as it lies within the
+   //  same namespace.
+   //
+   attrs.pos_ = string::npos;
+   attrs.offsets_.below_ = OffsetRule;
+   auto currSpace = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    auto items = file_->Items();
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
-      if((*i)->GetPos() > pos)
+      size_t begin, left, end;
+
+      //  Keep going if we haven't reached the desired namespace or MIN.
+      //  Return if we've passed MAX.
+      //
+      if((*i)->IsInternal()) continue;
+      currSpace = (*i)->GetSpace();
+      if(currSpace != space) continue;
+
+      auto currPos = (*i)->GetPos();
+      if(currPos < min) continue;
+      if(currPos > max) return;
+
+      auto type = (*i)->Type();
+
+      if(type == Cxx::SpaceDefn)
       {
-         if((*i)->Type() != Cxx::Data) return updated;
-
-         auto data = static_cast< const Data* >(*i);
-         if(!data->IsStatic()) return updated;
-
-         size_t begin, end;
-         if(!GetSpan(data, begin, end)) return updated;
-         pos = NextBegin(end);
-         updated = true;
+         //  Update the insertion position to the line following the
+         //  namespace definition's left brace.
+         //
+         if(!(*i)->GetSpan3(begin, left, end)) return;
+         attrs.pos_ = NextBegin(left);
+         continue;
       }
-   }
 
-   return updated;
+      if(!isFunc)
+      {
+         //  Free data goes after existing free data.
+         //
+         if(type != Cxx::Data) return;
+         auto data = static_cast< const Data* >(*i);
+         if(data->GetClass() != nullptr) return;
+         attrs.offsets_.below_ = OffsetNone;
+      }
+      else
+      {
+         //  A free function goes with free function definitions in
+         //  alphabetical order.  If it will appear after another item,
+         //  put its rule above it.
+         //
+         switch(type)
+         {
+         case Cxx::Function:
+         {
+            auto func = static_cast< const Function* >(*i);
+            if(func->GetClass() != nullptr) return;
+            if(func->GetDefn() == func)
+            {
+               if(strCompare(func->Name(), name) > 0) return;
+            }
+            break;
+         }
+
+         case Cxx::Data:
+         {
+            //  Skip over an fn_name.  It belongs to the next function, and
+            //  we wouldn't want to insert the new function between them.
+            //
+            auto data = static_cast< const Data* >(*i);
+            if(data->GetTypeSpec()->Name() == "fn_name") continue;
+            break;
+         }
+
+         case Cxx::Class:
+            //
+            //  Put the function above a class that is private to the .cpp.
+            //
+            return;
+         }
+
+         attrs.offsets_.below_ = OffsetNone;
+         attrs.offsets_.above_ = OffsetRule;
+      }
+
+      //  Update the insertion position to the line after the current item.
+      //
+      if(!(*i)->GetSpan2(begin, end)) return;
+      attrs.pos_ = NextBegin(end);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3284,8 +3389,6 @@ word Editor::FixFunction(Function* func, const CodeWarning& log)
       return TagAsConstFunction(func);
    case FunctionCouldBeStatic:
       return TagAsStaticClassFunction(func);
-   case FunctionCouldBeFree:
-      return ChangeFunctionToFree(func);
    case FunctionCouldBeDefaulted:
       return TagAsDefaulted(func);
    case CouldBeNoexcept:
@@ -3341,8 +3444,6 @@ word Editor::FixInvoker(const Function* func, const CodeWarning& log)
       return EraseArgument(func, log.offset_);
    case VirtualDefaultArgument:
       return InsertArgument(func, log.offset_);
-   case FunctionCouldBeFree:
-      return ChangeInvokerToFree(func);
    case FunctionCouldBeMember:
       return ChangeInvokerToMember(func, log.offset_);
    }
@@ -3409,8 +3510,7 @@ word Editor::FixReferences(const CodeWarning& log)
    //  Fix references to the data, followed by the data itself.
    //
    auto data = static_cast< const Data* >(log.item_);
-   CxxTokenVector refs;
-   GetReferences(data, refs);
+   auto refs = data->GetReferences();
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {
@@ -3607,7 +3707,7 @@ word Editor::FixWarning(const CodeWarning& log)
    case FunctionCouldBeStatic:
       return FixFunctions(log);
    case FunctionCouldBeFree:
-      return FixInvokers(log);
+      return ChangeMemberToFree(log);
    case StaticFunctionViaMember:
       return ChangeOperator(log);
    case UseOfTab:
@@ -3667,7 +3767,7 @@ word Editor::FixWarning(const CodeWarning& log)
    case ExcessiveCast:
       return ChangeCast(log);
    case DataCouldBeFree:
-      return ChangeDataToFree(log);
+      return ChangeMemberToFree(log);
    case ConstructorNotPrivate:
       return ChangeSpecialFunction(log);
    case DestructorNotPrivate:
@@ -3734,21 +3834,47 @@ bool Editor::FunctionsWereSorted(const CodeWarning& log) const
 
 //------------------------------------------------------------------------------
 
-CxxTokenVector Editor::GetItemsForFuncDefn(const Function* func) const
+string Editor::GetDefnCode(const CxxScope* defn, CxxToken*& ftarg) const
 {
-   Debug::ft("Editor.GetItemsForFuncDefn");
+   Debug::ft("Editor.GetDefnCode");
 
-   CxxTokenVector items;
+   size_t begin, left, end;
+   defn->GetSpan3(begin, left, end);
+   auto& lexer = defn->GetFile()->GetLexer();
+   auto code = lexer.Source().substr(begin, end - begin + 1);
+
+   ftarg = nullptr;
+   auto pos = Find(left, "Debug::ft");
+
+   if(pos < end)
+   {
+      pos = Find(pos, "(");
+      pos = FindNonBlank(pos + 1);
+      ftarg = file_->PosToItem(pos);
+   }
+
+   return code;
+}
+
+//------------------------------------------------------------------------------
+
+CxxItemVector Editor::GetItemsForDefn(const CxxScope* defn) const
+{
+   Debug::ft("Editor.GetItemsForDefn");
+
+   CxxItemVector items;
+   if(defn == nullptr) return items;
+
    auto& fileItems = file_->Items();
 
-   //  Return the items above FUNC that are referenced by FUNC.
+   //  Return the items above DEFN that are referenced by DEFN.
    //
    for(auto i = fileItems.cbegin(); i != fileItems.cend(); ++i)
    {
-      if(*i == func)
+      if(*i == defn)
       {
          size_t begin, end;
-         func->GetSpan2(begin, end);
+         defn->GetSpan2(begin, end);
 
          while(i != fileItems.cbegin())
          {
@@ -4023,7 +4149,7 @@ void Editor::InsertAboveItemDefn(const ItemDefnAttrs& attrs)
    {
    case OffsetRule:
       InsertLine(attrs.pos_, EMPTY_STR);
-      InsertRule(attrs.pos_, '-');
+      InsertLine(attrs.pos_, SingleRule());
       //  [[fallthrough]]
    case OffsetBlank:
       InsertLine(attrs.pos_, EMPTY_STR);
@@ -4070,7 +4196,7 @@ void Editor::InsertBelowItemDefn(const ItemDefnAttrs& attrs)
    {
    case OffsetRule:
       InsertLine(attrs.pos_, EMPTY_STR);
-      InsertRule(attrs.pos_, '-');
+      InsertLine(attrs.pos_, SingleRule());
       //  [[fallthrough]]
    case OffsetBlank:
       InsertLine(attrs.pos_, EMPTY_STR);
@@ -4373,9 +4499,9 @@ word Editor::InsertIncludeGuard(const CodeWarning& log)
    //
    auto ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    ParserPtr parser(new Parser(EMPTY_STR));
-   if(!parser->ParseFileItem(code_, ifnPos, file_, ns)) ParseFailed(ifnPos);
-   if(!parser->ParseFileItem(code_, defPos, nullptr, ns)) ParseFailed(defPos);
-   if(!parser->ParseFileItem(code_, endPos, nullptr, ns)) ParseFailed(endPos);
+   parser->ParseFileItem(code_, ifnPos, file_, ns);
+   parser->ParseFileItem(code_, defPos, nullptr, ns);
+   parser->ParseFileItem(code_, endPos, nullptr, ns);
    return Changed(pos);
 }
 
@@ -4589,18 +4715,6 @@ word Editor::InsertPureVirtual(const CodeWarning& log)
    //  Insert a definition that invokes Debug::SwLog with strOver(this).
    //
    return Unimplemented();
-}
-
-//------------------------------------------------------------------------------
-
-size_t Editor::InsertRule(size_t pos, char c)
-{
-   Debug::ft("Editor.InsertRule");
-
-   string rule = COMMENT_STR;
-   rule.append(LineLengthMax() - 2, c);
-   InsertLine(pos, rule);
-   return pos;
 }
 
 //------------------------------------------------------------------------------
@@ -4958,7 +5072,7 @@ void Editor::MoveFuncDefn(const FunctionVector& sorted, const Function* func)
    //  items defined directly above FUNC and used by FUNC, which will cause
    //  compile errors (forward references) if not moved.
    //
-   auto items = GetItemsForFuncDefn(func);
+   auto items = GetItemsForDefn(func);
 
    string code;
    ItemDefnAttrs defnAttrs(func);
@@ -5032,27 +5146,6 @@ word Editor::MoveMemberInit(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
-size_t Editor::NamespacePos(const Namespace* space) const
-{
-   Debug::ft("Editor.NamespacePos");
-
-   auto spaces = file_->Spaces();
-
-   for(auto s = spaces->cbegin(); s != spaces->cend(); ++s)
-   {
-      if((*s)->GetSpace() == space)
-      {
-         size_t begin, left, end;
-         if(!(*s)->GetSpan3(begin, left, end)) return string::npos;
-         return NextBegin(left);
-      }
-   }
-
-   return string::npos;
-}
-
-//------------------------------------------------------------------------------
-
 bool Editor::OverridesWereSorted(const CodeWarning& log) const
 {
    Debug::ft("Editor.OverridesWereSorted");
@@ -5074,36 +5167,41 @@ bool Editor::OverridesWereSorted(const CodeWarning& log) const
 
 //------------------------------------------------------------------------------
 
-bool Editor::ParseClassItem(size_t pos, Class* cls, Cxx::Access access) const
+CxxToken* Editor::ParseClassItem
+   (size_t pos, Class* cls, Cxx::Access access) const
 {
    Debug::ft("Editor.ParseClassItem");
 
    ParserPtr parser(new Parser(EMPTY_STR));
-   if(parser->ParseClassItem(code_, pos, cls, access)) return UpdateXref();
-   return ParseFailed(pos);
+   if(!parser->ParseClassItem(code_, pos, cls, access)) return ParseFailed(pos);
+   auto item = cls->NewestItem();
+   item->UpdateXref(true);
+   return item;
 }
 
 //------------------------------------------------------------------------------
 
-bool Editor::ParseFailed(size_t pos) const
+CxxToken* Editor::ParseFailed(size_t pos) const
 {
    Debug::ft("Editor.ParseFailed");
 
    *Cli_->obuf << spaces(2) << "Incremental parsing failed:" << CRLF;
    *Cli_->obuf << GetCode(pos);
-   return false;
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
 
-bool Editor::ParseFileItem(size_t pos, Namespace* ns) const
+CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
 {
    Debug::ft("Editor.ParseFileItem");
 
    if(ns == nullptr) ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    ParserPtr parser(new Parser(EMPTY_STR));
-   if(parser->ParseFileItem(code_, pos, file_, ns)) return UpdateXref();
-   return ParseFailed(pos);
+   if(!parser->ParseFileItem(code_, pos, file_, ns)) return ParseFailed(pos);
+   auto item = file_->NewestItem();
+   item->UpdateXref(true);
+   return item;
 }
 
 //------------------------------------------------------------------------------
@@ -5114,14 +5212,13 @@ size_t Editor::Paste(size_t pos, const std::string& code, size_t from)
 {
    Debug::ft(Editor_Paste);
 
-   if(from != lastCut_)
+   if(from != lastErasePos_)
    {
       Debug::SwLog(Editor_Paste, "Illegal Paste operation: " + code, from);
       return string::npos;
    }
 
    code_.insert(pos, code);
-   lastCut_ = string::npos;
    UpdatePos(Pasted, pos, code.size(), from);
    return pos;
 }
@@ -5142,55 +5239,85 @@ size_t Editor::PrologEnd() const
 
 //------------------------------------------------------------------------------
 
-void Editor::QualifyClassItems
-   (const Data* data, string& code, const string& name, bool init) const
+void Editor::QualifyClassItems(CxxScope* decl, string& code) const
 {
-   Debug::ft("Editor.QualifyClassItems");
+   Debug::ft("Editor.QualifyClassItems(decl)");
 
-   auto cls = data->GetClass();
-   auto qualifier = cls->Name() + SCOPE_STR;
+   auto usages = GetItemUsages(decl, true);
+   auto cls = decl->GetClass();
 
-   size_t pos, end;
-   if(!data->GetSpan2(pos, end)) return;
-   size_t cpos = code.find(STATIC_STR);
+   QualifyClassItems(cls, usages.directs, code);
+   QualifyClassItems(cls, usages.indirects, code);
+}
 
-   if(init)
-   {
-      pos = code_.find('=', pos);
-      cpos = code.find('=', pos);
-   }
+//------------------------------------------------------------------------------
 
+void Editor::QualifyClassItems
+   (const Class* cls, const CxxNamedSet& items, string& code)
+{
+   Debug::ft("Editor.QualifyClassItems(cls)");
+
+   auto clsName = cls->Name();
+   Lexer lexer;
+   lexer.Initialize(code);
    string id;
 
-   while(FindIdentifier(pos, id, false) && (pos <= end))
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
-      if(id != name)
+      //  Don't qualify a class name.
+      //
+      if((*i)->Type() == Cxx::Class) continue;
+
+      auto icls = (*i)->GetClass();
+
+      if((cls == icls) || cls->DerivesFrom(icls))
       {
-         auto item = file_->PosToItem(pos);
+         //  Don't qualify a class name in the hierarchy, which can appear
+         //  in types and constructor invocations.
+         //
+         auto& name = (*i)->Name();
+         if((name == clsName) || (name == icls->Name())) continue;
 
-         if(item != nullptr)
+         auto pos = lexer.Find(0, STATIC_STR) + strlen(STATIC_STR) + 1;
+
+         while(lexer.FindIdentifier(pos, id, false) && (pos <= code.size()))
          {
-            auto ref = item->Referent();
-
-            if((ref != nullptr) && (ref->Type() != Cxx::Class))
+            if(id == name)
             {
-               if(ref->GetClass() == cls)
-               {
-                  auto qpos = code.find(id, cpos);
+               auto insert = true;
+               auto prev1 = lexer.RfindNonBlank(pos - 1);
+               auto prev2 = lexer.RfindNonBlank(prev1 - 1);
+               auto char1 = code[prev1];
+               auto char2 = code[prev2];
 
-                  if(qpos != string::npos)
-                  {
-                     code.insert(qpos, qualifier);
-                     cpos = qpos + qualifier.size();
-                  }
+               //  Don't qualify a name that is preceded by a selection or
+               //  scope resolution operator.
+               //
+               if(char1 == '.')
+               {
+                  insert = false;
+               }
+               else if((char2 == '-') && (char1 == '>'))
+               {
+                  insert = false;
+               }
+               else if((char2 == ':') && (char1 == ':'))
+               {
+                  insert = false;
+               }
+
+               if(insert)
+               {
+                  auto qual = icls->Name() + SCOPE_STR;
+                  code.insert(pos, qual);
+                  lexer.Initialize(code);
+                  pos += qual.size();
                }
             }
+
+            pos += id.size();
          }
       }
-
-      //  Look for the next name after the current one.
-      //
-      pos = NextPos(pos + id.size());
    }
 }
 
@@ -5219,32 +5346,32 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
       }
    }
 
-   auto nsName = ns->ScopedName(false);
-   auto nsCode = nsName + SCOPE_STR;
+   auto name = ns->ScopedName(false);
+   auto qual = name + SCOPE_STR;
    size_t pos, end;
    if(!item->GetSpan2(pos, end)) return;
-   string name;
+   string id;
 
-   while(FindIdentifier(pos, name, false) && (pos <= end))
+   while(FindIdentifier(pos, id, false) && (pos <= end))
    {
-      if(name == *symbol)
+      if(id == *symbol)
       {
-         //  Qualify NAME with NS if it is not already qualified.
+         //  Qualify ID with NS if it is not already qualified.
          //
          if(code_.rfind(SCOPE_STR, pos) != (pos - strlen(SCOPE_STR)))
          {
             auto elem = file_->PosToItem(pos);
             auto qname = (elem != nullptr ? elem->GetQualName() : nullptr);
-            if(qname != nullptr) qname->AddPrefix(nsName, ns);
-            Insert(pos, nsCode);
+            if(qname != nullptr) qname->AddPrefix(name, ns);
+            Insert(pos, qual);
             Changed();
-            pos = NextPos(pos + nsCode.size());
+            pos += qual.size();
          }
       }
 
       //  Look for the next name after the current one.
       //
-      pos = NextPos(pos + name.size());
+      pos += id.size();
    }
 }
 
@@ -5375,7 +5502,7 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
    //  (e.g. for calls to Debug::SwLog), so keep its name and only replace
    //  its definition.
    //
-   auto data = arg->Referent();
+   auto data = static_cast< SpaceData* >(arg->Referent());
    if(data == nullptr) return NotFound("Debug::ft fn_name");
    auto dpos = data->GetPos();
    auto lpos = Find(dpos, QUOTE_STR);
@@ -5454,8 +5581,9 @@ bool Editor::ReplaceImpl(Function* func) const
    Debug::ft("Editor.ReplaceImpl");
 
    ParserPtr parser(new Parser(EMPTY_STR));
-   if(parser->ReplaceImpl(func, code_)) return UpdateXref();
-   return false;
+   if(!parser->ReplaceImpl(func, code_)) return false;
+   func->GetImpl()->UpdateXref(true);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -5477,7 +5605,7 @@ word Editor::ReplaceNull(const CodeWarning& log)
 
    auto pos = log.item_->GetPos();
    if(pos == string::npos) return NotFound(NULL_STR, true);
-   if(code_.compare(pos, sizeof(NULL_STR), NULL_STR) != 0)
+   if(code_.compare(pos, strlen(NULL_STR), NULL_STR) != 0)
       return NotFound(NULL_STR);
    Replace(pos, strlen(NULL_STR), NULLPTR_STR);
    log.item_->Rename(NULLPTR_STR);
@@ -5669,13 +5797,15 @@ word Editor::ResolveUsings()
 
    auto& items = file_->Items();
 
-   for(auto item = items.begin(); item != items.end(); ++item)
+   for(auto i = items.begin(); i != items.end(); ++i)
    {
-      auto refs = FindUsingReferents(*item);
+      if((*i)->IsInternal()) continue;
+
+      auto refs = FindUsingReferents(*i);
 
       for(auto ref = refs.cbegin(); ref != refs.cend(); ++ref)
       {
-         QualifyReferent(*item, *ref);
+         QualifyReferent(*i, *ref);
       }
    }
 
@@ -6201,6 +6331,23 @@ word Editor::TagAsVirtual(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
+void Editor::UpdateAfterErase(size_t& pos) const
+{
+   Debug::ft("Editor.UpdateAfterErase");
+
+   if(pos == string::npos) return;
+
+   if(pos >= lastErasePos_)
+   {
+      if(pos < (lastErasePos_ + lastEraseSize_))
+         pos = string::npos;
+      else
+         pos -= lastEraseSize_;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::UpdateItemControls(const Class* cls, ItemDeclAttrs& attrs) const
 {
    Debug::ft("Editor.UpdateItemControls");
@@ -6434,7 +6581,7 @@ word Editor::UpdateItemDefnLoc(const CxxToken* prev,
    //
    if((prev == nullptr) && (next != nullptr) && (next->Type() == Cxx::Function))
    {
-      auto items = GetItemsForFuncDefn(static_cast< const Function* >(next));
+      auto items = GetItemsForDefn(static_cast< const CxxScope* >(next));
       if(!items.empty()) next = items.front();
    }
 
@@ -6490,6 +6637,21 @@ void Editor::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from)
 {
    Debug::ft("Editor.UpdatePos");
+
+   switch(action)
+   {
+   case Erased:
+      lastErasePos_ = begin;
+      lastEraseSize_ = count;
+      lastInsertSize_ = 0;
+      break;
+
+   case Inserted:
+   case Pasted:
+      lastInsertSize_ = count;
+      lastErasePos_ = string::npos;
+      lastEraseSize_ = 0;
+   }
 
    Update();
    file_->UpdatePos(action, begin, count, from);

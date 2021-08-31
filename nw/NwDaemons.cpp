@@ -45,7 +45,7 @@ fixed_string TcpIoDaemonName = "tcp";
 //
 static string MakeTcpName(ipport_t port)
 {
-   Debug::ft("NetworkBase.MakeName");
+   Debug::ft("NetworkBase.MakeTcpName");
 
    //  A Daemon requires a unique name, so append the port number
    //  to the basic name.

@@ -74,7 +74,7 @@ fn_name CodeTools_SetCompoundType = "CodeTools.SetCompoundType";
 //  are non-zero if NAME was tagged as long, short, signed, or unsigned.
 //
 static bool SetCompoundType
-   (QualNamePtr& name, Cxx::Type type, int size, int sign)
+   (const QualNamePtr& name, Cxx::Type type, int size, int sign)
 {
    Debug::ft(CodeTools_SetCompoundType);
 

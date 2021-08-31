@@ -39,7 +39,6 @@ using std::string;
 
 namespace NodeBase
 {
-//
 //  Returns true if no threads are included or excluded.
 //
 static bool ThreadsEmpty()

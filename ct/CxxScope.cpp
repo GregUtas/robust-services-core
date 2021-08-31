@@ -1384,13 +1384,19 @@ void Data::CheckUsage() const
 {
    Debug::ft("Data.CheckUsage");
 
+   //  When static class data is converted to static data at file scope in a
+   //  .cpp, references to the data are updated but not recompiled.  The new
+   //  data therefore appears to have no readers or writers and will be logged
+   //  as unused unless references to it are considered.
+   //
    if(reads_ == 0)
    {
       if(writes_ > 0)
          Log(DataWriteOnly);
       else if(WasInited() && !IsConst())
          Log(DataInitOnly);
-      else Log(DataUnused);
+      else if(Xref()->empty())
+         Log(DataUnused);
    }
 }
 
@@ -3763,6 +3769,13 @@ bool Function::CheckIfUnused(Warning warning) const
    }
 
    if(FuncType() == FuncOperator) return false;
+
+   //  When member function is converted to a static function at file scope in
+   //  a .cpp, references to the function are updated but not recompiled.  The
+   //  new function therefore appears to have no invokers and will be logged as
+   //  unused unless references to it are considered.
+   //
+   if(!Xref()->empty()) return false;
    Log(warning);
    return true;
 }

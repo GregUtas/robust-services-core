@@ -107,8 +107,6 @@ static void DisplayReferences(ostream& stream, const CxxTokenVector& refs)
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {
-      if((*r)->IsInternal()) continue;
-
       auto file = (*r)->GetFile();
       if(file == nullptr) continue;
 
@@ -336,14 +334,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
 
       for(auto n = namespaces.begin(); n != namespaces.end(); ++n)
       {
-         CxxTokenVector refs;
-         auto xref = (*n)->Xref();
-
-         for(auto r = xref->cbegin(); r != xref->cend(); ++r)
-         {
-            refs.push_back(*r);
-         }
-
+         auto refs = (*n)->XrefItems();
          std::sort(refs.begin(), refs.end(), IsSortedByFilePos);
 
          auto name = (*n)->XrefName(true);
@@ -373,14 +364,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
 
    for(auto i = items.begin(); i != items.end(); ++i)
    {
-      CxxTokenVector refs;
-      auto xref = (*i)->Xref();
-
-      for(auto r = xref->cbegin(); r != xref->cend(); ++r)
-      {
-         refs.push_back(*r);
-      }
-
+      auto refs = (*i)->XrefItems();
       std::sort(refs.begin(), refs.end(), IsSortedByFilePos);
 
       auto file = (*i)->GetFile();
@@ -410,7 +394,6 @@ void CxxSymbols::DisplayXref(ostream& stream) const
       }
 
       stream << " [" << strClass(*i, false) << ']' << CRLF;
-
       DisplayReferences(stream, refs);
    }
 }

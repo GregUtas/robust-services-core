@@ -620,9 +620,7 @@ void CxxScoped::ChangeName(const std::string& name)
 
    Rename(name);
 
-   auto xref = Xref();
-
-   for(auto r = xref->begin(); r != xref->end(); ++r)
+   for(auto r = xref_.begin(); r != xref_.end(); ++r)
    {
       (*r)->Rename(name);
    }
@@ -1207,6 +1205,20 @@ void CxxScoped::UpdateReference(CxxToken* item, bool insert) const
       xref_.insert(item);
    else
       xref_.erase(item);
+}
+
+//------------------------------------------------------------------------------
+
+CxxTokenVector CxxScoped::XrefItems() const
+{
+   CxxTokenVector refs;
+
+   for(auto r = xref_.cbegin(); r != xref_.cend(); ++r)
+   {
+      if(!(*r)->IsInternal()) refs.push_back(*r);
+   }
+
+   return refs;
 }
 
 //==============================================================================

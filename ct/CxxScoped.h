@@ -144,6 +144,10 @@ public:
    //
    void DisplayFiles(std::ostream& stream) const;
 
+   //  Copies items from the cross-reference, omitting those that are internal.
+   //
+   CxxTokenVector XrefItems() const;
+
    //  Returns the amount of memory used by xref_ entries.
    //
    size_t XrefSize() const { return xref_.size() * 3 * sizeof(CxxNamed*); }

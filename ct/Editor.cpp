@@ -1581,7 +1581,7 @@ word Editor::ChangeMemberToFree(const CodeWarning& log)
    auto cpp = defn->GetFile();
    if(cpp != file)
    {
-      //  Moving the definition to another .cpp is not yet supported, because
+      //  Moving the definition to another .cpp is not yet supported because
       //  it also involves adjusting the #include directives in both files.
       //
       return Report("Moving the definition to another .cpp is not supported.");

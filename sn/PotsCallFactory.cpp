@@ -39,6 +39,32 @@
 
 namespace PotsBase
 {
+//  Sends a Release message when discarding an offhook-onhook message pair.
+//  MSG1 is the offhook message.
+//
+static void SendRelease(const Message& msg1)
+{
+   Debug::ft("PotsBase.SendRelease");
+
+   auto& icmsg = static_cast< const PotsMessage& >(msg1);
+   auto icphi = icmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
+   auto ogmsg = new Pots_NU_Message(nullptr, 20);
+
+   ogmsg->SetSignal(PotsSignal::Release);
+
+   PotsHeaderInfo ogphi;
+   ogphi.port = icphi->port;
+   ogphi.signal = PotsSignal::Release;
+   ogmsg->AddHeader(ogphi);
+
+   CauseInfo cause;
+   cause.cause = Cause::NormalCallClearing;
+   ogmsg->AddCause(cause);
+   ogmsg->Send(Message::External);
+}
+
+//------------------------------------------------------------------------------
+
 PotsCallFactory::PotsCallFactory() :
    BcFactory(PotsCallFactoryId, PotsProtocolId, "POTS Basic Call")
 {
@@ -231,29 +257,6 @@ bool PotsCallFactory::ScreenIcMsgs(Q1Way< Message >& msgq)
    }
 
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-void PotsCallFactory::SendRelease(const Message& msg1)
-{
-   Debug::ft("PotsCallFactory.SendRelease");
-
-   auto& icmsg = static_cast< const PotsMessage& >(msg1);
-   auto icphi = icmsg.FindType< PotsHeaderInfo >(PotsParameter::Header);
-   auto ogmsg = new Pots_NU_Message(nullptr, 20);
-
-   ogmsg->SetSignal(PotsSignal::Release);
-
-   PotsHeaderInfo ogphi;
-   ogphi.port = icphi->port;
-   ogphi.signal = PotsSignal::Release;
-   ogmsg->AddHeader(ogphi);
-
-   CauseInfo cause;
-   cause.cause = Cause::NormalCallClearing;
-   ogmsg->AddCause(cause);
-   ogmsg->Send(Message::External);
 }
 
 //------------------------------------------------------------------------------

@@ -792,10 +792,6 @@ public:
    //
    void UpdateXref(bool insert) override;
 private:
-   //  Checks if REF (the name's referent) is a template argument.
-   //
-   void CheckIfTemplateArgument(const CxxScoped* ref) const;
-
    //  Overridden so that a data item can be erased.
    //
    bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;

@@ -28,11 +28,9 @@
 #include "IpPortCfgParm.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
-#include "Switch.h"
 
 using namespace NodeBase;
 using namespace SessionBase;
-using namespace MediaBase;
 using namespace NetworkBase;
 
 //------------------------------------------------------------------------------
@@ -109,10 +107,6 @@ class PotsShelfFactory : public MsgFactory
    //  Private because this is a singleton.
    //
    ~PotsShelfFactory();
-
-   //  Invoked when an invalid message is found.
-   //
-   static void DiscardMsg(const Message& msg, Switch::PortId port);
 
    //  Overridden to wrap an incoming message.
    //

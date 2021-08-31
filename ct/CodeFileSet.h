@@ -107,12 +107,6 @@ private:
    //
    ~CodeFileSet();
 
-   //  Returns the set of files that need to be parsed when parsing FILES.
-   //  It adds files that affect FILES and then removes files that have
-   //  already been parsed.
-   //
-   LibrarySet* GetParseSet(const LibItemSet& files) const;
-
    //  Overridden to create a set of files.
    //
    LibrarySet* Create

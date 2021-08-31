@@ -186,11 +186,6 @@ private:
    //
    virtual bool AddAnonymousUnion(const ClassPtr& cls) { return false; }
 
-   //  Invoked by FindFunc.  Updates VIEW with MATCH and returns FUNC.
-   //
-   static Function* FoundFunc
-      (Function* func, SymbolView* view, TypeMatch match);
-
    //  The area's using statements.
    //
    UsingPtrVector usings_;
@@ -698,12 +693,6 @@ protected:
    //
    void DisplayBase(std::ostream& stream, const NodeBase::Flags& options) const;
 private:
-   //  Determines if MEMBER is accessible to SCOPE, updating VIEW with details
-   //  on its visibility.
-   //
-   static bool MemberIsAccessibleTo
-      (const CxxScoped* member, const CxxScope* scope, SymbolView* view);
-
    //  Determines how well the class (which is a class template or a
    //  specialization of one) matches TYPE.
    //
@@ -712,12 +701,6 @@ private:
    //  Creates a class template instance based on NAME and TYPE.
    //
    ClassInst* CreateInstance(const std::string& name, const TypeName* type);
-
-   //  Invoked when an error occurs in CreateCode.  NAME is the template
-   //  whose code could not be found.
-   //
-   static size_t CreateCodeError
-      (const std::string& name, NodeBase::debug64_t offset);
 
    //  Class attributes and the types of items that it defines.
    //

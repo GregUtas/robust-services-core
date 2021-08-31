@@ -67,6 +67,53 @@ static bool EraseTemplateArguments(string& prefix)
 }
 
 //------------------------------------------------------------------------------
+//
+//  Returns FUNC after setting MATCH to Incompatible if FUNC is nullptr.
+//  ARGS contains the arguments that were passed to CanInvokeWith.
+//
+static Function* FoundFunc
+   (Function* func, const StackArgVector& args, TypeMatch& match)
+{
+   Debug::ft("CodeTools.FoundFunc");
+
+   if(func != nullptr)
+   {
+      //  RecordAccess is not invoked on a function until argument matching has
+      //  selected the correct overload.  When an *argument* is a function, the
+      //  same thing occurs, but now it's finally time to do that.
+      //
+      for(auto a = args.cbegin(); a != args.cend(); ++a)
+      {
+         if(a->item_->Type() == Cxx::Function)
+         {
+            auto farg = static_cast< Function* >(a->item_);
+            farg->RecordAccess(a->MinControl());
+         }
+      }
+
+      //  If a function template has been instantiated, record that each of its
+      //  arguments was used.  This ensures that >trim will ask for each type to
+      //  be #included in the file that is using the function template.  This is
+      //  strictly necessary only for the arguments that were used to determine
+      //  the template specialization, but it is a reasonable approximation.
+      //
+      if(func->IsTemplateInstance())
+      {
+         for(auto a = args.cbegin(); a != args.cend(); ++a)
+         {
+            a->item_->Root()->RecordUsage();
+         }
+      }
+   }
+   else
+   {
+      match = Incompatible;
+   }
+
+   return func;
+}
+
+//------------------------------------------------------------------------------
 
 bool FuncDefnsAreSorted(const Function* func1, const Function* func2)
 {
@@ -113,6 +160,57 @@ FunctionVector FuncsInArea(const FunctionVector& defns, const CxxArea* area)
    }
 
    return funcs;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_InstantiateError = "CodeTools.InstantiateError";
+
+//  Invoked when InstantiateFunction fails.
+//
+static Function* InstantiateError(const string& instName, debug64_t offset)
+{
+   Debug::ft(CodeTools_InstantiateError);
+
+   auto expl = "Failed to instantiate " + instName;
+   Context::SwLog(CodeTools_InstantiateError, expl, offset);
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Determines if thatType (an argument passed to this function) matches
+//  --or can specialize--thisType, the argument expected by this function.
+//  tmpltParms contains the template parameters defined by this function.
+//  As the corresponding template arguments are found, they are added to
+//  tmpltArgs.  The result indicates how well thatType matches or specializes
+//  thisType.  Also sets argFound if thisType contains a template parameter.
+//
+static TypeMatch MatchTemplate(const string& thisType,
+   const string& thatType, stringVector& tmpltParms,
+   stringVector& tmpltArgs, bool& argFound)
+{
+   Debug::ft("CodeTools.MatchTemplate");
+
+   //  Create TypeSpecs for thisType and thatType by invoking a new parser.
+   //  Parsing requires a scope, so use the current one.  Note that const
+   //  qualification is stripped when deducing a template argument.
+   //
+   auto thatNonCVType = RemoveConsts(thatType);
+   TypeSpecPtr thisSpec;
+   TypeSpecPtr thatSpec;
+
+   auto scope = Context::Scope();
+   ParserPtr parser(new Parser(scope));
+   parser->ParseTypeSpec(thisType, thisSpec);
+   parser->ParseTypeSpec(thatNonCVType, thatSpec);
+   parser.reset();
+
+   if(thisSpec == nullptr) return Incompatible;
+   if(thatSpec == nullptr) return Incompatible;
+   thisSpec->SetTemplateRole(TemplateClass);
+   return thisSpec->MatchTemplate
+      (thatSpec.get(), tmpltParms, tmpltArgs, argFound);
 }
 
 //==============================================================================
@@ -4423,50 +4521,6 @@ Function* Function::FirstInstanceInClass() const
 
 //------------------------------------------------------------------------------
 
-Function* Function::FoundFunc
-   (Function* func, const StackArgVector& args, TypeMatch& match)
-{
-   Debug::ft("Function.FoundFunc");
-
-   if(func != nullptr)
-   {
-      //  RecordAccess is not invoked on a function until argument matching has
-      //  selected the correct overload.  When an *argument* is a function, the
-      //  same thing occurs, but now it's finally time to do that.
-      //
-      for(auto a = args.cbegin(); a != args.cend(); ++a)
-      {
-         if(a->item_->Type() == Cxx::Function)
-         {
-            auto farg = static_cast< Function* >(a->item_);
-            farg->RecordAccess(a->MinControl());
-         }
-      }
-
-      //  If a function template has been instantiated, record that each of its
-      //  arguments was used.  This ensures that >trim will ask for each type to
-      //  be #included in the file that is using the function template.  This is
-      //  strictly necessary only for the arguments that were used to determine
-      //  the template specialization, but it is a reasonable approximation.
-      //
-      if(func->IsTemplateInstance())
-      {
-         for(auto a = args.cbegin(); a != args.cend(); ++a)
-         {
-            a->item_->Root()->RecordUsage();
-         }
-      }
-   }
-   else
-   {
-      match = Incompatible;
-   }
-
-   return func;
-}
-
-//------------------------------------------------------------------------------
-
 FunctionRole Function::FuncRole() const
 {
    Argument* arg;
@@ -4868,19 +4922,6 @@ void Function::IncrThisWrites() const
    {
       Context::SwLog(Function_IncrThisWrites, "Function cannot be const", 0);
    }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Function_InstantiateError = "Function.InstantiateError";
-
-Function* Function::InstantiateError(const string& instName, debug64_t offset)
-{
-   Debug::ft(Function_InstantiateError);
-
-   auto expl = "Failed to instantiate " + instName;
-   Context::SwLog(Function_InstantiateError, expl, offset);
-   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -5373,35 +5414,6 @@ void Function::LogToArg(Warning warning, size_t index) const
 
    auto arg = GetArgs().at(index).get();
    arg->Log(warning, this, index + (this_ ? 0 : 1));
-}
-
-//------------------------------------------------------------------------------
-
-TypeMatch Function::MatchTemplate(const string& thisType,
-   const string& thatType, stringVector& tmpltParms,
-   stringVector& tmpltArgs, bool& argFound)
-{
-   Debug::ft("Function.MatchTemplate");
-
-   //  Create TypeSpecs for thisType and thatType by invoking a new parser.
-   //  Parsing requires a scope, so use the current one.  Note that const
-   //  qualification is stripped when deducing a template argument.
-   //
-   auto thatNonCVType = RemoveConsts(thatType);
-   TypeSpecPtr thisSpec;
-   TypeSpecPtr thatSpec;
-
-   auto scope = Context::Scope();
-   ParserPtr parser(new Parser(scope));
-   parser->ParseTypeSpec(thisType, thisSpec);
-   parser->ParseTypeSpec(thatNonCVType, thatSpec);
-   parser.reset();
-
-   if(thisSpec == nullptr) return Incompatible;
-   if(thatSpec == nullptr) return Incompatible;
-   thisSpec->SetTemplateRole(TemplateClass);
-   return thisSpec->MatchTemplate
-      (thatSpec.get(), tmpltParms, tmpltArgs, argFound);
 }
 
 //------------------------------------------------------------------------------

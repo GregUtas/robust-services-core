@@ -225,11 +225,6 @@ private:
    //
    bool IsReadOnly() const;
 
-   //  If RESULT is not empty, deletes a presumed trailing ", ", else sets
-   //  RESULT to indicate that nothing was found.  Returns 0.
-   //
-   static NodeBase::word Shown(std::string& result);
-
    //  Update EXPL to indicate that a function is not implemented by the type
    //  of set in question.
    //

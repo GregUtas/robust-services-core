@@ -30,6 +30,34 @@ using std::string;
 
 namespace NodeBase
 {
+//  Returns a string containing the characters that set a
+//  configuration parameter to "false".
+//
+static fixed_string ValidFalseChars()
+{
+   //  Characters that set a configuration parameter to false.
+   //
+   static fixed_string FalseChars = "FfNn";
+
+   return FalseChars;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns a string containing the characters that set a
+//  configuration parameter to "true".
+//
+static fixed_string ValidTrueChars()
+{
+   //  Characters that set a configuration parameter to true.
+   //
+   static fixed_string TrueChars = "TtYy";
+
+   return TrueChars;
+}
+
+//------------------------------------------------------------------------------
+
 CfgBitParm::CfgBitParm(c_string key, c_string def, c_string expl) :
    CfgParm(key, def, expl)
 {
@@ -121,27 +149,5 @@ bool CfgBitParm::SetNextValue(bool value)
 
    Debug::SwLog(CfgBitParm_SetNextValue, strOver(this), 0);
    return false;
-}
-
-//------------------------------------------------------------------------------
-
-fixed_string CfgBitParm::ValidFalseChars()
-{
-   //  Characters that set a configuration parameter to false.
-   //
-   static fixed_string FalseChars = "FfNn";
-
-   return FalseChars;
-}
-
-//------------------------------------------------------------------------------
-
-fixed_string CfgBitParm::ValidTrueChars()
-{
-   //  Characters that set a configuration parameter to true.
-   //
-   static fixed_string TrueChars = "TtYy";
-
-   return TrueChars;
 }
 }

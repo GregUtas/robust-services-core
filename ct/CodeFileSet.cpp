@@ -54,6 +54,41 @@ using std::string;
 
 namespace CodeTools
 {
+//  Returns the set of files that need to be parsed when parsing FILES.
+//  It adds files that affect FILES and then removes files that have
+//  already been parsed.
+//
+static LibrarySet* GetParseSet(const LibItemSet& files)
+{
+   Debug::ft("CodeTools.GetParseSet");
+
+   //  Expand FILES with substitute files and those that affect FILES.
+   //
+   auto library = Singleton< Library >::Instance();
+   LibItemSet parseSet(files);
+   SetUnion(parseSet, library->SubsFiles().Items());
+
+   auto parseFiles = new CodeFileSet(LibrarySet::TemporaryName(), &parseSet);
+   auto affects = parseFiles->Affecters();
+   auto& items = affects->Items();
+
+   //  Remove files that have already been parsed.
+   //
+   for(auto f = items.begin(); f != items.end(); NO_OP)
+   {
+      auto file = static_cast< CodeFile* >(*f);
+
+      if(file->ParseStatus() != CodeFile::Unparsed)
+         f = items.erase(f);
+      else
+         ++f;
+   }
+
+   return affects;
+}
+
+//------------------------------------------------------------------------------
+
 static bool IsSortedByFileLevel(const FileLevel& item1, const FileLevel& item2)
 {
    if(item1.level < item2.level) return true;
@@ -489,37 +524,6 @@ LibrarySet* CodeFileSet::FoundIn(const LibrarySet* that) const
    }
 
    return result;
-}
-
-//------------------------------------------------------------------------------
-
-LibrarySet* CodeFileSet::GetParseSet(const LibItemSet& files) const
-{
-   Debug::ft("CodeFileSet.GetParseSet");
-
-   //  Expand FILES with substitute files and those that affect FILES.
-   //
-   auto library = Singleton< Library >::Instance();
-   LibItemSet parseSet(files);
-   SetUnion(parseSet, library->SubsFiles().Items());
-
-   auto parseFiles = new CodeFileSet(TemporaryName(), &parseSet);
-   auto affects = parseFiles->Affecters();
-   auto& items = affects->Items();
-
-   //  Remove files that have already been parsed.
-   //
-   for(auto f = items.begin(); f != items.end(); NO_OP)
-   {
-      auto file = static_cast< CodeFile* >(*f);
-
-      if(file->ParseStatus() != CodeFile::Unparsed)
-         f = items.erase(f);
-      else
-         ++f;
-   }
-
-   return affects;
 }
 
 //------------------------------------------------------------------------------

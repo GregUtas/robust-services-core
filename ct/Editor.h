@@ -530,11 +530,6 @@ private:
    //
    void MoveFuncDefn(const FunctionVector& sorted, const Function* func);
 
-   //  Returns the code for a Debug::Ft invocation with an inline string
-   //  literal (FNAME).
-   //
-   string DebugFtCode(const string& fname) const;
-
    //  Inserts the declaration for a Patch override in CLS, based on ATTRS.
    //
    void InsertPatchDecl(Class* cls, const ItemDeclAttrs& attrs);
@@ -597,11 +592,6 @@ private:
    //  by the parse, or nullptr on failure.
    //
    CxxToken* ParseClassItem(size_t pos, Class* cls, Cxx::Access access) const;
-
-   //  Updates the cross-reference and returns true after an incremental
-   //  parse succeeds.
-   //
-   bool UpdateXref() const;
 
    //  Displays a message when parsing at POS failed.  Returns nullptr.
    //

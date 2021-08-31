@@ -66,10 +66,6 @@ public:
    //
    InvokerPool& operator=(const InvokerPool& that) = delete;
 
-   //> The maximum number of invoker threads allowed in a pool.
-   //
-   static const size_t MaxInvokers;
-
    //  Returns the pool's scheduler faction.
    //
    NodeBase::Faction GetFaction() const
@@ -183,10 +179,6 @@ private:
    //
    void ScheduledOut();
 
-   //  Returns true if a lost message log should be generated for RES.
-   //
-   static bool GenerateLog(Factory::Rc rc);
-
    //  Generates a log when ReceiveBuff fails.
    //
    bool LogLostBuff(SbIpBuffer& buff, FactoryId fid, Factory::Rc rc) const;
@@ -194,10 +186,6 @@ private:
    //  Generates a log when ReceiveMsg fails.
    //
    bool LogLostMsg(Message& msg, Factory::Rc rc, TransTrace* tt) const;
-
-   //  Captures the arrival of external message MSG at factory FAC.
-   //
-   static TransTrace* TraceRxNet(Message& msg, const Factory& fac);
 
    //  Returns the offset to faction_.
    //

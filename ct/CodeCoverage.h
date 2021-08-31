@@ -122,11 +122,6 @@ private:
    //
    NodeBase::word Merge(std::ostringstream& expl);
 
-   //  Assigns STREAM.str() to EXPL and returns RC.
-   //
-   static NodeBase::word Report
-      (NodeBase::word rc, const std::ostringstream& stream, std::string& expl);
-
    //  The code coverage database has the form
    //    [<FuncName> <FuncHash> [<TestName>]* "$"]* "$"
    //  The following enum is used when parsing the database:

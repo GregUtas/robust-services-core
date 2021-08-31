@@ -494,11 +494,6 @@ protected:
    //
    bool GetSemiSpan(size_t& begin, size_t& end) const;
 
-   //  Used when GetSpan2 or GetSpan3 fails, either because the item did not
-   //  override GetSpan or because the item is internal.
-   //
-   bool GetSpanFailure(size_t& begin, size_t& left, size_t& end) const;
-
    //  Marks the item as having been generated internally.
    //
    void SetInternal(bool internal) const { loc_.SetInternal(internal); }
@@ -861,10 +856,6 @@ private:
    //
    void PushMember(StackArg& arg1, const StackArg& arg2) const;
 
-   //  Pushes a TypeSpec that references NAME onto the argument stack.
-   //
-   static void PushType(const std::string& name);
-
    //  Handles the invocation of a function call.
    //
    void ExecuteCall() const;
@@ -908,10 +899,6 @@ private:
    //  Generates a log when a bitwise operator is used on a boolean.
    //
    void CheckBitwiseOp(const StackArg& arg1, const StackArg& arg2) const;
-
-   //  Registers reads and writes on ARG1 and ARG2 based on OP.
-   //
-   static void Record(Cxx::Operator op, StackArg& arg1, const StackArg* arg2);
 
    //  Displays operator new or operator new[].
    //

@@ -325,12 +325,6 @@ private:
    //
    virtual bool ShowValues(std::string& values) const = 0;
 
-   //  Invoked if trying to obtain a parameter whose type differs from
-   //  what the current parameter in the parse tree actually supports.
-   //  TYPE is the type of incorrect parameter.
-   //
-   static Rc Mismatch(const CliThread& cli, const std::string& type);
-
    //  The parameter's index in the instance of CliText.parms_ where it
    //  is registered.
    //

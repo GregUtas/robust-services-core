@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <ios>
 #include <sstream>
+#include <string>
 #include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
@@ -59,6 +60,52 @@ using std::string;
 
 namespace SessionBase
 {
+//  Displays the event name associated with SID and EID.
+//
+static void DisplayEvent(ostream& stream, ServiceId sid, EventId eid)
+{
+   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
+
+   if(svc != nullptr)
+   {
+      auto name = svc->EventName(eid);
+
+      if(name != nullptr)
+      {
+         stream << name;
+         return;
+      }
+
+      stream << strClass(svc, true) << ", ";
+   }
+   else if(sid != NIL_ID)
+   {
+      stream << "svc=" << sid << ", ";
+   }
+
+   stream << "evt=" << eid;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Displays ID in the trace's identifier column, preceded by LABEL.
+//  If ID is NIL_ID, it is not displayed.  Enough spaces to reach the
+//  description column are then inserted after the output.
+//
+static string OutputId(const string& label, id_t id)
+{
+   auto width = TraceDump::IdRcWidth + TraceDump::TabWidth;
+   if(id == NIL_ID) return spaces(width);
+   width -= col_t(label.size());
+
+   std::ostringstream stream;
+   stream << label;
+   stream << std::left << setw(width) << std::setfill(SPACE) << id;
+   return stream.str();
+}
+
+//------------------------------------------------------------------------------
+
 TransTrace::TransTrace(const Message& msg, const Factory& fac) :
    TimedRecord(TransTracer),
    rcvr_(&fac),
@@ -451,20 +498,6 @@ bool SboTrace::Display(ostream& stream, const string& opts)
    return true;
 }
 
-//------------------------------------------------------------------------------
-
-string SboTrace::OutputId(const string& label, id_t id)
-{
-   auto width = TraceDump::IdRcWidth + TraceDump::TabWidth;
-   if(id == NIL_ID) return spaces(width);
-   width -= col_t(label.size());
-
-   std::ostringstream stream;
-   stream << label;
-   stream << std::left << setw(width) << std::setfill(SPACE) << id;
-   return stream.str();
-}
-
 //==============================================================================
 
 SsmTrace::SsmTrace(Id rid, const ServiceSM& ssm) :
@@ -747,32 +780,6 @@ bool EventTrace::Display(ostream& stream, const string& opts)
    stream << spaces(TraceDump::ObjToDesc);
    DisplayEvent(stream, owner_, eid_);
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-void EventTrace::DisplayEvent(ostream& stream, ServiceId sid, EventId eid)
-{
-   auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid);
-
-   if(svc != nullptr)
-   {
-      auto name = svc->EventName(eid);
-
-      if(name != nullptr)
-      {
-         stream << name;
-         return;
-      }
-
-      stream << strClass(svc, true) << ", ";
-   }
-   else if(sid != NIL_ID)
-   {
-      stream << "svc=" << sid << ", ";
-   }
-
-   stream << "evt=" << eid;
 }
 
 //------------------------------------------------------------------------------

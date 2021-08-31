@@ -257,7 +257,6 @@ public:
    std::string display_movement_order(const UnitOrder& unit,
       const UnitOrderMap& unit_set) const;
    std::string display_retreat_result(const UnitOrder& unit) const;
-   std::string display_retreat_order(const UnitOrder& unit) const;
    std::string display_province(ProvinceId province) const;
 
    //  Looks for a unit that ended the season in PROVINCE and returns its

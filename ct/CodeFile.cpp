@@ -96,6 +96,30 @@ static void AddForwardDependencies
 }
 
 //------------------------------------------------------------------------------
+//
+//  Updates inclSet by adding types that this file used indirectly (in
+//  INDIRECTS) and that are defined within the code base.
+//
+static void AddIndirectExternalTypes
+   (const CxxNamedSet& indirects, CxxNamedSet& inclSet)
+{
+   Debug::ft("CodeTools.AddIndirectExternalTypes");
+
+   //  INDIRECTS contains types that were used indirectly.  Filter out those
+   //  which are terminals (for which an #include is not required) or that
+   //  are defined in the code base (for which an #include can be avoided
+   //  by using a forward declaration).
+   //
+   for(auto i = indirects.cbegin(); i != indirects.cend(); ++i)
+   {
+      auto type = (*i)->Type();
+      if(type == Cxx::Terminal) continue;
+      if((type == Cxx::Class) && !(*i)->GetFile()->IsSubsFile()) continue;
+      inclSet.insert(*i);
+   }
+}
+
+//------------------------------------------------------------------------------
 
 static void DisplayFileNames
    (ostream* stream, const LibItemSet& files, fixed_string title)
@@ -435,27 +459,6 @@ void CodeFile::AddIncludes
    {
       auto file = (*n)->GetDeclFile();
       if((file != nullptr) && (file != this)) inclSet.insert(file);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void CodeFile::AddIndirectExternalTypes
-   (const CxxNamedSet& indirects, CxxNamedSet& inclSet) const
-{
-   Debug::ft("CodeFile.AddIndirectExternalTypes");
-
-   //  INDIRECTS contains types that were used indirectly.  Filter out those
-   //  which are terminals (for which an #include is not required) or that
-   //  are defined in the code base (for which an #include can be avoided
-   //  by using a forward declaration).
-   //
-   for(auto i = indirects.cbegin(); i != indirects.cend(); ++i)
-   {
-      auto type = (*i)->Type();
-      if(type == Cxx::Terminal) continue;
-      if((type == Cxx::Class) && !(*i)->GetFile()->IsSubsFile()) continue;
-      inclSet.insert(*i);
    }
 }
 

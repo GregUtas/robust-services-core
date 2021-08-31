@@ -32,6 +32,7 @@
 #include "Message.h"
 #include "MsgHeader.h"
 #include "MsgPort.h"
+#include "ProtocolSM.h"
 #include "RootServiceSM.h"
 #include "SbLogs.h"
 #include "SbTrace.h"
@@ -46,6 +47,42 @@ using std::string;
 
 namespace SessionBase
 {
+fn_name SessionBase_AllocRoot = "SessionBase.AllocRoot";
+
+//  Allocates the root SSM that will receive MSG.  PSM is the
+//  uppermost PSM in the stack that MSG just created.
+//
+static RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm)
+{
+   Debug::ft(SessionBase_AllocRoot);
+
+   //  In an SSM context, create the root SSM for the incoming message.
+   //  This is done by delegating to the receiving factory.
+   //
+   auto header = msg.Header();
+
+   if(!header->initial)
+   {
+      Debug::SwLog(SessionBase_AllocRoot, "initial message expected",
+         pack2(header->protocol, header->signal));
+      return nullptr;
+   }
+
+   auto fid = header->rxAddr.fid;
+   auto fac = Singleton < FactoryRegistry >::Instance()->GetFactory(fid);
+
+   if(fac == nullptr)
+   {
+      Debug::SwLog(SessionBase_AllocRoot, "factory not found",
+         pack3(header->protocol, header->signal, fid));
+      return nullptr;
+   }
+
+   return static_cast< SsmFactory* >(fac)->AllocRoot(msg, psm);
+}
+
+//------------------------------------------------------------------------------
+
 SsmContext::SsmContext(Faction faction) : PsmContext(faction),
    root_(nullptr)
 {
@@ -60,39 +97,6 @@ SsmContext::~SsmContext()
 
    delete root_;
    root_ = nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SsmContext_AllocRoot = "SsmContext.AllocRoot";
-
-RootServiceSM* SsmContext::AllocRoot(const Message& msg, ProtocolSM& psm)
-{
-   Debug::ft(SsmContext_AllocRoot);
-
-   //  In an SSM context, create the root SSM for the incoming message.
-   //  This is done by delegating to the receiving factory.
-   //
-   auto header = msg.Header();
-
-   if(!header->initial)
-   {
-      Debug::SwLog(SsmContext_AllocRoot, "initial message expected",
-         pack2(header->protocol, header->signal));
-      return nullptr;
-   }
-
-   auto fid = header->rxAddr.fid;
-   auto fac = Singleton < FactoryRegistry >::Instance()->GetFactory(fid);
-
-   if(fac == nullptr)
-   {
-      Debug::SwLog(SsmContext_AllocRoot, "factory not found",
-         pack3(header->protocol, header->signal, fid));
-      return nullptr;
-   }
-
-   return static_cast< SsmFactory* >(fac)->AllocRoot(msg, psm);
 }
 
 //------------------------------------------------------------------------------

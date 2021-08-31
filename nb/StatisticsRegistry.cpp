@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StatisticsRegistry.h"
+#include <cstddef>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -34,8 +35,14 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t StatisticsRegistry::MaxStats = 1000;
-const size_t StatisticsRegistry::MaxGroups = 100;
+//> The maximum number of statistics that can register.
+//
+static const size_t MaxStats = 1000;
+
+//> The maximum number of groups that can register.
+//
+static const size_t MaxGroups = 100;
+
 TimePoint StatisticsRegistry::StartTime_ = TimePoint();
 
 //------------------------------------------------------------------------------

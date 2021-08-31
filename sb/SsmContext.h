@@ -72,11 +72,6 @@ private:
    //
    ~SsmContext();
 
-   //  Allocates the root SSM that will receive MSG.  PSM is the
-   //  uppermost PSM in the stack that MSG just created.
-   //
-   static RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm);
-
    //  Sets the root SSM.
    //
    void SetRoot(RootServiceSM* root);

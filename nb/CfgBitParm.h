@@ -69,16 +69,6 @@ private:
    //  is invalid.
    //
    virtual bool SetNextValue(bool value) = 0;
-
-   //  Returns a string containing the characters that set a
-   //  configuration parameter to "true".
-   //
-   static fixed_string ValidTrueChars();
-
-   //  Returns a string containing the characters that set a
-   //  configuration parameter to "false".
-   //
-   static fixed_string ValidFalseChars();
 };
 }
 #endif

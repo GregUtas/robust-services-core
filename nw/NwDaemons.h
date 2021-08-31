@@ -23,7 +23,6 @@
 #define NWDAEMONS_H_INCLUDED
 
 #include "Daemon.h"
-#include <string>
 #include "NwTypes.h"
 #include "SysTypes.h"
 
@@ -67,10 +66,6 @@ private:
    //
    ~TcpIoDaemon();
 
-   //  Returns the name for the daemon that manages the TCP I/O thread on PORT.
-   //
-   static std::string MakeName(ipport_t port);
-
    //  Overridden to create a TCP I/O thread.
    //
    NodeBase::Thread* CreateThread() override;
@@ -113,10 +108,6 @@ private:
    //  Not subclassed.
    //
    ~UdpIoDaemon();
-
-   //  Returns the name for the daemon that manages the UDP I/O thread on PORT.
-   //
-   static std::string MakeName(ipport_t port);
 
    //  Overridden to create a UDP I/O thread.
    //

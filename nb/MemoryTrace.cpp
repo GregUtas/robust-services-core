@@ -35,6 +35,27 @@ using std::string;
 
 namespace NodeBase
 {
+fixed_string MemTypeStrings[MemoryType_N + 1] =
+{
+   ERROR_STR,
+   "temp",
+   "dyn ",
+   "prot",
+   "perm",
+   "imm ",
+   ERROR_STR
+};
+
+//  Returns a string for displaying TYPE.
+//
+static c_string TypeString(MemoryType type)
+{
+   if((type >= 0) && (type < MemoryType_N)) return MemTypeStrings[type];
+   return MemTypeStrings[MemoryType_N];
+}
+
+//------------------------------------------------------------------------------
+
 MemoryTrace::MemoryTrace(Id rid, const void* addr, MemoryType type,
    size_t size) : TimedRecord(MemoryTracer),
    addr_(addr),
@@ -87,24 +108,5 @@ c_string MemoryTrace::EventString() const
    }
 
    return ERROR_STR;
-}
-
-//------------------------------------------------------------------------------
-
-fixed_string MemTypeStrings[MemoryType_N + 1] =
-{
-   ERROR_STR,
-   "temp",
-   "dyn ",
-   "prot",
-   "perm",
-   "imm ",
-   ERROR_STR
-};
-
-c_string MemoryTrace::TypeString(MemoryType type)
-{
-   if((type >= 0) && (type < MemoryType_N)) return MemTypeStrings[type];
-   return MemTypeStrings[MemoryType_N];
 }
 }

@@ -42,6 +42,21 @@ using std::string;
 
 namespace CodeTools
 {
+//  Used when GetSpan2 or GetSpan3 fails, either because the item did not
+//  override GetSpan or because the item is internal.
+//
+static bool GetSpanFailure(size_t& begin, size_t& left, size_t& end)
+{
+   Debug::ft("CodeTools.GetSpanFailure");
+
+   begin = string::npos;
+   left = string::npos;
+   end = string::npos;
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 bool IsSortedByFilePos(const CxxToken* item1, const CxxToken* item2)
 {
    auto file1 = item1->GetFile();
@@ -80,6 +95,142 @@ bool IsSortedByPos(const CxxToken* item1, const CxxToken* item2)
    if(pos1 < pos2) return true;
    if(pos1 > pos2) return false;
    return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_PushType = "CodeTools.PushType";
+
+//  Pushes a TypeSpec that references NAME onto the argument stack.
+//
+static void PushType(const string& name)
+{
+   Debug::ft(CodeTools_PushType);
+
+   //  Look up NAME and push what it refers to.
+   //
+   auto syms = Singleton< CxxSymbols >::Instance();
+   auto file = Context::File();
+   auto scope = Context::Scope();
+   SymbolView view;
+   auto item = syms->FindSymbol(file, scope, name, TYPE_REFS, view);
+
+   if(item != nullptr)
+   {
+      Context::PushArg(StackArg(item, 0, false));
+      return;
+   }
+
+   auto expl = "Failed to find type for " + name;
+   Context::SwLog(CodeTools_PushType, expl, 0);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_Record = "CodeTools.Record";
+
+//  Registers reads and writes on ARG1 and ARG2 based on OP.
+//
+static void Record(Cxx::Operator op, StackArg& arg1, const StackArg* arg2)
+{
+   Debug::ft(CodeTools_Record);
+
+   switch(op)
+   {
+   case Cxx::REFERENCE_SELECT:
+   case Cxx::POINTER_SELECT:
+   case Cxx::TYPE_NAME:
+   case Cxx::SIZEOF_TYPE:
+   case Cxx::ALIGNOF_TYPE:
+   case Cxx::NOEXCEPT:
+   case Cxx::ONES_COMPLEMENT:
+   case Cxx::UNARY_PLUS:
+   case Cxx::UNARY_MINUS:
+   case Cxx::LOGICAL_NOT:
+   case Cxx::ADDRESS_OF:
+   case Cxx::INDIRECTION:
+      arg1.WasRead();
+      return;
+
+   case Cxx::ARRAY_SUBSCRIPT:
+      arg1.WasRead();
+      arg2->WasRead();
+      arg1.WasIndexed();
+      return;
+
+   case Cxx::FUNCTION_CALL:
+   case Cxx::OBJECT_CREATE:
+   case Cxx::OBJECT_CREATE_ARRAY:
+   case Cxx::OBJECT_DELETE:
+   case Cxx::OBJECT_DELETE_ARRAY:
+   case Cxx::THROW:
+      return;
+
+   case Cxx::POSTFIX_INCREMENT:
+   case Cxx::POSTFIX_DECREMENT:
+   case Cxx::PREFIX_INCREMENT:
+   case Cxx::PREFIX_DECREMENT:
+      arg1.WasRead();
+      arg1.WasWritten();
+      return;
+
+   case Cxx::CONST_CAST:
+   case Cxx::DYNAMIC_CAST:
+   case Cxx::REINTERPRET_CAST:
+   case Cxx::STATIC_CAST:
+   case Cxx::CAST:
+   case Cxx::STATEMENT_SEPARATOR:
+      arg2->WasRead();
+      return;
+
+   case Cxx::REFERENCE_SELECT_MEMBER:
+   case Cxx::POINTER_SELECT_MEMBER:
+   case Cxx::MULTIPLY:
+   case Cxx::DIVIDE:
+   case Cxx::MODULO:
+   case Cxx::ADD:
+   case Cxx::SUBTRACT:
+   case Cxx::LEFT_SHIFT:
+   case Cxx::RIGHT_SHIFT:
+   case Cxx::LESS:
+   case Cxx::LESS_OR_EQUAL:
+   case Cxx::GREATER:
+   case Cxx::GREATER_OR_EQUAL:
+   case Cxx::EQUALITY:
+   case Cxx::INEQUALITY:
+   case Cxx::BITWISE_AND:
+   case Cxx::BITWISE_XOR:
+   case Cxx::BITWISE_OR:
+   case Cxx::LOGICAL_AND:
+   case Cxx::LOGICAL_OR:
+   case Cxx::CONDITIONAL:
+      arg1.WasRead();
+      arg2->WasRead();
+      return;
+
+   case Cxx::ASSIGN:
+      arg1.WasWritten();
+      arg2->WasRead();
+      return;
+
+   case Cxx::MULTIPLY_ASSIGN:
+   case Cxx::DIVIDE_ASSIGN:
+   case Cxx::MODULO_ASSIGN:
+   case Cxx::ADD_ASSIGN:
+   case Cxx::SUBTRACT_ASSIGN:
+   case Cxx::LEFT_SHIFT_ASSIGN:
+   case Cxx::RIGHT_SHIFT_ASSIGN:
+   case Cxx::BITWISE_AND_ASSIGN:
+   case Cxx::BITWISE_XOR_ASSIGN:
+   case Cxx::BITWISE_OR_ASSIGN:
+      arg1.WasRead();
+      arg1.WasWritten();
+      arg2->WasRead();
+      return;
+
+   default:
+      Debug::SwLog(CodeTools_Record, "unexpected operator", op);
+   }
 }
 
 //==============================================================================
@@ -555,18 +706,6 @@ bool CxxToken::GetSpan3(size_t& begin, size_t& left, size_t& end) const
    end = string::npos;
    if(IsInternal()) return false;
    return GetSpan(begin, left, end);
-}
-
-//------------------------------------------------------------------------------
-
-bool CxxToken::GetSpanFailure(size_t& begin, size_t& left, size_t& end) const
-{
-   Debug::ft("CxxToken.GetSpanFailure");
-
-   begin = string::npos;
-   left = string::npos;
-   end = string::npos;
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -3167,138 +3306,6 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
    default:
       auto expl = "Unknown operator";
       Context::SwLog(Operation_PushResult, expl, op_);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Operation_PushType = "Operation.PushType";
-
-void Operation::PushType(const string& name)
-{
-   Debug::ft(Operation_PushType);
-
-   //  Look up NAME and push what it refers to.
-   //
-   auto syms = Singleton< CxxSymbols >::Instance();
-   auto file = Context::File();
-   auto scope = Context::Scope();
-   SymbolView view;
-   auto item = syms->FindSymbol(file, scope, name, TYPE_REFS, view);
-
-   if(item != nullptr)
-   {
-      Context::PushArg(StackArg(item, 0, false));
-      return;
-   }
-
-   auto expl = "Failed to find type for " + name;
-   Context::SwLog(Operation_PushType, expl, 0);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Operation_Record = "Operation.Record";
-
-void Operation::Record(Cxx::Operator op, StackArg& arg1, const StackArg* arg2)
-{
-   Debug::ft(Operation_Record);
-
-   switch(op)
-   {
-   case Cxx::REFERENCE_SELECT:
-   case Cxx::POINTER_SELECT:
-   case Cxx::TYPE_NAME:
-   case Cxx::SIZEOF_TYPE:
-   case Cxx::ALIGNOF_TYPE:
-   case Cxx::NOEXCEPT:
-   case Cxx::ONES_COMPLEMENT:
-   case Cxx::UNARY_PLUS:
-   case Cxx::UNARY_MINUS:
-   case Cxx::LOGICAL_NOT:
-   case Cxx::ADDRESS_OF:
-   case Cxx::INDIRECTION:
-      arg1.WasRead();
-      return;
-
-   case Cxx::ARRAY_SUBSCRIPT:
-      arg1.WasRead();
-      arg2->WasRead();
-      arg1.WasIndexed();
-      return;
-
-   case Cxx::FUNCTION_CALL:
-   case Cxx::OBJECT_CREATE:
-   case Cxx::OBJECT_CREATE_ARRAY:
-   case Cxx::OBJECT_DELETE:
-   case Cxx::OBJECT_DELETE_ARRAY:
-   case Cxx::THROW:
-      return;
-
-   case Cxx::POSTFIX_INCREMENT:
-   case Cxx::POSTFIX_DECREMENT:
-   case Cxx::PREFIX_INCREMENT:
-   case Cxx::PREFIX_DECREMENT:
-      arg1.WasRead();
-      arg1.WasWritten();
-      return;
-
-   case Cxx::CONST_CAST:
-   case Cxx::DYNAMIC_CAST:
-   case Cxx::REINTERPRET_CAST:
-   case Cxx::STATIC_CAST:
-   case Cxx::CAST:
-   case Cxx::STATEMENT_SEPARATOR:
-      arg2->WasRead();
-      return;
-
-   case Cxx::REFERENCE_SELECT_MEMBER:
-   case Cxx::POINTER_SELECT_MEMBER:
-   case Cxx::MULTIPLY:
-   case Cxx::DIVIDE:
-   case Cxx::MODULO:
-   case Cxx::ADD:
-   case Cxx::SUBTRACT:
-   case Cxx::LEFT_SHIFT:
-   case Cxx::RIGHT_SHIFT:
-   case Cxx::LESS:
-   case Cxx::LESS_OR_EQUAL:
-   case Cxx::GREATER:
-   case Cxx::GREATER_OR_EQUAL:
-   case Cxx::EQUALITY:
-   case Cxx::INEQUALITY:
-   case Cxx::BITWISE_AND:
-   case Cxx::BITWISE_XOR:
-   case Cxx::BITWISE_OR:
-   case Cxx::LOGICAL_AND:
-   case Cxx::LOGICAL_OR:
-   case Cxx::CONDITIONAL:
-      arg1.WasRead();
-      arg2->WasRead();
-      return;
-
-   case Cxx::ASSIGN:
-      arg1.WasWritten();
-      arg2->WasRead();
-      return;
-
-   case Cxx::MULTIPLY_ASSIGN:
-   case Cxx::DIVIDE_ASSIGN:
-   case Cxx::MODULO_ASSIGN:
-   case Cxx::ADD_ASSIGN:
-   case Cxx::SUBTRACT_ASSIGN:
-   case Cxx::LEFT_SHIFT_ASSIGN:
-   case Cxx::RIGHT_SHIFT_ASSIGN:
-   case Cxx::BITWISE_AND_ASSIGN:
-   case Cxx::BITWISE_XOR_ASSIGN:
-   case Cxx::BITWISE_OR_ASSIGN:
-      arg1.WasRead();
-      arg1.WasWritten();
-      arg2->WasRead();
-      return;
-
-   default:
-      Debug::SwLog(Operation_Record, "unexpected operator", op);
    }
 }
 

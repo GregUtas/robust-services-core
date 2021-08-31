@@ -39,6 +39,25 @@ using std::string;
 
 namespace NodeBase
 {
+//
+//  Returns true if no threads are included or excluded.
+//
+static bool ThreadsEmpty()
+{
+   Debug::ft("NodeBase.ThreadsEmpty");
+
+   auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
+
+   for(auto t = threads.cbegin(); t != threads.cend(); ++t)
+   {
+      if((*t)->GetStatus() != TraceDefault) return false;
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Tool for the trace buffer's internal use.
 //
 fixed_string TraceBufferToolName = "ToolBuffer";
@@ -287,21 +306,5 @@ TraceRc NbTracer::SelectThread(ThreadId tid, TraceStatus status)
 
    buff->SetFilter(TraceThread);
    return TraceOk;
-}
-
-//------------------------------------------------------------------------------
-
-bool NbTracer::ThreadsEmpty()
-{
-   Debug::ft("NbTracer.ThreadsEmpty");
-
-   auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
-
-   for(auto t = threads.cbegin(); t != threads.cend(); ++t)
-   {
-      if((*t)->GetStatus() != TraceDefault) return false;
-   }
-
-   return true;
 }
 }

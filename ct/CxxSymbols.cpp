@@ -24,7 +24,6 @@
 #include <cstdint>
 #include <iterator>
 #include <ostream>
-#include <set>
 #include "CodeFile.h"
 #include "CodeTypes.h"
 #include "CxxArea.h"

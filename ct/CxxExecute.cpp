@@ -53,6 +53,65 @@ using std::string;
 
 namespace CodeTools
 {
+//  Returns true if a function in a template (not in a template
+//  *instance*) is being compiled.
+//
+static bool CompilingTemplateFunction()
+{
+   auto scope = Context::Scope();
+   if(scope == nullptr) return false;
+
+   auto func = Context::Scope()->GetFunction();
+   if(func == nullptr) return false;
+
+   return (func->GetTemplateType() != NonTemplate);
+}
+
+//------------------------------------------------------------------------------
+//
+//  Invoked to record that the context function cannot be const.
+//
+static void ContextFunctionIsNonConst()
+{
+   Debug::ft("CodeTools.ContextFunctionIsNonConst");
+
+   auto func = Context::Scope()->GetFunction();
+   if(func != nullptr) func->IncrThisWrites();
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns a string containing File_ and the line number/offset for Pos_.
+//
+static string Location()
+{
+   auto parser = Context::GetParser();
+   if(parser == nullptr) return "unknown location";
+
+   std::ostringstream stream;
+   stream << parser->GetVenue();
+   stream << ", line " << parser->GetLineNum(Context::GetPos()) + 1;
+
+   if(parser->ParsingSourceCode())
+   {
+      auto scope = Context::Scope();
+
+      if(scope != nullptr)
+      {
+         auto name = scope->ScopedName(true);
+         string locals(SCOPE_STR);
+         locals += LOCALS_STR;
+         auto pos = name.find(locals);
+         if(pos != string::npos) name.erase(pos);
+         if(!name.empty()) stream << ", scope " << name;
+      }
+   }
+
+   return stream.str();
+}
+
+//------------------------------------------------------------------------------
+//
 //  Concrete classes for tracing compilation.
 //
 class ActTrace : public CxxTrace
@@ -224,19 +283,6 @@ void Context::ClearTracepoints()
 
 //------------------------------------------------------------------------------
 
-bool Context::CompilingTemplateFunction()
-{
-   auto scope = Scope();
-   if(scope == nullptr) return false;
-
-   auto func = Scope()->GetFunction();
-   if(func == nullptr) return false;
-
-   return (func->GetTemplateType() != NonTemplate);
-}
-
-//------------------------------------------------------------------------------
-
 void Context::DisplayTracepoints(ostream& stream, const string& prefix)
 {
    if(Tracepoints_.empty())
@@ -309,35 +355,6 @@ void Context::InsertTracepoint
 
    Tracepoint loc(file, line, action);
    Tracepoints_.insert(loc);
-}
-
-//------------------------------------------------------------------------------
-
-string Context::Location()
-{
-   auto parser = GetParser();
-   if(parser == nullptr) return "unknown location";
-
-   std::ostringstream stream;
-   stream << parser->GetVenue();
-   stream << ", line " << parser->GetLineNum(GetPos()) + 1;
-
-   if(parser->ParsingSourceCode())
-   {
-      auto scope = Scope();
-
-      if(scope != nullptr)
-      {
-         auto name = scope->ScopedName(true);
-         string locals(SCOPE_STR);
-         locals += LOCALS_STR;
-         auto pos = name.find(locals);
-         if(pos != string::npos) name.erase(pos);
-         if(!name.empty()) stream << ", scope " << name;
-      }
-   }
-
-   return stream.str();
 }
 
 //------------------------------------------------------------------------------
@@ -1553,16 +1570,6 @@ void StackArg::CheckIfBool() const
 
    Context::Log(NonBooleanConditional);
    item_->Log(NonBooleanConditional, item_, -1);
-}
-
-//------------------------------------------------------------------------------
-
-void StackArg::ContextFunctionIsNonConst()
-{
-   Debug::ft("StackArg.ContextFunctionIsNonConst");
-
-   auto func = Context::Scope()->GetFunction();
-   if(func != nullptr) func->IncrThisWrites();
 }
 
 //------------------------------------------------------------------------------

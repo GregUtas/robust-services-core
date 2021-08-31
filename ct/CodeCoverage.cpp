@@ -45,6 +45,18 @@ using std::string;
 
 namespace CodeTools
 {
+//  Assigns STREAM.str() to EXPL and returns RC.
+//
+static word Report(word rc, const std::ostringstream& stream, string& expl)
+{
+   Debug::ft("CodeTools.Report");
+
+   expl = stream.str();
+   return rc;
+}
+
+//------------------------------------------------------------------------------
+
 CodeCoverage::CodeCoverage()
 {
    Debug::ft("CodeCoverage.ctor");
@@ -536,17 +548,6 @@ word CodeCoverage::Query(string& expl)
 
    expl = stats.str();
    return 0;
-}
-
-//------------------------------------------------------------------------------
-
-word CodeCoverage::Report
-   (word rc, const std::ostringstream& stream, string& expl)
-{
-   Debug::ft("CodeCoverage.Report");
-
-   expl = stream.str();
-   return rc;
 }
 
 //------------------------------------------------------------------------------

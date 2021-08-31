@@ -36,6 +36,7 @@
 #include "SbIpBuffer.h"
 #include "SbTypes.h"
 #include "Singleton.h"
+#include "Switch.h"
 #include "TlvParameter.h"
 
 //------------------------------------------------------------------------------

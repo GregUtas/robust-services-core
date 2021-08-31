@@ -21,6 +21,7 @@
 //
 #include "NwDaemons.h"
 #include <ostream>
+#include <string>
 #include "DaemonRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -39,9 +40,43 @@ namespace NetworkBase
 fixed_string TcpIoDaemonName = "tcp";
 
 //------------------------------------------------------------------------------
+//
+//  Returns the name for the daemon that manages the TCP I/O thread on PORT.
+//
+static string MakeTcpName(ipport_t port)
+{
+   Debug::ft("NetworkBase.MakeName");
+
+   //  A Daemon requires a unique name, so append the port number
+   //  to the basic name.
+   //
+   string name(TcpIoDaemonName);
+   name.push_back('_');
+   name.append(std::to_string(port));
+   return name;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns the name for the daemon that manages the UDP I/O thread on PORT.
+//
+static string MakeUdpName(ipport_t port)
+{
+   Debug::ft("NetworkBase.MakeUdpName");
+
+   //  A Daemon requires a unique name, so append the port number
+   //  to the basic name.
+   //
+   string name(UdpIoDaemonName);
+   name.push_back('_');
+   name.append(std::to_string(port));
+   return name;
+}
+
+//------------------------------------------------------------------------------
 
 TcpIoDaemon::TcpIoDaemon(const TcpIpService* service, ipport_t port) :
-   Daemon(MakeName(port).c_str(), 1),
+   Daemon(MakeTcpName(port).c_str(), 1),
    service_(service),
    port_(port)
 {
@@ -82,26 +117,11 @@ TcpIoDaemon* TcpIoDaemon::GetDaemon(const TcpIpService* service, ipport_t port)
    Debug::ft("TcpIoDaemon.GetDaemon");
 
    auto reg = Singleton< DaemonRegistry >::Instance();
-   auto name = MakeName(port);
+   auto name = MakeTcpName(port);
    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
 
    if(daemon != nullptr) return daemon;
    return new TcpIoDaemon(service, port);
-}
-
-//------------------------------------------------------------------------------
-
-string TcpIoDaemon::MakeName(ipport_t port)
-{
-   Debug::ft("TcpIoDaemon.MakeName");
-
-   //  A Daemon requires a unique name, so append the port number
-   //  to the basic name.
-   //
-   string name(TcpIoDaemonName);
-   name.push_back('_');
-   name.append(std::to_string(port));
-   return name;
 }
 
 //------------------------------------------------------------------------------
@@ -118,7 +138,7 @@ fixed_string UdpIoDaemonName = "udp";
 //------------------------------------------------------------------------------
 
 UdpIoDaemon::UdpIoDaemon(const UdpIpService* service, ipport_t port) :
-   Daemon(MakeName(port).c_str(), 1),
+   Daemon(MakeUdpName(port).c_str(), 1),
    service_(service),
    port_(port)
 {
@@ -159,26 +179,11 @@ UdpIoDaemon* UdpIoDaemon::GetDaemon(const UdpIpService* service, ipport_t port)
    Debug::ft("UdpIoDaemon.GetDaemon");
 
    auto reg = Singleton< DaemonRegistry >::Instance();
-   auto name = MakeName(port);
+   auto name = MakeUdpName(port);
    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
 
    if(daemon != nullptr) return daemon;
    return new UdpIoDaemon(service, port);
-}
-
-//------------------------------------------------------------------------------
-
-string UdpIoDaemon::MakeName(ipport_t port)
-{
-   Debug::ft("UdpIoDaemon.MakeName");
-
-   //  A Daemon requires a unique name, so append the port number
-   //  to the basic name.
-   //
-   string name(UdpIoDaemonName);
-   name.push_back('_');
-   name.append(std::to_string(port));
-   return name;
 }
 
 //------------------------------------------------------------------------------

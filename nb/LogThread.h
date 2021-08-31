@@ -67,10 +67,6 @@ private:
    //
    static void Spool(ostringstreamPtr& stream, const Log* log);
 
-   //  Copies the STREAM of logs to the console when appropriate.
-   //
-   static void CopyToConsole(const ostringstreamPtr& stream);
-
    //  Returns the number of message buffers reserved for work other than
    //  spooling logs.
    //

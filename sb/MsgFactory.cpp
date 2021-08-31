@@ -38,33 +38,12 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-MsgFactory::MsgFactory(Id fid, ContextType type, ProtocolId prid,
-   c_string name) : Factory(fid, type, prid, name)
+//  Captures the arrival of MSG at CTX.  TT is the record, if any, that
+//  was created to record the work.
+//
+static void CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt)
 {
-   Debug::ft("MsgFactory.ctor");
-}
-
-//------------------------------------------------------------------------------
-
-MsgFactory::~MsgFactory()
-{
-   Debug::ftnt("MsgFactory.dtor");
-}
-
-//------------------------------------------------------------------------------
-
-Context* MsgFactory::AllocContext() const
-{
-   Debug::ft("MsgFactory.AllocContext");
-
-   return new MsgContext(GetFaction());
-}
-
-//------------------------------------------------------------------------------
-
-void MsgFactory::CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt)
-{
-   Debug::ft("MsgFactory.CaptureMsg");
+   Debug::ft("SessionBase.CaptureMsg");
 
    auto warp = TimePoint::Now();
    auto sbt = Singleton< SbTracer >::Instance();
@@ -93,6 +72,30 @@ void MsgFactory::CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt)
       tt->ResumeTime(warp);
       tt->EndOfTransaction();
    }
+}
+
+//------------------------------------------------------------------------------
+
+MsgFactory::MsgFactory(Id fid, ContextType type, ProtocolId prid,
+   c_string name) : Factory(fid, type, prid, name)
+{
+   Debug::ft("MsgFactory.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+MsgFactory::~MsgFactory()
+{
+   Debug::ftnt("MsgFactory.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+Context* MsgFactory::AllocContext() const
+{
+   Debug::ft("MsgFactory.AllocContext");
+
+   return new MsgContext(GetFaction());
 }
 
 //------------------------------------------------------------------------------

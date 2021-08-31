@@ -260,10 +260,6 @@ private:
    //
    void RecoverBlocks();
 
-   //  Accesses the header that resides above OBJ.
-   //
-   static ObjectBlock* ObjToBlock(const Pooled* obj);
-
    //  Returns the offset to pid_.
    //
    static ptrdiff_t CellDiff();

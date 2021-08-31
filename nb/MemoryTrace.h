@@ -48,10 +48,6 @@ public:
    //
    bool Display(std::ostream& stream, const std::string& opts) override;
 private:
-   //  Returns a string for displaying TYPE.
-   //
-   static c_string TypeString(MemoryType type);
-
    //  Overridden to return a string for displaying this type of record.
    //
    c_string EventString() const override;

@@ -79,6 +79,95 @@ static void BadLine(LogId id, const string& input)
    }
 }
 
+//------------------------------------------------------------------------------
+//
+//  Called by LoadTuples to read the next tuple from the configuration
+//  file.    Returns true if another valid tuple exists; updates KEY
+//  and VALUE accordingly.  Returns false on EOF.  Calls BadLine to log
+//  invalid entries, but continues to look for tuples.
+//
+static bool LoadNextTuple(string& key, string& value)
+{
+   Debug::ft("NodeBase.LoadNextTuple");
+
+   string input;
+
+   while(Stream_->peek() != EOF)
+   {
+      //  Read lines from the configuration file until EOF is reached.
+      //  Skip any line that is empty, that contains only blanks, or that
+      //  has the comment character as its first non-blank character.
+      //
+      std::getline(*Stream_, input);
+      ++CurrLine_;
+
+      if(input.empty()) continue;
+
+      auto keyBeg = input.find_first_not_of(CfgTuple::ValidBlankChars());
+
+      if(keyBeg == string::npos) continue;
+      if(input[keyBeg] == CfgTuple::CommentChar) continue;
+
+      //  The next key begins at input[keyBeg].  See where it ends.
+      //
+      auto keyEnd = input.find_first_not_of(CfgTuple::ValidKeyChars(), keyBeg);
+
+      if(keyEnd == string::npos)
+      {
+         BadLine(ConfigValueMissing, input);  // line only contains a key
+         continue;
+      }
+
+      if(keyEnd == keyBeg)
+      {
+         BadLine(ConfigKeyInvalid, input);  // first character invalid
+         continue;
+      }
+
+      //  We have a key.  Now look for a value.
+      //
+      key = input.substr(keyBeg, keyEnd - keyBeg);
+
+      auto valBeg =
+         input.find_first_not_of(CfgTuple::ValidBlankChars(), keyEnd);
+
+      if(valBeg == string::npos)
+      {
+         BadLine(ConfigValueMissing, input);  // line only contains a key
+         continue;
+      }
+
+      auto valEnd =
+         input.find_first_not_of(CfgTuple::ValidValueChars(), valBeg);
+
+      if(valEnd == string::npos)
+      {
+         value = input.substr(valBeg);  // value occupies rest of line
+         return true;
+      }
+
+      if(valEnd == valBeg)
+      {
+         BadLine(ConfigValueInvalid, input);  // first character invalid
+         continue;
+      }
+
+      //  We have a value, but other stuff follows it.  That's OK as long
+      //  as the trailing stuff only consists of blanks or a comment.
+      //
+      value = input.substr(valBeg, valEnd - valBeg);
+
+      auto extra = input.find_first_not_of(CfgTuple::ValidBlankChars(), valEnd);
+      if(extra == string::npos) return true;
+      if(input[extra] == CfgTuple::CommentChar) return true;
+
+      BadLine(ConfigExtraIgnored, input.substr(extra));
+      return true;
+   }
+
+   return false;
+}
+
 //==============================================================================
 
 CfgParmRegistry::CfgParmRegistry()
@@ -264,90 +353,6 @@ void CfgParmRegistry::ListParms(ostream& stream, const string& prefix) const
       auto s = p->GetCurr();
       stream << prefix << p->Key() << ": " << s << CRLF;
    }
-}
-
-//------------------------------------------------------------------------------
-
-bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
-{
-   Debug::ft("CfgParmRegistry.LoadNextTuple");
-
-   string input;
-
-   while(Stream_->peek() != EOF)
-   {
-      //  Read lines from the configuration file until EOF is reached.
-      //  Skip any line that is empty, that contains only blanks, or that
-      //  has the comment character as its first non-blank character.
-      //
-      std::getline(*Stream_, input);
-      ++CurrLine_;
-
-      if(input.empty()) continue;
-
-      auto keyBeg = input.find_first_not_of(CfgTuple::ValidBlankChars());
-
-      if(keyBeg == string::npos) continue;
-      if(input[keyBeg] == CfgTuple::CommentChar) continue;
-
-      //  The next key begins at input[keyBeg].  See where it ends.
-      //
-      auto keyEnd = input.find_first_not_of(CfgTuple::ValidKeyChars(), keyBeg);
-
-      if(keyEnd == string::npos)
-      {
-         BadLine(ConfigValueMissing, input);  // line only contains a key
-         continue;
-      }
-
-      if(keyEnd == keyBeg)
-      {
-         BadLine(ConfigKeyInvalid, input);  // first character invalid
-         continue;
-      }
-
-      //  We have a key.  Now look for a value.
-      //
-      key = input.substr(keyBeg, keyEnd - keyBeg);
-
-      auto valBeg =
-         input.find_first_not_of(CfgTuple::ValidBlankChars(), keyEnd);
-
-      if(valBeg == string::npos)
-      {
-         BadLine(ConfigValueMissing, input);  // line only contains a key
-         continue;
-      }
-
-      auto valEnd =
-         input.find_first_not_of(CfgTuple::ValidValueChars(), valBeg);
-
-      if(valEnd == string::npos)
-      {
-         value = input.substr(valBeg);  // value occupies rest of line
-         return true;
-      }
-
-      if(valEnd == valBeg)
-      {
-         BadLine(ConfigValueInvalid, input);  // first character invalid
-         continue;
-      }
-
-      //  We have a value, but other stuff follows it.  That's OK as long
-      //  as the trailing stuff only consists of blanks or a comment.
-      //
-      value = input.substr(valBeg, valEnd - valBeg);
-
-      auto extra = input.find_first_not_of(CfgTuple::ValidBlankChars(), valEnd);
-      if(extra == string::npos) return true;
-      if(input[extra] == CfgTuple::CommentChar) return true;
-
-      BadLine(ConfigExtraIgnored, input.substr(extra));
-      return true;
-   }
-
-   return false;
 }
 
 //------------------------------------------------------------------------------

@@ -68,6 +68,80 @@ static uint32_t Backups_[MaxCause_ + 1] = { 0 };
 
 //------------------------------------------------------------------------------
 
+fn_name CodeTools_SetCompoundType = "CodeTools.SetCompoundType";
+
+//  Invoked by GetCompoundType when NAME ended with TYPE.  SIZE and SIGN
+//  are non-zero if NAME was tagged as long, short, signed, or unsigned.
+//
+static bool SetCompoundType
+   (QualNamePtr& name, Cxx::Type type, int size, int sign)
+{
+   Debug::ft(CodeTools_SetCompoundType);
+
+   auto base = Singleton< CxxRoot >::Instance();
+
+   switch(type)
+   {
+   case Cxx::NIL_TYPE:
+   case Cxx::INT:
+      if(sign > 0)
+      {
+         switch(size)
+         {
+         case -1:
+            name->SetReferent(base->uShortTerm(), nullptr);
+            return true;
+         case 1:
+            name->SetReferent(base->uLongTerm(), nullptr);
+            return true;
+         case 2:
+            name->SetReferent(base->uLongLongTerm(), nullptr);
+            return true;
+         }
+
+         name->SetReferent(base->uIntTerm(), nullptr);
+         return true;
+      }
+
+      switch(size)
+      {
+      case -1:
+         name->SetReferent(base->ShortTerm(), nullptr);
+         return true;
+      case 1:
+         name->SetReferent(base->LongTerm(), nullptr);
+         return true;
+      case 2:
+         name->SetReferent(base->LongLongTerm(), nullptr);
+         return true;
+      }
+
+      name->SetReferent(base->IntTerm(), nullptr);
+      return true;
+
+   case Cxx::CHAR:
+      if(sign > 0)
+         name->SetReferent(base->uCharTerm(), nullptr);
+      else
+         name->SetReferent(base->CharTerm(), nullptr);
+      return true;
+
+   case Cxx::DOUBLE:
+      if(size == 0)
+         name->SetReferent(base->DoubleTerm(), nullptr);
+      else
+         name->SetReferent(base->LongDoubleTerm(), nullptr);
+      return true;
+
+   default:
+      Debug::SwLog(CodeTools_SetCompoundType, name->Name(), type, false);
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 Parser::Parser(const string& opts) :
    source_(IsUnknown),
    inst_(nullptr),
@@ -4860,77 +4934,6 @@ CxxScoped* Parser::ResolveInstanceArgument(const QualName* name) const
    }
 
    return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Parser_SetCompoundType = "Parser.SetCompoundType";
-
-bool Parser::SetCompoundType
-   (QualNamePtr& name, Cxx::Type type, int size, int sign)
-{
-   Debug::ft(Parser_SetCompoundType);
-
-   auto base = Singleton< CxxRoot >::Instance();
-
-   switch(type)
-   {
-   case Cxx::NIL_TYPE:
-   case Cxx::INT:
-      if(sign > 0)
-      {
-         switch(size)
-         {
-         case -1:
-            name->SetReferent(base->uShortTerm(), nullptr);
-            return true;
-         case 1:
-            name->SetReferent(base->uLongTerm(), nullptr);
-            return true;
-         case 2:
-            name->SetReferent(base->uLongLongTerm(), nullptr);
-            return true;
-         }
-
-         name->SetReferent(base->uIntTerm(), nullptr);
-         return true;
-      }
-
-      switch(size)
-      {
-      case -1:
-         name->SetReferent(base->ShortTerm(), nullptr);
-         return true;
-      case 1:
-         name->SetReferent(base->LongTerm(), nullptr);
-         return true;
-      case 2:
-         name->SetReferent(base->LongLongTerm(), nullptr);
-         return true;
-      }
-
-      name->SetReferent(base->IntTerm(), nullptr);
-      return true;
-
-   case Cxx::CHAR:
-      if(sign > 0)
-         name->SetReferent(base->uCharTerm(), nullptr);
-      else
-         name->SetReferent(base->CharTerm(), nullptr);
-      return true;
-
-   case Cxx::DOUBLE:
-      if(size == 0)
-         name->SetReferent(base->DoubleTerm(), nullptr);
-      else
-         name->SetReferent(base->LongDoubleTerm(), nullptr);
-      return true;
-
-   default:
-      Debug::SwLog(Parser_SetCompoundType, name->Name(), type, false);
-   }
-
-   return false;
 }
 
 //------------------------------------------------------------------------------

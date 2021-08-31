@@ -1616,34 +1616,12 @@ private:
    //
    void InvokeDefaultBaseCtor() const;
 
-   //  Returns FUNC after setting MATCH to Incompatible if FUNC is nullptr.
-   //  ARGS contains the arguments that were passed to CanInvokeWith.
-   //
-   static Function* FoundFunc
-      (Function* func, const StackArgVector& args, TypeMatch& match);
-
-   //  Determines if thatType (an argument passed to this function) matches
-   //  --or can specialize--thisType, the argument expected by this function.
-   //  tmpltParms contains the template parameters defined by this function.
-   //  As the corresponding template arguments are found, they are added to
-   //  tmpltArgs.  The result indicates how well thatType matches or specializes
-   //  thisType.  Also sets argFound if thisType contains a template parameter.
-   //
-   static TypeMatch MatchTemplate(const std::string& thisType,
-      const std::string& thatType, stringVector& tmpltParms,
-      stringVector& tmpltArgs, bool& argFound);
-
    //  Instantiates a function template instance according to tmpltArgs, which
    //  contains the TypeString that specializes each template parameter in the
    //  same order that the parameters were defined.  If the function instance
    //  has already been instantiated, it is found and returned.
    //
    Function* InstantiateFunction(stringVector& tmpltArgs) const;
-
-   //  Invoked when InstantiateFunction fails.
-   //
-   static Function* InstantiateError
-      (const std::string& instName, NodeBase::debug64_t offset);
 
    //  Marks recvArg const if
    //  o it's a "this" argument and this function also has a const version, or

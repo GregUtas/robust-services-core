@@ -23,7 +23,6 @@
 #define STATISTICSREGISTRY_H_INCLUDED
 
 #include "Dynamic.h"
-#include <cstddef>
 #include <iosfwd>
 #include "NbTypes.h"
 #include "Registry.h"
@@ -54,14 +53,6 @@ public:
    //  Deleted to prohibit copy assignment.
    //
    StatisticsRegistry& operator=(const StatisticsRegistry& that) = delete;
-
-   //> The maximum number of statistics that can register.
-   //
-   static const size_t MaxStats;
-
-   //> The maximum number of groups that can register.
-   //
-   static const size_t MaxGroups;
 
    //  Returns the group registered against GID.
    //

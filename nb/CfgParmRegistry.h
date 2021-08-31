@@ -118,13 +118,6 @@ private:
    //
    void LoadTuples();
 
-   //  Called by LoadTuples to read the next tuple from the configuration
-   //  file.    Returns true if another valid tuple exists; updates KEY
-   //  and VALUE accordingly.  Returns false on EOF.  Calls BadLine to log
-   //  invalid entries, but continues to look for tuples.
-   //
-   bool LoadNextTuple(std::string& key, std::string& value);
-
    //  The file from which tuples are read during system initialization.
    //
    ProtectedStr configFileName_;

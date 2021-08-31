@@ -83,13 +83,6 @@ private:
    //
    FunctionStats* EnsureRecord(fn_name_arg func, size_t count);
 
-   //  Sets HIGH to CURR if CURR is greater than HIGH according to the
-   //  ordered sort criteria, which have the values -1 (if HIGH < CURR),
-   //  0 (if HIGH == CURR), and 1 (if HIGH > CURR).
-   //
-   static void CheckHigh(FunctionStats*& high, FunctionStats* curr,
-      int sort1, int sort2, int sort3);
-
    //  Outputs the FunctionStats records after sorting them based on SORT.
    //
    TraceRc Show(std::ostream& stream, Sort sort);

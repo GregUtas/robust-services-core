@@ -50,11 +50,6 @@ protected:
    //
    virtual ~MsgFactory();
 
-   //  Captures the arrival of MSG at CTX.  TT is the record, if any, that
-   //  was created to record the work.
-   //
-   static void CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt);
-
    //  Overridden to create a MsgContext.
    //
    Context* AllocContext() const override;

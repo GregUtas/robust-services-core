@@ -426,12 +426,6 @@ private:
    //
    bool GetCompoundType(QualNamePtr& name, Cxx::Type type);
 
-   //  Invoked by GetCompoundType when NAME ended with TYPE.  SIZE and SIGN
-   //  are non-zero if NAME was tagged as long, short, signed, or unsigned.
-   //
-   static bool SetCompoundType
-      (QualNamePtr& name, Cxx::Type type, int size, int sign);
-
    //  Returns true and creates or updates TYPE on finding a typed name, which
    //  may include a template signature.  CONSTRAINT specifies whether the name
    //  may contain keywords that are types (e.g. int).

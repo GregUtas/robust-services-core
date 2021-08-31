@@ -1053,6 +1053,34 @@ static Duration TimeIdle_ = Duration();
 static Duration TimeUsed_ = Duration();
 
 //------------------------------------------------------------------------------
+//
+//  Sets the active thread to nullptr and returns true if it matches
+//  ACTIVE, else returns false.
+//
+static bool ClearActiveThread(Thread* active)
+{
+   return ActiveThread_.compare_exchange_strong(active, nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name NodeBase_FactionToPriority = "NodeBase.FactionToPriority";
+
+//  Returns the priority associated with FACTION.  If FACTION is out of
+//  range, it is set to BackgroundFaction after generating a log.
+//
+static SysThread::Priority FactionToPriority(Faction& faction)
+{
+   Debug::ft(NodeBase_FactionToPriority);
+
+   if(faction < Faction_N) return FactionMap[faction];
+
+   Debug::SwLog(NodeBase_FactionToPriority, "invalid faction", faction);
+   faction = BackgroundFaction;
+   return SysThread::DefaultPriority;
+}
+
+//==============================================================================
 
 const ThreadId Thread::MaxId = 99;
 
@@ -1252,13 +1280,6 @@ void Thread::ClaimBlocks()
    {
       m->ClaimBlocks();
    }
-}
-
-//------------------------------------------------------------------------------
-
-bool Thread::ClearActiveThread(Thread* active)
-{
-   return ActiveThread_.compare_exchange_strong(active, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1720,21 +1741,6 @@ void Thread::ExtendTime(const Duration& time)
    auto thr = RunningThread(std::nothrow);
    if(thr == nullptr) return;
    thr->priv_->currEnd_ += time;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Thread_FactionToPriority = "Thread.FactionToPriority";
-
-SysThread::Priority Thread::FactionToPriority(Faction& faction)
-{
-   Debug::ft(Thread_FactionToPriority);
-
-   if(faction < Faction_N) return FactionMap[faction];
-
-   Debug::SwLog(Thread_FactionToPriority, "invalid faction", faction);
-   faction = BackgroundFaction;
-   return SysThread::DefaultPriority;
 }
 
 //------------------------------------------------------------------------------

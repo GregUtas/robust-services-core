@@ -80,10 +80,6 @@ public:
    //
    static TraceRc SelectThread(ThreadId tid, TraceStatus status);
 
-   //  Returns true if no threads are included or excluded.
-   //
-   static bool ThreadsEmpty();
-
    //  Returns the trace status of the faction identified by FAC.
    //
    TraceStatus FactionStatus(Faction faction) const;

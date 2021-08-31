@@ -466,11 +466,6 @@ private:
    //
    static Thread* ActiveThread();
 
-   //  Sets the active thread to nullptr and returns true if it matches
-   //  ACTIVE, else returns false.
-   //
-   static bool ClearActiveThread(Thread* active);
-
    //  Returns the active thread if it is running unpreemptably.
    //
    static Thread* LockedThread();
@@ -499,11 +494,6 @@ private:
    //  Returns the thread's mutex count.
    //
    uint8_t MutexCount() const;
-
-   //  Returns the priority associated with FACTION.  If FACTION is out of
-   //  range, it is set to BackgroundFaction after generating a log.
-   //
-   static SysThread::Priority FactionToPriority(Faction& faction);
 
    //  Returns true if the thread can generate a software log.  Returns false
    //  if a nested software log is already being generated, which is likely to

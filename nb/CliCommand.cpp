@@ -22,6 +22,7 @@
 #include "CliCommand.h"
 #include <cstring>
 #include <ostream>
+#include <string>
 #include "CliBuffer.h"
 #include "CliThread.h"
 #include "Debug.h"
@@ -37,6 +38,21 @@ namespace NodeBase
 const int CliCommand::CommandWidth = 12;
 const char CliCommand::CommandSeparator = '.';
 fixed_string CliCommand::UnexpectedIndex = "unexpected index";
+
+//------------------------------------------------------------------------------
+//
+//  Invoked if trying to obtain another parameter when the parse tree
+//  has been exhausted.  TYPE is the type of parameter that could not
+//  be obtained.
+//
+static CliParm::Rc Exhausted(const CliThread& cli, const string& type)
+{
+   Debug::ft("NodeBase.Exhausted");
+
+   auto s = "Internal error: parameters exhausted before looking for " + type;
+   cli.ibuf->ErrorAtPos(cli, s);
+   return CliParm::Error;
+}
 
 //------------------------------------------------------------------------------
 
@@ -58,17 +74,6 @@ CliCommand::CliCommand(c_string comm, c_string help, uint32_t size) :
 CliCommand::~CliCommand()
 {
    Debug::ftnt("CliCommand.dtor");
-}
-
-//------------------------------------------------------------------------------
-
-CliParm::Rc CliCommand::Exhausted(const CliThread& cli, const string& type)
-{
-   Debug::ft("CliCommand.Exhausted");
-
-   auto s = "Internal error: parameters exhausted before looking for " + type;
-   cli.ibuf->ErrorAtPos(cli, s);
-   return Error;
 }
 
 //------------------------------------------------------------------------------

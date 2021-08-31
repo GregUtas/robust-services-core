@@ -32,12 +32,31 @@
 #include "SbAppIds.h"
 #include "SbTypes.h"
 #include "Singleton.h"
+#include "Switch.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
 namespace PotsBase
 {
+//  Invoked when an invalid message is found.
+//
+static void DiscardMsg(const Message& msg, Switch::PortId port)
+{
+   Debug::ft("PotsBase.DiscardMsg");
+
+   msg.InvalidDiscarded();
+
+   auto log = Log::Create(PotsLogGroup, PotsShelfIcMessage);
+   if(log == nullptr) return;
+   *log << Log::Tab << "signal=" << msg.GetSignal();
+   *log << " port=" << port << CRLF;
+   msg.Output(*log, Log::Indent, true);
+   Log::Submit(log);
+}
+
+//------------------------------------------------------------------------------
+
 PotsShelfFactory::PotsShelfFactory() :
    MsgFactory(PotsShelfFactoryId, SingleMsg, PotsProtocolId, "POTS Shelf")
 {
@@ -92,22 +111,6 @@ CliText* PotsShelfFactory::CreateText() const
    Debug::ft("PotsShelfFactory.CreateText");
 
    return new CliText(PotsShelfFactoryExpl, PotsShelfFactoryStr);
-}
-
-//------------------------------------------------------------------------------
-
-void PotsShelfFactory::DiscardMsg(const Message& msg, Switch::PortId port)
-{
-   Debug::ft("PotsShelfFactory.DiscardMsg");
-
-   msg.InvalidDiscarded();
-
-   auto log = Log::Create(PotsLogGroup, PotsShelfIcMessage);
-   if(log == nullptr) return;
-   *log << Log::Tab << "signal=" << msg.GetSignal();
-   *log << " port=" << port << CRLF;
-   msg.Output(*log, Log::Indent, true);
-   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------

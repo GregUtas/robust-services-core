@@ -58,6 +58,59 @@ using std::string;
 
 namespace SessionBase
 {
+//  Returns true if a lost message log should be generated for RES.
+//
+static bool GenerateLog(Factory::Rc rc)
+{
+   Debug::ft("SessionBase.GenerateLog");
+
+   //  Suppress PortNotFound logs, which arise from legitimate race conditions.
+   //
+   return (rc != Factory::PortNotFound);
+}
+
+//------------------------------------------------------------------------------
+//
+//  Captures the arrival of external message MSG at factory FAC.
+//
+static TransTrace* TraceRxNet(Message& msg, const Factory& fac)
+{
+   Debug::ft("SessionBase.TraceRxNet");
+
+   auto sbt = Singleton< SbTracer >::Instance();
+
+   TransTrace* trans = nullptr;
+
+   if(sbt->MsgStatus(msg, MsgIncoming) == TraceIncluded)
+   {
+      auto buff = Singleton< TraceBuffer >::Instance();
+      auto warp = TimePoint::Now();
+
+      if(buff->ToolIsOn(TransTracer))
+      {
+         auto rec = trans = new TransTrace(msg, fac);
+         if(!buff->Insert(rec)) trans = nullptr;
+      }
+
+      if(buff->ToolIsOn(BufferTracer))
+      {
+         auto pool = Singleton< BtIpBufferPool >::Instance();
+
+         if(pool->AvailCount() > 0)
+         {
+            auto rec = new BuffTrace(BuffTrace::IcMsg, *msg.Buffer());
+            if(buff->Insert(rec)) msg.SetTrace(rec);
+         }
+      }
+
+      if(trans != nullptr) trans->ResumeTime(warp);
+   }
+
+   return trans;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Statistics for each invoker pool.
 //
 class InvokerPoolStats : public Dynamic
@@ -168,8 +221,10 @@ InvokerWork::~InvokerWork()
 }
 
 //==============================================================================
-
-const size_t InvokerPool::MaxInvokers = 10;
+//
+//> The maximum number of invoker threads allowed in a pool.
+//
+static const size_t MaxInvokers = 10;
 
 //------------------------------------------------------------------------------
 
@@ -408,17 +463,6 @@ Context* InvokerPool::FindWork()
    }
 
    return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-bool InvokerPool::GenerateLog(Factory::Rc rc)
-{
-   Debug::ft("InvokerPool.GenerateLog");
-
-   //  Suppress PortNotFound logs, which arise from legitimate race conditions.
-   //
-   return (rc != Factory::PortNotFound);
 }
 
 //------------------------------------------------------------------------------
@@ -736,44 +780,6 @@ void InvokerPool::Startup(RestartLevel level)
    auto daemon =
       InvokerDaemon::GetDaemon(GetFaction(), invokersCfg_->GetValue());
    daemon->CreateThreads();
-}
-
-//------------------------------------------------------------------------------
-
-TransTrace* InvokerPool::TraceRxNet(Message& msg, const Factory& fac)
-{
-   Debug::ft("InvokerPool.TraceRxNet");
-
-   auto sbt = Singleton< SbTracer >::Instance();
-
-   TransTrace* trans = nullptr;
-
-   if(sbt->MsgStatus(msg, MsgIncoming) == TraceIncluded)
-   {
-      auto buff = Singleton< TraceBuffer >::Instance();
-      auto warp = TimePoint::Now();
-
-      if(buff->ToolIsOn(TransTracer))
-      {
-         auto rec = trans = new TransTrace(msg, fac);
-         if(!buff->Insert(rec)) trans = nullptr;
-      }
-
-      if(buff->ToolIsOn(BufferTracer))
-      {
-         auto pool = Singleton< BtIpBufferPool >::Instance();
-
-         if(pool->AvailCount() > 0)
-         {
-            auto rec = new BuffTrace(BuffTrace::IcMsg, *msg.Buffer());
-            if(buff->Insert(rec)) msg.SetTrace(rec);
-         }
-      }
-
-      if(trans != nullptr) trans->ResumeTime(warp);
-   }
-
-   return trans;
 }
 
 //------------------------------------------------------------------------------

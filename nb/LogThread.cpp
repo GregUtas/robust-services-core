@@ -57,6 +57,24 @@ namespace NodeBase
 static SysMutex LogFileLock_("LogFileLock");
 
 //------------------------------------------------------------------------------
+//
+//  Copies the STREAM of logs to the console when appropriate.
+//
+static void CopyToConsole(const ostringstreamPtr& stream)
+{
+   Debug::ft("NodeBase.CopyToConsole");
+
+   //  In a lab load, display the logs on the console.
+   //
+   if(Element::RunningInLab())
+   {
+      ostringstreamPtr clone
+         (new (std::nothrow) std::ostringstream(stream->str()));
+      if(clone != nullptr) CoutThread::Spool(clone);
+   }
+}
+
+//------------------------------------------------------------------------------
 
 LogThread::LogThread() :
    Thread(BackgroundFaction, Singleton< LogDaemon >::Instance())
@@ -97,22 +115,6 @@ LogThread::~LogThread()
 c_string LogThread::AbbrName() const
 {
    return LogDaemonName;
-}
-
-//------------------------------------------------------------------------------
-
-void LogThread::CopyToConsole(const ostringstreamPtr& stream)
-{
-   Debug::ft("LogThread.CopyToConsole");
-
-   //  In a lab load, display the logs on the console.
-   //
-   if(Element::RunningInLab())
-   {
-      ostringstreamPtr clone
-         (new (std::nothrow) std::ostringstream(stream->str()));
-      if(clone != nullptr) CoutThread::Spool(clone);
-   }
 }
 
 //------------------------------------------------------------------------------

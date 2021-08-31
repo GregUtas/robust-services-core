@@ -24,7 +24,6 @@
 
 #include "Daemon.h"
 #include <cstddef>
-#include <string>
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -59,10 +58,6 @@ private:
    //  Not subclassed.
    //
    ~InvokerDaemon();
-
-   //  Returns the name for the daemon in FACTION.
-   //
-   static std::string MakeName(NodeBase::Faction faction);
 
    //  Overridden to create an invoker thread in the appropriate faction.
    //

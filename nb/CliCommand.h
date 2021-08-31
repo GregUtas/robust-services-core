@@ -25,7 +25,6 @@
 #include "CliText.h"
 #include <cstdint>
 #include <iosfwd>
-#include <string>
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -123,12 +122,6 @@ private:
    //  with negative values denoting errors or warnings.
    //
    virtual word ProcessCommand(CliThread& cli) const = 0;
-
-   //  Invoked if trying to obtain another parameter when the parse tree
-   //  has been exhausted.  TYPE is the type of parameter that could not
-   //  be obtained.
-   //
-   static Rc Exhausted(const CliThread& cli, const std::string& type);
 
    //  Overridden to stop looking for parameters if those below this
    //  command have been exhausted.

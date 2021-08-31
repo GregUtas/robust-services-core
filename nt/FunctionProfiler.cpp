@@ -52,6 +52,36 @@ static const size_t HashTableSizeLog2 = 10;
 static const uint32_t HashMask = ((1 << HashTableSizeLog2) - 1);
 
 //------------------------------------------------------------------------------
+//
+//  Sets HIGH to CURR if CURR is greater than HIGH according to the
+//  ordered sort criteria, which have the values -1 (if HIGH < CURR),
+//  0 (if HIGH == CURR), and 1 (if HIGH > CURR).
+//
+static void CheckHigh(FunctionStats*& high,
+   FunctionStats* curr, int sort1, int sort2, int sort3)
+{
+   //  SORTn > 0 if HIGH > CURR, 0 (if HIGH = CURR), or < 0 (if HIGH < CURR).
+   //
+   if(sort1 < 0)
+   {
+      high = curr;
+      return;
+   }
+
+   if(sort1 > 0) return;
+
+   if(sort2 < 0)
+   {
+      high = curr;
+      return;
+   }
+
+   if(sort2 > 0) return;
+
+   if(sort3 < 0) high = curr;
+}
+
+//------------------------------------------------------------------------------
 
 FunctionProfiler::FunctionProfiler() :
    size_(1 << HashTableSizeLog2),
@@ -93,32 +123,6 @@ FunctionProfiler::~FunctionProfiler()
 
    Memory::Free(functionq_, MemTemporary);
    functionq_ = nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-void FunctionProfiler::CheckHigh(FunctionStats*& high,
-   FunctionStats* curr, int sort1, int sort2, int sort3)
-{
-   //  SORTn > 0 if HIGH > CURR, 0 (if HIGH = CURR), or < 0 (if HIGH < CURR).
-   //
-   if(sort1 < 0)
-   {
-      high = curr;
-      return;
-   }
-
-   if(sort1 > 0) return;
-
-   if(sort2 < 0)
-   {
-      high = curr;
-      return;
-   }
-
-   if(sort2 > 0) return;
-
-   if(sort3 < 0) high = curr;
 }
 
 //------------------------------------------------------------------------------

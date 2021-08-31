@@ -348,10 +348,6 @@ private:
    //
    TypeMatch MatchConst(const StackArg& that, TypeMatch match) const;
 
-   //  Invoked to record that the context function cannot be const.
-   //
-   static void ContextFunctionIsNonConst();
-
    //  The name that was resolved to create this argument.
    //
    TypeName* name_;
@@ -844,11 +840,6 @@ public:
    //
    static bool ParsingTemplateInstance();
 
-   //  Returns true if a function in a template (not in a template
-   //  *instance*) is being compiled.
-   //
-   static bool CompilingTemplateFunction();
-
    //  Invoked when UPDATER starts updating the cross-reference.
    //
    static void PushXrefFrame(XrefUpdater updater);
@@ -972,10 +963,6 @@ private:
    //  Sets the file in which compilation is occurring and invokes Reset.
    //
    static void SetFile(CodeFile* file);
-
-   //  Returns a string containing File_ and the line number/offset for Pos_.
-   //
-   static std::string Location();
 
    //  The options set by the compiler.
    //

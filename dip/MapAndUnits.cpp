@@ -26,6 +26,26 @@ using namespace NodeBase;
 
 namespace Diplomacy
 {
+static string display_retreat_order(const UnitOrder& unit)
+{
+   std::ostringstream stream;
+
+   switch(unit.order)
+   {
+   case DISBAND_ORDER:
+      stream << unit << " disbands";
+      break;
+
+   case RETREAT_ORDER:
+      stream << unit << " - " << unit.dest;
+      break;
+   }
+
+   return stream.str();
+}
+
+//------------------------------------------------------------------------------
+
 MapAndUnits::MapAndUnits() :
    number_of_provinces(0),
    number_of_powers(0),
@@ -471,26 +491,6 @@ string MapAndUnits::display_province(ProvinceId province) const
    }
 
    return province_str;
-}
-
-//------------------------------------------------------------------------------
-
-string MapAndUnits::display_retreat_order(const UnitOrder& unit) const
-{
-   std::ostringstream stream;
-
-   switch(unit.order)
-   {
-   case DISBAND_ORDER:
-      stream << unit << " disbands";
-      break;
-
-   case RETREAT_ORDER:
-      stream << unit << " - " << unit.dest;
-      break;
-   }
-
-   return stream.str();
 }
 
 //------------------------------------------------------------------------------

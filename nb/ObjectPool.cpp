@@ -77,6 +77,18 @@ struct ObjectBlock
 
 constexpr size_t BlockHeaderSize = sizeof(ObjectBlock) - sizeof(Pooled);
 
+//------------------------------------------------------------------------------
+//
+//  Accesses the header that resides above OBJ.
+//
+static ObjectBlock* ObjToBlock(const Pooled* obj)
+{
+   if(obj == nullptr) return nullptr;
+   return (ObjectBlock*) getptr1(obj, BlockHeaderSize);
+}
+
+//==============================================================================
+//
 //  The configuration parameter for an object pool, which expands
 //  the pool's size if the pool was created *before* its tuple was
 //  read from the element configuration file.
@@ -92,24 +104,7 @@ private:
    ObjectPool* const pool_;
 };
 
-//  Statistics for each object pool.
-//
-class ObjectPoolStats : public Dynamic
-{
-public:
-   ObjectPoolStats();
-   ~ObjectPoolStats();
-
-   LowWatermarkPtr lowCount_;
-   CounterPtr      allocCount_;
-   CounterPtr      freeCount_;
-   CounterPtr      failCount_;
-   CounterPtr      auditCount_;
-   CounterPtr      expansions_;
-   LowWatermarkPtr lowExcess_;
-};
-
-//==============================================================================
+//------------------------------------------------------------------------------
 
 ObjectPoolSizeCfg::ObjectPoolSizeCfg(ObjectPool* pool) :
    CfgIntParm(pool->key_.c_str(), "1", 0,
@@ -150,6 +145,25 @@ void ObjectPoolSizeCfg::SetCurr()
 }
 
 //==============================================================================
+//
+//  Statistics for each object pool.
+//
+class ObjectPoolStats : public Dynamic
+{
+public:
+   ObjectPoolStats();
+   ~ObjectPoolStats();
+
+   LowWatermarkPtr lowCount_;
+   CounterPtr      allocCount_;
+   CounterPtr      freeCount_;
+   CounterPtr      failCount_;
+   CounterPtr      auditCount_;
+   CounterPtr      expansions_;
+   LowWatermarkPtr lowExcess_;
+};
+
+//------------------------------------------------------------------------------
 
 ObjectPoolStats::ObjectPoolStats()
 {
@@ -975,14 +989,6 @@ PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
    auto block = ObjToBlock(obj);
    if(block != nullptr) return block->header.seq;
    return 0;
-}
-
-//------------------------------------------------------------------------------
-
-ObjectBlock* ObjectPool::ObjToBlock(const Pooled* obj)
-{
-   if(obj == nullptr) return nullptr;
-   return (ObjectBlock*) getptr1(obj, BlockHeaderSize);
 }
 
 //------------------------------------------------------------------------------

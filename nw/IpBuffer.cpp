@@ -56,6 +56,24 @@ const size_t BuffSizes[nSizes + 1] =
 };
 
 //------------------------------------------------------------------------------
+//
+//  When buff_ is allocated, this function rounds SIZE off to a standard
+//  size.  An exception is thrown if SIZE is greater than MaxBuffSize.
+//
+static size_t BuffSize(size_t size)
+{
+   Debug::ft("NetworkBase.BuffSize");
+
+   for(auto i = 0; i <= nSizes; ++i)
+   {
+      if(BuffSizes[i] >= size) return BuffSizes[i];
+   }
+
+   Debug::SwErr("size out of range", size);
+   return 0;
+}
+
+//------------------------------------------------------------------------------
 
 IpBuffer::IpBuffer(MsgDirection dir, size_t header, size_t payload) :
    MsgBuffer(),
@@ -138,21 +156,6 @@ bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
    }
 
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-size_t IpBuffer::BuffSize(size_t size)
-{
-   Debug::ft("IpBuffer.BuffSize");
-
-   for(auto i = 0; i <= nSizes; ++i)
-   {
-      if(BuffSizes[i] >= size) return BuffSizes[i];
-   }
-
-   Debug::SwErr("size out of range", size);
-   return 0;
 }
 
 //------------------------------------------------------------------------------

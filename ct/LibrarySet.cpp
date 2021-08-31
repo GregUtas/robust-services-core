@@ -42,11 +42,29 @@ namespace CodeTools
 //
 static const char ReadOnlyChar = '$';
 
-const char LibrarySet::TemporaryChar = '%';
-
 //  Sequence number for generating names for temporary variables.
 //
 static uint32_t SeqNo_ = 0;
+
+//------------------------------------------------------------------------------
+//
+//  If RESULT is not empty, deletes a presumed trailing ", ", else sets
+//  RESULT to indicate that nothing was found.  Returns 0.
+//
+static word Shown(string& result)
+{
+   Debug::ft("CodeTools.Shown");
+
+   if(result.rfind(", ") == result.size() - 2)
+      result.erase(result.size() - 2, 2);
+   else if(result.empty())
+      result = EmptySet;
+   return 0;
+}
+
+//==============================================================================
+
+const char LibrarySet::TemporaryChar = '%';
 
 //------------------------------------------------------------------------------
 
@@ -446,19 +464,6 @@ word LibrarySet::Show(string& result) const
    }
 
    return Shown(result);
-}
-
-//------------------------------------------------------------------------------
-
-word LibrarySet::Shown(string& result)
-{
-   Debug::ft("LibrarySet.Shown");
-
-   if(result.rfind(", ") == result.size() - 2)
-      result.erase(result.size() - 2, 2);
-   else if(result.empty())
-      result = EmptySet;
-   return 0;
 }
 
 //------------------------------------------------------------------------------

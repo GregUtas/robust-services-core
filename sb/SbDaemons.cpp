@@ -22,6 +22,7 @@
 #include "SbDaemons.h"
 #include <ostream>
 #include <set>
+#include <string>
 #include "DaemonRegistry.h"
 #include "Debug.h"
 #include "InvokerThread.h"
@@ -38,6 +39,23 @@ using std::string;
 namespace SessionBase
 {
 fixed_string InvokerDaemonName = "invoker";
+
+//------------------------------------------------------------------------------
+//
+//  Returns the name for the daemon in FACTION.
+//
+static string MakeName(Faction faction)
+{
+   Debug::ft("SessionBase.MakeName");
+
+   //  A Daemon requires a unique name, so append the faction's character
+   //  to the basic name.
+   //
+   string name(InvokerDaemonName);
+   name.push_back('_');
+   name.push_back(FactionChar(faction));
+   return name;
+}
 
 //------------------------------------------------------------------------------
 
@@ -102,21 +120,6 @@ InvokerDaemon* InvokerDaemon::GetDaemon(Faction faction, size_t size)
 
    if(daemon != nullptr) return daemon;
    return new InvokerDaemon(faction, size);
-}
-
-//------------------------------------------------------------------------------
-
-string InvokerDaemon::MakeName(Faction faction)
-{
-   Debug::ft("InvokerDaemon.MakeName");
-
-   //  A Daemon requires a unique name, so append the faction's character
-   //  to the basic name.
-   //
-   string name(InvokerDaemonName);
-   name.push_back('_');
-   name.push_back(FactionChar(faction));
-   return name;
 }
 
 //------------------------------------------------------------------------------

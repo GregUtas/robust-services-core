@@ -48,6 +48,34 @@ using std::string;
 
 namespace CodeTools
 {
+fn_name CodeTools_CreateCodeError = "CodeTools.CreateCodeError";
+
+//  Invoked when an error occurs in CreateCode.  NAME is the template
+//  whose code could not be found.
+//
+static size_t CreateCodeError(const string& name, debug64_t offset)
+{
+   Debug::ft(CodeTools_CreateCodeError);
+
+   auto expl = "Could not find code for " + name;
+   Context::SwLog(CodeTools_CreateCodeError, expl, offset);
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Invoked by FindFunc.  Updates VIEW with MATCH and returns FUNC.
+//
+static Function* FoundFunc(Function* func, SymbolView* view, TypeMatch match)
+{
+   Debug::ft("CodeTools.FoundFunc");
+
+   if(view != nullptr) view->match_ = match;
+   return func;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Invoked when FindFunc (which defines the other arguments) has resolved
 //  a function call to FUNC.
 //
@@ -74,6 +102,39 @@ static Function* FuncAccessed(Function* func,
 
    func->RecordAccess(view->control_);
    return func;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_MemberIsAccessibleTo = "CodeTools.MemberIsAccessibleTo";
+
+//  Determines if MEMBER is accessible to SCOPE, updating VIEW with details
+//  on its visibility.
+//
+static bool MemberIsAccessibleTo
+   (const CxxScoped* member, const CxxScope* scope, SymbolView* view)
+{
+   Debug::ft(CodeTools_MemberIsAccessibleTo);
+
+   SymbolView local;
+   if(member == nullptr) return false;
+   if(scope == nullptr) return true;
+   if(view == nullptr) view = &local;
+
+   member->AccessibilityTo(scope, *view);
+   if(view->accessibility_ != Inaccessible)
+   {
+      if(member->Type() != Cxx::Function) member->RecordAccess(view->control_);
+      return true;
+   }
+
+   //  We should never get here when compiling well-formed code, so there is
+   //  probably a bug in AccessibilityOf.  Log this, but assume that ITEM is
+   //  accessible.
+   //
+   auto expl = member->ScopedName(true) + " is inaccessible";
+   Context::SwLog(CodeTools_MemberIsAccessibleTo, expl, 0);
+   return true;
 }
 
 //==============================================================================
@@ -940,19 +1001,6 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
    begin = code->find(instName) + instName.size();
    ReplaceTemplateParms(*code, inst->GetTemplateArgs()->Args(), begin);
    return begin;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Class_CreateCodeError = "Class.CreateCodeError";
-
-size_t Class::CreateCodeError(const string& name, debug64_t offset)
-{
-   Debug::ft(Class_CreateCodeError);
-
-   auto expl = "Could not find code for " + name;
-   Context::SwLog(Class_CreateCodeError, expl, offset);
-   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -2095,36 +2143,6 @@ TypeMatch Class::MatchTemplate(const TypeName& type) const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_MemberIsAccessibleTo = "Class.MemberIsAccessibleTo";
-
-bool Class::MemberIsAccessibleTo
-   (const CxxScoped* member, const CxxScope* scope, SymbolView* view)
-{
-   Debug::ft(Class_MemberIsAccessibleTo);
-
-   SymbolView local;
-   if(member == nullptr) return false;
-   if(scope == nullptr) return true;
-   if(view == nullptr) view = &local;
-
-   member->AccessibilityTo(scope, *view);
-   if(view->accessibility_ != Inaccessible)
-   {
-      if(member->Type() != Cxx::Function) member->RecordAccess(view->control_);
-      return true;
-   }
-
-   //  We should never get here when compiling well-formed code, so there is
-   //  probably a bug in AccessibilityOf.  Log this, but assume that ITEM is
-   //  accessible.
-   //
-   auto expl = member->ScopedName(true) + " is inaccessible";
-   Context::SwLog(Class_MemberIsAccessibleTo, expl, 0);
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 StackArg Class::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft("Class.NameToArg");
@@ -3243,16 +3261,6 @@ Typedef* CxxArea::FindType(const string& name) const
    }
 
    return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-Function* CxxArea::FoundFunc(Function* func, SymbolView* view, TypeMatch match)
-{
-   Debug::ft("CxxArea.FoundFunc");
-
-   if(view != nullptr) view->match_ = match;
-   return func;
 }
 
 //------------------------------------------------------------------------------

@@ -445,12 +445,6 @@ private:
    //
    void AddDirectTypes(const CxxNamedSet& directs, CxxNamedSet& inclSet) const;
 
-   //  Updates inclSet by adding types that this file used indirectly (in
-   //  INDIRECTS) and that are defined within the code base.
-   //
-   void AddIndirectExternalTypes
-      (const CxxNamedSet& indirects, CxxNamedSet& inclSet) const;
-
    //  Resets BASES to base classes for those *declared* in this file.
    //
    void GetDeclaredBaseClasses(CxxNamedSet& bases) const;

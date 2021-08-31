@@ -44,6 +44,21 @@ const char CliParm::OptParmBegin = '[';
 const char CliParm::OptParmEnd = ']';
 
 //------------------------------------------------------------------------------
+//
+//  Invoked if trying to obtain a parameter whose type differs from
+//  what the current parameter in the parse tree actually supports.
+//  TYPE is the type of incorrect parameter.
+//
+static CliParm::Rc Mismatch(const CliThread& cli, const string& type)
+{
+   Debug::ft("NodeBase.Mismatch");
+
+   auto s = "Internal error: parameter mismatch when looking for " + type;
+   cli.ibuf->ErrorAtPos(cli, s);
+   return CliParm::Error;
+}
+
+//------------------------------------------------------------------------------
 
 fn_name CliParm_ctor = "CliParm.ctor";
 
@@ -318,17 +333,6 @@ CliParm::Rc CliParm::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
    Debug::ft("CliParm.GetTextParmRc");
 
    return Mismatch(cli, "text");
-}
-
-//------------------------------------------------------------------------------
-
-CliParm::Rc CliParm::Mismatch(const CliThread& cli, const string& type)
-{
-   Debug::ft("CliParm.Mismatch");
-
-   auto s = "Internal error: parameter mismatch when looking for " + type;
-   cli.ibuf->ErrorAtPos(cli, s);
-   return Error;
 }
 
 //------------------------------------------------------------------------------

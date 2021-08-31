@@ -155,6 +155,21 @@ enum BlankLocation
    BlankBelow
 };
 
+//------------------------------------------------------------------------------
+//
+//  Returns the code for a Debug::Ft invocation with an inline string
+//  literal (FNAME).
+//
+static string DebugFtCode(const string& fname)
+{
+   Debug::ft("CodeTools.DebugFtCode");
+
+   auto call = string(IndentSize(), SPACE) + "Debug::ft(";
+   call.append(fname);
+   call.append(");");
+   return call;
+}
+
 //  Attributes when declaring a C++ item.
 //
 struct ItemDeclAttrs
@@ -2075,18 +2090,6 @@ size_t Editor::CutCode(const CxxToken* item, string& code)
    code = code_.substr(begin, end - begin + 1);
    Erase(begin, end - begin + 1);
    return begin;
-}
-
-//------------------------------------------------------------------------------
-
-string Editor::DebugFtCode(const string& fname) const
-{
-   Debug::ft("Editor.DebugFtCode");
-
-   auto call = string(IndentSize(), SPACE) + "Debug::ft(";
-   call.append(fname);
-   call.append(");");
-   return call;
 }
 
 //------------------------------------------------------------------------------
@@ -6656,23 +6659,6 @@ void Editor::UpdatePos
    Update();
    file_->UpdatePos(action, begin, count, from);
    Changed();
-}
-
-//------------------------------------------------------------------------------
-
-bool Editor::UpdateXref() const
-{
-   Debug::ft("Editor.UpdateXref");
-
-   //  The cross-reference (CxxScoped.xref_) uses *sets* of items, which avoids
-   //  duplicates.  The easiest way to update the cross-reference after adding
-   //  or modifying an item is therefore to have the affected file reinvoke
-   //  UpdateXref on all of its items.  Invoking UpdateXref on only the new or
-   //  modified item would be optimal, but efficiency isn't a major factor when
-   //  editing source code.
-   //
-   file_->UpdateXref(true);
-   return true;
 }
 
 //------------------------------------------------------------------------------

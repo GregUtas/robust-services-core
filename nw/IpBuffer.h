@@ -162,11 +162,6 @@ protected:
    //
    void Cleanup() override;
 private:
-   //  When buff_ is allocated, this function rounds SIZE off to a standard
-   //  size.  An exception is thrown if SIZE is greater than MaxBuffSize.
-   //
-   static size_t BuffSize(size_t size);
-
    //  The buffer that holds the message.
    //
    NodeBase::byte_t* buff_;

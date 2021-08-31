@@ -24,7 +24,6 @@
 
 #include "TimedRecord.h"
 #include <iosfwd>
-#include <string>
 #include "Duration.h"
 #include "EventHandler.h"
 #include "LocalAddress.h"
@@ -236,12 +235,6 @@ protected:
    //  is virtual.
    //
    explicit SboTrace(const NodeBase::Pooled& sbo);
-
-   //  Displays ID in the trace's identifier column, preceded by LABEL.
-   //  If ID is NIL_ID, it is not displayed.  Enough spaces to reach the
-   //  description column are then inserted after the output.
-   //
-   static std::string OutputId(const std::string& label, NodeBase::id_t id);
 private:
    //  The object associated with this trace record.  By the time the
    //  record is displayed, the object will have been deleted, so only
@@ -479,10 +472,6 @@ protected:
    //  For subclasses.
    //
    explicit EventTrace(const Event& evt);
-
-   //  Displays the event name associated with SID and EID.
-   //
-   static void DisplayEvent(std::ostream& stream, ServiceId sid, EventId eid);
 
    //  Overridden to return a string for displaying this type of record.
    //

@@ -127,11 +127,6 @@ class PotsCallFactory : public BcFactory
    //
    ~PotsCallFactory();
 
-   //  Sends a Release message when discarding an offhook-onhook message pair.
-   //  MSG1 is the offhook message.
-   //
-   static void SendRelease(const Message& msg1);
-
    //  Overridden to allocate a message to receive BUFF.
    //
    Message* AllocIcMsg(SbIpBufferPtr& buff) const override;

@@ -45,6 +45,39 @@ using std::string;
 
 namespace CodeTools
 {
+//  Checks if REF (the name's referent) is a template argument.
+//
+static void CheckIfTemplateArgument(const CxxScoped* ref)
+{
+   Debug::ft("CodeTools.CheckIfTemplateArgument");
+
+   //  If we are parsing a function in a template instance and this name's
+   //  referent (REF) is a template argument, find the template's version
+   //  of that function, indicating that its code uses a template argument.
+   //
+   if(!Context::GetParser()->ParsingTemplateInstance()) return;
+   auto scope = Context::Scope();
+   if(scope == nullptr) return;
+   auto ifunc = scope->GetFunction();
+   if(ifunc == nullptr) return;
+   auto inst = ifunc->GetClass();
+   if(inst == nullptr) return;
+   if(!inst->IsInTemplateInstance()) return;
+   auto args = inst->GetTemplateArgs()->Args();
+
+   for(auto a = args->cbegin(); a != args->cend(); ++a)
+   {
+      if((*a)->ReferentDefn() == ref)
+      {
+         auto tfunc = inst->FindTemplateAnalog(ifunc);
+         if(tfunc != nullptr)
+            static_cast< Function* >(tfunc)->SetTemplateParm();
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_ReferentError = "CodeTools.ReferentError";
 
 static CxxScoped* ReferentError(const string& item, debug64_t offset)
@@ -2052,37 +2085,6 @@ void QualName::CheckForRedundantScope() const
             Log(RedundantScope);
             return;
          }
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
-{
-   Debug::ft("QualName.CheckIfTemplateArgument");
-
-   //  If we are parsing a function in a template instance and this name's
-   //  referent (REF) is a template argument, find the template's version
-   //  of that function, indicating that its code uses a template argument.
-   //
-   if(!Context::GetParser()->ParsingTemplateInstance()) return;
-   auto scope = Context::Scope();
-   if(scope == nullptr) return;
-   auto ifunc = scope->GetFunction();
-   if(ifunc == nullptr) return;
-   auto inst = ifunc->GetClass();
-   if(inst == nullptr) return;
-   if(!inst->IsInTemplateInstance()) return;
-   auto args = inst->GetTemplateArgs()->Args();
-
-   for(auto a = args->cbegin(); a != args->cend(); ++a)
-   {
-      if((*a)->ReferentDefn() == ref)
-      {
-         auto tfunc = inst->FindTemplateAnalog(ifunc);
-         if(tfunc != nullptr)
-            static_cast< Function* >(tfunc)->SetTemplateParm();
       }
    }
 }

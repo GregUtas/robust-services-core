@@ -169,9 +169,10 @@ public:
    void EraseTerm(const Terminal* term);
    void EraseType(const Typedef* type);
 
-   //  Outputs the global cross-reference to STREAM.
+   //  Outputs the global cross-reference to STREAM.  The characters in
+   //  OPTS control what information will be included.
    //
-   void DisplayXref(std::ostream& stream) const;
+   void DisplayXref(std::ostream& stream, const std::string& opts) const;
 
    //  Shrinks containers.
    //

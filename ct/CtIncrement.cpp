@@ -484,7 +484,7 @@ static const string& DefaultExportOptions()
       DefaultOpts.push_back(ClassHierarchyView);
       DefaultOpts.push_back(ItemStatistics);
       DefaultOpts.push_back(FileSymbolUsage);
-      DefaultOpts.push_back(GlobalCrossReference);
+      DefaultOpts.push_back(CrossReferenceBrief);
    }
 
    return DefaultOpts;
@@ -502,7 +502,8 @@ static const string& ValidExportOptions()
       ValidOpts.push_back(ClassHierarchyView);
       ValidOpts.push_back(ItemStatistics);
       ValidOpts.push_back(FileSymbolUsage);
-      ValidOpts.push_back(GlobalCrossReference);
+      ValidOpts.push_back(CrossReferenceVerbose);
+      ValidOpts.push_back(CrossReferenceBrief);
    }
 
    return ValidOpts;
@@ -555,13 +556,14 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
       cli.SendToFile(filename, true);
    }
 
-   if(opts.find(GlobalCrossReference) != string::npos)
+   if((opts.find(CrossReferenceVerbose) != string::npos) ||
+      (opts.find(CanonicalFileView) != string::npos))
    {
       Debug::Progress(string("Exporting cross-reference...") + CRLF);
       auto stream = cli.FileStream();
       if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
       auto filename = title + ".xref.txt";
-      Singleton< CxxSymbols >::Instance()->DisplayXref(*stream);
+      Singleton< CxxSymbols >::Instance()->DisplayXref(*stream, opts);
       cli.SendToFile(filename, true);
    }
 

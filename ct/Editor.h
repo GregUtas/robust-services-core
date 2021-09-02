@@ -68,13 +68,19 @@ namespace CodeTools
 //  o Finding a position in the code, editing the code, and then using that
 //    position after the underlying text has shifted.  An edit can even change
 //    CodeWarning.Pos(), so it may also need to be reread or accessed later.
+//    The function UpdateAfterErase can be used to update a string position
+//    after each code erasure.
 //  o Manipulating code_ using string functions such as erase, insert, or
 //    replace instead of analogous Editor functions.  The latter invoke the
 //    function UpdatePos to update the positions of the C++ items that were
 //    created during parsing.  If this is not done, errors can occur during
 //    subsequent edits.  It is only safe to manipulate code_ directly when
-//    replacing one string with another of the same size.  This is done, for
-//    example, when mangling/demangling #include directives.
+//    replacing one string with another of the same size.  However, the goal
+//    is always to synchronize changes with the underlying C++ items so that
+//    >check and >export produce correct output if re-executed after editing.
+//    In fact, comparing .lib files before and after an editing session is a
+//    good way to check that this has occurred, and new or modified code is
+//    incrementally compiled for this reason.
 //
 class Editor : public Lexer
 {

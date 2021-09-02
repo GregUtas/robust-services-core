@@ -175,7 +175,7 @@ public:
    //
    virtual void GetDirectTemplateArgs(CxxUsageSets& symbols) const;
 
-   //  Returns the item's name as it should appear in the cross reference.
+   //  Returns the item's name as it should appear in the cross-reference.
    //  The default returns ScopedName(templates).
    //
    virtual std::string XrefName(bool templates) const;

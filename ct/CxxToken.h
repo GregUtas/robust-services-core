@@ -59,7 +59,7 @@ public:
    //  finally the declaration.  Definitions and declarations erase their
    //  entries in the file or scope where they appear, and declarations also
    //  erase themselves from the symbol table.  An item that refers to another
-   //  one erases itself from its referent's cross reference.
+   //  one erases itself from its referent's cross-reference.
    //
    virtual ~CxxToken();
 

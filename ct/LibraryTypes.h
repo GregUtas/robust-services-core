@@ -138,6 +138,7 @@ constexpr char OriginalFileView = 'o';
 constexpr char ClassHierarchyView = 'h';
 constexpr char ItemStatistics = 's';
 constexpr char FileSymbolUsage = 'u';
-constexpr char GlobalCrossReference = 'x';
+constexpr char CrossReferenceBrief = 'x';
+constexpr char CrossReferenceVerbose = 'z';
 }
 #endif

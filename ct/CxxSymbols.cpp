@@ -92,11 +92,14 @@ typedef std::pair< string, Typedef* > TypePair;
 
 //------------------------------------------------------------------------------
 //
-//  Displays REFS (references to a single item) in STREAM.
+//  Displays REFS (references to a single item) in STREAM.  If VERBOSE is not
+//  set, only the files that contain references are displayed.  If VERSBOSE is
+//  set, the line numbers where the references occur are also displayed.
 //
 const word LAST_XREF_START_COLUMN = 122;
 
-static void DisplayReferences(ostream& stream, const CxxTokenVector& refs)
+static void DisplayReferences
+   (ostream& stream, const CxxTokenVector& refs, bool verbose)
 {
    if(refs.empty()) return;
 
@@ -113,11 +116,15 @@ static void DisplayReferences(ostream& stream, const CxxTokenVector& refs)
       {
          if(refFile != nullptr) stream << CRLF;
          auto fn = file->Path(false);
-         stream << spaces(6) << fn << ':';
+         stream << spaces(6) << fn;
          refFile = file;
+         if(!verbose) continue;
+         stream << ':';
          endline = false;
          room = LAST_XREF_START_COLUMN - (fn.size() + 7);
       }
+
+      if(!verbose) continue;
 
       if(endline)
       {
@@ -317,9 +324,11 @@ CxxSymbols::~CxxSymbols()
 
 //------------------------------------------------------------------------------
 
-void CxxSymbols::DisplayXref(ostream& stream) const
+void CxxSymbols::DisplayXref(ostream& stream, const string& opts) const
 {
    Debug::ft("CxxSymbols.DisplayXref");
+
+   auto verbose = (opts.find(CrossReferenceVerbose) != string::npos);
 
    //  Start by displaying references to namespaces.
    //
@@ -339,7 +348,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
          auto name = (*n)->XrefName(true);
          if(name.empty()) continue;
          stream << spaces(3) << name << CRLF;
-         DisplayReferences(stream, refs);
+         DisplayReferences(stream, refs, verbose);
       }
    }
 
@@ -393,7 +402,7 @@ void CxxSymbols::DisplayXref(ostream& stream) const
       }
 
       stream << " [" << strClass(*i, false) << ']' << CRLF;
-      DisplayReferences(stream, refs);
+      DisplayReferences(stream, refs, verbose);
    }
 }
 

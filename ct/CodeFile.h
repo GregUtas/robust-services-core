@@ -25,7 +25,6 @@
 #include "LibraryItem.h"
 #include <cstddef>
 #include <iosfwd>
-#include <list>
 #include <string>
 #include "CodeTypes.h"
 #include "CodeWarning.h"
@@ -128,7 +127,7 @@ public:
 
    //  Returns the file's code items.
    //
-   const std::list< CxxToken* > Items() const { return items_; }
+   const CxxTokenList Items() const { return items_; }
    const IncludePtrVector& Includes() const { return incls_; }
    const ClassVector* Classes() const { return &classes_; }
 
@@ -609,7 +608,7 @@ private:
 
    //  The file's items, in the order in which they appear.
    //
-   std::list< CxxToken* > items_;
+   CxxTokenList items_;
 
    //  The items used in the file's executable code.
    //

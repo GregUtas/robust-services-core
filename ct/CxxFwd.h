@@ -22,6 +22,7 @@
 #ifndef CXXFWD_H_INCLUDED
 #define CXXFWD_H_INCLUDED
 
+#include <list>
 #include <memory>
 #include <set>
 #include <string>
@@ -191,5 +192,7 @@ typedef std::vector< Using* > UsingVector;
 typedef std::set< std::string > stringSet;
 typedef std::set< CxxToken* > CxxTokenSet;
 typedef std::set< CxxNamed* > CxxNamedSet;
+
+typedef std::list< CxxToken* > CxxTokenList;
 }
 #endif

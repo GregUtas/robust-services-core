@@ -559,7 +559,6 @@ enum LineType
    FileComment,           // comment at top of file, before any code
    RuleComment,           // //# (# = repeated -, =, or /)
    TextComment,           // //  text
-   SlashAsteriskComment,  // /*
    OpenBrace,             // {
    CloseBrace,            // }
    CloseBraceSemicolon,   // };

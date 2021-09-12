@@ -151,6 +151,7 @@ LineInfo::LineInfo(size_t start) :
    depth(DEPTH_NOT_SET),
    continuation(false),
    mergeable(false),
+   c_comment(false),
    type(LineType_N)
 {
 }
@@ -164,8 +165,16 @@ void LineInfo::Display(ostream& stream) const
    else
       stream << '?';
 
-   stream << (continuation ? '+' : SPACE);
-   stream << (mergeable ? '^' : SPACE);
+   if(c_comment)
+   {
+      stream << "/*";
+   }
+   else
+   {
+      stream << (continuation ? '+' : SPACE);
+      stream << (mergeable ? '^' : SPACE);
+   }
+
    stream << LineTypeAttr::Attrs[type].symbol << SPACE;
 }
 
@@ -690,7 +699,7 @@ void Lexer::CalcDepths()
 
 //------------------------------------------------------------------------------
 
-LineType Lexer::CalcLineType(size_t n, bool& cont)
+LineType Lexer::CalcLineType(size_t n, bool& cont, bool& c_comment)
 {
    Debug::ft("Lexer.CalcLineType");
 
@@ -708,10 +717,11 @@ LineType Lexer::CalcLineType(size_t n, bool& cont)
    {
       auto pos = FindSubstr(s, COMMENT_END_STR);
       if(pos != string::npos) slashAsterisk_ = false;
+      c_comment = true;
       return TextComment;
    }
 
-   //  See if a /* comment began, and whether it is still open.  Note that
+   //  See if a /* comment began and whether it is still open.  Note that
    //  when a /* comment is used, a line that contains code after the */
    //  is classified as a comment unless the /* occurred on the same line
    //  and was preceded by code.
@@ -721,7 +731,12 @@ LineType Lexer::CalcLineType(size_t n, bool& cont)
    if(pos != string::npos)
    {
       if(FindSubstr(s, COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
-      if(pos == 0) return SlashAsteriskComment;
+
+      if(pos == 0)
+      {
+         c_comment = true;
+         return TextComment;
+      }
    }
 
    return type;
@@ -751,7 +766,8 @@ void Lexer::CalcLineTypes()
    for(size_t n = 0; n < size; ++n)
    {
       auto currCont = false;
-      auto currType = CalcLineType(n, currCont);
+      auto c_comment = false;
+      auto currType = CalcLineType(n, currCont, c_comment);
 
       if(prevCont)
       {
@@ -764,6 +780,7 @@ void Lexer::CalcLineTypes()
       auto& info = lines_[n];
       info.type = (prevCont ? prevType : currType);
       info.mergeable = LineTypeAttr::Attrs[info.type].isMergeable;
+      info.c_comment = c_comment;
 
       prevCont = currCont;
       prevType = currType;
@@ -771,11 +788,12 @@ void Lexer::CalcLineTypes()
 
    for(size_t n = 0; n < size; ++n)
    {
-      auto t = lines_[n].type;
+      auto& info = lines_[n];
+      auto t = info.type;
 
       if(LineTypeAttr::Attrs[t].isCode) break;
 
-      if((t != EmptyComment) && (t != SlashAsteriskComment))
+      if((t != EmptyComment) && !info.c_comment)
       {
          lines_[n].type = FileComment;
       }
@@ -786,11 +804,13 @@ void Lexer::CalcLineTypes()
 
 word Lexer::CheckDepth(size_t n) const
 {
-   //  Return if the depth was not set or line only contains whitespace.
+   //  Return if (a) the depth was not set, (b) the line lies within a C-style
+   //  comment, or (c) the line only contains whitespace.
    //
    const auto& info = lines_[n];
    auto desired = info.depth;
    if(desired == DEPTH_NOT_SET) return -1;
+   if(info.c_comment) return -1;
    auto first = code_.find_first_not_of(WhitespaceChars, info.begin);
    if(first == string::npos) return -1;
    if((n < lines_.size() - 1) && (first >= lines_[n + 1].begin)) return -1;
@@ -1228,7 +1248,6 @@ string Lexer::CheckVerticalSpacing() const
 
       case FileComment:
       case TextComment:
-      case SlashAsteriskComment:
       case DebugFt:
       case HashDirective:
          break;
@@ -2505,7 +2524,6 @@ size_t Lexer::IntroStart(size_t pos, bool funcName) const
       {
       case EmptyComment:
       case TextComment:
-      case SlashAsteriskComment:
          //
          //  These are attached to the code that follows, so include them.
          //

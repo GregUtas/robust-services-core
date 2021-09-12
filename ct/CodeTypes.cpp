@@ -225,13 +225,17 @@ LineType CalcLineType(string& s, bool& cont)
       return TextComment;                   //  text
    }
 
-   //  Look for a /* comment.
+   //  A /* comment that does not end on this line is a TextComment.
+   //  If it ends on this line, classify the line by what follows.
    //
    pos = FindSubstr(s, COMMENT_BEGIN_STR);
 
-   if(pos != string::npos)
+   if(pos == 0)
    {
-      if(pos == 0) return SlashAsteriskComment;
+      pos = FindSubstr(s, COMMENT_END_STR);
+      if(pos == string::npos) return TextComment;
+      s.erase(pos + 1);
+      return CalcLineType(s, cont);
    }
 
    //  Look for preprocessor directives (e.g. #include, #ifndef).
@@ -434,7 +438,6 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "comment at the top of a file (e.g. for the file's name or license info)",
    "comment followed by a repeated character to draw a rule (e.g. //---- ...)",
    "comment not in one of the categories above (e.g. //  <text>)",
-   "C-style comment",
    "bare left brace",
    "bare right brace",
    "bare right brace with semicolon",
@@ -520,7 +523,6 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
    LineTypeAttr(F, F, F, F, 'f'),  // FileComment
    LineTypeAttr(F, F, F, F, '-'),  // RuleComment
    LineTypeAttr(F, F, F, F, 't'),  // TextComment
-   LineTypeAttr(F, F, F, F, '/'),  // SlashAsteriskComment
    LineTypeAttr(T, F, F, F, '{'),  // OpenBrace
    LineTypeAttr(T, F, F, F, '}'),  // CloseBrace
    LineTypeAttr(T, F, F, F, ']'),  // CloseBraceSemicolon

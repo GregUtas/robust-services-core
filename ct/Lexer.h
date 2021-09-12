@@ -51,6 +51,7 @@ struct LineInfo
    int depth;           // lexical level for indentation
    bool continuation;   // set if code continues from the previous line
    bool mergeable;      // set if code can merge with another line
+   bool c_comment;      // set if the line lies within a C-style comment
    LineType type;       // line's type
 
    //  Constructs a line that begins at START.
@@ -571,9 +572,9 @@ private:
    void FindLines();
 
    //  Classifies the Nth line of code.  Sets CONT if the code continues on
-   //  the next line.
+   //  the next line.  Sets C_COMMENT if the line lies within a C-style comment.
    //
-   LineType CalcLineType(size_t n, bool& cont);
+   LineType CalcLineType(size_t n, bool& cont, bool& c_comment);
 
    //  Returns the next identifier (which could be a keyword), starting at POS.
    //  The first character not allowed in an identifier finalizes the string.

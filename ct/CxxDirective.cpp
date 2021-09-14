@@ -718,6 +718,16 @@ Ifndef::Ifndef(MacroNamePtr& macro) : Existential(macro)
 
 //------------------------------------------------------------------------------
 
+void Ifndef::ChangeName(const string& name) const
+{
+   Debug::ft("Ifndef.ChangeName");
+
+   auto ref = GetSymbol()->Referent();
+   if(ref != nullptr) ref->Rename(name);
+}
+
+//------------------------------------------------------------------------------
+
 void Ifndef::Check() const
 {
    Debug::ft("Ifndef.Check");
@@ -775,16 +785,6 @@ bool Ifndef::IsIncludeGuard() const
    if(!file->IsHeader()) return false;
    if(!file->IsLastItem(GetEndif())) return false;
    return (Referent() != nullptr);
-}
-
-//------------------------------------------------------------------------------
-
-void Ifndef::Rename(const string& name)
-{
-   Debug::ft("Ifndef.Rename");
-
-   auto ref = GetSymbol()->Referent();
-   if(ref != nullptr) ref->ChangeName(name);
 }
 
 //==============================================================================
@@ -966,8 +966,7 @@ void Macro::Rename(const string& name)
 {
    Debug::ft("Macro.Rename");
 
-   CxxScoped::Rename(name);
-   name_ = name;
+   CxxScoped::RenameNonQual(name_, name);
 }
 
 //------------------------------------------------------------------------------
@@ -1125,7 +1124,7 @@ void MacroName::Rename(const string& name)
 {
    Debug::ft("MacroName.Rename");
 
-   name_ = name;
+   CxxNamed::RenameNonQual(name_, name);
 }
 
 //------------------------------------------------------------------------------

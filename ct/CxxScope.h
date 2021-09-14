@@ -840,6 +840,10 @@ public:
    //
    void RecordUsage() override { AddUsage(); }
 
+   //  Overridden to rename member data.
+   //
+   void Rename(const std::string& name) override;
+
    //  Overridden to shrink containers.
    //
    void Shrink() override;
@@ -1524,6 +1528,10 @@ public:
    //
    void RecordUsage() override;
 
+   //  Overridden to rename the function.
+   //
+   void Rename(const std::string& name) override;
+
    //  Overridden to support function templates.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
@@ -1922,6 +1930,12 @@ public:
    //  Overridden to forward to space_.
    //
    const std::string& Name() const override;
+
+   //  Overridden because, although it has nothing to do, it will be
+   //  invoked if a namespace is renamed, since it is an item in the
+   //  namespace's cross-reference.
+   //
+   void Rename(const std::string& name) override { }
 
    //  Overridden to forward to space_.
    //

@@ -114,10 +114,11 @@ public:
    //
    virtual void UpdateReference(CxxToken* item, bool insert) const;
 
-   //  Returns the references to the item, excluding its declaration and
-   //  definition.
+   //  Returns references to the item, excluding its declaration and
+   //  definition, as well as any references *within* the definition
+   //  (e.g. a recursive call to a function).
    //
-   CxxTokenVector GetReferences() const;
+   CxxTokenVector GetNonLocalRefs() const;
 
    //  Returns true if the item is unused.
    //
@@ -134,10 +135,6 @@ public:
    //  span of this item.  Returns false if ITEM is nullptr.
    //
    bool Contains(const CxxToken* item) const;
-
-   //  Invokes Rename on the item and each entry in its Xref().
-   //
-   void ChangeName(const std::string& name);
 
    //  Displays the filename where the item is declared.  If the item is
    //  defined in another file, that file is also displayed.
@@ -249,6 +246,11 @@ protected:
    //
    bool GetTypeSpan(size_t& begin, size_t& end) const;
 
+   //  Updates all references to the item and then updates oldName.
+   //  Invoked by overrides of Rename.
+   //
+   void RenameQual(QualName& oldName, const std::string& newName) const;
+
    //  Returns true if access control checking should be skipped for this item.
    //
    bool SkipAccessControlCheck() const;
@@ -259,7 +261,8 @@ protected:
 
    //  Overridden to update all references to the item.
    //
-   void Rename(const std::string& name) override;
+   void RenameNonQual
+      (std::string& oldName, const std::string& newName) const override;
 private:
    //  Records that the item's template analog, if any, required *at least*
    //  ACCESS to be accessible.
@@ -382,7 +385,7 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
-   //  Overridden to support renaming an argument.
+   //  Overridden to rename the argument.
    //
    void Rename(const std::string& name) override;
 
@@ -678,7 +681,7 @@ public:
    //
    void RecordUsage() override { AddUsage(); }
 
-   //  Overridden to support renaming an anonymous enumeration.
+   //  Overridden to rename the enumeration.
    //
    void Rename(const std::string& name) override;
 
@@ -1306,6 +1309,10 @@ public:
    //  Overridden to return the data member being initialized.
    //
    CxxScoped* Referent() const override;
+
+   //  Overridden to support renaming member data.
+   //
+   void Rename(const std::string& name) override;
 
    //  Overridden to shrink containers.
    //

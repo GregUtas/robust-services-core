@@ -240,6 +240,11 @@ protected:
    virtual bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const { return true; }
 
+   //  Changes oldName to newName.  Invoked by overrides of Rename.
+   //
+   virtual void RenameNonQual
+      (std::string& oldName, const std::string& newName) const;
+
    //  Invoked when the item is accessed.  Invokes ItemAccessed on the context
    //  function.  If the item was accessed through the reference select (.) or
    //  pointer select (->) operator, VIA is the item that preceded the operator.

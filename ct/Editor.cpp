@@ -945,27 +945,6 @@ static void Inform(string text)
 
 //------------------------------------------------------------------------------
 //
-//  Returns true if the string from CODE[POS] to CODE[POS+SIZE-1], which was
-//  found by searching for an identifier, is not part of a larger identifier.
-//
-static bool IsFullIdentifier(const string& code, size_t pos, size_t size)
-{
-   Debug::ft("CodeTools.IsFullIdentifier");
-
-   auto prev = code[pos - 1];
-   auto next = code[pos + size];
-
-   if((ValidFirstChars.find(prev) == string::npos) &&
-      (ValidNextChars.find(next) == string::npos))
-   {
-      return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-//
 //  Returns true if ITEM, whose CODE is provided, is a non-trival inline.
 //  To be an inline, it must be a function without a separate definition, but
 //  it must have an implementation (as opposed to being deleted or defaulted).
@@ -1058,16 +1037,14 @@ static void Rename(string& code, const string& oldName, const string& newName)
 {
    Debug::ft("CodeTools.Rename");
 
-   for(size_t pos = 0; pos < code.size(); pos += oldName.size())
-   {
-      pos = code.find(oldName, pos);
-      if(pos == string::npos) break;
+   Lexer lexer;
+   lexer.Initialize(code);
 
-      if(IsFullIdentifier(code, pos, oldName.size()))
-      {
-         code.replace(pos, oldName.size(), newName);
-         break;
-      }
+   for(auto pos = lexer.FindWord(0, oldName); pos != string::npos;
+      pos = lexer.FindWord(pos, oldName))
+   {
+      code.replace(pos, oldName.size(), newName);
+      pos += newName.size();
    }
 }
 
@@ -1673,24 +1650,24 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
    //
    if(newName != oldName)
    {
-      Rename(code, oldName, newName);
+      CodeTools::Rename(code, oldName, newName);
    }
 
    //  Find the range in which the new declaration can be placed and the
    //  references to it.
    //
    size_t min, max;
-   CxxItemVector items;
-   auto refs = FindDeclRange(decl, min, max, items);
+   auto items = FindDeclRange(decl, min, max);
    if(min > max)
    {
       return NotFound("Position for new static declaration");
    }
 
    //  Before deleting the member's current declaration and definition,
-   //  find the namespace to which it belongs.
+   //  find the namespace to which it belongs and the references to it.
    //
    auto space = decl->GetSpace();
+   auto refs = decl->GetNonLocalRefs();
    EraseItem(defn);
    pos = lastErasePos_;
    UpdateAfterErase(min);
@@ -1743,8 +1720,8 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
       return Report("Parsing of new declaration failed.");
    }
 
-   //  For each reference to the previous item, remove any qualified names and
-   //  update the referent.
+   //  For each reference to the previous item, remove any qualified names,
+   //  update the name if it has changed, and update the referent.
    //
    for(auto r = refs.begin(); r != refs.end(); ++r)
    {
@@ -1753,12 +1730,7 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
          auto tname = static_cast< const TypeName* >(*r);
          auto qname = tname->GetQualName();
          while(qname->Size() > 1) EraseItem(qname->First());
-
-         if(newName != oldName)
-         {
-            Replace(qname->Last()->GetPos(), oldName.size(), newName);
-         }
-
+         if(newName != oldName) qname->Rename(newName);
          qname->SetReferent(item, nullptr);
          qname->UpdateXref(true);
       }
@@ -2772,21 +2744,20 @@ size_t Editor::FindArgsEnd(const Function* func) const
 
 //------------------------------------------------------------------------------
 
-CxxTokenVector Editor::FindDeclRange
-   (CxxScope* decl, size_t& begin, size_t& end, CxxItemVector& items) const
+CxxItemVector Editor::FindDeclRange
+   (CxxScope* decl, size_t& begin, size_t& end) const
 {
    Debug::ft("Editor.FindDeclRange");
 
-   auto refs = decl->GetReferences();
+   auto refs = decl->GetNonLocalRefs();
    end = file_->FindFirstReference(refs);
-
-   auto usages = GetItemUsages(decl, false);
 
    //  Exclude any items declared immediately above the function and used by
    //  it, such as its fn_name.  These will be moved with the function.
    //
+   auto usages = GetItemUsages(decl, false);
    auto defn = decl->GetMate();
-   items = GetItemsForDefn(defn);
+   auto items = GetItemsForDefn(defn);
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
@@ -2798,7 +2769,7 @@ CxxTokenVector Editor::FindDeclRange
    auto max = file_->FindLastUsage(usages.indirects);
    if(max > begin) begin = max;
 
-   return refs;
+   return items;
 }
 
 //------------------------------------------------------------------------------
@@ -3513,7 +3484,7 @@ word Editor::FixReferences(const CodeWarning& log)
    //  Fix references to the data, followed by the data itself.
    //
    auto data = static_cast< const Data* >(log.item_);
-   auto refs = data->GetReferences();
+   auto refs = data->GetNonLocalRefs();
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {
@@ -5380,6 +5351,21 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
 
 //------------------------------------------------------------------------------
 
+void Editor::Rename(size_t pos, const string& oldName, const string& newName)
+{
+   Debug::ft("Editor.Rename");
+
+   //  This can be invoked when renaming an anonymous item.  It has no name,
+   //  so don't try to look for it and change it.
+   //
+   if(oldName.empty()) return;
+   pos = FindWord(pos, oldName);
+   if(pos == string::npos) return;
+   Replace(pos, oldName.size(), newName);
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::RenameArgument(const CodeWarning& log)
 {
    Debug::ft("Editor.RenameArgument");
@@ -5438,22 +5424,9 @@ word Editor::RenameArgument(const CodeWarning& log)
    size_t begin, end;
    if(!func->GetSpan2(begin, end)) return NotFound("Function");
    if(func == decl) defnName = declName;
-   auto& editor = func->GetFile()->GetEditor();
-
    auto arg = func->GetArgs().at(index).get();
-   arg->ChangeName(argName);
-
-   for(auto pos = editor.FindWord(begin, defnName); pos < end;
-      pos = editor.FindWord(pos + defnName.size(), defnName))
-   {
-      auto item = file_->PosToItem(pos);
-      if(item != nullptr) item->Rename(argName);
-      editor.Replace(pos, defnName.size(), argName);
-      end = end + argName.size() - defnName.size();
-      editor.Changed();
-   }
-
-   return editor.Changed(begin);
+   arg->Rename(argName);
+   return func->GetFile()->GetEditor().Changed(begin);
 }
 
 //------------------------------------------------------------------------------
@@ -5501,9 +5474,8 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
       return Changed(begin);
    }
 
-   //  The Debug::ft invocation used an fn_name.  It might be used elsewhere
-   //  (e.g. for calls to Debug::SwLog), so keep its name and only replace
-   //  its definition.
+   //  The Debug::ft invocation used an fn_name.  Replace its definition
+   //  and rename it if it doesn't follow the Scope_Function convention.
    //
    auto data = static_cast< SpaceData* >(arg->Referent());
    if(data == nullptr) return NotFound("Debug::ft fn_name");
@@ -5514,6 +5486,7 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
    if(rpos == string::npos) return NotFound("fn_name right quote");
    auto slit = static_cast< StrLiteral* >(file_->PosToItem(lpos));
    Replace(lpos, rpos - lpos + 1, fname);
+   if(data->Name() != fvar) data->Rename(fvar);
 
    if(LineSize(lpos) - 1 > LineLengthMax())
    {
@@ -5534,11 +5507,11 @@ word Editor::RenameIncludeGuard(const CodeWarning& log)
    //  This warning is logged against the #ifndef.
    //
    auto ifn = CurrBegin(log.Pos());
-   if(ifn == string::npos) return NotFound("Position of #define");
+   if(ifn == string::npos) return NotFound("Position of #ifndef");
    if(CompareCode(ifn, HASH_IFNDEF_STR) != 0) return NotFound(HASH_IFNDEF_STR);
 
    auto guard = log.File()->MakeGuardName();
-   log.item_->Rename(guard);
+   static_cast< Ifndef* >(log.item_)->ChangeName(guard);
 
    ifn += strlen(HASH_IFNDEF_STR) + 1;
    auto end = CurrEnd(ifn) - 1;
@@ -5606,11 +5579,7 @@ word Editor::ReplaceNull(const CodeWarning& log)
 {
    Debug::ft("Editor.ReplaceNull");
 
-   auto pos = log.item_->GetPos();
-   if(pos == string::npos) return NotFound(NULL_STR, true);
-   if(code_.compare(pos, strlen(NULL_STR), NULL_STR) != 0)
-      return NotFound(NULL_STR);
-   Replace(pos, strlen(NULL_STR), NULLPTR_STR);
+   auto pos = log.Pos();
    log.item_->Rename(NULLPTR_STR);
    return Changed(pos);
 }

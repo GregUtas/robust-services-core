@@ -283,6 +283,10 @@ public:
    //
    size_t FindLastUsage(const CxxNamedSet& usages) const;
 
+   //  Provides access to the editor.
+   //
+   Editor& GetEditor() { return editor_; }
+
    //  Invoked when ITEM is deleted.
    //
    void ItemDeleted(const CxxToken* item);
@@ -509,10 +513,6 @@ private:
    //  marked for removal.
    //
    void LogRemoveUsings(std::ostream* stream) const;
-
-   //  Provides access to the editor.
-   //
-   Editor& GetEditor() { return editor_; }
 
    //  Returns the item that was most recently added to the file and then
    //  clears it.

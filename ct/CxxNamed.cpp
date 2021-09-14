@@ -32,8 +32,8 @@
 #include "CxxScoped.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
+#include "Editor.h"
 #include "Formatters.h"
-#include "Lexer.h"
 #include "Parser.h"
 #include "Singleton.h"
 
@@ -309,6 +309,17 @@ StackArg CxxNamed::NameToArg(Cxx::Operator op, TypeName* name)
 
    Accessed(nullptr);
    return StackArg(this, name);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxNamed::RenameNonQual(string& oldName, const string& newName) const
+{
+   Debug::ft("CxxNamed.RenameNonQual");
+
+   if(oldName == newName) return;
+   GetFile()->GetEditor().Rename(GetPos(), oldName, newName);
+   oldName = newName;
 }
 
 //------------------------------------------------------------------------------
@@ -3072,7 +3083,7 @@ void TypeName::Rename(const string& name)
 {
    Debug::ft("TypeName.Rename");
 
-   name_ = name;
+   CxxNamed::RenameNonQual(name_, name);
 
    if(name == NULLPTR_STR)
    {

@@ -236,7 +236,7 @@ public:
    //
    CxxScoped* Referent() const override;
 
-   //  Overridden to support renaming an #include guard.
+   //  Overridden to support renaming a #define'd name.
    //
    void Rename(const std::string& name) override;
 
@@ -326,7 +326,7 @@ public:
    //
    void RecordUsage() override { AddUsage(); }
 
-   //  Overridden to support renaming an #include guard.
+   //  Overridden to rename a #define'd name.
    //
    void Rename(const std::string& name) override;
 
@@ -863,6 +863,10 @@ public:
    //
    ~Ifndef() { CxxStats::Decr(CxxStats::IFNDEF_DIRECTIVE); }
 
+   //  Changes the name of an #include guard to NAME.
+   //
+   void ChangeName(const std::string& name) const;
+
    //  Overridden to log anything but an #include guard.
    //
    void Check() const override;
@@ -879,10 +883,6 @@ public:
    //  Overridden to return true if this is an #include guard.
    //
    bool IsIncludeGuard() const override;
-
-   //  Overridden to support renaming an #include guard.
-   //
-   void Rename(const std::string& name) override;
 };
 
 //------------------------------------------------------------------------------

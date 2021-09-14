@@ -997,6 +997,15 @@ void ClassData::Promote(Class* cls, Cxx::Access access, bool first, bool last)
 
 //------------------------------------------------------------------------------
 
+void ClassData::Rename(const string& name)
+{
+   Debug::ft("ClassData.Rename");
+
+   CxxScoped::RenameNonQual(name_, name);
+}
+
+//------------------------------------------------------------------------------
+
 void ClassData::SetMemInit(const MemberInit* init)
 {
    memInit_ = init;
@@ -1127,7 +1136,7 @@ CodeFile* CxxScope::FindFileForStatic() const
    if(cls->IsTemplate()) return nullptr;
 
    std::set< CodeFile* > files;
-   auto refs = GetReferences();
+   auto refs = GetNonLocalRefs();
 
    for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {
@@ -3208,9 +3217,10 @@ void Function::CheckArgs() const
    {
       for(size_t i = 0; i < n; ++i)
       {
-         auto& mateName = mate_->args_[i]->Name();
+         auto& declName = args_[i]->Name();
+         auto& defnName = mate_->args_[i]->Name();
 
-         if(!mateName.empty() && (mateName != args_[i]->Name()))
+         if(!declName.empty() && (defnName != declName))
          {
             mate_->LogToArg(DefinitionRenamesArgument, i);
          }
@@ -3775,7 +3785,7 @@ bool Function::CheckIfUnused(Warning warning) const
    //  new function therefore appears to have no invokers and will be logged as
    //  unused unless references to it are considered.
    //
-   if(!Xref()->empty()) return false;
+   if(!GetNonLocalRefs().empty()) return false;
    Log(warning);
    return true;
 }
@@ -5596,6 +5606,15 @@ void Function::RecordUsage()
 
 //------------------------------------------------------------------------------
 
+void Function::Rename(const string& name)
+{
+   Debug::ft("Function.Rename");
+
+   CxxScoped::RenameQual(*name_, name);
+}
+
+//------------------------------------------------------------------------------
+
 StackArg Function::ResultType() const
 {
    Debug::ft("Function.ResultType");
@@ -6369,8 +6388,7 @@ void SpaceData::Rename(const string& name)
 {
    Debug::ft("SpaceData.Rename");
 
-   CxxScoped::Rename(name);
-   name_->Rename(name);
+   CxxScoped::RenameQual(*name_, name);
 }
 
 //------------------------------------------------------------------------------

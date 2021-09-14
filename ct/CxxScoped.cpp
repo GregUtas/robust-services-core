@@ -293,7 +293,7 @@ void Argument::Rename(const string& name)
 {
    Debug::ft("Argument.Rename");
 
-   name_ = name;
+   CxxScoped::RenameNonQual(name_, name);
 }
 
 //------------------------------------------------------------------------------
@@ -614,20 +614,6 @@ Cxx::Access CxxScoped::BroadestAccessUsed() const
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::ChangeName(const std::string& name)
-{
-   Debug::ft("CxxScoped.ChangeName");
-
-   Rename(name);
-
-   for(auto r = xref_.begin(); r != xref_.end(); ++r)
-   {
-      (*r)->Rename(name);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void CxxScoped::CheckAccessControl() const
 {
    Debug::ft("CxxScoped.CheckAccessControl");
@@ -780,9 +766,9 @@ bool CxxScoped::GetBracedSpan(size_t& begin, size_t& left, size_t& end) const
 
 //------------------------------------------------------------------------------
 
-CxxTokenVector CxxScoped::GetReferences() const
+CxxTokenVector CxxScoped::GetNonLocalRefs() const
 {
-   Debug::ft("CxxScoped.GetReferences");
+   Debug::ft("CxxScoped.GetNonLocalRefs");
 
    CxxTokenVector items;
    auto mate = GetMate();
@@ -1107,14 +1093,34 @@ void CxxScoped::RecordTemplateAccess(Cxx::Access access) const
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::Rename(const string& name)
+void CxxScoped::RenameNonQual(string& oldName, const string& newName) const
 {
-   Debug::ft("CxxScoped.Rename");
+   Debug::ft("CxxScoped.RenameNonQual");
+
+   if(oldName == newName) return;
 
    for(auto r = xref_.begin(); r != xref_.end(); ++r)
    {
-      (*r)->Rename(name);
+      (*r)->Rename(newName);
    }
+
+   CxxNamed::RenameNonQual(oldName, newName);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxScoped::RenameQual(QualName& oldName, const string& newName) const
+{
+   Debug::ft("CxxScoped.RenameQual");
+
+   if(oldName.Name() == newName) return;
+
+   for(auto r = xref_.begin(); r != xref_.end(); ++r)
+   {
+      (*r)->Rename(newName);
+   }
+
+   oldName.Rename(newName);
 }
 
 //------------------------------------------------------------------------------
@@ -1523,7 +1529,7 @@ void Enum::Rename(const string& name)
 {
    Debug::ft("Enum.Rename");
 
-   name_ = name;
+   CxxScoped::RenameNonQual(name_, name);
 }
 
 //------------------------------------------------------------------------------
@@ -2881,6 +2887,15 @@ CxxScoped* MemberInit::Referent() const
    auto cls = ctor_->GetClass();
    ref_ = static_cast< ClassData* >(cls->FindData(name_));
    return ref_;
+}
+
+//------------------------------------------------------------------------------
+
+void MemberInit::Rename(const string& name)
+{
+   Debug::ft("MemberInit.Rename");
+
+   CxxScoped::RenameNonQual(name_, name);
 }
 
 //------------------------------------------------------------------------------

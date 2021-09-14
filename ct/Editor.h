@@ -100,6 +100,10 @@ public:
    //
    word Format(string& expl);
 
+   //  Changes oldName, which appears at or shortly after POS, to newName.
+   //
+   void Rename(size_t pos, const string& oldName, const string& newName);
+
    //  Returns the number of commits made during >fix or >format commands.
    //
    static size_t CommitCount();
@@ -353,16 +357,15 @@ private:
    void FindFreeItemPos(const Namespace* space, const string& name,
       size_t pos, size_t min, size_t max, ItemDefnAttrs& attrs) const;
 
-   //  Updates BEGIN and END to the range where a new declaration for DECL
-   //  can appear when changing it from a class member to a static namespace
-   //  item in a .cpp.  It must appear before any item that references it
-   //  and after any item that the .cpp declares and that DECL uses.  Returns
-   //  the references to DECL, all of which occur in the .cpp, and updates
-   //  ITEMS with any items declared above the DECL's definition, and which
-   //  will be moved above the position of the new static namespace item.
+   //  Updates BEGIN and END to the range where a new declaration for DECL can
+   //  appear when changing it from a class member to a static namespace item
+   //  in a .cpp.  It must appear before any item that references it and after
+   //  any item that the .cpp declares and which DECL uses.  Returns any items
+   //  declared above DECL's definition, which will move above the position of
+   //  the new static namespace item.
    //
-   CxxTokenVector FindDeclRange
-      (CxxScope* decl, size_t& begin, size_t& end, CxxItemVector& items) const;
+   CxxItemVector FindDeclRange
+      (CxxScope* decl, size_t& begin, size_t& end) const;
 
    //  Replaces member DECL with a static namespace item.
    //

@@ -1931,11 +1931,9 @@ public:
    //
    const std::string& Name() const override;
 
-   //  Overridden because, although it has nothing to do, it will be
-   //  invoked if a namespace is renamed, since it is an item in the
-   //  namespace's cross-reference.
+   //  Overridden to support renaming a namespace.
    //
-   void Rename(const std::string& name) override { }
+   void Rename(const std::string& name) override;
 
    //  Overridden to forward to space_.
    //
@@ -1995,6 +1993,7 @@ private:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Rename(const std::string& name) override;
    void Shrink() override;
    std::string Trace() const override;
    std::string TypeString(bool arg) const override;

@@ -2464,6 +2464,15 @@ TagCount FuncSpec::Ptrs(bool arrays) const
 
 //------------------------------------------------------------------------------
 
+void FuncSpec::Rename(const string& name)
+{
+   Debug::ft("FuncSpec.Rename");
+
+   func_->Rename(name);
+}
+
+//------------------------------------------------------------------------------
+
 TagCount FuncSpec::Refs() const
 {
    return func_->GetTypeSpec()->Refs();
@@ -6005,7 +6014,6 @@ void Function::UpdateXref(bool insert)
    };
 
    if(defn_) name_->UpdateXref(insert);
-
    if(parms_ != nullptr) parms_->UpdateXref(insert);
    if(spec_ != nullptr) spec_->UpdateXref(insert);
 
@@ -6472,6 +6480,20 @@ bool SpaceDefn::GetSpan(size_t& begin, size_t& left, size_t& end) const
 const std::string& SpaceDefn::Name() const
 {
    return space_->Name();
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceDefn::Rename(const string& name)
+{
+   Debug::ft("SpaceDefn.Rename");
+
+   //  We don't actually have a name to update, so create a local one.
+   //  It's necessary, however, to invoke RenameNonQual to update the
+   //  namespace name that appears in the source code.
+   //
+   auto oldName = space_->Name();
+   return CxxScoped::RenameNonQual(oldName, name);
 }
 
 //------------------------------------------------------------------------------

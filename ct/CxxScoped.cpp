@@ -1817,6 +1817,15 @@ void Enumerator::RecordAccess(Cxx::Access access) const
 
 //------------------------------------------------------------------------------
 
+void Enumerator::Rename(const string& name)
+{
+   Debug::ft("Enumerator.Rename");
+
+   CxxScoped::RenameNonQual(name_, name);
+}
+
+//------------------------------------------------------------------------------
+
 string Enumerator::ScopedName(bool templates) const
 {
    return Prefix(enum_->ScopedName(templates)) + Name();
@@ -3583,6 +3592,15 @@ CxxScoped* Typedef::Referent() const
    Debug::ft("Typedef.Referent");
 
    return spec_->Referent();
+}
+
+//------------------------------------------------------------------------------
+
+void Typedef::Rename(const string& name)
+{
+   Debug::ft("Typedef.Rename");
+
+   CxxScoped::RenameNonQual(name_, name);
 }
 
 //------------------------------------------------------------------------------

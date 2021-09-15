@@ -653,6 +653,10 @@ public:
    //
    void RecordUsage() override { AddUsage(); }
 
+   //  Overridden to rename the class.
+   //
+   void Rename(const std::string& name) override;
+
    //  Overridden to support class templates.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
@@ -1052,6 +1056,10 @@ public:
    //  Overridden to return the namespace's name.
    //
    const std::string& Name() const override { return name_; }
+
+   //  Overridden to rename the namespace.
+   //
+   void Rename(const std::string& name) override;
 
    //  Overridden to handle the global namespace.
    //

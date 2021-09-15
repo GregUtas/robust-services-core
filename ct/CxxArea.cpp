@@ -2190,6 +2190,15 @@ CxxToken* Class::PosToItem(size_t pos) const
 
 //------------------------------------------------------------------------------
 
+void Class::Rename(const string& name)
+{
+   Debug::ft("Class.Rename");
+
+   CxxScoped::RenameQual(*name_, name);
+}
+
+//------------------------------------------------------------------------------
+
 void Class::SetAlignment(AlignAsPtr& align)
 {
    Debug::ft("Class.SetAlignment");
@@ -3875,6 +3884,15 @@ void Namespace::InsertDefn(CodeFile* file, size_t pos)
    space->SetScope(this);
    file->InsertSpace(space.get());
    defns_.push_back(std::move(space));
+}
+
+//------------------------------------------------------------------------------
+
+void Namespace::Rename(const string& name)
+{
+   Debug::ft("Namespace.Rename");
+
+   CxxScoped::RenameNonQual(name_, name);
 }
 
 //------------------------------------------------------------------------------

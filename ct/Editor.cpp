@@ -5580,7 +5580,11 @@ word Editor::ReplaceNull(const CodeWarning& log)
    Debug::ft("Editor.ReplaceNull");
 
    auto pos = log.Pos();
-   log.item_->Rename(NULLPTR_STR);
+   auto type = static_cast< TypeName* >(log.item_);
+   type->Rename(NULLPTR_STR);
+   type->UpdateXref(false);
+   type->SetReferent(Singleton< CxxRoot >::Instance()->NullptrTerm(), nullptr);
+   type->UpdateXref(true);
    return Changed(pos);
 }
 

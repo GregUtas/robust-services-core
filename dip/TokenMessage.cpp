@@ -112,7 +112,7 @@ TokenMessage& TokenMessage::operator=(const TokenMessage& that)
 {
    Debug::ft("TokenMessage.operator=(copy)");
 
-   if(&that == this) return *this;
+   if(this == &that) return *this;
 
    clear();
 
@@ -130,7 +130,7 @@ TokenMessage& TokenMessage::operator=(TokenMessage&& that)
 {
    Debug::ft("TokenMessage.operator=(move)");
 
-   if(&that == this) return *this;
+   if(this == &that) return *this;
 
    this->length_ = that.length_;
    this->message_ = std::move(that.message_);

@@ -31,7 +31,8 @@
 
 namespace NodeBase
 {
-//  A module consists of interrelated software that provides some logical
+//  A module--the term as used here predates C++20 and is unrelated to its
+//  usage--consists of interrelated software that provides some logical
 //  capability.  It is implemented within its own namespace, which should
 //  consist of a separate .h/.cpp pair for each major class.  One of these
 //  pairs is a Module subclass that is invoked during restarts.  The term

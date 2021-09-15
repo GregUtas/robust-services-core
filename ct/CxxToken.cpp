@@ -600,7 +600,7 @@ CxxToken& CxxToken::operator=(const CxxToken& that)
 {
    Debug::ft("CxxToken.operator=");
 
-   this->loc_ = that.loc_;
+   if(this != &that) this->loc_ = that.loc_;
    return *this;
 }
 

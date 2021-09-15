@@ -3084,13 +3084,6 @@ void TypeName::Rename(const string& name)
    Debug::ft("TypeName.Rename");
 
    CxxNamed::RenameNonQual(name_, name);
-
-   if(name == NULLPTR_STR)
-   {
-      UpdateXref(false);
-      ref_ = Singleton< CxxRoot >::Instance()->NullptrTerm();
-      UpdateXref(true);
-   }
 }
 
 //------------------------------------------------------------------------------

@@ -39,7 +39,7 @@ Token::Token(const category_t cat, const subtoken_t sub)
 
 Token& Token::operator=(const Token& that)
 {
-   if(&that != this) this->full_ = that.full_;
+   if(this != &that) this->full_ = that.full_;
    return *this;
 }
 

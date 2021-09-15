@@ -830,6 +830,10 @@ public:
    //
    void RecordUsage() override { AddUsage(); }
 
+   //  Overridden to rename the enumerator.
+   //
+   void Rename(const std::string& name) override;
+
    //  Overridden to prefix the enum as a scope.
    //
    std::string ScopedName(bool templates) const override;
@@ -1715,6 +1719,10 @@ public:
    //  Overridden to return the referent of GetTypeSpec().
    //
    CxxScoped* Referent() const override;
+
+   //  Overridden to rename the typedef.
+   //
+   void Rename(const std::string& name) override;
 
    //  Overridden to count references.
    //

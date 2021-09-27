@@ -921,6 +921,47 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
+//  The RENAME command.
+//
+fixed_string OldNameExpl =
+   "name of C++ item (enter \">help rename full\" for details)";
+
+fixed_string NewNameExpl = "new name for C++ item";
+
+class RenameCommand : public CliCommand
+{
+public:
+   RenameCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string RenameStr = "rename";
+fixed_string RenameExpl = "Renames a C++ item.";
+
+RenameCommand::RenameCommand() : CliCommand(RenameStr, RenameExpl)
+{
+   BindParm(*new CliTextParm(OldNameExpl, false, 0));
+   BindParm(*new CliTextParm(NewNameExpl, false, 0));
+}
+
+word RenameCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft("RenameCommand.ProcessCommand");
+
+   string oldName, newName, expl;
+
+   if(!GetString(oldName, cli)) return -1;
+   if(!GetString(newName, cli)) return -1;
+   if(!cli.EndOfInput()) return -1;
+
+   auto lib = Singleton< Library >::Instance();
+   auto rc = lib->Rename(cli, oldName, newName, expl);
+   return cli.Report(rc, expl);
+}
+
+//------------------------------------------------------------------------------
+//
 //  The SCAN command.
 //
 class ScanCommand : public CliCommand
@@ -1427,6 +1468,7 @@ CtIncrement::CtIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new FixCommand);
    BindCommand(*new FormatCommand);
    BindCommand(*new ExportCommand);
+   BindCommand(*new RenameCommand);
    BindCommand(*new CoverageCommand);
    BindCommand(*new ShrinkCommand);
    BindCommand(*new ItemsCommand);

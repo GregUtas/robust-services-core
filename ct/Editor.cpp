@@ -21,7 +21,6 @@
 //
 #include "Editor.h"
 #include <algorithm>
-#include <bitset>
 #include <cctype>
 #include <cstdint>
 #include <cstdio>
@@ -69,7 +68,7 @@ namespace CodeTools
 //  declaration and definition).  After all changes needed for a fix have been
 //  made, all modified files can be committed.
 //
-static std::set< Editor* > Editors_ = std::set< Editor* >();
+static std::set< Editor* > Editors_;
 
 //  The number of files committed so far.
 //
@@ -494,38 +493,6 @@ static word ChooseDtorAttributes(ItemDeclAttrs& attrs)
    attrs.access_ = access;
    attrs.virt_ = virt;
    return EditSucceeded;
-}
-
-//------------------------------------------------------------------------------
-//
-//  Invokes Write on each editor whose file has changed.
-//
-static void Commit()
-{
-   Debug::ft("CodeTools.Commit");
-
-   while(!Editors_.empty())
-   {
-      string expl;
-      auto editor = Editors_.cbegin();
-
-      while(true)
-      {
-         auto rc = (*editor)->Format(expl);
-         *Cli_->obuf << spaces(2) << expl;
-         expl.clear();
-
-         if(rc == EditCompleted)
-         {
-            ++Commits_;
-            break;
-         }
-
-         if(!Cli_->BoolPrompt(CommitFailedPrompt)) break;
-      }
-
-      Editors_.erase(editor);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -1499,7 +1466,7 @@ void Editor::ChangeForwards
    SymbolVector forwards;
    auto syms = Singleton< CxxSymbols >::Instance();
 
-   syms->FindItems(item->Name(), FORW_MASK | FRIEND_MASK, forwards);
+   syms->FindItems(item->Name(), CLASS_FORWS, forwards);
 
    for(auto f = forwards.cbegin(); f != forwards.cend(); ++f)
    {
@@ -1741,19 +1708,7 @@ word Editor::ChangeMemberToFree(CxxScope* decl)
    //
    if(ftarg != nullptr)
    {
-      auto ftpos = Find(pos, "Debug::ft");
-
-      if(ftpos < (pos + code.size()))
-      {
-         file_->LogPos(ftpos, DebugFtNameMismatch, item);
-         auto& log = file_->GetWarnings().back();
-         auto rc = FixLog(log);
-
-         if(rc != EditSucceeded)
-         {
-            Report("Failed to modify Debug::ft argument.");
-         }
-      }
+      UpdateDebugFt(static_cast< Function* >(item));
    }
 
    if(item != nullptr) pos = item->GetPos();
@@ -1982,6 +1937,36 @@ bool Editor::CommentFollows(size_t pos) const
    if(pos == string::npos) return false;
    if(CompareCode(pos, COMMENT_STR) == 0) return true;
    return (CompareCode(pos, COMMENT_BEGIN_STR) == 0);
+}
+
+//------------------------------------------------------------------------------
+
+void Editor::Commit(CliThread& cli)
+{
+   Debug::ft("Editor.Commit");
+
+   while(!Editors_.empty())
+   {
+      string expl;
+      auto editor = Editors_.cbegin();
+
+      while(true)
+      {
+         auto rc = (*editor)->Format(expl);
+         *cli.obuf << spaces(2) << expl;
+         expl.clear();
+
+         if(rc == EditCompleted)
+         {
+            ++Commits_;
+            break;
+         }
+
+         if(!cli.BoolPrompt(CommitFailedPrompt)) break;
+      }
+
+      Editors_.erase(editor);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3276,7 +3261,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
    //  a serious error occurred.  In that case, clear EXPL, since it has
    //  already been displayed when writing the last file.
    //
-   Commit();
+   Commit(*Cli_);
 
    if((reply == 'q') && (rc >= EditFailed))
    {
@@ -5338,6 +5323,7 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
             auto qname = (elem != nullptr ? elem->GetQualName() : nullptr);
             if(qname != nullptr) qname->AddPrefix(name, ns);
             Insert(pos, qual);
+            qname->SetContext(pos);
             Changed();
             pos += qual.size();
          }
@@ -5351,9 +5337,18 @@ void Editor::QualifyReferent(const CxxToken* item, CxxNamed* ref)
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_Rename = "Editor.Rename";
+
 void Editor::Rename(size_t pos, const string& oldName, const string& newName)
 {
-   Debug::ft("Editor.Rename");
+   Debug::ft(Editor_Rename);
+
+   if(pos == string::npos)
+   {
+      auto expl = "Invalid position for " + oldName;
+      Debug::SwLog(Editor_Rename, expl, 0, false);
+      return;
+   }
 
    //  This can be invoked when renaming an anonymous item.  It has no name,
    //  so don't try to look for it and change it.
@@ -5465,12 +5460,15 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
    {
       //  Replace the string literal in the Debug::ft invocation.
       //
-      auto rpar = code_.find(')', lpar);
-      if(rpar == string::npos) return NotFound("Debug::ft right parenthesis");
-      Erase(lpar + 1, rpar - lpar - 1);
-      Insert(lpar + 1, fname);
       auto slit = static_cast< StrLiteral* >(arg);
+      auto size = slit->GetStr().size();
+      auto lpos = code_.find(QUOTE, lpar);
+      if(lpos == string::npos) return NotFound("Debug::ft left quote");
+      auto rpar = code_.find(')', lpos + size + 1);
+      if(rpar == string::npos) return NotFound("Debug::ft right parenthesis");
       slit->Replace(fname.substr(1, fname.size() - 2));
+      Erase(lpos, rpar - lpos);
+      Insert(lpar + 1, fname);
       return Changed(begin);
    }
 
@@ -5485,8 +5483,8 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
    auto rpos = code_.find(QUOTE, lpos + 1);
    if(rpos == string::npos) return NotFound("fn_name right quote");
    auto slit = static_cast< StrLiteral* >(file_->PosToItem(lpos));
-   Replace(lpos, rpos - lpos + 1, fname);
    if(data->Name() != fvar) data->Rename(fvar);
+   Replace(lpos, rpos - lpos + 1, fname);
 
    if(LineSize(lpos) - 1 > LineLengthMax())
    {
@@ -5533,8 +5531,15 @@ size_t Editor::Replace(size_t pos, size_t count, const std::string& code)
 {
    Debug::ft("Editor.Replace");
 
-   Erase(pos, count);
-   Insert(pos, code);
+   code_.erase(pos, count);
+   code_.insert(pos, code);
+
+   auto size = code.size();
+
+   if(count > size)
+      UpdatePos(Erased, pos + size, count - size);
+   else
+      UpdatePos(Inserted, pos + count, size - count);
    return pos;
 }
 
@@ -6319,6 +6324,38 @@ void Editor::UpdateAfterErase(size_t& pos) const
          pos = string::npos;
       else
          pos -= lastEraseSize_;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_UpdateDebugFt = "Editor.UpdateDebugFt";
+
+void Editor::UpdateDebugFt(Function* func)
+{
+   Debug::ft(Editor_UpdateDebugFt);
+
+   auto defn = func->GetDefn();
+   if(func != defn) return UpdateDebugFt(defn);
+
+   size_t begin, end;
+   func->GetSpan2(begin, end);
+   auto file = func->GetFile();
+   auto& editor = file->GetEditor();
+   auto pos = editor.Find(begin, "Debug::ft");
+
+   if(pos < end)
+   {
+      file->LogPos(pos, DebugFtNameMismatch, func);
+      auto& log = file->GetWarnings().back();
+      auto rc = editor.FixLog(log);
+
+      if(rc != EditSucceeded)
+      {
+         auto expl = "Failed to update " + func->ScopedName(false);
+         expl.append(" Debug::ft argument.");
+         Debug::SwLog(Editor_UpdateDebugFt, expl, 0, false);
+      }
    }
 }
 

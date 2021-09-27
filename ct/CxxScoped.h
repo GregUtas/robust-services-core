@@ -979,6 +979,10 @@ public:
    //
    CxxScoped* Referent() const override;
 
+   //  Overridden to support renaming the class.
+   //
+   void Rename(const std::string& name) override;
+
    //  Overridden to return the class's scoped name.
    //
    std::string ScopedName(bool templates) const override;
@@ -1147,6 +1151,10 @@ public:
    //  Overridden to return the friend.
    //
    CxxScoped* Referent() const override;
+
+   //  Overridden to support renaming the class or function.
+   //
+   void Rename(const std::string& name) override;
 
    //  Overridden to apply the arguments after updating the scope to that
    //  of the class template.

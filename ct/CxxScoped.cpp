@@ -2059,6 +2059,15 @@ CxxScoped* Forward::Referent() const
 
 //------------------------------------------------------------------------------
 
+void Forward::Rename(const string& name)
+{
+   Debug::ft("Forward.Rename");
+
+   CxxScoped::RenameQual(*name_, name);
+}
+
+//------------------------------------------------------------------------------
+
 string Forward::ScopedName(bool templates) const
 {
    auto ref = Referent();
@@ -2596,6 +2605,15 @@ CxxScoped* Friend::Referent() const
    if(ref != nullptr) return ref;
    const_cast< Friend* >(this)->FindReferent();
    return GetReferent();
+}
+
+//------------------------------------------------------------------------------
+
+void Friend::Rename(const string& name)
+{
+   Debug::ft("Friend.Rename");
+
+   CxxScoped::RenameQual(*name_, name);
 }
 
 //------------------------------------------------------------------------------

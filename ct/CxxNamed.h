@@ -767,6 +767,10 @@ public:
    //
    bool ResolveTypedef(Typedef* type, size_t n) const override;
 
+   //  Overridden to also invoke SetContext on the first name.
+   //
+   void SetContext(size_t pos) override;
+
    //  Sets the last name's referent.  This is used by QualName.EnterBlock and
    //  Operation.PushMember when a name appears in executable code.  It is also
    //  used by classes that contain a QualName member and that find a referent.

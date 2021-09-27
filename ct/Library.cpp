@@ -31,12 +31,15 @@
 #include "CodeFileSet.h"
 #include "CodeItemSet.h"
 #include "CodeTypes.h"
+#include "Cxx.h"
 #include "CxxArea.h"
 #include "CxxFwd.h"
 #include "CxxRoot.h"
+#include "CxxScope.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
+#include "Editor.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "Interpreter.h"
@@ -67,31 +70,6 @@ fixed_string VarsStr  = "$vars";
 //------------------------------------------------------------------------------
 
 fixed_string Library::SubsDir = "subs";
-
-//------------------------------------------------------------------------------
-
-static CxxNamed* FindItem(CliThread& cli, const string& name)
-{
-   Debug::ft("CodeTools.FindItem");
-
-   SymbolVector items;
-   Singleton< CxxSymbols >::Instance()->FindItems(name, ITEM_REFS, items);
-   if(items.empty()) return nullptr;
-   if(items.size() == 1) return items.front();
-
-   auto indent = spaces(2);
-   std::ostringstream stream;
-   stream << name << " could refer to the following:" << CRLF;
-
-   for(size_t i = 0; i < items.size(); ++i)
-   {
-      stream << indent << '[' << i + 1 << "] " << items[i]->to_str() << CRLF;
-   }
-
-   stream << "Enter the index of the intended item: ";
-   auto index = cli.IntPrompt(stream.str(), 1, items.size());
-   return items[index - 1];
-}
 
 //==============================================================================
 
@@ -374,18 +352,39 @@ LibrarySet* Library::EnsureVar(CliThread& cli, const string& s) const
       return result;
    }
 
-   auto i = FindItem(cli, s);
+   CxxNamed* item;
+   SymbolVector items;
+   Singleton< CxxSymbols >::Instance()->FindItems(s, ITEM_REFS, items);
 
-   if(i != nullptr)
+   if(items.empty())
    {
-      string name = LibrarySet::TemporaryName();
-      auto result = new CodeItemSet(name, nullptr);
-      auto& itemSet = result->Items();
-      itemSet.insert(i);
-      return result;
+      return nullptr;
+   }
+   else if(items.size() == 1)
+   {
+      item = items.front();
+   }
+   else
+   {
+      auto indent = spaces(2);
+      std::ostringstream stream;
+      stream << s << " could refer to the following:" << CRLF;
+
+      for(size_t i = 0; i < items.size(); ++i)
+      {
+         stream << indent << '[' << i + 1 << "] " << items[i]->to_str() << CRLF;
+      }
+
+      stream << "Enter the index of the intended item: ";
+      auto index = cli.IntPrompt(stream.str(), 1, items.size());
+      item = items[index - 1];
    }
 
-   return nullptr;
+   string name = LibrarySet::TemporaryName();
+   auto result = new CodeItemSet(name, nullptr);
+   auto& itemSet = result->Items();
+   itemSet.insert(item);
+   return result;
 }
 
 //------------------------------------------------------------------------------
@@ -623,6 +622,98 @@ word Library::Purge(const string& name, string& expl)
       delete v;
    }
 
+   expl = SuccessExpl;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+word Library::Rename(CliThread& cli,
+   const std::string& oldName, const std::string& newName, string& expl) const
+{
+   Debug::ft("Library.Rename");
+
+   CxxNamed* item;
+   auto solo = true;
+   SymbolVector items1;
+   Singleton< CxxSymbols >::Instance()->FindItems(oldName, RENAME_REFS, items1);
+
+   if(items1.empty())
+   {
+      item = nullptr;
+   }
+   else if(items1.size() == 1)
+   {
+      item = items1.front();
+   }
+   else
+   {
+      //  Filter out special member functions and operators.
+      //
+      SymbolVector items2;
+
+      for(size_t i = 0; i < items1.size(); ++i)
+      {
+         auto elem = items1[i];
+
+         if(elem->Type() == Cxx::Function)
+         {
+            auto f = static_cast< const Function* >(elem);
+            if(f->FuncType() != FuncStandard) continue;
+            if(f->FuncRole() != FuncOther) continue;
+         }
+
+         items2.push_back(elem);
+      }
+
+      if(items2.empty())
+      {
+         item = nullptr;
+      }
+      else if(items2.size() == 1)
+      {
+         item = items2.front();
+      }
+      else
+      {
+         auto indent = spaces(2);
+         std::ostringstream stream;
+         stream << oldName << " could refer to the following:" << CRLF;
+
+         for(size_t i = 0; i < items2.size(); ++i)
+         {
+            stream << indent << '[' << i + 1 << "] "
+               << items2[i]->to_str() << CRLF;
+         }
+
+         stream << "Enter the index of the intended item (0 to abort): ";
+         auto index = cli.IntPrompt(stream.str(), 0, items2.size());
+         if(index == 0)
+         {
+            expl = "Command aborted.";
+            return -1;
+         }
+
+         item = items2[index - 1];
+         solo = false;
+      }
+   }
+
+   if(item == nullptr)
+   {
+      expl = oldName + " not found.";
+      return -2;
+   }
+
+   if(solo)
+   {
+      auto prompt = "Rename " +
+         item->ScopedName(true) + " [" + strClass(item, false) + ']';
+      if(!cli.BoolPrompt(prompt)) return -1;
+   }
+
+   item->Rename(newName);
+   Editor::Commit(cli);
    expl = SuccessExpl;
    return 0;
 }

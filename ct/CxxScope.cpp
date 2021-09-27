@@ -32,8 +32,8 @@
 #include "CxxSymbols.h"
 #include "CxxVector.h"
 #include "Debug.h"
+#include "Editor.h"
 #include "Formatters.h"
-#include "Lexer.h"
 #include "Parser.h"
 #include "Singleton.h"
 
@@ -2464,18 +2464,18 @@ TagCount FuncSpec::Ptrs(bool arrays) const
 
 //------------------------------------------------------------------------------
 
+TagCount FuncSpec::Refs() const
+{
+   return func_->GetTypeSpec()->Refs();
+}
+
+//------------------------------------------------------------------------------
+
 void FuncSpec::Rename(const string& name)
 {
    Debug::ft("FuncSpec.Rename");
 
    func_->Rename(name);
-}
-
-//------------------------------------------------------------------------------
-
-TagCount FuncSpec::Refs() const
-{
-   return func_->GetTypeSpec()->Refs();
 }
 
 //------------------------------------------------------------------------------
@@ -5619,7 +5619,22 @@ void Function::Rename(const string& name)
 {
    Debug::ft("Function.Rename");
 
+   //  Forward declarations must be renamed.  This must be done before renaming
+   //  the function, because FindItems compares scoped names to determine which
+   //  symbols match the name that is used as a key.
+   //
+   SymbolVector items;
+   Singleton< CxxSymbols >::Instance()->FindItems(Name(), FUNC_FORWS, items);
+   for(auto f = items.cbegin(); f != items.cend(); ++f)
+   {
+      if((*f)->Referent() == this)
+      {
+         (*f)->Rename(name);
+      }
+   }
+
    CxxScoped::RenameQual(*name_, name);
+   Editor::UpdateDebugFt(this);
 }
 
 //------------------------------------------------------------------------------

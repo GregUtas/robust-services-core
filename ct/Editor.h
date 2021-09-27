@@ -104,6 +104,14 @@ public:
    //
    void Rename(size_t pos, const string& oldName, const string& newName);
 
+   //  Updates any call to Debug::ft when FUNC or its scope was renamed.
+   //
+   static void UpdateDebugFt(Function* func);
+
+   //  Invokes Write on each editor whose file has changed.
+   //
+   static void Commit(CliThread& cli);
+
    //  Returns the number of commits made during >fix or >format commands.
    //
    static size_t CommitCount();

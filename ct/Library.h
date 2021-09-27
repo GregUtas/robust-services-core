@@ -132,6 +132,12 @@ public:
    LibrarySet* Evaluate
       (CliThread& cli, const std::string& expr, size_t pos) const;
 
+   //  Renames the C++ item identified by oldName to newName and updates EXPL
+   //  to indicate success or failure.
+   //
+   NodeBase::word Rename(CliThread& cli, const std::string& oldName,
+      const std::string& newName, std::string& expl) const;
+
    //  Returns all directories.  Used for iteration.
    //
    const CodeDirSet& Directories() const { return *dirSet_; }

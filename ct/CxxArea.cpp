@@ -35,8 +35,8 @@
 #include "CxxToken.h"
 #include "CxxVector.h"
 #include "Debug.h"
+#include "Editor.h"
 #include "Formatters.h"
-#include "Lexer.h"
 #include "Parser.h"
 #include "Singleton.h"
 
@@ -2194,7 +2194,53 @@ void Class::Rename(const string& name)
 {
    Debug::ft("Class.Rename");
 
+   //  Forward declarations must be renamed.  This must be done before renaming
+   //  the class, because FindItems compares scoped names to determine which
+   //  symbols match the name that is used as a key.
+   //
+   SymbolVector forwards;
+   auto syms = Singleton< CxxSymbols >::Instance();
+   syms->FindItems(Name(), CLASS_FORWS, forwards);
+
+   for(auto f = forwards.cbegin(); f != forwards.cend(); ++f)
+   {
+      if((*f)->Referent() == this)
+      {
+         (*f)->Rename(name);
+      }
+   }
+
    CxxScoped::RenameQual(*name_, name);
+
+   //  Constructors and the destructor must also be renamed, and calls
+   //  to Debug::ft must be updated for functions that are not renamed.
+   //
+   auto dtorName = '~' + name;
+   auto funcs = Funcs();
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      switch((*f)->FuncRole())
+      {
+      case PureCtor:
+      case CopyCtor:
+      case MoveCtor:
+         (*f)->Rename(name);
+         break;
+      case PureDtor:
+         (*f)->Rename(dtorName);
+         break;
+      default:
+         Editor::UpdateDebugFt(f->get());
+      }
+   }
+
+   auto opers = Opers();
+
+   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
+   {
+      Editor::UpdateDebugFt(o->get());
+   }
 }
 
 //------------------------------------------------------------------------------

@@ -57,6 +57,7 @@ const Flags SPACE_MASK = Flags(1 << Cxx::Namespace);
 const Flags TERM_MASK = Flags(1 << Cxx::Terminal);
 const Flags TYPE_MASK = Flags(1 << Cxx::Typedef);
 
+const Flags CLASS_FORWS = Flags(FORW_MASK | FRIEND_MASK);
 const Flags CODE_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK |
    ETOR_MASK | FORW_MASK | FRIEND_MASK | FUNC_MASK | MACRO_MASK | TYPE_MASK);
 const Flags ITEM_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK | ETOR_MASK |
@@ -64,6 +65,9 @@ const Flags ITEM_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK | ETOR_MASK |
 const Flags FRIEND_CLASSES = Flags(CLASS_MASK | FORW_MASK |
    FRIEND_MASK | TYPE_MASK);
 const Flags FRIEND_FUNCS = Flags(FRIEND_CLASSES | FUNC_MASK);
+const Flags FUNC_FORWS = Flags(FRIEND_MASK);
+const Flags RENAME_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK | ETOR_MASK |
+   FUNC_MASK | MACRO_MASK | SPACE_MASK | TYPE_MASK);
 const Flags SCOPE_REFS = Flags(CLASS_MASK | ENUM_MASK | SPACE_MASK | TYPE_MASK);
 const Flags TARG_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK | ETOR_MASK |
    FORW_MASK | FRIEND_MASK | TERM_MASK | MACRO_MASK | TYPE_MASK);
@@ -513,13 +517,6 @@ void CxxSymbols::FindItems
    if(mask.test(Cxx::Namespace)) ListSymbols(key, *spaces_, items);
    if(mask.test(Cxx::Function)) ListSymbols(key, *funcs_, items);
    if(mask.test(Cxx::Forward)) ListSymbols(key, *forws_, items);
-
-   FilterItems(name, items, list);
-   if(!list.empty()) return;
-
-   //  There was no match, so consider friend declarations, which
-   //  can double as forward declarations.
-   //
    if(mask.test(Cxx::Friend)) ListSymbols(key, *friends_, items);
    FilterItems(name, items, list);
 }

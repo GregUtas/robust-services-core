@@ -1770,7 +1770,7 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
    if(!GetName(name)) return Backup(start, 96);
    name.insert(0, 1, '~');
    QualNamePtr dtorName(new QualName(name));
-   dtorName->SetContext(pos);
+   dtorName->SetContext(pos - 1);
    func.reset(new Function(dtorName));
    func->SetContext(start);
    func->SetInline(inln);

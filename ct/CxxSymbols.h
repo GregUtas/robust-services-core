@@ -64,8 +64,11 @@ extern const NodeBase::Flags TYPE_MASK;    // typedef
 //  Combinations of the above, used when searching in various situations.
 //  o CODE_REFS includes all items except namespaces, locals, and terminals.
 //  o ITEM_REFS includes all items except locals and terminals.
+//  o CLASS_FORWS are forward declarations of a class for the >rename command.
 //  o FRIEND_CLASSES are used when a friend is a class.
 //  o FRIEND_FUNCS are used when a friend is a function.
+//  o FUNC_FORWS are forward declarations of a function for the >rename command.
+//  o RENAME_REFS are items that can be specified in the >rename command.
 //  o SCOPE_REFS are items that can precede a scope resolution operator.
 //  o TARG_REFS finds a template argument.
 //  o TYPE_REFS finds the result of an operator (bool, size_t, or name_info).
@@ -73,10 +76,13 @@ extern const NodeBase::Flags TYPE_MASK;    // typedef
 //  o USING_REFS are referents of a using statement.
 //  o VALUE_REFS are storage references or constants.
 //
+extern const NodeBase::Flags CLASS_FORWS;
 extern const NodeBase::Flags CODE_REFS;
 extern const NodeBase::Flags ITEM_REFS;
 extern const NodeBase::Flags FRIEND_CLASSES;
 extern const NodeBase::Flags FRIEND_FUNCS;
+extern const NodeBase::Flags FUNC_FORWS;
+extern const NodeBase::Flags RENAME_REFS;
 extern const NodeBase::Flags SCOPE_REFS;
 extern const NodeBase::Flags TARG_REFS;
 extern const NodeBase::Flags TYPE_REFS;

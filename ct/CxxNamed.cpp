@@ -2532,6 +2532,16 @@ bool QualName::ResolveTypedef(Typedef* type, size_t n) const
 
 //------------------------------------------------------------------------------
 
+void QualName::SetContext(size_t pos)
+{
+   Debug::ft("QualName.SetContext");
+
+   CxxNamed::SetContext(pos);
+   First()->SetContext(pos);
+}
+
+//------------------------------------------------------------------------------
+
 void QualName::SetOperator(Cxx::Operator oper) const
 {
    Debug::ft("QualName.SetOperator");

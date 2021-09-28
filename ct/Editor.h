@@ -66,10 +66,11 @@ namespace CodeTools
 //  The Editor accesses its source code via Lexer.code_, and its file via
 //  Lexer.file_.  Here are two common causes of bugs:
 //  o Finding a position in the code, editing the code, and then using that
-//    position after the underlying text has shifted.  An edit can even change
-//    CodeWarning.Pos(), so it may also need to be reread or accessed later.
-//    The function UpdateAfterErase can be used to update a string position
-//    after each code erasure.
+//    position after the underlying text has shifted as the result of using
+//    the Editor functions Erase, Insert, or Replace, or invoking Rename on
+//    a C++ item.  An edit can even change CodeWarning.Pos(), so it may also
+//    need to be reread or accessed later.  The function UpdateAfterErase
+//    can be used to update a string position after each code erasure.
 //  o Manipulating code_ using string functions such as erase, insert, or
 //    replace instead of analogous Editor functions.  The latter invoke the
 //    function UpdatePos to update the positions of the C++ items that were

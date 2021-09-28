@@ -648,7 +648,10 @@ word Library::Rename(CliThread& cli,
    }
    else
    {
-      //  Filter out special member functions and operators.
+      //  Filter out
+      //  o special member functions (only renamed if their class is renamed),
+      //  o operators (never renamed), and
+      //  o overrides (only renamed where declared by the base class).
       //
       SymbolVector items2;
 
@@ -659,6 +662,7 @@ word Library::Rename(CliThread& cli,
          if(elem->Type() == Cxx::Function)
          {
             auto f = static_cast< const Function* >(elem);
+            if(f->IsOverride()) continue;
             if(f->FuncType() != FuncStandard) continue;
             if(f->FuncRole() != FuncOther) continue;
          }
@@ -708,7 +712,7 @@ word Library::Rename(CliThread& cli,
    if(solo)
    {
       auto prompt = "Rename " +
-         item->ScopedName(true) + " [" + strClass(item, false) + ']';
+         item->ScopedName(true) + " [" + strClass(item, false) + "]?";
       if(!cli.BoolPrompt(prompt)) return -1;
    }
 

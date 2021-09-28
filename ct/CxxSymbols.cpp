@@ -166,7 +166,11 @@ static void FilterItems(const std::string& name,
 
       for(auto fqn = fqNames.begin(); fqn != fqNames.end(); ++fqn)
       {
-         if(NameCouldReferTo(*fqn, name) != string::npos) list.push_back(*i);
+         if(NameCouldReferTo(*fqn, name) != string::npos)
+         {
+            list.push_back(*i);
+            break;
+         }
       }
    }
 }

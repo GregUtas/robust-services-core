@@ -1500,9 +1500,11 @@ void Data::ExecuteAlignment() const
 
 //------------------------------------------------------------------------------
 
+fn_name Data_ExecuteInit = "Data.ExecuteInit";
+
 bool Data::ExecuteInit(bool push)
 {
-   Debug::ft("Data.ExecuteInit");
+   Debug::ft(Data_ExecuteInit);
 
    if(push)
    {
@@ -1510,10 +1512,26 @@ bool Data::ExecuteInit(bool push)
       Context::PushScope(this, true);
    }
 
+   auto decl = GetDecl();
+
+   if(this != decl)
+   {
+      //  This defines previously declared data, which should therefore
+      //  be found as its referent.
+      //
+      auto qualname = GetQualName();
+      qualname->SetDataInit();
+
+      if(qualname->Referent() != decl)
+      {
+         auto expl = "Incorrect referent for " + ScopedName(true);
+         Context::SwLog(Data_ExecuteInit, expl, 0);
+      }
+   }
+
    //  If some form of initialization exists, one of the following will
    //  set inited_ and return true; thus the empty statement.
    //
-   auto decl = GetDecl();
    decl->initing_ = true;
    if(InitByExpr(expr_.get()) || InitByAssign() || InitByDefault()) { }
    decl->initing_ = false;
@@ -1544,15 +1562,6 @@ CodeFile* Data::GetDefnFile() const
    if(defn_) return GetFile();
    if(mate_ != nullptr) return mate_->GetFile();
    return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-void Data::GetInitName(QualNamePtr& qualName) const
-{
-   Debug::ft("Data.GetInitName");
-
-   qualName.reset(new QualName(Name()));
 }
 
 //------------------------------------------------------------------------------
@@ -1807,8 +1816,8 @@ void Data::SetAssignment(ExprPtr& expr, size_t eqpos)
    init_.reset(new Expression(expr->EndPos(), true));
 
    QualNamePtr name;
-   GetInitName(name);
-   name->CopyContext(this, IsInternal());
+   name.reset(new QualName(Name()));
+   name->CopyContext(this, true);
    TokenPtr arg1(name.release());
    init_->AddItem(arg1);
    TokenPtr op(new Operation(Cxx::ASSIGN));
@@ -5996,8 +6005,6 @@ void Function::UpdateThisArg(StackArgVector& args) const
 
 void Function::UpdateXref(bool insert)
 {
-   if(deleted_) return;
-
    auto type = GetTemplateType();
 
    switch(type)
@@ -6384,16 +6391,6 @@ void SpaceData::GetDecls(CxxNamedSet& items)
 
 //------------------------------------------------------------------------------
 
-void SpaceData::GetInitName(QualNamePtr& qualName) const
-{
-   Debug::ft("SpaceData.GetInitName");
-
-   qualName.reset(new QualName(*name_));
-   qualName->SetDataInit();
-}
-
-//------------------------------------------------------------------------------
-
 CxxToken* SpaceData::PosToItem(size_t pos) const
 {
    auto item = Data::PosToItem(pos);
@@ -6441,6 +6438,16 @@ void SpaceData::UpdatePos
    Data::UpdatePos(action, begin, count, from);
    name_->UpdatePos(action, begin, count, from);
    if(parms_ != nullptr) parms_->UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+void SpaceData::UpdateXref(bool insert)
+{
+   Data::UpdateXref(insert);
+
+   if(!IsDecl()) name_->UpdateXref(insert);
+   if(parms_ != nullptr) parms_->UpdateXref(insert);
 }
 
 //==============================================================================

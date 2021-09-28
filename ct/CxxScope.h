@@ -561,10 +561,6 @@ private:
    //
    Data* GetDecl() { return (defn_ ? mate_ : this); }
 
-   //  Returns the name to be used in the initialization statement.
-   //
-   virtual void GetInitName(QualNamePtr& qualName) const;
-
    //  Compiles the assignment statement that initializes the data.
    //  Returns true if such a statement existed.
    //
@@ -728,6 +724,10 @@ public:
    //
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
+
+   //  Overridden to add the data's components to cross-references.
+   //
+   void UpdateXref(bool insert) override;
 private:
    //  Checks for static data in a header.
    //
@@ -736,10 +736,6 @@ private:
    //  Checks that global data is initialized.
    //
    void CheckIfInitialized() const;
-
-   //  Overridden to clone the qualified name.
-   //
-   void GetInitName(QualNamePtr& qualName) const override;
 
    //  The data item's name.  The definition of static class data contains
    //  a qualified name at file scope.  Declarations do not have qualified

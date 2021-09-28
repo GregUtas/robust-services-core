@@ -3939,6 +3939,22 @@ void Namespace::Rename(const string& name)
    Debug::ft("Namespace.Rename");
 
    CxxScoped::RenameNonQual(name_, name);
+
+   //  Calls to Debug::ft must be updated with the new namespace name.
+   //
+   auto funcs = Funcs();
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      Editor::UpdateDebugFt(f->get());
+   }
+
+   auto opers = Opers();
+
+   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
+   {
+      Editor::UpdateDebugFt(o->get());
+   }
 }
 
 //------------------------------------------------------------------------------

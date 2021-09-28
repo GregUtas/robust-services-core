@@ -1996,8 +1996,7 @@ word Editor::ConvertTabsToBlanks()
 
       auto count = (pos - begin) % indent;
       if(count == 0) count = indent;
-      Erase(pos, 1);
-      Insert(pos, spaces(count));
+      Replace(pos, 1, spaces(count));
       Changed();
    }
 
@@ -4653,13 +4652,9 @@ size_t Editor::InsertPrefix(size_t pos, const string& prefix)
    if(first == string::npos) return string::npos;
 
    if(pos + prefix.size() <= first)
-   {
       Replace(pos, prefix.size(), prefix);
-   }
    else
-   {
       Insert(pos, prefix);
-   }
 
    Changed();
    return pos;
@@ -5466,9 +5461,8 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
       if(lpos == string::npos) return NotFound("Debug::ft left quote");
       auto rpar = code_.find(')', lpos + size + 1);
       if(rpar == string::npos) return NotFound("Debug::ft right parenthesis");
+      Replace(lpos, rpar - lpos, fname);
       slit->Replace(fname.substr(1, fname.size() - 2));
-      Erase(lpos, rpar - lpos);
-      Insert(lpar + 1, fname);
       return Changed(begin);
    }
 
@@ -5483,8 +5477,8 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
    auto rpos = code_.find(QUOTE, lpos + 1);
    if(rpos == string::npos) return NotFound("fn_name right quote");
    auto slit = static_cast< StrLiteral* >(file_->PosToItem(lpos));
-   if(data->Name() != fvar) data->Rename(fvar);
    Replace(lpos, rpos - lpos + 1, fname);
+   if(data->Name() != fvar) data->Rename(fvar);
 
    if(LineSize(lpos) - 1 > LineLengthMax())
    {
@@ -5510,18 +5504,7 @@ word Editor::RenameIncludeGuard(const CodeWarning& log)
 
    auto guard = log.File()->MakeGuardName();
    static_cast< Ifndef* >(log.item_)->ChangeName(guard);
-
-   ifn += strlen(HASH_IFNDEF_STR) + 1;
-   auto end = CurrEnd(ifn) - 1;
-   Erase(ifn, end - ifn + 1);
-   Insert(ifn, guard);
-
    auto def = Find(ifn, HASH_DEFINE_STR);
-   if(def == string::npos) return NotFound(HASH_DEFINE_STR);
-   def += strlen(HASH_DEFINE_STR) + 1;
-   end = CurrEnd(def) - 1;
-   Erase(def, end - def + 1);
-   Insert(def, guard);
    return Changed(def);
 }
 
@@ -6132,8 +6115,7 @@ word Editor::TagAsDefaulted(Function* func)
    {
       auto right = FindFirstOf("}", endsig + 1);
       if(right == string::npos) return NotFound("Right brace");
-      Erase(endsig, right - endsig + 1);
-      Insert(endsig, "= default;");
+      Replace(endsig, right - endsig + 1, "= default;");
    }
 
    func->SetDefaulted();

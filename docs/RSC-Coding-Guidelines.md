@@ -39,7 +39,7 @@ Try to make it impossible for the reader to tell where code was added or changed
 1. Indent a multiple of 3 spaces.
 1. Remove unnecessary interior spaces and semicolons. Remove trailing spaces.
 1. Use `//` comments instead of `/*...*/`.
-1. Add blank lines for readability, but avoid multiple blank lines.
+1. Add blank lines for readability, but do not use consecutive blank lines.
 1. Limit lines to 80 characters in length.  Break after `,:)` and before `(`. A break at an operator can
 either occur before or after, depending on which reads better.
 1. Break before `{` and `}` unless everything in between also fits on the same line.
@@ -118,7 +118,8 @@ the compiler-generated default.
 1. To prohibit vector heap allocation, delete `operator new[]`.
 1. If a class only has static members, convert it to a namespace. If this is not possible, delete its constructor.
 1. Use `override` when overriding a function defined in a base class.
-1. Within the same level of access control, sort overridden functions alphabetically.
+1. Within the same level of access control, sort overrides alphabetically, and place them after functions that
+are not overrides.
 1. Make a function or argument `const` when appropriate.
 1. Remove `inline` as a keyword.
 1. Avoid `friend` where possible.
@@ -132,12 +133,12 @@ construction or too late during destruction.
 that use `MemProt` and `MemDyn` (or `MemImm` and `MemPerm`).
 1. Static member data begins with an uppercase letter and ends with an underscore, which may be omitted if it is
 not returned by a "Get" function. Non-static member data begins with a lowercase letter and ends with an underscore,
-which may be omitted if it is public (in which case it should probably be in a `struct`).
+which may be omitted if it is public (in which case it should preferably be in a `struct`).
 
 ## Functions
 1. Use the initialization list for constructors. Initialize members in the order that the class declared them.
 1. Use `()` instead of `(void)` for an empty argument list.
-1. Name each argument. Use the same name in the interface and the implementation.
+1. Name each argument. Use the same name in the interface and the implementation, and in the base class and overrides.
 1. Make the invocation of `Debug::ft` the first line in a function body, and follow it with a blank line.
 1. The `fn_name` passed to `Debug::ft` and other functions must accurately reflect the name of the invoking function.
 1. A simple "Get" function should not invoke `Debug::ft` unless it is virtual.
@@ -176,5 +177,5 @@ following are currently used:
 - `//e` is an unclassified enhancement
 - `//p` is a POTS enhancement
 - `//s` is a socket enhancement
-- `//x` is something to be removed
-- `//*` is something to be fixed or implemented as soon as possible
+- `//x` is something to be removed (should not appear in a Release)
+- `//*` is something to be fixed or implemented as soon as possible (should not appear in a Release)

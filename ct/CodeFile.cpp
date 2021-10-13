@@ -898,7 +898,8 @@ void CodeFile::CheckOverrideOrder() const
          }
          else
          {
-            if(prev != nullptr) (*f)->Log(OverrideNotSorted);
+            if(prev != nullptr)
+               (*f)->Log(OverrideNotSorted);
          }
       }
    }

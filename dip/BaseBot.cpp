@@ -2373,15 +2373,14 @@ void BaseBot::set_title(token_t msg, bool rcvd)
 
    case TOKEN_COMMAND_HLO:
       if(!rcvd)
-         title_ = "<-HLO: " + name_ + SPACE + version_;
-      else
       {
-         if(!observer_)
-         {
-            title_ = map_and_units->our_power.to_str() + "(";
-            title_ += std::to_string(map_and_units->passcode) + "): ";
-            title_ += name_ + SPACE + version_;
-         }
+         title_ = "<-HLO: " + name_ + SPACE + version_;
+      }
+      else if(!observer_)
+      {
+         title_ = map_and_units->our_power.to_str() + "(";
+         title_ += std::to_string(map_and_units->passcode) + "): ";
+         title_ += name_ + SPACE + version_;
       }
       break;
 

@@ -1072,24 +1072,21 @@ void Lexer::CheckSwitch(const Switch& code) const
             continue;
          }
       }
-      else
+      else if(info->depth == depth + 1)
       {
-         if(info->depth == depth + 1)
+         //  This isn't nested code, so a jump statement clears any pending
+         //  case label.
+         //
+         if((id == BREAK_STR) || (id == RETURN_STR) ||
+            (id == CONTINUE_STR) || (id == THROW_STR) || (id == GOTO_STR))
          {
-            //  This isn't nested code, so a jump statement clears any pending
-            //  case label.
-            //
-            if((id == BREAK_STR) || (id == RETURN_STR) ||
-               (id == CONTINUE_STR) || (id == THROW_STR) || (id == GOTO_STR))
-            {
-               casePos = string::npos;
-               pos = FindFirstOf(";", pos);
-               continue;
-            }
-            else
-            {
-               codePos = pos;
-            }
+            casePos = string::npos;
+            pos = FindFirstOf(";", pos);
+            continue;
+         }
+         else
+         {
+            codePos = pos;
          }
       }
 

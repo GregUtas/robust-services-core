@@ -1312,10 +1312,7 @@ StackArg::StackArg(CxxToken* t, TypeName* name,
    }
    else
    {
-      if(via.item_->Name() == THIS_STR)
-      {
-         member_ = true;
-      }
+      if(via.item_->Name() == THIS_STR) member_ = true;
    }
 }
 
@@ -2127,9 +2124,9 @@ void StackArg::WasWritten() const
       auto expl = "Write to const " + item_->Name();
       Context::SwLog(StackArg_WasWritten, expl, 0);
    }
-   else
+   else if(via_ != nullptr)
    {
-      if(via_ != nullptr) SetNonConst(1);
+      SetNonConst(1);
    }
 
    //  The context function must be non-const if it

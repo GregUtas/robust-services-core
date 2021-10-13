@@ -347,17 +347,14 @@ void Class::AccessibilityOf
    {
       control = controls.back();
    }
+   else if((n <= 1) && (itemType == Cxx::Class))
+   {
+      view.accessibility_ = item->FileScopeAccessiblity();
+      return;
+   }
    else
    {
-      if((n <= 1) && (itemType == Cxx::Class))
-      {
-         view.accessibility_ = item->FileScopeAccessiblity();
-         return;
-      }
-      else
-      {
-         control = controls[n];
-      }
+      control = controls[n];
    }
 
    //  See if SCOPE is a friend of ITEM's class.  If it isn't, it might still
@@ -2400,21 +2397,18 @@ void Class::WasCalled(FunctionRole role, const CxxNamed* item)
    {
       log = false;
 
-      if(base)
-         log = true;
-      else if(solo)
-         log = true;
-      else
+      if(base || solo)
       {
-         if(GetClassTag() == Cxx::ClassType)
+         log = true;
+      }
+      else if(GetClassTag() == Cxx::ClassType)
+      {
+         for(auto d = data->cbegin(); d != data->cend(); ++d)
          {
-            for(auto d = data->cbegin(); d != data->cend(); ++d)
+            if(!(*d)->IsStatic() && ((*d)->GetTypeSpec()->Ptrs(false) > 0))
             {
-               if(!(*d)->IsStatic() && ((*d)->GetTypeSpec()->Ptrs(false) > 0))
-               {
-                  log = true;
-                  break;
-               }
+               log = true;
+               break;
             }
          }
       }
@@ -3635,16 +3629,11 @@ void CxxArea::Shrink()
    size += XrefSize();
 
    if(Type() == Cxx::Namespace)
-   {
       CxxStats::Vectors(CxxStats::SPACE_DECL, size);
-   }
+   else if(IsInTemplateInstance())
+      CxxStats::Vectors(CxxStats::CLASS_INST, size);
    else
-   {
-      if(IsInTemplateInstance())
-         CxxStats::Vectors(CxxStats::CLASS_INST, size);
-      else
-         CxxStats::Vectors(CxxStats::CLASS_DECL, size);
-   }
+      CxxStats::Vectors(CxxStats::CLASS_DECL, size);
 }
 
 //------------------------------------------------------------------------------

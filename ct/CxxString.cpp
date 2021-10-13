@@ -96,16 +96,11 @@ void AdjustPtrs(string& type, TagCount ptrs) //c reassess for >1 const pointer
       for(auto i = ptrs; i > 0; --i)
       {
          if(pos >= type.size())
-         {
             type.push_back('*');
-         }
+         else if(type[pos] == '@')
+            type.erase(pos, 1);
          else
-         {
-            if(type[pos] == '@')
-               type.erase(pos, 1);
-            else
-               type.insert(pos, 1, '*');
-         }
+            type.insert(pos, 1, '*');
       }
    }
    else
@@ -113,16 +108,11 @@ void AdjustPtrs(string& type, TagCount ptrs) //c reassess for >1 const pointer
       for(auto i = ptrs; i < 0; ++i)
       {
          if(pos >= type.size())
-         {
             type.push_back('@');
-         }
+         else if(type[pos] == '*')
+            type.erase(pos, 1);
          else
-         {
-            if(type[pos] == '*')
-               type.erase(pos, 1);
-            else
-               type.insert(pos, 1, '@');
-         }
+            type.insert(pos, 1, '@');
       }
    }
 

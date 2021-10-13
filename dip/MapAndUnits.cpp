@@ -2243,12 +2243,9 @@ size_t MapAndUnits::process_provinces(const TokenMessage& provinces)
             number_of_provinces = p;
          }
       }
-      else
+      else if(number_of_provinces != 0)
       {
-         if(number_of_provinces != 0)
-         {
-            return provinces.parm_start(1) - 1;
-         }
+         return provinces.parm_start(1) - 1;
       }
    }
 

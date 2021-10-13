@@ -90,14 +90,11 @@ void MapAndUnits::adjudicate_builds()
                orders.number_of_orders_required - orders.adjustments.size();
          }
       }
-      else
+      else if(orders.adjustments.size() < orders.number_of_orders_required)
       {
-         if(orders.adjustments.size() < orders.number_of_orders_required)
-         {
-            //  Too few disbands ordered.  Disband using the default rules.
-            //
-            generate_cd_disbands(p, orders);
-         }
+         //  Too few disbands ordered.  Disband using the default rules.
+         //
+         generate_cd_disbands(p, orders);
       }
    }
 
@@ -1255,34 +1252,30 @@ bool MapAndUnits::check_for_indomitable_and_futile_convoys()
                      changes_made = true;
                   }
                }
-               else
+               else if(dislodger_if_cut != NIL_PROVINCE)
                {
-                  if(dislodger_if_cut != NIL_PROVINCE)
-                  {
-                     subverted_convoy.subversion_type = CONFUSED_CONVOY;  // (d)
-                  }
-                  else  // (c)
-                  {
-                     //  This convoy will succeed on the next invocation of
-                     //  resolve_attacks_on_unsubverted_convoys, when its
-                     //  army will successfully cut support.  It is no longer
-                     //  subverting a convoy, because its outcome is now known.
-                     //
-                     auto nonsubverted =
-                        subversions.find(subverted_army_province);
+                  subverted_convoy.subversion_type = CONFUSED_CONVOY;  // (d)
+               }
+               else  // (c)
+               {
+                  //  This convoy will succeed on the next invocation of
+                  //  resolve_attacks_on_unsubverted_convoys, when its
+                  //  army will successfully cut support.  It is no longer
+                  //  subverting a convoy, because its outcome is now known.
+                  //
+                  auto nonsubverted = subversions.find(subverted_army_province);
 
-                     if(nonsubverted != subversions.end())
-                     {
-                        auto& nonsubverted_convoy = nonsubverted->second;
-                        nonsubverted_convoy.clear();  // <b>
-                     }
-
-                     //  The convoy that was subverting this one no longer
-                     //  has a convoy to subvert, as this one will succeed.
-                     //
-                     s->second.subverted_army = NIL_PROVINCE;
-                     changes_made = true;
+                  if(nonsubverted != subversions.end())
+                  {
+                     auto& nonsubverted_convoy = nonsubverted->second;
+                     nonsubverted_convoy.clear();  // <b>
                   }
+
+                  //  The convoy that was subverting this one no longer
+                  //  has a convoy to subvert, as this one will succeed.
+                  //
+                  s->second.subverted_army = NIL_PROVINCE;
+                  changes_made = true;
                }
             }
          }

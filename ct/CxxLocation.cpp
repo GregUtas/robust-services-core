@@ -85,9 +85,9 @@ void CxxLocation::UpdatePos(EditorAction action,
             erased_ = false;
          }
       }
-      else
+      else if(pos_ >= begin)
       {
-         if(pos_ >= begin) pos_ += count;
+         pos_ += count;
       }
       break;
    }

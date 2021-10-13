@@ -319,14 +319,11 @@ void InitThread::HandleTimeout()
       if(ActiveThread() != nullptr) ThreadAdmin::Incr(ThreadAdmin::Delays);
       return;
    }
-   else
+   else if(thr->IsScheduled())
    {
-      if(thr->IsScheduled())
-      {
-         thr->Proceed();
-         ThreadAdmin::Incr(ThreadAdmin::Resignals);
-         return;
-      }
+      thr->Proceed();
+      ThreadAdmin::Incr(ThreadAdmin::Resignals);
+      return;
    }
 
    //  If the locked thread has run too long, signal it unless breakpoint

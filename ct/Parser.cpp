@@ -2640,13 +2640,10 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos)
       }
       while(GetArraySpec(arraySpec));
    }
-   else
+   else if(lexer_.NextCharIs('('))
    {
-      if(lexer_.NextCharIs('('))
-      {
-         if(!GetArgList(token)) return Backup(start, 146);
-         newOp->AddArg(token, false);
-      }
+      if(!GetArgList(token)) return Backup(start, 146);
+      newOp->AddArg(token, false);
    }
 
    return Success(Parser_GetNew, start);
@@ -2998,10 +2995,8 @@ bool Parser::GetProcDefn(FunctionPtr& func)
       if(!lexer_.GetTemplateSpec(spec)) return Backup(start, 164);
       funcName->Append(spec, false);
    }
-   else
-   {
-      if(!GetQualName(funcName)) return Backup(start, 165);
-   }
+   else if(!GetQualName(funcName)) return Backup(start, 165);
+
    if(!lexer_.NextCharIs('(')) return Backup(start, 166);
 
    auto oper = funcName->Operator();

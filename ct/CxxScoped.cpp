@@ -704,12 +704,9 @@ void CxxScoped::DisplayFiles(ostream& stream) const
          }
       }
    }
-   else
+   else if((defn != nullptr) && (defn != decl))
    {
-      if((defn != nullptr) && (defn != decl))
-      {
-         stream << defn->Name();
-      }
+      stream << defn->Name();
    }
 }
 

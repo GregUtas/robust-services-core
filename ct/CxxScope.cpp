@@ -1373,16 +1373,16 @@ void Data::CheckConstness(bool could) const
 
       if(!IsConstPtr())
       {
-         if(!nonconstptr_ && could)
+         if(!nonconstptr_ && could && (spec_->Ptrs(false) > 0))
          {
-            //  Only log this for pointers, not arrays.
+            //  This is only logged for pointers, not arrays.
             //
-            if(spec_->Ptrs(false) > 0) Log(DataCouldBeConstPtr);
+            Log(DataCouldBeConstPtr);
          }
       }
-      else
+      else if(nonconstptr_)
       {
-         if(nonconstptr_) Log(DataCannotBeConstPtr);
+         Log(DataCannotBeConstPtr);
       }
    }
 }
@@ -3304,12 +3304,9 @@ void Function::CheckArgs() const
                   if(arg->Root()->Type() == Cxx::Class)
                      LogToArg(ArgumentCouldBeConstRef, i);
                }
-               else
+               else if(!IsTemplateArg(arg) || (spec->Ptrs(true) == 0))
                {
-                  if(!IsTemplateArg(arg) || (spec->Ptrs(true) == 0))
-                  {
-                     LogToArg(ArgumentCouldBeConst, i);
-                  }
+                  LogToArg(ArgumentCouldBeConst, i);
                }
             }
          }
@@ -3717,16 +3714,13 @@ void Function::CheckIfHiding() const
    {
       if(item->GetAccess() != Cxx::Private) Log(HidesInheritedName);
    }
+   else if(!static_cast< Function* >(item)->virtual_)
+   {
+      if(item->GetAccess() != Cxx::Private) Log(HidesInheritedName);
+   }
    else
    {
-      if(!static_cast< Function* >(item)->virtual_)
-      {
-         if(item->GetAccess() != Cxx::Private) Log(HidesInheritedName);
-      }
-      else
-      {
-         if(!override_) Log(HidesInheritedName);
-      }
+      if(!override_) Log(HidesInheritedName);
    }
 }
 
@@ -6287,12 +6281,9 @@ void SpaceData::CheckIfStatic() const
          Log(GlobalStaticData);
       }
    }
-   else
+   else if((GetMate() == nullptr) && !IsConst() && !IsStatic())
    {
-      if((GetMate() == nullptr) && !IsConst() && !IsStatic())
-      {
-         Log(DataShouldBeStatic);
-      }
+      Log(DataShouldBeStatic);
    }
 }
 

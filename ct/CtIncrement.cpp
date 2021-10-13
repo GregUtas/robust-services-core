@@ -525,12 +525,9 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
    {
       opts = DefaultExportOptions();
    }
-   else
+   else if(!ValidateOptions(opts, ValidExportOptions(), expl))
    {
-      if(!ValidateOptions(opts, ValidExportOptions(), expl))
-      {
-         return cli.Report(-1, expl);
-      }
+      return cli.Report(-1, expl);
    }
 
    if((opts.find(NamespaceView) != string::npos) ||

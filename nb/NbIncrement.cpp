@@ -3420,19 +3420,16 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
    {
       *cli.obuf << spaces(2) << size << CRLF;
    }
+   else if(all)
+   {
+      reg->Output(*cli.obuf, 2, v);
+   }
    else
    {
-      if(all)
-      {
-         reg->Output(*cli.obuf, 2, v);
-      }
-      else
-      {
-         auto thr = reg->GetThread(tid);
-         if(thr == nullptr) return cli.Report(-2, NoThreadExpl);
-         thr->Output(*cli.obuf, 2, v);
-         return 1;
-      }
+      auto thr = reg->GetThread(tid);
+      if(thr == nullptr) return cli.Report(-2, NoThreadExpl);
+      thr->Output(*cli.obuf, 2, v);
+      return 1;
    }
 
    return size;

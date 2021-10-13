@@ -82,13 +82,10 @@ void NtTestData::Conclude()
          auto command = string("read ") + recover_.c_str();
          cli->Execute(command);
       }
-      else
+      else if(!epilog_.empty())
       {
-         if(!epilog_.empty())
-         {
-            auto command = string("read ") + epilog_.c_str();
-            cli->Execute(command);
-         }
+         auto command = string("read ") + epilog_.c_str();
+         cli->Execute(command);
       }
 
       ++failCount_;

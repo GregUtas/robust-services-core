@@ -1287,13 +1287,10 @@ void OptionalCode::UpdatePos
             }
          }
       }
-      else
+      else if(begin_ >= begin)
       {
-         if(begin_ >= begin)
-         {
-            begin_ += count;
-            end_ += count;
-         }
+         begin_ += count;
+         end_ += count;
       }
       break;
    }

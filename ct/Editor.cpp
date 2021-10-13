@@ -3077,16 +3077,13 @@ word Editor::FindSpecialFuncDeclLoc
    {
       attrs.access_ = Cxx::Public;
    }
-   else
+   else if((prototype != nullptr) && !prototype->IsTrivial())
    {
-      if((prototype != nullptr) && !prototype->IsTrivial())
-      {
-         std::ostringstream stream;
-         stream << "The " << prototype->FuncRole();
-         stream << " is not trivial." << CRLF;
-         stream << spaces(2) << ShellPrompt;
-         attrs.shell_ = Cli_->BoolPrompt(stream.str());
-      }
+      std::ostringstream stream;
+      stream << "The " << prototype->FuncRole();
+      stream << " is not trivial." << CRLF;
+      stream << spaces(2) << ShellPrompt;
+      attrs.shell_ = Cli_->BoolPrompt(stream.str());
    }
 
    return FindItemDeclLoc(cls, EMPTY_STR, attrs);
@@ -3247,12 +3244,9 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
       *Cli_->obuf << "Selected warning(s) in " << file_->Name();
       *Cli_->obuf << " previously fixed." << CRLF;
    }
-   else
+   else if(!opts.multiple)
    {
-      if(!opts.multiple)
-      {
-         *Cli_->obuf << "No warnings that can be fixed were found." << CRLF;
-      }
+      *Cli_->obuf << "No warnings that can be fixed were found." << CRLF;
    }
 
    //  Returning -1 or greater indicates that the next file can still be
@@ -5838,9 +5832,9 @@ word Editor::SortFunctions(const CodeWarning& log)
 
          CodeTools::EraseItem(orphans, *f);
       }
-      else
+      else if(reached)
       {
-         if(reached) break;
+         break;
       }
    }
 

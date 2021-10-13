@@ -1606,12 +1606,9 @@ main_t Thread::Exit(signal_t sig)
    {
       log = Log::Create(ThreadLogGroup, ThreadForcedToExit);
    }
-   else
+   else if(LogSignal(sig) || Element::RunningInLab())
    {
-      if(LogSignal(sig) || Element::RunningInLab())
-      {
-         log = Log::Create(ThreadLogGroup, ThreadExited);
-      }
+      log = Log::Create(ThreadLogGroup, ThreadExited);
    }
 
    if(log != nullptr)
@@ -2187,16 +2184,13 @@ bool Thread::LogTrap(const Exception* ex,
       *log << Log::Tab << "type=" << e->what() << CRLF;
       if(ex != nullptr) ex->Display(*log, spaces(4));
    }
+   else if(sig != SIGNIL)
+   {
+      *log << Log::Tab << "signal=" << reg->strSignal(sig) << CRLF;
+   }
    else
    {
-      if(sig != SIGNIL)
-      {
-         *log << Log::Tab << "signal=" << reg->strSignal(sig) << CRLF;
-      }
-      else
-      {
-         *log << Log::Tab << UnknownExceptionStr << CRLF;
-      }
+      *log << Log::Tab << UnknownExceptionStr << CRLF;
    }
 
    if(priv_->recovering_)

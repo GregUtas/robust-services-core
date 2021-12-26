@@ -20,10 +20,12 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Library.h"
+#include <cstring>
 #include <iterator>
 #include <set>
 #include <sstream>
 #include "CfgParmRegistry.h"
+#include "CfgStrParm.h"
 #include "CliThread.h"
 #include "CodeDir.h"
 #include "CodeDirSet.h"
@@ -40,6 +42,7 @@
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Editor.h"
+#include "Element.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "Interpreter.h"
@@ -741,6 +744,15 @@ void Library::Shutdown(RestartLevel level)
    Debug::ft("Library.Shutdown");
 
    Restart::Release(sourcePathCfg_);
+}
+
+//------------------------------------------------------------------------------
+
+string Library::SourcePath() const
+{
+   auto path = sourcePathCfg_->GetValue();
+   if(strlen(path) > 0) return path;
+   return Element::RscPath();
 }
 
 //------------------------------------------------------------------------------

@@ -27,7 +27,6 @@
 #include <iosfwd>
 #include <list>
 #include <string>
-#include "CfgStrParm.h"
 #include "LibraryTypes.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
@@ -64,10 +63,10 @@ public:
    //
    Library& operator=(const Library& that) = delete;
 
-   //  Returns the path to the source directory, the root for all .h and
-   //  .cpp files.  Does not include a trailing PATH_SEPARATOR character.
+   //  Returns the path to the source directory, the root for all imported .h
+   //  and .cpp files.  Does not include a trailing PATH_SEPARATOR character.
    //
-   NodeBase::c_string SourcePath() const { return sourcePathCfg_->GetValue(); }
+   std::string SourcePath() const;
 
    //  Adds PATH, which will be known by NAME, to the code base.  Updates
    //  EXPL to indicate success or failure.  Returns 0 on success.

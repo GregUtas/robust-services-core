@@ -3,7 +3,7 @@
 In Properties > Configuration Properties, the following options are set
 for all projects:
 
-- C/C++ > General > Common Language RunTime Support: No CLR Support
+- CC/C++ > General > Common Language RunTime Support: No CLR Support
 
   The CLR and managed code are Windows-specific.
   
@@ -43,9 +43,31 @@ for all projects:
 
   Might as well enable browsing.
   
-- C/C++ > Command Line > Additional Options: /wd4100 /wd4127 /wd4244 /wd4481 /we4715
-    
-  The first four are innocuous.  4715 is treated as an error.
+- C/C++ > Command Line > Additional Options
+
+  All compiler warnings except the following are enabled:
+  - C4061: enumerator not handled by case label; default label exists
+  - C4062: enumerator not handled by case label; no default label exists
+  - C4100: unreferenced parameter
+  - C4242: type conversion: possible loss of data
+  - C4244: type conversion: possible loss of data
+  - C4267: type conversion from size_t: possible loss of data
+  - C4365: type conversion: signed/unsigned mismatch
+  - C4514: unreferenced inline function removed
+  - C4623: default constructor implicitly defined as deleted
+  - C4625: copy constructor implicitly defined as deleted
+  - C4626: assignment operator implicitly defined as deleted
+  - C4668: symbol not defined as a preprocessor macro [caused by Windows]
+  - C4710: function not inlined
+  - C4711: function inlined
+  - C4715: not all paths return a value [_promoted to an error_]
+  - C4820: padding added after member
+  - C5026: move constructor implicitly defined as deleted
+  - C5027: move assignment operator implicitly defined as deleted
+  - C5045: will insert Spectre mitigation for memory load if /Qspectre switch specified
+  - C5219: type conversion: possible loss of data
+  - C26812: prefer 'enum class' over 'enum'
+  - C33010: unchecked lower bound for enum used as index
 
 - Linker > General > Enable Incremental Linking: /INCREMENTAL:NO
 - Linker > Debugging > Generate Debug Info: /DEBUG:FULL

@@ -219,9 +219,9 @@ private:
    //
    struct MessageEntry
    {
-      NodeBase::MsgDirection dir : 1;  // the message's direction
+      NodeBase::MsgDirection dir : 2;  // the message's direction
       ProtocolId prid : 7;             // the message's protocol
-      SignalId sid : 8;                // the message's signal
+      SignalId sid : 7;                // the message's signal
    };
 
    //  The size of the message history trace buffer.

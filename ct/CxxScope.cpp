@@ -3051,7 +3051,7 @@ Function* Function::CanInvokeWith
 
       auto recvResult = recvArg->GetTypeSpec()->ResultType();
       if(recvResult.item_ == nullptr) return FoundFunc(nullptr, args, match);
-      auto sendArg = args.at(i + sendIncr);
+      auto& sendArg = args.at(i + sendIncr);
       auto curr = recvResult.CalcMatchWith(sendArg, recvType, sendType);
       if(curr < match) match = curr;
       if(match == Incompatible) return FoundFunc(nullptr, args, match);

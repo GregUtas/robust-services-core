@@ -59,7 +59,7 @@ size_t log2(size_t n, bool up)
    size_t i = 0;
 
    if(up) --n;
-   for(n; n > 0; n >>= 1) ++i;
+   for(NO_OP; n > 0; n >>= 1) ++i;
    if(!up) --i;
 
    return i;
@@ -114,7 +114,7 @@ uint32_t rand(uint32_t min, uint32_t max)
 {
    //  Return a rand value, min <= value <= max.
    //
-   return (double(::rand()) / (RAND_MAX + 1)) * (max - min) + min;
+   return (double(::rand()) / (uint32_t(RAND_MAX) + 1)) * (max - min) + min;
 }
 
 //------------------------------------------------------------------------------

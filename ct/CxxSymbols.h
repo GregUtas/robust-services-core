@@ -263,9 +263,9 @@ template< typename T > void EraseSymbol(const CxxScoped* item,
    std::unordered_multimap< std::string, T >& table)
 {
    auto str = Normalize(item->Name());
-   auto last = table.upper_bound(str);
+   auto range = table.equal_range(str);
 
-   for(auto i = table.lower_bound(str); i != last; ++i)
+   for(auto i = range.first; i != range.second; ++i)
    {
       if(i->second == item)
       {
@@ -284,9 +284,9 @@ template< typename T > void ListSymbols(const std::string& name,
 {
    //  Assemble a list of matching symbols.
    //
-   auto last = table.upper_bound(name);
+   auto range = table.equal_range(name);
 
-   for(auto i = table.lower_bound(name); i != last; ++i)
+   for(auto i = range.first; i != range.second; ++i)
    {
       list.push_back(i->second);
    }

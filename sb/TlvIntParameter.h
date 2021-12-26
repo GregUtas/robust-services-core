@@ -23,6 +23,7 @@
 #define TLVINTPARAMETER_H_INCLUDED
 
 #include "TlvParameter.h"
+#include <cstdint>
 #include <sstream>
 #include "CliCommand.h"
 #include "CliThread.h"
@@ -78,7 +79,7 @@ protected:
          return IllegalValueInStream;
       }
 
-      T parmval = value;
+      T parmval = intmax_t(value);
 
       if(tlvmsg.AddType(parmval, Pid()) == nullptr)
       {

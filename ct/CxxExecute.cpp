@@ -2065,7 +2065,7 @@ void StackArg::WasIndexed()
    //
    auto ptrs = Ptrs(true);
 
-   if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= ptrs)
+   if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= TagCount(ptrs))
    {
       member_ = false;
       constptr_ = false;

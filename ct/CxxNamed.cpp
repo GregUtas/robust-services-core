@@ -3655,7 +3655,7 @@ int TypeTags::IsConstPtr() const
 
 bool TypeTags::IsConstPtr(size_t n) const
 {
-   if(n >= ptrs_) return false;
+   if(TagCount(n) >= ptrs_) return false;
    auto mask = 1 << n;
    return ((constPtr_ & mask) != 0);
 }
@@ -3673,7 +3673,7 @@ int TypeTags::IsVolatilePtr() const
 
 bool TypeTags::IsVolatilePtr(size_t n) const
 {
-   if(n >= ptrs_) return false;
+   if(TagCount(n) >= ptrs_) return false;
    auto mask = 1 << n;
    return ((volatilePtr_ & mask) != 0);
 }
@@ -3744,7 +3744,7 @@ bool TypeTags::SetPointer(size_t n, bool readonly, bool unstable)
    if(n < Cxx::MAX_PTRS)
    {
       auto mask = 1 << n;
-      if(n >= ptrs_) ptrs_ = n + 1;
+      if(TagCount(n) >= ptrs_) ptrs_ = n + 1;
       if(readonly) constPtr_ |= mask;
       if(unstable) volatilePtr_ |= mask;
       return true;

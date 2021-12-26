@@ -294,7 +294,7 @@ bool ObjectPool::AllocBlocks()
 {
    Debug::ft("ObjectPool.AllocBlocks");
 
-   while(currSegments_ < targSegmentsCfg_->GetValue())
+   while(word(currSegments_) < targSegmentsCfg_->GetValue())
    {
       auto pid = Pid();
       auto size = sizeof(uword) * segSize_;
@@ -736,13 +736,15 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
    {
       if(obj->orphaned_ == 0)
       {
-         Debug::SwLog(ObjectPool_EnqBlock, "block not in use", debug64_t(obj));
+         Debug::SwLog(ObjectPool_EnqBlock,
+            "block not in use", debug64_t(size_t(obj)));
          return;
       }
    }
    else if(obj->link_.next != nullptr)
    {
-      Debug::SwLog(ObjectPool_EnqBlock, "block still queued", debug64_t(obj));
+      Debug::SwLog(ObjectPool_EnqBlock,
+         "block still queued", debug64_t(size_t(obj)));
       return;
    }
 
@@ -765,7 +767,8 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
    if(!dyn_->freeq_.Enq(*obj))
    {
-      Debug::SwLog(ObjectPool_EnqBlock, "block not queued", debug64_t(obj));
+      Debug::SwLog(ObjectPool_EnqBlock,
+         "block not queued", debug64_t(size_t(obj)));
       return;
    }
 
@@ -923,7 +926,8 @@ Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
             if(b->obj.assigned_)
             {
                if(IndicesToBid(i, j, bid)) return &b->obj;
-               Debug::SwLog(ObjectPool_NextUsed, "index error", debug64_t(b));
+               Debug::SwLog(ObjectPool_NextUsed,
+                  "index error", debug64_t(size_t(b)));
                return nullptr;
             }
          }

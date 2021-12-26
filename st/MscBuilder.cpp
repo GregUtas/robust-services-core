@@ -963,7 +963,7 @@ string MscBuilder::OutputFiller(const MscContext* active) const
 
    for(size_t col = FirstCol, n = lines_; n > 0; col += ColWidth, --n)
    {
-      if((active != nullptr) && (active->Column() == col))
+      if((active != nullptr) && (active->Column() == MscColumn(col)))
          line[col] = ActiveCtx;
       else
          line[col] = IdleCtx;
@@ -1367,7 +1367,7 @@ void MscBuilder::SetContextColumns()
    //  All contexts in the current group have been assigned columns.  Check
    //  that nextCol_ has the expected value.
    //
-   if(nextCol_ != (FirstCol + (lines_ * ColWidth)))
+   if(nextCol_ != (FirstCol + (MscColumn(lines_) * ColWidth)))
    {
       Debug::SwLog(MscBuilder_SetContextColumns, "column invalid", nextCol_);
    }

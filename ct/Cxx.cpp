@@ -190,7 +190,7 @@ Cxx::Operator Cxx::GetReserved(const string& name)
 
    //  See if NAME matches one of a selected group of reserved words.
    //
-   auto match = Reserved->lower_bound(name);
+   auto match = Reserved->find(name);
    if(match != Reserved->cend()) return match->second;
    return NIL_OPERATOR;
 }
@@ -201,7 +201,7 @@ Cxx::Type Cxx::GetType(const string& name)
 {
    Debug::ft("Cxx.GetType");
 
-   auto match = Types->lower_bound(name);
+   auto match = Types->find(name);
    if(match != Types->cend()) return match->second;
    return NIL_TYPE;
 }

@@ -935,9 +935,9 @@ void CxxSymbols::ListMacros(const string& name, SymbolVector& list) const
 {
    Debug::ft("CxxSymbols.ListMacros");
 
-   auto last = macros_->upper_bound(name);
+   auto range = macros_->equal_range(name);
 
-   for(auto i = macros_->lower_bound(name); i != last; ++i)
+   for(auto i = range.first; i != range.second; ++i)
    {
       if(i->second->IsDefined()) list.push_back(i->second);
    }

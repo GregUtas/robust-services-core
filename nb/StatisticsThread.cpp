@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StatisticsThread.h"
+#include <cstdint>
 #include <sstream>
 #include <string>
 #include "Debug.h"
@@ -91,7 +92,7 @@ Duration StatisticsThread::CalcFirstDelay()
    tshort.Round(SecsField, ShortIntervalSecs);
    auto delay = timeNow.MsecsUntil(tshort);
 
-   if((delay < 0) || (delay > 1500 * ShortIntervalSecs))
+   if((delay < 0) || (delay > 1500 * int32_t(ShortIntervalSecs)))
    {
       Debug::SwLog(StatisticsThread_CalcFirstDelay, "invalid delay", delay);
       delay = 1000 * ShortIntervalSecs;
@@ -105,14 +106,14 @@ Duration StatisticsThread::CalcFirstDelay()
    tlong.Round(MinsField, LongIntervalSecs / 60);
    auto delta = tshort.MsecsUntil(tlong);
 
-   if((delta < 0) || (delta > 1500 * LongIntervalSecs))
+   if((delta < 0) || (delta > 1500 * int32_t(LongIntervalSecs)))
    {
       Debug::SwLog(StatisticsThread_CalcFirstDelay, "invalid delta", delta);
       countdown_ = WakeupsBetweenReports;
    }
    else
    {
-      countdown_ = (delta / (1000 * ShortIntervalSecs)) + 1;
+      countdown_ = delta / (1000 * int32_t(ShortIntervalSecs)) + 1;
    }
 
    Duration sleepTime(delay, mSECS);

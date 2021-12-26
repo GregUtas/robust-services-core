@@ -415,7 +415,8 @@ void LogBuffer::Purge(const Entry* last)
       {
          //  LAST no longer exists: requests must have been reordered!?
          //
-         Debug::SwLog(LogsWritten_Callback, "last not found", debug64_t(last));
+         Debug::SwLog(LogsWritten_Callback,
+            "last not found", debug64_t(size_t(last)));
          return;
       }
    }

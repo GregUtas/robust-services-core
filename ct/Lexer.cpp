@@ -1832,7 +1832,7 @@ Cxx::Operator Lexer::GetCxxOp()
 
    while(!token.empty())
    {
-      auto match = Cxx::CxxOps->lower_bound(token);
+      auto match = Cxx::CxxOps->find(token);
 
       if(match != Cxx::CxxOps->cend())
       {
@@ -2146,9 +2146,9 @@ bool Lexer::GetName(string& name, Constraint constraint)
    switch(constraint)
    {
    case NonKeyword:
-      if(Cxx::Types->lower_bound(id) != Cxx::Types->cend()) return false;
+      if(Cxx::Types->find(id) != Cxx::Types->cend()) return false;
 
-      if(Cxx::Keywords->lower_bound(id) != Cxx::Keywords->cend())
+      if(Cxx::Keywords->find(id) != Cxx::Keywords->cend())
       {
          if((id != OPERATOR_STR) && (id != OVERRIDE_STR) && (id != FINAL_STR))
          {
@@ -2160,7 +2160,7 @@ bool Lexer::GetName(string& name, Constraint constraint)
    case TypeKeyword:
       if(id != AUTO_STR)
       {
-         if(Cxx::Keywords->lower_bound(id) != Cxx::Keywords->cend())
+         if(Cxx::Keywords->find(id) != Cxx::Keywords->cend())
             return false;
       }
    }
@@ -2185,11 +2185,10 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
       if(GetOpOverride(oper)) return true;
       Debug::SwLog(Lexer_GetName2, name, oper, false);
    }
-   else
+   else if((Cxx::Types->find(name) == Cxx::Types->cend()) &&
+         (Cxx::Keywords->find(name) == Cxx::Keywords->cend()))
    {
-      if((Cxx::Types->lower_bound(name) == Cxx::Types->cend()) &&
-         (Cxx::Keywords->lower_bound(name) == Cxx::Keywords->cend()))
-         return true;
+      return true;
    }
 
    Reposition(prev_);
@@ -2392,7 +2391,7 @@ bool Lexer::GetOpOverride(Cxx::Operator& oper)
 
    while(count > 0)
    {
-      auto match = Cxx::CxxOps->lower_bound(token);
+      auto match = Cxx::CxxOps->find(token);
 
       if(match != Cxx::CxxOps->cend())
       {
@@ -2462,7 +2461,7 @@ Cxx::Operator Lexer::GetPreOp()
 
    while(!token.empty())
    {
-      auto match = Cxx::PreOps->lower_bound(token);
+      auto match = Cxx::PreOps->find(token);
 
       if(match != Cxx::PreOps->cend())
       {
@@ -2838,7 +2837,7 @@ Cxx::Directive Lexer::NextDirective(string& str) const
    str = NextIdentifier(curr_);
    if(str.empty()) return Cxx::NIL_DIRECTIVE;
 
-   auto match = Cxx::Directives->lower_bound(str);
+   auto match = Cxx::Directives->find(str);
    return
       (match != Cxx::Directives->cend() ? match->second : Cxx::NIL_DIRECTIVE);
 }
@@ -2885,7 +2884,7 @@ Cxx::Keyword Lexer::NextKeyword(string& str) const
    if(first == '#') return Cxx::HASH;
    if(first == '~') return Cxx::NVDTOR;
 
-   auto match = Cxx::Keywords->lower_bound(str);
+   auto match = Cxx::Keywords->find(str);
    return (match != Cxx::Keywords->cend() ? match->second : Cxx::NIL_KEYWORD);
 }
 

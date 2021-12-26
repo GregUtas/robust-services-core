@@ -436,7 +436,7 @@ Parameter::TestRc CipRouteParameter::VerifyMsg
    if(!cli.Command()->GetIntParm(rid, cli)) return StreamMissingMandatoryParm;
 
    if(route->selector != fid) return ParmValueMismatch;
-   if(route->identifier != rid) return ParmValueMismatch;
+   if(route->identifier != RouteResult::Id(rid)) return ParmValueMismatch;
 
    return Ok;
 }

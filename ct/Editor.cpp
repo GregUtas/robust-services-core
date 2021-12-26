@@ -1102,7 +1102,7 @@ bool Editor::AdjustHorizontally(size_t pos, size_t len, const string& spacing)
    {
       auto info = GetLineInfo(pos);
       auto begin = LineRfindNonBlank(prev);
-      if(begin < info->depth) begin = info->depth;
+      if(int(begin) < info->depth) begin = info->depth;
 
       if(begin < prev)
       {

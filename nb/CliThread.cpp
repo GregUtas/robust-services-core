@@ -157,7 +157,7 @@ char CliThread::CharPrompt
 
       if(text.size() == 1)
       {
-         auto c = (upper ? text[0] : tolower(text[0]));
+         char c = (upper ? text[0] : tolower(text[0]));
          if(chars.find(c) != string::npos) return c;
       }
    }

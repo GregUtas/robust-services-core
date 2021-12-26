@@ -215,7 +215,7 @@ void SysThreadStack::Display(ostream& stream, fn_depth omit)
          //  Get the name of the function associated with this stack frame.
          //  Modify the name by replacing each C++ scope operator with a dot.
          //
-         auto frame = DWORD64(frames[f]);
+         auto frame = DWORD64(size_t(frames[f]));
          auto func = StackInfo::GetFunction(frame);
 
          if(func != nullptr)
@@ -311,7 +311,7 @@ bool SysThreadStack::TrapIsOk()
 
    for(auto f = 2; f < depth; ++f)
    {
-      auto func = StackInfo::GetFunction(DWORD64(frames[f]));
+      auto func = StackInfo::GetFunction(DWORD64(size_t(frames[f])));
 
       if(func != nullptr)
       {

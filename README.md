@@ -97,7 +97,7 @@ them, are listed in the comments that precede the implementation of
 [`main`](/rsc/main.cpp). Each of these directories is built as a separate
 static library, with `main` residing in its own directory.
 
-RSC is currently developed using Visual Studio 2017. If that is also your
+RSC is currently developed using Visual Studio. If that is also your
 development environment, the _.vcxproj_ (project) files in this repository
 should already provide most of the build instructions that you need. The
 Windows build options used for RSC are described

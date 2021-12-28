@@ -165,6 +165,8 @@ word SysTcpSocket::Poll
       auto& requests = list[i].events;
 
       requests = 0;
+      if(inFlags.none()) continue;
+
       if(inFlags.test(PollWrite)) requests |= POLLWRNORM;
       if(inFlags.test(PollWriteOob)) requests |= POLLWRBAND;
       if(inFlags.test(PollRead)) requests |= POLLRDNORM;
@@ -186,6 +188,8 @@ word SysTcpSocket::Poll
       auto& outFlags = sockets[i]->outFlags_;
 
       outFlags.reset();
+      if(results == 0) continue;
+
       if((results & POLLERR) != 0) outFlags.set(PollError);
       if((results & POLLHUP) != 0) outFlags.set(PollHungUp);
       if((results & POLLNVAL) != 0) outFlags.set(PollInvalid);

@@ -231,12 +231,12 @@ const ObjectPoolId ObjectPool::MaxId = 250;
 //> The number of audit cycles over which a block must be unclaimed
 //  before it is recovered.
 //
-static const uint8_t OrphanThreshold = 2;
+constexpr uint8_t OrphanThreshold = 4;
 
 //> The maximum number of logs that display the contents of an orphaned
 //  block in a given pool during each audit cycle.
 //
-static const size_t OrphanMaxLogs = 8;
+constexpr size_t OrphanMaxLogs = 8;
 
 ObjectPool::ObjectPool
    (ObjectPoolId pid, MemoryType mem, size_t size, const string& name) :
@@ -595,6 +595,18 @@ Pooled* ObjectPool::DeqBlock(size_t size)
 
    stats_->lowExcess_->Update(maxsize - size);
 
+   //  If the free queue is empty, invoke UpdateAlaram, which will also
+   //  allocate another segment.
+   //
+   auto empty = false;
+
+   if(dyn_->freeq_.Empty())
+   {
+      empty = true;
+      UpdateAlarm();
+      stats_->lowCount_->Update(0);
+   }
+
    auto item = dyn_->freeq_.Deq();
 
    if(item == nullptr)
@@ -604,12 +616,16 @@ Pooled* ObjectPool::DeqBlock(size_t size)
    }
 
    --dyn_->availCount_;
-   stats_->lowCount_->Update(dyn_->availCount_);
    stats_->allocCount_->Incr();
 
-   if(--dyn_->delta_ <= -50)
+   if(!empty)
    {
-      UpdateAlarm();
+      stats_->lowCount_->Update(dyn_->availCount_);
+
+      if(--dyn_->delta_ <= -50)
+      {
+         UpdateAlarm();
+      }
    }
 
    if(Debug::TraceOn())

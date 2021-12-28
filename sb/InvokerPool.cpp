@@ -40,7 +40,6 @@
 #include "SbDaemons.h"
 #include "SbIpBuffer.h"
 #include "SbLogs.h"
-#include "SbPools.h"
 #include "SbTrace.h"
 #include "SbTracer.h"
 #include "Singleton.h"
@@ -94,13 +93,8 @@ static TransTrace* TraceRxNet(Message& msg, const Factory& fac)
 
       if(buff->ToolIsOn(BufferTracer))
       {
-         auto pool = Singleton< BtIpBufferPool >::Instance();
-
-         if(pool->AvailCount() > 0)
-         {
-            auto rec = new BuffTrace(BuffTrace::IcMsg, *msg.Buffer());
-            if(buff->Insert(rec)) msg.SetTrace(rec);
-         }
+         auto rec = new BuffTrace(BuffTrace::IcMsg, *msg.Buffer());
+         if(buff->Insert(rec)) msg.SetTrace(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);
@@ -224,7 +218,7 @@ InvokerWork::~InvokerWork()
 //
 //> The maximum number of invoker threads allowed in a pool.
 //
-static const size_t MaxInvokers = 10;
+constexpr size_t MaxInvokers = 10;
 
 //------------------------------------------------------------------------------
 

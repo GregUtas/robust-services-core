@@ -185,13 +185,8 @@ void Message::Capture(Route route) const
 
       if(buff->ToolIsOn(BufferTracer))
       {
-         auto pool = Singleton< BtIpBufferPool >::Instance();
-
-         if(pool->AvailCount() > 0)
-         {
-            auto rec = new BuffTrace(BuffTrace::OgMsg, *buff_);
-            buff->Insert(rec);
-         }
+         auto rec = new BuffTrace(BuffTrace::OgMsg, *buff_);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);

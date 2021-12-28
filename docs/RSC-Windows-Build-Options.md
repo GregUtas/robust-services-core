@@ -66,8 +66,15 @@ for all projects:
   - C5027: move assignment operator implicitly defined as deleted
   - C5045: will insert Spectre mitigation for memory load if /Qspectre switch specified
   - C5219: type conversion: possible loss of data
-  - C26812: prefer 'enum class' over 'enum'
-  - C33010: unchecked lower bound for enum used as index
+
+  During code analysis, all warnings except the following are enabled.
+  Microsoft's documentation for these can be found by searching on
+  _Cnnnnn_:
+  - C6389, C26135, C26403, C26409, C26429, C26430, C26432, C26436,
+    C26439, C26440, C26446, C26447, C26451, C26455, C26458, C26462,
+    C26466, C26475, C26481, C26482, C26485, C26486, C26487, C26488,
+    C26489, C26490, C26492, C26493, C26494, C26496, C26497, C26812,
+    C26818, C26822, C26823.
 
 - Linker > General > Enable Incremental Linking: /INCREMENTAL:NO
 - Linker > Debugging > Generate Debug Info: /DEBUG:FULL

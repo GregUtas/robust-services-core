@@ -79,9 +79,9 @@ TrafficRateText::TrafficRateText() :
 fixed_string TrafficQueryTextStr = "query";
 fixed_string TrafficQueryTextExpl = "displays traffic statistics";
 
-const id_t TrafficStatesIndex = 1;
-const id_t TrafficRateIndex = 2;
-const id_t TrafficQueryIndex = 3;
+constexpr id_t TrafficStatesIndex = 1;
+constexpr id_t TrafficRateIndex = 2;
+constexpr id_t TrafficQueryIndex = 3;
 
 fixed_string TrafficActionExpl = "subcommand...";
 

@@ -77,11 +77,11 @@ const int16_t SysTime::WeekDayOfT0 = 1;  // January 1 1900 was a Monday
 
 //  The number of seconds in a leap year.
 //
-static const int64_t SecsInLeapYear = 366 * 24 * 60 * 60;
+constexpr int64_t SecsInLeapYear = 366 * 24 * 60 * 60;
 
 //  The number of seconds in a non-leap year.
 //
-static const int64_t SecsInNonLeapYear = 365 * 24 * 60 * 60;
+constexpr int64_t SecsInNonLeapYear = 365 * 24 * 60 * 60;
 
 //------------------------------------------------------------------------------
 

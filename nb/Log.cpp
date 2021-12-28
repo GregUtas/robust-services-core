@@ -247,10 +247,10 @@ Log* Log::Find(fixed_string groupName, LogId id, LogGroup*& group)
 
 //------------------------------------------------------------------------------
 
-const size_t LogIdSize = 3;
-const size_t NameBegin = 1 + Log::Indent;
-const size_t NameSize = LogGroup::MaxNameSize + LogIdSize + 1;
-const size_t MinNameSize = 1 + LogIdSize;
+constexpr size_t LogIdSize = 3;
+constexpr size_t NameBegin = 1 + Log::Indent;
+constexpr size_t MinNameSize = LogIdSize + 1;
+const size_t NameSize = LogGroup::MaxNameSize + MinNameSize;
 
 Log* Log::Find(fixed_string log)
 {

@@ -48,7 +48,7 @@ namespace NetworkBase
 //
 const size_t IpBuffer::MaxBuffSize = 8192;
 
-const size_t nSizes = 5;
+constexpr size_t nSizes = 5;
 
 const size_t BuffSizes[nSizes + 1] =
 {

@@ -88,20 +88,20 @@ void HeapBlock::Display(ostream& stream,
 //
 //  The minimum size of a block allocated from the heap.
 //
-const size_t MinBlockSize = sizeof(HeapBlock);
+constexpr size_t MinBlockSize = sizeof(HeapBlock);
 
 //  Log2 of the minimum block size.  HeapBlock contains 4 words (pointers), so
 //  multiply by number of bytes in a word by 4 by adding 2 to its log2 value.
 //
-const size_t MinBlockSizeLog2 = BYTES_PER_WORD_LOG2 + 2;
+constexpr size_t MinBlockSizeLog2 = BYTES_PER_WORD_LOG2 + 2;
 
 //  The number of block sizes.  Each block size is a power of 2, which means
 //  that the largest heap could be MinBlockSize * 2^31 = MinBlockSize * 2GB.
 //  The largest block that could be allocated is MinBlockSize * 1GB, because
 //  heap management information uses some space at the beginning of the heap.
 //
-const NbHeap::level_t NumLevels = 32;
-const NbHeap::level_t LastLevel = NumLevels - 1;
+constexpr NbHeap::level_t NumLevels = 32;
+constexpr NbHeap::level_t LastLevel = NumLevels - 1;
 
 //  Types of heap corruption that can be detected.
 //

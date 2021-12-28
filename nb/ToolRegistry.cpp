@@ -36,7 +36,7 @@ namespace NodeBase
 {
 //> The maximum number of tools that can register.
 //
-static const size_t MaxTools = 20;
+constexpr size_t MaxTools = 20;
 
 //------------------------------------------------------------------------------
 

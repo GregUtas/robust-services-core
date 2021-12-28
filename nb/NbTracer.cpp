@@ -189,8 +189,8 @@ TraceRc NbTracer::ClearSelections(FlagId filter)
 
 TraceStatus NbTracer::FactionStatus(Faction faction) const
 {
-   if(faction >= Faction_N) return TraceDefault;
-   return factions_[faction];
+   if((faction >= 0) && (faction < Faction_N)) return factions_[faction];
+   return TraceDefault;
 }
 
 //------------------------------------------------------------------------------

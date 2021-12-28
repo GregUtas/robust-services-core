@@ -45,11 +45,11 @@ namespace NodeTools
 {
 //  The size (log2) of the functionq_ array.
 //
-static const size_t HashTableSizeLog2 = 10;
+constexpr size_t HashTableSizeLog2 = 10;
 
 //  The mask used to bring the hash returned by string_hash into range.
 //
-static const uint32_t HashMask = ((1 << HashTableSizeLog2) - 1);
+constexpr uint32_t HashMask = ((1 << HashTableSizeLog2) - 1);
 
 //------------------------------------------------------------------------------
 //

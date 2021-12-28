@@ -40,7 +40,7 @@ namespace CodeTools
 {
 //  Prefix for the name of a read-only set.
 //
-static const char ReadOnlyChar = '$';
+constexpr char ReadOnlyChar = '$';
 
 //  Sequence number for generating names for temporary variables.
 //

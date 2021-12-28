@@ -42,7 +42,7 @@ namespace NodeBase
 {
 //> The maximum number of mutexes.
 //
-static const id_t MaxMutexes = 250;
+constexpr id_t MaxMutexes = 250;
 
 //------------------------------------------------------------------------------
 

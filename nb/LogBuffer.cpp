@@ -91,7 +91,7 @@ void LogsWritten::Callback()
 //> When bundling logs into a stream, the number of characters that
 //  prevents another log from being added to the stream.
 //
-static const size_t BundledLogSizeThreshold = 2048;
+constexpr size_t BundledLogSizeThreshold = 2048;
 
 //------------------------------------------------------------------------------
 

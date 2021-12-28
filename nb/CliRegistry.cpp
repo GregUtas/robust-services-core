@@ -36,7 +36,7 @@ namespace NodeBase
 {
 //> The maximum number of increments that can register.
 //
-static const size_t MaxIncrements = 30;
+constexpr size_t MaxIncrements = 30;
 
 //------------------------------------------------------------------------------
 

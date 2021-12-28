@@ -300,7 +300,6 @@ fixed_string NotifyingThreadsStr = "Notifying threads...";
 fixed_string ExitingThreadsStr = "...threads to exit: ";
 fixed_string ExitedThreadsStr = "...threads exited: ";
 fixed_string ShutdownStr = "...shut down";
-const size_t ShutdownStrSize = strlen(ShutdownStr);
 
 void ModuleRegistry::Shutdown(RestartLevel level)
 {
@@ -383,7 +382,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
 
       m->Shutdown(level);
 
-      *Stream() << ShutdownStr << setw(36 - ShutdownStrSize);
+      *Stream() << ShutdownStr << setw(36 - strlen(ShutdownStr));
       elapsed = TimePoint::Now() - time;
       *Stream() << elapsed.To(mSECS) << CRLF;
       Log::Submit(stream_);
@@ -407,7 +406,6 @@ fixed_string StartupHeader =
 fixed_string StartupTotalStr = "total initialization time";
 fixed_string PreModuleStr = "pre-Module.Startup";
 fixed_string InitializedStr = "...initialized";
-const size_t InitializedStrSize = strlen(InitializedStr);
 
 void ModuleRegistry::Startup(RestartLevel level)
 {
@@ -436,7 +434,7 @@ void ModuleRegistry::Startup(RestartLevel level)
       m->Startup(level);
 
       auto elapsed = TimePoint::Now() - time;
-      *Stream() << InitializedStr << setw(36 - InitializedStrSize);
+      *Stream() << InitializedStr << setw(36 - strlen(InitializedStr));
       *Stream() << elapsed.To(mSECS) << CRLF;
       Log::Submit(stream_);
    }

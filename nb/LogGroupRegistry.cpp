@@ -99,7 +99,7 @@ void LogStatsGroup::DisplayStats
 //
 //> The maximum number of log groups.
 //
-static const id_t MaxGroups = 250;
+constexpr id_t MaxGroups = 250;
 
 //------------------------------------------------------------------------------
 

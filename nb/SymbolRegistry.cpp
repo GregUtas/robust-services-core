@@ -35,7 +35,7 @@ namespace NodeBase
 {
 //> The maximum number of symbols allowed in symbolq_.
 //
-static const size_t MaxSymbols = 4000;
+constexpr size_t MaxSymbols = 4000;
 
 //------------------------------------------------------------------------------
 

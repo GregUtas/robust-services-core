@@ -60,7 +60,7 @@ namespace CodeTools
 {
 //  The highest legal cause_ value.
 //
-static const size_t MaxCause_ = 300;
+constexpr size_t MaxCause_ = 300;
 
 //  Statistics on where the parser backed up.
 //

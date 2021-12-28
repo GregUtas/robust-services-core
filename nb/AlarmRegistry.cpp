@@ -36,7 +36,7 @@ namespace NodeBase
 {
 //> The maximum number of alarms.
 //
-static const id_t MaxAlarms = 250;
+constexpr id_t MaxAlarms = 250;
 
 //------------------------------------------------------------------------------
 

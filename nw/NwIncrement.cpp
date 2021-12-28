@@ -242,9 +242,9 @@ NameToAddrText::NameToAddrText() :
    BindParm(*new ServiceNameOptParm);
 }
 
-const id_t HostNameIndex = 1;
-const id_t NameToAddrIndex = 2;
-const id_t AddrToNameIndex = 3;
+constexpr id_t HostNameIndex = 1;
+constexpr id_t NameToAddrIndex = 2;
+constexpr id_t AddrToNameIndex = 3;
 
 fixed_string IpActionExpl = "function to execute...";
 

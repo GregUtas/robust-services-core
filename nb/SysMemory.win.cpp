@@ -29,7 +29,7 @@
 
 namespace NodeBase
 {
-const DWORD PAGE_INVALID = 0;
+constexpr DWORD PAGE_INVALID = 0;
 
 const DWORD PermissionToProtection[MemoryProtection_N] =
 {

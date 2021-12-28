@@ -527,7 +527,7 @@ FunctionTrace::Scope FunctionTrace::Scope_ = FullTrace;
 
 //> The maximum depth when displaying a function call.
 //
-static const fn_depth MaxDispDepth = 40;
+constexpr fn_depth MaxDispDepth = 40;
 
 //------------------------------------------------------------------------------
 

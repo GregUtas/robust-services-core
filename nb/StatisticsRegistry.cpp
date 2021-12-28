@@ -37,11 +37,11 @@ namespace NodeBase
 {
 //> The maximum number of statistics that can register.
 //
-static const size_t MaxStats = 1000;
+constexpr size_t MaxStats = 1000;
 
 //> The maximum number of groups that can register.
 //
-static const size_t MaxGroups = 100;
+constexpr size_t MaxGroups = 100;
 
 TimePoint StatisticsRegistry::StartTime_ = TimePoint();
 

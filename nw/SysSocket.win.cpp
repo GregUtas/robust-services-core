@@ -53,8 +53,8 @@ uint16_t ntohs(uint16_t netshort) { return ::ntohs(netshort); }
 
 //------------------------------------------------------------------------------
 
-const u_long IO_Blocking = 0;
-const u_long IO_NonBlocking = 1;
+constexpr u_long IO_Blocking = 0;
+constexpr u_long IO_NonBlocking = 1;
 
 //------------------------------------------------------------------------------
 

@@ -242,7 +242,7 @@ void ServiceSM::EnqEvent(Event& evt, Event::Location loc)
 {
    Debug::ft(ServiceSM_EnqEvent);
 
-   if(loc >= Event::Location_N)
+   if((loc < 0) || (loc >= Event::Location_N))
    {
       Debug::SwLog(ServiceSM_EnqEvent,
          "invalid location", pack3(sid_, evt.Eid(), loc));
@@ -291,7 +291,7 @@ bool ServiceSM::ExqEvent(Event& evt, Event::Location loc)
 {
    Debug::ft(ServiceSM_ExqEvent);
 
-   if(loc >= Event::Location_N)
+   if((loc < 0) || (loc >= Event::Location_N))
    {
       Debug::SwLog(ServiceSM_ExqEvent,
          "invalid location", pack3(sid_, evt.Eid(), loc));

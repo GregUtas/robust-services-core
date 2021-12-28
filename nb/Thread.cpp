@@ -1073,7 +1073,7 @@ static SysThread::Priority FactionToPriority(Faction& faction)
 {
    Debug::ft(NodeBase_FactionToPriority);
 
-   if(faction < Faction_N) return FactionMap[faction];
+   if((faction >= 0) && (faction < Faction_N)) return FactionMap[faction];
 
    Debug::SwLog(NodeBase_FactionToPriority, "invalid faction", faction);
    faction = BackgroundFaction;
@@ -1937,7 +1937,7 @@ void Thread::ImmProtect()
 
 //------------------------------------------------------------------------------
 
-const uint8_t MaxUnprotectCount = 15;
+constexpr uint8_t MaxUnprotectCount = 15;
 
 fn_name Thread_ImmUnprotect = "Thread.ImmUnprotect";
 
@@ -2237,7 +2237,7 @@ void Thread::MakePreemptable()
 
 //------------------------------------------------------------------------------
 
-const uint8_t MaxUnpreemptCount = 15;
+constexpr uint8_t MaxUnpreemptCount = 15;
 
 fn_name Thread_MakeUnpreemptable = "Thread.MakeUnpreemptable";
 
@@ -3629,9 +3629,9 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       }
    }
 
-   catch(Exception& ex)
+   catch(Exception& exc)
    {
-      switch(TrapHandler(&ex, &ex, SIGNIL, ex.Stack()))
+      switch(TrapHandler(&exc, &exc, SIGNIL, exc.Stack()))
       {
       case Continue:
          Debug::SwLog(Thread_TrapHandler, "continue", 1);
@@ -3644,9 +3644,9 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       }
    }
 
-   catch(std::exception& e)
+   catch(std::exception& exc)
    {
-      switch(TrapHandler(nullptr, &e, SIGNIL, nullptr))
+      switch(TrapHandler(nullptr, &exc, SIGNIL, nullptr))
       {
       case Continue:
          Debug::SwLog(Thread_TrapHandler, "continue", 2);

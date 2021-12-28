@@ -43,7 +43,7 @@ const size_t LogGroup::MaxExplSize = 48;
 
 //> The maximum number of logs in a group.
 //
-static const id_t MaxLogs = 250;
+constexpr id_t MaxLogs = 250;
 
 //------------------------------------------------------------------------------
 

@@ -47,7 +47,7 @@ struct SingletonTuple
 //
 //> The maximum size of the registry.
 //
-static const size_t MaxSingletons = 32 * kBs;
+constexpr size_t MaxSingletons = 32 * kBs;
 
 //  The registry of singletons.
 //

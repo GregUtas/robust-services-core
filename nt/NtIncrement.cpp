@@ -373,9 +373,9 @@ fixed_string FuncsSortByNamesTextExpl = "by function name";
 
 fixed_string FuncsSortHowExpl = "how to sort (default=calls)";
 
-const id_t SortByCallsIndex = 1;
-const id_t SortByTimesIndex = 2;
-const id_t SortByNamesIndex = 3;
+constexpr id_t SortByCallsIndex = 1;
+constexpr id_t SortByTimesIndex = 2;
+constexpr id_t SortByNamesIndex = 3;
 
 FuncsSortHowParm::FuncsSortHowParm() : CliTextParm(FuncsSortHowExpl, true)
 {
@@ -471,8 +471,8 @@ fixed_string FuncScopeCountsOnlyTextExpl = "count invocations per function";
 
 fixed_string FuncScopeExpl = "how to trace function invocations";
 
-const id_t FuncScopeFullTraceIndex = 1;
-const id_t FuncScopeCountsOnlyIndex = 2;
+constexpr id_t FuncScopeFullTraceIndex = 1;
+constexpr id_t FuncScopeCountsOnlyIndex = 2;
 
 FuncScopeParm::FuncScopeParm() : CliTextParm(FuncScopeExpl)
 {

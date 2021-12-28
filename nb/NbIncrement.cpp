@@ -132,9 +132,9 @@ public:
    AlarmsAction();
 };
 
-const id_t AlarmsListIndex = 1;
-const id_t AlarmsExplainIndex = 2;
-const id_t AlarmsClearIndex = 3;
+constexpr id_t AlarmsListIndex = 1;
+constexpr id_t AlarmsExplainIndex = 2;
+constexpr id_t AlarmsClearIndex = 3;
 
 fixed_string AlarmsActionExpl = "subcommand...";
 
@@ -265,8 +265,8 @@ AuditIntervalText::AuditIntervalText() :
 fixed_string AuditForceStr = "force";
 fixed_string AuditForceExpl = "forces the audit to run immediately";
 
-const id_t AuditIntervalIndex = 1;
-const id_t AuditForceIndex = 2;
+constexpr id_t AuditIntervalIndex = 1;
+constexpr id_t AuditForceIndex = 2;
 
 fixed_string AuditActionExpl = "subcommand...";
 
@@ -431,10 +431,10 @@ CfgParmsSetText::CfgParmsSetText() : CliText(CfgParmsSetExpl, CfgParmsSetStr)
    BindParm(*new CliTextParm(CfgParmValueExpl, false, 0));
 }
 
-const id_t CfgParmsListIndex = 1;
-const id_t CfgParmsExplIndex = 2;
-const id_t CfgParmsGetIndex = 3;
-const id_t CfgParmsSetIndex = 4;
+constexpr id_t CfgParmsListIndex = 1;
+constexpr id_t CfgParmsExplIndex = 2;
+constexpr id_t CfgParmsGetIndex = 3;
+constexpr id_t CfgParmsSetIndex = 4;
 
 fixed_string CfgParmsActionExpl = "subcommand...";
 
@@ -657,8 +657,8 @@ DaemonsSetText::DaemonsSetText() :
    BindParm(*new SetHowParm);
 }
 
-const id_t DaemonsListIndex = 1;
-const id_t DaemonsSetIndex = 2;
+constexpr id_t DaemonsListIndex = 1;
+constexpr id_t DaemonsSetIndex = 2;
 
 fixed_string DaemonsActionExpl = "subcommand...";
 
@@ -993,10 +993,10 @@ HeapsInUseText::HeapsInUseText() :
    BindParm(*new MemoryTypeParm);
 }
 
-const id_t HeapsResetIndex = 1;
-const id_t HeapsStartIndex = 2;
-const id_t HeapsStopIndex = 3;
-const id_t HeapsDisplayIndex = 4;
+constexpr id_t HeapsResetIndex = 1;
+constexpr id_t HeapsStartIndex = 2;
+constexpr id_t HeapsStopIndex = 3;
+constexpr id_t HeapsDisplayIndex = 4;
 
 fixed_string HeapsResetTextStr = "reset";
 fixed_string HeapsResetTextExpl = "clears allocated blocks";
@@ -1037,10 +1037,10 @@ HeapsTraceText::HeapsTraceText() :
 fixed_string HeapsValidateTextStr = "validate";
 fixed_string HeapsValidateTextExpl = "validates all heaps";
 
-const id_t HeapsListIndex = 1;
-const id_t HeapsInUseIndex = 2;
-const id_t HeapsTraceIndex = 3;
-const id_t HeapsValidateIndex = 4;
+constexpr id_t HeapsListIndex = 1;
+constexpr id_t HeapsInUseIndex = 2;
+constexpr id_t HeapsTraceIndex = 3;
+constexpr id_t HeapsValidateIndex = 4;
 
 fixed_string HeapsActionExpl = "subcommand...";
 
@@ -2277,11 +2277,11 @@ fixed_string ExitTextExpl = "exits and does not restart the system";
 fixed_string RestartStr = "restart";
 fixed_string RestartExpl = "Shuts down the system.";
 
-const id_t WarmIndex = 1;
-const id_t ColdIndex = 2;
-const id_t ReloadIndex = 3;
-const id_t RebootIndex = 4;
-const id_t ExitIndex = 5;
+constexpr id_t WarmIndex = 1;
+constexpr id_t ColdIndex = 2;
+constexpr id_t ReloadIndex = 3;
+constexpr id_t RebootIndex = 4;
+constexpr id_t ExitIndex = 5;
 
 fixed_string RestartTypeExpl = "type of shutdown...";
 
@@ -2484,10 +2484,10 @@ SchedKillText::SchedKillText() : CliText(SchedKillTextExpl, SchedKillTextStr)
    BindParm(*new ThreadIdMandParm);
 }
 
-const id_t SchedShowIndex = 1;
-const id_t SchedStartIndex = 2;
-const id_t SchedStopIndex = 3;
-const id_t SchedKillIndex = 4;
+constexpr id_t SchedShowIndex = 1;
+constexpr id_t SchedStartIndex = 2;
+constexpr id_t SchedStopIndex = 3;
+constexpr id_t SchedKillIndex = 4;
 
 fixed_string SchedActionExpl = "subcommand...";
 
@@ -2628,9 +2628,9 @@ FileText::FileText() : CliText(FileTextExpl, FileTextStr)
    BindParm(*new CliBoolParm(AppendExpl, true));
 }
 
-const id_t SendCoutIndex = 1;
-const id_t SendPrevIndex = 2;
-const id_t SendFileIndex = 3;
+constexpr id_t SendCoutIndex = 1;
+constexpr id_t SendPrevIndex = 2;
+constexpr id_t SendFileIndex = 3;
 
 fixed_string SendWhereExpl = "where to send CLI output";
 
@@ -2950,9 +2950,9 @@ RolloverText::RolloverText() : CliText(RolloverTextExpl, RolloverTextStr)
    BindParm(*new CliBoolParm(RolloverExpl, true));
 }
 
-const id_t StatsGroupsIndex = 1;
-const id_t StatsShowIndex = 2;
-const id_t StatsRolloverIndex = 3;
+constexpr id_t StatsGroupsIndex = 1;
+constexpr id_t StatsShowIndex = 2;
+constexpr id_t StatsRolloverIndex = 3;
 
 fixed_string StatsActionExpl = "subcommand...";
 
@@ -3259,9 +3259,9 @@ SymbolsAssignText::SymbolsAssignText() :
    BindParm(*new CliTextParm(CfgParmNameExpl, false, 0));
 }
 
-const id_t SymbolsListIndex = 1;
-const id_t SymbolsSetIndex = 2;
-const id_t SymbolsAssignIndex = 3;
+constexpr id_t SymbolsListIndex = 1;
+constexpr id_t SymbolsSetIndex = 2;
+constexpr id_t SymbolsAssignIndex = 3;
 
 fixed_string SymbolsActionExpl = "subcommand...";
 

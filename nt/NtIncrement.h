@@ -115,22 +115,6 @@ protected:
 
 //------------------------------------------------------------------------------
 //
-//  Displays the size of classes and structs defined by a module's layer.
-//  Defined here so that other increments can subclass it.
-//
-class SizesCommand : public CliCommand
-{
-public:
-   SizesCommand();
-   virtual ~SizesCommand() = default;
-protected:
-   virtual void DisplaySizes(const CliThread& cli, bool all) const;
-private:
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-//------------------------------------------------------------------------------
-//
 //  Supports tests.  Defined here so that other increments can subclass it.
 //
 class TestsAction : public CliTextParm

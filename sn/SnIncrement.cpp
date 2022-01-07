@@ -21,16 +21,12 @@
 //
 #include "SnIncrement.h"
 #include "CliCommand.h"
-#include "PotsIncrement.h"
 #include <sstream>
-#include <string>
 #include "CliIntParm.h"
 #include "CliThread.h"
 #include "Debug.h"
-#include "Formatters.h"
 #include "NbCliParms.h"
 #include "PotsCliParms.h"
-#include "PotsSessions.h"
 #include "PotsTreatmentRegistry.h"
 #include "PotsTreatments.h"
 #include "Singleton.h"
@@ -40,44 +36,6 @@
 
 namespace PotsBase
 {
-//  The SIZES command.
-//
-class SnSizesCommand : public PbSizesCommand
-{
-public:
-   SnSizesCommand() = default;
-private:
-   void DisplaySizes(const CliThread& cli, bool all) const override;
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-void SnSizesCommand::DisplaySizes(const CliThread& cli, bool all) const
-{
-   if(all)
-   {
-      PbSizesCommand::DisplaySizes(cli, all);
-      *cli.obuf << CRLF;
-   }
-
-   *cli.obuf << "  PotsBcSsm = " << sizeof(PotsBcSsm) << CRLF;
-   *cli.obuf << "  PotsTreatment = " << sizeof(PotsTreatment) << CRLF;
-}
-
-word SnSizesCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft("SnSizesCommand.ProcessCommand");
-
-   bool all = false;
-
-   if(GetBoolParmRc(all, cli) == Error) return -1;
-   if(!cli.EndOfInput()) return -1;
-   *cli.obuf << spaces(2) << SizesHeader << CRLF;
-   DisplaySizes(cli, all);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-//
 //  The TREATMENTS command.
 //
 fixed_string TreatmentQIdOptExpl = "PotsTreatmentRegistry::QId (default=all)";
@@ -146,7 +104,6 @@ SnIncrement::SnIncrement() : CliIncrement(SnText, SnExpl)
    Debug::ft("SnIncrement.ctor");
 
    BindCommand(*new TreatmentsCommand);
-   BindCommand(*new SnSizesCommand);
 }
 
 //------------------------------------------------------------------------------

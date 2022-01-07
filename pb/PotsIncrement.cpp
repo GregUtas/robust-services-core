@@ -23,9 +23,7 @@
 #include "CliCommand.h"
 #include <sstream>
 #include <string>
-#include "BcAddress.h"
 #include "BcCause.h"
-#include "BcProgress.h"
 #include "CliTextParm.h"
 #include "CliThread.h"
 #include "Debug.h"
@@ -34,7 +32,7 @@
 #include "LocalAddress.h"
 #include "MbPools.h"
 #include "MediaEndpt.h"
-#include "MediaParameter.h"
+#include "MediaPsm.h"
 #include "NbCliParms.h"
 #include "PotsCircuit.h"
 #include "PotsCliParms.h"
@@ -517,52 +515,6 @@ word ResetCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
-//  The SIZES command.
-//
-void PbSizesCommand::DisplaySizes(const CliThread& cli, bool all) const
-{
-   if(all)
-   {
-      StSizesCommand::DisplaySizes(cli, all);
-      *cli.obuf << CRLF;
-   }
-
-   *cli.obuf << "  CauseInfo = " << sizeof(CauseInfo) << CRLF;
-   *cli.obuf << "  Circuit = " << sizeof(Circuit) << CRLF;
-   *cli.obuf << "  DigitString = " << sizeof(DigitString) << CRLF;
-   *cli.obuf << "  MediaInfo = " << sizeof(MediaInfo) << CRLF;
-   *cli.obuf << "  ProgressInfo = " << sizeof(ProgressInfo) << CRLF;
-   *cli.obuf << "  Switch = " << sizeof(Switch) << CRLF;
-
-   *cli.obuf << "  Pots_UN_Message = " << sizeof(Pots_UN_Message) << CRLF;
-   *cli.obuf << "  Pots_NU_Message = " << sizeof(Pots_NU_Message) << CRLF;
-   *cli.obuf << "  PotsCallPsm = " << sizeof(PotsCallPsm) << CRLF;
-   *cli.obuf << "  PotsCircuit = " << sizeof(PotsCircuit) << CRLF;
-   *cli.obuf << "  PotsFeature = " << sizeof(PotsFeature) << CRLF;
-   *cli.obuf << "  PotsFeatureProfile = " << sizeof(PotsFeatureProfile) << CRLF;
-   *cli.obuf << "  PotsHeaderInfo = " << sizeof(PotsHeaderInfo) << CRLF;
-   *cli.obuf << "  PotsProfile = " << sizeof(PotsProfile) << CRLF;
-   *cli.obuf << "  PotsProfileRegistry = "
-      << sizeof(PotsProfileRegistry) << CRLF;
-   *cli.obuf << "  PotsRingInfo = " << sizeof(PotsRingInfo) << CRLF;
-   *cli.obuf << "  PotsScanInfo = " << sizeof(PotsScanInfo) << CRLF;
-}
-
-word PbSizesCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft("PbSizesCommand.ProcessCommand");
-
-   bool all = false;
-
-   if(GetBoolParmRc(all, cli) == Error) return -1;
-   if(!cli.EndOfInput()) return -1;
-   *cli.obuf << spaces(2) << SizesHeader << CRLF;
-   DisplaySizes(cli, all);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-//
 //  The SUBSCRIBE command.
 //
 class SubscribeCommand : public CliCommand
@@ -794,7 +746,6 @@ PotsIncrement::PotsIncrement() : CliIncrement(PotsText, PotsExpl)
    BindCommand(*new DeactivateCommand);
    BindCommand(*new UnsubscribeCommand);
    BindCommand(*new ResetCommand);
-   BindCommand(*new PbSizesCommand);
 }
 
 //------------------------------------------------------------------------------

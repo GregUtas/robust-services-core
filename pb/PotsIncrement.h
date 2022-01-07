@@ -23,31 +23,14 @@
 #define POTSINCREMENT_H_INCLUDED
 
 #include "CliIncrement.h"
-#include "StIncrement.h"
 #include "NbTypes.h"
 
 using namespace NodeBase;
-using namespace SessionTools;
 
 //------------------------------------------------------------------------------
 
 namespace PotsBase
 {
-//  The SIZES command for this increment.
-//
-class PbSizesCommand : public StSizesCommand
-{
-public:
-   PbSizesCommand() = default;
-   virtual ~PbSizesCommand() = default;
-protected:
-   void DisplaySizes(const CliThread& cli, bool all) const override;
-private:
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-//------------------------------------------------------------------------------
-//
 //  The increment that provides POTS commands.
 //
 class PotsIncrement : public CliIncrement

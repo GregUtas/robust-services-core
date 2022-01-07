@@ -1,20 +1,20 @@
 LINE COUNTS
-   80716   source code not in one of the categories below
-   41679   blank line
-   18513   blank comment
+   80574   source code not in one of the categories below
+   41652   blank line
+   18498   blank comment
    10400   comment at the top of a file (e.g. for the file's name or license info)
-    8045   comment followed by a repeated character to draw a rule (e.g. //---- ...)
-   21279   comment not in one of the categories above (e.g. //  <text>)
-   16196   bare left brace
-   14608   bare right brace
-    1589   bare right brace with semicolon
-    1790   access control
-    5003   invocation of Debug::ft
+    8038   comment followed by a repeated character to draw a rule (e.g. //---- ...)
+   21267   comment not in one of the categories above (e.g. //  <text>)
+   16180   bare left brace
+   14596   bare right brace
+    1585   bare right brace with semicolon
+    1779   access control
+    4999   invocation of Debug::ft
      694   definition of an fn_name
-    6258   #include directive
+    6231   #include directive
     1134   preprocessor directive other than #include
-     935   using statement
-  228839   TOTAL
+     933   using statement
+  228560   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   122  C-style cast
@@ -24,8 +24,8 @@ WARNING COUNTS (* if supported by >fix)
   W008    46  Cast removes const qualification
   W009    15  Pointer arithmetic
 * W015     3  #include not sorted in standard order
-* W020   170  Using statement in header
-* W022   201  Add using statement
+* W020   168  Using statement in header
+* W022   200  Add using statement
   W026    63  Unused argument
   W027     8  Unused class
 * W028    39  Unused data
@@ -45,7 +45,7 @@ WARNING COUNTS (* if supported by >fix)
 * W054     1  Data could be const pointer
 * W055     1  Data need not be mutable
   W056     2  Implicit constructor invoked: POD members not initialized
-* W060    63  Base class constructor is public
+* W060    60  Base class constructor is public
   W062     2  Member not included in member initialization list
 * W065    10  Base class virtual destructor is not public
   W075   399  Virtual function is public
@@ -233,9 +233,9 @@ W005 Functional cast
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTime.cpp(358):          Truncate(TimeField(int(field) + 1));
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTime.cpp(531):          return OutOfRange(TimeField(f));
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.cpp(591):    stream << indent << "buffsize : " << int(std::log2(size_));
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(3259):    pool->time_[id1].Truncate(TimeField(field - 1));
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(3288):    pool->time_[id1].Round(TimeField(field - 1), interval);
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(4072):    auto test = RecoveryThread::Test(index);
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(3207):    pool->time_[id1].Truncate(TimeField(field - 1));
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(3236):    pool->time_[id1].Round(TimeField(field - 1), interval);
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(4020):    auto test = RecoveryThread::Test(index);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPortCfgParm.h(51):    ipport_t GetPort() const { return ipport_t(GetValue()); }
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsFeature.h(72):    Id Fid() const { return Id(fid_.GetId()); }
   C:/Users/Greg/Documents/rsc/rsc/sb/Factory.h(91):    Id Fid() const { return Id(fid_.GetId()); }
@@ -322,9 +322,9 @@ W006 reinterpret_cast
   C:/Users/Greg/Documents/rsc/rsc/nb/Thread.cpp(1240):    auto p = reinterpret_cast< char* >(BAD_POINTER);
   C:/Users/Greg/Documents/rsc/rsc/nb/Tool.cpp(67):    auto fake = reinterpret_cast< const Tool* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionStats.cpp(76):    auto fake = reinterpret_cast< const FunctionStats* >(&local);
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1545):    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2039):    auto fake = reinterpret_cast< const Q2WayItem* >(&local);
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2550):    auto fake = reinterpret_cast< const RegistryItem* >(&local);
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1493):    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1987):    auto fake = reinterpret_cast< const Q2WayItem* >(&local);
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2498):    auto fake = reinterpret_cast< const RegistryItem* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.cpp(280):    auto fake = reinterpret_cast< const IpPort* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.cpp(72):    auto fake = reinterpret_cast< const IpService* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(226):    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
@@ -684,7 +684,7 @@ W007 Cast down the inheritance hierarchy
   C:/Users/Greg/Documents/rsc/rsc/nw/UdpIoThread.cpp(118):       auto svc = static_cast< const UdpIpService* >(ipPort_->GetService());
   C:/Users/Greg/Documents/rsc/rsc/nw/UdpIoThread.cpp(247):       auto socket = static_cast< SysUdpSocket* >(ipPort_->GetSocket());
   C:/Users/Greg/Documents/rsc/rsc/nw/UdpIpPort.cpp(53):    auto svc = static_cast< const UdpIpService* >(GetService());
-  C:/Users/Greg/Documents/rsc/rsc/pb/PotsIncrement.cpp(400):       auto mep = static_cast< MediaEndpt* >(obj);
+  C:/Users/Greg/Documents/rsc/rsc/pb/PotsIncrement.cpp(398):       auto mep = static_cast< MediaEndpt* >(obj);
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProtocol.cpp(466):    auto&            pmsg = static_cast< PotsMessage& >(msg);
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProtocol.cpp(523):    auto&             pmsg = static_cast< const PotsMessage& >(msg);
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProtocol.cpp(647):    auto&          pmsg = static_cast< PotsMessage& >(msg);
@@ -999,7 +999,7 @@ W007 Cast down the inheritance hierarchy
   C:/Users/Greg/Documents/rsc/rsc/st/MscBuilder.cpp(746):             auto rxmsg = static_cast< const MsgTrace* >(rec);
   C:/Users/Greg/Documents/rsc/rsc/st/MscBuilder.cpp(899):          tt = static_cast< const TransTrace* >(rec);
   C:/Users/Greg/Documents/rsc/rsc/st/MscBuilder.cpp(935):             mt = static_cast< const MsgTrace* >(rec);
-  C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.cpp(127):    auto ctx = static_cast< Context* >(pool->FirstUsed(bid));
+  C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.cpp(112):    auto ctx = static_cast< Context* >(pool->FirstUsed(bid));
   C:/Users/Greg/Documents/rsc/rsc/st/StTestData.cpp(63):    return static_cast< StTestData* >(data);
   C:/Users/Greg/Documents/rsc/rsc/st/TestSessions.cpp(480):    auto tpsm = static_cast< TestPsm* >(Psm());
   C:/Users/Greg/Documents/rsc/rsc/st/TestSessions.cpp(495):    auto tssm = static_cast< TestSsm* >(RootSsm());
@@ -1174,8 +1174,7 @@ W020 Using statement in header
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsFeatures.h(30): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsHtlFeature.h(30): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsHtlFeature.h(31): using namespace CallBase;
-  C:/Users/Greg/Documents/rsc/rsc/pb/PotsIncrement.h(29): using namespace NodeBase;
-  C:/Users/Greg/Documents/rsc/rsc/pb/PotsIncrement.h(30): using namespace SessionTools;
+  C:/Users/Greg/Documents/rsc/rsc/pb/PotsIncrement.h(28): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProfile.h(36): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProfile.h(37): using namespace CallBase;
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProfile.h(38): using namespace SessionBase;
@@ -1244,8 +1243,7 @@ W020 Using statement in header
   C:/Users/Greg/Documents/rsc/rsc/st/MscContext.h(33): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/st/MscContext.h(34): using namespace SessionBase;
   C:/Users/Greg/Documents/rsc/rsc/st/MscContextPair.h(34): using namespace NodeBase;
-  C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.h(29): using namespace NodeBase;
-  C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.h(30): using namespace NodeTools;
+  C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.h(28): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/st/StModule.h(28): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/st/StTestData.h(32): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/st/StTestData.h(33): using namespace SessionBase;
@@ -1447,7 +1445,6 @@ W022 Add using statement
   C:/Users/Greg/Documents/rsc/rsc/st/MscContext.cpp(0):  // namespace SessionBase
   C:/Users/Greg/Documents/rsc/rsc/st/MscContextPair.cpp(0):  // namespace NodeBase
   C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.cpp(0):  // namespace NodeBase
-  C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.cpp(0):  // namespace NodeTools
   C:/Users/Greg/Documents/rsc/rsc/st/StModule.cpp(0):  // namespace NodeBase
   C:/Users/Greg/Documents/rsc/rsc/st/StTestData.cpp(0):  // namespace NodeBase
   C:/Users/Greg/Documents/rsc/rsc/st/StTestData.cpp(0):  // namespace SessionBase
@@ -2071,8 +2068,8 @@ W053 Data could be const
   C:/Users/Greg/Documents/rsc/rsc/nb/Symbol.h(112):    Q1Link link_;
   C:/Users/Greg/Documents/rsc/rsc/nb/SysMutex.h(141):    RegCell mid_;
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionStats.h(91):    Q2Link link_;
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1411):    Q1Link link_;
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1897):    Q2Link link_;
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1359):    Q1Link link_;
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1845):    Q2Link link_;
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.h(197):    NodeBase::Q1Link link_;
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.h(153):    NodeBase::RegCell sid_;
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsFeatureProfile.h(99):    Q1Link link_;
@@ -2153,9 +2150,8 @@ W060 Base class constructor is public
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h(56):    explicit CorruptCommand(bool bind = true);
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h(98):    NtSaveWhatParm();
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h(110):    explicit NtSaveCommand(bool bind = true);
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h(124):    SizesCommand();
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h(139):    TestsAction();
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h(160):    explicit TestsCommand(bool bind = true);
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h(123):    TestsAction();
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h(144):    explicit TestsCommand(bool bind = true);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(50):    IpBuffer(NodeBase::MsgDirection dir, size_t header, size_t payload);
   C:/Users/Greg/Documents/rsc/rsc/nw/NwCliParms.h(67):    IpAddrParm(NodeBase::c_string help, NodeBase::c_string text);
   C:/Users/Greg/Documents/rsc/rsc/nw/NwIncrement.h(39):    NwClearWhatParm();
@@ -2173,7 +2169,6 @@ W060 Base class constructor is public
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(45):    SysIpL3Addr(ipv4addr_t v4Addr, ipport_t port,
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(51):    SysIpL3Addr(const SysIpL2Addr& l2Addr, ipport_t port,
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(59):    SysIpL3Addr
-  C:/Users/Greg/Documents/rsc/rsc/pb/PotsIncrement.h(41):    PbSizesCommand() = default;
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProtocol.h(264):    explicit PotsMessage(SbIpBufferPtr& buff);
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProtocol.h(268):    PotsMessage(ProtocolSM* psm, size_t size);
   C:/Users/Greg/Documents/rsc/rsc/sb/SbTrace.h(462):    EventTrace(Id rid, const Event& evt);
@@ -2182,7 +2177,6 @@ W060 Base class constructor is public
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(54):    TlvMessage(ProtocolSM* psm, size_t size);
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(62):    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(67):    TlvMessage(const Message& msg, ProtocolSM* psm);
-  C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.h(41):    StSizesCommand() = default;
 W062 Member not included in member initialization list
   C:/Users/Greg/Documents/rsc/rsc/nb/SysFile.win.cpp(41):    FileWalker(const char* dirName, const char* fileSpec);
   C:/Users/Greg/Documents/rsc/rsc/nb/SysFile.win.cpp(60):    _finddata_t attributes_;
@@ -2751,7 +2745,7 @@ W082 Adjacent arguments have the same type
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTime.h(72):    SysTime(int16_t year, int16_t month, int16_t day,
   C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(631):    void DisplaySummary(std::ostream& stream,
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionProfiler.cpp(60): static void CheckHigh(FunctionStats*& high,
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(204):    static word Sort(const string& input, const string& output, string& expl);
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(200):    static word Sort(const string& input, const string& output, string& expl);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(50):    IpBuffer(NodeBase::MsgDirection dir, size_t header, size_t payload);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPortCfgParm.h(42):    IpPortCfgParm(NodeBase::c_string key, NodeBase::c_string def,
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(59):    SysIpL3Addr
@@ -3862,15 +3856,15 @@ W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionProfiler.cpp(60): static void CheckHigh(FunctionStats*& high,
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionStats.cpp(47): int FunctionStats::Compare(const FunctionStats& that) const
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionStats.cpp(65): void FunctionStats::IncrCalls(const Duration& net)
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1053): static word CheckHeap(bool shouldExist, const CliThread& cli, Heap*& heap)
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1524): Q1WayItem::~Q1WayItem()
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1555): Q1WayPool::Q1WayPool()
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1584): void Q1WayPool::Reallocate()
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2018): Q2WayItem::~Q2WayItem()
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2049): Q2WayPool::Q2WayPool()
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2078): void Q2WayPool::Reallocate()
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2540): RegistryItem::~RegistryItem()
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2568): RegistryPool::RegistryPool()
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1001): static word CheckHeap(bool shouldExist, const CliThread& cli, Heap*& heap)
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1472): Q1WayItem::~Q1WayItem()
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1503): Q1WayPool::Q1WayPool()
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1532): void Q1WayPool::Reallocate()
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1966): Q2WayItem::~Q2WayItem()
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1997): Q2WayPool::Q2WayPool()
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2026): void Q2WayPool::Reallocate()
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2488): RegistryItem::~RegistryItem()
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2516): RegistryPool::RegistryPool()
   C:/Users/Greg/Documents/rsc/rsc/nt/TestDatabase.cpp(148): TestDatabase::State TestDatabase::GetState(const string& testname)
   C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(198): TraceStatus IpBuffer::GetStatus() const
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.cpp(194): size_t IpPort::Discards() const
@@ -3959,7 +3953,7 @@ W107 Function does not invoke Debug::ft as first statement
   C:/Users/Greg/Documents/rsc/rsc/nb/Thread.cpp(2922):    Debug::ft("Thread.SignalHandler");
   C:/Users/Greg/Documents/rsc/rsc/nb/Thread.cpp(3021):          Debug::ft(Thread_Start);
   C:/Users/Greg/Documents/rsc/rsc/nb/Thread.cpp(3515):       Debug::ft(Thread_TrapHandler);  //@
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(3729):       Debug::ft(RecoveryThread_Enter);
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(3677):       Debug::ft(RecoveryThread_Enter);
   C:/Users/Greg/Documents/rsc/rsc/sb/Context.cpp(689):    Debug::ft(Context_ProcessWork);
 W110 Override of Base.Display not found
   C:/Users/Greg/Documents/rsc/rsc/an/PotsShelf.h(42): class PotsShelfIpService : public UdpIpService
@@ -3983,9 +3977,9 @@ W110 Override of Base.Display not found
   C:/Users/Greg/Documents/rsc/rsc/nb/ThreadAdmin.cpp(55): class ThreadsStats : public Dynamic
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.h(64): class TraceBuffer : public Permanent
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionProfiler.h(48): class FunctionProfiler : public Temporary
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(935): class TestHeap : public NbHeap
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1290): class LbcPool : public Temporary
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2932): class SysTimePool : public Temporary
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(883): class TestHeap : public NbHeap
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1238): class LbcPool : public Temporary
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2880): class SysTimePool : public Temporary
   C:/Users/Greg/Documents/rsc/rsc/nt/TestDatabase.h(41): class TestDatabase : public NodeBase::Temporary
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.cpp(52): class IpPortStats : public Dynamic
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp(50): class HostAddrCfg : public CfgStrParm
@@ -4022,8 +4016,8 @@ W117 Line can merge with the next line and be under the length limit
   C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(3078): fixed_string PoolsHeader =
   C:/Users/Greg/Documents/rsc/rsc/nb/SoftwareException.h(41):    SoftwareException
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.cpp(557):          (curr->slot_ != TraceRecord::InvalidSlot) &&
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(4001):    BindText(*new CliText
-  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(4018):    BindText(*new CliText
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(3949):    BindText(*new CliText
+  C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(3966):    BindText(*new CliText
   C:/Users/Greg/Documents/rsc/rsc/sb/ServiceSM.cpp(765):                   ->CurrInitiator() != nullptr)
   C:/Users/Greg/Documents/rsc/rsc/sb/ServiceSM.cpp(768):                   ->CurrSsm() != nullptr)
   C:/Users/Greg/Documents/rsc/rsc/sn/PotsCwmService.cpp(611):    BindEventHandler
@@ -8084,39 +8078,39 @@ C:/Users/Greg/Documents/rsc/rsc/nt/FunctionStats.h
     91:    Q2Link link_;
 C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp
   W005 Functional cast
-    3259:    pool->time_[id1].Truncate(TimeField(field - 1));
-    3288:    pool->time_[id1].Round(TimeField(field - 1), interval);
-    4072:    auto test = RecoveryThread::Test(index);
+    3207:    pool->time_[id1].Truncate(TimeField(field - 1));
+    3236:    pool->time_[id1].Round(TimeField(field - 1), interval);
+    4020:    auto test = RecoveryThread::Test(index);
   W006 reinterpret_cast
-    1545:    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
-    2039:    auto fake = reinterpret_cast< const Q2WayItem* >(&local);
-    2550:    auto fake = reinterpret_cast< const RegistryItem* >(&local);
+    1493:    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
+    1987:    auto fake = reinterpret_cast< const Q2WayItem* >(&local);
+    2498:    auto fake = reinterpret_cast< const RegistryItem* >(&local);
 * W022 Add using statement
     0:  // namespace NodeBase
 * W053 Data could be const
-    1411:    Q1Link link_;
-    1897:    Q2Link link_;
+    1359:    Q1Link link_;
+    1845:    Q2Link link_;
   W082 Adjacent arguments have the same type
-    204:    static word Sort(const string& input, const string& output, string& expl);
+    200:    static word Sort(const string& input, const string& output, string& expl);
 * W106 Function does not invoke Debug::ft
-    1053: static word CheckHeap(bool shouldExist, const CliThread& cli, Heap*& heap)
-    1524: Q1WayItem::~Q1WayItem()
-    1555: Q1WayPool::Q1WayPool()
-    1584: void Q1WayPool::Reallocate()
-    2018: Q2WayItem::~Q2WayItem()
-    2049: Q2WayPool::Q2WayPool()
-    2078: void Q2WayPool::Reallocate()
-    2540: RegistryItem::~RegistryItem()
-    2568: RegistryPool::RegistryPool()
+    1001: static word CheckHeap(bool shouldExist, const CliThread& cli, Heap*& heap)
+    1472: Q1WayItem::~Q1WayItem()
+    1503: Q1WayPool::Q1WayPool()
+    1532: void Q1WayPool::Reallocate()
+    1966: Q2WayItem::~Q2WayItem()
+    1997: Q2WayPool::Q2WayPool()
+    2026: void Q2WayPool::Reallocate()
+    2488: RegistryItem::~RegistryItem()
+    2516: RegistryPool::RegistryPool()
   W107 Function does not invoke Debug::ft as first statement
-    3729:       Debug::ft(RecoveryThread_Enter);
+    3677:       Debug::ft(RecoveryThread_Enter);
   W110 Override of Base.Display not found
-    935: class TestHeap : public NbHeap
-    1290: class LbcPool : public Temporary
-    2932: class SysTimePool : public Temporary
+    883: class TestHeap : public NbHeap
+    1238: class LbcPool : public Temporary
+    2880: class SysTimePool : public Temporary
 * W117 Line can merge with the next line and be under the length limit
-    4001:    BindText(*new CliText
-    4018:    BindText(*new CliText
+    3949:    BindText(*new CliText
+    3966:    BindText(*new CliText
 C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h
 * W020 Using statement in header
     32: using namespace NodeBase;
@@ -8127,9 +8121,8 @@ C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h
     56:    explicit CorruptCommand(bool bind = true);
     98:    NtSaveWhatParm();
     110:    explicit NtSaveCommand(bool bind = true);
-    124:    SizesCommand();
-    139:    TestsAction();
-    160:    explicit TestsCommand(bool bind = true);
+    123:    TestsAction();
+    144:    explicit TestsCommand(bool bind = true);
 C:/Users/Greg/Documents/rsc/rsc/nt/NtModule.cpp
 * W022 Add using statement
     0:  // namespace NodeBase
@@ -8658,15 +8651,12 @@ C:/Users/Greg/Documents/rsc/rsc/pb/PotsHtlFeature.h
     59:    Address::DN dn_;
 C:/Users/Greg/Documents/rsc/rsc/pb/PotsIncrement.cpp
   W007 Cast down the inheritance hierarchy
-    400:       auto mep = static_cast< MediaEndpt* >(obj);
+    398:       auto mep = static_cast< MediaEndpt* >(obj);
 * W022 Add using statement
     0:  // namespace NodeBase
 C:/Users/Greg/Documents/rsc/rsc/pb/PotsIncrement.h
 * W020 Using statement in header
-    29: using namespace NodeBase;
-    30: using namespace SessionTools;
-* W060 Base class constructor is public
-    41:    PbSizesCommand() = default;
+    28: using namespace NodeBase;
 C:/Users/Greg/Documents/rsc/rsc/pb/PotsMessages.cpp
 * W022 Add using statement
     0:  // namespace CallBase
@@ -10177,16 +10167,12 @@ C:/Users/Greg/Documents/rsc/rsc/st/MscContextPair.h
     85:    Q1Link link_;
 C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.cpp
   W007 Cast down the inheritance hierarchy
-    127:    auto ctx = static_cast< Context* >(pool->FirstUsed(bid));
+    112:    auto ctx = static_cast< Context* >(pool->FirstUsed(bid));
 * W022 Add using statement
     0:  // namespace NodeBase
-    0:  // namespace NodeTools
 C:/Users/Greg/Documents/rsc/rsc/st/StIncrement.h
 * W020 Using statement in header
-    29: using namespace NodeBase;
-    30: using namespace NodeTools;
-* W060 Base class constructor is public
-    41:    StSizesCommand() = default;
+    28: using namespace NodeBase;
 C:/Users/Greg/Documents/rsc/rsc/st/StModule.cpp
 * W022 Add using statement
     0:  // namespace NodeBase

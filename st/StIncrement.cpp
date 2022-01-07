@@ -22,6 +22,7 @@
 #include "StIncrement.h"
 #include "CliCommand.h"
 #include "CliText.h"
+#include "NtIncrement.h"
 #include <iosfwd>
 #include <memory>
 #include <sstream>
@@ -29,52 +30,36 @@
 #include "CliBoolParm.h"
 #include "CliIntParm.h"
 #include "CliThread.h"
+#include "Context.h"
 #include "Debug.h"
-#include "Event.h"
-#include "EventHandler.h"
 #include "Factory.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
-#include "GlobalAddress.h"
-#include "Initiator.h"
 #include "LocalAddress.h"
+#include "Message.h"
 #include "MscBuilder.h"
 #include "MsgHeader.h"
-#include "MsgPort.h"
 #include "NbCliParms.h"
 #include "NtTestData.h"
+#include "Parameter.h"
+#include "Protocol.h"
 #include "ProtocolRegistry.h"
-#include "ProtocolSM.h"
 #include "Registry.h"
-#include "RootServiceSM.h"
 #include "SbCliParms.h"
-#include "SbIpBuffer.h"
 #include "SbPools.h"
-#include "SbTrace.h"
 #include "SbTypes.h"
-#include "Service.h"
 #include "Signal.h"
 #include "Singleton.h"
-#include "SsmContext.h"
-#include "State.h"
 #include "StTestData.h"
-#include "SysTcpSocket.h"
 #include "SysTypes.h"
-#include "SysUdpSocket.h"
 #include "TestSessions.h"
-#include "TextTlvMessage.h"
 #include "ThisThread.h"
-#include "Timer.h"
-#include "TimerProtocol.h"
-#include "TlvParameter.h"
-#include "TlvProtocol.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
-#include "Trigger.h"
 
-using namespace NetworkBase;
 using std::string;
+using namespace NodeTools;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------
@@ -412,74 +397,6 @@ word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
 //------------------------------------------------------------------------------
 //
-//  The SIZES command.
-//
-void StSizesCommand::DisplaySizes(const CliThread& cli, bool all) const
-{
-   if(all)
-   {
-      SizesCommand::DisplaySizes(cli, all);
-      *cli.obuf << CRLF;
-   }
-
-   //e IpBuffer, SysIpL2Addr, SysIpL3Addr, and SysUdpSocket should go in a
-   //  Network layer tools increment.  The Sizes command is the only thing
-   //  that such an increment would currently contain, so it has not been
-   //  implemented.
-   //
-   *cli.obuf << "  BuffTrace = " << sizeof(BuffTrace) << CRLF;
-   *cli.obuf << "  Context = " << sizeof(Context) << CRLF;
-   *cli.obuf << "  Event = " << sizeof(Event) << CRLF;
-   *cli.obuf << "  EventHandler = " << sizeof(EventHandler) << CRLF;
-   *cli.obuf << "  Factory = " << sizeof(Factory) << CRLF;
-   *cli.obuf << "  GlobalAddress = " << sizeof(GlobalAddress) << CRLF;
-   *cli.obuf << "  Initiator = " << sizeof(Initiator) << CRLF;
-   *cli.obuf << "  IpBuffer = " << sizeof(IpBuffer) << CRLF;
-   *cli.obuf << "  LocalAddress = " << sizeof(LocalAddress) << CRLF;
-   *cli.obuf << "  Message = " << sizeof(Message) << CRLF;
-   *cli.obuf << "  MsgContext = " << sizeof(MsgContext) << CRLF;
-   *cli.obuf << "  MsgHeader = " << sizeof(MsgHeader) << CRLF;
-   *cli.obuf << "  MsgPort = " << sizeof(MsgPort) << CRLF;
-   *cli.obuf << "  Parameter = " << sizeof(Parameter) << CRLF;
-   *cli.obuf << "  Protocol = " << sizeof(Protocol) << CRLF;
-   *cli.obuf << "  ProtocolLayer = " << sizeof(ProtocolLayer) << CRLF;
-   *cli.obuf << "  ProtocolSM = " << sizeof(ProtocolSM) << CRLF;
-   *cli.obuf << "  PsmContext = " << sizeof(PsmContext) << CRLF;
-   *cli.obuf << "  RootServiceSM = " << sizeof(RootServiceSM) << CRLF;
-   *cli.obuf << "  SbIpBuffer = " << sizeof(SbIpBuffer) << CRLF;
-   *cli.obuf << "  Service = " << sizeof(Service) << CRLF;
-   *cli.obuf << "  ServiceSM = " << sizeof(ServiceSM) << CRLF;
-   *cli.obuf << "  Signal = " << sizeof(Signal) << CRLF;
-   *cli.obuf << "  SsmContext = " << sizeof(SsmContext) << CRLF;
-   *cli.obuf << "  State = " << sizeof(State) << CRLF;
-   *cli.obuf << "  SysIpL3Addr = " << sizeof(SysIpL3Addr) << CRLF;
-   *cli.obuf << "  SysTcpSocket = " << sizeof(SysTcpSocket) << CRLF;
-   *cli.obuf << "  SysUdpSocket = " << sizeof(SysUdpSocket) << CRLF;
-   *cli.obuf << "  TextTlvMessage = " << sizeof(TextTlvMessage) << CRLF;
-   *cli.obuf << "  TimeoutParameter = " << sizeof(TimeoutParameter) << CRLF;
-   *cli.obuf << "  Timer = " << sizeof(Timer) << CRLF;
-   *cli.obuf << "  TlvMessage = " << sizeof(TlvMessage) << CRLF;
-   *cli.obuf << "  TlvParameter = " << sizeof(TlvParameter) << CRLF;
-   *cli.obuf << "  TlvParmHeader = " << sizeof(TlvParmHeader) << CRLF;
-   *cli.obuf << "  TlvProtocol = " << sizeof(TlvProtocol) << CRLF;
-   *cli.obuf << "  Trigger = " << sizeof(Trigger) << CRLF;
-}
-
-word StSizesCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft("StSizesCommand.ProcessCommand");
-
-   auto all = false;
-
-   if(GetBoolParmRc(all, cli) == Error) return -1;
-   if(!cli.EndOfInput()) return -1;
-   *cli.obuf << spaces(2) << SizesHeader << CRLF;
-   DisplaySizes(cli, all);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-//
 //  The TESTS command.
 //
 class TestVerifyText : public CliText
@@ -787,7 +704,6 @@ StIncrement::StIncrement() : CliIncrement(StIncrText, StIncrExpl)
 
    BindCommand(*new StSaveCommand);
    BindCommand(*new StTestsCommand);
-   BindCommand(*new StSizesCommand);
    BindCommand(*new StCorruptCommand);
 }
 

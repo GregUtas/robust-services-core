@@ -412,9 +412,6 @@ swflags           : Supports flags used to control branching
   query           : lists flags that are on
 )
 
-sizes             : Displays class sizes.
-  [t|f]           : display sizes in base classes? (default=f)
-
 corrupt           : Corrupts a data structure for testing purposes.
 (                 : what to corrupt...
   pool            : object pool
@@ -888,9 +885,6 @@ tests             : Configures or executes tests.
   )
 )
 
-sizes             : Displays class sizes.
-  [t|f]           : display sizes in base classes? (default=f)
-
 corrupt           : Corrupts a data structure for testing purposes.
 (                 : what to corrupt...
   pool            : object pool
@@ -1259,9 +1253,6 @@ unsubscribe       : Removes a feature from a DN.
 reset             : Resets a DN to its initial state.
   (20000:99999)   : DN
 
-sizes             : Displays class sizes.
-  [t|f]           : display sizes in base classes? (default=f)
-
 No additional help is available.
 pots>quit
 nb>an
@@ -1281,9 +1272,6 @@ sn>help full
 treatments        : Displays treatments.
   [0:5]           : PotsTreatmentRegistry::QId (default=all)
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
-
-sizes             : Displays class sizes.
-  [t|f]           : display sizes in base classes? (default=f)
 
 No additional help is available.
 sn>quit
@@ -1375,6 +1363,10 @@ format            : Reformats code files.
 export            : Exports library information.
   <str>           : filename for output
   [<str>]         : options (enter ">help export full" for details)
+
+rename            : Renames a C++ item.
+  <str>           : name of C++ item (enter ">help rename full" for details)
+  <str>           : new name for C++ item
 
 coverage          : Supports code coverage.
 (                 : subcommand...

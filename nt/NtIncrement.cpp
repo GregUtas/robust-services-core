@@ -40,7 +40,6 @@
 #include <string>
 #include <utility>
 #include "Algorithms.h"
-#include "Class.h"
 #include "CliBoolParm.h"
 #include "CliPtrParm.h"
 #include "CliThread.h"
@@ -52,8 +51,6 @@
 #include "FunctionProfiler.h"
 #include "FunctionTrace.h"
 #include "LeakyBucketCounter.h"
-#include "Module.h"
-#include "MsgBuffer.h"
 #include "NbAppIds.h"
 #include "NbCliParms.h"
 #include "NbSignals.h"
@@ -71,7 +68,6 @@
 #include "Singleton.h"
 #include "SysFile.h"
 #include "SysMutex.h"
-#include "SysThread.h"
 #include "SysTime.h"
 #include "TestDatabase.h"
 #include "ToolTypes.h"
@@ -525,54 +521,6 @@ word NtSetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    }
 
    return ExplainTraceRc(cli, rc);
-}
-
-//------------------------------------------------------------------------------
-//
-//  The SIZES command.
-//
-fixed_string SizesParmExpl = "display sizes in base classes? (default=f)";
-
-fixed_string SizesStr = "sizes";
-fixed_string SizesExpl = "Displays class sizes.";
-
-SizesCommand::SizesCommand() : CliCommand(SizesStr, SizesExpl)
-{
-   BindParm(*new CliBoolParm(SizesParmExpl, true));
-}
-
-void SizesCommand::DisplaySizes(const CliThread& cli, bool all) const
-{
-   *cli.obuf << "  Base = " << sizeof(Base) << CRLF;
-   *cli.obuf << "  Class = " << sizeof(Class) << CRLF;
-   *cli.obuf << "  CliBoolParm = " << sizeof(CliBoolParm) << CRLF;
-   *cli.obuf << "  CliIntParm = " << sizeof(CliIntParm) << CRLF;
-   *cli.obuf << "  CliText = " << sizeof(CliText) << CRLF;
-   *cli.obuf << "  CliTextParm = " << sizeof(CliTextParm) << CRLF;
-   *cli.obuf << "  FunctionTrace = " << sizeof(FunctionTrace) << CRLF;
-   *cli.obuf << "  MsgBuffer = " << sizeof(MsgBuffer) << CRLF;
-   *cli.obuf << "  Module = " << sizeof(Module) << CRLF;
-   *cli.obuf << "  Object = " << sizeof(Object) << CRLF;
-   *cli.obuf << "  Pooled = " << sizeof(Pooled) << CRLF;
-   *cli.obuf << "  Q1Link = " << sizeof(Q1Link) << CRLF;
-   *cli.obuf << "  Q2Link = " << sizeof(Q2Link) << CRLF;
-   *cli.obuf << "  RegCell = " << sizeof(RegCell) << CRLF;
-   *cli.obuf << "  SysThread = " << sizeof(SysThread) << CRLF;
-   *cli.obuf << "  Thread = " << sizeof(Thread) << CRLF;
-   *cli.obuf << "  TraceRecord = " << sizeof(TraceRecord) << CRLF;
-}
-
-word SizesCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft("SizesCommand.ProcessCommand");
-
-   auto all = false;
-
-   if(GetBoolParmRc(all, cli) == Error) return -1;
-   if(!cli.EndOfInput()) return -1;
-   *cli.obuf << spaces(2) << SizesHeader << CRLF;
-   DisplaySizes(cli, all);
-   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -4161,7 +4109,6 @@ NtIncrement::NtIncrement() : CliIncrement(NtStr, NtExpl)
    BindCommand(*new NtSaveCommand);
    BindCommand(*new TestsCommand);
    BindCommand(*new SwFlagsCommand);
-   BindCommand(*new SizesCommand);
    BindCommand(*new CorruptCommand);
    BindCommand(*new LeakyBucketCounterCommands);
    BindCommand(*new Q1WayCommands);

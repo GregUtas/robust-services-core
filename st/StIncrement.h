@@ -23,31 +23,14 @@
 #define STINCREMENT_H_INCLUDED
 
 #include "CliIncrement.h"
-#include "NtIncrement.h"
 #include "NbTypes.h"
 
 using namespace NodeBase;
-using namespace NodeTools;
 
 //------------------------------------------------------------------------------
 
 namespace SessionTools
 {
-//  The SIZES command for this increment.
-//
-class StSizesCommand : public SizesCommand
-{
-public:
-   StSizesCommand() = default;
-   virtual ~StSizesCommand() = default;
-protected:
-   void DisplaySizes(const CliThread& cli, bool all) const override;
-private:
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-//------------------------------------------------------------------------------
-//
 //  Increment for SessionBase tools and tests.
 //
 class StIncrement : public CliIncrement

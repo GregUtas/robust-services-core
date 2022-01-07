@@ -595,7 +595,7 @@ Pooled* ObjectPool::DeqBlock(size_t size)
 
    stats_->lowExcess_->Update(maxsize - size);
 
-   //  If the free queue is empty, invoke UpdateAlaram, which will also
+   //  If the free queue is empty, invoke UpdateAlarm, which will also
    //  allocate another segment.
    //
    auto empty = false;

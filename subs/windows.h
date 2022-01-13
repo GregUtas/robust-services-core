@@ -14,11 +14,12 @@
 //  Windows basic stuff
 //
 typedef uint16_t WORD;
-typedef uint32_t u_long;
 typedef uint32_t DWORD;
 typedef uint64_t DWORD64;
-typedef void*    HANDLE;
-typedef void*    LPVOID;
+typedef unsigned long ULONG;
+typedef unsigned long u_long;
+typedef void* HANDLE;
+typedef void* LPVOID;
 
 WORD    MAKEWORD(uint8_t a, uint8_t b);
 uint8_t LOBYTE(WORD w);

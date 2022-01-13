@@ -13,7 +13,22 @@
 //
 //  Windows TCP/IP
 //
-int inet_pton(uint16_t family, const char* addr, in_addr* buff);
+struct in6_addr
+{
+   uint8_t  s6_bytes[16];
+   uint16_t s6_words[8];
+};
+
+const in6_addr in6addr_any = { 0 };
+
+struct sockaddr_in6
+{
+   uint16_t sin6_family;
+   uint16_t sin6_port;
+   ULONG    sin6_flowinfo;
+   in6_addr sin6_addr;
+   ULONG    sin6_scope_id;
+};
 
 void freeaddrinfo(addrinfo* info);
 

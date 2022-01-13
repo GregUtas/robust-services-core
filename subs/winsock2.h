@@ -13,7 +13,9 @@
 //
 //  Windows sockets and networking
 //
+constexpr uint16_t AF_UNSPEC = 0;
 constexpr uint16_t AF_INET = 2;
+constexpr uint16_t AF_INET6 = 23;
 constexpr int      SOCK_STREAM = 1;
 constexpr int      SOCK_DGRAM = 2;
 constexpr uint32_t IPPROTO_TCP = 6;
@@ -41,6 +43,9 @@ constexpr uint16_t SO_MAX_MSG_SIZE = 0x2003;
 constexpr u_long FIONBIO = 126;
 constexpr u_long FIONREAD = 127;
 
+constexpr int IPPROTO_IPV6 = 41;
+constexpr int IPV6_V6ONLY = 27;
+
 struct sockaddr
 { 
    uint16_t sa_family;
@@ -59,7 +64,6 @@ struct sockaddr_in
    in_addr  sin_addr;
    char     sin_zero[8];
 };
-
 struct addrinfo
 {
    int       ai_flags;

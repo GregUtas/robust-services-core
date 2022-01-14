@@ -91,7 +91,7 @@ public:
    //
    void Initialize(const std::string& source, CodeFile* file = nullptr);
 
-   //  Returns the code on POS's line, removing its endline if CRLF if FALSE.
+   //  Returns the code on POS's line, removing its endline if CRLF is FALSE.
    //  Returns EMPTY_STR if POS is out of range.
    //
    std::string GetCode(size_t pos, bool crlf = true) const;

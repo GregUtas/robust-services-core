@@ -24,6 +24,7 @@
 #include <set>
 #include <sstream>
 #include <utility>
+#include "Algorithms.h"
 #include "CodeFile.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
@@ -2929,6 +2930,15 @@ TypeMatch Function::CalcConstructibilty
    }
 
    return Incompatible;
+}
+
+//------------------------------------------------------------------------------
+
+uint32_t Function::CalcHash() const
+{
+   std::ostringstream source;
+   Display(source, EMPTY_STR, Code_Mask);
+   return string_hash(source.str().c_str());
 }
 
 //------------------------------------------------------------------------------

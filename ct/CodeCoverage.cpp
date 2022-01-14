@@ -163,6 +163,8 @@ word CodeCoverage::Build(std::ostringstream& expl)
    return 0;
 }
 
+//------------------------------------------------------------------------------
+
 bool CodeCoverage::Commit(const Functions& funcs)
 {
    Debug::ft("CodeCoverage.Commit");

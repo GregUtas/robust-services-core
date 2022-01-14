@@ -1253,6 +1253,11 @@ public:
    //
    bool ContainsTemplateParameter() const;
 
+   //  Instantiates a function template instance based on TYPE.  If it has
+   //  already been instantiated, it is found and returned.
+   //
+   Function* InstantiateFunction(const TypeName* type) const;
+
    //  Pushes an implicit "this" argument that may be needed later.
    //
    void PushThisArg(StackArgVector& args) const;
@@ -1316,6 +1321,10 @@ public:
    //
    bool SignatureMatches(const Function* that, bool base) const;
 
+   //  Returns an argument based on the function's return type.
+   //
+   StackArg ResultType() const;
+
    //  Registers a read on the function's "this" argument.
    //
    void IncrThisReads() const;
@@ -1337,6 +1346,11 @@ public:
    //
    Warning Invoke(StackArgVector* args);
 
+   //  Tracks how many times the function was invoked, and propagates
+   //  constructor and destructor invocations up the class hierarchy.
+   //
+   void WasCalled();
+
    //  Returns true if the function was invoked.  Considers virtuality.
    //
    bool HasInvokers() const;
@@ -1346,14 +1360,13 @@ public:
    //
    bool IsInvokedInBase() const;
 
-   //  Returns an argument based on the function's return type.
+   //  Returns the function's overrides.
    //
-   StackArg ResultType() const;
+   const FunctionVector& GetOverrides() const { return overs_; }
 
-   //  Instantiates a function template instance based on TYPE.  If it has
-   //  already been instantiated, it is found and returned.
+   //  Returns a hash of the function's definition.
    //
-   Function* InstantiateFunction(const TypeName* type) const;
+   uint32_t CalcHash() const;
 
    //  Returns the function's name for Debug::ft purposes.
    //
@@ -1364,18 +1377,9 @@ public:
    //
    bool CheckDebugName(const std::string& str) const;
 
-   //  Returns the function's overrides.
-   //
-   const FunctionVector& GetOverrides() const { return overs_; }
-
    //  Displays the function's declaration.
    //
    void DisplayDecl(std::ostream& stream, const NodeBase::Flags& options) const;
-
-   //  Tracks how many times the function was invoked, and propagates
-   //  constructor and destructor invocations up the class hierarchy.
-   //
-   void WasCalled();
 
    //  Overridden to log warnings associated with the function.
    //

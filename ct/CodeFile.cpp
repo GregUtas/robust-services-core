@@ -27,7 +27,6 @@
 #include <iterator>
 #include <sstream>
 #include <utility>
-#include "Algorithms.h"
 #include "CodeCoverage.h"
 #include "CodeDir.h"
 #include "CodeFileSet.h"
@@ -612,9 +611,7 @@ void CodeFile::CheckDebugFt()
 
       auto last = editor_.GetLineNum(end);
       auto open = false, debug = false, code = false;
-      std::ostringstream source;
-      (*f)->Display(source, EMPTY_STR, Code_Mask);
-      auto hash = string_hash(source.str().c_str());
+      auto hash = (*f)->CalcHash();
 
       for(auto n = editor_.GetLineNum(begin); n < last; ++n)
       {
@@ -1486,7 +1483,8 @@ bool CodeFile::GetFnName(size_t line, string& fname, Data*& data) const
    string statement;
 
    if(!editor_.GetNthLine(line, statement)) return false;
-   if(statement.find("Debug::ft") == string::npos) return false;
+   const auto& lines = editor_.GetLinesInfo();
+   if(lines[line].type != DebugFt) return false;
 
    auto lpar = statement.find('(');
    if(lpar == string::npos) return false;

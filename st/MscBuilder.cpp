@@ -47,10 +47,10 @@ namespace SessionTools
 fixed_string MscHeader  = "MESSAGE SEQUENCE CHART";
 fixed_string MscTrailer = "END OF MSC";
 
-constexpr MscColumn FirstCol = (ColWidth / 2);  // column for first vertical line
-constexpr size_t MinMsgLine = 5;                // minimum length of horizontal line
-constexpr size_t TimeGap = 3;               // spacing between event times
-constexpr size_t TimeLen = 9;               // length of an event time (mm:ss.msecs)
+constexpr MscColumn FirstCol = (ColWidth / 2);  // column for 1st vertical line
+constexpr size_t MinMsgLine = 5;  // minimum length of horizontal line
+constexpr size_t TimeGap = 3;     // spacing between event times
+constexpr size_t TimeLen = 9;     // length of an event time (mm:ss.msecs)
 
 constexpr char IdleCtx   = ':';
 constexpr char ActiveCtx = '|';

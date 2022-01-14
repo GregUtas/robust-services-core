@@ -188,7 +188,11 @@ void Debug::SwLog(fn_name_arg func,
       *log << CRLF;
 
       *log << Log::Tab << "expl=" << errstr;
-      *log << "  errval=" << HexPrefixStr;
+      if(!errstr.empty() && (errstr.back() == CRLF))
+         *log << Log::Tab;
+      else
+         *log << spaces(2);
+      *log << "errval=" << HexPrefixStr;
       *log << std::hex << errval << std::dec << CRLF;
 
       if(stack) SysThreadStack::Display(*log, 1);

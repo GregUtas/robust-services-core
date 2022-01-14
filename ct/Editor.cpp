@@ -94,11 +94,11 @@ static void Inform(string text);
 //
 //  Return codes from editor functions.
 //
-const word EditAbort = -2;     // stream error or fix not implemented
-const word EditFailed = -1;    // could not fix; write info to CLI
-const word EditSucceeded = 0;  // warning fixed; write info to CLI
-const word EditContinue = 0;   // continue with edit
-const word EditCompleted = 1;  // warning closed; don't write info to CLI
+constexpr word EditAbort = -2;     // stream error or fix not implemented
+constexpr word EditFailed = -1;    // could not fix; write info to CLI
+constexpr word EditSucceeded = 0;  // warning fixed; write info to CLI
+constexpr word EditContinue = 0;   // continue with edit
+constexpr word EditCompleted = 1;  // warning closed; don't write info to CLI
 
 //  The last result.  It, and the two functions that manage it, are similar
 //  to the SetLastError/GetLastError interface.  Based on the return code,
@@ -611,14 +611,16 @@ static void DebugFtNames(const Function* func, string& flit, string& fvar)
 //  is not unique and the user did not provide a satisfactory suffix, else
 //  returns true after enclosing FNAME in quotes.
 //
-static bool EnsureUniqueDebugFtName(const string& flit, string& fname)
+static bool EnsureUniqueDebugFtName
+   (const Function* func, const string& flit, string& fname)
 {
    Debug::ft("CodeTools.EnsureUniqueDebugFtName");
 
    auto coverdb = Singleton< CodeCoverage >::Instance();
+   auto hash = func->CalcHash();
    fname = flit;
 
-   while(coverdb->Defined(fname))
+   while(!coverdb->Insert(fname, hash))
    {
       std::ostringstream stream;
       stream << spaces(2) << fname << " is already in use. " << SuffixPrompt;
@@ -4235,7 +4237,7 @@ word Editor::InsertDebugFtCall(const CodeWarning& log)
       //  No fn_name was defined, so use FLIT.  If another function already
       //  uses that name, prompt the user for a suffix.
       //
-      if(!EnsureUniqueDebugFtName(flit, arg))
+      if(!EnsureUniqueDebugFtName(func, flit, arg))
          return Report(FixSkipped);
    }
 
@@ -4796,7 +4798,7 @@ void Editor::InsertSpecialFuncDefn(const Class* cls, const ItemDefnAttrs& attrs)
 
 //------------------------------------------------------------------------------
 
-const size_t MaxRoleWarning = 15;
+constexpr size_t MaxRoleWarning = 15;
 
 struct RoleWarning
 {
@@ -5162,7 +5164,12 @@ size_t Editor::Paste(size_t pos, const std::string& code, size_t from)
 
    if(from != lastErasePos_)
    {
-      Debug::SwLog(Editor_Paste, "Illegal Paste operation: " + code, from);
+      string expl("Illegal Paste operation: ");
+      auto crlf = code.find(CRLF) >= (code.size() - 1);
+      if(crlf) expl.push_back(CRLF);
+      expl.append(code);
+      if(crlf && (code.back() != CRLF)) expl.push_back(CRLF);
+      Debug::SwLog(Editor_Paste, expl, from);
       return string::npos;
    }
 
@@ -5440,9 +5447,10 @@ word Editor::RenameDebugFtArgument(const CodeWarning& log)
    //  in use, prompt the user for a unique suffix.
    //
    string flit, fvar, fname;
+   auto func = static_cast<const Function*>(log.item_);
 
-   DebugFtNames(static_cast< const Function* >(log.item_), flit, fvar);
-   if(!EnsureUniqueDebugFtName(flit, fname))
+   DebugFtNames(func, flit, fvar);
+   if(!EnsureUniqueDebugFtName(func, flit, fname))
       return Report(FixSkipped);
 
    if(arg->Type() == Cxx::StringLiteral)
@@ -6635,11 +6643,12 @@ void Editor::UpdatePos
       lastInsertSize_ = 0;
       break;
 
-   case Inserted:
    case Pasted:
-      lastInsertSize_ = count;
       lastErasePos_ = string::npos;
       lastEraseSize_ = 0;
+      //  [[fallthrough]]
+   case Inserted:
+      lastInsertSize_ = count;
    }
 
    Update();

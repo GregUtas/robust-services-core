@@ -303,11 +303,10 @@ word InjectCommand::ProcessCommand(CliThread& cli) const
       if(failed) *cli.obuf << spaces(2) << SendFailure << CRLF;
    }
 
-   //  If the message could not be sent, delete it, else report success.
+   //  If the message could not be sent, report failure.
    //
    if(failed)
    {
-      delete msg;
       return -3;
    }
 

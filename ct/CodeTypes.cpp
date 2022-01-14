@@ -499,8 +499,8 @@ const string& SingleRule()
 
 //------------------------------------------------------------------------------
 
-const bool F = false;
-const bool T = true;
+constexpr bool F = false;
+constexpr bool T = true;
 
 //------------------------------------------------------------------------------
 

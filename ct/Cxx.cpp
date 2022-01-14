@@ -405,8 +405,8 @@ void Cxx::Initialize()
 
 //==============================================================================
 
-const bool F = false;
-const bool T = true;
+constexpr bool F = false;
+constexpr bool T = true;
 
 const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
 {

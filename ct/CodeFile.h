@@ -396,9 +396,10 @@ private:
    //
    void CheckOverrideOrder() const;
 
-   //  Checks invocations of Debug::ft.
+   //  Checks invocations of Debug::ft.  RECHECK is set if the file has already
+   //  been checked.
    //
-   void CheckDebugFt();
+   void CheckDebugFt(bool recheck);
 
    //  If the code on LINE invokes Debug::ft, updates FNAME to the string that
    //  identifies the function, and DATA to either nullptr or the fn_name for

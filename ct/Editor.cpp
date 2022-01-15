@@ -1021,7 +1021,7 @@ static void Rename(string& code, const string& oldName, const string& newName)
 
 static word Report(fixed_string text, word rc = EditFailed)
 {
-   Debug::ft("CodeTools.Report");
+   Debug::ft("CodeTools.Report(Editor)");
 
    SetExpl(text);
    return rc;

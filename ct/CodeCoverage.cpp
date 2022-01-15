@@ -49,7 +49,7 @@ namespace CodeTools
 //
 static word Report(word rc, const std::ostringstream& stream, string& expl)
 {
-   Debug::ft("CodeTools.Report");
+   Debug::ft("CodeTools.Report(CodeCoverage)");
 
    expl = stream.str();
    return rc;
@@ -194,15 +194,6 @@ bool CodeCoverage::Commit(const Functions& funcs)
 
    *stream << DELIMITER << CRLF;
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeCoverage::Defined(const string& func) const
-{
-   Debug::ft("CodeCoverage.Defined");
-
-   return (currFuncs_.find(Mangle(func)) != currFuncs_.cend());
 }
 
 //------------------------------------------------------------------------------
@@ -357,7 +348,7 @@ bool CodeCoverage::Insert(const string& func, uint32_t hash)
 
    auto name = Mangle(func);
    auto iter = currFuncs_.find(name);
-   if(iter != currFuncs_.cend()) return false;
+   if(iter != currFuncs_.cend()) return (iter->second.hash == hash);
 
    FuncInfo info(hash);
    auto result = currFuncs_.insert(FuncData(name, info));

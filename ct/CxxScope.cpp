@@ -75,7 +75,7 @@ static bool EraseTemplateArguments(string& prefix)
 static Function* FoundFunc
    (Function* func, const StackArgVector& args, TypeMatch& match)
 {
-   Debug::ft("CodeTools.FoundFunc");
+   Debug::ft("CodeTools.FoundFunc(CxxScope)");
 
    if(func != nullptr)
    {

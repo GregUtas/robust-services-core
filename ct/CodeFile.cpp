@@ -540,6 +540,7 @@ void CodeFile::Check(bool force)
 
    if(checked_ && !force) return;
 
+   auto recheck = checked_;
    checked_ = false;
    Debug::Progress(Name() + CRLF);
 
@@ -575,7 +576,7 @@ void CodeFile::Check(bool force)
    CheckLineBreaks();
    CheckOverrideOrder();
    CheckFunctionOrder();
-   CheckDebugFt();
+   CheckDebugFt(recheck);
    CheckIncludes();
    CheckIncludeOrder();
    checked_ = true;
@@ -583,7 +584,7 @@ void CodeFile::Check(bool force)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::CheckDebugFt()
+void CodeFile::CheckDebugFt(bool recheck)
 {
    Debug::ft("CodeFile.CheckDebugFt");
 
@@ -592,8 +593,6 @@ void CodeFile::CheckDebugFt()
    size_t begin, left, end;
    string fname;
    Data* data;
-
-   coverdb->Clear();
 
    //  For each function in this file, find the lines on which it begins
    //  and ends.  Within those lines, look for invocations of Debug::ft.
@@ -642,7 +641,7 @@ void CodeFile::CheckDebugFt()
                {
                   LogPos(editor_.GetLineStart(n), DebugFtNameMismatch, *f);
                }
-               else if(!debug && !coverdb->Insert(fname, hash))
+               else if(!recheck && !coverdb->Insert(fname, hash))
                {
                   LogPos(editor_.GetLineStart(n), DebugFtNameDuplicated, *f);
                }

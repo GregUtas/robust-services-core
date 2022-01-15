@@ -68,7 +68,7 @@ static size_t CreateCodeError(const string& name, debug64_t offset)
 //
 static Function* FoundFunc(Function* func, SymbolView* view, TypeMatch match)
 {
-   Debug::ft("CodeTools.FoundFunc");
+   Debug::ft("CodeTools.FoundFunc(CxxArea)");
 
    if(view != nullptr) view->match_ = match;
    return func;

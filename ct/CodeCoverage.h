@@ -52,19 +52,10 @@ public:
    //
    CodeCoverage& operator=(const CodeCoverage& that) = delete;
 
-   //  Clears the current database before inserting all of the functions in the
-   //  library.
-   //
-   void Clear() { currFuncs_.clear(); }
-
    //  Adds FUNC to the functions that invoke Debug::ft.  HASH is the hash value
    //  for its source code.  Returns false if FUNC is already in use.
    //
    bool Insert(const std::string& func, uint32_t hash);
-
-   //  Returns true if the name FUNC is already in use.
-   //
-   bool Defined(const std::string& func) const;
 
    //  Updates EXPL with the outcome of loading the database.  Returns a
    //  non-zero value on failure.

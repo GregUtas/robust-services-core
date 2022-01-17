@@ -548,7 +548,7 @@ private:
    //  to see if the thread should exit now or sleep until the restart ends.
    //  Returns true if the thread plans to exit, and false if it will sleep.
    //
-   bool Restarting(RestartLevel level);
+   bool Restarting(RestartLevel level) const;
 
    //  Returns the amount of time still available to the locked thread.
    //  Returns ZERO_SECS if the thread has used up all of its time.

@@ -28,6 +28,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <vector>
 #include "Debug.h"
 #include "Duration.h"
 #include "Element.h"
@@ -37,6 +38,7 @@
 #include "Memory.h"
 #include "Module.h"
 #include "NbLogs.h"
+#include "NbSignals.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "ThisThread.h"
@@ -339,22 +341,29 @@ void ModuleRegistry::Shutdown(RestartLevel level)
 
    auto reg = Singleton< ThreadRegistry >::Instance();
    auto before = reg->Threads().size();
-   auto planned = reg->Restarting(level);
+   auto exiting = reg->Restarting(level);
    size_t actual = 0;
 
-   //  Report PLANNED, the number of threads that plan to exit.  Schedule
-   //  threads until the planned number have exited.  If some fail to exit,
-   //  RootThread will time out and escalate the restart.
+   //  Report the number of threads that plan to exit.  Signal the threads
+   //  that will exit and schedule threads until the planned number have
+   //  exited.  If some fail to exit, RootThread will time out and escalate
+   //  the restart.
    //
-   *Stream() << ExitingThreadsStr << setw(2) << planned;
+   *Stream() << ExitingThreadsStr << setw(2) << exiting.size();
    *Stream() << setw(36 - (strlen(ExitingThreadsStr) + 2));
+
+   for(auto t = exiting.cbegin(); t != exiting.cend(); ++t)
+   {
+      (*t)->Raise(SIGCLOSE);
+   }
+
    auto elapsed = TimePoint::Now() - zeroTime;
    *Stream() << elapsed.To(mSECS) << CRLF;
    Log::Submit(stream_);
 
    Thread::EnableFactions(AllFactions());
    {
-      while(actual < planned)
+      while(actual < exiting.size())
       {
          Thread::SwitchContext();
          ThisThread::Pause(delay);

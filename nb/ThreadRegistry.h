@@ -183,9 +183,9 @@ private:
    Thread* Select() const;
 
    //  Informs all threads that a restart is occurring.  Returns the
-   //  number of threads that will exit instead of sleeping.
+   //  threads that will exit instead of sleeping.
    //
-   size_t Restarting(RestartLevel level) const;
+   std::vector< Thread* > Restarting(RestartLevel level) const;
 
    //  Sets THREAD's ThreadId when adding it to the registry.
    //

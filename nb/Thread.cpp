@@ -2694,18 +2694,14 @@ void Thread::ResetFlags()
 
 //------------------------------------------------------------------------------
 
-bool Thread::Restarting(RestartLevel level)
+bool Thread::Restarting(RestartLevel level) const
 {
    Debug::ft("Thread.Restarting");
 
    //  If the thread is willing to exit, signal it.  ModuleRegistry.Shutdown
-   //  will momentarily schedule it so that it can exit.
+   //  will momentarily signal and schedule it so that it can exit.
    //
-   if(ExitOnRestart(level))
-   {
-      Raise(SIGCLOSE);
-      return true;
-   }
+   if(ExitOnRestart(level)) return true;
 
    //  Unless this is RootThread or InitThread, mark it as a survivor.  This
    //  causes various functions to force it to sleep until the restart ends.

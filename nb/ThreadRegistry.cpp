@@ -382,20 +382,23 @@ void ThreadRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-size_t ThreadRegistry::Restarting(RestartLevel level) const
+std::vector< Thread* > ThreadRegistry::Restarting(RestartLevel level) const
 {
    Debug::ft("ThreadRegistry.Restarting");
 
-   size_t count = 0;
+   std::vector< Thread* > exiting;
 
    auto threads = GetThreads();
 
    for(auto t = threads.rbegin(); t != threads.rend(); ++t)
    {
-      if((*t)->Restarting(level)) ++count;
+      if((*t)->Restarting(level))
+      {
+         exiting.push_back(*t);
+      }
    }
 
-   return count;
+   return exiting;
 }
 
 //------------------------------------------------------------------------------

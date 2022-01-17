@@ -202,8 +202,9 @@ bool CfgParm::SetValue(c_string input, RestartLevel& level)
 
    FunctionGuard guard(Guard_MemUnprotect);
    if(!SetNext(input)) return false;
-   level = RestartRequired();
-   if(level == RestartNone) SetCurr();
+   level_ = RestartRequired();
+   level = level_;
+   if(level_ == RestartNone) SetCurr();
    return true;
 }
 }

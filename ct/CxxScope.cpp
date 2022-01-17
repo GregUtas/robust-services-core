@@ -1145,7 +1145,7 @@ CodeFile* CxxScope::FindFileForStatic() const
       if(files.size() > 1) return nullptr;
    }
 
-   if(files.empty()) return nullptr;
+   if(files.empty()) return GetDefnFile();
    auto file = *files.cbegin();
    if(file->IsHeader()) return nullptr;
    return file;

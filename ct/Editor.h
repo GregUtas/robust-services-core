@@ -662,10 +662,6 @@ private:
    //  The number of characters erased or inserted during the last edit.
    //
    size_t lastEraseSize_;
-
-   //  The number of characters erased or inserted during the last edit.
-   //
-   size_t lastInsertSize_;
 };
 }
 #endif

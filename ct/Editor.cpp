@@ -1084,8 +1084,7 @@ Editor::Editor() :
    sorted_(false),
    aliased_(false),
    lastErasePos_(string::npos),
-   lastEraseSize_(0),
-   lastInsertSize_(0)
+   lastEraseSize_(0)
 {
    Debug::ft("Editor.ctor");
 }
@@ -6640,15 +6639,12 @@ void Editor::UpdatePos
    case Erased:
       lastErasePos_ = begin;
       lastEraseSize_ = count;
-      lastInsertSize_ = 0;
       break;
 
    case Pasted:
       lastErasePos_ = string::npos;
       lastEraseSize_ = 0;
-      //  [[fallthrough]]
-   case Inserted:
-      lastInsertSize_ = count;
+      break;
    }
 
    Update();

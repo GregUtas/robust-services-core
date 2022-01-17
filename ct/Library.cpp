@@ -750,7 +750,7 @@ void Library::Shutdown(RestartLevel level)
 
 string Library::SourcePath() const
 {
-   auto path = sourcePathCfg_->GetValue();
+   auto path = sourcePathCfg_->CurrValue();
    if(strlen(path) > 0) return path;
    return Element::RscPath();
 }

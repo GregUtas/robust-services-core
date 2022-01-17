@@ -48,7 +48,7 @@ public:
 
    //  Returns the port on which the service is configured.
    //
-   ipport_t GetPort() const { return ipport_t(GetValue()); }
+   ipport_t GetPort() const { return ipport_t(CurrValue()); }
 
    //  Overridden to display member variables.
    //

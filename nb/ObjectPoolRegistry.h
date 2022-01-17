@@ -62,7 +62,7 @@ public:
 
    //  Returns true if full object nullification is enabled.
    //
-   bool NullifyObjectData() const { return nullifyObjectDataCfg_->GetValue(); }
+   bool NullifyObjectData() const { return nullifyObjectDataCfg_->CurrValue(); }
 
    //  Overridden to display member variables.
    //

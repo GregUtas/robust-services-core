@@ -152,9 +152,9 @@ bool PayloadInvokerPool::RejectIngressWork() const
    Debug::ft("PayloadInvokerPool.RejectIngressWork");
 
    auto msgCount = Singleton< MessagePool >::Instance()->AvailCount();
-   auto msgOvld = (msgCount <= size_t(noIngressMessageCount_->GetValue()));
+   auto msgOvld = (msgCount <= size_t(noIngressMessageCount_->CurrValue()));
    auto workLength = WorkQCurrLength(INGRESS);
-   auto workOvld = (workLength >= size_t(noIngressQueueLength_->GetValue()));
+   auto workOvld = (workLength >= size_t(noIngressQueueLength_->CurrValue()));
 
    if(msgOvld || workOvld)
    {

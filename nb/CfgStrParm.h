@@ -45,7 +45,7 @@ public:
 
    //  Returns the parameter's current value.
    //
-   c_string GetValue() const { return curr_.c_str(); }
+   c_string CurrValue() const { return curr_.c_str(); }
 
    //  Overridden to display member variables.
    //
@@ -56,6 +56,10 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
+   //  Returns the parameter's next value.
+   //
+   c_string NextValue() const { return next_.c_str(); }
+
    //  Overridden to prefix the parameter's type and allowed values.
    //
    void Explain(std::string& expl) const override;

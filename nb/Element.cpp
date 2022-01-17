@@ -143,7 +143,7 @@ string Element::Name()
 {
    auto element = Singleton< Element >::Extant();
    if(element == nullptr) return DefaultElementName;
-   return element->nameCfg_->GetValue();
+   return element->nameCfg_->CurrValue();
 }
 
 //------------------------------------------------------------------------------
@@ -205,7 +205,7 @@ bool Element::RunningInLab()
    //  create this class until it is required for another purpose.
    //
    auto element = Singleton< Element >::Extant();
-   if(element != nullptr) return element->runningInLabCfg_->GetValue();
+   if(element != nullptr) return element->runningInLabCfg_->CurrValue();
 
 #ifndef FIELD_LOAD
    return true;

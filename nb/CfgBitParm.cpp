@@ -73,6 +73,18 @@ CfgBitParm::~CfgBitParm()
 
 //------------------------------------------------------------------------------
 
+fn_name CfgBitParm_CurrValue = "CfgBitParm.CurrValue";
+
+bool CfgBitParm::CurrValue() const
+{
+   Debug::ft(CfgBitParm_CurrValue);
+
+   Debug::SwLog(CfgBitParm_CurrValue, strOver(this), 0);
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 void CfgBitParm::Explain(string& expl) const
 {
    CfgParm::Explain(expl);
@@ -86,20 +98,20 @@ string CfgBitParm::GetCurr() const
 {
    Debug::ft("CfgBitParm.GetCurr");
 
-   string s = (GetValue() ? ValidTrueChars() : ValidFalseChars());
+   string s = (CurrValue() ? ValidTrueChars() : ValidFalseChars());
    s.erase(1);
    return s;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CfgBitParm_GetValue = "CfgBitParm.GetValue";
+fn_name CfgBitParm_NextValue = "CfgBitParm.NextValue";
 
-bool CfgBitParm::GetValue() const
+bool CfgBitParm::NextValue() const
 {
-   Debug::ft(CfgBitParm_GetValue);
+   Debug::ft(CfgBitParm_NextValue);
 
-   Debug::SwLog(CfgBitParm_GetValue, strOver(this), 0);
+   Debug::SwLog(CfgBitParm_NextValue, strOver(this), 0);
    return false;
 }
 

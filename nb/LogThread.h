@@ -71,7 +71,7 @@ private:
    //  spooling logs.
    //
    size_t NoSpoolingMessageCount() const
-      { return noSpoolingMessageCount_->GetValue(); }
+      { return noSpoolingMessageCount_->CurrValue(); }
 
    //  Overridden to return a name for the thread.
    //

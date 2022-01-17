@@ -772,7 +772,7 @@ void InvokerPool::Startup(RestartLevel level)
    Debug::ft("InvokerPool.Startup");
 
    auto daemon =
-      InvokerDaemon::GetDaemon(GetFaction(), invokersCfg_->GetValue());
+      InvokerDaemon::GetDaemon(GetFaction(), invokersCfg_->CurrValue());
    daemon->CreateThreads();
 }
 

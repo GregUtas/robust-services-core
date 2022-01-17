@@ -186,8 +186,8 @@ void BreakEnabledCfg::SetCurr()
 {
    Debug::ft("BreakEnabledCfg.SetCurr");
 
-   auto curr = GetValue();
-   auto next = GetNextValue();
+   auto curr = CurrValue();
+   auto next = NextValue();
 
    CfgBoolParm::SetCurr();
 
@@ -294,7 +294,7 @@ bool ThreadAdmin::BreakEnabled()
    if(!Element::RunningInLab()) return false;
 
    auto self = AccessAdminData();
-   return (self != nullptr ? self->breakEnabled_->GetValue() : false);
+   return (self != nullptr ? self->breakEnabled_->CurrValue() : false);
 }
 
 //------------------------------------------------------------------------------
@@ -439,7 +439,7 @@ Duration ThreadAdmin::InitTimeout()
    Debug::ft("ThreadAdmin.InitTimeout");
 
    auto self = AccessAdminData();
-   auto msecs = (self != nullptr ? self->initTimeoutMsecs_->GetValue() : 2000);
+   auto msecs = (self != nullptr ? self->initTimeoutMsecs_->CurrValue() : 2000);
    return Duration(msecs, mSECS) << WarpFactor();
 }
 
@@ -455,7 +455,7 @@ void ThreadAdmin::Patch(sel_t selector, void* arguments)
 bool ThreadAdmin::ReinitOnSchedTimeout()
 {
    auto self = AccessAdminData();
-   return (self != nullptr ? self->reinitOnSchedTimeout_->GetValue() : true);
+   return (self != nullptr ? self->reinitOnSchedTimeout_->CurrValue() : true);
 }
 
 //------------------------------------------------------------------------------
@@ -463,7 +463,7 @@ bool ThreadAdmin::ReinitOnSchedTimeout()
 word ThreadAdmin::RtcInterval()
 {
    auto self = AccessAdminData();
-   return (self != nullptr ? self->rtcInterval_->GetValue() : 60);
+   return (self != nullptr ? self->rtcInterval_->CurrValue() : 60);
 }
 
 //------------------------------------------------------------------------------
@@ -471,7 +471,7 @@ word ThreadAdmin::RtcInterval()
 word ThreadAdmin::RtcLimit()
 {
    auto self = AccessAdminData();
-   return (self != nullptr ? self->rtcLimit_->GetValue() : 6);
+   return (self != nullptr ? self->rtcLimit_->CurrValue() : 6);
 }
 
 //------------------------------------------------------------------------------
@@ -479,7 +479,7 @@ word ThreadAdmin::RtcLimit()
 Duration ThreadAdmin::RtcTimeout()
 {
    auto self = AccessAdminData();
-   auto msecs = (self != nullptr ? self->rtcTimeoutMsecs_->GetValue() : 20);
+   auto msecs = (self != nullptr ? self->rtcTimeoutMsecs_->CurrValue() : 20);
    return Duration(msecs, mSECS);
 }
 
@@ -488,7 +488,7 @@ Duration ThreadAdmin::RtcTimeout()
 Duration ThreadAdmin::SchedTimeout()
 {
    auto self = AccessAdminData();
-   auto msecs = (self != nullptr ? self->schedTimeoutMsecs_->GetValue() : 100);
+   auto msecs = (self != nullptr ? self->schedTimeoutMsecs_->CurrValue() : 100);
    return Duration(msecs, mSECS);
 }
 
@@ -508,7 +508,7 @@ void ThreadAdmin::Shutdown(RestartLevel level)
 word ThreadAdmin::StackCheckInterval()
 {
    auto self = AccessAdminData();
-   return (self != nullptr ? self->stackCheckInterval_->GetValue() : 1);
+   return (self != nullptr ? self->stackCheckInterval_->CurrValue() : 1);
 }
 
 //------------------------------------------------------------------------------
@@ -516,7 +516,7 @@ word ThreadAdmin::StackCheckInterval()
 word ThreadAdmin::StackUsageLimit()
 {
    auto self = AccessAdminData();
-   return (self != nullptr ? self->stackUsageLimit_->GetValue() : 8000);
+   return (self != nullptr ? self->stackUsageLimit_->CurrValue() : 8000);
 }
 
 //------------------------------------------------------------------------------
@@ -560,7 +560,7 @@ word ThreadAdmin::TrapCount()
 word ThreadAdmin::TrapInterval()
 {
    auto self = AccessAdminData();
-   return (self != nullptr ? self->trapInterval_->GetValue() : 60);
+   return (self != nullptr ? self->trapInterval_->CurrValue() : 60);
 }
 
 //------------------------------------------------------------------------------
@@ -568,7 +568,7 @@ word ThreadAdmin::TrapInterval()
 word ThreadAdmin::TrapLimit()
 {
    auto self = AccessAdminData();
-   return (self != nullptr ? self->trapLimit_->GetValue() : 4);
+   return (self != nullptr ? self->trapLimit_->CurrValue() : 4);
 }
 
 //------------------------------------------------------------------------------
@@ -576,7 +576,7 @@ word ThreadAdmin::TrapLimit()
 bool ThreadAdmin::TrapOnRtcTimeout()
 {
    auto self = AccessAdminData();
-   return (self != nullptr ? self->trapOnRtcTimeout_->GetValue() : true);
+   return (self != nullptr ? self->trapOnRtcTimeout_->CurrValue() : true);
 }
 
 //------------------------------------------------------------------------------

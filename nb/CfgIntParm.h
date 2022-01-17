@@ -44,7 +44,7 @@ public:
 
    //  Returns the parameter's current value.
    //
-   word GetValue() const { return curr_; }
+   word CurrValue() const { return curr_; }
 
    //  Overridden to display member variables.
    //
@@ -61,11 +61,15 @@ protected:
    //
    virtual bool SetNextValue(word value);
 
+   //  Returns the parameter's next value.
+   //
+   word NextValue() const { return next_; }
+
    //  Overridden to prefix the parameter's type and allowed values.
    //
    void Explain(std::string& expl) const override;
 
-   //  Calls GetValue and maps the result to a string that corresponds
+   //  Calls CurrValue and maps the result to a string that corresponds
    //  to the parameter's current value.
    //
    std::string GetCurr() const override;

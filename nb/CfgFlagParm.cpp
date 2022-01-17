@@ -52,6 +52,13 @@ CfgFlagParm::~CfgFlagParm()
 
 //------------------------------------------------------------------------------
 
+bool CfgFlagParm::CurrValue() const
+{
+   return curr_->test(fid_);
+}
+
+//------------------------------------------------------------------------------
+
 void CfgFlagParm::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -64,9 +71,9 @@ void CfgFlagParm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-bool CfgFlagParm::GetValue() const
+bool CfgFlagParm::NextValue() const
 {
-   return curr_->test(fid_);
+   return next_;
 }
 
 //------------------------------------------------------------------------------

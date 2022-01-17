@@ -101,6 +101,7 @@ public:
 protected:
    void SetCurr() override;
 private:
+   RestartLevel RestartRequired() const override;
    ObjectPool* const pool_;
 };
 
@@ -123,6 +124,16 @@ ObjectPoolSizeCfg::~ObjectPoolSizeCfg()
    Debug::ftnt(ObjectPoolSizeCfg_dtor);
 
    Debug::SwLog(ObjectPoolSizeCfg_dtor, UnexpectedInvocation, 0);
+}
+
+//------------------------------------------------------------------------------
+
+RestartLevel ObjectPoolSizeCfg::RestartRequired() const
+{
+   Debug::ft("ObjectPoolSizeCfg.RestartRequired");
+
+   if(NextValue() > CurrValue()) return RestartNone;
+   return Restart::LevelToClear(pool_->BlockType());
 }
 
 //------------------------------------------------------------------------------
@@ -294,7 +305,7 @@ bool ObjectPool::AllocBlocks()
 {
    Debug::ft("ObjectPool.AllocBlocks");
 
-   while(word(currSegments_) < targSegmentsCfg_->GetValue())
+   while(word(currSegments_) < targSegmentsCfg_->CurrValue())
    {
       auto pid = Pid();
       auto size = sizeof(uword) * segSize_;
@@ -307,7 +318,7 @@ bool ObjectPool::AllocBlocks()
          if(log != nullptr)
          {
             *log << Log::Tab << "pool=" << int(pid);
-            *log << " target=" << targSegmentsCfg_->GetValue();
+            *log << " target=" << targSegmentsCfg_->CurrValue();
             *log << " actual=" << currSegments_;
             Log::Submit(log);
          }

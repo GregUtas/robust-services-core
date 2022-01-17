@@ -43,6 +43,10 @@ public:
    //
    virtual ~CfgFlagParm();
 
+   //  Overridden to return the parameter's current value.
+   //
+   bool CurrValue() const override;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -52,9 +56,9 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Overridden to return the parameter's current value.
+   //  Overridden to return the parameter's next value.
    //
-   bool GetValue() const override;
+   bool NextValue() const override;
 
    //  Overridden to transfer next_ to curr_.
    //

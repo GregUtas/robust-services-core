@@ -328,7 +328,7 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
       {
          //s Handle Connect() error.
          //
-         OutputLog(NetworkSocketError, "Connect", &buff);
+         OutputLog(NetworkSocketError, "connect", &buff);
          return SendFailed;
       }
    }
@@ -374,7 +374,7 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
 
       //s Handle Send() error.
       //
-      OutputLog(NetworkSocketError, "Send", &buff);
+      OutputLog(NetworkSocketError, "send", &buff);
       return SendFailed;
    }
 

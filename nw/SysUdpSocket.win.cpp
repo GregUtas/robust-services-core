@@ -23,7 +23,9 @@
 
 #include "SysUdpSocket.h"
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #include "Debug.h"
+#include "IpPortRegistry.h"
 #include "SysIpL3Addr.h"
 #include "UdpIpService.h"
 
@@ -65,9 +67,6 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
 {
    Debug::ft(SysUdpSocket_RecvFrom);
 
-   sockaddr_in peer;
-   int peersize = sizeof(peer);
-
    if(buff == nullptr)
    {
       Debug::SwLog(SysUdpSocket_RecvFrom, "invalid buffer", 0);
@@ -80,8 +79,26 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
       return 0;
    }
 
-   auto rcvd = recvfrom(Socket(), reinterpret_cast< char* >(buff),
-      size, 0, (sockaddr*) &peer, &peersize);
+   sockaddr_in ipv4peer;
+   sockaddr_in6 ipv6peer;
+   sockaddr* peer = nullptr;
+   int peersize = 0;
+
+   auto ipv6 = IpPortRegistry::UseIPv6();
+
+   if(ipv6)
+   {
+      peer = (sockaddr*) &ipv6peer;
+      peersize = sizeof(ipv6peer);
+   }
+   else
+   {
+      peer = (sockaddr*) &ipv4peer;
+      peersize = sizeof(ipv4peer);
+   }
+
+   auto rcvd = recvfrom(Socket(),
+      reinterpret_cast< char* >(buff), size, 0, peer, &peersize);
 
    if(rcvd == SOCKET_ERROR)
    {
@@ -90,7 +107,10 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
       return -1;
    }
 
-   remAddr = SysIpL3Addr(ntohl(peer.sin_addr.s_addr), ntohs(peer.sin_port));
+   if(ipv6)
+      remAddr.NetworkToHost(ipv6peer.sin6_addr.s6_words, ipv6peer.sin6_port);
+   else
+      remAddr.NetworkToHost(ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
    return rcvd;
 }
 
@@ -102,9 +122,6 @@ word SysUdpSocket::SendTo
    (const byte_t* data, size_t size, const SysIpL3Addr& remAddr)
 {
    Debug::ft(SysUdpSocket_SendTo);
-
-   sockaddr_in peer;
-   int peersize = sizeof(peer);
 
    if(data == nullptr)
    {
@@ -120,12 +137,32 @@ word SysUdpSocket::SendTo
 
    if(!SetBlocking(false)) return GetError();
 
-   peer.sin_family = AF_INET;
-   peer.sin_addr.s_addr = htonl(remAddr.GetIpV4Addr());
-   peer.sin_port = htons(remAddr.GetPort());
+   sockaddr_in ipv4peer;
+   sockaddr_in6 ipv6peer;
+   sockaddr* peer = nullptr;
+   int peersize = 0;
 
-   auto sent = sendto(Socket(), reinterpret_cast< const char* >(data),
-      size, 0, (sockaddr*) &peer, peersize);
+   auto ipv6 = IpPortRegistry::UseIPv6();
+
+   if(ipv6)
+   {
+      ipv6peer.sin6_family = AF_INET6;
+      remAddr.HostToNetwork(ipv6peer.sin6_addr.s6_words, ipv6peer.sin6_port);
+      ipv6peer.sin6_flowinfo = 0;
+      ipv6peer.sin6_scope_id = 0;
+      peer = (sockaddr*) &ipv6peer;
+      peersize = sizeof(ipv6peer);
+   }
+   else
+   {
+      ipv4peer.sin_family = AF_INET;
+      remAddr.HostToNetwork(ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
+      peer = (sockaddr*) &ipv4peer;
+      peersize = sizeof(ipv4peer);
+   }
+
+   auto sent = sendto(Socket(),
+      reinterpret_cast< const char* >(data), size, 0, peer, peersize);
 
    if(sent == SOCKET_ERROR) return SetError();
    return sent;

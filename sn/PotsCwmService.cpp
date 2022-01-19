@@ -1427,8 +1427,8 @@ EventHandler::Rc PotsCwmSsm::RelayMsg()
    //
    if((ogPsm == uPsm) && ogPsm->AddressesUnknown(nullptr))
    {
-      auto host = IpPortRegistry::HostAddress();
-      auto peer = IpPortRegistry::HostAddress();
+      auto& host = IpPortRegistry::HostAddress();
+      auto& peer = IpPortRegistry::HostAddress();
       GlobalAddress locAddr(host, PotsCallIpPort, PotsCallFactoryId);
       GlobalAddress remAddr(peer, PotsShelfIpPort, PotsShelfFactoryId);
 

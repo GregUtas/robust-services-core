@@ -119,8 +119,8 @@ Pots_UN_Message::Pots_UN_Message(ProtocolSM* psm, size_t size) :
    //
    if(psm == nullptr)
    {
-      auto host = IpPortRegistry::HostAddress();
-      auto peer = IpPortRegistry::HostAddress();
+      auto& host = IpPortRegistry::HostAddress();
+      auto& peer = IpPortRegistry::HostAddress();
 
       SetProtocol(PotsProtocolId);
       GlobalAddress addr(host, PotsShelfIpPort, PotsShelfFactoryId);
@@ -166,8 +166,8 @@ Pots_NU_Message::Pots_NU_Message(ProtocolSM* psm, size_t size) :
    //
    if(psm == nullptr)
    {
-      auto host = IpPortRegistry::HostAddress();
-      auto peer = IpPortRegistry::HostAddress();
+      auto& host = IpPortRegistry::HostAddress();
+      auto& peer = IpPortRegistry::HostAddress();
 
       SetProtocol(PotsProtocolId);
       GlobalAddress addr(host, PotsCallIpPort, PotsCallFactoryId);

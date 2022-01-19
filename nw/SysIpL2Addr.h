@@ -23,6 +23,7 @@
 #define SYSIPL2ADDR_H_INCLUDED
 
 #include "Object.h"
+#include <cstdint>
 #include <string>
 #include "NwTypes.h"
 
@@ -35,18 +36,16 @@ namespace NetworkBase
 class SysIpL2Addr : public NodeBase::Object
 {
 public:
-   //  Constructs a nil address (255.255.255.255).
+   //  Constructs the null address.
    //
    SysIpL2Addr();
 
-   //  Constructs an IPv4 address.
+   //  Constructs an address from TEXT.  An IPv4 address must use decimal
+   //  digits and be of the form n.n.n.n (n = 0 to 255).  An IPv6 address
+   //  must use hex digits and be of the form h:h:h:h:h:h:h:h (h = 0 to
+   //  0xffff).  Failure can be checked by invoking IsValid.
    //
-   explicit SysIpL2Addr(ipv4addr_t v4Addr);
-
-   //  Constructs an IPv4 address from the string "n.n.n.n".
-   //  Failure can be checked using IsValid.
-   //
-   explicit SysIpL2Addr(const std::string& text);
+   SysIpL2Addr(const std::string& text);
 
    //  Virtual to allow subclassing.
    //
@@ -60,25 +59,55 @@ public:
    //
    SysIpL2Addr& operator=(const SysIpL2Addr& that) = default;
 
-   //  Constructs the loopback address (127.0.0.1) in host order.
+   //  Returns true if this IP address is identical to THAT.
    //
-   static SysIpL2Addr LoopbackAddr();
+   bool operator==(const SysIpL2Addr& that) const;
 
-   //  Returns true if the address is non-nil.
+   //  Returns true if this IP address is different from THAT.
+   //
+   bool operator!=(const SysIpL2Addr& that) const;
+
+   //  Returns true if this platform supports IPv6 and dual-mode sockets.
+   //  If true can be returned, the only reason to return false is to test
+   //  IPv4-only operation.
+   //
+   static bool SupportsIPv6();
+
+   //  Returns true if the address is not the null address.
    //
    bool IsValid() const;
 
-   //  Returns the full IPv4 address.
-   //
-   ipv4addr_t GetIpV4Addr() const { return v4Addr_; }
-
-   //  Returns the address as a string ("n.n.n.n").
+   //  Returns the address as a string.
    //
    virtual std::string to_str() const;
+
+   //  Constructs this element's loopback address.
+   //
+   static const SysIpL2Addr& LoopbackIpAddr();
+
+   //  Returns true if this is a loopback address.
+   //
+   bool IsLoopbackIpAddr() const;
 
    //  Updates NAME to the standard name of this host.
    //
    static bool HostName(std::string& name);
+
+   //  Returns the type of address.
+   //
+   IpAddrFamily Family() const;
+
+   //  Sets the address to the null address.
+   //
+   void Nullify();
+
+   //  Returns the null address (all zeroes).
+   //
+   static const SysIpL2Addr& NullIpAddr();
+
+   //  Returns the raw IPv6 address.
+   //
+   const IPv6Addr& Addr() { return addr_; }
 
    //  Overridden to display member variables.
    //
@@ -89,13 +118,38 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Sets the full IPv4 address;
+   //  Constructs an IPv4 address from NETADDR, which must be in network
+   //  order.
    //
-   void SetIpV4Addr(ipv4addr_t v4Addr) { v4Addr_ = v4Addr; }
+   explicit SysIpL2Addr(IPv4Addr netaddr);
+
+   //  Constructs an IPv6 address from NETADDR, whose quartets must be in
+   //  network order.
+   //
+   explicit SysIpL2Addr(const uint16_t netaddr[8]);
+
+   //  Sets NETADDR from our IPv4 address by converting it from host to
+   //  network order.
+   //
+   void HostToNetwork(IPv4Addr& netaddr) const;
+
+   //  Sets NETADDR from our IPv6 address by converting it from host to
+   //  network order.
+   //
+   void HostToNetwork(uint16_t netaddr[8]) const;
+
+   //  Sets an IPv4 address from NETADDR, which must be in network order.
+   //
+   void NetworkToHost(IPv4Addr netaddr);
+
+   //  Sets an IPv6 address from NETADDR, whose quartets must be in network
+   //  order.
+   //
+   void NetworkToHost(const uint16_t netaddr[8]);
 private:
-   //  IPv4 address.
+   //  The address.  An IPv4 address is stored as an IPv4-mapped IPv6 address.
    //
-   ipv4addr_t v4Addr_;
+   IPv6Addr addr_;
 };
 }
 #endif

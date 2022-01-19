@@ -54,7 +54,11 @@ public:
 
    //  Returns the element's IP address (hostname).
    //
-   static SysIpL2Addr HostAddress();
+   static const SysIpL2Addr& HostAddress();
+
+   //  Returns true if IPv6 should be used.
+   //
+   static bool UseIPv6();
 
    //  Returns the IpPort registered against PORT and PROTOCOL.  If PROTOCOL
    //  is IpAny, the first IpPort registered against PORT is returned.
@@ -65,9 +69,9 @@ public:
    //
    const NodeBase::Q1Way< IpPort >& Ports() const { return portq_; }
 
-   //  Returns true if DEST.ADDR is either SRCE.ADDR, the loopback address,
-   //  or the host IP address, *and* the destination port is either NilIpPort
-   //  or has an IpPort registered against it.
+   //  Returns true if DEST's IP address is the same as SRCE's, a loopback
+   //  address, or the host IP address, *and* the destination port is either
+   //  NilIpPort or has an IpPort registered against it.
    //
    bool CanBypassStack(const SysIpL3Addr& srce, const SysIpL3Addr& dest) const;
 
@@ -103,6 +107,18 @@ private:
    //  Removes PORT from the registry.
    //
    void UnbindPort(IpPort& port);
+
+   //  Determines whether IPv6 should be used.
+   //
+   void SetIPv6();
+
+   //  Determines the host address.
+   //
+   void SetHostAddress();
+
+   //  Set if IPv6 should be used.
+   //
+   bool ipv6Enabled_;
 
    //  The element's IP address.
    //

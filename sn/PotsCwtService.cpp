@@ -774,7 +774,7 @@ EventHandler::Rc PotsCwbSsm::ProcessInitAck(Event& currEvent, Event*& nextEvent)
    //  Set the source and destination addresses in our Facility message.
    //
    auto msg = upsm->AccessOgMsg();
-   auto host = IpPortRegistry::HostAddress();
+   auto& host = IpPortRegistry::HostAddress();
    GlobalAddress locAddr(host, NilIpPort, PotsCallFactoryId);
    GlobalAddress remAddr(host, NilIpPort, PotsMuxFactoryId);
 

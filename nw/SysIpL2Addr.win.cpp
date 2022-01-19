@@ -24,11 +24,9 @@
 #include "SysIpL2Addr.h"
 #include <sstream>
 #include <winsock2.h>
-#include <ws2tcpip.h>
 #include "Debug.h"
 #include "Log.h"
 #include "NwLogs.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::string;
@@ -37,38 +35,6 @@ using std::string;
 
 namespace NetworkBase
 {
-SysIpL2Addr::SysIpL2Addr() : v4Addr_(INADDR_NONE)
-{
-   Debug::ft("SysIpL2Addr.ctor");
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysIpL2Addr_ctor4 = "SysIpL2Addr.ctor(string)";
-
-SysIpL2Addr::SysIpL2Addr(const string& text) : v4Addr_(INADDR_NONE)
-{
-   Debug::ft(SysIpL2Addr_ctor4);
-
-   in_addr result;
-
-   auto rc = inet_pton(AF_INET, text.c_str(), &result);
-
-   switch(rc)
-   {
-   case 1:
-      v4Addr_ = ntohl(result.s_addr);
-      break;
-   case 0:
-      Debug::SwLog(SysIpL2Addr_ctor4, text, 0);
-      break;
-   default:
-      Debug::SwLog(SysIpL2Addr_ctor4, "inet_pton failed", WSAGetLastError());
-   }
-}
-
-//------------------------------------------------------------------------------
-
 bool SysIpL2Addr::HostName(string& name)
 {
    Debug::ft("SysIpL2Addr.HostName");
@@ -83,7 +49,7 @@ bool SysIpL2Addr::HostName(string& name)
 
       if(log != nullptr)
       {
-         *log << Log::Tab << "GetHostName: errval=" << WSAGetLastError();
+         *log << Log::Tab << "gethostname: errval=" << WSAGetLastError();
          Log::Submit(log);
       }
       return false;
@@ -95,27 +61,16 @@ bool SysIpL2Addr::HostName(string& name)
 
 //------------------------------------------------------------------------------
 
-bool SysIpL2Addr::IsValid() const
-{
-   Debug::ft("SysIpL2Addr.IsValid");
-
-   return (v4Addr_ != INADDR_NONE);
-}
-
-//------------------------------------------------------------------------------
-
-SysIpL2Addr SysIpL2Addr::LoopbackAddr()
-{
-   Debug::ft("SysIpL2Addr.LoopbackAddr");
-
-   return SysIpL2Addr(INADDR_LOOPBACK);
-}
-
-//------------------------------------------------------------------------------
-
 void SysIpL2Addr::Patch(sel_t selector, void* arguments)
 {
    Object::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+bool SysIpL2Addr::SupportsIPv6()
+{
+   return true;
 }
 }
 #endif

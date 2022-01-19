@@ -20,9 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysIpL3Addr.h"
+#include <cctype>
+#include <cstddef>
 #include <iosfwd>
 #include <sstream>
 #include "Debug.h"
+#include "Formatters.h"
+#include "SysSocket.h"
 #include "SysTcpSocket.h"
 #include "SysTypes.h"
 
@@ -34,25 +38,41 @@ using std::string;
 
 namespace NetworkBase
 {
+//  Parses the port (in decimal) that follows TEXT[INDEX] and returns it in
+//  PORT.  Returns FALSE if a port does not follow TEXT[INDEX] or its value
+//  is out of range.
+//
+static bool GetDecPort(const string& text, size_t& index, ipport_t& port)
+{
+   Debug::ft("NetworkBase.GetDecPort");
+
+   auto found = false;
+   uword value = 0;
+
+   index = strSkipSpaces(text, index);
+   port = 0;
+
+   while(index < text.size())
+   {
+      if(!isdigit(text[index])) break;
+
+      found = true;
+      value = (value * 10) + (text[index++] - '0');
+      if(value > MaxIpPort) return false;
+   }
+
+   port = ipport_t(value);
+   return found;
+}
+
+//==============================================================================
+
 SysIpL3Addr::SysIpL3Addr() :
    port_(NilIpPort),
    proto_(IpAny),
    socket_(nullptr)
 {
-   Debug::ft("SysIpL3Addr.ctor");
-}
-
-//------------------------------------------------------------------------------
-
-SysIpL3Addr::SysIpL3Addr(ipv4addr_t v4Addr, ipport_t port,
-   IpProtocol proto, SysTcpSocket* socket) : SysIpL2Addr(v4Addr),
-   port_(port),
-   proto_(proto),
-   socket_(socket)
-{
-   Debug::ft("SysIpL3Addr.ctor(IPv4addr)");
-
-   if(socket_ != nullptr) proto_ = socket_->Protocol();
+   Debug::ftnt("SysIpL3Addr.ctor");
 }
 
 //------------------------------------------------------------------------------
@@ -66,6 +86,96 @@ SysIpL3Addr::SysIpL3Addr(const SysIpL2Addr& l2Addr, ipport_t port,
    Debug::ft("SysIpL3Addr.ctor(L2addr)");
 
    if(socket_ != nullptr) proto_ = socket_->Protocol();
+}
+
+//------------------------------------------------------------------------------
+
+SysIpL3Addr::SysIpL3Addr(IPv4Addr netaddr, ipport_t netport,
+   IpProtocol proto, SysTcpSocket* socket) : SysIpL2Addr(netaddr),
+   port_(ntohs(netport)),
+   proto_(proto),
+   socket_(socket)
+{
+   Debug::ft("SysIpL3Addr.ctor(IPv4)");
+
+   if(socket_ != nullptr) proto_ = socket_->Protocol();
+}
+
+//------------------------------------------------------------------------------
+
+SysIpL3Addr::SysIpL3Addr(const uint16_t netaddr[8], ipport_t netport,
+   IpProtocol proto, SysTcpSocket* socket) : SysIpL2Addr(netaddr),
+   port_(ntohs(netport)),
+   proto_(proto),
+   socket_(socket)
+{
+   Debug::ft("SysIpL3Addr.ctor(IPv6)");
+
+   if(socket_ != nullptr) proto_ = socket_->Protocol();
+}
+
+//------------------------------------------------------------------------------
+
+SysIpL3Addr::SysIpL3Addr(const std::string& text) : SysIpL2Addr(text),
+   port_(NilIpPort),
+   proto_(IpAny),
+   socket_(nullptr)
+{
+   Debug::ft("SysIpL3Addr.ctor(string)");
+
+   //  Check if SysIpL2Addr rejected TEXT.
+   //
+   if(!IsValid()) return;
+
+   auto col = string::npos;
+
+   if(text.find('.') != string::npos)
+   {
+      //  This should be an IPv4 address.  Extract any port number.
+      //
+      col = text.find(':');
+   }
+   else
+   {
+      //  This should be an IPv6 address.  If it contains a '[',
+      //  see if a port number follows the ']'.
+      //
+      auto lb = text.find('[');
+
+      if(lb != string::npos)
+      {
+         auto rb = text.find(']');
+
+         if(rb == string::npos)
+         {
+            Nullify();
+            return;
+         }
+
+         col = strSkipSpaces(text, rb + 1);
+
+         if((col >= text.size()) || (text[col] != ':'))
+         {
+            Nullify();
+            return;
+         }
+      }
+   }
+
+   //  If a port number was specified, extract it.
+   //
+   if(col != string::npos)
+   {
+      ipport_t port;
+
+      if(!GetDecPort(text, ++col, port))
+      {
+         Nullify();
+         return;
+      }
+
+      port_ = port;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -89,9 +199,71 @@ void SysIpL3Addr::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+void SysIpL3Addr::HostToNetwork(IPv4Addr& netaddr, ipport_t& netport) const
+{
+   Debug::ft("SysIpL3Addr.HostToNetwork(IPv4)");
+
+   SysIpL2Addr::HostToNetwork(netaddr);
+   netport = htons(port_);
+}
+
+//------------------------------------------------------------------------------
+
+void SysIpL3Addr::HostToNetwork(uint16_t netaddr[8], ipport_t& netport) const
+{
+   Debug::ft("SysIpL3Addr.HostToNetwork(IPv6)");
+
+   SysIpL2Addr::HostToNetwork(netaddr);
+   netport = htons(port_);
+}
+
+//------------------------------------------------------------------------------
+
+bool SysIpL3Addr::L2AddrMatches(const SysIpL2Addr& that) const
+{
+   Debug::ftnt("SysIpL3Addr.L2AddrMatches");
+
+   return SysIpL2Addr::operator==(that);
+}
+
+//------------------------------------------------------------------------------
+
+void SysIpL3Addr::NetworkToHost(IPv4Addr netaddr, ipport_t netport)
+{
+   Debug::ft("SysIpL3Addr.NetworkToHost(IPv4)");
+
+   SysIpL2Addr::NetworkToHost(netaddr);
+   port_ = ntohs(netport);
+}
+
+//------------------------------------------------------------------------------
+
+void SysIpL3Addr::NetworkToHost(const uint16_t netaddr[8], ipport_t netport)
+{
+   Debug::ft("SysIpL3Addr.NetworkToHost(IPv6)");
+
+   SysIpL2Addr::NetworkToHost(netaddr);
+   port_ = ntohs(netport);
+}
+
+//------------------------------------------------------------------------------
+
+void SysIpL3Addr::Nullify()
+{
+   Debug::ft("SysIpL3Addr.Nullify");
+
+   ReleaseSocket();
+   port_ = NilIpPort;
+   proto_ = IpAny;
+   SysIpL2Addr::Nullify();
+}
+
+//------------------------------------------------------------------------------
+
 bool SysIpL3Addr::operator==(const SysIpL3Addr& that) const
 {
-   return ((port_ == that.port_) && (GetIpV4Addr() == that.GetIpV4Addr()));
+   if(port_ != that.port_) return false;
+   return SysIpL2Addr::operator==(that);
 }
 
 //------------------------------------------------------------------------------
@@ -129,8 +301,13 @@ void SysIpL3Addr::SetSocket(SysTcpSocket* socket)
 string SysIpL3Addr::to_str() const
 {
    std::ostringstream stream;
+   auto ipv6 = (Family() == IPv6);
+   auto l3 = (port_ != NilIpPort);
 
-   stream << SysIpL2Addr::to_str() << ": " << port_;
+   if(ipv6 && l3) stream << '[';
+   stream << SysIpL2Addr::to_str();
+   if(ipv6 && l3) stream << ']';
+   if(l3) stream << ':' << port_;
    return stream.str();
 }
 

@@ -23,7 +23,9 @@
 #define SYSIPL3ADDR_H_INCLUDED
 
 #include "SysIpL2Addr.h"
+#include <cstdint>
 #include <string>
+#include <vector>
 #include "NwTypes.h"
 
 //------------------------------------------------------------------------------
@@ -39,22 +41,41 @@ public:
    //
    SysIpL3Addr();
 
-   //  Constructs an address from v4Addr, PORT, PROTO, and SOCKET.  If SOCKET
-   //  is valid, it determines PROTO.
-   //
-   SysIpL3Addr(ipv4addr_t v4Addr, ipport_t port,
-      IpProtocol proto = IpAny, SysTcpSocket* socket = nullptr);
-
    //  Constructs an address from L2ADDR, PORT, PROTO, and SOCKET.  If SOCKET
    //  is valid, it determines PROTO.
    //
    SysIpL3Addr(const SysIpL2Addr& l2Addr, ipport_t port,
       IpProtocol proto = IpAny, SysTcpSocket* socket = nullptr);
 
+   //  Constructs an IPv4 address from NETADDR, NETPORT, PROTO, and SOCKET.
+   //  NETADDR and NETPORT must be in network order.  If SOCKET is valid,
+   //  it determines PROTO.
+   //
+   SysIpL3Addr(IPv4Addr netaddr, ipport_t netport,
+      IpProtocol proto = IpAny, SysTcpSocket* socket = nullptr);
+
+   //  Constructs an IPv6 address from NETADDR, NETPORT, PROTO, and SOCKET.
+   //  NETADDR's quartets and NETPORT must be in network order.  If SOCKET
+   //  is valid, it determines PROTO.
+   //
+   SysIpL3Addr(const uint16_t netaddr[8], ipport_t netport,
+      IpProtocol proto = IpAny, SysTcpSocket* socket = nullptr);
+
+   //  Constructs an address from TEXT.  See the SysIpL2Addr(string) constructor
+   //  for the format required for the layer 2 address.  A port is optional; if
+   //  present, it appears as :p (in decimal) after the address.  If the address
+   //  is IPv6, it must be enclosed in square brackets if :p follows.  Failure
+   //  can be checked by invoking SysIpL2Addr::IsValid.
+   //
+   explicit SysIpL3Addr(const std::string& text);
+
    //  Constructs an address for the host identified by NAME.  SERVICE may be
    //  a port number or the name of a service associated with a well-known
    //  port.  PROTO is updated to the service's protocol.  Failure can be
    //  detected using SysIpL2Addr::IsValid.
+   //
+   //  NOTE: Obtaining the result may involve a remote query, so the invoking
+   //  ====  thread is temporarily made preemptable.
    //
    SysIpL3Addr
       (const std::string& name, const std::string& service, IpProtocol& proto);
@@ -71,9 +92,37 @@ public:
    //
    SysIpL3Addr& operator=(const SysIpL3Addr& that) = default;
 
-   //  Sets the socket for the address.
+   //  Returns true if the IP addresses and ports match.
    //
-   void SetSocket(SysTcpSocket* socket);
+   bool operator==(const SysIpL3Addr& that) const;
+
+   //  Returns the inverse of the == operator.
+   //
+   bool operator!=(const SysIpL3Addr& that) const;
+
+   //  Sets NETADDR and NETPORT from our IPv4 address by converting it from host
+   //  to network order.
+   //
+   void HostToNetwork(IPv4Addr& netaddr, ipport_t& netport) const;
+
+   //  Sets NETADDR and NETPORT from our IPv6 address by converting it from host
+   //  to network order.
+   //
+   void HostToNetwork(uint16_t netaddr[8], ipport_t& netport) const;
+
+   //  Sets an IPv4 address from NETADDR and NETPORT, which must be in network
+   //  order.
+   //
+   void NetworkToHost(IPv4Addr netaddr, ipport_t netport);
+
+   //  Sets an IPv6 address from NETADDR and NETPORT, whose quartets must be in
+   //  network order.
+   //
+   void NetworkToHost(const uint16_t netaddr[8], ipport_t netport);
+
+   //  Returns true if THAT's IP address matches ours.
+   //
+   bool L2AddrMatches(const SysIpL2Addr& that) const;
 
    //  Returns the port.
    //
@@ -82,6 +131,10 @@ public:
    //  Returns the protocol.
    //
    IpProtocol GetProtocol() const { return proto_; }
+
+   //  Sets the socket for the address.
+   //
+   void SetSocket(SysTcpSocket* socket);
 
    //  Returns the dedicated socket assigned to the address.
    //
@@ -95,6 +148,9 @@ public:
    //  Updates NAME and SERVICE to the standard host name and port
    //  service name of the host identified by this address.
    //
+   //  NOTE: Obtaining the result may involve a remote query, so the
+   //  ====  invoking thread is temporarily made preemptable.
+   //
    bool AddrToName(std::string& name, std::string& service) const;
 
    //  The same as to_str(), but also displays proto_ and socket_ unless
@@ -102,13 +158,14 @@ public:
    //
    std::string to_string() const;
 
-   //  Returns true if the IP addresses and ports match.
+   //  Sets the address to the null address after releasing socket_.
    //
-   bool operator==(const SysIpL3Addr& that) const;
+   void Nullify();
 
-   //  Returns the inverse of the == operator.
+   //  Returns all host addresses except IPv6 addresses with a non-zero
+   //  scope identifier.  Set the comment in the declaration of IPv6Addr.
    //
-   bool operator!=(const SysIpL3Addr& that) const;
+   static std::vector< SysIpL3Addr > HostAddresses();
 
    //  Overridden to display member variables.
    //

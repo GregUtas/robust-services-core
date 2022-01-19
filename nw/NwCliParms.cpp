@@ -20,8 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NwCliParms.h"
-#include <iosfwd>
-#include <sstream>
 #include <string>
 #include "CliCommand.h"
 #include "CliThread.h"
@@ -103,52 +101,13 @@ bool GetIpL3Addr(SysIpL3Addr& input, const CliCommand& comm, CliThread& cli)
    Debug::ft("NetworkBase.GetIpL3Addr");
 
    string s;
-   char c;
-   int n;
-   ipv4addr_t addr = 0;
-   ipport_t port = 0;
 
-   //  Get the IP address string (n.n.n.n[:p]) and put it into a stream.
+   //  Set INPUT from the string for a layer 3 or layer 2 address.
    //
    if(!comm.GetString(s, cli)) return false;
    if(!cli.EndOfInput()) return false;
-
-   std::istringstream stream(s);
-
-   //  Extract the "n.n.n.n" portion.
-   //
-   for(auto i = 0; i <= 3; ++i)
-   {
-      stream >> n;
-      if(!stream) return false;
-      if((n < 0) || (n > 255)) return false;
-      addr = (addr << 8) + n;
-
-      if(i != 3)
-      {
-         stream >> c;
-         if(!stream) return false;
-         if(c != '.') return false;
-      }
-   }
-
-   //  Extract the optional ":p" portion.
-   //
-   stream >> c;
-   if(!stream)
-   {
-      input = SysIpL3Addr(addr, NilIpPort);
-      return true;
-   }
-
-   if(c != ':') return false;
-
-   stream >> n;
-   if(!stream) return false;
-   if((n < 0) || (n > 0xffff)) return false;
-
-   input = SysIpL3Addr(addr, port);
-   return true;
+   input = SysIpL3Addr(s);
+   return input.IsValid();
 }
 
 //------------------------------------------------------------------------------

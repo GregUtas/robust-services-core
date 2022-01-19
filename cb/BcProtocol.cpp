@@ -958,8 +958,8 @@ ProtocolSM::OutgoingRc BcPsm::ProcessOgMsg(Message& msg)
    //
    if(AddressesUnknown(&msg))
    {
-      auto host = IpPortRegistry::HostAddress();
-      auto peer = IpPortRegistry::HostAddress();
+      auto& host = IpPortRegistry::HostAddress();
+      auto& peer = IpPortRegistry::HostAddress();
 //s   auto cip = Singleton< CipUdpService >::Instance();
       auto cip = Singleton< CipTcpService >::Instance();
       GlobalAddress locAddr(host, cip->Port(), CipObcFactoryId);

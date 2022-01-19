@@ -289,15 +289,16 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
    if(config_.ip_specified)
    {
       SysIpL2Addr addr(config_.server_name);
-      server_addr_ = SysIpL3Addr(addr, config_.server_port);
 
-      if(!server_addr_.IsValid())
+      if(!addr.IsValid())
       {
          stream << "Server's IP address is ill-formed" << CRLF;
          stream << "address=" << config_.server_name << CRLF;
          send_to_console(stream);
          return SERVER_ADDRESS_LOOKUP_FAILED;
       }
+
+      server_addr_ = SysIpL3Addr(addr, config_.server_port);
    }
    else if(config_.name_specified)
    {
@@ -324,7 +325,7 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
    else
    {
       config_.name_specified = SysIpL2Addr::HostName(config_.server_name);
-      auto addr = SysIpL2Addr::LoopbackAddr();
+      auto& addr = SysIpL2Addr::LoopbackIpAddr();
       server_addr_ = SysIpL3Addr(addr, config_.server_port);
    }
 

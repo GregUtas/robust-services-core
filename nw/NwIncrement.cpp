@@ -23,9 +23,11 @@
 #include "CliCommand.h"
 #include "CliText.h"
 #include "CliTextParm.h"
+#include <cstddef>
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <vector>
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -224,16 +226,25 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
-fixed_string AddrToNameTextStr = "addrtoname";
-fixed_string AddrToNameTextExpl =
-   "maps an IP address to a host name/service name";
-
 fixed_string HostNameTextStr = "hostname";
 fixed_string HostNameTextExpl = "returns the name of this element";
+
+fixed_string UsesIPv6TextStr = "usesipv6";
+fixed_string UsesIPv6TextExpl = "indicates whether this element uses IPv6";
+
+fixed_string HostAddrTextStr = "hostaddr";
+fixed_string HostAddrTextExpl = "returns this element's IP address";
+
+fixed_string HostAddrsTextStr = "hostaddrs";
+fixed_string HostAddrsTextExpl = "returns this element's IP addresses";
 
 fixed_string NameToAddrTextStr = "nametoaddr";
 fixed_string NameToAddrTextExpl =
    "maps a host name/service name to an IP address";
+
+fixed_string AddrToNameTextStr = "addrtoname";
+fixed_string AddrToNameTextExpl =
+   "maps an IP address to a host name/service name";
 
 NameToAddrText::NameToAddrText() :
    CliText(NameToAddrTextExpl, NameToAddrTextStr)
@@ -243,14 +254,20 @@ NameToAddrText::NameToAddrText() :
 }
 
 constexpr id_t HostNameIndex = 1;
-constexpr id_t NameToAddrIndex = 2;
-constexpr id_t AddrToNameIndex = 3;
+constexpr id_t UsesIPv6Index = 2;
+constexpr id_t HostAddrIndex = 3;
+constexpr id_t HostAddrsIndex = 4;
+constexpr id_t NameToAddrIndex = 5;
+constexpr id_t AddrToNameIndex = 6;
 
 fixed_string IpActionExpl = "function to execute...";
 
 IpAction::IpAction() : CliTextParm(IpActionExpl)
 {
    BindText(*new CliText(HostNameTextExpl, HostNameTextStr), HostNameIndex);
+   BindText(*new CliText(UsesIPv6TextExpl, UsesIPv6TextStr), UsesIPv6Index);
+   BindText(*new CliText(HostAddrTextExpl, HostAddrTextStr), HostAddrIndex);
+   BindText(*new CliText(HostAddrsTextExpl, HostAddrsTextStr), HostAddrsIndex);
    BindText(*new NameToAddrText, NameToAddrIndex);
    BindText(*new IpAddrParm
       (AddrToNameTextExpl, AddrToNameTextStr), AddrToNameIndex);
@@ -274,6 +291,7 @@ word IpCommand::ProcessCommand(CliThread& cli) const
    string name, service;
    SysIpL3Addr host;
    IpProtocol proto;
+   std::vector< SysIpL3Addr > hostaddrs;
 
    if(!GetTextIndex(index, cli)) return -1;
 
@@ -283,6 +301,36 @@ word IpCommand::ProcessCommand(CliThread& cli) const
       if(!cli.EndOfInput()) return -1;
       if(!SysIpL2Addr::HostName(name)) return cli.Report(-2, NoHostNameExpl);
       return cli.Report(0, name);
+
+   case UsesIPv6Index:
+      if(!cli.EndOfInput()) return -1;
+      *cli.obuf << "Uses IPv6: " << IpPortRegistry::UseIPv6() << CRLF;
+      return cli.Report(0, name);
+
+   case HostAddrIndex:
+      if(!cli.EndOfInput()) return -1;
+      *cli.obuf << "Host address: ";
+      *cli.obuf << IpPortRegistry::HostAddress().to_str() << CRLF;
+      break;
+
+   case HostAddrsIndex:
+      if(!cli.EndOfInput()) return -1;
+      hostaddrs = SysIpL3Addr::HostAddresses();
+      *cli.obuf << "Host addresses:" << CRLF;
+
+      if(hostaddrs.empty())
+      {
+         *cli.obuf << spaces(2) << "None found." << CRLF;
+      }
+      else
+      {
+         for(size_t i = 0; i < hostaddrs.size(); ++i)
+         {
+            *cli.obuf << spaces(2) << hostaddrs[i].to_str() << CRLF;
+         }
+      }
+      break;
+
    case NameToAddrIndex:
       if(!GetString(name, cli)) return -1;
       if(!GetString(service, cli)) service.clear();
@@ -291,14 +339,16 @@ word IpCommand::ProcessCommand(CliThread& cli) const
       if(!host.IsValid()) return cli.Report(-2, NoHostAddrExpl);
       *cli.obuf << spaces(2) << host.to_str() << CRLF;
       break;
+
    case AddrToNameIndex:
       if(!GetIpL3Addr(host, *this, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
       if(!host.AddrToName(name, service)) return cli.Report(-2, NoHostInfoExpl);
       *cli.obuf << spaces(2) << name;
-      if(!service.empty()) *cli.obuf << " : " << service;
+      if(!service.empty() && (service != "0")) *cli.obuf << " : " << service;
       *cli.obuf << CRLF;
       break;
+
    default:
       Debug::SwLog(IpCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);

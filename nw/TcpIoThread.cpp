@@ -141,7 +141,7 @@ bool TcpIoThread::AcceptConn()
       {
          //s Handle Accept() error.
          //
-         OutputLog(NetworkSocketError, "Accept", SocketError, listener);
+         OutputLog(NetworkSocketError, "accept", SocketError, listener);
       }
 
       return false;
@@ -350,7 +350,7 @@ void TcpIoThread::Enter()
       {
          //s Handle Poll() error.
          //
-         OutputLog(NetworkSocketError, "Poll", SocketError, sockets_.Front());
+         OutputLog(NetworkSocketError, "poll", SocketError, sockets_.Front());
          Pause(Duration(20, mSECS));
          continue;
       }
@@ -658,7 +658,7 @@ void TcpIoThread::ServiceSocket()
       {
          //s Handle Recv() error.
          //
-         OutputLog(NetworkSocketError, "Recv", SocketError, socket);
+         OutputLog(NetworkSocketError, "recv", SocketError, socket);
       }
 
       EraseSocket(curr_);
@@ -675,7 +675,7 @@ void TcpIoThread::ServiceSocket()
    //
    if(!socket->RemAddr(txAddr_))
    {
-      OutputLog(NetworkSocketError, "GetPeerName", SocketError, socket);
+      OutputLog(NetworkSocketError, "getpeername", SocketError, socket);
       return;
    }
 

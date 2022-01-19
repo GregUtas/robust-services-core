@@ -24,8 +24,10 @@
 #include "SysTcpSocket.h"
 #include <memory>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #include "Debug.h"
 #include "Duration.h"
+#include "IpPortRegistry.h"
 #include "NwTrace.h"
 #include "SysIpL3Addr.h"
 #include "TcpIpService.h"
@@ -40,10 +42,25 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
 {
    Debug::ft("SysTcpSocket.Accept");
 
-   sockaddr_in peer;
-   int peersize = sizeof(peer);
+   sockaddr_in ipv4peer;
+   sockaddr_in6 ipv6peer;
+   sockaddr* peer = nullptr;
+   int peersize = 0;
 
-   auto socket = accept(Socket(), (sockaddr*) &peer, &peersize);
+   auto ipv6 = IpPortRegistry::UseIPv6();
+
+   if(ipv6)
+   {
+      peer = (sockaddr*) &ipv6peer;
+      peersize = sizeof(ipv6peer);
+   }
+   else
+   {
+      peer = (sockaddr*) &ipv4peer;
+      peersize = sizeof(ipv4peer);
+   }
+
+   auto socket = accept(Socket(), peer, &peersize);
 
    if(socket == INVALID_SOCKET)
    {
@@ -52,8 +69,13 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
       return nullptr;
    }
 
-   remAddr = SysIpL3Addr
-      (ntohl(peer.sin_addr.s_addr), ntohs(peer.sin_port), IpTcp, this);
+   if(ipv6)
+      remAddr = SysIpL3Addr(ipv6peer.sin6_addr.s6_words,
+         ipv6peer.sin6_port, IpTcp, this);
+   else
+      remAddr = SysIpL3Addr(ipv4peer.sin_addr.s_addr,
+         ipv4peer.sin_port, IpTcp, this);
+
    return SysTcpSocketPtr(new SysTcpSocket(socket));
 }
 
@@ -63,13 +85,31 @@ word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)
 {
    Debug::ft("SysTcpSocket.Connect");
 
-   sockaddr_in peer;
+   sockaddr_in ipv4peer;
+   sockaddr_in6 ipv6peer;
+   sockaddr* peer = nullptr;
+   int peersize = 0;
 
-   peer.sin_family = AF_INET;
-   peer.sin_addr.s_addr = htonl(remAddr.GetIpV4Addr());
-   peer.sin_port = htons(remAddr.GetPort());
+   auto ipv6 = IpPortRegistry::UseIPv6();
 
-   if(connect(Socket(), (sockaddr*) &peer, sizeof(peer)) == SOCKET_ERROR)
+   if(ipv6)
+   {
+      ipv6peer.sin6_family = AF_INET6;
+      remAddr.HostToNetwork(ipv6peer.sin6_addr.s6_words, ipv6peer.sin6_port);
+      ipv6peer.sin6_flowinfo = 0;
+      ipv6peer.sin6_scope_id = 0;
+      peer = (sockaddr*)&ipv6peer;
+      peersize = sizeof(ipv6peer);
+   }
+   else
+   {
+      ipv4peer.sin_family = AF_INET;
+      remAddr.HostToNetwork(ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
+      peer = (sockaddr*)&ipv4peer;
+      peersize = sizeof(ipv4peer);
+   }
+
+   if(connect(Socket(), peer, peersize) == SOCKET_ERROR)
    {
       SetError();
       auto err = GetError();
@@ -123,17 +163,36 @@ bool SysTcpSocket::LocAddr(SysIpL3Addr& locAddr)
 {
    Debug::ft("SysTcpSocket.LocAddr");
 
-   sockaddr_in host;
-   int hostsize = sizeof(host);
+   sockaddr_in ipv4host;
+   sockaddr_in6 ipv6host;
+   sockaddr* host = nullptr;
+   int hostsize = 0;
 
-   if(getsockname(Socket(), (sockaddr*) &host, &hostsize) != 0)
+   auto ipv6 = IpPortRegistry::UseIPv6();
+
+   if(ipv6)
+   {
+      host = (sockaddr*) &ipv6host;
+      hostsize = sizeof(ipv6host);
+   }
+   else
+   {
+      host = (sockaddr*) &ipv4host;
+      hostsize = sizeof(ipv4host);
+   }
+
+   if(getsockname(Socket(), host, &hostsize) != 0)
    {
       SetError();
       return false;
    }
 
-   locAddr = SysIpL3Addr
-      (ntohl(host.sin_addr.s_addr), ntohs(host.sin_port), IpTcp, nullptr);
+   if(ipv6)
+      locAddr = SysIpL3Addr(ipv6host.sin6_addr.s6_words,
+         ipv6host.sin6_port, IpTcp, nullptr);
+   else
+      locAddr = SysIpL3Addr(ipv4host.sin_addr.s_addr,
+         ipv4host.sin_port, IpTcp, nullptr);
    return true;
 }
 
@@ -236,19 +295,36 @@ bool SysTcpSocket::RemAddr(SysIpL3Addr& remAddr)
 {
    Debug::ft("SysTcpSocket.RemAddr");
 
-   sockaddr_in peer;
-   int peersize = sizeof(peer);
+   sockaddr_in ipv4peer;
+   sockaddr_in6 ipv6peer;
+   sockaddr* peer = nullptr;
+   int peersize = 0;
 
-   if(getpeername(Socket(), (sockaddr*) &peer, &peersize) == SOCKET_ERROR)
+   auto ipv6 = IpPortRegistry::UseIPv6();
+
+   if(ipv6)
+   {
+      peer = (sockaddr*) &ipv6peer;
+      peersize = sizeof(ipv6peer);
+   }
+   else
+   {
+      peer = (sockaddr*) &ipv4peer;
+      peersize = sizeof(ipv4peer);
+   }
+
+   if(getpeername(Socket(), peer, &peersize) == SOCKET_ERROR)
    {
       SetError();
       return false;
    }
 
-   if(peer.sin_family != AF_INET) return false;
-
-   remAddr = SysIpL3Addr
-      (ntohl(peer.sin_addr.s_addr), ntohs(peer.sin_port), IpTcp, this);
+   if(ipv6)
+      remAddr = SysIpL3Addr(ipv6peer.sin6_addr.s6_words,
+         ipv6peer.sin6_port, IpTcp, this);
+   else
+      remAddr = SysIpL3Addr(ipv4peer.sin_addr.s_addr,
+         ipv4peer.sin_port, IpTcp, this);
    return true;
 }
 

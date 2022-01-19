@@ -22,11 +22,13 @@
 #ifdef OS_WIN
 
 #include "SysIpL3Addr.h"
+#include <cstddef>
 #include <cstring>
 #include <sstream>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include "Debug.h"
+#include "FunctionGuard.h"
 #include "Log.h"
 #include "NwLogs.h"
 #include "SysTypes.h"
@@ -41,7 +43,7 @@ namespace NetworkBase
 fn_name SysIpL3Addr_ctor = "SysIpL3Addr.ctor(name, service)";
 
 SysIpL3Addr::SysIpL3Addr(const string& name,
-   const string& service, IpProtocol& proto) : SysIpL2Addr(INADDR_NONE),
+   const string& service, IpProtocol& proto) :
    port_(NilIpPort),
    proto_(IpAny),
    socket_(nullptr)
@@ -52,15 +54,18 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
    addrinfo* info = nullptr;
 
    memset(&hints, 0, sizeof(hints));
-   hints.ai_family = AF_INET;
+   hints.ai_family = AF_UNSPEC;
+
+   FunctionGuard guard(Guard_MakePreemptable);
 
    if(getaddrinfo(name.c_str(), service.c_str(), &hints, &info) == 0)
    {
-      if(info->ai_family == AF_INET)
+      switch(info->ai_family)
+      {
+      case AF_INET:
       {
          auto netaddr = (sockaddr_in*) info->ai_addr;
-         SetIpV4Addr(ntohl(netaddr->sin_addr.s_addr));
-         port_ = ntohs(netaddr->sin_port);
+         NetworkToHost(netaddr->sin_addr.s_addr, netaddr->sin_port);
 
          switch(info->ai_protocol)
          {
@@ -76,9 +81,34 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
             Debug::SwLog(SysIpL3Addr_ctor,
                "unsupported protocol", info->ai_protocol);
          }
+
+         break;
       }
-      else
+
+      case AF_INET6:
       {
+         auto netaddr = (sockaddr_in6*) info->ai_addr;
+         NetworkToHost(netaddr->sin6_addr.s6_words, netaddr->sin6_port);
+
+         switch(info->ai_protocol)
+         {
+         case 0:
+            break;
+         case IPPROTO_UDP:
+            proto_ = IpUdp;
+            break;
+         case IPPROTO_TCP:
+            proto_ = IpTcp;
+            break;
+         default:
+            Debug::SwLog(SysIpL3Addr_ctor,
+               "unsupported protocol", info->ai_protocol);
+         }
+
+         break;
+      }
+
+      default:
          Debug::SwLog(SysIpL3Addr_ctor,
             "unsupported protocol family", info->ai_family);
       }
@@ -91,7 +121,7 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
 
       if(log != nullptr)
       {
-         *log << Log::Tab << "GetAddrInfo: errval=" << WSAGetLastError();
+         *log << Log::Tab << "getaddrinfo: errval=" << WSAGetLastError();
          Log::Submit(log);
       }
    }
@@ -105,16 +135,34 @@ bool SysIpL3Addr::AddrToName(string& name, string& service) const
 {
    Debug::ft("SysIpL3Addr.AddrToName");
 
-   sockaddr_in addr;
+   sockaddr* addrinfo = nullptr;
+   size_t addrsize = 0;
+   sockaddr_in ipv4addr;
+   sockaddr_in6 ipv6addr;
+
+   if(Family() == IPv4)
+   {
+      ipv4addr.sin_family = AF_INET;
+      HostToNetwork(ipv4addr.sin_addr.s_addr, ipv4addr.sin_port);
+      addrinfo = (sockaddr*) &ipv4addr;
+      addrsize = sizeof(ipv4addr);
+   }
+   else
+   {
+      ipv6addr.sin6_family = AF_INET6;
+      HostToNetwork(ipv6addr.sin6_addr.s6_words, ipv6addr.sin6_port);
+      ipv6addr.sin6_flowinfo = 0;
+      ipv6addr.sin6_scope_id = 0;
+      addrinfo = (sockaddr*) &ipv6addr;
+      addrsize = sizeof(ipv6addr);
+   }
+
    char buff1[64];
    char buff2[64];
 
-   addr.sin_family = AF_INET;
-   addr.sin_addr.s_addr = htonl(GetIpV4Addr());
-   addr.sin_port = htons(port_);
+   FunctionGuard guard(Guard_MakePreemptable);
 
-   if(getnameinfo
-      ((sockaddr*) &addr, sizeof(addr), buff1, 64, buff2, 64, 0) == 0)
+   if(getnameinfo(addrinfo, addrsize, buff1, 64, buff2, 64, 0) == 0)
    {
       name = buff1;
       service = buff2;
@@ -125,10 +173,105 @@ bool SysIpL3Addr::AddrToName(string& name, string& service) const
 
    if(log != nullptr)
    {
-      *log << Log::Tab << "GetNameInfo: errval=" << WSAGetLastError();
+      *log << Log::Tab << "getnameinfo: errval=" << WSAGetLastError();
       Log::Submit(log);
    }
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysIpL3Addr_HostAddresses = "SysIpL3Addr.HostAddresses";
+
+std::vector< SysIpL3Addr > SysIpL3Addr::HostAddresses()
+{
+   Debug::ft(SysIpL3Addr_HostAddresses);
+
+   std::vector< SysIpL3Addr > hostaddrs;
+   string host;
+   addrinfo hints;
+   addrinfo* info = nullptr;
+
+   SysIpL2Addr::HostName(host);
+   memset(&hints, 0, sizeof(hints));
+   hints.ai_family = AF_UNSPEC;
+
+   if(getaddrinfo(host.c_str(), nullptr, &hints, &info) != 0)
+   {
+      auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
+
+      if(log != nullptr)
+      {
+         *log << Log::Tab << "getaddrinfo: errval=" << WSAGetLastError();
+         Log::Submit(log);
+      }
+   }
+
+   for(auto curr = info; curr != nullptr; curr = curr->ai_next)
+   {
+      SysIpL3Addr hostaddr;
+
+      switch(curr->ai_family)
+      {
+      case AF_INET:
+      {
+         auto netaddr = (sockaddr_in*) curr->ai_addr;
+         hostaddr.NetworkToHost(netaddr->sin_addr.s_addr, netaddr->sin_port);
+
+         switch(curr->ai_protocol)
+         {
+         case 0:
+            break;
+         case IPPROTO_UDP:
+            hostaddr.proto_ = IpUdp;
+            break;
+         case IPPROTO_TCP:
+            hostaddr.proto_ = IpTcp;
+            break;
+         default:
+            Debug::SwLog(SysIpL3Addr_HostAddresses,
+               "unsupported protocol", curr->ai_protocol);
+         }
+
+         break;
+      }
+
+      case AF_INET6:
+      {
+         auto netaddr = (sockaddr_in6*) curr->ai_addr;
+         if(netaddr->sin6_scope_id != 0) continue;
+
+         hostaddr.NetworkToHost
+            (netaddr->sin6_addr.s6_words, netaddr->sin6_port);
+
+         switch(curr->ai_protocol)
+         {
+         case 0:
+            break;
+         case IPPROTO_UDP:
+            hostaddr.proto_ = IpUdp;
+            break;
+         case IPPROTO_TCP:
+            hostaddr.proto_ = IpTcp;
+            break;
+         default:
+            Debug::SwLog(SysIpL3Addr_HostAddresses,
+               "unsupported protocol", curr->ai_protocol);
+         }
+
+         break;
+      }
+
+      default:
+         Debug::SwLog(SysIpL3Addr_HostAddresses,
+            "unsupported protocol family", curr->ai_family);
+      }
+
+      hostaddrs.push_back(hostaddr);
+   }
+
+   freeaddrinfo(info);
+   return hostaddrs;
 }
 
 //------------------------------------------------------------------------------

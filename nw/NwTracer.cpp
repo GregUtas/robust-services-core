@@ -167,7 +167,7 @@ int NwTracer::FindPeer(const SysIpL3Addr& peer) const
 
    for(auto i = 0; i < MaxPeerEntries; ++i)
    {
-      if(peers_[i].peer.GetIpV4Addr() == peer.GetIpV4Addr())
+      if(peers_[i].peer.L2AddrMatches(peer))
       {
          if(peers_[i].peer.GetPort() == peer.GetPort()) return i;
          if(peers_[i].peer.GetPort() == NilIpPort) return i;

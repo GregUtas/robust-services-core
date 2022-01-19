@@ -42,6 +42,11 @@ namespace NodeBase
    //
    extern fixed_string ObjSeparatorStr;
 
+   //  Returns the position of the next character in STR that is not a space,
+   //  starting at INDEX.  Returns string::npos if no such character is found.
+   //
+   size_t strSkipSpaces(const std::string& str, size_t index);
+
    //  Converts STR to a positive integer, returning it in SIZE.  Returns false
    //  if STR is empty or contains a non-digit.
    //

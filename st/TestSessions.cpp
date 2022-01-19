@@ -393,7 +393,7 @@ TestMessage::TestMessage(ProtocolSM* dest) : Message(nullptr, 0),
 
    SetProtocol(TestProtocolId);
 
-   auto host = IpPortRegistry::HostAddress();
+   auto& host = IpPortRegistry::HostAddress();
    GlobalAddress addr(host, NilIpPort, TestFactoryId);
    SetSender(addr);
 

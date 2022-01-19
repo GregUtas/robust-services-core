@@ -22,8 +22,10 @@
 #include "IpPortRegistry.h"
 #include "CfgStrParm.h"
 #include "StatisticsGroup.h"
+#include <cstddef>
 #include <ostream>
 #include <string>
+#include <vector>
 #include "Algorithms.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
@@ -45,17 +47,18 @@ using std::string;
 
 namespace NetworkBase
 {
-//  Configuration parameter for the host IP address.
+//  Configuration parameter for this element's IP address.
 //
 class HostAddrCfg : public CfgStrParm
 {
 public:
    HostAddrCfg();
    ~HostAddrCfg();
-   SysIpL2Addr Address() const { return addr_; }
+   const SysIpL2Addr& Address() const { return addr_; }
 protected:
    void SetCurr() override;
 private:
+   RestartLevel RestartRequired() const override { return RestartCold; }
    bool SetNext(c_string input) override;
 
    //  Kept in synch with the string version of the element's address.
@@ -65,8 +68,8 @@ private:
 
 //------------------------------------------------------------------------------
 
-HostAddrCfg::HostAddrCfg() : CfgStrParm("ElementDefaultAddr",
-   "127.0.0.1", "element's default IP address (n.n.n.n)")
+HostAddrCfg::HostAddrCfg() : CfgStrParm("ElementIpAddr",
+   "127.0.0.1", "element's IP address")
 {
    Debug::ft("HostAddrCfg.ctor");
 }
@@ -161,7 +164,7 @@ void IpPortStatsGroup::DisplayStats
 
 //==============================================================================
 
-IpPortRegistry::IpPortRegistry()
+IpPortRegistry::IpPortRegistry() : ipv6Enabled_(false)
 {
    Debug::ft("IpPortRegistry.ctor");
 
@@ -239,11 +242,9 @@ bool IpPortRegistry::CanBypassStack
 {
    Debug::ft("IpPortRegistry.CanBypassStack");
 
-   if((dest.GetIpV4Addr() != srce.GetIpV4Addr()) &&
-      (dest.GetIpV4Addr() != SysIpL2Addr::LoopbackAddr().GetIpV4Addr()))
+   if(!srce.L2AddrMatches(dest) && !dest.IsLoopbackIpAddr())
    {
-      auto host = HostAddress();
-      if(dest.GetIpV4Addr() != host.GetIpV4Addr()) return false;
+      if(!dest.L2AddrMatches(HostAddress())) return false;
    }
 
    auto port = dest.GetPort();
@@ -258,6 +259,7 @@ void IpPortRegistry::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
+   stream << prefix << "UseIPv6     : " << UseIPv6() << CRLF;
    stream << prefix << "HostAddr    : " << hostAddr_.to_str() << CRLF;
    stream << prefix << "hostAddrCfg : " << strObj(hostAddrCfg_.get()) << CRLF;
    stream << prefix << "statsGroup  : " << strObj(statsGroup_.get()) << CRLF;
@@ -283,29 +285,16 @@ IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
 
 //------------------------------------------------------------------------------
 
-SysIpL2Addr IpPortRegistry::HostAddress()
+const SysIpL2Addr& IpPortRegistry::HostAddress()
 {
    Debug::ft("IpPortRegistry.HostAddress");
 
+   //  If this is invoked before we've even been constructed, return
+   //  the IPv4 loopback address.
+   //
    auto reg = Singleton< IpPortRegistry >::Extant();
-   if(reg == nullptr) return SysIpL2Addr::LoopbackAddr();
-
-   if(reg->hostAddr_.IsValid()) return reg->hostAddr_;
-
-   string name;
-   string service;
-   IpProtocol proto;
-
-   if(SysIpL2Addr::HostName(name))
-   {
-      SysIpL3Addr host(name, service, proto);
-
-      FunctionGuard guard(Guard_MemUnprotect);
-      reg->hostAddr_ = host;
-      return host;
-   }
-
-   return reg->hostAddrCfg_->Address();
+   if(reg == nullptr) return SysIpL2Addr::LoopbackIpAddr();
+   return reg->hostAddr_;
 }
 
 //------------------------------------------------------------------------------
@@ -313,6 +302,77 @@ SysIpL2Addr IpPortRegistry::HostAddress()
 void IpPortRegistry::Patch(sel_t selector, void* arguments)
 {
    Protected::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+void IpPortRegistry::SetHostAddress()
+{
+   Debug::ft("IpPortRegistry.SetHostAddress");
+
+   hostAddr_.Nullify();
+
+   //  If the configured address is a loopback address, use it.
+   //
+   if(hostAddrCfg_->Address().IsLoopbackIpAddr())
+   {
+      hostAddr_ = SysIpL2Addr::LoopbackIpAddr();
+      return;
+   }
+
+   //  Get this element's addresses.  If the configured address is on the list,
+   //  use it as long as it's not IPv6 when we're only supposed to use IPv4.
+   //  If the configured address isn't chosen, the platform's IP stack should
+   //  have arranged the addresses in order of preference, so use the first one
+   //  that is acceptable.  If the list is empty, use the configured address.
+   //
+   auto hostaddrs = SysIpL3Addr::HostAddresses();
+
+   if(ipv6Enabled_ || (hostAddrCfg_->Address().Family() == IPv4))
+   {
+      for(size_t i = 0; i < hostaddrs.size(); ++i)
+      {
+         if(hostaddrs[i].L2AddrMatches(hostAddrCfg_->Address()))
+         {
+            hostAddr_ = hostAddrCfg_->Address();
+            return;
+         }
+      }
+   }
+
+   for(size_t i = 0; i < hostaddrs.size(); ++i)
+   {
+      if(ipv6Enabled_ || (hostaddrs[i].Family() == IPv4))
+      {
+         hostAddr_ = hostaddrs[i];
+         return;
+      }
+   }
+
+   if(!hostaddrs.empty()) hostAddr_ = hostaddrs[0];
+}
+
+//------------------------------------------------------------------------------
+
+void IpPortRegistry::SetIPv6()
+{
+   Debug::ft("IpPortRegistry.SetIPv6");
+
+   ipv6Enabled_ = SysIpL2Addr::SupportsIPv6();
+
+   //  If this element only has IPv6 addresses, IPv6 must be enabled.
+   //
+   if(!ipv6Enabled_)
+   {
+      auto hostaddrs = SysIpL3Addr::HostAddresses();
+
+      for(size_t i = 0; i < hostaddrs.size(); ++i)
+      {
+         if(hostaddrs[i].Family() == IPv4) return;
+      }
+   }
+
+   ipv6Enabled_ = true;
 }
 
 //------------------------------------------------------------------------------
@@ -336,14 +396,14 @@ void IpPortRegistry::Startup(RestartLevel level)
 {
    Debug::ft("IpPortRegistry.Startup");
 
-   //  The host address is frequently required and may be expensive to
-   //  look up.  It is therefore cached during initialization, after
-   //  which a restart is required to change it.
-   //
-   FunctionGuard guard(Guard_MemUnprotect);
-   HostAddress();
-   if(statsGroup_ == nullptr) statsGroup_.reset(new IpPortStatsGroup);
-   guard.Release();
+   if(level >= RestartCold)
+   {
+      FunctionGuard guard(Guard_MemUnprotect);
+      SetIPv6();
+      SetHostAddress();
+      if(statsGroup_ == nullptr) statsGroup_.reset(new IpPortStatsGroup);
+      guard.Release();
+   }
 
    for(auto p = portq_.First(); p != nullptr; portq_.Next(p))
    {
@@ -358,5 +418,14 @@ void IpPortRegistry::UnbindPort(IpPort& port)
    Debug::ftnt("IpPortRegistry.UnbindPort");
 
    portq_.Exq(port);
+}
+
+//------------------------------------------------------------------------------
+
+bool IpPortRegistry::UseIPv6()
+{
+   auto reg = Singleton< IpPortRegistry >::Extant();
+   if(reg == nullptr) return SysIpL2Addr::SupportsIPv6();
+   return reg->ipv6Enabled_;
 }
 }

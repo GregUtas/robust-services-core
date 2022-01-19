@@ -91,8 +91,8 @@ void GlobalAddress::Display(ostream& stream,
 
 bool GlobalAddress::operator==(const GlobalAddress& that) const
 {
-   return ((sbAddr_ == that.sbAddr_) && (GetPort() == that.GetPort()) &&
-      (GetIpV4Addr() == that.GetIpV4Addr()));
+   if(this->sbAddr_ != that.sbAddr_) return false;
+   return SysIpL3Addr::operator==(that);
 }
 
 //------------------------------------------------------------------------------

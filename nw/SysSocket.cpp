@@ -67,10 +67,10 @@ void SysSocket::Display(ostream& stream,
 {
    Dynamic::Display(stream, prefix, options);
 
-   stream << prefix << "socket        : " << socket_ << CRLF;
-   stream << prefix << "blocking      : " << blocking_ << CRLF;
-   stream << prefix << "tracing       : " << tracing_ << CRLF;
-   stream << prefix << "error         : " << error_ << CRLF;
+   stream << prefix << "socket   : " << socket_ << CRLF;
+   stream << prefix << "blocking : " << blocking_ << CRLF;
+   stream << prefix << "tracing  : " << tracing_ << CRLF;
+   stream << prefix << "error    : " << error_ << CRLF;
 }
 
 //------------------------------------------------------------------------------

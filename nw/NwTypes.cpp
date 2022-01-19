@@ -21,6 +21,8 @@
 //
 #include "NwTypes.h"
 #include <ostream>
+#include "Debug.h"
+#include "SysIpL2Addr.h"
 #include "SysTypes.h"
 
 using std::ostream;
@@ -30,6 +32,47 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
+IPv6Addr::IPv6Addr()
+{
+   Debug::ft("IPv6Addr.ctor");
+
+   for(int i = 3; i >= 0; --i) u32[i] = 0;
+}
+
+//------------------------------------------------------------------------------
+
+bool IPv6Addr::operator==(const IPv6Addr& that) const
+{
+   for(int i = 3; i >= 0; --i)
+   {
+      if(this->u32[i] != that.u32[i]) return false;
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool IPv6Addr::operator!=(const IPv6Addr& that) const
+{
+   return !(*this == that);
+}
+
+//------------------------------------------------------------------------------
+
+void IPv6Addr::SetAsMappedIPv4Addr()
+{
+   Debug::ft("IPv6Addr.SetAsMappedIPv4Addr");
+
+   //  Don't map an IPv4 address if IPv6 is not supported.
+   //
+   if(!SysIpL2Addr::SupportsIPv6()) return;
+   u16[U16_MAPPED_IPv4_IDX] = MappedIPv4Quartet;
+   for(int i = U16_MAPPED_IPv4_IDX - 1; i >= 0; --i) u16[i] = 0;
+}
+
+//==============================================================================
+
 fixed_string ProtocolStrings[IpProtocol_N + 1] =
 {
    "Any",

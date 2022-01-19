@@ -24,10 +24,12 @@
 #include "SysSocket.h"
 #include <iosfwd>
 #include <sstream>
+#include <winerror.h>
 #include <winsock2.h>
 #include <windows.h>   // must follow winsock2.h
-#include <winerror.h>
+#include <ws2tcpip.h>
 #include "Debug.h"
+#include "IpPortRegistry.h"
 #include "IpService.h"
 #include "Log.h"
 #include "NwLogs.h"
@@ -68,18 +70,19 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
 {
    Debug::ft(SysSocket_ctor2);
 
-   sockaddr_in addr;
-
+   //  Allocate a socket for UDP or TCP.
+   //
    rc = AllocOk;
    auto proto = service->Protocol();
+   auto family = (IpPortRegistry::UseIPv6() ? AF_INET6 : AF_INET);
 
    switch(proto)
    {
    case IpUdp:
-      socket_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+      socket_ = socket(family, SOCK_DGRAM, IPPROTO_UDP);
       break;
    case IpTcp:
-      socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+      socket_ = socket(family, SOCK_STREAM, IPPROTO_TCP);
       break;
    default:
       Debug::SwLog(SysSocket_ctor2, "unexpected protocol", proto);
@@ -95,16 +98,53 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
       return;
    }
 
+   if(family == AF_INET6)
+   {
+      //  Configure the socket to support both IPv4 and IPv6.  This
+      //  must be done before the socket is bound.
+      //
+      DWORD dual = 0;
+
+      if(setsockopt(socket_, IPPROTO_IPV6, IPV6_V6ONLY,
+         (const char*)&dual, sizeof(dual)) == SOCKET_ERROR)
+      {
+         SetError();
+         rc = SetOptionError;
+      }
+   }
+
    rc = SetService(service, true);
    if(rc != AllocOk) return;
 
    if(port == NilIpPort) return;
 
-   addr.sin_family = AF_INET;
-   addr.sin_addr.s_addr = htonl(INADDR_ANY);
-   addr.sin_port = htons(port);
+   //  The desired port is known, so bind the socket against it.
+   //
+   sockaddr* addr = nullptr;
+   int addrsize = 0;
+   sockaddr_in ipv4addr;
+   sockaddr_in6 ipv6addr;
 
-   if(bind(socket_, (sockaddr*) &addr, sizeof(addr)) == SOCKET_ERROR)
+   if(family == AF_INET)
+   {
+      ipv4addr.sin_family = AF_INET;
+      ipv4addr.sin_addr.s_addr = htonl(INADDR_ANY);
+      ipv4addr.sin_port = htons(port);
+      addr = (sockaddr*) &ipv4addr;
+      addrsize = sizeof(ipv4addr);
+   }
+   else
+   {
+      ipv6addr.sin6_family = AF_INET6;
+      ipv6addr.sin6_addr = in6addr_any;
+      ipv6addr.sin6_port = htons(port);
+      ipv6addr.sin6_flowinfo = 0;
+      ipv6addr.sin6_scope_id = 0;
+      addr = (sockaddr*) &ipv6addr;
+      addrsize = sizeof(ipv6addr);
+   }
+
+   if(bind(socket_, addr, addrsize) == SOCKET_ERROR)
    {
       SetError();
       rc = BindError;

@@ -139,7 +139,7 @@ void UdpIoThread::Enter()
    //  port, regardless of how they were actually addressed.  Clear any
    //  alarm that indicates our service is unavailable.
    //
-   auto host = IpPortRegistry::HostAddress();
+   auto& host = IpPortRegistry::HostAddress();
    rxAddr_ = SysIpL3Addr(host, port_, IpUdp, nullptr);
    ClearAlarm();
 
@@ -195,7 +195,7 @@ void UdpIoThread::Enter()
 
             if(log != nullptr)
             {
-               *log << Log::Tab << "RecvFrom: port=" << port_;
+               *log << Log::Tab << "recvfrom: port=" << port_;
                *log << " errval=" << socket->GetError();
                Log::Submit(log);
             }

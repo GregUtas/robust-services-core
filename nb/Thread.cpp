@@ -1384,7 +1384,7 @@ void Thread::DisplayStats(ostream& stream, const Flags& options) const
 fixed_string SchedHeader =
 "      THREADS          |   SINCE START OF CURRENT 15-MINUTE INTERVAL  | LAST\n"
 "                       |            rtc  max   max     max  total     |5 SEC\n"
-"id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu";
+"id    name   native f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu";
 //        1         2         3         4         5         6         7
 //234567890123456789012345678901234567890123456789012345678901234567890123456
 fixed_string SchedLine =

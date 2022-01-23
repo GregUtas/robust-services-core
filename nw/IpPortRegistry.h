@@ -30,7 +30,7 @@
 
 namespace NetworkBase
 {
-   class HostAddrCfg;
+   class LocalAddrCfg;
 }
 
 //------------------------------------------------------------------------------
@@ -52,9 +52,9 @@ public:
    //
    IpPortRegistry& operator=(const IpPortRegistry& that) = delete;
 
-   //  Returns the element's IP address (hostname).
+   //  Returns this element's IP address.
    //
-   static const SysIpL2Addr& HostAddress();
+   static const SysIpL2Addr& LocalAddr();
 
    //  Returns true if IPv6 should be used.
    //
@@ -70,8 +70,8 @@ public:
    const NodeBase::Q1Way< IpPort >& Ports() const { return portq_; }
 
    //  Returns true if DEST's IP address is the same as SRCE's, a loopback
-   //  address, or the host IP address, *and* the destination port is either
-   //  NilIpPort or has an IpPort registered against it.
+   //  address, or this element's IP address, *and* the destination port is
+   //  either NilIpPort or has an IpPort registered against it.
    //
    bool CanBypassStack(const SysIpL3Addr& srce, const SysIpL3Addr& dest) const;
 
@@ -112,9 +112,9 @@ private:
    //
    void SetIPv6();
 
-   //  Determines the host address.
+   //  Determines this element's address.
    //
-   void SetHostAddress();
+   void SetLocalAddr();
 
    //  Set if IPv6 should be used.
    //
@@ -122,11 +122,11 @@ private:
 
    //  The element's IP address.
    //
-   SysIpL2Addr hostAddr_;
+   SysIpL2Addr localAddr_;
 
    //  Configuration parameter for the element's IP address.
    //
-   std::unique_ptr< HostAddrCfg > hostAddrCfg_;
+   std::unique_ptr< LocalAddrCfg > localAddrCfg_;
 
    //  Information about each IP port that receives messages.
    //

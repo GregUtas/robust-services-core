@@ -139,8 +139,8 @@ void UdpIoThread::Enter()
    //  port, regardless of how they were actually addressed.  Clear any
    //  alarm that indicates our service is unavailable.
    //
-   auto& host = IpPortRegistry::HostAddress();
-   rxAddr_ = SysIpL3Addr(host, port_, IpUdp, nullptr);
+   auto& self = IpPortRegistry::LocalAddr();
+   rxAddr_ = SysIpL3Addr(self, port_, IpUdp, nullptr);
    ClearAlarm();
 
    //  Enter a loop that keeps waiting forever to receive the next message.

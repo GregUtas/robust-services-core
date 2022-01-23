@@ -162,10 +162,10 @@ public:
    //
    void Nullify();
 
-   //  Returns all host addresses except IPv6 addresses with a non-zero
+   //  Returns all local addresses except IPv6 addresses with a non-zero
    //  scope identifier.  Set the comment in the declaration of IPv6Addr.
    //
-   static std::vector< SysIpL3Addr > HostAddresses();
+   static std::vector< SysIpL3Addr > LocalAddrs();
 
    //  Overridden to display member variables.
    //

@@ -114,7 +114,7 @@ void IoThread::Display(ostream& stream,
 
    stream << prefix << "port   : " << port_ << CRLF;
    stream << prefix << "ipPort : " << ipPort_ << CRLF;
-   stream << prefix << "host   : " << host_.to_str() << CRLF;
+   stream << prefix << "self   : " << self_.to_str() << CRLF;
    stream << prefix << "recvs  : " << recvs_ << CRLF;
    stream << prefix << "txAddr : " << txAddr_.to_string() << CRLF;
    stream << prefix << "rxAddr : " << rxAddr_.to_string() << CRLF;

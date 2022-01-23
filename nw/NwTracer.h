@@ -120,7 +120,7 @@ private:
       NodeBase::TraceStatus status;  // whether included or excluded
    };
 
-   //  The trace status of a host IP port.
+   //  The trace status of a local IP port.
    //
    struct PortFilter
    {

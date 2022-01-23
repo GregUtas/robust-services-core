@@ -89,7 +89,7 @@ private:
    //
    const NodeBase::word data_;
 
-   //  The host IP port associated with the event.
+   //  The local IP port associated with the event.
    //
    const ipport_t port_;
 

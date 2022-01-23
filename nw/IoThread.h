@@ -95,9 +95,9 @@ protected:
    //
    IpPort* ipPort_;
 
-   //  The host address.
+   //  This element's address.
    //
-   SysIpL2Addr host_;
+   SysIpL2Addr self_;
 
    //  The number of messages received during the current work interval.
    //
@@ -107,8 +107,8 @@ protected:
    //
    SysIpL3Addr txAddr_;
 
-   //  The (host) address on which the current message arrived.  When
-   //  TCP is used, rxAddr_.socket_ identifies the connection's socket.
+   //  The address on which the current message arrived.  When TCP
+   //  is used, rxAddr_.socket_ identifies the connection's socket.
    //
    SysIpL3Addr rxAddr_;
 

@@ -181,22 +181,22 @@ bool SysIpL3Addr::AddrToName(string& name, string& service) const
 
 //------------------------------------------------------------------------------
 
-fn_name SysIpL3Addr_HostAddresses = "SysIpL3Addr.HostAddresses";
+fn_name SysIpL3Addr_LocalAddrs = "SysIpL3Addr.LocalAddrs";
 
-std::vector< SysIpL3Addr > SysIpL3Addr::HostAddresses()
+std::vector< SysIpL3Addr > SysIpL3Addr::LocalAddrs()
 {
-   Debug::ft(SysIpL3Addr_HostAddresses);
+   Debug::ft(SysIpL3Addr_LocalAddrs);
 
-   std::vector< SysIpL3Addr > hostaddrs;
-   string host;
+   std::vector< SysIpL3Addr > localAddrs;
+   string self;
    addrinfo hints;
    addrinfo* info = nullptr;
 
-   SysIpL2Addr::HostName(host);
+   SysIpL2Addr::LocalName(self);
    memset(&hints, 0, sizeof(hints));
    hints.ai_family = AF_UNSPEC;
 
-   if(getaddrinfo(host.c_str(), nullptr, &hints, &info) != 0)
+   if(getaddrinfo(self.c_str(), nullptr, &hints, &info) != 0)
    {
       auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
 
@@ -209,27 +209,27 @@ std::vector< SysIpL3Addr > SysIpL3Addr::HostAddresses()
 
    for(auto curr = info; curr != nullptr; curr = curr->ai_next)
    {
-      SysIpL3Addr hostaddr;
+      SysIpL3Addr localAddr;
 
       switch(curr->ai_family)
       {
       case AF_INET:
       {
          auto netaddr = (sockaddr_in*) curr->ai_addr;
-         hostaddr.NetworkToHost(netaddr->sin_addr.s_addr, netaddr->sin_port);
+         localAddr.NetworkToHost(netaddr->sin_addr.s_addr, netaddr->sin_port);
 
          switch(curr->ai_protocol)
          {
          case 0:
             break;
          case IPPROTO_UDP:
-            hostaddr.proto_ = IpUdp;
+            localAddr.proto_ = IpUdp;
             break;
          case IPPROTO_TCP:
-            hostaddr.proto_ = IpTcp;
+            localAddr.proto_ = IpTcp;
             break;
          default:
-            Debug::SwLog(SysIpL3Addr_HostAddresses,
+            Debug::SwLog(SysIpL3Addr_LocalAddrs,
                "unsupported protocol", curr->ai_protocol);
          }
 
@@ -241,7 +241,7 @@ std::vector< SysIpL3Addr > SysIpL3Addr::HostAddresses()
          auto netaddr = (sockaddr_in6*) curr->ai_addr;
          if(netaddr->sin6_scope_id != 0) continue;
 
-         hostaddr.NetworkToHost
+         localAddr.NetworkToHost
             (netaddr->sin6_addr.s6_words, netaddr->sin6_port);
 
          switch(curr->ai_protocol)
@@ -249,13 +249,13 @@ std::vector< SysIpL3Addr > SysIpL3Addr::HostAddresses()
          case 0:
             break;
          case IPPROTO_UDP:
-            hostaddr.proto_ = IpUdp;
+            localAddr.proto_ = IpUdp;
             break;
          case IPPROTO_TCP:
-            hostaddr.proto_ = IpTcp;
+            localAddr.proto_ = IpTcp;
             break;
          default:
-            Debug::SwLog(SysIpL3Addr_HostAddresses,
+            Debug::SwLog(SysIpL3Addr_LocalAddrs,
                "unsupported protocol", curr->ai_protocol);
          }
 
@@ -263,15 +263,15 @@ std::vector< SysIpL3Addr > SysIpL3Addr::HostAddresses()
       }
 
       default:
-         Debug::SwLog(SysIpL3Addr_HostAddresses,
+         Debug::SwLog(SysIpL3Addr_LocalAddrs,
             "unsupported protocol family", curr->ai_family);
       }
 
-      hostaddrs.push_back(hostaddr);
+      localAddrs.push_back(localAddr);
    }
 
    freeaddrinfo(info);
-   return hostaddrs;
+   return localAddrs;
 }
 
 //------------------------------------------------------------------------------

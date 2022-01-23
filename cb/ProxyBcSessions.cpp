@@ -512,8 +512,8 @@ ProtocolSM::OutgoingRc ProxyBcPsm::ProcessOgMsg(Message& msg)
    //
    if(AddressesUnknown(&msg))
    {
-      auto& host = IpPortRegistry::HostAddress();
-      GlobalAddress addr(host, NilIpPort, ProxyCallFactoryId);
+      auto& self = IpPortRegistry::LocalAddr();
+      GlobalAddress addr(self, NilIpPort, ProxyCallFactoryId);
 
       msg.SetSender(addr);
       msg.SetReceiver(addr);

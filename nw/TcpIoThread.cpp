@@ -370,7 +370,7 @@ void TcpIoThread::Enter()
       //  follows the overload control principle of handling progress
       //  work (existing sockets) before accepting new work.
       //
-      host_ = IpPortRegistry::HostAddress();
+      self_ = IpPortRegistry::LocalAddr();
 
       for(curr_ = first; curr_ < sockets_.Size(); ++curr_)
       {
@@ -679,7 +679,7 @@ void TcpIoThread::ServiceSocket()
       return;
    }
 
-   rxAddr_ = SysIpL3Addr(host_, port_, IpTcp, socket);
+   rxAddr_ = SysIpL3Addr(self_, port_, IpTcp, socket);
    InvokeHandler(*ipPort_, buffer_, rcvd);
 }
 

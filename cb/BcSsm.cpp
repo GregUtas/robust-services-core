@@ -158,7 +158,7 @@ CipMessage* BcSsm::BuildCipIam()
    }
 
    //  In a distributed system, a query to a central database (name server) is
-   //  often needed to find HOST (the destination's IP address).  For example:
+   //  often needed to find the destination's IP addres.  For example:
    //  o querying a DNS server with a VoIP call's destination URL
    //  o querying a toll-free database with an 800 number
    //  o querying an HLR with a mobile subscriber's number

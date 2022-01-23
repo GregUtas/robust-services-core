@@ -284,7 +284,7 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
 
    std::ostringstream stream;
 
-   client_addr_ = SysIpL3Addr(IpPortRegistry::HostAddress(), ClientIpPort);
+   client_addr_ = SysIpL3Addr(IpPortRegistry::LocalAddr(), ClientIpPort);
 
    if(config_.ip_specified)
    {
@@ -324,7 +324,7 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
    }
    else
    {
-      config_.name_specified = SysIpL2Addr::HostName(config_.server_name);
+      config_.name_specified = SysIpL2Addr::LocalName(config_.server_name);
       auto& addr = SysIpL2Addr::LoopbackIpAddr();
       server_addr_ = SysIpL3Addr(addr, config_.server_port);
    }

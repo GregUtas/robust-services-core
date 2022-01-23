@@ -139,11 +139,13 @@ public:
    //
    NodeBase::word GetError() const { return error_; }
 
-   //  Initializes the socket layer of the host O/S during startup.
+   //  Initializes this executable's use of our element's socket layer
+   //  during startup.
    //
    static bool StartLayer();
 
-   //  Releases the socket layer of the host O/S during shutdown.
+   //  Releases this executable's use of our element's socket layer
+   //  during shutdown.
    //
    static void StopLayer();
 

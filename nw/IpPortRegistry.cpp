@@ -49,11 +49,11 @@ namespace NetworkBase
 {
 //  Configuration parameter for this element's IP address.
 //
-class HostAddrCfg : public CfgStrParm
+class LocalAddrCfg : public CfgStrParm
 {
 public:
-   HostAddrCfg();
-   ~HostAddrCfg();
+   LocalAddrCfg();
+   ~LocalAddrCfg();
    const SysIpL2Addr& Address() const { return addr_; }
 protected:
    void SetCurr() override;
@@ -68,24 +68,24 @@ private:
 
 //------------------------------------------------------------------------------
 
-HostAddrCfg::HostAddrCfg() : CfgStrParm("ElementIpAddr",
+LocalAddrCfg::LocalAddrCfg() : CfgStrParm("ElementIpAddr",
    "127.0.0.1", "element's IP address")
 {
-   Debug::ft("HostAddrCfg.ctor");
+   Debug::ft("LocalAddrCfg.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-HostAddrCfg::~HostAddrCfg()
+LocalAddrCfg::~LocalAddrCfg()
 {
-   Debug::ftnt("HostAddrCfg.dtor");
+   Debug::ftnt("LocalAddrCfg.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-void HostAddrCfg::SetCurr()
+void LocalAddrCfg::SetCurr()
 {
-   Debug::ft("HostAddrCfg.SetCurr");
+   Debug::ft("LocalAddrCfg.SetCurr");
 
    FunctionGuard guard(Guard_MemUnprotect);
    CfgStrParm::SetCurr();
@@ -94,9 +94,9 @@ void HostAddrCfg::SetCurr()
 
 //------------------------------------------------------------------------------
 
-bool HostAddrCfg::SetNext(c_string input)
+bool LocalAddrCfg::SetNext(c_string input)
 {
-   Debug::ft("HostAddrCfg.SetNext");
+   Debug::ft("LocalAddrCfg.SetNext");
 
    SysIpL2Addr addr(input);
    if(!addr.IsValid()) return false;
@@ -169,8 +169,8 @@ IpPortRegistry::IpPortRegistry() : ipv6Enabled_(false)
    Debug::ft("IpPortRegistry.ctor");
 
    portq_.Init(IpPort::LinkDiff());
-   hostAddrCfg_.reset(new HostAddrCfg);
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*hostAddrCfg_);
+   localAddrCfg_.reset(new LocalAddrCfg);
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*localAddrCfg_);
    statsGroup_.reset(new IpPortStatsGroup);
 }
 
@@ -244,7 +244,7 @@ bool IpPortRegistry::CanBypassStack
 
    if(!srce.L2AddrMatches(dest) && !dest.IsLoopbackIpAddr())
    {
-      if(!dest.L2AddrMatches(HostAddress())) return false;
+      if(!dest.L2AddrMatches(LocalAddr())) return false;
    }
 
    auto port = dest.GetPort();
@@ -260,8 +260,8 @@ void IpPortRegistry::Display(ostream& stream,
    Protected::Display(stream, prefix, options);
 
    stream << prefix << "UseIPv6     : " << UseIPv6() << CRLF;
-   stream << prefix << "HostAddr    : " << hostAddr_.to_str() << CRLF;
-   stream << prefix << "hostAddrCfg : " << strObj(hostAddrCfg_.get()) << CRLF;
+   stream << prefix << "LocalAddr    : " << localAddr_.to_str() << CRLF;
+   stream << prefix << "localAddrCfg : " << strObj(localAddrCfg_.get()) << CRLF;
    stream << prefix << "statsGroup  : " << strObj(statsGroup_.get()) << CRLF;
    stream << prefix << "portq : " << CRLF;
    portq_.Display(stream, prefix + spaces(2), options);
@@ -285,16 +285,16 @@ IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
 
 //------------------------------------------------------------------------------
 
-const SysIpL2Addr& IpPortRegistry::HostAddress()
+const SysIpL2Addr& IpPortRegistry::LocalAddr()
 {
-   Debug::ft("IpPortRegistry.HostAddress");
+   Debug::ft("IpPortRegistry.LocalAddr");
 
    //  If this is invoked before we've even been constructed, return
    //  the IPv4 loopback address.
    //
    auto reg = Singleton< IpPortRegistry >::Extant();
    if(reg == nullptr) return SysIpL2Addr::LoopbackIpAddr();
-   return reg->hostAddr_;
+   return reg->localAddr_;
 }
 
 //------------------------------------------------------------------------------
@@ -302,54 +302,6 @@ const SysIpL2Addr& IpPortRegistry::HostAddress()
 void IpPortRegistry::Patch(sel_t selector, void* arguments)
 {
    Protected::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-void IpPortRegistry::SetHostAddress()
-{
-   Debug::ft("IpPortRegistry.SetHostAddress");
-
-   hostAddr_.Nullify();
-
-   //  If the configured address is a loopback address, use it.
-   //
-   if(hostAddrCfg_->Address().IsLoopbackIpAddr())
-   {
-      hostAddr_ = SysIpL2Addr::LoopbackIpAddr();
-      return;
-   }
-
-   //  Get this element's addresses.  If the configured address is on the list,
-   //  use it as long as it's not IPv6 when we're only supposed to use IPv4.
-   //  If the configured address isn't chosen, the platform's IP stack should
-   //  have arranged the addresses in order of preference, so use the first one
-   //  that is acceptable.  If the list is empty, use the configured address.
-   //
-   auto hostaddrs = SysIpL3Addr::HostAddresses();
-
-   if(ipv6Enabled_ || (hostAddrCfg_->Address().Family() == IPv4))
-   {
-      for(size_t i = 0; i < hostaddrs.size(); ++i)
-      {
-         if(hostaddrs[i].L2AddrMatches(hostAddrCfg_->Address()))
-         {
-            hostAddr_ = hostAddrCfg_->Address();
-            return;
-         }
-      }
-   }
-
-   for(size_t i = 0; i < hostaddrs.size(); ++i)
-   {
-      if(ipv6Enabled_ || (hostaddrs[i].Family() == IPv4))
-      {
-         hostAddr_ = hostaddrs[i];
-         return;
-      }
-   }
-
-   if(!hostaddrs.empty()) hostAddr_ = hostaddrs[0];
 }
 
 //------------------------------------------------------------------------------
@@ -364,15 +316,63 @@ void IpPortRegistry::SetIPv6()
    //
    if(!ipv6Enabled_)
    {
-      auto hostaddrs = SysIpL3Addr::HostAddresses();
+      auto localAddrs = SysIpL3Addr::LocalAddrs();
 
-      for(size_t i = 0; i < hostaddrs.size(); ++i)
+      for(size_t i = 0; i < localAddrs.size(); ++i)
       {
-         if(hostaddrs[i].Family() == IPv4) return;
+         if(localAddrs[i].Family() == IPv4) return;
       }
    }
 
    ipv6Enabled_ = true;
+}
+
+//------------------------------------------------------------------------------
+
+void IpPortRegistry::SetLocalAddr()
+{
+   Debug::ft("IpPortRegistry.SetLocalAddr");
+
+   localAddr_.Nullify();
+
+   //  If the configured address is a loopback address, use it.
+   //
+   if(localAddrCfg_->Address().IsLoopbackIpAddr())
+   {
+      localAddr_ = SysIpL2Addr::LoopbackIpAddr();
+      return;
+   }
+
+   //  Get this element's addresses.  If the configured address is on the list,
+   //  use it as long as it's not IPv6 when we're only supposed to use IPv4.
+   //  If the configured address isn't chosen, the platform's IP stack should
+   //  have arranged the addresses in order of preference, so use the first one
+   //  that is acceptable.  If the list is empty, use the configured address.
+   //
+   auto localAddrs = SysIpL3Addr::LocalAddrs();
+
+   if(ipv6Enabled_ || (localAddrCfg_->Address().Family() == IPv4))
+   {
+      for(size_t i = 0; i < localAddrs.size(); ++i)
+      {
+         if(localAddrs[i].L2AddrMatches(localAddrCfg_->Address()))
+         {
+            localAddr_ = localAddrCfg_->Address();
+            return;
+         }
+      }
+   }
+
+   for(size_t i = 0; i < localAddrs.size(); ++i)
+   {
+      if(ipv6Enabled_ || (localAddrs[i].Family() == IPv4))
+      {
+         localAddr_ = localAddrs[i];
+         return;
+      }
+   }
+
+   if(!localAddrs.empty()) localAddr_ = SysIpL2Addr::LoopbackIpAddr();
 }
 
 //------------------------------------------------------------------------------
@@ -400,7 +400,7 @@ void IpPortRegistry::Startup(RestartLevel level)
    {
       FunctionGuard guard(Guard_MemUnprotect);
       SetIPv6();
-      SetHostAddress();
+      SetLocalAddr();
       if(statsGroup_ == nullptr) statsGroup_.reset(new IpPortStatsGroup);
       guard.Release();
    }

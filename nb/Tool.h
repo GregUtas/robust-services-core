@@ -122,7 +122,7 @@ enum TraceFilter
    TraceFaction,   // a specific faction
    TraceThread,    // a specific thread
    TracePeer,      // messages to/from a specific peer address
-   TracePort,      // messages to/from a specific host port
+   TracePort,      // messages to/from a specific local port
    TraceFactory,   // incoming messages to a specific factory
    TraceProtocol,  // incoming messages in a specific protocol
    TraceSignal,    // incoming messages with a specific signal

@@ -958,11 +958,11 @@ ProtocolSM::OutgoingRc BcPsm::ProcessOgMsg(Message& msg)
    //
    if(AddressesUnknown(&msg))
    {
-      auto& host = IpPortRegistry::HostAddress();
-      auto& peer = IpPortRegistry::HostAddress();
+      auto& self = IpPortRegistry::LocalAddr();
+      auto& peer = IpPortRegistry::LocalAddr();
 //s   auto cip = Singleton< CipUdpService >::Instance();
       auto cip = Singleton< CipTcpService >::Instance();
-      GlobalAddress locAddr(host, cip->Port(), CipObcFactoryId);
+      GlobalAddress locAddr(self, cip->Port(), CipObcFactoryId);
       GlobalAddress remAddr(peer, cip->Port(), CipTbcFactoryId);
 
       msg.SetSender(locAddr);

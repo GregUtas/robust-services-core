@@ -450,9 +450,9 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
    //
    if(AddressesUnknown(&msg))
    {
-      auto& host = IpPortRegistry::HostAddress();
-      GlobalAddress locAddr(host, NilIpPort, PotsMuxFactoryId);
-      GlobalAddress remAddr(host, NilIpPort, PotsCallFactoryId);
+      auto& self = IpPortRegistry::LocalAddr();
+      GlobalAddress locAddr(self, NilIpPort, PotsMuxFactoryId);
+      GlobalAddress remAddr(self, NilIpPort, PotsCallFactoryId);
 
       msg.SetSender(locAddr);
       msg.SetReceiver(remAddr);
@@ -863,9 +863,9 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
    //
    if((ogPsm == uPsm_) && ogPsm->AddressesUnknown(nullptr))
    {
-      auto& host = IpPortRegistry::HostAddress();
-      auto& peer = IpPortRegistry::HostAddress();
-      GlobalAddress locAddr(host, PotsCallIpPort, PotsCallFactoryId);
+      auto& self = IpPortRegistry::LocalAddr();
+      auto& peer = IpPortRegistry::LocalAddr();
+      GlobalAddress locAddr(self, PotsCallIpPort, PotsCallFactoryId);
       GlobalAddress remAddr(peer, PotsShelfIpPort, PotsShelfFactoryId);
 
       pmsg->SetSender(locAddr);

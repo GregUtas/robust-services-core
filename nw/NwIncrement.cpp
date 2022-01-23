@@ -226,17 +226,17 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
-fixed_string HostNameTextStr = "hostname";
-fixed_string HostNameTextExpl = "returns the name of this element";
+fixed_string LocalNameTextStr = "localname";
+fixed_string LocalNameTextExpl = "returns the name of this element";
 
 fixed_string UsesIPv6TextStr = "usesipv6";
 fixed_string UsesIPv6TextExpl = "indicates whether this element uses IPv6";
 
-fixed_string HostAddrTextStr = "hostaddr";
-fixed_string HostAddrTextExpl = "returns this element's IP address";
+fixed_string LocalAddrTextStr = "localaddr";
+fixed_string LocalAddrTextExpl = "returns this element's IP address";
 
-fixed_string HostAddrsTextStr = "hostaddrs";
-fixed_string HostAddrsTextExpl = "returns this element's IP addresses";
+fixed_string LocalAddrsTextStr = "localaddrs";
+fixed_string LocalAddrsTextExpl = "returns this element's IP addresses";
 
 fixed_string NameToAddrTextStr = "nametoaddr";
 fixed_string NameToAddrTextExpl =
@@ -253,10 +253,10 @@ NameToAddrText::NameToAddrText() :
    BindParm(*new ServiceNameOptParm);
 }
 
-constexpr id_t HostNameIndex = 1;
+constexpr id_t LocalNameIndex = 1;
 constexpr id_t UsesIPv6Index = 2;
-constexpr id_t HostAddrIndex = 3;
-constexpr id_t HostAddrsIndex = 4;
+constexpr id_t LocalAddrIndex = 3;
+constexpr id_t LocalAddrsIndex = 4;
 constexpr id_t NameToAddrIndex = 5;
 constexpr id_t AddrToNameIndex = 6;
 
@@ -264,10 +264,10 @@ fixed_string IpActionExpl = "function to execute...";
 
 IpAction::IpAction() : CliTextParm(IpActionExpl)
 {
-   BindText(*new CliText(HostNameTextExpl, HostNameTextStr), HostNameIndex);
+   BindText(*new CliText(LocalNameTextExpl, LocalNameTextStr), LocalNameIndex);
    BindText(*new CliText(UsesIPv6TextExpl, UsesIPv6TextStr), UsesIPv6Index);
-   BindText(*new CliText(HostAddrTextExpl, HostAddrTextStr), HostAddrIndex);
-   BindText(*new CliText(HostAddrsTextExpl, HostAddrsTextStr), HostAddrsIndex);
+   BindText(*new CliText(LocalAddrTextExpl, LocalAddrTextStr), LocalAddrIndex);
+   BindText(*new CliText(LocalAddrsTextExpl, LocalAddrsTextStr), LocalAddrsIndex);
    BindText(*new NameToAddrText, NameToAddrIndex);
    BindText(*new IpAddrParm
       (AddrToNameTextExpl, AddrToNameTextStr), AddrToNameIndex);
@@ -291,15 +291,15 @@ word IpCommand::ProcessCommand(CliThread& cli) const
    string name, service;
    SysIpL3Addr host;
    IpProtocol proto;
-   std::vector< SysIpL3Addr > hostaddrs;
+   std::vector< SysIpL3Addr > localAddrs;
 
    if(!GetTextIndex(index, cli)) return -1;
 
    switch(index)
    {
-   case HostNameIndex:
+   case LocalNameIndex:
       if(!cli.EndOfInput()) return -1;
-      if(!SysIpL2Addr::HostName(name)) return cli.Report(-2, NoHostNameExpl);
+      if(!SysIpL2Addr::LocalName(name)) return cli.Report(-2, NoHostNameExpl);
       return cli.Report(0, name);
 
    case UsesIPv6Index:
@@ -307,26 +307,26 @@ word IpCommand::ProcessCommand(CliThread& cli) const
       *cli.obuf << "Uses IPv6: " << IpPortRegistry::UseIPv6() << CRLF;
       return cli.Report(0, name);
 
-   case HostAddrIndex:
+   case LocalAddrIndex:
       if(!cli.EndOfInput()) return -1;
-      *cli.obuf << "Host address: ";
-      *cli.obuf << IpPortRegistry::HostAddress().to_str() << CRLF;
+      *cli.obuf << "Local address: ";
+      *cli.obuf << IpPortRegistry::LocalAddr().to_str() << CRLF;
       break;
 
-   case HostAddrsIndex:
+   case LocalAddrsIndex:
       if(!cli.EndOfInput()) return -1;
-      hostaddrs = SysIpL3Addr::HostAddresses();
-      *cli.obuf << "Host addresses:" << CRLF;
+      localAddrs = SysIpL3Addr::LocalAddrs();
+      *cli.obuf << "Local addresses:" << CRLF;
 
-      if(hostaddrs.empty())
+      if(localAddrs.empty())
       {
          *cli.obuf << spaces(2) << "None found." << CRLF;
       }
       else
       {
-         for(size_t i = 0; i < hostaddrs.size(); ++i)
+         for(size_t i = 0; i < localAddrs.size(); ++i)
          {
-            *cli.obuf << spaces(2) << hostaddrs[i].to_str() << CRLF;
+            *cli.obuf << spaces(2) << localAddrs[i].to_str() << CRLF;
          }
       }
       break;

@@ -91,7 +91,7 @@ public:
 
    //  Updates NAME to the standard name of this host.
    //
-   static bool HostName(std::string& name);
+   static bool LocalName(std::string& name);
 
    //  Returns the type of address.
    //

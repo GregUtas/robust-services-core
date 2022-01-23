@@ -163,36 +163,36 @@ bool SysTcpSocket::LocAddr(SysIpL3Addr& locAddr)
 {
    Debug::ft("SysTcpSocket.LocAddr");
 
-   sockaddr_in ipv4host;
-   sockaddr_in6 ipv6host;
-   sockaddr* host = nullptr;
-   int hostsize = 0;
+   sockaddr_in ipv4self;
+   sockaddr_in6 ipv6self;
+   sockaddr* self = nullptr;
+   int selfsize = 0;
 
    auto ipv6 = IpPortRegistry::UseIPv6();
 
    if(ipv6)
    {
-      host = (sockaddr*) &ipv6host;
-      hostsize = sizeof(ipv6host);
+      self = (sockaddr*) &ipv6self;
+      selfsize = sizeof(ipv6self);
    }
    else
    {
-      host = (sockaddr*) &ipv4host;
-      hostsize = sizeof(ipv4host);
+      self = (sockaddr*) &ipv4self;
+      selfsize = sizeof(ipv4self);
    }
 
-   if(getsockname(Socket(), host, &hostsize) != 0)
+   if(getsockname(Socket(), self, &selfsize) != 0)
    {
       SetError();
       return false;
    }
 
    if(ipv6)
-      locAddr = SysIpL3Addr(ipv6host.sin6_addr.s6_words,
-         ipv6host.sin6_port, IpTcp, nullptr);
+      locAddr = SysIpL3Addr(ipv6self.sin6_addr.s6_words,
+         ipv6self.sin6_port, IpTcp, nullptr);
    else
-      locAddr = SysIpL3Addr(ipv4host.sin_addr.s_addr,
-         ipv4host.sin_port, IpTcp, nullptr);
+      locAddr = SysIpL3Addr(ipv4self.sin_addr.s_addr,
+         ipv4self.sin_port, IpTcp, nullptr);
    return true;
 }
 

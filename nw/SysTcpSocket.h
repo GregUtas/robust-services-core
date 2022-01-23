@@ -44,7 +44,7 @@ namespace NetworkBase
 enum PollFlag
 {
    PollInvalid,   // socket is no longer valid
-   PollError,     // host already disconnected or peer aborted
+   PollError,     // we already disconnected or peer aborted
    PollHungUp,    // peer disconnected or aborted
    PollWrite,     // can send without blocking
    PollWriteOob,  // can send out-of-band data without blocking
@@ -128,8 +128,7 @@ public:
    //
    NodeBase::word Send(const NodeBase::byte_t* data, size_t size);
 
-   //  Sets locAddr to the host address of this socket.  Returns false
-   //  on failure.
+   //  Sets locAddr to the address of this socket.  Returns false on failure.
    //
    bool LocAddr(SysIpL3Addr& locAddr);
 

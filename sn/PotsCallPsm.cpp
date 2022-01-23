@@ -310,9 +310,9 @@ ProtocolSM::OutgoingRc PotsCallPsm::ProcessOgMsg(Message& msg)
    //
    if(AddressesUnknown(&msg))
    {
-      auto& host = IpPortRegistry::HostAddress();
-      auto& peer = IpPortRegistry::HostAddress();
-      GlobalAddress locAddr(host, PotsCallIpPort, PotsCallFactoryId);
+      auto& self = IpPortRegistry::LocalAddr();
+      auto& peer = IpPortRegistry::LocalAddr();
+      GlobalAddress locAddr(self, PotsCallIpPort, PotsCallFactoryId);
       GlobalAddress remAddr(peer, PotsShelfIpPort, PotsShelfFactoryId);
 
       msg.SetSender(locAddr);

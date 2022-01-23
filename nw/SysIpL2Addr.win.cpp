@@ -35,9 +35,9 @@ using std::string;
 
 namespace NetworkBase
 {
-bool SysIpL2Addr::HostName(string& name)
+bool SysIpL2Addr::LocalName(string& name)
 {
-   Debug::ft("SysIpL2Addr.HostName");
+   Debug::ft("SysIpL2Addr.LocalName");
 
    char buff[256];
 

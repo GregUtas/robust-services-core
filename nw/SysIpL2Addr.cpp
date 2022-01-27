@@ -329,6 +329,7 @@ void SysIpL2Addr::NetworkToHost(IPv4Addr netaddr)
    Debug::ft("SysIpL2Addr.NetworkToHost(IPv4)");
 
    addr_.u32[U32_IPv4_IDX] = ntohl(netaddr);
+   addr_.SetAsMappedIPv4Addr();
 }
 
 //------------------------------------------------------------------------------
@@ -381,6 +382,21 @@ string SysIpL2Addr::to_str() const
 
    if(Family() == IPv4)
    {
+      if(SupportsIPv6())
+      {
+         //  This should display the 0:0:0:0:0:f: prefix for the IPv4 address.
+         //
+         stream << std::hex;
+
+         for(size_t i = 0; i <= U16_MAPPED_IPv4_IDX; ++i)
+         {
+            stream << addr_.u16[i];
+            stream << ':';
+         }
+
+         stream << std::dec;
+      }
+
       stream << int(addr_.u8[U8_IPv4_A_IDX]) << '.';
       stream << int(addr_.u8[U8_IPv4_B_IDX]) << '.';
       stream << int(addr_.u8[U8_IPv4_C_IDX]) << '.';

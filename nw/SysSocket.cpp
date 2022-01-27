@@ -83,12 +83,12 @@ void SysSocket::OutputLog
    auto log = Log::Create(NetworkLogGroup, id);
    if(log == nullptr) return;
 
-   *log << Log::Tab << expl << ": errval=" << GetError();
+   *log << Log::Tab << expl << ": errval=" << GetError() << CRLF;
 
    if(buff != nullptr)
    {
-      *log << " txPort=" << buff->TxAddr().GetPort();
-      *log << " rxPort=" << buff->RxAddr().GetPort();
+      *log << Log::Tab << "txAddr=" << buff->TxAddr().to_string() << CRLF;
+      *log << Log::Tab << "rxAddr=" << buff->RxAddr().to_string();
    }
 
    Log::Submit(log);
@@ -99,6 +99,50 @@ void SysSocket::OutputLog
 void SysSocket::Patch(sel_t selector, void* arguments)
 {
    Dynamic::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+bool SysSocket::ReportLayerStart(const string& err)
+{
+   Debug::ft("SysSocket.ReportLayerStart");
+
+   auto reg = Singleton< AlarmRegistry >::Instance();
+   auto alarm = reg->Find(NetInitAlarmName);
+   auto ok = err.empty();
+
+   if(alarm != nullptr)
+   {
+      auto status = (ok ? NoAlarm : CriticalAlarm);
+      auto id = (ok ? NetworkStartupSuccess : NetworkStartupFailure);
+      auto log = alarm->Create(NetworkLogGroup, id, status);
+
+      if(log != nullptr)
+      {
+         if(!ok) *log << Log::Tab << "errval=" << err;
+         Log::Submit(log);
+      }
+   }
+
+   return ok;
+}
+
+//------------------------------------------------------------------------------
+
+void SysSocket::ReportLayerStop(const string& err)
+{
+   Debug::ft("SysSocket.ReportLayerStop");
+
+   if(!err.empty())
+   {
+      auto log = Log::Create(NetworkLogGroup, NetworkShutdownFailure);
+
+      if(log != nullptr)
+      {
+         *log << Log::Tab << "errval=" << err;
+         Log::Submit(log);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------

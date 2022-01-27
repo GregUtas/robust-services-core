@@ -651,7 +651,7 @@ static void EraseLocals(const CxxScope* defn, CxxNamedSet& set)
       auto pos = (*i)->GetPos();
 
       if(((*i)->GetFile() == file) && (pos >= begin) && (pos <= end))
-         set.erase(*i++);
+         i = set.erase(i);
       else
          ++i;
    }

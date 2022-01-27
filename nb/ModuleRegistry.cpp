@@ -25,10 +25,9 @@
 #include <iomanip>
 #include <ios>
 #include <iosfwd>
-#include <map>
+#include <list>
 #include <sstream>
 #include <string>
-#include <vector>
 #include "Debug.h"
 #include "Duration.h"
 #include "Element.h"
@@ -340,16 +339,15 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    Log::Submit(stream_);
 
    auto reg = Singleton< ThreadRegistry >::Instance();
-   auto before = reg->Threads().size();
    auto exiting = reg->Restarting(level);
-   size_t actual = 0;
+   auto target = exiting.size();
 
    //  Report the number of threads that plan to exit.  Signal the threads
    //  that will exit and schedule threads until the planned number have
    //  exited.  If some fail to exit, RootThread will time out and escalate
    //  the restart.
    //
-   *Stream() << ExitingThreadsStr << setw(2) << exiting.size();
+   *Stream() << ExitingThreadsStr << setw(2) << target;
    *Stream() << setw(36 - (strlen(ExitingThreadsStr) + 2));
 
    for(auto t = exiting.cbegin(); t != exiting.cend(); ++t)
@@ -363,16 +361,29 @@ void ModuleRegistry::Shutdown(RestartLevel level)
 
    Thread::EnableFactions(AllFactions());
    {
-      while(actual < exiting.size())
+      for(auto prev = exiting.size(); prev > 0; prev = exiting.size())
       {
          Thread::SwitchContext();
          ThisThread::Pause(delay);
-         actual = before - reg->Threads().size();
+         reg->TrimThreads(exiting);
+
+         if(prev == exiting.size())
+         {
+            //  No thread exited while we were paused.  Resignal the remaining
+            //  threads.  This is similar to code in InitThread.HandleTimeout
+            //  and Thread.SwitchContext, where a thread occasionally misses
+            //  its Proceed() and must be resignalled.
+            //
+            for(auto t = exiting.cbegin(); t != exiting.cend(); ++t)
+            {
+               (*t)->Raise(SIGCLOSE);
+            }
+         }
       }
    }
    Thread::EnableFactions(NoFactions);
 
-   actual = before - reg->Threads().size();
+   auto actual = target - exiting.size();
    *Stream() << CRLF << ExitedThreadsStr << setw(2) << actual;
    *Stream() << setw(36 - (strlen(ExitedThreadsStr) + 2));
    elapsed = TimePoint::Now() - zeroTime;

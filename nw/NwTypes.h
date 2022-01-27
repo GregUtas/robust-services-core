@@ -105,6 +105,7 @@ typedef uint16_t ipport_t;
 //
 constexpr ipport_t NilIpPort = 0;
 constexpr ipport_t FirstAppIpPort = 1024;
+constexpr ipport_t LocalAddrTestIpPort = 30000;
 constexpr ipport_t CipIpPort = 40000;
 constexpr ipport_t PotsShelfIpPort = 40001;
 constexpr ipport_t PotsCallIpPort = 40002;
@@ -124,6 +125,22 @@ enum IpProtocol
 //  Inserts a string for PROTO into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, IpProtocol proto);
+
+//  The state of an IP address associated with this element.
+//
+enum IpAddrState
+{
+   Unverified,    // address has not yet been tested
+   BindFailed,    // socket could not be bound to address
+   SendFailed,    // address failed to send a test message
+   RecvFailed,    // address failed to receive a test message
+   Verified,      // socket bound; message sent and received
+   IpAddrState_N  // number of states
+};
+
+//  Inserts a string for STATE into STREAM.
+//
+std::ostream& operator<<(std::ostream& stream, IpAddrState state);
 
 //  Forward declarations.
 //

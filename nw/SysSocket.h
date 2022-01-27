@@ -210,6 +210,16 @@ protected:
    NodeBase::word SetError();
    NodeBase::word SetError(NodeBase::word errval);
 private:
+   //  Reports the result of StartLayer.  Returns false if ERR is not empty,
+   //  which indicates that StartLayer failed.
+   //
+   static bool ReportLayerStart(const std::string& err);
+
+   //  Reports the result of StopLayer.  If ERR is not empty, it indicates
+   //  that StopLayer failed.
+   //
+   static void ReportLayerStop(const std::string& err);
+
    //  Updates the network alarm when the network goes down or comes back up.
    //  ERR is included in the alarm log when OK is false.
    //

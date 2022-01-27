@@ -32,6 +32,8 @@ using namespace NodeBase;
 namespace NetworkBase
 {
 fixed_string NetworkLogGroup = "NET";
+fixed_string NetInitAlarmName = "NETINIT";
+fixed_string LocAddrAlarmName = "LOCADDR";
 fixed_string NetworkAlarmName = "NETWORK";
 
 //------------------------------------------------------------------------------
@@ -42,18 +44,23 @@ void CreateNwLogs(RestartLevel level)
 
    if(level < RestartReboot) return;
 
+   new Alarm(NetInitAlarmName, "Network layer not initialized", 5);
    new Alarm(NetworkAlarmName, "Network access lost", 5);
+   new Alarm(LocAddrAlarmName, "Local address unreachable", 5);
 
    auto group = new LogGroup(NetworkLogGroup, "Network Layer");
    new Log(group, NetworkStartupFailure, "Network startup failure");
    new Log(group, NetworkShutdownFailure, "Network shutdown failure");
-   new Log(group, NetworkUnavailable, "Network unavailable");
+   new Log(group, NetworkUnavailable, "Network is unavailable");
    new Log(group, NetworkPortOccupied, "IP port already occupied");
    new Log(group, NetworkServiceFailure, "Network service has failed");
    new Log(group, NetworkAllocFailure, "Network allocation failure");
    new Log(group, NetworkFunctionError, "Network function error");
-   new Log(group, NetworkAvailable, "Network available");
+   new Log(group, NetworkLocalAddrFailure, "Local address failure");
+   new Log(group, NetworkAvailable, "Network is available");
    new Log(group, NetworkServiceAvailable, "Network service is available");
+   new Log(group, NetworkStartupSuccess, "Network startup successful");
+   new Log(group, NetworkLocalAddrSuccess, "Local address verified");
    new Log(group, NetworkSocketError, "Socket function error");
    new Log(group, NetworkNoDestination, "No destination from input handler");
 }

@@ -8,6 +8,14 @@ One or more threads exited and could not be recreated:
   o minor: a capability is impaired
   o off: the thread(s) have been recreated
 The daemon's identifier (as shown in >daemons list) is appended to "DAEMON".
+? LOCADDR
+A test of the local address (>cfgparms set elementipaddr) has concluded.
+  o critical: the local address is unregistered or unreachable
+  o off: test message successfully reached the local address
+? NETINIT
+Configuration of the network layer has changed:
+  o critical: failed to register the system as a user of the network layer
+  o off: successfully registered the system as a user of the network layer
 ? NETWORK
 The status of the network layer has changed:
   o critical: the node has lost network access

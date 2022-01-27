@@ -23,9 +23,11 @@
 #include "CfgStrParm.h"
 #include "StatisticsGroup.h"
 #include <cstddef>
-#include <ostream>
+#include <sstream>
 #include <string>
 #include <vector>
+#include "Alarm.h"
+#include "AlarmRegistry.h"
 #include "Algorithms.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
@@ -33,7 +35,9 @@
 #include "FunctionGuard.h"
 #include "IpPort.h"
 #include "IpService.h"
+#include "Log.h"
 #include "NwCliParms.h"
+#include "NwLogs.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -69,7 +73,7 @@ private:
 //------------------------------------------------------------------------------
 
 LocalAddrCfg::LocalAddrCfg() : CfgStrParm("ElementIpAddr",
-   "127.0.0.1", "element's IP address")
+   "127.0.0.1", "element's IP address (check firewall/VPN/etc if routable)")
 {
    Debug::ft("LocalAddrCfg.ctor");
 }
@@ -164,7 +168,9 @@ void IpPortStatsGroup::DisplayStats
 
 //==============================================================================
 
-IpPortRegistry::IpPortRegistry() : ipv6Enabled_(false)
+IpPortRegistry::IpPortRegistry() :
+   ipv6Enabled_(false),
+   localState_(Unverified)
 {
    Debug::ft("IpPortRegistry.ctor");
 
@@ -259,12 +265,20 @@ void IpPortRegistry::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   stream << prefix << "UseIPv6     : " << UseIPv6() << CRLF;
-   stream << prefix << "LocalAddr    : " << localAddr_.to_str() << CRLF;
+   stream << prefix << "UseIPv6      : " << UseIPv6() << CRLF;
+   stream << prefix << "localAddr    : " << localAddr_.to_str() << CRLF;
+   stream << prefix << "localState   : " << localState_ << CRLF;
    stream << prefix << "localAddrCfg : " << strObj(localAddrCfg_.get()) << CRLF;
-   stream << prefix << "statsGroup  : " << strObj(statsGroup_.get()) << CRLF;
+   stream << prefix << "statsGroup   : " << strObj(statsGroup_.get()) << CRLF;
    stream << prefix << "portq : " << CRLF;
    portq_.Display(stream, prefix + spaces(2), options);
+}
+
+//------------------------------------------------------------------------------
+
+void IpPortRegistry::DisplayLocalAddr(ostream& stream) const
+{
+   stream << LocalAddr().to_str() << " (" << localState_ << ')';
 }
 
 //------------------------------------------------------------------------------
@@ -343,19 +357,19 @@ void IpPortRegistry::SetLocalAddr()
       return;
    }
 
-   //  Get this element's addresses.  If the configured address is on the list,
-   //  use it as long as it's not IPv6 when we're only supposed to use IPv4.
-   //  If the configured address isn't chosen, the platform's IP stack should
-   //  have arranged the addresses in order of preference, so use the first one
-   //  that is acceptable.  If the list is empty, use the configured address.
+   //  If the configured address is a known local address, use it as long as
+   //  it's not IPv6 when we're only supposed to use IPv4.  If the configured
+   //  address isn't chosen, the platform's IP stack should have arranged the
+   //  addresses in order of preference, so use the first acceptable one.  If
+   //  no address is acceptable, use the configured address.
    //
-   auto localAddrs = SysIpL3Addr::LocalAddrs();
+   auto localAddrs = SysIpL2Addr::LocalAddrs();
 
    if(ipv6Enabled_ || (localAddrCfg_->Address().Family() == IPv4))
    {
-      for(size_t i = 0; i < localAddrs.size(); ++i)
+      for(auto a = localAddrs.cbegin(); a != localAddrs.cend(); ++a)
       {
-         if(localAddrs[i].L2AddrMatches(localAddrCfg_->Address()))
+         if(*a == localAddrCfg_->Address())
          {
             localAddr_ = localAddrCfg_->Address();
             return;
@@ -363,16 +377,16 @@ void IpPortRegistry::SetLocalAddr()
       }
    }
 
-   for(size_t i = 0; i < localAddrs.size(); ++i)
+   for(auto a = localAddrs.cbegin(); a != localAddrs.cend(); ++a)
    {
-      if(ipv6Enabled_ || (localAddrs[i].Family() == IPv4))
+      if(ipv6Enabled_ || (a->Family() == IPv4))
       {
-         localAddr_ = localAddrs[i];
+         localAddr_ = *a;
          return;
       }
    }
 
-   if(!localAddrs.empty()) localAddr_ = SysIpL2Addr::LoopbackIpAddr();
+   localAddr_ = SysIpL2Addr::LoopbackIpAddr();
 }
 
 //------------------------------------------------------------------------------
@@ -408,6 +422,68 @@ void IpPortRegistry::Startup(RestartLevel level)
    for(auto p = portq_.First(); p != nullptr; portq_.Next(p))
    {
       p->Startup(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IpPortRegistry_TestAdvance = "IpPortRegistry.TestAdvance";
+
+void IpPortRegistry::TestAdvance()
+{
+   Debug::ft(IpPortRegistry_TestAdvance);
+
+   FunctionGuard guard(Guard_MemUnprotect);
+
+   switch(localState_)
+   {
+   case BindFailed:
+      localState_ = SendFailed;
+      break;
+   case SendFailed:
+      localState_ = RecvFailed;
+      break;
+   case RecvFailed:
+      localState_ = Verified;
+      break;
+   default:
+      Debug::SwLog(IpPortRegistry_TestAdvance, "invalid state", localState_);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void IpPortRegistry::TestBegin()
+{
+   Debug::ft("IpPortRegistry.TestBegin");
+
+   FunctionGuard guard(Guard_MemUnprotect);
+   localState_ = BindFailed;
+}
+
+//------------------------------------------------------------------------------
+
+void IpPortRegistry::TestEnd() const
+{
+   Debug::ft("IpPortRegistry.TestEnd");
+
+   //  Raise an alarm to report the state of the local address.
+   //
+   auto reg = Singleton< AlarmRegistry >::Instance();
+   auto alarm = reg->Find(LocAddrAlarmName);
+
+   if(alarm != nullptr)
+   {
+      auto ok = (localState_ == Verified);
+      auto status = (ok ? NoAlarm : CriticalAlarm);
+      auto id = (ok ? NetworkLocalAddrSuccess : NetworkLocalAddrFailure);
+      auto log = alarm->Create(NetworkLogGroup, id, status);
+
+      if(log != nullptr)
+      {
+         if(!ok) *log << Log::Tab << "errval=" << localState_;
+         Log::Submit(log);
+      }
    }
 }
 

@@ -28,12 +28,15 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "CliBoolParm.h"
 #include "CliThread.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
+#include "LocalAddrTest.h"
 #include "NbCliParms.h"
 #include "NwCliParms.h"
 #include "NwTracer.h"
@@ -41,6 +44,7 @@
 #include "Q1Way.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
+#include "ThisThread.h"
 #include "Tool.h"
 #include "ToolTypes.h"
 
@@ -208,6 +212,11 @@ word NwIncludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The IP command.
 //
+class LocalAddrText : public CliText
+{
+public: LocalAddrText();
+};
+
 class NameToAddrText : public CliText
 {
 public: NameToAddrText();
@@ -227,16 +236,23 @@ private:
 };
 
 fixed_string LocalNameTextStr = "localname";
-fixed_string LocalNameTextExpl = "returns the name of this element";
+fixed_string LocalNameTextExpl = "displays this element's host name";
 
 fixed_string UsesIPv6TextStr = "usesipv6";
-fixed_string UsesIPv6TextExpl = "indicates whether this element uses IPv6";
+fixed_string UsesIPv6TextExpl = "displays whether this element uses IPv6";
 
 fixed_string LocalAddrTextStr = "localaddr";
-fixed_string LocalAddrTextExpl = "returns this element's IP address";
+fixed_string LocalAddrTextExpl = "displays this element's IP address";
+
+fixed_string LocalAddrExpl = "retest local address? (default=f)";
+
+LocalAddrText::LocalAddrText() : CliText(LocalAddrTextExpl, LocalAddrTextStr)
+{
+   BindParm(*new CliBoolParm(LocalAddrExpl, true));
+}
 
 fixed_string LocalAddrsTextStr = "localaddrs";
-fixed_string LocalAddrsTextExpl = "returns this element's IP addresses";
+fixed_string LocalAddrsTextExpl = "displays this element's IP addresses";
 
 fixed_string NameToAddrTextStr = "nametoaddr";
 fixed_string NameToAddrTextExpl =
@@ -266,8 +282,9 @@ IpAction::IpAction() : CliTextParm(IpActionExpl)
 {
    BindText(*new CliText(LocalNameTextExpl, LocalNameTextStr), LocalNameIndex);
    BindText(*new CliText(UsesIPv6TextExpl, UsesIPv6TextStr), UsesIPv6Index);
-   BindText(*new CliText(LocalAddrTextExpl, LocalAddrTextStr), LocalAddrIndex);
-   BindText(*new CliText(LocalAddrsTextExpl, LocalAddrsTextStr), LocalAddrsIndex);
+   BindText(*new LocalAddrText, LocalAddrIndex);
+   BindText(*new CliText
+      (LocalAddrsTextExpl, LocalAddrsTextStr), LocalAddrsIndex);
    BindText(*new NameToAddrText, NameToAddrIndex);
    BindText(*new IpAddrParm
       (AddrToNameTextExpl, AddrToNameTextStr), AddrToNameIndex);
@@ -288,10 +305,11 @@ word IpCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(IpCommand_ProcessCommand);
 
    id_t index;
+   auto retest = false;
    string name, service;
    SysIpL3Addr host;
    IpProtocol proto;
-   std::vector< SysIpL3Addr > localAddrs;
+   std::vector< SysIpL2Addr > localAddrs;
 
    if(!GetTextIndex(index, cli)) return -1;
 
@@ -308,14 +326,23 @@ word IpCommand::ProcessCommand(CliThread& cli) const
       return cli.Report(0, name);
 
    case LocalAddrIndex:
+      if(GetBoolParmRc(retest, cli) == Error) return -1;
       if(!cli.EndOfInput()) return -1;
+      if(retest)
+      {
+         *cli.obuf << "Retesting local address..." << CRLF;
+         cli.Flush();
+         Singleton< SendLocalThread >::Instance()->Retest();
+         ThisThread::Pause(5 * ONE_SEC);
+      }
       *cli.obuf << "Local address: ";
-      *cli.obuf << IpPortRegistry::LocalAddr().to_str() << CRLF;
+      Singleton< IpPortRegistry >::Instance()->DisplayLocalAddr(*cli.obuf);
+      *cli.obuf << CRLF;
       break;
 
    case LocalAddrsIndex:
       if(!cli.EndOfInput()) return -1;
-      localAddrs = SysIpL3Addr::LocalAddrs();
+      localAddrs = SysIpL2Addr::LocalAddrs();
       *cli.obuf << "Local addresses:" << CRLF;
 
       if(localAddrs.empty())

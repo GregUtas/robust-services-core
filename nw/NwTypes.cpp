@@ -73,6 +73,27 @@ void IPv6Addr::SetAsMappedIPv4Addr()
 
 //==============================================================================
 
+fixed_string IpAddrStateStrings[IpAddrState_N + 1] =
+{
+   "unverified",
+   "bind failed",
+   "send failed",
+   "recv failed",
+   "verified",
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, IpAddrState state)
+{
+   if((state >= 0) && (state < IpAddrState_N))
+      stream << IpAddrStateStrings[state];
+   else
+      stream << IpAddrStateStrings[IpAddrState_N];
+   return stream;
+}
+
+//==============================================================================
+
 fixed_string ProtocolStrings[IpProtocol_N + 1] =
 {
    "Any",

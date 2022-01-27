@@ -276,7 +276,7 @@ static void RemoveAliasedClasses(CxxNamedSet& inclSet)
       }
 
       if(erase1)
-         inclSet.erase(*item1++);
+         item1 = inclSet.erase(item1);
       else
          ++item1;
    }
@@ -303,7 +303,7 @@ static void RemoveAliasedClasses(CxxNamedSet& inclSet)
             }
 
             if(erase2)
-               inclSet.erase(*item2++);
+               item2 = inclSet.erase(item2);
             else
                ++item2;
          }
@@ -344,14 +344,14 @@ static void RemoveIncludedBaseItems(CxxNamedSet& inclSet)
             }
 
             if(erase2)
-               inclSet.erase(*item2++);
+               item2 = inclSet.erase(item2);
             else
                ++item2;
          }
       }
 
       if(erase1)
-         inclSet.erase(*item1++);
+         item1 = inclSet.erase(item1);
       else
          ++item1;
    }
@@ -387,7 +387,7 @@ static void RemoveIndirectBaseItems
       }
 
       if(erase)
-         inclSet.erase(*item1++);
+         item1 = inclSet.erase(item1);
       else
          ++item1;
    }
@@ -1145,7 +1145,7 @@ void CodeFile::EraseInternals(CxxNamedSet& set) const
    for(auto i = set.cbegin(); i != set.cend(); NO_OP)
    {
       if((*i)->GetFile() == this)
-         set.erase(*i++);
+         i = set.erase(i);
       else
          ++i;
    }
@@ -2366,7 +2366,7 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
       }
 
       if(remove)
-         addForws.erase(*add++);
+         add = addForws.erase(add);
       else
          ++add;
    }

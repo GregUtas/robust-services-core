@@ -96,7 +96,7 @@ namespace NodeBase
 fixed_string AlarmExpl = "alarm name";
 
 fixed_string AlarmsListTextStr = "list";
-fixed_string AlarmsListTextExpl = "lists alarms";
+fixed_string AlarmsListTextExpl = "displays alarms";
 
 class AlarmsExplainText : public CliText
 {
@@ -403,7 +403,7 @@ fixed_string CfgParmNameExpl = "name of configuration parameter";
 fixed_string CfgParmValueExpl = "value of configuration parameter";
 
 fixed_string CfgParmsListStr = "list";
-fixed_string CfgParmsListExpl = "lists all configuration parameters";
+fixed_string CfgParmsListExpl = "displays all configuration parameters";
 
 fixed_string CfgParmsExplStr = "explain";
 fixed_string CfgParmsExplExpl = "explains a configuration parameter";
@@ -415,7 +415,7 @@ CfgParmsExplText::CfgParmsExplText() :
 }
 
 fixed_string CfgParmsGetStr = "get";
-fixed_string CfgParmsGetExpl = "returns a configuration parameter's value";
+fixed_string CfgParmsGetExpl = "displays a configuration parameter's value";
 
 CfgParmsGetText::CfgParmsGetText() : CliText(CfgParmsGetExpl, CfgParmsGetStr)
 {
@@ -638,7 +638,7 @@ private:
 
 fixed_string DaemonsListTextStr = "list";
 fixed_string DaemonsListTextExpl =
-   "shows info for all daemons or a specific daemon";
+   "displays info for all daemons or a specific daemon";
 
 DaemonsListText::DaemonsListText() :
    CliText(DaemonsListTextExpl, DaemonsListTextStr)
@@ -982,10 +982,10 @@ private:
 };
 
 fixed_string HeapsListTextStr = "list";
-fixed_string HeapsListTextExpl = "lists all heaps";
+fixed_string HeapsListTextExpl = "displays all heaps";
 
 fixed_string HeapsInUseTextStr = "inuse";
-fixed_string HeapsInUseTextExpl = "returns the number of bytes allocated";
+fixed_string HeapsInUseTextExpl = "displays the number of bytes allocated";
 
 HeapsInUseText::HeapsInUseText() :
    CliText(HeapsInUseTextExpl, HeapsInUseTextStr)
@@ -1054,7 +1054,7 @@ HeapsAction::HeapsAction() : CliTextParm(HeapsActionExpl)
 }
 
 fixed_string HeapsStr = "heaps";
-fixed_string HeapsExpl = "Lists all heaps.";
+fixed_string HeapsExpl = "Displays all heaps.";
 
 HeapsCommand::HeapsCommand() : CliCommand(HeapsStr, HeapsExpl)
 {
@@ -1513,7 +1513,7 @@ private:
 };
 
 fixed_string IncrsStr = "incrs";
-fixed_string IncrsExpl = "Lists all available increments.";
+fixed_string IncrsExpl = "Displays all available increments.";
 
 IncrsCommand::IncrsCommand() : CliCommand(IncrsStr, IncrsExpl) { }
 
@@ -1537,7 +1537,7 @@ public: LogsListText();
 
 fixed_string LogsListTextStr = "list";
 fixed_string LogsListTextExpl =
-   "shows info for all logs or the logs in a specific group";
+   "displays info for all logs or the logs in a specific group";
 
 LogsListText::LogsListText() :
    CliText(LogsListTextExpl, LogsListTextStr)
@@ -1546,7 +1546,7 @@ LogsListText::LogsListText() :
 }
 
 fixed_string LogsGroupsTextStr = "groups";
-fixed_string LogsGroupsTextExpl = "lists all log groups";
+fixed_string LogsGroupsTextExpl = "displays all log groups";
 
 class LogsExplainText : public CliText
 {
@@ -1605,7 +1605,7 @@ public: LogsBuffersText();
 };
 
 fixed_string LogsBuffersTextStr = "buffers";
-fixed_string LogsBuffersTextExpl = "lists all log buffers";
+fixed_string LogsBuffersTextExpl = "displays all log buffers";
 
 LogsBuffersText::LogsBuffersText() :
    CliText(LogsBuffersTextExpl, LogsBuffersTextStr)
@@ -2095,7 +2095,7 @@ QueryWhatParm::QueryWhatParm() : CliTextParm(QueryWhatExpl)
 }
 
 fixed_string QueryStr = "query";
-fixed_string QueryExpl = "Shows the status of trace tools.";
+fixed_string QueryExpl = "Displays the status of trace tools.";
 
 QueryCommand::QueryCommand(bool bind) : CliCommand(QueryStr, QueryExpl)
 {
@@ -2923,7 +2923,7 @@ private:
 };
 
 fixed_string GroupsTextStr = "groups";
-fixed_string GroupsTextExpl = "lists all statistics groups";
+fixed_string GroupsTextExpl = "displays all statistics groups";
 
 fixed_string StatisticsGroupOptExpl = "group number (default=all)";
 
@@ -3225,14 +3225,14 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
-fixed_string SymbolOptNameExpl = "symbol's name (lists all if omitted)";
+fixed_string SymbolOptNameExpl = "symbol's name (displays all if omitted)";
 
 fixed_string SymbolMandNameExpl = "symbol's name";
 
 fixed_string SymbolValueExpl = "symbol's value (symbol deleted if omitted)";
 
 fixed_string SymbolsListStr = "list";
-fixed_string SymbolsListExpl = "lists symbols";
+fixed_string SymbolsListExpl = "displays symbols";
 
 SymbolsListText::SymbolsListText() : CliText(SymbolsListExpl, SymbolsListStr)
 {
@@ -3452,7 +3452,7 @@ private:
 };
 
 fixed_string ToolsStr = "tools";
-fixed_string ToolsExpl = "Lists available debugging tools.";
+fixed_string ToolsExpl = "Displays available debugging tools.";
 
 ToolsCommand::ToolsCommand() : CliCommand(ToolsStr, ToolsExpl) { }
 

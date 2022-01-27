@@ -223,7 +223,7 @@ fixed_string MinTestsParmExpl = "value of N";
 
 fixed_string CoverageUnderTextStr = "under";
 fixed_string CoverageUnderTextExpl =
-   "lists functions invoked by fewer than N tests";
+   "displays functions invoked by fewer than N tests";
 
 CoverageUnderText::CoverageUnderText() :
    CliText(CoverageUnderTextExpl, CoverageUnderTextStr)
@@ -736,7 +736,7 @@ private:
 };
 
 fixed_string ItemsStr = "items";
-fixed_string ItemsExpl = "Lists the C++ items in a file, by position.";
+fixed_string ItemsExpl = "Displays the C++ items in a file, by position.";
 
 ItemsCommand::ItemsCommand() : LibraryCommand(ItemsStr, ItemsExpl)
 {

@@ -184,7 +184,7 @@ void UdpIoThread::Enter()
 
       if(rcvd < 0)
       {
-         //s Handle Recvfrom() error.
+         //s Handle RecvFrom() error.
          //  For now, take a short break and hope the problem goes away.
          //  WSAEWOULDBLOCK is a chronic occurrence on Windows, which is
          //  curious because our socket is non-blocking.

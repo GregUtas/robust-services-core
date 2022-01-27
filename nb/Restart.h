@@ -54,7 +54,6 @@ enum RestartReason
    MutexCreationFailed,       // failed to create mutex
    HeapCreationFailed,        // insufficient memory for heap
    ObjectPoolCreationFailed,  // insufficient memory for object pool
-   NetworkLayerUnavailable,   // network layer could not be started
    RestartTimeout,            // restart took too long
    SchedulingTimeout,         // missed InitThread heartbeat
    ThreadPauseFailed,         // Thread::Pause failed

@@ -24,12 +24,12 @@
 #include "IpBuffer.h"
 #include "IpPortRegistry.h"
 #include "IpServiceRegistry.h"
+#include "LocalAddrTest.h"
 #include "ModuleRegistry.h"
 #include "NbModule.h"
 #include "NwIncrement.h"
 #include "NwLogs.h"
 #include "NwTracer.h"
-#include "Restart.h"
 #include "Singleton.h"
 #include "SysSocket.h"
 #include "SysTypes.h"
@@ -84,15 +84,17 @@ void NwModule::Startup(RestartLevel level)
 
    CreateNwLogs(level);
 
-   if((level >= RestartCold) && !SysSocket::StartLayer())
+   if(level >= RestartCold)
    {
-      Restart::Initiate(RestartWarm, NetworkLayerUnavailable, 0);
+      SysSocket::StartLayer();
    }
 
    Singleton< NwTracer >::Instance()->Startup(level);
    Singleton< IpServiceRegistry >::Instance()->Startup(level);
    Singleton< IpPortRegistry >::Instance()->Startup(level);
    Singleton< IpBufferPool >::Instance()->Startup(level);
+   Singleton< SendLocalIpService >::Instance()->Startup(level);
+   Singleton< SendLocalThread >::Instance()->Startup(level);
    Singleton< NwIncrement >::Instance()->Startup(level);
 }
 }

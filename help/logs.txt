@@ -118,16 +118,16 @@ no override of Base::Claim marks a block that an application is using.
 ? OBJ903
 Multiple orphaned blocks have been returned to their object pool.
 ? NET100
-The network layer failed to initialize. The node has no network access.
-This log raises the NETWORK alarm.
+The network layer could not be initialized for use by this system,
+so it has no network access. This log raises the NETINIT alarm.
 ? NET101
 The network layer failed to shut down along with the system.
 ? NET102
-The network layer has gone down. The node has no network access. This
-log raises the NETWORK alarm.
+The network layer has gone down. This node has no network access.
+This log raises the NETWORK alarm.
 ? NET103
-A service could not be provisioned because it attempted to use an IP
-port that is already assigned to another service.
+A service could not be provisioned because it attempted to use an
+IP port that is already assigned to another service.
 ? NET104
 An I/O thread has failed because it could not configure its primary
 socket. The service provisioned on its IP port is now unavailable.
@@ -136,11 +136,19 @@ This log raises a PORT alarm.
 A network resource, such as a socket, could not be allocated.
 ? NET106
 A network function, such as a name lookup, failed.
+? NET107
+A test message sent to this node's local IP address was not received.
+This log raises the LOCADDR alarm. Use >nw ip localaddrs to find a
+reachable local address and >cfgparms set elementipaddr to set it. 
 ? NET500
 The network layer is in service.
 ? NET501
 An I/O thread is now running. The service provisioned on its IP port
 is now available.
+? NET502
+The network layer was initialized for use by this elemeent.
+? NET503
+A test message sent to this node's local IP address was received.
 ? NET900
 A socket function, such as receiving or sending a message, failed.
 ? NET901

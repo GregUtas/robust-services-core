@@ -31,11 +31,10 @@
 #include "Debug.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
-#include "Log.h"
-#include "NwLogs.h"
 #include "NwTrace.h"
 
 using namespace NodeBase;
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -307,15 +306,12 @@ bool SysSocket::StartLayer()
    Debug::ft("SysSocket.StartLayer");
 
    WSAData wsaData;
-
    auto wVersionRequested = MAKEWORD(2, 2);
-
    auto err = WSAStartup(wVersionRequested, &wsaData);
 
    if(err != 0)
    {
-      SetStatus(false, std::to_string(err));
-      return false;
+      return ReportLayerStart(std::to_string(err));
    }
 
    auto rls = HIBYTE(wsaData.wVersion);
@@ -325,17 +321,11 @@ bool SysSocket::StartLayer()
    {
       std::ostringstream stream;
       stream << rls << '.' << dot;
-      SetStatus(false, stream.str());
       WSACleanup();
-      return false;
+      return ReportLayerStart(stream.str());
    }
 
-   //  To indicate that the network is available, generate a log without
-   //  trying to modify the network alarm, which is currently off.
-   //
-   auto log = Log::Create(NetworkLogGroup, NetworkAvailable);
-   if(log != nullptr) Log::Submit(log);
-   return true;
+   return ReportLayerStart(EMPTY_STR);
 }
 
 //------------------------------------------------------------------------------
@@ -344,16 +334,14 @@ void SysSocket::StopLayer()
 {
    Debug::ft("SysSocket.StopLayer");
 
+   string err;
+
    if(WSACleanup() != 0)
    {
-      auto log = Log::Create(NetworkLogGroup, NetworkShutdownFailure);
-
-      if(log != nullptr)
-      {
-         *log << Log::Tab << "errval=" << WSAGetLastError();
-         Log::Submit(log);
-      }
+      err = std::to_string(WSAGetLastError());
    }
+
+   ReportLayerStop(err);
 }
 }
 #endif

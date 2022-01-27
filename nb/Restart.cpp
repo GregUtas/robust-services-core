@@ -94,7 +94,6 @@ fixed_string RestartReasonStrings[RestartReason_N + 1] =
    "mutex creation failed",
    "heap creation failed",
    "object pool creation failed",
-   "network layer unavailable",
    "restart timeout",
    "scheduling timeout",
    "thread pause failed",

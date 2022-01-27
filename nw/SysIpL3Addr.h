@@ -25,7 +25,6 @@
 #include "SysIpL2Addr.h"
 #include <cstdint>
 #include <string>
-#include <vector>
 #include "NwTypes.h"
 
 //------------------------------------------------------------------------------
@@ -161,11 +160,6 @@ public:
    //  Sets the address to the null address after releasing socket_.
    //
    void Nullify();
-
-   //  Returns all local addresses except IPv6 addresses with a non-zero
-   //  scope identifier.  Set the comment in the declaration of IPv6Addr.
-   //
-   static std::vector< SysIpL3Addr > LocalAddrs();
 
    //  Overridden to display member variables.
    //

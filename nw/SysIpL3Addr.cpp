@@ -321,7 +321,9 @@ string SysIpL3Addr::to_string() const
 
    if((proto_ != IpAny) || (socket_ != nullptr))
    {
-      stream << " [" << proto_ << ", " << socket_ << ']';
+      stream << " [" << proto_;
+      if(socket_ != nullptr) stream << ", " << socket_;
+      stream << ']';
    }
 
    return stream.str();

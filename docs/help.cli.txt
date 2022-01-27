@@ -43,7 +43,7 @@ help              : Provides help for an increment or command.
 quit              : Exits the most recent (or all) increments.
   [all]           : exits all increments
 
-incrs             : Lists all available increments.
+incrs             : Displays all available increments.
 
 send              : Sends CLI output to the console or a file.
 (                 : where to send CLI output
@@ -61,10 +61,10 @@ echo              : Writes the rest of the input line to the console.
 
 cfgparms          : Supports configuration parameters.
 (                 : subcommand...
-  list            : lists all configuration parameters
+  list            : displays all configuration parameters
   explain         : explains a configuration parameter
     <str>         : name of configuration parameter
-  get             : returns a configuration parameter's value
+  get             : displays a configuration parameter's value
     <str>         : name of configuration parameter
   set             : sets a configuration parameter's value
     <str>         : name of configuration parameter
@@ -73,9 +73,9 @@ cfgparms          : Supports configuration parameters.
 
 logs              : Interface to the log subsystem.
 (                 : subcommand...
-  list            : shows info for all logs or the logs in a specific group
+  list            : displays info for all logs or the logs in a specific group
     [<str>]       : log group name (default=all)
-  groups          : lists all log groups
+  groups          : displays all log groups
   explain         : displays documentation for a log
     <str>         : log group name
     (100:999)     : log number
@@ -90,7 +90,7 @@ logs              : Interface to the log subsystem.
     (100:999)     : log number
     (0:100)       : report every Nth log (0=none, 1=all)
   count           : displays the number of logs reported so far
-  buffers         : lists all log buffers
+  buffers         : displays all log buffers
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
   write           : writes a buffer's logs to its log file
     (0:7)         : log buffer index
@@ -101,7 +101,7 @@ logs              : Interface to the log subsystem.
 
 alarms            : Interface to the alarm subsystem.
 (                 : subcommand...
-  list            : lists alarms
+  list            : displays alarms
   explain         : displays documentation for an alarm
     <str>         : alarm name
   clear           : clears an alarm
@@ -110,8 +110,8 @@ alarms            : Interface to the alarm subsystem.
 
 symbols           : Supports symbols.
 (                 : subcommand...
-  list            : lists symbols
-    [<str>]       : symbol's name (lists all if omitted)
+  list            : displays symbols
+    [<str>]       : symbol's name (displays all if omitted)
   set             : sets a symbol's value
     <str>         : symbol's name
     [<str>]       : symbol's value (symbol deleted if omitted)
@@ -122,7 +122,7 @@ symbols           : Supports symbols.
 
 stats             : Supports performance statistics.
 (                 : subcommand...
-  groups          : lists all statistics groups
+  groups          : displays all statistics groups
   show            : displays statistics
     [0:255]       : group number (default=all)
     [0:65535]     : member number (group specific; default=all)
@@ -163,7 +163,7 @@ threads           : Counts or displays threads.
 
 daemons           : Displays daemons.
 (                 : subcommand...
-  list            : shows info for all daemons or a specific daemon
+  list            : displays info for all daemons or a specific daemon
     [0:65535]     : index (location in registry)
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
   set             : disables (off) or enables (on) a daemon
@@ -188,10 +188,10 @@ psignals          : Displays POSIX signals.
 singletons        : Displays the singletons registry.
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
-heaps             : Lists all heaps.
+heaps             : Displays all heaps.
 (                 : subcommand...
-  list            : lists all heaps
-  inuse           : returns the number of bytes allocated
+  list            : displays all heaps
+  inuse           : displays the number of bytes allocated
     (1:6)         : memory type (see mem.* symbols)
   trace           : controls heap trace tool
     (1:6)         : memory type (see mem.* symbols)
@@ -206,7 +206,7 @@ heaps             : Lists all heaps.
 
 status            : Displays system statistics.
 
-tools             : Lists available debugging tools.
+tools             : Displays available debugging tools.
 
 set               : Controls trace tool settings.
 (                 : what to set...
@@ -243,7 +243,7 @@ exclude           : Specifies what should not be captured by trace tools.
     (0:99)        : ThreadId
 )
 
-query             : Shows the status of trace tools.
+query             : Displays the status of trace tools.
 (                 : what to query...
   buffer          : trace buffer
   tools           : trace tools
@@ -314,9 +314,9 @@ nb>nt
 nt>help full
 logs              : Interface to the log subsystem.
 (                 : subcommand...
-  list            : shows info for all logs or the logs in a specific group
+  list            : displays info for all logs or the logs in a specific group
     [<str>]       : log group name (default=all)
-  groups          : lists all log groups
+  groups          : displays all log groups
   explain         : displays documentation for a log
     <str>         : log group name
     (100:999)     : log number
@@ -331,7 +331,7 @@ logs              : Interface to the log subsystem.
     (100:999)     : log number
     (0:100)       : report every Nth log (0=none, 1=all)
   count           : displays the number of logs reported so far
-  buffers         : lists all log buffers
+  buffers         : displays all log buffers
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
   write           : writes a buffer's logs to its log file
     (0:7)         : log buffer index
@@ -392,9 +392,9 @@ tests             : Configures or executes tests.
   failed          : records that the current test failed
     <int>         : failure code
     [<str>]       : explanation for failure
-  query           : shows pass/fail counts and (if verbose) all tests
+  query           : displays pass/fail counts and (if verbose) all tests
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
-  retest          : lists tests that have not passed
+  retest          : displays tests that have not passed
   erase           : removes a test from the database
     <str>         : test name
   reset           : resets the testing environment
@@ -409,7 +409,7 @@ swflags           : Supports flags used to control branching
     off           : off
   )
   clear           : clears all flags
-  query           : lists flags that are on
+  query           : displays flags that are on
 )
 
 corrupt           : Corrupts a data structure for testing purposes.
@@ -600,10 +600,11 @@ nb>nw
 nw>help full
 ip                : Executes IP functions.
 (                 : function to execute...
-  localname       : returns the name of this element
-  usesipv6        : indicates whether this element uses IPv6
-  localaddr       : returns this element's IP address
-  localaddrs      : returns this element's IP addresses
+  localname       : displays this element's host name
+  usesipv6        : displays whether this element uses IPv6
+  localaddr       : displays this element's IP address
+    [t|f]         : retest local address? (default=f)
+  localaddrs      : displays this element's IP addresses
   nametoaddr      : maps a host name/service name to an IP address
     <str>         : name of host
     [<str>]       : name of IP service (or port number)
@@ -646,7 +647,7 @@ exclude           : Specifies what should not be captured by trace tools.
     (0:65535)     : ipport_t
 )
 
-query             : Shows the status of trace tools.
+query             : Displays the status of trace tools.
 (                 : what to query...
   buffer          : trace buffer
   tools           : trace tools
@@ -797,7 +798,7 @@ exclude           : Specifies what should not be captured by trace tools.
   timers          : timer registry work
 )
 
-query             : Shows the status of trace tools.
+query             : Displays the status of trace tools.
 (                 : what to query...
   buffer          : trace buffer
   tools           : trace tools
@@ -875,9 +876,9 @@ tests             : Configures or executes tests.
   failed          : records that the current test failed
     <int>         : failure code
     [<str>]       : explanation for failure
-  query           : shows pass/fail counts and (if verbose) all tests
+  query           : displays pass/fail counts and (if verbose) all tests
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
-  retest          : lists tests that have not passed
+  retest          : displays tests that have not passed
   erase           : removes a test from the database
     <str>         : test name
   reset           : resets the testing environment
@@ -1375,7 +1376,7 @@ coverage          : Supports code coverage.
 (                 : subcommand...
   load            : reads the database from InputPath/coverage.db.txt
   query           : displays information about the loaded database
-  under           : lists functions invoked by fewer than N tests
+  under           : displays functions invoked by fewer than N tests
     (1:10)        : value of N
   erase           : removes a function from the database
     <str>         : name of function to remove
@@ -1384,7 +1385,7 @@ coverage          : Supports code coverage.
 
 shrink            : Shrinks the library's element containers.
 
-items             : Lists the C++ items in a file, by position.
+items             : Displays the C++ items in a file, by position.
   <str>           : filename (including extension)
 
 exp               : Performs an experimental test.

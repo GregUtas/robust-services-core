@@ -39,11 +39,16 @@ namespace NetworkBase
    constexpr NodeBase::LogId NetworkServiceFailure = NodeBase::TroubleLog + 4;
    constexpr NodeBase::LogId NetworkAllocFailure = NodeBase::TroubleLog + 5;
    constexpr NodeBase::LogId NetworkFunctionError = NodeBase::TroubleLog + 6;
+   constexpr NodeBase::LogId NetworkLocalAddrFailure = NodeBase::TroubleLog + 7;
    constexpr NodeBase::LogId NetworkAvailable = NodeBase::InfoLog;
    constexpr NodeBase::LogId NetworkServiceAvailable = NodeBase::InfoLog + 1;
+   constexpr NodeBase::LogId NetworkStartupSuccess = NodeBase::InfoLog + 2;
+   constexpr NodeBase::LogId NetworkLocalAddrSuccess = NodeBase::InfoLog + 3;
    constexpr NodeBase::LogId NetworkSocketError = NodeBase::DebugLog;
    constexpr NodeBase::LogId NetworkNoDestination = NodeBase::DebugLog + 1;
 
+   extern NodeBase::fixed_string NetInitAlarmName;
+   extern NodeBase::fixed_string LocAddrAlarmName;
    extern NodeBase::fixed_string NetworkAlarmName;
 
    void CreateNwLogs(NodeBase::RestartLevel level);

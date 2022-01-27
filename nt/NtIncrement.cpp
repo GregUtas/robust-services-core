@@ -564,7 +564,7 @@ fixed_string FlagsClearTextStr = "clear";
 fixed_string FlagsClearTextExpl = "clears all flags";
 
 fixed_string FlagsQueryTextStr = "query";
-fixed_string FlagsQueryTextExpl = "lists flags that are on";
+fixed_string FlagsQueryTextExpl = "displays flags that are on";
 
 fixed_string FlagsActionExpl = "subcommand...";
 
@@ -737,11 +737,11 @@ TestFailedText::TestFailedText() :
 }
 
 fixed_string TestRetestTextStr = "retest";
-fixed_string TestRetestTextExpl = "lists tests that have not passed";
+fixed_string TestRetestTextExpl = "displays tests that have not passed";
 
 fixed_string TestQueryTextStr = "query";
 fixed_string TestQueryTextExpl =
-   "shows pass/fail counts and (if verbose) all tests";
+   "displays pass/fail counts and (if verbose) all tests";
 
 TestQueryText::TestQueryText() :
    CliText(TestQueryTextExpl, TestQueryTextStr)

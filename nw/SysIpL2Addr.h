@@ -25,6 +25,7 @@
 #include "Object.h"
 #include <cstdint>
 #include <string>
+#include <vector>
 #include "NwTypes.h"
 
 //------------------------------------------------------------------------------
@@ -80,6 +81,11 @@ public:
    //  Returns the address as a string.
    //
    virtual std::string to_str() const;
+
+   //  Returns all local addresses except IPv6 addresses with a non-zero
+   //  scope identifier.  Set the comment in the declaration of IPv6Addr.
+   //
+   static std::vector< SysIpL2Addr > LocalAddrs();
 
    //  Constructs this element's loopback address.
    //

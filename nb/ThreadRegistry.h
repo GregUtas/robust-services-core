@@ -24,6 +24,7 @@
 
 #include "Permanent.h"
 #include <cstddef>
+#include <list>
 #include <map>
 #include <utility>
 #include <vector>
@@ -185,7 +186,11 @@ private:
    //  Informs all threads that a restart is occurring.  Returns the
    //  threads that will exit instead of sleeping.
    //
-   std::vector< Thread* > Restarting(RestartLevel level) const;
+   std::list< Thread* > Restarting(RestartLevel level) const;
+
+   //  Updates THREADS by removing threads that are no longer registered.
+   //
+   void TrimThreads(std::list< Thread* >& threads) const;
 
    //  Sets THREAD's ThreadId when adding it to the registry.
    //

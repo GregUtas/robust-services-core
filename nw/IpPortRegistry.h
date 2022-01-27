@@ -23,6 +23,7 @@
 #define IPPORTREGISTRY_H_INCLUDED
 
 #include "Protected.h"
+#include <iosfwd>
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "Q1Way.h"
@@ -43,6 +44,8 @@ class IpPortRegistry : public NodeBase::Protected
 {
    friend class NodeBase::Singleton< IpPortRegistry >;
    friend class IpPort;
+   friend class LocalAddrHandler;
+   friend class SendLocalThread;
 public:
    //  Deleted to prohibit copying.
    //
@@ -74,6 +77,10 @@ public:
    //  either NilIpPort or has an IpPort registered against it.
    //
    bool CanBypassStack(const SysIpL3Addr& srce, const SysIpL3Addr& dest) const;
+
+   //  Displays this element's local address and status in STREAM.
+   //
+   void DisplayLocalAddr(std::ostream& stream) const;
 
    //  Overridden to display member variables.
    //
@@ -112,9 +119,24 @@ private:
    //
    void SetIPv6();
 
-   //  Determines this element's address.
+   //  Sets this element's IP address based on the LocalAddr configuration
+   //  parameter.
    //
    void SetLocalAddr();
+
+   //  Prepares to test this element's IP address by seeing if it can send
+   //  and receive a message.
+   //
+   void TestBegin();
+
+   //  Invoked to report success during each phase of testing this element's
+   //  IP address (binding a socket, sending a message, receiving a message).
+   //
+   void TestAdvance();
+
+   //  Invoked after this element's IP address has been tested.
+   //
+   void TestEnd() const;
 
    //  Set if IPv6 should be used.
    //
@@ -123,6 +145,10 @@ private:
    //  The element's IP address.
    //
    SysIpL2Addr localAddr_;
+
+   //  The status of the local address.
+   //
+   IpAddrState localState_;
 
    //  Configuration parameter for the element's IP address.
    //

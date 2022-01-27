@@ -22,11 +22,14 @@
 #ifdef OS_WIN
 
 #include "SysIpL2Addr.h"
+#include <cstring>
 #include <sstream>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #include "Debug.h"
 #include "Log.h"
 #include "NwLogs.h"
+#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::string;
@@ -35,6 +38,73 @@ using std::string;
 
 namespace NetworkBase
 {
+fn_name SysIpL2Addr_LocalAddrs = "SysIpL2Addr.LocalAddrs";
+
+std::vector< SysIpL2Addr > SysIpL2Addr::LocalAddrs()
+{
+   Debug::ft(SysIpL2Addr_LocalAddrs);
+
+   std::vector< SysIpL2Addr > localAddrs;
+   string self;
+
+   if(LocalName(self))
+   {
+      addrinfo hints;
+      addrinfo* info = nullptr;
+
+      memset(&hints, 0, sizeof(hints));
+      hints.ai_family = AF_UNSPEC;
+
+      if(getaddrinfo(self.c_str(), nullptr, &hints, &info) == 0)
+      {
+         for(auto curr = info; curr != nullptr; curr = curr->ai_next)
+         {
+            SysIpL2Addr localAddr;
+
+            switch(curr->ai_family)
+            {
+            case AF_INET:
+            {
+               auto netaddr = (sockaddr_in*) curr->ai_addr;
+               localAddr.NetworkToHost(netaddr->sin_addr.s_addr);
+               break;
+            }
+
+            case AF_INET6:
+            {
+               auto netaddr = (sockaddr_in6*) curr->ai_addr;
+               if(netaddr->sin6_scope_id != 0) continue;
+               localAddr.NetworkToHost(netaddr->sin6_addr.s6_words);
+               break;
+            }
+
+            default:
+               Debug::SwLog(SysIpL2Addr_LocalAddrs,
+                  "unsupported protocol family", curr->ai_family);
+            }
+
+            localAddrs.push_back(localAddr);
+         }
+
+         freeaddrinfo(info);
+      }
+      else
+      {
+         auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
+
+         if(log != nullptr)
+         {
+            *log << Log::Tab << "getaddrinfo: errval=" << WSAGetLastError();
+            Log::Submit(log);
+         }
+      }
+   }
+
+   return localAddrs;
+}
+
+//------------------------------------------------------------------------------
+
 bool SysIpL2Addr::LocalName(string& name)
 {
    Debug::ft("SysIpL2Addr.LocalName");

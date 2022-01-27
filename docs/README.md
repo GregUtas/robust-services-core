@@ -22,7 +22,7 @@ Document | Description
 ![CodeProject](images/cp100x30.gif) [Robust C++: Queue Templates](https://www.codeproject.com/Articles/5271081/Robust-Cplusplus-Queue-Templates) | article on the `Q1Way` and `Q2Way` templates
 ![CodeProject](images/cp100x30.gif) [Robust C++: Singletons](https://www.codeproject.com/Articles/5286932/Robust-Cplusplus-Singletons) | article on the `Singleton` template
 ![CodeProject](images/cp100x30.gif) [A Wrapper for `std::vector`](https://www.codeproject.com/Tips/5271013/A-Wrapper-for-std-vector) | article on the `Array` template
-<img src="images/md.png" alt="markdown" height="30"> [RSC Windows Build Options](/docs/RSC-Windows-Build-Options.md) | build options used in VS2017
+<img src="images/md.png" alt="markdown" height="30"> [RSC Windows Build Options](/docs/RSC-Windows-Build-Options.md) | build options used in VS2022
 <img src="images/txt.jpg" alt="txt" height="30"> [help.cli](/docs/help.cli.txt) | summary of all CLI commands
 ![pdf](images/pdf24.png) [RSC Software Design](/docs/RSC-Software-Design.pdf) | high-level design notes for various enhancements
 <img src="images/md.png" alt="markdown" height="30"> [RSC Coding Guidelines](/docs/RSC-Coding-Guidelines.md) | C++ coding guidelines

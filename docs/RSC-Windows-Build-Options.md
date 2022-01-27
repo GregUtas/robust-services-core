@@ -3,7 +3,7 @@
 In Properties > Configuration Properties, the following options are set
 for all projects:
 
-- CC/C++ > General > Common Language RunTime Support: No CLR Support
+- C/C++ > General > Common Language RunTime Support: No CLR Support
 
   The CLR and managed code are Windows-specific.
   

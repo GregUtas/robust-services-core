@@ -204,7 +204,7 @@ public:
    //  o if STR ends in a punctuation character, the next character must not
    //    be punctuation (and vice versa).
    //
-   bool NextStringIs(NodeBase::fixed_string str, bool check = true);
+   bool NextStringIs(NodeBase::c_string str, bool check = true);
 
    //  Returns the location where the line containing POS ends.  This is the
    //  location of the next CRLF that is not preceded by a '\'.

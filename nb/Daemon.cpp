@@ -42,7 +42,7 @@ using std::string;
 
 namespace NodeBase
 {
-Daemon::Daemon(fixed_string name, size_t size) :
+Daemon::Daemon(c_string name, size_t size) :
    name_(name),
    size_(size),
    traps_(0),

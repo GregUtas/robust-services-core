@@ -61,7 +61,7 @@ public:
 
    //  Sets key_ and input_ from the arguments.
    //
-   CfgTuple(fixed_string key, fixed_string input);
+   CfgTuple(c_string key, c_string input);
 
    //  Removes the tuple from CfgParmRegistry.  Not subclassed.
    //

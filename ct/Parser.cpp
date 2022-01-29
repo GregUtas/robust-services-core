@@ -4319,7 +4319,7 @@ Cxx::Keyword Parser::NextKeyword(string& str)
 
 //------------------------------------------------------------------------------
 
-bool Parser::NextKeywordIs(fixed_string str)
+bool Parser::NextKeywordIs(c_string str)
 {
    Debug::ft("Parser.NextKeywordIs");
 

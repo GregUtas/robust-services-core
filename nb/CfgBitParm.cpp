@@ -33,7 +33,7 @@ namespace NodeBase
 //  Returns a string containing the characters that set a
 //  configuration parameter to "false".
 //
-static fixed_string ValidFalseChars()
+static c_string ValidFalseChars()
 {
    //  Characters that set a configuration parameter to false.
    //
@@ -47,7 +47,7 @@ static fixed_string ValidFalseChars()
 //  Returns a string containing the characters that set a
 //  configuration parameter to "true".
 //
-static fixed_string ValidTrueChars()
+static c_string ValidTrueChars()
 {
    //  Characters that set a configuration parameter to true.
    //

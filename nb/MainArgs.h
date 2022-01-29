@@ -63,7 +63,7 @@ public:
    //  Looks for an argument that begins with TAG.  If one is found,
    //  returns the string that follows TAG, else returns EMPTY_STR.
    //
-   static std::string Find(fixed_string tag);
+   static std::string Find(c_string tag);
 
    //  Overridden to display member variables.
    //

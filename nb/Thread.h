@@ -452,7 +452,7 @@ private:
    //  Kills the thread.  Returns nullptr when trying to kill the thread.
    //  If the thread cannot be killed, returns a C string explaining why.
    //
-   fixed_string Kill();
+   c_string Kill();
 
    //  Returns true if the thread is unpreemptable.
    //

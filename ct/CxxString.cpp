@@ -582,14 +582,14 @@ bool PathIncludes(const string& path, const string& dir)
 
 //------------------------------------------------------------------------------
 
-string& Prefix(string& scope, fixed_string separator)
+string& Prefix(string& scope, c_string separator)
 {
    return (scope.empty() ? scope : scope.append(separator));
 }
 
 //------------------------------------------------------------------------------
 
-string& Prefix(string&& scope, fixed_string separator)
+string& Prefix(string&& scope, c_string separator)
 {
    return (scope.empty() ? scope : scope.append(separator));
 }

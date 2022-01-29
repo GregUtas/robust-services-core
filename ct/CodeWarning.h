@@ -35,7 +35,6 @@
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
-using NodeBase::fixed_string;
 using NodeBase::word;
 
 //------------------------------------------------------------------------------
@@ -58,11 +57,11 @@ struct WarningAttrs
 
    //  A string that explains the warning.
    //
-   fixed_string expl_;
+   NodeBase::fixed_string expl_;
 
    //  Constructs a warning with the specified attributes.
    //
-   WarningAttrs(bool fixable, bool preserve, fixed_string expl);
+   WarningAttrs(bool fixable, bool preserve, NodeBase::c_string expl);
 };
 
 //------------------------------------------------------------------------------
@@ -132,7 +131,7 @@ public:
 
    //  Returns the explanation for warning W.
    //
-   static fixed_string Expl(Warning w) { return Attrs_.at(w).expl_; }
+   static NodeBase::c_string Expl(Warning w) { return Attrs_.at(w).expl_; }
 
    //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
    //

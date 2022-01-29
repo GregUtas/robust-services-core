@@ -132,7 +132,7 @@ protected:
    //  Protected because this class is virtual.  SIZE is the number of
    //  threads to be created and monitored.
    //
-   Daemon(fixed_string name, size_t size);
+   Daemon(c_string name, size_t size);
 private:
    //  Creates a thread that this daemon will manage.
    //

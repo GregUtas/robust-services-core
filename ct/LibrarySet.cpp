@@ -381,7 +381,7 @@ word LibrarySet::NotImplemented(string& expl) const
 
 fn_name LibrarySet_OpError = "LibrarySet.OpError";
 
-LibrarySet* LibrarySet::OpError(fixed_string op) const
+LibrarySet* LibrarySet::OpError(c_string op) const
 {
    std::ostringstream stream;
    stream << "Operator " << op << " is invalid for set type " << GetType();

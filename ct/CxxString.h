@@ -110,9 +110,9 @@ namespace CodeTools
    //  Appends SEPARATOR to SCOPE unless it is empty, and returns the result.
    //
    std::string& Prefix(std::string& scope,
-      NodeBase::fixed_string separator = NodeBase::SCOPE_STR);
+      NodeBase::c_string separator = NodeBase::SCOPE_STR);
    std::string& Prefix(std::string&& scope,
-      NodeBase::fixed_string separator = NodeBase::SCOPE_STR);
+      NodeBase::c_string separator = NodeBase::SCOPE_STR);
 
    //  Modifies NAME by stripping off a scope resolution operator and whatever
    //  precedes it.  Does the same to any template arguments embedded in NAME.

@@ -42,7 +42,7 @@ fixed_string AlarmSymbols[AlarmStatus_N + 1] =
    "  ? "   // AlarmStatus_N
 };
 
-fixed_string AlarmStatusSymbol(AlarmStatus status)
+c_string AlarmStatusSymbol(AlarmStatus status)
 {
    if((status >= 0) && (status < AlarmStatus_N)) return AlarmSymbols[status];
    return AlarmSymbols[AlarmStatus_N];

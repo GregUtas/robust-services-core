@@ -128,7 +128,7 @@ std::ostream& operator<<(std::ostream& stream, AlarmStatus status);
 
 //  Returns a 4-character string that corresponds to STATUS.
 //
-fixed_string AlarmStatusSymbol(AlarmStatus status);
+c_string AlarmStatusSymbol(AlarmStatus status);
 
 //  The direction of a message.
 //

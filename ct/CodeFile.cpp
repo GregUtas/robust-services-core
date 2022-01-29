@@ -121,7 +121,7 @@ static void AddIndirectExternalTypes
 //------------------------------------------------------------------------------
 
 static void DisplayFileNames
-   (ostream* stream, const LibItemSet& files, fixed_string title)
+   (ostream* stream, const LibItemSet& files, c_string title)
 {
    //  Display, in STREAM, the names of files in FILES.  TITLE provides an
    //  explanation for the list.
@@ -140,7 +140,7 @@ static void DisplayFileNames
 //------------------------------------------------------------------------------
 
 static void DisplaySymbols
-   (ostream* stream, const CxxNamedSet& items, fixed_string title)
+   (ostream* stream, const CxxNamedSet& items, c_string title)
 {
    //  Display, in STREAM, the names in ITEMS, including their scope.
    //  TITLE provides an explanation for the list.  Put the symbols in

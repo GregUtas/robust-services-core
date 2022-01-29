@@ -40,7 +40,7 @@ const char CfgTuple::CommentChar = '/';
 
 //------------------------------------------------------------------------------
 
-CfgTuple::CfgTuple(fixed_string key, fixed_string input) :
+CfgTuple::CfgTuple(c_string key, c_string input) :
    key_(key),
    input_(input)
 {

@@ -65,7 +65,7 @@ public:
    //  Creates a group identified by NAME, which is converted to
    //  upper case.  EXPL describes the types of logs in the group.
    //
-   LogGroup(fixed_string name, fixed_string expl);
+   LogGroup(c_string name, c_string expl);
 
    //  Not subclassed.
    //

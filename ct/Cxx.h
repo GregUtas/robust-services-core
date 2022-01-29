@@ -517,7 +517,7 @@ private:
    //  Constructs an operator with the specified attributes.
    //
    CxxOp(const std::string& sym, size_t args, size_t prio,
-      bool over, bool push, bool symm, NodeBase::fixed_string sp);
+      bool over, bool push, bool symm, NodeBase::c_string sp);
 };
 
 //------------------------------------------------------------------------------

@@ -59,7 +59,7 @@ ostream& operator<<(ostream& stream, Warning warning)
 
 //------------------------------------------------------------------------------
 
-WarningAttrs::WarningAttrs(bool fixable, bool preserve, fixed_string expl) :
+WarningAttrs::WarningAttrs(bool fixable, bool preserve, c_string expl) :
    fixable_(fixable),
    preserve_(preserve),
    expl_(expl)

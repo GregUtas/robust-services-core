@@ -564,7 +564,7 @@ private:
 
    //  Returns true if the next keyword is STR.
    //
-   bool NextKeywordIs(NodeBase::fixed_string str);
+   bool NextKeywordIs(NodeBase::c_string str);
 
    //  Returns the current parse position.
    //

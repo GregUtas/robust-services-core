@@ -84,8 +84,7 @@ public:
    //
    //  NOTE: Unless nullptr is returned, Log::Submit must still be invoked.
    //
-   ostringstreamPtr Create
-      (fixed_string groupName, LogId id, AlarmStatus status);
+   ostringstreamPtr Create(c_string groupName, LogId id, AlarmStatus status);
 
    //  Returns the alarm's name.
    //

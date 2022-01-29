@@ -985,7 +985,7 @@ static Cxx::Access MaxAccessUsed(CxxScope* decl)
 //  Sets Expl_ to "TEXT not found."  If QUOTES is set, TEXT is enclosed in
 //  quotes.  Returns 0.
 //
-static word NotFound(fixed_string text, bool quotes = false)
+static word NotFound(c_string text, bool quotes = false)
 {
    Debug::ft("CodeTools.NotFound");
 
@@ -1019,7 +1019,7 @@ static void Rename(string& code, const string& oldName, const string& newName)
 
 //------------------------------------------------------------------------------
 
-static word Report(fixed_string text, word rc = EditFailed)
+static word Report(c_string text, word rc = EditFailed)
 {
    Debug::ft("CodeTools.Report(Editor)");
 

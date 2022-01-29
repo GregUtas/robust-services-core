@@ -85,7 +85,7 @@ const string Log::Tab = spaces(Indent);
 
 fn_name Log_ctor = "Log.ctor";
 
-Log::Log(LogGroup* group, LogId id, fixed_string expl) :
+Log::Log(LogGroup* group, LogId id, c_string expl) :
    group_(group),
    id_(id),
    expl_(expl)
@@ -143,7 +143,7 @@ size_t Log::Count()
 
 //------------------------------------------------------------------------------
 
-ostringstreamPtr Log::Create(fixed_string groupName, LogId id)
+ostringstreamPtr Log::Create(c_string groupName, LogId id)
 {
    Debug::ftnt("Log.Create");
 
@@ -169,8 +169,8 @@ ostringstreamPtr Log::Create(fixed_string groupName, LogId id)
 
 //------------------------------------------------------------------------------
 
-ostringstreamPtr Log::Create(fixed_string groupName,
-   LogId id, fixed_string alarmName, AlarmStatus status)
+ostringstreamPtr Log::Create
+   (c_string groupName, LogId id, c_string alarmName, AlarmStatus status)
 {
    Debug::ftnt("Log.Create(alarm)");
 
@@ -234,7 +234,7 @@ void Log::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-Log* Log::Find(fixed_string groupName, LogId id, LogGroup*& group)
+Log* Log::Find(c_string groupName, LogId id, LogGroup*& group)
 {
    Debug::ftnt("Log.Find");
 
@@ -252,7 +252,7 @@ constexpr size_t NameBegin = 1 + Log::Indent;
 constexpr size_t MinNameSize = LogIdSize + 1;
 const size_t NameSize = LogGroup::MaxNameSize + MinNameSize;
 
-Log* Log::Find(fixed_string log)
+Log* Log::Find(c_string log)
 {
    Debug::ft("Log.Find(log)");
 

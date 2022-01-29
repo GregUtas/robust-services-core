@@ -84,7 +84,7 @@ void DaemonRegistry::Display(ostream& stream,
 
 fn_name DaemonRegistry_FindDaemon = "DaemonRegistry.FindDaemon";
 
-Daemon* DaemonRegistry::FindDaemon(fixed_string name) const
+Daemon* DaemonRegistry::FindDaemon(c_string name) const
 {
    Debug::ft(DaemonRegistry_FindDaemon);
 

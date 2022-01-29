@@ -53,7 +53,7 @@ public:
 
    //  Returns the daemon identified by NAME.
    //
-   Daemon* FindDaemon(fixed_string name) const;
+   Daemon* FindDaemon(c_string name) const;
 
    //  Returns the daemons in the registry.
    //

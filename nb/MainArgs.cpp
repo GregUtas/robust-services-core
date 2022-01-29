@@ -89,7 +89,7 @@ void MainArgs::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-string MainArgs::Find(fixed_string tag)
+string MainArgs::Find(c_string tag)
 {
    Debug::ft("MainArgs.Find");
 

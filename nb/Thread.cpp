@@ -2058,7 +2058,7 @@ bool Thread::IsTraceable() const
 fixed_string KillRootThread = "The root thread cannot be killed.";
 fixed_string KillDeletingThread = "The thread is already being deleted.";
 
-fixed_string Thread::Kill()
+c_string Thread::Kill()
 {
    Debug::ft("Thread.Kill");
 

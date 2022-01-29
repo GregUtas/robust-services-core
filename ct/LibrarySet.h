@@ -237,7 +237,7 @@ private:
 
    //  Generates a log and returns nullptr.
    //
-   LibrarySet* OpError(NodeBase::fixed_string op) const;
+   LibrarySet* OpError(NodeBase::c_string op) const;
 
    //  The set's name.
    //

@@ -115,8 +115,7 @@ ptrdiff_t Alarm::CellDiff()
 
 //------------------------------------------------------------------------------
 
-ostringstreamPtr Alarm::Create
-   (fixed_string groupName, LogId id, AlarmStatus status)
+ostringstreamPtr Alarm::Create(c_string groupName, LogId id, AlarmStatus status)
 {
    Debug::ft("Alarm.Create");
 

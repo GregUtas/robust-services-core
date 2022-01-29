@@ -49,7 +49,7 @@ constexpr id_t MaxLogs = 250;
 
 fn_name LogGroup_ctor = "LogGroup.ctor";
 
-LogGroup::LogGroup(fixed_string name, fixed_string expl) :
+LogGroup::LogGroup(c_string name, c_string expl) :
    name_(strUpper(name).c_str()),
    expl_(expl),
    suppressed_(false)

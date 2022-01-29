@@ -3001,7 +3001,7 @@ size_t Lexer::NextPos(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-bool Lexer::NextStringIs(fixed_string str, bool check)
+bool Lexer::NextStringIs(c_string str, bool check)
 {
    Debug::ft("Lexer.NextStringIs");
 

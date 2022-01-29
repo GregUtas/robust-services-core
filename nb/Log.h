@@ -77,7 +77,7 @@ public:
    //  should be defined as a LogType plus offset.  EXPL provides a brief
    //  explanation of the log and is included with each occurrence.
    //
-   Log(LogGroup* group, LogId id, fixed_string expl);
+   Log(LogGroup* group, LogId id, c_string expl);
 
    //  Not subclassed.
    //
@@ -96,7 +96,7 @@ public:
    //        usually occur when a log is continuously repeated or a higher
    //        level problem generates dependent logs.
    //
-   static ostringstreamPtr Create(fixed_string groupName, LogId id);
+   static ostringstreamPtr Create(c_string groupName, LogId id);
 
    //  Submits STREAM to the log system.  STREAM must have been created by
    //  Create.  Adds a CRLF to stream if it does not end with one.  The log
@@ -120,12 +120,12 @@ public:
    //  Returns the log associated with groupName and ID.  Updates
    //  GROUP to the log's group.
    //
-   static Log* Find(fixed_string groupName, LogId id, LogGroup*& group);
+   static Log* Find(c_string groupName, LogId id, LogGroup*& group);
 
    //  Returns the log associated with LOG by extracting the group
    //  name and LogId from the beginning of LOG.
    //
-   static Log* Find(fixed_string log);
+   static Log* Find(c_string log);
 
    //  Displays the log's statistics.
    //
@@ -160,8 +160,8 @@ private:
    //  alarmName and STATUS used to set or clear an alarm.  Applications
    //  must use Alarm::Create, which invokes this.
    //
-   static ostringstreamPtr Create(fixed_string groupName, LogId id,
-      fixed_string alarmName, AlarmStatus status);
+   static ostringstreamPtr Create(c_string groupName,
+      LogId id, c_string alarmName, AlarmStatus status);
 
    //  Creates and returns the log's header.  STATUS is used when
    //  modifying an alarm.

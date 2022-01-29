@@ -90,7 +90,7 @@ public:
 
    //  Returns the pool's name.
    //
-   fixed_string Name() const { return name_.c_str(); }
+   c_string Name() const { return name_.c_str(); }
 
    //  Returns the pool's identifier.
    //

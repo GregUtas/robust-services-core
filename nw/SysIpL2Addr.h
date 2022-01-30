@@ -80,7 +80,7 @@ public:
 
    //  Returns the address as a string.
    //
-   virtual std::string to_str() const;
+   std::string to_str() const;
 
    //  Returns all local addresses except IPv6 addresses with a non-zero
    //  scope identifier.  Set the comment in the declaration of IPv6Addr.
@@ -95,7 +95,8 @@ public:
    //
    bool IsLoopbackIpAddr() const;
 
-   //  Updates NAME to the standard name of this host.
+   //  Updates NAME to the standard name of this host.  On failure, returns
+   //  false and generates a log.
    //
    static bool LocalName(std::string& name);
 

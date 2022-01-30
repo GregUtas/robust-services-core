@@ -95,8 +95,6 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
 
    if(sent <= 0)
    {
-      //s Handle SendTo() error.
-      //
       OutputLog(NetworkSocketError, "sendto", &buff);
       return SendFailed;
    }

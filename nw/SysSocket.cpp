@@ -20,9 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysSocket.h"
+#include <iosfwd>
 #include <sstream>
-#include "Alarm.h"
-#include "AlarmRegistry.h"
 #include "Debug.h"
 #include "IpBuffer.h"
 #include "Log.h"
@@ -42,11 +41,12 @@ using std::string;
 
 namespace NetworkBase
 {
-SysSocket::SysSocket(SysSocket_t socket) :
+SysSocket::SysSocket(SysSocket_t socket, ipport_t port) :
    socket_(socket),
+   error_(0),
+   port_(port),
    blocking_(true),
-   tracing_(false),
-   error_(0)
+   tracing_(false)
 {
    Debug::ft("SysSocket.ctor(wrap)");
 }
@@ -68,30 +68,52 @@ void SysSocket::Display(ostream& stream,
    Dynamic::Display(stream, prefix, options);
 
    stream << prefix << "socket   : " << socket_ << CRLF;
+   stream << prefix << "error    : " << error_ << CRLF;
+   stream << prefix << "port     : " << port_ << CRLF;
    stream << prefix << "blocking : " << blocking_ << CRLF;
    stream << prefix << "tracing  : " << tracing_ << CRLF;
-   stream << prefix << "error    : " << error_ << CRLF;
 }
 
 //------------------------------------------------------------------------------
 
-void SysSocket::OutputLog
-   (LogId id, fixed_string expl, const IpBuffer* buff) const
+nwerr_t SysSocket::OutputLog(LogId id, c_string func, nwerr_t errval)
 {
-   Debug::ft("SysSocket.OutputLog");
+   Debug::ft("SysSocket.OutputLog(errval)");
 
-   auto log = Log::Create(NetworkLogGroup, id);
-   if(log == nullptr) return;
+   //  Generate a log that appends information about this socket.
+   //
+   error_ = errval;
 
-   *log << Log::Tab << expl << ": errval=" << GetError() << CRLF;
+   std::ostringstream stream;
+
+   stream << CRLF << Log::Tab << to_str();
+   OutputNwLog(id, func, errval, stream.str().c_str());
+   return -1;
+}
+
+//------------------------------------------------------------------------------
+
+void SysSocket::OutputLog(LogId id, c_string func, const IpBuffer* buff) const
+{
+   Debug::ft("SysSocket.OutputLog(buff)");
+
+   //  Generate a log that appends BUFF's addresses.
+   //
+   std::ostringstream stream;
+
+   stream << CRLF;
 
    if(buff != nullptr)
    {
-      *log << Log::Tab << "txAddr=" << buff->TxAddr().to_string() << CRLF;
-      *log << Log::Tab << "rxAddr=" << buff->RxAddr().to_string();
+      stream << Log::Tab << "txAddr=" << buff->TxAddr().to_str(true) << CRLF;
+      stream << Log::Tab << "rxAddr=" << buff->RxAddr().to_str(true);
+   }
+   else
+   {
+      stream << Log::Tab << to_str();
    }
 
-   Log::Submit(log);
+   OutputNwLog(id, func, GetError(), stream.str().c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -99,50 +121,6 @@ void SysSocket::OutputLog
 void SysSocket::Patch(sel_t selector, void* arguments)
 {
    Dynamic::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-bool SysSocket::ReportLayerStart(const string& err)
-{
-   Debug::ft("SysSocket.ReportLayerStart");
-
-   auto reg = Singleton< AlarmRegistry >::Instance();
-   auto alarm = reg->Find(NetInitAlarmName);
-   auto ok = err.empty();
-
-   if(alarm != nullptr)
-   {
-      auto status = (ok ? NoAlarm : CriticalAlarm);
-      auto id = (ok ? NetworkStartupSuccess : NetworkStartupFailure);
-      auto log = alarm->Create(NetworkLogGroup, id, status);
-
-      if(log != nullptr)
-      {
-         if(!ok) *log << Log::Tab << "errval=" << err;
-         Log::Submit(log);
-      }
-   }
-
-   return ok;
-}
-
-//------------------------------------------------------------------------------
-
-void SysSocket::ReportLayerStop(const string& err)
-{
-   Debug::ft("SysSocket.ReportLayerStop");
-
-   if(!err.empty())
-   {
-      auto log = Log::Create(NetworkLogGroup, NetworkShutdownFailure);
-
-      if(log != nullptr)
-      {
-         *log << Log::Tab << "errval=" << err;
-         Log::Submit(log);
-      }
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -159,7 +137,7 @@ SysSocket::SendRc SysSocket::SendBuff(IpBuffer& buff)
 
 //------------------------------------------------------------------------------
 
-word SysSocket::SetError(word errval)
+nwerr_t SysSocket::SetError(nwerr_t errval)
 {
    Debug::ft("SysSocket.SetError(errval)");
 
@@ -169,36 +147,21 @@ word SysSocket::SetError(word errval)
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_SetStatus = "SysSocket.SetStatus";
-
-void SysSocket::SetStatus(bool ok, const string& err)
-{
-   auto reg = Singleton< AlarmRegistry >::Instance();
-   auto alarm = reg->Find(NetworkAlarmName);
-   auto status = (ok ? NoAlarm : CriticalAlarm);
-   auto id = (ok ? NetworkAvailable : NetworkUnavailable);
-
-   if(alarm == nullptr)
-   {
-      Debug::SwLog(SysSocket_SetStatus, err, status);
-      return;
-   }
-
-   auto log = alarm->Create(NetworkLogGroup, id, status);
-
-   if(log != nullptr)
-   {
-      if(!ok) *log << Log::Tab << "errval=" << err;
-      Log::Submit(log);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 bool SysSocket::SetTracing(bool tracing)
 {
    tracing_ = tracing;
    return tracing;
+}
+
+//------------------------------------------------------------------------------
+
+string SysSocket::to_str() const
+{
+   std::ostringstream stream;
+   stream << "socket=" << socket_;
+
+   if(port_ != NilIpPort) stream << " port=" << port_;
+   return stream.str();
 }
 
 //------------------------------------------------------------------------------

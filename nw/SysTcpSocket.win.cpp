@@ -28,6 +28,7 @@
 #include "Debug.h"
 #include "Duration.h"
 #include "IpPortRegistry.h"
+#include "NwLogs.h"
 #include "NwTrace.h"
 #include "SysIpL3Addr.h"
 #include "TcpIpService.h"
@@ -64,19 +65,27 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
 
    if(socket == INVALID_SOCKET)
    {
-      SetError();
+      SetError(WSAGetLastError());
       if(GetError() == WSAEWOULDBLOCK) outFlags_.reset(PollRead);
       return nullptr;
    }
 
+   auto port = NilIpPort;
+
    if(ipv6)
+   {
       remAddr = SysIpL3Addr(ipv6peer.sin6_addr.s6_words,
          ipv6peer.sin6_port, IpTcp, this);
+      port = ipv6peer.sin6_port;
+   }
    else
+   {
       remAddr = SysIpL3Addr(ipv4peer.sin_addr.s_addr,
          ipv4peer.sin_port, IpTcp, this);
+      port = ipv4peer.sin_port;
+   }
 
-   return SysTcpSocketPtr(new SysTcpSocket(socket));
+   return SysTcpSocketPtr(new SysTcpSocket(socket, port));
 }
 
 //------------------------------------------------------------------------------
@@ -111,7 +120,7 @@ word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)
 
    if(connect(Socket(), peer, peersize) == SOCKET_ERROR)
    {
-      SetError();
+      SetError(WSAGetLastError());
       auto err = GetError();
       if(err != WSAEWOULDBLOCK) return err;
    }
@@ -128,7 +137,12 @@ void SysTcpSocket::Disconnect()
    if(!disconnecting_ && (state_ != Idle) && IsValid())
    {
       TraceEvent(NwTrace::Disconnect, 0);
-      if(shutdown(Socket(), SD_SEND) == SOCKET_ERROR) SetError();
+
+      if(shutdown(Socket(), SD_SEND) == SOCKET_ERROR)
+      {
+         OutputLog(NetworkSocketError, "shutdown", WSAGetLastError());
+      }
+
       disconnecting_ = true;
    }
 }
@@ -137,7 +151,7 @@ void SysTcpSocket::Disconnect()
 
 fn_name SysTcpSocket_Listen = "SysTcpSocket.Listen";
 
-bool SysTcpSocket::Listen(size_t backlog)
+word SysTcpSocket::Listen(size_t backlog)
 {
    Debug::ft(SysTcpSocket_Listen);
 
@@ -149,12 +163,12 @@ bool SysTcpSocket::Listen(size_t backlog)
 
    if(listen(Socket(), backlog) != 0)
    {
-      SetError();
-      return false;
+      SetError(WSAGetLastError());
+      return -1;
    }
 
    state_ = Listening;
-   return true;
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -183,7 +197,7 @@ bool SysTcpSocket::LocAddr(SysIpL3Addr& locAddr)
 
    if(getsockname(Socket(), self, &selfsize) != 0)
    {
-      SetError();
+      OutputLog(NetworkSocketError, "getsockname", WSAGetLastError());
       return false;
    }
 
@@ -236,7 +250,8 @@ word SysTcpSocket::Poll
 
    if(ready == SOCKET_ERROR)
    {
-      return sockets[0]->SetError();
+      return sockets[0]->OutputLog
+         (NetworkSocketError, "WSAPoll", WSAGetLastError());
    }
 
    //  Save the status of each socket before LIST gets deleted.
@@ -273,19 +288,24 @@ word SysTcpSocket::Recv(byte_t* buff, size_t size)
    if(buff == nullptr)
    {
       Debug::SwLog(SysTcpSocket_Recv, "invalid buffer", 0);
-      return -1;
+      return -2;
    }
 
    if(size == 0)
    {
       Debug::SwLog(SysTcpSocket_Recv, "invalid size", size);
-      return -1;
+      return -2;
    }
 
    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
-   TraceEvent(NwTrace::Recv, rcvd);
 
-   if(rcvd == SOCKET_ERROR) return SetError();
+   if(rcvd == SOCKET_ERROR)
+   {
+      return SetError(WSAGetLastError());
+   }
+
+   NetworkIsUp();
+   TraceEvent(NwTrace::Recv, rcvd);
    return rcvd;
 }
 
@@ -315,7 +335,7 @@ bool SysTcpSocket::RemAddr(SysIpL3Addr& remAddr)
 
    if(getpeername(Socket(), peer, &peersize) == SOCKET_ERROR)
    {
-      SetError();
+      OutputLog(NetworkSocketError, "getpeername", WSAGetLastError());
       return false;
    }
 
@@ -339,24 +359,28 @@ word SysTcpSocket::Send(const byte_t* data, size_t size)
    if(data == nullptr)
    {
       Debug::SwLog(SysTcpSocket_Send, "invalid data", 0);
-      return -1;
+      return -2;
    }
 
    if(size == 0)
    {
       Debug::SwLog(SysTcpSocket_Send, "invalid size", size);
-      return -1;
+      return -2;
    }
 
    auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
 
    if(sent == SOCKET_ERROR)
    {
-      SetError();
+      sent = SetError(WSAGetLastError());
       if(GetError() == WSAEWOULDBLOCK) sent = 0;
    }
+   else
+   {
+      NetworkIsUp();
+      TraceEvent(NwTrace::Send, sent);
+   }
 
-   TraceEvent(NwTrace::Send, sent);
    return sent;
 }
 
@@ -379,7 +403,8 @@ SysSocket::AllocRc SysTcpSocket::SetService
    if(setsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
       (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)
    {
-      SetError();
+      OutputLog
+         (NetworkSocketError, "setsockopt/SO_KEEPALIVE", WSAGetLastError());
       return SetOptionError;
    }
 
@@ -389,12 +414,15 @@ SysSocket::AllocRc SysTcpSocket::SetService
    if(getsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
       (char*) &val, &valsize) == SOCKET_ERROR)
    {
-      SetError();
+      OutputLog
+         (NetworkSocketError, "getsockopt/SO_KEEPALIVE", WSAGetLastError());
       return GetOptionError;
    }
 
    if(val != alive)
+   {
       Debug::SwLog(SysTcpSocket_SetService, "keepalive not set", val);
+   }
 
    return AllocOk;
 }

@@ -20,9 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TcpIoThread.h"
+#include <iosfwd>
 #include <sstream>
 #include <string>
-#include "Alarm.h"
 #include "Debug.h"
 #include "Duration.h"
 #include "Formatters.h"
@@ -30,6 +30,7 @@
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Log.h"
+#include "NbTypes.h"
 #include "NwLogs.h"
 #include "NwTrace.h"
 #include "Singleton.h"
@@ -46,6 +47,46 @@ using std::string;
 
 namespace NetworkBase
 {
+//  Generates a log when LISTENER has failed.
+//
+static void OutputLog(SysTcpSocket* listener)
+{
+   Debug::ft("NetworkBase.OutputLog(listener)");
+
+   //  Generate a log that includes the listener's socket and its flags.
+   //
+   std::ostringstream stream;
+
+   stream << CRLF;
+   stream << Log::Tab << listener->to_str();
+   stream << " flags=" << listener->OutFlags()->to_string();
+
+   OutputNwLog(NetworkSocketError, "listener", 0, stream.str().c_str());
+}
+
+//------------------------------------------------------------------------------
+//
+//  Generates a log, deregisters LISTENER from our port, and returns
+//  false if an error has occurred on LISTENER.
+//
+static bool ListenerHasFailed(SysTcpSocket* listener)
+{
+   Debug::ft("NetworkBase.ListenerHasFailed");
+
+   auto flags = listener->OutFlags();
+
+   if(flags->test(PollInvalid) || flags->test(PollError) ||
+      flags->test(PollHungUp))
+   {
+      OutputLog(listener);
+      return true;
+   }
+
+   return false;
+}
+
+//==============================================================================
+
 const size_t TcpIoThread::MaxConns = 48 * kBs;
 
 //------------------------------------------------------------------------------
@@ -139,9 +180,8 @@ bool TcpIoThread::AcceptConn()
       //
       if(flags->test(PollRead))
       {
-         //s Handle Accept() error.
-         //
-         OutputLog(NetworkSocketError, "accept", SocketError, listener);
+         listener->OutputLog
+            (NetworkSocketError, "accept", listener->GetError());
       }
 
       return false;
@@ -185,15 +225,15 @@ bool TcpIoThread::AllocateListener()
    SysTcpSocketPtr socket(new SysTcpSocket(port_, svc, rc));
 
    if(rc != SysSocket::AllocOk)
-      return RaiseAlarm(socket->GetError());
+      return ipPort_->RaiseAlarm(socket->GetError());
 
-   if(!socket->Listen(svc->MaxBacklog()))
-      return RaiseAlarm(socket->GetError());
+   if(socket->Listen(svc->MaxBacklog()) != 0)
+      return ipPort_->RaiseAlarm(socket->GetError());
 
    socket->TracePort(NwTrace::Listen, port_, svc->MaxBacklog());
 
    if(!ipPort_->SetSocket(socket.get()))
-      return RaiseAlarm(1);
+      return ipPort_->RaiseAlarm(-1);
 
    //  If we already had a listener, it should have been the one
    //  registered against our port.  But just in case...
@@ -226,22 +266,6 @@ void TcpIoThread::ClaimBlocks()
    {
       sockets_[i]->ClaimBlocks();
    }
-}
-
-//------------------------------------------------------------------------------
-
-void TcpIoThread::ClearAlarm() const
-{
-   Debug::ft("TcpIoThread.ClearAlarm");
-
-   auto alarm = ipPort_->GetAlarm();
-   if(alarm == nullptr) return;
-
-   auto log = alarm->Create(NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
-   if(log == nullptr) return;
-
-   *log << Log::Tab << "TCP: port=" << port_;
-   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------
@@ -340,7 +364,7 @@ void TcpIoThread::Enter()
    //  associated with our service.
    //
    if(!EnsureListener()) return;
-   ClearAlarm();
+   ipPort_->ClearAlarm();
 
    while(true)
    {
@@ -348,9 +372,8 @@ void TcpIoThread::Enter()
 
       if(ready_ < 0)
       {
-         //s Handle Poll() error.
-         //
-         OutputLog(NetworkSocketError, "poll", SocketError, sockets_.Front());
+         auto listener = Listener();
+         listener->OutputLog(NetworkSocketError, "poll", listener->GetError());
          Pause(Duration(20, mSECS));
          continue;
       }
@@ -472,54 +495,6 @@ SysTcpSocket* TcpIoThread::Listener() const
 
 //------------------------------------------------------------------------------
 
-bool TcpIoThread::ListenerHasFailed(SysTcpSocket* listener) const
-{
-   Debug::ft("TcpIoThread.ListenerHasFailed");
-
-   auto flags = listener->OutFlags();
-
-   if(flags->test(PollInvalid) || flags->test(PollError) ||
-      flags->test(PollHungUp))
-   {
-      OutputLog(NetworkSocketError, "listener", SocketFlags, listener);
-      return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
-void TcpIoThread::OutputLog(LogId id, fixed_string expl,
-   Error error, SysTcpSocket* socket, debug64_t errval) const
-{
-   Debug::ft("TcpIoThread.OutputLog");
-
-   if((error == SocketError) && (socket->GetError() == 0)) return;
-
-   auto log = Log::Create(NetworkLogGroup, id);
-   if(log == nullptr) return;
-
-   *log << Log::Tab << expl << ": port=" << port_;
-
-   switch(error)
-   {
-   case SocketNull:
-      *log << " errval=" << errval;
-      break;
-   case SocketError:
-      *log << " errval=" << socket->GetError();
-      break;
-   case SocketFlags:
-      *log << " flags=" << socket->OutFlags()->to_string();
-      break;
-   }
-
-   Log::Submit(log);
-}
-
-//------------------------------------------------------------------------------
-
 void TcpIoThread::Patch(sel_t selector, void* arguments)
 {
    IoThread::Patch(selector, arguments);
@@ -571,23 +546,6 @@ word TcpIoThread::PollSockets()
    recvs_ = 0;
    if(ready > 0) sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
    return ready;
-}
-
-//------------------------------------------------------------------------------
-
-bool TcpIoThread::RaiseAlarm(word errval) const
-{
-   Debug::ft("TcpIoThread.RaiseAlarm");
-
-   auto alarm = ipPort_->GetAlarm();
-   if(alarm == nullptr) return false;
-
-   auto log = alarm->Create(NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
-   if(log == nullptr) return false;
-
-   *log << Log::Tab << "TCP: port=" << port_ << " errval=" << errval;
-   Log::Submit(log);
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -654,11 +612,9 @@ void TcpIoThread::ServiceSocket()
 
    if(rcvd <= 0)
    {
-      if(rcvd < 0)
+      if(rcvd == -1)
       {
-         //s Handle Recv() error.
-         //
-         OutputLog(NetworkSocketError, "recv", SocketError, socket);
+         socket->OutputLog(NetworkSocketError, "recv", socket->GetError());
       }
 
       EraseSocket(curr_);
@@ -675,7 +631,7 @@ void TcpIoThread::ServiceSocket()
    //
    if(!socket->RemAddr(txAddr_))
    {
-      OutputLog(NetworkSocketError, "getpeername", SocketError, socket);
+      socket->OutputLog(NetworkSocketError, "getpeername", socket->GetError());
       return;
    }
 

@@ -183,8 +183,8 @@ void IpBuffer::Display(ostream& stream,
    stream << prefix << "buff     : " << strPtr(buff_) << CRLF;
    stream << prefix << "hdrSize  : " << hdrSize_ << CRLF;
    stream << prefix << "buffSize : " << buffSize_ << CRLF;
-   stream << prefix << "txAddr   : " << txAddr_.to_string() << CRLF;
-   stream << prefix << "rxAddr   : " << rxAddr_.to_string() << CRLF;
+   stream << prefix << "txAddr   : " << txAddr_.to_str(true) << CRLF;
+   stream << prefix << "rxAddr   : " << rxAddr_.to_str(true) << CRLF;
    stream << prefix << "dir      : " << dir_ << CRLF;
    stream << prefix << "external : " << external_ << CRLF;
    stream << prefix << "queued   : " << queued_ << CRLF;

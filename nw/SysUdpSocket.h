@@ -59,16 +59,16 @@ public:
    ~SysUdpSocket();
 
    //  Reads up to SIZE bytes into BUFF.  Updates remAddr with the source of
-   //  the bytes.  Returns the number of bytes read, or -1 on failure.  On
-   //  an empty packet, returns 0.  If the socket is non-blocking, returns
-   //  -2 if there was nothing to read.
+   //  the bytes.  Returns the number of bytes read.  Om failure, generates
+   //  a log and returns -1.  Returns 0 if an empty packet was received.
    //
    NodeBase::word RecvFrom
       (NodeBase::byte_t* buff, size_t size, SysIpL3Addr& remAddr);
 
    //  Makes the socket non-blocking and sends DATA, of length SIZE, to the
-   //  destination specified by remAddr. Returns the number of bytes sent,
-   //  or -1 on failure.
+   //  destination specified by remAddr.  Returns the number of bytes sent.
+   //  On failure, returns -2 if a log has been generated, or -1 if the
+   //  invoker should generate a log.
    //
    NodeBase::word SendTo
       (const NodeBase::byte_t* data, size_t size, const SysIpL3Addr& remAddr);

@@ -298,7 +298,7 @@ void SysIpL3Addr::SetSocket(SysTcpSocket* socket)
 
 //------------------------------------------------------------------------------
 
-string SysIpL3Addr::to_str() const
+string SysIpL3Addr::to_str(bool verbose) const
 {
    std::ostringstream stream;
    auto ipv6 = (Family() == IPv6);
@@ -308,22 +308,15 @@ string SysIpL3Addr::to_str() const
    stream << SysIpL2Addr::to_str();
    if(ipv6 && l3) stream << ']';
    if(l3) stream << ':' << port_;
-   return stream.str();
-}
 
-//------------------------------------------------------------------------------
-
-string SysIpL3Addr::to_string() const
-{
-   std::ostringstream stream;
-
-   stream << to_str();
-
-   if((proto_ != IpAny) || (socket_ != nullptr))
+   if(verbose)
    {
-      stream << " [" << proto_;
-      if(socket_ != nullptr) stream << ", " << socket_;
-      stream << ']';
+      if((proto_ != IpAny) || (socket_ != nullptr))
+      {
+         stream << " [" << proto_;
+         if(socket_ != nullptr) stream << ", " << socket_;
+         stream << ']';
+      }
    }
 
    return stream.str();

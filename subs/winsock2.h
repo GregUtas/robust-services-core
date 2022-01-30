@@ -25,7 +25,7 @@ constexpr uint32_t INADDR_LOOPBACK = 0x7f000001;
 constexpr uint32_t INADDR_NONE = 0xffffffff;
 
 typedef uintptr_t SOCKET;
-constexpr SOCKET INVALID_SOCKET = 0;
+constexpr SOCKET INVALID_SOCKET = UINTPTR_MAX;
 
 constexpr int NO_ERROR = 0;
 constexpr int SOCKET_ERROR = -1;

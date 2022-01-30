@@ -70,8 +70,8 @@ public:
 
    //  Constructs an address for the host identified by NAME.  SERVICE may be
    //  a port number or the name of a service associated with a well-known
-   //  port.  PROTO is updated to the service's protocol.  Failure can be
-   //  detected using SysIpL2Addr::IsValid.
+   //  port.  PROTO is updated to the service's protocol.  Failure results in
+   //  a log and can be detected using SysIpL2Addr::IsValid.
    //
    //  NOTE: Obtaining the result may involve a remote query, so the invoking
    //  ====  thread is temporarily made preemptable.
@@ -144,18 +144,20 @@ public:
    //
    void ReleaseSocket();
 
-   //  Updates NAME and SERVICE to the standard host name and port
-   //  service name of the host identified by this address.
+   //  Updates NAME and SERVICE to the standard host name and port service
+   //  name of the host identified by this address.  On failure, generates
+   //  a log and returns false.
    //
    //  NOTE: Obtaining the result may involve a remote query, so the
    //  ====  invoking thread is temporarily made preemptable.
    //
    bool AddrToName(std::string& name, std::string& service) const;
 
-   //  The same as to_str(), but also displays proto_ and socket_ unless
-   //  both still have their default values (IpAny and nullptr).
+   //  Returns the address as a string ("n.n.n.n:p").  If VERBOSE is set,
+   //  also displays proto_ and socket_ unless both still have their default
+   //  values (IpAny and nullptr).
    //
-   std::string to_string() const;
+   std::string to_str(bool verbose) const;
 
    //  Sets the address to the null address after releasing socket_.
    //
@@ -169,10 +171,6 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Returns the address as a string ("n.n.n.n:p").
-   //
-   std::string to_str() const override;
 private:
    //  The port number associated with the address.
    //

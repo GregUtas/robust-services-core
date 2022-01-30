@@ -63,7 +63,8 @@ SysTcpSocket::SysTcpSocket(ipport_t port,
 
 //------------------------------------------------------------------------------
 
-SysTcpSocket::SysTcpSocket(SysSocket_t socket) : SysSocket(socket),
+SysTcpSocket::SysTcpSocket(SysSocket_t socket, ipport_t port) :
+   SysSocket(socket, port),
    state_(Connected),
    disconnecting_(false),
    iotActive_(false),
@@ -326,8 +327,6 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
       }
       else
       {
-         //s Handle Connect() error.
-         //
          OutputLog(NetworkSocketError, "connect", &buff);
          return SendFailed;
       }
@@ -368,12 +367,12 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
    auto dest = port->GetHandler()->HostToNetwork(buff, src, size);
    auto sent = Send(dest, size);
 
-   if(sent <= 0)
+   if(sent == 0)
    {
-      if(sent == 0) return QueueBuff(&buff);
-
-      //s Handle Send() error.
-      //
+      return QueueBuff(&buff);
+   }
+   else if(sent == -1)
+   {
       OutputLog(NetworkSocketError, "send", &buff);
       return SendFailed;
    }

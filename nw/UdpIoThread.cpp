@@ -20,19 +20,15 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "UdpIoThread.h"
-#include <sstream>
-#include <string>
-#include "Alarm.h"
 #include "Debug.h"
 #include "Duration.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
-#include "Log.h"
 #include "NbTypes.h"
-#include "NwLogs.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
+#include "SysTypes.h"
 #include "SysUdpSocket.h"
 #include "TimePoint.h"
 #include "UdpIpService.h"
@@ -78,22 +74,6 @@ c_string UdpIoThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-void UdpIoThread::ClearAlarm() const
-{
-   Debug::ft("UdpIoThread.ClearAlarm");
-
-   auto alarm = ipPort_->GetAlarm();
-   if(alarm == nullptr) return;
-
-   auto log = alarm->Create(NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
-   if(log == nullptr) return;
-
-   *log << Log::Tab << "UDP: port=" << port_;
-   Log::Submit(log);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name UdpIoThread_Enter = "UdpIoThread.Enter";
 
 void UdpIoThread::Enter()
@@ -123,14 +103,14 @@ void UdpIoThread::Enter()
       if(rc != SysSocket::AllocOk)
       {
          delete socket;
-         RaiseAlarm(0x100 + rc);
+         ipPort_->RaiseAlarm(rc);
          return;
       }
 
       if(!ipPort_->SetSocket(socket))
       {
          delete socket;
-         RaiseAlarm(1);
+         ipPort_->RaiseAlarm(-1);
          return;
       }
    }
@@ -141,7 +121,7 @@ void UdpIoThread::Enter()
    //
    auto& self = IpPortRegistry::LocalAddr();
    rxAddr_ = SysIpL3Addr(self, port_, IpUdp, nullptr);
-   ClearAlarm();
+   ipPort_->ClearAlarm();
 
    //  Enter a loop that keeps waiting forever to receive the next message.
    //  Pause after receiving a threshold number of messages in a row.
@@ -184,23 +164,11 @@ void UdpIoThread::Enter()
 
       if(rcvd < 0)
       {
-         //s Handle RecvFrom() error.
-         //  For now, take a short break and hope the problem goes away.
-         //  WSAEWOULDBLOCK is a chronic occurrence on Windows, which is
-         //  curious because our socket is non-blocking.
+         //  Take a short break and hope the problem goes away.  WSAEWOULDBLOCK
+         //  is a chronic occurrence on Windows, which is curious because the
+         //  code above tries to make the socket blocking when it has no more
+         //  mesaages waiting.
          //
-         if(rcvd == -1)
-         {
-            auto log = Log::Create(NetworkLogGroup, NetworkSocketError);
-
-            if(log != nullptr)
-            {
-               *log << Log::Tab << "recvfrom: port=" << port_;
-               *log << " errval=" << socket->GetError();
-               Log::Submit(log);
-            }
-         }
-
          Pause(Duration(20, mSECS));
          recvs_ = 0;
          continue;
@@ -218,22 +186,6 @@ void UdpIoThread::Enter()
 void UdpIoThread::Patch(sel_t selector, void* arguments)
 {
    IoThread::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-void UdpIoThread::RaiseAlarm(debug64_t errval) const
-{
-   Debug::ft("UdpIoThread.RaiseAlarm");
-
-   auto alarm = ipPort_->GetAlarm();
-   if(alarm == nullptr) return;
-
-   auto log = alarm->Create(NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
-   if(log == nullptr) return;
-
-   *log << Log::Tab << "UDP: port=" << port_ << " errval=" << errval;
-   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------

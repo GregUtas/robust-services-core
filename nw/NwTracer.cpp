@@ -276,7 +276,7 @@ void NwTracer::QuerySelections(ostream& stream) const
          if(peers_[i].status != TraceDefault)
          {
             stream << spaces(2) << peers_[i].status << ": ";
-            stream << peers_[i].peer.to_string() << CRLF;
+            stream << peers_[i].peer.to_str(true) << CRLF;
          }
       }
    }

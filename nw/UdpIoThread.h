@@ -24,7 +24,6 @@
 
 #include "IoThread.h"
 #include "NwTypes.h"
-#include "SysTypes.h"
 
 namespace NetworkBase
 {
@@ -58,14 +57,6 @@ protected:
    //
    void Unblock() override;
 private:
-   //  Raises an alarm when an error forces the thread to exit.
-   //
-   void RaiseAlarm(NodeBase::debug64_t errval) const;
-
-   //  Clears any alarm associated with the thread's service.
-   //
-   void ClearAlarm() const;
-
    //  Releases resources when exiting or cleaning up the thread.
    //
    void ReleaseResources();

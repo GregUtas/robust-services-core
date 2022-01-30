@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -141,6 +142,10 @@ enum IpAddrState
 //  Inserts a string for STATE into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, IpAddrState state);
+
+//  For reporting errors in network functions.
+//
+typedef NodeBase::word nwerr_t;
 
 //  Forward declarations.
 //

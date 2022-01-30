@@ -22,7 +22,7 @@
 #include "IpPort.h"
 #include "Dynamic.h"
 #include <cstdint>
-#include <ostream>
+#include <sstream>
 #include <string>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
@@ -33,8 +33,10 @@
 #include "IoThread.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
+#include "Log.h"
 #include "NbSignals.h"
 #include "NbTypes.h"
+#include "NwLogs.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
@@ -162,6 +164,23 @@ void IpPort::BytesSent(size_t count) const
    stats_->sends_->Incr();
    stats_->bytesSent_->Add(count);
    stats_->maxBytesSent_->Update(count);
+}
+
+//------------------------------------------------------------------------------
+
+void IpPort::ClearAlarm() const
+{
+   Debug::ft("IpPort.ClearAlarm");
+
+   if(alarm_ == nullptr) return;
+
+   auto log = alarm_->Create(NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
+   if(log == nullptr) return;
+
+   *log << Log::Tab << "service=" << service_->Name();
+   *log << '(' << service_->Protocol() << ')';
+   *log << " port=" << port_;
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------
@@ -295,6 +314,26 @@ void IpPort::PollArrayOverflow() const
    Debug::ft("IpPort.PollArrayOverflow");
 
    stats_->overflows_->Incr();
+}
+
+//------------------------------------------------------------------------------
+
+bool IpPort::RaiseAlarm(word errval) const
+{
+   Debug::ft("IpPort.RaiseAlarm");
+
+   if(alarm_ == nullptr) return false;
+
+   auto log = alarm_->Create
+      (NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
+   if(log == nullptr) return false;
+
+   *log << Log::Tab << "service=" << service_->Name();
+   *log << '(' << service_->Protocol() << ')';
+   *log << " port=" << port_;
+   *log << " errval=" << errval;
+   Log::Submit(log);
+   return false;
 }
 
 //------------------------------------------------------------------------------

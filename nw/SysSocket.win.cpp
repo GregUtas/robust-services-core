@@ -31,10 +31,10 @@
 #include "Debug.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
+#include "NwLogs.h"
 #include "NwTrace.h"
 
 using namespace NodeBase;
-using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -63,9 +63,10 @@ fn_name SysSocket_ctor2 = "SysSocket.ctor";
 
 SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
    socket_(INVALID_SOCKET),
+   error_(0),
+   port_(NilIpPort),
    blocking_(true),
-   tracing_(false),
-   error_(0)
+   tracing_(false)
 {
    Debug::ft(SysSocket_ctor2);
 
@@ -85,14 +86,14 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
       break;
    default:
       Debug::SwLog(SysSocket_ctor2, "unexpected protocol", proto);
-      SetError(WSAENOPROTOOPT);
+      SetError(WSAEPROTONOSUPPORT);
       rc = AllocFailed;
       return;
    }
 
    if(socket_ == INVALID_SOCKET)
    {
-      SetError();
+      OutputLog(NetworkAllocFailure, "socket", WSAGetLastError());
       rc = AllocFailed;
       return;
    }
@@ -107,8 +108,10 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
       if(setsockopt(socket_, IPPROTO_IPV6, IPV6_V6ONLY,
          (const char*)&dual, sizeof(dual)) == SOCKET_ERROR)
       {
-         SetError();
+         OutputLog(NetworkSocketError,
+            "setsockopt/IPV6_V6ONLY", WSAGetLastError());
          rc = SetOptionError;
+         return;
       }
    }
 
@@ -145,9 +148,31 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
 
    if(bind(socket_, addr, addrsize) == SOCKET_ERROR)
    {
-      SetError();
+      OutputLog(NetworkSocketError, "bind", WSAGetLastError());
       rc = BindError;
+      return;
    }
+
+   port_ = port;
+}
+
+//------------------------------------------------------------------------------
+
+c_string SysSocket::AlarmName(nwerr_t errval)
+{
+   Debug::ft("SysSocket.AlarmName");
+
+   switch(errval)
+   {
+   case WSAENETDOWN:
+      return NetworkAlarmName;
+   case WSASYSNOTREADY:
+   case WSAVERNOTSUPPORTED:
+   case WSANOTINITIALISED:
+      return NetInitAlarmName;
+   }
+
+   return EMPTY_STR;
 }
 
 //------------------------------------------------------------------------------
@@ -159,7 +184,12 @@ void SysSocket::Close(bool disconnecting)
    if(IsValid())
    {
       TraceEvent(NwTrace::Close, disconnecting);
-      if(closesocket(Socket()) == SOCKET_ERROR) SetError();
+
+      if(closesocket(Socket()) == SOCKET_ERROR)
+      {
+         OutputLog(NetworkSocketError, "closesocket", WSAGetLastError());
+      }
+
       Invalidate();
    }
 }
@@ -176,7 +206,7 @@ bool SysSocket::Empty()
    //
    if(ioctlsocket(socket_, FIONREAD, &bytecount) != NO_ERROR)
    {
-      SetError();
+      OutputLog(NetworkSocketError, "ioctlsocket/FIONREAD", WSAGetLastError());
       return true;
    }
 
@@ -190,6 +220,7 @@ void SysSocket::Invalidate()
    Debug::ftnt("SysSocket.Invalidate");
 
    socket_ = INVALID_SOCKET;
+   port_ = NilIpPort;
 }
 
 //------------------------------------------------------------------------------
@@ -215,30 +246,8 @@ bool SysSocket::SetBlocking(bool blocking)
       return true;
    }
 
-   //s Handle ioctlsocket() error.
-   //
-   SetError();
+   OutputLog(NetworkSocketError, "ioctlsocket/FIONBIO", WSAGetLastError());
    return false;
-}
-
-//------------------------------------------------------------------------------
-
-word SysSocket::SetError()
-{
-   Debug::ft("SysSocket.SetError");
-
-   error_ = WSAGetLastError();
-
-   switch(error_)
-   {
-   case WSAENETDOWN:
-   case WSASYSNOTREADY:
-   case WSANOTINITIALISED:
-      SetStatus(false, std::to_string(error_));
-      break;
-   }
-
-   return -1;
 }
 
 //------------------------------------------------------------------------------
@@ -266,14 +275,14 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
    if(setsockopt(socket_, SOL_SOCKET, SO_RCVBUF,
       (const char*) &rxSize, sizeof(rxSize)) == SOCKET_ERROR)
    {
-      SetError();
+      OutputLog(NetworkSocketError, "setsockopt/SO_RCVBUF", WSAGetLastError());
       return SetOptionError;
    }
 
    if(getsockopt(socket_, SOL_SOCKET, SO_RCVBUF,
       (char*) &max, &maxsize) == SOCKET_ERROR)
    {
-      SetError();
+      OutputLog(NetworkSocketError, "getsockopt/SO_RCVBUF", WSAGetLastError());
       return GetOptionError;
    }
 
@@ -283,19 +292,22 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
    if(setsockopt(socket_, SOL_SOCKET, SO_SNDBUF,
       (const char*) &txSize, sizeof(txSize)) == SOCKET_ERROR)
    {
-      SetError();
+      OutputLog(NetworkSocketError, "setsockopt/SO_SNDBUF", WSAGetLastError());
       return SetOptionError;
    }
 
    if(getsockopt(socket_, SOL_SOCKET, SO_SNDBUF,
       (char*) &max, &maxsize) == SOCKET_ERROR)
    {
-      SetError();
+      OutputLog(NetworkSocketError, "getsockopt/SO_SNDBUF", WSAGetLastError());
       return GetOptionError;
    }
 
    if(max < txSize)
+   {
       Debug::SwLog(SysSocket_SetService, "tx size too large", txSize);
+   }
+
    return rc;
 }
 
@@ -334,14 +346,9 @@ void SysSocket::StopLayer()
 {
    Debug::ft("SysSocket.StopLayer");
 
-   string err;
+   if(WSACleanup() == 0) return;
 
-   if(WSACleanup() != 0)
-   {
-      err = std::to_string(WSAGetLastError());
-   }
-
-   ReportLayerStop(err);
+   OutputNwLog(NetworkShutdownFailure, "StopLayer", WSAGetLastError());
 }
 }
 #endif

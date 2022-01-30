@@ -364,7 +364,7 @@ word IpCommand::ProcessCommand(CliThread& cli) const
       if(!cli.EndOfInput()) return -1;
       host = SysIpL3Addr(name, service, proto);
       if(!host.IsValid()) return cli.Report(-2, NoHostAddrExpl);
-      *cli.obuf << spaces(2) << host.to_str() << CRLF;
+      *cli.obuf << spaces(2) << host.to_str(false) << CRLF;
       break;
 
    case AddrToNameIndex:

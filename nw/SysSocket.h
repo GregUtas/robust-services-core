@@ -111,7 +111,8 @@ public:
    bool Empty();
 
    //  Invoked before performing socket operations.  If BLOCKING is set,
-   //  an operation on the socket is allowed to block.
+   //  an operation on the socket is allowed to block.  Returns false and
+   //  generates a log if the socket could not be configured as desired.
    //
    bool SetBlocking(bool blocking);
 
@@ -121,23 +122,39 @@ public:
    //  size of the socket's receive and transmit buffers based on
    //  o RxSize and TxSize if SHARED is set, and
    //  o GetAppSocketSizes if SHARED is not set.
+   //  Returns AllocOk on success.  On failure, generates a log and
+   //  returns the reason for the failure.
    //
    virtual AllocRc SetService(const IpService* service, bool shared);
 
-   //  Sends BUFF from the socket.
+   //  Sends BUFF from the socket.  Returns SendOk or SendQueued on
+   //  success.  On failure, generates a log and returns the reason for
+   //  the failure.
    //
    virtual SendRc SendBuff(IpBuffer& buff) = 0;
 
+   //  Generates the network log specifies by ID when the platform-specific
+   //  ERRVAL was returned by FUNC.  Returns -1.
+   //
+   nwerr_t OutputLog(NodeBase::LogId id,
+      NodeBase::c_string func, nwerr_t errval);
+
    //  Generates the network log specified by ID when a socket operation
-   //  fails.  EXPL explains the failure, and BUFF is any associated buffer.
+   //  fails.  FUNC identifies the function that failed, and BUFF is any
+   //  associated buffer.
    //
    void OutputLog(NodeBase::LogId id,
-      NodeBase::fixed_string expl, const IpBuffer* buff) const;
+      NodeBase::c_string func, const IpBuffer* buff) const;
 
    //  Returns the last error report on the socket.  Its interpretation
    //  is platform specific.
    //
-   NodeBase::word GetError() const { return error_; }
+   nwerr_t GetError() const { return error_; }
+
+   //  Returns the alarm name associated with the platform-specific ERRVAL.
+   //  Returns an empty string if no alarm is associated with the error.
+   //
+   static NodeBase::c_string AlarmName(nwerr_t errval);
 
    //  Initializes this executable's use of our element's socket layer
    //  during startup.
@@ -166,6 +183,10 @@ public:
    NwTrace* TracePeer(NodeBase::TraceRecordId rid, ipport_t port,
       const SysIpL3Addr& peer, NodeBase::word data);
 
+   //  Displays socket information for logging purposes.
+   //
+   std::string to_str() const;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -177,15 +198,15 @@ public:
 protected:
    //  Allocates a socket that will send and receive on PORT, on behalf of
    //  SERVICE.  If PORT is NilIpPort, the socket is created but is not bound
-   //  to a port.  RC is updated to indicate success or failure.  Protected
-   //  because this class is virtual.
+   //  to a port.  RC is updated to indicate success or failure, and a log is
+   //  generated on failure.  Protected because this class is virtual.
    //
    SysSocket(ipport_t port, const IpService* service, AllocRc& rc);
 
    //  Invoked by SysTcpSocket::Accept to wrap a socket that was created
    //  for a new connection.
    //
-   explicit SysSocket(NodeBase::SysSocket_t socket);
+   SysSocket(NodeBase::SysSocket_t socket, ipport_t port);
 
    //  Records the deletion.  Subclasses must invoke Close().  Protected so
    //  that subclasses can control their deletion policy.  Virtual to allow
@@ -203,28 +224,11 @@ protected:
    //
    void Close(bool disconnecting);
 
-   //  Sets the error code for the socket so that it can be obtained for
-   //  logging purposes.  If the value is not provided explicitly, it is
-   //  obtained from the underlying platform.  Returns -1.
+   //  Sets the platform-specific ERRVAL for the socket so that it can
+   //  later be retrieved and included in a log.  Returns -1.
    //
-   NodeBase::word SetError();
-   NodeBase::word SetError(NodeBase::word errval);
+   nwerr_t SetError(nwerr_t errval);
 private:
-   //  Reports the result of StartLayer.  Returns false if ERR is not empty,
-   //  which indicates that StartLayer failed.
-   //
-   static bool ReportLayerStart(const std::string& err);
-
-   //  Reports the result of StopLayer.  If ERR is not empty, it indicates
-   //  that StopLayer failed.
-   //
-   static void ReportLayerStop(const std::string& err);
-
-   //  Updates the network alarm when the network goes down or comes back up.
-   //  ERR is included in the alarm log when OK is false.
-   //
-   static void SetStatus(bool ok, const std::string& err);
-
    //  Sets or clears tracing_ and returns the new setting.
    //
    bool SetTracing(bool tracing);
@@ -242,6 +246,14 @@ private:
    //
    NodeBase::SysSocket_t socket_;
 
+   //  The last error reported on this socket by the underlying platform.
+   //
+   nwerr_t error_;
+
+   //  The port to which the socket is bound.
+   //
+   ipport_t port_;
+
    //  Set if operations on the socket can block.  Used by SetBlocking to
    //  avoid unnecessary work.
    //
@@ -250,10 +262,6 @@ private:
    //  Set if this socket is being traced.
    //
    bool tracing_;
-
-   //  The last error reported on this socket by the underlying platform.
-   //
-   NodeBase::word error_;
 };
 }
 #endif

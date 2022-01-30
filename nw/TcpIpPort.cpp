@@ -20,12 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TcpIpPort.h"
-#include <sstream>
-#include <string>
 #include "Debug.h"
-#include "Log.h"
 #include "NwDaemons.h"
-#include "NwLogs.h"
 #include "Restart.h"
 #include "SysTcpSocket.h"
 #include "SysTypes.h"
@@ -81,15 +77,6 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
 
    if(rc != SysSocket::AllocOk)
    {
-      auto log = Log::Create(NetworkLogGroup, NetworkAllocFailure);
-
-      if(log != nullptr)
-      {
-         *log << Log::Tab << "TCP socket: rc=" << rc;
-         *log << " errval=" << socket->GetError();
-         Log::Submit(log);
-      }
-
       return nullptr;
    }
 

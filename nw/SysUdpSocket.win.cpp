@@ -26,6 +26,7 @@
 #include <ws2tcpip.h>
 #include "Debug.h"
 #include "IpPortRegistry.h"
+#include "NwLogs.h"
 #include "SysIpL3Addr.h"
 #include "UdpIpService.h"
 
@@ -50,7 +51,8 @@ SysUdpSocket::SysUdpSocket(ipport_t port,
       if(getsockopt(Socket(), SOL_SOCKET, SO_MAX_MSG_SIZE,
          (char*) &max, &maxsize) == SOCKET_ERROR)
       {
-         SetError();
+         OutputLog(NetworkSocketError,
+            "getsockopt/SO_MAX_MSG_SIZE", WSAGetLastError());
          rc = GetOptionError;
          return;
       }
@@ -70,13 +72,13 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
    if(buff == nullptr)
    {
       Debug::SwLog(SysUdpSocket_RecvFrom, "invalid buffer", 0);
-      return 0;
+      return -1;
    }
 
    if((buff == nullptr) || (size == 0))
    {
       Debug::SwLog(SysUdpSocket_RecvFrom, "invalid size", size);
-      return 0;
+      return -1;
    }
 
    sockaddr_in ipv4peer;
@@ -102,10 +104,17 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
 
    if(rcvd == SOCKET_ERROR)
    {
-      SetError();
-      if(GetError() == WSAEWOULDBLOCK) return -2;
+      auto error = WSAGetLastError();
+
+      if(error != WSAEWOULDBLOCK)
+      {
+         OutputLog(NetworkSocketError, "recvfrom", error);
+      }
+
       return -1;
    }
+
+   NetworkIsUp();
 
    if(ipv6)
       remAddr.NetworkToHost(ipv6peer.sin6_addr.s6_words, ipv6peer.sin6_port);
@@ -126,13 +135,13 @@ word SysUdpSocket::SendTo
    if(data == nullptr)
    {
       Debug::SwLog(SysUdpSocket_SendTo, "invalid data", 0);
-      return 0;
+      return -2;
    }
 
    if((data == nullptr) || (size == 0))
    {
       Debug::SwLog(SysUdpSocket_SendTo, "invalid size", size);
-      return 0;
+      return -2;
    }
 
    if(!SetBlocking(false)) return GetError();
@@ -164,7 +173,12 @@ word SysUdpSocket::SendTo
    auto sent = sendto(Socket(),
       reinterpret_cast< const char* >(data), size, 0, peer, peersize);
 
-   if(sent == SOCKET_ERROR) return SetError();
+   if(sent == SOCKET_ERROR)
+   {
+      return SetError(WSAGetLastError());
+   }
+
+   NetworkIsUp();
    return sent;
 }
 }

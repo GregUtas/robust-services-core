@@ -94,7 +94,7 @@ bool NwTrace::Display(ostream& stream, const string& opts)
       stream << "state=" << data_;
       break;
    case Connect:
-      stream << "peer=" << peer_.to_str() << " rc=" << data_;
+      stream << "peer=" << peer_.to_str(false) << " rc=" << data_;
       break;
    case Listen:
       stream << "port=" << port_ << " backlog=" << data_;
@@ -103,21 +103,21 @@ bool NwTrace::Display(ostream& stream, const string& opts)
       stream << "ready=" << data_;
       break;
    case Accept:
-      stream << "port=" << port_ << " peer=" << peer_.to_str();
+      stream << "port=" << port_ << " peer=" << peer_.to_str(false);
       break;
    case Recv:
       stream << "rcvd=" << data_;
       break;
    case RecvFrom:
       stream << "rcvd=" << data_;
-      stream << " port=" << port_ << " peer=" << peer_.to_str();
+      stream << " port=" << port_ << " peer=" << peer_.to_str(false);
       break;
    case Send:
       stream << "sent=" << data_;
       break;
    case SendTo:
       stream << "sent=" << data_;
-      stream << " port=" << port_ << " peer=" << peer_.to_str();
+      stream << " port=" << port_ << " peer=" << peer_.to_str(false);
       break;
    case Disconnect:
       break;

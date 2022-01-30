@@ -260,8 +260,8 @@ void BaseBot::Display(ostream& stream,
    stream << prefix << "config :" << CRLF;
    config_.Display(stream, lead);
 
-   stream << prefix << "client_addr    : " << client_addr_.to_string() << CRLF;
-   stream << prefix << "server_addr    : " << server_addr_.to_string() << CRLF;
+   stream << prefix << "client_addr    : " << client_addr_.to_str(true) << CRLF;
+   stream << prefix << "server_addr    : " << server_addr_.to_str(true) << CRLF;
    stream << prefix << "state          : " << state_ << CRLF;
    stream << prefix << "retry_delay    : " << retry_delay_ << CRLF;
    stream << prefix << "title          : " << title_ << CRLF;
@@ -1803,7 +1803,7 @@ void BaseBot::report_end(const TokenMessage& message) const
 
 //------------------------------------------------------------------------------
 
-void BaseBot::report_exit(fixed_string reason)
+void BaseBot::report_exit(c_string reason)
 {
    Debug::ft("BaseBot.report_exit");
 
@@ -2179,7 +2179,7 @@ void BaseBot::send_im_message()
 
 //------------------------------------------------------------------------------
 
-void BaseBot::send_nme(fixed_string name, fixed_string version)
+void BaseBot::send_nme(c_string name, c_string version)
 {
    Debug::ft("BaseBot.send_nme");
 

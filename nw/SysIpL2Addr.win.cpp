@@ -23,11 +23,9 @@
 
 #include "SysIpL2Addr.h"
 #include <cstring>
-#include <sstream>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include "Debug.h"
-#include "Log.h"
 #include "NwLogs.h"
 #include "SysTypes.h"
 
@@ -67,6 +65,7 @@ std::vector< SysIpL2Addr > SysIpL2Addr::LocalAddrs()
             {
                auto netaddr = (sockaddr_in*) curr->ai_addr;
                localAddr.NetworkToHost(netaddr->sin_addr.s_addr);
+               localAddrs.push_back(localAddr);
                break;
             }
 
@@ -75,6 +74,7 @@ std::vector< SysIpL2Addr > SysIpL2Addr::LocalAddrs()
                auto netaddr = (sockaddr_in6*) curr->ai_addr;
                if(netaddr->sin6_scope_id != 0) continue;
                localAddr.NetworkToHost(netaddr->sin6_addr.s6_words);
+               localAddrs.push_back(localAddr);
                break;
             }
 
@@ -82,21 +82,13 @@ std::vector< SysIpL2Addr > SysIpL2Addr::LocalAddrs()
                Debug::SwLog(SysIpL2Addr_LocalAddrs,
                   "unsupported protocol family", curr->ai_family);
             }
-
-            localAddrs.push_back(localAddr);
          }
 
          freeaddrinfo(info);
       }
       else
       {
-         auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
-
-         if(log != nullptr)
-         {
-            *log << Log::Tab << "getaddrinfo: errval=" << WSAGetLastError();
-            Log::Submit(log);
-         }
+         OutputNwLog(NetworkFunctionError, "getaddrinfo", WSAGetLastError());
       }
    }
 
@@ -115,13 +107,7 @@ bool SysIpL2Addr::LocalName(string& name)
 
    if(gethostname(buff, 256) == SOCKET_ERROR)
    {
-      auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
-
-      if(log != nullptr)
-      {
-         *log << Log::Tab << "gethostname: errval=" << WSAGetLastError();
-         Log::Submit(log);
-      }
+      OutputNwLog(NetworkFunctionError, "gethostname", WSAGetLastError());
       return false;
    }
 

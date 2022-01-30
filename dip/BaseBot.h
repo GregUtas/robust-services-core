@@ -121,7 +121,7 @@ protected:
 
    //  Sends an NME (the bot's name and version) to the server.
    //
-   void send_nme(fixed_string name, fixed_string version);
+   void send_nme(c_string name, c_string version);
 
    //  Requests a copy of the map.  Gets a MAP and MDF, but doesn't YES(MAP())
    //  in response.  Done automatically if joining a game via HLO or OBS, but
@@ -553,7 +553,7 @@ protected:
 
    //  Reports that the bot is exiting for REASON.
    //
-   void report_exit(fixed_string reason);
+   void report_exit(c_string reason);
 
    /////////////////////////////////////////////////////////////////////////////
    //

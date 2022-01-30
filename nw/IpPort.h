@@ -101,9 +101,15 @@ public:
    //
    virtual SysTcpSocket* CreateAppSocket();
 
-   //  Provides the I/O thread with access to the port's alarm.
+   //  Raises an alarm if the port's I/O thread cannot configure its socket.
+   //  ERRVAL is a platform-specific error code.  Returns false.
    //
-   NodeBase::Alarm* GetAlarm() const { return alarm_; }
+   bool RaiseAlarm(nwerr_t errval) const;
+
+   //  Clears any alarm after the port's I/O thread successfully configures
+   //  its socket.
+   //
+   void ClearAlarm() const;
 
    //  Invoked after COUNT bytes were received.
    //

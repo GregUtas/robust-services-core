@@ -23,7 +23,6 @@
 #include <ostream>
 #include "Debug.h"
 #include "SysIpL2Addr.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using namespace NodeBase;

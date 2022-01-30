@@ -67,7 +67,7 @@ class SysTcpSocket : public SysSocket
 public:
    //  Allocates a socket that will send and receive on PORT, on behalf of
    //  SERVICE.  The socket is made non-blocking.  RC is updated to indicate
-   //  success or failure.
+   //  success or failure, and a log is generated on failure.
    //
    SysTcpSocket(ipport_t port, const TcpIpService* service, AllocRc& rc);
 
@@ -84,14 +84,16 @@ public:
    //  Initiates connection setup to remAddr.  Returns 0 on success.  If
    //  the socket is non-blocking, reports success immediately; the socket
    //  then queues outgoing messages until the connection is accepted.
+   //  Returns -1 on failure; the invoker should then generate a log.
    //
    NodeBase::word Connect(const SysIpL3Addr& remAddr);
 
    //  Listens for Connect requests.  BACKLOG is the maximum number of
    //  requests that can be queued, waiting to be processed by Accept.
-   //  Returns true on success.
+   //  Returns 0 on success.  Returns -1 on failure; the invoker should
+   //  then generate a log.
    //
-   bool Listen(size_t backlog);
+   NodeBase::word Listen(size_t backlog);
 
    //  Accesses the flags that request the socket's status when invoking
    //  Poll.  Only the read and write flags should be set.
@@ -100,7 +102,8 @@ public:
 
    //  Waits for events on SOCKETS, which is SIZE in length.  TIMEOUT
    //  specifies how long to wait.  Returns the number of sockets on
-   //  which events have occurred, and -1 on failure.
+   //  which events have occurred.  On failure, returns -1 after
+   //  generating a log.
    //
    static NodeBase::word Poll(SysTcpSocket* sockets[],
       size_t size, const NodeBase::Duration& timeout);
@@ -113,27 +116,33 @@ public:
    //  Invoked on a socket that had called Listen to create a socket for
    //  accepting a new connection.  Sets remAddr to the peer address that
    //  is communicating with the new socket.  Clears PollRead and returns
-   //  nullptr if no connection requests were pending.
+   //  nullptr if no connection requests were pending.  On failure, leaves
+   //  PollRead set and returns nullptr; the invoker should then generate
+   //  a log.
    //
    SysTcpSocketPtr Accept(SysIpL3Addr& remAddr);
 
    //  Reads up to SIZE bytes into BUFF.  Returns the number of bytes read.
-   //  Returns 0 if the socket was gracefully closed, and -1 on failure.
+   //  Returns 0 if the socket was gracefully closed.  Returns -1 when the
+   //  invoker should generate a log to report a failure, and -2 if a log
+   //  has already been generated.
    //
    NodeBase::word Recv(NodeBase::byte_t* buff, size_t size);
 
    //  Sends SIZE bytes, starting at DATA, to the address to which the socket
    //  is bound.  Returns the number of bytes sent.  Returns 0 if the socket
-   //  would block, and -1 on failure.
+   //  would block.  Returns -1 when the invoker should generate a log to
+   //  report a failure, and -2 if a log has already been generated.
    //
    NodeBase::word Send(const NodeBase::byte_t* data, size_t size);
 
-   //  Sets locAddr to the address of this socket.  Returns false on failure.
+   //  Sets locAddr to the address of this socket.  On failure, generates
+   //  a log and returns false.
    //
    bool LocAddr(SysIpL3Addr& locAddr);
 
    //  Sets remAddr to the peer address that is communicating with this
-   //  socket.  Returns false on failure.
+   //  socket.  On failure, generates a log and returns false.
    //
    bool RemAddr(SysIpL3Addr& remAddr);
 
@@ -223,10 +232,10 @@ private:
       Connected    // created by Accept, or Connect has succeeded
    };
 
-   //  Invoked to wrap SOCKET, which was created to accept a connection.
-   //  The socket is made non-blocking.
+   //  Invoked to wrap SOCKET, which was created to accept a connection
+   //  from a peer that is using PORT.  The socket is made non-blocking.
    //
-   explicit SysTcpSocket(NodeBase::SysSocket_t socket);
+   SysTcpSocket(NodeBase::SysSocket_t socket, ipport_t port);
 
    //  Closes the socket.  Private because sockets are closed and deleted
    //  using Release, Deregister, or Purge.

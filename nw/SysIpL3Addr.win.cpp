@@ -24,12 +24,10 @@
 #include "SysIpL3Addr.h"
 #include <cstddef>
 #include <cstring>
-#include <sstream>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include "Debug.h"
 #include "FunctionGuard.h"
-#include "Log.h"
 #include "NwLogs.h"
 #include "SysTypes.h"
 
@@ -117,13 +115,7 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
    }
    else
    {
-      auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
-
-      if(log != nullptr)
-      {
-         *log << Log::Tab << "getaddrinfo: errval=" << WSAGetLastError();
-         Log::Submit(log);
-      }
+      OutputNwLog(NetworkFunctionError, "getaddrinfo", WSAGetLastError());
    }
 
    proto = proto_;
@@ -169,13 +161,7 @@ bool SysIpL3Addr::AddrToName(string& name, string& service) const
       return true;
    }
 
-   auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
-
-   if(log != nullptr)
-   {
-      *log << Log::Tab << "getnameinfo: errval=" << WSAGetLastError();
-      Log::Submit(log);
-   }
+   OutputNwLog(NetworkFunctionError, "getnameinfo", WSAGetLastError());
    return false;
 }
 

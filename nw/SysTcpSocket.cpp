@@ -56,7 +56,7 @@ SysTcpSocket::SysTcpSocket(ipport_t port,
 
    ogMsgq_.Init(Pooled::LinkDiff());
    if(rc != AllocOk) return;
-   if(SetBlocking(false)) return;
+   if(SetBlocking(false) && SetClose(true)) return;
    rc = SetOptionError;
    Disconnect();
 }
@@ -74,7 +74,7 @@ SysTcpSocket::SysTcpSocket(SysSocket_t socket, ipport_t port) :
    Debug::ft("SysTcpSocket.ctor(wrap)");
 
    ogMsgq_.Init(Pooled::LinkDiff());
-   if(SetBlocking(false)) return;
+   if(SetBlocking(false) && SetClose(true)) return;
    Disconnect();
 }
 

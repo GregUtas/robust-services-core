@@ -36,6 +36,7 @@ constexpr int SOMAXCONN = 0x7fffffff;
 
 constexpr uint16_t SOL_SOCKET = 0xffff;
 constexpr uint16_t SO_KEEPALIVE = 0x0008;
+constexpr uint16_t SO_LINGER = 0x0080;
 constexpr uint16_t SO_SNDBUF = 0x1001;
 constexpr uint16_t SO_RCVBUF = 0x1002;
 constexpr uint16_t SO_MAX_MSG_SIZE = 0x2003;
@@ -64,6 +65,7 @@ struct sockaddr_in
    in_addr  sin_addr;
    char     sin_zero[8];
 };
+
 struct addrinfo
 {
    int       ai_flags;
@@ -74,6 +76,12 @@ struct addrinfo
    char*     ai_canonname;
    sockaddr* ai_addr;
    addrinfo* ai_next;
+};
+
+struct linger
+{
+   uint16_t l_onoff;
+   uint16_t l_linger;
 };
 
 constexpr int POLLERR = 0x0001;

@@ -52,7 +52,7 @@ SysUdpSocket::SysUdpSocket(ipport_t port,
          (char*) &max, &maxsize) == SOCKET_ERROR)
       {
          OutputLog(NetworkSocketError,
-            "getsockopt/SO_MAX_MSG_SIZE", WSAGetLastError());
+            "getsockopt/MAX_MSG_SIZE", WSAGetLastError());
          rc = GetOptionError;
          return;
       }

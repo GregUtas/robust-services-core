@@ -151,6 +151,13 @@ public:
    //
    void Dispatch();
 
+   //  Sets the linger option to determine how the socket will be closed.
+   //  If GRACEFUL is not set, a hard close (RST) will occur.  Lingering
+   //  for a timeout is not supported because it requires the socket to
+   //  block.  On failure, returns false after generating a log.
+   //
+   bool SetClose(bool graceful);
+
    //  Invoked by an I/O thread to delete the socket immediately.
    //
    void Purge();

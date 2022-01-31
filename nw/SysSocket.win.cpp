@@ -275,31 +275,33 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
    if(setsockopt(socket_, SOL_SOCKET, SO_RCVBUF,
       (const char*) &rxSize, sizeof(rxSize)) == SOCKET_ERROR)
    {
-      OutputLog(NetworkSocketError, "setsockopt/SO_RCVBUF", WSAGetLastError());
+      OutputLog(NetworkSocketError, "setsockopt/RCVBUF", WSAGetLastError());
       return SetOptionError;
    }
 
    if(getsockopt(socket_, SOL_SOCKET, SO_RCVBUF,
       (char*) &max, &maxsize) == SOCKET_ERROR)
    {
-      OutputLog(NetworkSocketError, "getsockopt/SO_RCVBUF", WSAGetLastError());
+      OutputLog(NetworkSocketError, "getsockopt/RCVBUF", WSAGetLastError());
       return GetOptionError;
    }
 
    if(max < rxSize)
+   {
       Debug::SwLog(SysSocket_SetService, "rx size too large", rxSize);
+   }
 
    if(setsockopt(socket_, SOL_SOCKET, SO_SNDBUF,
       (const char*) &txSize, sizeof(txSize)) == SOCKET_ERROR)
    {
-      OutputLog(NetworkSocketError, "setsockopt/SO_SNDBUF", WSAGetLastError());
+      OutputLog(NetworkSocketError, "setsockopt/SNDBUF", WSAGetLastError());
       return SetOptionError;
    }
 
    if(getsockopt(socket_, SOL_SOCKET, SO_SNDBUF,
       (char*) &max, &maxsize) == SOCKET_ERROR)
    {
-      OutputLog(NetworkSocketError, "getsockopt/SO_SNDBUF", WSAGetLastError());
+      OutputLog(NetworkSocketError, "getsockopt/SNDBUF", WSAGetLastError());
       return GetOptionError;
    }
 

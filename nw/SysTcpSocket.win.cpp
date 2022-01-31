@@ -386,6 +386,26 @@ word SysTcpSocket::Send(const byte_t* data, size_t size)
 
 //------------------------------------------------------------------------------
 
+bool SysTcpSocket::SetClose(bool graceful)
+{
+   Debug::ft("SysTcpSocket.SetClose");
+
+   linger linger_opts;
+   linger_opts.l_onoff = 0;
+   linger_opts.l_linger = (graceful ? 0 : 1);
+
+   if(setsockopt(Socket(), SOL_SOCKET, SO_LINGER,
+      (char*) &linger_opts, sizeof(linger)) != SOCKET_ERROR)
+   {
+      return true;
+   }
+
+   OutputLog(NetworkSocketError, "setsockopt/LINGER", WSAGetLastError());
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysTcpSocket_SetService = "SysTcpSocket.SetService";
 
 SysSocket::AllocRc SysTcpSocket::SetService
@@ -403,8 +423,7 @@ SysSocket::AllocRc SysTcpSocket::SetService
    if(setsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
       (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)
    {
-      OutputLog
-         (NetworkSocketError, "setsockopt/SO_KEEPALIVE", WSAGetLastError());
+      OutputLog(NetworkSocketError, "setsockopt/KEEPALIVE", WSAGetLastError());
       return SetOptionError;
    }
 
@@ -414,8 +433,7 @@ SysSocket::AllocRc SysTcpSocket::SetService
    if(getsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
       (char*) &val, &valsize) == SOCKET_ERROR)
    {
-      OutputLog
-         (NetworkSocketError, "getsockopt/SO_KEEPALIVE", WSAGetLastError());
+      OutputLog(NetworkSocketError, "getsockopt/KEEPALIVE", WSAGetLastError());
       return GetOptionError;
    }
 

@@ -72,8 +72,7 @@ static bool EraseTemplateArguments(string& prefix)
 //  Returns FUNC after setting MATCH to Incompatible if FUNC is nullptr.
 //  ARGS contains the arguments that were passed to CanInvokeWith.
 //
-static Function* FoundFunc
-   (Function* func, const StackArgVector& args, TypeMatch& match)
+static Function* FoundFunc(Function* func, const StackArgVector& args)
 {
    Debug::ft("CodeTools.FoundFunc(CxxScope)");
 
@@ -105,10 +104,6 @@ static Function* FoundFunc
             a->item_->Root()->RecordUsage();
          }
       }
-   }
-   else
-   {
-      match = Incompatible;
    }
 
    return func;
@@ -2981,8 +2976,8 @@ bool Function::CanBeNoexcept() const
 
 //------------------------------------------------------------------------------
 
-Function* Function::CanInvokeWith
-   (StackArgVector& args, stringVector& argTypes, TypeMatch& match) const
+Function* Function::CanInvokeWith(StackArgVector& args,
+   stringVector& argTypes, std::vector< TypeMatch >& matches) const
 {
    Debug::ft("Function.CanInvokeWith");
 
@@ -3002,7 +2997,7 @@ Function* Function::CanInvokeWith
       sendIncr = 1;
    }
 
-   if(recvSize < sendSize) return FoundFunc(nullptr, args, match);
+   if(recvSize < sendSize) return FoundFunc(nullptr, args);
 
    //  If this is a function template, create a vector that will map template
    //  parameters to template arguments.
@@ -3022,15 +3017,13 @@ Function* Function::CanInvokeWith
       }
    }
 
-   //  Each argument in ARGS must match, or be transformable to, the type that
-   //  this function expects.  Assume compatibility and downgrade from there.
-   //  Note that a "this" argument is skipped if thisIncr is 1 instead of 0.
+   //  Each argument in ARGS must match, or be transformable to, the type
+   //  that this function expects.  Note that a "this" argument is skipped
+   //  if thisIncr is 1 instead of 0.
    //
    //c If an argument is an overloaded function, alternates are not considered.
    //  This eventually needs to be supported.
    //
-   match = Compatible;
-
    for(size_t i = 0; i < sendSize; ++i)
    {
       auto recvArg = args_.at(i).get();
@@ -3047,24 +3040,24 @@ Function* Function::CanInvokeWith
          //
          auto argFound = false;
 
-         auto curr = MatchTemplate
+         auto match = MatchTemplate
             (recvType, sendType, tmpltParms, tmpltArgs, argFound);
 
-         if(curr != Incompatible)
+         if(match != Incompatible)
          {
-            if(curr < match) match = curr;
+            matches.push_back(match);
             continue;
          }
 
-         if(argFound) return FoundFunc(nullptr, args, match);
+         if(argFound) return FoundFunc(nullptr, args);
       }
 
       auto recvResult = recvArg->GetTypeSpec()->ResultType();
-      if(recvResult.item_ == nullptr) return FoundFunc(nullptr, args, match);
+      if(recvResult.item_ == nullptr) return FoundFunc(nullptr, args);
       auto& sendArg = args.at(i + sendIncr);
-      auto curr = recvResult.CalcMatchWith(sendArg, recvType, sendType);
-      if(curr < match) match = curr;
-      if(match == Incompatible) return FoundFunc(nullptr, args, match);
+      auto match = recvResult.CalcMatchWith(sendArg, recvType, sendType);
+      if(match == Incompatible) return FoundFunc(nullptr, args);
+      matches.push_back(match);
    }
 
    //  If ARGS had fewer arguments than this function, this function
@@ -3076,8 +3069,10 @@ Function* Function::CanInvokeWith
       {
          if(!args_.at(i)->HasDefault())
          {
-            return FoundFunc(nullptr, args, match);
+            return FoundFunc(nullptr, args);
          }
+
+         matches.push_back(Compatible);
       }
    }
 
@@ -3086,11 +3081,10 @@ Function* Function::CanInvokeWith
       //  This is a function template, so it needs to be instantiated.
       //
       auto inst = InstantiateFunction(tmpltArgs);
-      if(inst == nullptr) match = Incompatible;
-      return FoundFunc(inst, args, match);
+      return FoundFunc(inst, args);
    }
 
-   return FoundFunc(const_cast< Function* >(this), args, match);
+   return FoundFunc(const_cast< Function* >(this), args);
 }
 
 //------------------------------------------------------------------------------

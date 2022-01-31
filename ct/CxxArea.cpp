@@ -64,6 +64,23 @@ static size_t CreateCodeError(const string& name, debug64_t offset)
 
 //------------------------------------------------------------------------------
 //
+//  Returns the minimum value in MATCHES.
+//
+static TypeMatch FindMin(const std::vector< TypeMatch >& matches)
+{
+   if(matches.empty()) return Incompatible;
+   auto min = Compatible;
+
+   for(auto m = matches.cbegin(); m != matches.cend(); ++m)
+   {
+      if(*m < min) min = *m;
+   }
+
+   return min;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Invoked by FindFunc.  Updates VIEW with MATCH and returns FUNC.
 //
 static Function* FoundFunc(Function* func, SymbolView* view, TypeMatch match)
@@ -3204,7 +3221,7 @@ Function* CxxArea::FindFunc(const string& name,
    //  Get the type string for each argument in ARGS.
    //
    FunctionVector funcs;
-   std::vector< TypeMatch > matches;
+   std::vector< std::vector <TypeMatch >> argMatches;
 
    stringVector argTypes;
 
@@ -3234,37 +3251,47 @@ Function* CxxArea::FindFunc(const string& name,
       {
          if(args == nullptr) return FoundFunc(func, view, Compatible);
 
-         auto match = Incompatible;
-         func = func->CanInvokeWith(*args, argTypes, match);
-         if(match == Compatible) return FoundFunc(func, view, Compatible);
+         std::vector< TypeMatch > matches;
+         func = func->CanInvokeWith(*args, argTypes, matches);
 
          if(func != nullptr)
          {
             funcs.push_back(func);
-            matches.push_back(match);
+            argMatches.push_back(matches);
          }
       }
    }
 
    auto count = funcs.size();
-   if(count == 1) return FoundFunc(funcs.front(), view, matches.front());
-   if(count == 0) return FoundFunc(nullptr, view, Incompatible);
+   if(count == 1)
+      return FoundFunc(funcs.front(), view, FindMin(argMatches.front()));
+   if(count == 0)
+      return FoundFunc(nullptr, view, Incompatible);
 
-   //  Return the best match.
+   //  Return the function that is the best match, as defined by the sum of
+   //  how well each argument matches (its distance from being Compatible).
    //
-   Function* func = nullptr;
-   auto best = Incompatible;
+   auto bestMatch = 1000;
+   size_t bestIndex = 0;
 
    for(size_t i = 0; i < count; ++i)
    {
-      if(matches[i] > best)
+      auto total = 0;
+      auto& matches = argMatches[i];
+
+      for(auto m = matches.cbegin(); m != matches.cend(); ++m)
       {
-         func = funcs[i];
-         best = matches[i];
+         total += (Compatible - *m);
+      }
+
+      if(total < bestMatch)
+      {
+         bestIndex = i;
+         bestMatch = total;
       }
    }
 
-   return FoundFunc(func, view, best);
+   return FoundFunc(funcs[bestIndex], view, FindMin(argMatches[bestIndex]));
 }
 
 //------------------------------------------------------------------------------

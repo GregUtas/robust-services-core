@@ -1300,13 +1300,13 @@ public:
    size_t GetBracePos() const { return pos_; }
 
    //  Decides if this function can be invoked with ARGS, whose TypeString
-   //  results appear in argTypes.  Updates MATCH to indicate how well the
-   //  arguments and the function match.  Returns the function itself--or,
-   //  if it is a function template, the correct instance.  Returns nullptr
-   //  if the function does not match ARGS.
+   //  results appear in argTypes.  Updates MATCHES to indicate how well each
+   //  argument and the function match.  Returns the function itself--or, if
+   //  it is a function template, the correct instance.  Returns nullptr if
+   //  the function does not match ARGS.
    //
-   Function* CanInvokeWith
-      (StackArgVector& args, stringVector& argTypes, TypeMatch& match) const;
+   Function* CanInvokeWith(StackArgVector& args,
+      stringVector& argTypes, std::vector< TypeMatch >& matches) const;
 
    //  THAT is an argument whose type is thatType.  If this is a constructor
    //  that can be invoked implicitly with THAT, determines how compatible
@@ -1952,7 +1952,7 @@ private:
    //
    bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
-   //  The primary class for the namespace.
+   //  The namespace that aggregates all of the items.
    //
    Namespace* const space_;
 };

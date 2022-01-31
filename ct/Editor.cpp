@@ -2798,6 +2798,8 @@ void Editor::FindFreeItemPos(const Namespace* space, const string& name,
 
       auto currPos = (*i)->GetPos();
       if(currPos < min) continue;
+      attrs.pos_ = min;
+
       if(currPos > max) return;
 
       auto type = (*i)->Type();

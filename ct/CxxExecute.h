@@ -402,7 +402,7 @@ private:
 
    //  Set if the argument was created by a constructor.
    //
-   bool ctor_ : 1;
+   mutable bool ctor_ : 1;
 
    //  Set if WasRead has been invoked on the argument.  This prevents further
    //  invocations of WasRead when the argument is reused by pushing it as the

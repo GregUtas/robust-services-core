@@ -555,7 +555,7 @@ const CxxOp CxxOp::Attrs[Cxx::NIL_OPERATOR + 1] =
 //------------------------------------------------------------------------------
 
 CxxOp::CxxOp(const string& sym, size_t args,
-   size_t prio, bool over, bool push, bool symm,c_string sp) :
+   size_t prio, bool over, bool push, bool symm, c_string sp) :
    symbol(sym),
    arguments(args),
    priority(prio),

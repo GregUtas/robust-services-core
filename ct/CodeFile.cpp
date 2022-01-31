@@ -1258,8 +1258,12 @@ size_t CodeFile::FindFirstReference(const CxxTokenVector& refs) const
    {
       if((*r)->GetFile() == this)
       {
-         auto pos = (*r)->GetPos();
-         if(pos < first) first = pos;
+         size_t begin, end;
+
+         if((*r)->GetSpan2(begin, end))
+         {
+            if(begin < first) first = begin;
+         }
       }
    }
 
@@ -1278,8 +1282,12 @@ size_t CodeFile::FindLastUsage(const CxxNamedSet& usages) const
    {
       if((*u)->GetFile() == this)
       {
-         auto pos = (*u)->GetPos();
-         if(pos > last) last = pos;
+         size_t begin, end;
+
+         if((*u)->GetSpan2(begin, end))
+         {
+            if(end > last) last = editor_.NextBegin(end);
+         }
       }
    }
 

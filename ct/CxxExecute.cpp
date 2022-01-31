@@ -1394,6 +1394,12 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
 
    if(this->const_ && !this->mutable_)
    {
+      //  Somewhere we have a bug relating to const correctness--unless this
+      //  item was implicitly converted by a constructor (and is therefore a
+      //  temporarym so just return now).
+      //
+      if(this->ctor_) return;
+
       auto expl = this->TypeString(true);
       expl += " (const) assigned to " + that.TypeString(true);
       Context::SwLog(StackArg_AssignedTo, expl, 0);
@@ -1630,25 +1636,29 @@ TypeMatch StackArg::MatchConst(const StackArg& that, TypeMatch match) const
 {
    Debug::ft("StackArg.MatchConst");
 
-   //  o A const argument can be passed to a non-const parameter by value.
-   //  o A non-const object can be passed to a const function, but only if
-   //    there isn't another overload of the function that is non-const.
-   //  Note that this function can be invoked merely to check if two operands
-   //  are compatible.  Therefore, if it is invoked during argument matching,
-   //  it does not reject passing a const argument to a non-const pointer or
-   //  reference.  Instead, it returns Adaptable, which satisifies operand
-   //  compatibility checks.  Later on, StackArg.AssignedTo verifies whether
-   //  constness was properly interpreted.
+   //  Assess whether THAT can be passed to THIS.
+   //  o A const THAT can be passed to a non-const THIS by value (direct).
+   //  o A const THAT cannot be passed to a non-const THIS.  However, this
+   //    function can be invoked merely to check if two operands are compatible.
+   //    It therefore does not reject passing a const argument to a non-const
+   //    pointer or reference.  Instead, it returns Adaptable, which satisifies
+   //    operand compatibility checks.  Later on, StackArg.AssignedTo verifies
+   //    whether constness was properly interpreted.
+   //  o A non-const THAT can be passed to a const THIS, but only if there
+   //    isn't another overload of the function that is non-const.  In this
+   //    case, we fade MATCH tofavor the non-const version.
    //
    if(this->IsIndirect())
    {
       if(that.IsConst())
       {
-         if(!this->IsConst()) return Adaptable;
+         if(!this->IsConst())
+            return Adaptable;
       }
       else
       {
-         if(that.IsThis() && this->IsConst()) return Adaptable;
+         if(that.IsThis() && this->IsConst())
+            return TypeMatch(match - 1);
       }
    }
 
@@ -1721,7 +1731,11 @@ TypeMatch StackArg::MatchWith(const StackArg& that,
          }
       }
 
-      if(thisClass->CanConstructFrom(that, thatType)) return Constructible;
+      if(thisClass->CanConstructFrom(that, thatType))
+      {
+         that.ctor_ = true;
+         return Constructible;
+      }
    }
 
    return match;

@@ -544,7 +544,7 @@ word TcpIoThread::PollSockets()
    //  pending events.
    //
    recvs_ = 0;
-   if(ready > 0) sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
+   sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
    return ready;
 }
 

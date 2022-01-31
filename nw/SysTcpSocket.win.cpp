@@ -298,6 +298,7 @@ word SysTcpSocket::Recv(byte_t* buff, size_t size)
    }
 
    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
+   TraceEvent(NwTrace::Recv, rcvd);
 
    if(rcvd == SOCKET_ERROR)
    {
@@ -305,7 +306,6 @@ word SysTcpSocket::Recv(byte_t* buff, size_t size)
    }
 
    NetworkIsUp();
-   TraceEvent(NwTrace::Recv, rcvd);
    return rcvd;
 }
 
@@ -378,9 +378,9 @@ word SysTcpSocket::Send(const byte_t* data, size_t size)
    else
    {
       NetworkIsUp();
-      TraceEvent(NwTrace::Send, sent);
    }
 
+   TraceEvent(NwTrace::Send, sent);
    return sent;
 }
 

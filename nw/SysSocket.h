@@ -139,9 +139,8 @@ public:
    nwerr_t OutputLog(NodeBase::LogId id,
       NodeBase::c_string func, nwerr_t errval);
 
-   //  Generates the network log specified by ID when a socket operation
-   //  fails.  FUNC identifies the function that failed, and BUFF is any
-   //  associated buffer.
+   //  Generates the network log specified by ID when BUFF could not be
+   //  sent.  FUNC identifies the function that failed.
    //
    void OutputLog(NodeBase::LogId id,
       NodeBase::c_string func, const IpBuffer* buff) const;

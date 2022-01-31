@@ -1396,7 +1396,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    {
       //  Somewhere we have a bug relating to const correctness--unless this
       //  item was implicitly converted by a constructor (and is therefore a
-      //  temporarym so just return now).
+      //  temporary, so just return now).
       //
       if(this->ctor_) return;
 
@@ -1646,7 +1646,7 @@ TypeMatch StackArg::MatchConst(const StackArg& that, TypeMatch match) const
    //    whether constness was properly interpreted.
    //  o A non-const THAT can be passed to a const THIS, but only if there
    //    isn't another overload of the function that is non-const.  In this
-   //    case, we fade MATCH tofavor the non-const version.
+   //    case, we fade MATCH to favor the non-const version.
    //
    if(this->IsIndirect())
    {

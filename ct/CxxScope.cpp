@@ -2832,6 +2832,7 @@ bool Function::ArgCouldBeConst(size_t n) const
    auto arg = GetDefn()->args_[n].get();
 
    if(!arg->CouldBeConst()) return false;
+   if(arg->GetTypeSpec()->Refs() == 2) return false;
 
    for(auto f = overs_.cbegin(); f != overs_.cend(); ++f)
    {
@@ -5175,12 +5176,7 @@ void Function::InvokeDefaultBaseCtor() const
 
    auto cls = GetClass();
    if(cls == nullptr) return;
-   auto base = cls->BaseClass();
-   if(base == nullptr) return;
-   auto ctor = base->FindCtor(nullptr);
-   if(ctor == nullptr) return;
-   ctor->WasCalled();
-   ctor->RecordAccess(Cxx::Protected);
+   cls->InvokeDefaultBaseCtor();
 }
 
 //------------------------------------------------------------------------------
@@ -6148,6 +6144,7 @@ void Function::WasCalled()
       for(auto ctor = GetBase(); ctor != nullptr; ctor = ctor->base_)
       {
          ++ctor->calls_;
+         ctor->RecordAccess(Cxx::Protected);
       }
       break;
    }

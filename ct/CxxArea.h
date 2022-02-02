@@ -444,6 +444,10 @@ public:
    //
    Cxx::Access DefaultAccess() const;
 
+   //  Registers an implicit invocation of the base class default constructor.
+   //
+   void InvokeDefaultBaseCtor() const;
+
    //  Registers an implicit invocation of the copy constructor.
    //
    void InvokeCopyCtor() const;

@@ -45,10 +45,6 @@ namespace SessionBase
 class TlvMessage : public Message
 {
 public:
-   //  Overridden to create an incoming message.
-   //
-   explicit TlvMessage(SbIpBufferPtr& buff);
-
    //  Overridden to create an outgoing message.
    //
    TlvMessage(ProtocolSM* psm, size_t size);
@@ -60,11 +56,6 @@ public:
    //  message's header.
    //
    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
-
-   //  Copies MSG into an outgoing message and queues it on PSM.  The header
-   //  contains the message length but is not changed in any other way.
-   //
-   TlvMessage(const Message& msg, ProtocolSM* psm);
 
    //  Virtual to allow subclassing.
    //
@@ -241,6 +232,15 @@ public:
    //
    bool Send(Message::Route route) override;
 protected:
+   //  Creates an incoming message.
+   //
+   explicit TlvMessage(SbIpBufferPtr& buff);
+
+   //  Copies MSG into an outgoing message and queues it on PSM.  The header
+   //  contains the message length but is not changed in any other way.
+   //
+   TlvMessage(const Message& msg, ProtocolSM* psm);
+
    //  The physical layout of a TLV message's data.
    //
    struct TlvMsgLayout

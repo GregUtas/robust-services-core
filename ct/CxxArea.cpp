@@ -1292,6 +1292,14 @@ bool Class::EnterScope()
    if(IsAtFileScope()) GetFile()->InsertClass(this);
    if(parms_ != nullptr) parms_->EnterScope();
    if(alignas_ != nullptr) alignas_->EnterBlock();
+
+   //  If this class has no constructor, invoke the
+   //  default constructor in its base class.
+   //
+   if(FindFuncByRole(PureCtor, false) == nullptr)
+   {
+      InvokeDefaultBaseCtor();
+   }
    return true;
 }
 
@@ -1995,6 +2003,20 @@ void Class::InvokeCopyCtor() const
          FuncAccessed(ctor, nullptr, scope, &view);
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+void Class::InvokeDefaultBaseCtor() const
+{
+   Debug::ft("Class.InvokeDefaultBaseCtor");
+
+   auto base = BaseClass();
+   if(base == nullptr) return;
+   auto ctor = base->FindCtor(nullptr);
+   if(ctor == nullptr) return;
+   ctor->WasCalled();
+   ctor->RecordAccess(Cxx::Protected);
 }
 
 //------------------------------------------------------------------------------

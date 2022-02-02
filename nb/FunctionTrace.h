@@ -39,10 +39,6 @@ class FunctionTrace : public TimedRecord
 {
    friend class Thread;
 public:
-   //  Sets func_ and depth_.
-   //
-   FunctionTrace(fn_name_arg func, fn_depth depth);
-
    //  Constructs a default record.
    //
    FunctionTrace();
@@ -95,6 +91,10 @@ public:
    //  Mask for selecting FunctionTrace records when using TraceBuffer::Next.
    //
    static const Flags FTmask;
+protected:
+   //  Sets func_ and depth_.
+   //
+   FunctionTrace(fn_name_arg func, fn_depth depth);
 private:
    //  Overridden to allocate space in the buffer allocated for records
    //  that belong to this class.

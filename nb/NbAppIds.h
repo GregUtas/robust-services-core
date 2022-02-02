@@ -36,17 +36,22 @@ enum ObjectPoolIds
 {
    MsgBufferObjPoolId = 1,
    IpBufferObjPoolId = 2,
-   SbIpBufferObjPoolId = 3,
-   BtIpBufferObjPoolId = 4,
-   ContextObjPoolId = 5,
-   MessageObjPoolId = 6,
-   MsgPortObjPoolId = 7,
-   ProtocolSMObjPoolId = 8,
-   TimerObjPoolId = 9,
-   EventObjPoolId = 10,
-   ServiceSMObjPoolId = 11,
-   MediaEndptObjPoolId = 12,
-   DipIpBufferObjPoolId = 13
+   TinyBufferObjPoolId = 3,
+   SmallBufferObjPoolId = 4,
+   MediumBufferObjPoolId = 5,
+   LargeBufferObjPoolId = 6,
+   HugeBufferObjPoolId = 7,
+   SbIpBufferObjPoolId = 8,
+   BtIpBufferObjPoolId = 9,
+   ContextObjPoolId = 10,
+   MessageObjPoolId = 11,
+   MsgPortObjPoolId = 12,
+   ProtocolSMObjPoolId = 13,
+   TimerObjPoolId = 14,
+   EventObjPoolId = 15,
+   ServiceSMObjPoolId = 16,
+   MediaEndptObjPoolId = 17,
+   DipIpBufferObjPoolId = 18,
 };
 
 //------------------------------------------------------------------------------

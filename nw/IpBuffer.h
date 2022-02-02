@@ -23,11 +23,16 @@
 #define IPBUFFER_H_INCLUDED
 
 #include "MsgBuffer.h"
-#include "ObjectPool.h"
 #include <cstddef>
+#include <memory>
 #include "NbTypes.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
+
+namespace NetworkBase
+{
+   class ByteBuffer;
+}
 
 //------------------------------------------------------------------------------
 
@@ -94,22 +99,22 @@ public:
    //  Returns a pointer to the message header, which is also the start
    //  of the buffer.
    //
-   NodeBase::byte_t* HeaderPtr() const { return buff_; }
+   NodeBase::byte_t* HeaderPtr() const { return bytes_; }
 
    //  Returns a pointer to the payload, skipping the message header.
    //
-   NodeBase::byte_t* PayloadPtr() const { return buff_ + hdrSize_; }
+   NodeBase::byte_t* PayloadPtr() const { return bytes_ + hdrSize_; }
 
    //  Returns the number of bytes in the payload.  The default version
    //  returns the total buffer size minus the header size, as it doesn't
    //  know how many bytes have been copied into the buffer.  An override
    //  will return the actual number of bytes in the payload, which will
-   //  usually be less than what the buffer can hold.  The reason for this
-   //  is that, internally, a handful of buffer sizes are used to reduce
-   //  heap fragmentation.  This function is invoked by AddBytes (to see if
-   //  a larger buffer should be allocated), OutgoingBytes (to provide a
-   //  pointer to the message and return its size), and Send (to determine
-   //  the number of bytes to send).
+   //  usually be less than what the buffer can hold.  The reason is that,
+   //  internally, the buffer is allocated from an object pool, with there
+   //  being enough pools to support a handful of sizes  This function is
+   //  invoked by AddBytes (to see if a larger buffer should be allocated),
+   //  OutgoingBytes (to provide a pointer to the message and return its
+   //  size), and Send (to determine the number of bytes to send).
    //
    virtual size_t PayloadSize() const;
 
@@ -154,25 +159,34 @@ public:
    //
    NodeBase::TraceStatus GetStatus() const override;
 
+   //  Overridden to enumerate all objects that the buffer owns.
+   //
+   void GetSubtended(std::vector< Base* >& objects) const override;
+
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-protected:
-   //  Overridden to free buff_ during recovery.
-   //
-   void Cleanup() override;
 private:
-   //  The buffer that holds the message.
+   //  Ensures that the byte buffer can hold SIZE bytes.  Returns true if a
+   //  new buffer was allocated because the current one wasn't large enough.
    //
-   NodeBase::byte_t* buff_;
+   bool AllocBuff(size_t bytes);
 
-   //  The size of the header.
+   //  The container allocated for the buffer's contents.
    //
-   const size_t hdrSize_;
+   std::unique_ptr< ByteBuffer > buff_;
 
-   //  The size of buff_ (which includes any header).
+   //  The maximum number of bytes that buff_ can hold.
    //
    size_t buffSize_;
+
+   //  The location of the buffer contents within buff_.
+   //
+   NodeBase::byte_t* bytes_;
+
+   //  The size of the application header within buff_.
+   //
+   const size_t hdrSize_;
 
    //  The source IP address.
    //
@@ -193,27 +207,6 @@ private:
    //  Set if the buffer was queued for output.
    //
    bool queued_ : 8;
-};
-
-//------------------------------------------------------------------------------
-//
-//  Pool for IpBuffer objects.
-//
-class IpBufferPool : public NodeBase::ObjectPool
-{
-   friend class NodeBase::Singleton< IpBufferPool >;
-public:
-   //> The size of IpBuffer blocks.
-   //
-   static const size_t BlockSize;
-private:
-   //  Private because this is a singleton.
-   //
-   IpBufferPool();
-
-   //  Private because this is a singleton.
-   //
-   ~IpBufferPool();
 };
 }
 #endif

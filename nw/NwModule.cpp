@@ -21,7 +21,6 @@
 //
 #include "NwModule.h"
 #include "Debug.h"
-#include "IpBuffer.h"
 #include "IpPortRegistry.h"
 #include "IpServiceRegistry.h"
 #include "LocalAddrTest.h"
@@ -29,6 +28,7 @@
 #include "NbModule.h"
 #include "NwIncrement.h"
 #include "NwLogs.h"
+#include "NwPools.h"
 #include "NwTracer.h"
 #include "Singleton.h"
 #include "SysSocket.h"
@@ -93,6 +93,11 @@ void NwModule::Startup(RestartLevel level)
    Singleton< IpServiceRegistry >::Instance()->Startup(level);
    Singleton< IpPortRegistry >::Instance()->Startup(level);
    Singleton< IpBufferPool >::Instance()->Startup(level);
+   Singleton< TinyBufferPool >::Instance()->Startup(level);
+   Singleton< SmallBufferPool >::Instance()->Startup(level);
+   Singleton< MediumBufferPool >::Instance()->Startup(level);
+   Singleton< LargeBufferPool >::Instance()->Startup(level);
+   Singleton< HugeBufferPool >::Instance()->Startup(level);
    Singleton< SendLocalIpService >::Instance()->Startup(level);
    Singleton< SendLocalThread >::Instance()->Startup(level);
    Singleton< NwIncrement >::Instance()->Startup(level);

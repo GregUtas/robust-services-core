@@ -22,13 +22,17 @@
 #include "IpBuffer.h"
 #include <ostream>
 #include <string>
+#include <utility>
+#include "Algorithms.h"
+#include "AllocationException.h"
+#include "ByteBuffer.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
 #include "Memory.h"
-#include "NbAppIds.h"
+#include "NwPools.h"
 #include "NwTracer.h"
 #include "Restart.h"
 #include "Singleton.h"
@@ -42,51 +46,42 @@ using std::string;
 
 namespace NetworkBase
 {
-//  The maximum size and the standard sizes for message buffers.  A small number
-//  of fixed sizes reduces heap fragmentation.  It also leaves slack space that
-//  reduces the odds of Memory::Realloc having to allocate a new buffer.
-//
-const size_t IpBuffer::MaxBuffSize = 8192;
-
-constexpr size_t nSizes = 5;
-
-const size_t BuffSizes[nSizes + 1] =
+static std::unique_ptr< ByteBuffer > AllocByteBuff(size_t bytes)
 {
-   32, 128, 512, 2048, IpBuffer::MaxBuffSize
-};
+   Debug::ft("NetworkBase.AllocByteBuff");
 
-//------------------------------------------------------------------------------
-//
-//  When buff_ is allocated, this function rounds SIZE off to a standard
-//  size.  An exception is thrown if SIZE is greater than MaxBuffSize.
-//
-static size_t BuffSize(size_t size)
-{
-   Debug::ft("NetworkBase.BuffSize");
+   if(bytes <= TinyBuffer::ArraySize)
+      return std::unique_ptr< ByteBuffer >(new TinyBuffer);
+   else if(bytes <= SmallBuffer::ArraySize)
+      return std::unique_ptr< ByteBuffer >(new SmallBuffer);
+   else if(bytes <= MediumBuffer::ArraySize)
+      return std::unique_ptr< ByteBuffer >(new MediumBuffer);
+   else if(bytes <= LargeBuffer::ArraySize)
+      return std::unique_ptr< ByteBuffer >(new LargeBuffer);
+   else if(bytes <= HugeBuffer::ArraySize)
+      return std::unique_ptr< ByteBuffer >(new HugeBuffer);
 
-   for(auto i = 0; i <= nSizes; ++i)
-   {
-      if(BuffSizes[i] >= size) return BuffSizes[i];
-   }
-
-   Debug::SwErr("size out of range", size);
-   return 0;
+   throw AllocationException(MemDynamic, bytes);
 }
+
+//==============================================================================
+
+const size_t IpBuffer::MaxBuffSize = HugeBuffer::ArraySize;
 
 //------------------------------------------------------------------------------
 
 IpBuffer::IpBuffer(MsgDirection dir, size_t header, size_t payload) :
    MsgBuffer(),
-   buff_(nullptr),
+   buffSize_(0),
+   bytes_(nullptr),
    hdrSize_(header),
-   buffSize_(header + payload),
    dir_(dir),
    external_(false),
    queued_(false)
 {
    Debug::ft("IpBuffer.ctor");
 
-   buff_ = (byte_t*) Memory::Alloc(BuffSize(buffSize_), MemDynamic);
+   AllocBuff(header + payload);
 }
 
 //------------------------------------------------------------------------------
@@ -94,20 +89,14 @@ IpBuffer::IpBuffer(MsgDirection dir, size_t header, size_t payload) :
 IpBuffer::~IpBuffer()
 {
    Debug::ftnt("IpBuffer.dtor");
-
-   if(buff_ != nullptr)
-   {
-      Memory::Free(buff_, MemDynamic);
-      buff_ = nullptr;
-   }
 }
 
 //------------------------------------------------------------------------------
 
 IpBuffer::IpBuffer(const IpBuffer& that) : MsgBuffer(that),
-   buff_(nullptr),
+   buffSize_(0),
+   bytes_(nullptr),
    hdrSize_(that.hdrSize_),
-   buffSize_(that.buffSize_),
    txAddr_(that.txAddr_),
    rxAddr_(that.rxAddr_),
    dir_(that.dir_),
@@ -116,11 +105,10 @@ IpBuffer::IpBuffer(const IpBuffer& that) : MsgBuffer(that),
 {
    Debug::ft("IpBuffer.ctor(copy)");
 
-   buff_ = (byte_t*) Memory::Alloc(BuffSize(buffSize_), MemDynamic);
-
-   //  Copy the original buffer into the new one.
+   //  Allocate a buffer and copy the original's contents into it.
    //
-   Memory::Copy(buff_, that.buff_, buffSize_);
+   AllocBuff(that.buffSize_);
+   Memory::Copy(bytes_, that.bytes_, hdrSize_ + that.PayloadSize());
 }
 
 //------------------------------------------------------------------------------
@@ -132,27 +120,19 @@ bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
    //  If the buffer can't hold SIZE more bytes, extend its size.
    //
    moved = false;
-   if(buff_ == nullptr) return false;
-
    auto paySize = PayloadSize();
    auto newSize = hdrSize_ + paySize + size;
 
    if(newSize > buffSize_)
    {
-      auto buff = (byte_t*)
-         Memory::Realloc(buff_, BuffSize(newSize), MemDynamic);
-      if(buff == nullptr) return false;
-
-      moved = (buff != buff_);
-      buff_ = buff;
-      buffSize_ = newSize;
+      moved = AllocBuff(newSize);
    }
 
    //  Copy SIZE bytes into the buffer if they have been supplied.
    //
    if(source != nullptr)
    {
-      Memory::Copy((buff_ + hdrSize_ + paySize), source, size);
+      Memory::Copy((bytes_ + hdrSize_ + paySize), source, size);
    }
 
    return true;
@@ -160,17 +140,24 @@ bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 
 //------------------------------------------------------------------------------
 
-void IpBuffer::Cleanup()
+bool IpBuffer::AllocBuff(size_t bytes)
 {
-   Debug::ft("IpBuffer.Cleanup");
+   Debug::ft("IpBuffer.AllocBuff");
+
+   if(bytes <= buffSize_) return false;
+
+   auto newbuff = AllocByteBuff(bytes);
+   auto newbytes = newbuff->Bytes();
 
    if(buff_ != nullptr)
    {
-      Memory::Free(buff_, MemDynamic);
-      buff_ = nullptr;
+      Memory::Copy(newbytes, bytes_, hdrSize_ + PayloadSize());
    }
 
-   MsgBuffer::Cleanup();
+   buff_ = std::move(newbuff);
+   buffSize_ = buff_->Size();
+   bytes_ = (byte_t*) newbytes;
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -180,9 +167,10 @@ void IpBuffer::Display(ostream& stream,
 {
    MsgBuffer::Display(stream, prefix, options);
 
-   stream << prefix << "buff     : " << strPtr(buff_) << CRLF;
-   stream << prefix << "hdrSize  : " << hdrSize_ << CRLF;
+   stream << prefix << "buff     : " << strPtr(buff_.get()) << CRLF;
    stream << prefix << "buffSize : " << buffSize_ << CRLF;
+   stream << prefix << "bytes    : " << strPtr(bytes_) << CRLF;
+   stream << prefix << "hdrSize  : " << hdrSize_ << CRLF;
    stream << prefix << "txAddr   : " << txAddr_.to_str(true) << CRLF;
    stream << prefix << "rxAddr   : " << rxAddr_.to_str(true) << CRLF;
    stream << prefix << "dir      : " << dir_ << CRLF;
@@ -190,7 +178,7 @@ void IpBuffer::Display(ostream& stream,
    stream << prefix << "queued   : " << queued_ << CRLF;
    stream << prefix << "length   : " << PayloadSize() << CRLF;
 
-   strBytes(stream, prefix + spaces(2), buff_, hdrSize_ + PayloadSize());
+   strBytes(stream, prefix + spaces(2), bytes_, hdrSize_ + PayloadSize());
 }
 
 //------------------------------------------------------------------------------
@@ -198,6 +186,17 @@ void IpBuffer::Display(ostream& stream,
 TraceStatus IpBuffer::GetStatus() const
 {
    return Singleton< NwTracer >::Instance()->BuffStatus(*this, dir_);
+}
+
+//------------------------------------------------------------------------------
+
+void IpBuffer::GetSubtended(std::vector< Base* >& objects) const
+{
+   Debug::ft("IpBuffer.GetSubtended");
+
+   Pooled::GetSubtended(objects);
+
+   buff_->GetSubtended(objects);
 }
 
 //------------------------------------------------------------------------------
@@ -228,11 +227,11 @@ size_t IpBuffer::OutgoingBytes(byte_t*& bytes) const
 
    if(external_)
    {
-      bytes = buff_ + hdrSize_;
+      bytes = bytes_ + hdrSize_;
       return PayloadSize();
    }
 
-   bytes = buff_;
+   bytes = bytes_;
    return hdrSize_ + PayloadSize();
 }
 
@@ -249,7 +248,7 @@ size_t IpBuffer::Payload(byte_t*& bytes) const
 {
    Debug::ft("IpBuffer.Payload");
 
-   bytes = buff_;
+   bytes = bytes_;
    if(bytes == nullptr) return 0;
 
    bytes += hdrSize_;
@@ -335,24 +334,5 @@ bool IpBuffer::Send(bool external)
    }
 
    return (socket->SendBuff(*this) != SysSocket::SendFailed);
-}
-
-//==============================================================================
-
-const size_t IpBufferPool::BlockSize = sizeof(IpBuffer);
-
-//------------------------------------------------------------------------------
-
-IpBufferPool::IpBufferPool() :
-   ObjectPool(IpBufferObjPoolId, MemDynamic, BlockSize, "IpBuffers")
-{
-   Debug::ft("IpBufferPool.ctor");
-}
-
-//------------------------------------------------------------------------------
-
-IpBufferPool::~IpBufferPool()
-{
-   Debug::ftnt("IpBufferPool.dtor");
 }
 }

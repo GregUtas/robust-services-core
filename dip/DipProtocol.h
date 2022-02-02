@@ -348,11 +348,7 @@ private:
 class DipIpBufferPool : public ObjectPool
 {
    friend class Singleton< DipIpBufferPool >;
-public:
-   //> The size of DipIpBuffer blocks.
-   //
-   static const size_t BlockSize;
-private:
+
    //  Private because this is a singleton.
    //
    DipIpBufferPool();

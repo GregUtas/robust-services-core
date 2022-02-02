@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MbPools.h"
+#include <cstddef>
 #include "Debug.h"
 #include "MediaEndpt.h"
 #include "NbAppIds.h"
@@ -29,13 +30,12 @@
 
 namespace MediaBase
 {
-const size_t MediaEndptPool::BlockSize =
-   sizeof(MediaEndpt) + (40 * BYTES_PER_WORD);
+constexpr size_t MediaEndptSize = sizeof(MediaEndpt) + (40 * BYTES_PER_WORD);
 
 //------------------------------------------------------------------------------
 
 MediaEndptPool::MediaEndptPool() :
-   ObjectPool(MediaEndptObjPoolId, MemDynamic, BlockSize, "MediaEndpts")
+   ObjectPool(MediaEndptObjPoolId, MemDynamic, MediaEndptSize, "MediaEndpts")
 {
    Debug::ft("MediaEndptPool.ctor");
 }

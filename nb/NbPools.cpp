@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbPools.h"
+#include <cstddef>
 #include "ClassRegistry.h"
 #include "Debug.h"
 #include "MsgBuffer.h"
@@ -33,13 +34,12 @@
 
 namespace NodeBase
 {
-const size_t MsgBufferPool::BlockSize =
-   sizeof(MsgBuffer) + (16 * BYTES_PER_WORD);
+const size_t MsgBufferSize = sizeof(MsgBuffer) + (16 * BYTES_PER_WORD);
 
 //------------------------------------------------------------------------------
 
 MsgBufferPool::MsgBufferPool() :
-   ObjectPool(MsgBufferObjPoolId, MemDynamic, BlockSize, "MsgBuffers")
+   ObjectPool(MsgBufferObjPoolId, MemDynamic, MsgBufferSize, "MsgBuffers")
 {
    Debug::ft("MsgBufferPool.ctor");
 }

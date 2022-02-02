@@ -23,7 +23,6 @@
 #define SBPOOLS_H_INCLUDED
 
 #include "ObjectPool.h"
-#include <cstddef>
 #include "NbTypes.h"
 
 namespace SessionBase
@@ -42,10 +41,6 @@ class SbIpBufferPool : public NodeBase::ObjectPool
 {
    friend class NodeBase::Singleton< SbIpBufferPool >;
 public:
-   //> The size of SbIpBuffer blocks.
-   //
-   static const size_t BlockSize;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
@@ -67,10 +62,6 @@ class ContextPool : public NodeBase::ObjectPool
 {
    friend class NodeBase::Singleton< ContextPool >;
 public:
-   //> The size of Context blocks.
-   //
-   static const size_t BlockSize;
-
    //  Overridden to claim blocks on work queues.
    //
    void ClaimBlocks() override;
@@ -96,10 +87,6 @@ class MessagePool : public NodeBase::ObjectPool
 {
    friend class NodeBase::Singleton< MessagePool >;
 public:
-   //> The size of Message blocks.
-   //
-   static const size_t BlockSize;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
@@ -121,10 +108,6 @@ class MsgPortPool : public NodeBase::ObjectPool
 {
    friend class NodeBase::Singleton< MsgPortPool >;
 public:
-   //> The size of MsgPort blocks.
-   //
-   static const size_t BlockSize;
-
    //  Finds the port that is communicating with remAddr.  This function is
    //  used when a port on another processor sends a subsequent message to a
    //  local port from which it has not yet received a reply.  Such a message
@@ -155,10 +138,6 @@ class ProtocolSMPool : public NodeBase::ObjectPool
 {
    friend class NodeBase::Singleton< ProtocolSMPool >;
 public:
-   //> The size of ProtocolSM blocks.
-   //
-   static const size_t BlockSize;
-
    //  Overridden to claim objects in the PSM's context.
    //
    void ClaimBlocks() override;
@@ -189,10 +168,6 @@ class TimerPool : public NodeBase::ObjectPool
 {
    friend class NodeBase::Singleton< TimerPool >;
 public:
-   //> The size of Timer blocks.
-   //
-   static const size_t BlockSize;
-
    //  Increments the number of timeouts sent.
    //
    void IncrTimeouts() const;
@@ -239,10 +214,6 @@ class ServiceSMPool : public NodeBase::ObjectPool
 {
    friend class NodeBase::Singleton< ServiceSMPool >;
 public:
-   //> The size of ServiceSM blocks.
-   //
-   static const size_t BlockSize;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
@@ -264,10 +235,6 @@ class EventPool : public NodeBase::ObjectPool
 {
    friend class NodeBase::Singleton< EventPool >;
 public:
-   //> The size of Event blocks.
-   //
-   static const size_t BlockSize;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
@@ -291,10 +258,6 @@ class BtIpBufferPool : public NodeBase::ObjectPool
 {
    friend class NodeBase::Singleton< BtIpBufferPool >;
 public:
-   //> The size of BtIpBuffer blocks.
-   //
-   static const size_t BlockSize;
-
    //  Overridden to claim blocks held by the trace buffer.
    //
    void ClaimBlocks() override;

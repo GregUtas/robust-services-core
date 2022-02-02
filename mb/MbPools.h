@@ -23,7 +23,6 @@
 #define MBPOOLS_H_INCLUDED
 
 #include "ObjectPool.h"
-#include <cstddef>
 #include "NbTypes.h"
 
 using namespace NodeBase;
@@ -37,11 +36,7 @@ namespace MediaBase
 class MediaEndptPool : public ObjectPool
 {
    friend class Singleton< MediaEndptPool >;
-public:
-   //> The size of MediaEndpt blocks.
-   //
-   static const size_t BlockSize;
-private:
+
    //  Private because this is a singleton.
    //
    MediaEndptPool();

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SbPools.h"
+#include <cstddef>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -52,12 +53,12 @@ using std::string;
 
 namespace SessionBase
 {
-const size_t SbIpBufferPool::BlockSize = sizeof(SbIpBuffer);
+constexpr size_t SbIpBufferSize = sizeof(SbIpBuffer);
 
 //------------------------------------------------------------------------------
 
 SbIpBufferPool::SbIpBufferPool() :
-   ObjectPool(SbIpBufferObjPoolId, MemDynamic, BlockSize, "SbIpBuffers")
+   ObjectPool(SbIpBufferObjPoolId, MemDynamic, SbIpBufferSize, "SbIpBuffers")
 {
    Debug::ft("SbIpBufferPool.ctor");
 }
@@ -78,12 +79,12 @@ void SbIpBufferPool::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-const size_t ContextPool::BlockSize = sizeof(SsmContext);
+constexpr size_t ContextSize = sizeof(SsmContext);
 
 //------------------------------------------------------------------------------
 
 ContextPool::ContextPool() :
-   ObjectPool(ContextObjPoolId, MemDynamic, BlockSize, "Contexts")
+   ObjectPool(ContextObjPoolId, MemDynamic, ContextSize, "Contexts")
 {
    Debug::ft("ContextPool.ctor");
 }
@@ -113,12 +114,12 @@ void ContextPool::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-const size_t EventPool::BlockSize = sizeof(Event) + (20 * BYTES_PER_WORD);
+constexpr size_t EventSize = sizeof(Event) + (20 * BYTES_PER_WORD);
 
 //------------------------------------------------------------------------------
 
 EventPool::EventPool() :
-   ObjectPool(EventObjPoolId, MemDynamic, BlockSize, "Events")
+   ObjectPool(EventObjPoolId, MemDynamic, EventSize, "Events")
 {
    Debug::ft("EventPool.ctor");
 }
@@ -139,12 +140,12 @@ void EventPool::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-const size_t MessagePool::BlockSize = sizeof(Message) + (40 * BYTES_PER_WORD);
+constexpr size_t MessageSize = sizeof(Message) + (40 * BYTES_PER_WORD);
 
 //------------------------------------------------------------------------------
 
 MessagePool::MessagePool() :
-   ObjectPool(MessageObjPoolId, MemDynamic, BlockSize, "Messages")
+   ObjectPool(MessageObjPoolId, MemDynamic, MessageSize, "Messages")
 {
    Debug::ft("MessagePool.ctor");
 }
@@ -165,12 +166,12 @@ void MessagePool::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-const size_t MsgPortPool::BlockSize = sizeof(MsgPort);
+constexpr size_t MsgPortSize = sizeof(MsgPort);
 
 //------------------------------------------------------------------------------
 
 MsgPortPool::MsgPortPool() :
-   ObjectPool(MsgPortObjPoolId, MemDynamic, BlockSize, "MsgPorts")
+   ObjectPool(MsgPortObjPoolId, MemDynamic, MsgPortSize, "MsgPorts")
 {
    Debug::ft("MsgPortPool.ctor");
 }
@@ -220,8 +221,7 @@ void MsgPortPool::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-const size_t ProtocolSMPool::BlockSize =
-   sizeof(ProtocolSM) + (60 * BYTES_PER_WORD);
+constexpr size_t ProtocolSMSize = sizeof(ProtocolSM) + (60 * BYTES_PER_WORD);
 
 //  The identifier of the PSM currently being audited.
 //
@@ -230,7 +230,7 @@ static NodeBase::PooledObjectId PsmToAudit_ = NIL_ID;
 //------------------------------------------------------------------------------
 
 ProtocolSMPool::ProtocolSMPool() :
-   ObjectPool(ProtocolSMObjPoolId, MemDynamic, BlockSize, "ProtocolSMs")
+   ObjectPool(ProtocolSMObjPoolId, MemDynamic, ProtocolSMSize, "ProtocolSMs")
 {
    Debug::ft("ProtocolSMPool.ctor");
 }
@@ -300,13 +300,12 @@ void ProtocolSMPool::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-const size_t ServiceSMPool::BlockSize =
-   sizeof(RootServiceSM) + (60 * BYTES_PER_WORD);
+constexpr size_t ServiceSMSize = sizeof(RootServiceSM) + (60 * BYTES_PER_WORD);
 
 //------------------------------------------------------------------------------
 
 ServiceSMPool::ServiceSMPool() :
-   ObjectPool(ServiceSMObjPoolId, MemDynamic, BlockSize, "ServiceSMs")
+   ObjectPool(ServiceSMObjPoolId, MemDynamic, ServiceSMSize, "ServiceSMs")
 {
    Debug::ft("ServiceSMPool.ctor");
 }
@@ -327,12 +326,12 @@ void ServiceSMPool::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-const size_t TimerPool::BlockSize = sizeof(Timer);
+constexpr size_t TimerSize = sizeof(Timer);
 
 //------------------------------------------------------------------------------
 
 TimerPool::TimerPool() :
-   ObjectPool(TimerObjPoolId, MemDynamic, BlockSize, "Timers")
+   ObjectPool(TimerObjPoolId, MemDynamic, TimerSize, "Timers")
 {
    Debug::ft("TimerPool.ctor");
 
@@ -409,12 +408,12 @@ void TimerPool::Startup(RestartLevel level)
 
 //==============================================================================
 
-const size_t BtIpBufferPool::BlockSize = sizeof(SbIpBuffer);
+constexpr size_t BtIpBufferSize = sizeof(SbIpBuffer);
 
 //------------------------------------------------------------------------------
 
 BtIpBufferPool::BtIpBufferPool() :
-   ObjectPool(BtIpBufferObjPoolId, MemDynamic, BlockSize, "BtIpBuffers")
+   ObjectPool(BtIpBufferObjPoolId, MemDynamic, BtIpBufferSize, "BtIpBuffers")
 {
    Debug::ft("BtIpBufferPool.ctor");
 }

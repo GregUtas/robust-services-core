@@ -479,12 +479,12 @@ void* DipIpBuffer::operator new(size_t size)
 
 //==============================================================================
 
-const size_t DipIpBufferPool::BlockSize = sizeof(DipIpBuffer);
+constexpr size_t DipIpBufferSize = sizeof(DipIpBuffer);
 
 //------------------------------------------------------------------------------
 
 DipIpBufferPool::DipIpBufferPool() :
-   ObjectPool(DipIpBufferObjPoolId, MemDynamic, BlockSize, "DipIpBuffers")
+   ObjectPool(DipIpBufferObjPoolId, MemDynamic, DipIpBufferSize, "DipIpBuffers")
 {
    Debug::ft("DipIpBufferPool.ctor");
 }

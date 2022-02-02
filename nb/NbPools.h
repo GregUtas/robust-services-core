@@ -23,7 +23,6 @@
 #define NBPOOLS_H_INCLUDED
 
 #include "ObjectPool.h"
-#include <cstddef>
 #include "NbTypes.h"
 
 //------------------------------------------------------------------------------
@@ -36,10 +35,6 @@ class MsgBufferPool : public ObjectPool
 {
    friend class Singleton< MsgBufferPool >;
 public:
-   //> The size of MsgBuffer blocks.
-   //
-   static const size_t BlockSize;
-
    //  Overridden to claim blocks held by the trace buffer.
    //
    void ClaimBlocks() override;

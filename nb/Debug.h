@@ -83,11 +83,6 @@ public:
    static void SwLog(fn_name_arg func,
       const std::string& errstr, debug64_t errval, bool stack = true);
 
-   //  Throws an exception.  The arguments are the same as for SwLog, above.
-   //  A stack trace is always included.
-   //
-   static void SwErr(const std::string& errstr, debug64_t offset);
-
    //  Throws an exception if CONDITION is false.  ERRVAL is for debugging.
    //
    static void Assert(bool condition, debug64_t errval = 0);

@@ -34,7 +34,6 @@
 #include "NbLogs.h"
 #include "RootThread.h"
 #include "Singleton.h"
-#include "SoftwareException.h"
 #include "SysThread.h"
 #include "SysThreadStack.h"
 #include "ThisThread.h"
@@ -138,15 +137,6 @@ void Debug::SetSwFlag(FlagId fid, bool value)
          Singleton< RootThread >::Extant()->systhrd_->Proceed();
       }
    }
-}
-
-//------------------------------------------------------------------------------
-
-void Debug::SwErr(const string& errstr, debug64_t offset)
-{
-   Debug::ft("Debug.SwErr");
-
-   throw SoftwareException(errstr, offset, 1);
 }
 
 //------------------------------------------------------------------------------

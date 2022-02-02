@@ -66,6 +66,7 @@
 #include "RegCell.h"
 #include "Registry.h"
 #include "Singleton.h"
+#include "SoftwareException.h"
 #include "SysFile.h"
 #include "SysMutex.h"
 #include "SysTime.h"
@@ -3454,6 +3455,7 @@ public:
       Delete,
       DerefenceBadPtr,
       DivideByZero,
+      Exception,
       InfiniteLoop,
       MutexBlock,
       MutexExit,
@@ -3461,7 +3463,6 @@ public:
       OverflowStack,
       RaiseSignal,
       Return,
-      SwErr,
       Terminate,
       Trap
    };
@@ -3477,7 +3478,7 @@ private:
    static void DoAbort();
    static void DoDelete();
    static int DoDivide();
-   static void DoSwErr();
+   static void DoException();
    static void DoTerminate();
    static void LoopForever();
    static void RecurseForever(size_t depth);
@@ -3633,20 +3634,20 @@ int RecoveryThread::DoDivide()
 
 //------------------------------------------------------------------------------
 
+void RecoveryThread::DoException()
+{
+   Debug::ft("RecoveryThread.DoException");
+
+   throw SoftwareException("software exception test", 1);
+}
+
+//------------------------------------------------------------------------------
+
 void RecoveryThread::DoRaise() const
 {
    Debug::ft("RecoveryThread.DoRaise");
 
    raise(signal_);
-}
-
-//------------------------------------------------------------------------------
-
-void RecoveryThread::DoSwErr()
-{
-   Debug::ft("RecoveryThread.DoSwErr");
-
-   Debug::SwErr("software error test", 1);
 }
 
 //------------------------------------------------------------------------------
@@ -3704,6 +3705,9 @@ void RecoveryThread::Enter()
       case DtorTrap:
          Debug::SetSwFlag(ThreadDtorTrapFlag, true);
          return;
+      case Exception:
+         DoException();
+         break;
       case InfiniteLoop:
          LoopForever();
          break;
@@ -3728,9 +3732,6 @@ void RecoveryThread::Enter()
       case Return:
          return;
       case Sleep:
-         break;
-      case SwErr:
-         DoSwErr();
          break;
       case Terminate:
          DoTerminate();
@@ -3877,6 +3878,11 @@ fixed_string DtorTrapTextExpl = "trap in recovery thread destructor";
 
 //------------------------------------------------------------------------------
 
+fixed_string ExceptionTextStr = "exception";
+fixed_string ExceptionTextExpl = "raise a software exception";
+
+//------------------------------------------------------------------------------
+
 fixed_string LoopTextStr = "loop";
 fixed_string LoopTextExpl = "enter an infinite loop";
 
@@ -3917,11 +3923,6 @@ fixed_string StackTextExpl = "cause a stack overflow";
 
 //------------------------------------------------------------------------------
 
-fixed_string SwErrTextStr = "swerr";
-fixed_string SwErrTextExpl = "cause a software exception";
-
-//------------------------------------------------------------------------------
-
 fixed_string TerminateTextStr = "terminate";
 fixed_string TerminateTextExpl = "call terminate()";
 
@@ -3946,14 +3947,15 @@ RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
       (CreateTextExpl, CreateTextStr), RecoveryThread::Create);
    BindText(*new CliText
       (ReturnTextExpl, ReturnTextStr), RecoveryThread::Return);
-   BindText(*new CliText
-      (AbortTextExpl, AbortTextStr), RecoveryThread::Abort);
+   BindText(*new CliText(AbortTextExpl, AbortTextStr), RecoveryThread::Abort);
    BindText(*new CliText
       (BadPtrTextExpl, BadPtrTextStr), RecoveryThread::DerefenceBadPtr);
    BindText(*new CliText
       (CtorTrapTextExpl, CtorTrapTextStr), RecoveryThread::CtorTrap);
    BindText(*new CliText
       (DivideTextExpl, DivideTextStr), RecoveryThread::DivideByZero);
+   BindText(*new CliText
+      (ExceptionTextExpl, ExceptionTextStr), RecoveryThread::Exception);
    BindText(*new CliText
       (LoopTextExpl, LoopTextStr), RecoveryThread::InfiniteLoop);
    BindText(*new CliText
@@ -3963,8 +3965,6 @@ RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
    BindText(*new CliText
       (MutexTrapExpl, MutexTrapStr), RecoveryThread::MutexTrap);
    BindText(*new RaiseText, RecoveryThread::RaiseSignal);
-   BindText(*new CliText
-      (SwErrTextExpl, SwErrTextStr), RecoveryThread::SwErr);
    BindText(*new CliText
       (TerminateTextExpl, TerminateTextStr), RecoveryThread::Terminate);
    BindText(*new TrapText, RecoveryThread::Trap);
@@ -4030,13 +4030,13 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
    case RecoveryThread::DtorTrap:
    case RecoveryThread::DerefenceBadPtr:
    case RecoveryThread::DivideByZero:
+   case RecoveryThread::Exception:
    case RecoveryThread::InfiniteLoop:
    case RecoveryThread::MutexBlock:
    case RecoveryThread::MutexExit:
    case RecoveryThread::MutexTrap:
    case RecoveryThread::OverflowStack:
    case RecoveryThread::Return:
-   case RecoveryThread::SwErr:
    case RecoveryThread::Terminate:
       if(!cli.EndOfInput()) return -1;
       thr->SetTest(test);

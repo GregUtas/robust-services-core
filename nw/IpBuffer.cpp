@@ -23,7 +23,6 @@
 #include <ostream>
 #include <string>
 #include <utility>
-#include "Algorithms.h"
 #include "AllocationException.h"
 #include "ByteBuffer.h"
 #include "Debug.h"

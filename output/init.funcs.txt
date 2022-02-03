@@ -1,740 +1,748 @@
-FUNCTION PROFILE: 27-Jan-2022 09:08:00.643 on Reigi
+FUNCTION PROFILE: 3-Feb-2022 11:08:24.559 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-     4342        7831   Memory.Alloc
-     2821       11449   SysMutex.Acquire
-     2821        9369   SysMutex.Release
-     2821        8018   MutexGuard.ctor
-     2821        5228   MutexGuard.dtor
-     2821        4761   MutexGuard.Release
-     2525        4151   NbHeap.Alloc
-     1934       71457   SysHeap.Alloc
-     1304        5853   Immutable.ctor
-     1304        2163   Immutable.operator new
-      870        1007   CliParm.ctor
-      746        2459   Registry.ctor
-      746        1243   Registry.Init
-      649        4983   Dynamic.ctor
-      649        1081   Dynamic.operator new
-      575        2468   StatisticsRegistry.BindStat
-      575         952   Statistic.ctor
-      476        2338   CliText.ctor
-      466        3358   Counter.ctor
-      394         758   CliText.BindParm
-      388         824   Singletons.BindInstance
-      388         648   Singleton.Instance
-      303        1175   CliTextParm.BindText
-      259        1099   Permanent.ctor
-      247         401   Permanent.operator new
-      223         599   Service.BindHandler
-      211         430   Service.BindEventName
-      207         303   FunctionGuard.Release
-      207         297   FunctionGuard.ctor
-      206         304   FunctionGuard.dtor
-      186        1379   CliIntParm.ctor
-      180         452   Q1Way.Insert
-      173         607   CliCommand.ctor
-      173         500   Thread.MemProtect
-      173         463   Thread.MemUnprotect
-      157        1077   CliTextParm.ctor
-      127        1494   Protected.ctor
-      127         206   Protected.operator new
-      125         281   Base.operator new
-      122         357   EventHandler.ctor
-      122         163   LibraryItem.ctor
-      120         628   CliIncrement.BindCommand
-      117         203   Memory.Alloc(nothrow)
-      115         142   CxxToken.ctor
-      114         285   CxxNamed.ctor
-       98         148   Memory.Free
-       96         172   Q1Way.Size
-       89         468   SymbolRegistry.FindSymbol
-       89         384   Symbol.SetValue
-       89         151   SymbolRegistry.EnsureSymbol
+     4521        8418   Memory.Alloc
+     2894       11790   SysMutex.Acquire
+     2894        9145   SysMutex.Release
+     2894        6415   MutexGuard.ctor
+     2894        4405   MutexGuard.dtor
+     2894        4233   MutexGuard.Release
+     2598        4437   NbHeap.Alloc
+     2052      113710   SysHeap.Alloc
+     1308        6286   Immutable.ctor
+     1308        2236   Immutable.operator new
+      870        1071   CliParm.ctor
+      746        2586   Registry.ctor
+      746        1280   Registry.Init
+      686        5401   Dynamic.ctor
+      686        1909   Dynamic.operator new
+      607        2631   StatisticsRegistry.BindStat
+      607        1035   Statistic.ctor
+      488        3608   Counter.ctor
+      476        2449   CliText.ctor
+      394         808   CliText.BindParm
+      393         899   Singletons.BindInstance
+      393         662   Singleton.Instance
+      303        1239   CliTextParm.BindText
+      263        1147   Permanent.ctor
+      251         415   Permanent.operator new
+      242         375   FunctionGuard.ctor
+      242         370   FunctionGuard.Release
+      241         841   FunctionGuard.dtor
+      223         586   Service.BindHandler
+      211         456   Service.BindEventName
+      203         554   Thread.MemProtect
+      203         453   Thread.MemUnprotect
+      190         475   Q1Way.Insert
+      186        1446   CliIntParm.ctor
+      173         633   CliCommand.ctor
+      157        1150   CliTextParm.ctor
+      142        1870   Protected.ctor
+      142         242   Protected.operator new
+      129         245   Memory.Alloc(nothrow)
+      125         380   Base.operator new
+      122         366   EventHandler.ctor
+      122         185   LibraryItem.ctor
+      120         665   CliIncrement.BindCommand
+      115         185   CxxToken.ctor
+      114         380   CxxNamed.ctor
+      107         169   Memory.Free
+       99         183   NbHeap.BlockToSize
+       99         169   NbHeap.Free
+       96         180   Q1Way.Size
+       89         448   SymbolRegistry.FindSymbol
+       89         380   Symbol.SetValue
+       89         152   SymbolRegistry.EnsureSymbol
        89           0   Symbol.ctor
-       88         627   SysThread.Resume
-       88         213   Thread.Interrupt
-       88         205   SysThread.Interrupt
-       88         175   NbHeap.BlockToSize
-       88         144   NbHeap.Free
-       85         837   HighWatermark.ctor
+       86         641   SysThread.Resume
+       86         228   Thread.Interrupt
+       86         204   SysThread.Interrupt
+       85         834   HighWatermark.ctor
        83         150   SymbolRegistry.BindSymbol(int)
-       81         146   Service.BindSystemHandler
-       75         124   ThreadRegistry.GetState
-       70         145   CxxStats.ctor
-       68         143   CxxOp.ctor
-       65         733   SysFile.Normalize
-       65         237   MainArgs.At
-       64         129   LogGroup.FindLog
-       64         109   Registry.Extend
-       63       21760   SysFile.CreateOstream
-       62          97   LogGroup.BindLog
-       62           0   Log.ctor
-       61     1520711   SysThread.Suspend
-       59        2288   AlarmRegistry.Find
-       59         271   Thread.Pause
-       57        2800   CfgParmRegistry.FindTuple
-       57         249   Service.BindState
-       57          78   State.ctor
-       53         284   CliCommandSet.BindCommand
-       48         267   CxxScoped.ctor
-       47         109   Thread.Ready
-       46         140   ThreadAdmin.WarpFactor
-       45         201   Thread.Resume
-       45         183   Thread.InitialTime
-       45         117   IPv6Addr.ctor
-       44         160   CxxWord.ctor
-       43        1952   Thread.LogContextSwitch
-       43         111   Thread.Schedule
-       43         104   SysThread.Wait
+       81         142   Service.BindSystemHandler
+       70         178   CxxStats.ctor
+       68        3024   AlarmRegistry.Find
+       68         147   CxxOp.ctor
+       65         701   SysFile.Normalize
+       65         275   MainArgs.At
+       65         113   Registry.Extend
+       64          94   ThreadRegistry.GetState
+       63       30299   SysFile.CreateOstream
+       63         131   LogGroup.FindLog
+       62        3558   CfgParmRegistry.FindTuple
+       61     3783915   SysThread.Suspend
+       61         102   LogGroup.BindLog
+       61           0   Log.ctor
+       59         325   Thread.Pause
+       57         248   Service.BindState
+       57          72   State.ctor
+       53         297   CliCommandSet.BindCommand
+       48         318   CxxScoped.ctor
+       47         100   Thread.Ready
+       46         144   ThreadAdmin.WarpFactor
+       45         186   Thread.Resume
+       45         181   Thread.InitialTime
+       45         122   IPv6Addr.ctor
+       44        1800   CfgParmRegistry.BindTuple
+       44         167   CxxWord.ctor
+       44           0   CfgTuple.ctor
+       43        1360   CfgParmRegistry.BindParm
+       43         698   Thread.LogContextSwitch
+       43         107   Thread.Schedule
+       43         103   SysThread.Wait
        43          97   Thread.EnterBlockingOperation
-       43          84   Thread.Suspend
-       39        1501   CfgParmRegistry.BindTuple
-       39           0   CfgTuple.ctor
-       38        1048   CfgParmRegistry.BindParm
-       38          70   CfgParm.SetFromTuple
-       38          69   CfgParm.GetInput
-       38          58   CfgParm.SetCurr
-       38          41   CfgParm.ctor
-       36         947   SysIpL2Addr.ctor
-       36         175   CliCharParm.ctor
-       36          65   Parameter.BindUsage
-       33          57   Factory.AddIncomingSignal
+       43          88   Thread.Suspend
+       43          85   CfgParm.SetFromTuple
+       43          76   CfgParm.GetInput
+       43          76   CfgParm.SetCurr
+       43          42   CfgParm.ctor
+       36         177   CliCharParm.ctor
+       36         115   SysIpL2Addr.ctor
+       36          67   Parameter.BindUsage
+       35          92   AlarmRegistry.BindAlarm
+       35           0   Alarm.ctor
+       34         389   CfgIntParm.SetNext
+       34         355   LowWatermark.ctor
+       34         253   CfgIntParm.ctor
+       34         145   CfgIntParm.GetCurr
+       34          66   CfgIntParm.SetNextValue
+       34          58   CfgIntParm.SetCurr
+       33          58   Factory.AddIncomingSignal
        32         145   SysThread.CreateSentry
-       32          86   LeakyBucketCounter.ctor
-       32          62   LeakyBucketCounter.Initialize
-       32          60   BcState.ctor
-       31         137   Thread.ExitBlockingOperation
-       30        2890   LogThread.Spool
-       30         197   Log.Submit
+       32         100   Thread.ImmProtect
+       32          84   LeakyBucketCounter.ctor
+       32          63   LeakyBucketCounter.Initialize
+       32          61   Thread.ImmUnprotect
+       32          56   BcState.ctor
+       31         164   Thread.ExitBlockingOperation
+       30        1810   LogThread.Spool
+       30         191   Log.Submit
        30         123   Log.Find(log)
-       30          73   AlarmRegistry.BindAlarm
-       30           0   Alarm.ctor
-       29         265   CfgIntParm.SetNext
-       29         198   CfgIntParm.ctor
-       29         105   CfgIntParm.GetCurr
-       29          61   SysIpL3Addr.ctor
-       29          51   CfgIntParm.SetNextValue
-       29          44   CfgIntParm.SetCurr
-       28          48   PotsFeature.SetIncompatible
-       27          87   Thread.ImmProtect
-       27          50   Thread.ImmUnprotect
-       27          46   Factory.AddOutgoingSignal
-       26          68   OperatorInfo.ctor
-       25          38   CliBuffer.CalcType
-       24         350   Accumulator.ctor
-       24         254   LowWatermark.ctor
-       22          45   QualName.ctor(string)
-       22          45   ServiceRegistry.BindService
-       22          43   TypeTags.ctor
+       29          58   SysIpL3Addr.ctor
+       28          51   PotsFeature.SetIncompatible
+       27          51   Factory.AddOutgoingSignal
+       26          76   OperatorInfo.ctor
+       25          60   CliBuffer.CalcType
+       24         342   Accumulator.ctor
+       22          50   TypeTags.ctor
+       22          49   QualName.ctor(string)
+       22          49   ServiceRegistry.BindService
        22          38   TypeName.ctor
-       22          23   TypeSpec.ctor
+       22          27   TypeSpec.ctor
        22           0   Service.ctor
-       21         125   Terminal.ctor
-       21          40   CxxScope.ctor
-       20         335   NodeBase.LoadNextTuple
-       20         123   FuncData.ctor
-       20          92   Data.ctor
-       20          62   CxxStrLiteral.CreateRef
-       20          51   Q1Way.Deq
-       20          50   DataSpec.ctor
+       21         140   Terminal.ctor
+       21          63   Q1Way.Deq
+       21          60   CxxScope.ctor
+       20         418   NodeBase.LoadNextTuple
+       20         145   FuncData.ctor
+       20         104   Data.ctor
+       20          86   CxxStrLiteral.CreateRef
+       20          51   DataSpec.ctor
        20          16   TypeTags.SetPointer
-       19          30   SysIpL2Addr.dtor
-       18         377   SysTime.AddMsecs
-       18         247   SysMemory.Protect
-       18          71   Heap.SetAttrs
-       18          57   SysThread.Delay
-       18          37   Heap.SetPermissions
-       17         105   Protocol.BindParameter
-       17          60   PotsTreatmentQueue.BindTreatment
-       17          41   TlvParameter.ctor
-       17          29   PotsTreatment.ctor
-       17          29   Parameter.ctor
-       17          26   SysIpL3Addr.dtor
-       16        6893   ThreadRegistry.SetThreadId
-       16        1409   Thread.EnterThread
-       16          67   Thread.RegisterForSignals
-       16          64   Protocol.BindSignal
-       16          58   SysThread.Start
-       16          50   SysThread.SetPriority
-       16          38   Thread.Start
-       16          37   SysIpL3Addr.L2AddrMatches
-       16          27   ThreadRegistry.Created
-       16          26   Thread.ctor
-       16          23   ThreadRegistry.Initialized
-       16          23   Thread.SetInitialized
+       19         370   SysTime.AddMsecs
+       19          53   SysIpL2Addr.dtor
+       18         172   SysMemory.Protect
+       18          58   Heap.SetAttrs
+       18          44   SysThread.Delay
+       18          30   Heap.SetPermissions
+       17        2084   ObjectPoolSizeCfg.ctor
+       17         102   Protocol.BindParameter
+       17          67   ObjectPool.EnsureAlarm
+       17          63   PotsTreatmentQueue.BindTreatment
+       17          47   ObjectPool.ctor
+       17          44   TlvParameter.ctor
+       17          37   Persistent.ctor
+       17          31   ObjectPoolSizeCfg.SetCurr
+       17          31   ObjectPoolRegistry.BindPool
+       17          31   ObjectPool.AllocBlocks
+       17          31   Parameter.ctor
+       17          30   PotsTreatment.ctor
+       17          30   SysIpL3Addr.dtor
+       17          30   ObjectPool.Startup
+       17          30   Persistent.operator new
+       17           0   ObjectPoolStats.ctor
+       16        4278   ThreadRegistry.SetThreadId
+       16        1120   Thread.EnterThread
+       16          75   SysThread.SetPriority
+       16          69   Protocol.BindSignal
+       16          69   SysThread.Start
+       16          39   Q1Way.Enq
+       16          38   Thread.RegisterForSignals
+       16          28   ThreadRegistry.Created
+       16          27   Thread.Start
+       16          26   ThreadRegistry.Initialized
+       16          24   Thread.ctor
+       16          21   Thread.SetInitialized
+       16          20   SysIpL3Addr.L2AddrMatches
        16           2   Signal.ctor
        16           0   ThreadPriv.ctor
        16           0   ThreadStats.ctor
-       15        1883   SysThread.Create
-       15          49   NodeBase.FactionToPriority
-       15          44   DaemonRegistry.FindDaemon
+       15        2856   SysThread.Create
+       15          41   DaemonRegistry.FindDaemon
        15          38   Q1Way.Henq
+       15          37   NodeBase.FactionToPriority
        15           0   SysThread.ctor
-       14          52   Module.ctor
-       14          47   PosixSignal.ctor
-       14          26   Q1Way.Enq
-       14          16   ModuleRegistry.BindModule
-       14          14   PosixSignalRegistry.BindSignal
-       12         933   ObjectPoolSizeCfg.ctor
-       12         136   PotsToneTreatment.ctor
-       12          46   ObjectPool.EnsureAlarm
-       12          26   ObjectPool.ctor
-       12          24   Persistent.ctor
-       12          20   ObjectPool.AllocBlocks
-       12          20   ObjectPoolSizeCfg.SetCurr
-       12          20   ObjectPoolRegistry.BindPool
-       12          19   Persistent.operator new
-       12          19   ObjectPool.Startup
-       12          18   NetworkBase.GetDecByte
-       12           0   ObjectPoolStats.ctor
-       11          68   PotsFeatureRegistry.BindFeature
-       11          52   LogGroupRegistry.FindGroup
-       11          20   PotsFeature.ctor
-       11          17   Thread.Startup
-       10          69   Daemon.ThreadCreated
-       10          56   SysHeap.BlockToSize
-       10          42   ToneRegistry.BindTone
+       14          68   Module.ctor
+       14          49   PosixSignal.ctor
+       14          15   ModuleRegistry.BindModule
+       14          13   PosixSignalRegistry.BindSignal
+       12         142   PotsToneTreatment.ctor
+       12          23   NetworkBase.GetDecByte
+       11          69   PotsFeatureRegistry.BindFeature
+       11          50   LogGroupRegistry.FindGroup
+       11          25   ObjectPool.DeqBlock
+       11          22   PotsFeature.ctor
+       11          21   Pooled.ctor
+       11          20   Thread.Startup
+       10          86   Daemon.ThreadCreated
+       10          46   ToneRegistry.BindTone
        10          41   Daemon.EnsureAlarm
        10          33   Switch.BindCircuit
-       10          20   Daemon.ctor
-       10          19   Trigger.BindInitiator
-       10          18   SysHeap.Free
+       10          21   Trigger.BindInitiator
+       10          20   Initiator.GetTrigger
+       10          18   Daemon.ctor
+       10          18   DaemonRegistry.BindDaemon
        10          17   Circuit.ctor
-       10          17   DaemonRegistry.BindDaemon
        10          17   Tone.ctor
-       10          16   Initiator.GetTrigger
        10          13   Initiator.ctor
-        9       60056   MutexRegistry.Find
-        9          96   CliBoolParm.ctor
-        9          62   CliRegistry.BindIncrement
-        9          49   SysSocket.SetBlocking
-        9          24   MutexRegistry.BindMutex
+        9       70950   MutexRegistry.Find
+        9         103   CliBoolParm.ctor
+        9          63   CliRegistry.BindIncrement
+        9          44   SysSocket.SetBlocking
+        9          29   Pooled.operator delete
+        9          28   MutexRegistry.BindMutex
         9          23   MsgBuffer.ctor
-        9          20   ObjectPool.DeqBlock
-        9          19   LogGroupRegistry.BindGroup
-        9          15   Pooled.ctor
-        9          12   Thread.MakePreemptable
-        9           2   C++.delete
+        9          20   LogGroupRegistry.BindGroup
+        9          18   ObjectPool.EnqBlock
+        9          16   Thread.MakePreemptable
+        9           1   C++.delete
         9           0   CliIncrement.ctor
         9           0   LogGroup.ctor
         9           0   SysMutex.ctor
-        8          35   StatisticsRegistry.BindGroup
-        8          18   MsgFactory.ctor
-        8          16   FactoryRegistry.BindFactory
-        8          15   IpPort.SetThread
-        8          15   Factory.Startup
-        8          13   Factory.ctor
-        8          12   StatisticsGroup.ctor
-        8          11   NetworkBase.GetHexQuartet
+        8          50   SysHeap.BlockToSize
+        8          40   StatisticsRegistry.BindGroup
+        8          26   MsgFactory.ctor
+        8          16   NetworkBase.GetHexQuartet
+        8          15   FactoryRegistry.BindFactory
+        8          14   Factory.Startup
+        8          14   IpPort.SetThread
+        8          14   SysHeap.Free
+        8          13   StatisticsGroup.ctor
+        8          12   Factory.ctor
         8           0   FactoryStats.ctor
-        7         508   SsmFactory.ctor
-        7          74   Service.BindTrigger
-        7          39   Library.AddVar
-        7          35   StreamRequest.ctor
-        7          20   PsmFactory.ctor
-        7          19   Pooled.operator delete
-        7          17   ObjectPool.EnqBlock
-        7          16   Alarm.Create
-        7          15   MsgBuffer.operator new
-        7          14   MsgBuffer.dtor
-        7          13   LibrarySet.ctor
+        7         500   SsmFactory.ctor
+        7          70   Service.BindTrigger
+        7          58   Library.AddVar
+        7          26   PsmFactory.ctor
+        7          23   StreamRequest.ctor
+        7          17   LibrarySet.ctor
+        7          13   MsgBuffer.dtor
         7          11   Thread.MakeUnpreemptable
-        7           9   Thread.EnqMsg
-        6         130   CliCommandSet.ctor
-        6          91   Macro.ctor
-        6          73   ToolRegistry.BindTool
-        6          64   CliPtrParm.ctor
-        6          38   Tool.ctor
-        6          35   CfgBitParm.GetCurr
-        6          31   IpPort.RecvsInSequence
-        6          28   NetworkBase.MakeUdpName
-        6          25   CodeSet.ctor
-        6          22   TlvIntParameter.ctor
+        7          10   Thread.EnqMsg
+        7          10   MsgBuffer.operator new
+        6         133   CliCommandSet.ctor
+        6          95   Macro.ctor
+        6          79   ToolRegistry.BindTool
+        6          68   CliPtrParm.ctor
+        6          37   Tool.ctor
+        6          28   CodeSet.ctor
+        6          27   TlvIntParameter.ctor
+        6          26   NetworkBase.MakeUdpName
+        6          24   CfgBitParm.GetCurr
         6          20   CfgBitParm.ctor
-        6          18   CfgBitParm.SetNext
-        6          14   Thread.DeqMsg
-        5         501   CfgBoolParm.ctor
-        5          68   PotsTreatmentRegistry.BindTreatmentQ
-        5          47   CodeFileSet.ctor
-        5          26   AddressParameter.ctor
-        5          24   BcTrigger.ctor
-        5          14   StreamRequest.dtor
-        5          10   ServiceCodeRegistry.SetService
+        6          17   CfgBitParm.SetNext
+        6          13   Alarm.Create
+        6          11   IpPort.RecvsInSequence
+        5         505   CfgBoolParm.ctor
+        5          70   PotsTreatmentRegistry.BindTreatmentQ
+        5          49   CodeFileSet.ctor
+        5          27   AddressParameter.ctor
+        5          23   BcTrigger.ctor
+        5          11   CliBuffer.FindNextNonBlank
+        5          11   ServiceCodeRegistry.SetService
         5          10   IpPortRegistry.LocalAddr
-        5           9   SysIpL2Addr.Nullify
-        5           8   SymbolRegistry.BindSymbol(string)
-        5           7   CfgBoolParm.SetNextValue
-        5           7   CfgBoolParm.SetCurr
-        5           6   CliBuffer.FindNextNonBlank
+        5          10   Thread.DeqMsg
+        5           9   SymbolRegistry.BindSymbol(string)
+        5           9   StreamRequest.dtor
+        5           8   SysIpL2Addr.Nullify
+        5           8   CfgBoolParm.SetCurr
+        5           8   CfgBoolParm.SetNextValue
         5           0   PotsTreatmentQueue.ctor
         5           0   Trigger.ctor
-        4      745472   SysUdpSocket.RecvFrom
-        4        2079   SysSocket.ctor
-        4         833   IpPortCfgParm.ctor
-        4         277   SysSocket.SetService
-        4         242   CfgParmRegistry.FindParm
-        4          44   PotsLockoutTreatment.ctor
-        4          37   SysTime.ctor(now)
-        4          32   SysSocket.Empty
-        4          31   FileThread.Spool(string)
-        4          29   IoThread.ctor
-        4          25   TlvProtocol.ctor
+        4        2150   SysSocket.ctor
+        4         990   IpPortCfgParm.ctor
+        4         311   CfgParmRegistry.FindParm
+        4         224   SysUdpSocket.RecvFrom
+        4         202   SysSocket.SetService
+        4          46   PotsLockoutTreatment.ctor
+        4          39   TlvProtocol.ctor
+        4          33   FileThread.Spool(string)
+        4          33   SysTime.ctor(now)
+        4          19   Heap.operator new
         4          16   IpPort.EnsureAlarm
-        4          11   FileRequest.ctor
-        4          11   CliBuffer.GetNextInput
-        4          11   Thread.RtcPercentUsed
-        4          11   Heap.operator new
-        4          11   IpPortCfgParm.SetNextValue
-        4          10   SysIpL3Addr.ctor(L2addr)
-        4          10   IpPortRegistry.BindPort
+        4          15   SysIpL3Addr.ctor(L2addr)
+        4          14   FileRequest.ctor
+        4          13   SysSocket.Empty
+        4          13   IpServiceRegistry.BindService
+        4          12   CliBuffer.GetNextInput
+        4          12   IoThread.ctor
+        4          11   IpPort.ctor
+        4          10   Temporary.ctor
+        4          10   IpPortCfgParm.SetNextValue
         4           9   ProtocolRegistry.BindProtocol
-        4           9   Temporary.ctor
-        4           8   IpServiceRegistry.BindService
-        4           7   IpService.Startup
+        4           8   IpPortRegistry.BindPort
+        4           8   Thread.RtcPercentUsed
+        4           8   FileThread.Spool(written)
+        4           8   IpService.Startup
         4           7   IpPort.BindHandler
-        4           7   FileThread.Spool(written)
+        4           7   FileThread.Record
         4           7   IpService.Provision
-        4           7   IpPort.ctor
+        4           7   Temporary.operator new
         4           6   IpPort.SetSocket
-        4           6   IoThread.ConditionalPause
-        4           5   FileThread.Record
-        4           5   InputHandler.ctor
+        4           6   InputHandler.ctor
+        4           5   IoThread.ConditionalPause
+        4           5   IpPort.ClearAlarm
         4           5   Heap.ctor
-        4           2   Temporary.operator new
         4           0   InvokerWork.ctor
         4           0   IpPortStats.ctor
         4           0   IpService.ctor
         4           0   Protocol.ctor
         4           0   SysIpL2Addr.ctor(string)
-        3        3175   UdpIoThread.ctor
-        3         700   CipFactory.ctor
-        3          39   UdpIpPort.ctor
-        3          34   SysHeap.ctor
-        3          25   CfgStrParm.ctor
-        3          18   UdpIpService.ctor
-        3          15   UdpIoDaemon.ctor
+        3        2412   UdpIoThread.ctor
+        3         694   CipFactory.ctor
+        3          43   UdpIpPort.ctor
+        3          38   SysHeap.ctor
+        3          27   CfgStrParm.ctor
+        3          21   UdpIpService.ctor
+        3          14   PotsCwmState.ctor
         3          13   CoutThread.Spool(stream)
-        3          11   PotsCwmState.ctor
-        3          11   PotsWmlState.ctor
-        3          11   PotsCfxState.ctor
+        3          12   FileRequest.dtor
+        3          12   UdpIoDaemon.ctor
+        3          10   PotsCfxState.ctor
         3          10   PotsCwbState.ctor
+        3          10   PotsWmlState.ctor
+        3          10   UdpIpPort.CreateIoThread
+        3           9   IPv6Addr.SetAsMappedIPv4Addr
+        3           9   TimerRegistry.ProcessWork
         3           8   UdpIoThread.Enter
-        3           8   NwTracer.FindPort
-        3           7   IPv6Addr.SetAsMappedIPv4Addr
-        3           7   UdpIpPort.CreateIoThread
-        3           7   IpPortRegistry.TestAdvance
-        3           6   NwTracer.PortStatus
-        3           6   SysUdpSocket.ctor
-        3           6   FileRequest.dtor
+        3           7   Thread.CurrTimeRunning
+        3           7   SbInputHandler.ctor
+        3           6   CliBuffer.GetStr
         3           6   UdpIoDaemon.GetDaemon
-        3           5   Thread.EnableFactions
         3           5   CfgStrParm.SetNext
+        3           5   NwTracer.PortStatus
+        3           5   Thread.EnableFactions
+        3           5   CfgStrParm.SetCurr
         3           5   UdpIpService.CreatePort
-        3           5   UdpIoThread.ClearAlarm
-        3           4   CfgStrParm.SetCurr
-        3           4   CliBuffer.GetStr
-        3           2   SbInputHandler.ctor
-        2      254715   SysTcpSocket.Poll
-        2        2613   SbExtInputHandler.ctor
-        2         462   BcFactory.ctor
-        2         326   MainArgs.PushBack
-        2         226   SysFile.CreateIstream
-        2         191   ProxyBcService.ctor
-        2          43   MediaParameter.ctor
-        2          28   NbTracer.SelectFaction
-        2          18   CliIncrement.FindCommand
-        2          14   ProgressParameter.ctor
+        3           5   NwTracer.FindPort
+        3           4   SysUdpSocket.ctor
+        3           3   IpPortRegistry.TestAdvance
+        2        2298   SbExtInputHandler.ctor
+        2         519   SysFile.CreateIstream
+        2         503   BcFactory.ctor
+        2         185   ProxyBcService.ctor
+        2         166   SysTcpSocket.Poll
+        2         161   MainArgs.PushBack
+        2          46   MediaParameter.ctor
+        2          29   CliThread.ParseCommand
+        2          27   NbTracer.SelectFaction
+        2          17   CliIncrement.FindCommand
+        2          16   CliBuffer.ScanLine
         2          14   CauseParameter.ctor
-        2          13   CoutThread.Spool(string)
-        2          11   CliBuffer.ScanLine
-        2          11   IpBuffer.PayloadSize
-        2          10   SysSocket.TracePeer
-        2           9   NetworkBase.MakeTcpName
-        2           9   TimerRegistry.ProcessWork
-        2           9   SessionBase.MakeName
+        2          14   ProgressParameter.ctor
+        2          14   SessionBase.MakeName
+        2          12   CoutThread.Spool(string)
+        2           9   PotsCwtService.ctor
+        2           9   CliStack.Top
+        2           8   NetworkBase.MakeTcpName
+        2           8   CinThread.Enter
         2           7   TestState.ctor
-        2           7   PotsCwaState.ctor
-        2           7   CliStack.Top
+        2           7   IpBuffer.PayloadSize
         2           7   PotsMuxState.ctor
-        2           7   CinThread.Enter
-        2           7   PotsCcwState.ctor
+        2           7   PotsCwaState.ctor
         2           7   PotsSusInitiator.ctor
-        2           6   IpBuffer.operator new
+        2           6   PotsCcwState.ctor
         2           6   SysTime.MsecsUntil
-        2           6   Thread.CurrTimeRunning
-        2           6   NetworkBase.BuffSize
-        2           6   IpBuffer.ctor
-        2           5   CliThread.ParseCommand
-        2           5   PotsCwtService.ctor
-        2           5   Context.SetContextMsg
+        2           6   BcService.ctor
+        2           6   Log.Find
         2           5   CliCookie.Initialize
-        2           5   Log.Find
-        2           5   NwTracer.PeerStatus
-        2           4   DataSpec.ctor(string)
-        2           4   BcService.ctor
-        2           4   NwTracer.FindPeer
+        2           5   DataSpec.ctor(string)
+        2           4   NetworkBase.AllocByteBuff
+        2           4   NwTracer.PeerStatus
+        2           4   SmallBuffer.operator new
+        2           4   CliThread.EndOfInput
+        2           4   CliStack.FindCommand(incr)
+        2           4   TcpIoThread.PollSockets
+        2           4   CliThread.InvokeCommand
+        2           3   SysSocket.TracePeer
+        2           3   CliStack.FindCommand
+        2           3   CliThread.AllocResources
         2           3   IpBuffer.dtor
-        2           3   TcpIoThread.PollSockets
+        2           3   NwTracer.FindPeer
+        2           3   IpBuffer.operator new
         2           3   InitThread.Enter
         2           3   Temporary.operator delete
-        2           2   CliStack.FindCommand(incr)
+        2           3   Context.SetContextMsg
+        2           3   IpBuffer.AllocBuff
+        2           2   IpBuffer.ctor
         2           2   SysTime.Round
         2           2   SysTime.Truncate
-        2           2   CliThread.AllocResources
-        2           2   CliThread.InvokeCommand
-        2           2   CliStack.FindCommand
-        2           2   CliThread.EndOfInput
-        2           2   CliBuffer.GetLine
+        2           1   CliBuffer.GetLine
         2           0   CliBuffer.ctor
         2           0   CliStack.ctor
-        1       47135   SysThreadStack.Startup
-        1        1524   CipHandler.ctor
-        1        1241   TcpIoThread.ctor
-        1         832   SysSocket.StartLayer
-        1         745   main
-        1         383   Cxx.Initialize
-        1         318   SysMemory.Alloc
+        1       83420   SysThreadStack.Startup
+        1        1900   main
+        1        1253   CipHandler.ctor
+        1         971   SysSocket.StartLayer
+        1         917   TcpIoThread.ctor
+        1         503   Cxx.Initialize
+        1         301   SysMemory.Alloc
         1         245   PotsShelfFactory.ctor
-        1         159   CodeWarning.Initialize
-        1         135   SysIpL2Addr.HostToNetwork(IPv6)
-        1         101   SysThread.Wrap
-        1          92   ModuleRegistry.Startup
-        1          81   PotsCwaService.ctor
-        1          81   PotsCwbService.ctor
-        1          73   EventPool.ctor
-        1          70   TestProtocol.ctor
-        1          62   CxxSymbols.Startup
-        1          58   TimerProtocol.ctor
+        1         195   CodeWarning.Initialize
+        1         162   CxxSymbols.Startup
+        1         126   ModuleRegistry.Startup
+        1         102   SysIpL2Addr.HostToNetwork(IPv6)
+        1          97   StackArg.ctor(ptrs)
+        1          89   TimerProtocol.ctor
+        1          84   TimerPool.ctor
+        1          82   PotsCwaService.ctor
+        1          82   PotsCwbService.ctor
+        1          76   SysThread.Wrap
+        1          65   CxxArea.ctor
+        1          65   SbIpBufferPool.ctor
+        1          61   SmallBufferPool.ctor
+        1          60   MediumBufferPool.ctor
         1          58   MediaEndptPool.ctor
-        1          54   StackArg.ctor(ptrs)
-        1          54   SbIpBufferPool.ctor
-        1          52   CipProtocol.ctor
-        1          52   BtIpBufferPool.ctor
-        1          52   ProtocolSMPool.ctor
-        1          50   PotsProtocol.ctor
-        1          49   LocalAddrCfg.ctor
-        1          44   ContextPool.ctor
-        1          44   Log.Format
-        1          43   NodeBase.GetLogType
-        1          43   MsgBufferPool.ctor
-        1          41   TimerPool.ctor
-        1          40   MsgPortPool.ctor
-        1          39   MessagePool.ctor
-        1          39   IpBufferPool.ctor
-        1          39   PotsFeatureRegistry.Audit
-        1          37   ServiceSMPool.ctor
-        1          31   SnIncrement.ctor
-        1          30   CxxArea.ctor
-        1          25   Namespace.ctor
-        1          25   SysTcpSocket.Listen
-        1          24   CbModule.ctor
-        1          24   PotsOSusInitiator.ctor
-        1          23   CtModule.ctor
-        1          23   NtModule.ctor
-        1          22   CodeDirSet.ctor
-        1          20   BreakEnabledCfg.ctor
-        1          20   CfgFlagParm.ctor
+        1          58   ProtocolSMPool.ctor
+        1          57   CipProtocol.ctor
+        1          56   LocalAddrCfg.ctor
+        1          56   NodeBase.GetLogType
+        1          56   TinyBufferPool.ctor
+        1          55   BtIpBufferPool.ctor
+        1          55   TestProtocol.ctor
+        1          54   HugeBufferPool.ctor
+        1          53   LargeBufferPool.ctor
+        1          53   PotsProtocol.ctor
+        1          52   MsgPortPool.ctor
+        1          52   CodeDirSet.ctor
+        1          52   MessagePool.ctor
+        1          47   IpBufferPool.ctor
+        1          46   Namespace.ctor
+        1          45   EventPool.ctor
+        1          45   MsgBufferPool.ctor
+        1          45   ContextPool.ctor
+        1          42   ServiceSMPool.ctor
+        1          42   PotsFeatureRegistry.Audit
+        1          42   Log.Format
+        1          31   TestService.ctor
+        1          30   SendLocalIpService.ctor
+        1          29   PotsOSusInitiator.ctor
+        1          28   CtModule.ctor
+        1          28   NtIncrement.ctor
+        1          25   CnModule.Startup
+        1          24   PotsBicFeature.ctor
+        1          24   ReadCommand.ProcessCommand
+        1          23   NbIncrement.ctor
+        1          23   SysSignals.CreateStandardSignals
+        1          23   SysTcpSocket.Listen
+        1          22   CfgFlagParm.ctor
+        1          21   ThreadRegistry.Startup
         1          20   PotsTSusInitiator.ctor
-        1          19   ThreadRegistry.Startup
+        1          20   SnIncrement.ctor
+        1          20   TestFactory.ctor
+        1          20   CipTcpService.ctor
+        1          19   TimeoutParameter.ctor
+        1          18   CtIncrement.ctor
+        1          18   PotsBcService.ctor
+        1          18   PotsMuxFactory.ctor
         1          18   PotsCwaNull.ctor
-        1          18   SysTcpSocket.Accept
-        1          18   PotsWmlActivate.ctor
+        1          18   PotsMuxNull.ctor
+        1          18   TestNull.ctor
+        1          18   PotsCfxNull.ctor
+        1          18   NwIncrement.ctor
+        1          17   PotsCallFactory.ctor
+        1          17   CliThread.Flush
         1          17   InvokerPoolRegistry.BindPool
-        1          17   PotsCallIpService.ctor
-        1          17   NwIncrement.ctor
-        1          17   PotsCfxNull.ctor
-        1          16   NtIncrement.ctor
+        1          16   PotsCallIpService.ctor
         1          16   PotsShelfIpService.ctor
-        1          16   TestNull.ctor
-        1          16   CipTcpService.ctor
-        1          16   OnModule.Startup
-        1          16   PotsMuxNull.ctor
-        1          16   SendLocalIpService.ctor
-        1          16   CnModule.Startup
-        1          16   PotsCwmInitiating.ctor
-        1          16   PotsMuxPassive.ctor
-        1          15   PotsCcwNull.ctor
-        1          15   PotsCwmNull.ctor
-        1          15   PotsBocService.ctor
-        1          15   PotsWmlActivating.ctor
-        1          15   PotsCfuActivating.ctor
+        1          16   ProxyBcFactory.ctor
+        1          16   PotsBocFeature.ctor
+        1          15   SbIncrement.ctor
+        1          15   PotsIncrement.ctor
         1          15   TestActive.ctor
-        1          15   TestService.ctor
-        1          15   TimeoutParameter.ctor
+        1          15   PotsCwbPending.ctor
         1          15   PotsWmlNull.ctor
+        1          15   PotsCwmInitiating.ctor
+        1          15   PotsCfuActivating.ctor
         1          15   PotsCwbNull.ctor
-        1          15   PotsCcwActive.ctor
+        1          15   PotsCwmNull.ctor
+        1          15   PotsMuxPassive.ctor
         1          15   PotsWmlTiming.ctor
+        1          15   LogStatsGroup.ctor
+        1          15   PotsCcwActive.ctor
+        1          15   PotsCcwNull.ctor
         1          15   PotsCfbTiming.ctor
         1          15   PotsCwaActive.ctor
-        1          15   PotsCwbPending.ctor
+        1          15   PotsBicService.ctor
+        1          15   PotsCwbActive.ctor
         1          15   PotsCwmActive.ctor
-        1          14   LogStatsGroup.ctor
-        1          14   PotsCwbActive.ctor
-        1          14   RnModule.Startup
-        1          14   CtIncrement.ctor
-        1          13   PotsIdleTreatment.ctor
-        1          13   NbIncrement.ctor
-        1          13   PotsBicFeature.ctor
-        1          13   PotsCallHandler.ctor
-        1          12   PotsSusService.ctor
+        1          15   PotsSusNull.ctor
+        1          15   PotsWmlActivating.ctor
+        1          15   PotsSusFeature.ctor
+        1          14   PotsCfxService.ctor
+        1          14   PotsMuxService.ctor
+        1          14   PotsCfbFeature.ctor
+        1          14   PotsCfnService.ctor
+        1          14   PotsCwtFeature.ctor
+        1          14   PotsCfuFeature.ctor
+        1          14   PotsSusService.ctor
+        1          14   PotsWmlActivate.ctor
+        1          14   AnIncrement.ctor
+        1          13   TestCallFactory.ctor
+        1          13   OnModule.Startup
+        1          13   CipObcFactory.ctor
+        1          13   PbModule.Startup
+        1          13   PotsProxyService.ctor
+        1          13   SbModule.Startup
+        1          13   RnModule.Startup
+        1          13   LocalAddrHandler.ctor
         1          12   StIncrement.ctor
-        1          12   TestFactory.ctor
-        1          12   PotsBcService.ctor
-        1          12   SbIncrement.ctor
-        1          12   AnIncrement.ctor
-        1          12   PotsBicService.ctor
-        1          12   CliThread.Flush
-        1          12   PotsCfbFeature.ctor
+        1          12   LogThread.Enter
         1          12   PotsProfileRegistry.Startup
-        1          12   PotsCfbService.ctor
-        1          12   PotsCfxService.ctor
-        1          12   PotsDiscService.ctor
-        1          12   PotsBicNull.ctor
-        1          12   PotsMuxService.ctor
-        1          12   PotsCfnFeature.ctor
-        1          12   PotsCfuActivate.ctor
-        1          12   PotsCfuFeature.ctor
         1          12   TcpIpPort.ctor
-        1          12   PotsCfuDeactivate.ctor
-        1          12   PotsCwtFeature.ctor
-        1          12   PotsSusFeature.ctor
-        1          12   PotsWmlDeactivate.ctor
-        1          11   PotsCcwService.ctor
-        1          11   PotsHtlNull.ctor
-        1          11   PotsMuxFactory.ctor
-        1          11   PotsWmlService.ctor
-        1          11   PotsBocNull.ctor
-        1          11   PotsCfnService.ctor
-        1          11   PotsCfuService.ctor
-        1          11   PotsCwmService.ctor
-        1          11   PotsTwcFeature.ctor
-        1          11   PotsCfnInitiator.ctor
-        1          11   PotsCfuInitiator.ctor
+        1          12   SbModule.ctor
+        1          12   PotsIdleTreatment.ctor
+        1          12   NwModule.ctor
+        1          12   PotsBicNull.ctor
+        1          12   StModule.ctor
+        1          12   PotsWmlService.ctor
+        1          12   PotsTwcFeature.ctor
+        1          12   PotsDiscService.ctor
+        1          12   PotsWmlInitiator.ctor
+        1          11   PotsCfnFeature.ctor
         1          11   PotsHtlFeature.ctor
-        1          11   PotsWmlInitiator.ctor
-        1          11   TestCallFactory.ctor
+        1          11   PotsHtlInitiator.ctor
+        1          11   PotsWmlDeactivate.ctor
         1          11   TimeoutSignal.ctor
-        1          11   LocalAddrHandler.ctor
-        1          11   PotsBocFeature.ctor
-        1          11   ProxyBcFactory.ctor
-        1          11   PotsCfbInitiator.ctor
-        1          11   PotsDiscNull.ctor
-        1          11   PotsHtlService.ctor
-        1          11   PotsIncrement.ctor
-        1          11   PotsBicInitiator.ctor
-        1          11   PotsSusNull.ctor
+        1          11   PotsBocService.ctor
+        1          11   PotsCfuService.ctor
+        1          11   PotsWmlFeature.ctor
         1          11   PotsBocInitiator.ctor
+        1          11   PotsCfnInitiator.ctor
+        1          11   PotsCfuActivate.ctor
+        1          11   PotsCfuDeactivate.ctor
+        1          11   PotsCfuInitiator.ctor
+        1          11   PotsDiscNull.ctor
+        1          11   PotsHtlNull.ctor
+        1          11   PotsHtlService.ctor
+        1          11   PotsBocNull.ctor
+        1          11   PotsCcwService.ctor
+        1          11   PotsCfbService.ctor
+        1          11   PotsCwmService.ctor
         1          11   PotsCwtInitiator.ctor
         1          11   PotsCxfFeature.ctor
-        1          11   PotsHtlInitiator.ctor
-        1          11   PotsShelfHandler.ctor
-        1          11   PotsWmlFeature.ctor
-        1          10   IpPortStatsGroup.ctor
-        1          10   MbModule.ctor
-        1          10   StModule.ctor
-        1          10   CipObcFactory.ctor
-        1          10   PotsCallFactory.ctor
-        1          10   PotsProxyService.ctor
+        1          11   PotsBicInitiator.ctor
+        1          11   IpPortStatsGroup.ctor
+        1          11   PotsCfbInitiator.ctor
+        1          11   PbModule.ctor
+        1          11   PotsCallHandler.ctor
+        1          10   PotsShelfHandler.ctor
+        1          10   PayloadInvokerPool.ctor
         1          10   FactoryStatsGroup.ctor
-        1           9   CipTbcFactory.ctor
-        1           9   InvokerPoolStatsGroup.ctor
-        1           9   NbHeap.ctor
-        1           9   SnModule.Startup
-        1           9   ObjectPoolStatsGroup.ctor
-        1           8   MacroDATE.ctor
-        1           8   PbModule.Startup
-        1           8   MacroFunc.ctor
-        1           8   SbModule.ctor
-        1           8   MacroFILE.ctor
-        1           8   MacroLINE.ctor
-        1           8   MacroTIME.ctor
-        1           8   NodeBase.CreatePosixSignals
-        1           8   NwModule.ctor
+        1          10   MbModule.ctor
+        1          10   OnModule.ctor
+        1          10   SysTcpSocket.Accept
+        1          10   AnModule.ctor
+        1          10   CipTbcFactory.ctor
+        1          10   NtModule.ctor
+        1          10   CbModule.ctor
+        1          10   InvokerPoolStatsGroup.ctor
+        1          10   NbModule.ctor
+        1          10   ObjectPoolStatsGroup.ctor
+        1           9   InvokerThread.ScheduledIn
+        1           9   NwModule.Startup
+        1           9   BreakEnabledCfg.ctor
+        1           9   MacroLINE.ctor
         1           8   Define.ctor(rhs)
-        1           8   PbModule.ctor
-        1           7   OnModule.ctor
-        1           7   NbModule.ctor
-        1           7   CnModule.ctor
-        1           7   SbModule.Startup
-        1           7   PotsStatistics.ctor
-        1           6   RnModule.ctor
-        1           6   AnModule.ctor
-        1           6   IpPortRegistry.TestEnd
-        1           6   CtModule.Startup
+        1           8   MacroDATE.ctor
+        1           8   MbModule.Startup
+        1           8   SnModule.ctor
+        1           8   MacroFILE.ctor
+        1           8   IpPortRegistry.TestEnd
+        1           8   MacroTIME.ctor
+        1           8   MacroFunc.ctor
+        1           8   Registry.Size
+        1           8   NbHeap.ctor
+        1           8   CoutThread.Enter
+        1           8   ThreadStatsGroup.ctor
+        1           7   CliCommand.GetStringRc
+        1           7   NetworkBase.ReportLayerStart
+        1           7   CliTextParm.GetStringRc
+        1           7   CliText.AccessParm
+        1           7   SysSocket.SetError(errval)
         1           6   CxxChar.Initialize
-        1           6   ProtectedHeap.ctor
-        1           6   SnModule.ctor
-        1           6   DynamicHeap.ctor
-        1           6   NwModule.Startup
-        1           6   ObjectDaemon.ctor
-        1           6   CliStack.SetRoot
+        1           6   PotsStatistics.ctor
+        1           6   RnModule.ctor
+        1           6   Parser.ResetStats
         1           6   PersistentHeap.ctor
-        1           6   TimerDaemon.ctor
-        1           5   MbModule.Startup
-        1           5   LogDaemon.ctor
-        1           5   SysSocket.SetError
-        1           5   TcpIoThread.EnsureListener
-        1           5   LogBufferRegistry.Startup
-        1           5   TcpIoDaemon.ctor
-        1           5   ToneSilent.ctor
-        1           5   MainArgs.Find
+        1           6   DynamicHeap.ctor
+        1           6   CnModule.ctor
+        1           6   TcpIoThread.Enter
+        1           6   ProtectedHeap.ctor
+        1           6   CliStack.SetRoot
+        1           5   SysTcpSocket.SetClose
+        1           5   TimerDaemon.ctor
+        1           5   SnModule.Startup
+        1           5   CliCookie.Advance
+        1           5   CliDaemon.ctor
+        1           5   ObjectDaemon.ctor
+        1           5   NbIncrement.Startup
+        1           5   StatisticsRegistry.Startup
         1           5   TcpIpService.ctor
-        1           5   ThreadStatsGroup.ctor
-        1           4   PayloadInvokerPool.ctor
-        1           4   ThreadsStatsGroup.ctor
+        1           5   MainArgs.Find
+        1           5   Library.Startup
+        1           5   ToneSilent.ctor
+        1           5   SysSocket.TraceEvent
+        1           5   ThreadsStatsGroup.ctor
+        1           4   AlarmRegistry.Startup
+        1           4   InputHandler.NetworkToHost
         1           4   StatisticsDaemon.ctor
-        1           4   SendLocalThread.Enter
-        1           4   CliThread.Enter
-        1           4   CxxRoot.Startup
-        1           4   CliDaemon.ctor
-        1           4   FileThread.Enter
-        1           4   InvokerThread.Enter
-        1           4   Memory.Copy
-        1           3   InvokerPool.FindWork
-        1           3   CbModule.Startup
-        1           3   Array.ctor
-        1           3   Element.IsUnnamed
-        1           3   InvokerThread.ScheduledIn
-        1           3   TcpIoThread.Enter
-        1           3   CliBuffer.dtor
-        1           3   IpPort.BytesRcvd
-        1           3   Parser.ResetStats
-        1           3   ReadCommand.ProcessCommand
+        1           4   SysSignals.CreateNativeSignals
+        1           4   LogDaemon.ctor
+        1           4   TcpIoDaemon.ctor
+        1           4   CxxRoot.ctor
+        1           4   NodeBase.CreatePosixSignals
+        1           3   Array.Reserve
         1           3   CliThread.SetResult
-        1           3   InvokerPool.ScheduledOut
-        1           3   IpBuffer.Send
-        1           3   SysSocket.ReportLayerStart
-        1           3   SysUdpSocket.SendTo
-        1           3   IpPortRegistry.TestBegin
+        1           3   ObjectPoolAudit.Enter
+        1           3   TcpIoThread.AcceptConn
+        1           3   Element.IsUnnamed
+        1           3   CtModule.Startup
+        1           3   IpPort.BytesSent
+        1           3   Memory.Copy
+        1           3   CliBuffer.dtor
         1           3   LibraryVarSet.ctor
-        1           3   LogThread.Enter
-        1           3   SendLocalThread.ctor
-        1           3   InputHandler.AllocBuff
-        1           3   SysSocket.TracePort
-        1           2   SysIpL3Addr.HostToNetwork(IPv6)
-        1           2   SysSignals.CreateStandardSignals
-        1           2   AlarmRegistry.Startup
-        1           2   CfgParmRegistry.Startup
-        1           2   CliCookie.Advance
-        1           2   InputHandler.NetworkToHost
-        1           2   InvokerPool.ProcessWork
-        1           2   InvokerThread.BlockingAllowed
-        1           2   IoThread.InvokeHandler
-        1           2   Library.Startup
-        1           2   NtModule.Startup
-        1           2   StModule.Startup
-        1           2   ClassRegistry.Startup
-        1           2   CliStack.dtor
+        1           2   InvokerPool.FindWork
         1           2   LocalAddrHandler.ReceiveBuff
-        1           2   LogBuffer.SetNext
-        1           2   NbIncrement.Startup
-        1           2   NodeBase.OutputNodeRunningLog
-        1           2   PotsBase.CreatePotsLogs
-        1           2   StatisticsThread.Enter
+        1           2   CliBuffer.OpenInputFile
+        1           2   CliParm.GetString
+        1           2   CliThread.Enter
+        1           2   InvokerPool.BindThread
+        1           2   NtModule.Startup
+        1           2   IpPortRegistry.TestBegin
         1           2   AnModule.Startup
-        1           2   CfgParmRegistry.LoadTuples
-        1           2   InputHandler.HostToNetwork
-        1           2   InvokerDaemon.ctor
-        1           2   SysUdpSocket.SendBuff
-        1           2   IpServiceRegistry.Startup
         1           2   LocalAddrCfg.SetNext
-        1           2   LogBufferRegistry.Compress
-        1           2   PotsTreatmentRegistry.Startup
-        1           2   Daemon.RaiseAlarm
-        1           2   FactoryRegistry.Startup
-        1           2   FileThread.ctor
-        1           2   IpBuffer.OutgoingBytes
-        1           2   NbModule.Startup
-        1           2   TcpIoThread.AllocateListener
-        1           2   CliTextParm.GetStringRc
-        1           2   CoutThread.Enter
-        1           2   CxxSymbols.ctor
-        1           2   TcpIoDaemon.GetDaemon
-        1           2   CinThread.GetLine
-        1           2   CliThread.ctor
-        1           2   InvokerDaemon.GetDaemon
+        1           2   StModule.Startup
+        1           2   TcpIoThread.EnsureListener
+        1           2   CbModule.Startup
+        1           2   CfgParmRegistry.LoadTuples
+        1           2   ClassRegistry.Startup
+        1           2   NodeBase.OutputNodeRunningLog
+        1           2   CxxRoot.Startup
         1           2   InvokerPool.Startup
         1           2   InvokerPoolRegistry.Startup
+        1           2   PotsTreatmentRegistry.Startup
+        1           2   CxxSymbols.ctor
+        1           2   FactoryRegistry.Startup
+        1           2   InvokerThread.Enter
         1           2   Library.ctor
-        1           2   ObjectPoolRegistry.Startup
+        1           2   LogBufferRegistry.Compress
+        1           2   LogGroupRegistry.Startup
+        1           2   CliIncrement.Enter
+        1           2   CliStack.dtor
+        1           2   FileThread.Enter
+        1           2   FileThread.ctor
+        1           2   IpServiceRegistry.Startup
+        1           2   LogBuffer.SetNext
+        1           2   NbModule.Startup
+        1           2   SendLocalThread.Enter
         1           2   TcpIpPort.CreateIoThread
-        1           2   ThreadAdmin.Startup
-        1           1   InvokerThread.ctor
-        1           1   LogGroupRegistry.Startup
-        1           1   LogThread.ctor
-        1           1   PotsCallIpService.CreateHandler
-        1           1   ServiceCodeRegistry.Startup
-        1           1   StatisticsRegistry.Startup
-        1           1   StatisticsThread.ctor
-        1           1   TcpIoThread.AcceptConn
-        1           1   TimerThread.ctor
-        1           1   CliIncrement.Enter
-        1           1   CxxRoot.ctor
-        1           1   DaemonRegistry.Startup
-        1           1   NetworkBase.CreateNwLogs
-        1           1   ObjectPoolAudit.ctor
-        1           1   PotsShelfIpService.CreateHandler
-        1           1   Registry.Size
-        1           1   StatisticsThread.CalcFirstDelay
+        1           2   Array.Init
+        1           2   CliThread.ctor
+        1           2   LogThread.ctor
+        1           2   NetworkBase.CreateNwLogs
+        1           2   ObjectPoolAudit.ctor
+        1           2   ObjectPoolRegistry.Startup
+        1           2   PotsBase.CreatePotsLogs
+        1           2   SendLocalThread.ctor
+        1           2   ServiceCodeRegistry.Startup
+        1           2   SessionBase.CreateSbLogs
+        1           2   StatisticsThread.Enter
+        1           2   SysIpL2Addr.IsValid
+        1           2   SysSocket.TracePort
+        1           2   TcpIoDaemon.GetDaemon
+        1           2   TimerThread.ctor
         1           1   CipTcpService.CreateHandler
-        1           1   CliText.AccessParm
         1           1   CoutThread.ctor
         1           1   Daemon.CreateThreads
-        1           1   IpPortRegistry.Startup
-        1           1   SessionBase.CreateSbLogs
+        1           1   InvokerThread.ctor
+        1           1   IpPortRegistry.SetIPv6
+        1           1   StatisticsThread.ctor
         1           1   SysIpL2Addr.Family
-        1           1   SysIpL2Addr.IsValid
         1           1   SysIpL2Addr.LoopbackIpAddr
-        1           1   SysIpL2Addr.NetworkToHost(IPv6)
-        1           1   SysSignals.CreateNativeSignals
+        1           1   TimerPool.Startup
+        1           1   CliThread.Startup
+        1           1   DaemonRegistry.Startup
+        1           1   InvokerPool.ScheduledOut
+        1           1   IpPortRegistry.SetLocalAddr
+        1           1   IpPortRegistry.Startup
+        1           1   IpPortRegistry.ctor
+        1           1   LocalAddrCfg.SetCurr
+        1           1   PotsShelfIpService.CreateHandler
+        1           1   SendLocalIpService.CreateHandler
+        1           1   SysIpL2Addr.IsLoopbackIpAddr
         1           1   TcpIpService.CreatePort
-        1           1   BreakEnabledCfg.SetCurr
-        1           1   CliCommand.GetStringRc
-        1           1   CliCookie.ctor
-        1           1   CliParm.GetString
+        1           1   TraceBuffer.StopTracing
+        1           1   Array.ctor
+        1           1   CfgParmRegistry.Startup
+        1           1   InvokerPool.ProcessWork
+        1           1   IoThread.InvokeHandler
+        1           1   IpPort.BytesRcvd
+        1           1   LogBufferRegistry.Startup
+        1           1   PotsCallIpService.CreateHandler
+        1           1   StopCommand.ProcessCommand
+        1           1   ThreadAdmin.InitTimeout
+        1           1   ThreadAdmin.Startup
+        1           1   CinThread.GetLine
+        1           1   CinThread.SetClient
+        1           1   Debug.SwFlagOn
         1           1   InitThread.InitializeSystem
         1           1   InitThread.ctor
         1           1   InvokerDaemon.CreateThread
-        1           1   IpPortRegistry.SetIPv6
-        1           1   IpPortRegistry.SetLocalAddr
-        1           1   IpPortRegistry.ctor
-        1           1   LocalAddrCfg.SetCurr
-        1           1   SendLocalIpService.CreateHandler
-        1           1   SysIpL2Addr.IsLoopbackIpAddr
-        1           1   TimerPool.Startup
-        1           1   CliBuffer.OpenInputFile
+        1           1   IpBuffer.Send
+        1           1   SysIpL3Addr.HostToNetwork(IPv6)
+        1           1   TcpIoThread.AllocateListener
+        1           1   BreakEnabledCfg.SetCurr
         1           1   CliThread.ReadCommands
+        1           1   InputHandler.HostToNetwork
+        1           1   InvokerThread.BlockingAllowed
         1           1   Log.Create
         1           1   ModuleRegistry.Restart
-        1           1   ObjectPoolAudit.Enter
-        1           1   TraceBuffer.StopTracing
+        1           1   NodeBase.CreateNbLogs
+        1           1   StatisticsThread.CalcFirstDelay
+        1           1   SysUdpSocket.SendBuff
         1           1   CfgFlagParm.SetCurr
         1           1   CfgFlagParm.SetNextValue
-        1           1   Debug.SwFlagOn
-        1           1   Q1Way.Init
-        1           1   RootThread.Main
-        1           1   RootThread.ctor
-        1           1   StopCommand.ProcessCommand
-        1           1   SysTcpSocket.ctor
-        1           1   TcpIoThread.ClearAlarm
-        1           1   ThreadAdmin.InitTimeout
-        1           1   TimerThread.Enter
-        1           1   CinThread.SetClient
-        1           1   NodeBase.CreateNbLogs
+        1           1   Daemon.RaiseAlarm
+        1           1   InvokerDaemon.GetDaemon
         1           1   ProtectedHeap.GetSize
+        1           1   Q1Way.Init
         1           1   RootThread.Enter
-        1           1   CliThread.Startup
-        1           1   TemporaryHeap.ctor
-        1           0   Operation.ctor
-        1           0   Array.Reserve
-        1           0   IpPort.BytesSent
-        1           0   SysIpL3Addr.NetworkToHost(IPv6)
-        1           0   InvokerPool.BindThread
-        1           0   Array.Init
+        1           1   RootThread.ctor
+        1           1   SysTcpSocket.ctor
+        1           1   SysUdpSocket.SendTo
+        1           1   TimerThread.Enter
+        1           1   InputHandler.AllocBuff
+        1           1   IpBuffer.OutgoingBytes
+        1           1   SysIpL2Addr.NetworkToHost(IPv6)
+        1           1   SysIpL3Addr.NetworkToHost(IPv6)
+        1           1   RootThread.Main
         1           0   CinThread.ctor
+        1           0   InvokerDaemon.ctor
+        1           0   Operation.ctor
+        1           0   TemporaryHeap.ctor
+        1           0   CliCookie.ctor
         1           0   AlarmRegistry.ctor
         1           0   CfgParmRegistry.ctor
         1           0   ClassRegistry.ctor
@@ -774,4 +782,4 @@ FUNCTION PROFILE: 27-Jan-2022 09:08:00.643 on Reigi
         1           0   ToneRegistry.ctor
         1           0   TraceBuffer.SetTool
 
-Total functions: 771
+Total functions: 779

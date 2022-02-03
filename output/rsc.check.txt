@@ -1,6 +1,6 @@
 LINE COUNTS
-   81366   source code not in one of the categories below
-   42082   blank line
+   81367   source code not in one of the categories below
+   42081   blank line
    18666   blank comment
    10484   comment at the top of a file (e.g. for the file's name or license info)
     8142   comment followed by a repeated character to draw a rule (e.g. //---- ...)
@@ -8,13 +8,13 @@ LINE COUNTS
    16386   bare left brace
    14784   bare right brace
     1603   bare right brace with semicolon
-    1802   access control
+    1803   access control
     5059   invocation of Debug::ft
      695   definition of an fn_name
     6301   #include directive
     1143   preprocessor directive other than #include
      938   using statement
-  230925   TOTAL
+  230926   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   133  C-style cast
@@ -37,7 +37,7 @@ WARNING COUNTS (* if supported by >fix)
   W037    15  Member hides inherited name
   W038     1  Class could be namespace
 * W042   174  Member could be private
-* W043    76  Member could be protected
+* W043    73  Member could be protected
   W044    13  Typedef of pointer type
 * W048     2  Data is write-only
   W050    26  Data is not private
@@ -45,13 +45,13 @@ WARNING COUNTS (* if supported by >fix)
 * W054     1  Data could be const pointer
 * W055     1  Data need not be mutable
   W056     7  Implicit constructor invoked: POD members not initialized
-* W060    61  Base class constructor is public
+* W060    58  Base class constructor is public
   W062     2  Member not included in member initialization list
 * W065    10  Base class virtual destructor is not public
   W075   401  Virtual function is public
 * W077    57  Virtual function has no overrides
   W082   113  Adjacent arguments have the same type
-* W088    41  Argument could be const
+* W088    40  Argument could be const
 * W090    97  Function could be const
 * W092   124  Function could be free
 * W099   294  Line contains adjacent spaces
@@ -79,7 +79,7 @@ W004 C-style cast
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxArea.h(908):    CxxScope* GetTemplateInstance() const override { return (CxxScope*) this; }
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.h(1240):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.h(1453):    CxxToken* RootType() const override { return (CxxToken*) Referent(); }
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4701):    if(tmplt_ != nullptr) return (CxxScope*) this;
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4702):    if(tmplt_ != nullptr) return (CxxScope*) this;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.h(391):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(1927):    return (CxxToken*) this;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(2170):    return (CxxToken*) this;
@@ -371,9 +371,9 @@ W006 reinterpret_cast
   C:/Users/Greg/Documents/rsc/rsc/sb/TimerProtocol.cpp(106):    auto toi = reinterpret_cast< const TimeoutInfo* >(bytes);
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.cpp(64):    auto encap = reinterpret_cast< const TlvMsgLayout* >(parm.bytes);
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.cpp(458):    auto encap = reinterpret_cast< TlvMsgLayout* >(pptr->bytes);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(88):       return reinterpret_cast< T* >(pptr->bytes);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(102):       auto dest = reinterpret_cast< T* >(pptr->bytes);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(137):       parm = (pptr == nullptr ? nullptr : reinterpret_cast< T* >(pptr->bytes));
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(79):       return reinterpret_cast< T* >(pptr->bytes);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(93):       auto dest = reinterpret_cast< T* >(pptr->bytes);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(128):       parm = (pptr == nullptr ? nullptr : reinterpret_cast< T* >(pptr->bytes));
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(282):       { return reinterpret_cast< TlvMsgLayout* >(Buffer()->HeaderPtr()); }
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvProtocol.cpp(66):       auto pptr = reinterpret_cast< TlvParmPtr >(&bytes[index]);
   C:/Users/Greg/Documents/rsc/rsc/sn/PotsCallHandler.cpp(89):    auto pptr = reinterpret_cast< TlvParmPtr >(sbuff->PayloadPtr());
@@ -519,15 +519,15 @@ W007 Cast down the inheritance hierarchy
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(1926):    auto item = static_cast< Data* >(FindTemplateAnalog(this));
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(2013):          static_cast< Block* >(GetScope())->EraseItem(this);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(2029):          static_cast< Block* >(GetScope())->ReplaceItem(this, next_.release());
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(3721):    else if(!static_cast< Function* >(item)->virtual_)
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4498):       func = static_cast< Function* >(inst->FindTemplateAnalog(this));
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4511):       auto i = FindArg(static_cast< const Argument* >(item), false);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4558):    return static_cast< Function* >((*cti)->FindInstanceAnalog(this));
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5263):    auto that = static_cast< const Argument* >(FindTemplateAnalog(arg));
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5718):    auto func = static_cast< Function* >(FindTemplateAnalog(this));
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5730):    auto func = static_cast< Function* >(FindTemplateAnalog(this));
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5975):                auto item = static_cast< CxxNamed* >(args.front().item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(6164):       auto func = static_cast< Function* >(cls->FindTemplateAnalog(this));
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(3722):    else if(!static_cast< Function* >(item)->virtual_)
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4499):       func = static_cast< Function* >(inst->FindTemplateAnalog(this));
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4512):       auto i = FindArg(static_cast< const Argument* >(item), false);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4559):    return static_cast< Function* >((*cti)->FindInstanceAnalog(this));
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5264):    auto that = static_cast< const Argument* >(FindTemplateAnalog(arg));
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5719):    auto func = static_cast< Function* >(FindTemplateAnalog(this));
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5731):    auto func = static_cast< Function* >(FindTemplateAnalog(this));
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5976):                auto item = static_cast< CxxNamed* >(args.front().item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(6165):       auto func = static_cast< Function* >(cls->FindTemplateAnalog(this));
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(96):          auto func = static_cast< Function* >(GetScope());
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(204):       auto& fname = static_cast< Function* >(GetScope())->Name();
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(220):    auto cls = static_cast< Class* >(ref);
@@ -1047,10 +1047,10 @@ W008 Cast removes const qualification
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(2875):    return const_cast< TypeName* >(this);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.h(717):       override { return const_cast< QualName* >(this); }
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.h(1240):    CxxToken* AutoType() const override { return (CxxToken*) this; }
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(3087):    return FoundFunc(const_cast< Function* >(this), args);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4467):    auto prev = const_cast< Function* >(this);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4691):    if(IsTemplate()) return const_cast< Function* >(this);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4701):    if(tmplt_ != nullptr) return (CxxScope*) this;
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(3088):    return FoundFunc(const_cast< Function* >(this), args);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4468):    auto prev = const_cast< Function* >(this);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4692):    if(IsTemplate()) return const_cast< Function* >(this);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4702):    if(tmplt_ != nullptr) return (CxxScope*) this;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.h(391):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.h(1442):       const override { return const_cast< Function* >(this); }
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(745):    if(n == 0) return const_cast< CxxScoped* >(this);
@@ -1715,12 +1715,12 @@ W032 Unused function
   C:/Users/Greg/Documents/rsc/rsc/sb/TextTlvMessage.h(58):    explicit TextTlvMessage(SbIpBufferPtr& text);
   C:/Users/Greg/Documents/rsc/rsc/sb/TextTlvMessage.h(62):    TextTlvMessage(ProtocolSM* psm, size_t size);
   C:/Users/Greg/Documents/rsc/rsc/sb/TextTlvMessage.h(68):    bool Receive();
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(62):    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(76):    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(185):    size_t AllParms(TlvParmArray ptab, size_t size) const;
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(191):    size_t FindParms(ParameterId pid, TlvParmArray ptab, size_t size) const;
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(205):    TlvParmPtr AddBytes
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(212):    TlvParmPtr CopyParm
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(58):    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(67):    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(176):    size_t AllParms(TlvParmArray ptab, size_t size) const;
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(182):    size_t FindParms(ParameterId pid, TlvParmArray ptab, size_t size) const;
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(196):    TlvParmPtr AddBytes
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(203):    TlvParmPtr CopyParm
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(265):    NodeBase::byte_t* FindBytes(size_t& size, ParameterId pid) const;
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(272):    virtual bool MatchParm(TlvParmPtr pptr, ParmIterator& pit, bool& last) const;
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(287):    size_t ParmOffset(ParmIterator& pit) const;
@@ -1906,11 +1906,11 @@ W042 Member could be private
   C:/Users/Greg/Documents/rsc/rsc/sb/Service.h(121):    bool IsModifiable() const { return modifiable_; }
   C:/Users/Greg/Documents/rsc/rsc/sb/Service.h(125):    bool IsModifier() const { return modifier_; }
   C:/Users/Greg/Documents/rsc/rsc/sb/ServiceSM.h(95):    StateId NextState() const { return nextState_; }
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(156):       ParmIterator() : mptr(nullptr), pptr(nullptr), pindex(0) { }
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(159):       ParmIterator& operator=(const ParmIterator& that) = default;
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(174):    TlvParmPtr FirstParm(ParmIterator& pit) const;
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(179):    TlvParmPtr NextParm(ParmIterator& pit) const;
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(200):    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(147):       ParmIterator() : mptr(nullptr), pptr(nullptr), pindex(0) { }
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(150):       ParmIterator& operator=(const ParmIterator& that) = default;
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(165):    TlvParmPtr FirstParm(ParmIterator& pit) const;
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(170):    TlvParmPtr NextParm(ParmIterator& pit) const;
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(191):    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(277):    virtual void AddFence();
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(281):    TlvMsgLayout* TlvLayout() const
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(292):    Fence* FencePtr() const;
@@ -1976,8 +1976,7 @@ W043 Member could be protected
   C:/Users/Greg/Documents/rsc/rsc/nb/CliParm.h(246):    bool GetIdentifier(std::string& s, CliThread& cli,
   C:/Users/Greg/Documents/rsc/rsc/nb/CliParm.h(261):    bool IsOptional() const { return opt_; }
   C:/Users/Greg/Documents/rsc/rsc/nb/CliText.h(65):    const Registry< CliParm >& Parms() const { return parms_; }
-  C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.h(44):    FunctionTrace(fn_name_arg func, fn_depth depth);
-  C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.h(48):    FunctionTrace();
+  C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.h(44):    FunctionTrace();
   C:/Users/Greg/Documents/rsc/rsc/nb/MsgBuffer.h(45):    MsgBuffer(const MsgBuffer& that);
   C:/Users/Greg/Documents/rsc/rsc/nb/Object.h(59):    virtual void Patch(sel_t selector, void* arguments) { }
   C:/Users/Greg/Documents/rsc/rsc/nb/SoftwareException.h(41):    SoftwareException
@@ -1998,8 +1997,6 @@ W043 Member could be protected
   C:/Users/Greg/Documents/rsc/rsc/sb/ProtocolSM.h(85):    enum OutgoingRc
   C:/Users/Greg/Documents/rsc/rsc/sb/ProtocolSM.h(131):    Message* FirstOgMsg() const { return ogMsgq_.First(); }
   C:/Users/Greg/Documents/rsc/rsc/sb/Service.h(87):    virtual NodeBase::c_string PortName(PortId pid) const;
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(50):    explicit TlvMessage(SbIpBufferPtr& buff);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(67):    TlvMessage(const Message& msg, ProtocolSM* psm);
 W044 Typedef of pointer type
   C:/Users/Greg/Documents/rsc/rsc/nb/SysDecls.h(46): typedef void* SysHeap_t;
   C:/Users/Greg/Documents/rsc/rsc/nb/SysDecls.h(47): typedef void* SysThread_t;
@@ -2155,8 +2152,7 @@ W060 Base class constructor is public
   C:/Users/Greg/Documents/rsc/rsc/nb/CliIntParm.h(49):    CliIntParm(c_string help, word min, word max,
   C:/Users/Greg/Documents/rsc/rsc/nb/CliText.h(49):    CliText(c_string help, c_string text, bool opt = false, uint32_t size = 32);
   C:/Users/Greg/Documents/rsc/rsc/nb/CliTextParm.h(49):    explicit CliTextParm(c_string help, bool opt = false,
-  C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.h(44):    FunctionTrace(fn_name_arg func, fn_depth depth);
-  C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.h(48):    FunctionTrace();
+  C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.h(44):    FunctionTrace();
   C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.h(41):    StatusCommand();
   C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.h(56):    LogsAction();
   C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.h(76):    explicit LogsCommand(bool bind = true);
@@ -2203,10 +2199,8 @@ W060 Base class constructor is public
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProtocol.h(268):    PotsMessage(ProtocolSM* psm, size_t size);
   C:/Users/Greg/Documents/rsc/rsc/sb/SbTrace.h(462):    EventTrace(Id rid, const Event& evt);
   C:/Users/Greg/Documents/rsc/rsc/sb/SbTrace.h(503):    HandlerTrace(ServiceId sid, const State& state, const Event& evt,
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(50):    explicit TlvMessage(SbIpBufferPtr& buff);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(54):    TlvMessage(ProtocolSM* psm, size_t size);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(62):    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(67):    TlvMessage(const Message& msg, ProtocolSM* psm);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(50):    TlvMessage(ProtocolSM* psm, size_t size);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(58):    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
 W062 Member not included in member initialization list
   C:/Users/Greg/Documents/rsc/rsc/nb/SysFile.win.cpp(41):    FileWalker(const char* dirName, const char* fileSpec);
   C:/Users/Greg/Documents/rsc/rsc/nb/SysFile.win.cpp(60):    _finddata_t attributes_;
@@ -2618,9 +2612,9 @@ W075 Virtual function is public
   C:/Users/Greg/Documents/rsc/rsc/sb/Signal.h(92):    virtual NodeBase::CliText* CreateText() const;
   C:/Users/Greg/Documents/rsc/rsc/sb/SsmFactory.h(42):    virtual RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const;
   C:/Users/Greg/Documents/rsc/rsc/sb/SsmFactory.h(48):    virtual ProtocolSM* AllocOgPsm(const Message& msg) const;
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(76):    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(200):    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(217):    virtual void DeleteParm(TlvParmLayout& parm);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(67):    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(191):    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(208):    virtual void DeleteParm(TlvParmLayout& parm);
   C:/Users/Greg/Documents/rsc/rsc/sn/PotsCwtService.cpp(268):    void Cancel() override;
   C:/Users/Greg/Documents/rsc/rsc/sn/PotsTreatments.h(149):    virtual EventHandler::Rc ApplyTreatment
 W077 Virtual function has no overrides
@@ -2676,9 +2670,9 @@ W077 Virtual function has no overrides
   C:/Users/Greg/Documents/rsc/rsc/sb/ServiceSM.h(139):    virtual void MorphToService(ServiceId sid);
   C:/Users/Greg/Documents/rsc/rsc/sb/TextTlvMessage.h(77):    virtual SbIpBufferPtr Parse() = 0;
   C:/Users/Greg/Documents/rsc/rsc/sb/TextTlvMessage.h(84):    virtual SbIpBufferPtr Build() = 0;
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(76):    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(200):    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(217):    virtual void DeleteParm(TlvParmLayout& parm);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(67):    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(191):    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(208):    virtual void DeleteParm(TlvParmLayout& parm);
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(272):    virtual bool MatchParm(TlvParmPtr pptr, ParmIterator& pit, bool& last) const;
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(277):    virtual void AddFence();
 W082 Adjacent arguments have the same type
@@ -2792,7 +2786,7 @@ W082 Adjacent arguments have the same type
   C:/Users/Greg/Documents/rsc/rsc/sb/SbTracer.h(190):       SignalFilter(ProtocolId p, SignalId s, NodeBase::TraceStatus ts);
   C:/Users/Greg/Documents/rsc/rsc/sb/Service.h(181):    explicit Service(Id sid, bool modifiable = false, bool modifier = false);
   C:/Users/Greg/Documents/rsc/rsc/sb/SsmFactory.h(56):    SsmFactory(Id fid, ProtocolId prid, NodeBase::c_string name);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(113):    template< class T > T* CopyType
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(104):    template< class T > T* CopyType
   C:/Users/Greg/Documents/rsc/rsc/st/StTestData.h(78):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
   C:/Users/Greg/Documents/rsc/rsc/st/TestSessions.h(354):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
 W088 Argument could be const
@@ -2819,7 +2813,6 @@ W088 Argument could be const
   C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(535/1):    bool GetSizeOf(ExprPtr& expr, size_t pos);
   C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(536/1):    bool GetThrow(ExprPtr& expr, size_t pos);
   C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(537/1):    bool GetTypeId(ExprPtr& expr, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Exception.h(67/1):    Exception(Exception&& that);
   C:/Users/Greg/Documents/rsc/rsc/nb/Object.h(59/2):    virtual void Patch(sel_t selector, void* arguments) { }
   C:/Users/Greg/Documents/rsc/rsc/nb/Q1Way.h(90/1):    bool Enq(T& elem)
   C:/Users/Greg/Documents/rsc/rsc/nb/Q1Way.h(114/1):    bool Henq(T& elem)
@@ -2836,7 +2829,7 @@ W088 Argument could be const
   C:/Users/Greg/Documents/rsc/rsc/sb/Initiator.h(108/2):       (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const;
   C:/Users/Greg/Documents/rsc/rsc/sb/Message.h(132/1):    virtual InspectRc InspectMsg(NodeBase::debug64_t& errval) const;
   C:/Users/Greg/Documents/rsc/rsc/sb/ServiceSM.h(107/1):    virtual void PsmDeleted(ProtocolSM& exPsm);
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(217/1):    virtual void DeleteParm(TlvParmLayout& parm);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(208/1):    virtual void DeleteParm(TlvParmLayout& parm);
 W090 Function could be const
   C:/Users/Greg/Documents/rsc/rsc/cb/BcSessions.h(1111):    virtual CipMessage* BuildCipCpg(Progress::Ind progress);
   C:/Users/Greg/Documents/rsc/rsc/cb/BcSessions.h(1167):    CipMessage* BuildCipRel(Cause::Ind cause);
@@ -3507,24 +3500,24 @@ W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(2506): void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(2522): const TypeTags* FuncSpec::Tags() const
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(2529): TypeTags* FuncSpec::Tags()
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(2932): uint32_t Function::CalcHash() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4563): FunctionRole Function::FuncRole() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4600): FunctionType Function::FuncType() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4611): Cxx::Access Function::GetAccess() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4619): CodeFile* Function::GetDeclFile() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4626): void Function::GetDecls(CxxNamedSet& items)
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4633): const Function* Function::GetDefn() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4642): Function* Function::GetDefn()
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4651): CodeFile* Function::GetDefnFile() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4660): CxxScope* Function::GetScope() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4688): CxxScope* Function::GetTemplate() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4699): CxxScope* Function::GetTemplateInstance() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4707): TemplateType Function::GetTemplateType() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5215): bool Function::IsImplemented() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5438): size_t Function::LogOffsetToArgIndex(word offset) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(6171): bool Function::WasRead()
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(6378): void SpaceData::GetDecls(CxxNamedSet& items)
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(6477): void SpaceDefn::GetDecls(CxxNamedSet& items)
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(2933): uint32_t Function::CalcHash() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4564): FunctionRole Function::FuncRole() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4601): FunctionType Function::FuncType() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4612): Cxx::Access Function::GetAccess() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4620): CodeFile* Function::GetDeclFile() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4627): void Function::GetDecls(CxxNamedSet& items)
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4634): const Function* Function::GetDefn() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4643): Function* Function::GetDefn()
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4652): CodeFile* Function::GetDefnFile() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4661): CxxScope* Function::GetScope() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4689): CxxScope* Function::GetTemplate() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4700): CxxScope* Function::GetTemplateInstance() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(4708): TemplateType Function::GetTemplateType() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5216): bool Function::IsImplemented() const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5439): size_t Function::LogOffsetToArgIndex(word offset) const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(6172): bool Function::WasRead()
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(6379): void SpaceData::GetDecls(CxxNamedSet& items)
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(6478): void SpaceDefn::GetDecls(CxxNamedSet& items)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(471): Class* BaseDecl::GetClass() const
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(595): void CxxScoped::AddFiles(LibItemSet& imSet) const
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(823): bool CxxScoped::IsAuto() const
@@ -4111,8 +4104,8 @@ W119 Argument passed by value is modified
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxArea.cpp(132/3):    (const CxxScoped* member, const CxxScope* scope, SymbolView* view)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxArea.cpp(2830/2):    const CxxScope* scope, CodeFile* file, SymbolView& view) const
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(2017/1): TypeName* QualName::At(size_t n) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5496/2):    const CxxScope* scope, CodeFile* file, SymbolView& view) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5736/1): void Function::SetOperator(Cxx::Operator oper)
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5497/2):    const CxxScope* scope, CodeFile* file, SymbolView& view) const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp(5737/1): void Function::SetOperator(Cxx::Operator oper)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxScoped.cpp(3883/1): void Using::SetScope(CxxScope* scope)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxString.cpp(217/2): static size_t FindTemplateBegin(const string& name, size_t pos, size_t depth)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxString.cpp(239/2): static size_t FindTemplateEnd(const string& name, size_t pos)
@@ -4201,7 +4194,7 @@ W119 Argument passed by value is modified
   C:/Users/Greg/Documents/rsc/rsc/sb/ServiceSM.cpp(900/2):    (const Trigger* trigger, const Initiator* modifier, Event& snpEvent)
   C:/Users/Greg/Documents/rsc/rsc/sb/TimerRegistry.cpp(75/1): Timer::QId TimerRegistry::CalcQId(secs_t secs) const
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.cpp(223/2): TlvParmPtr TlvMessage::CopyParm(const TlvParmLayout& src, ParameterId pid)
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(114/3):       (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(105/3):       (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
   C:/Users/Greg/Documents/rsc/rsc/st/MscBuilder.cpp(1024/1):    (const MscContext* active, const MsgTrace& mt, const TransTrace* tt)
 W120 Function returns non-const reference or pointer to member data
   C:/Users/Greg/Documents/rsc/rsc/cb/BcSessions.h(1000):    DigitString& DialedDigits() { return dialed_; }
@@ -5307,7 +5300,7 @@ C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.h
     1202:    static const TypeSpecPtr Bool; // CxxExecute.cpp
 C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp
   W004 C-style cast
-    4701:    if(tmplt_ != nullptr) return (CxxScope*) this;
+    4702:    if(tmplt_ != nullptr) return (CxxScope*) this;
   W007 Cast down the inheritance hierarchy
     89:             auto farg = static_cast< Function* >(a->item_);
     924:       auto cls = static_cast<const Class*>(scope);
@@ -5318,20 +5311,20 @@ C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp
     1926:    auto item = static_cast< Data* >(FindTemplateAnalog(this));
     2013:          static_cast< Block* >(GetScope())->EraseItem(this);
     2029:          static_cast< Block* >(GetScope())->ReplaceItem(this, next_.release());
-    3721:    else if(!static_cast< Function* >(item)->virtual_)
-    4498:       func = static_cast< Function* >(inst->FindTemplateAnalog(this));
-    4511:       auto i = FindArg(static_cast< const Argument* >(item), false);
-    4558:    return static_cast< Function* >((*cti)->FindInstanceAnalog(this));
-    5263:    auto that = static_cast< const Argument* >(FindTemplateAnalog(arg));
-    5718:    auto func = static_cast< Function* >(FindTemplateAnalog(this));
-    5730:    auto func = static_cast< Function* >(FindTemplateAnalog(this));
-    5975:                auto item = static_cast< CxxNamed* >(args.front().item_);
-    6164:       auto func = static_cast< Function* >(cls->FindTemplateAnalog(this));
+    3722:    else if(!static_cast< Function* >(item)->virtual_)
+    4499:       func = static_cast< Function* >(inst->FindTemplateAnalog(this));
+    4512:       auto i = FindArg(static_cast< const Argument* >(item), false);
+    4559:    return static_cast< Function* >((*cti)->FindInstanceAnalog(this));
+    5264:    auto that = static_cast< const Argument* >(FindTemplateAnalog(arg));
+    5719:    auto func = static_cast< Function* >(FindTemplateAnalog(this));
+    5731:    auto func = static_cast< Function* >(FindTemplateAnalog(this));
+    5976:                auto item = static_cast< CxxNamed* >(args.front().item_);
+    6165:       auto func = static_cast< Function* >(cls->FindTemplateAnalog(this));
   W008 Cast removes const qualification
-    3087:    return FoundFunc(const_cast< Function* >(this), args);
-    4467:    auto prev = const_cast< Function* >(this);
-    4691:    if(IsTemplate()) return const_cast< Function* >(this);
-    4701:    if(tmplt_ != nullptr) return (CxxScope*) this;
+    3088:    return FoundFunc(const_cast< Function* >(this), args);
+    4468:    auto prev = const_cast< Function* >(this);
+    4692:    if(IsTemplate()) return const_cast< Function* >(this);
+    4702:    if(tmplt_ != nullptr) return (CxxScope*) this;
   W082 Adjacent arguments have the same type
     185: static TypeMatch MatchTemplate(const string& thisType,
 * W106 Function does not invoke Debug::ft
@@ -5367,27 +5360,27 @@ C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.cpp
     2506: void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
     2522: const TypeTags* FuncSpec::Tags() const
     2529: TypeTags* FuncSpec::Tags()
-    2932: uint32_t Function::CalcHash() const
-    4563: FunctionRole Function::FuncRole() const
-    4600: FunctionType Function::FuncType() const
-    4611: Cxx::Access Function::GetAccess() const
-    4619: CodeFile* Function::GetDeclFile() const
-    4626: void Function::GetDecls(CxxNamedSet& items)
-    4633: const Function* Function::GetDefn() const
-    4642: Function* Function::GetDefn()
-    4651: CodeFile* Function::GetDefnFile() const
-    4660: CxxScope* Function::GetScope() const
-    4688: CxxScope* Function::GetTemplate() const
-    4699: CxxScope* Function::GetTemplateInstance() const
-    4707: TemplateType Function::GetTemplateType() const
-    5215: bool Function::IsImplemented() const
-    5438: size_t Function::LogOffsetToArgIndex(word offset) const
-    6171: bool Function::WasRead()
-    6378: void SpaceData::GetDecls(CxxNamedSet& items)
-    6477: void SpaceDefn::GetDecls(CxxNamedSet& items)
+    2933: uint32_t Function::CalcHash() const
+    4564: FunctionRole Function::FuncRole() const
+    4601: FunctionType Function::FuncType() const
+    4612: Cxx::Access Function::GetAccess() const
+    4620: CodeFile* Function::GetDeclFile() const
+    4627: void Function::GetDecls(CxxNamedSet& items)
+    4634: const Function* Function::GetDefn() const
+    4643: Function* Function::GetDefn()
+    4652: CodeFile* Function::GetDefnFile() const
+    4661: CxxScope* Function::GetScope() const
+    4689: CxxScope* Function::GetTemplate() const
+    4700: CxxScope* Function::GetTemplateInstance() const
+    4708: TemplateType Function::GetTemplateType() const
+    5216: bool Function::IsImplemented() const
+    5439: size_t Function::LogOffsetToArgIndex(word offset) const
+    6172: bool Function::WasRead()
+    6379: void SpaceData::GetDecls(CxxNamedSet& items)
+    6478: void SpaceDefn::GetDecls(CxxNamedSet& items)
   W119 Argument passed by value is modified
-    5496/2:    const CxxScope* scope, CodeFile* file, SymbolView& view) const
-    5736/1: void Function::SetOperator(Cxx::Operator oper)
+    5497/2:    const CxxScope* scope, CodeFile* file, SymbolView& view) const
+    5737/1: void Function::SetOperator(Cxx::Operator oper)
 C:/Users/Greg/Documents/rsc/rsc/ct/CxxScope.h
   W004 C-style cast
     391:    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -7020,8 +7013,6 @@ C:/Users/Greg/Documents/rsc/rsc/nb/Exception.h
     71:    virtual ~Exception();
   W075 Virtual function is public
     51:    virtual void Display(std::ostream& stream, const std::string& prefix) const;
-* W088 Argument could be const
-    67/1:    Exception(Exception&& that);
 C:/Users/Greg/Documents/rsc/rsc/nb/FileThread.cpp
   W007 Cast down the inheritance hierarchy
     212:       auto req = static_cast< FileRequest* >(msg);
@@ -7070,11 +7061,9 @@ C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.cpp
     510: void CtorChain::SetOuter(FunctionTrace* outer)
 C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.h
 * W043 Member could be protected
-    44:    FunctionTrace(fn_name_arg func, fn_depth depth);
-    48:    FunctionTrace();
+    44:    FunctionTrace();
 * W060 Base class constructor is public
-    44:    FunctionTrace(fn_name_arg func, fn_depth depth);
-    48:    FunctionTrace();
+    44:    FunctionTrace();
 C:/Users/Greg/Documents/rsc/rsc/nb/Heap.cpp
 * W106 Function does not invoke Debug::ft
     145: void Heap::Freeing(void* addr, size_t size)
@@ -9589,54 +9578,49 @@ C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.cpp
     223/2: TlvParmPtr TlvMessage::CopyParm(const TlvParmLayout& src, ParameterId pid)
 C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h
   W006 reinterpret_cast
-    88:       return reinterpret_cast< T* >(pptr->bytes);
-    102:       auto dest = reinterpret_cast< T* >(pptr->bytes);
-    137:       parm = (pptr == nullptr ? nullptr : reinterpret_cast< T* >(pptr->bytes));
+    79:       return reinterpret_cast< T* >(pptr->bytes);
+    93:       auto dest = reinterpret_cast< T* >(pptr->bytes);
+    128:       parm = (pptr == nullptr ? nullptr : reinterpret_cast< T* >(pptr->bytes));
     282:       { return reinterpret_cast< TlvMsgLayout* >(Buffer()->HeaderPtr()); }
 * W032 Unused function
-    62:    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
-    76:    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
-    185:    size_t AllParms(TlvParmArray ptab, size_t size) const;
-    191:    size_t FindParms(ParameterId pid, TlvParmArray ptab, size_t size) const;
-    205:    TlvParmPtr AddBytes
-    212:    TlvParmPtr CopyParm
+    58:    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
+    67:    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
+    176:    size_t AllParms(TlvParmArray ptab, size_t size) const;
+    182:    size_t FindParms(ParameterId pid, TlvParmArray ptab, size_t size) const;
+    196:    TlvParmPtr AddBytes
+    203:    TlvParmPtr CopyParm
     265:    NodeBase::byte_t* FindBytes(size_t& size, ParameterId pid) const;
     272:    virtual bool MatchParm(TlvParmPtr pptr, ParmIterator& pit, bool& last) const;
     287:    size_t ParmOffset(ParmIterator& pit) const;
 * W042 Member could be private
-    156:       ParmIterator() : mptr(nullptr), pptr(nullptr), pindex(0) { }
-    159:       ParmIterator& operator=(const ParmIterator& that) = default;
-    174:    TlvParmPtr FirstParm(ParmIterator& pit) const;
-    179:    TlvParmPtr NextParm(ParmIterator& pit) const;
-    200:    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
+    147:       ParmIterator() : mptr(nullptr), pptr(nullptr), pindex(0) { }
+    150:       ParmIterator& operator=(const ParmIterator& that) = default;
+    165:    TlvParmPtr FirstParm(ParmIterator& pit) const;
+    170:    TlvParmPtr NextParm(ParmIterator& pit) const;
+    191:    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
     277:    virtual void AddFence();
     281:    TlvMsgLayout* TlvLayout() const
     292:    Fence* FencePtr() const;
     296:    void CheckFence() const;
-* W043 Member could be protected
-    50:    explicit TlvMessage(SbIpBufferPtr& buff);
-    67:    TlvMessage(const Message& msg, ProtocolSM* psm);
 * W060 Base class constructor is public
-    50:    explicit TlvMessage(SbIpBufferPtr& buff);
-    54:    TlvMessage(ProtocolSM* psm, size_t size);
-    62:    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
-    67:    TlvMessage(const Message& msg, ProtocolSM* psm);
+    50:    TlvMessage(ProtocolSM* psm, size_t size);
+    58:    TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
   W075 Virtual function is public
-    76:    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
-    200:    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
-    217:    virtual void DeleteParm(TlvParmLayout& parm);
+    67:    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
+    191:    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
+    208:    virtual void DeleteParm(TlvParmLayout& parm);
 * W077 Virtual function has no overrides
-    76:    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
-    200:    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
-    217:    virtual void DeleteParm(TlvParmLayout& parm);
+    67:    virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
+    191:    virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
+    208:    virtual void DeleteParm(TlvParmLayout& parm);
     272:    virtual bool MatchParm(TlvParmPtr pptr, ParmIterator& pit, bool& last) const;
     277:    virtual void AddFence();
   W082 Adjacent arguments have the same type
-    113:    template< class T > T* CopyType
+    104:    template< class T > T* CopyType
 * W088 Argument could be const
-    217/1:    virtual void DeleteParm(TlvParmLayout& parm);
+    208/1:    virtual void DeleteParm(TlvParmLayout& parm);
   W119 Argument passed by value is modified
-    114/3:       (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
+    105/3:       (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
 C:/Users/Greg/Documents/rsc/rsc/sb/TlvParameter.cpp
   W007 Cast down the inheritance hierarchy
     67:    auto& tmsg = static_cast< const TlvMessage& >(msg);

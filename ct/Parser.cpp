@@ -1351,7 +1351,6 @@ bool Parser::GetCtorInit(FunctionPtr& func)
       //  the expression in parentheses as an argument list in case it's a
       //  constructor call.
       //
-      begin = CurrPos();
       auto call = false;
       auto cls = func->GetClass();
       if(cls != nullptr)
@@ -1382,6 +1381,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
          end = lexer_.FindClosing('(', ')');
          if(end == string::npos) return Backup(start, 63);
          if(!GetArgList(token)) return Backup(start, 64);
+         auto begin = baseName->GetPos();
          memberName = baseName->Name();
          MemberInitPtr mem(new MemberInit(func.get(), memberName, token));
          mem->SetContext(begin);

@@ -344,9 +344,9 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
          return order + 13;
       default:
          if(oper_) return order + 14;
-         if(virt_) return order + 16;
+         if(virt_) return order + 15;
          if(over_) return order + 17;
-         return order + 15;
+         return order + 16;
       }
       break;
    }

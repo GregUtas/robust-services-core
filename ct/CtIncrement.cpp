@@ -256,11 +256,11 @@ class CoverageAction : public CliTextParm
 public: CoverageAction();
 };
 
-const id_t CoverageLoadIndex = 1;
-const id_t CoverageQueryIndex = 2;
-const id_t CoverageUnderIndex = 3;
-const id_t CoverageEraseIndex = 4;
-const id_t CoverageUpdateIndex = 5;
+constexpr id_t CoverageLoadIndex = 1;
+constexpr id_t CoverageQueryIndex = 2;
+constexpr id_t CoverageUnderIndex = 3;
+constexpr id_t CoverageEraseIndex = 4;
+constexpr id_t CoverageUpdateIndex = 5;
 
 fixed_string CoverageActionExpl = "subcommand...";
 

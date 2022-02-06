@@ -100,7 +100,7 @@ typedef std::pair< string, Typedef* > TypePair;
 //  set, only the files that contain references are displayed.  If VERSBOSE is
 //  set, the line numbers where the references occur are also displayed.
 //
-const word LAST_XREF_START_COLUMN = 122;
+constexpr word LAST_XREF_START_COLUMN = 122;
 
 static void DisplayReferences
    (ostream& stream, const CxxTokenVector& refs, bool verbose)

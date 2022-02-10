@@ -322,20 +322,21 @@ word IpCommand::ProcessCommand(CliThread& cli) const
 
    case UsesIPv6Index:
       if(!cli.EndOfInput()) return -1;
-      *cli.obuf << "Uses IPv6: " << IpPortRegistry::UseIPv6() << CRLF;
-      return cli.Report(0, name);
+      *cli.obuf << spaces(2) << "Uses IPv6: ";
+      *cli.obuf << IpPortRegistry::UseIPv6() << CRLF;
+      break;
 
    case LocalAddrIndex:
       if(GetBoolParmRc(retest, cli) == Error) return -1;
       if(!cli.EndOfInput()) return -1;
       if(retest)
       {
-         *cli.obuf << "Retesting local address..." << CRLF;
+         *cli.obuf << spaces(2) << "Retesting local address..." << CRLF;
          cli.Flush();
          Singleton< SendLocalThread >::Instance()->Retest();
          ThisThread::Pause(5 * ONE_SEC);
       }
-      *cli.obuf << "Local address: ";
+      *cli.obuf << spaces(2) << "Local address: ";
       Singleton< IpPortRegistry >::Instance()->DisplayLocalAddr(*cli.obuf);
       *cli.obuf << CRLF;
       break;
@@ -343,17 +344,17 @@ word IpCommand::ProcessCommand(CliThread& cli) const
    case LocalAddrsIndex:
       if(!cli.EndOfInput()) return -1;
       localAddrs = SysIpL2Addr::LocalAddrs();
-      *cli.obuf << "Local addresses:" << CRLF;
+      *cli.obuf << spaces(2) << "Local addresses:" << CRLF;
 
       if(localAddrs.empty())
       {
-         *cli.obuf << spaces(2) << "None found." << CRLF;
+         *cli.obuf << spaces(4) << "None found." << CRLF;
       }
       else
       {
          for(size_t i = 0; i < localAddrs.size(); ++i)
          {
-            *cli.obuf << spaces(2) << localAddrs[i].to_str() << CRLF;
+            *cli.obuf << spaces(4) << localAddrs[i].to_str() << CRLF;
          }
       }
       break;

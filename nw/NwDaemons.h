@@ -23,11 +23,14 @@
 #define NWDAEMONS_H_INCLUDED
 
 #include "Daemon.h"
+#include "Duration.h"
 #include "NwTypes.h"
 #include "SysTypes.h"
+#include "TimePoint.h"
 
 namespace NetworkBase
 {
+   class IoThreadRecreator;
    class TcpIpService;
    class UdpIpService;
 }
@@ -38,20 +41,74 @@ namespace NetworkBase
 {
 //  Daemons for managing I/O threads.
 //
+class IoDaemon : public NodeBase::Daemon
+{
+   friend class IoThreadRecreator;
+public:
+   //  Virtual to allow subclassing.
+   //
+   virtual ~IoDaemon() = default;
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
+protected:
+   //  Creates a daemon identified by NAME that will recreate the I/O thread
+   //  for SERVICE and PORT if it exits.
+   //
+   IoDaemon(NodeBase::c_string name, const IpService* service, ipport_t port);
+private:
+   //  Overridden by subclasses to create a protocol-specific thread for
+   //  SERVICE and PORT.
+   //
+   virtual NodeBase::Thread* CreateIoThread
+      (const IpService* service, ipport_t port) = 0;
+
+   //  Invoked when the deferred work item is deleted.
+   //
+   void RecreatorDeleted();
+
+   //  Overridden to create the I/O thread.
+   //
+   NodeBase::Thread* CreateThread() override;
+
+   //  The service for the I/O thread.
+   //
+   const IpService* const service_;
+
+   //  The port for the I/O thread.
+   //
+   const ipport_t port_;
+
+   //  The time when the last thread was created.
+   //
+   NodeBase::TimePoint lastCreation_;
+
+   //  The backoff time for recreating the thread if it exits quickly.
+   //
+   NodeBase::secs_t backoffSecs_;
+
+   //  The work item queued to recreate the thread after a backoff time.
+   //
+   IoThreadRecreator* recreator_;
+};
+
+//------------------------------------------------------------------------------
+
 extern NodeBase::fixed_string TcpIoDaemonName;
 
-class TcpIoDaemon : public NodeBase::Daemon
+class TcpIoDaemon : public IoDaemon
 {
 public:
    //  Finds/creates the daemon that manages the TCP I/O thread that receives
    //  messages on PORT on behalf of SERVICE.
    //
    static TcpIoDaemon* GetDaemon(const TcpIpService* service, ipport_t port);
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -62,39 +119,23 @@ private:
    //
    TcpIoDaemon(const TcpIpService* service, ipport_t port);
 
-   //  Not subclassed.
-   //
-   ~TcpIoDaemon();
-
    //  Overridden to create a TCP I/O thread.
    //
-   NodeBase::Thread* CreateThread() override;
-
-   //  The service for the TCP I/O thread.
-   //
-   const TcpIpService* const service_;
-
-   //  The port for the TCP I/O thread.
-   //
-   const ipport_t port_;
+   NodeBase::Thread* CreateIoThread
+      (const IpService* service, ipport_t port) override;
 };
 
 //------------------------------------------------------------------------------
 
 extern NodeBase::fixed_string UdpIoDaemonName;
 
-class UdpIoDaemon : public NodeBase::Daemon
+class UdpIoDaemon : public IoDaemon
 {
 public:
    //  Finds/creates the daemon that manages the UDP I/O thread that receives
    //  messages on PORT on behalf of SERVICE.
    //
    static UdpIoDaemon* GetDaemon(const UdpIpService* service, ipport_t port);
-
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -105,21 +146,10 @@ private:
    //
    UdpIoDaemon(const UdpIpService* service, ipport_t port);
 
-   //  Not subclassed.
-   //
-   ~UdpIoDaemon();
-
    //  Overridden to create a UDP I/O thread.
    //
-   NodeBase::Thread* CreateThread() override;
-
-   //  The service for the UDP I/O thread.
-   //
-   const UdpIpService* const service_;
-
-   //  The port for the UDP I/O thread.
-   //
-   const ipport_t port_;
+   NodeBase::Thread* CreateIoThread
+      (const IpService* service, ipport_t port) override;
 };
 }
 #endif

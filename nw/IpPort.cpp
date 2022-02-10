@@ -269,7 +269,7 @@ void IpPort::EnsureAlarm()
    {
       auto alarmExpl = "Service unavailable: " + string(service_->Name());
       FunctionGuard guard(Guard_ImmUnprotect);
-      alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 5);
+      alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 0);
    }
 }
 

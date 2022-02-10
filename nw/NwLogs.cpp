@@ -24,6 +24,9 @@
 #include "Alarm.h"
 #include "AlarmRegistry.h"
 #include "Debug.h"
+#include "Deferred.h"
+#include "DeferredRegistry.h"
+#include "IpPortRegistry.h"
 #include "Log.h"
 #include "LogGroup.h"
 #include "Singleton.h"
@@ -99,6 +102,12 @@ void NetworkIsUp()
    Debug::ft("NetworkBase.NetworkIsUp");
 
    UpdateAlarm(NetworkAlarmName, NetworkAvailable, NoAlarm, EMPTY_STR);
+
+   //  Create I/O threads by notifying all deferred work items.
+   //
+   auto ireg = Singleton< IpPortRegistry >::Instance();
+   auto dreg = Singleton< DeferredRegistry >::Instance();
+   dreg->NotifyAll(ireg, Deferred::Timeout);
 }
 
 //------------------------------------------------------------------------------

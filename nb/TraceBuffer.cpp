@@ -94,7 +94,7 @@ bool BufferTrace::Display(ostream& stream, const string& opts)
 
 //==============================================================================
 
-const size_t TraceBuffer::MinSize = 16;  // 64K TraceRecords
+const size_t TraceBuffer::MinSize = 17;  // 128K TraceRecords
 const size_t TraceBuffer::MaxSize = 22;  // 4M TraceRecords
 fixed_string TraceBuffer::NoneSelected = "none";
 

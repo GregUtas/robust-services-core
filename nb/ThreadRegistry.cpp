@@ -52,7 +52,9 @@ static bool IsSortedByThreadId(const Thread* thr1, const Thread* thr2)
 
 //==============================================================================
 
-ThreadInfo::ThreadInfo(ThreadState state, SysThread* systhrd, Thread* thread) :
+ThreadInfo::ThreadInfo
+   (ThreadId tid, ThreadState state, SysThread* systhrd, Thread* thread) :
+   tid_(tid),
    state_(state),
    systhrd_(systhrd),
    thread_(thread)
@@ -132,7 +134,7 @@ static SysThreadId NextSysThreadId_ = 0;
 
 //------------------------------------------------------------------------------
 
-ThreadRegistry::ThreadRegistry()
+ThreadRegistry::ThreadRegistry() : nextTid_(1)
 {
    Debug::ft("ThreadRegistry.ctor");
 
@@ -178,8 +180,9 @@ void ThreadRegistry::Created(SysThread* systhrd, Thread* thread)
 
    if(entry == threads_.cend())
    {
-      SetThreadId(thread);
-      threads_.insert(Entry(nid, ThreadInfo(Constructing, systhrd, thread)));
+      auto tid = SetThreadId(thread);
+      threads_.insert
+         (Entry(nid, ThreadInfo(tid, Constructing, systhrd, thread)));
       return;
    }
 
@@ -222,6 +225,7 @@ void ThreadRegistry::Display(ostream& stream,
 
    stream << prefix << "statsGroup : ";
    stream << strObj(statsGroup_.get()) << CRLF;
+   stream << prefix << "nextTid    : " << nextTid_ << CRLF;
 
    stream << prefix << "threads [ThreadId]" << CRLF;
    auto threads = GetThreads();
@@ -248,9 +252,34 @@ void ThreadRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void ThreadRegistry::Erase(SysThreadId nid)
+void ThreadRegistry::EraseThreadId(ThreadId tid)
 {
-   Debug::ft("ThreadRegistry.Erase");
+   Debug::ft("ThreadRegistry.EraseThreadId");
+
+   //  When a thread exits, its entry is not erased.  It enters the Deleted
+   //  state and remains registered against its native identifier, with its
+   //  ThreadId preserved.  This allows it to be distinguished from other
+   //  threads in trace tool output, even after it has exited.  ThreadIds
+   //  are assigned in ascending order, as tracekd by nextTid_.  When it
+   //  reaches the maximum ThreadId, it wraps around and assigns ThreadIds
+   //  starting at 1 again.  At this point, the ThreadId of a thread that
+   //  has exited can be reassigned, so its entry must finally be erased.
+   //
+   for(auto t = threads_.cbegin(); t != threads_.cend(); ++t)
+   {
+      if(t->second.tid_ == tid)
+      {
+         threads_.erase(t);
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void ThreadRegistry::Exiting(SysThreadId nid)
+{
+   Debug::ft("ThreadRegistry.Exiting");
 
    MutexGuard guard(&ThreadsLock_);
 
@@ -258,8 +287,21 @@ void ThreadRegistry::Erase(SysThreadId nid)
 
    if(entry != threads_.cend())
    {
-      threads_.erase(entry);
+      entry->second.state_ = Deleted;
+      entry->second.systhrd_ = nullptr;
+      entry->second.thread_ = nullptr;
    }
+}
+
+//------------------------------------------------------------------------------
+
+ThreadId ThreadRegistry::FindTid(SysThreadId nid) const
+{
+   Debug::noft();
+
+   auto entry = threads_.find(nid);
+   if(entry == threads_.end()) return NIL_ID;
+   return entry->second.tid_;
 }
 
 //------------------------------------------------------------------------------
@@ -289,13 +331,12 @@ ThreadState ThreadRegistry::GetState()
    if(entry != threads_.cend())
    {
       auto state = entry->second.state_;
-      auto systhrd = entry->second.systhrd_;
 
       if(state == Deleted)
       {
-         threads_.erase(entry);
          ThreadAdmin::Incr(ThreadAdmin::Orphans);
-         delete systhrd;
+         delete entry->second.systhrd_;
+         entry->second.systhrd_ = nullptr;
          Debug::SwLog(ThreadRegistry_GetState, "orphan exited", nid);
       }
 
@@ -471,23 +512,32 @@ Thread* ThreadRegistry::Select() const
 
 //------------------------------------------------------------------------------
 
-void ThreadRegistry::SetThreadId(Thread* thread) const
+ThreadId ThreadRegistry::SetThreadId(Thread* thread)
 {
    Debug::ft("ThreadRegistry.SetThreadId");
 
-   //  Get a list of all threads, sorted by ThreadId, and assign the
-   //  first available identifier to THREAD.
+   //  Get a list of all threads, sorted by ThreadId.  Assign the first
+   //  available identifier, starting at nextTid_, to THREAD.
    //
-   ThreadId tid = 1;
+   ThreadId tid = nextTid_++;
+   if(nextTid_ > Thread::MaxId) nextTid_ = 1;
+
    auto threads = GetThreads();
 
    for(auto t = threads.cbegin(); t != threads.cend(); ++t)
    {
-      if((*t)->Tid() != tid) break;
-      ++tid;
+      auto curr = (*t)->Tid();
+
+      if(curr < tid)
+         continue;
+      else if(curr > tid)
+         break;
+      else
+         ++tid;
    }
 
    thread->SetTid(tid);
+   return tid;
 }
 
 //------------------------------------------------------------------------------
@@ -523,6 +573,7 @@ void ThreadRegistry::Startup(RestartLevel level)
 
    //  This starts up all threads that survived the restart.
    //
+   nextTid_ = 1;
    if(statsGroup_ == nullptr) statsGroup_.reset(new ThreadStatsGroup);
 
    auto threads = GetThreads();

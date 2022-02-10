@@ -1606,7 +1606,7 @@ main_t Thread::Exit(signal_t sig)
    {
       log = Log::Create(ThreadLogGroup, ThreadForcedToExit);
    }
-   else if(LogSignal(sig) || Element::RunningInLab())
+   else if(LogSignal(sig) || (Element::RunningInLab() && (sig != SIGNIL)))
    {
       log = Log::Create(ThreadLogGroup, ThreadExited);
    }
@@ -2628,10 +2628,10 @@ void Thread::ReleaseResources(bool orphaned)
    //
    Restart::Release(stats_);
 
-   //  If the thread is about to exit, remove it from the registry, else
-   //  register its native thread as an orphan.  Various functions invoke
-   //  GetState to check for the existence of an orphaned native thread,
-   //  which is immediately exited when found.
+   //  If the thread is about to exit, delete its native thread, else
+   //  register it as an orphan.  Various functions invoke GetState to
+   //  check for the existence of an orphaned native thread, which is
+   //  immediately exited when found.
    //
    auto threads = Singleton< ThreadRegistry >::Extant();
 
@@ -2643,7 +2643,7 @@ void Thread::ReleaseResources(bool orphaned)
    {
       auto nid = (systhrd_ != nullptr ? systhrd_->Nid() : NIL_ID);
       systhrd_.reset();
-      if(nid != NIL_ID) threads->Erase(nid);
+      if(nid != NIL_ID) threads->Exiting(nid);
    }
 
    //  If the thread has a daemon, notify it of the deletion so that it can

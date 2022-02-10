@@ -67,7 +67,12 @@ enum ThreadState
 //
 struct ThreadInfo
 {
-   ThreadInfo(ThreadState state, SysThread* systhrd, Thread* thread);
+   ThreadInfo
+      (ThreadId tid, ThreadState state, SysThread* systhrd, Thread* thread);
+
+   //  The thread's identifier.
+   //
+   ThreadId tid_;
 
    //  The thread's state;
    //
@@ -75,7 +80,7 @@ struct ThreadInfo
 
    //  The wrapper for the native thread.
    //
-   SysThread* const systhrd_;
+   SysThread* systhrd_;
 
    //  The full RSC thread object.
    //
@@ -103,6 +108,10 @@ public:
    //  Returns the thread whose native identifier is NID.
    //
    Thread* FindThread(SysThreadId nid) const;
+
+   //  Returns the ThreadId assigned to the native identifier NID.
+   //
+   ThreadId FindTid(SysThreadId nid) const;
 
    //  Returns the number of threads in the registry.
    //
@@ -175,9 +184,9 @@ private:
    //
    bool IsDeleted() const;
 
-   //  Removes NID from the registry.
+   //  Invoked when the thread associated with NID is exiting.
    //
-   void Erase(SysThreadId nid);
+   void Exiting(SysThreadId nid);
 
    //  Selects the next thread to run.
    //
@@ -192,9 +201,14 @@ private:
    //
    void TrimThreads(std::list< Thread* >& threads) const;
 
-   //  Sets THREAD's ThreadId when adding it to the registry.
+   //  Sets THREAD's ThreadId when adding it to the registry.  Returns
+   //  the assigned ThreadId.
    //
-   void SetThreadId(Thread* thread) const;
+   ThreadId SetThreadId(Thread* thread);
+
+   //  Erases the entry if any, that contains TID.
+   //
+   void EraseThreadId(ThreadId tid);
 
    //  An entry for a thread.
    //
@@ -203,6 +217,10 @@ private:
    //  The threads.
    //
    ThreadMap threads_;
+
+   //  The starting point for assigning the next ThreadId.
+   //
+   ThreadId nextTid_;
 
    //  The statistics group for per-thread statistics.
    //

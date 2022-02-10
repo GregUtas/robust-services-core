@@ -82,7 +82,7 @@ bool TimedRecord::Display(ostream& stream, const string& opts)
    if((thr != nullptr) && (thr->CalcStatus(false) != TraceIncluded))
       return false;
 
-   auto tid = (thr != nullptr ? thr->Tid() : NIL_ID);
+   auto tid = (thr != nullptr ? thr->Tid() : reg->FindTid(nid_));
    stream << GetTime(opts) << TraceDump::Tab();
    stream << setw(TraceDump::TidWidth) << tid;
 

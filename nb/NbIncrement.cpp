@@ -43,6 +43,7 @@
 #include "Daemon.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
+#include "DeferredRegistry.h"
 #include "Duration.h"
 #include "Element.h"
 #include "FileThread.h"
@@ -733,6 +734,39 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
       Debug::SwLog(DaemonsCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
+}
+
+//------------------------------------------------------------------------------
+//
+//  The DEFERRED command.
+//
+class DeferredCommand : public CliCommand
+{
+public:
+   DeferredCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string DeferredStr = "deferred";
+fixed_string DeferredExpl = "Displays deferred work items.";
+
+DeferredCommand::DeferredCommand() : CliCommand(DeferredStr, DeferredExpl)
+{
+   BindParm(*new DispCBVParm);
+}
+
+word DeferredCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft("DeferredCommand.ProcessCommand");
+
+   bool v;
+
+   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!cli.EndOfInput()) return -1;
+
+   Singleton< DeferredRegistry >::Instance()->Output(*cli.obuf, 2, v);
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -3517,6 +3551,7 @@ NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
    BindCommand(*new DaemonsCommand);
    BindCommand(*new MutexesCommand);
    BindCommand(*new BuffersCommand);
+   BindCommand(*new DeferredCommand);
    BindCommand(*new PsignalsCommand);
    BindCommand(*new SingletonsCommand);
    BindCommand(*new HeapsCommand);

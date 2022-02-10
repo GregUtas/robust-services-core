@@ -111,6 +111,11 @@ public:
    //
    BlockingReason GetBlockingReason() const;
 
+   //  Queues MSG for processing by the thread.  May be overridden, but the
+   //  base class version must be invoked.
+   //
+   virtual bool EnqMsg(MsgBuffer& msg);
+
    //  Awakens a thread if it has paused.  If it has not paused, it will be
    //  immediately reawakened if it pauses.  If it is blocked for some other
    //  reason, it remains blocked.  MASK can be used to set flags that the
@@ -264,12 +269,6 @@ protected:
    //  up until it has invoked this function.
    //
    void SetInitialized();
-
-   //  Queues MSG for processing by the thread.  May be overridden, but the
-   //  base class version must be invoked.  Protected so that a subclass can
-   //  prevent direct access to its message queue.
-   //
-   virtual bool EnqMsg(MsgBuffer& msg);
 
    //  Dequeues the next message.  If no message is available, pauses for
    //  TIMEOUT to wait for a message.  May be overridden, but the base class

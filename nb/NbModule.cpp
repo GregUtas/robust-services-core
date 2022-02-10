@@ -29,6 +29,8 @@
 #include "CoutThread.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
+#include "DeferredRegistry.h"
+#include "DeferredThread.h"
 #include "Duration.h"
 #include "Element.h"
 #include "FileThread.h"
@@ -94,6 +96,7 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton< ThreadAdmin >::Instance()->Shutdown(level);
    Singleton< ThreadRegistry >::Instance()->Shutdown(level);
    Singleton< ObjectPoolRegistry >::Instance()->Shutdown(level);
+   Singleton< DeferredRegistry >::Instance()->Shutdown(level);
    Singleton< DaemonRegistry >::Instance()->Shutdown(level);
    Singleton< CfgParmRegistry >::Instance()->Shutdown(level);
    Singleton< LogGroupRegistry >::Instance()->Shutdown(level);
@@ -126,6 +129,7 @@ void NbModule::Startup(RestartLevel level)
    CreateNbLogs(level);
    Singleton< CfgParmRegistry >::Instance()->Startup(level);
    Singleton< DaemonRegistry >::Instance()->Startup(level);
+   Singleton< DeferredRegistry >::Instance()->Startup(level);
    Singleton< ObjectPoolRegistry >::Instance()->Startup(level);
    Singleton< ThreadRegistry >::Instance()->Startup(level);
    Singleton< ThreadAdmin >::Instance()->Startup(level);
@@ -151,6 +155,7 @@ void NbModule::Startup(RestartLevel level)
    Singleton< ObjectPoolAudit >::Instance()->Startup(level);
    Singleton< StatisticsThread >::Instance()->Startup(level);
    Singleton< LogThread >::Instance()->Startup(level);
+   Singleton< DeferredThread >::Instance()->Startup(level);
    Singleton< CliThread >::Instance()->Startup(level);
 }
 }

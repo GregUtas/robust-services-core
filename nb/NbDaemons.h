@@ -53,6 +53,22 @@ private:
 
 //------------------------------------------------------------------------------
 
+extern fixed_string DeferredDaemonName;
+
+class DeferredDaemon : public Daemon
+{
+   friend class Singleton< DeferredDaemon >;
+public:
+   void Patch(sel_t selector, void* arguments) override;
+private:
+   DeferredDaemon();
+   ~DeferredDaemon();
+   Thread* CreateThread() override;
+   AlarmStatus GetAlarmLevel() const override;
+};
+
+//------------------------------------------------------------------------------
+
 extern fixed_string LogDaemonName;
 
 class LogDaemon : public Daemon

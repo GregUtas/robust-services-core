@@ -60,6 +60,7 @@ enum RestartReason
    DeathOfCriticalThread,     // irrecoverable exception
    HeapProtectionFailed,      // failed to change memory protection
    HeapCorruption,            // corrupt heap detected
+   DeferredQueueCorruption,   // corrupt deferred work item queue
    WorkQueueCorruption,       // corrupt invoker work queue
    TimerQueueCorruption,      // corrupt timer registry queue
    RestartReason_N            // number of restart reasons

@@ -22,6 +22,8 @@
 #include "NbDaemons.h"
 #include "CliThread.h"
 #include "Debug.h"
+#include "DeferredThread.h"
+#include "LogThread.h"
 #include "ObjectPoolAudit.h"
 #include "Singleton.h"
 #include "StatisticsThread.h"
@@ -71,6 +73,47 @@ void CliDaemon::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
+fixed_string DeferredDaemonName = "defer";
+
+//------------------------------------------------------------------------------
+
+DeferredDaemon::DeferredDaemon() : Daemon(DeferredDaemonName, 1)
+{
+   Debug::ft("DeferredDaemon.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+DeferredDaemon::~DeferredDaemon()
+{
+   Debug::ftnt("DeferredDaemon.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+Thread* DeferredDaemon::CreateThread()
+{
+   Debug::ft("DeferredDaemon.CreateThread");
+   return Singleton< DeferredThread >::Instance();
+}
+
+//------------------------------------------------------------------------------
+
+AlarmStatus DeferredDaemon::GetAlarmLevel() const
+{
+   Debug::ft("DeferredDaemon.GetAlarmLevel");
+   return CriticalAlarm;
+}
+
+//------------------------------------------------------------------------------
+
+void DeferredDaemon::Patch(sel_t selector, void* arguments)
+{
+   Daemon::Patch(selector, arguments);
+}
+
+//==============================================================================
+
 fixed_string LogDaemonName = "log";
 
 //------------------------------------------------------------------------------
@@ -92,7 +135,7 @@ LogDaemon::~LogDaemon()
 Thread* LogDaemon::CreateThread()
 {
    Debug::ft("LogDaemon.CreateThread");
-   return Singleton< CliThread >::Instance();
+   return Singleton< LogThread >::Instance();
 }
 
 //------------------------------------------------------------------------------

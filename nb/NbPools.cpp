@@ -23,6 +23,7 @@
 #include <cstddef>
 #include "ClassRegistry.h"
 #include "Debug.h"
+#include "DeferredRegistry.h"
 #include "MsgBuffer.h"
 #include "NbAppIds.h"
 #include "Singleton.h"
@@ -58,6 +59,7 @@ void MsgBufferPool::ClaimBlocks()
    Debug::ft("MsgBufferPool.ClaimBlocks");
 
    Singleton< ThreadRegistry >::Instance()->ClaimBlocks();
+   Singleton< DeferredRegistry >::Instance()->ClaimBlocks();
    Singleton< TraceBuffer >::Instance()->ClaimBlocks();
 
    //  Although subclasses of Class don't necessarily own MsgBuffers, they

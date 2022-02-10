@@ -130,9 +130,10 @@ public:
    void Startup(RestartLevel level) override;
 protected:
    //  Protected because this class is virtual.  SIZE is the number of
-   //  threads to be created and monitored.
+   //  threads to be created and monitored.  NOALARM is set if an alarm
+   //  should not be raised when the daemon cannot create its thread(s).
    //
-   Daemon(c_string name, size_t size);
+   Daemon(c_string name, size_t size, bool noalarm = false);
 private:
    //  Creates a thread that this daemon will manage.
    //
@@ -181,6 +182,11 @@ private:
    //  The number of threads to be created.
    //
    size_t size_;
+
+   //  Set if an alarm should not be raised when the thread(s) cannot
+   //  be created.
+   //
+   bool noalarm_;
 
    //  Used to detect traps in CreateThread and to disable the daemon.
    //

@@ -42,9 +42,10 @@ using std::string;
 
 namespace NodeBase
 {
-Daemon::Daemon(c_string name, size_t size) :
+Daemon::Daemon(c_string name, size_t size, bool noalarm) :
    name_(name),
    size_(size),
+   noalarm_(noalarm),
    traps_(0),
    alarm_(nullptr)
 {
@@ -156,11 +157,12 @@ void Daemon::Display(ostream& stream,
 {
    Permanent::Display(stream, prefix, options);
 
-   stream << prefix << "name  : " << name_ << CRLF;
-   stream << prefix << "did   : " << did_.to_str() << CRLF;
-   stream << prefix << "size  : " << size_ << CRLF;
-   stream << prefix << "traps : " << int(traps_) << CRLF;
-   stream << prefix << "alarm : " << strObj(alarm_) << CRLF;
+   stream << prefix << "name    : " << name_ << CRLF;
+   stream << prefix << "did     : " << did_.to_str() << CRLF;
+   stream << prefix << "size    : " << size_ << CRLF;
+   stream << prefix << "noalarm : " << noalarm_ << CRLF;
+   stream << prefix << "traps   : " << int(traps_) << CRLF;
+   stream << prefix << "alarm   : " << strObj(alarm_) << CRLF;
    stream << prefix << "threads [ThreadId]" << CRLF;
 
    auto lead = prefix + spaces(2);
@@ -191,6 +193,8 @@ void Daemon::Enable()
 void Daemon::EnsureAlarm()
 {
    Debug::ft("Daemon.EnsureAlarm");
+
+   if(noalarm_) return;
 
    //  If the thread unavailable alarm is not registered, create it.
    //
@@ -244,6 +248,8 @@ void Daemon::Patch(sel_t selector, void* arguments)
 void Daemon::RaiseAlarm(AlarmStatus level) const
 {
    Debug::ft("Daemon.RaiseAlarm");
+
+   if(alarm_ == nullptr) return;
 
    auto id = (level == CriticalAlarm ? ThreadCriticalDeath : ThreadUnavailable);
 

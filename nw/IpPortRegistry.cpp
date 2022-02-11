@@ -35,6 +35,7 @@
 #include "FunctionGuard.h"
 #include "IpPort.h"
 #include "IpService.h"
+#include "LocalAddrTest.h"
 #include "Log.h"
 #include "NwCliParms.h"
 #include "NwLogs.h"
@@ -471,10 +472,10 @@ void IpPortRegistry::TestEnd() const
    //
    auto reg = Singleton< AlarmRegistry >::Instance();
    auto alarm = reg->Find(LocAddrAlarmName);
+   auto ok = (localState_ == Verified);
 
    if(alarm != nullptr)
    {
-      auto ok = (localState_ == Verified);
       auto status = (ok ? NoAlarm : CriticalAlarm);
       auto id = (ok ? NetworkLocalAddrSuccess : NetworkLocalAddrFailure);
       auto log = alarm->Create(NetworkLogGroup, id, status);
@@ -484,6 +485,13 @@ void IpPortRegistry::TestEnd() const
          if(!ok) *log << Log::Tab << "errval=" << localState_;
          Log::Submit(log);
       }
+   }
+
+   //  If the local address test failed, rerun it in 15 seconds.
+   //
+   if(!ok)
+   {
+      new LocalAddrRetest(15);
    }
 }
 

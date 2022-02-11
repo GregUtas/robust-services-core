@@ -22,9 +22,11 @@
 #ifndef LOCALADDRTEST_H_INCLUDED
 #define LOCALADDRTEST_H_INCLUDED
 
+#include "Deferred.h"
 #include "InputHandler.h"
 #include "Thread.h"
 #include "UdpIpService.h"
+#include "Duration.h"
 #include "IpPortCfgParm.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
@@ -81,8 +83,30 @@ private:
 };
 
 //------------------------------------------------------------------------------
+
+class LocalAddrRetest : public Deferred
+{
+public:
+   //  Recreates SendLocalThread after TIMEOUT.
+   //
+   explicit LocalAddrRetest(secs_t timeout);
+
+   //  Not subclassed.
+   //
+   ~LocalAddrRetest();
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
+private:
+   //  Creates SendLocalThread to test the local address.
+   //
+   void EventHasOccurred(Event event) override;
+};
+
+//------------------------------------------------------------------------------
 //
-//  Thread for sending messages to each of this element's addresses.
+//  Local address test protocol over UDP.
 //
 class SendLocalIpService : public UdpIpService
 {

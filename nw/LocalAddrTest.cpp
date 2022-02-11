@@ -26,7 +26,6 @@
 #include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
@@ -179,61 +178,55 @@ void SendLocalThread::Display(ostream& stream,
 
 void SendLocalThread::Enter()
 {
-   while(true)
+   Debug::ft("SendLocalThread.Enter");
+
+   //  Inform the registry that the test is starting.
+   //
+   auto reg = Singleton< IpPortRegistry >::Instance();
+   reg->TestBegin();
+
+   //  Wait briefly if the UDP I/O thread that will receive our message
+   //  needs more time to bind a socket to our port.
+   //
+   auto port = Singleton< SendLocalIpService >::Instance()->Port();
+   auto ipPort = reg->GetPort(port, IpUdp);
+
+   for(auto i = 4; i > 0; --i)
    {
-      Debug::ft("SendLocalThread.Enter");
+      if(ipPort->GetSocket() != nullptr) break;
+      Pause(250 * ONE_mSEC);
+   }
 
-      //  Inform the registry that the test is starting.
+   if(ipPort->GetSocket() != nullptr)
+   {
+      reg->TestAdvance();
+
+      //  Send a message to the UDP I/O thread.  On success, give the
+      //  UDP I/O thread time to receive the message.
       //
-      auto reg = Singleton< IpPortRegistry >::Instance();
-      reg->TestBegin();
+      SysIpL3Addr addr(IpPortRegistry::LocalAddr(), port);
+      IpBufferPtr buff(new IpBuffer(MsgOutgoing, 0, sizeof(SysIpL3Addr)));
+      auto payload = reinterpret_cast< SysIpL3Addr* >(buff->PayloadPtr());
 
-      //  Wait briefly if the UDP I/O thread that will receive our message
-      //  needs more time to bind a socket to our port.
-      //
-      auto port = Singleton< SendLocalIpService >::Instance()->Port();
-      auto ipPort = reg->GetPort(port, IpUdp);
+      buff->SetTxAddr(addr);
+      buff->SetRxAddr(addr);
+      *payload = addr;
 
-      for(auto i = 4; i > 0; --i)
-      {
-         if(ipPort->GetSocket() != nullptr) break;
-         Pause(250 * ONE_mSEC);
-      }
-
-      if(ipPort->GetSocket() != nullptr)
+      if(buff->Send(true))
       {
          reg->TestAdvance();
-
-         //  Send a message to the UDP I/O thread.  On success, give the
-         //  UDP I/O thread time to receive the message.
-         //
-         SysIpL3Addr addr(IpPortRegistry::LocalAddr(), port);
-         IpBufferPtr buff(new IpBuffer(MsgOutgoing, 0, sizeof(SysIpL3Addr)));
-         auto payload = reinterpret_cast< SysIpL3Addr* >(buff->PayloadPtr());
-
-         buff->SetTxAddr(addr);
-         buff->SetRxAddr(addr);
-         *payload = addr;
-
-         if(buff->Send(true))
-         {
-            reg->TestAdvance();
-            Pause(2 * ONE_SEC);
-         }
+         Pause(2 * ONE_SEC);
       }
+   }
 
-      //  The test has ended.  If it was initiated from the CLI, inform the
-      //  CLI thread that the test has been completed.
-      //
-      reg->TestEnd();
+   //  The test has ended.  If it was initiated from the CLI, inform the
+   //  CLI thread that the test has been completed.
+   //
+   reg->TestEnd();
 
-      if(retest_)
-      {
-         retest_ = false;
-         Singleton< CliThread >::Instance()->Interrupt();
-      }
-
-      Pause(TIMEOUT_NEVER);
+   if(retest_)
+   {
+      Singleton< CliThread >::Instance()->Interrupt();
    }
 }
 
@@ -252,5 +245,45 @@ void SendLocalThread::Retest()
 
    retest_ = true;
    Interrupt();
+}
+
+//==============================================================================
+
+LocalAddrRetest::LocalAddrRetest(secs_t timeout) :
+   Deferred(*Singleton< IpPortRegistry >::Instance(), timeout, false)
+{
+   Debug::ft("LocalAddrRetest.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+LocalAddrRetest::~LocalAddrRetest()
+{
+   Debug::ftnt("LocalAddrRetest.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+void LocalAddrRetest::EventHasOccurred(Event event)
+{
+   Debug::ft("LocalAddrRetest.EventHasOccurred");
+
+   //  SendLocalThread currently exits when it completes its test.  But if
+   //  its design changes to just sleep until the next test, it would need
+   //  to be awoken instead.
+   //
+   auto thread = Singleton< SendLocalThread >::Extant();
+
+   if(thread == nullptr)
+      Singleton< SendLocalThread >::Instance();
+   else
+      thread->Interrupt();
+}
+
+//------------------------------------------------------------------------------
+
+void LocalAddrRetest::Patch(sel_t selector, void* arguments)
+{
+   Deferred::Patch(selector, arguments);
 }
 }

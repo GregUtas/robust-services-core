@@ -260,7 +260,7 @@ void ThreadRegistry::EraseThreadId(ThreadId tid)
    //  state and remains registered against its native identifier, with its
    //  ThreadId preserved.  This allows it to be distinguished from other
    //  threads in trace tool output, even after it has exited.  ThreadIds
-   //  are assigned in ascending order, as tracekd by nextTid_.  When it
+   //  are assigned in ascending order, as tracked by nextTid_.  When it
    //  reaches the maximum ThreadId, it wraps around and assigns ThreadIds
    //  starting at 1 again.  At this point, the ThreadId of a thread that
    //  has exited can be reassigned, so its entry must finally be erased.
@@ -295,17 +295,6 @@ void ThreadRegistry::Exiting(SysThreadId nid)
 
 //------------------------------------------------------------------------------
 
-ThreadId ThreadRegistry::FindTid(SysThreadId nid) const
-{
-   Debug::noft();
-
-   auto entry = threads_.find(nid);
-   if(entry == threads_.end()) return NIL_ID;
-   return entry->second.tid_;
-}
-
-//------------------------------------------------------------------------------
-
 Thread* ThreadRegistry::FindThread(SysThreadId nid) const
 {
    Debug::noft();
@@ -313,6 +302,17 @@ Thread* ThreadRegistry::FindThread(SysThreadId nid) const
    auto entry = threads_.find(nid);
    if(entry == threads_.end()) return nullptr;
    return entry->second.thread_;
+}
+
+//------------------------------------------------------------------------------
+
+ThreadId ThreadRegistry::FindTid(SysThreadId nid) const
+{
+   Debug::noft();
+
+   auto entry = threads_.find(nid);
+   if(entry == threads_.end()) return NIL_ID;
+   return entry->second.tid_;
 }
 
 //------------------------------------------------------------------------------
@@ -536,6 +536,7 @@ ThreadId ThreadRegistry::SetThreadId(Thread* thread)
          ++tid;
    }
 
+   EraseThreadId(tid);
    thread->SetTid(tid);
    return tid;
 }

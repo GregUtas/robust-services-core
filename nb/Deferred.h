@@ -93,13 +93,13 @@ private:
    //
    Base* Owner() const { return owner_; }
 
-   //  Overridden to remove the item from the work queue.
-   //
-   void Cleanup() override;
-
    //  Returns the offset to link_.
    //
    static ptrdiff_t LinkDiff();
+
+   //  Overridden to remove the item from the work queue.
+   //
+   void Cleanup() override;
 
    //  The two-way queue link for the registry.
    //

@@ -25,7 +25,6 @@
 #include "Duration.h"
 #include "NbDaemons.h"
 #include "Singleton.h"
-#include "ToolTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -51,15 +50,6 @@ DeferredThread::~DeferredThread()
 c_string DeferredThread::AbbrName() const
 {
    return DeferredDaemonName;
-}
-
-//------------------------------------------------------------------------------
-
-TraceStatus DeferredThread::CalcStatus(bool dynamic) const
-{
-   auto status = GetStatus();
-   if(status != TraceDefault) return status;
-   return Thread::CalcStatus(dynamic);
 }
 
 //------------------------------------------------------------------------------

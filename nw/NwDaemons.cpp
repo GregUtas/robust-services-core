@@ -55,8 +55,8 @@ public:
 
    //  Overridden to display member variables.
    //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
+   void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -214,7 +214,7 @@ void IoDaemon::Patch(sel_t selector, void* arguments)
 
 void IoDaemon::RecreatorDeleted()
 {
-   Debug::ft("NetworkBase.RecreatorDeleted");
+   Debug::ft("IoDaemon.RecreatorDeleted");
 
    recreator_ = nullptr;
 }

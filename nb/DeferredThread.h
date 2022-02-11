@@ -52,10 +52,6 @@ private:
    //
    c_string AbbrName() const override;
 
-   //  Overridden to support excluding or including this thread.
-   //
-   TraceStatus CalcStatus(bool dynamic) const override;
-
    //  Overridden to delete the singleton.
    //
    void Destroy() override;

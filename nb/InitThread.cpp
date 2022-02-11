@@ -349,7 +349,7 @@ void InitThread::InitializeSystem()
    state_ = Running;
    Singleton< RootThread >::Extant()->Interrupt();
 
-   //  Now that the restart is over, disable  tracing of RootThread
+   //  Now that the restart is over, disable tracing of RootThread
    //  and this thread, which usually cause unwanted noise in traces.
    //  Schedule the first thread before returning to our thread loop
    //  to sleep.

@@ -318,35 +318,36 @@ size_t ItemDeclAttrs::CalcDeclOrder() const
    case Cxx::Friend:
       return 0;
    case Cxx::Forward:
-      return order + 4;
+      return order + 3;
    case Cxx::Enum:
-      return order + 5;
+      return order + 4;
    case Cxx::Typedef:
-      return order + 6;
+      return order + 5;
    case Cxx::Class:
-      return order + 7;
+      return order + 6;
 
    case Cxx::Function:
    {
       switch(role_)
       {
       case PureCtor:
-         return order + 8;
+         return order + 7;
       case PureDtor:
-         return order + 9;
+         return order + 8;
       case CopyCtor:
-         return order + 10;
+         return order + 9;
       case MoveCtor:
-         return order + 11;
+         return order + 10;
       case CopyOper:
-         return order + 12;
+         return order + 11;
       case MoveOper:
-         return order + 13;
+         return order + 12;
       default:
-         if(oper_) return order + 14;
-         if(virt_) return order + 15;
+         if(oper_) return order + 13;
+         if(virt_) return order + 14;
          if(over_) return order + 17;
-         return order + 16;
+         if(stat_) return order + 16;
+         return order + 15;
       }
       break;
    }

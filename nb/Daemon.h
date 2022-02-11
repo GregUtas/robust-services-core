@@ -177,16 +177,16 @@ private:
 
    //  The daemon's index in DaemonRegistry.
    //
-   RegCell did_;
+   const RegCell did_;
 
    //  The number of threads to be created.
    //
-   size_t size_;
+   const size_t size_;
 
    //  Set if an alarm should not be raised when the thread(s) cannot
    //  be created.
    //
-   bool noalarm_;
+   const bool noalarm_;
 
    //  Used to detect traps in CreateThread and to disable the daemon.
    //

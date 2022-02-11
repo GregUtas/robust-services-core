@@ -1,63 +1,63 @@
 LINE COUNTS
-   81367   source code not in one of the categories below
-   42081   blank line
-   18666   blank comment
-   10484   comment at the top of a file (e.g. for the file's name or license info)
-    8142   comment followed by a repeated character to draw a rule (e.g. //---- ...)
-   21474   comment not in one of the categories above (e.g. //  <text>)
-   16386   bare left brace
-   14784   bare right brace
-    1603   bare right brace with semicolon
-    1803   access control
-    5059   invocation of Debug::ft
-     695   definition of an fn_name
-    6301   #include directive
-    1143   preprocessor directive other than #include
-     938   using statement
-  230926   TOTAL
+   81701   source code not in one of the categories below
+   42315   blank line
+   18784   blank comment
+   10568   comment at the top of a file (e.g. for the file's name or license info)
+    8197   comment followed by a repeated character to draw a rule (e.g. //---- ...)
+   21579   comment not in one of the categories above (e.g. //  <text>)
+   16471   bare left brace
+   14861   bare right brace
+    1611   bare right brace with semicolon
+    1821   access control
+    5095   invocation of Debug::ft
+     698   definition of an fn_name
+    6357   #include directive
+    1152   preprocessor directive other than #include
+     942   using statement
+  232152   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   133  C-style cast
   W005    59  Functional cast
-  W006   119  reinterpret_cast
-  W007   644  Cast down the inheritance hierarchy
+  W006   120  reinterpret_cast
+  W007   646  Cast down the inheritance hierarchy
   W008    46  Cast removes const qualification
   W009    15  Pointer arithmetic
 * W015     3  #include not sorted in standard order
 * W020   168  Using statement in header
 * W022   201  Add using statement
-  W026    63  Unused argument
+  W026    64  Unused argument
   W027     8  Unused class
 * W028    39  Unused data
 * W029     1  Unused enum
 * W030    20  Unused enumerator
-* W032   122  Unused function
+* W032   125  Unused function
 * W033     1  Unused typedef
 * W035     1  No referent for friend declaration
-  W037    15  Member hides inherited name
+  W037    16  Member hides inherited name
   W038     1  Class could be namespace
 * W042   174  Member could be private
 * W043    73  Member could be protected
   W044    13  Typedef of pointer type
 * W048     2  Data is write-only
   W050    26  Data is not private
-* W053    60  Data could be const
+* W053    61  Data could be const
 * W054     1  Data could be const pointer
 * W055     1  Data need not be mutable
   W056     7  Implicit constructor invoked: POD members not initialized
 * W060    58  Base class constructor is public
   W062     2  Member not included in member initialization list
 * W065    10  Base class virtual destructor is not public
-  W075   401  Virtual function is public
+  W075   402  Virtual function is public
 * W077    57  Virtual function has no overrides
   W082   113  Adjacent arguments have the same type
 * W088    40  Argument could be const
-* W090    97  Function could be const
+* W090    98  Function could be const
 * W092   124  Function could be free
 * W099   294  Line contains adjacent spaces
   W102     3  Line length exceeds the standard maximum
-* W106   634  Function does not invoke Debug::ft
-  W107    17  Function does not invoke Debug::ft as first statement
+* W106   635  Function does not invoke Debug::ft
+  W107    16  Function does not invoke Debug::ft as first statement
   W110    40  Override of Base.Display not found
 * W111    11  Override of Object.Patch not found
 * W117    40  Line can merge with the next line and be under the length limit
@@ -224,7 +224,7 @@ W005 Functional cast
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(3658):    if(TagCount(n) >= ptrs_) return false;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(3676):    if(TagCount(n) >= ptrs_) return false;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(3747):       if(TagCount(n) >= ptrs_) ptrs_ = n + 1;
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2135):    *Cli_->obuf << ": " << Warning(log.warning_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2136):    *Cli_->obuf << ": " << Warning(log.warning_);
   C:/Users/Greg/Documents/rsc/rsc/ct/Interpreter.cpp(147):          type = LibTokenType(i);
   C:/Users/Greg/Documents/rsc/rsc/ct/Lexer.cpp(2291):          fp *= std::pow(10.0, int(num));
   C:/Users/Greg/Documents/rsc/rsc/ct/Lexer.cpp(2398):          oper = Cxx::Operator(match->second);
@@ -232,14 +232,14 @@ W005 Functional cast
   C:/Users/Greg/Documents/rsc/rsc/mb/Tones.h(73):    Id Tid() const { return Id(tid_.GetId()); }
   C:/Users/Greg/Documents/rsc/rsc/nb/Memory.cpp(234):       auto type = MemoryType(m);
   C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.cpp(727):    return BlockState(state);
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(590):       rc = nbt->SelectFaction(Faction(id), TraceDefault);
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(938):       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1087):          auto type = MemoryType(memtype);
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1101):          auto type = MemoryType(memtype);
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1131):          auto type = MemoryType(m);
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1142):          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1489):       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(3096):       auto heap = Memory::AccessHeap(MemoryType(m));
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(591):       rc = nbt->SelectFaction(Faction(id), TraceDefault);
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(972):       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1121):          auto type = MemoryType(memtype);
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1135):          auto type = MemoryType(memtype);
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1165):          auto type = MemoryType(m);
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1176):          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1523):       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(3130):       auto heap = Memory::AccessHeap(MemoryType(m));
   C:/Users/Greg/Documents/rsc/rsc/nb/NbTracer.cpp(230):             stream << Faction(f) << CRLF;
   C:/Users/Greg/Documents/rsc/rsc/nb/ObjectPool.h(97):    ObjectPoolId Pid() const { return ObjectPoolId(pid_.GetId()); }
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTime.cpp(358):          Truncate(TimeField(int(field) + 1));
@@ -317,7 +317,8 @@ W006 reinterpret_cast
   C:/Users/Greg/Documents/rsc/rsc/nb/CliCommandSet.cpp(173):    auto& commands = reinterpret_cast< const Registry< CliCommand >& >(Parms());
   C:/Users/Greg/Documents/rsc/rsc/nb/CliIncrement.cpp(102):    auto fake = reinterpret_cast< const CliIncrement* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nb/CliParm.cpp(113):    auto fake = reinterpret_cast< const CliParm* >(&local);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Daemon.cpp(74):    auto fake = reinterpret_cast< const Daemon* >(&local);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Daemon.cpp(75):    auto fake = reinterpret_cast< const Daemon* >(&local);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.cpp(99):    auto fake = reinterpret_cast<const Deferred*>(&local);
   C:/Users/Greg/Documents/rsc/rsc/nb/Log.cpp(133):    auto fake = reinterpret_cast< const Log* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(125):    SetNext(reinterpret_cast< Entry* >(buff_));
   C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(340):       where = reinterpret_cast< Entry* >(buff_);
@@ -342,7 +343,7 @@ W006 reinterpret_cast
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2499):    auto fake = reinterpret_cast< const RegistryItem* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.cpp(299):    auto fake = reinterpret_cast< const IpPort* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.cpp(72):    auto fake = reinterpret_cast< const IpService* >(&local);
-  C:/Users/Greg/Documents/rsc/rsc/nw/LocalAddrTest.cpp(212):          auto payload = reinterpret_cast< SysIpL3Addr* >(buff->PayloadPtr());
+  C:/Users/Greg/Documents/rsc/rsc/nw/LocalAddrTest.cpp(209):       auto payload = reinterpret_cast< SysIpL3Addr* >(buff->PayloadPtr());
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(300):    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(371):    auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.win.cpp(103):       reinterpret_cast< char* >(buff), size, 0, peer, &peersize);
@@ -583,51 +584,51 @@ W007 Cast down the inheritance hierarchy
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.cpp(3055):    auto cls = static_cast< Class* >(root);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.cpp(3122):          mem = static_cast< Function* >(mem)->InstantiateFunction(tmplt);
   C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(266):       auto func = static_cast< const Function* >(item);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(734):    return static_cast< Namespace* >(scope);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(806):    auto defn = static_cast< Data* >(data->GetMate());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(899):    auto defn = static_cast< Function* >(func->GetMate());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(927):    auto func = static_cast< const Function* >(item);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1165):    auto oper = static_cast< const Operation* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1432):    static_cast< Class* >(log.item_)->SetClassTag(Cxx::StructType);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1481):          static_cast< Forward* >(*f)->SetClassTag(to);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1523):    auto decl = static_cast< CxxScope* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1685):    auto item = static_cast< CxxScope* >(ParseFileItem(pos, space));
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1698):          auto tname = static_cast< const TypeName* >(*r);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1712):       UpdateDebugFt(static_cast< Function* >(item));
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1748):    auto func = static_cast< const Function* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1818):    static_cast< Class* >(log.item_)->SetClassTag(Cxx::ClassType);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2077):    auto decl = static_cast< Function* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2462):    static_cast< Function* >(log.item_)->SetExplicit(false);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2558):    static_cast< ClassData* >(log.item_)->SetMutable(false);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2594):    static_cast< Function* >(log.item_)->SetOverride(false);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2615):    auto qname = static_cast< const QualName* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2679):    static_cast< Function* >(log.item_)->SetVirtual(false);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2749):       usages.directs.erase(static_cast< CxxNamed* >(*i));
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2750):       usages.indirects.erase(static_cast< CxxNamed* >(*i));
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2822):          auto data = static_cast< const Data* >(*i);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2836):             auto func = static_cast< const Function* >(*i);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2850):             auto data = static_cast< const Data* >(*i);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(3000):    return FindSigEnd(static_cast< const Function* >(log.item_));
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(3309):    auto data = static_cast< Data* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(3376):    auto func = static_cast< Function* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(3467):    auto data = static_cast< const Data* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4044):    auto data = static_cast< Data* >(aref);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4051):    ReplaceImpl(static_cast< Function* >(log.item_));
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4202):    auto func = static_cast< Function* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4552):    auto cls = static_cast< Class* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4853):    auto cls = static_cast< Class* >(item);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5294):       ns = static_cast< Namespace* >(ref)->OuterSpace();
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5370):    auto func = static_cast< const Function* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5451):    auto func = static_cast<const Function*>(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5461):       auto slit = static_cast< StrLiteral* >(arg);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5475):    auto data = static_cast< SpaceData* >(arg->Referent());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5482):    auto slit = static_cast< StrLiteral* >(file_->PosToItem(lpos));
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5509):    static_cast< Ifndef* >(log.item_)->ChangeName(guard);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5574):    auto type = static_cast< TypeName* >(log.item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6141):    static_cast< Function* >(log.item_)->SetExplicit(true);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6190):    static_cast< Function* >(log.item_)->SetOverride(true);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6294):    static_cast< Function* >(log.item_)->SetVirtual(true);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6582):       auto items = GetItemsForDefn(static_cast< const CxxScope* >(next));
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(735):    return static_cast< Namespace* >(scope);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(807):    auto defn = static_cast< Data* >(data->GetMate());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(900):    auto defn = static_cast< Function* >(func->GetMate());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(928):    auto func = static_cast< const Function* >(item);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1166):    auto oper = static_cast< const Operation* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1433):    static_cast< Class* >(log.item_)->SetClassTag(Cxx::StructType);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1482):          static_cast< Forward* >(*f)->SetClassTag(to);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1524):    auto decl = static_cast< CxxScope* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1686):    auto item = static_cast< CxxScope* >(ParseFileItem(pos, space));
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1699):          auto tname = static_cast< const TypeName* >(*r);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1713):       UpdateDebugFt(static_cast< Function* >(item));
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1749):    auto func = static_cast< const Function* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1819):    static_cast< Class* >(log.item_)->SetClassTag(Cxx::ClassType);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2078):    auto decl = static_cast< Function* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2463):    static_cast< Function* >(log.item_)->SetExplicit(false);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2559):    static_cast< ClassData* >(log.item_)->SetMutable(false);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2595):    static_cast< Function* >(log.item_)->SetOverride(false);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2616):    auto qname = static_cast< const QualName* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2680):    static_cast< Function* >(log.item_)->SetVirtual(false);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2750):       usages.directs.erase(static_cast< CxxNamed* >(*i));
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2751):       usages.indirects.erase(static_cast< CxxNamed* >(*i));
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2823):          auto data = static_cast< const Data* >(*i);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2837):             auto func = static_cast< const Function* >(*i);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(2851):             auto data = static_cast< const Data* >(*i);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(3001):    return FindSigEnd(static_cast< const Function* >(log.item_));
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(3310):    auto data = static_cast< Data* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(3377):    auto func = static_cast< Function* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(3468):    auto data = static_cast< const Data* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4045):    auto data = static_cast< Data* >(aref);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4052):    ReplaceImpl(static_cast< Function* >(log.item_));
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4203):    auto func = static_cast< Function* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4553):    auto cls = static_cast< Class* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4854):    auto cls = static_cast< Class* >(item);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5295):       ns = static_cast< Namespace* >(ref)->OuterSpace();
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5371):    auto func = static_cast< const Function* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5452):    auto func = static_cast<const Function*>(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5462):       auto slit = static_cast< StrLiteral* >(arg);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5476):    auto data = static_cast< SpaceData* >(arg->Referent());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5483):    auto slit = static_cast< StrLiteral* >(file_->PosToItem(lpos));
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5510):    static_cast< Ifndef* >(log.item_)->ChangeName(guard);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5575):    auto type = static_cast< TypeName* >(log.item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6142):    static_cast< Function* >(log.item_)->SetExplicit(true);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6191):    static_cast< Function* >(log.item_)->SetOverride(true);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6295):    static_cast< Function* >(log.item_)->SetVirtual(true);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6583):       auto items = GetItemsForDefn(static_cast< const CxxScope* >(next));
   C:/Users/Greg/Documents/rsc/rsc/ct/Lexer.cpp(3157):          auto def = static_cast< Define* >(item);
   C:/Users/Greg/Documents/rsc/rsc/ct/Library.cpp(667):             auto f = static_cast< const Function* >(elem);
   C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(482):    auto op = static_cast< Operation* >(token.get());
@@ -685,8 +686,10 @@ W007 Cast down the inheritance hierarchy
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.cpp(476):          auto ft = static_cast< FunctionTrace* >(rec);
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionProfiler.cpp(203):             auto ft = static_cast<FunctionTrace*>(rec);
   C:/Users/Greg/Documents/rsc/rsc/nt/NtTestData.cpp(62):    return static_cast< NtTestData* >(data);
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(121):    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(183):    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(258):       (this, static_cast< const TcpIpService* >(service), port);
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(269):    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(318):       (this, static_cast<const UdpIpService*>(service), port);
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(329):    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(421):    bool alive = static_cast< const TcpIpService* >(service)->Keepalive();
   C:/Users/Greg/Documents/rsc/rsc/nw/TcpIoThread.cpp(213):    auto registrant = static_cast< SysTcpSocket* >(ipPort_->GetSocket());
   C:/Users/Greg/Documents/rsc/rsc/nw/TcpIoThread.cpp(223):    auto svc = static_cast< const TcpIpService* >(ipPort_->GetService());
@@ -1165,7 +1168,7 @@ W020 Using statement in header
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.h(32): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/nt/NtModule.h(28): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/nt/NtTestData.h(31): using namespace NodeBase;
-  C:/Users/Greg/Documents/rsc/rsc/nw/LocalAddrTest.h(32): using namespace NodeBase;
+  C:/Users/Greg/Documents/rsc/rsc/nw/LocalAddrTest.h(34): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/on/OnModule.h(28): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/pb/PbModule.h(28): using namespace NodeBase;
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsBicFeature.h(28): using namespace NodeBase;
@@ -1506,10 +1509,11 @@ W026 Unused argument
   C:/Users/Greg/Documents/rsc/rsc/ct/Editor.h(433/1):    word SplitVirtualFunction(const Function* func);
   C:/Users/Greg/Documents/rsc/rsc/mb/MediaEndpt.h(109/1):    virtual void ProcessIcMsg(Message& msg);
   C:/Users/Greg/Documents/rsc/rsc/nb/Debug.h(123/1):    static void noop(debug64_t info = 0);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(90/1):    virtual void EventHasOccurred(Event event) = 0;
   C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.cpp(75/3):       const std::string& prefix, const Flags& options) const;
   C:/Users/Greg/Documents/rsc/rsc/nb/SysThreadStack.h(38/1):    void Startup(RestartLevel level);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(324/2):       (BlockingReason why, fn_name_arg func) { return true; }
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(333/1):    virtual void ScheduledIn(fn_name_arg func) { }
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(323/2):       (BlockingReason why, fn_name_arg func) { return true; }
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(332/1):    virtual void ScheduledIn(fn_name_arg func) { }
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.h(152/1):    TraceRc StartTracing(const std::string& opts);
   C:/Users/Greg/Documents/rsc/rsc/nw/InputHandler.h(138/3):       (IpBuffer& buff, NodeBase::byte_t* src, size_t size) const;
   C:/Users/Greg/Documents/rsc/rsc/nw/InputHandler.h(143/1):    virtual void SocketFailed(SysSocket* socket) const { }
@@ -1641,6 +1645,10 @@ W032 Unused function
   C:/Users/Greg/Documents/rsc/rsc/nb/Class.h(150):    bool SetTemplate(Object& obj);
   C:/Users/Greg/Documents/rsc/rsc/nb/Class.h(158):    bool SetQuasiSingleton(Object& obj);
   C:/Users/Greg/Documents/rsc/rsc/nb/CliThread.h(142):    word Result() const { return result_; }
+  C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(64):    void SendToThread(Thread* thread);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(68):    void Restart(secs_t secs);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(94):    Base* Owner() const { return owner_; }
+  C:/Users/Greg/Documents/rsc/rsc/nb/DeferredRegistry.h(52):    void EraseAll(Base* owner);
   C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.cpp(167):    PerThreadInfo()
   C:/Users/Greg/Documents/rsc/rsc/nb/LogGroupRegistry.h(62):    Log* FindLog(const std::string& name, LogId id) const;
   C:/Users/Greg/Documents/rsc/rsc/nb/Memory.h(50):    size_t Words(size_t size);
@@ -1655,7 +1663,6 @@ W032 Unused function
   C:/Users/Greg/Documents/rsc/rsc/nb/PooledClass.h(69):    bool SetPool(ObjectPool& pool);
   C:/Users/Greg/Documents/rsc/rsc/nb/PosixSignal.h(148): Flags PS_Delayed();
   C:/Users/Greg/Documents/rsc/rsc/nb/Q1Link.h(65):    bool IsQueued() const { return next != nullptr; }
-  C:/Users/Greg/Documents/rsc/rsc/nb/Q2Link.h(66):    bool IsQueued() const { return next != nullptr; }
   C:/Users/Greg/Documents/rsc/rsc/nb/Q2Way.h(298):    void Display(std::ostream& stream,
   C:/Users/Greg/Documents/rsc/rsc/nb/SysFile.h(80):    std::string Normalize(const std::string& path);
   C:/Users/Greg/Documents/rsc/rsc/nb/SysFile.h(95):    void GetCurrDir(std::string& dirName);
@@ -1669,13 +1676,13 @@ W032 Unused function
   C:/Users/Greg/Documents/rsc/rsc/nb/SysMutex.h(116):    Thread* Owner() const;
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTickTimer.h(83):    bool TickTimingAvailable() const { return available_; }
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTime.h(77):    int16_t Get(TimeField field) const { return time_[field]; }
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(124):    static std::atomic_uint32_t* Vector();
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(128):    static bool TestFlag(FlagId fid);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(132):    static void ResetFlag(FlagId fid);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(155):    Faction GetFaction() const { return faction_; }
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(159):    bool ChangeFaction(Faction faction);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(488):    SysMutex* BlockingMutex() const;
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(496):    uint8_t MutexCount() const;
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(129):    static std::atomic_uint32_t* Vector();
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(133):    static bool TestFlag(FlagId fid);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(137):    static void ResetFlag(FlagId fid);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(160):    Faction GetFaction() const { return faction_; }
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(164):    bool ChangeFaction(Faction faction);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(487):    SysMutex* BlockingMutex() const;
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(495):    uint8_t MutexCount() const;
   C:/Users/Greg/Documents/rsc/rsc/nb/TimePoint.h(45):    explicit TimePoint(const SysTime& time);
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.h(182):    const SysTime& StartTimeFull() const { return startTime_; }
   C:/Users/Greg/Documents/rsc/rsc/nw/IpServiceRegistry.h(56):    IpService* GetService(const std::string& name) const;
@@ -1738,6 +1745,7 @@ W037 Member hides inherited name
   C:/Users/Greg/Documents/rsc/rsc/cb/ProxyBcSessions.h(219):    static const Id NextId        = FirstId + 4;
   C:/Users/Greg/Documents/rsc/rsc/cb/ProxyBcSessions.h(303):    static const Id NextId              = FirstId + 7;
   C:/Users/Greg/Documents/rsc/rsc/mb/Tones.h(77):    static ptrdiff_t CellDiff();
+  C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(98):    static ptrdiff_t LinkDiff();
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(105):    void HostToNetwork(IPv4Addr& netaddr, ipport_t& netport) const;
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(110):    void HostToNetwork(uint16_t netaddr[8], ipport_t& netport) const;
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(115):    void NetworkToHost(IPv4Addr netaddr, ipport_t netport);
@@ -1863,8 +1871,8 @@ W042 Member could be private
   C:/Users/Greg/Documents/rsc/rsc/nb/StatisticsGroup.h(66):    id_t Gid() const { return gid_.GetId(); }
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTime.h(81):    int16_t DayOfWeek() const;
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTime.h(136):    c_string strMonth() const;
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(136):    static void ResetFlags();
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(151):    SysThreadId NativeThreadId() const;
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(141):    static void ResetFlags();
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(156):    SysThreadId NativeThreadId() const;
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceRecord.h(54):    static const uint32_t InvalidSlot;
   C:/Users/Greg/Documents/rsc/rsc/nw/IoThread.h(87):    bool ExitOnRestart(NodeBase::RestartLevel level) const override;
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.h(185):    virtual IoThread* CreateIoThread();
@@ -2061,8 +2069,7 @@ W053 Data could be const
   C:/Users/Greg/Documents/rsc/rsc/nb/CliIntParm.h(79):    word min_;
   C:/Users/Greg/Documents/rsc/rsc/nb/CliIntParm.h(83):    word max_;
   C:/Users/Greg/Documents/rsc/rsc/nb/CliIntParm.h(87):    bool hex_;
-  C:/Users/Greg/Documents/rsc/rsc/nb/Daemon.h(179):    RegCell did_;
-  C:/Users/Greg/Documents/rsc/rsc/nb/Daemon.h(183):    size_t size_;
+  C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(106):    Q2Link link_;
   C:/Users/Greg/Documents/rsc/rsc/nb/Log.h(189):    RegCell lid_;
   C:/Users/Greg/Documents/rsc/rsc/nb/LogGroup.h(141):    RegCell gid_;
   C:/Users/Greg/Documents/rsc/rsc/nb/Module.h(134):    RegCell mid_;
@@ -2078,11 +2085,13 @@ W053 Data could be const
   C:/Users/Greg/Documents/rsc/rsc/nb/StatisticsThread.h(70):    static Duration SleepInterval;
   C:/Users/Greg/Documents/rsc/rsc/nb/Symbol.h(112):    Q1Link link_;
   C:/Users/Greg/Documents/rsc/rsc/nb/SysMutex.h(141):    RegCell mid_;
+  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.h(75):    ThreadId tid_;
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionStats.h(91):    Q2Link link_;
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1360):    Q1Link link_;
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(1846):    Q2Link link_;
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.h(203):    NodeBase::Q1Link link_;
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.h(153):    NodeBase::RegCell sid_;
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.h(98):    IoThreadRecreator* recreator_;
   C:/Users/Greg/Documents/rsc/rsc/nw/NwTypes.h(60):       uint8_t  u8[16];  // bytes: [12-15] overlay IPv4Addr
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsFeatureProfile.h(99):    Q1Link link_;
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsHtlFeature.h(59):    Address::DN dn_;
@@ -2208,7 +2217,7 @@ W065 Base class virtual destructor is not public
   C:/Users/Greg/Documents/rsc/rsc/ct/LibrarySet.h(196):    virtual ~LibrarySet();
   C:/Users/Greg/Documents/rsc/rsc/nb/CliAppData.h(82):    virtual ~CliAppData();
   C:/Users/Greg/Documents/rsc/rsc/nb/Exception.h(71):    virtual ~Exception();
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(259):    virtual ~Thread();
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(264):    virtual ~Thread();
   C:/Users/Greg/Documents/rsc/rsc/nw/SysSocket.h(214):    virtual ~SysSocket();
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsFeatureProfile.h(80):    virtual ~PotsFeatureProfile();
   C:/Users/Greg/Documents/rsc/rsc/sb/Context.h(188):    virtual ~Context();
@@ -2525,8 +2534,9 @@ W075 Virtual function is public
   C:/Users/Greg/Documents/rsc/rsc/nb/SysFile.h(51):    virtual bool IsSubdir() const = 0;
   C:/Users/Greg/Documents/rsc/rsc/nb/SysFile.h(55):    virtual bool AtEnd() const = 0;
   C:/Users/Greg/Documents/rsc/rsc/nb/SysFile.h(60):    virtual bool Advance() = 0;
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(176):    virtual TraceStatus CalcStatus(bool dynamic) const;
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(230):    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(117):    virtual bool EnqMsg(MsgBuffer& msg);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(181):    virtual TraceStatus CalcStatus(bool dynamic) const;
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(235):    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
   C:/Users/Greg/Documents/rsc/rsc/nb/Tool.h(64):    virtual c_string Name() const = 0;
   C:/Users/Greg/Documents/rsc/rsc/nb/Tool.h(68):    virtual c_string Expl() const = 0;
   C:/Users/Greg/Documents/rsc/rsc/nb/Tool.h(74):    virtual std::string Status() const;
@@ -2633,15 +2643,15 @@ W077 Virtual function has no overrides
   C:/Users/Greg/Documents/rsc/rsc/nb/Class.h(84):    virtual Object* GetQuasiSingleton();
   C:/Users/Greg/Documents/rsc/rsc/nb/Class.h(88):    virtual void FreeQuasiSingleton(Object* obj);
   C:/Users/Greg/Documents/rsc/rsc/nb/CliIncrement.h(80):    virtual void Exit();
-  C:/Users/Greg/Documents/rsc/rsc/nb/Daemon.h(148):    virtual void Recover() { }
+  C:/Users/Greg/Documents/rsc/rsc/nb/Daemon.h(149):    virtual void Recover() { }
   C:/Users/Greg/Documents/rsc/rsc/nb/Object.h(79):    virtual Class* GetClass() const;
   C:/Users/Greg/Documents/rsc/rsc/nb/Object.h(87):    virtual void PostInitialize() { }
   C:/Users/Greg/Documents/rsc/rsc/nb/Object.h(98):    virtual InstanceId GetInstanceId() const;
   C:/Users/Greg/Documents/rsc/rsc/nb/ObjectPool.h(102):    virtual Pooled* DeqBlock(size_t size);
   C:/Users/Greg/Documents/rsc/rsc/nb/ObjectPool.h(107):    virtual void EnqBlock(Pooled* obj, bool deleted);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(230):    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(272):    virtual bool EnqMsg(MsgBuffer& msg);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(278):    virtual MsgBuffer* DeqMsg(const Duration& timeout);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(117):    virtual bool EnqMsg(MsgBuffer& msg);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(235):    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(277):    virtual MsgBuffer* DeqMsg(const Duration& timeout);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.h(147):    virtual void DisplayStats
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.h(77):    virtual size_t RxSize() const { return IoThread::MaxRxBuffSize; }
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.h(81):    virtual size_t TxSize() const { return IoThread::MaxTxBuffSize; }
@@ -2704,9 +2714,9 @@ W082 Adjacent arguments have the same type
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.h(455):    virtual void UpdatePos(EditorAction action,
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.h(491):    virtual bool GetSpan(size_t& begin, size_t& left, size_t& end) const;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.h(868):    Function* FindNewOrDelete(const StackArg& arg, bool del, bool& pod) const;
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(578): static void DebugFtNames(const Function* func, string& flit, string& fvar)
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(948): static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1005): static void Rename(string& code, const string& oldName, const string& newName)
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(579): static void DebugFtNames(const Function* func, string& flit, string& fvar)
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(949): static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1006): static void Rename(string& code, const string& oldName, const string& newName)
   C:/Users/Greg/Documents/rsc/rsc/ct/Editor.h(106):    void Rename(size_t pos, const string& oldName, const string& newName);
   C:/Users/Greg/Documents/rsc/rsc/ct/Editor.h(261):    bool AdjustHorizontally(size_t pos, size_t len, const string& spacing);
   C:/Users/Greg/Documents/rsc/rsc/ct/Editor.h(297):    word InsertForward(size_t pos, const string& nspace, const string& forward);
@@ -2769,7 +2779,7 @@ W082 Adjacent arguments have the same type
   C:/Users/Greg/Documents/rsc/rsc/nb/SysThread.h(115):    static SysThread_t Create
   C:/Users/Greg/Documents/rsc/rsc/nb/SysThreadStack.win.cpp(91):    static const char* GetFileLoc(DWORD64 frame, DWORD& line, DWORD& disp);
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTime.h(72):    SysTime(int16_t year, int16_t month, int16_t day,
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(631):    void DisplaySummary(std::ostream& stream,
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(630):    void DisplaySummary(std::ostream& stream,
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionProfiler.cpp(60): static void CheckHigh(FunctionStats*& high,
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(201):    static word Sort(const string& input, const string& output, string& expl);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(55):    IpBuffer(NodeBase::MsgDirection dir, size_t header, size_t payload);
@@ -2874,6 +2884,7 @@ W090 Function could be const
   C:/Users/Greg/Documents/rsc/rsc/nb/Alarm.h(120):    void SetStatus(AlarmStatus status);
   C:/Users/Greg/Documents/rsc/rsc/nb/CallbackRequest.h(44):    virtual void Callback() { }
   C:/Users/Greg/Documents/rsc/rsc/nb/Class.h(137):    virtual Object* New(size_t size);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(90):    virtual void EventHasOccurred(Event event) = 0;
   C:/Users/Greg/Documents/rsc/rsc/nb/Log.h(118):    void SetInterval(uint8_t interval);
   C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.h(143):    void SetState(index_t index, BlockState state);
   C:/Users/Greg/Documents/rsc/rsc/nb/Object.h(59):    virtual void Patch(sel_t selector, void* arguments) { }
@@ -2882,19 +2893,19 @@ W090 Function could be const
   C:/Users/Greg/Documents/rsc/rsc/nb/Q2Way.h(150):    bool Exq(T& elem)
   C:/Users/Greg/Documents/rsc/rsc/nb/StatisticsRegistry.h(72):    void StartInterval(bool first);
   C:/Users/Greg/Documents/rsc/rsc/nb/SysThread.h(170):    DelayRc Suspend(SysSentry_t& sentry, const Duration& timeout);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(120):    bool Interrupt(const Flags& mask = NoFlags);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(163):    void SetStatus(TraceStatus status);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(266):    void SetInitialized();
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(418):    void Reset(FlagId fid);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(422):    void Ready();
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(426):    void Preempt();
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(445):    void Proceed();
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(484):    void UpdateMutex(SysMutex* mutex);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(492):    void UpdateMutexCount(bool acquired);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(544):    bool LogTrap(const Exception* ex,
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(592):    void SetTrap(bool on);
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(600):    void StackCheck();
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(604):    void SetSignal(signal_t sig);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(125):    bool Interrupt(const Flags& mask = NoFlags);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(168):    void SetStatus(TraceStatus status);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(271):    void SetInitialized();
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(417):    void Reset(FlagId fid);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(421):    void Ready();
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(425):    void Preempt();
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(444):    void Proceed();
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(483):    void UpdateMutex(SysMutex* mutex);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(491):    void UpdateMutexCount(bool acquired);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(543):    bool LogTrap(const Exception* ex,
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(591):    void SetTrap(bool on);
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(599):    void StackCheck();
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(603):    void SetSignal(signal_t sig);
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceRecord.h(105):    virtual void ClaimBlocks() { }
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionProfiler.h(84):    FunctionStats* EnsureRecord(fn_name_arg func, size_t count);
   C:/Users/Greg/Documents/rsc/rsc/nt/NtTestData.h(81):    void Reset();
@@ -3026,14 +3037,14 @@ W092 Function could be free
   C:/Users/Greg/Documents/rsc/rsc/nb/SysThread.h(135):    static void DeleteSentry(SysSentry_t& sentry); // SysThread.cpp
   C:/Users/Greg/Documents/rsc/rsc/nb/SysThread.h(174):    bool Resume(SysSentry_t& sentry); // SysThread.cpp
   C:/Users/Greg/Documents/rsc/rsc/nb/SysTime.h(158):    static const int16_t* DaysPerMonth(int16_t year); // SysTime.cpp
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(221):    static double PercentIdle(); // NbIncrement.cpp
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(624):    static void EnableFactions(const FactionFlags& enabled); // ModuleRegistry.cpp
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(640):    static TraceRc LogContextSwitches(bool on); // NbIncrement.cpp
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(648):    static void DisplayContextSwitches(std::ostream& stream); // NbIncrement.cpp
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(226):    static double PercentIdle(); // NbIncrement.cpp
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(623):    static void EnableFactions(const FactionFlags& enabled); // ModuleRegistry.cpp
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(639):    static TraceRc LogContextSwitches(bool on); // NbIncrement.cpp
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(647):    static void DisplayContextSwitches(std::ostream& stream); // NbIncrement.cpp
   C:/Users/Greg/Documents/rsc/rsc/nb/TimePoint.h(82):    static TimePoint Never(); // TimePoint.cpp
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.h(105):    void QueryTools(std::ostream& stream) const; // NbIncrement.cpp
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.h(49):    static TcpIoDaemon* GetDaemon(const TcpIpService* service, ipport_t port); // TcpIpPort.cpp
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.h(92):    static UdpIoDaemon* GetDaemon(const UdpIpService* service, ipport_t port); // UdpIpPort.cpp
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.h(111):    static TcpIoDaemon* GetDaemon(const TcpIpService* service, ipport_t port); // TcpIpPort.cpp
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.h(138):    static UdpIoDaemon* GetDaemon(const UdpIpService* service, ipport_t port); // UdpIpPort.cpp
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL2Addr.h(113):    static const SysIpL2Addr& NullIpAddr(); // SysIpL2Addr.cpp
   C:/Users/Greg/Documents/rsc/rsc/nw/SysSocket.h(156):    static NodeBase::c_string AlarmName(nwerr_t errval); // NwLogs.cpp
   C:/Users/Greg/Documents/rsc/rsc/nw/SysSocket.h(161):    static bool StartLayer(); // NwModule.cpp
@@ -3350,8 +3361,8 @@ W099 Line contains adjacent spaces
   C:/Users/Greg/Documents/rsc/rsc/sn/PotsProxyHandlers.cpp(351):    CauseInfo*    cci;
 W102 Line length exceeds the standard maximum
   C:/Users/Greg/Documents/rsc/rsc/cb/BcSsm.cpp(285):    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(3073): "Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(3074): "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(3107): "Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(3108): "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/an/PotsTrafficThread.cpp(1347): void PotsTrafficThread::RecordHoldingTime(const Duration& time)
   C:/Users/Greg/Documents/rsc/rsc/cb/DigitString.cpp(136): Digit DigitString::At(DigitCount i) const
@@ -3590,8 +3601,8 @@ W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxVector.h(93): template< class T > void SortAndDisplayItemPtrs
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxVector.h(127): template< class T > void EraseItem(std::vector< T* >& vec, const T* item)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxVector.h(151): template< class T > void EraseItemPtr
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1975): size_t Editor::CommitCount() { return Commits_; }
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4833): static FunctionRole WarningToRole(Warning log)
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1976): size_t Editor::CommitCount() { return Commits_; }
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4834): static FunctionRole WarningToRole(Warning log)
   C:/Users/Greg/Documents/rsc/rsc/ct/Interpreter.cpp(133): const OperatorInfo* OperatorInfo::GetAttrs(LibTokenType type)
   C:/Users/Greg/Documents/rsc/rsc/ct/Interpreter.cpp(141): bool OperatorInfo::GetType(const string& op, LibTokenType& type)
   C:/Users/Greg/Documents/rsc/rsc/ct/Lexer.cpp(87): static IndentRule ClassifyIndent(string& id)
@@ -3879,11 +3890,12 @@ W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/nb/ThreadAdmin.cpp(568): word ThreadAdmin::TrapLimit()
   C:/Users/Greg/Documents/rsc/rsc/nb/ThreadAdmin.cpp(576): bool ThreadAdmin::TrapOnRtcTimeout()
   C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(48): static bool IsSortedByThreadId(const Thread* thr1, const Thread* thr2)
-  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(267): Thread* ThreadRegistry::FindThread(SysThreadId nid) const
-  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(310): Thread* ThreadRegistry::GetThread(ThreadId tid) const
-  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(323): std::vector< Thread* > ThreadRegistry::GetThreads() const
-  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(361): bool ThreadRegistry::IsDeleted() const
-  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(511): size_t ThreadRegistry::Size()
+  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(298): Thread* ThreadRegistry::FindThread(SysThreadId nid) const
+  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(309): ThreadId ThreadRegistry::FindTid(SysThreadId nid) const
+  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(351): Thread* ThreadRegistry::GetThread(ThreadId tid) const
+  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(364): std::vector< Thread* > ThreadRegistry::GetThreads() const
+  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(402): bool ThreadRegistry::IsDeleted() const
+  C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp(562): size_t ThreadRegistry::Size()
   C:/Users/Greg/Documents/rsc/rsc/nb/ToolRegistry.cpp(117): Tool* ToolRegistry::GetTool(FlagId id) const
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.cpp(110): TraceBuffer::TraceBuffer() :
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.cpp(146): TraceBuffer::~TraceBuffer()
@@ -3913,10 +3925,10 @@ W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/nt/TestDatabase.cpp(148): TestDatabase::State TestDatabase::GetState(const string& testname)
   C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(185): TraceStatus IpBuffer::GetStatus() const
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.cpp(213): size_t IpPort::Discards() const
-  C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp(286): IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
-  C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp(501): bool IpPortRegistry::UseIPv6()
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp(287): IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp(509): bool IpPortRegistry::UseIPv6()
   C:/Users/Greg/Documents/rsc/rsc/nw/IpServiceRegistry.cpp(77): IpService* IpServiceRegistry::GetService(const string& name) const
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwLogs.cpp(143): static void UpdateAlarm
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwLogs.cpp(152): static void UpdateAlarm
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL2Addr.cpp(358): const SysIpL2Addr& SysIpL2Addr::NullIpAddr()
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL2Addr.win.cpp(127): bool SysIpL2Addr::SupportsIPv6()
   C:/Users/Greg/Documents/rsc/rsc/nw/SysSocket.cpp(150): bool SysSocket::SetTracing(bool tracing)
@@ -4002,8 +4014,7 @@ W107 Function does not invoke Debug::ft as first statement
   C:/Users/Greg/Documents/rsc/rsc/nb/Thread.cpp(3017):          Debug::ft(Thread_Start);
   C:/Users/Greg/Documents/rsc/rsc/nb/Thread.cpp(3511):       Debug::ft(Thread_TrapHandler);  //@
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(3678):       Debug::ft(RecoveryThread_Enter);
-  C:/Users/Greg/Documents/rsc/rsc/nw/LocalAddrTest.cpp(184):       Debug::ft("SendLocalThread.Enter");
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwLogs.cpp(99):    Debug::ft("NetworkBase.NetworkIsUp");
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwLogs.cpp(102):    Debug::ft("NetworkBase.NetworkIsUp");
   C:/Users/Greg/Documents/rsc/rsc/sb/Context.cpp(689):    Debug::ft(Context_ProcessWork);
 W110 Override of Base.Display not found
   C:/Users/Greg/Documents/rsc/rsc/an/PotsShelf.h(42): class PotsShelfIpService : public UdpIpService
@@ -4037,7 +4048,7 @@ W110 Override of Base.Display not found
   C:/Users/Greg/Documents/rsc/rsc/nw/ByteBuffer.h(96): class LargeBuffer : public ByteBuffer
   C:/Users/Greg/Documents/rsc/rsc/nw/ByteBuffer.h(107): class HugeBuffer : public ByteBuffer
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.cpp(54): class IpPortStats : public Dynamic
-  C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp(56): class LocalAddrCfg : public CfgStrParm
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp(57): class LocalAddrCfg : public CfgStrParm
   C:/Users/Greg/Documents/rsc/rsc/nw/NwTracer.h(40): class NwTracer : public NodeBase::Permanent
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsProfile.h(81):    struct PotsProfileDynamic : public Persistent
   C:/Users/Greg/Documents/rsc/rsc/sb/Factory.cpp(45): class FactoryStats : public Dynamic
@@ -4072,9 +4083,9 @@ W117 Line can merge with the next line and be under the length limit
   C:/Users/Greg/Documents/rsc/rsc/nb/NbCliParms.cpp(388):    BindText(*new CliText
   C:/Users/Greg/Documents/rsc/rsc/nb/NbCliParms.cpp(392):    BindText(*new CliText
   C:/Users/Greg/Documents/rsc/rsc/nb/NbCliParms.cpp(394):    BindText(*new CliText
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1021):    BindText(*new CliText
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(2499):    BindText(*new CliText
-  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(3078): fixed_string PoolsHeader =
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(1055):    BindText(*new CliText
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(2533):    BindText(*new CliText
+  C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp(3112): fixed_string PoolsHeader =
   C:/Users/Greg/Documents/rsc/rsc/nb/SoftwareException.h(41):    SoftwareException
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.cpp(557):          (curr->slot_ != TraceRecord::InvalidSlot) &&
   C:/Users/Greg/Documents/rsc/rsc/sb/ServiceSM.cpp(765):                   ->CurrInitiator() != nullptr)
@@ -4113,13 +4124,13 @@ W119 Argument passed by value is modified
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxString.cpp(755/3): size_t rfind_first_not_of(const string& str, const string& chars, size_t off)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxString.cpp(769/2): size_t rfind_first_of(const string& str, size_t off, const string& chars)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.cpp(752/2):    const CxxToken* item, word offset, const string& info) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1918/1): bool Editor::CodeFollowsImmediately(size_t pos) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1933/1): bool Editor::CommentFollows(size_t pos) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4352/1): word Editor::InsertForward(size_t pos,
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4520/1):    (size_t pos, const string& nspace, const string& forward)
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5146/2): CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5339/1): void Editor::Rename(size_t pos, const string& oldName, const string& newName)
-  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6572/3):    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1919/1): bool Editor::CodeFollowsImmediately(size_t pos) const
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(1934/1): bool Editor::CommentFollows(size_t pos) const
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4353/1): word Editor::InsertForward(size_t pos,
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(4521/1):    (size_t pos, const string& nspace, const string& forward)
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5147/2): CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(5340/1): void Editor::Rename(size_t pos, const string& oldName, const string& newName)
+  C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp(6573/3):    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
   C:/Users/Greg/Documents/rsc/rsc/ct/Interpreter.cpp(488/1): LibExprErr Interpreter::ApplyOperator(bool operand)
   C:/Users/Greg/Documents/rsc/rsc/ct/Interpreter.cpp(599/1): LibrarySet* Interpreter::Error(LibExprErr err) const
   C:/Users/Greg/Documents/rsc/rsc/ct/Lexer.cpp(1271/1): size_t Lexer::CurrBegin(size_t pos) const
@@ -4181,7 +4192,7 @@ W119 Argument passed by value is modified
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.cpp(365/1): TraceRc TraceBuffer::DisplayTrace(ostream* stream, const string& opts)
   C:/Users/Greg/Documents/rsc/rsc/nw/IoThread.cpp(143/2):    (const IpPort& port, const byte_t* source, size_t size) const
   C:/Users/Greg/Documents/rsc/rsc/nw/IoThread.cpp(143/3):    (const IpPort& port, const byte_t* source, size_t size) const
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwLogs.cpp(106/1): void OutputNwLog(LogId id, c_string func, nwerr_t errval, c_string extra)
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwLogs.cpp(115/1): void OutputNwLog(LogId id, c_string func, nwerr_t errval, c_string extra)
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.cpp(246/1): SysSocket::SendRc SysTcpSocket::QueueBuff(IpBuffer* buff, bool henq)
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(154/1): word SysTcpSocket::Listen(size_t backlog)
   C:/Users/Greg/Documents/rsc/rsc/sb/Context.cpp(385/3): void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
@@ -4203,7 +4214,7 @@ W120 Function returns non-const reference or pointer to member data
   C:/Users/Greg/Documents/rsc/rsc/nb/CliText.h(82):    Registry< CliParm >& Parms() { return parms_; }
   C:/Users/Greg/Documents/rsc/rsc/nb/CliThread.h(190):    CliCookie& Cookie() { return cookie_; }
 W121 Static member function has indirect argument for its class
-  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(587/1):    static void Trace(Thread* thr, fn_name_arg func,
+  C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h(586/1):    static void Trace(Thread* thr, fn_name_arg func,
   C:/Users/Greg/Documents/rsc/rsc/sb/SbTrace.h(175/1):       (BuffTrace* bt, FactoryId fid, SignalId sid, SkipInfo& skip);
 W125 Non-const cast is not a downcast
   C:/Users/Greg/Documents/rsc/rsc/sb/Message.cpp(954):          auto bt = dynamic_cast< const BuffTrace* >(bt_);
@@ -5762,69 +5773,69 @@ C:/Users/Greg/Documents/rsc/rsc/ct/CxxVector.h
     151: template< class T > void EraseItemPtr
 C:/Users/Greg/Documents/rsc/rsc/ct/Editor.cpp
   W005 Functional cast
-    2135:    *Cli_->obuf << ": " << Warning(log.warning_);
+    2136:    *Cli_->obuf << ": " << Warning(log.warning_);
   W007 Cast down the inheritance hierarchy
     266:       auto func = static_cast< const Function* >(item);
-    734:    return static_cast< Namespace* >(scope);
-    806:    auto defn = static_cast< Data* >(data->GetMate());
-    899:    auto defn = static_cast< Function* >(func->GetMate());
-    927:    auto func = static_cast< const Function* >(item);
-    1165:    auto oper = static_cast< const Operation* >(log.item_);
-    1432:    static_cast< Class* >(log.item_)->SetClassTag(Cxx::StructType);
-    1481:          static_cast< Forward* >(*f)->SetClassTag(to);
-    1523:    auto decl = static_cast< CxxScope* >(log.item_);
-    1685:    auto item = static_cast< CxxScope* >(ParseFileItem(pos, space));
-    1698:          auto tname = static_cast< const TypeName* >(*r);
-    1712:       UpdateDebugFt(static_cast< Function* >(item));
-    1748:    auto func = static_cast< const Function* >(log.item_);
-    1818:    static_cast< Class* >(log.item_)->SetClassTag(Cxx::ClassType);
-    2077:    auto decl = static_cast< Function* >(log.item_);
-    2462:    static_cast< Function* >(log.item_)->SetExplicit(false);
-    2558:    static_cast< ClassData* >(log.item_)->SetMutable(false);
-    2594:    static_cast< Function* >(log.item_)->SetOverride(false);
-    2615:    auto qname = static_cast< const QualName* >(log.item_);
-    2679:    static_cast< Function* >(log.item_)->SetVirtual(false);
-    2749:       usages.directs.erase(static_cast< CxxNamed* >(*i));
-    2750:       usages.indirects.erase(static_cast< CxxNamed* >(*i));
-    2822:          auto data = static_cast< const Data* >(*i);
-    2836:             auto func = static_cast< const Function* >(*i);
-    2850:             auto data = static_cast< const Data* >(*i);
-    3000:    return FindSigEnd(static_cast< const Function* >(log.item_));
-    3309:    auto data = static_cast< Data* >(log.item_);
-    3376:    auto func = static_cast< Function* >(log.item_);
-    3467:    auto data = static_cast< const Data* >(log.item_);
-    4044:    auto data = static_cast< Data* >(aref);
-    4051:    ReplaceImpl(static_cast< Function* >(log.item_));
-    4202:    auto func = static_cast< Function* >(log.item_);
-    4552:    auto cls = static_cast< Class* >(log.item_);
-    4853:    auto cls = static_cast< Class* >(item);
-    5294:       ns = static_cast< Namespace* >(ref)->OuterSpace();
-    5370:    auto func = static_cast< const Function* >(log.item_);
-    5451:    auto func = static_cast<const Function*>(log.item_);
-    5461:       auto slit = static_cast< StrLiteral* >(arg);
-    5475:    auto data = static_cast< SpaceData* >(arg->Referent());
-    5482:    auto slit = static_cast< StrLiteral* >(file_->PosToItem(lpos));
-    5509:    static_cast< Ifndef* >(log.item_)->ChangeName(guard);
-    5574:    auto type = static_cast< TypeName* >(log.item_);
-    6141:    static_cast< Function* >(log.item_)->SetExplicit(true);
-    6190:    static_cast< Function* >(log.item_)->SetOverride(true);
-    6294:    static_cast< Function* >(log.item_)->SetVirtual(true);
-    6582:       auto items = GetItemsForDefn(static_cast< const CxxScope* >(next));
+    735:    return static_cast< Namespace* >(scope);
+    807:    auto defn = static_cast< Data* >(data->GetMate());
+    900:    auto defn = static_cast< Function* >(func->GetMate());
+    928:    auto func = static_cast< const Function* >(item);
+    1166:    auto oper = static_cast< const Operation* >(log.item_);
+    1433:    static_cast< Class* >(log.item_)->SetClassTag(Cxx::StructType);
+    1482:          static_cast< Forward* >(*f)->SetClassTag(to);
+    1524:    auto decl = static_cast< CxxScope* >(log.item_);
+    1686:    auto item = static_cast< CxxScope* >(ParseFileItem(pos, space));
+    1699:          auto tname = static_cast< const TypeName* >(*r);
+    1713:       UpdateDebugFt(static_cast< Function* >(item));
+    1749:    auto func = static_cast< const Function* >(log.item_);
+    1819:    static_cast< Class* >(log.item_)->SetClassTag(Cxx::ClassType);
+    2078:    auto decl = static_cast< Function* >(log.item_);
+    2463:    static_cast< Function* >(log.item_)->SetExplicit(false);
+    2559:    static_cast< ClassData* >(log.item_)->SetMutable(false);
+    2595:    static_cast< Function* >(log.item_)->SetOverride(false);
+    2616:    auto qname = static_cast< const QualName* >(log.item_);
+    2680:    static_cast< Function* >(log.item_)->SetVirtual(false);
+    2750:       usages.directs.erase(static_cast< CxxNamed* >(*i));
+    2751:       usages.indirects.erase(static_cast< CxxNamed* >(*i));
+    2823:          auto data = static_cast< const Data* >(*i);
+    2837:             auto func = static_cast< const Function* >(*i);
+    2851:             auto data = static_cast< const Data* >(*i);
+    3001:    return FindSigEnd(static_cast< const Function* >(log.item_));
+    3310:    auto data = static_cast< Data* >(log.item_);
+    3377:    auto func = static_cast< Function* >(log.item_);
+    3468:    auto data = static_cast< const Data* >(log.item_);
+    4045:    auto data = static_cast< Data* >(aref);
+    4052:    ReplaceImpl(static_cast< Function* >(log.item_));
+    4203:    auto func = static_cast< Function* >(log.item_);
+    4553:    auto cls = static_cast< Class* >(log.item_);
+    4854:    auto cls = static_cast< Class* >(item);
+    5295:       ns = static_cast< Namespace* >(ref)->OuterSpace();
+    5371:    auto func = static_cast< const Function* >(log.item_);
+    5452:    auto func = static_cast<const Function*>(log.item_);
+    5462:       auto slit = static_cast< StrLiteral* >(arg);
+    5476:    auto data = static_cast< SpaceData* >(arg->Referent());
+    5483:    auto slit = static_cast< StrLiteral* >(file_->PosToItem(lpos));
+    5510:    static_cast< Ifndef* >(log.item_)->ChangeName(guard);
+    5575:    auto type = static_cast< TypeName* >(log.item_);
+    6142:    static_cast< Function* >(log.item_)->SetExplicit(true);
+    6191:    static_cast< Function* >(log.item_)->SetOverride(true);
+    6295:    static_cast< Function* >(log.item_)->SetVirtual(true);
+    6583:       auto items = GetItemsForDefn(static_cast< const CxxScope* >(next));
   W082 Adjacent arguments have the same type
-    578: static void DebugFtNames(const Function* func, string& flit, string& fvar)
-    948: static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
-    1005: static void Rename(string& code, const string& oldName, const string& newName)
+    579: static void DebugFtNames(const Function* func, string& flit, string& fvar)
+    949: static bool ItemIsUsedBetween(const CxxToken* item, size_t begin, size_t end)
+    1006: static void Rename(string& code, const string& oldName, const string& newName)
 * W106 Function does not invoke Debug::ft
-    1975: size_t Editor::CommitCount() { return Commits_; }
-    4833: static FunctionRole WarningToRole(Warning log)
+    1976: size_t Editor::CommitCount() { return Commits_; }
+    4834: static FunctionRole WarningToRole(Warning log)
   W119 Argument passed by value is modified
-    1918/1: bool Editor::CodeFollowsImmediately(size_t pos) const
-    1933/1: bool Editor::CommentFollows(size_t pos) const
-    4352/1: word Editor::InsertForward(size_t pos,
-    4520/1:    (size_t pos, const string& nspace, const string& forward)
-    5146/2: CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
-    5339/1: void Editor::Rename(size_t pos, const string& oldName, const string& newName)
-    6572/3:    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
+    1919/1: bool Editor::CodeFollowsImmediately(size_t pos) const
+    1934/1: bool Editor::CommentFollows(size_t pos) const
+    4353/1: word Editor::InsertForward(size_t pos,
+    4521/1:    (size_t pos, const string& nspace, const string& forward)
+    5147/2: CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
+    5340/1: void Editor::Rename(size_t pos, const string& oldName, const string& newName)
+    6573/3:    const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const
 C:/Users/Greg/Documents/rsc/rsc/ct/Editor.h
 * W020 Using statement in header
     47: using namespace NodeBase;
@@ -6965,15 +6976,12 @@ C:/Users/Greg/Documents/rsc/rsc/nb/CoutThread.h
     48:    static void Spool(c_string s, bool eol = false); // CoutThread.cpp
 C:/Users/Greg/Documents/rsc/rsc/nb/Daemon.cpp
   W006 reinterpret_cast
-    74:    auto fake = reinterpret_cast< const Daemon* >(&local);
+    75:    auto fake = reinterpret_cast< const Daemon* >(&local);
 C:/Users/Greg/Documents/rsc/rsc/nb/Daemon.h
 * W042 Member could be private
     97:    id_t Did() const { return did_.GetId(); }
-* W053 Data could be const
-    179:    RegCell did_;
-    183:    size_t size_;
 * W077 Virtual function has no overrides
-    148:    virtual void Recover() { }
+    149:    virtual void Recover() { }
 C:/Users/Greg/Documents/rsc/rsc/nb/Debug.cpp
 * W106 Function does not invoke Debug::ft
     57: void Debug::Assert(bool condition, debug64_t errval)
@@ -6996,6 +7004,25 @@ C:/Users/Greg/Documents/rsc/rsc/nb/Debug.h
     115:    static void ResetSwFlags(); // NtIncrement.cpp
     119:    static Flags GetSwFlags(); // NtIncrement.cpp
     123:    static void noop(debug64_t info = 0); // CxxExecute.cpp
+C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.cpp
+  W006 reinterpret_cast
+    99:    auto fake = reinterpret_cast<const Deferred*>(&local);
+C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h
+  W026 Unused argument
+    90/1:    virtual void EventHasOccurred(Event event) = 0;
+* W032 Unused function
+    64:    void SendToThread(Thread* thread);
+    68:    void Restart(secs_t secs);
+    94:    Base* Owner() const { return owner_; }
+  W037 Member hides inherited name
+    98:    static ptrdiff_t LinkDiff();
+* W053 Data could be const
+    106:    Q2Link link_;
+* W090 Function could be const
+    90:    virtual void EventHasOccurred(Event event) = 0;
+C:/Users/Greg/Documents/rsc/rsc/nb/DeferredRegistry.h
+* W032 Unused function
+    52:    void EraseAll(Base* owner);
 C:/Users/Greg/Documents/rsc/rsc/nb/Duration.h
 * W099 Line contains adjacent spaces
     191: int64_t  operator/(const Duration& lhs, const Duration& rhs);
@@ -7297,21 +7324,21 @@ C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.h
     143:    void SetState(index_t index, BlockState state);
 C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.cpp
   W005 Functional cast
-    590:       rc = nbt->SelectFaction(Faction(id), TraceDefault);
-    938:       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
-    1087:          auto type = MemoryType(memtype);
-    1101:          auto type = MemoryType(memtype);
-    1131:          auto type = MemoryType(m);
-    1142:          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
-    1489:       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
-    3096:       auto heap = Memory::AccessHeap(MemoryType(m));
+    591:       rc = nbt->SelectFaction(Faction(id), TraceDefault);
+    972:       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
+    1121:          auto type = MemoryType(memtype);
+    1135:          auto type = MemoryType(memtype);
+    1165:          auto type = MemoryType(m);
+    1176:          *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
+    1523:       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
+    3130:       auto heap = Memory::AccessHeap(MemoryType(m));
   W102 Line length exceeds the standard maximum
-    3073: "Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
-    3074: "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
+    3107: "Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
+    3108: "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 * W117 Line can merge with the next line and be under the length limit
-    1021:    BindText(*new CliText
-    2499:    BindText(*new CliText
-    3078: fixed_string PoolsHeader =
+    1055:    BindText(*new CliText
+    2533:    BindText(*new CliText
+    3112: fixed_string PoolsHeader =
 C:/Users/Greg/Documents/rsc/rsc/nb/NbIncrement.h
 * W028 Unused data
     195:    static const id_t LastNbIndex = 3;
@@ -7532,9 +7559,6 @@ C:/Users/Greg/Documents/rsc/rsc/nb/Q1Way.h
 C:/Users/Greg/Documents/rsc/rsc/nb/Q2Link.cpp
 * W106 Function does not invoke Debug::ft
     40: Q2Link::~Q2Link()
-C:/Users/Greg/Documents/rsc/rsc/nb/Q2Link.h
-* W032 Unused function
-    66:    bool IsQueued() const { return next != nullptr; }
 C:/Users/Greg/Documents/rsc/rsc/nb/Q2Way.h
   W004 C-style cast
     145:       return (T*) getptr1(item, diff_);    // location of item's vptr
@@ -7953,51 +7977,52 @@ C:/Users/Greg/Documents/rsc/rsc/nb/Thread.cpp
     3420/1: void Thread::Trace(Thread* thr,
 C:/Users/Greg/Documents/rsc/rsc/nb/Thread.h
   W026 Unused argument
-    324/2:       (BlockingReason why, fn_name_arg func) { return true; }
-    333/1:    virtual void ScheduledIn(fn_name_arg func) { }
+    323/2:       (BlockingReason why, fn_name_arg func) { return true; }
+    332/1:    virtual void ScheduledIn(fn_name_arg func) { }
 * W032 Unused function
-    124:    static std::atomic_uint32_t* Vector();
-    128:    static bool TestFlag(FlagId fid);
-    132:    static void ResetFlag(FlagId fid);
-    155:    Faction GetFaction() const { return faction_; }
-    159:    bool ChangeFaction(Faction faction);
-    488:    SysMutex* BlockingMutex() const;
-    496:    uint8_t MutexCount() const;
+    129:    static std::atomic_uint32_t* Vector();
+    133:    static bool TestFlag(FlagId fid);
+    137:    static void ResetFlag(FlagId fid);
+    160:    Faction GetFaction() const { return faction_; }
+    164:    bool ChangeFaction(Faction faction);
+    487:    SysMutex* BlockingMutex() const;
+    495:    uint8_t MutexCount() const;
 * W042 Member could be private
-    136:    static void ResetFlags();
-    151:    SysThreadId NativeThreadId() const;
+    141:    static void ResetFlags();
+    156:    SysThreadId NativeThreadId() const;
 * W065 Base class virtual destructor is not public
-    259:    virtual ~Thread();
+    264:    virtual ~Thread();
   W075 Virtual function is public
-    176:    virtual TraceStatus CalcStatus(bool dynamic) const;
-    230:    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
+    117:    virtual bool EnqMsg(MsgBuffer& msg);
+    181:    virtual TraceStatus CalcStatus(bool dynamic) const;
+    235:    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 * W077 Virtual function has no overrides
-    230:    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
-    272:    virtual bool EnqMsg(MsgBuffer& msg);
-    278:    virtual MsgBuffer* DeqMsg(const Duration& timeout);
+    117:    virtual bool EnqMsg(MsgBuffer& msg);
+    235:    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
+    277:    virtual MsgBuffer* DeqMsg(const Duration& timeout);
   W082 Adjacent arguments have the same type
-    631:    void DisplaySummary(std::ostream& stream,
+    630:    void DisplaySummary(std::ostream& stream,
 * W090 Function could be const
-    120:    bool Interrupt(const Flags& mask = NoFlags);
-    163:    void SetStatus(TraceStatus status);
-    266:    void SetInitialized();
-    418:    void Reset(FlagId fid);
-    422:    void Ready();
-    426:    void Preempt();
-    445:    void Proceed();
-    484:    void UpdateMutex(SysMutex* mutex);
-    492:    void UpdateMutexCount(bool acquired);
-    544:    bool LogTrap(const Exception* ex,
-    592:    void SetTrap(bool on);
-    600:    void StackCheck();
-    604:    void SetSignal(signal_t sig);
+    125:    bool Interrupt(const Flags& mask = NoFlags);
+    168:    void SetStatus(TraceStatus status);
+    271:    void SetInitialized();
+    417:    void Reset(FlagId fid);
+    421:    void Ready();
+    425:    void Preempt();
+    444:    void Proceed();
+    483:    void UpdateMutex(SysMutex* mutex);
+    491:    void UpdateMutexCount(bool acquired);
+    543:    bool LogTrap(const Exception* ex,
+    591:    void SetTrap(bool on);
+    599:    void StackCheck();
+    603:    void SetSignal(signal_t sig);
 * W092 Function could be free
-    221:    static double PercentIdle(); // NbIncrement.cpp
-    624:    static void EnableFactions(const FactionFlags& enabled); // ModuleRegistry.cpp
-    640:    static TraceRc LogContextSwitches(bool on); // NbIncrement.cpp
-    648:    static void DisplayContextSwitches(std::ostream& stream); // NbIncrement.cpp
+    226:    static double PercentIdle(); // NbIncrement.cpp
+    623:    static void EnableFactions(const FactionFlags& enabled); // ModuleRegistry.cpp
+    639:    static TraceRc LogContextSwitches(bool on); // NbIncrement.cpp
+    647:    static void DisplayContextSwitches(std::ostream& stream); // NbIncrement.cpp
   W121 Static member function has indirect argument for its class
-    587/1:    static void Trace(Thread* thr, fn_name_arg func,
+    586/1:    static void Trace(Thread* thr, fn_name_arg func,
 C:/Users/Greg/Documents/rsc/rsc/nb/ThreadAdmin.cpp
 * W106 Function does not invoke Debug::ft
     206: static ThreadAdmin* AccessAdminData()
@@ -8030,11 +8055,15 @@ C:/Users/Greg/Documents/rsc/rsc/nb/ThreadAdmin.h
 C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.cpp
 * W106 Function does not invoke Debug::ft
     48: static bool IsSortedByThreadId(const Thread* thr1, const Thread* thr2)
-    267: Thread* ThreadRegistry::FindThread(SysThreadId nid) const
-    310: Thread* ThreadRegistry::GetThread(ThreadId tid) const
-    323: std::vector< Thread* > ThreadRegistry::GetThreads() const
-    361: bool ThreadRegistry::IsDeleted() const
-    511: size_t ThreadRegistry::Size()
+    298: Thread* ThreadRegistry::FindThread(SysThreadId nid) const
+    309: ThreadId ThreadRegistry::FindTid(SysThreadId nid) const
+    351: Thread* ThreadRegistry::GetThread(ThreadId tid) const
+    364: std::vector< Thread* > ThreadRegistry::GetThreads() const
+    402: bool ThreadRegistry::IsDeleted() const
+    562: size_t ThreadRegistry::Size()
+C:/Users/Greg/Documents/rsc/rsc/nb/ThreadRegistry.h
+* W053 Data could be const
+    75:    ThreadId tid_;
 C:/Users/Greg/Documents/rsc/rsc/nb/TimePoint.h
 * W032 Unused function
     45:    explicit TimePoint(const SysTime& time);
@@ -8310,10 +8339,10 @@ C:/Users/Greg/Documents/rsc/rsc/nw/IpPortCfgParm.h
     42:    IpPortCfgParm(NodeBase::c_string key, NodeBase::c_string def,
 C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp
 * W106 Function does not invoke Debug::ft
-    286: IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
-    501: bool IpPortRegistry::UseIPv6()
+    287: IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
+    509: bool IpPortRegistry::UseIPv6()
   W110 Override of Base.Display not found
-    56: class LocalAddrCfg : public CfgStrParm
+    57: class LocalAddrCfg : public CfgStrParm
 C:/Users/Greg/Documents/rsc/rsc/nw/IpService.cpp
   W006 reinterpret_cast
     72:    auto fake = reinterpret_cast< const IpService* >(&local);
@@ -8349,25 +8378,27 @@ C:/Users/Greg/Documents/rsc/rsc/nw/IpServiceRegistry.h
     56:    IpService* GetService(const std::string& name) const;
 C:/Users/Greg/Documents/rsc/rsc/nw/LocalAddrTest.cpp
   W006 reinterpret_cast
-    212:          auto payload = reinterpret_cast< SysIpL3Addr* >(buff->PayloadPtr());
+    209:       auto payload = reinterpret_cast< SysIpL3Addr* >(buff->PayloadPtr());
 * W022 Add using statement
     0:  // namespace NodeBase
-  W107 Function does not invoke Debug::ft as first statement
-    184:       Debug::ft("SendLocalThread.Enter");
 C:/Users/Greg/Documents/rsc/rsc/nw/LocalAddrTest.h
 * W020 Using statement in header
-    32: using namespace NodeBase;
+    34: using namespace NodeBase;
 C:/Users/Greg/Documents/rsc/rsc/nw/NwCliParms.h
 * W060 Base class constructor is public
     67:    IpAddrParm(NodeBase::c_string help, NodeBase::c_string text);
 C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp
   W007 Cast down the inheritance hierarchy
-    121:    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
-    183:    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
+    258:       (this, static_cast< const TcpIpService* >(service), port);
+    269:    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
+    318:       (this, static_cast<const UdpIpService*>(service), port);
+    329:    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
 C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.h
+* W053 Data could be const
+    98:    IoThreadRecreator* recreator_;
 * W092 Function could be free
-    49:    static TcpIoDaemon* GetDaemon(const TcpIpService* service, ipport_t port); // TcpIpPort.cpp
-    92:    static UdpIoDaemon* GetDaemon(const UdpIpService* service, ipport_t port); // UdpIpPort.cpp
+    111:    static TcpIoDaemon* GetDaemon(const TcpIpService* service, ipport_t port); // TcpIpPort.cpp
+    138:    static UdpIoDaemon* GetDaemon(const UdpIpService* service, ipport_t port); // UdpIpPort.cpp
 C:/Users/Greg/Documents/rsc/rsc/nw/NwIncrement.h
 * W060 Base class constructor is public
     39:    NwClearWhatParm();
@@ -8380,11 +8411,11 @@ C:/Users/Greg/Documents/rsc/rsc/nw/NwIncrement.h
     142:    NwStatusCommand() = default;
 C:/Users/Greg/Documents/rsc/rsc/nw/NwLogs.cpp
 * W106 Function does not invoke Debug::ft
-    143: static void UpdateAlarm
+    152: static void UpdateAlarm
   W107 Function does not invoke Debug::ft as first statement
-    99:    Debug::ft("NetworkBase.NetworkIsUp");
+    102:    Debug::ft("NetworkBase.NetworkIsUp");
   W119 Argument passed by value is modified
-    106/1: void OutputNwLog(LogId id, c_string func, nwerr_t errval, c_string extra)
+    115/1: void OutputNwLog(LogId id, c_string func, nwerr_t errval, c_string extra)
 C:/Users/Greg/Documents/rsc/rsc/nw/NwTracer.h
 * W042 Member could be private
     63:    bool PeersEmpty() const;

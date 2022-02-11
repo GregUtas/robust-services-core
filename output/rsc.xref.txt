@@ -605,6 +605,12 @@ NAMESPACES:
       nb/DaemonRegistry.h
       nb/Debug.cpp
       nb/Debug.h
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
+      nb/DeferredThread.cpp
+      nb/DeferredThread.h
       nb/Duration.cpp
       nb/Duration.h
       nb/Dynamic.cpp
@@ -1704,6 +1710,10 @@ NAMESPACES:
       nb/DaemonRegistry.h
       nb/Debug.cpp
       nb/Debug.h
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
       nb/Duration.cpp
       nb/Duration.h
       nb/Element.cpp
@@ -2054,6 +2064,8 @@ NAMESPACES:
       st/TestSessions.cpp
       st/TestSessions.h
 EXTERNAL:
+   DEFERREDREGISTRY_H_INCLUDED [Define]
+      nb/DeferredRegistry.h
    FIELD_LOAD [Define]
       nb/Element.cpp
       nb/InitFlags.cpp
@@ -19666,9 +19678,9 @@ ct/Editor.cpp
       ct/Editor.cpp
    CodeTools.BlankLocation.BlankNone: 152 [Enumerator]
       ct/Editor.cpp
-   CodeTools.ChooseArgumentName: 433 [Function]
+   CodeTools.ChooseArgumentName: 434 [Function]
       ct/Editor.cpp
-   CodeTools.ChooseDtorAttributes: 450 [Function]
+   CodeTools.ChooseDtorAttributes: 451 [Function]
       ct/Editor.cpp
    CodeTools.ClassInstantiated: 143 [SpaceData]
       ct/Editor.cpp
@@ -19678,11 +19690,11 @@ ct/Editor.cpp
       ct/Editor.cpp
    CodeTools.Commits_: 75 [SpaceData]
       ct/Editor.cpp
-   CodeTools.CreateSpecialFunctionComment: 503 [Function]
+   CodeTools.CreateSpecialFunctionComment: 504 [Function]
       ct/Editor.cpp
    CodeTools.DebugFtCode: 162 [Function]
       ct/Editor.cpp
-   CodeTools.DebugFtNames: 578 [Function]
+   CodeTools.DebugFtNames: 579 [Function]
       ct/Editor.cpp
    CodeTools.DefnPrompt: 135 [SpaceData]
       ct/Editor.cpp
@@ -19694,55 +19706,55 @@ ct/Editor.cpp
       ct/Editor.cpp
    CodeTools.EditFailed: 98 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_CodeBegin: 1824 [SpaceData]
+   CodeTools.Editor_CodeBegin: 1825 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_EraseAssignment: 2315 [SpaceData]
+   CodeTools.Editor_EraseAssignment: 2316 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_Paste: 5160 [SpaceData]
+   CodeTools.Editor_Paste: 5161 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_Rename: 5337 [SpaceData]
+   CodeTools.Editor_Rename: 5338 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_UpdateDebugFt: 6317 [SpaceData]
+   CodeTools.Editor_UpdateDebugFt: 6318 [SpaceData]
       ct/Editor.cpp
    CodeTools.Editors_: 71 [SpaceData]
       ct/Editor.cpp
    CodeTools.EditSucceeded: 99 [SpaceData]
       ct/Editor.cpp
-   CodeTools.EnsureUniqueDebugFtName: 614 [Function]
+   CodeTools.EnsureUniqueDebugFtName: 615 [Function]
       ct/Editor.cpp
-   CodeTools.EraseLocals: 641 [Function]
+   CodeTools.EraseLocals: 642 [Function]
       ct/Editor.cpp
    CodeTools.Expl_: 111 [SpaceData]
       ct/Editor.cpp
    CodeTools.FilePrompt: 136 [SpaceData]
       ct/Editor.cpp
-   CodeTools.FindFuncDefnFile: 666 [Function]
+   CodeTools.FindFuncDefnFile: 667 [Function]
       ct/Editor.cpp
-   CodeTools.FindMaxAccess: 704 [Function]
+   CodeTools.FindMaxAccess: 705 [Function]
       ct/Editor.cpp
-   CodeTools.FindNamespace: 726 [Function]
+   CodeTools.FindNamespace: 727 [Function]
       ct/Editor.cpp
    CodeTools.FixPrompt: 125 [SpaceData]
       ct/Editor.cpp
    CodeTools.FixSkipped: 128 [SpaceData]
       ct/Editor.cpp
-   CodeTools.GetComment: 742 [Function]
+   CodeTools.GetComment: 743 [Function]
       ct/Editor.cpp
-   CodeTools.GetDatas: 802 [Function]
+   CodeTools.GetDatas: 803 [Function]
       ct/Editor.cpp
    CodeTools.GetExpl: 119 [Function]
       ct/Editor.cpp
    CodeTools.GetIdentifier: 87 [Function]
       ct/Editor.cpp
-   CodeTools.GetItemName: 775 [Function]
+   CodeTools.GetItemName: 776 [Function]
       ct/Editor.cpp
-   CodeTools.GetItemUsages: 828 [Function]
+   CodeTools.GetItemUsages: 829 [Function]
       ct/Editor.cpp
-   CodeTools.GetOverrides: 888 [Function]
+   CodeTools.GetOverrides: 889 [Function]
       ct/Editor.cpp
    CodeTools.Inform: 91 [Function]
       ct/Editor.cpp
-   CodeTools.IsNonTrivialInline: 922 [Function]
+   CodeTools.IsNonTrivialInline: 923 [Function]
       ct/Editor.cpp
    CodeTools.ItemDeclAttrs: 174 [Class]
       ct/Editor.cpp
@@ -19791,89 +19803,89 @@ ct/Editor.cpp
       ct/Editor.cpp
    CodeTools.ItemDeclAttrs_CalcDeclOrder: 291 [SpaceData]
       ct/Editor.cpp
-   CodeTools.ItemDefnAttrs: 397 [Class]
+   CodeTools.ItemDefnAttrs: 398 [Class]
       ct/Editor.cpp
       ct/Editor.h
-   CodeTools.ItemDefnAttrs.ItemDefnAttrs(): 399 [Function]
+   CodeTools.ItemDefnAttrs.ItemDefnAttrs(): 400 [Function]
       ct/Editor.cpp
-   CodeTools.ItemDefnAttrs.ItemDefnAttrs(const Function*): 401 [Function]
+   CodeTools.ItemDefnAttrs.ItemDefnAttrs(const Function*): 402 [Function]
       ct/Editor.cpp
-   CodeTools.ItemDefnAttrs.ItemDefnAttrs(FunctionRole): 400 [Function]
+   CodeTools.ItemDefnAttrs.ItemDefnAttrs(FunctionRole): 401 [Function]
       ct/Editor.cpp
-   CodeTools.ItemDefnAttrs.offsets_: 405 [ClassData]
+   CodeTools.ItemDefnAttrs.offsets_: 406 [ClassData]
       ct/Editor.cpp
-   CodeTools.ItemDefnAttrs.pos_: 404 [ClassData]
+   CodeTools.ItemDefnAttrs.pos_: 405 [ClassData]
       ct/Editor.cpp
-   CodeTools.ItemDefnAttrs.role_: 403 [ClassData]
+   CodeTools.ItemDefnAttrs.role_: 404 [ClassData]
       ct/Editor.cpp
    CodeTools.ItemDeleted: 129 [SpaceData]
       ct/Editor.cpp
-   CodeTools.ItemIsUsedBetween: 948 [Function]
+   CodeTools.ItemIsUsedBetween: 949 [Function]
       ct/Editor.cpp
-   CodeTools.ItemOffset: 378 [Enum]
+   CodeTools.ItemOffset: 379 [Enum]
       ct/Editor.cpp
-   CodeTools.ItemOffset.OffsetBlank: 381 [Enumerator]
+   CodeTools.ItemOffset.OffsetBlank: 382 [Enumerator]
       ct/Editor.cpp
-   CodeTools.ItemOffset.OffsetNone: 380 [Enumerator]
+   CodeTools.ItemOffset.OffsetNone: 381 [Enumerator]
       ct/Editor.cpp
-   CodeTools.ItemOffset.OffsetRule: 382 [Enumerator]
+   CodeTools.ItemOffset.OffsetRule: 383 [Enumerator]
       ct/Editor.cpp
-   CodeTools.ItemOffsets: 385 [Class]
+   CodeTools.ItemOffsets: 386 [Class]
       ct/Editor.cpp
       ct/Editor.h
-   CodeTools.ItemOffsets.above_: 389 [ClassData]
+   CodeTools.ItemOffsets.above_: 390 [ClassData]
       ct/Editor.cpp
-   CodeTools.ItemOffsets.below_: 390 [ClassData]
+   CodeTools.ItemOffsets.below_: 391 [ClassData]
       ct/Editor.cpp
-   CodeTools.ItemOffsets.ItemOffsets: 387 [Function]
-   CodeTools.MaxAccessUsed: 969 [Function]
+   CodeTools.ItemOffsets.ItemOffsets: 388 [Function]
+   CodeTools.MaxAccessUsed: 970 [Function]
       ct/Editor.cpp
-   CodeTools.MaxRoleWarning: 4802 [SpaceData]
+   CodeTools.MaxRoleWarning: 4803 [SpaceData]
       ct/Editor.cpp
    CodeTools.NewNamePrompt: 138 [SpaceData]
       ct/Editor.cpp
-   CodeTools.NotFound: 988 [Function]
+   CodeTools.NotFound: 989 [Function]
       ct/Editor.cpp
    CodeTools.NotImplemented: 130 [SpaceData]
       ct/Editor.cpp
-   CodeTools.PatchComment: 4540 [SpaceData]
+   CodeTools.PatchComment: 4541 [SpaceData]
       ct/Editor.cpp
-   CodeTools.PatchInvocation: 4543 [SpaceData]
+   CodeTools.PatchInvocation: 4544 [SpaceData]
       ct/Editor.cpp
-   CodeTools.PatchReturn: 4541 [SpaceData]
+   CodeTools.PatchReturn: 4542 [SpaceData]
       ct/Editor.cpp
-   CodeTools.PatchSignature: 4542 [SpaceData]
+   CodeTools.PatchSignature: 4543 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Rename: 1005 [Function]
+   CodeTools.Rename: 1006 [Function]
       ct/Editor.cpp
-   CodeTools.Report(c_string,word): 1022 [Function]
+   CodeTools.Report(c_string,word): 1023 [Function]
       ct/Editor.cpp
-   CodeTools.Report(const std::ostringstream&,word): 1032 [Function]
-   CodeTools.RoleWarning: 4804 [Class]
+   CodeTools.Report(const std::ostringstream&,word): 1033 [Function]
+   CodeTools.RoleWarning: 4805 [Class]
       ct/Editor.cpp
-   CodeTools.RoleWarning.log: 4807 [ClassData]
+   CodeTools.RoleWarning.log: 4808 [ClassData]
       ct/Editor.cpp
-   CodeTools.RoleWarning.role: 4806 [ClassData]
+   CodeTools.RoleWarning.role: 4807 [ClassData]
       ct/Editor.cpp
    CodeTools.SetExpl: 115 [Function]
       ct/Editor.cpp
    CodeTools.ShellPrompt: 137 [SpaceData]
       ct/Editor.cpp
-   CodeTools.SpecialMemberFunctionLogs: 4812 [SpaceData]
+   CodeTools.SpecialMemberFunctionLogs: 4813 [SpaceData]
       ct/Editor.cpp
-   CodeTools.strCode: 1052 [Function]
+   CodeTools.strCode: 1053 [Function]
       ct/Editor.cpp
-   CodeTools.strComment: 1061 [Function]
+   CodeTools.strComment: 1062 [Function]
       ct/Editor.cpp
    CodeTools.SuffixPrompt: 139 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Unimplemented: 1074 [Function]
+   CodeTools.Unimplemented: 1075 [Function]
       ct/Editor.cpp
    CodeTools.UnspecifiedFailure: 131 [SpaceData]
       ct/Editor.cpp
    CodeTools.VirtualPrompt: 140 [SpaceData]
       ct/Editor.cpp
-   CodeTools.WarningToRole: 4833 [Function]
+   CodeTools.WarningToRole: 4834 [Function]
       ct/Editor.cpp
    CodeTools.YNSQChars: 127 [SpaceData]
       ct/Editor.cpp
@@ -25989,6 +26001,7 @@ nb/Algorithms.h
       nb/CliIncrement.cpp
       nb/CliParm.cpp
       nb/Daemon.cpp
+      nb/Deferred.cpp
       nb/Log.cpp
       nb/LogGroup.cpp
       nb/Module.cpp
@@ -26225,6 +26238,10 @@ nb/Base.h
       nb/Base.h
       nb/Debug.cpp
       nb/Debug.h
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
       nb/Formatters.cpp
       nb/NbIncrement.cpp
       nb/Object.cpp
@@ -26260,6 +26277,7 @@ nb/Base.h
       nb/Class.cpp
       nb/Class.h
       nb/ClassRegistry.h
+      nb/DeferredRegistry.h
       nb/NbPools.h
       nb/ObjectPoolRegistry.cpp
       nb/Pooled.cpp
@@ -26273,6 +26291,8 @@ nb/Base.h
       sb/SbPools.h
       sb/TimerRegistry.h
    NodeBase.Base.Cleanup: 122 [Function]
+      nb/Deferred.cpp
+      nb/Deferred.h
       nb/ObjectPool.cpp
       nb/StreamRequest.cpp
       nb/StreamRequest.h
@@ -26389,6 +26409,7 @@ nb/Base.h
       nb/ClassRegistry.h
       nb/DaemonRegistry.cpp
       nb/DaemonRegistry.h
+      nb/DeferredRegistry.h
       nb/Log.h
       nb/LogGroup.h
       nb/LogGroupRegistry.h
@@ -28878,11 +28899,11 @@ nb/CoutThread.h
       nb/CoutThread.cpp
    NodeBase.Singleton<CoutThread>: 38 [Friend]
 nb/Daemon.cpp
-   NodeBase.Daemon_CreateThread: 80 [SpaceData]
+   NodeBase.Daemon_CreateThread: 81 [SpaceData]
       nb/Daemon.cpp
-   NodeBase.Daemon_dtor: 59 [SpaceData]
+   NodeBase.Daemon_dtor: 60 [SpaceData]
       nb/Daemon.cpp
-   NodeBase.Daemon_Find: 211 [SpaceData]
+   NodeBase.Daemon_Find: 215 [SpaceData]
       nb/Daemon.cpp
 nb/Daemon.h
    DAEMON_H_INCLUDED: 23 [Define]
@@ -28907,12 +28928,12 @@ nb/Daemon.h
       sb/InvokerThread.cpp
       sb/SbDaemons.cpp
       sb/SbDaemons.h
-   NodeBase.Daemon.alarm_: 191 [ClassData]
+   NodeBase.Daemon.alarm_: 197 [ClassData]
       nb/Daemon.cpp
    NodeBase.Daemon.CellDiff: 117 [Function]
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
-   NodeBase.Daemon.CreateThread: 139 [Function]
+   NodeBase.Daemon.CreateThread: 140 [Function]
       nb/Daemon.cpp
       nb/NbDaemons.h
       nt/NtIncrement.cpp
@@ -28922,7 +28943,7 @@ nb/Daemon.h
       nb/Daemon.cpp
       nb/InitThread.cpp
       sb/InvokerPool.cpp
-   NodeBase.Daemon.Daemon(c_string,size_t): 135 [Function]
+   NodeBase.Daemon.Daemon(c_string,size_t,bool): 136 [Function]
       nb/Daemon.cpp
       nb/NbDaemons.cpp
       nt/NtIncrement.cpp
@@ -28931,7 +28952,7 @@ nb/Daemon.h
    NodeBase.Daemon.Daemon(const Daemon&): 72 [Function]
    NodeBase.Daemon.Did: 97 [Function]
       nb/Daemon.cpp
-   NodeBase.Daemon.did_: 179 [ClassData]
+   NodeBase.Daemon.did_: 180 [ClassData]
       nb/Daemon.cpp
       nb/Daemon.h
    NodeBase.Daemon.Disable: 109 [Function]
@@ -28946,23 +28967,25 @@ nb/Daemon.h
    NodeBase.Daemon.Enable: 113 [Function]
       nb/Daemon.cpp
       nb/NbIncrement.cpp
-   NodeBase.Daemon.EnsureAlarm: 158 [Function]
+   NodeBase.Daemon.EnsureAlarm: 159 [Function]
       nb/Daemon.cpp
-   NodeBase.Daemon.Find: 171 [Function]
+   NodeBase.Daemon.Find: 172 [Function]
       nb/Daemon.cpp
-   NodeBase.Daemon.GetAlarmLevel: 154 [Function]
+   NodeBase.Daemon.GetAlarmLevel: 155 [Function]
       nb/Daemon.cpp
       nb/NbDaemons.h
       nt/NtIncrement.cpp
       sb/SbDaemons.h
-   NodeBase.Daemon.Iterator: 167 [Typedef]
+   NodeBase.Daemon.Iterator: 168 [Typedef]
       nb/Daemon.cpp
       nb/Daemon.h
    NodeBase.Daemon.Name: 93 [Function]
       nb/DaemonRegistry.cpp
-   NodeBase.Daemon.name_: 175 [ClassData]
+   NodeBase.Daemon.name_: 176 [ClassData]
       nb/Daemon.cpp
       nb/Daemon.h
+   NodeBase.Daemon.noalarm_: 189 [ClassData]
+      nb/Daemon.cpp
    NodeBase.Daemon.operator=: 76 [Function]
    NodeBase.Daemon.Patch: 126 [Function]
       nb/Daemon.cpp
@@ -28972,11 +28995,11 @@ nb/Daemon.h
       nw/NwDaemons.h
       sb/SbDaemons.cpp
       sb/SbDaemons.h
-   NodeBase.Daemon.RaiseAlarm: 163 [Function]
+   NodeBase.Daemon.RaiseAlarm: 164 [Function]
       nb/Daemon.cpp
-   NodeBase.Daemon.Recover: 148 [Function]
+   NodeBase.Daemon.Recover: 149 [Function]
       nb/Daemon.cpp
-   NodeBase.Daemon.size_: 183 [ClassData]
+   NodeBase.Daemon.size_: 184 [ClassData]
       nb/Daemon.cpp
       nb/Daemon.h
    NodeBase.Daemon.Startup: 130 [Function]
@@ -28994,10 +29017,10 @@ nb/Daemon.h
    NodeBase.Daemon.Threads: 101 [Function]
       nb/InitThread.cpp
       sb/SbDaemons.cpp
-   NodeBase.Daemon.threads_: 195 [ClassData]
+   NodeBase.Daemon.threads_: 201 [ClassData]
       nb/Daemon.cpp
       nb/Daemon.h
-   NodeBase.Daemon.traps_: 187 [ClassData]
+   NodeBase.Daemon.traps_: 193 [ClassData]
       nb/Daemon.cpp
    NodeBase.Daemon.~Daemon: 68 [Function]
       nb/Daemon.cpp
@@ -29194,6 +29217,9 @@ nb/Debug.h
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+      nb/DeferredThread.cpp
       nb/Duration.cpp
       nb/Dynamic.cpp
       nb/Element.cpp
@@ -29591,6 +29617,9 @@ nb/Debug.h
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+      nb/DeferredThread.cpp
       nb/Dynamic.cpp
       nb/Element.cpp
       nb/ElementException.cpp
@@ -29927,6 +29956,9 @@ nb/Debug.h
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+      nb/DeferredThread.cpp
       nb/Dynamic.cpp
       nb/Element.cpp
       nb/ElementException.cpp
@@ -30247,6 +30279,8 @@ nb/Debug.h
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
       nb/Duration.cpp
       nb/Element.cpp
       nb/FunctionGuard.cpp
@@ -30308,6 +30342,7 @@ nb/Debug.h
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
+      nw/NwDaemons.cpp
       nw/NwIncrement.cpp
       nw/NwTracer.cpp
       nw/SysIpL2Addr.win.cpp
@@ -30414,6 +30449,7 @@ nb/Debug.h
       nb/CliParm.cpp
       nb/Daemon.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
       nb/Heap.cpp
       nb/SysFile.cpp
       nb/Thread.cpp
@@ -30421,6 +30457,7 @@ nb/Debug.h
       nw/ByteBuffer.cpp
       nw/InputHandler.cpp
       nw/IpService.cpp
+      nw/NwDaemons.cpp
       nw/SysSocket.cpp
       nw/TcpIpService.cpp
       pb/PotsFeature.cpp
@@ -30460,6 +30497,7 @@ nb/Debug.h
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/DeferredRegistry.cpp
       nb/Element.cpp
       nb/Log.cpp
       nb/LogBufferRegistry.cpp
@@ -30511,6 +30549,157 @@ nb/Debug.h
       sb/Trigger.cpp
       sn/PotsTreatmentRegistry.cpp
       st/TestSessions.cpp
+nb/Deferred.cpp
+   NodeBase.Deferred_EventHasOccurred: 85 [SpaceData]
+      nb/Deferred.cpp
+nb/Deferred.h
+   DEFERRED_H_INCLUDED: 23 [Define]
+      nb/Deferred.h
+   NodeBase.Deferred: 42 [Class]
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
+      nw/LocalAddrTest.cpp
+      nw/LocalAddrTest.h
+      nw/NwDaemons.cpp
+      nw/NwLogs.cpp
+   NodeBase.Deferred.Cleanup: 102 [Function]
+      nb/Deferred.cpp
+   NodeBase.Deferred.Deferred(Base&,secs_t,bool): 83 [Function]
+      nb/Deferred.cpp
+      nw/LocalAddrTest.cpp
+      nw/NwDaemons.cpp
+   NodeBase.Deferred.Deferred(const Deferred&): 53 [Function]
+   NodeBase.Deferred.Display: 72 [Function]
+      nb/Deferred.cpp
+      nw/NwDaemons.cpp
+   NodeBase.Deferred.Event: 58 [Typedef]
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
+      nw/LocalAddrTest.cpp
+      nw/LocalAddrTest.h
+      nw/NwDaemons.cpp
+   NodeBase.Deferred.EventHasOccurred: 90 [Function]
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+      nw/LocalAddrTest.h
+      nw/NwDaemons.cpp
+   NodeBase.Deferred.link_: 106 [ClassData]
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+   NodeBase.Deferred.LinkDiff: 98 [Function]
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+   NodeBase.Deferred.Owner: 94 [Function]
+   NodeBase.Deferred.owner_: 110 [ClassData]
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+   NodeBase.Deferred.Patch: 77 [Function]
+      nb/Deferred.cpp
+      nw/LocalAddrTest.cpp
+      nw/LocalAddrTest.h
+      nw/NwDaemons.cpp
+   NodeBase.Deferred.Restart: 68 [Function]
+      nb/Deferred.cpp
+   NodeBase.Deferred.secs_: 114 [ClassData]
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+   NodeBase.Deferred.SendToThread: 64 [Function]
+      nb/Deferred.cpp
+   NodeBase.Deferred.Timeout: 60 [ClassData]
+      nb/DeferredRegistry.cpp
+      nw/NwLogs.cpp
+   NodeBase.Deferred.warm_: 118 [ClassData]
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+   NodeBase.Deferred.~Deferred: 49 [Function]
+      nb/Deferred.cpp
+   NodeBase.DeferredRegistry: 45 [Friend]
+   NodeBase.Q2Way<Deferred>: 44 [Friend]
+   NodeBase.Thread: 33 [Forward]
+      nb/Deferred.h
+nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry_dtor: 52 [SpaceData]
+      nb/DeferredRegistry.cpp
+nb/DeferredRegistry.h
+   NodeBase.Deferred: 39 [Friend]
+   NodeBase.DeferredRegistry: 36 [Class]
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
+      nb/DeferredThread.cpp
+      nb/NbIncrement.cpp
+      nb/NbModule.cpp
+      nb/NbPools.cpp
+      nw/NwLogs.cpp
+   NodeBase.DeferredRegistry.ClaimBlocks: 60 [Function]
+      nb/DeferredRegistry.cpp
+      nb/NbPools.cpp
+   NodeBase.DeferredRegistry.corrupt_: 109 [ClassData]
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.DeferredRegistry(): 77 [Function]
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.DeferredRegistry(const DeferredRegistry&): 44 [Function]
+   NodeBase.DeferredRegistry.Display: 64 [Function]
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.Erase: 89 [Function]
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.EraseAll: 52 [Function]
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.Exqueue: 93 [Function]
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.Insert: 85 [Function]
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.itemq_: 105 [ClassData]
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.NotifyAll: 56 [Function]
+      nb/DeferredRegistry.cpp
+      nw/NwLogs.cpp
+   NodeBase.DeferredRegistry.operator=: 48 [Function]
+   NodeBase.DeferredRegistry.Patch: 69 [Function]
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.RaiseEvent: 97 [Function]
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredRegistry.RaiseTimeouts: 101 [Function]
+      nb/DeferredRegistry.cpp
+      nb/DeferredThread.cpp
+   NodeBase.DeferredRegistry.Shutdown: 73 [Function]
+      nb/DeferredRegistry.cpp
+      nb/NbModule.cpp
+   NodeBase.DeferredRegistry.~DeferredRegistry: 81 [Function]
+      nb/DeferredRegistry.cpp
+   NodeBase.DeferredThread: 40 [Friend]
+   NodeBase.Singleton<DeferredRegistry>: 38 [Friend]
+nb/DeferredThread.h
+   DEFERREDTHREAD_H_INCLUDED: 23 [Define]
+      nb/DeferredThread.h
+   NodeBase.DeferredThread: 35 [Class]
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
+      nb/DeferredThread.cpp
+      nb/DeferredThread.h
+      nb/NbDaemons.cpp
+      nb/NbModule.cpp
+   NodeBase.DeferredThread.AbbrName: 53 [Function]
+      nb/DeferredThread.cpp
+   NodeBase.DeferredThread.DeferredThread: 45 [Function]
+      nb/DeferredThread.cpp
+   NodeBase.DeferredThread.Destroy: 57 [Function]
+      nb/DeferredThread.cpp
+   NodeBase.DeferredThread.Enter: 62 [Function]
+      nb/DeferredThread.cpp
+   NodeBase.DeferredThread.Patch: 41 [Function]
+      nb/DeferredThread.cpp
+   NodeBase.DeferredThread.~DeferredThread: 49 [Function]
+      nb/DeferredThread.cpp
+   NodeBase.Singleton<DeferredThread>: 37 [Friend]
 nb/Duration.cpp
    NodeBase.Duration_ctor: 37 [SpaceData]
       nb/Duration.cpp
@@ -30524,6 +30713,7 @@ nb/Duration.h
       an/PotsTrafficThread.h
       dip/BotThread.cpp
       nb/Alarm.h
+      nb/DeferredThread.cpp
       nb/Duration.cpp
       nb/Duration.h
       nb/FunctionTrace.cpp
@@ -30552,6 +30742,7 @@ nb/Duration.h
       nb/TimePoint.h
       nt/FunctionStats.cpp
       nt/FunctionStats.h
+      nw/NwDaemons.cpp
       nw/SysTcpSocket.h
       nw/SysTcpSocket.win.cpp
       sb/InvokerPool.cpp
@@ -30582,6 +30773,7 @@ nb/Duration.h
       nb/ThreadAdmin.cpp
       nb/TimePoint.cpp
       nt/NtIncrement.cpp
+      nw/NwDaemons.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
       sb/InvokerPool.cpp
@@ -30628,6 +30820,7 @@ nb/Duration.h
    NodeBase.Duration.operator=: 96 [Function]
       an/PotsTrafficThread.cpp
       dip/BotThread.cpp
+      nb/DeferredThread.cpp
       nb/FunctionTrace.cpp
       nb/InitThread.cpp
       nb/LeakyBucketCounter.cpp
@@ -30638,6 +30831,7 @@ nb/Duration.h
       nb/RootThread.cpp
       nb/StatisticsThread.cpp
       nb/Thread.cpp
+      nw/NwDaemons.cpp
       sb/TimerThread.cpp
    NodeBase.Duration.operator>>=: 164 [Function]
       nb/Duration.cpp
@@ -30653,6 +30847,7 @@ nb/Duration.h
       nb/Duration.h
    NodeBase.Duration.To: 116 [Function]
       an/PotsTrafficThread.cpp
+      nb/DeferredRegistry.cpp
       nb/Duration.cpp
       nb/FunctionTrace.cpp
       nb/ModuleRegistry.cpp
@@ -30687,6 +30882,7 @@ nb/Duration.h
    NodeBase.ONE_SEC: 204 [SpaceData]
       an/PotsTrafficThread.cpp
       nb/CliThread.cpp
+      nb/DeferredThread.cpp
       nb/LogThread.cpp
       nb/Thread.cpp
       nw/LocalAddrTest.cpp
@@ -30718,6 +30914,7 @@ nb/Duration.h
       nb/Thread.cpp
    NodeBase.operator-(const Duration&,const Duration&): 187 [Function]
       an/PotsTrafficThread.cpp
+      nb/DeferredThread.cpp
       nb/Duration.cpp
       nb/FunctionTrace.cpp
       nb/Thread.cpp
@@ -30754,9 +30951,11 @@ nb/Duration.h
       nb/Thread.cpp
    NodeBase.operator>(const Duration&,const Duration&): 181 [Function]
       an/PotsTrafficThread.cpp
+      nb/DeferredThread.cpp
       nb/Duration.cpp
       nb/Thread.cpp
       nt/FunctionProfiler.cpp
+      nw/NwDaemons.cpp
       sb/TimerThread.cpp
    NodeBase.operator>=(const Duration&,const Duration&): 182 [Function]
       nb/Alarm.cpp
@@ -30773,10 +30972,16 @@ nb/Duration.h
       dip/BotThread.h
       nb/Alarm.cpp
       nb/Alarm.h
+      nb/Deferred.cpp
+      nb/Deferred.h
       nb/LeakyBucketCounter.cpp
       nb/LeakyBucketCounter.h
       nb/StatisticsThread.cpp
       nb/StatisticsThread.h
+      nw/LocalAddrTest.cpp
+      nw/LocalAddrTest.h
+      nw/NwDaemons.cpp
+      nw/NwDaemons.h
       pb/PotsCfnFeature.cpp
       pb/PotsCfnFeature.h
       pb/PotsProtocol.h
@@ -30850,6 +31055,7 @@ nb/Duration.h
       nb/SysTime.win.cpp
    NodeBase.TIMEOUT_IMMED: 199 [SpaceData]
       an/PotsTrafficThread.cpp
+      nb/DeferredThread.cpp
       nb/InitThread.cpp
       nb/LogThread.cpp
       nb/RootThread.cpp
@@ -30872,7 +31078,6 @@ nb/Duration.h
       nb/ObjectPoolAudit.cpp
       nb/SysThread.cpp
       nb/Thread.cpp
-      nw/LocalAddrTest.cpp
       nw/SysTcpSocket.win.cpp
       nw/TcpIoThread.cpp
       sb/InvokerPool.cpp
@@ -30889,6 +31094,7 @@ nb/Duration.h
       an/PotsTrafficThread.cpp
       ct/Editor.cpp
       nb/Debug.cpp
+      nb/DeferredRegistry.cpp
       nb/Duration.cpp
       nb/Exception.cpp
       nb/InitThread.cpp
@@ -30915,6 +31121,7 @@ nb/Duration.h
       nb/StatisticsThread.cpp
       nb/Thread.cpp
       nt/NtIncrement.cpp
+      nw/NwDaemons.cpp
    NodeBase.TimeUnits.TICKS: 62 [Enumerator]
       nb/Duration.cpp
       nb/Thread.cpp
@@ -30944,6 +31151,8 @@ nb/Dynamic.h
       mb/Switch.h
       mb/ToneRegistry.cpp
       mb/ToneRegistry.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
       nb/Dynamic.cpp
       nb/ObjectPool.cpp
       nb/Statistics.cpp
@@ -31011,6 +31220,8 @@ nb/Dynamic.h
    NodeBase.Dynamic.operator new[](size_t,void*): 63 [Function]
       nb/Dynamic.cpp
    NodeBase.Dynamic.Patch: 51 [Function]
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
       nb/Dynamic.cpp
       nb/Statistics.cpp
       nb/Statistics.h
@@ -31356,6 +31567,8 @@ nb/Formatters.h
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
       nb/Formatters.cpp
       nb/Heap.cpp
       nb/InitThread.cpp
@@ -31565,6 +31778,7 @@ nb/Formatters.h
       nb/CliStack.cpp
       nb/CliThread.cpp
       nb/Daemon.cpp
+      nb/DeferredRegistry.cpp
       nb/Element.cpp
       nb/Formatters.cpp
       nb/LogThread.cpp
@@ -33017,6 +33231,7 @@ nb/LogThread.h
       nb/LogBuffer.cpp
       nb/LogThread.cpp
       nb/LogThread.h
+      nb/NbDaemons.cpp
       nb/NbModule.cpp
    NodeBase.LogThread.AbbrName: 78 [Function]
       nb/LogThread.cpp
@@ -33488,6 +33703,8 @@ nb/MsgBuffer.h
       nb/MsgBuffer.h
    NodeBase.MsgBuffer: 36 [Class]
       dip/BotThread.cpp
+      nb/Deferred.cpp
+      nb/Deferred.h
       nb/MsgBuffer.cpp
       nb/MsgBuffer.h
       nb/NbPools.cpp
@@ -33498,6 +33715,8 @@ nb/MsgBuffer.h
       nw/IpBuffer.cpp
       nw/IpBuffer.h
    NodeBase.MsgBuffer.Display: 66 [Function]
+      nb/Deferred.cpp
+      nb/Deferred.h
       nb/MsgBuffer.cpp
       nb/StreamRequest.cpp
       nb/StreamRequest.h
@@ -33508,6 +33727,7 @@ nb/MsgBuffer.h
       nb/Thread.cpp
       nw/IpBuffer.h
    NodeBase.MsgBuffer.MsgBuffer(): 75 [Function]
+      nb/Deferred.cpp
       nb/MsgBuffer.cpp
       nw/IpBuffer.cpp
    NodeBase.MsgBuffer.MsgBuffer(const MsgBuffer&): 45 [Function]
@@ -33518,7 +33738,11 @@ nb/MsgBuffer.h
       nb/CoutThread.cpp
       nb/FileThread.cpp
       nb/MsgBuffer.cpp
+      nw/IpPortRegistry.cpp
+      nw/NwDaemons.cpp
    NodeBase.MsgBuffer.Patch: 71 [Function]
+      nb/Deferred.cpp
+      nb/Deferred.h
       nb/MsgBuffer.cpp
       nb/StreamRequest.cpp
       nb/StreamRequest.h
@@ -34285,55 +34509,73 @@ nb/NbDaemons.h
    NodeBase.CliDaemonName: 40 [SpaceData]
       nb/CliThread.cpp
       nb/NbDaemons.cpp
-   NodeBase.LogDaemon: 58 [Class]
+   NodeBase.DeferredDaemon: 58 [Class]
+      nb/DeferredThread.cpp
+      nb/NbDaemons.cpp
+      nb/NbDaemons.h
+   NodeBase.DeferredDaemon.CreateThread: 66 [Function]
+      nb/NbDaemons.cpp
+   NodeBase.DeferredDaemon.DeferredDaemon: 64 [Function]
+      nb/NbDaemons.cpp
+   NodeBase.DeferredDaemon.GetAlarmLevel: 67 [Function]
+      nb/NbDaemons.cpp
+   NodeBase.DeferredDaemon.Patch: 62 [Function]
+      nb/NbDaemons.cpp
+   NodeBase.DeferredDaemon.~DeferredDaemon: 65 [Function]
+      nb/NbDaemons.cpp
+   NodeBase.DeferredDaemonName: 56 [SpaceData]
+      nb/DeferredThread.cpp
+      nb/NbDaemons.cpp
+   NodeBase.LogDaemon: 74 [Class]
       nb/LogThread.cpp
       nb/NbDaemons.cpp
       nb/NbDaemons.h
-   NodeBase.LogDaemon.CreateThread: 66 [Function]
+   NodeBase.LogDaemon.CreateThread: 82 [Function]
       nb/NbDaemons.cpp
-   NodeBase.LogDaemon.GetAlarmLevel: 67 [Function]
+   NodeBase.LogDaemon.GetAlarmLevel: 83 [Function]
       nb/NbDaemons.cpp
-   NodeBase.LogDaemon.LogDaemon: 64 [Function]
+   NodeBase.LogDaemon.LogDaemon: 80 [Function]
       nb/NbDaemons.cpp
-   NodeBase.LogDaemon.Patch: 62 [Function]
+   NodeBase.LogDaemon.Patch: 78 [Function]
       nb/NbDaemons.cpp
-   NodeBase.LogDaemon.~LogDaemon: 65 [Function]
+   NodeBase.LogDaemon.~LogDaemon: 81 [Function]
       nb/NbDaemons.cpp
-   NodeBase.LogDaemonName: 56 [SpaceData]
+   NodeBase.LogDaemonName: 72 [SpaceData]
       nb/LogThread.cpp
       nb/NbDaemons.cpp
-   NodeBase.ObjectDaemon: 74 [Class]
+   NodeBase.ObjectDaemon: 90 [Class]
       nb/NbDaemons.cpp
       nb/NbDaemons.h
       nb/ObjectPoolAudit.cpp
-   NodeBase.ObjectDaemon.CreateThread: 82 [Function]
+   NodeBase.ObjectDaemon.CreateThread: 98 [Function]
       nb/NbDaemons.cpp
-   NodeBase.ObjectDaemon.ObjectDaemon: 80 [Function]
+   NodeBase.ObjectDaemon.ObjectDaemon: 96 [Function]
       nb/NbDaemons.cpp
-   NodeBase.ObjectDaemon.Patch: 78 [Function]
+   NodeBase.ObjectDaemon.Patch: 94 [Function]
       nb/NbDaemons.cpp
-   NodeBase.ObjectDaemon.~ObjectDaemon: 81 [Function]
+   NodeBase.ObjectDaemon.~ObjectDaemon: 97 [Function]
       nb/NbDaemons.cpp
-   NodeBase.ObjectDaemonName: 72 [SpaceData]
+   NodeBase.ObjectDaemonName: 88 [SpaceData]
       nb/NbDaemons.cpp
       nb/ObjectPoolAudit.cpp
    NodeBase.Singleton<CliDaemon>: 44 [Friend]
-   NodeBase.Singleton<LogDaemon>: 60 [Friend]
-   NodeBase.Singleton<ObjectDaemon>: 76 [Friend]
-   NodeBase.Singleton<StatisticsDaemon>: 91 [Friend]
-   NodeBase.StatisticsDaemon: 89 [Class]
+   NodeBase.Singleton<DeferredDaemon>: 60 [Friend]
+   NodeBase.Singleton<LogDaemon>: 76 [Friend]
+   NodeBase.Singleton<ObjectDaemon>: 92 [Friend]
+   NodeBase.Singleton<StatisticsDaemon>: 107 [Friend]
+   NodeBase.StatisticsDaemon: 105 [Class]
       nb/NbDaemons.cpp
       nb/NbDaemons.h
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsDaemon.CreateThread: 97 [Function]
+   NodeBase.StatisticsDaemon.CreateThread: 113 [Function]
       nb/NbDaemons.cpp
-   NodeBase.StatisticsDaemon.Patch: 93 [Function]
+   NodeBase.StatisticsDaemon.Patch: 109 [Function]
       nb/NbDaemons.cpp
-   NodeBase.StatisticsDaemon.StatisticsDaemon: 95 [Function]
+   NodeBase.StatisticsDaemon.StatisticsDaemon: 111 [Function]
       nb/NbDaemons.cpp
-   NodeBase.StatisticsDaemon.~StatisticsDaemon: 96 [Function]
+   NodeBase.StatisticsDaemon.~StatisticsDaemon: 112 [Function]
       nb/NbDaemons.cpp
-   NodeBase.StatisticsDaemonName: 87 [SpaceData]
+   NodeBase.StatisticsDaemonName: 103 [SpaceData]
       nb/NbDaemons.cpp
       nb/StatisticsThread.cpp
 nb/NbHeap.cpp
@@ -34505,919 +34747,929 @@ nb/NbHeap.h
    NodeBase.NbHeap.~NbHeap: 50 [Function]
       nb/NbHeap.cpp
 nb/NbIncrement.cpp
-   NodeBase.AlarmExpl: 96 [SpaceData]
+   NodeBase.AlarmExpl: 97 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsAction: 129 [Class]
+   NodeBase.AlarmsAction: 130 [Class]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsAction.AlarmsAction: 132 [Function]
+   NodeBase.AlarmsAction.AlarmsAction: 133 [Function]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsActionExpl: 139 [SpaceData]
+   NodeBase.AlarmsActionExpl: 140 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsClearIndex: 137 [SpaceData]
+   NodeBase.AlarmsClearIndex: 138 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsClearText: 115 [Class]
+   NodeBase.AlarmsClearText: 116 [Class]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsClearText.AlarmsClearText: 117 [Function]
+   NodeBase.AlarmsClearText.AlarmsClearText: 118 [Function]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsClearTextExpl: 121 [SpaceData]
+   NodeBase.AlarmsClearTextExpl: 122 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsClearTextStr: 120 [SpaceData]
+   NodeBase.AlarmsClearTextStr: 121 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsCommand: 149 [Class]
+   NodeBase.AlarmsCommand: 150 [Class]
       nb/Alarm.h
       nb/NbIncrement.cpp
-   NodeBase.AlarmsCommand.AlarmsCommand: 152 [Function]
+   NodeBase.AlarmsCommand.AlarmsCommand: 153 [Function]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsCommand.ProcessCommand: 154 [Function]
+   NodeBase.AlarmsCommand.ProcessCommand: 155 [Function]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsCommand_ProcessCommand: 165 [SpaceData]
+   NodeBase.AlarmsCommand_ProcessCommand: 166 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsExpl: 158 [SpaceData]
+   NodeBase.AlarmsExpl: 159 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsExplainIndex: 136 [SpaceData]
+   NodeBase.AlarmsExplainIndex: 137 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsExplainText: 101 [Class]
+   NodeBase.AlarmsExplainText: 102 [Class]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsExplainText.AlarmsExplainText: 103 [Function]
+   NodeBase.AlarmsExplainText.AlarmsExplainText: 104 [Function]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsExplainTextExpl: 107 [SpaceData]
+   NodeBase.AlarmsExplainTextExpl: 108 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsExplainTextStr: 106 [SpaceData]
+   NodeBase.AlarmsExplainTextStr: 107 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsListIndex: 135 [SpaceData]
+   NodeBase.AlarmsListIndex: 136 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsListTextExpl: 99 [SpaceData]
+   NodeBase.AlarmsListTextExpl: 100 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsListTextStr: 98 [SpaceData]
+   NodeBase.AlarmsListTextStr: 99 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AlarmsStr: 157 [SpaceData]
+   NodeBase.AlarmsStr: 158 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AppendExpl: 2621 [SpaceData]
+   NodeBase.AppendExpl: 2655 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditAction: 241 [Class]
+   NodeBase.AuditAction: 242 [Class]
       nb/NbIncrement.cpp
-   NodeBase.AuditAction.AuditAction: 243 [Function]
+   NodeBase.AuditAction.AuditAction: 244 [Function]
       nb/NbIncrement.cpp
-   NodeBase.AuditActionExpl: 271 [SpaceData]
+   NodeBase.AuditActionExpl: 272 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditCommand: 246 [Class]
+   NodeBase.AuditCommand: 247 [Class]
       nb/NbIncrement.cpp
-   NodeBase.AuditCommand.AuditCommand: 249 [Function]
+   NodeBase.AuditCommand.AuditCommand: 250 [Function]
       nb/NbIncrement.cpp
-   NodeBase.AuditCommand.ProcessCommand: 251 [Function]
+   NodeBase.AuditCommand.ProcessCommand: 252 [Function]
       nb/NbIncrement.cpp
-   NodeBase.AuditCommand_ProcessCommand: 287 [SpaceData]
+   NodeBase.AuditCommand_ProcessCommand: 288 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditExpl: 280 [SpaceData]
+   NodeBase.AuditExpl: 281 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditForceExpl: 266 [SpaceData]
+   NodeBase.AuditForceExpl: 267 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditForceIndex: 269 [SpaceData]
+   NodeBase.AuditForceIndex: 270 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditForceStr: 265 [SpaceData]
+   NodeBase.AuditForceStr: 266 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditIntervalExpl: 257 [SpaceData]
+   NodeBase.AuditIntervalExpl: 258 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditIntervalIndex: 268 [SpaceData]
+   NodeBase.AuditIntervalIndex: 269 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditIntervalStr: 256 [SpaceData]
+   NodeBase.AuditIntervalStr: 257 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditIntervalText: 236 [Class]
+   NodeBase.AuditIntervalText: 237 [Class]
       nb/NbIncrement.cpp
-   NodeBase.AuditIntervalText.AuditIntervalText: 238 [Function]
+   NodeBase.AuditIntervalText.AuditIntervalText: 239 [Function]
       nb/NbIncrement.cpp
-   NodeBase.AuditSecondsExpl: 254 [SpaceData]
+   NodeBase.AuditSecondsExpl: 255 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.AuditStr: 279 [SpaceData]
+   NodeBase.AuditStr: 280 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.BuffersCommand: 332 [Class]
+   NodeBase.BuffersCommand: 333 [Class]
       nb/NbIncrement.cpp
-   NodeBase.BuffersCommand.BuffersCommand: 335 [Function]
+   NodeBase.BuffersCommand.BuffersCommand: 336 [Function]
       nb/NbIncrement.cpp
-   NodeBase.BuffersCommand.ProcessCommand: 337 [Function]
+   NodeBase.BuffersCommand.ProcessCommand: 338 [Function]
       nb/NbIncrement.cpp
-   NodeBase.BuffersExpl: 341 [SpaceData]
+   NodeBase.BuffersExpl: 342 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.BuffersStr: 340 [SpaceData]
+   NodeBase.BuffersStr: 341 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.BuffSizeExpl: 2718 [SpaceData]
+   NodeBase.BuffSizeExpl: 2752 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.BuffSizeText: 2703 [Class]
+   NodeBase.BuffSizeText: 2737 [Class]
       nb/NbIncrement.cpp
-   NodeBase.BuffSizeText.BuffSizeText: 2705 [Function]
+   NodeBase.BuffSizeText.BuffSizeText: 2739 [Function]
       nb/NbIncrement.cpp
-   NodeBase.BuffSizeTextExpl: 2721 [SpaceData]
+   NodeBase.BuffSizeTextExpl: 2755 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.BuffSizeTextStr: 2720 [SpaceData]
+   NodeBase.BuffSizeTextStr: 2754 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.BuffWrapExpl: 2729 [SpaceData]
+   NodeBase.BuffWrapExpl: 2763 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.BuffWrapText: 2708 [Class]
+   NodeBase.BuffWrapText: 2742 [Class]
       nb/NbIncrement.cpp
-   NodeBase.BuffWrapText.BuffWrapText: 2710 [Function]
+   NodeBase.BuffWrapText.BuffWrapText: 2744 [Function]
       nb/NbIncrement.cpp
-   NodeBase.BuffWrapTextExpl: 2732 [SpaceData]
+   NodeBase.BuffWrapTextExpl: 2766 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.BuffWrapTextStr: 2731 [SpaceData]
+   NodeBase.BuffWrapTextStr: 2765 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ByteCountExpl: 829 [SpaceData]
+   NodeBase.ByteCountExpl: 863 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmNameExpl: 401 [SpaceData]
+   NodeBase.CfgParmNameExpl: 402 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsAction: 388 [Class]
+   NodeBase.CfgParmsAction: 389 [Class]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsAction.CfgParmsAction: 390 [Function]
+   NodeBase.CfgParmsAction.CfgParmsAction: 391 [Function]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsActionExpl: 439 [SpaceData]
+   NodeBase.CfgParmsActionExpl: 440 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsCommand: 393 [Class]
+   NodeBase.CfgParmsCommand: 394 [Class]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsCommand.CfgParmsCommand: 396 [Function]
+   NodeBase.CfgParmsCommand.CfgParmsCommand: 397 [Function]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsCommand.ProcessCommand: 398 [Function]
+   NodeBase.CfgParmsCommand.ProcessCommand: 399 [Function]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsCommand_ProcessCommand: 457 [SpaceData]
+   NodeBase.CfgParmsCommand_ProcessCommand: 458 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsExpl: 450 [SpaceData]
+   NodeBase.CfgParmsExpl: 451 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsExplExpl: 409 [SpaceData]
+   NodeBase.CfgParmsExplExpl: 410 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsExplIndex: 435 [SpaceData]
+   NodeBase.CfgParmsExplIndex: 436 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsExplStr: 408 [SpaceData]
+   NodeBase.CfgParmsExplStr: 409 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsExplText: 373 [Class]
+   NodeBase.CfgParmsExplText: 374 [Class]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsExplText.CfgParmsExplText: 375 [Function]
+   NodeBase.CfgParmsExplText.CfgParmsExplText: 376 [Function]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsGetExpl: 418 [SpaceData]
+   NodeBase.CfgParmsGetExpl: 419 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsGetIndex: 436 [SpaceData]
+   NodeBase.CfgParmsGetIndex: 437 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsGetStr: 417 [SpaceData]
+   NodeBase.CfgParmsGetStr: 418 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsGetText: 378 [Class]
+   NodeBase.CfgParmsGetText: 379 [Class]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsGetText.CfgParmsGetText: 380 [Function]
+   NodeBase.CfgParmsGetText.CfgParmsGetText: 381 [Function]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsListExpl: 406 [SpaceData]
+   NodeBase.CfgParmsListExpl: 407 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsListIndex: 434 [SpaceData]
+   NodeBase.CfgParmsListIndex: 435 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsListStr: 405 [SpaceData]
+   NodeBase.CfgParmsListStr: 406 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsSetExpl: 426 [SpaceData]
+   NodeBase.CfgParmsSetExpl: 427 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsSetIndex: 437 [SpaceData]
+   NodeBase.CfgParmsSetIndex: 438 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsSetStr: 425 [SpaceData]
+   NodeBase.CfgParmsSetStr: 426 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsSetText: 383 [Class]
+   NodeBase.CfgParmsSetText: 384 [Class]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsSetText.CfgParmsSetText: 385 [Function]
+   NodeBase.CfgParmsSetText.CfgParmsSetText: 386 [Function]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmsStr: 449 [SpaceData]
+   NodeBase.CfgParmsStr: 450 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CfgParmValueExpl: 403 [SpaceData]
+   NodeBase.CfgParmValueExpl: 404 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ClearExpl: 542 [SpaceData]
+   NodeBase.ClearExpl: 543 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ClearStr: 541 [SpaceData]
+   NodeBase.ClearStr: 542 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ClearWhatExpl: 528 [SpaceData]
+   NodeBase.ClearWhatExpl: 529 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ColdIndex: 2281 [SpaceData]
+   NodeBase.ColdIndex: 2315 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ColdTextExpl: 2266 [SpaceData]
+   NodeBase.ColdTextExpl: 2300 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ColdTextStr: 2265 [SpaceData]
+   NodeBase.ColdTextStr: 2299 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CommandMandExpl: 1339 [SpaceData]
+   NodeBase.CommandMandExpl: 1373 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CommandOptExpl: 1341 [SpaceData]
+   NodeBase.CommandOptExpl: 1375 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CoutTextExpl: 2616 [SpaceData]
+   NodeBase.CoutTextExpl: 2650 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.CoutTextStr: 2615 [SpaceData]
+   NodeBase.CoutTextStr: 2649 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsAction: 626 [Class]
+   NodeBase.DaemonsAction: 627 [Class]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsAction.DaemonsAction: 628 [Function]
+   NodeBase.DaemonsAction.DaemonsAction: 629 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsActionExpl: 663 [SpaceData]
+   NodeBase.DaemonsActionExpl: 664 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsCommand: 631 [Class]
+   NodeBase.DaemonsCommand: 632 [Class]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsCommand.DaemonsCommand: 634 [Function]
+   NodeBase.DaemonsCommand.DaemonsCommand: 635 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsCommand.ProcessCommand: 636 [Function]
+   NodeBase.DaemonsCommand.ProcessCommand: 637 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsCommand_ProcessCommand: 679 [SpaceData]
+   NodeBase.DaemonsCommand_ProcessCommand: 680 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsExpl: 672 [SpaceData]
+   NodeBase.DaemonsExpl: 673 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsListIndex: 660 [SpaceData]
+   NodeBase.DaemonsListIndex: 661 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsListText: 616 [Class]
+   NodeBase.DaemonsListText: 617 [Class]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsListText.DaemonsListText: 618 [Function]
+   NodeBase.DaemonsListText.DaemonsListText: 619 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsListTextExpl: 640 [SpaceData]
+   NodeBase.DaemonsListTextExpl: 641 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsListTextStr: 639 [SpaceData]
+   NodeBase.DaemonsListTextStr: 640 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsSetIndex: 661 [SpaceData]
+   NodeBase.DaemonsSetIndex: 662 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsSetText: 621 [Class]
+   NodeBase.DaemonsSetText: 622 [Class]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsSetText.DaemonsSetText: 623 [Function]
+   NodeBase.DaemonsSetText.DaemonsSetText: 624 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsSetTextExpl: 651 [SpaceData]
+   NodeBase.DaemonsSetTextExpl: 652 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsSetTextStr: 650 [SpaceData]
+   NodeBase.DaemonsSetTextStr: 651 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DaemonsStr: 671 [SpaceData]
+   NodeBase.DaemonsStr: 672 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DelayCommand: 742 [Class]
+   NodeBase.DeferredCommand: 743 [Class]
       nb/NbIncrement.cpp
-   NodeBase.DelayCommand.DelayCommand: 745 [Function]
+   NodeBase.DeferredCommand.DeferredCommand: 746 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DelayCommand.ProcessCommand: 747 [Function]
+   NodeBase.DeferredCommand.ProcessCommand: 748 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DelayExpl: 753 [SpaceData]
+   NodeBase.DeferredExpl: 752 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DelayStr: 752 [SpaceData]
+   NodeBase.DeferredStr: 751 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DelayTimeExpl: 750 [SpaceData]
+   NodeBase.DelayCommand: 776 [Class]
       nb/NbIncrement.cpp
-   NodeBase.DisplayCommand: 780 [Class]
+   NodeBase.DelayCommand.DelayCommand: 779 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DisplayCommand.DisplayCommand: 783 [Function]
+   NodeBase.DelayCommand.ProcessCommand: 781 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DisplayCommand.ProcessCommand: 785 [Function]
+   NodeBase.DelayExpl: 787 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DisplayExpl: 789 [SpaceData]
+   NodeBase.DelayStr: 786 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DisplayHelp: 1192 [Function]
+   NodeBase.DelayTimeExpl: 784 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DisplayStr: 788 [SpaceData]
+   NodeBase.DisplayCommand: 814 [Class]
       nb/NbIncrement.cpp
-   NodeBase.DumpCommand: 819 [Class]
+   NodeBase.DisplayCommand.DisplayCommand: 817 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DumpCommand.DumpCommand: 822 [Function]
+   NodeBase.DisplayCommand.ProcessCommand: 819 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DumpCommand.ProcessCommand: 824 [Function]
+   NodeBase.DisplayExpl: 823 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.DumpExpl: 832 [SpaceData]
+   NodeBase.DisplayHelp: 1226 [Function]
       nb/NbIncrement.cpp
-   NodeBase.DumpStr: 831 [SpaceData]
+   NodeBase.DisplayStr: 822 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.EchoCommand: 862 [Class]
+   NodeBase.DumpCommand: 853 [Class]
       nb/NbIncrement.cpp
-   NodeBase.EchoCommand.EchoCommand: 865 [Function]
+   NodeBase.DumpCommand.DumpCommand: 856 [Function]
       nb/NbIncrement.cpp
-   NodeBase.EchoCommand.ProcessCommand: 867 [Function]
+   NodeBase.DumpCommand.ProcessCommand: 858 [Function]
       nb/NbIncrement.cpp
-   NodeBase.EchoExpl: 873 [SpaceData]
+   NodeBase.DumpExpl: 866 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.EchoParmExpl: 870 [SpaceData]
+   NodeBase.DumpStr: 865 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.EchoStr: 872 [SpaceData]
+   NodeBase.EchoCommand: 896 [Class]
       nb/NbIncrement.cpp
-   NodeBase.ElseExpl: 1344 [SpaceData]
+   NodeBase.EchoCommand.EchoCommand: 899 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ElseParm: 1322 [Class]
+   NodeBase.EchoCommand.ProcessCommand: 901 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ElseParm.ElseParm: 1324 [Function]
+   NodeBase.EchoExpl: 907 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ElseStr: 1343 [SpaceData]
+   NodeBase.EchoParmExpl: 904 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ExcludeExpl: 901 [SpaceData]
+   NodeBase.EchoStr: 906 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ExcludeStr: 900 [SpaceData]
+   NodeBase.ElseExpl: 1378 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ExcludeWhatExpl: 892 [SpaceData]
+   NodeBase.ElseParm: 1356 [Class]
       nb/NbIncrement.cpp
-   NodeBase.ExitIndex: 2284 [SpaceData]
+   NodeBase.ElseParm.ElseParm: 1358 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ExitTextExpl: 2275 [SpaceData]
+   NodeBase.ElseStr: 1377 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ExitTextStr: 2274 [SpaceData]
+   NodeBase.ExcludeExpl: 935 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.FileText: 2597 [Class]
+   NodeBase.ExcludeStr: 934 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.FileText.FileText: 2599 [Function]
+   NodeBase.ExcludeWhatExpl: 926 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.FileTextExpl: 2624 [SpaceData]
+   NodeBase.ExitIndex: 2318 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.FileTextStr: 2623 [SpaceData]
+   NodeBase.ExitTextExpl: 2309 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.FindGroupAndLog: 1680 [Function]
+   NodeBase.ExitTextStr: 2308 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.GroupsTextExpl: 2926 [SpaceData]
+   NodeBase.FileText: 2631 [Class]
       nb/NbIncrement.cpp
-   NodeBase.GroupsTextStr: 2925 [SpaceData]
+   NodeBase.FileText.FileText: 2633 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HeapsAction: 971 [Class]
+   NodeBase.FileTextExpl: 2658 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsAction.HeapsAction: 973 [Function]
+   NodeBase.FileTextStr: 2657 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsActionExpl: 1045 [SpaceData]
+   NodeBase.FindGroupAndLog: 1714 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HeapsCommand: 976 [Class]
+   NodeBase.GroupsTextExpl: 2960 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsCommand.HeapsCommand: 979 [Function]
+   NodeBase.GroupsTextStr: 2959 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsCommand.ProcessCommand: 981 [Function]
+   NodeBase.HeapsAction: 1005 [Class]
       nb/NbIncrement.cpp
-   NodeBase.HeapsCommand_ProcessCommand: 1064 [SpaceData]
+   NodeBase.HeapsAction.HeapsAction: 1007 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HeapsDisplayIndex: 999 [SpaceData]
+   NodeBase.HeapsActionExpl: 1079 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsDisplayTextExpl: 1011 [SpaceData]
+   NodeBase.HeapsCommand: 1010 [Class]
       nb/NbIncrement.cpp
-   NodeBase.HeapsDisplayTextStr: 1010 [SpaceData]
+   NodeBase.HeapsCommand.HeapsCommand: 1013 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HeapsExpl: 1057 [SpaceData]
+   NodeBase.HeapsCommand.ProcessCommand: 1015 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HeapsHeader: 3072 [SpaceData]
+   NodeBase.HeapsCommand_ProcessCommand: 1098 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsInUseIndex: 1041 [SpaceData]
+   NodeBase.HeapsDisplayIndex: 1033 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsInUseText: 956 [Class]
+   NodeBase.HeapsDisplayTextExpl: 1045 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsInUseText.HeapsInUseText: 958 [Function]
+   NodeBase.HeapsDisplayTextStr: 1044 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsInUseTextExpl: 988 [SpaceData]
+   NodeBase.HeapsExpl: 1091 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsInUseTextStr: 987 [SpaceData]
+   NodeBase.HeapsHeader: 3106 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsListIndex: 1040 [SpaceData]
+   NodeBase.HeapsInUseIndex: 1075 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsListTextExpl: 985 [SpaceData]
+   NodeBase.HeapsInUseText: 990 [Class]
       nb/NbIncrement.cpp
-   NodeBase.HeapsListTextStr: 984 [SpaceData]
+   NodeBase.HeapsInUseText.HeapsInUseText: 992 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HeapsResetIndex: 996 [SpaceData]
+   NodeBase.HeapsInUseTextExpl: 1022 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsResetTextExpl: 1002 [SpaceData]
+   NodeBase.HeapsInUseTextStr: 1021 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsResetTextStr: 1001 [SpaceData]
+   NodeBase.HeapsListIndex: 1074 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsStartIndex: 997 [SpaceData]
+   NodeBase.HeapsListTextExpl: 1019 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsStartTextExpl: 1005 [SpaceData]
+   NodeBase.HeapsListTextStr: 1018 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsStartTextStr: 1004 [SpaceData]
+   NodeBase.HeapsResetIndex: 1030 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsStopIndex: 998 [SpaceData]
+   NodeBase.HeapsResetTextExpl: 1036 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsStopTextExpl: 1008 [SpaceData]
+   NodeBase.HeapsResetTextStr: 1035 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsStopTextStr: 1007 [SpaceData]
+   NodeBase.HeapsStartIndex: 1031 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsStr: 1056 [SpaceData]
+   NodeBase.HeapsStartTextExpl: 1039 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsTraceAction: 961 [Class]
+   NodeBase.HeapsStartTextStr: 1038 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsTraceAction.HeapsTraceAction: 963 [Function]
+   NodeBase.HeapsStopIndex: 1032 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsTraceActionExpl: 1013 [SpaceData]
+   NodeBase.HeapsStopTextExpl: 1042 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsTraceIndex: 1042 [SpaceData]
+   NodeBase.HeapsStopTextStr: 1041 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsTraceText: 966 [Class]
+   NodeBase.HeapsStr: 1090 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsTraceText.HeapsTraceText: 968 [Function]
+   NodeBase.HeapsTraceAction: 995 [Class]
       nb/NbIncrement.cpp
-   NodeBase.HeapsTraceTextExpl: 1028 [SpaceData]
+   NodeBase.HeapsTraceAction.HeapsTraceAction: 997 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HeapsTraceTextStr: 1027 [SpaceData]
+   NodeBase.HeapsTraceActionExpl: 1047 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsValidateIndex: 1043 [SpaceData]
+   NodeBase.HeapsTraceIndex: 1076 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HeapsValidateTextExpl: 1038 [SpaceData]
+   NodeBase.HeapsTraceText: 1000 [Class]
       nb/NbIncrement.cpp
-   NodeBase.HeapsValidateTextStr: 1037 [SpaceData]
+   NodeBase.HeapsTraceText.HeapsTraceText: 1002 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HelpCommand: 1157 [Class]
+   NodeBase.HeapsTraceTextExpl: 1062 [SpaceData]
+      nb/NbIncrement.cpp
+   NodeBase.HeapsTraceTextStr: 1061 [SpaceData]
+      nb/NbIncrement.cpp
+   NodeBase.HeapsValidateIndex: 1077 [SpaceData]
+      nb/NbIncrement.cpp
+   NodeBase.HeapsValidateTextExpl: 1072 [SpaceData]
+      nb/NbIncrement.cpp
+   NodeBase.HeapsValidateTextStr: 1071 [SpaceData]
+      nb/NbIncrement.cpp
+   NodeBase.HelpCommand: 1191 [Class]
       nb/CliThread.h
       nb/NbIncrement.cpp
-   NodeBase.HelpCommand.HelpCommand: 1160 [Function]
+   NodeBase.HelpCommand.HelpCommand: 1194 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HelpCommand.ProcessCommand: 1162 [Function]
+   NodeBase.HelpCommand.ProcessCommand: 1196 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HelpCommExpl: 1167 [SpaceData]
+   NodeBase.HelpCommExpl: 1201 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HelpExpl: 1183 [SpaceData]
+   NodeBase.HelpExpl: 1217 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HelpFullExpl: 1175 [SpaceData]
+   NodeBase.HelpFullExpl: 1209 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HelpFullParm: 1169 [Class]
+   NodeBase.HelpFullParm: 1203 [Class]
       nb/NbIncrement.cpp
-   NodeBase.HelpFullParm.HelpFullParm: 1171 [Function]
+   NodeBase.HelpFullParm.HelpFullParm: 1205 [Function]
       nb/NbIncrement.cpp
-   NodeBase.HelpFullStr: 1174 [SpaceData]
+   NodeBase.HelpFullStr: 1208 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HelpIncrExpl: 1165 [SpaceData]
+   NodeBase.HelpIncrExpl: 1199 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.HelpStr: 1182 [SpaceData]
+   NodeBase.HelpStr: 1216 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IfCommand: 1327 [Class]
+   NodeBase.IfCommand: 1361 [Class]
       nb/NbIncrement.cpp
-   NodeBase.IfCommand.IfCommand: 1330 [Function]
+   NodeBase.IfCommand.IfCommand: 1364 [Function]
       nb/NbIncrement.cpp
-   NodeBase.IfCommand.ProcessCommand: 1332 [Function]
+   NodeBase.IfCommand.ProcessCommand: 1366 [Function]
       nb/NbIncrement.cpp
-   NodeBase.IfCommand_ProcessCommand: 1364 [SpaceData]
+   NodeBase.IfCommand_ProcessCommand: 1398 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IfExpl: 1352 [SpaceData]
+   NodeBase.IfExpl: 1386 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IfStr: 1351 [SpaceData]
+   NodeBase.IfStr: 1385 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IfSymbolExpl: 1335 [SpaceData]
+   NodeBase.IfSymbolExpl: 1369 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IfValueExpl: 1337 [SpaceData]
+   NodeBase.IfValueExpl: 1371 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IncludeExpl: 1445 [SpaceData]
+   NodeBase.IncludeExpl: 1479 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IncludeStr: 1444 [SpaceData]
+   NodeBase.IncludeStr: 1478 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IncludeWhatExpl: 1435 [SpaceData]
+   NodeBase.IncludeWhatExpl: 1469 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IncrsCommand: 1507 [Class]
+   NodeBase.IncrsCommand: 1541 [Class]
       nb/NbIncrement.cpp
-   NodeBase.IncrsCommand.IncrsCommand: 1510 [Function]
+   NodeBase.IncrsCommand.IncrsCommand: 1544 [Function]
       nb/NbIncrement.cpp
-   NodeBase.IncrsCommand.ProcessCommand: 1512 [Function]
+   NodeBase.IncrsCommand.ProcessCommand: 1546 [Function]
       nb/NbIncrement.cpp
-   NodeBase.IncrsExpl: 1516 [SpaceData]
+   NodeBase.IncrsExpl: 1550 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.IncrsStr: 1515 [SpaceData]
+   NodeBase.IncrsStr: 1549 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogCountExpl: 1616 [SpaceData]
+   NodeBase.LogCountExpl: 1650 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsActionExpl: 1645 [SpaceData]
+   NodeBase.LogsActionExpl: 1679 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsBuffersText: 1602 [Class]
+   NodeBase.LogsBuffersText: 1636 [Class]
       nb/NbIncrement.cpp
-   NodeBase.LogsBuffersText.LogsBuffersText: 1604 [Function]
+   NodeBase.LogsBuffersText.LogsBuffersText: 1638 [Function]
       nb/NbIncrement.cpp
-   NodeBase.LogsBuffersTextExpl: 1608 [SpaceData]
+   NodeBase.LogsBuffersTextExpl: 1642 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsBuffersTextStr: 1607 [SpaceData]
+   NodeBase.LogsBuffersTextStr: 1641 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsCountTextExpl: 1600 [SpaceData]
+   NodeBase.LogsCountTextExpl: 1634 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsCountTextStr: 1599 [SpaceData]
+   NodeBase.LogsCountTextStr: 1633 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsExpl: 1663 [SpaceData]
+   NodeBase.LogsExpl: 1697 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsExplainText: 1551 [Class]
+   NodeBase.LogsExplainText: 1585 [Class]
       nb/NbIncrement.cpp
-   NodeBase.LogsExplainText.LogsExplainText: 1553 [Function]
+   NodeBase.LogsExplainText.LogsExplainText: 1587 [Function]
       nb/NbIncrement.cpp
-   NodeBase.LogsExplainTextExpl: 1557 [SpaceData]
+   NodeBase.LogsExplainTextExpl: 1591 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsExplainTextStr: 1556 [SpaceData]
+   NodeBase.LogsExplainTextStr: 1590 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsFreeText: 1632 [Class]
+   NodeBase.LogsFreeText: 1666 [Class]
       nb/NbIncrement.cpp
-   NodeBase.LogsFreeText.LogsFreeText: 1634 [Function]
+   NodeBase.LogsFreeText.LogsFreeText: 1668 [Function]
       nb/NbIncrement.cpp
-   NodeBase.LogsFreeTextExpl: 1638 [SpaceData]
+   NodeBase.LogsFreeTextExpl: 1672 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsFreeTextStr: 1637 [SpaceData]
+   NodeBase.LogsFreeTextStr: 1671 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsGroupsTextExpl: 1549 [SpaceData]
+   NodeBase.LogsGroupsTextExpl: 1583 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsGroupsTextStr: 1548 [SpaceData]
+   NodeBase.LogsGroupsTextStr: 1582 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsListText: 1533 [Class]
+   NodeBase.LogsListText: 1567 [Class]
       nb/NbIncrement.cpp
-   NodeBase.LogsListText.LogsListText: 1535 [Function]
+   NodeBase.LogsListText.LogsListText: 1569 [Function]
       nb/NbIncrement.cpp
-   NodeBase.LogsListTextExpl: 1539 [SpaceData]
+   NodeBase.LogsListTextExpl: 1573 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsListTextStr: 1538 [SpaceData]
+   NodeBase.LogsListTextStr: 1572 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsStr: 1662 [SpaceData]
+   NodeBase.LogsStr: 1696 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsSuppressText: 1566 [Class]
+   NodeBase.LogsSuppressText: 1600 [Class]
       nb/NbIncrement.cpp
-   NodeBase.LogsSuppressText.LogsSuppressText: 1568 [Function]
+   NodeBase.LogsSuppressText.LogsSuppressText: 1602 [Function]
       nb/NbIncrement.cpp
-   NodeBase.LogsSuppressTextExpl: 1572 [SpaceData]
+   NodeBase.LogsSuppressTextExpl: 1606 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsSuppressTextStr: 1571 [SpaceData]
+   NodeBase.LogsSuppressTextStr: 1605 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsThrottleText: 1583 [Class]
+   NodeBase.LogsThrottleText: 1617 [Class]
       nb/NbIncrement.cpp
-   NodeBase.LogsThrottleText.LogsThrottleText: 1585 [Function]
+   NodeBase.LogsThrottleText.LogsThrottleText: 1619 [Function]
       nb/NbIncrement.cpp
-   NodeBase.LogsThrottleTextExpl: 1589 [SpaceData]
+   NodeBase.LogsThrottleTextExpl: 1623 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsThrottleTextStr: 1588 [SpaceData]
+   NodeBase.LogsThrottleTextStr: 1622 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsWriteText: 1618 [Class]
+   NodeBase.LogsWriteText: 1652 [Class]
       nb/NbIncrement.cpp
-   NodeBase.LogsWriteText.LogsWriteText: 1620 [Function]
+   NodeBase.LogsWriteText.LogsWriteText: 1654 [Function]
       nb/NbIncrement.cpp
-   NodeBase.LogsWriteTextExpl: 1624 [SpaceData]
+   NodeBase.LogsWriteTextExpl: 1658 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogsWriteTextStr: 1623 [SpaceData]
+   NodeBase.LogsWriteTextStr: 1657 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.LogThrottleExpl: 1581 [SpaceData]
+   NodeBase.LogThrottleExpl: 1615 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.MemAddrText: 827 [SpaceData]
+   NodeBase.MemAddrText: 861 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.MemberIdOptExpl: 2930 [SpaceData]
+   NodeBase.MemberIdOptExpl: 2964 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ModulesCommand: 1872 [Class]
+   NodeBase.ModulesCommand: 1906 [Class]
       nb/NbIncrement.cpp
-   NodeBase.ModulesCommand.ModulesCommand: 1875 [Function]
+   NodeBase.ModulesCommand.ModulesCommand: 1909 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ModulesCommand.ProcessCommand: 1877 [Function]
+   NodeBase.ModulesCommand.ProcessCommand: 1911 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ModulesExpl: 1881 [SpaceData]
+   NodeBase.ModulesExpl: 1915 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ModulesStr: 1880 [SpaceData]
+   NodeBase.ModulesStr: 1914 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.MutexesCommand: 1926 [Class]
+   NodeBase.MutexesCommand: 1960 [Class]
       nb/NbIncrement.cpp
-   NodeBase.MutexesCommand.MutexesCommand: 1929 [Function]
+   NodeBase.MutexesCommand.MutexesCommand: 1963 [Function]
       nb/NbIncrement.cpp
-   NodeBase.MutexesCommand.ProcessCommand: 1931 [Function]
+   NodeBase.MutexesCommand.ProcessCommand: 1965 [Function]
       nb/NbIncrement.cpp
-   NodeBase.MutexesExpl: 1935 [SpaceData]
+   NodeBase.MutexesExpl: 1969 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.MutexesStr: 1934 [SpaceData]
+   NodeBase.MutexesStr: 1968 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ObjPtrMandText: 778 [SpaceData]
+   NodeBase.ObjPtrMandText: 812 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.PoolsCommand: 1980 [Class]
+   NodeBase.PoolsCommand: 2014 [Class]
       nb/NbIncrement.cpp
-   NodeBase.PoolsCommand.PoolsCommand: 1983 [Function]
+   NodeBase.PoolsCommand.PoolsCommand: 2017 [Function]
       nb/NbIncrement.cpp
-   NodeBase.PoolsCommand.ProcessCommand: 1985 [Function]
+   NodeBase.PoolsCommand.ProcessCommand: 2019 [Function]
       nb/NbIncrement.cpp
-   NodeBase.PoolsExpl: 1989 [SpaceData]
+   NodeBase.PoolsExpl: 2023 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.PoolsHeader: 3078 [SpaceData]
+   NodeBase.PoolsHeader: 3112 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.PoolsStr: 1988 [SpaceData]
+   NodeBase.PoolsStr: 2022 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.PrevTextExpl: 2619 [SpaceData]
+   NodeBase.PrevTextExpl: 2653 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.PrevTextStr: 2618 [SpaceData]
+   NodeBase.PrevTextStr: 2652 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.PsignalsCommand: 2034 [Class]
+   NodeBase.PsignalsCommand: 2068 [Class]
       nb/NbIncrement.cpp
-   NodeBase.PsignalsCommand.ProcessCommand: 2039 [Function]
+   NodeBase.PsignalsCommand.ProcessCommand: 2073 [Function]
       nb/NbIncrement.cpp
-   NodeBase.PsignalsCommand.PsignalsCommand: 2037 [Function]
+   NodeBase.PsignalsCommand.PsignalsCommand: 2071 [Function]
       nb/NbIncrement.cpp
-   NodeBase.PsignalsExpl: 2043 [SpaceData]
+   NodeBase.PsignalsExpl: 2077 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.PsignalsStr: 2042 [SpaceData]
+   NodeBase.PsignalsStr: 2076 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.QueryExpl: 2098 [SpaceData]
+   NodeBase.QueryExpl: 2132 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.QueryStr: 2097 [SpaceData]
+   NodeBase.QueryStr: 2131 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.QueryWhatExpl: 2088 [SpaceData]
+   NodeBase.QueryWhatExpl: 2122 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.QuitAllExpl: 2163 [SpaceData]
+   NodeBase.QuitAllExpl: 2197 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.QuitAllStr: 2162 [SpaceData]
+   NodeBase.QuitAllStr: 2196 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.QuitCommand: 2154 [Class]
+   NodeBase.QuitCommand: 2188 [Class]
       nb/CliThread.h
       nb/NbIncrement.cpp
-   NodeBase.QuitCommand.ProcessCommand: 2159 [Function]
+   NodeBase.QuitCommand.ProcessCommand: 2193 [Function]
       nb/NbIncrement.cpp
-   NodeBase.QuitCommand.QuitCommand: 2157 [Function]
+   NodeBase.QuitCommand.QuitCommand: 2191 [Function]
       nb/NbIncrement.cpp
-   NodeBase.QuitExpl: 2171 [SpaceData]
+   NodeBase.QuitExpl: 2205 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.QuitParm: 2149 [Class]
+   NodeBase.QuitParm: 2183 [Class]
       nb/NbIncrement.cpp
-   NodeBase.QuitParm.QuitParm: 2151 [Function]
+   NodeBase.QuitParm.QuitParm: 2185 [Function]
       nb/NbIncrement.cpp
-   NodeBase.QuitStr: 2170 [SpaceData]
+   NodeBase.QuitStr: 2204 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ReadCommand: 2204 [Class]
+   NodeBase.ReadCommand: 2238 [Class]
       nb/NbIncrement.cpp
-   NodeBase.ReadCommand.ProcessCommand: 2209 [Function]
+   NodeBase.ReadCommand.ProcessCommand: 2243 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ReadCommand.ReadCommand: 2207 [Function]
+   NodeBase.ReadCommand.ReadCommand: 2241 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ReadExpl: 2215 [SpaceData]
+   NodeBase.ReadExpl: 2249 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ReadStr: 2214 [SpaceData]
+   NodeBase.ReadStr: 2248 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ReadWhereExpl: 2212 [SpaceData]
+   NodeBase.ReadWhereExpl: 2246 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RebootIndex: 2283 [SpaceData]
+   NodeBase.RebootIndex: 2317 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RebootTextExpl: 2272 [SpaceData]
+   NodeBase.RebootTextExpl: 2306 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RebootTextStr: 2271 [SpaceData]
+   NodeBase.RebootTextStr: 2305 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ReloadIndex: 2282 [SpaceData]
+   NodeBase.ReloadIndex: 2316 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ReloadTextExpl: 2269 [SpaceData]
+   NodeBase.ReloadTextExpl: 2303 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ReloadTextStr: 2268 [SpaceData]
+   NodeBase.ReloadTextStr: 2302 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RestartCommand: 2254 [Class]
+   NodeBase.RestartCommand: 2288 [Class]
       nb/NbIncrement.cpp
-   NodeBase.RestartCommand.ProcessCommand: 2259 [Function]
+   NodeBase.RestartCommand.ProcessCommand: 2293 [Function]
       nb/NbIncrement.cpp
-   NodeBase.RestartCommand.RestartCommand: 2257 [Function]
+   NodeBase.RestartCommand.RestartCommand: 2291 [Function]
       nb/NbIncrement.cpp
-   NodeBase.RestartExpl: 2278 [SpaceData]
+   NodeBase.RestartExpl: 2312 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RestartStr: 2277 [SpaceData]
+   NodeBase.RestartStr: 2311 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RestartType: 2249 [Class]
+   NodeBase.RestartType: 2283 [Class]
       nb/NbIncrement.cpp
-   NodeBase.RestartType.RestartType: 2251 [Function]
+   NodeBase.RestartType.RestartType: 2285 [Function]
       nb/NbIncrement.cpp
-   NodeBase.RestartTypeExpl: 2286 [SpaceData]
+   NodeBase.RestartTypeExpl: 2320 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RolloverExpl: 2943 [SpaceData]
+   NodeBase.RolloverExpl: 2977 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RolloverText: 2907 [Class]
+   NodeBase.RolloverText: 2941 [Class]
       nb/NbIncrement.cpp
-   NodeBase.RolloverText.RolloverText: 2909 [Function]
+   NodeBase.RolloverText.RolloverText: 2943 [Function]
       nb/NbIncrement.cpp
-   NodeBase.RolloverTextExpl: 2946 [SpaceData]
+   NodeBase.RolloverTextExpl: 2980 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RolloverTextStr: 2945 [SpaceData]
+   NodeBase.RolloverTextStr: 2979 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RootExpl: 3495 [SpaceData]
+   NodeBase.RootExpl: 3529 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.RootStr: 3494 [SpaceData]
+   NodeBase.RootStr: 3528 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SaveExpl: 2375 [SpaceData]
+   NodeBase.SaveExpl: 2409 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SaveStr: 2374 [SpaceData]
+   NodeBase.SaveStr: 2408 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SaveWhatExpl: 2367 [SpaceData]
+   NodeBase.SaveWhatExpl: 2401 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedAction: 2452 [Class]
+   NodeBase.SchedAction: 2486 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SchedAction.SchedAction: 2454 [Function]
+   NodeBase.SchedAction.SchedAction: 2488 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SchedActionExpl: 2492 [SpaceData]
+   NodeBase.SchedActionExpl: 2526 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedCommand: 2457 [Class]
+   NodeBase.SchedCommand: 2491 [Class]
       nb/NbIncrement.cpp
       nb/Thread.h
-   NodeBase.SchedCommand.ProcessCommand: 2462 [Function]
+   NodeBase.SchedCommand.ProcessCommand: 2496 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SchedCommand.SchedCommand: 2460 [Function]
+   NodeBase.SchedCommand.SchedCommand: 2494 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SchedCommand_ProcessCommand: 2512 [SpaceData]
+   NodeBase.SchedCommand_ProcessCommand: 2546 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedExpl: 2505 [SpaceData]
+   NodeBase.SchedExpl: 2539 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedKillIndex: 2490 [SpaceData]
+   NodeBase.SchedKillIndex: 2524 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedKillText: 2447 [Class]
+   NodeBase.SchedKillText: 2481 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SchedKillText.SchedKillText: 2449 [Function]
+   NodeBase.SchedKillText.SchedKillText: 2483 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SchedKillTextExpl: 2480 [SpaceData]
+   NodeBase.SchedKillTextExpl: 2514 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedKillTextStr: 2479 [SpaceData]
+   NodeBase.SchedKillTextStr: 2513 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedShowIndex: 2487 [SpaceData]
+   NodeBase.SchedShowIndex: 2521 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedShowText: 2442 [Class]
+   NodeBase.SchedShowText: 2476 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SchedShowText.SchedShowText: 2444 [Function]
+   NodeBase.SchedShowText.SchedShowText: 2478 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SchedShowTextExpl: 2466 [SpaceData]
+   NodeBase.SchedShowTextExpl: 2500 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedShowTextStr: 2465 [SpaceData]
+   NodeBase.SchedShowTextStr: 2499 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedStartIndex: 2488 [SpaceData]
+   NodeBase.SchedStartIndex: 2522 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedStartTextExpl: 2474 [SpaceData]
+   NodeBase.SchedStartTextExpl: 2508 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedStartTextStr: 2473 [SpaceData]
+   NodeBase.SchedStartTextStr: 2507 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedStopIndex: 2489 [SpaceData]
+   NodeBase.SchedStopIndex: 2523 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedStopTextExpl: 2477 [SpaceData]
+   NodeBase.SchedStopTextExpl: 2511 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedStopTextStr: 2476 [SpaceData]
+   NodeBase.SchedStopTextStr: 2510 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SchedStr: 2504 [SpaceData]
+   NodeBase.SchedStr: 2538 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SendCommand: 2607 [Class]
+   NodeBase.SendCommand: 2641 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SendCommand.ProcessCommand: 2612 [Function]
+   NodeBase.SendCommand.ProcessCommand: 2646 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SendCommand.SendCommand: 2610 [Function]
+   NodeBase.SendCommand.SendCommand: 2644 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SendCommand_ProcessCommand: 2652 [SpaceData]
+   NodeBase.SendCommand_ProcessCommand: 2686 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SendCoutIndex: 2631 [SpaceData]
+   NodeBase.SendCoutIndex: 2665 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SendExpl: 2645 [SpaceData]
+   NodeBase.SendExpl: 2679 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SendFileIndex: 2633 [SpaceData]
+   NodeBase.SendFileIndex: 2667 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SendPrevIndex: 2632 [SpaceData]
+   NodeBase.SendPrevIndex: 2666 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SendStr: 2644 [SpaceData]
+   NodeBase.SendStr: 2678 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SendWhereExpl: 2635 [SpaceData]
+   NodeBase.SendWhereExpl: 2669 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SendWhereParm: 2602 [Class]
+   NodeBase.SendWhereParm: 2636 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SendWhereParm.SendWhereParm: 2604 [Function]
+   NodeBase.SendWhereParm.SendWhereParm: 2638 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SetExpl: 2761 [SpaceData]
+   NodeBase.SetExpl: 2795 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SetOptionsExpl: 2349 [SpaceData]
+   NodeBase.SetOptionsExpl: 2383 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SetStr: 2760 [SpaceData]
+   NodeBase.SetStr: 2794 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SetWhatExpl: 2751 [SpaceData]
+   NodeBase.SetWhatExpl: 2785 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SingletonsCommand: 2842 [Class]
+   NodeBase.SingletonsCommand: 2876 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SingletonsCommand.ProcessCommand: 2847 [Function]
+   NodeBase.SingletonsCommand.ProcessCommand: 2881 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SingletonsCommand.SingletonsCommand: 2845 [Function]
+   NodeBase.SingletonsCommand.SingletonsCommand: 2879 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SingletonsExpl: 2851 [SpaceData]
+   NodeBase.SingletonsExpl: 2885 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SingletonsStr: 2850 [SpaceData]
+   NodeBase.SingletonsStr: 2884 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StartCommand: 2875 [Class]
+   NodeBase.StartCommand: 2909 [Class]
       nb/NbIncrement.cpp
-   NodeBase.StartCommand.ProcessCommand: 2880 [Function]
+   NodeBase.StartCommand.ProcessCommand: 2914 [Function]
       nb/NbIncrement.cpp
-   NodeBase.StartCommand.StartCommand: 2878 [Function]
+   NodeBase.StartCommand.StartCommand: 2912 [Function]
       nb/NbIncrement.cpp
-   NodeBase.StartExpl: 2884 [SpaceData]
+   NodeBase.StartExpl: 2918 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StartStr: 2883 [SpaceData]
+   NodeBase.StartStr: 2917 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatisticsCommand: 2917 [Class]
+   NodeBase.StatisticsCommand: 2951 [Class]
       nb/NbIncrement.cpp
-   NodeBase.StatisticsCommand.ProcessCommand: 2922 [Function]
+   NodeBase.StatisticsCommand.ProcessCommand: 2956 [Function]
       nb/NbIncrement.cpp
-   NodeBase.StatisticsCommand.StatisticsCommand: 2920 [Function]
+   NodeBase.StatisticsCommand.StatisticsCommand: 2954 [Function]
       nb/NbIncrement.cpp
-   NodeBase.StatisticsCommand_ProcessCommand: 2975 [SpaceData]
+   NodeBase.StatisticsCommand_ProcessCommand: 3009 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatisticsExpl: 2967 [SpaceData]
+   NodeBase.StatisticsExpl: 3001 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatisticsGroupOptExpl: 2928 [SpaceData]
+   NodeBase.StatisticsGroupOptExpl: 2962 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatisticsStr: 2966 [SpaceData]
+   NodeBase.StatisticsStr: 3000 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatsAction: 2912 [Class]
+   NodeBase.StatsAction: 2946 [Class]
       nb/NbIncrement.cpp
-   NodeBase.StatsAction.StatsAction: 2914 [Function]
+   NodeBase.StatsAction.StatsAction: 2948 [Function]
       nb/NbIncrement.cpp
-   NodeBase.StatsActionExpl: 2957 [SpaceData]
+   NodeBase.StatsActionExpl: 2991 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatsGroupsIndex: 2953 [SpaceData]
+   NodeBase.StatsGroupsIndex: 2987 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatsRolloverIndex: 2955 [SpaceData]
+   NodeBase.StatsRolloverIndex: 2989 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatsShowIndex: 2954 [SpaceData]
+   NodeBase.StatsShowIndex: 2988 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatsShowText: 2902 [Class]
+   NodeBase.StatsShowText: 2936 [Class]
       nb/NbIncrement.cpp
-   NodeBase.StatsShowText.StatsShowText: 2904 [Function]
+   NodeBase.StatsShowText.StatsShowText: 2938 [Function]
       nb/NbIncrement.cpp
-   NodeBase.StatsShowTextExpl: 2933 [SpaceData]
+   NodeBase.StatsShowTextExpl: 2967 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatsShowTextStr: 2932 [SpaceData]
+   NodeBase.StatsShowTextStr: 2966 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatusExpl: 3063 [SpaceData]
+   NodeBase.StatusExpl: 3097 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StatusStr: 3062 [SpaceData]
+   NodeBase.StatusStr: 3096 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StopCommand: 3174 [Class]
+   NodeBase.StopCommand: 3208 [Class]
       nb/NbIncrement.cpp
-   NodeBase.StopCommand.ProcessCommand: 3179 [Function]
+   NodeBase.StopCommand.ProcessCommand: 3213 [Function]
       nb/NbIncrement.cpp
-   NodeBase.StopCommand.StopCommand: 3177 [Function]
+   NodeBase.StopCommand.StopCommand: 3211 [Function]
       nb/NbIncrement.cpp
-   NodeBase.StopExpl: 3183 [SpaceData]
+   NodeBase.StopExpl: 3217 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.StopStr: 3182 [SpaceData]
+   NodeBase.StopStr: 3216 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolMandNameExpl: 3230 [SpaceData]
+   NodeBase.SymbolMandNameExpl: 3264 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolOptNameExpl: 3228 [SpaceData]
+   NodeBase.SymbolOptNameExpl: 3262 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsAction: 3215 [Class]
+   NodeBase.SymbolsAction: 3249 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsAction.SymbolsAction: 3217 [Function]
+   NodeBase.SymbolsAction.SymbolsAction: 3251 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsActionExpl: 3266 [SpaceData]
+   NodeBase.SymbolsActionExpl: 3300 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsAssignIndex: 3264 [SpaceData]
+   NodeBase.SymbolsAssignIndex: 3298 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsAssignsExpl: 3252 [SpaceData]
+   NodeBase.SymbolsAssignsExpl: 3286 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsAssignStr: 3251 [SpaceData]
+   NodeBase.SymbolsAssignStr: 3285 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsAssignText: 3210 [Class]
+   NodeBase.SymbolsAssignText: 3244 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsAssignText.SymbolsAssignText: 3212 [Function]
+   NodeBase.SymbolsAssignText.SymbolsAssignText: 3246 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsCommand: 3220 [Class]
+   NodeBase.SymbolsCommand: 3254 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsCommand.ProcessCommand: 3225 [Function]
+   NodeBase.SymbolsCommand.ProcessCommand: 3259 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsCommand.SymbolsCommand: 3223 [Function]
+   NodeBase.SymbolsCommand.SymbolsCommand: 3257 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsCommand_ProcessCommand: 3283 [SpaceData]
+   NodeBase.SymbolsCommand_ProcessCommand: 3317 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsExpl: 3276 [SpaceData]
+   NodeBase.SymbolsExpl: 3310 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsListExpl: 3235 [SpaceData]
+   NodeBase.SymbolsListExpl: 3269 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsListIndex: 3262 [SpaceData]
+   NodeBase.SymbolsListIndex: 3296 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsListStr: 3234 [SpaceData]
+   NodeBase.SymbolsListStr: 3268 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsListText: 3200 [Class]
+   NodeBase.SymbolsListText: 3234 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsListText.SymbolsListText: 3202 [Function]
+   NodeBase.SymbolsListText.SymbolsListText: 3236 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsSetExpl: 3243 [SpaceData]
+   NodeBase.SymbolsSetExpl: 3277 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsSetIndex: 3263 [SpaceData]
+   NodeBase.SymbolsSetIndex: 3297 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsSetStr: 3242 [SpaceData]
+   NodeBase.SymbolsSetStr: 3276 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsSetText: 3205 [Class]
+   NodeBase.SymbolsSetText: 3239 [Class]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsSetText.SymbolsSetText: 3207 [Function]
+   NodeBase.SymbolsSetText.SymbolsSetText: 3241 [Function]
       nb/NbIncrement.cpp
-   NodeBase.SymbolsStr: 3275 [SpaceData]
+   NodeBase.SymbolsStr: 3309 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.SymbolValueExpl: 3232 [SpaceData]
+   NodeBase.SymbolValueExpl: 3266 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ThreadsCommand: 3382 [Class]
+   NodeBase.ThreadsCommand: 3416 [Class]
       nb/NbIncrement.cpp
-   NodeBase.ThreadsCommand.ProcessCommand: 3387 [Function]
+   NodeBase.ThreadsCommand.ProcessCommand: 3421 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ThreadsCommand.ThreadsCommand: 3385 [Function]
+   NodeBase.ThreadsCommand.ThreadsCommand: 3419 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ThreadsExpl: 3391 [SpaceData]
+   NodeBase.ThreadsExpl: 3425 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ThreadsStr: 3390 [SpaceData]
+   NodeBase.ThreadsStr: 3424 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ToolHeaderStr: 3442 [SpaceData]
+   NodeBase.ToolHeaderStr: 3476 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ToolListExpl: 2739 [SpaceData]
+   NodeBase.ToolListExpl: 2773 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ToolListText: 2713 [Class]
+   NodeBase.ToolListText: 2747 [Class]
       nb/NbIncrement.cpp
-   NodeBase.ToolListText.ToolListText: 2715 [Function]
+   NodeBase.ToolListText.ToolListText: 2749 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ToolListTextExpl: 2742 [SpaceData]
+   NodeBase.ToolListTextExpl: 2776 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ToolListTextStr: 2741 [SpaceData]
+   NodeBase.ToolListTextStr: 2775 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ToolsCommand: 3446 [Class]
+   NodeBase.ToolsCommand: 3480 [Class]
       nb/NbIncrement.cpp
-   NodeBase.ToolsCommand.ProcessCommand: 3451 [Function]
+   NodeBase.ToolsCommand.ProcessCommand: 3485 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ToolsCommand.ToolsCommand: 3449 [Function]
+   NodeBase.ToolsCommand.ToolsCommand: 3483 [Function]
       nb/NbIncrement.cpp
-   NodeBase.ToolsExpl: 3455 [SpaceData]
+   NodeBase.ToolsExpl: 3489 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ToolsStr: 3454 [SpaceData]
+   NodeBase.ToolsStr: 3488 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.TraceText: 2353 [Class]
+   NodeBase.TraceText: 2387 [Class]
       nb/NbIncrement.cpp
-   NodeBase.TraceText.TraceText: 2355 [Function]
+   NodeBase.TraceText.TraceText: 2389 [Function]
       nb/NbIncrement.cpp
-   NodeBase.TraceTextExpl: 2359 [SpaceData]
+   NodeBase.TraceTextExpl: 2393 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.TraceTextStr: 2358 [SpaceData]
+   NodeBase.TraceTextStr: 2392 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.ValidSetOptions: 2351 [SpaceData]
+   NodeBase.ValidSetOptions: 2385 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.WarmIndex: 2280 [SpaceData]
+   NodeBase.WarmIndex: 2314 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.WarmTextExpl: 2263 [SpaceData]
+   NodeBase.WarmTextExpl: 2297 [SpaceData]
       nb/NbIncrement.cpp
-   NodeBase.WarmTextStr: 2262 [SpaceData]
+   NodeBase.WarmTextStr: 2296 [SpaceData]
       nb/NbIncrement.cpp
 nb/NbIncrement.h
    NBINCREMENT_H_INCLUDED: 23 [Define]
@@ -35831,7 +36083,7 @@ nb/NbModule.h
       nb/NbModule.cpp
    NodeBase.Singleton<NbModule>: 36 [Friend]
 nb/NbPools.cpp
-   NodeBase.MsgBufferSize: 37 [SpaceData]
+   NodeBase.MsgBufferSize: 38 [SpaceData]
       nb/NbPools.cpp
 nb/NbPools.h
    NBPOOLS_H_INCLUDED: 23 [Define]
@@ -36170,6 +36422,7 @@ nb/NbTypes.h
       ct/Lexer.cpp
       nb/Class.cpp
       nb/CliStack.cpp
+      nb/DeferredRegistry.cpp
       nb/Log.cpp
       nb/LogBuffer.cpp
       nb/LogBufferRegistry.cpp
@@ -36263,6 +36516,7 @@ nb/NbTypes.h
       nb/ThreadAdmin.cpp
       nt/NtIncrement.cpp
    NodeBase.Faction.MaintenanceFaction: 78 [Enumerator]
+      nb/DeferredThread.cpp
       nb/ModuleRegistry.cpp
       nb/ThreadAdmin.cpp
       nw/LocalAddrTest.cpp
@@ -36617,6 +36871,8 @@ nb/Object.h
       nb/Daemon.h
       nb/DaemonRegistry.cpp
       nb/DaemonRegistry.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
       nb/Element.cpp
       nb/Element.h
       nb/Heap.cpp
@@ -36872,6 +37128,12 @@ nb/Object.h
       nb/Daemon.h
       nb/DaemonRegistry.cpp
       nb/DaemonRegistry.h
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
+      nb/DeferredThread.cpp
+      nb/DeferredThread.h
       nb/Dynamic.cpp
       nb/Dynamic.h
       nb/Element.cpp
@@ -37830,6 +38092,7 @@ nb/Pooled.h
       nb/Pooled.cpp
    NodeBase.Pooled.ClaimBlocks: 78 [Function]
       dip/BotTrace.cpp
+      nb/DeferredRegistry.cpp
       nb/Pooled.cpp
       nb/Thread.cpp
       nw/SysTcpSocket.cpp
@@ -37888,6 +38151,7 @@ nb/Pooled.h
       mb/MediaEndpt.cpp
       mb/MediaPsm.cpp
       nb/CoutThread.cpp
+      nb/DeferredRegistry.cpp
       nb/FileThread.cpp
       nb/Pooled.cpp
       nw/SysTcpSocket.cpp
@@ -38542,6 +38806,7 @@ nb/Q2Link.cpp
 nb/Q2Link.h
    NodeBase.NbHeap: 44 [Friend]
    NodeBase.Q2Link: 41 [Class]
+      nb/Deferred.h
       nb/NbHeap.cpp
       nb/Q2Link.cpp
       nb/Q2Link.h
@@ -38551,12 +38816,14 @@ nb/Q2Link.h
       sb/Context.h
       sb/Timer.h
    NodeBase.Q2Link.Display: 70 [Function]
+      nb/Deferred.cpp
       nb/NbHeap.cpp
       nb/Q2Link.cpp
       nb/Q2Way.h
       sb/Context.cpp
       sb/Timer.cpp
    NodeBase.Q2Link.IsQueued: 66 [Function]
+      nb/DeferredRegistry.cpp
    NodeBase.Q2Link.next: 75 [ClassData]
       nb/NbHeap.cpp
       nb/Q2Link.cpp
@@ -38578,6 +38845,8 @@ nb/Q2Link.h
       nb/Q2Link.h
 nb/Q2Way.h
    NodeBase.Q2Way: 49 [Class]
+      nb/Deferred.h
+      nb/DeferredRegistry.h
       nb/NbHeap.cpp
       nb/Q2Link.h
       nb/Q2Way.h
@@ -38601,11 +38870,13 @@ nb/Q2Way.h
       nt/FunctionProfiler.cpp
       nt/NtIncrement.cpp
    NodeBase.Q2Way.Enq: 94 [Function]
+      nb/DeferredRegistry.cpp
       nb/NbHeap.cpp
       nt/FunctionProfiler.cpp
       nt/NtIncrement.cpp
       sb/Context.cpp
    NodeBase.Q2Way.Exq: 150 [Function]
+      nb/DeferredRegistry.cpp
       nb/NbHeap.cpp
       nb/Q2Way.h
       nt/FunctionProfiler.cpp
@@ -38613,6 +38884,7 @@ nb/Q2Way.h
       sb/Context.cpp
       sb/Timer.cpp
    NodeBase.Q2Way.First: 169 [Function]
+      nb/DeferredRegistry.cpp
       nb/Q2Way.h
       nt/FunctionProfiler.cpp
       nt/NtIncrement.cpp
@@ -38625,6 +38897,7 @@ nb/Q2Way.h
       sb/Context.cpp
       sb/Timer.cpp
    NodeBase.Q2Way.Init: 81 [Function]
+      nb/DeferredRegistry.cpp
       nb/NbHeap.cpp
       nt/FunctionProfiler.cpp
       nt/NtIncrement.cpp
@@ -38635,10 +38908,12 @@ nb/Q2Way.h
    NodeBase.Q2Way.Last: 213 [Function]
       nt/NtIncrement.cpp
    NodeBase.Q2Way.Next(const T&) const: 201 [Function]
+      nb/DeferredRegistry.cpp
       nt/FunctionProfiler.cpp
       nt/NtIncrement.cpp
       sb/TimerRegistry.cpp
    NodeBase.Q2Way.Next(T*&) const: 180 [Function]
+      nb/DeferredRegistry.cpp
       nb/Q2Way.h
       nt/FunctionProfiler.cpp
       nt/NtIncrement.cpp
@@ -38652,6 +38927,7 @@ nb/Q2Way.h
    NodeBase.Q2Way.Prev(T*&) const: 224 [Function]
       nt/NtIncrement.cpp
    NodeBase.Q2Way.Purge: 281 [Function]
+      nb/DeferredRegistry.cpp
       nb/Q2Way.h
       nt/FunctionProfiler.cpp
       nt/NtIncrement.cpp
@@ -39156,12 +39432,12 @@ nb/Restart.cpp
    NodeBase.RestartReasonStrings: 90 [SpaceData]
       nb/Restart.cpp
 nb/Restart.h
-   NodeBase.ModuleRegistry: 76 [Friend]
-   NodeBase.operator<<(std::ostream&,RestartReason): 70 [Function]
+   NodeBase.ModuleRegistry: 77 [Friend]
+   NodeBase.operator<<(std::ostream&,RestartReason): 71 [Function]
       nb/ElementException.cpp
       nb/InitThread.cpp
       nb/Restart.cpp
-   NodeBase.Restart: 74 [Class]
+   NodeBase.Restart: 75 [Class]
       an/PotsTrafficThread.cpp
       cb/ServiceCodeRegistry.cpp
       ct/CxxRoot.cpp
@@ -39172,6 +39448,7 @@ nb/Restart.h
       nb/CliThread.cpp
       nb/CoutThread.cpp
       nb/Daemon.cpp
+      nb/DeferredRegistry.cpp
       nb/FileThread.cpp
       nb/Heap.cpp
       nb/Log.cpp
@@ -39208,7 +39485,7 @@ nb/Restart.h
       sb/SbTrace.cpp
       sb/TimerRegistry.cpp
       sn/PotsTreatmentRegistry.cpp
-   NodeBase.Restart.ClearsMemory: 93 [Function]
+   NodeBase.Restart.ClearsMemory: 94 [Function]
       cb/ServiceCodeRegistry.cpp
       nb/CfgParmRegistry.cpp
       nb/Memory.cpp
@@ -39222,12 +39499,12 @@ nb/Restart.h
       pb/PotsProfile.cpp
       sb/SbTrace.cpp
       sn/PotsTreatmentRegistry.cpp
-   NodeBase.Restart.GetLevel: 88 [Function]
+   NodeBase.Restart.GetLevel: 89 [Function]
       an/PotsTrafficThread.cpp
       nb/LogBuffer.cpp
       nb/Thread.cpp
       sb/InvokerThread.cpp
-   NodeBase.Restart.GetStage: 84 [Function]
+   NodeBase.Restart.GetStage: 85 [Function]
       nb/CinThread.cpp
       nb/CoutThread.cpp
       nb/Daemon.cpp
@@ -39246,8 +39523,9 @@ nb/Restart.h
       sb/Context.cpp
       sb/InvokerPool.cpp
       sb/InvokerThread.cpp
-   NodeBase.Restart.Initiate: 114 [Function]
+   NodeBase.Restart.Initiate: 115 [Function]
       nb/Daemon.cpp
+      nb/DeferredRegistry.cpp
       nb/Heap.cpp
       nb/NbHeap.cpp
       nb/NbIncrement.cpp
@@ -39257,16 +39535,16 @@ nb/Restart.h
       nb/Thread.cpp
       sb/InvokerPool.cpp
       sb/TimerRegistry.cpp
-   NodeBase.Restart.Level_: 123 [ClassData]
+   NodeBase.Restart.Level_: 124 [ClassData]
       nb/ModuleRegistry.cpp
       nb/Restart.cpp
       nb/Restart.h
-   NodeBase.Restart.LevelToClear: 108 [Function]
+   NodeBase.Restart.LevelToClear: 109 [Function]
       nb/Heap.cpp
       nb/NbHeap.cpp
       nb/ObjectPool.cpp
       nb/Restart.cpp
-   NodeBase.Restart.Release: 98 [Function]
+   NodeBase.Restart.Release: 99 [Function]
       ct/CxxRoot.cpp
       ct/Library.cpp
       nb/Class.cpp
@@ -39285,8 +39563,8 @@ nb/Restart.h
       sb/FactoryRegistry.cpp
       sb/InvokerThread.cpp
       sb/SbPools.cpp
-   NodeBase.Restart.Restart: 80 [Function]
-   NodeBase.Restart.Stage_: 119 [ClassData]
+   NodeBase.Restart.Restart: 81 [Function]
+   NodeBase.Restart.Stage_: 120 [ClassData]
       nb/ModuleRegistry.cpp
       nb/Restart.cpp
       nb/Restart.h
@@ -39297,6 +39575,8 @@ nb/Restart.h
       nb/Restart.h
    NodeBase.RestartReason.DeathOfCriticalThread: 60 [Enumerator]
       nb/Daemon.cpp
+   NodeBase.RestartReason.DeferredQueueCorruption: 63 [Enumerator]
+      nb/DeferredRegistry.cpp
    NodeBase.RestartReason.HeapCorruption: 62 [Enumerator]
       nb/NbHeap.cpp
    NodeBase.RestartReason.HeapCreationFailed: 55 [Enumerator]
@@ -39313,7 +39593,7 @@ nb/Restart.h
       nb/RootThread.cpp
    NodeBase.RestartReason.ObjectPoolCreationFailed: 56 [Enumerator]
       nb/ObjectPool.cpp
-   NodeBase.RestartReason.RestartReason_N: 65 [Enumerator]
+   NodeBase.RestartReason.RestartReason_N: 66 [Enumerator]
       nb/Restart.cpp
    NodeBase.RestartReason.RestartTimeout: 57 [Enumerator]
       nb/RootThread.cpp
@@ -39323,9 +39603,9 @@ nb/Restart.h
       nb/InitThread.cpp
       nb/RootThread.cpp
       nb/Thread.cpp
-   NodeBase.RestartReason.TimerQueueCorruption: 64 [Enumerator]
+   NodeBase.RestartReason.TimerQueueCorruption: 65 [Enumerator]
       sb/TimerRegistry.cpp
-   NodeBase.RestartReason.WorkQueueCorruption: 63 [Enumerator]
+   NodeBase.RestartReason.WorkQueueCorruption: 64 [Enumerator]
       sb/InvokerPool.cpp
    NodeBase.RestartStage: 36 [Enum]
       nb/Restart.cpp
@@ -39523,6 +39803,11 @@ nb/Singleton.h
       nb/Daemon.cpp
       nb/DaemonRegistry.h
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
+      nb/DeferredThread.cpp
+      nb/DeferredThread.h
       nb/Element.cpp
       nb/Element.h
       nb/FileThread.cpp
@@ -39766,6 +40051,7 @@ nb/Singleton.h
       nb/CinThread.cpp
       nb/CliThread.cpp
       nb/CoutThread.cpp
+      nb/DeferredThread.cpp
       nb/FileThread.cpp
       nb/InitThread.cpp
       nb/LogThread.cpp
@@ -39825,6 +40111,7 @@ nb/Singleton.h
       nw/IpPort.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/LocalAddrTest.cpp
       pb/PotsFeature.cpp
       pb/PotsProfile.cpp
       sb/Event.cpp
@@ -39906,6 +40193,9 @@ nb/Singleton.h
       nb/CliThread.cpp
       nb/CoutThread.cpp
       nb/Daemon.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
+      nb/DeferredThread.cpp
       nb/Element.cpp
       nb/FileThread.cpp
       nb/FunctionTrace.cpp
@@ -41725,6 +42015,8 @@ nb/SysTypes.h
       nb/Daemon.h
       nb/DaemonRegistry.cpp
       nb/DaemonRegistry.h
+      nb/DeferredThread.cpp
+      nb/DeferredThread.h
       nb/FileThread.cpp
       nb/FileThread.h
       nb/Formatters.cpp
@@ -41779,6 +42071,8 @@ nb/SysTypes.h
       nw/LocalAddrTest.h
       nw/NwCliParms.cpp
       nw/NwCliParms.h
+      nw/NwDaemons.cpp
+      nw/NwDaemons.h
       nw/NwLogs.cpp
       nw/NwLogs.h
       nw/NwTrace.cpp
@@ -41928,6 +42222,8 @@ nb/SysTypes.h
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
       nb/Element.cpp
       nb/ElementException.cpp
       nb/FileThread.cpp
@@ -42534,6 +42830,10 @@ nb/SysTypes.h
       nb/DaemonRegistry.h
       nb/Debug.cpp
       nb/Debug.h
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
       nb/Element.cpp
       nb/Element.h
       nb/FileThread.cpp
@@ -42878,6 +43178,8 @@ nb/SysTypes.h
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
       nb/Duration.cpp
       nb/Element.cpp
       nb/FunctionGuard.cpp
@@ -42943,6 +43245,7 @@ nb/SysTypes.h
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
+      nw/NwDaemons.cpp
       nw/NwIncrement.cpp
       nw/NwTracer.cpp
       nw/SysIpL2Addr.win.cpp
@@ -43321,6 +43624,7 @@ nb/SysTypes.h
       nb/SysMutex.win.cpp
       nb/SysThread.cpp
       nb/Thread.cpp
+      nb/ThreadRegistry.cpp
       nb/TimedRecord.cpp
       nb/TraceRecord.h
       pb/PotsProtocol.cpp
@@ -43526,6 +43830,8 @@ nb/SysTypes.h
       nb/Daemon.h
       nb/DaemonRegistry.cpp
       nb/DaemonRegistry.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
       nb/ElementException.cpp
       nb/ElementException.h
       nb/InitThread.cpp
@@ -43634,6 +43940,7 @@ nb/SysTypes.h
       an/PotsTrafficThread.cpp
       cb/BcSsm.cpp
       dip/BotTrace.cpp
+      nb/DeferredRegistry.cpp
       nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/Restart.cpp
@@ -43683,6 +43990,7 @@ nb/SysTypes.h
       nb/Thread.cpp
    NodeBase.RestartLevel.RestartWarm: 206 [Enumerator]
       nb/Daemon.cpp
+      nb/DeferredRegistry.cpp
       nb/InitThread.cpp
       nb/ModuleRegistry.cpp
       nb/NbHeap.cpp
@@ -44359,6 +44667,10 @@ nb/Thread.h
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
       nb/Debug.h
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredThread.cpp
+      nb/DeferredThread.h
       nb/Exception.cpp
       nb/FileThread.cpp
       nb/FileThread.h
@@ -44402,12 +44714,13 @@ nb/Thread.h
       sb/SbTracer.cpp
       sb/TimerThread.cpp
       sb/TimerThread.h
-   NodeBase.Thread.AbbrName: 306 [Function]
+   NodeBase.Thread.AbbrName: 305 [Function]
       an/PotsTrafficThread.h
       dip/BotThread.h
       nb/CinThread.h
       nb/CliThread.h
       nb/CoutThread.h
+      nb/DeferredThread.h
       nb/FileThread.h
       nb/InitThread.h
       nb/LogThread.h
@@ -44421,15 +44734,15 @@ nb/Thread.h
       nw/UdpIoThread.h
       sb/InvokerThread.h
       sb/TimerThread.h
-   NodeBase.Thread.ActiveThread: 467 [Function]
+   NodeBase.Thread.ActiveThread: 466 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.BlockingAllowed: 323 [Function]
+   NodeBase.Thread.BlockingAllowed: 322 [Function]
       nb/Thread.cpp
       sb/InvokerThread.h
-   NodeBase.Thread.BlockingMutex: 488 [Function]
+   NodeBase.Thread.BlockingMutex: 487 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.CalcStatus: 176 [Function]
+   NodeBase.Thread.CalcStatus: 181 [Function]
       nb/Thread.cpp
       nb/TimedRecord.cpp
       nt/FunctionProfiler.cpp
@@ -44438,40 +44751,43 @@ nb/Thread.h
       sb/SbTracer.cpp
       sb/TimerThread.cpp
       sb/TimerThread.h
-   NodeBase.Thread.CanBeScheduled: 475 [Function]
+   NodeBase.Thread.CanBeScheduled: 474 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.Thread.CauseTrap: 296 [Function]
+   NodeBase.Thread.CauseTrap: 295 [Function]
       nb/Thread.cpp
       nt/NtIncrement.cpp
-   NodeBase.Thread.ChangeFaction: 159 [Function]
+   NodeBase.Thread.ChangeFaction: 164 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.ClaimBlocks: 301 [Function]
+   NodeBase.Thread.ClaimBlocks: 300 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
       nw/TcpIoThread.cpp
       nw/TcpIoThread.h
-   NodeBase.Thread.CurrTimeRunning: 216 [Function]
+   NodeBase.Thread.CurrTimeRunning: 221 [Function]
       an/PotsTrafficThread.cpp
+      nb/DeferredRegistry.cpp
+      nb/DeferredThread.cpp
       nb/Thread.cpp
       sb/TimerRegistry.cpp
       sb/TimerThread.cpp
-   NodeBase.Thread.daemon_: 656 [ClassData]
+   NodeBase.Thread.daemon_: 655 [ClassData]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.Thread.deleting_: 668 [ClassData]
+   NodeBase.Thread.deleting_: 667 [ClassData]
       nb/Thread.cpp
-   NodeBase.Thread.DeqMsg: 278 [Function]
+   NodeBase.Thread.DeqMsg: 277 [Function]
       dip/BotThread.cpp
       nb/CoutThread.cpp
       nb/FileThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Destroy: 365 [Function]
+   NodeBase.Thread.Destroy: 364 [Function]
       an/PotsTrafficThread.h
       dip/BotThread.h
       nb/CinThread.h
       nb/CliThread.h
       nb/CoutThread.h
+      nb/DeferredThread.h
       nb/FileThread.h
       nb/InitThread.h
       nb/LogThread.h
@@ -44482,7 +44798,7 @@ nb/Thread.h
       nt/NtIncrement.cpp
       nw/LocalAddrTest.h
       sb/TimerThread.h
-   NodeBase.Thread.Display: 234 [Function]
+   NodeBase.Thread.Display: 239 [Function]
       an/PotsTrafficThread.cpp
       an/PotsTrafficThread.h
       dip/BotThread.cpp
@@ -44510,31 +44826,33 @@ nb/Thread.h
       nw/LocalAddrTest.h
       sb/InvokerThread.cpp
       sb/InvokerThread.h
-   NodeBase.Thread.DisplayContextSwitches: 648 [Function]
+   NodeBase.Thread.DisplayContextSwitches: 647 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
-   NodeBase.Thread.DisplayStats: 230 [Function]
+   NodeBase.Thread.DisplayStats: 235 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.Thread.DisplaySummaries: 636 [Function]
+   NodeBase.Thread.DisplaySummaries: 635 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
-   NodeBase.Thread.DisplaySummary: 631 [Function]
+   NodeBase.Thread.DisplaySummary: 630 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.EnableFactions: 624 [Function]
+   NodeBase.Thread.EnableFactions: 623 [Function]
       nb/ModuleRegistry.cpp
       nb/Thread.cpp
-   NodeBase.Thread.EnqMsg: 272 [Function]
+   NodeBase.Thread.EnqMsg: 117 [Function]
       dip/BotThread.cpp
       nb/CoutThread.cpp
+      nb/Deferred.cpp
       nb/FileThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Enter: 315 [Function]
+   NodeBase.Thread.Enter: 314 [Function]
       an/PotsTrafficThread.h
       dip/BotThread.h
       nb/CinThread.h
       nb/CliThread.h
       nb/CoutThread.h
+      nb/DeferredThread.h
       nb/FileThread.h
       nb/InitThread.h
       nb/LogThread.h
@@ -44554,13 +44872,13 @@ nb/Thread.h
       nb/Thread.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
-   NodeBase.Thread.EnterSwLog: 502 [Function]
+   NodeBase.Thread.EnterSwLog: 501 [Function]
       nb/Debug.cpp
       nb/Thread.cpp
-   NodeBase.Thread.EnterThread: 405 [Function]
+   NodeBase.Thread.EnterThread: 404 [Function]
       nb/RootThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Exit: 613 [Function]
+   NodeBase.Thread.Exit: 612 [Function]
       nb/Thread.cpp
    NodeBase.Thread.ExitBlockingOperation: 108 [Function]
       nb/CinThread.cpp
@@ -44568,56 +44886,56 @@ nb/Thread.h
       nb/Thread.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
-   NodeBase.Thread.ExitIfSafe: 513 [Function]
+   NodeBase.Thread.ExitIfSafe: 512 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.ExitOnRestart: 347 [Function]
+   NodeBase.Thread.ExitOnRestart: 346 [Function]
       an/PotsTrafficThread.h
       nb/StatisticsThread.h
       nb/Thread.cpp
       nw/IoThread.h
-   NodeBase.Thread.ExitSwLog: 507 [Function]
+   NodeBase.Thread.ExitSwLog: 506 [Function]
       nb/Debug.cpp
       nb/Thread.cpp
-   NodeBase.Thread.ExtendTime: 560 [Function]
+   NodeBase.Thread.ExtendTime: 559 [Function]
       nb/Exception.cpp
       nb/Thread.cpp
-   NodeBase.Thread.faction_: 664 [ClassData]
+   NodeBase.Thread.faction_: 663 [ClassData]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.Thread.FindRunningThread: 373 [Function]
+   NodeBase.Thread.FindRunningThread: 372 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.FunctionInvoked(fn_name_arg): 572 [Function]
+   NodeBase.Thread.FunctionInvoked(fn_name_arg): 571 [Function]
       nb/Debug.cpp
       nb/Thread.cpp
-   NodeBase.Thread.FunctionInvoked(fn_name_arg,const std::nothrow_t&): 573 [Function]
+   NodeBase.Thread.FunctionInvoked(fn_name_arg,const std::nothrow_t&): 572 [Function]
       nb/Thread.cpp
    NodeBase.Thread.GetBlockingReason: 112 [Function]
       nb/Thread.cpp
       sb/InvokerPool.cpp
-   NodeBase.Thread.GetDaemon: 479 [Function]
+   NodeBase.Thread.GetDaemon: 478 [Function]
       nb/NbIncrement.cpp
-   NodeBase.Thread.GetFaction: 155 [Function]
-   NodeBase.Thread.GetSignal: 288 [Function]
+   NodeBase.Thread.GetFaction: 160 [Function]
+   NodeBase.Thread.GetSignal: 287 [Function]
       nb/CliThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.GetStatus: 169 [Function]
+   NodeBase.Thread.GetStatus: 174 [Function]
       nb/NbTracer.cpp
       nb/Thread.cpp
       sb/TimerThread.cpp
-   NodeBase.Thread.HandleSignal: 202 [Function]
+   NodeBase.Thread.HandleSignal: 207 [Function]
       nb/SysThread.win.cpp
       nb/Thread.cpp
-   NodeBase.Thread.ImmProtect: 400 [Function]
+   NodeBase.Thread.ImmProtect: 399 [Function]
       nb/FunctionGuard.cpp
       nb/Thread.cpp
-   NodeBase.Thread.ImmUnprotect: 396 [Function]
+   NodeBase.Thread.ImmUnprotect: 395 [Function]
       nb/FunctionGuard.cpp
       nb/Thread.cpp
-   NodeBase.Thread.InitialTime: 284 [Function]
+   NodeBase.Thread.InitialTime: 283 [Function]
       an/PotsTrafficThread.cpp
       an/PotsTrafficThread.h
       nb/Thread.cpp
-   NodeBase.Thread.Interrupt: 120 [Function]
+   NodeBase.Thread.Interrupt: 125 [Function]
       an/PotsTrafficThread.cpp
       nb/CinThread.cpp
       nb/Daemon.cpp
@@ -44632,57 +44950,58 @@ nb/Thread.h
       nw/LocalAddrTest.cpp
       nw/TcpIoThread.cpp
       sb/InvokerPool.cpp
-   NodeBase.Thread.IsLocked: 459 [Function]
+   NodeBase.Thread.IsLocked: 458 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.IsScheduled: 212 [Function]
+   NodeBase.Thread.IsScheduled: 217 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
       sb/InvokerPool.cpp
-   NodeBase.Thread.IsTraceable: 463 [Function]
+   NodeBase.Thread.IsTraceable: 462 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.Kill: 455 [Function]
+   NodeBase.Thread.Kill: 454 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
-   NodeBase.Thread.LockedThread: 471 [Function]
+   NodeBase.Thread.LockedThread: 470 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.LogContextSwitch: 644 [Function]
+   NodeBase.Thread.LogContextSwitch: 643 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.LogContextSwitches: 640 [Function]
+   NodeBase.Thread.LogContextSwitches: 639 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
-   NodeBase.Thread.LogSignal: 608 [Function]
+   NodeBase.Thread.LogSignal: 607 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.LogTrap: 544 [Function]
+   NodeBase.Thread.LogTrap: 543 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.MakePreemptable: 384 [Function]
+   NodeBase.Thread.MakePreemptable: 383 [Function]
       nb/FunctionGuard.cpp
       nb/InitThread.cpp
       nb/RootThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.MakeUnpreemptable: 379 [Function]
+   NodeBase.Thread.MakeUnpreemptable: 378 [Function]
       nb/FunctionGuard.cpp
       nb/Thread.cpp
    NodeBase.Thread.MaxId: 79 [ClassData]
       nb/DaemonRegistry.cpp
       nb/NbCliParms.cpp
       nb/Thread.cpp
-   NodeBase.Thread.MemProtect: 392 [Function]
+      nb/ThreadRegistry.cpp
+   NodeBase.Thread.MemProtect: 391 [Function]
       nb/FunctionGuard.cpp
       nb/Thread.cpp
-   NodeBase.Thread.MemUnprotect: 388 [Function]
+   NodeBase.Thread.MemUnprotect: 387 [Function]
       nb/FunctionGuard.cpp
       nb/Thread.cpp
-   NodeBase.Thread.msgq_: 672 [ClassData]
+   NodeBase.Thread.msgq_: 671 [ClassData]
       nb/Thread.cpp
-   NodeBase.Thread.MutexCount: 496 [Function]
+   NodeBase.Thread.MutexCount: 495 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.NativeThreadId: 151 [Function]
+   NodeBase.Thread.NativeThreadId: 156 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
    NodeBase.Thread.operator=: 75 [Function]
-   NodeBase.Thread.Patch: 239 [Function]
+   NodeBase.Thread.Patch: 244 [Function]
       dip/BotThread.cpp
       dip/BotThread.h
       nb/CinThread.cpp
@@ -44691,6 +45010,8 @@ nb/Thread.h
       nb/CliThread.h
       nb/CoutThread.cpp
       nb/CoutThread.h
+      nb/DeferredThread.cpp
+      nb/DeferredThread.h
       nb/FileThread.cpp
       nb/FileThread.h
       nb/InitThread.cpp
@@ -44717,6 +45038,7 @@ nb/Thread.h
       dip/BotThread.cpp
       nb/CinThread.cpp
       nb/CliThread.cpp
+      nb/DeferredThread.cpp
       nb/InitThread.cpp
       nb/LogThread.cpp
       nb/ObjectPoolAudit.cpp
@@ -44734,59 +45056,59 @@ nb/Thread.h
       an/PotsTrafficThread.cpp
       nb/ThisThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.PercentIdle: 221 [Function]
+   NodeBase.Thread.PercentIdle: 226 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Preempt: 426 [Function]
+   NodeBase.Thread.Preempt: 425 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.priv_: 676 [ClassData]
+   NodeBase.Thread.priv_: 675 [ClassData]
       nb/Thread.cpp
-   NodeBase.Thread.Proceed: 445 [Function]
+   NodeBase.Thread.Proceed: 444 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Raise: 195 [Function]
+   NodeBase.Thread.Raise: 200 [Function]
       nb/ModuleRegistry.cpp
       nb/RootThread.cpp
       nb/Thread.cpp
       nt/NtIncrement.cpp
       nw/IpPort.cpp
-   NodeBase.Thread.Ready: 422 [Function]
+   NodeBase.Thread.Ready: 421 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.Recover: 360 [Function]
+   NodeBase.Thread.Recover: 359 [Function]
       nb/CliThread.h
       nb/Thread.cpp
       nt/NtIncrement.cpp
       sb/InvokerThread.h
-   NodeBase.Thread.RegisterForSignals: 522 [Function]
+   NodeBase.Thread.RegisterForSignals: 521 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.ReleaseResources: 619 [Function]
+   NodeBase.Thread.ReleaseResources: 618 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.Reset: 418 [Function]
+   NodeBase.Thread.Reset: 417 [Function]
       nb/InitThread.cpp
       nb/RootThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.ResetDebugFlags: 208 [Function]
+   NodeBase.Thread.ResetDebugFlags: 213 [Function]
       nb/Exception.cpp
       nb/SysThread.win.cpp
       nb/Thread.cpp
-   NodeBase.Thread.ResetFlag: 132 [Function]
+   NodeBase.Thread.ResetFlag: 137 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.ResetFlags: 136 [Function]
+   NodeBase.Thread.ResetFlags: 141 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Restarting: 551 [Function]
+   NodeBase.Thread.Restarting: 550 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.Thread.Resume: 450 [Function]
+   NodeBase.Thread.Resume: 449 [Function]
       nb/Thread.cpp
    NodeBase.Thread.RtcPercentUsed: 92 [Function]
       nb/ThisThread.cpp
       nb/Thread.cpp
       nw/IoThread.cpp
-   NodeBase.Thread.RtcTimeout: 565 [Function]
+   NodeBase.Thread.RtcTimeout: 564 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.RunningThread(): 142 [Function]
+   NodeBase.Thread.RunningThread(): 147 [Function]
       nb/CinThread.cpp
       nb/MutexRegistry.cpp
       nb/SysMutex.win.cpp
@@ -44795,19 +45117,20 @@ nb/Thread.h
       sb/Context.cpp
       sb/InvokerPool.cpp
       sb/SbTracer.cpp
-   NodeBase.Thread.RunningThread(const std::nothrow_t&): 143 [Function]
+   NodeBase.Thread.RunningThread(const std::nothrow_t&): 148 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.Schedule: 434 [Function]
+   NodeBase.Thread.Schedule: 433 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.ScheduledIn: 333 [Function]
+   NodeBase.Thread.ScheduledIn: 332 [Function]
       nb/Thread.cpp
       sb/InvokerThread.h
-   NodeBase.Thread.SetInitialized: 266 [Function]
+   NodeBase.Thread.SetInitialized: 271 [Function]
       an/PotsTrafficThread.cpp
       dip/BotThread.cpp
       nb/CinThread.cpp
       nb/CliThread.cpp
       nb/CoutThread.cpp
+      nb/DeferredThread.cpp
       nb/FileThread.cpp
       nb/InitThread.cpp
       nb/LogThread.cpp
@@ -44821,34 +45144,34 @@ nb/Thread.h
       nw/UdpIoThread.cpp
       sb/InvokerThread.cpp
       sb/TimerThread.cpp
-   NodeBase.Thread.SetSignal: 604 [Function]
+   NodeBase.Thread.SetSignal: 603 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.SetStatus: 163 [Function]
+   NodeBase.Thread.SetStatus: 168 [Function]
       nb/NbTracer.cpp
       nb/Thread.cpp
-   NodeBase.Thread.SetTid: 369 [Function]
+   NodeBase.Thread.SetTid: 368 [Function]
       nb/ThreadRegistry.cpp
-   NodeBase.Thread.SetTrap: 592 [Function]
+   NodeBase.Thread.SetTrap: 591 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.Shutdown: 244 [Function]
+   NodeBase.Thread.Shutdown: 249 [Function]
       nb/CliThread.cpp
       nb/CliThread.h
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
       sb/InvokerThread.h
-   NodeBase.Thread.SignalHandler: 518 [Function]
+   NodeBase.Thread.SignalHandler: 517 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.StackCheck: 600 [Function]
+   NodeBase.Thread.StackCheck: 599 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.Start: 410 [Function]
+   NodeBase.Thread.Start: 409 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.StartShortInterval: 292 [Function]
+   NodeBase.Thread.StartShortInterval: 291 [Function]
       nb/StatisticsThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.StartTracing: 184 [Function]
+   NodeBase.Thread.StartTracing: 189 [Function]
       nb/ThisThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Startup: 249 [Function]
+   NodeBase.Thread.Startup: 254 [Function]
       dip/DipModule.cpp
       nb/CliThread.cpp
       nb/CliThread.h
@@ -44857,34 +45180,35 @@ nb/Thread.h
       nb/ThreadRegistry.cpp
       nw/NwModule.cpp
       sb/SbModule.cpp
-   NodeBase.Thread.stats_: 680 [ClassData]
+   NodeBase.Thread.stats_: 679 [ClassData]
       nb/Thread.cpp
-   NodeBase.Thread.StopTracing: 188 [Function]
+   NodeBase.Thread.StopTracing: 193 [Function]
       nb/ThisThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Suspend: 430 [Function]
+   NodeBase.Thread.Suspend: 429 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.SwitchContext: 441 [Function]
+   NodeBase.Thread.SwitchContext: 440 [Function]
       nb/InitThread.cpp
       nb/ModuleRegistry.cpp
       nb/Thread.cpp
-   NodeBase.Thread.systhrd_: 652 [ClassData]
+   NodeBase.Thread.systhrd_: 651 [ClassData]
       nb/Debug.cpp
       nb/RootThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Test: 414 [Function]
+   NodeBase.Thread.Test: 413 [Function]
       nb/InitThread.cpp
       nb/RootThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.TestFlag: 128 [Function]
+   NodeBase.Thread.TestFlag: 133 [Function]
       nb/Thread.cpp
    NodeBase.Thread.Thread(const Thread&): 71 [Function]
-   NodeBase.Thread.Thread(Faction,Daemon*): 254 [Function]
+   NodeBase.Thread.Thread(Faction,Daemon*): 259 [Function]
       an/PotsTrafficThread.cpp
       dip/BotThread.cpp
       nb/CinThread.cpp
       nb/CliThread.cpp
       nb/CoutThread.cpp
+      nb/DeferredThread.cpp
       nb/FileThread.cpp
       nb/InitThread.cpp
       nb/LogThread.cpp
@@ -44897,7 +45221,7 @@ nb/Thread.h
       nw/LocalAddrTest.cpp
       sb/InvokerThread.cpp
       sb/TimerThread.cpp
-   NodeBase.Thread.Tid: 147 [Function]
+   NodeBase.Thread.Tid: 152 [Function]
       dip/BaseBot.cpp
       nb/Daemon.cpp
       nb/InitThread.cpp
@@ -44906,55 +45230,55 @@ nb/Thread.h
       nb/ThreadRegistry.cpp
       nb/TimedRecord.cpp
       sb/InvokerThread.cpp
-   NodeBase.Thread.tid_: 660 [ClassData]
+   NodeBase.Thread.tid_: 659 [ClassData]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.Thread.TimeLeft: 556 [Function]
+   NodeBase.Thread.TimeLeft: 555 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.to_str: 225 [Function]
+   NodeBase.Thread.to_str: 230 [Function]
       nb/InitThread.cpp
       nb/MutexRegistry.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Trace: 587 [Function]
+   NodeBase.Thread.Trace: 586 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.TraceRunningThread(Thread*&): 579 [Function]
+   NodeBase.Thread.TraceRunningThread(Thread*&): 578 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.TraceRunningThread(Thread*&,const std::nothrow_t&): 580 [Function]
+   NodeBase.Thread.TraceRunningThread(Thread*&,const std::nothrow_t&): 579 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.TrapAction: 526 [Enum]
+   NodeBase.Thread.TrapAction: 525 [Enum]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.Thread.TrapAction.Continue: 528 [Enumerator]
+   NodeBase.Thread.TrapAction.Continue: 527 [Enumerator]
       nb/Thread.cpp
-   NodeBase.Thread.TrapAction.Release: 529 [Enumerator]
+   NodeBase.Thread.TrapAction.Release: 528 [Enumerator]
       nb/Thread.cpp
-   NodeBase.Thread.TrapAction.Return: 530 [Enumerator]
+   NodeBase.Thread.TrapAction.Return: 529 [Enumerator]
       nb/Thread.cpp
-   NodeBase.Thread.TrapCheck: 596 [Function]
+   NodeBase.Thread.TrapCheck: 595 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.TrapHandler: 538 [Function]
+   NodeBase.Thread.TrapHandler: 537 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.Unblock: 340 [Function]
+   NodeBase.Thread.Unblock: 339 [Function]
       nb/Thread.cpp
       nw/TcpIoThread.h
       nw/UdpIoThread.h
-   NodeBase.Thread.UpdateMutex: 484 [Function]
+   NodeBase.Thread.UpdateMutex: 483 [Function]
       nb/SysMutex.win.cpp
       nb/Thread.cpp
-   NodeBase.Thread.UpdateMutexCount: 492 [Function]
+   NodeBase.Thread.UpdateMutexCount: 491 [Function]
       nb/SysMutex.win.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Vector: 124 [Function]
+   NodeBase.Thread.Vector: 129 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.~Thread: 259 [Function]
+   NodeBase.Thread.~Thread: 264 [Function]
       nb/Thread.cpp
    NodeBase.ThreadPriv: 46 [Forward]
       nb/Thread.h
    NodeBase.ThreadRegistry: 67 [Friend]
    NodeBase.ThreadStats: 47 [Forward]
       nb/Thread.h
-   NodeBase.TraceAutostop: 687 [SpaceData]
+   NodeBase.TraceAutostop: 686 [SpaceData]
       nb/Thread.cpp
    THREAD_H_INCLUDED: 23 [Define]
       nb/Thread.h
@@ -45209,51 +45533,53 @@ nb/ThreadAdmin.h
 nb/ThreadRegistry.cpp
    NodeBase.IsSortedByThreadId: 48 [Function]
       nb/ThreadRegistry.cpp
-   NodeBase.NextSysThreadId_: 131 [SpaceData]
+   NodeBase.NextSysThreadId_: 133 [SpaceData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry_Created: 168 [SpaceData]
+   NodeBase.ThreadRegistry_Created: 170 [SpaceData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry_Destroying: 191 [SpaceData]
+   NodeBase.ThreadRegistry_Destroying: 194 [SpaceData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry_dtor: 144 [SpaceData]
+   NodeBase.ThreadRegistry_dtor: 146 [SpaceData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry_GetState: 278 [SpaceData]
+   NodeBase.ThreadRegistry_GetState: 320 [SpaceData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry_Initialized: 343 [SpaceData]
+   NodeBase.ThreadRegistry_Initialized: 384 [SpaceData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadsLock_: 125 [SpaceData]
+   NodeBase.ThreadsLock_: 127 [SpaceData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadStatsGroup: 64 [Class]
+   NodeBase.ThreadStatsGroup: 66 [Class]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadStatsGroup.DisplayStats: 69 [Function]
+   NodeBase.ThreadStatsGroup.DisplayStats: 71 [Function]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadStatsGroup.ThreadStatsGroup: 67 [Function]
+   NodeBase.ThreadStatsGroup.ThreadStatsGroup: 69 [Function]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadStatsGroup.~ThreadStatsGroup: 68 [Function]
+   NodeBase.ThreadStatsGroup.~ThreadStatsGroup: 70 [Function]
       nb/ThreadRegistry.cpp
 nb/ThreadRegistry.h
-   NodeBase.ModuleRegistry: 93 [Friend]
-   NodeBase.Singleton<ThreadRegistry>: 91 [Friend]
+   NodeBase.ModuleRegistry: 98 [Friend]
+   NodeBase.Singleton<ThreadRegistry>: 96 [Friend]
    NodeBase.SysThread: 37 [Forward]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
       nb/ThreadRegistry.h
    NodeBase.Thread: 38 [Forward]
       nb/ThreadRegistry.h
-   NodeBase.Thread: 92 [Friend]
+   NodeBase.Thread: 97 [Friend]
    NodeBase.ThreadInfo: 68 [Class]
       nb/ThreadRegistry.cpp
       nb/ThreadRegistry.h
-   NodeBase.ThreadInfo.state_: 74 [ClassData]
+   NodeBase.ThreadInfo.state_: 79 [ClassData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadInfo.systhrd_: 78 [ClassData]
+   NodeBase.ThreadInfo.systhrd_: 83 [ClassData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadInfo.thread_: 82 [ClassData]
+   NodeBase.ThreadInfo.thread_: 87 [ClassData]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
    NodeBase.ThreadInfo.ThreadInfo: 70 [Function]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry: 89 [Class]
+   NodeBase.ThreadInfo.tid_: 75 [ClassData]
+      nb/ThreadRegistry.cpp
+   NodeBase.ThreadRegistry: 94 [Class]
       nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/NbModule.cpp
@@ -45267,82 +45593,89 @@ nb/ThreadRegistry.h
       nb/ThreadRegistry.h
       nb/TimedRecord.cpp
       nt/FunctionProfiler.cpp
-   NodeBase.ThreadRegistry.ClaimBlocks: 121 [Function]
+   NodeBase.ThreadRegistry.ClaimBlocks: 130 [Function]
       nb/NbPools.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Created: 158 [Function]
+   NodeBase.ThreadRegistry.Created: 167 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Destroying: 166 [Function]
+   NodeBase.ThreadRegistry.Destroying: 175 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Display: 125 [Function]
+   NodeBase.ThreadRegistry.Display: 134 [Function]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Entry: 201 [Typedef]
+   NodeBase.ThreadRegistry.Entry: 215 [Typedef]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Erase: 180 [Function]
+   NodeBase.ThreadRegistry.EraseThreadId: 211 [Function]
+      nb/ThreadRegistry.cpp
+   NodeBase.ThreadRegistry.Exiting: 189 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.FindThread: 105 [Function]
+   NodeBase.ThreadRegistry.FindThread: 110 [Function]
       nb/SysMutex.cpp
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
       nb/TimedRecord.cpp
       nt/FunctionProfiler.cpp
-   NodeBase.ThreadRegistry.GetState: 172 [Function]
+   NodeBase.ThreadRegistry.FindTid: 114 [Function]
+      nb/ThreadRegistry.cpp
+      nb/TimedRecord.cpp
+   NodeBase.ThreadRegistry.GetState: 181 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.GetThread: 117 [Function]
+   NodeBase.ThreadRegistry.GetThread: 126 [Function]
       nb/NbIncrement.cpp
       nb/NbTracer.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.GetThreads: 113 [Function]
+   NodeBase.ThreadRegistry.GetThreads: 122 [Function]
       nb/NbTracer.cpp
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Initialized: 162 [Function]
+   NodeBase.ThreadRegistry.Initialized: 171 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.IsDeleted: 176 [Function]
+   NodeBase.ThreadRegistry.IsDeleted: 185 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.operator=: 101 [Function]
-   NodeBase.ThreadRegistry.Patch: 130 [Function]
+   NodeBase.ThreadRegistry.nextTid_: 223 [ClassData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Restarting: 189 [Function]
+   NodeBase.ThreadRegistry.operator=: 106 [Function]
+   NodeBase.ThreadRegistry.Patch: 139 [Function]
+      nb/ThreadRegistry.cpp
+   NodeBase.ThreadRegistry.Restarting: 198 [Function]
       nb/ModuleRegistry.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Select: 184 [Function]
+   NodeBase.ThreadRegistry.Select: 193 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.SetThreadId: 197 [Function]
+   NodeBase.ThreadRegistry.SetThreadId: 207 [Function]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Shutdown: 134 [Function]
+   NodeBase.ThreadRegistry.Shutdown: 143 [Function]
       nb/NbModule.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Size: 109 [Function]
+   NodeBase.ThreadRegistry.Size: 118 [Function]
       nb/NbIncrement.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.Startup: 138 [Function]
+   NodeBase.ThreadRegistry.Startup: 147 [Function]
       nb/NbModule.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.statsGroup_: 209 [ClassData]
+   NodeBase.ThreadRegistry.statsGroup_: 227 [ClassData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.ThreadMap: 150 [Typedef]
+   NodeBase.ThreadRegistry.ThreadMap: 159 [Typedef]
       nb/ThreadRegistry.h
-   NodeBase.ThreadRegistry.ThreadRegistry(): 142 [Function]
+   NodeBase.ThreadRegistry.ThreadRegistry(): 151 [Function]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.ThreadRegistry(const ThreadRegistry&): 97 [Function]
-   NodeBase.ThreadRegistry.Threads: 154 [Function]
+   NodeBase.ThreadRegistry.ThreadRegistry(const ThreadRegistry&): 102 [Function]
+   NodeBase.ThreadRegistry.Threads: 163 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.threads_: 205 [ClassData]
+   NodeBase.ThreadRegistry.threads_: 219 [ClassData]
       nb/ThreadRegistry.cpp
       nb/ThreadRegistry.h
-   NodeBase.ThreadRegistry.TrimThreads: 193 [Function]
+   NodeBase.ThreadRegistry.TrimThreads: 202 [Function]
       nb/ModuleRegistry.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry.~ThreadRegistry: 146 [Function]
+   NodeBase.ThreadRegistry.~ThreadRegistry: 155 [Function]
       nb/ThreadRegistry.cpp
    NodeBase.ThreadState: 55 [Enum]
       nb/ThreadRegistry.cpp
@@ -45444,6 +45777,7 @@ nb/TimePoint.h
       nb/StatisticsThread.cpp
       nb/Thread.cpp
       nb/TimePoint.cpp
+      nw/NwDaemons.cpp
       sb/Context.cpp
       sb/SbTrace.cpp
    NodeBase.operator<(const TimePoint&,const TimePoint&): 124 [Function]
@@ -45482,6 +45816,8 @@ nb/TimePoint.h
       nb/TimedRecord.cpp
       nb/TimedRecord.h
       nw/IoThread.h
+      nw/NwDaemons.cpp
+      nw/NwDaemons.h
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
       sb/Context.cpp
@@ -45517,6 +45853,7 @@ nb/TimePoint.h
       nb/Thread.cpp
       nb/TimePoint.cpp
       nb/TimedRecord.cpp
+      nw/NwDaemons.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
       sb/Context.cpp
@@ -45556,6 +45893,7 @@ nb/TimePoint.h
       nb/SysTickTimer.win.cpp
       nb/Thread.cpp
       nb/TimedRecord.h
+      nw/NwDaemons.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
       sb/Context.cpp
@@ -45597,6 +45935,7 @@ nb/TimePoint.h
       nb/Thread.cpp
       nb/TimePoint.cpp
       nb/TimedRecord.cpp
+      nw/NwDaemons.cpp
    NodeBase.TimePoint.ts_: 117 [ClassData]
       nb/TimePoint.cpp
       nb/TimePoint.h
@@ -48712,35 +49051,35 @@ nw/IpPortCfgParm.h
    NetworkBase.IpPortCfgParm.~IpPortCfgParm: 47 [Function]
       nw/IpPortCfgParm.cpp
 nw/IpPortRegistry.cpp
-   NetworkBase.IpPortRegistry_BindPort: 196 [SpaceData]
+   NetworkBase.IpPortRegistry_BindPort: 197 [SpaceData]
       nw/IpPortRegistry.cpp
-   NetworkBase.IpPortRegistry_dtor: 185 [SpaceData]
+   NetworkBase.IpPortRegistry_dtor: 186 [SpaceData]
       nw/IpPortRegistry.cpp
-   NetworkBase.IpPortRegistry_TestAdvance: 430 [SpaceData]
+   NetworkBase.IpPortRegistry_TestAdvance: 431 [SpaceData]
       nw/IpPortRegistry.cpp
-   NetworkBase.IpPortStatsGroup: 112 [Class]
+   NetworkBase.IpPortStatsGroup: 113 [Class]
       nw/IpPortRegistry.cpp
-   NetworkBase.IpPortStatsGroup.DisplayStats: 117 [Function]
+   NetworkBase.IpPortStatsGroup.DisplayStats: 118 [Function]
       nw/IpPortRegistry.cpp
-   NetworkBase.IpPortStatsGroup.IpPortStatsGroup: 115 [Function]
+   NetworkBase.IpPortStatsGroup.IpPortStatsGroup: 116 [Function]
       nw/IpPortRegistry.cpp
-   NetworkBase.IpPortStatsGroup.~IpPortStatsGroup: 116 [Function]
+   NetworkBase.IpPortStatsGroup.~IpPortStatsGroup: 117 [Function]
       nw/IpPortRegistry.cpp
-   NetworkBase.LocalAddrCfg: 56 [Class]
+   NetworkBase.LocalAddrCfg: 57 [Class]
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
-   NetworkBase.LocalAddrCfg.addr_: 70 [ClassData]
+   NetworkBase.LocalAddrCfg.addr_: 71 [ClassData]
       nw/IpPortRegistry.cpp
-   NetworkBase.LocalAddrCfg.Address: 61 [Function]
+   NetworkBase.LocalAddrCfg.Address: 62 [Function]
       nw/IpPortRegistry.cpp
-   NetworkBase.LocalAddrCfg.LocalAddrCfg: 59 [Function]
+   NetworkBase.LocalAddrCfg.LocalAddrCfg: 60 [Function]
       nw/IpPortRegistry.cpp
-   NetworkBase.LocalAddrCfg.RestartRequired: 65 [Function]
-   NetworkBase.LocalAddrCfg.SetCurr: 63 [Function]
+   NetworkBase.LocalAddrCfg.RestartRequired: 66 [Function]
+   NetworkBase.LocalAddrCfg.SetCurr: 64 [Function]
       nw/IpPortRegistry.cpp
-   NetworkBase.LocalAddrCfg.SetNext: 66 [Function]
+   NetworkBase.LocalAddrCfg.SetNext: 67 [Function]
       nw/IpPortRegistry.cpp
-   NetworkBase.LocalAddrCfg.~LocalAddrCfg: 60 [Function]
+   NetworkBase.LocalAddrCfg.~LocalAddrCfg: 61 [Function]
       nw/IpPortRegistry.cpp
 nw/IpPortRegistry.h
    IPPORTREGISTRY_H_INCLUDED: 23 [Define]
@@ -48757,7 +49096,9 @@ nw/IpPortRegistry.h
       nw/IpPortRegistry.h
       nw/IpService.cpp
       nw/LocalAddrTest.cpp
+      nw/NwDaemons.cpp
       nw/NwIncrement.cpp
+      nw/NwLogs.cpp
       nw/NwModule.cpp
       nw/SysSocket.win.cpp
       nw/SysTcpSocket.cpp
@@ -48904,6 +49245,7 @@ nw/IpService.h
       nw/IpService.h
       nw/IpServiceRegistry.cpp
       nw/IpServiceRegistry.h
+      nw/NwDaemons.cpp
       nw/NwTypes.h
       nw/SysSocket.win.cpp
       nw/SysTcpSocket.win.cpp
@@ -48993,6 +49335,7 @@ nw/IpService.h
       nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/NwDaemons.cpp
       nw/SysSocket.win.cpp
       nw/TcpIpService.h
       nw/UdpIpService.h
@@ -49070,78 +49413,89 @@ nw/IpServiceRegistry.h
       nw/IpServiceRegistry.cpp
    NodeBase.Singleton<IpServiceRegistry>: 43 [Friend]
 nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrIpPortExpl: 78 [SpaceData]
+   NetworkBase.LocalAddrIpPortExpl: 77 [SpaceData]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrIpPortKey: 77 [SpaceData]
+   NetworkBase.LocalAddrIpPortKey: 76 [SpaceData]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrsServiceExpl: 109 [SpaceData]
+   NetworkBase.LocalAddrsServiceExpl: 108 [SpaceData]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrsServiceStr: 108 [SpaceData]
+   NetworkBase.LocalAddrsServiceStr: 107 [SpaceData]
       nw/LocalAddrTest.cpp
 nw/LocalAddrTest.h
    LOCALADDRTEST_H_INCLUDED: 23 [Define]
       nw/LocalAddrTest.h
-   NetworkBase.LocalAddrHandler: 124 [Class]
+   NetworkBase.LocalAddrHandler: 148 [Class]
       nw/IpPortRegistry.h
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrHandler.LocalAddrHandler: 129 [Function]
+   NetworkBase.LocalAddrHandler.LocalAddrHandler: 153 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrHandler.Patch: 137 [Function]
+   NetworkBase.LocalAddrHandler.Patch: 161 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrHandler.ReceiveBuff: 141 [Function]
+   NetworkBase.LocalAddrHandler.ReceiveBuff: 165 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrHandler.~LocalAddrHandler: 133 [Function]
+   NetworkBase.LocalAddrHandler.~LocalAddrHandler: 157 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService: 87 [Class]
+   NetworkBase.LocalAddrRetest: 87 [Class]
+      nw/IpPortRegistry.cpp
+      nw/LocalAddrTest.cpp
+   NetworkBase.LocalAddrRetest.EventHasOccurred: 104 [Function]
+      nw/LocalAddrTest.cpp
+   NetworkBase.LocalAddrRetest.LocalAddrRetest: 92 [Function]
+      nw/LocalAddrTest.cpp
+   NetworkBase.LocalAddrRetest.Patch: 100 [Function]
+      nw/LocalAddrTest.cpp
+   NetworkBase.LocalAddrRetest.~LocalAddrRetest: 96 [Function]
+      nw/LocalAddrTest.cpp
+   NetworkBase.SendLocalIpService: 111 [Class]
       nw/LocalAddrTest.cpp
       nw/LocalAddrTest.h
       nw/NwModule.cpp
-   NetworkBase.SendLocalIpService.CreateHandler: 108 [Function]
+   NetworkBase.SendLocalIpService.CreateHandler: 132 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.CreateText: 112 [Function]
+   NetworkBase.SendLocalIpService.CreateText: 136 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.Display: 91 [Function]
+   NetworkBase.SendLocalIpService.Display: 115 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.GetFaction: 93 [Function]
-   NetworkBase.SendLocalIpService.Name: 94 [Function]
-   NetworkBase.SendLocalIpService.Patch: 95 [Function]
+   NetworkBase.SendLocalIpService.GetFaction: 117 [Function]
+   NetworkBase.SendLocalIpService.Name: 118 [Function]
+   NetworkBase.SendLocalIpService.Patch: 119 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.Port: 96 [Function]
+   NetworkBase.SendLocalIpService.Port: 120 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.portCfg_: 116 [ClassData]
+   NetworkBase.SendLocalIpService.portCfg_: 140 [ClassData]
       nw/LocalAddrTest.cpp
       nw/LocalAddrTest.h
-   NetworkBase.SendLocalIpService.SendLocalIpService: 100 [Function]
+   NetworkBase.SendLocalIpService.SendLocalIpService: 124 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.~SendLocalIpService: 104 [Function]
+   NetworkBase.SendLocalIpService.~SendLocalIpService: 128 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread: 41 [Class]
+   NetworkBase.SendLocalThread: 43 [Class]
       nw/IpPortRegistry.h
       nw/LocalAddrTest.cpp
       nw/LocalAddrTest.h
       nw/NwIncrement.cpp
       nw/NwModule.cpp
-   NetworkBase.SendLocalThread.AbbrName: 68 [Function]
+   NetworkBase.SendLocalThread.AbbrName: 70 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Destroy: 72 [Function]
+   NetworkBase.SendLocalThread.Destroy: 74 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Display: 51 [Function]
+   NetworkBase.SendLocalThread.Display: 53 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Enter: 76 [Function]
+   NetworkBase.SendLocalThread.Enter: 78 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Patch: 56 [Function]
+   NetworkBase.SendLocalThread.Patch: 58 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Retest: 47 [Function]
+   NetworkBase.SendLocalThread.Retest: 49 [Function]
       nw/LocalAddrTest.cpp
       nw/NwIncrement.cpp
-   NetworkBase.SendLocalThread.retest_: 80 [ClassData]
+   NetworkBase.SendLocalThread.retest_: 82 [ClassData]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.SendLocalThread: 60 [Function]
+   NetworkBase.SendLocalThread.SendLocalThread: 62 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.~SendLocalThread: 64 [Function]
+   NetworkBase.SendLocalThread.~SendLocalThread: 66 [Function]
       nw/LocalAddrTest.cpp
-   NodeBase.Singleton<SendLocalIpService>: 89 [Friend]
-   NodeBase.Singleton<SendLocalThread>: 43 [Friend]
+   NodeBase.Singleton<SendLocalIpService>: 113 [Friend]
+   NodeBase.Singleton<SendLocalThread>: 45 [Friend]
 nw/NwCliParms.cpp
    NetworkBase.HostNameMandExpl: 44 [SpaceData]
       nw/NwCliParms.cpp
@@ -49243,62 +49597,100 @@ nw/NwCliParms.h
    NWCLIPARMS_H_INCLUDED: 23 [Define]
       nw/NwCliParms.h
 nw/NwDaemons.cpp
-   NetworkBase.MakeTcpName: 46 [Function]
+   NetworkBase.BackOffSecs: 158 [SpaceData]
       nw/NwDaemons.cpp
-   NetworkBase.MakeUdpName: 63 [Function]
+   NetworkBase.IoDaemon_CreateIoThread: 146 [SpaceData]
+      nw/NwDaemons.cpp
+   NetworkBase.IoThreadRecreator: 44 [Class]
+      nw/NwDaemons.cpp
+      nw/NwDaemons.h
+   NetworkBase.IoThreadRecreator.daemon_: 71 [ClassData]
+      nw/NwDaemons.cpp
+   NetworkBase.IoThreadRecreator.Display: 58 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.IoThreadRecreator.EventHasOccurred: 67 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.IoThreadRecreator.IoThreadRecreator: 49 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.IoThreadRecreator.Patch: 63 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.IoThreadRecreator.port_: 79 [ClassData]
+      nw/NwDaemons.cpp
+   NetworkBase.IoThreadRecreator.service_: 75 [ClassData]
+      nw/NwDaemons.cpp
+   NetworkBase.IoThreadRecreator.~IoThreadRecreator: 54 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.MakeTcpName: 230 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.MakeUdpName: 290 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.MinExitTime: 160 [SpaceData]
       nw/NwDaemons.cpp
 nw/NwDaemons.h
-   NetworkBase.TcpIoDaemon: 43 [Class]
+   NetworkBase.IoDaemon: 44 [Class]
+      nw/NwDaemons.cpp
+      nw/NwDaemons.h
+   NetworkBase.IoDaemon.backoffSecs_: 94 [ClassData]
+      nw/NwDaemons.cpp
+   NetworkBase.IoDaemon.CreateIoThread: 69 [Function]
+      nw/NwDaemons.cpp
+      nw/NwDaemons.h
+   NetworkBase.IoDaemon.CreateThread: 78 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.IoDaemon.Display: 54 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.IoDaemon.IoDaemon: 64 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.IoDaemon.lastCreation_: 90 [ClassData]
+      nw/NwDaemons.cpp
+   NetworkBase.IoDaemon.Patch: 59 [Function]
+      nw/NwDaemons.cpp
+      nw/NwDaemons.h
+   NetworkBase.IoDaemon.port_: 86 [ClassData]
+      nw/NwDaemons.cpp
+   NetworkBase.IoDaemon.recreator_: 98 [ClassData]
+      nw/NwDaemons.cpp
+   NetworkBase.IoDaemon.RecreatorDeleted: 74 [Function]
+      nw/NwDaemons.cpp
+   NetworkBase.IoDaemon.service_: 82 [ClassData]
+      nw/NwDaemons.cpp
+   NetworkBase.IoDaemon.~IoDaemon: 50 [Function]
+   NetworkBase.IoThreadRecreator: 33 [Forward]
+      nw/NwDaemons.h
+   NetworkBase.IoThreadRecreator: 46 [Friend]
+   NetworkBase.TcpIoDaemon: 105 [Class]
       nw/NwDaemons.cpp
       nw/NwDaemons.h
       nw/TcpIpPort.cpp
-   NetworkBase.TcpIoDaemon.CreateThread: 71 [Function]
+   NetworkBase.TcpIoDaemon.CreateIoThread: 124 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.TcpIoDaemon.Display: 53 [Function]
-      nw/NwDaemons.cpp
-   NetworkBase.TcpIoDaemon.GetDaemon: 49 [Function]
+   NetworkBase.TcpIoDaemon.GetDaemon: 111 [Function]
       nw/NwDaemons.cpp
       nw/TcpIpPort.cpp
-   NetworkBase.TcpIoDaemon.Patch: 58 [Function]
+   NetworkBase.TcpIoDaemon.Patch: 115 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.TcpIoDaemon.port_: 79 [ClassData]
+   NetworkBase.TcpIoDaemon.TcpIoDaemon: 120 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.TcpIoDaemon.service_: 75 [ClassData]
+   NetworkBase.TcpIoDaemonName: 103 [SpaceData]
       nw/NwDaemons.cpp
-   NetworkBase.TcpIoDaemon.TcpIoDaemon: 63 [Function]
-      nw/NwDaemons.cpp
-   NetworkBase.TcpIoDaemon.~TcpIoDaemon: 67 [Function]
-      nw/NwDaemons.cpp
-   NetworkBase.TcpIoDaemonName: 41 [SpaceData]
-      nw/NwDaemons.cpp
-   NetworkBase.TcpIpService: 31 [Forward]
-      nw/NwDaemons.cpp
+   NetworkBase.TcpIpService: 34 [Forward]
       nw/NwDaemons.h
-   NetworkBase.UdpIoDaemon: 86 [Class]
+   NetworkBase.UdpIoDaemon: 132 [Class]
       nw/NwDaemons.cpp
       nw/NwDaemons.h
       nw/UdpIpPort.cpp
-   NetworkBase.UdpIoDaemon.CreateThread: 114 [Function]
+   NetworkBase.UdpIoDaemon.CreateIoThread: 151 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.UdpIoDaemon.Display: 96 [Function]
-      nw/NwDaemons.cpp
-   NetworkBase.UdpIoDaemon.GetDaemon: 92 [Function]
+   NetworkBase.UdpIoDaemon.GetDaemon: 138 [Function]
       nw/NwDaemons.cpp
       nw/UdpIpPort.cpp
-   NetworkBase.UdpIoDaemon.Patch: 101 [Function]
+   NetworkBase.UdpIoDaemon.Patch: 142 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.UdpIoDaemon.port_: 122 [ClassData]
+   NetworkBase.UdpIoDaemon.UdpIoDaemon: 147 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.UdpIoDaemon.service_: 118 [ClassData]
+   NetworkBase.UdpIoDaemonName: 130 [SpaceData]
       nw/NwDaemons.cpp
-   NetworkBase.UdpIoDaemon.UdpIoDaemon: 106 [Function]
-      nw/NwDaemons.cpp
-   NetworkBase.UdpIoDaemon.~UdpIoDaemon: 110 [Function]
-      nw/NwDaemons.cpp
-   NetworkBase.UdpIoDaemonName: 84 [SpaceData]
-      nw/NwDaemons.cpp
-   NetworkBase.UdpIpService: 32 [Forward]
-      nw/NwDaemons.cpp
+   NetworkBase.UdpIpService: 35 [Forward]
       nw/NwDaemons.h
    NWDAEMONS_H_INCLUDED: 23 [Define]
       nw/NwDaemons.h
@@ -49325,15 +49717,15 @@ nw/NwIncrement.cpp
       nw/NwIncrement.cpp
    NetworkBase.IpExpl: 294 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsCommand: 391 [Class]
+   NetworkBase.IpPortsCommand: 392 [Class]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsCommand.IpPortsCommand: 394 [Function]
+   NetworkBase.IpPortsCommand.IpPortsCommand: 395 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsCommand.ProcessCommand: 396 [Function]
+   NetworkBase.IpPortsCommand.ProcessCommand: 397 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsExpl: 400 [SpaceData]
+   NetworkBase.IpPortsExpl: 401 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsStr: 399 [SpaceData]
+   NetworkBase.IpPortsStr: 400 [SpaceData]
       nw/NwIncrement.cpp
    NetworkBase.IpStr: 293 [SpaceData]
       nw/NwIncrement.cpp
@@ -49371,9 +49763,9 @@ nw/NwIncrement.cpp
       nw/NwIncrement.cpp
    NetworkBase.NameToAddrTextStr: 257 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.NetworkExpl: 510 [SpaceData]
+   NetworkBase.NetworkExpl: 511 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.NetworkText: 509 [SpaceData]
+   NetworkBase.NetworkText: 510 [SpaceData]
       nw/NwIncrement.cpp
    NetworkBase.UsesIPv6Index: 273 [SpaceData]
       nw/NwIncrement.cpp
@@ -49502,9 +49894,9 @@ nw/NwIncrement.h
    NWINCREMENT_H_INCLUDED: 23 [Define]
       nw/NwIncrement.h
 nw/NwLogs.cpp
-   NetworkBase.NetworkIsUp_: 41 [SpaceData]
+   NetworkBase.NetworkIsUp_: 44 [SpaceData]
       nw/NwLogs.cpp
-   NetworkBase.UpdateAlarm: 47 [Function]
+   NetworkBase.UpdateAlarm: 50 [Function]
       nw/NwLogs.cpp
 nw/NwLogs.h
    NetworkBase.CreateNwLogs: 74 [Function]
@@ -50107,6 +50499,7 @@ nw/NwTypes.h
       nw/IoThread.h
       nw/IpPort.h
       nw/IpPortCfgParm.h
+      nw/NwDaemons.h
       nw/SysSocket.h
       nw/SysTcpSocket.h
       nw/TcpIpPort.h
@@ -51084,6 +51477,7 @@ nw/TcpIpService.h
       cb/BcProtocol.h
       dip/DipProtocol.cpp
       dip/DipProtocol.h
+      nw/NwDaemons.cpp
       nw/NwDaemons.h
       nw/SysTcpSocket.cpp
       nw/SysTcpSocket.h
@@ -51173,6 +51567,7 @@ nw/UdpIpService.h
       cb/BcProtocol.h
       nw/LocalAddrTest.cpp
       nw/LocalAddrTest.h
+      nw/NwDaemons.cpp
       nw/NwDaemons.h
       nw/SysUdpSocket.h
       nw/SysUdpSocket.win.cpp
@@ -65763,6 +66158,7 @@ subs/bitset
       nb/CliThread.cpp
       nb/Debug.cpp
       nb/Debug.h
+      nb/DeferredRegistry.cpp
       nb/Log.cpp
       nb/LogBuffer.cpp
       nb/LogBufferRegistry.cpp
@@ -65910,6 +66306,8 @@ subs/cstddef
       nb/CliParm.h
       nb/Daemon.cpp
       nb/Daemon.h
+      nb/Deferred.cpp
+      nb/Deferred.h
       nb/Log.cpp
       nb/Log.h
       nb/LogGroup.cpp
@@ -66439,6 +66837,7 @@ subs/cstdint
       nb/CliText.h
       nb/CliTextParm.cpp
       nb/CliTextParm.h
+      nb/Deferred.h
       nb/Duration.cpp
       nb/Duration.h
       nb/Formatters.cpp
@@ -66546,6 +66945,7 @@ subs/cstdint
       nb/CliIncrement.cpp
       nb/CliParm.cpp
       nb/Daemon.cpp
+      nb/Deferred.cpp
       nb/Log.cpp
       nb/LogGroup.cpp
       nb/Module.cpp
@@ -67124,6 +67524,10 @@ subs/iosfwd
       nb/Daemon.h
       nb/DaemonRegistry.cpp
       nb/DaemonRegistry.h
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
       nb/Element.cpp
       nb/Element.h
       nb/ElementException.cpp
@@ -68278,6 +68682,9 @@ subs/ostream
       nb/CfgFlagParm.cpp
       nb/CliIntParm.cpp
       nb/CliParm.cpp
+      nb/Daemon.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
       nb/Element.cpp
       nb/FileThread.cpp
       nb/Heap.cpp
@@ -68413,6 +68820,8 @@ subs/ostream
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
       nb/Element.cpp
       nb/ElementException.cpp
       nb/FileThread.cpp
@@ -68664,6 +69073,8 @@ subs/ostream
       nb/Daemon.cpp
       nb/DaemonRegistry.cpp
       nb/Debug.cpp
+      nb/Deferred.cpp
+      nb/DeferredRegistry.cpp
       nb/Element.cpp
       nb/ElementException.cpp
       nb/FileThread.cpp
@@ -68898,6 +69309,7 @@ subs/ostream
       nb/CliAppData.cpp
       nb/CliBuffer.cpp
       nb/CliThread.cpp
+      nb/Deferred.cpp
       nb/Formatters.cpp
       nb/Heap.cpp
       nb/LogBuffer.cpp
@@ -69116,6 +69528,7 @@ subs/ostream
       nb/CliBuffer.cpp
       nb/CliCookie.cpp
       nb/Daemon.cpp
+      nb/Deferred.cpp
       nb/Formatters.cpp
       nb/FunctionTrace.cpp
       nb/Heap.cpp
@@ -69148,6 +69561,7 @@ subs/ostream
       nw/IoThread.cpp
       nw/IpBuffer.cpp
       nw/IpService.cpp
+      nw/NwDaemons.cpp
       nw/NwIncrement.cpp
       nw/SysSocket.cpp
       nw/SysUdpSocket.cpp
@@ -69189,6 +69603,7 @@ subs/ostream
       dip/StartupParameters.cpp
       nb/Log.cpp
       nb/Thread.cpp
+      nb/ThreadRegistry.cpp
       nb/TimedRecord.cpp
       nw/IoThread.cpp
       nw/IpPort.cpp
@@ -70378,6 +70793,10 @@ subs/string
       nb/DaemonRegistry.h
       nb/Debug.cpp
       nb/Debug.h
+      nb/Deferred.cpp
+      nb/Deferred.h
+      nb/DeferredRegistry.cpp
+      nb/DeferredRegistry.h
       nb/Duration.cpp
       nb/Duration.h
       nb/Element.cpp

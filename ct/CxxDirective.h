@@ -2,7 +2,7 @@
 //
 //  CxxDirective.h
 //
-//  Copyright (C) 2013-2021  Greg Utas
+//  Copyright (C) 2013-2022  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //
@@ -659,7 +659,7 @@ protected:
    //
    MacroName* GetSymbol() const { return name_.get(); }
 
-   //  Returns true if the symbol that the directive is checking. was already
+   //  Returns true if the symbol that the directive is checking was already
    //  defined when encountered.
    //
    bool SymbolPredefined() const { return name_->WasPredefined(); }

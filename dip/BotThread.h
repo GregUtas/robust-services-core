@@ -2,7 +2,7 @@
 //
 //  BotThread.h
 //
-//  Copyright (C) 2019  Greg Utas
+//  Copyright (C) 2019-2022  Greg Utas
 //
 //  Diplomacy AI Client - Part of the DAIDE project (www.daide.org.uk).
 //

@@ -2,7 +2,7 @@
 //
 //  Deferred.h
 //
-//  Copyright (C) 2013-2021  Greg Utas
+//  Copyright (C) 2013-2022  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //
@@ -63,7 +63,7 @@ public:
    //
    void SendToThread(Thread* thread);
 
-   //  Resets the item with a new timeout in SECS.  Returns true.
+   //  Resets the item with a new timeout in SECS.
    //
    void Restart(secs_t secs);
 

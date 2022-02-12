@@ -2,7 +2,7 @@
 //
 //  DeferredThread.cpp
 //
-//  Copyright (C) 2013-2021  Greg Utas
+//  Copyright (C) 2013-2022  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //
@@ -67,7 +67,8 @@ void DeferredThread::Enter()
 {
    Debug::ft("DeferredThread.Enter");
 
-   //  Every second, tell our registry to process the next timer queue.
+   //  Every second, tell our registry to notify items whose timeout has
+   //  occurred.
    //
    auto reg = Singleton< DeferredRegistry >::Instance();
    Duration sleep(ONE_SEC);

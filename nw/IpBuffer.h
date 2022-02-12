@@ -2,7 +2,7 @@
 //
 //  IpBuffer.h
 //
-//  Copyright (C) 2013-2021  Greg Utas
+//  Copyright (C) 2013-2022  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //
@@ -111,7 +111,7 @@ public:
    //  will return the actual number of bytes in the payload, which will
    //  usually be less than what the buffer can hold.  The reason is that,
    //  internally, the buffer is allocated from an object pool, with there
-   //  being enough pools to support a handful of sizes  This function is
+   //  being enough pools to support a handful of sizes.  This function is
    //  invoked by AddBytes (to see if a larger buffer should be allocated),
    //  OutgoingBytes (to provide a pointer to the message and return its
    //  size), and Send (to determine the number of bytes to send).

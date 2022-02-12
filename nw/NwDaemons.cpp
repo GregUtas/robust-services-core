@@ -2,7 +2,7 @@
 //
 //  NwDaemons.cpp
 //
-//  Copyright (C) 2013-2021  Greg Utas
+//  Copyright (C) 2013-2022  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //
@@ -44,7 +44,8 @@ namespace NetworkBase
 class IoThreadRecreator : public Deferred
 {
 public:
-   //  Recreates an I/O thread for SERVICE and PORT after TIMEOUT seconds.
+   //  Recreates an I/O thread for SERVICE and PORT, after TIMEOUT seconds,
+   //  on behalf of DAEMON.
    //
    IoThreadRecreator(IoDaemon* daemon,
       const IpService* service, ipport_t port, secs_t timeout);
@@ -176,10 +177,10 @@ Thread* IoDaemon::CreateThread()
       return CreateIoThread(service_, port_);
    }
 
-   //  The last thread exited quickly, so unless one already exists as the
-   //  result of a previous thread also having exited, queue a work item to
-   //  recreate the thread after the backoff time.  Double the backoff time
-   //  if that thread should quickly exit again, but cap it at 64 seconds.
+   //  The last thread exited quickly, so unless a work item already exists
+   //  as the result of a previous thread also having exited, queue one to
+   //  recreate the thread after the backoff time.  If that thread also exits
+   //  quickly, the backoff time will be doubled (but capped at 64 seconds).
    //
    if(recreator_ == nullptr)
    {

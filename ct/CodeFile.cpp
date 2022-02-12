@@ -2,7 +2,7 @@
 //
 //  CodeFile.cpp
 //
-//  Copyright (C) 2013-2021  Greg Utas
+//  Copyright (C) 2013-2022  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //
@@ -2289,7 +2289,7 @@ CxxToken* CodeFile::PosToItem(size_t pos) const
 const stringVector DEFAULT_PROLOG =
 {
    EMPTY_STR,
-   "Copyright (C) 2013-2021  Greg Utas",
+   "Copyright (C) 2013-2022  Greg Utas",
    EMPTY_STR,
    "This file is part of the Robust Services Core (RSC).",
    EMPTY_STR,

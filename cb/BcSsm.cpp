@@ -2,7 +2,7 @@
 //
 //  BcSsm.cpp
 //
-//  Copyright (C) 2013-2021  Greg Utas
+//  Copyright (C) 2013-2022  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //
@@ -158,7 +158,7 @@ CipMessage* BcSsm::BuildCipIam()
    }
 
    //  In a distributed system, a query to a central database (name server) is
-   //  often needed to find the destination's IP addres.  For example:
+   //  often needed to find the destination's IP address.  For example:
    //  o querying a DNS server with a VoIP call's destination URL
    //  o querying a toll-free database with an 800 number
    //  o querying an HLR with a mobile subscriber's number

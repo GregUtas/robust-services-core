@@ -159,14 +159,14 @@ public:
    //
    std::string to_str(bool verbose) const;
 
-   //  Sets the address to the null address after releasing socket_.
-   //
-   void Nullify();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden to release socket_ before nullifying the address.
+   //
+   void Nullify() override;
 
    //  Overridden for patching.
    //

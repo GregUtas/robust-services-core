@@ -25,6 +25,7 @@
 #include "Permanent.h"
 #include <cstddef>
 #include <cstdint>
+#include <iosfwd>
 #include <string>
 #include "CallbackRequest.h"
 #include "SysTypes.h"
@@ -67,7 +68,7 @@ public:
    //  Adds LOG's contents to the buffer and releases LOG.  Returns true
    //  if the log was successfully added, and false if the buffer was full.
    //
-   bool Push(const ostringstreamPtr& log);
+   bool Push(const std::ostringstream* log);
 
    //  Returns the number of unspooled and/or unspooled logs in the buffer.
    //

@@ -98,7 +98,7 @@ public:
    //  arguments and code.
    //
    bool ParseFuncInst(const std::string& name, const Function* tmplt,
-      CxxArea* area, const TypeName* type, const NodeBase::stringPtr& code);
+      CxxArea* area, const TypeName* type, const std::string* code);
 
    //  Returns true and creates SPEC if CODE is a valid type specification.
    //
@@ -232,7 +232,7 @@ private:
    //  Updates EXPR with the results of parsing an expression upon reaching
    //  an alphabetic character.  Used in preprocessor directives.
    //
-   bool GetPreAlpha(ExprPtr& expr);
+   bool GetPreAlpha(const ExprPtr& expr);
 
    //  Errors associated with preprocessor directives.
    //
@@ -265,7 +265,7 @@ private:
    //  block started with a left brace.  If it didn't, it contains only
    //  one statement.
    //
-   bool GetStatements(BlockPtr& block, bool braced);
+   bool GetStatements(Block* block, bool braced);
 
    //  Tries the parses associated with KWD, adding statements to BLOCK.
    //
@@ -363,7 +363,7 @@ private:
 
    //  Returns true and updates FUNC if the function is deleted or defaulted.
    //
-   bool GetFuncSpecial(FunctionPtr& func);
+   bool GetFuncSpecial(Function* func);
 
    //  Returns true and creates FUNC on finding
    //  o GetCtorDecl: a constructor declaration
@@ -376,7 +376,7 @@ private:
    //
    bool GetCtorDecl(FunctionPtr& func);
    bool GetCtorDefn(FunctionPtr& func);
-   bool GetCtorInit(FunctionPtr& func);
+   bool GetCtorInit(Function* func);
    bool GetDtorDecl(FunctionPtr& func);
    bool GetDtorDefn(FunctionPtr& func);
    bool GetProcDecl(FunctionPtr& func);
@@ -397,7 +397,7 @@ private:
 
    //  Returns true and updates FUNC on finding one or more function arguments.
    //
-   bool GetArguments(FunctionPtr& func);
+   bool GetArguments(Function* func);
 
    //  Returns true and creates DECL on finding a function argument.
    //
@@ -420,11 +420,11 @@ private:
 
    //  Checks if NAME is a built-in type or a keyword that is an invalid type.
    //
-   bool CheckType(QualNamePtr& name);
+   bool CheckType(const QualNamePtr& name);
 
    //  Invoked when NAME (of TYPE) began with long, short, signed, or unsigned.
    //
-   bool GetCompoundType(QualNamePtr& name, Cxx::Type type);
+   bool GetCompoundType(const QualName* name, Cxx::Type type);
 
    //  Returns true and creates or updates TYPE on finding a typed name, which
    //  may include a template signature.  CONSTRAINT specifies whether the name
@@ -474,7 +474,7 @@ private:
    //  Updates EXPR with the results of parsing an expression upon reaching
    //  an alphabetic character.
    //
-   bool GetCxxAlpha(ExprPtr& expr);
+   bool GetCxxAlpha(const ExprPtr& expr);
 
    //  Updates EXPR with the results of parsing an expression upon reaching
    //  an alphabetic character that could be an encoding tag for a character
@@ -492,9 +492,9 @@ private:
    //  the encoding tag, if any, that preceded a character or string literal.
    //  POS is the position of the ' or ".
    //
-   bool GetNum(ExprPtr& expr);
-   bool GetChar(ExprPtr& expr, Cxx::Encoding code, size_t pos);
-   bool GetStr(ExprPtr& expr, Cxx::Encoding code, size_t pos);
+   bool GetNum(Expression* expr);
+   bool GetChar(Expression* expr, Cxx::Encoding code, size_t pos);
+   bool GetStr(Expression* expr, Cxx::Encoding code, size_t pos);
 
    //  Updates EXPR with the results of parsing an expression enclosed by
    //  parentheses.  It tries, in order,
@@ -502,21 +502,21 @@ private:
    //  o GetCast to handle a C-style cast, and
    //  o GetPrecedence to handle parentheses that the order of evaluation.
    //
-   bool HandleParentheses(ExprPtr& expr);
+   bool HandleParentheses(const ExprPtr& expr);
    bool GetArgList(TokenPtr& call);
-   bool GetCast(ExprPtr& expr);
-   bool GetPrecedence(ExprPtr& expr);
+   bool GetCast(Expression* expr);
+   bool GetPrecedence(Expression* expr);
 
    //  Updates EXPR with the results of parsing an expression that begins
    //  with a '~' at POS, which could either be a ones complement operator
    //  or a direct destructor invocation.  POS was the location of the '~',
    //  which has already been parsed as an operator.
    //
-   bool HandleTilde(ExprPtr& expr, size_t pos);
+   bool HandleTilde(Expression* expr, size_t pos);
 
    //  Updates EXPR with the results of parsing an array index found at POS.
    //
-   bool GetSubscript(ExprPtr& expr, size_t pos);
+   bool GetSubscript(Expression* expr, size_t pos);
 
    //  Updates EXPR with the results of parsing a brace initialization list.
    //
@@ -525,16 +525,16 @@ private:
    //  Updates EXPR with the results of parsing an expression that begins with
    //  the specified operator, which is located at POS.
    //
-   bool GetAlignOf(ExprPtr& expr, size_t pos);
-   bool GetCxxCast(ExprPtr& expr, Cxx::Operator op, size_t pos);
-   bool GetConditional(ExprPtr& expr, size_t pos);
-   bool GetDefined(ExprPtr& expr, size_t pos);
-   bool GetDelete(ExprPtr& expr, Cxx::Operator op, size_t pos);
-   bool GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos);
-   bool GetNoExcept(ExprPtr& expr, size_t pos);
-   bool GetSizeOf(ExprPtr& expr, size_t pos);
-   bool GetThrow(ExprPtr& expr, size_t pos);
-   bool GetTypeId(ExprPtr& expr, size_t pos);
+   bool GetAlignOf(Expression* expr, size_t pos);
+   bool GetCxxCast(Expression* expr, Cxx::Operator op, size_t pos);
+   bool GetConditional(Expression* expr, size_t pos);
+   bool GetDefined(Expression* expr, size_t pos);
+   bool GetDelete(Expression* expr, Cxx::Operator op, size_t pos);
+   bool GetNew(Expression* expr, Cxx::Operator op, size_t pos);
+   bool GetNoExcept(Expression* expr, size_t pos);
+   bool GetSizeOf(Expression* expr, size_t pos);
+   bool GetThrow(Expression* expr, size_t pos);
+   bool GetTypeId(Expression* expr, size_t pos);
 
    //  Updates STATEMENT with the results of parsing a statement that begins
    //  with the specified keyword.  GetBasic handles assignments, function
@@ -601,7 +601,7 @@ private:
    //  location to END.  A "<@" prefix and "@>" suffix are also added to the
    //  string.  CAUSE is the same as for Backup and Retreat.  Returns false.
    //
-   bool Skip(size_t end, const ExprPtr& expr, size_t cause = 0);
+   bool Skip(size_t end, Expression* expr, size_t cause = 0);
 
    //  Invoked when the parse fails.  VENUE identifies what was being parsed
    //  (usually venue_).

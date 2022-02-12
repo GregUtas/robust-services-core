@@ -49,7 +49,7 @@ public:
 
    //  Deletes all work items owned by OWNER.
    //
-   void EraseAll(Base* owner);
+   void EraseAll(const Base* owner);
 
    //  Notifies all work items owned by OWNER of EVENT.
    //

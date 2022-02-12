@@ -60,7 +60,7 @@ static SysMutex LogFileLock_("LogFileLock");
 //
 //  Copies the STREAM of logs to the console when appropriate.
 //
-static void CopyToConsole(const ostringstreamPtr& stream)
+static void CopyToConsole(const std:: ostringstream* stream)
 {
    Debug::ft("NodeBase.CopyToConsole");
 
@@ -178,7 +178,7 @@ void LogThread::Enter()
 
       //  Add the log to the log file and possibly the console.
       //
-      if(!periodic) CopyToConsole(stream);
+      if(!periodic) CopyToConsole(stream.get());
       FileThread::Spool(buff->FileName(), stream, callback);
    }
 }

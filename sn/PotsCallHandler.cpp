@@ -60,7 +60,7 @@ PotsCallHandler::~PotsCallHandler()
 //------------------------------------------------------------------------------
 
 void PotsCallHandler::DiscardBuff
-   (const IpBufferPtr& buff, const PotsHeaderInfo* phi, word errval) const
+   (const IpBuffer* buff, const PotsHeaderInfo* phi, word errval) const
 {
    Debug::ft("PotsCallHandler.DiscardBuff");
 
@@ -95,13 +95,13 @@ void PotsCallHandler::ReceiveBuff
    //
    if(cct == nullptr)
    {
-      DiscardBuff(buff, phi, 0);
+      DiscardBuff(buff.get(), phi, 0);
       return;
    }
 
    if(!cct->Supports(PotsProtocolId))
    {
-      DiscardBuff(buff, phi, phi->port);
+      DiscardBuff(buff.get(), phi, phi->port);
       return;
    }
 
@@ -109,7 +109,7 @@ void PotsCallHandler::ReceiveBuff
 
    if(prof == nullptr)
    {
-      DiscardBuff(buff, phi, -1);
+      DiscardBuff(buff.get(), phi, -1);
       return;
    }
 

@@ -68,6 +68,10 @@ public:
    //
    bool operator!=(const SysIpL2Addr& that) const;
 
+   //  Sets the address to the null address.
+   //
+   virtual void Nullify();
+
    //  Returns true if this platform supports IPv6 and dual-mode sockets.
    //  If true can be returned, the only reason to return false is to test
    //  IPv4-only operation.
@@ -103,10 +107,6 @@ public:
    //  Returns the type of address.
    //
    IpAddrFamily Family() const;
-
-   //  Sets the address to the null address.
-   //
-   void Nullify();
 
    //  Returns the null address (all zeroes).
    //

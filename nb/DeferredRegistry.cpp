@@ -132,7 +132,7 @@ void DeferredRegistry::Erase(Deferred* item)
 
 //------------------------------------------------------------------------------
 
-void DeferredRegistry::EraseAll(Base* owner)
+void DeferredRegistry::EraseAll(const Base* owner)
 {
    Debug::ft("DeferredRegistry.EraseAll");
 

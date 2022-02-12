@@ -74,7 +74,7 @@ fn_name CodeTools_SetCompoundType = "CodeTools.SetCompoundType";
 //  are non-zero if NAME was tagged as long, short, signed, or unsigned.
 //
 static bool SetCompoundType
-   (const QualNamePtr& name, Cxx::Type type, int size, int sign)
+   (const QualName* name, Cxx::Type type, int size, int sign)
 {
    Debug::ft(CodeTools_SetCompoundType);
 
@@ -249,7 +249,7 @@ bool Parser::Backup(size_t pos, FunctionPtr& func, size_t cause)
 
 fn_name Parser_CheckType = "Parser.CheckType";
 
-bool Parser::CheckType(QualNamePtr& name)
+bool Parser::CheckType(const QualNamePtr& name)
 {
    Debug::ft(Parser_CheckType);
 
@@ -301,7 +301,7 @@ bool Parser::CheckType(QualNamePtr& name)
    case Cxx::SHORT:
    case Cxx::SIGNED:
    case Cxx::UNSIGNED:
-      return GetCompoundType(name, type);
+      return GetCompoundType(name.get(), type);
    case Cxx::WCHAR:
       name->SetReferent(root->wCharTerm(), nullptr);
       return true;
@@ -461,7 +461,7 @@ bool Parser::GetAlignAs(AlignAsPtr& align)
 
 fn_name Parser_GetAlignOf = "Parser.GetAlignOf";
 
-bool Parser::GetAlignOf(ExprPtr& expr, size_t pos)
+bool Parser::GetAlignOf(Expression* expr, size_t pos)
 {
    Debug::ft(Parser_GetAlignOf);
 
@@ -582,7 +582,7 @@ bool Parser::GetArgument(ArgumentPtr& arg)
 
 fn_name Parser_GetArguments = "Parser.GetArguments";
 
-bool Parser::GetArguments(FunctionPtr& func)
+bool Parser::GetArguments(Function* func)
 {
    Debug::ft(Parser_GetArguments);
 
@@ -749,7 +749,7 @@ bool Parser::GetBlock(BlockPtr& block)
 
    while(true)
    {
-      GetStatements(block, braced);
+      GetStatements(block.get(), braced);
 
       //  GetStatements stops if it reaches a nested block.  If the current
       //  block is braced, parse the nested block.  If not, return so that
@@ -879,7 +879,7 @@ bool Parser::GetCase(TokenPtr& statement)
 
 fn_name Parser_GetCast = "Parser.GetCast";
 
-bool Parser::GetCast(ExprPtr& expr)
+bool Parser::GetCast(Expression* expr)
 {
    Debug::ft(Parser_GetCast);
 
@@ -943,7 +943,7 @@ bool Parser::GetCatch(TokenPtr& statement)
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetChar(ExprPtr& expr, Cxx::Encoding code, size_t pos)
+bool Parser::GetChar(Expression* expr, Cxx::Encoding code, size_t pos)
 {
    Debug::ft("Parser.GetChar");
 
@@ -1142,7 +1142,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetCompoundType(QualNamePtr& name, Cxx::Type type)
+bool Parser::GetCompoundType(const QualName* name, Cxx::Type type)
 {
    Debug::ft("Parser.GetCompoundType");
 
@@ -1210,7 +1210,7 @@ bool Parser::GetCompoundType(QualNamePtr& name, Cxx::Type type)
 
 fn_name Parser_GetConditional = "Parser.GetConditional";
 
-bool Parser::GetConditional(ExprPtr& expr, size_t pos)
+bool Parser::GetConditional(Expression* expr, size_t pos)
 {
    Debug::ft(Parser_GetConditional);
 
@@ -1288,9 +1288,9 @@ bool Parser::GetCtorDecl(FunctionPtr& func)
    func->SetExplicit(expl);
    func->SetConstexpr(cexp);
    if(cexp) func->SetInline(true);
-   if(!GetArguments(func)) return Backup(start, func, 214);
+   if(!GetArguments(func.get())) return Backup(start, func, 214);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
-   if(!GetCtorInit(func)) return Backup(start, func, 215);
+   if(!GetCtorInit(func.get())) return Backup(start, func, 215);
    func->SetNoexcept(noex);
    return Success(Parser_GetCtorDecl, start);
 }
@@ -1317,9 +1317,9 @@ bool Parser::GetCtorDefn(FunctionPtr& func)
    if(!ctorName->CheckCtorDefn()) return Backup(start, 58);
    func.reset(new Function(ctorName));
    func->SetContext(start);
-   if(!GetArguments(func)) return Backup(start, func, 216);
+   if(!GetArguments(func.get())) return Backup(start, func, 216);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
-   if(!GetCtorInit(func)) return Backup(start, func, 217);
+   if(!GetCtorInit(func.get())) return Backup(start, func, 217);
    func->SetNoexcept(noex);
    return Success(Parser_GetCtorDefn, start);
 }
@@ -1328,7 +1328,7 @@ bool Parser::GetCtorDefn(FunctionPtr& func)
 
 fn_name Parser_GetCtorInit = "Parser.GetCtorInit";
 
-bool Parser::GetCtorInit(FunctionPtr& func)
+bool Parser::GetCtorInit(Function* func)
 {
    Debug::ft(Parser_GetCtorInit);
 
@@ -1341,7 +1341,6 @@ bool Parser::GetCtorInit(FunctionPtr& func)
    auto end = lexer_.FindFirstOf("{");
    if(end == string::npos) return Backup(start, 59);
 
-   size_t begin;
    QualNamePtr baseName;
    string memberName;
    TokenPtr token;
@@ -1361,7 +1360,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
             auto name = baseName->QualifiedName(true, true);
             auto file = Context::File();
             SymbolView view;
-            call = base->NameRefersToItem(name, func.get(), file, view);
+            call = base->NameRefersToItem(name, func, file, view);
          }
       }
 
@@ -1383,7 +1382,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
          if(!GetArgList(token)) return Backup(start, 64);
          auto begin = baseName->GetPos();
          memberName = baseName->Name();
-         MemberInitPtr mem(new MemberInit(func.get(), memberName, token));
+         MemberInitPtr mem(new MemberInit(func, memberName, token));
          mem->SetContext(begin);
          func->AddMemberInit(mem);
       }
@@ -1391,13 +1390,13 @@ bool Parser::GetCtorInit(FunctionPtr& func)
 
    while(lexer_.NextCharIs(','))
    {
-      begin = CurrPos();
+      auto begin = CurrPos();
       if(!lexer_.GetName(memberName)) return Backup(start, 65);
       if(!lexer_.NextCharIs('(')) return Backup(start, 66);
       end = lexer_.FindClosing('(', ')');
       if(end == string::npos) return Backup(start, 67);
       if(!GetArgList(token)) return Backup(start, 68);
-      MemberInitPtr mem(new MemberInit(func.get(), memberName, token));
+      MemberInitPtr mem(new MemberInit(func, memberName, token));
       mem->SetContext(begin);
       func->AddMemberInit(mem);
    }
@@ -1409,7 +1408,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
 
 fn_name Parser_GetCxxAlpha = "Parser.GetCxxAlpha";
 
-bool Parser::GetCxxAlpha(ExprPtr& expr)
+bool Parser::GetCxxAlpha(const ExprPtr& expr)
 {
    Debug::ft(Parser_GetCxxAlpha);
 
@@ -1445,12 +1444,12 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
          return Backup(start, 72);
 
       case Cxx::OBJECT_CREATE:
-         if(GetNew(expr, op, qualName->GetPos())) return true;
+         if(GetNew(expr.get(), op, qualName->GetPos())) return true;
          return Backup(start, 73);
 
       case Cxx::OBJECT_DELETE:
          if(lexer_.NextStringIs(ARRAY_STR)) op = Cxx::OBJECT_DELETE_ARRAY;
-         if(GetDelete(expr, op, qualName->GetPos())) return true;
+         if(GetDelete(expr.get(), op, qualName->GetPos())) return true;
          return Backup(start, 74);
 
       case Cxx::STATIC_CAST:
@@ -1464,28 +1463,28 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
          lexer_.Reposition(start);
          auto pos = lexer_.FindFirstOf("<");
          lexer_.Reposition(pos);
-         if(GetCxxCast(expr, op, qualName->GetPos())) return true;
+         if(GetCxxCast(expr.get(), op, qualName->GetPos())) return true;
          return Backup(start, 75);
       }
 
       case Cxx::SIZEOF_TYPE:
-         if(GetSizeOf(expr, qualName->GetPos())) return true;
+         if(GetSizeOf(expr.get(), qualName->GetPos())) return true;
          return Backup(start, 77);
 
       case Cxx::ALIGNOF_TYPE:
-         if(GetAlignOf(expr, qualName->GetPos())) return true;
+         if(GetAlignOf(expr.get(), qualName->GetPos())) return true;
          return Backup(start, 101);
 
       case Cxx::THROW:
-         if(GetThrow(expr, qualName->GetPos())) return true;
+         if(GetThrow(expr.get(), qualName->GetPos())) return true;
          return Backup(start, 76);
 
       case Cxx::TYPE_NAME:
-         if(GetTypeId(expr, qualName->GetPos())) return true;
+         if(GetTypeId(expr.get(), qualName->GetPos())) return true;
          return Backup(start, 78);
 
       case Cxx::NOEXCEPT:
-         if(GetNoExcept(expr, qualName->GetPos())) return true;
+         if(GetNoExcept(expr.get(), qualName->GetPos())) return true;
          return Backup(start, 228);
 
       default:
@@ -1503,7 +1502,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
 
 fn_name Parser_GetCxxCast = "Parser.GetCxxCast";
 
-bool Parser::GetCxxCast(ExprPtr& expr, Cxx::Operator op, size_t pos)
+bool Parser::GetCxxCast(Expression* expr, Cxx::Operator op, size_t pos)
 {
    Debug::ft(Parser_GetCxxCast);
 
@@ -1547,25 +1546,25 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
       switch(c)
       {
       case QUOTE:
-         if(GetStr(expr, Cxx::ASCII, start)) break;
-         return Skip(end, expr);
+         if(GetStr(expr.get(), Cxx::ASCII, start)) break;
+         return Skip(end, expr.get());
 
       case APOSTROPHE:
-         if(GetChar(expr, Cxx::ASCII, start)) break;
-         return Skip(end, expr);
+         if(GetChar(expr.get(), Cxx::ASCII, start)) break;
+         return Skip(end, expr.get());
 
       case '{':
          return false;
 
       case '_':
          if(GetCxxAlpha(expr)) break;
-         return Skip(end, expr);
+         return Skip(end, expr.get());
 
       case 'u':
       case 'U':
       case 'L':
          if(GetCxxLiteralOrAlpha(expr)) break;
-         return Skip(end, expr);
+         return Skip(end, expr.get());
 
       default:
          if(ispunct(c))
@@ -1575,12 +1574,12 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
          }
          if(isdigit(c))
          {
-            if(GetNum(expr)) break;
-            return Skip(end, expr);
+            if(GetNum(expr.get())) break;
+            return Skip(end, expr.get());
          }
          if(GetCxxAlpha(expr)) break;
          if(GetOp(expr, true)) break;
-         return Skip(end, expr);
+         return Skip(end, expr.get());
       }
    }
 
@@ -1635,8 +1634,8 @@ bool Parser::GetCxxLiteralOrAlpha(ExprPtr& expr)
    if(code != Cxx::Encoding_N)
    {
       c = lexer_.CurrChar();
-      if(c == QUOTE) return GetStr(expr, code, start);
-      if(c == APOSTROPHE) return GetChar(expr, code, start);
+      if(c == QUOTE) return GetStr(expr.get(), code, start);
+      if(c == APOSTROPHE) return GetChar(expr.get(), code, start);
    }
 
    //  This wasn't a character or string literal,
@@ -1669,7 +1668,7 @@ bool Parser::GetDefault(TokenPtr& statement)
 
 fn_name Parser_GetDefined = "Parser.GetDefined";
 
-bool Parser::GetDefined(ExprPtr& expr, size_t pos)
+bool Parser::GetDefined(Expression* expr, size_t pos)
 {
    Debug::ft(Parser_GetDefined);
 
@@ -1700,7 +1699,7 @@ bool Parser::GetDefined(ExprPtr& expr, size_t pos)
 
 fn_name Parser_GetDelete = "Parser.GetDelete";
 
-bool Parser::GetDelete(ExprPtr& expr, Cxx::Operator op, size_t pos)
+bool Parser::GetDelete(Expression* expr, Cxx::Operator op, size_t pos)
 {
    Debug::ft(Parser_GetDelete);
 
@@ -1776,7 +1775,7 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
    func->SetInline(inln);
    func->SetVirtual(virt);
    if(!lexer_.NextCharIs('(')) return Backup(start, 97);
-   if(!GetArguments(func)) return Backup(start, func, 98);
+   if(!GetArguments(func.get())) return Backup(start, func, 98);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    func->SetNoexcept(noex);
    return Success(Parser_GetDtorDecl, start);
@@ -1804,7 +1803,7 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
    func.reset(new Function(dtorName));
    func->SetContext(start);
    if(!lexer_.NextCharIs('(')) return Backup(start, 102);
-   if(!GetArguments(func)) return Backup(start, func, 103);
+   if(!GetArguments(func.get())) return Backup(start, func, 103);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    func->SetNoexcept(noex);
    return Success(Parser_GetDtorDefn, start);
@@ -2198,7 +2197,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    //  or defaulted, or is actually defined.
    //
    if(lexer_.NextCharIs(';')) return Success(Parser_GetFuncDecl, start);
-   if(GetFuncSpecial(func)) return Success(Parser_GetFuncDecl, start);
+   if(GetFuncSpecial(func.get())) return Success(Parser_GetFuncDecl, start);
 
    auto pos = CurrPos();
    if(!lexer_.NextCharIs('{')) return Backup(start, func, 219);
@@ -2257,7 +2256,7 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
 
    if(!found) return Backup(start, func, 222);
    func->SetTemplateParms(parms);
-   if(GetFuncSpecial(func)) return Success(Parser_GetFuncDecl, start);
+   if(GetFuncSpecial(func.get())) return Success(Parser_GetFuncDecl, start);
 
    auto curr = CurrPos();
    if(!lexer_.NextCharIs('{')) return Backup(start, func, 223);
@@ -2326,13 +2325,13 @@ bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
    funcName->SetContext(pos);
    func.reset(new Function(funcName, spec, true));
    func->SetContext(pos);
-   if(!GetArguments(func)) return Backup(start, func, 225);
+   if(!GetArguments(func.get())) return Backup(start, func, 225);
    return Success(Parser_GetFuncSpec, start);
 }
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetFuncSpecial(FunctionPtr& func)
+bool Parser::GetFuncSpecial(Function* func)
 {
    Debug::ft("Parser.GetFuncSpecial");
 
@@ -2563,7 +2562,7 @@ bool Parser::GetNamespace()
 
 fn_name Parser_GetNew = "Parser.GetNew";
 
-bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos)
+bool Parser::GetNew(Expression* expr, Cxx::Operator op, size_t pos)
 {
    Debug::ft(Parser_GetNew);
 
@@ -2653,7 +2652,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos)
 
 fn_name Parser_GetNoExcept = "Parser.GetNoExcept";
 
-bool Parser::GetNoExcept(ExprPtr& expr, size_t pos)
+bool Parser::GetNoExcept(Expression* expr, size_t pos)
 {
    Debug::ft(Parser_GetNoExcept);
 
@@ -2675,7 +2674,7 @@ bool Parser::GetNoExcept(ExprPtr& expr, size_t pos)
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetNum(ExprPtr& expr)
+bool Parser::GetNum(Expression* expr)
 {
    Debug::ft("Parser.GetNum");
 
@@ -2712,11 +2711,11 @@ bool Parser::GetOp(ExprPtr& expr, bool cxx)
    case Cxx::FUNCTION_CALL:
       return HandleParentheses(expr);
    case Cxx::ARRAY_SUBSCRIPT:
-      return GetSubscript(expr, start);
+      return GetSubscript(expr.get(), start);
    case Cxx::CONDITIONAL:
-      return GetConditional(expr, start);
+      return GetConditional(expr.get(), start);
    case Cxx::ONES_COMPLEMENT:
-      return HandleTilde(expr, start);
+      return HandleTilde(expr.get(), start);
    case Cxx::SCOPE_RESOLUTION:
       lexer_.Reposition(start);
       if(!GetQualName(qualName)) return false;
@@ -2761,7 +2760,7 @@ size_t Parser::GetPointers()
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetPreAlpha(ExprPtr& expr)
+bool Parser::GetPreAlpha(const ExprPtr& expr)
 {
    Debug::ft("Parser.GetPreAlpha");
 
@@ -2774,7 +2773,7 @@ bool Parser::GetPreAlpha(ExprPtr& expr)
 
    if(name == DEFINED_STR)
    {
-      if(GetDefined(expr, start)) return true;
+      if(GetDefined(expr.get(), start)) return true;
       return Backup(start, 153);
    }
 
@@ -2789,7 +2788,7 @@ bool Parser::GetPreAlpha(ExprPtr& expr)
 
 fn_name Parser_GetPrecedence = "Parser.GetPrecedence";
 
-bool Parser::GetPrecedence(ExprPtr& expr)
+bool Parser::GetPrecedence(Expression* expr)
 {
    Debug::ft(Parser_GetPrecedence);
 
@@ -2825,19 +2824,19 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
       switch(c)
       {
       case QUOTE:
-         if(GetStr(expr, Cxx::ASCII, start)) break;
-         return Skip(end, expr);
+         if(GetStr(expr.get(), Cxx::ASCII, start)) break;
+         return Skip(end, expr.get());
 
       case APOSTROPHE:
-         if(GetChar(expr, Cxx::ASCII, start)) break;
-         return Skip(end, expr);
+         if(GetChar(expr.get(), Cxx::ASCII, start)) break;
+         return Skip(end, expr.get());
 
       case '{':
          return false;
 
       case '_':
          if(GetPreAlpha(expr)) break;
-         return Skip(end, expr);
+         return Skip(end, expr.get());
 
       default:
          if(ispunct(c))
@@ -2847,12 +2846,12 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
          }
          if(isdigit(c))
          {
-            if(GetNum(expr)) break;
-            return Skip(end, expr);
+            if(GetNum(expr.get())) break;
+            return Skip(end, expr.get());
          }
          if(GetPreAlpha(expr)) break;
          if(GetOp(expr, false)) break;
-         return Skip(end, expr);
+         return Skip(end, expr.get());
       }
    }
 
@@ -2930,7 +2929,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    funcName->SetContext(pos);
    func.reset(new Function(funcName, typeSpec));
    func->SetContext(pos);
-   if(!GetArguments(func)) return Backup(start, func, 226);
+   if(!GetArguments(func.get())) return Backup(start, func, 226);
    func->SetOperator(oper);
 
    lexer_.GetCVTags(attrs);
@@ -3002,7 +3001,7 @@ bool Parser::GetProcDefn(FunctionPtr& func)
    auto oper = funcName->Operator();
    func.reset(new Function(funcName, typeSpec));
    func->SetContext(pos);
-   if(!GetArguments(func)) return Backup(start, func, 227);
+   if(!GetArguments(func.get())) return Backup(start, func, 227);
    func->SetStatic(stat, Cxx::NIL_OPERATOR);
    func->SetOperator(oper);
 
@@ -3088,7 +3087,7 @@ bool Parser::GetReturn(TokenPtr& statement)
 
 fn_name Parser_GetSizeOf = "Parser.GetSizeOf";
 
-bool Parser::GetSizeOf(ExprPtr& expr, size_t pos)
+bool Parser::GetSizeOf(Expression* expr, size_t pos)
 {
    Debug::ft(Parser_GetSizeOf);
 
@@ -3221,7 +3220,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetStatements(BlockPtr& block, bool braced)
+bool Parser::GetStatements(Block* block, bool braced)
 {
    Debug::ft("Parser.GetStatements");
 
@@ -3235,7 +3234,7 @@ bool Parser::GetStatements(BlockPtr& block, bool braced)
    {
       auto kwd = NextKeyword(str);
       if(CxxWord::Attrs[kwd].advance) lexer_.Advance(str.size());
-      if(!ParseInBlock(kwd, block.get())) return true;
+      if(!ParseInBlock(kwd, block)) return true;
       if(!braced) return true;
    }
 
@@ -3276,7 +3275,7 @@ bool Parser::GetStaticAssert(StaticAssertPtr& statement)
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code, size_t pos)
+bool Parser::GetStr(Expression* expr, Cxx::Encoding code, size_t pos)
 {
    Debug::ft("Parser.GetStr");
 
@@ -3356,7 +3355,7 @@ bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code, size_t pos)
 
 fn_name Parser_GetSubscript = "Parser.GetSubscript";
 
-bool Parser::GetSubscript(ExprPtr& expr, size_t pos)
+bool Parser::GetSubscript(Expression* expr, size_t pos)
 {
    Debug::ft(Parser_GetSubscript);
 
@@ -3481,7 +3480,7 @@ bool Parser::GetTemplateParms(TemplateParmsPtr& parms)
 
 fn_name Parser_GetThrow = "Parser.GetThrow";
 
-bool Parser::GetThrow(ExprPtr& expr, size_t pos)
+bool Parser::GetThrow(Expression* expr, size_t pos)
 {
    Debug::ft(Parser_GetThrow);
 
@@ -3577,7 +3576,7 @@ bool Parser::GetTypedef(TypedefPtr& type)
 
 fn_name Parser_GetTypeId = "Parser.GetTypeId";
 
-bool Parser::GetTypeId(ExprPtr& expr, size_t pos)
+bool Parser::GetTypeId(Expression* expr, size_t pos)
 {
    Debug::ft(Parser_GetTypeId);
 
@@ -4178,7 +4177,7 @@ bool Parser::HandleLine(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-bool Parser::HandleParentheses(ExprPtr& expr)
+bool Parser::HandleParentheses(const ExprPtr& expr)
 {
    Debug::ft("Parser.HandleParentheses");
 
@@ -4203,8 +4202,8 @@ bool Parser::HandleParentheses(ExprPtr& expr)
       }
    }
 
-   if(GetCast(expr)) return true;
-   return GetPrecedence(expr);
+   if(GetCast(expr.get())) return true;
+   return GetPrecedence(expr.get());
 }
 
 //------------------------------------------------------------------------------
@@ -4229,7 +4228,7 @@ bool Parser::HandlePragma(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-bool Parser::HandleTilde(ExprPtr& expr, size_t pos)
+bool Parser::HandleTilde(Expression* expr, size_t pos)
 {
    Debug::ft("Parser.HandleTilde");
 
@@ -4507,7 +4506,7 @@ bool Parser::ParseFileItem(const std::string& code,
 //------------------------------------------------------------------------------
 
 bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
-   CxxArea* area, const TypeName* type, const NodeBase::stringPtr& code)
+   CxxArea* area, const TypeName* type, const string* code)
 {
    Debug::ft("Parser.ParseFuncInst");
 
@@ -4935,7 +4934,7 @@ CxxScoped* Parser::ResolveInstanceArgument(const QualName* name) const
 
 fn_name Parser_Skip = "Parser.Skip";
 
-bool Parser::Skip(size_t end, const ExprPtr& expr, size_t cause)
+bool Parser::Skip(size_t end, Expression* expr, size_t cause)
 {
    Debug::ft(Parser_Skip);
 

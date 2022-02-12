@@ -59,7 +59,7 @@ void IpBufferPool::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-const size_t TinyBufferSize = sizeof(TinyBuffer);
+constexpr size_t TinyBufferSize = sizeof(TinyBuffer);
 
 //------------------------------------------------------------------------------
 

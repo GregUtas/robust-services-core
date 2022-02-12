@@ -399,7 +399,7 @@ void Log::Submit(ostringstreamPtr& stream)
    auto buffer = Singleton< LogBufferRegistry >::Extant()->Active();
    if(buffer == nullptr) return;
 
-   if(buffer->Push(stream))
+   if(buffer->Push(stream.get()))
       log->bufferCount_->Incr();
    else
       log->discardCount_->Incr();

@@ -5048,7 +5048,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
       }
    }
 
-   parser->ParseFuncInst(fullName, this, area, type, code);
+   parser->ParseFuncInst(fullName, this, area, type, code.get());
    parser.reset();
    code.reset();
 

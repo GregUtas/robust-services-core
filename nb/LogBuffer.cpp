@@ -21,7 +21,6 @@
 //
 #include "LogBuffer.h"
 #include <bitset>
-#include <iosfwd>
 #include <sstream>
 #include "Debug.h"
 #include "Log.h"
@@ -435,7 +434,7 @@ void LogBuffer::Purge(const Entry* last)
 
 fn_name LogBuffer_Push = "LogBuffer.Push";
 
-bool LogBuffer::Push(const ostringstreamPtr& log)
+bool LogBuffer::Push(const std::ostringstream* log)
 {
    Debug::ftnt(LogBuffer_Push);
 

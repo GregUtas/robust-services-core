@@ -2937,7 +2937,7 @@ void Thread::SignalHandler(signal_t sig)
    }
 
    Pause(Duration(2, SECS));
-   signal(sig, SIG_DFL);
+   signal(sig, nullptr);
    raise(sig);
 }
 

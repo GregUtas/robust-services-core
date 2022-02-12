@@ -35,7 +35,7 @@
 
 namespace NodeBase
 {
-const size_t MsgBufferSize = sizeof(MsgBuffer) + (16 * BYTES_PER_WORD);
+constexpr size_t MsgBufferSize = sizeof(MsgBuffer) + (16 * BYTES_PER_WORD);
 
 //------------------------------------------------------------------------------
 

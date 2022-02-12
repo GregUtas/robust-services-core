@@ -99,10 +99,10 @@ public:
    //
    ~PotsCallHandler();
 private:
-   //  Discards BUFF when it is invalid.  ERRVAL is included in the log.
+   //  Logs BUFF when it is invalid.  ERRVAL is included in the log.
    //
    void DiscardBuff
-      (const IpBufferPtr& buff, const PotsHeaderInfo* phi, word errval) const;
+      (const IpBuffer* buff, const PotsHeaderInfo* phi, word errval) const;
 
    //  Overridden to add a SessionBase header to a message arriving over the
    //  IP stack.

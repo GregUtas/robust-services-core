@@ -255,6 +255,7 @@ namespace Cxx
       Enumerator,
       Forward,
       Friend,
+      FuncSpec,
       Function,
       Macro,
       MemberInit,

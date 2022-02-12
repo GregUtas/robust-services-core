@@ -1975,12 +1975,15 @@ public:
    //  Deleted to prohibit copying.
    //
    FuncSpec(const FuncSpec& that) = delete;
+
+   //  Overridden to reveal that this is a function specification.
+   //
+   Cxx::ItemType Type() const override { return Cxx::FuncSpec; }
 private:
    //  The following are overridden to return the function signature.
    //
    Function* GetFuncSpec() const override { return func_.get(); }
    CxxScoped* Referent() const override { return func_.get(); }
-   CxxToken* RootType() const override { return func_.get(); }
 
    //  The following are forwarded to the function.
    //

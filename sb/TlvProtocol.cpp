@@ -59,6 +59,7 @@ void TlvProtocol::DisplayMsg(ostream& stream,
 {
    auto lead = prefix + spaces(2);
    byte_t* bytes;
+   auto hdrsize = buff.HeaderSize();
    auto bytecount = buff.Payload(bytes);
 
    for(size_t index = 0; index < bytecount; NO_OP)
@@ -69,18 +70,19 @@ void TlvProtocol::DisplayMsg(ostream& stream,
       index += sizeof(TlvParmHeader);
 
       if(parm != nullptr)
-      {
-         stream << prefix << strClass(parm, false) << CRLF;
-         parm->DisplayMsg(stream, lead, &bytes[index], pptr->header.plen);
-      }
+         stream << prefix << strClass(parm, false);
+      else if(pptr->header.pid == NIL_ID)
+         stream << prefix << "Deleted parameter";
       else
+         stream << prefix << "Unknown parameter";
+
+      stream << " (offset=" << hdrsize + index - sizeof(TlvParmHeader);
+      stream << " pid=" << pptr->header.pid;
+      stream << " plen=" << pptr->header.plen << ')' << CRLF;
+
+      if(parm != nullptr)
       {
-         if(pptr->header.pid == NIL_ID)
-            stream << prefix << "Deleted parameter: pid=";
-         else
-            stream << prefix << "Unknown parameter: pid=";
-         stream << pptr->header.pid;
-         stream << ", length=" << pptr->header.plen << CRLF;
+         parm->DisplayMsg(stream, lead, &bytes[index], pptr->header.plen);
       }
 
       index += TlvMessage::Pad(pptr->header.plen);

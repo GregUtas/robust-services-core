@@ -1,20 +1,20 @@
 LINE COUNTS
-   81701   source code not in one of the categories below
-   42315   blank line
-   18784   blank comment
+   81719   source code not in one of the categories below
+   42330   blank line
+   18788   blank comment
    10568   comment at the top of a file (e.g. for the file's name or license info)
-    8197   comment followed by a repeated character to draw a rule (e.g. //---- ...)
-   21579   comment not in one of the categories above (e.g. //  <text>)
-   16471   bare left brace
-   14861   bare right brace
+    8200   comment followed by a repeated character to draw a rule (e.g. //---- ...)
+   21583   comment not in one of the categories above (e.g. //  <text>)
+   16474   bare left brace
+   14864   bare right brace
     1611   bare right brace with semicolon
-    1821   access control
-    5095   invocation of Debug::ft
+    1822   access control
+    5098   invocation of Debug::ft
      698   definition of an fn_name
     6357   #include directive
     1152   preprocessor directive other than #include
-     942   using statement
-  232152   TOTAL
+     943   using statement
+  232207   TOTAL
 
 WARNING COUNTS (* if supported by >fix)
   W004   133  C-style cast
@@ -26,6 +26,7 @@ WARNING COUNTS (* if supported by >fix)
 * W015     3  #include not sorted in standard order
 * W020   168  Using statement in header
 * W022   201  Add using statement
+* W023     1  Remove using statement
   W026    64  Unused argument
   W027     8  Unused class
 * W028    39  Unused data
@@ -34,9 +35,9 @@ WARNING COUNTS (* if supported by >fix)
 * W032   125  Unused function
 * W033     1  Unused typedef
 * W035     1  No referent for friend declaration
-  W037    16  Member hides inherited name
+  W037    15  Member hides inherited name
   W038     1  Class could be namespace
-* W042   174  Member could be private
+* W042   173  Member could be private
 * W043    73  Member could be protected
   W044    13  Typedef of pointer type
 * W048     2  Data is write-only
@@ -48,10 +49,10 @@ WARNING COUNTS (* if supported by >fix)
 * W060    58  Base class constructor is public
   W062     2  Member not included in member initialization list
 * W065    10  Base class virtual destructor is not public
-  W075   402  Virtual function is public
+  W075   404  Virtual function is public
 * W077    57  Virtual function has no overrides
   W082   113  Adjacent arguments have the same type
-* W088    40  Argument could be const
+* W088    20  Argument could be const
 * W090    98  Function could be const
 * W092   124  Function could be free
 * W099   294  Line contains adjacent spaces
@@ -100,13 +101,13 @@ W004 C-style cast
   C:/Users/Greg/Documents/rsc/rsc/nb/Class.cpp(227):    return (Object*) addr;
   C:/Users/Greg/Documents/rsc/rsc/nb/CliPtrParm.cpp(91):          p = (void*) n;
   C:/Users/Greg/Documents/rsc/rsc/nb/Formatters.cpp(161):       auto base = (const Base*) obj;
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(313):    auto after = (ptr_t) next_ + size;
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(326):       if(wrap && (after > (const_ptr_t) first)) return nullptr;
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(333):       if(wrap || (after > (const_ptr_t) first)) return nullptr;
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(507):       used = (const_ptr_t) next_ - (const_ptr_t) first;
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(507):       used = (const_ptr_t) next_ - (const_ptr_t) first;
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(509):       used = size_ - ((const_ptr_t) first - (const_ptr_t) next_);
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(509):       used = size_ - ((const_ptr_t) first - (const_ptr_t) next_);
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(312):    auto after = (ptr_t) next_ + size;
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(325):       if(wrap && (after > (const_ptr_t) first)) return nullptr;
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(332):       if(wrap || (after > (const_ptr_t) first)) return nullptr;
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(506):       used = (const_ptr_t) next_ - (const_ptr_t) first;
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(506):       used = (const_ptr_t) next_ - (const_ptr_t) first;
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(508):       used = size_ - ((const_ptr_t) first - (const_ptr_t) next_);
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(508):       used = size_ - ((const_ptr_t) first - (const_ptr_t) next_);
   C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.cpp(285):    heap_ = (HeapPriv*) SysMemory::Alloc(nullptr, size_);
   C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.cpp(326):    heap_->state = (uint8_t*) (heapAddr + infoSize);
   C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.cpp(358):          ReleaseBlock((HeapBlock*) addr, level);
@@ -188,13 +189,13 @@ W004 C-style cast
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(60):       peer = (sockaddr*) &ipv4peer;
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(110):       peer = (sockaddr*)&ipv6peer;
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(117):       peer = (sockaddr*)&ipv4peer;
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(189):       self = (sockaddr*) &ipv6self;
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(194):       self = (sockaddr*) &ipv4self;
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(327):       peer = (sockaddr*) &ipv6peer;
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(332):       peer = (sockaddr*) &ipv4peer;
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(398):       (char*) &linger_opts, sizeof(linger)) != SOCKET_ERROR)
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(424):       (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(434):       (char*) &val, &valsize) == SOCKET_ERROR)
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(198):       self = (sockaddr*) &ipv6self;
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(203):       self = (sockaddr*) &ipv4self;
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(336):       peer = (sockaddr*) &ipv6peer;
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(341):       peer = (sockaddr*) &ipv4peer;
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(407):       (char*) &linger_opts, sizeof(linger)) != SOCKET_ERROR)
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(433):       (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(443):       (char*) &val, &valsize) == SOCKET_ERROR)
   C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.win.cpp(52):          (char*) &max, &maxsize) == SOCKET_ERROR)
   C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.win.cpp(93):       peer = (sockaddr*) &ipv6peer;
   C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.win.cpp(98):       peer = (sockaddr*) &ipv4peer;
@@ -220,7 +221,7 @@ W005 Functional cast
   C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.cpp(692):       Attrs[ValidHexDigits[i]].hexValue = int8_t(h);
   C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.cpp(697):       Attrs[ValidOctDigits[i]].octValue = int8_t(i);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1661):             return TypeMatch(match - 1);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2082):    if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= TagCount(ptrs))
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2083):    if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= TagCount(ptrs))
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(3658):    if(TagCount(n) >= ptrs_) return false;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(3676):    if(TagCount(n) >= ptrs_) return false;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(3747):       if(TagCount(n) >= ptrs_) ptrs_ = n + 1;
@@ -320,10 +321,10 @@ W006 reinterpret_cast
   C:/Users/Greg/Documents/rsc/rsc/nb/Daemon.cpp(75):    auto fake = reinterpret_cast< const Daemon* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.cpp(99):    auto fake = reinterpret_cast<const Deferred*>(&local);
   C:/Users/Greg/Documents/rsc/rsc/nb/Log.cpp(133):    auto fake = reinterpret_cast< const Log* >(&local);
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(125):    SetNext(reinterpret_cast< Entry* >(buff_));
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(340):       where = reinterpret_cast< Entry* >(buff_);
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(348):    SetNext(reinterpret_cast< Entry* >(after));
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(385):          SetNext(reinterpret_cast< Entry* >(buff_));
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(124):    SetNext(reinterpret_cast< Entry* >(buff_));
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(339):       where = reinterpret_cast< Entry* >(buff_);
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(347):    SetNext(reinterpret_cast< Entry* >(after));
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(384):          SetNext(reinterpret_cast< Entry* >(buff_));
   C:/Users/Greg/Documents/rsc/rsc/nb/LogGroup.cpp(120):    auto fake = reinterpret_cast< const LogGroup* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nb/Module.cpp(65):    auto fake = reinterpret_cast< const Module* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nb/Object.cpp(114):    auto obj = reinterpret_cast< ObjectStruct* >(this);
@@ -344,8 +345,8 @@ W006 reinterpret_cast
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.cpp(299):    auto fake = reinterpret_cast< const IpPort* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.cpp(72):    auto fake = reinterpret_cast< const IpService* >(&local);
   C:/Users/Greg/Documents/rsc/rsc/nw/LocalAddrTest.cpp(209):       auto payload = reinterpret_cast< SysIpL3Addr* >(buff->PayloadPtr());
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(300):    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(371):    auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(309):    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(380):    auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.win.cpp(103):       reinterpret_cast< char* >(buff), size, 0, peer, &peersize);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.win.cpp(174):       reinterpret_cast< const char* >(data), size, 0, peer, peersize);
   C:/Users/Greg/Documents/rsc/rsc/pb/PotsFeature.cpp(84):    auto fake = reinterpret_cast< const PotsFeature* >(&local);
@@ -376,7 +377,7 @@ W006 reinterpret_cast
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(93):       auto dest = reinterpret_cast< T* >(pptr->bytes);
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(128):       parm = (pptr == nullptr ? nullptr : reinterpret_cast< T* >(pptr->bytes));
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.h(282):       { return reinterpret_cast< TlvMsgLayout* >(Buffer()->HeaderPtr()); }
-  C:/Users/Greg/Documents/rsc/rsc/sb/TlvProtocol.cpp(66):       auto pptr = reinterpret_cast< TlvParmPtr >(&bytes[index]);
+  C:/Users/Greg/Documents/rsc/rsc/sb/TlvProtocol.cpp(67):       auto pptr = reinterpret_cast< TlvParmPtr >(&bytes[index]);
   C:/Users/Greg/Documents/rsc/rsc/sn/PotsCallHandler.cpp(89):    auto pptr = reinterpret_cast< TlvParmPtr >(sbuff->PayloadPtr());
   C:/Users/Greg/Documents/rsc/rsc/sn/PotsCallHandler.cpp(90):    auto phi = reinterpret_cast< PotsHeaderInfo* >(pptr->bytes);
   C:/Users/Greg/Documents/rsc/rsc/sn/PotsCwmService.cpp(1381):          auto ring = reinterpret_cast< PotsRingInfo* >(pptr->bytes);
@@ -495,12 +496,12 @@ W007 Cast down the inheritance hierarchy
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxDirective.cpp(1092):       auto macro = static_cast< Macro* >(ref_);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxDirective.cpp(1105):       auto macro = static_cast< Macro* >(ref_);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1615):          auto derived = static_cast< const Class* >(root);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1717):       auto thisClass = static_cast< Class* >(thisRoot);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1725):             auto thatClass = static_cast< Class* >(thatRoot);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1882):    if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item_)))
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1936):       auto type = static_cast< TypeSpec* >(item_);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1946):       spec->SetReferent(static_cast< CxxScoped* >(item_), nullptr);
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2132):          static_cast< Class* >(root)->BlockCopied(this);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1718):       auto thisClass = static_cast< Class* >(thisRoot);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1726):             auto thatClass = static_cast< Class* >(thatRoot);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1883):    if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item_)))
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1937):       auto type = static_cast< TypeSpec* >(item_);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1947):       spec->SetReferent(static_cast< CxxScoped* >(item_), nullptr);
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2133):          static_cast< Class* >(root)->BlockCopied(this);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(74):             static_cast< Function* >(tfunc)->SetTemplateParm();
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(404):          space = static_cast< Namespace* >(item);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(428):          cls = static_cast< Class* >(item);
@@ -639,28 +640,28 @@ W007 Cast down the inheritance hierarchy
   C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1069):    static_cast< ClassData* >(data.get())->SetMutable(mute);
   C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1070):    static_cast< ClassData* >(data.get())->SetWidth(width);
   C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1232):    auto cond = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1523):    auto cast = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1690):    auto op = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1716):    auto delOp = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1744):    auto d = static_cast< Do* >(statement.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1952):    auto f = static_cast< For* >(statement.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2060):       static_cast< FuncData* >(data.get())->SetExpression(expr);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2112):          curr = static_cast< FuncData* >(data.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2401):             static_cast< If* >(first)->SetElseIf();
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2407):    auto i = static_cast< If* >(statement.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2550):    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2594):    auto newOp = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2613):    static_cast< Operation* >(token.get())->SetNew();
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2669):    auto op = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3083):    static_cast< Return* >(statement.get())->AddExpr(expr);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3130):    auto op = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3379):    auto op = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3405):    auto s = static_cast< Switch* >(statement.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3497):    auto op = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3531):    auto t = static_cast< Try* >(statement.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3593):    auto op = static_cast< Operation* >(token.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3889):    auto w = static_cast< While* >(statement.get());
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(4248):          auto op = static_cast< Operation* >(token)->Op();
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1522):    auto cast = static_cast< Operation* >(token.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1689):    auto op = static_cast< Operation* >(token.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1715):    auto delOp = static_cast< Operation* >(token.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1743):    auto d = static_cast< Do* >(statement.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1951):    auto f = static_cast< For* >(statement.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2059):       static_cast< FuncData* >(data.get())->SetExpression(expr);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2111):          curr = static_cast< FuncData* >(data.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2400):             static_cast< If* >(first)->SetElseIf();
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2406):    auto i = static_cast< If* >(statement.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2549):    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2593):    auto newOp = static_cast< Operation* >(token.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2612):    static_cast< Operation* >(token.get())->SetNew();
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2668):    auto op = static_cast< Operation* >(token.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3082):    static_cast< Return* >(statement.get())->AddExpr(expr);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3129):    auto op = static_cast< Operation* >(token.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3378):    auto op = static_cast< Operation* >(token.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3404):    auto s = static_cast< Switch* >(statement.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3496):    auto op = static_cast< Operation* >(token.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3530):    auto t = static_cast< Try* >(statement.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3592):    auto op = static_cast< Operation* >(token.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(3888):    auto w = static_cast< While* >(statement.get());
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(4247):          auto op = static_cast< Operation* >(token)->Op();
   C:/Users/Greg/Documents/rsc/rsc/dip/BotThread.cpp(201):    DipIpBufferPtr ipb(static_cast< DipIpBuffer* >(msg));
   C:/Users/Greg/Documents/rsc/rsc/dip/DipProtocol.cpp(274):    auto dipbuff = static_cast< DipIpBuffer* >(&buff);
   C:/Users/Greg/Documents/rsc/rsc/dip/DipProtocol.cpp(327):    DipIpBufferPtr dipbuff(static_cast< DipIpBuffer* >(buff.release()));
@@ -686,11 +687,11 @@ W007 Cast down the inheritance hierarchy
   C:/Users/Greg/Documents/rsc/rsc/nb/TraceBuffer.cpp(476):          auto ft = static_cast< FunctionTrace* >(rec);
   C:/Users/Greg/Documents/rsc/rsc/nt/FunctionProfiler.cpp(203):             auto ft = static_cast<FunctionTrace*>(rec);
   C:/Users/Greg/Documents/rsc/rsc/nt/NtTestData.cpp(62):    return static_cast< NtTestData* >(data);
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(258):       (this, static_cast< const TcpIpService* >(service), port);
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(269):    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(318):       (this, static_cast<const UdpIpService*>(service), port);
-  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(329):    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(421):    bool alive = static_cast< const TcpIpService* >(service)->Keepalive();
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(259):       (this, static_cast< const TcpIpService* >(service), port);
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(270):    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(319):       (this, static_cast<const UdpIpService*>(service), port);
+  C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp(330):    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(430):    bool alive = static_cast< const TcpIpService* >(service)->Keepalive();
   C:/Users/Greg/Documents/rsc/rsc/nw/TcpIoThread.cpp(213):    auto registrant = static_cast< SysTcpSocket* >(ipPort_->GetSocket());
   C:/Users/Greg/Documents/rsc/rsc/nw/TcpIoThread.cpp(223):    auto svc = static_cast< const TcpIpService* >(ipPort_->GetService());
   C:/Users/Greg/Documents/rsc/rsc/nw/TcpIoThread.cpp(308):    auto registrant = static_cast< SysTcpSocket* >(ipPort_->GetSocket());
@@ -1072,7 +1073,7 @@ W008 Cast removes const qualification
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.cpp(811):       const_cast< CxxToken* >(this) : nullptr);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.cpp(844):    CxxToken* prev = const_cast< CxxToken* >(this);
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.h(508):    virtual CxxToken* RootType() const { return const_cast< CxxToken* >(this); }
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(4536):       func->SetTemplate(const_cast< Function* >(tmplt));
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(4535):       func->SetTemplate(const_cast< Function* >(tmplt));
   C:/Users/Greg/Documents/rsc/rsc/nb/Algorithms.cpp(43):    return (void*) ((const_ptr_t) ptr2 - diff);
   C:/Users/Greg/Documents/rsc/rsc/nb/Algorithms.cpp(50):    return (void*) ((const_ptr_t) ptr1 + diff);
   C:/Users/Greg/Documents/rsc/rsc/nb/Base.cpp(67):    objects.push_back(const_cast< Base* >(this));
@@ -1083,16 +1084,16 @@ W009 Pointer arithmetic
   C:/Users/Greg/Documents/rsc/rsc/dip/DipProtocol.cpp(211):       dest = payload + received;
   C:/Users/Greg/Documents/rsc/rsc/nb/Algorithms.cpp(43):    return (void*) ((const_ptr_t) ptr2 - diff);
   C:/Users/Greg/Documents/rsc/rsc/nb/Algorithms.cpp(50):    return (void*) ((const_ptr_t) ptr1 + diff);
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(313):    auto after = (ptr_t) next_ + size;
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(314):    auto wrap = after >= (buff_ + size_);
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(341):       after = buff_ + size;
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(312):    auto after = (ptr_t) next_ + size;
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(313):    auto wrap = after >= (buff_ + size_);
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(340):       after = buff_ + size;
   C:/Users/Greg/Documents/rsc/rsc/nb/Thread.cpp(2957):    ptrdiff_t stacksize = &local - priv_->stackBase_;
   C:/Users/Greg/Documents/rsc/rsc/nw/IoThread.cpp(189):       source += rcvd;
   C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(134):       Memory::Copy((bytes_ + hdrSize_ + paySize), source, size);
   C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(134):       Memory::Copy((bytes_ + hdrSize_ + paySize), source, size);
-  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(229):       bytes = bytes_ + hdrSize_;
-  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(253):    bytes += hdrSize_;
-  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(106):    NodeBase::byte_t* PayloadPtr() const { return bytes_ + hdrSize_; }
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(238):       bytes = bytes_ + hdrSize_;
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(262):    bytes += hdrSize_;
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(111):    NodeBase::byte_t* PayloadPtr() const { return bytes_ + hdrSize_; }
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.cpp(166):    auto pptr = (TlvParmPtr) (layout->bytes + layout->header.length);
   C:/Users/Greg/Documents/rsc/rsc/sb/TlvMessage.cpp(249):    auto fence = layout->bytes + layout->header.length;
 W015 #include not sorted in standard order
@@ -1470,6 +1471,8 @@ W022 Add using statement
   C:/Users/Greg/Documents/rsc/rsc/st/StTestData.cpp(0):  // namespace SessionBase
   C:/Users/Greg/Documents/rsc/rsc/st/TestSessions.cpp(0):  // namespace NodeBase
   C:/Users/Greg/Documents/rsc/rsc/st/TestSessions.cpp(0):  // namespace SessionBase
+W023 Remove using statement
+  C:/Users/Greg/Documents/rsc/rsc/sb/SbIpBuffer.cpp(36): using namespace NetworkBase;
 W026 Unused argument
   C:/Users/Greg/Documents/rsc/rsc/ct/CodeFile.h(419/3):       const CxxNamed* item, const CxxScope* scope) const;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.h(911/1):    static void Shutdown(NodeBase::RestartLevel level);
@@ -1549,7 +1552,7 @@ W028 Unused data
   C:/Users/Greg/Documents/rsc/rsc/cb/ProxyBcSessions.h(219):    static const Id NextId        = FirstId + 4;
   C:/Users/Greg/Documents/rsc/rsc/cb/ProxyBcSessions.h(303):    static const Id NextId              = FirstId + 7;
   C:/Users/Greg/Documents/rsc/rsc/cb/ProxyBcSessions.h(387):    constexpr TriggerId NextId = FirstId + 3;
-  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(446):    constexpr char Unchecked = ' ';  // spacing not determined
+  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(447):    constexpr char Unchecked = ' ';  // spacing not determined
   C:/Users/Greg/Documents/rsc/rsc/dip/DipProtocol.h(162): constexpr ProtocolError IM_TIMEOUT = 0x01;
   C:/Users/Greg/Documents/rsc/rsc/dip/DipProtocol.h(163): constexpr ProtocolError IM_EXPECTED = 0x02;
   C:/Users/Greg/Documents/rsc/rsc/dip/DipProtocol.h(164): constexpr ProtocolError IM_WRONG_ENDIAN = 0x03;
@@ -1648,7 +1651,7 @@ W032 Unused function
   C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(64):    void SendToThread(Thread* thread);
   C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(68):    void Restart(secs_t secs);
   C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h(94):    Base* Owner() const { return owner_; }
-  C:/Users/Greg/Documents/rsc/rsc/nb/DeferredRegistry.h(52):    void EraseAll(Base* owner);
+  C:/Users/Greg/Documents/rsc/rsc/nb/DeferredRegistry.h(52):    void EraseAll(const Base* owner);
   C:/Users/Greg/Documents/rsc/rsc/nb/FunctionTrace.cpp(167):    PerThreadInfo()
   C:/Users/Greg/Documents/rsc/rsc/nb/LogGroupRegistry.h(62):    Log* FindLog(const std::string& name, LogId id) const;
   C:/Users/Greg/Documents/rsc/rsc/nb/Memory.h(50):    size_t Words(size_t size);
@@ -1751,7 +1754,6 @@ W037 Member hides inherited name
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(115):    void NetworkToHost(IPv4Addr netaddr, ipport_t netport);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(120):    void NetworkToHost(const uint16_t netaddr[8], ipport_t netport);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(160):    std::string to_str(bool verbose) const;
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(164):    void Nullify();
   C:/Users/Greg/Documents/rsc/rsc/sb/Context.h(166):    static ptrdiff_t LinkDiff();
   C:/Users/Greg/Documents/rsc/rsc/sb/Timer.h(106):    static ptrdiff_t LinkDiff();
 W038 Class could be namespace
@@ -1777,7 +1779,7 @@ W042 Member could be private
   C:/Users/Greg/Documents/rsc/rsc/ct/CodeFile.h(284):    size_t FindLastUsage(const CxxNamedSet& usages) const;
   C:/Users/Greg/Documents/rsc/rsc/ct/CodeFileSet.h(104):    void to_str(stringVector& strings, bool verbose) const override;
   C:/Users/Greg/Documents/rsc/rsc/ct/CodeItemSet.h(64):    void to_str(stringVector& strings, bool verbose) const override;
-  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(541):    Numeric(NumericType type, size_t width, bool sign) :
+  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(542):    Numeric(NumericType type, size_t width, bool sign) :
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxArea.h(92):    Typedef* FindType(const std::string& name) const;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxArea.h(178):    Enum* FindEnum(const std::string& name) const;
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxArea.h(182):    Enumerator* FindEnumerator(const std::string& name) const;
@@ -1879,7 +1881,6 @@ W042 Member could be private
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.h(69):    virtual ipport_t Port() const = 0;
   C:/Users/Greg/Documents/rsc/rsc/nw/NwTracer.h(63):    bool PeersEmpty() const;
   C:/Users/Greg/Documents/rsc/rsc/nw/NwTracer.h(67):    bool PortsEmpty() const;
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h(164):    void Nullify();
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.h(89):    NodeBase::word Connect(const SysIpL3Addr& remAddr);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.h(137):    NodeBase::word Send(const NodeBase::byte_t* data, size_t size);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.h(159):    bool SetClose(bool graceful);
@@ -2138,11 +2139,11 @@ i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(46):    sockaddr_in ip
 i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(47):    sockaddr_in6 ipv6peer;
 i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(97):    sockaddr_in ipv4peer;
 i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(98):    sockaddr_in6 ipv6peer;
-i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(180):    sockaddr_in ipv4self;
-i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(181):    sockaddr_in6 ipv6self;
-i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(318):    sockaddr_in ipv4peer;
-i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(319):    sockaddr_in6 ipv6peer;
-i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(393):    linger linger_opts;
+i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(189):    sockaddr_in ipv4self;
+i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(190):    sockaddr_in6 ipv6self;
+i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(327):    sockaddr_in ipv4peer;
+i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(328):    sockaddr_in6 ipv6peer;
+i C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(402):    linger linger_opts;
 i C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.win.cpp(84):    sockaddr_in ipv4peer;
 i C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.win.cpp(85):    sockaddr_in6 ipv6peer;
 i C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.win.cpp(149):    sockaddr_in ipv4peer;
@@ -2548,8 +2549,9 @@ W075 Virtual function is public
   C:/Users/Greg/Documents/rsc/rsc/nw/InputHandler.h(128):    virtual void ReceiveBuff
   C:/Users/Greg/Documents/rsc/rsc/nw/InputHandler.h(137):    virtual NodeBase::byte_t* HostToNetwork
   C:/Users/Greg/Documents/rsc/rsc/nw/InputHandler.h(143):    virtual void SocketFailed(SysSocket* socket) const { }
-  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(119):    virtual size_t PayloadSize() const;
-  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(138):    virtual bool AddBytes
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(64):    virtual IpBuffer* Clone() const;
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(124):    virtual size_t PayloadSize() const;
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h(143):    virtual bool AddBytes
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.h(102):    virtual SysTcpSocket* CreateAppSocket();
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.h(147):    virtual void DisplayStats
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.h(60):    virtual NodeBase::c_string Name() const = 0;
@@ -2561,6 +2563,7 @@ W075 Virtual function is public
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.h(88):    virtual NodeBase::CliText* CreateText() const = 0;
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.h(94):    virtual bool HasSharedSocket() const = 0;
   C:/Users/Greg/Documents/rsc/rsc/nw/IpService.h(102):    virtual void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const;
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL2Addr.h(73):    virtual void Nullify();
   C:/Users/Greg/Documents/rsc/rsc/nw/SysSocket.h(99):    virtual IpProtocol Protocol() const { return IpAny; }
   C:/Users/Greg/Documents/rsc/rsc/nw/SysSocket.h(128):    virtual AllocRc SetService(const IpService* service, bool shared);
   C:/Users/Greg/Documents/rsc/rsc/nw/SysSocket.h(134):    virtual SendRc SendBuff(IpBuffer& buff) = 0;
@@ -2690,7 +2693,7 @@ W082 Adjacent arguments have the same type
   C:/Users/Greg/Documents/rsc/rsc/ct/CodeFile.h(535):    void UpdatePos(EditorAction action,
   C:/Users/Greg/Documents/rsc/rsc/ct/CodeWarning.h(64):    WarningAttrs(bool fixable, bool preserve, NodeBase::c_string expl);
   C:/Users/Greg/Documents/rsc/rsc/ct/CodeWarning.h(143):    void UpdatePos(EditorAction action,
-  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(617):    SymbolView(Accessibility a, TypeMatch m, Cxx::Access c,
+  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(618):    SymbolView(Accessibility a, TypeMatch m, Cxx::Access c,
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.h(287):    TypeMatch CalcMatchWith(const StackArg& that,
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.h(342):    TypeMatch MatchWith(const StackArg& that,
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxLocation.h(76):    void UpdatePos(EditorAction action, size_t begin, size_t count, size_t from);
@@ -2801,28 +2804,8 @@ W082 Adjacent arguments have the same type
   C:/Users/Greg/Documents/rsc/rsc/st/TestSessions.h(354):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
 W088 Argument could be const
   C:/Users/Greg/Documents/rsc/rsc/ct/Editor.h(506/4):       const CxxToken* item, const CxxToken* next, ItemDefnAttrs& attrs) const;
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(268/1):    bool GetStatements(BlockPtr& block, bool braced);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(366/1):    bool GetFuncSpecial(FunctionPtr& func);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(379/1):    bool GetCtorInit(FunctionPtr& func);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(400/1):    bool GetArguments(FunctionPtr& func);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(427/1):    bool GetCompoundType(QualNamePtr& name, Cxx::Type type);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(495/1):    bool GetNum(ExprPtr& expr);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(496/1):    bool GetChar(ExprPtr& expr, Cxx::Encoding code, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(497/1):    bool GetStr(ExprPtr& expr, Cxx::Encoding code, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(507/1):    bool GetCast(ExprPtr& expr);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(508/1):    bool GetPrecedence(ExprPtr& expr);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(515/1):    bool HandleTilde(ExprPtr& expr, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(519/1):    bool GetSubscript(ExprPtr& expr, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(528/1):    bool GetAlignOf(ExprPtr& expr, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(529/1):    bool GetCxxCast(ExprPtr& expr, Cxx::Operator op, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(530/1):    bool GetConditional(ExprPtr& expr, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(531/1):    bool GetDefined(ExprPtr& expr, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(532/1):    bool GetDelete(ExprPtr& expr, Cxx::Operator op, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(533/1):    bool GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(534/1):    bool GetNoExcept(ExprPtr& expr, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(535/1):    bool GetSizeOf(ExprPtr& expr, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(536/1):    bool GetThrow(ExprPtr& expr, size_t pos);
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(537/1):    bool GetTypeId(ExprPtr& expr, size_t pos);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(483/1):    bool GetCxxLiteralOrAlpha(ExprPtr& expr);
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h(489/1):    bool GetOp(ExprPtr& expr, bool cxx);
   C:/Users/Greg/Documents/rsc/rsc/nb/Object.h(59/2):    virtual void Patch(sel_t selector, void* arguments) { }
   C:/Users/Greg/Documents/rsc/rsc/nb/Q1Way.h(90/1):    bool Enq(T& elem)
   C:/Users/Greg/Documents/rsc/rsc/nb/Q1Way.h(114/1):    bool Henq(T& elem)
@@ -2945,7 +2928,7 @@ W092 Function could be free
   C:/Users/Greg/Documents/rsc/rsc/cb/BcSessions.h(1115):    static void DisplayStateCounts // AnIncrement.cpp
   C:/Users/Greg/Documents/rsc/rsc/cb/BcSessions.h(1120):    static void ResetStateCounts(RestartLevel level); // CbModule.cpp
   C:/Users/Greg/Documents/rsc/rsc/ct/CodeFile.h(357):    const stringVector& Prolog() const; // CodeFile.cpp
-  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(461):    static void UpdateOperator(Cxx::Operator& oper, size_t args); // CxxScope.cpp
+  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(462):    static void UpdateOperator(Cxx::Operator& oper, size_t args); // CxxScope.cpp
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.h(735):    static bool AtFileScope(); // CxxToken.cpp
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.h(750):    static Cxx::Access ScopeVisibility(); // CxxArea.cpp
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.h(808):    static void WasCalled(Function* func); // CxxScope.cpp
@@ -3450,8 +3433,8 @@ W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1169): Cxx::Access ParseFrame::ScopeAccess() const
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1176): Cxx::Access ParseFrame::SetAccess(Cxx::Access access)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(1580): bool StackArg::IsBool() const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2271): TypeName* XrefFrame::FindItem(const string& name) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2283): void XrefFrame::PushItem(TypeName* item)
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2272): TypeName* XrefFrame::FindItem(const string& name) const
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2284): void XrefFrame::PushItem(TypeName* item)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxLocation.cpp(41): void CxxLocation::SetLoc(CodeFile* file, size_t pos)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxLocation.cpp(49): void CxxLocation::SetLoc(CodeFile* file, size_t pos, bool internal)
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.cpp(166): CxxArea* CxxNamed::GetArea() const
@@ -3721,7 +3704,7 @@ W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/nb/InitFlags.cpp(48): bool InitFlags::SuspendRoot()
   C:/Users/Greg/Documents/rsc/rsc/nb/InitFlags.cpp(55): bool InitFlags::TraceInit()
   C:/Users/Greg/Documents/rsc/rsc/nb/Log.cpp(139): size_t Log::Count()
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(500): void LogBuffer::UpdateMax()
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(499): void LogBuffer::UpdateMax()
   C:/Users/Greg/Documents/rsc/rsc/nb/LogGroup.cpp(179): void LogGroup::SetSuppressed(bool suppressed)
   C:/Users/Greg/Documents/rsc/rsc/nb/LogGroupRegistry.cpp(190): LogGroup* LogGroupRegistry::Group(id_t gid) const
   C:/Users/Greg/Documents/rsc/rsc/nb/MainArgs.cpp(142): size_t MainArgs::Size()
@@ -3923,7 +3906,7 @@ W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2489): RegistryItem::~RegistryItem()
   C:/Users/Greg/Documents/rsc/rsc/nt/NtIncrement.cpp(2517): RegistryPool::RegistryPool()
   C:/Users/Greg/Documents/rsc/rsc/nt/TestDatabase.cpp(148): TestDatabase::State TestDatabase::GetState(const string& testname)
-  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(185): TraceStatus IpBuffer::GetStatus() const
+  C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp(194): TraceStatus IpBuffer::GetStatus() const
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPort.cpp(213): size_t IpPort::Discards() const
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp(287): IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
   C:/Users/Greg/Documents/rsc/rsc/nw/IpPortRegistry.cpp(509): bool IpPortRegistry::UseIPv6()
@@ -4001,7 +3984,7 @@ W106 Function does not invoke Debug::ft
   C:/Users/Greg/Documents/rsc/rsc/st/MscContextPair.cpp(53): void MscContextPair::Contexts(MscContext*& ctx1, MscContext*& ctx2) const
 W107 Function does not invoke Debug::ft as first statement
   C:/Users/Greg/Documents/rsc/rsc/ct/CodeFile.cpp(490):    Debug::ft("CodeFile.Affecters");
-  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2200):    Debug::ft("Tracepoint.OnLine");
+  C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp(2201):    Debug::ft("Tracepoint.OnLine");
   C:/Users/Greg/Documents/rsc/rsc/nb/CinThread.cpp(103):       Debug::ft(CinThread_Enter);
   C:/Users/Greg/Documents/rsc/rsc/nb/Exception.cpp(42):    Debug::ft("Exception.ctor");  //@
   C:/Users/Greg/Documents/rsc/rsc/nb/MutexGuard.cpp(35):    Debug::ft("MutexGuard.ctor");
@@ -4079,7 +4062,7 @@ W117 Line can merge with the next line and be under the length limit
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxToken.cpp(2716):          auto vName = (del ?
   C:/Users/Greg/Documents/rsc/rsc/dip/BaseBot.cpp(1711):          (press->message == contents))
   C:/Users/Greg/Documents/rsc/rsc/nb/CliStack.h(68):    const CliCommand* FindCommand
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(192):       stream << fileName_ << SPACE
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(191):       stream << fileName_ << SPACE
   C:/Users/Greg/Documents/rsc/rsc/nb/NbCliParms.cpp(388):    BindText(*new CliText
   C:/Users/Greg/Documents/rsc/rsc/nb/NbCliParms.cpp(392):    BindText(*new CliText
   C:/Users/Greg/Documents/rsc/rsc/nb/NbCliParms.cpp(394):    BindText(*new CliText
@@ -4157,9 +4140,9 @@ W119 Argument passed by value is modified
   C:/Users/Greg/Documents/rsc/rsc/ct/Lexer.cpp(3304/1): size_t Lexer::SkipCharLiteral(size_t pos) const
   C:/Users/Greg/Documents/rsc/rsc/ct/Lexer.cpp(3347/1): size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
   C:/Users/Greg/Documents/rsc/rsc/ct/Lexer.cpp(3380/1): size_t Lexer::SkipTemplateSpec(size_t pos) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1145/2): bool Parser::GetCompoundType(QualNamePtr& name, Cxx::Type type)
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2484/1): size_t Parser::GetLineNum(size_t pos) const
-  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(4301/2): void Parser::Log(Warning warning, size_t pos) const
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(1145/2): bool Parser::GetCompoundType(const QualName* name, Cxx::Type type)
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(2483/1): size_t Parser::GetLineNum(size_t pos) const
+  C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp(4300/2): void Parser::Log(Warning warning, size_t pos) const
   C:/Users/Greg/Documents/rsc/rsc/dip/Token.cpp(147/1): bool Token::set_number(int number)
   C:/Users/Greg/Documents/rsc/rsc/nb/Algorithms.cpp(30/1): size_t find_first_one(uword n)
   C:/Users/Greg/Documents/rsc/rsc/nb/Algorithms.cpp(55/1): size_t log2(size_t n, bool up)
@@ -4171,7 +4154,7 @@ W119 Argument passed by value is modified
   C:/Users/Greg/Documents/rsc/rsc/nb/CliThread.cpp(753/2):    (const string& expl, size_t begin, size_t end, col_t indent) const
   C:/Users/Greg/Documents/rsc/rsc/nb/Formatters.cpp(75/4):    const string& prefix, const byte_t* bytes, size_t count)
   C:/Users/Greg/Documents/rsc/rsc/nb/Formatters.cpp(311/2): size_t strSkipSpaces(const std::string& str, size_t index)
-  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(98/1): LogBuffer::LogBuffer(size_t size) :
+  C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp(97/1): LogBuffer::LogBuffer(size_t size) :
   C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.cpp(243/2): NbHeap::NbHeap(MemoryType type, size_t size) : Heap(),
   C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.cpp(414/1): void* NbHeap::Alloc(size_t size)
   C:/Users/Greg/Documents/rsc/rsc/nb/NbHeap.cpp(697/1): void NbHeap::FreeBlock(HeapBlock* block, level_t level)
@@ -4194,7 +4177,7 @@ W119 Argument passed by value is modified
   C:/Users/Greg/Documents/rsc/rsc/nw/IoThread.cpp(143/3):    (const IpPort& port, const byte_t* source, size_t size) const
   C:/Users/Greg/Documents/rsc/rsc/nw/NwLogs.cpp(115/1): void OutputNwLog(LogId id, c_string func, nwerr_t errval, c_string extra)
   C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.cpp(246/1): SysSocket::SendRc SysTcpSocket::QueueBuff(IpBuffer* buff, bool henq)
-  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(154/1): word SysTcpSocket::Listen(size_t backlog)
+  C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(163/1): word SysTcpSocket::Listen(size_t backlog)
   C:/Users/Greg/Documents/rsc/rsc/sb/Context.cpp(385/3): void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
   C:/Users/Greg/Documents/rsc/rsc/sb/Context.cpp(683/1): void Context::ProcessWork(InvokerThread* inv)
   C:/Users/Greg/Documents/rsc/rsc/sb/Message.cpp(589/1): bool Message::Retrieve(ProtocolSM* psm)
@@ -4220,10 +4203,10 @@ W125 Non-const cast is not a downcast
   C:/Users/Greg/Documents/rsc/rsc/sb/Message.cpp(954):          auto bt = dynamic_cast< const BuffTrace* >(bt_);
 W127 Data could be free
   C:/Users/Greg/Documents/rsc/rsc/cb/BcAddress.h(247):    static fixed_string DigitToChar; // DigitString.cpp
-  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(389):    static const CxxWord Attrs[Cxx::NIL_KEYWORD + 1]; // Parser.cpp
-  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(583):    static const Numeric Short; // CxxRoot.cpp
-  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(584):    static const Numeric uChar; // CxxRoot.cpp
-  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(588):    static const Numeric uShort; // CxxRoot.cpp
+  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(390):    static const CxxWord Attrs[Cxx::NIL_KEYWORD + 1]; // Parser.cpp
+  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(584):    static const Numeric Short; // CxxRoot.cpp
+  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(585):    static const Numeric uChar; // CxxRoot.cpp
+  C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h(589):    static const Numeric uShort; // CxxRoot.cpp
   C:/Users/Greg/Documents/rsc/rsc/ct/CxxNamed.h(1202):    static const TypeSpecPtr Bool; // CxxExecute.cpp
   C:/Users/Greg/Documents/rsc/rsc/ct/Library.h(151):    static NodeBase::fixed_string SubsDir; // CodeDir.cpp
   C:/Users/Greg/Documents/rsc/rsc/nb/Alarm.h(59):    static const size_t MaxNameSize; // Alarm.cpp
@@ -4982,18 +4965,18 @@ C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.cpp
     909: void CxxUsageSets::AddUser(CxxNamed* item)
 C:/Users/Greg/Documents/rsc/rsc/ct/Cxx.h
 * W028 Unused data
-    446:    constexpr char Unchecked = ' ';  // spacing not determined
+    447:    constexpr char Unchecked = ' ';  // spacing not determined
 * W042 Member could be private
-    541:    Numeric(NumericType type, size_t width, bool sign) :
+    542:    Numeric(NumericType type, size_t width, bool sign) :
   W082 Adjacent arguments have the same type
-    617:    SymbolView(Accessibility a, TypeMatch m, Cxx::Access c,
+    618:    SymbolView(Accessibility a, TypeMatch m, Cxx::Access c,
 * W092 Function could be free
-    461:    static void UpdateOperator(Cxx::Operator& oper, size_t args); // CxxScope.cpp
+    462:    static void UpdateOperator(Cxx::Operator& oper, size_t args); // CxxScope.cpp
 * W127 Data could be free
-    389:    static const CxxWord Attrs[Cxx::NIL_KEYWORD + 1]; // Parser.cpp
-    583:    static const Numeric Short; // CxxRoot.cpp
-    584:    static const Numeric uChar; // CxxRoot.cpp
-    588:    static const Numeric uShort; // CxxRoot.cpp
+    390:    static const CxxWord Attrs[Cxx::NIL_KEYWORD + 1]; // Parser.cpp
+    584:    static const Numeric Short; // CxxRoot.cpp
+    585:    static const Numeric uChar; // CxxRoot.cpp
+    589:    static const Numeric uShort; // CxxRoot.cpp
 C:/Users/Greg/Documents/rsc/rsc/ct/CxxArea.cpp
   W007 Cast down the inheritance hierarchy
     108:       auto cls = static_cast< Class* >(call->Via()->Root());
@@ -5102,15 +5085,15 @@ C:/Users/Greg/Documents/rsc/rsc/ct/CxxDirective.h
 C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp
   W005 Functional cast
     1661:             return TypeMatch(match - 1);
-    2082:    if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= TagCount(ptrs))
+    2083:    if(item_->GetTypeSpec()->Tags()->PtrCount(false) >= TagCount(ptrs))
   W007 Cast down the inheritance hierarchy
     1615:          auto derived = static_cast< const Class* >(root);
-    1717:       auto thisClass = static_cast< Class* >(thisRoot);
-    1725:             auto thatClass = static_cast< Class* >(thatRoot);
-    1882:    if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item_)))
-    1936:       auto type = static_cast< TypeSpec* >(item_);
-    1946:       spec->SetReferent(static_cast< CxxScoped* >(item_), nullptr);
-    2132:          static_cast< Class* >(root)->BlockCopied(this);
+    1718:       auto thisClass = static_cast< Class* >(thisRoot);
+    1726:             auto thatClass = static_cast< Class* >(thatRoot);
+    1883:    if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item_)))
+    1937:       auto type = static_cast< TypeSpec* >(item_);
+    1947:       spec->SetReferent(static_cast< CxxScoped* >(item_), nullptr);
+    2133:          static_cast< Class* >(root)->BlockCopied(this);
   W075 Virtual function is public
     126:    bool Display(ostream& stream, const string& opts) override;
     138:    bool Display(ostream& stream, const string& opts) override;
@@ -5138,10 +5121,10 @@ C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.cpp
     1169: Cxx::Access ParseFrame::ScopeAccess() const
     1176: Cxx::Access ParseFrame::SetAccess(Cxx::Access access)
     1580: bool StackArg::IsBool() const
-    2271: TypeName* XrefFrame::FindItem(const string& name) const
-    2283: void XrefFrame::PushItem(TypeName* item)
+    2272: TypeName* XrefFrame::FindItem(const string& name) const
+    2284: void XrefFrame::PushItem(TypeName* item)
   W107 Function does not invoke Debug::ft as first statement
-    2200:    Debug::ft("Tracepoint.OnLine");
+    2201:    Debug::ft("Tracepoint.OnLine");
 C:/Users/Greg/Documents/rsc/rsc/ct/CxxExecute.h
   W026 Unused argument
     911/1:    static void Shutdown(NodeBase::RestartLevel level);
@@ -6147,64 +6130,44 @@ C:/Users/Greg/Documents/rsc/rsc/ct/Parser.cpp
     1069:    static_cast< ClassData* >(data.get())->SetMutable(mute);
     1070:    static_cast< ClassData* >(data.get())->SetWidth(width);
     1232:    auto cond = static_cast< Operation* >(token.get());
-    1523:    auto cast = static_cast< Operation* >(token.get());
-    1690:    auto op = static_cast< Operation* >(token.get());
-    1716:    auto delOp = static_cast< Operation* >(token.get());
-    1744:    auto d = static_cast< Do* >(statement.get());
-    1952:    auto f = static_cast< For* >(statement.get());
-    2060:       static_cast< FuncData* >(data.get())->SetExpression(expr);
-    2112:          curr = static_cast< FuncData* >(data.get());
-    2401:             static_cast< If* >(first)->SetElseIf();
-    2407:    auto i = static_cast< If* >(statement.get());
-    2550:    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
-    2594:    auto newOp = static_cast< Operation* >(token.get());
-    2613:    static_cast< Operation* >(token.get())->SetNew();
-    2669:    auto op = static_cast< Operation* >(token.get());
-    3083:    static_cast< Return* >(statement.get())->AddExpr(expr);
-    3130:    auto op = static_cast< Operation* >(token.get());
-    3379:    auto op = static_cast< Operation* >(token.get());
-    3405:    auto s = static_cast< Switch* >(statement.get());
-    3497:    auto op = static_cast< Operation* >(token.get());
-    3531:    auto t = static_cast< Try* >(statement.get());
-    3593:    auto op = static_cast< Operation* >(token.get());
-    3889:    auto w = static_cast< While* >(statement.get());
-    4248:          auto op = static_cast< Operation* >(token)->Op();
+    1522:    auto cast = static_cast< Operation* >(token.get());
+    1689:    auto op = static_cast< Operation* >(token.get());
+    1715:    auto delOp = static_cast< Operation* >(token.get());
+    1743:    auto d = static_cast< Do* >(statement.get());
+    1951:    auto f = static_cast< For* >(statement.get());
+    2059:       static_cast< FuncData* >(data.get())->SetExpression(expr);
+    2111:          curr = static_cast< FuncData* >(data.get());
+    2400:             static_cast< If* >(first)->SetElseIf();
+    2406:    auto i = static_cast< If* >(statement.get());
+    2549:    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
+    2593:    auto newOp = static_cast< Operation* >(token.get());
+    2612:    static_cast< Operation* >(token.get())->SetNew();
+    2668:    auto op = static_cast< Operation* >(token.get());
+    3082:    static_cast< Return* >(statement.get())->AddExpr(expr);
+    3129:    auto op = static_cast< Operation* >(token.get());
+    3378:    auto op = static_cast< Operation* >(token.get());
+    3404:    auto s = static_cast< Switch* >(statement.get());
+    3496:    auto op = static_cast< Operation* >(token.get());
+    3530:    auto t = static_cast< Try* >(statement.get());
+    3592:    auto op = static_cast< Operation* >(token.get());
+    3888:    auto w = static_cast< While* >(statement.get());
+    4247:          auto op = static_cast< Operation* >(token)->Op();
   W008 Cast removes const qualification
-    4536:       func->SetTemplate(const_cast< Function* >(tmplt));
+    4535:       func->SetTemplate(const_cast< Function* >(tmplt));
   W082 Adjacent arguments have the same type
     76: static bool SetCompoundType
 * W106 Function does not invoke Debug::ft
     326: size_t Parser::CurrPos() const
   W119 Argument passed by value is modified
-    1145/2: bool Parser::GetCompoundType(QualNamePtr& name, Cxx::Type type)
-    2484/1: size_t Parser::GetLineNum(size_t pos) const
-    4301/2: void Parser::Log(Warning warning, size_t pos) const
+    1145/2: bool Parser::GetCompoundType(const QualName* name, Cxx::Type type)
+    2483/1: size_t Parser::GetLineNum(size_t pos) const
+    4300/2: void Parser::Log(Warning warning, size_t pos) const
 C:/Users/Greg/Documents/rsc/rsc/ct/Parser.h
   W082 Adjacent arguments have the same type
     472:    bool GetParExpr(ExprPtr& expr, bool omit, bool opt = false);
 * W088 Argument could be const
-    268/1:    bool GetStatements(BlockPtr& block, bool braced);
-    366/1:    bool GetFuncSpecial(FunctionPtr& func);
-    379/1:    bool GetCtorInit(FunctionPtr& func);
-    400/1:    bool GetArguments(FunctionPtr& func);
-    427/1:    bool GetCompoundType(QualNamePtr& name, Cxx::Type type);
-    495/1:    bool GetNum(ExprPtr& expr);
-    496/1:    bool GetChar(ExprPtr& expr, Cxx::Encoding code, size_t pos);
-    497/1:    bool GetStr(ExprPtr& expr, Cxx::Encoding code, size_t pos);
-    507/1:    bool GetCast(ExprPtr& expr);
-    508/1:    bool GetPrecedence(ExprPtr& expr);
-    515/1:    bool HandleTilde(ExprPtr& expr, size_t pos);
-    519/1:    bool GetSubscript(ExprPtr& expr, size_t pos);
-    528/1:    bool GetAlignOf(ExprPtr& expr, size_t pos);
-    529/1:    bool GetCxxCast(ExprPtr& expr, Cxx::Operator op, size_t pos);
-    530/1:    bool GetConditional(ExprPtr& expr, size_t pos);
-    531/1:    bool GetDefined(ExprPtr& expr, size_t pos);
-    532/1:    bool GetDelete(ExprPtr& expr, Cxx::Operator op, size_t pos);
-    533/1:    bool GetNew(ExprPtr& expr, Cxx::Operator op, size_t pos);
-    534/1:    bool GetNoExcept(ExprPtr& expr, size_t pos);
-    535/1:    bool GetSizeOf(ExprPtr& expr, size_t pos);
-    536/1:    bool GetThrow(ExprPtr& expr, size_t pos);
-    537/1:    bool GetTypeId(ExprPtr& expr, size_t pos);
+    483/1:    bool GetCxxLiteralOrAlpha(ExprPtr& expr);
+    489/1:    bool GetOp(ExprPtr& expr, bool cxx);
 * W092 Function could be free
     170:    static void ResetStats(); // CtIncrement.cpp
     174:    static void DisplayStats(std::ostream& stream); // CtIncrement.cpp
@@ -7022,7 +6985,7 @@ C:/Users/Greg/Documents/rsc/rsc/nb/Deferred.h
     90:    virtual void EventHasOccurred(Event event) = 0;
 C:/Users/Greg/Documents/rsc/rsc/nb/DeferredRegistry.h
 * W032 Unused function
-    52:    void EraseAll(Base* owner);
+    52:    void EraseAll(const Base* owner);
 C:/Users/Greg/Documents/rsc/rsc/nb/Duration.h
 * W099 Line contains adjacent spaces
     191: int64_t  operator/(const Duration& lhs, const Duration& rhs);
@@ -7141,28 +7104,28 @@ C:/Users/Greg/Documents/rsc/rsc/nb/Log.h
     66:    static const size_t MaxExplSize; // Log.cpp
 C:/Users/Greg/Documents/rsc/rsc/nb/LogBuffer.cpp
   W004 C-style cast
-    313:    auto after = (ptr_t) next_ + size;
-    326:       if(wrap && (after > (const_ptr_t) first)) return nullptr;
-    333:       if(wrap || (after > (const_ptr_t) first)) return nullptr;
-    507:       used = (const_ptr_t) next_ - (const_ptr_t) first;
-    507:       used = (const_ptr_t) next_ - (const_ptr_t) first;
-    509:       used = size_ - ((const_ptr_t) first - (const_ptr_t) next_);
-    509:       used = size_ - ((const_ptr_t) first - (const_ptr_t) next_);
+    312:    auto after = (ptr_t) next_ + size;
+    325:       if(wrap && (after > (const_ptr_t) first)) return nullptr;
+    332:       if(wrap || (after > (const_ptr_t) first)) return nullptr;
+    506:       used = (const_ptr_t) next_ - (const_ptr_t) first;
+    506:       used = (const_ptr_t) next_ - (const_ptr_t) first;
+    508:       used = size_ - ((const_ptr_t) first - (const_ptr_t) next_);
+    508:       used = size_ - ((const_ptr_t) first - (const_ptr_t) next_);
   W006 reinterpret_cast
-    125:    SetNext(reinterpret_cast< Entry* >(buff_));
-    340:       where = reinterpret_cast< Entry* >(buff_);
-    348:    SetNext(reinterpret_cast< Entry* >(after));
-    385:          SetNext(reinterpret_cast< Entry* >(buff_));
+    124:    SetNext(reinterpret_cast< Entry* >(buff_));
+    339:       where = reinterpret_cast< Entry* >(buff_);
+    347:    SetNext(reinterpret_cast< Entry* >(after));
+    384:          SetNext(reinterpret_cast< Entry* >(buff_));
   W009 Pointer arithmetic
-    313:    auto after = (ptr_t) next_ + size;
-    314:    auto wrap = after >= (buff_ + size_);
-    341:       after = buff_ + size;
+    312:    auto after = (ptr_t) next_ + size;
+    313:    auto wrap = after >= (buff_ + size_);
+    340:       after = buff_ + size;
 * W106 Function does not invoke Debug::ft
-    500: void LogBuffer::UpdateMax()
+    499: void LogBuffer::UpdateMax()
 * W117 Line can merge with the next line and be under the length limit
-    192:       stream << fileName_ << SPACE
+    191:       stream << fileName_ << SPACE
   W119 Argument passed by value is modified
-    98/1: LogBuffer::LogBuffer(size_t size) :
+    97/1: LogBuffer::LogBuffer(size_t size) :
 C:/Users/Greg/Documents/rsc/rsc/nb/LogBufferRegistry.h
 * W042 Member could be private
     61:    static const size_t LogBufferSize;
@@ -8289,18 +8252,19 @@ C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.cpp
   W009 Pointer arithmetic
     134:       Memory::Copy((bytes_ + hdrSize_ + paySize), source, size);
     134:       Memory::Copy((bytes_ + hdrSize_ + paySize), source, size);
-    229:       bytes = bytes_ + hdrSize_;
-    253:    bytes += hdrSize_;
+    238:       bytes = bytes_ + hdrSize_;
+    262:    bytes += hdrSize_;
 * W106 Function does not invoke Debug::ft
-    185: TraceStatus IpBuffer::GetStatus() const
+    194: TraceStatus IpBuffer::GetStatus() const
 C:/Users/Greg/Documents/rsc/rsc/nw/IpBuffer.h
   W009 Pointer arithmetic
-    106:    NodeBase::byte_t* PayloadPtr() const { return bytes_ + hdrSize_; }
+    111:    NodeBase::byte_t* PayloadPtr() const { return bytes_ + hdrSize_; }
 * W060 Base class constructor is public
     55:    IpBuffer(NodeBase::MsgDirection dir, size_t header, size_t payload);
   W075 Virtual function is public
-    119:    virtual size_t PayloadSize() const;
-    138:    virtual bool AddBytes
+    64:    virtual IpBuffer* Clone() const;
+    124:    virtual size_t PayloadSize() const;
+    143:    virtual bool AddBytes
   W082 Adjacent arguments have the same type
     55:    IpBuffer(NodeBase::MsgDirection dir, size_t header, size_t payload);
 * W127 Data could be free
@@ -8389,10 +8353,10 @@ C:/Users/Greg/Documents/rsc/rsc/nw/NwCliParms.h
     67:    IpAddrParm(NodeBase::c_string help, NodeBase::c_string text);
 C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.cpp
   W007 Cast down the inheritance hierarchy
-    258:       (this, static_cast< const TcpIpService* >(service), port);
-    269:    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
-    318:       (this, static_cast<const UdpIpService*>(service), port);
-    329:    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
+    259:       (this, static_cast< const TcpIpService* >(service), port);
+    270:    auto daemon = static_cast< TcpIoDaemon* >(reg->FindDaemon(name.c_str()));
+    319:       (this, static_cast<const UdpIpService*>(service), port);
+    330:    auto daemon = static_cast< UdpIoDaemon* >(reg->FindDaemon(name.c_str()));
 C:/Users/Greg/Documents/rsc/rsc/nw/NwDaemons.h
 * W053 Data could be const
     98:    IoThreadRecreator* recreator_;
@@ -8442,6 +8406,8 @@ C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL2Addr.h
 * W060 Base class constructor is public
     42:    SysIpL2Addr();
     49:    SysIpL2Addr(const std::string& text);
+  W075 Virtual function is public
+    73:    virtual void Nullify();
 * W092 Function could be free
     113:    static const SysIpL2Addr& NullIpAddr(); // SysIpL2Addr.cpp
 C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL2Addr.win.cpp
@@ -8462,9 +8428,6 @@ C:/Users/Greg/Documents/rsc/rsc/nw/SysIpL3Addr.h
     115:    void NetworkToHost(IPv4Addr netaddr, ipport_t netport);
     120:    void NetworkToHost(const uint16_t netaddr[8], ipport_t netport);
     160:    std::string to_str(bool verbose) const;
-    164:    void Nullify();
-* W042 Member could be private
-    164:    void Nullify();
 * W060 Base class constructor is public
     41:    SysIpL3Addr();
     46:    SysIpL3Addr(const SysIpL2Addr& l2Addr, ipport_t port,
@@ -8553,30 +8516,30 @@ C:/Users/Greg/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp
     60:       peer = (sockaddr*) &ipv4peer;
     110:       peer = (sockaddr*)&ipv6peer;
     117:       peer = (sockaddr*)&ipv4peer;
-    189:       self = (sockaddr*) &ipv6self;
-    194:       self = (sockaddr*) &ipv4self;
-    327:       peer = (sockaddr*) &ipv6peer;
-    332:       peer = (sockaddr*) &ipv4peer;
-    398:       (char*) &linger_opts, sizeof(linger)) != SOCKET_ERROR)
-    424:       (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)
-    434:       (char*) &val, &valsize) == SOCKET_ERROR)
+    198:       self = (sockaddr*) &ipv6self;
+    203:       self = (sockaddr*) &ipv4self;
+    336:       peer = (sockaddr*) &ipv6peer;
+    341:       peer = (sockaddr*) &ipv4peer;
+    407:       (char*) &linger_opts, sizeof(linger)) != SOCKET_ERROR)
+    433:       (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)
+    443:       (char*) &val, &valsize) == SOCKET_ERROR)
   W006 reinterpret_cast
-    300:    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
-    371:    auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
+    309:    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
+    380:    auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
   W007 Cast down the inheritance hierarchy
-    421:    bool alive = static_cast< const TcpIpService* >(service)->Keepalive();
+    430:    bool alive = static_cast< const TcpIpService* >(service)->Keepalive();
   W056 Implicit constructor invoked: POD members not initialized
   i 46:    sockaddr_in ipv4peer;
   i 47:    sockaddr_in6 ipv6peer;
   i 97:    sockaddr_in ipv4peer;
   i 98:    sockaddr_in6 ipv6peer;
-  i 180:    sockaddr_in ipv4self;
-  i 181:    sockaddr_in6 ipv6self;
-  i 318:    sockaddr_in ipv4peer;
-  i 319:    sockaddr_in6 ipv6peer;
-  i 393:    linger linger_opts;
+  i 189:    sockaddr_in ipv4self;
+  i 190:    sockaddr_in6 ipv6self;
+  i 327:    sockaddr_in ipv4peer;
+  i 328:    sockaddr_in6 ipv6peer;
+  i 402:    linger linger_opts;
   W119 Argument passed by value is modified
-    154/1: word SysTcpSocket::Listen(size_t backlog)
+    163/1: word SysTcpSocket::Listen(size_t backlog)
 C:/Users/Greg/Documents/rsc/rsc/nw/SysUdpSocket.h
 * W042 Member could be private
     73:    NodeBase::word SendTo
@@ -9392,6 +9355,9 @@ C:/Users/Greg/Documents/rsc/rsc/sb/SbInvokerPools.cpp
   W007 Cast down the inheritance hierarchy
     61:       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressQueueLength")));
     72:       (static_cast< CfgIntParm* >(reg->FindParm("NoIngressMessageCount")));
+C:/Users/Greg/Documents/rsc/rsc/sb/SbIpBuffer.cpp
+* W023 Remove using statement
+    36: using namespace NetworkBase;
 C:/Users/Greg/Documents/rsc/rsc/sb/SbIpBuffer.h
   W006 reinterpret_cast
     62:       { return reinterpret_cast< MsgHeader* >(HeaderPtr()); }
@@ -9665,7 +9631,7 @@ C:/Users/Greg/Documents/rsc/rsc/sb/TlvParameter.h
     71:    static Id ExtractPid(const TlvParmLayout& parm); // TlvParameter.cpp
 C:/Users/Greg/Documents/rsc/rsc/sb/TlvProtocol.cpp
   W006 reinterpret_cast
-    66:       auto pptr = reinterpret_cast< TlvParmPtr >(&bytes[index]);
+    67:       auto pptr = reinterpret_cast< TlvParmPtr >(&bytes[index]);
 C:/Users/Greg/Documents/rsc/rsc/sb/Trigger.h
 * W042 Member could be private
     80:    static bool IsValidId(Id tid)

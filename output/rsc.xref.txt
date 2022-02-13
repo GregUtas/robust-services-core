@@ -404,6 +404,7 @@ NAMESPACES:
       sb/SbIncrement.h
       sb/SbInputHandler.cpp
       sb/SbInputHandler.h
+      sb/SbIpBuffer.cpp
       sb/SbIpBuffer.h
       sb/SbModule.cpp
       sb/SbTracer.cpp
@@ -8980,7 +8981,7 @@ ct/Cxx.cpp
    CodeTools.XX: 474 [SpaceData]
       ct/Cxx.cpp
 ct/Cxx.h
-   CodeTools.CharString: 342 [Function]
+   CodeTools.CharString: 343 [Function]
       ct/Cxx.cpp
       ct/CxxCharLiteral.h
       ct/CxxStrLiteral.h
@@ -9074,7 +9075,7 @@ ct/Cxx.h
       ct/CxxScope.cpp
       ct/Lexer.cpp
       ct/Parser.cpp
-   CodeTools.Cxx.CxxOps: 297 [SpaceData]
+   CodeTools.Cxx.CxxOps: 298 [SpaceData]
       ct/Cxx.cpp
       ct/Lexer.cpp
    CodeTools.Cxx.Directive: 44 [Enum]
@@ -9125,15 +9126,15 @@ ct/Cxx.h
       ct/Parser.cpp
    CodeTools.Cxx.Directive.NIL_DIRECTIVE: 58 [Enumerator]
       ct/Lexer.cpp
-   CodeTools.Cxx.DirectivePair: 278 [Typedef]
+   CodeTools.Cxx.DirectivePair: 279 [Typedef]
       ct/Cxx.cpp
-   CodeTools.Cxx.Directives: 280 [SpaceData]
+   CodeTools.Cxx.Directives: 281 [SpaceData]
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.Cxx.DirectiveTable: 277 [Typedef]
+   CodeTools.Cxx.DirectiveTable: 278 [Typedef]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.Cxx.DirectiveTablePtr: 279 [Typedef]
+   CodeTools.Cxx.DirectiveTablePtr: 280 [Typedef]
       ct/Cxx.cpp
       ct/Cxx.h
    CodeTools.Cxx.Encoding: 227 [Enum]
@@ -9164,14 +9165,14 @@ ct/Cxx.h
       ct/CxxCharLiteral.h
       ct/CxxStrLiteral.h
       ct/Parser.cpp
-   CodeTools.Cxx.GetReserved: 317 [Function]
+   CodeTools.Cxx.GetReserved: 318 [Function]
       ct/Cxx.cpp
       ct/Parser.cpp
-   CodeTools.Cxx.GetType: 321 [Function]
+   CodeTools.Cxx.GetType: 322 [Function]
       ct/Cxx.cpp
       ct/Lexer.cpp
       ct/Parser.cpp
-   CodeTools.Cxx.Initialize: 311 [Function]
+   CodeTools.Cxx.Initialize: 312 [Function]
       ct/CtModule.cpp
       ct/Cxx.cpp
    CodeTools.Cxx.ItemType: 246 [Enum]
@@ -9211,7 +9212,7 @@ ct/Cxx.h
       ct/CxxStatement.cpp
       ct/CxxSymbols.cpp
       ct/Editor.cpp
-   CodeTools.Cxx.ItemType.Elision: 272 [Enumerator]
+   CodeTools.Cxx.ItemType.Elision: 273 [Enumerator]
       ct/CxxExecute.cpp
       ct/CxxToken.h
    CodeTools.Cxx.ItemType.Enum: 254 [Enumerator]
@@ -9242,7 +9243,10 @@ ct/Cxx.h
       ct/CxxScoped.h
       ct/CxxSymbols.cpp
       ct/Editor.cpp
-   CodeTools.Cxx.ItemType.Function: 258 [Enumerator]
+   CodeTools.Cxx.ItemType.FuncSpec: 258 [Enumerator]
+      ct/CxxExecute.cpp
+      ct/CxxScope.h
+   CodeTools.Cxx.ItemType.Function: 259 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxNamed.cpp
       ct/CxxRoot.cpp
@@ -9253,17 +9257,17 @@ ct/Cxx.h
       ct/CxxToken.cpp
       ct/Editor.cpp
       ct/Library.cpp
-   CodeTools.Cxx.ItemType.If: 269 [Enumerator]
+   CodeTools.Cxx.ItemType.If: 270 [Enumerator]
       ct/CxxStatement.h
       ct/Parser.cpp
-   CodeTools.Cxx.ItemType.Macro: 259 [Enumerator]
+   CodeTools.Cxx.ItemType.Macro: 260 [Enumerator]
       ct/CxxDirective.h
       ct/CxxNamed.cpp
       ct/CxxSymbols.cpp
-   CodeTools.Cxx.ItemType.MemberInit: 260 [Enumerator]
+   CodeTools.Cxx.ItemType.MemberInit: 261 [Enumerator]
       ct/CxxScoped.h
       ct/Editor.cpp
-   CodeTools.Cxx.ItemType.Namespace: 261 [Enumerator]
+   CodeTools.Cxx.ItemType.Namespace: 262 [Enumerator]
       ct/CodeItemSet.cpp
       ct/CxxArea.cpp
       ct/CxxArea.h
@@ -9272,25 +9276,25 @@ ct/Cxx.h
       ct/CxxScoped.cpp
       ct/CxxSymbols.cpp
       ct/Editor.cpp
-   CodeTools.Cxx.ItemType.NoOp: 270 [Enumerator]
+   CodeTools.Cxx.ItemType.NoOp: 271 [Enumerator]
       ct/CxxScope.cpp
       ct/CxxStatement.h
-   CodeTools.Cxx.ItemType.Operation: 271 [Enumerator]
+   CodeTools.Cxx.ItemType.Operation: 272 [Enumerator]
       ct/CxxScope.cpp
       ct/CxxToken.cpp
       ct/CxxToken.h
       ct/Parser.cpp
-   CodeTools.Cxx.ItemType.QualName: 262 [Enumerator]
+   CodeTools.Cxx.ItemType.QualName: 263 [Enumerator]
       ct/CxxNamed.h
       ct/Editor.cpp
       ct/Parser.cpp
-   CodeTools.Cxx.ItemType.SpaceDefn: 263 [Enumerator]
+   CodeTools.Cxx.ItemType.SpaceDefn: 264 [Enumerator]
       ct/CxxScope.h
       ct/Editor.cpp
-   CodeTools.Cxx.ItemType.StringLiteral: 264 [Enumerator]
+   CodeTools.Cxx.ItemType.StringLiteral: 265 [Enumerator]
       ct/CxxToken.h
       ct/Editor.cpp
-   CodeTools.Cxx.ItemType.TemplateParm: 265 [Enumerator]
+   CodeTools.Cxx.ItemType.TemplateParm: 266 [Enumerator]
       ct/Cxx.cpp
       ct/CxxNamed.cpp
       ct/CxxScoped.h
@@ -9300,7 +9304,7 @@ ct/Cxx.h
       ct/CxxScoped.h
       ct/CxxSymbols.cpp
       ct/CxxToken.cpp
-   CodeTools.Cxx.ItemType.Typedef: 266 [Enumerator]
+   CodeTools.Cxx.ItemType.Typedef: 267 [Enumerator]
       ct/CodeFile.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
@@ -9309,10 +9313,10 @@ ct/Cxx.h
       ct/CxxSymbols.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.Cxx.ItemType.TypeName: 267 [Enumerator]
+   CodeTools.Cxx.ItemType.TypeName: 268 [Enumerator]
       ct/CxxNamed.h
       ct/Editor.cpp
-   CodeTools.Cxx.ItemType.TypeSpec: 268 [Enumerator]
+   CodeTools.Cxx.ItemType.TypeSpec: 269 [Enumerator]
       ct/CxxExecute.cpp
       ct/CxxNamed.h
    CodeTools.Cxx.ItemType.Undefined: 248 [Enumerator]
@@ -9450,15 +9454,15 @@ ct/Cxx.h
       ct/Parser.cpp
    CodeTools.Cxx.Keyword.WHILE: 104 [Enumerator]
       ct/Cxx.cpp
-   CodeTools.Cxx.KeywordPair: 285 [Typedef]
+   CodeTools.Cxx.KeywordPair: 286 [Typedef]
       ct/Cxx.cpp
-   CodeTools.Cxx.Keywords: 287 [SpaceData]
+   CodeTools.Cxx.Keywords: 288 [SpaceData]
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.Cxx.KeywordTable: 284 [Typedef]
+   CodeTools.Cxx.KeywordTable: 285 [Typedef]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.Cxx.KeywordTablePtr: 286 [Typedef]
+   CodeTools.Cxx.KeywordTablePtr: 287 [Typedef]
       ct/Cxx.cpp
       ct/Cxx.h
    CodeTools.Cxx.MAX_PTRS: 239 [SpaceData]
@@ -9729,18 +9733,18 @@ ct/Cxx.h
    CodeTools.Cxx.Operator.UNARY_PLUS: 131 [Enumerator]
       ct/Cxx.cpp
       ct/CxxToken.cpp
-   CodeTools.Cxx.OperatorPair: 295 [Typedef]
+   CodeTools.Cxx.OperatorPair: 296 [Typedef]
       ct/Cxx.cpp
-   CodeTools.Cxx.OperatorTable: 294 [Typedef]
-      ct/Cxx.cpp
-      ct/Cxx.h
-   CodeTools.Cxx.OperatorTablePtr: 296 [Typedef]
+   CodeTools.Cxx.OperatorTable: 295 [Typedef]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.Cxx.PreOps: 298 [SpaceData]
+   CodeTools.Cxx.OperatorTablePtr: 297 [Typedef]
+      ct/Cxx.cpp
+      ct/Cxx.h
+   CodeTools.Cxx.PreOps: 299 [SpaceData]
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.Cxx.Reserved: 299 [SpaceData]
+   CodeTools.Cxx.Reserved: 300 [SpaceData]
       ct/Cxx.cpp
    CodeTools.Cxx.Type: 183 [Enum]
       ct/Cxx.cpp
@@ -9801,57 +9805,57 @@ ct/Cxx.h
    CodeTools.Cxx.Type.WCHAR: 199 [Enumerator]
       ct/Cxx.cpp
       ct/Parser.cpp
-   CodeTools.Cxx.TypePair: 305 [Typedef]
+   CodeTools.Cxx.TypePair: 306 [Typedef]
       ct/Cxx.cpp
-   CodeTools.Cxx.Types: 307 [SpaceData]
+   CodeTools.Cxx.Types: 308 [SpaceData]
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.Cxx.TypesTable: 304 [Typedef]
+   CodeTools.Cxx.TypesTable: 305 [Typedef]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.Cxx.TypesTablePtr: 306 [Typedef]
+   CodeTools.Cxx.TypesTablePtr: 307 [Typedef]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.CxxChar: 401 [Class]
+   CodeTools.CxxChar: 402 [Class]
       ct/Cxx.cpp
       ct/Cxx.h
       ct/CxxArea.cpp
       ct/CxxRoot.cpp
       ct/CxxString.cpp
       ct/Lexer.cpp
-   CodeTools.CxxChar.Attrs: 437 [ClassData]
+   CodeTools.CxxChar.Attrs: 438 [ClassData]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxString.cpp
       ct/Lexer.cpp
-   CodeTools.CxxChar.hexValue: 425 [ClassData]
+   CodeTools.CxxChar.hexValue: 426 [ClassData]
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.CxxChar.Initialize: 433 [Function]
+   CodeTools.CxxChar.Initialize: 434 [Function]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
-   CodeTools.CxxChar.intValue: 421 [ClassData]
+   CodeTools.CxxChar.intValue: 422 [ClassData]
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.CxxChar.octValue: 429 [ClassData]
+   CodeTools.CxxChar.octValue: 430 [ClassData]
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.CxxChar.validFirst: 405 [ClassData]
+   CodeTools.CxxChar.validFirst: 406 [ClassData]
       ct/Cxx.cpp
       ct/CxxString.cpp
       ct/Lexer.cpp
-   CodeTools.CxxChar.validInt: 417 [ClassData]
+   CodeTools.CxxChar.validInt: 418 [ClassData]
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.CxxChar.validNext: 409 [ClassData]
+   CodeTools.CxxChar.validNext: 410 [ClassData]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxString.cpp
       ct/Lexer.cpp
-   CodeTools.CxxChar.validOp: 413 [ClassData]
+   CodeTools.CxxChar.validOp: 414 [ClassData]
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.CxxOp: 455 [Class]
+   CodeTools.CxxOp: 456 [Class]
       ct/Cxx.cpp
       ct/Cxx.h
       ct/CxxArea.cpp
@@ -9859,47 +9863,47 @@ ct/Cxx.h
       ct/CxxScope.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.CxxOp.arguments: 486 [ClassData]
+   CodeTools.CxxOp.arguments: 487 [ClassData]
       ct/Cxx.cpp
       ct/CxxToken.cpp
-   CodeTools.CxxOp.Attrs: 515 [ClassData]
+   CodeTools.CxxOp.Attrs: 516 [ClassData]
       ct/Cxx.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.CxxOp.CxxOp: 519 [Function]
+   CodeTools.CxxOp.CxxOp: 520 [Function]
       ct/Cxx.cpp
-   CodeTools.CxxOp.NameToOperator: 478 [Function]
+   CodeTools.CxxOp.NameToOperator: 479 [Function]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.CxxOp.OperatorToName: 465 [Function]
+   CodeTools.CxxOp.OperatorToName: 466 [Function]
       ct/Cxx.cpp
       ct/CxxNamed.cpp
       ct/CxxToken.cpp
-   CodeTools.CxxOp.overloadable: 494 [ClassData]
+   CodeTools.CxxOp.overloadable: 495 [ClassData]
       ct/Cxx.cpp
       ct/CxxToken.cpp
-   CodeTools.CxxOp.priority: 490 [ClassData]
+   CodeTools.CxxOp.priority: 491 [ClassData]
       ct/Cxx.cpp
       ct/CxxToken.cpp
-   CodeTools.CxxOp.rightToLeft: 501 [ClassData]
+   CodeTools.CxxOp.rightToLeft: 502 [ClassData]
       ct/Cxx.cpp
       ct/CxxToken.cpp
-   CodeTools.CxxOp.spacing: 511 [ClassData]
-      ct/Cxx.cpp
-      ct/CxxToken.cpp
-      ct/Editor.cpp
-   CodeTools.CxxOp.symbol: 482 [ClassData]
+   CodeTools.CxxOp.spacing: 512 [ClassData]
       ct/Cxx.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.CxxOp.symmetric: 505 [ClassData]
+   CodeTools.CxxOp.symbol: 483 [ClassData]
       ct/Cxx.cpp
       ct/CxxToken.cpp
-   CodeTools.CxxOp.UpdateOperator: 461 [Function]
+      ct/Editor.cpp
+   CodeTools.CxxOp.symmetric: 506 [ClassData]
+      ct/Cxx.cpp
+      ct/CxxToken.cpp
+   CodeTools.CxxOp.UpdateOperator: 462 [Function]
       ct/Cxx.cpp
       ct/CxxScope.cpp
-   CodeTools.CxxStats: 710 [Class]
+   CodeTools.CxxStats: 711 [Class]
       ct/CodeFile.cpp
       ct/CtIncrement.cpp
       ct/Cxx.cpp
@@ -9918,9 +9922,9 @@ ct/Cxx.h
       ct/CxxSymbols.cpp
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.CxxStats.CxxStats: 813 [Function]
+   CodeTools.CxxStats.CxxStats: 814 [Function]
       ct/Cxx.cpp
-   CodeTools.CxxStats.Decr: 796 [Function]
+   CodeTools.CxxStats.Decr: 797 [Function]
       ct/CodeFile.cpp
       ct/CxxArea.cpp
       ct/CxxCharLiteral.h
@@ -9934,13 +9938,13 @@ ct/Cxx.h
       ct/CxxStrLiteral.h
       ct/CxxSymbols.cpp
       ct/CxxToken.h
-   CodeTools.CxxStats.Display: 809 [Function]
+   CodeTools.CxxStats.Display: 810 [Function]
       ct/CtIncrement.cpp
       ct/Cxx.cpp
-   CodeTools.CxxStats.in_use: 825 [ClassData]
+   CodeTools.CxxStats.in_use: 826 [ClassData]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.CxxStats.Incr: 792 [Function]
+   CodeTools.CxxStats.Incr: 793 [Function]
       ct/CodeFile.cpp
       ct/CxxArea.cpp
       ct/CxxCharLiteral.h
@@ -9953,196 +9957,196 @@ ct/Cxx.h
       ct/CxxSymbols.cpp
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.CxxStats.Info: 837 [ClassData]
+   CodeTools.CxxStats.Info: 838 [ClassData]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.CxxStats.Item: 715 [Enum]
+   CodeTools.CxxStats.Item: 716 [Enum]
       ct/Cxx.h
-   CodeTools.CxxStats.Item.ALIGNAS: 758 [Enumerator]
+   CodeTools.CxxStats.Item.ALIGNAS: 759 [Enumerator]
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.ARG_DECL: 750 [Enumerator]
+   CodeTools.CxxStats.Item.ARG_DECL: 751 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.ARRAY_SPEC: 741 [Enumerator]
+   CodeTools.CxxStats.Item.ARRAY_SPEC: 742 [Enumerator]
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.ASM: 759 [Enumerator]
+   CodeTools.CxxStats.Item.ASM: 760 [Enumerator]
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.BASE_DECL: 751 [Enumerator]
+   CodeTools.CxxStats.Item.BASE_DECL: 752 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.BLOCK_DECL: 776 [Enumerator]
+   CodeTools.CxxStats.Item.BLOCK_DECL: 777 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.CxxStats.Item.BOOL_LITERAL: 732 [Enumerator]
+   CodeTools.CxxStats.Item.BOOL_LITERAL: 733 [Enumerator]
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.BRACE_INIT: 739 [Enumerator]
+   CodeTools.CxxStats.Item.BRACE_INIT: 740 [Enumerator]
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.BREAK: 760 [Enumerator]
+   CodeTools.CxxStats.Item.BREAK: 761 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.CASE: 761 [Enumerator]
+   CodeTools.CxxStats.Item.CASE: 762 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.CATCH: 762 [Enumerator]
+   CodeTools.CxxStats.Item.CATCH: 763 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.CHAR_LITERAL: 733 [Enumerator]
+   CodeTools.CxxStats.Item.CHAR_LITERAL: 734 [Enumerator]
       ct/CxxCharLiteral.h
-   CodeTools.CxxStats.Item.CLASS_DATA: 777 [Enumerator]
+   CodeTools.CxxStats.Item.CLASS_DATA: 778 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.CxxStats.Item.CLASS_DECL: 781 [Enumerator]
+   CodeTools.CxxStats.Item.CLASS_DECL: 782 [Enumerator]
       ct/CxxArea.cpp
-   CodeTools.CxxStats.Item.CLASS_INST: 782 [Enumerator]
+   CodeTools.CxxStats.Item.CLASS_INST: 783 [Enumerator]
       ct/CxxArea.cpp
-   CodeTools.CxxStats.Item.CODE_FILE: 785 [Enumerator]
+   CodeTools.CxxStats.Item.CODE_FILE: 786 [Enumerator]
       ct/CodeFile.cpp
-   CodeTools.CxxStats.Item.CONTINUE: 763 [Enumerator]
+   CodeTools.CxxStats.Item.CONTINUE: 764 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.CXX_SYMBOLS: 786 [Enumerator]
+   CodeTools.CxxStats.Item.CXX_SYMBOLS: 787 [Enumerator]
       ct/CxxSymbols.cpp
-   CodeTools.CxxStats.Item.DATA_SPEC: 747 [Enumerator]
+   CodeTools.CxxStats.Item.DATA_SPEC: 748 [Enumerator]
       ct/CxxNamed.cpp
-   CodeTools.CxxStats.Item.DEFINE_DIRECTIVE: 724 [Enumerator]
+   CodeTools.CxxStats.Item.DEFINE_DIRECTIVE: 725 [Enumerator]
       ct/CxxDirective.cpp
-   CodeTools.CxxStats.Item.DO: 764 [Enumerator]
+   CodeTools.CxxStats.Item.DO: 765 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.ELIF_DIRECTIVE: 721 [Enumerator]
+   CodeTools.CxxStats.Item.ELIF_DIRECTIVE: 722 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.ELISION: 737 [Enumerator]
+   CodeTools.CxxStats.Item.ELISION: 738 [Enumerator]
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.ELSE_DIRECTIVE: 722 [Enumerator]
+   CodeTools.CxxStats.Item.ELSE_DIRECTIVE: 723 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.ENDIF_DIRECTIVE: 723 [Enumerator]
+   CodeTools.CxxStats.Item.ENDIF_DIRECTIVE: 724 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.ENUM_DECL: 752 [Enumerator]
+   CodeTools.CxxStats.Item.ENUM_DECL: 753 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.ENUM_MEM: 753 [Enumerator]
+   CodeTools.CxxStats.Item.ENUM_MEM: 754 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.ERROR_DIRECTIVE: 727 [Enumerator]
+   CodeTools.CxxStats.Item.ERROR_DIRECTIVE: 728 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.EXPR: 765 [Enumerator]
+   CodeTools.CxxStats.Item.EXPR: 766 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.EXPRESSION: 740 [Enumerator]
+   CodeTools.CxxStats.Item.EXPRESSION: 741 [Enumerator]
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.FILE_DATA: 778 [Enumerator]
+   CodeTools.CxxStats.Item.FILE_DATA: 779 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.CxxStats.Item.FLOAT_LITERAL: 731 [Enumerator]
+   CodeTools.CxxStats.Item.FLOAT_LITERAL: 732 [Enumerator]
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.FOR: 766 [Enumerator]
+   CodeTools.CxxStats.Item.FOR: 767 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.FORWARD_DECL: 754 [Enumerator]
+   CodeTools.CxxStats.Item.FORWARD_DECL: 755 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.FRIEND_DECL: 755 [Enumerator]
+   CodeTools.CxxStats.Item.FRIEND_DECL: 756 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.FUNC_DATA: 779 [Enumerator]
+   CodeTools.CxxStats.Item.FUNC_DATA: 780 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.CxxStats.Item.FUNC_SPEC: 748 [Enumerator]
+   CodeTools.CxxStats.Item.FUNC_SPEC: 749 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.CxxStats.Item.FUNCTION: 780 [Enumerator]
+   CodeTools.CxxStats.Item.FUNCTION: 781 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.CxxStats.Item.GOTO: 767 [Enumerator]
+   CodeTools.CxxStats.Item.GOTO: 768 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.IF: 768 [Enumerator]
+   CodeTools.CxxStats.Item.IF: 769 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.IF_DIRECTIVE: 718 [Enumerator]
+   CodeTools.CxxStats.Item.IF_DIRECTIVE: 719 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.IFDEF_DIRECTIVE: 719 [Enumerator]
+   CodeTools.CxxStats.Item.IFDEF_DIRECTIVE: 720 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.IFNDEF_DIRECTIVE: 720 [Enumerator]
+   CodeTools.CxxStats.Item.IFNDEF_DIRECTIVE: 721 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.INCLUDE_DIRECTIVE: 726 [Enumerator]
+   CodeTools.CxxStats.Item.INCLUDE_DIRECTIVE: 727 [Enumerator]
       ct/CxxDirective.cpp
-   CodeTools.CxxStats.Item.INT_LITERAL: 730 [Enumerator]
+   CodeTools.CxxStats.Item.INT_LITERAL: 731 [Enumerator]
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.Item_N: 787 [Enumerator]
+   CodeTools.CxxStats.Item.Item_N: 788 [Enumerator]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.CxxStats.Item.LABEL: 769 [Enumerator]
+   CodeTools.CxxStats.Item.LABEL: 770 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.LINE_DIRECTIVE: 728 [Enumerator]
+   CodeTools.CxxStats.Item.LINE_DIRECTIVE: 729 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.MACRO_NAME: 717 [Enumerator]
+   CodeTools.CxxStats.Item.MACRO_NAME: 718 [Enumerator]
       ct/CxxDirective.cpp
-   CodeTools.CxxStats.Item.MEMBER_INIT: 743 [Enumerator]
+   CodeTools.CxxStats.Item.MEMBER_INIT: 744 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.NOOP: 770 [Enumerator]
+   CodeTools.CxxStats.Item.NOOP: 771 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.NULLPTR: 735 [Enumerator]
+   CodeTools.CxxStats.Item.NULLPTR: 736 [Enumerator]
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.OPERATION: 736 [Enumerator]
+   CodeTools.CxxStats.Item.OPERATION: 737 [Enumerator]
       ct/CxxToken.cpp
-   CodeTools.CxxStats.Item.PRAGMA_DIRECTIVE: 729 [Enumerator]
+   CodeTools.CxxStats.Item.PRAGMA_DIRECTIVE: 730 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.PRECEDENCE: 738 [Enumerator]
+   CodeTools.CxxStats.Item.PRECEDENCE: 739 [Enumerator]
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.QUAL_NAME: 744 [Enumerator]
+   CodeTools.CxxStats.Item.QUAL_NAME: 745 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxNamed.cpp
-   CodeTools.CxxStats.Item.RETURN: 771 [Enumerator]
+   CodeTools.CxxStats.Item.RETURN: 772 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.SPACE_DECL: 784 [Enumerator]
+   CodeTools.CxxStats.Item.SPACE_DECL: 785 [Enumerator]
       ct/CxxArea.cpp
-   CodeTools.CxxStats.Item.SPACE_DEFN: 783 [Enumerator]
+   CodeTools.CxxStats.Item.SPACE_DEFN: 784 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.CxxStats.Item.STATIC_ASSERT: 772 [Enumerator]
+   CodeTools.CxxStats.Item.STATIC_ASSERT: 773 [Enumerator]
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.CxxStats.Item.STR_LITERAL: 734 [Enumerator]
+   CodeTools.CxxStats.Item.STR_LITERAL: 735 [Enumerator]
       ct/CxxStrLiteral.h
-   CodeTools.CxxStats.Item.SWITCH: 773 [Enumerator]
+   CodeTools.CxxStats.Item.SWITCH: 774 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.TEMPLATE_PARM: 745 [Enumerator]
+   CodeTools.CxxStats.Item.TEMPLATE_PARM: 746 [Enumerator]
       ct/CxxScoped.cpp
       ct/CxxScoped.h
-   CodeTools.CxxStats.Item.TEMPLATE_PARMS: 742 [Enumerator]
+   CodeTools.CxxStats.Item.TEMPLATE_PARMS: 743 [Enumerator]
       ct/CxxScoped.cpp
       ct/CxxScoped.h
-   CodeTools.CxxStats.Item.TERMINAL_DECL: 756 [Enumerator]
+   CodeTools.CxxStats.Item.TERMINAL_DECL: 757 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.TRY: 774 [Enumerator]
+   CodeTools.CxxStats.Item.TRY: 775 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.Item.TYPE_DECL: 757 [Enumerator]
+   CodeTools.CxxStats.Item.TYPE_DECL: 758 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.TYPE_NAME: 746 [Enumerator]
+   CodeTools.CxxStats.Item.TYPE_NAME: 747 [Enumerator]
       ct/CxxNamed.cpp
-   CodeTools.CxxStats.Item.UNDEF_DIRECTIVE: 725 [Enumerator]
+   CodeTools.CxxStats.Item.UNDEF_DIRECTIVE: 726 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
-   CodeTools.CxxStats.Item.USING_DECL: 749 [Enumerator]
+   CodeTools.CxxStats.Item.USING_DECL: 750 [Enumerator]
       ct/CxxScoped.cpp
-   CodeTools.CxxStats.Item.WHILE: 775 [Enumerator]
+   CodeTools.CxxStats.Item.WHILE: 776 [Enumerator]
       ct/CxxStatement.cpp
       ct/CxxStatement.h
-   CodeTools.CxxStats.name: 817 [ClassData]
+   CodeTools.CxxStats.name: 818 [ClassData]
       ct/Cxx.cpp
-   CodeTools.CxxStats.Shrink: 805 [Function]
+   CodeTools.CxxStats.Shrink: 806 [Function]
       ct/CtIncrement.cpp
       ct/Cxx.cpp
-   CodeTools.CxxStats.size: 821 [ClassData]
+   CodeTools.CxxStats.size: 822 [ClassData]
       ct/Cxx.cpp
-   CodeTools.CxxStats.Strings: 800 [Function]
+   CodeTools.CxxStats.Strings: 801 [Function]
       ct/CodeFile.cpp
       ct/CxxArea.cpp
       ct/CxxDirective.cpp
@@ -10151,10 +10155,10 @@ ct/Cxx.h
       ct/CxxScoped.cpp
       ct/CxxStrLiteral.h
       ct/CxxSymbols.cpp
-   CodeTools.CxxStats.strings: 829 [ClassData]
+   CodeTools.CxxStats.strings: 830 [ClassData]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.CxxStats.Vectors: 801 [Function]
+   CodeTools.CxxStats.Vectors: 802 [Function]
       ct/CodeFile.cpp
       ct/CxxArea.cpp
       ct/CxxDirective.cpp
@@ -10163,10 +10167,10 @@ ct/Cxx.h
       ct/CxxScoped.cpp
       ct/CxxSymbols.cpp
       ct/CxxToken.cpp
-   CodeTools.CxxStats.vectors: 833 [ClassData]
+   CodeTools.CxxStats.vectors: 834 [ClassData]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.CxxUsageSets: 668 [Class]
+   CodeTools.CxxUsageSets: 669 [Class]
       ct/CodeFile.cpp
       ct/CodeFile.h
       ct/CodeFileSet.cpp
@@ -10189,11 +10193,11 @@ ct/Cxx.h
       ct/CxxToken.h
       ct/Editor.cpp
       ct/LibrarySet.h
-   CodeTools.CxxUsageSets.AddBase: 686 [Function]
+   CodeTools.CxxUsageSets.AddBase: 687 [Function]
       ct/CodeFile.cpp
       ct/Cxx.cpp
       ct/CxxScoped.cpp
-   CodeTools.CxxUsageSets.AddDirect: 687 [Function]
+   CodeTools.CxxUsageSets.AddDirect: 688 [Function]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxDirective.cpp
@@ -10201,115 +10205,115 @@ ct/Cxx.h
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
       ct/CxxToken.cpp
-   CodeTools.CxxUsageSets.AddForward: 689 [Function]
+   CodeTools.CxxUsageSets.AddForward: 690 [Function]
       ct/Cxx.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
-   CodeTools.CxxUsageSets.AddIndirect: 688 [Function]
+   CodeTools.CxxUsageSets.AddIndirect: 689 [Function]
       ct/Cxx.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
-   CodeTools.CxxUsageSets.AddInherit: 691 [Function]
+   CodeTools.CxxUsageSets.AddInherit: 692 [Function]
       ct/Cxx.cpp
       ct/CxxScope.cpp
-   CodeTools.CxxUsageSets.AddUser: 690 [Function]
+   CodeTools.CxxUsageSets.AddUser: 691 [Function]
       ct/Cxx.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
-   CodeTools.CxxUsageSets.bases: 670 [ClassData]
+   CodeTools.CxxUsageSets.bases: 671 [ClassData]
       ct/CodeFile.cpp
       ct/CodeItemSet.cpp
       ct/Cxx.cpp
-   CodeTools.CxxUsageSets.CxxUsageSets: 680 [Function]
-   CodeTools.CxxUsageSets.directs: 671 [ClassData]
+   CodeTools.CxxUsageSets.CxxUsageSets: 681 [Function]
+   CodeTools.CxxUsageSets.directs: 672 [ClassData]
       ct/CodeFile.cpp
       ct/CodeItemSet.cpp
       ct/Cxx.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.CxxUsageSets.EraseLocals: 699 [Function]
+   CodeTools.CxxUsageSets.EraseLocals: 700 [Function]
       ct/Cxx.cpp
       ct/CxxScope.cpp
-   CodeTools.CxxUsageSets.EraseTemplateArgs: 695 [Function]
+   CodeTools.CxxUsageSets.EraseTemplateArgs: 696 [Function]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
-   CodeTools.CxxUsageSets.forwards: 673 [ClassData]
+   CodeTools.CxxUsageSets.forwards: 674 [ClassData]
       ct/CodeFile.cpp
       ct/CodeItemSet.cpp
       ct/Cxx.cpp
       ct/CxxScope.cpp
-   CodeTools.CxxUsageSets.friends: 674 [ClassData]
+   CodeTools.CxxUsageSets.friends: 675 [ClassData]
       ct/CodeFile.cpp
       ct/CodeItemSet.cpp
       ct/Cxx.cpp
       ct/CxxScope.cpp
-   CodeTools.CxxUsageSets.indirects: 672 [ClassData]
+   CodeTools.CxxUsageSets.indirects: 673 [ClassData]
       ct/CodeFile.cpp
       ct/Cxx.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.CxxUsageSets.inherits: 676 [ClassData]
+   CodeTools.CxxUsageSets.inherits: 677 [ClassData]
       ct/CodeItemSet.cpp
       ct/Cxx.cpp
       ct/Editor.cpp
-   CodeTools.CxxUsageSets.Union: 703 [Function]
+   CodeTools.CxxUsageSets.Union: 704 [Function]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
-   CodeTools.CxxUsageSets.users: 675 [ClassData]
+   CodeTools.CxxUsageSets.users: 676 [ClassData]
       ct/CodeFile.cpp
       ct/Cxx.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.CxxWord: 358 [Class]
+   CodeTools.CxxWord: 359 [Class]
       ct/Cxx.cpp
       ct/Cxx.h
       ct/Parser.cpp
-   CodeTools.CxxWord.advance: 385 [ClassData]
+   CodeTools.CxxWord.advance: 386 [ClassData]
       ct/Cxx.cpp
       ct/Parser.cpp
-   CodeTools.CxxWord.Attrs: 389 [ClassData]
+   CodeTools.CxxWord.Attrs: 390 [ClassData]
       ct/Cxx.cpp
       ct/Parser.cpp
-   CodeTools.CxxWord.classTarget: 377 [ClassData]
+   CodeTools.CxxWord.classTarget: 378 [ClassData]
       ct/Cxx.cpp
       ct/Parser.cpp
-   CodeTools.CxxWord.CxxWord: 393 [Function]
+   CodeTools.CxxWord.CxxWord: 394 [Function]
       ct/Cxx.cpp
-   CodeTools.CxxWord.fileTarget: 376 [ClassData]
-      ct/Cxx.cpp
-      ct/Parser.cpp
-   CodeTools.CxxWord.funcTarget: 378 [ClassData]
+   CodeTools.CxxWord.fileTarget: 377 [ClassData]
       ct/Cxx.cpp
       ct/Parser.cpp
-   CodeTools.DeclaredGlobally: 661 [SpaceData]
+   CodeTools.CxxWord.funcTarget: 379 [ClassData]
+      ct/Cxx.cpp
+      ct/Parser.cpp
+   CodeTools.DeclaredGlobally: 662 [SpaceData]
       ct/Cxx.cpp
       ct/CxxDirective.cpp
       ct/CxxExecute.cpp
       ct/CxxNamed.cpp
       ct/CxxScoped.cpp
       ct/CxxSymbols.cpp
-   CodeTools.DeclaredLocally: 662 [SpaceData]
+   CodeTools.DeclaredLocally: 663 [SpaceData]
       ct/Cxx.cpp
       ct/CxxExecute.cpp
       ct/CxxNamed.cpp
-   CodeTools.FindAccessControl: 347 [Function]
+   CodeTools.FindAccessControl: 348 [Function]
       ct/CodeTypes.cpp
       ct/Cxx.cpp
       ct/Editor.cpp
-   CodeTools.KeywordSet: 352 [Typedef]
+   CodeTools.KeywordSet: 353 [Typedef]
       ct/Lexer.cpp
       ct/Lexer.h
       ct/Parser.cpp
       ct/Parser.h
-   CodeTools.NotAccessible: 660 [SpaceData]
+   CodeTools.NotAccessible: 661 [SpaceData]
       ct/Cxx.cpp
       ct/CxxNamed.cpp
-   CodeTools.Numeric: 527 [Class]
+   CodeTools.Numeric: 528 [Class]
       ct/Cxx.cpp
       ct/Cxx.h
       ct/CxxCharLiteral.h
@@ -10327,59 +10331,59 @@ ct/Cxx.h
       ct/CxxStrLiteral.h
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.Numeric.bitWidth_: 597 [ClassData]
+   CodeTools.Numeric.bitWidth_: 598 [ClassData]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.Numeric.Bool: 571 [ClassData]
+   CodeTools.Numeric.Bool: 572 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
       ct/CxxToken.h
-   CodeTools.Numeric.CalcMatchWith: 566 [Function]
+   CodeTools.Numeric.CalcMatchWith: 567 [Function]
       ct/Cxx.cpp
       ct/CxxExecute.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.Char: 572 [ClassData]
+   CodeTools.Numeric.Char: 573 [ClassData]
       ct/Cxx.cpp
       ct/CxxCharLiteral.h
       ct/CxxRoot.cpp
-   CodeTools.Numeric.Char16: 573 [ClassData]
+   CodeTools.Numeric.Char16: 574 [ClassData]
       ct/Cxx.cpp
       ct/CxxCharLiteral.h
       ct/CxxRoot.cpp
-   CodeTools.Numeric.Char32: 574 [ClassData]
+   CodeTools.Numeric.Char32: 575 [ClassData]
       ct/Cxx.cpp
       ct/CxxCharLiteral.h
       ct/CxxRoot.cpp
-   CodeTools.Numeric.Double: 575 [ClassData]
+   CodeTools.Numeric.Double: 576 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.Enum: 576 [ClassData]
+   CodeTools.Numeric.Enum: 577 [ClassData]
       ct/Cxx.cpp
       ct/CxxScoped.h
-   CodeTools.Numeric.Float: 577 [ClassData]
+   CodeTools.Numeric.Float: 578 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.Int: 578 [ClassData]
+   CodeTools.Numeric.Int: 579 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.IsPOD: 558 [Function]
+   CodeTools.Numeric.IsPOD: 559 [Function]
       ct/CxxToken.h
-   CodeTools.Numeric.Long: 579 [ClassData]
+   CodeTools.Numeric.Long: 580 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.LongDouble: 580 [ClassData]
+   CodeTools.Numeric.LongDouble: 581 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.LongLong: 581 [ClassData]
+   CodeTools.Numeric.LongLong: 582 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.Nil: 570 [ClassData]
+   CodeTools.Numeric.Nil: 571 [ClassData]
       ct/Cxx.cpp
       ct/CxxCharLiteral.h
       ct/CxxDirective.cpp
@@ -10388,96 +10392,96 @@ ct/Cxx.h
       ct/CxxScoped.cpp
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.Numeric.Numeric(const Numeric&): 546 [Function]
-   CodeTools.Numeric.Numeric(NumericType,size_t,bool): 541 [Function]
-   CodeTools.Numeric.NumericType: 530 [Enum]
+   CodeTools.Numeric.Numeric(const Numeric&): 547 [Function]
+   CodeTools.Numeric.Numeric(NumericType,size_t,bool): 542 [Function]
+   CodeTools.Numeric.NumericType: 531 [Enum]
       ct/Cxx.h
-   CodeTools.Numeric.NumericType.ENUM: 536 [Enumerator]
+   CodeTools.Numeric.NumericType.ENUM: 537 [Enumerator]
       ct/Cxx.cpp
       ct/CxxScoped.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.NumericType.FLOAT: 534 [Enumerator]
+   CodeTools.Numeric.NumericType.FLOAT: 535 [Enumerator]
       ct/Cxx.cpp
-   CodeTools.Numeric.NumericType.INT: 533 [Enumerator]
+   CodeTools.Numeric.NumericType.INT: 534 [Enumerator]
       ct/Cxx.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.NumericType.NIL: 532 [Enumerator]
+   CodeTools.Numeric.NumericType.NIL: 533 [Enumerator]
       ct/Cxx.cpp
       ct/Cxx.h
       ct/CxxToken.cpp
-   CodeTools.Numeric.NumericType.PTR: 535 [Enumerator]
+   CodeTools.Numeric.NumericType.PTR: 536 [Enumerator]
       ct/Cxx.cpp
       ct/CxxExecute.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.operator=: 550 [Function]
+   CodeTools.Numeric.operator=: 551 [Function]
       ct/CxxScoped.h
-   CodeTools.Numeric.Pointer: 582 [ClassData]
+   CodeTools.Numeric.Pointer: 583 [ClassData]
       ct/Cxx.cpp
       ct/CxxExecute.cpp
       ct/CxxNamed.cpp
       ct/CxxStrLiteral.h
       ct/CxxToken.h
-   CodeTools.Numeric.SetWidth: 562 [Function]
+   CodeTools.Numeric.SetWidth: 563 [Function]
       ct/CxxToken.cpp
-   CodeTools.Numeric.Short: 583 [ClassData]
+   CodeTools.Numeric.Short: 584 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
-   CodeTools.Numeric.signed_: 601 [ClassData]
+   CodeTools.Numeric.signed_: 602 [ClassData]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.Numeric.Type: 554 [Function]
+   CodeTools.Numeric.Type: 555 [Function]
       ct/CxxExecute.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.type_: 593 [ClassData]
+   CodeTools.Numeric.type_: 594 [ClassData]
       ct/Cxx.cpp
       ct/Cxx.h
-   CodeTools.Numeric.uChar: 584 [ClassData]
+   CodeTools.Numeric.uChar: 585 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
-   CodeTools.Numeric.uInt: 585 [ClassData]
-      ct/Cxx.cpp
-      ct/CxxRoot.cpp
-      ct/CxxToken.cpp
-   CodeTools.Numeric.uLong: 586 [ClassData]
+   CodeTools.Numeric.uInt: 586 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.uLongLong: 587 [ClassData]
+   CodeTools.Numeric.uLong: 587 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
-   CodeTools.Numeric.uShort: 588 [ClassData]
+   CodeTools.Numeric.uLongLong: 588 [ClassData]
       ct/Cxx.cpp
       ct/CxxRoot.cpp
-   CodeTools.Numeric.wChar: 589 [ClassData]
+      ct/CxxToken.cpp
+   CodeTools.Numeric.uShort: 589 [ClassData]
+      ct/Cxx.cpp
+      ct/CxxRoot.cpp
+   CodeTools.Numeric.wChar: 590 [ClassData]
       ct/Cxx.cpp
       ct/CxxCharLiteral.h
       ct/CxxRoot.cpp
-   CodeTools.operator<<(std::ostream&,Cxx::Access): 328 [Function]
+   CodeTools.operator<<(std::ostream&,Cxx::Access): 329 [Function]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.operator<<(std::ostream&,Cxx::ClassTag): 332 [Function]
+   CodeTools.operator<<(std::ostream&,Cxx::ClassTag): 333 [Function]
       ct/CodeFile.cpp
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxScoped.cpp
-   CodeTools.operator<<(std::ostream&,Cxx::Encoding): 336 [Function]
+   CodeTools.operator<<(std::ostream&,Cxx::Encoding): 337 [Function]
       ct/Cxx.cpp
-   CodeTools.Spacing.Gap: 448 [SpaceData]
+   CodeTools.Spacing.Gap: 449 [SpaceData]
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.Spacing.NoGap: 447 [SpaceData]
+   CodeTools.Spacing.NoGap: 448 [SpaceData]
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.Spacing.Unchecked: 446 [SpaceData]
-   CodeTools.SymbolView: 609 [Class]
+   CodeTools.Spacing.Unchecked: 447 [SpaceData]
+   CodeTools.SymbolView: 610 [Class]
       ct/Cxx.cpp
       ct/Cxx.h
       ct/CxxArea.cpp
@@ -10498,43 +10502,43 @@ ct/Cxx.h
       ct/Editor.cpp
       ct/Lexer.cpp
       ct/Parser.cpp
-   CodeTools.SymbolView.accessibility_: 622 [ClassData]
+   CodeTools.SymbolView.accessibility_: 623 [ClassData]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
       ct/CxxSymbols.cpp
       ct/CxxToken.cpp
-   CodeTools.SymbolView.control_: 626 [ClassData]
+   CodeTools.SymbolView.control_: 627 [ClassData]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
       ct/CxxSymbols.cpp
-   CodeTools.SymbolView.defts_: 635 [ClassData]
+   CodeTools.SymbolView.defts_: 636 [ClassData]
       ct/Cxx.cpp
       ct/CxxNamed.cpp
-   CodeTools.SymbolView.distance_: 655 [ClassData]
+   CodeTools.SymbolView.distance_: 656 [ClassData]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxSymbols.cpp
-   CodeTools.SymbolView.friend_: 643 [ClassData]
+   CodeTools.SymbolView.friend_: 644 [ClassData]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxToken.cpp
-   CodeTools.SymbolView.match_: 630 [ClassData]
+   CodeTools.SymbolView.match_: 631 [ClassData]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxToken.cpp
-   CodeTools.SymbolView.resolved_: 648 [ClassData]
+   CodeTools.SymbolView.resolved_: 649 [ClassData]
       ct/Cxx.cpp
       ct/CxxSymbols.cpp
-   CodeTools.SymbolView.SymbolView(): 613 [Function]
+   CodeTools.SymbolView.SymbolView(): 614 [Function]
       ct/Cxx.cpp
-   CodeTools.SymbolView.SymbolView(Accessibility,TypeMatch,Cxx::Access,bool,bool,bool,bool,Distance): 617 [Function]
+   CodeTools.SymbolView.SymbolView(Accessibility,TypeMatch,Cxx::Access,bool,bool,bool,bool,Distance): 618 [Function]
       ct/Cxx.cpp
-   CodeTools.SymbolView.using_: 639 [ClassData]
+   CodeTools.SymbolView.using_: 640 [ClassData]
       ct/Cxx.cpp
       ct/CxxNamed.cpp
       ct/CxxScoped.cpp
@@ -11923,15 +11927,15 @@ ct/CxxExecute.cpp
       ct/CxxExecute.cpp
    CodeTools.StackArg_AssignedTo: 1355 [SpaceData]
       ct/CxxExecute.cpp
-   CodeTools.StackArg_Ptrs: 1780 [SpaceData]
+   CodeTools.StackArg_Ptrs: 1781 [SpaceData]
       ct/CxxExecute.cpp
-   CodeTools.StackArg_SetAsAutoType: 1811 [SpaceData]
+   CodeTools.StackArg_SetAsAutoType: 1812 [SpaceData]
       ct/CxxExecute.cpp
-   CodeTools.StackArg_SetAutoType: 1874 [SpaceData]
+   CodeTools.StackArg_SetAutoType: 1875 [SpaceData]
       ct/CxxExecute.cpp
-   CodeTools.StackArg_SetNonConst: 2009 [SpaceData]
+   CodeTools.StackArg_SetNonConst: 2010 [SpaceData]
       ct/CxxExecute.cpp
-   CodeTools.StackArg_WasWritten: 2111 [SpaceData]
+   CodeTools.StackArg_WasWritten: 2112 [SpaceData]
       ct/CxxExecute.cpp
    CodeTools.TokenTrace: 145 [Class]
       ct/CxxExecute.cpp
@@ -11941,7 +11945,7 @@ ct/CxxExecute.cpp
       ct/CxxExecute.cpp
    CodeTools.TokenTrace.TokenTrace: 150 [Function]
       ct/CxxExecute.cpp
-   CodeTools.TraceActionStrings: 2248 [SpaceData]
+   CodeTools.TraceActionStrings: 2249 [SpaceData]
       ct/CxxExecute.cpp
    CodeTools.Tracepoints_: 255 [SpaceData]
       ct/CxxExecute.cpp
@@ -12926,6 +12930,7 @@ ct/CxxFwd.h
       ct/Parser.cpp
    CodeTools.Expression: 62 [Forward]
       ct/CxxFwd.h
+      ct/Parser.h
    CodeTools.ExprPtr: 117 [Typedef]
       ct/CxxDirective.cpp
       ct/CxxDirective.h
@@ -14343,6 +14348,7 @@ ct/CxxNamed.h
       ct/CxxNamed.h
       ct/CxxScope.h
    CodeTools.TypeSpec.Type: 1154 [Function]
+      ct/CxxScope.h
    CodeTools.TypeSpec.TypeSpec(): 1158 [Function]
       ct/CxxNamed.cpp
    CodeTools.TypeSpec.TypeSpec(const TypeSpec&): 1162 [Function]
@@ -15324,93 +15330,93 @@ ct/CxxScope.h
       ct/CxxScope.cpp
       ct/CxxScope.h
       ct/Parser.cpp
-   CodeTools.FuncSpec.AddArray: 2006 [Function]
+   CodeTools.FuncSpec.AddArray: 2009 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.AlignTemplateArg: 2007 [Function]
+   CodeTools.FuncSpec.AlignTemplateArg: 2010 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Arrays: 2008 [Function]
+   CodeTools.FuncSpec.Arrays: 2011 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Check: 1987 [Function]
+   CodeTools.FuncSpec.Check: 1990 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Clone: 2046 [Function]
+   CodeTools.FuncSpec.Clone: 2049 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.ContainsTemplateParameter: 1988 [Function]
+   CodeTools.FuncSpec.ContainsTemplateParameter: 1991 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.DisplayArrays: 2009 [Function]
+   CodeTools.FuncSpec.DisplayArrays: 2012 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.DisplayTags: 2010 [Function]
+   CodeTools.FuncSpec.DisplayTags: 2013 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.EnterArrays: 2040 [Function]
+   CodeTools.FuncSpec.EnterArrays: 2043 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.EnteringScope: 1989 [Function]
+   CodeTools.FuncSpec.EnteringScope: 1992 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.FindReferent: 2026 [Function]
+   CodeTools.FuncSpec.FindReferent: 2029 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.func_: 2050 [ClassData]
+   CodeTools.FuncSpec.func_: 2053 [ClassData]
       ct/CxxScope.cpp
       ct/CxxScope.h
    CodeTools.FuncSpec.FuncSpec(const FuncSpec&): 1977 [Function]
    CodeTools.FuncSpec.FuncSpec(FunctionPtr&): 1969 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.GetAllTags: 2011 [Function]
+   CodeTools.FuncSpec.GetAllTags: 2014 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.GetFuncSpec: 1981 [Function]
-   CodeTools.FuncSpec.GetNames: 2027 [Function]
+   CodeTools.FuncSpec.GetFuncSpec: 1985 [Function]
+   CodeTools.FuncSpec.GetNames: 2030 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.GetTemplateArgs: 2012 [Function]
+   CodeTools.FuncSpec.GetTemplateArgs: 2015 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.GetTypeSpec: 2013 [Function]
+   CodeTools.FuncSpec.GetTypeSpec: 2016 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.HasArrayDefn: 2014 [Function]
+   CodeTools.FuncSpec.HasArrayDefn: 2017 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Instantiating: 2028 [Function]
+   CodeTools.FuncSpec.Instantiating: 2031 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.IsConst: 1990 [Function]
-   CodeTools.FuncSpec.IsVolatile: 1991 [Function]
-   CodeTools.FuncSpec.ItemIsTemplateArg: 2030 [Function]
+   CodeTools.FuncSpec.IsConst: 1993 [Function]
+   CodeTools.FuncSpec.IsVolatile: 1994 [Function]
+   CodeTools.FuncSpec.ItemIsTemplateArg: 2033 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.MatchesExactly: 2031 [Function]
+   CodeTools.FuncSpec.MatchesExactly: 2034 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.MatchTemplate: 2032 [Function]
+   CodeTools.FuncSpec.MatchTemplate: 2035 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.MatchTemplateArg: 2029 [Function]
+   CodeTools.FuncSpec.MatchTemplateArg: 2032 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Name: 1992 [Function]
-   CodeTools.FuncSpec.NamesReferToArgs: 2034 [Function]
+   CodeTools.FuncSpec.Name: 1995 [Function]
+   CodeTools.FuncSpec.NamesReferToArgs: 2037 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.PosToItem: 1993 [Function]
+   CodeTools.FuncSpec.PosToItem: 1996 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Print: 1994 [Function]
+   CodeTools.FuncSpec.Print: 1997 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Ptrs: 2015 [Function]
+   CodeTools.FuncSpec.Ptrs: 2018 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Referent: 1982 [Function]
-   CodeTools.FuncSpec.Refs: 2016 [Function]
+   CodeTools.FuncSpec.Referent: 1986 [Function]
+   CodeTools.FuncSpec.Refs: 2019 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Rename: 1996 [Function]
+   CodeTools.FuncSpec.Rename: 1999 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.ResultType: 2017 [Function]
+   CodeTools.FuncSpec.ResultType: 2020 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.RootType: 1983 [Function]
-   CodeTools.FuncSpec.SetPtrs: 2018 [Function]
+   CodeTools.FuncSpec.SetPtrs: 2021 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.SetReferent: 2041 [Function]
+   CodeTools.FuncSpec.SetReferent: 2044 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Shrink: 1997 [Function]
+   CodeTools.FuncSpec.Shrink: 2000 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Tags(): 2019 [Function]
+   CodeTools.FuncSpec.Tags(): 2022 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Tags() const: 2020 [Function]
+   CodeTools.FuncSpec.Tags() const: 2023 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.Trace: 1998 [Function]
+   CodeTools.FuncSpec.Trace: 2001 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.TypeString: 1999 [Function]
+   CodeTools.FuncSpec.Type: 1981 [Function]
+   CodeTools.FuncSpec.TypeString: 2002 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.TypeTagsString: 2021 [Function]
+   CodeTools.FuncSpec.TypeTagsString: 2024 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.UpdatePos: 2000 [Function]
+   CodeTools.FuncSpec.UpdatePos: 2003 [Function]
       ct/CxxScope.cpp
-   CodeTools.FuncSpec.UpdateXref: 2002 [Function]
+   CodeTools.FuncSpec.UpdateXref: 2005 [Function]
       ct/CxxScope.cpp
    CodeTools.FuncSpec.~FuncSpec: 1973 [Function]
       ct/CxxScope.cpp
@@ -21742,101 +21748,101 @@ ct/Parser.cpp
       ct/Parser.cpp
    CodeTools.Parser_GetCtorInit: 1329 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetCxxAlpha: 1410 [SpaceData]
+   CodeTools.Parser_GetCxxAlpha: 1409 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetCxxCast: 1504 [SpaceData]
+   CodeTools.Parser_GetCxxCast: 1503 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetCxxExpr: 1534 [SpaceData]
+   CodeTools.Parser_GetCxxExpr: 1533 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetDefault: 1651 [SpaceData]
+   CodeTools.Parser_GetDefault: 1650 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetDefined: 1670 [SpaceData]
+   CodeTools.Parser_GetDefined: 1669 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetDelete: 1701 [SpaceData]
+   CodeTools.Parser_GetDelete: 1700 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetDo: 1725 [SpaceData]
+   CodeTools.Parser_GetDo: 1724 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetDtorDecl: 1752 [SpaceData]
+   CodeTools.Parser_GetDtorDecl: 1751 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetDtorDefn: 1787 [SpaceData]
+   CodeTools.Parser_GetDtorDefn: 1786 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetEnum: 1815 [SpaceData]
+   CodeTools.Parser_GetEnum: 1814 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetEnumerator: 1868 [SpaceData]
+   CodeTools.Parser_GetEnumerator: 1867 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetFor: 1913 [SpaceData]
+   CodeTools.Parser_GetFor: 1912 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetFriend: 1962 [SpaceData]
+   CodeTools.Parser_GetFriend: 1961 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetFuncData: 2010 [SpaceData]
+   CodeTools.Parser_GetFuncData: 2009 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetFuncDecl: 2136 [SpaceData]
+   CodeTools.Parser_GetFuncDecl: 2135 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetFuncDefn: 2229 [SpaceData]
+   CodeTools.Parser_GetFuncDefn: 2228 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetFuncImpl: 2271 [SpaceData]
+   CodeTools.Parser_GetFuncImpl: 2270 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetFuncSpec: 2304 [SpaceData]
+   CodeTools.Parser_GetFuncSpec: 2303 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetGoto: 2357 [SpaceData]
+   CodeTools.Parser_GetGoto: 2356 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetIf: 2377 [SpaceData]
+   CodeTools.Parser_GetIf: 2376 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetNamespace: 2533 [SpaceData]
+   CodeTools.Parser_GetNamespace: 2532 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetNew: 2564 [SpaceData]
+   CodeTools.Parser_GetNew: 2563 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetNoExcept: 2654 [SpaceData]
+   CodeTools.Parser_GetNoExcept: 2653 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetPrecedence: 2790 [SpaceData]
+   CodeTools.Parser_GetPrecedence: 2789 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetPreExpr: 2812 [SpaceData]
+   CodeTools.Parser_GetPreExpr: 2811 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetProcDecl: 2870 [SpaceData]
+   CodeTools.Parser_GetProcDecl: 2869 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetProcDefn: 2965 [SpaceData]
+   CodeTools.Parser_GetProcDefn: 2964 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetQualName: 3022 [SpaceData]
+   CodeTools.Parser_GetQualName: 3021 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetReturn: 3065 [SpaceData]
+   CodeTools.Parser_GetReturn: 3064 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetSizeOf: 3089 [SpaceData]
+   CodeTools.Parser_GetSizeOf: 3088 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetSpaceData: 3138 [SpaceData]
+   CodeTools.Parser_GetSpaceData: 3137 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetStaticAssert: 3247 [SpaceData]
+   CodeTools.Parser_GetStaticAssert: 3246 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetSubscript: 3357 [SpaceData]
+   CodeTools.Parser_GetSubscript: 3356 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetSwitch: 3388 [SpaceData]
+   CodeTools.Parser_GetSwitch: 3387 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetTemplateParm: 3413 [SpaceData]
+   CodeTools.Parser_GetTemplateParm: 3412 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetTemplateParms: 3451 [SpaceData]
+   CodeTools.Parser_GetTemplateParms: 3450 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetThrow: 3482 [SpaceData]
+   CodeTools.Parser_GetThrow: 3481 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetTry: 3515 [SpaceData]
+   CodeTools.Parser_GetTry: 3514 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetTypedef: 3539 [SpaceData]
+   CodeTools.Parser_GetTypedef: 3538 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetTypeId: 3578 [SpaceData]
+   CodeTools.Parser_GetTypeId: 3577 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetTypeSpec1: 3651 [SpaceData]
+   CodeTools.Parser_GetTypeSpec1: 3650 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetUsing: 3818 [SpaceData]
+   CodeTools.Parser_GetUsing: 3817 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_GetWhile: 3872 [SpaceData]
+   CodeTools.Parser_GetWhile: 3871 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_Parse: 4333 [SpaceData]
+   CodeTools.Parser_Parse: 4332 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_ParseInBlock: 4555 [SpaceData]
+   CodeTools.Parser_ParseInBlock: 4554 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_ParseInClass: 4684 [SpaceData]
+   CodeTools.Parser_ParseInClass: 4683 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_ParseInFile: 4774 [SpaceData]
+   CodeTools.Parser_ParseInFile: 4773 [SpaceData]
       ct/Parser.cpp
-   CodeTools.Parser_Skip: 4936 [SpaceData]
+   CodeTools.Parser_Skip: 4935 [SpaceData]
       ct/Parser.cpp
    CodeTools.SetCompoundType: 76 [Function]
       ct/Parser.cpp
@@ -22802,7 +22808,7 @@ dip/DipProtocol.cpp
       dip/DipProtocol.cpp
    Diplomacy.BotTcpServiceStr: 381 [SpaceData]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBufferSize: 482 [SpaceData]
+   Diplomacy.DipIpBufferSize: 491 [SpaceData]
       dip/DipProtocol.cpp
 dip/DipProtocol.h
    Diplomacy.BM_Message: 199 [Class]
@@ -22894,31 +22900,33 @@ dip/DipProtocol.h
       dip/DipProtocol.cpp
    Diplomacy.DipIpBuffer.BytesAdded: 320 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.currSize_: 341 [ClassData]
+   Diplomacy.DipIpBuffer.Clone: 332 [Function]
+      dip/DipProtocol.cpp
+   Diplomacy.DipIpBuffer.currSize_: 345 [ClassData]
       dip/DipProtocol.cpp
       dip/DipProtocol.h
    Diplomacy.DipIpBuffer.DipIpBuffer(const DipIpBuffer&): 312 [Function]
       dip/DipProtocol.cpp
    Diplomacy.DipIpBuffer.DipIpBuffer(MsgDirection,size_t): 308 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.Display: 332 [Function]
+   Diplomacy.DipIpBuffer.Display: 336 [Function]
       dip/DipProtocol.cpp
    Diplomacy.DipIpBuffer.operator new: 324 [Function]
       dip/BaseBot.cpp
       dip/BotThread.cpp
       dip/BotTrace.cpp
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.PayloadSize: 337 [Function]
+   Diplomacy.DipIpBuffer.PayloadSize: 341 [Function]
       dip/DipProtocol.cpp
    Diplomacy.DipIpBuffer.~DipIpBuffer: 316 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBufferPool: 348 [Class]
+   Diplomacy.DipIpBufferPool: 352 [Class]
       dip/DipModule.cpp
       dip/DipProtocol.cpp
       dip/DipProtocol.h
-   Diplomacy.DipIpBufferPool.DipIpBufferPool: 354 [Function]
+   Diplomacy.DipIpBufferPool.DipIpBufferPool: 358 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBufferPool.~DipIpBufferPool: 358 [Function]
+   Diplomacy.DipIpBufferPool.~DipIpBufferPool: 362 [Function]
       dip/DipProtocol.cpp
    Diplomacy.DipMessage: 71 [Class]
       dip/BaseBot.cpp
@@ -23050,7 +23058,7 @@ dip/DipProtocol.h
    DIPPROTOCOL_H_INCLUDED: 25 [Define]
       dip/DipProtocol.h
    NodeBase.Singleton<BotTcpService>: 215 [Friend]
-   NodeBase.Singleton<DipIpBufferPool>: 350 [Friend]
+   NodeBase.Singleton<DipIpBufferPool>: 354 [Friend]
 dip/DipTypes.h
    Diplomacy.BotEvent: 79 [Typedef]
       dip/BaseBot.cpp
@@ -32881,121 +32889,121 @@ nb/Log.h
       nb/Log.cpp
       nb/Log.h
 nb/LogBuffer.cpp
-   NodeBase.BundledLogSizeThreshold: 94 [SpaceData]
+   NodeBase.BundledLogSizeThreshold: 93 [SpaceData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer_GetLogs: 239 [SpaceData]
+   NodeBase.LogBuffer_GetLogs: 238 [SpaceData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer_Push: 436 [SpaceData]
+   NodeBase.LogBuffer_Push: 435 [SpaceData]
       nb/LogBuffer.cpp
-   NodeBase.LogBufferLock_: 47 [SpaceData]
+   NodeBase.LogBufferLock_: 46 [SpaceData]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten: 51 [Class]
+   NodeBase.LogsWritten: 50 [Class]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogsWritten.buff_: 62 [ClassData]
+   NodeBase.LogsWritten.buff_: 61 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten.Callback: 58 [Function]
+   NodeBase.LogsWritten.Callback: 57 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten.last_: 66 [ClassData]
+   NodeBase.LogsWritten.last_: 65 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten.LogsWritten: 56 [Function]
+   NodeBase.LogsWritten.LogsWritten: 55 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten_Callback: 80 [SpaceData]
+   NodeBase.LogsWritten_Callback: 79 [SpaceData]
       nb/LogBuffer.cpp
 nb/LogBuffer.h
    LOGBUFFER_H_INCLUDED: 23 [Define]
       nb/LogBuffer.h
-   NodeBase.LogBuffer: 43 [Class]
+   NodeBase.LogBuffer: 44 [Class]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
       nb/LogBufferRegistry.cpp
       nb/LogBufferRegistry.h
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.Advance: 151 [Function]
+   NodeBase.LogBuffer.Advance: 152 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.buff_: 199 [ClassData]
+   NodeBase.LogBuffer.buff_: 200 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Count: 74 [Function]
+   NodeBase.LogBuffer.Count: 75 [Function]
       nb/LogBuffer.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.discards_: 174 [ClassData]
+   NodeBase.LogBuffer.discards_: 175 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Display: 95 [Function]
+   NodeBase.LogBuffer.Display: 96 [Function]
       nb/LogBuffer.cpp
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBuffer.Empty: 65 [Function]
+   NodeBase.LogBuffer.Empty: 66 [Function]
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBuffer.Entry: 114 [Class]
+   NodeBase.LogBuffer.Entry: 115 [Class]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Entry: 102 [Forward]
+   NodeBase.LogBuffer.Entry: 103 [Forward]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogBuffer.Entry.header: 116 [ClassData]
+   NodeBase.LogBuffer.Entry.header: 117 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Entry.log: 117 [ClassData]
+   NodeBase.LogBuffer.Entry.log: 118 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.FileName: 85 [Function]
+   NodeBase.LogBuffer.FileName: 86 [Function]
       nb/LogBufferRegistry.cpp
       nb/LogThread.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.fileName_: 170 [ClassData]
+   NodeBase.LogBuffer.fileName_: 171 [ClassData]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogBuffer.First: 122 [Function]
+   NodeBase.LogBuffer.First: 123 [Function]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogBuffer.FirstSpooled: 146 [Function]
+   NodeBase.LogBuffer.FirstSpooled: 147 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.FirstUnspooled: 140 [Function]
+   NodeBase.LogBuffer.FirstUnspooled: 141 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.GetLogs: 81 [Function]
+   NodeBase.LogBuffer.GetLogs: 82 [Function]
       nb/LogBuffer.cpp
       nb/LogThread.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.Header: 106 [Class]
+   NodeBase.LogBuffer.Header: 107 [Class]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogBuffer.Header.next: 109 [ClassData]
+   NodeBase.LogBuffer.Header.next: 110 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Header.prev: 108 [ClassData]
+   NodeBase.LogBuffer.Header.prev: 109 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.InsertionPoint: 135 [Function]
+   NodeBase.LogBuffer.InsertionPoint: 136 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Last: 127 [Function]
+   NodeBase.LogBuffer.Last: 128 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.LogBuffer(const LogBuffer&): 57 [Function]
-   NodeBase.LogBuffer.LogBuffer(size_t): 49 [Function]
+   NodeBase.LogBuffer.LogBuffer(const LogBuffer&): 58 [Function]
+   NodeBase.LogBuffer.LogBuffer(size_t): 50 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.max_: 191 [ClassData]
+   NodeBase.LogBuffer.max_: 192 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.next_: 187 [ClassData]
+   NodeBase.LogBuffer.next_: 188 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.operator=: 61 [Function]
-   NodeBase.LogBuffer.Patch: 100 [Function]
+   NodeBase.LogBuffer.operator=: 62 [Function]
+   NodeBase.LogBuffer.Patch: 101 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Pop: 157 [Function]
+   NodeBase.LogBuffer.Pop: 158 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Purge: 162 [Function]
+   NodeBase.LogBuffer.Purge: 163 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Push: 70 [Function]
+   NodeBase.LogBuffer.Push: 71 [Function]
       nb/Log.cpp
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.ResetAllToUnspooled: 91 [Function]
+   NodeBase.LogBuffer.ResetAllToUnspooled: 92 [Function]
       nb/LogBuffer.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.SetNext: 131 [Function]
+   NodeBase.LogBuffer.SetNext: 132 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.size_: 195 [ClassData]
+   NodeBase.LogBuffer.size_: 196 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.spooled_: 179 [ClassData]
+   NodeBase.LogBuffer.spooled_: 180 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.unspooled_: 183 [ClassData]
+   NodeBase.LogBuffer.unspooled_: 184 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.UpdateMax: 166 [Function]
+   NodeBase.LogBuffer.UpdateMax: 167 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.~LogBuffer: 53 [Function]
+   NodeBase.LogBuffer.~LogBuffer: 54 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten: 45 [Friend]
+   NodeBase.LogsWritten: 46 [Friend]
 nb/LogBufferRegistry.cpp
    NodeBase.LogBufferRegistry_dtor: 50 [SpaceData]
       nb/LogBufferRegistry.cpp
@@ -44090,8 +44098,6 @@ nb/SysTypes.h
       ct/CxxExecute.cpp
       ct/CxxScope.cpp
       ct/CxxScope.h
-      ct/Parser.cpp
-      ct/Parser.h
       nb/FileThread.cpp
    NodeBase.TAB: 151 [SpaceData]
       ct/CodeTypes.cpp
@@ -48662,7 +48668,7 @@ nw/IoThread.h
 nw/IpBuffer.cpp
    NetworkBase.AllocByteBuff: 48 [Function]
       nw/IpBuffer.cpp
-   NetworkBase.IpBuffer_Send: 268 [SpaceData]
+   NetworkBase.IpBuffer_Send: 277 [SpaceData]
       nw/IpBuffer.cpp
 nw/IpBuffer.h
    IPBUFFER_H_INCLUDED: 23 [Define]
@@ -48686,26 +48692,33 @@ nw/IpBuffer.h
       sb/SbInputHandler.cpp
       sb/SbIpBuffer.cpp
       sb/SbIpBuffer.h
-   NetworkBase.IpBuffer.AddBytes: 138 [Function]
+      sn/PotsCallHandler.cpp
+      sn/PotsSessions.h
+   NetworkBase.IpBuffer.AddBytes: 143 [Function]
       dip/DipProtocol.cpp
       dip/DipProtocol.h
       nw/IpBuffer.cpp
       sb/TlvMessage.cpp
-   NetworkBase.IpBuffer.AllocBuff: 173 [Function]
+   NetworkBase.IpBuffer.AllocBuff: 182 [Function]
       nw/IpBuffer.cpp
-   NetworkBase.IpBuffer.buff_: 177 [ClassData]
+   NetworkBase.IpBuffer.buff_: 186 [ClassData]
       nw/IpBuffer.cpp
-   NetworkBase.IpBuffer.buffSize_: 181 [ClassData]
+   NetworkBase.IpBuffer.buffSize_: 190 [ClassData]
       nw/IpBuffer.cpp
-   NetworkBase.IpBuffer.bytes_: 185 [ClassData]
+   NetworkBase.IpBuffer.bytes_: 194 [ClassData]
       nw/IpBuffer.cpp
       nw/IpBuffer.h
-   NetworkBase.IpBuffer.Dir: 75 [Function]
+   NetworkBase.IpBuffer.Clone: 64 [Function]
+      dip/DipProtocol.h
+      nw/IpBuffer.cpp
+      nw/SysTcpSocket.cpp
+      sb/SbIpBuffer.h
+   NetworkBase.IpBuffer.Dir: 76 [Function]
       sb/Message.cpp
-   NetworkBase.IpBuffer.dir_: 201 [ClassData]
+   NetworkBase.IpBuffer.dir_: 210 [ClassData]
       nw/IpBuffer.cpp
       nw/IpBuffer.h
-   NetworkBase.IpBuffer.Display: 155 [Function]
+   NetworkBase.IpBuffer.Display: 160 [Function]
       dip/DipProtocol.cpp
       dip/DipProtocol.h
       nw/IoThread.cpp
@@ -48713,29 +48726,31 @@ nw/IpBuffer.h
       sb/SbIpBuffer.cpp
       sb/SbIpBuffer.h
       sn/PotsCallHandler.cpp
-   NetworkBase.IpBuffer.external_: 205 [ClassData]
+   NetworkBase.IpBuffer.external_: 214 [ClassData]
       nw/IpBuffer.cpp
-   NetworkBase.IpBuffer.GetStatus: 160 [Function]
+   NetworkBase.IpBuffer.GetStatus: 165 [Function]
       nw/IpBuffer.cpp
-   NetworkBase.IpBuffer.GetSubtended: 164 [Function]
+   NetworkBase.IpBuffer.GetSubtended: 169 [Function]
       nw/IpBuffer.cpp
       sb/Message.cpp
-   NetworkBase.IpBuffer.hdrSize_: 189 [ClassData]
+   NetworkBase.IpBuffer.hdrSize_: 198 [ClassData]
       nw/IpBuffer.cpp
       nw/IpBuffer.h
-   NetworkBase.IpBuffer.HeaderPtr: 102 [Function]
+   NetworkBase.IpBuffer.HeaderPtr: 107 [Function]
       dip/BotThread.cpp
       dip/BotTrace.cpp
       nw/InputHandler.cpp
       sb/SbInputHandler.cpp
       sb/SbIpBuffer.h
       sb/TlvMessage.h
-   NetworkBase.IpBuffer.InvalidDiscarded: 147 [Function]
+   NetworkBase.IpBuffer.HeaderSize: 102 [Function]
+      sb/TlvProtocol.cpp
+   NetworkBase.IpBuffer.InvalidDiscarded: 152 [Function]
       an/PotsShelfHandler.cpp
       nw/IpBuffer.cpp
       sb/InvokerPool.cpp
       sb/Message.cpp
-   NetworkBase.IpBuffer.IpBuffer(const IpBuffer&): 59 [Function]
+   NetworkBase.IpBuffer.IpBuffer(const IpBuffer&): 177 [Function]
       dip/DipProtocol.cpp
       nw/IpBuffer.cpp
       sb/SbIpBuffer.cpp
@@ -48743,28 +48758,27 @@ nw/IpBuffer.h
       dip/DipProtocol.cpp
       nw/IpBuffer.cpp
       sb/SbIpBuffer.cpp
-   NetworkBase.IpBuffer.IsQueued: 97 [Function]
+   NetworkBase.IpBuffer.IsQueued: 98 [Function]
       nw/SysTcpSocket.cpp
    NetworkBase.IpBuffer.MaxBuffSize: 50 [ClassData]
       nw/IpBuffer.cpp
-   NetworkBase.IpBuffer.operator new: 151 [Function]
+   NetworkBase.IpBuffer.operator new: 156 [Function]
       nw/InputHandler.cpp
       nw/IpBuffer.cpp
       nw/LocalAddrTest.cpp
-      nw/SysTcpSocket.cpp
-   NetworkBase.IpBuffer.OutgoingBytes: 130 [Function]
+   NetworkBase.IpBuffer.OutgoingBytes: 135 [Function]
       nw/IpBuffer.cpp
       nw/SysTcpSocket.cpp
       nw/SysUdpSocket.cpp
-   NetworkBase.IpBuffer.Patch: 168 [Function]
+   NetworkBase.IpBuffer.Patch: 173 [Function]
       nw/IpBuffer.cpp
       sb/SbIpBuffer.cpp
       sb/SbIpBuffer.h
-   NetworkBase.IpBuffer.Payload: 124 [Function]
+   NetworkBase.IpBuffer.Payload: 129 [Function]
       nw/IpBuffer.cpp
       sb/Message.cpp
       sb/TlvProtocol.cpp
-   NetworkBase.IpBuffer.PayloadPtr: 106 [Function]
+   NetworkBase.IpBuffer.PayloadPtr: 111 [Function]
       an/PotsShelfHandler.cpp
       dip/BaseBot.cpp
       dip/BotThread.cpp
@@ -48772,54 +48786,54 @@ nw/IpBuffer.h
       nw/LocalAddrTest.cpp
       sb/SbExtInputHandler.cpp
       sn/PotsCallHandler.cpp
-   NetworkBase.IpBuffer.PayloadSize: 119 [Function]
+   NetworkBase.IpBuffer.PayloadSize: 124 [Function]
       dip/DipProtocol.cpp
       dip/DipProtocol.h
       nw/IpBuffer.cpp
       sb/SbIpBuffer.h
-   NetworkBase.IpBuffer.queued_: 209 [ClassData]
+   NetworkBase.IpBuffer.queued_: 218 [ClassData]
       nw/IpBuffer.cpp
       nw/IpBuffer.h
-   NetworkBase.IpBuffer.RxAddr: 71 [Function]
+   NetworkBase.IpBuffer.RxAddr: 72 [Function]
       dip/DipProtocol.cpp
       nw/NwTracer.cpp
       nw/SysSocket.cpp
       nw/SysTcpSocket.cpp
       nw/SysUdpSocket.cpp
       sb/Message.cpp
-   NetworkBase.IpBuffer.rxAddr_: 197 [ClassData]
+   NetworkBase.IpBuffer.rxAddr_: 206 [ClassData]
       nw/IpBuffer.cpp
       nw/IpBuffer.h
-   NetworkBase.IpBuffer.Send: 143 [Function]
+   NetworkBase.IpBuffer.Send: 148 [Function]
       dip/BaseBot.cpp
       nw/IpBuffer.cpp
       nw/LocalAddrTest.cpp
       sb/Message.cpp
-   NetworkBase.IpBuffer.SetDir: 79 [Function]
+   NetworkBase.IpBuffer.SetDir: 80 [Function]
       sb/Message.cpp
-   NetworkBase.IpBuffer.SetQueued: 93 [Function]
+   NetworkBase.IpBuffer.SetQueued: 94 [Function]
       nw/SysTcpSocket.cpp
-   NetworkBase.IpBuffer.SetRxAddr: 84 [Function]
+   NetworkBase.IpBuffer.SetRxAddr: 85 [Function]
       dip/BaseBot.cpp
       nw/IoThread.cpp
       nw/LocalAddrTest.cpp
       nw/SysTcpSocket.cpp
       sb/Message.cpp
-   NetworkBase.IpBuffer.SetTxAddr: 89 [Function]
+   NetworkBase.IpBuffer.SetTxAddr: 90 [Function]
       dip/BaseBot.cpp
       nw/IoThread.cpp
       nw/LocalAddrTest.cpp
       sb/Message.cpp
-   NetworkBase.IpBuffer.TxAddr: 67 [Function]
+   NetworkBase.IpBuffer.TxAddr: 68 [Function]
       nw/NwTracer.cpp
       nw/SysSocket.cpp
       nw/SysTcpSocket.cpp
       nw/SysUdpSocket.cpp
       sb/Message.cpp
-   NetworkBase.IpBuffer.txAddr_: 193 [ClassData]
+   NetworkBase.IpBuffer.txAddr_: 202 [ClassData]
       nw/IpBuffer.cpp
       nw/IpBuffer.h
-   NetworkBase.IpBuffer.~IpBuffer: 63 [Function]
+   NetworkBase.IpBuffer.~IpBuffer: 59 [Function]
       nw/IpBuffer.cpp
 nw/IpPort.cpp
    NetworkBase.IpPort_CreateIoThread: 199 [SpaceData]
@@ -49597,34 +49611,34 @@ nw/NwCliParms.h
    NWCLIPARMS_H_INCLUDED: 23 [Define]
       nw/NwCliParms.h
 nw/NwDaemons.cpp
-   NetworkBase.BackOffSecs: 158 [SpaceData]
+   NetworkBase.BackOffSecs: 159 [SpaceData]
       nw/NwDaemons.cpp
-   NetworkBase.IoDaemon_CreateIoThread: 146 [SpaceData]
+   NetworkBase.IoDaemon_CreateIoThread: 147 [SpaceData]
       nw/NwDaemons.cpp
    NetworkBase.IoThreadRecreator: 44 [Class]
       nw/NwDaemons.cpp
       nw/NwDaemons.h
-   NetworkBase.IoThreadRecreator.daemon_: 71 [ClassData]
+   NetworkBase.IoThreadRecreator.daemon_: 72 [ClassData]
       nw/NwDaemons.cpp
-   NetworkBase.IoThreadRecreator.Display: 58 [Function]
+   NetworkBase.IoThreadRecreator.Display: 59 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.IoThreadRecreator.EventHasOccurred: 67 [Function]
+   NetworkBase.IoThreadRecreator.EventHasOccurred: 68 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.IoThreadRecreator.IoThreadRecreator: 49 [Function]
+   NetworkBase.IoThreadRecreator.IoThreadRecreator: 50 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.IoThreadRecreator.Patch: 63 [Function]
+   NetworkBase.IoThreadRecreator.Patch: 64 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.IoThreadRecreator.port_: 79 [ClassData]
+   NetworkBase.IoThreadRecreator.port_: 80 [ClassData]
       nw/NwDaemons.cpp
-   NetworkBase.IoThreadRecreator.service_: 75 [ClassData]
+   NetworkBase.IoThreadRecreator.service_: 76 [ClassData]
       nw/NwDaemons.cpp
-   NetworkBase.IoThreadRecreator.~IoThreadRecreator: 54 [Function]
+   NetworkBase.IoThreadRecreator.~IoThreadRecreator: 55 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.MakeTcpName: 230 [Function]
+   NetworkBase.MakeTcpName: 231 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.MakeUdpName: 290 [Function]
+   NetworkBase.MakeUdpName: 291 [Function]
       nw/NwDaemons.cpp
-   NetworkBase.MinExitTime: 160 [SpaceData]
+   NetworkBase.MinExitTime: 161 [SpaceData]
       nw/NwDaemons.cpp
 nw/NwDaemons.h
    NetworkBase.IoDaemon: 44 [Class]
@@ -50673,7 +50687,7 @@ nw/SysIpL2Addr.h
       nw/SysIpL2Addr.cpp
       nw/SysIpL3Addr.cpp
       nw/SysIpL3Addr.h
-   NetworkBase.SysIpL2Addr.Family: 105 [Function]
+   NetworkBase.SysIpL2Addr.Family: 109 [Function]
       nw/IpPortRegistry.cpp
       nw/SysIpL2Addr.cpp
       nw/SysIpL3Addr.cpp
@@ -50683,25 +50697,25 @@ nw/SysIpL2Addr.h
       nw/SysIpL3Addr.cpp
    NetworkBase.SysIpL2Addr.HostToNetwork(uint16_t) const: 146 [Function]
       nw/SysIpL2Addr.cpp
-   NetworkBase.SysIpL2Addr.IsLoopbackIpAddr: 96 [Function]
+   NetworkBase.SysIpL2Addr.IsLoopbackIpAddr: 100 [Function]
       nw/IpPortRegistry.cpp
       nw/SysIpL2Addr.cpp
-   NetworkBase.SysIpL2Addr.IsValid: 79 [Function]
+   NetworkBase.SysIpL2Addr.IsValid: 83 [Function]
       dip/BaseBot.cpp
       nw/IpPortRegistry.cpp
       nw/NwCliParms.cpp
       nw/NwIncrement.cpp
       nw/SysIpL2Addr.cpp
       nw/SysIpL3Addr.cpp
-   NetworkBase.SysIpL2Addr.LocalAddrs: 88 [Function]
+   NetworkBase.SysIpL2Addr.LocalAddrs: 92 [Function]
       nw/IpPortRegistry.cpp
       nw/NwIncrement.cpp
       nw/SysIpL2Addr.win.cpp
-   NetworkBase.SysIpL2Addr.LocalName: 101 [Function]
+   NetworkBase.SysIpL2Addr.LocalName: 105 [Function]
       dip/BaseBot.cpp
       nw/NwIncrement.cpp
       nw/SysIpL2Addr.win.cpp
-   NetworkBase.SysIpL2Addr.LoopbackIpAddr: 92 [Function]
+   NetworkBase.SysIpL2Addr.LoopbackIpAddr: 96 [Function]
       dip/BaseBot.cpp
       nw/IpPortRegistry.cpp
       nw/SysIpL2Addr.cpp
@@ -50712,10 +50726,11 @@ nw/SysIpL2Addr.h
       nw/SysIpL2Addr.cpp
       nw/SysIpL2Addr.win.cpp
       nw/SysIpL3Addr.cpp
-   NetworkBase.SysIpL2Addr.Nullify: 109 [Function]
+   NetworkBase.SysIpL2Addr.Nullify: 73 [Function]
       nw/IpPortRegistry.cpp
       nw/SysIpL2Addr.cpp
       nw/SysIpL3Addr.cpp
+      nw/SysIpL3Addr.h
    NetworkBase.SysIpL2Addr.NullIpAddr: 113 [Function]
       nw/SysIpL2Addr.cpp
    NetworkBase.SysIpL2Addr.operator!=: 69 [Function]
@@ -50731,7 +50746,7 @@ nw/SysIpL2Addr.h
       nw/SysIpL2Addr.win.cpp
       nw/SysIpL3Addr.h
       nw/SysIpL3Addr.win.cpp
-   NetworkBase.SysIpL2Addr.SupportsIPv6: 75 [Function]
+   NetworkBase.SysIpL2Addr.SupportsIPv6: 79 [Function]
       nw/IpPortRegistry.cpp
       nw/NwTypes.cpp
       nw/SysIpL2Addr.cpp
@@ -50750,7 +50765,7 @@ nw/SysIpL2Addr.h
    NetworkBase.SysIpL2Addr.SysIpL2Addr(IPv4Addr): 131 [Function]
       nw/SysIpL2Addr.cpp
       nw/SysIpL3Addr.cpp
-   NetworkBase.SysIpL2Addr.to_str: 83 [Function]
+   NetworkBase.SysIpL2Addr.to_str: 87 [Function]
       nw/IoThread.cpp
       nw/IpPortRegistry.cpp
       nw/NwIncrement.cpp
@@ -50796,7 +50811,7 @@ nw/SysIpL3Addr.h
    NetworkBase.SysIpL3Addr.AddrToName: 154 [Function]
       nw/NwIncrement.cpp
       nw/SysIpL3Addr.win.cpp
-   NetworkBase.SysIpL3Addr.Display: 168 [Function]
+   NetworkBase.SysIpL3Addr.Display: 164 [Function]
       nw/SysIpL3Addr.cpp
       sb/GlobalAddress.cpp
       sb/GlobalAddress.h
@@ -50833,7 +50848,7 @@ nw/SysIpL3Addr.h
       nw/SysIpL3Addr.cpp
       nw/SysIpL3Addr.win.cpp
       nw/SysUdpSocket.win.cpp
-   NetworkBase.SysIpL3Addr.Nullify: 164 [Function]
+   NetworkBase.SysIpL3Addr.Nullify: 169 [Function]
       nw/SysIpL3Addr.cpp
    NetworkBase.SysIpL3Addr.operator!=: 100 [Function]
       nw/SysIpL3Addr.cpp
@@ -51331,13 +51346,13 @@ nw/SysTcpSocket.h
    SYSTCPSOCKET_H_INCLUDED: 23 [Define]
       nw/SysTcpSocket.h
 nw/SysTcpSocket.win.cpp
-   NetworkBase.SysTcpSocket_Listen: 152 [SpaceData]
+   NetworkBase.SysTcpSocket_Listen: 161 [SpaceData]
       nw/SysTcpSocket.win.cpp
-   NetworkBase.SysTcpSocket_Recv: 282 [SpaceData]
+   NetworkBase.SysTcpSocket_Recv: 291 [SpaceData]
       nw/SysTcpSocket.win.cpp
-   NetworkBase.SysTcpSocket_Send: 353 [SpaceData]
+   NetworkBase.SysTcpSocket_Send: 362 [SpaceData]
       nw/SysTcpSocket.win.cpp
-   NetworkBase.SysTcpSocket_SetService: 409 [SpaceData]
+   NetworkBase.SysTcpSocket_SetService: 418 [SpaceData]
       nw/SysTcpSocket.win.cpp
 nw/SysUdpSocket.cpp
    NetworkBase.SysUdpSocket_SendBuff: 73 [SpaceData]
@@ -59003,7 +59018,9 @@ sb/SbIpBuffer.h
       sb/SbTypes.h
       sb/TlvProtocol.cpp
       sn/PotsCallHandler.cpp
-   SessionBase.SbIpBuffer.Display: 78 [Function]
+   SessionBase.SbIpBuffer.Clone: 78 [Function]
+      sb/SbIpBuffer.cpp
+   SessionBase.SbIpBuffer.Display: 82 [Function]
       sb/SbIpBuffer.cpp
       sb/SbTrace.cpp
    SessionBase.SbIpBuffer.Header: 61 [Function]
@@ -59026,9 +59043,9 @@ sb/SbIpBuffer.h
       sb/SbInputHandler.cpp
       sb/SbIpBuffer.cpp
       sb/SbTrace.cpp
-   SessionBase.SbIpBuffer.Patch: 83 [Function]
+   SessionBase.SbIpBuffer.Patch: 87 [Function]
       sb/SbIpBuffer.cpp
-   SessionBase.SbIpBuffer.PayloadSize: 87 [Function]
+   SessionBase.SbIpBuffer.PayloadSize: 91 [Function]
       sb/SbIpBuffer.cpp
    SessionBase.SbIpBuffer.SbIpBuffer(const SbIpBuffer&): 53 [Function]
       sb/SbIpBuffer.cpp
@@ -66256,7 +66273,6 @@ subs/csignal
       nb/Thread.cpp
       nt/NtIncrement.cpp
    SIG_DFL: 17 [Function]
-      nb/Thread.cpp
    SIGABRT: 8 [Define]
       nb/SysSignals.cpp
    SIGBREAK: 14 [Define]
@@ -67884,6 +67900,7 @@ subs/iosfwd
       nb/Formatters.cpp
       nb/Log.cpp
       nb/LogBuffer.cpp
+      nb/LogBuffer.h
       nb/LogThread.cpp
       nb/Memory.cpp
       nb/ModuleRegistry.cpp
@@ -69578,9 +69595,11 @@ subs/ostream
       sb/LocalAddress.cpp
       sb/SbIncrement.cpp
       sb/SbInputHandler.cpp
+      sb/SbIpBuffer.cpp
       sb/SbPools.cpp
       sb/SbTrace.cpp
       sb/Timer.cpp
+      sb/TlvProtocol.cpp
       sn/PotsTreatments.cpp
       st/MscBuilder.cpp
       st/TestSessions.cpp
@@ -72180,7 +72199,7 @@ subs/winsock2.h
       nw/SysTcpSocket.win.cpp
    WINSOCK2_H_INCLUDED: 6 [Define]
    WSA_NOT_ENOUGH_MEMORY: 139 [SpaceData]
-   WSACleanup: 145 [Function]
+   WSACleanup: 147 [Function]
       nw/SysSocket.win.cpp
    WSAData: 128 [Class]
       nw/SysSocket.win.cpp
@@ -72192,11 +72211,15 @@ subs/winsock2.h
    WSAData.wHighVersion: 131 [ClassData]
    WSAData.wVersion: 130 [ClassData]
       nw/SysSocket.win.cpp
+   WSAECONNRESET: 142 [SpaceData]
+      nw/SysTcpSocket.win.cpp
    WSAENOPROTOOPT: 141 [SpaceData]
+   WSAENOTCONN: 143 [SpaceData]
+      nw/SysTcpSocket.win.cpp
    WSAEWOULDBLOCK: 140 [SpaceData]
       nw/SysTcpSocket.win.cpp
       nw/SysUdpSocket.win.cpp
-   WSAGetLastError: 144 [Function]
+   WSAGetLastError: 146 [Function]
       nw/SysIpL2Addr.win.cpp
       nw/SysIpL3Addr.win.cpp
       nw/SysSocket.win.cpp
@@ -72204,7 +72227,7 @@ subs/winsock2.h
       nw/SysUdpSocket.win.cpp
    WSAPoll: 118 [Function]
       nw/SysTcpSocket.win.cpp
-   WSAStartup: 143 [Function]
+   WSAStartup: 145 [Function]
       nw/SysSocket.win.cpp
 subs/ws2tcpip.h
    freeaddrinfo: 33 [Function]

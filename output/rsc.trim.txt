@@ -997,7 +997,6 @@ Parser.h
       CodeTools.UsingPtr [CxxFwd.h]
       NodeBase.c_string [SysTypes.h]
       NodeBase.fn_name_arg [SysTypes.h]
-      NodeBase.stringPtr [SysTypes.h]
       NodeBase.SysTime [SysTime.h]
       std.ostream [iosfwd]
       std.string [string]
@@ -1009,6 +1008,7 @@ Parser.h
       CodeTools.CxxArea [CxxFwd.h]
       CodeTools.CxxScope [CxxFwd.h]
       CodeTools.CxxScoped [CxxFwd.h]
+      CodeTools.Expression [CxxFwd.h]
       CodeTools.Function [CxxFwd.h]
       CodeTools.Namespace [CxxFwd.h]
       CodeTools.QualName [CxxFwd.h]
@@ -1160,7 +1160,7 @@ LogBuffer.h
       UINT16_MAX [cstdint]
    Indirect usage:
       NodeBase.CallbackRequestPtr [CallbackRequest.h]
-      NodeBase.ostringstreamPtr [SysTypes.h]
+      std.ostringstream [iosfwd]
       std.string [string]
    Forward usage:
       NodeBase.LogBuffer.Entry [LogBuffer.h]
@@ -2527,6 +2527,7 @@ CxxScope.h
       CodeTools.Cxx.Access.Private [Cxx.h]
       CodeTools.Cxx.ItemType.Block [Cxx.h]
       CodeTools.Cxx.ItemType.Data [Cxx.h]
+      CodeTools.Cxx.ItemType.FuncSpec [Cxx.h]
       CodeTools.Cxx.ItemType.Function [Cxx.h]
       CodeTools.Cxx.ItemType.SpaceDefn [Cxx.h]
       CodeTools.Cxx.Operator [Cxx.h]
@@ -6310,7 +6311,7 @@ PotsSessions.h
       SessionBase.ServiceId [SbTypes.h]
       SessionBase.TimerId [SbTypes.h]
    Indirect usage:
-      NetworkBase.IpBufferPtr [NwTypes.h]
+      NetworkBase.IpBuffer [IpBuffer.h]
       SessionBase.Event [Event.h]
       SessionBase.Message [Message.h]
       SessionBase.ProtocolSM [ProtocolSM.h]
@@ -6345,6 +6346,7 @@ PotsSessions.h
       CallBase.ProxyBcTermAlerting [ProxyBcSessions.h]
       CallBase.RouteResult [BcRouting.h]
       NetworkBase.InputHandler [InputHandler.h]
+      NetworkBase.IpBuffer [IpBuffer.h]
       NetworkBase.IpBufferPtr [NwTypes.h]
       NetworkBase.IpPort [NwTypes.h]
       NetworkBase.ipport_t [NwTypes.h]
@@ -10874,6 +10876,7 @@ CxxExecute.cpp
       CodeTools.Cxx.ItemType.Class [Cxx.h]
       CodeTools.Cxx.ItemType.Elision [Cxx.h]
       CodeTools.Cxx.ItemType.Enum [Cxx.h]
+      CodeTools.Cxx.ItemType.FuncSpec [Cxx.h]
       CodeTools.Cxx.ItemType.Namespace [Cxx.h]
       CodeTools.Cxx.ItemType.TypeSpec [Cxx.h]
       CodeTools.Cxx.Operator.REFERENCE_SELECT [Cxx.h]
@@ -24245,7 +24248,6 @@ Thread.cpp
       operator new(size_t) [new]
       ptrdiff_t [cstddef]
       raise [csignal]
-      SIG_DFL [csignal]
       signal [csignal]
       size_t [cstddef]
       std.atomic [atomic]
@@ -25273,6 +25275,7 @@ SbIpBuffer.cpp
       SessionBase.ProtocolRegistry [ProtocolRegistry.h]
       SessionBase.ProtocolRegistry.GetProtocol [ProtocolRegistry.h]
       SessionBase.SbIpBuffer [SbIpBuffer.h]
+      SessionBase.SbIpBuffer.Clone [SbIpBuffer.h]
       SessionBase.SbIpBuffer.Display [SbIpBuffer.h]
       SessionBase.SbIpBuffer.Header [SbIpBuffer.h]
       SessionBase.SbIpBuffer.operator delete(void*) [SbIpBuffer.h]
@@ -25289,7 +25292,10 @@ SbIpBuffer.cpp
       std.basic_ostream [ostream]
       std.basic_ostream.operator<<(char) [ostream]
       std.basic_ostream.operator<<(const char*) [ostream]
+      std.basic_ostream.operator<<(unsigned int) [ostream]
       std.basic_string [string]
+   Remove the using statement for
+      NetworkBase
 TimerRegistry.cpp
    Base usage:
       SessionBase.TimerRegistry [TimerRegistry.h]
@@ -26315,6 +26321,7 @@ IpBuffer.cpp
       NetworkBase.IpBuffer.buff_ [IpBuffer.h]
       NetworkBase.IpBuffer.buffSize_ [IpBuffer.h]
       NetworkBase.IpBuffer.bytes_ [IpBuffer.h]
+      NetworkBase.IpBuffer.Clone [IpBuffer.h]
       NetworkBase.IpBuffer.dir_ [IpBuffer.h]
       NetworkBase.IpBuffer.Display [IpBuffer.h]
       NetworkBase.IpBuffer.external_ [IpBuffer.h]
@@ -30689,6 +30696,7 @@ SysTcpSocket.cpp
       NetworkBase.InputHandler [InputHandler.h]
       NetworkBase.InputHandler.HostToNetwork [InputHandler.h]
       NetworkBase.IpBuffer [IpBuffer.h]
+      NetworkBase.IpBuffer.Clone [IpBuffer.h]
       NetworkBase.IpBuffer.IsQueued [IpBuffer.h]
       NetworkBase.IpBuffer.OutgoingBytes [IpBuffer.h]
       NetworkBase.IpBuffer.RxAddr [IpBuffer.h]
@@ -30925,6 +30933,8 @@ SysTcpSocket.win.cpp
       std.unique_ptr<T[]> [memory]
       std.unique_ptr<T[]>.get [memory]
       std.unique_ptr<T[]>.reset [memory]
+      WSAECONNRESET [winsock2.h]
+      WSAENOTCONN [winsock2.h]
       WSAEWOULDBLOCK [winsock2.h]
       WSAGetLastError [winsock2.h]
       WSAPoll [winsock2.h]
@@ -32951,6 +32961,7 @@ TlvProtocol.cpp
    Base usage:
       SessionBase.TlvProtocol [TlvProtocol.h]
    Direct usage:
+      NetworkBase.IpBuffer.HeaderSize [IpBuffer.h]
       NetworkBase.IpBuffer.Payload [IpBuffer.h]
       NodeBase.byte_t [SysTypes.h]
       NodeBase.CRLF [SysTypes.h]
@@ -32985,6 +32996,7 @@ TlvProtocol.cpp
       std.basic_ostream [ostream]
       std.basic_ostream.operator<<(char) [ostream]
       std.basic_ostream.operator<<(const char*) [ostream]
+      std.basic_ostream.operator<<(unsigned int) [ostream]
       std.basic_ostream.operator<<(unsigned short) [ostream]
       std.basic_string [string]
 AnModule.cpp
@@ -33234,6 +33246,7 @@ DipProtocol.cpp
       Diplomacy.DipIpBuffer [DipProtocol.h]
       Diplomacy.DipIpBuffer.AddBytes [DipProtocol.h]
       Diplomacy.DipIpBuffer.BytesAdded [DipProtocol.h]
+      Diplomacy.DipIpBuffer.Clone [DipProtocol.h]
       Diplomacy.DipIpBuffer.currSize_ [DipProtocol.h]
       Diplomacy.DipIpBuffer.DipIpBuffer(const DipIpBuffer&) [DipProtocol.h]
       Diplomacy.DipIpBuffer.DipIpBuffer(MsgDirection,size_t) [DipProtocol.h]

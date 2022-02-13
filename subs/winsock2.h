@@ -139,6 +139,8 @@ struct WSAData
 constexpr int WSA_NOT_ENOUGH_MEMORY = 8;
 constexpr int WSAEWOULDBLOCK = 10035;
 constexpr int WSAENOPROTOOPT = 10042;
+constexpr int WSAECONNRESET = 10054;
+constexpr int WSAENOTCONN = 10057;
 
 int WSAStartup(WORD versionRequested, WSAData* data);
 int WSAGetLastError();

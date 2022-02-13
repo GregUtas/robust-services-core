@@ -140,7 +140,16 @@ void SysTcpSocket::Disconnect()
 
       if(shutdown(Socket(), SD_SEND) == SOCKET_ERROR)
       {
-         OutputLog(NetworkSocketError, "shutdown", WSAGetLastError());
+         auto error = WSAGetLastError();
+
+         switch(error)
+         {
+         case WSAECONNRESET:  // peer has disconnected
+         case WSAENOTCONN:    // connect() still pending
+            break;
+         default:
+            OutputLog(NetworkSocketError, "shutdown", error);
+         }
       }
 
       disconnecting_ = true;

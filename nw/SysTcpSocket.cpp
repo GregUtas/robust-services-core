@@ -258,7 +258,7 @@ SysSocket::SendRc SysTcpSocket::QueueBuff(IpBuffer* buff, bool henq)
       //  capture the buffer's contents; and the sender can free the buffer
       //  when it no longer requires access the outgoing message.
       //
-      buff = new IpBuffer(*buff);
+      buff = buff->Clone();
    }
 
    if(henq)

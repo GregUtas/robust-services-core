@@ -327,6 +327,10 @@ public:
    //
    bool AddBytes(const byte_t* source, size_t size, bool& moved) override;
 
+   //  Overridden to return a copy of the buffer.
+   //
+   IpBuffer* Clone() const override;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,

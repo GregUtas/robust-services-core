@@ -73,6 +73,10 @@ public:
    //
    static void operator delete(void* addr, SbPoolUser user);
 
+   //  Overridden to return a copy of the buffer.
+   //
+   IpBuffer* Clone() const override;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,

@@ -54,13 +54,14 @@ public:
    //
    IpBuffer(NodeBase::MsgDirection dir, size_t header, size_t payload);
 
-   //  Copy constructor.
-   //
-   IpBuffer(const IpBuffer& that);
-
    //  Frees buff_.  Virtual to allow subclassing.
    //
    virtual ~IpBuffer();
+
+   //  Returns a copy of this buffer.  This acts as a copy constructor
+   //  that preserves BUFF's class.
+   //
+   virtual IpBuffer* Clone() const;
 
    //  Returns the source IP address/port.
    //
@@ -95,6 +96,10 @@ public:
    //  Returns true if the buffer was queued for output.
    //
    bool IsQueued() const { return queued_; }
+
+   //  Returns the size of the message header.
+   //
+   size_t HeaderSize() const { return hdrSize_; }
 
    //  Returns a pointer to the message header, which is also the start
    //  of the buffer.
@@ -166,6 +171,10 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
+protected:
+   //  Copy constructor.  Protected because Clone() should be used.
+   //
+   IpBuffer(const IpBuffer& that);
 private:
    //  Ensures that the byte buffer can hold SIZE bytes.  Returns true if a
    //  new buffer was allocated because the current one wasn't large enough.

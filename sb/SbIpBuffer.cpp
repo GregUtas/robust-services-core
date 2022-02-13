@@ -33,6 +33,7 @@
 #include "SysTypes.h"
 
 using namespace NodeBase;
+using namespace NetworkBase;
 using std::ostream;
 using std::string;
 
@@ -65,6 +66,15 @@ SbIpBuffer::SbIpBuffer(const SbIpBuffer& that) : IpBuffer(that)
 
 //------------------------------------------------------------------------------
 
+IpBuffer* SbIpBuffer::Clone() const
+{
+   Debug::ft("SbIpBuffer.Clone");
+
+   return new SbIpBuffer(*this);
+}
+
+//------------------------------------------------------------------------------
+
 void SbIpBuffer::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -72,7 +82,7 @@ void SbIpBuffer::Display(ostream& stream,
 
    auto header = Header();
 
-   stream << prefix << "MsgHeader:" << CRLF;
+   stream << prefix << "MsgHeader (length=" << sizeof(MsgHeader) << ')' << CRLF;
    header->Display(stream, prefix + spaces(2));
    stream << prefix << "Parameters:" << CRLF;
 

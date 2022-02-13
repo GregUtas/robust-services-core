@@ -460,6 +460,15 @@ void DipIpBuffer::BytesAdded(size_t size)
 
 //------------------------------------------------------------------------------
 
+IpBuffer* DipIpBuffer::Clone() const
+{
+   Debug::ft("DipIpBuffer.Clone");
+
+   return new DipIpBuffer(*this);
+}
+
+//------------------------------------------------------------------------------
+
 void DipIpBuffer::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {

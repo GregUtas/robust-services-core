@@ -161,6 +161,15 @@ bool IpBuffer::AllocBuff(size_t bytes)
 
 //------------------------------------------------------------------------------
 
+IpBuffer* IpBuffer::Clone() const
+{
+   Debug::ft("IpBuffer.Clone");
+
+   return new IpBuffer(*this);
+}
+
+//------------------------------------------------------------------------------
+
 void IpBuffer::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -278,13 +287,6 @@ bool IpBuffer::Send(bool external)
       Debug::SwLog(IpBuffer_Send, "null buffer", txAddr_.GetPort());
       return false;
    }
-
-   //  An IpBuffer can be subclassed, so truncate the outgoing message to
-   //  the current size of the application payload.  This prevents unused
-   //  bytes from being sent if the buffer is queued for output, at which
-   //  time it gets downclassed to an IpBuffer.
-   //
-   buffSize_ = hdrSize_ + PayloadSize();
 
    //  If there is a dedicated socket for the destination, send the message
    //  over it.  If not, find the IP service associated with the sender and

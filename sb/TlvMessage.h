@@ -55,7 +55,7 @@ public:
    //  PARM also contains the message header, which is placed into the new
    //  message's header.
    //
-   TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
+   TlvMessage(const TlvParm& parm, ProtocolSM* psm);
 
    //  Virtual to allow subclassing.
    //
@@ -64,7 +64,7 @@ public:
    //  Encapsulates MSG's payload as a parameter within the message, giving
    //  it the identifier PID.
    //
-   virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
+   virtual TlvParm* Wrap(const TlvMessage& msg, ParameterId pid);
 
    //  Returns the first parameter that matches PID.  Returns nullptr if no
    //  such parameter exists.  T is the type for the parameter's contents,
@@ -150,36 +150,36 @@ public:
       ParmIterator& operator=(const ParmIterator& that) = default;
    private:
       const TlvMsgLayout* mptr;  // reference to message
-      TlvParmPtr pptr;           // reference to current parameter
+      TlvParm* pptr;             // reference to current parameter
       size_t pindex;             // parameter's offset within message
    };
 
    //  Returns the first parameter that matches PID.  Returns nullptr if no
    //  such parameter exists.
    //
-   TlvParmPtr FindParm(ParameterId pid) const;
+   TlvParm* FindParm(ParameterId pid) const;
 
    //  Returns the first parameter in the message and updates PIT, which
    //  is used to iterate through the parameters.
    //
-   TlvParmPtr FirstParm(ParmIterator& pit) const;
+   TlvParm* FirstParm(ParmIterator& pit) const;
 
    //  Returns the next parameter in the message based on PIT, which is
    //  updated.
    //
-   TlvParmPtr NextParm(ParmIterator& pit) const;
+   TlvParm* NextParm(ParmIterator& pit) const;
 
    //  Returns all parameters in the message by updating PTAB, an array
    //  that contains SIZE elements (indices 0 to SIZE-1).  Returns the
    //  number of parameters found.
    //
-   size_t AllParms(TlvParmArray ptab, size_t size) const;
+   size_t AllParms(const TlvParm* ptab[], size_t size) const;
 
    //  Returns all parameters that match PID by updating PTAB, an array that
    //  contains SIZE elements (indices 0 to SIZE-1).  Returns the number of
    //  parameters found.
    //
-   size_t FindParms(ParameterId pid, TlvParmArray ptab, size_t size) const;
+   size_t FindParms(ParameterId pid, const TlvParm* ptab[], size_t size) const;
 
    //  Adds a parameter to the message.  PID is its identifier and PLEN
    //  is its length in bytes.  The syntax for invocation on MSG, where
@@ -188,24 +188,22 @@ public:
    //    auto info = reinterpret_cast< T* >(pptr->bytes);
    //  after which INFO's fields can be filled in.
    //
-   virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
+   virtual TlvParm* AddParm(ParameterId pid, size_t plen);
 
    //  Inserts a parameter identified by PID, filling it with SIZE bytes
    //  that are taken from SRC.
    //
-   TlvParmPtr AddBytes
-      (const NodeBase::byte_t* src, size_t size, ParameterId pid);
+   TlvParm* AddBytes(const NodeBase::byte_t* src, size_t size, ParameterId pid);
 
    //  Copies the parameter SRC (in another message) into this message by
    //  creating a parameter identified by PID.  If PID is NIL_ID, SRCE's
    //  parameter identifier is used.
    //
-   TlvParmPtr CopyParm
-      (const TlvParmLayout& src, ParameterId pid = NodeBase::NIL_ID);
+   TlvParm* CopyParm(const TlvParm& src, ParameterId pid = NodeBase::NIL_ID);
 
    //  Removes a parameter by changing its identifier to NIL_ID.
    //
-   virtual void DeleteParm(TlvParmLayout& parm);
+   virtual void DeleteParm(TlvParm& parm);
 
    //> The byte alignment used for messages in this network.  The default
    //  value pads the header and parameters to a multiple of four bytes.
@@ -248,7 +246,7 @@ protected:
       MsgHeader header;
       union
       {
-         TlvParmLayout firstParm;                   // first parameter
+         TlvParm firstParm;                         // first parameter
          NodeBase::byte_t bytes[MaxSbMsgSize - 1];  // payload as bytes
       };
    };
@@ -269,7 +267,8 @@ protected:
    //  PPTR.  LAST is set to false unless PPTR is the last parameter in the
    //  message.
    //
-   virtual bool MatchParm(TlvParmPtr pptr, ParmIterator& pit, bool& last) const;
+   virtual bool MatchParm
+      (const TlvParm* pptr, ParmIterator& pit, bool& last) const;
 
    //  Adds the fence pattern to an incoming message in preparation for
    //  adding more parameters to it.
@@ -284,7 +283,7 @@ protected:
    //  Returns the number of bytes that precede the parameter referenced by
    //  PPTR.  Returns SIZE_MAX if PPTR is nullptr or not within this message.
    //
-   size_t ParmOffset(ParmIterator& pit) const;
+   size_t ParmOffset(const ParmIterator& pit) const;
 
    //  Returns a pointer to the message's fence, which follows the header
    //  and parameters in TlvLayout.

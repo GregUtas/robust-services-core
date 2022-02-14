@@ -65,7 +65,7 @@ void PotsShelfHandler::ReceiveBuff
 
    auto sbuff = static_cast< SbIpBuffer* >(buff.get());
    auto header = sbuff->Header();
-   auto pptr = reinterpret_cast< TlvParmPtr >(sbuff->PayloadPtr());
+   auto pptr = reinterpret_cast< TlvParm* >(sbuff->PayloadPtr());
    auto phi = reinterpret_cast< PotsHeaderInfo* >(pptr->bytes);
 
    //  Verify that the message is addressed to an existing POTS circuit.

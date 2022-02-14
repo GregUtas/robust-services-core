@@ -982,6 +982,7 @@ bool CodeWarning::Suppress() const
    {
    case ArgumentUnused:
    {
+      if(fn == "Allocators.h") return true;
       if(fn == "BaseBot.h") return true;
       break;
    }

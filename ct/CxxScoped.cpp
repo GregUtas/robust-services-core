@@ -2675,7 +2675,7 @@ void Friend::SetFunc(FunctionPtr& func)
 {
    Debug::ft("Friend.SetFunc");
 
-   func->CloseScope();
+   func->CloseScope();  //*
 
    if(func->GetBracePos() != string::npos)
    {

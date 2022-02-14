@@ -64,7 +64,7 @@ void TlvProtocol::DisplayMsg(ostream& stream,
 
    for(size_t index = 0; index < bytecount; NO_OP)
    {
-      auto pptr = reinterpret_cast< TlvParmPtr >(&bytes[index]);
+      auto pptr = reinterpret_cast< TlvParm* >(&bytes[index]);
       auto parm = Protocol::GetParameter(pptr->header.pid);
 
       index += sizeof(TlvParmHeader);

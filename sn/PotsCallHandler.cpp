@@ -86,7 +86,7 @@ void PotsCallHandler::ReceiveBuff
 
    auto sbuff = static_cast< SbIpBuffer* >(buff.get());
    auto header = sbuff->Header();
-   auto pptr = reinterpret_cast< TlvParmPtr >(sbuff->PayloadPtr());
+   auto pptr = reinterpret_cast< TlvParm* >(sbuff->PayloadPtr());
    auto phi = reinterpret_cast< PotsHeaderInfo* >(pptr->bytes);
    auto cct = Singleton< Switch >::Instance()->GetCircuit(phi->port);
 

@@ -43,7 +43,7 @@ TlvParameter::~TlvParameter()
 
 //------------------------------------------------------------------------------
 
-Parameter::Id TlvParameter::ExtractPid(const TlvParmLayout& parm)
+Parameter::Id TlvParameter::ExtractPid(const TlvParm& parm)
 {
    Debug::ft("TlvParameter.ExtractPid");
 

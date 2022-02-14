@@ -49,14 +49,11 @@ constexpr size_t MaxTlvParmSize = MaxSbMsgSize - sizeof(TlvParmHeader);
 //
 //  TLV parameter layout.
 //
-struct TlvParmLayout
+struct TlvParm
 {
    TlvParmHeader header;                        // parameter header
    NodeBase::byte_t bytes[MaxTlvParmSize - 1];  // parameter contents
 };
-
-typedef TlvParmLayout* TlvParmPtr;  // pointer to a parameter
-typedef TlvParmPtr* TlvParmArray;   // array of pointers to parameters
 
 //------------------------------------------------------------------------------
 //
@@ -68,7 +65,7 @@ class TlvParameter : public Parameter
 public:
    //  Returns the parameter's identifier.
    //
-   static Id ExtractPid(const TlvParmLayout& parm);
+   static Id ExtractPid(const TlvParm& parm);
 
    //  Overridden for patching.
    //

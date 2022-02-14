@@ -182,7 +182,7 @@ public:
    //  Sets an adjustment order or the order for a unit.
    //
    bool set_hold_order(ProvinceId unit);
-   bool set_move_order(ProvinceId unit, Location dest);
+   bool set_move_order(ProvinceId unit, const Location& dest);
    bool set_support_to_hold_order(ProvinceId unit, ProvinceId client);
    bool set_support_to_move_order
       (ProvinceId unit, ProvinceId client, ProvinceId dest);
@@ -192,8 +192,8 @@ public:
    bool set_move_by_single_step_convoy_order
       (ProvinceId unit, ProvinceId dest, ProvinceId fleet);
    bool set_disband_order(ProvinceId unit);
-   bool set_retreat_order(ProvinceId unit, Location dest);
-   void set_build_order(Location location);
+   bool set_retreat_order(ProvinceId unit, const Location& dest);
+   void set_build_order(const Location& location);
    bool set_remove_order(ProvinceId unit);
    void set_waive_order();
    void set_multiple_waive_orders(size_t waives);
@@ -328,11 +328,11 @@ public:
 
    //  Returns the number of supply centres currently owned by POWER.
    //
-   size_t get_centre_count(Token power) const;
+   size_t get_centre_count(const Token& power) const;
 
    //  Returns the number of units currently owned by POWER.
    //
-   size_t get_unit_count(Token power) const;
+   size_t get_unit_count(const Token& power) const;
 private:
    //  Constructor.  Private because this is a singleton.
    //

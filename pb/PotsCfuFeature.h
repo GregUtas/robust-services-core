@@ -53,7 +53,7 @@ public:
    explicit PotsCfuFeatureProfile(Address::DN dn);
    ~PotsCfuFeatureProfile();
 private:
-   bool Activate(PotsProfile& profile, CliThread& cli) override;
+   bool Activate(const PotsProfile& profile, CliThread& cli) override;
 };
 }
 #endif

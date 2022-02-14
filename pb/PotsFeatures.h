@@ -61,7 +61,7 @@ public:
 protected:
    DnRouteFeatureProfile(PotsFeature::Id fid, Address::DN dn);
    virtual ~DnRouteFeatureProfile();
-   bool Activate(PotsProfile& profile, CliThread& cli) override;
+   bool Activate(const PotsProfile& profile, CliThread& cli) override;
    bool Deactivate(PotsProfile& profile) override;
 private:
    Address::DN dn_;

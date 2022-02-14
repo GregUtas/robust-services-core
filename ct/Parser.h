@@ -480,13 +480,13 @@ private:
    //  an alphabetic character that could be an encoding tag for a character
    //  or string literal.
    //
-   bool GetCxxLiteralOrAlpha(ExprPtr& expr);
+   bool GetCxxLiteralOrAlpha(const ExprPtr& expr);
 
    //  Updates EXPR with the results of parsing an expression upon reaching
    //  a punctuation character.  CXX is true when parsing C++ and is false
    //  when parsing preprocessor directives.
    //
-   bool GetOp(ExprPtr& expr, bool cxx);
+   bool GetOp(const ExprPtr& expr, bool cxx);
 
    //  Updates EXPR with the results of parsing a literal.  CODE specifies
    //  the encoding tag, if any, that preceded a character or string literal.

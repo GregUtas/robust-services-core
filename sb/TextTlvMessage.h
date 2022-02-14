@@ -55,7 +55,7 @@ protected:
    //  valid MsgHeader.  When Parse is invoked, it parses TEXT to build the
    //  TLV version of the message in a buffer that replaces TEXT.
    //
-   explicit TextTlvMessage(SbIpBufferPtr& text);
+   explicit TextTlvMessage(SbIpBufferPtr& buff);
 
    //  Creates an outgoing message.  Protected because this class is virtual.
    //

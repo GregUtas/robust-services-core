@@ -1160,7 +1160,7 @@ protected:
 
    //  Overridden to handle deletion of the CIP PSM.
    //
-   void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(const ProtocolSM& exPsm) override;
 private:
    //  Builds a CIP REL containing CAUSE.
    //

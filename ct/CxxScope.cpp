@@ -626,7 +626,7 @@ ClassData::ClassData(string& name, TypeSpecPtr& type) : Data(type),
 
    std::swap(name_, name);
    Singleton< CxxSymbols >::Instance()->InsertData(this);
-   OpenScope(nullptr);  //*
+   OpenScope(nullptr);
    CxxStats::Incr(CxxStats::CLASS_DATA);
 }
 
@@ -887,7 +887,7 @@ bool ClassData::EnterScope()
       ExecuteInit(false);
    }
 
-   CloseScope();  //*
+   CloseScope();
    return true;
 }
 
@@ -1095,7 +1095,7 @@ CxxScope::~CxxScope()
 {
    Debug::ftnt("CxxScope.dtor");
 
-   CloseScope();  //*
+   CloseScope();
 }
 
 //------------------------------------------------------------------------------
@@ -1112,7 +1112,7 @@ void CxxScope::AccessibilityOf
 
 //------------------------------------------------------------------------------
 
-void CxxScope::CloseScope()  //*
+void CxxScope::CloseScope()
 {
    Debug::ftnt("CxxScope.CloseScope");
 
@@ -1178,7 +1178,7 @@ TemplateParm* CxxScope::NameToTemplateParm(const string& name) const
 
 fn_name CxxScope_OpenScope = "CxxScope.OpenScope";
 
-void CxxScope::OpenScope(const QualName* name)  //*
+void CxxScope::OpenScope(const QualName* name)
 {
    Debug::ft(CxxScope_OpenScope);
 
@@ -2605,7 +2605,7 @@ Function::Function(QualNamePtr& name) :
    Debug::ft("Function.ctor");
 
    Singleton< CxxSymbols >::Instance()->InsertFunc(this);
-   OpenScope(name_.get());  //*
+   OpenScope(name_.get());
    CxxStats::Incr(CxxStats::FUNCTION);
 }
 
@@ -2649,7 +2649,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    spec_->SetUserType(TS_Function);
    if(type_) return;
 
-   OpenScope(name_.get());  //*
+   OpenScope(name_.get());
    CxxStats::Incr(CxxStats::FUNCTION);
 }
 
@@ -4267,7 +4267,7 @@ bool Function::EnterScope()
    //  Enter our return type and arguments.
    //
    EnterSignature();
-   CloseScope();  //*
+   CloseScope();
 
    //  See whether this is a new function or the definition of a
    //  previously declared function.
@@ -4303,9 +4303,6 @@ bool Function::EnterScope()
 void Function::EnterSignature()
 {
    Debug::ft("Function.EnterSignature");
-
-   if((Name() == "Clone") && (GetFile()->Name() == "SbIpBuffer.cpp"))
-      Debug::noop();  //x
 
    if(spec_ != nullptr)
    {
@@ -6213,7 +6210,7 @@ SpaceData::SpaceData(QualNamePtr& name, TypeSpecPtr& type) : Data(type),
 {
    Debug::ft("SpaceData.ctor");
 
-   OpenScope(name_.get());  //*
+   OpenScope(name_.get());
    CxxStats::Incr(CxxStats::FILE_DATA);
 }
 
@@ -6358,7 +6355,7 @@ bool SpaceData::EnterScope()
    if(GetArea()->FindItem(Name()) != nullptr)
       spec->SetUserType(TS_Definition);
    spec->EnteringScope(this);
-   CloseScope();  //*
+   CloseScope();
 
    //  See whether this is a new declaration or the definition
    //  of previously declared data (i.e. class static data or

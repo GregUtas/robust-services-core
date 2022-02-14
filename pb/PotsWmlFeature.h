@@ -57,7 +57,7 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   bool Activate(PotsProfile& profile, CliThread& cli) override;
+   bool Activate(const PotsProfile& profile, CliThread& cli) override;
 
    secs_t timeout_;
 };

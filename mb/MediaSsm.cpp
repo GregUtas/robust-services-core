@@ -94,7 +94,7 @@ void MediaSsm::NotifyListeners
 
 //------------------------------------------------------------------------------
 
-void MediaSsm::PsmDeleted(ProtocolSM& exPsm)
+void MediaSsm::PsmDeleted(const ProtocolSM& exPsm)
 {
    Debug::ft("MediaSsm.PsmDeleted");
 

@@ -114,7 +114,7 @@ public:
 
    //  Returns the raw IPv6 address.
    //
-   const IPv6Addr& Addr() { return addr_; }
+   const IPv6Addr& Addr() const { return addr_; }
 
    //  Overridden to display member variables.
    //

@@ -860,6 +860,10 @@ msecs_t TrafficCall::ProcessTerminating()
       //
       auto reg = Singleton< PotsProfileRegistry >::Instance();
       auto prof = reg->Profile(dest_);
+
+      if(prof == nullptr)  //x
+         Debug::noop();
+
       auto term = prof->GetCircuit();
       auto state = term->GetState();
 

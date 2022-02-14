@@ -1594,7 +1594,7 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetCxxLiteralOrAlpha(ExprPtr& expr)
+bool Parser::GetCxxLiteralOrAlpha(const ExprPtr& expr)
 {
    Debug::ft("Parser.GetCxxLiteralOrAlpha");
 
@@ -2686,7 +2686,7 @@ bool Parser::GetNum(Expression* expr)
 
 //------------------------------------------------------------------------------
 
-bool Parser::GetOp(ExprPtr& expr, bool cxx)
+bool Parser::GetOp(const ExprPtr& expr, bool cxx)
 {
    Debug::ft("Parser.GetOp");
 

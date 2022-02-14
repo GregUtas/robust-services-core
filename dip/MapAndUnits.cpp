@@ -339,13 +339,13 @@ bool MapAndUnits::cancel_build_order(ProvinceId province)
 
 //------------------------------------------------------------------------------
 
-bool MapAndUnits::cancel_remove_order(ProvinceId location)
+bool MapAndUnits::cancel_remove_order(ProvinceId province)
 {
    Debug::ft("MapAndUnits.cancel_remove_order");
 
    //  This is exactly the same as removing a build order.
    //
-   return cancel_build_order(location);
+   return cancel_build_order(province);
 }
 
 //------------------------------------------------------------------------------
@@ -1035,7 +1035,7 @@ size_t MapAndUnits::get_adjustment_results(TokenMessage ord_messages[]) const
 
 //------------------------------------------------------------------------------
 
-size_t MapAndUnits::get_centre_count(Token power) const
+size_t MapAndUnits::get_centre_count(const Token& power) const
 {
    Debug::ft("MapAndUnits.get_centre_count");
 
@@ -1213,7 +1213,7 @@ size_t MapAndUnits::get_retreat_results(TokenMessage ord_messages[]) const
 
 //------------------------------------------------------------------------------
 
-size_t MapAndUnits::get_unit_count(Token power) const
+size_t MapAndUnits::get_unit_count(const Token& power) const
 {
    Debug::ft("MapAndUnits.get_unit_count");
 
@@ -2461,7 +2461,7 @@ Token MapAndUnits::province_token(ProvinceId province) const
 
 //------------------------------------------------------------------------------
 
-void MapAndUnits::set_build_order(Location location)
+void MapAndUnits::set_build_order(const Location& location)
 {
    Debug::ft("MapAndUnits.set_build_order");
 
@@ -2575,7 +2575,7 @@ bool MapAndUnits::set_move_by_single_step_convoy_order
 
 //------------------------------------------------------------------------------
 
-bool MapAndUnits::set_move_order(ProvinceId unit, Location dest)
+bool MapAndUnits::set_move_order(ProvinceId unit, const Location& dest)
 {
    Debug::ft("MapAndUnits.set_move_order");
 
@@ -2659,7 +2659,7 @@ bool MapAndUnits::set_remove_order(ProvinceId unit)
 
 //------------------------------------------------------------------------------
 
-bool MapAndUnits::set_retreat_order(ProvinceId unit, Location dest)
+bool MapAndUnits::set_retreat_order(ProvinceId unit, const Location& dest)
 {
    Debug::ft("MapAndUnits.set_retreat_order");
 

@@ -68,7 +68,7 @@ protected:
    //  deletion of the media gateway PSM.  May be overridden, but the base
    //  class version must be invoked,
    //
-   void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(const ProtocolSM& exPsm) override;
 private:
    //  Informs all PSMs that are listening to txPsm that they should now
    //  listen to txPort.

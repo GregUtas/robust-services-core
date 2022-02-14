@@ -56,7 +56,7 @@ DnRouteFeatureProfile::~DnRouteFeatureProfile()
 
 //------------------------------------------------------------------------------
 
-bool DnRouteFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
+bool DnRouteFeatureProfile::Activate(const PotsProfile& profile, CliThread& cli)
 {
    Debug::ft("DnRouteFeatureProfile.Activate");
 

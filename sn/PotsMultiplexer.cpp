@@ -782,7 +782,7 @@ PotsMuxPsm* PotsMuxSsm::NPsm() const
 
 //------------------------------------------------------------------------------
 
-void PotsMuxSsm::PsmDeleted(ProtocolSM& exPsm)
+void PotsMuxSsm::PsmDeleted(const ProtocolSM& exPsm)
 {
    Debug::ft("PotsMuxSsm.PsmDeleted");
 

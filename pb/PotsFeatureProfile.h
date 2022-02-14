@@ -55,7 +55,7 @@ public:
    //  Activates the feature.  The default version generates a log and must
    //  be overridden by features that can be activated and deactivated.
    //
-   virtual bool Activate(PotsProfile& profile, CliThread& cli);  //d
+   virtual bool Activate(const PotsProfile& profile, CliThread& cli);  //d
 
    //  Deactivates the feature.  The default version generates a log and must
    //  be overridden by features that can be activated and deactivated.

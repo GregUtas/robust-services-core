@@ -711,7 +711,7 @@ void ProxyBcSsm::NextProxy(ProxyBcPsm*& ppsm) const
 
 //------------------------------------------------------------------------------
 
-void ProxyBcSsm::PsmDeleted(ProtocolSM& exPsm)
+void ProxyBcSsm::PsmDeleted(const ProtocolSM& exPsm)
 {
    Debug::ft("ProxyBcSsm.PsmDeleted");
 

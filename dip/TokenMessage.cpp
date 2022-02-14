@@ -63,13 +63,13 @@ TokenMessage::TokenMessage(const Token& token) :
 
 //------------------------------------------------------------------------------
 
-TokenMessage::TokenMessage(const Token* message) :
+TokenMessage::TokenMessage(const Token* stream) :
    length_(0),
    parm_count_(0)
 {
    Debug::ft("TokenMessage.ctor(message)");
 
-   set_from(message);
+   set_from(stream);
 }
 
 //------------------------------------------------------------------------------

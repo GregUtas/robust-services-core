@@ -382,7 +382,7 @@ PotsProfile* PotsBcSsm::Profile() const
 
 //------------------------------------------------------------------------------
 
-void PotsBcSsm::PsmDeleted(ProtocolSM& exPsm)
+void PotsBcSsm::PsmDeleted(const ProtocolSM& exPsm)
 {
    Debug::ft("PotsBcSsm.PsmDeleted");
 

@@ -529,7 +529,7 @@ protected:
 
    //  Overridden to handle deletion of a proxy PSM.
    //
-   void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(const ProtocolSM& exPsm) override;
 private:
    //  The number of proxy PSMs on the call.
    //

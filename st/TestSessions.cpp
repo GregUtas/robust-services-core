@@ -827,7 +827,7 @@ void TestSsm::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void TestSsm::PsmDeleted(ProtocolSM& exPsm)
+void TestSsm::PsmDeleted(const ProtocolSM& exPsm)
 {
    Debug::ft("TestSsm.PsmDeleted");
 

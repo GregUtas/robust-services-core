@@ -104,7 +104,7 @@ public:
    //  PSM pointers in member data, for example, but the base class version
    //  must be invoked.
    //
-   virtual void PsmDeleted(ProtocolSM& exPsm);
+   virtual void PsmDeleted(const ProtocolSM& exPsm);
 
    //  Returns true if the SSM has entered the Null state.
    //

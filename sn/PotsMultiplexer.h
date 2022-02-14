@@ -171,7 +171,7 @@ public:
 private:
    PotsMuxPsm* NPsm() const;
    ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
-   void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(const ProtocolSM& exPsm) override;
 
    PotsProfile* prof_;
    PotsCallPsm* uPsm_;

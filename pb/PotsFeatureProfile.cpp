@@ -52,7 +52,7 @@ PotsFeatureProfile::~PotsFeatureProfile()
 
 fn_name PotsFeatureProfile_Activate = "PotsFeatureProfile.Activate";
 
-bool PotsFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
+bool PotsFeatureProfile::Activate(const PotsProfile& profile, CliThread& cli)
 {
    Debug::ft(PotsFeatureProfile_Activate);
 

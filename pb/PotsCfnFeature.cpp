@@ -140,7 +140,7 @@ PotsCfnFeatureProfile::~PotsCfnFeatureProfile()
 
 //------------------------------------------------------------------------------
 
-bool PotsCfnFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
+bool PotsCfnFeatureProfile::Activate(const PotsProfile& profile, CliThread& cli)
 {
    Debug::ft("PotsCfnFeatureProfile.Activate");
 

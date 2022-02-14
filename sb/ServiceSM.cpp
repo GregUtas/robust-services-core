@@ -1166,7 +1166,7 @@ void ServiceSM::ProcessSsmqSnp(ServiceSM* modifier, Event& snpEvent)
 
 //------------------------------------------------------------------------------
 
-void ServiceSM::PsmDeleted(ProtocolSM& exPsm)
+void ServiceSM::PsmDeleted(const ProtocolSM& exPsm)
 {
    Debug::ft("ServiceSM.PsmDeleted");
 

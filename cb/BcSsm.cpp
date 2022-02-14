@@ -389,7 +389,7 @@ EventHandler::Rc BcSsm::HandleRemoteRelease(Event& currEvent)
 
 //------------------------------------------------------------------------------
 
-void BcSsm::PsmDeleted(ProtocolSM& exPsm)
+void BcSsm::PsmDeleted(const ProtocolSM& exPsm)
 {
    Debug::ft("BcSsm.PsmDeleted");
 

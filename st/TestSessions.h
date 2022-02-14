@@ -284,7 +284,7 @@ private:
 
    //  Overridden to handle deletion of the test or application PSM.
    //
-   void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(const ProtocolSM& exPsm) override;
 
    //  The test PSM.
    //

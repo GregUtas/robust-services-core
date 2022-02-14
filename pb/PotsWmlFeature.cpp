@@ -139,7 +139,7 @@ PotsWmlFeatureProfile::~PotsWmlFeatureProfile()
 
 //------------------------------------------------------------------------------
 
-bool PotsWmlFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
+bool PotsWmlFeatureProfile::Activate(const PotsProfile& profile, CliThread& cli)
 {
    Debug::ft("PotsWmlFeatureProfile.Activate");
 

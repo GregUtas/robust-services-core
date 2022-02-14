@@ -33,7 +33,9 @@ using std::string;
 
 namespace NodeBase
 {
-fixed_string CliBoolParm::AnyBoolParm = "t|f";
+//  Represents a boolean value in parameter help text.
+//
+static fixed_string AnyBoolParm = "t|f";
 
 //------------------------------------------------------------------------------
 

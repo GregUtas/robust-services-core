@@ -48,27 +48,6 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //> The number of seconds between statistics reports and the rollover
-   //  of statistics (default = 15 minutes).
-   //
-   static secs_t LongIntervalSecs;
-
-   //> The number of seconds between the rollover of the short interval
-   //  for thread statistics (default = 5 seconds).
-   //
-   static secs_t ShortIntervalSecs;
-
-   //  The number of wakeups between statistics reports, which is equal
-   //  to SecondsInStatsInterval / SecondsInThreadInterval.  The thread
-   //  wakes up frequently to roll over thread statistics, but does so
-   //  for other statistics every SecondsInStatsInterval.
-   //
-   static size_t WakeupsBetweenReports;
-
-   //> The interval between the times when the thread starts to run.
-   //
-   static Duration SleepInterval;
-
    //  Private because this is a singleton.
    //
    StatisticsThread();

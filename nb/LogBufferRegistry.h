@@ -56,10 +56,6 @@ public:
    //
    static const id_t MaxBuffers = 8;
 
-   //> The size of a log buffer in kilobytes.
-   //
-   static const size_t LogBufferSize;
-
    //  Returns the name of the log file.
    //
    std::string FileName() const;

@@ -58,10 +58,6 @@ public:
    //
    static const size_t MaxNameSize;
 
-   //> The maximum length of the string that explains a log group.
-   //
-   static const size_t MaxExplSize;
-
    //  Creates a group identified by NAME, which is converted to
    //  upper case.  EXPL describes the types of logs in the group.
    //

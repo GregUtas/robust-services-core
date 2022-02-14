@@ -40,13 +40,27 @@ using std::string;
 
 namespace NodeBase
 {
-secs_t StatisticsThread::LongIntervalSecs = 900;  // must be a multiple of 60
-secs_t StatisticsThread::ShortIntervalSecs = 5;   // must be a divisor of 60
+//> The number of seconds between statistics reports and the rollover
+//  of statistics (default = 15 minutes).
+//
+constexpr secs_t LongIntervalSecs = 900;
 
-size_t StatisticsThread::WakeupsBetweenReports =
+//> The number of seconds between the rollover of the short interval
+//  for thread statistics (default = 5 seconds).
+//
+constexpr secs_t ShortIntervalSecs = 5;
+
+//  The number of wakeups between statistics reports, which is equal
+//  to SecondsInStatsInterval / SecondsInThreadInterval.  The thread
+//  wakes up frequently to roll over thread statistics, but does so
+//  for other statistics every SecondsInStatsInterval.
+//
+constexpr size_t WakeupsBetweenReports =
    LongIntervalSecs / ShortIntervalSecs;
 
-Duration StatisticsThread::SleepInterval = Duration(ShortIntervalSecs, SECS);
+//> The interval between the times when the thread starts to run.
+//
+static const Duration SleepInterval = Duration(ShortIntervalSecs, SECS);
 
 //------------------------------------------------------------------------------
 

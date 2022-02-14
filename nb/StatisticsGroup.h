@@ -49,10 +49,6 @@ public:
    //
    StatisticsGroup& operator=(const StatisticsGroup& that) = delete;
 
-   //> The maximum length of a string that explains a group's purpose.
-   //
-   static const size_t MaxExplSize;
-
    //> The length of a line that displays an individual statistic.
    //
    static const size_t ReportWidth;

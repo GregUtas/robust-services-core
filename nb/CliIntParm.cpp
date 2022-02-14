@@ -36,9 +36,15 @@ using std::string;
 
 namespace NodeBase
 {
-fixed_string CliIntParm::AnyIntParm = "<int>";
+//  Represents an integer value in parameter help text.
+//
+static fixed_string AnyIntParm = "<int>";
+
+//  Separates the minimum and maximum values in parameter help text.
+//
+constexpr char RangeSeparator = ':';
+
 fixed_string CliIntParm::AnyHexParm = "<hex>";
-const char CliIntParm::RangeSeparator = ':';
 
 //------------------------------------------------------------------------------
 

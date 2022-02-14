@@ -272,10 +272,6 @@ private:
    //
    bool Recover() override;
 
-   //  The default prompt for user input.
-   //
-   static const char CliPrompt;
-
    //  The stack of active increments.
    //
    std::unique_ptr< CliStack > stack_;

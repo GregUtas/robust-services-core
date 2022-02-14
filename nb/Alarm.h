@@ -54,14 +54,6 @@ public:
    //
    Alarm& operator=(const Alarm& that) = delete;
 
-   //> The maximum length of an alarm's name.
-   //
-   static const size_t MaxNameSize;
-
-   //> The maximum length of the string that explains an alarm.
-   //
-   static const size_t MaxExplSize;
-
    //  Creates an alarm identified by NAME and explained by EXPL.  DELAY is
    //  for hysteresis control: the alarm's level cannot be decreased until
    //  DELAY has passed.  A value of TIMEOUT_IMMED avoids hysteresis control.

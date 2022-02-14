@@ -34,10 +34,6 @@ namespace NodeBase
 class CliIntParm : public CliParm
 {
 public:
-   //  Represents an integer value in parameter help text.
-   //
-   static fixed_string AnyIntParm;
-
    //  Represents a hex value in parameter help text.
    //
    static fixed_string AnyHexParm;
@@ -69,10 +65,6 @@ private:
    //  Overridden to show the range of legal values.
    //
    bool ShowValues(std::string& values) const override;
-
-   //  Separates the minimum and maximum values in parameter help text.
-   //
-   static const char RangeSeparator;
 
    //  The minimum legal value for the integer parameter.
    //

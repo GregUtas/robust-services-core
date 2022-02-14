@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "SbCliParms.h"
+#include "SysTypes.h"
 #include "TlvMessage.h"
 
 using std::ostream;

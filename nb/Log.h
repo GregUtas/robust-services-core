@@ -61,10 +61,6 @@ public:
    //
    static const LogId MaxId = 999;
 
-   //> The maximum length of the string that explains a log.
-   //
-   static const size_t MaxExplSize;
-
    //  The indentation for each subsequent line of a log.
    //
    static const col_t Indent;

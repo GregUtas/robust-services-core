@@ -58,9 +58,13 @@ using std::string;
 
 namespace NodeBase
 {
+//  The maximum depth of nesting when >send directs output to another file.
+//
 constexpr size_t MaxOutputDepth = 8;
 
-const char CliThread::CliPrompt = '>';
+//  The default prompt for user input.
+//
+constexpr char CliPrompt = '>';
 
 //------------------------------------------------------------------------------
 

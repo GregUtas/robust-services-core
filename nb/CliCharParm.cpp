@@ -36,7 +36,9 @@ using std::string;
 
 namespace NodeBase
 {
-const char CliCharParm::CharSeparator = '|';
+//  Separates valid input characters in parameter help text.
+//
+constexpr char CharSeparator = '|';
 
 //------------------------------------------------------------------------------
 

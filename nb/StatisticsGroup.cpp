@@ -35,8 +35,9 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t StatisticsGroup::MaxExplSize = 44;
-const size_t StatisticsGroup::ReportWidth = 76;
+//> The maximum length of a string that explains a group's purpose.
+//
+constexpr size_t MaxExplSize = 44;
 
 //> The header for statistics reports.
 //
@@ -47,6 +48,8 @@ static fixed_string ReportHeader = "      Curr      Prev         All";
 //    <---individual statistic explanation---> nnnnnnnnn nnnnnnnnn nnnnnnnnnnn
 //         1         2         3         4         5         6         7
 //1234567890123456789012345678901234567890123456789012345678901234567890123456
+
+const size_t StatisticsGroup::ReportWidth = 76;
 
 //------------------------------------------------------------------------------
 

@@ -22,6 +22,7 @@
 #include "BcAddress.h"
 #include <ostream>
 #include "Debug.h"
+#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -30,7 +31,10 @@ using std::string;
 
 namespace CallBase
 {
-fixed_string DigitString::DigitToChar = "?1234567890*#???";
+//  DigitToChar[d] maps Digit d (0-15) to a character (0-9, *, or #,
+//  with ? used for an illegal digit).
+//
+static fixed_string DigitToChar = "?1234567890*#???";
 
 //------------------------------------------------------------------------------
 

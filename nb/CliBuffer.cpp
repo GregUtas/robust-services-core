@@ -67,16 +67,38 @@ struct CliSource
 };
 
 //------------------------------------------------------------------------------
+//
+//  The character that prevents the next one from being interpreted in a
+//  special way.
+//
+constexpr char EscapeChar = BACKSLASH;
 
+//  The character that precedes and follows a string that contains blanks
+//  or special characters.
+//
+constexpr char StringChar = QUOTE;
+
+//  The character that separates multiple commands entered on one line.
+//
+constexpr char BreakChar = ';';
+
+//  The character that causes the remainder of an input line to be ignored.
+//
+constexpr char CommentChar = '/';
+
+//  The character that explicitly skips an optional parameter.
+//
+constexpr char OptSkipChar = '~';
+
+//  The character that precedes a symbol's name to obtain its value.
+//
+constexpr char SymbolChar = '&';
+
+//  The maximum depth of nesting when >read obtains input from another file.
+//
 constexpr size_t MaxInputDepth = 8;
 
-const char CliBuffer::EscapeChar = BACKSLASH;
-const char CliBuffer::StringChar = QUOTE;
-const char CliBuffer::BreakChar = ';';
-const char CliBuffer::CommentChar = '/';
-const char CliBuffer::OptSkipChar = '~';
 const char CliBuffer::OptTagChar = '=';
-const char CliBuffer::SymbolChar = '&';
 fixed_string CliBuffer::ErrorPointer = "_|";
 
 //------------------------------------------------------------------------------

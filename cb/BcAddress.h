@@ -29,7 +29,6 @@
 #include <iosfwd>
 #include <string>
 #include "SbTypes.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using namespace SessionBase;
@@ -240,11 +239,6 @@ private:
    //  The number of digits in the string.
    //
    DigitCount size_;
-
-   //  DigitToChar[d] maps Digit d (0-15) to a character (0-9, *, or #,
-   //  with ? used for an illegal digit).
-   //
-   static fixed_string DigitToChar;
 };
 
 //------------------------------------------------------------------------------

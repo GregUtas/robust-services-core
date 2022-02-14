@@ -54,10 +54,6 @@ private:
    //  Overridden to show 't' and 'f' as acceptable inputs.
    //
    bool ShowValues(std::string& values) const override;
-
-   //  Represents a boolean value in parameter help text.
-   //
-   static fixed_string AnyBoolParm;
 };
 }
 #endif

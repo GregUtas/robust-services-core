@@ -71,9 +71,14 @@ fixed_string WeekDayStrings[SysTime::MaxWeekDay + 2] =
 };
 
 //------------------------------------------------------------------------------
+//
+//  The year of T0 (1900).
+//
+constexpr int16_t YearOfT0 = 1900;
 
-const int16_t SysTime::YearOfT0 = 1900;  // T0 = January 1 1900
-const int16_t SysTime::WeekDayOfT0 = 1;  // January 1 1900 was a Monday
+//  The weekday of T0 (January 1, 1900 was a Monday).
+//
+constexpr int16_t WeekDayOfT0 = 1;
 
 //  The number of seconds in a leap year.
 //

@@ -37,8 +37,13 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t Statistic::MaxExplSize = 40;
-const char Statistic::NotUpdated = '*';
+//> The maximum length of the string that explains the statistic.
+//
+constexpr size_t MaxExplSize = 40;
+
+//  The string displayed when a value has not been set.
+//
+constexpr char NotUpdated = '*';
 
 //------------------------------------------------------------------------------
 

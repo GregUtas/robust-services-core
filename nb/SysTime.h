@@ -157,14 +157,6 @@ private:
    //
    static const int16_t* DaysPerMonth(int16_t year);
 
-   //  The year of T0 (1900).
-   //
-   static const int16_t YearOfT0;
-
-   //  The weekday of T0 (January 1, 1900 was a Monday).
-   //
-   static const int16_t WeekDayOfT0;
-
    //  Returns the number of days since T0 (Jan 1, 1900).
    //
    size_t DaysSinceT0() const;

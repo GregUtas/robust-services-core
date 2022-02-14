@@ -63,9 +63,14 @@ struct AlarmDynamic : public Permanent
 };
 
 //==============================================================================
+//
+//> The maximum length of an alarm's name.
+//
+constexpr size_t MaxNameSize = 12;
 
-const size_t Alarm::MaxNameSize = 12;
-const size_t Alarm::MaxExplSize = 48;
+//> The maximum length of the string that explains an alarm.
+//
+constexpr size_t MaxExplSize = 48;
 
 //------------------------------------------------------------------------------
 

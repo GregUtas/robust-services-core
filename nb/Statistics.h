@@ -51,10 +51,6 @@ public:
    //
    Statistic& operator=(const Statistic& that) = delete;
 
-   //> The maximum length of the string that explains the statistic.
-   //
-   static const size_t MaxExplSize;
-
    //  Virtual to allow subclassing.
    //
    virtual ~Statistic();
@@ -85,10 +81,6 @@ protected:
    //  in statistics reports.  Protected because this class is virtual.
    //
    Statistic(const std::string& expl, size_t divisor);
-
-   //  The string displayed when a value has not been set.
-   //
-   static const char NotUpdated;
 
    //  The statistic's value during the current measurement period.
    //

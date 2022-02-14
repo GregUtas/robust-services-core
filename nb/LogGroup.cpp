@@ -38,12 +38,15 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t LogGroup::MaxNameSize = 5;
-const size_t LogGroup::MaxExplSize = 48;
+//> The maximum length of the string that explains a log group.
+//
+constexpr size_t MaxExplSize = 48;
 
 //> The maximum number of logs in a group.
 //
 constexpr id_t MaxLogs = 250;
+
+const size_t LogGroup::MaxNameSize = 5;
 
 //------------------------------------------------------------------------------
 

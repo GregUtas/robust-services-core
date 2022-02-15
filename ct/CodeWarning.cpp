@@ -1026,6 +1026,10 @@ bool CodeWarning::Suppress() const
       if(fn == "ProxyBcSessions.h") return true;
       break;
 
+   case ArgumentCouldBeConst:
+      if(item_->Name() == "main") return true;
+      break;
+
    case FunctionCouldBeStatic:
    case FunctionCouldBeFree:
    case CouldBeNoexcept:

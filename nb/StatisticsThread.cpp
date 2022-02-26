@@ -55,8 +55,7 @@ constexpr secs_t ShortIntervalSecs = 5;
 //  wakes up frequently to roll over thread statistics, but does so
 //  for other statistics every SecondsInStatsInterval.
 //
-constexpr size_t WakeupsBetweenReports =
-   LongIntervalSecs / ShortIntervalSecs;
+constexpr size_t WakeupsBetweenReports = LongIntervalSecs / ShortIntervalSecs;
 
 //> The interval between the times when the thread starts to run.
 //

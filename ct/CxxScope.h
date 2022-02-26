@@ -1438,8 +1438,8 @@ public:
 
    //  Overridden to return the function itself.
    //
-   Function* GetFunction()
-      const override { return const_cast< Function* >(this); }
+   Function* GetFunction() const
+      override { return const_cast< Function* >(this); }
 
    //  Overridden to return the definition if it is distinct from the
    //  declaration, and vice versa.

@@ -665,8 +665,8 @@ public:
    explicit BoolLiteral(bool b)
       : b_(b) { CxxStats::Incr(CxxStats::BOOL_LITERAL); }
    ~BoolLiteral() { CxxStats::Decr(CxxStats::BOOL_LITERAL); }
-   void Print(std::ostream& stream, const NodeBase::Flags& options)
-      const override { stream << std::boolalpha << b_; }
+   void Print(std::ostream& stream, const NodeBase::Flags& options) const
+      override { stream << std::boolalpha << b_; }
    CxxScoped* Referent() const override;
    std::string TypeString(bool arg) const override { return BOOL_STR; }
 private:
@@ -710,8 +710,8 @@ public:
    ~NullPtr() { CxxStats::Decr(CxxStats::NULLPTR); }
    bool IsConstPtr() const override { return true; }
    bool IsConstPtr(size_t n) const override { return true; }
-   void Print(std::ostream& stream, const NodeBase::Flags& options)
-      const override { stream << NULLPTR_STR; }
+   void Print(std::ostream& stream, const NodeBase::Flags& options) const
+      override { stream << NULLPTR_STR; }
    CxxScoped* Referent() const override;
    std::string TypeString(bool arg) const override { return NULLPTR_T_STR; }
 private:

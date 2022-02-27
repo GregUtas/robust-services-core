@@ -335,12 +335,12 @@ NAMESPACES:
       nw/IpBuffer.h
       nw/IpPort.cpp
       nw/IpPort.h
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
       nw/IpService.h
+      nw/IpServiceCfg.cpp
+      nw/IpServiceCfg.h
       nw/IpServiceRegistry.cpp
       nw/IpServiceRegistry.h
       nw/LocalAddrTest.cpp
@@ -827,12 +827,12 @@ NAMESPACES:
       nw/IpBuffer.h
       nw/IpPort.cpp
       nw/IpPort.h
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
       nw/IpService.h
+      nw/IpServiceCfg.cpp
+      nw/IpServiceCfg.h
       nw/IpServiceRegistry.cpp
       nw/IpServiceRegistry.h
       nw/LocalAddrTest.h
@@ -1502,7 +1502,6 @@ NAMESPACES:
       st/TestSessions.cpp
       st/TestSessions.h
    std
-      an/PotsShelfIpService.cpp
       an/PotsTrafficThread.cpp
       an/PotsTrafficThread.h
       cb/BcAddress.cpp
@@ -1884,8 +1883,6 @@ NAMESPACES:
       nw/IpBuffer.h
       nw/IpPort.cpp
       nw/IpPort.h
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
@@ -2035,7 +2032,6 @@ NAMESPACES:
       sb/Trigger.cpp
       sb/Trigger.h
       sn/PotsBcSsm.cpp
-      sn/PotsCallIpService.cpp
       sn/PotsCallPsm.cpp
       sn/PotsCfxService.cpp
       sn/PotsCfxService.h
@@ -2147,38 +2143,38 @@ an/AnModule.h
       an/AnModule.h
    NodeBase.Singleton<AnModule>: 38 [Friend]
 an/PotsShelf.h
-   NodeBase.Singleton<PotsShelfFactory>: 101 [Friend]
-   NodeBase.Singleton<PotsShelfIpService>: 44 [Friend]
-   PotsBase.PotsShelfFactory: 99 [Class]
+   NodeBase.Singleton<PotsShelfFactory>: 97 [Friend]
+   NodeBase.Singleton<PotsShelfIpService>: 43 [Friend]
+   PotsBase.PotsShelfFactory: 95 [Class]
       an/AnModule.cpp
       an/PotsShelf.h
       an/PotsShelfFactory.cpp
-   PotsBase.PotsShelfFactory.AllocIcMsg: 113 [Function]
+   PotsBase.PotsShelfFactory.AllocIcMsg: 109 [Function]
       an/PotsShelfFactory.cpp
-   PotsBase.PotsShelfFactory.AllocOgMsg: 118 [Function]
+   PotsBase.PotsShelfFactory.AllocOgMsg: 114 [Function]
       an/PotsShelfFactory.cpp
-   PotsBase.PotsShelfFactory.CreateText: 122 [Function]
+   PotsBase.PotsShelfFactory.CreateText: 118 [Function]
       an/PotsShelfFactory.cpp
-   PotsBase.PotsShelfFactory.InjectMsg: 126 [Function]
+   PotsBase.PotsShelfFactory.InjectMsg: 122 [Function]
       an/PotsShelfFactory.cpp
-   PotsBase.PotsShelfFactory.PotsShelfFactory: 105 [Function]
+   PotsBase.PotsShelfFactory.PotsShelfFactory: 101 [Function]
       an/PotsShelfFactory.cpp
-   PotsBase.PotsShelfFactory.ProcessIcMsg: 130 [Function]
+   PotsBase.PotsShelfFactory.ProcessIcMsg: 126 [Function]
       an/PotsShelfFactory.cpp
-   PotsBase.PotsShelfFactory.ReallocOgMsg: 134 [Function]
+   PotsBase.PotsShelfFactory.ReallocOgMsg: 130 [Function]
       an/PotsShelfFactory.cpp
-   PotsBase.PotsShelfFactory.~PotsShelfFactory: 109 [Function]
+   PotsBase.PotsShelfFactory.~PotsShelfFactory: 105 [Function]
       an/PotsShelfFactory.cpp
-   PotsBase.PotsShelfHandler: 77 [Class]
+   PotsBase.PotsShelfHandler: 73 [Class]
       an/PotsShelfHandler.cpp
       an/PotsShelfIpService.cpp
-   PotsBase.PotsShelfHandler.PotsShelfHandler: 82 [Function]
+   PotsBase.PotsShelfHandler.PotsShelfHandler: 78 [Function]
       an/PotsShelfHandler.cpp
-   PotsBase.PotsShelfHandler.ReceiveBuff: 91 [Function]
+   PotsBase.PotsShelfHandler.ReceiveBuff: 87 [Function]
       an/PotsShelfHandler.cpp
-   PotsBase.PotsShelfHandler.~PotsShelfHandler: 86 [Function]
+   PotsBase.PotsShelfHandler.~PotsShelfHandler: 82 [Function]
       an/PotsShelfHandler.cpp
-   PotsBase.PotsShelfIpService: 42 [Class]
+   PotsBase.PotsShelfIpService: 41 [Class]
       an/AnModule.cpp
       an/PotsShelf.h
       an/PotsShelfIpService.cpp
@@ -2186,15 +2182,13 @@ an/PotsShelf.h
       an/PotsShelfIpService.cpp
    PotsBase.PotsShelfIpService.CreateText: 66 [Function]
       an/PotsShelfIpService.cpp
-   PotsBase.PotsShelfIpService.GetFaction: 50 [Function]
-   PotsBase.PotsShelfIpService.Name: 48 [Function]
-   PotsBase.PotsShelfIpService.Port: 49 [Function]
-   PotsBase.PotsShelfIpService.portCfg_: 70 [ClassData]
-      an/PotsShelf.h
+   PotsBase.PotsShelfIpService.Enabled: 58 [Function]
+   PotsBase.PotsShelfIpService.GetFaction: 57 [Function]
+   PotsBase.PotsShelfIpService.Name: 55 [Function]
+   PotsBase.PotsShelfIpService.Port: 56 [Function]
+   PotsBase.PotsShelfIpService.PotsShelfIpService: 47 [Function]
       an/PotsShelfIpService.cpp
-   PotsBase.PotsShelfIpService.PotsShelfIpService: 54 [Function]
-      an/PotsShelfIpService.cpp
-   PotsBase.PotsShelfIpService.~PotsShelfIpService: 58 [Function]
+   PotsBase.PotsShelfIpService.~PotsShelfIpService: 51 [Function]
       an/PotsShelfIpService.cpp
    POTSSHELF_H_INCLUDED: 23 [Define]
       an/PotsShelf.h
@@ -2208,13 +2202,9 @@ an/PotsShelfFactory.cpp
    PotsBase.PotsShelfFactoryStr: 106 [SpaceData]
       an/PotsShelfFactory.cpp
 an/PotsShelfIpService.cpp
-   PotsBase.PotsShelfIpPortExpl: 35 [SpaceData]
+   PotsBase.PotsShelfServiceExpl: 55 [SpaceData]
       an/PotsShelfIpService.cpp
-   PotsBase.PotsShelfIpPortKey: 34 [SpaceData]
-      an/PotsShelfIpService.cpp
-   PotsBase.PotsShelfServiceExpl: 66 [SpaceData]
-      an/PotsShelfIpService.cpp
-   PotsBase.PotsShelfServiceStr: 65 [SpaceData]
+   PotsBase.PotsShelfServiceStr: 54 [SpaceData]
       an/PotsShelfIpService.cpp
 an/PotsTrafficThread.cpp
    NodeBase.Singleton<TrafficCallPool>: 227 [Friend]
@@ -2454,18 +2444,18 @@ an/PotsTrafficThread.h
    POTSTRAFFICTHREAD_H_INCLUDED: 23 [Define]
       an/PotsTrafficThread.h
 cb/BcAddress.cpp
-   CallBase.AddressParameter_InjectMsg: 97 [SpaceData]
+   CallBase.AddressParameter_InjectMsg: 98 [SpaceData]
       cb/BcAddress.cpp
-   CallBase.AddressTypeStrings: 52 [SpaceData]
+   CallBase.AddressTypeStrings: 53 [SpaceData]
       cb/BcAddress.cpp
-   CallBase.IllegalDigitExpl: 94 [SpaceData]
+   CallBase.IllegalDigitExpl: 95 [SpaceData]
       cb/BcAddress.cpp
-   CallBase.TooManyDigitsExpl: 95 [SpaceData]
+   CallBase.TooManyDigitsExpl: 96 [SpaceData]
       cb/BcAddress.cpp
 cb/BcAddress.h
    BCADDRESS_H_INCLUDED: 23 [Define]
       cb/BcAddress.h
-   CallBase.Address: 69 [Class]
+   CallBase.Address: 68 [Class]
       an/PotsTrafficThread.cpp
       an/PotsTrafficThread.h
       cb/BcAddress.cpp
@@ -2494,9 +2484,9 @@ cb/BcAddress.h
       pb/PotsWmlFeature.h
       sn/PotsCfxService.cpp
       sn/PotsWmlService.cpp
-   CallBase.Address.Address: 129 [Function]
+   CallBase.Address.Address: 128 [Function]
       cb/BcAddress.cpp
-   CallBase.Address.DN: 85 [Typedef]
+   CallBase.Address.DN: 84 [Typedef]
       an/PotsTrafficThread.cpp
       an/PotsTrafficThread.h
       cb/BcAddress.h
@@ -2517,39 +2507,39 @@ cb/BcAddress.h
       pb/PotsProfileRegistry.h
       pb/PotsWmlFeature.cpp
       pb/PotsWmlFeature.h
-   CallBase.Address.DN_Length: 93 [ClassData]
+   CallBase.Address.DN_Length: 92 [ClassData]
       cb/DigitString.cpp
-   CallBase.Address.DNToIndex: 121 [Function]
+   CallBase.Address.DNToIndex: 120 [Function]
       pb/PotsProfile.cpp
       pb/PotsProfileRegistry.cpp
-   CallBase.Address.FirstDN: 88 [ClassData]
+   CallBase.Address.FirstDN: 87 [ClassData]
       cb/BcAddress.h
       pb/PotsCliParms.cpp
       pb/PotsProfileRegistry.cpp
-   CallBase.Address.FirstSC: 108 [ClassData]
+   CallBase.Address.FirstSC: 107 [ClassData]
       cb/BcAddress.h
-   CallBase.Address.IndexToDN: 125 [Function]
+   CallBase.Address.IndexToDN: 124 [Function]
       pb/PotsProfile.cpp
       pb/PotsProfile.h
-   CallBase.Address.IsValidDN: 101 [Function]
+   CallBase.Address.IsValidDN: 100 [Function]
       cb/DigitString.cpp
       pb/PotsFeatures.cpp
       pb/PotsProfileRegistry.cpp
       sn/PotsCfxService.cpp
       sn/PotsWmlService.cpp
-   CallBase.Address.IsValidSC: 117 [Function]
+   CallBase.Address.IsValidSC: 116 [Function]
       cb/DigitString.cpp
       cb/ServiceCodeRegistry.cpp
-   CallBase.Address.LastDN: 89 [ClassData]
+   CallBase.Address.LastDN: 88 [ClassData]
       an/PotsTrafficThread.cpp
       cb/BcAddress.h
       pb/PotsCliParms.cpp
       pb/PotsProfileRegistry.cpp
-   CallBase.Address.LastSC: 109 [ClassData]
+   CallBase.Address.LastSC: 108 [ClassData]
       cb/BcAddress.h
       cb/ServiceCodeRegistry.cpp
       cb/ServiceCodeRegistry.h
-   CallBase.Address.NilDN: 87 [ClassData]
+   CallBase.Address.NilDN: 86 [ClassData]
       an/PotsTrafficThread.cpp
       cb/BcRouting.cpp
       cb/DigitString.cpp
@@ -2557,82 +2547,82 @@ cb/BcAddress.h
       pb/PotsCfnFeature.cpp
       pb/PotsCfuFeature.cpp
       pb/PotsWmlFeature.cpp
-   CallBase.Address.NilSC: 107 [ClassData]
+   CallBase.Address.NilSC: 106 [ClassData]
       cb/BcRouting.cpp
       cb/DigitString.cpp
-   CallBase.Address.SC: 105 [Typedef]
+   CallBase.Address.SC: 104 [Typedef]
       cb/BcAddress.h
       cb/DigitString.cpp
       cb/ServiceCodeRegistry.cpp
       cb/ServiceCodeRegistry.h
-   CallBase.Address.SC_Length: 113 [ClassData]
+   CallBase.Address.SC_Length: 112 [ClassData]
       cb/DigitString.cpp
-   CallBase.Address.Type: 75 [Enum]
+   CallBase.Address.Type: 74 [Enum]
       cb/BcAddress.cpp
       cb/BcAddress.h
       cb/BcRouting.h
-   CallBase.Address.Type.DnType: 78 [Enumerator]
+   CallBase.Address.Type.DnType: 77 [Enumerator]
       cb/BcRouting.cpp
       cb/BcSsm.cpp
       sn/PotsCfxService.cpp
       sn/PotsWmlService.cpp
-   CallBase.Address.Type.Invalid: 77 [Enumerator]
+   CallBase.Address.Type.Invalid: 76 [Enumerator]
       cb/BcRouting.cpp
-   CallBase.Address.Type.ScType: 79 [Enumerator]
+   CallBase.Address.Type.ScType: 78 [Enumerator]
       cb/BcRouting.cpp
       cb/BcSsm.cpp
-   CallBase.Address.Type.Type_N: 80 [Enumerator]
+   CallBase.Address.Type.Type_N: 79 [Enumerator]
       cb/BcAddress.cpp
-   CallBase.Address.~Address: 97 [Function]
+   CallBase.Address.~Address: 96 [Function]
       cb/BcAddress.cpp
-   CallBase.AddressParameter: 254 [Class]
-      cb/BcAddress.cpp
-      cb/BcProtocol.cpp
-      pb/PotsProtocol.cpp
-   CallBase.AddressParameter.AddressParameter: 259 [Function]
+   CallBase.AddressParameter: 248 [Class]
       cb/BcAddress.cpp
       cb/BcProtocol.cpp
       pb/PotsProtocol.cpp
-   CallBase.AddressParameter.DisplayMsg: 267 [Function]
+   CallBase.AddressParameter.AddressParameter: 253 [Function]
       cb/BcAddress.cpp
-   CallBase.AddressParameter.InjectMsg: 272 [Function]
+      cb/BcProtocol.cpp
+      pb/PotsProtocol.cpp
+   CallBase.AddressParameter.DisplayMsg: 261 [Function]
       cb/BcAddress.cpp
-   CallBase.AddressParameter.VerifyMsg: 276 [Function]
+   CallBase.AddressParameter.InjectMsg: 266 [Function]
       cb/BcAddress.cpp
-   CallBase.AddressParameter.~AddressParameter: 263 [Function]
+   CallBase.AddressParameter.VerifyMsg: 270 [Function]
       cb/BcAddress.cpp
-   CallBase.Digit: 48 [Enum]
+   CallBase.AddressParameter.~AddressParameter: 257 [Function]
+      cb/BcAddress.cpp
+   CallBase.Digit: 47 [Enum]
       cb/BcAddress.h
       cb/DigitString.cpp
-   CallBase.Digit.Digit_0: 60 [Enumerator]
+   CallBase.Digit.Digit_0: 59 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.Digit_1: 51 [Enumerator]
+   CallBase.Digit.Digit_1: 50 [Enumerator]
       cb/BcAddress.h
       cb/DigitString.cpp
-   CallBase.Digit.Digit_2: 52 [Enumerator]
+   CallBase.Digit.Digit_2: 51 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.Digit_3: 53 [Enumerator]
+   CallBase.Digit.Digit_3: 52 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.Digit_4: 54 [Enumerator]
+   CallBase.Digit.Digit_4: 53 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.Digit_5: 55 [Enumerator]
+   CallBase.Digit.Digit_5: 54 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.Digit_6: 56 [Enumerator]
+   CallBase.Digit.Digit_6: 55 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.Digit_7: 57 [Enumerator]
+   CallBase.Digit.Digit_7: 56 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.Digit_8: 58 [Enumerator]
+   CallBase.Digit.Digit_8: 57 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.Digit_9: 59 [Enumerator]
+   CallBase.Digit.Digit_9: 58 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.Digit_Hash: 62 [Enumerator]
+   CallBase.Digit.Digit_Hash: 61 [Enumerator]
       cb/BcAddress.h
       cb/DigitString.cpp
-   CallBase.Digit.Digit_Star: 61 [Enumerator]
+   CallBase.Digit.Digit_Star: 60 [Enumerator]
       cb/DigitString.cpp
-   CallBase.Digit.NilDigit: 50 [Enumerator]
+   CallBase.Digit.NilDigit: 49 [Enumerator]
       cb/DigitString.cpp
-   CallBase.DigitString: 141 [Class]
+   CallBase.DigitString: 140 [Class]
       an/PotsTrafficThread.cpp
       cb/BcAddress.cpp
       cb/BcAddress.h
@@ -2649,93 +2639,91 @@ cb/BcAddress.h
       sn/PotsHtlService.cpp
       sn/PotsProxyHandlers.cpp
       sn/PotsWmlService.cpp
-   CallBase.DigitString.AddDigit: 183 [Function]
+   CallBase.DigitString.AddDigit: 182 [Function]
       cb/DigitString.cpp
-   CallBase.DigitString.AddDigits(const DigitString&): 191 [Function]
+   CallBase.DigitString.AddDigits(const DigitString&): 190 [Function]
       cb/DigitString.cpp
       sn/PotsBcHandlers.cpp
       sn/PotsHtlService.cpp
       sn/PotsProxyHandlers.cpp
       sn/PotsWmlService.cpp
-   CallBase.DigitString.AddDigits(const std::string&): 187 [Function]
+   CallBase.DigitString.AddDigits(const std::string&): 186 [Function]
       cb/BcAddress.cpp
       cb/DigitString.cpp
-   CallBase.DigitString.At: 214 [Function]
+   CallBase.DigitString.At: 213 [Function]
       cb/DigitString.cpp
-   CallBase.DigitString.Clear: 210 [Function]
+   CallBase.DigitString.Clear: 209 [Function]
       cb/DigitString.cpp
       sn/PotsCcwService.cpp
       sn/PotsCfxService.cpp
       sn/PotsWmlService.cpp
-   CallBase.DigitString.DigitCount: 146 [Typedef]
+   CallBase.DigitString.DigitCount: 145 [Typedef]
       cb/BcAddress.h
       cb/DigitString.cpp
-   CallBase.DigitString.digits_: 238 [ClassData]
+   CallBase.DigitString.digits_: 237 [ClassData]
       cb/DigitString.cpp
-   CallBase.DigitString.DigitString(): 164 [Function]
+   CallBase.DigitString.DigitString(): 163 [Function]
       cb/DigitString.cpp
-   CallBase.DigitString.DigitString(Address::DN): 168 [Function]
+   CallBase.DigitString.DigitString(Address::DN): 167 [Function]
       cb/DigitString.cpp
-   CallBase.DigitString.DigitString(const std::string&): 172 [Function]
+   CallBase.DigitString.DigitString(const std::string&): 171 [Function]
       cb/DigitString.cpp
-   CallBase.DigitString.DigitToChar: 247 [ClassData]
-      cb/DigitString.cpp
-   CallBase.DigitString.Display: 234 [Function]
+   CallBase.DigitString.Display: 233 [Function]
       cb/BcAddress.cpp
       cb/BcSsm.cpp
       cb/DigitString.cpp
-   CallBase.DigitString.Empty: 206 [Function]
+   CallBase.DigitString.Empty: 205 [Function]
       sn/PotsBcHandlers.cpp
       sn/PotsCfxService.cpp
       sn/PotsWmlService.cpp
-   CallBase.DigitString.IsCompleteAddress: 198 [Function]
+   CallBase.DigitString.IsCompleteAddress: 197 [Function]
       cb/DigitString.cpp
       sn/PotsBcHandlers.cpp
-   CallBase.DigitString.IsValidDigit: 176 [Function]
+   CallBase.DigitString.IsValidDigit: 175 [Function]
       cb/DigitString.cpp
-   CallBase.DigitString.MaxDigitCount: 150 [ClassData]
+   CallBase.DigitString.MaxDigitCount: 149 [ClassData]
       cb/BcAddress.h
       cb/DigitString.cpp
-   CallBase.DigitString.operator!=: 230 [Function]
+   CallBase.DigitString.operator!=: 229 [Function]
       cb/BcAddress.cpp
       cb/DigitString.cpp
-   CallBase.DigitString.operator==: 226 [Function]
+   CallBase.DigitString.operator==: 225 [Function]
       cb/DigitString.cpp
-   CallBase.DigitString.Rc: 154 [Enum]
+   CallBase.DigitString.Rc: 153 [Enum]
       cb/BcAddress.h
       cb/DigitString.cpp
-   CallBase.DigitString.Rc.Complete: 157 [Enumerator]
+   CallBase.DigitString.Rc.Complete: 156 [Enumerator]
       cb/BcAddress.cpp
       cb/DigitString.cpp
-   CallBase.DigitString.Rc.IllegalDigit: 158 [Enumerator]
-      cb/BcAddress.cpp
-      cb/DigitString.cpp
-      sn/PotsBcHandlers.cpp
-      sn/PotsHtlService.cpp
-      sn/PotsWmlService.cpp
-   CallBase.DigitString.Rc.Ok: 156 [Enumerator]
-      cb/BcAddress.cpp
-      cb/DigitString.cpp
-   CallBase.DigitString.Rc.Overflow: 159 [Enumerator]
+   CallBase.DigitString.Rc.IllegalDigit: 157 [Enumerator]
       cb/BcAddress.cpp
       cb/DigitString.cpp
       sn/PotsBcHandlers.cpp
       sn/PotsHtlService.cpp
       sn/PotsWmlService.cpp
-   CallBase.DigitString.Size: 202 [Function]
+   CallBase.DigitString.Rc.Ok: 155 [Enumerator]
+      cb/BcAddress.cpp
+      cb/DigitString.cpp
+   CallBase.DigitString.Rc.Overflow: 158 [Enumerator]
+      cb/BcAddress.cpp
+      cb/DigitString.cpp
+      sn/PotsBcHandlers.cpp
+      sn/PotsHtlService.cpp
+      sn/PotsWmlService.cpp
+   CallBase.DigitString.Size: 201 [Function]
       cb/BcAddress.h
       cb/DigitString.cpp
-   CallBase.DigitString.size_: 242 [ClassData]
+   CallBase.DigitString.size_: 241 [ClassData]
       cb/DigitString.cpp
-   CallBase.DigitString.ToDN: 218 [Function]
+   CallBase.DigitString.ToDN: 217 [Function]
       cb/BcRouting.cpp
       cb/BcSsm.cpp
       cb/DigitString.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.DigitString.ToSC: 222 [Function]
+   CallBase.DigitString.ToSC: 221 [Function]
       cb/BcRouting.cpp
       cb/DigitString.cpp
-   CallBase.operator<<: 134 [Function]
+   CallBase.operator<<: 133 [Function]
       cb/BcAddress.cpp
       cb/BcRouting.cpp
 cb/BcCause.cpp
@@ -3069,262 +3057,262 @@ cb/BcProgress.h
    CallBase.ProgressParameter.~ProgressParameter: 92 [Function]
       cb/BcProgress.cpp
 cb/BcProtocol.cpp
-   CallBase.AnmTextExpl: 340 [SpaceData]
+   CallBase.AnmTextExpl: 409 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.AnmTextStr: 339 [SpaceData]
+   CallBase.AnmTextStr: 408 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.BcPsm_ProcessIcMsg: 713 [SpaceData]
+   CallBase.BcPsm_ProcessIcMsg: 782 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.BcPsm_ProcessOgMsg: 843 [SpaceData]
+   CallBase.BcPsm_ProcessOgMsg: 912 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CalledExpl: 491 [SpaceData]
+   CallBase.CalledExpl: 560 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CallingExpl: 474 [SpaceData]
+   CallBase.CallingExpl: 543 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipAddressParameter: 112 [Class]
+   CallBase.CipAddressParameter: 115 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipAddressParameter.CipAddressParameter: 115 [Function]
+   CallBase.CipAddressParameter.CipAddressParameter: 118 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipAddressParameter.~CipAddressParameter: 116 [Function]
-   CallBase.CipAnmSignal: 75 [Class]
+   CallBase.CipAddressParameter.~CipAddressParameter: 119 [Function]
+   CallBase.CipAnmSignal: 78 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipAnmSignal.CipAnmSignal: 79 [Function]
+   CallBase.CipAnmSignal.CipAnmSignal: 82 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipAnmSignal.CreateText: 81 [Function]
+   CallBase.CipAnmSignal.CreateText: 84 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipAnmSignal.~CipAnmSignal: 80 [Function]
-   CallBase.CipCalledParameter: 128 [Class]
+   CallBase.CipAnmSignal.~CipAnmSignal: 83 [Function]
+   CallBase.CipCalledParameter: 131 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipCalledParameter.CipCalledParameter: 132 [Function]
+   CallBase.CipCalledParameter.CipCalledParameter: 135 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipCalledParameter.CreateCliParm: 134 [Function]
+   CallBase.CipCalledParameter.CreateCliParm: 137 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipCalledParameter.~CipCalledParameter: 133 [Function]
-   CallBase.CipCallingParameter: 119 [Class]
+   CallBase.CipCalledParameter.~CipCalledParameter: 136 [Function]
+   CallBase.CipCallingParameter: 122 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipCallingParameter.CipCallingParameter: 123 [Function]
+   CallBase.CipCallingParameter.CipCallingParameter: 126 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipCallingParameter.CreateCliParm: 125 [Function]
+   CallBase.CipCallingParameter.CreateCliParm: 128 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipCallingParameter.~CipCallingParameter: 124 [Function]
-   CallBase.CipCauseParameter: 163 [Class]
+   CallBase.CipCallingParameter.~CipCallingParameter: 127 [Function]
+   CallBase.CipCauseParameter: 166 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipCauseParameter.CipCauseParameter: 167 [Function]
+   CallBase.CipCauseParameter.CipCauseParameter: 170 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipCauseParameter.~CipCauseParameter: 168 [Function]
-   CallBase.CipCpgSignal: 66 [Class]
+   CallBase.CipCauseParameter.~CipCauseParameter: 171 [Function]
+   CallBase.CipCpgSignal: 69 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipCpgSignal.CipCpgSignal: 70 [Function]
+   CallBase.CipCpgSignal.CipCpgSignal: 73 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipCpgSignal.CreateText: 72 [Function]
+   CallBase.CipCpgSignal.CreateText: 75 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipCpgSignal.~CipCpgSignal: 71 [Function]
-   CallBase.CipIamSignal: 57 [Class]
+   CallBase.CipCpgSignal.~CipCpgSignal: 74 [Function]
+   CallBase.CipIamSignal: 60 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipIamSignal.CipIamSignal: 61 [Function]
+   CallBase.CipIamSignal.CipIamSignal: 64 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipIamSignal.CreateText: 63 [Function]
+   CallBase.CipIamSignal.CreateText: 66 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipIamSignal.~CipIamSignal: 62 [Function]
-   CallBase.CipMediaParameter: 171 [Class]
+   CallBase.CipIamSignal.~CipIamSignal: 65 [Function]
+   CallBase.CipMediaParameter: 174 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipMediaParameter.CipMediaParameter: 175 [Function]
+   CallBase.CipMediaParameter.CipMediaParameter: 178 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipMediaParameter.~CipMediaParameter: 176 [Function]
-   CallBase.CipObcFactoryExpl: 1130 [SpaceData]
+   CallBase.CipMediaParameter.~CipMediaParameter: 179 [Function]
+   CallBase.CipObcFactoryExpl: 1207 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipObcFactoryStr: 1129 [SpaceData]
+   CallBase.CipObcFactoryStr: 1206 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipOriginalCalledParameter: 146 [Class]
+   CallBase.CipOriginalCalledParameter: 149 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipOriginalCalledParameter.CipOriginalCalledParameter: 150 [Function]
+   CallBase.CipOriginalCalledParameter.CipOriginalCalledParameter: 153 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipOriginalCalledParameter.CreateCliParm: 152 [Function]
+   CallBase.CipOriginalCalledParameter.CreateCliParm: 155 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipOriginalCalledParameter.~CipOriginalCalledParameter: 151 [Function]
-   CallBase.CipOriginalCallingParameter: 137 [Class]
+   CallBase.CipOriginalCalledParameter.~CipOriginalCalledParameter: 154 [Function]
+   CallBase.CipOriginalCallingParameter: 140 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipOriginalCallingParameter.CipOriginalCallingParameter: 141 [Function]
+   CallBase.CipOriginalCallingParameter.CipOriginalCallingParameter: 144 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipOriginalCallingParameter.CreateCliParm: 143 [Function]
+   CallBase.CipOriginalCallingParameter.CreateCliParm: 146 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipOriginalCallingParameter.~CipOriginalCallingParameter: 142 [Function]
-   CallBase.CipProgressParameter: 155 [Class]
+   CallBase.CipOriginalCallingParameter.~CipOriginalCallingParameter: 145 [Function]
+   CallBase.CipProgressParameter: 158 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipProgressParameter.CipProgressParameter: 159 [Function]
+   CallBase.CipProgressParameter.CipProgressParameter: 162 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipProgressParameter.~CipProgressParameter: 160 [Function]
-   CallBase.CipRelSignal: 84 [Class]
+   CallBase.CipProgressParameter.~CipProgressParameter: 163 [Function]
+   CallBase.CipRelSignal: 87 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipRelSignal.CipRelSignal: 88 [Function]
+   CallBase.CipRelSignal.CipRelSignal: 91 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipRelSignal.CreateText: 90 [Function]
+   CallBase.CipRelSignal.CreateText: 93 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipRelSignal.~CipRelSignal: 89 [Function]
-   CallBase.CipRouteParameter: 93 [Class]
+   CallBase.CipRelSignal.~CipRelSignal: 92 [Function]
+   CallBase.CipRouteParameter: 96 [Class]
       cb/BcProtocol.cpp
-   CallBase.CipRouteParameter.CipRouteParameter: 97 [Function]
+   CallBase.CipRouteParameter.CipRouteParameter: 100 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipRouteParameter.CreateCliParm: 99 [Function]
+   CallBase.CipRouteParameter.CreateCliParm: 102 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipRouteParameter.DisplayMsg: 100 [Function]
+   CallBase.CipRouteParameter.DisplayMsg: 103 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipRouteParameter.InjectMsg: 102 [Function]
+   CallBase.CipRouteParameter.InjectMsg: 105 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipRouteParameter.VerifyMsg: 103 [Function]
+   CallBase.CipRouteParameter.VerifyMsg: 106 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipRouteParameter.~CipRouteParameter: 98 [Function]
-   CallBase.CipTbcFactoryExpl: 1192 [SpaceData]
+   CallBase.CipRouteParameter.~CipRouteParameter: 101 [Function]
+   CallBase.CipTbcFactoryExpl: 1269 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipTbcFactoryStr: 1191 [SpaceData]
+   CallBase.CipTbcFactoryStr: 1268 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipTcpPortExpl: 225 [SpaceData]
+   CallBase.CipTcpExpl: 261 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipTcpPortKey: 224 [SpaceData]
+   CallBase.CipTcpKey: 260 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipTcpServiceExpl: 256 [SpaceData]
+   CallBase.CipTcpServiceExpl: 290 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipTcpServiceStr: 255 [SpaceData]
+   CallBase.CipTcpServiceStr: 289 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipUdpPortExpl: 182 [SpaceData]
+   CallBase.CipUdpExpl: 185 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipUdpPortKey: 181 [SpaceData]
+   CallBase.CipUdpKey: 184 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipUdpServiceExpl: 213 [SpaceData]
+   CallBase.CipUdpServiceExpl: 214 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CipUdpServiceStr: 212 [SpaceData]
+   CallBase.CipUdpServiceStr: 213 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CpgTextExpl: 328 [SpaceData]
+   CallBase.CpgTextExpl: 397 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.CpgTextStr: 327 [SpaceData]
+   CallBase.CpgTextStr: 396 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.IamTextExpl: 316 [SpaceData]
+   CallBase.IamTextExpl: 385 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.IamTextStr: 315 [SpaceData]
+   CallBase.IamTextStr: 384 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.OriginalCalledExpl: 526 [SpaceData]
+   CallBase.OriginalCalledExpl: 595 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.OriginalCalledTag: 527 [SpaceData]
+   CallBase.OriginalCalledTag: 596 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.OriginalCallingExpl: 508 [SpaceData]
+   CallBase.OriginalCallingExpl: 577 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.OriginalCallingTag: 509 [SpaceData]
+   CallBase.OriginalCallingTag: 578 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.RelTextExpl: 352 [SpaceData]
+   CallBase.RelTextExpl: 421 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.RelTextStr: 351 [SpaceData]
+   CallBase.RelTextStr: 420 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.RouteIdExpl: 448 [SpaceData]
+   CallBase.RouteIdExpl: 517 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.RouteParm: 107 [Class]
+   CallBase.RouteParm: 110 [Class]
       cb/BcProtocol.cpp
-   CallBase.RouteParm.RouteParm: 109 [Function]
+   CallBase.RouteParm.RouteParm: 112 [Function]
       cb/BcProtocol.cpp
-   CallBase.RouteParmExpl: 451 [SpaceData]
+   CallBase.RouteParmExpl: 520 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.RouteParmStr: 450 [SpaceData]
+   CallBase.RouteParmStr: 519 [SpaceData]
       cb/BcProtocol.cpp
-   CallBase.RouteSelExpl: 446 [SpaceData]
+   CallBase.RouteSelExpl: 515 [SpaceData]
       cb/BcProtocol.cpp
-   NodeBase.Singleton<CipAnmSignal>: 77 [Friend]
-   NodeBase.Singleton<CipCalledParameter>: 130 [Friend]
-   NodeBase.Singleton<CipCallingParameter>: 121 [Friend]
-   NodeBase.Singleton<CipCauseParameter>: 165 [Friend]
-   NodeBase.Singleton<CipCpgSignal>: 68 [Friend]
-   NodeBase.Singleton<CipIamSignal>: 59 [Friend]
-   NodeBase.Singleton<CipMediaParameter>: 173 [Friend]
-   NodeBase.Singleton<CipOriginalCalledParameter>: 148 [Friend]
-   NodeBase.Singleton<CipOriginalCallingParameter>: 139 [Friend]
-   NodeBase.Singleton<CipProgressParameter>: 157 [Friend]
-   NodeBase.Singleton<CipRelSignal>: 86 [Friend]
-   NodeBase.Singleton<CipRouteParameter>: 95 [Friend]
+   NodeBase.Singleton<CipAnmSignal>: 80 [Friend]
+   NodeBase.Singleton<CipCalledParameter>: 133 [Friend]
+   NodeBase.Singleton<CipCallingParameter>: 124 [Friend]
+   NodeBase.Singleton<CipCauseParameter>: 168 [Friend]
+   NodeBase.Singleton<CipCpgSignal>: 71 [Friend]
+   NodeBase.Singleton<CipIamSignal>: 62 [Friend]
+   NodeBase.Singleton<CipMediaParameter>: 176 [Friend]
+   NodeBase.Singleton<CipOriginalCalledParameter>: 151 [Friend]
+   NodeBase.Singleton<CipOriginalCallingParameter>: 142 [Friend]
+   NodeBase.Singleton<CipProgressParameter>: 160 [Friend]
+   NodeBase.Singleton<CipRelSignal>: 89 [Friend]
+   NodeBase.Singleton<CipRouteParameter>: 98 [Friend]
 cb/BcProtocol.h
    BCPROTOCOL_H_INCLUDED: 23 [Define]
       cb/BcProtocol.h
-   CallBase.BcPsm: 194 [Class]
+   CallBase.BcPsm: 193 [Class]
       cb/BcProtocol.cpp
       cb/BcProtocol.h
       cb/ProxyBcSessions.cpp
       cb/ProxyBcSessions.h
-   CallBase.BcPsm.AltRcvd: 204 [ClassData]
+   CallBase.BcPsm.AltRcvd: 203 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.AltSent: 203 [ClassData]
+   CallBase.BcPsm.AltSent: 202 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.AnmRcvd: 206 [ClassData]
+   CallBase.BcPsm.AnmRcvd: 205 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.AnmSent: 205 [ClassData]
+   CallBase.BcPsm.AnmSent: 204 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.BcPsm(FactoryId): 229 [Function]
-      cb/BcProtocol.cpp
-      cb/ProxyBcSessions.cpp
-   CallBase.BcPsm.BcPsm(FactoryId,ProtocolLayer&,bool): 223 [Function]
+   CallBase.BcPsm.BcPsm(FactoryId): 228 [Function]
       cb/BcProtocol.cpp
       cb/ProxyBcSessions.cpp
-   CallBase.BcPsm.Display: 217 [Function]
+   CallBase.BcPsm.BcPsm(FactoryId,ProtocolLayer&,bool): 222 [Function]
+      cb/BcProtocol.cpp
+      cb/ProxyBcSessions.cpp
+   CallBase.BcPsm.Display: 216 [Function]
       cb/BcProtocol.cpp
       cb/ProxyBcSessions.h
-   CallBase.BcPsm.EnsureMediaMsg: 237 [Function]
+   CallBase.BcPsm.EnsureMediaMsg: 236 [Function]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.EosRcvd: 202 [ClassData]
+   CallBase.BcPsm.EosRcvd: 201 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.EosSent: 201 [ClassData]
+   CallBase.BcPsm.EosSent: 200 [ClassData]
       cb/BcProtocol.cpp
       cb/ProxyBcSessions.cpp
-   CallBase.BcPsm.FindRcvdMsg: 213 [Function]
+   CallBase.BcPsm.FindRcvdMsg: 212 [Function]
       cb/BcProtocol.cpp
       sn/PotsCfxService.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.BcPsm.IamRcvd: 200 [ClassData]
+   CallBase.BcPsm.IamRcvd: 199 [ClassData]
       cb/BcProtocol.cpp
       cb/ProxyBcSessions.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.BcPsm.IamSent: 199 [ClassData]
+   CallBase.BcPsm.IamSent: 198 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.iamTimer_: 263 [ClassData]
+   CallBase.BcPsm.iamTimer_: 262 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.InjectFinalMsg: 242 [Function]
+   CallBase.BcPsm.InjectFinalMsg: 241 [Function]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.ProcessIcMsg: 246 [Function]
+   CallBase.BcPsm.ProcessIcMsg: 245 [Function]
       cb/BcProtocol.cpp
-   CallBase.BcPsm.ProcessOgMsg: 250 [Function]
-      cb/BcProtocol.cpp
-      cb/ProxyBcSessions.cpp
-      cb/ProxyBcSessions.h
-   CallBase.BcPsm.SendFinalMsg: 259 [Function]
-      cb/BcProtocol.cpp
-   CallBase.BcPsm.SusRcvd: 208 [ClassData]
-      cb/BcProtocol.cpp
-   CallBase.BcPsm.SusSent: 207 [ClassData]
-      cb/BcProtocol.cpp
-   CallBase.BcPsm.UsesIamTimer: 254 [Function]
-      cb/BcProtocol.cpp
-      cb/ProxyBcSessions.h
-   CallBase.BcPsm.~BcPsm: 233 [Function]
-      cb/BcProtocol.cpp
-   CallBase.CauseInfo: 47 [Forward]
-      cb/BcProtocol.h
-   CallBase.CipFactory: 391 [Class]
-      cb/BcProtocol.cpp
-      cb/BcProtocol.h
-      cb/ProxyBcSessions.h
-   CallBase.CipFactory.AllocIcMsg: 404 [Function]
-      cb/BcProtocol.cpp
-   CallBase.CipFactory.AllocOgMsg: 408 [Function]
-      cb/BcProtocol.cpp
-   CallBase.CipFactory.CipFactory: 396 [Function]
+   CallBase.BcPsm.ProcessOgMsg: 249 [Function]
       cb/BcProtocol.cpp
       cb/ProxyBcSessions.cpp
-   CallBase.CipFactory.ReallocOgMsg: 412 [Function]
+      cb/ProxyBcSessions.h
+   CallBase.BcPsm.SendFinalMsg: 258 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipFactory.~CipFactory: 400 [Function]
+   CallBase.BcPsm.SusRcvd: 207 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.CipHandler: 375 [Class]
+   CallBase.BcPsm.SusSent: 206 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.CipHandler.CipHandler: 380 [Function]
+   CallBase.BcPsm.UsesIamTimer: 253 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipHandler.~CipHandler: 384 [Function]
+      cb/ProxyBcSessions.h
+   CallBase.BcPsm.~BcPsm: 232 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipMessage: 138 [Class]
+   CallBase.CauseInfo: 46 [Forward]
+      cb/BcProtocol.h
+   CallBase.CipFactory: 410 [Class]
+      cb/BcProtocol.cpp
+      cb/BcProtocol.h
+      cb/ProxyBcSessions.h
+   CallBase.CipFactory.AllocIcMsg: 423 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipFactory.AllocOgMsg: 427 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipFactory.CipFactory: 415 [Function]
+      cb/BcProtocol.cpp
+      cb/ProxyBcSessions.cpp
+   CallBase.CipFactory.ReallocOgMsg: 431 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipFactory.~CipFactory: 419 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipHandler: 394 [Class]
+      cb/BcProtocol.cpp
+   CallBase.CipHandler.CipHandler: 399 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipHandler.~CipHandler: 403 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipMessage: 137 [Class]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       cb/BcProtocol.h
@@ -3335,45 +3323,45 @@ cb/BcProtocol.h
       sn/PotsCfxService.cpp
       sn/PotsCfxService.h
       sn/PotsProxyHandlers.cpp
-   CallBase.CipMessage.AddAddress: 171 [Function]
+   CallBase.CipMessage.AddAddress: 170 [Function]
       cb/BcProtocol.cpp
       cb/BcSsm.cpp
       sn/PotsBcHandlers.cpp
       sn/PotsCfxService.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipMessage.AddCause: 179 [Function]
+   CallBase.CipMessage.AddCause: 178 [Function]
       cb/BcProtocol.cpp
       cb/BcSsm.cpp
       cb/ProxyBcSessions.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipMessage.AddMedia: 183 [Function]
+   CallBase.CipMessage.AddMedia: 182 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipMessage.AddProgress: 175 [Function]
+   CallBase.CipMessage.AddProgress: 174 [Function]
       cb/BcProtocol.cpp
       cb/BcSsm.cpp
-   CallBase.CipMessage.AddRoute: 156 [Function]
+   CallBase.CipMessage.AddRoute: 155 [Function]
       cb/BcProtocol.cpp
       cb/BcSsm.cpp
       sn/PotsCfxService.cpp
-   CallBase.CipMessage.CipMessage(ProtocolSM*,size_t): 148 [Function]
+   CallBase.CipMessage.CipMessage(ProtocolSM*,size_t): 147 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipMessage.CipMessage(SbIpBufferPtr&): 143 [Function]
+   CallBase.CipMessage.CipMessage(SbIpBufferPtr&): 142 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipMessage.~CipMessage: 152 [Function]
+   CallBase.CipMessage.~CipMessage: 151 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipObcFactory: 419 [Class]
+   CallBase.CipObcFactory: 438 [Class]
       cb/BcProtocol.cpp
       cb/BcProtocol.h
       cb/CbModule.cpp
-   CallBase.CipObcFactory.AllocOgPsm: 433 [Function]
+   CallBase.CipObcFactory.AllocOgPsm: 452 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipObcFactory.CipObcFactory: 425 [Function]
+   CallBase.CipObcFactory.CipObcFactory: 444 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipObcFactory.CreateText: 437 [Function]
+   CallBase.CipObcFactory.CreateText: 456 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipObcFactory.~CipObcFactory: 429 [Function]
+   CallBase.CipObcFactory.~CipObcFactory: 448 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipParameter: 113 [Class]
+   CallBase.CipParameter: 112 [Class]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       cb/BcProtocol.h
@@ -3382,73 +3370,76 @@ cb/BcProtocol.h
       sn/PotsBcHandlers.cpp
       sn/PotsCfxService.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipParameter.Called: 118 [ClassData]
+   CallBase.CipParameter.Called: 117 [ClassData]
       cb/BcProtocol.cpp
       cb/BcSsm.cpp
       sn/PotsCfxService.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipParameter.Calling: 117 [ClassData]
+   CallBase.CipParameter.Calling: 116 [ClassData]
       cb/BcProtocol.cpp
       sn/PotsBcHandlers.cpp
       sn/PotsCfxService.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipParameter.Cause: 122 [ClassData]
+   CallBase.CipParameter.Cause: 121 [ClassData]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       cb/ProxyBcSessions.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipParameter.CipParameter: 127 [Function]
+   CallBase.CipParameter.CipParameter: 126 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipParameter.Media: 123 [ClassData]
+   CallBase.CipParameter.Media: 122 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.CipParameter.OriginalCalled: 120 [ClassData]
-      cb/BcProtocol.cpp
-      sn/PotsCfxService.cpp
-      sn/PotsProxyHandlers.cpp
-   CallBase.CipParameter.OriginalCalling: 119 [ClassData]
+   CallBase.CipParameter.OriginalCalled: 119 [ClassData]
       cb/BcProtocol.cpp
       sn/PotsCfxService.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipParameter.Progress: 121 [ClassData]
+   CallBase.CipParameter.OriginalCalling: 118 [ClassData]
+      cb/BcProtocol.cpp
+      sn/PotsCfxService.cpp
+      sn/PotsProxyHandlers.cpp
+   CallBase.CipParameter.Progress: 120 [ClassData]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       cb/ProxyBcSessions.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipParameter.Route: 116 [ClassData]
+   CallBase.CipParameter.Route: 115 [ClassData]
       cb/BcProtocol.cpp
       cb/ProxyBcSessions.cpp
       sn/PotsBcHandlers.cpp
-   CallBase.CipParameter.~CipParameter: 131 [Function]
-   CallBase.CipProtocol: 66 [Class]
+   CallBase.CipParameter.~CipParameter: 130 [Function]
+   CallBase.CipProtocol: 65 [Class]
       cb/BcProtocol.cpp
       cb/BcProtocol.h
       cb/CbModule.cpp
-   CallBase.CipProtocol.CipProtocol: 81 [Function]
+   CallBase.CipProtocol.CipProtocol: 80 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipProtocol.IamTimeout: 73 [ClassData]
+   CallBase.CipProtocol.IamTimeout: 72 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.CipProtocol.IamTimeoutId: 77 [ClassData]
+   CallBase.CipProtocol.IamTimeoutId: 76 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.CipProtocol.~CipProtocol: 85 [Function]
+   CallBase.CipProtocol.~CipProtocol: 84 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipPsm: 270 [Class]
+   CallBase.CipPsm: 269 [Class]
       cb/BcProtocol.cpp
+      cb/BcProtocol.h
       cb/BcSessions.h
       cb/BcSsm.cpp
       cb/TestCallFactory.cpp
       sn/PotsBcSsm.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipPsm.CipPsm(): 275 [Function]
+   CallBase.CipPsm: 346 [Friend]
+   CallBase.CipPsm: 301 [Friend]
+   CallBase.CipPsm.CipPsm(): 274 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipPsm.CipPsm(FactoryId,ProtocolLayer&,bool): 280 [Function]
+   CallBase.CipPsm.CipPsm(FactoryId,ProtocolLayer&,bool): 279 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipPsm.CreateAppSocket: 288 [Function]
+   CallBase.CipPsm.CreateAppSocket: 287 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipPsm.Route: 292 [Function]
+   CallBase.CipPsm.Route: 291 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipPsm.~CipPsm: 284 [Function]
+   CallBase.CipPsm.~CipPsm: 283 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipSignal: 92 [Class]
+   CallBase.CipSignal: 91 [Class]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       cb/BcProtocol.h
@@ -3456,99 +3447,111 @@ cb/BcProtocol.h
       cb/ProxyBcSessions.cpp
       sn/PotsCfxService.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipSignal.ANM: 97 [ClassData]
+   CallBase.CipSignal.ANM: 96 [ClassData]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       cb/BcSsm.cpp
       cb/ProxyBcSessions.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipSignal.CipSignal: 102 [Function]
+   CallBase.CipSignal.CipSignal: 101 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipSignal.CPG: 96 [ClassData]
+   CallBase.CipSignal.CPG: 95 [ClassData]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       cb/BcSsm.cpp
       cb/ProxyBcSessions.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipSignal.IAM: 95 [ClassData]
+   CallBase.CipSignal.IAM: 94 [ClassData]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       cb/BcSsm.cpp
       cb/ProxyBcSessions.cpp
       sn/PotsCfxService.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipSignal.REL: 98 [ClassData]
+   CallBase.CipSignal.REL: 97 [ClassData]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       cb/BcSsm.cpp
       cb/ProxyBcSessions.cpp
       sn/PotsProxyHandlers.cpp
-   CallBase.CipSignal.~CipSignal: 106 [Function]
-   CallBase.CipTbcFactory: 444 [Class]
+   CallBase.CipSignal.~CipSignal: 105 [Function]
+   CallBase.CipTbcFactory: 463 [Class]
       cb/BcProtocol.cpp
       cb/BcProtocol.h
       cb/CbModule.cpp
-   CallBase.CipTbcFactory.AllocIcPsm: 458 [Function]
+   CallBase.CipTbcFactory.AllocIcPsm: 477 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipTbcFactory.AllocRoot: 464 [Function]
+   CallBase.CipTbcFactory.AllocRoot: 483 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipTbcFactory.CipTbcFactory: 450 [Function]
+   CallBase.CipTbcFactory.CipTbcFactory: 469 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipTbcFactory.CreateText: 468 [Function]
+   CallBase.CipTbcFactory.CreateText: 487 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipTbcFactory.~CipTbcFactory: 454 [Function]
+   CallBase.CipTbcFactory.~CipTbcFactory: 473 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipTcpService: 334 [Class]
+   CallBase.CipTcpService: 343 [Class]
       cb/BcProtocol.cpp
       cb/BcProtocol.h
       cb/CbModule.cpp
-   CallBase.CipTcpService.CipTcpService: 348 [Function]
+   CallBase.CipTcpService.CipTcpService: 354 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipTcpService.CreateHandler: 356 [Function]
+   CallBase.CipTcpService.CreateHandler: 371 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipTcpService.CreateText: 360 [Function]
+   CallBase.CipTcpService.CreateText: 375 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipTcpService.GetAppSocketSizes: 364 [Function]
+   CallBase.CipTcpService.Enabled: 365 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipTcpService.GetFaction: 342 [Function]
-   CallBase.CipTcpService.MaxBacklog: 344 [Function]
-   CallBase.CipTcpService.MaxConns: 343 [Function]
-   CallBase.CipTcpService.Name: 340 [Function]
-   CallBase.CipTcpService.Port: 341 [Function]
+   CallBase.CipTcpService.enabled_: 387 [ClassData]
       cb/BcProtocol.cpp
-   CallBase.CipTcpService.portCfg_: 368 [ClassData]
+   CallBase.CipTcpService.GetAppSocketSizes: 379 [Function]
       cb/BcProtocol.cpp
-      cb/BcProtocol.h
-   CallBase.CipTcpService.~CipTcpService: 352 [Function]
+   CallBase.CipTcpService.GetFaction: 364 [Function]
+   CallBase.CipTcpService.MaxBacklog: 367 [Function]
+   CallBase.CipTcpService.MaxConns: 366 [Function]
+   CallBase.CipTcpService.Name: 362 [Function]
+   CallBase.CipTcpService.Port: 363 [Function]
+   CallBase.CipTcpService.Shutdown: 383 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipUdpService: 299 [Class]
+   CallBase.CipTcpService.Startup: 350 [Function]
       cb/BcProtocol.cpp
-      cb/BcProtocol.h
-   CallBase.CipUdpService.CipUdpService: 311 [Function]
+      cb/CbModule.cpp
+   CallBase.CipTcpService.~CipTcpService: 358 [Function]
       cb/BcProtocol.cpp
-   CallBase.CipUdpService.CreateHandler: 319 [Function]
-      cb/BcProtocol.cpp
-   CallBase.CipUdpService.CreateText: 323 [Function]
-      cb/BcProtocol.cpp
-   CallBase.CipUdpService.GetFaction: 307 [Function]
-   CallBase.CipUdpService.Name: 305 [Function]
-   CallBase.CipUdpService.Port: 306 [Function]
-   CallBase.CipUdpService.portCfg_: 327 [ClassData]
+   CallBase.CipUdpService: 298 [Class]
       cb/BcProtocol.cpp
       cb/BcProtocol.h
-   CallBase.CipUdpService.~CipUdpService: 315 [Function]
+      cb/CbModule.cpp
+   CallBase.CipUdpService.CipUdpService: 309 [Function]
       cb/BcProtocol.cpp
-   CallBase.DigitString: 45 [Forward]
+   CallBase.CipUdpService.CreateHandler: 324 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipUdpService.CreateText: 328 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipUdpService.Enabled: 320 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipUdpService.enabled_: 336 [ClassData]
+      cb/BcProtocol.cpp
+   CallBase.CipUdpService.GetFaction: 319 [Function]
+   CallBase.CipUdpService.Name: 317 [Function]
+   CallBase.CipUdpService.Port: 318 [Function]
+   CallBase.CipUdpService.Shutdown: 332 [Function]
+      cb/BcProtocol.cpp
+   CallBase.CipUdpService.Startup: 305 [Function]
+      cb/BcProtocol.cpp
+      cb/CbModule.cpp
+   CallBase.CipUdpService.~CipUdpService: 313 [Function]
+      cb/BcProtocol.cpp
+   CallBase.DigitString: 44 [Forward]
       cb/BcProtocol.h
-   CallBase.ProgressInfo: 46 [Forward]
+   CallBase.ProgressInfo: 45 [Forward]
       cb/BcProtocol.h
-   CallBase.RouteResult: 48 [Forward]
+   CallBase.RouteResult: 47 [Forward]
       cb/BcProtocol.h
-   NodeBase.Singleton<CipObcFactory>: 421 [Friend]
-   NodeBase.Singleton<CipProtocol>: 68 [Friend]
-   NodeBase.Singleton<CipTbcFactory>: 446 [Friend]
-   NodeBase.Singleton<CipTcpService>: 336 [Friend]
-   NodeBase.Singleton<CipUdpService>: 301 [Friend]
+   NodeBase.Singleton<CipObcFactory>: 440 [Friend]
+   NodeBase.Singleton<CipProtocol>: 67 [Friend]
+   NodeBase.Singleton<CipTbcFactory>: 465 [Friend]
+   NodeBase.Singleton<CipTcpService>: 345 [Friend]
+   NodeBase.Singleton<CipUdpService>: 300 [Friend]
 cb/BcRouting.h
    BCROUTING_H_INCLUDED: 23 [Define]
       cb/BcRouting.h
@@ -5344,7 +5347,9 @@ cb/CbModule.h
       cb/CbModule.h
    NodeBase.Singleton<CbModule>: 38 [Friend]
 cb/DigitString.cpp
-   CallBase.DigitString_IsCompleteAddress: 163 [SpaceData]
+   CallBase.DigitString_IsCompleteAddress: 167 [SpaceData]
+      cb/DigitString.cpp
+   CallBase.DigitToChar: 37 [SpaceData]
       cb/DigitString.cpp
 cb/ProxyBcSessions.cpp
    CallBase.ProxyBcAnalyzeProxyMessage_ProcessEvent: 351 [SpaceData]
@@ -22257,9 +22262,9 @@ dip/Adjudicator.cpp
 dip/BaseBot.cpp
    Diplomacy.BaseBot_disconnect_from_server: 189 [SpaceData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot_report_end: 1746 [SpaceData]
+   Diplomacy.BaseBot_report_end: 1742 [SpaceData]
       dip/BaseBot.cpp
-   Diplomacy.BaseBot_send_im_message: 2141 [SpaceData]
+   Diplomacy.BaseBot_send_im_message: 2137 [SpaceData]
       dip/BaseBot.cpp
 dip/BaseBot.h
    BASEBOT_H_INCLUDED: 15 [Define]
@@ -22808,7 +22813,7 @@ dip/DipProtocol.cpp
       dip/DipProtocol.cpp
    Diplomacy.BotTcpServiceStr: 381 [SpaceData]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBufferSize: 491 [SpaceData]
+   Diplomacy.DipIpBufferSize: 477 [SpaceData]
       dip/DipProtocol.cpp
 dip/DipProtocol.h
    Diplomacy.BM_Message: 199 [Class]
@@ -22826,30 +22831,23 @@ dip/DipProtocol.h
       dip/DipModule.cpp
       dip/DipProtocol.cpp
       dip/DipProtocol.h
-   Diplomacy.BotTcpService.AcceptsConns: 222 [Function]
-   Diplomacy.BotTcpService.BotTcpService: 238 [Function]
+   Diplomacy.BotTcpService.AcceptsConns: 231 [Function]
+   Diplomacy.BotTcpService.BotTcpService: 219 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.BotTcpService.CreateHandler: 246 [Function]
+   Diplomacy.BotTcpService.CreateHandler: 238 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.BotTcpService.CreateText: 250 [Function]
+   Diplomacy.BotTcpService.CreateText: 242 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.BotTcpService.Display: 233 [Function]
+   Diplomacy.BotTcpService.Enabled: 230 [Function]
+   Diplomacy.BotTcpService.GetAppSocketSizes: 246 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.BotTcpService.GetAppSocketSizes: 254 [Function]
-      dip/DipProtocol.cpp
-   Diplomacy.BotTcpService.GetFaction: 221 [Function]
-   Diplomacy.BotTcpService.Keepalive: 225 [Function]
-   Diplomacy.BotTcpService.MaxBacklog: 224 [Function]
-   Diplomacy.BotTcpService.MaxConns: 223 [Function]
-   Diplomacy.BotTcpService.Name: 219 [Function]
-   Diplomacy.BotTcpService.Port: 220 [Function]
-      dip/DipProtocol.cpp
-   Diplomacy.BotTcpService.port_: 258 [ClassData]
-      dip/DipProtocol.cpp
-      dip/DipProtocol.h
-   Diplomacy.BotTcpService.SetPort: 229 [Function]
-      dip/BaseBot.cpp
-   Diplomacy.BotTcpService.~BotTcpService: 242 [Function]
+   Diplomacy.BotTcpService.GetFaction: 229 [Function]
+   Diplomacy.BotTcpService.Keepalive: 234 [Function]
+   Diplomacy.BotTcpService.MaxBacklog: 233 [Function]
+   Diplomacy.BotTcpService.MaxConns: 232 [Function]
+   Diplomacy.BotTcpService.Name: 227 [Function]
+   Diplomacy.BotTcpService.Port: 228 [Function]
+   Diplomacy.BotTcpService.~BotTcpService: 223 [Function]
    Diplomacy.DipHeader: 58 [Class]
       dip/BotTrace.cpp
       dip/BotTrace.h
@@ -22873,21 +22871,21 @@ dip/DipProtocol.h
       dip/BaseBot.cpp
       dip/BotThread.cpp
       dip/DipProtocol.cpp
-   Diplomacy.DipInputHandler: 265 [Class]
+   Diplomacy.DipInputHandler: 253 [Class]
       dip/DipProtocol.cpp
-   Diplomacy.DipInputHandler.AllocBuff: 275 [Function]
+   Diplomacy.DipInputHandler.AllocBuff: 263 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipInputHandler.DipInputHandler: 270 [Function]
+   Diplomacy.DipInputHandler.DipInputHandler: 258 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipInputHandler.HostToNetwork: 280 [Function]
+   Diplomacy.DipInputHandler.HostToNetwork: 268 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipInputHandler.NetworkToHost: 285 [Function]
+   Diplomacy.DipInputHandler.NetworkToHost: 273 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipInputHandler.ReceiveBuff: 290 [Function]
+   Diplomacy.DipInputHandler.ReceiveBuff: 278 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipInputHandler.SocketFailed: 295 [Function]
+   Diplomacy.DipInputHandler.SocketFailed: 283 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer: 302 [Class]
+   Diplomacy.DipIpBuffer: 290 [Class]
       dip/BaseBot.cpp
       dip/BaseBot.h
       dip/BotThread.cpp
@@ -22896,37 +22894,37 @@ dip/DipProtocol.h
       dip/DipProtocol.cpp
       dip/DipProtocol.h
       dip/DipTypes.h
-   Diplomacy.DipIpBuffer.AddBytes: 328 [Function]
+   Diplomacy.DipIpBuffer.AddBytes: 316 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.BytesAdded: 320 [Function]
+   Diplomacy.DipIpBuffer.BytesAdded: 308 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.Clone: 332 [Function]
+   Diplomacy.DipIpBuffer.Clone: 320 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.currSize_: 345 [ClassData]
+   Diplomacy.DipIpBuffer.currSize_: 333 [ClassData]
       dip/DipProtocol.cpp
       dip/DipProtocol.h
-   Diplomacy.DipIpBuffer.DipIpBuffer(const DipIpBuffer&): 312 [Function]
+   Diplomacy.DipIpBuffer.DipIpBuffer(const DipIpBuffer&): 300 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.DipIpBuffer(MsgDirection,size_t): 308 [Function]
+   Diplomacy.DipIpBuffer.DipIpBuffer(MsgDirection,size_t): 296 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.Display: 336 [Function]
+   Diplomacy.DipIpBuffer.Display: 324 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.operator new: 324 [Function]
+   Diplomacy.DipIpBuffer.operator new: 312 [Function]
       dip/BaseBot.cpp
       dip/BotThread.cpp
       dip/BotTrace.cpp
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.PayloadSize: 341 [Function]
+   Diplomacy.DipIpBuffer.PayloadSize: 329 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBuffer.~DipIpBuffer: 316 [Function]
+   Diplomacy.DipIpBuffer.~DipIpBuffer: 304 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBufferPool: 352 [Class]
+   Diplomacy.DipIpBufferPool: 340 [Class]
       dip/DipModule.cpp
       dip/DipProtocol.cpp
       dip/DipProtocol.h
-   Diplomacy.DipIpBufferPool.DipIpBufferPool: 358 [Function]
+   Diplomacy.DipIpBufferPool.DipIpBufferPool: 346 [Function]
       dip/DipProtocol.cpp
-   Diplomacy.DipIpBufferPool.~DipIpBufferPool: 362 [Function]
+   Diplomacy.DipIpBufferPool.~DipIpBufferPool: 350 [Function]
       dip/DipProtocol.cpp
    Diplomacy.DipMessage: 71 [Class]
       dip/BaseBot.cpp
@@ -23058,7 +23056,7 @@ dip/DipProtocol.h
    DIPPROTOCOL_H_INCLUDED: 25 [Define]
       dip/DipProtocol.h
    NodeBase.Singleton<BotTcpService>: 215 [Friend]
-   NodeBase.Singleton<DipIpBufferPool>: 354 [Friend]
+   NodeBase.Singleton<DipIpBufferPool>: 342 [Friend]
 dip/DipTypes.h
    Diplomacy.BotEvent: 79 [Typedef]
       dip/BaseBot.cpp
@@ -23073,6 +23071,7 @@ dip/DipTypes.h
       dip/TokenTextMap.h
    Diplomacy.ClientIpPort: 63 [SpaceData]
       dip/BaseBot.cpp
+      dip/DipProtocol.h
    Diplomacy.DipIpBuffer: 71 [Forward]
       dip/DipTypes.h
    Diplomacy.DipIpBufferPtr: 75 [Typedef]
@@ -25771,9 +25770,9 @@ mb/Tones.h
    TONES_H_INCLUDED: 23 [Define]
       mb/Tones.h
 nb/Alarm.cpp
-   NodeBase.Alarm_ctor: 72 [SpaceData]
+   NodeBase.Alarm_ctor: 77 [SpaceData]
       nb/Alarm.cpp
-   NodeBase.Alarm_dtor: 97 [SpaceData]
+   NodeBase.Alarm_dtor: 102 [SpaceData]
       nb/Alarm.cpp
    NodeBase.AlarmDynamic: 43 [Class]
       nb/Alarm.cpp
@@ -25784,6 +25783,10 @@ nb/Alarm.cpp
    NodeBase.AlarmDynamic.nextStatus_: 58 [ClassData]
       nb/Alarm.cpp
    NodeBase.AlarmDynamic.status_: 52 [ClassData]
+      nb/Alarm.cpp
+   NodeBase.MaxExplSize: 73 [SpaceData]
+      nb/Alarm.cpp
+   NodeBase.MaxNameSize: 69 [SpaceData]
       nb/Alarm.cpp
 nb/Alarm.h
    ALARM_H_INCLUDED: 23 [Define]
@@ -25802,15 +25805,15 @@ nb/Alarm.h
       nw/IpPort.h
       nw/NwLogs.cpp
       sb/SbLogs.cpp
-   NodeBase.Alarm.aid_: 136 [ClassData]
+   NodeBase.Alarm.aid_: 128 [ClassData]
       nb/Alarm.cpp
-   NodeBase.Alarm.Alarm(c_string,c_string,secs_t): 71 [Function]
+   NodeBase.Alarm.Alarm(c_string,c_string,secs_t): 63 [Function]
       nb/Alarm.cpp
    NodeBase.Alarm.Alarm(const Alarm&): 51 [Function]
-   NodeBase.Alarm.CellDiff: 103 [Function]
+   NodeBase.Alarm.CellDiff: 95 [Function]
       nb/Alarm.cpp
       nb/AlarmRegistry.cpp
-   NodeBase.Alarm.Create: 87 [Function]
+   NodeBase.Alarm.Create: 79 [Function]
       nb/Alarm.cpp
       nb/Daemon.cpp
       nb/ObjectPool.cpp
@@ -25818,44 +25821,40 @@ nb/Alarm.h
       nw/IpPortRegistry.cpp
       nw/NwLogs.cpp
       sb/SbInvokerPools.cpp
-   NodeBase.Alarm.delay_: 132 [ClassData]
+   NodeBase.Alarm.delay_: 124 [ClassData]
       nb/Alarm.cpp
-   NodeBase.Alarm.Display: 107 [Function]
+   NodeBase.Alarm.Display: 99 [Function]
       nb/Alarm.cpp
       nb/AlarmRegistry.cpp
       nb/NbIncrement.cpp
-   NodeBase.Alarm.dyn_: 141 [ClassData]
+   NodeBase.Alarm.dyn_: 133 [ClassData]
       nb/Alarm.cpp
-   NodeBase.Alarm.Expl: 95 [Function]
+   NodeBase.Alarm.Expl: 87 [Function]
       nb/Log.cpp
-   NodeBase.Alarm.expl_: 128 [ClassData]
+   NodeBase.Alarm.expl_: 120 [ClassData]
       nb/Alarm.cpp
       nb/Alarm.h
-   NodeBase.Alarm.MaxExplSize: 63 [ClassData]
-      nb/Alarm.cpp
-   NodeBase.Alarm.MaxNameSize: 59 [ClassData]
-      nb/Alarm.cpp
-   NodeBase.Alarm.Name: 91 [Function]
+   NodeBase.Alarm.Name: 83 [Function]
       nb/AlarmRegistry.cpp
       nb/Log.cpp
       nb/NbIncrement.cpp
-   NodeBase.Alarm.name_: 124 [ClassData]
+   NodeBase.Alarm.name_: 116 [ClassData]
       nb/Alarm.cpp
       nb/Alarm.h
    NodeBase.Alarm.operator=: 55 [Function]
-   NodeBase.Alarm.Patch: 112 [Function]
+   NodeBase.Alarm.Patch: 104 [Function]
       nb/Alarm.cpp
-   NodeBase.Alarm.SetStatus: 120 [Function]
+   NodeBase.Alarm.SetStatus: 112 [Function]
       nb/Alarm.cpp
       nb/NbIncrement.cpp
-   NodeBase.Alarm.Shutdown: 116 [Function]
+   NodeBase.Alarm.Shutdown: 108 [Function]
       nb/Alarm.cpp
       nb/AlarmRegistry.cpp
-   NodeBase.Alarm.Status: 99 [Function]
+   NodeBase.Alarm.Status: 91 [Function]
       nb/Alarm.cpp
       nb/AlarmRegistry.cpp
       nb/NbIncrement.cpp
-   NodeBase.Alarm.~Alarm: 75 [Function]
+   NodeBase.Alarm.~Alarm: 67 [Function]
       nb/Alarm.cpp
    NodeBase.AlarmDynamic: 34 [Forward]
       nb/Alarm.h
@@ -26405,6 +26404,8 @@ nb/Base.h
       sn/SnIncrement.cpp
       st/MscBuilder.cpp
    NodeBase.Base.Shutdown: 137 [Function]
+      cb/BcProtocol.cpp
+      cb/BcProtocol.h
       cb/CbModule.cpp
       ct/CodeCoverage.h
       ct/CxxRoot.h
@@ -26436,6 +26437,8 @@ nb/Base.h
       nw/IpPortRegistry.h
       nw/IpServiceRegistry.cpp
       nw/IpServiceRegistry.h
+      nw/LocalAddrTest.cpp
+      nw/LocalAddrTest.h
       pb/PbModule.cpp
       pb/PotsProfile.h
       pb/PotsProfileRegistry.h
@@ -26585,16 +26588,22 @@ nb/CfgBoolParm.h
       nb/NbTypes.h
       nb/ObjectPoolRegistry.cpp
       nb/ThreadAdmin.cpp
+      nw/IpServiceCfg.cpp
+      nw/IpServiceCfg.h
    NodeBase.CfgBoolParm.CfgBoolParm: 39 [Function]
       nb/CfgBoolParm.cpp
       nb/ThreadAdmin.cpp
+      nw/IpServiceCfg.cpp
    NodeBase.CfgBoolParm.curr_: 72 [ClassData]
       nb/CfgBoolParm.cpp
       nb/CfgBoolParm.h
    NodeBase.CfgBoolParm.CurrValue: 47 [Function]
+      cb/BcProtocol.cpp
       nb/Element.cpp
       nb/ObjectPoolRegistry.h
       nb/ThreadAdmin.cpp
+      nw/IpServiceCfg.cpp
+      nw/LocalAddrTest.cpp
    NodeBase.CfgBoolParm.Display: 51 [Function]
       nb/CfgBoolParm.cpp
    NodeBase.CfgBoolParm.next_: 76 [ClassData]
@@ -26602,11 +26611,14 @@ nb/CfgBoolParm.h
       nb/CfgBoolParm.h
    NodeBase.CfgBoolParm.NextValue: 60 [Function]
       nb/ThreadAdmin.cpp
+      nw/IpServiceCfg.cpp
    NodeBase.CfgBoolParm.Patch: 56 [Function]
       nb/CfgBoolParm.cpp
    NodeBase.CfgBoolParm.SetCurr: 64 [Function]
       nb/CfgBoolParm.cpp
       nb/ThreadAdmin.cpp
+      nw/IpServiceCfg.cpp
+      nw/IpServiceCfg.h
    NodeBase.CfgBoolParm.SetNextValue: 68 [Function]
       nb/CfgBoolParm.cpp
    NodeBase.CfgBoolParm.~CfgBoolParm: 43 [Function]
@@ -26649,14 +26661,11 @@ nb/CfgIntParm.h
       nb/NbTypes.h
       nb/ObjectPool.cpp
       nb/ThreadAdmin.cpp
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       sb/InvokerPool.cpp
       sb/SbInvokerPools.cpp
    NodeBase.CfgIntParm.CfgIntParm: 39 [Function]
       nb/CfgIntParm.cpp
       nb/ObjectPool.cpp
-      nw/IpPortCfgParm.cpp
    NodeBase.CfgIntParm.curr_: 88 [ClassData]
       nb/CfgIntParm.cpp
       nb/CfgIntParm.h
@@ -26664,13 +26673,10 @@ nb/CfgIntParm.h
       nb/LogThread.h
       nb/ObjectPool.cpp
       nb/ThreadAdmin.cpp
-      nw/IpPortCfgParm.h
       sb/InvokerPool.cpp
       sb/SbInvokerPools.cpp
    NodeBase.CfgIntParm.Display: 51 [Function]
       nb/CfgIntParm.cpp
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
    NodeBase.CfgIntParm.Explain: 70 [Function]
       nb/CfgIntParm.cpp
    NodeBase.CfgIntParm.GetCurr: 75 [Function]
@@ -26686,7 +26692,6 @@ nb/CfgIntParm.h
       nb/ObjectPool.cpp
    NodeBase.CfgIntParm.Patch: 56 [Function]
       nb/CfgIntParm.cpp
-      nw/IpPortCfgParm.h
    NodeBase.CfgIntParm.SetCurr: 79 [Function]
       nb/CfgIntParm.cpp
       nb/ObjectPool.cpp
@@ -26694,8 +26699,6 @@ nb/CfgIntParm.h
       nb/CfgIntParm.cpp
    NodeBase.CfgIntParm.SetNextValue: 62 [Function]
       nb/CfgIntParm.cpp
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
    NodeBase.CfgIntParm.~CfgIntParm: 43 [Function]
       nb/CfgIntParm.cpp
 nb/CfgParm.cpp
@@ -26720,7 +26723,6 @@ nb/CfgParm.h
       nb/CfgStrParm.cpp
       nb/CfgStrParm.h
       nb/NbIncrement.cpp
-      nw/IpPortCfgParm.cpp
    NodeBase.CfgParm.CfgParm(c_string,c_string,c_string): 94 [Function]
       nb/CfgBitParm.cpp
       nb/CfgIntParm.cpp
@@ -26778,12 +26780,11 @@ nb/CfgParm.h
       nb/CfgParm.cpp
       nb/CfgStrParm.cpp
       nb/CfgStrParm.h
-      nw/IpPortCfgParm.cpp
    NodeBase.CfgParm.RestartRequired: 128 [Function]
       nb/CfgParm.cpp
       nb/ObjectPool.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
+      nw/IpServiceCfg.h
    NodeBase.CfgParm.SetCurr: 107 [Function]
       nb/CfgBoolParm.cpp
       nb/CfgBoolParm.h
@@ -26839,7 +26840,6 @@ nb/CfgParmRegistry.h
       nb/CfgParmRegistry.h
    NodeBase.CfgParm: 46 [Friend]
    NodeBase.CfgParmRegistry: 43 [Class]
-      an/PotsShelfIpService.cpp
       cb/BcProtocol.cpp
       ct/Library.cpp
       nb/CfgParm.cpp
@@ -26858,9 +26858,7 @@ nb/CfgParmRegistry.h
       nw/LocalAddrTest.cpp
       sb/InvokerPool.cpp
       sb/SbInvokerPools.cpp
-      sn/PotsCallIpService.cpp
    NodeBase.CfgParmRegistry.BindParm: 65 [Function]
-      an/PotsShelfIpService.cpp
       cb/BcProtocol.cpp
       ct/Library.cpp
       nb/CfgParmRegistry.cpp
@@ -26873,7 +26871,6 @@ nb/CfgParmRegistry.h
       nw/LocalAddrTest.cpp
       sb/InvokerPool.cpp
       sb/SbInvokerPools.cpp
-      sn/PotsCallIpService.cpp
    NodeBase.CfgParmRegistry.BindTuple: 105 [Function]
       nb/CfgParm.cpp
       nb/CfgParmRegistry.cpp
@@ -27265,6 +27262,9 @@ nb/CliAppData.h
    NodeBase.TestSessionAppId: 98 [SpaceData]
       st/StTestData.cpp
    std.deleter_type: 41 [Friend]
+nb/CliBoolParm.cpp
+   NodeBase.AnyBoolParm: 38 [SpaceData]
+      nb/CliBoolParm.cpp
 nb/CliBoolParm.h
    CLIBOOLPARM_H_INCLUDED: 23 [Define]
       nb/CliBoolParm.h
@@ -27276,8 +27276,6 @@ nb/CliBoolParm.h
       nw/NwIncrement.cpp
       pb/PotsProtocol.cpp
       st/StIncrement.cpp
-   NodeBase.CliBoolParm.AnyBoolParm: 60 [ClassData]
-      nb/CliBoolParm.cpp
    NodeBase.CliBoolParm.CliBoolParm: 39 [Function]
       nb/CliBoolParm.cpp
    NodeBase.CliBoolParm.GetBoolParmRc: 52 [Function]
@@ -27289,9 +27287,11 @@ nb/CliBoolParm.h
    NodeBase.CliBoolParm.~CliBoolParm: 44 [Function]
       nb/CliBoolParm.cpp
 nb/CliBuffer.cpp
-   NodeBase.CliBuffer_GetLine: 294 [SpaceData]
+   NodeBase.BreakChar: 83 [SpaceData]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer_GetStr: 382 [SpaceData]
+   NodeBase.CliBuffer_GetLine: 316 [SpaceData]
+      nb/CliBuffer.cpp
+   NodeBase.CliBuffer_GetStr: 404 [SpaceData]
       nb/CliBuffer.cpp
    NodeBase.CliSource: 52 [Class]
       nb/CliBuffer.h
@@ -27303,7 +27303,17 @@ nb/CliBuffer.cpp
       nb/CliBuffer.cpp
    NodeBase.CliSource.inputs_: 66 [ClassData]
       nb/CliBuffer.cpp
-   NodeBase.MaxInputDepth: 71 [SpaceData]
+   NodeBase.CommentChar: 87 [SpaceData]
+      nb/CliBuffer.cpp
+   NodeBase.EscapeChar: 74 [SpaceData]
+      nb/CliBuffer.cpp
+   NodeBase.MaxInputDepth: 99 [SpaceData]
+      nb/CliBuffer.cpp
+   NodeBase.OptSkipChar: 91 [SpaceData]
+      nb/CliBuffer.cpp
+   NodeBase.StringChar: 79 [SpaceData]
+      nb/CliBuffer.cpp
+   NodeBase.SymbolChar: 95 [SpaceData]
       nb/CliBuffer.cpp
 nb/CliBuffer.h
    CLIBUFFER_H_INCLUDED: 23 [Define]
@@ -27318,40 +27328,36 @@ nb/CliBuffer.h
       nb/CliTextParm.cpp
       nb/CliThread.cpp
       nb/CliThread.h
-   NodeBase.CliBuffer.BreakChar: 62 [ClassData]
+   NodeBase.CliBuffer.buff_: 183 [ClassData]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.buff_: 209 [ClassData]
+   NodeBase.CliBuffer.CalcType: 159 [Function]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CalcType: 185 [Function]
-      nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CharType: 143 [Enum]
+   NodeBase.CliBuffer.CharType: 117 [Enum]
       nb/CliBuffer.cpp
       nb/CliBuffer.h
-   NodeBase.CliBuffer.CharType.Blank: 146 [Enumerator]
+   NodeBase.CliBuffer.CharType.Blank: 120 [Enumerator]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CharType.EndOfLine: 147 [Enumerator]
+   NodeBase.CliBuffer.CharType.EndOfLine: 121 [Enumerator]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CharType.OptSkip: 149 [Enumerator]
+   NodeBase.CliBuffer.CharType.OptSkip: 123 [Enumerator]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CharType.OptTag: 150 [Enumerator]
+   NodeBase.CliBuffer.CharType.OptTag: 124 [Enumerator]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CharType.Regular: 145 [Enumerator]
+   NodeBase.CliBuffer.CharType.Regular: 119 [Enumerator]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CharType.String: 148 [Enumerator]
+   NodeBase.CliBuffer.CharType.String: 122 [Enumerator]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CharType.Symbol: 151 [Enumerator]
+   NodeBase.CliBuffer.CharType.Symbol: 125 [Enumerator]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CliBuffer: 156 [Function]
+   NodeBase.CliBuffer.CliBuffer: 130 [Function]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.CommentChar: 66 [ClassData]
-      nb/CliBuffer.cpp
-   NodeBase.CliBuffer.Display: 134 [Function]
+   NodeBase.CliBuffer.Display: 108 [Function]
       nb/CliBuffer.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.Echo: 121 [Function]
+   NodeBase.CliBuffer.Echo: 95 [Function]
       nb/CliBuffer.cpp
       nb/NbIncrement.cpp
-   NodeBase.CliBuffer.ErrorAtPos: 112 [Function]
+   NodeBase.CliBuffer.ErrorAtPos: 86 [Function]
       nb/CliBoolParm.cpp
       nb/CliBuffer.cpp
       nb/CliCharParm.cpp
@@ -27363,28 +27369,26 @@ nb/CliBuffer.h
       nb/CliText.cpp
       nb/CliTextParm.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.ErrorPointer: 82 [ClassData]
+   NodeBase.CliBuffer.ErrorPointer: 56 [ClassData]
       ct/LibraryErrSet.cpp
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.EscapeChar: 53 [ClassData]
-      nb/CliBuffer.cpp
-   NodeBase.CliBuffer.FindNextNonBlank: 190 [Function]
+   NodeBase.CliBuffer.FindNextNonBlank: 164 [Function]
       nb/CliBuffer.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.GetInput: 180 [Function]
+   NodeBase.CliBuffer.GetInput: 154 [Function]
       nb/CliBuffer.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.GetInt: 93 [Function]
+   NodeBase.CliBuffer.GetInt: 67 [Function]
       nb/CliBuffer.cpp
       nb/CliIntParm.cpp
       nb/CliPtrParm.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.GetLine: 165 [Function]
+   NodeBase.CliBuffer.GetLine: 139 [Function]
       nb/CliBuffer.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.GetNextInput: 176 [Function]
+   NodeBase.CliBuffer.GetNextInput: 150 [Function]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.GetStr: 88 [Function]
+   NodeBase.CliBuffer.GetStr: 62 [Function]
       nb/CliBoolParm.cpp
       nb/CliBuffer.cpp
       nb/CliCharParm.cpp
@@ -27394,20 +27398,18 @@ nb/CliBuffer.h
       nb/CliText.cpp
       nb/CliTextParm.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.GetSymbol: 195 [Function]
+   NodeBase.CliBuffer.GetSymbol: 169 [Function]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.OpenInputFile: 126 [Function]
+   NodeBase.CliBuffer.OpenInputFile: 100 [Function]
       nb/CliBuffer.cpp
       nb/NbIncrement.cpp
-   NodeBase.CliBuffer.OptSkipChar: 70 [ClassData]
-      nb/CliBuffer.cpp
-   NodeBase.CliBuffer.OptTagChar: 74 [ClassData]
+   NodeBase.CliBuffer.OptTagChar: 52 [ClassData]
       nb/CliBuffer.cpp
       nb/CliParm.cpp
       nb/CliTextParm.cpp
-   NodeBase.CliBuffer.Patch: 139 [Function]
+   NodeBase.CliBuffer.Patch: 113 [Function]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.Pos: 97 [Function]
+   NodeBase.CliBuffer.Pos: 71 [Function]
       ct/CtIncrement.cpp
       nb/CliBoolParm.cpp
       nb/CliCharParm.cpp
@@ -27416,43 +27418,42 @@ nb/CliBuffer.h
       nb/CliPtrParm.cpp
       nb/CliText.cpp
       nb/CliTextParm.cpp
-   NodeBase.CliBuffer.pos_: 213 [ClassData]
+   NodeBase.CliBuffer.pos_: 187 [ClassData]
       nb/CliBuffer.cpp
       nb/CliBuffer.h
-   NodeBase.CliBuffer.PutLine: 200 [Function]
+   NodeBase.CliBuffer.PutLine: 174 [Function]
       nb/CliBuffer.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.Read: 117 [Function]
+   NodeBase.CliBuffer.Read: 91 [Function]
       ct/CtIncrement.cpp
       nb/CliBuffer.cpp
       nb/NbIncrement.cpp
-   NodeBase.CliBuffer.ReadingFromFile: 130 [Function]
+   NodeBase.CliBuffer.ReadingFromFile: 104 [Function]
       nb/CliBuffer.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.Reset: 205 [Function]
+   NodeBase.CliBuffer.Reset: 179 [Function]
       nb/CliBuffer.cpp
       nb/CliThread.cpp
-   NodeBase.CliBuffer.ScanLine: 171 [Function]
+   NodeBase.CliBuffer.ScanLine: 145 [Function]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.SetPos: 101 [Function]
+   NodeBase.CliBuffer.SetPos: 75 [Function]
       nb/CliBoolParm.cpp
       nb/CliCharParm.cpp
       nb/CliIntParm.cpp
       nb/CliPtrParm.cpp
       nb/CliText.cpp
       nb/CliTextParm.cpp
-   NodeBase.CliBuffer.sources_: 219 [ClassData]
+   NodeBase.CliBuffer.sources_: 193 [ClassData]
       nb/CliBuffer.cpp
-   NodeBase.CliBuffer.StringChar: 58 [ClassData]
-      nb/CliBuffer.cpp
-   NodeBase.CliBuffer.SymbolChar: 78 [ClassData]
-      nb/CliBuffer.cpp
-   NodeBase.CliBuffer.~CliBuffer: 160 [Function]
+   NodeBase.CliBuffer.~CliBuffer: 134 [Function]
       nb/CliBuffer.cpp
    NodeBase.CliSource: 36 [Forward]
       nb/CliBuffer.h
    NodeBase.CliThread: 48 [Friend]
    std.deleter_type: 47 [Friend]
+nb/CliCharParm.cpp
+   NodeBase.CharSeparator: 41 [SpaceData]
+      nb/CliCharParm.cpp
 nb/CliCharParm.h
    CLICHARPARM_H_INCLUDED: 23 [Define]
       nb/CliCharParm.h
@@ -27460,9 +27461,7 @@ nb/CliCharParm.h
       nb/CliCharParm.cpp
       nb/NbCliParms.h
       nt/NtIncrement.cpp
-   NodeBase.CliCharParm.chars_: 70 [ClassData]
-      nb/CliCharParm.cpp
-   NodeBase.CliCharParm.CharSeparator: 66 [ClassData]
+   NodeBase.CliCharParm.chars_: 66 [ClassData]
       nb/CliCharParm.cpp
    NodeBase.CliCharParm.CliCharParm: 40 [Function]
       nb/CliCharParm.cpp
@@ -27778,6 +27777,11 @@ nb/CliIncrement.h
       nb/NbIncrement.h
    NodeBase.CliIncrement.~CliIncrement: 51 [Function]
       nb/CliIncrement.cpp
+nb/CliIntParm.cpp
+   NodeBase.AnyIntParm: 41 [SpaceData]
+      nb/CliIntParm.cpp
+   NodeBase.RangeSeparator: 45 [SpaceData]
+      nb/CliIntParm.cpp
 nb/CliIntParm.h
    CLIINTPARM_H_INCLUDED: 23 [Define]
       nb/CliIntParm.h
@@ -27802,34 +27806,30 @@ nb/CliIntParm.h
       sb/SbCliParms.h
       sn/SnIncrement.cpp
       st/StIncrement.cpp
-   NodeBase.CliIntParm.AnyHexParm: 43 [ClassData]
+   NodeBase.CliIntParm.AnyHexParm: 39 [ClassData]
       nb/CliIntParm.cpp
       nb/CliPtrParm.cpp
-   NodeBase.CliIntParm.AnyIntParm: 39 [ClassData]
-      nb/CliIntParm.cpp
-   NodeBase.CliIntParm.CliIntParm: 49 [Function]
+   NodeBase.CliIntParm.CliIntParm: 45 [Function]
       nb/CliIntParm.cpp
       nb/NbCliParms.cpp
       nw/NwCliParms.cpp
       pb/PotsCliParms.cpp
       sb/SbCliParms.cpp
-   NodeBase.CliIntParm.Display: 58 [Function]
+   NodeBase.CliIntParm.Display: 54 [Function]
       nb/CliIntParm.cpp
-   NodeBase.CliIntParm.GetIntParmRc: 67 [Function]
+   NodeBase.CliIntParm.GetIntParmRc: 63 [Function]
       nb/CliIntParm.cpp
-   NodeBase.CliIntParm.hex_: 87 [ClassData]
+   NodeBase.CliIntParm.hex_: 79 [ClassData]
       nb/CliIntParm.cpp
-   NodeBase.CliIntParm.max_: 83 [ClassData]
+   NodeBase.CliIntParm.max_: 75 [ClassData]
       nb/CliIntParm.cpp
-   NodeBase.CliIntParm.min_: 79 [ClassData]
+   NodeBase.CliIntParm.min_: 71 [ClassData]
       nb/CliIntParm.cpp
-   NodeBase.CliIntParm.Patch: 63 [Function]
+   NodeBase.CliIntParm.Patch: 59 [Function]
       nb/CliIntParm.cpp
-   NodeBase.CliIntParm.RangeSeparator: 75 [ClassData]
+   NodeBase.CliIntParm.ShowValues: 67 [Function]
       nb/CliIntParm.cpp
-   NodeBase.CliIntParm.ShowValues: 71 [Function]
-      nb/CliIntParm.cpp
-   NodeBase.CliIntParm.~CliIntParm: 54 [Function]
+   NodeBase.CliIntParm.~CliIntParm: 50 [Function]
       nb/CliIntParm.cpp
 nb/CliParm.cpp
    NodeBase.CliParm_ctor: 63 [SpaceData]
@@ -28555,13 +28555,15 @@ nb/CliTextParm.h
    NodeBase.CliTextParm.~CliTextParm: 54 [Function]
       nb/CliTextParm.cpp
 nb/CliThread.cpp
-   NodeBase.CliThread_ReadCommands: 609 [SpaceData]
+   NodeBase.CliPrompt: 67 [SpaceData]
       nb/CliThread.cpp
-   NodeBase.MaxOutputDepth: 61 [SpaceData]
+   NodeBase.CliThread_ReadCommands: 613 [SpaceData]
       nb/CliThread.cpp
-   NodeBase.YesNoChars: 111 [SpaceData]
+   NodeBase.MaxOutputDepth: 63 [SpaceData]
       nb/CliThread.cpp
-   NodeBase.YesNoHelp: 112 [SpaceData]
+   NodeBase.YesNoChars: 115 [SpaceData]
+      nb/CliThread.cpp
+   NodeBase.YesNoHelp: 116 [SpaceData]
       nb/CliThread.cpp
 nb/CliThread.h
    CLITHREAD_H_INCLUDED: 23 [Define]
@@ -28641,7 +28643,7 @@ nb/CliThread.h
       nb/CliThread.cpp
    NodeBase.CliThread.AllocResources: 256 [Function]
       nb/CliThread.cpp
-   NodeBase.CliThread.appsData_: 311 [ClassData]
+   NodeBase.CliThread.appsData_: 307 [ClassData]
       nb/CliThread.cpp
    NodeBase.CliThread.BoolPrompt: 90 [Function]
       ct/CodeFileSet.cpp
@@ -28652,8 +28654,6 @@ nb/CliThread.h
       sb/SbIncrement.cpp
    NodeBase.CliThread.CharPrompt: 99 [Function]
       ct/Editor.cpp
-      nb/CliThread.cpp
-   NodeBase.CliThread.CliPrompt: 277 [ClassData]
       nb/CliThread.cpp
    NodeBase.CliThread.CliThread: 219 [Function]
       nb/CliThread.cpp
@@ -28668,7 +28668,7 @@ nb/CliThread.h
       pb/PotsProtocol.cpp
       pb/PotsWmlFeature.cpp
       sb/TlvIntParameter.h
-   NodeBase.CliThread.command_: 289 [ClassData]
+   NodeBase.CliThread.command_: 285 [ClassData]
       nb/CliThread.cpp
       nb/CliThread.h
    NodeBase.CliThread.Cookie: 190 [Function]
@@ -28679,7 +28679,7 @@ nb/CliThread.h
       nb/CliPtrParm.cpp
       nb/CliText.cpp
       nb/CliTextParm.cpp
-   NodeBase.CliThread.cookie_: 293 [ClassData]
+   NodeBase.CliThread.cookie_: 289 [ClassData]
       nb/CliThread.cpp
       nb/CliThread.h
    NodeBase.CliThread.Destroy: 264 [Function]
@@ -28796,7 +28796,7 @@ nb/CliThread.h
       sb/TlvIntParameter.h
       sn/SnIncrement.cpp
       st/StIncrement.cpp
-   NodeBase.CliThread.outFiles_: 307 [ClassData]
+   NodeBase.CliThread.outFiles_: 303 [ClassData]
       nb/CliThread.cpp
    NodeBase.CliThread.ParseCommand: 233 [Function]
       nb/CliThread.cpp
@@ -28808,7 +28808,7 @@ nb/CliThread.h
    NodeBase.CliThread.Prompt: 186 [Function]
       ct/CtIncrement.cpp
       nb/CliBuffer.cpp
-   NodeBase.CliThread.prompt_: 285 [ClassData]
+   NodeBase.CliThread.prompt_: 281 [ClassData]
       nb/CliThread.cpp
       nb/CliThread.h
    NodeBase.CliThread.PushOutputFile: 152 [Function]
@@ -28834,7 +28834,7 @@ nb/CliThread.h
    NodeBase.CliThread.Report1: 251 [Function]
       nb/CliThread.cpp
    NodeBase.CliThread.Result: 142 [Function]
-   NodeBase.CliThread.result_: 297 [ClassData]
+   NodeBase.CliThread.result_: 293 [ClassData]
       nb/CliThread.cpp
       nb/CliThread.h
    NodeBase.CliThread.SendAckToOutputFile: 243 [Function]
@@ -28853,13 +28853,13 @@ nb/CliThread.h
       nb/CliThread.cpp
    NodeBase.CliThread.Shutdown: 203 [Function]
       nb/CliThread.cpp
-   NodeBase.CliThread.stack_: 281 [ClassData]
+   NodeBase.CliThread.stack_: 277 [ClassData]
       nb/CliThread.cpp
       nb/NbIncrement.cpp
    NodeBase.CliThread.Startup: 207 [Function]
       nb/CliThread.cpp
       nb/NbModule.cpp
-   NodeBase.CliThread.stream_: 301 [ClassData]
+   NodeBase.CliThread.stream_: 297 [ClassData]
       nb/CliThread.cpp
    NodeBase.CliThread.StrPrompt: 112 [Function]
       ct/Editor.cpp
@@ -29330,9 +29330,9 @@ nb/Debug.h
       nw/IoThread.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       nw/IpServiceRegistry.cpp
       nw/LocalAddrTest.cpp
       nw/NwCliParms.cpp
@@ -29718,9 +29718,9 @@ nb/Debug.h
       nw/IoThread.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       nw/IpServiceRegistry.cpp
       nw/LocalAddrTest.cpp
       nw/NwCliParms.cpp
@@ -30048,9 +30048,9 @@ nb/Debug.h
       nw/IoThread.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       nw/IpServiceRegistry.cpp
       nw/LocalAddrTest.cpp
       nw/NwDaemons.cpp
@@ -30985,7 +30985,6 @@ nb/Duration.h
       nb/LeakyBucketCounter.cpp
       nb/LeakyBucketCounter.h
       nb/StatisticsThread.cpp
-      nb/StatisticsThread.h
       nw/LocalAddrTest.cpp
       nw/LocalAddrTest.h
       nw/NwDaemons.cpp
@@ -31801,7 +31800,6 @@ nb/Formatters.h
       nb/ThreadAdmin.cpp
       nb/ThreadRegistry.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/NwDaemons.cpp
       pb/PotsFeatureRegistry.cpp
@@ -31840,6 +31838,7 @@ nb/FunctionGuard.h
       nb/FunctionGuard.h
    NodeBase.FunctionGuard: 44 [Class]
       an/PotsTrafficThread.cpp
+      cb/BcProtocol.cpp
       ct/CodeCoverage.cpp
       ct/Library.cpp
       dip/BaseBot.cpp
@@ -31870,6 +31869,8 @@ nb/FunctionGuard.h
       nw/IpPort.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
+      nw/LocalAddrTest.cpp
       nw/SysIpL3Addr.win.cpp
       pb/PotsCfbFeature.cpp
       pb/PotsCfnFeature.cpp
@@ -31907,6 +31908,7 @@ nb/FunctionGuard.h
       nb/FunctionGuard.cpp
       nb/FunctionGuard.h
    NodeBase.GuardedFunction.Guard_ImmUnprotect: 37 [Enumerator]
+      cb/BcProtocol.cpp
       nb/Class.cpp
       nb/Daemon.cpp
       nb/FunctionGuard.cpp
@@ -31917,6 +31919,7 @@ nb/FunctionGuard.h
       nb/NbIncrement.cpp
       nb/ObjectPool.cpp
       nw/IpPort.cpp
+      nw/LocalAddrTest.cpp
       sb/Factory.cpp
       sb/FactoryRegistry.cpp
       sb/Service.cpp
@@ -31951,6 +31954,7 @@ nb/FunctionGuard.h
       nw/IpPort.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       pb/PotsCfbFeature.cpp
       pb/PotsCfnFeature.cpp
       pb/PotsCfuFeature.cpp
@@ -32646,11 +32650,11 @@ nb/LeakyBucketCounter.h
    NodeBase.LeakyBucketCounter.~LeakyBucketCounter: 49 [Function]
       nb/LeakyBucketCounter.cpp
 nb/Log.cpp
-   NodeBase.Log_ctor: 86 [SpaceData]
+   NodeBase.Log_ctor: 89 [SpaceData]
       nb/Log.cpp
-   NodeBase.Log_dtor: 118 [SpaceData]
+   NodeBase.Log_dtor: 121 [SpaceData]
       nb/Log.cpp
-   NodeBase.Log_Submit: 363 [SpaceData]
+   NodeBase.Log_Submit: 366 [SpaceData]
       nb/Log.cpp
    NodeBase.LogDynamic: 56 [Class]
       nb/Log.cpp
@@ -32660,13 +32664,15 @@ nb/Log.cpp
    NodeBase.LogDynamic.LogDynamic: 60 [Function]
    NodeBase.LogDynamic.sequence_: 71 [ClassData]
       nb/Log.cpp
-   NodeBase.LogIdSize: 250 [SpaceData]
+   NodeBase.LogIdSize: 253 [SpaceData]
       nb/Log.cpp
-   NodeBase.MinNameSize: 252 [SpaceData]
+   NodeBase.MaxExplSize: 82 [SpaceData]
       nb/Log.cpp
-   NodeBase.NameBegin: 251 [SpaceData]
+   NodeBase.MinNameSize: 255 [SpaceData]
       nb/Log.cpp
-   NodeBase.NameSize: 253 [SpaceData]
+   NodeBase.NameBegin: 254 [SpaceData]
+      nb/Log.cpp
+   NodeBase.NameSize: 256 [SpaceData]
       nb/Log.cpp
    NodeBase.SeqNo_: 78 [SpaceData]
       nb/Log.cpp
@@ -32722,15 +32728,15 @@ nb/Log.h
       sb/SsmContext.cpp
       sn/PotsBcSsm.cpp
       sn/PotsCallHandler.cpp
-   NodeBase.Log.bufferCount_: 198 [ClassData]
+   NodeBase.Log.bufferCount_: 194 [ClassData]
       nb/Log.cpp
-   NodeBase.Log.CellDiff: 140 [Function]
+   NodeBase.Log.CellDiff: 136 [Function]
       nb/Log.cpp
       nb/LogGroup.cpp
-   NodeBase.Log.Count: 136 [Function]
+   NodeBase.Log.Count: 132 [Function]
       nb/Log.cpp
       nb/NbIncrement.cpp
-   NodeBase.Log.Create(c_string,LogId): 99 [Function]
+   NodeBase.Log.Create(c_string,LogId): 95 [Function]
       an/PotsShelfFactory.cpp
       an/PotsShelfHandler.cpp
       an/PotsTrafficThread.cpp
@@ -32758,63 +32764,61 @@ nb/Log.h
       sb/SsmContext.cpp
       sn/PotsBcSsm.cpp
       sn/PotsCallHandler.cpp
-   NodeBase.Log.Create(c_string,LogId,c_string,AlarmStatus): 163 [Function]
+   NodeBase.Log.Create(c_string,LogId,c_string,AlarmStatus): 159 [Function]
       nb/Log.cpp
-   NodeBase.Log.discardCount_: 206 [ClassData]
+   NodeBase.Log.discardCount_: 202 [ClassData]
       nb/Log.cpp
-   NodeBase.Log.Display: 144 [Function]
-      nb/Log.cpp
-      nb/LogGroup.cpp
-   NodeBase.Log.DisplayStats: 132 [Function]
+   NodeBase.Log.Display: 140 [Function]
       nb/Log.cpp
       nb/LogGroup.cpp
-   NodeBase.Log.dyn_: 194 [ClassData]
+   NodeBase.Log.DisplayStats: 128 [Function]
       nb/Log.cpp
-   NodeBase.Log.expl_: 185 [ClassData]
+      nb/LogGroup.cpp
+   NodeBase.Log.dyn_: 190 [ClassData]
       nb/Log.cpp
-   NodeBase.Log.Find(c_string): 128 [Function]
+   NodeBase.Log.expl_: 181 [ClassData]
       nb/Log.cpp
-   NodeBase.Log.Find(c_string,LogId,LogGroup*&): 123 [Function]
+   NodeBase.Log.Find(c_string): 124 [Function]
+      nb/Log.cpp
+   NodeBase.Log.Find(c_string,LogId,LogGroup*&): 119 [Function]
       nb/Log.cpp
       nb/LogBuffer.cpp
-   NodeBase.Log.Format: 169 [Function]
+   NodeBase.Log.Format: 165 [Function]
       nb/Log.cpp
-   NodeBase.Log.group_: 177 [ClassData]
+   NodeBase.Log.group_: 173 [ClassData]
       nb/Log.cpp
-   NodeBase.Log.Id: 109 [Function]
+   NodeBase.Log.Id: 105 [Function]
       nb/LogBuffer.cpp
       nb/LogGroup.cpp
       nb/LogThread.cpp
-   NodeBase.Log.id_: 181 [ClassData]
+   NodeBase.Log.id_: 177 [ClassData]
       nb/Log.cpp
       nb/Log.h
-   NodeBase.Log.Indent: 70 [ClassData]
+   NodeBase.Log.Indent: 66 [ClassData]
       an/PotsShelfFactory.cpp
       nb/Log.cpp
       sb/InvokerPool.cpp
-   NodeBase.Log.lid_: 189 [ClassData]
+   NodeBase.Log.lid_: 185 [ClassData]
       nb/Log.cpp
    NodeBase.Log.Log(const Log&): 54 [Function]
-   NodeBase.Log.Log(LogGroup*,LogId,c_string): 80 [Function]
-      nb/Log.cpp
-   NodeBase.Log.MaxExplSize: 66 [ClassData]
+   NodeBase.Log.Log(LogGroup*,LogId,c_string): 76 [Function]
       nb/Log.cpp
    NodeBase.Log.MaxId: 62 [ClassData]
       nb/Log.cpp
       nb/NbCliParms.cpp
    NodeBase.Log.operator=: 58 [Function]
-   NodeBase.Log.Patch: 149 [Function]
+   NodeBase.Log.Patch: 145 [Function]
       nb/Log.cpp
-   NodeBase.Log.SetInterval: 118 [Function]
+   NodeBase.Log.SetInterval: 114 [Function]
       nb/Log.cpp
       nb/NbIncrement.cpp
-   NodeBase.Log.Shutdown: 153 [Function]
+   NodeBase.Log.Shutdown: 149 [Function]
       nb/Log.cpp
       nb/LogGroup.cpp
-   NodeBase.Log.Startup: 157 [Function]
+   NodeBase.Log.Startup: 153 [Function]
       nb/Log.cpp
       nb/LogGroup.cpp
-   NodeBase.Log.Submit: 105 [Function]
+   NodeBase.Log.Submit: 101 [Function]
       an/PotsShelfFactory.cpp
       an/PotsShelfHandler.cpp
       an/PotsTrafficThread.cpp
@@ -32845,11 +32849,11 @@ nb/Log.h
       sb/SsmContext.cpp
       sn/PotsBcSsm.cpp
       sn/PotsCallHandler.cpp
-   NodeBase.Log.suppressCount_: 202 [ClassData]
+   NodeBase.Log.suppressCount_: 198 [ClassData]
       nb/Log.cpp
-   NodeBase.Log.Suppressed: 173 [Function]
+   NodeBase.Log.Suppressed: 169 [Function]
       nb/Log.cpp
-   NodeBase.Log.Tab: 74 [ClassData]
+   NodeBase.Log.Tab: 70 [ClassData]
       an/PotsShelfFactory.cpp
       an/PotsShelfHandler.cpp
       an/PotsTrafficThread.cpp
@@ -32881,7 +32885,7 @@ nb/Log.h
       sb/SsmContext.cpp
       sn/PotsBcSsm.cpp
       sn/PotsCallHandler.cpp
-   NodeBase.Log.~Log: 84 [Function]
+   NodeBase.Log.~Log: 80 [Function]
       nb/Log.cpp
    NodeBase.LogDynamic: 38 [Forward]
       nb/Log.h
@@ -33005,9 +33009,11 @@ nb/LogBuffer.h
       nb/LogBuffer.cpp
    NodeBase.LogsWritten: 46 [Friend]
 nb/LogBufferRegistry.cpp
-   NodeBase.LogBufferRegistry_dtor: 50 [SpaceData]
+   NodeBase.LogBufferRegistry_dtor: 52 [SpaceData]
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBufferRegistry_Free: 139 [SpaceData]
+   NodeBase.LogBufferRegistry_Free: 141 [SpaceData]
+      nb/LogBufferRegistry.cpp
+   NodeBase.LogBufferSize: 41 [SpaceData]
       nb/LogBufferRegistry.cpp
 nb/LogBufferRegistry.h
    LOGBUFFERREGISTRY_H_INCLUDED: 23 [Define]
@@ -33023,53 +33029,53 @@ nb/LogBufferRegistry.h
       nb/NbIncrement.cpp
       nb/NbModule.cpp
       nb/RootThread.cpp
-   NodeBase.LogBufferRegistry.Access: 74 [Function]
+   NodeBase.LogBufferRegistry.Access: 70 [Function]
       nb/LogBufferRegistry.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBufferRegistry.Active: 69 [Function]
+   NodeBase.LogBufferRegistry.Active: 65 [Function]
       nb/Log.cpp
       nb/LogBufferRegistry.cpp
       nb/LogThread.cpp
-   NodeBase.LogBufferRegistry.buffer_: 113 [ClassData]
+   NodeBase.LogBufferRegistry.buffer_: 109 [ClassData]
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBufferRegistry.Compress: 105 [Function]
+   NodeBase.LogBufferRegistry.Compress: 101 [Function]
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBufferRegistry.Display: 84 [Function]
+   NodeBase.LogBufferRegistry.Display: 80 [Function]
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBufferRegistry.FileName: 65 [Function]
+   NodeBase.LogBufferRegistry.FileName: 61 [Function]
       nb/LogBufferRegistry.cpp
       nb/LogThread.cpp
-   NodeBase.LogBufferRegistry.Free: 80 [Function]
+   NodeBase.LogBufferRegistry.Free: 76 [Function]
       nb/LogBufferRegistry.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBufferRegistry.LogBufferRegistry(): 97 [Function]
+   NodeBase.LogBufferRegistry.LogBufferRegistry(): 93 [Function]
       nb/LogBufferRegistry.cpp
    NodeBase.LogBufferRegistry.LogBufferRegistry(const LogBufferRegistry&): 49 [Function]
-   NodeBase.LogBufferRegistry.LogBufferSize: 61 [ClassData]
-      nb/LogBufferRegistry.cpp
    NodeBase.LogBufferRegistry.MaxBuffers: 57 [ClassData]
       nb/LogBufferRegistry.cpp
       nb/LogBufferRegistry.h
       nb/NbCliParms.cpp
    NodeBase.LogBufferRegistry.operator=: 53 [Function]
-   NodeBase.LogBufferRegistry.Patch: 89 [Function]
+   NodeBase.LogBufferRegistry.Patch: 85 [Function]
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBufferRegistry.size_: 109 [ClassData]
+   NodeBase.LogBufferRegistry.size_: 105 [ClassData]
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBufferRegistry.Startup: 93 [Function]
+   NodeBase.LogBufferRegistry.Startup: 89 [Function]
       nb/LogBufferRegistry.cpp
       nb/NbModule.cpp
-   NodeBase.LogBufferRegistry.~LogBufferRegistry: 101 [Function]
+   NodeBase.LogBufferRegistry.~LogBufferRegistry: 97 [Function]
       nb/LogBufferRegistry.cpp
    NodeBase.Singleton<LogBufferRegistry>: 45 [Friend]
 nb/LogGroup.cpp
-   NodeBase.LogGroup_BindLog: 88 [SpaceData]
+   NodeBase.LogGroup_BindLog: 91 [SpaceData]
       nb/LogGroup.cpp
-   NodeBase.LogGroup_ctor: 50 [SpaceData]
+   NodeBase.LogGroup_ctor: 53 [SpaceData]
       nb/LogGroup.cpp
-   NodeBase.LogGroup_dtor: 76 [SpaceData]
+   NodeBase.LogGroup_dtor: 79 [SpaceData]
       nb/LogGroup.cpp
-   NodeBase.MaxLogs: 46 [SpaceData]
+   NodeBase.MaxExplSize: 43 [SpaceData]
+      nb/LogGroup.cpp
+   NodeBase.MaxLogs: 47 [SpaceData]
       nb/LogGroup.cpp
 nb/LogGroup.h
    LOGGROUP_H_INCLUDED: 23 [Define]
@@ -33090,68 +33096,66 @@ nb/LogGroup.h
       nw/NwLogs.cpp
       pb/PotsLogs.cpp
       sb/SbLogs.cpp
-   NodeBase.LogGroup.BindLog: 121 [Function]
+   NodeBase.LogGroup.BindLog: 117 [Function]
       nb/Log.cpp
       nb/LogGroup.cpp
-   NodeBase.LogGroup.CellDiff: 100 [Function]
+   NodeBase.LogGroup.CellDiff: 96 [Function]
       nb/LogGroup.cpp
       nb/LogGroupRegistry.cpp
-   NodeBase.LogGroup.Display: 104 [Function]
+   NodeBase.LogGroup.Display: 100 [Function]
       nb/LogGroup.cpp
       nb/LogGroupRegistry.cpp
-   NodeBase.LogGroup.DisplayStats: 96 [Function]
+   NodeBase.LogGroup.DisplayStats: 92 [Function]
       nb/LogGroup.cpp
       nb/LogGroupRegistry.cpp
-   NodeBase.LogGroup.expl_: 133 [ClassData]
+   NodeBase.LogGroup.expl_: 129 [ClassData]
       nb/LogGroup.cpp
-   NodeBase.LogGroup.FindLog: 92 [Function]
+   NodeBase.LogGroup.FindLog: 88 [Function]
       nb/Log.cpp
       nb/LogGroup.cpp
       nb/LogGroupRegistry.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogGroup.Gid: 80 [Function]
+   NodeBase.LogGroup.Gid: 76 [Function]
       nb/LogGroup.cpp
-   NodeBase.LogGroup.gid_: 141 [ClassData]
+   NodeBase.LogGroup.gid_: 137 [ClassData]
       nb/LogGroup.cpp
       nb/LogGroup.h
-   NodeBase.LogGroup.LogGroup(c_string,c_string): 68 [Function]
+   NodeBase.LogGroup.LogGroup(c_string,c_string): 64 [Function]
       nb/LogGroup.cpp
    NodeBase.LogGroup.LogGroup(const LogGroup&): 51 [Function]
-   NodeBase.LogGroup.logs_: 145 [ClassData]
-      nb/LogGroup.cpp
-   NodeBase.LogGroup.MaxExplSize: 63 [ClassData]
+   NodeBase.LogGroup.logs_: 141 [ClassData]
       nb/LogGroup.cpp
    NodeBase.LogGroup.MaxNameSize: 59 [ClassData]
       nb/Log.cpp
       nb/LogGroup.cpp
-   NodeBase.LogGroup.Name: 76 [Function]
+   NodeBase.LogGroup.Name: 72 [Function]
       nb/Log.cpp
       nb/LogGroupRegistry.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogGroup.name_: 129 [ClassData]
+   NodeBase.LogGroup.name_: 125 [ClassData]
       nb/LogGroup.cpp
       nb/LogGroup.h
    NodeBase.LogGroup.operator=: 55 [Function]
-   NodeBase.LogGroup.Patch: 109 [Function]
+   NodeBase.LogGroup.Patch: 105 [Function]
       nb/LogGroup.cpp
-   NodeBase.LogGroup.SetSuppressed: 88 [Function]
+   NodeBase.LogGroup.SetSuppressed: 84 [Function]
       nb/LogGroup.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogGroup.Shutdown: 113 [Function]
+   NodeBase.LogGroup.Shutdown: 109 [Function]
       nb/LogGroup.cpp
       nb/LogGroupRegistry.cpp
-   NodeBase.LogGroup.Startup: 117 [Function]
+   NodeBase.LogGroup.Startup: 113 [Function]
       nb/LogGroup.cpp
       nb/LogGroupRegistry.cpp
-   NodeBase.LogGroup.Suppressed: 84 [Function]
+   NodeBase.LogGroup.Suppressed: 80 [Function]
       nb/Log.cpp
-   NodeBase.LogGroup.suppressed_: 137 [ClassData]
+   NodeBase.LogGroup.suppressed_: 133 [ClassData]
       nb/LogGroup.cpp
       nb/LogGroup.h
-   NodeBase.LogGroup.UnbindLog: 125 [Function]
+   NodeBase.LogGroup.UnbindLog: 121 [Function]
       nb/Log.cpp
       nb/LogGroup.cpp
-   NodeBase.LogGroup.~LogGroup: 72 [Function]
+   NodeBase.LogGroup.~LogGroup: 68 [Function]
       nb/LogGroup.cpp
 nb/LogGroupRegistry.cpp
    NodeBase.LogGroupRegistry_BindGroup: 127 [SpaceData]
@@ -33841,23 +33845,20 @@ nb/MutexRegistry.h
 nb/NbAppIds.h
    NBAPPIDS_H_INCLUDED: 23 [Define]
       nb/NbAppIds.h
-   NodeBase.CallTrapFlag: 70 [SpaceData]
+   NodeBase.CallTrapFlag: 69 [SpaceData]
       cb/BcHandlers.cpp
       cb/CbModule.cpp
-   NodeBase.CipAlertingTimeoutFlag: 72 [SpaceData]
+   NodeBase.CipAlertingTimeoutFlag: 71 [SpaceData]
       cb/CbModule.cpp
       pb/PotsCircuit.cpp
-   NodeBase.CipAlwaysOverIpFlag: 69 [SpaceData]
-      cb/BcProtocol.cpp
-      cb/CbModule.cpp
-   NodeBase.CipIamTimeoutFlag: 71 [SpaceData]
+   NodeBase.CipIamTimeoutFlag: 70 [SpaceData]
       cb/BcProtocol.cpp
       cb/CbModule.cpp
    NodeBase.DisableRootThread: 62 [SpaceData]
       nb/Debug.cpp
       nb/RootThread.cpp
       nt/NtModule.cpp
-   NodeBase.FirstAppDebugFlag: 73 [SpaceData]
+   NodeBase.FirstAppDebugFlag: 72 [SpaceData]
    NodeBase.ObjectPoolIds: 35 [Enum]
    NodeBase.ObjectPoolIds.BtIpBufferObjPoolId: 45 [Enumerator]
       sb/SbPools.cpp
@@ -37263,8 +37264,6 @@ nb/Object.h
       nw/IpBuffer.h
       nw/IpPort.cpp
       nw/IpPort.h
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
@@ -39447,6 +39446,7 @@ nb/Restart.h
       nb/Restart.cpp
    NodeBase.Restart: 75 [Class]
       an/PotsTrafficThread.cpp
+      cb/BcProtocol.cpp
       cb/ServiceCodeRegistry.cpp
       ct/CxxRoot.cpp
       ct/Library.cpp
@@ -39475,13 +39475,16 @@ nb/Restart.h
       nb/Restart.cpp
       nb/StatisticsThread.cpp
       nb/SysHeap.win.cpp
+      nb/SysThreadStack.win.cpp
       nb/Thread.cpp
       nb/ThreadAdmin.cpp
       nb/ThreadRegistry.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
       nw/IpPortRegistry.cpp
+      nw/LocalAddrTest.cpp
       nw/SysTcpSocket.cpp
+      nw/SysUdpSocket.win.cpp
       nw/TcpIpPort.cpp
       pb/PotsProfile.cpp
       sb/Context.cpp
@@ -39511,6 +39514,7 @@ nb/Restart.h
       an/PotsTrafficThread.cpp
       nb/LogBuffer.cpp
       nb/Thread.cpp
+      nw/SysUdpSocket.win.cpp
       sb/InvokerThread.cpp
    NodeBase.Restart.GetStage: 85 [Function]
       nb/CinThread.cpp
@@ -39523,6 +39527,7 @@ nb/Restart.h
       nb/Q1Way.h
       nb/Q2Way.h
       nb/Registry.h
+      nb/SysThreadStack.win.cpp
       nb/Thread.cpp
       nb/ThreadAdmin.cpp
       nw/IpBuffer.cpp
@@ -39553,6 +39558,7 @@ nb/Restart.h
       nb/ObjectPool.cpp
       nb/Restart.cpp
    NodeBase.Restart.Release: 99 [Function]
+      cb/BcProtocol.cpp
       ct/CxxRoot.cpp
       ct/Library.cpp
       nb/Class.cpp
@@ -39566,6 +39572,7 @@ nb/Restart.h
       nb/ThreadRegistry.cpp
       nw/IpPort.cpp
       nw/IpPortRegistry.cpp
+      nw/LocalAddrTest.cpp
       pb/PotsProfile.cpp
       sb/Factory.cpp
       sb/FactoryRegistry.cpp
@@ -39642,6 +39649,7 @@ nb/Restart.h
       sb/InvokerThread.cpp
    NodeBase.RestartStage.ShuttingDown: 41 [Enumerator]
       nb/ModuleRegistry.cpp
+      nb/SysThreadStack.win.cpp
       nw/IpBuffer.cpp
       nw/TcpIpPort.cpp
    NodeBase.RestartStage.StartingUp: 39 [Enumerator]
@@ -39722,7 +39730,6 @@ nb/Singleton.h
       an/PotsShelf.h
       an/PotsShelfFactory.cpp
       an/PotsShelfHandler.cpp
-      an/PotsShelfIpService.cpp
       an/PotsTrafficThread.cpp
       an/PotsTrafficThread.h
       cb/BcProtocol.cpp
@@ -39898,10 +39905,10 @@ nb/Singleton.h
       nw/ByteBuffer.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       nw/IpServiceRegistry.h
       nw/LocalAddrTest.cpp
       nw/LocalAddrTest.h
@@ -40012,7 +40019,6 @@ nb/Singleton.h
       sn/PotsBocService.h
       sn/PotsCallFactory.cpp
       sn/PotsCallHandler.cpp
-      sn/PotsCallIpService.cpp
       sn/PotsCcwService.cpp
       sn/PotsCcwService.h
       sn/PotsCfbService.h
@@ -40143,7 +40149,6 @@ nb/Singleton.h
       an/AnModule.cpp
       an/PotsShelfFactory.cpp
       an/PotsShelfHandler.cpp
-      an/PotsShelfIpService.cpp
       an/PotsTrafficThread.cpp
       cb/BcProtocol.cpp
       cb/BcRouting.cpp
@@ -40252,9 +40257,9 @@ nb/Singleton.h
       nw/ByteBuffer.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       nw/LocalAddrTest.cpp
       nw/NwDaemons.cpp
       nw/NwIncrement.cpp
@@ -40324,7 +40329,6 @@ nb/Singleton.h
       sn/PotsBocService.cpp
       sn/PotsCallFactory.cpp
       sn/PotsCallHandler.cpp
-      sn/PotsCallIpService.cpp
       sn/PotsCcwService.cpp
       sn/PotsCfxService.cpp
       sn/PotsCwmService.cpp
@@ -40438,22 +40442,26 @@ nb/SoftwareException.h
    SOFTWAREEXCEPTION_H_INCLUDED: 23 [Define]
       nb/SoftwareException.h
 nb/Statistics.cpp
-   NodeBase.Statistic_ctor: 45 [SpaceData]
+   NodeBase.MaxExplSize: 42 [SpaceData]
+      nb/Statistics.cpp
+   NodeBase.NotUpdated: 46 [SpaceData]
+      nb/Statistics.cpp
+   NodeBase.Statistic_ctor: 50 [SpaceData]
       nb/Statistics.cpp
 nb/Statistics.h
-   NodeBase.Accumulator: 162 [Class]
+   NodeBase.Accumulator: 154 [Class]
       nb/NbTypes.h
       nb/Statistics.cpp
       nb/Thread.cpp
       nw/IpPort.cpp
-   NodeBase.Accumulator.Accumulator: 167 [Function]
+   NodeBase.Accumulator.Accumulator: 159 [Function]
       nb/Statistics.cpp
-   NodeBase.Accumulator.Add: 175 [Function]
+   NodeBase.Accumulator.Add: 167 [Function]
       nb/Thread.cpp
       nw/IpPort.cpp
-   NodeBase.Accumulator.~Accumulator: 171 [Function]
+   NodeBase.Accumulator.~Accumulator: 163 [Function]
       nb/Statistics.cpp
-   NodeBase.Counter: 134 [Class]
+   NodeBase.Counter: 126 [Class]
       nb/Log.cpp
       nb/NbTypes.h
       nb/ObjectPool.cpp
@@ -40466,9 +40474,9 @@ nb/Statistics.h
       sb/InvokerPool.cpp
       sb/SbPools.cpp
       sn/PotsStatistics.cpp
-   NodeBase.Counter.Counter: 139 [Function]
+   NodeBase.Counter.Counter: 131 [Function]
       nb/Statistics.cpp
-   NodeBase.Counter.DisplayStat: 151 [Function]
+   NodeBase.Counter.DisplayStat: 143 [Function]
       nb/Log.cpp
       nb/ObjectPool.cpp
       nb/Statistics.cpp
@@ -40479,7 +40487,7 @@ nb/Statistics.h
       sb/InvokerPool.cpp
       sb/SbPools.cpp
       sn/PotsStatistics.cpp
-   NodeBase.Counter.Incr: 147 [Function]
+   NodeBase.Counter.Incr: 139 [Function]
       nb/Log.cpp
       nb/ObjectPool.cpp
       nb/Thread.cpp
@@ -40489,122 +40497,120 @@ nb/Statistics.h
       sb/InvokerPool.cpp
       sb/SbPools.cpp
       sn/PotsStatistics.cpp
-   NodeBase.Counter.Patch: 155 [Function]
+   NodeBase.Counter.Patch: 147 [Function]
       nb/Statistics.cpp
-   NodeBase.Counter.~Counter: 143 [Function]
+   NodeBase.Counter.~Counter: 135 [Function]
       nb/Statistics.cpp
-   NodeBase.HighWatermark: 182 [Class]
+   NodeBase.HighWatermark: 174 [Class]
       nb/NbTypes.h
       nb/Statistics.cpp
       nb/Thread.cpp
       nw/IpPort.cpp
       sb/Factory.cpp
       sb/InvokerPool.cpp
-   NodeBase.HighWatermark.DisplayStat: 203 [Function]
+   NodeBase.HighWatermark.DisplayStat: 195 [Function]
       nb/Statistics.cpp
       nb/Thread.cpp
       nw/IpPort.cpp
       sb/Factory.cpp
       sb/InvokerPool.cpp
-   NodeBase.HighWatermark.HighWatermark: 191 [Function]
+   NodeBase.HighWatermark.HighWatermark: 183 [Function]
       nb/Statistics.cpp
-   NodeBase.HighWatermark.Initial: 187 [ClassData]
+   NodeBase.HighWatermark.Initial: 179 [ClassData]
       nb/Statistics.cpp
-   NodeBase.HighWatermark.Overall: 207 [Function]
+   NodeBase.HighWatermark.Overall: 199 [Function]
       nb/Statistics.cpp
-   NodeBase.HighWatermark.StartInterval: 211 [Function]
+   NodeBase.HighWatermark.StartInterval: 203 [Function]
       nb/Statistics.cpp
-   NodeBase.HighWatermark.Update: 199 [Function]
+   NodeBase.HighWatermark.Update: 191 [Function]
       nb/Thread.cpp
       nw/IpPort.cpp
       sb/Factory.cpp
       sb/InvokerPool.cpp
-   NodeBase.HighWatermark.~HighWatermark: 195 [Function]
+   NodeBase.HighWatermark.~HighWatermark: 187 [Function]
       nb/Statistics.cpp
-   NodeBase.LowWatermark: 218 [Class]
+   NodeBase.LowWatermark: 210 [Class]
       nb/NbIncrement.cpp
       nb/NbTypes.h
       nb/ObjectPool.cpp
       nb/Statistics.cpp
-   NodeBase.LowWatermark.DisplayStat: 239 [Function]
+   NodeBase.LowWatermark.DisplayStat: 231 [Function]
       nb/ObjectPool.cpp
       nb/Statistics.cpp
-   NodeBase.LowWatermark.Initial: 223 [ClassData]
+   NodeBase.LowWatermark.Initial: 215 [ClassData]
       nb/NbIncrement.cpp
       nb/Statistics.cpp
-   NodeBase.LowWatermark.LowWatermark: 227 [Function]
+   NodeBase.LowWatermark.LowWatermark: 219 [Function]
       nb/Statistics.cpp
-   NodeBase.LowWatermark.Overall: 243 [Function]
+   NodeBase.LowWatermark.Overall: 235 [Function]
       nb/Statistics.cpp
-   NodeBase.LowWatermark.StartInterval: 247 [Function]
+   NodeBase.LowWatermark.StartInterval: 239 [Function]
       nb/Statistics.cpp
-   NodeBase.LowWatermark.Update: 235 [Function]
+   NodeBase.LowWatermark.Update: 227 [Function]
       nb/ObjectPool.cpp
-   NodeBase.LowWatermark.~LowWatermark: 231 [Function]
+   NodeBase.LowWatermark.~LowWatermark: 223 [Function]
       nb/Statistics.cpp
    NodeBase.Statistic: 42 [Class]
       nb/Statistics.cpp
       nb/Statistics.h
       nb/StatisticsRegistry.cpp
       nb/StatisticsRegistry.h
-   NodeBase.Statistic.CellDiff: 119 [Function]
+   NodeBase.Statistic.CellDiff: 111 [Function]
       nb/Statistics.cpp
       nb/StatisticsRegistry.cpp
-   NodeBase.Statistic.Curr: 64 [Function]
+   NodeBase.Statistic.Curr: 60 [Function]
       nb/ObjectPool.cpp
       nb/Thread.cpp
       nw/IpPort.cpp
       sb/Factory.cpp
       sb/InvokerPool.cpp
-   NodeBase.Statistic.curr_: 95 [ClassData]
+   NodeBase.Statistic.curr_: 87 [ClassData]
       nb/Statistics.cpp
       nb/Statistics.h
-   NodeBase.Statistic.Display: 76 [Function]
+   NodeBase.Statistic.Display: 72 [Function]
       nb/Statistics.cpp
-   NodeBase.Statistic.DisplayStat: 72 [Function]
+   NodeBase.Statistic.DisplayStat: 68 [Function]
       nb/Statistics.cpp
       nb/Statistics.h
-   NodeBase.Statistic.divisor_: 107 [ClassData]
+   NodeBase.Statistic.divisor_: 99 [ClassData]
       nb/Statistics.cpp
-   NodeBase.Statistic.expl_: 127 [ClassData]
-      nb/Statistics.cpp
-   NodeBase.Statistic.MaxExplSize: 56 [ClassData]
-      nb/Statistics.cpp
-   NodeBase.Statistic.NotUpdated: 91 [ClassData]
+   NodeBase.Statistic.expl_: 119 [ClassData]
       nb/Statistics.cpp
    NodeBase.Statistic.operator=: 52 [Function]
-   NodeBase.Statistic.Overall: 68 [Function]
+   NodeBase.Statistic.Overall: 64 [Function]
       nb/Log.cpp
       nb/Statistics.cpp
       nb/Statistics.h
       nb/ThreadAdmin.cpp
-   NodeBase.Statistic.Patch: 81 [Function]
+   NodeBase.Statistic.Patch: 77 [Function]
       nb/Statistics.cpp
       nb/Statistics.h
-   NodeBase.Statistic.prev_: 99 [ClassData]
+   NodeBase.Statistic.prev_: 91 [ClassData]
       nb/Statistics.cpp
-   NodeBase.Statistic.sid_: 123 [ClassData]
+   NodeBase.Statistic.sid_: 115 [ClassData]
       nb/Statistics.cpp
-   NodeBase.Statistic.StartInterval: 115 [Function]
+   NodeBase.Statistic.StartInterval: 107 [Function]
       nb/Statistics.cpp
       nb/Statistics.h
       nb/StatisticsRegistry.cpp
    NodeBase.Statistic.Statistic(const Statistic&): 48 [Function]
-   NodeBase.Statistic.Statistic(const std::string&,size_t): 87 [Function]
+   NodeBase.Statistic.Statistic(const std::string&,size_t): 83 [Function]
       nb/Statistics.cpp
-   NodeBase.Statistic.total_: 103 [ClassData]
+   NodeBase.Statistic.total_: 95 [ClassData]
       nb/Statistics.cpp
-   NodeBase.Statistic.~Statistic: 60 [Function]
+   NodeBase.Statistic.~Statistic: 56 [Function]
       nb/Statistics.cpp
    NodeBase.StatisticsRegistry: 44 [Friend]
    STATISTICS_H_INCLUDED: 23 [Define]
       nb/Statistics.h
 nb/StatisticsGroup.cpp
-   NodeBase.ReportHeader: 43 [SpaceData]
+   NodeBase.MaxExplSize: 40 [SpaceData]
       nb/StatisticsGroup.cpp
-   NodeBase.StatisticsGroup_ctor: 53 [SpaceData]
+   NodeBase.ReportHeader: 44 [SpaceData]
       nb/StatisticsGroup.cpp
-   NodeBase.StatisticsGroup_dtor: 69 [SpaceData]
+   NodeBase.StatisticsGroup_ctor: 56 [SpaceData]
+      nb/StatisticsGroup.cpp
+   NodeBase.StatisticsGroup_dtor: 72 [SpaceData]
       nb/StatisticsGroup.cpp
 nb/StatisticsGroup.h
    NodeBase.StatisticsGroup: 40 [Class]
@@ -40622,12 +40628,12 @@ nb/StatisticsGroup.h
       sb/InvokerPoolRegistry.cpp
       sn/PotsStatistics.cpp
       sn/PotsStatistics.h
-   NodeBase.StatisticsGroup.CellDiff: 97 [Function]
+   NodeBase.StatisticsGroup.CellDiff: 93 [Function]
       nb/StatisticsGroup.cpp
       nb/StatisticsRegistry.cpp
-   NodeBase.StatisticsGroup.Display: 79 [Function]
+   NodeBase.StatisticsGroup.Display: 75 [Function]
       nb/StatisticsGroup.cpp
-   NodeBase.StatisticsGroup.DisplayStats: 74 [Function]
+   NodeBase.StatisticsGroup.DisplayStats: 70 [Function]
       nb/LogGroupRegistry.cpp
       nb/NbIncrement.cpp
       nb/ObjectPoolRegistry.cpp
@@ -40640,26 +40646,24 @@ nb/StatisticsGroup.h
       sb/InvokerPoolRegistry.cpp
       sn/PotsStatistics.cpp
       sn/PotsStatistics.h
-   NodeBase.StatisticsGroup.Expl: 93 [Function]
+   NodeBase.StatisticsGroup.Expl: 89 [Function]
       nb/StatisticsRegistry.cpp
-   NodeBase.StatisticsGroup.expl_: 105 [ClassData]
+   NodeBase.StatisticsGroup.expl_: 101 [ClassData]
       nb/StatisticsGroup.cpp
       nb/StatisticsGroup.h
-   NodeBase.StatisticsGroup.Gid: 66 [Function]
+   NodeBase.StatisticsGroup.Gid: 62 [Function]
       nb/StatisticsRegistry.cpp
-   NodeBase.StatisticsGroup.gid_: 101 [ClassData]
+   NodeBase.StatisticsGroup.gid_: 97 [ClassData]
       nb/StatisticsGroup.cpp
       nb/StatisticsGroup.h
-   NodeBase.StatisticsGroup.MaxExplSize: 54 [ClassData]
-      nb/StatisticsGroup.cpp
    NodeBase.StatisticsGroup.operator=: 50 [Function]
-   NodeBase.StatisticsGroup.Patch: 84 [Function]
+   NodeBase.StatisticsGroup.Patch: 80 [Function]
       nb/StatisticsGroup.cpp
-   NodeBase.StatisticsGroup.ReportWidth: 58 [ClassData]
+   NodeBase.StatisticsGroup.ReportWidth: 54 [ClassData]
       nb/StatisticsGroup.cpp
       nb/StatisticsRegistry.cpp
    NodeBase.StatisticsGroup.StatisticsGroup(const StatisticsGroup&): 46 [Function]
-   NodeBase.StatisticsGroup.StatisticsGroup(const std::string&): 89 [Function]
+   NodeBase.StatisticsGroup.StatisticsGroup(const std::string&): 85 [Function]
       nb/LogGroupRegistry.cpp
       nb/ObjectPoolRegistry.cpp
       nb/StatisticsGroup.cpp
@@ -40669,7 +40673,7 @@ nb/StatisticsGroup.h
       sb/FactoryRegistry.cpp
       sb/InvokerPoolRegistry.cpp
       sn/PotsStatistics.cpp
-   NodeBase.StatisticsGroup.~StatisticsGroup: 62 [Function]
+   NodeBase.StatisticsGroup.~StatisticsGroup: 58 [Function]
       nb/StatisticsGroup.cpp
    NodeBase.StatisticsRegistry: 42 [Friend]
    STATISTICSGROUP_H_INCLUDED: 23 [Define]
@@ -40747,7 +40751,15 @@ nb/StatisticsRegistry.h
    STATISTICSREGISTRY_H_INCLUDED: 23 [Define]
       nb/StatisticsRegistry.h
 nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread_CalcFirstDelay: 79 [SpaceData]
+   NodeBase.LongIntervalSecs: 46 [SpaceData]
+      nb/StatisticsThread.cpp
+   NodeBase.ShortIntervalSecs: 51 [SpaceData]
+      nb/StatisticsThread.cpp
+   NodeBase.SleepInterval: 62 [SpaceData]
+      nb/StatisticsThread.cpp
+   NodeBase.StatisticsThread_CalcFirstDelay: 92 [SpaceData]
+      nb/StatisticsThread.cpp
+   NodeBase.WakeupsBetweenReports: 58 [SpaceData]
       nb/StatisticsThread.cpp
 nb/StatisticsThread.h
    NodeBase.Singleton<StatisticsThread>: 40 [Friend]
@@ -40756,37 +40768,29 @@ nb/StatisticsThread.h
       nb/NbModule.cpp
       nb/StatisticsThread.cpp
       nb/StatisticsThread.h
-   NodeBase.StatisticsThread.AbbrName: 87 [Function]
+   NodeBase.StatisticsThread.AbbrName: 66 [Function]
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.CalcFirstDelay: 83 [Function]
+   NodeBase.StatisticsThread.CalcFirstDelay: 62 [Function]
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.countdown_: 108 [ClassData]
+   NodeBase.StatisticsThread.countdown_: 87 [ClassData]
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.delayed_: 112 [ClassData]
+   NodeBase.StatisticsThread.delayed_: 91 [ClassData]
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.Destroy: 91 [Function]
+   NodeBase.StatisticsThread.Destroy: 70 [Function]
       nb/StatisticsThread.cpp
    NodeBase.StatisticsThread.Display: 44 [Function]
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.Enter: 96 [Function]
+   NodeBase.StatisticsThread.Enter: 75 [Function]
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.ExitOnRestart: 100 [Function]
-      nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.LongIntervalSecs: 54 [ClassData]
+   NodeBase.StatisticsThread.ExitOnRestart: 79 [Function]
       nb/StatisticsThread.cpp
    NodeBase.StatisticsThread.Patch: 49 [Function]
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.ShortIntervalSecs: 59 [ClassData]
+   NodeBase.StatisticsThread.StatisticsThread: 53 [Function]
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.SleepInterval: 70 [ClassData]
+   NodeBase.StatisticsThread.wakeupTime_: 83 [ClassData]
       nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.StatisticsThread: 74 [Function]
-      nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.WakeupsBetweenReports: 66 [ClassData]
-      nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.wakeupTime_: 104 [ClassData]
-      nb/StatisticsThread.cpp
-   NodeBase.StatisticsThread.~StatisticsThread: 78 [Function]
+   NodeBase.StatisticsThread.~StatisticsThread: 57 [Function]
       nb/StatisticsThread.cpp
    STATISTICSTHREAD_H_INCLUDED: 23 [Define]
       nb/StatisticsThread.h
@@ -41566,30 +41570,30 @@ nb/SysThreadStack.h
    SYSTHREADSTACK_H_INCLUDED: 23 [Define]
       nb/SysThreadStack.h
 nb/SysThreadStack.win.cpp
-   NodeBase.MaxFrames: 49 [SpaceData]
+   NodeBase.MaxFrames: 50 [SpaceData]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackFrames: 53 [Typedef]
+   NodeBase.StackFrames: 54 [Typedef]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackFramesPtr: 57 [Typedef]
+   NodeBase.StackFramesPtr: 58 [Typedef]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackInfo: 63 [Class]
+   NodeBase.StackInfo: 64 [Class]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackInfo.GetFileLoc: 91 [Function]
+   NodeBase.StackInfo.GetFileLoc: 92 [Function]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackInfo.GetFrames: 81 [Function]
+   NodeBase.StackInfo.GetFrames: 82 [Function]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackInfo.GetFunction: 85 [Function]
+   NodeBase.StackInfo.GetFunction: 86 [Function]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackInfo.Process: 95 [ClassData]
+   NodeBase.StackInfo.Process: 96 [ClassData]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackInfo.Shutdown: 76 [Function]
+   NodeBase.StackInfo.Shutdown: 77 [Function]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackInfo.Source: 103 [ClassData]
+   NodeBase.StackInfo.Source: 104 [ClassData]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackInfo.StackInfo: 68 [Function]
-   NodeBase.StackInfo.Startup: 72 [Function]
+   NodeBase.StackInfo.StackInfo: 69 [Function]
+   NodeBase.StackInfo.Startup: 73 [Function]
       nb/SysThreadStack.win.cpp
-   NodeBase.StackInfo.Symbols: 99 [ClassData]
+   NodeBase.StackInfo.Symbols: 100 [ClassData]
       nb/SysThreadStack.win.cpp
 nb/SysTickTimer.cpp
    NodeBase.SysTickTimer_dtor: 36 [SpaceData]
@@ -41661,17 +41665,21 @@ nb/SysTime.cpp
       nb/SysTime.cpp
    NodeBase.NonLeapYearDaysPerMonth: 52 [SpaceData]
       nb/SysTime.cpp
-   NodeBase.SecsInLeapYear: 80 [SpaceData]
+   NodeBase.SecsInLeapYear: 85 [SpaceData]
       nb/SysTime.cpp
-   NodeBase.SecsInNonLeapYear: 84 [SpaceData]
+   NodeBase.SecsInNonLeapYear: 89 [SpaceData]
       nb/SysTime.cpp
-   NodeBase.SysTime_MsecsUntil: 282 [SpaceData]
+   NodeBase.SysTime_MsecsUntil: 287 [SpaceData]
       nb/SysTime.cpp
-   NodeBase.SysTime_OutOfRange: 307 [SpaceData]
+   NodeBase.SysTime_OutOfRange: 312 [SpaceData]
       nb/SysTime.cpp
-   NodeBase.SysTime_Round: 327 [SpaceData]
+   NodeBase.SysTime_Round: 332 [SpaceData]
+      nb/SysTime.cpp
+   NodeBase.WeekDayOfT0: 81 [SpaceData]
       nb/SysTime.cpp
    NodeBase.WeekDayStrings: 68 [SpaceData]
+      nb/SysTime.cpp
+   NodeBase.YearOfT0: 77 [SpaceData]
       nb/SysTime.cpp
 nb/SysTime.h
    NodeBase.SysTime: 38 [Class]
@@ -41707,7 +41715,7 @@ nb/SysTime.h
       nt/NtIncrement.cpp
    NodeBase.SysTime.DaysPerMonth: 158 [Function]
       nb/SysTime.cpp
-   NodeBase.SysTime.DaysSinceT0: 170 [Function]
+   NodeBase.SysTime.DaysSinceT0: 162 [Function]
       nb/SysTime.cpp
    NodeBase.SysTime.Display: 148 [Function]
       nb/SysTime.cpp
@@ -41779,7 +41787,7 @@ nb/SysTime.h
       nb/StatisticsThread.cpp
       nb/SysTime.cpp
       nt/NtIncrement.cpp
-   NodeBase.SysTime.OutOfRange: 179 [Function]
+   NodeBase.SysTime.OutOfRange: 171 [Function]
       nb/SysTime.cpp
    NodeBase.SysTime.Patch: 153 [Function]
       nb/SysTime.cpp
@@ -41809,7 +41817,7 @@ nb/SysTime.h
    NodeBase.SysTime.SysTime(int16_t,int16_t,int16_t,int16_t,int16_t,int16_t,int16_t): 72 [Function]
       nb/SysTime.cpp
       nt/NtIncrement.cpp
-   NodeBase.SysTime.time_: 183 [ClassData]
+   NodeBase.SysTime.time_: 175 [ClassData]
       nb/SysTime.cpp
       nb/SysTime.h
       nb/SysTime.win.cpp
@@ -41825,11 +41833,7 @@ nb/SysTime.h
    NodeBase.SysTime.Truncate: 93 [Function]
       nb/SysTime.cpp
       nt/NtIncrement.cpp
-   NodeBase.SysTime.Verify: 174 [Function]
-      nb/SysTime.cpp
-   NodeBase.SysTime.WeekDayOfT0: 166 [ClassData]
-      nb/SysTime.cpp
-   NodeBase.SysTime.YearOfT0: 162 [ClassData]
+   NodeBase.SysTime.Verify: 166 [Function]
       nb/SysTime.cpp
    SYSTIME_H_INCLUDED: 23 [Define]
       nb/SysTime.h
@@ -42070,11 +42074,11 @@ nb/SysTypes.h
       nb/TraceRecord.cpp
       nb/TraceRecord.h
       nt/NtIncrement.cpp
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
       nw/IpService.h
+      nw/IpServiceCfg.cpp
+      nw/IpServiceCfg.h
       nw/LocalAddrTest.cpp
       nw/LocalAddrTest.h
       nw/NwCliParms.cpp
@@ -42299,7 +42303,6 @@ nb/SysTypes.h
       nw/IoThread.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
@@ -42536,7 +42539,6 @@ nb/SysTypes.h
       an/PotsShelfIpService.cpp
       an/PotsTrafficThread.cpp
       cb/BcAddress.cpp
-      cb/BcAddress.h
       cb/BcCause.cpp
       cb/BcProgress.cpp
       cb/BcProtocol.cpp
@@ -42569,7 +42571,6 @@ nb/SysTypes.h
       nb/CfgParm.h
       nb/CfgParmRegistry.cpp
       nb/CliBoolParm.cpp
-      nb/CliBoolParm.h
       nb/CliBuffer.cpp
       nb/CliBuffer.h
       nb/CliCharParm.h
@@ -42956,8 +42957,6 @@ nb/SysTypes.h
       nw/IpBuffer.h
       nw/IpPort.cpp
       nw/IpPort.h
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
@@ -43793,6 +43792,8 @@ nb/SysTypes.h
       an/AnModule.h
       an/PotsTrafficThread.cpp
       an/PotsTrafficThread.h
+      cb/BcProtocol.cpp
+      cb/BcProtocol.h
       cb/BcSessions.h
       cb/BcSsm.cpp
       cb/CbModule.cpp
@@ -43895,13 +43896,16 @@ nb/SysTypes.h
       nw/IoThread.h
       nw/IpPort.cpp
       nw/IpPort.h
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
       nw/IpService.h
+      nw/IpServiceCfg.cpp
+      nw/IpServiceCfg.h
       nw/IpServiceRegistry.cpp
       nw/IpServiceRegistry.h
+      nw/LocalAddrTest.cpp
+      nw/LocalAddrTest.h
       nw/NwLogs.cpp
       nw/NwLogs.h
       nw/NwModule.cpp
@@ -43954,10 +43958,11 @@ nb/SysTypes.h
       nb/Restart.cpp
       nb/Singletons.cpp
       nw/IoThread.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
+      nw/IpServiceCfg.cpp
       nw/NwLogs.cpp
       nw/NwModule.cpp
+      nw/SysUdpSocket.win.cpp
       pb/PotsCircuit.cpp
       sb/InvokerPool.cpp
       sb/TimerRegistry.cpp
@@ -43975,6 +43980,7 @@ nb/SysTypes.h
       nb/NbIncrement.cpp
       nb/ObjectPool.cpp
       nb/Restart.cpp
+      nw/IpServiceCfg.cpp
       sb/InvokerThread.cpp
    NodeBase.RestartLevel.RestartReboot: 209 [Enumerator]
       nb/LogBuffer.cpp
@@ -44149,7 +44155,6 @@ nb/SysTypes.h
       ct/LibrarySet.h
       ct/LibraryVarSet.cpp
       ct/LibraryVarSet.h
-      dip/DipProtocol.h
       dip/MapAndUnits.h
       dip/TokenMessage.cpp
       nb/CfgIntParm.cpp
@@ -44195,8 +44200,6 @@ nb/SysTypes.h
       nw/IoThread.cpp
       nw/IoThread.h
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       nw/NwIncrement.cpp
       nw/NwIncrement.h
       nw/NwTrace.cpp
@@ -44431,13 +44434,13 @@ nb/Thread.cpp
       nb/Thread.cpp
    NodeBase.FtLocks_: 102 [SpaceData]
       nb/Thread.cpp
-   NodeBase.KillDeletingThread: 2059 [SpaceData]
+   NodeBase.KillDeletingThread: 2064 [SpaceData]
       nb/Thread.cpp
-   NodeBase.KillRootThread: 2058 [SpaceData]
+   NodeBase.KillRootThread: 2063 [SpaceData]
       nb/Thread.cpp
-   NodeBase.MaxUnpreemptCount: 2240 [SpaceData]
+   NodeBase.MaxUnpreemptCount: 2245 [SpaceData]
       nb/Thread.cpp
-   NodeBase.MaxUnprotectCount: 1940 [SpaceData]
+   NodeBase.MaxUnprotectCount: 1945 [SpaceData]
       nb/Thread.cpp
    NodeBase.NodeBase_FactionToPriority: 1067 [SpaceData]
       nb/Thread.cpp
@@ -44489,23 +44492,23 @@ nb/Thread.cpp
       nb/Thread.cpp
    NodeBase.Thread_EnterBlockingOperation: 1531 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_ImmProtect: 1912 [SpaceData]
+   NodeBase.Thread_ImmProtect: 1917 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_ImmUnprotect: 1942 [SpaceData]
+   NodeBase.Thread_ImmUnprotect: 1947 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_MakeUnpreemptable: 2242 [SpaceData]
+   NodeBase.Thread_MakeUnpreemptable: 2247 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_MemProtect: 2265 [SpaceData]
+   NodeBase.Thread_MemProtect: 2270 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_MemUnprotect: 2293 [SpaceData]
+   NodeBase.Thread_MemUnprotect: 2298 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Pause: 2344 [SpaceData]
+   NodeBase.Thread_Pause: 2349 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Raise: 2443 [SpaceData]
+   NodeBase.Thread_Raise: 2461 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Start: 2978 [SpaceData]
+   NodeBase.Thread_Start: 2994 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_TrapHandler: 3504 [SpaceData]
+   NodeBase.Thread_TrapHandler: 3520 [SpaceData]
       nb/Thread.cpp
    NodeBase.ThreadDataStr: 994 [SpaceData]
       nb/Thread.cpp
@@ -44777,10 +44780,10 @@ nb/Thread.h
       nb/Thread.cpp
       sb/TimerRegistry.cpp
       sb/TimerThread.cpp
-   NodeBase.Thread.daemon_: 655 [ClassData]
+   NodeBase.Thread.daemon_: 660 [ClassData]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.Thread.deleting_: 667 [ClassData]
+   NodeBase.Thread.deleting_: 672 [ClassData]
       nb/Thread.cpp
    NodeBase.Thread.DeqMsg: 277 [Function]
       dip/BotThread.cpp
@@ -44832,18 +44835,18 @@ nb/Thread.h
       nw/LocalAddrTest.h
       sb/InvokerThread.cpp
       sb/InvokerThread.h
-   NodeBase.Thread.DisplayContextSwitches: 647 [Function]
+   NodeBase.Thread.DisplayContextSwitches: 652 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
    NodeBase.Thread.DisplayStats: 235 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.Thread.DisplaySummaries: 635 [Function]
+   NodeBase.Thread.DisplaySummaries: 640 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
-   NodeBase.Thread.DisplaySummary: 630 [Function]
+   NodeBase.Thread.DisplaySummary: 635 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.EnableFactions: 623 [Function]
+   NodeBase.Thread.EnableFactions: 628 [Function]
       nb/ModuleRegistry.cpp
       nb/Thread.cpp
    NodeBase.Thread.EnqMsg: 117 [Function]
@@ -44905,7 +44908,7 @@ nb/Thread.h
    NodeBase.Thread.ExtendTime: 559 [Function]
       nb/Exception.cpp
       nb/Thread.cpp
-   NodeBase.Thread.faction_: 663 [ClassData]
+   NodeBase.Thread.faction_: 668 [ClassData]
       nb/Thread.cpp
       nb/Thread.h
    NodeBase.Thread.FindRunningThread: 372 [Function]
@@ -44970,9 +44973,9 @@ nb/Thread.h
    NodeBase.Thread.LockedThread: 470 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.LogContextSwitch: 643 [Function]
+   NodeBase.Thread.LogContextSwitch: 648 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.LogContextSwitches: 639 [Function]
+   NodeBase.Thread.LogContextSwitches: 644 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
    NodeBase.Thread.LogSignal: 607 [Function]
@@ -44998,7 +45001,7 @@ nb/Thread.h
    NodeBase.Thread.MemUnprotect: 387 [Function]
       nb/FunctionGuard.cpp
       nb/Thread.cpp
-   NodeBase.Thread.msgq_: 671 [ClassData]
+   NodeBase.Thread.msgq_: 676 [ClassData]
       nb/Thread.cpp
    NodeBase.Thread.MutexCount: 495 [Function]
       nb/Thread.cpp
@@ -45067,10 +45070,12 @@ nb/Thread.h
       nb/Thread.cpp
    NodeBase.Thread.Preempt: 425 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.priv_: 675 [ClassData]
+   NodeBase.Thread.priv_: 680 [ClassData]
       nb/Thread.cpp
    NodeBase.Thread.Proceed: 444 [Function]
       nb/InitThread.cpp
+      nb/Thread.cpp
+   NodeBase.Thread.Purge: 623 [Function]
       nb/Thread.cpp
    NodeBase.Thread.Raise: 200 [Function]
       nb/ModuleRegistry.cpp
@@ -45186,7 +45191,7 @@ nb/Thread.h
       nb/ThreadRegistry.cpp
       nw/NwModule.cpp
       sb/SbModule.cpp
-   NodeBase.Thread.stats_: 679 [ClassData]
+   NodeBase.Thread.stats_: 684 [ClassData]
       nb/Thread.cpp
    NodeBase.Thread.StopTracing: 193 [Function]
       nb/ThisThread.cpp
@@ -45197,7 +45202,7 @@ nb/Thread.h
       nb/InitThread.cpp
       nb/ModuleRegistry.cpp
       nb/Thread.cpp
-   NodeBase.Thread.systhrd_: 651 [ClassData]
+   NodeBase.Thread.systhrd_: 656 [ClassData]
       nb/Debug.cpp
       nb/RootThread.cpp
       nb/Thread.cpp
@@ -45236,7 +45241,7 @@ nb/Thread.h
       nb/ThreadRegistry.cpp
       nb/TimedRecord.cpp
       sb/InvokerThread.cpp
-   NodeBase.Thread.tid_: 659 [ClassData]
+   NodeBase.Thread.tid_: 664 [ClassData]
       nb/Thread.cpp
       nb/Thread.h
    NodeBase.Thread.TimeLeft: 555 [Function]
@@ -45284,7 +45289,7 @@ nb/Thread.h
    NodeBase.ThreadRegistry: 67 [Friend]
    NodeBase.ThreadStats: 47 [Forward]
       nb/Thread.h
-   NodeBase.TraceAutostop: 686 [SpaceData]
+   NodeBase.TraceAutostop: 691 [SpaceData]
       nb/Thread.cpp
    THREAD_H_INCLUDED: 23 [Define]
       nb/Thread.h
@@ -48836,11 +48841,11 @@ nw/IpBuffer.h
    NetworkBase.IpBuffer.~IpBuffer: 59 [Function]
       nw/IpBuffer.cpp
 nw/IpPort.cpp
-   NetworkBase.IpPort_CreateIoThread: 199 [SpaceData]
+   NetworkBase.IpPort_CreateIoThread: 195 [SpaceData]
       nw/IpPort.cpp
-   NetworkBase.IpPort_SetSocket: 350 [SpaceData]
+   NetworkBase.IpPort_SetSocket: 358 [SpaceData]
       nw/IpPort.cpp
-   NetworkBase.IpPort_SetThread: 393 [SpaceData]
+   NetworkBase.IpPort_SetThread: 401 [SpaceData]
       nw/IpPort.cpp
    NetworkBase.IpPortStats: 54 [Class]
       nw/IpPort.cpp
@@ -48892,41 +48897,45 @@ nw/IpPort.h
       nw/UdpIpService.cpp
       sb/SbInputHandler.cpp
       sn/PotsCallHandler.cpp
-   NetworkBase.IpPort.alarm_: 227 [ClassData]
+   NetworkBase.IpPort.alarm_: 231 [ClassData]
       nw/IpPort.cpp
-   NetworkBase.IpPort.BindHandler: 190 [Function]
+   NetworkBase.IpPort.BindHandler: 194 [Function]
       nw/InputHandler.cpp
       nw/IpPort.cpp
-   NetworkBase.IpPort.BytesRcvd: 116 [Function]
+   NetworkBase.IpPort.BytesRcvd: 120 [Function]
       nw/IpPort.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
-   NetworkBase.IpPort.BytesSent: 120 [Function]
+   NetworkBase.IpPort.BytesSent: 124 [Function]
       nw/IpPort.cpp
       nw/SysTcpSocket.cpp
       nw/SysUdpSocket.cpp
-   NetworkBase.IpPort.ClearAlarm: 112 [Function]
+   NetworkBase.IpPort.ClearAlarm: 116 [Function]
       nw/IpPort.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
-   NetworkBase.IpPort.CreateAppSocket: 102 [Function]
+   NetworkBase.IpPort.CreateAppSocket: 106 [Function]
       cb/BcProtocol.cpp
       dip/BaseBot.cpp
       nw/IpPort.cpp
       nw/TcpIpPort.h
-   NetworkBase.IpPort.CreateIoThread: 185 [Function]
+   NetworkBase.IpPort.CreateIoThread: 189 [Function]
       nw/IpPort.cpp
       nw/TcpIpPort.h
       nw/UdpIpPort.h
-   NetworkBase.IpPort.Discards: 142 [Function]
+   NetworkBase.IpPort.CreateThread: 86 [Function]
+      nw/IpPort.cpp
+      nw/IpServiceCfg.cpp
+      nw/TcpIpPort.cpp
+   NetworkBase.IpPort.Discards: 146 [Function]
       nw/IpPort.cpp
       nw/NwIncrement.cpp
-   NetworkBase.IpPort.Display: 156 [Function]
+   NetworkBase.IpPort.Display: 160 [Function]
       nw/IpPort.cpp
-   NetworkBase.IpPort.DisplayStats: 147 [Function]
+   NetworkBase.IpPort.DisplayStats: 151 [Function]
       nw/IpPort.cpp
       nw/IpPortRegistry.cpp
-   NetworkBase.IpPort.EnsureAlarm: 199 [Function]
+   NetworkBase.IpPort.EnsureAlarm: 203 [Function]
       nw/IpPort.cpp
    NetworkBase.IpPort.GetHandler: 78 [Function]
       nw/IoThread.cpp
@@ -48949,7 +48958,7 @@ nw/IpPort.h
       nw/TcpIpPort.cpp
       nw/UdpIoThread.cpp
       nw/UdpIpPort.cpp
-   NetworkBase.IpPort.GetSocket: 90 [Function]
+   NetworkBase.IpPort.GetSocket: 94 [Function]
       nw/IpBuffer.cpp
       nw/LocalAddrTest.cpp
       nw/TcpIoThread.cpp
@@ -48957,77 +48966,77 @@ nw/IpPort.h
    NetworkBase.IpPort.GetThread: 82 [Function]
       dip/BaseBot.cpp
       nw/TcpIpPort.cpp
-   NetworkBase.IpPort.handler_: 215 [ClassData]
+   NetworkBase.IpPort.handler_: 219 [ClassData]
       nw/IpPort.cpp
       nw/IpPort.h
-   NetworkBase.IpPort.IngressDiscarded: 132 [Function]
+   NetworkBase.IpPort.IngressDiscarded: 136 [Function]
       nw/IpPort.cpp
       sn/PotsCallHandler.cpp
-   NetworkBase.IpPort.InvalidDiscarded: 128 [Function]
+   NetworkBase.IpPort.InvalidDiscarded: 132 [Function]
       nw/IoThread.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
       sb/SbInputHandler.cpp
       sn/PotsCallHandler.cpp
    NetworkBase.IpPort.IpPort(const IpPort&): 62 [Function]
-   NetworkBase.IpPort.IpPort(ipport_t,const IpService*): 179 [Function]
+   NetworkBase.IpPort.IpPort(ipport_t,const IpService*): 183 [Function]
       nw/IpPort.cpp
       nw/TcpIpPort.cpp
       nw/UdpIpPort.cpp
-   NetworkBase.IpPort.link_: 203 [ClassData]
+   NetworkBase.IpPort.link_: 207 [ClassData]
       nw/IpPort.cpp
-   NetworkBase.IpPort.LinkDiff: 152 [Function]
+   NetworkBase.IpPort.LinkDiff: 156 [Function]
       nw/IpPort.cpp
       nw/IpPortRegistry.cpp
    NetworkBase.IpPort.operator=: 66 [Function]
-   NetworkBase.IpPort.Patch: 161 [Function]
+   NetworkBase.IpPort.Patch: 165 [Function]
       nw/IpPort.cpp
       nw/TcpIpPort.cpp
       nw/TcpIpPort.h
       nw/UdpIpPort.cpp
       nw/UdpIpPort.h
-   NetworkBase.IpPort.PollArrayOverflow: 137 [Function]
+   NetworkBase.IpPort.PollArrayOverflow: 141 [Function]
       nw/IpPort.cpp
       nw/TcpIoThread.cpp
-   NetworkBase.IpPort.port_: 207 [ClassData]
+   NetworkBase.IpPort.port_: 211 [ClassData]
       nw/IpPort.cpp
       nw/IpPort.h
-   NetworkBase.IpPort.RaiseAlarm: 107 [Function]
+   NetworkBase.IpPort.RaiseAlarm: 111 [Function]
       nw/IpPort.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
-   NetworkBase.IpPort.RecvsInSequence: 124 [Function]
+   NetworkBase.IpPort.RecvsInSequence: 128 [Function]
       nw/IoThread.cpp
       nw/IpPort.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
-   NetworkBase.IpPort.service_: 211 [ClassData]
+   NetworkBase.IpPort.service_: 215 [ClassData]
       nw/IpPort.cpp
       nw/IpPort.h
-   NetworkBase.IpPort.SetSocket: 95 [Function]
+   NetworkBase.IpPort.SetSocket: 99 [Function]
       nw/IpPort.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
-   NetworkBase.IpPort.SetThread: 86 [Function]
+   NetworkBase.IpPort.SetThread: 90 [Function]
       nw/IoThread.cpp
       nw/IpPort.cpp
       nw/TcpIoThread.cpp
       nw/UdpIoThread.cpp
-   NetworkBase.IpPort.Shutdown: 165 [Function]
+   NetworkBase.IpPort.Shutdown: 169 [Function]
       nw/IpPort.cpp
       nw/IpPortRegistry.cpp
-   NetworkBase.IpPort.socket_: 223 [ClassData]
+   NetworkBase.IpPort.socket_: 227 [ClassData]
       nw/IpPort.cpp
       nw/IpPort.h
-   NetworkBase.IpPort.Startup: 169 [Function]
+   NetworkBase.IpPort.Startup: 173 [Function]
       nw/IpPort.cpp
       nw/IpPortRegistry.cpp
-   NetworkBase.IpPort.stats_: 231 [ClassData]
+   NetworkBase.IpPort.stats_: 235 [ClassData]
       nw/IpPort.cpp
-   NetworkBase.IpPort.thread_: 219 [ClassData]
+   NetworkBase.IpPort.thread_: 223 [ClassData]
       nw/IpPort.cpp
       nw/IpPort.h
-   NetworkBase.IpPort.UnbindHandler: 195 [Function]
+   NetworkBase.IpPort.UnbindHandler: 199 [Function]
       nw/InputHandler.cpp
       nw/IpPort.cpp
    NetworkBase.IpPort.~IpPort: 58 [Function]
@@ -49036,34 +49045,6 @@ nw/IpPort.h
       nw/IpPort.h
    NodeBase.Alarm: 36 [Forward]
       nw/IpPort.h
-nw/IpPortCfgParm.h
-   IPPORTCFGPARM_H_INCLUDED: 23 [Define]
-      nw/IpPortCfgParm.h
-   NetworkBase.IpPortCfgParm: 35 [Class]
-      an/PotsShelfIpService.cpp
-      cb/BcProtocol.cpp
-      nw/IpPortCfgParm.cpp
-      nw/LocalAddrTest.cpp
-      nw/NwTypes.h
-      sn/PotsCallIpService.cpp
-   NetworkBase.IpPortCfgParm.Display: 55 [Function]
-      nw/IpPortCfgParm.cpp
-   NetworkBase.IpPortCfgParm.GetPort: 51 [Function]
-      an/PotsShelf.h
-      cb/BcProtocol.h
-      nw/LocalAddrTest.h
-      sn/PotsSessions.h
-   NetworkBase.IpPortCfgParm.IpPortCfgParm: 42 [Function]
-      nw/IpPortCfgParm.cpp
-   NetworkBase.IpPortCfgParm.Patch: 60 [Function]
-      nw/IpPortCfgParm.cpp
-   NetworkBase.IpPortCfgParm.RestartRequired: 69 [Function]
-   NetworkBase.IpPortCfgParm.service_: 74 [ClassData]
-      nw/IpPortCfgParm.cpp
-   NetworkBase.IpPortCfgParm.SetNextValue: 64 [Function]
-      nw/IpPortCfgParm.cpp
-   NetworkBase.IpPortCfgParm.~IpPortCfgParm: 47 [Function]
-      nw/IpPortCfgParm.cpp
 nw/IpPortRegistry.cpp
    NetworkBase.IpPortRegistry_BindPort: 197 [SpaceData]
       nw/IpPortRegistry.cpp
@@ -49105,10 +49086,10 @@ nw/IpPortRegistry.h
       dip/BaseBot.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       nw/LocalAddrTest.cpp
       nw/NwDaemons.cpp
       nw/NwIncrement.cpp
@@ -49145,9 +49126,9 @@ nw/IpPortRegistry.h
       cb/BcProtocol.cpp
       dip/BaseBot.cpp
       nw/IpBuffer.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       nw/LocalAddrTest.cpp
       nw/NwIncrement.cpp
       nw/SysTcpSocket.cpp
@@ -49234,31 +49215,34 @@ nw/IpService.cpp
       nw/IpService.cpp
    NetworkBase.IpService_dtor: 57 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_GetAppSocketSizes: 130 [SpaceData]
+   NetworkBase.IpService_Enabled: 130 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_GetFaction: 143 [SpaceData]
+   NetworkBase.IpService_GetAppSocketSizes: 142 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_HasSharedSocket: 155 [SpaceData]
+   NetworkBase.IpService_GetFaction: 155 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_Name: 167 [SpaceData]
+   NetworkBase.IpService_HasSharedSocket: 167 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_Port: 186 [SpaceData]
+   NetworkBase.IpService_Name: 179 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_Protocol: 198 [SpaceData]
+   NetworkBase.IpService_Port: 198 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_Provision: 210 [SpaceData]
+   NetworkBase.IpService_Protocol: 210 [SpaceData]
+      nw/IpService.cpp
+   NetworkBase.IpService_Provision: 222 [SpaceData]
       nw/IpService.cpp
 nw/IpService.h
    IPSERVICE_H_INCLUDED: 23 [Define]
       nw/IpService.h
-   NetworkBase.IpService: 42 [Class]
+   NetworkBase.IpService: 44 [Class]
+      cb/BcProtocol.cpp
       nw/IoThread.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpService.cpp
       nw/IpService.h
       nw/IpServiceRegistry.cpp
       nw/IpServiceRegistry.h
+      nw/LocalAddrTest.cpp
       nw/NwDaemons.cpp
       nw/NwTypes.h
       nw/SysSocket.win.cpp
@@ -49269,39 +49253,45 @@ nw/IpService.h
       nw/UdpIpPort.cpp
       nw/UdpIpService.cpp
       nw/UdpIpService.h
-   NetworkBase.IpService.CellDiff: 114 [Function]
+   NetworkBase.IpService.CellDiff: 117 [Function]
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpService.CreateHandler: 144 [Function]
+   NetworkBase.IpService.CreateHandler: 147 [Function]
       an/PotsShelf.h
       cb/BcProtocol.h
       dip/DipProtocol.h
       nw/IpService.cpp
       nw/LocalAddrTest.h
       sn/PotsSessions.h
-   NetworkBase.IpService.CreatePort: 149 [Function]
+   NetworkBase.IpService.CreatePort: 152 [Function]
       nw/IpService.cpp
       nw/TcpIpService.h
       nw/UdpIpService.h
-   NetworkBase.IpService.CreateText: 88 [Function]
+   NetworkBase.IpService.CreateText: 91 [Function]
       an/PotsShelf.h
       cb/BcProtocol.h
       dip/DipProtocol.h
       nw/IpService.cpp
       nw/LocalAddrTest.h
       sn/PotsSessions.h
-   NetworkBase.IpService.Display: 118 [Function]
+   NetworkBase.IpService.Display: 121 [Function]
       nw/IpService.cpp
-      nw/LocalAddrTest.cpp
-      nw/LocalAddrTest.h
       nw/TcpIpService.cpp
       nw/TcpIpService.h
-   NetworkBase.IpService.GetAppSocketSizes: 102 [Function]
+   NetworkBase.IpService.Enabled: 76 [Function]
+      an/PotsShelf.h
+      cb/BcProtocol.h
+      dip/DipProtocol.h
+      nw/IpPort.cpp
+      nw/IpService.cpp
+      nw/LocalAddrTest.h
+      sn/PotsSessions.h
+   NetworkBase.IpService.GetAppSocketSizes: 105 [Function]
       cb/BcProtocol.h
       dip/DipProtocol.h
       nw/IpService.cpp
       nw/SysSocket.win.cpp
-   NetworkBase.IpService.GetFaction: 73 [Function]
+   NetworkBase.IpService.GetFaction: 71 [Function]
       an/PotsShelf.h
       cb/BcProtocol.h
       dip/DipProtocol.h
@@ -49309,18 +49299,18 @@ nw/IpService.h
       nw/IpService.cpp
       nw/LocalAddrTest.h
       sn/PotsSessions.h
-   NetworkBase.IpService.HasSharedSocket: 94 [Function]
+   NetworkBase.IpService.HasSharedSocket: 97 [Function]
       nw/IpBuffer.cpp
       nw/IpService.cpp
       nw/TcpIpService.h
       nw/UdpIpService.h
-   NetworkBase.IpService.IpService(): 135 [Function]
+   NetworkBase.IpService.IpService(): 138 [Function]
       nw/IpService.cpp
-   NetworkBase.IpService.IpService(const IpService&): 48 [Function]
-   NetworkBase.IpService.MaxId: 56 [ClassData]
+   NetworkBase.IpService.IpService(const IpService&): 51 [Function]
+   NetworkBase.IpService.MaxId: 59 [ClassData]
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpService.Name: 60 [Function]
+   NetworkBase.IpService.Name: 63 [Function]
       an/PotsShelf.h
       cb/BcProtocol.h
       dip/DipProtocol.h
@@ -49330,186 +49320,214 @@ nw/IpService.h
       nw/LocalAddrTest.h
       nw/NwIncrement.cpp
       sn/PotsSessions.h
-   NetworkBase.IpService.operator=: 52 [Function]
-   NetworkBase.IpService.Patch: 123 [Function]
+   NetworkBase.IpService.operator=: 55 [Function]
+   NetworkBase.IpService.Patch: 126 [Function]
       nw/IpService.cpp
       nw/TcpIpService.cpp
       nw/TcpIpService.h
       nw/UdpIpService.cpp
       nw/UdpIpService.h
-   NetworkBase.IpService.Port: 69 [Function]
+   NetworkBase.IpService.Port: 156 [Function]
       an/PotsShelf.h
       cb/BcProtocol.h
       dip/DipProtocol.h
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       nw/LocalAddrTest.h
       sn/PotsSessions.h
-   NetworkBase.IpService.Protocol: 64 [Function]
+   NetworkBase.IpService.Protocol: 67 [Function]
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
+      nw/IpServiceCfg.cpp
       nw/NwDaemons.cpp
       nw/SysSocket.win.cpp
       nw/TcpIpService.h
       nw/UdpIpService.h
-   NetworkBase.IpService.Provision: 106 [Function]
+   NetworkBase.IpService.Provision: 109 [Function]
       dip/BaseBot.cpp
       nw/IpService.cpp
-   NetworkBase.IpService.RxSize: 77 [Function]
+   NetworkBase.IpService.RxSize: 80 [Function]
       nw/IoThread.cpp
       nw/IpService.cpp
       nw/SysSocket.win.cpp
-   NetworkBase.IpService.Sid: 110 [Function]
+   NetworkBase.IpService.Sid: 113 [Function]
       nw/TcpIpService.cpp
-   NetworkBase.IpService.sid_: 153 [ClassData]
+   NetworkBase.IpService.sid_: 160 [ClassData]
       nw/IpService.cpp
       nw/IpService.h
-   NetworkBase.IpService.Startup: 130 [Function]
+   NetworkBase.IpService.Startup: 133 [Function]
       an/AnModule.cpp
-      cb/CbModule.cpp
+      cb/BcProtocol.cpp
+      cb/BcProtocol.h
       dip/DipModule.cpp
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
-      nw/NwModule.cpp
+      nw/LocalAddrTest.cpp
+      nw/LocalAddrTest.h
       sn/SnModule.cpp
-   NetworkBase.IpService.TxSize: 81 [Function]
+   NetworkBase.IpService.TxSize: 84 [Function]
       nw/IoThread.cpp
       nw/IpService.cpp
       nw/SysSocket.win.cpp
-   NetworkBase.IpService.~IpService: 140 [Function]
+   NetworkBase.IpService.~IpService: 143 [Function]
       nw/IpService.cpp
+   NetworkBase.IpServiceCfg: 47 [Friend]
    NodeBase.CliText: 35 [Forward]
       dip/DipProtocol.h
       nw/IpService.cpp
       nw/IpService.h
       nw/LocalAddrTest.h
-   NodeBase.Registry<IpService>: 44 [Friend]
+   NodeBase.Registry<IpService>: 46 [Friend]
+nw/IpServiceCfg.h
+   IPSERVICECFG_H_INCLUDED: 23 [Define]
+      nw/IpServiceCfg.h
+   NetworkBase.IpServiceCfg: 38 [Class]
+      cb/BcProtocol.cpp
+      nw/IpService.h
+      nw/IpServiceCfg.cpp
+      nw/LocalAddrTest.cpp
+      nw/NwTypes.h
+   NetworkBase.IpServiceCfg.IpServiceCfg: 43 [Function]
+      nw/IpServiceCfg.cpp
+   NetworkBase.IpServiceCfg.RestartRequired: 52 [Function]
+      nw/IpServiceCfg.cpp
+   NetworkBase.IpServiceCfg.service_: 60 [ClassData]
+      nw/IpServiceCfg.cpp
+   NetworkBase.IpServiceCfg.SetCurr: 56 [Function]
+      nw/IpServiceCfg.cpp
+   NetworkBase.IpServiceCfg.~IpServiceCfg: 47 [Function]
+      nw/IpServiceCfg.cpp
 nw/IpServiceRegistry.cpp
    NetworkBase.IpServiceRegistry_dtor: 46 [SpaceData]
       nw/IpServiceRegistry.cpp
 nw/IpServiceRegistry.h
    IPSERVICEREGISTRY_H_INCLUDED: 23 [Define]
       nw/IpServiceRegistry.h
-   NetworkBase.IpService: 32 [Forward]
+   NetworkBase.IpService: 33 [Forward]
       nw/IpServiceRegistry.h
-   NetworkBase.IpService: 44 [Friend]
-   NetworkBase.IpServiceRegistry: 41 [Class]
+   NetworkBase.IpService: 45 [Friend]
+   NetworkBase.IpServiceRegistry: 42 [Class]
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
       nw/IpServiceRegistry.h
       nw/NwModule.cpp
-   NetworkBase.IpServiceRegistry.BindService: 85 [Function]
+   NetworkBase.IpServiceRegistry.BindService: 86 [Function]
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.Display: 60 [Function]
+   NetworkBase.IpServiceRegistry.Display: 61 [Function]
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.GetService: 56 [Function]
+   NetworkBase.IpServiceRegistry.GetServices: 57 [Function]
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.IpServiceRegistry(): 77 [Function]
+   NetworkBase.IpServiceRegistry.IpServiceRegistry(): 78 [Function]
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.IpServiceRegistry(const IpServiceRegistry&): 48 [Function]
-   NetworkBase.IpServiceRegistry.operator=: 52 [Function]
-   NetworkBase.IpServiceRegistry.Patch: 65 [Function]
+   NetworkBase.IpServiceRegistry.IpServiceRegistry(const IpServiceRegistry&): 49 [Function]
+   NetworkBase.IpServiceRegistry.operator=: 53 [Function]
+   NetworkBase.IpServiceRegistry.Patch: 66 [Function]
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.services_: 93 [ClassData]
+   NetworkBase.IpServiceRegistry.services_: 94 [ClassData]
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.Shutdown: 69 [Function]
-      nw/IpServiceRegistry.cpp
-      nw/NwModule.cpp
-   NetworkBase.IpServiceRegistry.Startup: 73 [Function]
+   NetworkBase.IpServiceRegistry.Shutdown: 70 [Function]
       nw/IpServiceRegistry.cpp
       nw/NwModule.cpp
-   NetworkBase.IpServiceRegistry.UnbindService: 89 [Function]
+   NetworkBase.IpServiceRegistry.Startup: 74 [Function]
+      nw/IpServiceRegistry.cpp
+      nw/NwModule.cpp
+   NetworkBase.IpServiceRegistry.UnbindService: 90 [Function]
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.~IpServiceRegistry: 81 [Function]
+   NetworkBase.IpServiceRegistry.~IpServiceRegistry: 82 [Function]
       nw/IpServiceRegistry.cpp
-   NodeBase.Singleton<IpServiceRegistry>: 43 [Friend]
+   NodeBase.Singleton<IpServiceRegistry>: 44 [Friend]
 nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrIpPortExpl: 77 [SpaceData]
+   NetworkBase.LocalAddrsServiceExpl: 110 [SpaceData]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrIpPortKey: 76 [SpaceData]
+   NetworkBase.LocalAddrsServiceStr: 109 [SpaceData]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrsServiceExpl: 108 [SpaceData]
+   NetworkBase.LocalAddrUdpExpl: 80 [SpaceData]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrsServiceStr: 107 [SpaceData]
+   NetworkBase.LocalAddrUdpKey: 79 [SpaceData]
       nw/LocalAddrTest.cpp
 nw/LocalAddrTest.h
    LOCALADDRTEST_H_INCLUDED: 23 [Define]
       nw/LocalAddrTest.h
-   NetworkBase.LocalAddrHandler: 148 [Class]
+   NetworkBase.LocalAddrHandler: 157 [Class]
       nw/IpPortRegistry.h
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrHandler.LocalAddrHandler: 153 [Function]
+   NetworkBase.LocalAddrHandler.LocalAddrHandler: 162 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrHandler.Patch: 161 [Function]
+   NetworkBase.LocalAddrHandler.Patch: 170 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrHandler.ReceiveBuff: 165 [Function]
+   NetworkBase.LocalAddrHandler.ReceiveBuff: 174 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrHandler.~LocalAddrHandler: 157 [Function]
+   NetworkBase.LocalAddrHandler.~LocalAddrHandler: 166 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrRetest: 87 [Class]
+   NetworkBase.LocalAddrRetest: 86 [Class]
       nw/IpPortRegistry.cpp
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrRetest.EventHasOccurred: 104 [Function]
+   NetworkBase.LocalAddrRetest.EventHasOccurred: 103 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrRetest.LocalAddrRetest: 92 [Function]
+   NetworkBase.LocalAddrRetest.LocalAddrRetest: 91 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrRetest.Patch: 100 [Function]
+   NetworkBase.LocalAddrRetest.Patch: 99 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.LocalAddrRetest.~LocalAddrRetest: 96 [Function]
+   NetworkBase.LocalAddrRetest.~LocalAddrRetest: 95 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService: 111 [Class]
+   NetworkBase.SendLocalIpService: 110 [Class]
       nw/LocalAddrTest.cpp
       nw/LocalAddrTest.h
       nw/NwModule.cpp
-   NetworkBase.SendLocalIpService.CreateHandler: 132 [Function]
+   NetworkBase.SendLocalIpService.CreateHandler: 137 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.CreateText: 136 [Function]
+   NetworkBase.SendLocalIpService.CreateText: 141 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.Display: 115 [Function]
+   NetworkBase.SendLocalIpService.Enabled: 132 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.GetFaction: 117 [Function]
-   NetworkBase.SendLocalIpService.Name: 118 [Function]
-   NetworkBase.SendLocalIpService.Patch: 119 [Function]
+   NetworkBase.SendLocalIpService.enabled_: 149 [ClassData]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.Port: 120 [Function]
+   NetworkBase.SendLocalIpService.GetFaction: 131 [Function]
+   NetworkBase.SendLocalIpService.Name: 129 [Function]
+   NetworkBase.SendLocalIpService.Patch: 133 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.portCfg_: 140 [ClassData]
+   NetworkBase.SendLocalIpService.Port: 130 [Function]
       nw/LocalAddrTest.cpp
-      nw/LocalAddrTest.h
-   NetworkBase.SendLocalIpService.SendLocalIpService: 124 [Function]
+   NetworkBase.SendLocalIpService.SendLocalIpService: 121 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalIpService.~SendLocalIpService: 128 [Function]
+   NetworkBase.SendLocalIpService.Shutdown: 145 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread: 43 [Class]
+   NetworkBase.SendLocalIpService.Startup: 117 [Function]
+      nw/LocalAddrTest.cpp
+      nw/NwModule.cpp
+   NetworkBase.SendLocalIpService.~SendLocalIpService: 125 [Function]
+      nw/LocalAddrTest.cpp
+   NetworkBase.SendLocalThread: 42 [Class]
       nw/IpPortRegistry.h
       nw/LocalAddrTest.cpp
       nw/LocalAddrTest.h
       nw/NwIncrement.cpp
       nw/NwModule.cpp
-   NetworkBase.SendLocalThread.AbbrName: 70 [Function]
+   NetworkBase.SendLocalThread: 113 [Friend]
+   NetworkBase.SendLocalThread.AbbrName: 69 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Destroy: 74 [Function]
+   NetworkBase.SendLocalThread.Destroy: 73 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Display: 53 [Function]
+   NetworkBase.SendLocalThread.Display: 52 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Enter: 78 [Function]
+   NetworkBase.SendLocalThread.Enter: 77 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Patch: 58 [Function]
+   NetworkBase.SendLocalThread.Patch: 57 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.Retest: 49 [Function]
+   NetworkBase.SendLocalThread.Retest: 48 [Function]
       nw/LocalAddrTest.cpp
       nw/NwIncrement.cpp
-   NetworkBase.SendLocalThread.retest_: 82 [ClassData]
+   NetworkBase.SendLocalThread.retest_: 81 [ClassData]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.SendLocalThread: 62 [Function]
+   NetworkBase.SendLocalThread.SendLocalThread: 61 [Function]
       nw/LocalAddrTest.cpp
-   NetworkBase.SendLocalThread.~SendLocalThread: 66 [Function]
+   NetworkBase.SendLocalThread.~SendLocalThread: 65 [Function]
       nw/LocalAddrTest.cpp
-   NodeBase.Singleton<SendLocalIpService>: 113 [Friend]
-   NodeBase.Singleton<SendLocalThread>: 45 [Friend]
+   NodeBase.Singleton<SendLocalIpService>: 112 [Friend]
+   NodeBase.Singleton<SendLocalThread>: 44 [Friend]
 nw/NwCliParms.cpp
    NetworkBase.HostNameMandExpl: 44 [SpaceData]
       nw/NwCliParms.cpp
@@ -50333,8 +50351,8 @@ nw/NwTypes.cpp
 nw/NwTypes.h
    NetworkBase.CipIpPort: 110 [SpaceData]
       cb/BcProtocol.cpp
+      cb/BcProtocol.h
    NetworkBase.FirstAppIpPort: 108 [SpaceData]
-      nw/IpPortCfgParm.cpp
    NetworkBase.InputHandler: 152 [Forward]
       nw/IpService.h
    NetworkBase.IoThread: 153 [Forward]
@@ -50414,7 +50432,6 @@ nw/NwTypes.h
    NetworkBase.ipport_t: 103 [Typedef]
       an/PotsShelf.h
       cb/BcProtocol.h
-      dip/DipProtocol.cpp
       dip/DipProtocol.h
       dip/DipTypes.h
       dip/StartupParameters.h
@@ -50422,7 +50439,6 @@ nw/NwTypes.h
       nw/IoThread.h
       nw/IpPort.cpp
       nw/IpPort.h
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
@@ -50458,13 +50474,6 @@ nw/NwTypes.h
       nw/UdpIpService.h
       sb/GlobalAddress.cpp
       sb/GlobalAddress.h
-      sn/PotsSessions.h
-   NetworkBase.IpPortCfgParm: 156 [Forward]
-      nw/NwTypes.h
-   NetworkBase.IpPortCfgParmPtr: 163 [Typedef]
-      an/PotsShelf.h
-      cb/BcProtocol.h
-      nw/LocalAddrTest.h
       sn/PotsSessions.h
    NetworkBase.IpProtocol: 118 [Enum]
       dip/BaseBot.cpp
@@ -50509,15 +50518,21 @@ nw/NwTypes.h
       nw/SysUdpSocket.h
       nw/UdpIoThread.cpp
       nw/UdpIpService.h
-   NetworkBase.IpService: 157 [Forward]
+   NetworkBase.IpService: 156 [Forward]
       nw/IoThread.h
       nw/IpPort.h
-      nw/IpPortCfgParm.h
+      nw/IpServiceCfg.cpp
+      nw/IpServiceCfg.h
       nw/NwDaemons.h
       nw/SysSocket.h
       nw/SysTcpSocket.h
       nw/TcpIpPort.h
       nw/UdpIpPort.h
+   NetworkBase.IpServiceCfg: 160 [Forward]
+      nw/NwTypes.h
+   NetworkBase.IpServiceCfgPtr: 164 [Typedef]
+      cb/BcProtocol.h
+      nw/LocalAddrTest.h
    NetworkBase.IPv4Addr: 44 [Typedef]
       nw/SysIpL2Addr.cpp
       nw/SysIpL2Addr.h
@@ -50547,9 +50562,8 @@ nw/NwTypes.h
    NetworkBase.IPv6Addr.u8: 60 [ClassData]
       nw/SysIpL2Addr.cpp
    NetworkBase.LastAppIpPort: 114 [SpaceData]
-      nw/IpPortCfgParm.cpp
    NetworkBase.LocalAddrTestIpPort: 109 [SpaceData]
-      nw/LocalAddrTest.cpp
+      nw/LocalAddrTest.h
    NetworkBase.MappedIPv4Quartet: 95 [SpaceData]
       nw/NwTypes.cpp
       nw/SysIpL2Addr.cpp
@@ -50559,7 +50573,6 @@ nw/NwTypes.h
       nw/SysIpL3Addr.cpp
    NetworkBase.NilIpPort: 107 [SpaceData]
       cb/ProxyBcSessions.cpp
-      dip/DipProtocol.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
       nw/NwTrace.cpp
@@ -50591,22 +50604,22 @@ nw/NwTypes.h
       nw/SysIpL3Addr.cpp
    NetworkBase.PotsCallIpPort: 112 [SpaceData]
       pb/PotsMessages.cpp
-      sn/PotsCallIpService.cpp
       sn/PotsCallPsm.cpp
       sn/PotsCwmService.cpp
       sn/PotsMultiplexer.cpp
+      sn/PotsSessions.h
    NetworkBase.PotsShelfIpPort: 111 [SpaceData]
-      an/PotsShelfIpService.cpp
+      an/PotsShelf.h
       pb/PotsMessages.cpp
       sn/PotsCallPsm.cpp
       sn/PotsCwmService.cpp
       sn/PotsMultiplexer.cpp
-   NetworkBase.SysIpL3Addr: 158 [Forward]
+   NetworkBase.SysIpL3Addr: 157 [Forward]
       nw/IpPortRegistry.h
       nw/SysSocket.h
       nw/SysTcpSocket.h
       nw/SysUdpSocket.h
-   NetworkBase.SysSocket: 159 [Forward]
+   NetworkBase.SysSocket: 158 [Forward]
       dip/DipProtocol.h
       nw/InputHandler.h
       nw/IpPort.cpp
@@ -50614,7 +50627,7 @@ nw/NwTypes.h
       nw/NwTrace.cpp
       nw/NwTrace.h
       nw/TcpIoThread.h
-   NetworkBase.SysTcpSocket: 160 [Forward]
+   NetworkBase.SysTcpSocket: 159 [Forward]
       cb/BcProtocol.cpp
       cb/BcProtocol.h
       dip/DipProtocol.h
@@ -50632,7 +50645,7 @@ nw/NwTypes.h
       sb/SbExtInputHandler.h
       sb/SbInputHandler.cpp
       sb/SbInputHandler.h
-   NetworkBase.SysTcpSocketPtr: 164 [Typedef]
+   NetworkBase.SysTcpSocketPtr: 163 [Typedef]
       nw/SysTcpSocket.h
       nw/SysTcpSocket.win.cpp
       nw/TcpIoThread.cpp
@@ -50929,7 +50942,7 @@ nw/SysIpL3Addr.win.cpp
    NetworkBase.SysIpL3Addr_ctor: 41 [SpaceData]
       nw/SysIpL3Addr.win.cpp
 nw/SysSocket.cpp
-   NetworkBase.SysSocket_SendBuff: 128 [SpaceData]
+   NetworkBase.SysSocket_SendBuff: 133 [SpaceData]
       nw/SysSocket.cpp
 nw/SysSocket.h
    NetworkBase.htonl: 51 [Function]
@@ -51390,9 +51403,9 @@ nw/SysUdpSocket.h
    SYSUDPSOCKET_H_INCLUDED: 23 [Define]
       nw/SysUdpSocket.h
 nw/SysUdpSocket.win.cpp
-   NetworkBase.SysUdpSocket_RecvFrom: 66 [SpaceData]
+   NetworkBase.SysUdpSocket_RecvFrom: 68 [SpaceData]
       nw/SysUdpSocket.win.cpp
-   NetworkBase.SysUdpSocket_SendTo: 128 [SpaceData]
+   NetworkBase.SysUdpSocket_SendTo: 147 [SpaceData]
       nw/SysUdpSocket.win.cpp
 nw/TcpIoThread.cpp
    NetworkBase.ListenerHasFailed: 72 [Function]
@@ -51490,7 +51503,6 @@ nw/TcpIpService.cpp
 nw/TcpIpService.h
    NetworkBase.TcpIpService: 33 [Class]
       cb/BcProtocol.h
-      dip/DipProtocol.cpp
       dip/DipProtocol.h
       nw/NwDaemons.cpp
       nw/NwDaemons.h
@@ -51507,8 +51519,6 @@ nw/TcpIpService.h
    NetworkBase.TcpIpService.CreatePort: 86 [Function]
       nw/TcpIpService.cpp
    NetworkBase.TcpIpService.Display: 58 [Function]
-      dip/DipProtocol.cpp
-      dip/DipProtocol.h
       nw/TcpIpService.cpp
    NetworkBase.TcpIpService.HasSharedSocket: 65 [Function]
    NetworkBase.TcpIpService.Keepalive: 54 [Function]
@@ -61757,7 +61767,7 @@ sb/TlvIntParameter.h
 sb/TlvMessage.cpp
    SessionBase.TlvMessage_AddParm: 128 [SpaceData]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage_Wrap: 434 [SpaceData]
+   SessionBase.TlvMessage_Wrap: 435 [SpaceData]
       sb/TlvMessage.cpp
 sb/TlvMessage.h
    SessionBase.TlvMessage: 45 [Class]
@@ -61788,7 +61798,7 @@ sb/TlvMessage.h
    SessionBase.TlvMessage: 145 [Friend]
    SessionBase.TlvMessage.AddBytes: 196 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.AddFence: 277 [Function]
+   SessionBase.TlvMessage.AddFence: 276 [Function]
       sb/TlvMessage.cpp
    SessionBase.TlvMessage.AddParm: 191 [Function]
       sb/TlvMessage.cpp
@@ -61803,26 +61813,26 @@ sb/TlvMessage.h
       sb/TlvMessage.h
    SessionBase.TlvMessage.AllParms: 176 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.ChangeDir: 323 [Function]
+   SessionBase.TlvMessage.ChangeDir: 322 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.CheckFence: 296 [Function]
+   SessionBase.TlvMessage.CheckFence: 295 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.CopyParm: 203 [Function]
+   SessionBase.TlvMessage.CopyParm: 202 [Function]
       sb/TlvMessage.cpp
    SessionBase.TlvMessage.CopyType: 104 [Function]
       sn/PotsProxyHandlers.cpp
-   SessionBase.TlvMessage.DeleteParm: 208 [Function]
+   SessionBase.TlvMessage.DeleteParm: 206 [Function]
       mb/MediaPsm.cpp
       sb/TlvMessage.cpp
       sn/PotsCwmService.cpp
-   SessionBase.TlvMessage.Fence: 259 [Typedef]
+   SessionBase.TlvMessage.Fence: 257 [Typedef]
       sb/TlvMessage.cpp
       sb/TlvMessage.h
-   SessionBase.TlvMessage.FencePtr: 292 [Function]
+   SessionBase.TlvMessage.FencePtr: 291 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.FenceSize: 260 [ClassData]
+   SessionBase.TlvMessage.FenceSize: 258 [ClassData]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.FindBytes: 265 [Function]
+   SessionBase.TlvMessage.FindBytes: 263 [Function]
       sb/TlvMessage.cpp
    SessionBase.TlvMessage.FindParm: 160 [Function]
       mb/MediaPsm.cpp
@@ -61853,20 +61863,20 @@ sb/TlvMessage.h
       sn/PotsWmlService.cpp
    SessionBase.TlvMessage.FirstParm: 165 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.InspectMsg: 225 [Function]
+   SessionBase.TlvMessage.InspectMsg: 223 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.Log2Align: 213 [ClassData]
+   SessionBase.TlvMessage.Log2Align: 211 [ClassData]
       sb/TlvMessage.h
-   SessionBase.TlvMessage.MatchParm: 272 [Function]
+   SessionBase.TlvMessage.MatchParm: 270 [Function]
       sb/TlvMessage.cpp
    SessionBase.TlvMessage.NextParm: 170 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.Pad: 218 [Function]
+   SessionBase.TlvMessage.Pad: 216 [Function]
       sb/TlvMessage.cpp
       sb/TlvProtocol.cpp
-   SessionBase.TlvMessage.ParmDeathPattern: 308 [ClassData]
+   SessionBase.TlvMessage.ParmDeathPattern: 307 [ClassData]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.ParmFencePattern: 304 [ClassData]
+   SessionBase.TlvMessage.ParmFencePattern: 303 [ClassData]
       sb/TlvMessage.cpp
    SessionBase.TlvMessage.ParmIterator: 143 [Class]
       sb/TlvMessage.cpp
@@ -61885,51 +61895,51 @@ sb/TlvMessage.h
       sb/TlvMessage.cpp
       sb/TlvMessage.h
    SessionBase.TlvMessage.ParmIterator.~ParmIterator: 148 [Function]
-   SessionBase.TlvMessage.ParmOffset: 287 [Function]
+   SessionBase.TlvMessage.ParmOffset: 286 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.Patch: 229 [Function]
+   SessionBase.TlvMessage.Patch: 227 [Function]
       sb/TextTlvMessage.cpp
       sb/TextTlvMessage.h
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.Send: 233 [Function]
+   SessionBase.TlvMessage.Send: 231 [Function]
       pb/PotsCircuit.cpp
       pb/PotsIncrement.cpp
       sb/TextTlvMessage.h
       sb/TlvMessage.cpp
       sn/PotsCallFactory.cpp
-   SessionBase.TlvMessage.TlvLayout: 281 [Function]
+   SessionBase.TlvMessage.TlvLayout: 280 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.TlvMessage(const Message&,ProtocolSM*): 242 [Function]
+   SessionBase.TlvMessage.TlvMessage(const Message&,ProtocolSM*): 240 [Function]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.TlvMessage(const TlvParmLayout&,ProtocolSM*): 58 [Function]
+   SessionBase.TlvMessage.TlvMessage(const TlvParm&,ProtocolSM*): 58 [Function]
       sb/TlvMessage.cpp
    SessionBase.TlvMessage.TlvMessage(ProtocolSM*,size_t): 50 [Function]
       cb/BcProtocol.cpp
       pb/PotsMessages.cpp
       sb/TextTlvMessage.cpp
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.TlvMessage(SbIpBufferPtr&): 237 [Function]
+   SessionBase.TlvMessage.TlvMessage(SbIpBufferPtr&): 235 [Function]
       cb/BcProtocol.cpp
       pb/PotsMessages.cpp
       sb/TextTlvMessage.cpp
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.TlvMessage_AddType: 314 [Function]
+   SessionBase.TlvMessage.TlvMessage_AddType: 313 [Function]
       sb/TlvMessage.h
-   SessionBase.TlvMessage.TlvMessage_CopyType: 316 [Function]
+   SessionBase.TlvMessage.TlvMessage_CopyType: 315 [Function]
       sb/TlvMessage.h
-   SessionBase.TlvMessage.TlvMessage_FindType: 312 [Function]
+   SessionBase.TlvMessage.TlvMessage_FindType: 311 [Function]
       sb/TlvMessage.h
-   SessionBase.TlvMessage.TlvMessage_VerifyParm: 318 [Function]
+   SessionBase.TlvMessage.TlvMessage_VerifyParm: 317 [Function]
       sb/TlvMessage.h
-   SessionBase.TlvMessage.TlvMsgLayout: 246 [Class]
+   SessionBase.TlvMessage.TlvMsgLayout: 244 [Class]
    SessionBase.TlvMessage.TlvMsgLayout: 139 [Forward]
       sb/TlvMessage.cpp
       sb/TlvMessage.h
-   SessionBase.TlvMessage.TlvMsgLayout.bytes: 252 [ClassData]
+   SessionBase.TlvMessage.TlvMsgLayout.bytes: 250 [ClassData]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.TlvMsgLayout.firstParm: 251 [ClassData]
+   SessionBase.TlvMessage.TlvMsgLayout.firstParm: 249 [ClassData]
       sb/TlvMessage.cpp
-   SessionBase.TlvMessage.TlvMsgLayout.header: 248 [ClassData]
+   SessionBase.TlvMessage.TlvMsgLayout.header: 246 [ClassData]
       sb/TlvMessage.cpp
    SessionBase.TlvMessage.VerifyParm: 122 [Function]
       cb/BcAddress.cpp
@@ -61945,35 +61955,52 @@ sb/TlvMessage.h
 sb/TlvParameter.h
    SessionBase.MaxTlvParmSize: 46 [SpaceData]
       sb/TlvParameter.h
-   SessionBase.TlvParameter: 66 [Class]
+   SessionBase.TlvParameter: 63 [Class]
       cb/BcAddress.h
       cb/BcProtocol.h
       pb/PotsProtocol.h
       sb/TimerProtocol.h
       sb/TlvIntParameter.h
       sb/TlvParameter.cpp
-   SessionBase.TlvParameter.ExtractPid: 71 [Function]
+   SessionBase.TlvParameter.ExtractPid: 68 [Function]
       sb/TlvParameter.cpp
-   SessionBase.TlvParameter.Patch: 75 [Function]
+   SessionBase.TlvParameter.Patch: 72 [Function]
       sb/TlvParameter.cpp
-   SessionBase.TlvParameter.TlvParameter: 80 [Function]
+   SessionBase.TlvParameter.TlvParameter: 77 [Function]
       cb/BcAddress.cpp
       cb/BcProtocol.cpp
       pb/PotsProtocol.cpp
       sb/TimerProtocol.cpp
       sb/TlvIntParameter.h
       sb/TlvParameter.cpp
-   SessionBase.TlvParameter.VerifyMsg: 92 [Function]
+   SessionBase.TlvParameter.VerifyMsg: 89 [Function]
       cb/BcAddress.h
       cb/BcProtocol.cpp
       pb/PotsProtocol.cpp
       sb/TlvIntParameter.h
       sb/TlvParameter.cpp
-   SessionBase.TlvParameter.~TlvParameter: 84 [Function]
+   SessionBase.TlvParameter.~TlvParameter: 81 [Function]
       sb/TlvParameter.cpp
-   SessionBase.TlvParmArray: 59 [Typedef]
+   SessionBase.TlvParm: 52 [Class]
+      an/PotsShelfHandler.cpp
       sb/TlvMessage.cpp
       sb/TlvMessage.h
+      sb/TlvParameter.cpp
+      sb/TlvParameter.h
+      sb/TlvProtocol.cpp
+      sn/PotsCallHandler.cpp
+   SessionBase.TlvParm.bytes: 55 [ClassData]
+      an/PotsShelfHandler.cpp
+      mb/MediaPsm.cpp
+      sb/Context.cpp
+      sb/TlvMessage.cpp
+      sb/TlvMessage.h
+      sn/PotsCallHandler.cpp
+      sn/PotsCwmService.cpp
+   SessionBase.TlvParm.header: 54 [ClassData]
+      sb/TlvMessage.cpp
+      sb/TlvParameter.cpp
+      sb/TlvProtocol.cpp
    SessionBase.TlvParmHeader: 38 [Class]
       sb/Timer.cpp
       sb/TlvMessage.cpp
@@ -61986,30 +62013,6 @@ sb/TlvParameter.h
    SessionBase.TlvParmHeader.plen: 41 [ClassData]
       sb/TlvMessage.cpp
       sb/TlvProtocol.cpp
-   SessionBase.TlvParmLayout: 52 [Class]
-      sb/TlvMessage.cpp
-      sb/TlvMessage.h
-      sb/TlvParameter.cpp
-      sb/TlvParameter.h
-   SessionBase.TlvParmLayout.bytes: 55 [ClassData]
-      an/PotsShelfHandler.cpp
-      mb/MediaPsm.cpp
-      sb/Context.cpp
-      sb/TlvMessage.cpp
-      sb/TlvMessage.h
-      sn/PotsCallHandler.cpp
-      sn/PotsCwmService.cpp
-   SessionBase.TlvParmLayout.header: 54 [ClassData]
-      sb/TlvMessage.cpp
-      sb/TlvParameter.cpp
-      sb/TlvProtocol.cpp
-   SessionBase.TlvParmPtr: 58 [Typedef]
-      an/PotsShelfHandler.cpp
-      sb/TlvMessage.cpp
-      sb/TlvMessage.h
-      sb/TlvParameter.h
-      sb/TlvProtocol.cpp
-      sn/PotsCallHandler.cpp
    TLVPARAMETER_H_INCLUDED: 23 [Define]
       sb/TlvParameter.h
 sb/TlvProtocol.h
@@ -62638,13 +62641,9 @@ sn/PotsCallFactory.cpp
    PotsBase.SendRelease: 45 [Function]
       sn/PotsCallFactory.cpp
 sn/PotsCallIpService.cpp
-   PotsBase.PotsCallIpPortExpl: 34 [SpaceData]
+   PotsBase.PotsCallServiceExpl: 54 [SpaceData]
       sn/PotsCallIpService.cpp
-   PotsBase.PotsCallIpPortKey: 33 [SpaceData]
-      sn/PotsCallIpService.cpp
-   PotsBase.PotsCallServiceExpl: 65 [SpaceData]
-      sn/PotsCallIpService.cpp
-   PotsBase.PotsCallServiceStr: 64 [SpaceData]
+   PotsBase.PotsCallServiceStr: 53 [SpaceData]
       sn/PotsCallIpService.cpp
 sn/PotsCallPsm.cpp
    PotsBase.PotsCallPsm_ProcessOgMsg: 191 [SpaceData]
@@ -64367,174 +64366,174 @@ sn/PotsProxySessions.h
    POTSPROXYSESSIONS_H_INCLUDED: 23 [Define]
       sn/PotsProxySessions.h
 sn/PotsSessions.h
-   NodeBase.Singleton<PotsAuthorizeOriginationSap>: 330 [Friend]
-   NodeBase.Singleton<PotsAuthorizeTerminationSap>: 356 [Friend]
-   NodeBase.Singleton<PotsBcActive>: 294 [Friend]
-   NodeBase.Singleton<PotsBcAnalyzingInformation>: 222 [Friend]
-   NodeBase.Singleton<PotsBcAuthorizingCallSetup>: 238 [Friend]
-   NodeBase.Singleton<PotsBcAuthorizingOrigination>: 206 [Friend]
-   NodeBase.Singleton<PotsBcAuthorizingTermination>: 262 [Friend]
-   NodeBase.Singleton<PotsBcCollectingInformation>: 214 [Friend]
-   NodeBase.Singleton<PotsBcException>: 318 [Friend]
-   NodeBase.Singleton<PotsBcLocalSuspending>: 302 [Friend]
-   NodeBase.Singleton<PotsBcNull>: 198 [Friend]
-   NodeBase.Singleton<PotsBcOrigAlerting>: 254 [Friend]
-   NodeBase.Singleton<PotsBcPresentingCall>: 278 [Friend]
-   NodeBase.Singleton<PotsBcRemoteSuspending>: 310 [Friend]
-   NodeBase.Singleton<PotsBcSelectingFacility>: 270 [Friend]
-   NodeBase.Singleton<PotsBcSelectingRoute>: 230 [Friend]
-   NodeBase.Singleton<PotsBcSendingCall>: 246 [Friend]
-   NodeBase.Singleton<PotsBcService>: 180 [Friend]
-   NodeBase.Singleton<PotsBcTermAlerting>: 286 [Friend]
-   NodeBase.Singleton<PotsCallFactory>: 120 [Friend]
-   NodeBase.Singleton<PotsCallIpService>: 58 [Friend]
-   NodeBase.Singleton<PotsCollectInformationSap>: 343 [Friend]
-   NodeBase.Singleton<PotsLocalAlertingSnp>: 383 [Friend]
-   NodeBase.Singleton<PotsLocalBusySap>: 370 [Friend]
-   PotsBase.PotsAuthorizeOriginationSap: 328 [Class]
+   NodeBase.Singleton<PotsAuthorizeOriginationSap>: 326 [Friend]
+   NodeBase.Singleton<PotsAuthorizeTerminationSap>: 352 [Friend]
+   NodeBase.Singleton<PotsBcActive>: 290 [Friend]
+   NodeBase.Singleton<PotsBcAnalyzingInformation>: 218 [Friend]
+   NodeBase.Singleton<PotsBcAuthorizingCallSetup>: 234 [Friend]
+   NodeBase.Singleton<PotsBcAuthorizingOrigination>: 202 [Friend]
+   NodeBase.Singleton<PotsBcAuthorizingTermination>: 258 [Friend]
+   NodeBase.Singleton<PotsBcCollectingInformation>: 210 [Friend]
+   NodeBase.Singleton<PotsBcException>: 314 [Friend]
+   NodeBase.Singleton<PotsBcLocalSuspending>: 298 [Friend]
+   NodeBase.Singleton<PotsBcNull>: 194 [Friend]
+   NodeBase.Singleton<PotsBcOrigAlerting>: 250 [Friend]
+   NodeBase.Singleton<PotsBcPresentingCall>: 274 [Friend]
+   NodeBase.Singleton<PotsBcRemoteSuspending>: 306 [Friend]
+   NodeBase.Singleton<PotsBcSelectingFacility>: 266 [Friend]
+   NodeBase.Singleton<PotsBcSelectingRoute>: 226 [Friend]
+   NodeBase.Singleton<PotsBcSendingCall>: 242 [Friend]
+   NodeBase.Singleton<PotsBcService>: 176 [Friend]
+   NodeBase.Singleton<PotsBcTermAlerting>: 282 [Friend]
+   NodeBase.Singleton<PotsCallFactory>: 116 [Friend]
+   NodeBase.Singleton<PotsCallIpService>: 57 [Friend]
+   NodeBase.Singleton<PotsCollectInformationSap>: 339 [Friend]
+   NodeBase.Singleton<PotsLocalAlertingSnp>: 379 [Friend]
+   NodeBase.Singleton<PotsLocalBusySap>: 366 [Friend]
+   PotsBase.PotsAuthorizeOriginationSap: 324 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcTriggers.cpp
       sn/PotsBocService.cpp
       sn/PotsProxySessions.cpp
       sn/PotsSessions.h
       sn/PotsSusService.cpp
-   PotsBase.PotsAuthorizeOriginationSap.PotsAuthorizeOriginationSap: 337 [Function]
+   PotsBase.PotsAuthorizeOriginationSap.PotsAuthorizeOriginationSap: 333 [Function]
       sn/PotsBcTriggers.cpp
-   PotsBase.PotsAuthorizeOriginationSap.PotsBocPriority: 335 [ClassData]
+   PotsBase.PotsAuthorizeOriginationSap.PotsBocPriority: 331 [ClassData]
       sn/PotsBocService.cpp
-   PotsBase.PotsAuthorizeOriginationSap.PotsSusPriority: 334 [ClassData]
+   PotsBase.PotsAuthorizeOriginationSap.PotsSusPriority: 330 [ClassData]
       sn/PotsSusService.cpp
-   PotsBase.PotsAuthorizeOriginationSap.~PotsAuthorizeOriginationSap: 338 [Function]
-   PotsBase.PotsAuthorizeTerminationSap: 354 [Class]
+   PotsBase.PotsAuthorizeOriginationSap.~PotsAuthorizeOriginationSap: 334 [Function]
+   PotsBase.PotsAuthorizeTerminationSap: 350 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcTriggers.cpp
       sn/PotsBicService.cpp
       sn/PotsCfuService.cpp
       sn/PotsSessions.h
       sn/PotsSusService.cpp
-   PotsBase.PotsAuthorizeTerminationSap.PotsAuthorizeTerminationSap: 364 [Function]
+   PotsBase.PotsAuthorizeTerminationSap.PotsAuthorizeTerminationSap: 360 [Function]
       sn/PotsBcTriggers.cpp
-   PotsBase.PotsAuthorizeTerminationSap.PotsBicPriority: 361 [ClassData]
+   PotsBase.PotsAuthorizeTerminationSap.PotsBicPriority: 357 [ClassData]
       sn/PotsBicService.cpp
-   PotsBase.PotsAuthorizeTerminationSap.PotsCfuPriority: 362 [ClassData]
+   PotsBase.PotsAuthorizeTerminationSap.PotsCfuPriority: 358 [ClassData]
       sn/PotsCfuService.cpp
-   PotsBase.PotsAuthorizeTerminationSap.PotsSusPriority: 360 [ClassData]
+   PotsBase.PotsAuthorizeTerminationSap.PotsSusPriority: 356 [ClassData]
       sn/PotsSusService.cpp
-   PotsBase.PotsAuthorizeTerminationSap.~PotsAuthorizeTerminationSap: 365 [Function]
-   PotsBase.PotsBcActive: 292 [Class]
+   PotsBase.PotsAuthorizeTerminationSap.~PotsAuthorizeTerminationSap: 361 [Function]
+   PotsBase.PotsBcActive: 288 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcActive.PotsBcActive: 296 [Function]
+   PotsBase.PotsBcActive.PotsBcActive: 292 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcActive.~PotsBcActive: 297 [Function]
-   PotsBase.PotsBcAnalyzingInformation: 220 [Class]
+   PotsBase.PotsBcActive.~PotsBcActive: 293 [Function]
+   PotsBase.PotsBcAnalyzingInformation: 216 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcAnalyzingInformation.PotsBcAnalyzingInformation: 224 [Function]
+   PotsBase.PotsBcAnalyzingInformation.PotsBcAnalyzingInformation: 220 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcAnalyzingInformation.~PotsBcAnalyzingInformation: 225 [Function]
-   PotsBase.PotsBcAuthorizingCallSetup: 236 [Class]
+   PotsBase.PotsBcAnalyzingInformation.~PotsBcAnalyzingInformation: 221 [Function]
+   PotsBase.PotsBcAuthorizingCallSetup: 232 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcAuthorizingCallSetup.PotsBcAuthorizingCallSetup: 240 [Function]
+   PotsBase.PotsBcAuthorizingCallSetup.PotsBcAuthorizingCallSetup: 236 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcAuthorizingCallSetup.~PotsBcAuthorizingCallSetup: 241 [Function]
-   PotsBase.PotsBcAuthorizingOrigination: 204 [Class]
+   PotsBase.PotsBcAuthorizingCallSetup.~PotsBcAuthorizingCallSetup: 237 [Function]
+   PotsBase.PotsBcAuthorizingOrigination: 200 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcAuthorizingOrigination.PotsBcAuthorizingOrigination: 208 [Function]
+   PotsBase.PotsBcAuthorizingOrigination.PotsBcAuthorizingOrigination: 204 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcAuthorizingOrigination.~PotsBcAuthorizingOrigination: 209 [Function]
-   PotsBase.PotsBcAuthorizingTermination: 260 [Class]
+   PotsBase.PotsBcAuthorizingOrigination.~PotsBcAuthorizingOrigination: 205 [Function]
+   PotsBase.PotsBcAuthorizingTermination: 256 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcAuthorizingTermination.PotsBcAuthorizingTermination: 264 [Function]
+   PotsBase.PotsBcAuthorizingTermination.PotsBcAuthorizingTermination: 260 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcAuthorizingTermination.~PotsBcAuthorizingTermination: 265 [Function]
-   PotsBase.PotsBcCollectingInformation: 212 [Class]
+   PotsBase.PotsBcAuthorizingTermination.~PotsBcAuthorizingTermination: 261 [Function]
+   PotsBase.PotsBcCollectingInformation: 208 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcCollectingInformation.PotsBcCollectingInformation: 216 [Function]
+   PotsBase.PotsBcCollectingInformation.PotsBcCollectingInformation: 212 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcCollectingInformation.~PotsBcCollectingInformation: 217 [Function]
-   PotsBase.PotsBcException: 316 [Class]
+   PotsBase.PotsBcCollectingInformation.~PotsBcCollectingInformation: 213 [Function]
+   PotsBase.PotsBcException: 312 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcException.PotsBcException: 320 [Function]
+   PotsBase.PotsBcException.PotsBcException: 316 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcException.~PotsBcException: 321 [Function]
-   PotsBase.PotsBcLocalSuspending: 300 [Class]
+   PotsBase.PotsBcException.~PotsBcException: 317 [Function]
+   PotsBase.PotsBcLocalSuspending: 296 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcLocalSuspending.PotsBcLocalSuspending: 304 [Function]
+   PotsBase.PotsBcLocalSuspending.PotsBcLocalSuspending: 300 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcLocalSuspending.~PotsBcLocalSuspending: 305 [Function]
-   PotsBase.PotsBcNull: 196 [Class]
+   PotsBase.PotsBcLocalSuspending.~PotsBcLocalSuspending: 301 [Function]
+   PotsBase.PotsBcNull: 192 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcNull.PotsBcNull: 200 [Function]
+   PotsBase.PotsBcNull.PotsBcNull: 196 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcNull.~PotsBcNull: 201 [Function]
-   PotsBase.PotsBcOrigAlerting: 252 [Class]
+   PotsBase.PotsBcNull.~PotsBcNull: 197 [Function]
+   PotsBase.PotsBcOrigAlerting: 248 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcOrigAlerting.PotsBcOrigAlerting: 256 [Function]
+   PotsBase.PotsBcOrigAlerting.PotsBcOrigAlerting: 252 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcOrigAlerting.~PotsBcOrigAlerting: 257 [Function]
-   PotsBase.PotsBcPresentingCall: 276 [Class]
+   PotsBase.PotsBcOrigAlerting.~PotsBcOrigAlerting: 253 [Function]
+   PotsBase.PotsBcPresentingCall: 272 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcPresentingCall.PotsBcPresentingCall: 280 [Function]
+   PotsBase.PotsBcPresentingCall.PotsBcPresentingCall: 276 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcPresentingCall.~PotsBcPresentingCall: 281 [Function]
-   PotsBase.PotsBcRemoteSuspending: 308 [Class]
+   PotsBase.PotsBcPresentingCall.~PotsBcPresentingCall: 277 [Function]
+   PotsBase.PotsBcRemoteSuspending: 304 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcRemoteSuspending.PotsBcRemoteSuspending: 312 [Function]
+   PotsBase.PotsBcRemoteSuspending.PotsBcRemoteSuspending: 308 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcRemoteSuspending.~PotsBcRemoteSuspending: 313 [Function]
-   PotsBase.PotsBcSelectingFacility: 268 [Class]
+   PotsBase.PotsBcRemoteSuspending.~PotsBcRemoteSuspending: 309 [Function]
+   PotsBase.PotsBcSelectingFacility: 264 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcSelectingFacility.PotsBcSelectingFacility: 272 [Function]
+   PotsBase.PotsBcSelectingFacility.PotsBcSelectingFacility: 268 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcSelectingFacility.~PotsBcSelectingFacility: 273 [Function]
-   PotsBase.PotsBcSelectingRoute: 228 [Class]
+   PotsBase.PotsBcSelectingFacility.~PotsBcSelectingFacility: 269 [Function]
+   PotsBase.PotsBcSelectingRoute: 224 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcSelectingRoute.PotsBcSelectingRoute: 232 [Function]
+   PotsBase.PotsBcSelectingRoute.PotsBcSelectingRoute: 228 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcSelectingRoute.~PotsBcSelectingRoute: 233 [Function]
-   PotsBase.PotsBcSendingCall: 244 [Class]
+   PotsBase.PotsBcSelectingRoute.~PotsBcSelectingRoute: 229 [Function]
+   PotsBase.PotsBcSendingCall: 240 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcSendingCall.PotsBcSendingCall: 248 [Function]
+   PotsBase.PotsBcSendingCall.PotsBcSendingCall: 244 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcSendingCall.~PotsBcSendingCall: 249 [Function]
-   PotsBase.PotsBcService: 178 [Class]
+   PotsBase.PotsBcSendingCall.~PotsBcSendingCall: 245 [Function]
+   PotsBase.PotsBcService: 174 [Class]
       sn/PotsBcService.cpp
       sn/PotsSessions.h
       sn/SnModule.cpp
-   PotsBase.PotsBcService.PotsBcService: 185 [Function]
+   PotsBase.PotsBcService.PotsBcService: 181 [Function]
       sn/PotsBcService.cpp
-   PotsBase.PotsBcService.~PotsBcService: 189 [Function]
+   PotsBase.PotsBcService.~PotsBcService: 185 [Function]
       sn/PotsBcService.cpp
-   PotsBase.PotsBcSsm: 395 [Class]
+   PotsBase.PotsBcSsm: 391 [Class]
       sn/PotsBcHandlers.cpp
       sn/PotsBcSsm.cpp
       sn/PotsBicService.cpp
@@ -64551,28 +64550,28 @@ sn/PotsSessions.h
       sn/PotsSusService.cpp
       sn/PotsTreatments.cpp
       sn/PotsWmlService.cpp
-   PotsBase.PotsBcSsm.AnalyzeMsg: 431 [Function]
+   PotsBase.PotsBcSsm.AnalyzeMsg: 427 [Function]
       sn/PotsBcHandlers.cpp
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcSsm.AnalyzeNPsmTimeout: 443 [Function]
+   PotsBase.PotsBcSsm.AnalyzeNPsmTimeout: 439 [Function]
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcSsm.ClearCall: 448 [Function]
+   PotsBase.PotsBcSsm.ClearCall: 444 [Function]
       sn/PotsBcHandlers.cpp
       sn/PotsBcSsm.cpp
       sn/PotsCwtService.cpp
       sn/PotsTreatments.cpp
-   PotsBase.PotsBcSsm.ClearTimer: 426 [Function]
+   PotsBase.PotsBcSsm.ClearTimer: 422 [Function]
       sn/PotsBcHandlers.cpp
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcSsm.Display: 452 [Function]
+   PotsBase.PotsBcSsm.Display: 448 [Function]
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcSsm.GetTreatment: 439 [Function]
+   PotsBase.PotsBcSsm.GetTreatment: 435 [Function]
       sn/PotsBcHandlers.cpp
-   PotsBase.PotsBcSsm.PotsBcSsm: 401 [Function]
+   PotsBase.PotsBcSsm.PotsBcSsm: 397 [Function]
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcSsm.prof_: 473 [ClassData]
+   PotsBase.PotsBcSsm.prof_: 469 [ClassData]
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcSsm.Profile: 409 [Function]
+   PotsBase.PotsBcSsm.Profile: 405 [Function]
       sn/PotsBcHandlers.cpp
       sn/PotsBcSsm.cpp
       sn/PotsBicService.cpp
@@ -64588,25 +64587,25 @@ sn/PotsSessions.h
       sn/PotsSusService.cpp
       sn/PotsTreatments.cpp
       sn/PotsWmlService.cpp
-   PotsBase.PotsBcSsm.PsmDeleted: 469 [Function]
+   PotsBase.PotsBcSsm.PsmDeleted: 465 [Function]
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcSsm.SetNextSap: 457 [Function]
+   PotsBase.PotsBcSsm.SetNextSap: 453 [Function]
       sn/PotsBcSsm.cpp
       sn/PotsCcwService.cpp
       sn/PotsCwtService.cpp
-   PotsBase.PotsBcSsm.SetNextSnp: 461 [Function]
+   PotsBase.PotsBcSsm.SetNextSnp: 457 [Function]
       sn/PotsBcHandlers.cpp
       sn/PotsBcSsm.cpp
       sn/PotsCwtService.cpp
       sn/PotsProxyHandlers.cpp
       sn/PotsTreatments.cpp
-   PotsBase.PotsBcSsm.SetProfile: 405 [Function]
+   PotsBase.PotsBcSsm.SetProfile: 401 [Function]
       sn/PotsBcHandlers.cpp
       sn/PotsBcSsm.cpp
       sn/PotsProxyHandlers.cpp
-   PotsBase.PotsBcSsm.SetTreatment: 435 [Function]
+   PotsBase.PotsBcSsm.SetTreatment: 431 [Function]
       sn/PotsBcHandlers.cpp
-   PotsBase.PotsBcSsm.StartTimer: 418 [Function]
+   PotsBase.PotsBcSsm.StartTimer: 414 [Function]
       sn/PotsBcHandlers.cpp
       sn/PotsBcSsm.cpp
       sn/PotsCcwService.cpp
@@ -64614,66 +64613,66 @@ sn/PotsSessions.h
       sn/PotsCwtService.cpp
       sn/PotsTreatments.cpp
       sn/PotsWmlService.cpp
-   PotsBase.PotsBcSsm.StopTimer: 422 [Function]
+   PotsBase.PotsBcSsm.StopTimer: 418 [Function]
       sn/PotsBcHandlers.cpp
       sn/PotsBcSsm.cpp
       sn/PotsWmlService.cpp
-   PotsBase.PotsBcSsm.tid_: 477 [ClassData]
+   PotsBase.PotsBcSsm.tid_: 473 [ClassData]
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcSsm.TimerPsm: 414 [Function]
+   PotsBase.PotsBcSsm.TimerPsm: 410 [Function]
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcSsm.trmt_: 481 [ClassData]
+   PotsBase.PotsBcSsm.trmt_: 477 [ClassData]
       sn/PotsBcSsm.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcSsm.~PotsBcSsm: 465 [Function]
+   PotsBase.PotsBcSsm.~PotsBcSsm: 461 [Function]
       sn/PotsBcSsm.cpp
-   PotsBase.PotsBcTermAlerting: 284 [Class]
+   PotsBase.PotsBcTermAlerting: 280 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcStates.cpp
       sn/PotsSessions.h
-   PotsBase.PotsBcTermAlerting.PotsBcTermAlerting: 288 [Function]
+   PotsBase.PotsBcTermAlerting.PotsBcTermAlerting: 284 [Function]
       sn/PotsBcStates.cpp
-   PotsBase.PotsBcTermAlerting.~PotsBcTermAlerting: 289 [Function]
-   PotsBase.PotsCallFactory: 118 [Class]
+   PotsBase.PotsBcTermAlerting.~PotsBcTermAlerting: 285 [Function]
+   PotsBase.PotsCallFactory: 114 [Class]
       sn/PotsCallFactory.cpp
       sn/PotsSessions.h
       sn/SnModule.cpp
-   PotsBase.PotsCallFactory.AllocIcMsg: 132 [Function]
+   PotsBase.PotsCallFactory.AllocIcMsg: 128 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.AllocIcPsm: 136 [Function]
+   PotsBase.PotsCallFactory.AllocIcPsm: 132 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.AllocOgMsg: 141 [Function]
+   PotsBase.PotsCallFactory.AllocOgMsg: 137 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.AllocRoot: 146 [Function]
+   PotsBase.PotsCallFactory.AllocRoot: 142 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.CreateText: 150 [Function]
+   PotsBase.PotsCallFactory.CreateText: 146 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.PortAllocated: 154 [Function]
+   PotsBase.PotsCallFactory.PortAllocated: 150 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.PotsCallFactory: 124 [Function]
+   PotsBase.PotsCallFactory.PotsCallFactory: 120 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.ReallocOgMsg: 158 [Function]
+   PotsBase.PotsCallFactory.ReallocOgMsg: 154 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.ScreenFirstMsg: 162 [Function]
+   PotsBase.PotsCallFactory.ScreenFirstMsg: 158 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.ScreenIcMsgs: 167 [Function]
+   PotsBase.PotsCallFactory.ScreenIcMsgs: 163 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.VerifyRoute: 171 [Function]
+   PotsBase.PotsCallFactory.VerifyRoute: 167 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallFactory.~PotsCallFactory: 128 [Function]
+   PotsBase.PotsCallFactory.~PotsCallFactory: 124 [Function]
       sn/PotsCallFactory.cpp
-   PotsBase.PotsCallHandler: 91 [Class]
+   PotsBase.PotsCallHandler: 87 [Class]
       sn/PotsCallHandler.cpp
       sn/PotsCallIpService.cpp
-   PotsBase.PotsCallHandler.DiscardBuff: 104 [Function]
+   PotsBase.PotsCallHandler.DiscardBuff: 100 [Function]
       sn/PotsCallHandler.cpp
-   PotsBase.PotsCallHandler.PotsCallHandler: 96 [Function]
+   PotsBase.PotsCallHandler.PotsCallHandler: 92 [Function]
       sn/PotsCallHandler.cpp
-   PotsBase.PotsCallHandler.ReceiveBuff: 110 [Function]
+   PotsBase.PotsCallHandler.ReceiveBuff: 106 [Function]
       sn/PotsCallHandler.cpp
-   PotsBase.PotsCallHandler.~PotsCallHandler: 100 [Function]
+   PotsBase.PotsCallHandler.~PotsCallHandler: 96 [Function]
       sn/PotsCallHandler.cpp
-   PotsBase.PotsCallIpService: 56 [Class]
+   PotsBase.PotsCallIpService: 55 [Class]
       sn/PotsCallIpService.cpp
       sn/PotsSessions.h
       sn/SnModule.cpp
@@ -64681,58 +64680,56 @@ sn/PotsSessions.h
       sn/PotsCallIpService.cpp
    PotsBase.PotsCallIpService.CreateText: 80 [Function]
       sn/PotsCallIpService.cpp
-   PotsBase.PotsCallIpService.GetFaction: 64 [Function]
-   PotsBase.PotsCallIpService.Name: 62 [Function]
-   PotsBase.PotsCallIpService.Port: 63 [Function]
-   PotsBase.PotsCallIpService.portCfg_: 84 [ClassData]
+   PotsBase.PotsCallIpService.Enabled: 72 [Function]
+   PotsBase.PotsCallIpService.GetFaction: 71 [Function]
+   PotsBase.PotsCallIpService.Name: 69 [Function]
+   PotsBase.PotsCallIpService.Port: 70 [Function]
+   PotsBase.PotsCallIpService.PotsCallIpService: 61 [Function]
       sn/PotsCallIpService.cpp
-      sn/PotsSessions.h
-   PotsBase.PotsCallIpService.PotsCallIpService: 68 [Function]
+   PotsBase.PotsCallIpService.~PotsCallIpService: 65 [Function]
       sn/PotsCallIpService.cpp
-   PotsBase.PotsCallIpService.~PotsCallIpService: 72 [Function]
-      sn/PotsCallIpService.cpp
-   PotsBase.PotsCollectInformationSap: 341 [Class]
+   PotsBase.PotsCollectInformationSap: 337 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcTriggers.cpp
       sn/PotsHtlService.cpp
       sn/PotsProxySessions.cpp
       sn/PotsSessions.h
       sn/PotsWmlService.cpp
-   PotsBase.PotsCollectInformationSap.PotsCollectInformationSap: 350 [Function]
+   PotsBase.PotsCollectInformationSap.PotsCollectInformationSap: 346 [Function]
       sn/PotsBcTriggers.cpp
-   PotsBase.PotsCollectInformationSap.PotsHtlPriority: 347 [ClassData]
+   PotsBase.PotsCollectInformationSap.PotsHtlPriority: 343 [ClassData]
       sn/PotsHtlService.cpp
-   PotsBase.PotsCollectInformationSap.PotsWmlPriority: 348 [ClassData]
+   PotsBase.PotsCollectInformationSap.PotsWmlPriority: 344 [ClassData]
       sn/PotsWmlService.cpp
-   PotsBase.PotsCollectInformationSap.~PotsCollectInformationSap: 351 [Function]
-   PotsBase.PotsHeaderInfo: 40 [Forward]
+   PotsBase.PotsCollectInformationSap.~PotsCollectInformationSap: 347 [Function]
+   PotsBase.PotsHeaderInfo: 39 [Forward]
       sn/PotsSessions.h
-   PotsBase.PotsLocalAlertingSnp: 381 [Class]
+   PotsBase.PotsLocalAlertingSnp: 377 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcTriggers.cpp
       sn/PotsCfnService.cpp
       sn/PotsSessions.h
-   PotsBase.PotsLocalAlertingSnp.PotsCfnPriority: 385 [ClassData]
+   PotsBase.PotsLocalAlertingSnp.PotsCfnPriority: 381 [ClassData]
       sn/PotsCfnService.cpp
-   PotsBase.PotsLocalAlertingSnp.PotsLocalAlertingSnp: 387 [Function]
+   PotsBase.PotsLocalAlertingSnp.PotsLocalAlertingSnp: 383 [Function]
       sn/PotsBcTriggers.cpp
-   PotsBase.PotsLocalAlertingSnp.~PotsLocalAlertingSnp: 388 [Function]
-   PotsBase.PotsLocalBusySap: 368 [Class]
+   PotsBase.PotsLocalAlertingSnp.~PotsLocalAlertingSnp: 384 [Function]
+   PotsBase.PotsLocalBusySap: 364 [Class]
       sn/PotsBcService.cpp
       sn/PotsBcTriggers.cpp
       sn/PotsCfbService.cpp
       sn/PotsCwtService.cpp
       sn/PotsSessions.h
-   PotsBase.PotsLocalBusySap.PotsCfbPriority: 375 [ClassData]
+   PotsBase.PotsLocalBusySap.PotsCfbPriority: 371 [ClassData]
       sn/PotsCfbService.cpp
-   PotsBase.PotsLocalBusySap.PotsCwtPriority: 374 [ClassData]
+   PotsBase.PotsLocalBusySap.PotsCwtPriority: 370 [ClassData]
       sn/PotsCwtService.cpp
-   PotsBase.PotsLocalBusySap.PotsLocalBusySap: 377 [Function]
+   PotsBase.PotsLocalBusySap.PotsLocalBusySap: 373 [Function]
       sn/PotsBcTriggers.cpp
-   PotsBase.PotsLocalBusySap.~PotsLocalBusySap: 378 [Function]
-   PotsBase.PotsProfile: 41 [Forward]
+   PotsBase.PotsLocalBusySap.~PotsLocalBusySap: 374 [Function]
+   PotsBase.PotsProfile: 40 [Forward]
       sn/PotsSessions.h
-   PotsBase.PotsTreatment: 42 [Forward]
+   PotsBase.PotsTreatment: 41 [Forward]
       sn/PotsSessions.h
    POTSSESSIONS_H_INCLUDED: 23 [Define]
       sn/PotsSessions.h
@@ -66485,7 +66482,6 @@ subs/cstddef
       mb/MediaParameter.cpp
       mb/MediaParameter.h
       nb/Alarm.cpp
-      nb/Alarm.h
       nb/AlarmRegistry.cpp
       nb/Algorithms.cpp
       nb/Algorithms.h
@@ -67694,8 +67690,6 @@ subs/iosfwd
       nw/IpBuffer.h
       nw/IpPort.cpp
       nw/IpPort.h
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
@@ -68432,7 +68426,6 @@ subs/memory
       nw/IpPort.cpp
       nw/IpPort.h
       nw/IpPortRegistry.cpp
-      nw/LocalAddrTest.cpp
       nw/TcpIoThread.cpp
       nw/TcpIpPort.cpp
       pb/PotsFeatureRegistry.cpp
@@ -68480,7 +68473,6 @@ subs/memory
       sb/Message.cpp
       sb/SbInputHandler.cpp
    std.unique_ptr.reset: 34 [Function]
-      an/PotsShelfIpService.cpp
       cb/BcProtocol.cpp
       ct/CodeFile.cpp
       ct/CodeFileSet.cpp
@@ -68541,7 +68533,6 @@ subs/memory
       sb/Message.cpp
       sb/SbInvokerPools.cpp
       sb/SbPools.cpp
-      sn/PotsCallIpService.cpp
       sn/PotsStatistics.cpp
       st/StIncrement.cpp
       st/StTestData.cpp
@@ -68906,7 +68897,6 @@ subs/ostream
       nw/IoThread.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
@@ -69168,7 +69158,6 @@ subs/ostream
       nw/IoThread.cpp
       nw/IpBuffer.cpp
       nw/IpPort.cpp
-      nw/IpPortCfgParm.cpp
       nw/IpPortRegistry.cpp
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
@@ -69349,7 +69338,6 @@ subs/ostream
       nt/NtIncrement.cpp
       nw/InputHandler.cpp
       nw/IoThread.cpp
-      nw/LocalAddrTest.cpp
       nw/NwTrace.cpp
       nw/SysIpL3Addr.cpp
       nw/SysTcpSocket.cpp
@@ -70052,8 +70040,6 @@ subs/string
    std.basic_string.begin: 44 [Function]
       nb/SysConsole.win.cpp
    std.basic_string.c_str: 45 [Function]
-      an/PotsShelfIpService.cpp
-      cb/BcProtocol.cpp
       ct/CodeCoverage.cpp
       ct/CodeDir.cpp
       ct/CodeFile.cpp
@@ -70103,7 +70089,6 @@ subs/string
       nt/NtTestData.h
       nt/TestDatabase.cpp
       nw/IpPort.cpp
-      nw/LocalAddrTest.cpp
       nw/NwDaemons.cpp
       nw/NwLogs.cpp
       nw/SysIpL2Addr.win.cpp
@@ -70112,7 +70097,6 @@ subs/string
       nw/TcpIoThread.cpp
       sb/InvokerPool.cpp
       sb/SbDaemons.cpp
-      sn/PotsCallIpService.cpp
       st/MscBuilder.cpp
    std.basic_string.capacity: 46 [Function]
       ct/CodeFile.cpp
@@ -70972,8 +70956,6 @@ subs/string
       nw/IpBuffer.h
       nw/IpPort.cpp
       nw/IpPort.h
-      nw/IpPortCfgParm.cpp
-      nw/IpPortCfgParm.h
       nw/IpPortRegistry.cpp
       nw/IpPortRegistry.h
       nw/IpService.cpp
@@ -71139,8 +71121,6 @@ subs/string
    std.to_string(double): 119 [Function]
    std.to_string(float): 118 [Function]
    std.to_string(int): 112 [Function]
-      an/PotsShelfIpService.cpp
-      cb/BcProtocol.cpp
       ct/CodeFileSet.cpp
       ct/CtIncrement.cpp
       ct/CxxSymbols.cpp
@@ -71158,12 +71138,10 @@ subs/string
       nb/SymbolRegistry.cpp
       nt/TestDatabase.cpp
       nw/IpPort.cpp
-      nw/LocalAddrTest.cpp
       nw/NwDaemons.cpp
       nw/NwLogs.cpp
       nw/SysSocket.win.cpp
       pb/PotsCircuit.cpp
-      sn/PotsCallIpService.cpp
    std.to_string(long double): 120 [Function]
    std.to_string(long long): 116 [Function]
    std.to_string(long): 114 [Function]
@@ -71408,6 +71386,8 @@ subs/vector
       nb/ThreadRegistry.h
       nw/IpBuffer.cpp
       nw/IpBuffer.h
+      nw/IpServiceRegistry.cpp
+      nw/IpServiceRegistry.h
       nw/NwIncrement.cpp
       nw/SysIpL2Addr.h
       nw/SysIpL2Addr.win.cpp
@@ -71697,6 +71677,7 @@ subs/vector
       nb/FunctionTrace.cpp
       nb/MainArgs.cpp
       nb/ThreadRegistry.cpp
+      nw/IpServiceRegistry.cpp
       nw/SysIpL2Addr.win.cpp
    std.vector.rbegin(): 25 [Function]
       nb/ThreadRegistry.cpp
@@ -71988,15 +71969,17 @@ subs/windows.h
    WORD: 16 [Typedef]
 subs/winerror.h
    WINERROR_H_INCLUDED: 6 [Define]
-   WSAENETDOWN: 9 [SpaceData]
+   WSAEINTR: 8 [SpaceData]
+      nw/SysUdpSocket.win.cpp
+   WSAENETDOWN: 10 [SpaceData]
       nw/SysSocket.win.cpp
-   WSAEPROTONOSUPPORT: 8 [SpaceData]
+   WSAEPROTONOSUPPORT: 9 [SpaceData]
       nw/SysSocket.win.cpp
-   WSANOTINITIALISED: 12 [SpaceData]
+   WSANOTINITIALISED: 13 [SpaceData]
       nw/SysSocket.win.cpp
-   WSASYSNOTREADY: 10 [SpaceData]
+   WSASYSNOTREADY: 11 [SpaceData]
       nw/SysSocket.win.cpp
-   WSAVERNOTSUPPORTED: 11 [SpaceData]
+   WSAVERNOTSUPPORTED: 12 [SpaceData]
       nw/SysSocket.win.cpp
 subs/winsock2.h
    accept: 119 [Function]

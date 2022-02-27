@@ -81,6 +81,10 @@ public:
    //
    IoThread* GetThread() const { return thread_; }
 
+   //  Creates the port's I/O thread if its service is enabled.
+   //
+   IoThread* CreateThread();
+
    //  Sets (or clears, if nullptr) the port's I/O thread.
    //
    void SetThread(IoThread* thread);

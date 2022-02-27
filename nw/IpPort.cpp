@@ -136,12 +136,8 @@ bool IpPort::BindHandler(InputHandler& handler)
    Debug::ft("IpPort.BindHandler");
 
    handler_.reset(&handler);
-
-   //  If the port does not have an I/O thread, create one.
-   //
-   if(thread_ != nullptr) return true;
-   SetThread(CreateIoThread());
-   return (thread_ != nullptr);
+   CreateThread();
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -206,6 +202,18 @@ IoThread* IpPort::CreateIoThread()
    //
    Debug::SwLog(IpPort_CreateIoThread, service_->Name(), port_);
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+IoThread* IpPort::CreateThread()
+{
+   Debug::ft("IpPort.CreateThread");
+
+   if(thread_ != nullptr) return thread_;
+   if(!service_->Enabled()) return nullptr;
+   SetThread(CreateIoThread());
+   return thread_;
 }
 
 //------------------------------------------------------------------------------
@@ -448,11 +456,11 @@ void IpPort::Startup(RestartLevel level)
       stats_.reset(new IpPortStats);
    }
 
-   //  If the port has an input handler, make sure that it has an I/O thread.
+   //  If the port has an input handler, create its I/O thread.
    //
-   if((handler_ != nullptr) && (thread_ == nullptr))
+   if(handler_ != nullptr)
    {
-      SetThread(CreateIoThread());
+      CreateThread();
    }
 }
 

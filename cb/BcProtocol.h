@@ -33,7 +33,6 @@
 #include "UdpIpService.h"
 #include <cstddef>
 #include "Duration.h"
-#include "IpPortCfgParm.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SbTypes.h"
@@ -299,12 +298,11 @@ private:
 class CipUdpService : public UdpIpService
 {
    friend class Singleton< CipUdpService >;
+   friend class CipPsm;
 public:
-   //  Overridden to return the service's attributes.
+   //  Overridden for restarts.
    //
-   c_string Name() const override { return "Call Interworking"; }
-   ipport_t Port() const override { return portCfg_->GetPort(); }
-   Faction GetFaction() const override { return PayloadFaction; }
+   void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //
@@ -314,6 +312,13 @@ private:
    //
    ~CipUdpService();
 
+   //  Overridden to return the service's attributes.
+   //
+   c_string Name() const override { return "Call Interworking"; }
+   ipport_t Port() const override { return CipIpPort; }
+   Faction GetFaction() const override { return PayloadFaction; }
+   bool Enabled() const override;
+
    //  Overridden to create the CIP input handler.
    //
    InputHandler* CreateHandler(IpPort* port) const override;
@@ -322,9 +327,13 @@ private:
    //
    CliText* CreateText() const override;
 
-   //  The configuration parameter for setting the service's port.
+   //  Overridden for restarts.
    //
-   IpPortCfgParmPtr portCfg_;
+   void Shutdown(NodeBase::RestartLevel level) override;
+
+   //  The configuration parameter for enabling the service.
+   //
+   CfgServiceParmPtr enabled_;
 };
 
 //------------------------------------------------------------------------------
@@ -334,14 +343,11 @@ private:
 class CipTcpService : public TcpIpService
 {
    friend class Singleton< CipTcpService >;
+   friend class CipPsm;
 public:
-   //  Overridden to return the service's attributes.
+   //  Overridden for restarts.
    //
-   c_string Name() const override { return "Call Interworking"; }
-   ipport_t Port() const override { return portCfg_->GetPort(); }
-   Faction GetFaction() const override { return PayloadFaction; }
-   size_t MaxConns() const override { return TcpIoThread::MaxConns; }
-   size_t MaxBacklog() const override { return 200; }
+   void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //
@@ -350,6 +356,15 @@ private:
    //  Private because this is a singleton.
    //
    ~CipTcpService();
+
+   //  Overridden to return the service's attributes.
+   //
+   c_string Name() const override { return "Call Interworking"; }
+   ipport_t Port() const override { return CipIpPort; }
+   Faction GetFaction() const override { return PayloadFaction; }
+   bool Enabled() const override;
+   size_t MaxConns() const override { return TcpIoThread::MaxConns; }
+   size_t MaxBacklog() const override { return 200; }
 
    //  Overridden to create the CIP input handler.
    //
@@ -363,9 +378,13 @@ private:
    //
    void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const override;
 
-   //  The configuration parameter for setting the service's port.
+   //  Overridden for restarts.
    //
-   IpPortCfgParmPtr portCfg_;
+   void Shutdown(NodeBase::RestartLevel level) override;
+
+   //  The configuration parameter for enabling the service.
+   //
+   CfgServiceParmPtr enabled_;
 };
 
 //------------------------------------------------------------------------------

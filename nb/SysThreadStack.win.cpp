@@ -35,6 +35,7 @@
 #include "Log.h"
 #include "Memory.h"
 #include "NbLogs.h"
+#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -120,6 +121,14 @@ const char* StackInfo::GetFileLoc(DWORD64 frame, DWORD& line, DWORD& disp)
 
 fn_depth StackInfo::GetFrames(StackFramesPtr& frames)
 {
+   //* Reading stack frames during the shutdown phase of a restart fails
+   //  because a heap corruption is detected.  It appears that VS2022 is
+   //  the culprit, because the problem occurs even after reverting to the
+   //  most recent code that successfully passed restart tests in VS2017.
+   //
+   auto stage = Restart::GetStage();
+   if(stage == ShuttingDown) return 0;
+
    frames.reset(new StackFrames);
    return RtlCaptureStackBackTrace(0, MaxFrames, frames.get(), nullptr);
 }

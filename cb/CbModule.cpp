@@ -83,7 +83,7 @@ void CbModule::Startup(RestartLevel level)
    Singleton< CipTbcFactory >::Instance()->Startup(level);
    Singleton< TestCallFactory >::Instance()->Startup(level);
    Singleton< ProxyBcFactory >::Instance()->Startup(level);
-//s Singleton< CipUdpService >::Instance()->Startup(level);
+   Singleton< CipUdpService >::Instance()->Startup(level);
    Singleton< CipTcpService >::Instance()->Startup(level);
    Singleton< ServiceCodeRegistry >::Instance()->Startup(level);
 
@@ -123,7 +123,6 @@ void CbModule::Startup(RestartLevel level)
    reg->BindSymbol("cause.resetcircuit", Cause::ResetCircuit);
 
    reg->BindSymbol("flag.calltrap", CallTrapFlag);
-   reg->BindSymbol("flag.cipalwaysoverip", CipAlwaysOverIpFlag);
    reg->BindSymbol("flag.cipiamtimeout", CipIamTimeoutFlag);
    reg->BindSymbol("flag.cipalertingtimeout", CipAlertingTimeoutFlag);
 }

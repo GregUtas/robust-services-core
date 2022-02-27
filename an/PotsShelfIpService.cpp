@@ -20,10 +20,12 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsShelf.h"
-#include <string>
 #include "CfgParmRegistry.h"
 #include "CliText.h"
 #include "Debug.h"
+#include "FunctionGuard.h"
+#include "IpService.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 
@@ -31,17 +33,16 @@
 
 namespace PotsBase
 {
-fixed_string PotsShelfIpPortKey = "PotsShelfIpPort";
-fixed_string PotsShelfIpPortExpl = "POTS Shelf Protocol: UDP port";
+fixed_string PotsShelfUdpKey = "PotsShelfUdp";
+fixed_string PotsShelfUdpExpl = "Create UDP I/O thread for POTS Shelf";
 
 PotsShelfIpService::PotsShelfIpService()
 {
    Debug::ft("PotsShelfIpService.ctor");
 
-   auto port = std::to_string(PotsShelfIpPort);
-   portCfg_.reset(new IpPortCfgParm
-      (PotsShelfIpPortKey, port.c_str(), PotsShelfIpPortExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
+   enabled_.reset
+      (new CfgServiceParm(PotsShelfUdpKey, "F", PotsShelfUdpExpl, this));
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
 }
 
 //------------------------------------------------------------------------------
@@ -70,5 +71,41 @@ CliText* PotsShelfIpService::CreateText() const
    Debug::ft("PotsShelfIpService.CreateText");
 
    return new CliText(PotsShelfServiceStr, PotsShelfServiceExpl);
+}
+
+//------------------------------------------------------------------------------
+
+bool PotsShelfIpService::Enabled() const
+{
+   return enabled_->CurrValue();
+}
+
+//------------------------------------------------------------------------------
+
+void PotsShelfIpService::Shutdown(RestartLevel level)
+{
+   Debug::ft("PotsShelfIpService.Shutdown");
+
+   FunctionGuard guard(Guard_ImmUnprotect);
+   Restart::Release(enabled_);
+
+   IpService::Shutdown(level);
+}
+
+//------------------------------------------------------------------------------
+
+void PotsShelfIpService::Startup(RestartLevel level)
+{
+   Debug::ft("PotsShelfIpService.Startup");
+
+   if(enabled_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      enabled_.reset
+         (new CfgServiceParm(PotsShelfUdpKey, "F", PotsShelfUdpExpl, this));
+      Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+   }
+
+   IpService::Startup(level);
 }
 }

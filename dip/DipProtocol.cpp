@@ -362,7 +362,7 @@ void DipInputHandler::SocketFailed(SysSocket* socket) const
 
 //==============================================================================
 
-BotTcpService::BotTcpService() : port_(NilIpPort)
+BotTcpService::BotTcpService()
 {
    Debug::ft("BotTcpService.ctor");
 }
@@ -390,16 +390,6 @@ CliText* BotTcpService::CreateText() const
 
 //------------------------------------------------------------------------------
 
-void BotTcpService::Display(ostream& stream,
-   const string& prefix, const Flags& options) const
-{
-   TcpIpService::Display(stream, prefix, options);
-
-   stream << prefix << "port : " << port_ << CRLF;
-}
-
-//------------------------------------------------------------------------------
-
 void BotTcpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
 {
    Debug::ft("BotTcpService.GetAppSocketSizes");
@@ -409,10 +399,6 @@ void BotTcpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
    rxSize = 2048;
    txSize = 0;
 }
-
-//------------------------------------------------------------------------------
-
-ipport_t BotTcpService::Port() const { return ipport_t(port_); }
 
 //==============================================================================
 

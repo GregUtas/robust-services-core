@@ -64,7 +64,7 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
    {
       if(Restart::GetStage() == ShuttingDown) return nullptr;
       Debug::SwLog(TcpIpPort_CreateAppSocket, "I/O thread not found", 0);
-      thread = static_cast< TcpIoThread* >(CreateIoThread());
+      thread = static_cast< TcpIoThread* >(CreateThread());
       if(thread == nullptr) return nullptr;
    }
 

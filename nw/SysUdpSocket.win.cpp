@@ -22,11 +22,13 @@
 #ifdef OS_WIN
 
 #include "SysUdpSocket.h"
+#include <winerror.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include "Debug.h"
 #include "IpPortRegistry.h"
 #include "NwLogs.h"
+#include "Restart.h"
 #include "SysIpL3Addr.h"
 #include "UdpIpService.h"
 
@@ -106,8 +108,25 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
    {
       auto error = WSAGetLastError();
 
-      if(error != WSAEWOULDBLOCK)
+      switch(error)
       {
+      case WSAEWOULDBLOCK:
+         //
+         //  There is nothing on the socket, but it hasn't yet been made
+         //  blocking.
+         //
+         break;
+      case WSAEINTR:
+         //
+         //  Don't log this during a restart, when an I/O thread's socket
+         //  is released so that the thread can exit.
+         //
+         if(Restart::GetLevel() >= RestartCold)
+         {
+            break;
+         }
+         //  [[fallthrough]]
+      default:
          OutputLog(NetworkSocketError, "recvfrom", error);
       }
 

@@ -22,6 +22,7 @@
 #ifndef IPSERVICE_H_INCLUDED
 #define IPSERVICE_H_INCLUDED
 
+#include "CfgBoolParm.h"
 #include "Immutable.h"
 #include <cstddef>
 #include "IoThread.h"
@@ -35,13 +36,16 @@ namespace NodeBase
    class CliText;
 }
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
 {
-class IpService : public NodeBase::Immutable
+class IpService : public Immutable
 {
-   friend class NodeBase::Registry< IpService >;
+   friend class Registry< IpService >;
+   friend class CfgServiceParm;
 public:
    //  Deleted to prohibit copying.
    //
@@ -53,24 +57,24 @@ public:
 
    //> The maximum number of IP services.
    //
-   static const NodeBase::id_t MaxId;
+   static const id_t MaxId;
 
    //  Returns a string that identifies the service for display purposes.
    //
-   virtual NodeBase::c_string Name() const = 0;
+   virtual c_string Name() const = 0;
 
    //  Returns the IP protocol over which the service runs.
    //
    virtual IpProtocol Protocol() const = 0;
 
-   //  Returns the port on which the service should be started during a
-   //  restart.
-   //
-   virtual ipport_t Port() const = 0;
-
    //  Returns the scheduler faction for the service's I/O thread.
    //
-   virtual NodeBase::Faction GetFaction() const = 0;
+   virtual Faction GetFaction() const = 0;
+
+   //  Returns true if the service is enabled, in which case its I/O
+   //  thread is created during a restart.
+   //
+   virtual bool Enabled() const = 0;
 
    //  Returns the size of the receive buffer for the service's I/O thread.
    //
@@ -85,7 +89,7 @@ public:
    //  illustrate its purpose, which is to name a protocol whose port, and
    //  possibly other attributes, could be configured via a CLI command.]
    //
-   virtual NodeBase::CliText* CreateText() const = 0;
+   virtual CliText* CreateText() const = 0;
 
    //  Returns true if applications share the I/O thread's primary socket.
    //  If it returns false, as it does for TCP-based services, application
@@ -107,7 +111,7 @@ public:
 
    //  Returns the service's identifier.
    //
-   NodeBase::id_t Sid() const { return sid_.GetId(); }
+   id_t Sid() const { return sid_.GetId(); }
 
    //  Returns the offset to sid_.
    //
@@ -116,7 +120,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const NodeBase::Flags& options) const override;
+      const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -127,7 +131,7 @@ public:
    //  be overridden if, for example, the service needs to be started on
    //  multiple ports.
    //
-   void Startup(NodeBase::RestartLevel level) override;
+   void Startup(RestartLevel level) override;
 protected:
    //  Registers the service with IpServiceRegistry.  Protected because
    //  this class is virtual.
@@ -148,9 +152,44 @@ private:
    //
    virtual IpPort* CreatePort(ipport_t pid) = 0;
 
+   //  Returns the service's well-known port number.
+   //
+   virtual ipport_t Port() const = 0;
+
    //  The service's identifier.
    //
-   NodeBase::RegCell sid_;
+   RegCell sid_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Configuration parameter for enabling a service.  If it is enabled, an
+//  I/O thread is created.
+//
+class CfgServiceParm : public CfgBoolParm
+{
+public:
+   //  Creates a parameter with the specified attributes.
+   //
+   CfgServiceParm(c_string key,
+      c_string def, c_string expl, IpService* service);
+
+   //  Virtual to allow subclassing.
+   //
+   virtual ~CfgServiceParm();
+private:
+   //  Overridden to indicate that a cold restart is required to disable a
+   //  service.  Enabling a service does not require a restart.
+   //
+   RestartLevel RestartRequired() const override;
+
+   //  Overridden to create the service I/O thread when it is enabled.
+   //
+   void SetCurr() override;
+
+   //  The service associated with the parameter.
+   //
+   IpService* const service_;
 };
 }
 #endif

@@ -66,10 +66,9 @@ constexpr FlagId ThreadCtorTrapFlag = 3;
 constexpr FlagId ThreadCtorRetrapFlag = 4;
 constexpr FlagId ThreadDtorTrapFlag = 5;
 constexpr FlagId ThreadRetrapFlag = 6;
-constexpr FlagId CipAlwaysOverIpFlag = 7;
-constexpr FlagId CallTrapFlag = 8;
-constexpr FlagId CipIamTimeoutFlag = 9;
-constexpr FlagId CipAlertingTimeoutFlag = 10;
-constexpr FlagId FirstAppDebugFlag = 11;
+constexpr FlagId CallTrapFlag = 7;
+constexpr FlagId CipIamTimeoutFlag = 8;
+constexpr FlagId CipAlertingTimeoutFlag = 9;
+constexpr FlagId FirstAppDebugFlag = 10;
 }
 #endif

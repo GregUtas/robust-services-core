@@ -36,10 +36,13 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "FactoryRegistry.h"
+#include "FunctionGuard.h"
 #include "GlobalAddress.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
+#include "IpService.h"
 #include "NbAppIds.h"
+#include "Restart.h"
 #include "RootServiceSM.h"
 #include "SbAppIds.h"
 #include "SbCliParms.h"
@@ -178,17 +181,15 @@ class CipMediaParameter : public MediaParameter
 
 //==============================================================================
 
-fixed_string CipUdpPortKey = "CipUdpPort";
-fixed_string CipUdpPortExpl = "Call Interworking Protocol: UDP port";
+fixed_string CipUdpKey = "CipUdp";
+fixed_string CipUdpExpl = "Create UDP I/O thread for Call Interworking";
 
 CipUdpService::CipUdpService()
 {
    Debug::ft("CipUdpService.ctor");
 
-   auto port = std::to_string(CipIpPort);
-   portCfg_.reset(new IpPortCfgParm
-      (CipUdpPortKey, port.c_str(), CipUdpPortExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
+   enabled_.reset(new CfgServiceParm(CipUdpKey, "F", CipUdpExpl, this));
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
 }
 
 //------------------------------------------------------------------------------
@@ -219,19 +220,52 @@ CliText* CipUdpService::CreateText() const
    return new CliText(CipUdpServiceExpl, CipUdpServiceStr);
 }
 
+//------------------------------------------------------------------------------
+
+bool CipUdpService::Enabled() const
+{
+   return enabled_->CurrValue();
+}
+
+//------------------------------------------------------------------------------
+
+void CipUdpService::Shutdown(RestartLevel level)
+{
+   Debug::ft("CipUdpService.Shutdown");
+
+   FunctionGuard guard(Guard_ImmUnprotect);
+   Restart::Release(enabled_);
+
+   IpService::Shutdown(level);
+}
+
+//------------------------------------------------------------------------------
+
+void CipUdpService::Startup(RestartLevel level)
+{
+   Debug::ft("CipUdpService.Startup");
+
+   if(enabled_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      enabled_.reset(new CfgServiceParm(CipUdpKey, "F", CipUdpExpl, this));
+      Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+   }
+
+   IpService::Startup(level);
+}
+
 //==============================================================================
 
-fixed_string CipTcpPortKey = "CipTcpPort";
-fixed_string CipTcpPortExpl = "Call Interworking Protocol: TCP port";
+fixed_string CipTcpKey = "CipTcp";
+fixed_string CipTcpExpl = "Create TCP I/O thread for Call Interworking";
 
 CipTcpService::CipTcpService()
 {
    Debug::ft("CipTcpService.ctor");
 
-   auto port = std::to_string(CipIpPort);
-   portCfg_.reset(new IpPortCfgParm
-      (CipTcpPortKey, port.c_str(), CipTcpPortExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
+   enabled_.reset(new CfgServiceParm(CipTcpKey, "F", CipTcpExpl, this));
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
 }
 
 //------------------------------------------------------------------------------
@@ -264,6 +298,13 @@ CliText* CipTcpService::CreateText() const
 
 //------------------------------------------------------------------------------
 
+bool CipTcpService::Enabled() const
+{
+   return enabled_->CurrValue();
+}
+
+//------------------------------------------------------------------------------
+
 void CipTcpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
 {
    Debug::ft("CipTcpService.GetAppSocketSizes");
@@ -272,6 +313,34 @@ void CipTcpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
    //
    rxSize = 2048;
    txSize = 0;
+}
+
+//------------------------------------------------------------------------------
+
+void CipTcpService::Shutdown(RestartLevel level)
+{
+   Debug::ft("CipTcpService.Shutdown");
+
+   FunctionGuard guard(Guard_ImmUnprotect);
+   Restart::Release(enabled_);
+
+   IpService::Shutdown(level);
+}
+
+//------------------------------------------------------------------------------
+
+void CipTcpService::Startup(RestartLevel level)
+{
+   Debug::ft("CipTcpService.Startup");
+
+   if(enabled_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      enabled_.reset(new CfgServiceParm(CipTcpKey, "F", CipTcpExpl, this));
+      Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+   }
+
+   IpService::Startup(level);
 }
 
 //==============================================================================
@@ -960,10 +1029,8 @@ ProtocolSM::OutgoingRc BcPsm::ProcessOgMsg(Message& msg)
    {
       auto& self = IpPortRegistry::LocalAddr();
       auto& peer = IpPortRegistry::LocalAddr();
-//s   auto cip = Singleton< CipUdpService >::Instance();
-      auto cip = Singleton< CipTcpService >::Instance();
-      GlobalAddress locAddr(self, cip->Port(), CipObcFactoryId);
-      GlobalAddress remAddr(peer, cip->Port(), CipTbcFactoryId);
+      GlobalAddress locAddr(self, CipIpPort, CipObcFactoryId);
+      GlobalAddress remAddr(peer, CipIpPort, CipTbcFactoryId);
 
       msg.SetSender(locAddr);
       msg.SetReceiver(remAddr);
@@ -1017,7 +1084,10 @@ SysTcpSocket* CipPsm::CreateAppSocket()
 {
    Debug::ft("CipPsm.CreateAppSocket");
 
-   if(!Debug::SwFlagOn(CipAlwaysOverIpFlag)) return nullptr;
+   //  Use TCP if it is enabled and UDP is not.
+   //
+   if(!Singleton< CipTcpService >::Instance()->Enabled()) return nullptr;
+   if(Singleton< CipUdpService >::Instance()->Enabled()) return nullptr;
 
    auto reg = Singleton< IpPortRegistry >::Instance();
    auto port = reg->GetPort(CipIpPort, IpTcp);
@@ -1031,7 +1101,14 @@ Message::Route CipPsm::Route() const
 {
    Debug::ft("CipPsm.Route");
 
-   if(Debug::SwFlagOn(CipAlwaysOverIpFlag)) return Message::IpStack;
+   //  Use the IP stack unless neither TCP nor UDP is enabled.
+   //
+   if((Singleton< CipTcpService >::Instance()->Enabled()) ||
+      (Singleton< CipUdpService >::Instance()->Enabled()))
+   {
+      return Message::IpStack;
+   }
+
    return Message::Internal;
 }
 

@@ -329,9 +329,7 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
       server_addr_ = SysIpL3Addr(addr, config_.server_port);
    }
 
-   //  Create our IP port.  A socket is not actually bound to ClientIpPort;
-   //  it is effectively a virtual port number that ultimately allows us to
-   //  create a TcpIoThread that handles communication with the server.
+   //  Create our IP port.
    //
    auto reg = Singleton< IpPortRegistry >::Instance();
    auto port = reg->GetPort(ClientIpPort);
@@ -339,8 +337,6 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
    if(port == nullptr)
    {
       auto service = Singleton< BotTcpService >::Instance();
-      service->SetPort(ClientIpPort);
-
       port = service->Provision(ClientIpPort);
       if(port == nullptr) return FAILED_TO_ALLOCATE_PORT;
    }

@@ -127,7 +127,6 @@ Pots_UN_Message::Pots_UN_Message(ProtocolSM* psm, size_t size) :
       SetSender(addr);
       addr = GlobalAddress(peer, PotsCallIpPort, PotsCallFactoryId);
       SetReceiver(addr);
-      return;
    }
 }
 

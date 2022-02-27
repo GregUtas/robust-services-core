@@ -24,6 +24,7 @@
 
 #include "Immutable.h"
 #include <string>
+#include <vector>
 #include "NbTypes.h"
 #include "Registry.h"
 
@@ -51,9 +52,9 @@ public:
    //
    IpServiceRegistry& operator=(const IpServiceRegistry& that) = delete;
 
-   //  Returns the service registered against NAME.
+   //  Returns the service(s) registered against NAME.
    //
-   IpService* GetService(const std::string& name) const;
+   std::vector< IpService* > GetServices(const std::string& name) const;
 
    //  Overridden to display member variables.
    //

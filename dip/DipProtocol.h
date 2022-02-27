@@ -213,26 +213,7 @@ struct BM_Message
 class BotTcpService : public TcpIpService
 {
    friend class Singleton< BotTcpService >;
-public:
-   //  Overridden to return the service's attributes.
-   //
-   c_string Name() const override { return "Diplomacy"; }
-   ipport_t Port() const override;
-   Faction GetFaction() const override { return PayloadFaction; }
-   bool AcceptsConns() const override { return false; }
-   size_t MaxConns() const override { return 4; }
-   size_t MaxBacklog() const override { return 0; }
-   bool Keepalive() const override { return true; }
 
-   //  Sets the service's port number.
-   //
-   void SetPort(ipport_t port) { port_ = port; }
-
-   //  Overridden to display the service's data.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
-private:
    //  Private because this is a singleton.
    //
    BotTcpService();
@@ -240,6 +221,17 @@ private:
    //  Private because this is a singleton.
    //
    ~BotTcpService() = default;
+
+   //  Overridden to return the service's attributes.
+   //
+   c_string Name() const override { return "Diplomacy"; }
+   ipport_t Port() const override { return ClientIpPort; }
+   Faction GetFaction() const override { return PayloadFaction; }
+   bool Enabled() const override { return true; }
+   bool AcceptsConns() const override { return false; }
+   size_t MaxConns() const override { return 4; }
+   size_t MaxBacklog() const override { return 0; }
+   bool Keepalive() const override { return true; }
 
    //  Overridden to create the Diplomacy input handler.
    //
@@ -252,10 +244,6 @@ private:
    //  Overridden to return the socket's buffer sizes.
    //
    void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const override;
-
-   //  The port on which the protocol is running.
-   //
-   word port_;
 };
 
 //------------------------------------------------------------------------------

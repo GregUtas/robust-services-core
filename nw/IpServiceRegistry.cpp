@@ -74,14 +74,17 @@ void IpServiceRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-IpService* IpServiceRegistry::GetService(const string& name) const
+std::vector< IpService* > IpServiceRegistry::GetServices
+   (const string& name) const
 {
+   std::vector< IpService* > services;
+
    for(auto s = services_.First(); s != nullptr; services_.Next(s))
    {
-      if(s->Name() == name) return s;
+      if(s->Name() == name) services.push_back(s);
    }
 
-   return nullptr;
+   return services;
 }
 
 //------------------------------------------------------------------------------

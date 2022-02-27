@@ -26,9 +26,12 @@
 #include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
+#include "FunctionGuard.h"
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
+#include "IpService.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
@@ -73,17 +76,16 @@ void LocalAddrHandler::ReceiveBuff
 
 //==============================================================================
 
-fixed_string LocalAddrIpPortKey = "LocalTestIpPort";
-fixed_string LocalAddrIpPortExpl = "Local Address Test: UDP port";
+fixed_string LocalAddrUdpKey = "LocalTestUdp";
+fixed_string LocalAddrUdpExpl = "Create UDP I/O thread for Local Address Test";
 
 SendLocalIpService::SendLocalIpService()
 {
    Debug::ft("SendLocalIpService.ctor");
 
-   auto port = std::to_string(LocalAddrTestIpPort);
-   portCfg_.reset(new IpPortCfgParm
-      (LocalAddrIpPortKey, port.c_str(), LocalAddrIpPortExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
+   enabled_.reset
+      (new CfgServiceParm(LocalAddrUdpKey, "F", LocalAddrUdpExpl, this));
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
 }
 
 //------------------------------------------------------------------------------
@@ -116,12 +118,9 @@ CliText* SendLocalIpService::CreateText() const
 
 //------------------------------------------------------------------------------
 
-void SendLocalIpService::Display(ostream& stream,
-   const string& prefix, const Flags& options) const
+bool SendLocalIpService::Enabled() const
 {
-   UdpIpService::Display(stream, prefix, options);
-
-   stream << prefix << "portCfg : " << portCfg_.get() << CRLF;
+   return enabled_->CurrValue();
 }
 
 //------------------------------------------------------------------------------
@@ -129,6 +128,35 @@ void SendLocalIpService::Display(ostream& stream,
 void SendLocalIpService::Patch(sel_t selector, void* arguments)
 {
    UdpIpService::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+void SendLocalIpService::Shutdown(RestartLevel level)
+{
+   Debug::ft("SendLocalIpService.Shutdown");
+
+   FunctionGuard guard(Guard_ImmUnprotect);
+   Restart::Release(enabled_);
+
+   IpService::Shutdown(level);
+}
+
+//------------------------------------------------------------------------------
+
+void SendLocalIpService::Startup(RestartLevel level)
+{
+   Debug::ft("SendLocalIpService.Startup");
+
+   if(enabled_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      enabled_.reset
+         (new CfgServiceParm(LocalAddrUdpKey, "F", LocalAddrUdpExpl, this));
+      Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
+   }
+
+   IpService::Startup(level);
 }
 
 //==============================================================================
@@ -180,16 +208,21 @@ void SendLocalThread::Enter()
 {
    Debug::ft("SendLocalThread.Enter");
 
-   //  Inform the registry that the test is starting.
+   //  Exit if the local address service is not enabled.
    //
    auto reg = Singleton< IpPortRegistry >::Instance();
-   reg->TestBegin();
+   auto svc = Singleton< SendLocalIpService >::Instance();
+   if(!svc->Enabled()) return;
 
-   //  Wait briefly if the UDP I/O thread that will receive our message
-   //  needs more time to bind a socket to our port.
+   //  Inform the registry that the test is starting.  Wait briefly if the
+   //  UDP I/O thread that will receive our message needs more time to bind
+   //  a socket to our port.
    //
-   auto port = Singleton< SendLocalIpService >::Instance()->Port();
+   auto port = svc->Port();
    auto ipPort = reg->GetPort(port, IpUdp);
+   if(ipPort == nullptr) return;
+
+   reg->TestBegin();
 
    for(auto i = 4; i > 0; --i)
    {

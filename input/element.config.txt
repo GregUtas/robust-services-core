@@ -10,14 +10,14 @@
 /
 / BreakEnabled             F
 CheckStack               T
-/ CipTcpPort               40000
-/ CipUdpPort               40000
+CipTcp                   T
+CipUdp                   T
 ElementIpAddr            127.0.0.1
 ElementName              Reigi
 / InitTimeoutMsecs         10000
 / HelpPath [obsolete]      ../rsc/help
 / InputPath [obsolete]     ../rsc/input
-/ LocalTestIpPort          30000
+LocalTestUdp               T
 / NoIngressMessageCount    800
 / NoIngressQueueLength     1200
 / NoSpoolingMessageCount   400
@@ -42,8 +42,8 @@ NumOfSmallBuffers        8
 NumOfTimers              7
 / NumOfTinyBuffers         1
 / OutputPath [obsolete]    ../rsc/excluded/output
-/ PotsCallIpPort           40002
-/ PotsShelfIpPort          40001
+PotsCallUdp              T
+PotsShelfUdp             T
 ReinitOnSchedTimeout     F
 / RtcInterval              60
 / RtcLimit                 6

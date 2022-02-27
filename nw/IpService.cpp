@@ -127,6 +127,18 @@ void IpService::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name IpService_Enabled = "IpService.Enabled";
+
+bool IpService::Enabled() const
+{
+   Debug::ft(IpService_Enabled);
+
+   Debug::SwLog(IpService_Enabled, strOver(this), sid_.GetId());
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name IpService_GetAppSocketSizes = "IpService.GetAppSocketSizes";
 
 void IpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
@@ -263,5 +275,55 @@ void IpService::Startup(RestartLevel level)
 
    auto pid = Port();
    if(pid != NilIpPort) Provision(pid);
+}
+
+//==============================================================================
+
+CfgServiceParm::CfgServiceParm(c_string key, c_string def,
+   c_string expl, IpService* service) : CfgBoolParm(key, def, expl),
+   service_(service)
+{
+   Debug::ft("CfgServiceParm.ctor");
+}
+
+//------------------------------------------------------------------------------
+
+CfgServiceParm::~CfgServiceParm()
+{
+   Debug::ftnt("CfgServiceParm.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+RestartLevel CfgServiceParm::RestartRequired() const
+{
+   Debug::ftnt("CfgServiceParm.RestartRequired");
+
+   //  A restart is required to disable,but not to enable, a service.
+   //
+   return (NextValue() ? RestartNone : RestartCold);
+}
+
+//------------------------------------------------------------------------------
+
+void CfgServiceParm::SetCurr()
+{
+   Debug::ft("CfgServiceParm.SetCurr");
+
+   FunctionGuard guard(Guard_MemUnprotect);
+   CfgBoolParm::SetCurr();
+
+   //  If the service was enabled, create its I/O thread.
+   //
+   if(CurrValue())
+   {
+      auto reg = Singleton< IpPortRegistry >::Instance();
+      auto port = reg->GetPort(service_->Port(), service_->Protocol());
+
+      if(port != nullptr)
+      {
+         port->CreateThread();
+      }
+   }
 }
 }

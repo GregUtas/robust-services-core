@@ -617,6 +617,11 @@ private:
    //
    void ReleaseResources(bool orphaned);
 
+   //  Performs critical cleanup actions when exiting a thread abnormally.
+   //  Returns EXIT, the thread's exit code.
+   //
+   main_t PurgeThread(main_t exit);
+
    //  Used during initializations and restarts to enable/disable the
    //  scheduling of specific factions.
    //

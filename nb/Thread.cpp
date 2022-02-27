@@ -2440,6 +2440,17 @@ void Thread::Proceed()
 
 //------------------------------------------------------------------------------
 
+main_t Thread::PurgeThread(main_t exit)
+{
+   auto reg = Singleton< ThreadRegistry >::Instance();
+   reg->Exiting(SysThread::RunningThreadId());
+   if(daemon_ != nullptr) daemon_->ThreadDeleted(this);
+   ClearActiveThread(this);
+   return exit;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Thread_Raise = "Thread.Raise";
 
 void Thread::Raise(signal_t sig)
@@ -2465,9 +2476,7 @@ void Thread::Raise(signal_t sig)
       return;
    }
 
-   //  If this is the running thread, throw the signal immediately.  If the
-   //  running thread can't be found, don't assert: the signal handler can
-   //  invoke this when a signal occurs on an unknown thread.
+   //  If this is the running thread, throw the signal immediately.
    //
    auto thr = RunningThread(std::nothrow);
 
@@ -3147,7 +3156,7 @@ main_t Thread::Start()
             return Exit(sex.GetSignal());
          case Return:
          default:
-            return sex.GetSignal();
+            return PurgeThread(sex.GetSignal());
          }
       }
 
@@ -3161,7 +3170,7 @@ main_t Thread::Start()
             return Exit(SIGNIL);
          case Return:
          default:
-            return SIGDELETED;
+            return PurgeThread(SIGDELETED);
          }
       }
 
@@ -3175,7 +3184,7 @@ main_t Thread::Start()
             return Exit(SIGNIL);
          case Return:
          default:
-            return SIGDELETED;
+            return PurgeThread(SIGDELETED);
          }
       }
 
@@ -3189,7 +3198,7 @@ main_t Thread::Start()
             return Exit(SIGNIL);
          case Return:
          default:
-            return SIGDELETED;
+            return PurgeThread(SIGDELETED);
          }
       }
    }

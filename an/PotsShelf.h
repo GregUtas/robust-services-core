@@ -25,7 +25,6 @@
 #include "MsgFactory.h"
 #include "SbExtInputHandler.h"
 #include "UdpIpService.h"
-#include "IpPortCfgParm.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 
@@ -43,11 +42,9 @@ class PotsShelfIpService : public UdpIpService
 {
    friend class Singleton< PotsShelfIpService >;
 public:
-   //  Overridden to return the service's attributes.
+   //  Overridden for restarts.
    //
-   c_string Name() const override { return "POTS Shelf"; }
-   ipport_t Port() const override { return portCfg_->GetPort(); }
-   Faction GetFaction() const override { return PayloadFaction; }
+   void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //
@@ -57,6 +54,13 @@ private:
    //
    ~PotsShelfIpService();
 
+   //  Overridden to return the service's attributes.
+   //
+   c_string Name() const override { return "POTS Shelf"; }
+   ipport_t Port() const override { return PotsShelfIpPort; }
+   Faction GetFaction() const override { return PayloadFaction; }
+   bool Enabled() const override;
+
    //  Overridden to create the POTS shelf input handler.
    //
    InputHandler* CreateHandler(IpPort* port) const override;
@@ -65,9 +69,13 @@ private:
    //
    CliText* CreateText() const override;
 
-   //  The configuration parameter for setting the service's port.
+   //  Overridden for restarts.
    //
-   IpPortCfgParmPtr portCfg_;
+   void Shutdown(NodeBase::RestartLevel level) override;
+
+   //  The configuration parameter for enabling the service.
+   //
+   CfgServiceParmPtr enabled_;
 };
 
 //------------------------------------------------------------------------------

@@ -153,14 +153,14 @@ class InputHandler;
 class IoThread;
 class IpBuffer;
 class IpPort;
-class IpPortCfgParm;
 class IpService;
 class SysIpL3Addr;
 class SysSocket;
 class SysTcpSocket;
+class CfgServiceParm;
 
 typedef std::unique_ptr< IpBuffer > IpBufferPtr;
-typedef std::unique_ptr< IpPortCfgParm > IpPortCfgParmPtr;
 typedef std::unique_ptr< SysTcpSocket > SysTcpSocketPtr;
+typedef std::unique_ptr< CfgServiceParm > CfgServiceParmPtr;
 }
 #endif

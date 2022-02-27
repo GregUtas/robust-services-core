@@ -29,7 +29,6 @@
 #include "Duration.h"
 #include "EventHandler.h"
 #include "Initiator.h"
-#include "IpPortCfgParm.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SbTypes.h"
@@ -57,11 +56,9 @@ class PotsCallIpService : public UdpIpService
 {
    friend class Singleton< PotsCallIpService >;
 public:
-   //  Overridden to return the service's attributes.
+   //  Overridden for restarts.
    //
-   c_string Name() const override { return "POTS Call"; }
-   ipport_t Port() const override { return portCfg_->GetPort(); }
-   Faction GetFaction() const override { return PayloadFaction; }
+   void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //
@@ -71,6 +68,13 @@ private:
    //
    ~PotsCallIpService();
 
+   //  Overridden to return the service's attributes.
+   //
+   c_string Name() const override { return "POTS Call"; }
+   ipport_t Port() const override { return PotsCallIpPort; }
+   Faction GetFaction() const override { return PayloadFaction; }
+   bool Enabled() const override;
+
    //  Overridden to create the POTS call input handler.
    //
    InputHandler* CreateHandler(IpPort* port) const override;
@@ -79,9 +83,13 @@ private:
    //
    CliText* CreateText() const override;
 
-   //  The configuration parameter for port_.
+   //  Overridden for restarts.
    //
-   IpPortCfgParmPtr portCfg_;
+   void Shutdown(NodeBase::RestartLevel level) override;
+
+   //  The configuration parameter for enabling the service.
+   //
+   CfgServiceParmPtr enabled_;
 };
 
 //------------------------------------------------------------------------------

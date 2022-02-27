@@ -27,7 +27,6 @@
 #include "Thread.h"
 #include "UdpIpService.h"
 #include "Duration.h"
-#include "IpPortCfgParm.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 
@@ -111,13 +110,11 @@ private:
 class SendLocalIpService : public UdpIpService
 {
    friend class Singleton< SendLocalIpService >;
+   friend class SendLocalThread;
 public:
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
-   Faction GetFaction() const override { return MaintenanceFaction; }
-   c_string Name() const override { return "Local Address Test"; }
-   void Patch(sel_t selector, void* arguments) override;
-   ipport_t Port() const override { return portCfg_->GetPort(); }
+   //  Overridden for restarts.
+   //
+   void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this is a singleton.
    //
@@ -127,6 +124,14 @@ private:
    //
    ~SendLocalIpService();
 
+   //  Overridden to return the service's attributes.
+   //
+   c_string Name() const override { return "Local Address Test"; }
+   ipport_t Port() const override { return LocalAddrTestIpPort; }
+   Faction GetFaction() const override { return MaintenanceFaction; }
+   bool Enabled() const override;
+   void Patch(sel_t selector, void* arguments) override;
+
    //  Overridden to create the input handler for receiving the messages.
    //
    InputHandler* CreateHandler(IpPort* port) const override;
@@ -135,9 +140,13 @@ private:
    //
    CliText* CreateText() const override;
 
-   //  The configuration parameter for setting the service's port.
+   //  Overridden for restarts.
    //
-   IpPortCfgParmPtr portCfg_;
+   void Shutdown(NodeBase::RestartLevel level) override;
+
+   //  The configuration parameter for enabling the service.
+   //
+   CfgServiceParmPtr enabled_;
 };
 
 //------------------------------------------------------------------------------

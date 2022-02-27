@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  PotsShelfIpService.cpp
+//  IpServiceCfg.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,45 +19,65 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "PotsShelf.h"
-#include "CliText.h"
+#include "IpServiceCfg.h"
 #include "Debug.h"
-#include "SysTypes.h"
+#include "FunctionGuard.h"
+#include "IpPort.h"
+#include "IpPortRegistry.h"
+#include "IpService.h"
+#include "Singleton.h"
+
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
-namespace PotsBase
+namespace NetworkBase
 {
-PotsShelfIpService::PotsShelfIpService()
+IpServiceCfg::IpServiceCfg(c_string key, c_string def,
+   c_string expl, IpService* service) : CfgBoolParm(key, def, expl),
+   service_(service)
 {
-   Debug::ft("PotsShelfIpService.ctor");
+   Debug::ft("IpServiceCfg.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-PotsShelfIpService::~PotsShelfIpService()
+IpServiceCfg::~IpServiceCfg()
 {
-   Debug::ftnt("PotsShelfIpService.dtor");
+   Debug::ftnt("IpServiceCfg.dtor");
 }
 
 //------------------------------------------------------------------------------
 
-InputHandler* PotsShelfIpService::CreateHandler(IpPort* port) const
+RestartLevel IpServiceCfg::RestartRequired() const
 {
-   Debug::ft("PotsShelfIpService.CreateHandler");
+   Debug::ftnt("IpServiceCfg.RestartRequired");
 
-   return new PotsShelfHandler(port);
+   //  A restart is required to disable,but not to enable, a service.
+   //
+   return (NextValue() ? RestartNone : RestartCold);
 }
 
 //------------------------------------------------------------------------------
 
-fixed_string PotsShelfServiceStr = "POTS Shelf/UDP";
-fixed_string PotsShelfServiceExpl = "POTS Shelf Protocol";
-
-CliText* PotsShelfIpService::CreateText() const
+void IpServiceCfg::SetCurr()
 {
-   Debug::ft("PotsShelfIpService.CreateText");
+   Debug::ft("IpServiceCfg.SetCurr");
 
-   return new CliText(PotsShelfServiceStr, PotsShelfServiceExpl);
+   FunctionGuard guard(Guard_MemUnprotect);
+   CfgBoolParm::SetCurr();
+
+   //  If the service was enabled, create its I/O thread.
+   //
+   if(CurrValue())
+   {
+      auto reg = Singleton< IpPortRegistry >::Instance();
+      auto port = reg->GetPort(service_->Port(), service_->Protocol());
+
+      if(port != nullptr)
+      {
+         port->CreateThread();
+      }
+   }
 }
 }

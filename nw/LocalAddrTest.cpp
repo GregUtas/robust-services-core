@@ -30,7 +30,7 @@
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
-#include "IpService.h"
+#include "IpServiceCfg.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -84,7 +84,7 @@ SendLocalIpService::SendLocalIpService()
    Debug::ft("SendLocalIpService.ctor");
 
    enabled_.reset
-      (new CfgServiceParm(LocalAddrUdpKey, "F", LocalAddrUdpExpl, this));
+      (new IpServiceCfg(LocalAddrUdpKey, "F", LocalAddrUdpExpl, this));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
 }
 
@@ -152,7 +152,7 @@ void SendLocalIpService::Startup(RestartLevel level)
    {
       FunctionGuard guard(Guard_ImmUnprotect);
       enabled_.reset
-         (new CfgServiceParm(LocalAddrUdpKey, "F", LocalAddrUdpExpl, this));
+         (new IpServiceCfg(LocalAddrUdpKey, "F", LocalAddrUdpExpl, this));
       Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
    }
 

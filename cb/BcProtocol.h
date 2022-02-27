@@ -333,7 +333,7 @@ private:
 
    //  The configuration parameter for enabling the service.
    //
-   CfgServiceParmPtr enabled_;
+   IpServiceCfgPtr enabled_;
 };
 
 //------------------------------------------------------------------------------
@@ -384,7 +384,7 @@ private:
 
    //  The configuration parameter for enabling the service.
    //
-   CfgServiceParmPtr enabled_;
+   IpServiceCfgPtr enabled_;
 };
 
 //------------------------------------------------------------------------------

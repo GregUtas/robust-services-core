@@ -40,7 +40,7 @@
 #include "GlobalAddress.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
-#include "IpService.h"
+#include "IpServiceCfg.h"
 #include "NbAppIds.h"
 #include "Restart.h"
 #include "RootServiceSM.h"
@@ -188,7 +188,7 @@ CipUdpService::CipUdpService()
 {
    Debug::ft("CipUdpService.ctor");
 
-   enabled_.reset(new CfgServiceParm(CipUdpKey, "F", CipUdpExpl, this));
+   enabled_.reset(new IpServiceCfg(CipUdpKey, "F", CipUdpExpl, this));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
 }
 
@@ -248,7 +248,7 @@ void CipUdpService::Startup(RestartLevel level)
    if(enabled_ == nullptr)
    {
       FunctionGuard guard(Guard_ImmUnprotect);
-      enabled_.reset(new CfgServiceParm(CipUdpKey, "F", CipUdpExpl, this));
+      enabled_.reset(new IpServiceCfg(CipUdpKey, "F", CipUdpExpl, this));
       Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
    }
 
@@ -264,7 +264,7 @@ CipTcpService::CipTcpService()
 {
    Debug::ft("CipTcpService.ctor");
 
-   enabled_.reset(new CfgServiceParm(CipTcpKey, "F", CipTcpExpl, this));
+   enabled_.reset(new IpServiceCfg(CipTcpKey, "F", CipTcpExpl, this));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
 }
 
@@ -336,7 +336,7 @@ void CipTcpService::Startup(RestartLevel level)
    if(enabled_ == nullptr)
    {
       FunctionGuard guard(Guard_ImmUnprotect);
-      enabled_.reset(new CfgServiceParm(CipTcpKey, "F", CipTcpExpl, this));
+      enabled_.reset(new IpServiceCfg(CipTcpKey, "F", CipTcpExpl, this));
       Singleton< CfgParmRegistry >::Instance()->BindParm(*enabled_);
    }
 

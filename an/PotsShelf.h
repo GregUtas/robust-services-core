@@ -41,11 +41,7 @@ namespace PotsBase
 class PotsShelfIpService : public UdpIpService
 {
    friend class Singleton< PotsShelfIpService >;
-public:
-   //  Overridden for restarts.
-   //
-   void Startup(NodeBase::RestartLevel level) override;
-private:
+
    //  Private because this is a singleton.
    //
    PotsShelfIpService();
@@ -59,7 +55,7 @@ private:
    c_string Name() const override { return "POTS Shelf"; }
    ipport_t Port() const override { return PotsShelfIpPort; }
    Faction GetFaction() const override { return PayloadFaction; }
-   bool Enabled() const override;
+   bool Enabled() const override { return true; }
 
    //  Overridden to create the POTS shelf input handler.
    //
@@ -68,14 +64,6 @@ private:
    //  Overridden to create a CLI parameter for identifying the protocol.
    //
    CliText* CreateText() const override;
-
-   //  Overridden for restarts.
-   //
-   void Shutdown(NodeBase::RestartLevel level) override;
-
-   //  The configuration parameter for enabling the service.
-   //
-   CfgServiceParmPtr enabled_;
 };
 
 //------------------------------------------------------------------------------

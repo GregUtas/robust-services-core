@@ -41,6 +41,8 @@ the one for `DipModule.h`.
 `namespace Diplomacy`.
 * In the list of `Singleton` invocations, comment out all of them and uncomment the one
 for `DipModule`.
+* DAIDE Server 0.38, which can be downloaded from the [DAIDE](http://www.daide.org.uk)
+  site, only supports IPv4, so change `SysIpL2Addr::SupportsIPv6` to `return false`.
 
 If you've already developed a bot, rebasing it onto RSC will require a bit of work because
 some of the interfaces have changed.  However, it shouldn't prove too difficult.  Note that

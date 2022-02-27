@@ -157,10 +157,10 @@ class IpService;
 class SysIpL3Addr;
 class SysSocket;
 class SysTcpSocket;
-class CfgServiceParm;
+class IpServiceCfg;
 
 typedef std::unique_ptr< IpBuffer > IpBufferPtr;
 typedef std::unique_ptr< SysTcpSocket > SysTcpSocketPtr;
-typedef std::unique_ptr< CfgServiceParm > CfgServiceParmPtr;
+typedef std::unique_ptr< IpServiceCfg > IpServiceCfgPtr;
 }
 #endif

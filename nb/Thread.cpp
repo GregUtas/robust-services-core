@@ -1593,6 +1593,12 @@ main_t Thread::EnterThread(void* arg)
 
 main_t Thread::Exit(signal_t sig)
 {
+   //  Set this immediately to prevent an exception from being thrown
+   //  to force the thread to exit.  We have exited Thread.Start, so
+   //  the exception wouldn't be caught.
+   //
+   priv_->exiting_ = true;
+
    Debug::ft("Thread.Exit");
 
    //  If the thread is holding any mutexes, release them.
@@ -1619,7 +1625,6 @@ main_t Thread::Exit(signal_t sig)
       Log::Submit(log);
    }
 
-   priv_->exiting_ = true;
    Destroy();
    return sig;
 }
@@ -1683,7 +1688,7 @@ void Thread::ExitIfSafe(debug64_t offset)
 
    Debug::ft("Thread.ExitIfSafe");
 
-   if((priv_->traps_ == 0) && SysThreadStack::TrapIsOk())
+   if(!priv_->exiting_ && (priv_->traps_ == 0) && SysThreadStack::TrapIsOk())
    {
       SetTrap(false);
       lock.clear();
@@ -2440,8 +2445,10 @@ void Thread::Proceed()
 
 //------------------------------------------------------------------------------
 
-main_t Thread::PurgeThread(main_t exit)
+main_t Thread::Purge(main_t exit)
 {
+   Debug::ftnt("Thread.Purge");
+
    auto reg = Singleton< ThreadRegistry >::Instance();
    reg->Exiting(SysThread::RunningThreadId());
    if(daemon_ != nullptr) daemon_->ThreadDeleted(this);
@@ -3156,7 +3163,7 @@ main_t Thread::Start()
             return Exit(sex.GetSignal());
          case Return:
          default:
-            return PurgeThread(sex.GetSignal());
+            return Purge(sex.GetSignal());
          }
       }
 
@@ -3170,7 +3177,7 @@ main_t Thread::Start()
             return Exit(SIGNIL);
          case Return:
          default:
-            return PurgeThread(SIGDELETED);
+            return Purge(SIGDELETED);
          }
       }
 
@@ -3184,7 +3191,7 @@ main_t Thread::Start()
             return Exit(SIGNIL);
          case Return:
          default:
-            return PurgeThread(SIGDELETED);
+            return Purge(SIGDELETED);
          }
       }
 
@@ -3198,7 +3205,7 @@ main_t Thread::Start()
             return Exit(SIGNIL);
          case Return:
          default:
-            return PurgeThread(SIGDELETED);
+            return Purge(SIGDELETED);
          }
       }
    }

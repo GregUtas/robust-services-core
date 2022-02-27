@@ -80,14 +80,19 @@ nwerr_t SysSocket::OutputLog(LogId id, c_string func, nwerr_t errval)
 {
    Debug::ft("SysSocket.OutputLog(errval)");
 
-   //  Generate a log that appends information about this socket.
+   //  Generate a log that appends information about this socket.  To
+   //  prevent log floods, don't generate the same log twice in a row
+   //  on the same socket.
    //
-   error_ = errval;
+   if(error_ != errval)
+   {
+      std::ostringstream stream;
 
-   std::ostringstream stream;
+      error_ = errval;
+      stream << CRLF << Log::Tab << to_str();
+      OutputNwLog(id, func, errval, stream.str().c_str());
+   }
 
-   stream << CRLF << Log::Tab << to_str();
-   OutputNwLog(id, func, errval, stream.str().c_str());
    return -1;
 }
 

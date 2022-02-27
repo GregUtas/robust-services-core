@@ -22,7 +22,6 @@
 #ifndef IPSERVICE_H_INCLUDED
 #define IPSERVICE_H_INCLUDED
 
-#include "CfgBoolParm.h"
 #include "Immutable.h"
 #include <cstddef>
 #include "IoThread.h"
@@ -45,7 +44,7 @@ namespace NetworkBase
 class IpService : public Immutable
 {
    friend class Registry< IpService >;
-   friend class CfgServiceParm;
+   friend class IpServiceCfg;
 public:
    //  Deleted to prohibit copying.
    //
@@ -159,37 +158,6 @@ private:
    //  The service's identifier.
    //
    RegCell sid_;
-};
-
-//------------------------------------------------------------------------------
-//
-//  Configuration parameter for enabling a service.  If it is enabled, an
-//  I/O thread is created.
-//
-class CfgServiceParm : public CfgBoolParm
-{
-public:
-   //  Creates a parameter with the specified attributes.
-   //
-   CfgServiceParm(c_string key,
-      c_string def, c_string expl, IpService* service);
-
-   //  Virtual to allow subclassing.
-   //
-   virtual ~CfgServiceParm();
-private:
-   //  Overridden to indicate that a cold restart is required to disable a
-   //  service.  Enabling a service does not require a restart.
-   //
-   RestartLevel RestartRequired() const override;
-
-   //  Overridden to create the service I/O thread when it is enabled.
-   //
-   void SetCurr() override;
-
-   //  The service associated with the parameter.
-   //
-   IpService* const service_;
 };
 }
 #endif

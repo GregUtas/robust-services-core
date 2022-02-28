@@ -80,31 +80,23 @@ using std::string;
 
 namespace NodeBase
 {
-//  FtLocks_ provides a per-thread lock to prevent nested calls to functions
-//  that are invoked from Debug::ft and that, in turn, invoke functions that
-//  also invoke Debug::Ft.  Nested calls to these functions must be blocked
-//  to prevent a stack overflow.
-//
-//  NOTE ON INITIALIZATION ORDER:
-//  ============================
-//  Debug::ft is invoked fairly early during initialization, well before entry
-//  to main().  The SysMutex and Duration items defined at file scope in this
-//  file end up invoking Debug::ft during their initialization.  If FtLocks_
-//  has not been initialized at that point, FtLocks_.find() will trap.  This
-//  could occur if an item initialized in another file also causes Debug::ft
-//  to be invoked.
-//
-//  SysTickTimer provides the time at which a function was invoked, so it is
-//  created after FtLocks_.  FtLocks_ must be created first because functions
-//  invoked to create SysTickTimer invoke Debug::ft, which requires FtLocks_
-//  to have been constructed.
-//
-static std::map< SysThreadId, std::atomic_flag > FtLocks_;
-
 //  Returns the Debug::ft lock for the running thread.
 //
 static std::atomic_flag& AccessFtLock()
 {
+   //  FtLocks_ provides a per-thread lock to prevent nested calls to functions
+   //  that are invoked from Debug::ft and that, in turn, invoke functions that
+   //  also invoke Debug::ft.  Nested calls to these functions must be blocked
+   //  to prevent a stack overflow.
+   //
+   //  Debug::ft is invoked early during initialization, well before entry to
+   //  main().  If FtLocks_ has not been constructed by then, FtLocks_.find()
+   //  traps (the infamous "static initialization order fiasco").  FtLocks_ was
+   //  therefore changed from a static item at file scope to a static local in
+   //  this function.
+   //
+   static std::map< SysThreadId, std::atomic_flag > FtLocks_;
+
    Debug::noft();
 
    auto nid = SysThread::RunningThreadId();
@@ -122,6 +114,11 @@ static std::atomic_flag& AccessFtLock()
    return lock;
 }
 
+//  SysTickTimer provides the time at which a function was invoked, so it is
+//  created after FtLocks_.  FtLocks_ must be created first because functions
+//  invoked to create SysTickTimer invoke Debug::ft, which requires FtLocks_
+//  to have been constructed.
+//
 const SysTickTimer* TickTimer = SysTickTimer::Instance();
 
 //------------------------------------------------------------------------------

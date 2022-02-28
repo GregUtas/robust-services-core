@@ -120,6 +120,7 @@ void IpService::Display(ostream& stream,
    stream << prefix << "Name     : " << Name() << CRLF;
    stream << prefix << "Protocol : " << Protocol() << CRLF;
    stream << prefix << "Port     : " << Port() << CRLF;
+   stream << prefix << "Enabled  : " << Enabled() << CRLF;
    stream << prefix << "Faction  : " << GetFaction() << CRLF;
    stream << prefix << "RxSize   : " << RxSize() << CRLF;
    stream << prefix << "TxSize   : " << TxSize() << CRLF;

@@ -47,6 +47,7 @@ extern NodeBase::fixed_string NoHostAddrExpl;
 extern NodeBase::fixed_string NoHostInfoExpl;
 extern NodeBase::fixed_string NoHostNameExpl;
 extern NodeBase::fixed_string NoIpPortExpl;
+extern NodeBase::fixed_string NoIpServiceExpl;
 
 //------------------------------------------------------------------------------
 //

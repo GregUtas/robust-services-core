@@ -182,7 +182,7 @@ buffers           : Counts or displays message buffers.
   [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
 
 deferred          : Displays deferred work items.
-  [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
+  [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 psignals          : Displays POSIX signals.
   [0:65535]       : index (location in registry)
@@ -615,8 +615,12 @@ ip                : Executes IP functions.
     <str>         : IP address and optional port: n.n.n.n[:p]
 )
 
-ipports           : Displays IP ports with input handlers.
+ipports           : Displays IP ports.
   [0:65535]       : ipport_t
+  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+
+ipservices        : Displays IP services.
+  [0:65535]       : index (location in registry)
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 status            : Displays system statistics.

@@ -36,6 +36,7 @@
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
+#include "IpServiceRegistry.h"
 #include "LocalAddrTest.h"
 #include "NbCliParms.h"
 #include "NwCliParms.h"
@@ -398,7 +399,7 @@ private:
 };
 
 fixed_string IpPortsStr = "ipports";
-fixed_string IpPortsExpl = "Displays IP ports with input handlers.";
+fixed_string IpPortsExpl = "Displays IP ports.";
 
 IpPortsCommand::IpPortsCommand() : CliCommand(IpPortsStr, IpPortsExpl)
 {
@@ -434,6 +435,60 @@ word IpPortsCommand::ProcessCommand(CliThread& cli) const
       auto ipport = reg->GetPort(port);
       if(ipport == nullptr) return cli.Report(-2, NoIpPortExpl);
       ipport->Output(*cli.obuf, 2, v);
+   }
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+//
+//  The IPSERVICES command.
+//
+class IpServicesCommand : public CliCommand
+{
+public:
+   IpServicesCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string IpServicesStr = "ipservices";
+fixed_string IpServicesExpl = "Displays IP services.";
+
+IpServicesCommand::IpServicesCommand() : CliCommand(IpServicesStr, IpServicesExpl)
+{
+   BindParm(*new IdOptParm);
+   BindParm(*new DispBVParm);
+}
+
+word IpServicesCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft("IpServicesCommand.ProcessCommand");
+
+   word id;
+   bool all, v = false;
+   IpService* service = nullptr;
+   auto reg = Singleton< IpServiceRegistry >::Instance();
+
+   switch(GetIntParmRc(id, cli))
+   {
+   case None: all = true; break;
+   case Ok: all = false; break;
+   default: return -1;
+   }
+
+   if(GetBV(*this, cli, v) == Error) return -1;
+   if(!cli.EndOfInput()) return -1;
+
+   if(all)
+   {
+      reg->Output(*cli.obuf, 2, v);
+   }
+   else
+   {
+      service = reg->Services().At(id);
+      if(service == nullptr) return cli.Report(-2, NoIpServiceExpl);
+      service->Output(*cli.obuf, 2, v);
    }
 
    return 0;
@@ -516,6 +571,7 @@ NwIncrement::NwIncrement() : CliIncrement(NetworkText, NetworkExpl)
 
    BindCommand(*new IpCommand);
    BindCommand(*new IpPortsCommand);
+   BindCommand(*new IpServicesCommand);
    BindCommand(*new NwStatusCommand);
    BindCommand(*new NwIncludeCommand);
    BindCommand(*new NwExcludeCommand);

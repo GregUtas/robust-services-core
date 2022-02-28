@@ -52,6 +52,10 @@ public:
    //
    IpServiceRegistry& operator=(const IpServiceRegistry& that) = delete;
 
+   //  Returns the services in the registry.
+   //
+   const NodeBase::Registry< IpService >& Services() const { return services_; }
+
    //  Returns the service(s) registered against NAME.
    //
    std::vector< IpService* > GetServices(const std::string& name) const;

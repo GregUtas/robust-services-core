@@ -38,6 +38,7 @@ fixed_string NoHostAddrExpl = "Host address not found.";
 fixed_string NoHostInfoExpl = "Host information not found.";
 fixed_string NoHostNameExpl = "Host name not found.";
 fixed_string NoIpPortExpl   = "Nothing is registered against that IP port.";
+fixed_string NoIpServiceExpl = "There is no IP service at that index.";
 
 //------------------------------------------------------------------------------
 

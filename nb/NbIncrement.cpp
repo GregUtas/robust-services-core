@@ -753,7 +753,7 @@ fixed_string DeferredExpl = "Displays deferred work items.";
 
 DeferredCommand::DeferredCommand() : CliCommand(DeferredStr, DeferredExpl)
 {
-   BindParm(*new DispCBVParm);
+   BindParm(*new DispBVParm);
 }
 
 word DeferredCommand::ProcessCommand(CliThread& cli) const

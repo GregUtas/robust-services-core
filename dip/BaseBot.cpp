@@ -823,7 +823,7 @@ void BaseBot::process_message(const DipMessage& message)
       //
       std::ostringstream stream;
       stream << "Unexpected message received: signal=";
-      stream << message.header.signal << CRLF;
+      stream << int(message.header.signal) << CRLF;
       send_to_console(stream);
    }
 }

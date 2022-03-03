@@ -48,7 +48,7 @@ extern const Flags VerboseOpt;  // flag with DispVerbose set
 
 //  Reasons for thread blocking.
 //
-enum BlockingReason : uint8_t
+enum BlockingReason : int16_t
 {
    NotBlocked,         // running or ready to run
    BlockedOnClock,     // sleeping until timeout or interrupt

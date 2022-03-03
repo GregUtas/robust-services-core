@@ -33,7 +33,7 @@ namespace Diplomacy
 //  that its fleet is dislodged, which means that the convoy fails and its
 //  army does not cut the support, which means that the convoy succeeds...
 //
-enum SubversionType : uint8_t
+enum SubversionType : int16_t
 {
    UNSUBVERTED_CONVOY,  // convoy is not subverted by another convoying army
    SUBVERTED_CONVOY,    // convoy is subverted by another convoying army

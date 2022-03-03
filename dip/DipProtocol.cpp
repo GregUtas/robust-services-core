@@ -77,7 +77,7 @@ void DipMessage::Display(ostream& stream) const
       reinterpret_cast< const BM_Message* >(this)->Display(stream);
       break;
    default:
-      stream << "Unknown signal: " << header.signal << CRLF;
+      stream << "Unknown signal: " << int(header.signal) << CRLF;
    }
 }
 

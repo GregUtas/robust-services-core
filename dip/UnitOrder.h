@@ -26,7 +26,7 @@ namespace Diplomacy
 {
 //  Information about a unit.
 //
-enum OrderType : uint8_t
+enum OrderType : int16_t
 {
    NO_ORDER,               // no order specified
    HOLD_ORDER,
@@ -45,7 +45,7 @@ enum OrderType : uint8_t
 //  B, or C).  The status indicates what will happen in a destination province
 //  that is a member of the ring.
 //
-enum RingUnitStatus : uint8_t
+enum RingUnitStatus : int16_t
 {
    NIL_RING_STATUS,           // default value if not calculated
    RING_ADVANCES_REGARDLESS,  // unit in ring advances to destination

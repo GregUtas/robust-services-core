@@ -106,7 +106,7 @@ public:
 
    //  The type of season in which an order token is valid.
    //
-   enum SeasonType : uint8_t
+   enum SeasonType : int16_t
    {
       NOT_AN_ORDER,    // token is not an order type
       MOVE_SEASON,     // order is valid in spring or fall

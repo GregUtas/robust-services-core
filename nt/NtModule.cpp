@@ -78,5 +78,7 @@ void NtModule::Startup(RestartLevel level)
    reg->BindSymbol("flag.threadctorretrap", ThreadCtorRetrapFlag);
    reg->BindSymbol("flag.threadretrap", ThreadRetrapFlag);
    reg->BindSymbol("flag.threaddtortrap", ThreadDtorTrapFlag);
+   reg->BindSymbol("recovery.thread", 0, false);
+   reg->BindSymbol("recovery.daemon", 0, false);
 }
 }

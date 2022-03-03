@@ -67,6 +67,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 #include "SoftwareException.h"
+#include "SymbolRegistry.h"
 #include "SysFile.h"
 #include "SysMutex.h"
 #include "SysTime.h"
@@ -3503,6 +3504,9 @@ fixed_string RecoveryDaemonName = "recover";
 RecoveryDaemon::RecoveryDaemon() : Daemon(RecoveryDaemonName, 1)
 {
    Debug::ft("RecoveryDaemon.ctor");
+
+   auto reg = Singleton< SymbolRegistry >::Instance();
+   reg->BindSymbol("recovery.daemon", Did(), false);
 }
 
 RecoveryDaemon::~RecoveryDaemon()
@@ -3530,6 +3534,9 @@ RecoveryThread::RecoveryThread() :
    signal_(0)
 {
    Debug::ft("RecoveryThread.ctor");
+
+   auto reg = Singleton< SymbolRegistry >::Instance();
+   reg->BindSymbol("recovery.thread", Tid(), false);
 
    //  Set ThreadCtorTrapFlag to cause a trap during thread creation.  This
    //  tests orphan recovery and a single daemon trap.  If ThreadCtorRetrapFlag

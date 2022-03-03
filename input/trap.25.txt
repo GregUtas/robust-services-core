@@ -1,8 +1,8 @@
 / RECOVER disable daemon; kill thread; enable daemon; thread recreated
-daemons set 9 off
+daemons set &recovery.daemon off
 delay 1
-sched kill 15
+sched kill &recovery.thread
 delay 2
-daemons set 9 on
+daemons set &recovery.daemon on
 delay 1
 tests end

@@ -2,7 +2,7 @@ read test.trap.setup
 
 tests begin recover.Return
 read trap.01
-tests begin recover.SwErr
+tests begin recover.Exception
 read trap.02
 tests begin recover.BadPtrExit
 read trap.24
@@ -32,14 +32,14 @@ tests begin recover.StackOverflow
 read trap.14
 tests begin recover.MutexBlock
 read trap.19
+tests begin recover.ThreadCtorTrap
+read trap.20
 tests begin recover.MutexExit
 read trap.21
 tests begin recover.MutexTrap
 read trap.22
 tests begin recover.TrapInRecover
 read trap.15
-tests begin recover.ThreadCtorTrap
-read trap.20
 tests begin recover.DaemonReenable
 read trap.25
 tests begin recover.DaemonRetrap

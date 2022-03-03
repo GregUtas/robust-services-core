@@ -315,14 +315,13 @@ void FileThread::Spool(const string& name, ostringstreamPtr& stream, bool trunc)
 
 //------------------------------------------------------------------------------
 
-void FileThread::Spool(const string& name, const string& s, bool eol)
+void FileThread::Spool(const string& name, const string& str, bool eol)
 {
    Debug::ftnt("FileThread.Spool(string)");
 
-   ostringstreamPtr stream(new (std::nothrow) std::ostringstream);
+   ostringstreamPtr stream(new (std::nothrow) std::ostringstream(str));
    if(stream == nullptr) return;
 
-   *stream << s;
    if(eol) *stream << CRLF;
 
    CallbackRequestPtr callback;

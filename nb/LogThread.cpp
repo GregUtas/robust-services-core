@@ -58,9 +58,9 @@ static SysMutex LogFileLock_("LogFileLock");
 
 //------------------------------------------------------------------------------
 //
-//  Copies the STREAM of logs to the console when appropriate.
+//  Copies LOGS to the console when appropriate.
 //
-static void CopyToConsole(const std:: ostringstream* stream)
+static void CopyToConsole(const string& logs)
 {
    Debug::ft("NodeBase.CopyToConsole");
 
@@ -68,8 +68,7 @@ static void CopyToConsole(const std:: ostringstream* stream)
    //
    if(Element::RunningInLab())
    {
-      ostringstreamPtr clone
-         (new (std::nothrow) std::ostringstream(stream->str()));
+      ostringstreamPtr clone(new (std::nothrow) std::ostringstream(logs));
       if(clone != nullptr) CoutThread::Spool(clone);
    }
 }
@@ -166,9 +165,9 @@ void LogThread::Enter()
       auto buff = reg->Active();
       CallbackRequestPtr callback;
       auto periodic = false;
-      auto stream = buff->GetLogs(callback, periodic);
+      auto logs = buff->GetLogs(callback, periodic);
 
-      if(stream == nullptr)
+      if(logs.empty())
       {
          delay = TIMEOUT_NEVER;  // log buffer is empty
          continue;
@@ -178,7 +177,8 @@ void LogThread::Enter()
 
       //  Add the log to the log file and possibly the console.
       //
-      if(!periodic) CopyToConsole(stream.get());
+      if(!periodic) CopyToConsole(logs);
+      ostringstreamPtr stream(new std::ostringstream(logs));
       FileThread::Spool(buff->FileName(), stream, callback);
    }
 }
@@ -194,7 +194,7 @@ void LogThread::Patch(sel_t selector, void* arguments)
 
 fn_name LogThread_Spool = "LogThread.Spool";
 
-void LogThread::Spool(ostringstreamPtr& stream, const Log* log)
+void LogThread::Spool(const string& str, const Log* log)
 {
    Debug::ftnt(LogThread_Spool);
 
@@ -218,7 +218,7 @@ void LogThread::Spool(ostringstreamPtr& stream, const Log* log)
       //
       if(Element::RunningInLab())
       {
-         SysConsole::Out() << stream->str() << std::flush;
+         SysConsole::Out() << str << std::flush;
 
          auto path = Element::OutputPath() +
             PATH_SEPARATOR + Element::ConsoleFileName() + ".txt";
@@ -226,7 +226,7 @@ void LogThread::Spool(ostringstreamPtr& stream, const Log* log)
 
          if(file != nullptr)
          {
-            *file << stream->str();
+            *file << str;
             file.reset();
          }
       }
@@ -241,10 +241,8 @@ void LogThread::Spool(ostringstreamPtr& stream, const Log* log)
 
    if(file != nullptr)
    {
-      *file << stream->str();
+      *file << str;
       file.reset();
    }
-
-   stream.reset();
 }
 }

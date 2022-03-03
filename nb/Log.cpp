@@ -370,16 +370,21 @@ void Log::Submit(ostringstreamPtr& stream)
    Debug::ftnt(Log_Submit);
 
    if(stream == nullptr) return;
-   if(stream->str().back() != CRLF) *stream << CRLF;
 
-   auto log = Find(stream->str().c_str());
+   auto str = stream->str();
+   stream.reset();
+
+   if(str.empty()) return;
+   if(str.back() != CRLF) str.push_back(CRLF);
+
+   auto log = Find(str.c_str());
 
    //  During a restart, LogThread won't run, so output the log
    //  directly instead of buffering it.
    //
    if(Restart::GetStage() != Running)
    {
-      LogThread::Spool(stream, log);
+      LogThread::Spool(str, log);
 
       if((log != nullptr) && (log->bufferCount_ != nullptr))
       {
@@ -393,7 +398,7 @@ void Log::Submit(ostringstreamPtr& stream)
    {
       //  This log has not been registered.
       //
-      Debug::SwLog(Log_Submit, stream->str().substr(0, 40), 0);
+      Debug::SwLog(Log_Submit, str.substr(0, 40), 0);
       return;
    }
 
@@ -402,7 +407,7 @@ void Log::Submit(ostringstreamPtr& stream)
    auto buffer = Singleton< LogBufferRegistry >::Extant()->Active();
    if(buffer == nullptr) return;
 
-   if(buffer->Push(stream.get()))
+   if(buffer->Push(str))
       log->bufferCount_->Incr();
    else
       log->discardCount_->Incr();

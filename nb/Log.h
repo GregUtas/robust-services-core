@@ -95,8 +95,8 @@ public:
    static ostringstreamPtr Create(c_string groupName, LogId id);
 
    //  Submits STREAM to the log system.  STREAM must have been created by
-   //  Create.  Adds a CRLF to stream if it does not end with one.  The log
-   //  system assumes ownership of STREAM, which is set to nullptr.
+   //  Create.  Adds a CRLF to STREAM if it does not end with one.  STREAM
+   //  is freed and becomes nullptr.
    //
    static void Submit(ostringstreamPtr& stream);
 

@@ -237,8 +237,7 @@ const LogBuffer::Entry* LogBuffer::FirstUnspooled() const
 
 fn_name LogBuffer_GetLogs = "LogBuffer.GetLogs";
 
-ostringstreamPtr LogBuffer::GetLogs
-   (CallbackRequestPtr& callback, bool& periodic)
+string LogBuffer::GetLogs(CallbackRequestPtr& callback, bool& periodic)
 {
    Debug::ft(LogBuffer_GetLogs);
 
@@ -246,26 +245,29 @@ ostringstreamPtr LogBuffer::GetLogs
    //
    MutexGuard guard(&LogBufferLock_);
 
+   string logs;
    periodic = false;
    auto curr = FirstUnspooled();
-   if(curr == nullptr) return nullptr;
-   ostringstreamPtr stream(new std::ostringstream);
+   if(curr == nullptr) return logs;
 
    //  Accumulate logs until they exceed the size limit.  But first, insert
    //  a warning if some logs were discarded because the buffer was full.
    //
    if(discards_ > 0)
    {
-      *stream << CRLF << AlarmStatusSymbol(MinorAlarm) << "WARNING: ";
-      *stream << discards_ << " log(s) discarded";
-      *stream << CRLF;
+      logs.push_back(CRLF);
+      logs.append(AlarmStatusSymbol(MinorAlarm));
+      logs.append("WARNING: ");
+      logs.append(std::to_string(discards_));
+      logs.append(" log(s) discarded");
+      logs.push_back(CRLF);
       discards_ = 0;
    }
 
    size_t count = 0;
    const Entry* prev = nullptr;
 
-   while((stream->str().size() < BundledLogSizeThreshold) && (curr != nullptr))
+   while((logs.size() < BundledLogSizeThreshold) && (curr != nullptr))
    {
       //  Identify this log so that a periodic log is not bundled with
       //  others.
@@ -287,7 +289,7 @@ ostringstreamPtr LogBuffer::GetLogs
          break;
       }
 
-      *stream << &curr->log[0];
+      logs.append(&curr->log[0]);
       prev = curr;
       curr = Advance();
       if(periodic) break;
@@ -295,7 +297,7 @@ ostringstreamPtr LogBuffer::GetLogs
    }
 
    callback.reset(new LogsWritten(this, prev));
-   return stream;
+   return logs;
 }
 
 //------------------------------------------------------------------------------
@@ -434,7 +436,7 @@ void LogBuffer::Purge(const Entry* last)
 
 fn_name LogBuffer_Push = "LogBuffer.Push";
 
-bool LogBuffer::Push(const std::ostringstream* log)
+bool LogBuffer::Push(const std::string& log)
 {
    Debug::ftnt(LogBuffer_Push);
 
@@ -449,7 +451,7 @@ bool LogBuffer::Push(const std::ostringstream* log)
       return false;
    }
 
-   auto count = log->str().size();
+   auto count = log.size();
    size_t size = sizeof(Header) + count + 1;
 
    MutexGuard guard(&LogBufferLock_);
@@ -462,7 +464,7 @@ bool LogBuffer::Push(const std::ostringstream* log)
       return false;
    }
 
-   Memory::Copy(entry->log, log->str().c_str(), count);
+   Memory::Copy(entry->log, log.c_str(), count);
    entry->log[count] = NUL;
    if(unspooled_ == nullptr) unspooled_ = entry;
    UpdateMax();

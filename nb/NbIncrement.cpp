@@ -1864,8 +1864,8 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
          {
             CallbackRequestPtr callback;
             auto periodic = false;
-            auto stream = buff->GetLogs(callback, periodic);
-            if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
+            auto logs = buff->GetLogs(callback, periodic);
+            ostringstreamPtr stream(new std::ostringstream(logs));
             FileThread::Spool(file, stream, callback);
          }
 

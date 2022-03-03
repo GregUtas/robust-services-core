@@ -61,11 +61,10 @@ private:
    //
    ~LogThread();
 
-   //  Invoked to immediately output STREAM, which contains a log of type
-   //  LOG, during a restart.  STREAM is freed and set to nullptr before
-   //  returning.
+   //  Invoked to immediately output STR, which contains a log of type
+   //  LOG, during a restart.
    //
-   static void Spool(ostringstreamPtr& stream, const Log* log);
+   static void Spool(const std::string& str, const Log* log);
 
    //  Returns the number of message buffers reserved for work other than
    //  spooling logs.

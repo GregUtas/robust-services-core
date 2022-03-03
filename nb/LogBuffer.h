@@ -68,18 +68,18 @@ public:
    //  Adds LOG's contents to the buffer and releases LOG.  Returns true
    //  if the log was successfully added, and false if the buffer was full.
    //
-   bool Push(const std::ostringstream* log);
+   bool Push(const std::string& log);
 
    //  Returns the number of unspooled and/or unspooled logs in the buffer.
    //
    size_t Count(bool spooled, bool unspooled) const;
 
-   //  Extracts logs from the buffer and bundles them into an ostringstream.
-   //  Returns nullptr if the buffer was empty, else updates CALLBACK so that
+   //  Extracts logs from the buffer and bundles them into a string.  Returns
+   //  an empty string if the buffer was empty, else updates CALLBACK so that
    //  the buffer can free the space occupied by the logs after they have been
    //  written.  Sets PERIODIC when the stream contains a periodic log.
    //
-   ostringstreamPtr GetLogs(CallbackRequestPtr& callback, bool& periodic);
+   std::string GetLogs(CallbackRequestPtr& callback, bool& periodic);
 
    //  Returns the file name for the logs.
    //

@@ -80,40 +80,57 @@ using std::string;
 
 namespace NodeBase
 {
+//  FtLocks_ provides a per-thread lock to prevent nested calls to functions
+//  that are invoked from Debug::ft and that, in turn, invoke functions that
+//  also invoke Debug::ft.  Nested calls to these functions must be blocked
+//  to prevent a stack overflow.
+//
+static std::map< SysThreadId, std::atomic_flag >& AccessFtLocks()
+{
+   static std::map< SysThreadId, std::atomic_flag > FtLocks_;
+
+   return FtLocks_;
+}
+
+//------------------------------------------------------------------------------
+//
 //  Returns the Debug::ft lock for the running thread.
 //
 static std::atomic_flag& AccessFtLock()
 {
-   //  FtLocks_ provides a per-thread lock to prevent nested calls to functions
-   //  that are invoked from Debug::ft and that, in turn, invoke functions that
-   //  also invoke Debug::ft.  Nested calls to these functions must be blocked
-   //  to prevent a stack overflow.
-   //
-   //  Debug::ft is invoked early during initialization, well before entry to
-   //  main().  If FtLocks_ has not been constructed by then, FtLocks_.find()
-   //  traps (the infamous "static initialization order fiasco").  FtLocks_ was
-   //  therefore changed from a static item at file scope to a static local in
-   //  this function.
-   //
-   static std::map< SysThreadId, std::atomic_flag > FtLocks_;
+   auto& locks = AccessFtLocks();
 
    Debug::noft();
 
    auto nid = SysThread::RunningThreadId();
-   auto iter = FtLocks_.find(nid);
+   auto iter = locks.find(nid);
 
-   if(iter != FtLocks_.cend())
+   if(iter != locks.cend())
    {
       return iter->second;
    }
 
    //  The lock must be created and initialized.
    //
-   auto& lock = FtLocks_[nid];
+   auto& lock = locks[nid];
    lock.clear();
    return lock;
 }
 
+//------------------------------------------------------------------------------
+//
+//  Erases a thread's Debug::ft lock when it exits.
+//
+static void EraseFtLock()
+{
+   Debug::noft();
+
+   auto& locks = AccessFtLocks();
+   locks.erase(SysThread::RunningThreadId());
+}
+
+//------------------------------------------------------------------------------
+//
 //  SysTickTimer provides the time at which a function was invoked, so it is
 //  created after FtLocks_.  FtLocks_ must be created first because functions
 //  invoked to create SysTickTimer invoke Debug::ft, which requires FtLocks_
@@ -479,14 +496,14 @@ ContextSwitch* ContextSwitches::AddSwitch()
 //
 struct SchedSnapshot
 {
-   //  MAX is the maximum ThreadId seen while recording context switches.
+   //  SIZE is the number of threads seen while recording context switches.
    //
-   explicit SchedSnapshot(ThreadId max) :
+   explicit SchedSnapshot(size_t size) :
       activity(nullptr),
       nid(0)
    {
-      activity.reset(new char[max + 1]);
-      for(size_t i = 0; i <= max; ++i) activity[i] = ContextSwitches::IdleChar;
+      activity.reset(new char[size]);
+      for(size_t i = 0; i < size; ++i) activity[i] = ContextSwitches::IdleChar;
    }
 
    //  An array of characters, one per thread, indicating what each thread was
@@ -520,14 +537,14 @@ typedef std::map< TimePoint, SchedSnapshotPtr> SchedEntries;
 //  output dynamically following the 0.  Each thread's activity is then shown
 //  in its column.
 //
-fixed_string SwitchHeader1 = "             Ran for  -";
-fixed_string SwitchHeader2 = "Timestamp    (usecs)  0";
+fixed_string SwitchHeader1 =
+   "  symbols: . idle   # unpreemptable   | preemptable   V scheduled out";
+fixed_string SwitchHeader2 = "             ran for  -";
+fixed_string SwitchHeader3 = "timestamp    (usecs)  0";
 
 //  The footer (legend) for displaying context switches.
 //
 fixed_string SwitchFooter1 =
-   "Symbols: . idle   # unpreemptable   | preemptable   V scheduled out";
-fixed_string SwitchFooter2 =
    "         * multiple threads running unpreemptably (rightmost column)";
 
 //------------------------------------------------------------------------------
@@ -556,14 +573,36 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
       elems = capacity_;
    }
 
-   //  Find the maximum ThreadId recorded during the context switches.
+   //  Find the threads that were recorded during the context switches.
+   //  Thread 0 is always "found" in case an unknown thread was encountered.
    //
-   ThreadId max = 0;
+   std::unique_ptr< bool[] > threadFound(new bool[Thread::MaxId + 1]);
+
+   threadFound[0] = true;
+
+   for(ThreadId t = 1; t <= Thread::MaxId; ++t)
+   {
+      threadFound[t] = false;
+   }
 
    for(size_t i = first, count = elems; count > 0; --count)
    {
-      if(switches_[i].tid > max) max = switches_[i].tid;
+      threadFound[switches_[i].tid] = true;
       i = (i == capacity_ - 1 ? 0 : i + 1);
+   }
+
+   //  Assign a column to each thread found during the context switches.
+   //  The first column (0) is for unknown threads, so start at column 1.
+   //
+   size_t cols = 1;
+   std::unique_ptr< size_t[] > threadColumn(new size_t[Thread::MaxId + 1]);
+
+   for(ThreadId t = 0; t <= Thread::MaxId; ++t)
+   {
+      if(threadFound[t])
+         threadColumn[t] = cols++;
+      else
+         threadColumn[t] = SIZE_MAX;
    }
 
    //  For each context switch, create an entry for its time in and time out.
@@ -579,7 +618,7 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
       if(curr == timeline.cend())
       {
          timeline.insert
-            (SchedEntry(entry->in, SchedSnapshotPtr(new SchedSnapshot(max))));
+            (SchedEntry(entry->in, SchedSnapshotPtr(new SchedSnapshot(cols))));
       }
 
       curr = timeline.find(entry->out);
@@ -587,7 +626,7 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
       if(curr == timeline.cend())
       {
          timeline.insert
-            (SchedEntry(entry->out, SchedSnapshotPtr(new SchedSnapshot(max))));
+            (SchedEntry(entry->out, SchedSnapshotPtr(new SchedSnapshot(cols))));
       }
       else
       {
@@ -630,10 +669,10 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
 
       for(NO_OP; begin != end; ++begin)
       {
-         begin->second->activity[entry->tid] = symbol;
+         begin->second->activity[threadColumn[entry->tid]] = symbol;
       }
 
-      end->second->activity[entry->tid] = EndChar;
+      end->second->activity[threadColumn[entry->tid]] = EndChar;
       end->second->duration = entry->out - entry->in;
 
       i = (i == capacity_ - 1 ? 0 : i + 1);
@@ -650,18 +689,20 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
 
    stream << CRLF;
    stream << "Context switches: " << elems << CRLF;
-
-   stream << SwitchHeader1;
-
-   auto front = ((3 * max) - strlen("Threads")) / 2;
-   auto back = ((3 * max) + 1 - strlen("Threads")) / 2;
-   stream << string(front, '-') << "Threads" << string(back, '-') << CRLF;
-
+   stream << SwitchHeader1 << CRLF << CRLF;
    stream << SwitchHeader2;
 
-   for(ThreadId t = 1; t <= max; ++t)
+   auto title = "threads";
+   auto titleSize = strlen(title);
+   string rule(3 * (cols - 2), '-');
+   rule.replace(((rule.size() - 1) / 2) - (titleSize / 2), titleSize, title);
+   stream << rule << CRLF;
+
+   stream << SwitchHeader3;
+
+   for(ThreadId t = 1; t <= Thread::MaxId; ++t)
    {
-      stream << setw(3) << t;
+      if(threadFound[t]) stream << setw(3) << t;
    }
 
    stream << CRLF;
@@ -679,11 +720,16 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
 
       size_t locked = 0;
 
-      for(ThreadId t = 0; t <= max; ++t)
+      for(ThreadId t = 0; t <= Thread::MaxId; ++t)
       {
-         auto c = entry->second->activity[t];
-         if(c == LockedChar) ++locked;
-         stream << spaces(2) << entry->second->activity[t];
+         auto col = threadColumn[t];
+
+         if(col != SIZE_MAX)
+         {
+            auto c = entry->second->activity[col];
+            if(c == LockedChar) ++locked;
+            stream << spaces(2) << entry->second->activity[col];
+         }
       }
 
       if(locked > 1)
@@ -695,12 +741,10 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
       stream << CRLF;
    }
 
-   stream << SwitchFooter1 << CRLF;
-
    if(multilocked)
    {
       Debug::SwLog(ContextSwitches_DisplaySwitches, "simultaneously locked", 0);
-      stream << SwitchFooter2 << CRLF;
+      stream << SwitchFooter1 << CRLF;
       stream << "UNPREEMPTABLE THREADS RAN SIMULTANEOUSLY" << CRLF;
    }
 }
@@ -728,7 +772,7 @@ TraceRc ContextSwitches::LogSwitches(bool on)
 //
 //  What to do with a thread on the next scheduling operation.
 //
-enum SchedulingAction : uint8_t
+enum SchedulingAction : int16_t
 {
    RunThread,    // default value
    SleepThread,  // force thread to sleep
@@ -1181,6 +1225,16 @@ c_string Thread::AbbrName() const
 
    Debug::SwLog(Thread_AbbrName, strOver(this), 0);
    return "unknown";
+}
+
+//------------------------------------------------------------------------------
+
+main_t Thread::AbnormalExit(signal_t signal)
+{
+   Debug::ft("Thread.AbnormalExit");
+
+   Purge(false, signal == SIGDELETED);
+   return signal;
 }
 
 //------------------------------------------------------------------------------
@@ -2442,15 +2496,37 @@ void Thread::Proceed()
 
 //------------------------------------------------------------------------------
 
-main_t Thread::Purge(main_t exit)
+void Thread::Purge(bool orphaned, bool deleted)
 {
    Debug::ftnt("Thread.Purge");
 
-   auto reg = Singleton< ThreadRegistry >::Instance();
-   reg->Exiting(SysThread::RunningThreadId());
-   if(daemon_ != nullptr) daemon_->ThreadDeleted(this);
+   //  If the thread is about to exit, delete its native thread, else
+   //  register it as an orphan.  Various functions invoke GetState to
+   //  check for the existence of an orphaned native thread, which is
+   //  immediately exited when found.
+   //
+   auto reg = Singleton< ThreadRegistry >::Extant();
+
+   if(orphaned)
+      reg->Destroying(Deleted, systhrd_.release());
+   else
+      reg->Exiting(SysThread::RunningThreadId());
+
+   //  If the Thread object exists, inform any daemon that the thread
+   //  is exiting.  If the thread is running, free its Debug::ft lock.
+   //  Finally, this can no longer be the active thread.
+   //
+   if(!deleted && (daemon_ != nullptr))
+   {
+      daemon_->ThreadDeleted(this);
+   }
+
+   if(!orphaned)
+   {
+      EraseFtLock();
+   }
+
    ClearActiveThread(this);
-   return exit;
 }
 
 //------------------------------------------------------------------------------
@@ -2641,32 +2717,7 @@ void Thread::ReleaseResources(bool orphaned)
    //
    Restart::Release(stats_);
 
-   //  If the thread is about to exit, delete its native thread, else
-   //  register it as an orphan.  Various functions invoke GetState to
-   //  check for the existence of an orphaned native thread, which is
-   //  immediately exited when found.
-   //
-   auto threads = Singleton< ThreadRegistry >::Extant();
-
-   if(orphaned)
-   {
-      threads->Destroying(Deleted, systhrd_.release());
-   }
-   else
-   {
-      auto nid = (systhrd_ != nullptr ? systhrd_->Nid() : NIL_ID);
-      systhrd_.reset();
-      if(nid != NIL_ID) threads->Exiting(nid);
-   }
-
-   //  If the thread has a daemon, notify it of the deletion so that it can
-   //  recreate the thread.
-   //
-   if(daemon_ != nullptr) daemon_->ThreadDeleted(this);
-
-   //  This can no longer be the active thread.
-   //
-   ClearActiveThread(this);
+   Purge(orphaned, false);
 }
 
 //------------------------------------------------------------------------------
@@ -3000,6 +3051,8 @@ main_t Thread::Start()
       {
          if(!started)
          {
+            Debug::ft("Thread.Start(initializing)");
+
             //  Immediately register to catch POSIX signals.
             //
             RegisterForSignals();
@@ -3160,7 +3213,7 @@ main_t Thread::Start()
             return Exit(sex.GetSignal());
          case Return:
          default:
-            return Purge(sex.GetSignal());
+            return AbnormalExit(sex.GetSignal());
          }
       }
 
@@ -3174,7 +3227,7 @@ main_t Thread::Start()
             return Exit(SIGNIL);
          case Return:
          default:
-            return Purge(SIGDELETED);
+            return AbnormalExit(SIGNIL);
          }
       }
 
@@ -3188,7 +3241,7 @@ main_t Thread::Start()
             return Exit(SIGNIL);
          case Return:
          default:
-            return Purge(SIGDELETED);
+            return AbnormalExit(SIGNIL);
          }
       }
 
@@ -3202,7 +3255,7 @@ main_t Thread::Start()
             return Exit(SIGNIL);
          case Return:
          default:
-            return Purge(SIGDELETED);
+            return AbnormalExit(SIGNIL);
          }
       }
    }

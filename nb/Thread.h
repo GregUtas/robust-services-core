@@ -611,16 +611,24 @@ private:
    //
    main_t Exit(signal_t sig);
 
-   //  Invoked by the destructor and Cleanup to free resources.  ORPHANED
-   //  is set if the thread is not about to exit, in which case its native
-   //  thread is registered as an orphan instead of being deleted.
+   //  Frees the thread's resources.  ORPHANED is set if the thread is
+   //  not running but had its Thread object deleted.
    //
    void ReleaseResources(bool orphaned);
 
-   //  Performs critical cleanup actions when exiting a thread abnormally.
-   //  Returns EXIT, the thread's exit code.
+   //  Invoked when the thread will be exited without deleting its
+   //  Thread object.  Returns SIGNAL as the thread's exit code.
    //
-   main_t Purge(main_t exit);
+   main_t AbnormalExit(signal_t signal);
+
+   //  Performs cleanup actions when deleting or exiting a thread.
+   //  If a Thread object is deleted when the thread is not running,
+   //  this gets invoked twice.  The first time, ORPHANED is set to
+   //  indicate that the thread is not currently running.  The second
+   //  time, DELETED is set to indicate that the Thread object has
+   //  already been deleted.
+   //
+   void Purge(bool orphaned, bool deleted);
 
    //  Used during initializations and restarts to enable/disable the
    //  scheduling of specific factions.

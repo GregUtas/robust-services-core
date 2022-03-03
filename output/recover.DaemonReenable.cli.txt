@@ -4,15 +4,15 @@ nt>start
   OK.
 nt>read trap.25
 nt>
-nt>daemons set 9 off
+nt>daemons set &recovery.daemon off
   OK.
 nt>delay 1
   OK.
-nt>sched kill 15
+nt>sched kill &recovery.thread
   OK.
 nt>delay 2
   OK.
-nt>daemons set 9 on
+nt>daemons set &recovery.daemon on
   OK.
 nt>delay 1
   OK.

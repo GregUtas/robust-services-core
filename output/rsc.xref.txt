@@ -28960,6 +28960,7 @@ nb/Daemon.h
    NodeBase.Daemon.Daemon(const Daemon&): 72 [Function]
    NodeBase.Daemon.Did: 97 [Function]
       nb/Daemon.cpp
+      nt/NtIncrement.cpp
    NodeBase.Daemon.did_: 180 [ClassData]
       nb/Daemon.cpp
       nb/Daemon.h
@@ -31814,8 +31815,6 @@ nb/Formatters.h
       sb/TimerRegistry.cpp
    NodeBase.strPtr: 76 [Function]
       nb/Formatters.cpp
-      nw/IoThread.cpp
-      nw/IpBuffer.cpp
       st/MscContext.cpp
    NodeBase.strSkipSpaces: 48 [Function]
       nb/Formatters.cpp
@@ -32893,121 +32892,121 @@ nb/Log.h
       nb/Log.cpp
       nb/Log.h
 nb/LogBuffer.cpp
-   NodeBase.BundledLogSizeThreshold: 93 [SpaceData]
+   NodeBase.BundledLogSizeThreshold: 95 [SpaceData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer_GetLogs: 238 [SpaceData]
+   NodeBase.LogBuffer_GetLogs: 240 [SpaceData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer_Push: 435 [SpaceData]
+   NodeBase.LogBuffer_Push: 439 [SpaceData]
       nb/LogBuffer.cpp
-   NodeBase.LogBufferLock_: 46 [SpaceData]
+   NodeBase.LogBufferLock_: 48 [SpaceData]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten: 50 [Class]
+   NodeBase.LogsWritten: 52 [Class]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogsWritten.buff_: 61 [ClassData]
+   NodeBase.LogsWritten.buff_: 63 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten.Callback: 57 [Function]
+   NodeBase.LogsWritten.Callback: 59 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten.last_: 65 [ClassData]
+   NodeBase.LogsWritten.last_: 67 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten.LogsWritten: 55 [Function]
+   NodeBase.LogsWritten.LogsWritten: 57 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten_Callback: 79 [SpaceData]
+   NodeBase.LogsWritten_Callback: 81 [SpaceData]
       nb/LogBuffer.cpp
 nb/LogBuffer.h
    LOGBUFFER_H_INCLUDED: 23 [Define]
       nb/LogBuffer.h
-   NodeBase.LogBuffer: 44 [Class]
+   NodeBase.LogBuffer: 42 [Class]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
       nb/LogBufferRegistry.cpp
       nb/LogBufferRegistry.h
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.Advance: 152 [Function]
+   NodeBase.LogBuffer.Advance: 150 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.buff_: 200 [ClassData]
+   NodeBase.LogBuffer.buff_: 198 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Count: 75 [Function]
+   NodeBase.LogBuffer.Count: 73 [Function]
       nb/LogBuffer.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.discards_: 175 [ClassData]
+   NodeBase.LogBuffer.discards_: 173 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Display: 96 [Function]
+   NodeBase.LogBuffer.Display: 94 [Function]
       nb/LogBuffer.cpp
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBuffer.Empty: 66 [Function]
+   NodeBase.LogBuffer.Empty: 64 [Function]
       nb/LogBufferRegistry.cpp
-   NodeBase.LogBuffer.Entry: 115 [Class]
+   NodeBase.LogBuffer.Entry: 113 [Class]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Entry: 103 [Forward]
+   NodeBase.LogBuffer.Entry: 101 [Forward]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogBuffer.Entry.header: 117 [ClassData]
+   NodeBase.LogBuffer.Entry.header: 115 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Entry.log: 118 [ClassData]
+   NodeBase.LogBuffer.Entry.log: 116 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.FileName: 86 [Function]
+   NodeBase.LogBuffer.FileName: 84 [Function]
       nb/LogBufferRegistry.cpp
       nb/LogThread.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.fileName_: 171 [ClassData]
+   NodeBase.LogBuffer.fileName_: 169 [ClassData]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogBuffer.First: 123 [Function]
+   NodeBase.LogBuffer.First: 121 [Function]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogBuffer.FirstSpooled: 147 [Function]
+   NodeBase.LogBuffer.FirstSpooled: 145 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.FirstUnspooled: 141 [Function]
+   NodeBase.LogBuffer.FirstUnspooled: 139 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.GetLogs: 82 [Function]
+   NodeBase.LogBuffer.GetLogs: 80 [Function]
       nb/LogBuffer.cpp
       nb/LogThread.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.Header: 107 [Class]
+   NodeBase.LogBuffer.Header: 105 [Class]
       nb/LogBuffer.cpp
       nb/LogBuffer.h
-   NodeBase.LogBuffer.Header.next: 110 [ClassData]
+   NodeBase.LogBuffer.Header.next: 108 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Header.prev: 109 [ClassData]
+   NodeBase.LogBuffer.Header.prev: 107 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.InsertionPoint: 136 [Function]
+   NodeBase.LogBuffer.InsertionPoint: 134 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Last: 128 [Function]
+   NodeBase.LogBuffer.Last: 126 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.LogBuffer(const LogBuffer&): 58 [Function]
-   NodeBase.LogBuffer.LogBuffer(size_t): 50 [Function]
+   NodeBase.LogBuffer.LogBuffer(const LogBuffer&): 56 [Function]
+   NodeBase.LogBuffer.LogBuffer(size_t): 48 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.max_: 192 [ClassData]
+   NodeBase.LogBuffer.max_: 190 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.next_: 188 [ClassData]
+   NodeBase.LogBuffer.next_: 186 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.operator=: 62 [Function]
-   NodeBase.LogBuffer.Patch: 101 [Function]
+   NodeBase.LogBuffer.operator=: 60 [Function]
+   NodeBase.LogBuffer.Patch: 99 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Pop: 158 [Function]
+   NodeBase.LogBuffer.Pop: 156 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Purge: 163 [Function]
+   NodeBase.LogBuffer.Purge: 161 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.Push: 71 [Function]
+   NodeBase.LogBuffer.Push: 69 [Function]
       nb/Log.cpp
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.ResetAllToUnspooled: 92 [Function]
+   NodeBase.LogBuffer.ResetAllToUnspooled: 90 [Function]
       nb/LogBuffer.cpp
       nb/NbIncrement.cpp
-   NodeBase.LogBuffer.SetNext: 132 [Function]
+   NodeBase.LogBuffer.SetNext: 130 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.size_: 196 [ClassData]
+   NodeBase.LogBuffer.size_: 194 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.spooled_: 180 [ClassData]
+   NodeBase.LogBuffer.spooled_: 178 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.unspooled_: 184 [ClassData]
+   NodeBase.LogBuffer.unspooled_: 182 [ClassData]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.UpdateMax: 167 [Function]
+   NodeBase.LogBuffer.UpdateMax: 165 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogBuffer.~LogBuffer: 54 [Function]
+   NodeBase.LogBuffer.~LogBuffer: 52 [Function]
       nb/LogBuffer.cpp
-   NodeBase.LogsWritten: 46 [Friend]
+   NodeBase.LogsWritten: 44 [Friend]
 nb/LogBufferRegistry.cpp
    NodeBase.LogBufferRegistry_dtor: 52 [SpaceData]
       nb/LogBufferRegistry.cpp
@@ -33226,11 +33225,11 @@ nb/LogGroupRegistry.h
       nb/LogGroupRegistry.cpp
    NodeBase.Singleton<LogGroupRegistry>: 45 [Friend]
 nb/LogThread.cpp
-   NodeBase.CopyToConsole: 63 [Function]
+   NodeBase.CopyToConsole: 62 [Function]
       nb/LogThread.cpp
-   NodeBase.LogFileLock_: 57 [SpaceData]
+   NodeBase.LogFileLock_: 56 [SpaceData]
       nb/LogThread.cpp
-   NodeBase.LogThread_Spool: 195 [SpaceData]
+   NodeBase.LogThread_Spool: 194 [SpaceData]
       nb/LogThread.cpp
 nb/LogThread.h
    LOGTHREAD_H_INCLUDED: 23 [Define]
@@ -33245,24 +33244,24 @@ nb/LogThread.h
       nb/LogThread.h
       nb/NbDaemons.cpp
       nb/NbModule.cpp
-   NodeBase.LogThread.AbbrName: 78 [Function]
+   NodeBase.LogThread.AbbrName: 77 [Function]
       nb/LogThread.cpp
-   NodeBase.LogThread.Destroy: 82 [Function]
+   NodeBase.LogThread.Destroy: 81 [Function]
       nb/LogThread.cpp
    NodeBase.LogThread.Display: 49 [Function]
       nb/LogThread.cpp
-   NodeBase.LogThread.Enter: 86 [Function]
+   NodeBase.LogThread.Enter: 85 [Function]
       nb/LogThread.cpp
    NodeBase.LogThread.LogThread: 58 [Function]
       nb/LogThread.cpp
-   NodeBase.LogThread.NoSpoolingMessageCount: 73 [Function]
+   NodeBase.LogThread.NoSpoolingMessageCount: 72 [Function]
       nb/LogThread.cpp
-   NodeBase.LogThread.noSpoolingMessageCount_: 91 [ClassData]
+   NodeBase.LogThread.noSpoolingMessageCount_: 90 [ClassData]
       nb/LogThread.cpp
       nb/LogThread.h
    NodeBase.LogThread.Patch: 54 [Function]
       nb/LogThread.cpp
-   NodeBase.LogThread.Spool: 68 [Function]
+   NodeBase.LogThread.Spool: 67 [Function]
       nb/Log.cpp
       nb/LogThread.cpp
    NodeBase.LogThread.~LogThread: 62 [Function]
@@ -34191,6 +34190,7 @@ nb/NbCliParms.h
    NodeBase.IdOptParm: 161 [Class]
       nb/NbCliParms.cpp
       nb/NbIncrement.cpp
+      nw/NwIncrement.cpp
    NodeBase.IdOptParm.IdOptParm: 163 [Function]
       nb/NbCliParms.cpp
    NodeBase.IstreamMandParm: 170 [Class]
@@ -39159,6 +39159,7 @@ nb/Registry.h
       nb/StatisticsRegistry.cpp
       nb/ToolRegistry.cpp
       nt/NtIncrement.cpp
+      nw/NwIncrement.cpp
       pb/PotsFeatureRegistry.cpp
       pb/PotsProfileRegistry.cpp
       sb/FactoryRegistry.cpp
@@ -40913,6 +40914,7 @@ nb/SymbolRegistry.h
       nb/SymbolRegistry.cpp
       nb/SymbolRegistry.h
       nb/ThreadAdmin.cpp
+      nt/NtIncrement.cpp
       nt/NtModule.cpp
       sn/SnModule.cpp
       st/StModule.cpp
@@ -40925,6 +40927,7 @@ nb/SymbolRegistry.h
       nb/NbIncrement.cpp
       nb/SymbolRegistry.cpp
       nb/ThreadAdmin.cpp
+      nt/NtIncrement.cpp
       nt/NtModule.cpp
       sn/SnModule.cpp
       st/StModule.cpp
@@ -43748,11 +43751,9 @@ nb/SysTypes.h
       nb/FileThread.h
       nb/Log.cpp
       nb/Log.h
-      nb/LogBuffer.cpp
-      nb/LogBuffer.h
       nb/LogThread.cpp
-      nb/LogThread.h
       nb/ModuleRegistry.cpp
+      nb/NbIncrement.cpp
       nb/StreamRequest.h
       nb/Thread.cpp
    NodeBase.PATH_SEPARATOR: 148 [SpaceData]
@@ -44362,280 +44363,282 @@ nb/ThisThread.h
    THISTHREAD_H_INCLUDED: 23 [Define]
       nb/ThisThread.h
 nb/Thread.cpp
-   NodeBase.AccessFtLock: 106 [Function]
+   NodeBase.AccessFtLock: 99 [Function]
       nb/Thread.cpp
-   NodeBase.ActiveThread_: 1029 [SpaceData]
+   NodeBase.AccessFtLocks: 88 [Function]
       nb/Thread.cpp
-   NodeBase.ClearActiveThread: 1060 [Function]
+   NodeBase.ActiveThread_: 1070 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ClosingConsoleStr: 997 [SpaceData]
+   NodeBase.ClearActiveThread: 1101 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitch: 313 [Class]
+   NodeBase.ClosingConsoleStr: 1038 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.ContextSwitch: 317 [Function]
+   NodeBase.ContextSwitch: 327 [Class]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.in: 321 [ClassData]
+   NodeBase.ContextSwitch.ContextSwitch: 331 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.locked: 337 [ClassData]
+   NodeBase.ContextSwitch.in: 335 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.nid: 329 [ClassData]
+   NodeBase.ContextSwitch.locked: 351 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.out: 325 [ClassData]
+   NodeBase.ContextSwitch.nid: 343 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.tid: 333 [ClassData]
+   NodeBase.ContextSwitch.out: 339 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches: 355 [Class]
+   NodeBase.ContextSwitch.tid: 347 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.AddSwitch: 378 [Function]
+   NodeBase.ContextSwitches: 369 [Class]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.capacity_: 401 [ClassData]
+   NodeBase.ContextSwitches.AddSwitch: 392 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.ContextSwitches(): 393 [Function]
+   NodeBase.ContextSwitches.capacity_: 415 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.ContextSwitches(const ContextSwitches&): 361 [Function]
-   NodeBase.ContextSwitches.DisplaySwitches: 389 [Function]
+   NodeBase.ContextSwitches.ContextSwitches(): 407 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.EndChar: 385 [ClassData]
+   NodeBase.ContextSwitches.ContextSwitches(const ContextSwitches&): 375 [Function]
+   NodeBase.ContextSwitches.DisplaySwitches: 403 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.full_: 413 [ClassData]
+   NodeBase.ContextSwitches.EndChar: 399 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.IdleChar: 382 [ClassData]
+   NodeBase.ContextSwitches.full_: 427 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.LockedChar: 384 [ClassData]
+   NodeBase.ContextSwitches.IdleChar: 396 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.log_: 417 [ClassData]
+   NodeBase.ContextSwitches.LockedChar: 398 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.LoggingOn: 369 [Function]
+   NodeBase.ContextSwitches.log_: 431 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.LogSwitches: 373 [Function]
+   NodeBase.ContextSwitches.LoggingOn: 383 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.next_: 405 [ClassData]
+   NodeBase.ContextSwitches.LogSwitches: 387 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.operator=: 365 [Function]
-   NodeBase.ContextSwitches.switches_: 409 [ClassData]
+   NodeBase.ContextSwitches.next_: 419 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.UnlockedChar: 383 [ClassData]
+   NodeBase.ContextSwitches.operator=: 379 [Function]
+   NodeBase.ContextSwitches.switches_: 423 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.~ContextSwitches: 397 [Function]
+   NodeBase.ContextSwitches.UnlockedChar: 397 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches_DisplaySwitches: 538 [SpaceData]
+   NodeBase.ContextSwitches.~ContextSwitches: 411 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches_dtor: 443 [SpaceData]
+   NodeBase.ContextSwitches_DisplaySwitches: 552 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ContextSwitchesLock_: 424 [SpaceData]
+   NodeBase.ContextSwitches_dtor: 457 [SpaceData]
       nb/Thread.cpp
-   NodeBase.CurrIntervalStart_: 1045 [SpaceData]
+   NodeBase.ContextSwitchesLock_: 438 [SpaceData]
       nb/Thread.cpp
-   NodeBase.FactionMap: 1011 [SpaceData]
+   NodeBase.CurrIntervalStart_: 1086 [SpaceData]
       nb/Thread.cpp
-   NodeBase.FactionsEnabled_: 1033 [SpaceData]
+   NodeBase.EraseFtLock: 124 [Function]
       nb/Thread.cpp
-   NodeBase.FactionToPriority: 1072 [Function]
+   NodeBase.FactionMap: 1052 [SpaceData]
       nb/Thread.cpp
-   NodeBase.FtLocks_: 102 [SpaceData]
+   NodeBase.FactionsEnabled_: 1074 [SpaceData]
       nb/Thread.cpp
-   NodeBase.KillDeletingThread: 2064 [SpaceData]
+   NodeBase.FactionToPriority: 1113 [Function]
       nb/Thread.cpp
-   NodeBase.KillRootThread: 2063 [SpaceData]
+   NodeBase.KillDeletingThread: 2115 [SpaceData]
       nb/Thread.cpp
-   NodeBase.MaxUnpreemptCount: 2245 [SpaceData]
+   NodeBase.KillRootThread: 2114 [SpaceData]
       nb/Thread.cpp
-   NodeBase.MaxUnprotectCount: 1945 [SpaceData]
+   NodeBase.MaxUnpreemptCount: 2296 [SpaceData]
       nb/Thread.cpp
-   NodeBase.NodeBase_FactionToPriority: 1067 [SpaceData]
+   NodeBase.MaxUnprotectCount: 1996 [SpaceData]
       nb/Thread.cpp
-   NodeBase.PrevIntervalStart_: 1041 [SpaceData]
+   NodeBase.NodeBase_FactionToPriority: 1108 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SchedEntries: 520 [Typedef]
+   NodeBase.PrevIntervalStart_: 1082 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SchedEntry: 515 [Typedef]
+   NodeBase.SchedEntries: 534 [Typedef]
       nb/Thread.cpp
-   NodeBase.SchedHeader: 1384 [SpaceData]
+   NodeBase.SchedEntry: 529 [Typedef]
       nb/Thread.cpp
-   NodeBase.SchedLine: 1390 [SpaceData]
+   NodeBase.SchedHeader: 1435 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot: 483 [Class]
+   NodeBase.SchedLine: 1441 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot.activity: 498 [ClassData]
+   NodeBase.SchedSnapshot: 497 [Class]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot.duration: 502 [ClassData]
+   NodeBase.SchedSnapshot.activity: 512 [ClassData]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot.nid: 506 [ClassData]
+   NodeBase.SchedSnapshot.duration: 516 [ClassData]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot.SchedSnapshot: 487 [Function]
-   NodeBase.SchedSnapshotPtr: 511 [Typedef]
+   NodeBase.SchedSnapshot.nid: 520 [ClassData]
       nb/Thread.cpp
-   NodeBase.SchedulingAction: 734 [Enum]
+   NodeBase.SchedSnapshot.SchedSnapshot: 501 [Function]
+   NodeBase.SchedSnapshotPtr: 525 [Typedef]
       nb/Thread.cpp
-   NodeBase.SchedulingAction.ExitThread: 738 [Enumerator]
+   NodeBase.SchedulingAction: 775 [Enum]
       nb/Thread.cpp
-   NodeBase.SchedulingAction.RunThread: 736 [Enumerator]
+   NodeBase.SchedulingAction.ExitThread: 779 [Enumerator]
       nb/Thread.cpp
-   NodeBase.SchedulingAction.SleepThread: 737 [Enumerator]
+   NodeBase.SchedulingAction.RunThread: 777 [Enumerator]
       nb/Thread.cpp
-   NodeBase.Singleton<ContextSwitches>: 357 [Friend]
-   NodeBase.StackCheckCounter_: 1037 [SpaceData]
+   NodeBase.SchedulingAction.SleepThread: 778 [Enumerator]
       nb/Thread.cpp
-   NodeBase.SwitchFooter1: 531 [SpaceData]
+   NodeBase.Singleton<ContextSwitches>: 371 [Friend]
+   NodeBase.StackCheckCounter_: 1078 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SwitchFooter2: 533 [SpaceData]
+   NodeBase.SwitchFooter1: 547 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SwitchHeader1: 526 [SpaceData]
+   NodeBase.SwitchHeader1: 540 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SwitchHeader2: 527 [SpaceData]
+   NodeBase.SwitchHeader2: 542 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_AbbrName: 1179 [SpaceData]
+   NodeBase.SwitchHeader3: 543 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_ChangeFaction: 1246 [SpaceData]
+   NodeBase.Thread_AbbrName: 1220 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Enter: 1520 [SpaceData]
+   NodeBase.Thread_ChangeFaction: 1297 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_EnterBlockingOperation: 1531 [SpaceData]
+   NodeBase.Thread_Enter: 1571 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_ImmProtect: 1917 [SpaceData]
+   NodeBase.Thread_EnterBlockingOperation: 1582 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_ImmUnprotect: 1947 [SpaceData]
+   NodeBase.Thread_ImmProtect: 1968 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_MakeUnpreemptable: 2247 [SpaceData]
+   NodeBase.Thread_ImmUnprotect: 1998 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_MemProtect: 2270 [SpaceData]
+   NodeBase.Thread_MakeUnpreemptable: 2298 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_MemUnprotect: 2298 [SpaceData]
+   NodeBase.Thread_MemProtect: 2321 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Pause: 2349 [SpaceData]
+   NodeBase.Thread_MemUnprotect: 2349 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Raise: 2461 [SpaceData]
+   NodeBase.Thread_Pause: 2400 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Start: 2994 [SpaceData]
+   NodeBase.Thread_Raise: 2534 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_TrapHandler: 3520 [SpaceData]
+   NodeBase.Thread_Start: 3042 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ThreadDataStr: 994 [SpaceData]
+   NodeBase.Thread_TrapHandler: 3570 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv: 750 [Class]
+   NodeBase.ThreadDataStr: 1035 [SpaceData]
+      nb/Thread.cpp
+   NodeBase.ThreadPriv: 791 [Class]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.ThreadPriv.acquiring_: 860 [ClassData]
+   NodeBase.ThreadPriv.acquiring_: 901 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.action_: 840 [ClassData]
+   NodeBase.ThreadPriv.action_: 881 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.autostop_: 808 [ClassData]
+   NodeBase.ThreadPriv.autostop_: 849 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.blocked_: 844 [ClassData]
+   NodeBase.ThreadPriv.blocked_: 885 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.currEnd_: 900 [ClassData]
+   NodeBase.ThreadPriv.currEnd_: 941 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.currStart_: 894 [ClassData]
+   NodeBase.ThreadPriv.currStart_: 935 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.currTime_: 883 [ClassData]
+   NodeBase.ThreadPriv.currTime_: 924 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.Display: 763 [Function]
+   NodeBase.ThreadPriv.Display: 804 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.entered_: 788 [ClassData]
+   NodeBase.ThreadPriv.entered_: 829 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.exiting_: 836 [ClassData]
+   NodeBase.ThreadPriv.exiting_: 877 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.immUnprots_: 772 [ClassData]
+   NodeBase.ThreadPriv.immUnprots_: 813 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.locked_: 796 [ClassData]
+   NodeBase.ThreadPriv.locked_: 837 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.logged_: 832 [ClassData]
+   NodeBase.ThreadPriv.logged_: 873 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.memUnprots_: 776 [ClassData]
+   NodeBase.ThreadPriv.memUnprots_: 817 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.mutexes_: 780 [ClassData]
+   NodeBase.ThreadPriv.mutexes_: 821 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.prevTime_: 878 [ClassData]
+   NodeBase.ThreadPriv.prevTime_: 919 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.readyTime_: 887 [ClassData]
+   NodeBase.ThreadPriv.readyTime_: 928 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.recovering_: 828 [ClassData]
+   NodeBase.ThreadPriv.recovering_: 869 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.rtcLbc_: 864 [ClassData]
+   NodeBase.ThreadPriv.rtcLbc_: 905 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.signal_: 852 [ClassData]
+   NodeBase.ThreadPriv.signal_: 893 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.stackBase_: 856 [ClassData]
+   NodeBase.ThreadPriv.stackBase_: 897 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.status_: 848 [ClassData]
+   NodeBase.ThreadPriv.status_: 889 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.swlogs_: 784 [ClassData]
+   NodeBase.ThreadPriv.swlogs_: 825 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.ThreadPriv: 755 [Function]
+   NodeBase.ThreadPriv.ThreadPriv: 796 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.traceMsg_: 800 [ClassData]
+   NodeBase.ThreadPriv.traceMsg_: 841 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.tracing_: 804 [ClassData]
+   NodeBase.ThreadPriv.tracing_: 845 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.trap_: 817 [ClassData]
+   NodeBase.ThreadPriv.trap_: 858 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.trapLbc_: 868 [ClassData]
+   NodeBase.ThreadPriv.trapLbc_: 909 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.traps_: 824 [ClassData]
+   NodeBase.ThreadPriv.traps_: 865 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.unpreempts_: 768 [ClassData]
+   NodeBase.ThreadPriv.unpreempts_: 809 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.vector_: 872 [ClassData]
+   NodeBase.ThreadPriv.vector_: 913 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.waiting_: 792 [ClassData]
+   NodeBase.ThreadPriv.waiting_: 833 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.warned_: 813 [ClassData]
+   NodeBase.ThreadPriv.warned_: 854 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.~ThreadPriv: 759 [Function]
+   NodeBase.ThreadPriv.~ThreadPriv: 800 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadStats: 268 [Class]
+   NodeBase.ThreadStats: 282 [Class]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.ThreadStats.exceeds_: 275 [ClassData]
+   NodeBase.ThreadStats.exceeds_: 289 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.interrupts_: 277 [ClassData]
+   NodeBase.ThreadStats.interrupts_: 291 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.maxMsgs_: 278 [ClassData]
+   NodeBase.ThreadStats.maxMsgs_: 292 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.maxStack_: 279 [ClassData]
+   NodeBase.ThreadStats.maxStack_: 293 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.maxTime_: 280 [ClassData]
+   NodeBase.ThreadStats.maxTime_: 294 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.ThreadStats: 271 [Function]
+   NodeBase.ThreadStats.ThreadStats: 285 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadStats.totTime_: 281 [ClassData]
+   NodeBase.ThreadStats.totTime_: 295 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.traps_: 274 [ClassData]
+   NodeBase.ThreadStats.traps_: 288 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.yields_: 276 [ClassData]
+   NodeBase.ThreadStats.yields_: 290 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.~ThreadStats: 272 [Function]
+   NodeBase.ThreadStats.~ThreadStats: 286 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace: 131 [Class]
+   NodeBase.ThreadTrace: 145 [Class]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.CaptureEvent: 140 [Function]
+   NodeBase.ThreadTrace.CaptureEvent: 154 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.Display: 154 [Function]
+   NodeBase.ThreadTrace.Display: 168 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.info_: 162 [ClassData]
+   NodeBase.ThreadTrace.info_: 176 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.operator delete: 150 [Function]
+   NodeBase.ThreadTrace.operator delete: 164 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.operator new: 146 [Function]
+   NodeBase.ThreadTrace.operator new: 160 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.PauseEnter: 134 [ClassData]
+   NodeBase.ThreadTrace.PauseEnter: 148 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.PauseExit: 135 [ClassData]
+   NodeBase.ThreadTrace.PauseExit: 149 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.ThreadTrace: 158 [Function]
+   NodeBase.ThreadTrace.ThreadTrace: 172 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace_CaptureEvent: 177 [SpaceData]
+   NodeBase.ThreadTrace_CaptureEvent: 191 [SpaceData]
       nb/Thread.cpp
-   NodeBase.TickTimer: 125 [SpaceData]
-   NodeBase.TimeIdle_: 1049 [SpaceData]
+   NodeBase.TickTimer: 139 [SpaceData]
+   NodeBase.TimeIdle_: 1090 [SpaceData]
       nb/Thread.cpp
-   NodeBase.TimeUsed_: 1053 [SpaceData]
+   NodeBase.TimeUsed_: 1094 [SpaceData]
       nb/Thread.cpp
-   NodeBase.TrapDuringRecoveryStr: 995 [SpaceData]
+   NodeBase.TrapDuringRecoveryStr: 1036 [SpaceData]
       nb/Thread.cpp
-   NodeBase.TrapLimitReachedStr: 996 [SpaceData]
+   NodeBase.TrapLimitReachedStr: 1037 [SpaceData]
       nb/Thread.cpp
-   NodeBase.UnknownExceptionStr: 993 [SpaceData]
+   NodeBase.UnknownExceptionStr: 1034 [SpaceData]
       nb/Thread.cpp
 nb/Thread.h
    NodeBase.Daemon: 43 [Forward]
@@ -44743,6 +44746,8 @@ nb/Thread.h
       nw/UdpIoThread.h
       sb/InvokerThread.h
       sb/TimerThread.h
+   NodeBase.Thread.AbnormalExit: 622 [Function]
+      nb/Thread.cpp
    NodeBase.Thread.ActiveThread: 466 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
@@ -44780,10 +44785,10 @@ nb/Thread.h
       nb/Thread.cpp
       sb/TimerRegistry.cpp
       sb/TimerThread.cpp
-   NodeBase.Thread.daemon_: 660 [ClassData]
+   NodeBase.Thread.daemon_: 668 [ClassData]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.Thread.deleting_: 672 [ClassData]
+   NodeBase.Thread.deleting_: 680 [ClassData]
       nb/Thread.cpp
    NodeBase.Thread.DeqMsg: 277 [Function]
       dip/BotThread.cpp
@@ -44835,18 +44840,18 @@ nb/Thread.h
       nw/LocalAddrTest.h
       sb/InvokerThread.cpp
       sb/InvokerThread.h
-   NodeBase.Thread.DisplayContextSwitches: 652 [Function]
+   NodeBase.Thread.DisplayContextSwitches: 660 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
    NodeBase.Thread.DisplayStats: 235 [Function]
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
-   NodeBase.Thread.DisplaySummaries: 640 [Function]
+   NodeBase.Thread.DisplaySummaries: 648 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
-   NodeBase.Thread.DisplaySummary: 635 [Function]
+   NodeBase.Thread.DisplaySummary: 643 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.EnableFactions: 628 [Function]
+   NodeBase.Thread.EnableFactions: 636 [Function]
       nb/ModuleRegistry.cpp
       nb/Thread.cpp
    NodeBase.Thread.EnqMsg: 117 [Function]
@@ -44908,7 +44913,7 @@ nb/Thread.h
    NodeBase.Thread.ExtendTime: 559 [Function]
       nb/Exception.cpp
       nb/Thread.cpp
-   NodeBase.Thread.faction_: 668 [ClassData]
+   NodeBase.Thread.faction_: 676 [ClassData]
       nb/Thread.cpp
       nb/Thread.h
    NodeBase.Thread.FindRunningThread: 372 [Function]
@@ -44973,9 +44978,9 @@ nb/Thread.h
    NodeBase.Thread.LockedThread: 470 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.LogContextSwitch: 648 [Function]
+   NodeBase.Thread.LogContextSwitch: 656 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.LogContextSwitches: 644 [Function]
+   NodeBase.Thread.LogContextSwitches: 652 [Function]
       nb/NbIncrement.cpp
       nb/Thread.cpp
    NodeBase.Thread.LogSignal: 607 [Function]
@@ -45001,7 +45006,7 @@ nb/Thread.h
    NodeBase.Thread.MemUnprotect: 387 [Function]
       nb/FunctionGuard.cpp
       nb/Thread.cpp
-   NodeBase.Thread.msgq_: 676 [ClassData]
+   NodeBase.Thread.msgq_: 684 [ClassData]
       nb/Thread.cpp
    NodeBase.Thread.MutexCount: 495 [Function]
       nb/Thread.cpp
@@ -45070,12 +45075,12 @@ nb/Thread.h
       nb/Thread.cpp
    NodeBase.Thread.Preempt: 425 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.priv_: 680 [ClassData]
+   NodeBase.Thread.priv_: 688 [ClassData]
       nb/Thread.cpp
    NodeBase.Thread.Proceed: 444 [Function]
       nb/InitThread.cpp
       nb/Thread.cpp
-   NodeBase.Thread.Purge: 623 [Function]
+   NodeBase.Thread.Purge: 631 [Function]
       nb/Thread.cpp
    NodeBase.Thread.Raise: 200 [Function]
       nb/ModuleRegistry.cpp
@@ -45092,7 +45097,7 @@ nb/Thread.h
       sb/InvokerThread.h
    NodeBase.Thread.RegisterForSignals: 521 [Function]
       nb/Thread.cpp
-   NodeBase.Thread.ReleaseResources: 618 [Function]
+   NodeBase.Thread.ReleaseResources: 617 [Function]
       nb/Thread.cpp
    NodeBase.Thread.Reset: 417 [Function]
       nb/InitThread.cpp
@@ -45191,7 +45196,7 @@ nb/Thread.h
       nb/ThreadRegistry.cpp
       nw/NwModule.cpp
       sb/SbModule.cpp
-   NodeBase.Thread.stats_: 684 [ClassData]
+   NodeBase.Thread.stats_: 692 [ClassData]
       nb/Thread.cpp
    NodeBase.Thread.StopTracing: 193 [Function]
       nb/ThisThread.cpp
@@ -45202,7 +45207,7 @@ nb/Thread.h
       nb/InitThread.cpp
       nb/ModuleRegistry.cpp
       nb/Thread.cpp
-   NodeBase.Thread.systhrd_: 656 [ClassData]
+   NodeBase.Thread.systhrd_: 664 [ClassData]
       nb/Debug.cpp
       nb/RootThread.cpp
       nb/Thread.cpp
@@ -45240,8 +45245,9 @@ nb/Thread.h
       nb/Thread.cpp
       nb/ThreadRegistry.cpp
       nb/TimedRecord.cpp
+      nt/NtIncrement.cpp
       sb/InvokerThread.cpp
-   NodeBase.Thread.tid_: 664 [ClassData]
+   NodeBase.Thread.tid_: 672 [ClassData]
       nb/Thread.cpp
       nb/Thread.h
    NodeBase.Thread.TimeLeft: 555 [Function]
@@ -45289,7 +45295,7 @@ nb/Thread.h
    NodeBase.ThreadRegistry: 67 [Friend]
    NodeBase.ThreadStats: 47 [Forward]
       nb/Thread.h
-   NodeBase.TraceAutostop: 691 [SpaceData]
+   NodeBase.TraceAutostop: 699 [SpaceData]
       nb/Thread.cpp
    THREAD_H_INCLUDED: 23 [Define]
       nb/Thread.h
@@ -46921,1211 +46927,1211 @@ nt/FunctionStats.h
       nt/FunctionStats.h
    NodeTools.FunctionStats.~FunctionStats: 48 [Function]
 nt/NtIncrement.cpp
-   NodeBase.Singleton<LbcPool>: 1241 [Friend]
-   NodeBase.Singleton<Q1WayPool>: 1365 [Friend]
-   NodeBase.Singleton<Q2WayPool>: 1851 [Friend]
-   NodeBase.Singleton<RecoveryDaemon>: 3434 [Friend]
-   NodeBase.Singleton<RecoveryThread>: 3446 [Friend]
-   NodeBase.Singleton<RegistryPool>: 2390 [Friend]
-   NodeBase.Singleton<SysTimePool>: 2883 [Friend]
-   NodeBase.Singleton<TestHeap>: 886 [Friend]
-   NodeTools.AbortTextExpl: 3841 [SpaceData]
+   NodeBase.Singleton<LbcPool>: 1242 [Friend]
+   NodeBase.Singleton<Q1WayPool>: 1366 [Friend]
+   NodeBase.Singleton<Q2WayPool>: 1852 [Friend]
+   NodeBase.Singleton<RecoveryDaemon>: 3435 [Friend]
+   NodeBase.Singleton<RecoveryThread>: 3447 [Friend]
+   NodeBase.Singleton<RegistryPool>: 2391 [Friend]
+   NodeBase.Singleton<SysTimePool>: 2884 [Friend]
+   NodeBase.Singleton<TestHeap>: 887 [Friend]
+   NodeTools.AbortTextExpl: 3848 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.AbortTextStr: 3840 [SpaceData]
+   NodeTools.AbortTextStr: 3847 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.AddDaysCommand: 2989 [Class]
+   NodeTools.AddDaysCommand: 2990 [Class]
       nt/NtIncrement.cpp
-   NodeTools.AddDaysCommand.AddDaysCommand: 2992 [Function]
+   NodeTools.AddDaysCommand.AddDaysCommand: 2993 [Function]
       nt/NtIncrement.cpp
-   NodeTools.AddDaysCommand.ProcessCommand: 2994 [Function]
+   NodeTools.AddDaysCommand.ProcessCommand: 2995 [Function]
       nt/NtIncrement.cpp
-   NodeTools.AddDaysExpl: 3352 [SpaceData]
+   NodeTools.AddDaysExpl: 3353 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.AddDaysStr: 3351 [SpaceData]
+   NodeTools.AddDaysStr: 3352 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.AddMsecsCommand: 2957 [Class]
+   NodeTools.AddMsecsCommand: 2958 [Class]
       nt/NtIncrement.cpp
-   NodeTools.AddMsecsCommand.AddMsecsCommand: 2960 [Function]
+   NodeTools.AddMsecsCommand.AddMsecsCommand: 2961 [Function]
       nt/NtIncrement.cpp
-   NodeTools.AddMsecsCommand.ProcessCommand: 2962 [Function]
+   NodeTools.AddMsecsCommand.ProcessCommand: 2963 [Function]
       nt/NtIncrement.cpp
-   NodeTools.AddMsecsExpl: 3245 [SpaceData]
+   NodeTools.AddMsecsExpl: 3246 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.AddMsecsStr: 3244 [SpaceData]
+   NodeTools.AddMsecsStr: 3245 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.AtCommand: 2435 [Class]
+   NodeTools.AtCommand: 2436 [Class]
       nt/NtIncrement.cpp
-   NodeTools.AtCommand.AtCommand: 2438 [Function]
+   NodeTools.AtCommand.AtCommand: 2439 [Function]
       nt/NtIncrement.cpp
-   NodeTools.AtCommand.ProcessCommand: 2440 [Function]
+   NodeTools.AtCommand.ProcessCommand: 2441 [Function]
       nt/NtIncrement.cpp
-   NodeTools.AtExpl: 2673 [SpaceData]
+   NodeTools.AtExpl: 2674 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.AtStr: 2672 [SpaceData]
+   NodeTools.AtStr: 2673 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.BadPtrTextExpl: 3846 [SpaceData]
+   NodeTools.BadPtrTextExpl: 3853 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.BadPtrTextStr: 3845 [SpaceData]
+   NodeTools.BadPtrTextStr: 3852 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.CheckHeap: 1002 [Function]
+   NodeTools.CheckHeap: 1003 [Function]
       nt/NtIncrement.cpp
-   NodeTools.CorruptExpl: 110 [SpaceData]
+   NodeTools.CorruptExpl: 111 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.CorruptStr: 109 [SpaceData]
+   NodeTools.CorruptStr: 110 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.CorruptWhatExpl: 102 [SpaceData]
+   NodeTools.CorruptWhatExpl: 103 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.CountCommand: 2475 [Class]
+   NodeTools.CountCommand: 2476 [Class]
       nt/NtIncrement.cpp
-   NodeTools.CountCommand.CountCommand: 2478 [Function]
+   NodeTools.CountCommand.CountCommand: 2479 [Function]
       nt/NtIncrement.cpp
-   NodeTools.CountCommand.ProcessCommand: 2480 [Function]
+   NodeTools.CountCommand.ProcessCommand: 2481 [Function]
       nt/NtIncrement.cpp
-   NodeTools.CountExpl: 2862 [SpaceData]
+   NodeTools.CountExpl: 2863 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Countq1Command: 1387 [Class]
+   NodeTools.Countq1Command: 1388 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Countq1Command.Countq1Command: 1390 [Function]
+   NodeTools.Countq1Command.Countq1Command: 1391 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Countq1Command.ProcessCommand: 1392 [Function]
+   NodeTools.Countq1Command.ProcessCommand: 1393 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Countq1Expl: 1566 [SpaceData]
+   NodeTools.Countq1Expl: 1567 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Countq1Str: 1565 [SpaceData]
+   NodeTools.Countq1Str: 1566 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Countq2Command: 1873 [Class]
+   NodeTools.Countq2Command: 1874 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Countq2Command.Countq2Command: 1876 [Function]
+   NodeTools.Countq2Command.Countq2Command: 1877 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Countq2Command.ProcessCommand: 1878 [Function]
+   NodeTools.Countq2Command.ProcessCommand: 1879 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Countq2Expl: 2061 [SpaceData]
+   NodeTools.Countq2Expl: 2062 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Countq2Str: 2060 [SpaceData]
+   NodeTools.Countq2Str: 2061 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.CountStr: 2861 [SpaceData]
+   NodeTools.CountStr: 2862 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.CreateTextExpl: 3856 [SpaceData]
+   NodeTools.CreateTextExpl: 3863 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.CreateTextStr: 3855 [SpaceData]
+   NodeTools.CreateTextStr: 3862 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.CtorTrapTextExpl: 3851 [SpaceData]
+   NodeTools.CtorTrapTextExpl: 3858 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.CtorTrapTextStr: 3850 [SpaceData]
+   NodeTools.CtorTrapTextStr: 3857 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DayOfWeekCommand: 2917 [Class]
+   NodeTools.DayOfWeekCommand: 2918 [Class]
       nt/NtIncrement.cpp
-   NodeTools.DayOfWeekCommand.DayOfWeekCommand: 2920 [Function]
+   NodeTools.DayOfWeekCommand.DayOfWeekCommand: 2921 [Function]
       nt/NtIncrement.cpp
-   NodeTools.DayOfWeekCommand.ProcessCommand: 2922 [Function]
+   NodeTools.DayOfWeekCommand.ProcessCommand: 2923 [Function]
       nt/NtIncrement.cpp
-   NodeTools.DayOfWeekExpl: 3118 [SpaceData]
+   NodeTools.DayOfWeekExpl: 3119 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DayOfWeekStr: 3117 [SpaceData]
+   NodeTools.DayOfWeekStr: 3118 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DayOfYearCommand: 2925 [Class]
+   NodeTools.DayOfYearCommand: 2926 [Class]
       nt/NtIncrement.cpp
-   NodeTools.DayOfYearCommand.DayOfYearCommand: 2928 [Function]
+   NodeTools.DayOfYearCommand.DayOfYearCommand: 2929 [Function]
       nt/NtIncrement.cpp
-   NodeTools.DayOfYearCommand.ProcessCommand: 2930 [Function]
+   NodeTools.DayOfYearCommand.ProcessCommand: 2931 [Function]
       nt/NtIncrement.cpp
-   NodeTools.DayOfYearExpl: 3142 [SpaceData]
+   NodeTools.DayOfYearExpl: 3143 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DayOfYearStr: 3141 [SpaceData]
+   NodeTools.DayOfYearStr: 3142 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DeleteText: 3805 [Class]
+   NodeTools.DeleteText: 3812 [Class]
       nt/NtIncrement.cpp
-   NodeTools.DeleteText.DeleteText: 3807 [Function]
+   NodeTools.DeleteText.DeleteText: 3814 [Function]
       nt/NtIncrement.cpp
-   NodeTools.DeleteTextExpl: 3862 [SpaceData]
+   NodeTools.DeleteTextExpl: 3869 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DeleteTextStr: 3861 [SpaceData]
+   NodeTools.DeleteTextStr: 3868 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Deq1Command: 1395 [Class]
+   NodeTools.Deq1Command: 1396 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Deq1Command.Deq1Command: 1398 [Function]
+   NodeTools.Deq1Command.Deq1Command: 1399 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Deq1Command.ProcessCommand: 1400 [Function]
+   NodeTools.Deq1Command.ProcessCommand: 1401 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Deq1Expl: 1584 [SpaceData]
+   NodeTools.Deq1Expl: 1585 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Deq1Str: 1583 [SpaceData]
+   NodeTools.Deq1Str: 1584 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Deq2Command: 1881 [Class]
+   NodeTools.Deq2Command: 1882 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Deq2Command.Deq2Command: 1884 [Function]
+   NodeTools.Deq2Command.Deq2Command: 1885 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Deq2Command.ProcessCommand: 1886 [Function]
+   NodeTools.Deq2Command.ProcessCommand: 1887 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Deq2Expl: 2079 [SpaceData]
+   NodeTools.Deq2Expl: 2080 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Deq2Str: 2078 [SpaceData]
+   NodeTools.Deq2Str: 2079 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DivideTextExpl: 3872 [SpaceData]
+   NodeTools.DivideTextExpl: 3879 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DivideTextStr: 3871 [SpaceData]
+   NodeTools.DivideTextStr: 3878 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DtorTrapTextExpl: 3877 [SpaceData]
+   NodeTools.DtorTrapTextExpl: 3884 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.DtorTrapTextStr: 3876 [SpaceData]
+   NodeTools.DtorTrapTextStr: 3883 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq1Command: 1403 [Class]
+   NodeTools.Emptyq1Command: 1404 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq1Command.Emptyq1Command: 1406 [Function]
+   NodeTools.Emptyq1Command.Emptyq1Command: 1407 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq1Command.ProcessCommand: 1408 [Function]
+   NodeTools.Emptyq1Command.ProcessCommand: 1409 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq1Expl: 1606 [SpaceData]
+   NodeTools.Emptyq1Expl: 1607 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq1Str: 1605 [SpaceData]
+   NodeTools.Emptyq1Str: 1606 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq2Command: 1889 [Class]
+   NodeTools.Emptyq2Command: 1890 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq2Command.Emptyq2Command: 1892 [Function]
+   NodeTools.Emptyq2Command.Emptyq2Command: 1893 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq2Command.ProcessCommand: 1894 [Function]
+   NodeTools.Emptyq2Command.ProcessCommand: 1895 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq2Expl: 2101 [SpaceData]
+   NodeTools.Emptyq2Expl: 2102 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Emptyq2Str: 2100 [SpaceData]
+   NodeTools.Emptyq2Str: 2101 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Enq1Command: 1411 [Class]
+   NodeTools.Enq1Command: 1412 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Enq1Command.Enq1Command: 1414 [Function]
+   NodeTools.Enq1Command.Enq1Command: 1415 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Enq1Command.ProcessCommand: 1416 [Function]
+   NodeTools.Enq1Command.ProcessCommand: 1417 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Enq1Expl: 1625 [SpaceData]
+   NodeTools.Enq1Expl: 1626 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Enq1Str: 1624 [SpaceData]
+   NodeTools.Enq1Str: 1625 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Enq2Command: 1897 [Class]
+   NodeTools.Enq2Command: 1898 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Enq2Command.Enq2Command: 1900 [Function]
+   NodeTools.Enq2Command.Enq2Command: 1901 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Enq2Command.ProcessCommand: 1902 [Function]
+   NodeTools.Enq2Command.ProcessCommand: 1903 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Enq2Expl: 2120 [SpaceData]
+   NodeTools.Enq2Expl: 2121 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Enq2Str: 2119 [SpaceData]
+   NodeTools.Enq2Str: 2120 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.ExceptionTextExpl: 3882 [SpaceData]
+   NodeTools.ExceptionTextExpl: 3889 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.ExceptionTextStr: 3881 [SpaceData]
+   NodeTools.ExceptionTextStr: 3888 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Exq1Command: 1419 [Class]
+   NodeTools.Exq1Command: 1420 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Exq1Command.Exq1Command: 1422 [Function]
+   NodeTools.Exq1Command.Exq1Command: 1423 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Exq1Command.ProcessCommand: 1424 [Function]
+   NodeTools.Exq1Command.ProcessCommand: 1425 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Exq1Expl: 1654 [SpaceData]
+   NodeTools.Exq1Expl: 1655 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Exq1Str: 1653 [SpaceData]
+   NodeTools.Exq1Str: 1654 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Exq2Command: 1905 [Class]
+   NodeTools.Exq2Command: 1906 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Exq2Command.Exq2Command: 1908 [Function]
+   NodeTools.Exq2Command.Exq2Command: 1909 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Exq2Command.ProcessCommand: 1910 [Function]
+   NodeTools.Exq2Command.ProcessCommand: 1911 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Exq2Expl: 2149 [SpaceData]
+   NodeTools.Exq2Expl: 2150 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Exq2Str: 2148 [SpaceData]
+   NodeTools.Exq2Str: 2149 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FirstCommand: 2443 [Class]
+   NodeTools.FirstCommand: 2444 [Class]
       nt/NtIncrement.cpp
-   NodeTools.FirstCommand.FirstCommand: 2446 [Function]
+   NodeTools.FirstCommand.FirstCommand: 2447 [Function]
       nt/NtIncrement.cpp
-   NodeTools.FirstCommand.ProcessCommand: 2448 [Function]
+   NodeTools.FirstCommand.ProcessCommand: 2449 [Function]
       nt/NtIncrement.cpp
-   NodeTools.FirstExpl: 2701 [SpaceData]
+   NodeTools.FirstExpl: 2702 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Firstq1Command: 1427 [Class]
+   NodeTools.Firstq1Command: 1428 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Firstq1Command.Firstq1Command: 1430 [Function]
+   NodeTools.Firstq1Command.Firstq1Command: 1431 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Firstq1Command.ProcessCommand: 1432 [Function]
+   NodeTools.Firstq1Command.ProcessCommand: 1433 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Firstq1Expl: 1684 [SpaceData]
+   NodeTools.Firstq1Expl: 1685 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Firstq1Str: 1683 [SpaceData]
+   NodeTools.Firstq1Str: 1684 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Firstq2Command: 1913 [Class]
+   NodeTools.Firstq2Command: 1914 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Firstq2Command.Firstq2Command: 1916 [Function]
+   NodeTools.Firstq2Command.Firstq2Command: 1917 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Firstq2Command.ProcessCommand: 1918 [Function]
+   NodeTools.Firstq2Command.ProcessCommand: 1919 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Firstq2Expl: 2179 [SpaceData]
+   NodeTools.Firstq2Expl: 2180 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Firstq2Str: 2178 [SpaceData]
+   NodeTools.Firstq2Str: 2179 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FirstStr: 2700 [SpaceData]
+   NodeTools.FirstStr: 2701 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FlagIdExpl: 553 [SpaceData]
+   NodeTools.FlagIdExpl: 554 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FlagsAction: 536 [Class]
+   NodeTools.FlagsAction: 537 [Class]
       nt/NtIncrement.cpp
-   NodeTools.FlagsAction.FlagsAction: 538 [Function]
+   NodeTools.FlagsAction.FlagsAction: 539 [Function]
       nt/NtIncrement.cpp
-   NodeTools.FlagsActionExpl: 570 [SpaceData]
+   NodeTools.FlagsActionExpl: 571 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FlagsClearTextExpl: 565 [SpaceData]
+   NodeTools.FlagsClearTextExpl: 566 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FlagsClearTextStr: 564 [SpaceData]
+   NodeTools.FlagsClearTextStr: 565 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FlagsQueryTextExpl: 568 [SpaceData]
+   NodeTools.FlagsQueryTextExpl: 569 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FlagsQueryTextStr: 567 [SpaceData]
+   NodeTools.FlagsQueryTextStr: 568 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FlagsSetText: 531 [Class]
+   NodeTools.FlagsSetText: 532 [Class]
       nt/NtIncrement.cpp
-   NodeTools.FlagsSetText.FlagsSetText: 533 [Function]
+   NodeTools.FlagsSetText.FlagsSetText: 534 [Function]
       nt/NtIncrement.cpp
-   NodeTools.FlagsSetTextExpl: 556 [SpaceData]
+   NodeTools.FlagsSetTextExpl: 557 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FlagsSetTextStr: 555 [SpaceData]
+   NodeTools.FlagsSetTextStr: 556 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FloodCountExpl: 165 [SpaceData]
+   NodeTools.FloodCountExpl: 166 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FreeqOffsetExpl: 90 [SpaceData]
+   NodeTools.FreeqOffsetExpl: 91 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncScopeCountsOnlyIndex: 472 [SpaceData]
+   NodeTools.FuncScopeCountsOnlyIndex: 473 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncScopeCountsOnlyTextExpl: 467 [SpaceData]
+   NodeTools.FuncScopeCountsOnlyTextExpl: 468 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncScopeCountsOnlyTextStr: 466 [SpaceData]
+   NodeTools.FuncScopeCountsOnlyTextStr: 467 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncScopeExpl: 469 [SpaceData]
+   NodeTools.FuncScopeExpl: 470 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncScopeFullTraceIndex: 471 [SpaceData]
+   NodeTools.FuncScopeFullTraceIndex: 472 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncScopeFullTraceTextExpl: 464 [SpaceData]
+   NodeTools.FuncScopeFullTraceTextExpl: 465 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncScopeFullTraceTextStr: 463 [SpaceData]
+   NodeTools.FuncScopeFullTraceTextStr: 464 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncScopeParm: 453 [Class]
+   NodeTools.FuncScopeParm: 454 [Class]
       nt/NtIncrement.cpp
-   NodeTools.FuncScopeParm.FuncScopeParm: 455 [Function]
+   NodeTools.FuncScopeParm.FuncScopeParm: 456 [Function]
       nt/NtIncrement.cpp
-   NodeTools.FuncsSortByCallsTextExpl: 363 [SpaceData]
+   NodeTools.FuncsSortByCallsTextExpl: 364 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncsSortByCallsTextStr: 362 [SpaceData]
+   NodeTools.FuncsSortByCallsTextStr: 363 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncsSortByNamesTextExpl: 369 [SpaceData]
+   NodeTools.FuncsSortByNamesTextExpl: 370 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncsSortByNamesTextStr: 368 [SpaceData]
+   NodeTools.FuncsSortByNamesTextStr: 369 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncsSortByTimesTextExpl: 366 [SpaceData]
+   NodeTools.FuncsSortByTimesTextExpl: 367 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncsSortByTimesTextStr: 365 [SpaceData]
+   NodeTools.FuncsSortByTimesTextStr: 366 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncsSortHowExpl: 371 [SpaceData]
+   NodeTools.FuncsSortHowExpl: 372 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncsSortHowParm: 352 [Class]
+   NodeTools.FuncsSortHowParm: 353 [Class]
       nt/NtIncrement.cpp
-   NodeTools.FuncsSortHowParm.FuncsSortHowParm: 354 [Function]
+   NodeTools.FuncsSortHowParm.FuncsSortHowParm: 355 [Function]
       nt/NtIncrement.cpp
-   NodeTools.FuncsText: 357 [Class]
+   NodeTools.FuncsText: 358 [Class]
       nt/NtIncrement.cpp
-   NodeTools.FuncsText.FuncsText: 359 [Function]
+   NodeTools.FuncsText.FuncsText: 360 [Function]
       nt/NtIncrement.cpp
-   NodeTools.FuncsTextExpl: 388 [SpaceData]
+   NodeTools.FuncsTextExpl: 389 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.FuncsTextStr: 387 [SpaceData]
+   NodeTools.FuncsTextStr: 388 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapAllocCommand: 938 [Class]
+   NodeTools.HeapAllocCommand: 939 [Class]
       nt/NtIncrement.cpp
-   NodeTools.HeapAllocCommand.HeapAllocCommand: 941 [Function]
+   NodeTools.HeapAllocCommand.HeapAllocCommand: 942 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapAllocCommand.ProcessCommand: 943 [Function]
+   NodeTools.HeapAllocCommand.ProcessCommand: 944 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapAllocExpl: 1103 [SpaceData]
+   NodeTools.HeapAllocExpl: 1104 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapAllocStr: 1102 [SpaceData]
+   NodeTools.HeapAllocStr: 1103 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapBlockAddrExpl: 914 [SpaceData]
+   NodeTools.HeapBlockAddrExpl: 915 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapBlockSizeExpl: 918 [SpaceData]
+   NodeTools.HeapBlockSizeExpl: 919 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapBlockToSizeCommand: 946 [Class]
+   NodeTools.HeapBlockToSizeCommand: 947 [Class]
       nt/NtIncrement.cpp
-   NodeTools.HeapBlockToSizeCommand.HeapBlockToSizeCommand: 949 [Function]
+   NodeTools.HeapBlockToSizeCommand.HeapBlockToSizeCommand: 950 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapBlockToSizeCommand.ProcessCommand: 951 [Function]
+   NodeTools.HeapBlockToSizeCommand.ProcessCommand: 952 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapBlockToSizeExpl: 1132 [SpaceData]
+   NodeTools.HeapBlockToSizeExpl: 1133 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapBlockToSizeStr: 1131 [SpaceData]
+   NodeTools.HeapBlockToSizeStr: 1132 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapCommands: 980 [Class]
+   NodeTools.HeapCommands: 981 [Class]
       nt/NtIncrement.cpp
-   NodeTools.HeapCommands.HeapCommands: 983 [Function]
+   NodeTools.HeapCommands.HeapCommands: 984 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapCreateCommand: 922 [Class]
+   NodeTools.HeapCreateCommand: 923 [Class]
       nt/NtIncrement.cpp
-   NodeTools.HeapCreateCommand.HeapCreateCommand: 925 [Function]
+   NodeTools.HeapCreateCommand.HeapCreateCommand: 926 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapCreateCommand.ProcessCommand: 927 [Function]
+   NodeTools.HeapCreateCommand.ProcessCommand: 928 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapCreateExpl: 1029 [SpaceData]
+   NodeTools.HeapCreateExpl: 1030 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapCreateStr: 1028 [SpaceData]
+   NodeTools.HeapCreateStr: 1029 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapDestroyCommand: 930 [Class]
+   NodeTools.HeapDestroyCommand: 931 [Class]
       nt/NtIncrement.cpp
-   NodeTools.HeapDestroyCommand.HeapDestroyCommand: 933 [Function]
+   NodeTools.HeapDestroyCommand.HeapDestroyCommand: 934 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapDestroyCommand.ProcessCommand: 935 [Function]
+   NodeTools.HeapDestroyCommand.ProcessCommand: 936 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapDestroyExpl: 1079 [SpaceData]
+   NodeTools.HeapDestroyExpl: 1080 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapDestroyStr: 1078 [SpaceData]
+   NodeTools.HeapDestroyStr: 1079 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapDisplayCommand: 954 [Class]
+   NodeTools.HeapDisplayCommand: 955 [Class]
       nt/NtIncrement.cpp
-   NodeTools.HeapDisplayCommand.HeapDisplayCommand: 957 [Function]
+   NodeTools.HeapDisplayCommand.HeapDisplayCommand: 958 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapDisplayCommand.ProcessCommand: 959 [Function]
+   NodeTools.HeapDisplayCommand.ProcessCommand: 960 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapDisplayExpl: 1161 [SpaceData]
+   NodeTools.HeapDisplayExpl: 1162 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapDisplayStr: 1160 [SpaceData]
+   NodeTools.HeapDisplayStr: 1161 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapExpl: 987 [SpaceData]
+   NodeTools.HeapExpl: 988 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapFreeCommand: 962 [Class]
+   NodeTools.HeapFreeCommand: 963 [Class]
       nt/NtIncrement.cpp
-   NodeTools.HeapFreeCommand.HeapFreeCommand: 965 [Function]
+   NodeTools.HeapFreeCommand.HeapFreeCommand: 966 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapFreeCommand.ProcessCommand: 967 [Function]
+   NodeTools.HeapFreeCommand.ProcessCommand: 968 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapFreeExpl: 1181 [SpaceData]
+   NodeTools.HeapFreeExpl: 1182 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapFreeStr: 1180 [SpaceData]
+   NodeTools.HeapFreeStr: 1181 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapSizeExpl: 905 [SpaceData]
+   NodeTools.HeapSizeExpl: 906 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapStr: 986 [SpaceData]
+   NodeTools.HeapStr: 987 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapTypeChars: 910 [SpaceData]
+   NodeTools.HeapTypeChars: 911 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapTypeExpl: 909 [SpaceData]
+   NodeTools.HeapTypeExpl: 910 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapValidateCommand: 970 [Class]
+   NodeTools.HeapValidateCommand: 971 [Class]
       nt/NtIncrement.cpp
-   NodeTools.HeapValidateCommand.HeapValidateCommand: 973 [Function]
+   NodeTools.HeapValidateCommand.HeapValidateCommand: 974 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapValidateCommand.ProcessCommand: 975 [Function]
+   NodeTools.HeapValidateCommand.ProcessCommand: 976 [Function]
       nt/NtIncrement.cpp
-   NodeTools.HeapValidateExpl: 1209 [SpaceData]
+   NodeTools.HeapValidateExpl: 1210 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.HeapValidateStr: 1208 [SpaceData]
+   NodeTools.HeapValidateStr: 1209 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Henq1Command: 1435 [Class]
+   NodeTools.Henq1Command: 1436 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Henq1Command.Henq1Command: 1438 [Function]
+   NodeTools.Henq1Command.Henq1Command: 1439 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Henq1Command.ProcessCommand: 1440 [Function]
+   NodeTools.Henq1Command.ProcessCommand: 1441 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Henq1Expl: 1707 [SpaceData]
+   NodeTools.Henq1Expl: 1708 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Henq1Str: 1706 [SpaceData]
+   NodeTools.Henq1Str: 1707 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Henq2Command: 1921 [Class]
+   NodeTools.Henq2Command: 1922 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Henq2Command.Henq2Command: 1924 [Function]
+   NodeTools.Henq2Command.Henq2Command: 1925 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Henq2Command.ProcessCommand: 1926 [Function]
+   NodeTools.Henq2Command.ProcessCommand: 1927 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Henq2Expl: 2204 [SpaceData]
+   NodeTools.Henq2Expl: 2205 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Henq2Str: 2203 [SpaceData]
+   NodeTools.Henq2Str: 2204 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.InitCommand: 2411 [Class]
+   NodeTools.InitCommand: 2412 [Class]
       nt/NtIncrement.cpp
-   NodeTools.InitCommand.InitCommand: 2414 [Function]
+   NodeTools.InitCommand.InitCommand: 2415 [Function]
       nt/NtIncrement.cpp
-   NodeTools.InitCommand.ProcessCommand: 2416 [Function]
+   NodeTools.InitCommand.ProcessCommand: 2417 [Function]
       nt/NtIncrement.cpp
-   NodeTools.InitExpl: 2567 [SpaceData]
+   NodeTools.InitExpl: 2568 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.InitStr: 2566 [SpaceData]
+   NodeTools.InitStr: 2567 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.InsertCommand: 2419 [Class]
+   NodeTools.InsertCommand: 2420 [Class]
       nt/NtIncrement.cpp
-   NodeTools.InsertCommand.InsertCommand: 2422 [Function]
+   NodeTools.InsertCommand.InsertCommand: 2423 [Function]
       nt/NtIncrement.cpp
-   NodeTools.InsertCommand.ProcessCommand: 2424 [Function]
+   NodeTools.InsertCommand.ProcessCommand: 2425 [Function]
       nt/NtIncrement.cpp
-   NodeTools.InsertExpl: 2593 [SpaceData]
+   NodeTools.InsertExpl: 2594 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Insertq1Command: 1443 [Class]
+   NodeTools.Insertq1Command: 1444 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Insertq1Command.Insertq1Command: 1446 [Function]
+   NodeTools.Insertq1Command.Insertq1Command: 1447 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Insertq1Command.ProcessCommand: 1448 [Function]
+   NodeTools.Insertq1Command.ProcessCommand: 1449 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Insertq1Expl: 1736 [SpaceData]
+   NodeTools.Insertq1Expl: 1737 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Insertq1Str: 1735 [SpaceData]
+   NodeTools.Insertq1Str: 1736 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.InsertStr: 2592 [SpaceData]
+   NodeTools.InsertStr: 2593 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.IsLeapYearCommand: 2933 [Class]
+   NodeTools.IsLeapYearCommand: 2934 [Class]
       nt/NtIncrement.cpp
-   NodeTools.IsLeapYearCommand.IsLeapYearCommand: 2936 [Function]
+   NodeTools.IsLeapYearCommand.IsLeapYearCommand: 2937 [Function]
       nt/NtIncrement.cpp
-   NodeTools.IsLeapYearCommand.ProcessCommand: 2938 [Function]
+   NodeTools.IsLeapYearCommand.ProcessCommand: 2939 [Function]
       nt/NtIncrement.cpp
-   NodeTools.IsLeapYearExpl: 3166 [SpaceData]
+   NodeTools.IsLeapYearExpl: 3167 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.IsLeapYearStr: 3165 [SpaceData]
+   NodeTools.IsLeapYearStr: 3166 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LastCommand: 2459 [Class]
+   NodeTools.LastCommand: 2460 [Class]
       nt/NtIncrement.cpp
-   NodeTools.LastCommand.LastCommand: 2462 [Function]
+   NodeTools.LastCommand.LastCommand: 2463 [Function]
       nt/NtIncrement.cpp
-   NodeTools.LastCommand.ProcessCommand: 2464 [Function]
+   NodeTools.LastCommand.ProcessCommand: 2465 [Function]
       nt/NtIncrement.cpp
-   NodeTools.LastExpl: 2793 [SpaceData]
+   NodeTools.LastExpl: 2794 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Lastq2Command: 1929 [Class]
+   NodeTools.Lastq2Command: 1930 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Lastq2Command.Lastq2Command: 1932 [Function]
+   NodeTools.Lastq2Command.Lastq2Command: 1933 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Lastq2Command.ProcessCommand: 1934 [Function]
+   NodeTools.Lastq2Command.ProcessCommand: 1935 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Lastq2Expl: 2233 [SpaceData]
+   NodeTools.Lastq2Expl: 2234 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Lastq2Str: 2232 [SpaceData]
+   NodeTools.Lastq2Str: 2233 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LastStr: 2792 [SpaceData]
+   NodeTools.LastStr: 2793 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LbcEventCommand: 1265 [Class]
+   NodeTools.LbcEventCommand: 1266 [Class]
       nt/NtIncrement.cpp
-   NodeTools.LbcEventCommand.LbcEventCommand: 1268 [Function]
+   NodeTools.LbcEventCommand.LbcEventCommand: 1269 [Function]
       nt/NtIncrement.cpp
-   NodeTools.LbcEventCommand.ProcessCommand: 1270 [Function]
+   NodeTools.LbcEventCommand.ProcessCommand: 1271 [Function]
       nt/NtIncrement.cpp
-   NodeTools.LbcEventExpl: 1322 [SpaceData]
+   NodeTools.LbcEventExpl: 1323 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LbcEventStr: 1321 [SpaceData]
+   NodeTools.LbcEventStr: 1322 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LbcInitCommand: 1257 [Class]
+   NodeTools.LbcInitCommand: 1258 [Class]
       nt/NtIncrement.cpp
-   NodeTools.LbcInitCommand.LbcInitCommand: 1260 [Function]
+   NodeTools.LbcInitCommand.LbcInitCommand: 1261 [Function]
       nt/NtIncrement.cpp
-   NodeTools.LbcInitCommand.ProcessCommand: 1262 [Function]
+   NodeTools.LbcInitCommand.ProcessCommand: 1263 [Function]
       nt/NtIncrement.cpp
-   NodeTools.LbcInitExpl: 1296 [SpaceData]
+   NodeTools.LbcInitExpl: 1297 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LbcInitStr: 1295 [SpaceData]
+   NodeTools.LbcInitStr: 1296 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LbcLimitExpl: 1275 [SpaceData]
+   NodeTools.LbcLimitExpl: 1276 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LbcPool: 1239 [Class]
+   NodeTools.LbcPool: 1240 [Class]
       nt/NtIncrement.cpp
-   NodeTools.LbcPool.lbc_: 1245 [ClassData]
+   NodeTools.LbcPool.lbc_: 1246 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.LbcPool.LbcPool(): 1247 [Function]
-   NodeTools.LbcPool.LbcPool(const LbcPool&): 1243 [Function]
-   NodeTools.LbcPool.operator=: 1244 [Function]
-   NodeTools.LbcPool.~LbcPool: 1248 [Function]
-   NodeTools.LbcTimeExpl: 1279 [SpaceData]
+   NodeTools.LbcPool.LbcPool(): 1248 [Function]
+   NodeTools.LbcPool.LbcPool(const LbcPool&): 1244 [Function]
+   NodeTools.LbcPool.operator=: 1245 [Function]
+   NodeTools.LbcPool.~LbcPool: 1249 [Function]
+   NodeTools.LbcTimeExpl: 1280 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LeakyBucketCounterCommands: 1251 [Class]
+   NodeTools.LeakyBucketCounterCommands: 1252 [Class]
       nt/NtIncrement.cpp
-   NodeTools.LeakyBucketCounterCommands.LeakyBucketCounterCommands: 1254 [Function]
+   NodeTools.LeakyBucketCounterCommands.LeakyBucketCounterCommands: 1255 [Function]
       nt/NtIncrement.cpp
-   NodeTools.LeakyBucketCounterExpl: 1284 [SpaceData]
+   NodeTools.LeakyBucketCounterExpl: 1285 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LeakyBucketCounterStr: 1283 [SpaceData]
+   NodeTools.LeakyBucketCounterStr: 1284 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LogsFloodText: 167 [Class]
+   NodeTools.LogsFloodText: 168 [Class]
       nt/NtIncrement.cpp
-   NodeTools.LogsFloodText.LogsFloodText: 169 [Function]
+   NodeTools.LogsFloodText.LogsFloodText: 170 [Function]
       nt/NtIncrement.cpp
-   NodeTools.LogsFloodTextExpl: 173 [SpaceData]
+   NodeTools.LogsFloodTextExpl: 174 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LogsFloodTextStr: 172 [SpaceData]
+   NodeTools.LogsFloodTextStr: 173 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LogsSortText: 151 [Class]
+   NodeTools.LogsSortText: 152 [Class]
       nt/NtIncrement.cpp
-   NodeTools.LogsSortText.LogsSortText: 153 [Function]
+   NodeTools.LogsSortText.LogsSortText: 154 [Function]
       nt/NtIncrement.cpp
-   NodeTools.LogsSortTextExpl: 157 [SpaceData]
+   NodeTools.LogsSortTextExpl: 158 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LogsSortTextStr: 156 [SpaceData]
+   NodeTools.LogsSortTextStr: 157 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LoopTextExpl: 3887 [SpaceData]
+   NodeTools.LoopTextExpl: 3894 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.LoopTextStr: 3886 [SpaceData]
+   NodeTools.LoopTextStr: 3893 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MsecsFromNowCommand: 2973 [Class]
+   NodeTools.MsecsFromNowCommand: 2974 [Class]
       nt/NtIncrement.cpp
-   NodeTools.MsecsFromNowCommand.MsecsFromNowCommand: 2976 [Function]
+   NodeTools.MsecsFromNowCommand.MsecsFromNowCommand: 2977 [Function]
       nt/NtIncrement.cpp
-   NodeTools.MsecsFromNowCommand.ProcessCommand: 2978 [Function]
+   NodeTools.MsecsFromNowCommand.ProcessCommand: 2979 [Function]
       nt/NtIncrement.cpp
-   NodeTools.MsecsFromNowExpl: 3297 [SpaceData]
+   NodeTools.MsecsFromNowExpl: 3298 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MsecsFromNowStr: 3296 [SpaceData]
+   NodeTools.MsecsFromNowStr: 3297 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MsecsUntilCommand: 2981 [Class]
+   NodeTools.MsecsUntilCommand: 2982 [Class]
       nt/NtIncrement.cpp
-   NodeTools.MsecsUntilCommand.MsecsUntilCommand: 2984 [Function]
+   NodeTools.MsecsUntilCommand.MsecsUntilCommand: 2985 [Function]
       nt/NtIncrement.cpp
-   NodeTools.MsecsUntilCommand.ProcessCommand: 2986 [Function]
+   NodeTools.MsecsUntilCommand.ProcessCommand: 2987 [Function]
       nt/NtIncrement.cpp
-   NodeTools.MsecsUntilExpl: 3322 [SpaceData]
+   NodeTools.MsecsUntilExpl: 3323 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MsecsUntilStr: 3321 [SpaceData]
+   NodeTools.MsecsUntilStr: 3322 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MutexBlockExpl: 3892 [SpaceData]
+   NodeTools.MutexBlockExpl: 3899 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MutexBlockStr: 3891 [SpaceData]
+   NodeTools.MutexBlockStr: 3898 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MutexExitExpl: 3897 [SpaceData]
+   NodeTools.MutexExitExpl: 3904 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MutexExitStr: 3896 [SpaceData]
+   NodeTools.MutexExitStr: 3903 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MutexTrapExpl: 3902 [SpaceData]
+   NodeTools.MutexTrapExpl: 3909 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.MutexTrapStr: 3901 [SpaceData]
+   NodeTools.MutexTrapStr: 3908 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.NextCommand: 2451 [Class]
+   NodeTools.NextCommand: 2452 [Class]
       nt/NtIncrement.cpp
-   NodeTools.NextCommand.NextCommand: 2454 [Function]
+   NodeTools.NextCommand.NextCommand: 2455 [Function]
       nt/NtIncrement.cpp
-   NodeTools.NextCommand.ProcessCommand: 2456 [Function]
+   NodeTools.NextCommand.ProcessCommand: 2457 [Function]
       nt/NtIncrement.cpp
-   NodeTools.NextExpl: 2746 [SpaceData]
+   NodeTools.NextExpl: 2747 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Nextq1Command: 1451 [Class]
+   NodeTools.Nextq1Command: 1452 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Nextq1Command.Nextq1Command: 1454 [Function]
+   NodeTools.Nextq1Command.Nextq1Command: 1455 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Nextq1Command.ProcessCommand: 1456 [Function]
+   NodeTools.Nextq1Command.ProcessCommand: 1457 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Nextq1Expl: 1767 [SpaceData]
+   NodeTools.Nextq1Expl: 1768 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Nextq1Str: 1766 [SpaceData]
+   NodeTools.Nextq1Str: 1767 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Nextq2Command: 1937 [Class]
+   NodeTools.Nextq2Command: 1938 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Nextq2Command.Nextq2Command: 1940 [Function]
+   NodeTools.Nextq2Command.Nextq2Command: 1941 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Nextq2Command.ProcessCommand: 1942 [Function]
+   NodeTools.Nextq2Command.ProcessCommand: 1943 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Nextq2Expl: 2258 [SpaceData]
+   NodeTools.Nextq2Expl: 2259 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Nextq2Str: 2257 [SpaceData]
+   NodeTools.Nextq2Str: 2258 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.NextStr: 2745 [SpaceData]
+   NodeTools.NextStr: 2746 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.NtExpl: 4101 [SpaceData]
+   NodeTools.NtExpl: 4108 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsAction: 180 [Class]
+   NodeTools.NtLogsAction: 181 [Class]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsAction.NtLogsAction: 183 [Function]
+   NodeTools.NtLogsAction.NtLogsAction: 184 [Function]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsAction.~NtLogsAction: 184 [Function]
-   NodeTools.NtLogsCommand: 187 [Class]
+   NodeTools.NtLogsAction.~NtLogsAction: 185 [Function]
+   NodeTools.NtLogsCommand: 188 [Class]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsCommand.FloodIndex: 191 [ClassData]
+   NodeTools.NtLogsCommand.FloodIndex: 192 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsCommand.LastNtIndex: 192 [ClassData]
+   NodeTools.NtLogsCommand.LastNtIndex: 193 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsCommand.NtLogsCommand: 196 [Function]
+   NodeTools.NtLogsCommand.NtLogsCommand: 197 [Function]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsCommand.ProcessSubcommand: 199 [Function]
+   NodeTools.NtLogsCommand.ProcessSubcommand: 200 [Function]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsCommand.Sort: 201 [Function]
+   NodeTools.NtLogsCommand.Sort: 202 [Function]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsCommand.SortIndex: 190 [ClassData]
+   NodeTools.NtLogsCommand.SortIndex: 191 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.NtLogsCommand.~NtLogsCommand: 197 [Function]
-   NodeTools.NtLogsCommand_ProcessSubcommand: 215 [SpaceData]
+   NodeTools.NtLogsCommand.~NtLogsCommand: 198 [Function]
+   NodeTools.NtLogsCommand_ProcessSubcommand: 216 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.NtStr: 4100 [SpaceData]
+   NodeTools.NtStr: 4107 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.NullPtrExpl: 1346 [SpaceData]
+   NodeTools.NullPtrExpl: 1347 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.ObjectPoolText: 85 [Class]
+   NodeTools.ObjectPoolText: 86 [Class]
       nt/NtIncrement.cpp
-   NodeTools.ObjectPoolText.ObjectPoolText: 87 [Function]
+   NodeTools.ObjectPoolText.ObjectPoolText: 88 [Function]
       nt/NtIncrement.cpp
-   NodeTools.ObjectPoolTextExpl: 93 [SpaceData]
+   NodeTools.ObjectPoolTextExpl: 94 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.ObjectPoolTextStr: 92 [SpaceData]
+   NodeTools.ObjectPoolTextStr: 93 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.PrevCommand: 2467 [Class]
+   NodeTools.PrevCommand: 2468 [Class]
       nt/NtIncrement.cpp
-   NodeTools.PrevCommand.PrevCommand: 2470 [Function]
+   NodeTools.PrevCommand.PrevCommand: 2471 [Function]
       nt/NtIncrement.cpp
-   NodeTools.PrevCommand.ProcessCommand: 2472 [Function]
+   NodeTools.PrevCommand.ProcessCommand: 2473 [Function]
       nt/NtIncrement.cpp
-   NodeTools.PrevExpl: 2815 [SpaceData]
+   NodeTools.PrevExpl: 2816 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Prevq2Command: 1945 [Class]
+   NodeTools.Prevq2Command: 1946 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Prevq2Command.Prevq2Command: 1948 [Function]
+   NodeTools.Prevq2Command.Prevq2Command: 1949 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Prevq2Command.ProcessCommand: 1950 [Function]
+   NodeTools.Prevq2Command.ProcessCommand: 1951 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Prevq2Expl: 2305 [SpaceData]
+   NodeTools.Prevq2Expl: 2306 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Prevq2Str: 2304 [SpaceData]
+   NodeTools.Prevq2Str: 2305 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.PrevStr: 2814 [SpaceData]
+   NodeTools.PrevStr: 2815 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq1Command: 1459 [Class]
+   NodeTools.Purgeq1Command: 1460 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq1Command.ProcessCommand: 1464 [Function]
+   NodeTools.Purgeq1Command.ProcessCommand: 1465 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq1Command.Purgeq1Command: 1462 [Function]
+   NodeTools.Purgeq1Command.Purgeq1Command: 1463 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq1Expl: 1814 [SpaceData]
+   NodeTools.Purgeq1Expl: 1815 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq1Str: 1813 [SpaceData]
+   NodeTools.Purgeq1Str: 1814 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq2Command: 1953 [Class]
+   NodeTools.Purgeq2Command: 1954 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq2Command.ProcessCommand: 1958 [Function]
+   NodeTools.Purgeq2Command.ProcessCommand: 1959 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq2Command.Purgeq2Command: 1956 [Function]
+   NodeTools.Purgeq2Command.Purgeq2Command: 1957 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq2Expl: 2352 [SpaceData]
+   NodeTools.Purgeq2Expl: 2353 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Purgeq2Str: 2351 [SpaceData]
+   NodeTools.Purgeq2Str: 2352 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayCommands: 1381 [Class]
+   NodeTools.Q1WayCommands: 1382 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayCommands.Q1WayCommands: 1384 [Function]
+   NodeTools.Q1WayCommands.Q1WayCommands: 1385 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayExpl: 1547 [SpaceData]
+   NodeTools.Q1WayExpl: 1548 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayItem: 1348 [Class]
+   NodeTools.Q1WayItem: 1349 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayItem.Display: 1356 [Function]
+   NodeTools.Q1WayItem.Display: 1357 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayItem.index_: 1359 [ClassData]
+   NodeTools.Q1WayItem.index_: 1360 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayItem.link_: 1360 [ClassData]
+   NodeTools.Q1WayItem.link_: 1361 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayItem.LinkDiff: 1355 [Function]
+   NodeTools.Q1WayItem.LinkDiff: 1356 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayItem.operator=: 1354 [Function]
-   NodeTools.Q1WayItem.Q1WayItem(const Q1WayItem&): 1353 [Function]
-   NodeTools.Q1WayItem.Q1WayItem(word): 1351 [Function]
+   NodeTools.Q1WayItem.operator=: 1355 [Function]
+   NodeTools.Q1WayItem.Q1WayItem(const Q1WayItem&): 1354 [Function]
+   NodeTools.Q1WayItem.Q1WayItem(word): 1352 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayItem.~Q1WayItem: 1352 [Function]
+   NodeTools.Q1WayItem.~Q1WayItem: 1353 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayItemIndexExpl: 1500 [SpaceData]
+   NodeTools.Q1WayItemIndexExpl: 1501 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayPool: 1363 [Class]
+   NodeTools.Q1WayPool: 1364 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayPool.Display: 1370 [Function]
+   NodeTools.Q1WayPool.Display: 1371 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayPool.itemq_: 1375 [ClassData]
+   NodeTools.Q1WayPool.itemq_: 1376 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayPool.items_: 1374 [ClassData]
+   NodeTools.Q1WayPool.items_: 1375 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayPool.MaxItems: 1373 [ClassData]
+   NodeTools.Q1WayPool.MaxItems: 1374 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayPool.operator=: 1368 [Function]
-   NodeTools.Q1WayPool.Q1WayPool(): 1377 [Function]
+   NodeTools.Q1WayPool.operator=: 1369 [Function]
+   NodeTools.Q1WayPool.Q1WayPool(): 1378 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayPool.Q1WayPool(const Q1WayPool&): 1367 [Function]
-   NodeTools.Q1WayPool.Reallocate: 1369 [Function]
+   NodeTools.Q1WayPool.Q1WayPool(const Q1WayPool&): 1368 [Function]
+   NodeTools.Q1WayPool.Reallocate: 1370 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q1WayPool.~Q1WayPool: 1378 [Function]
-   NodeTools.Q1WayStr: 1546 [SpaceData]
+   NodeTools.Q1WayPool.~Q1WayPool: 1379 [Function]
+   NodeTools.Q1WayStr: 1547 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayCommands: 1867 [Class]
+   NodeTools.Q2WayCommands: 1868 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayCommands.Q2WayCommands: 1870 [Function]
+   NodeTools.Q2WayCommands.Q2WayCommands: 1871 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayExpl: 2041 [SpaceData]
+   NodeTools.Q2WayExpl: 2042 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayItem: 1834 [Class]
+   NodeTools.Q2WayItem: 1835 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayItem.Display: 1842 [Function]
+   NodeTools.Q2WayItem.Display: 1843 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayItem.index_: 1845 [ClassData]
+   NodeTools.Q2WayItem.index_: 1846 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayItem.link_: 1846 [ClassData]
+   NodeTools.Q2WayItem.link_: 1847 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayItem.LinkDiff: 1841 [Function]
+   NodeTools.Q2WayItem.LinkDiff: 1842 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayItem.operator=: 1840 [Function]
-   NodeTools.Q2WayItem.Q2WayItem(const Q2WayItem&): 1839 [Function]
-   NodeTools.Q2WayItem.Q2WayItem(word): 1837 [Function]
+   NodeTools.Q2WayItem.operator=: 1841 [Function]
+   NodeTools.Q2WayItem.Q2WayItem(const Q2WayItem&): 1840 [Function]
+   NodeTools.Q2WayItem.Q2WayItem(word): 1838 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayItem.~Q2WayItem: 1838 [Function]
+   NodeTools.Q2WayItem.~Q2WayItem: 1839 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayItemIndexExpl: 1994 [SpaceData]
+   NodeTools.Q2WayItemIndexExpl: 1995 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayPool: 1849 [Class]
+   NodeTools.Q2WayPool: 1850 [Class]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayPool.Display: 1856 [Function]
+   NodeTools.Q2WayPool.Display: 1857 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayPool.itemq_: 1861 [ClassData]
+   NodeTools.Q2WayPool.itemq_: 1862 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayPool.items_: 1860 [ClassData]
+   NodeTools.Q2WayPool.items_: 1861 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayPool.MaxItems: 1859 [ClassData]
+   NodeTools.Q2WayPool.MaxItems: 1860 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayPool.operator=: 1854 [Function]
-   NodeTools.Q2WayPool.Q2WayPool(): 1863 [Function]
+   NodeTools.Q2WayPool.operator=: 1855 [Function]
+   NodeTools.Q2WayPool.Q2WayPool(): 1864 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayPool.Q2WayPool(const Q2WayPool&): 1853 [Function]
-   NodeTools.Q2WayPool.Reallocate: 1855 [Function]
+   NodeTools.Q2WayPool.Q2WayPool(const Q2WayPool&): 1854 [Function]
+   NodeTools.Q2WayPool.Reallocate: 1856 [Function]
       nt/NtIncrement.cpp
-   NodeTools.Q2WayPool.~Q2WayPool: 1864 [Function]
-   NodeTools.Q2WayStr: 2040 [SpaceData]
+   NodeTools.Q2WayPool.~Q2WayPool: 1865 [Function]
+   NodeTools.Q2WayStr: 2041 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RaiseText: 3810 [Class]
+   NodeTools.RaiseText: 3817 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RaiseText.RaiseText: 3812 [Function]
+   NodeTools.RaiseText.RaiseText: 3819 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RaiseTextExpl: 3907 [SpaceData]
+   NodeTools.RaiseTextExpl: 3914 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RaiseTextStr: 3906 [SpaceData]
+   NodeTools.RaiseTextStr: 3913 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoverCommand: 3825 [Class]
+   NodeTools.RecoverCommand: 3832 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RecoverCommand.EnsureThread: 3830 [Function]
+   NodeTools.RecoverCommand.EnsureThread: 3837 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoverCommand.ProcessCommand: 3831 [Function]
+   NodeTools.RecoverCommand.ProcessCommand: 3838 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoverCommand.RecoverCommand: 3828 [Function]
+   NodeTools.RecoverCommand.RecoverCommand: 3835 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoverCommand_EnsureThread: 3988 [SpaceData]
+   NodeTools.RecoverCommand_EnsureThread: 3995 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoverCommand_ProcessCommand: 4004 [SpaceData]
+   NodeTools.RecoverCommand_ProcessCommand: 4011 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoverExpl: 3981 [SpaceData]
+   NodeTools.RecoverExpl: 3988 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoverStr: 3980 [SpaceData]
+   NodeTools.RecoverStr: 3987 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoverWhatExpl: 3942 [SpaceData]
+   NodeTools.RecoverWhatExpl: 3949 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoverWhatParm: 3820 [Class]
+   NodeTools.RecoverWhatParm: 3827 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RecoverWhatParm.RecoverWhatParm: 3822 [Function]
+   NodeTools.RecoverWhatParm.RecoverWhatParm: 3829 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryDaemon: 3432 [Class]
+   NodeTools.RecoveryDaemon: 3433 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryDaemon.CreateThread: 3438 [Function]
+   NodeTools.RecoveryDaemon.CreateThread: 3439 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryDaemon.GetAlarmLevel: 3439 [Function]
+   NodeTools.RecoveryDaemon.GetAlarmLevel: 3440 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryDaemon.RecoveryDaemon: 3436 [Function]
+   NodeTools.RecoveryDaemon.RecoveryDaemon: 3437 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryDaemon.~RecoveryDaemon: 3437 [Function]
+   NodeTools.RecoveryDaemon.~RecoveryDaemon: 3438 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryDaemonName: 3501 [SpaceData]
+   NodeTools.RecoveryDaemonName: 3502 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryMutex_: 3497 [SpaceData]
+   NodeTools.RecoveryMutex_: 3498 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread: 3444 [Class]
+   NodeTools.RecoveryThread: 3445 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.AbbrName: 3488 [Function]
+   NodeTools.RecoveryThread.AbbrName: 3489 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.AcquireMutex: 3477 [Function]
+   NodeTools.RecoveryThread.AcquireMutex: 3478 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Destroy: 3489 [Function]
+   NodeTools.RecoveryThread.Destroy: 3490 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Display: 3472 [Function]
+   NodeTools.RecoveryThread.Display: 3473 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.DoAbort: 3478 [Function]
+   NodeTools.RecoveryThread.DoAbort: 3479 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.DoDelete: 3479 [Function]
+   NodeTools.RecoveryThread.DoDelete: 3480 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.DoDivide: 3480 [Function]
+   NodeTools.RecoveryThread.DoDivide: 3481 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.DoException: 3481 [Function]
+   NodeTools.RecoveryThread.DoException: 3482 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.DoRaise: 3486 [Function]
+   NodeTools.RecoveryThread.DoRaise: 3487 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.DoTerminate: 3482 [Function]
+   NodeTools.RecoveryThread.DoTerminate: 3483 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.DoTrap: 3487 [Function]
+   NodeTools.RecoveryThread.DoTrap: 3488 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Enter: 3490 [Function]
+   NodeTools.RecoveryThread.Enter: 3491 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.LoopForever: 3483 [Function]
+   NodeTools.RecoveryThread.LoopForever: 3484 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Recover: 3491 [Function]
+   NodeTools.RecoveryThread.Recover: 3492 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.RecoveryThread: 3475 [Function]
+   NodeTools.RecoveryThread.RecoveryThread: 3476 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.RecurseForever: 3484 [Function]
+   NodeTools.RecoveryThread.RecurseForever: 3485 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.SetTest: 3470 [Function]
+   NodeTools.RecoveryThread.SetTest: 3471 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.SetTestSignal: 3471 [Function]
+   NodeTools.RecoveryThread.SetTestSignal: 3472 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.signal_: 3494 [ClassData]
+   NodeTools.RecoveryThread.signal_: 3495 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test: 3448 [Enum]
+   NodeTools.RecoveryThread.Test: 3449 [Enum]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.Abort: 3451 [Enumerator]
+   NodeTools.RecoveryThread.Test.Abort: 3452 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.Create: 3452 [Enumerator]
+   NodeTools.RecoveryThread.Test.Create: 3453 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.CtorTrap: 3453 [Enumerator]
+   NodeTools.RecoveryThread.Test.CtorTrap: 3454 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.Delete: 3455 [Enumerator]
+   NodeTools.RecoveryThread.Test.Delete: 3456 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.DerefenceBadPtr: 3456 [Enumerator]
+   NodeTools.RecoveryThread.Test.DerefenceBadPtr: 3457 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.DivideByZero: 3457 [Enumerator]
+   NodeTools.RecoveryThread.Test.DivideByZero: 3458 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.DtorTrap: 3454 [Enumerator]
+   NodeTools.RecoveryThread.Test.DtorTrap: 3455 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.Exception: 3458 [Enumerator]
+   NodeTools.RecoveryThread.Test.Exception: 3459 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.InfiniteLoop: 3459 [Enumerator]
+   NodeTools.RecoveryThread.Test.InfiniteLoop: 3460 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.MutexBlock: 3460 [Enumerator]
+   NodeTools.RecoveryThread.Test.MutexBlock: 3461 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.MutexExit: 3461 [Enumerator]
+   NodeTools.RecoveryThread.Test.MutexExit: 3462 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.MutexTrap: 3462 [Enumerator]
+   NodeTools.RecoveryThread.Test.MutexTrap: 3463 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.OverflowStack: 3463 [Enumerator]
+   NodeTools.RecoveryThread.Test.OverflowStack: 3464 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.RaiseSignal: 3464 [Enumerator]
+   NodeTools.RecoveryThread.Test.RaiseSignal: 3465 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.Return: 3465 [Enumerator]
+   NodeTools.RecoveryThread.Test.Return: 3466 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.Sleep: 3450 [Enumerator]
+   NodeTools.RecoveryThread.Test.Sleep: 3451 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.Terminate: 3466 [Enumerator]
+   NodeTools.RecoveryThread.Test.Terminate: 3467 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.Test.Trap: 3467 [Enumerator]
+   NodeTools.RecoveryThread.Test.Trap: 3468 [Enumerator]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.test_: 3493 [ClassData]
+   NodeTools.RecoveryThread.test_: 3494 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.UseBadPointer: 3485 [Function]
+   NodeTools.RecoveryThread.UseBadPointer: 3486 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread.~RecoveryThread: 3476 [Function]
+   NodeTools.RecoveryThread.~RecoveryThread: 3477 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread_AcquireMutex: 3576 [SpaceData]
+   NodeTools.RecoveryThread_AcquireMutex: 3583 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread_Enter: 3672 [SpaceData]
+   NodeTools.RecoveryThread_Enter: 3679 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RecoveryThread_LoopForever: 3756 [SpaceData]
+   NodeTools.RecoveryThread_LoopForever: 3763 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryCommands: 2405 [Class]
+   NodeTools.RegistryCommands: 2406 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RegistryCommands.RegistryCommands: 2408 [Function]
+   NodeTools.RegistryCommands.RegistryCommands: 2409 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RegistryExpl: 2548 [SpaceData]
+   NodeTools.RegistryExpl: 2549 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryIdExpl: 2539 [SpaceData]
+   NodeTools.RegistryIdExpl: 2540 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryItem: 2372 [Class]
+   NodeTools.RegistryItem: 2373 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RegistryItem.CellDiff: 2379 [Function]
+   NodeTools.RegistryItem.CellDiff: 2380 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RegistryItem.Display: 2380 [Function]
+   NodeTools.RegistryItem.Display: 2381 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RegistryItem.index_: 2385 [ClassData]
+   NodeTools.RegistryItem.index_: 2386 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryItem.operator=: 2378 [Function]
-   NodeTools.RegistryItem.RegistryItem(const RegistryItem&): 2377 [Function]
-   NodeTools.RegistryItem.RegistryItem(word): 2375 [Function]
+   NodeTools.RegistryItem.operator=: 2379 [Function]
+   NodeTools.RegistryItem.RegistryItem(const RegistryItem&): 2378 [Function]
+   NodeTools.RegistryItem.RegistryItem(word): 2376 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RegistryItem.rid_: 2383 [ClassData]
+   NodeTools.RegistryItem.rid_: 2384 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryItem.~RegistryItem: 2376 [Function]
+   NodeTools.RegistryItem.~RegistryItem: 2377 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RegistryItemIndexExpl: 2513 [SpaceData]
+   NodeTools.RegistryItemIndexExpl: 2514 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryPool: 2388 [Class]
+   NodeTools.RegistryPool: 2389 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RegistryPool.Display: 2394 [Function]
+   NodeTools.RegistryPool.Display: 2395 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RegistryPool.items_: 2398 [ClassData]
+   NodeTools.RegistryPool.items_: 2399 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryPool.MaxItems: 2397 [ClassData]
+   NodeTools.RegistryPool.MaxItems: 2398 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryPool.operator=: 2393 [Function]
-   NodeTools.RegistryPool.registry_: 2399 [ClassData]
+   NodeTools.RegistryPool.operator=: 2394 [Function]
+   NodeTools.RegistryPool.registry_: 2400 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryPool.RegistryPool(): 2401 [Function]
+   NodeTools.RegistryPool.RegistryPool(): 2402 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RegistryPool.RegistryPool(const RegistryPool&): 2392 [Function]
-   NodeTools.RegistryPool.~RegistryPool: 2402 [Function]
-   NodeTools.RegistrySizeExpl: 2543 [SpaceData]
+   NodeTools.RegistryPool.RegistryPool(const RegistryPool&): 2393 [Function]
+   NodeTools.RegistryPool.~RegistryPool: 2403 [Function]
+   NodeTools.RegistrySizeExpl: 2544 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RegistryStr: 2547 [SpaceData]
+   NodeTools.RegistryStr: 2548 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RemoveCommand: 2427 [Class]
+   NodeTools.RemoveCommand: 2428 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RemoveCommand.ProcessCommand: 2432 [Function]
+   NodeTools.RemoveCommand.ProcessCommand: 2433 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RemoveCommand.RemoveCommand: 2430 [Function]
+   NodeTools.RemoveCommand.RemoveCommand: 2431 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RemoveExpl: 2635 [SpaceData]
+   NodeTools.RemoveExpl: 2636 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RemoveStr: 2634 [SpaceData]
+   NodeTools.RemoveStr: 2635 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.ReturnTextExpl: 3917 [SpaceData]
+   NodeTools.ReturnTextExpl: 3924 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.ReturnTextStr: 3916 [SpaceData]
+   NodeTools.ReturnTextStr: 3923 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RoundCommand: 2949 [Class]
+   NodeTools.RoundCommand: 2950 [Class]
       nt/NtIncrement.cpp
-   NodeTools.RoundCommand.ProcessCommand: 2954 [Function]
+   NodeTools.RoundCommand.ProcessCommand: 2955 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RoundCommand.RoundCommand: 2952 [Function]
+   NodeTools.RoundCommand.RoundCommand: 2953 [Function]
       nt/NtIncrement.cpp
-   NodeTools.RoundExpl: 3216 [SpaceData]
+   NodeTools.RoundExpl: 3217 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.RoundStr: 3215 [SpaceData]
+   NodeTools.RoundStr: 3216 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.ScopeText: 458 [Class]
+   NodeTools.ScopeText: 459 [Class]
       nt/NtIncrement.cpp
-   NodeTools.ScopeText.ScopeText: 460 [Function]
+   NodeTools.ScopeText.ScopeText: 461 [Function]
       nt/NtIncrement.cpp
-   NodeTools.ScopeTextExpl: 483 [SpaceData]
+   NodeTools.ScopeTextExpl: 484 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.ScopeTextStr: 482 [SpaceData]
+   NodeTools.ScopeTextStr: 483 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SignalParmExpl: 3836 [SpaceData]
+   NodeTools.SignalParmExpl: 3843 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SortByCallsIndex: 373 [SpaceData]
+   NodeTools.SortByCallsIndex: 374 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SortByNamesIndex: 375 [SpaceData]
+   NodeTools.SortByNamesIndex: 376 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SortByTimesIndex: 374 [SpaceData]
+   NodeTools.SortByTimesIndex: 375 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.StackTextExpl: 3922 [SpaceData]
+   NodeTools.StackTextExpl: 3929 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.StackTextStr: 3921 [SpaceData]
+   NodeTools.StackTextStr: 3928 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.StrTimeCommand: 3005 [Class]
+   NodeTools.StrTimeCommand: 3006 [Class]
       nt/NtIncrement.cpp
-   NodeTools.StrTimeCommand.ProcessCommand: 3010 [Function]
+   NodeTools.StrTimeCommand.ProcessCommand: 3011 [Function]
       nt/NtIncrement.cpp
-   NodeTools.StrTimeCommand.StrTimeCommand: 3008 [Function]
+   NodeTools.StrTimeCommand.StrTimeCommand: 3009 [Function]
       nt/NtIncrement.cpp
-   NodeTools.StrTimeExpl: 3404 [SpaceData]
+   NodeTools.StrTimeExpl: 3405 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.StrTimeStr: 3403 [SpaceData]
+   NodeTools.StrTimeStr: 3404 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SubDaysCommand: 2997 [Class]
+   NodeTools.SubDaysCommand: 2998 [Class]
       nt/NtIncrement.cpp
-   NodeTools.SubDaysCommand.ProcessCommand: 3002 [Function]
+   NodeTools.SubDaysCommand.ProcessCommand: 3003 [Function]
       nt/NtIncrement.cpp
-   NodeTools.SubDaysCommand.SubDaysCommand: 3000 [Function]
+   NodeTools.SubDaysCommand.SubDaysCommand: 3001 [Function]
       nt/NtIncrement.cpp
-   NodeTools.SubDaysExpl: 3378 [SpaceData]
+   NodeTools.SubDaysExpl: 3379 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SubDaysStr: 3377 [SpaceData]
+   NodeTools.SubDaysStr: 3378 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SubMsecsCommand: 2965 [Class]
+   NodeTools.SubMsecsCommand: 2966 [Class]
       nt/NtIncrement.cpp
-   NodeTools.SubMsecsCommand.ProcessCommand: 2970 [Function]
+   NodeTools.SubMsecsCommand.ProcessCommand: 2971 [Function]
       nt/NtIncrement.cpp
-   NodeTools.SubMsecsCommand.SubMsecsCommand: 2968 [Function]
+   NodeTools.SubMsecsCommand.SubMsecsCommand: 2969 [Function]
       nt/NtIncrement.cpp
-   NodeTools.SubMsecsExpl: 3271 [SpaceData]
+   NodeTools.SubMsecsExpl: 3272 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SubMsecsStr: 3270 [SpaceData]
+   NodeTools.SubMsecsStr: 3271 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SwFlagsCommand: 541 [Class]
+   NodeTools.SwFlagsCommand: 542 [Class]
       nt/NtIncrement.cpp
-   NodeTools.SwFlagsCommand.FlagsClearIndex: 545 [ClassData]
+   NodeTools.SwFlagsCommand.FlagsClearIndex: 546 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.SwFlagsCommand.FlagsQueryIndex: 546 [ClassData]
+   NodeTools.SwFlagsCommand.FlagsQueryIndex: 547 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.SwFlagsCommand.FlagsSetIndex: 544 [ClassData]
+   NodeTools.SwFlagsCommand.FlagsSetIndex: 545 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.SwFlagsCommand.ProcessCommand: 550 [Function]
+   NodeTools.SwFlagsCommand.ProcessCommand: 551 [Function]
       nt/NtIncrement.cpp
-   NodeTools.SwFlagsCommand.SwFlagsCommand: 548 [Function]
+   NodeTools.SwFlagsCommand.SwFlagsCommand: 549 [Function]
       nt/NtIncrement.cpp
-   NodeTools.SwFlagsExpl: 582 [SpaceData]
+   NodeTools.SwFlagsExpl: 583 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SwFlagsStr: 581 [SpaceData]
+   NodeTools.SwFlagsStr: 582 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SysTimeCommands: 2895 [Class]
+   NodeTools.SysTimeCommands: 2896 [Class]
       nt/NtIncrement.cpp
-   NodeTools.SysTimeCommands.SysTimeCommands: 2898 [Function]
+   NodeTools.SysTimeCommands.SysTimeCommands: 2899 [Function]
       nt/NtIncrement.cpp
-   NodeTools.SysTimeDaysExpl: 3028 [SpaceData]
+   NodeTools.SysTimeDaysExpl: 3029 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SysTimeExpl: 3033 [SpaceData]
+   NodeTools.SysTimeExpl: 3034 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SysTimeIndexExpl: 3015 [SpaceData]
+   NodeTools.SysTimeIndexExpl: 3016 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SysTimeIntervalExpl: 3019 [SpaceData]
+   NodeTools.SysTimeIntervalExpl: 3020 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SysTimeMsecsExpl: 3024 [SpaceData]
+   NodeTools.SysTimeMsecsExpl: 3025 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.SysTimePool: 2881 [Class]
+   NodeTools.SysTimePool: 2882 [Class]
       nt/NtIncrement.cpp
-   NodeTools.SysTimePool.MaxIndex: 2888 [ClassData]
+   NodeTools.SysTimePool.MaxIndex: 2889 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.SysTimePool.operator=: 2886 [Function]
-   NodeTools.SysTimePool.SysTimePool(): 2891 [Function]
-   NodeTools.SysTimePool.SysTimePool(const SysTimePool&): 2885 [Function]
-   NodeTools.SysTimePool.time_: 2889 [ClassData]
+   NodeTools.SysTimePool.operator=: 2887 [Function]
+   NodeTools.SysTimePool.SysTimePool(): 2892 [Function]
+   NodeTools.SysTimePool.SysTimePool(const SysTimePool&): 2886 [Function]
+   NodeTools.SysTimePool.time_: 2890 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.SysTimePool.~SysTimePool: 2892 [Function]
-   NodeTools.SysTimeStr: 3032 [SpaceData]
+   NodeTools.SysTimePool.~SysTimePool: 2893 [Function]
+   NodeTools.SysTimeStr: 3033 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TerminateTextExpl: 3927 [SpaceData]
+   NodeTools.TerminateTextExpl: 3934 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TerminateTextStr: 3926 [SpaceData]
+   NodeTools.TerminateTextStr: 3933 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestBeginExpl: 712 [SpaceData]
+   NodeTools.TestBeginExpl: 713 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestBeginText: 659 [Class]
+   NodeTools.TestBeginText: 660 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TestBeginText.TestBeginText: 661 [Function]
+   NodeTools.TestBeginText.TestBeginText: 662 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestBeginTextExpl: 715 [SpaceData]
+   NodeTools.TestBeginTextExpl: 716 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestBeginTextStr: 714 [SpaceData]
+   NodeTools.TestBeginTextStr: 715 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestEndTextExpl: 724 [SpaceData]
+   NodeTools.TestEndTextExpl: 725 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestEndTextStr: 723 [SpaceData]
+   NodeTools.TestEndTextStr: 724 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestEpilogExpl: 690 [SpaceData]
+   NodeTools.TestEpilogExpl: 691 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestEpilogText: 649 [Class]
+   NodeTools.TestEpilogText: 650 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TestEpilogText.TestEpilogText: 651 [Function]
+   NodeTools.TestEpilogText.TestEpilogText: 652 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestEpilogTextExpl: 693 [SpaceData]
+   NodeTools.TestEpilogTextExpl: 694 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestEpilogTextStr: 692 [SpaceData]
+   NodeTools.TestEpilogTextStr: 693 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestEraseExpl: 753 [SpaceData]
+   NodeTools.TestEraseExpl: 754 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestEraseText: 674 [Class]
+   NodeTools.TestEraseText: 675 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TestEraseText.TestEraseText: 676 [Function]
+   NodeTools.TestEraseText.TestEraseText: 677 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestEraseTextExpl: 756 [SpaceData]
+   NodeTools.TestEraseTextExpl: 757 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestEraseTextStr: 755 [SpaceData]
+   NodeTools.TestEraseTextStr: 756 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestFailCodeExpl: 726 [SpaceData]
+   NodeTools.TestFailCodeExpl: 727 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestFailedText: 664 [Class]
+   NodeTools.TestFailedText: 665 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TestFailedText.TestFailedText: 666 [Function]
+   NodeTools.TestFailedText.TestFailedText: 667 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestFailedTextExpl: 731 [SpaceData]
+   NodeTools.TestFailedTextExpl: 732 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestFailedTextStr: 730 [SpaceData]
+   NodeTools.TestFailedTextStr: 731 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestFailExpl: 728 [SpaceData]
+   NodeTools.TestFailExpl: 729 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestHeap: 884 [Class]
+   NodeTools.TestHeap: 885 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TestHeap.SetSize: 888 [Function]
+   NodeTools.TestHeap.SetSize: 889 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestHeap.SetType: 889 [Function]
+   NodeTools.TestHeap.SetType: 890 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestHeap.Size_: 895 [ClassData]
+   NodeTools.TestHeap.Size_: 896 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.TestHeap.TestHeap: 891 [Function]
+   NodeTools.TestHeap.TestHeap: 892 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestHeap.Type_: 894 [ClassData]
+   NodeTools.TestHeap.Type_: 895 [ClassData]
       nt/NtIncrement.cpp
-   NodeTools.TestHeap.~TestHeap: 892 [Function]
-   NodeTools.TestPrologExpl: 679 [SpaceData]
+   NodeTools.TestHeap.~TestHeap: 893 [Function]
+   NodeTools.TestPrologExpl: 680 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestPrologText: 644 [Class]
+   NodeTools.TestPrologText: 645 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TestPrologText.TestPrologText: 646 [Function]
+   NodeTools.TestPrologText.TestPrologText: 647 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestPrologTextExpl: 682 [SpaceData]
+   NodeTools.TestPrologTextExpl: 683 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestPrologTextStr: 681 [SpaceData]
+   NodeTools.TestPrologTextStr: 682 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestQueryText: 669 [Class]
+   NodeTools.TestQueryText: 670 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TestQueryText.TestQueryText: 671 [Function]
+   NodeTools.TestQueryText.TestQueryText: 672 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestQueryTextExpl: 744 [SpaceData]
+   NodeTools.TestQueryTextExpl: 745 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestQueryTextStr: 743 [SpaceData]
+   NodeTools.TestQueryTextStr: 744 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestRecoverExpl: 701 [SpaceData]
+   NodeTools.TestRecoverExpl: 702 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestRecoverText: 654 [Class]
+   NodeTools.TestRecoverText: 655 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TestRecoverText.TestRecoverText: 656 [Function]
+   NodeTools.TestRecoverText.TestRecoverText: 657 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TestRecoverTextExpl: 704 [SpaceData]
+   NodeTools.TestRecoverTextExpl: 705 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestRecoverTextStr: 703 [SpaceData]
+   NodeTools.TestRecoverTextStr: 704 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestResetTextExpl: 764 [SpaceData]
+   NodeTools.TestResetTextExpl: 765 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestResetTextStr: 763 [SpaceData]
+   NodeTools.TestResetTextStr: 764 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestRetestTextExpl: 741 [SpaceData]
+   NodeTools.TestRetestTextExpl: 742 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestRetestTextStr: 740 [SpaceData]
+   NodeTools.TestRetestTextStr: 741 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestsActionExpl: 766 [SpaceData]
+   NodeTools.TestsActionExpl: 767 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestsExpl: 786 [SpaceData]
+   NodeTools.TestsExpl: 787 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TestsStr: 785 [SpaceData]
+   NodeTools.TestsStr: 786 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.ThisParmExpl: 3860 [SpaceData]
+   NodeTools.ThisParmExpl: 3867 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor1Command: 2901 [Class]
+   NodeTools.TimeCtor1Command: 2902 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor1Command.ProcessCommand: 2906 [Function]
+   NodeTools.TimeCtor1Command.ProcessCommand: 2907 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor1Command.TimeCtor1Command: 2904 [Function]
+   NodeTools.TimeCtor1Command.TimeCtor1Command: 2905 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor1Expl: 3056 [SpaceData]
+   NodeTools.TimeCtor1Expl: 3057 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor1Str: 3055 [SpaceData]
+   NodeTools.TimeCtor1Str: 3056 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor2Command: 2909 [Class]
+   NodeTools.TimeCtor2Command: 2910 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor2Command.ProcessCommand: 2914 [Function]
+   NodeTools.TimeCtor2Command.ProcessCommand: 2915 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor2Command.TimeCtor2Command: 2912 [Function]
+   NodeTools.TimeCtor2Command.TimeCtor2Command: 2913 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor2Expl: 3080 [SpaceData]
+   NodeTools.TimeCtor2Expl: 3081 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TimeCtor2Str: 3079 [SpaceData]
+   NodeTools.TimeCtor2Str: 3080 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TrapText: 3815 [Class]
+   NodeTools.TrapText: 3822 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TrapText.TrapText: 3817 [Function]
+   NodeTools.TrapText.TrapText: 3824 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TrapTextExpl: 3932 [SpaceData]
+   NodeTools.TrapTextExpl: 3939 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TrapTextStr: 3931 [SpaceData]
+   NodeTools.TrapTextStr: 3938 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TruncateCommand: 2941 [Class]
+   NodeTools.TruncateCommand: 2942 [Class]
       nt/NtIncrement.cpp
-   NodeTools.TruncateCommand.ProcessCommand: 2946 [Function]
+   NodeTools.TruncateCommand.ProcessCommand: 2947 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TruncateCommand.TruncateCommand: 2944 [Function]
+   NodeTools.TruncateCommand.TruncateCommand: 2945 [Function]
       nt/NtIncrement.cpp
-   NodeTools.TruncateExpl: 3189 [SpaceData]
+   NodeTools.TruncateExpl: 3190 [SpaceData]
       nt/NtIncrement.cpp
-   NodeTools.TruncateStr: 3188 [SpaceData]
+   NodeTools.TruncateStr: 3189 [SpaceData]
       nt/NtIncrement.cpp
 nt/NtIncrement.h
    NodeBase.Singleton<NtIncrement>: 158 [Friend]
@@ -48586,7 +48592,7 @@ nw/InputHandler.h
    NetworkBase.InputHandler.~InputHandler: 59 [Function]
       nw/InputHandler.cpp
 nw/IoThread.cpp
-   NetworkBase.IoThread_ctor: 50 [SpaceData]
+   NetworkBase.IoThread_ctor: 49 [SpaceData]
       nw/IoThread.cpp
 nw/IoThread.h
    IOTHREAD_H_INCLUDED: 23 [Define]
@@ -49215,21 +49221,21 @@ nw/IpService.cpp
       nw/IpService.cpp
    NetworkBase.IpService_dtor: 57 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_Enabled: 130 [SpaceData]
+   NetworkBase.IpService_Enabled: 131 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_GetAppSocketSizes: 142 [SpaceData]
+   NetworkBase.IpService_GetAppSocketSizes: 143 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_GetFaction: 155 [SpaceData]
+   NetworkBase.IpService_GetFaction: 156 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_HasSharedSocket: 167 [SpaceData]
+   NetworkBase.IpService_HasSharedSocket: 168 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_Name: 179 [SpaceData]
+   NetworkBase.IpService_Name: 180 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_Port: 198 [SpaceData]
+   NetworkBase.IpService_Port: 199 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_Protocol: 210 [SpaceData]
+   NetworkBase.IpService_Protocol: 211 [SpaceData]
       nw/IpService.cpp
-   NetworkBase.IpService_Provision: 222 [SpaceData]
+   NetworkBase.IpService_Provision: 223 [SpaceData]
       nw/IpService.cpp
 nw/IpService.h
    IPSERVICE_H_INCLUDED: 23 [Define]
@@ -49244,6 +49250,7 @@ nw/IpService.h
       nw/IpServiceRegistry.h
       nw/LocalAddrTest.cpp
       nw/NwDaemons.cpp
+      nw/NwIncrement.cpp
       nw/NwTypes.h
       nw/SysSocket.win.cpp
       nw/SysTcpSocket.win.cpp
@@ -49411,32 +49418,36 @@ nw/IpServiceRegistry.h
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
       nw/IpServiceRegistry.h
+      nw/NwIncrement.cpp
       nw/NwModule.cpp
-   NetworkBase.IpServiceRegistry.BindService: 86 [Function]
+   NetworkBase.IpServiceRegistry.BindService: 90 [Function]
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.Display: 61 [Function]
+   NetworkBase.IpServiceRegistry.Display: 65 [Function]
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.GetServices: 57 [Function]
+   NetworkBase.IpServiceRegistry.GetServices: 61 [Function]
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.IpServiceRegistry(): 78 [Function]
+   NetworkBase.IpServiceRegistry.IpServiceRegistry(): 82 [Function]
       nw/IpServiceRegistry.cpp
    NetworkBase.IpServiceRegistry.IpServiceRegistry(const IpServiceRegistry&): 49 [Function]
    NetworkBase.IpServiceRegistry.operator=: 53 [Function]
-   NetworkBase.IpServiceRegistry.Patch: 66 [Function]
+   NetworkBase.IpServiceRegistry.Patch: 70 [Function]
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.services_: 94 [ClassData]
+   NetworkBase.IpServiceRegistry.Services: 57 [Function]
+      nw/NwIncrement.cpp
+   NetworkBase.IpServiceRegistry.services_: 98 [ClassData]
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.Shutdown: 70 [Function]
+      nw/IpServiceRegistry.h
+   NetworkBase.IpServiceRegistry.Shutdown: 74 [Function]
       nw/IpServiceRegistry.cpp
       nw/NwModule.cpp
-   NetworkBase.IpServiceRegistry.Startup: 74 [Function]
+   NetworkBase.IpServiceRegistry.Startup: 78 [Function]
       nw/IpServiceRegistry.cpp
       nw/NwModule.cpp
-   NetworkBase.IpServiceRegistry.UnbindService: 90 [Function]
+   NetworkBase.IpServiceRegistry.UnbindService: 94 [Function]
       nw/IpService.cpp
       nw/IpServiceRegistry.cpp
-   NetworkBase.IpServiceRegistry.~IpServiceRegistry: 82 [Function]
+   NetworkBase.IpServiceRegistry.~IpServiceRegistry: 86 [Function]
       nw/IpServiceRegistry.cpp
    NodeBase.Singleton<IpServiceRegistry>: 44 [Friend]
 nw/LocalAddrTest.cpp
@@ -49529,60 +49540,60 @@ nw/LocalAddrTest.h
    NodeBase.Singleton<SendLocalIpService>: 112 [Friend]
    NodeBase.Singleton<SendLocalThread>: 44 [Friend]
 nw/NwCliParms.cpp
-   NetworkBase.HostNameMandExpl: 44 [SpaceData]
+   NetworkBase.HostNameMandExpl: 45 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.IpAddrTextParm: 51 [Class]
+   NetworkBase.IpAddrTextParm: 52 [Class]
       nw/NwCliParms.cpp
-   NetworkBase.IpAddrTextParm.IpAddrTextParm: 53 [Function]
+   NetworkBase.IpAddrTextParm.IpAddrTextParm: 54 [Function]
       nw/NwCliParms.cpp
-   NetworkBase.IpAddrTextParmExpl: 56 [SpaceData]
+   NetworkBase.IpAddrTextParmExpl: 57 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.IpPortMandExpl: 115 [SpaceData]
+   NetworkBase.IpPortMandExpl: 116 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.IpPortOptExpl: 119 [SpaceData]
+   NetworkBase.IpPortOptExpl: 120 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.PeersTextExpl: 69 [SpaceData]
+   NetworkBase.PeersTextExpl: 70 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.PeersTextStr: 68 [SpaceData]
+   NetworkBase.PeersTextStr: 69 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.PeerTextExpl: 76 [SpaceData]
+   NetworkBase.PeerTextExpl: 77 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.PeerTextStr: 75 [SpaceData]
+   NetworkBase.PeerTextStr: 76 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.PortsTextExpl: 93 [SpaceData]
+   NetworkBase.PortsTextExpl: 94 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.PortsTextStr: 92 [SpaceData]
+   NetworkBase.PortsTextStr: 93 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.PortTextExpl: 83 [SpaceData]
+   NetworkBase.PortTextExpl: 84 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.PortTextStr: 82 [SpaceData]
+   NetworkBase.PortTextStr: 83 [SpaceData]
       nw/NwCliParms.cpp
-   NetworkBase.ServiceNameOptExpl: 126 [SpaceData]
+   NetworkBase.ServiceNameOptExpl: 127 [SpaceData]
       nw/NwCliParms.cpp
 nw/NwCliParms.h
-   NetworkBase.GetIpL3Addr: 122 [Function]
+   NetworkBase.GetIpL3Addr: 123 [Function]
       nw/NwCliParms.cpp
       nw/NwIncrement.cpp
-   NetworkBase.HostNameMandParm: 55 [Class]
+   NetworkBase.HostNameMandParm: 56 [Class]
       nw/NwCliParms.cpp
       nw/NwIncrement.cpp
-   NetworkBase.HostNameMandParm.HostNameMandParm: 57 [Function]
+   NetworkBase.HostNameMandParm.HostNameMandParm: 58 [Function]
       nw/NwCliParms.cpp
-   NetworkBase.IpAddrParm: 64 [Class]
+   NetworkBase.IpAddrParm: 65 [Class]
       nw/NwCliParms.cpp
       nw/NwCliParms.h
       nw/NwIncrement.cpp
-   NetworkBase.IpAddrParm.IpAddrParm: 67 [Function]
+   NetworkBase.IpAddrParm.IpAddrParm: 68 [Function]
       nw/NwCliParms.cpp
-   NetworkBase.IpAddrParm.~IpAddrParm: 68 [Function]
-   NetworkBase.IpPortMandParm: 75 [Class]
+   NetworkBase.IpAddrParm.~IpAddrParm: 69 [Function]
+   NetworkBase.IpPortMandParm: 76 [Class]
       nw/NwCliParms.cpp
-   NetworkBase.IpPortMandParm.IpPortMandParm: 77 [Function]
+   NetworkBase.IpPortMandParm.IpPortMandParm: 78 [Function]
       nw/NwCliParms.cpp
-   NetworkBase.IpPortOptParm: 80 [Class]
+   NetworkBase.IpPortOptParm: 81 [Class]
       nw/NwCliParms.cpp
       nw/NwIncrement.cpp
-   NetworkBase.IpPortOptParm.IpPortOptParm: 82 [Function]
+   NetworkBase.IpPortOptParm.IpPortOptParm: 83 [Function]
       nw/NwCliParms.cpp
    NetworkBase.NoHostAddrExpl: 46 [SpaceData]
       nw/NwCliParms.cpp
@@ -49597,30 +49608,33 @@ nw/NwCliParms.h
       nw/IpPortRegistry.cpp
       nw/NwCliParms.cpp
       nw/NwIncrement.cpp
-   NetworkBase.PeersText: 103 [Class]
+   NetworkBase.NoIpServiceExpl: 50 [SpaceData]
       nw/NwCliParms.cpp
       nw/NwIncrement.cpp
-   NetworkBase.PeersText.PeersText: 105 [Function]
-      nw/NwCliParms.cpp
-   NetworkBase.PeerText: 98 [Class]
+   NetworkBase.PeersText: 104 [Class]
       nw/NwCliParms.cpp
       nw/NwIncrement.cpp
-   NetworkBase.PeerText.PeerText: 100 [Function]
+   NetworkBase.PeersText.PeersText: 106 [Function]
       nw/NwCliParms.cpp
-   NetworkBase.PortsText: 113 [Class]
-      nw/NwCliParms.cpp
-      nw/NwIncrement.cpp
-   NetworkBase.PortsText.PortsText: 115 [Function]
-      nw/NwCliParms.cpp
-   NetworkBase.PortText: 108 [Class]
+   NetworkBase.PeerText: 99 [Class]
       nw/NwCliParms.cpp
       nw/NwIncrement.cpp
-   NetworkBase.PortText.PortText: 110 [Function]
+   NetworkBase.PeerText.PeerText: 101 [Function]
       nw/NwCliParms.cpp
-   NetworkBase.ServiceNameOptParm: 89 [Class]
+   NetworkBase.PortsText: 114 [Class]
       nw/NwCliParms.cpp
       nw/NwIncrement.cpp
-   NetworkBase.ServiceNameOptParm.ServiceNameOptParm: 91 [Function]
+   NetworkBase.PortsText.PortsText: 116 [Function]
+      nw/NwCliParms.cpp
+   NetworkBase.PortText: 109 [Class]
+      nw/NwCliParms.cpp
+      nw/NwIncrement.cpp
+   NetworkBase.PortText.PortText: 111 [Function]
+      nw/NwCliParms.cpp
+   NetworkBase.ServiceNameOptParm: 90 [Class]
+      nw/NwCliParms.cpp
+      nw/NwIncrement.cpp
+   NetworkBase.ServiceNameOptParm.ServiceNameOptParm: 92 [Function]
       nw/NwCliParms.cpp
    NetworkBase.SysIpL3Addr: 37 [Forward]
       nw/NwCliParms.h
@@ -49727,83 +49741,93 @@ nw/NwDaemons.h
    NWDAEMONS_H_INCLUDED: 23 [Define]
       nw/NwDaemons.h
 nw/NwIncrement.cpp
-   NetworkBase.AddrToNameIndex: 277 [SpaceData]
+   NetworkBase.AddrToNameIndex: 279 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.AddrToNameTextExpl: 262 [SpaceData]
+   NetworkBase.AddrToNameTextExpl: 264 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.AddrToNameTextStr: 261 [SpaceData]
+   NetworkBase.AddrToNameTextStr: 263 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.IpAction: 225 [Class]
+   NetworkBase.IpAction: 227 [Class]
       nw/NwIncrement.cpp
-   NetworkBase.IpAction.IpAction: 227 [Function]
+   NetworkBase.IpAction.IpAction: 229 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.IpActionExpl: 279 [SpaceData]
+   NetworkBase.IpActionExpl: 281 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.IpCommand: 230 [Class]
+   NetworkBase.IpCommand: 232 [Class]
       nw/NwIncrement.cpp
-   NetworkBase.IpCommand.IpCommand: 233 [Function]
+   NetworkBase.IpCommand.IpCommand: 235 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.IpCommand.ProcessCommand: 235 [Function]
+   NetworkBase.IpCommand.ProcessCommand: 237 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.IpCommand_ProcessCommand: 301 [SpaceData]
+   NetworkBase.IpCommand_ProcessCommand: 303 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.IpExpl: 294 [SpaceData]
+   NetworkBase.IpExpl: 296 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsCommand: 392 [Class]
+   NetworkBase.IpPortsCommand: 394 [Class]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsCommand.IpPortsCommand: 395 [Function]
+   NetworkBase.IpPortsCommand.IpPortsCommand: 397 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsCommand.ProcessCommand: 397 [Function]
+   NetworkBase.IpPortsCommand.ProcessCommand: 399 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsExpl: 401 [SpaceData]
+   NetworkBase.IpPortsExpl: 403 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.IpPortsStr: 400 [SpaceData]
+   NetworkBase.IpPortsStr: 402 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.IpStr: 293 [SpaceData]
+   NetworkBase.IpServicesCommand: 448 [Class]
       nw/NwIncrement.cpp
-   NetworkBase.LocalAddrExpl: 247 [SpaceData]
+   NetworkBase.IpServicesCommand.IpServicesCommand: 451 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.LocalAddrIndex: 274 [SpaceData]
+   NetworkBase.IpServicesCommand.ProcessCommand: 453 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.LocalAddrsIndex: 275 [SpaceData]
+   NetworkBase.IpServicesExpl: 457 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.LocalAddrsTextExpl: 255 [SpaceData]
+   NetworkBase.IpServicesStr: 456 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.LocalAddrsTextStr: 254 [SpaceData]
+   NetworkBase.IpStr: 295 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.LocalAddrText: 215 [Class]
+   NetworkBase.LocalAddrExpl: 249 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.LocalAddrText.LocalAddrText: 217 [Function]
+   NetworkBase.LocalAddrIndex: 276 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.LocalAddrTextExpl: 245 [SpaceData]
+   NetworkBase.LocalAddrsIndex: 277 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.LocalAddrTextStr: 244 [SpaceData]
+   NetworkBase.LocalAddrsTextExpl: 257 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.LocalNameIndex: 272 [SpaceData]
+   NetworkBase.LocalAddrsTextStr: 256 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.LocalNameTextExpl: 239 [SpaceData]
+   NetworkBase.LocalAddrText: 217 [Class]
       nw/NwIncrement.cpp
-   NetworkBase.LocalNameTextStr: 238 [SpaceData]
+   NetworkBase.LocalAddrText.LocalAddrText: 219 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.NameToAddrIndex: 276 [SpaceData]
+   NetworkBase.LocalAddrTextExpl: 247 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.NameToAddrText: 220 [Class]
+   NetworkBase.LocalAddrTextStr: 246 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.NameToAddrText.NameToAddrText: 222 [Function]
+   NetworkBase.LocalNameIndex: 274 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.NameToAddrTextExpl: 258 [SpaceData]
+   NetworkBase.LocalNameTextExpl: 241 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.NameToAddrTextStr: 257 [SpaceData]
+   NetworkBase.LocalNameTextStr: 240 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.NetworkExpl: 511 [SpaceData]
+   NetworkBase.NameToAddrIndex: 278 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.NetworkText: 510 [SpaceData]
+   NetworkBase.NameToAddrText: 222 [Class]
       nw/NwIncrement.cpp
-   NetworkBase.UsesIPv6Index: 273 [SpaceData]
+   NetworkBase.NameToAddrText.NameToAddrText: 224 [Function]
       nw/NwIncrement.cpp
-   NetworkBase.UsesIPv6TextExpl: 242 [SpaceData]
+   NetworkBase.NameToAddrTextExpl: 260 [SpaceData]
       nw/NwIncrement.cpp
-   NetworkBase.UsesIPv6TextStr: 241 [SpaceData]
+   NetworkBase.NameToAddrTextStr: 259 [SpaceData]
+      nw/NwIncrement.cpp
+   NetworkBase.NetworkExpl: 568 [SpaceData]
+      nw/NwIncrement.cpp
+   NetworkBase.NetworkText: 567 [SpaceData]
+      nw/NwIncrement.cpp
+   NetworkBase.UsesIPv6Index: 275 [SpaceData]
+      nw/NwIncrement.cpp
+   NetworkBase.UsesIPv6TextExpl: 244 [SpaceData]
+      nw/NwIncrement.cpp
+   NetworkBase.UsesIPv6TextStr: 243 [SpaceData]
       nw/NwIncrement.cpp
 nw/NwIncrement.h
    NetworkBase.NwClearCommand: 43 [Class]
@@ -66688,10 +66712,15 @@ subs/cstdint
       ct/CxxToken.cpp
    int16_t: 12 [Typedef]
       ct/CxxToken.cpp
+      dip/ConvoySubversion.h
       dip/DipTypes.h
+      dip/UnitOrder.h
+      nb/NbTypes.h
       nb/SysTime.cpp
       nb/SysTime.h
       nb/SysTypes.h
+      nb/Thread.cpp
+      nb/ToolTypes.h
    INT32_MAX: 25 [SpaceData]
       ct/CxxToken.cpp
       nb/SysTime.cpp
@@ -66768,6 +66797,7 @@ subs/cstdint
       nb/FunctionTrace.cpp
       nb/Statistics.h
       nb/SysHeap.win.cpp
+      nb/Thread.cpp
       nb/TraceBuffer.cpp
       sb/TlvMessage.cpp
    UINT16_MAX: 30 [SpaceData]
@@ -66909,7 +66939,6 @@ subs/cstdint
       ct/CxxToken.cpp
       dip/BaseBot.cpp
       dip/BaseBot.h
-      dip/ConvoySubversion.h
       dip/DipProtocol.h
       dip/DipTypes.h
       dip/UnitOrder.h
@@ -66930,7 +66959,6 @@ subs/cstdint
       nb/SysTypes.h
       nb/Thread.cpp
       nb/Thread.h
-      nb/ToolTypes.h
       nw/NwTypes.h
       nw/SysIpL2Addr.cpp
       pb/PotsCircuit.h
@@ -67893,8 +67921,6 @@ subs/iosfwd
       nb/FileThread.cpp
       nb/Formatters.cpp
       nb/Log.cpp
-      nb/LogBuffer.cpp
-      nb/LogBuffer.h
       nb/LogThread.cpp
       nb/Memory.cpp
       nb/ModuleRegistry.cpp
@@ -68204,6 +68230,7 @@ subs/map
       dip/Adjudicator.cpp
       dip/TokenTextMap.cpp
       nb/CliThread.cpp
+      nb/Thread.cpp
    std.map.erase(const_iterator&): 43 [Function]
       dip/Adjudicator.cpp
       dip/MapAndUnits.cpp
@@ -68621,6 +68648,7 @@ subs/new
       nb/Memory.cpp
       nb/ModuleRegistry.cpp
       nb/NbHeap.cpp
+      nb/NbIncrement.cpp
       nb/ObjectPool.cpp
       nb/Pooled.cpp
       nb/Singleton.h
@@ -68708,6 +68736,7 @@ subs/ostream
       nt/NtTestData.cpp
       nw/IpBuffer.cpp
       nw/IpPortRegistry.cpp
+      nw/IpService.cpp
       nw/LocalAddrTest.cpp
       nw/NwIncrement.cpp
       nw/NwTrace.cpp
@@ -69338,6 +69367,7 @@ subs/ostream
       nt/NtIncrement.cpp
       nw/InputHandler.cpp
       nw/IoThread.cpp
+      nw/IpBuffer.cpp
       nw/NwTrace.cpp
       nw/SysIpL3Addr.cpp
       nw/SysTcpSocket.cpp
@@ -69940,8 +69970,6 @@ subs/sstream
       nb/FileThread.cpp
       nb/Formatters.cpp
       nb/Log.cpp
-      nb/LogBuffer.cpp
-      nb/LogThread.cpp
       nb/Memory.cpp
       nb/NbHeap.cpp
       nb/NbIncrement.cpp
@@ -69998,6 +70026,7 @@ subs/string
       ct/CxxStrLiteral.h
       ct/Editor.cpp
       nb/CliTextParm.cpp
+      nb/LogBuffer.cpp
       nw/NwDaemons.cpp
    std.basic_string.append(const charT*): 38 [Function]
       ct/CxxScope.cpp
@@ -70185,6 +70214,8 @@ subs/string
       nb/Debug.cpp
       nb/Element.cpp
       nb/Formatters.cpp
+      nb/Log.cpp
+      nb/LogThread.cpp
       nb/Memory.cpp
       nb/NbCliParms.cpp
       nb/NbIncrement.cpp
@@ -70442,6 +70473,8 @@ subs/string
       nb/CliThread.cpp
       nb/Duration.cpp
       nb/Element.cpp
+      nb/Log.cpp
+      nb/LogBuffer.cpp
       nb/NbCliParms.cpp
       nb/NbIncrement.cpp
       nb/ToolRegistry.cpp
@@ -70453,6 +70486,7 @@ subs/string
       ct/Editor.cpp
    std.basic_string.replace(size_t,size_t,const charT*): 79 [Function]
       ct/Editor.cpp
+      nb/Thread.cpp
    std.basic_string.replace(size_t,size_t,size_t,charT): 80 [Function]
       nb/Formatters.cpp
    std.basic_string.rfind(charT,size_t) const: 83 [Function]
@@ -70542,6 +70576,7 @@ subs/string
       nb/StatisticsGroup.cpp
       nb/StreamRequest.cpp
       nb/SysFile.cpp
+      nb/Thread.cpp
       nw/SysIpL2Addr.cpp
       nw/SysIpL3Addr.cpp
       pb/PotsProtocol.cpp
@@ -71132,6 +71167,7 @@ subs/string
       nb/Daemon.cpp
       nb/Duration.cpp
       nb/Formatters.cpp
+      nb/LogBuffer.cpp
       nb/NbIncrement.cpp
       nb/ObjectPool.cpp
       nb/RegCell.cpp

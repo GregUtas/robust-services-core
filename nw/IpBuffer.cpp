@@ -175,9 +175,9 @@ void IpBuffer::Display(ostream& stream,
 {
    MsgBuffer::Display(stream, prefix, options);
 
-   stream << prefix << "buff     : " << strPtr(buff_.get()) << CRLF;
+   stream << prefix << "buff     : " << buff_.get() << CRLF;
    stream << prefix << "buffSize : " << buffSize_ << CRLF;
-   stream << prefix << "bytes    : " << strPtr(bytes_) << CRLF;
+   stream << prefix << "bytes    : " << bytes_ << CRLF;
    stream << prefix << "hdrSize  : " << hdrSize_ << CRLF;
    stream << prefix << "txAddr   : " << txAddr_.to_str(true) << CRLF;
    stream << prefix << "rxAddr   : " << rxAddr_.to_str(true) << CRLF;

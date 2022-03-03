@@ -176,6 +176,5 @@ following are currently used:
 - `//d` is a decoupling enhancement
 - `//e` is an unclassified enhancement
 - `//p` is a POTS enhancement
-- `//s` is a socket enhancement
 - `//x` is something to be removed (should not appear in a Release)
 - `//*` is something to be fixed or implemented as soon as possible (should not appear in a Release)

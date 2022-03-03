@@ -24,9 +24,9 @@
 
 #include "Thread.h"
 #include <cstddef>
+#include <string>
 #include "CfgIntParm.h"
 #include "NbTypes.h"
-#include "SysTypes.h"
 
 namespace NodeBase
 {

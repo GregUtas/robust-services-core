@@ -23,8 +23,6 @@
 #include <iosfwd>
 #include <new>
 #include <ostream>
-#include <sstream>
-#include <string>
 #include "CallbackRequest.h"
 #include "CfgParmRegistry.h"
 #include "CoutThread.h"
@@ -44,6 +42,7 @@
 #include "SysConsole.h"
 #include "SysFile.h"
 #include "SysMutex.h"
+#include "SysTypes.h"
 
 using std::ostream;
 using std::string;

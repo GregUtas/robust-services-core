@@ -21,7 +21,8 @@
 //
 #include "LogBuffer.h"
 #include <bitset>
-#include <sstream>
+#include <memory>
+#include <ostream>
 #include "Debug.h"
 #include "Log.h"
 #include "LogThread.h"
@@ -32,6 +33,7 @@
 #include "Singleton.h"
 #include "SysMutex.h"
 #include "SysTime.h"
+#include "SysTypes.h"
 #include "TimePoint.h"
 
 using std::ostream;

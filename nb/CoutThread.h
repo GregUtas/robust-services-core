@@ -43,7 +43,7 @@ public:
    //
    static void Spool(ostringstreamPtr& stream);
 
-   //  Queues STR for output to the console.  Adds a "CRLF" if EOL is set.
+   //  Queues STR for output to the console.  Adds a CRLF if EOL is set.
    //
    static void Spool(c_string s, bool eol = false);
 

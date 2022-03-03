@@ -43,6 +43,7 @@
 #include "NwTracer.h"
 #include "NwTypes.h"
 #include "Q1Way.h"
+#include "Registry.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
 #include "ThisThread.h"
@@ -455,7 +456,8 @@ private:
 fixed_string IpServicesStr = "ipservices";
 fixed_string IpServicesExpl = "Displays IP services.";
 
-IpServicesCommand::IpServicesCommand() : CliCommand(IpServicesStr, IpServicesExpl)
+IpServicesCommand::IpServicesCommand() :
+   CliCommand(IpServicesStr, IpServicesExpl)
 {
    BindParm(*new IdOptParm);
    BindParm(*new DispBVParm);

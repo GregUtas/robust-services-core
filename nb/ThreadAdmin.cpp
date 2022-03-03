@@ -237,7 +237,7 @@ ThreadAdmin::ThreadAdmin()
    creg->BindParm(*reinitOnSchedTimeout_);
 
    rtcTimeoutMsecs_.reset(new CfgIntParm("RtcTimeoutMsecs",
-      "20", 5, 100, "run-to-completion timeout (msecs)"));
+      "10", 5, 100, "run-to-completion timeout (msecs)"));
    creg->BindParm(*rtcTimeoutMsecs_);
 
    trapOnRtcTimeout_.reset(new CfgBoolParm("TrapOnRtcTimeout",

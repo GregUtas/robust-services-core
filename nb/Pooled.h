@@ -108,9 +108,9 @@ private:
    //
    bool assigned_;
 
-   //  Zero for a block that is in use.  Incremented each time through the
-   //  audit; if it reaches a threshold, the block is deemed to be orphaned
-   //  and is recovered.
+   //  Zero for a block on the free queue or that has just been claimed by
+   //  its owner.  Incremented each time through the audit; if it reaches a
+   //  threshold, the block deemed to be orphaned and is recovered.
    //
    uint8_t orphaned_;
 

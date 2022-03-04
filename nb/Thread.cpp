@@ -2762,8 +2762,8 @@ bool Thread::Restarting(RestartLevel level) const
 {
    Debug::ft("Thread.Restarting");
 
-   //  If the thread is willing to exit, signal it.  ModuleRegistry.Shutdown
-   //  will momentarily signal and schedule it so that it can exit.
+   //  If the thread is willing to exit, ModuleRegistry.Shutdown will
+   //  momentarily signal and schedule it so that it can exit.
    //
    if(ExitOnRestart(level)) return true;
 

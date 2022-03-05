@@ -3069,7 +3069,7 @@ main_t Thread::Start()
             {
                auto state = reg->GetState();
                if(state == Constructed) break;
-               if(state == Deleted) return SIGDELETED;
+               if(state == Deleted) return AbnormalExit(SIGDELETED);
             }
 
             //  Indicate that we're ready to run.  This blocks until we're

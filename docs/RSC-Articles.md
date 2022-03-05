@@ -5,9 +5,9 @@ This is a preface to the RSC articles on CodeProject.
 ## The Repository
 
 RSC is an open-source framework for developing robust C++ applications. Its
-repository contains over 220K lines of code organized into static libraries.
-Each static library is implemented in its own namespace so that the layer
-that code belongs to will be clear.
+repository contains over 230K lines of code organized into static libraries.
+Each static library is implemented in its own namespace so that the layer to
+which code belongs will be clear.
 
 ## Downloading the Code
 
@@ -83,3 +83,6 @@ You probably found your first RSC article because its topic interested you.
 For an overview of RSC, read
 [Software Techniques for Lemmings](https://www.codeproject.com/Articles/5258540/Software-Techniques-for-Lemmings),
 which discusses the rationale behind various aspects of its design.
+
+And if you find RSC useful or interesting, please give this repository a
+star by clicking on the button at the upper right of this page.

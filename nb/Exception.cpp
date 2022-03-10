@@ -34,7 +34,7 @@ using std::string;
 
 namespace NodeBase
 {
-Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
+Exception::Exception(bool stack) : stack_(nullptr)
 {
    //  Reenable Debug functions before tracing this function.
    //
@@ -46,14 +46,11 @@ Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
    //
    Thread::ExtendTime(Duration(20, mSECS));
 
-   //  When capturing the stack, exclude this constructor and those of
-   //  our subclasses.
-   //
    if(stack)
    {
       stack_.reset(new std::ostringstream);
       *stack_ << std::boolalpha << std::nouppercase;
-      SysThreadStack::Display(*stack_, depth + 1);
+      SysThreadStack::Display(*stack_);
    }
 }
 

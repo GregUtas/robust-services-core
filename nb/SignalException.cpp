@@ -35,7 +35,7 @@ using std::string;
 namespace NodeBase
 {
 SignalException::SignalException(signal_t sig, debug64_t errval) :
-   Exception(true, 1),
+   Exception(true),
    signal_(sig),
    errval_(errval)
 {

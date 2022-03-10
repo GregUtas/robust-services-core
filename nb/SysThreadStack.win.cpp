@@ -187,7 +187,7 @@ DWORD StackInfo::Startup()
 
 //==============================================================================
 
-void SysThreadStack::Display(ostream& stream, fn_depth omit)
+void SysThreadStack::Display(ostream& stream)
 {
    Debug::ftnt("SysThreadStack.Display");
 
@@ -202,12 +202,12 @@ void SysThreadStack::Display(ostream& stream, fn_depth omit)
    string name;
    DWORD line;
    DWORD disp;
-   auto xlo = omit + 1 + 20;
-   auto xhi = depth - 1 - 28;
+   auto xlo = 30;
+   auto xhi = depth - 21;
 
    stream << Log::Tab << "Function Traceback:" << CRLF;
 
-   for(auto f = omit + 1; f < depth; ++f)
+   for(auto f = 2; f < depth; ++f)
    {
       if((f >= xlo) && (f <= xhi))
       {

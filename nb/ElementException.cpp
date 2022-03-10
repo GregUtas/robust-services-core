@@ -34,7 +34,7 @@ namespace NodeBase
 {
 ElementException::ElementException
    (RestartLevel level, RestartReason reason, debug64_t errval) :
-   Exception(true, 1),
+   Exception(true),
    level_(level),
    reason_(reason),
    errval_(errval)

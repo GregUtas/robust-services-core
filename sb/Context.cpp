@@ -96,7 +96,7 @@ private:
 //------------------------------------------------------------------------------
 
 SbException::SbException(debug64_t errval, debug64_t offset) :
-   SoftwareException(errval, offset, 2),
+   SoftwareException(errval, offset),
    ctx_(nullptr)
 {
    Debug::ft("SbException.ctor");
@@ -108,7 +108,7 @@ SbException::SbException(debug64_t errval, debug64_t offset) :
 //------------------------------------------------------------------------------
 
 SbException::SbException(const string& errstr, debug64_t offset) :
-   SoftwareException(errstr, offset, 2),
+   SoftwareException(errstr, offset),
    ctx_(nullptr)
 {
    Debug::ft("SbException.ctor(string)");

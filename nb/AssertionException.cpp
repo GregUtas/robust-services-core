@@ -31,7 +31,7 @@ using std::string;
 
 namespace NodeBase
 {
-AssertionException::AssertionException(debug64_t errval) : Exception(true, 1),
+AssertionException::AssertionException(debug64_t errval) : Exception(true),
    errval_(errval)
 {
    Debug::ft("AssertionException.ctor");

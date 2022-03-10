@@ -54,12 +54,10 @@ public:
    //
    std::ostringstream* Stack() const { return stack_.get(); }
 protected:
-   //  Captures the call stack in stack_ if STACK is true.  DEPTH is the level
-   //  of subclassing (1 for a direct subclass from Exception), which is used
-   //  to omit exception constructors from the call stack.  Protected because
+   //  Captures the call stack in stack_ if STACK is true.  Protected because
    //  this class is virtual.
    //
-   Exception(bool stack, fn_depth depth);
+   explicit Exception(bool stack);
 
    //  Exceptions need to be copyable, so transfer ownership of stack_.
    //

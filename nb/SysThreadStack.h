@@ -45,10 +45,9 @@ namespace SysThreadStack
    //
    fn_depth FuncDepth();
 
-   //  Writes the current thread's call stack into STREAM.  OMIT specifies
-   //  the number of functions to omit (other than this one).
+   //  Writes the current thread's call stack into STREAM.
    //
-   void Display(std::ostream& stream, fn_depth omit);
+   void Display(std::ostream& stream);
 
    //  Returns false if a destructor is found on the stack.
    //

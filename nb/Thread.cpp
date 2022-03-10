@@ -1206,7 +1206,7 @@ Thread::~Thread()
    if(log != nullptr)
    {
       *log << Log::Tab << "thread=" << to_str() << CRLF;
-      SysThreadStack::Display(*log, 0);
+      SysThreadStack::Display(*log);
       *log << Log::Tab << ThreadDataStr << CRLF;
       Display(*log, Log::Tab + spaces(2), NoFlags);
       Log::Submit(log);

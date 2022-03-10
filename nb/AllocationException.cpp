@@ -32,7 +32,7 @@ using std::string;
 namespace NodeBase
 {
 AllocationException::AllocationException(MemoryType type, size_t size) :
-   Exception(true, 1),
+   Exception(true),
    type_(type),
    size_(size)
 {

@@ -31,8 +31,8 @@ using std::string;
 
 namespace NodeBase
 {
-SoftwareException::SoftwareException(debug64_t errval, debug64_t offset,
-   fn_depth depth) : Exception(true, depth),
+SoftwareException::SoftwareException(debug64_t errval, debug64_t offset) :
+   Exception(true),
    errval_(errval),
    errstr_(EMPTY_STR),
    offset_(offset)
@@ -42,8 +42,8 @@ SoftwareException::SoftwareException(debug64_t errval, debug64_t offset,
 
 //------------------------------------------------------------------------------
 
-SoftwareException::SoftwareException(const string& errstr, debug64_t offset,
-   fn_depth depth) : Exception(true, depth),
+SoftwareException::SoftwareException(const string& errstr, debug64_t offset) :
+   Exception(true),
    errval_(0),
    errstr_(errstr),
    offset_(offset)

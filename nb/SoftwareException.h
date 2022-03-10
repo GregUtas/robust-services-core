@@ -30,18 +30,16 @@
 
 namespace NodeBase
 {
-//  Debug::SwLog throws this when an application decides to abort work in
-//  progress.
+//  An application throws this when it decides to abort work in progress.
 //
 class SoftwareException : public Exception
 {
 public:
-   //  ERRVAL/ERRSTR and OFFSET are the arguments to Debug::SwLog.
+   //  ERRVAL/ERRSTR and OFFSET provide debugging information, the same as
+   //  for Debug::SwLog.
    //
-   SoftwareException
-      (debug64_t errval, debug64_t offset, fn_depth depth = 1);
-   SoftwareException
-      (const std::string& errstr, debug64_t offset, fn_depth depth = 1);
+   SoftwareException(debug64_t errval, debug64_t offset);
+   SoftwareException(const std::string& errstr, debug64_t offset);
 
    //  Virtual to allow subclassing.
    //

@@ -423,11 +423,11 @@ void ThreadRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-std::list< Thread* > ThreadRegistry::Restarting(RestartLevel level) const
+std::set< Thread* > ThreadRegistry::Restarting(RestartLevel level) const
 {
    Debug::ft("ThreadRegistry.Restarting");
 
-   std::list< Thread* > exiting;
+   std::set< Thread* > exiting;
 
    auto threads = GetThreads();
 
@@ -435,7 +435,7 @@ std::list< Thread* > ThreadRegistry::Restarting(RestartLevel level) const
    {
       if((*t)->Restarting(level))
       {
-         exiting.push_back(*t);
+         exiting.insert(*t);
       }
    }
 
@@ -587,7 +587,7 @@ void ThreadRegistry::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-void ThreadRegistry::TrimThreads(std::list< Thread* >& threads) const
+void ThreadRegistry::TrimThreads(std::set< Thread* >& threads) const
 {
    Debug::ft("ThreadRegistry.TrimThreads");
 

@@ -24,8 +24,8 @@
 
 #include "Permanent.h"
 #include <cstddef>
-#include <list>
 #include <map>
+#include <set>
 #include <utility>
 #include <vector>
 #include "NbTypes.h"
@@ -195,11 +195,11 @@ private:
    //  Informs all threads that a restart is occurring.  Returns the
    //  threads that will exit instead of sleeping.
    //
-   std::list< Thread* > Restarting(RestartLevel level) const;
+   std::set< Thread* > Restarting(RestartLevel level) const;
 
    //  Updates THREADS by removing threads that are no longer registered.
    //
-   void TrimThreads(std::list< Thread* >& threads) const;
+   void TrimThreads(std::set< Thread* >& threads) const;
 
    //  Sets THREAD's ThreadId when adding it to the registry.  Returns
    //  the assigned ThreadId.

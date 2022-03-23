@@ -156,7 +156,7 @@ enum BlankLocation
 
 //------------------------------------------------------------------------------
 //
-//  Returns the code for a Debug::Ft invocation with an inline string
+//  Returns the code for a Debug::ft invocation with an inline string
 //  literal (FNAME).
 //
 static string DebugFtCode(const string& fname)

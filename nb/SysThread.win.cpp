@@ -259,10 +259,8 @@ bool SysThread::Resume(SysSentry_t& sentry)
 
 //------------------------------------------------------------------------------
 
-SysThreadId SysThread::RunningThreadId()
+SysThreadId SysThread::RunningThreadId() NO_FT
 {
-   Debug::noft();
-
    return GetCurrentThreadId();
 }
 

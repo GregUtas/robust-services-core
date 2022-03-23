@@ -91,12 +91,6 @@ public:
    //
    static void Progress(const std::string& s);
 
-   //  Invoked by functions that are (transitively) invoked by
-   //  Debug::ft.  Such functions must *not* invoke Debug::ft;
-   //  doing so will definitely cause a stack overflow.
-   //
-   static void noft() { }
-
    //  Returns true if a trace tool is currently active.
    //
    static bool TraceOn() { return FcFlags_.test(TracingActive); }

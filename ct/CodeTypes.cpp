@@ -263,7 +263,6 @@ LineType CalcLineType(string& s, bool& cont)
    //
    if(FindSubstr(s, "Debug::ft(") != string::npos) return DebugFt;
    if(FindSubstr(s, "Debug::ftnt(") != string::npos) return DebugFt;
-   if(FindSubstr(s, "Debug::noft(") != string::npos) return DebugFt;
 
    //  Look for strings that provide function names for Debug::ft.  These
    //  have the format

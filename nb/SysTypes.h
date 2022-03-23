@@ -79,6 +79,12 @@ constexpr id_t NIL_ID = 0;
 //
 #define NO_OP
 
+//  Indicates that a function must *not* invoke Debug::ft.  The function
+//  itself can be invoked via Debug::ft, so a stack overflow could occur
+//  if it also invoked Debug::ft.
+//
+#define NO_FT
+
 //  Causes a trap.  Its value must differ from nullptr.
 //
 extern const uintptr_t BAD_POINTER;

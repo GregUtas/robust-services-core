@@ -70,7 +70,7 @@ void Debug::Assert(bool condition, debug64_t errval)
 //  o tracing off: 17000 calls/minute
 //  o tracing on: 4000 calls/minute
 //
-void Debug::ft(fn_name_arg func)
+void Debug::ft(fn_name_arg func) NO_FT
 {
    if(FcFlags_.none()) return;
    Thread::FunctionInvoked(func);
@@ -78,7 +78,7 @@ void Debug::ft(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-void Debug::ftnt(fn_name_arg func)
+void Debug::ftnt(fn_name_arg func) NO_FT
 {
    if(FcFlags_.none()) return;
    Thread::FunctionInvoked(func, std::nothrow);

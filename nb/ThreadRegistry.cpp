@@ -295,10 +295,8 @@ void ThreadRegistry::Exiting(SysThreadId nid)
 
 //------------------------------------------------------------------------------
 
-Thread* ThreadRegistry::FindThread(SysThreadId nid) const
+Thread* ThreadRegistry::FindThread(SysThreadId nid) const NO_FT
 {
-   Debug::noft();
-
    auto entry = threads_.find(nid);
    if(entry == threads_.end()) return nullptr;
    return entry->second.thread_;
@@ -306,10 +304,8 @@ Thread* ThreadRegistry::FindThread(SysThreadId nid) const
 
 //------------------------------------------------------------------------------
 
-ThreadId ThreadRegistry::FindTid(SysThreadId nid) const
+ThreadId ThreadRegistry::FindTid(SysThreadId nid) const NO_FT
 {
-   Debug::noft();
-
    auto entry = threads_.find(nid);
    if(entry == threads_.end()) return NIL_ID;
    return entry->second.tid_;

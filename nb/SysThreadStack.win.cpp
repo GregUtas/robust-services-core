@@ -122,9 +122,10 @@ const char* StackInfo::GetFileLoc(DWORD64 frame, DWORD& line, DWORD& disp)
 fn_depth StackInfo::GetFrames(StackFramesPtr& frames)
 {
    //* Reading stack frames during the shutdown phase of a restart fails
-   //  because a heap corruption is detected.  It appears that VS2022 is
-   //  the culprit, because the problem occurs even after reverting to the
-   //  most recent code that successfully passed restart tests in VS2017.
+   //  because a heap corruption is detected.  It appears that a library
+   //  up-issued by VS2022 is the culprit, because the problem occurs even
+   //  after reverting to the most recent code that passed restart tests
+   //  in VS2017.
    //
    auto stage = Restart::GetStage();
    if(stage == ShuttingDown) return 0;
@@ -187,10 +188,8 @@ DWORD StackInfo::Startup()
 
 //==============================================================================
 
-void SysThreadStack::Display(ostream& stream)
+void SysThreadStack::Display(ostream& stream) NO_FT
 {
-   Debug::ftnt("SysThreadStack.Display");
-
    StackFramesPtr frames = nullptr;
    auto depth = StackInfo::GetFrames(frames);
    if(depth == 0) return;
@@ -308,10 +307,8 @@ void SysThreadStack::Startup(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-bool SysThreadStack::TrapIsOk()
+bool SysThreadStack::TrapIsOk() NO_FT
 {
-   Debug::ft("SysThreadStack.TrapIsOk");
-
    //  Do not trap a thread that is currently executing a destructor.
    //
    StackFramesPtr frames = nullptr;

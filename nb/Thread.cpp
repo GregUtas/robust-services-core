@@ -85,7 +85,7 @@ namespace NodeBase
 //  also invoke Debug::ft.  Nested calls to these functions must be blocked
 //  to prevent a stack overflow.
 //
-static std::map< SysThreadId, std::atomic_flag >& AccessFtLocks()
+static std::map< SysThreadId, std::atomic_flag >& AccessFtLocks() NO_FT
 {
    static std::map< SysThreadId, std::atomic_flag > FtLocks_;
 
@@ -96,12 +96,9 @@ static std::map< SysThreadId, std::atomic_flag >& AccessFtLocks()
 //
 //  Returns the Debug::ft lock for the running thread.
 //
-static std::atomic_flag& AccessFtLock()
+static std::atomic_flag& AccessFtLock() NO_FT
 {
    auto& locks = AccessFtLocks();
-
-   Debug::noft();
-
    auto nid = SysThread::RunningThreadId();
    auto iter = locks.find(nid);
 
@@ -121,10 +118,8 @@ static std::atomic_flag& AccessFtLock()
 //
 //  Erases a thread's Debug::ft lock when it exits.
 //
-static void EraseFtLock()
+static void EraseFtLock() NO_FT
 {
-   Debug::noft();
-
    auto& locks = AccessFtLocks();
    locks.erase(SysThread::RunningThreadId());
 }
@@ -1239,10 +1234,8 @@ main_t Thread::AbnormalExit(signal_t signal)
 
 //------------------------------------------------------------------------------
 
-Thread* Thread::ActiveThread()
+Thread* Thread::ActiveThread() NO_FT
 {
-   Debug::noft();
-
    auto thr = ActiveThread_.load();
    if(thr == nullptr) return nullptr;
    if(thr->deleting_) return nullptr;
@@ -1711,10 +1704,8 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-void Thread::ExitIfSafe(debug64_t offset)
+void Thread::ExitIfSafe(debug64_t offset) NO_FT
 {
-   Debug::noft();
-
    //  If the thread is blocked, it just invoked ExitBlockingOperation.  It
    //  can be trapped before it can even record the time when it started to
    //  run, so record it now.  This prevents ContextSwitches.DisplaySwitches
@@ -1730,14 +1721,17 @@ void Thread::ExitIfSafe(debug64_t offset)
    //
    priv_->action_ = RunThread;
 
-   //  This function can be invoked from Debug::ft and TrapCheck, and the
-   //  following functions also invoke Debug::Ft.  Reinvocations of this
-   //  function are therefore blocked to prevent a stack overflow.
+   //  This function can be invoked via
+   //    Debug::ft
+   //      FunctionInvoked
+   //        TrapCheck
+   //  SetTrap and SignalException also invoke Debug::ft.  Reinvocation of
+   //  this function is therefore blocked to prevent a stack overflow.  The
+   //  lock returned by AccessFtLock is used for this purpose, in the same 
+   //  way that FunctionInvoked uses it.
    //
    auto& lock = AccessFtLock();
    if(lock.test_and_set()) return;
-
-   Debug::ft("Thread.ExitIfSafe");
 
    if(!priv_->exiting_ && (priv_->traps_ == 0) && SysThreadStack::TrapIsOk())
    {
@@ -1798,10 +1792,8 @@ void Thread::ExtendTime(const Duration& time)
 
 //------------------------------------------------------------------------------
 
-Thread* Thread::FindRunningThread()
+Thread* Thread::FindRunningThread() NO_FT
 {
-   Debug::noft();
-
    //  The running thread is usually the active thread.  If it isn't,
    //  search the thread registry.
    //
@@ -1824,10 +1816,8 @@ Thread* Thread::FindRunningThread()
 
 //------------------------------------------------------------------------------
 
-void Thread::FunctionInvoked(fn_name_arg func)
+void Thread::FunctionInvoked(fn_name_arg func) NO_FT
 {
-   Debug::noft();
-
    Thread* thr = nullptr;
 
    //  This handles the following:
@@ -1870,10 +1860,8 @@ void Thread::FunctionInvoked(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-void Thread::FunctionInvoked(fn_name_arg func, const std::nothrow_t&)
+void Thread::FunctionInvoked(fn_name_arg func, const std::nothrow_t&) NO_FT
 {
-   Debug::noft();
-
    Thread* thr = nullptr;
 
    if(Debug::FcFlags_.test(Debug::TracingActive))
@@ -2380,10 +2368,8 @@ uint8_t Thread::MutexCount() const
 
 //------------------------------------------------------------------------------
 
-SysThreadId Thread::NativeThreadId() const
+SysThreadId Thread::NativeThreadId() const NO_FT
 {
-   Debug::noft();
-
    if(systhrd_ != nullptr) return systhrd_->Nid();
    return NIL_ID;
 }
@@ -2825,10 +2811,8 @@ void Thread::RtcTimeout()
 
 //------------------------------------------------------------------------------
 
-Thread* Thread::RunningThread()
+Thread* Thread::RunningThread() NO_FT
 {
-   Debug::noft();
-
    auto thr = FindRunningThread();
    if(thr != nullptr) return thr;
 
@@ -2853,10 +2837,8 @@ Thread* Thread::RunningThread()
 
 //------------------------------------------------------------------------------
 
-Thread* Thread::RunningThread(const std::nothrow_t&)
+Thread* Thread::RunningThread(const std::nothrow_t&) NO_FT
 {
-   Debug::noft();
-
    auto thr = FindRunningThread();
    if(thr == nullptr) ThreadAdmin::Incr(ThreadAdmin::Unknowns);
    return thr;
@@ -3007,10 +2989,8 @@ void Thread::SignalHandler(signal_t sig)
 
 //------------------------------------------------------------------------------
 
-void Thread::StackCheck()
+void Thread::StackCheck() NO_FT
 {
-   Debug::noft();
-
    //  Return immediately if stackBase_ has not been initialized.
    //
    if((priv_ == nullptr) || (priv_->stackBase_ == nullptr)) return;
@@ -3024,7 +3004,7 @@ void Thread::StackCheck()
    if(stacksize > ThreadAdmin::StackUsageLimit())
    {
       //  This function can be invoked from Debug::ft, and SignalException's
-      //  constructor also invokes Debug::Ft.  Reinvocations of this function
+      //  constructor also invokes Debug::ft.  Reinvocations of this function
       //  are therefore blocked to prevent a stack overflow.
       //
       auto& lock = AccessFtLock();
@@ -3555,10 +3535,8 @@ bool Thread::TraceRunningThread(Thread*& thr, const std::nothrow_t&)
 
 //------------------------------------------------------------------------------
 
-void Thread::TrapCheck()
+void Thread::TrapCheck() NO_FT
 {
-   Debug::noft();
-
    //  Wait to trap a thread if it has yet to be entered.
    //
    if((priv_ == nullptr) || !priv_->trap_ || !priv_->entered_) return;

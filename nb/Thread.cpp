@@ -1727,7 +1727,7 @@ void Thread::ExitIfSafe(debug64_t offset) NO_FT
    //        TrapCheck
    //  SetTrap and SignalException also invoke Debug::ft.  Reinvocation of
    //  this function is therefore blocked to prevent a stack overflow.  The
-   //  lock returned by AccessFtLock is used for this purpose, in the same 
+   //  lock returned by AccessFtLock is used for this purpose, in the same
    //  way that FunctionInvoked uses it.
    //
    auto& lock = AccessFtLock();
@@ -3145,20 +3145,6 @@ main_t Thread::Start()
 
       catch(ElementException& nex)
       {
-         auto reason = nex.Reason();
-         auto code = nex.Errval();
-
-         if((reason == ManualRestart) &&
-            (code == RestartExit) && Element::RunningInLab())
-         {
-            //  This shuts the system down.  Wait for 10 seconds
-            //  instead of letting the console suddenly vanish.
-            //
-            CoutThread::Spool(ClosingConsoleStr, true);
-            Pause(Duration(10, SECS));
-            exit(reason);
-         }
-
          auto log = Log::Create(NodeLogGroup, NodeRestart);
 
          if(log != nullptr)
@@ -3167,6 +3153,29 @@ main_t Thread::Start()
             nex.Display(*log, Log::Tab + spaces(2));
             *log << nex.Stack()->str();
             Log::Submit(log);
+         }
+
+         auto code = nex.Errval();
+
+         if(code >= RestartReboot)
+         {
+            //  Pause so that logs can be generated.  In the lab, display a
+            //  "shutting down" message if exiting rather than restarting.
+            //
+            Pause(Duration(1, SECS));
+
+            if((code == RestartExit) && Element::RunningInLab())
+            {
+               CoutThread::Spool(ClosingConsoleStr, true);
+               Pause(Duration(10, SECS));
+            }
+
+            //  Exit this process.  To support RestartReboot, RSC will be
+            //  created as a child process of a trivial process which then
+            //  sleeps until RSC exits.  If the exit code is RestartReboot,
+            //  it will then recreate RSC.
+            //
+            exit(code);
          }
 
          //  RootThread and InitThread handle their own flow of execution when

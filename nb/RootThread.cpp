@@ -21,6 +21,7 @@
 //
 #include "RootThread.h"
 #include <cstdint>
+#include <cstdlib>
 #include <sstream>
 #include <string>
 #include "Debug.h"
@@ -268,30 +269,31 @@ main_t RootThread::Main()
 {
    Debug::ft("RootThread.Main");
 
-   //  This loop is hypothetical because Start() does not return.
-   //  If Enter() above returned, the loop would come into play.
+   //  Load symbol information.
    //
-   while(true)
-   {
-      //  Load symbol information.
-      //
-      SysThreadStack::Startup(RestartReboot);
+   SysThreadStack::Startup(RestartReboot);
 
-      //  Create the POSIX signals.  They are needed now so that
-      //  RootThread can register for signals when it is wrapped.
-      //
-      CreatePosixSignals();
+   //  Create the POSIX signals.  They are needed now so that
+   //  RootThread can register for signals when it is wrapped.
+   //
+   CreatePosixSignals();
 
-      //  Create the log buffer, which is used to log the progress
-      //  of initialization.
-      //
-      Singleton< LogBufferRegistry >::Instance();
+   //  Create the log buffer, which is used to log the progress
+   //  of initialization.
+   //
+   Singleton< LogBufferRegistry >::Instance();
 
-      //  Wrap the root thread and enter it.
-      //
-      auto root = Singleton< RootThread >::Instance();
-      Thread::EnterThread(root);
-   }
+   //  Wrap the root thread and enter it.
+   //
+   auto root = Singleton< RootThread >::Instance();
+   Thread::EnterThread(root);
+
+   //  If we get here, there is a serious problem.  Thread::EnterThread
+   //  invokes Thread::Start, which does not return unless a series of
+   //  exceptions occurs in a thread.  RootThread is so simple that this
+   //  shouldn't occur.  But if it somehow does, initiate a reboot.
+   //
+   exit(RestartReboot);
 }
 
 //------------------------------------------------------------------------------

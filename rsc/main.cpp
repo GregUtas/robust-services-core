@@ -20,12 +20,22 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 //------------------------------------------------------------------------------
+
+#include <iostream>
+#include <ostream>
+#include <string>
+#include "Debug.h"
+#include "MainArgs.h"
+#include "RootThread.h"
+#include "Singleton.h"
+#include "SysTypes.h"
+
+//------------------------------------------------------------------------------
 //
-//  This determines what gets included in the build.  Each module resides
-//  in its own static library, and all the files that belong to the library
-//  reside in a folder with the same name.  The order of modules, from the
-//  lowest to the highest layer, is
-//
+//  CreateModules() determines what gets included in the build.  Each module
+//  resides in its own static library, and all the files that belong to that
+//  library reside in a folder with the same name.  The order of modules, from
+//  the lowest to the highest layer, is
 //                                              dependencies
 //  namespace       module      library  nb nt ct nw sb st mb cb pb cn
 //  ---------       ------      -------  -----------------------------
@@ -50,18 +60,10 @@
 //  be included here.  To build only NodeBase, create NbModule.  To include
 //  additional layers, add a using directive for the namespace, and create
 //  only the module, for the uppermost layer (leaf library) that is required
-//  in the build.  That module's Register function will, in turn, pull in the
-//  modules that it requires, and so on transitively.
+//  in the build.  That module's constructor will, in turn, create the modules
+//  that it requires, and so on transitively.
 //
-#include <iostream>
-#include <ostream>
-#include <string>
-#include "Debug.h"
-#include "MainArgs.h"
-#include "RootThread.h"
-#include "Singleton.h"
-#include "SysTypes.h"
-#include "AnModule.h"  // modules begin here
+#include "AnModule.h"
 //& #include "CbModule.h"
 #include "CnModule.h"
 #include "CtModule.h"
@@ -76,10 +78,6 @@
 //& #include "SbModule.h"
 #include "SnModule.h"
 //& #include "StModule.h"
-
-using std::string;
-
-//------------------------------------------------------------------------------
 
 using namespace NodeBase;
 //& using namespace NodeTools;
@@ -99,6 +97,29 @@ using namespace AccessNode;
 
 //------------------------------------------------------------------------------
 
+static void CreateModules()
+{
+   Debug::ft("CreateModules");
+
+   //& Singleton< NbModule >::Instance();
+   //& Singleton< NtModule >::Instance();
+   Singleton< CtModule >::Instance();
+   //& Singleton< NwModule >::Instance();
+   //& Singleton< SbModule >::Instance();
+   //& Singleton< StModule >::Instance();
+   //& Singleton< MbModule >::Instance();
+   //& Singleton< CbModule >::Instance();
+   //& Singleton< PbModule >::Instance();
+   Singleton< OnModule >::Instance();
+   Singleton< CnModule >::Instance();
+   Singleton< RnModule >::Instance();
+   Singleton< SnModule >::Instance();
+   Singleton< AnModule >::Instance();
+   //& Singleton< DipModule >::Instance();
+}
+
+//------------------------------------------------------------------------------
+
 main_t main(int argc, char* argv[])
 {
    Debug::ft("main");
@@ -110,30 +131,15 @@ main_t main(int argc, char* argv[])
 
    for(auto i = 0; i < argc; ++i)
    {
-      string arg(argv[i]);
+      std::string arg(argv[i]);
       MainArgs::PushBack(arg);
       std::cout << "  argv[" << i << "]: " << arg << CRLF;
    }
 
    std::cout << std::flush;
 
-   //  Instantiate the desired modules.
+   //  Create the desired modules and finish initializing the system.
    //
-//& Singleton< NbModule >::Instance();
-//& Singleton< NtModule >::Instance();
-   Singleton< CtModule >::Instance();
-//& Singleton< NwModule >::Instance();
-//& Singleton< SbModule >::Instance();
-//& Singleton< StModule >::Instance();
-//& Singleton< MbModule >::Instance();
-//& Singleton< CbModule >::Instance();
-//& Singleton< PbModule >::Instance();
-   Singleton< OnModule >::Instance();
-   Singleton< CnModule >::Instance();
-   Singleton< RnModule >::Instance();
-   Singleton< SnModule >::Instance();
-   Singleton< AnModule >::Instance();
-//& Singleton< DipModule >::Instance();
-
+   CreateModules();
    return RootThread::Main();
 }

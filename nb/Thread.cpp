@@ -3159,22 +3159,24 @@ main_t Thread::Start()
 
          if(code >= RestartReboot)
          {
-            //  Pause so that logs can be generated.  In the lab, display a
-            //  "shutting down" message if exiting rather than restarting.
+            //  In the lab, display a "shutting down" message if exiting
+            //  rather than restarting.
             //
-            Pause(Duration(1, SECS));
+            auto time = Duration(1, SECS);
 
             if((code == RestartExit) && Element::RunningInLab())
             {
                CoutThread::Spool(ClosingConsoleStr, true);
-               Pause(Duration(10, SECS));
+               time = Duration(10, SECS);
             }
 
-            //  Exit this process.  To support RestartReboot, RSC will be
-            //  created as a child process of a trivial process which then
-            //  sleeps until RSC exits.  If the exit code is RestartReboot,
-            //  it will then recreate RSC.
+            //  Before exiting, pause so that logs can be generated.  To  
+            //  implement RestartReboot, RSC will be created as a child
+            //  process of a trivial process which then sleeps until RSC
+            //  exits.  If the exit code is RestartReboot, it will then
+            //  recreate RSC.
             //
+            Pause(time);
             exit(code);
          }
 

@@ -965,7 +965,7 @@ void Lexer::CheckPunctuation() const
          break;
 
       case '(':
-         if(WhitespaceChars.find(code_[pos + 1]) != string::npos)
+         if(SpaceOrTab.find(code_[pos + 1]) != string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "(@");
          break;
 

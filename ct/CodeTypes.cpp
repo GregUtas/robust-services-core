@@ -45,6 +45,7 @@ const string ValidIntDigits("0123456789");
 const string ValidHexDigits("0123456789abcdefABCDEF");
 const string ValidOctDigits("01234567");
 const string WhitespaceChars(" \n\t\v\f\r");
+const string SpaceOrTab(" \t");
 
 //------------------------------------------------------------------------------
 

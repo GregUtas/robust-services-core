@@ -191,6 +191,7 @@ extern const std::string ValidOctDigits;
 //  Whitespace characters.
 //
 extern const std::string WhitespaceChars;
+extern const std::string SpaceOrTab;
 
 //------------------------------------------------------------------------------
 //

@@ -1030,7 +1030,7 @@ fixed_string UnknownExceptionStr = "unknown exception";
 fixed_string ThreadDataStr = "Thread Data:";
 fixed_string TrapDuringRecoveryStr = "TRAP DURING RECOVERY.";
 fixed_string TrapLimitReachedStr = "TRAP LIMIT EXCEEDED.";
-fixed_string ClosingConsoleStr = "Closing console in 10 seconds...";
+fixed_string ExitingStr = "========== Exiting in 10 seconds... ==========";
 
 //------------------------------------------------------------------------------
 //
@@ -3155,26 +3155,26 @@ main_t Thread::Start()
             Log::Submit(log);
          }
 
-         auto code = nex.Errval();
+         auto level = nex.Errval();
 
-         if(code >= RestartReboot)
+         if(level >= RestartReboot)
          {
             //  In the lab, display a "shutting down" message if exiting
             //  rather than restarting.
             //
-            auto time = Duration(1, SECS);
+            int code = (level == RestartExit ? 0 : 1);
+            Duration time(1, SECS);
 
-            if((code == RestartExit) && Element::RunningInLab())
+            if((level == RestartExit) && Element::RunningInLab())
             {
-               CoutThread::Spool(ClosingConsoleStr, true);
+               CoutThread::Spool(ExitingStr, true);
                time = Duration(10, SECS);
             }
 
-            //  Before exiting, pause so that logs can be generated.  To  
-            //  implement RestartReboot, RSC will be created as a child
-            //  process of a trivial process which then sleeps until RSC
-            //  exits.  If the exit code is RestartReboot, it will then
-            //  recreate RSC.
+            //  Before exiting, pause so that logs can be generated.  To
+            //  support RestartReboot, RscLauncher.cpp must launch RSC.
+            //  It then sleeps, waiting for RSC to exit.  If RSC exits
+            //  with a non-zero exit code, it is immediately relaunched.
             //
             Pause(time);
             exit(code);

@@ -19,7 +19,6 @@ typedef uint64_t DWORD64;
 typedef unsigned long ULONG;
 typedef unsigned long u_long;
 typedef void* HANDLE;
-typedef void* LPVOID;
 
 WORD    MAKEWORD(uint8_t a, uint8_t b);
 uint8_t LOBYTE(WORD w);
@@ -132,6 +131,54 @@ HANDLE  GetCurrentThread();
 DWORD   GetCurrentThreadId();
 bool    SetThreadPriority(HANDLE Thread, int Priority);
 bool    SetThreadPriorityBoost(HANDLE Thread, bool disable);
+
+//------------------------------------------------------------------------------
+//
+//  Windows processes
+//
+struct STARTUPINFOA
+{
+   DWORD cb;
+   char* lpReserved;
+   char* lpDesktop;
+   char* lpTitle;
+   DWORD dwX;
+   DWORD dwY;
+   DWORD dwXSize;
+   DWORD dwYSize;
+   DWORD dwXCountChars;
+   DWORD dwYCountChars;
+   DWORD dwFillAttribute;
+   DWORD dwFlags;
+   WORD wShowWindow;
+   WORD cbReserved2;
+   unsigned char* lpReserved2;
+   HANDLE hStdInput;
+   HANDLE hStdOutput;
+   HANDLE hStdError;
+};
+
+struct PROCESS_INFORMATION
+{
+   HANDLE hProcess;
+   HANDLE hThread;
+   DWORD  dwProcessId;
+   DWORD  dwThreadId;
+};
+
+bool CreateProcessA(
+   const char* lpApplicationName,
+   char* lpCommandLine,
+   void* lpProcessAttributes,
+   void* lpThreadAttributes,
+   bool bInheritHandles,
+   DWORD dwCreationFlags,
+   void* lpEnvironment,
+   const char* lpCurrentDirectory,
+   STARTUPINFOA* lpStartupInfo,
+   PROCESS_INFORMATION* lpProcessInformation);
+
+void GetExitCodeProcess(HANDLE hProcess, DWORD* lpExitCode);
 
 //------------------------------------------------------------------------------
 //

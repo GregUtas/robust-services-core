@@ -1066,8 +1066,10 @@ bool CodeWarning::Suppress() const
          if(fn == "CxxString.cpp") return true;
       }
 
-      auto& name = func->Name();
+      auto dir = func->GetImplFile()->Dir();
+      if(dir->Name() == "launcher") return true;
 
+      auto& name = func->Name();
       if(name.find("Display") == 0) return true;
       if(name.find("Print") == 0) return true;
       if(name.find("Output") == 0) return true;

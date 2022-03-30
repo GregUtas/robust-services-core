@@ -534,6 +534,7 @@ enum Warning
    DataShouldBeStatic,       // non-extern data at .cpp file scope is not static
    FunctionShouldBeStatic,   // non-extern func at .cpp file scope is not static
    FunctionCouldBeDemoted,   // only invoked in one subtree of class hierarchy
+   NoEndlineAtEndOfFile,     // file does not have CRLF as its last character
    Warning_N                 // number of warnings
 };
 

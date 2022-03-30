@@ -1275,6 +1275,20 @@ word Editor::AdjustVertically()
 
 //------------------------------------------------------------------------------
 
+word Editor::AppendEndline()
+{
+   Debug::ft("Editor.AppendEndline");
+
+   if(code_.back() != CRLF)
+   {
+      code_.push_back(CRLF);
+   }
+
+   return Changed(code_.size() - 1);
+}
+
+//------------------------------------------------------------------------------
+
 word Editor::ChangeAccess(const CodeWarning& log, Cxx::Access acc)
 {
    Debug::ft("Editor.ChangeAccess(log)");
@@ -3748,6 +3762,8 @@ word Editor::FixWarning(const CodeWarning& log)
       return FixDatas(log);
    case FunctionShouldBeStatic:
       return FixFunctions(log);
+   case NoEndlineAtEndOfFile:
+      return AppendEndline();
    }
 
    return Report(NotImplemented);
@@ -3759,6 +3775,7 @@ word Editor::Format(string& expl)
 {
    Debug::ft("Editor.Format");
 
+   AppendEndline();
    EraseTrailingBlanks();
    AdjustVertically();
    ConvertTabsToBlanks();

@@ -956,11 +956,14 @@ void Lexer::CheckPunctuation() const
       case '}':
          if(WhitespaceChars.find(code_[pos - 1]) == string::npos)
             file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_}");
-         if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
+         if(pos + 1 < code_.size())
          {
-            if(code_[pos + 1] == ';') continue;
-            if(code_[pos + 1] == ',') continue;
-            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "}_");
+            if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
+            {
+               if(code_[pos + 1] == ';') continue;
+               if(code_[pos + 1] == ',') continue;
+               file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "}_");
+            }
          }
          break;
 

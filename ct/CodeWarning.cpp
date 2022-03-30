@@ -786,6 +786,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(FunctionCouldBeDemoted,
       WarningAttrs(F, true,
       "Function could be moved to a subclass")));
+   Attrs_.insert(WarningPair(NoEndlineAtEndOfFile,
+      WarningAttrs(T, true,
+      "File does not end with an endline")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, false,
       ERROR_STR)));

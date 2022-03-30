@@ -163,6 +163,7 @@ private:
    word AdjustOperator(const CodeWarning& log);
    word AdjustPunctuation(const CodeWarning& log);
    word AdjustTags(const CodeWarning& log);
+   word AppendEndline();
    word ChangeAccess(const CodeWarning& log, Cxx::Access acc);
    word ChangeAccess(CxxToken* item, ItemDeclAttrs& attrs);
    word ChangeAssignmentToCtorCall(const CodeWarning& log);

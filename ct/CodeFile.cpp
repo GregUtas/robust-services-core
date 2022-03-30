@@ -981,6 +981,11 @@ void CodeFile::CheckVerticalSpacing()
 
    auto actions = editor_.CheckVerticalSpacing();
 
+   if(code_.back() != CRLF)
+   {
+      LogLine(editor_.LineCount() - 1, NoEndlineAtEndOfFile);
+   }
+
    for(size_t n = 0; n < actions.size(); ++n)
    {
       switch(actions[n])
@@ -2439,6 +2444,17 @@ bool CodeFile::ReadCode(string& code) const
       std::getline(*input, str);
       code += str;
       code.push_back(CRLF);
+   }
+
+   //  std::getline reads up to the next endline or EOF, so we added the
+   //  endline back in. However, this results in adding an endline at the
+   //  end of the file, even if it didn't have one. Remove such an endline.
+   //
+   input->seekg(-1, std::ios::end);
+
+   if(input->peek() != CRLF)
+   {
+      code.pop_back();
    }
 
    input.reset();

@@ -1619,6 +1619,9 @@ NAMESPACES:
       dip/UnitOrder.h
       dip/WinterOrders.cpp
       dip/WinterOrders.h
+      launcher/RscLauncher.cpp
+      launcher/RscLauncher.h
+      launcher/RscLauncher.win.cpp
       mb/Circuit.cpp
       mb/Circuit.h
       mb/MediaEndpt.cpp
@@ -5934,6 +5937,7 @@ ct/CodeDir.h
       ct/CodeFile.cpp
    CodeTools.CodeDir.Name: 81 [Function]
       ct/CodeDirSet.cpp
+      ct/CodeWarning.cpp
       ct/CtIncrement.cpp
       ct/Library.cpp
    CodeTools.CodeDir.name_: 85 [ClassData]
@@ -5978,11 +5982,11 @@ ct/CodeFile.cpp
       ct/CodeFile.cpp
    CodeTools.AddIndirectExternalTypes: 102 [Function]
       ct/CodeFile.cpp
-   CodeTools.CodeFile_InsertInclude: 1827 [SpaceData]
+   CodeTools.CodeFile_InsertInclude: 1832 [SpaceData]
       ct/CodeFile.cpp
-   CodeTools.CodeFile_LogAddForwards: 1965 [SpaceData]
+   CodeTools.CodeFile_LogAddForwards: 1970 [SpaceData]
       ct/CodeFile.cpp
-   CodeTools.DEFAULT_PROLOG: 2289 [SpaceData]
+   CodeTools.DEFAULT_PROLOG: 2294 [SpaceData]
       ct/CodeFile.cpp
    CodeTools.DisplayFileNames: 123 [Function]
       ct/CodeFile.cpp
@@ -6648,30 +6652,30 @@ ct/CodeTypes.cpp
    CodeTools.T: 503 [SpaceData]
       ct/CodeTypes.cpp
 ct/CodeTypes.h
-   CodeTools.Accessibility: 299 [Enum]
+   CodeTools.Accessibility: 300 [Enum]
       ct/Cxx.cpp
       ct/Cxx.h
       ct/CxxScoped.cpp
       ct/CxxScoped.h
-   CodeTools.Accessibility.Declared: 301 [Enumerator]
+   CodeTools.Accessibility.Declared: 302 [Enumerator]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxScoped.cpp
       ct/CxxSymbols.cpp
-   CodeTools.Accessibility.Inaccessible: 305 [Enumerator]
+   CodeTools.Accessibility.Inaccessible: 306 [Enumerator]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
-   CodeTools.Accessibility.Inherited: 302 [Enumerator]
+   CodeTools.Accessibility.Inherited: 303 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxScoped.cpp
       ct/CxxSymbols.cpp
       ct/CxxToken.cpp
-   CodeTools.Accessibility.Restricted: 304 [Enumerator]
+   CodeTools.Accessibility.Restricted: 305 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxScoped.cpp
-   CodeTools.Accessibility.Unrestricted: 303 [Enumerator]
+   CodeTools.Accessibility.Unrestricted: 304 [Enumerator]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
@@ -6695,17 +6699,17 @@ ct/CodeTypes.h
       ct/CodeTypes.cpp
       ct/Cxx.cpp
       ct/CxxToken.cpp
-   CodeTools.AssignmentType: 353 [Enum]
+   CodeTools.AssignmentType: 354 [Enum]
       ct/CxxExecute.cpp
       ct/CxxExecute.h
-   CodeTools.AssignmentType.Copied: 355 [Enumerator]
+   CodeTools.AssignmentType.Copied: 356 [Enumerator]
       ct/CxxExecute.cpp
       ct/CxxScope.cpp
       ct/CxxToken.cpp
-   CodeTools.AssignmentType.Passed: 356 [Enumerator]
+   CodeTools.AssignmentType.Passed: 357 [Enumerator]
       ct/CxxExecute.cpp
       ct/CxxScope.cpp
-   CodeTools.AssignmentType.Returned: 357 [Enumerator]
+   CodeTools.AssignmentType.Returned: 358 [Enumerator]
       ct/CxxExecute.cpp
       ct/CxxStatement.cpp
    CodeTools.AUTO_STR: 46 [SpaceData]
@@ -6729,7 +6733,7 @@ ct/CodeTypes.h
       ct/Cxx.cpp
       ct/CxxStatement.cpp
       ct/Lexer.cpp
-   CodeTools.CalcLineType: 615 [Function]
+   CodeTools.CalcLineType: 617 [Function]
       ct/CodeTypes.cpp
       ct/Lexer.cpp
    CodeTools.CASE_STR: 50 [SpaceData]
@@ -6757,7 +6761,7 @@ ct/CodeTypes.h
       ct/CxxCharLiteral.h
       ct/CxxRoot.cpp
       ct/Parser.cpp
-   CodeTools.CheckLine: 619 [Function]
+   CodeTools.CheckLine: 621 [Function]
       ct/CodeTypes.cpp
       ct/Lexer.cpp
    CodeTools.CLASS_STR: 54 [SpaceData]
@@ -6765,46 +6769,46 @@ ct/CodeTypes.h
       ct/Cxx.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.Code_Mask: 645 [SpaceData]
+   CodeTools.Code_Mask: 647 [SpaceData]
       ct/CodeTypes.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
-   CodeTools.CodeDisplayOptions: 627 [Enum]
-   CodeTools.CodeDisplayOptions.DispCode: 634 [Enumerator]
+   CodeTools.CodeDisplayOptions: 629 [Enum]
+   CodeTools.CodeDisplayOptions.DispCode: 636 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxArea.cpp
       ct/CxxDirective.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
-   CodeTools.CodeDisplayOptions.DispFQ: 629 [Enumerator]
+   CodeTools.CodeDisplayOptions.DispFQ: 631 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxArea.cpp
       ct/CxxDirective.cpp
       ct/CxxRoot.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
-   CodeTools.CodeDisplayOptions.DispLast: 633 [Enumerator]
+   CodeTools.CodeDisplayOptions.DispLast: 635 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxScoped.cpp
-   CodeTools.CodeDisplayOptions.DispLF: 631 [Enumerator]
+   CodeTools.CodeDisplayOptions.DispLF: 633 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxScope.cpp
       ct/CxxStatement.cpp
-   CodeTools.CodeDisplayOptions.DispNoAC: 635 [Enumerator]
+   CodeTools.CodeDisplayOptions.DispNoAC: 637 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxScope.cpp
-   CodeTools.CodeDisplayOptions.DispNoLF: 632 [Enumerator]
+   CodeTools.CodeDisplayOptions.DispNoLF: 634 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxStatement.cpp
-   CodeTools.CodeDisplayOptions.DispNoTP: 636 [Enumerator]
+   CodeTools.CodeDisplayOptions.DispNoTP: 638 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
-   CodeTools.CodeDisplayOptions.DispNS: 630 [Enumerator]
+   CodeTools.CodeDisplayOptions.DispNS: 632 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxScope.cpp
-   CodeTools.CodeDisplayOptions.DispStats: 637 [Enumerator]
+   CodeTools.CodeDisplayOptions.DispStats: 639 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/CxxArea.cpp
@@ -6848,19 +6852,19 @@ ct/CodeTypes.h
       ct/Cxx.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Constraint: 210 [Enum]
+   CodeTools.Constraint: 211 [Enum]
       ct/Lexer.cpp
       ct/Lexer.h
       ct/Parser.cpp
       ct/Parser.h
-   CodeTools.Constraint.AnyKeyword: 214 [Enumerator]
+   CodeTools.Constraint.AnyKeyword: 215 [Enumerator]
       ct/Lexer.cpp
       ct/Parser.cpp
-   CodeTools.Constraint.NonKeyword: 212 [Enumerator]
+   CodeTools.Constraint.NonKeyword: 213 [Enumerator]
       ct/Lexer.cpp
       ct/Lexer.h
       ct/Parser.h
-   CodeTools.Constraint.TypeKeyword: 213 [Enumerator]
+   CodeTools.Constraint.TypeKeyword: 214 [Enumerator]
       ct/Lexer.cpp
       ct/Parser.cpp
    CodeTools.CONTINUE_STR: 58 [SpaceData]
@@ -6888,7 +6892,7 @@ ct/CodeTypes.h
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Parser.cpp
-   CodeTools.Distance: 288 [Typedef]
+   CodeTools.Distance: 289 [Typedef]
       ct/CodeTypes.h
       ct/Cxx.cpp
       ct/Cxx.h
@@ -6912,7 +6916,7 @@ ct/CodeTypes.h
    CodeTools.DYNAMIC_CAST_STR: 63 [SpaceData]
       ct/CodeTypes.cpp
       ct/Cxx.cpp
-   CodeTools.EditorAction: 654 [Enum]
+   CodeTools.EditorAction: 656 [Enum]
       ct/CodeFile.cpp
       ct/CodeFile.h
       ct/CodeWarning.cpp
@@ -6935,15 +6939,15 @@ ct/CodeTypes.h
       ct/CxxToken.h
       ct/Editor.cpp
       ct/Editor.h
-   CodeTools.EditorAction.Erased: 656 [Enumerator]
+   CodeTools.EditorAction.Erased: 658 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxLocation.cpp
       ct/Editor.cpp
-   CodeTools.EditorAction.Inserted: 657 [Enumerator]
+   CodeTools.EditorAction.Inserted: 659 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxLocation.cpp
       ct/Editor.cpp
-   CodeTools.EditorAction.Pasted: 658 [Enumerator]
+   CodeTools.EditorAction.Pasted: 660 [Enumerator]
       ct/CxxDirective.cpp
       ct/CxxLocation.cpp
       ct/Editor.cpp
@@ -6983,7 +6987,7 @@ ct/CodeTypes.h
       ct/Cxx.cpp
       ct/CxxScope.cpp
       ct/Lexer.cpp
-   CodeTools.FixOptions: 541 [Class]
+   CodeTools.FixOptions: 543 [Class]
       ct/CodeFile.cpp
       ct/CodeFile.h
       ct/CodeFileSet.cpp
@@ -6995,16 +6999,16 @@ ct/CodeTypes.h
       ct/LibraryErrSet.h
       ct/LibrarySet.cpp
       ct/LibrarySet.h
-   CodeTools.FixOptions.FixOptions: 547 [Function]
-   CodeTools.FixOptions.multiple: 545 [ClassData]
+   CodeTools.FixOptions.FixOptions: 549 [Function]
+   CodeTools.FixOptions.multiple: 547 [ClassData]
       ct/CodeFileSet.cpp
       ct/CodeTypes.h
       ct/Editor.cpp
-   CodeTools.FixOptions.prompt: 544 [ClassData]
+   CodeTools.FixOptions.prompt: 546 [ClassData]
       ct/CodeTypes.h
       ct/CtIncrement.cpp
       ct/Editor.cpp
-   CodeTools.FixOptions.warning: 543 [ClassData]
+   CodeTools.FixOptions.warning: 545 [ClassData]
       ct/CodeTypes.h
       ct/CtIncrement.cpp
       ct/Editor.cpp
@@ -7017,7 +7021,7 @@ ct/CodeTypes.h
       ct/Cxx.cpp
       ct/CxxStatement.cpp
       ct/Lexer.cpp
-   CodeTools.FQ_Mask: 640 [SpaceData]
+   CodeTools.FQ_Mask: 642 [SpaceData]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/CxxArea.cpp
@@ -7028,20 +7032,20 @@ ct/CodeTypes.h
       ct/Cxx.cpp
       ct/CxxScoped.cpp
       ct/Parser.cpp
-   CodeTools.FunctionDefinition: 260 [Enum]
+   CodeTools.FunctionDefinition: 261 [Enum]
       ct/CxxArea.cpp
       ct/CxxArea.h
-   CodeTools.FunctionDefinition.BaseDefined: 265 [Enumerator]
+   CodeTools.FunctionDefinition.BaseDefined: 266 [Enumerator]
       ct/CxxArea.cpp
-   CodeTools.FunctionDefinition.BaseDeleted: 266 [Enumerator]
+   CodeTools.FunctionDefinition.BaseDeleted: 267 [Enumerator]
       ct/CxxArea.cpp
-   CodeTools.FunctionDefinition.LocalDeclared: 263 [Enumerator]
+   CodeTools.FunctionDefinition.LocalDeclared: 264 [Enumerator]
       ct/CxxArea.cpp
-   CodeTools.FunctionDefinition.LocalDeleted: 264 [Enumerator]
+   CodeTools.FunctionDefinition.LocalDeleted: 265 [Enumerator]
       ct/CxxArea.cpp
-   CodeTools.FunctionDefinition.NotDeclared: 262 [Enumerator]
+   CodeTools.FunctionDefinition.NotDeclared: 263 [Enumerator]
       ct/CxxArea.cpp
-   CodeTools.FunctionRole: 240 [Enum]
+   CodeTools.FunctionRole: 241 [Enum]
       ct/CodeTypes.cpp
       ct/CodeTypes.h
       ct/CxxArea.cpp
@@ -7050,59 +7054,59 @@ ct/CodeTypes.h
       ct/CxxScope.h
       ct/Editor.cpp
       ct/Editor.h
-   CodeTools.FunctionRole.CopyCtor: 244 [Enumerator]
+   CodeTools.FunctionRole.CopyCtor: 245 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.FunctionRole.CopyOper: 246 [Enumerator]
+   CodeTools.FunctionRole.CopyOper: 247 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.FunctionRole.FuncOther: 248 [Enumerator]
+   CodeTools.FunctionRole.FuncOther: 249 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Library.cpp
-   CodeTools.FunctionRole.FuncRole_N: 249 [Enumerator]
+   CodeTools.FunctionRole.FuncRole_N: 250 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.FunctionRole.MoveCtor: 245 [Enumerator]
+   CodeTools.FunctionRole.MoveCtor: 246 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.FunctionRole.MoveOper: 247 [Enumerator]
+   CodeTools.FunctionRole.MoveOper: 248 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.FunctionRole.PureCtor: 242 [Enumerator]
-      ct/CxxArea.cpp
-      ct/CxxScope.cpp
-      ct/CxxToken.cpp
-      ct/Editor.cpp
-   CodeTools.FunctionRole.PureDtor: 243 [Enumerator]
+   CodeTools.FunctionRole.PureCtor: 243 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.FunctionType: 228 [Enum]
+   CodeTools.FunctionRole.PureDtor: 244 [Enumerator]
+      ct/CxxArea.cpp
+      ct/CxxScope.cpp
+      ct/CxxToken.cpp
+      ct/Editor.cpp
+   CodeTools.FunctionType: 229 [Enum]
       ct/CxxScope.cpp
       ct/CxxScope.h
-   CodeTools.FunctionType.FuncCtor: 230 [Enumerator]
+   CodeTools.FunctionType.FuncCtor: 231 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
-   CodeTools.FunctionType.FuncDtor: 231 [Enumerator]
+   CodeTools.FunctionType.FuncDtor: 232 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
-   CodeTools.FunctionType.FuncOperator: 232 [Enumerator]
+   CodeTools.FunctionType.FuncOperator: 233 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.FunctionType.FuncStandard: 233 [Enumerator]
+   CodeTools.FunctionType.FuncStandard: 234 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/Library.cpp
@@ -7182,23 +7186,23 @@ ct/CodeTypes.h
       ct/Cxx.cpp
       ct/CxxStatement.cpp
       ct/Lexer.cpp
-   CodeTools.IncludeGroup: 365 [Enum]
+   CodeTools.IncludeGroup: 366 [Enum]
       ct/CodeFile.cpp
       ct/CodeFile.h
       ct/CxxDirective.h
-   CodeTools.IncludeGroup.ExtBase: 369 [Enumerator]
+   CodeTools.IncludeGroup.ExtBase: 370 [Enumerator]
       ct/CodeFile.cpp
-   CodeTools.IncludeGroup.ExtDecl: 367 [Enumerator]
+   CodeTools.IncludeGroup.ExtDecl: 368 [Enumerator]
       ct/CodeFile.cpp
-   CodeTools.IncludeGroup.ExtUses: 371 [Enumerator]
+   CodeTools.IncludeGroup.ExtUses: 372 [Enumerator]
       ct/CodeFile.cpp
-   CodeTools.IncludeGroup.IntBase: 370 [Enumerator]
+   CodeTools.IncludeGroup.IntBase: 371 [Enumerator]
       ct/CodeFile.cpp
-   CodeTools.IncludeGroup.IntDecl: 368 [Enumerator]
+   CodeTools.IncludeGroup.IntDecl: 369 [Enumerator]
       ct/CodeFile.cpp
-   CodeTools.IncludeGroup.IntUses: 372 [Enumerator]
+   CodeTools.IncludeGroup.IntUses: 373 [Enumerator]
       ct/CodeFile.cpp
-   CodeTools.IncludeGroup.Ungrouped: 373 [Enumerator]
+   CodeTools.IncludeGroup.Ungrouped: 374 [Enumerator]
       ct/CodeFile.cpp
       ct/CxxDirective.cpp
    CodeTools.IndentSize: 150 [Function]
@@ -7223,23 +7227,23 @@ ct/CodeTypes.h
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
       ct/Parser.cpp
-   CodeTools.IsAccessControl: 623 [Function]
+   CodeTools.IsAccessControl: 625 [Function]
       ct/CodeTypes.cpp
-   CodeTools.ItemSort: 199 [Enum]
+   CodeTools.ItemSort: 200 [Enum]
       ct/CxxVector.h
-   CodeTools.ItemSort.SortByFilePos: 203 [Enumerator]
+   CodeTools.ItemSort.SortByFilePos: 204 [Enumerator]
       ct/CxxVector.h
-   CodeTools.ItemSort.SortByName: 201 [Enumerator]
+   CodeTools.ItemSort.SortByName: 202 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxRoot.cpp
       ct/CxxVector.h
-   CodeTools.ItemSort.SortByPos: 202 [Enumerator]
+   CodeTools.ItemSort.SortByPos: 203 [Enumerator]
       ct/CodeFile.cpp
       ct/CxxArea.cpp
       ct/CxxVector.h
-   CodeTools.Last_Mask: 644 [SpaceData]
+   CodeTools.Last_Mask: 646 [SpaceData]
       ct/CodeTypes.cpp
-   CodeTools.LF_Mask: 642 [SpaceData]
+   CodeTools.LF_Mask: 644 [SpaceData]
       ct/CodeTypes.cpp
       ct/CxxStatement.cpp
    CodeTools.LineLengthMax: 154 [Function]
@@ -7247,89 +7251,89 @@ ct/CodeTypes.h
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType: 554 [Enum]
+   CodeTools.LineType: 556 [Enum]
       ct/CodeTypes.cpp
       ct/CodeTypes.h
       ct/CodeWarning.cpp
       ct/CodeWarning.h
       ct/Lexer.cpp
       ct/Lexer.h
-   CodeTools.LineType.AccessControl: 565 [Enumerator]
+   CodeTools.LineType.AccessControl: 567 [Enumerator]
       ct/CodeTypes.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.AnyLine: 571 [Enumerator]
+   CodeTools.LineType.AnyLine: 573 [Enumerator]
       ct/CodeFile.cpp
-   CodeTools.LineType.BlankLine: 557 [Enumerator]
+   CodeTools.LineType.BlankLine: 559 [Enumerator]
       ct/CodeTypes.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.CloseBrace: 563 [Enumerator]
+   CodeTools.LineType.CloseBrace: 565 [Enumerator]
       ct/CodeTypes.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.CloseBraceSemicolon: 564 [Enumerator]
+   CodeTools.LineType.CloseBraceSemicolon: 566 [Enumerator]
       ct/CodeTypes.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.CodeLine: 556 [Enumerator]
-      ct/CodeFile.cpp
-      ct/CodeTypes.cpp
-      ct/CxxScope.cpp
-      ct/Editor.cpp
-      ct/Lexer.cpp
-   CodeTools.LineType.DebugFt: 566 [Enumerator]
+   CodeTools.LineType.CodeLine: 558 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.EmptyComment: 558 [Enumerator]
+   CodeTools.LineType.DebugFt: 568 [Enumerator]
+      ct/CodeFile.cpp
+      ct/CodeTypes.cpp
+      ct/CxxScope.cpp
+      ct/Editor.cpp
+      ct/Lexer.cpp
+   CodeTools.LineType.EmptyComment: 560 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.FileComment: 559 [Enumerator]
+   CodeTools.LineType.FileComment: 561 [Enumerator]
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.FunctionName: 567 [Enumerator]
+   CodeTools.LineType.FunctionName: 569 [Enumerator]
       ct/CodeTypes.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.HashDirective: 569 [Enumerator]
+   CodeTools.LineType.HashDirective: 571 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.IncludeDirective: 568 [Enumerator]
+   CodeTools.LineType.IncludeDirective: 570 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.LineType_N: 572 [Enumerator]
+   CodeTools.LineType.LineType_N: 574 [Enumerator]
       ct/CodeTypes.cpp
       ct/CodeTypes.h
       ct/CodeWarning.cpp
       ct/CodeWarning.h
       ct/Lexer.cpp
-   CodeTools.LineType.OpenBrace: 562 [Enumerator]
+   CodeTools.LineType.OpenBrace: 564 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.RuleComment: 560 [Enumerator]
+   CodeTools.LineType.RuleComment: 562 [Enumerator]
       ct/CodeTypes.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.TextComment: 561 [Enumerator]
+   CodeTools.LineType.TextComment: 563 [Enumerator]
       ct/CodeTypes.cpp
       ct/Lexer.cpp
-   CodeTools.LineType.UsingStatement: 570 [Enumerator]
+   CodeTools.LineType.UsingStatement: 572 [Enumerator]
       ct/CodeTypes.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineTypeAttr: 581 [Class]
+   CodeTools.LineTypeAttr: 583 [Class]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/CodeTypes.h
@@ -7337,31 +7341,31 @@ ct/CodeTypes.h
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineTypeAttr.Attrs: 605 [ClassData]
+   CodeTools.LineTypeAttr.Attrs: 607 [ClassData]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/CtIncrement.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineTypeAttr.isBlank: 597 [ClassData]
+   CodeTools.LineTypeAttr.isBlank: 599 [ClassData]
       ct/CodeTypes.cpp
       ct/Lexer.cpp
-   CodeTools.LineTypeAttr.isCode: 585 [ClassData]
+   CodeTools.LineTypeAttr.isCode: 587 [ClassData]
       ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.LineTypeAttr.isMergeable: 593 [ClassData]
+   CodeTools.LineTypeAttr.isMergeable: 595 [ClassData]
       ct/CodeTypes.cpp
       ct/Lexer.cpp
-   CodeTools.LineTypeAttr.isParsePos: 589 [ClassData]
+   CodeTools.LineTypeAttr.isParsePos: 591 [ClassData]
       ct/CodeTypes.cpp
       ct/CtIncrement.cpp
-   CodeTools.LineTypeAttr.LineTypeAttr: 609 [Function]
+   CodeTools.LineTypeAttr.LineTypeAttr: 611 [Function]
       ct/CodeTypes.cpp
-   CodeTools.LineTypeAttr.symbol: 601 [ClassData]
+   CodeTools.LineTypeAttr.symbol: 603 [ClassData]
       ct/CodeTypes.cpp
       ct/Lexer.cpp
    CodeTools.LOCALS_STR: 143 [SpaceData]
@@ -7395,7 +7399,7 @@ ct/CodeTypes.h
       ct/CodeTypes.cpp
       ct/Cxx.cpp
       ct/CxxToken.cpp
-   CodeTools.NoAC_Mask: 646 [SpaceData]
+   CodeTools.NoAC_Mask: 648 [SpaceData]
       ct/CodeTypes.cpp
       ct/CxxScope.cpp
    CodeTools.NOEXCEPT_STR: 84 [SpaceData]
@@ -7404,21 +7408,21 @@ ct/CodeTypes.h
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Parser.cpp
-   CodeTools.NoLF_Mask: 643 [SpaceData]
+   CodeTools.NoLF_Mask: 645 [SpaceData]
       ct/CodeTypes.cpp
-   CodeTools.NOT_A_SUBCLASS: 291 [SpaceData]
+   CodeTools.NOT_A_SUBCLASS: 292 [SpaceData]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxToken.cpp
-   CodeTools.NOT_A_SUBSCOPE: 290 [SpaceData]
+   CodeTools.NOT_A_SUBSCOPE: 291 [SpaceData]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/CxxSymbols.cpp
-   CodeTools.NoTP_Mask: 647 [SpaceData]
+   CodeTools.NoTP_Mask: 649 [SpaceData]
       ct/CodeTypes.cpp
       ct/CxxArea.cpp
       ct/CxxScope.cpp
-   CodeTools.NS_Mask: 641 [SpaceData]
+   CodeTools.NS_Mask: 643 [SpaceData]
       ct/CodeTypes.cpp
       ct/CxxArea.cpp
       ct/Library.cpp
@@ -7438,10 +7442,10 @@ ct/CodeTypes.h
       ct/CxxRoot.cpp
       ct/CxxToken.cpp
       ct/CxxToken.h
-   CodeTools.operator<<(std::ostream&,FunctionRole): 254 [Function]
+   CodeTools.operator<<(std::ostream&,FunctionRole): 255 [Function]
       ct/CodeTypes.cpp
       ct/Editor.cpp
-   CodeTools.operator<<(std::ostream&,LineType): 577 [Function]
+   CodeTools.operator<<(std::ostream&,LineType): 579 [Function]
       ct/CodeTypes.cpp
       ct/CodeWarning.cpp
    CodeTools.OPERATOR_STR: 87 [SpaceData]
@@ -7496,6 +7500,9 @@ ct/CodeTypes.h
    CodeTools.SIZEOF_STR: 96 [SpaceData]
       ct/CodeTypes.cpp
       ct/Cxx.cpp
+   CodeTools.SpaceOrTab: 194 [SpaceData]
+      ct/CodeTypes.cpp
+      ct/Lexer.cpp
    CodeTools.STATIC_ASSERT_STR: 98 [SpaceData]
       ct/CodeTypes.cpp
       ct/Cxx.cpp
@@ -7509,7 +7516,7 @@ ct/CodeTypes.h
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Parser.cpp
-   CodeTools.Stats_Mask: 648 [SpaceData]
+   CodeTools.Stats_Mask: 650 [SpaceData]
       ct/CodeTypes.cpp
    CodeTools.stringVector: 39 [Typedef]
       ct/CodeDirSet.cpp
@@ -7546,7 +7553,7 @@ ct/CodeTypes.h
       ct/CodeTypes.cpp
       ct/Cxx.cpp
       ct/CxxStatement.cpp
-   CodeTools.TagCount: 222 [Typedef]
+   CodeTools.TagCount: 223 [Typedef]
       ct/CxxExecute.cpp
       ct/CxxExecute.h
       ct/CxxNamed.cpp
@@ -7564,28 +7571,28 @@ ct/CodeTypes.h
       ct/CxxArea.cpp
       ct/CxxScoped.cpp
       ct/Parser.cpp
-   CodeTools.TemplateRole: 340 [Enum]
+   CodeTools.TemplateRole: 341 [Enum]
       ct/CxxNamed.cpp
       ct/CxxNamed.h
-   CodeTools.TemplateRole.TemplateArgument: 343 [Enumerator]
+   CodeTools.TemplateRole.TemplateArgument: 344 [Enumerator]
       ct/CxxNamed.cpp
-   CodeTools.TemplateRole.TemplateClass: 345 [Enumerator]
+   CodeTools.TemplateRole.TemplateClass: 346 [Enumerator]
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
-   CodeTools.TemplateRole.TemplateNone: 342 [Enumerator]
+   CodeTools.TemplateRole.TemplateNone: 343 [Enumerator]
       ct/CxxNamed.cpp
-   CodeTools.TemplateRole.TemplateParameter: 344 [Enumerator]
+   CodeTools.TemplateRole.TemplateParameter: 345 [Enumerator]
       ct/CxxArea.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
-   CodeTools.TemplateType: 275 [Enum]
+   CodeTools.TemplateType: 276 [Enum]
       ct/CxxScope.cpp
       ct/CxxScope.h
-   CodeTools.TemplateType.ClassTemplate: 279 [Enumerator]
+   CodeTools.TemplateType.ClassTemplate: 280 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.TemplateType.FuncTemplate: 278 [Enumerator]
+   CodeTools.TemplateType.FuncTemplate: 279 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.TemplateType.NonTemplate: 277 [Enumerator]
+   CodeTools.TemplateType.NonTemplate: 278 [Enumerator]
       ct/CodeFile.cpp
       ct/CxxExecute.cpp
       ct/CxxScope.cpp
@@ -7617,7 +7624,7 @@ ct/CodeTypes.h
    CodeTools.TYPEID_STR: 109 [SpaceData]
       ct/CodeTypes.cpp
       ct/Cxx.cpp
-   CodeTools.TypeMatch: 313 [Enum]
+   CodeTools.TypeMatch: 314 [Enum]
       ct/Cxx.cpp
       ct/Cxx.h
       ct/CxxArea.cpp
@@ -7628,36 +7635,36 @@ ct/CodeTypes.h
       ct/CxxNamed.h
       ct/CxxScope.cpp
       ct/CxxScope.h
-   CodeTools.TypeMatch.Abridgeable: 317 [Enumerator]
+   CodeTools.TypeMatch.Abridgeable: 318 [Enumerator]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxNamed.cpp
       ct/CxxToken.cpp
-   CodeTools.TypeMatch.Adaptable: 316 [Enumerator]
+   CodeTools.TypeMatch.Adaptable: 317 [Enumerator]
       ct/CxxExecute.cpp
-   CodeTools.TypeMatch.Compatible: 322 [Enumerator]
+   CodeTools.TypeMatch.Compatible: 323 [Enumerator]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxExecute.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
-   CodeTools.TypeMatch.Constructible: 319 [Enumerator]
+   CodeTools.TypeMatch.Constructible: 320 [Enumerator]
       ct/CxxExecute.cpp
-   CodeTools.TypeMatch.Convertible: 318 [Enumerator]
+   CodeTools.TypeMatch.Convertible: 319 [Enumerator]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxNamed.cpp
       ct/CxxToken.cpp
-   CodeTools.TypeMatch.Derivable: 321 [Enumerator]
+   CodeTools.TypeMatch.Derivable: 322 [Enumerator]
       ct/CxxExecute.cpp
-   CodeTools.TypeMatch.Incompatible: 315 [Enumerator]
+   CodeTools.TypeMatch.Incompatible: 316 [Enumerator]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxExecute.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
       ct/CxxToken.cpp
-   CodeTools.TypeMatch.Promotable: 320 [Enumerator]
+   CodeTools.TypeMatch.Promotable: 321 [Enumerator]
       ct/Cxx.cpp
       ct/CxxNamed.cpp
       ct/CxxToken.cpp
@@ -7665,16 +7672,16 @@ ct/CodeTypes.h
       ct/CodeTypes.cpp
       ct/Cxx.cpp
       ct/Lexer.cpp
-   CodeTools.TypeSpecUser: 329 [Enum]
+   CodeTools.TypeSpecUser: 330 [Enum]
       ct/CxxNamed.cpp
       ct/CxxNamed.h
-   CodeTools.TypeSpecUser.TS_Definition: 332 [Enumerator]
+   CodeTools.TypeSpecUser.TS_Definition: 333 [Enumerator]
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
-   CodeTools.TypeSpecUser.TS_Function: 333 [Enumerator]
+   CodeTools.TypeSpecUser.TS_Function: 334 [Enumerator]
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
-   CodeTools.TypeSpecUser.TS_Unspecified: 331 [Enumerator]
+   CodeTools.TypeSpecUser.TS_Unspecified: 332 [Enumerator]
       ct/CxxNamed.cpp
    CodeTools.UNION_STR: 111 [SpaceData]
       ct/CodeTypes.cpp
@@ -7737,7 +7744,7 @@ ct/CodeTypes.h
       ct/Cxx.cpp
       ct/CxxNamed.cpp
       ct/CxxScope.cpp
-   CodeTools.Warning: 392 [Enum]
+   CodeTools.Warning: 393 [Enum]
       ct/CodeFile.cpp
       ct/CodeFile.h
       ct/CodeTypes.cpp
@@ -7759,555 +7766,559 @@ ct/CodeTypes.h
       ct/Lexer.cpp
       ct/Parser.cpp
       ct/Parser.h
-   CodeTools.Warning.AddBlankLine: 494 [Enumerator]
+   CodeTools.Warning.AddBlankLine: 495 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.AdjacentArgumentTypes: 476 [Enumerator]
+   CodeTools.Warning.AdjacentArgumentTypes: 477 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
-   CodeTools.Warning.AdjacentSpaces: 493 [Enumerator]
+   CodeTools.Warning.AdjacentSpaces: 494 [Enumerator]
       ct/CodeTypes.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.Warning.AllWarnings: 394 [Enumerator]
+   CodeTools.Warning.AllWarnings: 395 [Enumerator]
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.AnonymousArgument: 475 [Enumerator]
+   CodeTools.Warning.AnonymousArgument: 476 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.AnonymousEnum: 439 [Enumerator]
+   CodeTools.Warning.AnonymousEnum: 440 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ArgumentCannotBeConst: 480 [Enumerator]
+   CodeTools.Warning.ArgumentCannotBeConst: 481 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
-   CodeTools.Warning.ArgumentCouldBeConst: 482 [Enumerator]
-      ct/CodeWarning.cpp
-      ct/CxxScope.cpp
-      ct/Editor.cpp
-   CodeTools.Warning.ArgumentCouldBeConstRef: 481 [Enumerator]
+   CodeTools.Warning.ArgumentCouldBeConst: 483 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ArgumentUnused: 420 [Enumerator]
+   CodeTools.Warning.ArgumentCouldBeConstRef: 482 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.BitwiseOperatorOnBoolean: 517 [Enumerator]
+   CodeTools.Warning.ArgumentUnused: 421 [Enumerator]
+      ct/CodeWarning.cpp
+      ct/CxxScope.cpp
+      ct/Editor.cpp
+   CodeTools.Warning.BitwiseOperatorOnBoolean: 518 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.Warning.BoolMixedWithNumeric: 470 [Enumerator]
+   CodeTools.Warning.BoolMixedWithNumeric: 471 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxNamed.cpp
       ct/CxxToken.cpp
-   CodeTools.Warning.CastingAwayConstness: 402 [Enumerator]
+   CodeTools.Warning.CastingAwayConstness: 403 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
-   CodeTools.Warning.ClassCouldBeNamespace: 432 [Enumerator]
+   CodeTools.Warning.ClassCouldBeNamespace: 433 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ClassCouldBeStruct: 433 [Enumerator]
+   CodeTools.Warning.ClassCouldBeStruct: 434 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ClassUnused: 421 [Enumerator]
+   CodeTools.Warning.ClassUnused: 422 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ConstructorNotPrivate: 522 [Enumerator]
+   CodeTools.Warning.ConstructorNotPrivate: 523 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.CopyCtorConstructsBase: 512 [Enumerator]
+   CodeTools.Warning.CopyCtorConstructsBase: 513 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.CopyCtorNotDeleted: 528 [Enumerator]
+   CodeTools.Warning.CopyCtorNotDeleted: 529 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.CopyOperNotDeleted: 529 [Enumerator]
+   CodeTools.Warning.CopyOperNotDeleted: 530 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.CouldBeNoexcept: 508 [Enumerator]
+   CodeTools.Warning.CouldBeNoexcept: 509 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.CtorCouldBeDeleted: 530 [Enumerator]
+   CodeTools.Warning.CtorCouldBeDeleted: 531 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DataCannotBeConst: 445 [Enumerator]
+   CodeTools.Warning.DataCannotBeConst: 446 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
-   CodeTools.Warning.DataCannotBeConstPtr: 446 [Enumerator]
+   CodeTools.Warning.DataCannotBeConstPtr: 447 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
-   CodeTools.Warning.DataCouldBeConst: 447 [Enumerator]
-      ct/CodeWarning.cpp
-      ct/CxxScope.cpp
-      ct/Editor.cpp
-   CodeTools.Warning.DataCouldBeConstPtr: 448 [Enumerator]
+   CodeTools.Warning.DataCouldBeConst: 448 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DataCouldBeFree: 521 [Enumerator]
+   CodeTools.Warning.DataCouldBeConstPtr: 449 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DataInitOnly: 441 [Enumerator]
+   CodeTools.Warning.DataCouldBeFree: 522 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DataNeedNotBeMutable: 449 [Enumerator]
+   CodeTools.Warning.DataInitOnly: 442 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DataNotPrivate: 444 [Enumerator]
-      ct/CodeWarning.cpp
-      ct/CxxScope.cpp
-   CodeTools.Warning.DataShouldBeStatic: 533 [Enumerator]
+   CodeTools.Warning.DataNeedNotBeMutable: 450 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DataUninitialized: 440 [Enumerator]
+   CodeTools.Warning.DataNotPrivate: 445 [Enumerator]
+      ct/CodeWarning.cpp
+      ct/CxxScope.cpp
+   CodeTools.Warning.DataShouldBeStatic: 534 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DataUnused: 422 [Enumerator]
+   CodeTools.Warning.DataUninitialized: 441 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DataWriteOnly: 442 [Enumerator]
+   CodeTools.Warning.DataUnused: 423 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DebugFtCanBeLiteral: 518 [Enumerator]
+   CodeTools.Warning.DataWriteOnly: 443 [Enumerator]
+      ct/CodeWarning.cpp
+      ct/CxxScope.cpp
+      ct/Editor.cpp
+   CodeTools.Warning.DebugFtCanBeLiteral: 519 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DebugFtNameDuplicated: 503 [Enumerator]
+   CodeTools.Warning.DebugFtNameDuplicated: 504 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DebugFtNameMismatch: 502 [Enumerator]
+   CodeTools.Warning.DebugFtNameMismatch: 503 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DebugFtNotFirst: 501 [Enumerator]
+   CodeTools.Warning.DebugFtNotFirst: 502 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
-   CodeTools.Warning.DebugFtNotInvoked: 500 [Enumerator]
+   CodeTools.Warning.DebugFtNotInvoked: 501 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DefineNotAtFileScope: 406 [Enumerator]
+   CodeTools.Warning.DefineNotAtFileScope: 407 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxDirective.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DefinitionRenamesArgument: 477 [Enumerator]
+   CodeTools.Warning.DefinitionRenamesArgument: 478 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DestructorNotPrivate: 523 [Enumerator]
+   CodeTools.Warning.DestructorNotPrivate: 524 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.DisplayNotOverridden: 504 [Enumerator]
+   CodeTools.Warning.DisplayNotOverridden: 505 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.Downcasting: 401 [Enumerator]
+   CodeTools.Warning.Downcasting: 402 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
-   CodeTools.Warning.EnumeratorUnused: 424 [Enumerator]
+   CodeTools.Warning.EnumeratorUnused: 425 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.EnumTypesDiffer: 489 [Enumerator]
+   CodeTools.Warning.EnumTypesDiffer: 490 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
-   CodeTools.Warning.EnumUnused: 423 [Enumerator]
+   CodeTools.Warning.EnumUnused: 424 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ExcessiveCast: 520 [Enumerator]
+   CodeTools.Warning.ExcessiveCast: 521 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ExplicitConstructor: 516 [Enumerator]
+   CodeTools.Warning.ExplicitConstructor: 517 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ForwardAdd: 418 [Enumerator]
+   CodeTools.Warning.ForwardAdd: 419 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ForwardRemove: 419 [Enumerator]
+   CodeTools.Warning.ForwardRemove: 420 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ForwardUnresolved: 428 [Enumerator]
+   CodeTools.Warning.ForwardUnresolved: 429 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FriendAsForward: 430 [Enumerator]
+   CodeTools.Warning.FriendAsForward: 431 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FriendUnresolved: 429 [Enumerator]
+   CodeTools.Warning.FriendUnresolved: 430 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FriendUnused: 425 [Enumerator]
+   CodeTools.Warning.FriendUnused: 426 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FunctionalCast: 399 [Enumerator]
+   CodeTools.Warning.FunctionalCast: 400 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
-   CodeTools.Warning.FunctionCannotBeConst: 483 [Enumerator]
+   CodeTools.Warning.FunctionCannotBeConst: 484 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
-   CodeTools.Warning.FunctionCouldBeConst: 484 [Enumerator]
-      ct/CodeWarning.cpp
-      ct/CxxScope.cpp
-      ct/Editor.cpp
-   CodeTools.Warning.FunctionCouldBeDefaulted: 506 [Enumerator]
+   CodeTools.Warning.FunctionCouldBeConst: 485 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FunctionCouldBeDemoted: 535 [Enumerator]
-      ct/CodeWarning.cpp
-      ct/CxxScope.cpp
-   CodeTools.Warning.FunctionCouldBeFree: 486 [Enumerator]
+   CodeTools.Warning.FunctionCouldBeDefaulted: 507 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FunctionCouldBeMember: 515 [Enumerator]
+   CodeTools.Warning.FunctionCouldBeDemoted: 536 [Enumerator]
+      ct/CodeWarning.cpp
+      ct/CxxScope.cpp
+   CodeTools.Warning.FunctionCouldBeFree: 487 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FunctionCouldBeStatic: 485 [Enumerator]
+   CodeTools.Warning.FunctionCouldBeMember: 516 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FunctionNotDefined: 467 [Enumerator]
+   CodeTools.Warning.FunctionCouldBeStatic: 486 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FunctionNotOverridden: 471 [Enumerator]
+   CodeTools.Warning.FunctionNotDefined: 468 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FunctionNotSorted: 497 [Enumerator]
+   CodeTools.Warning.FunctionNotOverridden: 472 [Enumerator]
+      ct/CodeWarning.cpp
+      ct/CxxScope.cpp
+      ct/Editor.cpp
+   CodeTools.Warning.FunctionNotSorted: 498 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FunctionShouldBeStatic: 534 [Enumerator]
+   CodeTools.Warning.FunctionShouldBeStatic: 535 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.FunctionUnused: 426 [Enumerator]
+   CodeTools.Warning.FunctionUnused: 427 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.GlobalStaticData: 443 [Enumerator]
+   CodeTools.Warning.GlobalStaticData: 444 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
-   CodeTools.Warning.HeadingNotStandard: 498 [Enumerator]
+   CodeTools.Warning.HeadingNotStandard: 499 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.HidesInheritedName: 431 [Enumerator]
+   CodeTools.Warning.HidesInheritedName: 432 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ImplicitConstructor: 451 [Enumerator]
+   CodeTools.Warning.ImplicitConstructor: 452 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ImplicitCopyConstructor: 452 [Enumerator]
+   CodeTools.Warning.ImplicitCopyConstructor: 453 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ImplicitCopyOperator: 453 [Enumerator]
+   CodeTools.Warning.ImplicitCopyOperator: 454 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ImplicitDestructor: 458 [Enumerator]
+   CodeTools.Warning.ImplicitDestructor: 459 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ImplicitPODConstructor: 450 [Enumerator]
+   CodeTools.Warning.ImplicitPODConstructor: 451 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.IncludeAdd: 411 [Enumerator]
+   CodeTools.Warning.IncludeAdd: 412 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.IncludeDuplicated: 410 [Enumerator]
+   CodeTools.Warning.IncludeDuplicated: 411 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.IncludeFollowsCode: 407 [Enumerator]
+   CodeTools.Warning.IncludeFollowsCode: 408 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.IncludeGuardMisnamed: 499 [Enumerator]
+   CodeTools.Warning.IncludeGuardMisnamed: 500 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxDirective.cpp
       ct/Editor.cpp
-   CodeTools.Warning.IncludeGuardMissing: 408 [Enumerator]
+   CodeTools.Warning.IncludeGuardMissing: 409 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.IncludeNotSorted: 409 [Enumerator]
+   CodeTools.Warning.IncludeNotSorted: 410 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.IncludeRemove: 412 [Enumerator]
+   CodeTools.Warning.IncludeRemove: 413 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.Indentation: 491 [Enumerator]
+   CodeTools.Warning.Indentation: 492 [Enumerator]
       ct/CodeWarning.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.Warning.InitCouldUseConstructor: 507 [Enumerator]
+   CodeTools.Warning.InitCouldUseConstructor: 508 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ItemCouldBePrivate: 436 [Enumerator]
+   CodeTools.Warning.ItemCouldBePrivate: 437 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ItemCouldBeProtected: 437 [Enumerator]
+   CodeTools.Warning.ItemCouldBeProtected: 438 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.LineLength: 496 [Enumerator]
+   CodeTools.Warning.LineLength: 497 [Enumerator]
       ct/CodeTypes.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.MemberInitMissing: 456 [Enumerator]
+   CodeTools.Warning.MemberInitMissing: 457 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.MemberInitNotSorted: 457 [Enumerator]
+   CodeTools.Warning.MemberInitNotSorted: 458 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.NoJumpOrFallthrough: 531 [Enumerator]
+   CodeTools.Warning.NoEndlineAtEndOfFile: 537 [Enumerator]
+      ct/CodeFile.cpp
+      ct/CodeWarning.cpp
+      ct/Editor.cpp
+   CodeTools.Warning.NoJumpOrFallthrough: 532 [Enumerator]
       ct/CodeWarning.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.Warning.NonBooleanConditional: 488 [Enumerator]
+   CodeTools.Warning.NonBooleanConditional: 489 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxExecute.cpp
-   CodeTools.Warning.NonExplicitConstructor: 455 [Enumerator]
+   CodeTools.Warning.NonExplicitConstructor: 456 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.NonVirtualDestructor: 460 [Enumerator]
+   CodeTools.Warning.NonVirtualDestructor: 461 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.OperatorOverloaded: 466 [Enumerator]
+   CodeTools.Warning.OperatorOverloaded: 467 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
-   CodeTools.Warning.OperatorSpacing: 526 [Enumerator]
+   CodeTools.Warning.OperatorSpacing: 527 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.Warning.OverrideNotSorted: 532 [Enumerator]
+   CodeTools.Warning.OverrideNotSorted: 533 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.OverrideRenamesArgument: 478 [Enumerator]
+   CodeTools.Warning.OverrideRenamesArgument: 479 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.OverrideTagMissing: 473 [Enumerator]
+   CodeTools.Warning.OverrideTagMissing: 474 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.PatchNotOverridden: 505 [Enumerator]
+   CodeTools.Warning.PatchNotOverridden: 506 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.PointerArithmetic: 403 [Enumerator]
+   CodeTools.Warning.PointerArithmetic: 404 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
-   CodeTools.Warning.PointerTypedef: 438 [Enumerator]
+   CodeTools.Warning.PointerTypedef: 439 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
-   CodeTools.Warning.PreprocessorDirective: 525 [Enumerator]
+   CodeTools.Warning.PreprocessorDirective: 526 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxDirective.cpp
-   CodeTools.Warning.PtrTagDetached: 396 [Enumerator]
+   CodeTools.Warning.PtrTagDetached: 397 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxNamed.cpp
       ct/Editor.cpp
-   CodeTools.Warning.PublicConstructor: 454 [Enumerator]
+   CodeTools.Warning.PublicConstructor: 455 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.PunctuationSpacing: 527 [Enumerator]
+   CodeTools.Warning.PunctuationSpacing: 528 [Enumerator]
       ct/CodeWarning.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.Warning.PureVirtualNotDefined: 468 [Enumerator]
+   CodeTools.Warning.PureVirtualNotDefined: 469 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.RedundantAccessControl: 435 [Enumerator]
+   CodeTools.Warning.RedundantAccessControl: 436 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.RedundantConst: 405 [Enumerator]
+   CodeTools.Warning.RedundantConst: 406 [Enumerator]
       ct/CodeWarning.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
       ct/Parser.cpp
-   CodeTools.Warning.RedundantScope: 524 [Enumerator]
+   CodeTools.Warning.RedundantScope: 525 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxNamed.cpp
       ct/Editor.cpp
-   CodeTools.Warning.RedundantSemicolon: 404 [Enumerator]
+   CodeTools.Warning.RedundantSemicolon: 405 [Enumerator]
       ct/CodeWarning.cpp
       ct/Editor.cpp
       ct/Parser.cpp
-   CodeTools.Warning.RefTagDetached: 397 [Enumerator]
+   CodeTools.Warning.RefTagDetached: 398 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxNamed.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ReinterpretCast: 400 [Enumerator]
+   CodeTools.Warning.ReinterpretCast: 401 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
-   CodeTools.Warning.RemoveLine: 495 [Enumerator]
+   CodeTools.Warning.RemoveLine: 496 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.RemoveLineBreak: 511 [Enumerator]
+   CodeTools.Warning.RemoveLineBreak: 512 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.RemoveOverrideTag: 413 [Enumerator]
+   CodeTools.Warning.RemoveOverrideTag: 414 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.RemoveVirtualTag: 472 [Enumerator]
+   CodeTools.Warning.RemoveVirtualTag: 473 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ReturnsNonConstMember: 514 [Enumerator]
+   CodeTools.Warning.ReturnsNonConstMember: 515 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxExecute.cpp
-   CodeTools.Warning.RuleOf3CopyCtorNoOper: 464 [Enumerator]
+   CodeTools.Warning.RuleOf3CopyCtorNoOper: 465 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.RuleOf3CopyOperNoCtor: 465 [Enumerator]
+   CodeTools.Warning.RuleOf3CopyOperNoCtor: 466 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.RuleOf3DtorNoCopyCtor: 462 [Enumerator]
+   CodeTools.Warning.RuleOf3DtorNoCopyCtor: 463 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.RuleOf3DtorNoCopyOper: 463 [Enumerator]
+   CodeTools.Warning.RuleOf3DtorNoCopyOper: 464 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ShouldNotBeNoexcept: 509 [Enumerator]
+   CodeTools.Warning.ShouldNotBeNoexcept: 510 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.StaticFunctionViaMember: 487 [Enumerator]
+   CodeTools.Warning.StaticFunctionViaMember: 488 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.StructCouldBeClass: 434 [Enumerator]
+   CodeTools.Warning.StructCouldBeClass: 435 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.TrailingSpace: 492 [Enumerator]
+   CodeTools.Warning.TrailingSpace: 493 [Enumerator]
       ct/CodeTypes.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.TypedefUnused: 427 [Enumerator]
+   CodeTools.Warning.TypedefUnused: 428 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.UnnecessaryCast: 519 [Enumerator]
+   CodeTools.Warning.UnnecessaryCast: 520 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
       ct/Editor.cpp
-   CodeTools.Warning.UseOfCast: 398 [Enumerator]
+   CodeTools.Warning.UseOfCast: 399 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxToken.cpp
-   CodeTools.Warning.UseOfNull: 395 [Enumerator]
+   CodeTools.Warning.UseOfNull: 396 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxNamed.cpp
       ct/Editor.cpp
-   CodeTools.Warning.UseOfSlashAsterisk: 510 [Enumerator]
+   CodeTools.Warning.UseOfSlashAsterisk: 511 [Enumerator]
       ct/CodeTypes.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.UseOfTab: 490 [Enumerator]
+   CodeTools.Warning.UseOfTab: 491 [Enumerator]
       ct/CodeTypes.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.UsingAdd: 416 [Enumerator]
+   CodeTools.Warning.UsingAdd: 417 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.UsingDuplicated: 415 [Enumerator]
+   CodeTools.Warning.UsingDuplicated: 416 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.UsingInHeader: 414 [Enumerator]
+   CodeTools.Warning.UsingInHeader: 415 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.UsingRemove: 417 [Enumerator]
+   CodeTools.Warning.UsingRemove: 418 [Enumerator]
       ct/CodeFile.cpp
       ct/CodeWarning.cpp
       ct/Editor.cpp
-   CodeTools.Warning.ValueArgumentModified: 513 [Enumerator]
+   CodeTools.Warning.ValueArgumentModified: 514 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
-   CodeTools.Warning.VirtualAndPublic: 469 [Enumerator]
+   CodeTools.Warning.VirtualAndPublic: 470 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.VirtualDefaultArgument: 479 [Enumerator]
+   CodeTools.Warning.VirtualDefaultArgument: 480 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Warning.VirtualDestructor: 459 [Enumerator]
+   CodeTools.Warning.VirtualDestructor: 460 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxArea.cpp
       ct/Editor.cpp
-   CodeTools.Warning.VirtualFunctionInvoked: 461 [Enumerator]
+   CodeTools.Warning.VirtualFunctionInvoked: 462 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScope.cpp
-   CodeTools.Warning.VoidAsArgument: 474 [Enumerator]
+   CodeTools.Warning.VoidAsArgument: 475 [Enumerator]
       ct/CodeWarning.cpp
       ct/CxxScoped.cpp
       ct/Editor.cpp
-   CodeTools.Warning.Warning_N: 536 [Enumerator]
+   CodeTools.Warning.Warning_N: 538 [Enumerator]
       ct/CodeTypes.h
       ct/CodeWarning.cpp
       ct/CtIncrement.cpp
@@ -8332,17 +8343,17 @@ ct/CodeTypes.h
       ct/CxxToken.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
-   CodeTools.XrefUpdater: 380 [Enum]
+   CodeTools.XrefUpdater: 381 [Enum]
       ct/CxxExecute.cpp
       ct/CxxExecute.h
-   CodeTools.XrefUpdater.InstanceFunction: 385 [Enumerator]
+   CodeTools.XrefUpdater.InstanceFunction: 386 [Enumerator]
       ct/CxxScope.cpp
       ct/CxxScoped.cpp
-   CodeTools.XrefUpdater.NotAFunction: 382 [Enumerator]
+   CodeTools.XrefUpdater.NotAFunction: 383 [Enumerator]
       ct/CxxExecute.cpp
-   CodeTools.XrefUpdater.StandardFunction: 383 [Enumerator]
+   CodeTools.XrefUpdater.StandardFunction: 384 [Enumerator]
       ct/CxxScope.cpp
-   CodeTools.XrefUpdater.TemplateFunction: 384 [Enumerator]
+   CodeTools.XrefUpdater.TemplateFunction: 385 [Enumerator]
       ct/CxxExecute.cpp
       ct/CxxScope.cpp
    CODETYPES_H_INCLUDED: 23 [Define]
@@ -19717,15 +19728,15 @@ ct/Editor.cpp
       ct/Editor.cpp
    CodeTools.EditFailed: 98 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_CodeBegin: 1825 [SpaceData]
+   CodeTools.Editor_CodeBegin: 1839 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_EraseAssignment: 2316 [SpaceData]
+   CodeTools.Editor_EraseAssignment: 2330 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_Paste: 5161 [SpaceData]
+   CodeTools.Editor_Paste: 5178 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_Rename: 5338 [SpaceData]
+   CodeTools.Editor_Rename: 5355 [SpaceData]
       ct/Editor.cpp
-   CodeTools.Editor_UpdateDebugFt: 6318 [SpaceData]
+   CodeTools.Editor_UpdateDebugFt: 6335 [SpaceData]
       ct/Editor.cpp
    CodeTools.Editors_: 71 [SpaceData]
       ct/Editor.cpp
@@ -19851,7 +19862,7 @@ ct/Editor.cpp
    CodeTools.ItemOffsets.ItemOffsets: 388 [Function]
    CodeTools.MaxAccessUsed: 970 [Function]
       ct/Editor.cpp
-   CodeTools.MaxRoleWarning: 4803 [SpaceData]
+   CodeTools.MaxRoleWarning: 4820 [SpaceData]
       ct/Editor.cpp
    CodeTools.NewNamePrompt: 138 [SpaceData]
       ct/Editor.cpp
@@ -19859,30 +19870,30 @@ ct/Editor.cpp
       ct/Editor.cpp
    CodeTools.NotImplemented: 130 [SpaceData]
       ct/Editor.cpp
-   CodeTools.PatchComment: 4541 [SpaceData]
+   CodeTools.PatchComment: 4558 [SpaceData]
       ct/Editor.cpp
-   CodeTools.PatchInvocation: 4544 [SpaceData]
+   CodeTools.PatchInvocation: 4561 [SpaceData]
       ct/Editor.cpp
-   CodeTools.PatchReturn: 4542 [SpaceData]
+   CodeTools.PatchReturn: 4559 [SpaceData]
       ct/Editor.cpp
-   CodeTools.PatchSignature: 4543 [SpaceData]
+   CodeTools.PatchSignature: 4560 [SpaceData]
       ct/Editor.cpp
    CodeTools.Rename: 1006 [Function]
       ct/Editor.cpp
    CodeTools.Report(c_string,word): 1023 [Function]
       ct/Editor.cpp
    CodeTools.Report(const std::ostringstream&,word): 1033 [Function]
-   CodeTools.RoleWarning: 4805 [Class]
+   CodeTools.RoleWarning: 4822 [Class]
       ct/Editor.cpp
-   CodeTools.RoleWarning.log: 4808 [ClassData]
+   CodeTools.RoleWarning.log: 4825 [ClassData]
       ct/Editor.cpp
-   CodeTools.RoleWarning.role: 4807 [ClassData]
+   CodeTools.RoleWarning.role: 4824 [ClassData]
       ct/Editor.cpp
    CodeTools.SetExpl: 115 [Function]
       ct/Editor.cpp
    CodeTools.ShellPrompt: 137 [SpaceData]
       ct/Editor.cpp
-   CodeTools.SpecialMemberFunctionLogs: 4813 [SpaceData]
+   CodeTools.SpecialMemberFunctionLogs: 4830 [SpaceData]
       ct/Editor.cpp
    CodeTools.strCode: 1053 [Function]
       ct/Editor.cpp
@@ -19896,7 +19907,7 @@ ct/Editor.cpp
       ct/Editor.cpp
    CodeTools.VirtualPrompt: 140 [SpaceData]
       ct/Editor.cpp
-   CodeTools.WarningToRole: 4834 [Function]
+   CodeTools.WarningToRole: 4851 [Function]
       ct/Editor.cpp
    CodeTools.YNSQChars: 127 [SpaceData]
       ct/Editor.cpp
@@ -19912,7 +19923,7 @@ ct/Editor.h
       ct/CxxScope.cpp
       ct/Editor.cpp
       ct/Library.cpp
-   CodeTools.Editor.AdjustHorizontally: 261 [Function]
+   CodeTools.Editor.AdjustHorizontally: 262 [Function]
       ct/Editor.cpp
    CodeTools.Editor.AdjustIndentation: 162 [Function]
       ct/Editor.cpp
@@ -19922,47 +19933,49 @@ ct/Editor.h
       ct/Editor.cpp
    CodeTools.Editor.AdjustTags: 165 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.AdjustVertically: 231 [Function]
+   CodeTools.Editor.AdjustVertically: 232 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.aliased_: 655 [ClassData]
+   CodeTools.Editor.aliased_: 656 [ClassData]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeAccess(const CodeWarning&,Cxx::Access): 166 [Function]
+   CodeTools.Editor.AppendEndline: 166 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeAccess(CxxToken*,ItemDeclAttrs&): 167 [Function]
+   CodeTools.Editor.ChangeAccess(const CodeWarning&,Cxx::Access): 167 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeAssignmentToCtorCall: 168 [Function]
+   CodeTools.Editor.ChangeAccess(CxxToken*,ItemDeclAttrs&): 168 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeCast: 169 [Function]
+   CodeTools.Editor.ChangeAssignmentToCtorCall: 169 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeClassToNamespace: 170 [Function]
+   CodeTools.Editor.ChangeCast: 170 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeClassToStruct: 171 [Function]
+   CodeTools.Editor.ChangeClassToNamespace: 171 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.Changed(): 620 [Function]
+   CodeTools.Editor.ChangeClassToStruct: 172 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.Changed(size_t): 625 [Function]
+   CodeTools.Editor.Changed(): 621 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeForwards: 319 [Function]
+   CodeTools.Editor.Changed(size_t): 626 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeFunctionToMember: 426 [Function]
+   CodeTools.Editor.ChangeForwards: 320 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeInvokerToMember: 427 [Function]
+   CodeTools.Editor.ChangeFunctionToMember: 427 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeMemberToFree(const CodeWarning&): 172 [Function]
+   CodeTools.Editor.ChangeInvokerToMember: 428 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeMemberToFree(CxxScope*): 381 [Function]
+   CodeTools.Editor.ChangeMemberToFree(const CodeWarning&): 173 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeOperator: 173 [Function]
+   CodeTools.Editor.ChangeMemberToFree(CxxScope*): 382 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeSpecialFunction: 400 [Function]
+   CodeTools.Editor.ChangeOperator: 174 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ChangeStructToClass: 174 [Function]
+   CodeTools.Editor.ChangeSpecialFunction: 401 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.CodeBegin: 278 [Function]
+   CodeTools.Editor.ChangeStructToClass: 175 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.CodeFollowsImmediately: 282 [Function]
+   CodeTools.Editor.CodeBegin: 279 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.CommentFollows: 561 [Function]
+   CodeTools.Editor.CodeFollowsImmediately: 283 [Function]
+      ct/Editor.cpp
+   CodeTools.Editor.CommentFollows: 562 [Function]
       ct/Editor.cpp
    CodeTools.Editor.Commit: 114 [Function]
       ct/Editor.cpp
@@ -19970,11 +19983,11 @@ ct/Editor.h
    CodeTools.Editor.CommitCount: 118 [Function]
       ct/CodeFileSet.cpp
       ct/Editor.cpp
-   CodeTools.Editor.ConvertTabsToBlanks: 236 [Function]
+   CodeTools.Editor.ConvertTabsToBlanks: 237 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.CutCode: 573 [Function]
+   CodeTools.Editor.CutCode: 574 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.DeleteSpecialFunction: 404 [Function]
+   CodeTools.Editor.DeleteSpecialFunction: 405 [Function]
       ct/Editor.cpp
    CodeTools.Editor.Display: 122 [Function]
       ct/CodeFile.cpp
@@ -19983,96 +19996,96 @@ ct/Editor.h
       ct/Editor.cpp
    CodeTools.Editor.Editor: 91 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.Erase: 629 [Function]
+   CodeTools.Editor.Erase: 630 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseAccessControl: 176 [Function]
+   CodeTools.Editor.EraseAccessControl: 177 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseAdjacentSpaces: 175 [Function]
+   CodeTools.Editor.EraseAdjacentSpaces: 176 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseArgument: 428 [Function]
+   CodeTools.Editor.EraseArgument: 429 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseAssignment: 581 [Function]
+   CodeTools.Editor.EraseAssignment: 582 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseBlankLine: 177 [Function]
+   CodeTools.Editor.EraseBlankLine: 178 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseCast: 178 [Function]
+   CodeTools.Editor.EraseCast: 179 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseClass: 179 [Function]
+   CodeTools.Editor.EraseClass: 180 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseConst: 180 [Function]
+   CodeTools.Editor.EraseConst: 181 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseDefaultValue: 429 [Function]
+   CodeTools.Editor.EraseDefaultValue: 430 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseEmptyNamespace: 292 [Function]
+   CodeTools.Editor.EraseEmptyNamespace: 293 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseExplicitTag: 181 [Function]
+   CodeTools.Editor.EraseExplicitTag: 182 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseForward: 182 [Function]
+   CodeTools.Editor.EraseForward: 183 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseItem: 577 [Function]
+   CodeTools.Editor.EraseItem: 578 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseLine: 585 [Function]
+   CodeTools.Editor.EraseLine: 586 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseLineBreak(const CodeWarning&): 183 [Function]
+   CodeTools.Editor.EraseLineBreak(const CodeWarning&): 184 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseLineBreak(size_t): 242 [Function]
+   CodeTools.Editor.EraseLineBreak(size_t): 243 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseMutableTag: 184 [Function]
+   CodeTools.Editor.EraseMutableTag: 185 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseNoexceptTag: 431 [Function]
+   CodeTools.Editor.EraseNoexceptTag: 432 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseOverrideTag: 185 [Function]
+   CodeTools.Editor.EraseOverrideTag: 186 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseParameter: 430 [Function]
+   CodeTools.Editor.EraseParameter: 431 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseScope: 187 [Function]
+   CodeTools.Editor.EraseScope: 188 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseSemicolon: 186 [Function]
+   CodeTools.Editor.EraseSemicolon: 187 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseTrailingBlanks: 226 [Function]
+   CodeTools.Editor.EraseTrailingBlanks: 227 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseVirtualTag: 188 [Function]
+   CodeTools.Editor.EraseVirtualTag: 189 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.EraseVoidArgument: 189 [Function]
+   CodeTools.Editor.EraseVoidArgument: 190 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FindArgsEnd: 445 [Function]
+   CodeTools.Editor.FindArgsEnd: 446 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FindDeclRange: 376 [Function]
+   CodeTools.Editor.FindDeclRange: 377 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FindFreeItemPos: 366 [Function]
+   CodeTools.Editor.FindFreeItemPos: 367 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FindFuncDefnLoc: 499 [Function]
+   CodeTools.Editor.FindFuncDefnLoc: 500 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FindItemDeclLoc: 462 [Function]
+   CodeTools.Editor.FindItemDeclLoc: 463 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FindSigEnd(const CodeWarning&): 451 [Function]
+   CodeTools.Editor.FindSigEnd(const CodeWarning&): 452 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FindSigEnd(const Function*): 452 [Function]
+   CodeTools.Editor.FindSigEnd(const Function*): 453 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FindSpecialFuncDeclLoc: 469 [Function]
+   CodeTools.Editor.FindSpecialFuncDeclLoc: 470 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FindUsingReferents: 311 [Function]
+   CodeTools.Editor.FindUsingReferents: 312 [Function]
       ct/Editor.cpp
    CodeTools.Editor.Fix: 97 [Function]
       ct/CodeFile.cpp
       ct/Editor.cpp
-   CodeTools.Editor.FixData: 328 [Function]
+   CodeTools.Editor.FixData: 329 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FixDatas: 324 [Function]
+   CodeTools.Editor.FixDatas: 325 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FixFunction: 412 [Function]
+   CodeTools.Editor.FixFunction: 413 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FixFunctions: 408 [Function]
+   CodeTools.Editor.FixFunctions: 409 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FixInvoker: 421 [Function]
+   CodeTools.Editor.FixInvoker: 422 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FixInvokers: 417 [Function]
+   CodeTools.Editor.FixInvokers: 418 [Function]
       ct/Editor.cpp
    CodeTools.Editor.FixLog: 150 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FixReference: 342 [Function]
+   CodeTools.Editor.FixReference: 343 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.FixReferences: 338 [Function]
+   CodeTools.Editor.FixReferences: 339 [Function]
       ct/Editor.cpp
    CodeTools.Editor.FixStatus: 134 [Function]
       ct/Editor.cpp
@@ -20081,200 +20094,200 @@ ct/Editor.h
    CodeTools.Editor.Format: 102 [Function]
       ct/CodeFile.cpp
       ct/Editor.cpp
-   CodeTools.Editor.FunctionsWereSorted: 535 [Function]
+   CodeTools.Editor.FunctionsWereSorted: 536 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.GetDefnCode: 347 [Function]
+   CodeTools.Editor.GetDefnCode: 348 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.GetItemsForDefn: 545 [Function]
+   CodeTools.Editor.GetItemsForDefn: 546 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.GetOffsets: 517 [Function]
+   CodeTools.Editor.GetOffsets: 518 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.GetSpan: 566 [Function]
+   CodeTools.Editor.GetSpan: 567 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.IncludesBegin: 270 [Function]
+   CodeTools.Editor.IncludesBegin: 271 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.Indent: 246 [Function]
+   CodeTools.Editor.Indent: 247 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InlineDebugFtArgument: 190 [Function]
+   CodeTools.Editor.InlineDebugFtArgument: 191 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.Insert: 633 [Function]
+   CodeTools.Editor.Insert: 634 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertAboveItemDecl: 494 [Function]
+   CodeTools.Editor.InsertAboveItemDecl: 495 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertAboveItemDefn: 525 [Function]
+   CodeTools.Editor.InsertAboveItemDefn: 526 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertArgument: 432 [Function]
+   CodeTools.Editor.InsertArgument: 433 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertBelowItemDecl: 490 [Function]
+   CodeTools.Editor.InsertBelowItemDecl: 491 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertBelowItemDefn: 521 [Function]
+   CodeTools.Editor.InsertBelowItemDefn: 522 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertBlankLine: 191 [Function]
+   CodeTools.Editor.InsertBlankLine: 192 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertCopyCtorCall: 192 [Function]
+   CodeTools.Editor.InsertCopyCtorCall: 193 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertDataInit: 193 [Function]
+   CodeTools.Editor.InsertDataInit: 194 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertDebugFtCall: 194 [Function]
+   CodeTools.Editor.InsertDebugFtCall: 195 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertDisplay: 195 [Function]
+   CodeTools.Editor.InsertDisplay: 196 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertEnumName: 196 [Function]
+   CodeTools.Editor.InsertEnumName: 197 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertFallthrough: 197 [Function]
+   CodeTools.Editor.InsertFallthrough: 198 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertForward(const CodeWarning&): 198 [Function]
+   CodeTools.Editor.InsertForward(const CodeWarning&): 199 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertForward(size_t,const string&,const string&): 297 [Function]
+   CodeTools.Editor.InsertForward(size_t,const string&,const string&): 298 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertInclude: 199 [Function]
+   CodeTools.Editor.InsertInclude: 200 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertIncludeGuard: 200 [Function]
+   CodeTools.Editor.InsertIncludeGuard: 201 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertLine: 589 [Function]
+   CodeTools.Editor.InsertLine: 590 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertLineBreak(const CodeWarning&): 201 [Function]
+   CodeTools.Editor.InsertLineBreak(const CodeWarning&): 202 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertLineBreak(size_t): 256 [Function]
+   CodeTools.Editor.InsertLineBreak(size_t): 257 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertMemberInit: 202 [Function]
+   CodeTools.Editor.InsertMemberInit: 203 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertNamespaceForward: 302 [Function]
+   CodeTools.Editor.InsertNamespaceForward: 303 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertPatch: 203 [Function]
+   CodeTools.Editor.InsertPatch: 204 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertPatchDecl: 553 [Function]
+   CodeTools.Editor.InsertPatchDecl: 554 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertPatchDefn: 557 [Function]
+   CodeTools.Editor.InsertPatchDefn: 558 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertPODCtor: 204 [Function]
+   CodeTools.Editor.InsertPODCtor: 205 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertPrefix: 252 [Function]
+   CodeTools.Editor.InsertPrefix: 253 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertPureVirtual: 205 [Function]
+   CodeTools.Editor.InsertPureVirtual: 206 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertSpecialFuncDecl: 390 [Function]
+   CodeTools.Editor.InsertSpecialFuncDecl: 391 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertSpecialFuncDefn: 395 [Function]
+   CodeTools.Editor.InsertSpecialFuncDefn: 396 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertSpecialFunctions: 386 [Function]
+   CodeTools.Editor.InsertSpecialFunctions: 387 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.InsertUsing: 206 [Function]
+   CodeTools.Editor.InsertUsing: 207 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.lastErasePos_: 660 [ClassData]
+   CodeTools.Editor.lastErasePos_: 661 [ClassData]
       ct/Editor.cpp
-   CodeTools.Editor.lastEraseSize_: 664 [ClassData]
+   CodeTools.Editor.lastEraseSize_: 665 [ClassData]
       ct/Editor.cpp
-   CodeTools.Editor.LineAfterItem: 456 [Function]
+   CodeTools.Editor.LineAfterItem: 457 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.MoveDefine: 207 [Function]
+   CodeTools.Editor.MoveDefine: 208 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.MoveFuncDefn: 549 [Function]
+   CodeTools.Editor.MoveFuncDefn: 550 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.MoveItem: 530 [Function]
+   CodeTools.Editor.MoveItem: 531 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.MoveMemberInit: 208 [Function]
+   CodeTools.Editor.MoveMemberInit: 209 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.OverridesWereSorted: 540 [Function]
+   CodeTools.Editor.OverridesWereSorted: 541 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ParseClassItem: 612 [Function]
+   CodeTools.Editor.ParseClassItem: 613 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ParseFailed: 616 [Function]
+   CodeTools.Editor.ParseFailed: 617 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ParseFileItem: 606 [Function]
+   CodeTools.Editor.ParseFileItem: 607 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.Paste: 637 [Function]
+   CodeTools.Editor.Paste: 638 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.PrologEnd: 265 [Function]
+   CodeTools.Editor.PrologEnd: 266 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.QualifyClassItems(const Class*,const CxxNamedSet&,string&): 358 [Function]
+   CodeTools.Editor.QualifyClassItems(const Class*,const CxxNamedSet&,string&): 359 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.QualifyClassItems(CxxScope*,string&) const: 353 [Function]
+   CodeTools.Editor.QualifyClassItems(CxxScope*,string&) const: 354 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.QualifyReferent: 315 [Function]
+   CodeTools.Editor.QualifyReferent: 316 [Function]
       ct/Editor.cpp
    CodeTools.Editor.Rename: 106 [Function]
       ct/CxxNamed.cpp
       ct/Editor.cpp
-   CodeTools.Editor.RenameArgument: 209 [Function]
+   CodeTools.Editor.RenameArgument: 210 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.RenameDebugFtArgument: 210 [Function]
+   CodeTools.Editor.RenameDebugFtArgument: 211 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.RenameIncludeGuard: 211 [Function]
+   CodeTools.Editor.RenameIncludeGuard: 212 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.Replace: 594 [Function]
+   CodeTools.Editor.Replace: 595 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ReplaceHeading: 212 [Function]
+   CodeTools.Editor.ReplaceHeading: 213 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ReplaceImpl: 600 [Function]
+   CodeTools.Editor.ReplaceImpl: 601 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ReplaceName: 213 [Function]
+   CodeTools.Editor.ReplaceName: 214 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ReplaceNull: 214 [Function]
+   CodeTools.Editor.ReplaceNull: 215 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ReplaceSlashAsterisk: 215 [Function]
+   CodeTools.Editor.ReplaceSlashAsterisk: 216 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ReplaceUsing: 216 [Function]
+   CodeTools.Editor.ReplaceUsing: 217 [Function]
       ct/Editor.cpp
    CodeTools.Editor.ReportFix: 154 [Function]
       ct/Editor.cpp
    CodeTools.Editor.ReportFixInFile: 158 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.ResolveUsings: 307 [Function]
+   CodeTools.Editor.ResolveUsings: 308 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.sorted_: 650 [ClassData]
+   CodeTools.Editor.sorted_: 651 [ClassData]
       ct/Editor.cpp
-   CodeTools.Editor.SortFunctions: 217 [Function]
+   CodeTools.Editor.SortFunctions: 218 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.SortIncludes: 286 [Function]
+   CodeTools.Editor.SortIncludes: 287 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.SortOverrides: 218 [Function]
+   CodeTools.Editor.SortOverrides: 219 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.SplitVirtualFunction: 433 [Function]
+   CodeTools.Editor.SplitVirtualFunction: 434 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsConstArgument: 434 [Function]
+   CodeTools.Editor.TagAsConstArgument: 435 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsConstData: 332 [Function]
+   CodeTools.Editor.TagAsConstData: 333 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsConstFunction: 435 [Function]
+   CodeTools.Editor.TagAsConstFunction: 436 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsConstPointer: 333 [Function]
+   CodeTools.Editor.TagAsConstPointer: 334 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsConstReference: 436 [Function]
+   CodeTools.Editor.TagAsConstReference: 437 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsDefaulted: 437 [Function]
+   CodeTools.Editor.TagAsDefaulted: 438 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsExplicit: 219 [Function]
+   CodeTools.Editor.TagAsExplicit: 220 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsNoexcept: 438 [Function]
+   CodeTools.Editor.TagAsNoexcept: 439 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsOverride: 220 [Function]
+   CodeTools.Editor.TagAsOverride: 221 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsStaticClassFunction: 439 [Function]
+   CodeTools.Editor.TagAsStaticClassFunction: 440 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsStaticData: 334 [Function]
+   CodeTools.Editor.TagAsStaticData: 335 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsStaticFreeFunction: 440 [Function]
+   CodeTools.Editor.TagAsStaticFreeFunction: 441 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.TagAsVirtual: 221 [Function]
+   CodeTools.Editor.TagAsVirtual: 222 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.UpdateAfterErase: 646 [Function]
+   CodeTools.Editor.UpdateAfterErase: 647 [Function]
       ct/Editor.cpp
    CodeTools.Editor.UpdateDebugFt: 110 [Function]
       ct/CxxArea.cpp
       ct/CxxScope.cpp
       ct/Editor.cpp
-   CodeTools.Editor.UpdateItemControls: 486 [Function]
+   CodeTools.Editor.UpdateItemControls: 487 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.UpdateItemDeclAttrs: 479 [Function]
+   CodeTools.Editor.UpdateItemDeclAttrs: 480 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.UpdateItemDeclLoc: 475 [Function]
+   CodeTools.Editor.UpdateItemDeclLoc: 476 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.UpdateItemDefnAttrs: 505 [Function]
+   CodeTools.Editor.UpdateItemDefnAttrs: 506 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.UpdateItemDefnLoc: 511 [Function]
+   CodeTools.Editor.UpdateItemDefnLoc: 512 [Function]
       ct/Editor.cpp
-   CodeTools.Editor.UpdatePos: 641 [Function]
+   CodeTools.Editor.UpdatePos: 642 [Function]
       ct/Editor.cpp
    CodeTools.Editor.Write: 127 [Function]
       ct/Editor.cpp
@@ -20452,7 +20465,7 @@ ct/Lexer.cpp
       ct/Lexer.cpp
    CodeTools.Lexer_CalcDepths: 219 [SpaceData]
       ct/Lexer.cpp
-   CodeTools.Lexer_GetName2: 2174 [SpaceData]
+   CodeTools.Lexer_GetName2: 2177 [SpaceData]
       ct/Lexer.cpp
 ct/Lexer.h
    CodeTools.DEPTH_NOT_SET: 69 [SpaceData]
@@ -24987,6 +25000,22 @@ dip/WinterOrders.h
       dip/WinterOrders.cpp
    WINTERORDERS_H_INCLUDED: 15 [Define]
       dip/WinterOrders.h
+launcher/RscLauncher.cpp
+   Explain: 42 [Function]
+      launcher/RscLauncher.cpp
+   GetExecutable: 57 [Function]
+      launcher/RscLauncher.cpp
+   GetParameters: 96 [Function]
+      launcher/RscLauncher.cpp
+   main(): 142 [Function]
+   Proceed: 115 [Function]
+      launcher/RscLauncher.cpp
+launcher/RscLauncher.h
+   LaunchRsc: 33 [Function]
+      launcher/RscLauncher.cpp
+      launcher/RscLauncher.win.cpp
+   RSCLAUNCHER_H_INCLUDED: 23 [Define]
+      launcher/RscLauncher.h
 mb/Circuit.cpp
    MediaBase.Circuit_Name: 84 [SpaceData]
       mb/Circuit.cpp
@@ -29499,7 +29528,7 @@ nb/Debug.h
       sb/InvokerThread.cpp
       sb/ProtocolLayer.cpp
    NodeBase.Debug.Debug: 57 [Function]
-   NodeBase.Debug.FcFlags_: 136 [ClassData]
+   NodeBase.Debug.FcFlags_: 130 [ClassData]
       nb/Debug.cpp
       nb/Debug.h
       nb/Thread.cpp
@@ -30030,7 +30059,6 @@ nb/Debug.h
       nb/SysMutex.win.cpp
       nb/SysThread.cpp
       nb/SysThread.win.cpp
-      nb/SysThreadStack.win.cpp
       nb/SysTickTimer.cpp
       nb/SysTime.win.cpp
       nb/Temporary.cpp
@@ -30181,25 +30209,21 @@ nb/Debug.h
       st/StModule.cpp
       st/StTestData.cpp
       st/TestSessions.cpp
-   NodeBase.Debug.GetSwFlags: 119 [Function]
+   NodeBase.Debug.GetSwFlags: 113 [Function]
       nb/Debug.cpp
       nt/NtIncrement.cpp
-   NodeBase.Debug.InvocationFlag: 127 [Enum]
-   NodeBase.Debug.InvocationFlag.StackChecking: 131 [Enumerator]
+   NodeBase.Debug.InvocationFlag: 121 [Enum]
+   NodeBase.Debug.InvocationFlag.StackChecking: 125 [Enumerator]
       nb/Thread.cpp
       nb/ThreadAdmin.cpp
-   NodeBase.Debug.InvocationFlag.TracingActive: 129 [Enumerator]
+   NodeBase.Debug.InvocationFlag.TracingActive: 123 [Enumerator]
       nb/Debug.cpp
       nb/Debug.h
       nb/Thread.cpp
       nb/TraceBuffer.cpp
-   NodeBase.Debug.InvocationFlag.TrapPending: 130 [Enumerator]
+   NodeBase.Debug.InvocationFlag.TrapPending: 124 [Enumerator]
       nb/Thread.cpp
-   NodeBase.Debug.noft: 98 [Function]
-      nb/SysThread.win.cpp
-      nb/Thread.cpp
-      nb/ThreadRegistry.cpp
-   NodeBase.Debug.noop: 123 [Function]
+   NodeBase.Debug.noop: 117 [Function]
       ct/CxxExecute.cpp
       nb/Debug.cpp
    NodeBase.Debug.Progress: 92 [Function]
@@ -30209,13 +30233,13 @@ nb/Debug.h
       ct/CxxArea.cpp
       ct/Parser.cpp
       nb/Debug.cpp
-   NodeBase.Debug.ResetSwFlags: 115 [Function]
+   NodeBase.Debug.ResetSwFlags: 109 [Function]
       nb/Debug.cpp
       nt/NtIncrement.cpp
-   NodeBase.Debug.SetSwFlag: 111 [Function]
+   NodeBase.Debug.SetSwFlag: 105 [Function]
       nb/Debug.cpp
       nt/NtIncrement.cpp
-   NodeBase.Debug.SwFlagOn: 107 [Function]
+   NodeBase.Debug.SwFlagOn: 101 [Function]
       cb/BcHandlers.cpp
       cb/BcProtocol.cpp
       nb/Debug.cpp
@@ -30423,7 +30447,7 @@ nb/Debug.h
       st/MscBuilder.cpp
       st/StTestData.cpp
       st/TestSessions.cpp
-   NodeBase.Debug.TraceOn: 102 [Function]
+   NodeBase.Debug.TraceOn: 96 [Function]
       dip/BaseBot.cpp
       dip/BotThread.cpp
       nb/CliThread.cpp
@@ -31369,7 +31393,6 @@ nb/ElementException.h
       nb/ElementException.cpp
       nb/ElementException.h
    NodeBase.ElementException.Reason: 53 [Function]
-      nb/Thread.cpp
    NodeBase.ElementException.reason_: 73 [ClassData]
       nb/ElementException.cpp
       nb/ElementException.h
@@ -31378,7 +31401,7 @@ nb/ElementException.h
    NodeBase.ElementException.~ElementException: 45 [Function]
       nb/ElementException.cpp
 nb/Exception.cpp
-   NodeBase.ExceptionExpl: 94 [SpaceData]
+   NodeBase.ExceptionExpl: 91 [SpaceData]
       nb/Exception.cpp
 nb/Exception.h
    EXCEPTION_H_INCLUDED: 23 [Define]
@@ -31409,32 +31432,32 @@ nb/Exception.h
       nb/SignalException.h
       nb/SoftwareException.h
       nb/Thread.cpp
-   NodeBase.Exception.Exception(bool,fn_depth): 62 [Function]
+   NodeBase.Exception.Exception(bool): 60 [Function]
       nb/AllocationException.cpp
       nb/AssertionException.cpp
       nb/ElementException.cpp
       nb/Exception.cpp
       nb/SignalException.cpp
       nb/SoftwareException.cpp
-   NodeBase.Exception.Exception(const Exception&): 66 [Function]
+   NodeBase.Exception.Exception(const Exception&): 64 [Function]
       nb/Exception.cpp
-   NodeBase.Exception.Exception(Exception&&): 67 [Function]
+   NodeBase.Exception.Exception(Exception&&): 65 [Function]
       nb/Exception.cpp
    NodeBase.Exception.operator=(const Exception&&): 45 [Function]
    NodeBase.Exception.operator=(const Exception&): 44 [Function]
    NodeBase.Exception.Stack: 55 [Function]
       nb/Thread.cpp
-   NodeBase.Exception.stack_: 82 [ClassData]
+   NodeBase.Exception.stack_: 80 [ClassData]
       nb/Exception.cpp
       nb/Exception.h
-   NodeBase.Exception.what: 76 [Function]
+   NodeBase.Exception.what: 74 [Function]
       nb/AllocationException.h
       nb/AssertionException.h
       nb/ElementException.h
       nb/Exception.cpp
       nb/SignalException.h
       nb/SoftwareException.h
-   NodeBase.Exception.~Exception: 71 [Function]
+   NodeBase.Exception.~Exception: 69 [Function]
       nb/Exception.cpp
 nb/FileThread.cpp
    NodeBase.ConsoleFileLock_: 51 [SpaceData]
@@ -39602,7 +39625,6 @@ nb/Restart.h
       nb/Heap.cpp
    NodeBase.RestartReason.ManualRestart: 53 [Enumerator]
       nb/NbIncrement.cpp
-      nb/Thread.cpp
    NodeBase.RestartReason.MutexCreationFailed: 54 [Enumerator]
       nb/NbHeap.cpp
    NodeBase.RestartReason.NilRestart: 52 [Enumerator]
@@ -40416,29 +40438,29 @@ nb/SoftwareException.cpp
    NodeBase.SoftwareExceptionExpl: 75 [SpaceData]
       nb/SoftwareException.cpp
 nb/SoftwareException.h
-   NodeBase.SoftwareException: 36 [Class]
+   NodeBase.SoftwareException: 35 [Class]
       nb/SoftwareException.cpp
       sb/Context.cpp
-   NodeBase.SoftwareException.Display: 52 [Function]
+   NodeBase.SoftwareException.Display: 50 [Function]
       nb/SoftwareException.cpp
       sb/Context.cpp
-   NodeBase.SoftwareException.errstr_: 64 [ClassData]
+   NodeBase.SoftwareException.errstr_: 62 [ClassData]
       nb/SoftwareException.cpp
-   NodeBase.SoftwareException.errval_: 60 [ClassData]
+   NodeBase.SoftwareException.errval_: 58 [ClassData]
       nb/SoftwareException.cpp
-   NodeBase.SoftwareException.offset_: 68 [ClassData]
+   NodeBase.SoftwareException.offset_: 66 [ClassData]
       nb/SoftwareException.cpp
-   NodeBase.SoftwareException.SoftwareException(const std::string&,debug64_t,fn_depth): 43 [Function]
+   NodeBase.SoftwareException.SoftwareException(const std::string&,debug64_t): 42 [Function]
       nb/SoftwareException.cpp
       nt/NtIncrement.cpp
       sb/Context.cpp
-   NodeBase.SoftwareException.SoftwareException(debug64_t,debug64_t,fn_depth): 41 [Function]
+   NodeBase.SoftwareException.SoftwareException(debug64_t,debug64_t): 41 [Function]
       nb/SoftwareException.cpp
       sb/Context.cpp
-   NodeBase.SoftwareException.what: 56 [Function]
+   NodeBase.SoftwareException.what: 54 [Function]
       nb/SoftwareException.cpp
       sb/Context.cpp
-   NodeBase.SoftwareException.~SoftwareException: 48 [Function]
+   NodeBase.SoftwareException.~SoftwareException: 46 [Function]
       nb/SoftwareException.cpp
    SOFTWAREEXCEPTION_H_INCLUDED: 23 [Define]
       nb/SoftwareException.h
@@ -41546,12 +41568,12 @@ nb/SysThread.win.cpp
       nb/SysThread.win.cpp
    NodeBase.SysThread_Resume: 247 [SpaceData]
       nb/SysThread.win.cpp
-   NodeBase.SysThread_Start: 290 [SpaceData]
+   NodeBase.SysThread_Start: 288 [SpaceData]
       nb/SysThread.win.cpp
-   NodeBase.SysThread_Suspend: 320 [SpaceData]
+   NodeBase.SysThread_Suspend: 318 [SpaceData]
       nb/SysThread.win.cpp
 nb/SysThreadStack.h
-   NodeBase.SysThreadStack.Display: 51 [Function]
+   NodeBase.SysThreadStack.Display: 50 [Function]
       nb/Debug.cpp
       nb/Exception.cpp
       nb/SysThreadStack.win.cpp
@@ -41567,7 +41589,7 @@ nb/SysThreadStack.h
    NodeBase.SysThreadStack.Startup: 38 [Function]
       nb/RootThread.cpp
       nb/SysThreadStack.win.cpp
-   NodeBase.SysThreadStack.TrapIsOk: 55 [Function]
+   NodeBase.SysThreadStack.TrapIsOk: 54 [Function]
       nb/SysThreadStack.win.cpp
       nb/Thread.cpp
    SYSTHREADSTACK_H_INCLUDED: 23 [Define]
@@ -41853,15 +41875,16 @@ nb/SysTypes.cpp
    NodeBase.RestartStrings: 100 [SpaceData]
       nb/SysTypes.cpp
 nb/SysTypes.h
+   NO_FT: 86 [Define]
    NO_OP: 80 [Define]
-   NodeBase.APOSTROPHE: 144 [SpaceData]
+   NodeBase.APOSTROPHE: 150 [SpaceData]
       ct/Cxx.cpp
       ct/CxxCharLiteral.h
       ct/Lexer.cpp
       ct/Parser.cpp
       dip/MapAndUnits.cpp
       dip/TokenMessage.cpp
-   NodeBase.BACKSLASH: 145 [SpaceData]
+   NodeBase.BACKSLASH: 151 [SpaceData]
       ct/Cxx.cpp
       ct/CxxString.cpp
       ct/Lexer.cpp
@@ -41869,7 +41892,7 @@ nb/SysTypes.h
       nb/CliBuffer.cpp
       nb/SysFile.cpp
       nb/SysThreadStack.win.cpp
-   NodeBase.BAD_POINTER: 84 [SpaceData]
+   NodeBase.BAD_POINTER: 90 [SpaceData]
       nb/Base.cpp
       nb/Class.cpp
       nb/Q1Way.h
@@ -41879,7 +41902,7 @@ nb/SysTypes.h
       nb/SysTypes.h
    NodeBase.BITS_PER_WORD: 55 [SpaceData]
       nb/Algorithms.cpp
-   NodeBase.byte_t: 100 [Typedef]
+   NodeBase.byte_t: 106 [Typedef]
       cb/BcAddress.cpp
       cb/BcAddress.h
       cb/BcCause.cpp
@@ -41944,7 +41967,7 @@ nb/SysTypes.h
       nb/NbHeap.cpp
       nb/ObjectPool.cpp
       nb/Thread.cpp
-   NodeBase.c_string: 113 [Typedef]
+   NodeBase.c_string: 119 [Typedef]
       an/PotsShelf.h
       an/PotsTrafficThread.cpp
       an/PotsTrafficThread.h
@@ -42124,7 +42147,7 @@ nb/SysTypes.h
       sb/TimerThread.cpp
       sb/TimerThread.h
       sn/PotsSessions.h
-   NodeBase.col_t: 140 [Typedef]
+   NodeBase.col_t: 146 [Typedef]
       nb/Base.cpp
       nb/Base.h
       nb/CliCharParm.cpp
@@ -42140,18 +42163,18 @@ nb/SysTypes.h
       nb/Log.h
       nb/TraceDump.h
       sb/SbTrace.cpp
-   NodeBase.const_ptr_t: 96 [Typedef]
+   NodeBase.const_ptr_t: 102 [Typedef]
       nb/Algorithms.cpp
       nb/LogBuffer.cpp
       nb/ObjectPool.cpp
-   NodeBase.COUT_LENGTH_MAX: 136 [SpaceData]
+   NodeBase.COUT_LENGTH_MAX: 142 [SpaceData]
       ct/CodeFileSet.cpp
       ct/Parser.cpp
       dip/BotTrace.cpp
       nb/CliParm.cpp
       nb/Formatters.cpp
       sb/SbTrace.cpp
-   NodeBase.CRLF: 146 [SpaceData]
+   NodeBase.CRLF: 152 [SpaceData]
       an/AnIncrement.cpp
       an/PotsShelfFactory.cpp
       an/PotsTrafficThread.cpp
@@ -42397,12 +42420,12 @@ nb/SysTypes.h
       st/StIncrement.cpp
       st/StTestData.cpp
       st/TestSessions.cpp
-   NodeBase.CRLF_STR: 156 [SpaceData]
+   NodeBase.CRLF_STR: 162 [SpaceData]
       ct/CodeFileSet.cpp
       ct/Editor.cpp
       ct/Parser.cpp
       nb/SysTypes.cpp
-   NodeBase.debug64_t: 164 [Typedef]
+   NodeBase.debug64_t: 170 [Typedef]
       cb/BcProtocol.cpp
       ct/CxxArea.cpp
       ct/CxxExecute.cpp
@@ -42434,7 +42457,7 @@ nb/SysTypes.h
       sb/TlvMessage.h
       st/MscBuilder.cpp
       st/MscBuilder.h
-   NodeBase.DelayRc: 220 [Enum]
+   NodeBase.DelayRc: 226 [Enum]
       nb/InitThread.cpp
       nb/SysThread.cpp
       nb/SysThread.h
@@ -42443,24 +42466,24 @@ nb/SysTypes.h
       nb/ThisThread.h
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.DelayRc.DelayCompleted: 224 [Enumerator]
+   NodeBase.DelayRc.DelayCompleted: 230 [Enumerator]
       an/PotsTrafficThread.cpp
       nb/InitThread.cpp
       nb/NbIncrement.cpp
       nb/RootThread.cpp
       nb/SysThread.win.cpp
       nb/Thread.cpp
-   NodeBase.DelayRc.DelayError: 222 [Enumerator]
+   NodeBase.DelayRc.DelayError: 228 [Enumerator]
       nb/RootThread.cpp
       nb/SysThread.win.cpp
       nb/Thread.cpp
-   NodeBase.DelayRc.DelayInterrupted: 223 [Enumerator]
+   NodeBase.DelayRc.DelayInterrupted: 229 [Enumerator]
       an/PotsTrafficThread.cpp
       nb/InitThread.cpp
       nb/RootThread.cpp
       nb/SysThread.win.cpp
       nb/Thread.cpp
-   NodeBase.EMPTY_STR: 155 [SpaceData]
+   NodeBase.EMPTY_STR: 161 [SpaceData]
       ct/CodeFile.cpp
       ct/CodeFile.h
       ct/CodeWarning.cpp
@@ -42499,7 +42522,7 @@ nb/SysTypes.h
       nw/NwLogs.h
       nw/SysSocket.win.cpp
       st/MscBuilder.cpp
-   NodeBase.ERROR_STR: 159 [SpaceData]
+   NodeBase.ERROR_STR: 165 [SpaceData]
       an/PotsTrafficThread.cpp
       cb/BcAddress.cpp
       cb/BcCause.cpp
@@ -42536,7 +42559,7 @@ nb/SysTypes.h
       sb/Parameter.cpp
       sb/SbTrace.cpp
       sb/SbTypes.cpp
-   NodeBase.fixed_string: 114 [Typedef]
+   NodeBase.fixed_string: 120 [Typedef]
       an/AnIncrement.cpp
       an/PotsShelfFactory.cpp
       an/PotsShelfIpService.cpp
@@ -42685,7 +42708,7 @@ nb/SysTypes.h
       st/MscBuilder.cpp
       st/StIncrement.cpp
       st/TestSessions.cpp
-   NodeBase.FlagId: 128 [Typedef]
+   NodeBase.FlagId: 134 [Typedef]
       dip/DipTypes.h
       nb/CfgFlagParm.cpp
       nb/CfgFlagParm.h
@@ -42713,7 +42736,7 @@ nb/SysTypes.h
       nw/NwTracer.h
       sb/SbTracer.cpp
       sb/SbTracer.h
-   NodeBase.Flags: 131 [Typedef]
+   NodeBase.Flags: 137 [Typedef]
       an/PotsTrafficThread.cpp
       an/PotsTrafficThread.h
       cb/BcEvents.cpp
@@ -43104,21 +43127,17 @@ nb/SysTypes.h
       st/StTestData.h
       st/TestSessions.cpp
       st/TestSessions.h
-   NodeBase.FLAGS_SIZE: 130 [SpaceData]
+   NodeBase.FLAGS_SIZE: 136 [SpaceData]
       nb/SysTypes.h
-   NodeBase.fn_depth: 124 [Typedef]
-      nb/Exception.cpp
-      nb/Exception.h
+   NodeBase.fn_depth: 130 [Typedef]
       nb/FunctionTrace.cpp
       nb/FunctionTrace.h
-      nb/SoftwareException.cpp
-      nb/SoftwareException.h
       nb/SysThreadStack.h
       nb/SysThreadStack.win.cpp
       nb/Thread.cpp
       nb/TraceBuffer.cpp
       nb/TraceBuffer.h
-   NodeBase.fn_name: 119 [Typedef]
+   NodeBase.fn_name: 125 [Typedef]
       an/AnIncrement.cpp
       an/PotsShelfFactory.cpp
       an/PotsTrafficThread.cpp
@@ -43329,7 +43348,7 @@ nb/SysTypes.h
       st/MscBuilder.cpp
       st/StTestData.cpp
       st/TestSessions.cpp
-   NodeBase.fn_name_arg: 120 [Typedef]
+   NodeBase.fn_name_arg: 126 [Typedef]
       ct/CxxExecute.cpp
       ct/CxxExecute.h
       ct/Parser.cpp
@@ -43412,7 +43431,7 @@ nb/SysTypes.h
       st/MscBuilder.cpp
       st/MscBuilder.h
       st/StIncrement.cpp
-   NodeBase.istreamPtr: 90 [Typedef]
+   NodeBase.istreamPtr: 96 [Typedef]
       ct/CodeFile.cpp
       ct/CodeFile.h
       nb/CfgParmRegistry.cpp
@@ -43427,20 +43446,20 @@ nb/SysTypes.h
       nt/NtIncrement.cpp
       nw/IoThread.cpp
       nw/TcpIoThread.cpp
-   NodeBase.main_t: 104 [Typedef]
+   NodeBase.main_t: 110 [Typedef]
       nb/RootThread.cpp
       nb/RootThread.h
       nb/SysThread.h
       nb/Thread.cpp
       nb/Thread.h
       rsc/main.cpp
-   NodeBase.MaxFlagId: 129 [SpaceData]
+   NodeBase.MaxFlagId: 135 [SpaceData]
       nb/Debug.cpp
       nb/SysTypes.h
       nt/NtIncrement.cpp
    NodeBase.MBs: 62 [SpaceData]
       nb/LogBufferRegistry.cpp
-   NodeBase.MemoryProtection: 186 [Enum]
+   NodeBase.MemoryProtection: 192 [Enum]
       nb/Heap.cpp
       nb/Heap.h
       nb/SysHeap.h
@@ -43449,21 +43468,21 @@ nb/SysTypes.h
       nb/SysMemory.win.cpp
       nb/SysTypes.cpp
       nb/SysTypes.h
-   NodeBase.MemoryProtection.MemExecuteOnly: 189 [Enumerator]
-   NodeBase.MemoryProtection.MemInaccessible: 188 [Enumerator]
-   NodeBase.MemoryProtection.MemoryProtection_N: 194 [Enumerator]
+   NodeBase.MemoryProtection.MemExecuteOnly: 195 [Enumerator]
+   NodeBase.MemoryProtection.MemInaccessible: 194 [Enumerator]
+   NodeBase.MemoryProtection.MemoryProtection_N: 200 [Enumerator]
       nb/SysMemory.win.cpp
       nb/SysTypes.cpp
-   NodeBase.MemoryProtection.MemReadExecute: 191 [Enumerator]
-   NodeBase.MemoryProtection.MemReadOnly: 190 [Enumerator]
+   NodeBase.MemoryProtection.MemReadExecute: 197 [Enumerator]
+   NodeBase.MemoryProtection.MemReadOnly: 196 [Enumerator]
       nb/Memory.cpp
-   NodeBase.MemoryProtection.MemReadWrite: 192 [Enumerator]
+   NodeBase.MemoryProtection.MemReadWrite: 198 [Enumerator]
       nb/Heap.cpp
       nb/Memory.cpp
       nb/NbHeap.cpp
       nb/SysMemory.h
-   NodeBase.MemoryProtection.MemReadWriteExecute: 193 [Enumerator]
-   NodeBase.MemoryType: 168 [Enum]
+   NodeBase.MemoryProtection.MemReadWriteExecute: 199 [Enumerator]
+   NodeBase.MemoryType: 174 [Enum]
       nb/AllocationException.cpp
       nb/AllocationException.h
       nb/Base.h
@@ -43498,7 +43517,7 @@ nb/SysTypes.h
       nb/SysTypes.h
       nb/Temporary.h
       nt/NtIncrement.cpp
-   NodeBase.MemoryType.MemDynamic: 172 [Enumerator]
+   NodeBase.MemoryType.MemDynamic: 178 [Enumerator]
       an/PotsTrafficThread.cpp
       dip/DipProtocol.cpp
       mb/MbPools.cpp
@@ -43521,7 +43540,7 @@ nb/SysTypes.h
       sb/InvokerPool.cpp
       sb/InvokerPoolRegistry.cpp
       sb/SbPools.cpp
-   NodeBase.MemoryType.MemImmutable: 176 [Enumerator]
+   NodeBase.MemoryType.MemImmutable: 182 [Enumerator]
       nb/AlarmRegistry.cpp
       nb/Allocators.h
       nb/ClassRegistry.cpp
@@ -43549,19 +43568,19 @@ nb/SysTypes.h
       sb/ProtocolRegistry.cpp
       sb/Service.cpp
       sb/ServiceRegistry.cpp
-   NodeBase.MemoryType.MemNull: 170 [Enumerator]
+   NodeBase.MemoryType.MemNull: 176 [Enumerator]
       nb/Class.cpp
       nb/Heap.cpp
       nb/Memory.cpp
       nb/Pooled.cpp
       nb/Registry.h
       nb/Restart.h
-   NodeBase.MemoryType.MemoryType_N: 177 [Enumerator]
+   NodeBase.MemoryType.MemoryType_N: 183 [Enumerator]
       nb/Memory.cpp
       nb/MemoryTrace.cpp
       nb/NbIncrement.cpp
       nb/SysTypes.cpp
-   NodeBase.MemoryType.MemPermanent: 175 [Enumerator]
+   NodeBase.MemoryType.MemPermanent: 181 [Enumerator]
       nb/Allocators.h
       nb/Base.h
       nb/DaemonRegistry.cpp
@@ -43578,14 +43597,14 @@ nb/SysTypes.h
       nb/SysThreadStack.win.cpp
       nb/Thread.cpp
       nb/TraceBuffer.cpp
-   NodeBase.MemoryType.MemPersistent: 173 [Enumerator]
+   NodeBase.MemoryType.MemPersistent: 179 [Enumerator]
       nb/Allocators.h
       nb/Memory.cpp
       nb/NbIncrement.cpp
       nb/Persistent.cpp
       nb/Persistent.h
       nb/Restart.cpp
-   NodeBase.MemoryType.MemProtected: 174 [Enumerator]
+   NodeBase.MemoryType.MemProtected: 180 [Enumerator]
       nb/Allocators.h
       nb/Memory.cpp
       nb/ModuleRegistry.cpp
@@ -43600,7 +43619,7 @@ nb/SysTypes.h
       nt/NtIncrement.cpp
       pb/PotsProfileRegistry.cpp
       sn/PotsTreatmentRegistry.cpp
-   NodeBase.MemoryType.MemTemporary: 171 [Enumerator]
+   NodeBase.MemoryType.MemTemporary: 177 [Enumerator]
       nb/Allocators.h
       nb/Memory.cpp
       nb/NbCliParms.cpp
@@ -43673,7 +43692,7 @@ nb/SysTypes.h
       st/MscBuilder.cpp
       st/MscContext.cpp
       st/TestSessions.cpp
-   NodeBase.NoFlags: 132 [SpaceData]
+   NodeBase.NoFlags: 138 [SpaceData]
       an/PotsTrafficThread.cpp
       ct/CodeFile.cpp
       ct/CxxNamed.cpp
@@ -43701,7 +43720,7 @@ nb/SysTypes.h
       sb/Context.cpp
       sb/SbIncrement.cpp
       st/MscBuilder.cpp
-   NodeBase.NUL: 147 [SpaceData]
+   NodeBase.NUL: 153 [SpaceData]
       ct/Lexer.cpp
       nb/CinThread.cpp
       nb/CliCommandSet.cpp
@@ -43712,11 +43731,11 @@ nb/SysTypes.h
       nb/FunctionTrace.cpp
       nb/LogBuffer.cpp
       nb/NbTracer.cpp
-   NodeBase.operator<<(std::ostream&,MemoryProtection): 199 [Function]
+   NodeBase.operator<<(std::ostream&,MemoryProtection): 205 [Function]
       nb/Heap.cpp
       nb/NbIncrement.cpp
       nb/SysTypes.cpp
-   NodeBase.operator<<(std::ostream&,MemoryType): 182 [Function]
+   NodeBase.operator<<(std::ostream&,MemoryType): 188 [Function]
       nb/AllocationException.cpp
       nb/Memory.cpp
       nb/NbHeap.cpp
@@ -43726,19 +43745,19 @@ nb/SysTypes.h
       nb/Singletons.cpp
       nb/SysHeap.win.cpp
       nb/SysTypes.cpp
-   NodeBase.operator<<(std::ostream&,RestartLevel): 216 [Function]
+   NodeBase.operator<<(std::ostream&,RestartLevel): 222 [Function]
       nb/CfgParm.cpp
       nb/ElementException.cpp
       nb/InitThread.cpp
       nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/SysTypes.cpp
-   NodeBase.ostreamPtr: 91 [Typedef]
+   NodeBase.ostreamPtr: 97 [Typedef]
       ct/Parser.h
       nb/SysFile.cpp
       nb/SysFile.h
       nb/TraceBuffer.h
-   NodeBase.ostringstreamPtr: 89 [Typedef]
+   NodeBase.ostringstreamPtr: 95 [Typedef]
       nb/Alarm.cpp
       nb/Alarm.h
       nb/CliBuffer.cpp
@@ -43756,7 +43775,7 @@ nb/SysTypes.h
       nb/NbIncrement.cpp
       nb/StreamRequest.h
       nb/Thread.cpp
-   NodeBase.PATH_SEPARATOR: 148 [SpaceData]
+   NodeBase.PATH_SEPARATOR: 154 [SpaceData]
       ct/CodeCoverage.cpp
       ct/CodeFile.cpp
       ct/CtIncrement.cpp
@@ -43769,9 +43788,9 @@ nb/SysTypes.h
       nb/SysFile.cpp
       nt/NtIncrement.cpp
       nt/TestDatabase.cpp
-   NodeBase.ptr_t: 95 [Typedef]
+   NodeBase.ptr_t: 101 [Typedef]
       nb/LogBuffer.cpp
-   NodeBase.QUOTE: 149 [SpaceData]
+   NodeBase.QUOTE: 155 [SpaceData]
       ct/CodeFile.cpp
       ct/CodeFileSet.cpp
       ct/CodeTypes.cpp
@@ -43785,10 +43804,10 @@ nb/SysTypes.h
       ct/Lexer.cpp
       ct/Parser.cpp
       nb/CliBuffer.cpp
-   NodeBase.QUOTE_STR: 158 [SpaceData]
+   NodeBase.QUOTE_STR: 164 [SpaceData]
       ct/Editor.cpp
       nb/SysTypes.cpp
-   NodeBase.RestartLevel: 203 [Enum]
+   NodeBase.RestartLevel: 209 [Enum]
       an/AnModule.cpp
       an/AnModule.h
       an/PotsTrafficThread.cpp
@@ -43949,7 +43968,7 @@ nb/SysTypes.h
       sn/SnModule.h
       st/StModule.cpp
       st/StModule.h
-   NodeBase.RestartLevel.RestartCold: 207 [Enumerator]
+   NodeBase.RestartLevel.RestartCold: 213 [Enumerator]
       an/PotsTrafficThread.cpp
       cb/BcSsm.cpp
       dip/BotTrace.cpp
@@ -43967,13 +43986,13 @@ nb/SysTypes.h
       pb/PotsCircuit.cpp
       sb/InvokerPool.cpp
       sb/TimerRegistry.cpp
-   NodeBase.RestartLevel.RestartExit: 210 [Enumerator]
+   NodeBase.RestartLevel.RestartExit: 216 [Enumerator]
       nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/Thread.cpp
-   NodeBase.RestartLevel.RestartLevel_N: 211 [Enumerator]
+   NodeBase.RestartLevel.RestartLevel_N: 217 [Enumerator]
       nb/SysTypes.cpp
-   NodeBase.RestartLevel.RestartNone: 205 [Enumerator]
+   NodeBase.RestartLevel.RestartNone: 211 [Enumerator]
       nb/CfgParm.cpp
       nb/CfgParm.h
       nb/CfgParmRegistry.cpp
@@ -43983,7 +44002,7 @@ nb/SysTypes.h
       nb/Restart.cpp
       nw/IpServiceCfg.cpp
       sb/InvokerThread.cpp
-   NodeBase.RestartLevel.RestartReboot: 209 [Enumerator]
+   NodeBase.RestartLevel.RestartReboot: 215 [Enumerator]
       nb/LogBuffer.cpp
       nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
@@ -43997,13 +44016,13 @@ nb/SysTypes.h
       pb/PotsLogs.cpp
       sb/SbLogs.cpp
       sn/SnModule.cpp
-   NodeBase.RestartLevel.RestartReload: 208 [Enumerator]
+   NodeBase.RestartLevel.RestartReload: 214 [Enumerator]
       nb/ModuleRegistry.cpp
       nb/NbIncrement.cpp
       nb/Restart.cpp
       nb/Singletons.cpp
       nb/Thread.cpp
-   NodeBase.RestartLevel.RestartWarm: 206 [Enumerator]
+   NodeBase.RestartLevel.RestartWarm: 212 [Enumerator]
       nb/Daemon.cpp
       nb/DeferredRegistry.cpp
       nb/InitThread.cpp
@@ -44015,7 +44034,7 @@ nb/SysTypes.h
       nb/Singletons.cpp
       nb/SysHeap.win.cpp
       nb/Thread.cpp
-   NodeBase.SCOPE_STR: 160 [SpaceData]
+   NodeBase.SCOPE_STR: 166 [SpaceData]
       ct/Cxx.cpp
       ct/CxxArea.cpp
       ct/CxxExecute.cpp
@@ -44030,7 +44049,7 @@ nb/SysTypes.h
       ct/Parser.cpp
       nb/Formatters.cpp
       nb/SysTypes.cpp
-   NodeBase.signal_t: 108 [Typedef]
+   NodeBase.signal_t: 114 [Typedef]
       nb/NbSignals.h
       nb/PosixSignal.cpp
       nb/PosixSignal.h
@@ -44043,7 +44062,7 @@ nb/SysTypes.h
       nb/Thread.cpp
       nb/Thread.h
       nt/NtIncrement.cpp
-   NodeBase.SPACE: 150 [SpaceData]
+   NodeBase.SPACE: 156 [SpaceData]
       ct/CodeCoverage.cpp
       ct/CodeFile.cpp
       ct/CodeFileSet.cpp
@@ -44096,17 +44115,17 @@ nb/SysTypes.h
       sb/SbTrace.cpp
       sb/ServiceSM.cpp
       st/MscBuilder.cpp
-   NodeBase.SPACE_STR: 157 [SpaceData]
+   NodeBase.SPACE_STR: 163 [SpaceData]
       ct/Editor.cpp
       nb/SysTypes.cpp
-   NodeBase.stringPtr: 88 [Typedef]
+   NodeBase.stringPtr: 94 [Typedef]
       ct/CxxArea.cpp
       ct/CxxArea.h
       ct/CxxExecute.cpp
       ct/CxxScope.cpp
       ct/CxxScope.h
       nb/FileThread.cpp
-   NodeBase.TAB: 151 [SpaceData]
+   NodeBase.TAB: 157 [SpaceData]
       ct/CodeTypes.cpp
       ct/Editor.cpp
       ct/Lexer.cpp
@@ -44367,278 +44386,278 @@ nb/Thread.cpp
       nb/Thread.cpp
    NodeBase.AccessFtLocks: 88 [Function]
       nb/Thread.cpp
-   NodeBase.ActiveThread_: 1070 [SpaceData]
+   NodeBase.ActiveThread_: 1065 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ClearActiveThread: 1101 [Function]
+   NodeBase.ClearActiveThread: 1096 [Function]
       nb/Thread.cpp
-   NodeBase.ClosingConsoleStr: 1038 [SpaceData]
+   NodeBase.ContextSwitch: 322 [Class]
       nb/Thread.cpp
-   NodeBase.ContextSwitch: 327 [Class]
+   NodeBase.ContextSwitch.ContextSwitch: 326 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.ContextSwitch: 331 [Function]
+   NodeBase.ContextSwitch.in: 330 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.in: 335 [ClassData]
+   NodeBase.ContextSwitch.locked: 346 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.locked: 351 [ClassData]
+   NodeBase.ContextSwitch.nid: 338 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.nid: 343 [ClassData]
+   NodeBase.ContextSwitch.out: 334 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.out: 339 [ClassData]
+   NodeBase.ContextSwitch.tid: 342 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitch.tid: 347 [ClassData]
+   NodeBase.ContextSwitches: 364 [Class]
       nb/Thread.cpp
-   NodeBase.ContextSwitches: 369 [Class]
+   NodeBase.ContextSwitches.AddSwitch: 387 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.AddSwitch: 392 [Function]
+   NodeBase.ContextSwitches.capacity_: 410 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.capacity_: 415 [ClassData]
+   NodeBase.ContextSwitches.ContextSwitches(): 402 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.ContextSwitches(): 407 [Function]
+   NodeBase.ContextSwitches.ContextSwitches(const ContextSwitches&): 370 [Function]
+   NodeBase.ContextSwitches.DisplaySwitches: 398 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.ContextSwitches(const ContextSwitches&): 375 [Function]
-   NodeBase.ContextSwitches.DisplaySwitches: 403 [Function]
+   NodeBase.ContextSwitches.EndChar: 394 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.EndChar: 399 [ClassData]
+   NodeBase.ContextSwitches.full_: 422 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.full_: 427 [ClassData]
+   NodeBase.ContextSwitches.IdleChar: 391 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.IdleChar: 396 [ClassData]
+   NodeBase.ContextSwitches.LockedChar: 393 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.LockedChar: 398 [ClassData]
+   NodeBase.ContextSwitches.log_: 426 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.log_: 431 [ClassData]
+   NodeBase.ContextSwitches.LoggingOn: 378 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.LoggingOn: 383 [Function]
+   NodeBase.ContextSwitches.LogSwitches: 382 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.LogSwitches: 387 [Function]
+   NodeBase.ContextSwitches.next_: 414 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.next_: 419 [ClassData]
+   NodeBase.ContextSwitches.operator=: 374 [Function]
+   NodeBase.ContextSwitches.switches_: 418 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.operator=: 379 [Function]
-   NodeBase.ContextSwitches.switches_: 423 [ClassData]
+   NodeBase.ContextSwitches.UnlockedChar: 392 [ClassData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.UnlockedChar: 397 [ClassData]
+   NodeBase.ContextSwitches.~ContextSwitches: 406 [Function]
       nb/Thread.cpp
-   NodeBase.ContextSwitches.~ContextSwitches: 411 [Function]
+   NodeBase.ContextSwitches_DisplaySwitches: 547 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches_DisplaySwitches: 552 [SpaceData]
+   NodeBase.ContextSwitches_dtor: 452 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ContextSwitches_dtor: 457 [SpaceData]
+   NodeBase.ContextSwitchesLock_: 433 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ContextSwitchesLock_: 438 [SpaceData]
+   NodeBase.CurrIntervalStart_: 1081 [SpaceData]
       nb/Thread.cpp
-   NodeBase.CurrIntervalStart_: 1086 [SpaceData]
+   NodeBase.EraseFtLock: 121 [Function]
       nb/Thread.cpp
-   NodeBase.EraseFtLock: 124 [Function]
+   NodeBase.ExitingStr: 1033 [SpaceData]
       nb/Thread.cpp
-   NodeBase.FactionMap: 1052 [SpaceData]
+   NodeBase.FactionMap: 1047 [SpaceData]
       nb/Thread.cpp
-   NodeBase.FactionsEnabled_: 1074 [SpaceData]
+   NodeBase.FactionsEnabled_: 1069 [SpaceData]
       nb/Thread.cpp
-   NodeBase.FactionToPriority: 1113 [Function]
+   NodeBase.FactionToPriority: 1108 [Function]
       nb/Thread.cpp
-   NodeBase.KillDeletingThread: 2115 [SpaceData]
+   NodeBase.KillDeletingThread: 2103 [SpaceData]
       nb/Thread.cpp
-   NodeBase.KillRootThread: 2114 [SpaceData]
+   NodeBase.KillRootThread: 2102 [SpaceData]
       nb/Thread.cpp
-   NodeBase.MaxUnpreemptCount: 2296 [SpaceData]
+   NodeBase.MaxUnpreemptCount: 2284 [SpaceData]
       nb/Thread.cpp
-   NodeBase.MaxUnprotectCount: 1996 [SpaceData]
+   NodeBase.MaxUnprotectCount: 1984 [SpaceData]
       nb/Thread.cpp
-   NodeBase.NodeBase_FactionToPriority: 1108 [SpaceData]
+   NodeBase.NodeBase_FactionToPriority: 1103 [SpaceData]
       nb/Thread.cpp
-   NodeBase.PrevIntervalStart_: 1082 [SpaceData]
+   NodeBase.PrevIntervalStart_: 1077 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SchedEntries: 534 [Typedef]
+   NodeBase.SchedEntries: 529 [Typedef]
       nb/Thread.cpp
-   NodeBase.SchedEntry: 529 [Typedef]
+   NodeBase.SchedEntry: 524 [Typedef]
       nb/Thread.cpp
-   NodeBase.SchedHeader: 1435 [SpaceData]
+   NodeBase.SchedHeader: 1428 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SchedLine: 1441 [SpaceData]
+   NodeBase.SchedLine: 1434 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot: 497 [Class]
+   NodeBase.SchedSnapshot: 492 [Class]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot.activity: 512 [ClassData]
+   NodeBase.SchedSnapshot.activity: 507 [ClassData]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot.duration: 516 [ClassData]
+   NodeBase.SchedSnapshot.duration: 511 [ClassData]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot.nid: 520 [ClassData]
+   NodeBase.SchedSnapshot.nid: 515 [ClassData]
       nb/Thread.cpp
-   NodeBase.SchedSnapshot.SchedSnapshot: 501 [Function]
-   NodeBase.SchedSnapshotPtr: 525 [Typedef]
+   NodeBase.SchedSnapshot.SchedSnapshot: 496 [Function]
+   NodeBase.SchedSnapshotPtr: 520 [Typedef]
       nb/Thread.cpp
-   NodeBase.SchedulingAction: 775 [Enum]
+   NodeBase.SchedulingAction: 770 [Enum]
       nb/Thread.cpp
-   NodeBase.SchedulingAction.ExitThread: 779 [Enumerator]
+   NodeBase.SchedulingAction.ExitThread: 774 [Enumerator]
       nb/Thread.cpp
-   NodeBase.SchedulingAction.RunThread: 777 [Enumerator]
+   NodeBase.SchedulingAction.RunThread: 772 [Enumerator]
       nb/Thread.cpp
-   NodeBase.SchedulingAction.SleepThread: 778 [Enumerator]
+   NodeBase.SchedulingAction.SleepThread: 773 [Enumerator]
       nb/Thread.cpp
-   NodeBase.Singleton<ContextSwitches>: 371 [Friend]
-   NodeBase.StackCheckCounter_: 1078 [SpaceData]
+   NodeBase.Singleton<ContextSwitches>: 366 [Friend]
+   NodeBase.StackCheckCounter_: 1073 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SwitchFooter1: 547 [SpaceData]
+   NodeBase.SwitchFooter1: 542 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SwitchHeader1: 540 [SpaceData]
+   NodeBase.SwitchHeader1: 535 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SwitchHeader2: 542 [SpaceData]
+   NodeBase.SwitchHeader2: 537 [SpaceData]
       nb/Thread.cpp
-   NodeBase.SwitchHeader3: 543 [SpaceData]
+   NodeBase.SwitchHeader3: 538 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_AbbrName: 1220 [SpaceData]
+   NodeBase.Thread_AbbrName: 1215 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_ChangeFaction: 1297 [SpaceData]
+   NodeBase.Thread_ChangeFaction: 1290 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Enter: 1571 [SpaceData]
+   NodeBase.Thread_Enter: 1564 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_EnterBlockingOperation: 1582 [SpaceData]
+   NodeBase.Thread_EnterBlockingOperation: 1575 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_ImmProtect: 1968 [SpaceData]
+   NodeBase.Thread_ImmProtect: 1956 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_ImmUnprotect: 1998 [SpaceData]
+   NodeBase.Thread_ImmUnprotect: 1986 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_MakeUnpreemptable: 2298 [SpaceData]
+   NodeBase.Thread_MakeUnpreemptable: 2286 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_MemProtect: 2321 [SpaceData]
+   NodeBase.Thread_MemProtect: 2309 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_MemUnprotect: 2349 [SpaceData]
+   NodeBase.Thread_MemUnprotect: 2337 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Pause: 2400 [SpaceData]
+   NodeBase.Thread_Pause: 2386 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Raise: 2534 [SpaceData]
+   NodeBase.Thread_Raise: 2520 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_Start: 3042 [SpaceData]
+   NodeBase.Thread_Start: 3022 [SpaceData]
       nb/Thread.cpp
-   NodeBase.Thread_TrapHandler: 3570 [SpaceData]
+   NodeBase.Thread_TrapHandler: 3559 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ThreadDataStr: 1035 [SpaceData]
+   NodeBase.ThreadDataStr: 1030 [SpaceData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv: 791 [Class]
+   NodeBase.ThreadPriv: 786 [Class]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.ThreadPriv.acquiring_: 901 [ClassData]
+   NodeBase.ThreadPriv.acquiring_: 896 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.action_: 881 [ClassData]
+   NodeBase.ThreadPriv.action_: 876 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.autostop_: 849 [ClassData]
+   NodeBase.ThreadPriv.autostop_: 844 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.blocked_: 885 [ClassData]
+   NodeBase.ThreadPriv.blocked_: 880 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.currEnd_: 941 [ClassData]
+   NodeBase.ThreadPriv.currEnd_: 936 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.currStart_: 935 [ClassData]
+   NodeBase.ThreadPriv.currStart_: 930 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.currTime_: 924 [ClassData]
+   NodeBase.ThreadPriv.currTime_: 919 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.Display: 804 [Function]
+   NodeBase.ThreadPriv.Display: 799 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.entered_: 829 [ClassData]
+   NodeBase.ThreadPriv.entered_: 824 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.exiting_: 877 [ClassData]
+   NodeBase.ThreadPriv.exiting_: 872 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.immUnprots_: 813 [ClassData]
+   NodeBase.ThreadPriv.immUnprots_: 808 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.locked_: 837 [ClassData]
+   NodeBase.ThreadPriv.locked_: 832 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.logged_: 873 [ClassData]
+   NodeBase.ThreadPriv.logged_: 868 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.memUnprots_: 817 [ClassData]
+   NodeBase.ThreadPriv.memUnprots_: 812 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.mutexes_: 821 [ClassData]
+   NodeBase.ThreadPriv.mutexes_: 816 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.prevTime_: 919 [ClassData]
+   NodeBase.ThreadPriv.prevTime_: 914 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.readyTime_: 928 [ClassData]
+   NodeBase.ThreadPriv.readyTime_: 923 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.recovering_: 869 [ClassData]
+   NodeBase.ThreadPriv.recovering_: 864 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.rtcLbc_: 905 [ClassData]
+   NodeBase.ThreadPriv.rtcLbc_: 900 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.signal_: 893 [ClassData]
+   NodeBase.ThreadPriv.signal_: 888 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.stackBase_: 897 [ClassData]
+   NodeBase.ThreadPriv.stackBase_: 892 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.status_: 889 [ClassData]
+   NodeBase.ThreadPriv.status_: 884 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.swlogs_: 825 [ClassData]
+   NodeBase.ThreadPriv.swlogs_: 820 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.ThreadPriv: 796 [Function]
+   NodeBase.ThreadPriv.ThreadPriv: 791 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.traceMsg_: 841 [ClassData]
+   NodeBase.ThreadPriv.traceMsg_: 836 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.tracing_: 845 [ClassData]
+   NodeBase.ThreadPriv.tracing_: 840 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.trap_: 858 [ClassData]
+   NodeBase.ThreadPriv.trap_: 853 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.trapLbc_: 909 [ClassData]
+   NodeBase.ThreadPriv.trapLbc_: 904 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.traps_: 865 [ClassData]
+   NodeBase.ThreadPriv.traps_: 860 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.unpreempts_: 809 [ClassData]
+   NodeBase.ThreadPriv.unpreempts_: 804 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.vector_: 913 [ClassData]
+   NodeBase.ThreadPriv.vector_: 908 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.waiting_: 833 [ClassData]
+   NodeBase.ThreadPriv.waiting_: 828 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.warned_: 854 [ClassData]
+   NodeBase.ThreadPriv.warned_: 849 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadPriv.~ThreadPriv: 800 [Function]
+   NodeBase.ThreadPriv.~ThreadPriv: 795 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadStats: 282 [Class]
+   NodeBase.ThreadStats: 277 [Class]
       nb/Thread.cpp
       nb/Thread.h
-   NodeBase.ThreadStats.exceeds_: 289 [ClassData]
+   NodeBase.ThreadStats.exceeds_: 284 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.interrupts_: 291 [ClassData]
+   NodeBase.ThreadStats.interrupts_: 286 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.maxMsgs_: 292 [ClassData]
+   NodeBase.ThreadStats.maxMsgs_: 287 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.maxStack_: 293 [ClassData]
+   NodeBase.ThreadStats.maxStack_: 288 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.maxTime_: 294 [ClassData]
+   NodeBase.ThreadStats.maxTime_: 289 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.ThreadStats: 285 [Function]
+   NodeBase.ThreadStats.ThreadStats: 280 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadStats.totTime_: 295 [ClassData]
+   NodeBase.ThreadStats.totTime_: 290 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.traps_: 288 [ClassData]
+   NodeBase.ThreadStats.traps_: 283 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.yields_: 290 [ClassData]
+   NodeBase.ThreadStats.yields_: 285 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadStats.~ThreadStats: 286 [Function]
+   NodeBase.ThreadStats.~ThreadStats: 281 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace: 145 [Class]
+   NodeBase.ThreadTrace: 140 [Class]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.CaptureEvent: 154 [Function]
+   NodeBase.ThreadTrace.CaptureEvent: 149 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.Display: 168 [Function]
+   NodeBase.ThreadTrace.Display: 163 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.info_: 176 [ClassData]
+   NodeBase.ThreadTrace.info_: 171 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.operator delete: 164 [Function]
+   NodeBase.ThreadTrace.operator delete: 159 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.operator new: 160 [Function]
+   NodeBase.ThreadTrace.operator new: 155 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.PauseEnter: 148 [ClassData]
+   NodeBase.ThreadTrace.PauseEnter: 143 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.PauseExit: 149 [ClassData]
+   NodeBase.ThreadTrace.PauseExit: 144 [ClassData]
       nb/Thread.cpp
-   NodeBase.ThreadTrace.ThreadTrace: 172 [Function]
+   NodeBase.ThreadTrace.ThreadTrace: 167 [Function]
       nb/Thread.cpp
-   NodeBase.ThreadTrace_CaptureEvent: 191 [SpaceData]
+   NodeBase.ThreadTrace_CaptureEvent: 186 [SpaceData]
       nb/Thread.cpp
-   NodeBase.TickTimer: 139 [SpaceData]
-   NodeBase.TimeIdle_: 1090 [SpaceData]
+   NodeBase.TickTimer: 134 [SpaceData]
+   NodeBase.TimeIdle_: 1085 [SpaceData]
       nb/Thread.cpp
-   NodeBase.TimeUsed_: 1094 [SpaceData]
+   NodeBase.TimeUsed_: 1089 [SpaceData]
       nb/Thread.cpp
-   NodeBase.TrapDuringRecoveryStr: 1036 [SpaceData]
+   NodeBase.TrapDuringRecoveryStr: 1031 [SpaceData]
       nb/Thread.cpp
-   NodeBase.TrapLimitReachedStr: 1037 [SpaceData]
+   NodeBase.TrapLimitReachedStr: 1032 [SpaceData]
       nb/Thread.cpp
-   NodeBase.UnknownExceptionStr: 1034 [SpaceData]
+   NodeBase.UnknownExceptionStr: 1029 [SpaceData]
       nb/Thread.cpp
 nb/Thread.h
    NodeBase.Daemon: 43 [Forward]
@@ -45558,9 +45577,9 @@ nb/ThreadRegistry.cpp
       nb/ThreadRegistry.cpp
    NodeBase.ThreadRegistry_dtor: 146 [SpaceData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry_GetState: 320 [SpaceData]
+   NodeBase.ThreadRegistry_GetState: 316 [SpaceData]
       nb/ThreadRegistry.cpp
-   NodeBase.ThreadRegistry_Initialized: 384 [SpaceData]
+   NodeBase.ThreadRegistry_Initialized: 380 [SpaceData]
       nb/ThreadRegistry.cpp
    NodeBase.ThreadsLock_: 127 [SpaceData]
       nb/ThreadRegistry.cpp
@@ -53948,7 +53967,9 @@ rn/RnModule.h
    RoutingNode.RnModule.~RnModule: 46 [Function]
       rn/RnModule.cpp
 rsc/main.cpp
-   main: 102 [Function]
+   CreateModules: 100 [Function]
+      rsc/main.cpp
+   main(int,char*): 123 [Function]
 sb/AnalyzeSapEvent.cpp
    SessionBase.AnalyzeSapEvent_FreeContext: 122 [SpaceData]
       sb/AnalyzeSapEvent.cpp
@@ -66272,6 +66293,7 @@ subs/cctype
       nw/SysIpL2Addr.cpp
    tolower: 14 [Function]
       dip/MapAndUnits.cpp
+      launcher/RscLauncher.cpp
       nb/CliBoolParm.cpp
       nb/CliThread.cpp
       nb/Formatters.cpp
@@ -67030,6 +67052,7 @@ subs/cstdio
       ct/CodeCoverage.cpp
       ct/CodeFile.cpp
       ct/CxxRoot.cpp
+      launcher/RscLauncher.cpp
       nb/CfgParmRegistry.cpp
       nb/CliThread.cpp
       nb/SysFile.cpp
@@ -67044,6 +67067,8 @@ subs/cstdio
 subs/cstdlib
    CSTDLIB_INCLUDED: 6 [Define]
    exit: 10 [Function]
+      launcher/RscLauncher.cpp
+      nb/RootThread.cpp
       nb/Thread.cpp
    rand: 11 [Function]
       nb/Algorithms.cpp
@@ -67058,6 +67083,7 @@ subs/cstring
       dip/TokenMessage.cpp
       nb/Memory.cpp
    memset: 11 [Function]
+      launcher/RscLauncher.win.cpp
       nb/Memory.cpp
       nw/SysIpL2Addr.win.cpp
       nw/SysIpL3Addr.win.cpp
@@ -67069,7 +67095,8 @@ subs/cstring
       nb/FunctionTrace.cpp
       nt/FunctionProfiler.cpp
       nt/FunctionStats.cpp
-   strcpy: 15 [Function]
+   strcpy_s: 15 [Function]
+      launcher/RscLauncher.win.cpp
    strlen: 13 [Function]
       ct/CodeWarning.cpp
       ct/Cxx.cpp
@@ -67267,6 +67294,7 @@ subs/iomanip
 subs/ios
    IOS_INCLUDED: 6 [Define]
    std.basic_ios: 15 [Class]
+      ct/CodeFile.cpp
       nb/SysFile.cpp
    std.basic_ios.app: 23 [ClassData]
       nb/SysFile.cpp
@@ -67291,6 +67319,7 @@ subs/ios
    std.basic_ios.seekdir.beg: 26 [Enumerator]
    std.basic_ios.seekdir.cur: 26 [Enumerator]
    std.basic_ios.seekdir.end: 26 [Enumerator]
+      ct/CodeFile.cpp
    std.basic_ios.trunc: 24 [ClassData]
       nb/SysFile.cpp
    std.basic_ios.~basic_ios: 19 [Function]
@@ -67380,8 +67409,10 @@ subs/iosfwd
    std.char_traits: 11 [Forward]
    std.fstream: 29 [Typedef]
    std.ifstream: 27 [Typedef]
+      launcher/RscLauncher.cpp
       nb/SysFile.cpp
    std.ios: 22 [Typedef]
+      ct/CodeFile.cpp
       nb/SysFile.cpp
    std.istream: 23 [Typedef]
       ct/CxxRoot.cpp
@@ -67953,8 +67984,11 @@ subs/iosfwd
 subs/iostream
    IOSTREAM_INCLUDED: 6 [Define]
    std.cin: 14 [SpaceData]
+      launcher/RscLauncher.cpp
       nb/SysConsole.cpp
    std.cout: 15 [SpaceData]
+      launcher/RscLauncher.cpp
+      launcher/RscLauncher.win.cpp
       nb/SysConsole.cpp
       rsc/main.cpp
 subs/istream
@@ -67997,6 +68031,7 @@ subs/istream
       ct/CodeCoverage.cpp
       ct/CodeFile.cpp
       ct/CxxRoot.cpp
+      launcher/RscLauncher.cpp
       nb/CfgParmRegistry.cpp
       nb/CliThread.cpp
       nb/SysFile.cpp
@@ -68006,6 +68041,7 @@ subs/istream
    std.basic_istream.seekg(streampos): 40 [Function]
       ct/CodeFile.cpp
    std.basic_istream.seekg(streampos,basic_ios::seekdir): 41 [Function]
+      ct/CodeFile.cpp
    std.basic_istream.tellg: 39 [Function]
    std.basic_istream.~basic_istream: 18 [Function]
 subs/iterator
@@ -68037,8 +68073,6 @@ subs/list
       dip/DipTypes.h
       nb/CliBuffer.cpp
       nb/CliBuffer.h
-      nb/ThreadRegistry.cpp
-      nb/ThreadRegistry.h
    std.list.back(): 40 [Function]
       ct/CodeFile.cpp
    std.list.back() const: 39 [Function]
@@ -68047,7 +68081,6 @@ subs/list
       dip/Adjudicator.cpp
       dip/BaseBot.cpp
       dip/UnitOrder.cpp
-      nb/ThreadRegistry.cpp
    std.list.begin() const: 25 [Function]
       ct/Editor.cpp
       ct/Library.cpp
@@ -68058,14 +68091,12 @@ subs/list
       ct/Library.cpp
       ct/LibraryVarSet.cpp
       nb/CliBuffer.cpp
-      nb/ModuleRegistry.cpp
    std.list.cend: 27 [Function]
       ct/CodeFile.cpp
       ct/Editor.cpp
       ct/Library.cpp
       ct/LibraryVarSet.cpp
       nb/CliBuffer.cpp
-      nb/ModuleRegistry.cpp
    std.list.clear: 33 [Function]
       dip/MapAndUnits.cpp
       dip/UnitOrder.cpp
@@ -68080,7 +68111,6 @@ subs/list
       dip/Adjudicator.cpp
       dip/BaseBot.cpp
       dip/UnitOrder.cpp
-      nb/ThreadRegistry.cpp
    std.list.end() const: 30 [Function]
       ct/Editor.cpp
       ct/Library.cpp
@@ -68089,7 +68119,6 @@ subs/list
       ct/CodeFile.cpp
       ct/Library.cpp
       dip/BaseBot.cpp
-      nb/ThreadRegistry.cpp
    std.list.erase(const_iterator,const_iterator): 44 [Function]
    std.list.front(): 42 [Function]
       nb/CliBuffer.cpp
@@ -68114,7 +68143,6 @@ subs/list
       dip/MapAndUnits.cpp
       dip/UnitOrder.cpp
       nb/CliBuffer.cpp
-      nb/ThreadRegistry.cpp
    std.list.push_front: 49 [Function]
       dip/Adjudicator.cpp
       nb/CliBuffer.cpp
@@ -68128,7 +68156,6 @@ subs/list
       ct/LibraryVarSet.cpp
       dip/BaseBot.cpp
       nb/CliBuffer.cpp
-      nb/ModuleRegistry.cpp
    std.list.sort(): 52 [Function]
    std.list.sort(bool (*sorted)(T& first, T& second)): 53 [Function]
       ct/CodeFile.cpp
@@ -68611,6 +68638,7 @@ subs/new
       ct/Library.cpp
       ct/LibrarySet.cpp
       dip/MapAndUnits.cpp
+      launcher/RscLauncher.cpp
       nb/Class.cpp
       nb/Heap.cpp
       nb/Q1Way.h
@@ -68635,6 +68663,7 @@ subs/new
       dip/BaseBot.cpp
       dip/BotThread.cpp
       dip/MapAndUnits.cpp
+      launcher/RscLauncher.cpp
       nb/Base.cpp
       nb/CliBuffer.cpp
       nb/CliThread.cpp
@@ -68815,6 +68844,8 @@ subs/ostream
       dip/TokenMessage.cpp
       dip/UnitOrder.cpp
       dip/WinterOrders.cpp
+      launcher/RscLauncher.cpp
+      launcher/RscLauncher.win.cpp
       mb/Circuit.cpp
       mb/MediaEndpt.cpp
       mb/MediaFailureEvent.cpp
@@ -69067,6 +69098,8 @@ subs/ostream
       dip/StartupParameters.cpp
       dip/Token.cpp
       dip/WinterOrders.cpp
+      launcher/RscLauncher.cpp
+      launcher/RscLauncher.win.cpp
       mb/Circuit.cpp
       mb/MediaEndpt.cpp
       mb/MediaFailureEvent.cpp
@@ -69556,6 +69589,7 @@ subs/ostream
       dip/BaseBot.cpp
       dip/DipProtocol.cpp
       dip/WinterOrders.cpp
+      launcher/RscLauncher.win.cpp
       nb/AlarmRegistry.cpp
       nb/AllocationException.cpp
       nb/CfgParmRegistry.cpp
@@ -69739,6 +69773,8 @@ subs/set
       nb/SysFile.h
       nb/SysHeap.h
       nb/SysHeap.win.cpp
+      nb/ThreadRegistry.cpp
+      nb/ThreadRegistry.h
       nt/TestDatabase.cpp
    std.set.begin(): 23 [Function]
       ct/CodeFile.cpp
@@ -69747,6 +69783,7 @@ subs/set
       dip/Adjudicator.cpp
       dip/BotThread.cpp
       dip/MapAndUnits.cpp
+      nb/ThreadRegistry.cpp
    std.set.begin() const: 27 [Function]
       ct/CxxScoped.cpp
       dip/Adjudicator.cpp
@@ -69773,6 +69810,7 @@ subs/set
       dip/BotThread.cpp
       nb/Daemon.cpp
       nb/Memory.cpp
+      nb/ModuleRegistry.cpp
       nt/TestDatabase.cpp
    std.set.cend: 29 [Function]
       ct/CodeCoverage.cpp
@@ -69798,6 +69836,7 @@ subs/set
       dip/BotThread.cpp
       nb/Daemon.cpp
       nb/Memory.cpp
+      nb/ModuleRegistry.cpp
       nt/TestDatabase.cpp
    std.set.clear: 35 [Function]
       ct/CodeCoverage.cpp
@@ -69834,6 +69873,7 @@ subs/set
       dip/BotThread.cpp
       dip/MapAndUnits.cpp
       nb/Daemon.cpp
+      nb/ThreadRegistry.cpp
    std.set.end() const: 32 [Function]
       ct/CxxScoped.cpp
       dip/Adjudicator.cpp
@@ -69858,6 +69898,7 @@ subs/set
       dip/BotThread.cpp
       dip/MapAndUnits.cpp
       nb/Daemon.cpp
+      nb/ThreadRegistry.cpp
    std.set.erase(const_iterator&,const_iterator&): 40 [Function]
    std.set.find(const T&): 45 [Function]
       ct/CodeCoverage.cpp
@@ -69901,6 +69942,7 @@ subs/set
       nb/Memory.cpp
       nb/SysFile.cpp
       nb/SysHeap.win.cpp
+      nb/ThreadRegistry.cpp
    std.set.iterator: 18 [Typedef]
    std.set.lower_bound(const T&): 47 [Function]
    std.set.lower_bound(const T&) const: 46 [Function]
@@ -69925,6 +69967,7 @@ subs/set
       dip/MapAndUnits.cpp
       nb/Daemon.cpp
       nb/InitThread.cpp
+      nb/ModuleRegistry.cpp
       sb/SbDaemons.cpp
    std.set.swap: 38 [Function]
       ct/SetOperations.cpp
@@ -70046,6 +70089,7 @@ subs/string
    std.basic_string.at(size_t) const: 40 [Function]
       ct/CxxString.cpp
    std.basic_string.back(): 43 [Function]
+      ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/Cxx.cpp
       ct/CxxScope.cpp
@@ -70067,6 +70111,7 @@ subs/string
    std.basic_string.basic_string(const charT*,const charT*): 27 [Function]
    std.basic_string.basic_string(size_t,charT): 26 [Function]
    std.basic_string.begin: 44 [Function]
+      launcher/RscLauncher.win.cpp
       nb/SysConsole.win.cpp
    std.basic_string.c_str: 45 [Function]
       ct/CodeCoverage.cpp
@@ -70079,6 +70124,7 @@ subs/string
       ct/Parser.cpp
       dip/BaseBot.cpp
       dip/MapAndUnits.cpp
+      launcher/RscLauncher.win.cpp
       nb/Alarm.cpp
       nb/Alarm.h
       nb/CfgParm.cpp
@@ -70200,6 +70246,7 @@ subs/string
       ct/LibrarySet.cpp
       ct/Parser.cpp
       dip/StartupParameters.cpp
+      launcher/RscLauncher.cpp
       nb/CfgParmRegistry.cpp
       nb/CinThread.cpp
       nb/CliBoolParm.cpp
@@ -70228,6 +70275,7 @@ subs/string
       nw/NwLogs.cpp
       st/MscBuilder.cpp
    std.basic_string.end: 53 [Function]
+      launcher/RscLauncher.win.cpp
       nb/SysConsole.win.cpp
    std.basic_string.erase: 54 [Function]
       ct/CodeFile.cpp
@@ -70270,6 +70318,7 @@ subs/string
       ct/Library.cpp
       ct/Parser.cpp
       dip/MapAndUnits.cpp
+      launcher/RscLauncher.cpp
       nb/CliTextParm.cpp
       nb/CliThread.cpp
       nb/FunctionTrace.cpp
@@ -70351,6 +70400,7 @@ subs/string
       ct/Lexer.cpp
       ct/LibrarySet.cpp
       dip/StartupParameters.cpp
+      launcher/RscLauncher.cpp
       nb/CfgBitParm.cpp
       nb/CliBoolParm.cpp
       nb/CliBuffer.cpp
@@ -70415,6 +70465,7 @@ subs/string
       ct/Parser.h
       dip/BaseBot.cpp
       dip/MapAndUnits.cpp
+      launcher/RscLauncher.cpp
       nb/CfgParmRegistry.cpp
       nb/CfgTuple.cpp
       nb/CliTextParm.cpp
@@ -70445,6 +70496,7 @@ subs/string
    std.basic_string.operator[](size_t) const: 35 [Function]
    std.basic_string.pop_back: 76 [Function]
       ct/CodeCoverage.cpp
+      ct/CodeFile.cpp
       ct/CodeTypes.cpp
       ct/Cxx.cpp
       ct/CxxScope.cpp
@@ -70613,6 +70665,7 @@ subs/string
       ct/CodeCoverage.cpp
       ct/CodeFile.cpp
       ct/CxxRoot.cpp
+      launcher/RscLauncher.cpp
       nb/CfgParmRegistry.cpp
       nb/CinThread.cpp
       nb/CliBuffer.cpp
@@ -70744,6 +70797,9 @@ subs/string
       dip/TokenMessage.h
       dip/TokenTextMap.cpp
       dip/TokenTextMap.h
+      launcher/RscLauncher.cpp
+      launcher/RscLauncher.h
+      launcher/RscLauncher.win.cpp
       mb/Circuit.cpp
       mb/Circuit.h
       mb/MediaEndpt.cpp
@@ -71190,6 +71246,7 @@ subs/string
       ct/CxxStrLiteral.h
    std.wstring: 108 [Typedef]
       ct/CxxStrLiteral.h
+      launcher/RscLauncher.win.cpp
       nb/SysConsole.win.cpp
    STRING_INCLUDED: 6 [Define]
 subs/timeb.h
@@ -71769,235 +71826,273 @@ subs/vector
    std.vector.~vector: 22 [Function]
    VECTOR_INCLUDED: 6 [Define]
 subs/windows.h
-   _EXCEPTION_POINTERS: 171 [Class]
+   _EXCEPTION_POINTERS: 218 [Class]
       nb/SysThread.win.cpp
-   _EXCEPTION_POINTERS.ExceptionRecord: 173 [ClassData]
+   _EXCEPTION_POINTERS.ExceptionRecord: 220 [ClassData]
       nb/SysThread.win.cpp
-   _resetstkoflw: 178 [Function]
+   _resetstkoflw: 225 [Function]
       nb/SysThread.win.cpp
-   _se_translator_function: 176 [Typedef]
+   _se_translator_function: 223 [Typedef]
       nb/SysThread.win.cpp
-   _set_se_translator: 177 [Function]
+   _set_se_translator: 224 [Function]
       nb/SysThread.win.cpp
-   CloseHandle: 109 [Function]
+   CloseHandle: 108 [Function]
+      launcher/RscLauncher.win.cpp
       nb/SysLock.win.cpp
       nb/SysMutex.win.cpp
       nb/SysThread.win.cpp
-   CreateEvent: 110 [Function]
+   CreateEvent: 109 [Function]
       nb/SysThread.win.cpp
-   CreateMutex: 107 [Function]
+   CreateMutex: 106 [Function]
       nb/SysLock.win.cpp
       nb/SysMutex.win.cpp
-   DBG_CONTROL_BREAK: 141 [SpaceData]
+   CreateProcessA: 169 [Function]
+      launcher/RscLauncher.win.cpp
+   DBG_CONTROL_BREAK: 188 [SpaceData]
       nb/SysThread.win.cpp
-   DBG_CONTROL_C: 140 [SpaceData]
+   DBG_CONTROL_C: 187 [SpaceData]
       nb/SysThread.win.cpp
-   DUPLICATE_SAME_ACCESS: 122 [SpaceData]
+   DUPLICATE_SAME_ACCESS: 121 [SpaceData]
       nb/SysThread.win.cpp
-   DuplicateHandle: 126 [Function]
+   DuplicateHandle: 125 [Function]
       nb/SysThread.win.cpp
    DWORD: 17 [Typedef]
+      launcher/RscLauncher.win.cpp
       nb/SysHeap.win.cpp
       nb/SysMemory.win.cpp
       nb/SysThreadStack.win.cpp
       nw/SysSocket.win.cpp
    DWORD64: 18 [Typedef]
       nb/SysThreadStack.win.cpp
-   errno_t: 52 [Typedef]
+   errno_t: 51 [Typedef]
       nb/SysTime.win.cpp
-   ERROR_INVALID_PARAMETER: 31 [SpaceData]
+   ERROR_INVALID_PARAMETER: 30 [SpaceData]
       nb/SysMemory.win.cpp
-   ERROR_NOT_ENOUGH_MEMORY: 29 [SpaceData]
+   ERROR_NOT_ENOUGH_MEMORY: 28 [SpaceData]
       nb/SysThreadStack.win.cpp
-   ERROR_NOT_OWNER: 32 [SpaceData]
-   ERROR_NOT_SUPPORTED: 30 [SpaceData]
+   ERROR_NOT_OWNER: 31 [SpaceData]
+   ERROR_NOT_SUPPORTED: 29 [SpaceData]
       nb/SysHeap.win.cpp
-   EXCEPTION_ACCESS_VIOLATION: 144 [SpaceData]
+   EXCEPTION_ACCESS_VIOLATION: 191 [SpaceData]
       nb/SysThread.win.cpp
-   EXCEPTION_RECORD: 164 [Class]
-   EXCEPTION_RECORD.ExceptionCode: 166 [ClassData]
+   EXCEPTION_RECORD: 211 [Class]
+   EXCEPTION_RECORD.ExceptionCode: 213 [ClassData]
       nb/SysThread.win.cpp
-   EXCEPTION_RECORD.ExceptionInformation: 168 [ClassData]
+   EXCEPTION_RECORD.ExceptionInformation: 215 [ClassData]
       nb/SysThread.win.cpp
-   EXCEPTION_RECORD.NumberParameters: 167 [ClassData]
+   EXCEPTION_RECORD.NumberParameters: 214 [ClassData]
       nb/SysThread.win.cpp
-   GetConsoleWindow: 187 [Function]
+   GetConsoleWindow: 234 [Function]
       nb/SysConsole.win.cpp
-   GetCurrentProcess: 125 [Function]
+   GetCurrentProcess: 124 [Function]
       nb/SysThread.win.cpp
       nb/SysThreadStack.win.cpp
-   GetCurrentThread: 131 [Function]
+   GetCurrentThread: 130 [Function]
       nb/SysThread.win.cpp
-   GetCurrentThreadId: 132 [Function]
+   GetCurrentThreadId: 131 [Function]
       nb/SysThread.win.cpp
-   GetLastError: 27 [Function]
+   GetExitCodeProcess: 181 [Function]
+      launcher/RscLauncher.win.cpp
+   GetLastError: 26 [Function]
+      launcher/RscLauncher.win.cpp
       nb/SysHeap.win.cpp
       nb/SysLock.win.cpp
       nb/SysMemory.win.cpp
       nb/SysMutex.win.cpp
       nb/SysThread.win.cpp
       nb/SysThreadStack.win.cpp
-   GetProcessHeap: 88 [Function]
+   GetProcessHeap: 87 [Function]
       nb/SysHeap.win.cpp
-   GetProcessHeaps: 89 [Function]
+   GetProcessHeaps: 88 [Function]
       nb/SysHeap.win.cpp
    HANDLE: 21 [Typedef]
       nb/SysHeap.win.cpp
       nb/SysThread.win.cpp
       nb/SysThreadStack.win.cpp
-   HEAP_GENERATE_EXCEPTIONS: 83 [SpaceData]
-   HeapAlloc: 91 [Function]
+   HEAP_GENERATE_EXCEPTIONS: 82 [SpaceData]
+   HeapAlloc: 90 [Function]
       nb/SysHeap.win.cpp
-   HeapCreate: 90 [Function]
+   HeapCreate: 89 [Function]
       nb/SysHeap.win.cpp
-   HeapDestroy: 95 [Function]
+   HeapDestroy: 94 [Function]
       nb/SysHeap.win.cpp
-   HeapFree: 94 [Function]
+   HeapFree: 93 [Function]
       nb/SysHeap.win.cpp
-   HeapSize: 92 [Function]
+   HeapSize: 91 [Function]
       nb/SysHeap.win.cpp
-   HeapValidate: 93 [Function]
+   HeapValidate: 92 [Function]
       nb/SysHeap.win.cpp
-   HIBYTE: 26 [Function]
+   HIBYTE: 25 [Function]
       nw/SysSocket.win.cpp
-   HIGH_PRIORITY_CLASS: 123 [SpaceData]
+   HIGH_PRIORITY_CLASS: 122 [SpaceData]
       nb/SysThread.win.cpp
-   HRESULT: 85 [Typedef]
+   HRESULT: 84 [Typedef]
       nb/SysHeap.win.cpp
-   INFINITE: 101 [SpaceData]
+   INFINITE: 100 [SpaceData]
+      launcher/RscLauncher.win.cpp
       nb/SysLock.win.cpp
-   LARGE_INTEGER: 38 [Class]
+   LARGE_INTEGER: 37 [Class]
       nb/SysTickTimer.win.cpp
-   LARGE_INTEGER.QuadPart: 46 [ClassData]
+   LARGE_INTEGER.QuadPart: 45 [ClassData]
       nb/SysTickTimer.win.cpp
-   LARGE_INTEGER.u: 40 [Class]
-   LARGE_INTEGER.u.HighPart: 43 [ClassData]
-   LARGE_INTEGER.u.LowPart: 42 [ClassData]
-   LOBYTE: 25 [Function]
+   LARGE_INTEGER.u: 39 [Class]
+   LARGE_INTEGER.u.HighPart: 42 [ClassData]
+   LARGE_INTEGER.u.LowPart: 41 [ClassData]
+   LOBYTE: 24 [Function]
       nw/SysSocket.win.cpp
-   localtime_s: 54 [Function]
+   localtime_s: 53 [Function]
       nb/SysTime.win.cpp
-   LPVOID: 22 [Typedef]
-   MAKEWORD: 24 [Function]
+   MAKEWORD: 23 [Function]
       nw/SysSocket.win.cpp
-   MEM_COMMIT: 69 [SpaceData]
+   MEM_COMMIT: 68 [SpaceData]
       nb/SysMemory.win.cpp
-   MEM_RELEASE: 71 [SpaceData]
+   MEM_RELEASE: 70 [SpaceData]
       nb/SysMemory.win.cpp
-   MEM_RESERVE: 70 [SpaceData]
+   MEM_RESERVE: 69 [SpaceData]
       nb/SysMemory.win.cpp
-   PAGE_EXECUTE: 65 [SpaceData]
+   PAGE_EXECUTE: 64 [SpaceData]
       nb/SysMemory.win.cpp
-   PAGE_EXECUTE_READ: 66 [SpaceData]
+   PAGE_EXECUTE_READ: 65 [SpaceData]
       nb/SysMemory.win.cpp
-   PAGE_EXECUTE_READWRITE: 67 [SpaceData]
+   PAGE_EXECUTE_READWRITE: 66 [SpaceData]
       nb/SysMemory.win.cpp
-   PAGE_NOACCESS: 62 [SpaceData]
+   PAGE_NOACCESS: 61 [SpaceData]
       nb/SysMemory.win.cpp
-   PAGE_READONLY: 63 [SpaceData]
+   PAGE_READONLY: 62 [SpaceData]
       nb/SysMemory.win.cpp
-   PAGE_READWRITE: 64 [SpaceData]
+   PAGE_READWRITE: 63 [SpaceData]
       nb/SysMemory.win.cpp
-   QueryPerformanceCounter: 50 [Function]
+   PROCESS_INFORMATION: 161 [Class]
+      launcher/RscLauncher.win.cpp
+   PROCESS_INFORMATION.dwProcessId: 165 [ClassData]
+   PROCESS_INFORMATION.dwThreadId: 166 [ClassData]
+   PROCESS_INFORMATION.hProcess: 163 [ClassData]
+      launcher/RscLauncher.win.cpp
+   PROCESS_INFORMATION.hThread: 164 [ClassData]
+      launcher/RscLauncher.win.cpp
+   QueryPerformanceCounter: 49 [Function]
       nb/SysTickTimer.win.cpp
-   QueryPerformanceFrequency: 49 [Function]
+   QueryPerformanceFrequency: 48 [Function]
       nb/SysTickTimer.win.cpp
-   ReleaseMutex: 108 [Function]
+   ReleaseMutex: 107 [Function]
       nb/SysLock.win.cpp
       nb/SysMutex.win.cpp
-   S_OK: 86 [SpaceData]
+   S_OK: 85 [SpaceData]
       nb/SysHeap.win.cpp
-   SetConsoleTitle: 189 [Function]
+   SetConsoleTitle: 236 [Function]
+      launcher/RscLauncher.win.cpp
       nb/SysConsole.win.cpp
-   SetEvent: 111 [Function]
+   SetEvent: 110 [Function]
       nb/SysThread.win.cpp
-   SetPriorityClass: 129 [Function]
+   SetPriorityClass: 128 [Function]
       nb/SysThread.win.cpp
-   SetThreadPriority: 133 [Function]
+   SetThreadPriority: 132 [Function]
       nb/SysThread.win.cpp
-   SetThreadPriorityBoost: 134 [Function]
+   SetThreadPriorityBoost: 133 [Function]
       nb/SysThread.win.cpp
-   ShowWindow: 188 [Function]
+   ShowWindow: 235 [Function]
       nb/SysConsole.win.cpp
-   SIZE_T: 60 [Typedef]
+   SIZE_T: 59 [Typedef]
       nb/SysHeap.win.cpp
-   STATUS_ACCESS_VIOLATION: 143 [SpaceData]
+   STARTUPINFOA: 139 [Class]
+      launcher/RscLauncher.win.cpp
+   STARTUPINFOA.cb: 141 [ClassData]
+      launcher/RscLauncher.win.cpp
+   STARTUPINFOA.cbReserved2: 154 [ClassData]
+   STARTUPINFOA.dwFillAttribute: 151 [ClassData]
+   STARTUPINFOA.dwFlags: 152 [ClassData]
+   STARTUPINFOA.dwX: 145 [ClassData]
+   STARTUPINFOA.dwXCountChars: 149 [ClassData]
+   STARTUPINFOA.dwXSize: 147 [ClassData]
+   STARTUPINFOA.dwY: 146 [ClassData]
+   STARTUPINFOA.dwYCountChars: 150 [ClassData]
+   STARTUPINFOA.dwYSize: 148 [ClassData]
+   STARTUPINFOA.hStdError: 158 [ClassData]
+   STARTUPINFOA.hStdInput: 156 [ClassData]
+   STARTUPINFOA.hStdOutput: 157 [ClassData]
+   STARTUPINFOA.lpDesktop: 143 [ClassData]
+   STARTUPINFOA.lpReserved: 142 [ClassData]
+   STARTUPINFOA.lpReserved2: 155 [ClassData]
+   STARTUPINFOA.lpTitle: 144 [ClassData]
+   STARTUPINFOA.wShowWindow: 153 [ClassData]
+   STATUS_ACCESS_VIOLATION: 190 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_ARRAY_BOUNDS_EXCEEDED: 151 [SpaceData]
+   STATUS_ARRAY_BOUNDS_EXCEEDED: 198 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_DATATYPE_MISALIGNMENT: 142 [SpaceData]
+   STATUS_DATATYPE_MISALIGNMENT: 189 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_FLOAT_DENORMAL_OPERAND: 152 [SpaceData]
+   STATUS_FLOAT_DENORMAL_OPERAND: 199 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_FLOAT_DIVIDE_BY_ZERO: 153 [SpaceData]
+   STATUS_FLOAT_DIVIDE_BY_ZERO: 200 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_FLOAT_INEXACT_RESULT: 154 [SpaceData]
+   STATUS_FLOAT_INEXACT_RESULT: 201 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_FLOAT_INVALID_OPERATION: 155 [SpaceData]
+   STATUS_FLOAT_INVALID_OPERATION: 202 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_FLOAT_OVERFLOW: 156 [SpaceData]
+   STATUS_FLOAT_OVERFLOW: 203 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_FLOAT_STACK_CHECK: 157 [SpaceData]
+   STATUS_FLOAT_STACK_CHECK: 204 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_FLOAT_UNDERFLOW: 158 [SpaceData]
+   STATUS_FLOAT_UNDERFLOW: 205 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_ILLEGAL_INSTRUCTION: 148 [SpaceData]
+   STATUS_ILLEGAL_INSTRUCTION: 195 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_IN_PAGE_ERROR: 145 [SpaceData]
+   STATUS_IN_PAGE_ERROR: 192 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_INTEGER_DIVIDE_BY_ZERO: 159 [SpaceData]
+   STATUS_INTEGER_DIVIDE_BY_ZERO: 206 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_INTEGER_OVERFLOW: 160 [SpaceData]
+   STATUS_INTEGER_OVERFLOW: 207 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_INVALID_DISPOSITION: 150 [SpaceData]
+   STATUS_INVALID_DISPOSITION: 197 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_INVALID_HANDLE: 146 [SpaceData]
+   STATUS_INVALID_HANDLE: 193 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_NO_MEMORY: 147 [SpaceData]
+   STATUS_NO_MEMORY: 194 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_NONCONTINUABLE_EXCEPTION: 149 [SpaceData]
+   STATUS_NONCONTINUABLE_EXCEPTION: 196 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_PRIVILEGED_INSTRUCTION: 161 [SpaceData]
+   STATUS_PRIVILEGED_INSTRUCTION: 208 [SpaceData]
       nb/SysThread.win.cpp
-   STATUS_STACK_OVERFLOW: 162 [SpaceData]
+   STATUS_STACK_OVERFLOW: 209 [SpaceData]
       nb/SysThread.win.cpp
-   SW_MINIMIZE: 184 [SpaceData]
+   SW_MINIMIZE: 231 [SpaceData]
       nb/SysConsole.win.cpp
-   SW_RESTORE: 185 [SpaceData]
+   SW_RESTORE: 232 [SpaceData]
       nb/SysConsole.win.cpp
-   THREAD_PRIORITY_ABOVE_NORMAL: 119 [SpaceData]
+   THREAD_PRIORITY_ABOVE_NORMAL: 118 [SpaceData]
       nb/SysThread.win.cpp
-   THREAD_PRIORITY_BELOW_NORMAL: 117 [SpaceData]
+   THREAD_PRIORITY_BELOW_NORMAL: 116 [SpaceData]
       nb/SysThread.win.cpp
-   THREAD_PRIORITY_HIGHEST: 120 [SpaceData]
+   THREAD_PRIORITY_HIGHEST: 119 [SpaceData]
       nb/SysThread.win.cpp
-   THREAD_PRIORITY_NORMAL: 118 [SpaceData]
+   THREAD_PRIORITY_NORMAL: 117 [SpaceData]
       nb/SysThread.win.cpp
    u_long: 20 [Typedef]
       nw/SysSocket.win.cpp
    ULONG: 19 [Typedef]
-   VirtualAlloc: 73 [Function]
+   VirtualAlloc: 72 [Function]
       nb/SysMemory.win.cpp
-   VirtualFree: 74 [Function]
+   VirtualFree: 73 [Function]
       nb/SysMemory.win.cpp
-   VirtualLock: 75 [Function]
+   VirtualLock: 74 [Function]
       nb/SysMemory.win.cpp
-   VirtualProtect: 77 [Function]
+   VirtualProtect: 76 [Function]
       nb/SysMemory.win.cpp
-   VirtualUnlock: 76 [Function]
+   VirtualUnlock: 75 [Function]
       nb/SysMemory.win.cpp
-   WAIT_ABANDONED: 103 [SpaceData]
+   WAIT_ABANDONED: 102 [SpaceData]
       nb/SysLock.win.cpp
       nb/SysMutex.win.cpp
       nb/SysThread.win.cpp
-   WAIT_OBJECT_0: 102 [SpaceData]
+   WAIT_OBJECT_0: 101 [SpaceData]
       nb/SysLock.win.cpp
       nb/SysMutex.win.cpp
       nb/SysThread.win.cpp
-   WAIT_TIMEOUT: 104 [SpaceData]
+   WAIT_TIMEOUT: 103 [SpaceData]
       nb/SysMutex.win.cpp
       nb/SysThread.win.cpp
-   WaitForSingleObject: 106 [Function]
+   WaitForSingleObject: 105 [Function]
+      launcher/RscLauncher.win.cpp
       nb/SysLock.win.cpp
       nb/SysMutex.win.cpp
       nb/SysThread.win.cpp

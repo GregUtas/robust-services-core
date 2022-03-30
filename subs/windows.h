@@ -234,4 +234,5 @@ constexpr int SW_RESTORE = 9;
 HANDLE GetConsoleWindow();
 bool ShowWindow(HANDLE window, int mode);
 bool SetConsoleTitle(const wchar_t* title);
+
 #endif

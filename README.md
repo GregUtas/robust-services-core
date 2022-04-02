@@ -22,11 +22,11 @@ been proven in flagship telecom products, including (from the author's
 experience as its chief software architect) the core network server that
 handles all of the calls in AT&T's cellular network. A pattern language that
 summarizes the patterns appears in the
-[second chapter](/docs/RCS-chapter-2.pdf) of _Robust Communications Software_.
-The document [_RSC Software Overview_](/docs/RSC-Software-Overview.pdf)
+[second chapter](docs/RCS-chapter-2.pdf) of _Robust Communications Software_.
+The document [_RSC Software Overview_](docs/RSC-Software-Overview.pdf)
 describes which of them are currently available in this repository and points
 to the primary code files that implement them, and this
-[tutorial](/docs/RCS-tutorial.pdf) provides more information about some of
+[tutorial](docs/RCS-tutorial.pdf) provides more information about some of
 them.
 
 ## C++ static analysis tools
@@ -50,7 +50,7 @@ telecom industry. But more importantly, POTS is a non-trivial application, yet
 everyone has a reasonable understanding of what it does. You should therefore
 be able to figure out what the POTS code is doing without reading a large
 specification. An overview of the POTS application is provided
-[here](/docs/RSC-POTS-Application.md).
+[here](docs/RSC-POTS-Application.md).
 
 ## Diplomacy AI client
 
@@ -65,13 +65,13 @@ Their website also provides base software for developing bots. It seemed that
 it would be interesting to refactor this software while decoupling it from
 Windows and bringing it more in line with C++11. This would help RSC evolve
 to better support standalone clients that use IP (TCP, in this case). The
-resulting software is available in the [_dip_](/dip) directory and is
-described in some further detail [here](/docs/RSC-Diplomacy.md).
+resulting software is available in the [_dip_](src/dip) directory and is
+described in some further detail [here](docs/RSC-Diplomacy.md).
 
 ## Documentation
 
 This page provides an overview of RSC. There is also a page which lists
-[documents](/docs/README.md) that go into far more depth on many topics.
+[documents](docs/README.md) that go into far more depth on many topics.
 
 ## Installing the repository
 
@@ -90,18 +90,18 @@ RSC is currently implemented on Windows, where it runs as a console application.
 However, it defines an abstraction layer, in the form of generic C++ _.h_'s and
 platform-specific _.cpp_'s, that should allow it to be ported to other systems
 fairly easily. Debug and release executables, for 32-bit and 64-bit Windows, are
-provided [here](/exe).
+provided with each [release](https://github.com/GregUtas/robust-services-core/releases/latest).
 
 The directories that contain RSC's source code, and the dependencies between
 them, are listed in the comments that precede the implementation of
-[`main`](/rsc/main.cpp). Each of these directories is built as a separate
+[`main`](src/rsc/main.cpp). Each of these directories is built as a separate
 static library, with `main` residing in its own directory.
 
 RSC is currently developed using Visual Studio. If that is also your
 development environment, the _.vcxproj_ (project) files in this repository
 should already provide most of the build instructions that you need. The
 Windows build options used for RSC are described
-[here](/docs/RSC-Windows-Build-Options.md).
+[here](docs/RSC-Windows-Build-Options.md).
 
 ## Running the executable
 
@@ -109,12 +109,12 @@ During initialization, the program displays each module as it is initialized.
 (A _module_ is equivalent to a static library.)  After all modules
 have initialized, the CLI prompt `nb>` appears to indicate that CLI commands
 in the _nb_ directory are available. The information written to the console
-during startup is shown [here](/output/init.console.txt), and a list of all
-CLI commands is provided [here](/docs/help.cli.txt).
+during startup is shown [here](output/init.console.txt), and a list of all
+CLI commands is provided [here](docs/help.cli.txt).
 
 If you enter `>read saveinit` as the first CLI command, a function trace of
 the initialization, which starts even before the invocation of `main`, is
-generated. This trace should look a lot like [this](/output/init.trace.txt).
+generated. This trace should look a lot like [this](output/init.trace.txt).
 Each function that appears in such a trace invoked `Debug::ft`, which records
 the following:
   * the function's name
@@ -140,8 +140,8 @@ _log_ file).
 
 ## Testing
 
-Most of the files in the [_input_](/input) directory are test scripts. The
-document that describes the [POTS application](/docs/RSC-POTS-Application.md)
+Most of the files in the [_input_](input) directory are test scripts. The
+document that describes the [POTS application](docs/RSC-POTS-Application.md)
 also discusses its tests, which exercise a considerable portion of the RSC
 software. The tests described below are rather tactical by comparison.
 
@@ -152,7 +152,7 @@ appropriate recovery action is taken. Getting the safety net to work could be
 challenging when porting RSC to another platform, which is why these tests are
 provided. All of the safety net tests can be run with the command
 `>read test.trap.all.`  During each test, the following are generated (see
-the _recover.*_ files in the [_output_](/output) directory):
+the _recover.*_ files in the [_output_](output) directory):
 
   * A function trace (_*.trace.txt_), as described above.
   * A function profile (_*.funcs.txt_) that lists each function that was
@@ -167,14 +167,14 @@ record of all the context switches that occurred during the test.
  
 Entering `>nt` in the CLI accesses the "nt" _increment_ (a set of CLI
 commands). It provides sets of commands for testing functions in the
-[`NbHeap`](/nb/NbHeap.h), [`LeakyBucketCounter`](/nb/LeakyBucketCounter.h),
-[`Q1Way`](/nb/Q1Way.h), [`Q2Way`](/nb/Q2Way.h), [`Registry`](/nb/Registry.h),
-and [`SysTime`](/nb/SysTime.h) interfaces.
+[`NbHeap`](src/nb/NbHeap.h), [`LeakyBucketCounter`](src/nb/LeakyBucketCounter.h),
+[`Q1Way`](src/nb/Q1Way.h), [`Q2Way`](src/nb/Q2Way.h), [`Registry`](src/nb/Registry.h),
+and [`SysTime`](src/nb/SysTime.h) interfaces.
 
 ## Licensing
 
 RSC is freely available under the terms of the [GNU General Public License,
-version 3](/LICENSE.txt), which basically says that you must also publish your
+version 3](LICENSE.txt), which basically says that you must also publish your
 own software, as well as your changes to RSC. If you are developing software
 that you want to keep proprietary, the GPLv3 license also allows RSC to be
 licensed under the terms of another license approved by the [Free Software

@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Library.h"
-#include <cstring>
 #include <iterator>
 #include <set>
 #include <sstream>

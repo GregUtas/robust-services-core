@@ -75,7 +75,8 @@ in current use are
    use `Element::RunningInLab()`)
    1. `WORDSIZE_32` for a 32-bit CPU (else assumed to be 64-bit; may only be used in _subs/_ files)
    1. `CT_COMPILER` when running the `>parse` command (may only be used in _subs/_ files) </li>
-1. To `#define` an imitation keyword that maps to an empty string. The only current example is `NO_OP`.
+1. To `#define` an imitation keyword that maps to an empty string. The only current examples are
+   `NO_OP` and `NO_FT`.
 
 ## Implementations
 1. Sort `#include` directives alphabetically within the following groups:
@@ -168,7 +169,7 @@ Prefer to generate a log (`Debug::SwLog`) and return a failure value.
 ## Tagged comments
 Some comments identify work items. They have the form `//a`, where `a` is some character.  The
 following are currently used:
-- `//&` is something in [`main.cpp`](/rsc/main.cpp) that might be enabled for a subset build
+- `//&` is something in [`main.cpp`](/src/rsc/main.cpp) that might be enabled for a subset build
 - `//>` is an internal constant that can be changed to alter behavior
 - `//@` is a useful breakpoint during development
 - `//b` is a basic call enhancement

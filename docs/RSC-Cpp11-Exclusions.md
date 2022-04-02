@@ -1,6 +1,6 @@
 ﻿# Robust Services Core: Static Analysis C++11 Exclusions
 
-The _ct_ directory contains a [parser](/ct/Parser.h) that supports the C++
+The _ct_ directory contains a [parser](/src/ct/Parser.h) that supports the C++
 static analysis tools. Because these tools were developed to analyze RSC,
 the parser only supports the C++ language features that RSC uses. In fact,
 RSC's source code is currently the only test suite for the `>parse` command.
@@ -240,8 +240,8 @@ code.
 
 - [ ] `IncludeRemove`
 
-  - **Templates**. Because external headers in the [_subs_](/subs) directory do
-  not provide function implementations for templates, `>check` can incorrectly
+  - **Templates**. Because external headers in the [_subs_](/src/subs) directory
+  do not provide function implementations for templates, `>check` can incorrectly
   suggest removing an `#include` that is needed to make a destructor visible to
   a `std::unique_ptr` template instance.
 
@@ -264,8 +264,8 @@ code.
     _first_ expression afer the `?` operator is evaluated when executing the
     assignment operator, but not the second.
 
-  - **Templates**. Because external headers in the [_subs_](/subs) directory do
-  not provide function implementations for templates, `>check` can incorrectly
+  - **Templates**. Because external headers in the [_subs_](/src/subs) directory
+  do not provide function implementations for templates, `>check` can incorrectly
   suggest declaring a data member `const` even though it is inserted in a
   `std::set` and must therefore support `std::move`.
 

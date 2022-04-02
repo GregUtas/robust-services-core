@@ -1,23 +1,23 @@
 # Robust Services Core: Diplomacy Bot
 
-Much of the software in the [_dip_](/dip) directory was evolved from the base software
+Much of the software in the [_dip_](/src/dip) directory was evolved from the base software
 for developing Diplomacy bots found on the [DAIDE](http://www.daide.org.uk) (Diplomacy
 AI Development Environment) website.  That software was refactored, decoupled from
 Windows (to run as a console application), and evolved to introduce C++11 capabilities.
 
-The [_extras_](/dip/extras) directory should give you an idea of the current state of
-this software.  To build a bot that plays the game, derive from [`BaseBot`](/dip/BaseBot.h)
-and follow the instructions in [_BotType.h_](/dip/BotType.h).  If you simply build the
+The [_extras_](/src/dip/extras) directory should give you an idea of the current state of
+this software.  To build a bot that plays the game, derive from [`BaseBot`](/src/dip/BaseBot.h)
+and follow the instructions in [_BotType.h_](/src/dip/BotType.h).  If you simply build the
 software as is, it produces an observer bot that can join a game and report on its progress.
 Several files in the _extras_ directory illustrate the output from this observer.  All the
 games in that directory were played by instances of the impressive Albert bot:
 
-* A win by Turkey in a [standard](/dip/extras/Standard-TUR-win.txt) game.
+* A win by Turkey in a [standard](/src/dip/extras/Standard-TUR-win.txt) game.
 * A draw between England, France, and Austria in a
-[fleet_rome](/dip/extras/Fleet-Rome-AUS-ENG-FRA-draw.txt) game.
-* The first season of a [classical](/dip/extras/classical.console.txt) game.
+[fleet_rome](/src/dip/extras/Fleet-Rome-AUS-ENG-FRA-draw.txt) game.
+* The first season of a [classical](/src/dip/extras/classical.console.txt) game.
 
-The last game is included because it is accompanied by a [trace](/dip/extras/classical.trace.txt)
+The last game is included because it is accompanied by a [trace](/src/dip/extras/classical.trace.txt)
 of the game's startup and initial season.  This should give you an idea of the debugging
 capabilities available in RSC.  The last thing in the _extras_ directory is a Win32 debug
 executable of the observer bot (_obsbot.exe_).  If you launch it with the `-L3` option, it will
@@ -33,7 +33,7 @@ debug information.
 To build the observer bot, or even subclass it to create a bot that plays the game, start
 with the instructions on the [main page](/README.md).  However, the observer bot is not
 enabled in a default RSC build.  But it is easy to target the build for a bot by modifying
-[`main`](/rsc/main.cpp) as follows:
+[`main`](/src/rsc/main.cpp) as follows:
 
 * In the list of `#include` directives, comment out all `...Module.h` entries and uncomment
 the one for `DipModule.h`.

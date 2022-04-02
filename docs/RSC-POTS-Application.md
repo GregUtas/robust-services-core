@@ -18,7 +18,7 @@ The items in this event trace also appear in the function trace.
 * A console file (_*.cli.txt_).
 
 The [_traffic_](/input/traffic.start.txt) script (`>read traffic.start`) launches a
-[thread](/an/PotsTrafficThread.h) that initiates, answers, and releases calls, initially
+[thread](/src/an/PotsTrafficThread.h) that initiates, answers, and releases calls, initially
 at a rate of 600 per minute.  The call rate can be increased to the point where the system
 enters overload.  Whatever the current call rate, you can observe the system's behavior with
 commands such as `>status`, `>sched show`, and `>traffic profile`.  A console file of a
@@ -62,14 +62,14 @@ _Not yet implemented, but can be assigned to a user's profile._
 interval, the call is routed to a pre-specified number.
 
 ## Design overview
-The [`SessionBase`](/sb) component of RCS defines virtual base classes for implementing state
+The [`SessionBase`](/src/sb) component of RCS defines virtual base classes for implementing state
 machines and protocols.  As a session-oriented application, POTS uses this framework.  The
 documents [_RSC Session Processing_](/docs/RSC-Session-Processing.pdf) and [_A Pattern Language
 of Call Processing_](/docs/PLCP.pdf) should prove helpful if studying the POTS software in
 detail.
 
 The protocol between the user (client/phone) and network (server) is defined
-[here](/pb/PotsProtocol.h).
+[here](/src/pb/PotsProtocol.h).
 On the network side, the POTS basic call state machine is based on the states and events defined
-[here](/cb/BcSessions.h).  Its concrete state subclasses are defined [here](/sn/PotsSessions.h),
-and its event handlers are implemented [here](/sn/PotsBcHandlers.cpp).
+[here](/src/cb/BcSessions.h).  Its concrete state subclasses are defined [here](/src/sn/PotsSessions.h),
+and its event handlers are implemented [here](/src/sn/PotsBcHandlers.cpp).

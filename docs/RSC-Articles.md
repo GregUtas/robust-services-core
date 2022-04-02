@@ -21,12 +21,12 @@ updated only when the code that it discusses has evolved.
 The [tags](https://github.com/GregUtas/robust-services-core/tags) page lists
 stable releases. Unless a release only changed documentation, it includes
 executables. However, RSC must be properly installed to run them. The main
-[README](README.md) page has installation instructions.
+[README](/README.md) page has installation instructions.
 
 ## Finding Code
 
 Unless otherwise noted, the code in an article resides in the namespace
-`NodeBase`, which is implemented in the [_nb_](/nb) directory. `NodeBase`
+`NodeBase`, which is implemented in the [_nb_](/src/nb) directory. `NodeBase`
 is RSC's lowest layer. It contains about 55K lines of code and provides
 base classes for things such as
 
@@ -52,8 +52,8 @@ _*.win.cpp_ files) run to about 3K lines of code.
 
 When building on RSC, you'll always use `NodeBase`. If your application
 uses UDP- or TCP-based protocols, investigate the namespace `NetworkBase` 
-in the [_nw_](/nw) directory, and the namespace `SessionBase` in the
-[_sb_](/sb) directory. There are currently no articles about those layers,
+in the [_nw_](/src/nw) directory, and the namespace `SessionBase` in the
+[_sb_](/src/sb) directory. There are currently no articles about those layers,
 but some [documents](/docs/README.md) discuss them.
 
 ## Modifying RSC

@@ -6,20 +6,13 @@
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>true</EnableExperimentalCppCoreCheck>
     <LinkIncremental>false</LinkIncremental>
+    <CodeAnalysisRuleSet>..\shared\analysis.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <CompileAsManaged>false</CompileAsManaged>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <WarningLevel>EnableAllWarnings</WarningLevel>
+	  <CompileAsManaged>false</CompileAsManaged>
+	  <DebugInformationFormat>OldStyle</DebugInformationFormat>
+	  <WarningLevel>EnableAllWarnings</WarningLevel>
       <AdditionalOptions>/wd4061 /wd4062 /wd4100 /wd4242 /wd4244 /wd4267 /wd4365 /wd4514 /wd4623 /wd4625 /wd4626 /wd4668 /wd4710 /wd4711 /we4715 /wd4820 /wd5026 /wd5027 /wd5045 /wd5219 /wd26812 /wd33010 %(AdditionalOptions)</AdditionalOptions>
       <ExceptionHandling>Async</ExceptionHandling>
       <MinimalRebuild>false</MinimalRebuild>

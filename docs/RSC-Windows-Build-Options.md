@@ -11,9 +11,9 @@ for all projects:
 
   This provides full symbol information, even in a release build.
   
-- C/C++ > General > Warning Level: /W4
+- C/C++ > General > Warning Level: /Wall
 
-  This enables all compiler warnings.  A few are explicitly disabled using
+  This enables all compiler warnings.  Some are explicitly disabled using
   the /wd option (see below).
   
 - C/C++ > Optimization: /Od
@@ -25,7 +25,7 @@ for all projects:
   
 - C/C++ > Optimization > Omit Frame Pointers: Oy-
 
-  Keeping frame pointers ensures that `SysThreadStack` will work.
+  This simplifies debugging.
 
 - C/C++ > Preprocessor: OS_WIN
 
@@ -39,9 +39,9 @@ for all projects:
 
   This detects things like the use of uninitialized variables and out-of-bound array indices.
   
-- C/C++ > Browse Information > Enable Browse Information: /FR
+- C/C++ > All Options > Support Just My Code Debugging: /JMC-
 
-  Might as well enable browsing.
+  This supports debugging in Windows code.
   
 - C/C++ > Command Line > Additional Options
 

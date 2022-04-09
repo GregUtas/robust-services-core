@@ -12,8 +12,9 @@ that target.
 
 If you don't want to use CMake, you can set up your build
 environment by copying the files in this directory to the
-appropriate locations. A file with the name _\<dir>.*_ goes
-in the  _\<dir>_ source code directory. The only exception
-is _rsc.sln_, which goes in the _src_ directory.
+appropriate locations, overwriting the files that CMake
+generated. A file with the name _\<dir>.*_ goes in the
+_\<dir>_ source code directory. The only exception is
+_rsc.sln_, which goes in the _src_ directory.
 
 

@@ -70,7 +70,7 @@ class ProtectedHeap : public NbHeap
    //  may range from 1MB to 512Mb (32-bit CPU) or 8GB (64-bit CPU).
    //
    static size_t GetSize();
-   const static size_t MinSize = 1532 * kBs;
+   const static size_t MinSize = 4096 * kBs;
    const static size_t MaxSize = size_t(1) << (25 + BYTES_PER_WORD);
 };
 

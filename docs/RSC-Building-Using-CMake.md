@@ -9,7 +9,7 @@ either directly or through the Properties editor. The reason is that
 CMake must _regenerate_ those files before you can build for another
 target (Win32 or x64)--at which point your edits will be lost.
 Instead of modifying the _vcxproj_ files, you must modify
-[_GlobalSettingsInclude.cmake_](src/CMake/GlobalSettingsInclude.cmake)
+[_GlobalSettingsInclude.cmake_](/src/CMake/GlobalSettingsInclude.cmake),
 or one of the _CMakeLists.txt_ files, so that CMake generates suitable
 _vcxproj_ files. The CMake
 [tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html#)

@@ -299,7 +299,7 @@ TraceRc TraceBuffer::Clear()
 
    Lock();
    {
-      auto last = (ovfl_ ? size_ : bnext_);
+      auto last = (ovfl_ ? size_ : bnext_.load());
 
       for(size_t i = 0; i < last; ++i)
       {
@@ -585,7 +585,7 @@ void TraceBuffer::Query(ostream& stream) const
    Debug::ft("TraceBuffer.Query");
 
    auto indent = spaces(2);
-   auto entries = (ovfl_ ? size_ : bnext_);
+   auto entries = (ovfl_ ? size_ : bnext_.load());
 
    stream << strClass(this) << CRLF;
    stream << indent << "buffsize : " << int(std::log2(size_));

@@ -22,7 +22,6 @@
 #ifndef REGISTRY_H_INCLUDED
 #define REGISTRY_H_INCLUDED
 
-#include <algorithm>
 #include <cstddef>
 #include <iosfwd>
 #include <ostream>
@@ -573,7 +572,8 @@ private:
       Debug::ft(Registry_Extend());
       if(capacity_ >= max_) return false;
       if(min > max_) return false;
-      auto count = std::min(2 * capacity_, max_);
+      auto count = 2 * capacity_;
+      if(max_ < count) count = max_;
       if(count <= min) count = min + 1;
       auto size = sizeof(T*) * count;
       auto table = (T**) Memory::Alloc(size, mem_);

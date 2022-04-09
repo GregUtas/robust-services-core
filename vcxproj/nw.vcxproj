@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F6873BBE-818E-4991-9FD9-D7214E9371A1}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>nw</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="..\shared\RSC Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="..\shared\RSC Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\shared\RSC Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\shared\RSC Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <AdditionalIncludeDirectories>../nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>ws2_32.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ByteBuffer.cpp" />
+    <ClCompile Include="IpServiceCfg.cpp" />
+    <ClCompile Include="LocalAddrTest.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="IoThread.cpp" />
+    <ClCompile Include="IpBuffer.cpp" />
+    <ClCompile Include="IpPort.cpp" />
+    <ClCompile Include="IpPortRegistry.cpp" />
+    <ClCompile Include="IpService.cpp" />
+    <ClCompile Include="IpServiceRegistry.cpp" />
+    <ClCompile Include="NwCliParms.cpp" />
+    <ClCompile Include="NwDaemons.cpp" />
+    <ClCompile Include="NwIncrement.cpp" />
+    <ClCompile Include="NwLogs.cpp" />
+    <ClCompile Include="NwModule.cpp" />
+    <ClCompile Include="NwPools.cpp" />
+    <ClCompile Include="NwTrace.cpp" />
+    <ClCompile Include="NwTracer.cpp" />
+    <ClCompile Include="NwTypes.cpp" />
+    <ClCompile Include="SysIpL2Addr.cpp" />
+    <ClCompile Include="SysIpL2Addr.win.cpp" />
+    <ClCompile Include="SysIpL3Addr.cpp" />
+    <ClCompile Include="SysIpL3Addr.win.cpp" />
+    <ClCompile Include="SysSocket.cpp" />
+    <ClCompile Include="SysSocket.win.cpp" />
+    <ClCompile Include="SysTcpSocket.cpp" />
+    <ClCompile Include="SysTcpSocket.win.cpp" />
+    <ClCompile Include="SysUdpSocket.cpp" />
+    <ClCompile Include="SysUdpSocket.win.cpp" />
+    <ClCompile Include="TcpIoThread.cpp" />
+    <ClCompile Include="TcpIpPort.cpp" />
+    <ClCompile Include="TcpIpService.cpp" />
+    <ClCompile Include="UdpIoThread.cpp" />
+    <ClCompile Include="UdpIpPort.cpp" />
+    <ClCompile Include="UdpIpService.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ByteBuffer.h" />
+    <ClInclude Include="IpServiceCfg.h" />
+    <ClInclude Include="LocalAddrTest.h" />
+    <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="IoThread.h" />
+    <ClInclude Include="IpBuffer.h" />
+    <ClInclude Include="IpPort.h" />
+    <ClInclude Include="IpPortRegistry.h" />
+    <ClInclude Include="IpService.h" />
+    <ClInclude Include="IpServiceRegistry.h" />
+    <ClInclude Include="NwCliParms.h" />
+    <ClInclude Include="NwDaemons.h" />
+    <ClInclude Include="NwIncrement.h" />
+    <ClInclude Include="NwLogs.h" />
+    <ClInclude Include="NwModule.h" />
+    <ClInclude Include="NwPools.h" />
+    <ClInclude Include="NwTrace.h" />
+    <ClInclude Include="NwTracer.h" />
+    <ClInclude Include="NwTypes.h" />
+    <ClInclude Include="SysIpL2Addr.h" />
+    <ClInclude Include="SysIpL3Addr.h" />
+    <ClInclude Include="SysSocket.h" />
+    <ClInclude Include="SysTcpSocket.h" />
+    <ClInclude Include="SysUdpSocket.h" />
+    <ClInclude Include="TcpIoThread.h" />
+    <ClInclude Include="TcpIpPort.h" />
+    <ClInclude Include="TcpIpService.h" />
+    <ClInclude Include="UdpIoThread.h" />
+    <ClInclude Include="UdpIpPort.h" />
+    <ClInclude Include="UdpIpService.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\nb\nb.vcxproj">
+      <Project>{50814a14-cc19-45a3-9f0a-c9bd6cc0e1fb}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

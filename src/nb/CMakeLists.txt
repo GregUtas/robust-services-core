@@ -1,0 +1,445 @@
+set(PROJECT_NAME nb)
+
+################################################################################
+# Source groups
+################################################################################
+set(Header_Files
+    "Alarm.h"
+    "AlarmRegistry.h"
+    "Algorithms.h"
+    "AllocationException.h"
+    "Allocators.h"
+    "Array.h"
+    "AssertionException.h"
+    "Base.h"
+    "CallbackRequest.h"
+    "CfgBitParm.h"
+    "CfgBoolParm.h"
+    "CfgFlagParm.h"
+    "CfgIntParm.h"
+    "CfgParm.h"
+    "CfgParmRegistry.h"
+    "CfgStrParm.h"
+    "CfgTuple.h"
+    "CinThread.h"
+    "Class.h"
+    "ClassRegistry.h"
+    "CliAppData.h"
+    "CliBoolParm.h"
+    "CliBuffer.h"
+    "CliCharParm.h"
+    "CliCommand.h"
+    "CliCommandSet.h"
+    "CliCookie.h"
+    "CliIncrement.h"
+    "CliIntParm.h"
+    "CliParm.h"
+    "CliPtrParm.h"
+    "CliRegistry.h"
+    "CliStack.h"
+    "CliText.h"
+    "CliTextParm.h"
+    "CliThread.h"
+    "CoutThread.h"
+    "Daemon.h"
+    "DaemonRegistry.h"
+    "Debug.h"
+    "Deferred.h"
+    "DeferredRegistry.h"
+    "DeferredThread.h"
+    "Duration.h"
+    "Dynamic.h"
+    "Element.h"
+    "ElementException.h"
+    "Exception.h"
+    "FileThread.h"
+    "Formatters.h"
+    "FunctionGuard.h"
+    "FunctionName.h"
+    "FunctionTrace.h"
+    "Heap.h"
+    "Immutable.h"
+    "InitFlags.h"
+    "InitThread.h"
+    "LeakyBucketCounter.h"
+    "Log.h"
+    "LogBuffer.h"
+    "LogBufferRegistry.h"
+    "LogGroup.h"
+    "LogGroupRegistry.h"
+    "LogThread.h"
+    "MainArgs.h"
+    "Memory.h"
+    "MemoryTrace.h"
+    "Module.h"
+    "ModuleRegistry.h"
+    "MsgBuffer.h"
+    "MutexGuard.h"
+    "MutexRegistry.h"
+    "NbAppIds.h"
+    "NbCliParms.h"
+    "NbDaemons.h"
+    "NbHeap.h"
+    "NbIncrement.h"
+    "NbLogs.h"
+    "NbModule.h"
+    "NbPools.h"
+    "NbSignals.h"
+    "NbTracer.h"
+    "NbTypes.h"
+    "Object.h"
+    "ObjectPool.h"
+    "ObjectPoolAudit.h"
+    "ObjectPoolRegistry.h"
+    "ObjectPoolTrace.h"
+    "Permanent.h"
+    "PermanentHeap.h"
+    "Persistent.h"
+    "Pooled.h"
+    "PooledClass.h"
+    "PosixSignal.h"
+    "PosixSignalRegistry.h"
+    "Protected.h"
+    "Q1Link.h"
+    "Q1Way.h"
+    "Q2Link.h"
+    "Q2Way.h"
+    "RegCell.h"
+    "Registry.h"
+    "Restart.h"
+    "RootThread.h"
+    "SignalException.h"
+    "Singleton.h"
+    "Singletons.h"
+    "SoftwareException.h"
+    "Statistics.h"
+    "StatisticsGroup.h"
+    "StatisticsRegistry.h"
+    "StatisticsThread.h"
+    "StreamRequest.h"
+    "Symbol.h"
+    "SymbolRegistry.h"
+    "SysConsole.h"
+    "SysDecls.h"
+    "SysFile.h"
+    "SysHeap.h"
+    "SysLock.h"
+    "SysMemory.h"
+    "SysMutex.h"
+    "SysSignals.h"
+    "SysThread.h"
+    "SysThreadStack.h"
+    "SysTickTimer.h"
+    "SysTime.h"
+    "SysTypes.h"
+    "Temporary.h"
+    "ThisThread.h"
+    "Thread.h"
+    "ThreadAdmin.h"
+    "ThreadRegistry.h"
+    "TimedRecord.h"
+    "TimePoint.h"
+    "Tool.h"
+    "ToolRegistry.h"
+    "ToolTypes.h"
+    "TraceBuffer.h"
+    "TraceDump.h"
+    "TraceRecord.h"
+)
+source_group("Header Files" FILES ${Header_Files})
+
+set(Source_Files
+    "Alarm.cpp"
+    "AlarmRegistry.cpp"
+    "Algorithms.cpp"
+    "AllocationException.cpp"
+    "AssertionException.cpp"
+    "Base.cpp"
+    "CfgBitParm.cpp"
+    "CfgBoolParm.cpp"
+    "CfgFlagParm.cpp"
+    "CfgIntParm.cpp"
+    "CfgParm.cpp"
+    "CfgParmRegistry.cpp"
+    "CfgStrParm.cpp"
+    "CfgTuple.cpp"
+    "CinThread.cpp"
+    "Class.cpp"
+    "ClassRegistry.cpp"
+    "CliAppData.cpp"
+    "CliBoolParm.cpp"
+    "CliBuffer.cpp"
+    "CliCharParm.cpp"
+    "CliCommand.cpp"
+    "CliCommandSet.cpp"
+    "CliCookie.cpp"
+    "CliIncrement.cpp"
+    "CliIntParm.cpp"
+    "CliParm.cpp"
+    "CliPtrParm.cpp"
+    "CliRegistry.cpp"
+    "CliStack.cpp"
+    "CliText.cpp"
+    "CliTextParm.cpp"
+    "CliThread.cpp"
+    "CoutThread.cpp"
+    "Daemon.cpp"
+    "DaemonRegistry.cpp"
+    "Debug.cpp"
+    "Deferred.cpp"
+    "DeferredRegistry.cpp"
+    "DeferredThread.cpp"
+    "Duration.cpp"
+    "Dynamic.cpp"
+    "Element.cpp"
+    "ElementException.cpp"
+    "Exception.cpp"
+    "FileThread.cpp"
+    "Formatters.cpp"
+    "FunctionGuard.cpp"
+    "FunctionName.cpp"
+    "FunctionTrace.cpp"
+    "Heap.cpp"
+    "Immutable.cpp"
+    "InitFlags.cpp"
+    "InitThread.cpp"
+    "LeakyBucketCounter.cpp"
+    "Log.cpp"
+    "LogBuffer.cpp"
+    "LogBufferRegistry.cpp"
+    "LogGroup.cpp"
+    "LogGroupRegistry.cpp"
+    "LogThread.cpp"
+    "MainArgs.cpp"
+    "Memory.cpp"
+    "MemoryTrace.cpp"
+    "Module.cpp"
+    "ModuleRegistry.cpp"
+    "MsgBuffer.cpp"
+    "MutexGuard.cpp"
+    "MutexRegistry.cpp"
+    "NbCliParms.cpp"
+    "NbDaemons.cpp"
+    "NbHeap.cpp"
+    "NbIncrement.cpp"
+    "NbLogs.cpp"
+    "NbModule.cpp"
+    "NbPools.cpp"
+    "NbSignals.cpp"
+    "NbTracer.cpp"
+    "NbTypes.cpp"
+    "Object.cpp"
+    "ObjectPool.cpp"
+    "ObjectPoolAudit.cpp"
+    "ObjectPoolRegistry.cpp"
+    "ObjectPoolTrace.cpp"
+    "Permanent.cpp"
+    "PermanentHeap.cpp"
+    "Persistent.cpp"
+    "Pooled.cpp"
+    "PooledClass.cpp"
+    "PosixSignal.cpp"
+    "PosixSignalRegistry.cpp"
+    "Protected.cpp"
+    "Q1Link.cpp"
+    "Q2Link.cpp"
+    "RegCell.cpp"
+    "Restart.cpp"
+    "RootThread.cpp"
+    "SignalException.cpp"
+    "Singletons.cpp"
+    "SoftwareException.cpp"
+    "Statistics.cpp"
+    "StatisticsGroup.cpp"
+    "StatisticsRegistry.cpp"
+    "StatisticsThread.cpp"
+    "StreamRequest.cpp"
+    "Symbol.cpp"
+    "SymbolRegistry.cpp"
+    "SysConsole.cpp"
+    "SysConsole.win.cpp"
+    "SysFile.cpp"
+    "SysFile.win.cpp"
+    "SysHeap.win.cpp"
+    "SysLock.cpp"
+    "SysLock.win.cpp"
+    "SysMemory.win.cpp"
+    "SysMutex.cpp"
+    "SysMutex.win.cpp"
+    "SysSignals.cpp"
+    "SysSignals.win.cpp"
+    "SysThread.cpp"
+    "SysThread.win.cpp"
+    "SysThreadStack.win.cpp"
+    "SysTickTimer.cpp"
+    "SysTickTimer.win.cpp"
+    "SysTime.cpp"
+    "SysTime.win.cpp"
+    "SysTypes.cpp"
+    "Temporary.cpp"
+    "ThisThread.cpp"
+    "Thread.cpp"
+    "ThreadAdmin.cpp"
+    "ThreadRegistry.cpp"
+    "TimedRecord.cpp"
+    "TimePoint.cpp"
+    "Tool.cpp"
+    "ToolRegistry.cpp"
+    "ToolTypes.cpp"
+    "TraceBuffer.cpp"
+    "TraceDump.cpp"
+    "TraceRecord.cpp"
+)
+source_group("Source Files" FILES ${Source_Files})
+
+set(ALL_FILES
+    ${Header_Files}
+    ${Source_Files}
+)
+
+################################################################################
+# Target
+################################################################################
+add_library(${PROJECT_NAME} STATIC ${ALL_FILES})
+
+use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
+
+set(ROOT_NAMESPACE nb)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    VS_GLOBAL_KEYWORD "Win32Proj"
+)
+if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
+    )
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
+    )
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
+    )
+endif()
+################################################################################
+# Compile definitions
+################################################################################
+if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        "$<$<CONFIG:Debug>:"
+            "_DEBUG"
+        ">"
+        "$<$<CONFIG:Release>:"
+            "NDEBUG"
+        ">"
+        "WIN32;"
+        "_LIB;"
+        "UNICODE;"
+        "_UNICODE"
+    )
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        "$<$<CONFIG:Debug>:"
+            "_DEBUG"
+        ">"
+        "$<$<CONFIG:Release>:"
+            "NDEBUG"
+        ">"
+        "_LIB;"
+        "UNICODE;"
+        "_UNICODE"
+    )
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        "$<$<CONFIG:Debug>:"
+            "_DEBUG"
+        ">"
+        "$<$<CONFIG:Release>:"
+            "NDEBUG"
+        ">"
+        "WIN32;"
+        "_LIB;"
+        "UNICODE;"
+        "_UNICODE"
+    )
+endif()
+
+################################################################################
+# Compile and link options
+################################################################################
+if(MSVC)
+    if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+        target_compile_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Release>:
+                /Oi;
+                /Gy
+            >
+            ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
+            ${DEFAULT_CXX_EXCEPTION_HANDLING}
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+        target_compile_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Release>:
+                /Oi;
+                /Gy
+            >
+            ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
+            ${DEFAULT_CXX_EXCEPTION_HANDLING}
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
+        target_compile_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Release>:
+                /Oi;
+                /Gy
+            >
+            ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
+            ${DEFAULT_CXX_EXCEPTION_HANDLING}
+        )
+    endif()
+    if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+        target_link_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Release>:
+                /OPT:REF;
+                /OPT:NOICF
+            >
+            /SUBSYSTEM:WINDOWS
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+        target_link_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Release>:
+                /OPT:REF;
+                /OPT:NOICF
+            >
+            /SUBSYSTEM:WINDOWS
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
+        target_link_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Release>:
+                /OPT:REF;
+                /OPT:NOICF
+            >
+            /SUBSYSTEM:WINDOWS
+        )
+    endif()
+endif()
+
+################################################################################
+# Dependencies
+################################################################################
+if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+    set(ADDITIONAL_LIBRARY_DEPENDENCIES
+        "Dbghelp"
+    )
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+    set(ADDITIONAL_LIBRARY_DEPENDENCIES
+        "Dbghelp"
+    )
+elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
+    set(ADDITIONAL_LIBRARY_DEPENDENCIES
+        "Dbghelp"
+    )
+endif()
+
+target_link_libraries(${PROJECT_NAME} PUBLIC "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
+

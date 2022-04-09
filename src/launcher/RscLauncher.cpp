@@ -62,7 +62,8 @@ static bool GetExecutable(string& exe)
 
    while(true)
    {
-      cout << "Enter directory where rsc.exe is located or 'Q' to exit:\n  ";
+      cout << "Enter full path to directory where rsc.exe is located";
+      cout << " or 'Q' to exit : \n  ";
       std::getline(cin, dir);
 
       if(!dir.empty())

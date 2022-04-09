@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -9,245 +12,281 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F38CD809-F188-49AF-BD46-0F2B08DD0746}</ProjectGuid>
+    <ProjectGuid>{ABEA2865-992D-3B75-BBA0-CB774D48F7DF}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>sb</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <Platform>Win32</Platform>
+    <ProjectName>sb</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="..\shared\RSC Common.props" />
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="..\shared\RSC Common.props" />
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="..\shared\RSC Common.props" />
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="..\shared\RSC Common.props" />
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sb.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sb</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sb.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sb</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnablePREfast>false</EnablePREfast>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4061;4062;4100;4242;4244;4267;4365;4514;4582;4623;4625;4626;4668;4710;4711;4820;5026;5027;5045</DisableSpecificWarnings>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <OmitFramePointers>false</OmitFramePointers>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SDLCheck>true</SDLCheck>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TreatSpecificWarningsAsErrors>4715</TreatSpecificWarningsAsErrors>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_DEBUG;WIN32;_LIB;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_LIB;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4061;4062;4100;4242;4244;4267;4365;4514;4582;4623;4625;4626;4668;4710;4711;4820;5026;5027;5045</DisableSpecificWarnings>
+      <ExceptionHandling>Async</ExceptionHandling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OmitFramePointers>false</OmitFramePointers>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SDLCheck>true</SDLCheck>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TreatSpecificWarningsAsErrors>4715</TreatSpecificWarningsAsErrors>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);NDEBUG;WIN32;_LIB;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;NDEBUG;_LIB;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AnalyzeMsgEvent.cpp" />
-    <ClCompile Include="AnalyzeSapEvent.cpp" />
-    <ClCompile Include="AnalyzeSnpEvent.cpp" />
-    <ClCompile Include="Context.cpp" />
-    <ClCompile Include="Event.cpp" />
-    <ClCompile Include="EventHandler.cpp" />
-    <ClCompile Include="Factory.cpp" />
-    <ClCompile Include="FactoryRegistry.cpp" />
-    <ClCompile Include="ForceTransitionEvent.cpp" />
-    <ClCompile Include="GlobalAddress.cpp" />
-    <ClCompile Include="InitiationReqEvent.cpp" />
-    <ClCompile Include="Initiator.cpp" />
-    <ClCompile Include="InvokerPool.cpp" />
-    <ClCompile Include="InvokerPoolRegistry.cpp" />
-    <ClCompile Include="InvokerThread.cpp" />
-    <ClCompile Include="LocalAddress.cpp" />
-    <ClCompile Include="Message.cpp" />
-    <ClCompile Include="MsgContext.cpp" />
-    <ClCompile Include="MsgFactory.cpp" />
-    <ClCompile Include="MsgHeader.cpp" />
-    <ClCompile Include="MsgPort.cpp" />
-    <ClCompile Include="Parameter.cpp" />
-    <ClCompile Include="Protocol.cpp" />
-    <ClCompile Include="ProtocolLayer.cpp" />
-    <ClCompile Include="ProtocolRegistry.cpp" />
-    <ClCompile Include="ProtocolSM.cpp" />
-    <ClCompile Include="PsmContext.cpp" />
-    <ClCompile Include="PsmFactory.cpp" />
-    <ClCompile Include="RootServiceSM.cpp" />
-    <ClCompile Include="SbCliParms.cpp" />
-    <ClCompile Include="SbDaemons.cpp" />
-    <ClCompile Include="SbExtInputHandler.cpp" />
-    <ClCompile Include="SbHandlers.cpp" />
-    <ClCompile Include="SbIncrement.cpp" />
-    <ClCompile Include="SbInputHandler.cpp" />
-    <ClCompile Include="SbInvokerPools.cpp" />
-    <ClCompile Include="SbIpBuffer.cpp" />
-    <ClCompile Include="SbLogs.cpp" />
-    <ClCompile Include="SbModule.cpp" />
-    <ClCompile Include="SbPools.cpp" />
-    <ClCompile Include="SbTrace.cpp" />
-    <ClCompile Include="SbTracer.cpp" />
-    <ClCompile Include="SbTypes.cpp" />
-    <ClCompile Include="Service.cpp" />
-    <ClCompile Include="ServiceRegistry.cpp" />
-    <ClCompile Include="ServiceSM.cpp" />
-    <ClCompile Include="Signal.cpp" />
-    <ClCompile Include="SsmContext.cpp" />
-    <ClCompile Include="SsmFactory.cpp" />
-    <ClCompile Include="State.cpp" />
-    <ClCompile Include="TextTlvMessage.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="TimerProtocol.cpp" />
-    <ClCompile Include="TimerRegistry.cpp" />
-    <ClCompile Include="TimerThread.cpp" />
-    <ClCompile Include="TlvMessage.cpp" />
-    <ClCompile Include="TlvParameter.cpp" />
-    <ClCompile Include="TlvProtocol.cpp" />
-    <ClCompile Include="Trigger.cpp" />
+    <CustomBuild Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Users/Greg/Documents/rsc/rsc/src/sb/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/Greg/Documents/rsc/rsc/src -BC:/Users/Greg/Documents/rsc/rsc/src --check-stamp-file C:/Users/Greg/Documents/rsc/rsc/src/sb/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\CMake\Default.cmake;C:\Users\Greg\Documents\rsc\rsc\src\CMake\DefaultCXX.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\sb\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Users/Greg/Documents/rsc/rsc/src/sb/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/Greg/Documents/rsc/rsc/src -BC:/Users/Greg/Documents/rsc/rsc/src --check-stamp-file C:/Users/Greg/Documents/rsc/rsc/src/sb/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\CMake\Default.cmake;C:\Users\Greg\Documents\rsc\rsc\src\CMake\DefaultCXX.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\sb\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Context.h" />
-    <ClInclude Include="Event.h" />
-    <ClInclude Include="EventHandler.h" />
-    <ClInclude Include="Factory.h" />
-    <ClInclude Include="FactoryRegistry.h" />
-    <ClInclude Include="GlobalAddress.h" />
-    <ClInclude Include="Initiator.h" />
-    <ClInclude Include="InvokerPool.h" />
-    <ClInclude Include="InvokerPoolRegistry.h" />
-    <ClInclude Include="InvokerThread.h" />
-    <ClInclude Include="LocalAddress.h" />
-    <ClInclude Include="Message.h" />
-    <ClInclude Include="MsgContext.h" />
-    <ClInclude Include="MsgFactory.h" />
-    <ClInclude Include="MsgHeader.h" />
-    <ClInclude Include="MsgPort.h" />
-    <ClInclude Include="Parameter.h" />
-    <ClInclude Include="Protocol.h" />
-    <ClInclude Include="ProtocolLayer.h" />
-    <ClInclude Include="ProtocolRegistry.h" />
-    <ClInclude Include="ProtocolSM.h" />
-    <ClInclude Include="PsmContext.h" />
-    <ClInclude Include="PsmFactory.h" />
-    <ClInclude Include="RootServiceSM.h" />
-    <ClInclude Include="SbAppIds.h" />
-    <ClInclude Include="SbCliParms.h" />
-    <ClInclude Include="SbDaemons.h" />
-    <ClInclude Include="SbEvents.h" />
-    <ClInclude Include="SbExtInputHandler.h" />
-    <ClInclude Include="SbHandlers.h" />
-    <ClInclude Include="SbIncrement.h" />
-    <ClInclude Include="SbInputHandler.h" />
-    <ClInclude Include="SbInvokerPools.h" />
-    <ClInclude Include="SbIpBuffer.h" />
-    <ClInclude Include="SbLogs.h" />
-    <ClInclude Include="SbModule.h" />
-    <ClInclude Include="SbPools.h" />
-    <ClInclude Include="SbTrace.h" />
-    <ClInclude Include="SbTracer.h" />
-    <ClInclude Include="SbTypes.h" />
-    <ClInclude Include="Service.h" />
-    <ClInclude Include="ServiceRegistry.h" />
-    <ClInclude Include="ServiceSM.h" />
-    <ClInclude Include="Signal.h" />
-    <ClInclude Include="SsmContext.h" />
-    <ClInclude Include="SsmFactory.h" />
-    <ClInclude Include="State.h" />
-    <ClInclude Include="TextTlvMessage.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="TimerProtocol.h" />
-    <ClInclude Include="TimerRegistry.h" />
-    <ClInclude Include="TimerThread.h" />
-    <ClInclude Include="TlvIntParameter.h" />
-    <ClInclude Include="TlvMessage.h" />
-    <ClInclude Include="TlvParameter.h" />
-    <ClInclude Include="TlvProtocol.h" />
-    <ClInclude Include="Trigger.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Context.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Event.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\EventHandler.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Factory.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\FactoryRegistry.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\GlobalAddress.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Initiator.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\InvokerPool.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\InvokerPoolRegistry.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\InvokerThread.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\LocalAddress.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Message.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\MsgContext.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\MsgFactory.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\MsgHeader.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\MsgPort.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Parameter.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Protocol.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ProtocolLayer.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ProtocolRegistry.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ProtocolSM.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\PsmContext.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\PsmFactory.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\RootServiceSM.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbAppIds.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbCliParms.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbDaemons.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbEvents.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbExtInputHandler.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbHandlers.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbIncrement.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbInputHandler.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbInvokerPools.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbIpBuffer.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbLogs.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbModule.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbPools.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbTrace.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbTracer.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbTypes.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Service.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ServiceRegistry.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ServiceSM.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Signal.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SsmContext.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SsmFactory.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\State.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TextTlvMessage.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Timer.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TimerProtocol.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TimerRegistry.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TimerThread.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TlvIntParameter.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TlvMessage.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TlvParameter.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TlvProtocol.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Trigger.h" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\AnalyzeMsgEvent.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\AnalyzeSapEvent.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\AnalyzeSnpEvent.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Context.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Event.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\EventHandler.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Factory.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\FactoryRegistry.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ForceTransitionEvent.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\GlobalAddress.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\InitiationReqEvent.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Initiator.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\InvokerPool.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\InvokerPoolRegistry.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\InvokerThread.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\LocalAddress.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Message.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\MsgContext.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\MsgFactory.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\MsgHeader.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\MsgPort.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Parameter.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Protocol.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ProtocolLayer.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ProtocolRegistry.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ProtocolSM.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\PsmContext.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\PsmFactory.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\RootServiceSM.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbCliParms.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbDaemons.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbExtInputHandler.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbHandlers.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbIncrement.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbInputHandler.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbInvokerPools.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbIpBuffer.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbLogs.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbModule.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbPools.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbTrace.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbTracer.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SbTypes.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Service.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ServiceRegistry.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\ServiceSM.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Signal.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SsmContext.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\SsmFactory.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\State.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TextTlvMessage.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Timer.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TimerProtocol.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TimerRegistry.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TimerThread.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TlvMessage.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TlvParameter.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\TlvProtocol.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\Trigger.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nb\nb.vcxproj">
-      <Project>{50814a14-cc19-45a3-9f0a-c9bd6cc0e1fb}</Project>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\ZERO_CHECK.vcxproj">
+      <Project>{C4265043-5604-303D-8600-D44262787CDD}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="..\nw\nw.vcxproj">
-      <Project>{f6873bbe-818e-4991-9fd9-d7214e9371a1}</Project>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\nb\nb.vcxproj">
+      <Project>{90CE693F-5DC2-356F-AB0C-C2D18B28FF70}</Project>
+      <Name>nb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\nw\nw.vcxproj">
+      <Project>{16C90F96-01EF-3A15-B2BC-03094C36D6BA}</Project>
+      <Name>nw</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

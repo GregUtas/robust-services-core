@@ -97,11 +97,12 @@ them, are listed in the comments that precede the implementation of
 [`main`](src/rsc/main.cpp). Each of these directories is built as a separate
 static library, with `main` residing in its own directory.
 
-RSC is currently developed using Visual Studio. If that is also your
-development environment, the _.vcxproj_ (project) files in this repository
-should already provide most of the build instructions that you need. The
-Windows build options used for RSC are described
-[here](docs/RSC-Windows-Build-Options.md).
+RSC is currently developed using Visual Studio. The Windows build options used
+by RSC are described [here](docs/RSC-Windows-Build-Options.md).
+
+RSC uses CMake to generate Visual Studio's _vcxproj_ files. If you do not wish to
+use CMake, you can use the _vcxproj_ files in the [`vcxproj`](vcxproj) directory.
+How to build with CMake is described [here](docs/RSC-Building-Using-CMake.md).
 
 ## Running the executable
 
@@ -191,3 +192,4 @@ How to contribute to RSC is described [here](CONTRIBUTING.md).
 
 GitHub now lets you sponsor projects. A "Sponsor" button is located at the top
 of this page.
+

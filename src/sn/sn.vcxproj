@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -9,173 +12,233 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0DFBBCDB-D579-419D-B58B-62FE99735C7A}</ProjectGuid>
+    <ProjectGuid>{9770A771-86B5-39D5-AC74-556AA7E38DB4}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>sn</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <Platform>Win32</Platform>
+    <ProjectName>sn</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="..\shared\RSC Common.props" />
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="..\shared\RSC Common.props" />
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="..\shared\RSC Common.props" />
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="..\shared\RSC Common.props" />
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sn.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sn</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sn.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sn</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.lib</TargetExt>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nt;../nw;../sb;../st;../mb;../cb;../pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnablePREfast>false</EnablePREfast>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4061;4062;4100;4242;4244;4267;4365;4514;4582;4623;4625;4626;4668;4710;4711;4820;5026;5027;5045</DisableSpecificWarnings>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <OmitFramePointers>false</OmitFramePointers>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SDLCheck>true</SDLCheck>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TreatSpecificWarningsAsErrors>4715</TreatSpecificWarningsAsErrors>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_DEBUG;WIN32;_LIB;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nt;../nw;../sb;../st;../mb;../cb;../pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_LIB;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4061;4062;4100;4242;4244;4267;4365;4514;4582;4623;4625;4626;4668;4710;4711;4820;5026;5027;5045</DisableSpecificWarnings>
+      <ExceptionHandling>Async</ExceptionHandling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nt;../nw;../sb;../st;../mb;../cb;../pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OmitFramePointers>false</OmitFramePointers>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SDLCheck>true</SDLCheck>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TreatSpecificWarningsAsErrors>4715</TreatSpecificWarningsAsErrors>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);NDEBUG;WIN32;_LIB;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nt;../nw;../sb;../st;../mb;../cb;../pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;NDEBUG;_LIB;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="PotsBcHandlers.h" />
-    <ClInclude Include="PotsBicService.h" />
-    <ClInclude Include="PotsBocService.h" />
-    <ClInclude Include="PotsCcwService.h" />
-    <ClInclude Include="PotsCfbService.h" />
-    <ClInclude Include="PotsCfnService.h" />
-    <ClInclude Include="PotsCfuService.h" />
-    <ClInclude Include="PotsCfxService.h" />
-    <ClInclude Include="PotsCwtService.h" />
-    <ClInclude Include="PotsHtlService.h" />
-    <ClInclude Include="PotsMultiplexer.h" />
-    <ClInclude Include="PotsProxyHandlers.h" />
-    <ClInclude Include="PotsProxySessions.h" />
-    <ClInclude Include="PotsSessions.h" />
-    <ClInclude Include="PotsStatistics.h" />
-    <ClInclude Include="PotsSusService.h" />
-    <ClInclude Include="PotsTreatmentRegistry.h" />
-    <ClInclude Include="PotsTreatments.h" />
-    <ClInclude Include="PotsWmlService.h" />
-    <ClInclude Include="SnIncrement.h" />
-    <ClInclude Include="SnModule.h" />
+    <CustomBuild Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Users/Greg/Documents/rsc/rsc/src/sn/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/Greg/Documents/rsc/rsc/src -BC:/Users/Greg/Documents/rsc/rsc/src --check-stamp-file C:/Users/Greg/Documents/rsc/rsc/src/sn/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\CMake\Default.cmake;C:\Users\Greg\Documents\rsc\rsc\src\CMake\DefaultCXX.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\sn\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Users/Greg/Documents/rsc/rsc/src/sn/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/Greg/Documents/rsc/rsc/src -BC:/Users/Greg/Documents/rsc/rsc/src --check-stamp-file C:/Users/Greg/Documents/rsc/rsc/src/sn/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\CMake\Default.cmake;C:\Users\Greg\Documents\rsc\rsc\src\CMake\DefaultCXX.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\sn\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PotsBcHandlers.cpp" />
-    <ClCompile Include="PotsBcService.cpp" />
-    <ClCompile Include="PotsBcSsm.cpp" />
-    <ClCompile Include="PotsBcStates.cpp" />
-    <ClCompile Include="PotsBcTriggers.cpp" />
-    <ClCompile Include="PotsBicService.cpp" />
-    <ClCompile Include="PotsBocService.cpp" />
-    <ClCompile Include="PotsCallFactory.cpp" />
-    <ClCompile Include="PotsCallHandler.cpp" />
-    <ClCompile Include="PotsCallIpService.cpp" />
-    <ClCompile Include="PotsCallPsm.cpp" />
-    <ClCompile Include="PotsCcwService.cpp" />
-    <ClCompile Include="PotsCfbService.cpp" />
-    <ClCompile Include="PotsCfnService.cpp" />
-    <ClCompile Include="PotsCfuService.cpp" />
-    <ClCompile Include="PotsCfxService.cpp" />
-    <ClCompile Include="PotsCwmService.cpp" />
-    <ClCompile Include="PotsCwtService.cpp" />
-    <ClCompile Include="PotsDiscService.cpp" />
-    <ClCompile Include="PotsHtlService.cpp" />
-    <ClCompile Include="PotsMultiplexer.cpp" />
-    <ClCompile Include="PotsProxyHandlers.cpp" />
-    <ClCompile Include="PotsProxySessions.cpp" />
-    <ClCompile Include="PotsStatistics.cpp" />
-    <ClCompile Include="PotsSusService.cpp" />
-    <ClCompile Include="PotsTreatmentRegistry.cpp" />
-    <ClCompile Include="PotsTreatments.cpp" />
-    <ClCompile Include="PotsWmlService.cpp" />
-    <ClCompile Include="SnIncrement.cpp" />
-    <ClCompile Include="SnModule.cpp" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBcHandlers.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBicService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBocService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCcwService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCfbService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCfnService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCfuService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCfxService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCwtService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsHtlService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsMultiplexer.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsProxyHandlers.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsProxySessions.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsSessions.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsStatistics.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsSusService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsTreatmentRegistry.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsTreatments.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsWmlService.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\SnIncrement.h" />
+    <ClInclude Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\SnModule.h" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBcHandlers.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBcService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBcSsm.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBcStates.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBcTriggers.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBicService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsBocService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCallFactory.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCallHandler.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCallIpService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCallPsm.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCcwService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCfbService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCfnService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCfuService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCfxService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCwmService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsCwtService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsDiscService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsHtlService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsMultiplexer.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsProxyHandlers.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsProxySessions.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsStatistics.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsSusService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsTreatmentRegistry.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsTreatments.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\PotsWmlService.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\SnIncrement.cpp" />
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\SnModule.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\ZERO_CHECK.vcxproj">
+      <Project>{C4265043-5604-303D-8600-D44262787CDD}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\cb\cb.vcxproj">
+      <Project>{1A615CF3-9BB0-3586-BD80-1671B35A878F}</Project>
+      <Name>cb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\mb\mb.vcxproj">
+      <Project>{738A376E-1D97-3B81-95CD-CDBB0AEB3E76}</Project>
+      <Name>mb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\nb\nb.vcxproj">
+      <Project>{90CE693F-5DC2-356F-AB0C-C2D18B28FF70}</Project>
+      <Name>nb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\nw\nw.vcxproj">
+      <Project>{16C90F96-01EF-3A15-B2BC-03094C36D6BA}</Project>
+      <Name>nw</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\pb\pb.vcxproj">
+      <Project>{2246B4CF-EE2A-3BE6-9B20-87F43E62FC55}</Project>
+      <Name>pb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\sb.vcxproj">
+      <Project>{ABEA2865-992D-3B75-BBA0-CB774D48F7DF}</Project>
+      <Name>sb</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

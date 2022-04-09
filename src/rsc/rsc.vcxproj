@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -9,170 +12,250 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\an\an.vcxproj">
-      <Project>{ff8adb07-f57d-4477-8867-9c45948a0220}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\cb\cb.vcxproj">
-      <Project>{81edfbc1-362e-4082-a9c5-e1b116ad0302}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\cn\cn.vcxproj">
-      <Project>{c32ef89c-a415-4e15-8251-bbe1f1411f35}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\ct\ct.vcxproj">
-      <Project>{57309c43-59ce-40e0-be61-cf240edb14ef}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\dip\dip.vcxproj">
-      <Project>{aabffebe-972c-490b-a12c-15e2880020a3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\mb\mb.vcxproj">
-      <Project>{d3133157-1e87-42bf-84f2-61140dc2b773}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\nb\nb.vcxproj">
-      <Project>{50814a14-cc19-45a3-9f0a-c9bd6cc0e1fb}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\nt\nt.vcxproj">
-      <Project>{9ad2cf38-7b5e-4584-9028-f637787de098}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\nw\nw.vcxproj">
-      <Project>{f6873bbe-818e-4991-9fd9-d7214e9371a1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\on\on.vcxproj">
-      <Project>{c95d31fd-a747-4692-a561-a10aea211979}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\pb\pb.vcxproj">
-      <Project>{a1d355ba-591f-412b-b3e9-ab88248a5552}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\rn\rn.vcxproj">
-      <Project>{07785ea1-6817-4ded-ac74-329c64429e23}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\sb\sb.vcxproj">
-      <Project>{f38cd809-f188-49af-bd46-0f2b08dd0746}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\sn\sn.vcxproj">
-      <Project>{0dfbbcdb-d579-419d-b58b-62fe99735c7a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\st\st.vcxproj">
-      <Project>{868cf7da-d9f6-40bd-8005-8c94ede5ceb7}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{307BE7A7-2E82-488B-91FB-C83D87F9726D}</ProjectGuid>
+    <ProjectGuid>{ADA6B43D-B5AC-3144-8784-0323C756DA61}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>rsc</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <Platform>Win32</Platform>
+    <Platform>Win32</Platform>
     <ProjectName>rsc</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="..\shared\RSC Common.props" />
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="..\shared\RSC Common.props" />
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="..\shared\RSC Common.props" />
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="..\shared\RSC Common.props" />
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">rsc.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">rsc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">rsc.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">rsc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nt;../ct;../nw;../sb;../st;../mb;../cb;../pb;../on;../cn;../rn;../an;../sn;../dip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnablePREfast>false</EnablePREfast>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\ct;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\st;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\on;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\rn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\an;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\dip;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\an\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\st;C:\Users\Greg\Documents\rsc\rsc\src\an\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nt\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\st;C:\Users\Greg\Documents\rsc\rsc\src\on\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4061;4062;4100;4242;4244;4267;4365;4514;4582;4623;4625;4626;4668;4710;4711;4820;5026;5027;5045</DisableSpecificWarnings>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <OmitFramePointers>false</OmitFramePointers>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SDLCheck>true</SDLCheck>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TreatSpecificWarningsAsErrors>4715</TreatSpecificWarningsAsErrors>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_DEBUG;WIN32;_CONSOLE;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_CONSOLE;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\ct;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\st;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\on;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\rn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\an;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\dip;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\an\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\st;C:\Users\Greg\Documents\rsc\rsc\src\an\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nt\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\st;C:\Users\Greg\Documents\rsc\rsc\src\on\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\ct;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\st;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\on;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\rn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\an;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\dip;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\an\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\st;C:\Users\Greg\Documents\rsc\rsc\src\an\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nt\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\st;C:\Users\Greg\Documents\rsc\rsc\src\on\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>..\Debug\an.lib;..\Debug\cb.lib;..\Debug\cn.lib;..\Debug\ct.lib;..\Debug\dip.lib;..\Debug\mb.lib;..\Debug\nb.lib;..\Debug\nt.lib;..\Debug\nw.lib;..\Debug\on.lib;..\Debug\pb.lib;..\Debug\rn.lib;..\Debug\sb.lib;..\Debug\sn.lib;..\Debug\st.lib;..\Debug\cn.lib;..\Debug\cb.lib;..\Debug\mb.lib;..\Debug\st.lib;..\Debug\nt.lib;..\Debug\sb.lib;..\Debug\nw.lib;..\Debug\nb.lib;Dbghelp.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nt;../ct;../nw;../sb;../st;../mb;../cb;../pb;../on;../cn;../rn;../an;../sn;../dip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Greg/Documents/rsc/rsc/src/Debug/rsc.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Greg/Documents/rsc/rsc/src/Debug/rsc.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\ct;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\st;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\on;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\rn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\an;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\dip;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\an\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\st;C:\Users\Greg\Documents\rsc\rsc\src\an\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nt\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\st;C:\Users\Greg\Documents\rsc\rsc\src\on\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4061;4062;4100;4242;4244;4267;4365;4514;4582;4623;4625;4626;4668;4710;4711;4820;5026;5027;5045</DisableSpecificWarnings>
+      <ExceptionHandling>Async</ExceptionHandling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nt;../ct;../nw;../sb;../st;../mb;../cb;../pb;../on;../cn;../rn;../an;../sn;../dip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OmitFramePointers>false</OmitFramePointers>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SDLCheck>true</SDLCheck>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TreatSpecificWarningsAsErrors>4715</TreatSpecificWarningsAsErrors>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);NDEBUG;WIN32;_CONSOLE;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;NDEBUG;_CONSOLE;UNICODE;_UNICODE;OS_WIN;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\ct;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\st;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\on;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\rn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\an;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\dip;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\an\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\st;C:\Users\Greg\Documents\rsc\rsc\src\an\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nt\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\st;C:\Users\Greg\Documents\rsc\rsc\src\on\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\ct;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\st;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\on;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\rn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\an;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\sn;C:\Users\Greg\Documents\rsc\rsc\src\rsc\..\dip;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\an\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\an\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\st;C:\Users\Greg\Documents\rsc\rsc\src\an\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\an\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\cb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\mb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nw\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\st\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\st\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\nt\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\st;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\pb\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\cn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\ct\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\dip\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\on\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\on\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\st;C:\Users\Greg\Documents\rsc\rsc\src\on\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\pb;C:\Users\Greg\Documents\rsc\rsc\src\on\..\cn;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\rn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nt;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\nw;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\sb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\st;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\mb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\cb;C:\Users\Greg\Documents\rsc\rsc\src\sn\..\pb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
     <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>..\Release\an.lib;..\Release\cb.lib;..\Release\cn.lib;..\Release\ct.lib;..\Release\dip.lib;..\Release\mb.lib;..\Release\nb.lib;..\Release\nt.lib;..\Release\nw.lib;..\Release\on.lib;..\Release\pb.lib;..\Release\rn.lib;..\Release\sb.lib;..\Release\sn.lib;..\Release\st.lib;..\Release\cn.lib;..\Release\cb.lib;..\Release\mb.lib;..\Release\st.lib;..\Release\nt.lib;..\Release\sb.lib;..\Release\nw.lib;..\Release\nb.lib;Dbghelp.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../nb;../nt;../ct;../nw;../sb;../st;../mb;../cb;../pb;../on;../cn;../rn;../an;../sn;../dip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Greg/Documents/rsc/rsc/src/Release/rsc.lib</ImportLibrary>
       <OptimizeReferences>true</OptimizeReferences>
+      <ProgramDataBaseFile>C:/Users/Greg/Documents/rsc/rsc/src/Release/rsc.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Greg\Documents\rsc\rsc\src\rsc\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Users/Greg/Documents/rsc/rsc/src/rsc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/Greg/Documents/rsc/rsc/src -BC:/Users/Greg/Documents/rsc/rsc/src --check-stamp-file C:/Users/Greg/Documents/rsc/rsc/src/rsc/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\CMake\Default.cmake;C:\Users\Greg\Documents\rsc\rsc\src\CMake\DefaultCXX.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\rsc\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Users/Greg/Documents/rsc/rsc/src/rsc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/Greg/Documents/rsc/rsc/src -BC:/Users/Greg/Documents/rsc/rsc/src --check-stamp-file C:/Users/Greg/Documents/rsc/rsc/src/rsc/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\CMake\Default.cmake;C:\Users\Greg\Documents\rsc\rsc\src\CMake\DefaultCXX.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Greg\Documents\rsc\rsc\src\rsc\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Greg\Documents\rsc\rsc\src\rsc\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\ZERO_CHECK.vcxproj">
+      <Project>{C4265043-5604-303D-8600-D44262787CDD}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\an\an.vcxproj">
+      <Project>{EBC02642-602D-33C9-B1B3-D5A2388E0426}</Project>
+      <Name>an</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\cb\cb.vcxproj">
+      <Project>{1A615CF3-9BB0-3586-BD80-1671B35A878F}</Project>
+      <Name>cb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\cn\cn.vcxproj">
+      <Project>{56B0E0DF-BEF7-34B7-9DB6-6CB201C1245A}</Project>
+      <Name>cn</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\ct\ct.vcxproj">
+      <Project>{31E4081B-A6CF-3D8D-9393-250688191AA2}</Project>
+      <Name>ct</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\dip\dip.vcxproj">
+      <Project>{10447D99-6E67-3FA7-91F9-1C1F17340847}</Project>
+      <Name>dip</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\mb\mb.vcxproj">
+      <Project>{738A376E-1D97-3B81-95CD-CDBB0AEB3E76}</Project>
+      <Name>mb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\nb\nb.vcxproj">
+      <Project>{90CE693F-5DC2-356F-AB0C-C2D18B28FF70}</Project>
+      <Name>nb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\nt\nt.vcxproj">
+      <Project>{04423FE6-2659-3D81-9A59-3EF8DFCAC932}</Project>
+      <Name>nt</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\nw\nw.vcxproj">
+      <Project>{16C90F96-01EF-3A15-B2BC-03094C36D6BA}</Project>
+      <Name>nw</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\on\on.vcxproj">
+      <Project>{1383F019-1D7F-3715-9A4A-14259D18F767}</Project>
+      <Name>on</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\pb\pb.vcxproj">
+      <Project>{2246B4CF-EE2A-3BE6-9B20-87F43E62FC55}</Project>
+      <Name>pb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\rn\rn.vcxproj">
+      <Project>{3C9FC3A3-C436-3A26-86EF-AC6953485C3E}</Project>
+      <Name>rn</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\sb\sb.vcxproj">
+      <Project>{ABEA2865-992D-3B75-BBA0-CB774D48F7DF}</Project>
+      <Name>sb</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\sn\sn.vcxproj">
+      <Project>{9770A771-86B5-39D5-AC74-556AA7E38DB4}</Project>
+      <Name>sn</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Greg\Documents\rsc\rsc\src\st\st.vcxproj">
+      <Project>{F726C7F5-8D6A-306A-8F18-FF97C3768CED}</Project>
+      <Name>st</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -126,7 +126,8 @@ main_t main(int argc, char* argv[])
 
    //  Echo and save the arguments.
    //
-   std::cout << "ENTERING main(int argc, char* argv[])" << CRLF;
+   std::cout << "ROBUST SERVICES CORE" << CRLF;
+   std::cout << "Entering main(int argc, char* argv[])" << CRLF;
    std::cout << "  argc: " << argc << CRLF;
 
    for(auto i = 0; i < argc; ++i)

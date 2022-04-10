@@ -68,3 +68,12 @@ You can now launch RSC through the VS _Debug_ menu. If you get an error
 saying that the _.exe_ couldn't be found, check that _rsc_ is set as
 the startup project by right-clicking on it in the VS Solution Explorer
 and selecting "Set as Startup Project".
+
+## CMakeConverter
+
+The tool [CMakeConverter](https://github.com/pavelliavonau/cmakeconverter)
+significantly eased RSC's migration to CMake by generating the initial
+_CMakeLists.txt_ files and a _GlobalSettingsInclude.cmake_ stub that could
+be populated with RSC's compile and link options. If you want to migrate
+to CMake but are new to it, you should definitely give this tool a try.
+

@@ -5,17 +5,17 @@ set(CMAKE_SYSTEM_VERSION 10.0 CACHE STRING "" FORCE)
 project(rsc CXX)
 
 ################################################################################
-# Set target arch type if empty. Visual studio solution generator provides it.
+# Set target if not provided
 ################################################################################
 if(NOT CMAKE_VS_PLATFORM_NAME)
     set(CMAKE_VS_PLATFORM_NAME "x64")
 endif()
-message("${CMAKE_VS_PLATFORM_NAME} architecture in use")
+message("${CMAKE_VS_PLATFORM_NAME} target in use")
 
 if(NOT ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM"
      OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64"
      OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32"))
-    message(FATAL_ERROR "${CMAKE_VS_PLATFORM_NAME} arch is not supported!")
+    message(FATAL_ERROR "${CMAKE_VS_PLATFORM_NAME} target is not supported")
 endif()
 
 ################################################################################
@@ -57,7 +57,7 @@ if(MSVC)
 endif()
 
 ################################################################################
-# Nuget packages function stub.
+# Nuget packages function stub
 ################################################################################
 function(use_package TARGET PACKAGE VERSION)
     message(WARNING "No implementation of use_package. Create yours. "
@@ -66,14 +66,14 @@ function(use_package TARGET PACKAGE VERSION)
 endfunction()
 
 ################################################################################
-# Common utils
+# Common utilities
 ################################################################################
 include(CMake/Utils.cmake)
 
 ################################################################################
-# Additional Global Settings(add specific info there)
+# Additional global settings (defines most of RSC's compile and link options)
 ################################################################################
-include(CMake/GlobalSettingsInclude.cmake OPTIONAL)
+include(CMake/GlobalSettingsInclude.cmake)
 
 ################################################################################
 # Use solution folders feature
@@ -81,7 +81,7 @@ include(CMake/GlobalSettingsInclude.cmake OPTIONAL)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ################################################################################
-# Sub-projects
+# Subprojects
 ################################################################################
 add_subdirectory(an)
 add_subdirectory(cb)

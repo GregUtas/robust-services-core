@@ -7,11 +7,9 @@ for all projects:
 
   The CLR and managed code are Windows-specific.
   
-- C/C++ > General > Debug Information Format: /Zi
+- C/C++ > General > Debug Information Format: /Z7
 
-  This provides PDB files for debugging, even in a release build.
-  This setting used to be /Z7, but /Zi occurs when using CMake, despite
-  trying to force /Z7. As /Zi supports debugging, this seems acceptable.
+  This provides support for debugging, even in a release build.
   
 - C/C++ > General > Warning Level: /Wall
 

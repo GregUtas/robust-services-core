@@ -1,4 +1,4 @@
-# Building RSC Using CMake
+# Robust Services Core: Building with CMake
 
 CMake generates the Visual Studio (VS) _vcxproj_ files that you would
 otherwise have created using the Properties editor. Once that is done,

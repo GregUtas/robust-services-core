@@ -20,8 +20,10 @@ if you need to do this. Many CMake questions are also addressed on
 
 How VS has integrated support for CMake is described
 [here](https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170).
-I still haven't configured VS to seemlessly support CMake. However, the
-workflow described below was adequate for building and running RSC.
+I still haven't configured VS to support CMake, which definitely looks
+like the route to take. When that happens, this page will be updated.
+But for now, the workflow described below is adequate for building and
+running RSC.
 
 ## Generating _vcxproj_ files
 

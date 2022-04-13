@@ -211,7 +211,7 @@ bool Element::RunningInLab()
    return true;
 #else
    return false;
-#endif;
+#endif
 }
 
 //------------------------------------------------------------------------------

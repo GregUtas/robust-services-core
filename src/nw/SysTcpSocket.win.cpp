@@ -23,8 +23,8 @@
 
 #include "SysTcpSocket.h"
 #include <memory>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
 #include "Debug.h"
 #include "Duration.h"
 #include "IpPortRegistry.h"

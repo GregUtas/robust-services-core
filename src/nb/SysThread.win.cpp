@@ -25,7 +25,7 @@
 #include <csignal>
 #include <cstdint>
 #include <process.h>
-#include <windows.h>
+#include <Windows.h>
 #include "Debug.h"
 #include "Duration.h"
 #include "NbSignals.h"

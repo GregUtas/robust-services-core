@@ -131,7 +131,7 @@ static void EraseFtLock() NO_FT
 //  invoked to create SysTickTimer invoke Debug::ft, which requires FtLocks_
 //  to have been constructed.
 //
-const SysTickTimer* TickTimer = SysTickTimer::Instance();
+static const SysTickTimer* TickTimer = SysTickTimer::Instance();
 
 //------------------------------------------------------------------------------
 //
@@ -1062,7 +1062,7 @@ const SysThread::Priority FactionMap[Faction_N] =
 //  The thread that is running or which has been scheduled to run.
 //  Excludes RootThread and InitThread.
 //
-static std::atomic< Thread* > ActiveThread_ = nullptr;
+static std::atomic< Thread* > ActiveThread_ = { nullptr };
 
 //  The factions that may currently be scheduled.
 //

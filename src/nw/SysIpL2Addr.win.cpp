@@ -23,8 +23,8 @@
 
 #include "SysIpL2Addr.h"
 #include <cstring>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
 #include "Debug.h"
 #include "NwLogs.h"
 #include "SysTypes.h"

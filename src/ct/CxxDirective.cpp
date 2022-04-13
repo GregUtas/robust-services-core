@@ -657,7 +657,7 @@ bool Iff::HasCompiledCode() const
 {
    Debug::ft("Iff.HasCompiledCode");
 
-   if(HasCompiledCode()) return true;
+   if(Conditional::HasCompiledCode()) return true;
 
    for(auto e = elifs_.cbegin(); e != elifs_.cend(); ++e)
    {

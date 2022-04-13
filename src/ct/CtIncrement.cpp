@@ -37,7 +37,7 @@
 #include "CodeDir.h"
 #include "CodeDirSet.h"
 #include "CodeFile.h"
-#include "CodeFileSEt.h"
+#include "CodeFileSet.h"
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxExecute.h"

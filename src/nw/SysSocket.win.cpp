@@ -25,9 +25,9 @@
 #include <iosfwd>
 #include <sstream>
 #include <winerror.h>
-#include <winsock2.h>
-#include <windows.h>   // must follow winsock2.h
-#include <ws2tcpip.h>
+#include <WinSock2.h>
+#include <Windows.h>   // must follow WinSock2.h
+#include <WS2tcpip.h>
 #include "Debug.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"

@@ -54,7 +54,7 @@ namespace NodeBase
 //  The following return the set of factions that can be scheduled during
 //  various scenarios.
 //
-const FactionFlags& NoFactions = FactionFlags();
+static const FactionFlags& NoFactions = FactionFlags();
 
 //------------------------------------------------------------------------------
 

@@ -2382,7 +2382,7 @@ word RestartCommand::ProcessCommand(CliThread& cli) const
 //
 fixed_string SetOptionsExpl = "options: t=suppress times; c=don't move ctors";
 
-const string& ValidSetOptions = "tc";
+static const string& ValidSetOptions = "tc";
 
 class TraceText : public CliText
 {

@@ -130,7 +130,7 @@ void Daemon::CreateThreads()
       {
          RaiseAlarm(GetAlarmLevel());
          return;
-      };
+      }
 
       threads_.insert(thread);
       ThreadAdmin::Incr(ThreadAdmin::Recreations);

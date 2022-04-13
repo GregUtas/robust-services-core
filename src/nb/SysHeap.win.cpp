@@ -26,7 +26,7 @@
 #include <intsafe.h>
 #include <sstream>
 #include <string>
-#include <windows.h>
+#include <Windows.h>
 #include "Debug.h"
 #include "Restart.h"
 

@@ -75,7 +75,7 @@ struct LogDynamic : public Permanent
 //
 //  Incremented when a log is created; assigned to it as a sequence number.
 //
-static std::atomic_size_t SeqNo_ = 0;
+static std::atomic_size_t SeqNo_ = { 0 };
 
 //> The maximum length of the string that explains a log.
 //

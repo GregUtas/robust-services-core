@@ -20,7 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #ifndef DEFERREDREGISTRY_H_INCLUDED
-#define TIMERREGISTRY_H_INCLUDED
+#define DEFERREDREGISTRY_H_INCLUDED
 
 #include "Dynamic.h"
 #include "Deferred.h"

@@ -6027,7 +6027,7 @@ void Function::UpdateXref(bool insert)
       //  This is either a function template or a function in a class template.
       //
       Context::PushXrefFrame(TemplateFunction);
-   };
+   }
 
    if(defn_) name_->UpdateXref(insert);
    if(parms_ != nullptr) parms_->UpdateXref(insert);

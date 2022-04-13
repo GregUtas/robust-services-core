@@ -23,7 +23,7 @@
 
 #include "SysTickTimer.h"
 #include <sys/timeb.h>
-#include <windows.h>
+#include <Windows.h>
 #include "Debug.h"
 
 using std::string;

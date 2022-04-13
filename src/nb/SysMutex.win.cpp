@@ -23,7 +23,7 @@
 
 #include "SysMutex.h"
 #include <new>
-#include <windows.h>
+#include <Windows.h>
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Duration.h"

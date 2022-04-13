@@ -23,8 +23,8 @@
 
 #include "SysUdpSocket.h"
 #include <winerror.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
 #include "Debug.h"
 #include "IpPortRegistry.h"
 #include "NwLogs.h"

@@ -22,7 +22,7 @@
 #ifdef OS_WIN
 
 #include "SysLock.h"
-#include <windows.h>
+#include <Windows.h>
 #include "Debug.h"
 #include "SysThread.h"
 #include "ThreadAdmin.h"

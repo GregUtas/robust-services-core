@@ -3076,7 +3076,7 @@ word Editor::FindSpecialFuncDeclLoc
          prompt = true;
       }
       break;
-   };
+   }
 
    //  The user can decide to define the function as defaulted or deleted.
    //  If it will be defaulted and a related function is not trivial, ask
@@ -5429,7 +5429,7 @@ word Editor::RenameArgument(const CodeWarning& log)
          argName = ChooseArgumentName(declName, defnName);
          if(argName == defnName) func = decl;
       }
-   };
+   }
 
    size_t begin, end;
    if(!func->GetSpan2(begin, end)) return NotFound("Function");

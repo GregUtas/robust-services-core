@@ -78,7 +78,7 @@ ProtocolLayer::~ProtocolLayer()
    //
    if(upper_ != nullptr)
    {
-      Debug::SwLog(ProtocolLayer_dtor, "unexpected upper layer", GetFactory());
+      Debug::SwLog(ProtocolLayer_dtor, "unexpected upper layer", 0);
       upper_->AdjacentDeleted(false);
       upper_ = nullptr;
    }

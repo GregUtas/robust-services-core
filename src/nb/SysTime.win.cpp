@@ -24,7 +24,7 @@
 #include "SysTime.h"
 #include <ctime>
 #include <sys/timeb.h>
-#include <windows.h>
+#include <Windows.h>
 #include "Debug.h"
 
 //------------------------------------------------------------------------------

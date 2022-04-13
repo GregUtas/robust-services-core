@@ -569,7 +569,7 @@ class IntLiteral : public Literal
 public:
    //  Bases for an integer literal.
    //
-   enum Radix
+   enum Radix : unsigned int
    {
       DEC,  // no prefix
       HEX,  // "0x" prefix
@@ -578,7 +578,7 @@ public:
 
    //  Suffixes that specify an integer literal's size.
    //
-   enum Size
+   enum Size : unsigned int
    {
       SIZE_I,  // no suffix
       SIZE_L,  // "L" suffix
@@ -596,7 +596,7 @@ public:
       Tags(Radix r, bool u, Size s) : radix_(r), unsigned_(u), size_(s) { }
       ~Tags() = default;
       Tags(const Tags& that) = default;
-      Tags& operator=(const Tags& that) = default;
+      Tags& operator=(const Tags& that) = delete;
    };
 
    IntLiteral(int64_t num, const Tags& tags)
@@ -622,7 +622,7 @@ class FloatLiteral : public Literal
 public:
    //  Suffixes that specify a floating point literal's size.
    //
-   enum Size
+   enum Size : unsigned int
    {
       SIZE_D,  // no suffix (double)
       SIZE_F,  // "F" suffix (float)

@@ -297,7 +297,7 @@ constexpr Distance NOT_A_SUBCLASS = UINT8_MAX;
 //  the scope that uses it.  Whether the symbol is visible (through #include
 //  and using statements, and scope qualification) is considered separately.
 //
-enum Accessibility
+enum Accessibility : unsigned int
 {
    Declared,      // user is declarer
    Inherited,     // user is a subclass of declarer and can see name
@@ -311,7 +311,7 @@ enum Accessibility
 //  Indicates how closely a type matches the one expected by a function or
 //  template.
 //
-enum TypeMatch
+enum TypeMatch : unsigned int
 {
    Incompatible,   // argument cannot be matched
    Adaptable,      // argument is non-const but would be passed as const
@@ -327,7 +327,7 @@ enum TypeMatch
 //
 //  Where a TypeSpec occurs.
 //
-enum TypeSpecUser
+enum TypeSpecUser : unsigned int
 {
    TS_Unspecified,  // default value
    TS_Definition,   // data or function definition, distinct from declaration
@@ -338,7 +338,7 @@ enum TypeSpecUser
 //
 //  Specifies a type's role in a template.
 //
-enum TemplateRole
+enum TemplateRole : unsigned int
 {
    TemplateNone,       // not part of a template
    TemplateArgument,   // e.g. int in vector< int >

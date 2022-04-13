@@ -125,7 +125,7 @@ Cxx::Access FindAccessControl(const std::string& s)
 
 ostream& operator<<(ostream& stream, Cxx::Access access)
 {
-   if((access >= 0) && (access < Cxx::Access_N))
+   if(access < Cxx::Access_N)
       stream << AccessStrings[access];
    else
       stream << AccessStrings[Cxx::Access_N];
@@ -145,7 +145,7 @@ fixed_string ClassTagStrings[Cxx::ClassTag_N + 1] =
 
 ostream& operator<<(ostream& stream, Cxx::ClassTag tag)
 {
-   if((tag >= 0) && (tag < Cxx::ClassTag_N))
+   if(tag < Cxx::ClassTag_N)
       stream << ClassTagStrings[tag];
    else
       stream << ClassTagStrings[Cxx::ClassTag_N];
@@ -213,18 +213,18 @@ void Cxx::Initialize()
    Debug::ft("Cxx.Initialize");
 
    Directives.reset(new DirectiveTable);
-   Directives->insert(DirectivePair(HASH_DEFINE_STR, _DEFINE));
-   Directives->insert(DirectivePair(HASH_ELIF_STR, _ELIF));
-   Directives->insert(DirectivePair(HASH_ELSE_STR, _ELSE));
-   Directives->insert(DirectivePair(HASH_ENDIF_STR, _ENDIF));
-   Directives->insert(DirectivePair(HASH_ERROR_STR, _ERROR));
-   Directives->insert(DirectivePair(HASH_IF_STR, _IF));
-   Directives->insert(DirectivePair(HASH_IFDEF_STR, _IFDEF));
-   Directives->insert(DirectivePair(HASH_IFNDEF_STR, _IFNDEF));
-   Directives->insert(DirectivePair(HASH_INCLUDE_STR, _INCLUDE));
-   Directives->insert(DirectivePair(HASH_LINE_STR, _LINE));
-   Directives->insert(DirectivePair(HASH_PRAGMA_STR, _PRAGMA));
-   Directives->insert(DirectivePair(HASH_UNDEF_STR, _UNDEF));
+   Directives->insert(DirectivePair(HASH_DEFINE_STR, HASH_DEFINE));
+   Directives->insert(DirectivePair(HASH_ELIF_STR, HASH_ELIF));
+   Directives->insert(DirectivePair(HASH_ELSE_STR, HASH_ELSE));
+   Directives->insert(DirectivePair(HASH_ENDIF_STR, HASH_ENDIF));
+   Directives->insert(DirectivePair(HASH_ERROR_STR, HASH_ERROR));
+   Directives->insert(DirectivePair(HASH_IF_STR, HASH_IF));
+   Directives->insert(DirectivePair(HASH_IFDEF_STR, HASH_IFDEF));
+   Directives->insert(DirectivePair(HASH_IFNDEF_STR, HASH_IFNDEF));
+   Directives->insert(DirectivePair(HASH_INCLUDE_STR, HASH_INCLUDE));
+   Directives->insert(DirectivePair(HASH_LINE_STR, HASH_LINE));
+   Directives->insert(DirectivePair(HASH_PRAGMA_STR, HASH_PRAGMA));
+   Directives->insert(DirectivePair(HASH_UNDEF_STR, HASH_UNDEF));
 
    Keywords.reset(new KeywordTable);
    Keywords->insert(KeywordPair(ALIGNAS_STR, ALIGNAS));

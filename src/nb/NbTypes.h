@@ -132,7 +132,7 @@ c_string AlarmStatusSymbol(AlarmStatus status);
 
 //  The direction of a message.
 //
-enum MsgDirection
+enum MsgDirection : unsigned int
 {
    MsgIncoming,
    MsgOutgoing

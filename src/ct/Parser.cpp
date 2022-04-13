@@ -3939,29 +3939,29 @@ bool Parser::HandleDirective(DirectivePtr& dir)
 
    switch(kwd)
    {
-   case Cxx::_DEFINE:
+   case Cxx::HASH_DEFINE:
       return HandleDefine();
-   case Cxx::_ELIF:
+   case Cxx::HASH_ELIF:
       return HandleElif(dir);
-   case Cxx::_ELSE:
+   case Cxx::HASH_ELSE:
       return HandleElse(dir);
-   case Cxx::_ERROR:
+   case Cxx::HASH_ERROR:
       return HandleError(dir);
-   case Cxx::_ENDIF:
+   case Cxx::HASH_ENDIF:
       return HandleEndif(dir);
-   case Cxx::_IF:
+   case Cxx::HASH_IF:
       return HandleIf(dir);
-   case Cxx::_IFDEF:
+   case Cxx::HASH_IFDEF:
       return HandleIfdef(dir);
-   case Cxx::_IFNDEF:
+   case Cxx::HASH_IFNDEF:
       return HandleIfndef(dir);
-   case Cxx::_INCLUDE:
+   case Cxx::HASH_INCLUDE:
       return HandleInclude();
-   case Cxx::_LINE:
+   case Cxx::HASH_LINE:
       return HandleLine(dir);
-   case Cxx::_PRAGMA:
+   case Cxx::HASH_PRAGMA:
       return HandlePragma(dir);
-   case Cxx::_UNDEF:
+   case Cxx::HASH_UNDEF:
       return HandleUndef(dir);
       break;
    }

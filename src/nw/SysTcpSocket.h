@@ -164,7 +164,7 @@ public:
 
    //  The socket's state with respect to the application.
    //
-   enum AppState
+   enum AppState : unsigned int
    {
       Initial,   // socket allocated
       Acquired,  // application has invoked Acquire()
@@ -231,7 +231,7 @@ private:
 
    //  States for TCP sockets.
    //
-   enum State
+   enum State : unsigned int
    {
       Idle,        // initial state
       Listening,   // has invoked Listen

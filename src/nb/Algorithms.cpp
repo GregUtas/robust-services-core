@@ -114,7 +114,7 @@ uint32_t rand(uint32_t min, uint32_t max)
 {
    //  Return a rand value, min <= value <= max.
    //
-   return (double(::rand()) / (uint32_t(RAND_MAX) + 1)) * (max - min) + min;
+   return (double(::rand()) / (uint32_t(RAND_MAX) + 1.0)) * (max - min) + min;
 }
 
 //------------------------------------------------------------------------------

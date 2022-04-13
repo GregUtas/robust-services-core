@@ -43,18 +43,18 @@ namespace Cxx
 {
    enum Directive
    {
-      _DEFINE,
-      _ERROR,
-      _ELIF,
-      _ELSE,
-      _ENDIF,
-      _IF,
-      _IFDEF,
-      _IFNDEF,
-      _INCLUDE,
-      _LINE,
-      _PRAGMA,
-      _UNDEF,
+      HASH_DEFINE,
+      HASH_ERROR,
+      HASH_ELIF,
+      HASH_ELSE,
+      HASH_ENDIF,
+      HASH_IF,
+      HASH_IFDEF,
+      HASH_IFNDEF,
+      HASH_INCLUDE,
+      HASH_LINE,
+      HASH_PRAGMA,
+      HASH_UNDEF,
       NIL_DIRECTIVE
    };
 
@@ -106,7 +106,7 @@ namespace Cxx
       NIL_KEYWORD  // no keyword found; also used as maximum value
    };
 
-   enum Operator
+   enum Operator : unsigned int
    {
       SCOPE_RESOLUTION,         // n::t
       REFERENCE_SELECT,         // r.m
@@ -203,7 +203,7 @@ namespace Cxx
 
    //  Class types.
    //
-   enum ClassTag
+   enum ClassTag : unsigned int
    {
       Typename,
       ClassType,
@@ -214,7 +214,7 @@ namespace Cxx
 
    //  Access control.
    //
-   enum Access
+   enum Access : unsigned int
    {
       Private,
       Protected,
@@ -528,7 +528,7 @@ private:
 class Numeric
 {
 public:
-   enum NumericType
+   enum NumericType : unsigned int
    {
       NIL,
       INT,

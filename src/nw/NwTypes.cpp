@@ -103,7 +103,7 @@ fixed_string ProtocolStrings[IpProtocol_N + 1] =
 
 ostream& operator<<(ostream& stream, IpProtocol proto)
 {
-   if((proto >= 0) && (proto < IpProtocol_N))
+   if(proto < IpProtocol_N)
       stream << ProtocolStrings[proto];
    else
       stream << ProtocolStrings[IpProtocol_N];

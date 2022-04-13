@@ -2,7 +2,7 @@
 #
 if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") OR
   (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"))
-    message("Reading GlobalSettingsInclude.cmake shared by MSVC and CLang")
+    message("Reading global settings shared by MSVC and CLang")
 
     # Clang is currently used only to target Windows
     # Enable Windows targets (*.win.cpp files)
@@ -25,7 +25,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") OR
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    message("Reading GlobalSettingsInclude.cmake for MSVC")
+    message("Reading global settings for MSVC")
 
     # Include run-time checks
     add_compile_options(/RTC1)
@@ -60,16 +60,10 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # Support incremental linking for patching
     add_link_options(/INCREMENTAL)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    message("Reading GlobalSettingsInclude.cmake for Clang")
+    message("Reading global settings for Clang")
 
     # Provide full debugging information
     add_compile_options(/Zi)
-
-    # Temporarily disable specific compiler warnings
-    add_compile_options(-Wno-defaulted-function-deleted)
-    add_compile_options(-Wno-reserved-identifier)
-    add_compile_options(-Wno-signed-enum-bitfield)
-    add_compile_options(-Wno-tautological-type-limit-compare)
 
     # Disable specific compiler warnings
     add_compile_options(-Wno-c++98-compat)
@@ -97,11 +91,12 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     add_compile_options(-Wno-suggest-destructor-override)
     add_compile_options(-Wno-switch)
     add_compile_options(-Wno-switch-enum)
+    add_compile_options(-Wno-tautological-type-limit-compare)
     add_compile_options(-Wno-tautological-undefined-compare)
     add_compile_options(-Wno-trigraphs)
     add_compile_options(-Wno-unused-parameter)
     add_compile_options(-Wno-unreachable-code-break)
     add_compile_options(-Wno-unreachable-code-return)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message("Reading GlobalSettingsInclude.cmake for GCC")
+    message("Reading global settings for GCC")
 endif()

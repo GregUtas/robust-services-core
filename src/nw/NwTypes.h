@@ -115,7 +115,7 @@ constexpr ipport_t LastAppIpPort = MaxIpPort;
 
 //  IP protocols.
 //
-enum IpProtocol
+enum IpProtocol : unsigned int
 {
    IpAny,        // wildcard
    IpUdp,

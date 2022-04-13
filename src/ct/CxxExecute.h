@@ -651,7 +651,7 @@ public:
 
    //  Copy operator.  Needed to allow sorting.
    //
-   Tracepoint& operator=(const Tracepoint& that) = default;
+   Tracepoint& operator=(const Tracepoint& that) = delete;
 
    //  For supporting Context::Tracepoints_.
    //

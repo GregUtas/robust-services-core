@@ -1404,18 +1404,18 @@ void Lexer::FindCode(const OptionalCode* opt, bool compile)
    {
       switch(d)
       {
-      case Cxx::_IF:
-      case Cxx::_IFDEF:
-      case Cxx::_IFNDEF:
+      case Cxx::HASH_IF:
+      case Cxx::HASH_IFDEF:
+      case Cxx::HASH_IFNDEF:
          ++level;
          break;
 
-      case Cxx::_ELIF:
-      case Cxx::_ELSE:
+      case Cxx::HASH_ELIF:
+      case Cxx::HASH_ELSE:
          if(level == 0) return opt->SetSkipped(begin, curr_ - 1);
          break;
 
-      case Cxx::_ENDIF:
+      case Cxx::HASH_ENDIF:
          if(level == 0) return opt->SetSkipped(begin, curr_ - 1);
          --level;
          break;

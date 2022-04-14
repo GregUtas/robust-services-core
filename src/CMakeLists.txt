@@ -10,12 +10,12 @@ project(rsc CXX)
 if(NOT CMAKE_VS_PLATFORM_NAME)
     set(CMAKE_VS_PLATFORM_NAME "x64")
 endif()
-message("${CMAKE_VS_PLATFORM_NAME} target in use")
+message("** ${CMAKE_VS_PLATFORM_NAME} target in use")
 
 if(NOT ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM"
      OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64"
      OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32"))
-    message(FATAL_ERROR "${CMAKE_VS_PLATFORM_NAME} target is not supported")
+    message(FATAL_ERROR "** ${CMAKE_VS_PLATFORM_NAME} target is not supported")
 endif()
 
 ################################################################################
@@ -60,7 +60,7 @@ endif()
 # Nuget packages function stub
 ################################################################################
 function(use_package TARGET PACKAGE VERSION)
-    message(WARNING "No implementation of use_package. Create yours. "
+    message(WARNING "** No implementation of use_package. Create yours. "
                     "Package \"${PACKAGE}\" with version \"${VERSION}\" "
                     "for target \"${TARGET}\" is ignored!")
 endfunction()

@@ -172,6 +172,7 @@ following are currently used:
 - `//&` is something in [`main.cpp`](/src/rsc/main.cpp) that might be enabled for a subset build
 - `//>` is an internal constant that can be changed to alter behavior
 - `//@` is a useful breakpoint during development
+- `/*L` comments out Windows-specific code that needs to be targeted for Linux
 - `//b` is a basic call enhancement
 - `//c` is a `CodeTools` enhancement
 - `//d` is a decoupling enhancement

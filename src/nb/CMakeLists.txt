@@ -257,23 +257,34 @@ set(Source_Files
     "Symbol.cpp"
     "SymbolRegistry.cpp"
     "SysConsole.cpp"
+    "SysConsole.linux.cpp"
     "SysConsole.win.cpp"
     "SysFile.cpp"
+    "SysFile.linux.cpp"
     "SysFile.win.cpp"
+    "SysHeap.linux.cpp"
     "SysHeap.win.cpp"
     "SysLock.cpp"
+    "SysLock.linux.cpp"
     "SysLock.win.cpp"
+    "SysMemory.linux.cpp"
     "SysMemory.win.cpp"
     "SysMutex.cpp"
+    "SysMutex.linux.cpp"
     "SysMutex.win.cpp"
     "SysSignals.cpp"
+    "SysSignals.linux.cpp"
     "SysSignals.win.cpp"
     "SysThread.cpp"
+    "SysThread.linux.cpp"
     "SysThread.win.cpp"
+    "SysThreadStack.linux.cpp"
     "SysThreadStack.win.cpp"
     "SysTickTimer.cpp"
+    "SysTickTimer.linux.cpp"
     "SysTickTimer.win.cpp"
     "SysTime.cpp"
+    "SysTime.linux.cpp"
     "SysTime.win.cpp"
     "SysTypes.cpp"
     "Temporary.cpp"
@@ -306,14 +317,13 @@ use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 
 set(ROOT_NAMESPACE nb)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    VS_GLOBAL_KEYWORD "Win32Proj"
-)
-
 if(MSVC)
     set_target_properties(${PROJECT_NAME} PROPERTIES
+        VS_GLOBAL_KEYWORD "Win32Proj"
+    )
+    set_target_properties(${PROJECT_NAME} PROPERTIES
         INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
-)
+    )
 endif()
 
 ################################################################################
@@ -333,17 +343,19 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
         "_UNICODE"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-        "$<$<CONFIG:Debug>:"
-            "_DEBUG"
-        ">"
-        "$<$<CONFIG:Release>:"
-            "NDEBUG"
-        ">"
-        "_LIB;"
-        "UNICODE;"
-        "_UNICODE"
-    )
+    if(MSVC)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE
+            "$<$<CONFIG:Debug>:"
+                "_DEBUG"
+            ">"
+            "$<$<CONFIG:Release>:"
+                "NDEBUG"
+            ">"
+            "_LIB;"
+            "UNICODE;"
+            "_UNICODE"
+        )
+    endif()
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Win32")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         "$<$<CONFIG:Debug>:"

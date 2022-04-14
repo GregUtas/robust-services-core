@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysConsole.win.cpp
+//  SysSignals.linux.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,36 +19,37 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifdef OS_WIN
+#ifdef OS_LINUX
 
-#include "SysConsole.h"
-#include <Windows.h>
+#include "SysSignals.h"
+#include "PosixSignal.h"
+#include <bitset>
+#include <csignal>
 #include "Debug.h"
-
-using std::string;
-using std::wstring;
+#include "Singleton.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-bool SysConsole::Minimize(bool minimize)
+class SigBus : public PosixSignal
 {
-   Debug::ft("SysConsole.Minimize");
+   friend class Singleton< SigBus >;
 
-   auto window = GetConsoleWindow();
-   auto mode = (minimize ? SW_MINIMIZE : SW_RESTORE);
-   return ShowWindow(window, mode);
-}
+   SigBus();
+   ~SigBus() = default;
+};
+
+SigBus::SigBus() : PosixSignal(SIGBUS, "SIGBUS",
+   "Bad memory access", 8, PS_Native() | PS_Break() | PS_Interrupt()) { }
 
 //------------------------------------------------------------------------------
 
-bool SysConsole::SetTitle(const string& title)
+void SysSignals::CreateNativeSignals()
 {
-   Debug::ft("SysConsole.SetTitle");
+   Debug::ft("SysSignals.CreateNativeSignals");
 
-   wstring wtitle(title.begin(), title.end());
-   return SetConsoleTitle(wtitle.c_str());
+   Singleton< SigBus >::Instance();
 }
 }
 #endif

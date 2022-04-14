@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysConsole.win.cpp
+//  SysConsole.linux.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,10 +19,9 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifdef OS_WIN
+#ifdef OS_LINUX
 
 #include "SysConsole.h"
-#include <Windows.h>
 #include "Debug.h"
 
 using std::string;
@@ -36,9 +35,12 @@ bool SysConsole::Minimize(bool minimize)
 {
    Debug::ft("SysConsole.Minimize");
 
+   return false;
+/*L
    auto window = GetConsoleWindow();
    auto mode = (minimize ? SW_MINIMIZE : SW_RESTORE);
    return ShowWindow(window, mode);
+*/
 }
 
 //------------------------------------------------------------------------------
@@ -47,8 +49,11 @@ bool SysConsole::SetTitle(const string& title)
 {
    Debug::ft("SysConsole.SetTitle");
 
+   return false;
+/*L
    wstring wtitle(title.begin(), title.end());
    return SetConsoleTitle(wtitle.c_str());
+*/
 }
 }
 #endif

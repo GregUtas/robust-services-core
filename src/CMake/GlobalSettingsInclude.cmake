@@ -1,10 +1,13 @@
 # Options common to all RSC builds
 #
-if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") OR
-  (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"))
-    message("Reading global settings shared by MSVC and CLang")
+# - if(MSVC) is true for both MSVC and clang builds
+# - clang is currently used only to target Windows (x64)
+# - GCC is used only to target Linux (x64)
+# - x86 uses "Visual Studio 17 2022" generator instead of Ninja
+#
+if(MSVC)
+    message("** Reading global settings shared by MSVC and CLang")
 
-    # Clang is currently used only to target Windows
     # Enable Windows targets (*.win.cpp files)
     add_compile_definitions(OS_WIN)
 
@@ -25,7 +28,7 @@ if((CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") OR
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    message("Reading global settings for MSVC")
+    message("** Reading global settings for MSVC")
 
     # Include run-time checks
     add_compile_options(/RTC1)
@@ -60,7 +63,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # Support incremental linking for patching
     add_link_options(/INCREMENTAL)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    message("Reading global settings for Clang")
+    message("** Reading global settings for Clang")
 
     # Provide full debugging information
     add_compile_options(/Zi)
@@ -98,5 +101,25 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     add_compile_options(-Wno-unreachable-code-break)
     add_compile_options(-Wno-unreachable-code-return)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message("Reading global settings for GCC")
+    message("** Reading global settings for GCC")
+
+    # Enable Linux targets (*.linux.cpp files)
+    add_compile_definitions(OS_LINUX)
+
+    # Allow signal handler to throw a C++ exception
+    add_compile_options(-fnon-call-exceptions)
+
+    # Enable all compiler warnings
+    add_compile_options(-Wall)
+
+    # Disable specific compiler warnings
+    add_compile_options(-Wno-address)
+    add_compile_options(-Wno-char-subscripts)
+    add_compile_options(-Wno-comment)
+    add_compile_options(-Wno-nonnull-compare)
+    add_compile_options(-Wno-sign-compare)
+    add_compile_options(-Wno-switch)
+    add_compile_options(-Wno-trigraphs)
+else()
+    message(FATAL_ERROR "** ${CMAKE_CXX_COMPILER_ID} compiler is not supported")
 endif()

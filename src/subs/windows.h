@@ -2,6 +2,7 @@
 //
 //  windows.h
 //
+#ifdef OS_WIN
 #ifndef WINDOWS_H_INCLUDED
 #define WINDOWS_H_INCLUDED
 
@@ -235,4 +236,5 @@ HANDLE GetConsoleWindow();
 bool ShowWindow(HANDLE window, int mode);
 bool SetConsoleTitle(const wchar_t* title);
 
+#endif
 #endif

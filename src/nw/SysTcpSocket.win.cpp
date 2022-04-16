@@ -107,14 +107,15 @@ word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)
       remAddr.HostToNetwork(ipv6peer.sin6_addr.s6_words, ipv6peer.sin6_port);
       ipv6peer.sin6_flowinfo = 0;
       ipv6peer.sin6_scope_id = 0;
-      peer = (sockaddr*)&ipv6peer;
+      peer = (sockaddr*) &ipv6peer;
       peersize = sizeof(ipv6peer);
    }
    else
    {
       ipv4peer.sin_family = AF_INET;
-      remAddr.HostToNetwork(ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
-      peer = (sockaddr*)&ipv4peer;
+      remAddr.HostToNetwork
+         ((IPv4Addr&) ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
+      peer = (sockaddr*) &ipv4peer;
       peersize = sizeof(ipv4peer);
    }
 

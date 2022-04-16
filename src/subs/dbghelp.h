@@ -2,6 +2,7 @@
 //
 //  dbghelp.h
 //
+#ifdef OS_WIN
 #ifndef DBGHELP_H_INCLUDED
 #define DBGHELP_H_INCLUDED
 
@@ -39,4 +40,5 @@ bool  SymFromAddr(HANDLE Process, DWORD64 Address, DWORD64* Displacement, SYMBOL
 bool  SymGetLineFromAddr64(HANDLE Process, DWORD64 Addr, DWORD* Displacement, IMAGEHLP_LINE64* Line64);
 bool  SymCleanup(HANDLE Process);
 
+#endif
 #endif

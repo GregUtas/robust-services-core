@@ -135,7 +135,7 @@ bool SysIpL3Addr::AddrToName(string& name, string& service) const
    if(Family() == IPv4)
    {
       ipv4addr.sin_family = AF_INET;
-      HostToNetwork(ipv4addr.sin_addr.s_addr, ipv4addr.sin_port);
+      HostToNetwork((IPv4Addr&) ipv4addr.sin_addr.s_addr, ipv4addr.sin_port);
       addrinfo = (sockaddr*) &ipv4addr;
       addrsize = sizeof(ipv4addr);
    }

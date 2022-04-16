@@ -2,6 +2,7 @@
 //
 //  process.h
 //
+#ifdef OS_WIN
 #ifndef PROCESS_H_INCLUDED
 #define PROCESS_H_INCLUDED
 
@@ -21,4 +22,5 @@ uintptr_t _beginthreadex(
    unsigned initFlags,
    unsigned* threadId);
 
+#endif
 #endif

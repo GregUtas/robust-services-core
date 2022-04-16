@@ -2,6 +2,7 @@
 //
 //  io.h
 //
+#ifdef OS_WIN
 #ifndef IO_H_INCLUDED
 #define IO_H_INCLUDED
 
@@ -28,4 +29,5 @@ intptr_t _findfirst(const char* Filename, _finddata_t* FindData);
 int      _findnext(intptr_t FindHandle, _finddata_t* FindData);
 int      _findclose(intptr_t FindHandle);
 
+#endif
 #endif

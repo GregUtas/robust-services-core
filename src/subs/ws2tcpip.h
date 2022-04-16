@@ -2,6 +2,7 @@
 //
 //  ws2tcpip.h
 //
+#ifdef OS_WIN
 #ifndef WS2TCPIP_H_INCLUDED
 #define WS2TCPIP_H_INCLUDED
 
@@ -15,8 +16,11 @@
 //
 struct in6_addr
 {
-   uint8_t  s6_bytes[16];
-   uint16_t s6_words[8];
+   union
+   {
+      uint8_t  s6_bytes[16];
+      uint16_t s6_words[8];
+   };
 };
 
 const in6_addr in6addr_any = { 0 };
@@ -38,4 +42,5 @@ int getaddrinfo(const char* nodeName, const char* serviceName,
 int getnameinfo(const sockaddr* addr, int addrLength, char* nodeBuffer,
    DWORD nodeBufferSize, char* serviceBuffer, DWORD serviceBufferSize, int flags);
 
+#endif
 #endif

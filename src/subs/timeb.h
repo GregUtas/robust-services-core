@@ -2,6 +2,7 @@
 //
 //  timeb.h
 //
+#ifdef OS_WIN
 #ifndef TIMEB_H_INCLUDED
 #define TIMEB_H_INCLUDED
 
@@ -22,4 +23,5 @@ struct _timeb
 
 errno_t _ftime_s(_timeb* Time);
 
+#endif
 #endif

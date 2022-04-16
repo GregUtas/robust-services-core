@@ -30,6 +30,9 @@ endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     message("** Reading global settings for MSVC")
 
+    # For definitions in subs/cstddef
+    add_compile_definitions(MSVC_COMPILER)
+
     # Include run-time checks
     add_compile_options(/RTC1)
 

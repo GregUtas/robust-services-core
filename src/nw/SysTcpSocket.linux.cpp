@@ -23,6 +23,12 @@
 
 #include "SysTcpSocket.h"
 #include <memory>
+#include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/poll.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include "Debug.h"
 #include "Duration.h"
 #include "IpPortRegistry.h"
@@ -41,12 +47,10 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
 {
    Debug::ft("SysTcpSocket.Accept");
 
-   return nullptr;
-/*L
    sockaddr_in ipv4peer;
    sockaddr_in6 ipv6peer;
    sockaddr* peer = nullptr;
-   int peersize = 0;
+   socklen_t peersize = 0;
 
    auto ipv6 = IpPortRegistry::UseIPv6();
 
@@ -65,8 +69,8 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
 
    if(socket == INVALID_SOCKET)
    {
-      SetError(WSAGetLastError());
-      if(GetError() == WSAEWOULDBLOCK) outFlags_.reset(PollRead);
+      SetError(errno);
+      if(errno == EWOULDBLOCK) outFlags_.reset(PollRead);
       return nullptr;
    }
 
@@ -74,7 +78,7 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
 
    if(ipv6)
    {
-      remAddr = SysIpL3Addr(ipv6peer.sin6_addr.s6_words,
+      remAddr = SysIpL3Addr(ipv6peer.sin6_addr.s6_addr16,
          ipv6peer.sin6_port, IpTcp, this);
       port = ipv6peer.sin6_port;
    }
@@ -86,7 +90,6 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
    }
 
    return SysTcpSocketPtr(new SysTcpSocket(socket, port));
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -95,41 +98,37 @@ word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)
 {
    Debug::ft("SysTcpSocket.Connect");
 
-   return -1;
-/*L
    sockaddr_in ipv4peer;
    sockaddr_in6 ipv6peer;
    sockaddr* peer = nullptr;
-   int peersize = 0;
+   socklen_t peersize = 0;
 
    auto ipv6 = IpPortRegistry::UseIPv6();
 
    if(ipv6)
    {
       ipv6peer.sin6_family = AF_INET6;
-      remAddr.HostToNetwork(ipv6peer.sin6_addr.s6_words, ipv6peer.sin6_port);
+      remAddr.HostToNetwork(ipv6peer.sin6_addr.s6_addr16, ipv6peer.sin6_port);
       ipv6peer.sin6_flowinfo = 0;
       ipv6peer.sin6_scope_id = 0;
-      peer = (sockaddr*)&ipv6peer;
+      peer = (sockaddr*) &ipv6peer;
       peersize = sizeof(ipv6peer);
    }
    else
    {
       ipv4peer.sin_family = AF_INET;
       remAddr.HostToNetwork(ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
-      peer = (sockaddr*)&ipv4peer;
+      peer = (sockaddr*) &ipv4peer;
       peersize = sizeof(ipv4peer);
    }
 
-   if(connect(Socket(), peer, peersize) == SOCKET_ERROR)
+   if(connect(Socket(), peer, peersize) != 0)
    {
-      SetError(WSAGetLastError());
-      auto err = GetError();
-      if(err != WSAEWOULDBLOCK) return err;
+      SetError(errno);
+      if(errno != EWOULDBLOCK) return errno;
    }
 
    return 0;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -137,28 +136,25 @@ word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)
 void SysTcpSocket::Disconnect()
 {
    Debug::ft("SysTcpSocket.Disconnect");
-/*L
+
    if(!disconnecting_ && (state_ != Idle) && IsValid())
    {
       TraceEvent(NwTrace::Disconnect, 0);
 
-      if(shutdown(Socket(), SD_SEND) == SOCKET_ERROR)
+      if(shutdown(Socket(), SHUT_WR) != 0)
       {
-         auto error = WSAGetLastError();
-
-         switch(error)
+         switch(errno)
          {
-         case WSAECONNRESET:  // peer has disconnected
-         case WSAENOTCONN:    // connect() still pending
+         case ECONNRESET:  // peer has disconnected
+         case ENOTCONN:    // connect() still pending
             break;
          default:
-            OutputLog(NetworkSocketError, "shutdown", error);
+            OutputLog(NetworkSocketError, "shutdown", errno);
          }
       }
 
       disconnecting_ = true;
    }
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -169,8 +165,6 @@ word SysTcpSocket::Listen(size_t backlog)
 {
    Debug::ft(SysTcpSocket_Listen);
 
-   return -1;
-/*L
    if(backlog > SOMAXCONN)
    {
       Debug::SwLog(SysTcpSocket_Listen, "backlog too large", backlog);
@@ -179,13 +173,12 @@ word SysTcpSocket::Listen(size_t backlog)
 
    if(listen(Socket(), backlog) != 0)
    {
-      SetError(WSAGetLastError());
+      SetError(errno);
       return -1;
    }
 
    state_ = Listening;
    return 0;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -194,12 +187,10 @@ bool SysTcpSocket::LocAddr(SysIpL3Addr& locAddr)
 {
    Debug::ft("SysTcpSocket.LocAddr");
 
-   return false;
-/*L
    sockaddr_in ipv4self;
    sockaddr_in6 ipv6self;
    sockaddr* self = nullptr;
-   int selfsize = 0;
+   socklen_t selfsize = 0;
 
    auto ipv6 = IpPortRegistry::UseIPv6();
 
@@ -216,18 +207,17 @@ bool SysTcpSocket::LocAddr(SysIpL3Addr& locAddr)
 
    if(getsockname(Socket(), self, &selfsize) != 0)
    {
-      OutputLog(NetworkSocketError, "getsockname", WSAGetLastError());
+      OutputLog(NetworkSocketError, "getsockname", errno);
       return false;
    }
 
    if(ipv6)
-      locAddr = SysIpL3Addr(ipv6self.sin6_addr.s6_words,
+      locAddr = SysIpL3Addr(ipv6self.sin6_addr.s6_addr16,
          ipv6self.sin6_port, IpTcp, nullptr);
    else
       locAddr = SysIpL3Addr(ipv4self.sin_addr.s_addr,
          ipv4self.sin_port, IpTcp, nullptr);
    return true;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -244,8 +234,6 @@ word SysTcpSocket::Poll
 {
    Debug::ft("SysTcpSocket.Poll");
 
-   return 0;
-/*L
    if(size == 0) return 0;
    int delay = (timeout != TIMEOUT_NEVER ? timeout.ToMsecs() : -1);
 
@@ -268,12 +256,11 @@ word SysTcpSocket::Poll
       if(inFlags.test(PollReadOob)) requests |= POLLRDBAND;
    }
 
-   auto ready = WSAPoll(list.get(), size, delay);
+   auto ready = poll(list.get(), size, delay);
 
-   if(ready == SOCKET_ERROR)
+   if(ready < 0)
    {
-      return sockets[0]->OutputLog
-         (NetworkSocketError, "WSAPoll", WSAGetLastError());
+      return sockets[0]->OutputLog(NetworkSocketError, "WSAPoll", errno);
    }
 
    //  Save the status of each socket before LIST gets deleted.
@@ -297,7 +284,6 @@ word SysTcpSocket::Poll
 
    list.reset();
    return ready;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -308,8 +294,6 @@ word SysTcpSocket::Recv(byte_t* buff, size_t size)
 {
    Debug::ft(SysTcpSocket_Recv);
 
-   return -2;
-/*L
    if(buff == nullptr)
    {
       Debug::SwLog(SysTcpSocket_Recv, "invalid buffer", 0);
@@ -325,14 +309,13 @@ word SysTcpSocket::Recv(byte_t* buff, size_t size)
    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
    TraceEvent(NwTrace::Recv, rcvd);
 
-   if(rcvd == SOCKET_ERROR)
+   if(rcvd < 0)
    {
-      return SetError(WSAGetLastError());
+      return SetError(errno);
    }
 
    NetworkIsUp();
    return rcvd;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -341,12 +324,10 @@ bool SysTcpSocket::RemAddr(SysIpL3Addr& remAddr)
 {
    Debug::ft("SysTcpSocket.RemAddr");
 
-   return false;
-/*L
    sockaddr_in ipv4peer;
    sockaddr_in6 ipv6peer;
    sockaddr* peer = nullptr;
-   int peersize = 0;
+   socklen_t peersize = 0;
 
    auto ipv6 = IpPortRegistry::UseIPv6();
 
@@ -361,20 +342,19 @@ bool SysTcpSocket::RemAddr(SysIpL3Addr& remAddr)
       peersize = sizeof(ipv4peer);
    }
 
-   if(getpeername(Socket(), peer, &peersize) == SOCKET_ERROR)
+   if(getpeername(Socket(), peer, &peersize) != 0)
    {
-      OutputLog(NetworkSocketError, "getpeername", WSAGetLastError());
+      OutputLog(NetworkSocketError, "getpeername", errno);
       return false;
    }
 
    if(ipv6)
-      remAddr = SysIpL3Addr(ipv6peer.sin6_addr.s6_words,
+      remAddr = SysIpL3Addr(ipv6peer.sin6_addr.s6_addr16,
          ipv6peer.sin6_port, IpTcp, this);
    else
       remAddr = SysIpL3Addr(ipv4peer.sin_addr.s_addr,
          ipv4peer.sin_port, IpTcp, this);
    return true;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -385,8 +365,6 @@ word SysTcpSocket::Send(const byte_t* data, size_t size)
 {
    Debug::ft(SysTcpSocket_Send);
 
-   return -2;
-/*L
    if(data == nullptr)
    {
       Debug::SwLog(SysTcpSocket_Send, "invalid data", 0);
@@ -401,10 +379,10 @@ word SysTcpSocket::Send(const byte_t* data, size_t size)
 
    auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
 
-   if(sent == SOCKET_ERROR)
+   if(sent < 0)
    {
-      sent = SetError(WSAGetLastError());
-      if(GetError() == WSAEWOULDBLOCK) sent = 0;
+      sent = SetError(errno);
+      if(GetError() == EWOULDBLOCK) sent = 0;
    }
    else
    {
@@ -413,7 +391,6 @@ word SysTcpSocket::Send(const byte_t* data, size_t size)
 
    TraceEvent(NwTrace::Send, sent);
    return sent;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -422,21 +399,18 @@ bool SysTcpSocket::SetClose(bool graceful)
 {
    Debug::ft("SysTcpSocket.SetClose");
 
-   return false;
-/*L
    linger linger_opts;
    linger_opts.l_onoff = 0;
    linger_opts.l_linger = (graceful ? 0 : 1);
 
    if(setsockopt(Socket(), SOL_SOCKET, SO_LINGER,
-      (char*) &linger_opts, sizeof(linger)) != SOCKET_ERROR)
+      (char*) &linger_opts, sizeof(linger)) == 0)
    {
       return true;
    }
 
-   OutputLog(NetworkSocketError, "setsockopt/LINGER", WSAGetLastError());
+   OutputLog(NetworkSocketError, "setsockopt/LINGER", errno);
    return false;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -448,8 +422,6 @@ SysSocket::AllocRc SysTcpSocket::SetService
 {
    Debug::ft(SysTcpSocket_SetService);
 
-   return SetOptionError;
-/*L
    //  Configure SERVICE's socket settings followed by its TCP settings.
    //
    auto rc = SysSocket::SetService(service, shared);
@@ -458,19 +430,19 @@ SysSocket::AllocRc SysTcpSocket::SetService
    bool alive = static_cast< const TcpIpService* >(service)->Keepalive();
 
    if(setsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
-      (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)
+      (const char*) &alive, sizeof(alive)) != 0)
    {
-      OutputLog(NetworkSocketError, "setsockopt/KEEPALIVE", WSAGetLastError());
+      OutputLog(NetworkSocketError, "setsockopt/KEEPALIVE", errno);
       return SetOptionError;
    }
 
    bool val;
-   int valsize = sizeof(val);
+   socklen_t valsize = sizeof(val);
 
    if(getsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
-      (char*) &val, &valsize) == SOCKET_ERROR)
+      (char*) &val, &valsize) != 0)
    {
-      OutputLog(NetworkSocketError, "getsockopt/KEEPALIVE", WSAGetLastError());
+      OutputLog(NetworkSocketError, "getsockopt/KEEPALIVE", errno);
       return GetOptionError;
    }
 
@@ -480,7 +452,6 @@ SysSocket::AllocRc SysTcpSocket::SetService
    }
 
    return AllocOk;
-*/
 }
 }
 #endif

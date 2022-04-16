@@ -2,6 +2,7 @@
 //
 //  direct.h
 //
+#ifdef OS_WIN
 #ifndef DIRECT_H_INCLUDED
 #define DIRECT_H_INCLUDED
 
@@ -12,4 +13,5 @@
 int _chdir(const char* Path);
 char* _getcwd(const char* buffer, int maxlen);
 
+#endif
 #endif

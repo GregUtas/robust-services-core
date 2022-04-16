@@ -22,11 +22,42 @@
 //  The declarations in subs/ files are often simplified versions of their true
 //  counterparts and may also omit things that the code base does not use.
 //
+typedef intptr_t ptrdiff_t;
+
 #ifdef CT_COMPILER
-   typedef uintptr_t size_t;
+   //  For the >parse command.
+   //
    constexpr nullptr_t NULL = nullptr;
+   typedef uintmax_t size_t;
+#else
+#ifdef OS_LINUX
+   //  GCC's definition of size_t.
+   //
+   typedef unsigned long size_t;
+#else
+#ifdef WIN32
+   //  Windows' x86 definition of size_t.
+   //
+   typedef unsigned int size_t;
+#else
+#ifdef MSVC_COMPILER
+   //  clang's definition of size_t, which also works on Windows x64.
+   //
+   typedef unsigned long long size_t;
+#endif
+#endif
+#endif
 #endif
 
-typedef intptr_t ptrdiff_t;
+#ifndef CT_COMPILER
+#ifndef MSVC_COMPILER
+   //  Bizarrely, GCC doesn't define nullptr_t as a built-in.
+   //
+   namespace std
+   {
+      typedef uintptr_t nullptr_t;
+   }
+#endif
+#endif
 
 #endif

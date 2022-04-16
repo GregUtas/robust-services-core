@@ -126,6 +126,7 @@ bool FileWalker::Reset()
    return false;
 }
 */
+
 //==============================================================================
 
 void SysFile::GetCurrDir(string& dirName)
@@ -173,7 +174,7 @@ FileListPtr SysFile::GetFileList(const char* dirName, const char* fileSpec)
 bool SysFile::SetDir(const char* dirName)
 {
    Debug::ft("SysFile.SetDir");
-   
+
    return false;
 /*L
    return (_chdir(dirName) == 0);

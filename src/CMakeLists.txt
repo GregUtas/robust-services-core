@@ -10,6 +10,7 @@ project(rsc CXX)
 if(NOT CMAKE_VS_PLATFORM_NAME)
     set(CMAKE_VS_PLATFORM_NAME "x64")
 endif()
+
 message("** ${CMAKE_VS_PLATFORM_NAME} target in use")
 
 if(NOT ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM"
@@ -100,3 +101,4 @@ add_subdirectory(rsc)
 add_subdirectory(sb)
 add_subdirectory(sn)
 add_subdirectory(st)
+add_subdirectory(subs)

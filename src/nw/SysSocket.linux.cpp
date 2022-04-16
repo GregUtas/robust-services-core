@@ -22,9 +22,15 @@
 #ifdef OS_LINUX
 
 #include "SysSocket.h"
-#include <netinet/in.h>
+#include <endian.h>
+#include <errno.h>
 #include <iosfwd>
+#include <netdb.h>
+#include <netinet/in.h>
 #include <sstream>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include "Debug.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
@@ -39,34 +45,34 @@ namespace NetworkBase
 {
 uint32_t htonl(uint32_t hostlong) { return ::htonl(hostlong); }
 
-uint64_t htonll(uint64_t hostllong) { return 0; /*L ::htonll(hostllong); */ }
+uint64_t htonll(uint64_t hostllong) { return htobe64(hostllong); }
 
 uint16_t htons(uint16_t hostshort) { return ::htons(hostshort); }
 
 uint32_t ntohl(uint32_t netlong) { return ::ntohl(netlong); }
 
-uint64_t ntohll(uint32_t netllong) { return 0; /*L ::ntohll(netllong); */ }
+uint64_t ntohll(uint64_t netllong) { return be64toh(netllong); }
 
 uint16_t ntohs(uint16_t netshort) { return ::ntohs(netshort); }
 
 //------------------------------------------------------------------------------
 
-constexpr u_long IO_Blocking = 0;
-constexpr u_long IO_NonBlocking = 1;
+constexpr unsigned long IO_Blocking = 0;
+constexpr unsigned long IO_NonBlocking = 1;
 
 //------------------------------------------------------------------------------
 
 fn_name SysSocket_ctor2 = "SysSocket.ctor";
 
 SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
-   socket_(0 /*L INVALID_SOCKET */),
+   socket_(INVALID_SOCKET),
    error_(0),
    port_(NilIpPort),
    blocking_(true),
    tracing_(false)
 {
    Debug::ft(SysSocket_ctor2);
-/*L
+
    //  Allocate a socket for UDP or TCP.
    //
    rc = AllocOk;
@@ -83,14 +89,14 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
       break;
    default:
       Debug::SwLog(SysSocket_ctor2, "unexpected protocol", proto);
-      SetError(WSAEPROTONOSUPPORT);
+      SetError(EPROTONOSUPPORT);
       rc = AllocFailed;
       return;
    }
 
    if(socket_ == INVALID_SOCKET)
    {
-      OutputLog(NetworkAllocFailure, "socket", WSAGetLastError());
+      OutputLog(NetworkAllocFailure, "socket", errno);
       rc = AllocFailed;
       return;
    }
@@ -100,13 +106,12 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
       //  Configure the socket to support both IPv4 and IPv6.  This
       //  must be done before the socket is bound.
       //
-      DWORD dual = 0;
+      uint32_t dual = 0;
 
       if(setsockopt(socket_, IPPROTO_IPV6, IPV6_V6ONLY,
-         (const char*)&dual, sizeof(dual)) == SOCKET_ERROR)
+         (const char*)&dual, sizeof(dual)) != 0)
       {
-         OutputLog(NetworkSocketError,
-            "setsockopt/IPV6_V6ONLY", WSAGetLastError());
+         OutputLog(NetworkSocketError, "setsockopt/IPV6_V6ONLY", errno);
          rc = SetOptionError;
          return;
       }
@@ -143,15 +148,14 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
       addrsize = sizeof(ipv6addr);
    }
 
-   if(bind(socket_, addr, addrsize) == SOCKET_ERROR)
+   if(bind(socket_, addr, addrsize) != 0)
    {
-      OutputLog(NetworkSocketError, "bind", WSAGetLastError());
+      OutputLog(NetworkSocketError, "bind", errno);
       rc = BindError;
       return;
    }
 
    port_ = port;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -159,17 +163,13 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
 c_string SysSocket::AlarmName(nwerr_t errval)
 {
    Debug::ft("SysSocket.AlarmName");
-/*L
+
    switch(errval)
    {
-   case WSAENETDOWN:
+   case ENETDOWN:
       return NetworkAlarmName;
-   case WSASYSNOTREADY:
-   case WSAVERNOTSUPPORTED:
-   case WSANOTINITIALISED:
-      return NetInitAlarmName;
    }
-*/
+
    return EMPTY_STR;
 }
 
@@ -178,19 +178,18 @@ c_string SysSocket::AlarmName(nwerr_t errval)
 void SysSocket::Close(bool disconnecting)
 {
    Debug::ft("SysSocket.Close");
-/*L
+
    if(IsValid())
    {
       TraceEvent(NwTrace::Close, disconnecting);
 
-      if(closesocket(Socket()) == SOCKET_ERROR)
+      if(close(Socket()) != 0)
       {
-         OutputLog(NetworkSocketError, "closesocket", WSAGetLastError());
+         OutputLog(NetworkSocketError, "close", errno);
       }
 
       Invalidate();
    }
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -199,20 +198,17 @@ bool SysSocket::Empty()
 {
    Debug::ft("SysSocket.Empty");
 
-   return true;
-/*L
-   u_long bytecount = 0;
+   unsigned long bytecount = 0;
 
    //  Find out how many bytes are waiting to be read from the socket.
    //
-   if(ioctlsocket(socket_, FIONREAD, &bytecount) != NO_ERROR)
+   if(ioctl(socket_, FIONREAD, &bytecount) != 0)
    {
-      OutputLog(NetworkSocketError, "ioctlsocket/FIONREAD", WSAGetLastError());
+      OutputLog(NetworkSocketError, "ioctl/FIONREAD", errno);
       return true;
    }
 
    return (bytecount == 0);
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -220,20 +216,16 @@ bool SysSocket::Empty()
 void SysSocket::Invalidate()
 {
    Debug::ftnt("SysSocket.Invalidate");
-/*L
+
    socket_ = INVALID_SOCKET;
    port_ = NilIpPort;
-*/
 }
 
 //------------------------------------------------------------------------------
 
 bool SysSocket::IsValid() const
 {
-   return false;
-/*L
    return (socket_ != INVALID_SOCKET);
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -242,21 +234,18 @@ bool SysSocket::SetBlocking(bool blocking)
 {
    Debug::ft("SysSocket.SetBlocking");
 
-   return false;
-/*L
    if(blocking_ == blocking) return true;
 
    auto mode = (blocking ? IO_Blocking : IO_NonBlocking);
 
-   if(ioctlsocket(socket_, FIONBIO, &mode) == NO_ERROR)
+   if(ioctl(socket_, FIONBIO, &mode) == 0)
    {
       blocking_ = blocking;
       return true;
    }
 
-   OutputLog(NetworkSocketError, "ioctlsocket/FIONBIO", WSAGetLastError());
+   OutputLog(NetworkSocketError, "ioctl/FIONBIO", errno);
    return false;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -267,11 +256,9 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
 {
    Debug::ft(SysSocket_SetService);
 
-   return SetOptionError;
-/*L
    auto rc = AllocOk;
    size_t max, rxSize, txSize;
-   int maxsize = sizeof(max);
+   socklen_t maxsize = sizeof(max);
 
    if(shared)
    {
@@ -284,16 +271,16 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
    }
 
    if(setsockopt(socket_, SOL_SOCKET, SO_RCVBUF,
-      (const char*) &rxSize, sizeof(rxSize)) == SOCKET_ERROR)
+      (const char*) &rxSize, sizeof(rxSize)) != 0)
    {
-      OutputLog(NetworkSocketError, "setsockopt/RCVBUF", WSAGetLastError());
+      OutputLog(NetworkSocketError, "setsockopt/RCVBUF", errno);
       return SetOptionError;
    }
 
    if(getsockopt(socket_, SOL_SOCKET, SO_RCVBUF,
-      (char*) &max, &maxsize) == SOCKET_ERROR)
+      (char*) &max, &maxsize) != 0)
    {
-      OutputLog(NetworkSocketError, "getsockopt/RCVBUF", WSAGetLastError());
+      OutputLog(NetworkSocketError, "getsockopt/RCVBUF", errno);
       return GetOptionError;
    }
 
@@ -303,16 +290,16 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
    }
 
    if(setsockopt(socket_, SOL_SOCKET, SO_SNDBUF,
-      (const char*) &txSize, sizeof(txSize)) == SOCKET_ERROR)
+      (const char*) &txSize, sizeof(txSize)) != 0)
    {
-      OutputLog(NetworkSocketError, "setsockopt/SNDBUF", WSAGetLastError());
+      OutputLog(NetworkSocketError, "setsockopt/SNDBUF", errno);
       return SetOptionError;
    }
 
    if(getsockopt(socket_, SOL_SOCKET, SO_SNDBUF,
-      (char*) &max, &maxsize) == SOCKET_ERROR)
+      (char*) &max, &maxsize) != 0)
    {
-      OutputLog(NetworkSocketError, "getsockopt/SNDBUF", WSAGetLastError());
+      OutputLog(NetworkSocketError, "getsockopt/SNDBUF", errno);
       return GetOptionError;
    }
 
@@ -322,7 +309,6 @@ SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
    }
 
    return rc;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -331,30 +317,9 @@ bool SysSocket::StartLayer()
 {
    Debug::ft("SysSocket.StartLayer");
 
-   return false;
-/*L
-   WSAData wsaData;
-   auto wVersionRequested = MAKEWORD(2, 2);
-   auto err = WSAStartup(wVersionRequested, &wsaData);
-
-   if(err != 0)
-   {
-      return ReportLayerStart(std::to_string(err));
-   }
-
-   auto rls = HIBYTE(wsaData.wVersion);
-   auto dot = LOBYTE(wsaData.wVersion);
-
-   if((rls != 2) || (dot != 2))
-   {
-      std::ostringstream stream;
-      stream << rls << '.' << dot;
-      WSACleanup();
-      return ReportLayerStart(stream.str());
-   }
-
+   //  Linux does not require a process to set up the network layer.
+   //
    return ReportLayerStart(EMPTY_STR);
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -362,11 +327,8 @@ bool SysSocket::StartLayer()
 void SysSocket::StopLayer()
 {
    Debug::ft("SysSocket.StopLayer");
-/*L
-   if(WSACleanup() == 0) return;
 
-   OutputNwLog(NetworkShutdownFailure, "StopLayer", WSAGetLastError());
-*/
+   //  Linux does not require a process to take down the network layer.
 }
 }
 #endif

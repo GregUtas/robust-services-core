@@ -145,6 +145,7 @@ static void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
    Thread::HandleSignal(sig, errval);
 }
 */
+
 //------------------------------------------------------------------------------
 
 SysThread_t SysThread::Create

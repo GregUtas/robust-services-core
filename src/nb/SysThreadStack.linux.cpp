@@ -185,6 +185,7 @@ DWORD StackInfo::Startup()
    return 0;
 }
 */
+
 //==============================================================================
 
 void SysThreadStack::Display(ostream& stream) NO_FT

@@ -24,6 +24,10 @@
 #include "SysIpL3Addr.h"
 #include <cstddef>
 #include <cstring>
+#include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #include "Debug.h"
 #include "FunctionGuard.h"
 #include "NwLogs.h"
@@ -45,7 +49,7 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
    socket_(nullptr)
 {
    Debug::ft(SysIpL3Addr_ctor);
-/*L
+
    addrinfo hints;
    addrinfo* info = nullptr;
 
@@ -54,7 +58,9 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
 
    FunctionGuard guard(Guard_MakePreemptable);
 
-   if(getaddrinfo(name.c_str(), service.c_str(), &hints, &info) == 0)
+   auto err = getaddrinfo(name.c_str(), service.c_str(), &hints, &info);
+
+   if(err == 0)
    {
       switch(info->ai_family)
       {
@@ -84,7 +90,7 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
       case AF_INET6:
       {
          auto netaddr = (sockaddr_in6*) info->ai_addr;
-         NetworkToHost(netaddr->sin6_addr.s6_words, netaddr->sin6_port);
+         NetworkToHost(netaddr->sin6_addr.s6_addr16, netaddr->sin6_port);
 
          switch(info->ai_protocol)
          {
@@ -113,11 +119,10 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
    }
    else
    {
-      OutputNwLog(NetworkFunctionError, "getaddrinfo", WSAGetLastError());
+      OutputNwLog(NetworkFunctionError, "getaddrinfo", err);
    }
 
    proto = proto_;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -126,8 +131,6 @@ bool SysIpL3Addr::AddrToName(string& name, string& service) const
 {
    Debug::ft("SysIpL3Addr.AddrToName");
 
-   return false;
-/*L
    sockaddr* addrinfo = nullptr;
    size_t addrsize = 0;
    sockaddr_in ipv4addr;
@@ -143,7 +146,7 @@ bool SysIpL3Addr::AddrToName(string& name, string& service) const
    else
    {
       ipv6addr.sin6_family = AF_INET6;
-      HostToNetwork(ipv6addr.sin6_addr.s6_words, ipv6addr.sin6_port);
+      HostToNetwork(ipv6addr.sin6_addr.s6_addr16, ipv6addr.sin6_port);
       ipv6addr.sin6_flowinfo = 0;
       ipv6addr.sin6_scope_id = 0;
       addrinfo = (sockaddr*) &ipv6addr;
@@ -155,16 +158,17 @@ bool SysIpL3Addr::AddrToName(string& name, string& service) const
 
    FunctionGuard guard(Guard_MakePreemptable);
 
-   if(getnameinfo(addrinfo, addrsize, buff1, 64, buff2, 64, 0) == 0)
+   auto err = getnameinfo(addrinfo, addrsize, buff1, 64, buff2, 64, 0);
+
+   if(err == 0)
    {
       name = buff1;
       service = buff2;
       return true;
    }
 
-   OutputNwLog(NetworkFunctionError, "getnameinfo", WSAGetLastError());
+   OutputNwLog(NetworkFunctionError, "getnameinfo", err);
    return false;
-*/
 }
 
 //------------------------------------------------------------------------------

@@ -14,7 +14,6 @@
 #include "MapAndUnits.h"
 #include <cstdint>
 #include <set>
-#include <utility>
 #include "ConvoySubversion.h"
 #include "Debug.h"
 

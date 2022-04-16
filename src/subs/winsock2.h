@@ -2,6 +2,7 @@
 //
 //  winsock2.h
 //
+#ifdef OS_WIN
 #ifndef WINSOCK2_H_INCLUDED
 #define WINSOCK2_H_INCLUDED
 
@@ -25,13 +26,13 @@ constexpr uint32_t INADDR_LOOPBACK = 0x7f000001;
 constexpr uint32_t INADDR_NONE = 0xffffffff;
 
 typedef uintptr_t SOCKET;
-constexpr SOCKET INVALID_SOCKET = UINTPTR_MAX;
 
 constexpr int NO_ERROR = 0;
 constexpr int SOCKET_ERROR = -1;
 
 constexpr int SD_SEND = 1;
 constexpr int SD_BOTH = 2;
+
 constexpr int SOMAXCONN = 0x7fffffff;
 
 constexpr uint16_t SOL_SOCKET = 0xffff;
@@ -102,7 +103,7 @@ struct pollfd
 uint64_t htonll(uint64_t hostllong);
 uint32_t htonl(uint32_t hostlong);
 uint16_t htons(uint16_t hostshort);
-uint64_t ntohll(uint32_t netllong);
+uint64_t ntohll(uint64_t netllong);
 uint32_t ntohl(uint32_t netlong);
 uint16_t ntohs(uint16_t netshort);
 
@@ -146,4 +147,5 @@ int WSAStartup(WORD versionRequested, WSAData* data);
 int WSAGetLastError();
 int WSACleanup();
 
+#endif
 #endif

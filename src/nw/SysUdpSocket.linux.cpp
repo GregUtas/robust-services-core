@@ -22,6 +22,10 @@
 #ifdef OS_LINUX
 
 #include "SysUdpSocket.h"
+#include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #include "Debug.h"
 #include "IpPortRegistry.h"
 #include "NwLogs.h"
@@ -35,33 +39,14 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
+size_t SysUdpSocket::MaxUdpSize_ = 508;
+
+//------------------------------------------------------------------------------
+
 SysUdpSocket::SysUdpSocket(ipport_t port,
    const UdpIpService* service, AllocRc& rc) : SysSocket(port, service, rc)
 {
    Debug::ft("SysUdpSocket.ctor");
-
-   rc = GetOptionError;
-   return;
-/*L
-   //  If the maximum UDP message size has not been set, set it now.
-   //
-   if((MaxUdpSize_ == 0) && (rc == AllocOk))
-   {
-      size_t max;
-      int maxsize = sizeof(max);
-
-      if(getsockopt(Socket(), SOL_SOCKET, SO_MAX_MSG_SIZE,
-         (char*) &max, &maxsize) == SOCKET_ERROR)
-      {
-         OutputLog(NetworkSocketError,
-            "getsockopt/MAX_MSG_SIZE", WSAGetLastError());
-         rc = GetOptionError;
-         return;
-      }
-
-      MaxUdpSize_ = (max < MaxMsgSize ? max : MaxMsgSize);
-   }
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -72,8 +57,6 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
 {
    Debug::ft(SysUdpSocket_RecvFrom);
 
-   return -1;
-/*L
    if(buff == nullptr)
    {
       Debug::SwLog(SysUdpSocket_RecvFrom, "invalid buffer", 0);
@@ -89,7 +72,7 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
    sockaddr_in ipv4peer;
    sockaddr_in6 ipv6peer;
    sockaddr* peer = nullptr;
-   int peersize = 0;
+   socklen_t peersize = 0;
 
    auto ipv6 = IpPortRegistry::UseIPv6();
 
@@ -107,19 +90,17 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
    auto rcvd = recvfrom(Socket(),
       reinterpret_cast< char* >(buff), size, 0, peer, &peersize);
 
-   if(rcvd == SOCKET_ERROR)
+   if(rcvd < 0)
    {
-      auto error = WSAGetLastError();
-
-      switch(error)
+      switch(errno)
       {
-      case WSAEWOULDBLOCK:
+      case EWOULDBLOCK:
          //
          //  There is nothing on the socket, but it hasn't yet been made
          //  blocking.
          //
          break;
-      case WSAEINTR:
+      case EINTR:
          //
          //  Don't log this during a restart, when an I/O thread's socket
          //  is released so that the thread can exit.
@@ -130,7 +111,7 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
          }
          //  [[fallthrough]]
       default:
-         OutputLog(NetworkSocketError, "recvfrom", error);
+         OutputLog(NetworkSocketError, "recvfrom", errno);
       }
 
       return -1;
@@ -139,11 +120,10 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
    NetworkIsUp();
 
    if(ipv6)
-      remAddr.NetworkToHost(ipv6peer.sin6_addr.s6_words, ipv6peer.sin6_port);
+      remAddr.NetworkToHost(ipv6peer.sin6_addr.s6_addr16, ipv6peer.sin6_port);
    else
       remAddr.NetworkToHost(ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
    return rcvd;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -155,8 +135,6 @@ word SysUdpSocket::SendTo
 {
    Debug::ft(SysUdpSocket_SendTo);
 
-   return -2;
-/*L
    if(data == nullptr)
    {
       Debug::SwLog(SysUdpSocket_SendTo, "invalid data", 0);
@@ -174,14 +152,14 @@ word SysUdpSocket::SendTo
    sockaddr_in ipv4peer;
    sockaddr_in6 ipv6peer;
    sockaddr* peer = nullptr;
-   int peersize = 0;
+   socklen_t peersize = 0;
 
    auto ipv6 = IpPortRegistry::UseIPv6();
 
    if(ipv6)
    {
       ipv6peer.sin6_family = AF_INET6;
-      remAddr.HostToNetwork(ipv6peer.sin6_addr.s6_words, ipv6peer.sin6_port);
+      remAddr.HostToNetwork(ipv6peer.sin6_addr.s6_addr16, ipv6peer.sin6_port);
       ipv6peer.sin6_flowinfo = 0;
       ipv6peer.sin6_scope_id = 0;
       peer = (sockaddr*) &ipv6peer;
@@ -198,14 +176,13 @@ word SysUdpSocket::SendTo
    auto sent = sendto(Socket(),
       reinterpret_cast< const char* >(data), size, 0, peer, peersize);
 
-   if(sent == SOCKET_ERROR)
+   if(sent < 0)
    {
-      return SetError(WSAGetLastError());
+      return SetError(errno);
    }
 
    NetworkIsUp();
    return sent;
-*/
 }
 }
 #endif

@@ -65,6 +65,7 @@ static DWORD GetMemoryProtection(MemoryProtection attrs)
    return mode;
 }
 */
+
 //------------------------------------------------------------------------------
 
 fn_name SysMemory_Alloc = "SysMemory.Alloc";

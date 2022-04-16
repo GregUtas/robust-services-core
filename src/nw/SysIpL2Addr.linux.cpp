@@ -23,6 +23,11 @@
 
 #include "SysIpL2Addr.h"
 #include <cstring>
+#include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include "Debug.h"
 #include "NwLogs.h"
 #include "SysTypes.h"
@@ -41,8 +46,6 @@ std::vector< SysIpL2Addr > SysIpL2Addr::LocalAddrs()
    Debug::ft(SysIpL2Addr_LocalAddrs);
 
    std::vector< SysIpL2Addr > localAddrs;
-
-/*L
    string self;
 
    if(LocalName(self))
@@ -52,8 +55,9 @@ std::vector< SysIpL2Addr > SysIpL2Addr::LocalAddrs()
 
       memset(&hints, 0, sizeof(hints));
       hints.ai_family = AF_UNSPEC;
+      auto err = getaddrinfo(self.c_str(), nullptr, &hints, &info);
 
-      if(getaddrinfo(self.c_str(), nullptr, &hints, &info) == 0)
+      if(err == 0)
       {
          for(auto curr = info; curr != nullptr; curr = curr->ai_next)
          {
@@ -73,7 +77,7 @@ std::vector< SysIpL2Addr > SysIpL2Addr::LocalAddrs()
             {
                auto netaddr = (sockaddr_in6*) curr->ai_addr;
                if(netaddr->sin6_scope_id != 0) continue;
-               localAddr.NetworkToHost(netaddr->sin6_addr.s6_words);
+               localAddr.NetworkToHost(netaddr->sin6_addr.s6_addr16);
                localAddrs.push_back(localAddr);
                break;
             }
@@ -88,10 +92,10 @@ std::vector< SysIpL2Addr > SysIpL2Addr::LocalAddrs()
       }
       else
       {
-         OutputNwLog(NetworkFunctionError, "getaddrinfo", WSAGetLastError());
+         OutputNwLog(NetworkFunctionError, "getaddrinfo", err);
       }
    }
-*/
+
    return localAddrs;
 }
 
@@ -101,21 +105,18 @@ bool SysIpL2Addr::LocalName(string& name)
 {
    Debug::ft("SysIpL2Addr.LocalName");
 
-   return false;
-/*L
    char buff[256];
 
    name.clear();
 
-   if(gethostname(buff, 256) == SOCKET_ERROR)
+   if(gethostname(buff, 256) != 0)
    {
-      OutputNwLog(NetworkFunctionError, "gethostname", WSAGetLastError());
+      OutputNwLog(NetworkFunctionError, "gethostname", errno);
       return false;
    }
 
    name = buff;
    return true;
-*/
 }
 
 //------------------------------------------------------------------------------

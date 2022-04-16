@@ -40,10 +40,6 @@ using std::string;
 
 namespace NetworkBase
 {
-size_t SysUdpSocket::MaxUdpSize_ = 0;
-
-//------------------------------------------------------------------------------
-
 SysUdpSocket::~SysUdpSocket()
 {
    Debug::ftnt("SysUdpSocket.dtor");

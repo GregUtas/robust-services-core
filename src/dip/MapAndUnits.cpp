@@ -16,7 +16,6 @@
 #include <iosfwd>
 #include <list>
 #include <sstream>
-#include <utility>
 #include "ConvoySubversion.h"
 #include "Debug.h"
 

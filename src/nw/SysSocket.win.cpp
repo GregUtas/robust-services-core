@@ -48,7 +48,7 @@ uint16_t htons(uint16_t hostshort) { return ::htons(hostshort); }
 
 uint32_t ntohl(uint32_t netlong) { return ::ntohl(netlong); }
 
-uint64_t ntohll(uint32_t netllong) { return ::ntohll(netllong); }
+uint64_t ntohll(uint64_t netllong) { return ::ntohll(netllong); }
 
 uint16_t ntohs(uint16_t netshort) { return ::ntohs(netshort); }
 

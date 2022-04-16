@@ -41,7 +41,7 @@ enum IpAddrFamily
 
 //  An IPv4 address.  Internally, it is stored in host order.
 //
-typedef unsigned long IPv4Addr;
+typedef uint32_t IPv4Addr;
 
 //  An IPv6 address.  Internally, it is stored in host order and is also
 //  used for all IPv4 addresses.  [0] is the most significant field.  If
@@ -146,6 +146,8 @@ std::ostream& operator<<(std::ostream& stream, IpAddrState state);
 //  For reporting errors in network functions.
 //
 typedef NodeBase::word nwerr_t;
+
+constexpr int INVALID_SOCKET = -1;  // matches both Windows and Linux
 
 //  Forward declarations.
 //

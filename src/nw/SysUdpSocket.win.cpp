@@ -38,6 +38,10 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
+size_t SysUdpSocket::MaxUdpSize_ = 0;
+
+//------------------------------------------------------------------------------
+
 SysUdpSocket::SysUdpSocket(ipport_t port,
    const UdpIpService* service, AllocRc& rc) : SysSocket(port, service, rc)
 {
@@ -184,7 +188,8 @@ word SysUdpSocket::SendTo
    else
    {
       ipv4peer.sin_family = AF_INET;
-      remAddr.HostToNetwork(ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
+      remAddr.HostToNetwork
+         ((IPv4Addr&) ipv4peer.sin_addr.s_addr, ipv4peer.sin_port);
       peer = (sockaddr*) &ipv4peer;
       peersize = sizeof(ipv4peer);
    }

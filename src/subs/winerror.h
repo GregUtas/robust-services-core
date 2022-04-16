@@ -2,6 +2,7 @@
 //
 //  winerror.h
 //
+#ifdef OS_WIN
 #ifndef WINERROR_H_INCLUDED
 #define WINERROR_H_INCLUDED
 
@@ -12,4 +13,5 @@ constexpr int WSASYSNOTREADY = 10091;
 constexpr int WSAVERNOTSUPPORTED = 10092;
 constexpr int WSANOTINITIALISED = 10093;
 
+#endif
 #endif

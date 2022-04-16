@@ -84,14 +84,15 @@ _../rsc/input/element.config.txt_.
 
 ## Building an executable
 
-RSC requires C++11.
-
-RSC is currently implemented on Windows, where it runs as a console application.
-However, it defines an abstraction layer, in the form of generic C++ _.h_'s and
-platform-specific _.cpp_'s, that should allow it to be ported to other systems
-fairly easily (the targets for Linux are currently being developed). Debug and
-release executables, for 32-bit and 64-bit Windows, are provided with each
+If you don't want to build RSC, debug and release
+[executables](docs/RSC-Executables.md) are provided with each
 [release](https://github.com/GregUtas/robust-services-core/releases/latest).
+
+RSC requires C\++11 and is implemented on Windows, where it runs as a console
+application. However, it defines an abstraction layer, in the form of generic
+C++ _.h_'s and platform-specific _.cpp_'s, that should allow it to be ported
+to other systems fairly easily. The targets for Linux are currently being
+developed.
 
 The directories that contain RSC's source code, and the dependencies between
 them, are listed in the comments that precede the implementation of
@@ -107,7 +108,7 @@ build process, they have been removed from the repository.
 
 ## Running the executable
 
-During initialization, the program displays each module as it is initialized.
+During initialization, RSC displays each module as it is initialized.
 (A _module_ is equivalent to a static library.)  After all modules
 have initialized, the CLI prompt `nb>` appears to indicate that CLI commands
 in the _nb_ directory are available. The information written to the console
@@ -139,6 +140,30 @@ The numeric string _yymmdd-hhmmss-mmm_ is appended to the names of these files
 to record the time when the system initialized (for the _console_ file and
 initial _log_ file) or the time of the preceding restart (for a subsequent
 _log_ file).
+
+## Developing an application
+
+To use RSC as a framework, create a static library which uses the subset of
+RSC that your application requires. This will always include the namespace
+`NodeBase` (in the [_nb_](src/nb) directory), and it might also include
+`NetworkBase` (in the [_nw_](src/nw) directory) and `SessionBase` (in the
+[_sb_](src/sb) directory). Using a new namespace for your application is
+also a good idea.
+
+To initialize your application, derive from [`Module`](src/nb/Module.h).
+For an example, see [`NbModule`](src/nb/NbModule.cpp), which initializes
+`NodeBase`. Change [`CreateModules`](src/rsc/main.cpp) so that it also
+instantiates your module, and comment out its instantiation of modules that
+you don't want in your build.
+
+To interact with your application, derive from
+[`CliIncrement`](src/nb/CliIncrement.h).
+For an example, see [`NbIncrement`](src/nb/NbIncrement.cpp), the increment
+for `NodeBase`. Instantiate your CLI increment in your module's `Startup`
+function. When you launch RSC, you can then access the commands in your
+increment through the CLI by entering `>incr`, where `incr` is the
+abbreviation that your increment's constructor passed to `CliIncrement`'s
+constructor.
 
 ## Testing
 

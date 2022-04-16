@@ -8,22 +8,22 @@ VS uses to support CMake.
 ## Launching Visual Studio
 
 To use CMake in VS, you no longer open a solution. Instead, just launch
-VS as an application. Then, under its _Get started_ menu on the right,
-select _Open a local folder_. In the File Explorer window that pops up,
-navigate to RSC's _src_ folder, click on it, and click the _Select Folder_
-button. VS now notices the [_CMakeLists.txt_](/src/CMakeLists.tx) file in
-that directory and starts to load all of the projects that it defines. It
-therefore takes VS a little while before it is ready to go.
+VS as an application. Then, under its **Get started** menu on the right,
+select **Open a local folder**. In the File Explorer browser that pops up,
+navigate to RSC's _src_ directory, click on it, and click the **Select
+Folder** button. VS now notices the [_CMakeLists.txt_](/src/CMakeLists.txt)
+file in that directory and starts to load all of the subprojects that it
+requires. It therefore takes a little while before VS is ready to go.
 
 ## Building RSC
 
-The file [_CMakeSettings.json_](/src/CMakeSettings.json) contains the
-configurations that are supported for building RSC:
+The file [_CMakeSettings.json_](/src/CMakeSettings.json) describes the
+configurations that can be used to build RSC:
 
-- WSL-GCC-Debug: Windows Subsystem for Linux using the gcc compiler
-- x64-Clang-Debug: 64-bit Windows using the clang compiler
-- x64-Debug and x64-Release: 64-bit Windows using the MSVC compiler
-- x86-Debug and x86-Release: 32-bit Windows using the MSVC compiler
+- **WSL-GCC-Debug**: Windows Subsystem for Linux using the gcc compiler
+- **x64-Clang-Debug**: 64-bit Windows using the clang compiler
+- **x64-Debug** and **x64-Release**: 64-bit Windows using the MSVC compiler
+- **x86-Debug** and **x86-Release**: 32-bit Windows using the MSVC compiler
 
 When you change the configuration, you may need to invoke _Project >
 Delete Cache and Reconfigure_ before initiating a build. This erases the
@@ -62,6 +62,6 @@ The tool [CMakeConverter](https://github.com/pavelliavonau/cmakeconverter)
 significantly eased RSC's migration to CMake by generating the initial
 _CMakeLists.txt_ files and a _GlobalSettingsInclude.cmake_ stub that could
 be populated with RSC's compile and link options. If you want to migrate
-to CMake but are new to it, you should definitely give this tool a try.
+to CMake but are new to it, give this tool a try.
 
 

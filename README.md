@@ -89,20 +89,21 @@ RSC requires C++11.
 RSC is currently implemented on Windows, where it runs as a console application.
 However, it defines an abstraction layer, in the form of generic C++ _.h_'s and
 platform-specific _.cpp_'s, that should allow it to be ported to other systems
-fairly easily. Debug and release executables, for 32-bit and 64-bit Windows, are
-provided with each [release](https://github.com/GregUtas/robust-services-core/releases/latest).
+fairly easily (the targets for Linux are currently being developed). Debug and
+release executables, for 32-bit and 64-bit Windows, are provided with each
+[release](https://github.com/GregUtas/robust-services-core/releases/latest).
 
 The directories that contain RSC's source code, and the dependencies between
 them, are listed in the comments that precede the implementation of
 [`main`](src/rsc/main.cpp). Each of these directories is built as a separate
 static library, with `main` residing in its own directory.
 
-RSC is currently developed using Visual Studio. The Windows build options used
-by RSC are described [here](docs/RSC-Windows-Build-Options.md).
+RSC is developed using Visual Studio. The Windows build options that RSC uses
+are described [here](docs/RSC-Windows-Build-Options.md).
 
-RSC uses CMake to generate Visual Studio's _vcxproj_ files. If you do not wish to
-use CMake, you can use the _vcxproj_ files in the [`vcxproj`](vcxproj) directory.
-How to build with CMake is described [here](docs/RSC-Building-Using-CMake.md).
+RSC is built using CMake, as described [here](docs/RSC-Building-Using-CMake.md).
+Because Visual Studio's _.vcxproj_ files are no longer modified as part of the
+build process, they have been removed from the repository.
 
 ## Running the executable
 

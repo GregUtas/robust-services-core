@@ -41,7 +41,8 @@ class SigBus : public PosixSignal
 };
 
 SigBus::SigBus() : PosixSignal(SIGBUS, "SIGBUS",
-   "Bad memory access", 8, PS_Native() | PS_Break() | PS_Interrupt()) { }
+   "Non-existent Memory Access", 0,
+      PS_Native() | PS_Break() | PS_Interrupt()) { }
 
 //------------------------------------------------------------------------------
 

@@ -8,11 +8,17 @@
 #define SIGABRT 6
 #define SIGINT 2
 #define SIGILL 4
-#define SIGBUS 7     // Linux only
 #define SIGFPE 8
 #define SIGSEGV 11
 #define SIGTERM 15
-#define SIGBREAK 21  // Windows only
+
+#ifdef OS_LINUX
+#define SIGBUS 7
+#endif
+
+#ifdef OS_WIN
+#define SIGBREAK 21
+#endif
 
 typedef void (*sighandler)(int sig);
 void* signal(int sig, sighandler handler);

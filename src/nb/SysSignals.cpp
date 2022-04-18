@@ -101,7 +101,7 @@ SigInt::SigInt() : PosixSignal(SIGINT, "SIGINT",
 //------------------------------------------------------------------------------
 
 SigSegv::SigSegv() : PosixSignal(SIGSEGV, "SIGSEGV",
-   "Invalid Memory Reference", 0, PS_Native()) { }
+   "Illegal Memory Access", 0, PS_Native()) { }
 
 //------------------------------------------------------------------------------
 

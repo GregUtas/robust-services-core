@@ -58,7 +58,6 @@ template< typename T > size_t IndexOf
 //------------------------------------------------------------------------------
 //
 //  Copies the objects in VEC so they can be sorted by position and displayed.
-//  FILE is set to sort the objects by file and position.
 //
 template< class T > void SortAndDisplayItems
    (const std::vector< T >& vec, std::ostream& stream,
@@ -88,7 +87,6 @@ template< class T > void SortAndDisplayItems
 //------------------------------------------------------------------------------
 //
 //  Copies the objects in VEC so they can be sorted by position and displayed.
-//  FILE is set to sort the objects by file and position.
 //
 template< class T > void SortAndDisplayItemPtrs
    (const std::vector< std::unique_ptr< T >>& vec, std::ostream& stream,

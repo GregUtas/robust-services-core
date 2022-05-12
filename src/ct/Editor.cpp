@@ -3246,7 +3246,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
       }
 
       Cli_->Flush();
-      if(!opts.prompt) ThisThread::Pause(Duration(20, mSECS));
+      if(!opts.prompt) ThisThread::Pause(msecs_t(20));
       if(exit || (rc < EditFailed)) break;
    }
 
@@ -4471,7 +4471,7 @@ word Editor::InsertIncludeGuard(const CodeWarning& log)
    //  parser must have noted an unresolved #if/#ifdef/#ifndef.
    //
    auto ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
-   ParserPtr parser(new Parser(EMPTY_STR));
+   ParserPtr parser(new Parser());
    parser->ParseFileItem(code_, ifnPos, file_, ns);
    parser->ParseFileItem(code_, defPos, nullptr, ns);
    parser->ParseFileItem(code_, endPos, nullptr, ns);
@@ -5141,7 +5141,7 @@ CxxToken* Editor::ParseClassItem
 {
    Debug::ft("Editor.ParseClassItem");
 
-   ParserPtr parser(new Parser(EMPTY_STR));
+   ParserPtr parser(new Parser());
    if(!parser->ParseClassItem(code_, pos, cls, access)) return ParseFailed(pos);
    auto item = cls->NewestItem();
    item->UpdateXref(true);
@@ -5166,7 +5166,7 @@ CxxToken* Editor::ParseFileItem(size_t pos, Namespace* ns) const
    Debug::ft("Editor.ParseFileItem");
 
    if(ns == nullptr) ns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
-   ParserPtr parser(new Parser(EMPTY_STR));
+   ParserPtr parser(new Parser());
    if(!parser->ParseFileItem(code_, pos, file_, ns)) return ParseFailed(pos);
    auto item = file_->NewestItem();
    item->UpdateXref(true);
@@ -5565,7 +5565,7 @@ bool Editor::ReplaceImpl(Function* func) const
 {
    Debug::ft("Editor.ReplaceImpl");
 
-   ParserPtr parser(new Parser(EMPTY_STR));
+   ParserPtr parser(new Parser());
    if(!parser->ReplaceImpl(func, code_)) return false;
    func->GetImpl()->UpdateXref(true);
    return true;

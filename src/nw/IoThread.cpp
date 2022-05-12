@@ -117,7 +117,6 @@ void IoThread::Display(ostream& stream,
    stream << prefix << "recvs  : " << recvs_ << CRLF;
    stream << prefix << "txAddr : " << txAddr_.to_str(true) << CRLF;
    stream << prefix << "rxAddr : " << rxAddr_.to_str(true) << CRLF;
-   stream << prefix << "time   : " << time_.Ticks() << CRLF;
    stream << prefix << "buffer : " << buffer_ << CRLF;
    stream << prefix << "rxSize : " << rxSize_ << CRLF;
    stream << prefix << "txSize : " << txSize_ << CRLF;

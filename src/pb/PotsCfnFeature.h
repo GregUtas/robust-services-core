@@ -24,8 +24,8 @@
 
 #include "PotsFeature.h"
 #include "PotsFeatures.h"
+#include <cstdint>
 #include "BcAddress.h"
-#include "Duration.h"
 #include "NbTypes.h"
 
 using namespace CallBase;
@@ -51,15 +51,15 @@ class PotsCfnFeature : public PotsFeature
 class PotsCfnFeatureProfile : public DnRouteFeatureProfile
 {
 public:
-   PotsCfnFeatureProfile(Address::DN dn, secs_t timeout);
+   PotsCfnFeatureProfile(Address::DN dn, uint32_t timeout);
    ~PotsCfnFeatureProfile();
-   secs_t Timeout() const { return timeout_; }
+   uint32_t Timeout() const { return timeout_; }
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    bool Activate(const PotsProfile& profile, CliThread& cli) override;
 
-   secs_t timeout_;
+   uint32_t timeout_;
 };
 }
 #endif

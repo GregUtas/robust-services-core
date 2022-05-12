@@ -32,6 +32,7 @@
 #include <utility>
 #include "CodeTypes.h"
 #include "Cxx.h"
+#include "CxxExecute.h"
 #include "CxxFwd.h"
 #include "CxxLocation.h"
 #include "LibraryTypes.h"
@@ -93,6 +94,17 @@ public:
    //
    virtual void CopyContext(const CxxToken* that, bool internal);
 
+   //  Creates and returns a copy of the item.  Serves as a copy constructor,
+   //  which cannot be invoked directly on this class (because it is virtual).
+   //  The default version generates a log and returns nullptr.
+   //
+   virtual CxxToken* Clone() const;
+
+   //  Constructs an argument based on the item's referent.  The default
+   //  version generates a log and returns NilStackArg.
+   //
+   virtual StackArg ResultType() const;
+
    //  Returns the file in which this item was found.
    //
    CodeFile* GetFile() const { return loc_.GetFile(); }
@@ -141,10 +153,10 @@ public:
    virtual QualName* GetQualName() const { return nullptr; }
 
    //  Converts a type to a string, expanding typedefs and preserving pointers.
-   //  ARG is set if the string will be used to compare argument types.
+   //  ARG is set if the string will be used to compare argument types.  The
+   //  default version generates a log and returns ERROR_STR.
    //
-   virtual std::string TypeString(bool arg) const
-      { return NodeBase::ERROR_STR; }
+   virtual std::string TypeString(bool arg) const;
 
    //  Returns the item's type specification.
    //
@@ -257,11 +269,15 @@ public:
    //
    virtual CxxScope* GetTemplate() const { return nullptr; }
 
-   //  Returns the template specification associated with the item, if any.
-   //  The default implementation invokes GetQualName and, if the result is
-   //  not nullptr, asks it for its template arguments.
+   //  Returns the template arguments, if any, associated with an item.
    //
-   virtual TypeName* GetTemplateArgs() const;
+   virtual const TemplateArgPtrVector* Args() const { return nullptr; }
+
+   //  Returns the template specification associated with the item, if any.
+   //  The default version invokes GetQualName and, if the result is not
+   //  nullptr, asks it for its template arguments.
+   //
+   virtual TypeName* GetTemplatedName() const;
 
    //  If the item is, or belongs to, a template instance, returns the instance.
    //
@@ -289,6 +305,11 @@ public:
    //  Returns what the item refers to.
    //
    virtual CxxScoped* Referent() const { return nullptr; }
+
+   //  Returns true if all components in the item have referents.  The default
+   //  version returns false if Referent() returns nullptr.
+   //
+   virtual bool VerifyReferents() const;
 
    //  Invoked before adding the item to the current scope (Context::Scope()).
    //  Returning false indicates that
@@ -411,11 +432,6 @@ public:
    virtual void Print
       (std::ostream& stream, const NodeBase::Flags& options) const;
 
-   //  Shrinks the item's containers (e.g. strings and vectors) to the minimum
-   //  size required for their current contents.
-   //
-   virtual void Shrink() { }
-
    //  Invokes Referent to find what the item refers to.  If the result is a
    //  forward or friend declaration, *its* referent is found in an attempt to
    //  locate the actual definition.
@@ -465,11 +481,6 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-
-   //  Overridden to return an empty string because an item derived directly
-   //  from this class has no name.
-   //
-   const std::string& Name() const override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -497,10 +508,6 @@ protected:
    //  Marks the item as having been generated internally.
    //
    void SetInternal(bool internal) const { loc_.SetInternal(internal); }
-
-   //  Shrinks TOKENS.
-   //
-   static void ShrinkTokens(const TokenPtrVector& tokens);
 private:
    //  Returns the item's underlying type.  Can return nullptr, whereas Root
    //  (above) returns the item that returned nullptr.
@@ -539,7 +546,7 @@ public:
    //
    void EnterBlock() override;
 
-   //  Overridden to return the referent's name.
+   //  Overridden to return the literal as it appeared in the source code.
    //
    const std::string& Name() const override;
 
@@ -599,9 +606,9 @@ public:
       Tags& operator=(const Tags& that) = delete;
    };
 
-   IntLiteral(int64_t num, const Tags& tags)
-      : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::INT_LITERAL); }
-   ~IntLiteral() { CxxStats::Decr(CxxStats::INT_LITERAL); }
+   IntLiteral(int64_t num, const Tags& tags) : num_(num), tags_(tags) { }
+   ~IntLiteral() = default;
+   CxxToken* Clone() const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    CxxScoped* Referent() const override;
@@ -642,9 +649,9 @@ public:
       Tags& operator=(const Tags& that) = default;
    };
 
-   FloatLiteral(long double num, const Tags& tags)
-      : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::FLOAT_LITERAL); }
-   ~FloatLiteral() { CxxStats::Decr(CxxStats::FLOAT_LITERAL); }
+   FloatLiteral(long double num, const Tags& tags) : num_(num), tags_(tags) { }
+   ~FloatLiteral() = default;
+   CxxToken* Clone() const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    CxxScoped* Referent() const override;
@@ -662,9 +669,9 @@ private:
 class BoolLiteral : public Literal
 {
 public:
-   explicit BoolLiteral(bool b)
-      : b_(b) { CxxStats::Incr(CxxStats::BOOL_LITERAL); }
-   ~BoolLiteral() { CxxStats::Decr(CxxStats::BOOL_LITERAL); }
+   explicit BoolLiteral(bool b) : b_(b) { }
+   ~BoolLiteral() = default;
+   CxxToken* Clone() const override;
    void Print(std::ostream& stream, const NodeBase::Flags& options) const
       override { stream << std::boolalpha << b_; }
    CxxScoped* Referent() const override;
@@ -706,8 +713,8 @@ protected:
 class NullPtr : public Literal
 {
 public:
-   NullPtr() { CxxStats::Incr(CxxStats::NULLPTR); }
-   ~NullPtr() { CxxStats::Decr(CxxStats::NULLPTR); }
+   NullPtr() = default;
+   ~NullPtr() = default;
    bool IsConstPtr() const override { return true; }
    bool IsConstPtr(size_t n) const override { return true; }
    void Print(std::ostream& stream, const NodeBase::Flags& options) const
@@ -814,10 +821,6 @@ public:
    //
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink the tokens.
-   //
-   void Shrink() override;
 
    //  Overridden to return the operator's symbol.
    //
@@ -946,7 +949,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Expression() { CxxStats::Decr(CxxStats::EXPRESSION); }
+   ~Expression() = default;
 
    //  Adds ITEM to the expression.
    //
@@ -974,6 +977,10 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to return a copy of the expression.
+   //
+   CxxToken* Clone() const override;
+
    //  Overridden to invoke Context::Execute after invoking EnterBlock on
    //  each token in items_.
    //
@@ -982,6 +989,10 @@ public:
    //  Overridden to update SYMBOLS with each token's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+
+   //  Overridden to return the expression as it appeared in the source code.
+   //
+   const std::string& Name() const override;
 
    //  Overridden to find the item located at POS.
    //
@@ -992,9 +1003,10 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
-   //  Overridden to shrink the tokens.
+   //  Overridden to return the expression's type. This is currently
+   //  supported only for an expression that contains a single literal.
    //
-   void Shrink() override;
+   StackArg ResultType() const override;
 
    //  Overridden to display the expression.
    //
@@ -1048,7 +1060,7 @@ public:
 
    //  Not subclassed.
    //
-   ~ArraySpec() { CxxStats::Decr(CxxStats::ARRAY_SPEC); }
+   ~ArraySpec() = default;
 
    //  Overridden to log warnings associated with expr_.
    //
@@ -1070,10 +1082,6 @@ public:
    //
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink the array expression.
-   //
-   void Shrink() override;
 
    //  Overridden to return "[]" if ARG is false and "*" if it is true.
    //
@@ -1101,8 +1109,8 @@ private:
 class Elision : public CxxToken
 {
 public:
-   Elision() { CxxStats::Incr(CxxStats::ELISION); }
-   ~Elision() { CxxStats::Decr(CxxStats::ELISION); }
+   Elision() = default;
+   ~Elision() = default;
    void EnterBlock() override { }
    CxxToken* PosToItem(size_t pos) const override { return nullptr; }
    void Print
@@ -1117,16 +1125,14 @@ public:
 class Precedence : public CxxToken
 {
 public:
-   explicit Precedence(ExprPtr& expr)
-      : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
-   ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
+   explicit Precedence(ExprPtr& expr) : expr_(std::move(expr)) { }
+   ~Precedence() = default;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -1143,7 +1149,7 @@ class BraceInit : public CxxToken
 {
 public:
    BraceInit();
-   ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
+   ~BraceInit() = default;
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
    void Check() const override;
    void EnterBlock() override;
@@ -1151,7 +1157,6 @@ public:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -1168,14 +1173,13 @@ class AlignAs : public CxxToken
 {
 public:
    explicit AlignAs(TokenPtr& token);
-   ~AlignAs() { CxxStats::Decr(CxxStats::ALIGNAS); }
+   ~AlignAs() = default;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -1191,12 +1195,11 @@ class Asm : public CxxToken
 {
 public:
    explicit Asm(ExprPtr& code);
-   ~Asm() { CxxStats::Decr(CxxStats::ASM); }
+   ~Asm() = default;
    void EnterBlock() override { }
    bool EnterScope() override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
 private:
@@ -1214,7 +1217,7 @@ class StaticAssert : public CxxToken
 {
 public:
    StaticAssert(ExprPtr& expr, ExprPtr& message);
-   ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
+   ~StaticAssert() = default;
    void Check() const override;
    void EnterBlock() override;
    bool EnterScope() override;
@@ -1222,7 +1225,6 @@ public:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;

@@ -25,6 +25,7 @@
 #define DIPMODULE_H_INCLUDED
 
 #include "Module.h"
+#include "NbTypes.h"
 
 using namespace NodeBase;
 

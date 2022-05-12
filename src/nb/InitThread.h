@@ -93,7 +93,7 @@ private:
 
    //  Calculates the run-to-completion timeout (our sleep interval).
    //
-   Duration CalculateDelay() const;
+   msecs_t CalculateDelay() const;
 
    //  Invoked after sleeping for the expected duration.
    //

@@ -27,7 +27,7 @@
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "LogBuffer.h"
-#include "TimePoint.h"
+#include "SystemTime.h"
 
 using std::ostream;
 using std::string;
@@ -132,7 +132,11 @@ void LogBufferRegistry::Display(ostream& stream,
 
 string LogBufferRegistry::FileName() const
 {
-   if(size_ == 0) return "logs" + TimePoint::TimeZeroStr() + ".txt";
+   if(size_ == 0)
+   {
+      return "logs" + to_string(SystemTime::TimeZero(), FullNumeric) + ".txt";
+   }
+
    return buffer_[size_ - 1]->FileName();
 }
 

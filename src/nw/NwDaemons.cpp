@@ -21,10 +21,13 @@
 //
 #include "NwDaemons.h"
 #include "Deferred.h"
+#include <chrono>
 #include <ostream>
+#include <ratio>
 #include <string>
 #include "DaemonRegistry.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "IpPortRegistry.h"
 #include "Singleton.h"
@@ -48,7 +51,7 @@ public:
    //  on behalf of DAEMON.
    //
    IoThreadRecreator(IoDaemon* daemon,
-      const IpService* service, ipport_t port, secs_t timeout);
+      const IpService* service, ipport_t port, uint32_t timeout);
 
    //  Not subclassed.
    //
@@ -83,7 +86,7 @@ private:
 //------------------------------------------------------------------------------
 
 IoThreadRecreator::IoThreadRecreator(IoDaemon* daemon,
-   const IpService* service, ipport_t port, secs_t timeout) :
+   const IpService* service, ipport_t port, uint32_t timeout) :
    Deferred(*Singleton< IpPortRegistry >::Instance(), timeout, false),
    daemon_(daemon),
    service_(service),
@@ -135,7 +138,7 @@ IoDaemon::IoDaemon(c_string name, const IpService* service, ipport_t port) :
    Daemon(name, 1, true),
    service_(service),
    port_(port),
-   lastCreation_(TimePoint::Now()),
+   lastCreation_(SteadyTime::Now()),
    backoffSecs_(0),
    recreator_(nullptr)
 {
@@ -156,9 +159,9 @@ Thread* IoDaemon::CreateIoThread(const IpService* service, ipport_t port)
 
 //------------------------------------------------------------------------------
 
-constexpr secs_t BackOffSecs = 4;
+constexpr uint32_t BackOffSecs = 4;
 
-const Duration MinExitTime = Duration(4, SECS);
+const msecs_t MinExitTime(4000);
 
 Thread* IoDaemon::CreateThread()
 {
@@ -168,7 +171,7 @@ Thread* IoDaemon::CreateThread()
    //  immediately.  Reset the backoff time to 4 seconds so that we will
    //  wait to recreate it if it exits quickly.
    //
-   auto now = TimePoint::Now();
+   auto now = SteadyTime::Now();
 
    if((now - lastCreation_) > MinExitTime)
    {
@@ -198,10 +201,9 @@ void IoDaemon::Display(ostream& stream,
 {
    Daemon::Display(stream, prefix, options);
 
-   stream << prefix << "service      : " << strObj(service_) << CRLF;
-   stream << prefix << "port         : " << port_ << CRLF;
-   stream << prefix << "lastCreation : " << lastCreation_.to_str() << CRLF;
-   stream << prefix << "backoffSecs  : " << backoffSecs_ << CRLF;
+   stream << prefix << "service     : " << strObj(service_) << CRLF;
+   stream << prefix << "port        : " << port_ << CRLF;
+   stream << prefix << "backoffSecs : " << backoffSecs_ << CRLF;
 }
 
 //------------------------------------------------------------------------------

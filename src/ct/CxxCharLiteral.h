@@ -44,15 +44,9 @@ namespace CodeTools
 template< typename C, Cxx::Encoding E > class CxxCharLiteral : public Literal
 {
 public:
-   explicit CxxCharLiteral(C c) : c_(c)
-   {
-      CxxStats::Incr(CxxStats::CHAR_LITERAL);
-   }
+   explicit CxxCharLiteral(C c) : c_(c) { }
 
-   ~CxxCharLiteral()
-   {
-      CxxStats::Decr(CxxStats::CHAR_LITERAL);
-   }
+   ~CxxCharLiteral() = default;
 
    CxxCharLiteral(const CxxCharLiteral& that) = delete;
 

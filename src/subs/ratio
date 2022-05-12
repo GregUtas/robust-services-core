@@ -1,0 +1,23 @@
+//==============================================================================
+//
+//  ratio
+//
+#ifndef RATIO_INCLUDED
+#define RATIO_INCLUDED
+
+#include "cstdint"
+
+namespace std
+{
+template<intmax_t N, intmax_t D = 1> struct ratio
+{
+   static constexpr intmax_t num = N;
+   static constexpr intmax_t den = D;
+   using type = ratio<N, D>;
+};
+
+using milli = ratio<1, 1000>;
+using micro = ratio<1, 1000000>;
+using nano = ratio<1, 1000000000>;
+}
+#endif

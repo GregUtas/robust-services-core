@@ -1617,7 +1617,7 @@ void BaseBot::process_yes_tme_message
 
 //------------------------------------------------------------------------------
 
-bool BaseBot::queue_event(BotEvent event, secs_t secs)
+bool BaseBot::queue_event(BotEvent event, int secs)
 {
    Debug::ft("BaseBot.queue_event");
 

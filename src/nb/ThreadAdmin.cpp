@@ -30,7 +30,6 @@
 #include "CfgIntParm.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
@@ -434,13 +433,13 @@ void ThreadAdmin::Incr(Register r)
 
 //------------------------------------------------------------------------------
 
-Duration ThreadAdmin::InitTimeout()
+msecs_t ThreadAdmin::InitTimeout()
 {
    Debug::ft("ThreadAdmin.InitTimeout");
 
    auto self = AccessAdminData();
    auto msecs = (self != nullptr ? self->initTimeoutMsecs_->CurrValue() : 2000);
-   return Duration(msecs, mSECS) << WarpFactor();
+   return msecs_t(msecs << WarpFactor());
 }
 
 //------------------------------------------------------------------------------
@@ -476,20 +475,20 @@ word ThreadAdmin::RtcLimit()
 
 //------------------------------------------------------------------------------
 
-Duration ThreadAdmin::RtcTimeout()
+msecs_t ThreadAdmin::RtcTimeout()
 {
    auto self = AccessAdminData();
    auto msecs = (self != nullptr ? self->rtcTimeoutMsecs_->CurrValue() : 20);
-   return Duration(msecs, mSECS);
+   return msecs_t(msecs);
 }
 
 //------------------------------------------------------------------------------
 
-Duration ThreadAdmin::SchedTimeout()
+msecs_t ThreadAdmin::SchedTimeout()
 {
    auto self = AccessAdminData();
    auto msecs = (self != nullptr ? self->schedTimeoutMsecs_->CurrValue() : 100);
-   return Duration(msecs, mSECS);
+   return msecs_t(msecs);
 }
 
 //------------------------------------------------------------------------------
@@ -516,7 +515,7 @@ word ThreadAdmin::StackCheckInterval()
 word ThreadAdmin::StackUsageLimit()
 {
    auto self = AccessAdminData();
-   return (self != nullptr ? self->stackUsageLimit_->CurrValue() : 8000);
+   return (self != nullptr ? self->stackUsageLimit_->CurrValue() : 8192);
 }
 
 //------------------------------------------------------------------------------

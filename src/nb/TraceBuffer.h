@@ -32,7 +32,7 @@
 #include <utility>
 #include "NbTypes.h"
 #include "SysDecls.h"
-#include "SysTime.h"
+#include "SystemTime.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
 
@@ -179,7 +179,7 @@ public:
 
    //  Returns the time (full) when tracing started.
    //
-   const SysTime& StartTimeFull() const { return startTime_; }
+   const SystemTime::Point& StartTime() const { return startTime_; }
 
    //  Returns a string specifying when tracing started, followed by this
    //  element's name.
@@ -316,7 +316,7 @@ private:
 
    //  The full clock time when tracing started.
    //
-   SysTime startTime_;
+   SystemTime::Point startTime_;
 
    //  The number of times that locking blocked the creation of a buffer entry.
    //

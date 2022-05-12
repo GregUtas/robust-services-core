@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "FunctionProfiler.h"
+#include <chrono>
 #include <cstdint>
 #include <cstring>
 #include <map>
@@ -28,7 +29,6 @@
 #include <utility>
 #include "Algorithms.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "FunctionStats.h"
 #include "FunctionTrace.h"
 #include "Memory.h"

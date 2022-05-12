@@ -82,7 +82,7 @@ public:
 
    //  Returns the net time spent in the function that this record captured.
    //
-   Duration Net() const { return net_; }
+   usecs_t Net() const { return net_; }
 
    //  Overridden to display the trace record.
    //
@@ -150,7 +150,7 @@ private:
 
    //  Calculates the gross time spent in a function call.
    //
-   Duration CalcGrossTime();
+   usecs_t CalcGrossTime();
 
    //  The name of function that was invoked.
    //
@@ -170,12 +170,12 @@ private:
    //  The total time spent in the function call.  Calculated after
    //  tracing stops.
    //
-   Duration gross_;
+   usecs_t gross_;
 
    //  The net time spent in the function call.  Calculated after
    //  tracing stops.
    //
-   Duration net_;
+   usecs_t net_;
 
    //  The scope of function tracing.
    //

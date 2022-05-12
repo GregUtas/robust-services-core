@@ -91,7 +91,6 @@ public:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -110,7 +109,7 @@ class Break : public CxxStatement
 {
 public:
    explicit Break(size_t pos);
-   ~Break() { CxxStats::Decr(CxxStats::BREAK); }
+   ~Break() = default;
    void EnterBlock() override { }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
@@ -124,7 +123,7 @@ class Case : public CxxStatement
 {
 public:
    Case(ExprPtr& expression, size_t pos);
-   ~Case() { CxxStats::Decr(CxxStats::CASE); }
+   ~Case() = default;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -132,7 +131,6 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    bool InLine() const override { return false; }
    CxxToken* PosToItem(size_t pos) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -150,7 +148,7 @@ class Catch : public CxxStatement
 {
 public:
    explicit Catch(size_t pos);
-   ~Catch() { CxxStats::Decr(CxxStats::CATCH); }
+   ~Catch() = default;
    void AddArg(ArgumentPtr& a) { arg_ = std::move(a); }
    void AddHandler(BlockPtr& b) { handler_ = std::move(b); }
    void Check() const override;
@@ -163,7 +161,6 @@ public:
    bool InLine() const override { return false; }
    bool LocateItem(const CxxToken* item, size_t& n) const override;
    CxxToken* PosToItem(size_t pos) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -182,7 +179,7 @@ class Continue : public CxxStatement
 {
 public:
    explicit Continue(size_t pos);
-   ~Continue() { CxxStats::Decr(CxxStats::CONTINUE); }
+   ~Continue() = default;
    void EnterBlock() override { }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
@@ -196,7 +193,7 @@ class Do : public Condition
 {
 public:
    explicit Do(size_t pos);
-   ~Do() { CxxStats::Decr(CxxStats::DO); }
+   ~Do() = default;
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
    void Check() const override;
    void Display(std::ostream& stream,
@@ -209,7 +206,6 @@ public:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -227,14 +223,13 @@ class Expr : public CxxStatement
 {
 public:
    Expr(ExprPtr& expression, size_t pos);
-   ~Expr() { CxxStats::Decr(CxxStats::EXPR); }
+   ~Expr() = default;
    void Check() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -250,7 +245,7 @@ class For : public Condition
 {
 public:
    explicit For(size_t pos);
-   ~For() { CxxStats::Decr(CxxStats::FOR); }
+   ~For() = default;
    void AddInitial(TokenPtr& i) { initial_ = std::move(i); }
    void AddSubsequent(ExprPtr& s) { subsequent_ = std::move(s); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
@@ -266,7 +261,6 @@ public:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -286,11 +280,10 @@ class Goto : public CxxStatement
 {
 public:
    Goto(std::string& label, size_t pos);
-   ~Goto() { CxxStats::Decr(CxxStats::GOTO); }
+   ~Goto() = default;
    void EnterBlock() override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
 private:
    std::string label_;
 };
@@ -303,7 +296,7 @@ class If : public Condition
 {
 public:
    explicit If(size_t pos);
-   ~If() { CxxStats::Decr(CxxStats::IF); }
+   ~If() = default;
    void AddThen(BlockPtr& b) { then_ = std::move(b); }
    void AddElse(BlockPtr& b) { else_ = std::move(b); }
    void SetElseIf() { elseif_ = true; }
@@ -318,7 +311,6 @@ public:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    Cxx::ItemType Type() const override { return Cxx::If; }
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
@@ -339,13 +331,12 @@ class Label : public CxxStatement
 {
 public:
    Label(std::string& name, size_t pos);
-   ~Label() { CxxStats::Decr(CxxStats::LABEL); }
+   ~Label() = default;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    void ExitBlock() const override;
    bool InLine() const override { return false; }
-   void Shrink() override;
 private:
    bool GetSpan(size_t& begin, size_t& left, size_t& end) const override;
 
@@ -360,7 +351,7 @@ class NoOp : public CxxStatement
 {
 public:
    explicit NoOp(size_t pos);
-   ~NoOp() { CxxStats::Decr(CxxStats::NOOP); }
+   ~NoOp() = default;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override { }
@@ -378,7 +369,7 @@ class Return : public CxxStatement
 {
 public:
    explicit Return(size_t pos);
-   ~Return() { CxxStats::Decr(CxxStats::RETURN); }
+   ~Return() = default;
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
    void Check() const override;
    void EnterBlock() override;
@@ -386,7 +377,6 @@ public:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -402,7 +392,7 @@ class Switch : public CxxStatement
 {
 public:
    explicit Switch(size_t pos);
-   ~Switch() { CxxStats::Decr(CxxStats::SWITCH); }
+   ~Switch() = default;
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
    void AddCases(BlockPtr& b) { cases_ = std::move(b); }
    void Check() const override;
@@ -414,7 +404,6 @@ public:
    bool InLine() const override { return false; }
    bool LocateItem(const CxxToken* item, size_t& n) const override;
    CxxToken* PosToItem(size_t pos) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -433,7 +422,7 @@ class Try : public CxxStatement
 {
 public:
    explicit Try(size_t pos);
-   ~Try() { CxxStats::Decr(CxxStats::TRY); }
+   ~Try() = default;
    void AddTry(BlockPtr& b) { try_ = std::move(b); }
    void AddCatch(TokenPtr& t) { catches_.push_back(std::move(t)); }
    void Check() const override;
@@ -446,7 +435,6 @@ public:
    bool InLine() const override { return false; }
    bool LocateItem(const CxxToken* item, size_t& n) const override;
    CxxToken* PosToItem(size_t pos) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;
@@ -465,7 +453,7 @@ class While : public Condition
 {
 public:
    explicit While(size_t pos);
-   ~While() { CxxStats::Decr(CxxStats::WHILE); }
+   ~While() = default;
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
    void Check() const override;
    void Display(std::ostream& stream,
@@ -478,7 +466,6 @@ public:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;

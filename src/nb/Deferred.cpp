@@ -37,7 +37,7 @@ using std::string;
 
 namespace NodeBase
 {
-Deferred::Deferred(Base& owner, secs_t secs, bool warm) :
+Deferred::Deferred(Base& owner, uint32_t secs, bool warm) :
    MsgBuffer(),
    owner_(&owner),
    secs_(secs),
@@ -109,7 +109,7 @@ void Deferred::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-void Deferred::Restart(secs_t secs)
+void Deferred::Restart(uint32_t secs)
 {
    Debug::ftnt("Deferred.Restart");
 

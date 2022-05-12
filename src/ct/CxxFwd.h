@@ -23,6 +23,7 @@
 #define CXXFWD_H_INCLUDED
 
 #include <list>
+#include <map>
 #include <memory>
 #include <set>
 #include <string>
@@ -82,6 +83,7 @@ class QualName;
 class SpaceDefn;
 class StackArg;
 class StaticAssert;
+class TemplateArg;
 class TemplateParm;
 class TemplateParms;
 class Terminal;
@@ -134,6 +136,7 @@ typedef std::unique_ptr< Pragma > PragmaPtr;
 typedef std::unique_ptr< QualName > QualNamePtr;
 typedef std::unique_ptr< SpaceDefn > SpaceDefnPtr;
 typedef std::unique_ptr< StaticAssert > StaticAssertPtr;
+typedef std::unique_ptr< TemplateArg > TemplateArgPtr;
 typedef std::unique_ptr< TemplateParm > TemplateParmPtr;
 typedef std::unique_ptr< TemplateParms > TemplateParmsPtr;
 typedef std::unique_ptr< Terminal > TerminalPtr;
@@ -166,10 +169,10 @@ typedef std::vector< NamespacePtr > NamespacePtrVector;
 typedef std::vector< ScopePtr > ScopePtrVector;
 typedef std::vector< SpaceDefnPtr > SpaceDefnPtrVector;
 typedef std::vector< StaticAssertPtr > StaticAssertPtrVector;
+typedef std::vector< TemplateArgPtr > TemplateArgPtrVector;
 typedef std::vector< TemplateParmPtr > TemplateParmPtrVector;
 typedef std::vector< TokenPtr > TokenPtrVector;
 typedef std::vector< TypedefPtr > TypedefPtrVector;
-typedef std::vector< TypeSpecPtr > TypeSpecPtrVector;
 typedef std::vector< UsingPtr > UsingPtrVector;
 
 typedef std::vector< Asm* > AsmVector;
@@ -194,5 +197,11 @@ typedef std::set< CxxToken* > CxxTokenSet;
 typedef std::set< CxxNamed* > CxxNamedSet;
 
 typedef std::list< CxxToken* > CxxTokenList;
+
+//------------------------------------------------------------------------------
+//
+//  For mapping template parameters to template arguments.
+//
+typedef std::map<std::string, std::string> TemplateParmToArgMap;
 }
 #endif

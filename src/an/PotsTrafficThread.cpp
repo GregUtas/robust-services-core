@@ -21,7 +21,9 @@
 //
 #include "PotsTrafficThread.h"
 #include "Dynamic.h"
+#include <chrono>
 #include <iomanip>
+#include <ratio>
 #include <sstream>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -39,7 +41,7 @@
 #include "Restart.h"
 #include "SbPools.h"
 #include "Singleton.h"
-#include "TimePoint.h"
+#include "SteadyTime.h"
 #include "Tones.h"
 
 using namespace MediaBase;
@@ -89,13 +91,13 @@ public:
    //  Originates a call, returning how long to wait until the next
    //  message will be sent.  Returns 0 if the call is over.
    //
-   msecs_t Originate() const;
+   uint32_t Originate() const;
 
    //  Selects the next action for a call in progress, returning how
    //  long to wait until the next message will be sent.  Returns 0
    //  if the call is over.
    //
-   msecs_t Advance();
+   uint32_t Advance();
 
    //  Returns true if the call has no originator or terminator.
    //
@@ -135,14 +137,14 @@ private:
    //  Advances a call from the indicated state, returning how long
    //  to wait until the next message will be sent.
    //
-   msecs_t ProcessOriginating();
-   msecs_t ProcessDialing();
-   msecs_t ProcessTerminating();
-   msecs_t ProcessRinging();
-   msecs_t ProcessConnected();
-   msecs_t ProcessSuspended();
-   msecs_t ProcessSingleEnded();
-   msecs_t ProcessReleasing();
+   uint32_t ProcessOriginating();
+   uint32_t ProcessDialing();
+   uint32_t ProcessTerminating();
+   uint32_t ProcessRinging();
+   uint32_t ProcessConnected();
+   uint32_t ProcessSuspended();
+   uint32_t ProcessSingleEnded();
+   uint32_t ProcessReleasing();
 
    //  Updates the circuit's state.
    //
@@ -182,8 +184,8 @@ private:
 
    //  The times at which the originator entered and left the call.
    //
-   const TimePoint origStart_;
-   TimePoint origEnd_;
+   const SteadyTime::Point origStart_;
+   SteadyTime::Point origEnd_;
 
    //  The amount of time to wait before sending another offhook.
    //
@@ -199,8 +201,8 @@ private:
 
    //  The times at which the terminator entered and left the call.
    //
-   TimePoint termStart_;
-   TimePoint termEnd_;
+   SteadyTime::Point termStart_;
+   SteadyTime::Point termEnd_;
 
    //  The call's state.
    //
@@ -209,7 +211,7 @@ private:
    //  The number of milliseconds to wait before looking for dial tone
    //  and retransmitting an offhook if dial tone is not yet connected.
    //
-   static const msecs_t DelayMsecs_[DelaySize];
+   static const uint32_t DelayMsecs_[DelaySize];
 
    //  The number of calls in each state.
    //
@@ -281,7 +283,7 @@ TrafficCallPool::~TrafficCallPool()
 
 //==============================================================================
 
-const msecs_t TrafficCall::DelayMsecs_[] = { 2000, 3500, 5000, 7500 };
+const uint32_t TrafficCall::DelayMsecs_[] = { 2000, 3500, 5000, 7500 };
 int TrafficCall::StateCount_[] = { 0 };
 size_t TrafficCall::CallId_ = 1;
 
@@ -290,13 +292,13 @@ size_t TrafficCall::CallId_ = 1;
 TrafficCall::TrafficCall(PotsCircuit& orig) :
    callid_(CallId_),
    orig_(&orig),
-   origStart_(TimePoint::Now()),
-   origEnd_(0),
+   origStart_(SteadyTime::Now()),
+   origEnd_(SteadyTime::GetInvalid()),
    delay_(0),
    dest_(Address::NilDN),
    term_(nullptr),
-   termStart_(0),
-   termEnd_(0),
+   termStart_(SteadyTime::GetInvalid()),
+   termEnd_(SteadyTime::GetInvalid()),
    state_(Originating)
 {
    Debug::ft("TrafficCall.ctor");
@@ -324,15 +326,15 @@ TrafficCall::~TrafficCall()
    //
    auto thread = Singleton< PotsTrafficThread >::Instance();
 
-   if(origEnd_.IsValid())
+   if(SteadyTime::IsValid(origEnd_))
    {
       auto duration = origEnd_ - origStart_;
       thread->RecordHoldingTime(duration);
    }
 
-   if(termEnd_.IsValid())
+   if(SteadyTime::IsValid(termEnd_))
    {
-      auto duration = termEnd_ - termStart_ + (ONE_SEC << 1);
+      nsecs_t duration = termEnd_ - termStart_ + msecs_t(2000);
       thread->RecordHoldingTime(duration);
    }
 }
@@ -341,7 +343,7 @@ TrafficCall::~TrafficCall()
 
 fn_name TrafficCall_Advance = "TrafficCall.Advance";
 
-msecs_t TrafficCall::Advance()
+uint32_t TrafficCall::Advance()
 {
    Debug::ft(TrafficCall_Advance);
 
@@ -455,7 +457,7 @@ void TrafficCall::EraseOrig()
    {
       orig_->ClearTrafficId(callid_);
       orig_ = nullptr;
-      origEnd_ = TimePoint::Now();
+      origEnd_ = SteadyTime::Now();
    }
 }
 
@@ -469,7 +471,7 @@ void TrafficCall::EraseTerm()
    {
       term_->ClearTrafficId(callid_);
       term_ = nullptr;
-      termEnd_ = TimePoint::Now();
+      termEnd_ = SteadyTime::Now();
    }
 }
 
@@ -504,7 +506,7 @@ void* TrafficCall::operator new(size_t size)
 
 //------------------------------------------------------------------------------
 
-msecs_t TrafficCall::Originate() const
+uint32_t TrafficCall::Originate() const
 {
    Debug::ft("TrafficCall.Originate");
 
@@ -516,7 +518,7 @@ msecs_t TrafficCall::Originate() const
 
 //------------------------------------------------------------------------------
 
-msecs_t TrafficCall::ProcessConnected()
+uint32_t TrafficCall::ProcessConnected()
 {
    Debug::ft("TrafficCall.ProcessConnected");
 
@@ -549,7 +551,7 @@ msecs_t TrafficCall::ProcessConnected()
 
 //------------------------------------------------------------------------------
 
-msecs_t TrafficCall::ProcessDialing()
+uint32_t TrafficCall::ProcessDialing()
 {
    Debug::ft("TrafficCall.ProcessDialing");
 
@@ -581,7 +583,7 @@ msecs_t TrafficCall::ProcessDialing()
    if(rnd <= 10)
    {
       SetState(SingleEnded);
-      return 1000 * PotsProtocol::InterDigitTimeout;
+      return SECS_TO_MS * PotsProtocol::InterDigitTimeout;
    }
 
    auto msg = orig_->CreateMsg(PotsSignal::Digits);
@@ -596,7 +598,7 @@ msecs_t TrafficCall::ProcessDialing()
 
 //------------------------------------------------------------------------------
 
-msecs_t TrafficCall::ProcessOriginating()
+uint32_t TrafficCall::ProcessOriginating()
 {
    Debug::ft("TrafficCall.ProcessOriginating");
 
@@ -693,7 +695,7 @@ msecs_t TrafficCall::ProcessOriginating()
       if(rnd <= 6)
       {
          SetState(SingleEnded);
-         return (1000 * PotsProtocol::FirstDigitTimeout) + 500;
+         return (SECS_TO_MS * PotsProtocol::FirstDigitTimeout) + 500;
       }
 
       auto msg = orig_->CreateMsg(PotsSignal::Digits);
@@ -742,7 +744,7 @@ msecs_t TrafficCall::ProcessOriginating()
 
 //------------------------------------------------------------------------------
 
-msecs_t TrafficCall::ProcessReleasing()
+uint32_t TrafficCall::ProcessReleasing()
 {
    Debug::ft("TrafficCall.ProcessReleasing");
 
@@ -755,7 +757,7 @@ msecs_t TrafficCall::ProcessReleasing()
 
 //------------------------------------------------------------------------------
 
-msecs_t TrafficCall::ProcessRinging()
+uint32_t TrafficCall::ProcessRinging()
 {
    Debug::ft("TrafficCall.ProcessRinging");
 
@@ -788,7 +790,7 @@ msecs_t TrafficCall::ProcessRinging()
 
 //------------------------------------------------------------------------------
 
-msecs_t TrafficCall::ProcessSingleEnded()
+uint32_t TrafficCall::ProcessSingleEnded()
 {
    Debug::ft("TrafficCall.ProcessSingleEnded");
 
@@ -802,7 +804,7 @@ msecs_t TrafficCall::ProcessSingleEnded()
 
 //------------------------------------------------------------------------------
 
-msecs_t TrafficCall::ProcessSuspended()
+uint32_t TrafficCall::ProcessSuspended()
 {
    Debug::ft("TrafficCall.ProcessSuspended");
 
@@ -842,12 +844,12 @@ msecs_t TrafficCall::ProcessSuspended()
 
    SetState(SingleEnded);
    EraseTerm();
-   return 1000 * PotsProtocol::SuspendTimeout;
+   return SECS_TO_MS * PotsProtocol::SuspendTimeout;
 }
 
 //------------------------------------------------------------------------------
 
-msecs_t TrafficCall::ProcessTerminating()
+uint32_t TrafficCall::ProcessTerminating()
 {
    Debug::ft("TrafficCall.ProcessTerminating");
 
@@ -867,7 +869,7 @@ msecs_t TrafficCall::ProcessTerminating()
       {
          term_ = term;
          term_->SetTrafficId(callid_);
-         termStart_ = TimePoint::Now();
+         termStart_ = SteadyTime::Now();
       }
       else
       {
@@ -903,7 +905,7 @@ msecs_t TrafficCall::ProcessTerminating()
 
       SetState(SingleEnded);
       EraseTerm();
-      return 1000 * PotsProtocol::AnswerTimeout;
+      return SECS_TO_MS * PotsProtocol::AnswerTimeout;
    }
 
    if(port != Tone::Silence)
@@ -995,16 +997,16 @@ c_string TrafficCall::strState(State state)
 //  The frequency at which the thread wakes up to send messages when
 //  generating traffic.
 //
-constexpr msecs_t MsecsToSleep = 100;
+constexpr uint32_t MsecsToSleep = 100;
 
 //  The longest time horizon at which a future event can be scheduled.
 //
-constexpr secs_t MaxDelaySecs = 120;
+constexpr uint32_t MaxDelaySecs = 120;
 
 //  The number of entries in the timewheel.  Successive entries are
 //  processed every MsecsToSleep.
 //
-constexpr size_t NumOfSlots = 1000 * MaxDelaySecs / MsecsToSleep + 1;
+constexpr size_t NumOfSlots = SECS_TO_MS * MaxDelaySecs / MsecsToSleep + 1;
 
 //  The first DN that will be allocated for running traffic.  It is
 //  assumed that all DNs between this one and Address::LastDN can be
@@ -1015,7 +1017,7 @@ constexpr Address::DN StartDN = 21001;
 //  The average call holding time, which can be found using the
 //  >traffic query command.
 //
-constexpr secs_t HoldingTimeSecs = 30;
+constexpr uint32_t HoldingTimeSecs = 30;
 
 //  The average number of POTS lines involved in 100 calls, which
 //  can be found using the >traffic query command.
@@ -1109,9 +1111,11 @@ void PotsTrafficThread::Display(ostream& stream,
 {
    Thread::Display(stream, prefix, options);
 
+   auto totalSecs = totalTimes_.count() / std::nano::den;
+
    stream << prefix << "NumOfSlots      : " << NumOfSlots << CRLF;
    stream << prefix << "MaxCallsPerMin  : " << MaxCallsPerMin << CRLF;
-   stream << prefix << "timeout         : " << timeout_.To(mSECS) << CRLF;
+   stream << prefix << "timeout         : " << to_string(timeout_) << CRLF;
    stream << prefix << "callsPerMin     : " << callsPerMin_ << CRLF;
    stream << prefix << "maxCallsPerTick : " << maxCallsPerTick_ << CRLF;
    stream << prefix << "milCallsPerTick : " << milCallsPerTick_ << CRLF;
@@ -1120,7 +1124,7 @@ void PotsTrafficThread::Display(ostream& stream,
    stream << prefix << "currSlot        : " << currSlot_ << CRLF;
    stream << prefix << "totalCalls      : " << totalCalls_ << CRLF;
    stream << prefix << "activeCalls     : " << activeCalls_ << CRLF;
-   stream << prefix << "totalTimes      : " << totalTimes_ << CRLF;
+   stream << prefix << "totalTimes      : " << totalSecs << "s" << CRLF;
    stream << prefix << "totalReports    : " << totalReports_ << CRLF;
    stream << prefix << "overflows       : " << overflows_ << CRLF;
    stream << prefix << "aborts          : " << aborts_ << CRLF;
@@ -1136,18 +1140,18 @@ void PotsTrafficThread::DisplayStateCounts(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void PotsTrafficThread::Enqueue(TrafficCall& call, msecs_t delay)
+void PotsTrafficThread::Enqueue(TrafficCall& call, uint32_t msecs)
 {
    Debug::ft("PotsTrafficThread.Enqueue");
 
-   if((delay == 0) || call.Empty())
+   if((msecs == 0) || call.Empty())
    {
       delete &call;
       --activeCalls_;
       return;
    }
 
-   size_t incr = delay / MsecsToSleep;
+   size_t incr = msecs / MsecsToSleep;
    if(incr == 0) incr = 1;
    if(incr >= NumOfSlots) incr = NumOfSlots - 1;
    auto nextSlot = currSlot_ + incr;
@@ -1175,7 +1179,7 @@ void PotsTrafficThread::Enter()
          //
          //  Our call rate has been modified and we have work to do.
          //
-         timeout_ = Duration(MsecsToSleep, mSECS);
+         timeout_ = msecs_t(MsecsToSleep);
          break;
 
       case DelayCompleted:
@@ -1271,11 +1275,11 @@ Address::DN PotsTrafficThread::FindDn(DnStatus status) const
 
 //------------------------------------------------------------------------------
 
-Duration PotsTrafficThread::InitialTime() const
+msecs_t PotsTrafficThread::InitialTime() const
 {
    Debug::ft("PotsTrafficThread.InitialTime");
 
-   return Thread::InitialTime() << 4;
+   return 16 * Thread::InitialTime();
 }
 
 //------------------------------------------------------------------------------
@@ -1290,7 +1294,7 @@ void PotsTrafficThread::Query(ostream& stream) const
    if(timeout_ == TIMEOUT_NEVER)
       stream << "infinite";
    else
-      stream << timeout_.to_str(mSECS);
+      stream << to_string(timeout_);
    stream << CRLF;
 
    stream << "Maximum calls per minute     " << MaxCallsPerMin << CRLF;
@@ -1308,9 +1312,9 @@ void PotsTrafficThread::Query(ostream& stream) const
 
    if((totalReports_ > 0) && (totalCalls_ > 0))
    {
-      auto htsecs = totalTimes_ / totalReports_;
-      stream << "Average holding time (secs)  " << htsecs;
-      if(htsecs > HoldingTimeSecs) stream << " ***";
+      auto htsecs = (totalTimes_ / std::nano::den) / totalReports_;
+      stream << "Average holding time (secs)  " << htsecs.count();
+      if(htsecs.count() > HoldingTimeSecs) stream << " ***";
       stream << CRLF;
 
       auto hdnspc = 100 * totalReports_ / totalCalls_;
@@ -1344,9 +1348,9 @@ void PotsTrafficThread::Query(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-void PotsTrafficThread::RecordHoldingTime(const Duration& time)
+void PotsTrafficThread::RecordHoldingTime(const nsecs_t& time)
 {
-   totalTimes_ += time.To(SECS);
+   totalTimes_ += time;
    ++totalReports_;
 }
 
@@ -1408,7 +1412,7 @@ void PotsTrafficThread::SetRate(uint32_t rate)
    {
       //  Add N more circuits, with a minimum of 20, starting at DN.
       //
-      size_t n = 20;
+      int n = 20;
 
       if(rate > 10)
       {
@@ -1435,7 +1439,7 @@ void PotsTrafficThread::SetRate(uint32_t rate)
       FunctionGuard guard(Guard_MemUnprotect);
       auto reg = Singleton< PotsProfileRegistry >::Instance();
 
-      for(size_t i = 0; i < n; ++i)
+      for(auto i = 0; i < n; ++i)
       {
          if(reg->Profile(dn) == nullptr)
          {

@@ -25,9 +25,9 @@
 #define BOTTHREAD_H_INCLUDED
 
 #include "Thread.h"
+#include <cstdint>
 #include <set>
 #include "DipTypes.h"
-#include "Duration.h"
 #include "NbTypes.h"
 
 namespace Diplomacy
@@ -57,7 +57,7 @@ public:
    //  already an instance of the same event set to expire at the
    //  same time.
    //
-   bool QueueEvent(BotEvent event, secs_t secs);
+   bool QueueEvent(BotEvent event, uint32_t secs);
 
    //  Cancels EVENT if it exists.  If more than one such event is
    //  pending, only the one that would occur first is cancelled.
@@ -109,10 +109,10 @@ private:
    //
    struct Wakeup
    {
-      BotEvent event;       // event
-      mutable secs_t secs;  // delay
+      BotEvent event;         // event
+      mutable uint32_t secs;  // delay
 
-      Wakeup(BotEvent e, secs_t s) : event(e), secs(s) { }
+      Wakeup(BotEvent e, uint32_t s) : event(e), secs(s) { }
 
       bool operator<(const Wakeup& that) const
       {

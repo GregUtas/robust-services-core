@@ -23,12 +23,14 @@
 //
 #include "BotThread.h"
 #include <ostream>
+#include <ratio>
 #include <string>
 #include <utility>
 #include "BaseBot.h"
 #include "BotTrace.h"
 #include "Debug.h"
 #include "DipProtocol.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -114,7 +116,7 @@ void BotThread::Enter()
 {
    Debug::ft(BotThread_Enter);
 
-   Pause(Duration(4, SECS));
+   Pause(msecs_t(4 * ONE_SEC));
 
    bot_ = BaseBot::instance();
    auto rc = bot_->initialise();
@@ -125,7 +127,7 @@ void BotThread::Enter()
       return;
    }
 
-   Duration delay;
+   msecs_t delay;
 
    while(true)
    {
@@ -136,7 +138,7 @@ void BotThread::Enter()
       if(wakeups_.empty())
          delay = TIMEOUT_NEVER;
       else
-         delay = Duration(wakeups_.cbegin()->secs, SECS);
+         delay = msecs_t(wakeups_.cbegin()->secs * ONE_SEC);
 
       auto msg = DeqMsg(delay);
 
@@ -217,7 +219,7 @@ void BotThread::ProcessMsg(MsgBuffer* msg) const
 
 //------------------------------------------------------------------------------
 
-bool BotThread::QueueEvent(BotEvent event, secs_t secs)
+bool BotThread::QueueEvent(BotEvent event, uint32_t secs)
 {
    Debug::ft("BotThread.QueueEvent");
 

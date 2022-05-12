@@ -20,11 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ModuleRegistry.h"
+#include <chrono>
 #include <cstddef>
 #include <cstring>
 #include <iomanip>
 #include <ios>
 #include <iosfwd>
+#include <ratio>
 #include <set>
 #include <sstream>
 #include <string>
@@ -40,10 +42,11 @@
 #include "NbSignals.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "SteadyTime.h"
+#include "SystemTime.h"
 #include "ThisThread.h"
 #include "Thread.h"
 #include "ThreadRegistry.h"
-#include "TimePoint.h"
 
 using std::ostream;
 using std::setw;
@@ -181,10 +184,9 @@ void ModuleRegistry::Display(ostream& stream,
 {
    Immutable::Display(stream, prefix, options);
 
-   stream << prefix << "TimeZero : " << TimePoint::TimeZero().Ticks() << CRLF;
-   stream << prefix << "Stage    : " << Restart::Stage_ << CRLF;
-   stream << prefix << "Level    : " << Restart::Level_ << CRLF;
-   stream << prefix << "stream   : " << stream_.get() << CRLF;
+   stream << prefix << "Stage  : " << Restart::Stage_ << CRLF;
+   stream << prefix << "Level  : " << Restart::Level_ << CRLF;
+   stream << prefix << "stream : " << stream_.get() << CRLF;
 
    stream << prefix << "modules [ModuleId]" << CRLF;
    modules_.Display(stream, prefix + spaces(2), options);
@@ -311,7 +313,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
       Memory::Unprotect(MemProtected);
    }
 
-   Duration delay(25, mSECS);
+   msecs_t delay(25);
 
    //  Schedule a subset of the factions so that pending logs will be output.
    //
@@ -328,14 +330,15 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    }
    Thread::EnableFactions(NoFactions);
 
-   auto zeroTime = TimePoint::Now();
+   auto zeroTime = SystemTime::Now();
+   auto zeroPoint = SteadyTime::Now();
    *Stream() << CRLF << "RESTART TYPE: " << level << CRLF;
    *Stream() << CRLF << ShutdownHeader << CRLF;
 
    //  Notify all threads of the restart.
    //
    *Stream() << NotifyingThreadsStr << setw(52 - strlen(NotifyingThreadsStr));
-   *Stream() << zeroTime.to_str() << CRLF;
+   *Stream() << to_string(zeroTime, LowAlpha) << CRLF;
    Log::Submit(stream_);
 
    auto reg = Singleton< ThreadRegistry >::Instance();
@@ -355,8 +358,8 @@ void ModuleRegistry::Shutdown(RestartLevel level)
       (*t)->Raise(SIGCLOSE);
    }
 
-   auto elapsed = TimePoint::Now() - zeroTime;
-   *Stream() << elapsed.To(mSECS) << CRLF;
+   nsecs_t elapsed = SteadyTime::Now() - zeroPoint;
+   *Stream() << elapsed.count() / NS_TO_MS << CRLF;
    Log::Submit(stream_);
 
    Thread::EnableFactions(AllFactions());
@@ -386,33 +389,34 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    auto actual = target - exiting.size();
    *Stream() << CRLF << ExitedThreadsStr << setw(2) << actual;
    *Stream() << setw(36 - (strlen(ExitedThreadsStr) + 2));
-   elapsed = TimePoint::Now() - zeroTime;
-   *Stream() << elapsed.To(mSECS) << CRLF;
+   elapsed = SteadyTime::Now() - zeroPoint;
+   *Stream() << elapsed.count() / NS_TO_MS << CRLF;
    Log::Submit(stream_);
 
    //  Modules must be shut down in reverse order of their initialization.
    //
    for(auto m = modules_.Last(); m != nullptr; modules_.Prev(m))
    {
-      auto time = TimePoint::Now();
+      auto time = SystemTime::Now();
+      auto point = SteadyTime::Now();
       auto name = strClass(m) + "...";
       *Stream() << name << setw(52 - name.size());
-      *Stream() << time.to_str() << CRLF;
+      *Stream() << to_string(time, LowAlpha) << CRLF;
       Log::Submit(stream_);
 
       m->Shutdown(level);
 
       *Stream() << ShutdownStr << setw(36 - strlen(ShutdownStr));
-      elapsed = TimePoint::Now() - time;
-      *Stream() << elapsed.To(mSECS) << CRLF;
+      elapsed = SteadyTime::Now() - point;
+      *Stream() << elapsed.count() / 10000000 << CRLF;
       Log::Submit(stream_);
    }
 
    *Stream() << setw(36) << string(5, '-') << CRLF;
    auto width = strlen(ShutdownTotalStr);
-   elapsed = TimePoint::Now() - zeroTime;
+   elapsed = SteadyTime::Now() - zeroPoint;
    *Stream() << ShutdownTotalStr;
-   *Stream() << setw(36 - width) << elapsed.To(mSECS) << CRLF;
+   *Stream() << setw(36 - width) << elapsed.count() / NS_TO_MS << CRLF;
    Log::Submit(stream_);
 }
 
@@ -432,30 +436,34 @@ void ModuleRegistry::Startup(RestartLevel level)
    Debug::ft("ModuleRegistry.Startup");
 
    auto zeroTime =
-      (level >= RestartReboot ? TimePoint::TimeZero() : TimePoint::Now());
+      (level >= RestartReboot ? SystemTime::TimeZero() : SystemTime::Now());
+   auto zeroPoint =
+      (level >= RestartReboot ? SteadyTime::TimeZero() : SteadyTime::Now());
    *Stream() << CRLF << StartupHeader << CRLF;
 
    if(level >= RestartReboot)
    {
-      auto elapsed = TimePoint::Now() - zeroTime;
+      nsecs_t elapsed = SteadyTime::Now() - zeroPoint;
       *Stream() << PreModuleStr;
-      *Stream() << setw(36 - strlen(PreModuleStr)) << elapsed.To(mSECS);
-      *Stream() << setw(16) << zeroTime.to_str() << CRLF;
+      *Stream() << setw(36 - strlen(PreModuleStr))
+         << elapsed.count() / NS_TO_MS;
+      *Stream() << setw(16) << to_string(zeroTime, LowAlpha) << CRLF;
    }
 
    for(auto m = modules_.First(); m != nullptr; modules_.Next(m))
    {
-      auto time = TimePoint::Now();
+      auto time = SystemTime::Now();
+      auto point = SteadyTime::Now();
       auto name = strClass(m) + "...";
       *Stream() << name << setw(52 - name.size());
-      *Stream() << time.to_str() << CRLF;
+      *Stream() << to_string(time, LowAlpha) << CRLF;
       Log::Submit(stream_);
 
       m->Startup(level);
 
-      auto elapsed = TimePoint::Now() - time;
+      nsecs_t elapsed = SteadyTime::Now() - point;
       *Stream() << InitializedStr << setw(36 - strlen(InitializedStr));
-      *Stream() << elapsed.To(mSECS) << CRLF;
+      *Stream() << elapsed.count() / NS_TO_MS << CRLF;
       Log::Submit(stream_);
    }
 
@@ -466,9 +474,9 @@ void ModuleRegistry::Startup(RestartLevel level)
 
    *Stream() << setw(36) << string(5, '-') << CRLF;
    auto width = strlen(StartupTotalStr);
-   auto elapsed = TimePoint::Now() - zeroTime;
+   nsecs_t elapsed = SteadyTime::Now() - zeroPoint;
    *Stream() << StartupTotalStr;
-   *Stream() << setw(36 - width) << elapsed.To(mSECS) << CRLF;
+   *Stream() << setw(36 - width) << elapsed.count() / NS_TO_MS << CRLF;
    Log::Submit(stream_);
 }
 

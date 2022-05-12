@@ -144,10 +144,6 @@ public:
    //
    CxxToken* PosToItem(size_t pos) const override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to update the position the of the area's items.
    //
    void UpdatePos(EditorAction action,
@@ -343,11 +339,6 @@ public:
    //  Returns the class template, if any, associated with the class.
    //
    virtual Class* GetClassTemplate() const;
-
-   //  Returns true if this is a class template instance created by
-   //  compiling a class template.
-   //
-   virtual bool IsCompiledTemplate() const { return false; }
 
    //  Returns a class template's instantiations.
    //
@@ -614,8 +605,7 @@ public:
 
    //  Overridden to support class templates.
    //
-   const TemplateParms* GetTemplateParms() const
-      override { return parms_.get(); }
+   TemplateParms* GetTemplateParms() const override { return parms_.get(); }
 
    //  Overridden to update SYMBOLS with the type usage of each of the
    //  class's components.
@@ -650,8 +640,8 @@ public:
 
    //  Overridden to return the class's qualified name.
    //
-   std::string QualifiedName(bool scopes, bool templates) const
-      override { return name_->QualifiedName(scopes, templates); }
+   std::string QualifiedName(bool scopes, bool templates) const override
+      { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to record usage of the class.
    //
@@ -664,10 +654,6 @@ public:
    //  Overridden to support class templates.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to reveal that this is a class.
    //
@@ -690,8 +676,8 @@ public:
    //  Overridden to support, for example, passing a "this" argument or writing
    //  to a class object in an array.
    //
-   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
-      override { return false; }
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect) override
+      { return false; }
 
    //  Overridden to append template arguments to a template specialization.
    //
@@ -895,13 +881,13 @@ public:
    //
    void GetDirectClasses(CxxUsageSets& symbols) override { }
 
-   //  Overridden to return the instance's class template.
+   //  Overridden to return the class template on which the instance is based.
    //
    CxxScope* GetTemplate() const override { return tmplt_; }
 
-   //  Overridden to return the instance's template arguments.
+   //  Overridden to return the instance's name and template arguments.
    //
-   TypeName* GetTemplateArgs() const override { return tspec_.get(); }
+   TypeName* GetTemplatedName() const override { return tspec_.get(); }
 
    //  Overridden to return this class template instance.
    //
@@ -915,11 +901,6 @@ public:
    //
    void Instantiate() override;
 
-   //  Overridden to return true for a class template instance created by
-   //  compiling a class template.
-   //
-   bool IsCompiledTemplate() const override;
-
    //  Overridden for when NAME refers to a class template instance.
    //
    bool NameRefersToItem(const std::string& name, const CxxScope* scope,
@@ -932,10 +913,6 @@ public:
    //  Overridden to count references.
    //
    void SetAsReferent(const CxxNamed* user) override { ++refs_; }
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to return a string containing a fully qualified class name
    //  and fully qualified template arguments.
@@ -1050,8 +1027,8 @@ public:
 
    //  Overridden to return the namespace.
    //
-   Namespace* GetSpace() const
-      override { return const_cast< Namespace* >(this); }
+   Namespace* GetSpace() const override
+      { return const_cast< Namespace* >(this); }
 
    //  Overridden to indicate that we are not in a template instance.
    //
@@ -1072,10 +1049,6 @@ public:
    //  Overridden to preserve the location where the namespace first occurred.
    //
    void SetLoc(CodeFile* file, size_t pos) const override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to reveal that this is a namespace.
    //

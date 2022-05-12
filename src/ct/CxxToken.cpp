@@ -23,7 +23,6 @@
 #include <sstream>
 #include "CodeFile.h"
 #include "CxxArea.h"
-#include "CxxExecute.h"
 #include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
@@ -238,8 +237,6 @@ static void Record(Cxx::Operator op, StackArg& arg1, const StackArg* arg2)
 AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 {
    Debug::ft("AlignAs.ctor");
-
-   CxxStats::Incr(CxxStats::ALIGNAS);
 }
 
 //------------------------------------------------------------------------------
@@ -286,14 +283,6 @@ void AlignAs::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void AlignAs::Shrink()
-{
-   CxxToken::Shrink();
-   token_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void AlignAs::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -313,8 +302,6 @@ void AlignAs::UpdateXref(bool insert)
 ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
 {
    Debug::ft("ArraySpec.ctor");
-
-   CxxStats::Incr(CxxStats::ARRAY_SPEC);
 }
 
 //------------------------------------------------------------------------------
@@ -361,14 +348,6 @@ void ArraySpec::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void ArraySpec::Shrink()
-{
-   CxxToken::Shrink();
-   if(expr_ != nullptr) expr_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 string ArraySpec::TypeString(bool arg) const
 {
    return (arg ? "*" : ARRAY_STR);
@@ -395,8 +374,6 @@ void ArraySpec::UpdateXref(bool insert)
 Asm::Asm(ExprPtr& code) : code_(std::move(code))
 {
    Debug::ft("Asm.ctor");
-
-   CxxStats::Incr(CxxStats::ASM);
 }
 
 //------------------------------------------------------------------------------
@@ -430,14 +407,6 @@ void Asm::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void Asm::Shrink()
-{
-   CxxToken::Shrink();
-   code_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Asm::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -446,6 +415,15 @@ void Asm::UpdatePos
 }
 
 //==============================================================================
+
+CxxToken* BoolLiteral::Clone() const
+{
+   Debug::ft("BoolLiteral.Clone");
+
+   return new BoolLiteral(b_);
+}
+
+//------------------------------------------------------------------------------
 
 CxxScoped* BoolLiteral::Referent() const
 {
@@ -459,8 +437,6 @@ CxxScoped* BoolLiteral::Referent() const
 BraceInit::BraceInit()
 {
    Debug::ft("BraceInit.ctor");
-
-   CxxStats::Incr(CxxStats::BRACE_INIT);
 }
 
 //------------------------------------------------------------------------------
@@ -538,16 +514,6 @@ void BraceInit::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void BraceInit::Shrink()
-{
-   CxxToken::Shrink();
-   ShrinkTokens(items_);
-   auto size = items_.capacity() * sizeof(TokenPtr);
-   CxxStats::Vectors(CxxStats::BRACE_INIT, size);
-}
-
-//------------------------------------------------------------------------------
-
 void BraceInit::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -602,6 +568,18 @@ CxxToken& CxxToken::operator=(const CxxToken& that)
 
    if(this != &that) this->loc_ = that.loc_;
    return *this;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxToken_Clone = "CxxToken.Clone";
+
+CxxToken* CxxToken::Clone() const
+{
+   Debug::ft(CxxToken_Clone);
+
+   Context::SwLog(CxxToken_Clone, strOver(this), 0);
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -710,12 +688,12 @@ bool CxxToken::GetSpan3(size_t& begin, size_t& left, size_t& end) const
 
 //------------------------------------------------------------------------------
 
-TypeName* CxxToken::GetTemplateArgs() const
+TypeName* CxxToken::GetTemplatedName() const
 {
-   Debug::ft("CxxToken.GetTemplateArgs");
+   Debug::ft("CxxToken.GetTemplatedName");
 
    auto name = GetQualName();
-   return (name != nullptr ? name->GetTemplateArgs() : nullptr);
+   return (name != nullptr ? name->GetTemplatedName() : nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -795,16 +773,6 @@ void CxxToken::Log(Warning warning,
 
 //------------------------------------------------------------------------------
 
-const string& CxxToken::Name() const
-{
-   Debug::ft("CxxToken.Name");
-
-   static string empty_str;
-   return empty_str;
-}
-
-//------------------------------------------------------------------------------
-
 CxxToken* CxxToken::PosToItem(size_t pos) const
 {
    return ((GetPos() == pos) && !IsInternal() ?
@@ -833,6 +801,18 @@ CxxScoped* CxxToken::ReferentDefn() const
    }
 
    return ref1;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxToken_ResultType = "CxxToken.ResultType";
+
+StackArg CxxToken::ResultType() const
+{
+   Debug::ft(CxxToken_ResultType);
+
+   Context::SwLog(CxxToken_ResultType, strOver(this), 0);
+   return NilStackArg;
 }
 
 //------------------------------------------------------------------------------
@@ -893,16 +873,6 @@ void CxxToken::SetLoc(CodeFile* file, size_t pos, bool internal) const
 
 //------------------------------------------------------------------------------
 
-void CxxToken::ShrinkTokens(const TokenPtrVector& tokens)
-{
-   for(auto t = tokens.cbegin(); t != tokens.cend(); ++t)
-   {
-      (*t)->Shrink();
-   }
-}
-
-//------------------------------------------------------------------------------
-
 string CxxToken::strLocation() const
 {
    auto file = GetFile();
@@ -916,10 +886,29 @@ string CxxToken::strLocation() const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxToken_TypeString = "CxxToken.TypeString";
+
+string CxxToken::TypeString(bool arg) const
+{
+   Debug::ft(CxxToken_TypeString);
+
+   Context::SwLog(CxxToken_TypeString, strOver(this), 0);
+   return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
 void CxxToken::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
    loc_.UpdatePos(action, begin, count, from);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxToken::VerifyReferents() const
+{
+   return (Referent() != nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -949,8 +938,6 @@ Expression::Expression(size_t end, bool force) :
    force_(force)
 {
    Debug::ft("Expression.ctor");
-
-   CxxStats::Incr(CxxStats::EXPRESSION);
 }
 
 //------------------------------------------------------------------------------
@@ -1223,6 +1210,26 @@ void Expression::Check() const
 
 //------------------------------------------------------------------------------
 
+CxxToken* Expression::Clone() const
+{
+   Debug::ft("Expression.Clone");
+
+   //  This is currently used to clone a literal that appears as a template
+   //  argument.  Operators within the expression are not supported.
+   //
+   ExprPtr expr(new Expression(0, force_));
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      TokenPtr token((*i)->Clone());
+      expr->AddItem(token);
+   }
+
+   return expr.release();
+}
+
+//------------------------------------------------------------------------------
+
 void Expression::EnterBlock()
 {
    Debug::ft("Expression.EnterBlock");
@@ -1254,6 +1261,19 @@ void Expression::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
 //------------------------------------------------------------------------------
 
+const string& Expression::Name() const
+{
+   if(items_.size() == 1)
+   {
+      return items_.front()->Name();
+   }
+
+   Context::SwLog("Expression.Name", "multiple items", 0);
+   return CxxToken::Name();
+}
+
+//------------------------------------------------------------------------------
+
 CxxToken* Expression::PosToItem(size_t pos) const
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
@@ -1277,12 +1297,30 @@ void Expression::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void Expression::Shrink()
+fn_name Expression_ResultType = "Expression.ResultType";
+
+StackArg Expression::ResultType() const
 {
-   CxxToken::Shrink();
-   ShrinkTokens(items_);
-   auto size = items_.capacity() * sizeof(TokenPtr);
-   CxxStats::Vectors(CxxStats::EXPRESSION, size);
+   Debug::ft(Expression_ResultType);
+
+   if(items_.size() == 1)
+   {
+      const auto& item = items_.front();
+      auto ref = item->Referent();
+
+      if(ref != nullptr)
+      {
+         return StackArg(ref, 0, false);
+      }
+
+      Context::SwLog(Expression_ResultType, "nil referent", item->Type());
+   }
+   else
+   {
+      Context::SwLog(Expression_ResultType, "not a single item", items_.size());
+   }
+
+   return NilStackArg;
 }
 
 //------------------------------------------------------------------------------
@@ -1331,6 +1369,15 @@ void Expression::UpdateXref(bool insert)
 }
 
 //==============================================================================
+
+CxxToken* FloatLiteral::Clone() const
+{
+   Debug::ft("FloatLiteral.Clone");
+
+   return new FloatLiteral(num_, tags_);
+}
+
+//------------------------------------------------------------------------------
 
 Numeric FloatLiteral::GetNumeric() const
 {
@@ -1413,6 +1460,15 @@ Numeric IntLiteral::BaseNumeric() const
    }
 
    return Numeric::Nil;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* IntLiteral::Clone() const
+{
+   Debug::ft("IntLiteral.Clone");
+
+   return new IntLiteral(num_, tags_);
 }
 
 //------------------------------------------------------------------------------
@@ -1546,7 +1602,16 @@ void Literal::EnterBlock()
 
 const string& Literal::Name() const
 {
-   return Referent()->Name();
+   //  This is naughty but avoids adding a string member to Literal.  It is
+   //  currently invoked only to build a larger name, so it unlikely that it
+   //  will cause problems.
+   //
+   static string name;
+
+   std::ostringstream stream;
+   Print(stream, NoFlags);
+   name = stream.str();
+   return name;
 }
 
 //------------------------------------------------------------------------------
@@ -1589,8 +1654,6 @@ Operation::Operation(Cxx::Operator op) :
    overload_(nullptr)
 {
    Debug::ft("Operation.ctor");
-
-   CxxStats::Incr(CxxStats::OPERATION);
 }
 
 //------------------------------------------------------------------------------
@@ -1603,8 +1666,6 @@ Operation::~Operation()
    {
       overload_->UpdateReference(this, false);
    }
-
-   CxxStats::Incr(CxxStats::OPERATION);
 }
 
 //------------------------------------------------------------------------------
@@ -3113,7 +3174,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    //  If ARG2 specified template arguments, use them to find (or instantiate)
    //  the correct function template instance.
    //
-   auto tmplt = arg2.item_->GetTemplateArgs();
+   auto tmplt = arg2.item_->GetTemplatedName();
 
    if(tmplt != nullptr)
    {
@@ -3311,16 +3372,6 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
 
 //------------------------------------------------------------------------------
 
-void Operation::Shrink()
-{
-   CxxToken::Shrink();
-   ShrinkTokens(args_);
-   auto size = args_.capacity() * sizeof(TokenPtr);
-   CxxStats::Vectors(CxxStats::OPERATION, size);
-}
-
-//------------------------------------------------------------------------------
-
 string Operation::Trace() const
 {
    switch(op_)
@@ -3432,14 +3483,6 @@ void Precedence::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void Precedence::Shrink()
-{
-   CxxToken::Shrink();
-   if(expr_ != nullptr) expr_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Precedence::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -3461,8 +3504,6 @@ StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
    message_(std::move(message))
 {
    Debug::ft("StaticAssert.ctor");
-
-   CxxStats::Incr(CxxStats::STATIC_ASSERT);
 }
 
 //------------------------------------------------------------------------------
@@ -3534,15 +3575,6 @@ void StaticAssert::Print(ostream& stream, const Flags& options) const
    stream << ", ";
    message_->Print(stream, options);
    stream << ");";
-}
-
-//------------------------------------------------------------------------------
-
-void StaticAssert::Shrink()
-{
-   CxxToken::Shrink();
-   expr_->Shrink();
-   if(message_ != nullptr) message_->Shrink();
 }
 
 //------------------------------------------------------------------------------

@@ -50,20 +50,11 @@ template< typename C, class T, Cxx::Encoding E >
    class CxxStrLiteral : public StringLiteral
 {
 public:
-   CxxStrLiteral()
-   {
-      CxxStats::Incr(CxxStats::STR_LITERAL);
-   }
+   CxxStrLiteral() = default;
 
-   explicit CxxStrLiteral(const T& s) : str_(s)
-   {
-      CxxStats::Incr(CxxStats::STR_LITERAL);
-   }
+   explicit CxxStrLiteral(const T& s) : str_(s) { }
 
-   ~CxxStrLiteral()
-   {
-      CxxStats::Decr(CxxStats::STR_LITERAL);
-   }
+   ~CxxStrLiteral() = default;
 
    CxxStrLiteral(const CxxStrLiteral& that) = delete;
 
@@ -124,12 +115,6 @@ private:
    }
 
    CxxScoped* Referent() const override { return GetReferent(); }
-
-   void Shrink() override
-   {
-      str_.shrink_to_fit();
-      CxxStats::Strings(CxxStats::STR_LITERAL, str_.capacity());
-   }
 
    std::string TypeString(bool arg) const override
    {

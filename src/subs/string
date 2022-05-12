@@ -16,7 +16,7 @@ namespace std
    template <typename T> class char_traits { };
 
    template <typename charT, class traits = char_traits<charT>,
-      class alloc = allocator<charT>> class basic_string
+      class A = allocator<charT>> class basic_string
    {
    public:
       static const size_t npos = SIZE_MAX;

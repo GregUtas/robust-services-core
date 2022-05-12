@@ -157,8 +157,8 @@ public:
 
    //  Overridden to indicate that the circuit supports the POTS protocol.
    //
-   bool Supports(ProtocolId prid) const
-      override { return (prid == PotsProtocolId); }
+   bool Supports(ProtocolId prid) const override
+      { return (prid == PotsProtocolId); }
 private:
    //  The size of the trace buffer, which maintains a message history
    //  that is included in logs.

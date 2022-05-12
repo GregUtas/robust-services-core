@@ -20,7 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StatisticsThread.h"
+#include <chrono>
 #include <cstdint>
+#include <ratio>
 #include <sstream>
 #include <string>
 #include "Debug.h"
@@ -30,7 +32,7 @@
 #include "Restart.h"
 #include "Singleton.h"
 #include "StatisticsRegistry.h"
-#include "SysTime.h"
+#include "SystemTime.h"
 #include "SysTypes.h"
 
 using std::ostream;
@@ -43,23 +45,24 @@ namespace NodeBase
 //> The number of seconds between statistics reports and the rollover
 //  of statistics (default = 15 minutes).
 //
-constexpr secs_t LongIntervalSecs = 900;
+constexpr uint32_t LongIntervalMins = 15;
 
 //> The number of seconds between the rollover of the short interval
 //  for thread statistics (default = 5 seconds).
 //
-constexpr secs_t ShortIntervalSecs = 5;
+constexpr uint32_t ShortIntervalSecs = 5;
 
 //  The number of wakeups between statistics reports, which is equal
 //  to SecondsInStatsInterval / SecondsInThreadInterval.  The thread
 //  wakes up frequently to roll over thread statistics, but does so
 //  for other statistics every SecondsInStatsInterval.
 //
-constexpr size_t WakeupsBetweenReports = LongIntervalSecs / ShortIntervalSecs;
+constexpr size_t WakeupsBetweenReports =
+   60 * LongIntervalMins / ShortIntervalSecs;
 
 //> The interval between the times when the thread starts to run.
 //
-static const Duration SleepInterval = Duration(ShortIntervalSecs, SECS);
+static const msecs_t SleepInterval = msecs_t(SECS_TO_MS * ShortIntervalSecs);
 
 //------------------------------------------------------------------------------
 
@@ -91,46 +94,47 @@ c_string StatisticsThread::AbbrName() const
 
 fn_name StatisticsThread_CalcFirstDelay = "StatisticsThread.CalcFirstDelay";
 
-Duration StatisticsThread::CalcFirstDelay()
+msecs_t StatisticsThread::CalcFirstDelay()
 {
    Debug::ft(StatisticsThread_CalcFirstDelay);
 
-   SysTime timeNow;
-
-   //  Start the first short interval for thread statistics at the next
-   //  time that is at least half the distance between short intervals.
+   //  Start the first short interval at the next time that is at least
+   //  half the distance between short intervals.
    //
-   auto tshort = timeNow;
-   tshort.AddMsecs(1000 * ShortIntervalSecs);
-   tshort.Round(SecsField, ShortIntervalSecs);
-   auto delay = timeNow.MsecsUntil(tshort);
+   nsecs_t nsecs(SystemTime::Now().time_since_epoch());
+   uint64_t msecs = nsecs.count() / NS_TO_MS;
 
-   if((delay < 0) || (delay > 1500 * int32_t(ShortIntervalSecs)))
+   int sleep = SECS_TO_MS * ShortIntervalSecs;
+   auto msecs_past = msecs % sleep;
+   int delay = sleep - msecs_past;
+   if(delay < (sleep >> 1)) delay += sleep;
+
+   if((delay < 0) || (delay > (sleep * 3) >> 1))
    {
       Debug::SwLog(StatisticsThread_CalcFirstDelay, "invalid delay", delay);
-      delay = 1000 * ShortIntervalSecs;
+      delay = SECS_TO_MS * ShortIntervalSecs;
    }
 
-   //  Start the first long interval for thread statistics at the next
-   //  time that is at least half the distance between long intervals.
+   //  Start the first long interval for statistics at the next time
+   //  that is at least half the distance between long intervals.
    //
-   auto tlong = timeNow;
-   tlong.AddMsecs(1000 * LongIntervalSecs);
-   tlong.Round(MinsField, LongIntervalSecs / 60);
-   auto delta = tshort.MsecsUntil(tlong);
+   sleep = 60 * SECS_TO_MS * LongIntervalMins;
+   msecs_past = msecs % sleep;
+   int delta = sleep - msecs_past;
+   if(delta < (sleep >> 1)) delta += sleep;
 
-   if((delta < 0) || (delta > 1500 * int32_t(LongIntervalSecs)))
+   if((delta < 0) || (delay > (delta * 3) >> 1))
    {
       Debug::SwLog(StatisticsThread_CalcFirstDelay, "invalid delta", delta);
       countdown_ = WakeupsBetweenReports;
    }
    else
    {
-      countdown_ = delta / (1000 * int32_t(ShortIntervalSecs)) + 1;
+      countdown_ = delta / (SECS_TO_MS * ShortIntervalSecs) + 1;
    }
 
-   Duration sleepTime(delay, mSECS);
-   wakeupTime_ = TimePoint::Now() + sleepTime;
+   msecs_t sleepTime(delay);
+   wakeupTime_ = SteadyTime::Now() + sleepTime;
    return sleepTime;
 }
 
@@ -150,9 +154,8 @@ void StatisticsThread::Display(ostream& stream,
 {
    Thread::Display(stream, prefix, options);
 
-   stream << prefix << "wakeupTime : " << wakeupTime_.Ticks() << CRLF;
-   stream << prefix << "countdown  : " << countdown_ << CRLF;
-   stream << prefix << "delayed    : " << delayed_ << CRLF;
+   stream << prefix << "countdown : " << countdown_ << CRLF;
+   stream << prefix << "delayed   : " << delayed_ << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -210,7 +213,8 @@ void StatisticsThread::Enter()
       //  Calculate the time when we want to wake up and sleep until then.
       //
       wakeupTime_ += SleepInterval;
-      sleep = wakeupTime_ - TimePoint::Now();
+      nsecs_t diff = wakeupTime_ - SteadyTime::Now();
+      sleep = msecs_t(diff.count() / NS_TO_MS);
    }
 }
 

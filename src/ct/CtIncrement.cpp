@@ -39,7 +39,6 @@
 #include "CodeFile.h"
 #include "CodeFileSet.h"
 #include "CodeTypes.h"
-#include "Cxx.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "CxxSymbols.h"
@@ -842,10 +841,10 @@ static const string& ValidParseOptions()
    if(ValidOpts.empty())
    {
       ValidOpts.push_back(TemplateLogs);
-      ValidOpts.push_back(TraceParse);
-      ValidOpts.push_back(SaveParseTrace);
+      ValidOpts.push_back(TraceParsing);
       ValidOpts.push_back(TraceCompilation);
       ValidOpts.push_back(TraceFunctions);
+      ValidOpts.push_back(TraceInstantiation);
    }
 
    return ValidOpts;
@@ -1023,8 +1022,7 @@ class ShowCommand : public LibraryCommand
 public:
    static const id_t DirsIndex = 1;
    static const id_t FailIndex = 2;
-   static const id_t ItemsIndex = 3;
-   static const id_t StatsIndex = 4;
+   static const id_t StatsIndex = 3;
 
    ShowCommand();
 private:
@@ -1037,9 +1035,6 @@ fixed_string DirsTextExpl = "code directories";
 fixed_string FailTextStr = "failed";
 fixed_string FailTextExpl = "code files that failed to parse";
 
-fixed_string ItemsTextStr = "items";
-fixed_string ItemsTextExpl = "memory usage by item type";
-
 fixed_string StatsTextStr = "stats";
 fixed_string StatsTextExpl = "parser statistics";
 
@@ -1049,7 +1044,6 @@ ShowWhatParm::ShowWhatParm() : CliTextParm(ShowWhatExpl)
 {
    BindText(*new CliText(DirsTextExpl, DirsTextStr), ShowCommand::DirsIndex);
    BindText(*new CliText(FailTextExpl, FailTextStr), ShowCommand::FailIndex);
-   BindText(*new CliText(ItemsTextExpl, ItemsTextStr), ShowCommand::ItemsIndex);
    BindText(*new CliText(StatsTextExpl, StatsTextStr), ShowCommand::StatsIndex);
 }
 
@@ -1121,10 +1115,6 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
       break;
    }
 
-   case ItemsIndex:
-      CxxStats::Display(*cli.obuf);
-      break;
-
    case StatsIndex:
       Parser::DisplayStats(*cli.obuf);
       break;
@@ -1134,35 +1124,6 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
       return cli.Report(index, SystemErrorExpl);
    }
 
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-//
-//  The SHRINK command.
-//
-class ShrinkCommand : public CliCommand
-{
-public:
-   ShrinkCommand();
-private:
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-//------------------------------------------------------------------------------
-
-fixed_string ShrinkStr = "shrink";
-fixed_string ShrinkExpl = "Shrinks the library's element containers.";
-
-ShrinkCommand::ShrinkCommand() : CliCommand(ShrinkStr, ShrinkExpl) { }
-
-word ShrinkCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft("ShrinkCommand.ProcessCommand");
-
-   if(!cli.EndOfInput()) return -1;
-
-   CxxStats::Shrink();
    return 0;
 }
 
@@ -1234,7 +1195,7 @@ fixed_string BreakTextStr = "break";
 fixed_string BreakTextExpl = "breakpoint (at Debug::noop in Context::SetPos)";
 
 fixed_string StartTextStr = "start";
-fixed_string StartTextExpl = "start tracing (must preconfigure settings)";
+fixed_string StartTextExpl = "start tracing (preconfigure trace using >set)";
 
 fixed_string StopTextStr = "stop";
 fixed_string StopTextExpl = "stop tracing";
@@ -1467,7 +1428,6 @@ CtIncrement::CtIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new ExportCommand);
    BindCommand(*new RenameCommand);
    BindCommand(*new CoverageCommand);
-   BindCommand(*new ShrinkCommand);
    BindCommand(*new ItemsCommand);
    BindCommand(*new ExpCommand);
 

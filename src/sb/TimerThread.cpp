@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TimerThread.h"
+#include <ratio>
 #include "Debug.h"
 #include "Duration.h"
 #include "SbDaemons.h"
@@ -94,7 +95,7 @@ void TimerThread::Enter()
    //  Every second, tell our registry to process the next timer queue.
    //
    auto reg = Singleton< TimerRegistry >::Instance();
-   Duration sleep(ONE_SEC);
+   msecs_t sleep(ONE_SEC);
 
    while(true)
    {

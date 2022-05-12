@@ -20,6 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "UdpIoThread.h"
+#include <chrono>
+#include <ratio>
 #include "Debug.h"
 #include "Duration.h"
 #include "IpPort.h"
@@ -27,10 +29,10 @@
 #include "NbTypes.h"
 #include "NwTrace.h"
 #include "Singleton.h"
+#include "SteadyTime.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
 #include "SysUdpSocket.h"
-#include "TimePoint.h"
 #include "UdpIpService.h"
 
 using namespace NodeBase;
@@ -160,7 +162,7 @@ void UdpIoThread::Enter()
       }
 
       ++recvs_;
-      time_ = TimePoint::Now();
+      time_ = SteadyTime::Now();
 
       if(rcvd < 0)
       {
@@ -169,7 +171,7 @@ void UdpIoThread::Enter()
          //  code above tries to make the socket blocking when it has no more
          //  mesaages waiting.
          //
-         Pause(Duration(20, mSECS));
+         Pause(msecs_t(20));
          recvs_ = 0;
          continue;
       }

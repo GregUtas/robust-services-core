@@ -40,7 +40,7 @@ class ObjectPoolAudit : public Thread
 public:
    //  Sets the audit interval.
    //
-   void SetInterval(const Duration& interval);
+   void SetInterval(const msecs_t& interval);
 
    //  Overridden to display member variables.
    //
@@ -82,7 +82,7 @@ private:
 
    //  The time between audits.
    //
-   Duration interval_;
+   msecs_t interval_;
 
    //  The work currently being performed by the audit.
    //

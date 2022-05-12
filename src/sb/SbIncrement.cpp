@@ -22,6 +22,7 @@
 #include "SbIncrement.h"
 #include "CliCommand.h"
 #include "CliText.h"
+#include <chrono>
 #include <iomanip>
 #include <iosfwd>
 #include <sstream>
@@ -1394,7 +1395,7 @@ word SbStatusCommand::ProcessCommand(CliThread& cli) const
    {
       *cli.obuf << setw(8) << p->WorkQCurrLength(INGRESS);
       *cli.obuf << setw(8) << p->WorkQMaxLength(INGRESS);
-      *cli.obuf << setw(8) << p->WorkQMaxDelay(INGRESS).To(mSECS);
+      *cli.obuf << setw(8) << p->WorkQMaxDelay(INGRESS).count() / NS_TO_MS;
       *cli.obuf << spaces(3) << p->GetFaction() << CRLF;
    }
 

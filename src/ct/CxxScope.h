@@ -66,6 +66,13 @@ public:
    //
    TemplateParm* NameToTemplateParm(const std::string& name) const;
 
+   //  Replaces a class's or function's template parameters, if any appear
+   //  in CODE, with the template arguments in ARGS, starting at BEGIN.
+   //  The default version generates a log.
+   //
+   void ReplaceTemplateParms(std::string& code,
+      const TemplateArgPtrVector* args, size_t begin) const;
+
    //  Returns the current access control when parsing within the scope.
    //
    virtual Cxx::Access GetCurrAccess() const { return Cxx::Private; }
@@ -93,13 +100,6 @@ protected:
    //  class member data (which has no qualified name).
    //
    void OpenScope(const QualName* name);
-
-   //  Replaces this class's or function's template parameters, as they
-   //  appear in CODE, with the template arguments in ARGS, starting at
-   //  BEGIN.
-   //
-   void ReplaceTemplateParms
-      (std::string& code, const TypeSpecPtrVector* args, size_t begin) const;
 
    //  If this is a class member that is declared in a header, defined in
    //  a .cpp, and only referenced in one file, returns that file, which is
@@ -254,13 +254,14 @@ public:
    //
    std::string ScopedName(bool templates) const override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to reveal that this is a code block.
    //
    Cxx::ItemType Type() const override { return Cxx::Block; }
+
+   //  Overridden to ignore the block.
+   //
+   std::string TypeString(bool arg) const override
+      { return NodeBase::EMPTY_STR; }
 
    //  Overridden to update the location of block's statements.
    //
@@ -277,7 +278,7 @@ private:
 
    //  The block's name.
    //
-   std::string name_;
+   const std::string name_;
 
    //  Set if braces were used when there were zero or one statements.
    //
@@ -414,7 +415,7 @@ public:
 
    //  Overridden to search the data's type for template arguments.
    //
-   TypeName* GetTemplateArgs() const override;
+   TypeName* GetTemplatedName() const override;
 
    //  Overridden to return the data's type.
    //
@@ -463,10 +464,6 @@ public:
    //  Overridden to record that the data cannot be const.
    //
    bool SetNonConst() override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to reveal that this is a data item.
    //
@@ -688,8 +685,7 @@ public:
 
    //  Overridden to support static member data in a template.
    //
-   const TemplateParms* GetTemplateParms() const
-      override { return parms_.get(); }
+   TemplateParms* GetTemplateParms() const override { return parms_.get(); }
 
    //  Overridden to return the item's name.
    //
@@ -701,8 +697,8 @@ public:
 
    //  Overridden to return the item's qualified name.
    //
-   std::string QualifiedName(bool scopes, bool templates) const
-      override { return name_->QualifiedName(scopes, templates); }
+   std::string QualifiedName(bool scopes, bool templates) const override
+      { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to record usage of the item.
    //
@@ -715,10 +711,6 @@ public:
    //  Overridden to support static member data in a template.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to update the data's location.
    //
@@ -839,10 +831,6 @@ public:
    //  Overridden to rename member data.
    //
    void Rename(const std::string& name) override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to return the item's name.
    //
@@ -980,10 +968,6 @@ public:
    //
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to return the item's name.
    //
@@ -1249,10 +1233,6 @@ public:
    //
    bool IsTemplateInstance() const { return tmplt_ != nullptr; }
 
-   //  Returns true if the function is a compiled function template.
-   //
-   bool ContainsTemplateParameter() const;
-
    //  Instantiates a function template instance based on TYPE.  If it has
    //  already been instantiated, it is found and returned.
    //
@@ -1320,10 +1300,6 @@ public:
    //  a subclass of THAT function's "this" argument.
    //
    bool SignatureMatches(const Function* that, bool base) const;
-
-   //  Returns an argument based on the function's return type.
-   //
-   StackArg ResultType() const;
 
    //  Registers a read on the function's "this" argument.
    //
@@ -1438,8 +1414,8 @@ public:
 
    //  Overridden to return the function itself.
    //
-   Function* GetFunction() const
-      override { return const_cast< Function* >(this); }
+   Function* GetFunction() const override
+      { return const_cast< Function* >(this); }
 
    //  Overridden to return the definition if it is distinct from the
    //  declaration, and vice versa.
@@ -1462,10 +1438,10 @@ public:
    //
    CxxScope* GetTemplate() const override;
 
-   //  Overridden to return the template arguments for a function
+   //  Overridden to return the name and template arguments for a function
    //  template instance.
    //
-   TypeName* GetTemplateArgs() const override { return tspec_.get(); }
+   TypeName* GetTemplatedName() const override { return tspec_.get(); }
 
    //  Overridden to return this function if it is a template instance.
    //
@@ -1473,8 +1449,7 @@ public:
 
    //  Overridden to support function templates.
    //
-   const TemplateParms* GetTemplateParms() const
-      override { return parms_.get(); }
+   TemplateParms* GetTemplateParms() const override { return parms_.get(); }
 
    //  Overridden to return the function's return type.
    //
@@ -1521,8 +1496,8 @@ public:
 
    //  Overridden to return the function's qualified name.
    //
-   std::string QualifiedName(bool scopes, bool templates) const
-      override { return name_->QualifiedName(scopes, templates); }
+   std::string QualifiedName(bool scopes, bool templates) const override
+      { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to record usage of the function.
    //
@@ -1532,13 +1507,17 @@ public:
    //
    void Rename(const std::string& name) override;
 
+   //  Overridden to return an argument based on the function's return type.
+   //
+   StackArg ResultType() const override;
+
    //  Overridden to support function templates.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
 
-   //  Overridden to shrink containers.
+   //  Overridden to return the function's name and arguments.
    //
-   void Shrink() override;
+   std::string Trace() const override;
 
    //  Overridden to reveal that this is a function.
    //
@@ -1988,7 +1967,6 @@ private:
    //  The following are forwarded to the function.
    //
    void Check() const override;
-   bool ContainsTemplateParameter() const override;
    void EnteringScope(const CxxScope* scope) override;
    bool IsConst() const override { return func_->IsConst(); }
    bool IsVolatile() const override { return func_->IsVolatile(); }
@@ -1997,7 +1975,6 @@ private:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Rename(const std::string& name) override;
-   void Shrink() override;
    std::string Trace() const override;
    std::string TypeString(bool arg) const override;
    void UpdatePos(EditorAction action,
@@ -2012,7 +1989,8 @@ private:
    void DisplayArrays(std::ostream& stream) const override;
    void DisplayTags(std::ostream& stream) const override;
    TypeTags GetAllTags() const override;
-   TypeName* GetTemplateArgs() const override;
+   const TemplateArgPtrVector* Args() const override;
+   TypeName* GetTemplatedName() const override;
    TypeSpec* GetTypeSpec() const override;
    bool HasArrayDefn() const override;
    TagCount Ptrs(bool arrays) const override;

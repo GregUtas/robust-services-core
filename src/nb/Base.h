@@ -60,9 +60,9 @@ public:
    //
    virtual ~Base() = default;
 
-   //  Displays the object in STREAM.  The default implementation displays
-   //  the object's class name and its "this" pointer, using the typical
-   //  form for each member:
+   //  Displays the object in STREAM.  The default version displays the
+   //  object's class name and its "this" pointer, using the typical form
+   //  for each member:
    //    stream << prefix << "member : " << member_ << CRLF;
    //
    //  When a member is a class itself, it is usually displayed by

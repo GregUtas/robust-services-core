@@ -23,10 +23,10 @@
 #define NWDAEMONS_H_INCLUDED
 
 #include "Daemon.h"
-#include "Duration.h"
+#include <cstdint>
 #include "NwTypes.h"
+#include "SteadyTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 
 namespace NetworkBase
 {
@@ -87,11 +87,11 @@ private:
 
    //  The time when the last thread was created.
    //
-   NodeBase::TimePoint lastCreation_;
+   NodeBase::SteadyTime::Point lastCreation_;
 
    //  The backoff time for recreating the thread if it exits quickly.
    //
-   NodeBase::secs_t backoffSecs_;
+   uint32_t backoffSecs_;
 
    //  The work item queued to recreate the thread after a backoff time.
    //

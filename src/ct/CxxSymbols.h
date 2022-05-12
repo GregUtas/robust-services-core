@@ -180,10 +180,6 @@ public:
    //
    void DisplayXref(std::ostream& stream, const std::string& opts) const;
 
-   //  Shrinks containers.
-   //
-   void Shrink() const;
-
    //  Overridden for restarts.
    //
    void Shutdown(NodeBase::RestartLevel level) override;

@@ -21,11 +21,14 @@
 //
 #include "TraceBuffer.h"
 #include "TraceRecord.h"
+#include <chrono>
 #include <cmath>
 #include <cstring>
 #include <new>
+#include <ratio>
 #include <sstream>
 #include "Debug.h"
+#include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "FunctionName.h"
@@ -750,8 +753,11 @@ TraceRc TraceBuffer::StartTracing(const string& opts)
       SetTool(ToolBuffer, true);
       Insert(new BufferTrace);
    }
+   else
+   {
+      startTime_ = SystemTime::Now();
+   }
 
-   if(Empty()) startTime_ = SysTime();
    Debug::FcFlags_.set(Debug::TracingActive);
    return TraceOk;
 }
@@ -774,7 +780,7 @@ string TraceBuffer::strTimePlace() const
 {
    std::ostringstream stream;
 
-   stream << ": " << startTime_.to_str(SysTime::Alpha);
+   stream << ": " << to_string(startTime_, FullAlpha);
    stream << " on " << Element::Name();
    return stream.str();
 }

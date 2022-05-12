@@ -26,7 +26,7 @@
 #include "InputHandler.h"
 #include "Thread.h"
 #include "UdpIpService.h"
-#include "Duration.h"
+#include <cstdint>
 #include "NbTypes.h"
 #include "NwTypes.h"
 
@@ -86,9 +86,9 @@ private:
 class LocalAddrRetest : public Deferred
 {
 public:
-   //  Recreates SendLocalThread after TIMEOUT.
+   //  Recreates SendLocalThread after TIMEOUT seconds.
    //
-   explicit LocalAddrRetest(secs_t timeout);
+   explicit LocalAddrRetest(uint32_t timeout);
 
    //  Not subclassed.
    //

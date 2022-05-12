@@ -22,6 +22,7 @@
 #include "RootThread.h"
 #include <cstdint>
 #include <cstdlib>
+#include <ratio>
 #include <sstream>
 #include <string>
 #include "Debug.h"
@@ -156,7 +157,7 @@ void RootThread::Enter()
             if(log != nullptr)
             {
                *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
-               *log << " timeout=" << timeout.to_str(mSECS);
+               *log << " timeout=" << to_string(timeout);
                Log::Submit(log);
             }
 
@@ -169,7 +170,7 @@ void RootThread::Enter()
                if(initThr != nullptr)
                {
                   initThr->Raise(SIGCLOSE);
-                  Pause(Duration(100, mSECS));
+                  Pause(msecs_t(100));
                }
             }
             else
@@ -242,7 +243,7 @@ void RootThread::Enter()
          if(log != nullptr)
          {
             *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
-            *log << " timeout=" << timeout.to_str(mSECS);
+            *log << " timeout=" << to_string(timeout);
             Log::Submit(log);
          }
 

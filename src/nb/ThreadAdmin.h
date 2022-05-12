@@ -24,12 +24,12 @@
 
 #include "Protected.h"
 #include <iosfwd>
+#include "Duration.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
 
 namespace NodeBase
 {
-   class Duration;
    class ThreadsStats;
 }
 
@@ -54,12 +54,12 @@ public:
 
    //  Returns the time allowed for the system to initialize.
    //
-   static Duration InitTimeout();
+   static msecs_t InitTimeout();
 
    //  Returns how long InitThread should sleep before interrupting
    //  RootThread to indicate that scheduling is still occurring.
    //
-   static Duration SchedTimeout();
+   static msecs_t SchedTimeout();
 
    //  Returns true if RootThread should cause a restart if InitThread
    //  fails to indicate that scheduling is still occurring.
@@ -68,7 +68,7 @@ public:
 
    //  Returns how long a thread can run unpreemptably before yielding.
    //
-   static Duration RtcTimeout();
+   static msecs_t RtcTimeout();
 
    //  Returns true if InitThread should trap the running thread if
    //  it runs unpreemptably too long.

@@ -25,13 +25,13 @@
 #include "ServiceSM.h"
 #include "State.h"
 #include <cstddef>
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
 #include "BcCause.h"
 #include "Context.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "GlobalAddress.h"
 #include "IpPortRegistry.h"
 #include "LocalAddress.h"
@@ -413,10 +413,10 @@ public:
       Transient  // was sent a Facility Nack (third NPSM)
    };
 
-   static const secs_t ToneTimeout = 6;        // (was 1; changed for tests)
-   static const secs_t RenotifyTimeout = 6;    // (was 10; changed for tests)
-   static const secs_t ReconnectTimeout = 10;
-   static const secs_t ReanswerTimeout = 30;
+   static const uint32_t ToneTimeout = 6;        // (was 1; changed for tests)
+   static const uint32_t RenotifyTimeout = 6;    // (was 10; changed for tests)
+   static const uint32_t ReconnectTimeout = 10;
+   static const uint32_t ReanswerTimeout = 30;
 
    static const TimerId ToneTimeoutId = 1;
    static const TimerId RenotifyTimeoutId = 2;
@@ -468,7 +468,7 @@ private:
    PotsMuxSsm* Mux() const { return static_cast< PotsMuxSsm* >(Parent()); }
    PotsCallPsm* UPsm() const { return Mux()->UPsm(); }
    PotsMuxPsm* NPsm(PotsMuxSsm::CallId cid) const { return Mux()->NPsm(cid); }
-   void StartTimer(TimerId tid, secs_t duration);
+   void StartTimer(TimerId tid, uint32_t secs);
    void StopTimer(TimerId tid);
    PotsMuxPsm* CreateNPsm() const;
    PotsMuxPsm* OtherNPsm(const ProtocolSM* npsm) const;
@@ -1763,7 +1763,7 @@ EventHandler::Rc PotsCwmSsm::StartCwtTone()
 
 fn_name PotsCwmSsm_StartTimer = "PotsCwmSsm.StartTimer";
 
-void PotsCwmSsm::StartTimer(TimerId tid, secs_t duration)
+void PotsCwmSsm::StartTimer(TimerId tid, uint32_t secs)
 {
    Debug::ft(PotsCwmSsm_StartTimer);
 
@@ -1777,7 +1777,7 @@ void PotsCwmSsm::StartTimer(TimerId tid, secs_t duration)
       tid_ = NIL_ID;
    }
 
-   if(upsm->StartTimer(duration, *this, tid)) tid_ = tid;
+   if(upsm->StartTimer(secs, *this, tid)) tid_ = tid;
 }
 
 //------------------------------------------------------------------------------

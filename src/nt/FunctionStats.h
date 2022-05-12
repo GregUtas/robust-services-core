@@ -65,12 +65,12 @@ public:
 
    //  Returns the total net time spent in the function.
    //
-   Duration Time() const { return time_; }
+   usecs_t Time() const { return time_; }
 
    //  Increments the number of times the function was invoked and
    //  adds NET to the total net time spent in it.
    //
-   void IncrCalls(const Duration& net);
+   void IncrCalls(const usecs_t& net);
 
    //  Returns -1, 0, or 1 if THAT is less than, equal to, or greater
    //  than "this" when sorted by namespace and function name.
@@ -100,7 +100,7 @@ private:
 
    //  The total net time spent in the function.
    //
-   Duration time_;
+   usecs_t time_;
 };
 }
 #endif

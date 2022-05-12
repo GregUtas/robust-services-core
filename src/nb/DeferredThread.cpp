@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "DeferredThread.h"
+#include <ratio>
 #include "Debug.h"
 #include "DeferredRegistry.h"
 #include "Duration.h"
@@ -71,7 +72,7 @@ void DeferredThread::Enter()
    //  occurred.
    //
    auto reg = Singleton< DeferredRegistry >::Instance();
-   Duration sleep(ONE_SEC);
+   msecs_t sleep(msecs_t(1000));
 
    while(true)
    {
@@ -81,7 +82,7 @@ void DeferredThread::Enter()
       //  Sleep for one second, minus the amount of time that we just ran.
       //
       auto runTime = CurrTimeRunning();
-      sleep = (runTime > ONE_SEC ? TIMEOUT_IMMED : ONE_SEC - runTime);
+      sleep = (runTime > secs_t(1) ? TIMEOUT_IMMED : msecs_t(1000) - runTime);
    }
 }
 

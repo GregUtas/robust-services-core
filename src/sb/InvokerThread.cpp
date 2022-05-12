@@ -20,8 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "InvokerThread.h"
+#include <chrono>
 #include <cstdint>
 #include <ostream>
+#include <ratio>
 #include <string>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -145,11 +147,10 @@ void InvokerThread::Display(ostream& stream,
 {
    Thread::Display(stream, prefix, options);
 
-   stream << prefix << "iid    : " << iid_.to_str() << CRLF;
-   stream << prefix << "ctx    : " << ctx_.get() << CRLF;
-   stream << prefix << "msg    : " << msg_ << CRLF;
-   stream << prefix << "trans  : " << trans_ << CRLF;
-   stream << prefix << "ticks0 : " << time0_.Ticks() << CRLF;
+   stream << prefix << "iid   : " << iid_.to_str() << CRLF;
+   stream << prefix << "ctx   : " << ctx_.get() << CRLF;
+   stream << prefix << "msg   : " << msg_ << CRLF;
+   stream << prefix << "trans : " << trans_ << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -239,7 +240,7 @@ void InvokerThread::SetContext(Context* ctx)
    ctx_.release();
    ctx_.reset(ctx);
    ++trans_;
-   time0_ = TimePoint::Now();
+   time0_ = SteadyTime::Now();
 }
 
 //------------------------------------------------------------------------------

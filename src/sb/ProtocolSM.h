@@ -25,7 +25,6 @@
 #include "ProtocolLayer.h"
 #include <cstddef>
 #include <cstdint>
-#include "Duration.h"
 #include "Message.h"
 #include "Q1Way.h"
 #include "SbTypes.h"
@@ -101,7 +100,7 @@ public:
       Timeout            // expected message not received
    };
 
-   //  Starts a timer that expires after DURATION +/- 0.5 secs.  If the timer
+   //  Starts a timer that expires after SECS +/- 0.5 seconds.  If the timer
    //  expires, the PSM receives a message with a signal of Signal::Timeout,
    //  followed by a parameter that contains OWNER and TID, which are echoed
    //  so that the application that started the timer can identify it (using
@@ -110,8 +109,7 @@ public:
    //  it expires and must be explicitly stopped.  Returns true if the timer
    //  was successfully started.
    //
-   bool StartTimer(NodeBase::secs_t duration,
-      Base& owner, TimerId tid, bool repeat = false);
+   bool StartTimer(int secs, Base& owner, TimerId tid, bool repeat = false);
 
    //  Stops the timer identified by OWNER and TID.
    //

@@ -26,7 +26,7 @@
 #include <cstddef>
 #include "Duration.h"
 #include "NbTypes.h"
-#include "TimePoint.h"
+#include "SteadyTime.h"
 
 //------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ private:
    //  Calculates how long the thread will sleep when it is initially
    //  entered, and also initializes countdown_;
    //
-   Duration CalcFirstDelay();
+   msecs_t CalcFirstDelay();
 
    //  Overridden to return a name for the thread.
    //
@@ -80,7 +80,7 @@ private:
 
    //  The next time at which the thread wants to run.
    //
-   TimePoint wakeupTime_;
+   SteadyTime::Point wakeupTime_;
 
    //  A counter that causes a report to be generated when it reaches zero.
    //

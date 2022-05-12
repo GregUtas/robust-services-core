@@ -52,17 +52,14 @@ LibraryItem::~LibraryItem()
 
 //------------------------------------------------------------------------------
 
-fn_name LibraryItem_Name = "LibraryItem.Name";
-
 const std::string& LibraryItem::Name() const
 {
-   Debug::ft(LibraryItem_Name);
+   Debug::ft("LibraryItem.Name");
 
-   static string null_string(EMPTY_STR);
+   static string nameless(EMPTY_STR);
 
-   if(null_string.empty()) null_string.clear();
-   Debug::SwLog(LibraryItem_Name, strOver(this), 0);
-   return null_string;
+   if(!nameless.empty()) nameless.clear();
+   return nameless;
 }
 
 //------------------------------------------------------------------------------

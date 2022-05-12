@@ -21,8 +21,10 @@
 //
 #include "Context.h"
 #include "SoftwareException.h"
+#include <chrono>
 #include <cstdint>
 #include <iosfwd>
+#include <ratio>
 #include <sstream>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -155,7 +157,6 @@ fn_name Context_ctor = "Context.ctor";
 
 Context::Context(Faction faction) :
    whichq_(nullptr),
-   enqTime_(0),
    pool_(nullptr),
    thread_(nullptr),
    faction_(faction),
@@ -223,7 +224,7 @@ void Context::CaptureTask(const Message& msg, const InvokerThread* inv)
    if(TraceOn())
    {
       auto buff = Singleton< TraceBuffer >::Instance();
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
 
       if(buff->ToolIsOn(TransTracer))
       {
@@ -304,7 +305,6 @@ void Context::Display(ostream& stream,
    priMsgq_.Display(stream, prefix + spaces(2), options);
    stream << prefix << "stdMsgq : " << CRLF;
    stdMsgq_.Display(stream, prefix + spaces(2), options);
-   stream << prefix << "enqTime : " << enqTime_.Ticks() << CRLF;
    stream << prefix << "pool    : " << pool_ << CRLF;
    stream << prefix << "thread  : " << thread_ << CRLF;
    stream << prefix << "faction : " << int(faction_) << CRLF;
@@ -422,7 +422,7 @@ void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
       whichq_ = &whichq;
       state_ = Ready;
       prio_ = prio;
-      enqTime_ = TimePoint::Now();
+      enqTime_ = SteadyTime::Now();
       pool_->Enqueued(prio_);
       return;
 
@@ -691,7 +691,7 @@ void Context::ProcessWork(InvokerThread* inv)
    thread_ = inv;
    if(thread_ == nullptr) return;
 
-   auto delay = TimePoint::Now() - enqTime_;
+   nsecs_t delay = SteadyTime::Now() - enqTime_;
 
    pool_->RecordDelay(prio_, delay);
 

@@ -21,14 +21,15 @@
 //
 #include "Alarm.h"
 #include "Permanent.h"
-#include <cstdint>
+#include <chrono>
+#include <ratio>
 #include <sstream>
 #include "AlarmRegistry.h"
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Log.h"
 #include "Singleton.h"
-#include "TimePoint.h"
+#include "SteadyTime.h"
 
 using std::ostream;
 using std::string;
@@ -45,7 +46,7 @@ struct AlarmDynamic : public Permanent
    //  Initializes members.
    //
    AlarmDynamic() : status_(NoAlarm),
-      nextStatus_(NoAlarm), currStatusTime_(0) { }
+      nextStatus_(NoAlarm), currStatusTime_(SteadyTime::GetInvalid()) { }
 
    //  The alarm's current status.
    //
@@ -59,7 +60,7 @@ struct AlarmDynamic : public Permanent
 
    //  The most recent time at which the alarm was at its current level.
    //
-   TimePoint currStatusTime_;
+   SteadyTime::Point currStatusTime_;
 };
 
 //==============================================================================
@@ -76,10 +77,10 @@ constexpr size_t MaxExplSize = 48;
 
 fn_name Alarm_ctor = "Alarm.ctor";
 
-Alarm::Alarm(c_string name, c_string expl, secs_t delay) :
+Alarm::Alarm(c_string name, c_string expl, uint32_t delay) :
    name_(name),
    expl_(expl),
-   delay_(Duration(delay, SECS))
+   delay_(secs_t(delay))
 {
    Debug::ft(Alarm_ctor);
 
@@ -124,7 +125,7 @@ ostringstreamPtr Alarm::Create(c_string groupName, LogId id, AlarmStatus status)
 {
    Debug::ft("Alarm.Create");
 
-   auto now = TimePoint::Now();
+   auto now = SteadyTime::Now();
    ostringstreamPtr log(nullptr);
 
    if(status > dyn_->status_)
@@ -182,7 +183,7 @@ void Alarm::SetStatus(AlarmStatus status)
 
    dyn_->status_ = status;
    dyn_->nextStatus_ = NoAlarm;
-   dyn_->currStatusTime_ = TimePoint::Now();
+   dyn_->currStatusTime_ = SteadyTime::Now();
 }
 
 //------------------------------------------------------------------------------

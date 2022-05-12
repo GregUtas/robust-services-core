@@ -108,7 +108,7 @@ void Debug::Progress(const string& s)
    Debug::ft("Debug.Progress");
 
    CoutThread::Spool(s.c_str());
-   ThisThread::Pause(Duration(10, mSECS));
+   ThisThread::Pause(msecs_t(10));
 }
 
 //------------------------------------------------------------------------------

@@ -33,6 +33,7 @@
 #include "CodeTypes.h"
 #include "CodeWarning.h"
 #include "Cxx.h"
+#include "CxxExecute.h"
 #include "CxxFwd.h"
 #include "CxxNamed.h"
 #include "Debug.h"
@@ -582,7 +583,7 @@ LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
       auto file = static_cast< CodeFile* >(*f);
-      auto code = file->GetCode();
+      auto& code = file->GetCode();
       if(code.find(s) != string::npos) msSet.insert(*f);
    }
 
@@ -667,7 +668,8 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    //  declarations in #included files affect visibility, so an #included
    //  file must already have been parsed.
    //
-   ParserPtr parser(new Parser(opts));
+   Context::SetOptions(opts);
+   ParserPtr parser(new Parser());
    size_t total = 0;
    size_t failed = 0;
 
@@ -763,7 +765,7 @@ word CodeFileSet::Scan
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
       auto file = static_cast< CodeFile* >(*f);
-      auto code = file->GetCode();
+      auto& code = file->GetCode();
 
       auto pos = code.find(pattern);
       auto shown = false;
@@ -858,6 +860,24 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
    if(!heading) stream << CRLF;
    stream << "Files shown: " << shown << CRLF;
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+std::vector< CodeFile* > CodeFileSet::SortInAlphaOrder() const
+{
+   Debug::ft("CodeFileSet.SortInAlphaOrder");
+
+   auto& fileSet = Items();
+   std::vector< CodeFile* > files;
+
+   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   {
+      files.push_back(static_cast<CodeFile*>(*f));
+   }
+
+   std::sort(files.begin(), files.end(), IsSortedByName);
+   return files;
 }
 
 //------------------------------------------------------------------------------

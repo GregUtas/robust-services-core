@@ -41,8 +41,6 @@ namespace CodeTools
 Break::Break(size_t pos) : CxxStatement(pos)
 {
    Debug::ft("Break.ctor");
-
-   CxxStats::Incr(CxxStats::BREAK);
 }
 
 //------------------------------------------------------------------------------
@@ -58,8 +56,6 @@ Case::Case(ExprPtr& expression, size_t pos) : CxxStatement(pos),
    expr_(expression.release())
 {
    Debug::ft("Case.ctor");
-
-   CxxStats::Incr(CxxStats::CASE);
 }
 
 //------------------------------------------------------------------------------
@@ -121,14 +117,6 @@ CxxToken* Case::PosToItem(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Case::Shrink()
-{
-   CxxStatement::Shrink();
-   expr_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Case::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -148,8 +136,6 @@ void Case::UpdateXref(bool insert)
 Catch::Catch(size_t pos) : CxxStatement(pos)
 {
    Debug::ft("Catch.ctor");
-
-   CxxStats::Incr(CxxStats::CATCH);
 }
 
 //------------------------------------------------------------------------------
@@ -255,15 +241,6 @@ CxxToken* Catch::PosToItem(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Catch::Shrink()
-{
-   CxxStatement::Shrink();
-   if(arg_ != nullptr) arg_->Shrink();
-   handler_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Catch::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -347,14 +324,6 @@ bool Condition::Show(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
-void Condition::Shrink()
-{
-   CxxStatement::Shrink();
-   if(condition_ != nullptr) condition_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Condition::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -374,8 +343,6 @@ void Condition::UpdateXref(bool insert)
 Continue::Continue(size_t pos) : CxxStatement(pos)
 {
    Debug::ft("Continue.ctor");
-
-   CxxStats::Incr(CxxStats::CONTINUE);
 }
 
 //------------------------------------------------------------------------------
@@ -475,8 +442,6 @@ bool CxxStatement::GetSpan(size_t& begin, size_t& left, size_t& end) const
 Do::Do(size_t pos) : Condition(pos)
 {
    Debug::ft("Do.ctor");
-
-   CxxStats::Incr(CxxStats::DO);
 }
 
 //------------------------------------------------------------------------------
@@ -593,14 +558,6 @@ void Do::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void Do::Shrink()
-{
-   Condition::Shrink();
-   loop_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Do::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -622,8 +579,6 @@ Expr::Expr(ExprPtr& expression, size_t pos) : CxxStatement(pos),
    expr_(expression.release())
 {
    Debug::ft("Expr.ctor");
-
-   CxxStats::Incr(CxxStats::EXPR);
 }
 
 //------------------------------------------------------------------------------
@@ -671,14 +626,6 @@ void Expr::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void Expr::Shrink()
-{
-   CxxStatement::Shrink();
-   expr_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Expr::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -698,8 +645,6 @@ void Expr::UpdateXref(bool insert)
 For::For(size_t pos) : Condition(pos)
 {
    Debug::ft("For.ctor");
-
-   CxxStats::Incr(CxxStats::FOR);
 }
 
 //------------------------------------------------------------------------------
@@ -886,16 +831,6 @@ void For::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void For::Shrink()
-{
-   Condition::Shrink();
-   if(initial_ != nullptr) initial_->Shrink();
-   if(subsequent_ != nullptr) subsequent_->Shrink();
-   loop_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void For::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -923,7 +858,6 @@ Goto::Goto(string& label, size_t pos) : CxxStatement(pos)
    Debug::ft("Goto.ctor");
 
    std::swap(label_, label);
-   CxxStats::Incr(CxxStats::GOTO);
 }
 
 //------------------------------------------------------------------------------
@@ -945,22 +879,12 @@ void Goto::Print(std::ostream& stream, const NodeBase::Flags& options) const
    stream << GOTO_STR << SPACE << label_ << ';';
 }
 
-//------------------------------------------------------------------------------
-
-void Goto::Shrink()
-{
-   CxxStatement::Shrink();
-   label_.shrink_to_fit();
-}
-
 //==============================================================================
 
 If::If(size_t pos) : Condition(pos),
    elseif_(false)
 {
    Debug::ft("If.ctor");
-
-   CxxStats::Incr(CxxStats::IF);
 }
 
 //------------------------------------------------------------------------------
@@ -1100,15 +1024,6 @@ void If::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void If::Shrink()
-{
-   Condition::Shrink();
-   then_->Shrink();
-   if(else_ != nullptr) else_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void If::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -1133,7 +1048,6 @@ Label::Label(string& name, size_t pos) : CxxStatement(pos)
    Debug::ft("Label.ctor");
 
    std::swap(name_, name);
-   CxxStats::Incr(CxxStats::LABEL);
 }
 
 //------------------------------------------------------------------------------
@@ -1176,21 +1090,11 @@ bool Label::GetSpan(size_t& begin, size_t& left, size_t& end) const
    return GetColonSpan(begin, end);
 }
 
-//------------------------------------------------------------------------------
-
-void Label::Shrink()
-{
-   CxxStatement::Shrink();
-   name_.shrink_to_fit();
-}
-
 //==============================================================================
 
 NoOp::NoOp(size_t pos) : CxxStatement(pos)
 {
    Debug::ft("NoOp.ctor");
-
-   CxxStats::Incr(CxxStats::NOOP);
 }
 
 //------------------------------------------------------------------------------
@@ -1213,8 +1117,6 @@ void NoOp::Print(ostream& stream, const Flags& options) const
 Return::Return(size_t pos) : CxxStatement(pos)
 {
    Debug::ft("Return.ctor");
-
-   CxxStats::Incr(CxxStats::RETURN);
 }
 
 //------------------------------------------------------------------------------
@@ -1288,14 +1190,6 @@ void Return::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void Return::Shrink()
-{
-   CxxStatement::Shrink();
-   if(expr_ != nullptr) expr_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Return::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -1315,8 +1209,6 @@ void Return::UpdateXref(bool insert)
 Switch::Switch(size_t pos) : CxxStatement(pos)
 {
    Debug::ft("Switch.ctor[>ct]");
-
-   CxxStats::Incr(CxxStats::SWITCH);
 }
 
 //------------------------------------------------------------------------------
@@ -1407,15 +1299,6 @@ CxxToken* Switch::PosToItem(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Switch::Shrink()
-{
-   CxxStatement::Shrink();
-   expr_->Shrink();
-   cases_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Switch::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -1437,8 +1320,6 @@ void Switch::UpdateXref(bool insert)
 Try::Try(size_t pos) : CxxStatement(pos)
 {
    Debug::ft("Try.ctor");
-
-   CxxStats::Incr(CxxStats::TRY);
 }
 
 //------------------------------------------------------------------------------
@@ -1574,19 +1455,6 @@ CxxToken* Try::PosToItem(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Try::Shrink()
-{
-   CxxStatement::Shrink();
-   try_->Shrink();
-
-   for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
-   {
-      (*c)->Shrink();
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void Try::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -1616,8 +1484,6 @@ void Try::UpdateXref(bool insert)
 While::While(size_t pos) : Condition(pos)
 {
    Debug::ft("While.ctor");
-
-   CxxStats::Incr(CxxStats::WHILE);
 }
 
 //------------------------------------------------------------------------------
@@ -1712,14 +1578,6 @@ void While::Print(ostream& stream, const Flags& options) const
    Condition::Print(stream, options);
    stream << ')';
    loop_->Print(stream, options);
-}
-
-//------------------------------------------------------------------------------
-
-void While::Shrink()
-{
-   Condition::Shrink();
-   loop_->Shrink();
 }
 
 //------------------------------------------------------------------------------

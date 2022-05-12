@@ -19,11 +19,11 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "Duration.h"
 #include "Thread.h"
 #include "Dynamic.h"
 #include "FunctionTrace.h"
 #include <cctype>
+#include <chrono>
 #include <csignal>
 #include <cstddef>
 #include <cstdlib>
@@ -31,6 +31,7 @@
 #include <iomanip>
 #include <ios>
 #include <map>
+#include <ratio>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -63,12 +64,12 @@
 #include "Singleton.h"
 #include "Statistics.h"
 #include "StatisticsRegistry.h"
+#include "SteadyTime.h"
 #include "SysMutex.h"
+#include "SystemTime.h"
 #include "SysThreadStack.h"
-#include "SysTickTimer.h"
 #include "ThreadAdmin.h"
 #include "ThreadRegistry.h"
-#include "TimePoint.h"
 #include "Tool.h"
 #include "TraceBuffer.h"
 
@@ -123,15 +124,6 @@ static void EraseFtLock() NO_FT
    auto& locks = AccessFtLocks();
    locks.erase(SysThread::RunningThreadId());
 }
-
-//------------------------------------------------------------------------------
-//
-//  SysTickTimer provides the time at which a function was invoked, so it is
-//  created after FtLocks_.  FtLocks_ must be created first because functions
-//  invoked to create SysTickTimer invoke Debug::ft, which requires FtLocks_
-//  to have been constructed.
-//
-static const SysTickTimer* TickTimer = SysTickTimer::Instance();
 
 //------------------------------------------------------------------------------
 //
@@ -227,7 +219,7 @@ bool ThreadTrace::Display(ostream& stream, const string& opts)
       if(info_ == -1)
          stream << " (forever)";
       else
-         stream << " (msecs=" << Duration(info_, TICKS).To(mSECS) << ')';
+         stream << " (msecs=" << info_ << ')';
       break;
    case PauseExit:
       stream << " (";
@@ -302,10 +294,8 @@ ThreadStats::ThreadStats()
    interrupts_.reset(new Counter("interrupts"));
    maxMsgs_.reset(new HighWatermark("longest length of message queue"));
    maxStack_.reset(new HighWatermark("highest stack usage (words)"));
-   maxTime_.reset
-      (new HighWatermark("longest time scheduled in (usecs)", TICKS_PER_uSEC));
-   totTime_.reset
-      (new Accumulator("total execution time (msecs)", TICKS_PER_mSEC));
+   maxTime_.reset(new HighWatermark("longest time scheduled in (usecs)", 1000));
+   totTime_.reset(new Accumulator("total execution time (msecs)", NS_TO_MS));
 }
 
 //------------------------------------------------------------------------------
@@ -325,13 +315,17 @@ struct ContextSwitch
    //
    ContextSwitch();
 
+   //  The time when the thread started to run.
+   //
+   SystemTime::Point start;
+
    //  When the thread started to run.
    //
-   TimePoint in;
+   SteadyTime::Point in;
 
    //  When the context switch occurred.
    //
-   TimePoint out;
+   SteadyTime::Point out;
 
    //  The native identifier for the thread being scheduled out.
    //
@@ -349,8 +343,6 @@ struct ContextSwitch
 //------------------------------------------------------------------------------
 
 ContextSwitch::ContextSwitch() :
-   in(0),
-   out(0),
    nid(0),
    tid(0),
    locked(false)
@@ -462,7 +454,7 @@ ContextSwitches::~ContextSwitches()
 
 ContextSwitch* ContextSwitches::AddSwitch()
 {
-   static Duration timeout(10, mSECS);
+   static msecs_t timeout(10);
 
    if(!log_) return nullptr;
 
@@ -493,8 +485,10 @@ struct SchedSnapshot
 {
    //  SIZE is the number of threads seen while recording context switches.
    //
-   explicit SchedSnapshot(size_t size) :
+   explicit SchedSnapshot(SystemTime::Point& when, size_t size) :
+      time(when),
       activity(nullptr),
+      duration(0),
       nid(0)
    {
       activity.reset(new char[size]);
@@ -506,9 +500,13 @@ struct SchedSnapshot
    //
    std::unique_ptr< char[] > activity;
 
+   //  The system time associated with this entry.
+   //
+   SystemTime::Point time;
+
    //  If a thread was scheduled out at this time point, how long it had run.
    //
-   Duration duration;
+   nsecs_t duration;
 
    //  Set if an unknown thread was associated with this entry.
    //
@@ -521,12 +519,12 @@ typedef std::unique_ptr< SchedSnapshot > SchedSnapshotPtr;
 
 //  Associates a time point with what each thread was doing at that time.
 //
-typedef std::pair< TimePoint, SchedSnapshotPtr> SchedEntry;
+typedef std::pair< SteadyTime::Point, SchedSnapshotPtr> SchedEntry;
 
 //  Maps each time point associated with a context switch to what each thread
 //  was doing at that time.
 //
-typedef std::map< TimePoint, SchedSnapshotPtr> SchedEntries;
+typedef std::map< SteadyTime::Point, SchedSnapshotPtr> SchedEntries;
 
 //  The header for displaying context switches.  ThreadIds starting at 1 are
 //  output dynamically following the 0.  Each thread's activity is then shown
@@ -612,16 +610,16 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
 
       if(curr == timeline.cend())
       {
-         timeline.insert
-            (SchedEntry(entry->in, SchedSnapshotPtr(new SchedSnapshot(cols))));
+         timeline.insert(SchedEntry(entry->in,
+            SchedSnapshotPtr(new SchedSnapshot(entry->start, cols))));
       }
 
       curr = timeline.find(entry->out);
 
       if(curr == timeline.cend())
       {
-         timeline.insert
-            (SchedEntry(entry->out, SchedSnapshotPtr(new SchedSnapshot(cols))));
+         timeline.insert(SchedEntry(entry->out,
+            SchedSnapshotPtr(new SchedSnapshot(entry->start, cols))));
       }
       else
       {
@@ -704,10 +702,10 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
 
    for(auto entry = timeline.cbegin(); entry != timeline.cend(); ++entry)
    {
-      stream << entry->first.to_str(MinsField);
+      stream << to_string(entry->second->time, MinSecMsecs);
 
       if(entry->second->duration > ZERO_SECS)
-         stream << setw(11) << entry->second->duration.To(uSECS);
+         stream << setw(11) << entry->second->duration.count() / NS_TO_US;
       else if(entry->second->nid != 0)
          stream << strHex(entry->second->nid, 11, true);
       else
@@ -911,29 +909,29 @@ public:
    //  thread statistics.  This provides a view of how thread behavior
    //  has recently changed.
    //
-   Duration prevTime_;
+   SteadyTime::Point::duration prevTime_;
 
    //  How long the thread has run during the current short interval for
    //  thread statistics.
    //
-   Duration currTime_;
+   SteadyTime::Point::duration currTime_;
 
    //  The time at which the thread became ready to run.
    //
-   TimePoint readyTime_;
+   SteadyTime::Point readyTime_;
 
    //  The last time at which the thread started to run unpreemptably.
    //  If the thread is preemptable, the last time it exited a blocking
    //  operation, although it may have been scheduled out and back in
    //  several times since then.
    //
-   TimePoint currStart_;
+   SteadyTime::Point currStart_;
 
    //  The time at which the thread will be trapped if it has not yielded.
    //  Reset to 0 when the thread yields, and set when it resumes running
    //  unpreemptably.
    //
-   TimePoint currEnd_;
+   SteadyTime::Point currEnd_;
 };
 
 //------------------------------------------------------------------------------
@@ -962,7 +960,9 @@ ThreadPriv::ThreadPriv() :
    signal_(SIGNIL),
    stackBase_(nullptr),
    acquiring_(nullptr),
-   vector_(0)
+   vector_(0),
+   prevTime_(0),
+   currTime_(0)
 {
    Debug::ft("ThreadPriv.ctor");
 
@@ -1017,11 +1017,6 @@ void ThreadPriv::Display(ostream& stream,
    trapLbc_.Display(stream, prefix + spaces(2), options);
    stream << prefix << "vector     : "
       << std::hex << vector_ << std::dec << CRLF;
-   stream << prefix << "prevTime   : " << prevTime_.Ticks() << CRLF;
-   stream << prefix << "currTime   : " << currTime_.Ticks() << CRLF;
-   stream << prefix << "readyTime  : " << readyTime_.Ticks() << CRLF;
-   stream << prefix << "currStart  : " << currStart_.Ticks() << CRLF;
-   stream << prefix << "currEnd    : " << currEnd_.Ticks() << CRLF;
 }
 
 //==============================================================================
@@ -1074,19 +1069,19 @@ static size_t StackCheckCounter_ = 1;
 
 //  The time when the previous short interval for thread statistics began.
 //
-static TimePoint PrevIntervalStart_ = TimePoint();
+static SteadyTime::Point PrevIntervalStart_ = SteadyTime::GetInvalid();
 
 //  The time when the current short interval for thread statistics began.
 //
-static TimePoint CurrIntervalStart_ = TimePoint();
+static SteadyTime::Point CurrIntervalStart_ = SteadyTime::GetInvalid();
 
 //  The amount of idle time during the most recent short interval.
 //
-static Duration TimeIdle_ = Duration();
+static nsecs_t TimeIdle_ = nsecs_t(0);
 
 //  The time spent in threads during the most recent short interval.
 //
-static Duration TimeUsed_ = Duration();
+static nsecs_t TimeUsed_ = nsecs_t(0);
 
 //------------------------------------------------------------------------------
 //
@@ -1140,11 +1135,11 @@ Thread::Thread(Faction faction, Daemon* daemon) :
    {
       //  There are no threads, so we must be wrapping the root thread.
       //
-      CurrIntervalStart_ = TimePoint::Now();
+      CurrIntervalStart_ = SteadyTime::Now();
       Singleton< ContextSwitches >::Instance();
 
       systhrd_.reset(new SysThread);
-      priv_->currStart_ = TimePoint::TimeZero();
+      priv_->currStart_ = SteadyTime::TimeZero();
       priv_->entered_ = true;
    }
    else
@@ -1328,17 +1323,18 @@ void Thread::ClaimBlocks()
 
 //------------------------------------------------------------------------------
 
-Duration Thread::CurrTimeRunning() const
+msecs_t Thread::CurrTimeRunning() const
 {
    Debug::ft("Thread.CurrTimeRunning");
 
-   if(!priv_->currStart_.IsValid()) return ZERO_SECS;
-   return (TimePoint::Now() - priv_->currStart_);
+   if(!SteadyTime::IsValid(priv_->currStart_)) return ZERO_SECS;
+   nsecs_t elapsed = SteadyTime::Now() - priv_->currStart_;
+   return msecs_t(elapsed.count() / NS_TO_MS);
 }
 
 //------------------------------------------------------------------------------
 
-MsgBuffer* Thread::DeqMsg(const Duration& timeout)
+MsgBuffer* Thread::DeqMsg(const msecs_t& timeout)
 {
    Debug::ft("Thread.DeqMsg");
 
@@ -1436,33 +1432,35 @@ fixed_string SchedLine =
 
 void Thread::DisplaySummaries(ostream& stream)
 {
-   Duration time0;  // duration of current interval
-   Duration idle0;  // idle time during current interval
-   Duration used0;  // time in all threads during current interval
+   nsecs_t time0;        // duration of current interval
+   nsecs_t idle0;        // idle time during current interval
+   uint64_t nsecs0 = 0;  // time in all threads during current interval
 
    auto threads = Singleton< ThreadRegistry >::Instance()->GetThreads();
 
    for(auto t = threads.cbegin(); t != threads.cend(); ++t)
    {
-      used0 += Duration((*t)->stats_->totTime_->Curr(), TICKS);
+      nsecs0 += (*t)->stats_->totTime_->Curr();
    }
 
-   time0 = TimePoint::Now() - StatisticsRegistry::StartTime();
+   nsecs_t used0(nsecs0);
+   time0 = SteadyTime::Now() - StatisticsRegistry::StartPoint();
    idle0 = (time0 > used0 ? time0 - used0 : ZERO_SECS);
 
    stream << std::setprecision(1) << std::fixed;
 
    stream << "SCHEDULER REPORT: " << Element::strTimePlace() << CRLF;
    stream << "for interval beginning at ";
-   stream << StatisticsRegistry::StartTime().to_str() << CRLF;
+   stream << to_string(StatisticsRegistry::StartTime(), LowAlpha) << CRLF;
 
    stream << SchedLine << CRLF;
    stream << SchedHeader << CRLF;
    stream << SchedLine << CRLF;
 
+   idle0 += usecs_t(500);
    stream << setw(10) << "idle";
-   stream << setw(55) << (idle0 + Duration(500, uSECS)).To(mSECS);
-   stream << setw(5) << 100 * double(idle0.Ticks()) / time0.Ticks();
+   stream << setw(55) << idle0.count() / NS_TO_MS;
+   stream << setw(5) << 100 * double(idle0.count()) / time0.count();
 
    //  Set TIME1 to the length of the previous short interval.
    //
@@ -1470,7 +1468,7 @@ void Thread::DisplaySummaries(ostream& stream)
 
    if(time1 > ZERO_SECS)
    {
-      stream << setw(6) << 100 * double(TimeIdle_.Ticks()) / time1.Ticks();
+      stream << setw(6) << 100 * double(TimeIdle_.count()) / time1.count();
    }
 
    stream << CRLF;
@@ -1491,10 +1489,8 @@ void Thread::DisplaySummaries(ostream& stream)
 //------------------------------------------------------------------------------
 
 void Thread::DisplaySummary
-   (ostream& stream, const Duration& time0, const Duration& time1) const
+   (ostream& stream, const nsecs_t& time0, const nsecs_t& time1) const
 {
-   Duration currTime(stats_->totTime_->Curr(), TICKS);
-
    stream << setw(2) << Tid();
    stream << setw(8) << AbbrName() << SPACE;
    stream << setw(8) << std::hex << NativeThreadId() << std::dec;
@@ -1513,20 +1509,22 @@ void Thread::DisplaySummary
    stream << setw(5) << stats_->maxMsgs_->Curr();
    stream << setw(6) << stats_->maxStack_->Curr();
 
-   auto usecs = Duration(stats_->maxTime_->Curr(), TICKS).To(uSECS);
+   auto usecs = stats_->maxTime_->Curr() / NS_TO_US;
 
    if(usecs <= 9999999)
       stream << setw(8) << usecs;
    else
       stream << " 10+ sec";
 
-   auto pct = 100 * double(currTime.Ticks()) / time0.Ticks();
-   stream << setw(7) << (currTime + Duration(500, uSECS)).To(mSECS);
+   auto nsecs = stats_->totTime_->Curr();
+   auto pct = 100 * double(nsecs) / time0.count();
+   auto msecs = (nsecs + 500000) / NS_TO_MS;
+   stream << setw(7) << msecs;
    stream << setw(5) << pct;
 
    if(time1 > ZERO_SECS)
    {
-      pct = 100 * double(priv_->prevTime_.Ticks()) / time1.Ticks();
+      pct = 100 * double(priv_->prevTime_.count()) / time1.count();
       stream << setw(6) << pct;
    }
 
@@ -1680,7 +1678,7 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
    Debug::ft("Thread.ExitBlockingOperation");
 
    auto thr = RunningThread();
-   thr->priv_->currStart_ = TimePoint::Now();
+   thr->priv_->currStart_ = SteadyTime::Now();
 
    if(thr->priv_->blocked_ != NotBlocked)
       thr->priv_->blocked_ = NotBlocked;
@@ -1713,7 +1711,7 @@ void Thread::ExitIfSafe(debug64_t offset) NO_FT
    //
    if(priv_->blocked_ != NotBlocked)
    {
-      priv_->currStart_ = TimePoint::Now();
+      priv_->currStart_ = SteadyTime::Now();
    }
 
    //  Reset action_ to prevent this from being invoked again.  If it isn't
@@ -1777,7 +1775,7 @@ void Thread::ExitSwLog(bool all)
 
 //------------------------------------------------------------------------------
 
-void Thread::ExtendTime(const Duration& time)
+void Thread::ExtendTime(const msecs_t& time)
 {
    Debug::ft("Thread.ExtendTime");
 
@@ -1936,7 +1934,7 @@ bool Thread::HandleSignal(signal_t sig, uint32_t code)
       {
          thr = LockedThread();
 
-         if((thr != nullptr) && (TimePoint::Now() < thr->priv_->currEnd_))
+         if((thr != nullptr) && (SteadyTime::Now() < thr->priv_->currEnd_))
          {
             thr = nullptr;
          }
@@ -2010,7 +2008,7 @@ void Thread::ImmUnprotect()
 
 //------------------------------------------------------------------------------
 
-Duration Thread::InitialTime() const
+msecs_t Thread::InitialTime() const
 {
    Debug::ft("Thread.InitialTime");
 
@@ -2138,7 +2136,7 @@ void Thread::LogContextSwitch() const
 
    ThreadAdmin::Incr(ThreadAdmin::Switches);
 
-   auto now = TimePoint::Now();
+   auto now = SteadyTime::Now();
 
    if(Singleton< ThreadRegistry >::Extant()->IsDeleted())
    {
@@ -2150,6 +2148,7 @@ void Thread::LogContextSwitch() const
       {
          rec->tid = 0;
          rec->nid = SysThread::RunningThreadId();
+         rec->start = SystemTime::Now();
          rec->in = now;
          rec->out = now;
          rec->locked = false;
@@ -2160,9 +2159,9 @@ void Thread::LogContextSwitch() const
       if(stats_ != nullptr)
       {
          stats_->yields_->Incr();
-         auto elapsed = now - priv_->currStart_;
-         stats_->maxTime_->Update(elapsed.Ticks());
-         stats_->totTime_->Add(elapsed.Ticks());
+         nsecs_t elapsed = now - priv_->currStart_;
+         stats_->maxTime_->Update(elapsed.count());
+         stats_->totTime_->Add(elapsed.count());
          priv_->currTime_ += elapsed;
       }
 
@@ -2172,6 +2171,7 @@ void Thread::LogContextSwitch() const
       {
          rec->tid = Tid();
          rec->nid = SysThread::RunningThreadId();
+         rec->start = SystemTime::Now();
          rec->in = priv_->currStart_;
          rec->out = now;
          rec->locked = priv_->locked_;
@@ -2385,9 +2385,9 @@ void Thread::Patch(sel_t selector, void* arguments)
 
 fn_name Thread_Pause = "Thread.Pause";
 
-DelayRc Thread::Pause(Duration time)
+DelayRc Thread::Pause(msecs_t time)
 {
-   Trace(nullptr, Thread_Pause, ThreadTrace::PauseEnter, time.Ticks());
+   Trace(nullptr, Thread_Pause, ThreadTrace::PauseEnter, time.count());
 
    auto drc = DelayCompleted;
    auto thr = RunningThread();
@@ -2431,7 +2431,7 @@ double Thread::PercentIdle()
 {
    if(TimeIdle_ == ZERO_SECS) return 0.0;
    auto total = TimeIdle_ + TimeUsed_;
-   return 100 * (double(TimeIdle_.Ticks()) / total.Ticks());
+   return 100 * (double(TimeIdle_.count()) / total.count());
 }
 
 //------------------------------------------------------------------------------
@@ -2443,7 +2443,7 @@ void Thread::Preempt()
    //  Set the thread's ready time so that it will later be reselected,
    //  and lower its priority so that the platform won't schedule it in.
    //
-   priv_->readyTime_ = TimePoint::Now();
+   priv_->readyTime_ = SteadyTime::Now();
    systhrd_->SetPriority(SysThread::LowPriority);
    ThreadAdmin::Incr(ThreadAdmin::Preempts);
 }
@@ -2629,7 +2629,7 @@ void Thread::Raise(signal_t sig)
 
 void Thread::Ready()
 {
-   priv_->currStart_ = TimePoint::Now();
+   priv_->currStart_ = SteadyTime::Now();
 
    Debug::ft("Thread.Ready");
 
@@ -2639,7 +2639,7 @@ void Thread::Ready()
    //  is currently active, wake InitThread to schedule this thread in,
    //  but have it wait to be signalled before it runs.
    //
-   priv_->readyTime_ = TimePoint::Now();
+   priv_->readyTime_ = SteadyTime::Now();
    priv_->waiting_ = true;
 
    if(ActiveThread() == nullptr)
@@ -2649,7 +2649,7 @@ void Thread::Ready()
 
    systhrd_->Wait();
    priv_->waiting_ = false;
-   priv_->currStart_ = TimePoint::Now();
+   priv_->currStart_ = SteadyTime::Now();
    priv_->locked_ = (priv_->unpreempts_ > 0);
 }
 
@@ -2768,8 +2768,9 @@ void Thread::Resume(fn_name_arg func)
 
    //  Set the time before which a locked thread should schedule itself out.
    //
-   auto time = InitialTime() << ThreadAdmin::WarpFactor();
-   if(!priv_->entered_) time <<= 2;
+   auto warp = ThreadAdmin::WarpFactor();
+   if(!priv_->entered_) ++warp;
+   auto time = InitialTime() * (1 << warp);
    priv_->currEnd_ = priv_->currStart_ + time;
    priv_->warned_ = false;
 
@@ -2788,8 +2789,8 @@ word Thread::RtcPercentUsed()
    auto thr = RunningThread();
    if(!thr->IsLocked()) return 0;
 
-   auto used = TimePoint::Now() - thr->priv_->currStart_;
-   auto full = thr->priv_->currEnd_ - thr->priv_->currStart_;
+   nsecs_t used = SteadyTime::Now() - thr->priv_->currStart_;
+   nsecs_t full = thr->priv_->currEnd_ - thr->priv_->currStart_;
 
    if(used < full) return ((100 * used) / full);
    return 100;
@@ -2982,7 +2983,7 @@ void Thread::SignalHandler(signal_t sig)
       Log::Submit(log);
    }
 
-   Pause(Duration(2, SECS));
+   Pause(msecs_t(2000));
    signal(sig, nullptr);
    raise(sig);
 }
@@ -3163,12 +3164,12 @@ main_t Thread::Start()
             //  rather than restarting.
             //
             int code = (level == RestartExit ? 0 : 1);
-            Duration time(1, SECS);
+            msecs_t time(1 * ONE_SEC);
 
             if((level == RestartExit) && Element::RunningInLab())
             {
                CoutThread::Spool(ExitingStr, true);
-               time = Duration(10, SECS);
+               time = msecs_t(10 * ONE_SEC);
             }
 
             //  Before exiting, pause so that logs can be generated.  To
@@ -3272,12 +3273,12 @@ void Thread::StartShortInterval()
    }
 
    PrevIntervalStart_ = CurrIntervalStart_;
-   CurrIntervalStart_ = TimePoint::Now();
+   CurrIntervalStart_ = SteadyTime::Now();
 
    //  Until the first short interval ends, there is no "previous" short
    //  interval.
    //
-   if(PrevIntervalStart_.IsValid())
+   if(SteadyTime::IsValid(PrevIntervalStart_))
    {
       auto elapsed = CurrIntervalStart_ - PrevIntervalStart_;
 
@@ -3349,8 +3350,8 @@ void Thread::Suspend()
       if(log != nullptr)
       {
          *log << Log::Tab << "thread=" << to_str();
-         auto elapsed = TimePoint::Now() - priv_->currEnd_;
-         *log << " overrun=" << elapsed.to_str(mSECS);
+         nsecs_t elapsed = SteadyTime::Now() - priv_->currEnd_;
+         *log << " overrun=" << elapsed.count() / NS_TO_MS << "ms";
          Log::Submit(log);
       }
 
@@ -3358,7 +3359,7 @@ void Thread::Suspend()
    }
 
    LogContextSwitch();
-   priv_->currEnd_ = TimePoint();
+   priv_->currEnd_ = SteadyTime::Now();
    Schedule();
 }
 
@@ -3439,7 +3440,7 @@ bool Thread::TestFlag(FlagId fid)
 
 //------------------------------------------------------------------------------
 
-Duration Thread::TimeLeft() const
+msecs_t Thread::TimeLeft() const
 {
    Debug::ft("Thread.TimeLeft");
 
@@ -3448,10 +3449,10 @@ Duration Thread::TimeLeft() const
    //  has again been scheduled to run unpreemptably but currEnd_ has not
    //  been recalculated.
    //
-   if(!priv_->currEnd_.IsValid()) return InitialTime();
-   auto time = priv_->currEnd_ - TimePoint::Now();
-   if(time.Ticks() <= 0) return ZERO_SECS;
-   return time;
+   if(!SteadyTime::IsValid(priv_->currEnd_)) return InitialTime();
+   nsecs_t time = priv_->currEnd_ - SteadyTime::Now();
+   if(time.count() <= 0) return ZERO_SECS;
+   return msecs_t(time.count() / NS_TO_MS);
 }
 
 //------------------------------------------------------------------------------
@@ -3760,16 +3761,4 @@ std::atomic_uint32_t* Thread::Vector()
 
    return &RunningThread()->priv_->vector_;
 }
-
-//------------------------------------------------------------------------------
-
-const Duration ZERO_SECS = Duration::Immed();
-const Duration ONE_uSEC = Duration(1, uSECS);
-const Duration ONE_mSEC = Duration(1, mSECS);
-const Duration ONE_SEC = Duration(1, SECS);
-const Duration TIMEOUT_IMMED = Duration::Immed();
-const Duration TIMEOUT_NEVER = Duration::Never();
-const int64_t TICKS_PER_uSEC = Duration(1, uSECS).Ticks();
-const int64_t TICKS_PER_mSEC = Duration(1, mSECS).Ticks();
-const int64_t TICKS_PER_SEC = Duration(1, SECS).Ticks();
 }

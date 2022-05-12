@@ -65,7 +65,7 @@ static ThreadId PrevTid_ = NIL_ID;
 TimedRecord::TimedRecord(FlagId owner) :
    TraceRecord(owner),
    nid_(SysThread::RunningThreadId()),
-   time_(TimePoint::Now())
+   time_(SystemTime::Now())
 {
 }
 
@@ -75,7 +75,7 @@ bool TimedRecord::Display(ostream& stream, const string& opts)
 {
    //  Some records are captured before SysTickTimer is even initialized.
    //
-   if(!time_.IsValid()) return false;
+   if(!SystemTime::IsValid(time_)) return false;
 
    auto reg = Singleton< ThreadRegistry >::Instance();
    auto thr = reg->FindThread(nid_);
@@ -107,6 +107,6 @@ string TimedRecord::GetTime(const string& opts) const
    //  Convert our timestamp to hh:mm:ss.mmm and remove the hours.
    //
    if(opts.find(NoTimeData) != string::npos) return "00:00.000";
-   return time_.to_str(MinsField);
+   return to_string(time_, MinSecMsecs);
 }
 }

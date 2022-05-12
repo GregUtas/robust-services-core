@@ -22,188 +22,40 @@
 #ifndef DURATION_H_INCLUDED
 #define DURATION_H_INCLUDED
 
+#include <chrono>
 #include <cstdint>
+#include <ratio>
 #include <string>
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-//  A field in a full time representation.  This is used mostly in SysTime
-//  but is also required here.
+//  Aliases for durations of different magnitudes.
 //
-enum TimeField
-{
-   YearsField,
-   MonthsField,
-   DaysField,
-   HoursField,
-   MinsField,
-   SecsField,
-   MsecsField,
-   TimeField_N
-};
+using secs_t = std::chrono::seconds;
+using msecs_t = std::chrono::milliseconds;
+using usecs_t = std::chrono::microseconds;
+using nsecs_t = std::chrono::nanoseconds;
 
-//------------------------------------------------------------------------------
-//
-//  Time intervals.  These are used for values that will be converted to, or
-//  have been converted from, a Duration (below).
-//
-typedef uint32_t secs_t;   // seconds
-typedef uint32_t msecs_t;  // milliseconds
-typedef uint32_t usecs_t;  // microseconds
-
-//------------------------------------------------------------------------------
-//
-//  Units for a time interval.
-//
-enum TimeUnits
-{
-   TICKS,    // system-specific
-   uSECS,    // microseconds
-   mSECS,    // milliseconds
-   SECS,     // seconds
-   MINUTES,
-   HOURS,
-   DAYS
-};
-
-//------------------------------------------------------------------------------
-//
-//  A time interval.
-//
-class Duration
-{
-public:
-   //  Constructor for a duration of VALUE, in UNITS.
-   //
-   Duration(int64_t value, TimeUnits units);
-
-   //  Constructs a duration of 0.
-   //
-   Duration();
-
-   //  Not subclassed.
-   //
-   ~Duration() = default;
-
-   //  Copy constructor.
-   //
-   Duration(const Duration& that) = default;
-
-   //  Copy operator.
-   //
-   Duration& operator=(const Duration& that) = default;
-
-   //  Returns a string that represents the duration in UNITS.
-   //
-   std::string to_str(TimeUnits units) const;
-
-   //  Returns the interval until now (zero).
-   //
-   static Duration Immed();
-
-   //  Returns the interval that will never expire (Infinity).
-   //
-   static Duration Never();
-
-   //  Returns the interval in ticks.
-   //
-   int64_t Ticks() const { return ticks_; }
-
-   //  Returns the interval in UNITS.
-   //
-   int64_t To(TimeUnits units) const;
-
-   //  Returns the interval in milliseconds, mapping Infinity to
-   //  UINT32_MAX and negative times to 0.
-   //
-   uint32_t ToMsecs() const;
-
-   //  Returns the interval, unchanged.
-   //
-   Duration operator+();
-
-   //  Returns the interval, negated.
-   //
-   Duration operator-();
-
-   //  Adds a tick to the interval.
-   //
-   Duration& operator++();
-   Duration operator++(int);
-
-   //  Subtracts a tick from the interval.
-   //
-   Duration& operator--();
-   Duration operator--(int);
-
-   //  Adds RHS to the interval.
-   //
-   Duration& operator+=(const Duration& rhs);
-
-   //  Subtracts RHS from the interval.
-   //
-   Duration& operator-=(const Duration& rhs);
-
-   //  Multiplies the interval by RHS.
-   //
-   Duration& operator*=(int64_t rhs);
-
-   //  Divides the interval by RHS.
-   //
-   Duration& operator/=(int64_t rhs);
-
-   //  Finds the reminder of the interval when divided by RHS.
-   //
-   Duration& operator%=(const Duration& rhs);
-
-   //  Changes the interval by a power of 2.
-   //
-   Duration& operator<<=(int8_t shift);
-   Duration& operator>>=(int8_t shift);
-
-   //  The value that represents infinity.
-   //
-   static const int64_t Infinity = INT64_MAX;
-private:
-   //  The duration, which is always in ticks.
-   //
-   int64_t ticks_;
-};
-
-//  Duration comparison operators.
-//
-bool operator==(const Duration& lhs, const Duration& rhs);
-bool operator!=(const Duration& lhs, const Duration& rhs);
-bool operator<(const Duration& lhs, const Duration& rhs);
-bool operator<=(const Duration& lhs, const Duration& rhs);
-bool operator>(const Duration& lhs, const Duration& rhs);
-bool operator>=(const Duration& lhs, const Duration& rhs);
-
-//  Duration arithmetic operators.
-//
-Duration operator+(const Duration& lhs, const Duration& rhs);
-Duration operator-(const Duration& lhs, const Duration& rhs);
-Duration operator*(const Duration& lhs, int64_t rhs);
-Duration operator*(int64_t lhs, const Duration& rhs);
-Duration operator/(const Duration& lhs, int64_t rhs);
-int64_t  operator/(const Duration& lhs, const Duration& rhs);
-Duration operator%(const Duration& lhs, const Duration& rhs);
-Duration operator<<(const Duration& lhs, int8_t shift);
-Duration operator>>(const Duration& lhs, int8_t shift);
+std::string to_string(const secs_t& secs);
+std::string to_string(const msecs_t& msecs);
+std::string to_string(const usecs_t& usecs);
+std::string to_string(const nsecs_t& nsecs);
 
 //  Duration constants.  These are initialized in Thread.cpp because
 //  of the "static initialization order fiasco".
 //
-extern const Duration TIMEOUT_IMMED;
-extern const Duration TIMEOUT_NEVER;
-extern const Duration ZERO_SECS;
-extern const Duration ONE_uSEC;
-extern const Duration ONE_mSEC;
-extern const Duration ONE_SEC;
-extern const int64_t TICKS_PER_uSEC;
-extern const int64_t TICKS_PER_mSEC;
-extern const int64_t TICKS_PER_SEC;
+constexpr msecs_t TIMEOUT_IMMED = msecs_t(0);
+constexpr msecs_t TIMEOUT_NEVER = msecs_t(UINT32_MAX);
+constexpr msecs_t ZERO_SECS = msecs_t(0);
+constexpr msecs_t ONE_SEC = msecs_t(1000);
+
+//  Conversion constants.
+//
+constexpr uint32_t NS_TO_US = std::nano::den / std::micro::den;
+constexpr uint32_t NS_TO_MS = std::nano::den / std::milli::den;
+constexpr uint32_t NS_TO_SECS = std::nano::den;
+constexpr uint32_t SECS_TO_MS = std::milli::den;
 }
 #endif

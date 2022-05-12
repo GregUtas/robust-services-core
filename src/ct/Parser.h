@@ -30,7 +30,7 @@
 #include "CxxFwd.h"
 #include "Lexer.h"
 #include "LibraryTypes.h"
-#include "SysTime.h"
+#include "SystemTime.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -63,9 +63,9 @@ namespace CodeTools
 class Parser
 {
 public:
-   //  Creates a parser that will use the options specified in OPTS.
+   //  Creates a parser.
    //
-   explicit Parser(const std::string& opts);
+   Parser();
 
    //  Creates a parser that will parse a code fragment on behalf of another
    //  parser.  The scope in which to parse must be provided.
@@ -95,14 +95,15 @@ public:
    //  Parses the function template instance identified by NAME, adding it to
    //  the namespace or class specified by AREA.  TMPLT is the function template
    //  on which it is based, and TYPE and CODE contain the instance's template
-   //  arguments and code.
+   //  arguments and code.  Returns the new function on success, or nullptr on
+   //  failure.
    //
-   bool ParseFuncInst(const std::string& name, const Function* tmplt,
+   Function* ParseFuncInst(const std::string& name, const Function* tmplt,
       CxxArea* area, const TypeName* type, const std::string* code);
 
-   //  Returns true and creates SPEC if CODE is a valid type specification.
+   //  Returns true and creates ARG if CODE is a valid template argument.
    //
-   bool ParseTypeSpec(const std::string& code, TypeSpecPtr& spec);
+   bool ParseTemplateArg(const std::string& code, TemplateArgPtr& arg);
 
    //  Returns true and creates NAME if CODE is a valid name, maybe qualified.
    //
@@ -153,7 +154,7 @@ public:
 
    //  Returns the time when the parse originally started.
    //
-   static const NodeBase::SysTime* GetTime();
+   static const NodeBase::SystemTime::Point& GetTime();
 
    //  Returns a string that specifies the parser's current position for the
    //  __LINE__ macro.  If parsing source code, this will be a numeric.  If
@@ -181,7 +182,7 @@ private:
       IsFile,       // source code in a file
       IsClassInst,  // code for a class template instance
       IsFuncInst,   // code for a function template instance
-      IsTypeSpec,   // a string containing a type specification
+      IsTmpltArg,   // a string containing a template argument
       IsQualName    // a string containing a qualified name
    };
 
@@ -285,11 +286,11 @@ private:
    //
    bool GetClass(Cxx::Keyword kwd, CxxArea* area);
 
-   //  Returns true and creates CLS on finding a class declaration.  If it
+   //  Returns true and creates CLS on finding a class definition.  If it
    //  is only a forward declaration, it is returned in FORW.  KWD is the
    //  keyword that was just found.
    //
-   bool GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw);
+   bool GetClassDefn(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw);
 
    //  Returns true and creates BASE on finding a base class declaration.
    //
@@ -410,6 +411,10 @@ private:
    //  Returns true and creates PARM on finding a template parameter.
    //
    bool GetTemplateParm(TemplateParmPtr& parm);
+
+   //  Returns true and creates ARG on finding a template argument.
+   //
+   bool GetTemplateArg(TemplateArgPtr& arg);
 
    //  Returns true and creates or updates NAME on finding a name that could be
    //  qualified.  If NAME ends in "operator", the operator that follows it is
@@ -608,12 +613,6 @@ private:
    //
    void Failure(const std::string& venue) const;
 
-   //  Returns true from the function named FUNC, which began its parse at
-   //  START.  If the parse is being traced, the parsed string (from START
-   //  to lexer_.Prev()) is added to the parse tree.
-   //
-   bool Success(NodeBase::fn_name_arg func, size_t start) const;
-
    //  Returns a string of blanks based on the depth of parsing.
    //
    static std::string Indent();
@@ -634,17 +633,9 @@ private:
    //
    Lexer lexer_;
 
-   //  Compiler options.
-   //
-   std::string opts_;
-
    //  The time when the parse started.
    //
-   const NodeBase::SysTime time_;
-
-   //  The stack depth at which Parse() was invoked.
-   //
-   size_t depth_;
+   const NodeBase::SystemTime::Point time_;
 
    //  The position where the most recent keyword began.
    //
@@ -658,10 +649,6 @@ private:
    //  the parser code but could be mapped to a text explanation.
    //
    size_t cause_;
-
-   //  Output file for parse tracing, if any.
-   //
-   NodeBase::ostreamPtr pTrace_;
 };
 }
 #endif

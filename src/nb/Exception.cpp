@@ -44,7 +44,7 @@ Exception::Exception(bool stack) : stack_(nullptr)
    //  Capturing a stack trace takes time, so give the thread an extra
    //  20 msecs.
    //
-   Thread::ExtendTime(Duration(20, mSECS));
+   Thread::ExtendTime(msecs_t(20));
 
    if(stack)
    {

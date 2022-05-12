@@ -20,13 +20,16 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SbTrace.h"
+#include <chrono>
 #include <iomanip>
 #include <ios>
+#include <ratio>
 #include <sstream>
 #include <string>
 #include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Factory.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
@@ -166,8 +169,9 @@ bool TransTrace::Display(ostream& stream, const string& opts)
 {
    if(!TimedRecord::Display(stream, opts)) return false;
 
-   auto delta = time1_ - time0_;
-   stream << setw(TraceDump::TotWidth) << delta.To(uSECS) << TraceDump::Tab();
+   nsecs_t delta = time1_ - time0_;
+   auto usecs = delta.count() / NS_TO_US;
+   stream << setw(TraceDump::TotWidth) << usecs << TraceDump::Tab();
 
    stream << rcvr_ << TraceDump::Tab();
 
@@ -210,7 +214,7 @@ void TransTrace::EndOfTransaction()
 {
    //  Set the time at which this transaction ended.
    //
-   time1_ = TimePoint::Now();
+   time1_ = SteadyTime::Now();
 }
 
 //------------------------------------------------------------------------------
@@ -231,12 +235,12 @@ c_string TransTrace::EventString() const
 
 //------------------------------------------------------------------------------
 
-void TransTrace::ResumeTime(const TimePoint& then)
+void TransTrace::ResumeTime(const SteadyTime::Point& then)
 {
    //  Adjust this transaction's elapsed time so that the time spent since
    //  THEN is excluded.
    //
-   auto warp = TimePoint::Now() - then;
+   auto warp = SteadyTime::Now() - then;
    time0_ += warp;
    time1_ = time0_;
 }
@@ -715,7 +719,7 @@ c_string MsgTrace::EventString() const
 TimerTrace::TimerTrace(Id rid, const Timer& tmr) :
    SboTrace(tmr),
    tid_(tmr.Tid()),
-   secs_(tmr.duration_),
+   secs_(tmr.secs_),
    psm_(tmr.Psm())
 {
    rid_ = rid;

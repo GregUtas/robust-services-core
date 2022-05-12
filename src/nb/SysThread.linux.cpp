@@ -338,7 +338,7 @@ signal_t SysThread::Start()
 
 fn_name SysThread_Suspend = "SysThread.Suspend";
 
-DelayRc SysThread::Suspend(SysSentry_t& sentry, const Duration& timeout)
+DelayRc SysThread::Suspend(SysSentry_t& sentry, const msecs_t& timeout)
 {
    Debug::ft(SysThread_Suspend);
 

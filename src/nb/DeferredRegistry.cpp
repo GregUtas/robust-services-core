@@ -21,11 +21,11 @@
 //
 #include "DeferredRegistry.h"
 #include <bitset>
+#include <chrono>
 #include <ostream>
 #include <string>
 #include "Debug.h"
 #include "DeferredThread.h"
-#include "Duration.h"
 #include "Formatters.h"
 #include "Q2Link.h"
 #include "Restart.h"
@@ -178,7 +178,7 @@ void DeferredRegistry::Insert(Deferred* item)
    else
    {
       auto thr = Singleton< DeferredThread >::Instance();
-      auto incr = (thr->CurrTimeRunning().To(mSECS) >= 500 ? 1 : 0);
+      auto incr = (thr->CurrTimeRunning().count() >= 500 ? 1 : 0);
       item->secs_ += incr;
    }
 

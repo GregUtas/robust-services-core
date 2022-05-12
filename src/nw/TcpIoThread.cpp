@@ -20,7 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TcpIoThread.h"
+#include <chrono>
 #include <iosfwd>
+#include <ratio>
 #include <sstream>
 #include <string>
 #include "Debug.h"
@@ -34,10 +36,10 @@
 #include "NwLogs.h"
 #include "NwTrace.h"
 #include "Singleton.h"
+#include "SteadyTime.h"
 #include "SysIpL3Addr.h"
 #include "SysTcpSocket.h"
 #include "TcpIpService.h"
-#include "TimePoint.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -374,7 +376,7 @@ void TcpIoThread::Enter()
       {
          auto listener = Listener();
          listener->OutputLog(NetworkSocketError, "poll", listener->GetError());
-         Pause(Duration(20, mSECS));
+         Pause(msecs_t(20));
          continue;
       }
 
@@ -534,7 +536,7 @@ word TcpIoThread::PollSockets()
    //
    EnterBlockingOperation(BlockedOnNetwork, TcpIoThread_Enter);
    {
-      ready = SysTcpSocket::Poll(sockets, size, ONE_SEC << 1);
+      ready = SysTcpSocket::Poll(sockets, size, msecs_t(2000));
    }
    ExitBlockingOperation(TcpIoThread_Enter);
 
@@ -606,7 +608,7 @@ void TcpIoThread::ServiceSocket()
    //
    if(!flags->test(PollRead)) return;
 
-   time_ = TimePoint::Now();
+   time_ = SteadyTime::Now();
 
    auto rcvd = socket->Recv(buffer_, SysSocket::MaxMsgSize);
 

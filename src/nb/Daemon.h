@@ -60,7 +60,6 @@ namespace NodeBase
 //
 class Daemon : public Permanent
 {
-   friend class Registry< Daemon >;
 public:
    //  Virtual to allow subclassing.  An instance would be deleted if, for some
    //  reason, the threads no longer need to be monitored and recreated.

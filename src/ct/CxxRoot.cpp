@@ -39,7 +39,7 @@
 #include "Parser.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "SysTime.h"
+#include "SystemTime.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
 
@@ -63,7 +63,6 @@ public:
    CxxToken* GetValue() const override;
    CxxScoped* Referent() const override { return StrLiteral::GetReferent(); }
 private:
-   mutable StrLiteralPtr unknown_;
    mutable StrLiteralPtr date_;
 };
 
@@ -78,17 +77,9 @@ CxxToken* MacroDATE::GetValue() const
 
    if(date_ != nullptr) return date_.get();
 
-   auto time = Parser::GetTime();
-
-   if(time != nullptr)
-   {
-      date_ = StrLiteralPtr(new StrLiteral(time->to_str(SysTime::HighAlpha)));
-      return date_.get();
-   }
-
-   if(unknown_ != nullptr) return unknown_.get();
-   unknown_ = StrLiteralPtr(new StrLiteral("??-???-????"));
-   return unknown_.get();
+   auto stime = to_string(Parser::GetTime(), HighAlpha);
+   date_ = StrLiteralPtr(new StrLiteral(stime));
+   return date_.get();
 }
 
 //------------------------------------------------------------------------------
@@ -222,7 +213,6 @@ public:
    CxxToken* GetValue() const override;
    CxxScoped* Referent() const override { return StrLiteral::GetReferent(); }
 private:
-   mutable StrLiteralPtr unknown_;
    mutable StrLiteralPtr time_;
 };
 
@@ -237,17 +227,9 @@ CxxToken* MacroTIME::GetValue() const
 
    if(time_ != nullptr) return time_.get();
 
-   auto time = Parser::GetTime();
-
-   if(time != nullptr)
-   {
-      time_ = StrLiteralPtr(new StrLiteral(time->to_str(SysTime::LowAlpha)));
-      return time_.get();
-   }
-
-   if(unknown_ != nullptr) return unknown_.get();
-   unknown_ = StrLiteralPtr(new StrLiteral("??:??:??"));
-   return unknown_.get();
+   auto stime = to_string(Parser::GetTime(), LowAlpha);
+   time_ = StrLiteralPtr(new StrLiteral(stime));
+   return time_.get();
 }
 
 //==============================================================================
@@ -354,16 +336,6 @@ void CxxRoot::Display(ostream& stream,
    nonqual.reset(DispFQ);
 
    SortAndDisplayItemPtrs(macros_, stream, EMPTY_STR, nonqual, SortByName);
-}
-
-//------------------------------------------------------------------------------
-
-void CxxRoot::Shrink() const
-{
-   for(auto m = macros_.cbegin(); m != macros_.cend(); ++m)
-   {
-      (*m)->Shrink();
-   }
 }
 
 //------------------------------------------------------------------------------

@@ -32,7 +32,7 @@
 #include "TlvProtocol.h"
 #include "UdpIpService.h"
 #include <cstddef>
-#include "Duration.h"
+#include <cstdint>
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SbTypes.h"
@@ -69,7 +69,7 @@ public:
    //  Timeout while waiting for a response to an IAM, which is the first
    //  signal sent from the originator of a call to the terminator.
    //
-   static const secs_t IamTimeout = 10;
+   static const uint32_t IamTimeout = 10;
 
    //  Identifies the timer for IamTimeout.
    //

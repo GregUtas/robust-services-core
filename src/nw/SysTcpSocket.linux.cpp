@@ -230,12 +230,12 @@ void SysTcpSocket::Patch(sel_t selector, void* arguments)
 //------------------------------------------------------------------------------
 
 word SysTcpSocket::Poll
-   (SysTcpSocket* sockets[], size_t size, const Duration& timeout)
+   (SysTcpSocket* sockets[], size_t size, const msecs_t& timeout)
 {
    Debug::ft("SysTcpSocket.Poll");
 
    if(size == 0) return 0;
-   int delay = (timeout != TIMEOUT_NEVER ? timeout.ToMsecs() : -1);
+   int delay = (timeout != TIMEOUT_NEVER ? timeout.count() : -1);
 
    //  Create an array for the sockets and their flags.
    //

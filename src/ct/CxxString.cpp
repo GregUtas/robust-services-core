@@ -535,6 +535,23 @@ size_t NameCouldReferTo(const string& fqName, const string& name)
 
 //------------------------------------------------------------------------------
 
+static bool NextNonBlankIs(string& code, size_t pos, char c)
+{
+   Debug::ft("CodeTools.NextNonBlankIs");
+
+   for(auto i = pos; i < code.size(); ++i)
+   {
+      if(WhitespaceChars.find(code[i]) == string::npos)
+      {
+         return (code[i] == c);
+      }
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 string Normalize(const string& name)
 {
    string result;
@@ -618,6 +635,30 @@ string RemoveConsts(const string& type)
    {
       result.erase(pos, 6);
       pos = result.find(" const", pos);
+   }
+
+   return result;
+}
+
+//------------------------------------------------------------------------------
+
+string RemoveRatioParms(const string& type)
+{
+   Debug::ft("CodeTools.RemoveRatioParms");
+
+   //  Remove any template parameters in occurrences of std::ratio.
+   //
+   auto result = type;
+
+   for(auto rat = type.find("std::ratio"); rat < type.size();
+      rat = type.find("std::ratio", rat))
+   {
+      rat = rat + strlen("std::ratio");
+      auto lb = type.find('<', rat);
+      if(lb != rat) continue;
+      auto rb = type.find('>', lb);
+      if(rb == string::npos) return type;
+      result.erase(lb, rb - lb + 1);
    }
 
    return result;
@@ -717,8 +758,8 @@ string& RemoveTemplates(string&& type)
 
 //------------------------------------------------------------------------------
 
-size_t Replace
-   (string& code, const string& s1, const string& s2, size_t begin, size_t end)
+size_t Replace(string& code, const string& s1,
+   const string& s2, size_t begin, size_t end, char c)
 {
    Debug::ft("CodeTools.Replace");
 
@@ -737,14 +778,16 @@ size_t Replace
       if((!CxxChar::Attrs[prev].validFirst || (prev == '~')) &&
          !CxxChar::Attrs[next].validNext)
       {
-         code.replace(pos, size1, s2);
-         pos += size2;
-         if(end != string::npos) end += (size2 - size1);
+         if((c == NUL) || !NextNonBlankIs(code, pos + size1, c))
+         {
+            code.replace(pos, size1, s2);
+            pos += size2;
+            if(end != string::npos) end += (size2 - size1);
+            continue;
+         }
       }
-      else
-      {
-         pos += size1;
-      }
+
+      pos += size1;
    }
 
    return end;

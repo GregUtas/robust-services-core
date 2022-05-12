@@ -39,6 +39,7 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxString.h"
+#include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "CxxVector.h"
 #include "Debug.h"
@@ -409,7 +410,6 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) :
    isHeader_ = (name.find(".c") == string::npos);
    isSubsFile_ = (dir != nullptr) && dir->IsSubsDir();
    Singleton< Library >::Instance()->AddFile(*this);
-   CxxStats::Incr(CxxStats::CODE_FILE);
 }
 
 //------------------------------------------------------------------------------
@@ -417,10 +417,6 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) :
 CodeFile::~CodeFile()
 {
    Debug::ftnt("CodeFile.dtor");
-
-   //  There is currently no situation in which this is invoked.
-
-   CxxStats::Decr(CxxStats::CODE_FILE);
 }
 
 //------------------------------------------------------------------------------
@@ -1944,6 +1940,29 @@ void CodeFile::InsertWarning(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
+bool CodeFile::IsExcludedTarget() const
+{
+   Debug::ft("CodeFile.IsExcludedTarget");
+
+   auto& fn = Name();
+   auto syms = Singleton< CxxSymbols >::Instance();
+
+   if(fn.find(".win.cpp") != string::npos)
+   {
+      auto macro = syms->FindMacro("OS_WIN");
+      return ((macro == nullptr) || !macro->IsDefined());
+   }
+   else if(fn.find(".linux.cpp") != string::npos)
+   {
+      auto macro = syms->FindMacro("OS_LINUX");
+      return ((macro == nullptr) || !macro->IsDefined());
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 bool CodeFile::IsLastItem(const CxxNamed* item) const
 {
    Debug::ft("CodeFile.IsLastItem");
@@ -2589,56 +2608,6 @@ void CodeFile::SetParsed(bool passed)
    Debug::ft("CodeFile.SetParsed");
 
    parsed_ = (passed ? Passed : Failed);
-}
-
-//------------------------------------------------------------------------------
-
-void CodeFile::Shrink()
-{
-   code_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::CODE_FILE, code_.capacity());
-
-   for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
-   {
-      (*i)->Shrink();
-   }
-
-   for(auto d = dirs_.cbegin(); d != dirs_.cend(); ++d)
-   {
-      (*d)->Shrink();
-   }
-
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
-   {
-      (*u)->Shrink();
-   }
-
-   forws_.shrink_to_fit();
-   macros_.shrink_to_fit();
-   spaces_.shrink_to_fit();
-   classes_.shrink_to_fit();
-   enums_.shrink_to_fit();
-   types_.shrink_to_fit();
-   funcs_.shrink_to_fit();
-   data_.shrink_to_fit();
-   assembly_.shrink_to_fit();
-   asserts_.shrink_to_fit();
-
-   auto size = incls_.capacity() * sizeof(IncludePtr);
-   size += dirs_.capacity() * sizeof(DirectivePtr);
-   size += usings_.capacity() * sizeof(UsingPtr);
-   size += forws_.capacity() * sizeof(Forward*);
-   size += macros_.capacity() * sizeof(Macro*);
-   size += spaces_.capacity() * sizeof(SpaceDefn*);
-   size += classes_.capacity() * sizeof(Class*);
-   size += enums_.capacity() * sizeof(Enum*);
-   size += types_.capacity() * sizeof(Typedef*);
-   size += funcs_.capacity() * sizeof(Function*);
-   size += data_.capacity() * sizeof(Data*);
-   size += assembly_.capacity() * sizeof(Asm*);
-   size += asserts_.capacity() * sizeof(StaticAssert*);
-   size += usages_.size() * 3 * sizeof(CxxNamed*);
-   CxxStats::Vectors(CxxStats::CODE_FILE, size);
 }
 
 //------------------------------------------------------------------------------

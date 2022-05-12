@@ -122,7 +122,7 @@ PotsFeatureProfile* PotsCfnFeature::Subscribe
 
 //==============================================================================
 
-PotsCfnFeatureProfile::PotsCfnFeatureProfile(Address::DN dn, secs_t timeout) :
+PotsCfnFeatureProfile::PotsCfnFeatureProfile(Address::DN dn, uint32_t timeout) :
    DnRouteFeatureProfile(CFN, dn),
    timeout_(timeout)
 {

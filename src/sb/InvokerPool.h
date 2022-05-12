@@ -83,7 +83,7 @@ public:
    //  Returns a work queue's maximum delay during the current
    //  statistics interval.
    //
-   NodeBase::Duration WorkQMaxDelay(MsgPriority prio) const;
+   NodeBase::nsecs_t WorkQMaxDelay(MsgPriority prio) const;
 
    //  Displays statistics.
    //
@@ -120,7 +120,7 @@ protected:
    //  excessive, but the base class version must be invoked.
    //
    virtual void RecordDelay
-      (MsgPriority prio, const NodeBase::Duration& delay) const;
+      (MsgPriority prio, const NodeBase::nsecs_t& delay) const;
 private:
    //  Adds THREAD to the set of invokers.
    //

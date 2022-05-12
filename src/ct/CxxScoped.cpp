@@ -55,7 +55,6 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
    Debug::ft("Argument.ctor");
 
    std::swap(name_, name);
-   CxxStats::Incr(CxxStats::ARG_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -63,8 +62,6 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
 Argument::~Argument()
 {
    Debug::ft("Argument.dtor");
-
-   CxxStats::Decr(CxxStats::ARG_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -314,18 +311,6 @@ bool Argument::SetNonConst()
 
 //------------------------------------------------------------------------------
 
-void Argument::Shrink()
-{
-   CxxScoped::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::ARG_DECL, name_.capacity());
-   CxxStats::Vectors(CxxStats::ARG_DECL, XrefSize());
-   spec_->Shrink();
-   if(default_ != nullptr) default_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 string Argument::TypeString(bool arg) const
 {
    return spec_->TypeString(arg);
@@ -396,7 +381,6 @@ BaseDecl::BaseDecl(QualNamePtr& name, Cxx::Access access) :
    Debug::ft("BaseDecl.ctor");
 
    SetAccess(access);
-   CxxStats::Incr(CxxStats::BASE_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -406,7 +390,6 @@ BaseDecl::~BaseDecl()
    Debug::ft("BaseDecl.dtor");
 
    GetClass()->EraseSubclass(static_cast< Class* >(GetScope()));
-   CxxStats::Decr(CxxStats::BASE_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -1232,7 +1215,6 @@ Enum::Enum(string& name) : refs_(0)
 
    std::swap(name_, name);
    if(!name_.empty()) Singleton< CxxSymbols >::Instance()->InsertEnum(this);
-   CxxStats::Incr(CxxStats::ENUM_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -1243,7 +1225,6 @@ Enum::~Enum()
 
    GetFile()->EraseEnum(this);
    if(!name_.empty()) Singleton< CxxSymbols >::Extant()->EraseEnum(this);
-   CxxStats::Decr(CxxStats::ENUM_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -1551,24 +1532,6 @@ void Enum::SetAsReferent(const CxxNamed* user)
 
 //------------------------------------------------------------------------------
 
-void Enum::Shrink()
-{
-   CxxScoped::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::ENUM_DECL, name_.capacity());
-
-   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
-   {
-      (*e)->Shrink();
-   }
-
-   auto size = etors_.capacity() * sizeof(EnumeratorPtr);
-   size += XrefSize();
-   CxxStats::Vectors(CxxStats::ENUM_DECL, size);
-}
-
-//------------------------------------------------------------------------------
-
 string Enum::TypeString(bool arg) const
 {
    return Prefix(GetScope()->TypeString(arg)) + name_;
@@ -1611,7 +1574,6 @@ Enumerator::Enumerator(string& name, ExprPtr& init, Enum* decl) :
 
    std::swap(name_, name);
    Singleton< CxxSymbols >::Instance()->InsertEtor(this);
-   CxxStats::Incr(CxxStats::ENUM_MEM);
 }
 
 //------------------------------------------------------------------------------
@@ -1621,7 +1583,6 @@ Enumerator::~Enumerator()
    Debug::ftnt("Enumerator.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseEtor(this);
-   CxxStats::Decr(CxxStats::ENUM_MEM);
 }
 
 //------------------------------------------------------------------------------
@@ -1841,17 +1802,6 @@ void Enumerator::SetAsReferent(const CxxNamed* user)
 
 //------------------------------------------------------------------------------
 
-void Enumerator::Shrink()
-{
-   CxxScoped::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::ENUM_MEM, name_.capacity());
-   CxxStats::Vectors(CxxStats::ENUM_MEM, XrefSize());
-   if(init_ != nullptr) init_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 string Enumerator::TypeString(bool arg) const
 {
    auto ts = enum_->TypeString(arg);
@@ -1904,7 +1854,6 @@ Forward::Forward(QualNamePtr& name, Cxx::ClassTag tag) :
    Debug::ft("Forward.ctor");
 
    Singleton< CxxSymbols >::Instance()->InsertForw(this);
-   CxxStats::Incr(CxxStats::FORWARD_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -1915,7 +1864,6 @@ Forward::~Forward()
 
    GetFile()->EraseForw(this);
    Singleton< CxxSymbols >::Extant()->EraseForw(this);
-   CxxStats::Decr(CxxStats::FORWARD_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -2094,16 +2042,6 @@ void Forward::SetTemplateParms(TemplateParmsPtr& parms)
 
 //------------------------------------------------------------------------------
 
-void Forward::Shrink()
-{
-   CxxScoped::Shrink();
-   CxxStats::Vectors(CxxStats::FORWARD_DECL, XrefSize());
-   name_->Shrink();
-   if(parms_ != nullptr) parms_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 string Forward::TypeString(bool arg) const
 {
    auto ref = Referent();
@@ -2147,8 +2085,6 @@ Friend::Friend() :
    users_(0)
 {
    Debug::ft("Friend.ctor");
-
-   CxxStats::Incr(CxxStats::FRIEND_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -2158,7 +2094,6 @@ Friend::~Friend()
    Debug::ftnt("Friend.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseFriend(this);
-   CxxStats::Decr(CxxStats::FRIEND_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -2336,10 +2271,10 @@ CxxScoped* Friend::FindForward() const
             //
             if(idx == 0) break;
             if(cls->IsInTemplateInstance()) break;
-            auto args = qname->At(idx - 1)->GetTemplateArgs();
-            if(args == nullptr) break;
-            if(!ResolveTemplate(cls, args, (idx >= size))) break;
-            cls = cls->EnsureInstance(args);
+            auto tname = qname->At(idx - 1)->GetTemplatedName();
+            if(tname == nullptr) break;
+            if(!ResolveTemplate(cls, tname, (idx >= size))) break;
+            cls = cls->EnsureInstance(tname);
             item = cls;
             qname->SetReferentN(idx - 1, item, nullptr);  // updated value
             if(item == nullptr) return nullptr;
@@ -2495,7 +2430,7 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
    //  be visible as a forward declaration, although the friend declaration
    //  itself could have doubled as that forward declaration.
    //
-   auto tmplt = ((ref->IsTemplate()) || (ref->GetTemplateArgs() != nullptr));
+   auto tmplt = ((ref->IsTemplate()) || (ref->GetTemplatedName() != nullptr));
    auto forw = name_->GetForward();
    auto type = (forw != nullptr ? forw->Type() : ref->Type());
 
@@ -2520,7 +2455,7 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
             outer = outer->GetClassTemplate();
          symbols.AddDirect(outer);
       }
-      else if(ref->GetTemplateArgs() != nullptr)
+      else if(ref->GetTemplatedName() != nullptr)
       {
          symbols.AddIndirect(ref->GetTemplate());
       }
@@ -2632,12 +2567,22 @@ bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
 
 //------------------------------------------------------------------------------
 
-bool Friend::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
+bool Friend::ResolveTemplate(Class* cls, const TypeName* type, bool end) const
 {
    Debug::ft("Friend.ResolveTemplate");
 
-   const_cast< Friend* >(this)->SetScope(cls->GetScope());
-   return true;
+   auto scope = cls->GetScope();
+   const_cast< Friend* >(this)->SetScope(scope);
+
+   //  Class.AccessbilityTo invokes Class.FindFriend to determine if a friend
+   //  declaration did anything useful, even if it wasn't needed to access a
+   //  member.  If a friend is a class template instance, this can cause this
+   //  code to be invoked to find the friend's referent.  If the referent for
+   //  a template parameter is unknown, it would cause Class.EnsureInstance
+   //  to create a class instance name with unqualified template parameters,
+   //  and so we prevent this.
+   //
+   return type->VerifyReferents();
 }
 
 //------------------------------------------------------------------------------
@@ -2749,17 +2694,6 @@ void Friend::SetTemplateParms(TemplateParmsPtr& parms)
 
 //------------------------------------------------------------------------------
 
-void Friend::Shrink()
-{
-   CxxScoped::Shrink();
-   CxxStats::Vectors(CxxStats::FRIEND_DECL, XrefSize());
-   if(name_ != nullptr) name_->Shrink();
-   if(parms_ != nullptr) parms_->Shrink();
-   if(func_ != nullptr) func_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 string Friend::TypeString(bool arg) const
 {
    auto ref = Referent();
@@ -2799,7 +2733,6 @@ MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
    Debug::ft("MemberInit.ctor");
 
    std::swap(name_, name);
-   CxxStats::Incr(CxxStats::MEMBER_INIT);
 }
 
 //------------------------------------------------------------------------------
@@ -2807,8 +2740,6 @@ MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
 MemberInit::~MemberInit()
 {
    Debug::ft("MemberInit.dtor");
-
-   CxxStats::Decr(CxxStats::MEMBER_INIT);
 }
 
 //------------------------------------------------------------------------------
@@ -2924,16 +2855,6 @@ void MemberInit::Rename(const string& name)
 
 //------------------------------------------------------------------------------
 
-void MemberInit::Shrink()
-{
-   CxxScoped::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::MEMBER_INIT, name_.capacity());
-   init_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void MemberInit::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -2952,7 +2873,7 @@ void MemberInit::UpdateXref(bool insert)
 //==============================================================================
 
 TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
-   QualNamePtr& type, size_t ptrs, TypeSpecPtr& preset) :
+   QualNamePtr& type, size_t ptrs, TemplateArgPtr& preset) :
    tag_(tag),
    type_(std::move(type)),
    ptrs_(ptrs),
@@ -2961,7 +2882,13 @@ TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
    Debug::ft("TemplateParm.ctor");
 
    std::swap(name_, name);
-   CxxStats::Incr(CxxStats::TEMPLATE_PARM);
+}
+
+//------------------------------------------------------------------------------
+
+TemplateParm::~TemplateParm()
+{
+   Debug::ftnt("TemplateParm.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -3086,22 +3013,16 @@ CxxToken* TemplateParm::RootType() const
 
 //------------------------------------------------------------------------------
 
-void TemplateParm::Shrink()
-{
-   CxxScoped::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::TEMPLATE_PARM, name_.capacity());
-   if(type_ != nullptr) type_->Shrink();
-   if(default_ != nullptr) default_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 string TemplateParm::TypeString(bool arg) const
 {
-   auto ts = Name();
-   if(ptrs_ > 0) ts += string(ptrs_, '*');
-   return ts;
+   if(tag_ != Cxx::ClassTag_N)
+   {
+      auto ts = Name();
+      if(ptrs_ > 0) ts += string(ptrs_, '*');
+      return ts;
+   }
+
+   return type_->TypeString(arg);
 }
 
 //------------------------------------------------------------------------------
@@ -3129,7 +3050,13 @@ TemplateParms::TemplateParms(TemplateParmPtr& parm)
    Debug::ft("TemplateParms.ctor");
 
    parms_.push_back(std::move(parm));
-   CxxStats::Incr(CxxStats::TEMPLATE_PARMS);
+}
+
+//------------------------------------------------------------------------------
+
+TemplateParms::~TemplateParms()
+{
+   Debug::ftnt("TemplateParms.dtor");
 }
 
 //------------------------------------------------------------------------------
@@ -3237,21 +3164,6 @@ void TemplateParms::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-void TemplateParms::Shrink()
-{
-   CxxToken::Shrink();
-
-   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
-   {
-      (*p)->Shrink();
-   }
-
-   auto size = parms_.capacity() * sizeof(TemplateParmPtr);
-   CxxStats::Vectors(CxxStats::TEMPLATE_PARMS, size);
-}
-
-//------------------------------------------------------------------------------
-
 string TemplateParms::TypeString(bool arg) const
 {
    string ts = "<";
@@ -3299,7 +3211,6 @@ Terminal::Terminal(const string& name, const string& type) :
 
    SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
    Singleton< CxxSymbols >::Instance()->InsertTerm(this);
-   CxxStats::Incr(CxxStats::TERMINAL_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -3309,7 +3220,6 @@ Terminal::~Terminal()
    Debug::ftnt("Terminal.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseTerm(this);
-   CxxStats::Decr(CxxStats::TERMINAL_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -3358,18 +3268,6 @@ bool Terminal::NameRefersToItem(const string& name,
    return true;
 }
 
-//------------------------------------------------------------------------------
-
-void Terminal::Shrink()
-{
-   CxxScoped::Shrink();
-   name_.shrink_to_fit();
-   type_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::TERMINAL_DECL, name_.capacity());
-   CxxStats::Strings(CxxStats::TERMINAL_DECL, type_.capacity());
-   CxxStats::Vectors(CxxStats::TERMINAL_DECL, XrefSize());
-}
-
 //==============================================================================
 
 Typedef::Typedef(string& name, TypeSpecPtr& spec) :
@@ -3381,7 +3279,6 @@ Typedef::Typedef(string& name, TypeSpecPtr& spec) :
 
    std::swap(name_, name);
    Singleton< CxxSymbols >::Instance()->InsertType(this);
-   CxxStats::Incr(CxxStats::TYPE_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -3392,7 +3289,20 @@ Typedef::~Typedef()
 
    GetFile()->EraseType(this);
    Singleton< CxxSymbols >::Extant()->EraseType(this);
-   CxxStats::Decr(CxxStats::TYPE_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+const TemplateArgPtrVector* Typedef::Args() const
+{
+   return spec_->Args();
+}
+
+//------------------------------------------------------------------------------
+
+string Typedef::ArgString(const TemplateParmToArgMap& tmap) const
+{
+   return spec_->ArgString(tmap);
 }
 
 //------------------------------------------------------------------------------
@@ -3557,9 +3467,9 @@ bool Typedef::GetSpan(size_t& begin, size_t& left, size_t& end) const
 
 //------------------------------------------------------------------------------
 
-TypeName* Typedef::GetTemplateArgs() const
+TypeName* Typedef::GetTemplatedName() const
 {
-   return spec_->GetTemplateArgs();
+   return spec_->GetTemplatedName();
 }
 
 //------------------------------------------------------------------------------
@@ -3568,6 +3478,32 @@ void Typedef::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 {
    spec_->GetUsages(file, symbols);
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+void Typedef::Instantiating(CxxScopedVector& locals) const
+{
+   spec_->Instantiating(locals);
+}
+
+//------------------------------------------------------------------------------
+
+bool Typedef::ItemIsTemplateArg(const CxxNamed* item) const
+{
+   Debug::ft("Typedef.ItemIsTemplateArg");
+
+   return spec_->ItemIsTemplateArg(item);
+}
+
+//------------------------------------------------------------------------------
+
+bool Typedef::NamesReferToArgs(const NameVector& names,
+   const CxxScope* scope, CodeFile* file, size_t& index) const
+{
+   Debug::ft("Typedef.NamesReferToArgs");
+
+   return spec_->NamesReferToArgs(names, scope, file, index);
 }
 
 //------------------------------------------------------------------------------
@@ -3640,17 +3576,6 @@ void Typedef::SetAsReferent(const CxxNamed* user)
 
 //------------------------------------------------------------------------------
 
-void Typedef::Shrink()
-{
-   CxxScoped::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::TYPE_DECL, name_.capacity());
-   CxxStats::Vectors(CxxStats::TYPE_DECL, XrefSize());
-   spec_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 string Typedef::TypeString(bool arg) const
 {
    return spec_->TypeString(arg);
@@ -3673,6 +3598,13 @@ void Typedef::UpdateXref(bool insert)
    if(alignas_ != nullptr) alignas_->UpdateXref(insert);
 }
 
+//------------------------------------------------------------------------------
+
+bool Typedef::VerifyReferents() const
+{
+   return spec_->VerifyReferents();
+}
+
 //==============================================================================
 
 Using::Using(QualNamePtr& name, bool space, bool added) :
@@ -3683,8 +3615,6 @@ Using::Using(QualNamePtr& name, bool space, bool added) :
    space_(space)
 {
    Debug::ft("Using.ctor");
-
-   CxxStats::Incr(CxxStats::USING_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -3694,7 +3624,6 @@ Using::~Using()
    Debug::ft("Using.dtor");
 
    GetFile()->EraseUsing(this);
-   CxxStats::Decr(CxxStats::USING_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -3889,14 +3818,6 @@ void Using::SetScope(CxxScope* scope)
    //
    if(scope->Type() == Cxx::Class) scope = scope->GetSpace();
    CxxScoped::SetScope(scope);
-}
-
-//------------------------------------------------------------------------------
-
-void Using::Shrink()
-{
-   CxxScoped::Shrink();
-   name_->Shrink();
 }
 
 //------------------------------------------------------------------------------

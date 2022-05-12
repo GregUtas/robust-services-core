@@ -24,6 +24,7 @@
 
 #include "CodeSet.h"
 #include <string>
+#include <vector>
 #include "LibraryItem.h"
 #include "LibraryTypes.h"
 
@@ -58,6 +59,10 @@ public:
    LibrarySet* ReferencedBy() const override;
    LibrarySet* UsedBy(bool self) const override;
    LibrarySet* Users(bool self) const override;
+
+   //  Returns the files in alphabetical order.
+   //
+   std::vector< CodeFile* > SortInAlphaOrder() const;
 
    //  Checks the code files in the set.
    //

@@ -26,12 +26,12 @@
 #include <bitset>
 #include <cstddef>
 #include <memory>
+#include "Duration.h"
 #include "SysDecls.h"
 #include "SysTypes.h"
 
 namespace NodeBase
 {
-   class Duration;
    class Thread;
 }
 
@@ -149,7 +149,7 @@ private:
    //  o Interrupted: was awoken before the requested duration elapsed
    //  o Completed: slept for the requested duration
    //
-   DelayRc Delay(const Duration& timeout);
+   DelayRc Delay(const msecs_t& timeout);
 
    //  Signals the thread.  If the thread is delaying, it awakens.  If it
    //  is not delaying, it only yields (sleeps for zero seconds, allowing
@@ -167,7 +167,7 @@ private:
 
    //  Invoked to wait on SENTRY until TIMEOUT.
    //
-   DelayRc Suspend(SysSentry_t& sentry, const Duration& timeout);
+   DelayRc Suspend(SysSentry_t& sentry, const msecs_t& timeout);
 
    //  Invoked to signal SENTRY.
    //

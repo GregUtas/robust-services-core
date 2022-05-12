@@ -126,21 +126,24 @@ The options are specified in a string that contains any of the following:
      (omitting this is useful when doing a diff between .lib files)
   u: display each file's symbol usage and recommended changes to #includes,
      usings, and forward declarations (in a separate .trim file)
-  x: display the brief global cross-reference (only files with references)
-  z: display the verbose global cross-reference (line numbers for references)
+  x: display the brief global cross-reference (file names as references)
+  z: display the verbose global cross-reference (line numbers as references)
 If no options are entered, they default to "nchsux".  At least one option
 of "ncoh" must be specified to generate a .lib file.  If a cross-reference
 is requested, it appears in a separate .xref file.
 /
 ? ct.parse
 The options are specified in a string that contains any of the following:
-  t: display logs while compiling templates (normally suppressed because
+  t: display logs when compiling templates (normally suppressed because
      an item accessed through a template parameter cannot be resolved)
-  p: save parse tree on failure
-  s: always save parse tree
+  p: trace function calls during parsing (mostly Parser.cpp and Lexer.cpp)
   c: generate "object code" when compiling (use >save trace <fn> afterwards)
-  f: enable FunctionTracer
-For no options, use a hyphen ('-').
+  f: trace function calls when compiling (mostly Cxx*.cpp files)
+  i: trace template instantiations (otherwise omitted)
+For no options, use a hyphen ('-'). Either 'p' and/or 'c' must be specified
+for any tracing to occur. If tracing is started before issuing the >parse
+command, all files are traced, with ParserTracer (if selected) acting as the
+option 'c' and FunctionTracer acting as options 'pf'.
 /
 ? ct.rename
 The current name can be qualified with scopes.  The following can be renamed:

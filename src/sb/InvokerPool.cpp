@@ -21,6 +21,7 @@
 //
 #include "InvokerPool.h"
 #include <cstdint>
+#include <ratio>
 #include <sstream>
 #include "Algorithms.h"
 #include "CfgIntParm.h"
@@ -44,8 +45,8 @@
 #include "SbTracer.h"
 #include "Singleton.h"
 #include "Statistics.h"
+#include "SteadyTime.h"
 #include "ThisThread.h"
-#include "TimePoint.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -83,7 +84,7 @@ static TransTrace* TraceRxNet(Message& msg, const Factory& fac)
    if(sbt->MsgStatus(msg, MsgIncoming) == TraceIncluded)
    {
       auto buff = Singleton< TraceBuffer >::Instance();
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
 
       if(buff->ToolIsOn(TransTracer))
       {
@@ -198,8 +199,7 @@ InvokerWork::InvokerWork() : length_(0)
 
    dequeues_.reset(new Counter("contexts dequeued"));
    maxLength_.reset(new HighWatermark("longest length of work queue"));
-   maxDelay_.reset(new HighWatermark
-      ("longest queue delay in msecs", TICKS_PER_mSEC));
+   maxDelay_.reset(new HighWatermark("longest queue delay in msecs", NS_TO_MS));
 }
 
 //------------------------------------------------------------------------------
@@ -735,9 +735,9 @@ bool InvokerPool::ReceiveMsg(Message& msg, bool atIoLevel)
 
 //------------------------------------------------------------------------------
 
-void InvokerPool::RecordDelay(MsgPriority prio, const Duration& delay) const
+void InvokerPool::RecordDelay(MsgPriority prio, const nsecs_t& delay) const
 {
-   work_[prio]->maxDelay_->Update(delay.Ticks());
+   work_[prio]->maxDelay_->Update(delay.count());
 }
 
 //------------------------------------------------------------------------------
@@ -795,10 +795,10 @@ size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
 
 //------------------------------------------------------------------------------
 
-Duration InvokerPool::WorkQMaxDelay(MsgPriority prio) const
+nsecs_t InvokerPool::WorkQMaxDelay(MsgPriority prio) const
 {
    if(prio > MAX_PRIORITY) return ZERO_SECS;
-   return Duration(work_[prio]->maxDelay_->Curr(), TICKS);
+   return nsecs_t(work_[prio]->maxDelay_->Curr());
 }
 
 //------------------------------------------------------------------------------

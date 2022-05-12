@@ -24,8 +24,9 @@
 
 #include "Object.h"
 #include <cstddef>
+#include <cstdint>
 #include "Duration.h"
-#include "TimePoint.h"
+#include "SteadyTime.h"
 
 //------------------------------------------------------------------------------
 
@@ -50,7 +51,7 @@ public:
 
    //  Initializes the counter to detect LIMIT events in SECONDS.
    //
-   void Initialize(size_t limit, secs_t seconds);
+   void Initialize(size_t limit, uint32_t seconds);
 
    //  Invoked by the application when an event occurs.  Returns
    //  true if more than LIMIT events have occurred in SECONDS.
@@ -69,12 +70,12 @@ private:
    //  The length of the interval during which a threshold number
    //  of events have to occur to drain the bucket.
    //
-   Duration interval_;
+   msecs_t interval_;
 
    //  The last time that HasReachedLimit was invoked (i.e. the
    //  last time than an event occurred).
    //
-   TimePoint lastTime_;
+   SteadyTime::Point lastTime_;
 
    //  The maximum number of events allowed during an interval.
    //

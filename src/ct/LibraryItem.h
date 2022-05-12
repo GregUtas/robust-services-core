@@ -39,12 +39,11 @@ public:
    //
    virtual ~LibraryItem();
 
-   //  Returns the item's name.  The default implementation generates a
-   //  log and returns an empty string.
+   //  Returns the item's name.  The default version returns an empty string.
    //
    virtual const std::string& Name() const;
 
-   //  Renames the item.  The default implementation generates a log.
+   //  Renames the item.  The default version generates a log.
    //
    virtual void Rename(const std::string& name);
 

@@ -158,10 +158,6 @@ public:
    //
    const std::list< LibrarySet* >& Variables() const { return vars_; }
 
-   //  Shrinks containers.
-   //
-   void Shrink();
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,

@@ -145,6 +145,16 @@ extern NodeBase::fixed_string NULL_STR;
 
 //------------------------------------------------------------------------------
 //
+//  The current stage in parsing and compiling.
+//
+enum Phase
+{
+   Parsing,   // mostly Parser.cpp and Lexer.cpp
+   Compiling  // mostly Cxx*.cpp files
+};
+
+//------------------------------------------------------------------------------
+//
 //  Returns the indentation size for source code.
 //
 size_t IndentSize();

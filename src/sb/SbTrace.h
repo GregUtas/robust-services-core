@@ -23,15 +23,15 @@
 #define SBTRACE_H_INCLUDED
 
 #include "TimedRecord.h"
+#include <cstdint>
 #include <iosfwd>
-#include "Duration.h"
 #include "EventHandler.h"
 #include "LocalAddress.h"
 #include "Message.h"
 #include "NbTypes.h"
 #include "SbTypes.h"
+#include "SteadyTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 //
@@ -57,13 +57,13 @@ public:
    //
    TransTrace(const Context& ctx, const Message& msg, const InvokerThread* inv);
 
-   //  When a trace tool starts its work, it calls TimePoint::Now()
+   //  When a trace tool starts its work, it calls SteadyTime::Now()
    //  to obtain the current clock time in ticks.  When it finishes its
    //  work, it calls this function so that the time used by the tool
    //  can be excluded from the cost of the current transaction.  THEN
-   //  was the value obtained from TimePoint::Now().
+   //  was the value obtained from SteadyTime::Now().
    //
-   void ResumeTime(const NodeBase::TimePoint& then);
+   void ResumeTime(const NodeBase::SteadyTime::Point& then);
 
    //  Called to set the context once it is known.
    //
@@ -107,11 +107,11 @@ private:
 
    //  The time when the transaction began.
    //
-   NodeBase::TimePoint time0_;
+   NodeBase::SteadyTime::Point time0_;
 
    //  The time when the transaction ended.
    //
-   NodeBase::TimePoint time1_;
+   NodeBase::SteadyTime::Point time1_;
 
    //  The FactoryId (or ServiceId, if known) involved in the transaction.
    //
@@ -434,7 +434,7 @@ private:
 
    //  The timer's duration.
    //
-   const NodeBase::secs_t secs_;
+   const uint32_t secs_;
 
    //  The PSM associated with the timer.
    //

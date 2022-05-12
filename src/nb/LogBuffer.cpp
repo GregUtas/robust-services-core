@@ -24,6 +24,7 @@
 #include <memory>
 #include <ostream>
 #include "Debug.h"
+#include "Duration.h"
 #include "Log.h"
 #include "LogThread.h"
 #include "Memory.h"
@@ -32,9 +33,8 @@
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysMutex.h"
-#include "SysTime.h"
+#include "SystemTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 
 using std::ostream;
 using std::string;
@@ -113,11 +113,9 @@ LogBuffer::LogBuffer(size_t size) :
    //  replaced within a '-'.
    //
    if(Restart::GetLevel() == RestartReboot)
-      fileName_ = "logs" + TimePoint::TimeZeroStr();
+      fileName_ = "logs" + to_string(SystemTime::TimeZero(), FullNumeric);
    else
-      fileName_ = "logs" + SysTime().to_str(SysTime::Numeric);
-   auto pos = fileName_.find('.');
-   if(pos != string::npos) fileName_[pos] = '-';
+      fileName_ = "logs" + to_string(SystemTime::Now(), FullNumeric);
    fileName_.append(".txt");
 
    if(size < (16 * kBs)) size = 16 * kBs;

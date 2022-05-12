@@ -89,10 +89,6 @@ public:
    //
    void Check(bool force);
 
-   //  Shrinks containers.
-   //
-   void Shrink() const;
-
    //  Overridden to display macros.
    //
    void Display(std::ostream& stream,

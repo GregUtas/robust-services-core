@@ -145,10 +145,6 @@ public:
    //
    CxxTokenVector XrefItems() const;
 
-   //  Returns the amount of memory used by xref_ entries.
-   //
-   size_t XrefSize() const { return xref_.size() * 3 * sizeof(CxxNamed*); }
-
    //  Overridden to copy THAT's scope and access control.
    //
    void CopyContext(const CxxToken* that, bool internal) override;
@@ -393,10 +389,6 @@ public:
    //
    bool SetNonConst() override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to reveal that this is an argument.
    //
    Cxx::ItemType Type() const override { return Cxx::Argument; }
@@ -526,8 +518,8 @@ public:
 
    //  Overridden to return the base class's qualified name.
    //
-   std::string QualifiedName(bool scopes, bool templates) const
-      override { return name_->QualifiedName(scopes, templates); }
+   std::string QualifiedName(bool scopes, bool templates) const override
+      { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to return the base class.
    //
@@ -540,10 +532,6 @@ public:
    //  Overridden to preserve the access control set by the constructor.
    //
    void SetAccess(Cxx::Access access) override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override { name_->Shrink(); }
 
    //  Overridden to return the declaration's full root type.
    //
@@ -689,10 +677,6 @@ public:
    //
    void SetAsReferent(const CxxNamed* user) override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to reveal that this is an enumeration.
    //
    Cxx::ItemType Type() const override { return Cxx::Enum; }
@@ -713,8 +697,8 @@ public:
    //  Overridden to support, for example, writing to an enum in a std::vector
    //  or passing an enum as an argument.
    //
-   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
-      override { return false; }
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect) override
+      { return false; }
 private:
    //  Overridden to set LEFT to the position of the left brace and END to the
    //  position of the semicolon.
@@ -842,10 +826,6 @@ public:
    //
    void SetAsReferent(const CxxNamed* user) override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to reveal that this is an enumerator.
    //
    Cxx::ItemType Type() const override { return Cxx::Enumerator; }
@@ -951,8 +931,7 @@ public:
 
    //  Overridden to support the forward declaration of templates.
    //
-   const TemplateParms* GetTemplateParms() const
-      override { return parms_.get(); }
+   TemplateParms* GetTemplateParms() const override { return parms_.get(); }
 
    //  Overridden to reveal that this is a forward declaration.
    //
@@ -972,8 +951,8 @@ public:
 
    //  Overridden to return the class's qualified name.
    //
-   std::string QualifiedName(bool scopes, bool templates) const
-      override { return name_->QualifiedName(scopes, templates); }
+   std::string QualifiedName(bool scopes, bool templates) const override
+      { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to return the class.
    //
@@ -994,10 +973,6 @@ public:
    //  Overridden to support the forward declaration of templates.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to reveal that this is a forward declaration.
    //
@@ -1117,8 +1092,7 @@ public:
 
    //  Overridden to support templates as friends.
    //
-   const TemplateParms* GetTemplateParms() const
-      override { return parms_.get(); }
+   TemplateParms* GetTemplateParms() const override { return parms_.get(); }
 
    //  Overridden to update SYMBOLS with the declaration's type usage.
    //
@@ -1160,7 +1134,7 @@ public:
    //  of the class template.
    //
    bool ResolveTemplate
-      (Class* cls, const TypeName* args, bool end) const override;
+      (Class* cls, const TypeName* type, bool end) const override;
 
    //  Overridden to return the friend's scoped name.
    //
@@ -1174,10 +1148,6 @@ public:
    //  Overridden to support templates as friends.
    //
    void SetTemplateParms(TemplateParmsPtr& parms) override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to reveal that this is a friend declaration.
    //
@@ -1326,10 +1296,6 @@ public:
    //
    void Rename(const std::string& name) override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to return the member's name.
    //
    std::string Trace() const override { return name_; }
@@ -1382,15 +1348,15 @@ public:
    //  an optional default (PRESET).
    //
    TemplateParm(std::string& name, Cxx::ClassTag tag,
-      QualNamePtr& type, size_t ptrs, TypeSpecPtr& preset);
+      QualNamePtr& type, size_t ptrs, TemplateArgPtr& preset);
 
    //  Not subclassed.
    //
-   ~TemplateParm() { CxxStats::Decr(CxxStats::TEMPLATE_PARM); }
+   ~TemplateParm();
 
    //  Returns the parameter's default type.
    //
-   const TypeSpec* Default() const { return default_.get(); }
+   const TemplateArg* Default() const { return default_.get(); }
 
    //  Overridden to return the default's type, else this item.
    //
@@ -1433,9 +1399,9 @@ public:
    //
    CxxScoped* Referent() const override;
 
-   //  Overridden to shrink the item's name.
+   //  Overridden to not add any scopes to the parameter.
    //
-   void Shrink() override;
+   std::string ScopedName(bool templates) const override { return name_; }
 
    //  Overridden to reveal that this is a template parameter.
    //
@@ -1473,11 +1439,11 @@ private:
 
    //  The level of pointer indirection for the parameter.
    //
-   const size_t ptrs_;
+   const TagCount ptrs_;
 
    //  The parameter's default value, if any.
    //
-   const TypeSpecPtr default_;
+   const TemplateArgPtr default_;
 };
 
 //------------------------------------------------------------------------------
@@ -1498,7 +1464,7 @@ public:
 
    //  Not subclassed.
    //
-   ~TemplateParms() { CxxStats::Decr(CxxStats::TEMPLATE_PARMS); }
+   ~TemplateParms();
 
    //  Adds another parameter to the template.
    //
@@ -1525,10 +1491,6 @@ public:
    //
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to return the template's parameters in angle brackets.
    //
@@ -1599,10 +1561,6 @@ public:
    bool NameRefersToItem(const std::string& name, const CxxScope* scope,
       CodeFile* file, SymbolView& view) const override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to reveal that this is a terminal.
    //
    Cxx::ItemType Type() const override { return Cxx::Terminal; }
@@ -1618,16 +1576,16 @@ public:
    //  Overridden to support, for example, writing to a char in a std::string
    //  or passing an int as an argument.
    //
-   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
-      override { return false; }
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect) override
+      { return false; }
 private:
    //  The terminal's name.
    //
-   std::string name_;
+   const std::string name_;
 
    //  The terminal's type.
    //
-   std::string type_;
+   const std::string type_;
 
    //  The terminal's attributes as an integer.
    //
@@ -1657,6 +1615,14 @@ public:
    //  Sets the typedef's alignment.
    //
    void SetAlignment(AlignAsPtr& align);
+
+   //  Overridden to return the the underlying type's template arguments.
+   //
+   const TemplateArgPtrVector* Args() const override;
+
+   //  Overridden to forward to the underlying type.
+   //
+   std::string ArgString(const TemplateParmToArgMap& tmap) const override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1691,13 +1657,13 @@ public:
    //
    void GetDecls(CxxNamedSet& items) override;
 
-   //  Overridden to return the definition's underlying numeric type.
+   //  Overridden to return the underlying numeric type.
    //
    Numeric GetNumeric() const override { return spec_->GetNumeric(); }
 
    //  Overridden to search the underlying type for template arguments.
    //
-   TypeName* GetTemplateArgs() const override;
+   TypeName* GetTemplatedName() const override;
 
    //  Overridden to return the underlying type.
    //
@@ -1707,13 +1673,26 @@ public:
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
+   //  Overridden to forward to the underlying type.
+   //
+   void Instantiating(CxxScopedVector& locals) const override;
+
    //  Overridden to determine if the typedef is unused.
    //
    bool IsUnused() const override { return (refs_ == 0); }
 
+   //  Overridden to return true if ITEM is the referent of a template argument.
+   //
+   bool ItemIsTemplateArg(const CxxNamed* item) const override;
+
    //  Overridden to return the alias introduced by the typedef.
    //
    const std::string& Name() const override { return name_; }
+
+   //  Overridden to forward to the underlying type.
+   //
+   bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
+      CodeFile* file, size_t& index) const override;
 
    //  Overridden to find the item located at POS.
    //
@@ -1736,10 +1715,6 @@ public:
    //
    void SetAsReferent(const CxxNamed* user) override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to reveal that this is a typedef.
    //
    Cxx::ItemType Type() const override { return Cxx::Typedef; }
@@ -1757,11 +1732,15 @@ public:
    //
    void UpdateXref(bool insert) override;
 
+   //  Overridden to check the typedef's root type.
+   //
+   bool VerifyReferents() const override;
+
    //  Overridden to support a temporary variable represented by a typedef
    //  that was, for example, returned by one function and passed to another.
    //
-   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
-      override { return false; }
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect) override
+      { return false; }
 private:
    //  Checks if the typedef is for a pointer type.
    //
@@ -1882,8 +1861,8 @@ public:
 
    //  Overridden to return the qualified name of what is being used.
    //
-   std::string QualifiedName(bool scopes, bool templates) const
-      override { return name_->QualifiedName(scopes, templates); }
+   std::string QualifiedName(bool scopes, bool templates) const override
+      { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to return what the declaration refers to.
    //
@@ -1900,10 +1879,6 @@ public:
    //  Overridden to adjust the scope for a using statement within a class.
    //
    void SetScope(CxxScope* scope) override;
-
-   //  Overridden to shrink the item's name.
-   //
-   void Shrink() override;
 
    //  Overridden to update the directive's location.
    //

@@ -25,6 +25,7 @@
 #include "SysSocket.h"
 #include <bitset>
 #include <cstddef>
+#include "Duration.h"
 #include "NwTypes.h"
 #include "Q1Way.h"
 #include "SysDecls.h"
@@ -106,7 +107,7 @@ public:
    //  generating a log.
    //
    static NodeBase::word Poll(SysTcpSocket* sockets[],
-      size_t size, const NodeBase::Duration& timeout);
+      size_t size, const NodeBase::msecs_t& timeout);
 
    //  Returns the flags that reported the socket's status after invoking
    //  Poll.  Any of the flags could have been set.

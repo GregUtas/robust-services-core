@@ -200,6 +200,11 @@ public:
    //
    void UpdateXref(bool insert) const;
 
+   //  Returns true if the file contains targeted code that was excluded
+   //  from the build.
+   //
+   bool IsExcludedTarget() const;
+
    //  Checks the file after it has been parsed, looking for additional
    //  warnings when a report is to be generated.  If FORCE is set, the
    //  file is rechecked even if it was previously checked.
@@ -290,10 +295,6 @@ public:
    //  Invoked when ITEM is deleted.
    //
    void ItemDeleted(const CxxToken* item);
-
-   //  Shrinks containers.
-   //
-   void Shrink();
 
    //  Overridden to display member variables.
    //

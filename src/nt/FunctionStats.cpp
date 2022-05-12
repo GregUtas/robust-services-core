@@ -24,6 +24,7 @@
 #include <cstring>
 #include <iomanip>
 #include <ostream>
+#include <ratio>
 #include <string>
 #include "Algorithms.h"
 #include "Formatters.h"
@@ -55,14 +56,14 @@ void FunctionStats::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    stream << setw(9) << calls_ << spaces(2);
-   stream << setw(10) << time_.To(uSECS) << spaces(3);
+   stream << setw(10) << time_.count() << spaces(3);
    stream << func_;
    stream << CRLF;
 }
 
 //------------------------------------------------------------------------------
 
-void FunctionStats::IncrCalls(const Duration& net)
+void FunctionStats::IncrCalls(const usecs_t& net)
 {
    ++calls_;
    time_ += net;

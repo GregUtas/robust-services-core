@@ -24,7 +24,7 @@
 
 #include "Pooled.h"
 #include <cstddef>
-#include "Duration.h"
+#include <cstdint>
 #include "Q1Link.h"
 #include "Q2Link.h"
 #include "SbTypes.h"
@@ -60,8 +60,7 @@ private:
    //  expire in SECS, and repeatedly if REPEAT is true.  Private because
    //  applications create timers via ProtocolSM::StartTimer.
    //
-   Timer(ProtocolSM& psm, Base& owner,
-      TimerId tid, NodeBase::secs_t secs, bool repeat);
+   Timer(ProtocolSM& psm, Base& owner, TimerId tid, uint32_t secs, bool repeat);
 
    //  Private because applications delete timers via ProtocolSM::StopTimer.
    //  Not subclassed.
@@ -147,11 +146,11 @@ private:
 
    //  The length of the timer in seconds.
    //
-   const NodeBase::secs_t duration_;
+   const uint32_t secs_;
 
    //  How long until the timer expires (only used for long timers).
    //
-   NodeBase::secs_t remaining_;
+   uint32_t remaining_;
 };
 }
 #endif

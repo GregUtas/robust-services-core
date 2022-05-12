@@ -24,6 +24,7 @@
 #include "EventHandler.h"
 #include "ServiceSM.h"
 #include "State.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -33,7 +34,6 @@
 #include "BcSessions.h"
 #include "Context.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "GlobalAddress.h"
 #include "IpPortRegistry.h"
 #include "LocalAddress.h"
@@ -254,13 +254,13 @@ private:
 class PotsCwbSsm : public PotsCwtSsm
 {
 public:
-   static const secs_t InitiationTimeout = 6;
+   static const uint32_t InitiationTimeout = 6;
 
    static const TimerId InitiationTimeoutId = 1;
 
    PotsCwbSsm();
    ~PotsCwbSsm();
-   void StartTimer(TimerId tid, secs_t duration);
+   void StartTimer(TimerId tid, uint32_t secs);
    void StopTimer(TimerId tid);
    void ClearTimer(TimerId tid);
    void FreeContext();
@@ -831,7 +831,7 @@ EventHandler::Rc PotsCwbSsm::RestoreContext(Event*& nextEvent)
 
 fn_name PotsCwbSsm_StartTimer = "PotsCwbSsm.StartTimer";
 
-void PotsCwbSsm::StartTimer(TimerId tid, secs_t duration)
+void PotsCwbSsm::StartTimer(TimerId tid, uint32_t secs)
 {
    Debug::ft(PotsCwbSsm_StartTimer);
 
@@ -846,7 +846,7 @@ void PotsCwbSsm::StartTimer(TimerId tid, secs_t duration)
       tid_ = NIL_ID;
    }
 
-   if(upsm->StartTimer(duration, *this, tid)) tid_ = tid;
+   if(upsm->StartTimer(secs, *this, tid)) tid_ = tid;
 }
 
 //------------------------------------------------------------------------------

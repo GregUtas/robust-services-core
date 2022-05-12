@@ -35,7 +35,7 @@ namespace NodeBase
 //
 namespace TraceDump
 {
-   //  Trace output field widths (see TraceHeader2).
+   //  Trace output field widths (see Header for the Generate function).
    //  Each field adds two trailing blanks for separation (TabWidth).
    //
    constexpr col_t TabWidth = 2;

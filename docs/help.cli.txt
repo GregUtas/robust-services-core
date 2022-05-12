@@ -492,69 +492,6 @@ reg               : Tests a Registry function.
   count           : Returns the number of items in the registry.
 )
 
-time              : Tests a SysTime function.
-(
-  ctor1           : Constructs the current time.
-    (1:3)         : item number
-  ctor2           : Constructs a specified time.
-    (1:3)         : item number
-    (1900:2100)   : year
-    (1:12)        : month (Jan=1, Dec=12)
-    (1:31)        : day of month
-    (0:23)        : hours (24-hour clock)
-    (0:59)        : minutes
-    (0:59)        : seconds
-    (0:999)       : milliseconds
-  dayofweek       : Returns the time's day of the week.
-    (1:3)         : item number
-  dayofyear       : Returns the time's day of the year.
-    (1:3)         : item number
-  isleapyear      : Returns true if a year is a leap year.
-    (1900:2100)   : year
-  truncate        : Truncates the time at a specified field.
-    (1:3)         : item number
-  (               : time field
-    year          : year field
-    month         : month field
-    day           : day field
-    hour          : hours field
-    min           : minutes field
-    sec           : seconds field
-    msec          : milliseconds field
-  )
-  round           : Rounds off the time at a specified field.
-    (1:3)         : item number
-  (               : time field
-    year          : year field
-    month         : month field
-    day           : day field
-    hour          : hours field
-    min           : minutes field
-    sec           : seconds field
-    msec          : milliseconds field
-  )
-    (1:500)       : interval (must evenly divide the field's range)
-  addmsecs        : Adds milliseconds to the time.
-    (1:3)         : item number
-    <int>         : number of milliseconds
-  submsecs        : Subtracts milliseconds from the time.
-    (1:3)         : item number
-    <int>         : number of milliseconds
-  msecsfromnow    : Returns the milliseconds from now to a time.
-    (1:3)         : item number
-  msecsuntil      : Returns the milliseconds from one time to another.
-    (1:3)         : item number
-    (1:3)         : item number
-  adddays         : Adds days to the time.
-    (1:3)         : item number
-    <int>         : number of days
-  subdays         : Subtracts days from the time.
-    (1:3)         : item number
-    <int>         : number of days
-  strtime         : Displays the time in various formats.
-    (1:3)         : item number
-)
-
 heap              : Tests an NbHeap function.
 (
   create          : Creates the heap.
@@ -1296,7 +1233,6 @@ show              : Displays library information.
 (                 : what to show...
   dirs            : code directories
   failed          : code files that failed to parse
-  items           : memory usage by item type
   stats           : parser statistics
 )
 
@@ -1334,7 +1270,7 @@ trace             : Manage tracepoints for >parse command.
   insert          : add tracepoint
   (               : action at tracepoint...
     break         : breakpoint (at Debug::noop in Context::SetPos)
-    start         : start tracing (must preconfigure settings)
+    start         : start tracing (preconfigure trace using >set)
     stop          : stop tracing
   )
     <str>         : name of source code file
@@ -1342,7 +1278,7 @@ trace             : Manage tracepoints for >parse command.
   remove          : delete tracepoint
   (               : action at tracepoint...
     break         : breakpoint (at Debug::noop in Context::SetPos)
-    start         : start tracing (must preconfigure settings)
+    start         : start tracing (preconfigure trace using >set)
     stop          : stop tracing
   )
     <str>         : name of source code file
@@ -1389,8 +1325,6 @@ coverage          : Supports code coverage.
     <str>         : name of function to remove
   update          : updates database with modified functions and rerun tests
 )
-
-shrink            : Shrinks the library's element containers.
 
 items             : Displays the C++ items in a file, by position.
   <str>           : filename (including extension)

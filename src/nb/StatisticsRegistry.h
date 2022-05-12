@@ -26,8 +26,9 @@
 #include <iosfwd>
 #include "NbTypes.h"
 #include "Registry.h"
+#include "SteadyTime.h"
+#include "SystemTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 
 namespace NodeBase
 {
@@ -62,9 +63,13 @@ public:
    //
    void DisplayStats(std::ostream& stream, const Flags& options) const;
 
+   //  Returns the clock time when the current interval started.
+   //
+   static const SystemTime::Point& StartTime() { return StartTime_; }
+
    //  Returns the tick time when the current interval started.
    //
-   static const TimePoint& StartTime() { return StartTime_; }
+   static const SteadyTime::Point& StartPoint() { return StartPoint_; }
 
    //  Invoked at regular intervals to start a new measurement period.  If
    //  FIRST is true, previous values in Statistics::total_ are discarded.
@@ -118,7 +123,11 @@ private:
 
    //  The time when the most recent statistics interval began.
    //
-   static TimePoint StartTime_;
+   static SystemTime::Point StartTime_;
+
+   //  The point when the most recent statistics interval began.
+   //
+   static SteadyTime::Point StartPoint_;
 };
 }
 #endif

@@ -22,7 +22,6 @@
 #include "Parser.h"
 #include <cctype>
 #include <cstdint>
-#include <cstdio>
 #include <cstring>
 #include <iomanip>
 #include <sstream>
@@ -41,13 +40,9 @@
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
-#include "Element.h"
 #include "Formatters.h"
 #include "Log.h"
 #include "Singleton.h"
-#include "SysFile.h"
-#include "SysThreadStack.h"
-#include "ThisThread.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -60,7 +55,7 @@ namespace CodeTools
 {
 //  The highest legal cause_ value.
 //
-constexpr size_t MaxCause_ = 300;
+constexpr size_t MaxCause_ = 301;
 
 //  Statistics on where the parser backed up.
 //
@@ -142,32 +137,15 @@ static bool SetCompoundType
 
 //------------------------------------------------------------------------------
 
-Parser::Parser(const string& opts) :
+Parser::Parser() :
    source_(IsUnknown),
    inst_(nullptr),
-   opts_(opts),
-   depth_(0),
+   time_(SystemTime::Now()),
    kwdBegin_(string::npos),
    farthest_(0),
-   cause_(0),
-   pTrace_(nullptr)
+   cause_(0)
 {
-   Debug::ft("Parser.ctor(opts)");
-
-   //  Save the options that control generation of a parse trace file (on
-   //  a per-file basis) and object code file (a single file).  Make this
-   //  the active parser.
-   //
-   if(opts_ != EMPTY_STR)
-   {
-      if((opts_.find(SaveParseTrace) != string::npos) &&
-         (opts_.find(TraceParse) == string::npos))
-      {
-         opts_.push_back(TraceParse);
-      }
-
-      Context::SetOptions(opts_);
-   }
+   Debug::ft("Parser.ctor");
 
    Context::PushParser(this);
 }
@@ -177,12 +155,10 @@ Parser::Parser(const string& opts) :
 Parser::Parser(CxxScope* scope) :
    source_(IsUnknown),
    inst_(nullptr),
-   opts_(EMPTY_STR),
-   depth_(0),
+   time_(SystemTime::Now()),
    kwdBegin_(string::npos),
    farthest_(0),
-   cause_(0),
-   pTrace_(nullptr)
+   cause_(0)
 {
    Debug::ft("Parser.ctor(scope)");
 
@@ -198,11 +174,10 @@ Parser::~Parser()
 {
    Debug::ftnt("Parser.dtor");
 
-   //  Remove the parser and close the parse trace file, if any.
+   //  Remove the parser.
    //
    if(Context::Optional() != nullptr) Fault(EndifExpected);
    Context::PopParser(this);
-   pTrace_.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -331,7 +306,7 @@ size_t Parser::CurrPos() const
    //
    if(Context::CheckPos_)
    {
-      Context::OnLine(lexer_.GetLineNum(curr), false);
+      Context::OnLine(lexer_.GetLineNum(curr), Parsing);
    }
 
    return curr;
@@ -459,11 +434,9 @@ bool Parser::GetAlignAs(AlignAsPtr& align)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetAlignOf = "Parser.GetAlignOf";
-
 bool Parser::GetAlignOf(Expression* expr, size_t pos)
 {
-   Debug::ft(Parser_GetAlignOf);
+   Debug::ft("Parser.GetAlignOf");
 
    auto start = CurrPos();
 
@@ -482,16 +455,14 @@ bool Parser::GetAlignOf(Expression* expr, size_t pos)
    auto op = static_cast< Operation* >(token.get());
    op->AddArg(arg, false);
    expr->AddItem(token);
-   return Success(Parser_GetAlignOf, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetArgList = "Parser.GetArgList";
-
 bool Parser::GetArgList(TokenPtr& call)
 {
-   Debug::ft(Parser_GetArgList);
+   Debug::ft("Parser.GetArgList");
 
    auto prev = lexer_.Prev();
    auto start = CurrPos();
@@ -525,16 +496,14 @@ bool Parser::GetArgList(TokenPtr& call)
       op->AddArg(arg, false);
    }
 
-   return Success(Parser_GetArgList, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetArgument = "Parser.GetArgument";
-
 bool Parser::GetArgument(ArgumentPtr& arg)
 {
-   Debug::ft(Parser_GetArgument);
+   Debug::ft("Parser.GetArgument");
 
    //  <Argument> = <TypeSpec> [<Name>] [<ArraySpec>] ["=" <Expr>]
    //
@@ -555,7 +524,7 @@ bool Parser::GetArgument(ArgumentPtr& arg)
       {
          arg.reset(new Argument(argName, typeSpec));
          arg->SetContext(pos);
-         return Success(Parser_GetArgument, start);
+         return true;
       }
    }
 
@@ -575,23 +544,21 @@ bool Parser::GetArgument(ArgumentPtr& arg)
    arg.reset(new Argument(argName, typeSpec));
    arg->SetContext(pos);
    arg->SetDefault(preset);
-   return Success(Parser_GetArgument, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetArguments = "Parser.GetArguments";
-
 bool Parser::GetArguments(Function* func)
 {
-   Debug::ft(Parser_GetArguments);
+   Debug::ft("Parser.GetArguments");
 
    //  <Arguments> = "(" [<Argument>] ["," <Argument>]* ")"
    //  The left parenthesis has already been parsed.  Looking for the right
    //  parenthesis immediately is an optimization for the no arguments case.
    //
    auto start = CurrPos();
-   if(lexer_.NextCharIs(')')) return Success(Parser_GetArguments, start);
+   if(lexer_.NextCharIs(')')) return true;
 
    ArgumentPtr arg;
 
@@ -607,16 +574,14 @@ bool Parser::GetArguments(Function* func)
    }
 
    if(!lexer_.NextCharIs(')')) return Backup(start, 8);
-   return Success(Parser_GetArguments, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetArraySpec = "Parser.GetArraySpec";
-
 bool Parser::GetArraySpec(ArraySpecPtr& array)
 {
-   Debug::ft(Parser_GetArraySpec);
+   Debug::ft("Parser.GetArraySpec");
 
    //  <ArraySpec> = "[" [<Expr>] "]"
    //
@@ -634,21 +599,18 @@ bool Parser::GetArraySpec(ArraySpecPtr& array)
    if(!lexer_.NextCharIs(']')) return Backup(start, 11);
    array.reset(new ArraySpec(size));
    array->SetContext(start);
-   return Success(Parser_GetArraySpec, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetAsm = "Parser.GetAsm";
-
 bool Parser::GetAsm(AsmPtr& statement)
 {
-   Debug::ft(Parser_GetAsm);
+   Debug::ft("Parser.GetAsm");
 
    //  The "asm" keyword has already been parsed.  It should be
    //  followed by a string within parentheses.
    //
-   auto begin = kwdBegin_;
    auto start = CurrPos();
 
    if(!lexer_.NextCharIs('(')) return Backup(start, 236);
@@ -660,16 +622,14 @@ bool Parser::GetAsm(AsmPtr& statement)
    if(!lexer_.NextCharIs(')')) return Backup(start, 239);
    if(!lexer_.NextCharIs(';')) return Backup(start, 240);
    statement.reset(new Asm(code));
-   return Success(Parser_GetAsm, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetBaseDecl = "Parser.GetBaseDecl";
-
 bool Parser::GetBaseDecl(BaseDeclPtr& base)
 {
-   Debug::ft(Parser_GetBaseDecl);
+   Debug::ft("Parser.GetBaseDecl");
 
    //  <BaseDecl> = ":" <Access> <QualName>
    //
@@ -682,16 +642,14 @@ bool Parser::GetBaseDecl(BaseDeclPtr& base)
    if(!GetQualName(baseName)) return Backup(start, 14);
    base.reset(new BaseDecl(baseName, access));
    base->SetContext(start);
-   return Success(Parser_GetBaseDecl, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetBasic = "Parser.GetBasic";
-
 bool Parser::GetBasic(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetBasic);
+   Debug::ft("Parser.GetBasic");
 
    auto start = CurrPos();
 
@@ -701,7 +659,7 @@ bool Parser::GetBasic(TokenPtr& statement)
    if(lexer_.NextCharIs(';'))
    {
       statement.reset(new NoOp(start));
-      return Success(Parser_GetBasic, start);
+      return true;
    }
 
    //  If the next sequence is a name followed by a ':', this is a label.
@@ -714,7 +672,7 @@ bool Parser::GetBasic(TokenPtr& statement)
       if(lexer_.NextCharIs(':') && !lexer_.NextCharIs(':'))
       {
          statement.reset(new Label(name, start));
-         return Success(Parser_GetBasic, start);
+         return true;
       }
 
       lexer_.Retreat(start);
@@ -727,16 +685,14 @@ bool Parser::GetBasic(TokenPtr& statement)
    if(!lexer_.NextCharIs(';')) return Backup(start, 17);
 
    statement.reset(new Expr(expr, start));
-   return Success(Parser_GetBasic, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetBlock = "Parser.GetBlock";
-
 bool Parser::GetBlock(BlockPtr& block)
 {
-   Debug::ft(Parser_GetBlock);
+   Debug::ft("Parser.GetBlock");
 
    //  <Block> = ["{"] [<Statement> ";"]* ["}"]
    //
@@ -774,16 +730,14 @@ bool Parser::GetBlock(BlockPtr& block)
 
    Context::PopScope();
    if(braced && !lexer_.NextCharIs('}')) return Backup(start, 18);
-   return Success(Parser_GetBlock, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetBraceInit = "Parser.GetBraceInit";
-
 bool Parser::GetBraceInit(ExprPtr& expr)
 {
-   Debug::ft(Parser_GetBraceInit);
+   Debug::ft("Parser.GetBraceInit");
 
    auto prev = lexer_.Prev();
    auto start = CurrPos();
@@ -831,16 +785,14 @@ bool Parser::GetBraceInit(ExprPtr& expr)
 
    expr.reset(new Expression(end, true));
    expr->AddItem(token);
-   return Success(Parser_GetBraceInit, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetBreak = "Parser.GetBreak";
-
 bool Parser::GetBreak(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetBreak);
+   Debug::ft("Parser.GetBreak");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -849,16 +801,14 @@ bool Parser::GetBreak(TokenPtr& statement)
    //
    if(!lexer_.NextCharIs(';')) return Backup(start, 22);
    statement.reset(new Break(begin));
-   return Success(Parser_GetBreak, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCase = "Parser.GetCase";
-
 bool Parser::GetCase(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetCase);
+   Debug::ft("Parser.GetCase");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -872,16 +822,14 @@ bool Parser::GetCase(TokenPtr& statement)
    if(!lexer_.NextCharIs(':')) return Backup(start, 25);
 
    statement.reset(new Case(expr, begin));
-   return Success(Parser_GetCase, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCast = "Parser.GetCast";
-
 bool Parser::GetCast(Expression* expr)
 {
-   Debug::ft(Parser_GetCast);
+   Debug::ft("Parser.GetCast");
 
    auto prev = lexer_.Prev();
    auto start = CurrPos();
@@ -902,16 +850,14 @@ bool Parser::GetCast(Expression* expr)
    cast->AddArg(arg1, false);
    cast->AddArg(arg2, false);
    expr->AddItem(token);
-   return Success(Parser_GetCast, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCatch = "Parser.GetCatch";
-
 bool Parser::GetCatch(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetCatch);
+   Debug::ft("Parser.GetCatch");
 
    auto start = CurrPos();
 
@@ -938,7 +884,7 @@ bool Parser::GetCatch(TokenPtr& statement)
    auto c = static_cast< Catch* >(statement.get());
    c->AddArg(arg);
    c->AddHandler(handler);
-   return Success(Parser_GetCatch, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -990,7 +936,7 @@ bool Parser::GetClass(Cxx::Keyword kwd, CxxArea* area)
    ClassPtr cls;
    ForwardPtr forw;
 
-   if(GetClassDecl(kwd, cls, forw))
+   if(GetClassDefn(kwd, cls, forw))
    {
       if(cls == nullptr) return area->AddForw(forw);
 
@@ -1003,11 +949,9 @@ bool Parser::GetClass(Cxx::Keyword kwd, CxxArea* area)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetClassData = "Parser.GetClassData";
-
 bool Parser::GetClassData(DataPtr& data)
 {
-   Debug::ft(Parser_GetClassData);
+   Debug::ft("Parser.GetClassData");
 
    //  <ClassData> = [<AlignAs>] ["static"] ["thread_local"] ["constexpr"]
    //                ["mutable"] <TypeSpec> <Name> [<ArraySpec>]
@@ -1069,16 +1013,14 @@ bool Parser::GetClassData(DataPtr& data)
    static_cast< ClassData* >(data.get())->SetMutable(mute);
    static_cast< ClassData* >(data.get())->SetWidth(width);
    data->SetAssignment(init, eqpos);
-   return Success(Parser_GetClassData, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetClassDecl = "Parser.GetClassDecl";
-
-bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
+bool Parser::GetClassDefn(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
 {
-   Debug::ft(Parser_GetClassDecl);
+   Debug::ft("Parser.GetClassDefn");
 
    //  <Class> = [<TemplateParms>] <ClassTag> <QualName>
    //            [ [<BaseDecl>] "{" [<MemberDecl>]* "}" ] ";"
@@ -1121,7 +1063,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
       forw.reset(new Forward(className, tag));
       forw->SetContext(begin);
       forw->SetTemplateParms(parms);
-      return Success(Parser_GetClassDecl, begin);
+      return true;
    }
 
    BaseDeclPtr base;
@@ -1137,7 +1079,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
    Context::PopScope();
    if(!lexer_.NextCharIs('}')) return Backup(start, 47);
    if(!lexer_.NextCharIs(';')) return Backup(start, 48);
-   return Success(Parser_GetClassDecl, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -1208,11 +1150,9 @@ bool Parser::GetCompoundType(const QualName* name, Cxx::Type type)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetConditional = "Parser.GetConditional";
-
 bool Parser::GetConditional(Expression* expr, size_t pos)
 {
-   Debug::ft(Parser_GetConditional);
+   Debug::ft("Parser.GetConditional");
 
    auto start = CurrPos();
 
@@ -1237,16 +1177,14 @@ bool Parser::GetConditional(Expression* expr, size_t pos)
    cond->AddArg(value1, false);
    cond->AddArg(value0, false);
    expr->AddItem(token);
-   return Success(Parser_GetConditional, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetContinue = "Parser.GetContinue";
-
 bool Parser::GetContinue(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetContinue);
+   Debug::ft("Parser.GetContinue");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -1255,16 +1193,14 @@ bool Parser::GetContinue(TokenPtr& statement)
    //
    if(!lexer_.NextCharIs(';')) return Backup(start, 53);
    statement.reset(new Continue(begin));
-   return Success(Parser_GetContinue, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCtorDecl = "Parser.GetCtorDecl";
-
 bool Parser::GetCtorDecl(FunctionPtr& func)
 {
-   Debug::ft(Parser_GetCtorDecl);
+   Debug::ft("Parser.GetCtorDecl");
 
    //  <CtorDecl> = ["inline"] ["explicit"] ["constexpr"]
    //               <Name> <Arguments> [<CtorInit>]
@@ -1287,21 +1223,18 @@ bool Parser::GetCtorDecl(FunctionPtr& func)
    func->SetInline(inln);
    func->SetExplicit(expl);
    func->SetConstexpr(cexp);
-   if(cexp) func->SetInline(true);
    if(!GetArguments(func.get())) return Backup(start, func, 214);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    if(!GetCtorInit(func.get())) return Backup(start, func, 215);
    func->SetNoexcept(noex);
-   return Success(Parser_GetCtorDecl, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCtorDefn = "Parser.GetCtorDefn";
-
 bool Parser::GetCtorDefn(FunctionPtr& func)
 {
-   Debug::ft(Parser_GetCtorDefn);
+   Debug::ft("Parser.GetCtorDefn");
 
    //  <CtorDefn> = <QualName> "::" <Name> <Arguments> <CtorInit>
    //
@@ -1321,22 +1254,20 @@ bool Parser::GetCtorDefn(FunctionPtr& func)
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    if(!GetCtorInit(func.get())) return Backup(start, func, 217);
    func->SetNoexcept(noex);
-   return Success(Parser_GetCtorDefn, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCtorInit = "Parser.GetCtorInit";
-
 bool Parser::GetCtorInit(Function* func)
 {
-   Debug::ft(Parser_GetCtorInit);
+   Debug::ft("Parser.GetCtorInit");
 
    //  <CtorInit> = [ ":" [<QualName> "(" <Expr> ")"]
    //                     ["," <Name> "(" <Expr> ")"]* ]
    //
    auto start = CurrPos();
-   if(!lexer_.NextStringIs(":")) return Success(Parser_GetCtorInit, start);
+   if(!lexer_.NextStringIs(":")) return true;
 
    auto end = lexer_.FindFirstOf("{");
    if(end == string::npos) return Backup(start, 59);
@@ -1401,7 +1332,7 @@ bool Parser::GetCtorInit(Function* func)
       func->AddMemberInit(mem);
    }
 
-   return Success(Parser_GetCtorInit, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -1500,11 +1431,9 @@ bool Parser::GetCxxAlpha(const ExprPtr& expr)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCxxCast = "Parser.GetCxxCast";
-
 bool Parser::GetCxxCast(Expression* expr, Cxx::Operator op, size_t pos)
 {
-   Debug::ft(Parser_GetCxxCast);
+   Debug::ft("Parser.GetCxxCast");
 
    auto start = CurrPos();
 
@@ -1525,16 +1454,14 @@ bool Parser::GetCxxCast(Expression* expr, Cxx::Operator op, size_t pos)
    cast->AddArg(arg1, false);
    cast->AddArg(arg2, false);
    expr->AddItem(token);
-   return Success(Parser_GetCxxCast, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetCxxExpr = "Parser.GetCxxExpr";
-
 bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
 {
-   Debug::ft(Parser_GetCxxExpr);
+   Debug::ft("Parser.GetCxxExpr");
 
    auto start = CurrPos();
 
@@ -1589,7 +1516,7 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
       return Backup(start, 86);
    }
 
-   return Success(Parser_GetCxxExpr, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -1647,11 +1574,9 @@ bool Parser::GetCxxLiteralOrAlpha(const ExprPtr& expr)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetDefault = "Parser.GetDefault";
-
 bool Parser::GetDefault(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetDefault);
+   Debug::ft("Parser.GetDefault");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -1661,16 +1586,14 @@ bool Parser::GetDefault(TokenPtr& statement)
    if(!lexer_.NextCharIs(':')) return Backup(start, 87);
    string label(DEFAULT_STR);
    statement.reset(new Label(label, begin));
-   return Success(Parser_GetDefault, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetDefined = "Parser.GetDefined";
-
 bool Parser::GetDefined(Expression* expr, size_t pos)
 {
-   Debug::ft(Parser_GetDefined);
+   Debug::ft("Parser.GetDefined");
 
    auto start = CurrPos();
 
@@ -1692,16 +1615,14 @@ bool Parser::GetDefined(Expression* expr, size_t pos)
    TokenPtr arg = std::move(macro);
    op->AddArg(arg, false);
    expr->AddItem(token);
-   return Success(Parser_GetDefined, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetDelete = "Parser.GetDelete";
-
 bool Parser::GetDelete(Expression* expr, Cxx::Operator op, size_t pos)
 {
-   Debug::ft(Parser_GetDelete);
+   Debug::ft("Parser.GetDelete");
 
    auto start = CurrPos();
 
@@ -1716,16 +1637,14 @@ bool Parser::GetDelete(Expression* expr, Cxx::Operator op, size_t pos)
    TokenPtr arg(item.release());
    delOp->AddArg(arg, false);
    expr->AddItem(token);
-   return Success(Parser_GetDelete, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetDo = "Parser.GetDo";
-
 bool Parser::GetDo(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetDo);
+   Debug::ft("Parser.GetDo");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -1743,16 +1662,14 @@ bool Parser::GetDo(TokenPtr& statement)
    auto d = static_cast< Do* >(statement.get());
    d->AddLoop(loop);
    d->AddCondition(condition);
-   return Success(Parser_GetDo, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetDtorDecl = "Parser.GetDtorDecl";
-
 bool Parser::GetDtorDecl(FunctionPtr& func)
 {
-   Debug::ft(Parser_GetDtorDecl);
+   Debug::ft("Parser.GetDtorDecl");
 
    //  <DtorDecl> = ["inline"] ["virtual"] "~" <Name> "(" ")" ["noexcept"]
    //
@@ -1778,16 +1695,14 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
    if(!GetArguments(func.get())) return Backup(start, func, 98);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    func->SetNoexcept(noex);
-   return Success(Parser_GetDtorDecl, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetDtorDefn = "Parser.GetDtorDefn";
-
 bool Parser::GetDtorDefn(FunctionPtr& func)
 {
-   Debug::ft(Parser_GetDtorDefn);
+   Debug::ft("Parser.GetDtorDefn");
 
    //  <DtorDefn> = <QualName> "::~" <Name> "(" ")" ["noexcept"]
    //
@@ -1806,16 +1721,14 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
    if(!GetArguments(func.get())) return Backup(start, func, 103);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    func->SetNoexcept(noex);
-   return Success(Parser_GetDtorDefn, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetEnum = "Parser.GetEnum";
-
 bool Parser::GetEnum(EnumPtr& decl)
 {
-   Debug::ft(Parser_GetEnum);
+   Debug::ft("Parser.GetEnum");
 
    //  <Enum> = "enum" [<AlignAs>] [<Name>]
    //           "{" <Enumerator> ["," <Enumerator>]* "}" ";"
@@ -1859,16 +1772,14 @@ bool Parser::GetEnum(EnumPtr& decl)
 
    if(!lexer_.NextCharIs('}')) return Backup(start, 106);
    if(!lexer_.NextCharIs(';')) return Backup(start, 107);
-   return Success(Parser_GetEnum, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetEnumerator = "Parser.GetEnumerator";
-
 bool Parser::GetEnumerator(string& name, ExprPtr& init)
 {
-   Debug::ft(Parser_GetEnumerator);
+   Debug::ft("Parser.GetEnumerator");
 
    auto start = CurrPos();
 
@@ -1883,7 +1794,7 @@ bool Parser::GetEnumerator(string& name, ExprPtr& init)
       if(!GetCxxExpr(init, end)) return Backup(start, 110);
    }
 
-   return Success(Parser_GetEnumerator, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -1909,11 +1820,9 @@ void Parser::GetFileDecls(Namespace* space)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetFor = "Parser.GetFor";
-
 bool Parser::GetFor(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetFor);
+   Debug::ft("Parser.GetFor");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -1953,16 +1862,14 @@ bool Parser::GetFor(TokenPtr& statement)
    f->AddCondition(condition);
    f->AddSubsequent(subsequent);
    f->AddLoop(loop);
-   return Success(Parser_GetFor, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetFriend = "Parser.GetFriend";
-
 bool Parser::GetFriend(FriendPtr& decl)
 {
-   Debug::ft(Parser_GetFriend);
+   Debug::ft("Parser.GetFriend");
 
    //  <Friend> = [<TemplateParms>] "friend"
    //             (<FuncDecl> | [<ClassTag>] <QualName> ";")
@@ -2001,16 +1908,14 @@ bool Parser::GetFriend(FriendPtr& decl)
    }
 
    decl->SetTemplateParms(parms);
-   return Success(Parser_GetFriend, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetFuncData = "Parser.GetFuncData";
-
 bool Parser::GetFuncData(DataPtr& data)
 {
-   Debug::ft(Parser_GetFuncData);
+   Debug::ft("Parser.GetFuncData");
 
    //  <FuncData> = [<AlignAs>] ["static"] ["thread_local"] ["constexpr"]
    //               <TypeSpec> (<FuncData1> | <FuncData2>)
@@ -2057,7 +1962,7 @@ bool Parser::GetFuncData(DataPtr& data)
       data->SetThreadLocal(tloc);
       data->SetConstexpr(cexp);
       static_cast< FuncData* >(data.get())->SetExpression(expr);
-      return Success(Parser_GetFuncData, start);
+      return true;
    }
 
    FuncData* prev = nullptr;
@@ -2075,7 +1980,7 @@ bool Parser::GetFuncData(DataPtr& data)
          //  to this item's name override those of the original type, which
          //  is cloned and modified to create the subsequent declaration.
          //
-         typeSpec.reset(prev->GetTypeSpec()->Clone());
+         typeSpec.reset(static_cast< TypeSpec* >(prev->GetTypeSpec()->Clone()));
          typeSpec->CopyContext(prev, true);
          *typeSpec->Tags() = TypeTags();
          GetTypeTags(typeSpec.get());
@@ -2127,16 +2032,14 @@ bool Parser::GetFuncData(DataPtr& data)
    while(lexer_.NextCharIs(','));
 
    if(!lexer_.NextCharIs(';')) return Backup(start, 130);
-   return Success(Parser_GetFuncData, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetFuncDecl = "Parser.GetFuncDecl";
-
 bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
 {
-   Debug::ft(Parser_GetFuncDecl);
+   Debug::ft("Parser.GetFuncDecl");
 
    //  <FuncDecl> = ["extern"] [<TemplateParms>]
    //               (<CtorDecl> | <DtorDecl> | <ProcDecl>) (<FuncImpl> | ";")
@@ -2196,8 +2099,8 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    //  depending on whether the function is only declared here, is deleted
    //  or defaulted, or is actually defined.
    //
-   if(lexer_.NextCharIs(';')) return Success(Parser_GetFuncDecl, start);
-   if(GetFuncSpecial(func.get())) return Success(Parser_GetFuncDecl, start);
+   if(lexer_.NextCharIs(';')) return true;
+   if(GetFuncSpecial(func.get())) return true;
 
    auto pos = CurrPos();
    if(!lexer_.NextCharIs('{')) return Backup(start, func, 219);
@@ -2220,16 +2123,14 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
       if(lexer_.NextCharIs(';')) Log(RedundantSemicolon);
    }
 
-   return Success(Parser_GetFuncDecl, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetFuncDefn = "Parser.GetFuncDefn";
-
 bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
 {
-   Debug::ft(Parser_GetFuncDefn);
+   Debug::ft("Parser.GetFuncDefn");
 
    //  <FuncDefn> = [<TemplateParms>]
    //               (<CtorDefn> | <DtorDefn> | <ProcDefn>) <FuncImpl>
@@ -2256,22 +2157,20 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
 
    if(!found) return Backup(start, func, 222);
    func->SetTemplateParms(parms);
-   if(GetFuncSpecial(func.get())) return Success(Parser_GetFuncDecl, start);
+   if(GetFuncSpecial(func.get())) return true;
 
    auto curr = CurrPos();
    if(!lexer_.NextCharIs('{')) return Backup(start, func, 223);
    lexer_.Reposition(curr);
    if(!GetFuncImpl(func.get())) return Backup(start, func, 224);
-   return Success(Parser_GetFuncDefn, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetFuncImpl = "Parser.GetFuncImpl";
-
 bool Parser::GetFuncImpl(Function* func)
 {
-   Debug::ft(Parser_GetFuncImpl);
+   Debug::ft("Parser.GetFuncImpl");
 
    auto start = CurrPos();
 
@@ -2295,16 +2194,14 @@ bool Parser::GetFuncImpl(Function* func)
    Context::PopScope();
    func->SetImpl(block);
    if(lexer_.NextCharIs(';')) Log(RedundantSemicolon);
-   return Success(Parser_GetFuncImpl, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetFuncSpec = "Parser.GetFuncSpec";
-
 bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
 {
-   Debug::ft(Parser_GetFuncSpec);
+   Debug::ft("Parser.GetFuncSpec");
 
    //  <FuncSpec> = "(" "*" <Name> ")" <Arguments>
    //  GetTypeSpec has already parsed the function's return type.
@@ -2326,7 +2223,7 @@ bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
    func.reset(new Function(funcName, spec, true));
    func->SetContext(pos);
    if(!GetArguments(func.get())) return Backup(start, func, 225);
-   return Success(Parser_GetFuncSpec, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -2353,11 +2250,9 @@ bool Parser::GetFuncSpecial(Function* func)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetGoto = "Parser.GetGoto";
-
 bool Parser::GetGoto(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetGoto);
+   Debug::ft("Parser.GetGoto");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -2368,16 +2263,14 @@ bool Parser::GetGoto(TokenPtr& statement)
    if(!lexer_.GetName(name)) return Backup(start, 249);
    if(!lexer_.NextCharIs(';')) return Backup(start, 250);
    statement.reset(new Goto(name, begin));
-   return Success(Parser_GetGoto, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetIf = "Parser.GetIf";
-
 bool Parser::GetIf(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetIf);
+   Debug::ft("Parser.GetIf");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -2407,7 +2300,7 @@ bool Parser::GetIf(TokenPtr& statement)
    i->AddCondition(condition);
    i->AddThen(thenBlock);
    i->AddElse(elseBlock);
-   return Success(Parser_GetIf, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -2529,11 +2422,9 @@ bool Parser::GetName(string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetNamespace = "Parser.GetNamespace";
-
 bool Parser::GetNamespace()
 {
-   Debug::ft(Parser_GetNamespace);
+   Debug::ft("Parser.GetNamespace");
 
    //  <Namespace> = "namespace" <Name> "{" [<FileDecl>]* "}"
    //  The "namespace" keyword has already been parsed.
@@ -2555,16 +2446,14 @@ bool Parser::GetNamespace()
 
    if(!lexer_.NextCharIs('}')) return Backup(start, 143);
    if(lexer_.NextCharIs(';')) Log(RedundantSemicolon);
-   return Success(Parser_GetNamespace, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetNew = "Parser.GetNew";
-
 bool Parser::GetNew(Expression* expr, Cxx::Operator op, size_t pos)
 {
-   Debug::ft(Parser_GetNew);
+   Debug::ft("Parser.GetNew");
 
    //    new = "new" ["(" <ArgList> ")"] <TypeSpec> ["(" <ArgList> ")"]
    //  new[] = "new" ["(" <ArgList> ")"] <TypeSpec> (<ArraySpec>)+
@@ -2645,18 +2534,14 @@ bool Parser::GetNew(Expression* expr, Cxx::Operator op, size_t pos)
       newOp->AddArg(token, false);
    }
 
-   return Success(Parser_GetNew, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetNoExcept = "Parser.GetNoExcept";
-
 bool Parser::GetNoExcept(Expression* expr, size_t pos)
 {
-   Debug::ft(Parser_GetNoExcept);
-
-   auto start = CurrPos();
+   Debug::ft("Parser.GetNoExcept");
 
    //  The noexcept operator has already been parsed.
    //
@@ -2669,7 +2554,7 @@ bool Parser::GetNoExcept(Expression* expr, size_t pos)
    TokenPtr arg(item.release());
    if(arg != nullptr) op->AddArg(arg, false);
    expr->AddItem(token);
-   return Success(Parser_GetNoExcept, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -2786,11 +2671,9 @@ bool Parser::GetPreAlpha(const ExprPtr& expr)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetPrecedence = "Parser.GetPrecedence";
-
 bool Parser::GetPrecedence(Expression* expr)
 {
-   Debug::ft(Parser_GetPrecedence);
+   Debug::ft("Parser.GetPrecedence");
 
    auto start = CurrPos();
 
@@ -2803,16 +2686,14 @@ bool Parser::GetPrecedence(Expression* expr)
    auto lpar = lexer_.Rfind(start - 1, "(");
    token->SetContext(lpar);
    expr->AddItem(token);
-   return Success(Parser_GetPrecedence, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetPreExpr = "Parser.GetPreExpr";
-
 bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
 {
-   Debug::ft(Parser_GetPreExpr);
+   Debug::ft("Parser.GetPreExpr");
 
    auto start = CurrPos();
 
@@ -2861,16 +2742,14 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
       return Backup(start, 157);
    }
 
-   return Success(Parser_GetPreExpr, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetProcDecl = "Parser.GetProcDecl";
-
 bool Parser::GetProcDecl(FunctionPtr& func)
 {
-   Debug::ft(Parser_GetProcDecl);
+   Debug::ft("Parser.GetProcDecl");
 
    //  <ProcDecl> = ["inline"] ["static"] ["virtual"] ["explicit"] ["constexpr"]
    //               (<StdProc> | <ConvOper>) <Arguments> ["const"] {"volatile"]
@@ -2949,23 +2828,20 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    func->SetVirtual(virt);
    func->SetExplicit(expl);
    func->SetConstexpr(cexp);
-   if(cexp) func->SetInline(true);
    func->SetConst(readonly);
    func->SetVolatile(unstable);
    func->SetNoexcept(noex);
    func->SetOverride(over);
    func->SetFinal(final);
    func->SetPure(pure);
-   return Success(Parser_GetProcDecl, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetProcDefn = "Parser.GetProcDefn";
-
 bool Parser::GetProcDefn(FunctionPtr& func)
 {
-   Debug::ft(Parser_GetProcDefn);
+   Debug::ft("Parser.GetProcDefn");
 
    //  <ProcDefn> = ["static"] <TypeSpec> <QualName> <Arguments>
    //               ["const"] {"volatile"] ["noexcept"]
@@ -2991,7 +2867,18 @@ bool Parser::GetProcDefn(FunctionPtr& func)
       funcName->SetContext(pos);
       funcName->SetOperator(oper);
       string spec;
-      if(!lexer_.GetTemplateSpec(spec)) return Backup(start, 164);
+
+      if(!lexer_.GetTemplateSpec(spec))
+      {
+         //  "operator<<" can either be operator<< or operator< with the
+         //  second '<' introducing the template arguments.
+         //
+         if(oper != Cxx::LEFT_SHIFT) return Backup(start, 164);
+         oper = Cxx::LESS;
+         funcName->SetOperator(oper);
+         lexer_.Reposition(lexer_.Curr() - 1);
+         if(!lexer_.GetTemplateSpec(spec)) return Backup(start, 301);
+      }
       funcName->Append(spec, false);
    }
    else if(!GetQualName(funcName)) return Backup(start, 165);
@@ -3013,7 +2900,7 @@ bool Parser::GetProcDefn(FunctionPtr& func)
    func->SetConst(readonly);
    func->SetVolatile(unstable);
    func->SetNoexcept(noex);
-   return Success(Parser_GetProcDefn, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3061,11 +2948,9 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetReturn = "Parser.GetReturn";
-
 bool Parser::GetReturn(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetReturn);
+   Debug::ft("Parser.GetReturn");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -3080,16 +2965,14 @@ bool Parser::GetReturn(TokenPtr& statement)
 
    statement.reset(new Return(begin));
    static_cast< Return* >(statement.get())->AddExpr(expr);
-   return Success(Parser_GetReturn, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetSizeOf = "Parser.GetSizeOf";
-
 bool Parser::GetSizeOf(Expression* expr, size_t pos)
 {
-   Debug::ft(Parser_GetSizeOf);
+   Debug::ft("Parser.GetSizeOf");
 
    auto start = CurrPos();
 
@@ -3129,16 +3012,14 @@ bool Parser::GetSizeOf(Expression* expr, size_t pos)
    auto op = static_cast< Operation* >(token.get());
    op->AddArg(arg, false);
    expr->AddItem(token);
-   return Success(Parser_GetSizeOf, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetSpaceData = "Parser.GetSpaceData";
-
 bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
 {
-   Debug::ft(Parser_GetSpaceData);
+   Debug::ft("Parser.GetSpaceData");
 
    //  <SpaceData> = [<AlignAs>] [["extern"] | [<TemplateParms>]]
    //                ["static"] ["thread_local"] ["constexpr"]
@@ -3215,7 +3096,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    data->SetConstexpr(cexp);
    data->SetExpression(expr);
    data->SetAssignment(init, eqpos);
-   return Success(Parser_GetSpaceData, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3243,11 +3124,9 @@ bool Parser::GetStatements(Block* block, bool braced)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetStaticAssert = "Parser.GetStaticAssert";
-
 bool Parser::GetStaticAssert(StaticAssertPtr& statement)
 {
-   Debug::ft(Parser_GetStaticAssert);
+   Debug::ft("Parser.GetStaticAssert");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -3270,7 +3149,7 @@ bool Parser::GetStaticAssert(StaticAssertPtr& statement)
    if(!lexer_.NextCharIs(';')) return Backup(start, 248);
    statement.reset(new StaticAssert(expr, message));
    statement->SetContext(begin);
-   return Success(Parser_GetStaticAssert, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3353,11 +3232,9 @@ bool Parser::GetStr(Expression* expr, Cxx::Encoding code, size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetSubscript = "Parser.GetSubscript";
-
 bool Parser::GetSubscript(Expression* expr, size_t pos)
 {
-   Debug::ft(Parser_GetSubscript);
+   Debug::ft("Parser.GetSubscript");
 
    auto start = CurrPos();
 
@@ -3379,16 +3256,14 @@ bool Parser::GetSubscript(Expression* expr, size_t pos)
    expr->AddItem(token);
    TokenPtr index(item.release());
    op->AddArg(index, false);
-   return Success(Parser_GetSubscript, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetSwitch = "Parser.GetSwitch";
-
 bool Parser::GetSwitch(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetSwitch);
+   Debug::ft("Parser.GetSwitch");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -3404,18 +3279,46 @@ bool Parser::GetSwitch(TokenPtr& statement)
    auto s = static_cast< Switch* >(statement.get());
    s->AddExpr(value);
    s->AddCases(cases);
-   return Success(Parser_GetSwitch, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTemplateParm = "Parser.GetTemplateParm";
+bool Parser::GetTemplateArg(TemplateArgPtr& arg)
+{
+   Debug::ft("Parser.GetTemplateArg");
+
+   //  <TemplateArg = <TypeSpec> | <Expr>
+   //
+   auto start = CurrPos();
+
+   TypeSpecPtr typeSpec;
+   ExprPtr expr;
+
+   if(GetTypeSpec(typeSpec))
+   {
+      arg.reset(new TemplateArg(typeSpec));
+   }
+   else
+   {
+      auto end = lexer_.FindFirstOf(",>");
+      if(GetCxxExpr(expr, end))
+         arg.reset(new TemplateArg(expr));
+      else
+         return Backup(start, 300);
+   }
+
+   arg->SetContext(start);
+   return true;
+}
+
+//------------------------------------------------------------------------------
 
 bool Parser::GetTemplateParm(TemplateParmPtr& parm)
 {
-   Debug::ft(Parser_GetTemplateParm);
+   Debug::ft("Parser.GetTemplateParm");
 
-   //  <TemplateParm> = (<ClassTag> | <QualName>) <Name> ["*"]* ["=" <TypeName>]
+   //  <TemplateParm> = (<ClassTag> | <QualName>) <Name> ["*"]* ["=" <TypeSpec>]
    //
    auto start = CurrPos();
 
@@ -3433,25 +3336,23 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
 
    auto ptrs = GetPointers();
 
-   TypeSpecPtr preset;
+   TemplateArgPtr preset;
 
    if(lexer_.NextCharIs('='))
    {
-      if(!GetTypeSpec(preset)) return Backup(start, 191);
+      if(!GetTemplateArg(preset)) return Backup(start, 191);
    }
 
    parm.reset(new TemplateParm(argName, tag, type, ptrs, preset));
    parm->SetContext(start);
-   return Success(Parser_GetTemplateParm, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTemplateParms = "Parser.GetTemplateParms";
-
 bool Parser::GetTemplateParms(TemplateParmsPtr& parms)
 {
-   Debug::ft(Parser_GetTemplateParms);
+   Debug::ft("Parser.GetTemplateParms");
 
    //  <TemplateParms> = "template" "<" <TemplateParm> ["," <TemplateParm>]* ">"
    //
@@ -3473,18 +3374,14 @@ bool Parser::GetTemplateParms(TemplateParmsPtr& parms)
    }
 
    if(!lexer_.NextCharIs('>')) return Backup(start, 196);
-   return Success(Parser_GetTemplateParms, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetThrow = "Parser.GetThrow";
-
 bool Parser::GetThrow(Expression* expr, size_t pos)
 {
-   Debug::ft(Parser_GetThrow);
-
-   auto start = CurrPos();
+   Debug::ft("Parser.GetThrow");
 
    //  The throw operator has already been parsed.
    //
@@ -3497,25 +3394,23 @@ bool Parser::GetThrow(Expression* expr, size_t pos)
    TokenPtr arg(item.release());
    if(arg != nullptr) op->AddArg(arg, false);
    expr->AddItem(token);
-   return Success(Parser_GetThrow, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-const SysTime* Parser::GetTime()
+const SystemTime::Point& Parser::GetTime()
 {
    Debug::ft("Parser.GetTime");
 
-   return &Context::RootParser()->time_;
+   return Context::RootParser()->time_;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTry = "Parser.GetTry";
-
 bool Parser::GetTry(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetTry);
+   Debug::ft("Parser.GetTry");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -3530,16 +3425,14 @@ bool Parser::GetTry(TokenPtr& statement)
    auto t = static_cast< Try* >(statement.get());
    t->AddTry(work);
    while(GetCatch(trap)) t->AddCatch(trap);
-   return Success(Parser_GetTry, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTypedef = "Parser.GetTypedef";
-
 bool Parser::GetTypedef(TypedefPtr& type)
 {
-   Debug::ft(Parser_GetTypedef);
+   Debug::ft("Parser.GetTypedef");
 
    //  <Typedef> = "typedef" <TypeSpec> [<Name>] [<ArraySpec>]* [<AlignAs>] ";"
    //  The "typedef" keyword has already been parsed.  <Name> is mandatory if
@@ -3569,16 +3462,14 @@ bool Parser::GetTypedef(TypedefPtr& type)
    type.reset(new Typedef(typeName, typeSpec));
    type->SetContext(begin);
    type->SetAlignment(align);
-   return Success(Parser_GetTypedef, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTypeId = "Parser.GetTypeId";
-
 bool Parser::GetTypeId(Expression* expr, size_t pos)
 {
-   Debug::ft(Parser_GetTypeId);
+   Debug::ft("Parser.GetTypeId");
 
    auto start = CurrPos();
 
@@ -3593,7 +3484,7 @@ bool Parser::GetTypeId(Expression* expr, size_t pos)
    TokenPtr arg(type.release());
    op->AddArg(arg, false);
    expr->AddItem(token);
-   return Success(Parser_GetTypeId, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3633,8 +3524,8 @@ bool Parser::GetTypeName(TypeNamePtr& type, Constraint constraint)
 
       do
       {
-         TypeSpecPtr arg;
-         if(!GetTypeSpec(arg)) return Backup(start, 204);
+         TemplateArgPtr arg;
+         if(!GetTemplateArg(arg)) return Backup(start, 204);
          type->AddTemplateArg(arg);
       }
       while(lexer_.NextCharIs(','));
@@ -3647,11 +3538,9 @@ bool Parser::GetTypeName(TypeNamePtr& type, Constraint constraint)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTypeSpec1 = "Parser.GetTypeSpec";
-
 bool Parser::GetTypeSpec(TypeSpecPtr& spec, KeywordSet* attrs)
 {
-   Debug::ft(Parser_GetTypeSpec1);
+   Debug::ft("Parser.GetTypeSpec");
 
    //  <TypeSpec> = ["const"] ["volatile"] <QualName> ["const"] ["volatile"]
    //               [<TypeTags>] [<FuncSpec>]
@@ -3718,7 +3607,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec, KeywordSet* attrs)
       spec->SetContext(pos);
    }
 
-   return Success(Parser_GetTypeSpec1, start);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3814,11 +3703,9 @@ bool Parser::GetTypeTags(TypeSpec* spec)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetUsing = "Parser.GetUsing";
-
 bool Parser::GetUsing(UsingPtr& use, TypedefPtr& type)
 {
-   Debug::ft(Parser_GetUsing);
+   Debug::ft("Parser.GetUsing");
 
    //  <Using> = "using" (<UsingDecl> | <TypeAlias>) ";"
    //  <UsingDecl> = ["namespace"] <QualName>
@@ -3838,7 +3725,7 @@ bool Parser::GetUsing(UsingPtr& use, TypedefPtr& type)
    {
       use.reset(new Using(usingName, space));
       use->SetContext(begin);
-      return Success(Parser_GetUsing, begin);
+      return true;
    }
 
    if(space) return Backup(start, 208);
@@ -3863,16 +3750,14 @@ bool Parser::GetUsing(UsingPtr& use, TypedefPtr& type)
    type->SetUsing();
    type->SetContext(begin);
    type->SetAlignment(align);
-   return Success(Parser_GetUsing, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetWhile = "Parser.GetWhile";
-
 bool Parser::GetWhile(TokenPtr& statement)
 {
-   Debug::ft(Parser_GetWhile);
+   Debug::ft("Parser.GetWhile");
 
    auto begin = kwdBegin_;
    auto start = CurrPos();
@@ -3888,7 +3773,7 @@ bool Parser::GetWhile(TokenPtr& statement)
    auto w = static_cast< While* >(statement.get());
    w->AddCondition(condition);
    w->AddLoop(loop);
-   return Success(Parser_GetWhile, begin);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -4329,11 +4214,9 @@ bool Parser::NextKeywordIs(c_string str)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Parse = "Parser.Parse";
-
 bool Parser::Parse(CodeFile& file)
 {
-   Debug::ft(Parser_Parse);
+   Debug::ft("Parser.Parse");
 
    //  Return if the file has already been parsed, else write its name to
    //  the console.
@@ -4341,33 +4224,16 @@ bool Parser::Parse(CodeFile& file)
    if(file.ParseStatus() != CodeFile::Unparsed) return true;
    Debug::Progress(file.Name());
 
-   //  Create a parse trace file if requested.
-   //
-   auto path =
-      Element::OutputPath() + PATH_SEPARATOR + file.Name() + ".parse.txt";
-   if(Context::OptionIsOn(TraceParse))
-   {
-      pTrace_ = SysFile::CreateOstream(path.c_str(), true);
-      if(pTrace_ == nullptr) return false;
-   }
-
-   //  Set up the trace environment and insert the name of the source code
-   //  file into the "object code" file.
-   //
-   auto traced = Context::StartTracing();
-   Context::Trace(CxxTrace::START_FILE, file);
-
    //  Initialize the parser and note the file being parsed.  Push the global
    //  namespace as the current scope and start parsing at file scope.
    //
+   Context::Trace(CxxTrace::START_FILE, file);
    auto gns = Singleton< CxxRoot >::Instance()->GlobalNamespace();
-   depth_ = SysThreadStack::FuncDepth();
    Context::SetFile(&file);
    Context::PushScope(gns, false);
    Enter(IsFile, file.Name(), nullptr, file.GetCode(), true, &file);
    GetFileDecls(gns);
    Context::PopScope();
-   if(traced) ThisThread::StopTracing();
 
    //  If the lexer reached the end of the file, the parse succeeded, so mark
    //  the file as parsed.  If the parse failed, indicate this on the console.
@@ -4377,26 +4243,6 @@ bool Parser::Parse(CodeFile& file)
    file.SetParsed(parsed);
    Debug::Progress((parsed ? CRLF_STR : string(" **FAILED** ") + CRLF));
    if(!parsed) Failure(venue_);
-
-   //  On success, delete the parse file if it is not supposed to be retained.
-   //
-   if(pTrace_ != nullptr)
-   {
-      pTrace_.reset();
-
-      if(parsed && !Context::OptionIsOn(SaveParseTrace))
-      {
-         auto err = remove(path.c_str());
-
-         if(err != 0)
-         {
-            std::ostringstream stream;
-            stream << "failed to remove " << path.c_str();
-            Debug::SwLog(Parser_Parse, stream.str(), err, false);
-         }
-      }
-   }
-
    return parsed;
 }
 
@@ -4406,13 +4252,17 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
 {
    Debug::ft("Parser.ParseClassInst");
 
+   auto stopped = false;
+   if(!Context::OptionIsOn(TraceInstantiation))
+      stopped = Context::StopTracing();
+
    auto name = inst->ScopedName(true);
    Debug::Progress(CRLF + Indent() + name);
 
    //  Initialize the parser.  If an "object code" file is being produced,
    //  insert the instance name.
    //
-   Enter(IsClassInst, name, inst->GetTemplateArgs(), inst->GetCode(), true);
+   Enter(IsClassInst, name, inst->GetTemplatedName(), inst->GetCode(), true);
    lexer_.Reposition(pos);
    Context::Trace(CxxTrace::START_TEMPLATE, inst);
 
@@ -4450,6 +4300,8 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
    Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "));
    if(!parsed) Failure(venue_);
    Context::Trace(CxxTrace::END_TEMPLATE);
+
+   if(stopped) Context::StartTracing(Compiling);
    return parsed;
 }
 
@@ -4505,10 +4357,14 @@ bool Parser::ParseFileItem(const std::string& code,
 
 //------------------------------------------------------------------------------
 
-bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
+Function* Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
    CxxArea* area, const TypeName* type, const string* code)
 {
    Debug::ft("Parser.ParseFuncInst");
+
+   auto stopped = false;
+   if(!Context::OptionIsOn(TraceInstantiation))
+      stopped = Context::StopTracing();
 
    Debug::Progress(CRLF + Indent() + name);
 
@@ -4524,12 +4380,14 @@ bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
    string str;
    auto kwd = NextKeyword(str);
 
+   Function* result = nullptr;
    FunctionPtr func;
    auto parsed = GetFuncDefn(kwd, func);
    if(!parsed) parsed = GetFuncDecl(kwd, func);
 
    if(parsed)
    {
+      result = func.get();
       func->SetAccess(tmplt->GetAccess());
       func->SetTemplateArgs(type);
       func->SetTemplate(const_cast< Function* >(tmplt));
@@ -4546,7 +4404,9 @@ bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
    Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "));
    if(!parsed) Failure(venue_);
    Context::Trace(CxxTrace::END_TEMPLATE);
-   return parsed;
+
+   if(stopped) Context::StartTracing(Compiling);
+   return result;
 }
 
 //------------------------------------------------------------------------------
@@ -4872,12 +4732,18 @@ bool Parser::ParseQualName(const string& code, QualNamePtr& name)
 
 //------------------------------------------------------------------------------
 
-bool Parser::ParseTypeSpec(const string& code, TypeSpecPtr& spec)
+bool Parser::ParseTemplateArg(const string& code, TemplateArgPtr& arg)
 {
-   Debug::ft("Parser.ParseTypeSpec");
+   Debug::ft("Parser.ParseTemplateArg");
 
-   Enter(IsTypeSpec, "internal TypeSpec", nullptr, code, false);
-   auto parsed = GetTypeSpec(spec);
+   auto stopped = false;
+   if(!Context::OptionIsOn(TraceInstantiation))
+      stopped = Context::StopTracing();
+
+   Enter(IsTmpltArg, "internal TemplateArg", nullptr, code, false);
+   auto parsed = GetTemplateArg(arg);
+
+   if(stopped) Context::StartTracing(Compiling);
    return parsed;
 }
 
@@ -4951,37 +4817,6 @@ bool Parser::Skip(size_t end, Expression* expr, size_t cause)
    TokenPtr item(new StrLiteral(code));
    expr->AddItem(item);
    lexer_.Reposition(end);
-   return Success(Parser_Skip, start);
-}
-
-//------------------------------------------------------------------------------
-
-bool Parser::Success(fn_name_arg func, size_t start) const
-{
-   Debug::ft("Parser.Success");
-
-   if(!Context::OptionIsOn(TraceParse)) return true;
-   if(!ParsingSourceCode()) return true;
-
-   //  Note that when the parse advances over the first keyword expected by a
-   //  function before invoking it, that keyword does not appear at the front
-   //  of the parse string.
-   //
-   auto lead = spaces((SysThreadStack::FuncDepth() - depth_) << 1);
-
-   *pTrace_ << lead << func << ": ";
-
-   auto prev = lexer_.Prev();
-   auto count = (prev > start ? prev - start : 0);
-   auto parsed = lexer_.Substr(start, count);
-   auto size = parsed.size();
-
-   if(size <= COUT_LENGTH_MAX)
-      *pTrace_ << parsed;
-   else
-      *pTrace_ << parsed.substr(0, 40) << "..." << parsed.substr(size - 40, 40);
-
-   *pTrace_ << CRLF;
    return true;
 }
 }

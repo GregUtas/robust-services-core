@@ -26,6 +26,7 @@
 #include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "FunctionGuard.h"
 #include "IpBuffer.h"
 #include "IpPort.h"
@@ -227,7 +228,7 @@ void SendLocalThread::Enter()
    for(auto i = 4; i > 0; --i)
    {
       if(ipPort->GetSocket() != nullptr) break;
-      Pause(250 * ONE_mSEC);
+      Pause(msecs_t(250));
    }
 
    if(ipPort->GetSocket() != nullptr)
@@ -282,7 +283,7 @@ void SendLocalThread::Retest()
 
 //==============================================================================
 
-LocalAddrRetest::LocalAddrRetest(secs_t timeout) :
+LocalAddrRetest::LocalAddrRetest(uint32_t timeout) :
    Deferred(*Singleton< IpPortRegistry >::Instance(), timeout, false)
 {
    Debug::ft("LocalAddrRetest.ctor");

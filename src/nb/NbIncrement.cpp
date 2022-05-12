@@ -27,6 +27,7 @@
 #include <iomanip>
 #include <ios>
 #include <iosfwd>
+#include <ratio>
 #include <sstream>
 #include <string>
 #include "Alarm.h"
@@ -293,7 +294,7 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
 
    id_t index;
    word secs;
-   Duration timeout;
+   msecs_t timeout;
 
    if(!GetTextIndex(index, cli)) return -1;
 
@@ -308,7 +309,7 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
       //
       if(!GetIntParm(secs, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
-      timeout = (secs == 0 ? TIMEOUT_NEVER : Duration(secs, SECS));
+      timeout = (secs == 0 ? TIMEOUT_NEVER : msecs_t(100 * secs));
       thr->SetInterval(timeout);
       break;
    case AuditForceIndex:
@@ -800,7 +801,7 @@ word DelayCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(secs, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto rc = ThisThread::Pause(Duration(secs, SECS));
+   auto rc = ThisThread::Pause(msecs_t(1000 * secs));
    if(rc != DelayCompleted) return cli.Report(-6, DelayFailure);
    return cli.Report(0, SuccessExpl);
 }

@@ -684,7 +684,7 @@ void CliThread::ReadCommands()
             //    after we have been created.  Pausing is also appropriate in
             //    this case, as another restart should occur momentarily.
             //
-            Pause(ONE_SEC);
+            Pause(msecs_t(1000));
             break;
 
          case StreamInUse:

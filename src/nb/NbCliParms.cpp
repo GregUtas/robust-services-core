@@ -25,13 +25,12 @@
 #include "CliCommand.h"
 #include "CliThread.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "Log.h"
 #include "LogBufferRegistry.h"
 #include "Module.h"
 #include "NbTypes.h"
 #include "ObjectPool.h"
-#include "SysTime.h"
+#include "SystemTime.h"
 
 using std::string;
 
@@ -352,7 +351,7 @@ RelationParm::RelationParm() : CliTextParm(RelationParmExpl)
 fixed_string SysTimeDayExpl = "day of month";
 
 SysTimeDayParm::SysTimeDayParm() :
-   CliIntParm(SysTimeDayExpl, 1, SysTime::MaxDay) { }
+   CliIntParm(SysTimeDayExpl, 1, 31) { }
 
 //------------------------------------------------------------------------------
 
@@ -382,19 +381,19 @@ fixed_string SysTimeFieldExpl = "time field";
 SysTimeFieldParm::SysTimeFieldParm() : CliTextParm(SysTimeFieldExpl)
 {
    BindText(*new CliText
-      (SysTimeYearTextExpl, SysTimeYearTextStr), YearsField + 1);
+      (SysTimeYearTextExpl, SysTimeYearTextStr), SystemTime::YearsField + 1);
    BindText(*new CliText
-      (SysTimeMonthTextExpl, SysTimeMonthTextStr), MonthsField + 1);
+      (SysTimeMonthTextExpl, SysTimeMonthTextStr), SystemTime::MonthsField + 1);
    BindText(*new CliText
-      (SysTimeDayTextExpl, SysTimeDayTextStr), DaysField + 1);
+      (SysTimeDayTextExpl, SysTimeDayTextStr), SystemTime::DaysField + 1);
    BindText(*new CliText
-      (SysTimeHourTextExpl, SysTimeHourTextStr), HoursField + 1);
+      (SysTimeHourTextExpl, SysTimeHourTextStr), SystemTime::HoursField + 1);
    BindText(*new CliText
-      (SysTimeMinTextExpl, SysTimeMinTextStr), MinsField + 1);
+      (SysTimeMinTextExpl, SysTimeMinTextStr), SystemTime::MinsField + 1);
    BindText(*new CliText
-      (SysTimeSecTextExpl, SysTimeSecTextStr), SecsField + 1);
+      (SysTimeSecTextExpl, SysTimeSecTextStr), SystemTime::SecsField + 1);
    BindText(*new CliText
-      (SysTimeMsecTextExpl, SysTimeMsecTextStr), MsecsField + 1);
+      (SysTimeMsecTextExpl, SysTimeMsecTextStr), SystemTime::MsecsField + 1);
 }
 
 //------------------------------------------------------------------------------
@@ -402,42 +401,42 @@ SysTimeFieldParm::SysTimeFieldParm() : CliTextParm(SysTimeFieldExpl)
 fixed_string SysTimeHourExpl = "hours (24-hour clock)";
 
 SysTimeHourParm::SysTimeHourParm() :
-   CliIntParm(SysTimeHourExpl, 0, SysTime::MaxHour) { }
+   CliIntParm(SysTimeHourExpl, 0, 23) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string SysTimeMinuteExpl = "minutes";
 
 SysTimeMinuteParm::SysTimeMinuteParm() :
-   CliIntParm(SysTimeMinuteExpl, 0, SysTime::MaxMin) { }
+   CliIntParm(SysTimeMinuteExpl, 0, 59) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string SysTimeMonthExpl = "month (Jan=1, Dec=12)";
 
 SysTimeMonthParm::SysTimeMonthParm() :
-   CliIntParm(SysTimeMonthExpl, 1, SysTime::MaxMonth + 1) { }
+   CliIntParm(SysTimeMonthExpl, 1, 12) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string SysTimeMsecondExpl = "milliseconds";
 
 SysTimeMsecondParm::SysTimeMsecondParm() :
-   CliIntParm(SysTimeMsecondExpl, 0, SysTime::MaxMsec) { }
+   CliIntParm(SysTimeMsecondExpl, 0, 999) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string SysTimeSecondExpl = "seconds";
 
 SysTimeSecondParm::SysTimeSecondParm() :
-   CliIntParm(SysTimeSecondExpl, 0, SysTime::MaxSec) { }
+   CliIntParm(SysTimeSecondExpl, 0, 59) { }
 
 //------------------------------------------------------------------------------
 
 fixed_string SysTimeYearExpl = "year";
 
 SysTimeYearParm::SysTimeYearParm() :
-   CliIntParm(SysTimeYearExpl, SysTime::MinYear, SysTime::MaxYear) { }
+   CliIntParm(SysTimeYearExpl, 1970, 2100) { }
 
 //------------------------------------------------------------------------------
 

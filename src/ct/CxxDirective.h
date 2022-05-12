@@ -85,10 +85,6 @@ public:
    //  Overridden to return the symbol's name.
    //
    const std::string& Name() const override { return name_; }
-
-   //  Overridden to shrink the item's name.
-   //
-   void Shrink() override;
 protected:
    //  Creates a directive that defines or references NAME.  Protected because
    //  this class is virtual.
@@ -136,10 +132,6 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-
-   //  Overridden to report the filename's length.
-   //
-   void Shrink() override;
 private:
    //  Set if the filename appeared in angle brackets.
    //
@@ -167,7 +159,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Undef() { CxxStats::Decr(CxxStats::UNDEF_DIRECTIVE); }
+   ~Undef() = default;
 
    //  Overridden to log the directive.
    //
@@ -177,10 +169,6 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-
-   //  Overridden to report the symbol's length.
-   //
-   void Shrink() override;
 };
 
 //------------------------------------------------------------------------------
@@ -239,10 +227,6 @@ public:
    //  Overridden to support renaming a #define'd name.
    //
    void Rename(const std::string& name) override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to return the referent's full root type.
    //
@@ -334,10 +318,6 @@ public:
    //
    CxxToken* RootType() const override { return GetValue(); }
 
-   //  Overridden to shrink the item's name.
-   //
-   void Shrink() override;
-
    //  Overridden to reveal that this is a macro.
    //
    Cxx::ItemType Type() const override { return Cxx::Macro; }
@@ -424,10 +404,6 @@ public:
    //  appears in a #define after its name was already used.
    //
    void SetExpr(ExprPtr& rhs) override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 
    //  Overridden to update the #define's location.
    //
@@ -571,10 +547,6 @@ public:
    //
    CxxToken* PosToItem(size_t pos) const override;
 
-   //  Overridden to shrink the conditional expression.
-   //
-   void Shrink() override;
-
    //  Overridden to update the directive's location.
    //
    void UpdatePos(EditorAction action,
@@ -633,10 +605,6 @@ public:
    //
    CxxScoped* Referent() const override { return name_->Referent(); }
 
-   //  Overridden to shrink the item's name.
-   //
-   void Shrink() override;
-
    //  Overridden to update the directive's location.
    //
    void UpdatePos(EditorAction action,
@@ -690,7 +658,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Elif() { CxxStats::Decr(CxxStats::ELIF_DIRECTIVE); }
+   ~Elif() = default;
 
    //  Overridden to display the directive.
    //
@@ -715,7 +683,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Else() { CxxStats::Decr(CxxStats::ELSE_DIRECTIVE); }
+   ~Else() = default;
 
    //  Overridden to display the directive.
    //
@@ -740,7 +708,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Endif() { CxxStats::Decr(CxxStats::ENDIF_DIRECTIVE); }
+   ~Endif() = default;
 
    //  Overridden to display the directive.
    //
@@ -761,7 +729,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Ifdef() { CxxStats::Decr(CxxStats::IFDEF_DIRECTIVE); }
+   ~Ifdef() = default;
 
    //  Overridden to log anything other than a platform target.
    //
@@ -790,7 +758,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Iff() { CxxStats::Decr(CxxStats::IF_DIRECTIVE); }
+   ~Iff() = default;
 
    //  Overridden to add an #elif.
    //
@@ -826,10 +794,6 @@ public:
    //
    CxxToken* PosToItem(size_t pos) const override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to update the #if's location.
    //
    void UpdatePos(EditorAction action,
@@ -861,7 +825,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Ifndef() { CxxStats::Decr(CxxStats::IFNDEF_DIRECTIVE); }
+   ~Ifndef() = default;
 
    //  Changes the name of an #include guard to NAME.
    //
@@ -899,10 +863,6 @@ public:
    //  Returns the text that follows the directive.
    //
    const std::string& GetText() const { return text_; }
-
-   //  Overridden to shrink the item's string.
-   //
-   void Shrink() override;
 protected:
    //  Creates a directive that is followed by TEXT.  Protected because
    //  this class is virtual.
@@ -927,7 +887,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Pragma() { CxxStats::Decr(CxxStats::PRAGMA_DIRECTIVE); }
+   ~Pragma() = default;
 
    //  Overridden to display the directive.
    //
@@ -952,7 +912,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Error() { CxxStats::Decr(CxxStats::ERROR_DIRECTIVE); }
+   ~Error() = default;
 
    //  Overridden to display the directive.
    //
@@ -977,7 +937,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Line() { CxxStats::Decr(CxxStats::LINE_DIRECTIVE); }
+   ~Line() = default;
 
    //  Overridden to display the directive.
    //

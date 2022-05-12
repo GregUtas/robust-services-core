@@ -23,8 +23,10 @@
 #define MSGBUFFER_H_INCLUDED
 
 #include "Pooled.h"
+#include <chrono>
 #include <cstddef>
-#include "TimePoint.h"
+#include <ratio>
+#include "SteadyTime.h"
 #include "ToolTypes.h"
 
 //------------------------------------------------------------------------------
@@ -46,11 +48,11 @@ public:
 
    //  Returns the time when the message was created.
    //
-   TimePoint RxTime() const { return rxTime_; }
+   SteadyTime::Point RxTime() const { return rxTime_; }
 
    //  Modifies the time when the message was created.
    //
-   void SetRxTime(const TimePoint& time) { rxTime_ = time; }
+   void SetRxTime(const SteadyTime::Point& time) { rxTime_ = time; }
 
    //  Determines whether the buffer should be traced.  The default version
    //  returns TraceDefault and may be overridden as required.
@@ -76,7 +78,7 @@ protected:
 private:
    //  The time when the message arrived at I/O level.
    //
-   TimePoint rxTime_;
+   SteadyTime::Point rxTime_;
 };
 }
 #endif

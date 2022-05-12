@@ -39,8 +39,8 @@
 #include "SbTrace.h"
 #include "Signal.h"
 #include "Singleton.h"
+#include "SteadyTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 #include "Timer.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
@@ -91,7 +91,7 @@ ProtocolSM::~ProtocolSM()
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
       auto buff = Singleton< TraceBuffer >::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -363,7 +363,7 @@ void ProtocolSM::Initialize(bool henq)
 
    if(ctx->TraceOn(trans))
    {
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -575,8 +575,7 @@ void ProtocolSM::SetState(StateId stid)
 
 fn_name ProtocolSM_StartTimer = "ProtocolSM.StartTimer";
 
-bool ProtocolSM::StartTimer
-   (secs_t duration, Base& owner, TimerId tid, bool repeat)
+bool ProtocolSM::StartTimer(int secs, Base& owner, TimerId tid, bool repeat)
 {
    Debug::ft(ProtocolSM_StartTimer);
 
@@ -589,7 +588,7 @@ bool ProtocolSM::StartTimer
       return false;
    }
 
-   new Timer(*this, owner, tid, duration, repeat);
+   new Timer(*this, owner, tid, secs, repeat);
    return true;
 }
 

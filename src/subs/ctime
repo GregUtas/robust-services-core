@@ -6,6 +6,7 @@
 #define CTIME_INCLUDED
 
 #include "cstdint"
+#include "string"
 
 typedef long clock_t;
 
@@ -28,6 +29,18 @@ struct tm
 
 typedef int64_t time_t;
 
-time_t time(time_t* Time);
+time_t time(time_t* time);
 
+#ifdef OS_WIN
+   tm* localtime_s(const time_t* intime, tm* outime);
+#endif
+
+#ifdef OS_LINUX
+   tm* localtime_r(tm* outime, const time_t* intime);
+#endif
+
+namespace std
+{
+   string put_time(const tm* time, const char* format);
+}
 #endif

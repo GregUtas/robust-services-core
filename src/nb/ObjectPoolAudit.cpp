@@ -21,6 +21,7 @@
 //
 #include "ObjectPoolAudit.h"
 #include <ostream>
+#include <ratio>
 #include <string>
 #include "Debug.h"
 #include "NbDaemons.h"
@@ -37,7 +38,7 @@ namespace NodeBase
 {
 ObjectPoolAudit::ObjectPoolAudit() :
    Thread(AuditFaction, Singleton< ObjectDaemon >::Instance()),
-   interval_(Duration(5, SECS)),
+   interval_(msecs_t(5000)),
    phase_(CheckingFreeq),
    pid_(NIL_ID)
 {
@@ -76,7 +77,7 @@ void ObjectPoolAudit::Display(ostream& stream,
 {
    Thread::Display(stream, prefix, options);
 
-   stream << prefix << "interval : " << interval_.to_str(SECS) << CRLF;
+   stream << prefix << "interval : " << to_string(interval_) << CRLF;
    stream << prefix << "phase    : " << phase_ << CRLF;
    stream << prefix << "pid      : " << int(pid_) << CRLF;
 }
@@ -105,7 +106,7 @@ void ObjectPoolAudit::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-void ObjectPoolAudit::SetInterval(const Duration& interval)
+void ObjectPoolAudit::SetInterval(const msecs_t& interval)
 {
    Debug::ft("ObjectPoolAudit.SetInterval");
 

@@ -20,15 +20,16 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SbInvokerPools.h"
+#include <chrono>
 #include <cstddef>
 #include <ostream>
+#include <ratio>
 #include <string>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
 #include "CfgIntParm.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "Formatters.h"
 #include "Log.h"
 #include "SbLogs.h"
@@ -122,7 +123,7 @@ void PayloadInvokerPool::Patch(sel_t selector, void* arguments)
 //------------------------------------------------------------------------------
 
 void PayloadInvokerPool::RecordDelay
-   (MsgPriority prio, const Duration& delay) const
+   (MsgPriority prio, const nsecs_t& delay) const
 {
    Debug::ft("PayloadInvokerPool.RecordDelay");
 
@@ -130,11 +131,13 @@ void PayloadInvokerPool::RecordDelay
 
    AlarmStatus status = CriticalAlarm;
 
-   if(delay < (ONE_SEC << 1))
+   auto nsecs = delay.count();
+
+   if(nsecs < (std::nano::den << 1))
       status = NoAlarm;
-   else if(delay < (ONE_SEC << 2))
+   else if(nsecs < (std::nano::den << 2))
       status = MinorAlarm;
-   else if(delay < (ONE_SEC << 3))
+   else if(nsecs < (std::nano::den << 3))
       status = MajorAlarm;
 
    if(overloadAlarm_ != nullptr)

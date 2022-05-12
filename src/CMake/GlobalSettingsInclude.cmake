@@ -109,6 +109,9 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Enable Linux targets (*.linux.cpp files)
     add_compile_definitions(OS_LINUX)
 
+    # Allows typedefs that hide underlying types in subs/chrono to compile
+    add_compile_options(-fpermissive)
+
     # Allow signal handler to throw a C++ exception
     add_compile_options(-fnon-call-exceptions)
 

@@ -22,11 +22,12 @@
 #ifdef OS_WIN
 
 #include "SysMutex.h"
+#include <chrono>
 #include <new>
+#include <ratio>
 #include <Windows.h>
 #include "Algorithms.h"
 #include "Debug.h"
-#include "Duration.h"
 #include "MutexRegistry.h"
 #include "Singleton.h"
 #include "SysThread.h"
@@ -81,7 +82,7 @@ SysMutex::~SysMutex()
 
 fn_name SysMutex_Acquire = "SysMutex.Acquire";
 
-SysMutex::Rc SysMutex::Acquire(const Duration& timeout)
+SysMutex::Rc SysMutex::Acquire(const msecs_t& timeout)
 {
    Debug::ftnt(SysMutex_Acquire);
 
@@ -96,7 +97,7 @@ SysMutex::Rc SysMutex::Acquire(const Duration& timeout)
    auto thr = Thread::RunningThread(std::nothrow);
    auto result = Error;
    if(thr != nullptr) thr->UpdateMutex(this);
-   auto rc = WaitForSingleObject(mutex_, timeout.ToMsecs());
+   auto rc = WaitForSingleObject(mutex_, timeout.count());
    if(thr != nullptr) thr->UpdateMutex(nullptr);
 
    switch(rc)

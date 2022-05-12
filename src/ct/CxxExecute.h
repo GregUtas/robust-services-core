@@ -416,12 +416,17 @@ extern const StackArg NilStackArg;
 //------------------------------------------------------------------------------
 //
 //  Options for the CLI >parse command.
+//  o t: output error logs (there *will* be some) when parsing templates
+//  o p: trace parsing (mostly Parser.cpp and Lexer.cpp functions)
+//  o c: trace compilation (mostly Cxx*.cpp files, with pseudo-code generation)
+//  o f: enable FunctionTracer when tracing compilation
+//  o i: trace template instantiation (omitted if not selected)
 //
 constexpr char TemplateLogs = 't';
-constexpr char TraceParse = 'p';
-constexpr char SaveParseTrace = 's';
+constexpr char TraceParsing = 'p';
 constexpr char TraceCompilation = 'c';
 constexpr char TraceFunctions = 'f';
+constexpr char TraceInstantiation = 'i';
 
 //------------------------------------------------------------------------------
 //
@@ -661,10 +666,9 @@ public:
    //
    const CodeFile* File() const { return file_; }
 
-   //  Invoked when FILE/LINE is reached.  COMPILING is false during
-   //  parsing and true during compilation.
+   //  Invoked when FILE/LINE is reached during PHASE.
    //
-   void OnLine(const CodeFile* file, size_t line, bool compiling) const;
+   void OnLine(const CodeFile* file, size_t line, Phase phase) const;
 
    //  Displays the tracepoint in STREAM, starting each line with PREFIX.
    //
@@ -704,6 +708,10 @@ public:
    //  Deleted because this class only has static members.
    //
    Context() = delete;
+
+   //  Sets the options for the duration of the current >parse command.
+   //
+   static void SetOptions(const std::string& opts);
 
    //  Adds LOCAL to the local variables in the current scope.
    //
@@ -836,6 +844,11 @@ public:
    //
    static bool ParsingSourceCode();
 
+   //  Returns true if a class or function template is currently being
+   //  parsed.
+   //
+   static bool ParsingTemplate();
+
    //  Returns true if a template instance is currently being parsed.
    //
    static bool ParsingTemplateInstance();
@@ -888,6 +901,17 @@ public:
    //
    static void ClearTracepoints();
 
+   //  Starts tracing depending on the trace tools that were selected before
+   //  invoking >parse and the options that were passed to the >parse command.
+   //  PHASE indicates whether parsing or compilation is occurring.
+   //
+   static void StartTracing(Phase phase);
+
+   //  Stops tracing.  TEMP is set when tracing is only being temporarily
+   //  disabled.  Returns true if tracing was in progress when stopped.
+   //
+   static bool StopTracing(bool temp = true);
+
    //  Displays current tracepoints in STREAM.  Each line starts with PREFIX.
    //
    static void DisplayTracepoints
@@ -930,10 +954,6 @@ private:
    //
    static size_t ParseDepth() { return Frames_.size(); }
 
-   //  Sets the options for the current parser when it starts to run.
-   //
-   static void SetOptions(const std::string& opts) { Options_ = opts; }
-
    //  Returns the current parser options.
    //
    static std::string GetOptions() { return Options_; }
@@ -947,14 +967,9 @@ private:
    //
    static bool PopOptional() { return Frame_->PopOptional(); }
 
-   //  Configures the trace environment and returns true if tracing has
-   //  been started.
+   //  Invoked when on LINE during PHASE.
    //
-   static bool StartTracing();
-
-   //  Invoked when parsing or compiling LINE.
-   //
-   static void OnLine(size_t line, bool compiling);
+   static void OnLine(size_t line, Phase phase);
 
    //  Reinitializes all members.
    //

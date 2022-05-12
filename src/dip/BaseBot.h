@@ -24,7 +24,6 @@
 #include <vector>
 #include "DipProtocol.h"
 #include "DipTypes.h"
-#include "Duration.h"
 #include "StartupParameters.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
@@ -171,7 +170,7 @@ protected:
    //  Queues an EVENT that will arrive in SECS.  Returns false if the same
    //  event is already pending at the same time.
    //
-   bool queue_event(BotEvent event, secs_t secs);
+   bool queue_event(BotEvent event, int secs);
 
    //  Cancels EVENT if it exists.  If more than one such event is pending,
    //  only the one that would occur first is cancelled.

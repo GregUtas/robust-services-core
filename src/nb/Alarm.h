@@ -24,6 +24,7 @@
 
 #include "Immutable.h"
 #include <cstddef>
+#include <cstdint>
 #include "Duration.h"
 #include "NbTypes.h"
 #include "RegCell.h"
@@ -60,7 +61,7 @@ public:
    //  Instead of Log::Create, the application must invoke Alarm::Create,
    //  which returns nullptr unless a log should be generated.
    //
-   Alarm(c_string name, c_string expl, secs_t delay);
+   Alarm(c_string name, c_string expl, uint32_t delay);
 
    //  Not subclassed.
    //
@@ -121,7 +122,7 @@ private:
 
    //  The delay when downgrading the alarm.
    //
-   const Duration delay_;
+   const secs_t delay_;
 
    //  The alarm's index in AlarmRegistry.
    //

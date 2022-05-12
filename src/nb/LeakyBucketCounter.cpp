@@ -20,7 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LeakyBucketCounter.h"
+#include <chrono>
 #include <ostream>
+#include <ratio>
 #include <string>
 #include "Debug.h"
 #include "SysTypes.h"
@@ -33,6 +35,7 @@ using std::string;
 namespace NodeBase
 {
 LeakyBucketCounter::LeakyBucketCounter() :
+   interval_(0),
    limit_(0),
    count_(0)
 {
@@ -53,8 +56,7 @@ void LeakyBucketCounter::Display(ostream& stream,
 {
    Object::Display(stream, prefix, options);
 
-   stream << prefix << "interval : " << interval_.to_str(mSECS) << CRLF;
-   stream << prefix << "lastTime : " << lastTime_.Ticks() << CRLF;
+   stream << prefix << "interval : " << to_string(interval_) << CRLF;
    stream << prefix << "limit    : " << limit_ << CRLF;
    stream << prefix << "count    : " << count_ << CRLF;
 }
@@ -72,9 +74,9 @@ bool LeakyBucketCounter::HasReachedLimit()
    //  Calculate the number of events that have drained
    //  from the bucket since the last event occurred.
    //
-   auto now = TimePoint::Now();
+   auto now = SteadyTime::Now();
    auto elapsed = now - lastTime_;
-   auto debits = elapsed.Ticks() / (interval_.Ticks() / limit_);
+   auto debits = elapsed / (interval_ / limit_);
 
    //  If the bucket isn't empty, drain events.
    //
@@ -110,12 +112,12 @@ bool LeakyBucketCounter::HasReachedLimit()
 
 //------------------------------------------------------------------------------
 
-void LeakyBucketCounter::Initialize(size_t limit, secs_t seconds)
+void LeakyBucketCounter::Initialize(size_t limit, uint32_t seconds)
 {
    Debug::ft("LeakyBucketCounter.Initialize");
 
-   interval_ = Duration(seconds, SECS);
-   lastTime_ = TimePoint::Now();
+   interval_ = msecs_t(SECS_TO_MS * seconds);
+   lastTime_ = SteadyTime::Now();
    limit_ = limit;
    count_ = 0;
 }

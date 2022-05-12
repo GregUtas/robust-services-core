@@ -257,7 +257,7 @@ void FileThread::Record(const std::string& s, bool eol)
 
    MutexGuard guard(&ConsoleFileLock_);
 
-   auto name = Element::ConsoleFileName() + ".txt";
+   auto name = Element::ConsoleFileName();
    Spool(name, s, eol);
 }
 

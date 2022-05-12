@@ -2230,9 +2230,9 @@ bool Lexer::GetNum(TokenPtr& item)
    //  It is already known that the next character is a digit, so a lot of
    //  nonsense can be avoided by seeing if that digit appears alone.
    //
-   if(curr_ >= code_.size() - 1) return false;
+   if(curr_ > code_.size() - 1) return false;
    auto pos = curr_ + 1;
-   auto c = code_[pos];
+   auto c = (pos < code_.size() ? code_[pos] : NUL);
 
    if(!CxxChar::Attrs[c].validInt)
    {

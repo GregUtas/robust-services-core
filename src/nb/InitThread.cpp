@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "InitThread.h"
+#include <ratio>
 #include <set>
 #include <sstream>
 #include <string>
@@ -78,7 +79,7 @@ c_string InitThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
-Duration InitThread::CalculateDelay() const
+msecs_t InitThread::CalculateDelay() const
 {
    Debug::ft("InitThread.CalculateDelay");
 
@@ -89,7 +90,7 @@ Duration InitThread::CalculateDelay() const
    //  o the RTC timeout, if no unpreemptable thread is running (or
    //    if it has already been signalled for running too long).
    //
-   Duration timeout;
+   msecs_t timeout;
    auto thr = LockedThread();
 
    if((thr != nullptr) && !timeout_)
@@ -97,7 +98,7 @@ Duration InitThread::CalculateDelay() const
    else
       timeout = ThreadAdmin::RtcTimeout();
 
-   auto delay = ThreadAdmin::SchedTimeout() >> 1;
+   msecs_t delay(ThreadAdmin::SchedTimeout().count() >> 1);
 
    if(timeout < delay)
    {
@@ -106,7 +107,7 @@ Duration InitThread::CalculateDelay() const
 
    //  If our timeout interval was rounded off to zero, sleep briefly.
    //
-   if(delay <= TIMEOUT_IMMED) delay = ONE_mSEC;
+   if(delay <= TIMEOUT_IMMED) delay = msecs_t(1);
    return delay;
 }
 
@@ -136,7 +137,7 @@ void InitThread::CauseRestart()
    reg->SetLevel(RestartWarm);
    Singleton< RootThread >::Extant()->Interrupt(RestartMask);
    state_ = Initializing;
-   Pause(Duration(100, mSECS));
+   Pause(msecs_t(100));
 }
 
 //------------------------------------------------------------------------------
@@ -204,7 +205,7 @@ void InitThread::Enter()
 {
    Debug::ft(InitThread_Enter);
 
-   Duration delay;
+   msecs_t delay;
    DelayRc drc;
 
    //  When a thread is entered, it is unpreemptable.  However, we must run

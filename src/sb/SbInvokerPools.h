@@ -61,8 +61,8 @@ private:
 
    //  Overridden to raise an alarm when DELAY is excessive.
    //
-   void RecordDelay
-      (MsgPriority prio, const NodeBase::Duration& delay) const override;
+   void RecordDelay(MsgPriority prio,
+      const NodeBase::nsecs_t& delay) const override;
 
    //  The alarm that is raised when payload work enters overload.
    //

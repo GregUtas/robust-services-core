@@ -21,7 +21,6 @@
 //
 #include "PotsTreatments.h"
 #include <bitset>
-#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -215,14 +214,14 @@ PotsTreatment* PotsTreatment::NextTreatment() const
 fn_name PotsToneTreatment_ctor = "PotsToneTreatment.ctor";
 
 PotsToneTreatment::PotsToneTreatment
-   (PotsTreatmentQueue::QId qid, Tone::Id tone, secs_t duration) :
+   (PotsTreatmentQueue::QId qid, Tone::Id tone, uint32_t secs) :
    PotsTreatment(qid),
    tone_(tone),
-   duration_(duration)
+   secs_(secs)
 {
    Debug::ft(PotsToneTreatment_ctor);
 
-   if(duration_ == 0)
+   if(secs_ == 0)
       Debug::SwLog(PotsToneTreatment_ctor, "invalid duration", 0);
 }
 
@@ -237,7 +236,7 @@ EventHandler::Rc PotsToneTreatment::ApplyTreatment
    auto upsm = PotsCallPsm::Cast(pssm->UPsm());
 
    upsm->SetOgTone(tone_);
-   pssm->StartTimer(PotsProtocol::TreatmentTimeoutId, duration_);
+   pssm->StartTimer(PotsProtocol::TreatmentTimeoutId, secs_);
    return EventHandler::Suspend;
 }
 
@@ -252,9 +251,9 @@ void PotsToneTreatment::Display(ostream& stream,
 
    auto reg = Singleton< ToneRegistry >::Instance();
 
-   stream << prefix << "tone     : " << int(tone_);
+   stream << prefix << "tone : " << int(tone_);
    stream << " [" << strClass(reg->GetTone(tone_), false) << ']' << CRLF;
-   stream << prefix << "duration : " << duration_ << CRLF;
+   stream << prefix << "secs : " << secs_ << CRLF;
 }
 
 //==============================================================================

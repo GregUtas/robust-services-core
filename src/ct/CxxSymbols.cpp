@@ -317,8 +317,6 @@ static CxxScoped* ItemAccessed(CxxScoped* item, const SymbolView& view)
 CxxSymbols::CxxSymbols()
 {
    Debug::ft("CxxSymbols.ctor");
-
-   CxxStats::Incr(CxxStats::CXX_SYMBOLS);
 }
 
 //------------------------------------------------------------------------------
@@ -326,8 +324,6 @@ CxxSymbols::CxxSymbols()
 CxxSymbols::~CxxSymbols()
 {
    Debug::ftnt("CxxSymbols.dtor");
-
-   CxxStats::Decr(CxxStats::CXX_SYMBOLS);
 }
 
 //------------------------------------------------------------------------------
@@ -726,7 +722,7 @@ CxxScoped* CxxSymbols::FindSymbol(CodeFile* file,
 
             for(auto c = item->GetClass(); c != nullptr; c = c->OuterClass())
             {
-               if(c->GetTemplateArgs() != nullptr)
+               if(c->GetTemplatedName() != nullptr)
                {
                   log = false;
                   break;
@@ -941,108 +937,6 @@ void CxxSymbols::ListMacros(const string& name, SymbolVector& list) const
    {
       if(i->second->IsDefined()) list.push_back(i->second);
    }
-}
-
-//------------------------------------------------------------------------------
-
-void CxxSymbols::Shrink() const
-{
-   //  This cannot shrink its containers.  An unordered multimap does not
-   //  support shrink_to_fit, and the strings in each tuple are const.
-   //
-   size_t ssize = 0;
-   size_t vsize = 0;
-
-   vsize += classes_->size() * (sizeof(ClassPair) + 2 * sizeof(ClassPair*));
-   vsize += classes_->bucket_count() * (sizeof(ClassPair*) + sizeof(size_t));
-
-   for(auto c = classes_->cbegin(); c != classes_->cend(); ++c)
-   {
-      ssize += c->first.capacity();
-   }
-
-   vsize += data_->size() * (sizeof(DataPair) + 2 * sizeof(DataPair*));
-   vsize += data_->bucket_count() * (sizeof(DataPair*) + sizeof(size_t));
-
-   for(auto d = data_->cbegin(); d != data_->cend(); ++d)
-   {
-      ssize += d->first.capacity();
-   }
-
-   vsize += macros_->size() * (sizeof(MacroPair) + 2 * sizeof(MacroPair*));
-   vsize += macros_->bucket_count() * (sizeof(MacroPair*) + sizeof(size_t));
-
-   for(auto m = macros_->cbegin(); m != macros_->cend(); ++m)
-   {
-      ssize += m->first.capacity();
-   }
-
-   vsize += enums_->size() * (sizeof(EnumPair) + 2 * sizeof(ClassPair*));
-   vsize += enums_->bucket_count() * (sizeof(EnumPair*) + sizeof(size_t));
-
-   for(auto e = enums_->cbegin(); e != enums_->cend(); ++e)
-   {
-      ssize += e->first.capacity();
-   }
-
-   vsize += etors_->size() * (sizeof(EtorPair) + 2 * sizeof(EtorPair*));
-   vsize += etors_->bucket_count() * (sizeof(EtorPair*) + sizeof(size_t));
-
-   for(auto e = etors_->cbegin(); e != etors_->cend(); ++e)
-   {
-      ssize += e->first.capacity();
-   }
-
-   vsize += forws_->size() * (sizeof(ForwPair) + 2 * sizeof(ForwPair*));
-   vsize += forws_->bucket_count() * (sizeof(ForwPair*) + sizeof(size_t));
-
-   for(auto f = forws_->cbegin(); f != forws_->cend(); ++f)
-   {
-      ssize += f->first.capacity();
-   }
-
-   vsize += friends_->size() * (sizeof(FriendPair) + 2 * sizeof(FriendPair*));
-   vsize += friends_->bucket_count() * (sizeof(FriendPair*) + sizeof(size_t));
-
-   for(auto f = friends_->cbegin(); f != friends_->cend(); ++f)
-   {
-      ssize += f->first.capacity();
-   }
-
-   vsize += funcs_->size() * (sizeof(FuncPair) + 2 * sizeof(FuncPair*));
-   vsize += funcs_->bucket_count() * (sizeof(FuncPair*) + sizeof(size_t));
-
-   for(auto f = funcs_->cbegin(); f != funcs_->cend(); ++f)
-   {
-      ssize += f->first.capacity();
-   }
-
-   vsize += spaces_->size() * (sizeof(SpacePair) + 2 * sizeof(SpacePair*));
-   vsize += spaces_->bucket_count() * (sizeof(SpacePair*) + sizeof(size_t));
-
-   for(auto s = spaces_->cbegin(); s != spaces_->cend(); ++s)
-   {
-      ssize += s->first.capacity();
-   }
-
-   vsize += terms_->size() * (sizeof(TermPair) + 2 * sizeof(TermPair*));
-   vsize += terms_->bucket_count() * (sizeof(TermPair*) + sizeof(size_t));
-
-   for(auto t = terms_->cbegin(); t != terms_->cend(); ++t)
-   {
-      ssize += t->first.capacity();
-   }
-
-   vsize += types_->size() * (sizeof(TypePair) + 2 * sizeof(TypePair*));
-   vsize += types_->bucket_count() * (sizeof(TypePair*) + sizeof(size_t));
-
-   for(auto t = types_->cbegin(); t != types_->cend(); ++t)
-   {
-      ssize += t->first.capacity();
-   }
-
-   CxxStats::Strings(CxxStats::CXX_SYMBOLS, ssize);
-   CxxStats::Vectors(CxxStats::CXX_SYMBOLS, vsize);
 }
 
 //------------------------------------------------------------------------------

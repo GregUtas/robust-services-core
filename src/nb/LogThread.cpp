@@ -23,6 +23,7 @@
 #include <iosfwd>
 #include <new>
 #include <ostream>
+#include <ratio>
 #include "CallbackRequest.h"
 #include "CfgParmRegistry.h"
 #include "CoutThread.h"
@@ -157,7 +158,7 @@ void LogThread::Enter()
 
       if(msgs->AvailCount() <= NoSpoolingMessageCount())
       {
-         delay = ONE_SEC;  // wait for more MsgBuffers
+         delay = msecs_t(1000);  // wait for more MsgBuffers
          continue;
       }
 
@@ -220,7 +221,7 @@ void LogThread::Spool(const string& str, const Log* log)
          SysConsole::Out() << str << std::flush;
 
          auto path = Element::OutputPath() +
-            PATH_SEPARATOR + Element::ConsoleFileName() + ".txt";
+            PATH_SEPARATOR + Element::ConsoleFileName();
          auto file = SysFile::CreateOstream(path.c_str());
 
          if(file != nullptr)

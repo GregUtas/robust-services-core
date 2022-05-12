@@ -979,7 +979,12 @@ bool CodeWarning::Preserve() const
 
 bool CodeWarning::Suppress() const
 {
-   auto& fn = File()->Name();
+   //  Suppress warnings in targeted files whose code wasn't compiled.
+   //
+   auto file = File();
+   auto& fn = file->Name();
+
+   if(file->IsExcludedTarget()) return true;
 
    switch(warning_)
    {
@@ -993,6 +998,13 @@ bool CodeWarning::Suppress() const
    case DataUnused:
       if(fn == "Allocators.h") return true;
       break;
+
+   case FriendUnused:
+   {
+      auto name = static_cast<const Friend*>(item_)->ScopedName(true);
+      if(name.find("::deleter_type") != string::npos) return true;
+      break;
+   }
 
    case FunctionUnused:
       if(fn == "Allocators.h") return true;
@@ -1058,13 +1070,13 @@ bool CodeWarning::Suppress() const
       if(func->IsInternal()) return true;
       if(func->IsPureVirtual()) return true;
 
-      auto file = func->GetImplFile();
-      if(file != nullptr)
+      if(func->GetImplFile() != nullptr)
       {
          if(fn == "Algorithms.cpp") return true;
          if(fn == "Duration.cpp") return true;
          if(fn == "Formatters.cpp") return true;
-         if(fn == "TimePoint.cpp") return true;
+         if(fn == "SteadyTime.cpp") return true;
+         if(fn == "SystemTime.cpp") return true;
          if(fn == "TraceRecord.cpp") return true;
          if(fn == "CxxString.cpp") return true;
       }

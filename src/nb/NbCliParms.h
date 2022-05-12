@@ -288,6 +288,9 @@ public:
 //
 //  Parameters for time.
 //
+//  These are no longer used but have been retained for use by any CLI
+//  command which has parameters that correspond to time values.
+//
 class SysTimeYearParm : public CliIntParm
 {
 public: SysTimeYearParm();

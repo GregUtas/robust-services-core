@@ -165,16 +165,21 @@ namespace CodeTools
    //
    std::string& RemoveTemplates(std::string&& type);
 
+   //  Removes template parameters from occurrences of std::ratio within TYPE.
+   //
+   std::string RemoveRatioParms(const std::string& type);
+
    //  Returns the starting location of TARG within S.  Skips any TARG that
    //  appears after a // comment or within a string literal.
    //
    size_t FindSubstr(const std::string& s, const std::string& targ);
 
    //  Between positions BEGIN and END - 1 in CODE, replaces occurrences of S1
-   //  with S2.  Returns the new location of END, accounting for replacements
+   //  with S2 unless the first non-blank character after S1 is C (ignored if
+   //  C is NUL).  Returns the new location of END, accounting for replacements
    //  of S1 by S2.
    //
-   size_t Replace(std::string& code,
-      const std::string& s1, const std::string& s2, size_t begin, size_t end);
+   size_t Replace(std::string& code, const std::string& s1,
+      const std::string& s2, size_t begin, size_t end, char c = NodeBase::NUL);
 }
 #endif

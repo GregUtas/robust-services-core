@@ -21,6 +21,7 @@
 //
 #include "TimerRegistry.h"
 #include <bitset>
+#include <chrono>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -72,16 +73,16 @@ TimerRegistry::~TimerRegistry()
 
 //------------------------------------------------------------------------------
 
-Timer::QId TimerRegistry::CalcQId(secs_t secs) const
+Timer::QId TimerRegistry::CalcQId(uint32_t secs) const
 {
    Debug::ft("TimerRegistry.CalcQId");
 
-   //  The timer thread wakes up 1000 msecs after it last began to run.
+   //  The timer thread wakes up ~1000 msecs after it last began to run.
    //  If it last began to run over 500 msecs ago, the next timer queue
    //  will be served in less than half a second, so increment SECS.
    //
    auto thr = Singleton< TimerThread >::Instance();
-   auto incr = (thr->CurrTimeRunning().To(mSECS) >= 500 ? 1 : 0);
+   auto incr = (thr->CurrTimeRunning().count() >= 500 ? 1 : 0);
 
    secs += incr;
    if(secs >= Timer::MaxQId) return Timer::MaxQId;

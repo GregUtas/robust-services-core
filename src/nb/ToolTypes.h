@@ -81,7 +81,7 @@ constexpr FlagId NetworkTracer = 5;    // socket events
 constexpr FlagId TransTracer = 6;      // SessionBase transactions
 constexpr FlagId BufferTracer = 7;     // SessionBase IpBuffers
 constexpr FlagId ContextTracer = 8;    // SessionBase contexts
-constexpr FlagId ParserTracer = 9;     // parser "object code generation"
+constexpr FlagId ParserTracer = 9;     // Parser "object code generation"
 constexpr FlagId FirstAppTracer = 10;  // start of application-specific tracers
 }
 #endif

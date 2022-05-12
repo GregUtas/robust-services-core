@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Timer.h"
-#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -36,8 +35,8 @@
 #include "SbTrace.h"
 #include "Signal.h"
 #include "Singleton.h"
+#include "SteadyTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 #include "TimerProtocol.h"
 #include "TimerRegistry.h"
 #include "TlvMessage.h"
@@ -54,19 +53,19 @@ using std::string;
 namespace SessionBase
 {
 Timer::Timer
-   (ProtocolSM& psm, Base& owner, TimerId tid, secs_t secs, bool repeat) :
+   (ProtocolSM& psm, Base& owner, TimerId tid, uint32_t secs, bool repeat) :
    psm_(&psm),
    owner_(&owner),
    tid_(tid),
    repeat_(repeat),
    qid_(NilQId),
-   duration_(secs),
+   secs_(secs),
    remaining_(secs)
 {
    Debug::ft("Timer.ctor");
 
    auto reg = Singleton< TimerRegistry >::Instance();
-   qid_ = reg->CalcQId(duration_);
+   qid_ = reg->CalcQId(secs_);
    reg->timerq_[qid_].Henq(*this);
    psm_->timerq_.Henq(*this);
 
@@ -76,7 +75,7 @@ Timer::Timer
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -104,7 +103,7 @@ Timer::~Timer()
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
       auto buff = Singleton< TraceBuffer >::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -159,7 +158,7 @@ void Timer::Display(ostream& stream,
    stream << prefix << "qid       : " << qid_ << CRLF;
    stream << prefix << "link      : " << CRLF;
    link_.Display(stream, prefix + spaces(2));
-   stream << prefix << "duration  : " << duration_ << CRLF;
+   stream << prefix << "secs      : " << secs_ << CRLF;
    stream << prefix << "remaining : " << remaining_ << CRLF;
 }
 
@@ -216,10 +215,10 @@ void Timer::Restart()
 
    if(qid_ < MaxQId)
    {
-      //  Move this timer to the queue that will be reached in duration_
+      //  Move this timer to the queue that will be reached in secs_
       //  seconds.
       //
-      auto secs = (duration_ == 0 ? 1 : duration_);
+      auto secs = (secs_ == 0 ? 1 : secs_);
       auto nextq = reg->CalcQId(secs);
       Deregister();
 
@@ -231,7 +230,7 @@ void Timer::Restart()
       //  This timer is MaxQId seconds or more, so it never moves.
       //  Just reset its countdown value.
       //
-      remaining_ = duration_;
+      remaining_ = secs_;
    }
 }
 

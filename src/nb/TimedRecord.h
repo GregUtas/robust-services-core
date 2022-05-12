@@ -23,10 +23,12 @@
 #define TIMEDRECORD_H_INCLUDED
 
 #include "TraceRecord.h"
+#include <chrono>
+#include <ratio>
 #include <string>
 #include "SysDecls.h"
+#include "SystemTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 
@@ -43,11 +45,11 @@ public:
 
    //  Returns the tick time at which the event occurred.
    //
-   TimePoint GetTime() const { return time_; }
+   SystemTime::Point GetTime() const { return time_; }
 
    //  Sets the time at which the event occurred.
    //
-   void SetTime(const TimePoint& time) { time_ = time; }
+   void SetTime(const SystemTime::Point& time) { time_ = time; }
 
    //  Returns the native thread identifier associated with the event.
    //
@@ -75,7 +77,7 @@ private:
 
    //  The time when the record was created.
    //
-   TimePoint time_;
+   SystemTime::Point time_;
 };
 }
 #endif

@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysTime.linux.cpp
+//  SteadyTime.h
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,51 +19,39 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifdef OS_LINUX
+#ifndef STEADYTIME_H_INCLUDED
+#define STEADYTIME_H_INCLUDED
 
-#include "SysTime.h"
-#include <ctime>
-#include "Debug.h"
+#include <chrono>
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-fn_name SysTime_ctor2 = "SysTime.ctor(now)";
-
-SysTime::SysTime()
+//  A point in time (timestamp) on the monotonic (steady) clock.
+//
+namespace SteadyTime
 {
-   Debug::ftnt(SysTime_ctor2);
-/*L
-   errno_t err;
-   time_t longtime;
-   _timeb timebuff;
-   tm timeofday;
+   //  The underlying type for a timestamp.
+   //
+   using Point = std::chrono::steady_clock::time_point;
 
-   time(&longtime);
+   //  Returns the current timestamp.
+   //
+   Point Now();
 
-   err = _ftime_s(&timebuff);
+   //  Returns the timestamp when the system booted.
+   //
+   Point TimeZero();
 
-   if(err != 0)
-   {
-      Debug::SwLog(SysTime_ctor2, "_ftime_s failed", err);
-   }
+   //  Returns an invalid timestamp (the clock's epoch) for reinitialization
+   //  purposes.  This is also the value set by the default constructor.
+   //
+   Point GetInvalid();
 
-   err = localtime_s(&timeofday, &longtime);
-
-   if(err != 0)
-   {
-      Debug::SwLog(SysTime_ctor2, "localtime_s failed", err);
-   }
-
-   time_[YearsField] = timeofday.tm_year + 1900;
-   time_[MonthsField] = timeofday.tm_mon;
-   time_[DaysField] = timeofday.tm_mday;
-   time_[HoursField] = timeofday.tm_hour;
-   time_[MinsField] = timeofday.tm_min;
-   time_[SecsField] = timeofday.tm_sec;
-   time_[MsecsField] = timebuff.millitm;
-*/
+   //  Returns true if the timestamp is not the value assigned by Invalidate.
+   //
+   bool IsValid(const Point& time);
 }
 }
 #endif

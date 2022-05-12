@@ -29,8 +29,8 @@
 #include "NbTypes.h"
 #include "RegCell.h"
 #include "SbTypes.h"
+#include "SteadyTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 
 //------------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@ public:
 
    //  Returns the time when the current transaction started.
    //
-   NodeBase::TimePoint Time0() const { return time0_; }
+   NodeBase::SteadyTime::Point Time0() const { return time0_; }
 
    //  Overridden to display member variables.
    //
@@ -150,7 +150,7 @@ private:
 
    //  The time when the current transaction began.
    //
-   NodeBase::TimePoint time0_;
+   NodeBase::SteadyTime::Point time0_;
 
    //  Percentage of run-to-completion timeout that must remain for invoker
    //  to begin another transaction instead of yielding.

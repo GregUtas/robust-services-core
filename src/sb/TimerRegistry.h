@@ -23,7 +23,7 @@
 #define TIMERREGISTRY_H_INCLUDED
 
 #include "Dynamic.h"
-#include "Duration.h"
+#include <cstdint>
 #include "NbTypes.h"
 #include "Q2Way.h"
 #include "SbTypes.h"
@@ -76,7 +76,7 @@ private:
    //  Determines the queue where a timer that will expire in SECS
    //  should be placed.
    //
-   Timer::QId CalcQId(NodeBase::secs_t secs) const;
+   Timer::QId CalcQId(uint32_t secs) const;
 
    //  Sends a timeout on behalf of TMR.
    //

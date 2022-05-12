@@ -26,7 +26,7 @@
 #include "ProxyBcSessions.h"
 #include "SbExtInputHandler.h"
 #include "UdpIpService.h"
-#include "Duration.h"
+#include <cstdint>
 #include "EventHandler.h"
 #include "Initiator.h"
 #include "NbTypes.h"
@@ -409,9 +409,9 @@ public:
    //
    ProtocolSM* TimerPsm(TimerId tid) const;
 
-   //  Starts a timer, identified by TID, for DURATION seconds.
+   //  Starts a timer, identified by TID, for SECS.
    //
-   void StartTimer(TimerId tid, secs_t duration);
+   void StartTimer(TimerId tid, uint32_t secs);
 
    //  Stops the timer identified by TID.
    //

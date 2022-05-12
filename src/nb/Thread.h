@@ -84,7 +84,7 @@ public:
    //  sleeps forever, although it can be interrupted.  Returns the reason why
    //  the pause ended.
    //
-   static DelayRc Pause(Duration time = TIMEOUT_IMMED);
+   static DelayRc Pause(msecs_t time = TIMEOUT_IMMED);
 
    //  Returns how long the running thread has run as a percentage (0 to 100)
    //  of the run-to-completion timeout.  Returns 0 for a preemptable thread.
@@ -218,7 +218,7 @@ public:
 
    //  How long the thread has run since it was scheduled in.
    //
-   Duration CurrTimeRunning() const;
+   msecs_t CurrTimeRunning() const;
 
    //  Returns the percentage of idle time during the most recent statistics
    //  short interval.
@@ -274,13 +274,13 @@ protected:
    //  TIMEOUT to wait for a message.  May be overridden, but the base class
    //  version must be invoked.  Protected to restrict usage to subclasses.
    //
-   virtual MsgBuffer* DeqMsg(const Duration& timeout);
+   virtual MsgBuffer* DeqMsg(const msecs_t& timeout);
 
    //  Returns the amount of time that the thread receives when it begins
    //  to run unpreemptably.  The default should only be overridden for
    //  compelling reasons.
    //
-   virtual Duration InitialTime() const;
+   virtual msecs_t InitialTime() const;
 
    //  Returns the signal, if any, that is currently being handled.
    //
@@ -552,11 +552,11 @@ private:
    //  Returns the amount of time still available to the locked thread.
    //  Returns ZERO_SECS if the thread has used up all of its time.
    //
-   Duration TimeLeft() const;
+   msecs_t TimeLeft() const;
 
    //  Gives the running thread more TIME to run unpreemptably.
    //
-   static void ExtendTime(const Duration& time);
+   static void ExtendTime(const msecs_t& time);
 
    //  Invoked when a thread did not yield before the run-to-completion
    //  timer expired.
@@ -641,7 +641,7 @@ private:
    //  for thread statistics.
    //
    void DisplaySummary(std::ostream& stream,
-      const Duration& time0, const Duration& time1) const;
+      const nsecs_t& time0, const nsecs_t& time1) const;
 
    //  Displays a summary of all threads' statistics in STREAM.
    //

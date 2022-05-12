@@ -120,7 +120,7 @@ const char* StackInfo::GetFileLoc(DWORD64 frame, DWORD& line, DWORD& disp)
 
 fn_depth StackInfo::GetFrames(StackFramesPtr& frames)
 {
-   //* Reading stack frames during the shutdown phase of a restart fails
+   //  Reading stack frames during the shutdown phase of a restart fails
    //  because a heap corruption is detected.  It appears that a library
    //  up-issued by VS2022 is the culprit, because the problem occurs even
    //  after reverting to the most recent code that passed restart tests

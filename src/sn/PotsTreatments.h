@@ -24,7 +24,7 @@
 
 #include "Protected.h"
 #include <cstddef>
-#include "Duration.h"
+#include <cstdint>
 #include "EventHandler.h"
 #include "Q1Link.h"
 #include "Q1Way.h"
@@ -180,11 +180,11 @@ class PotsToneTreatment : public PotsTreatment
 {
 public:
    //  Adds the treatment to the queue identified by QID.  TONE is the tone to
-   //  apply.  It lasts for DURATION before advancing to the next treatment in
-   //  the queue.
+   //  apply.  It lasts for SECS before advancing to the next treatment in the
+   //  queue.
    //
    PotsToneTreatment
-      (PotsTreatmentQueue::QId qid, Tone::Id tone, secs_t duration);
+      (PotsTreatmentQueue::QId qid, Tone::Id tone, uint32_t secs);
 
    //  Overridden to display member variables.
    //
@@ -202,7 +202,7 @@ private:
 
    //  The duration of tone_.
    //
-   secs_t duration_;
+   uint32_t secs_;
 };
 
 //------------------------------------------------------------------------------

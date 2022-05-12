@@ -129,14 +129,6 @@ CxxToken* Conditional::PosToItem(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Conditional::Shrink()
-{
-   OptionalCode::Shrink();
-   condition_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Conditional::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -300,14 +292,6 @@ void Define::SetExpr(ExprPtr& rhs)
 
 //------------------------------------------------------------------------------
 
-void Define::Shrink()
-{
-   Macro::Shrink();
-   if(rhs_ != nullptr) rhs_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Define::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -320,8 +304,6 @@ void Define::UpdatePos
 Elif::Elif()
 {
    Debug::ft("Elif.ctor");
-
-   CxxStats::Incr(CxxStats::ELIF_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -356,8 +338,6 @@ bool Elif::EnterScope()
 Else::Else()
 {
    Debug::ft("Else.ctor");
-
-   CxxStats::Incr(CxxStats::ELSE_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -389,8 +369,6 @@ bool Else::EnterScope()
 Endif::Endif()
 {
    Debug::ft("Endif.ctor");
-
-   CxxStats::Incr(CxxStats::ENDIF_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -407,8 +385,6 @@ void Endif::Display(ostream& stream,
 Error::Error(string& text) : StringDirective(text)
 {
    Debug::ft("Error.ctor");
-
-   CxxStats::Incr(CxxStats::ERROR_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -498,14 +474,6 @@ CxxToken* Existential::PosToItem(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Existential::Shrink()
-{
-   OptionalCode::Shrink();
-   name_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void Existential::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -526,8 +494,6 @@ void Existential::UpdateXref(bool insert)
 Ifdef::Ifdef(MacroNamePtr& macro) : Existential(macro)
 {
    Debug::ft("Ifdef.ctor");
-
-   CxxStats::Incr(CxxStats::IFDEF_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -579,8 +545,6 @@ Iff::Iff() :
    endif_(nullptr)
 {
    Debug::ft("Iff.ctor");
-
-   CxxStats::Incr(CxxStats::IF_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -685,15 +649,6 @@ CxxToken* Iff::PosToItem(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void Iff::Shrink()
-{
-   Conditional::Shrink();
-   elifs_.shrink_to_fit();
-   CxxStats::Vectors(CxxStats::IF_DIRECTIVE, elifs_.capacity());
-}
-
-//------------------------------------------------------------------------------
-
 void Iff::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -712,8 +667,6 @@ void Iff::UpdatePos
 Ifndef::Ifndef(MacroNamePtr& macro) : Existential(macro)
 {
    Debug::ft("Ifndef.ctor");
-
-   CxxStats::Incr(CxxStats::IFNDEF_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -794,8 +747,6 @@ Include::Include(string& name, bool angle) : SymbolDirective(name),
    group_(Ungrouped)
 {
    Debug::ft("Include.ctor");
-
-   CxxStats::Incr(CxxStats::INCLUDE_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -805,7 +756,6 @@ Include::~Include()
    Debug::ft("Include.dtor");
 
    GetFile()->EraseInclude(this);
-   CxxStats::Decr(CxxStats::INCLUDE_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -841,21 +791,11 @@ CodeFile* Include::FindFile() const
    return lib->FindFile(Name());
 }
 
-//------------------------------------------------------------------------------
-
-void Include::Shrink()
-{
-   SymbolDirective::Shrink();
-   CxxStats::Strings(CxxStats::INCLUDE_DIRECTIVE, Name().capacity());
-}
-
 //==============================================================================
 
 Line::Line(string& text) : StringDirective(text)
 {
    Debug::ft("Line.ctor");
-
-   CxxStats::Incr(CxxStats::LINE_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -877,7 +817,6 @@ Macro::Macro(const string& name) :
 
    SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
    Singleton< CxxSymbols >::Instance()->InsertMacro(this);
-   CxxStats::Incr(CxxStats::DEFINE_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -887,7 +826,6 @@ Macro::~Macro()
    Debug::ftnt("Macro.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseMacro(this);
-   CxxStats::Decr(CxxStats::DEFINE_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -984,16 +922,6 @@ void Macro::SetExpr(ExprPtr& rhs)
 
 //------------------------------------------------------------------------------
 
-void Macro::Shrink()
-{
-   CxxScoped::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::DEFINE_DIRECTIVE, name_.capacity());
-   CxxStats::Vectors(CxxStats::DEFINE_DIRECTIVE, XrefSize());
-}
-
-//------------------------------------------------------------------------------
-
 string Macro::TypeString(bool arg) const
 {
    Debug::ft("Macro.TypeString");
@@ -1020,7 +948,6 @@ MacroName::MacroName(string& name) :
    Debug::ft("MacroName.ctor");
 
    std::swap(name_, name);
-   CxxStats::Incr(CxxStats::MACRO_NAME);
 }
 
 //------------------------------------------------------------------------------
@@ -1030,7 +957,6 @@ MacroName::~MacroName()
    Debug::ftnt("MacroName.dtor");
 
    UpdateXref(false);
-   CxxStats::Decr(CxxStats::QUAL_NAME);
 }
 
 //------------------------------------------------------------------------------
@@ -1129,15 +1055,6 @@ void MacroName::Rename(const string& name)
 
 //------------------------------------------------------------------------------
 
-void MacroName::Shrink()
-{
-   CxxNamed::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::MACRO_NAME, name_.capacity());
-}
-
-//------------------------------------------------------------------------------
-
 fn_name MacroName_TypeString = "MacroName.TypeString";
 
 string MacroName::TypeString(bool arg) const
@@ -1204,7 +1121,7 @@ void OptionalCode::Display(ostream& stream,
       return;
    }
 
-   auto code = file->GetCode();
+   auto& code = file->GetCode();
 
    if(code.size() < end_)
    {
@@ -1301,8 +1218,6 @@ void OptionalCode::UpdatePos
 Pragma::Pragma(string& text) : StringDirective(text)
 {
    Debug::ft("Pragma.ctor");
-
-   CxxStats::Incr(CxxStats::PRAGMA_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -1332,14 +1247,6 @@ StringDirective::StringDirective(string& text)
    std::swap(text_, text);
 }
 
-//------------------------------------------------------------------------------
-
-void StringDirective::Shrink()
-{
-   CxxDirective::Shrink();
-   text_.shrink_to_fit();
-}
-
 //==============================================================================
 
 SymbolDirective::SymbolDirective(string& name)
@@ -1349,21 +1256,11 @@ SymbolDirective::SymbolDirective(string& name)
    std::swap(name_, name);
 }
 
-//------------------------------------------------------------------------------
-
-void SymbolDirective::Shrink()
-{
-   CxxDirective::Shrink();
-   name_.shrink_to_fit();
-}
-
 //==============================================================================
 
 Undef::Undef(string& name) : SymbolDirective(name)
 {
    Debug::ft("Undef.ctor");
-
-   CxxStats::Incr(CxxStats::UNDEF_DIRECTIVE);
 }
 
 //------------------------------------------------------------------------------
@@ -1384,13 +1281,5 @@ void Undef::Display(ostream& stream,
    stream << HASH_UNDEF_STR << SPACE;
    stream << Name();
    stream << CRLF;
-}
-
-//------------------------------------------------------------------------------
-
-void Undef::Shrink()
-{
-   SymbolDirective::Shrink();
-   CxxStats::Strings(CxxStats::UNDEF_DIRECTIVE, Name().capacity());
 }
 }

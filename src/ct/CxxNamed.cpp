@@ -26,7 +26,6 @@
 #include <utility>
 #include "CodeFile.h"
 #include "CxxArea.h"
-#include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
@@ -45,6 +44,33 @@ using std::string;
 
 namespace CodeTools
 {
+//  PARMS are a template's parameters, and ARGS are the arguments in one of its
+//  specializations or instantiations.  Updates TMAP to map each parameter to
+//  its corresponding argument.  For example, given vector<T> and vector<TYPE>,
+//  TMAP will contain an entry that maps T to TYPE.
+//
+static void BuildParameterMap(const TemplateParmPtrVector* parms,
+   const TemplateArgPtrVector* args, TemplateParmToArgMap& tmap)
+{
+   Debug::ft("CodeTools.BuildParameterMap");
+
+   std::pair<string, string> parmToArg;
+
+   for(auto i = 0; i < args->size(); ++i)
+   {
+      parmToArg.first = parms->at(i)->Name();
+
+      std::ostringstream stream;
+      Flags options(FQ_Mask | Code_Mask | NoAC_Mask | NoTP_Mask);
+      args->at(i)->Print(stream, options);
+      parmToArg.second = stream.str();
+
+      tmap.insert(parmToArg);
+   }
+}
+
+//------------------------------------------------------------------------------
+//
 //  Checks if REF (the name's referent) is a template argument.
 //
 static void CheckIfTemplateArgument(const CxxScoped* ref)
@@ -63,7 +89,7 @@ static void CheckIfTemplateArgument(const CxxScoped* ref)
    auto inst = ifunc->GetClass();
    if(inst == nullptr) return;
    if(!inst->IsInTemplateInstance()) return;
-   auto args = inst->GetTemplateArgs()->Args();
+   auto args = inst->GetTemplatedName()->Args();
 
    for(auto a = args->cbegin(); a != args->cend(); ++a)
    {
@@ -131,6 +157,18 @@ void CxxNamed::AddUsage()
    auto file = Context::File();
    if(file == nullptr) return;
    file->AddUsage(this);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxNamed_ArgString = "CxxNamed.ArgString";
+
+string CxxNamed::ArgString(const TemplateParmToArgMap& tmap) const
+{
+   Debug::ft(CxxNamed_ArgString);
+
+   Context::SwLog(CxxNamed_ArgString, strOver(this), 0);
+   return ERROR_STR;
 }
 
 //------------------------------------------------------------------------------
@@ -243,6 +281,13 @@ Namespace* CxxNamed::GetSpace() const
 
 //------------------------------------------------------------------------------
 
+void CxxNamed::Instantiating(CxxScopedVector& locals) const
+{
+   Debug::SwLog("CxxNamed.Instantiating", strOver(this), 0);
+}
+
+//------------------------------------------------------------------------------
+
 bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 {
    Debug::ft("CxxNamed.IsPreviousDeclOf");
@@ -287,6 +332,18 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxNamed_ItemIsTemplateArg = "CxxNamed.ItemIsTemplateArg";
+
+bool CxxNamed::ItemIsTemplateArg(const CxxNamed* item) const
+{
+   Debug::ft(CxxNamed_ItemIsTemplateArg);
+
+   Debug::SwLog(CxxNamed_ItemIsTemplateArg, strOver(this), 0);
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxNamed_MemberToArg = "CxxNamed.MemberToArg";
 
 StackArg CxxNamed::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
@@ -299,6 +356,19 @@ StackArg CxxNamed::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
    Context::SwLog(CxxNamed_MemberToArg, expl, op);
 
    return NameToArg(op, nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxNamed_NamesReferToArgs = "CxxNamed.NamesReferToArgs";
+
+bool CxxNamed::NamesReferToArgs(const NameVector& names,
+   const CxxScope* scope, CodeFile* file, size_t& index) const
+{
+   Debug::ft(CxxNamed_NamesReferToArgs);
+
+   Debug::SwLog(CxxNamed_NamesReferToArgs, strOver(this), 0);
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -436,11 +506,11 @@ CxxScoped* CxxNamed::ResolveName(CodeFile* file,
             //  instance.
             //
             if(cls->IsInTemplateInstance()) break;
-            auto args = qname->At(idx - 1)->GetTemplateArgs();
-            if(args == nullptr) break;
-            if(args->HasTemplateParmFor(scope)) break;
-            if(!ResolveTemplate(cls, args, (idx >= size))) break;
-            cls = cls->EnsureInstance(args);
+            auto tname = qname->At(idx - 1)->GetTemplatedName();
+            if(tname == nullptr) break;
+            if(tname->HasTemplateParmFor(scope)) break;
+            if(!ResolveTemplate(cls, tname, (idx >= size))) break;
+            cls = cls->EnsureInstance(tname);
             item = cls;
             qname->SetReferentN(idx - 1, item, &view);  // updated value
             if(item == nullptr) return nullptr;
@@ -614,8 +684,6 @@ DataSpec::DataSpec(QualNamePtr& name) :
    arrays_(nullptr)
 {
    Debug::ft("DataSpec.ctor");
-
-   CxxStats::Incr(CxxStats::DATA_SPEC);
 }
 
 //------------------------------------------------------------------------------
@@ -625,7 +693,6 @@ DataSpec::DataSpec(const char* name) : arrays_(nullptr)
    Debug::ft("DataSpec.ctor(string)");
 
    name_ = QualNamePtr(new QualName(name));
-   CxxStats::Incr(CxxStats::DATA_SPEC);
 }
 
 //------------------------------------------------------------------------------
@@ -633,8 +700,6 @@ DataSpec::DataSpec(const char* name) : arrays_(nullptr)
 DataSpec::~DataSpec()
 {
    Debug::ftnt("DataSpec.dtor");
-
-   CxxStats::Decr(CxxStats::DATA_SPEC);
 }
 
 //------------------------------------------------------------------------------
@@ -647,7 +712,6 @@ DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
 
    SetInternal(true);
    name_.reset(new QualName(*that.name_.get()));
-   CxxStats::Incr(CxxStats::DATA_SPEC);
 }
 
 //------------------------------------------------------------------------------
@@ -663,25 +727,59 @@ void DataSpec::AddArray(ArraySpecPtr& array)
 
 //------------------------------------------------------------------------------
 
+fn_name DataSpec_AlignTemplateArg = "DataSpec.AlignTemplateArg";
+
 string DataSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 {
-   Debug::ft("DataSpec.AlignTemplateArg");
+   Debug::ft(DataSpec_AlignTemplateArg);
 
-   //  If this is a template argument, remove any tags specified
-   //  by this type from thatArg's type.
+   //  If this is a template argument, remove any tags specified by this type
+   //  from thatArg's type.  An example of this is unique_ptr<void*[]>, whose
+   //  template argument is initially void**, but then gets adjusted to void*
+   //  because the template parameter in unique_ptr<T[]> removes one pointer.
    //
-   if(GetTemplateRole() != TemplateArgument) return ERROR_STR;
+   auto role = GetTemplateRole();
+   if(role != TemplateArgument)
+   {
+      Context::SwLog(DataSpec_AlignTemplateArg, "unexpected role", role);
+      return ERROR_STR;
+   }
 
    auto thisTags = this->GetAllTags();
-
    if(thisTags.PtrCount(true) == 0)
    {
       return thatArg->TypeString(true);
    }
 
    auto thatTags = thatArg->GetAllTags();
-   if(!thisTags.AlignTemplateTag(thatTags)) return ERROR_STR;
+   if(!thatTags.AlignTemplateTags(thisTags))
+   {
+      Context::SwLog(DataSpec_AlignTemplateArg, "tags alignment failed", 0);
+      return ERROR_STR;
+   }
+
    return thatArg->TypeTagsString(thatTags);
+}
+
+//------------------------------------------------------------------------------
+
+const TemplateArgPtrVector* DataSpec::Args() const
+{
+   return name_->Args();
+}
+
+//------------------------------------------------------------------------------
+
+string DataSpec::ArgString(const TemplateParmToArgMap& tmap) const
+{
+   std::ostringstream stream;
+
+   if(tags_.IsConst()) stream << CONST_STR << SPACE;
+   if(tags_.IsVolatile()) stream << VOLATILE_STR << SPACE;
+   stream << name_->ArgString(tmap);
+   tags_.Print(stream);
+
+   return stream.str();
 }
 
 //------------------------------------------------------------------------------
@@ -732,16 +830,6 @@ TypeSpec* DataSpec::Clone() const
    Debug::ft("DataSpec.Clone");
 
    return new DataSpec(*this);
-}
-
-//------------------------------------------------------------------------------
-
-bool DataSpec::ContainsTemplateParameter() const
-{
-   Debug::ft("DataSpec.ContainsTemplateParameter");
-
-   if(TypeSpec::ContainsTemplateParameter()) return true;
-   return name_->ContainsTemplateParameter();
 }
 
 //------------------------------------------------------------------------------
@@ -953,7 +1041,7 @@ void DataSpec::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 
    if(ref != nullptr)
    {
-      auto args = ref->GetTemplateArgs();
+      auto args = ref->GetTemplatedName();
 
       if(args != nullptr)
       {
@@ -1293,27 +1381,9 @@ bool DataSpec::IsVolatilePtr(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ItemIsTemplateArg = "DataSpec.ItemIsTemplateArg";
-
 bool DataSpec::ItemIsTemplateArg(const CxxNamed* item) const
 {
-   Debug::ft(DataSpec_ItemIsTemplateArg);
-
-   if(item == nullptr)
-   {
-      Debug::SwLog(DataSpec_ItemIsTemplateArg, "null item", 0);
-      return false;
-   }
-
-   auto ref = Referent();
-
-   if(ref != nullptr)
-   {
-      if(ref == item) return true;
-      auto rname = ref->ScopedName(true);
-      auto iname = item->ScopedName(true);
-      if(rname == iname) return true;
-   }
+   Debug::ft("DataSpec.ItemIsTemplateArg");
 
    return name_->ItemIsTemplateArg(item);
 }
@@ -1347,7 +1417,7 @@ TypeMatch DataSpec::MatchTemplate(const TypeSpec* that,
    //
    auto parm = QualifiedName(true, false);
    auto idx = FindIndex(tmpltParms, parm);
-   auto match = Compatible;
+   auto match1 = Compatible;
 
    if(idx != string::npos)
    {
@@ -1357,7 +1427,7 @@ TypeMatch DataSpec::MatchTemplate(const TypeSpec* that,
       TagCount thisPtrs = this->Ptrs(true);
       TagCount thatPtrs = that->Ptrs(true);
       if(thisPtrs > thatPtrs) return Incompatible;
-      if(thisPtrs < thatPtrs) match = Convertible;
+      if(thisPtrs < thatPtrs) match1 = Convertible;
 
       argFound = true;
       auto thatType = that->TypeString(true);
@@ -1369,7 +1439,7 @@ TypeMatch DataSpec::MatchTemplate(const TypeSpec* that,
       //
       auto& thatArg = tmpltArgs.at(idx);
       if(thatArg.empty()) thatArg = thatType;
-      return match;
+      return match1;
    }
 
    //  This type was not a template parameter.  THAT must match it.
@@ -1380,12 +1450,17 @@ TypeMatch DataSpec::MatchTemplate(const TypeSpec* that,
    auto thatType = RemoveTemplates(that->TypeString(true));
    if((thisType != thatType) && (RemoveConsts(thisType) != thatType))
    {
-      return Incompatible;
+      auto thisNum = this->GetNumeric();
+      auto thatNum = that->GetNumeric();
+      match1 = thisNum.CalcMatchWith(&thatNum);
+      if(match1 == Incompatible) return Incompatible;
    }
 
    auto thisName = this->GetQualName();
    auto thatName = that->GetQualName();
-   return thisName->MatchTemplate(thatName, tmpltParms, tmpltArgs, argFound);
+   auto match2 = thisName->MatchTemplate
+      (thatName, tmpltParms, tmpltArgs, argFound);
+   return (match1 < match2 ? match1 : match2);
 }
 
 //------------------------------------------------------------------------------
@@ -1635,7 +1710,7 @@ bool DataSpec::ResolveForward(CxxScoped* decl, size_t n) const
 
 //------------------------------------------------------------------------------
 
-bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
+bool DataSpec::ResolveTemplate(Class* cls, const TypeName* type, bool end) const
 {
    Debug::ft("DataSpec.ResolveTemplate");
 
@@ -1644,13 +1719,16 @@ bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
    //
    if(GetTemplateRole() == TemplateClass) return false;
 
-   auto tparms = args->Args();
+   auto args = type->Args();
 
-   for(auto a = tparms->cbegin(); a != tparms->cend(); ++a)
+   for(auto a = args->cbegin(); a != args->cend(); ++a)
    {
-      auto ref = (*a)->GetQualName()->GetReferent();
+      auto ref = (*a)->GetReferent();
+
       if((ref != nullptr) && (ref->Type() != Cxx::TemplateParm))
+      {
          return true;
+      }
    }
 
    return false;
@@ -1682,7 +1760,7 @@ bool DataSpec::ResolveTypedef(Typedef* type, size_t n) const
    //  delegate to name_, which will record it as a referent and resolve
    //  it to the template instance.
    //
-   if(type->GetTemplateArgs() == nullptr) return false;
+   if(type->GetTemplatedName() == nullptr) return false;
    return name_->ResolveTypedef(type, n);
 }
 
@@ -1828,25 +1906,6 @@ void DataSpec::SetUserType(TypeSpecUser user) const
 
 //------------------------------------------------------------------------------
 
-void DataSpec::Shrink()
-{
-   TypeSpec::Shrink();
-   name_->Shrink();
-
-   if(arrays_ != nullptr)
-   {
-      for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
-      {
-         (*a)->Shrink();
-      }
-
-      auto size = arrays_->capacity() * sizeof(ArraySpecPtr);
-      CxxStats::Vectors(CxxStats::DATA_SPEC, size);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 string DataSpec::Trace() const
 {
    auto result = TypeString(false);
@@ -1877,20 +1936,25 @@ string DataSpec::TypeString(bool arg) const
    auto ref = Referent();
    if(hack) SetUserType(TS_Function);
 
-   auto tags = GetAllTags();
-
    if(ref != nullptr)
    {
       ts = name_->TypeString(arg);
    }
    else
    {
-      if(GetTemplateRole() == TemplateNone) return ERROR_STR;
+      auto role = GetTemplateRole();
+      if(role == TemplateNone)
+      {
+         Context::SwLog("DataSpec.TypeString", "unexpected role", role);
+         return ERROR_STR;
+      }
+
       ts = QualifiedName(true, true);
    }
 
    //  Remove any tags from TS and replace them with our own.
    //
+   auto tags = GetAllTags();
    RemoveTags(ts);
    tags.TypeString(ts, arg);
    return ts;
@@ -1939,6 +2003,13 @@ void DataSpec::UpdateXref(bool insert)
    }
 }
 
+//------------------------------------------------------------------------------
+
+bool DataSpec::VerifyReferents() const
+{
+   return name_->VerifyReferents();
+}
+
 //==============================================================================
 
 QualName::QualName(TypeNamePtr& name) : init_(false)
@@ -1947,7 +2018,6 @@ QualName::QualName(TypeNamePtr& name) : init_(false)
 
    first_ = std::move(name);
    first_->SetQualName(this);
-   CxxStats::Incr(CxxStats::QUAL_NAME);
 }
 
 //------------------------------------------------------------------------------
@@ -1959,7 +2029,6 @@ QualName::QualName(const string& name) : init_(false)
    auto copy = name;
    first_ = (TypeNamePtr(new TypeName(copy)));
    first_->SetQualName(this);
-   CxxStats::Incr(CxxStats::QUAL_NAME);
 }
 
 //------------------------------------------------------------------------------
@@ -1967,8 +2036,6 @@ QualName::QualName(const string& name) : init_(false)
 QualName::~QualName()
 {
    Debug::ftnt("QualName.dtor");
-
-   CxxStats::Decr(CxxStats::QUAL_NAME);
 }
 
 //------------------------------------------------------------------------------
@@ -1983,8 +2050,6 @@ QualName::QualName(const QualName& that) : CxxNamed(that),
       TypeNamePtr name(new TypeName(*n));
       PushBack(name);
    }
-
-   CxxStats::Incr(CxxStats::QUAL_NAME);
 }
 
 //------------------------------------------------------------------------------
@@ -2010,6 +2075,58 @@ void QualName::Append(const string& name, bool space) const
    Debug::ft("QualName.Append");
 
    Last()->Append(name, space);
+}
+
+//------------------------------------------------------------------------------
+
+const TemplateArgPtrVector* QualName::Args() const
+{
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      auto args = n->Args();
+      if(args != nullptr) return args;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+string QualName::ArgString(const TemplateParmToArgMap& tmap) const
+{
+   //  Get the fully qualified name without any template arguments.
+   //  If it's a template parameter, replace it.
+   //
+   auto ref = Referent();
+
+   if(ref != nullptr)
+   {
+      auto type = Last()->DirectType();
+
+      if(type != ref)
+      {
+         return type->ArgString(tmap);
+      }
+
+      auto arg = ref->ScopedName(false);
+      auto parm = tmap.find(arg);
+
+      if(parm != tmap.cend())
+      {
+         arg = parm->second;
+      }
+
+      for(auto n = First(); n != nullptr; n = n->Next())
+      {
+         arg += n->ArgString(tmap);
+      }
+
+      return arg;
+   }
+
+   auto expl = "Failed to find referent for " + QualifiedName(true, true);
+   Context::SwLog("QualName.ArgString", expl, 0);
+   return ERROR_STR;
 }
 
 //------------------------------------------------------------------------------
@@ -2098,20 +2215,6 @@ void QualName::CheckForRedundantScope() const
          }
       }
    }
-}
-
-//------------------------------------------------------------------------------
-
-bool QualName::ContainsTemplateParameter() const
-{
-   Debug::ft("QualName.ContainsTemplateParameter");
-
-   for(auto n = First(); n != nullptr; n = n->Next())
-   {
-      if(n->ContainsTemplateParameter()) return true;
-   }
-
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -2267,11 +2370,11 @@ bool QualName::GetSpan(size_t& begin, size_t& left, size_t& end) const
 
 //------------------------------------------------------------------------------
 
-TypeName* QualName::GetTemplateArgs() const
+TypeName* QualName::GetTemplatedName() const
 {
    for(auto n = First(); n != nullptr; n = n->Next())
    {
-      auto spec = n->GetTemplateArgs();
+      auto spec = n->GetTemplatedName();
       if(spec != nullptr) return spec;
    }
 
@@ -2345,8 +2448,6 @@ bool QualName::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::ft("QualName.ItemIsTemplateArg");
 
-   //  Look for template arguments attached to each name.
-   //
    for(auto n = First(); n != nullptr; n = n->Next())
    {
       if(n->ItemIsTemplateArg(item)) return true;
@@ -2507,7 +2608,7 @@ void QualName::Rename(const string& name)
 
 //------------------------------------------------------------------------------
 
-bool QualName::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
+bool QualName::ResolveTemplate(Class* cls, const TypeName* type, bool end) const
 {
    Debug::ft("QualName.ResolveTemplate");
 
@@ -2515,7 +2616,7 @@ bool QualName::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
    //  force its instantiation.
    //
    if(end) return true;
-   auto inst = cls->EnsureInstance(args);
+   auto inst = cls->EnsureInstance(type);
    if(inst == nullptr) return false;
    inst->Instantiate();
    return true;
@@ -2579,18 +2680,6 @@ void QualName::SetTemplateArgs(const TemplateParms* tparms) const
 
 //------------------------------------------------------------------------------
 
-void QualName::Shrink()
-{
-   CxxNamed::Shrink();
-
-   for(auto n = First(); n != nullptr; n = n->Next())
-   {
-      n->Shrink();
-   }
-}
-
-//------------------------------------------------------------------------------
-
 size_t QualName::Size() const
 {
    size_t s = 0;
@@ -2600,14 +2689,19 @@ size_t QualName::Size() const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_TypeString = "QualName.TypeString";
-
 string QualName::TypeString(bool arg) const
 {
    auto ref = Referent();
 
    if(ref != nullptr)
    {
+      auto type = Last()->DirectType();
+
+      if(type != ref)
+      {
+         return type->TypeString(arg);
+      }
+
       auto ts = ref->TypeString(arg);
 
       if(ref->IsTemplate())
@@ -2619,7 +2713,7 @@ string QualName::TypeString(bool arg) const
    }
 
    auto expl = "Failed to find referent for " + QualifiedName(true, true);
-   Context::SwLog(QualName_TypeString, expl, 0);
+   Context::SwLog("QualName.TypeString", expl, 0);
    return ERROR_STR;
 }
 
@@ -2646,6 +2740,565 @@ void QualName::UpdateXref(bool insert)
    }
 }
 
+//------------------------------------------------------------------------------
+
+bool QualName::VerifyReferents() const
+{
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      if(!n->VerifyReferents()) return false;
+   }
+
+   return true;
+}
+
+//==============================================================================
+
+TemplateArg::TemplateArg(TypeSpecPtr& type) :
+   spec_(std::move(type)),
+   expr_(nullptr),
+   implicit_(false)
+{
+   Debug::ft("TemplateArg.ctor(type)");
+
+   spec_->SetTemplateRole(TemplateArgument);
+}
+
+//------------------------------------------------------------------------------
+
+TemplateArg::TemplateArg(ExprPtr& expr) :
+   spec_(nullptr),
+   expr_(std::move(expr)),
+   implicit_(false)
+{
+   Debug::ft("TemplateArg.ctor(expr)");
+}
+
+//------------------------------------------------------------------------------
+
+TemplateArg::~TemplateArg()
+{
+   Debug::ftnt("TemplateArg.dtor");
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateArg_AlignTemplateArg = "TemplateArg.AlignTemplateArg";
+
+std::string TemplateArg::AlignTemplateArg(const TemplateArg* thatArg) const
+{
+   Debug::ft(TemplateArg_AlignTemplateArg);
+
+   if((spec_ != nullptr) && (thatArg->spec_ != nullptr))
+   {
+      return spec_->AlignTemplateArg(thatArg->spec_.get());
+   }
+
+   Context::SwLog(TemplateArg_AlignTemplateArg, "needs implementation", 0);
+   return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
+string TemplateArg::ArgString(const TemplateParmToArgMap& tmap) const
+{
+   if(spec_ != nullptr)
+   {
+      return spec_->ArgString(tmap);
+   }
+   else if(expr_ != nullptr)
+   {
+      return TypeString(true);
+   }
+
+   Context::SwLog("TemplateArg.ArgString", "needs implementation", 0);
+   return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateArg_Check = "TemplateArg.Check";
+
+void TemplateArg::Check() const
+{
+   Debug::ftnt(TemplateArg_Check);
+
+   if(implicit_) return;
+
+   if(spec_ != nullptr)
+   {
+      spec_->Check();
+   }
+   else if(expr_ != nullptr)
+   {
+      expr_->Check();
+   }
+   else
+   {
+      Context::SwLog(TemplateArg_Check, "needs implementation", 0);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateArg_Clone = "TemplateArg.Clone";
+
+CxxToken* TemplateArg::Clone() const
+{
+   Debug::ft(TemplateArg_Clone);
+
+   if(spec_ != nullptr)
+   {
+      TypeSpecPtr spec(static_cast< TypeSpec* >(spec_->Clone()));
+      return new TemplateArg(spec);
+   }
+   else if(expr_ != nullptr)
+   {
+      ExprPtr expr(static_cast<Expression*>(expr_->Clone()));
+      return new TemplateArg(expr);
+   }
+
+   Context::SwLog(TemplateArg_Clone, "needs implementation", 0);
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateArg_CopyContext = "TemplateArg.CopyContext";
+
+void TemplateArg::CopyContext(const CxxToken* that, bool internal)
+{
+   Debug::ft(TemplateArg_CopyContext);
+
+   if(spec_ != nullptr)
+   {
+      spec_->CopyContext(that, internal);
+   }
+   else if(expr_ != nullptr)
+   {
+      expr_->CopyContext(that, internal);
+   }
+   else
+   {
+      Context::SwLog(TemplateArg_CopyContext, "needs implementation", 0);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateArg_EnterBlock = "TemplateArg.EnterBlock";
+
+void TemplateArg::EnterBlock()
+{
+   Debug::ft(TemplateArg_EnterBlock);
+
+   if(spec_ != nullptr)
+   {
+      spec_->EnterBlock();
+   }
+   else if(expr_ != nullptr)
+   {
+      expr_->EnterBlock();
+   }
+   else
+   {
+      Context::SwLog(TemplateArg_EnterBlock, "needs implementation", 0);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::EnteringScope(const CxxScope* scope) const
+{
+   Debug::ft("TemplateArg.EnteringScope");
+
+   if(spec_ != nullptr)
+   {
+      spec_->EnteringScope(scope);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::FindReferent()
+{
+   Debug::ft("TemplateArg.FindReferent");
+
+   if(spec_ != nullptr)
+   {
+      spec_->FindReferent();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::GetDirectClasses(CxxUsageSets& symbols)
+{
+   Debug::ft("TemplateArg.GetDirectClasses");
+
+   if(implicit_) return;
+
+   if(spec_ != nullptr)
+   {
+      spec_->GetDirectClasses(symbols);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::GetDirectTemplateArgs(CxxUsageSets& symbols) const
+{
+   Debug::ft("TemplateArg.GetDirectTemplateArgs");
+
+   if(implicit_) return;
+
+   if(spec_ != nullptr)
+   {
+      spec_->GetDirectTemplateArgs(symbols);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::GetNames(stringVector& names) const
+{
+   Debug::ft("TemplateArg.GetNames");
+
+   if(implicit_) return;
+
+   if(spec_ != nullptr)
+   {
+      spec_->GetNames(names);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+CxxScoped* TemplateArg::GetReferent() const
+{
+   if(spec_ != nullptr)
+   {
+      return spec_->GetQualName()->GetReferent();
+   }
+   else if(expr_ != nullptr)
+   {
+      return expr_->Referent();
+   }
+
+   Context::SwLog("TemplateArg.GetReferent", "needs implementation", 0);
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
+{
+   if(implicit_) return;
+
+   if(spec_ != nullptr)
+   {
+      spec_->GetUsages(file, symbols);
+   }
+   else if(expr_ != nullptr)
+   {
+      expr_->GetUsages(file, symbols);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::Instantiating(CxxScopedVector& locals) const
+{
+   Debug::ft("TemplateArg.Instantiating");
+
+   //  There is nothing to do for an expression, which must currently
+   //  contain only a single Literal.
+   //
+   if(spec_ != nullptr)
+   {
+      spec_->Instantiating(locals);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+bool TemplateArg::ItemIsTemplateArg(const CxxNamed* item) const
+{
+   Debug::ft("TemplateArg.ItemIsTemplateArg");
+
+   if(spec_ != nullptr)
+   {
+      return spec_->ItemIsTemplateArg(item);
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateArg_MatchTemplate = "TemplateArg.MatchTemplate";
+
+TypeMatch TemplateArg::MatchTemplate(const TemplateArg* that,
+   stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const
+{
+   Debug::ft(TemplateArg_MatchTemplate);
+
+   if((spec_ != nullptr) && (that->spec_ != nullptr))
+   {
+      return spec_->MatchTemplate
+         (that->spec_.get(), tmpltParms, tmpltArgs, argFound);
+   }
+
+   Context::SwLog(TemplateArg_MatchTemplate, "needs implementation", 0);
+   return Incompatible;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateArg_MatchTemplateArg = "TemplateArg.MatchTemplateArg";
+
+TypeMatch TemplateArg::MatchTemplateArg(const TemplateArg* that) const
+{
+   Debug::ft(TemplateArg_MatchTemplateArg);
+
+   if((spec_ != nullptr) && (that->spec_ != nullptr))
+   {
+      return spec_->MatchTemplateArg(that->spec_.get());
+   }
+
+   Context::SwLog(TemplateArg_MatchTemplateArg, "needs implementation", 0);
+   return Incompatible;
+}
+
+//------------------------------------------------------------------------------
+
+const std::string& TemplateArg::Name() const
+{
+   if(spec_ != nullptr)
+   {
+      return spec_->Name();
+   }
+   else if(expr_ != nullptr)
+   {
+      return expr_->Name();
+   }
+
+   Context::SwLog("TemplateArg.Name", "needs implementation", 0);
+   return CxxNamed::Name();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateArg_NamesReferToArgs = "TemplateArg.NamesReferToArgs";
+
+bool TemplateArg::NamesReferToArgs(const NameVector& names,
+   const CxxScope* scope, CodeFile* file, size_t& index) const
+{
+   Debug::ft(TemplateArg_NamesReferToArgs);
+
+   if(spec_ != nullptr)
+   {
+      return spec_->NamesReferToArgs(names, scope, file, index);
+   }
+   else if(expr_ != nullptr)
+   {
+      if(index >= names.size()) return false;
+      if(names.at(index).name != expr_->Name()) return false;
+      ++index;
+      return true;
+   }
+
+   Context::SwLog(TemplateArg_NamesReferToArgs, "needs implementation", 0);
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* TemplateArg::PosToItem(size_t pos) const
+{
+   if(implicit_) return nullptr;
+
+   if(spec_ != nullptr)
+   {
+      return spec_->PosToItem(pos);
+   }
+   else if(expr_ != nullptr)
+   {
+      return expr_->PosToItem(pos);
+   }
+
+   Context::SwLog("TemplateArg.PosToItem", "needs implementation", 0);
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::Print
+   (std::ostream& stream, const NodeBase::Flags& options) const
+{
+   //  Omit implicit arguments unless generating code for internal compilation.
+   //
+   if(implicit_ && !options.test(DispCode)) return;
+
+   if(spec_ != nullptr)
+   {
+      spec_->Print(stream, options);
+   }
+   else if(expr_ != nullptr)
+   {
+      expr_->Print(stream, options);
+   }
+   else
+   {
+      Context::SwLog("TemplateArg.Print", "needs implementation", 0);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+string TemplateArg::QualifiedName(bool scopes, bool templates) const
+{
+   if(spec_ != nullptr)
+   {
+      return spec_->QualifiedName(scopes, templates);
+   }
+   else if(expr_ != nullptr)
+   {
+      return expr_->Name();
+   }
+
+   Context::SwLog("TemplateArg.QualifiedName", "needs implementation", 0);
+   return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateArg_ResultType = "TemplateArg.ResultType";
+
+StackArg TemplateArg::ResultType() const
+{
+   Debug::ft(TemplateArg_ResultType);
+
+   if(spec_ != nullptr)
+   {
+      return spec_->ResultType();
+   }
+   else if(expr_ != nullptr)
+   {
+      return expr_->ResultType();
+   }
+
+   Context::SwLog(TemplateArg_ResultType, "needs implementation", 0);
+   return NilStackArg;
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::SetTemplateRole(TemplateRole role) const
+{
+   Debug::ft("TemplateArg.SetTemplateRole");
+
+   if(spec_ != nullptr)
+   {
+      spec_->SetTemplateRole(role);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::SetUserType(TypeSpecUser user) const
+{
+   Debug::ft("TemplateArg.SetUserType");
+
+   if(spec_ != nullptr)
+   {
+      spec_->SetUserType(user);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+std::string TemplateArg::Trace() const
+{
+   if(spec_ != nullptr)
+   {
+      return spec_->Trace();
+   }
+   else if(expr_ != nullptr)
+   {
+      return expr_->Trace();
+   }
+
+   Context::SwLog("TemplateArg.Trace", "needs implementation", 0);
+   return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
+std::string TemplateArg::TypeString(bool arg) const
+{
+   if(spec_ != nullptr)
+   {
+      return spec_->TypeString(arg);
+   }
+   else if(expr_ != nullptr)
+   {
+      std::ostringstream stream;
+      Flags flags(NS_Mask | Code_Mask | NoTP_Mask);
+      expr_->Print(stream, flags);
+      return stream.str();
+   }
+
+   Context::SwLog("TemplateArg.TypeString", "needs implementation", 0);
+   return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::UpdatePos(EditorAction action,
+   size_t begin, size_t count, size_t from) const
+{
+   if(implicit_) return;
+
+   CxxNamed::UpdatePos(action, begin, count, from);
+
+   if(spec_ != nullptr)
+   {
+      spec_->UpdatePos(action, begin, count, from);
+   }
+   else if(expr_ != nullptr)
+   {
+      expr_->UpdatePos(action, begin, count, from);
+   }
+   else
+   {
+      Context::SwLog("TemplateArg.UpdatePos", "needs implementation", 0);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateArg::UpdateXref(bool insert)
+{
+   if(implicit_) return;
+
+   if(spec_ != nullptr)
+   {
+      spec_->UpdateXref(insert);
+   }
+   else if(expr_ != nullptr)
+   {
+      expr_->UpdateXref(insert);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+bool TemplateArg::VerifyReferents() const
+{
+   return (spec_ != nullptr ? spec_->VerifyReferents() : true);
+}
+
 //==============================================================================
 
 TypeName::TypeName(string& name) :
@@ -2664,7 +3317,6 @@ TypeName::TypeName(string& name) :
    Debug::ft("TypeName.ctor");
 
    std::swap(name_, name);
-   CxxStats::Incr(CxxStats::TYPE_NAME);
 }
 
 //------------------------------------------------------------------------------
@@ -2672,8 +3324,6 @@ TypeName::TypeName(string& name) :
 TypeName::~TypeName()
 {
    Debug::ftnt("TypeName.dtor");
-
-   CxxStats::Decr(CxxStats::TYPE_NAME);
 }
 
 //------------------------------------------------------------------------------
@@ -2695,27 +3345,24 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
 
    if(that.args_ != nullptr)
    {
-      args_.reset(new TypeSpecPtrVector);
+      args_.reset(new TemplateArgPtrVector);
 
       for(auto a = that.args_->cbegin(); a != that.args_->cend(); ++a)
       {
-         TypeSpecPtr arg((*a)->Clone());
+         TemplateArgPtr arg(static_cast< TemplateArg* >((*a)->Clone()));
          arg->CopyContext(a->get(), true);
          args_->push_back(std::move(arg));
       }
    }
-
-   CxxStats::Incr(CxxStats::TYPE_NAME);
 }
 
 //------------------------------------------------------------------------------
 
-void TypeName::AddTemplateArg(TypeSpecPtr& arg)
+void TypeName::AddTemplateArg(TemplateArgPtr& arg)
 {
    Debug::ft("TypeName.AddTemplateArg");
 
-   if(args_ == nullptr) args_.reset(new TypeSpecPtrVector);
-   arg->SetTemplateRole(TemplateArgument);
+   if(args_ == nullptr) args_.reset(new TemplateArgPtrVector);
    args_->push_back(std::move(arg));
 }
 
@@ -2731,6 +3378,41 @@ void TypeName::Append(const string& name, bool space)
 
 //------------------------------------------------------------------------------
 
+const TemplateArgPtrVector* TypeName::Args() const
+{
+   if(type_ != nullptr)
+   {
+      auto args = type_->Args();
+      if(args != nullptr) return args;
+   }
+
+   return args_.get();
+}
+
+//------------------------------------------------------------------------------
+
+string TypeName::ArgString(const TemplateParmToArgMap& tmap) const
+{
+   string args;
+
+   if(args_ != nullptr)
+   {
+      args += '<';
+
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         args += (*a)->ArgString(tmap);
+         if(*a != args_->back()) args += ',';
+      }
+
+      args += '>';
+   }
+
+   return args;
+}
+
+//------------------------------------------------------------------------------
+
 void TypeName::Check() const
 {
    if(args_ != nullptr)
@@ -2740,23 +3422,6 @@ void TypeName::Check() const
          (*a)->Check();
       }
    }
-}
-
-//------------------------------------------------------------------------------
-
-bool TypeName::ContainsTemplateParameter() const
-{
-   Debug::ft("TypeName.ContainsTemplateParameter");
-
-   if(args_ != nullptr)
-   {
-      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
-      {
-         if((*a)->ContainsTemplateParameter()) return true;
-      }
-   }
-
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -2869,8 +3534,14 @@ bool TypeName::GetSpan(size_t& begin, size_t& left, size_t& end) const
 
 //------------------------------------------------------------------------------
 
-TypeName* TypeName::GetTemplateArgs() const
+TypeName* TypeName::GetTemplatedName() const
 {
+   if(type_ != nullptr)
+   {
+      auto name = type_->GetTemplatedName();
+      if(name != nullptr) return name;
+   }
+
    if(args_ == nullptr) return nullptr;
    return const_cast< TypeName* >(this);
 }
@@ -2929,6 +3600,11 @@ void TypeName::Instantiating(CxxScopedVector& locals) const
 {
    Debug::ft("TypeName.Instantiating");
 
+   if(type_ != nullptr)
+   {
+      type_->Instantiating(locals);
+   }
+
    if(args_ != nullptr)
    {
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
@@ -2940,9 +3616,22 @@ void TypeName::Instantiating(CxxScopedVector& locals) const
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_ItemIsTemplateArg = "TypeName.ItemIsTemplateArg";
+
 bool TypeName::ItemIsTemplateArg(const CxxNamed* item) const
 {
-   Debug::ft("TypeName.ItemIsTemplateArg");
+   Debug::ft(TypeName_ItemIsTemplateArg);
+
+   if(item == nullptr)
+   {
+      Debug::SwLog(TypeName_ItemIsTemplateArg, "null item", 0);
+      return false;
+   }
+
+   if(type_ != nullptr)
+   {
+      if(type_->ItemIsTemplateArg(item)) return true;
+   }
 
    if(args_ != nullptr)
    {
@@ -2952,15 +3641,21 @@ bool TypeName::ItemIsTemplateArg(const CxxNamed* item) const
       }
    }
 
-   auto ref = DirectType();
-
-   if(ref != nullptr)
+   if(ref_ != nullptr)
    {
-      auto type = ref->GetTypeSpec();
+      if(ref_ == item) return true;
 
-      if(type != nullptr)
+      auto rname = ref_->ScopedName(true);
+      auto iname = item->ScopedName(true);
+      if(rname == iname) return true;
+
+      auto spec = ref_->GetTypeSpec();
+      if((spec != nullptr) && spec->ItemIsTemplateArg(item)) return true;
+
+      if((ref_->Type() == Cxx::Enumerator) && (item->Type() == Cxx::Enum))
       {
-         if(type->ItemIsTemplateArg(item)) return true;
+         auto e = static_cast<const Enum*>(item);
+         if(e->FindEnumerator(ref_->Name()) == ref_) return true;
       }
    }
 
@@ -2969,10 +3664,17 @@ bool TypeName::ItemIsTemplateArg(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_MatchTemplate = "TypeName.MatchTemplate";
+
 TypeMatch TypeName::MatchTemplate(const TypeName* that,
    stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const
 {
-   Debug::ft("TypeName.MatchTemplate");
+   Debug::ft(TypeName_MatchTemplate);
+
+   if(type_ != nullptr)
+   {
+      Context::SwLog(TypeName_MatchTemplate, "forward to type_?", 0);
+   }
 
    if(this->args_ == nullptr) return Compatible;
    auto thisSize = this->args_->size();
@@ -3015,6 +3717,11 @@ bool TypeName::NamesReferToArgs(const NameVector& names,
       {
          if(!(*a)->NamesReferToArgs(names, scope, file, index)) return false;
       }
+   }
+
+   if(type_ != nullptr)
+   {
+      return type_->NamesReferToArgs(names, scope, file, index);
    }
 
    return true;
@@ -3121,8 +3828,6 @@ void TypeName::SetOperator(Cxx::Operator oper)
 {
    Debug::ft("TypeName.SetOperator");
 
-   oper_ = oper;
-
    switch(oper)
    {
    case Cxx::NIL_OPERATOR:
@@ -3135,6 +3840,17 @@ void TypeName::SetOperator(Cxx::Operator oper)
       //
       break;
 
+   case Cxx::LESS:
+      if(oper_ == Cxx::LEFT_SHIFT)
+      {
+         //  This occurs when operator<< was really operator< followed by a
+         //  template argument.  The name is currently operator<<, which will
+         //  match operator< at position 0 in the default clause below, so it
+         //  has to be fixed here.
+         //
+         name_.erase(name_.find('<'), 1);
+      }
+      //  [[fallthrough]]
    default:
       if(oper != Cxx::NIL_OPERATOR)
       {
@@ -3150,13 +3866,17 @@ void TypeName::SetOperator(Cxx::Operator oper)
          }
       }
    }
+
+   oper_ = oper;
 }
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_SetReferent = "TypeName.SetReferent";
+
 void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
-   Debug::ft("TypeName.SetReferent");
+   Debug::ft(TypeName_SetReferent);
 
    //  This can be invoked more than once when a class template name clears
    //  its referent, instead of leaving it as a forward declaration, so that
@@ -3172,6 +3892,44 @@ void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
    }
 
    ref_ = item;
+   if(ref_ == nullptr) return;
+
+   //  If the type has template arguments, add any that were defaulted.  This
+   //  needs to refer to previous arguments.  For example, vector's signature
+   //  is vector<T,A=allocator<T>>.  If given vector<unique_ptr<T>>, vector's
+   //  "T" is unique_ptr<T>, so its allocator<T> is allocator<unique_ptr<T>>.
+   //
+   if(args_ == nullptr) return;
+   auto tparms = ref_->GetTemplateParms();
+   if(tparms == nullptr) return;
+
+   auto parms = tparms->Parms();
+   auto argSize = args_->size();
+   auto parmSize = parms->size();
+   if(argSize == parmSize) return;
+
+   TemplateParmToArgMap map;
+   BuildParameterMap(parms, args_.get(), map);
+
+   for(auto i = argSize; i < parmSize; ++i)
+   {
+      auto def = parms->at(i)->Default();
+
+      if(def == nullptr)
+      {
+         Context::SwLog(TypeName_SetReferent, "default argument expected", i);
+         return;
+      }
+
+      auto defStr = def->ArgString(map);
+      TemplateArgPtr defArg;
+      auto scope = Context::Scope();
+      ParserPtr parser(new Parser(scope));
+      parser->ParseTemplateArg(defStr, defArg);
+      defArg->CopyContext(def, true);
+      defArg->SetImplicit();
+      args_->push_back(std::move(defArg));
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3186,7 +3944,8 @@ void TypeName::SetTemplateArgs(const TemplateParms* tparms)
    {
       TypeSpecPtr spec(new DataSpec((*p)->Name().c_str()));
       spec->CopyContext(this, true);
-      AddTemplateArg(spec);
+      TemplateArgPtr arg(new TemplateArg(spec));
+      AddTemplateArg(arg);
    }
 }
 
@@ -3217,27 +3976,6 @@ void TypeName::SetUserType(TypeSpecUser user) const
       {
          (*a)->SetUserType(user);
       }
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TypeName::Shrink()
-{
-   CxxNamed::Shrink();
-   name_.shrink_to_fit();
-
-   CxxStats::Strings(CxxStats::TYPE_NAME, name_.capacity());
-
-   if(args_ != nullptr)
-   {
-      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
-      {
-         (*a)->Shrink();
-      }
-
-      auto size = args_->capacity() * sizeof(TypeSpecPtr);
-      CxxStats::Vectors(CxxStats::TYPE_NAME, size);
    }
 }
 
@@ -3331,6 +4069,24 @@ void TypeName::UpdateXref(bool insert)
    }
 }
 
+//------------------------------------------------------------------------------
+
+bool TypeName::VerifyReferents() const
+{
+   if(ref_ == nullptr)
+      return false;
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         if(!(*a)->VerifyReferents()) return false;
+      }
+   }
+
+   return true;
+}
+
 //==============================================================================
 
 TypeSpec::TypeSpec() :
@@ -3374,23 +4130,6 @@ TagCount TypeSpec::Arrays() const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "Arrays", 0);
    return 0;
-}
-
-//------------------------------------------------------------------------------
-
-TypeSpec* TypeSpec::Clone() const
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "Clone", 0);
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-bool TypeSpec::ContainsTemplateParameter() const
-{
-   Debug::ft("TypeSpec.ContainsTemplateParameter");
-
-   return (role_ == TemplateParameter);
 }
 
 //------------------------------------------------------------------------------
@@ -3443,21 +4182,6 @@ void TypeSpec::GetNames(stringVector& names) const
 bool TypeSpec::HasArrayDefn() const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "HasArrayDefn", 0);
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::Instantiating(CxxScopedVector& locals) const
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "Instantiating", 0);
-}
-
-//------------------------------------------------------------------------------
-
-bool TypeSpec::ItemIsTemplateArg(const CxxNamed* item) const
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "ItemIsTemplateArg", 0);
    return false;
 }
 
@@ -3517,15 +4241,6 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
 
 //------------------------------------------------------------------------------
 
-bool TypeSpec::NamesReferToArgs(const NameVector& names,
-   const CxxScope* scope, CodeFile* file, size_t& index) const
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "NamesReferToArgs", 0);
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 TagCount TypeSpec::Ptrs(bool arrays) const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "Ptrs", 0);
@@ -3538,14 +4253,6 @@ TagCount TypeSpec::Refs() const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "Refs", 0);
    return 0;
-}
-
-//------------------------------------------------------------------------------
-
-StackArg TypeSpec::ResultType() const
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "ResultType", 0);
-   return NilStackArg;
 }
 
 //------------------------------------------------------------------------------
@@ -3620,14 +4327,14 @@ TypeTags::TypeTags(const TypeSpec& spec) :
 
 //------------------------------------------------------------------------------
 
-bool TypeTags::AlignTemplateTag(TypeTags& that) const
+bool TypeTags::AlignTemplateTags(const TypeTags& that)
 {
-   Debug::ft("TypeTags.AlignTemplateTag");
+   Debug::ft("TypeTags.AlignTemplateTags");
 
-   if(that.ptrs_ < this->ptrs_) return false;
-   if(that.arrays_ < this->arrays_) return false;
-   that.ptrs_ -= this->ptrs_;
-   that.arrays_ -= this->arrays_;
+   if(this->ptrs_ < that.ptrs_) return false;
+   if(this->arrays_ < that.arrays_) return false;
+   this->ptrs_ -= that.ptrs_;
+   this->arrays_ -= that.arrays_;
    return true;
 }
 

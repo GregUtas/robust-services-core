@@ -167,7 +167,6 @@ Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    Debug::ft("Class.ctor[>ct]");
 
    Singleton< CxxSymbols >::Instance()->InsertClass(this);
-   CxxStats::Incr(CxxStats::CLASS_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -178,7 +177,6 @@ Class::~Class()
 
    GetFile()->EraseClass(this);
    Singleton< CxxSymbols >::Extant()->EraseClass(this);
-   CxxStats::Decr(CxxStats::CLASS_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -301,7 +299,7 @@ void Class::AccessibilityOf
       //
       if(userClass->IsInTemplateInstance())
       {
-         auto spec = userClass->GetTemplateArgs();
+         auto spec = userClass->GetTemplatedName();
 
          if(spec->ItemIsTemplateArg(item))
          {
@@ -531,11 +529,6 @@ void Class::BlockCopied(const StackArg* arg)
 bool Class::CanConstructFrom(const StackArg& that, const string& thatType) const
 {
    Debug::ft("Class.CanConstructFrom");
-
-   //  Although we compile templates as well as is possible, only a template
-   //  *instance* can get constructed.
-   //
-   if(IsCompiledTemplate()) return false;
 
    //  Visit our functions to see if one of them is a suitable constructor.
    //
@@ -975,7 +968,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
 
    //  If the template is a specialization, delete its arguments.
    //
-   auto tmpltSpec = GetQualName()->GetTemplateArgs();
+   auto tmpltSpec = GetQualName()->GetTemplatedName();
 
    if(tmpltSpec != nullptr)
    {
@@ -989,9 +982,9 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
    }
 
    //  Replace the template name with the instance name, except within
-   //  any inner templates.  Note that the lexer must be reinitialized
-   //  each time through because it caches the length of CODE, which
-   //  changes as the result of symbol substitution.
+   //  inner templates or when followed by template parameters.  Lexer
+   //  must be reinitialized each time through because it caches the
+   //  length of CODE, which changes because of symbol substitution.
    //
    Lexer lexer;
    auto& instName = inst->Name();
@@ -1000,7 +993,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
    while(true)
    {
       auto end = code->find(TEMPLATE_STR, begin);
-      end = Replace(*code, tmpltName, instName, begin, end);
+      end = Replace(*code, tmpltName, instName, begin, end, '<');
       if(end == string::npos) break;
       begin = code->find('{', end);
       if(begin == string::npos) return CreateCodeError(tmpltName, 4);
@@ -1013,7 +1006,8 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
    //  Replace the template parameters with the instance arguments.
    //
    begin = code->find(instName) + instName.size();
-   ReplaceTemplateParms(*code, inst->GetTemplateArgs()->Args(), begin);
+   ReplaceTemplateParms(*code, inst->GetTemplatedName()->Args(), begin);
+
    return begin;
 }
 
@@ -1233,23 +1227,28 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
       return nullptr;
    }
 
-   //  See if the template instance already exists.
+   //  See if the template instance already exists.  Visibility to the
+   //  current scope is irrelevant because all users can share the same
+   //  instance.
    //
    auto syms = Singleton< CxxSymbols >::Instance();
+   auto name = Name() + type->TypeString(true);
+   SymbolVector list;
+   syms->FindItems(name, CLASS_MASK, list);
+
+   if(!list.empty())
+   {
+      return static_cast< ClassInst* >(list.front());
+   }
+
+   //  The instance doesn't exist, so create it.  If the template class
+   //  has specializations, choose the most appropriate one.
+   //
    auto file = Context::File();
    if(file == nullptr) return nullptr;
    auto scope = GetScope();
-   auto name = Name() + type->TypeString(true);
-   auto area = static_cast< CxxArea* >(GetScope());
-   SymbolView view;
-   auto inst = syms->FindSymbol(file, scope, name, CLASS_MASK, view, area);
-   if(inst != nullptr) return static_cast< ClassInst* >(inst);
-
-   //  The instance doesn't exist, so create it.  If the template
-   //  class has specializations, choose the most appropriate one.
-   //
-   SymbolVector list;
    ViewVector views;
+   auto area = static_cast<CxxArea*>(GetScope());
    syms->FindSymbols(file, scope, Name(), CLASS_MASK, list, views, area);
 
    Class* base = this;
@@ -2152,7 +2151,7 @@ TypeMatch Class::MatchTemplate(const TypeName& type) const
       return Incompatible;
    }
 
-   auto spec = GetQualName()->GetTemplateArgs();
+   auto spec = GetQualName()->GetTemplatedName();
    if(spec == nullptr) return Abridgeable;
 
    //  This is a template specialization.  If it and TYPE have the same number
@@ -2320,37 +2319,6 @@ void Class::SetTemplateParms(TemplateParmsPtr& parms)
 
 //------------------------------------------------------------------------------
 
-void Class::Shrink()
-{
-   CxxArea::Shrink();
-   name_->Shrink();
-   if(parms_ != nullptr) parms_->Shrink();
-   if(base_ != nullptr) base_->Shrink();
-
-   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
-   {
-      (*f)->Shrink();
-   }
-
-   for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
-   {
-      (*t)->Shrink();
-   }
-
-   subs_.shrink_to_fit();
-
-   auto size = friends_.capacity() * sizeof(FriendPtr);
-   size += (tmplts_.capacity() * sizeof(ClassInstPtr));
-   size += (subs_.capacity() * sizeof(Class*));
-
-   if(IsInTemplateInstance())
-      CxxStats::Vectors(CxxStats::CLASS_INST, size);
-   else
-      CxxStats::Vectors(CxxStats::CLASS_DECL, size);
-}
-
-//------------------------------------------------------------------------------
-
 string Class::TypeString(bool arg) const
 {
    return Prefix(GetScope()->TypeString(arg)) + Name();
@@ -2512,7 +2480,7 @@ bool Class::WasCreated(bool base) const
 
 string Class::XrefName(bool templates) const
 {
-   auto spec = GetQualName()->GetTemplateArgs();
+   auto spec = GetQualName()->GetTemplatedName();
    auto name = CxxScoped::XrefName(spec == nullptr);
 
    if(spec != nullptr)
@@ -2550,8 +2518,6 @@ ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
 
    tspec_.reset(new TypeName(*spec));
    tspec_->CopyContext(spec, true);
-   CxxStats::Incr(CxxStats::CLASS_INST);
-   CxxStats::Decr(CxxStats::CLASS_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -2559,12 +2525,6 @@ ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
 ClassInst::~ClassInst()
 {
    Debug::ftnt("ClassInst.dtor");
-
-   //  The following is the kind of thing that can happen when a base class
-   //  is not always virtual.
-   //
-   CxxStats::Decr(CxxStats::CLASS_INST);
-   CxxStats::Incr(CxxStats::CLASS_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -2602,7 +2562,7 @@ bool ClassInst::DerivesFrom(const Class* cls) const
    //
    if(!cls->IsInTemplateInstance()) return Class::DerivesFrom(cls);
    if(cls->GetTemplate() != tmplt_) return Class::DerivesFrom(cls);
-   auto thatSpec = cls->GetTemplateArgs();
+   auto thatSpec = cls->GetTemplatedName();
    if(thatSpec == nullptr) return Class::DerivesFrom(cls);
 
    //  CLS is of the form T<args2>.  See if args1 are compatible with args2.
@@ -2800,7 +2760,7 @@ void ClassInst::Instantiate()
    //
    code_.reset();
    auto begin = tmplt_->CreateCode(this, code_);
-   ParserPtr parser(new Parser(EMPTY_STR));
+   ParserPtr parser(new Parser());
 
    if(!locals.empty())
    {
@@ -2813,15 +2773,6 @@ void ClassInst::Instantiate()
    compiled_ = parser->ParseClassInst(this, begin);
    parser.reset();
    if(compiled_) code_.reset();
-}
-
-//------------------------------------------------------------------------------
-
-bool ClassInst::IsCompiledTemplate() const
-{
-   Debug::ft("ClassInst.IsCompiledTemplate");
-
-   return tspec_->ContainsTemplateParameter();
 }
 
 //------------------------------------------------------------------------------
@@ -2861,18 +2812,9 @@ bool ClassInst::NameRefersToItem(const string& name,
 
 //------------------------------------------------------------------------------
 
-void ClassInst::Shrink()
-{
-   Class::Shrink();
-   tspec_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 string ClassInst::TypeString(bool arg) const
 {
-   return Prefix(GetScope()->TypeString(arg)) +
-      tspec_->Name() + tspec_->TypeString(arg);
+   return Prefix(GetScope()->TypeString(arg)) + Name();
 }
 
 //==============================================================================
@@ -3605,88 +3547,6 @@ CxxToken* CxxArea::PosToItem(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-void CxxArea::Shrink()
-{
-   CxxScope::Shrink();
-
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
-   {
-      (*u)->Shrink();
-   }
-
-   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
-   {
-      (*c)->Shrink();
-   }
-
-   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
-   {
-      (*d)->Shrink();
-   }
-
-   for(auto e = enums_.cbegin(); e != enums_.cend(); ++e)
-   {
-      (*e)->Shrink();
-   }
-
-   for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
-   {
-      (*f)->Shrink();
-   }
-
-   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
-   {
-      (*f)->Shrink();
-   }
-
-   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
-   {
-      (*o)->Shrink();
-   }
-
-   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
-   {
-      (*t)->Shrink();
-   }
-
-   for(auto d = defns_.cbegin(); d != defns_.cend(); ++d)
-   {
-      (*d)->Shrink();
-   }
-
-   for(auto a = assembly_.cbegin(); a != assembly_.cend(); ++a)
-   {
-      (*a)->Shrink();
-   }
-
-   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
-   {
-      (*a)->Shrink();
-   }
-
-   auto size = usings_.capacity() * sizeof(UsingPtr);
-   size += (classes_.capacity() * sizeof(ClassPtr));
-   size += (data_.capacity() * sizeof(DataPtr));
-   size += (enums_.capacity() * sizeof(EnumPtr));
-   size += (forws_.capacity() * sizeof(ForwardPtr));
-   size += (funcs_.capacity() * sizeof(FunctionPtr));
-   size += (opers_.capacity() * sizeof(FunctionPtr));
-   size += (types_.capacity() * sizeof(TypedefPtr));
-   size += (defns_.capacity() * sizeof(ScopePtr));
-   size += (assembly_.capacity() * sizeof(AsmPtr));
-   size += (asserts_.capacity() * sizeof(StaticAssertPtr));
-   size += XrefSize();
-
-   if(Type() == Cxx::Namespace)
-      CxxStats::Vectors(CxxStats::SPACE_DECL, size);
-   else if(IsInTemplateInstance())
-      CxxStats::Vectors(CxxStats::CLASS_INST, size);
-   else
-      CxxStats::Vectors(CxxStats::CLASS_DECL, size);
-}
-
-//------------------------------------------------------------------------------
-
 void CxxArea::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -3798,7 +3658,6 @@ Namespace::Namespace(const string& name, Namespace* space) :
 
    CxxArea::SetScope(space);
    Singleton< CxxSymbols >::Instance()->InsertSpace(this);
-   CxxStats::Incr(CxxStats::SPACE_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -3808,7 +3667,6 @@ Namespace::~Namespace()
    Debug::ftnt("Namespace.dtor");
 
    Singleton< CxxSymbols >::Extant()->EraseSpace(this);
-   CxxStats::Decr(CxxStats::SPACE_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -4027,23 +3885,6 @@ void Namespace::SetLoc(CodeFile* file, size_t pos) const
    //  If this is the first definition of the namespace, set its location.
    //
    if(GetFile() == nullptr) CxxArea::SetLoc(file, pos);
-}
-
-//------------------------------------------------------------------------------
-
-void Namespace::Shrink()
-{
-   CxxArea::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::SPACE_DECL, name_.capacity());
-
-   for(auto s = spaces_.cbegin(); s != spaces_.cend(); ++s)
-   {
-      (*s)->Shrink();
-   }
-
-   auto size = spaces_.capacity() * sizeof(NamespacePtr);
-   CxxStats::Vectors(CxxStats::SPACE_DECL, size);
 }
 
 //------------------------------------------------------------------------------

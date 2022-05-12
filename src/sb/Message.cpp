@@ -42,7 +42,7 @@
 #include "SbTracer.h"
 #include "Signal.h"
 #include "Singleton.h"
-#include "TimePoint.h"
+#include "SteadyTime.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -95,7 +95,7 @@ Message::Message(ProtocolSM* psm, size_t size) :
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -120,7 +120,7 @@ Message::~Message()
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
       auto buff = Singleton< TraceBuffer >::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -145,7 +145,7 @@ void Message::Capture(Route route) const
 {
    Debug::ft("Message.Capture");
 
-   auto warp = TimePoint::Now();
+   auto warp = SteadyTime::Now();
    auto sbt = Singleton< SbTracer >::Instance();
    auto ctx = Context::RunningContext();
    bool trace;

@@ -28,7 +28,7 @@
 #include "SbTrace.h"
 #include "SbTracer.h"
 #include "Singleton.h"
-#include "TimePoint.h"
+#include "SteadyTime.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -45,7 +45,7 @@ static void CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt)
 {
    Debug::ft("SessionBase.CaptureMsg");
 
-   auto warp = TimePoint::Now();
+   auto warp = SteadyTime::Now();
    auto sbt = Singleton< SbTracer >::Instance();
 
    if(!ctx.TraceOn())

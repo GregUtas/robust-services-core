@@ -25,13 +25,13 @@
 #include "CfgParmRegistry.h"
 #include "CfgStrParm.h"
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "MainArgs.h"
 #include "Singleton.h"
 #include "SysFile.h"
-#include "SysTime.h"
+#include "SystemTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 
 using std::ostream;
 using std::string;
@@ -76,7 +76,7 @@ Element::~Element()
 
 const string Element::ConsoleFileName()
 {
-   return "console" + TimePoint::TimeZeroStr();
+   return "console" + to_string(SystemTime::TimeZero(), FullNumeric) + ".txt";
 }
 
 //------------------------------------------------------------------------------
@@ -218,6 +218,6 @@ bool Element::RunningInLab()
 
 string Element::strTimePlace()
 {
-   return (SysTime().to_str(SysTime::Alpha) + " on " + Name());
+   return to_string(SystemTime::Now(), FullAlpha) + " on " + Name();
 }
 }

@@ -75,6 +75,12 @@ This page provides an overview of RSC. There is also a page which lists
 
 ## Installing the repository
 
+Download one of the
+[releases](https://github.com/GregUtas/robust-services-core/releases/latest).
+Code checked since the latest release is work in progress and may be unstable
+or incomplete, so downloading from the green "Code" dropdown menu on the home
+page is not recommended.
+
 After you download and extract the repository, its top-level directory will have
 a name like _robust-services-core-v0.n.n_ now that releases are tagged. So will
 the directory directly underneath it. Rename that second-level directory _rsc_.
@@ -85,8 +91,7 @@ _../rsc/input/element.config.txt_.
 ## Building an executable
 
 If you don't want to build RSC, debug and release
-[executables](docs/RSC-Executables.md) are provided with each
-[release](https://github.com/GregUtas/robust-services-core/releases/latest).
+[executables](docs/RSC-Executables.md) are provided with each release.
 
 RSC requires C\++11 and is implemented on Windows, where it runs as a console
 application. However, it defines an abstraction layer, in the form of generic
@@ -195,8 +200,8 @@ record of all the context switches that occurred during the test.
 Entering `>nt` in the CLI accesses the "nt" _increment_ (a set of CLI
 commands). It provides sets of commands for testing functions in the
 [`NbHeap`](src/nb/NbHeap.h), [`LeakyBucketCounter`](src/nb/LeakyBucketCounter.h),
-[`Q1Way`](src/nb/Q1Way.h), [`Q2Way`](src/nb/Q2Way.h), [`Registry`](src/nb/Registry.h),
-and [`SysTime`](src/nb/SysTime.h) interfaces.
+[`Q1Way`](src/nb/Q1Way.h), [`Q2Way`](src/nb/Q2Way.h), and
+[`Registry`](src/nb/Registry.h) interfaces.
 
 ## Licensing
 

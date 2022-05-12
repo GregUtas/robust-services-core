@@ -53,8 +53,8 @@ public:
    //
    static std::string Name();
 
-   //  Returns a string containing the current time in SysTime::Alpha format,
-   //  followed by " on " and Element::Name().
+   //  Returns a string containing the current time in SystemTime::FullAlpha
+   //  format, followed by " on " and Element::Name().
    //
    static std::string strTimePlace();
 

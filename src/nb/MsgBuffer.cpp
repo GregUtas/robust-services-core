@@ -20,12 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MsgBuffer.h"
-#include <ostream>
-#include <string>
 #include "Debug.h"
 #include "NbPools.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -34,7 +31,7 @@ using std::string;
 
 namespace NodeBase
 {
-MsgBuffer::MsgBuffer() : rxTime_(TimePoint::Now())
+MsgBuffer::MsgBuffer() : rxTime_(SteadyTime::Now())
 {
    Debug::ft("MsgBuffer.ctor");
 }
@@ -59,8 +56,6 @@ void MsgBuffer::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    Pooled::Display(stream, prefix, options);
-
-   stream << prefix << "rxTime : " << rxTime_.Ticks() << CRLF;
 }
 
 //------------------------------------------------------------------------------

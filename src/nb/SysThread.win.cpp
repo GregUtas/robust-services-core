@@ -22,12 +22,13 @@
 #ifdef OS_WIN
 
 #include "SysThread.h"
+#include <chrono>
 #include <csignal>
 #include <cstdint>
 #include <process.h>
+#include <ratio>
 #include <Windows.h>
 #include "Debug.h"
-#include "Duration.h"
 #include "NbSignals.h"
 #include "Thread.h"
 
@@ -317,7 +318,7 @@ signal_t SysThread::Start()
 
 fn_name SysThread_Suspend = "SysThread.Suspend";
 
-DelayRc SysThread::Suspend(SysSentry_t& sentry, const Duration& timeout)
+DelayRc SysThread::Suspend(SysSentry_t& sentry, const msecs_t& timeout)
 {
    Debug::ft(SysThread_Suspend);
 
@@ -329,7 +330,7 @@ DelayRc SysThread::Suspend(SysSentry_t& sentry, const Duration& timeout)
       return DelayError;
    }
 
-   auto rc = WaitForSingleObject(sentry, timeout.ToMsecs());
+   auto rc = WaitForSingleObject(sentry, timeout.count());
 
    switch(rc)
    {

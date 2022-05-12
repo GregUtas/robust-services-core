@@ -21,7 +21,6 @@
 //
 #include "SysSignals.h"
 #include "PosixSignal.h"
-#include <bitset>
 #include <csignal>
 #include "Debug.h"
 #include "Singleton.h"

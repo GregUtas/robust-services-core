@@ -121,7 +121,7 @@ PotsFeatureProfile* PotsWmlFeature::Subscribe
 
 //==============================================================================
 
-PotsWmlFeatureProfile::PotsWmlFeatureProfile(Address::DN dn, secs_t timeout) :
+PotsWmlFeatureProfile::PotsWmlFeatureProfile(Address::DN dn, uint32_t timeout) :
    DnRouteFeatureProfile(WML, dn),
    timeout_(timeout)
 {

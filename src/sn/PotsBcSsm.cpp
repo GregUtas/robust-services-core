@@ -481,7 +481,7 @@ void PotsBcSsm::SetProfile(PotsProfile* prof)
 
 fn_name PotsBcSsm_StartTimer = "PotsBcSsm.StartTimer";
 
-void PotsBcSsm::StartTimer(TimerId tid, secs_t duration)
+void PotsBcSsm::StartTimer(TimerId tid, uint32_t secs)
 {
    Debug::ft(PotsBcSsm_StartTimer);
 
@@ -509,7 +509,7 @@ void PotsBcSsm::StartTimer(TimerId tid, secs_t duration)
       return;
    }
 
-   if(psm->StartTimer(duration, *this, tid)) tid_ = tid;
+   if(psm->StartTimer(secs, *this, tid)) tid_ = tid;
 }
 
 //------------------------------------------------------------------------------

@@ -35,9 +35,9 @@
 #include "SbPools.h"
 #include "SbTrace.h"
 #include "Singleton.h"
+#include "SteadyTime.h"
 #include "SysTcpSocket.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -87,7 +87,7 @@ MsgPort::~MsgPort()
 
    if(Context::RunningContextTraced(trans))
    {
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
       auto buff = Singleton< TraceBuffer >::Extant();
 
       if(buff->ToolIsOn(ContextTracer))
@@ -266,7 +266,7 @@ void MsgPort::Initialize(const Message* msg)
 
    if(ctx->TraceOn(trans))
    {
-      auto warp = TimePoint::Now();
+      auto warp = SteadyTime::Now();
       auto buff = Singleton< TraceBuffer >::Instance();
 
       if(buff->ToolIsOn(ContextTracer))

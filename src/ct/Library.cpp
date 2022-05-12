@@ -49,7 +49,6 @@
 #include "NbCliParms.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "ThisThread.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -456,7 +455,10 @@ void Library::Export(ostream& stream, const string& opts) const
 
       for(auto f = files_.cbegin(); f != files_.cend(); ++f)
       {
-         (*f)->DisplayItems(stream, opts);
+         if(!(*f)->IsExcludedTarget())
+         {
+            (*f)->DisplayItems(stream, opts);
+         }
       }
 
       rule = true;
@@ -726,18 +728,6 @@ word Library::Rename(CliThread& cli,
 
 //------------------------------------------------------------------------------
 
-void Library::Shrink()
-{
-   Debug::ft("Library.Shrink");
-
-   for(auto f = files_.cbegin(); f != files_.cend(); ++f)
-   {
-      (*f)->Shrink();
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void Library::Shutdown(RestartLevel level)
 {
    Debug::ft("Library.Shutdown");
@@ -792,25 +782,18 @@ void Library::Trim(ostream& stream) const
 {
    Debug::ft("Library.Trim");
 
-   //  There was originally a >trim command that displayed files
-   //  in build order, so retain this behavior.  This also allows
-   //  CodeFile.Trim to depend on that order.  Even if this isn't
-   //  currently required, it eventually could be.
+   //  This originally displayed files in build order, which causes a mess
+   //  when it changes and you want to look at a diff.  It has therefore
+   //  been changed to display files in alphabetical ordera
    //
-   auto order = fileSet_->SortInBuildOrder();
+   auto order = fileSet_->SortInAlphaOrder();
 
    for(auto f = order.cbegin(); f != order.cend(); ++f)
    {
-      auto file = f->file;
-      if(file->IsHeader()) file->Trim(&stream);
-      ThisThread::Pause();
-   }
-
-   for(auto f = order.cbegin(); f != order.cend(); ++f)
-   {
-      auto file = f->file;
-      if(file->IsCpp()) file->Trim(&stream);
-      ThisThread::Pause();
+      if(!(*f)->IsExcludedTarget())
+      {
+         (*f)->Trim(&stream);
+      }
    }
 }
 }

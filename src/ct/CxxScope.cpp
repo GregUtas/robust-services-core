@@ -193,20 +193,20 @@ static TypeMatch MatchTemplate(const string& thisType,
    //  qualification is stripped when deducing a template argument.
    //
    auto thatNonCVType = RemoveConsts(thatType);
-   TypeSpecPtr thisSpec;
-   TypeSpecPtr thatSpec;
+   TemplateArgPtr thisArg;
+   TemplateArgPtr thatArg;
 
    auto scope = Context::Scope();
    ParserPtr parser(new Parser(scope));
-   parser->ParseTypeSpec(thisType, thisSpec);
-   parser->ParseTypeSpec(thatNonCVType, thatSpec);
+   parser->ParseTemplateArg(thisType, thisArg);
+   parser->ParseTemplateArg(thatNonCVType, thatArg);
    parser.reset();
 
-   if(thisSpec == nullptr) return Incompatible;
-   if(thatSpec == nullptr) return Incompatible;
-   thisSpec->SetTemplateRole(TemplateClass);
-   return thisSpec->MatchTemplate
-      (thatSpec.get(), tmpltParms, tmpltArgs, argFound);
+   if(thisArg == nullptr) return Incompatible;
+   if(thatArg == nullptr) return Incompatible;
+   thisArg->SetTemplateRole(TemplateClass);
+   return thisArg->MatchTemplate
+      (thatArg.get(), tmpltParms, tmpltArgs, argFound);
 }
 
 //==============================================================================
@@ -223,8 +223,6 @@ Block::Block(bool braced) :
    nested_(false)
 {
    Debug::ft("Block.ctor");
-
-   CxxStats::Incr(CxxStats::BLOCK_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -232,8 +230,6 @@ Block::Block(bool braced) :
 Block::~Block()
 {
    Debug::ftnt("Block.dtor");
-
-   CxxStats::Decr(CxxStats::BLOCK_DECL);
 }
 
 //------------------------------------------------------------------------------
@@ -577,20 +573,6 @@ string Block::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-void Block::Shrink()
-{
-   CxxScope::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::BLOCK_DECL, name_.capacity());
-
-   ShrinkTokens(statements_);
-   auto size = statements_.capacity() * sizeof(TokenPtr);
-   size += XrefSize();
-   CxxStats::Vectors(CxxStats::BLOCK_DECL, size);
-}
-
-//------------------------------------------------------------------------------
-
 void Block::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -627,7 +609,6 @@ ClassData::ClassData(string& name, TypeSpecPtr& type) : Data(type),
    std::swap(name_, name);
    Singleton< CxxSymbols >::Instance()->InsertData(this);
    OpenScope(nullptr);
-   CxxStats::Incr(CxxStats::CLASS_DATA);
 }
 
 //------------------------------------------------------------------------------
@@ -638,7 +619,6 @@ ClassData::~ClassData()
 
    GetFile()->EraseData(this);
    Singleton< CxxSymbols >::Extant()->EraseData(this);
-   CxxStats::Decr(CxxStats::CLASS_DATA);
 }
 
 //------------------------------------------------------------------------------
@@ -1010,17 +990,6 @@ void ClassData::SetMemInit(const MemberInit* init)
 
 //------------------------------------------------------------------------------
 
-void ClassData::Shrink()
-{
-   Data::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::CLASS_DATA, name_.capacity());
-   CxxStats::Vectors(CxxStats::CLASS_DATA, XrefSize());
-   if(width_ != nullptr) width_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void ClassData::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -1230,15 +1199,17 @@ void CxxScope::OpenScope(const QualName* name)
 
 //------------------------------------------------------------------------------
 
+fn_name CxxScope_ReplaceTemplateParms = "CxxScope.ReplaceTemplateParms";
+
 void CxxScope::ReplaceTemplateParms
-   (string& code, const TypeSpecPtrVector* args, size_t begin) const
+   (string& code, const TemplateArgPtrVector* args, size_t begin) const
 {
-   Debug::ft("CxxScope.ReplaceTemplateParms");
+   Debug::ft(CxxScope_ReplaceTemplateParms);
 
    //  Replace the template parameters with the instance arguments.
    //
    auto tmpltParms = GetTemplateParms()->Parms();
-   auto tmpltSpec = GetQualName()->GetTemplateArgs();
+   auto tmpltSpec = GetQualName()->GetTemplatedName();
    auto tmpltArgs = (tmpltSpec != nullptr ? tmpltSpec->Args() : nullptr);
    string argName;
 
@@ -1258,6 +1229,8 @@ void CxxScope::ReplaceTemplateParms
       else
       {
          argName = tmpltParms->at(i)->Default()->TypeString(true);
+         auto expl = "default template parameter" + argName;
+         Context::SwLog(CxxScope_ReplaceTemplateParms, expl, 0);
       }
 
       RemoveRefs(argName);
@@ -1525,12 +1498,19 @@ bool Data::ExecuteInit(bool push)
       }
    }
 
+   //  The initialization of class data can refer to a template parameter,
+   //  so make the parameters available as locals.
+   //
+   auto cls = GetClass();
+   if(cls != nullptr) cls->EnterParms();
+
    //  If some form of initialization exists, one of the following will
    //  set inited_ and return true; thus the empty statement.
    //
    decl->initing_ = true;
    if(InitByExpr(expr_.get()) || InitByAssign() || InitByDefault()) { }
    decl->initing_ = false;
+   if(cls != nullptr) cls->ExitParms();
    if(push) Context::PopScope();
    return decl->inited_;
 }
@@ -1596,9 +1576,9 @@ bool Data::GetStrValue(string& str) const
 
 //------------------------------------------------------------------------------
 
-TypeName* Data::GetTemplateArgs() const
+TypeName* Data::GetTemplatedName() const
 {
-   return spec_->GetTemplateArgs();
+   return spec_->GetTemplatedName();
 }
 
 //------------------------------------------------------------------------------
@@ -1864,17 +1844,6 @@ bool Data::SetNonConst()
 
 //------------------------------------------------------------------------------
 
-void Data::Shrink()
-{
-   CxxScope::Shrink();
-   if(alignas_ != nullptr) alignas_->Shrink();
-   spec_->Shrink();
-   if(expr_ != nullptr) expr_->Shrink();
-   if(init_ != nullptr) init_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 string Data::TypeString(bool arg) const
 {
    return spec_->TypeString(arg);
@@ -1970,7 +1939,6 @@ FuncData::FuncData(string& name, TypeSpecPtr& type) : Data(type),
    Debug::ft("FuncData.ctor");
 
    std::swap(name_, name);
-   CxxStats::Incr(CxxStats::FUNC_DATA);
 }
 
 //------------------------------------------------------------------------------
@@ -1978,8 +1946,6 @@ FuncData::FuncData(string& name, TypeSpecPtr& type) : Data(type),
 FuncData::~FuncData()
 {
    Debug::ftnt("FuncData.dtor");
-
-   CxxStats::Decr(CxxStats::FUNC_DATA);
 }
 
 //------------------------------------------------------------------------------
@@ -2214,17 +2180,6 @@ void FuncData::SetNext(FuncDataPtr& next)
 
 //------------------------------------------------------------------------------
 
-void FuncData::Shrink()
-{
-   Data::Shrink();
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::FUNC_DATA, name_.capacity());
-   CxxStats::Vectors(CxxStats::FUNC_DATA, XrefSize());
-   if(next_ != nullptr) next_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void FuncData::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -2246,8 +2201,6 @@ void FuncData::UpdateXref(bool insert)
 FuncSpec::FuncSpec(FunctionPtr& func) : func_(func.release())
 {
    Debug::ft("FuncSpec.ctor");
-
-   CxxStats::Incr(CxxStats::FUNC_SPEC);
 }
 
 //------------------------------------------------------------------------------
@@ -2255,8 +2208,6 @@ FuncSpec::FuncSpec(FunctionPtr& func) : func_(func.release())
 FuncSpec::~FuncSpec()
 {
    Debug::ft("FuncSpec.dtor");
-
-   CxxStats::Decr(CxxStats::FUNC_SPEC);
 }
 
 //------------------------------------------------------------------------------
@@ -2283,6 +2234,13 @@ string FuncSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 
 //------------------------------------------------------------------------------
 
+const TemplateArgPtrVector* FuncSpec::Args() const
+{
+   return func_->GetTypeSpec()->Args();
+}
+
+//------------------------------------------------------------------------------
+
 TagCount FuncSpec::Arrays() const
 {
    Debug::ft("FuncSpec.Arrays");
@@ -2305,16 +2263,6 @@ TypeSpec* FuncSpec::Clone() const
 {
    Debug::SwLog(FuncSpec_Warning, "Clone", 0);
    return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-bool FuncSpec::ContainsTemplateParameter() const
-{
-   Debug::ft("FuncSpec.ContainsTemplateParameter");
-
-   if(TypeSpec::ContainsTemplateParameter()) return true;
-   return func_->ContainsTemplateParameter();
 }
 
 //------------------------------------------------------------------------------
@@ -2373,9 +2321,9 @@ void FuncSpec::GetNames(stringVector& names) const
 
 //------------------------------------------------------------------------------
 
-TypeName* FuncSpec::GetTemplateArgs() const
+TypeName* FuncSpec::GetTemplatedName() const
 {
-   return func_->GetTypeSpec()->GetTemplateArgs();
+   return func_->GetTypeSpec()->GetTemplatedName();
 }
 
 //------------------------------------------------------------------------------
@@ -2511,14 +2459,6 @@ void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::Shrink()
-{
-   TypeSpec::Shrink();
-   func_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 const TypeTags* FuncSpec::Tags() const
 {
    return func_->GetTypeSpec()->Tags();
@@ -2542,7 +2482,7 @@ string FuncSpec::Trace() const
 
 string FuncSpec::TypeString(bool arg) const
 {
-   return func_->TypeString(arg);
+   return func_->TypeString(true);  // must be true to avoid stack overflow
 }
 
 //------------------------------------------------------------------------------
@@ -2606,7 +2546,6 @@ Function::Function(QualNamePtr& name) :
 
    Singleton< CxxSymbols >::Instance()->InsertFunc(this);
    OpenScope(name_.get());
-   CxxStats::Incr(CxxStats::FUNCTION);
 }
 
 //------------------------------------------------------------------------------
@@ -2650,7 +2589,6 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    if(type_) return;
 
    OpenScope(name_.get());
-   CxxStats::Incr(CxxStats::FUNCTION);
 }
 
 //------------------------------------------------------------------------------
@@ -2659,7 +2597,6 @@ Function::~Function()
 {
    Debug::ftnt("Function.dtor");
 
-   CxxStats::Decr(CxxStats::FUNCTION);
    if(type_) return;
 
    if(base_ != nullptr)
@@ -3040,7 +2977,6 @@ Function* Function::CanInvokeWith(StackArgVector& args,
          //  same type, but doesn't.
          //
          auto argFound = false;
-
          auto match = MatchTemplate
             (recvType, sendType, tmpltParms, tmpltArgs, argFound);
 
@@ -3907,15 +3843,6 @@ void Function::CheckOverride()
 
 //------------------------------------------------------------------------------
 
-bool Function::ContainsTemplateParameter() const
-{
-   Debug::ft("Function.ContainsTemplateParameter");
-
-   return tspec_->ContainsTemplateParameter();
-}
-
-//------------------------------------------------------------------------------
-
 string Function::DebugName() const
 {
    Debug::ft("Function.DebugName");
@@ -4752,7 +4679,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
          CxxUsageSets sets;
          auto first = tmplts_.front();
          first->GetUsages(file, sets);
-         sets.EraseTemplateArgs(first->GetTemplateArgs());
+         sets.EraseTemplateArgs(first->GetTemplatedName());
          sets.EraseLocals();
          symbols.Union(sets);
          return;
@@ -4782,7 +4709,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
 
    //  The symbols in a function signature are always visible
    //  o in the definition (if separate from the declaration)
-   //  o in an overridden function (which must #include the base class)
+   //  o in an override (which must #include the base class)
    //  Consequently, symbols used in the signature only need to be reported
    //  (for the purpose of determining which files to #include) when they
    //  appear in the declaration of a new function.  Symbols accessed via a
@@ -4970,16 +4897,15 @@ Function* Function::InstantiateFunction(const TypeName* type) const
 {
    Debug::ft("Function.InstantiateFunction(type)");
 
-   //  Create the name for the function template instance and look for it.
-   //  If it has already been instantiated, return it.
+   //  If the function has already been instantiated, return it.
    //
    auto ts = type->TypeString(true);
-   auto instName = Name() + ts;
-   RemoveRefs(instName);
-   auto area = GetArea();
-   auto func =
-      area->FindFunc(instName, nullptr, nullptr, false, nullptr, nullptr);
-   if(func != nullptr) return func;
+
+   for(auto f = tmplts_.cbegin(); f != tmplts_.cend(); ++f)
+   {
+      auto tsprev = (*f)->GetTemplatedName()->TypeString(false);
+      if(tsprev == ts) return *f;
+   }
 
    //  Notify TYPE, which contains the template name and arguments, that its
    //  template is being instantiated.  This causes the instantiation of any
@@ -4999,6 +4925,8 @@ Function* Function::InstantiateFunction(const TypeName* type) const
       code_.reset(new string(stream.str()));
    }
 
+   auto instName = Name() + ts;
+   RemoveRefs(instName);
    stringPtr code(new string(*code_));
    if(code->empty()) return InstantiateError(instName, 0);
 
@@ -5038,7 +4966,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    //
    auto fullName = ScopedName(true) + ts;
    RemoveRefs(fullName);
-   ParserPtr parser(new Parser(EMPTY_STR));
+   ParserPtr parser(new Parser());
 
    if(!locals.empty())
    {
@@ -5048,11 +4976,11 @@ Function* Function::InstantiateFunction(const TypeName* type) const
       }
    }
 
-   parser->ParseFuncInst(fullName, this, area, type, code.get());
+   auto area = GetArea();
+   auto func = parser->ParseFuncInst(fullName, this, area, type, code.get());
    parser.reset();
    code.reset();
 
-   func = area->FindFunc(instName, nullptr, nullptr, false, nullptr, nullptr);
    if(func == nullptr) return InstantiateError(instName, 3);
    tmplts_.push_back(func);
    return func;
@@ -5092,8 +5020,8 @@ Function* Function::InstantiateFunction(stringVector& tmpltArgs) const
 
    for(size_t i = 0; i < parms->size(); ++i)
    {
-      TypeSpecPtr arg;
-      parser->ParseTypeSpec(tmpltArgs[i], arg);
+      TemplateArgPtr arg;
+      parser->ParseTemplateArg(tmpltArgs[i], arg);
       if(arg == nullptr) return nullptr;
       type->AddTemplateArg(arg);
    }
@@ -5798,39 +5726,6 @@ void Function::SetTemplateParms(TemplateParmsPtr& parms)
 
 //------------------------------------------------------------------------------
 
-void Function::Shrink()
-{
-   CxxScope::Shrink();
-   name_->Shrink();
-   if(parms_ != nullptr) parms_->Shrink();
-   if(spec_ != nullptr) spec_->Shrink();
-
-   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
-   {
-      (*a)->Shrink();
-   }
-
-   if(call_ != nullptr) call_->Shrink();
-
-   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
-   {
-      (*m)->Shrink();
-   }
-
-   if(impl_ != nullptr) impl_->Shrink();
-   tmplts_.shrink_to_fit();
-   overs_.shrink_to_fit();
-
-   auto size = args_.capacity() * sizeof(ArgumentPtr);
-   size += (mems_.capacity() * sizeof(TokenPtr));
-   size += (tmplts_.capacity() * sizeof(Function*));
-   size += (overs_.capacity() * sizeof(Function*));
-   size += XrefSize();
-   CxxStats::Vectors(CxxStats::FUNCTION, size);
-}
-
-//------------------------------------------------------------------------------
-
 bool Function::SignatureMatches(const Function* that, bool base) const
 {
    Debug::ft("Function.SignatureMatches");
@@ -5865,6 +5760,13 @@ bool Function::SignatureMatches(const Function* that, bool base) const
    }
 
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+string Function::Trace() const
+{
+   return TypeString(false);
 }
 
 //------------------------------------------------------------------------------
@@ -6211,7 +6113,6 @@ SpaceData::SpaceData(QualNamePtr& name, TypeSpecPtr& type) : Data(type),
    Debug::ft("SpaceData.ctor");
 
    OpenScope(name_.get());
-   CxxStats::Incr(CxxStats::FILE_DATA);
 }
 
 //------------------------------------------------------------------------------
@@ -6222,7 +6123,6 @@ SpaceData::~SpaceData()
 
    GetFile()->EraseData(this);
    Singleton< CxxSymbols >::Extant()->EraseData(this);
-   CxxStats::Decr(CxxStats::FILE_DATA);
 }
 
 //------------------------------------------------------------------------------
@@ -6414,16 +6314,6 @@ void SpaceData::SetTemplateParms(TemplateParmsPtr& parms)
 
 //------------------------------------------------------------------------------
 
-void SpaceData::Shrink()
-{
-   Data::Shrink();
-   CxxStats::Vectors(CxxStats::FILE_DATA, XrefSize());
-   name_->Shrink();
-   if(parms_ != nullptr) parms_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
 void SpaceData::UpdatePos
    (EditorAction action, size_t begin, size_t count, size_t from) const
 {
@@ -6448,8 +6338,6 @@ SpaceDefn::SpaceDefn(Namespace* ns) :
    space_(ns)
 {
    Debug::ft("SpaceDefn.ctor");
-
-   CxxStats::Incr(CxxStats::SPACE_DEFN);
 }
 
 //------------------------------------------------------------------------------
@@ -6459,7 +6347,6 @@ SpaceDefn::~SpaceDefn()
    Debug::ft("SpaceDefn.dtor");
 
    GetFile()->EraseSpace(this);
-   CxxStats::Decr(CxxStats::SPACE_DEFN);
 }
 
 //------------------------------------------------------------------------------

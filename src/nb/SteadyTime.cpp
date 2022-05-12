@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysTickTimer.linux.cpp
+//  SteadyTime.cpp
 //
 //  Copyright (C) 2013-2022  Greg Utas
 //
@@ -19,67 +19,40 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifdef OS_LINUX
-
-#include "SysTickTimer.h"
-#include "Debug.h"
-
-using std::string;
+#include "SteadyTime.h"
+#include <ratio>
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-SysTickTimer::SysTickTimer() :
-   ticks_per_sec_(1000),
-   available_(false)
+static const SteadyTime::Point SteadyBootTime = SteadyTime::Now();
+
+//------------------------------------------------------------------------------
+
+SteadyTime::Point SteadyTime::GetInvalid()
 {
-   Debug::ft("SysTickTimer.ctor");
-/*L
-   LARGE_INTEGER frequency;
-
-   if(QueryPerformanceFrequency(&frequency))
-   {
-      available_ = true;
-      ticks_per_sec_ = frequency.QuadPart;
-   }
-
-   startPoint_ = Now();
-   startTime_ = SysTime();
-
-   startTimeStr_ = startTime_.to_str(SysTime::Numeric).c_str();
-   auto pos = startTimeStr_.find('.');
-   if(pos != string::npos) startTimeStr_[pos] = '-';
-*/
+   return Point::min();
 }
 
 //------------------------------------------------------------------------------
 
-TimePoint SysTickTimer::Now() const
+bool SteadyTime::IsValid(const Point& time)
 {
-   return TimePoint();
-/*L
-   if(available_)
-   {
-      LARGE_INTEGER now;
-      QueryPerformanceCounter(&now);
-      return TimePoint(now.QuadPart);
-   }
-   else
-   {
-      _timeb now;
-      _ftime_s(&now);
-      auto msecs = 1000LL * now.time;
-      return TimePoint(msecs + now.millitm);
-   }
-*/
+   return (time != GetInvalid());
 }
 
 //------------------------------------------------------------------------------
 
-void SysTickTimer::Patch(sel_t selector, void* arguments)
+SteadyTime::Point SteadyTime::Now()
 {
-   Immutable::Patch(selector, arguments);
+   return std::chrono::steady_clock::now();
+}
+
+//------------------------------------------------------------------------------
+
+SteadyTime::Point SteadyTime::TimeZero()
+{
+   return SteadyBootTime;
 }
 }
-#endif

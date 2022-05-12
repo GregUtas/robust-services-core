@@ -20,10 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StatisticsRegistry.h"
+#include <chrono>
 #include <cstddef>
 #include <ostream>
+#include <ratio>
 #include <string>
 #include "Debug.h"
+#include "Duration.h"
 #include "Formatters.h"
 #include "Statistics.h"
 #include "StatisticsGroup.h"
@@ -43,7 +46,8 @@ constexpr size_t MaxStats = 1000;
 //
 constexpr size_t MaxGroups = 100;
 
-TimePoint StatisticsRegistry::StartTime_ = TimePoint();
+SystemTime::Point StatisticsRegistry::StartTime_ = SystemTime::GetInvalid();
+SteadyTime::Point StatisticsRegistry::StartPoint_ = SteadyTime::GetInvalid();
 
 //------------------------------------------------------------------------------
 
@@ -54,7 +58,8 @@ StatisticsRegistry::StatisticsRegistry()
    stats_.Init(MaxStats, Statistic::CellDiff(), MemDynamic);
    groups_.Init(MaxGroups, StatisticsGroup::CellDiff(), MemDynamic);
 
-   StartTime_ = TimePoint();
+   StartTime_ = SystemTime::GetInvalid();
+   StartPoint_ = SteadyTime::GetInvalid();
 }
 
 //------------------------------------------------------------------------------
@@ -110,7 +115,7 @@ void StatisticsRegistry::DisplayStats
    Debug::ft("StatisticsRegistry.DisplayStats");
 
    stream << "For reporting period beginning at ";
-   stream << StartTime_.to_str() << CRLF;
+   stream << to_string(StartTime_, LowAlpha) << CRLF;
 
    for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
    {
@@ -146,7 +151,8 @@ void StatisticsRegistry::StartInterval(bool first)
       s->StartInterval(first);
    }
 
-   StartTime_ = TimePoint::Now();
+   StartTime_ = SystemTime::Now();
+   StartPoint_ = SteadyTime::Now();
 }
 
 //------------------------------------------------------------------------------
@@ -159,9 +165,10 @@ void StatisticsRegistry::Startup(RestartLevel level)
    //  reconstructed.  Statistics can only start to be accumulated now, so
    //  set StartTicks_ to the current time.
    //
-   if(!StartTime_.IsValid())
+   if(!SystemTime::IsValid(StartTime_))
    {
-      StartTime_ = TimePoint::Now();
+      StartTime_ = SystemTime::Now();
+      StartPoint_ = SteadyTime::Now();
    }
 }
 

@@ -31,8 +31,8 @@
 #include "Q1Way.h"
 #include "Q2Link.h"
 #include "SbTypes.h"
+#include "SteadyTime.h"
 #include "SysTypes.h"
-#include "TimePoint.h"
 
 namespace SessionBase
 {
@@ -318,7 +318,7 @@ private:
 
    //  The time when the context was enqueued.
    //
-   NodeBase::TimePoint enqTime_;
+   NodeBase::SteadyTime::Point enqTime_;
 
    //  The invoker pool that is managing this context.
    //

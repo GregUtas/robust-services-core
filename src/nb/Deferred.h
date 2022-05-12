@@ -25,7 +25,6 @@
 #include "MsgBuffer.h"
 #include <cstddef>
 #include <cstdint>
-#include "Duration.h"
 #include "Q2Link.h"
 
 namespace NodeBase
@@ -65,7 +64,7 @@ public:
 
    //  Resets the item with a new timeout in SECS.
    //
-   void Restart(secs_t secs);
+   void Restart(uint32_t secs);
 
    //  Overridden to display member variables.
    //
@@ -80,7 +79,7 @@ protected:
    //  timeout in SECS, and that will survive a warm restart if WARM is set.
    //  Protected because this class is virtual.
    //
-   Deferred(Base& owner, secs_t secs, bool warm);
+   Deferred(Base& owner, uint32_t secs, bool warm);
 private:
    //  Notifies the work item of EVENT.  When this is invoked, the item is
    //  unowned (not queued).  Unless it is reassigned to an owner, usually
@@ -111,7 +110,7 @@ private:
 
    //  How long until the timeout occurs.
    //
-   secs_t secs_;
+   uint32_t secs_;
 
    //  Set if the item should survive a warm restart.
    //

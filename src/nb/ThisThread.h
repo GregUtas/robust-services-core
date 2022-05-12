@@ -43,7 +43,7 @@ namespace NodeBase
    {
       ThreadId RunningThreadId();
       word RtcPercentUsed();
-      DelayRc Pause(const Duration& timeout = TIMEOUT_IMMED);
+      DelayRc Pause(const msecs_t& timeout = TIMEOUT_IMMED);
       void PauseOver(word limit);
       bool EnterBlockingOperation(BlockingReason why, fn_name_arg func);
       void ExitBlockingOperation(fn_name_arg func);

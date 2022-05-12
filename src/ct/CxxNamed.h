@@ -29,6 +29,7 @@
 #include <string>
 #include "CodeTypes.h"
 #include "Cxx.h"
+#include "CxxExecute.h"
 #include "CxxFwd.h"
 #include "CxxString.h"
 #include "LibraryTypes.h"
@@ -65,7 +66,7 @@ public:
    //  Returns the template parameters associated with the item, if any.
    //  Must be overridden by an item that can declare a template.
    //
-   virtual const TemplateParms* GetTemplateParms() const { return nullptr; }
+   virtual TemplateParms* GetTemplateParms() const { return nullptr; }
 
    //  Returns true if the item declares template parameters.
    //
@@ -156,6 +157,25 @@ public:
    virtual StackArg MemberToArg
       (StackArg& via, TypeName* name, Cxx::Operator op);
 
+   //  Returns true if NAMES, used in SCOPE and FILE, could refer to a type
+   //  and its template arguments.  INDEX is the current index into NAMES.
+   //  The default version generates a log and returns false.
+   //
+   virtual bool NamesReferToArgs(const NameVector& names,
+      const CxxScope* scope, CodeFile* file, size_t& index) const;
+
+   //  In a default template argument, uses TMAP to replace a template
+   //  parameter with its corresponding template argument.  The default
+   //  version returns ERROR_STR.
+   //
+   virtual std::string ArgString(const TemplateParmToArgMap& tmap) const;
+
+   //  Invoked when a type is a template argument that is about to be used
+   //  to instantiate a template.  Finds the type's referent and, if it is a
+   //  template, also instantiates it.  The default version generates a log.
+   //
+   virtual void Instantiating(CxxScopedVector& locals) const;
+
    //  Invoked on an item that was used directly (e.g. to invoke a function).
    //  If the item's type is a forward declaration, its actual class is added
    //  to SYMBOLS because that class must be #included by the file that used
@@ -174,6 +194,11 @@ public:
    //  function on GetTypeSpec().
    //
    virtual void GetDirectTemplateArgs(CxxUsageSets& symbols) const;
+
+   //  Returns true if ITEM is the referent of a template argument.  The
+   //  default version generates a log and returns false.
+   //
+   virtual bool ItemIsTemplateArg(const CxxNamed* item) const;
 
    //  Returns the item's name as it should appear in the cross-reference.
    //  The default returns ScopedName(templates).
@@ -232,13 +257,13 @@ protected:
    //
    virtual bool ResolveTypedef(Typedef* type, size_t n) const { return true; }
 
-   //  Invoked when ResolveName finds ARGS, template arguments for CLS.  END
-   //  is set if the arguments are attached to the last name in the qualified
-   //  name.  To invoke EnsureInstance with the arguments, return true.  To
-   //  skip the arguments, return false.
+   //  Invoked when ResolveName finds TYPE, which has template arguments for
+   //  CLS.  END is set if the arguments are attached to the last name in the
+   //  qualified name.  To invoke EnsureInstance with the arguments, return
+   //  true.  To skip the arguments, return false.
    //
    virtual bool ResolveTemplate
-      (Class* cls, const TypeName* args, bool end) const { return true; }
+      (Class* cls, const TypeName* type, bool end) const { return true; }
 
    //  Changes oldName to newName.  Invoked by overrides of Rename.
    //
@@ -308,15 +333,11 @@ public:
 
    //  Adds a template argument (type specialization) to this name.
    //
-   void AddTemplateArg(TypeSpecPtr& arg);
+   void AddTemplateArg(TemplateArgPtr& arg);
 
    //  Creates template arguments from template parameters.
    //
    void SetTemplateArgs(const TemplateParms* tparms);
-
-   //  Returns the template arguments.
-   //
-   const TypeSpecPtrVector* Args() const { return args_.get(); }
 
    //  Adds the string corresponding to OPER to the name.
    //
@@ -347,15 +368,6 @@ public:
    //
    bool HasTemplateParmFor(const CxxScope* scope) const;
 
-   //  Returns true if any template argument is a template paramter.
-   //
-   bool ContainsTemplateParameter() const;
-
-   //  Invoked when instantiating the template specified by the arguments.
-   //  Invokes Instantiating on each template argument.
-   //
-   void Instantiating(CxxScopedVector& locals) const;
-
    //  Determines if THAT can instantiate a template for args_.
    //  o Returns Compatible if args_ is empty.
    //  o Returns Incompatible if THAT does not have the same number of
@@ -365,16 +377,6 @@ public:
    //
    TypeMatch MatchTemplate(const TypeName* that,
       stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const;
-
-   //  Returns true if NAMES, used in SCOPE and FILE, could refer to this
-   //  name's template arguments.  INDEX is the current index into NAMES.
-   //
-   bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
-      CodeFile* file, size_t& index) const;
-
-   //  Returns true if ITEM is the referent of a template argument.
-   //
-   bool ItemIsTemplateArg(const CxxNamed* item) const;
 
    //  Invoked when the name accesses MEM via CLS.  Sets the referent to MEM
    //  and records CLS as the type through which it was accessed.
@@ -401,6 +403,14 @@ public:
    //  Adds any template arguments to NAMES.
    //
    void GetNames(stringVector& names) const;
+
+   //  Overridden to return the name's template arguments.
+   //
+   const TemplateArgPtrVector* Args() const override;
+
+   //  Overridden to forward to any template arguments.
+   //
+   std::string ArgString(const TemplateParmToArgMap& tmap) const override;
 
    //  Overridden to check template arguments.
    //
@@ -432,17 +442,31 @@ public:
    //
    QualName* GetQualName() const override { return qname_; }
 
-   //  Overridden to return this item if it has template arguments.
+   //  Overridden to return this item or type_ if it has template arguments.
    //
-   TypeName* GetTemplateArgs() const override;
+   TypeName* GetTemplatedName() const override;
 
    //  Overridden to update SYMBOLS with the name's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
 
+   //  Overridden to forward to each template argument.
+   //
+   void Instantiating(CxxScopedVector& locals) const override;
+
+   //  Overridden to return true if ITEM is the referent of a template argument.
+   //
+   bool ItemIsTemplateArg(const CxxNamed* item) const override;
+
    //  Overridden to return the name.
    //
    const std::string& Name() const override { return name_; }
+
+   //  Overridden to use args_ if they exist, else to forward to type_ if
+   //  it exists.
+   //
+   bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
+      CodeFile* file, size_t& index) const override;
 
    //  Overridden to find the item located at POS.
    //
@@ -473,10 +497,6 @@ public:
    //
    void SetReferent(CxxScoped* item, const SymbolView* view) const override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to reveal that this is part of a qualified name.
    //
    Cxx::ItemType Type() const override { return Cxx::TypeName; }
@@ -494,6 +514,10 @@ public:
    //  Overridden to invoke UpdateReference on the name's referent.
    //
    void UpdateXref(bool insert) override;
+
+   //  Overridden to check the name and any template arguments.
+   //
+   bool VerifyReferents() const override;
 private:
    //  Overridden so that a data item can be erased.
    //
@@ -509,7 +533,7 @@ private:
 
    //  Any template arguments if the name is that of a template.
    //
-   std::unique_ptr< TypeSpecPtrVector > args_;
+   std::unique_ptr< TemplateArgPtrVector > args_;
 
    //  The next name in a qualified name.
    //
@@ -653,23 +677,10 @@ public:
    //
    CxxScoped* GetForward() const;
 
-   //  Invoked when instantiating a template whose specialization contains this
-   //  name.  Invokes Instantiating on each name.
-   //
-   void Instantiating(CxxScopedVector& locals) const;
-
    //  Invokes MatchTemplate on each name, returning the least favorable result.
    //
    TypeMatch MatchTemplate(const QualName* that,
       stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const;
-
-   //  Returns true if ITEM is the referent of a template argument.
-   //
-   bool ItemIsTemplateArg(const CxxNamed* item) const;
-
-   //  Returns true if the name contains a template paramter.
-   //
-   bool ContainsTemplateParameter() const;
 
    //  Adds the name and any template arguments to NAMES.
    //
@@ -686,6 +697,16 @@ public:
    //  Checks for a redundant scope name.
    //
    void CheckForRedundantScope() const;
+
+   //  Overridden to return any template arguments associated with one of the
+   //  names.
+   //
+   const TemplateArgPtrVector* Args() const override;
+
+   //  Overridden to use TMAP to replace template parameters with template
+   //  arguments.
+   //
+   std::string ArgString(const TemplateParmToArgMap& tmap) const override;
 
    //  Overridden to check each name and any template parameters.
    //
@@ -713,8 +734,8 @@ public:
 
    //  Overridden to return the item itself.
    //
-   QualName* GetQualName() const
-      override { return const_cast< QualName* >(this); }
+   QualName* GetQualName() const override
+      { return const_cast< QualName* >(this); }
 
    //  Overridden to return the parser's enclosing scope when initializing data
    //  at file scope.  This prevents the RedundantScope from being logged on a
@@ -725,13 +746,21 @@ public:
    //
    CxxScope* GetScope() const override;
 
-   //  Overridden to see if one of the names specifies a template instance.
+   //  Overridden to return one of the names if it has template arguments.
    //
-   TypeName* GetTemplateArgs() const override;
+   TypeName* GetTemplatedName() const override;
 
    //  Overridden to update SYMBOLS with the name's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+
+   //  Overridden to forward to each name.
+   //
+   void Instantiating(CxxScopedVector& locals) const override;
+
+   //  Overridden to return true if ITEM is the referent of a template argument.
+   //
+   bool ItemIsTemplateArg(const CxxNamed* item) const override;
 
    //  Overridden to return the last name.
    //
@@ -761,7 +790,7 @@ public:
    //  Overridden to instantiate the template unless END is set.
    //
    bool ResolveTemplate
-      (Class* cls, const TypeName* args, bool end) const override;
+      (Class* cls, const TypeName* type, bool end) const override;
 
    //  Overridden to forward to the Nth name.
    //
@@ -780,10 +809,6 @@ public:
    //
    void SetReferent(CxxScoped* item, const SymbolView* view) const override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to reveal that this is a qualified name.
    //
    Cxx::ItemType Type() const override { return Cxx::QualName; }
@@ -800,6 +825,10 @@ public:
    //  Overridden to add the name's components to cross-references.
    //
    void UpdateXref(bool insert) override;
+
+   //  Overridden to check each name.
+   //
+   bool VerifyReferents() const override;
 private:
    //  Overridden so that a data item can be erased.
    //
@@ -922,12 +951,11 @@ public:
    //
    TagCount RefCount() const { return refs_; }
 
-   //  If THAT has as many or more pointers and arrays as these tags do,
-   //  modifies THAT by removing the number of pointers and arrays in
-   //  these tags and returns true.  Returns false if these tags have
-   //  more pointers or arrays than THAT.
+   //  Modifies the tags by removing the number of pointers and arrays in
+   //  THAT.  Returns true on success, and false if these tags have fewer
+   //  pointers or arrays than THAT.
    //
-   bool AlignTemplateTag(TypeTags& that) const;
+   bool AlignTemplateTags(const TypeTags& that);
 
    //  Returns Compatible if these tags have the same number of pointers
    //  and arrays as THAT.  Returns Convertible if these tags have less
@@ -1008,10 +1036,6 @@ public:
    //
    TemplateRole GetTemplateRole() const { return role_; }
 
-   //  Returns true if the type contains a template paramter.
-   //
-   virtual bool ContainsTemplateParameter() const;
-
    //  Returns the function signature for a function type.
    //
    virtual Function* GetFuncSpec() const { return nullptr; }
@@ -1020,11 +1044,6 @@ public:
    //  Generates a log if the types are Incompatible.
    //
    TypeMatch MustMatchWith(const StackArg& that) const;
-
-   //  Creates and returns a copy of the type.  Serves as a copy constructor,
-   //  which cannot be invoked directly on this class (because it is virtual).
-   //
-   virtual TypeSpec* Clone() const = 0;
 
    //  Provides access to the type's tags.
    //
@@ -1094,10 +1113,6 @@ public:
    //
    virtual bool MatchesExactly(const TypeSpec* that) const = 0;
 
-   //  Constructs an argument based on the type's referent.
-   //
-   virtual StackArg ResultType() const = 0;
-
    //  Sets the type's role in a template.
    //
    virtual void SetTemplateRole(TemplateRole role) const { role_ = role; }
@@ -1129,25 +1144,9 @@ public:
    //
    virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const = 0;
 
-   //  Returns true if ITEM is the referent of a template argument.
-   //
-   virtual bool ItemIsTemplateArg(const CxxNamed* item) const = 0;
-
-   //  Invoked when the type is a template argument that is about to be used
-   //  to instantiate a template.  Finds the type's referent and, if it is a
-   //  template, also instantiates it.
-   //
-   virtual void Instantiating(CxxScopedVector& locals) const = 0;
-
    //  Adds each scoped name in the type to NAMES.
    //
    virtual void GetNames(stringVector& names) const = 0;
-
-   //  Returns true if NAMES, used in SCOPE and FILE, could refer to a type
-   //  and its template arguments.  INDEX is the current index into NAMES.
-   //
-   virtual bool NamesReferToArgs(const NameVector& names,
-      const CxxScope* scope, CodeFile* file, size_t& index) const = 0;
 
    //  Overridden to reveal that this is a type specification.
    //
@@ -1230,6 +1229,14 @@ private:
    //
    std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
 
+   //  Overridden to return any template arguments associated with the type.
+   //
+   const TemplateArgPtrVector* Args() const override;
+
+   //  Overridden to forward to the qualified name and to add its type tags.
+   //
+   std::string ArgString(const TemplateParmToArgMap& tmap) const override;
+
    //  Overridden to return the number of arrays attached to the type, following
    //  the type to its root.
    //
@@ -1244,13 +1251,9 @@ private:
    //
    void Check() const override;
 
-   //  Overridden to create and return a copy of the type.
+   //  Overridden to return a copy of the type.
    //
    TypeSpec* Clone() const override;
-
-   //  Returns true if the type contains a template paramter.
-   //
-   bool ContainsTemplateParameter() const override;
 
    //  Overridden to propagate the context to the type's qualified name.
    //
@@ -1395,8 +1398,7 @@ private:
    //
    const std::string& Name() const override { return name_->Name(); }
 
-   //  Returns true if NAMES, used in SCOPE and FILE, could refer to this type
-   //  and its template arguments.  INDEX is the current index into NAMES.
+   //  Overridden to determine if NAMES[INDEX] matches this type.
    //
    bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
       CodeFile* file, size_t& index) const override;
@@ -1417,8 +1419,8 @@ private:
 
    //  Overridden to return the type's qualified name.
    //
-   std::string QualifiedName(bool scopes, bool templates) const
-      override { return name_->QualifiedName(scopes, templates); }
+   std::string QualifiedName(bool scopes, bool templates) const override
+      { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to return what the type refers to.
    //
@@ -1437,7 +1439,7 @@ private:
    //  Overridden to determine if EnsureInstance should be invoked.
    //
    bool ResolveTemplate
-      (Class* cls, const TypeName* args, bool end) const override;
+      (Class* cls, const TypeName* type, bool end) const override;
 
    //  Overridden to resolve the typedef unless it has template arguments.
    //
@@ -1470,10 +1472,6 @@ private:
    //
    void SetUserType(TypeSpecUser user) const override;
 
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
    //  Overridden to provide access to the type's tags.
    //
    TypeTags* Tags() override { return &tags_; }
@@ -1502,10 +1500,14 @@ private:
    //
    void UpdateXref(bool insert) override;
 
+   //  Overridden to check the specification's name.
+   //
+   bool VerifyReferents() const override;
+
    //  Overridden to support a temporary variable represented by a DataSpec.
    //
-   bool WasWritten(const StackArg* arg, bool direct, bool indirect)
-      override { return false; }
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect) override
+      { return false; }
 
    //  The qualified name for the type as it appeared in the source code.
    //
@@ -1518,6 +1520,108 @@ private:
    //  The type's tags.
    //
    TypeTags tags_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  A template argument.  It can be a TypeSpec or an Expression, so it
+//  usually forwards to whichever one of them it is wrapping.
+//
+class TemplateArg : public CxxNamed
+{
+public:
+   //  Used when the argument is a TypeSpec.
+   //
+   explicit TemplateArg(TypeSpecPtr& type);
+
+   //  Used when the argument is an Expression.
+   //
+   explicit TemplateArg(ExprPtr& expr);
+
+   //  Not subclassed.
+   //
+   ~TemplateArg();
+
+   //  Invoked when the argument was added as a template parameter default.
+   //
+   void SetImplicit() { implicit_ = true; }
+
+   //  During template instantiation, aligns thatArg's type with this one,
+   //  which is that of a template parameter that might be a specialization.
+   //
+   std::string AlignTemplateArg(const TemplateArg* thatArg) const;
+
+   //  Invoked when the argument is entered into SCOPE.
+   //
+   void EnteringScope(const CxxScope* scope) const;
+
+   //  Adds the argument to NAMES.
+   //
+   void GetNames(stringVector& names) const;
+
+   //  Returns the argument's referent.
+   //
+   CxxScoped* GetReferent() const;
+
+   //  Determines if THAT can instantiate a template for this type.
+   //
+   TypeMatch MatchTemplate(const TemplateArg* that, stringVector& tmpltParms,
+      stringVector& tmpltArgs, bool& argFound) const;
+
+   //  Determines how well THAT matches this argument for the purpose of
+   //  template instantiation.
+   //
+   TypeMatch MatchTemplateArg(const TemplateArg* that) const;
+
+   //  Sets the template argument's role.
+   //
+   void SetTemplateRole(TemplateRole role) const;
+
+   //  Sets the template argument's user type.
+   //
+   void SetUserType(TypeSpecUser user) const;
+
+   //  Each override forwards to the type or expression that serves as
+   //  the template argument.
+   //
+   std::string ArgString(const TemplateParmToArgMap& tmap) const override;
+   void Check() const override;
+   CxxToken* Clone() const override;
+   void CopyContext(const CxxToken* that, bool internal) override;
+   void EnterBlock() override;
+   void FindReferent() override;
+   void GetDirectClasses(CxxUsageSets& symbols) override;
+   void GetDirectTemplateArgs(CxxUsageSets& symbols) const override;
+   TypeSpec* GetTypeSpec() const override { return spec_.get(); }
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) override;
+   void Instantiating(CxxScopedVector& locals) const override;
+   bool ItemIsTemplateArg(const CxxNamed* item) const override;
+   const std::string& Name() const override;
+   bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
+      CodeFile* file, size_t& index) const override;
+   CxxToken* PosToItem(size_t pos) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   std::string QualifiedName(bool scopes, bool templates) const override;
+   StackArg ResultType() const override;
+   std::string Trace() const override;
+   std::string TypeString(bool arg) const override;
+   void UpdatePos(EditorAction action,
+      size_t begin, size_t count, size_t from) const override;
+   void UpdateXref(bool insert) override;
+   bool VerifyReferents() const override;
+private:
+   //  Used when the argument is a TypeSpec.
+   //
+   const TypeSpecPtr spec_;
+
+   //  Used when the argument is an Expression.
+   //
+   const ExprPtr expr_;
+
+   //  Set if the argument was provided by a template parameter default.
+   //
+   bool implicit_;
 };
 }
 #endif

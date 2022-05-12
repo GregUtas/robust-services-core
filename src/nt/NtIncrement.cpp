@@ -3034,9 +3034,10 @@ void RecoveryThread::AcquireMutex()
 {
    Debug::ft(RecoveryThread_AcquireMutex);
 
-   auto rc = RecoveryMutex_.Acquire(TIMEOUT_IMMED);
-   if(rc != SysMutex::Acquired)
-      Debug::SwLog(RecoveryThread_AcquireMutex, "acquire failed", rc);
+   if(RecoveryMutex_.Acquire(TIMEOUT_IMMED))
+   {
+      Debug::SwLog(RecoveryThread_AcquireMutex, "acquire failed", 0);
+   }
 }
 
 //------------------------------------------------------------------------------

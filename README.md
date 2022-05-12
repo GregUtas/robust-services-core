@@ -150,10 +150,10 @@ _log_ file).
 
 To use RSC as a framework, create a static library which uses the subset of
 RSC that your application requires. This will always include the namespace
-`NodeBase` (in the [_nb_](src/nb) directory), and it might also include
+`NodeBase` (in the [_nb_](src/nb) directory). It might also include
 `NetworkBase` (in the [_nw_](src/nw) directory) and `SessionBase` (in the
 [_sb_](src/sb) directory). Using a new namespace for your application is
-also a good idea.
+recommended.
 
 To initialize your application, derive from [`Module`](src/nb/Module.h).
 For an example, see [`NbModule`](src/nb/NbModule.cpp), which initializes

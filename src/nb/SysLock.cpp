@@ -21,6 +21,8 @@
 //
 #include "SysLock.h"
 #include <ostream>
+#include "Debug.h"
+#include "SysThread.h"
 
 using std::ostream;
 using std::string;
@@ -29,10 +31,47 @@ using std::string;
 
 namespace NodeBase
 {
+SysLock::SysLock() : owner_(NIL_ID) { }
+
+//------------------------------------------------------------------------------
+
+SysLock::~SysLock()
+{
+   if(owner_ != NIL_ID)
+   {
+      Debug::SwLog("SysLock.dtor", "lock has owner", owner_);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void SysLock::Acquire()
+{
+   auto curr = SysThread::RunningThreadId();
+   if(owner_ == curr) return;
+   mutex_.lock();
+}
+
+//------------------------------------------------------------------------------
+
 void SysLock::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   stream << prefix << "mutex : " << mutex_ << CRLF;
    stream << prefix << "owner : " << owner_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+void SysLock::Release()
+{
+   auto curr = SysThread::RunningThreadId();
+   if(owner_ != curr) return;
+
+   //  Clear owner_ first, in case releasing the mutex results in another
+   //  thread acquiring it and running immediately, in which case it will
+   //  set owner_ itself.
+   //
+   owner_ = NIL_ID;
+   mutex_.unlock();
 }
 }

@@ -38,13 +38,14 @@ using msecs_t = std::chrono::milliseconds;
 using usecs_t = std::chrono::microseconds;
 using nsecs_t = std::chrono::nanoseconds;
 
+//  For converting a duration to a string.
+//
 std::string to_string(const secs_t& secs);
 std::string to_string(const msecs_t& msecs);
 std::string to_string(const usecs_t& usecs);
 std::string to_string(const nsecs_t& nsecs);
 
-//  Duration constants.  These are initialized in Thread.cpp because
-//  of the "static initialization order fiasco".
+//  Duration constants.
 //
 constexpr msecs_t TIMEOUT_IMMED = msecs_t(0);
 constexpr msecs_t TIMEOUT_NEVER = msecs_t(UINT32_MAX);

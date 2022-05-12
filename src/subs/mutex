@@ -1,0 +1,34 @@
+//==============================================================================
+//
+//  mutex
+//
+#ifndef MUTEX_INCLUDED
+#define MUTEX_INCLUDED
+
+#include "chrono"
+
+namespace std
+{
+class mutex
+{
+public:
+   mutex();
+   ~mutex();
+   mutex(const mutex& that) = delete;
+   mutex& operator=(const mutex& that) = delete;
+   void lock();
+   void unlock();
+};
+
+class timed_mutex
+{
+public:
+   timed_mutex();
+   ~timed_mutex();
+   timed_mutex(const timed_mutex& that) = delete;
+   timed_mutex& operator=(const timed_mutex& that) = delete;
+   bool try_lock_for(const std::chrono::milliseconds& msecs);
+   void unlock();
+};
+}
+#endif

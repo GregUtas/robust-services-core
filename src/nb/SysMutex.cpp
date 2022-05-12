@@ -21,11 +21,16 @@
 //
 #include "SysMutex.h"
 #include <cstdint>
+#include <new>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
+#include "Debug.h"
+#include "MutexRegistry.h"
 #include "Singleton.h"
+#include "SysThread.h"
 #include "SysTypes.h"
+#include "Thread.h"
 #include "ThreadRegistry.h"
 
 using std::ostream;
@@ -35,10 +40,69 @@ using std::string;
 
 namespace NodeBase
 {
+SysMutex::SysMutex(const char* name) :
+   name_(name),
+   nid_(NIL_ID),
+   owner_(nullptr),
+   locks_(0)
+{
+   Debug::ft("SysMutex.ctor");
+
+   Singleton< MutexRegistry >::Instance()->BindMutex(*this);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysMutex_dtor = "SysMutex.dtor";
+
+SysMutex::~SysMutex()
+{
+   Debug::ftnt(SysMutex_dtor);
+
+   if(nid_ != NIL_ID)
+   {
+      Debug::SwLog(SysMutex_dtor, name_, nid_);
+   }
+
+   Singleton< MutexRegistry >::Extant()->UnbindMutex(*this);
+}
+
+//------------------------------------------------------------------------------
+
+bool SysMutex::Acquire(const msecs_t& timeout)
+{
+   Debug::ftnt("SysMutex.Acquire");
+
+   auto curr = SysThread::RunningThreadId();
+
+   if(nid_ == curr)
+   {
+      ++locks_;
+      return true;
+   }
+
+   auto thr = Thread::RunningThread(std::nothrow);
+   if(thr != nullptr) thr->UpdateMutex(this);
+   auto locked = mutex_.try_lock_for(timeout);
+   if(thr != nullptr) thr->UpdateMutex(nullptr);
+
+   if(locked)
+   {
+      nid_ = curr;
+      owner_ = thr;
+      if(thr != nullptr) thr->UpdateMutexCount(true);
+      locks_ = 1;
+   }
+
+   return locked;
+}
+
+//------------------------------------------------------------------------------
+
 ptrdiff_t SysMutex::CellDiff()
 {
    uintptr_t local;
-   auto fake = reinterpret_cast< const SysMutex* >(&local);
+   auto fake = reinterpret_cast<const SysMutex*>(&local);
    return ptrdiff(&fake->mid_, fake);
 }
 
@@ -51,7 +115,6 @@ void SysMutex::Display(ostream& stream,
 
    stream << prefix << "name  : " << name_ << CRLF;
    stream << prefix << "mid   : " << mid_.to_str() << CRLF;
-   stream << prefix << "mutex : " << mutex_ << CRLF;
    stream << prefix << "nid   : " << nid_ << CRLF;
    stream << prefix << "owner : " << owner_ << CRLF;
    stream << prefix << "locks : " << locks_ << CRLF;
@@ -71,5 +134,33 @@ Thread* SysMutex::Owner() const
 void SysMutex::Patch(sel_t selector, void* arguments)
 {
    Permanent::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysMutex_Release = "SysMutex.Release";
+
+void SysMutex::Release(bool abandon)
+{
+   Debug::ftnt(SysMutex_Release);
+
+   auto curr = SysThread::RunningThreadId();
+
+   if(nid_ != curr)
+   {
+      Debug::SwLog(SysMutex_Release, name_, pack2(curr, nid_));
+      return;
+   }
+
+   if(!abandon && (--locks_ > 0)) return;
+
+   //  Clear owner_ and nid_ first, in case releasing the mutex results in
+   //  another thread acquiring the mutex, running immediately, and setting
+   //  those fields to their new values.
+   //
+   if(owner_ != nullptr) owner_->UpdateMutexCount(false);
+   owner_ = nullptr;
+   nid_ = NIL_ID;
+   mutex_.unlock();
 }
 }

@@ -460,7 +460,7 @@ ContextSwitch* ContextSwitches::AddSwitch()
 
    ContextSwitch* cs;
 
-   if(ContextSwitchesLock_.Acquire(timeout) == SysMutex::Acquired)
+   if(ContextSwitchesLock_.Acquire(timeout))
    {
       cs = &switches_[next_];
 
@@ -485,9 +485,9 @@ struct SchedSnapshot
 {
    //  SIZE is the number of threads seen while recording context switches.
    //
-   explicit SchedSnapshot(SystemTime::Point& when, size_t size) :
-      time(when),
+   SchedSnapshot(const SystemTime::Point& when, size_t size) :
       activity(nullptr),
+      time(when),
       duration(0),
       nid(0)
    {
@@ -502,7 +502,7 @@ struct SchedSnapshot
 
    //  The system time associated with this entry.
    //
-   SystemTime::Point time;
+   const SystemTime::Point time;
 
    //  If a thread was scheduled out at this time point, how long it had run.
    //

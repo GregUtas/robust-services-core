@@ -25,6 +25,7 @@
 #include "Permanent.h"
 #include <atomic>
 #include <cstddef>
+#include <mutex>
 #include "Duration.h"
 #include "RegCell.h"
 #include "SysDecls.h"
@@ -38,7 +39,12 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  Operating system abstraction layer: recursive mutex.
+//  Operating system abstraction layer: recursive, timed mutex.
+//
+//  The implementation uses C++11's timed_mutex.  Recursion is implemented
+//  within this wrapper so that the mutex can be unlocked if a thread traps
+//  while having acquired the mutex recursively.  It does not seem possible
+//  to do this safely when using a recursive mutex provided by <mutex>.
 //
 //  DESIGN GUIDELINES
 //
@@ -72,15 +78,6 @@ namespace NodeBase
 class SysMutex : public Permanent
 {
 public:
-   //  Outcomes when trying to acquire a mutex.
-   //
-   enum Rc
-   {
-      Acquired,  // success
-      TimedOut,  // failed to acquire mutex within desired interval
-      Error      // error (e.g. mutex does not exist)
-   };
-
    //  Creates a mutex identified by NAME.  Not subclassed.
    //
    explicit SysMutex(const char* name);
@@ -97,9 +94,10 @@ public:
    //
    SysMutex& operator=(const SysMutex& that) = delete;
 
-   //  Acquires the mutex.  TIMEOUT specifies how long to wait.
+   //  Acquires the mutex.  TIMEOUT specifies how long to wait.  Returns
+   //  true if the mutex was acquired, and false if the timeout occurred.
    //
-   Rc Acquire(const msecs_t& timeout);
+   bool Acquire(const msecs_t& timeout);
 
    //  Releases the mutex.  If ABANDON is set, the mutex is released
    //  (if owned by this thread) no matter how many times it had been
@@ -140,9 +138,9 @@ private:
    //
    RegCell mid_;
 
-   //  A handle to the native mutex.
+   //  The mutex.
    //
-   SysMutex_t mutex_;
+   std::timed_mutex mutex_;
 
    //  The native identifier of the thread that owns the mutex.
    //
@@ -152,7 +150,7 @@ private:
    //
    Thread* owner_;
 
-   //  The number of times the mutex was acquired.
+   //  The number of times the mutex was acquired recursively.
    //
    std::atomic_size_t locks_;
 };

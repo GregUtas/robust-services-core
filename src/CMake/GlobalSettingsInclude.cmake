@@ -55,7 +55,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/wd4061 /wd4062 /wd4100 /wd4242 /wd4244 /wd4267)
     add_compile_options(/wd4365 /wd4514 /wd4582 /wd4623 /wd4625 /wd4626)
     add_compile_options(/wd4668 /wd4710 /wd4711 /wd4820 /wd5026 /wd5027)
-    add_compile_options(/wd5045 /wd5219 /wd26812)
+    add_compile_options(/wd5045 /wd5219 /wd26110 /wd26812)
 
     # Include debugging information
     add_link_options(/DEBUG:FULL)

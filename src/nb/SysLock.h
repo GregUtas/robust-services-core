@@ -23,6 +23,7 @@
 #define SYSLOCK_H_INCLUDED
 
 #include <iosfwd>
+#include <mutex>
 #include <string>
 #include "SysDecls.h"
 #include "SysTypes.h"
@@ -31,10 +32,10 @@
 
 namespace NodeBase
 {
-//  Operating system abstraction layer: recursive mutex.
+//  Operating system abstraction layer: lightweight mutex.
 //
-//  This lightweight mutex is similar to SysMutex but is specifically intended
-//  for any scenario in which a mutex must frequently be acquired.  It is *not*
+//  This mutex is similar to SysMutex but is specifically intended for any
+//  scenario in which a mutex must frequently be acquired.  It is *not*
 //  intended for general use: it neither invokes Debug::ft nor registers with
 //  MutexRegistry.  It is strongly recommended that SysMutex be used first,
 //  converting to this mutex only after thorough testing if the performance
@@ -79,7 +80,7 @@ public:
 private:
    //  A handle to the native mutex.
    //
-   SysMutex_t mutex_;
+   std::mutex mutex_;
 
    //  The native identifier of the thread that owns the mutex.
    //

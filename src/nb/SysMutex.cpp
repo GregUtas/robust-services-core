@@ -29,7 +29,6 @@
 #include "MutexRegistry.h"
 #include "Singleton.h"
 #include "SysThread.h"
-#include "SysTypes.h"
 #include "Thread.h"
 #include "ThreadRegistry.h"
 
@@ -40,7 +39,7 @@ using std::string;
 
 namespace NodeBase
 {
-SysMutex::SysMutex(const char* name) :
+SysMutex::SysMutex(c_string name) :
    name_(name),
    nid_(NIL_ID),
    owner_(nullptr),

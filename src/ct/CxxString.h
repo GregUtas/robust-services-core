@@ -77,8 +77,8 @@ namespace CodeTools
    //
    std::string GetFileName(const std::string& path);
 
-   //  Returns true if DIR appears in PATH.  Prefixes a '/' to DIR before
-   //  searching PATH.
+   //  Returns true if DIR appears in PATH.  Prefixes PATH_SEPARATOR to DIR
+   //  before searching PATH.
    //
    bool PathIncludes(const std::string& path, const std::string& dir);
 

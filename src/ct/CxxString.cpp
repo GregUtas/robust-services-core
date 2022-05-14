@@ -590,11 +590,11 @@ string Normalize(const string& name)
 
 bool PathIncludes(const string& path, const string& dir)
 {
-   auto s = '/' + dir;
+   auto s = PATH_SEPARATOR + dir;
    auto pos = path.find(s);
    if(pos == string::npos) return false;
    if(pos == path.size() - s.size()) return true;
-   return (path[pos + s.size()] == '/');
+   return (path[pos + s.size()] == PATH_SEPARATOR);
 }
 
 //------------------------------------------------------------------------------

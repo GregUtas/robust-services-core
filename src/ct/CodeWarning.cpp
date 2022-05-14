@@ -1059,7 +1059,9 @@ bool CodeWarning::Suppress() const
    case HeadingNotStandard:
    {
       auto dir = File()->Dir();
-      return ((dir != nullptr) && (dir->Path().find("/dip") != string::npos));
+      string name(1, PATH_SEPARATOR);
+      name.append("dip");
+      return ((dir != nullptr) && (dir->Path().find(name) != string::npos));
    }
 
    case DebugFtNotInvoked:

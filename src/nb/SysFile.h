@@ -22,7 +22,7 @@
 #ifndef SYSFILE_H_INCLUDED
 #define SYSFILE_H_INCLUDED
 
-#include "Base.h"
+#include <cstddef>
 #include <set>
 #include <string>
 #include "SysTypes.h"
@@ -31,88 +31,29 @@
 
 namespace NodeBase
 {
-//  Virtual base class for file iteration.  An instance is created with
-//  SysFile::GetFileList.
-//
-class FileList : public Base
-{
-public:
-   //  Virtual to allow subclassing.
-   //
-   virtual ~FileList() = default;
-
-   //  Sets fileName to the name of the current file (without a path prefix).
-   //  Clears fileName if NextFile has returned false because no files remain.
-   //
-   virtual void GetName(std::string& fileName) const = 0;
-
-   //  Returns true if the current file is a subdirectory.
-   //
-   virtual bool IsSubdir() const = 0;
-
-   //  Returns true if the end of the list has been reached.
-   //
-   virtual bool AtEnd() const = 0;
-
-   //  Advances to the next file in the list.  Returns false if there are no
-   //  more files in the list.
-   //
-   virtual bool Advance() = 0;
-protected:
-   //  Protected because this class is virtual.
-   //
-   FileList() = default;
-};
-
-//  For iterating over files.
-//
-typedef std::unique_ptr< FileList > FileListPtr;
-
-//  Operating system abstraction layer: file I/O and directory navigation.
+//  File system functions.
 //
 namespace SysFile
 {
-   //  Replaces occurrences of '\' in PATH with '/'.  The first version
-   //  modifies PATH, and the second version modifies and returns a copy
-   //  of PATH.
-   //
-   void Normalize(std::string& path);
-   std::string Normalize(const std::string& path);
-
    //  Opens an existing file for input.  Returns nullptr if the file is
    //  empty or does not exist.
    //
-   istreamPtr CreateIstream(const char* fileName);
+   istreamPtr CreateIstream(c_string name);
 
    //  Creates a file for output.  If the file already exists, output is
    //  appended to it unless TRUNC is false.
    //
-   ostreamPtr CreateOstream(const char* fileName, bool trunc = false);
+   ostreamPtr CreateOstream(c_string name, bool trunc = false);
 
-   //  Sets dirName to the current directory.  On an error, dirName is
-   //  cleared.
+   //  If NAME ends with EXT, returns the position where EXT begins, else
+   //  returns string::npos.
    //
-   void GetCurrDir(std::string& dirName);
+   size_t FindExt(const std::string& name, const std::string& ext);
 
-   //  Sets the default directory.  Returns false if the directory does
-   //  not exist.
+   //  Adds the filenames in the directory DIR to NAMES, omitting any
+   //  subdirectories.  Returns false if DIR could not be opened.
    //
-   bool SetDir(const char* dirName);
-
-   //  Adds a file in the directory specified by dirName to fileNames
-   //  if its extension matches fileExt, which should begin with a dot.
-   //  fileExt is erased from fileNames.  Returns false if the directory
-   //  does not exist.
-   //
-   bool FindFiles(const char* dirName,
-      const char* fileExt, std::set< std::string >& fileNames);
-
-   //  Iterates over files whose name matches fileSpec (which can include
-   //  wildcard characters) in the directory specified by dirName.  If
-   //  dirName is nullptr, the default directory is searched.  Returns
-   //  nullptr if dirName does not exist or no files matched fileSpec.
-   //
-   FileListPtr GetFileList(const char* dirName, const char* fileSpec);
+   bool ListFiles(const std::string& dir, std::set< std::string >& names);
 }
 }
 #endif

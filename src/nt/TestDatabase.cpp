@@ -387,7 +387,7 @@ void TestDatabase::Update()
    auto indir = Element::InputPath();
    std::set< string > files;
 
-   if(!SysFile::FindFiles(indir.c_str(), ".txt", files))
+   if(!SysFile::ListFiles(indir.c_str(), files))
    {
       auto expl = "Could not open directory " + indir;
       Debug::SwLog(TestDatabase_Update, expl, 0);
@@ -397,9 +397,11 @@ void TestDatabase::Update()
    //  precedes the name of a test, and add (update) the test to
    //  (in) the database.
    //
-   for(auto f = files.cbegin(); f != files.cend(); ++f)
+   for(auto fn = files.cbegin(); fn != files.cend(); ++fn)
    {
-      auto path = indir + PATH_SEPARATOR + *f + ".txt";
+      if(SysFile::FindExt(*fn, ".txt") != string::npos) continue;
+
+      auto path = indir + PATH_SEPARATOR + *fn;
       auto stream = SysFile::CreateIstream(path.c_str());
 
       if(stream == nullptr)

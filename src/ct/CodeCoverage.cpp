@@ -90,9 +90,9 @@ word CodeCoverage::Build(std::ostringstream& expl)
    //  that it invoked, to the current database.
    //
    auto outdir = Element::OutputPath();
-   std::set< string > traces;
+   std::set< string > files;
 
-   if(!SysFile::FindFiles(outdir.c_str(), ".funcs.txt", traces))
+   if(!SysFile::ListFiles(outdir, files))
    {
       expl << "Could not open directory " << outdir;
       return -1;
@@ -100,20 +100,24 @@ word CodeCoverage::Build(std::ostringstream& expl)
 
    auto count = 0;
 
-   for(auto trace = traces.cbegin(); trace != traces.cend(); ++trace)
+   for(auto fn = files.cbegin(); fn != files.cend(); ++fn)
    {
-      if(testdb->GetState(*trace) == TestDatabase::Invalid) continue;
+      auto pos = SysFile::FindExt(*fn, ".funcs.txt");
+      if(pos == string::npos) continue;
 
-      auto path = outdir + PATH_SEPARATOR + *trace + ".funcs.txt";
+      auto test = fn->substr(0, pos);
+      if(testdb->GetState(test) == TestDatabase::Invalid) continue;
+
+      auto path = outdir + PATH_SEPARATOR + *fn;
       auto stream = SysFile::CreateIstream(path.c_str());
 
       if(stream == nullptr)
       {
-         expl << "Failed to open " << path << CRLF << spaces(2);
+         expl << "Failed to open " << *fn << CRLF << spaces(2);
          continue;
       }
 
-      currTests_.insert(*trace);
+      currTests_.insert(test);
       ++count;
 
       //  Extract the function names from STREAM.  Each is preceded by two
@@ -155,7 +159,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
             func = result.first;
          }
 
-         func->second.tests.insert(*trace);
+         func->second.tests.insert(test);
       }
    }
 

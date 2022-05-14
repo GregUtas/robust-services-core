@@ -22,7 +22,6 @@
 #include "CfgParmRegistry.h"
 #include <cstddef>
 #include <cstdio>
-#include <cstring>
 #include <istream>
 #include <sstream>
 #include "CfgParm.h"
@@ -50,16 +49,6 @@ static istreamPtr Stream_ = nullptr;
 //  The current line number in the configuration file.
 //
 static size_t CurrLine_ = 0;
-
-//> Used to derive the name of the file that contains this node's configuration
-//  parameters.  It is created by modifying the first argument to main(), which
-//  is the path to our executable, as follows:
-//  o find the last occurrence of BackFromExePath and erase what *follows*
-//    it (that is, retain BackFromExePath as a "suffix"), and then
-//  o append AppendToExePath.
-//
-fixed_string BackFromExePath_ = "rsc/";
-fixed_string AppendToExePath_ = "input/element.config.txt";
 
 //------------------------------------------------------------------------------
 //
@@ -177,19 +166,28 @@ CfgParmRegistry::CfgParmRegistry()
    tupleq_.Init(CfgTuple::LinkDiff());
    parmq_.Init(CfgParm::LinkDiff());
 
+   //> Construct the name of the file that contains this node's configuration
+   //  parameters.  This is done by modifying the first argument to main(),
+   //  which is the path to our executable, as follows:
+   //  o find the last occurrence of directory "rsc" and erase what *follows*
+   //    it (that is, keep the path to that directory as a "suffix"), and then
+   //  o append the directory "input" and the file name "element.config.txt".
+   //
    string exe(MainArgs::At(0));
-   SysFile::Normalize(exe);
    configFileName_ = exe.c_str();
 
-   auto pos = configFileName_.rfind(BackFromExePath_);
+   auto upFromExe = string("rsc") + PATH_SEPARATOR;
+   auto pos = configFileName_.rfind(upFromExe.c_str());
 
    if(pos != string::npos)
-      pos += strlen(BackFromExePath_);
+      pos += upFromExe.size();
    else
-      pos = configFileName_.rfind('/') + 1;
+      pos = configFileName_.rfind(PATH_SEPARATOR) + 1;
 
    configFileName_.erase(pos);
-   configFileName_.append(AppendToExePath_);
+   configFileName_.append("input");
+   configFileName_.push_back(PATH_SEPARATOR);
+   configFileName_.append("element.config.txt");
 }
 
 //------------------------------------------------------------------------------

@@ -287,7 +287,7 @@ CodeFile* Library::EnsureFile(const string& file, CodeDir* dir)
    //  If FILE was taken from an #include, remove any path.
    //
    auto name = file;
-   auto pos = name.rfind('/');
+   auto pos = name.rfind(PATH_SEPARATOR);
    if(pos != string::npos) name = name.substr(pos + 1);
    auto f = FindFile(name);
 

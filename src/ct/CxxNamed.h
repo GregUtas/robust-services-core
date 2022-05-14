@@ -1182,7 +1182,7 @@ public:
 
    //  Creates a type for NAME.
    //
-   explicit DataSpec(const char* name);
+   explicit DataSpec(NodeBase::c_string name);
 
    //  Not subclassed.
    //

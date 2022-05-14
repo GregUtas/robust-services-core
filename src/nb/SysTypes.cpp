@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysTypes.h"
+#include <filesystem>
 #include <ostream>
 
 using std::ostream;
@@ -28,6 +29,11 @@ using std::ostream;
 
 namespace NodeBase
 {
+const char PATH_SEPARATOR =
+   (std::filesystem::path::preferred_separator == L'\\' ? '\\' : '/');
+
+//------------------------------------------------------------------------------
+
 static uintptr_t BadPointer()
 {
    uintptr_t value = 0;

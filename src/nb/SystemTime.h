@@ -48,21 +48,6 @@ enum TimeFormat
 //
 namespace SystemTime
 {
-   //  The fields in the legacy type tm, which is enhanced to support
-   //  milliseconds.
-   //
-   enum Field
-   {
-      YearsField,
-      MonthsField,
-      DaysField,
-      HoursField,
-      MinsField,
-      SecsField,
-      MsecsField,
-      TimeField_N
-   };
-
    //  The underlying type for the time.
    //
    using Point = std::chrono::system_clock::time_point;

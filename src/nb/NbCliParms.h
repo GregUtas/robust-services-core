@@ -286,53 +286,6 @@ public:
 
 //------------------------------------------------------------------------------
 //
-//  Parameters for time.
-//
-//  These are no longer used but have been retained for use by any CLI
-//  command which has parameters that correspond to time values.
-//
-class SysTimeYearParm : public CliIntParm
-{
-public: SysTimeYearParm();
-};
-
-class SysTimeMonthParm : public CliIntParm
-{
-public: SysTimeMonthParm();
-};
-
-class SysTimeDayParm : public CliIntParm
-{
-public: SysTimeDayParm();
-};
-
-class SysTimeHourParm : public CliIntParm
-{
-public: SysTimeHourParm();
-};
-
-class SysTimeMinuteParm : public CliIntParm
-{
-public: SysTimeMinuteParm();
-};
-
-class SysTimeSecondParm : public CliIntParm
-{
-public: SysTimeSecondParm();
-};
-
-class SysTimeMsecondParm : public CliIntParm
-{
-public: SysTimeMsecondParm();
-};
-
-class SysTimeFieldParm : public CliTextParm
-{
-public: SysTimeFieldParm();
-};
-
-//------------------------------------------------------------------------------
-//
 //  Parameters for a ThreadId.
 //
 class ThreadIdMandParm : public CliIntParm

@@ -5,6 +5,8 @@
 # - GCC is used only to target Linux (x64)
 # - x86 uses "Visual Studio 17 2022" generator instead of Ninja
 #
+set(CMAKE_CXX_STANDARD 17)
+
 if(MSVC)
     message("** Reading global settings shared by MSVC and CLang")
 

@@ -90,36 +90,23 @@ word CodeDir::Extract(string& expl)
 {
    Debug::ft("CodeDir.Extract");
 
-   //  Set this as the current directory.
-   //
-   if(!SysFile::SetDir(path_.c_str()))
+   auto lib = Singleton< Library >::Instance();
+   std::set< string > files;
+
+   if(!SysFile::ListFiles(path_, files))
    {
       expl = "Could not open directory " + path_;
       return -1;
    }
 
-   auto list = SysFile::GetFileList(nullptr, "*");
-
-   if(list != nullptr)
+   for(auto fn = files.cbegin(); fn != files.cend(); ++fn)
    {
-      auto lib = Singleton< Library >::Instance();
-      string name;
-
-      do
+      if(IsCodeFile(*fn))
       {
-         if(!list->IsSubdir())
-         {
-            list->GetName(name);
-
-            if(IsCodeFile(name))
-            {
-               auto f = lib->EnsureFile(name, this);
-               f->Scan();
-               ThisThread::Pause();
-            }
-         }
+         auto file = lib->EnsureFile(*fn, this);
+         file->Scan();
+         ThisThread::Pause();
       }
-      while(list->Advance());
    }
 
    expl = SuccessExpl;

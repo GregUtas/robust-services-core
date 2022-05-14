@@ -29,7 +29,6 @@
 #include "Formatters.h"
 #include "MainArgs.h"
 #include "Singleton.h"
-#include "SysFile.h"
 #include "SystemTime.h"
 #include "SysTypes.h"
 
@@ -172,11 +171,9 @@ void Element::Patch(sel_t selector, void* arguments)
 
 const string Element::RscPath()
 {
-   //  Return the last directory named "rsc/" on the path to the executable.
+   //  Return the last directory named "rsc" on the path to the executable.
    //
    string path(MainArgs::At(0));
-   SysFile::Normalize(path);
-
    string dir("rsc");
    dir.push_back(PATH_SEPARATOR);
    auto pos = path.rfind(dir);
@@ -187,7 +184,7 @@ const string Element::RscPath()
    }
    else
    {
-      //  An "rsc/" directory was not found.  Set RscDir to the executable's
+      //  An "rsc" directory was not found.  Set RscDir to the executable's
       //  directory, though this is unlikely to work.
       //
       pos = path.rfind(PATH_SEPARATOR);

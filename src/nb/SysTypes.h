@@ -151,10 +151,10 @@ constexpr char APOSTROPHE = '\'';
 constexpr char BACKSLASH = '\\';
 constexpr char CRLF = '\n';
 constexpr char NUL = '\0';
-constexpr char PATH_SEPARATOR = '/';
 constexpr char QUOTE = '"';
 constexpr char SPACE = ' ';
 constexpr char TAB = '\t';
+extern const char PATH_SEPARATOR;
 
 //  String constants.
 //

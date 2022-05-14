@@ -688,7 +688,7 @@ DataSpec::DataSpec(QualNamePtr& name) :
 
 //------------------------------------------------------------------------------
 
-DataSpec::DataSpec(const char* name) : arrays_(nullptr)
+DataSpec::DataSpec(c_string name) : arrays_(nullptr)
 {
    Debug::ft("DataSpec.ctor(string)");
 

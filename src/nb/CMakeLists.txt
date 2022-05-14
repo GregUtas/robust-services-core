@@ -260,8 +260,6 @@ set(Source_Files
     "SysConsole.linux.cpp"
     "SysConsole.win.cpp"
     "SysFile.cpp"
-    "SysFile.linux.cpp"
-    "SysFile.win.cpp"
     "SysHeap.linux.cpp"
     "SysHeap.win.cpp"
     "SysLock.cpp"

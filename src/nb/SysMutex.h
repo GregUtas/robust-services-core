@@ -29,6 +29,7 @@
 #include "Duration.h"
 #include "RegCell.h"
 #include "SysDecls.h"
+#include "SysTypes.h"
 
 namespace NodeBase
 {
@@ -80,7 +81,7 @@ class SysMutex : public Permanent
 public:
    //  Creates a mutex identified by NAME.  Not subclassed.
    //
-   explicit SysMutex(const char* name);
+   explicit SysMutex(c_string name);
 
    //  Deletes the mutex.
    //
@@ -115,7 +116,7 @@ public:
 
    //  Returns the mutex's name.
    //
-   const char* Name() const { return name_; }
+   c_string Name() const { return name_; }
 
    //  Returns the offset to mid_.
    //
@@ -132,7 +133,7 @@ public:
 private:
    //  The mutex's name.
    //
-   const char* const name_;
+   fixed_string name_;
 
    //  The mutex's index in MutexRegistry.
    //

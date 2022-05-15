@@ -126,12 +126,6 @@ See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and
 See `Parser.GetNamespace`. Supporting any of these would also affect symbol
 resolution. An unnamed namespace can be removed by defining data and functions
 that appear within it as `static`.
-- [ ] argument-dependent lookup
-  - `getline` requires a `std::` prefix to be resolved but should find the
-     version in `<string>`
-  - `next` shouldn’t need a `std::` prefix (`iterator` is in `std`)
-  - `end` shouldn't need a `std::filesystem::` prefix (`directory_iterator`
-    is in `std::filesystem`)
 
 ### Classes
 - [ ] multiple inheritance (`Parser.GetBaseDecl`)
@@ -158,6 +152,11 @@ that appear within it as `static`.
   previously declared function (`DataSpec.MatchesExactly`)
 - [ ] argument-dependent lookup of regular functions (only done for operator
   overloads)
+  - `getline` requires a `std::` prefix to be resolved but should find the
+     version in `<string>`
+  - `next` shouldn’t need a `std::` prefix (`iterator` is in `std`)
+  - `end` shouldn't need a `std::filesystem::` prefix (`directory_iterator`
+    is in `std::filesystem`)
 - [ ] constructor inheritance (`Parser.GetUsing`, `Class.FindCtor`, and
   others)
 - [ ] brace initialization in a constructor's member initialization list

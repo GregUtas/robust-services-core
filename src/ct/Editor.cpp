@@ -103,7 +103,7 @@ constexpr word EditCompleted = 1;  // warning closed; don't write info to CLI
 //  The last result.  It, and the two functions that manage it, are similar
 //  to the SetLastError/GetLastError interface.  Based on the return code,
 //  Expl_ should contain
-//  o EditFailure or EditAbort: an explanation of why the edit failed
+//  o EditFailed or EditAbort: an explanation of why the edit failed
 //  o EditSucceeded: an edited line of code (or an empty string after deletion)
 //  o EditContinue: an empty string, because there is nothing to report
 //  o EditCompleted: an empty string, because all results have been reported

@@ -22,6 +22,7 @@
 #ifdef OS_LINUX
 
 #include "SysConsole.h"
+#include <iostream>
 #include "Debug.h"
 
 using std::string;
@@ -35,12 +36,9 @@ bool SysConsole::Minimize(bool minimize)
 {
    Debug::ft("SysConsole.Minimize");
 
+   //L Minimixr the console window.
+   //
    return false;
-/*L
-   auto window = GetConsoleWindow();
-   auto mode = (minimize ? SW_MINIMIZE : SW_RESTORE);
-   return ShowWindow(window, mode);
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -49,11 +47,8 @@ bool SysConsole::SetTitle(const string& title)
 {
    Debug::ft("SysConsole.SetTitle");
 
-   return false;
-/*L
-   wstring wtitle(title.begin(), title.end());
-   return SetConsoleTitle(wtitle.c_str());
-*/
+   std::cout << "\033]0;" << title.c_str() << "\007";
+   return true;
 }
 }
 #endif

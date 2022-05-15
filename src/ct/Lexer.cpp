@@ -236,8 +236,8 @@ void Lexer::CalcDepths()
    int nextDepth = 0;     // next depth for indentation
    int semiDepth = -1;    // depth to restore when reaching next semicolon
    size_t commaPos;       // position of comma that sets depths
-   size_t rparPos;        // position of right parenthese that sets depths
-   bool elseif = false;   // if "else if" being processed
+   size_t rparPos;        // position of right parenthesis that sets depths
+   bool elseif = false;   // if processing an "else if"
 
    std::vector< LeftBraceRole > lbStack;
    std::vector< size_t > lbDepths;
@@ -630,11 +630,7 @@ void Lexer::CalcDepths()
                if(curr_ == string::npos) curr_ = size - 1;
                SetDepth(currDepth, currDepth);
 
-               if(id == HASH_ENDIF_STR)
-               {
-                  if(currDepth > 0) --currDepth;
-               }
-               else if(id.compare(0, 3, "#if") == 0)
+               if(id.compare(0, 3, "#if") == 0)
                {
                   currDepth = NextLineIndentation(curr_);
                }

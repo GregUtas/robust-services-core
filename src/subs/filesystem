@@ -23,7 +23,7 @@ public:
    ~path() = default;
    path& operator=(const path& that) = default;
    path filename() const;
-   string string() const;
+   std::string string() const;
    static constexpr wchar_t preferred_separator = L'/';
 };
 
@@ -37,7 +37,7 @@ public:
    directory_entry(const path& path, error_code& ec);
    ~directory_entry() = default;
    directory_entry& operator=(const directory_entry& that) = default;
-   const path& path() const;
+   const std::filesystem::path& path() const;
 };
 
 class directory_iterator

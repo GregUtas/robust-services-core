@@ -159,6 +159,18 @@ static unsigned int EnterThread(void* arg)
 
 //------------------------------------------------------------------------------
 
+void SysThread::ConfigureProcess()
+{
+   Debug::ft("SysThread.ConfigureProcess");
+
+   //  Set our overall process priority.
+   //
+   auto process = GetCurrentProcess();
+   SetPriorityClass(process, HIGH_PRIORITY_CLASS);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysThread_Create = "SysThread.Create";
 
 bool SysThread::Create
@@ -265,23 +277,6 @@ signal_t SysThread::Start()
    //
    _set_se_translator((_se_translator_function) SE_Handler);
    return 0;
-}
-
-//------------------------------------------------------------------------------
-
-bool SysThread::Wrap(SysThread_t& nthread)
-{
-   Debug::ft("SysThread.Wrap");
-
-   //  Set our overall process priority and return a handle to our thread.
-   //
-   auto process = GetCurrentProcess();
-   SetPriorityClass(process, HIGH_PRIORITY_CLASS);
-
-   SysThread_t clone = GetCurrentThread();
-
-   return DuplicateHandle(process, clone, process,
-      &nthread, 0, false, DUPLICATE_SAME_ACCESS);
 }
 }
 #endif

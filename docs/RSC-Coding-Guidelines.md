@@ -173,6 +173,7 @@ following are currently used:
 - `//>` is an internal constant that can be changed to alter behavior
 - `//@` is a useful breakpoint during development
 - `/*L` comments out Windows-specific code that needs to be targeted for Linux
+- `//L` is a Linux target enhancement
 - `//b` is a basic call enhancement
 - `//c` is a `CodeTools` enhancement
 - `//d` is a decoupling enhancement

@@ -30,11 +30,13 @@
 
 namespace NodeBase
 {
-//  The root thread--the one created to invoke main()--is responsible for
+//  The thread created to run main() quickly creates RootThread, which
+//  is responsible for
 //  o creating InitThread and the minimal set of objects required for
-//    InitThread to finish initializing the system,
-//  o ensuring that InitThread finishes initializing the system, and
-//  o ensuring that InitThread is running while the system is in service.
+//    InitThread to finish initializing or restarting the system,
+//  o ensuring that initialization or a restart succeeds before a timeout,
+//  o ensuring that InitThread is running while the system is in service,
+//  o causing the executable to exit when a reboot or exit is requested.
 //
 class RootThread : public Thread
 {
@@ -72,8 +74,7 @@ private:
 
    //  Overridden to create InitThread, to ensure that InitThread finishes
    //  initializing the system, and to ensure that InitThread subsequently
-   //  runs periodically.  This is indirectly invoked by our Main function,
-   //  via Thread::Start.
+   //  runs periodically.
    //
    void Enter() override;
 

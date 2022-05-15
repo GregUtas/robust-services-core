@@ -57,6 +57,15 @@ static void* EnterThread(void* arg)
 
 //------------------------------------------------------------------------------
 
+void SysThread::ConfigureProcess()
+{
+   Debug::ft("SysThread.ConfigureProcess");
+
+   //L Set our process priority.
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysThread_Create = "SysThread.Create";
 
 bool SysThread::Create(const Thread* client,
@@ -196,33 +205,6 @@ signal_t SysThread::Start()
    //  to see if any Linux-specific actions need to be taken.
    //
    return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysThread_Wrap = "SysThread.Wrap";
-
-bool SysThread::Wrap(SysThread_t& nthread)
-{
-   Debug::ft(SysThread_Wrap);
-
-   //  We are wrapping the root thread, which runs at watchdog priority.  And
-   //  like all other threads, it runs using round-robin real-time scheduling.
-   //
-   auto nid = RunningThreadId();
-
-   sched_param parm;
-   parm.sched_priority = PriorityMap[WatchdogPriority];
-
-   auto err = pthread_setschedparam(nid, SCHED_RR, &parm);
-   if(err != 0)
-   {
-      ReportError(SysThread_Wrap, "setschedparam", err);
-      return false;
-   }
-
-   nthread = (void*) nid;
-   return true;
 }
 }
 #endif

@@ -43,6 +43,7 @@ class ModuleRegistry : public Immutable
    friend class Singleton< ModuleRegistry >;
    friend class Module;
    friend class InitThread;
+   friend class RootThread;
 public:
    //  Deleted to prohibit copying.
    //
@@ -88,6 +89,10 @@ private:
    //  Sets the level for an upcoming restart.
    //
    void SetLevel(RestartLevel level);
+
+   //  Returns the current restart level.
+   //
+   static RestartLevel GetLevel();
 
    //  Returns the next restart level when a restart fails.
    //

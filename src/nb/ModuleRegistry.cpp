@@ -194,6 +194,13 @@ void ModuleRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+RestartLevel ModuleRegistry::GetLevel()
+{
+   return level_;
+}
+
+//------------------------------------------------------------------------------
+
 Module* ModuleRegistry::GetModule(ModuleId mid) const
 {
    return modules_.At(mid);

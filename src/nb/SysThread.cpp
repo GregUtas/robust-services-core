@@ -50,22 +50,6 @@ SysThread::SysThread(Thread* client, Priority prio, size_t size) :
 
 //------------------------------------------------------------------------------
 
-SysThread::SysThread() :
-   nthread_(nullptr),
-   nid_(RunningThreadId()),
-   priority_(Priority_N),
-   signal_(SIGNIL)
-{
-   Debug::ft("SysThread.ctor(wrap)");
-
-   //  Wrap the thread and set its priority.
-   //
-   Debug::Assert(Wrap(nthread_));
-   Debug::Assert(SetPriority(WatchdogPriority));
-}
-
-//------------------------------------------------------------------------------
-
 SysThread::~SysThread()
 {
    Debug::ftnt("SysThread.dtor");

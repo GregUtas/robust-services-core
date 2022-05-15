@@ -28,10 +28,12 @@
 #include "Debug.h"
 #include "Duration.h"
 #include "Formatters.h"
+#include "Gate.h"
 #include "InitFlags.h"
 #include "InitThread.h"
 #include "Log.h"
 #include "LogBufferRegistry.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "NbLogs.h"
 #include "NbSignals.h"
@@ -48,6 +50,23 @@ using std::string;
 
 namespace NodeBase
 {
+//  After the thread that was created to run main() creates RootThread, it
+//  waits forever on this gate.  To initiate a reboot or exit, RootThread
+//  sets ExitCode and signals this gate, which unblocks the original thread
+//  and allows it to exit with ExitCode. On a non-zero code, RscLauncher
+//  restarts the executable.
+//
+static main_t ExitCode = 0;
+
+static Gate& ExitGate()
+{
+   static Gate gate;
+
+   return gate;
+}
+
+//------------------------------------------------------------------------------
+
 RootThread::RootThread() : Thread(WatchdogFaction),
    state_(Initializing)
 {
@@ -183,7 +202,7 @@ void RootThread::Enter()
       case Running:
          //
          //  The following suspends RootThread during breakpoint debugging,
-         //  where it would otherwise appear with annoying regularity.
+         //  when it would otherwise appear with annoying regularity.
          //
          if(Debug::SwFlagOn(DisableRootThread))
          {
@@ -199,12 +218,25 @@ void RootThread::Enter()
          case DelayInterrupted:
             //
             //  This is usually a heartbeat from InitThread.  But it also
-            //  occurs when InitThread is initiating a restart, in which
-            //  case we must update our state and start to run a watchdog
-            //  timer on the restart.
+            //  occurs when InitThread is initiating a restart.
             //
             if(Test(InitThread::Restart))
             {
+               //  If a reboot or exit was requested, unblock the thread
+               //  that ran main() and created us so that it can exit.
+               //
+               auto level = ModuleRegistry::GetLevel();
+
+               if((level == RestartReboot) || (level == RestartExit))
+               {
+                  ExitCode = (level == RestartExit ? 0 : -1);
+                  ExitGate().Notify();
+                  Pause(TIMEOUT_NEVER);
+               }
+
+               //  When restarting, update our state and loop around to run
+               //  a watchdog timer on the restart.
+               //
                Reset(InitThread::Restart);
                state_ = Initializing;
             }
@@ -284,17 +316,19 @@ main_t RootThread::Main()
    //
    Singleton< LogBufferRegistry >::Instance();
 
-   //  Wrap the root thread and enter it.
+   //  Set up our process.
    //
-   auto root = Singleton< RootThread >::Instance();
-   Thread::EnterThread(root);
+   SysThread::ConfigureProcess();
 
-   //  If we get here, there is a serious problem.  Thread::EnterThread
-   //  invokes Thread::Start, which does not return unless a series of
-   //  exceptions occurs in a thread.  RootThread is so simple that this
-   //  shouldn't occur.  But if it somehow does, initiate a reboot.
+   //  Create the root thread and wait for it to exit.
    //
-   exit(RestartReboot);
+   Singleton< RootThread >::Instance();
+   ExitGate().WaitFor(TIMEOUT_NEVER);
+
+   //  If we get here, RootThread wants the system to exit and
+   //  possibly get rebooted.
+   //
+   exit(ExitCode);
 }
 
 //------------------------------------------------------------------------------

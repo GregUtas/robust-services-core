@@ -26,7 +26,6 @@
 #include <chrono>
 #include <csignal>
 #include <cstddef>
-#include <cstdlib>
 #include <cstring>
 #include <iomanip>
 #include <ios>
@@ -1130,29 +1129,14 @@ Thread::Thread(Faction faction, Daemon* daemon) :
    stats_.reset(new ThreadStats);
    msgq_.Init(Pooled::LinkDiff());
 
+   //  Create a new thread.  StackUsageLimit is in words, so convert
+   //  it to bytes.
+   //
+   auto prio = FactionToPriority(faction_);
+   systhrd_.reset(new SysThread(this, prio,
+      ThreadAdmin::StackUsageLimit() << BYTES_PER_WORD_LOG2));
+
    auto reg = Singleton< ThreadRegistry >::Instance();
-
-   if(reg->Threads().empty())
-   {
-      //  There are no threads, so we must be wrapping the root thread.
-      //
-      CurrIntervalStart_ = SteadyTime::Now();
-      Singleton< ContextSwitches >::Instance();
-
-      systhrd_.reset(new SysThread);
-      priv_->currStart_ = SteadyTime::TimeZero();
-      priv_->entered_ = true;
-   }
-   else
-   {
-      //  Create a new thread.  StackUsageLimit is in words, so convert
-      //  it to bytes.
-      //
-      auto prio = FactionToPriority(faction_);
-      systhrd_.reset(new SysThread(this, prio,
-         ThreadAdmin::StackUsageLimit() << BYTES_PER_WORD_LOG2));
-   }
-
    reg->Created(systhrd_.get(), this);
    ThreadAdmin::Incr(ThreadAdmin::Creations);
    if(daemon_ != nullptr) daemon_->ThreadCreated(this);
@@ -3161,14 +3145,13 @@ main_t Thread::Start()
             Log::Submit(log);
          }
 
-         auto level = nex.Errval();
+         auto level = nex.Level();
 
          if(level >= RestartReboot)
          {
             //  In the lab, display a "shutting down" message if exiting
             //  rather than restarting.
             //
-            int code = (level == RestartExit ? 0 : 1);
             msecs_t time(1 * ONE_SEC);
 
             if((level == RestartExit) && Element::RunningInLab())
@@ -3183,16 +3166,15 @@ main_t Thread::Start()
             //  with a non-zero exit code, it is immediately relaunched.
             //
             Pause(time);
-            exit(code);
          }
 
          //  RootThread and InitThread handle their own flow of execution when
          //  initiating restarts, so just loop around and reinvoke their Enter
-         //  functions.  Other threads must first notify InitThread.
+         //  functions.  Other threads must notify InitThread.
          //
          if(faction_ < SystemFaction)
          {
-            Singleton< InitThread >::Instance()->InitiateRestart(nex.Level());
+            Singleton< InitThread >::Instance()->InitiateRestart(level);
          }
 
          continue;

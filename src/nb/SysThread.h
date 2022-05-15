@@ -95,10 +95,6 @@ private:
    //
    SysThread(Thread* client, Priority prio, size_t size);
 
-   //  Wraps an existing native thread.  Used to create RootThread.
-   //
-   SysThread();
-
    //  Releases resources.
    //
    ~SysThread();
@@ -115,11 +111,6 @@ private:
    static bool Create(const Thread* client,
       size_t size, SysThreadId& nid, SysThread_t& nthread);
 
-   //  Used by the constructor to wrap the thread that is running main().
-   //  Updates NTHREAD to the thread's handle.  Returns false on failure.
-   //
-   static bool Wrap(SysThread_t& nthread);
-
    //  Deletes a native thread and nullifies its handle.
    //
    static void Delete(SysThread_t& thread);
@@ -127,6 +118,10 @@ private:
    //  Returns the thread's native identifier.
    //
    SysThreadId Nid() const { return nid_; }
+
+   //  Configures the executable before creating the first thread.
+   //
+   static void ConfigureProcess();
 
    //  Performs environment-specific actions upon entering the thread.
    //  Returns a non-zero value if the thread should immediately exit.

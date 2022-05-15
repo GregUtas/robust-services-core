@@ -229,6 +229,12 @@ public:
    //
    std::string to_str() const;
 
+   //  Contains most of the entry code that is common to all threads.
+   //  Implements the safety net that can recover from all exceptions.
+   //  This is public for expediency and should be treated as private.
+   //
+   main_t Start();
+
    //  Displays statistics.  May be overridden to include thread-specific
    //  statistics, but the base class version must be invoked.
    //
@@ -402,11 +408,6 @@ private:
    //  the Thread object.
    //
    static main_t EnterThread(void* arg);
-
-   //  Contains most of the entry code that is common to all threads.
-   //  Implements the safety net that can recover from all exceptions.
-   //
-   main_t Start();
 
    //  Returns a flag in the thread's interrupt vector.  See also TestFlag.
    //

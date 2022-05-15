@@ -23,6 +23,7 @@
 
 #include "SysConsole.h"
 #include <iostream>
+#include <ostream>
 #include "Debug.h"
 
 using std::string;
@@ -36,7 +37,7 @@ bool SysConsole::Minimize(bool minimize)
 {
    Debug::ft("SysConsole.Minimize");
 
-   //L Minimixr the console window.
+   //L Minimize the console window.
    //
    return false;
 }

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysMutex.h"
+#include <chrono>
 #include <cstdint>
 #include <new>
 #include <ostream>

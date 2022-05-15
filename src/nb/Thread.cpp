@@ -33,6 +33,7 @@
 #include <map>
 #include <ratio>
 #include <sstream>
+#include <system_error>
 #include <utility>
 #include <vector>
 #include "AllocationException.h"
@@ -1148,7 +1149,7 @@ Thread::Thread(Faction faction, Daemon* daemon) :
       //  it to bytes.
       //
       auto prio = FactionToPriority(faction_);
-      systhrd_.reset(new SysThread(this, EnterThread, prio,
+      systhrd_.reset(new SysThread(this, prio,
          ThreadAdmin::StackUsageLimit() << BYTES_PER_WORD_LOG2));
    }
 
@@ -2404,7 +2405,11 @@ DelayRc Thread::Pause(msecs_t time)
 
    if(EnterBlockingOperation(BlockedOnClock, Thread_Pause))
    {
-      if(time != TIMEOUT_IMMED) drc = thr->systhrd_->Delay(time);
+      if(time != TIMEOUT_IMMED)
+      {
+         drc = thr->systhrd_->Delay(time);
+      }
+
       ExitBlockingOperation(Thread_Pause);
    }
    else
@@ -3223,6 +3228,22 @@ main_t Thread::Start()
          }
       }
 
+      catch(std::system_error& se)
+      {
+         Debug::SwLog(Thread_Start, se.what(), se.code().value(), false);
+
+         switch(TrapHandler(nullptr, &se, SIGNIL, nullptr))
+         {
+         case Continue:
+            continue;
+         case Release:
+            return Exit(SIGNIL);
+         case Return:
+         default:
+            return AbnormalExit(SIGNIL);
+         }
+      }
+
       catch(std::exception& e)
       {
          switch(TrapHandler(nullptr, &e, SIGNIL, nullptr))
@@ -3687,6 +3708,23 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       {
       case Continue:
          Debug::SwLog(Thread_TrapHandler, "continue", 1);
+         //  [[fallthrough]]
+      case Release:
+         return Release;
+      case Return:
+      default:
+         return Return;
+      }
+   }
+
+   catch(std::system_error& se)
+   {
+      Debug::SwLog(Thread_TrapHandler, se.what(), se.code().value(), false);
+
+      switch(TrapHandler(nullptr, &se, SIGNIL, nullptr))
+      {
+      case Continue:
+         Debug::SwLog(Thread_TrapHandler, "continue", 2);
          //  [[fallthrough]]
       case Release:
          return Release;

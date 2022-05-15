@@ -24,7 +24,6 @@
 #include "SysIpL3Addr.h"
 #include <cstddef>
 #include <cstring>
-#include <errno.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>

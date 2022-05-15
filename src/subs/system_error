@@ -5,6 +5,8 @@
 #ifndef SYSTEM_ERROR_INCLUDED
 #define SYSTEM_ERROR_INCLUDED
 
+#include "exception"
+
 namespace std
 {
 class error_code
@@ -12,6 +14,12 @@ class error_code
 public:
    error_code();
    int value() const;
+};
+
+class system_error : public exception
+{
+public:
+   const error_code& code() const;
 };
 }
 #endif

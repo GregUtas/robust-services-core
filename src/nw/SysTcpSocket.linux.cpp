@@ -22,15 +22,14 @@
 #ifdef OS_LINUX
 
 #include "SysTcpSocket.h"
+#include <chrono>
 #include <memory>
 #include <errno.h>
-#include <netdb.h>
 #include <netinet/in.h>
+#include <ratio>
 #include <sys/poll.h>
 #include <sys/socket.h>
-#include <unistd.h>
 #include "Debug.h"
-#include "Duration.h"
 #include "IpPortRegistry.h"
 #include "NwLogs.h"
 #include "NwTrace.h"

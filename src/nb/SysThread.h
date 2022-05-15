@@ -27,6 +27,7 @@
 #include <cstddef>
 #include <memory>
 #include "Duration.h"
+#include "Gate.h"
 #include "SysDecls.h"
 #include "SysTypes.h"
 
@@ -73,10 +74,6 @@ public:
       Priority_N         // number of priorities
    };
 private:
-   //  The signature of the Thread entry function.
-   //
-   typedef main_t (*ThreadEntry)(void* self);
-
    //  The signature of a signal handler.
    //
    typedef void (*sighandler_t)(signal_t sig);
@@ -93,11 +90,10 @@ private:
 
    typedef std::bitset< StatusFlag_N > StatusFlags;
 
-   //  Creates a native thread for CLIENT.  ENTRY is its entry function,
-   //  PRIO is the priority at which it will run, and SIZE is its stack
-   //  size (a size of 0 uses the default size).
+   //  Creates a native thread for CLIENT.  PRIO is the priority at
+   //  which it will run, and SIZE is its stack size).
    //
-   SysThread(Thread* client, ThreadEntry entry, Priority prio, size_t size);
+   SysThread(Thread* client, Priority prio, size_t size);
 
    //  Wraps an existing native thread.  Used to create RootThread.
    //
@@ -107,32 +103,26 @@ private:
    //
    ~SysThread();
 
-   //  Used by the constructor to create an actual native thread.  ENTRY,
-   //  CLIENT, and stackSize were passed to the constructor.  Updates NID
-   //  to the new thread's native identifier.  Returns the thread's native
-   //  handle.
+   //  For reporting errors from platform-specific functions.
    //
-   static SysThread_t Create(ThreadEntry entry,
-      const Thread* client, size_t stackSize, SysThreadId& nid);
+   static bool ReportError(fn_name function, fixed_string expl, int error);
+
+   //  Used by the constructor to create an actual native thread.  CLIENT
+   //  and SIZE were passed to the constructor.  Updates NID to the new
+   //  thread's native identifier and NTHREAD to its handle.  Returns
+   //  false on failure.
+   //
+   static bool Create(const Thread* client,
+      size_t size, SysThreadId& nid, SysThread_t& nthread);
 
    //  Used by the constructor to wrap the thread that is running main().
-   //  Returns the thread's native handle after possibly performing some
-   //  platform-specific work.
+   //  Updates NTHREAD to the thread's handle.  Returns false on failure.
    //
-   static SysThread_t Wrap();
+   static bool Wrap(SysThread_t& nthread);
 
    //  Deletes a native thread and nullifies its handle.
    //
    static void Delete(SysThread_t& thread);
-
-   //  Creates a sentry.  A thread waits on a sentry, and other threads
-   //  signal it to wake the thread up.
-   //
-   static SysSentry_t CreateSentry();
-
-   //  Deletes a sentry and nullifies its handle.
-   //
-   static void DeleteSentry(SysSentry_t& sentry);
 
    //  Returns the thread's native identifier.
    //
@@ -144,10 +134,6 @@ private:
    signal_t Start();
 
    //  Sleeps for TIMEOUT (TIMEOUT_IMMED = yield, TIMEOUT_NEVER = infinite).
-   //  The outcomes are
-   //  o Error: probably an obscure but serious bug
-   //  o Interrupted: was awoken before the requested duration elapsed
-   //  o Completed: slept for the requested duration
    //
    DelayRc Delay(const msecs_t& timeout);
 
@@ -165,13 +151,10 @@ private:
    //
    bool Proceed();
 
-   //  Invoked to wait on SENTRY until TIMEOUT.
+   //  Invoked to wait on SENTRY until TIMEOUT.  If TIMEOUT is TIMEOUT_NEVER,
+   //  the thread will only resume after SENTRY is signalled.
    //
-   DelayRc Suspend(SysSentry_t& sentry, const msecs_t& timeout);
-
-   //  Invoked to signal SENTRY.
-   //
-   bool Resume(SysSentry_t& sentry);
+   DelayRc Suspend(Gate& gate, const msecs_t& timeout);
 
    //  Sets or changes the thread's priority.
    //
@@ -202,19 +185,17 @@ private:
    //
    StatusFlags status_;
 
-   //  A reference to a native object that is waited on to implement Delay
-   //  and Interrupt.
-   //
-   SysSentry_t event_;
-
-   //  A reference to a native object that is waited on to implement Wait
-   //  and Proceed.
-   //
-   SysSentry_t guard_;
-
    //  The thread's current priority.
    //
    Priority priority_;
+
+   //  Used to implement Delay and Interrupt.
+   //
+   Gate alarm_;
+
+   //  Used to implement Wait and Proceed.
+   //
+   Gate sched_;
 
    //  The signal that caused the thread to be deleted.
    //

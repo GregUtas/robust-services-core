@@ -101,13 +101,13 @@ public:
    static constexpr time_point max();
 };
 
-template<class Clock, class Duration, class Numeric, class Ratio> time_point<Clock, Duration>
+template<class Clock, class Duration, typename Numeric, typename Ratio> time_point<Clock, Duration>
    operator+(const time_point<Clock, Duration>& lhs, const duration<Numeric, Ratio>& rhs);
 
-template<class Numeric, class Ratio, class Clock, class Duration> time_point<Clock, Duration>
+template<typename Numeric, typename Ratio, class Clock, class Duration> time_point<Clock, Duration>
    operator+(const duration<Numeric, Ratio>& lhs, const time_point<Clock, Duration>& rhs);
 
-template<class Clock, class Duration, class Numeric, class Ratio> time_point<Clock, Duration>
+template<class Clock, class Duration, typename Numeric, typename Ratio> time_point<Clock, Duration>
    operator-(const time_point<Clock, Duration>& lhs, const duration<Numeric, Ratio>& rhs);
 
 template<class Clock, class Duration> Duration

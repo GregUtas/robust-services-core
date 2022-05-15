@@ -32,11 +32,11 @@ typedef int64_t time_t;
 time_t time(time_t* time);
 
 #ifdef OS_WIN
-   tm* localtime_s(const time_t* intime, tm* outime);
+   tm* localtime_s(tm* outime, const time_t* intime);
 #endif
 
 #ifdef OS_LINUX
-   tm* localtime_r(tm* outime, const time_t* intime);
+   tm* localtime_r(const time_t* intime, tm* outime);
 #endif
 
 namespace std

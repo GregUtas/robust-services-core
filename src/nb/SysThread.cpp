@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysThread.h"
+#include <condition_variable>
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -33,25 +34,17 @@ using std::string;
 
 namespace NodeBase
 {
-SysThread::SysThread
-   (Thread* client, ThreadEntry entry, Priority prio, size_t size) :
+SysThread::SysThread(Thread* client, Priority prio, size_t size) :
    nthread_(nullptr),
    nid_(NIL_ID),
-   event_(CreateSentry()),
-   guard_(CreateSentry()),
    priority_(Priority_N),
    signal_(SIGNIL)
 {
    Debug::ft("SysThread.ctor");
 
-   Debug::Assert(event_ != nullptr);
-   Debug::Assert(guard_ != nullptr);
-
    //  Create the thread and set its priority.
    //
-   nthread_ = Create(entry, client, size, nid_);
-   Debug::Assert(nthread_ != nullptr);
-
+   Debug::Assert(Create(client, size, nid_, nthread_));
    Debug::Assert(SetPriority(prio));
 }
 
@@ -60,21 +53,14 @@ SysThread::SysThread
 SysThread::SysThread() :
    nthread_(nullptr),
    nid_(RunningThreadId()),
-   event_(CreateSentry()),
-   guard_(CreateSentry()),
    priority_(Priority_N),
    signal_(SIGNIL)
 {
    Debug::ft("SysThread.ctor(wrap)");
 
-   Debug::Assert(event_ != nullptr);
-   Debug::Assert(guard_ != nullptr);
-
    //  Wrap the thread and set its priority.
    //
-   nthread_ = Wrap();
-   Debug::Assert(nthread_ != nullptr);
-
+   Debug::Assert(Wrap(nthread_));
    Debug::Assert(SetPriority(WatchdogPriority));
 }
 
@@ -84,8 +70,6 @@ SysThread::~SysThread()
 {
    Debug::ftnt("SysThread.dtor");
 
-   DeleteSentry(event_);
-   DeleteSentry(guard_);
    Delete(nthread_);
 }
 
@@ -95,7 +79,7 @@ DelayRc SysThread::Delay(const msecs_t& timeout)
 {
    Debug::ft("SysThread.Delay");
 
-   return Suspend(event_, timeout);
+   return Suspend(alarm_, timeout);
 }
 
 //------------------------------------------------------------------------------
@@ -106,10 +90,8 @@ void SysThread::Display(ostream& stream,
    Permanent::Display(stream, prefix, options);
 
    stream << prefix << "nthread  : " << nthread_ << CRLF;
-   stream << prefix << "nid      : " << strHex(nid_, 4, false) << CRLF;
+   stream << prefix << "nid      : " << strHex(nid_, 8, false) << CRLF;
    stream << prefix << "status   : " << status_.to_string() << CRLF;
-   stream << prefix << "event    : " << event_ << CRLF;
-   stream << prefix << "guard    : " << guard_ << CRLF;
    stream << prefix << "priority : " << priority_ << CRLF;
    stream << prefix << "signal   : " << signal_ << CRLF;
 }
@@ -120,7 +102,8 @@ bool SysThread::Interrupt()
 {
    Debug::ft("SysThread.Interrupt");
 
-   return Resume(event_);
+   alarm_.Notify();
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -129,7 +112,38 @@ bool SysThread::Proceed()
 {
    Debug::ft("SysThread.Proceed");
 
-   return Resume(guard_);
+   sched_.Notify();
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool SysThread::ReportError(fn_name function, fixed_string expl, int error)
+{
+   Debug::SwLog(function, expl, error);
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysThread_Suspend = "SysThread.Suspend";
+
+DelayRc SysThread::Suspend(Gate& gate, const msecs_t& timeout)
+{
+   Debug::ft(SysThread_Suspend);
+
+   //  This operation can only be applied to the running thread.
+   //
+   if(RunningThreadId() != nid_)
+   {
+      Debug::SwLog(SysThread_Suspend, "not running thread", nid_);
+      return DelayError;
+   }
+
+   auto result = gate.WaitFor(timeout);
+
+   return (result == std::cv_status::timeout ?
+      DelayCompleted : DelayInterrupted);
 }
 
 //------------------------------------------------------------------------------
@@ -138,6 +152,6 @@ DelayRc SysThread::Wait()
 {
    Debug::ft("SysThread.Wait");
 
-   return Suspend(guard_, TIMEOUT_NEVER);
+   return Suspend(sched_, TIMEOUT_NEVER);
 }
 }

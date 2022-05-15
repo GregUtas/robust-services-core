@@ -1,0 +1,29 @@
+//==============================================================================
+//
+//  condition_variable
+//
+#ifndef CONDITION_VARIABLE_INCLUDED
+#define CONDITION_VARIABLE_INCLUDED
+
+#include "chrono"
+#include "mutex"
+
+namespace std
+{
+enum cv_status
+{
+   no_timeout,
+   timeout
+};
+
+class condition_variable
+{
+public:
+   condition_variable();
+   ~condition_variable();
+   void notify_one();
+   cv_status wait(unique_lock<mutex>& lock);
+   template<typename Numeric, typename Ratio> cv_status wait_for(unique_lock<mutex>& lock, const chrono::duration<Numeric, Ratio>& delay);
+};
+}
+#endif

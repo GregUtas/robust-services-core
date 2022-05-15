@@ -24,170 +24,93 @@
 #include "SysThread.h"
 #include <csignal>
 #include <cstdint>
+#include <pthread.h>
 #include "Debug.h"
-#include "Duration.h"
-#include "NbSignals.h"
 #include "Thread.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-/*L
 //  Mapping of external to internal priorities.
 //
 const int PriorityMap[SysThread::Priority_N] =
 {
-   THREAD_PRIORITY_BELOW_NORMAL,  // LowPriority
-   THREAD_PRIORITY_NORMAL,        // DefaultPriority
-   THREAD_PRIORITY_ABOVE_NORMAL,  // SystemPriority
-   THREAD_PRIORITY_HIGHEST        // WatchdogPriority
+   1,  // LowPriority
+   2,  // DefaultPriority
+   3,  // SystemPriority
+   4   // WatchdogPriority
 };
 
 //------------------------------------------------------------------------------
 
-static signal_t AccessViolationType(const _EXCEPTION_POINTERS* ex)
+static void* EnterThread(void* arg)
 {
-   auto rec = ex->ExceptionRecord;
+   Debug::ft("NodeBase.EnterThread");
 
-   if(rec->ExceptionCode == EXCEPTION_ACCESS_VIOLATION)
-   {
-      if(rec->NumberParameters > 0)
-      {
-         if(rec->ExceptionInformation[0] == 1) return SIGWRITE;
-      }
-   }
-
-   return SIGSEGV;
-}
-
-//------------------------------------------------------------------------------
-//
-//  Converts a Windows structured exception to a C++ exception.
-//
-static void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
-{
-   //  Reenable Debug functions before tracing this function.
+   //  Our argument is a pointer to a Thread.
    //
-   Thread::ResetDebugFlags();
-   Debug::ft("NodeBase.SE_Handler");
-
-   signal_t sig = 0;
-
-   switch(errval)                         // errval:
-   {
-   case DBG_CONTROL_C:                    // 0x40010005
-      sig = SIGINT;
-      break;
-
-   case DBG_CONTROL_BREAK:                // 0x40010008
-      sig = SIGBREAK;
-      break;
-
-   case STATUS_ACCESS_VIOLATION:          // 0xC0000005
-      sig = AccessViolationType(ex);
-      break;
-
-   case STATUS_DATATYPE_MISALIGNMENT:     // 0x80000002
-   case STATUS_IN_PAGE_ERROR:             // 0xC0000006
-   case STATUS_INVALID_HANDLE:            // 0xC0000008
-   case STATUS_NO_MEMORY:                 // 0xC0000017
-      sig = SIGSEGV;
-      break;
-
-   case STATUS_ILLEGAL_INSTRUCTION:       // 0xC000001D
-      sig = SIGILL;
-      break;
-
-   case STATUS_NONCONTINUABLE_EXCEPTION:  // 0xC0000025
-      sig = SIGTERM;
-      break;
-
-   case STATUS_INVALID_DISPOSITION:       // 0xC0000026
-   case STATUS_ARRAY_BOUNDS_EXCEEDED:     // 0xC000008C
-      sig = SIGSEGV;
-      break;
-
-   case STATUS_FLOAT_DENORMAL_OPERAND:    // 0xC000008D
-   case STATUS_FLOAT_DIVIDE_BY_ZERO:      // 0xC000008E
-   case STATUS_FLOAT_INEXACT_RESULT:      // 0xC000008F
-   case STATUS_FLOAT_INVALID_OPERATION:   // 0xC0000090
-   case STATUS_FLOAT_OVERFLOW:            // 0xC0000091
-   case STATUS_FLOAT_STACK_CHECK:         // 0xC0000092
-   case STATUS_FLOAT_UNDERFLOW:           // 0xC0000093
-   case STATUS_INTEGER_DIVIDE_BY_ZERO:    // 0xC0000094
-   case STATUS_INTEGER_OVERFLOW:          // 0xC0000095
-      sig = SIGFPE;
-      break;
-
-   case STATUS_PRIVILEGED_INSTRUCTION:    // 0xC0000096
-      sig = SIGILL;
-      break;
-
-   case STATUS_STACK_OVERFLOW:            // 0xC00000FD
-      //
-      //  A stack overflow in Windows now raises the exception
-      //  System.StackOverflowException, which cannot be caught.
-      //  Stack checking in Thread should therefore be enabled.
-      //
-      sig = SIGSTACK1;
-      break;
-
-   default:
-      sig = SIGTERM;
-   }
-
-   //  Handle SIG.  This usually throws an exception; in any case, it will
-   //  not return here.  If it does return, there is no specific provision
-   //  for reraising a structured exception, so simply return and assume
-   //  that Windows will handle it, probably brutally.
-   //
-   Thread::HandleSignal(sig, errval);
-}
-*/
-
-//------------------------------------------------------------------------------
-
-SysThread_t SysThread::Create
-   (ThreadEntry entry, const Thread* client, size_t stackSize, SysThreadId& nid)
-{
-   Debug::ft("SysThread.Create");
-
-   return nullptr;
-/*L
-   //  Create a native thread.
-   //
-   auto result = _beginthreadex(nullptr, stackSize,
-      (_beginthreadex_proc_type) entry, (void*) client, 0, &nid);
-   auto handle = (HANDLE) result;
-
-   if(handle != nullptr)
-   {
-      //  Disable Windows priority boosts.
-      //
-      SetThreadPriorityBoost(handle, true);
-   }
-
-   return handle;
-*/
+   auto thread = static_cast< Thread* >(arg);
+   uintptr_t rc = thread->Start();
+   return (void*) rc;
 }
 
 //------------------------------------------------------------------------------
 
-SysSentry_t SysThread::CreateSentry()
-{
-   Debug::ft("SysThread.CreateSentry");
+fn_name SysThread_Create = "SysThread.Create";
 
-   return nullptr;
-/*L
-   //  On another platform, this is likely to be a combination of a
-   //  condition variable and mutex, wrapped within an object that is
-   //  private to this file.  The first false argument indicates that
-   //  the event should be automatically reset when signalled, and the
-   //  second indicates that it is not signalled in its inital state.
+bool SysThread::Create(const Thread* client,
+   size_t size, SysThreadId& nid, SysThread_t& nthread)
+{
+   Debug::ft(SysThread_Create);
+
+   //  Initialize the structure that defines a new thread's attributes.
+   //  o They start to run detached, since join() is nonsense.
+   //  o They usually need a much smaller stack size than in other systems.
+   //  o They will be scheduled round-robin, using the real-time scheduler.
    //
-   return CreateEvent(nullptr, false, false, nullptr);
-*/
+   pthread_attr_t attrs;
+   pthread_attr_init(&attrs);
+
+   auto err = pthread_attr_setdetachstate(&attrs, PTHREAD_CREATE_DETACHED);
+   if(err != 0)
+   {
+      return ReportError(SysThread_Create, "setdetachstate", err);
+   }
+
+   err = pthread_attr_setstacksize(&attrs, size);
+   if(err != 0)
+   {
+      return ReportError(SysThread_Create, "setstacksize", err);
+   }
+
+   err = pthread_attr_setinheritsched(&attrs, PTHREAD_EXPLICIT_SCHED);
+   if(err != 0)
+   {
+      return ReportError(SysThread_Create, "setinheritsched", err);
+   }
+
+   err = pthread_attr_setschedpolicy(&attrs, SCHED_RR);
+   if(err != 0)
+   {
+      return ReportError(SysThread_Create, "setschedpolicy", err);
+   }
+
+   pthread_t thread;
+
+   err = pthread_create(&thread, &attrs, EnterThread, (void*) client);
+   if(err != 0)
+   {
+      return ReportError(SysThread_Create, "create", err);
+   }
+
+   //  Unlike Windows, this POSIX/Linux implementation does not need to
+   //  distinguish a thread's handle from its identifier.  POSIX only
+   //  has pthread_t, which is an integer.
+   //
+   nthread = (SysThread_t) thread;
+   nid = thread;
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -195,27 +118,6 @@ SysSentry_t SysThread::CreateSentry()
 void SysThread::Delete(SysThread_t& thread)
 {
    Debug::ftnt("SysThread.Delete");
-/*L
-   if(thread != nullptr)
-   {
-      CloseHandle(thread);
-      thread = nullptr;
-   }
-*/
-}
-
-//------------------------------------------------------------------------------
-
-void SysThread::DeleteSentry(SysSentry_t& sentry)
-{
-   Debug::ftnt("SysThread.DeleteSentry");
-/*L
-   if(sentry != nullptr)
-   {
-      CloseHandle(sentry);
-      sentry = nullptr;
-   }
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -230,11 +132,12 @@ void SysThread::Patch(sel_t selector, void* arguments)
 void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
 {
    signal(sig, handler);
-/*L
-   //  If the platform supports sigaction, it is preferred.  It should mask
-   //  signals that do not point to an error in the signal handler itself.
-   //  This is only a sketch.  For example, SIGSEGV should use sigaltstack
-   //  to safely catch a stack overrun.
+
+   //L Use sigaction() instead of signal().
+   //
+   //  Blocksignals except those that can occur because of an error in the
+   //  signal handler itself.  This is only a sketch.  For example, SIGSEGV
+   //  should use sigaltstack to safely catch a stack overflow.
    //
    //  sigaction action;
    //  sigset_t  block_mask;
@@ -248,49 +151,32 @@ void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
    //  action.sa_flags = 0;
    //
    //  sigaction(sig, &action, nullptr);
-*/
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysThread_Resume = "SysThread.Resume";
-
-bool SysThread::Resume(SysSentry_t& sentry)
-{
-   Debug::ft(SysThread_Resume);
-
-   return false;
-/*L
-   //  Signal SENTRY in case the thread is blocked on it.
-   //
-   if(SetEvent(sentry)) return true;
-   Debug::SwLog(SysThread_Resume, "failed to set event", GetLastError());
-   return false;
-*/
 }
 
 //------------------------------------------------------------------------------
 
 SysThreadId SysThread::RunningThreadId() NO_FT
 {
-   return 0;
-/*L
-   return GetCurrentThreadId();
-*/
+   //L Comparing two POSIX thread identifiers theoretically has to be
+   //  done with pthread_equal.
+   //
+   return pthread_self();
 }
 
 //------------------------------------------------------------------------------
 
+fn_name SysThread_SetPriority = "SysThread.SetPriority";
+
 bool SysThread::SetPriority(Priority prio)
 {
-   Debug::ft("SysThread.SetPriority");
+   Debug::ft(SysThread_SetPriority);
 
-   return false;
-/*L
    if(priority_ == prio) return true;
 
-   if(!SetThreadPriority(nthread_, PriorityMap[prio]))
+   auto err = pthread_setschedprio((pthread_t) nthread_, PriorityMap[prio]);
+   if(err != 0)
    {
+      ReportError(SysThread_SetPriority, "setschedparam", err);
       status_.set(SetPriorityFailed);
       return false;
    }
@@ -298,112 +184,45 @@ bool SysThread::SetPriority(Priority prio)
    priority_ = prio;
    status_.reset(SetPriorityFailed);
    return true;
-*/
 }
 
 //------------------------------------------------------------------------------
-
-fn_name SysThread_Start = "SysThread.Start";
 
 signal_t SysThread::Start()
 {
-   Debug::ft(SysThread_Start);
+   Debug::ft("SysThread.Start");
 
-   return 0;
-/*L
-   //  This is also invoked when recovering from a trap, so see if a stack
-   //  overflow occurred.  Some of these are irrecoverable, in which case
-   //  returning SIGSTACK2 causes the thread to exit.
+   //L This is invoked when recovering from a trap, so check status_
+   //  to see if any Linux-specific actions need to be taken.
    //
-   if(status_.test(StackOverflowed))
-   {
-      if(_resetstkoflw() == 0)
-      {
-         Debug::SwLog(SysThread_Start, status_.to_string(), nid_);
-         return SIGSTACK2;
-      }
-
-      status_.reset(StackOverflowed);
-   }
-
-   //  The translator for Windows structured exceptions must be installed
-   //  on a per-thread basis.
-   //
-   _set_se_translator((_se_translator_function) SE_Handler);
    return 0;
-*/
 }
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Suspend = "SysThread.Suspend";
+fn_name SysThread_Wrap = "SysThread.Wrap";
 
-DelayRc SysThread::Suspend(SysSentry_t& sentry, const msecs_t& timeout)
+bool SysThread::Wrap(SysThread_t& nthread)
 {
-   Debug::ft(SysThread_Suspend);
+   Debug::ft(SysThread_Wrap);
 
-   return DelayError;
-/*L
-   //  This operation can only be applied to the running thread.
+   //  We are wrapping the root thread, which runs at watchdog priority.  And
+   //  like all other threads, it runs using round-robin real-time scheduling.
    //
-   if(RunningThreadId() != nid_)
+   auto nid = RunningThreadId();
+
+   sched_param parm;
+   parm.sched_priority = PriorityMap[WatchdogPriority];
+
+   auto err = pthread_setschedparam(nid, SCHED_RR, &parm);
+   if(err != 0)
    {
-      Debug::SwLog(SysThread_Suspend, "thread not running", nid_);
-      return DelayError;
+      ReportError(SysThread_Wrap, "setschedparam", err);
+      return false;
    }
 
-   auto rc = WaitForSingleObject(sentry, timeout.ToMsecs());
-
-   switch(rc)
-   {
-   case WAIT_TIMEOUT:
-      //
-      //  Our timeout occurred before we were signalled.
-      //
-      return DelayCompleted;
-   case WAIT_OBJECT_0:
-      //
-      //  Someone signalled us.
-      //
-      return DelayInterrupted;
-   case WAIT_ABANDONED:
-      //
-      //  We're the only thread that waits on SENTRY, so this shouldn't occur.
-      //
-      Debug::SwLog(SysThread_Suspend, "unexpected result", rc);
-      return DelayInterrupted;
-   default:
-      Debug::SwLog(SysThread_Suspend, "unknown result", GetLastError());
-   }
-
-   return DelayError;
-*/
-}
-
-//------------------------------------------------------------------------------
-
-SysThread_t SysThread::Wrap()
-{
-   Debug::ft("SysThread.Wrap");
-
-   return nullptr;
-/*L
-   //  Set our overall process priority and return a handle to our thread.
-   //
-   auto process = GetCurrentProcess();
-   SetPriorityClass(process, HIGH_PRIORITY_CLASS);
-
-   SysThread_t clone = GetCurrentThread();
-   SysThread_t nthread;
-
-   if(!DuplicateHandle(process, clone, process,
-      &nthread, 0, false, DUPLICATE_SAME_ACCESS))
-   {
-      Debug::Assert(false);
-   }
-
-   return nthread;
-*/
+   nthread = (void*) nid;
+   return true;
 }
 }
 #endif

@@ -22,11 +22,9 @@
 #ifdef OS_WIN
 
 #include "SysThread.h"
-#include <chrono>
 #include <csignal>
 #include <cstdint>
 #include <process.h>
-#include <ratio>
 #include <Windows.h>
 #include "Debug.h"
 #include "NbSignals.h"
@@ -149,40 +147,41 @@ static void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
 
 //------------------------------------------------------------------------------
 
-SysThread_t SysThread::Create
-   (ThreadEntry entry, const Thread* client, size_t stackSize, SysThreadId& nid)
+static unsigned int EnterThread(void* arg)
 {
-   Debug::ft("SysThread.Create");
+   Debug::ft("NodeBase.EnterThread");
 
-   //  Create a native thread.
+   //  Our argument is a pointer to a Thread.
    //
-   auto result = _beginthreadex(nullptr, stackSize,
-      (_beginthreadex_proc_type) entry, (void*) client, 0, &nid);
-   auto handle = (HANDLE) result;
-
-   if(handle != nullptr)
-   {
-      //  Disable Windows priority boosts.
-      //
-      SetThreadPriorityBoost(handle, true);
-   }
-
-   return handle;
+   auto thread = static_cast< Thread* >(arg);
+   return thread->Start();
 }
 
 //------------------------------------------------------------------------------
 
-SysSentry_t SysThread::CreateSentry()
-{
-   Debug::ft("SysThread.CreateSentry");
+fn_name SysThread_Create = "SysThread.Create";
 
-   //  On another platform, this is likely to be a combination of a
-   //  condition variable and mutex, wrapped within an object that is
-   //  private to this file.  The first false argument indicates that
-   //  the event should be automatically reset when signalled, and the
-   //  second indicates that it is not signalled in its inital state.
+bool SysThread::Create
+   (const Thread* client, size_t size, SysThreadId& nid, SysThread_t& nthread)
+{
+   Debug::ft(SysThread_Create);
+
+   //  Create a native thread and provide its identifiers.  Disable Windows
+   //  priority boosts, which could interfere with our priority scheme.
    //
-   return CreateEvent(nullptr, false, false, nullptr);
+   unsigned int id;
+   auto result = _beginthreadex
+      (nullptr, size, EnterThread, (void*) client, 0, &id);
+
+   if(result == 0)
+   {
+      return ReportError(SysThread_Create, "beginthreadex", GetLastError());
+   }
+
+   nthread = (HANDLE) result;
+   nid = id;
+   SetThreadPriorityBoost(nthread, true);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -200,19 +199,6 @@ void SysThread::Delete(SysThread_t& thread)
 
 //------------------------------------------------------------------------------
 
-void SysThread::DeleteSentry(SysSentry_t& sentry)
-{
-   Debug::ftnt("SysThread.DeleteSentry");
-
-   if(sentry != nullptr)
-   {
-      CloseHandle(sentry);
-      sentry = nullptr;
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void SysThread::Patch(sel_t selector, void* arguments)
 {
    Permanent::Patch(selector, arguments);
@@ -223,39 +209,6 @@ void SysThread::Patch(sel_t selector, void* arguments)
 void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
 {
    signal(sig, handler);
-
-   //  If the platform supports sigaction, it is preferred.  It should mask
-   //  signals that do not point to an error in the signal handler itself.
-   //  This is only a sketch.  For example, SIGSEGV should use sigaltstack
-   //  to safely catch a stack overrun.
-   //
-   //  sigaction action;
-   //  sigset_t  block_mask;
-   //
-   //  sigemptyset(&block_mask);
-   //  sigaddset(&block_mask, SIGTERM);
-   //  sigaddset(&block_mask, SIGINT);
-   //
-   //  action.sa_handler = handler;
-   //  action.sa_mask = block_mask;
-   //  action.sa_flags = 0;
-   //
-   //  sigaction(sig, &action, nullptr);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysThread_Resume = "SysThread.Resume";
-
-bool SysThread::Resume(SysSentry_t& sentry)
-{
-   Debug::ft(SysThread_Resume);
-
-   //  Signal SENTRY in case the thread is blocked on it.
-   //
-   if(SetEvent(sentry)) return true;
-   Debug::SwLog(SysThread_Resume, "failed to set event", GetLastError());
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -316,50 +269,7 @@ signal_t SysThread::Start()
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Suspend = "SysThread.Suspend";
-
-DelayRc SysThread::Suspend(SysSentry_t& sentry, const msecs_t& timeout)
-{
-   Debug::ft(SysThread_Suspend);
-
-   //  This operation can only be applied to the running thread.
-   //
-   if(RunningThreadId() != nid_)
-   {
-      Debug::SwLog(SysThread_Suspend, "thread not running", nid_);
-      return DelayError;
-   }
-
-   auto rc = WaitForSingleObject(sentry, timeout.count());
-
-   switch(rc)
-   {
-   case WAIT_TIMEOUT:
-      //
-      //  Our timeout occurred before we were signalled.
-      //
-      return DelayCompleted;
-   case WAIT_OBJECT_0:
-      //
-      //  Someone signalled us.
-      //
-      return DelayInterrupted;
-   case WAIT_ABANDONED:
-      //
-      //  We're the only thread that waits on SENTRY, so this shouldn't occur.
-      //
-      Debug::SwLog(SysThread_Suspend, "unexpected result", rc);
-      return DelayInterrupted;
-   default:
-      Debug::SwLog(SysThread_Suspend, "unknown result", GetLastError());
-   }
-
-   return DelayError;
-}
-
-//------------------------------------------------------------------------------
-
-SysThread_t SysThread::Wrap()
+bool SysThread::Wrap(SysThread_t& nthread)
 {
    Debug::ft("SysThread.Wrap");
 
@@ -369,15 +279,9 @@ SysThread_t SysThread::Wrap()
    SetPriorityClass(process, HIGH_PRIORITY_CLASS);
 
    SysThread_t clone = GetCurrentThread();
-   SysThread_t nthread;
 
-   if(!DuplicateHandle(process, clone, process,
-      &nthread, 0, false, DUPLICATE_SAME_ACCESS))
-   {
-      Debug::Assert(false);
-   }
-
-   return nthread;
+   return DuplicateHandle(process, clone, process,
+      &nthread, 0, false, DUPLICATE_SAME_ACCESS);
 }
 }
 #endif

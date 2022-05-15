@@ -3132,6 +3132,11 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 {
    Debug::ft("Editor.Fix");
 
+   //  If there is an #include for an external file that is not in the subs/
+   //  directory, file_ will be nullptr.
+   //
+   if(file_ == nullptr) return 0;
+
    Cli_ = &cli;
 
    //  Run through all the warnings.

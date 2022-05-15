@@ -27,8 +27,14 @@ public:
    ~timed_mutex();
    timed_mutex(const timed_mutex& that) = delete;
    timed_mutex& operator=(const timed_mutex& that) = delete;
-   bool try_lock_for(const std::chrono::milliseconds& msecs);
+   template<typename Numeric, typename Ratio> bool try_lock_for(const chrono::duration< Numeric, Ratio >& dur);
    void unlock();
+};
+
+template < class Mutex > class unique_lock
+{
+public:
+   explicit unique_lock(Mutex& lock);
 };
 }
 #endif

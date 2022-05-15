@@ -49,10 +49,6 @@ union LARGE_INTEGER
 bool QueryPerformanceFrequency(LARGE_INTEGER* Frequency);
 bool QueryPerformanceCounter(LARGE_INTEGER* PerformanceCount);
 
-typedef int errno_t;
-
-errno_t localtime_s(tm* Tm, const time_t* Time);
-
 //------------------------------------------------------------------------------
 //
 //  Windows memory

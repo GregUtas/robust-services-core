@@ -1541,6 +1541,11 @@ public:
    //
    bool WasRead() override;
 
+   //  Overridden to do nothing if a function is passed as an argument.
+   //
+   bool WasWritten(const StackArg* arg, bool direct, bool indirect) override
+      { return false; }
+
    //  Overridden  to append argument types if the function's name is ambiguous.
    //
    std::string XrefName(bool templates) const override;

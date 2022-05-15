@@ -744,9 +744,21 @@ void Context::SwLog
       if(expl.find("is incompatible with #ERR!") != string::npos) return;
    }
 
+   //  Logs generated here occur during the compilation phase, after the
+   //  parsing phase.  The code was successfully parsed, but its semantics
+   //  were not fully understood.  A logic error is usual reason, but it
+   //  can also occur if the code being analyzed uses something that is
+   //  missing or declared incorrectly in a file in the subs/ directory.
+   //    The more of these logs that occur, the more likely it is that
+   //  >check will generate false warnings or fail to find others.  It is
+   //  unlikely, however, that an exception will occur in >parse after a
+   //  log is generated here; the first time that >parse made it through
+   //  the code base without crashing, over 5,000 logs were still being
+   //  generated!
+   //
    LastLogLoc_ = loc;
    auto info = loc + ": " + expl;
-   Trace(CxxTrace::ERROR, errval, info);  //@
+   Trace(CxxTrace::ERROR, errval, info);  //@ see comment above
    Debug::SwLog(func, info, errval, stack);
 }
 

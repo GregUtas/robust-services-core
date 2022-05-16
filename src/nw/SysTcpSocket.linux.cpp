@@ -23,8 +23,8 @@
 
 #include "SysTcpSocket.h"
 #include <chrono>
-#include <memory>
 #include <errno.h>
+#include <memory>
 #include <netinet/in.h>
 #include <ratio>
 #include <sys/poll.h>

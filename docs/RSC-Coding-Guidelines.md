@@ -18,7 +18,7 @@ Try to make it impossible for the reader to tell where code was added or changed
 //
 //  <FileName.ext>
 //
-//  Copyright (C) 2017  Greg Utas
+//  Copyright (C) 2013-2022  Greg Utas
 //
 //  This file is part of the Robust Services Core (RSC).
 //

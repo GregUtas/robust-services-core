@@ -31,6 +31,23 @@ using namespace NodeBase;
 
 namespace Diplomacy
 {
+//  This is similar to memcpy but exists to eliminate compiler warnings
+//  about memcpy-ing a class (Token) whose copy operator isn't trivial.
+//
+static void copy_tokens(Token* dest, const Token* source, int num)
+{
+   if(source < dest)
+   {
+      for(auto i = num - 1; i >= 0; --i) dest[i] = source[i];
+   }
+   else
+   {
+      for(auto i = 0; i < num; ++i) dest[i] = source[i];
+   }
+}
+
+//------------------------------------------------------------------------------
+
 TokenMessage::TokenMessage() :
    length_(0),
    parm_count_(0)
@@ -181,7 +198,7 @@ TokenMessage TokenMessage::enclose() const
       //  Create a message that encloses this one in parentheses.
       //
       combined.message_ = TokensPtr(new Token[length_ + 3]);
-      memcpy(&combined.message_[1], message_.get(), length_ * sizeof(Token));
+      copy_tokens(&combined.message_[1], message_.get(), length_);
       combined.message_[0] = TOKEN_OPEN_BRACKET;
       combined.message_[length_ + 1] = TOKEN_CLOSE_BRACKET;
       combined.message_[length_ + 2] = TOKEN_END_OF_MESSAGE;
@@ -218,7 +235,7 @@ void TokenMessage::enclose_this()
    else
    {
       TokensPtr combined(new Token[length_ + 3]);
-      memcpy(&combined[1], message_.get(), length_ * sizeof(Token));
+      copy_tokens(&combined[1], message_.get(), length_);
       combined[0] = TOKEN_OPEN_BRACKET;
       combined[length_ + 1] = TOKEN_CLOSE_BRACKET;
       combined[length_ + 2] = TOKEN_END_OF_MESSAGE;
@@ -317,7 +334,7 @@ bool TokenMessage::get_tokens(Token tokens[], size_t max) const
 
    if(message_ == nullptr) return false;
    if(max < length_) return false;
-   memcpy(tokens, message_.get(), (length_ + 1) * sizeof(Token));
+   copy_tokens(tokens, message_.get(), length_ + 1);
    return true;
 }
 
@@ -369,9 +386,9 @@ TokenMessage TokenMessage::operator+(const TokenMessage& that)
    else
    {
       combined.message_ = TokensPtr(new Token[length_ + that.length_ + 1]);
-      memcpy(combined.message_.get(), message_.get(), length_ * sizeof(Token));
-      memcpy(&combined.message_[length_], that.message_.get(),
-         that.length_ * sizeof(Token));
+      copy_tokens(combined.message_.get(), message_.get(), length_);
+      copy_tokens
+         (&combined.message_[length_], that.message_.get(), that.length_);
       combined.message_[length_ + that.length_] = TOKEN_END_OF_MESSAGE;
       combined.length_ = length_ + that.length_;
       combined.parm_count_ = parm_count_ + that.parm_count_;
@@ -409,9 +426,9 @@ TokenMessage TokenMessage::operator&(const TokenMessage& that)
    else
    {
       combined.message_ = TokensPtr(new Token[length_ + that.length_ + 3]);
-      memcpy(combined.message_.get(), message_.get(), length_ * sizeof(Token));
-      memcpy(&combined.message_[length_ + 1], that.message_.get(),
-         that.length_ * sizeof(Token));
+      copy_tokens(combined.message_.get(), message_.get(), length_);
+      copy_tokens
+         (&combined.message_[length_ + 1], that.message_.get(), that.length_);
       combined.message_[length_] = TOKEN_OPEN_BRACKET;
       combined.message_[length_ + that.length_ + 1] = TOKEN_CLOSE_BRACKET;
       combined.message_[length_ + that.length_ + 2] = TOKEN_END_OF_MESSAGE;
@@ -567,7 +584,7 @@ size_t TokenMessage::set_from(const Token* stream)
    else
    {
       message_ = TokensPtr(new Token[index + 1]);
-      memcpy(message_.get(), stream, index * sizeof(Token));
+      copy_tokens(message_.get(), stream, index);
       message_[index] = TOKEN_END_OF_MESSAGE;
       length_ = index;
    }
@@ -617,7 +634,7 @@ size_t TokenMessage::set_from(const Token* stream, size_t length)
    else
    {
       message_ = TokensPtr(new Token[length + 1]);
-      memcpy(message_.get(), stream, length * sizeof(Token));
+      copy_tokens(message_.get(), stream, length);
       message_[length] = TOKEN_END_OF_MESSAGE;
       length_ = length;
    }

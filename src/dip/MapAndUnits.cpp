@@ -531,7 +531,7 @@ TokenMessage MapAndUnits::encode_build_result
    else
       order = order + Token(TOKEN_ORDER_REM);
 
-   auto msg = Token(TOKEN_COMMAND_ORD) + encode_turn() &
+   auto msg = (Token(TOKEN_COMMAND_ORD) + encode_turn()) &
       order & Token(TOKEN_RESULT_SUC);
    return msg;
 }
@@ -619,7 +619,7 @@ TokenMessage MapAndUnits::encode_movement_order(const UnitOrder& unit) const
          convoy_via = convoy_via + game_map[*f].token;
       }
 
-      order = order + Token(TOKEN_ORDER_VIA) & convoy_via;
+      order = (order + Token(TOKEN_ORDER_VIA)) & convoy_via;
       break;
 
    default:
@@ -719,7 +719,7 @@ TokenMessage MapAndUnits::encode_movement_result(const UnitOrder& unit) const
          convoy_via = convoy_via + game_map[*f].token;
       }
 
-      order = order + Token(TOKEN_ORDER_VIA) & convoy_via;
+      order = (order + Token(TOKEN_ORDER_VIA)) & convoy_via;
 
       if(unit.no_convoy)
          result = TOKEN_RESULT_NSO;
@@ -744,7 +744,8 @@ TokenMessage MapAndUnits::encode_movement_result(const UnitOrder& unit) const
       result = result + Token(TOKEN_RESULT_RET);
    }
 
-   auto msg = TokenMessage(TOKEN_COMMAND_ORD) + encode_turn() & order & result;
+   auto msg = (TokenMessage(TOKEN_COMMAND_ORD) + encode_turn()) &
+      order & result;
    return msg;
 }
 
@@ -814,7 +815,7 @@ TokenMessage MapAndUnits::encode_retreat_result(const UnitOrder& unit) const
       return result;  // empty
    }
 
-   auto msg = Token(TOKEN_COMMAND_ORD) + encode_turn() & order & result;
+   auto msg = (Token(TOKEN_COMMAND_ORD) + encode_turn()) & order & result;
    return msg;
 }
 
@@ -851,8 +852,8 @@ TokenMessage MapAndUnits::encode_waive(PowerId power) const
    Debug::ft("MapAndUnits.encode_waive");
 
    auto order = power_token(power) + Token(TOKEN_ORDER_WVE);
-   auto msg = Token(TOKEN_COMMAND_ORD) +
-      encode_turn() & order & Token(TOKEN_RESULT_SUC);
+   auto msg = (Token(TOKEN_COMMAND_ORD) + encode_turn()) &
+      order & Token(TOKEN_RESULT_SUC);
    return msg;
 }
 

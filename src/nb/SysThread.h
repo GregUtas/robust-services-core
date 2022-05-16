@@ -42,6 +42,14 @@ namespace NodeBase
 {
 //  Operating system abstraction layer: native thread wrapper.
 //
+//  Consideration was given to using <thread> and wrapping a std::thread,
+//  but this was abandoned for a few reasons:
+//  o It would only eliminate functions RunningThreadId, Create, and Delete.
+//  o It would make it impossible to specify a thread's stack size.  Most
+//    systems allocate large thread stacks, which are seldom appropriate.
+//  o thread::id is opaque.
+//  o thread::native_handle_type is platform-specific.
+//
 class SysThread : public Permanent
 {
    friend std::unique_ptr< SysThread >::deleter_type;
@@ -74,24 +82,8 @@ public:
       Priority_N         // number of priorities
    };
 private:
-   //  The signature of a signal handler.
-   //
-   typedef void (*sighandler_t)(signal_t sig);
-
-   //  The thread's status flags.
-   //
-   enum StatusFlag
-   {
-      SetPriorityFailed,  // failed to set priority
-      StackOverflowed,    // caused SIGSTACK1
-      IsExiting,          // is about to return
-      StatusFlag_N        // number of flags
-   };
-
-   typedef std::bitset< StatusFlag_N > StatusFlags;
-
-   //  Creates a native thread for CLIENT.  PRIO is the priority at
-   //  which it will run, and SIZE is its stack size).
+   //  Creates a native thread for CLIENT.  PRIO is the priority at which
+   //  it will run, and SIZE is its stack size).
    //
    SysThread(Thread* client, Priority prio, size_t size);
 
@@ -103,30 +95,47 @@ private:
    //
    static bool ReportError(fn_name function, fixed_string expl, int error);
 
-   //  Used by the constructor to create an actual native thread.  CLIENT
-   //  and SIZE were passed to the constructor.  Updates NID to the new
-   //  thread's native identifier and NTHREAD to its handle.  Returns
-   //  false on failure.
+   //  Platform-specific.  Configures the executable before creating the
+   //  first thread.
    //
-   static bool Create(const Thread* client,
-      size_t size, SysThreadId& nid, SysThread_t& nthread);
+   static void ConfigureProcess();
 
-   //  Deletes a native thread and nullifies its handle.
+   //  Platform-specific.  Invoked by the constructor to create a thread.
+   //  CLIENT and SIZE were passed to the constructor.  Updates nid_ to
+   //  the thread's native identifier and nthread_ to its native handle.
+   //  The thread must be created detached.  Returns false on failure.
    //
-   static void Delete(SysThread_t& thread);
+   bool Create(const Thread* client, size_t size);
+
+   //  Platform-specific.  Sets or changes the thread's priority.  Invoked
+   //  immediately after Create and also if a thread switches from running
+   //  unpreemptably to preemptably or vice versa.
+   //
+   bool SetPriority(Priority prio);
+
+   //  The signature of a signal handler.  SIG is the signal that occurred.
+   //
+   typedef void (*sighandler_t)(signal_t sig);
+
+   //  Platform-specific.  Registers HANDLER against SIG.  Invoked when
+   //  the thread is entered or reentered after trap recovery.
+   //
+   static void RegisterForSignal(signal_t sig, sighandler_t handler);
+
+   //  Platform-specific.  Invoked when the thread is entered or reentered
+   //  after trap recovery.  Returns a non-zero value if the thread should
+   //  immediately exit.
+   //
+   signal_t Start();
+
+   //  Platform-specific.  Invoked by the destructor so that resources can
+   //  be released.
+   //
+   void Delete();
 
    //  Returns the thread's native identifier.
    //
    SysThreadId Nid() const { return nid_; }
-
-   //  Configures the executable before creating the first thread.
-   //
-   static void ConfigureProcess();
-
-   //  Performs environment-specific actions upon entering the thread.
-   //  Returns a non-zero value if the thread should immediately exit.
-   //
-   signal_t Start();
 
    //  Sleeps for TIMEOUT (TIMEOUT_IMMED = yield, TIMEOUT_NEVER = infinite).
    //
@@ -146,35 +155,38 @@ private:
    //
    bool Proceed();
 
-   //  Invoked to wait on SENTRY until TIMEOUT.  If TIMEOUT is TIMEOUT_NEVER,
-   //  the thread will only resume after SENTRY is signalled.
+   //  Invoked to wait on GATE until TIMEOUT.  If TIMEOUT is TIMEOUT_NEVER,
+   //  the thread will only resume after GATE is signalled.
    //
    DelayRc Suspend(Gate& gate, const msecs_t& timeout);
 
-   //  Sets or changes the thread's priority.
+   //  The thread's status flags.
    //
-   bool SetPriority(Priority prio);
+   enum StatusFlag
+   {
+      StackOverflowed,  // caused SIGSTACK1
+      IsExiting,        // is about to return
+      StatusFlag_N      // number of flags
+   };
 
-   //  Registers HANDLER against SIG.
-   //
-   static void RegisterForSignal(signal_t sig, sighandler_t handler);
+   typedef std::bitset< StatusFlag_N > StatusFlags;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
-   //  Overridden for patching.
+   //  Overridden for patching.  Must be implemented as platform-specific.
    //
    void Patch(sel_t selector, void* arguments) override;
 
-   //  Reference to the native thread.
-   //
-   SysThread_t nthread_;
-
-   //  Native identifier for this thread.
+   //  The thread's native identifier.
    //
    SysThreadId nid_;
+
+   //  The thread's native handle.
+   //
+   SysThread_t nthread_;
 
    //  The thread's current status.
    //

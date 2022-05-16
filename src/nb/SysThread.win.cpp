@@ -173,8 +173,7 @@ void SysThread::ConfigureProcess()
 
 fn_name SysThread_Create = "SysThread.Create";
 
-bool SysThread::Create
-   (const Thread* client, size_t size, SysThreadId& nid, SysThread_t& nthread)
+bool SysThread::Create(const Thread* client, size_t size)
 {
    Debug::ft(SysThread_Create);
 
@@ -182,30 +181,29 @@ bool SysThread::Create
    //  priority boosts, which could interfere with our priority scheme.
    //
    unsigned int id;
-   auto result = _beginthreadex
+   nthread_ = _beginthreadex
       (nullptr, size, EnterThread, (void*) client, 0, &id);
 
-   if(result == 0)
+   if(nthread_ == 0)
    {
-      return ReportError(SysThread_Create, "beginthreadex", GetLastError());
+      return ReportError(SysThread_Create, "_beginthreadex", GetLastError());
    }
 
-   nthread = (HANDLE) result;
-   nid = id;
-   SetThreadPriorityBoost(nthread, true);
+   nid_ = id;
+   SetThreadPriorityBoost((HANDLE) nthread_, true);
    return true;
 }
 
 //------------------------------------------------------------------------------
 
-void SysThread::Delete(SysThread_t& thread)
+void SysThread::Delete()
 {
    Debug::ftnt("SysThread.Delete");
 
-   if(thread != nullptr)
+   if(nthread_ != 0)
    {
-      CloseHandle(thread);
-      thread = nullptr;
+      CloseHandle((HANDLE) nthread_);
+      nthread_ = 0;
    }
 }
 
@@ -238,14 +236,12 @@ bool SysThread::SetPriority(Priority prio)
 
    if(priority_ == prio) return true;
 
-   if(!SetThreadPriority(nthread_, PriorityMap[prio]))
+   if(!SetThreadPriority((HANDLE) nthread_, PriorityMap[prio]))
    {
-      status_.set(SetPriorityFailed);
       return false;
    }
 
    priority_ = prio;
-   status_.reset(SetPriorityFailed);
    return true;
 }
 

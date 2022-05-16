@@ -61,15 +61,14 @@ void SysThread::ConfigureProcess()
 {
    Debug::ft("SysThread.ConfigureProcess");
 
-   //L Set our process priority.
+   //L Set our overall process priority.
 }
 
 //------------------------------------------------------------------------------
 
 fn_name SysThread_Create = "SysThread.Create";
 
-bool SysThread::Create(const Thread* client,
-   size_t size, SysThreadId& nid, SysThread_t& nthread)
+bool SysThread::Create(const Thread* client, size_t size)
 {
    Debug::ft(SysThread_Create);
 
@@ -115,16 +114,16 @@ bool SysThread::Create(const Thread* client,
 
    //  Unlike Windows, this POSIX/Linux implementation does not need to
    //  distinguish a thread's handle from its identifier.  POSIX only
-   //  has pthread_t, which is an integer.
+   //  has pthread_t, which will do double duty.
    //
-   nthread = (SysThread_t) thread;
-   nid = thread;
+   nthread_ = thread;
+   nid_ = thread;
    return true;
 }
 
 //------------------------------------------------------------------------------
 
-void SysThread::Delete(SysThread_t& thread)
+void SysThread::Delete()
 {
    Debug::ftnt("SysThread.Delete");
 }
@@ -144,7 +143,7 @@ void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
 
    //L Use sigaction() instead of signal().
    //
-   //  Blocksignals except those that can occur because of an error in the
+   //  Block signals except those that can occur because of an error in the
    //  signal handler itself.  This is only a sketch.  For example, SIGSEGV
    //  should use sigaltstack to safely catch a stack overflow.
    //
@@ -166,9 +165,6 @@ void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
 
 SysThreadId SysThread::RunningThreadId() NO_FT
 {
-   //L Comparing two POSIX thread identifiers theoretically has to be
-   //  done with pthread_equal.
-   //
    return pthread_self();
 }
 
@@ -186,12 +182,10 @@ bool SysThread::SetPriority(Priority prio)
    if(err != 0)
    {
       ReportError(SysThread_SetPriority, "setschedparam", err);
-      status_.set(SetPriorityFailed);
       return false;
    }
 
    priority_ = prio;
-   status_.reset(SetPriorityFailed);
    return true;
 }
 

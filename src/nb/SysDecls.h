@@ -44,7 +44,7 @@ namespace NodeBase
 //  Handles for native OS objects.
 //
 typedef void* SysHeap_t;
-typedef void* SysThread_t;
+typedef uintptr_t SysThread_t;
 typedef uintptr_t SysThreadId;
 typedef uintptr_t SysSocket_t;
 }

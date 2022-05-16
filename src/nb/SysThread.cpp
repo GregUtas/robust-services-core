@@ -35,16 +35,16 @@ using std::string;
 namespace NodeBase
 {
 SysThread::SysThread(Thread* client, Priority prio, size_t size) :
-   nthread_(nullptr),
    nid_(NIL_ID),
+   nthread_(0),
    priority_(Priority_N),
    signal_(SIGNIL)
 {
    Debug::ft("SysThread.ctor");
 
-   //  Create the thread and set its priority.
-   //
-   Debug::Assert(Create(client, size, nid_, nthread_));
+   Debug::Assert(Create(client, size));
+   Debug::Assert(nid_ != NIL_ID);
+   Debug::Assert(nthread_ != 0);
    Debug::Assert(SetPriority(prio));
 }
 
@@ -54,7 +54,7 @@ SysThread::~SysThread()
 {
    Debug::ftnt("SysThread.dtor");
 
-   Delete(nthread_);
+   Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -73,8 +73,8 @@ void SysThread::Display(ostream& stream,
 {
    Permanent::Display(stream, prefix, options);
 
-   stream << prefix << "nthread  : " << nthread_ << CRLF;
    stream << prefix << "nid      : " << strHex(nid_, 8, false) << CRLF;
+   stream << prefix << "nthread  : " << nthread_ << CRLF;
    stream << prefix << "status   : " << status_.to_string() << CRLF;
    stream << prefix << "priority : " << priority_ << CRLF;
    stream << prefix << "signal   : " << signal_ << CRLF;

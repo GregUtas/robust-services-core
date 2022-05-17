@@ -62,9 +62,11 @@
 #include "errno.h"
 #include "in.h"
 #include "ioctl.h"
+#include "mman.h"
 #include "netdb.h"
 #include "poll.h"
 #include "pthread.h"
+#include "resource.h"
 #include "socket.h"
 #include "unistd.h"
 #endif

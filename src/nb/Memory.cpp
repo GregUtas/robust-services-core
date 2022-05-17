@@ -52,7 +52,7 @@ class ImmutableHeap : public NbHeap
    ImmutableHeap();
    ~ImmutableHeap();
 
-   //  The size of the immutable heap must be defined at compile
+   //> The size of the immutable heap must be defined at compile
    //  time because it is created even before main() is entered.
    //
    static const size_t Size_ = 512 * kBs;
@@ -65,7 +65,7 @@ class ProtectedHeap : public NbHeap
    ProtectedHeap();
    ~ProtectedHeap();
 
-   //  The number of kBs in the protected heap may be defined by a
+   //> The number of kBs in the protected heap may be defined by a
    //  command line parameter prefixed by "Prot_kBs=".  Its value
    //  may range from 1MB to 512Mb (32-bit CPU) or 8GB (64-bit CPU).
    //

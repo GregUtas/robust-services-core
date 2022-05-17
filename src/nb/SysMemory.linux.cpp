@@ -22,32 +22,33 @@
 #ifdef OS_LINUX
 
 #include "SysMemory.h"
+#include <errno.h>
+#include <sys/mman.h>
 #include "Debug.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-/*L
-constexpr DWORD PAGE_INVALID = 0;
+constexpr int PAGE_INVALID = 0;
 
-const DWORD PermissionToProtection[MemoryProtection_N] =
+const int PermissionToProtection[MemoryProtection_N] =
 {
-   PAGE_NOACCESS,          // MemInaccessible
-   PAGE_EXECUTE,           // MemExecuteOnly
-   PAGE_INVALID,           // hypothetical MemWriteOnly
-   PAGE_INVALID,           // hypothetical MemWriteExecute
-   PAGE_READONLY,          // MemReadOnly
-   PAGE_EXECUTE_READ,      // MemReadExecute
-   PAGE_READWRITE,         // MemReadWrite
-   PAGE_EXECUTE_READWRITE  // MemReadWriteExecute
+   PROT_NONE,                          // MemInaccessible
+   PROT_EXEC,                          // MemExecuteOnly
+   PAGE_INVALID,                       // hypothetical MemWriteOnly
+   PAGE_INVALID,                       // hypothetical MemWriteExecute
+   PROT_READ,                          // MemReadOnly
+   PROT_READ | PROT_EXEC,              // MemReadExecute
+   PROT_READ | PROT_WRITE,             // MemReadWrite
+   PROT_READ | PROT_WRITE | PROT_EXEC  // MemReadWriteExecute
 };
 
 //------------------------------------------------------------------------------
 
 fn_name NodeBase_GetMemoryProtection = "NodeBase.GetMemoryProtection";
 
-static DWORD GetMemoryProtection(MemoryProtection attrs)
+static int GetMemoryProtection(MemoryProtection attrs)
 {
    if((attrs < 0) || (attrs >= MemoryProtection_N))
    {
@@ -64,7 +65,6 @@ static DWORD GetMemoryProtection(MemoryProtection attrs)
 
    return mode;
 }
-*/
 
 //------------------------------------------------------------------------------
 
@@ -74,36 +74,28 @@ void* SysMemory::Alloc(void* addr, size_t size, MemoryProtection attrs)
 {
    Debug::ft(SysMemory_Alloc);
 
-   return nullptr;
-/*L
-   auto mode = GetMemoryProtection(attrs);
-   if(mode == PAGE_INVALID) return nullptr;
+   auto prot = GetMemoryProtection(attrs);
+   if(prot == PAGE_INVALID) return nullptr;
 
-   addr = VirtualAlloc(addr, size, MEM_COMMIT | MEM_RESERVE, mode);
+   addr = mmap(nullptr, size, prot, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
    if(addr != nullptr) return addr;
 
-   auto err = GetLastError();
-   Debug::SwLog(SysMemory_Alloc, "failed to allocate memory", err);
+   Debug::SwLog(SysMemory_Alloc, "failed to allocate memory", errno);
    return nullptr;
-*/
 }
 
 //------------------------------------------------------------------------------
 
 fn_name SysMemory_Free = "SysMemory.Free";
 
-bool SysMemory::Free(void* addr)
+bool SysMemory::Free(void* addr, size_t size)
 {
    Debug::ft(SysMemory_Free);
 
-   return false;
-/*L
-   if(VirtualFree(addr, 0, MEM_RELEASE)) return true;
+   if(munmap(addr, size) == 0) return true;
 
-   auto err = GetLastError();
-   Debug::SwLog(SysMemory_Free, "failed to free memory", err);
+   Debug::SwLog(SysMemory_Free, "failed to free memory", errno);
    return false;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -114,33 +106,27 @@ bool SysMemory::Lock(void* addr, size_t size)
 {
    Debug::ft(SysMemory_Lock);
 
-   return false;
-/*L
-   if(VirtualLock(addr, size)) return true;
+   if(mlock(addr, size) == 0) return true;
 
-   auto err = GetLastError();
-   Debug::SwLog(SysMemory_Lock, "failed to lock memory", err);
+   Debug::SwLog(SysMemory_Lock, "failed to lock memory", errno);
    return false;
-*/
 }
 
 //------------------------------------------------------------------------------
 
+fn_name SysMemory_Protect = "SysMemory.Protect";
+
 int SysMemory::Protect(void* addr, size_t size, MemoryProtection attrs)
 {
-   Debug::ft("SysMemory.Protect");
+   Debug::ft(SysMemory_Protect);
 
-   return -1;
-/*L
-   auto newMode = GetMemoryProtection(attrs);
-   if(newMode == PAGE_INVALID) return ERROR_INVALID_PARAMETER;
+   auto prot = GetMemoryProtection(attrs);
+   if(prot == PAGE_INVALID) return EINVAL;
 
-   DWORD oldMode = 0;
-   if(VirtualProtect(addr, size, newMode, &oldMode)) return 0;
+   if(mprotect(addr, size, prot) == 0) return 0;
 
-   auto err = GetLastError();
-   return err;
-*/
+   Debug::SwLog(SysMemory_Protect, "failed to change protection", errno);
+   return errno;
 }
 
 //------------------------------------------------------------------------------
@@ -151,14 +137,10 @@ bool SysMemory::Unlock(void* addr, size_t size)
 {
    Debug::ft(SysMemory_Unlock);
 
-   return false;
-/*L
-   if(VirtualUnlock(addr, size)) return true;
+   if(munlock(addr, size) == 0) return true;
 
-   auto err = GetLastError();
-   Debug::SwLog(SysMemory_Unlock, "failed to unlock memory", err);
+   Debug::SwLog(SysMemory_Unlock, "failed to unlock memory", errno);
    return false;
-*/
 }
 }
 #endif

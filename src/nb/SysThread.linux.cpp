@@ -25,6 +25,7 @@
 #include <csignal>
 #include <cstdint>
 #include <pthread.h>
+#include <sys/resource.h>
 #include "Debug.h"
 #include "Thread.h"
 
@@ -57,11 +58,20 @@ static void* EnterThread(void* arg)
 
 //------------------------------------------------------------------------------
 
+fn_name SysThread_ConfigureProcess = "SysThread.ConfigureProcess";
+
 void SysThread::ConfigureProcess()
 {
-   Debug::ft("SysThread.ConfigureProcess");
+   Debug::ft(SysThread_ConfigureProcess);
 
-   //L Set our overall process priority.
+   //  Set our overall process priority.
+   //
+   auto err = setpriority(PRIO_PROCESS, 0, -1);
+
+   if(err != 0)
+   {
+      ReportError(SysThread_ConfigureProcess, "setpriority", err);
+   }
 }
 
 //------------------------------------------------------------------------------

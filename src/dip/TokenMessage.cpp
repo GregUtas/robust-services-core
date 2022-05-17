@@ -13,7 +13,6 @@
 //
 #include "TokenMessage.h"
 #include <cctype>
-#include <cstring>
 #include <iosfwd>
 #include <map>
 #include <sstream>

@@ -88,7 +88,7 @@ void* SysMemory::Alloc(void* addr, size_t size, MemoryProtection attrs)
 
 fn_name SysMemory_Free = "SysMemory.Free";
 
-bool SysMemory::Free(void* addr)
+bool SysMemory::Free(void* addr, size_t size)
 {
    Debug::ft(SysMemory_Free);
 

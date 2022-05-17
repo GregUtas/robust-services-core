@@ -40,8 +40,9 @@ namespace SysMemory
    void* Alloc(void* addr, size_t size, MemoryProtection attrs = MemReadWrite);
 
    //  Frees the memory at ADDR, which was previously returned by Alloc.
+   //  SIZE should be the size of segment requested from Alloc.
    //
-   bool Free(void* addr);
+   bool Free(void* addr, size_t size);
 
    //  Disables paging for ADDR[0 to SIZE-1].
    //

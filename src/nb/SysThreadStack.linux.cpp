@@ -23,17 +23,15 @@
 
 #include "SysThreadStack.h"
 #include <cstddef>
+#include <cstdlib>
 #include <cstring>
+#include <execinfo.h>
 #include <memory>
-#include <new>
-#include <sstream>
+#include <ostream>
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
-#include "Memory.h"
-#include "NbLogs.h"
-#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -42,9 +40,7 @@ using std::string;
 
 namespace NodeBase
 {
-/*L
-//  The maximum number of frames that RtlCaptureStackBackTrace can capture.
-//  On Windows XP, it's 62.  In later versions of Windows, it's UINT16_MAX.
+//  The maximum number of frames that will be .
 //
 constexpr size_t MaxFrames = 2048;
 
@@ -57,151 +53,26 @@ typedef void* StackFrames[MaxFrames];
 typedef std::unique_ptr< void*[] > StackFramesPtr;
 
 //------------------------------------------------------------------------------
-//
-//  For capturing stack traces.
-//
-class StackInfo
-{
-public:
-   //  Deleted because this class only has static members.
-   //
-   StackInfo() = delete;
-
-   //  Loads symbol information on startup.
-   //
-   static DWORD Startup();
-
-   //  Releases symbol information on shutdown.
-   //
-   static void Shutdown();
-
-   //  Captures the running thread's stack in FRAMES.  Returns the number
-   //  of functions on the stack.
-   //
-   static fn_depth GetFrames(StackFramesPtr& frames);
-
-   //  Returns the name of the function associated with FRAME.
-   //
-   static const char* GetFunction(DWORD64 frame);
-
-   //  Returns the name of the file where the function associated with FRAME
-   //  is implemented, updating LINE and DISP to the line number and offset
-   //  within that file.
-   //
-   static const char* GetFileLoc(DWORD64 frame, DWORD& line, DWORD& disp);
-private:
-   //  A handle to our process.
-   //
-   static HANDLE Process;
-
-   //  Symbol information.
-   //
-   static SYMBOL_INFO* Symbols;
-
-   //  File name and line number information for a function.
-   //
-   static IMAGEHLP_LINE64 Source;
-};
-
-HANDLE StackInfo::Process = nullptr;
-SYMBOL_INFO* StackInfo::Symbols = nullptr;
-IMAGEHLP_LINE64 StackInfo::Source = { };
-
-//------------------------------------------------------------------------------
-
-const char* StackInfo::GetFileLoc(DWORD64 frame, DWORD& line, DWORD& disp)
-{
-   if(!SymGetLineFromAddr64(Process, frame, &disp, &Source)) return nullptr;
-   line = Source.LineNumber;
-   return Source.FileName;
-}
-
-//------------------------------------------------------------------------------
-
-fn_depth StackInfo::GetFrames(StackFramesPtr& frames)
-{
-   //  Reading stack frames during the shutdown phase of a restart fails
-   //  because a heap corruption is detected.  It appears that a library
-   //  up-issued by VS2022 is the culprit, because the problem occurs even
-   //  after reverting to the most recent code that passed restart tests
-   //  in VS2017.
-   //
-   auto stage = Restart::GetStage();
-   if(stage == ShuttingDown) return 0;
-
-   frames.reset(new StackFrames);
-   return RtlCaptureStackBackTrace(0, MaxFrames, frames.get(), nullptr);
-}
-
-//------------------------------------------------------------------------------
-
-const char* StackInfo::GetFunction(DWORD64 frame)
-{
-   if(!SymFromAddr(Process, frame, nullptr, Symbols)) return nullptr;
-   return Symbols->Name;
-}
-
-//------------------------------------------------------------------------------
-
-void StackInfo::Shutdown()
-{
-   Memory::Free(Symbols, MemPermanent);
-   Symbols = nullptr;
-   SymCleanup(GetCurrentProcess());
-}
-
-//------------------------------------------------------------------------------
-
-DWORD StackInfo::Startup()
-{
-   //  Allocate memory for, and load, symbol information.  We want to be able
-   //  to map a function return address to a specific line number in a source
-   //  code file, and we want demangled function names.
-   //
-   if(Symbols != nullptr) return 0;
-
-   auto size = sizeof(SYMBOL_INFO) + MAX_SYM_NAME;
-   Symbols = (SYMBOL_INFO*) Memory::Alloc(size, MemPermanent, std::nothrow);
-   if(Symbols == nullptr) return ERROR_NOT_ENOUGH_MEMORY;
-
-   Process = GetCurrentProcess();
-
-   if(!SymInitialize(Process, nullptr, true))
-   {
-      Memory::Free(Symbols, MemPermanent);
-      Symbols = nullptr;
-      return GetLastError();
-   }
-
-   auto options = SymGetOptions();
-   options |= (SYMOPT_LOAD_LINES | SYMOPT_UNDNAME);
-   SymSetOptions(options);
-
-   //  Initialize other fields required when interpreting a stack frame.
-   //
-   Symbols->SizeOfStruct = sizeof(SYMBOL_INFO);
-   Symbols->MaxNameLen = MAX_SYM_NAME;
-   Source.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
-   return 0;
-}
-*/
-
-//==============================================================================
 
 void SysThreadStack::Display(ostream& stream) NO_FT
 {
-/*L
-   StackFramesPtr frames = nullptr;
-   auto depth = StackInfo::GetFrames(frames);
+   StackFramesPtr frames(new StackFrames);
+
+   auto depth = backtrace(frames.get(), MaxFrames);
    if(depth == 0) return;
 
-   //  XLO and XHI limit the traceback's display to 48 functions, namely
-   //  the 28 uppermost and the 20 lowermost functions.
+   auto fnames = backtrace_symbols(frames.get(), depth);
+   if(fnames == nullptr)
+   {
+      stream << "function traceback unavailable" << CRLF;
+      return;
+   }
+
+   //  XLO and XHI limit the traceback's display to 48 functions,
+   //  namely the 28 uppermost and the 20 lowermost functions.
    //
    string prefix = Log::Tab + spaces(2);
    string name;
-   DWORD line;
-   DWORD disp;
    auto xlo = 30;
    auto xhi = depth - 21;
 
@@ -220,62 +91,39 @@ void SysThreadStack::Display(ostream& stream) NO_FT
       else
       {
          stream << prefix;
+         name = fnames[f];
 
-         //  Get the name of the function associated with this stack frame.
-         //  Modify the name by replacing each C++ scope operator with a dot.
-         //
-         auto frame = DWORD64(size_t(frames[f]));
-         auto func = StackInfo::GetFunction(frame);
-
-         if(func != nullptr)
+         if(!name.empty())
          {
-            name = func;
             ReplaceScopeOperators(name);
-            stream << name << " @ ";
-
-            //  Get the source code filename and line number where this
-            //  function invoked the next one on the stack.  Modify the
-            //  filename by removing the directory path.
-            //
-            auto file = StackInfo::GetFileLoc(frame, line, disp);
-
-            if(file != nullptr)
-            {
-               name = file;
-               auto pos = name.rfind(BACKSLASH);
-               if(pos != string::npos) name = name.erase(0, pos + 1);
-               stream << name << " + " << line << '[' << disp << ']';
-            }
-            else
-            {
-               stream << "<unknown file> (err=" << GetLastError() << ')';
-            }
+            stream << name;
          }
          else
          {
-            stream << "<unknown function> (err=" << GetLastError() << ')';
+            stream << "unknown function";
          }
 
          stream << CRLF;
       }
    }
-*/
+
+   //  Free the memory that backtrace_symbols() allocated for the function
+   //  names using malloc().
+   //
+   free(fnames);
 }
 
 //------------------------------------------------------------------------------
 
 fn_depth SysThreadStack::FuncDepth()
 {
-   return 0;
-/*L
    //  Exclude this function from the depth count.  We're only interested
    //  in the current function's depth, so Frames needn't be per-thread.
    //
    static void* Frames[MaxFrames];
 
-   auto depth = RtlCaptureStackBackTrace(0, MaxFrames, Frames, nullptr);
+   auto depth = backtrace(Frames, MaxFrames);
    return (depth > 0 ? depth - 1 : 0);
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -283,14 +131,6 @@ fn_depth SysThreadStack::FuncDepth()
 void SysThreadStack::Shutdown(RestartLevel level)
 {
    Debug::ft("SysThreadStack.Shutdown");
-/*L
-   //  When actually exiting the process, unload symbol information.
-   //
-   if(level >= RestartReboot)
-   {
-      StackInfo::Shutdown();
-   }
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -298,45 +138,30 @@ void SysThreadStack::Shutdown(RestartLevel level)
 void SysThreadStack::Startup(RestartLevel level)
 {
    Debug::ft("SysThreadStack.Startup");
-/*L
-   auto errval = StackInfo::Startup();
-   if(errval == 0) return;
-
-   auto log = Log::Create(NodeLogGroup, NodeNoSymbolInfo);
-
-   if(log != nullptr)
-   {
-      *log << Log::Tab << "errval=" << errval;
-      Log::Submit(log);
-   }
-*/
 }
 
 //------------------------------------------------------------------------------
 
 bool SysThreadStack::TrapIsOk() NO_FT
 {
-   return false;
-/*L
-   //  Do not trap a thread that is currently executing a destructor.
-   //
-   StackFramesPtr frames = nullptr;
-   auto depth = StackInfo::GetFrames(frames);
-   if(depth == 0) return true;
+   StackFramesPtr frames(new StackFrames);
+
+   auto depth = backtrace(frames.get(), MaxFrames);
+   if(depth == 0) return;
+
+   auto fnames = backtrace_symbols(frames.get(), depth);
+   if(fnames == nullptr)
+   {
+      return true;
+   }
 
    for(auto f = 2; f < depth; ++f)
    {
-      auto func = StackInfo::GetFunction(DWORD64(size_t(frames[f])));
-
-      if(func != nullptr)
-      {
-         if(strchr(func, '~') != nullptr) return false;
-         if(strstr(func, "operator delete") != nullptr) return false;
-      }
+      if(strchr(fnames[f], '~') != nullptr) return false;
+      if(strstr(fnames[f], "operator delete") != nullptr) return false;
    }
 
    return true;
-*/
 }
 }
 #endif

@@ -125,7 +125,7 @@ int SysMemory::Protect(void* addr, size_t size, MemoryProtection attrs)
 
    if(mprotect(addr, size, prot) == 0) return 0;
 
-   Debug::SwLog(SysMemory_Protect, "failed to change protection", errno);
+   Debug::SwLog(SysMemory_Protect, "failed to change permissions", errno);
    return errno;
 }
 

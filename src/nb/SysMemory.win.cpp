@@ -116,9 +116,11 @@ bool SysMemory::Lock(void* addr, size_t size)
 
 //------------------------------------------------------------------------------
 
+fn_name SysMemory_Protect = "SysMemory.Protect";
+
 int SysMemory::Protect(void* addr, size_t size, MemoryProtection attrs)
 {
-   Debug::ft("SysMemory.Protect");
+   Debug::ft(SysMemory_Protect);
 
    auto newMode = GetMemoryProtection(attrs);
    if(newMode == PAGE_INVALID) return ERROR_INVALID_PARAMETER;
@@ -127,6 +129,7 @@ int SysMemory::Protect(void* addr, size_t size, MemoryProtection attrs)
    if(VirtualProtect(addr, size, newMode, &oldMode)) return 0;
 
    auto err = GetLastError();
+   Debug::SwLog(SysMemory_Protect, "failed to change permissions", err);
    return err;
 }
 

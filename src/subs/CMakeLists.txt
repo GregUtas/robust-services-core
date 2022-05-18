@@ -21,6 +21,7 @@ set(Headers
     "endian.h"
     "errno.h"
     "exception"
+    "execinfo.h"
     "filesystem"
     "fstream"
     "functional"

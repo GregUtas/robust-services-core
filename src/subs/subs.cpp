@@ -60,6 +60,7 @@
 #ifdef OS_LINUX
 #include "endian.h"
 #include "errno.h"
+#include "execinfo.h"
 #include "in.h"
 #include "ioctl.h"
 #include "mman.h"

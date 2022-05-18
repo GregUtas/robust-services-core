@@ -5,7 +5,12 @@
 #ifndef CSTDLIB_INCLUDED
 #define CSTDLIB_INCLUDED
 
+#include "cstddef"
+
 constexpr int RAND_MAX = 0x7fff;
+
+void* malloc(size_t size);
+void free(void* addr);
 
 void exit(int status);
 int rand();

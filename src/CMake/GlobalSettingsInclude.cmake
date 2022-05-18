@@ -128,6 +128,10 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Wno-sign-compare)
     add_compile_options(-Wno-switch)
     add_compile_options(-Wno-trigraphs)
+
+    # Enable POSIX threads
+    add_compile_options(-pthread)
+    add_link_options(-pthread)
 else()
     message(FATAL_ERROR "** ${CMAKE_CXX_COMPILER_ID} compiler is not supported")
 endif()

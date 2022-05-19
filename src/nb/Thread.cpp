@@ -2956,6 +2956,11 @@ void Thread::SignalHandler(signal_t sig)
    //  Re-register for signals before handling the signal.
    //
    RegisterForSignals();
+
+   //* Support SIGWRITE on Linux.  On Windows, it is distinguished from
+   //  SIGSEGV when mapping the infamous 0xc0000005 structured exception
+   //  in SysThread.win.cpp.  A different solution is needed on Linux.
+   //
    if(HandleSignal(sig, 0)) return;
 
    //  Either trap recovery is off or we received a signal that could not be

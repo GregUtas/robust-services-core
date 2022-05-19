@@ -57,6 +57,12 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
       return;
    }
 
+   //* Linux only supports the default heap.  NbHeap will therefore need to
+   //  be used for all memory types except MemPermanent.  MemDynamic is used
+   //  far more than other memory types, and NbHeap will have to be enhanced
+   //  to support it.  Internally, NbHeap will have to allocate extra heaps
+   //  when object pools expand well beyond their original size.
+   //
    Debug::SwLog(SysHeap_ctor1, "not supported on Linux: use NbHeap", type);
    throw AllocationException(type, size);
 }
@@ -94,7 +100,7 @@ void* SysHeap::Alloc(size_t size)
    Debug::ft("SysHeap.Alloc");
 
    //  Because Free can only ask for a block's real size, as opposed to the
-   //  size that was originall requested, we must track heap usage by using
+   //  size that was originally requested, we must track heap usage by using
    //  the real size.
    //
    auto addr = malloc(size);
@@ -109,7 +115,7 @@ size_t SysHeap::BlockToSize(const void* addr) const
 {
    Debug::ft("SysHeap.BlockToSize");
 
-   //  Why isn't the parameter to malloc_usable_size take a const void*?
+   //  Why isn't the parameter to malloc_usable_size a const void*?
    //
    return malloc_usable_size(const_cast< void* >(addr));
 }

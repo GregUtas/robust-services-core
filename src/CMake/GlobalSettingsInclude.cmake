@@ -132,6 +132,9 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Enable POSIX threads
     add_compile_options(-pthread)
     add_link_options(-pthread)
+
+    # Enable heap validation
+    add_link_options(-lmcheck)
 else()
     message(FATAL_ERROR "** ${CMAKE_CXX_COMPILER_ID} compiler is not supported")
 endif()

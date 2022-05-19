@@ -191,8 +191,13 @@ DWORD StackInfo::Startup()
 void SysThreadStack::Display(ostream& stream) NO_FT
 {
    StackFramesPtr frames = nullptr;
+
    auto depth = StackInfo::GetFrames(frames);
-   if(depth == 0) return;
+   if(depth == 0)
+   {
+      stream << "function traceback unavailable" << CRLF;
+      return;
+   }
 
    //  XLO and XHI limit the traceback's display to 48 functions, namely
    //  the 28 uppermost and the 20 lowermost functions.
@@ -312,6 +317,7 @@ bool SysThreadStack::TrapIsOk() NO_FT
    //  Do not trap a thread that is currently executing a destructor.
    //
    StackFramesPtr frames = nullptr;
+
    auto depth = StackInfo::GetFrames(frames);
    if(depth == 0) return true;
 

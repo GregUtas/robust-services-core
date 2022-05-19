@@ -59,7 +59,11 @@ void SysThreadStack::Display(ostream& stream) NO_FT
    StackFramesPtr frames(new StackFrames);
 
    auto depth = backtrace(frames.get(), MaxFrames);
-   if(depth == 0) return;
+   if(depth == 0)
+   {
+      stream << "function traceback unavailable" << CRLF;
+      return;
+   }
 
    auto fnames = backtrace_symbols(frames.get(), depth);
    if(fnames == nullptr)
@@ -147,13 +151,10 @@ bool SysThreadStack::TrapIsOk() NO_FT
    StackFramesPtr frames(new StackFrames);
 
    auto depth = backtrace(frames.get(), MaxFrames);
-   if(depth == 0) return;
+   if(depth == 0) return true;
 
    auto fnames = backtrace_symbols(frames.get(), depth);
-   if(fnames == nullptr)
-   {
-      return true;
-   }
+   if(fnames == nullptr) return true;
 
    for(auto f = 2; f < depth; ++f)
    {
@@ -161,6 +162,10 @@ bool SysThreadStack::TrapIsOk() NO_FT
       if(strstr(fnames[f], "operator delete") != nullptr) return false;
    }
 
+   //  Free the memory that backtrace_symbols() allocated for the function
+   //  names using malloc().
+   //
+   free(fnames);
    return true;
 }
 }

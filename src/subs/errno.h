@@ -8,6 +8,7 @@
 
 extern int errno;
 
+constexpr int EPERM = 1;
 constexpr int EINTR = 4;
 constexpr int EWOULDBLOCK = 11;
 constexpr int EINVAL = 22;

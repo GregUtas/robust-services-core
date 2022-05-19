@@ -23,10 +23,16 @@
 
 #include "SysHeap.h"
 #include <cstdint>
+#include <cstdlib>
+#include <errno.h>
+#include <malloc.h>
+#include <mcheck.h>
 #include <ostream>
 #include <sstream>
 #include <string>
+#include "AllocationException.h"
 #include "Debug.h"
+#include "Element.h"
 #include "Restart.h"
 
 using std::ostream;
@@ -44,28 +50,21 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
    type_(type)
 {
    Debug::ft(SysHeap_ctor1);
-/*L
-   //  If this is the default heap, wrap it, else create it.
-   //
+
    if(type == MemPermanent)
    {
-      Debug::SwLog(SysHeap_ctor1, "wrong memory type", type);
+      Debug::SwLog(SysHeap_ctor1, "use default constructor", type);
       return;
    }
 
-   heap_ = HeapCreate(0, size, size);
-
-   if(heap_ == nullptr)
-   {
-      Restart::Initiate(RestartWarm, HeapCreationFailed, type);
-   }
-*/
+   Debug::SwLog(SysHeap_ctor1, "not supported on Linux: use NbHeap", type);
+   throw AllocationException(type, size);
 }
 
 //------------------------------------------------------------------------------
 
 SysHeap::SysHeap() : Heap(),
-   heap_(nullptr  /*L GetProcessHeap() */),
+   heap_(nullptr),
    size_(0),
    type_(MemPermanent)
 {
@@ -79,26 +78,6 @@ fn_name SysHeap_dtor = "SysHeap.dtor";
 SysHeap::~SysHeap()
 {
    Debug::ftnt(SysHeap_dtor);
-/*L
-   //  If there's no actual heap, we're done.
-   //
-   if(heap_ == nullptr) return;
-
-   //  Prevent an attempt to destroy the C++ default heap.
-   //
-   if(heap_ == GetProcessHeap())
-   {
-      Debug::SwLog(SysHeap_dtor, "tried to free default heap", 0);
-      return;
-   }
-
-   if(!HeapDestroy(heap_))
-   {
-      Debug::SwLog(SysHeap_dtor, "heap not freed", GetLastError());
-   }
-
-   heap_ = nullptr;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -114,14 +93,14 @@ void* SysHeap::Alloc(size_t size)
 {
    Debug::ft("SysHeap.Alloc");
 
-   return nullptr;
-/*L
-   if(heap_ == nullptr) return nullptr;
-
-   auto addr = HeapAlloc(heap_, 0, size);
+   //  Because Free can only ask for a block's real size, as opposed to the
+   //  size that was originall requested, we must track heap usage by using
+   //  the real size.
+   //
+   auto addr = malloc(size);
+   size = BlockToSize(addr);
    Requested(size, addr);
    return addr;
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -130,13 +109,9 @@ size_t SysHeap::BlockToSize(const void* addr) const
 {
    Debug::ft("SysHeap.BlockToSize");
 
-   return 0;
-/*L
-   if(heap_ == nullptr) return 0;
-   auto size = HeapSize(heap_, 0, addr);
-   if(size == (SIZE_MAX - 1)) size = 0;
-   return size;
-*/
+   //  Why isn't the parameter to malloc_usable_size take a const void*?
+   //
+   return malloc_usable_size(const_cast< void* >(addr));
 }
 
 //------------------------------------------------------------------------------
@@ -162,110 +137,18 @@ fn_name SysHeap_Free = "SysHeap.Free";
 void SysHeap::Free(void* addr)
 {
    Debug::ft(SysHeap_Free);
-/*L
-   if(heap_ == nullptr) return;
 
    auto size = BlockToSize(addr);
    Freeing(addr, size);
-
-   if(!HeapFree(heap_, 0, addr))
-   {
-      Debug::SwLog(SysHeap_Free, "HeapFree failed", GetLastError());
-   }
-*/
+   free(addr);
 }
 
 //------------------------------------------------------------------------------
 
 void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
 {
-/*L
-   DWORD NumberOfHeaps;
-   DWORD HeapsLength;
-   HANDLE DefaultProcessHeap;
-   HRESULT Result;
-   HANDLE* aHeaps;
-   SIZE_T BytesToAllocate;
-
-   //  Retrieve the number of active heaps for the current process
-   //  so we can calculate the buffer size needed for the heap handles.
-   //
-   NumberOfHeaps = GetProcessHeaps(0, nullptr);
-
-   if(NumberOfHeaps == 0)
-   {
-      expl << "Failed to get number of heaps: err=" << GetLastError() << CRLF;
-      return;
-   }
-
-   //  Calculate the buffer size.
-   //
-   Result = SIZETMult(NumberOfHeaps, sizeof(*aHeaps), &BytesToAllocate);
-
-   if(Result != S_OK)
-   {
-      expl << "SIZETMult failed: result=" << Result << CRLF;
-      return;
-   }
-
-   //  Get a handle to the default process heap.
-   //
-   DefaultProcessHeap = GetProcessHeap();
-
-   if(DefaultProcessHeap == nullptr)
-   {
-      expl << "Failed to get default heap: err=" << GetLastError() << CRLF;
-      return;
-   }
-
-   //  Allocate a buffer from the default process heap.
-   //
-   aHeaps = (HANDLE*) HeapAlloc(DefaultProcessHeap, 0, BytesToAllocate);
-
-   if(aHeaps == nullptr)
-   {
-      expl << "Failed to allocate " << BytesToAllocate << " bytes." << CRLF;
-      return;
-   }
-
-   //  Save the original number of heaps, because we are going to compare
-   //  it to the return value of the next GetProcessHeaps call.
-   //
-   HeapsLength = NumberOfHeaps;
-
-   //  Retrieve handles to the process heaps and display them.
-   //
-   NumberOfHeaps = GetProcessHeaps(HeapsLength, aHeaps);
-
-   if(NumberOfHeaps == 0)
-   {
-      expl << "Failed to get list of heaps: err=" << GetLastError() << CRLF;
-      HeapFree(DefaultProcessHeap, 0, aHeaps);
-      return;
-   }
-
-   if(NumberOfHeaps != HeapsLength)
-   {
-      //  Compare the latest number of heaps with the original number.  If
-      //  the latest number is larger than the original, another component
-      //  has created a new heap and the buffer is now too small.
-      //
-      expl << "The number of heaps changed: try again." << CRLF;
-      HeapFree(DefaultProcessHeap, 0, aHeaps);
-      return;
-   }
-   else
-   {
-      for(DWORD HeapsIndex = 0; HeapsIndex < HeapsLength; ++HeapsIndex)
-      {
-         heaps.insert(aHeaps[HeapsIndex]);
-      }
-   }
-
-   //  Release the memory allocated from the default process heap.
-   //
-   HeapFree(DefaultProcessHeap, 0, aHeaps);
-*/
+   //  This function is not supported on Linux, which only supports
+   //  the default heap.
 }
 
 //------------------------------------------------------------------------------
@@ -283,24 +166,30 @@ int SysHeap::SetPermissions(MemoryProtection attrs)
 {
    Debug::ft(SysHeap_SetPermissions);
 
-   return -1;
-/*L
    Debug::SwLog(SysHeap_SetPermissions, "not supported: use NbHeap", 0);
-   return ERROR_NOT_SUPPORTED;
-*/
+   return EPERM;
 }
 
 //------------------------------------------------------------------------------
 
+fn_name SysHeap_Validate = "SysHeap.Validate";
+
 bool SysHeap::Validate(const void* addr) const
 {
-   Debug::ft("SysHeap.Validate");
+   Debug::ft(SysHeap_Validate);
 
+   //  To validate the default help on Linux, mcheck() must have been called
+   //  before malloc().  Because we allocate memory before entering main(),
+   //  the only way to ensure this is to link using -lmcheck.  But doing so
+   //  installs a nil handler.  This means that if mcheck_check_all() detects
+   //  heap corruption, it invokes abort().  But we do catch SIGBART signals,
+   //  so we should be OK.  Regardless, it probably won't be long until the
+   //  system reboots--and maybe we should actually force one now, by setting
+   //  a flag to let the signal handler know that, right now, a SIGABRT would
+   //  signify heap corruption.
+   //
+   mcheck_check_all();
    return true;
-/*L
-   if(heap_ == nullptr) return true;
-   return HeapValidate(heap_, 0, addr);
-*/
 }
 }
 #endif

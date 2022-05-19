@@ -46,11 +46,9 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
 {
    Debug::ft(SysHeap_ctor1);
 
-   //  If this is the default heap, wrap it, else create it.
-   //
    if(type == MemPermanent)
    {
-      Debug::SwLog(SysHeap_ctor1, "wrong memory type", type);
+      Debug::SwLog(SysHeap_ctor1, "use default constructor", type);
       return;
    }
 

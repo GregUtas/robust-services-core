@@ -165,6 +165,10 @@ public:
    //
    size_t Expansions() const;
 
+   //  Returns the current number of segments.
+   //
+   size_t Segments() const { return currSegments_; }
+
    //  Returns the type of memory used by the pool's blocks.
    //
    MemoryType BlockType() const { return mem_; }

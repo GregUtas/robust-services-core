@@ -132,7 +132,7 @@ RestartLevel ObjectPoolSizeCfg::RestartRequired() const
 {
    Debug::ft("ObjectPoolSizeCfg.RestartRequired");
 
-   if(NextValue() > CurrValue()) return RestartNone;
+   if(NextValue() >= CurrValue()) return RestartNone;
    return Restart::LevelToClear(pool_->BlockType());
 }
 

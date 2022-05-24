@@ -72,7 +72,7 @@ void DeferredThread::Enter()
    //  occurred.
    //
    auto reg = Singleton< DeferredRegistry >::Instance();
-   msecs_t sleep(msecs_t(1000));
+   msecs_t sleep(msecs_t(1 * ONE_SEC));
 
    while(true)
    {
@@ -82,7 +82,8 @@ void DeferredThread::Enter()
       //  Sleep for one second, minus the amount of time that we just ran.
       //
       auto runTime = CurrTimeRunning();
-      sleep = (runTime > secs_t(1) ? TIMEOUT_IMMED : msecs_t(1000) - runTime);
+      sleep = (runTime > secs_t(1) ?
+         TIMEOUT_IMMED : msecs_t(1 * ONE_SEC) - runTime);
    }
 }
 

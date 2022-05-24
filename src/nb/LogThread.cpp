@@ -158,7 +158,7 @@ void LogThread::Enter()
 
       if(msgs->AvailCount() <= NoSpoolingMessageCount())
       {
-         delay = msecs_t(1000);  // wait for more MsgBuffers
+         delay = msecs_t(1 * ONE_SEC);  // wait for more MsgBuffers
          continue;
       }
 

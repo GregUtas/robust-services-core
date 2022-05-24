@@ -478,7 +478,7 @@ word ThreadAdmin::RtcLimit()
 msecs_t ThreadAdmin::RtcTimeout()
 {
    auto self = AccessAdminData();
-   auto msecs = (self != nullptr ? self->rtcTimeoutMsecs_->CurrValue() : 20);
+   auto msecs = (self != nullptr ? self->rtcTimeoutMsecs_->CurrValue() : 10);
    return msecs_t(msecs);
 }
 

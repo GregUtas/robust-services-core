@@ -75,7 +75,7 @@ PayloadInvokerPool::PayloadInvokerPool() :
    if(noIngressMessageCount_ == nullptr)
    {
       noIngressMessageCount_.reset
-         (new CfgIntParm("NoIngressMessageCount", "800", 400, 1200,
+         (new CfgIntParm("NoIngressMessageCount", "100", 50, 500,
          "messages reserved for non-ingress work"));
       reg->BindParm(*noIngressMessageCount_);
    }
@@ -154,8 +154,8 @@ bool PayloadInvokerPool::RejectIngressWork() const
 {
    Debug::ft("PayloadInvokerPool.RejectIngressWork");
 
-   auto msgCount = Singleton< MessagePool >::Instance()->AvailCount();
-   auto msgOvld = (msgCount <= size_t(noIngressMessageCount_->CurrValue()));
+   auto msgAvail = Singleton< MessagePool >::Instance()->AvailCount();
+   auto msgOvld = (msgAvail <= size_t(noIngressMessageCount_->CurrValue()));
    auto workLength = WorkQCurrLength(INGRESS);
    auto workOvld = (workLength >= size_t(noIngressQueueLength_->CurrValue()));
 

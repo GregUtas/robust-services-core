@@ -23,8 +23,7 @@
 
 #include "SysHeap.h"
 #include <cstdint>
-#include <intsafe.h>
-#include <sstream>
+#include <ostream>
 #include <string>
 #include <Windows.h>
 #include "Debug.h"
@@ -52,6 +51,11 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
       return;
    }
 
+   //  Linux doesn't support custom heaps, so all heaps other than
+   //  the default heap now use NbHeap.  This code is therefore no
+   //  longer used, but it has been kept in case Linux eventually
+   //  supports custom heaps.
+   //
    heap_ = HeapCreate(0, size, size);
 
    if(heap_ == nullptr)
@@ -113,6 +117,9 @@ void* SysHeap::Alloc(size_t size)
 
    if(heap_ == nullptr) return nullptr;
 
+   //  Windows doesn't provide a function that returns the actual
+   //  size of a block, so we can only track requested sizes.
+   //
    auto addr = HeapAlloc(heap_, 0, size);
    Requested(size, addr);
    return addr;
@@ -136,6 +143,15 @@ bool SysHeap::CanBeProtected() const { return false; }
 
 //------------------------------------------------------------------------------
 
+size_t SysHeap::CurrAvail() const
+{
+   Debug::ft("SysHeap.CurrAvail");
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
 void SysHeap::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -155,7 +171,11 @@ void SysHeap::Free(void* addr)
    Debug::ft(SysHeap_Free);
 
    if(heap_ == nullptr) return;
+   if(addr == nullptr) return;
 
+   //  Windows doesn't provide a function that returns the actual
+   //  size of a block, so we can only track requested sizes.
+   //
    auto size = BlockToSize(addr);
    Freeing(addr, size);
 
@@ -167,94 +187,7 @@ void SysHeap::Free(void* addr)
 
 //------------------------------------------------------------------------------
 
-void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
-{
-   DWORD NumberOfHeaps;
-   DWORD HeapsLength;
-   HANDLE DefaultProcessHeap;
-   HRESULT Result;
-   HANDLE* aHeaps;
-   SIZE_T BytesToAllocate;
-
-   //  Retrieve the number of active heaps for the current process
-   //  so we can calculate the buffer size needed for the heap handles.
-   //
-   NumberOfHeaps = GetProcessHeaps(0, nullptr);
-
-   if(NumberOfHeaps == 0)
-   {
-      expl << "Failed to get number of heaps: err=" << GetLastError() << CRLF;
-      return;
-   }
-
-   //  Calculate the buffer size.
-   //
-   Result = SIZETMult(NumberOfHeaps, sizeof(*aHeaps), &BytesToAllocate);
-
-   if(Result != S_OK)
-   {
-      expl << "SIZETMult failed: result=" << Result << CRLF;
-      return;
-   }
-
-   //  Get a handle to the default process heap.
-   //
-   DefaultProcessHeap = GetProcessHeap();
-
-   if(DefaultProcessHeap == nullptr)
-   {
-      expl << "Failed to get default heap: err=" << GetLastError() << CRLF;
-      return;
-   }
-
-   //  Allocate a buffer from the default process heap.
-   //
-   aHeaps = (HANDLE*) HeapAlloc(DefaultProcessHeap, 0, BytesToAllocate);
-
-   if(aHeaps == nullptr)
-   {
-      expl << "Failed to allocate " << BytesToAllocate << " bytes." << CRLF;
-      return;
-   }
-
-   //  Save the original number of heaps, because we are going to compare
-   //  it to the return value of the next GetProcessHeaps call.
-   //
-   HeapsLength = NumberOfHeaps;
-
-   //  Retrieve handles to the process heaps and display them.
-   //
-   NumberOfHeaps = GetProcessHeaps(HeapsLength, aHeaps);
-
-   if(NumberOfHeaps == 0)
-   {
-      expl << "Failed to get list of heaps: err=" << GetLastError() << CRLF;
-      HeapFree(DefaultProcessHeap, 0, aHeaps);
-      return;
-   }
-
-   if(NumberOfHeaps != HeapsLength)
-   {
-      //  Compare the latest number of heaps with the original number.  If
-      //  the latest number is larger than the original, another component
-      //  has created a new heap and the buffer is now too small.
-      //
-      expl << "The number of heaps changed: try again." << CRLF;
-      HeapFree(DefaultProcessHeap, 0, aHeaps);
-      return;
-   }
-   else
-   {
-      for(DWORD HeapsIndex = 0; HeapsIndex < HeapsLength; ++HeapsIndex)
-      {
-         heaps.insert(aHeaps[HeapsIndex]);
-      }
-   }
-
-   //  Release the memory allocated from the default process heap.
-   //
-   HeapFree(DefaultProcessHeap, 0, aHeaps);
-}
+size_t SysHeap::Overhead() const { return 0; }
 
 //------------------------------------------------------------------------------
 

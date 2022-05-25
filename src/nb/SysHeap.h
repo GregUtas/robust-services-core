@@ -24,8 +24,6 @@
 
 #include "Heap.h"
 #include <cstddef>
-#include <iosfwd>
-#include <set>
 #include "SysDecls.h"
 #include "SysTypes.h"
 
@@ -41,11 +39,6 @@ public:
    //  Virtual to allow subclassing.
    //
    virtual ~SysHeap();
-
-   //  Inserts, in HEAPS, the address of each heap allocated by this process.
-   //  Updates EXPL with an explanation if a problem occurs.
-   //
-   static void ListHeaps(std::set< void* >& heaps, std::ostringstream& expl);
 
    //  Overridden to return the heap's address.
    //
@@ -63,6 +56,10 @@ public:
    //
    bool CanBeProtected() const override;
 
+   //  Overridden to return the actual number of bytes available.
+   //
+   size_t CurrAvail() const override;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -71,6 +68,11 @@ public:
    //  Frees the memory segment at ADDR.
    //
    void Free(void* addr) override;
+
+   //  Overridden to return the number of bytes of management overhead.
+   //  Returns 0 if the value is unknown.
+   //
+   size_t Overhead() const override;
 
    //  Overridden for patching.
    //

@@ -123,13 +123,6 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 ################################################################################
-# Command line parameters
-################################################################################
-set_target_properties(${PROJECT_NAME}
-    PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "Prot_kBs=8192"
-)
-
-################################################################################
 # Dependencies
 ################################################################################
 # Link with other targets.

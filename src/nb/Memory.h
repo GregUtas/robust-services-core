@@ -97,11 +97,6 @@ namespace Memory
    //
    int Validate(MemoryType type, const void* addr);
 
-   //  Returns the type of memory associated with the heap at ADDR.
-   //  Returns MemNull if no heap begins at ADDR.
-   //
-   MemoryType AddrToType(const void* addr);
-
    //  Displays the system's heaps in STREAM, using PREFIX at the start
    //  of each line.
    //

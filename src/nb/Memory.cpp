@@ -21,15 +21,13 @@
 //
 #include "Memory.h"
 #include "NbHeap.h"
-#include "SysHeap.h"
 #include <cstring>
 #include <iomanip>
-#include <set>
-#include <sstream>
+#include <ostream>
+#include <vector>
 #include "AllocationException.h"
 #include "Debug.h"
-#include "Formatters.h"
-#include "MainArgs.h"
+#include "HeapCfg.h"
 #include "MemoryTrace.h"
 #include "PermanentHeap.h"
 #include "Restart.h"
@@ -51,11 +49,6 @@ class ImmutableHeap : public NbHeap
 
    ImmutableHeap();
    ~ImmutableHeap();
-
-   //> The size of the immutable heap must be defined at compile
-   //  time because it is created even before main() is entered.
-   //
-   static const size_t Size_ = 512 * kBs;
 };
 
 class ProtectedHeap : public NbHeap
@@ -64,17 +57,9 @@ class ProtectedHeap : public NbHeap
 
    ProtectedHeap();
    ~ProtectedHeap();
-
-   //> The number of kBs in the protected heap may be defined by a
-   //  command line parameter prefixed by "Prot_kBs=".  Its value
-   //  may range from 1MB to 512Mb (32-bit CPU) or 8GB (64-bit CPU).
-   //
-   static size_t GetSize();
-   const static size_t MinSize = 4096 * kBs;
-   const static size_t MaxSize = size_t(1) << (25 + BYTES_PER_WORD);
 };
 
-class PersistentHeap : public SysHeap
+class PersistentHeap : public NbHeap
 {
    friend class Singleton< PersistentHeap >;
 
@@ -82,7 +67,7 @@ class PersistentHeap : public SysHeap
    ~PersistentHeap();
 };
 
-class DynamicHeap : public SysHeap
+class DynamicHeap : public NbHeap
 {
    friend class Singleton< DynamicHeap >;
 
@@ -90,7 +75,7 @@ class DynamicHeap : public SysHeap
    ~DynamicHeap();
 };
 
-class TemporaryHeap : public SysHeap
+class TemporaryHeap : public NbHeap
 {
    friend class Singleton< TemporaryHeap >;
 
@@ -100,9 +85,13 @@ class TemporaryHeap : public SysHeap
 
 //------------------------------------------------------------------------------
 
-ImmutableHeap::ImmutableHeap() : NbHeap(MemImmutable, Size_)
+ImmutableHeap::ImmutableHeap() : NbHeap(MemImmutable)
 {
    Debug::ft("ImmutableHeap.ctor");
+
+   //> The size of the immutable heap must be defined at compile time.
+   //
+   Create(HeapCfg::SizeOfImmutableHeap);
 }
 
 //------------------------------------------------------------------------------
@@ -114,9 +103,11 @@ ImmutableHeap::~ImmutableHeap()
 
 //------------------------------------------------------------------------------
 
-ProtectedHeap::ProtectedHeap() : NbHeap(MemProtected, GetSize())
+ProtectedHeap::ProtectedHeap() : NbHeap(MemProtected)
 {
    Debug::ft("ProtectedHeap.ctor");
+
+   Create();
 }
 
 //------------------------------------------------------------------------------
@@ -128,30 +119,11 @@ ProtectedHeap::~ProtectedHeap()
 
 //------------------------------------------------------------------------------
 
-size_t ProtectedHeap::GetSize()
-{
-   Debug::ft("ProtectedHeap.GetSize");
-
-   size_t size;
-
-   auto str = MainArgs::Find("Prot_kBs=");
-   if(!strToSize(str, size)) return MinSize;
-
-   size *= kBs;
-
-   if(size < MinSize)
-      size = MinSize;
-   else if(size > MaxSize)
-      size = MaxSize;
-
-   return size;
-}
-
-//------------------------------------------------------------------------------
-
-PersistentHeap::PersistentHeap() : SysHeap(MemPersistent, 0)
+PersistentHeap::PersistentHeap() : NbHeap(MemPersistent)
 {
    Debug::ft("PersistentHeap.ctor");
+
+   Create();
 }
 
 //------------------------------------------------------------------------------
@@ -163,9 +135,11 @@ PersistentHeap::~PersistentHeap()
 
 //------------------------------------------------------------------------------
 
-DynamicHeap::DynamicHeap() : SysHeap(MemDynamic, 0)
+DynamicHeap::DynamicHeap() : NbHeap(MemDynamic)
 {
    Debug::ft("DynamicHeap.ctor");
+
+   Create();
 }
 
 //------------------------------------------------------------------------------
@@ -177,9 +151,11 @@ DynamicHeap::~DynamicHeap()
 
 //------------------------------------------------------------------------------
 
-TemporaryHeap::TemporaryHeap() : SysHeap(MemTemporary, 0)
+TemporaryHeap::TemporaryHeap() : NbHeap(MemTemporary)
 {
    Debug::ft("TemporaryHeap.ctor");
+
+   Create();
 }
 
 //------------------------------------------------------------------------------
@@ -223,21 +199,6 @@ Heap* Memory::AccessHeap(MemoryType type)
    }
 
    return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-MemoryType Memory::AddrToType(const void* addr)
-{
-   for(auto m = 1; m < MemoryType_N; ++m)
-   {
-      auto type = MemoryType(m);
-      auto heap = AccessHeap(type);
-      if(heap == nullptr) continue;
-      if(heap->Addr() == addr) return type;
-   }
-
-   return MemNull;
 }
 
 //------------------------------------------------------------------------------
@@ -338,47 +299,46 @@ void Memory::Copy(void* dest, const void* source, size_t size)
 
 //------------------------------------------------------------------------------
 
+fixed_string HeapHeader =
+   "MemoryType   Max kB  Curr kB  Targ kB  Used kB  Free kB  Address";
+
 void Memory::DisplayHeaps(ostream& stream, const string& prefix)
 {
-   std::set< void* > heaps;
+   std::vector< const Heap* > heaps;
    std::ostringstream expl;
 
-   SysHeap::ListHeaps(heaps, expl);
-   const Heap* heap = PermanentHeap::Instance();
-   if(heap != nullptr) heaps.insert(heap->Addr());
-   heap = Singleton< ImmutableHeap >::Extant();
-   if(heap != nullptr) heaps.insert(heap->Addr());
-   heap = Singleton< ProtectedHeap >::Extant();
-   if(heap != nullptr) heaps.insert(heap->Addr());
-   heap = Singleton< PersistentHeap >::Extant();
-   if(heap != nullptr) heaps.insert(heap->Addr());
-   heap = Singleton< DynamicHeap >::Extant();
-   if(heap != nullptr) heaps.insert(heap->Addr());
-   heap = Singleton< TemporaryHeap >::Extant();
-   if(heap != nullptr) heaps.insert(heap->Addr());
+   for(int m = MemTemporary; m < MemoryType_N; ++m)
+   {
+      heaps.push_back(AccessHeap(MemoryType(m)));
+   }
 
-   stream << prefix << "Heap  MemoryType  Address" << CRLF;
-   size_t index = 1;
+   stream << prefix << HeapHeader << CRLF;
+   auto config = Singleton< HeapCfg >::Instance();
 
    for(auto h = heaps.cbegin(); h != heaps.cend(); ++h)
    {
-      auto type = AddrToType(*h);
+      auto type = (*h)->Type();
 
-      stream << prefix << setw(4) << index++;
+      stream << prefix << setw(10) << type;
+      auto size = config->GetMaxSize(type);
+      stream << setw(9) << (size / kBs);
 
-      if(type != MemNull)
-         stream << setw(12) << type;
+      if(size > 0)
+      {
+         stream << setw(9) << (config->GetCurrSize(type) / kBs);
+         stream << setw(9) << (config->GetTargSize(type) / kBs);
+         stream << setw(9) << ((*h)->CurrInUse() / kBs);
+         stream << setw(9) << ((*h)->CurrAvail() / kBs);
+      }
       else
-         stream << setw(12) << "unknown";
+      {
+         stream << setw(9) << "n/a";
+         stream << setw(9) << "n/a";
+         stream << setw(9) << ((*h)->CurrInUse() / kBs);
+         stream << setw(9) << "n/a";
+      }
 
       stream << setw(NIBBLES_PER_POINTER + 2) << *h << CRLF;
-   }
-
-   if(!expl.str().empty())
-   {
-      stream << CRLF;
-      stream << prefix << "Problem while querying system heaps: " << CRLF;
-      stream << prefix << spaces(2) << expl.str() << CRLF;
    }
 }
 

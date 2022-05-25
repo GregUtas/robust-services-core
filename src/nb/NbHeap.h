@@ -37,10 +37,20 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  RSC's heap implementation, which is implemented using buddy allocation.
-//  It exists because Windows heap implementation runs into trouble if one
-//  of its heaps is write-protected.  A heap implementation that supports
-//  this capability is required.
+//  RSC's heap implementation, which uses buddy allocation.  It is used for
+//  all memory types other than MemPermanent, which uses the default heap.
+//    o Linux does not have a private heap capability, so all memory types
+//      except MemPermanent must use NbHeap.
+//    o Although Windows has a private heap capability, it runs into trouble
+//      if a heap is write-protected.  MemImmutable and MemProtected must
+//      therefore use NbHeap.
+//  The size of each heap must be engineered so that it has enough memory to
+//  handle peak load.  However, a restart can change the size of some heaps:
+//    o MemImmutable: size is fixed at compile time
+//    o MemPermanent: usually grows indefinitely (the default C++ heap)
+//    o MemProtected and MemPersistent: needs a reload restart to change size
+//    o MemDynamic: needs at least a cold restart to change size
+//    o MemTemporary: needs at least a warm restart to change size
 //
 class NbHeap : public Heap
 {
@@ -62,6 +72,10 @@ public:
    //
    size_t BlockToSize(const void* addr) const override;
 
+   //  Overriden to return the actual number of bytes available.
+   //
+   size_t CurrAvail() const override;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -70,6 +84,10 @@ public:
    //  Overridden to free the memory segment at ADDR.
    //
    void Free(void* addr) override;
+
+   //  Overridden to return the number of bytes of management overhead.
+   //
+   size_t Overhead() const override;
 
    //  Overridden for patching.
    //
@@ -101,12 +119,22 @@ public:
    //
    typedef size_t index_t;
 protected:
-   //  Creates a heap for memory of TYPE.  Variable-length heaps (SIZE=) are
-   //  not currently supported.  The heap is limited to SIZE bytes, which is
-   //  rounded up to a multiple of the smallest block size.  Protected because
-   //  this class is virtual.
+   //  Creates a heap for memory of TYPE.  Protected because this class is
+   //  virtual.
    //
-   NbHeap(MemoryType type, size_t size);
+   explicit NbHeap(MemoryType type);
+
+   //  Allocates the heap's memory.  Invoked by the leaf class constructor of a
+   //  heap that supports a specific MemoryType and whose size can be changed
+   //  by a restart.
+   //
+   bool Create();
+
+   //  Allocates the heap's memory.  SIZE is the number of bytes.  Invoked by
+   //  the leaf class constructor of a heap whose size cannot be changed by a
+   //  restart.
+   //
+   bool Create(size_t size);
 private:
    //  The state of a block.
    //

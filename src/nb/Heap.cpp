@@ -38,12 +38,12 @@ namespace NodeBase
 {
 Heap::Heap() :
    attrs_(MemReadWrite),
-   inUse_(0),
    allocs_(0),
    fails_(0),
    frees_(0),
-   maxInUse_(0),
    changes_(0),
+   currInUse_(0),
+   maxInUse_(0),
    trace_(false)
 {
    Debug::ft("Heap.ctor");
@@ -94,20 +94,32 @@ size_t Heap::BlockToSize(const void* addr) const
 
 //------------------------------------------------------------------------------
 
+fn_name Heap_CurrAvail = "Heap.CurrAvail";
+
+size_t Heap::CurrAvail() const
+{
+   Debug::ft(Heap_CurrAvail);
+
+   Debug::SwLog(Heap_CurrAvail, strOver(this), 0);
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
 void Heap::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    Permanent::Display(stream, prefix, options);
 
-   stream << prefix << "attrs    : " << attrs_ << CRLF;
-   stream << prefix << "inUse    : " << inUse_ << CRLF;
-   stream << prefix << "allocs   : " << allocs_ << CRLF;
-   stream << prefix << "fails    : " << fails_ << CRLF;
-   stream << prefix << "frees    : " << frees_ << CRLF;
-   stream << prefix << "maxInUse : " << maxInUse_ << CRLF;
-   stream << prefix << "changes  : " << changes_ << CRLF;
-   stream << prefix << "trace    : " << trace_ << CRLF;
-   stream << prefix << "blocks   : " << blocks_.size() << CRLF;
+   stream << prefix << "attrs       : " << attrs_ << CRLF;
+   stream << prefix << "allocs      : " << allocs_ << CRLF;
+   stream << prefix << "fails       : " << fails_ << CRLF;
+   stream << prefix << "frees       : " << frees_ << CRLF;
+   stream << prefix << "changes     : " << changes_ << CRLF;
+   stream << prefix << "currAlloc : " << currInUse_ << CRLF;
+   stream << prefix << "maxAlloc  : " << maxInUse_ << CRLF;
+   stream << prefix << "trace       : " << trace_ << CRLF;
+   stream << prefix << "blocks      : " << blocks_.size() << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -144,7 +156,7 @@ void Heap::Free(void* addr)
 
 void Heap::Freeing(void* addr, size_t size)
 {
-   inUse_ -= size;
+   currInUse_ -= size;
    ++frees_;
    if(!trace_) return;
 
@@ -161,6 +173,16 @@ void Heap::Freeing(void* addr, size_t size)
 bool Heap::IsFixedSize() const
 {
    return (Size() != 0);
+}
+
+//------------------------------------------------------------------------------
+
+size_t Heap::MinAvail() const
+{
+   Debug::ft("Heap.MinAvail");
+
+   auto size = Size();
+   return (size != 0 ? (size - Overhead() - MaxInUse()) : 0);
 }
 
 //------------------------------------------------------------------------------
@@ -185,6 +207,18 @@ void* Heap::operator new(size_t size)
 
 //------------------------------------------------------------------------------
 
+fn_name Heap_Overhead = "Heap.Overhead";
+
+size_t Heap::Overhead() const
+{
+   Debug::ft(Heap_Overhead);
+
+   Debug::SwLog(Heap_Overhead, strOver(this), 0);
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
 void Heap::Patch(sel_t selector, void* arguments)
 {
    Object::Patch(selector, arguments);
@@ -196,8 +230,8 @@ void Heap::Requested(size_t size, void* addr)
 {
    if(addr != nullptr)
    {
-      inUse_ += size;
-      if(inUse_ > maxInUse_) maxInUse_ = inUse_;
+      currInUse_ += size;
+      if(currInUse_ > maxInUse_) maxInUse_ = currInUse_;
       ++allocs_;
       if(trace_) blocks_.insert(TraceEntry(addr, size));
    }

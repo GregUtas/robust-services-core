@@ -50,11 +50,12 @@ public:
    //
    Heap& operator=(const Heap& that) = delete;
 
-   //  Returns the address of the heap itself.
+   //  Returns the address of the heap itself.  The default heap
+   //  (for MemPermanent) returns nullptr if its address is unknown.
    //
    virtual void* Addr() const = 0;
 
-   //  Returns the heap's size.
+   //  Returns the heap's size.  An expandable heap may return 0.
    //
    virtual size_t Size() const = 0;
 
@@ -91,17 +92,33 @@ public:
    //
    virtual int SetPermissions(MemoryProtection attrs);
 
+   //  Returns the number of bytes available.  Simply subtracting
+   //  the number of bytes allocated from the size of the heap is
+   //  inaccurate because of management overhead.
+   //
+   virtual size_t CurrAvail() const = 0;
+
+   //  Returns the number of bytes for management overhead.
+   //
+   virtual size_t Overhead() const = 0;
+
    //  Returns the heap's current memory protection.
    //
    MemoryProtection GetAttrs() const { return attrs_; }
 
-   //  Returns the number of bytes currently allocated from the heap.
+   //  Returns the number of bytes currently allocated or requested.
+   //  Ideally, this should be the number allocated rather than the
+   //  number requested, but Windows tracks the number requested.
    //
-   size_t BytesInUse() const { return inUse_; }
+   size_t CurrInUse() const { return currInUse_; }
 
-   //  Returns the maximum number of bytes allocated from the heap.
+   //  Returns the maximum number of bytes allocated or requested.
    //
-   size_t MaxBytesInUse() const { return maxInUse_; }
+   size_t MaxInUse() const { return maxInUse_; }
+
+   //  Returns the lowest number of bytes available.
+   //
+   size_t MinAvail() const;
 
    //  Returns the number of successful calls to Alloc().
    //
@@ -115,7 +132,8 @@ public:
    //
    size_t FreeCount() const { return frees_; }
 
-   //  Returns the number of times that Free() released memory.
+   //  Returns the number of times that the heap's memory
+   //  protection was changed.
    //
    size_t ChangeCount() const { return changes_; }
 
@@ -160,11 +178,15 @@ protected:
    //
    Heap();
 
-   //  Invoked before returning ADDR for a request of SIZE bytes.
+   //  Invoked before returning ADDR for an allocation request.
+   //  SIZE is the requested or actual size of the block at ADDR.
+   //  See the comment under CurrInUse, above.
    //
    void Requested(size_t size, void* addr);
 
-   //  Invoked before freeing ADDR, a block that is SIZE bytes long.
+   //  Invoked before freeing the block at ADDR.  SIZE is the
+   //  originally requested or actual size of the block at ADDR.
+   //  See the comment under CurrInUse, above.
    //
    void Freeing(void* addr, size_t size);
 private:
@@ -176,10 +198,6 @@ private:
    //  The heap's current memory protection attributes.
    //
    MemoryProtection attrs_;
-
-   //  The number of bytes currently allocated on the heap.
-   //
-   size_t inUse_;
 
    //  The number of successful calls to Alloc().
    //
@@ -193,13 +211,17 @@ private:
    //
    size_t frees_;
 
-   //  The maximum number of bytes allocated on the heap.
-   //
-   size_t maxInUse_;
-
    //  The number of times the heap's memory protection was changed.
    //
    size_t changes_;
+
+   //  The number of bytes currently allocated for requests.
+   //
+   size_t currInUse_;
+
+   //  The maximum number of bytes allocated for requests.
+   //
+   size_t maxInUse_;
 
    //  Set if in-use blocks are being traced.
    //

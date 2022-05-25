@@ -57,12 +57,6 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
       return;
    }
 
-   //* Linux only supports the default heap.  NbHeap will therefore need to
-   //  be used for all memory types except MemPermanent.  MemDynamic is used
-   //  far more than other memory types, and NbHeap will have to be enhanced
-   //  to support it.  Internally, NbHeap will have to allocate extra heaps
-   //  when object pools expand well beyond their original size.
-   //
    Debug::SwLog(SysHeap_ctor1, "not supported on Linux: use NbHeap", type);
    throw AllocationException(type, size);
 }
@@ -99,12 +93,12 @@ void* SysHeap::Alloc(size_t size)
 {
    Debug::ft("SysHeap.Alloc");
 
-   //  Because Free can only ask for a block's real size, as opposed to the
-   //  size that was originally requested, we must track heap usage by using
-   //  the real size.
+   //  Linux doesn't provide a function for returning the size of block
+   //  originally requested, so we can't distinguish between requested
+   //  and actual sizes.  We therefore track actual sizes.
    //
    auto addr = malloc(size);
-   size = BlockToSize(addr);
+   if(addr != nullptr) size = malloc_usable_size(addr);
    Requested(size, addr);
    return addr;
 }
@@ -126,6 +120,15 @@ bool SysHeap::CanBeProtected() const { return false; }
 
 //------------------------------------------------------------------------------
 
+size_t SysHeap::CurrAvail() const
+{
+   Debug::ft("SysHeap.CurrAvail");
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
 void SysHeap::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -144,18 +147,19 @@ void SysHeap::Free(void* addr)
 {
    Debug::ft(SysHeap_Free);
 
-   auto size = BlockToSize(addr);
+   //  Linux doesn't provide a function for returning the size of block
+   //  originally requested, so we can't distinguish between requested
+   //  and actual sizes.  We therefore track actual sizes.
+   //
+   if(addr == nullptr) return;
+   auto size = malloc_usable_size(addr);
    Freeing(addr, size);
    free(addr);
 }
 
 //------------------------------------------------------------------------------
 
-void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
-{
-   //  This function is not supported on Linux, which only supports
-   //  the default heap.
-}
+size_t SysHeap::Overhead() const { return 0; }
 
 //------------------------------------------------------------------------------
 

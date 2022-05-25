@@ -30,11 +30,13 @@
 #include "Duration.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "HeapCfg.h"
 #include "MutexGuard.h"
 #include "NbTypes.h"
 #include "Q2Link.h"
 #include "Q2Way.h"
 #include "Restart.h"
+#include "Singleton.h"
 #include "SysMemory.h"
 #include "SysMutex.h"
 
@@ -240,134 +242,12 @@ struct HeapPriv
 
 fn_name NbHeap_ctor = "NbHeap.ctor";
 
-NbHeap::NbHeap(MemoryType type, size_t size) : Heap(),
+NbHeap::NbHeap(MemoryType type) : Heap(),
    heap_(nullptr),
    size_(0),
    type_(type)
 {
    Debug::ft(NbHeap_ctor);
-
-   //  Round up the size of the heap management data to the next power of 2
-   //  so that it will overlay a whole number of blocks.
-   //
-   size_t infoSize = round_to_2_exp_n(sizeof(HeapPriv), MinBlockSizeLog2, true);
-   size_t minSize = (size_t(1) << log2(infoSize, true));
-
-   //  SIZE must be at least the smallest power of 2 that is larger than the
-   //  size of the heap management data.
-   //
-   if(size < minSize)
-   {
-      std::ostringstream expl;
-      expl << "heap size must be at least " << minSize;
-      Debug::SwLog(NbHeap_ctor, expl.str(), size);
-      return;
-   }
-
-   //  Allocate the heap's mutex.
-   //
-   std::ostringstream stream;
-   stream << "HeapLock(" << type_ << ')';
-   lockName_ = stream.str();
-   std::unique_ptr< SysMutex > lock(new SysMutex(lockName_.c_str()));
-
-   if(lock == nullptr)
-   {
-      Restart::Initiate(RestartWarm, MutexCreationFailed, 0);
-      return;
-   }
-
-   //  Round SIZE up to a multiple of the smallest block size.  Allocate
-   //  memory for the heap, initialize its management data, and have it
-   //  take ownership of the lock.
-   //
-   size_ = round_to_2_exp_n(size, MinBlockSizeLog2, true);
-   heap_ = (HeapPriv*) SysMemory::Alloc(nullptr, size_);
-
-   if(heap_ == nullptr)
-   {
-      size_ = 0;
-      lock.release();
-      Restart::Initiate(RestartWarm, HeapCreationFailed, type);
-      return;
-   }
-
-   new (heap_) HeapPriv();
-   heap_->lock.reset(lock.release());
-
-   //  Find the heap's lowest level, which is the level where the smallest
-   //  block that would span the entire heap would be placed.  Update SIZE
-   //  to the lowest power of 2 that would span the entire heap.
-   //
-   auto spanLog2 = log2(size_, true);
-   heap_->minLevel = LastLevel - (spanLog2 - MinBlockSizeLog2);
-
-   //  Set the heap's leftmost address, which precedes heap_ (its true start)
-   //  if its size_ is not a power of 2.
-   //
-   auto heapAddr = uintptr_t(heap_);
-   auto spanSize = size_t(1) << spanLog2;
-   heap_->leftAddr = heapAddr + size_ - spanSize;
-
-   //  Find the size of the STATE array.  There is a state for each block that
-   //  could be allocated: this is *twice* the number of blocks of MinBlockSize,
-   //  because buddies can be merged to handle larger requests.  Each state is
-   //  2 bits, so each byte can hold 4 states.  Round off the size of STATES
-   //  so that it overlays a whole number of blocks.
-   //
-   size_t maxBlocks = spanSize >> MinBlockSizeLog2;
-   heap_->maxIndex = maxBlocks - 1;
-   size_t stateSize = (2 * maxBlocks) / 4;
-   stateSize = round_to_2_exp_n(stateSize, MinBlockSizeLog2, true);
-
-   //  Set the addresses of the STATE array and initialize it to indicate that
-   //  all blocks are merged.
-   //
-   heap_->state = (uint8_t*) (heapAddr + infoSize);
-   for(size_t i = 0; i < stateSize; ++i) heap_->state[i] = 0;
-
-   //  Set the addresses of the first and last blocks that can be allocated
-   //  from the heap.
-   //
-   heap_->minAddr = heapAddr + infoSize + stateSize;
-   heap_->maxAddr = heapAddr + size_ - MinBlockSize;
-
-   //  Initialize the heap's free queues.
-   //
-   for(auto i = 0; i <= LastLevel; ++i) heap_->freeq[i].Init(0);
-
-   //  Put the available memory on the heap's free queues.  The front of the
-   //  heap contains memory that is off-limits because it either precedes the
-   //  heap (to make its logical size a power of 2) or because it contains the
-   //  management information.  We therefore work backwards from the *end* of
-   //  the heap, starting with a block whose size is half that of the heap,
-   //  rounded up to the next power of 2. Halve the size of each successive
-   //  block while checking that it does not infringe on the management data.
-   //
-   size = (size_t(1) << log2(size_, true)) >> 1;
-   auto addr = heapAddr + size_;
-   auto level = SizeToLevel(size);
-   auto avail = heapAddr + size_ - heap_->minAddr;
-
-   while(avail > 0)
-   {
-      if(size <= avail)
-      {
-         addr -= size;
-         avail -= size;
-         ReleaseBlock((HeapBlock*) addr, level);
-      }
-
-      ++level;
-      size >>= 1;
-   }
-
-   //  Mark all the blocks in the heap management area as allocated.
-   //
-   for(addr = heap_->leftAddr; addr < heap_->minAddr; addr += MinBlockSize)
-   {
-      ReserveBlock((HeapBlock*) addr);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -424,6 +304,7 @@ void* NbHeap::Alloc(size_t size)
    if(level > LastLevel) return nullptr;
 
    auto block = AllocBlock(level, size);
+   size = 1 << log2(size, true);
    Requested(size, block);
    return block;
 }
@@ -541,6 +422,176 @@ NbHeap::BlockState NbHeap::Corrupt(int reason, bool restart) const
 
 //------------------------------------------------------------------------------
 
+bool NbHeap::Create()
+{
+   Debug::ft("NbHeap.Create");
+
+   //  If the target size cannot be allocated, revert to the previous size.
+   //
+   auto config = Singleton< HeapCfg >::Instance();
+   auto size = config->GetTargSize(type_);
+
+   if(!Create(size))
+   {
+      config->RevertSize(type_);
+      return false;
+   }
+
+   config->UpdateSize(type_);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool NbHeap::Create(size_t size)
+{
+   Debug::ft("NbHeap.Create(size)");
+
+   //  Round up the size of the heap management data to the next power of 2
+   //  so that it will overlay a whole number of blocks.
+   //
+   size_t infoSize = round_to_2_exp_n(sizeof(HeapPriv), MinBlockSizeLog2, true);
+   size_t minSize = (size_t(1) << log2(infoSize, true));
+
+   //  SIZE must be at least the smallest power of 2 that is larger than the
+   //  size of the heap management data.
+   //
+   if(size < minSize)
+   {
+      std::ostringstream expl;
+      expl << "forcing heap size to minimum of " << minSize;
+      Debug::SwLog(NbHeap_ctor, expl.str(), size);
+      size = minSize;
+   }
+
+   //  Allocate the heap's mutex.
+   //
+   std::ostringstream stream;
+   stream << "HeapLock(" << type_ << ')';
+   lockName_ = stream.str();
+   std::unique_ptr< SysMutex > lock(new SysMutex(lockName_.c_str()));
+
+   if(lock == nullptr)
+   {
+      Restart::Initiate(RestartWarm, MutexCreationFailed, 0);
+      return false;
+   }
+
+   //  Round SIZE up to a multiple of the smallest block size.  Allocate
+   //  memory for the heap, initialize its management data, and have it
+   //  take ownership of the lock.
+   //
+   size_ = round_to_2_exp_n(size, MinBlockSizeLog2, true);
+   heap_ = (HeapPriv*) SysMemory::Alloc(nullptr, size_);
+
+   if(heap_ == nullptr)
+   {
+      size_ = 0;
+      lock.release();
+      return false;
+   }
+
+   new (heap_) HeapPriv();
+   heap_->lock.reset(lock.release());
+
+   //  Find the heap's lowest level, which is the level where the smallest
+   //  block that would span the entire heap would be placed.  Update SIZE
+   //  to the lowest power of 2 that would span the entire heap.
+   //
+   auto spanLog2 = log2(size_, true);
+   heap_->minLevel = LastLevel - (spanLog2 - MinBlockSizeLog2);
+
+   //  Set the heap's leftmost address, which precedes heap_ (its true start)
+   //  if its size_ is not a power of 2.
+   //
+   auto heapAddr = uintptr_t(heap_);
+   auto spanSize = size_t(1) << spanLog2;
+   heap_->leftAddr = heapAddr + size_ - spanSize;
+
+   //  Find the size of the STATE array.  There is a state for each block that
+   //  could be allocated: this is *twice* the number of blocks of MinBlockSize,
+   //  because buddies can be merged to handle larger requests.  Each state is
+   //  2 bits, so each byte can hold 4 states.  Round off the size of STATES
+   //  so that it overlays a whole number of blocks.
+   //
+   size_t maxBlocks = spanSize >> MinBlockSizeLog2;
+   heap_->maxIndex = maxBlocks - 1;
+   size_t stateSize = (2 * maxBlocks) / 4;
+   stateSize = round_to_2_exp_n(stateSize, MinBlockSizeLog2, true);
+
+   //  Set the addresses of the STATE array and initialize it to indicate that
+   //  all blocks are merged.
+   //
+   heap_->state = (uint8_t*) (heapAddr + infoSize);
+   for(size_t i = 0; i < stateSize; ++i) heap_->state[i] = 0;
+
+   //  Set the addresses of the first and last blocks that can be allocated
+   //  from the heap.
+   //
+   heap_->minAddr = heapAddr + infoSize + stateSize;
+   heap_->maxAddr = heapAddr + size_ - MinBlockSize;
+
+   //  Initialize the heap's free queues.
+   //
+   for(auto i = 0; i <= LastLevel; ++i) heap_->freeq[i].Init(0);
+
+   //  Put the available memory on the heap's free queues.  The front of the
+   //  heap contains memory that is off-limits because it either precedes the
+   //  heap (to make its logical size a power of 2) or because it contains the
+   //  management information.  We therefore work backwards from the *end* of
+   //  the heap, starting with a block whose size is half that of the heap,
+   //  rounded up to the next power of 2. Halve the size of each successive
+   //  block while checking that it does not infringe on the management data.
+   //
+   size = (size_t(1) << log2(size_, true)) >> 1;
+   auto addr = heapAddr + size_;
+   auto level = SizeToLevel(size);
+   auto avail = heapAddr + size_ - heap_->minAddr;
+
+   while(avail > 0)
+   {
+      if(size <= avail)
+      {
+         addr -= size;
+         avail -= size;
+         ReleaseBlock((HeapBlock*) addr, level);
+      }
+
+      ++level;
+      size >>= 1;
+   }
+
+   //  Mark all the blocks in the heap management area as allocated.
+   //
+   for(addr = heap_->leftAddr; addr < heap_->minAddr; addr += MinBlockSize)
+   {
+      ReserveBlock((HeapBlock*) addr);
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+size_t NbHeap::CurrAvail() const
+{
+   Debug::ft("NbHeap.CurrAvail");
+
+   size_t avail = 0;
+
+   for(auto level = 0; level <= LastLevel; ++level)
+   {
+      auto count = heap_->freeq[level].Size();
+      if(count == 0) continue;
+      auto size = LevelToSize(level);
+      avail += (count * size);
+   }
+
+   return avail;
+}
+
+//------------------------------------------------------------------------------
+
 HeapBlock* NbHeap::Dequeue(level_t level)
 {
    auto block = heap_->freeq[level].Deq();
@@ -577,7 +628,7 @@ void NbHeap::Display(ostream& stream,
 
    if(verbose)
    {
-      size_t free = 0;
+      size_t avail = 0;
 
       stream << prefix << "freeq [level] : " << CRLF;
 
@@ -585,12 +636,17 @@ void NbHeap::Display(ostream& stream,
       {
          auto count = heap_->freeq[level].Size();
          if(count == 0) continue;
-         stream << lead << strIndex(level) << "count=" << count << CRLF;
-         free += (count * LevelToSize(level));
+         auto size = LevelToSize(level);
+         stream << lead << strIndex(level);
+         stream << "count=" << count << " size=" << size << CRLF;
+         avail += (count * size);
       }
 
-      stream << prefix << "Free bytes : " << free << CRLF;
+      stream << prefix << "Free bytes : " << avail << CRLF;
 
+      //  The following exists for debugging purposes.  If the heap is
+      //  small enough, display the state of all blocks at each level.
+      //
       if(LastLevel - heap_->minLevel <= 7)
       {
          stream << prefix << "Block states : " << CRLF;
@@ -685,10 +741,10 @@ void NbHeap::Free(void* addr)
 
    MutexGuard guard(heap_->lock.get());
 
-   Freeing(addr, size);
    auto level = SizeToLevel(size);
    if(level > LastLevel) return;
 
+   Freeing(addr, size);
    FreeBlock((HeapBlock*) addr, level);
 }
 
@@ -738,6 +794,13 @@ HeapBlock* NbHeap::IndexToBlock(index_t index, level_t level) const
    auto first = (size_t(1) << (level - heap_->minLevel)) - 1;
    auto offset = index - first;
    return (HeapBlock*) (heap_->leftAddr + (offset << Log2Size(level)));
+}
+
+//------------------------------------------------------------------------------
+
+size_t NbHeap::Overhead() const
+{
+   return (heap_->minAddr - uintptr_t(heap_));
 }
 
 //------------------------------------------------------------------------------

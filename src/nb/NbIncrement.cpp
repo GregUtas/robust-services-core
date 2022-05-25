@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbIncrement.h"
+#include "CliCharParm.h"
 #include "CliText.h"
 #include <cctype>
 #include <cstddef>
@@ -51,6 +52,7 @@
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "Heap.h"
+#include "HeapCfg.h"
 #include "Log.h"
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
@@ -309,7 +311,7 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
       //
       if(!GetIntParm(secs, cli)) return -1;
       if(!cli.EndOfInput()) return -1;
-      timeout = (secs == 0 ? TIMEOUT_NEVER : msecs_t(100 * secs));
+      timeout = (secs == 0 ? TIMEOUT_NEVER : msecs_t(secs * ONE_SEC));
       thr->SetInterval(timeout);
       break;
    case AuditForceIndex:
@@ -801,7 +803,7 @@ word DelayCommand::ProcessCommand(CliThread& cli) const
    if(!GetIntParm(secs, cli)) return -1;
    if(!cli.EndOfInput()) return -1;
 
-   auto rc = ThisThread::Pause(msecs_t(1000 * secs));
+   auto rc = ThisThread::Pause(msecs_t(secs * ONE_SEC));
    if(rc != DelayCompleted) return cli.Report(-6, DelayFailure);
    return cli.Report(0, SuccessExpl);
 }
@@ -988,9 +990,14 @@ word ExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The HEAPS command.
 //
-class HeapsInUseText : public CliText
+class SizeScaleParm : public CliCharParm
 {
-public: HeapsInUseText();
+public: SizeScaleParm();
+};
+
+class HeapsSetSizeText : public CliText
+{
+public: HeapsSetSizeText();
 };
 
 class HeapsTraceAction : public CliTextParm
@@ -1008,6 +1015,11 @@ class HeapsAction : public CliTextParm
 public: HeapsAction();
 };
 
+class HeapsShowText : public CliText
+{
+public: HeapsShowText();
+};
+
 class HeapsCommand : public CliCommand
 {
 public:
@@ -1017,15 +1029,37 @@ private:
 };
 
 fixed_string HeapsListTextStr = "list";
-fixed_string HeapsListTextExpl = "displays all heaps";
+fixed_string HeapsListTextExpl = "lists all heaps";
 
-fixed_string HeapsInUseTextStr = "inuse";
-fixed_string HeapsInUseTextExpl = "displays the number of bytes allocated";
+fixed_string SizeScaleStr = "k|m|g";
+fixed_string SizeScaleExpl = "'k'=kB 'm'=MB 'g'=GB";
 
-HeapsInUseText::HeapsInUseText() :
-   CliText(HeapsInUseTextExpl, HeapsInUseTextStr)
+SizeScaleParm::SizeScaleParm() :
+   CliCharParm(SizeScaleExpl, SizeScaleStr, true) { }
+
+fixed_string HeapSizeExpl = "size";
+fixed_string HeapsSetSizeTextStr = "setsize";
+fixed_string HeapsSetSizeTextExpl = "sets the desired size";
+
+HeapsSetSizeText::HeapsSetSizeText() :
+   CliText(HeapsSetSizeTextExpl, HeapsSetSizeTextStr)
 {
    BindParm(*new MemoryTypeParm);
+   BindParm(*new CliIntParm(HeapSizeExpl, 1, 1023));
+   BindParm(*new SizeScaleParm);
+}
+
+fixed_string HeapsValidateTextStr = "validate";
+fixed_string HeapsValidateTextExpl = "validates all heaps";
+
+fixed_string HeapsShowTextStr = "show";
+fixed_string HeapsShowTextExpl = "displays a heap";
+
+HeapsShowText::HeapsShowText() :
+   CliText(HeapsShowTextExpl, HeapsShowTextStr)
+{
+   BindParm(*new MemoryTypeParm);
+   BindParm(*new DispBVParm);
 }
 
 constexpr id_t HeapsResetIndex = 1;
@@ -1034,7 +1068,7 @@ constexpr id_t HeapsStopIndex = 3;
 constexpr id_t HeapsDisplayIndex = 4;
 
 fixed_string HeapsResetTextStr = "reset";
-fixed_string HeapsResetTextExpl = "clears allocated blocks";
+fixed_string HeapsResetTextExpl = "clears the list of allocated blocks";
 
 fixed_string HeapsStartTextStr = "start";
 fixed_string HeapsStartTextExpl = "starts tracing of allocated blocks";
@@ -1069,23 +1103,23 @@ HeapsTraceText::HeapsTraceText() :
    BindParm(*new HeapsTraceAction);
 }
 
-fixed_string HeapsValidateTextStr = "validate";
-fixed_string HeapsValidateTextExpl = "validates all heaps";
-
 constexpr id_t HeapsListIndex = 1;
-constexpr id_t HeapsInUseIndex = 2;
-constexpr id_t HeapsTraceIndex = 3;
-constexpr id_t HeapsValidateIndex = 4;
+constexpr id_t HeapsSetSizeIndex = 2;
+constexpr id_t HeapsValidateIndex = 3;
+constexpr id_t HeapsShowIndex = 4;
+constexpr id_t HeapsTraceIndex = 5;
 
 fixed_string HeapsActionExpl = "subcommand...";
 
 HeapsAction::HeapsAction() : CliTextParm(HeapsActionExpl)
 {
-   BindText(*new CliText(HeapsListTextExpl, HeapsListTextStr), HeapsListIndex);
-   BindText(*new HeapsInUseText, HeapsInUseIndex);
-   BindText(*new HeapsTraceText, HeapsTraceIndex);
+   BindText(*new CliText
+      (HeapsListTextExpl, HeapsListTextStr), HeapsListIndex);
+   BindText(*new HeapsSetSizeText, HeapsSetSizeIndex);
    BindText(*new CliText
       (HeapsValidateTextExpl, HeapsValidateTextStr), HeapsValidateIndex);
+   BindText(*new HeapsShowText, HeapsShowIndex);
+   BindText(*new HeapsTraceText, HeapsTraceIndex);
 }
 
 fixed_string HeapsStr = "heaps";
@@ -1103,8 +1137,11 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(HeapsCommand_ProcessCommand);
 
    id_t index;
+   word memtype, size;
+   bool v;
    id_t trace;
-   word memtype;
+   char scale;
+   string expl;
 
    if(!GetTextIndex(index, cli)) return -1;
 
@@ -1115,16 +1152,70 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
       Memory::DisplayHeaps(*cli.obuf, spaces(2));
       return 0;
 
-   case HeapsInUseIndex:
+   case HeapsSetSizeIndex:
       if(!GetIntParm(memtype, cli)) return -1;
+      if(!GetIntParm(size, cli)) return -1;
+      if(!GetCharParm(scale, cli)) return -1;
+      if(cli.EndOfInput())
+      {
+         auto config = Singleton< HeapCfg >::Instance();
+         auto type = MemoryType(memtype);
+
+         switch(scale)
+         {
+         case 'k':
+            size *= kBs;
+            break;
+         case 'm':
+            size *= MBs;
+            break;
+         case 'g':
+            if((BYTES_PER_WORD == 4) && (size > 2))
+            {
+               return cli.Report(-2, "The size can be at most 2GB.");
+            }
+            size *= GBs;
+            break;
+         }
+
+         if(!config->SetTargSize(type, size, expl)) return cli.Report(-2, expl);
+      }
+
+      return cli.Report(0, SuccessExpl);
+      break;
+
+   case HeapsValidateIndex:
+      if(!cli.EndOfInput()) return -1;
+      *cli.obuf << spaces(2) << "Validating heaps..." << CRLF;
+
+      for(auto m = 1; m < MemoryType_N; ++m)
+      {
+         auto type = MemoryType(m);
+         auto result = Memory::Validate(type, nullptr);
+         string status;
+
+         if(result > 0)
+            status = "true";
+         else if(result == 0)
+            status = "false";
+         else
+            status = "unallocated";
+
+         *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
+      }
+
+      return 0;
+
+   case HeapsShowIndex:
+      if(!GetIntParm(memtype, cli)) return -1;
+      if(GetBV(*this, cli, v) == Error) return -1;
       if(cli.EndOfInput())
       {
          auto type = MemoryType(memtype);
          auto heap = Memory::AccessHeap(type);
          if(heap == nullptr) return cli.Report(-2, "Heap not found.");
-         auto size = heap->BytesInUse();
-         *cli.obuf << spaces(2) << "Bytes in use: " << size << CRLF;
-         return size;
+         heap->Output(*cli.obuf, 2, v);
+         return 0;
       }
       return -1;
 
@@ -1156,28 +1247,6 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
          }
       }
       return -1;
-
-   case HeapsValidateIndex:
-      if(!cli.EndOfInput()) return -1;
-      *cli.obuf << spaces(2) << "Validating heaps..." << CRLF;
-
-      for(auto m = 1; m < MemoryType_N; ++m)
-      {
-         auto type = MemoryType(m);
-         auto result = Memory::Validate(type, nullptr);
-         string status;
-
-         if(result > 0)
-            status = "true";
-         else if(result == 0)
-            status = "false";
-         else
-            status = "unallocated";
-
-         *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
-      }
-
-      return 0;
 
    default:
       Debug::SwLog(HeapsCommand_ProcessCommand, UnexpectedIndex, index);
@@ -1855,7 +1924,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
       if(buff != nullptr)
       {
-         auto file = buff->FileName();
+         auto& file = buff->FileName();
          word size = buff->Count(true, true);
          size_t targ = (count < size ? size - count : 0);
          if(count == 0) targ = 0;
@@ -3105,14 +3174,14 @@ void StatusCommand::Patch(sel_t selector, void* arguments)
 }
 
 fixed_string HeapsHeader =
-"Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
+"Alloc  Min kB     kB       Bytes                            Memory        Prot\n"
 "Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 //        1         2         3         4         5         6         7
 //234567890123456789012345678901234567890123456789012345678901234567890123456789
 
 fixed_string PoolsHeader =
-   "Alloc  Lowest    Curr    Curr\n"
-   "Fails   Avail   Avail  In Use     Allocs      Frees  Expands   Pool Name";
+   "Alloc     Min    Curr    Curr                        Segments\n"
+   "Fails   Avail   Avail  In Use     Allocs      Frees  Add  Tot   Pool Name";
 // 0         1         2         3         4         5         6         7
 // 01234567890123456789012345678901234567890123456789012345678901234567890123456
 
@@ -3123,7 +3192,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
    if(!cli.EndOfInput()) return -1;
 
    *cli.obuf << "STATUS REPORT: " << Element::strTimePlace() << CRLF;
-   *cli.obuf << "MEMORY USAGE" << CRLF;
+   *cli.obuf << "HEAPS" << CRLF;
    *cli.obuf << HeapsHeader << CRLF;
 
    for(auto m = 0; m < MemoryType_N; ++m)
@@ -3137,16 +3206,16 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
          auto size = heap->Size();
          if(size == 0)
          {
-            *cli.obuf << setw(7) << "---";
-            *cli.obuf << setw(8) << "---";
+            *cli.obuf << setw(8) << "n/a";
+            *cli.obuf << setw(7) << "n/a";
          }
          else
          {
-            *cli.obuf << setw(7) << ((size - heap->MaxBytesInUse()) / kBs);
-            *cli.obuf << setw(8) << ((size - heap->BytesInUse()) / kBs);
+            *cli.obuf << setw(8) << (heap->MinAvail() / kBs);
+            *cli.obuf << setw(7) << (heap->CurrAvail() / kBs);
          }
 
-         *cli.obuf << setw(12) << heap->BytesInUse();
+         *cli.obuf << setw(12) << heap->CurrInUse();
          *cli.obuf << setw(11) << heap->AllocCount();
          *cli.obuf << setw(11) << heap->FreeCount();
          *cli.obuf << setw(12) << heap->Type();
@@ -3174,7 +3243,8 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
       *cli.obuf << setw(8) << p->InUseCount();
       *cli.obuf << setw(11) << p->AllocCount();
       *cli.obuf << setw(11) << p->FreeCount();
-      *cli.obuf << setw(9) << p->Expansions();
+      *cli.obuf << setw(5) << p->Expansions();
+      *cli.obuf << setw(5) << p->Segments();
       *cli.obuf << spaces(3) << p->Name() << CRLF;
    }
 

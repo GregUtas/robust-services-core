@@ -898,7 +898,12 @@ private:
 MemoryType TestHeap::Type_ = MemTemporary;
 size_t TestHeap::Size_ = 1 * kBs;
 
-TestHeap::TestHeap() : NbHeap(Type_, Size_) { }
+TestHeap::TestHeap() : NbHeap(Type_)
+{
+   Debug::ft("TestHeap.ctor");
+
+   Create(Size_);
+}
 
 //------------------------------------------------------------------------------
 

@@ -676,11 +676,10 @@ PotsMuxRelayEvent::~PotsMuxRelayEvent()
 PotsMuxSsm::PotsMuxSsm(const Message& msg, ProtocolSM& psm) :
    MediaSsm(PotsMuxServiceId),
    prof_(nullptr),
-   uPsm_(nullptr)
+   uPsm_(nullptr),
+   nPsm_{nullptr}
 {
    Debug::ft("PotsMuxSsm.ctor");
-
-   for(auto i = 0; i <= MaxCallId; ++i) nPsm_[i] = nullptr;
 
    auto& npsm = static_cast< PotsMuxPsm& >(psm);
    auto port = npsm.TsPort();

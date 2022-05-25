@@ -31,11 +31,9 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-IPv6Addr::IPv6Addr()
+IPv6Addr::IPv6Addr() : u32{0}
 {
    Debug::ft("IPv6Addr.ctor");
-
-   for(int i = 3; i >= 0; --i) u32[i] = 0;
 }
 
 //------------------------------------------------------------------------------

@@ -72,9 +72,6 @@ NwTracer::NwTracer()
 {
    Debug::ft("NwTracer.ctor");
 
-   for(auto i = 0; i < MaxPeerEntries; ++i) peers_[i] = PeerFilter();
-   for(auto i = 0; i < MaxPortEntries; ++i) ports_[i] = PortFilter();
-
    Singleton< NetworkTraceTool >::Instance();
 }
 

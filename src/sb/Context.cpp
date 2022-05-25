@@ -164,7 +164,8 @@ Context::Context(Faction faction) :
    prio_(INGRESS),
    traceOn_(false),
    trans_(nullptr),
-   buffIndex_(0)
+   buffIndex_(0),
+   trace_{NilMessageEntry}
 {
    Debug::ft(Context_ctor);
 
@@ -177,8 +178,6 @@ Context::Context(Faction faction) :
    {
       Debug::SwLog(Context_ctor, "invoker pool not found", faction_);
    }
-
-   for(size_t i = 0; i < TraceSize; ++i) trace_[i] = NilMessageEntry;
 
    if(Debug::TraceOn())
    {

@@ -38,14 +38,9 @@ using std::string;
 
 namespace CallBase
 {
-ServiceCodeRegistry::ServiceCodeRegistry()
+ServiceCodeRegistry::ServiceCodeRegistry() : codeToService_{NIL_ID}
 {
    Debug::ft("ServiceCodeRegistry.ctor");
-
-   for(auto i = 0; i <= Address::LastSC; ++i)
-   {
-      codeToService_[i] = NIL_ID;
-   }
 }
 
 //------------------------------------------------------------------------------

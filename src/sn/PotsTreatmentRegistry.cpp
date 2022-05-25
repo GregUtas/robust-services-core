@@ -36,11 +36,11 @@ using std::string;
 
 namespace PotsBase
 {
-PotsTreatmentRegistry::PotsTreatmentRegistry()
+PotsTreatmentRegistry::PotsTreatmentRegistry() :
+   causeToQId_{NIL_ID}
 {
    Debug::ft("PotsTreatmentRegistry.ctor");
 
-   for(auto c = 0; c <= Cause::MaxInd; ++c) causeToQId_[c] = NIL_ID;
    treatmentqs_.Init(PotsTreatmentQueue::MaxQId,
       PotsTreatmentQueue::CellDiff(), MemProtected);
 }

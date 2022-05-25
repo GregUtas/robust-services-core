@@ -48,21 +48,14 @@ const State::Id State::MaxId = 63;
 
 fn_name State_ctor = "State.ctor";
 
-State::State(ServiceId sid, Id stid) : sid_(sid)
+State::State(ServiceId sid, Id stid) :
+   sid_(sid),
+   handlers_{NIL_ID},
+   msgAnalyzers_{NIL_ID}
 {
    Debug::ft(State_ctor);
 
    stid_.SetId(stid);
-
-   for(auto i = 0; i <= Event::MaxId; ++i)
-   {
-      handlers_[i] = NIL_ID;
-   }
-
-   for(auto i = 0; i <= MaxServicePortId; ++i)
-   {
-      msgAnalyzers_[i] = NIL_ID;
-   }
 
    //  Check that the state's service is registered.
    //

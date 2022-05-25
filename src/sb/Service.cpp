@@ -51,6 +51,7 @@ fixed_string MediaFailureEventStr    = "MediaFailureEvent";
 
 Service::Service(Id sid, bool modifiable, bool modifier) :
    status_(NotRegistered),
+   eventNames_{nullptr},
    modifiable_(modifiable),
    modifier_(modifier)
 {
@@ -60,7 +61,6 @@ Service::Service(Id sid, bool modifiable, bool modifier) :
 
    states_.Init(State::MaxId, State::CellDiff(), MemImmutable);
    handlers_.Init(EventHandler::MaxId, 0, MemImmutable, false);
-   for(auto i = 0; i <= Event::MaxId; ++i) eventNames_[i] = nullptr;
    triggers_.Init(Trigger::MaxId, 0, MemImmutable, false);
 
    //  Add the service to the global service registry.

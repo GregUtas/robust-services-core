@@ -38,14 +38,18 @@ static fixed_string DigitToChar = "?1234567890*#???";
 
 //------------------------------------------------------------------------------
 
-DigitString::DigitString() : size_(0)
+DigitString::DigitString() :
+   digits_{0},
+   size_(0)
 {
    Debug::ft("DigitString.ctor");
 }
 
 //------------------------------------------------------------------------------
 
-DigitString::DigitString(Address::DN dn) : size_(0)
+DigitString::DigitString(Address::DN dn) :
+   digits_{0},
+   size_(0)
 {
    Debug::ft("DigitString.ctor(dn)");
 
@@ -65,7 +69,9 @@ DigitString::DigitString(Address::DN dn) : size_(0)
 
 //------------------------------------------------------------------------------
 
-DigitString::DigitString(const string& s) : size_(0)
+DigitString::DigitString(const string& s) :
+   digits_{0},
+   size_(0)
 {
    Debug::ft("DigitString.ctor(string)");
 

@@ -95,7 +95,9 @@ Factory::Factory(Id fid, ContextType type, ProtocolId prid, c_string name) :
    type_(type),
    faction_(PayloadFaction),
    prid_(prid),
-   name_(name)
+   name_(name),
+   icSignals_{false},
+   ogSignals_{false}
 {
    Debug::ft("Factory.ctor");
 
@@ -103,8 +105,6 @@ Factory::Factory(Id fid, ContextType type, ProtocolId prid, c_string name) :
 
    fid_.SetId(fid);
    stats_.reset(new FactoryStats);
-   for(auto i = 0; i <= Signal::MaxId; ++i) icSignals_[i] = false;
-   for(auto i = 0; i <= Signal::MaxId; ++i) ogSignals_[i] = false;
 
    //  Add the factory to the global factory registry.
    //

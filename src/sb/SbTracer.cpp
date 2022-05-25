@@ -105,14 +105,13 @@ SbTracer::SignalFilter::SignalFilter(ProtocolId p, SignalId s, TraceStatus ts) :
 
 //------------------------------------------------------------------------------
 
-SbTracer::SbTracer() : timers_(TraceDefault)
+SbTracer::SbTracer() :
+   factories_{TraceDefault},
+   protocols_{TraceDefault},
+   services_{TraceDefault},
+   timers_(TraceDefault)
 {
    Debug::ft("SbTracer.ctor");
-
-   for(auto i = 0; i <= Factory::MaxId; ++i) factories_[i] = TraceDefault;
-   for(auto i = 0; i <= Protocol::MaxId; ++i) protocols_[i] = TraceDefault;
-   for(auto i = 0; i < MaxSignalEntries; ++i) signals_[i] = SignalFilter();
-   for(auto i = 0; i <= Service::MaxId; ++i) services_[i] = TraceDefault;
 
    Singleton< TransTraceTool >::Instance();
    Singleton< BufferTraceTool >::Instance();

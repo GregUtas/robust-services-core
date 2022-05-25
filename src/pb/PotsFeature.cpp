@@ -38,7 +38,8 @@ PotsFeature::PotsFeature(Id fid, bool deactivation,
    c_string abbr, c_string name) :
    deactivation_(deactivation),
    abbr_(abbr),
-   name_(name)
+   name_(name),
+   incompatible_{false}
 {
    Debug::ft("PotsFeature.ctor");
 
@@ -46,7 +47,6 @@ PotsFeature::PotsFeature(Id fid, bool deactivation,
    Debug::Assert(name_ != nullptr);
 
    fid_.SetId(fid);
-   for(auto i = 0; i <= MaxId; ++i) incompatible_[i] = false;
    incompatible_[fid] = true;
 
    Singleton< PotsFeatureRegistry >::Instance()->BindFeature(*this);

@@ -56,11 +56,10 @@ PotsCircuit::PotsCircuit(PotsProfile& profile) :
    cause_(Cause::NilInd),
    profile_(&profile),
    trafficId_(0),
-   buffIndex_(0)
+   buffIndex_(0),
+   trace_{NilSignalEntry}
 {
    Debug::ft("PotsCircuit.ctor");
-
-   for(auto i = 0; i < TraceSize; ++i) trace_[i] = NilSignalEntry;
 
    StateCount_[state_]++;
 }

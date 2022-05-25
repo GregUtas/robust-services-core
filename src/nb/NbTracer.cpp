@@ -121,11 +121,9 @@ class MemoryTraceTool : public Tool
 
 //------------------------------------------------------------------------------
 //
-NbTracer::NbTracer()
+NbTracer::NbTracer() : factions_{TraceDefault}
 {
    Debug::ft("NbTracer.ctor");
-
-   for(auto f = 0; f < Faction_N; ++f) factions_[f] = TraceDefault;
 
    Singleton< TraceBufferTool >::Instance();
    Singleton< FunctionTraceTool >::Instance();

@@ -63,9 +63,11 @@ constexpr char ErrorFlag = '?';
 
 MscBuilder::MscBuilder(bool debug) :
    debug_(debug),
+   events_{nullptr},
    nextEvent_(0),
    group_(0),
    lines_(0),
+   columns_{0},
    nextCol_(FirstCol),
    lastCol_(0),
    nextRow_(0),
@@ -76,8 +78,6 @@ MscBuilder::MscBuilder(bool debug) :
    contextq_.Init(MscContext::LinkDiff());
    addressq_.Init(MscAddress::LinkDiff());
    pairq_.Init(MscContextPair::LinkDiff());
-
-   for(auto i = 0; i < MaxEvents; ++i) events_[i] = nullptr;
 }
 
 //------------------------------------------------------------------------------

@@ -259,6 +259,7 @@ ObjectPool::ObjectPool
    segSize_(0),
    currSegments_(0),
    targSegmentsCfg_(nullptr),
+   blocks_{nullptr},
    alarm_(nullptr)
 {
    Debug::ft("ObjectPool.ctor");
@@ -270,8 +271,6 @@ ObjectPool::ObjectPool
    segSize_ = segIncr_ * ObjectsPerSegment;
 
    pid_.SetId(pid);
-
-   for(auto i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;
    dyn_.reset(new ObjectPoolDynamic);
    targSegmentsCfg_.reset(new ObjectPoolSizeCfg(this));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*targSegmentsCfg_);

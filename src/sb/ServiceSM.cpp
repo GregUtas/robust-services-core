@@ -55,11 +55,10 @@ ServiceSM::ServiceSM(ServiceId sid) :
    idled_(false),
    nextSap_(NIL_ID),
    nextSnp_(NIL_ID),
+   triggered_{false},
    parentSsm_(nullptr)
 {
    Debug::ft("ServiceSM.ctor");
-
-   for(auto i = 0; i <= Trigger::MaxId; ++i) triggered_[i] = false;
 
    ssmq_.Init(Pooled::LinkDiff());
 

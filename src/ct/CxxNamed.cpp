@@ -56,7 +56,7 @@ static void BuildParameterMap(const TemplateParmPtrVector* parms,
 
    std::pair<string, string> parmToArg;
 
-   for(auto i = 0; i < args->size(); ++i)
+   for(size_t i = 0; i < args->size(); ++i)
    {
       parmToArg.first = parms->at(i)->Name();
 

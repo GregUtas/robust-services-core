@@ -304,7 +304,7 @@ void* NbHeap::Alloc(size_t size)
    if(level > LastLevel) return nullptr;
 
    auto block = AllocBlock(level, size);
-   size = 1 << log2(size, true);
+   size = size_t(1) << log2(size, true);
    Requested(size, block);
    return block;
 }

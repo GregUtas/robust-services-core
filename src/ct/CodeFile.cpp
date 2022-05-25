@@ -1496,7 +1496,7 @@ bool CodeFile::GetFnName(size_t line, string& fname, Data*& data) const
 
    auto lpar = statement.find('(');
    if(lpar == string::npos) return false;
-   auto rpar = statement.find(')', lpar);
+   auto rpar = statement.rfind(')');
    if(rpar == string::npos) return false;
 
    auto lquo = statement.find(QUOTE, lpar);

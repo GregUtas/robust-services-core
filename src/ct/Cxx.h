@@ -250,6 +250,7 @@ namespace Cxx
       Class,
       Argument,
       Block,
+      BraceInit,
       Data,
       Enum,
       Enumerator,

@@ -740,7 +740,7 @@ string& RemoveTags(string& type)
 
 //------------------------------------------------------------------------------
 
-string& RemoveTemplates(string&& type)
+string RemoveTemplates(string&& type)
 {
    Debug::ft("CodeTools.RemoveTemplates");
 

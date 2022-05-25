@@ -163,7 +163,7 @@ namespace CodeTools
    //  Removes all template parameters or arguments from TYPE and returns the
    //  result.
    //
-   std::string& RemoveTemplates(std::string&& type);
+   std::string RemoveTemplates(std::string&& type);
 
    //  Removes template parameters from occurrences of std::ratio within TYPE.
    //

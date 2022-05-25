@@ -149,6 +149,7 @@ static bool InNestedBraceInit(const std::vector< LeftBraceRole >& roles)
 LineInfo::LineInfo(size_t start) :
    begin(start),
    depth(DEPTH_NOT_SET),
+   ctorBraceInit(false),
    continuation(false),
    mergeable(false),
    c_comment(false),
@@ -214,8 +215,6 @@ bool Lexer::Advance(size_t incr)
 
 //------------------------------------------------------------------------------
 
-const string BraceInitPrevChars("=,{(");
-
 fn_name Lexer_CalcDepths = "Lexer.CalcDepths";
 
 void Lexer::CalcDepths()
@@ -263,14 +262,14 @@ void Lexer::CalcDepths()
          auto lbDepth = currDepth;
          auto prevChar = code_[prev_];
 
-         if(BraceInitPrevChars.find(prevChar) != string::npos)
-            lbStack.push_back(LB_Init);
-         else if(kwd == Cxx::CLASS)
+         if(kwd == Cxx::CLASS)
             lbStack.push_back(LB_Area);
          else if(kwd == Cxx::NAMESPACE)
             lbStack.push_back(LB_Space);
          else if(kwd == Cxx::ENUM)
             lbStack.push_back(LB_Enum);
+         else if(IsBraceInit(prevChar))
+            lbStack.push_back(LB_Init);
          else
             lbStack.push_back(LB_Func);
 
@@ -302,7 +301,7 @@ void Lexer::CalcDepths()
             else
                nextDepth = currDepth;
          }
-         else if(ctor)
+         else if(ctor && (lbStack.back() != LB_Init))
          {
             ctor = false;
             lbDepth = currDepth - 1;
@@ -342,6 +341,11 @@ void Lexer::CalcDepths()
                   currInfo->continuation = true;
             }
          }
+
+         //  Record a brace initialization in a member initialization list.
+         //
+         if(ctor && (lbStack.back() == LB_Init))
+            currInfo->ctorBraceInit = true;
 
          //  Set the depth of the matching right brace unless it is already
          //  set (because it is on the same line as the left brace).
@@ -486,6 +490,11 @@ void Lexer::CalcDepths()
          Advance(1);
          break;
 
+      case '>':
+         //  Cancel KWD, which could be "class" in a template parameter list.
+         //
+         kwd = Cxx::NIL_KEYWORD;
+         //  [[fallthrough]]
       default:
          //
          //  Take operators one character at a time so as not to skip over a
@@ -943,15 +952,21 @@ void Lexer::CheckPunctuation() const
       switch(code_[pos])
       {
       case '{':
-         if(WhitespaceChars.find(code_[pos - 1]) == string::npos)
-            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_{");
-         if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
-            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "{_");
+         if(!GetLineInfo(pos)->ctorBraceInit)
+         {
+            if(WhitespaceChars.find(code_[pos - 1]) == string::npos)
+               file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_{");
+            if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
+               file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "{_");
+         }
          break;
 
       case '}':
-         if(WhitespaceChars.find(code_[pos - 1]) == string::npos)
-            file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_}");
+         if(!GetLineInfo(pos)->ctorBraceInit)
+         {
+            if(WhitespaceChars.find(code_[pos - 1]) == string::npos)
+               file_->LogPos(pos, PunctuationSpacing, nullptr, 0, "_}");
+         }
          if(pos + 1 < code_.size())
          {
             if(WhitespaceChars.find(code_[pos + 1]) == string::npos)
@@ -2555,6 +2570,29 @@ bool Lexer::IsBlankLine(size_t pos) const
 
    auto begin = CurrBegin(pos);
    return (code_.find_first_not_of(WhitespaceChars, begin) > CurrEnd(pos));
+}
+
+//------------------------------------------------------------------------------
+
+const string BraceInitPrevChars("=,{(");
+
+bool Lexer::IsBraceInit(char prev) const
+{
+   Debug::ft("Lexer.IsBraceInit");
+
+   //  If this isn't a brace initialization, it's the start of a function.
+   //  It's a brace initialization if PREV is one of BraceInitPrevChars.
+   //  It's a function if a semicolon occurs before the next right brace.
+   //  It's a brace initialization if a right brace occurs before the next
+   //  semicolon *unless* it's an empty function.
+   //
+   if(BraceInitPrevChars.find(prev) != string::npos) return true;
+
+   auto closePos = FindFirstOf(";}", curr_ + 1);
+   if(code_[closePos] == ';') return false;
+
+   auto nextPos = FindNonBlank(curr_ + 1);
+   return (code_[nextPos] != '}');
 }
 
 //------------------------------------------------------------------------------

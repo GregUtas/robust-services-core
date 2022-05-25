@@ -383,6 +383,11 @@ private:
    bool GetProcDecl(FunctionPtr& func);
    bool GetProcDefn(FunctionPtr& func);
 
+   //  Returns true and updates TOKEN after parsing a member initialization
+   //  expression, either between parentheses or braces.
+   //
+   bool GetMemberInit(TokenPtr& token);
+
    //  Returns true and creates SPEC on finding a type specification.  ATTRS
    //  is used when parsing a data type or type returned by a function, when
    //  "const" and "volatile" may appear before keywords such as "static" and
@@ -523,7 +528,13 @@ private:
    //
    bool GetSubscript(Expression* expr, size_t pos);
 
-   //  Updates EXPR with the results of parsing a brace initialization list.
+   //  Updates TOKEN with the results of parsing a brace initialization list.
+   //  On success, updates END to the position of the closing brace.
+   //
+   bool GetBraceInit(TokenPtr& token, size_t& end);
+
+   //  Updates EXPR with the results of parsing a brace initialization list,
+   //  which is wrapped in the expression.
    //
    bool GetBraceInit(ExprPtr& expr);
 

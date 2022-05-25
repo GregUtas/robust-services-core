@@ -4329,11 +4329,12 @@ word Editor::InsertForward(const CodeWarning& log)
    auto srPos = forward.find(SCOPE_STR);
    if(srPos == string::npos) return NotFound("Forward's namespace.");
 
-   //  Extract the namespace.
+   //  Extract the namespace; rfind avoids the initial "class" in a forward
+   //  declaration for template< class T > class ClassTemplateName.
    //
-   auto areaPos = forward.find("class ");
-   if(areaPos == string::npos) areaPos = forward.find("struct ");
-   if(areaPos == string::npos) areaPos = forward.find("union ");
+   auto areaPos = forward.rfind("class ");
+   if(areaPos == string::npos) areaPos = forward.rfind("struct ");
+   if(areaPos == string::npos) areaPos = forward.rfind("union ");
    if(areaPos == string::npos) return NotFound("Forward's area type");
 
    //  Set NSPACE to "namespace <ns>", where <ns> is the symbol's namespace.

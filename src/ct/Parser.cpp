@@ -55,7 +55,7 @@ namespace CodeTools
 {
 //  The highest legal cause_ value.
 //
-constexpr size_t MaxCause_ = 301;
+constexpr size_t MaxCause_ = 301;  // 63-66, 123, 178 currently unused
 
 //  Statistics on where the parser backed up.
 //
@@ -739,13 +739,28 @@ bool Parser::GetBraceInit(ExprPtr& expr)
 {
    Debug::ft("Parser.GetBraceInit");
 
+   TokenPtr token;
+   size_t end;
+
+   if(!GetBraceInit(token, end)) return false;
+   expr.reset(new Expression(end, true));
+   expr->AddItem(token);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool Parser::GetBraceInit(TokenPtr& token, size_t& end)
+{
+   Debug::ft("Parser.GetBraceInit(token)");
+
    auto prev = lexer_.Prev();
    auto start = CurrPos();
 
    //  The left brace has already been parsed.  A comma is actually allowed
    //  to follow the final item in the list, just before the closing brace.
    //
-   auto end = lexer_.FindClosing('{', '}');
+   end = lexer_.FindClosing('{', '}');
    if(end == string::npos) return Backup(start, 19);
 
    TokenPtrVector temps;
@@ -773,9 +788,9 @@ bool Parser::GetBraceInit(ExprPtr& expr)
       }
    }
 
-   TokenPtr token(new BraceInit);
+   token.reset(new BraceInit);
    token->SetContext(prev);
-   auto brace = static_cast< BraceInit* >(token.get());
+   auto brace = static_cast<BraceInit*>(token.get());
 
    for(size_t i = 0; i < temps.size(); ++i)
    {
@@ -783,8 +798,6 @@ bool Parser::GetBraceInit(ExprPtr& expr)
       brace->AddItem(init);
    }
 
-   expr.reset(new Expression(end, true));
-   expr->AddItem(token);
    return true;
 }
 
@@ -1307,10 +1320,7 @@ bool Parser::GetCtorInit(Function* func)
       }
       else
       {
-         if(!lexer_.NextCharIs('(')) return Backup(start, 62);
-         end = lexer_.FindClosing('(', ')');
-         if(end == string::npos) return Backup(start, 63);
-         if(!GetArgList(token)) return Backup(start, 64);
+         if(!GetMemberInit(token)) return Backup(start, 62);
          auto begin = baseName->GetPos();
          memberName = baseName->Name();
          MemberInitPtr mem(new MemberInit(func, memberName, token));
@@ -1322,11 +1332,8 @@ bool Parser::GetCtorInit(Function* func)
    while(lexer_.NextCharIs(','))
    {
       auto begin = CurrPos();
-      if(!lexer_.GetName(memberName)) return Backup(start, 65);
-      if(!lexer_.NextCharIs('(')) return Backup(start, 66);
-      end = lexer_.FindClosing('(', ')');
-      if(end == string::npos) return Backup(start, 67);
-      if(!GetArgList(token)) return Backup(start, 68);
+      if(!lexer_.GetName(memberName)) return Backup(start, 67);
+      if(!GetMemberInit(token)) return Backup(start, 68);
       MemberInitPtr mem(new MemberInit(func, memberName, token));
       mem->SetContext(begin);
       func->AddMemberInit(mem);
@@ -1950,8 +1957,6 @@ bool Parser::GetFuncData(DataPtr& data)
       //  an argument list in case it is a constructor call.
       //
       TokenPtr expr;
-      auto end = lexer_.FindClosing('(', ')');
-      if(end == string::npos) return Backup(start, 123);
       if(!GetArgList(expr)) return Backup(start, 124);
       if(!lexer_.NextCharIs(';')) return Backup(start, 125);
 
@@ -2401,6 +2406,27 @@ void Parser::GetMemberDecls(Class* cls)
       if(CxxWord::Attrs[kwd].advance) lexer_.Advance(str.size());
       if(!ParseInClass(kwd, cls)) return;
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool Parser::GetMemberInit(TokenPtr& token)
+{
+   Debug::ft("Parser.GetMemberInit");
+
+   //  Parse the member initialization enclosed by parentheses or braces.
+   //
+   if(lexer_.NextCharIs('('))
+   {
+      if(!GetArgList(token)) return false;
+   }
+   else if(lexer_.NextCharIs('{'))
+   {
+      size_t end;
+      if(!GetBraceInit(token, end)) return false;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3060,8 +3086,6 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
 
    if(lexer_.NextCharIs('('))
    {
-      auto end = lexer_.FindClosing('(', ')');
-      if(end == string::npos) return Backup(start, 178);
       if(!GetArgList(expr)) return Backup(start, 179);
    }
    else
@@ -3625,7 +3649,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec, string& name)
       //  This is a function type.  Set NAME to the function type's
       //  name, if any, stripping the "(*" prefix and ")" suffix.
       //
-      auto funcName = func->Name();
+      auto& funcName = func->Name();
       if(funcName.empty()) return true;
       name = funcName;
       name.erase(0, 2);

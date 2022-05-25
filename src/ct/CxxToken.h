@@ -1157,6 +1157,7 @@ public:
    CxxToken* PosToItem(size_t pos) const override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
+   Cxx::ItemType Type() const override { return Cxx::BraceInit; }
    void UpdatePos(EditorAction action,
       size_t begin, size_t count, size_t from) const override;
    void UpdateXref(bool insert) override;

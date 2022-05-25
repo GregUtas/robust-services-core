@@ -2455,6 +2455,10 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols)
             outer = outer->GetClassTemplate();
          symbols.AddDirect(outer);
       }
+      else if(ref->IsTemplate())
+      {
+         symbols.AddIndirect(ref);
+      }
       else if(ref->GetTemplatedName() != nullptr)
       {
          symbols.AddIndirect(ref->GetTemplate());

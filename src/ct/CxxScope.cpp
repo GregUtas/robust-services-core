@@ -1686,7 +1686,9 @@ bool Data::InitByExpr(CxxToken* expr)
       //  ROOT is not a class, so EXPR should contain a single expression.
       //  Compile it as if it was a single-member brace initialization list.
       //
-      if(expr->Type() == Cxx::Operation)
+      auto type = expr->Type();
+
+      if(type == Cxx::Operation)
       {
          auto op = static_cast< Operation* >(expr);
 
@@ -1702,6 +1704,13 @@ bool Data::InitByExpr(CxxToken* expr)
             auto expl = "Invalid arguments for " + spec_->Name();
             Context::SwLog(Data_InitByExpr, expl, op->ArgsSize());
          }
+      }
+      else if(type == Cxx::BraceInit)
+      {
+         expr->EnterBlock();
+         auto result = Context::PopArg(true);
+         spec_->MustMatchWith(result);
+         result.AssignedTo(StackArg(this, 0, false), Copied);
       }
       else
       {
@@ -3461,7 +3470,7 @@ bool Function::CheckDebugName(const string& str) const
    //    order to give a unique name to each of the function's overloads.
    //
    auto name = DebugName();
-   auto scope = GetScope()->Name();
+   auto& scope = GetScope()->Name();
 
    if(scope.empty())
    {

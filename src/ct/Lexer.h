@@ -49,6 +49,7 @@ struct LineInfo
 {
    const size_t begin;  // offset where line starts; it ends at a CRLF
    int depth;           // lexical level for indentation
+   bool ctorBraceInit;  // set for brace initialization of member
    bool continuation;   // set if code continues from the previous line
    bool mergeable;      // set if code can merge with another line
    bool c_comment;      // set if the line lies within a C-style comment
@@ -653,6 +654,11 @@ private:
    //  not mergeable.
    //
    void SetDepth(int depth1, int depth2, bool merge = true);
+
+   //  Returns true if the left brace at curr_ is a brace initialization.
+   //  PREV is the character that preceded the left brace.
+   //
+   bool IsBraceInit(char prev) const;
 
    //  Returns true if the colon at POS shouldn't be preceded by a space.
    //
